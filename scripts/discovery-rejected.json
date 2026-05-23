@@ -1,6 +1,182 @@
 {
-  "lastUpdated": "2026-05-21T19:05:44.015Z",
+  "lastUpdated": "2026-05-23T07:53:51.537Z",
   "entries": [
+    {
+      "ts": "2026-05-23T07:53:51.537Z",
+      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNa1B2a2hJcEs5dHJLWlg0OGVxRXJ3c0N0WmxRQndrMU5fc2FlUnVueVFSNVgwWHhZUEhBUDRuVEZrS2prLUl0OG83MWZmWHNBYjRZQVJfdkhIZmktRFFXcEktemJPUWUwM2tfTWxlWHpGbjE1dUtPS0FFNWVISE92bkZPdjFYVXFNSUJKTWZFOGZWZ3pDLUZacVZLcTNBYlFfOWt2SzBvb0ZGTE5paTRmSDB1cGR6aUpJUWNEaERIXzBuNXd0YUpWVkR5dHVoMTdMUFRMeA?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Wayne County Juvenile Detention Facility"
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxOU3JwNGtaUTRwTllQVktKRzNrMVlsbHMtYXczRF9JWW1QSWtwT3pjSlFfYmZLWmVFT2dsaFQzZnpHT0piQld6OWJLTnd4Wmc2dTBYQ3l5dkpjdWpPcFpvVml4UmpkemMzaXdLWnFiUVZTYUd6WDRFX3llSktrNDhFTVZFTE5DbGx3NmdVTGZsMlV1Z096TU05MUViVVhWSDk1XzhKX3B3WVJGQlhwdGI0ZGlXOThCTnVSZ3dVVFJlNU9BSHpvYWY0bG0xeDgweE01VFBHYmVRdHhjUi1QU2kxS3MyUGFsYmxUdUZJaXFhZXNtSHEw?oc=5",
+      "title": "AP probe finds adopted children overrepresented in for-profit facilities - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQQnNuVGRqQ0o0VHF1ZEdwZkN2emRuR0pQTE5nbnlaMlJYM2d1anVJNlNQc1ZjSk84TVFuV0t5ZHliRnVzd0R0NzdvYW9Fdm1xZ1ZOLU9aRFJwMnc4TnZFcTI1RkM2ZURLSUdWdGRhNHZwSC1IYUdhOWsxSnBEUTFXVWtoQXpFY1Nsb0pzNGFTWFhNZnVRWGtLN0k3ZXNzT2FCTlB1dEpuWkZodGJH?oc=5",
+      "title": "Washington County Planning Board OKs teen treatment facility - The Arkansas Democrat-Gazette",
+      "origin": "google-news",
+      "host": "arkansasonline.com",
+      "facilityQuery": "Teen Challenge Adventure Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "arkansasonline.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxNa3AzLUk3dzNHQUJySnAwRkVxZjlxN216WUprNXVnWEJ6aklZR3FTeFhhNVFuVl9JYTE0blViY1FvdGJfT0JQaVJtSU1oYzJMTWlOU0hGZFAzZ3ZCaVltdWJoOUNrXzBzTWNMR19RRUdHVFotdkpOZDgwazYzb0FWaFpJUmlrRy1oVzJlQzlLZk9GVlljTFpoRndNUHE3ejRRM2pFeDRqeXl3Z1lNb1I2WW1vbWpwMm1fbjJJUm1UMzZnQTVtVGdndTVvMmtOOTdreUxWeDdlaDZBU3ROZC03S9IB4AFBVV95cUxNa3AzLUk3dzNHQUJySnAwRkVxZjlxN216WUprNXVnWEJ6aklZR3FTeFhhNVFuVl9JYTE0blViY1FvdGJfT0JQaVJtSU1oYzJMTWlOU0hGZFAzZ3ZCaVltdWJoOUNrXzBzTWNMR19RRUdHVFotdkpOZDgwazYzb0FWaFpJUmlrRy1oVzJlQzlLZk9GVlljTFpoRndNUHE3ejRRM2pFeDRqeXl3Z1lNb1I2WW1vbWpwMm1fbjJJUm1UMzZnQTVtVGdndTVvMmtOOTdreUxWeDdlaDZBU3ROZC03Sw?oc=5",
+      "title": "Ex-prosecutor and other Trump critics sue to block payouts from $1.8B ‘anti-weaponization’ fund - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "New Haven",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMitgNBVV95cUxOWllxOU9CeU5RVEtfVmVRVWMzTzVTMm1LTWlXZktPMnlJX29GRmRPZjAtc3RTZHpHUmcza09PZ0ZNWjBBWDFnelZvV1JDNEw5a0FidUFiaEppdmt4bjh2SmFRTFNBX3pzazV4QVJXSmxkaVdRcUZoWTRPRmVKVWx1b19hMkVMRS03N2VFbU5MMmZrVThZcF9YelNWcE9lUXJNQXQwTmJCalRGa0k5THdFM25pZ3FKVi12cUVFTGJISG1CUGNnRTB0VlBIdW1tZU1kdHhZcmRmVmd4Y1pGZDByZDRybUZfaVVTRngyN0RRaC1TOV9pWE1OaEFBXzQ2eDQ3R1JBQzJGal9qbEhUcEpJeGVTbmM0c3g1SnNyYUtkdDBkRjNNQ3M3S3FRb21ta1RjclRWdnFXMVVfU3RhZ1lWSWFWcHNISklzMUhSVVNJTmhJUGJDdGJwNW5xUEVyaGtZRHRYallWSThnUXRFSmM3YldWUlNQRXNvdUtBQ0FQZEhTb2NvR2Mxc3U2aFBMazN5dVN6TGhjZU02TUQtd1FacEdpS3dPY0hMc19Ka25TamlHU0tfQlE?oc=5",
+      "title": "New footage shows Celeste Rivas Hernandez confronting neighbors over prank a year before her body was found in D4vd’s Tesla - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Celeste House",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOY3ZPV25mZ00tWDJVZVRLN3NCRWplQ3JMaVNhX2tad0NoUFJaa3lqTEE3cFdWTGhvQmk2M0dDWTBqTk16Q05RZDJZNnVXSWxaS003VjY1RDRZQXZjNGxTMmFpcEVnY1Z0SUxLcXpVS0xkT0s4X0ptaUtGMWFIdEhhektsVkVrVjhDNEEzY1VkTTd0Y3c?oc=5",
+      "title": "Let discovery proceed in Hyde School case | Opinion - The Portland Press Herald",
+      "origin": "google-news",
+      "host": "pressherald.com",
+      "facilityQuery": "Hyde School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Hyde School"
+        ],
+        "threshold": 3,
+        "host": "pressherald.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOdEJicVE1MjVlSlRSYnpVYVl6a05HdjMydkptaGpqT3NIOGdqamViWUFSRVo5V2hfb1NPMHktWmZveWRWTnZGNlFpVjlNRmRvX0toeWZCMXdscHRlOENRT1FhcW80dldhalJldk03THZzYWR6dXBLbjJPSnJwQ2doY0dyZG5ZS2lEakdnZw?oc=5",
+      "title": "Walter Rolland Pollich, III - The Arkansas Democrat-Gazette",
+      "origin": "google-news",
+      "host": "arkansasonline.com",
+      "facilityQuery": "Second Chance Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "arkansasonline.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxNTEV6X3pVOUtmUjl0NnlreXo1UUkzNmstdFhhcXZsdDhNajF4Vjg0UzhZa09HV3VTazFSXzFROTR2SWYzVjM4aVdOdjhsa1V1MVNNazlSbDJJVkxsUFRpQ2NNZ0s4MFhoR2NnQ2ttNmItZzMxX1VrZUIzTWdBSmc3ZDVZand2Z09SSko5d29YODd4VTY2UXM4TG94UmRrRkw1VkZXZTFiaTNnQ1BJbWFKQ2VuT2ctN1BTVm9Kd1dUM3U3N0oxbUJqckd30gHeAUFVX3lxTE9lalc1VDJvdXJGM0FaSmpuVm5RZFJDQjVJeFk2YmRLQm5BR0k2N0dEa1A5RWJET0VtR2xQMGtVeTJlcl93cUw0SWVaZm1JbHVyZ3lJUmlXQnpfX3lHamF4QVZCVW92dmxkblN4b1hTMGRVX2o1VEUxSHROUjIwSHVvU3JIUWlvcVJ5S1lBTzlaWG1sWnlXZlZNaFFpUTRiZDdybXRQWUtHSnNCYUpWLTV2c2RVaU1jTlVlcnlObU1Ha2JaUThfZjc0Z25aRDV0SExnWHlMRkJYLVhqeHc5UQ?oc=5",
+      "title": "I’m a mom of 3 & this backyard play camper is my favorite pre-Memorial Day Weekend buy - NJ.com",
+      "origin": "google-news",
+      "host": "nj.com",
+      "facilityQuery": "STEP2",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nj.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOYlFKejE5MUJIeTZabXRTTnVONl81c2ZRamdoNzZWWHg5QlpyMnhXblRSQ2ZfQ19yQjhmakdCQTZ0Q01HZHJyZXJZRXlERjlHTEVaelBpV3A2MEdFclo5bG5qWnFxMUl1MmpFU2swT0Y4bEY1cHpoZ2xXX0c4Z21ZdFRHM0tIbExZU3NBbVdSTjEtLXc1VEgzNnRB?oc=5",
+      "title": "Youth organization fundraising for new crisis shelter - Montana Free Press",
+      "origin": "google-news",
+      "host": "montanafreepress.org",
+      "facilityQuery": "Youth Homes",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "montanafreepress.org"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMikwNBVV95cUxNN3NzSG5RWDM4QTZ4a0hkam1POWdZMjQ0MldvZU9IXzh0SUtxUHdvTHRPM2UxcjZ0OW9jdGpWMGFvdzQ4eW5JUWJZMWJBZWZfa1RoMHdZYUJFZE1HN1dDZzlNMVFPNTIyXzJhU2ZFM2pZWVJSdkNubGN1SmhHamlYUGN0azF0Tk9FNEN5eklhUm1iUzRxMWFyc1JwOTZNbE0tSE9YLV9kTDk1MmR0cmRYbEw1NDNtUmIyN3FoVVFhdV9MQm8wVmZOc2N4WVZuODkyOGtlVjFIU0JaS1dncFp2NVB0RzdMMG5GXzlqMWI2WV9sLVBDczN5MVVKRmYzN0FEYTRac2VFTzBCd1VjcXNRbEI4RVFUN25aOXdzTFdWZVppSHdnYklkYUN1eXVhblZYSEIteEN3b2M5VVhWb3B3Q2tuX1BXalpXZnlnN29xQnB6dXdiR0ZZOFU5YnVaM2ppVXpZTzV1RFJLbUlMb1JJUDRSc2dIaTk3VG10eTBqNWN4WDgwNW82QlR6MU5FSHRpZ2pn?oc=5",
+      "title": "Former Wisconsin basketball forward signs professional contract - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Massanutten Military Academy",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQVml2di1meVdjRGZsb3gtRk9nT0pCS2d0YU1IenBHNk5oQmkwaHZPLTM5aWdfLW5rMUd4NDNyYWJvUFBqblZPMUxseXNnX2taSERmX3B6VTY2bEU3Y3VwQ0JVQ053QUZhNjUtV3d3aUJ4c2tsRXFNd0hwcXMyTkVYcEdFTldOdVhMeXFpVW12UG9IRW05ak5qTkJqUQ?oc=5",
+      "title": "Cavanaugh Road to close for utility work in Lansing - WILX",
+      "origin": "google-news",
+      "host": "wilx.com",
+      "facilityQuery": "DART",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wilx.com"
+      }
+    },
+    {
+      "ts": "2026-05-23T07:52:51.612Z",
+      "link": "https://news.google.com/rss/articles/CBMi-wJBVV95cUxNTGRJeWdYd3VRQTd1ZTRFYzVjSU5RNzZ2TEtnUFo4MmN3S2doU2JKNGlXS2lRZjk2ZFNoeGVwNFBTSUZUUmtaaEwzbTRlanVOTGZkQUV0ZTJwY2hlTm45b1Iwa0F1ZTU4WFJpaEhRaXhwOXRfQjItSVhEUUlJdmw3Vkp6dlNIWTFIWUp4RWh6dXB0VjlFeGw1ZkRUaElCRmJxVk04eVk4V3I5d3J1Zl9xVHROdUhRUnBfZFdTSmg4VW1jRHd1NlBEZEZtODIzTDFBSDF1LXlZSmtUb3NpWE85MWNWSkVtb3UyZEdoR2RtOW1yNDMyRFVLN2FTSFBjaFlaS19Gb2M4Y2I0ckFYaERBaHptMHNrcVN6ODI0RUpPVGdBYWgwZkQ4bGI3QVB5WDZFZll3OTdPYXM0bWdNODkxdDZfV2xfUDVkUXZTbTZsYVJhOHhQcHJfV1hYN1BMRXY0a2xrdkJEZEZGZ1VIWXRaLWVEUEg2b0phYzA0?oc=5",
+      "title": "'Layers of absolute awful conduct': Sexual abuse allegations from Wayne County juvenile jail sparks suit - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Wayne County Juvenile Detention Facility",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
     {
       "ts": "2026-05-21T19:05:44.015Z",
       "link": "https://www.sltrib.com/news/2020/10/12/why-we-are-raising-money/",
