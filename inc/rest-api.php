@@ -1959,12 +1959,12 @@ function kop_state_collect_programs($state_name) {
     $append_program = static function (&$programs, &$seen_names, $project_name, $facility, $data, $state_name) {
         if (!is_array($facility)) return;
 
-        // facility.address can be either a structured array {street,city,state,zip}
-        // (from import-state-pages.php) or a raw string (from import-location-pages.js,
-        // which often happens when the source page lists addresses without commas
-        // between street/city/state, e.g. "12700 E 76th Street North Owasso OK 74055").
+        // facility.address may be either a structured array {street,city,state,zip}
+        // (from import-state-pages.php) or a raw string (from import-location-pages.js).
+        // The newer schema also stores parsed pieces under facility.addressParts.
         $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
         $raw_address = isset($facility['address']) && is_string($facility['address']) ? trim($facility['address']) : '';
+        $address_parts = isset($facility['addressParts']) && is_array($facility['addressParts']) ? $facility['addressParts'] : array();
         $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
         $identification = isset($facility['identification']) && is_array($facility['identification']) ? $facility['identification'] : array();
 
@@ -1979,15 +1979,23 @@ function kop_state_collect_programs($state_name) {
 
         $facility_state = trim((string)($address['state'] ?? ''));
         $locdet_state = trim((string)($location_details['state'] ?? ''));
+        $parts_state = trim((string)($address_parts['state'] ?? ''));
+
+        // Resolution order for each piece: legacy structured `address` array,
+        // then new `addressParts`, then `locationDetails`, then the state row's name.
+        $resolved_street = trim((string)($address['street'] ?? ($address_parts['street'] ?? '')));
+        $resolved_city   = trim((string)($address['city']   ?? ($address_parts['city']   ?? ($location_details['city'] ?? ''))));
+        $resolved_state  = $facility_state ?: ($parts_state ?: ($locdet_state ?: $state_name));
+        $resolved_zip    = trim((string)($address['zip']    ?? ($address_parts['zip']    ?? '')));
 
         $programs[] = array(
             'project_name'     => $project_name,
             'facility_name'    => $facility_name,
             'operator_name'    => isset($data['operator']['name']) ? $data['operator']['name'] : '',
-            'city'             => $address['city'] ?? ($location_details['city'] ?? ''),
-            'state'            => $facility_state ?: ($locdet_state ?: $state_name),
-            'street'           => $address['street'] ?? '',
-            'zip'              => $address['zip'] ?? '',
+            'city'             => $resolved_city,
+            'state'            => $resolved_state,
+            'street'           => $resolved_street,
+            'zip'              => $resolved_zip,
             'raw_address'      => $raw_address,
             'type'             => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
             'status'           => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',

@@ -82,12 +82,15 @@ function backfill_normalize_ws($value) {
     return trim(preg_replace('/\s+/', ' ', (string)$value));
 }
 
-function backfill_guess_city_commaless($beforeState) {
+function backfill_split_street_city($beforeState) {
     $beforeState = (string)$beforeState;
     if ($beforeState === '') {
-        return ['city' => '', 'confidence' => 'none'];
+        return ['street' => '', 'city' => '', 'confidence' => 'none'];
     }
 
+    // Strategy 1: last street-suffix token. Everything up to and including the
+    // suffix (plus a following cardinal direction if any) is street; the rest
+    // is city.
     if (preg_match_all('/\b' . STREET_SUFFIX_RE . '\b\.?/i', $beforeState, $matches, PREG_OFFSET_CAPTURE)) {
         $last = end($matches[0]);
         $splitIdx = $last[1] + strlen($last[0]);
@@ -95,46 +98,85 @@ function backfill_guess_city_commaless($beforeState) {
         if (preg_match('/^\s+' . CARDINAL_AFTER_RE . '\b\.?/i', $rest, $cardMatch)) {
             $splitIdx += strlen($cardMatch[0]);
         }
+        $street = backfill_normalize_ws(substr($beforeState, 0, $splitIdx));
         $city = backfill_normalize_ws(substr($beforeState, $splitIdx));
-        if ($city !== '') return ['city' => $city, 'confidence' => 'auto'];
+        if ($city !== '' && $street !== '') {
+            return ['street' => $street, 'city' => $city, 'confidence' => 'auto'];
+        }
     }
 
-    if (preg_match('/^p\.?\s*o\.?\s*box\s+\d+\s+(.+)$/i', $beforeState, $m)) {
-        return ['city' => backfill_normalize_ws($m[1]), 'confidence' => 'auto'];
+    // Strategy 2: PO Box.
+    if (preg_match('/^(p\.?\s*o\.?\s*box\s+\d+)\s+(.+)$/i', $beforeState, $m)) {
+        return [
+            'street' => backfill_normalize_ws($m[1]),
+            'city' => backfill_normalize_ws($m[2]),
+            'confidence' => 'auto',
+        ];
     }
 
+    // Strategy 3: last whitespace-delimited token is the city. Low confidence
+    // because multi-word cities ("Oklahoma City") get mangled.
     $tokens = preg_split('/\s+/', trim($beforeState));
     if (count($tokens) >= 2) {
-        return ['city' => $tokens[count($tokens) - 1], 'confidence' => 'guess'];
+        return [
+            'street' => implode(' ', array_slice($tokens, 0, -1)),
+            'city' => $tokens[count($tokens) - 1],
+            'confidence' => 'guess',
+        ];
     }
 
-    return ['city' => '', 'confidence' => 'none'];
+    return ['street' => $beforeState, 'city' => '', 'confidence' => 'none'];
 }
 
 function backfill_extract($rawAddress) {
     $cleaned = backfill_normalize_ws($rawAddress);
     $cleaned = preg_replace('/\s*\([^()]*\)\s*$/', '', $cleaned);
-    $cleaned = preg_replace('/[;.,]+$/', '', $cleaned);
+    $cleaned = preg_replace('/[;]+$/', '', $cleaned);
     $cleaned = backfill_normalize_ws($cleaned);
     if ($cleaned === '') return null;
 
-    // Comma-based "(... ,)?City, XX [ZIP]" — the parser path that already works.
-    if (preg_match('/(?:,\s*|^)([A-Za-z.\'\x{2019}\- ]+),?\s+([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/u', $cleaned, $m)) {
-        $city = backfill_normalize_ws(preg_replace('/^.*:\s*/', '', $m[1]));
-        $state = strtoupper(trim($m[2]));
-        // The legacy regex also matches a state-only string at $ (city group becomes empty after the colon strip).
-        if ($city !== '' && !preg_match('/^\d/', $city)) {
-            return ['city' => $city, 'state' => $state, 'confidence' => 'auto'];
-        }
+    // Pull off the trailing ZIP and state abbreviation first; whatever's left
+    // is the "<street?> <city>" prefix we need to split.
+    $zip = '';
+    if (preg_match('/^(.+?)(?:[,]?\s+(\d{5}(?:-\d{4})?))?$/u', $cleaned, $zm)) {
+        $cleaned = trim($zm[1]);
+        $zip = $zm[2] ?? '';
+    }
+    $cleaned = preg_replace('/[,]+$/', '', $cleaned);
+
+    // Comma-based: "<street>, <city>, XX" or "<city>, XX"
+    if (preg_match('/^(.*),\s*([A-Za-z.\'\x{2019}\- ]+),\s*([A-Z]{2})$/u', $cleaned, $m)) {
+        return [
+            'street' => backfill_normalize_ws($m[1]),
+            'city' => backfill_normalize_ws($m[2]),
+            'state' => strtoupper($m[3]),
+            'zip' => $zip,
+            'confidence' => 'auto',
+        ];
+    }
+    if (preg_match('/^([A-Za-z.\'\x{2019}\- ]+),\s*([A-Z]{2})$/u', $cleaned, $m)) {
+        return [
+            'street' => '',
+            'city' => backfill_normalize_ws($m[1]),
+            'state' => strtoupper($m[2]),
+            'zip' => $zip,
+            'confidence' => 'auto',
+        ];
     }
 
-    // Comma-less: "<street> <city> XX [ZIP]"
-    if (preg_match('/^(.+?)\s+([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/u', $cleaned, $m)) {
-        $beforeState = trim($m[1]);
+    // Comma-less or single-comma-after-street: "<street?> <city> XX"
+    if (preg_match('/^(.*?)\s+([A-Z]{2})$/u', $cleaned, $m)) {
+        $beforeState = trim(preg_replace('/[,]+$/', '', $m[1]));
         $abbrev = strtoupper($m[2]);
-        $guess = backfill_guess_city_commaless($beforeState);
-        if ($guess['city'] !== '') {
-            return ['city' => $guess['city'], 'state' => $abbrev, 'confidence' => $guess['confidence']];
+        $split = backfill_split_street_city($beforeState);
+        if ($split['city'] !== '') {
+            return [
+                'street' => $split['street'],
+                'city' => $split['city'],
+                'state' => $abbrev,
+                'zip' => $zip,
+                'confidence' => $split['confidence'],
+            ];
         }
     }
 
@@ -179,11 +221,18 @@ try {
             if (!is_array($facility)) continue;
             $stats['scanned']++;
 
+            // Decide whether this record already has the structured pieces filled in.
             $existingCity = '';
             if (isset($facility['locationDetails']) && is_array($facility['locationDetails'])) {
                 $existingCity = backfill_normalize_ws($facility['locationDetails']['city'] ?? '');
             }
-            if ($existingCity !== '') { $stats['alreadyHasCity']++; continue; }
+            $hasStructuredAddressParts = isset($facility['addressParts'])
+                && is_array($facility['addressParts'])
+                && !empty($facility['addressParts']['city']);
+            if ($existingCity !== '' && $hasStructuredAddressParts) {
+                $stats['alreadyHasCity']++;
+                continue;
+            }
 
             $rawAddress = '';
             if (isset($facility['address']) && is_string($facility['address'])) {
@@ -194,9 +243,6 @@ try {
             $parsed = backfill_extract($rawAddress);
             if (!$parsed) { $stats['noStateMatch']++; continue; }
 
-            // The address might belong to a different state than the row's name
-            // (e.g. a TX facility filed under an OK aggregate by mistake). Don't
-            // rewrite the state silently — only fill in what's missing.
             $isAuto = $parsed['confidence'] === 'auto';
             if (!$isAuto && !$options['aggressive']) {
                 $stats['needsReview']++;
@@ -205,22 +251,38 @@ try {
                         'state_row' => $uname,
                         'facility' => $facility['identification']['name'] ?? '',
                         'raw_address' => $rawAddress,
+                        'guess_street' => $parsed['street'],
                         'guess_city' => $parsed['city'],
                         'guess_state' => $parsed['state'],
+                        'guess_zip' => $parsed['zip'],
                     ];
                 }
                 continue;
             }
 
+            // Fill in locationDetails (legacy structured fields).
             if (!isset($facility['locationDetails']) || !is_array($facility['locationDetails'])) {
                 $facility['locationDetails'] = ['city' => '', 'state' => '', 'country' => 'United States', 'additionalLocations' => []];
             }
-            $facility['locationDetails']['city'] = $parsed['city'];
+            if (empty($facility['locationDetails']['city'])) {
+                $facility['locationDetails']['city'] = $parsed['city'];
+            }
             if (empty($facility['locationDetails']['state'])) {
                 $facility['locationDetails']['state'] = $parsed['state'];
             }
             $stateForLocation = $facility['locationDetails']['state'] ?: $parsed['state'];
-            $facility['location'] = $parsed['city'] . ', ' . $stateForLocation;
+            if (empty($facility['location'])) {
+                $facility['location'] = $parsed['city'] . ', ' . $stateForLocation;
+            }
+
+            // Write the new structured addressParts sibling field.
+            // Keep facility.address (the raw line) untouched so existing consumers don't break.
+            $facility['addressParts'] = [
+                'street' => $parsed['street'],
+                'city'   => $parsed['city'],
+                'state'  => $parsed['state'],
+                'zip'    => $parsed['zip'],
+            ];
 
             $stats[$isAuto ? 'autoFixed' : 'needsReview']++;
             $rowChanged = true;
@@ -308,8 +370,10 @@ try {
     if ($reviewRows) {
         fwrite(STDOUT, PHP_EOL . "Sample needs-review (first " . count($reviewRows) . "):" . PHP_EOL);
         foreach ($reviewRows as $r) {
-            fwrite(STDOUT, sprintf("  [%s] %s\n    addr: %s\n    guess: %s, %s%s",
-                $r['state_row'], $r['facility'], $r['raw_address'], $r['guess_city'], $r['guess_state'], PHP_EOL
+            fwrite(STDOUT, sprintf(
+                "  [%s] %s\n    addr: %s\n    guess: street=\"%s\" city=\"%s\" state=\"%s\" zip=\"%s\"%s",
+                $r['state_row'], $r['facility'], $r['raw_address'],
+                $r['guess_street'], $r['guess_city'], $r['guess_state'], $r['guess_zip'], PHP_EOL
             ));
         }
     }

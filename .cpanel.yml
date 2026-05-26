@@ -8,6 +8,7 @@ deployment:
     - /bin/cp -R js $DEPLOYPATH
     - /bin/cp -R docs $DEPLOYPATH
     - /bin/cp -R templates $DEPLOYPATH
+    - /bin/cp -R scripts $DEPLOYPATH
     - /bin/cp functions.php $DEPLOYPATH
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH

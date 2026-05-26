@@ -301,6 +301,12 @@ function createEmptyFacility() {
         },
         location: '',
         address: '',
+        addressParts: {
+            street: '',
+            city: '',
+            state: '',
+            zip: ''
+        },
         otherOperators: [],
         operatingPeriod: {
             startYear: null,
@@ -777,11 +783,10 @@ const STREET_SUFFIX_PATTERN = '(?:st|street|ave|avenue|blvd|boulevard|rd|road|dr
 const CARDINAL_DIRECTION_AFTER_SUFFIX_RE = /^\s+(?:n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)\b\.?/i;
 
 // For comma-less postal lines (e.g. "12700 E 76th Street North Owasso OK 74055"),
-// guess the city by splitting at the LAST street-suffix word (+ optional cardinal
-// direction) and treating everything after it as the city. Falls back to PO Box
-// pattern, then to the last whitespace-delimited token.
-function guessCityFromCommalessAddress(beforeState) {
-    if (!beforeState) return '';
+// split street / city using the LAST street-suffix token (+ optional cardinal
+// direction). Falls back to PO Box pattern, then to last whitespace-delimited token.
+function splitStreetAndCityCommaless(beforeState) {
+    if (!beforeState) return { street: '', city: '' };
     const suffixRe = new RegExp(`\\b${STREET_SUFFIX_PATTERN}\\b\\.?`, 'gi');
     let lastMatch = null;
     let m;
@@ -794,59 +799,93 @@ function guessCityFromCommalessAddress(beforeState) {
         const rest = beforeState.slice(splitIdx);
         const cardMatch = rest.match(CARDINAL_DIRECTION_AFTER_SUFFIX_RE);
         if (cardMatch) splitIdx += cardMatch[0].length;
+        const street = normalizeWhitespace(beforeState.slice(0, splitIdx));
         const city = normalizeWhitespace(beforeState.slice(splitIdx));
-        if (city) return city;
+        if (city) return { street, city };
     }
-    const poBox = beforeState.match(/^p\.?\s*o\.?\s*box\s+\d+\s+(.+)$/i);
-    if (poBox) return normalizeWhitespace(poBox[1]);
+    const poBox = beforeState.match(/^(p\.?\s*o\.?\s*box\s+\d+)\s+(.+)$/i);
+    if (poBox) return { street: normalizeWhitespace(poBox[1]), city: normalizeWhitespace(poBox[2]) };
     const tokens = beforeState.trim().split(/\s+/);
-    if (tokens.length >= 2) return tokens[tokens.length - 1];
-    return '';
+    if (tokens.length >= 2) {
+        return {
+            street: tokens.slice(0, -1).join(' '),
+            city: tokens[tokens.length - 1],
+        };
+    }
+    return { street: beforeState, city: '' };
 }
 
 function extractLocationParts(address, fallbackStateAbbreviation) {
-    const cleaned = normalizeWhitespace(address)
+    let cleaned = normalizeWhitespace(address)
         .replace(/\s*\([^()]*\)\s*$/g, '')
-        .replace(/[;.,]+$/, '');
-    const match = cleaned.match(/(?:,\s*|^)([A-Za-z.'’\- ]+),?\s+([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/);
+        .replace(/[;]+$/, '');
+
+    // Peel the trailing ZIP off (preserve it for the structured return).
+    let zip = '';
+    const zipMatch = cleaned.match(/[,]?\s+(\d{5}(?:-\d{4})?)\s*$/);
+    if (zipMatch) {
+        zip = zipMatch[1];
+        cleaned = cleaned.slice(0, zipMatch.index).replace(/[,]+$/, '').trim();
+    } else {
+        cleaned = cleaned.replace(/[,.]+$/, '').trim();
+    }
+
     const fallbackStateName = fallbackStateAbbreviation
         ? Array.from(STATE_ABBREVIATIONS.entries()).find(([, abbreviation]) => abbreviation === fallbackStateAbbreviation)?.[0] || ''
         : '';
-    const stateNameMatch = fallbackStateName
-        ? cleaned.match(new RegExp(`(?:,\\s*|^)([A-Za-z.'’\\- ]+),?\\s+(${fallbackStateName.replace(/\s+/g, '\\s+')})(?:,?\\s+\\d{5}(?:-\\d{4})?)?$`, 'i'))
-        : null;
 
-    if (match) {
-        const city = normalizeWhitespace(match[1].replace(/^.*:\s*/, ''));
-        const state = normalizeWhitespace(match[2]);
+    // Comma form with explicit street: "<street>, <city>, XX"
+    const fullCommaMatch = cleaned.match(/^(.*),\s*([A-Za-z.'’\- ]+),\s*([A-Z]{2})$/);
+    if (fullCommaMatch) {
+        const street = normalizeWhitespace(fullCommaMatch[1]);
+        const city = normalizeWhitespace(fullCommaMatch[2].replace(/^.*:\s*/, ''));
+        const state = normalizeWhitespace(fullCommaMatch[3]);
         return {
-            city,
-            state,
-            location: city ? `${city}, ${state}` : state
+            street, city, state, zip,
+            location: city ? `${city}, ${state}` : state,
         };
     }
 
-    if (stateNameMatch) {
-        const city = normalizeWhitespace(stateNameMatch[1].replace(/^.*:\s*/, ''));
+    // Comma form without street: "<city>, XX"
+    const cityOnlyMatch = cleaned.match(/^([A-Za-z.'’\- ]+),\s*([A-Z]{2})$/);
+    if (cityOnlyMatch) {
+        const city = normalizeWhitespace(cityOnlyMatch[1].replace(/^.*:\s*/, ''));
+        const state = normalizeWhitespace(cityOnlyMatch[2]);
         return {
-            city,
-            state: fallbackStateAbbreviation,
-            location: city && fallbackStateAbbreviation ? `${city}, ${fallbackStateAbbreviation}` : fallbackStateAbbreviation
+            street: '', city, state, zip,
+            location: city ? `${city}, ${state}` : state,
         };
     }
 
-    // Comma-less postal patterns: "<street> <city> XX [ZIP]".
-    // Common in source pages where addresses were typed without separators,
-    // e.g. "12700 E 76th Street North Owasso OK 74055".
-    const noCommaMatch = cleaned.match(/^(.+?)\s+([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/);
+    // Fallback state-name (full name spelled out) variant.
+    if (fallbackStateName) {
+        const stateNameMatch = cleaned.match(new RegExp(
+            `^(?:(.*),\\s*)?([A-Za-z.'’\\- ]+),?\\s+(${fallbackStateName.replace(/\s+/g, '\\s+')})$`,
+            'i'
+        ));
+        if (stateNameMatch) {
+            const street = normalizeWhitespace(stateNameMatch[1] || '');
+            const city = normalizeWhitespace((stateNameMatch[2] || '').replace(/^.*:\s*/, ''));
+            return {
+                street, city,
+                state: fallbackStateAbbreviation,
+                zip,
+                location: city ? `${city}, ${fallbackStateAbbreviation}` : fallbackStateAbbreviation,
+            };
+        }
+    }
+
+    // Comma-less: "<street> <city> XX"
+    const noCommaMatch = cleaned.match(/^(.+?)\s+([A-Z]{2})$/);
     if (noCommaMatch) {
         const beforeState = noCommaMatch[1].trim();
         const stateAbbrev = noCommaMatch[2].toUpperCase();
-        const city = guessCityFromCommalessAddress(beforeState);
+        const { street, city } = splitStreetAndCityCommaless(beforeState);
         if (city) {
             return {
-                city,
+                street, city,
                 state: stateAbbrev,
+                zip,
                 location: `${city}, ${stateAbbrev}`,
             };
         }
@@ -854,17 +893,14 @@ function extractLocationParts(address, fallbackStateAbbreviation) {
 
     if (fallbackStateAbbreviation) {
         return {
-            city: '',
+            street: '', city: '',
             state: fallbackStateAbbreviation,
-            location: fallbackStateAbbreviation
+            zip,
+            location: fallbackStateAbbreviation,
         };
     }
 
-    return {
-        city: '',
-        state: '',
-        location: ''
-    };
+    return { street: '', city: '', state: '', zip, location: '' };
 }
 
 function parseEntryBlock(block, projectName, stateAbbreviation) {
@@ -920,12 +956,24 @@ function parseEntryBlock(block, projectName, stateAbbreviation) {
     facility.location = firstLocation.location;
     facility.locationDetails.city = firstLocation.city;
     facility.locationDetails.state = firstLocation.state || stateAbbreviation || '';
+    facility.addressParts = {
+        street: firstLocation.street || '',
+        city: firstLocation.city || '',
+        state: firstLocation.state || stateAbbreviation || '',
+        zip: firstLocation.zip || '',
+    };
 
     facility.locationDetails.additionalLocations = remainingAddresses.map(address => {
         const derivedLocation = extractLocationParts(address, stateAbbreviation);
         return {
             city: derivedLocation.city,
-            address
+            address,
+            addressParts: {
+                street: derivedLocation.street || '',
+                city: derivedLocation.city || '',
+                state: derivedLocation.state || stateAbbreviation || '',
+                zip: derivedLocation.zip || '',
+            },
         };
     });
 
