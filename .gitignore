@@ -52,3 +52,11 @@ scripts/mn_progress.json
 # Article discovery — local seen-URL cache (persisted via GH Actions cache in CI)
 scripts/.discovery-state.json
 scripts/.discovery-rejected.log
+
+# PHP-generated error logs (PHP drops these wherever it runs from; if one
+# lands in the cPanel-side checkout it blocks deploy with a dirty working
+# tree). Also catch __pycache__ which keeps slipping into commits.
+error_log
+**/error_log
+__pycache__/
+**/__pycache__/
