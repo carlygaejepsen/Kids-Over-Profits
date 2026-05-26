@@ -773,6 +773,37 @@ function applyMetadataToFacility(facility, metadataItems) {
     });
 }
 
+const STREET_SUFFIX_PATTERN = '(?:st|street|ave|avenue|blvd|boulevard|rd|road|dr|drive|ln|lane|ct|court|cir|circle|pl|place|hwy|highway|pkwy|parkway|ter|terrace|trl|trail|way|sq|square|loop|pike|plaza|plz|run|path|trace|crossing|alley|aly|expy|expressway|broadway|farm)';
+const CARDINAL_DIRECTION_AFTER_SUFFIX_RE = /^\s+(?:n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)\b\.?/i;
+
+// For comma-less postal lines (e.g. "12700 E 76th Street North Owasso OK 74055"),
+// guess the city by splitting at the LAST street-suffix word (+ optional cardinal
+// direction) and treating everything after it as the city. Falls back to PO Box
+// pattern, then to the last whitespace-delimited token.
+function guessCityFromCommalessAddress(beforeState) {
+    if (!beforeState) return '';
+    const suffixRe = new RegExp(`\\b${STREET_SUFFIX_PATTERN}\\b\\.?`, 'gi');
+    let lastMatch = null;
+    let m;
+    while ((m = suffixRe.exec(beforeState)) !== null) {
+        lastMatch = m;
+        if (m.index === suffixRe.lastIndex) suffixRe.lastIndex += 1;
+    }
+    if (lastMatch) {
+        let splitIdx = lastMatch.index + lastMatch[0].length;
+        const rest = beforeState.slice(splitIdx);
+        const cardMatch = rest.match(CARDINAL_DIRECTION_AFTER_SUFFIX_RE);
+        if (cardMatch) splitIdx += cardMatch[0].length;
+        const city = normalizeWhitespace(beforeState.slice(splitIdx));
+        if (city) return city;
+    }
+    const poBox = beforeState.match(/^p\.?\s*o\.?\s*box\s+\d+\s+(.+)$/i);
+    if (poBox) return normalizeWhitespace(poBox[1]);
+    const tokens = beforeState.trim().split(/\s+/);
+    if (tokens.length >= 2) return tokens[tokens.length - 1];
+    return '';
+}
+
 function extractLocationParts(address, fallbackStateAbbreviation) {
     const cleaned = normalizeWhitespace(address)
         .replace(/\s*\([^()]*\)\s*$/g, '')
@@ -802,6 +833,23 @@ function extractLocationParts(address, fallbackStateAbbreviation) {
             state: fallbackStateAbbreviation,
             location: city && fallbackStateAbbreviation ? `${city}, ${fallbackStateAbbreviation}` : fallbackStateAbbreviation
         };
+    }
+
+    // Comma-less postal patterns: "<street> <city> XX [ZIP]".
+    // Common in source pages where addresses were typed without separators,
+    // e.g. "12700 E 76th Street North Owasso OK 74055".
+    const noCommaMatch = cleaned.match(/^(.+?)\s+([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/);
+    if (noCommaMatch) {
+        const beforeState = noCommaMatch[1].trim();
+        const stateAbbrev = noCommaMatch[2].toUpperCase();
+        const city = guessCityFromCommalessAddress(beforeState);
+        if (city) {
+            return {
+                city,
+                state: stateAbbrev,
+                location: `${city}, ${stateAbbrev}`,
+            };
+        }
     }
 
     if (fallbackStateAbbreviation) {

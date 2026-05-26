@@ -156,6 +156,50 @@
     min-width: 220px;
 }
 
+.facility-alphabet-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 1.25em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #e2e2ea;
+}
+
+.facility-alphabet-filter a {
+    padding: 6px 10px;
+    text-decoration: none;
+    background-color: #00004d;
+    color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.85em;
+    line-height: 1;
+    min-width: 1.6em;
+    text-align: center;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.facility-alphabet-filter a:hover {
+    background-color: #33A7B5;
+    color: #ffffff;
+    border-color: #33A7B5;
+}
+
+.facility-alphabet-filter a.active {
+    background-color: #EF9034;
+    color: #ffffff;
+    border-color: #EF9034;
+}
+
+.facility-alphabet-filter a.empty {
+    background-color: #f2f2f5;
+    color: #b9b9c2;
+    border-color: #e2e2ea;
+    cursor: default;
+    pointer-events: none;
+}
+
 .facility-group {
     margin-bottom: 1.5em;
 }

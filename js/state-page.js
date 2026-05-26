@@ -1002,8 +1002,10 @@
             toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}">📂 Show documents</button>`);
         }
 
+        const firstLetter = (displayName.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
+        const letterAttr = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
         return `
-            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}">
+            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}">
                 <div class="facility-card-header">
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
@@ -1105,11 +1107,33 @@
             ? `<ul class="facility-list closed-list">${consolidatedClosed.map(facilityCardHtml).join('')}</ul>`
             : '';
 
+        // Build the alphabet jump-list from letters that actually appear in the
+        // facility list. Letters with no facilities are still rendered but greyed
+        // out, matching the state-reports page convention.
+        const presentLetters = new Set();
+        [...consolidatedActive, ...consolidatedClosed].forEach(f => {
+            const name = getFacilityDisplayName(f);
+            const first = (name.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
+            presentLetters.add(/[A-Z]/.test(first) ? first : '#');
+        });
+        const alphabetLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        const alphabetHtml = `
+            <nav class="facility-alphabet-filter" aria-label="Jump to letter">
+                <a href="#" class="active" data-letter="ALL">All</a>
+                ${alphabetLetters.map(l => `
+                    <a href="#" data-letter="${l}"${presentLetters.has(l) ? '' : ' class="empty" aria-disabled="true"'}>${l}</a>
+                `).join('')}
+                ${presentLetters.has('#') ? `<a href="#" data-letter="#">#</a>` : ''}
+            </nav>
+        `;
+
         container.innerHTML = `
             <div class="facility-toolbar">
                 <input type="text" class="section-search" id="facilitySearch" placeholder="Search facilities...">
                 ${inspectionsLink}
             </div>
+
+            ${alphabetHtml}
 
             <div class="facility-group facility-group-active">
                 <h3 class="facility-group-heading">
@@ -1131,16 +1155,41 @@
         wireFacilityToggles(container);
 
         const search = container.querySelector('#facilitySearch');
-        search.addEventListener('input', () => {
-            const q = search.value.trim().toLowerCase();
-            container.querySelectorAll('.facility-card').forEach(card => {
-                card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
-            });
-            // Hide group heading if all cards within are hidden.
+        const alphabetNav = container.querySelector('.facility-alphabet-filter');
+
+        const refreshGroupVisibility = () => {
             container.querySelectorAll('.facility-group').forEach(group => {
                 const visible = group.querySelectorAll('.facility-card:not([style*="display: none"])').length;
                 group.style.display = visible === 0 ? 'none' : '';
             });
+        };
+
+        const applyFilter = (letter, term) => {
+            const normalizedTerm = (term || '').trim().toLowerCase();
+            container.querySelectorAll('.facility-card').forEach(card => {
+                const matchesLetter = letter === 'ALL' || card.dataset.letter === letter;
+                const matchesTerm = !normalizedTerm || card.textContent.toLowerCase().includes(normalizedTerm);
+                card.style.display = (matchesLetter && matchesTerm) ? '' : 'none';
+            });
+            refreshGroupVisibility();
+        };
+
+        let currentLetter = 'ALL';
+
+        search.addEventListener('input', () => {
+            applyFilter(currentLetter, search.value);
+        });
+
+        alphabetNav.addEventListener('click', e => {
+            const link = e.target.closest('a[data-letter]');
+            if (!link) return;
+            e.preventDefault();
+            if (link.classList.contains('empty')) return;
+            currentLetter = link.dataset.letter;
+            alphabetNav.querySelectorAll('a').forEach(a => {
+                a.classList.toggle('active', a === link);
+            });
+            applyFilter(currentLetter, search.value);
         });
     };
 

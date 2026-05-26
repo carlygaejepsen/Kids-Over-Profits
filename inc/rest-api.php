@@ -1959,7 +1959,12 @@ function kop_state_collect_programs($state_name) {
     $append_program = static function (&$programs, &$seen_names, $project_name, $facility, $data, $state_name) {
         if (!is_array($facility)) return;
 
+        // facility.address can be either a structured array {street,city,state,zip}
+        // (from import-state-pages.php) or a raw string (from import-location-pages.js,
+        // which often happens when the source page lists addresses without commas
+        // between street/city/state, e.g. "12700 E 76th Street North Owasso OK 74055").
         $address = isset($facility['address']) && is_array($facility['address']) ? $facility['address'] : array();
+        $raw_address = isset($facility['address']) && is_string($facility['address']) ? trim($facility['address']) : '';
         $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
         $identification = isset($facility['identification']) && is_array($facility['identification']) ? $facility['identification'] : array();
 
@@ -1983,6 +1988,7 @@ function kop_state_collect_programs($state_name) {
             'state'            => $facility_state ?: ($locdet_state ?: $state_name),
             'street'           => $address['street'] ?? '',
             'zip'              => $address['zip'] ?? '',
+            'raw_address'      => $raw_address,
             'type'             => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
             'status'           => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',
             'operating_period' => isset($facility['operatingPeriod']['yearsOfOperation']) ? $facility['operatingPeriod']['yearsOfOperation'] : '',
@@ -2651,6 +2657,11 @@ function kop_state_collect_facilities($state_name) {
         if ($candidate === '') continue;
         $key = $find_matching_key($by_key, $candidate) ?: $candidate;
 
+        // Prefer the raw imported address line whenever the structured pieces
+        // don't carry a real street or city — otherwise the implode below
+        // collapses to just the state abbreviation (e.g. "OK") on records
+        // imported from comma-less source pages.
+        $has_real_structured = !empty($p['street']) || !empty($p['city']);
         $address_parts = array_filter(array(
             $p['street'] ?? '',
             $p['city'] ?? '',
@@ -2667,7 +2678,9 @@ function kop_state_collect_facilities($state_name) {
             if (!$existing['status']        && !empty($p['status']))        $existing['status']        = $p['status'];
             if (!$existing['operating_period'] && !empty($p['operating_period'])) $existing['operating_period'] = $p['operating_period'];
 
-            $incoming_address = implode(', ', $address_parts);
+            $incoming_address = (!$has_real_structured && !empty($p['raw_address']))
+                ? $p['raw_address']
+                : implode(', ', $address_parts);
             if ($incoming_address !== '') {
                 if (!isset($existing['addresses']) || !is_array($existing['addresses'])) {
                     $existing['addresses'] = array();
@@ -2687,7 +2700,9 @@ function kop_state_collect_facilities($state_name) {
             $existing['in_master'] = true;
             unset($existing);
         } else {
-            $primary_address = implode(', ', $address_parts);
+            $primary_address = (!$has_real_structured && !empty($p['raw_address']))
+                ? $p['raw_address']
+                : implode(', ', $address_parts);
             $by_key[$key] = array(
                 'name'              => $p['facility_name'] ?: $p['project_name'],
                 'project_name'      => $p['project_name'],
