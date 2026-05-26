@@ -279,11 +279,21 @@ async def run():
 
     BROWSER_PROFILE.mkdir(parents=True, exist_ok=True)
 
+    # Off-screen by default so the Chromium window doesn't steal focus or sit
+    # on top of other work. Set MN_BROWSER_VISIBLE=1 to launch it on-screen
+    # (needed when DHS throws a CAPTCHA that you have to solve manually).
+    mn_visible = os.environ.get("MN_BROWSER_VISIBLE", "").strip().lower() in {"1", "true", "yes"}
+    chromium_args = ["--disable-blink-features=AutomationControlled"]
+    if not mn_visible:
+        chromium_args.append("--window-position=-32000,-32000")
+        chromium_args.append("--window-size=1280,900")
+        print("(Browser launched off-screen. Set MN_BROWSER_VISIBLE=1 to show it — needed if a CAPTCHA appears.)")
+
     async with async_playwright() as p:
         context = await p.chromium.launch_persistent_context(
             user_data_dir=str(BROWSER_PROFILE),
             headless=False,
-            args=["--disable-blink-features=AutomationControlled"],
+            args=chromium_args,
             user_agent=(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                 "AppleWebKit/537.36 (KHTML, like Gecko) "

@@ -17,10 +17,16 @@
  *   php scripts/backfill-location-cities.php --apply
  *   php scripts/backfill-location-cities.php --apply --backup-dir tmp/city-backfill
  *
+ *   # Review-and-approve workflow for low-confidence guesses:
+ *   php scripts/backfill-location-cities.php --export-review=/tmp/review.json
+ *   # edit /tmp/review.json: fix bad street/city values, set "approve":false to skip
+ *   php scripts/backfill-location-cities.php --apply-review=/tmp/review.json
+ *
  * By default only "auto" matches (those backed by a street-suffix split or
  * a PO Box pattern) are written. Records where the parser had to guess
  * with no suffix anchor are listed under "needs-review" so you can audit
- * them before applying with --aggressive.
+ * them before applying with --aggressive, or export them with
+ * --export-review for hand-editing.
  */
 
 if (php_sapi_name() !== 'cli') {
@@ -34,15 +40,23 @@ Usage:
   php scripts/backfill-location-cities.php [options]
 
 Options:
-  --state=<name>      Limit to one state (e.g. Oklahoma). Repeatable.
-                      Default: scan every locations_master row.
-  --apply             Commit changes. Default is dry-run.
-  --aggressive        Also write low-confidence guesses (no street suffix).
-                      Default: only "auto" matches are written.
-  --backup-dir=<dir>  Write a JSON backup of the rows that change.
-                      Default: tmp/city-backfill-backups/<timestamp>/
-  --json              Emit machine-readable JSON output.
-  --help              Show this message.
+  --state=<name>           Limit to one state (e.g. Oklahoma). Repeatable.
+                           Default: scan every locations_master row.
+  --apply                  Commit changes. Default is dry-run.
+  --aggressive             Also write low-confidence guesses (no street suffix).
+                           Default: only "auto" matches are written.
+  --backup-dir=<dir>       Write a JSON backup of the rows that change.
+                           Default: tmp/city-backfill-backups/<timestamp>/
+  --json                   Emit machine-readable JSON output.
+  --export-review=<file>   Write all "needs review" + unparseable rows to a
+                           JSON file you can hand-edit. Includes every row
+                           (no 200-row cap) with an "approve":true flag per
+                           record. Implies dry-run.
+  --apply-review=<file>    Read an edited review file and commit only rows
+                           where "approve" is true, using whatever
+                           street/city/state/zip values are in the file.
+                           Skips other modes; cannot be combined with --apply.
+  --help                   Show this message.
 
 TEXT
 );
@@ -56,6 +70,8 @@ function backfill_parse_args($argv) {
         'backupDir' => '',
         'json' => false,
         'help' => false,
+        'exportReview' => '',
+        'applyReview' => '',
     ];
 
     foreach (array_slice($argv, 1) as $arg) {
@@ -65,7 +81,12 @@ function backfill_parse_args($argv) {
         if ($arg === '--json') { $options['json'] = true; continue; }
         if (preg_match('/^--state=(.+)$/', $arg, $m)) { $options['states'][] = trim($m[1]); continue; }
         if (preg_match('/^--backup-dir=(.+)$/', $arg, $m)) { $options['backupDir'] = trim($m[1]); continue; }
+        if (preg_match('/^--export-review=(.+)$/', $arg, $m)) { $options['exportReview'] = trim($m[1]); continue; }
+        if (preg_match('/^--apply-review=(.+)$/', $arg, $m)) { $options['applyReview'] = trim($m[1]); continue; }
         throw new InvalidArgumentException("Unknown argument: {$arg}");
+    }
+    if ($options['applyReview'] !== '' && ($options['apply'] || $options['exportReview'] !== '')) {
+        throw new InvalidArgumentException('--apply-review cannot be combined with --apply or --export-review.');
     }
     return $options;
 }
@@ -229,6 +250,167 @@ function backfill_extract($rawAddress) {
     return null;
 }
 
+/* ------------------------------------------------------------------ *
+ * --apply-review: read an edited review file and commit only the rows
+ * marked approve:true, using the user's edited values (not the parser's).
+ * ------------------------------------------------------------------ */
+
+function backfill_run_apply_review(PDO $pdo, array $options): void {
+    $reviewPath = $options['applyReview'];
+    if (!preg_match('~^(?:[A-Za-z]:[\\/]|/)~', $reviewPath)) {
+        $reviewPath = dirname(__DIR__) . '/' . ltrim(str_replace('\\', '/', $reviewPath), '/');
+    }
+    if (!file_exists($reviewPath)) {
+        throw new RuntimeException("Review file not found: {$reviewPath}");
+    }
+    $reviewData = json_decode(file_get_contents($reviewPath), true);
+    if (!is_array($reviewData) || !isset($reviewData['rows']) || !is_array($reviewData['rows'])) {
+        throw new RuntimeException("Invalid review file format (expected JSON with 'rows' array): {$reviewPath}");
+    }
+
+    // Group approved rows by state_row so we touch each DB row exactly once.
+    $approvedByState = [];
+    $skippedNotApproved = 0;
+    $skippedNoCity = 0;
+    $skippedMissingId = 0;
+    foreach ($reviewData['rows'] as $r) {
+        if (!is_array($r)) continue;
+        if (empty($r['approve'])) { $skippedNotApproved++; continue; }
+        if (empty($r['state_row']) || !isset($r['facility_idx'])) { $skippedMissingId++; continue; }
+        if (trim((string)($r['city'] ?? '')) === '') { $skippedNoCity++; continue; }
+        $approvedByState[(string)$r['state_row']][] = $r;
+    }
+
+    $changedRows = [];      // unique_name => updated JSON string
+    $originalRows = [];     // unique_name => original DB row (for backup)
+    $appliedCount = 0;
+    $nameMismatches = [];
+    $missingStateRows = [];
+    $missingIndices = [];
+
+    $stmt = $pdo->prepare("SELECT unique_name, json_data FROM locations_master WHERE unique_name = :name");
+
+    foreach ($approvedByState as $stateRow => $rowsForState) {
+        $stmt->execute([':name' => $stateRow]);
+        $dbRow = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$dbRow) {
+            $missingStateRows[] = $stateRow;
+            continue;
+        }
+        $originalRows[$stateRow] = $dbRow;
+
+        $data = json_decode($dbRow['json_data'], true);
+        if (!is_array($data) || empty($data['data']['facilities']) || !is_array($data['data']['facilities'])) {
+            continue;
+        }
+
+        $rowChanged = false;
+        foreach ($rowsForState as $r) {
+            $idx = (int)$r['facility_idx'];
+            if (!isset($data['data']['facilities'][$idx]) || !is_array($data['data']['facilities'][$idx])) {
+                $missingIndices[] = "{$stateRow}[{$idx}]";
+                continue;
+            }
+            $facility = &$data['data']['facilities'][$idx];
+
+            // Safety: verify the facility name still matches what was exported.
+            $expectedName = backfill_normalize_ws($r['facility_name'] ?? '');
+            $actualName = backfill_normalize_ws($facility['identification']['name'] ?? '');
+            if ($expectedName !== '' && $expectedName !== $actualName) {
+                $nameMismatches[] = "{$stateRow}[{$idx}]: expected \"{$expectedName}\" but found \"{$actualName}\"";
+                unset($facility);
+                continue;
+            }
+
+            $editedStreet = backfill_normalize_ws($r['street'] ?? '');
+            $editedCity   = backfill_normalize_ws($r['city']);
+            $editedState  = strtoupper(backfill_normalize_ws($r['state'] ?? ''));
+            $editedZip    = backfill_normalize_ws($r['zip'] ?? '');
+
+            if (!isset($facility['locationDetails']) || !is_array($facility['locationDetails'])) {
+                $facility['locationDetails'] = ['city' => '', 'state' => '', 'country' => 'United States', 'additionalLocations' => []];
+            }
+            $facility['locationDetails']['city'] = $editedCity;
+            if ($editedState !== '') {
+                $facility['locationDetails']['state'] = $editedState;
+            }
+            $stateForLocation = $facility['locationDetails']['state'] ?: $editedState;
+            $facility['location'] = $editedCity . ($stateForLocation !== '' ? (', ' . $stateForLocation) : '');
+
+            $facility['addressParts'] = [
+                'street' => $editedStreet,
+                'city'   => $editedCity,
+                'state'  => $editedState,
+                'zip'    => $editedZip,
+            ];
+
+            unset($facility);
+            $rowChanged = true;
+            $appliedCount++;
+        }
+
+        if ($rowChanged) {
+            $changedRows[$stateRow] = json_encode($data, JSON_UNESCAPED_SLASHES);
+        }
+    }
+
+    // Write a backup before mutating anything.
+    $backupFile = null;
+    if ($changedRows) {
+        $backupDir = $options['backupDir'] !== ''
+            ? $options['backupDir']
+            : dirname(__DIR__) . '/tmp/city-backfill-backups/' . date('Ymd-His') . '-review';
+        if (!preg_match('~^(?:[A-Za-z]:[\\/]|/)~', $backupDir)) {
+            $backupDir = dirname(__DIR__) . '/' . ltrim(str_replace('\\', '/', $backupDir), '/');
+        }
+        if (!is_dir($backupDir) && !mkdir($backupDir, 0777, true) && !is_dir($backupDir)) {
+            throw new RuntimeException("Failed to create backup directory: {$backupDir}");
+        }
+        $backupFile = rtrim($backupDir, '/\\') . '/city-backfill-review-backup.json';
+        $backupRows = [];
+        foreach ($changedRows as $name => $_) {
+            if (isset($originalRows[$name])) $backupRows[] = $originalRows[$name];
+        }
+        file_put_contents($backupFile, json_encode([
+            'createdAt' => date('c'),
+            'sourceReviewFile' => $reviewPath,
+            'rows' => $backupRows,
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+
+        $pdo->beginTransaction();
+        try {
+            $upd = $pdo->prepare("UPDATE locations_master SET json_data = :json_data, updated_at = NOW() WHERE unique_name = :unique_name");
+            foreach ($changedRows as $name => $jsonData) {
+                $upd->execute([':json_data' => $jsonData, ':unique_name' => $name]);
+            }
+            $pdo->commit();
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction()) $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    fwrite(STDOUT, "Apply-review summary:" . PHP_EOL);
+    fwrite(STDOUT, "  Facilities updated:     {$appliedCount}" . PHP_EOL);
+    fwrite(STDOUT, "  State rows updated:     " . count($changedRows) . PHP_EOL);
+    fwrite(STDOUT, "  Skipped (approve=false): {$skippedNotApproved}" . PHP_EOL);
+    fwrite(STDOUT, "  Skipped (empty city):    {$skippedNoCity}" . PHP_EOL);
+    fwrite(STDOUT, "  Skipped (missing id):    {$skippedMissingId}" . PHP_EOL);
+    if ($missingStateRows) {
+        fwrite(STDOUT, PHP_EOL . "Unknown state_row values in review file:" . PHP_EOL);
+        foreach ($missingStateRows as $name) fwrite(STDOUT, "  - {$name}" . PHP_EOL);
+    }
+    if ($missingIndices) {
+        fwrite(STDOUT, PHP_EOL . "facility_idx out of range:" . PHP_EOL);
+        foreach ($missingIndices as $msg) fwrite(STDOUT, "  - {$msg}" . PHP_EOL);
+    }
+    if ($nameMismatches) {
+        fwrite(STDOUT, PHP_EOL . "Name mismatches (skipped — facility may have been re-ordered):" . PHP_EOL);
+        foreach ($nameMismatches as $msg) fwrite(STDOUT, "  - {$msg}" . PHP_EOL);
+    }
+    if ($backupFile) fwrite(STDOUT, PHP_EOL . "Backup: {$backupFile}" . PHP_EOL);
+}
+
 /* ------------------------------------------------------------------ */
 
 try {
@@ -243,12 +425,18 @@ try {
 
     $stateFilter = array_map('strtoupper', $options['states']);
 
+    if ($options['applyReview'] !== '') {
+        backfill_run_apply_review($pdo, $options);
+        exit(0);
+    }
+
     $sql = "SELECT unique_name, json_data FROM locations_master";
     $rows = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
     $perState = [];        // state => [scanned, alreadyHasCity, autoFixed, needsReview, noStateMatch]
-    $reviewRows = [];      // sample rows for review
+    $reviewRows = [];      // sample rows for review (capped at 200, dry-run output only)
     $rowChanges = [];      // [unique_name => updatedJsonString] for --apply
+    $exportRows = [];      // full, uncapped review rows for --export-review
 
     foreach ($rows as $row) {
         $uname = (string)$row['unique_name'];
@@ -263,7 +451,7 @@ try {
         $rowChanged = false;
         $stats = ['scanned' => 0, 'alreadyHasCity' => 0, 'autoFixed' => 0, 'needsReview' => 0, 'noStateMatch' => 0];
 
-        foreach ($facilities as &$facility) {
+        foreach ($facilities as $facilityIdx => &$facility) {
             if (!is_array($facility)) continue;
             $stats['scanned']++;
 
@@ -287,7 +475,24 @@ try {
             if ($rawAddress === '') { continue; }
 
             $parsed = backfill_extract($rawAddress);
-            if (!$parsed) { $stats['noStateMatch']++; continue; }
+            if (!$parsed) {
+                $stats['noStateMatch']++;
+                if ($options['exportReview'] !== '') {
+                    $exportRows[] = [
+                        'state_row' => $uname,
+                        'facility_idx' => $facilityIdx,
+                        'facility_name' => $facility['identification']['name'] ?? '',
+                        'raw_address' => $rawAddress,
+                        'parse_confidence' => 'none',
+                        'street' => '',
+                        'city' => '',
+                        'state' => '',
+                        'zip' => '',
+                        'approve' => true,
+                    ];
+                }
+                continue;
+            }
 
             $isAuto = $parsed['confidence'] === 'auto';
             if (!$isAuto && !$options['aggressive']) {
@@ -301,6 +506,20 @@ try {
                         'guess_city' => $parsed['city'],
                         'guess_state' => $parsed['state'],
                         'guess_zip' => $parsed['zip'],
+                    ];
+                }
+                if ($options['exportReview'] !== '') {
+                    $exportRows[] = [
+                        'state_row' => $uname,
+                        'facility_idx' => $facilityIdx,
+                        'facility_name' => $facility['identification']['name'] ?? '',
+                        'raw_address' => $rawAddress,
+                        'parse_confidence' => $parsed['confidence'],
+                        'street' => $parsed['street'],
+                        'city' => $parsed['city'],
+                        'state' => $parsed['state'],
+                        'zip' => $parsed['zip'],
+                        'approve' => true,
                     ];
                 }
                 continue;
@@ -339,6 +558,35 @@ try {
         if ($rowChanged) {
             $rowChanges[$uname] = json_encode($data, JSON_UNESCAPED_SLASHES);
         }
+    }
+
+    // --export-review short-circuits before any apply logic.
+    if ($options['exportReview'] !== '') {
+        $exportPath = $options['exportReview'];
+        if (!preg_match('~^(?:[A-Za-z]:[\\/]|/)~', $exportPath)) {
+            $exportPath = dirname(__DIR__) . '/' . ltrim(str_replace('\\', '/', $exportPath), '/');
+        }
+        $exportDir = dirname($exportPath);
+        if ($exportDir !== '' && !is_dir($exportDir) && !mkdir($exportDir, 0777, true) && !is_dir($exportDir)) {
+            throw new RuntimeException("Failed to create export directory: {$exportDir}");
+        }
+        $payload = [
+            'createdAt' => date('c'),
+            'instructions' => 'Edit street/city/state/zip for any row whose values look wrong. Set "approve":false to skip a row. Re-run with --apply-review=<this file> to commit. The state_row + facility_idx fields identify the record and should not be changed.',
+            'totals' => [
+                'rows' => count($exportRows),
+                'guess' => count(array_filter($exportRows, fn($r) => ($r['parse_confidence'] ?? '') === 'guess')),
+                'none' => count(array_filter($exportRows, fn($r) => ($r['parse_confidence'] ?? '') === 'none')),
+            ],
+            'rows' => $exportRows,
+        ];
+        file_put_contents($exportPath, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        fwrite(STDOUT, "Exported " . count($exportRows) . " rows to: {$exportPath}" . PHP_EOL);
+        fwrite(STDOUT, "  guess-confidence: {$payload['totals']['guess']}" . PHP_EOL);
+        fwrite(STDOUT, "  unparseable:      {$payload['totals']['none']}" . PHP_EOL);
+        fwrite(STDOUT, PHP_EOL . "Edit that file, then run:" . PHP_EOL);
+        fwrite(STDOUT, "  php scripts/backfill-location-cities.php --apply-review={$exportPath}" . PHP_EOL);
+        exit(0);
     }
 
     // Write backups + apply.
