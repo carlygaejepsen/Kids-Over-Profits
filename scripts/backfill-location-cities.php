@@ -103,6 +103,9 @@ function backfill_parse_args($argv) {
 
 const STREET_SUFFIX_RE = '(?:st|street|ave|avenue|blvd|boulevard|rd|road|dr|drive|ln|lane|ct|court|cir|circle|pl|place|hwy|highway|pkwy|parkway|ter|terrace|trl|trail|way|sq|square|loop|pike|plaza|plz|run|path|trace|crossing|alley|aly|expy|expressway|broadway|farm)';
 const CARDINAL_AFTER_RE = '(?:n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)';
+// Secondary-unit designators that belong to the street line, not the city.
+// Designator + identifier (numeric/alpha) is consumed together.
+const SECONDARY_UNIT_RE = '(?:suite|ste|unit|apt|apartment|bldg|building|fl|floor|rm|room|department|dept|office|ofc)';
 
 const STATE_NAME_TO_ABBREV = [
     'ALABAMA' => 'AL', 'ALASKA' => 'AK', 'ARIZONA' => 'AZ', 'ARKANSAS' => 'AR',
@@ -247,17 +250,32 @@ function backfill_split_street_city($beforeState) {
     }
 
     // Strategy 1: last street-suffix token. Everything up to and including the
-    // suffix (plus a following cardinal direction if any) is street; the rest
-    // is city.
+    // suffix (plus a following cardinal direction and/or secondary-unit like
+    // "Suite 200" or "Bldg A") is street; the rest is city.
     if (preg_match_all('/\b' . STREET_SUFFIX_RE . '\b\.?/i', $beforeState, $matches, PREG_OFFSET_CAPTURE)) {
         $last = end($matches[0]);
         $splitIdx = $last[1] + strlen($last[0]);
         $rest = substr($beforeState, $splitIdx);
+        // Cardinal direction immediately after the suffix (e.g. "Main St N").
         if (preg_match('/^\s+' . CARDINAL_AFTER_RE . '\b\.?/i', $rest, $cardMatch)) {
             $splitIdx += strlen($cardMatch[0]);
+            $rest = substr($beforeState, $splitIdx);
+        }
+        // Secondary-unit designator + identifier (e.g. "Suite 200", "Bldg A",
+        // "Apt 4B", "# 12"). The leading separator may be a comma, dash
+        // (em-dash already normalized to "-"), or just whitespace.
+        if (preg_match(
+            '/^\s*[\-,]?\s*(?:' . SECONDARY_UNIT_RE . '\b\.?\s*[A-Za-z0-9][A-Za-z0-9\-]*|#\s*[A-Za-z0-9][A-Za-z0-9\-]*)/i',
+            $rest,
+            $unitMatch
+        )) {
+            $splitIdx += strlen($unitMatch[0]);
         }
         $street = backfill_normalize_ws(substr($beforeState, 0, $splitIdx));
         $city = backfill_normalize_ws(substr($beforeState, $splitIdx));
+        // Strip any leading punctuation that the split left behind (comma,
+        // dash) — these are separators between street+unit and city.
+        $city = trim($city, " ,.-");
         if ($city !== '' && $street !== '') {
             return ['street' => $street, 'city' => $city, 'confidence' => 'auto'];
         }
@@ -395,13 +413,14 @@ function backfill_extract($rawAddress) {
     $split = backfill_split_street_city($cleaned);
     $cityClean = trim($split['city'], " ,.-");
     $streetClean = trim($split['street'], " ,.");
-    // If the heuristic dropped digits or "Suite/Unit/Apt" into the city,
-    // it almost certainly grabbed too much. Downgrade to "guess" so it
-    // surfaces in --export-review instead of being committed as "auto".
+    // Defense-in-depth: if the heuristic somehow still dropped digits or a
+    // secondary-unit word into the "city", grab is suspect — downgrade to
+    // "guess" so the record surfaces in --export-review. Should be rare now
+    // that the street-suffix path consumes "Suite N" / "Bldg A" itself.
     $confidence = $split['confidence'];
     if ($confidence === 'auto' && (
         preg_match('/\d/', $cityClean)
-        || preg_match('/\b(suite|ste|unit|apt|apartment|bldg|building|fl|floor|rm|room)\b/i', $cityClean)
+        || preg_match('/\b(?:' . SECONDARY_UNIT_RE . ')\b/i', $cityClean)
     )) {
         $confidence = 'guess';
     }
