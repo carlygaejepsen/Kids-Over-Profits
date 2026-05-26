@@ -104,8 +104,103 @@ function backfill_parse_args($argv) {
 const STREET_SUFFIX_RE = '(?:st|street|ave|avenue|blvd|boulevard|rd|road|dr|drive|ln|lane|ct|court|cir|circle|pl|place|hwy|highway|pkwy|parkway|ter|terrace|trl|trail|way|sq|square|loop|pike|plaza|plz|run|path|trace|crossing|alley|aly|expy|expressway|broadway|farm)';
 const CARDINAL_AFTER_RE = '(?:n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)';
 
+const STATE_NAME_TO_ABBREV = [
+    'ALABAMA' => 'AL', 'ALASKA' => 'AK', 'ARIZONA' => 'AZ', 'ARKANSAS' => 'AR',
+    'CALIFORNIA' => 'CA', 'COLORADO' => 'CO', 'CONNECTICUT' => 'CT', 'DELAWARE' => 'DE',
+    'FLORIDA' => 'FL', 'GEORGIA' => 'GA', 'HAWAII' => 'HI', 'IDAHO' => 'ID',
+    'ILLINOIS' => 'IL', 'INDIANA' => 'IN', 'IOWA' => 'IA', 'KANSAS' => 'KS',
+    'KENTUCKY' => 'KY', 'LOUISIANA' => 'LA', 'MAINE' => 'ME', 'MARYLAND' => 'MD',
+    'MASSACHUSETTS' => 'MA', 'MICHIGAN' => 'MI', 'MINNESOTA' => 'MN', 'MISSISSIPPI' => 'MS',
+    'MISSOURI' => 'MO', 'MONTANA' => 'MT', 'NEBRASKA' => 'NE', 'NEVADA' => 'NV',
+    'NEW HAMPSHIRE' => 'NH', 'NEW JERSEY' => 'NJ', 'NEW MEXICO' => 'NM', 'NEW YORK' => 'NY',
+    'NORTH CAROLINA' => 'NC', 'NORTH DAKOTA' => 'ND', 'OHIO' => 'OH', 'OKLAHOMA' => 'OK',
+    'OREGON' => 'OR', 'PENNSYLVANIA' => 'PA', 'RHODE ISLAND' => 'RI', 'SOUTH CAROLINA' => 'SC',
+    'SOUTH DAKOTA' => 'SD', 'TENNESSEE' => 'TN', 'TEXAS' => 'TX', 'UTAH' => 'UT',
+    'VERMONT' => 'VT', 'VIRGINIA' => 'VA', 'WASHINGTON' => 'WA', 'WEST VIRGINIA' => 'WV',
+    'WISCONSIN' => 'WI', 'WYOMING' => 'WY',
+    'DISTRICT OF COLUMBIA' => 'DC', 'WASHINGTON DC' => 'DC', 'WASHINGTON D.C.' => 'DC',
+    'PUERTO RICO' => 'PR', 'GUAM' => 'GU', 'AMERICAN SAMOA' => 'AS',
+    'U.S. VIRGIN ISLANDS' => 'VI', 'US VIRGIN ISLANDS' => 'VI', 'VIRGIN ISLANDS' => 'VI',
+    'NORTHERN MARIANA ISLANDS' => 'MP',
+];
+
+const STATE_ABBREVS = [
+    'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS',
+    'KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY',
+    'NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV',
+    'WI','WY','DC','PR','GU','AS','VI','MP',
+];
+
 function backfill_normalize_ws($value) {
     return trim(preg_replace('/\s+/', ' ', (string)$value));
+}
+
+/**
+ * Normalize Unicode noise that confuses the regex parser:
+ *  - smart quotes/dashes/spaces → ASCII equivalents
+ *  - strip combining diacritics (é → e, ñ → n) so city regexes match
+ *  - drop BOM and zero-width chars
+ */
+function backfill_normalize_unicode($value) {
+    $value = (string)$value;
+    // Strip UTF-8 BOM at start
+    $value = preg_replace('/^\xEF\xBB\xBF/', '', $value);
+    // Smart punctuation + exotic whitespace → ASCII
+    static $charMap = [
+        "\u{2018}" => "'", "\u{2019}" => "'", "\u{201A}" => "'", "\u{201B}" => "'",
+        "\u{201C}" => '"', "\u{201D}" => '"', "\u{201E}" => '"', "\u{201F}" => '"',
+        "\u{2013}" => '-', "\u{2014}" => '-', "\u{2015}" => '-', "\u{2212}" => '-',
+        "\u{00A0}" => ' ', "\u{2002}" => ' ', "\u{2003}" => ' ', "\u{2004}" => ' ',
+        "\u{2005}" => ' ', "\u{2006}" => ' ', "\u{2007}" => ' ', "\u{2008}" => ' ',
+        "\u{2009}" => ' ', "\u{200A}" => ' ', "\u{200B}" => '',  "\u{202F}" => ' ',
+        "\u{205F}" => ' ', "\u{3000}" => ' ',
+        "\u{2026}" => '...',
+    ];
+    $value = strtr($value, $charMap);
+    // Decompose + strip diacritics so cañon → canon, é → e, etc. Prefer
+    // Normalizer (intl) when available; otherwise use an explicit char map.
+    // Don't fall back to iconv ASCII//TRANSLIT — it renders 'ñ' as '~n' on
+    // some platforms which then fails our city regex.
+    if (class_exists('Normalizer')) {
+        $decomposed = Normalizer::normalize($value, Normalizer::FORM_KD);
+        if (is_string($decomposed)) {
+            $value = preg_replace('/\p{Mn}+/u', '', $decomposed);
+        }
+    } else {
+        static $accentMap = [
+            'à'=>'a','á'=>'a','â'=>'a','ã'=>'a','ä'=>'a','å'=>'a','ą'=>'a','ā'=>'a','ă'=>'a',
+            'è'=>'e','é'=>'e','ê'=>'e','ë'=>'e','ę'=>'e','ē'=>'e','ĕ'=>'e','ė'=>'e',
+            'ì'=>'i','í'=>'i','î'=>'i','ï'=>'i','ī'=>'i','į'=>'i','ı'=>'i',
+            'ò'=>'o','ó'=>'o','ô'=>'o','õ'=>'o','ö'=>'o','ø'=>'o','ō'=>'o','ő'=>'o',
+            'ù'=>'u','ú'=>'u','û'=>'u','ü'=>'u','ū'=>'u','ů'=>'u','ű'=>'u',
+            'ý'=>'y','ÿ'=>'y',
+            'ñ'=>'n','ç'=>'c','ß'=>'ss','ł'=>'l','ś'=>'s','š'=>'s','ž'=>'z','ź'=>'z','ż'=>'z',
+            'ć'=>'c','č'=>'c','ď'=>'d','ě'=>'e','ř'=>'r','ť'=>'t','ů'=>'u','ý'=>'y',
+            'À'=>'A','Á'=>'A','Â'=>'A','Ã'=>'A','Ä'=>'A','Å'=>'A','Ą'=>'A','Ā'=>'A',
+            'È'=>'E','É'=>'E','Ê'=>'E','Ë'=>'E','Ę'=>'E','Ē'=>'E',
+            'Ì'=>'I','Í'=>'I','Î'=>'I','Ï'=>'I','Ī'=>'I',
+            'Ò'=>'O','Ó'=>'O','Ô'=>'O','Õ'=>'O','Ö'=>'O','Ø'=>'O','Ō'=>'O',
+            'Ù'=>'U','Ú'=>'U','Û'=>'U','Ü'=>'U','Ū'=>'U',
+            'Ý'=>'Y','Ñ'=>'N','Ç'=>'C','Ł'=>'L','Ś'=>'S','Š'=>'S','Ž'=>'Z',
+        ];
+        $value = strtr($value, $accentMap);
+    }
+    return $value;
+}
+
+/**
+ * Resolve any state token (2-letter abbrev in any case, or a full state
+ * name like "Oklahoma" / "New Jersey") to its canonical 2-letter code.
+ * Returns null if it doesn't look like a US state.
+ */
+function backfill_normalize_state($input) {
+    $upper = strtoupper(trim((string)$input));
+    $upper = preg_replace('/\s+/', ' ', $upper);
+    $upper = trim($upper, " .,");
+    if ($upper === '') return null;
+    if (in_array($upper, STATE_ABBREVS, true)) return $upper;
+    if (isset(STATE_NAME_TO_ABBREV[$upper])) return STATE_NAME_TO_ABBREV[$upper];
+    return null;
 }
 
 function backfill_guess_multiword_city(array $tokens): ?array {
@@ -201,58 +296,122 @@ function backfill_split_street_city($beforeState) {
 }
 
 function backfill_extract($rawAddress) {
-    $cleaned = backfill_normalize_ws($rawAddress);
+    // 1) Normalize Unicode noise first — smart quotes/dashes, non-breaking
+    //    spaces, accented letters — so the regex passes can work in ASCII.
+    $cleaned = backfill_normalize_unicode($rawAddress);
+    $cleaned = backfill_normalize_ws($cleaned);
     $cleaned = preg_replace('/\s*\([^()]*\)\s*$/', '', $cleaned);
-    $cleaned = preg_replace('/[;]+$/', '', $cleaned);
+    $cleaned = preg_replace('/[;]+\s*$/', '', $cleaned);
+    $cleaned = preg_replace('/[\.,;]+\s*$/', '', $cleaned);
     $cleaned = backfill_normalize_ws($cleaned);
     if ($cleaned === '') return null;
 
-    // Pull off the trailing ZIP and state abbreviation first; whatever's left
-    // is the street+city prefix we need to split.
+    // 2) Strip trailing ZIP. Variants accepted:
+    //    "12345", "12345-6789", "12345 6789", "123456789", any with a
+    //    trailing period like "12345." (which the strip above removed
+    //    already, but the regex below tolerates it too).
     $zip = '';
-    if (preg_match('/^(.+?)(?:[,]?\s+(\d{5}(?:-\d{4})?))?$/u', $cleaned, $zm)) {
+    if (preg_match('/^(.+?)[,\s]+(\d{5})(?:[\s\-]?(\d{4}))?\.?\s*$/u', $cleaned, $zm)) {
         $cleaned = trim($zm[1]);
-        $zip = $zm[2] ?? '';
+        $zip = $zm[2] . (!empty($zm[3]) ? '-' . $zm[3] : '');
     }
-    $cleaned = preg_replace('/[,]+$/', '', $cleaned);
+    $cleaned = preg_replace('/[,\.]+\s*$/', '', $cleaned);
+    $cleaned = backfill_normalize_ws($cleaned);
 
-    // Comma-based: "<street>, <city>, XX" or "<city>, XX"
-    if (preg_match('/^(.*),\s*([A-Za-z.\'\x{2019}\- ]+),\s*([A-Z]{2})$/u', $cleaned, $m)) {
-        return [
-            'street' => backfill_normalize_ws($m[1]),
-            'city' => backfill_normalize_ws($m[2]),
-            'state' => strtoupper($m[3]),
-            'zip' => $zip,
-            'confidence' => 'auto',
-        ];
+    // 3) Strip trailing state. Try 2-letter abbrev first (case-insensitive,
+    //    validated against the known list so we don't eat random initials),
+    //    then full state name, longest-first so "New Mexico" beats "Mexico"
+    //    if that were ever in the list.
+    $stateAbbrev = null;
+    if (preg_match('/^(.*?)[,\s]+([A-Za-z]{2})\.?\s*$/u', $cleaned, $m)) {
+        $abbrev = backfill_normalize_state($m[2]);
+        if ($abbrev !== null) {
+            $stateAbbrev = $abbrev;
+            $cleaned = trim($m[1]);
+        }
     }
-    if (preg_match('/^([A-Za-z.\'\x{2019}\- ]+),\s*([A-Z]{2})$/u', $cleaned, $m)) {
+    if ($stateAbbrev === null) {
+        static $sortedNames = null;
+        if ($sortedNames === null) {
+            $sortedNames = array_keys(STATE_NAME_TO_ABBREV);
+            usort($sortedNames, fn($a, $b) => strlen($b) - strlen($a));
+        }
+        foreach ($sortedNames as $name) {
+            $escapedName = preg_quote($name, '/');
+            if (preg_match('/^(.*?)[,\s]+' . $escapedName . '\.?\s*$/iu', $cleaned, $m)) {
+                $stateAbbrev = STATE_NAME_TO_ABBREV[$name];
+                $cleaned = trim($m[1]);
+                break;
+            }
+        }
+    }
+    if ($stateAbbrev === null) {
+        return null;
+    }
+    $cleaned = preg_replace('/[,\.]+\s*$/', '', $cleaned);
+    $cleaned = backfill_normalize_ws($cleaned);
+
+    // 4) Split the remaining "<street>, <city>" or "<street> <city>" or just
+    //    "<city>". With state/zip already removed, comma-vs-no-comma is the
+    //    only ambiguity left.
+    if ($cleaned === '') {
         return [
             'street' => '',
-            'city' => backfill_normalize_ws($m[1]),
-            'state' => strtoupper($m[2]),
+            'city' => '',
+            'state' => $stateAbbrev,
             'zip' => $zip,
             'confidence' => 'auto',
         ];
     }
 
-    // Comma-less or single-comma-after-street: optional street, then city + state.
-    if (preg_match('/^(.*?)\s+([A-Z]{2})$/u', $cleaned, $m)) {
-        $beforeState = trim(preg_replace('/[,]+$/', '', $m[1]));
-        $abbrev = strtoupper($m[2]);
-        $split = backfill_split_street_city($beforeState);
-        if ($split['city'] !== '') {
+    // Comma-separated "<street>, <city>": last comma splits them.
+    if (preg_match('/^(.+),\s*([\p{L}\p{M}.\'\- ]+)$/u', $cleaned, $m)) {
+        $cityCandidate = backfill_normalize_ws($m[2]);
+        // Only accept if the right side looks like a city (no digits — those
+        // are likely street numbers that landed there from a stray comma).
+        if ($cityCandidate !== '' && !preg_match('/\d/', $cityCandidate)) {
             return [
-                'street' => $split['street'],
-                'city' => $split['city'],
-                'state' => $abbrev,
+                'street' => backfill_normalize_ws($m[1]),
+                'city' => $cityCandidate,
+                'state' => $stateAbbrev,
                 'zip' => $zip,
-                'confidence' => $split['confidence'],
+                'confidence' => 'auto',
             ];
         }
     }
 
-    return null;
+    // Comma-less: hand off to the street-suffix heuristic. Single-token
+    // input falls through to "treat as city".
+    $tokens = preg_split('/\s+/', $cleaned);
+    if (count($tokens) === 1) {
+        return [
+            'street' => '',
+            'city' => $cleaned,
+            'state' => $stateAbbrev,
+            'zip' => $zip,
+            'confidence' => 'guess',
+        ];
+    }
+    $split = backfill_split_street_city($cleaned);
+    $cityClean = trim($split['city'], " ,.-");
+    $streetClean = trim($split['street'], " ,.");
+    // If the heuristic dropped digits or "Suite/Unit/Apt" into the city,
+    // it almost certainly grabbed too much. Downgrade to "guess" so it
+    // surfaces in --export-review instead of being committed as "auto".
+    $confidence = $split['confidence'];
+    if ($confidence === 'auto' && (
+        preg_match('/\d/', $cityClean)
+        || preg_match('/\b(suite|ste|unit|apt|apartment|bldg|building|fl|floor|rm|room)\b/i', $cityClean)
+    )) {
+        $confidence = 'guess';
+    }
+    return [
+        'street' => $streetClean,
+        'city'   => $cityClean,
+        'state'  => $stateAbbrev,
+        'zip'    => $zip,
+        'confidence' => $confidence,
+    ];
 }
 
 /* ------------------------------------------------------------------ *
