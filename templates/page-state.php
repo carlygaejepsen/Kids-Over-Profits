@@ -60,6 +60,7 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
 
     <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel">
         <h2>Facilities in <?php echo esc_html($state_name); ?></h2>
+        <p class="facilities-intro">Residential facilities providing religious, behavioral, and mental health treatment to children exist in all 50 states. Some of these facilities are known to be part of the Troubled Teen Industry, while others have not yet been verified. Any facility where children live and receive care requires additional oversight. This directory helps communities monitor local programs and advocate for accountability.</p>
         <div class="section-content"><p class="loading">Loading facilities…</p></div>
     </section>
 
