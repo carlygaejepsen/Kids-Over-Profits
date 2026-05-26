@@ -12,8 +12,8 @@ deployment:
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp .env.example $DEPLOYPATH
-    # Page templates moved into templates/ — remove stranded copies at theme root
-    # so WordPress doesn't see duplicate "Template Name:" entries.
+    # Page templates moved into templates/ -- remove stranded copies at theme root
+    # so WordPress does not see duplicate Template Name entries.
     - /bin/rm -f $DEPLOYPATH/page-admin-data.php
     - /bin/rm -f $DEPLOYPATH/page-admin-submissions.php
     - /bin/rm -f $DEPLOYPATH/page-admin-lawsuits.php
