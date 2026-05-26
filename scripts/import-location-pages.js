@@ -782,6 +782,36 @@ function applyMetadataToFacility(facility, metadataItems) {
 const STREET_SUFFIX_PATTERN = '(?:st|street|ave|avenue|blvd|boulevard|rd|road|dr|drive|ln|lane|ct|court|cir|circle|pl|place|hwy|highway|pkwy|parkway|ter|terrace|trl|trail|way|sq|square|loop|pike|plaza|plz|run|path|trace|crossing|alley|aly|expy|expressway|broadway|farm)';
 const CARDINAL_DIRECTION_AFTER_SUFFIX_RE = /^\s+(?:n|s|e|w|ne|nw|se|sw|north|south|east|west|northeast|northwest|southeast|southwest)\b\.?/i;
 
+function guessMultiWordCity(tokens) {
+    if (!Array.isArray(tokens) || tokens.length < 3) {
+        return null;
+    }
+
+    const compoundEndings = new Set([
+        'city', 'springs', 'heights', 'hills', 'beach', 'falls', 'valley',
+        'village', 'town', 'junction', 'harbor', 'grove', 'park', 'ridge',
+        'creek', 'point', 'mesa', 'fork', 'plains', 'lakes', 'island',
+    ]);
+    const last = (tokens[tokens.length - 1] || '').toLowerCase();
+    if (compoundEndings.has(last)) {
+        return {
+            street: tokens.slice(0, -2).join(' '),
+            city: tokens.slice(-2).join(' '),
+        };
+    }
+
+    const compoundPrefixes = new Set(['st', 'st.', 'saint', 'ft', 'ft.', 'fort', 'mt', 'mt.', 'mount', 'new', 'north', 'south', 'east', 'west']);
+    const penultimate = (tokens[tokens.length - 2] || '').toLowerCase();
+    if (compoundPrefixes.has(penultimate)) {
+        return {
+            street: tokens.slice(0, -2).join(' '),
+            city: tokens.slice(-2).join(' '),
+        };
+    }
+
+    return null;
+}
+
 // For comma-less postal lines (e.g. "12700 E 76th Street North Owasso OK 74055"),
 // split street / city using the LAST street-suffix token (+ optional cardinal
 // direction). Falls back to PO Box pattern, then to last whitespace-delimited token.
@@ -807,6 +837,10 @@ function splitStreetAndCityCommaless(beforeState) {
     if (poBox) return { street: normalizeWhitespace(poBox[1]), city: normalizeWhitespace(poBox[2]) };
     const tokens = beforeState.trim().split(/\s+/);
     if (tokens.length >= 2) {
+        const multiWordGuess = guessMultiWordCity(tokens);
+        if (multiWordGuess && multiWordGuess.street && multiWordGuess.city) {
+            return multiWordGuess;
+        }
         return {
             street: tokens.slice(0, -1).join(' '),
             city: tokens[tokens.length - 1],

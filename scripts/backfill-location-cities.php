@@ -82,6 +82,43 @@ function backfill_normalize_ws($value) {
     return trim(preg_replace('/\s+/', ' ', (string)$value));
 }
 
+function backfill_guess_multiword_city(array $tokens): ?array {
+    $count = count($tokens);
+    if ($count < 3) {
+        return null;
+    }
+
+    // Prefer multi-word city endings when the last token strongly suggests
+    // a compound city name (e.g. "Oklahoma City", "Colorado Springs").
+    $compoundEndings = [
+        'city', 'springs', 'heights', 'hills', 'beach', 'falls', 'valley',
+        'village', 'town', 'junction', 'harbor', 'grove', 'park', 'ridge',
+        'creek', 'point', 'mesa', 'fork', 'plains', 'lakes', 'island',
+    ];
+    $last = strtolower($tokens[$count - 1]);
+    if (in_array($last, $compoundEndings, true)) {
+        return [
+            'street' => implode(' ', array_slice($tokens, 0, -2)),
+            'city' => implode(' ', array_slice($tokens, -2)),
+            'confidence' => 'auto',
+        ];
+    }
+
+    // Prefixes that commonly start multi-word city names
+    // (e.g. "Fort Worth", "New York", "St George").
+    $compoundPrefixes = ['st', 'st.', 'saint', 'ft', 'ft.', 'fort', 'mt', 'mt.', 'mount', 'new', 'north', 'south', 'east', 'west'];
+    $penultimate = strtolower($tokens[$count - 2]);
+    if (in_array($penultimate, $compoundPrefixes, true)) {
+        return [
+            'street' => implode(' ', array_slice($tokens, 0, -2)),
+            'city' => implode(' ', array_slice($tokens, -2)),
+            'confidence' => 'guess',
+        ];
+    }
+
+    return null;
+}
+
 function backfill_split_street_city($beforeState) {
     $beforeState = (string)$beforeState;
     if ($beforeState === '') {
@@ -114,10 +151,19 @@ function backfill_split_street_city($beforeState) {
         ];
     }
 
-    // Strategy 3: last whitespace-delimited token is the city. Low confidence
-    // because multi-word cities ("Oklahoma City") get mangled.
+    // Strategy 3: token fallback. First try a multi-word city heuristic, then
+    // fall back to "last token is city". This is still low confidence.
     $tokens = preg_split('/\s+/', trim($beforeState));
     if (count($tokens) >= 2) {
+        $multiWordGuess = backfill_guess_multiword_city($tokens);
+        if ($multiWordGuess && $multiWordGuess['street'] !== '' && $multiWordGuess['city'] !== '') {
+            return [
+                'street' => $multiWordGuess['street'],
+                'city' => $multiWordGuess['city'],
+                'confidence' => $multiWordGuess['confidence'] ?? 'guess',
+            ];
+        }
+
         return [
             'street' => implode(' ', array_slice($tokens, 0, -1)),
             'city' => $tokens[count($tokens) - 1],
