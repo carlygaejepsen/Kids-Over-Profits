@@ -56,6 +56,9 @@ Options:
                            where "approve" is true, using whatever
                            street/city/state/zip values are in the file.
                            Skips other modes; cannot be combined with --apply.
+  --force                  Allow --export-review to overwrite an existing
+                           file. Without this, export refuses to clobber a
+                           review file that may already contain your edits.
   --help                   Show this message.
 
 TEXT
@@ -72,6 +75,7 @@ function backfill_parse_args($argv) {
         'help' => false,
         'exportReview' => '',
         'applyReview' => '',
+        'force' => false,
     ];
 
     foreach (array_slice($argv, 1) as $arg) {
@@ -79,6 +83,7 @@ function backfill_parse_args($argv) {
         if ($arg === '--apply') { $options['apply'] = true; continue; }
         if ($arg === '--aggressive') { $options['aggressive'] = true; continue; }
         if ($arg === '--json') { $options['json'] = true; continue; }
+        if ($arg === '--force') { $options['force'] = true; continue; }
         if (preg_match('/^--state=(.+)$/', $arg, $m)) { $options['states'][] = trim($m[1]); continue; }
         if (preg_match('/^--backup-dir=(.+)$/', $arg, $m)) { $options['backupDir'] = trim($m[1]); continue; }
         if (preg_match('/^--export-review=(.+)$/', $arg, $m)) { $options['exportReview'] = trim($m[1]); continue; }
@@ -565,6 +570,15 @@ try {
         $exportPath = $options['exportReview'];
         if (!preg_match('~^(?:[A-Za-z]:[\\/]|/)~', $exportPath)) {
             $exportPath = dirname(__DIR__) . '/' . ltrim(str_replace('\\', '/', $exportPath), '/');
+        }
+        // Refuse to clobber an existing review file unless --force is passed.
+        // (You may already have hand-edits in it; an export would destroy them.)
+        if (file_exists($exportPath) && !$options['force']) {
+            throw new RuntimeException(
+                "Refusing to overwrite existing file: {$exportPath}" . PHP_EOL .
+                "  If it contains your edits, run --apply-review={$exportPath} instead." . PHP_EOL .
+                "  If you really want to replace it, re-run with --force, or pass a different --export-review path."
+            );
         }
         $exportDir = dirname($exportPath);
         if ($exportDir !== '' && !is_dir($exportDir) && !mkdir($exportDir, 0777, true) && !is_dir($exportDir)) {
