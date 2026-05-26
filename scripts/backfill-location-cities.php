@@ -22,6 +22,11 @@
  *   # edit /tmp/review.json: fix bad street/city values, set "approve":false to skip
  *   php scripts/backfill-location-cities.php --apply-review=/tmp/review.json
  *
+ *   # Re-parse records the OLD parser committed wrong values for (city
+ *   # contains digits, "Suite/Bldg/Apt", a street suffix, etc.):
+ *   php scripts/backfill-location-cities.php --reparse-suspect --export-review=/tmp/reparse.json
+ *   # audit/edit, then --apply-review=/tmp/reparse.json
+ *
  * By default only "auto" matches (those backed by a street-suffix split or
  * a PO Box pattern) are written. Records where the parser had to guess
  * with no suffix anchor are listed under "needs-review" so you can audit
@@ -59,6 +64,12 @@ Options:
   --force                  Allow --export-review to overwrite an existing
                            file. Without this, export refuses to clobber a
                            review file that may already contain your edits.
+  --reparse-suspect        Also re-parse records where the OLD parser already
+                           wrote a suspect value (e.g. "Suite 200 Dallas" or
+                           "Dallas N" landed in the city). Combine with
+                           --export-review to audit fixes, or --apply to
+                           overwrite suspect values where the new parser
+                           returns an auto-confidence result.
   --help                   Show this message.
 
 TEXT
@@ -76,6 +87,7 @@ function backfill_parse_args($argv) {
         'exportReview' => '',
         'applyReview' => '',
         'force' => false,
+        'reparseSuspect' => false,
     ];
 
     foreach (array_slice($argv, 1) as $arg) {
@@ -84,6 +96,7 @@ function backfill_parse_args($argv) {
         if ($arg === '--aggressive') { $options['aggressive'] = true; continue; }
         if ($arg === '--json') { $options['json'] = true; continue; }
         if ($arg === '--force') { $options['force'] = true; continue; }
+        if ($arg === '--reparse-suspect') { $options['reparseSuspect'] = true; continue; }
         if (preg_match('/^--state=(.+)$/', $arg, $m)) { $options['states'][] = trim($m[1]); continue; }
         if (preg_match('/^--backup-dir=(.+)$/', $arg, $m)) { $options['backupDir'] = trim($m[1]); continue; }
         if (preg_match('/^--export-review=(.+)$/', $arg, $m)) { $options['exportReview'] = trim($m[1]); continue; }
@@ -189,6 +202,25 @@ function backfill_normalize_unicode($value) {
         $value = strtr($value, $accentMap);
     }
     return $value;
+}
+
+/**
+ * Heuristic: does this city value look like an old-parser misfire?
+ * Returns true if the city contains digits, a secondary-unit word
+ * (Suite/Apt/etc.), a street suffix, a trailing cardinal direction, a
+ * leading punctuation char, or is unusually long — all telltale signs
+ * that the comma-less heuristic grabbed too much.
+ */
+function backfill_looks_suspect($city) {
+    $city = (string)$city;
+    if ($city === '') return false;
+    if (preg_match('/\d/', $city)) return true;
+    if (preg_match('/\b(?:' . SECONDARY_UNIT_RE . ')\b/i', $city)) return true;
+    if (preg_match('/\b' . STREET_SUFFIX_RE . '\b/i', $city)) return true;
+    if (preg_match('/\s' . CARDINAL_AFTER_RE . '\.?$/i', $city)) return true;
+    if (preg_match('/^[\-\.,]/', $city)) return true;
+    if (strlen($city) > 60) return true;
+    return false;
 }
 
 /**
@@ -632,7 +664,7 @@ try {
 
         $facilities = &$data['data']['facilities'];
         $rowChanged = false;
-        $stats = ['scanned' => 0, 'alreadyHasCity' => 0, 'autoFixed' => 0, 'needsReview' => 0, 'noStateMatch' => 0];
+        $stats = ['scanned' => 0, 'alreadyHasCity' => 0, 'autoFixed' => 0, 'needsReview' => 0, 'noStateMatch' => 0, 'reparseSuspect' => 0];
 
         foreach ($facilities as $facilityIdx => &$facility) {
             if (!is_array($facility)) continue;
@@ -643,12 +675,24 @@ try {
             if (isset($facility['locationDetails']) && is_array($facility['locationDetails'])) {
                 $existingCity = backfill_normalize_ws($facility['locationDetails']['city'] ?? '');
             }
-            $hasStructuredAddressParts = isset($facility['addressParts'])
-                && is_array($facility['addressParts'])
-                && !empty($facility['addressParts']['city']);
+            $existingAddressPartsCity = '';
+            if (isset($facility['addressParts']) && is_array($facility['addressParts'])) {
+                $existingAddressPartsCity = backfill_normalize_ws($facility['addressParts']['city'] ?? '');
+            }
+            $hasStructuredAddressParts = $existingAddressPartsCity !== '';
+            $isReparse = false;
             if ($existingCity !== '' && $hasStructuredAddressParts) {
-                $stats['alreadyHasCity']++;
-                continue;
+                // Has structured data — only re-parse if --reparse-suspect AND the
+                // existing value looks like a known old-parser misfire.
+                $existingLooksSuspect =
+                    backfill_looks_suspect($existingCity)
+                    || backfill_looks_suspect($existingAddressPartsCity);
+                if (!($options['reparseSuspect'] && $existingLooksSuspect)) {
+                    $stats['alreadyHasCity']++;
+                    continue;
+                }
+                $stats['reparseSuspect']++;
+                $isReparse = true;
             }
 
             $rawAddress = '';
@@ -661,7 +705,7 @@ try {
             if (!$parsed) {
                 $stats['noStateMatch']++;
                 if ($options['exportReview'] !== '') {
-                    $exportRows[] = [
+                    $exportRow = [
                         'state_row' => $uname,
                         'facility_idx' => $facilityIdx,
                         'facility_name' => $facility['identification']['name'] ?? '',
@@ -673,6 +717,12 @@ try {
                         'zip' => '',
                         'approve' => true,
                     ];
+                    if ($isReparse) {
+                        $exportRow['was_reparsed_suspect'] = true;
+                        $exportRow['previous_city'] = $existingCity;
+                        $exportRow['previous_addressparts_city'] = $existingAddressPartsCity;
+                    }
+                    $exportRows[] = $exportRow;
                 }
                 continue;
             }
@@ -692,7 +742,7 @@ try {
                     ];
                 }
                 if ($options['exportReview'] !== '') {
-                    $exportRows[] = [
+                    $exportRow = [
                         'state_row' => $uname,
                         'facility_idx' => $facilityIdx,
                         'facility_name' => $facility['identification']['name'] ?? '',
@@ -704,22 +754,57 @@ try {
                         'zip' => $parsed['zip'],
                         'approve' => true,
                     ];
+                    if ($isReparse) {
+                        $exportRow['was_reparsed_suspect'] = true;
+                        $exportRow['previous_city'] = $existingCity;
+                        $exportRow['previous_addressparts_city'] = $existingAddressPartsCity;
+                    }
+                    $exportRows[] = $exportRow;
                 }
                 continue;
             }
 
-            // Fill in locationDetails (legacy structured fields).
+            // AUTO-confidence path. When this is a --reparse-suspect overwrite
+            // and the user is exporting for review, surface it in the file
+            // alongside the previous (suspect) value — overwriting an existing
+            // value is riskier than filling in an empty one, so it deserves
+            // an audit step before --apply-review writes it.
+            if ($isAuto && $isReparse && $options['exportReview'] !== '') {
+                $exportRows[] = [
+                    'state_row' => $uname,
+                    'facility_idx' => $facilityIdx,
+                    'facility_name' => $facility['identification']['name'] ?? '',
+                    'raw_address' => $rawAddress,
+                    'parse_confidence' => $parsed['confidence'],
+                    'street' => $parsed['street'],
+                    'city' => $parsed['city'],
+                    'state' => $parsed['state'],
+                    'zip' => $parsed['zip'],
+                    'approve' => true,
+                    'was_reparsed_suspect' => true,
+                    'previous_city' => $existingCity,
+                    'previous_addressparts_city' => $existingAddressPartsCity,
+                ];
+                // In --export-review mode the script doesn't touch the DB
+                // anyway (apply logic is short-circuited), so just record
+                // it and continue scanning.
+                continue;
+            }
+
+            // Fill in locationDetails (legacy structured fields). When this
+            // iteration is a re-parse of a suspect old value, overwrite
+            // unconditionally — that's the point of --reparse-suspect.
             if (!isset($facility['locationDetails']) || !is_array($facility['locationDetails'])) {
                 $facility['locationDetails'] = ['city' => '', 'state' => '', 'country' => 'United States', 'additionalLocations' => []];
             }
-            if (empty($facility['locationDetails']['city'])) {
+            if ($isReparse || empty($facility['locationDetails']['city'])) {
                 $facility['locationDetails']['city'] = $parsed['city'];
             }
-            if (empty($facility['locationDetails']['state'])) {
+            if ($isReparse || empty($facility['locationDetails']['state'])) {
                 $facility['locationDetails']['state'] = $parsed['state'];
             }
             $stateForLocation = $facility['locationDetails']['state'] ?: $parsed['state'];
-            if (empty($facility['location'])) {
+            if ($isReparse || empty($facility['location'])) {
                 $facility['location'] = $parsed['city'] . ', ' . $stateForLocation;
             }
 
@@ -821,9 +906,9 @@ try {
         }
     }
 
-    $totals = ['scanned' => 0, 'alreadyHasCity' => 0, 'autoFixed' => 0, 'needsReview' => 0, 'noStateMatch' => 0];
+    $totals = ['scanned' => 0, 'alreadyHasCity' => 0, 'autoFixed' => 0, 'needsReview' => 0, 'noStateMatch' => 0, 'reparseSuspect' => 0];
     foreach ($perState as $stats) {
-        foreach ($totals as $k => $_) $totals[$k] += $stats[$k];
+        foreach ($totals as $k => $_) $totals[$k] += ($stats[$k] ?? 0);
     }
 
     if ($options['json']) {
@@ -840,17 +925,23 @@ try {
     }
 
     $mode = $options['apply'] ? 'APPLY' : 'DRY-RUN';
-    fwrite(STDOUT, "Mode: {$mode}" . ($options['aggressive'] ? ' (aggressive)' : '') . PHP_EOL);
+    $modeSuffix = '';
+    if ($options['aggressive']) $modeSuffix .= ' (aggressive)';
+    if ($options['reparseSuspect']) $modeSuffix .= ' (reparse-suspect)';
+    fwrite(STDOUT, "Mode: {$mode}{$modeSuffix}" . PHP_EOL);
     fwrite(STDOUT, sprintf(
-        "Totals: scanned=%d alreadyHasCity=%d autoFixed=%d needsReview=%d noStateMatch=%d%s",
-        $totals['scanned'], $totals['alreadyHasCity'], $totals['autoFixed'], $totals['needsReview'], $totals['noStateMatch'], PHP_EOL
+        "Totals: scanned=%d alreadyHasCity=%d autoFixed=%d needsReview=%d noStateMatch=%d reparseSuspect=%d%s",
+        $totals['scanned'], $totals['alreadyHasCity'], $totals['autoFixed'],
+        $totals['needsReview'], $totals['noStateMatch'], $totals['reparseSuspect'], PHP_EOL
     ));
     fwrite(STDOUT, PHP_EOL . "Per-state breakdown (only states with at least one fixable facility):" . PHP_EOL);
     foreach ($perState as $uname => $stats) {
-        if (($stats['autoFixed'] + $stats['needsReview']) === 0) continue;
+        $reparse = $stats['reparseSuspect'] ?? 0;
+        if (($stats['autoFixed'] + $stats['needsReview'] + $reparse) === 0) continue;
         fwrite(STDOUT, sprintf(
-            "  %-25s scanned=%3d already=%3d auto=%3d review=%3d noState=%3d%s",
-            $uname, $stats['scanned'], $stats['alreadyHasCity'], $stats['autoFixed'], $stats['needsReview'], $stats['noStateMatch'], PHP_EOL
+            "  %-25s scanned=%3d already=%3d auto=%3d review=%3d noState=%3d reparse=%3d%s",
+            $uname, $stats['scanned'], $stats['alreadyHasCity'], $stats['autoFixed'],
+            $stats['needsReview'], $stats['noStateMatch'], $reparse, PHP_EOL
         ));
     }
     if ($reviewRows) {
