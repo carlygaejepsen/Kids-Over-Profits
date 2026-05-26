@@ -1845,6 +1845,7 @@ function kop_state_inspection_page_map() {
         'California' => 'ca-reports',
         'Connecticut'=> 'ct-reports',
         'Minnesota'  => 'mn-reports',
+        'North Carolina' => 'nc-reports',
         'Montana'    => 'mt-reports',
         'Nevada'     => 'nv-reports',
         'Oregon'     => 'or-reports',

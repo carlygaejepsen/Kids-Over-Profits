@@ -10,6 +10,7 @@ Current report pages are wired for:
 - California (`CA`)
 - Connecticut (`CT`)
 - Minnesota (`MN`)
+- North Carolina (`NC`)
 - Montana (`MT`)
 - Texas (`TX`)
 - Utah (`UT`)
@@ -35,6 +36,7 @@ Current report pages are wired for:
   - `wa-reports`
   - `ar-reports`
   - `mn-reports`
+  - `nc-reports`
 
 ### Data Sources
 - Primary source: `api/inspections-read.php?state=XX`
