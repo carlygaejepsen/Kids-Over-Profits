@@ -9,7 +9,7 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: application/json');
 
 // --- Auth ---
-$API_KEY = getenv('INSPECTIONS_API_KEY') ?: 'CHANGE_ME';
+$API_KEY = getenv('INSPECTIONS_API_KEY') ?: (getenv('KOP_DATA_API_KEY') ?: 'CHANGE_ME');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
