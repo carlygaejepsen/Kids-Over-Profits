@@ -1571,6 +1571,15 @@ function kop_search_database_rest_callback($request) {
 
         $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
 
+        // Skip per-facility reference rows produced by
+        // api/promote-facilities-to-rows.php. The flag lives on the outer
+        // wrapper, which kop_normalize_project_payload strips, so we have to
+        // peek at the raw payload before normalizing.
+        $outer = json_decode($row['json_data'], true);
+        if (is_array($outer) && !empty($outer['__facility_ref'])) {
+            continue;
+        }
+
         // Decode JSON to search content
         $data = kop_normalize_project_payload($row['json_data']);
         if (!$data) {
@@ -1634,7 +1643,7 @@ function kop_search_database_rest_callback($request) {
             $all_results[] = array(
                 'name' => $unique_name,
                 'label' => $unique_name,
-                'category' => 'facilities',
+                'category' => 'companies',
                 'operator' => $operator_name,
                 'facilityCount' => $facility_count,
                 'matchSnippet' => $match_snippet,

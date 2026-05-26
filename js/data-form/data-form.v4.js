@@ -1631,39 +1631,111 @@ function attachButtonListeners() {
     if (saveReferrerBtn && !saveReferrerBtn.dataset.listenerAttached) {
         saveReferrerBtn.onclick = async () => {
             const projectName = document.getElementById('referrer-project-name')?.value?.trim();
-            if (projectName) {
-                // Ensure category is set correctly in both formData and projects cache
-                if (window.formData) {
-                    window.formData.category = 'referrers';
-                }
-                // Also set in projects cache so saveProjectToCloud picks it up
-                if (!window.projects) window.projects = {};
-                if (!window.projects[projectName]) {
-                    window.projects[projectName] = { category: 'referrers' };
-                } else {
-                    window.projects[projectName].category = 'referrers';
-                }
-
-                // Call save with proper error handling
-                if (window.KOP_API && typeof window.KOP_API.saveProjectToCloud === 'function') {
-                    try {
-                        await window.KOP_API.saveProjectToCloud(projectName);
-                    } catch (err) {
-                        console.error('Failed to save referrer project:', err);
-                        showUploadStatus('Failed to save: ' + (err.message || 'Unknown error'), 'error');
-                    }
-                } else {
-                    console.error('KOP_API.saveProjectToCloud not available');
-                    showUploadStatus('Save function not available. Please refresh the page.', 'error');
-                }
-            } else {
+            if (!projectName) {
                 customAlert('Please enter a project name', 'Project Name Required').then(() => {
                     const projectNameInput = document.getElementById('referrer-project-name');
                     if (projectNameInput) projectNameInput.focus();
                 });
+                return;
+            }
+
+            // Ensure category is set correctly in both formData and projects cache
+            if (window.formData) {
+                window.formData.category = 'referrers';
+            }
+            if (!window.projects) window.projects = {};
+            if (!window.projects[projectName]) {
+                window.projects[projectName] = { category: 'referrers' };
+            } else {
+                window.projects[projectName].category = 'referrers';
+            }
+            // performSuggestionSubmission reads window.currentProjectName, not
+            // #referrer-project-name, so make sure they agree before submitting.
+            window.currentProjectName = projectName;
+
+            // Public form: route through the suggestion modal so the data
+            // actually reaches api/save-suggestion.php. saveProjectToCloud()
+            // only persists a local draft in suggestion mode.
+            const inSuggestionMode = window.KOP_FormConfig &&
+                typeof window.KOP_FormConfig.isSuggestionMode === 'function' &&
+                window.KOP_FormConfig.isSuggestionMode();
+
+            if (inSuggestionMode) {
+                if (typeof window.submitSuggestion === 'function') {
+                    window.submitSuggestion();
+                } else {
+                    console.error('submitSuggestion not available');
+                    showUploadStatus('Submission flow not loaded. Please refresh the page.', 'error');
+                }
+                return;
+            }
+
+            // Admin form: write directly to referrers_master via the cloud save path.
+            if (window.KOP_API && typeof window.KOP_API.saveProjectToCloud === 'function') {
+                try {
+                    await window.KOP_API.saveProjectToCloud(projectName);
+                } catch (err) {
+                    console.error('Failed to save referrer project:', err);
+                    showUploadStatus('Failed to save: ' + (err.message || 'Unknown error'), 'error');
+                }
+            } else {
+                console.error('KOP_API.saveProjectToCloud not available');
+                showUploadStatus('Save function not available. Please refresh the page.', 'error');
             }
         };
         saveReferrerBtn.dataset.listenerAttached = 'true';
+    }
+
+    const saveTransporterBtn = document.getElementById('save-transporter-project-btn');
+    if (saveTransporterBtn && !saveTransporterBtn.dataset.listenerAttached) {
+        saveTransporterBtn.onclick = async () => {
+            const projectName = document.getElementById('transporter-project-name')?.value?.trim();
+            if (!projectName) {
+                customAlert('Please enter a project name', 'Project Name Required').then(() => {
+                    const projectNameInput = document.getElementById('transporter-project-name');
+                    if (projectNameInput) projectNameInput.focus();
+                });
+                return;
+            }
+
+            if (window.formData) {
+                window.formData.category = 'transporters';
+            }
+            if (!window.projects) window.projects = {};
+            if (!window.projects[projectName]) {
+                window.projects[projectName] = { category: 'transporters' };
+            } else {
+                window.projects[projectName].category = 'transporters';
+            }
+            window.currentProjectName = projectName;
+
+            const inSuggestionMode = window.KOP_FormConfig &&
+                typeof window.KOP_FormConfig.isSuggestionMode === 'function' &&
+                window.KOP_FormConfig.isSuggestionMode();
+
+            if (inSuggestionMode) {
+                if (typeof window.submitSuggestion === 'function') {
+                    window.submitSuggestion();
+                } else {
+                    console.error('submitSuggestion not available');
+                    showUploadStatus('Submission flow not loaded. Please refresh the page.', 'error');
+                }
+                return;
+            }
+
+            if (window.KOP_API && typeof window.KOP_API.saveProjectToCloud === 'function') {
+                try {
+                    await window.KOP_API.saveProjectToCloud(projectName);
+                } catch (err) {
+                    console.error('Failed to save transporter project:', err);
+                    showUploadStatus('Failed to save: ' + (err.message || 'Unknown error'), 'error');
+                }
+            } else {
+                console.error('KOP_API.saveProjectToCloud not available');
+                showUploadStatus('Save function not available. Please refresh the page.', 'error');
+            }
+        };
+        saveTransporterBtn.dataset.listenerAttached = 'true';
     }
 
     // Import/Export

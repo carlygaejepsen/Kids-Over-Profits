@@ -57,19 +57,23 @@ SQL;
     // ============================================
     // Create suggested_edits table (for public suggestions)
     // ============================================
+    // Column names must match what save-suggestion.php writes and
+    // process-edit.php / manage-submissions.php read. The earlier draft of this
+    // schema used unique_name/json_data/submission_reason/submitted_by, which
+    // diverged from the production table and broke fresh installs.
     $createSuggestionsTableSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS `suggested_edits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `unique_name` varchar(255) NOT NULL COMMENT 'Project identifier',
-  `json_data` longtext NOT NULL COMMENT 'Suggested changes as JSON',
+  `master_id` varchar(255) NOT NULL COMMENT 'Sanitized project/program name identifier',
+  `edited_json_data` longtext NOT NULL COMMENT 'Suggested changes as JSON',
+  `reason` text COMMENT 'Submitter-supplied reason for the suggestion',
+  `submitter_ip` varchar(255) DEFAULT NULL COMMENT 'Submitter IP (or X-Forwarded-For chain)',
   `status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending',
-  `submitted_by` varchar(255) COMMENT 'Email or identifier of submitter',
-  `submission_reason` text COMMENT 'Reason for suggestion',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `reviewed_at` timestamp NULL DEFAULT NULL COMMENT 'Timestamp when submission was approved or rejected',
   PRIMARY KEY (`id`),
   KEY `status` (`status`),
-  KEY `unique_name` (`unique_name`),
+  KEY `master_id` (`master_id`),
   KEY `created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Public suggestions for facility data edits'
 SQL;

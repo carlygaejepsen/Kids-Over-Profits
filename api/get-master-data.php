@@ -87,6 +87,14 @@ try {
 
                 $data = $normalizePayload($data);
 
+                // Skip per-facility reference rows in facilities_master. These are
+                // created by api/promote-facilities-to-rows.php to give each
+                // individual facility a stable ID for foreign-key linking, and are
+                // explicitly marked so loaders can hide them from the company list.
+                if ($sourceLabel === 'facilities' && is_array($data) && !empty($data['__facility_ref'])) {
+                    continue;
+                }
+
                 // Standardize the project object (normalize old-format records)
                 $has_data_wrapper = isset($data['data']) && is_array($data['data']);
                 if ($has_data_wrapper) {

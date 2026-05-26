@@ -18,11 +18,12 @@ Quick reference for all database tables and their columns.
 ---
 
 ### suggested_edits
-**Columns:** `id`, `unique_name`, `json_data`, `status`, `submitted_by`, `submission_reason`, `created_at`, `updated_at`
+**Columns:** `id`, `master_id`, `edited_json_data`, `reason`, `submitter_ip`, `status`, `created_at`, `reviewed_at`
 
 **Purpose:** Public suggestions for facility data edits
 **Primary Key:** `id`
 **Status Values:** `pending`, `approved`, `rejected`
+**Notes:** `master_id` is a sanitized project/program-name string (not a numeric FK). `reviewed_at` is populated by `api/process-edit.php` when a submission is approved or rejected.
 
 ---
 
@@ -144,7 +145,7 @@ ORDER BY updated_at DESC;
 
 ### Get pending suggestions
 ```sql
-SELECT id, unique_name, status, submitted_by, created_at
+SELECT id, master_id, status, submitter_ip, created_at
 FROM suggested_edits
 WHERE status = 'pending'
 ORDER BY created_at ASC;
