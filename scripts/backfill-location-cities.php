@@ -136,7 +136,7 @@ function backfill_extract($rawAddress) {
     if ($cleaned === '') return null;
 
     // Pull off the trailing ZIP and state abbreviation first; whatever's left
-    // is the "<street?> <city>" prefix we need to split.
+    // is the street+city prefix we need to split.
     $zip = '';
     if (preg_match('/^(.+?)(?:[,]?\s+(\d{5}(?:-\d{4})?))?$/u', $cleaned, $zm)) {
         $cleaned = trim($zm[1]);
@@ -164,7 +164,7 @@ function backfill_extract($rawAddress) {
         ];
     }
 
-    // Comma-less or single-comma-after-street: "<street?> <city> XX"
+    // Comma-less or single-comma-after-street: optional street, then city + state.
     if (preg_match('/^(.*?)\s+([A-Z]{2})$/u', $cleaned, $m)) {
         $beforeState = trim(preg_replace('/[,]+$/', '', $m[1]));
         $abbrev = strtoupper($m[2]);
