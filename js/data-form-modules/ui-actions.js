@@ -34,7 +34,7 @@
             } else if (isStaff) {
                 newItem = { role: '', name: '' };
             } else if (isAdditionalLocation) {
-                newItem = { city: '', address: '' };
+                newItem = { city: '', address: '', zip: '' };
             }
             workingArray.push(newItem);
             if (path === 'identification.currentOwners') {

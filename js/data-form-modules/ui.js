@@ -43,7 +43,7 @@
             const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
             if (typeof array[index] !== 'object' || array[index] === null) {
                 if (isPastTTIJobs) array[index] = { role: '', organization: '', employer: '' };
-                else if (isAdditionalLocation) array[index] = { city: '', address: '' };
+                else if (isAdditionalLocation) array[index] = { city: '', address: '', zip: '' };
                 else array[index] = { role: '', name: '' };
             }
             if (isPastTTIJobs && field === 'employer') {

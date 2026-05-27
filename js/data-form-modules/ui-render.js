@@ -493,7 +493,7 @@
                 } else if (isStaffRoleName) {
                     data.push({ role: '', name: '' });
                 } else if (isAdditionalLocation) {
-                    data.push({ city: '', address: '' });
+                    data.push({ city: '', address: '', zip: '' });
                 } else {
                     data.push('');
                 }
@@ -688,8 +688,10 @@
                 } else if (isAdditionalLocation) {
                     let normalized = item;
                     if (typeof normalized !== 'object' || normalized === null) {
-                        normalized = { city: '', address: item || '' };
+                        normalized = { city: '', address: item || '', zip: '' };
                         data[index] = normalized;
+                    } else if (typeof normalized.zip !== 'string') {
+                        normalized.zip = '';
                     }
 
                     const cityInp = document.createElement('input');
@@ -720,8 +722,24 @@
                         }
                     };
 
+                    const zipInp = document.createElement('input');
+                    zipInp.type = 'text';
+                    zipInp.className = 'array-input array-input-role';
+                    zipInp.placeholder = 'ZIP';
+                    zipInp.style.maxWidth = '90px';
+                    zipInp.value = normalized.zip || '';
+                    zipInp.oninput = (e) => {
+                        if (typeof window.updateArrayObjectItemValue === 'function') {
+                            window.updateArrayObjectItemValue(path, index, 'zip', e.target.value);
+                        } else {
+                            normalized.zip = e.target.value;
+                            if (window.updateJSON) window.updateJSON();
+                        }
+                    };
+
                     row.appendChild(cityInp);
                     row.appendChild(addressInp);
+                    row.appendChild(zipInp);
                 } else if (typeof item === 'object' && item !== null) {
                     const roleInp = document.createElement('input');
                     roleInp.type = 'text';
@@ -769,29 +787,48 @@
                 delBtn.className = 'remove-btn';
                 delBtn.textContent = '×';
                 delBtn.onclick = () => {
-                    data.splice(index, 1);
-                    this.renderArray(container, path, data);
+                    const liveArray = resolveLiveArray() || data;
+                    liveArray.splice(index, 1);
+                    this.renderArray(container, path, liveArray);
                     if (window.updateJSON) window.updateJSON();
+                    if (window.autoSave) window.autoSave();
                 };
                 row.appendChild(delBtn);
                 container.appendChild(row);
             });
+
+            // Always re-resolve the live array from formData rather than trusting the
+            // closure `data` ref, which can become stale after autosave/normalization replaces it.
+            const resolveLiveArray = () => {
+                if (typeof window.resolvePathTarget !== 'function') return null;
+                const { target, normalizedPath } = window.resolvePathTarget(path);
+                if (!target) return null;
+                let arr = window.getNestedValue(target, normalizedPath);
+                if (!Array.isArray(arr)) {
+                    arr = [];
+                    window.setNestedValue(target, normalizedPath, arr);
+                }
+                return arr;
+            };
 
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'add-item-btn';
             addBtn.textContent = '+ Add Item';
             addBtn.onclick = () => {
+                const liveArray = resolveLiveArray() || data;
                 if (isPastTTIJobs) {
-                    data.push({ role: '', employer: '', organization: '' });
+                    liveArray.push({ role: '', employer: '', organization: '' });
                 } else if (isStaffRoleName) {
-                    data.push({ role: '', name: '' });
+                    liveArray.push({ role: '', name: '' });
                 } else if (isAdditionalLocation) {
-                    data.push({ city: '', address: '' });
+                    liveArray.push({ city: '', address: '', zip: '' });
                 } else {
-                    data.push('');
+                    liveArray.push('');
                 }
-                this.renderArray(container, path, data);
+                this.renderArray(container, path, liveArray);
+                if (window.updateJSON) window.updateJSON();
+                if (window.autoSave) window.autoSave();
             };
             container.appendChild(addBtn);
 

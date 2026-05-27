@@ -527,7 +527,7 @@ function updateArrayObjectItemValue(path, index, field, value) {
             if (isPastTTIJobs) {
                 array[index] = { role: '', organization: '', employer: '' };
             } else if (isAdditionalLocation) {
-                array[index] = { city: '', address: '' };
+                array[index] = { city: '', address: '', zip: '' };
             } else {
                 array[index] = { role: '', name: '' };
             }

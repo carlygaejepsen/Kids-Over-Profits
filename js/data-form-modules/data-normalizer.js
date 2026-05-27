@@ -330,15 +330,19 @@
                 if (Array.isArray(additionalLocations)) {
                     normalized.locationDetails.additionalLocations = additionalLocations.map(item => {
                         if (typeof item === 'string') {
-                            return { city: '', address: item };
+                            return { city: '', address: item, zip: '' };
                         }
                         return {
                             city: (item && typeof item.city === 'string') ? item.city : '',
-                            address: (item && typeof item.address === 'string') ? item.address : ''
+                            address: (item && typeof item.address === 'string') ? item.address : '',
+                            zip: (item && typeof item.zip === 'string') ? item.zip
+                                : (item && typeof item.zipCode === 'string') ? item.zipCode
+                                : (item && typeof item.postalCode === 'string') ? item.postalCode
+                                : ''
                         };
                     });
                 } else if (typeof additionalLocations === 'string' && additionalLocations.trim()) {
-                    normalized.locationDetails.additionalLocations = [{ city: '', address: additionalLocations.trim() }];
+                    normalized.locationDetails.additionalLocations = [{ city: '', address: additionalLocations.trim(), zip: '' }];
                 } else {
                     normalized.locationDetails.additionalLocations = [];
                 }

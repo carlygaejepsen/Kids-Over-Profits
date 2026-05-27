@@ -960,7 +960,7 @@ get_header();
                 </div>
                 <div class="form-group">
                     <label>Additional Locations</label>
-                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city + address only).</div>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city, address, ZIP).</div>
                     <div class="array-container" data-path="locationDetails.additionalLocations"></div>
                 </div>
             </div>
