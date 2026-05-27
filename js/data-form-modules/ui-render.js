@@ -787,6 +787,7 @@
                 delBtn.className = 'remove-btn';
                 delBtn.textContent = '×';
                 delBtn.onclick = () => {
+                    flushInputsToArray();
                     const liveArray = resolveLiveArray() || data;
                     liveArray.splice(index, 1);
                     this.renderArray(container, path, liveArray);
@@ -811,11 +812,53 @@
                 return arr;
             };
 
+            // Sync any currently-typed input values in the container back to the live array
+            // before we wipe the DOM. Defends against the case where the user clicked Add
+            // before the last keystroke's oninput finished propagating to formData.
+            const flushInputsToArray = () => {
+                const liveArray = resolveLiveArray();
+                if (!liveArray) return;
+                const rows = container.querySelectorAll('.array-item');
+                rows.forEach((row, rowIndex) => {
+                    if (rowIndex >= liveArray.length) return;
+                    const inputs = row.querySelectorAll('input, textarea');
+                    if (isAdditionalLocation) {
+                        const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
+                            ? liveArray[rowIndex] : {};
+                        liveArray[rowIndex] = {
+                            city: inputs[1] ? inputs[1].value : (existing.city || ''),
+                            address: inputs[0] ? inputs[0].value : (existing.address || ''),
+                            zip: inputs[2] ? inputs[2].value : (existing.zip || '')
+                        };
+                    } else if (isPastTTIJobs) {
+                        const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
+                            ? liveArray[rowIndex] : {};
+                        const employerVal = inputs[1] ? inputs[1].value : (existing.employer || existing.organization || '');
+                        liveArray[rowIndex] = {
+                            role: inputs[0] ? inputs[0].value : (existing.role || ''),
+                            employer: employerVal,
+                            organization: employerVal
+                        };
+                    } else if (isStaffRoleName) {
+                        const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
+                            ? liveArray[rowIndex] : {};
+                        liveArray[rowIndex] = {
+                            ...existing,
+                            role: inputs[0] ? inputs[0].value : (existing.role || ''),
+                            name: inputs[1] ? inputs[1].value : (existing.name || '')
+                        };
+                    } else if (inputs.length === 1) {
+                        liveArray[rowIndex] = inputs[0].value;
+                    }
+                });
+            };
+
             const addBtn = document.createElement('button');
             addBtn.type = 'button';
             addBtn.className = 'add-item-btn';
             addBtn.textContent = '+ Add Item';
             addBtn.onclick = () => {
+                flushInputsToArray();
                 const liveArray = resolveLiveArray() || data;
                 if (isPastTTIJobs) {
                     liveArray.push({ role: '', employer: '', organization: '' });
