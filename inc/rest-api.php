@@ -1989,18 +1989,135 @@ function kop_state_collect_programs($state_name) {
         $resolved_state  = $facility_state ?: ($parts_state ?: ($locdet_state ?: $state_name));
         $resolved_zip    = trim((string)($address['zip']    ?? ($address_parts['zip']    ?? '')));
 
+        // locationDetails.additionalLocations is the admin form's "Additional Locations"
+        // array — each entry is {city, address, zip}. Flatten each to a single string so
+        // kop_state_collect_facilities can merge them into the facility's addresses[].
+        $additional_addresses = array();
+        $additional_raw = isset($location_details['additionalLocations']) && is_array($location_details['additionalLocations'])
+            ? $location_details['additionalLocations']
+            : array();
+        foreach ($additional_raw as $alt) {
+            if (!is_array($alt)) continue;
+            $alt_street = trim((string)($alt['address'] ?? ''));
+            $alt_city   = trim((string)($alt['city']    ?? ''));
+            $alt_state  = trim((string)($alt['state']   ?? ''));
+            $alt_zip    = trim((string)($alt['zip']     ?? ''));
+            // The "address" field in additionalLocations is typically a full street+city+state+zip
+            // line. If it already contains a comma we treat it as the formatted address;
+            // otherwise we glue the structured pieces together.
+            if ($alt_street !== '' && strpos($alt_street, ',') !== false) {
+                $formatted = $alt_street;
+            } else {
+                $formatted = implode(', ', array_filter(array($alt_street, $alt_city, $alt_state, $alt_zip)));
+            }
+            $formatted = trim($formatted);
+            if ($formatted !== '') {
+                $additional_addresses[] = $formatted;
+            }
+        }
+
+        // Operator resolution: prefer the per-facility `identification.currentOperator`
+        // (set in the admin form's Identification section). Fall back to the project-level
+        // `operator.name`, but ONLY when the project isn't a "Location Aggregate" — those
+        // rows store the state name in operator.name (e.g. "TEXAS"), which we don't want
+        // to render as a facility's operator. Matches the filter in kop_collect_operator_values.
+        $facility_operator = trim((string)($identification['currentOperator'] ?? ''));
+        $project_operator_type = trim((string)($data['operator']['type'] ?? ''));
+        $project_operator_name = trim((string)($data['operator']['name'] ?? ''));
+        $is_location_aggregate = strcasecmp($project_operator_type, 'Location Aggregate') === 0;
+        $resolved_operator = $facility_operator !== ''
+            ? $facility_operator
+            : ($is_location_aggregate ? '' : $project_operator_name);
+
+        // Capacity / census: prefer admin-form values from facilityDetails. Inspection
+        // data fills these in later only if blank here.
+        $facility_details = isset($facility['facilityDetails']) && is_array($facility['facilityDetails']) ? $facility['facilityDetails'] : array();
+        $facility_capacity = $facility_details['capacity'] ?? '';
+        $facility_capacity = ($facility_capacity === null) ? '' : trim((string)$facility_capacity);
+        $facility_census = $facility_details['currentCensus'] ?? '';
+        $facility_census = ($facility_census === null) ? '' : trim((string)$facility_census);
+
+        // Operating period: prefer yearsOfOperation, fall back to startYear/endYear
+        // pair so admin-form date pickers surface as "1994–2010" / "Est. 1994".
+        $operating = isset($facility['operatingPeriod']) && is_array($facility['operatingPeriod']) ? $facility['operatingPeriod'] : array();
+        $operating_years = trim((string)($operating['yearsOfOperation'] ?? ''));
+        if ($operating_years === '') {
+            $start_year = trim((string)($operating['startYear'] ?? ''));
+            $end_year = trim((string)($operating['endYear'] ?? ''));
+            if ($start_year !== '' && $end_year !== '') $operating_years = "$start_year–$end_year";
+            elseif ($start_year !== '')                  $operating_years = $start_year;
+            elseif ($end_year !== '')                    $operating_years = "–$end_year";
+        }
+
+        // Normalize each scalar/array field on the facility schema into a primitive
+        // that the JS card layer can render. Arrays of strings stay arrays; arrays
+        // of objects pass through unchanged (the JS handles {name, role, employer}).
+        $as_array = static function ($v) {
+            return is_array($v) ? $v : array();
+        };
+        $as_string = static function ($v) {
+            if ($v === null || $v === '') return '';
+            return is_scalar($v) ? trim((string)$v) : '';
+        };
+
+        $age_min = $facility_details['ageRange']['min'] ?? null;
+        $age_max = $facility_details['ageRange']['max'] ?? null;
+
+        // Resources is an object: keep only the keys actually populated (true flag,
+        // non-empty notes/customResources). Strip the noise of the dozen always-false flags.
+        $raw_resources = is_array($facility['resources'] ?? null) ? $facility['resources'] : array();
+        $resource_flags = array();
+        $resource_details = array();
+        foreach ($raw_resources as $rkey => $rval) {
+            if (strpos($rkey, 'has') === 0 && $rval === true) {
+                $resource_flags[] = $rkey;
+            } elseif ($rkey === 'customResources' && is_array($rval) && !empty($rval)) {
+                $resource_details['customResources'] = $rval;
+            } elseif (is_string($rval) && trim($rval) !== '' && in_array($rkey, array('newsDetails', 'pressReleasesDetails', 'notes'), true)) {
+                $resource_details[$rkey] = trim($rval);
+            }
+        }
+
         $programs[] = array(
             'project_name'     => $project_name,
             'facility_name'    => $facility_name,
-            'operator_name'    => isset($data['operator']['name']) ? $data['operator']['name'] : '',
+            'operator_name'    => $resolved_operator,
             'city'             => $resolved_city,
             'state'            => $resolved_state,
+            'country'          => $as_string($location_details['country'] ?? ''),
             'street'           => $resolved_street,
             'zip'              => $resolved_zip,
             'raw_address'      => $raw_address,
-            'type'             => isset($facility['facilityDetails']['type']) ? $facility['facilityDetails']['type'] : '',
-            'status'           => isset($facility['operatingPeriod']['status']) ? $facility['operatingPeriod']['status'] : '',
-            'operating_period' => isset($facility['operatingPeriod']['yearsOfOperation']) ? $facility['operatingPeriod']['yearsOfOperation'] : '',
+            'additional_addresses' => $additional_addresses,
+            'type'             => $as_string($facility_details['type'] ?? ''),
+            'status'           => $as_string($operating['status'] ?? ''),
+            'operating_period' => $operating_years,
+            'operating_notes'  => $as_array($operating['notes'] ?? null),
+            'capacity'         => $facility_capacity,
+            'census'           => $facility_census,
+            'age_min'          => ($age_min === null || $age_min === '') ? null : (int)$age_min,
+            'age_max'          => ($age_max === null || $age_max === '') ? null : (int)$age_max,
+            'gender'           => $as_string($facility_details['gender'] ?? ''),
+            'current_name'     => $as_string($identification['currentName'] ?? ''),
+            'current_owner'    => $as_string($identification['currentOwner'] ?? ''),
+            'current_owners'   => $as_array($identification['currentOwners'] ?? null),
+            'past_owners'      => $as_array($identification['pastOwners'] ?? null),
+            'other_names'      => $as_array($identification['otherNames'] ?? null),
+            'past_names'       => $as_array($identification['pastNames'] ?? null),
+            'known_referrers'  => $as_array($identification['knownReferrers'] ?? null),
+            'other_operators'  => $as_array($facility['otherOperators'] ?? null),
+            'administrator'    => $as_array($facility['staff']['administrator'] ?? null),
+            'notable_staff'    => $as_array($facility['staff']['notableStaff'] ?? null),
+            'past_tti_jobs'    => $as_array($facility['staff']['pastTTIJobs'] ?? null),
+            'profile_links'    => $as_array($facility['profileLinks'] ?? null),
+            'accreditations_current' => $as_array($facility['accreditations']['current'] ?? null),
+            'accreditations_past'    => $as_array($facility['accreditations']['past'] ?? null),
+            'memberships'      => $as_array($facility['memberships'] ?? null),
+            'certifications'   => $as_array($facility['certifications'] ?? null),
+            'licensing'        => $as_array($facility['licensing'] ?? null),
+            'resource_flags'   => $resource_flags,
+            'resource_details' => $resource_details,
+            'notes'            => $as_array($facility['notes'] ?? null),
         );
     };
 
@@ -2238,6 +2355,7 @@ function kop_state_collect_inspection_summaries($state_name) {
 
             $stats_by_facility = array();        // counts
             $inspections_by_facility = array();  // per-record details
+            $inspection_by_fid_date = array();   // "$fid|$date" -> index into $inspections_by_facility[$fid] (for grouping single-finding rows)
 
             if (is_array($report_rows)) {
                 foreach ($report_rows as $r) {
@@ -2246,44 +2364,108 @@ function kop_state_collect_inspection_summaries($state_name) {
                         $stats_by_facility[$fid] = array('count' => 0, 'violations' => 0, 'latest' => '');
                         $inspections_by_facility[$fid] = array();
                     }
-                    $stats_by_facility[$fid]['count']++;
 
                     $categories = json_decode($r['categories_json'] ?? '', true);
-                    $finding_count = 0;
-                    $findings = array();
-                    $type = '';
-                    $pdf_url = '';
+                    if (!is_array($categories)) $categories = array();
+                    $date_str = (string)($r['report_date'] ?? '');
+                    $summary_text = (string)($r['summary'] ?? '');
 
-                    if (is_array($categories)) {
-                        if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
-                            $finding_count = (int)$categories['finding_count'];
-                        }
-                        // Pass findings through as-is so the client can apply
-                        // state-specific key extraction (OR uses {rule, excerpt},
-                        // AZ uses {rule, evidence, findings}, etc.). Cap to 12.
-                        if (isset($categories['findings']) && is_array($categories['findings'])) {
-                            if (!$finding_count) $finding_count = count($categories['findings']);
-                            $findings = array_slice($categories['findings'], 0, 12);
-                        }
-                        // If still no count but corrective actions exist that aren't "none",
-                        // treat as "has findings" so the inspection is visually flagged.
-                        $corrective = trim((string)($categories['corrective_actions'] ?? ''));
-                        if (!$finding_count && $corrective !== '' && strcasecmp($corrective, 'none') !== 0) {
-                            $finding_count = max(1, $finding_count);
-                        }
-                        $type = (string)($categories['report_type'] ?? '');
-                        $pdf_url = (string)($categories['pdf_url'] ?? '');
-                    }
-                    $stats_by_facility[$fid]['violations'] += $finding_count;
-
-                    $date_str = $r['report_date'] ?? '';
-                    if ($date_str) {
+                    // Update latest-date regardless of which branch we take below.
+                    $update_latest = static function ($date_str) use (&$stats_by_facility, $fid) {
+                        if (!$date_str) return;
                         $existing_ts = strtotime((string)$stats_by_facility[$fid]['latest']);
                         $new_ts = strtotime((string)$date_str);
                         if ($new_ts && (!$existing_ts || $new_ts > $existing_ts)) {
                             $stats_by_facility[$fid]['latest'] = $date_str;
                         }
+                    };
+
+                    // TX (and similar) write one DB row per deficiency, with the
+                    // citation in `summary` and TX-specific category keys. Detect
+                    // this so we can group rows by date into proper inspections
+                    // instead of showing one "No findings" card per deficiency.
+                    $has_findings_array = isset($categories['findings']) && is_array($categories['findings']) && !empty($categories['findings']);
+                    $is_single_finding = !$has_findings_array && (
+                        !empty($categories['Standard Number / Description']) ||
+                        !empty($categories['Sections Violated']) ||
+                        !empty($categories['Standard Risk Level']) ||
+                        !empty($categories['Deficiency Narrative'])
+                    );
+
+                    if ($is_single_finding) {
+                        $rule = trim((string)($categories['Sections Violated'] ?? ''));
+                        $standard_desc = trim((string)($categories['Standard Number / Description'] ?? ''));
+                        $description = $standard_desc;
+                        if ($rule !== '' && $standard_desc !== '' && mb_strpos($standard_desc, $rule) === 0) {
+                            $description = trim(ltrim(mb_substr($standard_desc, mb_strlen($rule)), " -–—"));
+                        }
+                        if ($description === '') $description = $summary_text;
+                        $narrative = trim((string)($categories['Deficiency Narrative'] ?? ''));
+
+                        $finding_entry = array('rule' => $rule, 'excerpt' => $description);
+                        if ($narrative !== '')                              $finding_entry['evidence']   = $narrative;
+                        if (!empty($categories['Standard Risk Level']))     $finding_entry['risk_level'] = trim((string)$categories['Standard Risk Level']);
+                        if (!empty($categories['Corrected at Inspection'])) $finding_entry['corrected']  = trim((string)$categories['Corrected at Inspection']);
+                        if (!empty($categories['Category']))                $finding_entry['category']   = trim((string)$categories['Category']);
+
+                        $stats_by_facility[$fid]['violations']++;
+
+                        $key = $fid . '|' . $date_str;
+                        if (isset($inspection_by_fid_date[$key])) {
+                            $idx = $inspection_by_fid_date[$key];
+                            if (count($inspections_by_facility[$fid][$idx]['findings']) < 30) {
+                                $inspections_by_facility[$fid][$idx]['findings'][] = $finding_entry;
+                            }
+                            $inspections_by_facility[$fid][$idx]['finding_count']++;
+                        } else {
+                            if (count($inspections_by_facility[$fid]) < 20) {
+                                $idx = count($inspections_by_facility[$fid]);
+                                $inspections_by_facility[$fid][] = array(
+                                    'date'          => $date_str,
+                                    'type'          => '',
+                                    'finding_count' => 1,
+                                    'findings'      => array($finding_entry),
+                                    'pdf_url'       => '',
+                                    'report_url'    => (string)($r['report_url'] ?? ''),
+                                    'summary'       => '',
+                                    'categories'    => array(),
+                                );
+                                $inspection_by_fid_date[$key] = $idx;
+                            }
+                            $stats_by_facility[$fid]['count']++;
+                        }
+                        $update_latest($date_str);
+                        continue;
                     }
+
+                    // Original path: this row represents an entire inspection.
+                    $stats_by_facility[$fid]['count']++;
+
+                    $finding_count = 0;
+                    $findings = array();
+                    $type = '';
+                    $pdf_url = '';
+
+                    if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
+                        $finding_count = (int)$categories['finding_count'];
+                    }
+                    // Pass findings through as-is so the client can apply
+                    // state-specific key extraction (OR uses {rule, excerpt},
+                    // AZ uses {rule, evidence, findings}, etc.). Cap to 12.
+                    if (isset($categories['findings']) && is_array($categories['findings'])) {
+                        if (!$finding_count) $finding_count = count($categories['findings']);
+                        $findings = array_slice($categories['findings'], 0, 12);
+                    }
+                    // If still no count but corrective actions exist that aren't "none",
+                    // treat as "has findings" so the inspection is visually flagged.
+                    $corrective = trim((string)($categories['corrective_actions'] ?? ''));
+                    if (!$finding_count && $corrective !== '' && strcasecmp($corrective, 'none') !== 0) {
+                        $finding_count = max(1, $finding_count);
+                    }
+                    $type = (string)($categories['report_type'] ?? '');
+                    $pdf_url = (string)($categories['pdf_url'] ?? '');
+                    $stats_by_facility[$fid]['violations'] += $finding_count;
+                    $update_latest($date_str);
 
                     if (count($inspections_by_facility[$fid]) < 20) {
                         // Cherry-pick state-report category fields so JS can render
@@ -2678,32 +2860,63 @@ function kop_state_collect_facilities($state_name) {
             $p['zip'] ?? '',
         ));
 
+        $extra_addresses = is_array($p['additional_addresses'] ?? null) ? $p['additional_addresses'] : array();
+
         if (isset($by_key[$key])) {
             // Existing record (e.g. another campus of the same facility) — fill in
             // missing scalar fields, and accumulate the campus's address into addresses[].
             $existing = &$by_key[$key];
-            if (!$existing['operator_name'] && !empty($p['operator_name'])) $existing['operator_name'] = $p['operator_name'];
-            if (!$existing['type']          && !empty($p['type']))          $existing['type']          = $p['type'];
-            if (!$existing['status']        && !empty($p['status']))        $existing['status']        = $p['status'];
-            if (!$existing['operating_period'] && !empty($p['operating_period'])) $existing['operating_period'] = $p['operating_period'];
+            // Scalar fields: keep the first non-empty value.
+            foreach (array('operator_name','type','status','operating_period','capacity','census',
+                           'country','gender','current_name','current_owner') as $sk) {
+                if (empty($existing[$sk]) && !empty($p[$sk])) $existing[$sk] = $p[$sk];
+            }
+            if (($existing['age_min'] ?? null) === null && ($p['age_min'] ?? null) !== null) $existing['age_min'] = $p['age_min'];
+            if (($existing['age_max'] ?? null) === null && ($p['age_max'] ?? null) !== null) $existing['age_max'] = $p['age_max'];
+            // Array fields: union (dedup of scalars; objects pass through).
+            foreach (array('operating_notes','current_owners','past_owners','other_names','past_names',
+                           'known_referrers','other_operators','administrator','notable_staff',
+                           'past_tti_jobs','profile_links','accreditations_current','accreditations_past',
+                           'memberships','certifications','licensing','resource_flags','notes') as $ak) {
+                if (empty($p[$ak]) || !is_array($p[$ak])) continue;
+                if (!isset($existing[$ak]) || !is_array($existing[$ak])) $existing[$ak] = array();
+                foreach ($p[$ak] as $item) {
+                    if (is_scalar($item)) {
+                        if (!in_array($item, $existing[$ak], true)) $existing[$ak][] = $item;
+                    } else {
+                        $existing[$ak][] = $item;
+                    }
+                }
+            }
+            if (!empty($p['resource_details']) && is_array($p['resource_details'])) {
+                if (!isset($existing['resource_details']) || !is_array($existing['resource_details'])) {
+                    $existing['resource_details'] = array();
+                }
+                $existing['resource_details'] = array_merge($existing['resource_details'], $p['resource_details']);
+            }
 
             $incoming_address = (!$has_real_structured && !empty($p['raw_address']))
                 ? $p['raw_address']
                 : implode(', ', $address_parts);
-            if ($incoming_address !== '') {
+            $to_merge = array();
+            if ($incoming_address !== '') $to_merge[] = $incoming_address;
+            foreach ($extra_addresses as $extra) $to_merge[] = $extra;
+            if (!empty($to_merge)) {
                 if (!isset($existing['addresses']) || !is_array($existing['addresses'])) {
                     $existing['addresses'] = array();
                     if (!empty($existing['address'])) $existing['addresses'][] = $existing['address'];
                 }
-                // Dedup case-insensitively
-                $known = array_map('strtolower', $existing['addresses']);
-                if (!in_array(strtolower($incoming_address), $known, true)) {
-                    $existing['addresses'][] = $incoming_address;
-                }
-                if (empty($existing['address'])) $existing['address'] = $incoming_address;
-                $addr_key = kop_normalize_address_for_match($incoming_address);
-                if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
-                    $address_to_key[$addr_key] = $key;
+                foreach ($to_merge as $addr) {
+                    // Dedup case-insensitively
+                    $known = array_map('strtolower', $existing['addresses']);
+                    if (!in_array(strtolower($addr), $known, true)) {
+                        $existing['addresses'][] = $addr;
+                    }
+                    if (empty($existing['address'])) $existing['address'] = $addr;
+                    $addr_key = kop_normalize_address_for_match($addr);
+                    if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                        $address_to_key[$addr_key] = $key;
+                    }
                 }
             }
             $existing['in_master'] = true;
@@ -2712,30 +2925,63 @@ function kop_state_collect_facilities($state_name) {
             $primary_address = (!$has_real_structured && !empty($p['raw_address']))
                 ? $p['raw_address']
                 : implode(', ', $address_parts);
+            $addresses = $primary_address !== '' ? array($primary_address) : array();
+            foreach ($extra_addresses as $extra) {
+                if (!in_array(strtolower($extra), array_map('strtolower', $addresses), true)) {
+                    $addresses[] = $extra;
+                }
+            }
             $by_key[$key] = array(
                 'name'              => $p['facility_name'] ?: $p['project_name'],
                 'project_name'      => $p['project_name'],
                 'address'           => $primary_address,
-                'addresses'         => $primary_address !== '' ? array($primary_address) : array(),
+                'addresses'         => $addresses,
                 'city'              => $p['city'] ?? '',
                 'state'             => $p['state'] ?? $state_name,
+                'country'           => $p['country'] ?? '',
                 'operator_name'     => $p['operator_name'] ?? '',
                 'type'              => $p['type'] ?? '',
                 'status'            => $p['status'] ?? '',
                 'operating_period'  => $p['operating_period'] ?? '',
+                'operating_notes'   => $p['operating_notes'] ?? array(),
                 'inspection_count'  => 0,
                 'violation_count'   => 0,
                 'latest_inspection_date' => '',
-                'capacity'          => '',
-                'census'            => '',
+                'capacity'          => $p['capacity'] ?? '',
+                'census'            => $p['census'] ?? '',
+                'age_min'           => $p['age_min'] ?? null,
+                'age_max'           => $p['age_max'] ?? null,
+                'gender'            => $p['gender'] ?? '',
+                'current_name'      => $p['current_name'] ?? '',
+                'current_owner'     => $p['current_owner'] ?? '',
+                'current_owners'    => $p['current_owners'] ?? array(),
+                'past_owners'       => $p['past_owners'] ?? array(),
+                'other_names'       => $p['other_names'] ?? array(),
+                'past_names'        => $p['past_names'] ?? array(),
+                'known_referrers'   => $p['known_referrers'] ?? array(),
+                'other_operators'   => $p['other_operators'] ?? array(),
+                'administrator'     => $p['administrator'] ?? array(),
+                'notable_staff'     => $p['notable_staff'] ?? array(),
+                'past_tti_jobs'     => $p['past_tti_jobs'] ?? array(),
+                'profile_links'     => $p['profile_links'] ?? array(),
+                'accreditations_current' => $p['accreditations_current'] ?? array(),
+                'accreditations_past'    => $p['accreditations_past'] ?? array(),
+                'memberships'       => $p['memberships'] ?? array(),
+                'certifications'    => $p['certifications'] ?? array(),
+                'licensing'         => $p['licensing'] ?? array(),
+                'resource_flags'    => $p['resource_flags'] ?? array(),
+                'resource_details'  => $p['resource_details'] ?? array(),
+                'notes'             => $p['notes'] ?? array(),
                 'inspections'       => array(),
                 'in_master'         => true,
                 'in_inspections'    => false,
             );
 
-            $addr_key = kop_normalize_address_for_match($by_key[$key]['address']);
-            if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
-                $address_to_key[$addr_key] = $key;
+            foreach ($addresses as $a) {
+                $addr_key = kop_normalize_address_for_match($a);
+                if ($addr_key !== '' && !isset($address_to_key[$addr_key])) {
+                    $address_to_key[$addr_key] = $key;
+                }
             }
         }
     }
@@ -2816,15 +3062,40 @@ function kop_state_collect_facilities($state_name) {
                 'addresses'         => $insp_addr !== '' ? array($insp_addr) : array(),
                 'city'              => '',
                 'state'             => $state_name,
+                'country'           => '',
                 'operator_name'     => '',
                 'type'              => trim((string)($insp['program_category'] ?? '')),
                 'status'            => '',
                 'operating_period'  => '',
+                'operating_notes'   => array(),
                 'inspection_count'  => $insp['inspection_count'],
                 'violation_count'   => $insp['violation_count'],
                 'latest_inspection_date' => $insp['latest_inspection_date'],
                 'capacity'          => trim((string)($insp['capacity'] ?? '')),
                 'census'            => trim((string)($insp['census'] ?? '')),
+                'age_min'           => null,
+                'age_max'           => null,
+                'gender'            => '',
+                'current_name'      => '',
+                'current_owner'     => '',
+                'current_owners'    => array(),
+                'past_owners'       => array(),
+                'other_names'       => array(),
+                'past_names'        => array(),
+                'known_referrers'   => array(),
+                'other_operators'   => array(),
+                'administrator'     => array(),
+                'notable_staff'     => array(),
+                'past_tti_jobs'     => array(),
+                'profile_links'     => array(),
+                'accreditations_current' => array(),
+                'accreditations_past'    => array(),
+                'memberships'       => array(),
+                'certifications'    => array(),
+                'licensing'         => array(),
+                'resource_flags'    => array(),
+                'resource_details'  => array(),
+                'notes'             => array(),
                 'inspections'       => $insp['inspections'] ?? array(),
                 'in_master'         => false,
                 'in_inspections'    => true,

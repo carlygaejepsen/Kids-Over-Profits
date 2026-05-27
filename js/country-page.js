@@ -1,7 +1,14 @@
 (function() {
     'use strict';
 
-    const config = window.statePageConfig;
+    const config = window.countryPageConfig;
+    // Compat shim: rendering helpers below read config.stateName / config.stateSlug
+    // (forked from state-page.js). Mirror the country fields so we don't have to
+    // touch every reference.
+    if (config) {
+        if (!config.stateName && config.countryName) config.stateName = config.countryName;
+        if (!config.stateSlug && config.countrySlug) config.stateSlug = config.countrySlug;
+    }
     if (!config || !config.apiUrl) return;
 
     const state = {
@@ -956,141 +963,17 @@
         return period;
     };
 
-    // Render a single list item: strings pass through; objects pull out the
-    // common shape {name, role, employer, organization, url, label}.
-    const renderListEntry = item => {
-        if (item == null) return '';
-        if (typeof item === 'string' || typeof item === 'number') {
-            return escapeHtml(String(item));
-        }
-        if (typeof item !== 'object') return '';
-
-        const url = item.url || item.link || item.href || '';
-        const label = item.label || item.name || item.title || item.text || url;
-        const role = item.role || '';
-        const employer = item.employer || item.organization || '';
-
-        let core;
-        if (url) {
-            core = `<a href="${escapeHtml(String(url))}" target="_blank" rel="noopener">${escapeHtml(String(label || url))}</a>`;
-        } else {
-            core = escapeHtml(String(label || ''));
-        }
-        const extras = [];
-        if (role) extras.push(escapeHtml(String(role)));
-        if (employer) extras.push(escapeHtml(String(employer)));
-        return extras.length ? `${core} <span class="detail-sub">— ${extras.join(' · ')}</span>` : core;
-    };
-
-    // Render a detail sub-section if the array has at least one displayable item.
-    const renderListSection = (label, items) => {
-        if (!Array.isArray(items) || !items.length) return '';
-        const lis = items
-            .map(renderListEntry)
-            .filter(s => s && s.trim() !== '')
-            .map(s => `<li>${s}</li>`)
-            .join('');
-        if (!lis) return '';
-        return `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${lis}</ul></div>`;
-    };
-
-    const renderScalarRow = (label, value) => {
-        if (value === null || value === undefined) return '';
-        const text = String(value).trim();
-        if (!text) return '';
-        return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
-    };
-
-    // "has*" resource flag -> human label
-    const RESOURCE_FLAG_LABELS = {
-        hasNews: 'News articles', hasPressReleases: 'Press releases',
-        hasInspections: 'Inspection reports', hasStateReports: 'State reports',
-        hasRegulatoryFilings: 'Regulatory filings', hasLawsuits: 'Lawsuits',
-        hasPoliceReports: 'Police reports', hasArticlesOfOrganization: 'Articles of organization',
-        hasPropertyRecords: 'Property records', hasPromotionalMaterials: 'Promotional materials',
-        hasEnrollmentDocuments: 'Enrollment documents', hasResearch: 'Academic research',
-        hasFinancial: 'Financial reports', hasStudent: 'Student / resident manual',
-        hasStaff: 'Staff manual', hasParent: 'Parent manual',
-        hasWebsite: 'Archived website', hasNATSAP: 'NATSAP profile',
-        hasSurvivorStories: 'Survivor stories', hasOther: 'Other documentation',
-        hasVideo: 'Video', hasAudio: 'Audio', hasSocialMedia: 'Social media',
-    };
-
     const facilityCardHtml = facility => {
         const displayName = getFacilityDisplayName(facility);
 
         // Stats / metadata that go into the collapsible "Details" panel.
         const detailRows = [];
-
-        // Identification & names
-        if (facility.current_name && facility.current_name !== facility.name) {
-            detailRows.push(renderScalarRow('Current name', facility.current_name));
-        }
-        detailRows.push(renderListSection('Other names', facility.other_names));
-        detailRows.push(renderListSection('Past names', facility.past_names));
-
-        // Operator / ownership
         if (facility.operator_name) {
             detailRows.push(`<div class="detail-row"><strong>Operator:</strong> ${escapeHtml(facility.operator_name)}</div>`);
         }
-        detailRows.push(renderListSection('Other operators', facility.other_operators));
-        if (facility.current_owner) {
-            detailRows.push(renderScalarRow('Current owner', facility.current_owner));
-        }
-        detailRows.push(renderListSection('Current owners', facility.current_owners));
-        detailRows.push(renderListSection('Past owners', facility.past_owners));
-
-        // Facility details
         if (facility.type) {
             detailRows.push(`<div class="detail-row"><strong>Type:</strong> ${escapeHtml(facility.type)}</div>`);
         }
-        const ageMin = facility.age_min;
-        const ageMax = facility.age_max;
-        if (ageMin != null || ageMax != null) {
-            const ageText = (ageMin != null && ageMax != null) ? `${ageMin}–${ageMax}`
-                : (ageMin != null) ? `${ageMin}+` : `up to ${ageMax}`;
-            detailRows.push(renderScalarRow('Age range', ageText));
-        }
-        if (facility.gender) detailRows.push(renderScalarRow('Gender', facility.gender));
-        if (facility.country) detailRows.push(renderScalarRow('Country', facility.country));
-
-        // Operating period notes (the headline yearLabel renders elsewhere)
-        detailRows.push(renderListSection('Operational notes', facility.operating_notes));
-
-        // Staff
-        detailRows.push(renderListSection('Administrator', facility.administrator));
-        detailRows.push(renderListSection('Notable staff', facility.notable_staff));
-        detailRows.push(renderListSection('Past TTI employment', facility.past_tti_jobs));
-
-        // Links & referrals
-        detailRows.push(renderListSection('Profile links', facility.profile_links));
-        detailRows.push(renderListSection('Known referrers', facility.known_referrers));
-
-        // Credentials
-        detailRows.push(renderListSection('Current accreditations', facility.accreditations_current));
-        detailRows.push(renderListSection('Past accreditations', facility.accreditations_past));
-        detailRows.push(renderListSection('Memberships', facility.memberships));
-        detailRows.push(renderListSection('Certifications', facility.certifications));
-        detailRows.push(renderListSection('Licensing', facility.licensing));
-
-        // Resources: turn the populated has* flags into chips, plus any details strings
-        if (Array.isArray(facility.resource_flags) && facility.resource_flags.length) {
-            const chips = facility.resource_flags
-                .map(f => RESOURCE_FLAG_LABELS[f] || f.replace(/^has/, ''))
-                .map(label => `<span class="resource-chip">${escapeHtml(label)}</span>`)
-                .join('');
-            detailRows.push(`<div class="detail-row detail-resources"><strong>Resources on file:</strong> ${chips}</div>`);
-        }
-        const rd = facility.resource_details || {};
-        if (rd.newsDetails)          detailRows.push(renderScalarRow('News details', rd.newsDetails));
-        if (rd.pressReleasesDetails) detailRows.push(renderScalarRow('Press release details', rd.pressReleasesDetails));
-        if (rd.notes)                detailRows.push(renderScalarRow('Resource notes', rd.notes));
-        detailRows.push(renderListSection('Custom resources', rd.customResources));
-
-        // Facility-level notes
-        detailRows.push(renderListSection('Notes', facility.notes));
-
-        // Inspection / violation summary chips (kept at the bottom of details)
         const statChips = [];
         if (facility.inspection_count > 0) {
             statChips.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
@@ -1104,11 +987,6 @@
         if (statChips.length) {
             detailRows.push(`<div class="detail-row detail-stats">${statChips.join('')}</div>`);
         }
-
-        // Drop empty strings (renderListSection / renderScalarRow return '' when no data).
-        const filteredDetailRows = detailRows.filter(Boolean);
-        detailRows.length = 0;
-        detailRows.push(...filteredDetailRows);
 
         const folderId = findFolderForFacility(displayName);
         const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
@@ -1217,7 +1095,7 @@
         const inspections = state.data.inspections || {};
 
         if ((facilities.total ?? 0) === 0) {
-            container.innerHTML = '<p class="empty">No facilities on file for this state yet.</p>';
+            container.innerHTML = '<p class="empty">No facilities on file for this country yet.</p>';
             return;
         }
 
@@ -1325,8 +1203,8 @@
     // ---------- News ----------
     const submitNewsButton = () => {
         if (!config.newsSubmitUrl) return '';
-        const url = `${config.newsSubmitUrl}${config.newsSubmitUrl.includes('?') ? '&' : '?'}prefill_state=${encodeURIComponent(config.stateName)}`;
-        return `<a href="${escapeHtml(url)}" class="submit-news-btn">+ Submit news for ${escapeHtml(config.stateName)}</a>`;
+        const url = `${config.newsSubmitUrl}${config.newsSubmitUrl.includes('?') ? '&' : '?'}prefill_country=${encodeURIComponent(config.countryName)}`;
+        return `<a href="${escapeHtml(url)}" class="submit-news-btn">+ Submit news for ${escapeHtml(config.countryName)}</a>`;
     };
 
     const renderNews = () => {
@@ -1335,7 +1213,7 @@
         const submitBtn = submitNewsButton();
         if (news.length === 0) {
             container.innerHTML = `
-                <p class="empty">No news items tagged for this state.</p>
+                <p class="empty">No news items tagged for this country.</p>
                 ${submitBtn}
             `;
             return;
@@ -1378,7 +1256,7 @@
         const container = document.querySelector('#section-lawsuits .section-content');
         const lawsuits = state.data.lawsuits || [];
         if (lawsuits.length === 0) {
-            container.innerHTML = '<p class="empty">No lawsuits on record for this state yet.</p>';
+            container.innerHTML = '<p class="empty">No lawsuits on record for this country yet.</p>';
             return;
         }
         container.innerHTML = `
@@ -1425,7 +1303,7 @@
         const container = document.querySelector('#section-legislation .section-content');
         const bills = state.data.legislation || [];
         if (bills.length === 0) {
-            container.innerHTML = '<p class="empty">No legislation on record for this state yet.</p>';
+            container.innerHTML = '<p class="empty">No legislation on record for this country yet.</p>';
             return;
         }
         container.innerHTML = `

@@ -26,6 +26,7 @@ require_once get_stylesheet_directory() . '/inc/database.php';
 
 // REST API Registration & Callbacks
 require_once get_stylesheet_directory() . '/inc/rest-api.php';
+require_once get_stylesheet_directory() . '/inc/country-rest-api.php';
 
 // Admin Menu & Page Rendering
 require_once get_stylesheet_directory() . '/inc/admin.php';
