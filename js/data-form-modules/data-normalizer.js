@@ -324,6 +324,7 @@
                     city: ['city', 'City'],
                     state: ['state', 'State'],
                     country: ['country', 'Country'],
+                    zip: ['zip', 'Zip', 'zipCode', 'ZipCode', 'postalCode', 'PostalCode', 'postal_code'],
                     additionalLocations: ['additionalLocations', 'additional_locations']
                 });
                 const additionalLocations = normalized.locationDetails.additionalLocations;

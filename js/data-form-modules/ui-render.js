@@ -737,8 +737,8 @@
                         }
                     };
 
-                    row.appendChild(cityInp);
                     row.appendChild(addressInp);
+                    row.appendChild(cityInp);
                     row.appendChild(zipInp);
                 } else if (typeof item === 'object' && item !== null) {
                     const roleInp = document.createElement('input');

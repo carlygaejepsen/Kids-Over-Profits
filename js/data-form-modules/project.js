@@ -49,7 +49,7 @@
             },
             facilities: [{
                 identification: { name: "", currentName: "", currentOperator: "", currentOwner: "", currentOwners: [], otherNames: [], knownReferrers: [] },
-                locationDetails: { city: "", state: "", country: "", additionalLocations: [] },
+                locationDetails: { city: "", state: "", country: "", zip: "", additionalLocations: [] },
                 location: "", address: "", otherOperators: [],
                 operatingPeriod: { startYear: null, endYear: null, status: "", yearsOfOperation: "", notes: [] },
                 staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },

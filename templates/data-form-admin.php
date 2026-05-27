@@ -936,6 +936,10 @@ get_header();
                     </p>
                 </div>
 
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>City</label>
@@ -949,14 +953,14 @@ get_header();
                         <label>Country</label>
                         <input type="text" class="facility-field" data-field="locationDetails.country" data-autocomplete-category="country" placeholder="e.g., Mexico">
                     </div>
+                    <div class="form-group">
+                        <label>ZIP</label>
+                        <input type="text" class="facility-field" data-field="locationDetails.zip" placeholder="e.g., 84101">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Full Location (Legacy)</label>
                     <input type="text" class="facility-field" data-field="location" placeholder="City, State or City, Country">
-                </div>
-                <div class="form-group">
-                    <label>Address</label>
-                    <textarea class="facility-field" data-field="address" rows="3" placeholder="Street address, suite/unit number..."></textarea>
                 </div>
                 <div class="form-group">
                     <label>Additional Locations</label>
