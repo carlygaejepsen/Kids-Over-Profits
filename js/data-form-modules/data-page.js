@@ -1040,6 +1040,7 @@
         // ============================================
         const privateOwnershipToggle = document.getElementById('private-ownership-toggle');
         const privateOwnershipStatus = document.getElementById('private-ownership-status');
+        const privateOwnershipBadge = document.getElementById('private-ownership-badge');
         const privateOwnershipEditBtn = document.getElementById('private-ownership-edit-btn');
         const operatorSection = document.getElementById('operator-section');
         const ownershipModal = document.getElementById('ownership-modal');
@@ -1057,6 +1058,11 @@
 
             if (privateOwnershipStatus) {
                 privateOwnershipStatus.textContent = isPrivate ? 'Privately owned' : 'Part of a chain/corporate';
+            }
+
+            if (privateOwnershipBadge) {
+                privateOwnershipBadge.textContent = isPrivate ? 'Privately Owned' : 'Chain/Corporate';
+                privateOwnershipBadge.classList.toggle('not-private', !isPrivate);
             }
 
             if (operatorSection) operatorSection.style.display = isPrivate ? 'none' : 'block';
@@ -1154,6 +1160,15 @@
                 ownershipModal.setAttribute('aria-hidden', 'false');
             });
             privateOwnershipEditBtn.dataset.listenerAttached = 'true';
+        }
+
+        if (privateOwnershipBadge && privateOwnershipToggle && !privateOwnershipBadge.dataset.listenerAttached) {
+            privateOwnershipBadge.style.cursor = 'pointer';
+            privateOwnershipBadge.addEventListener('click', () => {
+                privateOwnershipToggle.checked = !privateOwnershipToggle.checked;
+                privateOwnershipToggle.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            privateOwnershipBadge.dataset.listenerAttached = 'true';
         }
 
         if (ownershipModal && !ownershipModal.dataset.bound) {
