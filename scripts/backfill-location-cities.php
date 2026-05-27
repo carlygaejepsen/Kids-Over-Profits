@@ -529,9 +529,17 @@ function backfill_run_apply_review(PDO $pdo, array $options): void {
             $facility = &$data['data']['facilities'][$idx];
 
             // Safety: verify the facility name still matches what was exported.
-            $expectedName = backfill_normalize_ws($r['facility_name'] ?? '');
-            $actualName = backfill_normalize_ws($facility['identification']['name'] ?? '');
-            if ($expectedName !== '' && $expectedName !== $actualName) {
+            // Compare Unicode-normalized + case-folded forms so that curly
+            // quotes vs straight, en-dash vs hyphen, NBSP vs space, accented
+            // vs ASCII don't trigger a false-positive mismatch when the only
+            // change is editor auto-correction.
+            $rawExpected = $r['facility_name'] ?? '';
+            $rawActual   = $facility['identification']['name'] ?? '';
+            $expectedName = backfill_normalize_ws($rawExpected);
+            $actualName   = backfill_normalize_ws($rawActual);
+            $expectedCmp  = strtolower(backfill_normalize_ws(backfill_normalize_unicode($rawExpected)));
+            $actualCmp    = strtolower(backfill_normalize_ws(backfill_normalize_unicode($rawActual)));
+            if ($expectedName !== '' && $expectedCmp !== $actualCmp) {
                 $nameMismatches[] = "{$stateRow}[{$idx}]: expected \"{$expectedName}\" but found \"{$actualName}\"";
                 unset($facility);
                 continue;
