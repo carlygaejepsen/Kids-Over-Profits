@@ -1,6 +1,103 @@
 {
-  "lastUpdated": "2026-05-24T07:53:50.762Z",
+  "lastUpdated": "2026-05-28T08:35:14.609Z",
   "entries": [
+    {
+      "ts": "2026-05-28T08:35:14.609Z",
+      "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPT1JWY0wwV1lTdkxkaXV6QVB4dzZHTXdMajg4ZUhSd1dOa1JUVlVzc21OQlkyb3lOQks2SExjSHFnc3lQQVdtcDZWN0tlcUQyWnp2Yk1CLUZ1VVJON2Q0ckl6c2IyRTBJMUh4TWtwTHNPY2hJY2s3cThsaHE0LVRRUENsTnNCdVc2T3p6eWlJbWR1VWttRjdwY2RvRFM4WTFMU0NORkVxOTlyNDJkTWNJ?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Lakebrook"
+    },
+    {
+      "ts": "2026-05-28T08:35:14.609Z",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQNGJyQ3NKQ1lhYWdqMnpuZkxnNTFFUVVUSFhsSUhqQ2F5a3NrQWVObnVVM2xsZ2xONmN2VkxEaGtXeFNBblBndDR3QkRUQi1vR0ZxOEpLeV9ieVhtSU5NVXFaU0dHLWNpRHdpcDUzNmU3Y0R1bUVWQW50cFN1WHRXN1F5ZDl0SGJMcXE2S0RR?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Kanakuk Kamps"
+    },
+    {
+      "ts": "2026-05-28T08:35:14.609Z",
+      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPc3g4bjJZeHd3SEZtLXBQQzZtXzEwbmVjbGxLcEdBRzhNYXY1X21MN0xfdTR4ZTBETmRWSHRvN3VGd3ZBNnlQQ1lScnFaeWhwVjhmVjRwRzZqbG1ENWp5N2liZFlzQzFzekFEd0RvdXpLRHJUd0ZnYllqVE11NWlGOTRWSS1TM1RhSURYV3NLZnNTdXowbzFadzJaU0Zwb2x4VlBuLXRLalFibjFMVUEtM0JIa3JxVUU?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Phoenix House"
+    },
+    {
+      "ts": "2026-05-28T08:34:20.683Z",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBiQi03Zm1jTzE5MWgwaWphb1RmV0NUZDhEcGtyRnJhWnVpZ3VBQjBNN3E1VVVQZEcyekVIeEtkaFpnT01IZFhFQ19lZ1lFZ3hPV0p5SnBJSE83Z3hGLTgtQ2pKY0dpX1o5S2RFdUZVU2EwZ1c3VFRJS9IBfkFVX3lxTE90LUlxYllaVGpTM1Rob2JqMS1HXzVyU19vZnpfOXJQMmkteV94dGxUUWJ5M1BMRmJxZ2tEY0hMLWRyZm4yVnVfMzNnaTJKbGdnZTE4VVZKbnVIRXdMYnNPanY2SzJOVmdqS0J5MVozRVAxSDk1NW9GRWN0NUVtdw?oc=5",
+      "title": "Inside the \"troubled teen\" industry, when help sometimes does more harm - CBS News",
+      "origin": "google-news",
+      "host": "cbsnews.com",
+      "facilityQuery": "CALO Programs",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cbsnews.com"
+      }
+    },
+    {
+      "ts": "2026-05-28T08:34:20.683Z",
+      "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxORG1VbVBJUU5mVWhlM0h0Zmo2S0EtMzYwM2N5cjlwQkF2Q2g0Q0w2US10RDNuY3g2c1NEZGlvODVRNThzTWdnbXhBZXpGM09oTlVxRmtUZHNhcFJfQy1lbnZ2MVI0cDZ1X0szUDZQcFdwenk5Q0FxMTNRQ3I2SzVMZ3lZcVpvWkdpd05fOUV5YUNGTVlyRE9DZl9qZzVqQjljM1pLV0dLbnNzTFAwNlJYWg?oc=5",
+      "title": "National Guard Member Fired From Job Loses Military Bias Trial - Bloomberg Law News",
+      "origin": "google-news",
+      "host": "news.bloomberglaw.com",
+      "facilityQuery": "Bedford County Juvenile Detention",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "news.bloomberglaw.com"
+      }
+    },
+    {
+      "ts": "2026-05-28T08:34:20.683Z",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5QdERpa25NNE9XaVJxWUw2QVRuWnJYdDhIMlIwTlhLcVVQcUxDM0JkQVZXMHNGU3FfODF5U291c3RLcnV6SkJWREQ0QVBpbHlCbzRjYXI1WUNqNE0tNzRTNXh4UmdOOEM2Q2lERm1rMzM5ZHZxNlE?oc=5",
+      "title": "Embattled Kanakuk Kamps CEO to Retire - MinistryWatch",
+      "origin": "google-news",
+      "host": "ministrywatch.com",
+      "facilityQuery": "Kanakuk Kamps",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Kanakuk Kamps"
+        ],
+        "threshold": 3,
+        "host": "ministrywatch.com"
+      }
+    },
+    {
+      "ts": "2026-05-28T08:34:20.683Z",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQWnlXd1N6Qk84MVdJRElKM0p2bVVhcnFQWVJZS2xPYWtCbGNDN01ncjNxREdxYkF3MS1lU2xxRHE2ZFhwNGNINkRtZmRQMlA5SmhuSG5uSHNVb2Q4YThSQmQ2Qjg5SDh1dFFkdWhDRFdUbXROYVl2clVXdE1ub2dGaElYTEpoMklJZ0gxOHpOSkxHN0tWNVoyQUpTWHpqTWdub29uOA?oc=5",
+      "title": "Howard Center's Jarrett House closing in June due to workforce challenges - WPTZ",
+      "origin": "google-news",
+      "host": "mynbc5.com",
+      "facilityQuery": "Howard Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Howard Center"
+        ],
+        "threshold": 3,
+        "host": "mynbc5.com"
+      }
+    },
+    {
+      "ts": "2026-05-28T08:34:20.683Z",
+      "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNR3F6aFZzeVdfYVhKT1A0blNVTWhSNU9fV1FHUHAxTXhVeUZYellUYjdIaUoxSUc0WjdfRnZtNVNQeE4wZTFMSTgteC0yeGl2VjhHTjJscE9MY3hvNkZ0RGR3NXNSZ0VnSUwzWnZTdG9KNzBGMUg1bHFrMGhEa2o5OU1WSXE1aUFQMWtPVWpPamwyTElkT0s3YkNkak5JclR3RG1qWDJJWnJMcEhaaF9UdnR2bWs0S0ZfMkE1S0JPRV9pQVlDWFhNbVpNaV9GeUJaTGc?oc=5",
+      "title": "As Howard Center’s Jarrett House prepares to close, advocates worry about what comes next - Vermont Public",
+      "origin": "google-news",
+      "host": "vermontpublic.org",
+      "facilityQuery": "Howard Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "vermontpublic.org"
+      }
+    },
     {
       "ts": "2026-05-24T07:53:50.761Z",
       "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQa3NtZlhMUXhpOGdhRHNTVHBKOEJGX0YwaGt5N1BIUWxab09kUkRFenl1UlhjT3lhSVlQS1U4T083MWNoOFYydGs4eldyMWxpbWQ0Sk9WT2FJbnNkMHNrMmtBWXZYelY5TUt1dVNyWTFPYU1wWXowWXBkZzlRaVhmZ1JXODRQQ3dvVy15M0RCZi1MSFhQYzZZeVhQeUhZUjNEQzNjTU5FaF9fZTY0M2dyWmRvQXlDRFJ3cHNTdDZoTW9sdw?oc=5",
