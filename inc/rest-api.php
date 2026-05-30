@@ -216,57 +216,75 @@ function kop_register_facilities_rest_routes() {
                     $api_key = FILEBIRD_API_KEY;
                 }
                 
-                // If API key is available, use FileBird's native API
+                // If API key is available, use FileBird's native API.
+                // FileBird's attachment-id endpoint only returns files filed
+                // directly in a folder, so walk the subtree and merge results
+                // to surface documents nested in subfolders too.
                 if ($api_key) {
-                    $response = wp_remote_get(
-                        home_url("/wp-json/filebird/public/v1/attachment-id/?folder_id={$folder_id}"),
-                        array(
-                            'headers' => array(
-                                'X-Api-Key' => $api_key
-                            ),
-                            'timeout' => 15
-                        )
-                    );
-                    
-                    if (!is_wp_error($response)) {
+                    $folder_ids = function_exists('kop_get_folder_descendant_ids')
+                        ? kop_get_folder_descendant_ids($folder_id)
+                        : array($folder_id);
+
+                    $attachment_ids = array();
+                    $api_ok = false;
+                    foreach ($folder_ids as $fid) {
+                        $response = wp_remote_get(
+                            home_url("/wp-json/filebird/public/v1/attachment-id/?folder_id={$fid}"),
+                            array(
+                                'headers' => array(
+                                    'X-Api-Key' => $api_key
+                                ),
+                                'timeout' => 15
+                            )
+                        );
+
+                        if (is_wp_error($response)) {
+                            continue;
+                        }
+
                         $body = wp_remote_retrieve_body($response);
                         $data = json_decode($body, true);
-                        
+
                         // FileBird API returns {success: true, data: {attachment_ids: [...]}}
                         if (isset($data['success']) && $data['success'] && isset($data['data']['attachment_ids'])) {
-                            $attachment_ids = $data['data']['attachment_ids'];
-                            
-                            // Get full attachment details
-                            if (!empty($attachment_ids)) {
-                                $args = array(
-                                    'post_type' => 'attachment',
-                                    'post_status' => 'inherit',
-                                    'posts_per_page' => -1,
-                                    'post__in' => $attachment_ids,
-                                    'orderby' => 'title',
-                                    'order' => 'ASC'
-                                );
-                                
-                                $attachments = get_posts($args);
-                                
-                                $formatted = array_map(function($post) {
-                                    return array(
-                                        'id' => $post->ID,
-                                        'title' => $post->post_title,
-                                        'url' => wp_get_attachment_url($post->ID),
-                                        'thumb_url' => function_exists('kop_get_attachment_preview_url')
-                                            ? kop_get_attachment_preview_url($post->ID, 'large')
-                                            : wp_get_attachment_image_url($post->ID, 'large'),
-                                        'mime_type' => $post->post_mime_type,
-                                        'date' => $post->post_date
-                                    );
-                                }, $attachments);
-                                
-                                return rest_ensure_response($formatted);
-                            }
-                            
-                            return rest_ensure_response(array());
+                            $api_ok = true;
+                            $attachment_ids = array_merge($attachment_ids, $data['data']['attachment_ids']);
                         }
+                    }
+
+                    if ($api_ok) {
+                        $attachment_ids = array_values(array_unique($attachment_ids));
+
+                        // Get full attachment details
+                        if (!empty($attachment_ids)) {
+                            $args = array(
+                                'post_type' => 'attachment',
+                                'post_status' => 'inherit',
+                                'posts_per_page' => -1,
+                                'post__in' => $attachment_ids,
+                                'orderby' => 'title',
+                                'order' => 'ASC'
+                            );
+
+                            $attachments = get_posts($args);
+
+                            $formatted = array_map(function($post) {
+                                return array(
+                                    'id' => $post->ID,
+                                    'title' => $post->post_title,
+                                    'url' => wp_get_attachment_url($post->ID),
+                                    'thumb_url' => function_exists('kop_get_attachment_preview_url')
+                                        ? kop_get_attachment_preview_url($post->ID, 'large')
+                                        : wp_get_attachment_image_url($post->ID, 'large'),
+                                    'mime_type' => $post->post_mime_type,
+                                    'date' => $post->post_date
+                                );
+                            }, $attachments);
+
+                            return rest_ensure_response($formatted);
+                        }
+
+                        return rest_ensure_response(array());
                     }
                 }
                 

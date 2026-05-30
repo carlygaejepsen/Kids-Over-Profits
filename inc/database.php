@@ -535,7 +535,57 @@ function kop_get_filebird_folders() {
 }
 
 /**
- * Get attachments from a FileBird folder
+ * Get a FileBird folder ID plus the IDs of every folder nested beneath it.
+ *
+ * FileBird stores the tree in the `fbv` table via a `parent` column. Documents
+ * are only ever attached to the exact folder they were dropped into, so to show
+ * "everything" under a folder we must walk the whole subtree.
+ *
+ * @param int $folder_id Root folder.
+ * @return int[] Folder IDs including the root (deduped).
+ */
+function kop_get_folder_descendant_ids($folder_id) {
+    global $wpdb;
+
+    $folder_id = (int) $folder_id;
+    if ($folder_id <= 0) {
+        return array();
+    }
+
+    $folder_table = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$folder_table'") != $folder_table) {
+        return array($folder_id);
+    }
+
+    // Pull the full (id, parent) map once, then walk it in PHP. Cheaper and
+    // simpler than a recursive SQL CTE and works on older MySQL too.
+    $rows = $wpdb->get_results("SELECT id, parent FROM $folder_table WHERE type = 0");
+
+    $children = array();
+    foreach ($rows as $row) {
+        $children[(int) $row->parent][] = (int) $row->id;
+    }
+
+    $ids = array();
+    $queue = array($folder_id);
+    while (!empty($queue)) {
+        $current = array_shift($queue);
+        if (isset($ids[$current])) {
+            continue; // guard against cycles
+        }
+        $ids[$current] = true;
+        if (!empty($children[$current])) {
+            foreach ($children[$current] as $child) {
+                $queue[] = $child;
+            }
+        }
+    }
+
+    return array_keys($ids);
+}
+
+/**
+ * Get attachments from a FileBird folder and all of its nested subfolders.
  */
 function kop_get_folder_attachments($folder_id) {
     global $wpdb;
@@ -547,11 +597,19 @@ function kop_get_folder_attachments($folder_id) {
         return array();
     }
 
-    // Get attachment IDs from the folder
+    // Include the folder itself plus every subfolder beneath it.
+    $folder_ids = kop_get_folder_descendant_ids($folder_id);
+    if (empty($folder_ids)) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($folder_ids), '%d'));
+
+    // Get attachment IDs from the folder and all of its descendants
     $attachment_ids = $wpdb->get_col(
         $wpdb->prepare(
-            "SELECT attachment_id FROM $attachment_table WHERE folder_id = %d",
-            $folder_id
+            "SELECT DISTINCT attachment_id FROM $attachment_table WHERE folder_id IN ($placeholders)",
+            $folder_ids
         )
     );
 
