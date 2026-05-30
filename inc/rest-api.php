@@ -2044,9 +2044,14 @@ function kop_state_collect_programs($state_name) {
         if ($operating_years === '') {
             $start_year = trim((string)($operating['startYear'] ?? ''));
             $end_year = trim((string)($operating['endYear'] ?? ''));
-            if ($start_year !== '' && $end_year !== '') $operating_years = "$start_year–$end_year";
+            // NOTE: concatenation, not "$start_year–$end_year". The en-dash bytes
+            // (0xE2 0x80 0x93) fall in PHP's 0x80–0xFF range allowed in variable
+            // names, so inside a double-quoted string "$start_year–" parses as one
+            // (undefined) variable and the start year + dash vanish — yielding just
+            // the end year. Concatenation keeps the dash a literal.
+            if ($start_year !== '' && $end_year !== '') $operating_years = $start_year . '–' . $end_year;
             elseif ($start_year !== '')                  $operating_years = $start_year;
-            elseif ($end_year !== '')                    $operating_years = "–$end_year";
+            elseif ($end_year !== '')                    $operating_years = '–' . $end_year;
         }
 
         // Normalize each scalar/array field on the facility schema into a primitive
