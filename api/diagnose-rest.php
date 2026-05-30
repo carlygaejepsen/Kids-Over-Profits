@@ -45,6 +45,29 @@ if ($idx !== null) {
     echo "!! The range-building line was NOT found — the deployed file is OLDER than your repo.\n\n";
 }
 
+// The decisive check: which file did PHP ACTUALLY load this function from, and
+// does THAT file contain the fix? This catches an old copy / plugin shadowing it,
+// or a different theme path, which reading by path above cannot.
+echo "--- ACTIVE function source (reflection) ---\n";
+if (function_exists('kop_state_collect_programs')) {
+    try {
+        $rf = new ReflectionFunction('kop_state_collect_programs');
+        $srcfile = $rf->getFileName();
+        echo "kop_state_collect_programs loaded from:\n  $srcfile\n";
+        echo "  lines " . $rf->getStartLine() . "-" . $rf->getEndLine() . "\n";
+        $src = @file_get_contents($srcfile);
+        echo "  that file builds start/end range: " . ($src !== false && strpos($src, '$end_year') !== false ? 'YES' : 'NO') . "\n";
+        if ($srcfile !== $file) {
+            echo "  !! This is NOT the theme rest-api.php checked above — this copy is what actually runs.\n";
+        }
+    } catch (Throwable $e) {
+        echo "reflection failed: " . $e->getMessage() . "\n";
+    }
+} else {
+    echo "kop_state_collect_programs is NOT defined in this request.\n";
+}
+echo "\n";
+
 if (function_exists('opcache_get_status')) {
     $cfg = opcache_get_configuration();
     echo "opcache.enable:              " . var_export($cfg['directives']['opcache.enable'] ?? null, true) . "\n";
