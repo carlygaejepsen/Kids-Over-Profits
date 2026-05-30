@@ -1044,8 +1044,8 @@ get_header();
                             <input type="text" class="facility-field input-wide" data-field="operatingPeriod.status" data-autocomplete-category="status" placeholder="Open, Closed, Transferred, etc.">
                         </div>
                         <div class="form-group">
-                            <label>Years of Operation</label>
-                            <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="e.g., 1985-2010, 2015-Present">
+                            <label>Years of Operation <small style="font-weight:400;color:#888;">(auto-filled from Opened / Closed)</small></label>
+                            <input type="text" class="facility-field" data-field="operatingPeriod.yearsOfOperation" placeholder="Set the Opened / Closed years above" readonly tabindex="-1" style="background:#f3f4f6;color:#555;cursor:not-allowed;">
                         </div>
                         <div class="form-group">
                             <label>Operational Notes</label>

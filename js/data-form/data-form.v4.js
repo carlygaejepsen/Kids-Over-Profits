@@ -661,6 +661,37 @@ function loadFacilityData() {
         checkbox.checked = !!getNestedValue(facility, path);
     });
 
+    // Backfill empty Opened/Closed pickers from a legacy "Years of Operation"
+    // string (e.g. "2016-2022") so old records adopt the picker-as-source model.
+    // Staged into the inputs/formData only — persists when the user saves.
+    if (facility.operatingPeriod && typeof window.kopParseYearsOfOperation === 'function') {
+        const op = facility.operatingPeriod;
+        const emptyS = op.startYear === null || op.startYear === undefined || String(op.startYear).trim() === '';
+        const emptyE = op.endYear === null || op.endYear === undefined || String(op.endYear).trim() === '';
+        const yoo = String(op.yearsOfOperation || '').trim();
+        if (emptyS && emptyE && yoo) {
+            const parsed = window.kopParseYearsOfOperation(yoo, op.status);
+            if (parsed) {
+                if (parsed.startYear != null) {
+                    op.startYear = parsed.startYear;
+                    const sEl = document.querySelector('.facility-field[data-field="operatingPeriod.startYear"]');
+                    if (sEl) sEl.value = parsed.startYear;
+                }
+                if (parsed.endYear != null) {
+                    op.endYear = parsed.endYear;
+                    const eEl = document.querySelector('.facility-field[data-field="operatingPeriod.endYear"]');
+                    if (eEl) eEl.value = parsed.endYear;
+                }
+            }
+        }
+    }
+
+    // "Years of Operation" is derived from the Opened/Closed pickers; re-derive it
+    // on load so it reflects the pickers (preserving any legacy freeform-only value).
+    if (typeof window.kopSyncYearsOfOperation === 'function') {
+        window.kopSyncYearsOfOperation(window.currentFacilityIndex, { preserveLegacy: true });
+    }
+
     const facilityName = document.getElementById('facility-name');
     if (facilityName) facilityName.value = facility.identification?.name || '';
     

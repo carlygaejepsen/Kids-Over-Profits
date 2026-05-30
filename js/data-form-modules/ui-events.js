@@ -6,6 +6,75 @@
     // Depends on KOP_UI_Actions for some button clicks
     const KOP_UI_Actions = window.KOP_UI_Actions || {};
 
+    // "Years of Operation" is a derived, read-only field: it always mirrors the
+    // Opened/Closed year pickers so the three never disagree. This must produce
+    // exactly the same string the REST layer builds from startYear/endYear
+    // (see kop_state_collect_programs in inc/rest-api.php): "1994–2010" / "1994" / "–2010".
+    window.kopFormatYearsOfOperation = function (startYear, endYear) {
+        const s = (startYear === null || startYear === undefined) ? '' : String(startYear).trim();
+        const e = (endYear === null || endYear === undefined) ? '' : String(endYear).trim();
+        if (s !== '' && e !== '') return s + '–' + e; // en-dash, matches the PHP
+        if (s !== '') return s;
+        if (e !== '') return '–' + e;
+        return '';
+    };
+
+    // Parse a legacy free-text "Years of Operation" string into {startYear, endYear}.
+    // Mirrors migrate_parse_years() in api/migrate-operating-years.php. Returns null
+    // when it can't parse confidently (e.g. multi-stint), so we never guess wrong.
+    window.kopParseYearsOfOperation = function (text, status) {
+        const t = String(text || '').trim();
+        if (!t) return null;
+        const norm = t.replace(/[–—]/g, '-'); // en/em dash -> hyphen
+        const years = (norm.match(/\d{4}/g) || []).map(function (y) { return parseInt(y, 10); });
+        if (years.length > 2) return null; // multi-stint / complex -> leave for manual
+        const openEnded = /(present|current|now|ongoing|open)\s*$/i.test(norm) || /\d{4}\s*-\s*$/.test(norm);
+        if (years.length === 2 && /\d{4}\s*-\s*\d{4}/.test(norm)) {
+            return { startYear: years[0], endYear: years[1] };
+        }
+        if (years.length === 1) {
+            if (/^\s*-\s*\d{4}/.test(norm)) return { startYear: null, endYear: years[0] };   // "-2010"
+            if (openEnded) return { startYear: years[0], endYear: null };                      // "2010-present"
+            const closed = ['closed', 'shut down', 'shutdown', 'defunct'].indexOf(String(status || '').trim().toLowerCase()) !== -1;
+            return closed ? { startYear: null, endYear: years[0] } : { startYear: years[0], endYear: null };
+        }
+        return null;
+    };
+
+    // Regenerate facilities[idx].operatingPeriod.yearsOfOperation from the two
+    // year pickers and reflect it in the (read-only) input. On edits we always
+    // derive (so clearing both pickers clears the text); on load we pass
+    // preserveLegacy so records that only have freeform years — no pickers — are
+    // left untouched.
+    window.kopSyncYearsOfOperation = function (facilityIndex, opts) {
+        opts = opts || {};
+        if (!window.formData || !Array.isArray(window.formData.facilities)) return;
+        const idx = (typeof facilityIndex === 'number') ? facilityIndex : (window.currentFacilityIndex || 0);
+        const facility = window.formData.facilities[idx];
+        if (!facility || !facility.operatingPeriod) return;
+        const op = facility.operatingPeriod;
+        const hasPickers = (op.startYear !== '' && op.startYear != null) || (op.endYear !== '' && op.endYear != null);
+        if (!hasPickers && opts.preserveLegacy) return;
+        const derived = window.kopFormatYearsOfOperation(op.startYear, op.endYear);
+        op.yearsOfOperation = derived;
+        const input = document.querySelector('.facility-field[data-field="operatingPeriod.yearsOfOperation"]');
+        if (input) input.value = derived;
+    };
+
+    // Whichever per-field input handler wins the shared `listenerAttached` guard
+    // (this module's or the legacy data-form.v4.js one) writes startYear/endYear
+    // during the target phase; this delegated bubble-phase listener then re-derives
+    // Years of Operation and persists it — so the sync fires no matter which won.
+    document.addEventListener('input', function (e) {
+        const f = e.target;
+        if (!f || !f.dataset) return;
+        const path = f.dataset.field;
+        if (path !== 'operatingPeriod.startYear' && path !== 'operatingPeriod.endYear') return;
+        window.kopSyncYearsOfOperation(window.currentFacilityIndex || 0);
+        if (typeof window.updateJSON === 'function') window.updateJSON();
+        if (typeof window.autoSave === 'function') window.autoSave();
+    });
+
     const STANDALONE_FIELD_BINDINGS = {
         'operator-name': {
             getTarget: () => window.formData,
