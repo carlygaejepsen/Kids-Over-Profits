@@ -940,11 +940,15 @@
 
         const isClosed = ['closed', 'shut down', 'shutdown', 'defunct'].includes(status);
         const rangeMatch = period.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
-        const startOnlyMatch = !rangeMatch ? period.match(/(\d{4})/) : null;
+        // End-only form from the API ("–2010"): a leading dash before a single
+        // year means we only know the closure year, not the start year.
+        const endOnlyMatch = !rangeMatch ? period.match(/^\s*[-–—]\s*(\d{4})/) : null;
+        const startOnlyMatch = (!rangeMatch && !endOnlyMatch) ? period.match(/(\d{4})/) : null;
 
         if (isClosed) {
             // Closed: show the date range (never "Est.").
             if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+            if (endOnlyMatch) return `–${endOnlyMatch[1]}`;
             if (startOnlyMatch) return `${startOnlyMatch[1]}–`;
             return period;
         }
@@ -952,6 +956,7 @@
         // Open: "Est. YYYY". If somehow a range was captured for an open facility,
         // prefer the range so we don't lose info.
         if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+        if (endOnlyMatch) return `–${endOnlyMatch[1]}`;
         if (startOnlyMatch) return `Est. ${startOnlyMatch[1]}`;
         return period;
     };
