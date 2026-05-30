@@ -1,6 +1,110 @@
 {
-  "lastUpdated": "2026-05-28T08:35:14.609Z",
+  "lastUpdated": "2026-05-30T08:23:08.964Z",
   "entries": [
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNQXROSGo4SHVSdHAyc3ZDQVRpYWlaS3NCa3NpTXBUeXRtd1Yzem16NHBQMUVaTHdGbllwRWFjUjMwZENIbnppWFk0aXVNSnRDbnR3cHJRZnh6TmFXblhFX1RxQnZDUmhVVlhkUFlzRVBEUFE4TWhxT0l0TXp0aW10RHROZ3VHNGZxSHVfX0hHSVRGN21JaVN5c3N1OXhZOTNnaG44TG5RV09vX1lCNFpwdlFYMk4xY0xLX3QtUEdkLVpNeEgwcE1Qd1dlQW4?oc=5",
+      "title": "Despite scrutiny, special education money flows to for-profit residential treatment centers - CityNews Halifax",
+      "origin": "google-news",
+      "host": "halifax.citynews.ca",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "halifax.citynews.ca"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUdIBngFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUQ?oc=5",
+      "title": "DHHS issues emergency actions against Utah behavioral school attended by Paris Hilton - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5pbjk3QWVyZHBVck0tS3FQaFlqU0RTdmNaaXZaQjFpM0RBWnM1djN6S2VRaWg3NTdxeHI1UzBFeEVXT0phQmxBdlpnSGxEcDByRjlGOTBnTzhwZ0dW?oc=5",
+      "title": "Why illegal children's homes are being paid up to £2m per child by councils - BBC",
+      "origin": "google-news",
+      "host": "bbc.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "bbc.co.uk"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5VZ3ZtLVFqUjhFYWFRVmZPTFBMYXNVMDE3TDcwV3FlNzl4cW1tWEZ3RlQyTm0xdnloN0xpSWYyQ2ViODB0VnVqVjRnYVRER2c?oc=5",
+      "title": "Let discovery proceed in Hyde School case | Opinion - The Portland Press Herald",
+      "origin": "google-news",
+      "host": "pressherald.com",
+      "facilityQuery": "Hyde School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Hyde School"
+        ],
+        "threshold": 3,
+        "host": "pressherald.com"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxQaVR6OWhUWlhoTjZCNlFQU0lEV3hldHR2czlYWW4yTjJWenExdW0yaHFJRHFCX1NwbXlZb3Z4bWs1emlEU0RkeGlLSFhlMTZlYmd0bzZvX3VmLU9kOUVOTlUyam9TcElldDRaN2JrMnlIT283WXNiLTFJYW1PRUhDTEpIVTdLVnh0TloydlYweXd4YW9FY1lEWE1jSDY2STlmWUJnYl9qeklKcTRTZ1M2ZE1ZX1M1cjNFTWhsT1RMbFBtWFE1QzlYMU1yYUNraWNmWV9FTHNoeXVFQXc?oc=5",
+      "title": "HCPD ARRESTS INDIVIDUAL ON CHILD EXPLOITATION CHARGES On January 6, 2026, the Horry County Police Department Internet Crimes Against Children (ICAC) Unit received a cyber tip regarding suspected child sexual abuse material (CSAM). Subse - facebook.com",
+      "origin": "google-news",
+      "host": "facebook.com",
+      "facilityQuery": "The Meridian",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "facebook.com"
+      }
+    },
+    {
+      "ts": "2026-05-30T08:23:08.964Z",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNdkc3Sm16VVlTV3BJeEFHUTFfb2tjUlk3X292UWhkYjRHMGVoajJ2Z0Y0UTZsUjl0YlNjbVZORnl4d1RSM2RCWjZVTE5UbEpGal9wWHc2V2J3OU9UVmNQYjRWS3FhYW5mY3dyUlg2cHZzZmp5X2FpVktGRXBEcTlRX2o1bUQxdzhvS0NTT0t3ZWN4Ry1Sbi1nR1YwakJZVVkzVGRQV0NDbEdXLWJHX0oyTDQyaGtmenV6?oc=5",
+      "title": "No injuries reported following multi-agency response to Meridian barn fire - dailydispatch.com",
+      "origin": "google-news",
+      "host": "dailydispatch.com",
+      "facilityQuery": "The Meridian",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "dailydispatch.com"
+      }
+    },
     {
       "ts": "2026-05-28T08:35:14.609Z",
       "link": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPT1JWY0wwV1lTdkxkaXV6QVB4dzZHTXdMajg4ZUhSd1dOa1JUVlVzc21OQlkyb3lOQks2SExjSHFnc3lQQVdtcDZWN0tlcUQyWnp2Yk1CLUZ1VVJON2Q0ckl6c2IyRTBJMUh4TWtwTHNPY2hJY2s3cThsaHE0LVRRUENsTnNCdVc2T3p6eWlJbWR1VWttRjdwY2RvRFM4WTFMU0NORkVxOTlyNDJkTWNJ?oc=5",
