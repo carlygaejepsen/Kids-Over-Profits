@@ -585,9 +585,87 @@ function kop_get_folder_descendant_ids($folder_id) {
 }
 
 /**
+ * Expand a set of root folders to the IDs of those roots plus every folder
+ * nested beneath each of them.
+ *
+ * @param int[] $root_ids Root folders.
+ * @return int[] Deduped folder IDs (roots + descendants).
+ */
+function kop_get_descendant_ids_for_roots($root_ids) {
+    $all = array();
+    foreach ((array) $root_ids as $root) {
+        foreach (kop_get_folder_descendant_ids($root) as $id) {
+            $all[(int) $id] = true;
+        }
+    }
+    return array_keys($all);
+}
+
+/**
+ * Find every folder that shares the given folder's exact name.
+ *
+ * FileBird allows the same facility to appear as multiple folders in different
+ * organizational trees (e.g. "Spring Ridge Academy" exists at the root and again
+ * under "Closed Programs" and "Investigations"). When showing a facility's
+ * documents we want to merge all of them, otherwise files filed under a
+ * duplicate-named sibling tree are silently missed.
+ *
+ * @param int $folder_id Any one of the same-named folders.
+ * @return int[] All folder IDs sharing that name (including the input), deduped.
+ */
+function kop_get_same_name_folder_ids($folder_id) {
+    global $wpdb;
+
+    $folder_id = (int) $folder_id;
+    if ($folder_id <= 0) {
+        return array();
+    }
+
+    $folder_table = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$folder_table'") != $folder_table) {
+        return array($folder_id);
+    }
+
+    $name = $wpdb->get_var(
+        $wpdb->prepare("SELECT name FROM $folder_table WHERE id = %d AND type = 0", $folder_id)
+    );
+    if ($name === null || trim($name) === '') {
+        return array($folder_id);
+    }
+
+    $ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT id FROM $folder_table WHERE type = 0 AND LOWER(TRIM(name)) = LOWER(TRIM(%s))",
+            $name
+        )
+    );
+    $ids = array_map('intval', (array) $ids);
+    if (!in_array($folder_id, $ids, true)) {
+        $ids[] = $folder_id;
+    }
+
+    return array_values(array_unique($ids));
+}
+
+/**
  * Get attachments from a FileBird folder and all of its nested subfolders.
  */
 function kop_get_folder_attachments($folder_id) {
+    // Include the folder itself plus every subfolder beneath it.
+    return kop_get_attachments_in_folder_ids(kop_get_folder_descendant_ids($folder_id));
+}
+
+/**
+ * Get attachments that live directly in any of the supplied folder IDs.
+ *
+ * Callers are expected to have already expanded subtrees (see
+ * kop_get_folder_descendant_ids / kop_get_descendant_ids_for_roots) — this
+ * function does NOT walk the tree itself.
+ *
+ * @param int[] $folder_ids Folder IDs to pull attachments from.
+ * @return WP_Post[]
+ */
+function kop_get_attachments_in_folder_ids($folder_ids) {
     global $wpdb;
 
     $attachment_table = $wpdb->prefix . 'fbv_attachment_folder';
@@ -597,8 +675,7 @@ function kop_get_folder_attachments($folder_id) {
         return array();
     }
 
-    // Include the folder itself plus every subfolder beneath it.
-    $folder_ids = kop_get_folder_descendant_ids($folder_id);
+    $folder_ids = array_values(array_unique(array_map('intval', (array) $folder_ids)));
     if (empty($folder_ids)) {
         return array();
     }

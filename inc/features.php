@@ -637,6 +637,7 @@ function kop_filebird_folder_shortcode($atts) {
         'title' => '',
         'show_count' => 'yes',
         'layout' => 'grid', // Default to grid layout
+        'merge' => '',      // 'name' merges duplicate folders sharing this folder's name
     ), $atts);
 
     if (empty($atts['folder_id'])) {
@@ -657,7 +658,18 @@ function kop_filebird_folder_shortcode($atts) {
         $atts['title'] = $folder ? $folder->name : 'Documents';
     }
 
-    $attachments = kop_get_folder_attachments($atts['folder_id']);
+    // Facility views (merge=name) pull in every duplicate folder sharing this
+    // name across organizational trees; embedded shortcodes default to just this
+    // folder's own subtree.
+    if ($atts['merge'] === 'name'
+        && function_exists('kop_get_same_name_folder_ids')
+        && function_exists('kop_get_attachments_in_folder_ids')
+        && function_exists('kop_get_descendant_ids_for_roots')) {
+        $root_ids = kop_get_same_name_folder_ids($atts['folder_id']);
+        $attachments = kop_get_attachments_in_folder_ids(kop_get_descendant_ids_for_roots($root_ids));
+    } else {
+        $attachments = kop_get_folder_attachments($atts['folder_id']);
+    }
 
     ob_start();
     ?>

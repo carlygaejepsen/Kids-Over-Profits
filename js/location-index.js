@@ -59,7 +59,7 @@ function attachDocumentButtons(scope) {
 async function loadFacilityDocumentsFallback(folderId, container) {
     try {
         const restBase = getRestBase();
-        const response = await fetch(`${restBase}folder-content?id=${folderId}`, { credentials: 'same-origin' });
+        const response = await fetch(`${restBase}folder-content?id=${folderId}&merge=name`, { credentials: 'same-origin' });
         if (!response.ok) throw new Error('Failed to load content');
         const files = await response.json();
 
@@ -129,7 +129,7 @@ window.loadFacilityDocuments = async function(folderId, containerOrId) {
     container.innerHTML = `${labelSpan}<span class="field-value">Loading Document Library...</span>`;
 
     try {
-        const response = await fetch(`${restBase}render-folder-shortcode?id=${parsedId}`, { credentials: 'same-origin' });
+        const response = await fetch(`${restBase}render-folder-shortcode?id=${parsedId}&merge=name`, { credentials: 'same-origin' });
         if (!response.ok) throw new Error('Failed to load library');
         const data = await response.json();
 

@@ -504,12 +504,16 @@
     };
 
     const folderContentCache = new Map();
-    const fetchFolderContent = async folderId => {
+    // mergeSameName=true asks the backend to also include any duplicate folders
+    // that share this folder's name (used for facility document views, where the
+    // same program is often filed under several organizational trees).
+    const fetchFolderContent = async (folderId, { mergeSameName = false } = {}) => {
         if (!folderId || !config.folderContentUrl) return [];
-        const cacheKey = String(folderId);
+        const cacheKey = `${folderId}|${mergeSameName ? 'name' : ''}`;
         if (folderContentCache.has(cacheKey)) return folderContentCache.get(cacheKey);
         try {
-            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}`, { credentials: 'same-origin' });
+            const mergeParam = mergeSameName ? '&merge=name' : '';
+            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}${mergeParam}`, { credentials: 'same-origin' });
             const data = await res.json();
             const files = Array.isArray(data) ? data : [];
             folderContentCache.set(cacheKey, files);
@@ -1208,7 +1212,7 @@
                 if (panelKind === 'docs' && panel.dataset.loaded !== '1') {
                     const folderId = panel.dataset.folderId || btn.dataset.folderId;
                     btn.disabled = true;
-                    const files = await fetchFolderContent(folderId);
+                    const files = await fetchFolderContent(folderId, { mergeSameName: true });
                     panel.innerHTML = renderFileGrid(files);
                     panel.dataset.loaded = '1';
                     btn.disabled = false;

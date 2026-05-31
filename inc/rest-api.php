@@ -209,21 +209,36 @@ function kop_register_facilities_rest_routes() {
                 if (!$folder_id) {
                     return new WP_Error('missing_id', 'Folder ID is required', array('status' => 400));
                 }
-                
+
+                // Facility views pass merge=name so that duplicate folders sharing
+                // the facility's name (e.g. the same program filed under "Active
+                // Programs" and again under "Closed Programs") are all surfaced.
+                // Lawsuit/legislation views omit it and target their exact folder.
+                $merge_same_name = ($request->get_param('merge') === 'name')
+                    && function_exists('kop_get_same_name_folder_ids');
+                $root_ids = $merge_same_name
+                    ? kop_get_same_name_folder_ids($folder_id)
+                    : array((int) $folder_id);
+                if (empty($root_ids)) {
+                    $root_ids = array((int) $folder_id);
+                }
+
                 // Get API key from environment
                 $api_key = getenv('FILEBIRD_API_KEY');
                 if (!$api_key && defined('FILEBIRD_API_KEY')) {
                     $api_key = FILEBIRD_API_KEY;
                 }
-                
+
                 // If API key is available, use FileBird's native API.
                 // FileBird's attachment-id endpoint only returns files filed
                 // directly in a folder, so walk the subtree and merge results
                 // to surface documents nested in subfolders too.
                 if ($api_key) {
-                    $folder_ids = function_exists('kop_get_folder_descendant_ids')
-                        ? kop_get_folder_descendant_ids($folder_id)
-                        : array($folder_id);
+                    $folder_ids = function_exists('kop_get_descendant_ids_for_roots')
+                        ? kop_get_descendant_ids_for_roots($root_ids)
+                        : (function_exists('kop_get_folder_descendant_ids')
+                            ? kop_get_folder_descendant_ids($folder_id)
+                            : array($folder_id));
 
                     $attachment_ids = array();
                     $api_ok = false;
@@ -289,8 +304,14 @@ function kop_register_facilities_rest_routes() {
                 }
                 
                 // Fallback to direct database query if API fails or no key
-                $attachments = kop_get_folder_attachments($folder_id);
-                
+                $attachments = function_exists('kop_get_attachments_in_folder_ids')
+                    ? kop_get_attachments_in_folder_ids(
+                        function_exists('kop_get_descendant_ids_for_roots')
+                            ? kop_get_descendant_ids_for_roots($root_ids)
+                            : kop_get_folder_descendant_ids($folder_id)
+                      )
+                    : kop_get_folder_attachments($folder_id);
+
                 // Format attachments for frontend
                 $formatted = array_map(function($post) {
                     return array(
@@ -314,6 +335,11 @@ function kop_register_facilities_rest_routes() {
                     'type' => 'integer',
                     'sanitize_callback' => 'absint',
                 ),
+                'merge' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_key',
+                ),
             ),
         )
     );
@@ -330,12 +356,17 @@ function kop_register_facilities_rest_routes() {
                 
                 $html = '';
                 
+                // Facility views pass merge=name to pull in duplicate folders that
+                // share the facility's name across different organizational trees.
+                $merge = ($request->get_param('merge') === 'name') ? 'name' : '';
+
                 // Call the function directly to bypass shortcode registration issues in REST context
                 if (function_exists('kop_filebird_folder_shortcode')) {
                     $html = kop_filebird_folder_shortcode(array(
                         'folder_id' => intval($folder_id),
                         'show_count' => 'yes',
-                        'layout' => 'grid'
+                        'layout' => 'grid',
+                        'merge' => $merge
                     ));
                 }
                 
@@ -355,6 +386,11 @@ function kop_register_facilities_rest_routes() {
                     'required' => true,
                     'type' => 'integer',
                     'sanitize_callback' => 'absint',
+                ),
+                'merge' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_key',
                 ),
             ),
         )
