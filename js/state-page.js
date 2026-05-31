@@ -772,6 +772,7 @@
                 cats.licensee ? `<strong>Licensee:</strong> ${escapeHtml(cats.licensee)}` : '',
                 `<strong>Type:</strong> ${typeStr}`,
                 `<strong>Date:</strong> ${escapeHtml(dateStr)}`,
+                insp.inspected_by ? `<strong>Inspected by:</strong> ${escapeHtml(insp.inspected_by)} authority (out-of-state)` : '',
                 cats.visit_date ? `<strong>Visit:</strong> ${escapeHtml(cats.visit_date)}` : '',
                 cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
                 cats.census ? `<strong>Census:</strong> ${escapeHtml(cats.census)}` : '',

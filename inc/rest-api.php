@@ -2252,15 +2252,73 @@ function kop_facility_name_looks_junky($name) {
     return false;
 }
 
-function kop_normalize_facility_name($name) {
+/**
+ * Curated facility-name aliases for entries that should collapse into one
+ * directory row but that the rule-based normalizer can't safely merge on its
+ * own (renames, abbreviations, common misspellings, "doing business as").
+ *
+ * Format: 'any spelling of a variant' => 'the canonical spelling'.
+ *
+ * Both sides are run through kop_normalize_facility_name_rules() before they're
+ * compared, so you do NOT need entries for differences the rules already
+ * collapse — leading "The", "&" vs "and", dashes, punctuation, or casing. For
+ * example "Academy at Sisters" and "The Academy at Sisters" already merge via
+ * the rules; only add a row here when two genuinely different strings name the
+ * same facility.
+ *
+ * Chains are resolved (A => B, B => C yields A => C), so you can point several
+ * variants at an intermediate name without worrying about ordering.
+ *
+ * @return array<string,string>
+ */
+function kop_facility_name_aliases() {
+    return array(
+        // --- Turnbridge (CT) ---------------------------------------------
+        // Scraped Connecticut listings for "CT Clinical Services dba
+        // Turnbridge" arrive with OCR typos ("Clincal"/"Clnical"/"Turnbdridge"),
+        // a dropped space ("ClinicalServices"), and trailing unit/address
+        // fragments. They are one program; collapse them so the directory
+        // accumulates the unit addresses under a single entry.
+        'CT Clincal Services DBA Turnbdridge'                 => 'CT Clinical Services DBA Turnbridge',
+        'CT Clnical Services DBA Turnbridge'                  => 'CT Clinical Services DBA Turnbridge',
+        'CT Clinical Services dba Turnbridge (Townsend Ave.'  => 'CT Clinical Services DBA Turnbridge',
+        'CT ClinicalServices dba Turnbridge/#169WoodsideCir'  => 'CT Clinical Services DBA Turnbridge',
+        'CT ClinicalServices dbaTurnbridge/RT#170/Washing'    => 'CT Clinical Services DBA Turnbridge',
+        'CT Clnical Services dba Turnbridge/GH#168NORTH HAV'  => 'CT Clinical Services DBA Turnbridge',
+
+        // --- Add curated aliases below -----------------------------------
+        // 'Provo Canyon Behavioral Hospital' => 'Provo Canyon School',
+        // 'CALO'                             => 'Change Academy Lake of the Ozarks',
+    );
+}
+
+/**
+ * Rule-based half of facility-name normalization: lowercases and strips the
+ * formatting noise that should never distinguish two facilities. Kept separate
+ * from kop_normalize_facility_name() so the curated alias map can be normalized
+ * with the same rules without recursing back through the alias lookup.
+ *
+ * @param string $name
+ * @return string
+ */
+function kop_normalize_facility_name_rules($name) {
     $s = strtolower(trim((string)$name));
     if ($s === '') return '';
 
-    // Strip everything after the first colon — usually scraper metadata
-    // ("Board Chairperson: Kelsey Wood", "Date of site visit: 03/11/2025").
+    // Strip scraper metadata introduced by a colon ("Board Chairperson: Kelsey
+    // Wood", "Date of site visit: 03/11/2025") — but ONLY when the colon really
+    // separates a metadata label/value. Many real names use a colon as a brand
+    // separator ("The Journey: Homestead", "McLean Hospital: 3East"); stripping
+    // those would wrongly merge distinct programs into one directory row.
     $colon_pos = mb_strpos($s, ':');
     if ($colon_pos !== false) {
-        $s = mb_substr($s, 0, $colon_pos);
+        $before = trim(mb_substr($s, 0, $colon_pos));
+        $after  = trim(mb_substr($s, $colon_pos + 1));
+        $label_re = '/(?:board\s+chairperson|chairperson|administrator|executive\s+director|director|owner|operator|date\s+of\s+site\s+visit|site\s+visit|visit\s+date|inspection\s+date|licensee|licensed\s+capacity)$/iu';
+        $after_is_date = (bool)preg_match('#^\d{1,4}[/\-.]\d{1,2}(?:[/\-.]\d{2,4})?\b#', $after);
+        if ($after_is_date || preg_match($label_re, $before)) {
+            $s = $before;
+        }
     }
 
     // Peel off trailing administrative titles / scraper field labels.
@@ -2270,12 +2328,96 @@ function kop_normalize_facility_name($name) {
         $s
     );
 
+    // Treat "doing business as" as a plain separator. Scrapers emit
+    // "Operator dba Program" where the master data uses "Operator – Program",
+    // so dropping the "dba" lets the two key the same (e.g. "CERTS dba Kolob
+    // Canyon RTC" ↔ "CERTS – Kolob Canyon RTC").
+    $s = preg_replace('#\s+d\s*/?\s*b\s*/?\s*a\s+#u', ' ', $s);
+
     // Punctuation, dashes, ampersand, whitespace cleanup.
     $s = preg_replace('/\s*[\-\x{2013}\x{2014}]\s*/u', ' ', $s);
     $s = preg_replace('/\s*&\s*/', ' and ', $s);
     $s = preg_replace('/[^\w\s]/u', '', $s);
     $s = preg_replace('/\s+/', ' ', $s);
+    $s = trim($s);
+
+    // Drop a leading article so "The Academy at Sisters" keys the same as
+    // "Academy at Sisters". Only "the" is stripped — dropping "a"/"an" would
+    // risk merging unrelated names.
+    $s = preg_replace('/^the\s+/u', '', $s);
+
+    // Drop a trailing corporate suffix so "Normative Services Academy" and
+    // "Normative Services Academy, Inc." key the same. ("l.l.c." has already
+    // become "l l c" after punctuation removal above.)
+    $s = preg_replace('/\s+(?:l\s*l\s*c|llc|inc|incorporated|ltd|limited|co|corp|corporation)$/u', '', $s);
+
     return trim($s);
+}
+
+function kop_normalize_facility_name($name) {
+    // Normalized variant => normalized canonical, built once per request from
+    // the curated alias map and flattened so chained aliases resolve in one hop.
+    static $alias_lookup = null;
+
+    $s = kop_normalize_facility_name_rules($name);
+    if ($s === '') return '';
+
+    if ($alias_lookup === null) {
+        $alias_lookup = array();
+        foreach (kop_facility_name_aliases() as $variant => $canonical) {
+            $vk = kop_normalize_facility_name_rules($variant);
+            $ck = kop_normalize_facility_name_rules($canonical);
+            if ($vk !== '' && $ck !== '' && $vk !== $ck) {
+                $alias_lookup[$vk] = $ck;
+            }
+        }
+        // Resolve chains (A=>B, B=>C becomes A=>C); cap the walk to guard
+        // against an accidental cycle in the curated map.
+        foreach ($alias_lookup as $from => $to) {
+            $hops = 0;
+            while (isset($alias_lookup[$to]) && $alias_lookup[$to] !== $to && $hops < 10) {
+                $to = $alias_lookup[$to];
+                $hops++;
+            }
+            $alias_lookup[$from] = $to;
+        }
+    }
+
+    return $alias_lookup[$s] ?? $s;
+}
+
+/**
+ * Preferred display spelling for a collapsed group, keyed by the grouping key
+ * that kop_normalize_facility_name() returns. Lets a merged directory row show
+ * the canonical name from kop_facility_name_aliases() instead of whichever
+ * (possibly misspelled) variant happened to be encountered first.
+ *
+ * Only the curated map defines a canonical spelling — rule-only merges (leading
+ * "The", punctuation, etc.) have no preferred form here and keep their
+ * first-seen label. A canonical name is one that appears on the right-hand
+ * side of the alias map but never on the left (i.e. it is terminal).
+ *
+ * @return array<string,string> grouping key => canonical display name
+ */
+function kop_facility_canonical_display_map() {
+    static $map = null;
+    if ($map === null) {
+        $map = array();
+        $aliases = kop_facility_name_aliases();
+        $variant_keys = array();
+        foreach ($aliases as $variant => $canonical) {
+            $variant_keys[kop_normalize_facility_name_rules($variant)] = true;
+        }
+        foreach ($aliases as $variant => $canonical) {
+            $ckey = kop_normalize_facility_name_rules($canonical);
+            // Skip canonicals that are themselves a variant of another entry;
+            // the chain resolves to a different terminal name in that case.
+            if ($ckey !== '' && !isset($variant_keys[$ckey])) {
+                $map[$ckey] = $canonical;
+            }
+        }
+    }
+    return $map;
 }
 
 /**
@@ -2319,6 +2461,168 @@ function kop_normalize_address_for_match($address) {
 }
 
 /**
+ * Normalize a city name for collision detection. Folds the spelling variants
+ * that should NOT split a facility into two rows: "Saint"→"St", a trailing
+ * "St."→"st", and a leading directional ("S Syracuse"→"syracuse").
+ *
+ * @param string $city
+ * @return string
+ */
+function kop_normalize_city($city) {
+    $s = strtolower(trim((string)$city));
+    if ($s === '') return '';
+    $s = preg_replace('/[^\w\s]/u', '', $s);            // "st." -> "st"
+    $s = preg_replace('/\s+/u', ' ', $s);
+    $s = trim($s);
+    $s = preg_replace('/^saint\s+/u', 'st ', $s);        // "saint paul" -> "st paul"
+    $s = preg_replace('/^(?:north|south|east|west|n|s|e|w|so|no)\s+/u', '', $s); // drop directional
+    return trim($s);
+}
+
+/**
+ * True when two city strings should be treated as the SAME place (so a shared
+ * facility name keeps one directory row). False means they are different enough
+ * that same-named records are probably different facilities and should split.
+ *
+ * Guards against false splits: missing data, "Saint/St" spelling, a street
+ * fragment leaking in front of the real city ("Dove Song Way Encinitas" vs
+ * "Encinitas"), and typos ("Toquerville"/"Tocqueville").
+ */
+function kop_same_city($a, $b) {
+    $na = kop_normalize_city($a);
+    $nb = kop_normalize_city($b);
+    if ($na === '' || $nb === '') return true;   // unknown -> don't split
+    if ($na === $nb) return true;
+    $lo = mb_strlen($na) <= mb_strlen($nb) ? $na : $nb;
+    $hi = $lo === $na ? $nb : $na;
+    if (mb_substr($hi, -(mb_strlen($lo) + 1)) === ' ' . $lo) return true; // street fragment in front
+    similar_text($na, $nb, $pct);
+    return $pct >= 85.0;                          // typo guard
+}
+
+/**
+ * Pull the city out of a free-form address string ("123 Main St, Provo, UT
+ * 84601" -> "Provo"). Returns '' when no "City, ST" pattern is present.
+ *
+ * @param string $address
+ * @return string
+ */
+function kop_city_from_address($address) {
+    if (preg_match('/([A-Za-z .\'\-]+),\s*[A-Z]{2}\b/u', (string)$address, $m)) {
+        return trim($m[1]);
+    }
+    return '';
+}
+
+/**
+ * Derive the US state ABBREVIATION an address names. Strict: only a ", XX"
+ * abbreviation or a spelled-out state name counts, so a stray two-letter token
+ * never produces a false state. Returns '' when undeterminable.
+ *
+ * @param string $address
+ * @return string
+ */
+function kop_derive_state_from_address($address) {
+    $s = (string)$address;
+    if ($s === '') return '';
+    $abbr_to_name = kop_state_abbrev_to_name();  // ABBR => Name
+    if (preg_match_all('/,\s*([A-Za-z]{2})\b/', $s, $m)) {
+        $cand = strtoupper(end($m[1]));
+        if (isset($abbr_to_name[$cand])) return $cand;
+    }
+    foreach ($abbr_to_name as $ab => $name) {
+        if (preg_match('/\b' . preg_quote($name, '/') . '\b/i', $s)) return $ab;
+    }
+    return '';
+}
+
+/**
+ * Map every master facility NAME (normalized) to the set of state abbreviations
+ * it appears in, from facilities_master. This is the authoritative per-facility
+ * location source for deciding which state page an inspection row belongs on —
+ * far more reliable than the inspection's scraped address, which is sometimes
+ * the operator's HQ rather than the facility.
+ *
+ * @return array<string,string[]> normalized name => list of ABBREVs
+ */
+function kop_master_facility_state_map() {
+    static $map = null;
+    if ($map !== null) return $map;
+
+    global $wpdb;
+    $map = array();
+    $abbr_to_name = kop_state_abbrev_to_name();          // ABBR => Name
+    $name_to_abbr = array();
+    foreach ($abbr_to_name as $ab => $name) $name_to_abbr[strtolower($name)] = $ab;
+
+    $facility_abbr = static function ($f) use ($abbr_to_name, $name_to_abbr) {
+        $addr = isset($f['address']) && is_array($f['address']) ? $f['address'] : array();
+        $ld   = isset($f['locationDetails']) && is_array($f['locationDetails']) ? $f['locationDetails'] : array();
+        foreach (array($addr['state'] ?? '', $ld['state'] ?? '') as $cand) {
+            $cand = trim((string)$cand);
+            if ($cand === '') continue;
+            if (isset($abbr_to_name[strtoupper($cand)])) return strtoupper($cand);
+            if (isset($name_to_abbr[strtolower($cand)])) return $name_to_abbr[strtolower($cand)];
+        }
+        $loc = (string)($f['location'] ?? '');
+        if (preg_match_all('/,\s*([A-Za-z]{2})\b/', $loc, $m)) {
+            $c = strtoupper(end($m[1]));
+            if (isset($abbr_to_name[$c])) return $c;
+        }
+        foreach ($name_to_abbr as $lname => $ab) {
+            if ($loc !== '' && preg_match('/\b' . preg_quote($lname, '/') . '\b/i', $loc)) return $ab;
+        }
+        return '';
+    };
+
+    $sets = array();  // name_key => [ABBR => true]
+    $rows = $wpdb->get_results("SELECT json_data FROM facilities_master", ARRAY_A);
+    foreach ((array)$rows as $row) {
+        $data = kop_normalize_project_payload($row['json_data'] ?? '');
+        if (!is_array($data) || empty($data['facilities']) || !is_array($data['facilities'])) continue;
+        foreach ($data['facilities'] as $f) {
+            if (!is_array($f)) continue;
+            $ident = isset($f['identification']) && is_array($f['identification']) ? $f['identification'] : array();
+            $name  = $ident['name'] ?? $ident['currentName'] ?? '';
+            $nk    = kop_normalize_facility_name($name);
+            if ($nk === '') continue;
+            $ab = $facility_abbr($f);
+            if ($ab === '') continue;
+            $sets[$nk][$ab] = true;
+        }
+    }
+    foreach ($sets as $nk => $abset) $map[$nk] = array_keys($abset);
+    return $map;
+}
+
+/**
+ * The single state a normalized facility name is pinned to by master data, or
+ * '' if it's unknown or ambiguous. Prefix-aware: a chain whose more-specific
+ * sub-programs span multiple states (e.g. "Newport Academy" → "… St. Cloud" MN,
+ * "… Double Hill" CT) is treated as ambiguous so a bare chain name is never
+ * relocated to one arbitrary state.
+ *
+ * @param string $name_key  Output of kop_normalize_facility_name().
+ * @return string Single ABBREV, or ''.
+ */
+function kop_master_state_pin($name_key) {
+    static $memo = array();
+    if ($name_key === '') return '';
+    if (isset($memo[$name_key])) return $memo[$name_key];
+
+    $map = kop_master_facility_state_map();
+    $states = array();
+    foreach ($map[$name_key] ?? array() as $ab) $states[$ab] = true;
+    $prefix = $name_key . ' ';
+    foreach ($map as $k => $abs) {
+        if ($k !== $name_key && strncmp($k, $prefix, strlen($prefix)) === 0) {
+            foreach ($abs as $ab) $states[$ab] = true;
+        }
+    }
+    return $memo[$name_key] = (count($states) === 1) ? array_key_first($states) : '';
+}
+
+/**
  * Reduce inspection data to per-facility summaries plus per-inspection details
  * needed for inline expansion on the state page.
  *
@@ -2348,11 +2652,34 @@ function kop_state_collect_inspection_summaries($state_name) {
 
     // -------- Primary source: DB --------
     if ($abbrev !== '' && $facilities_table_exists === 'inspection_facilities' && $reports_table_exists === 'inspection_reports') {
-        $facility_rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, facility_name, full_address, bed_capacity, program_category
-             FROM inspection_facilities WHERE state = %s",
-            $abbrev
-        ), ARRAY_A);
+        // Place each facility on its HOME state page, not the inspecting
+        // authority's. We pull every row and decide home state from master data
+        // (authoritative per-facility location), relocating only on a confident,
+        // address-corroborated single-state match. $inspected_by_for[id] records
+        // the inspecting state when a row was pulled here from elsewhere.
+        $all_rows = $wpdb->get_results(
+            "SELECT id, facility_name, full_address, bed_capacity, program_category, state
+             FROM inspection_facilities",
+            ARRAY_A
+        );
+        $inspected_by_for = array();
+        $facility_rows = array();
+        foreach ((array)$all_rows as $r) {
+            $stored = strtoupper(trim((string)($r['state'] ?? '')));
+            $pin = kop_master_state_pin(kop_normalize_facility_name($r['facility_name'] ?? ''));
+            $addr_state = kop_derive_state_from_address($r['full_address'] ?? '');
+            // Relocate to the master-pinned state only when it differs from the
+            // stored state AND the row's own address doesn't contradict it.
+            $home = $stored;
+            if ($pin !== '' && $pin !== $stored && ($addr_state === '' || $addr_state === $pin)) {
+                $home = $pin;
+            }
+            if ($home !== $abbrev) continue;            // belongs to a different state's page
+            if ($stored !== '' && $stored !== $abbrev) {
+                $inspected_by_for[(int)$r['id']] = $stored;   // pulled in from another authority
+            }
+            $facility_rows[] = $r;
+        }
 
         if (is_array($facility_rows) && !empty($facility_rows)) {
             $facility_ids = array_map('intval', wp_list_pluck($facility_rows, 'id'));
@@ -2538,6 +2865,12 @@ function kop_state_collect_inspection_summaries($state_name) {
 
                 $fid = (int)$f['id'];
                 $stats = $stats_by_facility[$fid] ?? array('count' => 0, 'violations' => 0, 'latest' => '');
+                $inspected_by = $inspected_by_for[$fid] ?? '';
+                $insp_records = $inspections_by_facility[$fid] ?? array();
+                if ($inspected_by !== '') {
+                    foreach ($insp_records as &$_ir) { $_ir['inspected_by'] = $inspected_by; }
+                    unset($_ir);
+                }
                 $summaries[] = array(
                     'facility_name'          => $fname,
                     'inspection_address'     => trim((string)($f['full_address'] ?? '')),
@@ -2547,7 +2880,8 @@ function kop_state_collect_inspection_summaries($state_name) {
                     'capacity'               => trim((string)($f['bed_capacity'] ?? '')),
                     'census'                 => '',
                     'program_category'       => trim((string)($f['program_category'] ?? '')),
-                    'inspections'            => $inspections_by_facility[$fid] ?? array(),
+                    'inspected_by'           => $inspected_by,
+                    'inspections'            => $insp_records,
                 );
             }
 
@@ -2866,10 +3200,35 @@ function kop_state_collect_facilities($state_name) {
         return null;
     };
 
+    // City-aware slotting: records that share a normalized facility name but sit
+    // in genuinely different cities are kept as SEPARATE rows (e.g. two unrelated
+    // "Hope Harbor" programs in Marshall vs Winona). kop_same_city() folds mere
+    // spelling/typo/street-fragment differences so the same facility never splits.
+    // find_matching_key() runs against $name_slots (name-level keys); the slot
+    // resolver then maps (name key + city) to the actual $by_key row key.
+    $name_slots = array();  // name_key => list of ['key'=>final_key, 'city'=>source city]
+    $resolve_slot = static function ($name_key, $city) use (&$name_slots) {
+        if ($name_key === '') return $name_key;
+        if (!isset($name_slots[$name_key])) {
+            $name_slots[$name_key] = array(array('key' => $name_key, 'city' => (string)$city));
+            return $name_key;
+        }
+        foreach ($name_slots[$name_key] as $i => $slot) {
+            if (kop_same_city($slot['city'], $city)) {
+                if ($slot['city'] === '' && $city !== '') $name_slots[$name_key][$i]['city'] = (string)$city;
+                return $slot['key'];
+            }
+        }
+        $new_key = $name_key . '##' . (count($name_slots[$name_key]) + 1);
+        $name_slots[$name_key][] = array('key' => $new_key, 'city' => (string)$city);
+        return $new_key;
+    };
+
     foreach ($programs as $p) {
         $candidate = $normalize_key($p['facility_name'] ?: $p['project_name']);
         if ($candidate === '') continue;
-        $key = $find_matching_key($by_key, $candidate) ?: $candidate;
+        $name_key = $find_matching_key($name_slots, $candidate) ?: $candidate;
+        $key = $resolve_slot($name_key, $p['city'] ?? kop_city_from_address($p['raw_address'] ?? ''));
 
         // Prefer the raw imported address line whenever the structured pieces
         // don't carry a real street or city — otherwise the implode below
@@ -2954,8 +3313,10 @@ function kop_state_collect_facilities($state_name) {
                     $addresses[] = $extra;
                 }
             }
+            $display_map = kop_facility_canonical_display_map();
+            $display_name = $display_map[$key] ?? ($p['facility_name'] ?: $p['project_name']);
             $by_key[$key] = array(
-                'name'              => $p['facility_name'] ?: $p['project_name'],
+                'name'              => $display_name,
                 'project_name'      => $p['project_name'],
                 'address'           => $primary_address,
                 'addresses'         => $addresses,
@@ -3013,11 +3374,18 @@ function kop_state_collect_facilities($state_name) {
         $candidate = $normalize_key($insp['facility_name']);
         if ($candidate === '') continue;
 
-        $matched_key = $find_matching_key($by_key, $candidate);
+        $insp_city = kop_city_from_address($insp['inspection_address'] ?? '');
+        $name_key = $find_matching_key($name_slots, $candidate);
 
-        // Secondary merge path: inspection rows that carry loose address labels
-        // should merge into the named program record at the same address.
-        if (!$matched_key) {
+        if ($name_key !== null) {
+            // Matched a known facility name — slot it by city so a same-named
+            // program in a different city doesn't absorb this inspection.
+            $key = $resolve_slot($name_key, $insp_city);
+        } else {
+            // Secondary merge path: inspection rows that carry loose address labels
+            // should merge into the named program record at the same address.
+            // $address_to_key holds final (already-slotted) row keys.
+            $matched_key = null;
             $insp_addr_key = kop_normalize_address_for_match($insp['inspection_address'] ?? '');
             if ($insp_addr_key === '') {
                 $insp_addr_key = kop_normalize_address_for_match($insp['facility_name'] ?? '');
@@ -3037,9 +3405,9 @@ function kop_state_collect_facilities($state_name) {
                     }
                 }
             }
-        }
 
-        $key = $matched_key ?: $candidate;
+            $key = $matched_key ?: $resolve_slot($candidate, $insp_city);
+        }
 
         if (isset($by_key[$key])) {
             // Merge — accumulate counts; prefer the longer/cleaner inspection list and most recent date.
@@ -3078,8 +3446,9 @@ function kop_state_collect_facilities($state_name) {
             }
         } else {
             $insp_addr = (string)$insp['inspection_address'];
+            $display_map = kop_facility_canonical_display_map();
             $by_key[$key] = array(
-                'name'              => $insp['facility_name'],
+                'name'              => $display_map[$key] ?? $insp['facility_name'],
                 'project_name'      => '',
                 'address'           => $insp_addr,
                 'addresses'         => $insp_addr !== '' ? array($insp_addr) : array(),
