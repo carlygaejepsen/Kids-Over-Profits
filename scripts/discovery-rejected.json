@@ -1,6 +1,158 @@
 {
-  "lastUpdated": "2026-05-30T08:23:08.964Z",
+  "lastUpdated": "2026-05-31T08:05:33.580Z",
   "entries": [
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOT1dFaUdWLXUyX2FKa0lGTk5TUlhRblg5WEpIRnU1anpUTzQwbEtvMzRXbnhQTjd4ZG5oSEgxTGRBRGxoTWtYVWRhZkdGVDc3VzJFZzRGNFRxNHIwTGh1N0h6T0xlaVZTRGFjWGpDZ1RYckZfdkxiR043ZlRSNkx6RWQ1S3M3Y3pPeDEzNUx2ZXJyTW5rRmgwTg?oc=5",
+      "title": "Ep. 596: Teen Challenge, Zoe Ministries, and Remembering James Robison - MinistryWatch",
+      "origin": "google-news",
+      "host": "ministrywatch.com",
+      "facilityQuery": "Teen Challenge",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Teen Challenge"
+        ],
+        "threshold": 3,
+        "host": "ministrywatch.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxOZ1RVRG1TQkpNTzZIT2lQSG1ENFREdTJYWl9Nd1BKOUtOU2pvWTNCUkluSEZSZXJYOUxydHZUc3V1UG9GbW1WdjFtaWwtU0M2a0dpZ1ZEaDI2YXlVRnotSW1oQ3pJSWw5eVE5VFZITFhVMWpTSWxjb2tLQ0RyR2pzMTEteG53RlhtbmpReHZzRnpxUGZnNTBuUS1IWTh3QdIBsgFBVV95cUxPVG9wQk1MbDVDYUQ2ZkpqUU1VWXMtRkU0LUc3NzUtbDRRQmJ2SDlQZEgwcklRN0NKakp1NUVFUlE1V0ZqMnJKRW9yZU9rc1RSLWtGYUktZ1B4V2RjVnVabWFqZnR2c2lEZDZvZGNhcmxpa1ZsemREVEZQSVJlZ2c5cnMxMm4zNGtPalpaY0RlUmd4LWRKdVFPT3dzQnlPY2NsdGhTcHpEd1NBQk9qREZLd0Jn?oc=5",
+      "title": "Faith-based nonprofit expands addiction recovery services in Wausau - WSAW",
+      "origin": "google-news",
+      "host": "wsaw.com",
+      "facilityQuery": "Teen Challenge",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wsaw.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxPLUpXRE1LblY1anVHVmFnVHJfVUJqV2NLdXhrQ2RVRVhUOGJUU1dyMnI4cEk3UVZoaXhCYnFkdDNka29QTTFmUlllSkdmTGxWMFgxOXV6eGRodm9CTkxHZXJHMjhOeDZaU0RhU21jYWd5NG1vTjJSYzNXRkh1OXZDUkt3SENONXEyQi1YdDBaZjJKMTVPR1JaQlFVVi1wcGNHazMtRmhWZkNGTXhMVE5jRjZCYWZ5bXpFTi10cEJmZXZCbmVlUUd6am0zLURFdzJ5Nm1yTzVJeE44WE10YUFn?oc=5",
+      "title": "Michigan Outraged as Republicans Pass Major Tax Cut Package: 'If this worked, then why aren't all deep red states a paradise?' - The Nerd Stash",
+      "origin": "google-news",
+      "host": "thenerdstash.com",
+      "facilityQuery": "Michigan House",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "thenerdstash.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPcmsyOFFYWTF3bzMzT1JuNUIwZ25yZDdxQndVZ0ZJYVVhblF3R1hHSk1MN29CMjRwM1d0TGM0a0ZDZlotTERpOG14amZWMmNlOS1zanVvY0FuQ2t5UWF6SlhERlAzUDVFbTQyQmMzME9fQkdEblkyZk1BVDVaSEJRZGxLX3g3UTFLWHpQSUFVU0V3YTl5TFc3R3hjR3V0RlIwTHFqSTZ3QW84bVNMaTRUUDBxZXAwSEwxNUNkRF8zdEwzeWhIVG9fajhUbm42bE00VWZQMQ?oc=5",
+      "title": "San Diego Humane Society on day 13 of mass animal rescue in Julian - cbs8.com",
+      "origin": "google-news",
+      "host": "cbs8.com",
+      "facilityQuery": "The Ark",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cbs8.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOYVk4WEhnTkFQdVV4WDlIc3BRS2VqUjI4NjI0Zk9maTdZWHA2ZlhlRkhIREZhR3JXWEowZ2tiNmlyck91eG1Jall4d1F0dkZ4NTQtWnJJczN4OVhMQ3NCV3N6bllTaXFkRXFkNzBxZWowbUMycHkzUUhSSU9rX1I1Z0ZZdUR3M0lMd2lnOV9XOG5LYVpkNUZFYTNxVQ?oc=5",
+      "title": "16-year-old girl was shot at prom after-party in Dauphin County, DA says - WGAL",
+      "origin": "google-news",
+      "host": "wgal.com",
+      "facilityQuery": "Summit View",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wgal.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxOZ2dPYndTZUhjOVZ1SjFNSl9icFZqNS1WYkVLTXZSRmFPN3lyTlF3eEtzX29CWkJySkYyYjQ5dWFrOC1FT0JNRTJrSHRsbkhFWUtEYWRKZXFiRUNKUXAwMGtkWVRIbkZGMWZLMUZwOGdWaTFqZVlZeTJNQ0JXenZEWTJoaWp3OXpvZm9WQVVQY3hQVnUyZVpiMEhNbFJuQk9hc191Tlhjd0xsQndGNVJQUy00TnJoSVM1S1NmalJmWmRJbmJ3WWdvTTVaamlwcnRLeHBoVVZQamQ1N2FKUXJYb2ZRV3NhemJDcWtyX0k3RQ?oc=5",
+      "title": "Sex tapes, riots and drug burritos | Secrets of Green Hill - KING5.com",
+      "origin": "google-news",
+      "host": "king5.com",
+      "facilityQuery": "Green Hill School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "king5.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPdktiSlo3ZmpmQjhILVpoZlJDQmF3TUVOeTB0QVc1SGVoNXByMXp1YXNqR0ZIMTNJRmlpaXBRTVgzdUtCX1NEWS1NZnJtSGRlMWEzcE02Yjd2UTdMZllUOU5JeG9XQkFzUy1lU2FhTlNLN0xiZmIxeVZXX3lPQ0lseElOcDE2RDdISXZwYU5MbE9YN0ZxZ0sxM0dTOEZxTVdUS3FyVmpLVHVUZjRhVEtYWTlR?oc=5",
+      "title": "POSHARD FOUNDATION AWARDS MORE THAN $106,000 TO CHILD ADVOCACY ORGANIZATIONS - wfiwradio.com",
+      "origin": "google-news",
+      "host": "wfiwradio.com",
+      "facilityQuery": "Baptist Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wfiwradio.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNd0RJUmNTRmluUmV4cTVaZDE4OVFfQ2hqeVRPb1cxNlJPRGY3dXRXMDhVV21adjAydmtkMW5yUnhpRTk0LUxselpwbmhkQ3ZYdjBRNVpWWHU3eDNMRzAzYlJHdjhiZ3gxZUlGaHZEYWNMamlvZTMwSjlWbmZkMUVhM2NERjJqU0l4SmpwMXg1cmdVdFJ4bzhuZTBTMDFTQm1vQjdqVVZqZ0tkaHpsT29nSVVEWTdVUQ?oc=5",
+      "title": "Robert Redford honored at Sundance’s final Utah festival, founder’s legacy celebrated - artthreat.net",
+      "origin": "google-news",
+      "host": "artthreat.net",
+      "facilityQuery": "Mountain Haven",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "artthreat.net"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1TSUktYzVHLTZLMkh5blFGWG9kQzR5MzFqNG5SUXI2cld0VE1URHNHdXV1LUhULUxqeVN0WG5DNkVpUzJ3a2dmNEFrWjJOTmpNZWdDV0xYUFkxckVr?oc=5",
+      "title": "Murdaugh Family - Britannica",
+      "origin": "google-news",
+      "host": "britannica.com",
+      "facilityQuery": "Generations",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "britannica.com"
+      }
+    },
+    {
+      "ts": "2026-05-31T08:05:33.580Z",
+      "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPcmRTSGZhT2pMbUVxUm1VNnRCX2RWb0NWQWNKYmVaYVB3SHBIRHdfek8tU19PRUloTTFzWWo5cVZGVkc1ekswRGQtR21QZ0t5SEVwOUF2dXZUcko1VjRpNmZjTTFObE55bmE2RHN1bXhBV3JBQlRPMWhaQ193d3UxQ2FPOTdVdWdXTFUyWE9KTlVEWjNMRHBXZkRuakc0YmNuelHSAbYBQVVfeXFMUFB4VUdFQ3ppTzR5cXNrS3dnUkYyS3FVQUQzS3BTMnFDVzVBTElYZlo1MnNJSWJWZU1KbzBJN0gxUThfcmpFbGE0b0xjdTV1SXptN0dxRVRlSEVpQXhMODJrV1NZYWU0dlFoUDF4cWhocWdpTjdYRy1VNXhDNUNDSTZpN1hOd3I0MjZZbEZwVUNjS21hZmJqRjhEWHR6bVRDeXhhTkVONHhyb3l4dFlmRERSQkphenc?oc=5",
+      "title": "Hunting Island Lighthouse reopens after nearly four years, offering visitors a familiar climb and a major tourism boost - WTOC",
+      "origin": "google-news",
+      "host": "wtoc.com",
+      "facilityQuery": "Generations",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wtoc.com"
+      }
+    },
     {
       "ts": "2026-05-30T08:23:08.964Z",
       "link": "https://news.google.com/rss/articles/CBMizAFBVV95cUxNQXROSGo4SHVSdHAyc3ZDQVRpYWlaS3NCa3NpTXBUeXRtd1Yzem16NHBQMUVaTHdGbllwRWFjUjMwZENIbnppWFk0aXVNSnRDbnR3cHJRZnh6TmFXblhFX1RxQnZDUmhVVlhkUFlzRVBEUFE4TWhxT0l0TXp0aW10RHROZ3VHNGZxSHVfX0hHSVRGN21JaVN5c3N1OXhZOTNnaG44TG5RV09vX1lCNFpwdlFYMk4xY0xLX3QtUEdkLVpNeEgwcE1Qd1dlQW4?oc=5",
