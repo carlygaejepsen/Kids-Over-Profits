@@ -2275,6 +2275,14 @@ function kop_facility_name_looks_junky($name) {
     if ($name === '') return true;
     // Purely numeric (raw facility_number)
     if (preg_match('/^[0-9]+$/', $name)) return true;
+    // Bare jurisdiction name/abbrev ("OREGON", "Utah", "OR") — a header or
+    // placeholder row, not a facility.
+    $abbr_to_name = kop_state_abbrev_to_name();
+    $upper = strtoupper($name);
+    if (isset($abbr_to_name[$upper])) return true;                       // 2-letter abbrev
+    foreach ($abbr_to_name as $state_name) {
+        if (strcasecmp($name, $state_name) === 0) return true;          // full state name
+    }
     // Placeholder pattern
     if (mb_stripos($name, 'Facility (') === 0) return true;
     // CCL metadata concatenations
@@ -2321,6 +2329,15 @@ function kop_facility_name_aliases() {
         'CT ClinicalServices dba Turnbridge/#169WoodsideCir'  => 'CT Clinical Services DBA Turnbridge',
         'CT ClinicalServices dbaTurnbridge/RT#170/Washing'    => 'CT Clinical Services DBA Turnbridge',
         'CT Clnical Services dba Turnbridge/GH#168NORTH HAV'  => 'CT Clinical Services DBA Turnbridge',
+
+        // --- Northwest Behavioral Health Services (OR) -------------------
+        // The data-form profile was filed under the abbreviation "NWBHS",
+        // which the rules can't expand, so its rich details never merged onto
+        // the full-name card. Collapse the abbreviation — and the "Health
+        // Services" misspelling of the canonical "Healthcare Services" — into
+        // the spelled-out canonical name.
+        'NWBHS' => 'Northwest Behavioral Healthcare Services',
+        'Northwest Behavioral Health Services' => 'Northwest Behavioral Healthcare Services',
 
         // --- Add curated aliases below -----------------------------------
         // 'Provo Canyon Behavioral Hospital' => 'Provo Canyon School',
@@ -2646,6 +2663,40 @@ function kop_master_state_pin($name_key) {
     if ($name_key === '') return '';
     if (isset($memo[$name_key])) return $memo[$name_key];
 
+    $pin = kop_master_state_pin_raw($name_key);
+
+    // Inspection names sometimes append the state ("CALO Programs Missouri" vs
+    // master "CALO Programs"). Strip a trailing spelled-out state name and retry
+    // — the appended state itself corroborates the relocation.
+    if ($pin === '') {
+        foreach (kop_state_name_suffixes() as $suffix) {
+            if (substr($name_key, -strlen($suffix)) === $suffix) {
+                $shorter = trim(substr($name_key, 0, -strlen($suffix)));
+                if ($shorter !== '') {
+                    $pin = kop_master_state_pin_raw($shorter);
+                    if ($pin !== '') break;
+                }
+            }
+        }
+    }
+
+    return $memo[$name_key] = $pin;
+}
+
+/** Lowercase " <state name>" suffixes, longest first ("north carolina" before "carolina"). */
+function kop_state_name_suffixes() {
+    static $suffixes = null;
+    if ($suffixes === null) {
+        $suffixes = array();
+        foreach (kop_state_abbrev_to_name() as $name) $suffixes[] = ' ' . strtolower($name);
+        usort($suffixes, static function ($a, $b) { return strlen($b) <=> strlen($a); });
+    }
+    return $suffixes;
+}
+
+/** Raw prefix-aware master pin (no state-suffix stripping). */
+function kop_master_state_pin_raw($name_key) {
+    if ($name_key === '') return '';
     $map = kop_master_facility_state_map();
     $states = array();
     foreach ($map[$name_key] ?? array() as $ab) $states[$ab] = true;
@@ -2655,7 +2706,7 @@ function kop_master_state_pin($name_key) {
             foreach ($abs as $ab) $states[$ab] = true;
         }
     }
-    return $memo[$name_key] = (count($states) === 1) ? array_key_first($states) : '';
+    return (count($states) === 1) ? array_key_first($states) : '';
 }
 
 /**
@@ -3537,6 +3588,10 @@ function kop_state_collect_facilities($state_name) {
     }
 
     foreach ($by_key as $facility) {
+        // Final junk-name guard, applied regardless of source (master programs
+        // aren't filtered upstream the way inspection rows are) — drops bare
+        // jurisdiction/placeholder rows like "OREGON".
+        if (kop_facility_name_looks_junky($facility['name'] ?? '')) continue;
         $merged[] = $facility;
     }
 
