@@ -223,6 +223,40 @@ function kop_register_facilities_rest_routes() {
                     $root_ids = array((int) $folder_id);
                 }
 
+                // format=tree returns the nested subfolder structure
+                // ({files, subfolders:[{name, files, subfolders}]}) instead of a
+                // flat list, so the frontend can show documents grouped by folder.
+                if ($request->get_param('format') === 'tree'
+                    && function_exists('kop_get_facility_doc_tree')) {
+                    $format_file = function ($post) {
+                        return array(
+                            'id' => $post->ID,
+                            'title' => $post->post_title,
+                            'url' => wp_get_attachment_url($post->ID),
+                            'thumb_url' => function_exists('kop_get_attachment_preview_url')
+                                ? kop_get_attachment_preview_url($post->ID, 'large')
+                                : wp_get_attachment_image_url($post->ID, 'large'),
+                            'mime_type' => $post->post_mime_type,
+                            'date' => $post->post_date,
+                        );
+                    };
+                    $nodes_to_json = function ($nodes) use (&$nodes_to_json, $format_file) {
+                        return array_map(function ($node) use (&$nodes_to_json, $format_file) {
+                            return array(
+                                'name' => $node['name'],
+                                'files' => array_map($format_file, $node['attachments']),
+                                'subfolders' => $nodes_to_json($node['children']),
+                            );
+                        }, $nodes);
+                    };
+
+                    $tree = kop_get_facility_doc_tree($folder_id, $merge_same_name);
+                    return rest_ensure_response(array(
+                        'files' => array_map($format_file, $tree['files']),
+                        'subfolders' => $nodes_to_json($tree['subfolders']),
+                    ));
+                }
+
                 // Get API key from environment
                 $api_key = getenv('FILEBIRD_API_KEY');
                 if (!$api_key && defined('FILEBIRD_API_KEY')) {
@@ -336,6 +370,11 @@ function kop_register_facilities_rest_routes() {
                     'sanitize_callback' => 'absint',
                 ),
                 'merge' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'sanitize_callback' => 'sanitize_key',
+                ),
+                'format' => array(
                     'required' => false,
                     'type' => 'string',
                     'sanitize_callback' => 'sanitize_key',

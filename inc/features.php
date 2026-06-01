@@ -628,6 +628,92 @@ add_shortcode('filebird_library', 'kop_filebird_library_shortcode');
 add_shortcode('kop_document_library', 'kop_filebird_library_shortcode'); // Alias
 
 /**
+ * Render a single document as a <li> tile. Shared by the flat and nested
+ * (subfolder) document renderers so the markup stays identical.
+ */
+function kop_render_doc_file_li($attachment, $layout = 'grid') {
+    $file_url = wp_get_attachment_url($attachment->ID);
+    $file_type = wp_check_filetype($file_url);
+    $file_ext = strtoupper($file_type['ext']);
+    $file_path = get_attached_file($attachment->ID);
+    $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
+    $preview_url = function_exists('kop_get_attachment_preview_url')
+        ? kop_get_attachment_preview_url($attachment->ID, 'large')
+        : wp_get_attachment_image_url($attachment->ID, 'medium');
+    $has_preview = !empty($preview_url);
+    $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
+    $display_title = function_exists('kop_title_case')
+        ? kop_title_case($attachment->post_title)
+        : $attachment->post_title;
+
+    ob_start();
+    ?>
+    <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
+        <a href="<?php echo esc_url($file_url); ?>"
+           class="doc-link"
+           target="_blank"
+           rel="noopener"
+           data-title="<?php echo esc_attr($display_title); ?>"
+           data-mime="<?php echo esc_attr($attachment->post_mime_type); ?>"
+           data-thumb="<?php echo esc_url($preview_url); ?>">
+            <div class="doc-thumbnail">
+                <?php if ($has_preview): ?>
+                    <img src="<?php echo esc_url($preview_url); ?>"
+                         alt="<?php echo esc_attr($display_title); ?>"
+                         class="<?php echo esc_attr($preview_class); ?>"
+                         onerror="this.style.display='none'">
+                <?php else: ?>
+                    <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
+                        <?php echo esc_html($file_ext); ?>
+                    </span>
+                <?php endif; ?>
+            </div>
+            <div class="doc-info">
+                <span class="doc-title"><?php echo esc_html($display_title); ?></span>
+                <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
+            </div>
+        </a>
+    </li>
+    <?php
+    return ob_get_clean();
+}
+
+/**
+ * Render a <ul> of document tiles. Returns '' when there are no files.
+ */
+function kop_render_doc_file_list($attachments, $layout = 'grid') {
+    if (empty($attachments)) {
+        return '';
+    }
+    $items = '';
+    foreach ($attachments as $attachment) {
+        $items .= kop_render_doc_file_li($attachment, $layout);
+    }
+    return '<ul class="doc-list doc-layout-' . esc_attr($layout) . '">' . $items . '</ul>';
+}
+
+/**
+ * Render nested subfolder nodes (from kop_build_facility_doc_tree) as a set of
+ * labeled sections, recursing into deeper subfolders.
+ */
+function kop_render_doc_subfolders($nodes, $layout = 'grid') {
+    if (empty($nodes)) {
+        return '';
+    }
+    $html = '';
+    foreach ($nodes as $node) {
+        $inner = kop_render_doc_file_list($node['attachments'], $layout)
+               . kop_render_doc_subfolders($node['children'], $layout);
+        $html .= '<div class="doc-subfolder">'
+               . '<div class="doc-subfolder-title"><span class="folder-icon">📁</span> '
+               . esc_html($node['name']) . '</div>'
+               . '<div class="doc-subfolder-content">' . $inner . '</div>'
+               . '</div>';
+    }
+    return $html;
+}
+
+/**
  * Shortcode: Display specific FileBird folder
  * Usage: [filebird_folder folder_id="5" title="Resources"]
  */
@@ -659,16 +745,22 @@ function kop_filebird_folder_shortcode($atts) {
     }
 
     // Facility views (merge=name) pull in every duplicate folder sharing this
-    // name across organizational trees; embedded shortcodes default to just this
-    // folder's own subtree.
-    if ($atts['merge'] === 'name'
-        && function_exists('kop_get_same_name_folder_ids')
-        && function_exists('kop_get_attachments_in_folder_ids')
-        && function_exists('kop_get_descendant_ids_for_roots')) {
-        $root_ids = kop_get_same_name_folder_ids($atts['folder_id']);
-        $attachments = kop_get_attachments_in_folder_ids(kop_get_descendant_ids_for_roots($root_ids));
+    // name across organizational trees AND preserve the subfolder structure so
+    // nested documents stay grouped under their folder. Embedded shortcodes
+    // default to a flat list of just this folder's own subtree.
+    if ($atts['merge'] === 'name' && function_exists('kop_get_facility_doc_tree')) {
+        $tree = kop_get_facility_doc_tree($atts['folder_id'], true);
+        $count = count($tree['files']) + kop_count_facility_doc_tree($tree['subfolders']);
+        $body = kop_render_doc_file_list($tree['files'], $atts['layout'])
+              . kop_render_doc_subfolders($tree['subfolders'], $atts['layout']);
     } else {
         $attachments = kop_get_folder_attachments($atts['folder_id']);
+        $count = count($attachments);
+        $body = kop_render_doc_file_list($attachments, $atts['layout']);
+    }
+
+    if ($body === '') {
+        $body = '<p class="no-documents">No documents found in this folder.</p>';
     }
 
     ob_start();
@@ -677,59 +769,11 @@ function kop_filebird_folder_shortcode($atts) {
         <div class="doc-folder-title-single" style="font-size: 1.2em; font-weight: 700; margin-bottom: 15px; border-bottom: 2px solid #33A7B5; padding-bottom: 5px;">
             <?php echo esc_html($atts['title']); ?>
             <?php if ($atts['show_count'] === 'yes'): ?>
-            <span class="doc-count">(<?php echo count($attachments); ?>)</span>
+            <span class="doc-count">(<?php echo (int) $count; ?>)</span>
             <?php endif; ?>
         </div>
 
-        <?php if (!empty($attachments)): ?>
-        <ul class="doc-list doc-layout-<?php echo esc_attr($atts['layout']); ?>">
-            <?php foreach ($attachments as $attachment): ?>
-                <?php
-                $file_url = wp_get_attachment_url($attachment->ID);
-                $file_type = wp_check_filetype($file_url);
-                $file_ext = strtoupper($file_type['ext']);
-                $file_path = get_attached_file($attachment->ID);
-                $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
-                $preview_url = function_exists('kop_get_attachment_preview_url')
-                    ? kop_get_attachment_preview_url($attachment->ID, 'large')
-                    : wp_get_attachment_image_url($attachment->ID, 'medium');
-                $has_preview = !empty($preview_url);
-                $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
-                $display_title = function_exists('kop_title_case')
-                    ? kop_title_case($attachment->post_title)
-                    : $attachment->post_title;
-                ?>
-                <li class="doc-item">
-                    <a href="<?php echo esc_url($file_url); ?>"
-                       class="doc-link"
-                       target="_blank"
-                       rel="noopener"
-                       data-title="<?php echo esc_attr($display_title); ?>"
-                       data-mime="<?php echo esc_attr($attachment->post_mime_type); ?>"
-                       data-thumb="<?php echo esc_url($preview_url); ?>">
-                        <div class="doc-thumbnail">
-                            <?php if ($has_preview): ?>
-                                <img src="<?php echo esc_url($preview_url); ?>"
-                                     alt="<?php echo esc_attr($display_title); ?>"
-                                     class="<?php echo esc_attr($preview_class); ?>"
-                                     onerror="this.style.display='none'">
-                            <?php else: ?>
-                                <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>">
-                                    <?php echo esc_html($file_ext); ?>
-                                </span>
-                            <?php endif; ?>
-                        </div>
-                        <div class="doc-info">
-                            <span class="doc-title"><?php echo esc_html($display_title); ?></span>
-                            <span class="doc-meta"><?php echo esc_html($file_size); ?></span>
-                        </div>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-        <?php else: ?>
-        <p class="no-documents">No documents found in this folder.</p>
-        <?php endif; ?>
+        <?php echo $body; ?>
     </div>
     <?php
     return ob_get_clean();

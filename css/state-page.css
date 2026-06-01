@@ -989,6 +989,25 @@
     line-height: 1.3;
 }
 
+/* Nested subfolder sections within a facility's documents */
+.state-doc-subfolder {
+    margin-top: 0.9em;
+    padding-left: 0.9em;
+    border-left: 2px solid #e2e8f0;
+}
+
+.state-doc-subfolder-title {
+    font-weight: 700;
+    font-size: 0.9em;
+    color: #00004d;
+    margin: 0 0 0.5em;
+}
+
+/* Space the grid out from its subfolder heading and any nested sections */
+.state-doc-subfolder .state-doc-grid {
+    margin-bottom: 0.4em;
+}
+
 /* Submit news button */
 .news-toolbar {
     display: flex;

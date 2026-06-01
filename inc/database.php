@@ -706,3 +706,142 @@ function kop_get_attachments_in_folder_ids($folder_ids) {
 
     return get_posts($args);
 }
+
+/**
+ * Direct child folders (one level down) of the given parent folders.
+ *
+ * @param int[] $parent_ids
+ * @return int[] Child folder IDs.
+ */
+function kop_get_child_folder_ids($parent_ids) {
+    global $wpdb;
+
+    $parent_ids = array_values(array_unique(array_map('intval', (array) $parent_ids)));
+    if (empty($parent_ids)) {
+        return array();
+    }
+
+    $folder_table = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$folder_table'") != $folder_table) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($parent_ids), '%d'));
+    $ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT id FROM $folder_table WHERE type = 0 AND parent IN ($placeholders)",
+            $parent_ids
+        )
+    );
+
+    return array_map('intval', (array) $ids);
+}
+
+/**
+ * Recursively build a nested document tree for a set of sibling folders,
+ * collapsing folders that share the same name into a single node. This keeps
+ * the duplicate facility trees (see kop_get_same_name_folder_ids) from
+ * producing repeated "Sweidy v. SRA" style headings.
+ *
+ * Each node: array(
+ *   'name'        => string,
+ *   'attachments' => WP_Post[]  // files filed directly in this (merged) folder
+ *   'children'    => node[]      // nested subfolders
+ * )
+ *
+ * @param int[] $folder_ids Sibling folders to merge/render at this level.
+ * @param int   $depth      Recursion guard.
+ * @return array node[]
+ */
+function kop_build_facility_doc_tree($folder_ids, $depth = 0) {
+    if ($depth > 8) {
+        return array();
+    }
+
+    global $wpdb;
+    $folder_ids = array_values(array_unique(array_map('intval', (array) $folder_ids)));
+    if (empty($folder_ids)) {
+        return array();
+    }
+
+    $folder_table = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$folder_table'") != $folder_table) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($folder_ids), '%d'));
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT id, name FROM $folder_table WHERE type = 0 AND id IN ($placeholders)",
+            $folder_ids
+        )
+    );
+
+    // Group sibling folders by normalized name so duplicates merge into one node.
+    $groups = array();
+    foreach ($rows as $row) {
+        $key = strtolower(trim($row->name));
+        if (!isset($groups[$key])) {
+            $groups[$key] = array('name' => $row->name, 'ids' => array());
+        }
+        $groups[$key]['ids'][] = (int) $row->id;
+    }
+
+    $nodes = array();
+    foreach ($groups as $group) {
+        $attachments = kop_get_attachments_in_folder_ids($group['ids']); // direct only
+        $children = kop_build_facility_doc_tree(kop_get_child_folder_ids($group['ids']), $depth + 1);
+        if (empty($attachments) && empty($children)) {
+            continue; // prune empty branches
+        }
+        $nodes[] = array(
+            'name' => $group['name'],
+            'attachments' => $attachments,
+            'children' => $children,
+        );
+    }
+
+    usort($nodes, function ($a, $b) {
+        return strcasecmp($a['name'], $b['name']);
+    });
+
+    return $nodes;
+}
+
+/**
+ * Top-level facility document tree: the direct files of the (optionally
+ * name-merged) root folders, plus their nested subfolders.
+ *
+ * @param int  $folder_id        A folder the facility is matched to.
+ * @param bool $merge_same_name  Merge duplicate folders sharing the name.
+ * @return array array with keys 'files' (WP_Post[] filed directly on the roots)
+ *               and 'subfolders' (node[] from kop_build_facility_doc_tree).
+ */
+function kop_get_facility_doc_tree($folder_id, $merge_same_name = true) {
+    $roots = ($merge_same_name && function_exists('kop_get_same_name_folder_ids'))
+        ? kop_get_same_name_folder_ids($folder_id)
+        : array((int) $folder_id);
+    if (empty($roots)) {
+        $roots = array((int) $folder_id);
+    }
+
+    return array(
+        'files' => kop_get_attachments_in_folder_ids($roots), // files filed on the roots themselves
+        'subfolders' => kop_build_facility_doc_tree(kop_get_child_folder_ids($roots)),
+    );
+}
+
+/**
+ * Count every file in a facility doc tree's subfolder node list (recursive).
+ *
+ * @param array $nodes node[] from kop_build_facility_doc_tree
+ * @return int
+ */
+function kop_count_facility_doc_tree($nodes) {
+    $total = 0;
+    foreach ((array) $nodes as $node) {
+        $total += count($node['attachments']);
+        $total += kop_count_facility_doc_tree($node['children']);
+    }
+    return $total;
+}

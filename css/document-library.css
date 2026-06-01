@@ -341,6 +341,28 @@
     border-bottom: 3px solid var(--kop-teal);
 }
 
+/* Nested subfolder sections (facility document views with merge=name) */
+.doc-subfolder {
+    margin-top: 18px;
+    padding-left: 16px;
+    border-left: 3px solid var(--kop-teal);
+}
+
+.doc-subfolder-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--kop-text-primary);
+    margin-bottom: 10px;
+}
+
+.doc-subfolder-title .folder-icon {
+    margin-right: 4px;
+}
+
+.doc-subfolder-content > .doc-list {
+    margin-bottom: 8px;
+}
+
 /* Grid layout option */
 .doc-layout-grid {
     display: grid;

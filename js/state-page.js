@@ -524,6 +524,28 @@
         }
     };
 
+    // Facility documents fetched as a nested tree ({files, subfolders:[{name,
+    // files, subfolders}]}) so the subfolder structure is preserved in the UI.
+    const facilityTreeCache = new Map();
+    const fetchFacilityDocTree = async folderId => {
+        const empty = { files: [], subfolders: [] };
+        if (!folderId || !config.folderContentUrl) return empty;
+        const key = String(folderId);
+        if (facilityTreeCache.has(key)) return facilityTreeCache.get(key);
+        try {
+            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}&merge=name&format=tree`, { credentials: 'same-origin' });
+            const data = await res.json();
+            const tree = (data && typeof data === 'object' && !Array.isArray(data))
+                ? { files: Array.isArray(data.files) ? data.files : [], subfolders: Array.isArray(data.subfolders) ? data.subfolders : [] }
+                : { files: Array.isArray(data) ? data : [], subfolders: [] };
+            facilityTreeCache.set(key, tree);
+            return tree;
+        } catch (err) {
+            console.warn('Facility doc tree load failed', err);
+            return empty;
+        }
+    };
+
     const renderFileGrid = files => {
         if (!Array.isArray(files) || files.length === 0) {
             return '<p class="docs-empty">No documents in this folder.</p>';
@@ -545,6 +567,30 @@
                     </a>
                 </li>`;
         }).join('')}</ul>`;
+    };
+
+    // Render a facility doc tree: the root's own files, then each subfolder as a
+    // labeled section, recursing into deeper subfolders.
+    const renderSubfolders = subs => {
+        if (!Array.isArray(subs) || subs.length === 0) return '';
+        return subs.map(sf => {
+            const name = escapeHtml(sf.name || 'Folder');
+            const files = Array.isArray(sf.files) ? sf.files : [];
+            const inner = (files.length ? renderFileGrid(files) : '') + renderSubfolders(sf.subfolders);
+            return `<div class="state-doc-subfolder">
+                        <div class="state-doc-subfolder-title">📁 ${name}</div>
+                        ${inner}
+                    </div>`;
+        }).join('');
+    };
+
+    const renderDocTree = tree => {
+        const files = Array.isArray(tree && tree.files) ? tree.files : [];
+        const subs = Array.isArray(tree && tree.subfolders) ? tree.subfolders : [];
+        if (files.length === 0 && subs.length === 0) {
+            return '<p class="docs-empty">No documents in this folder.</p>';
+        }
+        return (files.length ? renderFileGrid(files) : '') + renderSubfolders(subs);
     };
 
     const wireDocToggles = container => {
@@ -1212,8 +1258,8 @@
                 if (panelKind === 'docs' && panel.dataset.loaded !== '1') {
                     const folderId = panel.dataset.folderId || btn.dataset.folderId;
                     btn.disabled = true;
-                    const files = await fetchFolderContent(folderId, { mergeSameName: true });
-                    panel.innerHTML = renderFileGrid(files);
+                    const tree = await fetchFacilityDocTree(folderId);
+                    panel.innerHTML = renderDocTree(tree);
                     panel.dataset.loaded = '1';
                     btn.disabled = false;
                 }
