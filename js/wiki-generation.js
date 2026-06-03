@@ -9,8 +9,16 @@
  * @returns {string} - Generated markdown text
  */
 function isOrganizationFormData(formData = {}) {
-    if ((formData.entryType || '').toLowerCase() === 'organization') {
+    // Respect an explicit choice both ways. A facility that names a parent
+    // company is still a facility, so an explicit "facility" must not be
+    // overridden by the heuristics below (which would route it to the org
+    // template and drop its Structure/Rules/Testimonies sections).
+    const declaredType = (formData.entryType || '').toLowerCase();
+    if (declaredType === 'organization') {
         return true;
+    }
+    if (declaredType === 'facility') {
+        return false;
     }
 
     if (formData.isOrganizationEntry) {
@@ -31,11 +39,13 @@ function isOrganizationFormData(formData = {}) {
         formData.natsapMember ||
         (Array.isArray(formData.selectedDiagnoses) && formData.selectedDiagnoses.length > 0)
     );
-    const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care| services)?|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/i.test(programName);
+    // "Health" alone (e.g. "Behavioral Health Hospital") is a facility type;
+    // only "Healthcare"/"Health Services" reads as a company.
+    const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care|\s+services)|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/i.test(programName);
     const typeLooksLikeOrganization = /organization|association|company|corporation|group|operator|network|membership/i.test(programType);
 
     return typeLooksLikeOrganization
-        || hasOrgOnlyFields
+        || (hasOrgOnlyFields && !hasFacilitySignals)
         || (hasProgramsTable && !hasFacilitySignals)
         || (nameLooksLikeOrganization && !hasFacilitySignals);
 }
@@ -158,10 +168,11 @@ function generateWikiMarkdown(formData) {
     // --- Build History Section ---
     let historySection = '';
 
-    if (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes)) {
-        // Use full imported/custom history section
-        historySection = formData.historyNotes.trim();
-    } else {
+    // Build the structured history from the individual fields first. Any
+    // "Additional History Notes" are appended afterward (see below) rather than
+    // replacing the section, so the structured fields are never dropped.
+    let structuredHistory = '';
+    {
         const historySentences = [];
 
         const descriptorParts = [];
@@ -179,13 +190,15 @@ function generateWikiMarkdown(formData) {
         const audienceParts = [];
         if (formData.ageRange) audienceParts.push(`serves young people aged ${escapeMarkdown(formData.ageRange)}`);
 
-        // Build diagnoses list from selected checkboxes + custom diagnoses
-        if (formData.selectedDiagnoses && formData.selectedDiagnoses.length > 0) {
-            const allDiagnoses = [...formData.selectedDiagnoses];
-            if (formData.customDiagnoses) {
-                const customItems = formData.customDiagnoses.split(',').map(d => d.trim()).filter(Boolean);
-                allDiagnoses.push(...customItems);
-            }
+        // Build diagnoses list from selected checkboxes + custom diagnoses.
+        // Custom diagnoses must be honored even when no checkbox is ticked, so
+        // combine both sources before deciding whether anything was provided.
+        const allDiagnoses = [...(formData.selectedDiagnoses || [])];
+        if (formData.customDiagnoses) {
+            const customItems = formData.customDiagnoses.split(',').map(d => d.trim()).filter(Boolean);
+            allDiagnoses.push(...customItems);
+        }
+        if (allDiagnoses.length > 0) {
             audienceParts.push(`marketed for students who struggle with a variety of challenges such as ${allDiagnoses.join(', ')}`);
         } else if (formData.diagnosesList) {
             // Fallback to old comma-separated field
@@ -206,7 +219,12 @@ function generateWikiMarkdown(formData) {
         const operationsParts = [];
         if (formData.capacity) operationsParts.push(`has a maximum enrollment of ${escapeMarkdown(formData.capacity)}`);
         if (formData.campusSize) operationsParts.push(`operates on a ${escapeMarkdown(formData.campusSize)} campus`);
-        if (formData.avgStay) operationsParts.push(`reports an average length of stay of around ${escapeMarkdown(formData.avgStay)}`);
+        if (formData.avgStay) {
+            // Drop the "around" lead-in when the value already carries its own
+            // qualifier (e.g. "between 12 and 20 months") to avoid "around between".
+            const stayHasQualifier = /^(?:between|about|approximately|roughly|around|over|under|up to)\b/i.test(formData.avgStay.trim());
+            operationsParts.push(`reports an average length of stay of ${stayHasQualifier ? '' : 'around '}${escapeMarkdown(formData.avgStay)}`);
+        }
         if (formData.tuition) operationsParts.push(`reports tuition of ${escapeMarkdown(formData.tuition)}`);
 
         // Build NATSAP status sentence from checkbox/dropdown + year
@@ -272,9 +290,24 @@ function generateWikiMarkdown(formData) {
             historySentences.push(`The program is affiliated with ${joinWithAnd(affList)}.`);
         }
 
-        historySection = historySentences.length > 0
-            ? historySentences.join('\n\n')
-            : getPlaceholder('History and Background Information', programName);
+        structuredHistory = historySentences.join('\n\n');
+    }
+
+    const historyNotesText = (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes))
+        ? formData.historyNotes.trim()
+        : '';
+
+    if (historyNotesText && formData.historyNotesIsImported) {
+        // Imported entries already hold the full prose section, and the
+        // structured fields were extracted from it — emitting both would
+        // duplicate content, so keep the original notes verbatim.
+        historySection = historyNotesText;
+    } else {
+        historySection = [structuredHistory, historyNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!historySection) {
+        historySection = getPlaceholder('History and Background Information', programName);
     }
 
     // --- Build Staff Section ---
@@ -445,10 +478,9 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Abuse Section ---
     let abuseSection = '';
+    let structuredAbuse = '';
 
-    if (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc)) {
-        abuseSection = formData.lawsuitsMisc.trim();
-    } else {
+    {
         const abuseParts = [];
 
         if (formData.mainComplaints) {
@@ -497,9 +529,21 @@ function generateWikiMarkdown(formData) {
             abuseParts.push(lawsuitDescriptions);
         }
 
-        abuseSection = abuseParts.length > 0
-            ? abuseParts.join('\n\n')
-            : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
+        structuredAbuse = abuseParts.join('\n\n');
+    }
+
+    const lawsuitsNotesText = (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc))
+        ? formData.lawsuitsMisc.trim()
+        : '';
+
+    if (lawsuitsNotesText && formData.lawsuitsMiscIsImported) {
+        abuseSection = lawsuitsNotesText;
+    } else {
+        abuseSection = [structuredAbuse, lawsuitsNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!abuseSection) {
+        abuseSection = getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
     }
 
     // --- Build Media Section ---
@@ -520,11 +564,9 @@ function generateWikiMarkdown(formData) {
     }
 
     // --- Build Testimonies Section ---
-    let testimoniesSection;
-    if (formData.testimoniesMisc && !isEffectivelyEmpty(formData.testimoniesMisc)) {
-        testimoniesSection = formData.testimoniesMisc.trim();
-    } else if (formData.testimonies && formData.testimonies.length > 0) {
-        testimoniesSection = formData.testimonies.map(t => {
+    let structuredTestimonies = '';
+    if (formData.testimonies && formData.testimonies.length > 0) {
+        structuredTestimonies = formData.testimonies.map(t => {
             const headingParts = [];
             if (t.date) headingParts.push(t.date);
             if (t.type) headingParts.push(`(${t.type})`);
@@ -534,7 +576,20 @@ function generateWikiMarkdown(formData) {
             const attribution = sourceLink ? ` - ${sourceLink}` : '';
             return `${heading}"${escapeMarkdown(t.quote)}"${attribution}`;
         }).join('\n\n');
+    }
+
+    const testimoniesNotesText = (formData.testimoniesMisc && !isEffectivelyEmpty(formData.testimoniesMisc))
+        ? formData.testimoniesMisc.trim()
+        : '';
+
+    let testimoniesSection;
+    if (testimoniesNotesText && formData.testimoniesMiscIsImported) {
+        testimoniesSection = testimoniesNotesText;
     } else {
+        testimoniesSection = [structuredTestimonies, testimoniesNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!testimoniesSection) {
         testimoniesSection = getPlaceholder('Survivor Testimonies', programName);
     }
 
@@ -552,16 +607,27 @@ function generateWikiMarkdown(formData) {
     }
 
     // --- Build Related Media Section ---
-    let relatedMediaSection;
-    if (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc)) {
-        relatedMediaSection = formData.relatedMediaMisc.trim();
-    } else if (formData.relatedMedia && formData.relatedMedia.length > 0) {
-        relatedMediaSection = formData.relatedMedia.map(m => {
+    let structuredRelatedMedia = '';
+    if (formData.relatedMedia && formData.relatedMedia.length > 0) {
+        structuredRelatedMedia = formData.relatedMedia.map(m => {
             const safeUrl = sanitizeUrl(m.url);
             const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
             return `- ${linkText}`;
         }).join('\n\n');
+    }
+
+    const relatedMediaNotesText = (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc))
+        ? formData.relatedMediaMisc.trim()
+        : '';
+
+    let relatedMediaSection;
+    if (relatedMediaNotesText && formData.relatedMediaMiscIsImported) {
+        relatedMediaSection = relatedMediaNotesText;
     } else {
+        relatedMediaSection = [structuredRelatedMedia, relatedMediaNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!relatedMediaSection) {
         relatedMediaSection = getPlaceholder('Related Media', programName);
     }
 
@@ -644,9 +710,8 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     const organizationType = formData.programType || 'Parent Organization';
 
     let historySection = '';
-    if (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes)) {
-        historySection = formData.historyNotes.trim();
-    } else {
+    let structuredHistory = '';
+    {
         const historySentences = [];
         const descriptorParts = [];
 
@@ -711,9 +776,21 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
             historySentences.push(`The organization is affiliated with ${joinWithAnd(affList)}.`);
         }
 
-        historySection = historySentences.filter(Boolean).length > 0
-            ? historySentences.filter(Boolean).join('\n\n')
-            : getPlaceholder('History and Background Information', programName);
+        structuredHistory = historySentences.filter(Boolean).join('\n\n');
+    }
+
+    const historyNotesText = (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes))
+        ? formData.historyNotes.trim()
+        : '';
+
+    if (historyNotesText && formData.historyNotesIsImported) {
+        historySection = historyNotesText;
+    } else {
+        historySection = [structuredHistory, historyNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!historySection) {
+        historySection = getPlaceholder('History and Background Information', programName);
     }
 
     let staffSection;
@@ -801,9 +878,8 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     }
 
     let abuseSection = '';
-    if (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc)) {
-        abuseSection = formData.lawsuitsMisc.trim();
-    } else {
+    let structuredAbuse = '';
+    {
         const abuseParts = [];
 
         if (formData.mainComplaints) {
@@ -853,9 +929,21 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
             abuseParts.push(lawsuitDescriptions);
         }
 
-        abuseSection = abuseParts.length > 0
-            ? abuseParts.join('\n\n')
-            : getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
+        structuredAbuse = abuseParts.join('\n\n');
+    }
+
+    const lawsuitsNotesText = (formData.lawsuitsMisc && !isEffectivelyEmpty(formData.lawsuitsMisc))
+        ? formData.lawsuitsMisc.trim()
+        : '';
+
+    if (lawsuitsNotesText && formData.lawsuitsMiscIsImported) {
+        abuseSection = lawsuitsNotesText;
+    } else {
+        abuseSection = [structuredAbuse, lawsuitsNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!abuseSection) {
+        abuseSection = getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
     }
 
     let mediaSection;
@@ -874,16 +962,27 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         mediaSection = getPlaceholder('Media Coverage', programName);
     }
 
-    let relatedMediaSection;
-    if (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc)) {
-        relatedMediaSection = formData.relatedMediaMisc.trim();
-    } else if (formData.relatedMedia && formData.relatedMedia.length > 0) {
-        relatedMediaSection = formData.relatedMedia.map((m) => {
+    let structuredRelatedMedia = '';
+    if (formData.relatedMedia && formData.relatedMedia.length > 0) {
+        structuredRelatedMedia = formData.relatedMedia.map((m) => {
             const safeUrl = sanitizeUrl(m.url);
             const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
             return `- ${linkText}`;
         }).join('\n\n');
+    }
+
+    const relatedMediaNotesText = (formData.relatedMediaMisc && !isEffectivelyEmpty(formData.relatedMediaMisc))
+        ? formData.relatedMediaMisc.trim()
+        : '';
+
+    let relatedMediaSection;
+    if (relatedMediaNotesText && formData.relatedMediaMiscIsImported) {
+        relatedMediaSection = relatedMediaNotesText;
     } else {
+        relatedMediaSection = [structuredRelatedMedia, relatedMediaNotesText].filter(Boolean).join('\n\n');
+    }
+
+    if (!relatedMediaSection) {
         relatedMediaSection = getPlaceholder('Related Media', programName);
     }
 

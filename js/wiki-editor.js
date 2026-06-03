@@ -93,6 +93,22 @@ document.addEventListener('DOMContentLoaded', () => {
     let relatedPrograms = [];
     let importedMarkdown = ''; // Store original imported markdown
     let isOrganizationEntry = false; // Track if current entry is an organization
+
+    // "Additional Notes" textareas whose content is appended to (not substituted
+    // for) the auto-generated section. Tracked so the generator knows which
+    // fields may carry verbatim imported prose. Keep in sync with the matching
+    // *IsImported handling in wiki-generation.js.
+    const APPEND_NOTE_FIELD_IDS = ['historyNotes', 'lawsuitsMisc', 'testimoniesMisc', 'relatedMediaMisc'];
+
+    // Record that a notes field currently holds verbatim imported content, so the
+    // generator can substitute (not append) it and avoid round-trip duplication.
+    // The marker is matched by value, so any manual edit silently clears it.
+    const markFieldAsImported = (id) => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.dataset.importedValue = el.value;
+        }
+    };
     let currentPage = 1;
     let totalEntries = 0;
     const entriesPerPage = 25;
@@ -127,10 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     targetContent.classList.remove('view-hidden');
                 }
 
-                // Update the state or reset results message if switching
-                // Clear the list if switching between types, to avoid confusion
-                // But only if no selection is made yet? 
-                // Let's just keep the facilities pane as is until a new selection is made.
+                // The Stubs tab drives the right pane directly (aggregated empties).
+                // Switching to a location/org tab returns to normal index browsing.
+                if (category === 'stub-indexes') {
+                    loadAllStubs();
+                } else if (browseMode === 'stubs') {
+                    browseMode = 'index';
+                    if (selectedIndexState) {
+                        renderIndexEntries();
+                    } else {
+                        updateIndexEntriesMessage('Select a location or organization above to load facilities.');
+                    }
+                }
             });
         });
 
@@ -381,6 +405,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Most repeating sections (staff, lawsuits, testimonies, etc.) only commit
+    // their typed values to the entry when the user clicks that section's "Add"
+    // button. If the fields are filled but Add isn't clicked before Generate or
+    // Submit, the input would be silently dropped. To prevent that, fold in any
+    // section whose required fields are already filled by triggering its existing
+    // Add handler. Each readiness check mirrors that handler's own validation, so
+    // a "please fill in..." alert is never shown.
+    function flushPendingFormAdders() {
+        const filled = (id) => {
+            const el = document.getElementById(id);
+            return !!(el && el.value && el.value.trim());
+        };
+
+        const pendingSections = [
+            { btn: 'addStaffBtn',       ready: () => filled('staffName') && filled('staffRole') },
+            { btn: 'addPunishmentBtn',  ready: () => filled('punishmentName') && filled('punishmentDescription') },
+            { btn: 'addRuleBtn',        ready: () => filled('ruleName') },
+            { btn: 'addLawsuitBtn',     ready: () => filled('lawsuitYear') && filled('lawsuitPlaintiff') && filled('lawsuitClaims') },
+            { btn: 'addCampusBtn',      ready: () => filled('campusName') && filled('campusLocation') },
+            { btn: 'addOwnerChangeBtn', ready: () => filled('ownerChangeYear') && (filled('ownerChangePrevious') || filled('ownerChangeNew')) },
+            { btn: 'addTherapyBtn',     ready: () => filled('therapyFrequency') },
+            { btn: 'addArticleBtn',     ready: () => filled('articleTitle') && filled('articleUrl') },
+            { btn: 'addTestimonyBtn',   ready: () => filled('testimonyQuote') && filled('testimonySource') },
+            { btn: 'addMediaBtn',       ready: () => filled('mediaTitle') && filled('mediaUrl') },
+            { btn: 'addAffiliationBtn', ready: () => filled('affiliationName') },
+            { btn: 'addRelatedProgBtn', ready: () => filled('relProgName') }
+        ];
+
+        pendingSections.forEach(({ btn, ready }) => {
+            const button = document.getElementById(btn);
+            if (button && ready()) {
+                button.click();
+            }
+        });
+    }
+
     function startEditStaffMember(index) {
         const member = staffMembers[index];
         if (!member) return;
@@ -546,6 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function collectCurrentFormData() {
+        // Fold in any section typed but not yet committed via its "Add" button.
+        flushPendingFormAdders();
+
         const vals = {};
         const inputs = document.querySelectorAll('#wikiForm input[type="text"], #wikiForm textarea, #wikiForm select');
         inputs.forEach(input => {
@@ -569,6 +632,23 @@ document.addEventListener('DOMContentLoaded', () => {
             relatedPrograms,
             headquarters: vals.headquarters,
             parentCompany: vals.parentCompany
+        });
+
+        // "Additional Notes" fields are normally appended to their section so the
+        // structured fields above them are never lost. The exception is content
+        // that arrived verbatim from an import and has not been edited since: that
+        // text already contains the full prose section, so appending the
+        // re-derived structured sentences would duplicate it. A field is treated
+        // as "imported" only while its value still matches what the import wrote
+        // (see markFieldAsImported / populateFormFromParsedData).
+        APPEND_NOTE_FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            vals[`${id}IsImported`] = !!(
+                el &&
+                typeof el.dataset.importedValue === 'string' &&
+                el.value === el.dataset.importedValue &&
+                el.value.trim() !== ''
+            );
         });
 
         return {
@@ -638,6 +718,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('customAllegations', data.customAllegations);
         setFieldValue('rebrand', data.rebrand);
         setFieldValue('rebrandLink', data.rebrandLink);
+
+        // These notes fields were just filled from imported/loaded data, so flag
+        // them as imported. The generator will substitute (not append) them while
+        // unchanged, preventing duplicate prose on a parse→generate round-trip;
+        // the flag clears automatically once the user edits the field.
+        APPEND_NOTE_FIELD_IDS.forEach(markFieldAsImported);
 
         staffMembers = Array.isArray(data.staffMembers) ? data.staffMembers : [];
         punishments = Array.isArray(data.punishments) ? data.punishments : [];
@@ -1212,28 +1298,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addTestimonyBtn) {
         addTestimonyBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const date = document.getElementById('testimonyDate').value.trim();
-            const type = document.getElementById('testimonyType').value;
-            const quote = document.getElementById('testimonyQuote').value.trim();
-            const sourceName = document.getElementById('testimonySourceName').value.trim();
-            const platform = document.getElementById('testimonyPlatform').value;
-            const url = sanitizeUrl(document.getElementById('testimonyUrl').value);
-            if (quote && (sourceName || platform) && url) {
-                // Build combined source string for display/output
-                let source = sourceName;
-                if (platform && sourceName) {
-                    source = `${sourceName} (${platform})`;
-                } else if (platform && !sourceName) {
-                    source = platform;
-                }
-                testimonies.push({ date, type, quote, sourceName, platform, source, url });
+            const date = document.getElementById('testimonyDate')?.value.trim() || '';
+            const type = document.getElementById('testimonyType')?.value || '';
+            const quote = document.getElementById('testimonyQuote')?.value.trim() || '';
+            const source = document.getElementById('testimonySource')?.value.trim() || '';
+            const url = sanitizeUrl(document.getElementById('testimonyUrl')?.value || '');
+            if (quote && source) {
+                testimonies.push({ date, type, quote, source, url });
                 renderList(testimonies, 'testimonyListOutput', item => `<strong>(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`);
-                clearInputs(['testimonyDate', 'testimonyQuote', 'testimonySourceName', 'testimonyUrl']);
-                // Reset platform dropdown
-                const platformSelect = document.getElementById('testimonyPlatform');
-                if (platformSelect) platformSelect.selectedIndex = 0;
+                clearInputs(['testimonyDate', 'testimonyQuote', 'testimonySource', 'testimonyUrl']);
             } else {
-                alert('Please enter at least a quote, source name or platform, and source URL.');
+                alert('Please enter at least a quote and a source name.');
             }
         });
     }
@@ -1639,11 +1714,25 @@ document.addEventListener('DOMContentLoaded', () => {
             { pattern: /\bremains\b/gi, replacement: 'remained' }
         ];
 
-        let updated = text;
-        replacements.forEach(({ pattern, replacement }) => {
-            updated = updated.replace(pattern, (match) => matchCaseReplacement(match, replacement));
-        });
-        return updated;
+        // Boilerplate placeholder paragraphs (e.g. "...has not been added yet.
+        // If you have ... to share, please contact u/Signal-Strain9810.") are an
+        // invitation to contribute, not statements of fact, so they must stay in
+        // the present tense. Skip any line carrying the placeholder signature.
+        const isPlaceholderLine = (line) =>
+            /Signal-Strain9810|been added (?:here )?yet/i.test(line);
+
+        const convertLine = (line) => {
+            let updated = line;
+            replacements.forEach(({ pattern, replacement }) => {
+                updated = updated.replace(pattern, (match) => matchCaseReplacement(match, replacement));
+            });
+            return updated;
+        };
+
+        return text
+            .split('\n')
+            .map((line) => (isPlaceholderLine(line) ? line : convertLine(line)))
+            .join('\n');
     };
 
     const convertPastBtn = document.getElementById('convertPastBtn');
@@ -2290,6 +2379,26 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentIndexPrograms = [];
     const stateProgramsCache = {};
     let allIndexData = null; // Store full index data
+    let browseMode = 'index'; // 'index' (location/org) or 'stubs' (aggregated empties)
+    let allStubsCache = null; // [{ entry, state }] of every empty entry across all indexes
+
+    // True when an entry's wiki slug is in the known-empty set (a stub).
+    function getEntrySlug(entry, stateCode) {
+        const slugFromUrl = getSlugFromEntryUrl(entry.url);
+        if (slugFromUrl) return slugFromUrl;
+        if (stateCode === 'CORPORATE') return normalizeToSlug(entry.normalizedName || entry.name || '');
+        return '';
+    }
+    function isStubEntry(entry, stateCode) {
+        const slug = getEntrySlug(entry, stateCode);
+        return !!(emptySlugSet && slug && emptySlugSet.has(slug.toLowerCase()));
+    }
+    function buildGroupHeader(text, isStub) {
+        const header = document.createElement('div');
+        header.className = 'index-entry-group-header' + (isStub ? ' is-stub' : '');
+        header.textContent = text;
+        return header;
+    }
 
     const setIndexSearchEnabled = (enabled) => {
         if (!indexSearch) return;
@@ -2447,6 +2556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadProgramsForState(stateCode) {
+        browseMode = 'index';
         selectedIndexState = stateCode || '';
         setIndexSearchEnabled(!!stateCode);
         if (indexSearch) {
@@ -2490,8 +2600,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Build a single facility row. globalIndex/orderedList drive Prev/Next nav.
+    function buildEntryRow(entry, globalIndex, orderedList, isStub) {
+        const row = document.createElement('div');
+        row.className = 'index-entry-row';
+
+        const slugFromUrl = getSlugFromEntryUrl(entry.url);
+        const entryName = entry.name || entry.normalizedName || 'Unnamed program';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'index-entry-name';
+        nameSpan.appendChild(document.createTextNode(entryName));
+
+        const actions = document.createElement('div');
+        actions.className = 'index-entry-actions';
+
+        if (selectedIndexState === 'CORPORATE') {
+            // Organizations show "View Programs" and allow editing the index page.
+            // (loadOrgProgramsFromDatabase already opens an empty form for empty orgs.)
+            const viewProgramsBtn = document.createElement('button');
+            viewProgramsBtn.type = 'button';
+            viewProgramsBtn.textContent = 'View Programs';
+            viewProgramsBtn.className = 'view-programs-btn';
+            viewProgramsBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                await loadOrgProgramsFromDatabase(entryName, viewProgramsBtn);
+            });
+            actions.appendChild(viewProgramsBtn);
+
+            const editIndexBtn = document.createElement('button');
+            editIndexBtn.type = 'button';
+            editIndexBtn.textContent = 'Edit Index Page';
+            editIndexBtn.className = 'edit-index-btn';
+            editIndexBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentNavType = 'index';
+                currentNavList = orderedList;
+                currentNavIndex = globalIndex;
+                updateNavButtons();
+                loadOrganizationIndexEntry(entry, editIndexBtn);
+            });
+            actions.appendChild(editIndexBtn);
+        } else if (isStub) {
+            // Not yet created: open a fresh empty form prefilled with the name.
+            const createButton = document.createElement('button');
+            createButton.type = 'button';
+            createButton.textContent = 'Create';
+            createButton.className = 'edit-entry-btn';
+            createButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                createStubEntry(entry, selectedIndexState, createButton);
+            });
+            actions.appendChild(createButton);
+        } else {
+            const editButton = document.createElement('button');
+            editButton.type = 'button';
+            editButton.textContent = 'Edit';
+            editButton.className = 'edit-entry-btn';
+            editButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentNavType = 'index';
+                currentNavList = orderedList;
+                currentNavIndex = globalIndex;
+                updateNavButtons();
+                loadEntryFromReddit(entry, editButton);
+            });
+            actions.appendChild(editButton);
+        }
+
+        if (slugFromUrl) {
+            const viewLink = document.createElement('a');
+            viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slugFromUrl}/`;
+            viewLink.target = '_blank';
+            viewLink.rel = 'noopener noreferrer';
+            viewLink.textContent = 'View on Reddit';
+            actions.appendChild(viewLink);
+        }
+
+        row.appendChild(nameSpan);
+        row.appendChild(actions);
+        return row;
+    }
+
     function renderIndexEntries() {
         if (!indexEntriesList) return;
+        if (browseMode === 'stubs') { renderAllStubs(); return; }
         if (!selectedIndexState) {
             updateIndexEntriesMessage('Choose an index page above to see its entries.');
             return;
@@ -2515,92 +2708,128 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Separate created entries from stubs (not yet created). Keep one combined
+        // order so Prev/Next navigation still walks the whole visible list.
+        const created = [];
+        const stubs = [];
+        matches.forEach(entry => {
+            (isStubEntry(entry, selectedIndexState) ? stubs : created).push(entry);
+        });
+        const ordered = [...created, ...stubs];
+
         indexEntriesList.innerHTML = '';
-        matches.forEach((entry, index) => {
+        if (created.length) {
+            indexEntriesList.appendChild(buildGroupHeader(`Created (${created.length})`));
+            created.forEach((entry, i) => {
+                indexEntriesList.appendChild(buildEntryRow(entry, i, ordered, false));
+            });
+        }
+        if (stubs.length) {
+            indexEntriesList.appendChild(buildGroupHeader(`Not yet created (${stubs.length})`, true));
+            stubs.forEach((entry, i) => {
+                indexEntriesList.appendChild(buildEntryRow(entry, created.length + i, ordered, true));
+            });
+        }
+    }
+
+    // Open a blank form for an entry that hasn't been written yet.
+    function createStubEntry(entry, stateCode, button) {
+        const name = entry.name || entry.normalizedName || '';
+        const entryType = stateCode === 'CORPORATE' ? 'organization' : 'facility';
+        if (button) button.disabled = true;
+        showEmptyBanner(name);
+        clearFormToEmpty(name, { entryType });
+        importedMarkdown = '';
+        updateMarkdownFromForm();
+        finalizeEntryLoad(name, { noScroll: true, source: 'index' });
+        document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (button) button.disabled = false;
+    }
+
+    // Aggregate every empty entry across all state/org indexes into one to-do list.
+    async function loadAllStubs() {
+        browseMode = 'stubs';
+        setIndexSearchEnabled(true);
+        if (allStubsCache) { renderAllStubs(); return; }
+
+        updateIndexEntriesMessage('Scanning every index for entries that still need to be created...');
+        try {
+            if (!emptySlugSet) { await loadEmptySlugMapping(); }
+            if (!allIndexData) { await initializeIndexes(); }
+
+            const stateCodes = Object.keys((allIndexData && allIndexData.states) || {});
+            const collected = [];
+            await Promise.all(stateCodes.map(async (code) => {
+                let programs = stateProgramsCache[code];
+                if (!programs) {
+                    try {
+                        const resp = await fetch(`${wikiProgramsBase}programs-${code}.json`, { cache: 'no-cache' });
+                        programs = resp.ok ? ((await resp.json()).programs || []) : [];
+                        stateProgramsCache[code] = programs;
+                    } catch (e) {
+                        programs = [];
+                    }
+                }
+                programs.forEach(entry => {
+                    if (isStubEntry(entry, code)) collected.push({ entry, state: code });
+                });
+            }));
+
+            collected.sort((a, b) => (a.entry.name || '').localeCompare(b.entry.name || ''));
+            allStubsCache = collected;
+            renderAllStubs();
+        } catch (error) {
+            updateIndexEntriesMessage(`Unable to load stubs: ${error.message || 'Unknown error'}`, 'error');
+        }
+    }
+
+    function renderAllStubs() {
+        if (!indexEntriesList) return;
+        if (!allStubsCache) { updateIndexEntriesMessage('Loading stubs...'); return; }
+
+        const filter = (indexSearch?.value || '').trim().toLowerCase();
+        const matches = filter
+            ? allStubsCache.filter(({ entry, state }) => {
+                  const target = `${entry.name || ''} ${entry.normalizedName || ''} ${STATE_DISPLAY_NAMES[state] || state}`.toLowerCase();
+                  return target.includes(filter);
+              })
+            : allStubsCache;
+
+        if (!matches.length) {
+            updateIndexEntriesMessage(filter ? 'No stubs match that filter.' : 'No entries need creation. 🎉');
+            return;
+        }
+
+        indexEntriesList.innerHTML = '';
+        indexEntriesList.appendChild(buildGroupHeader(`Entries needing creation (${matches.length})`, true));
+        matches.forEach(({ entry, state }) => {
             const row = document.createElement('div');
             row.className = 'index-entry-row';
 
             const nameSpan = document.createElement('span');
             nameSpan.className = 'index-entry-name';
-
-            // Determine candidate slug:
-            // Prefer explicit wiki slug from URL; if we're in CORPORATE view (organizations)
-            // fall back to a normalized name-based slug to detect empty org index pages.
-            const slugFromUrl = getSlugFromEntryUrl(entry.url);
-            const entryName = entry.name || entry.normalizedName || 'Unnamed program';
-            let candidateSlug = '';
-            if (slugFromUrl) {
-                candidateSlug = slugFromUrl;
-            } else if (selectedIndexState === 'CORPORATE') {
-                candidateSlug = normalizeToSlug(entry.normalizedName || entry.name || '');
-            }
-
-            nameSpan.appendChild(document.createTextNode(entryName));
-
-            // Visual indicator if this entry is known-empty (only when candidateSlug is available)
-            try {
-                if (emptySlugSet && candidateSlug && emptySlugSet.has(candidateSlug.toLowerCase())) {
-                    const emptyFlag = document.createElement('span');
-                    emptyFlag.className = 'index-empty-flag';
-                    emptyFlag.title = 'This wiki entry appears to be empty on Reddit';
-                    emptyFlag.style.pointerEvents = 'none';
-                    emptyFlag.style.marginLeft = '6px';
-                    emptyFlag.textContent = '⚠️ EMPTY';
-                    nameSpan.appendChild(emptyFlag);
-                }
-            } catch (e) {
-                // Fail silently
-            }
+            nameSpan.appendChild(document.createTextNode(entry.name || entry.normalizedName || 'Unnamed program'));
+            const stateTag = document.createElement('span');
+            stateTag.className = 'index-entry-state';
+            stateTag.textContent = ` (${STATE_DISPLAY_NAMES[state] || state})`;
+            nameSpan.appendChild(stateTag);
 
             const actions = document.createElement('div');
             actions.className = 'index-entry-actions';
+            const createButton = document.createElement('button');
+            createButton.type = 'button';
+            createButton.textContent = 'Create';
+            createButton.className = 'edit-entry-btn';
+            createButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                createStubEntry(entry, state, createButton);
+            });
+            actions.appendChild(createButton);
 
-            // Organizations show "View Programs" and allow editing the index page
-            if (selectedIndexState === 'CORPORATE') {
-                const viewProgramsBtn = document.createElement('button');
-                viewProgramsBtn.type = 'button';
-                viewProgramsBtn.textContent = 'View Programs';
-                viewProgramsBtn.className = 'view-programs-btn';
-                viewProgramsBtn.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await loadOrgProgramsFromDatabase(entryName, viewProgramsBtn);
-                });
-                actions.appendChild(viewProgramsBtn);
-
-                const editIndexBtn = document.createElement('button');
-                editIndexBtn.type = 'button';
-                editIndexBtn.textContent = 'Edit Index Page';
-                editIndexBtn.className = 'edit-index-btn';
-                editIndexBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentNavType = 'index';
-                    currentNavList = matches;
-                    currentNavIndex = index;
-                    updateNavButtons();
-                    loadOrganizationIndexEntry(entry, editIndexBtn);
-                });
-                actions.appendChild(editIndexBtn);
-            } else {
-                const editButton = document.createElement('button');
-                editButton.type = 'button';
-                editButton.textContent = 'Edit';
-                editButton.className = 'edit-entry-btn';
-                editButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    currentNavType = 'index';
-                    currentNavList = matches;
-                    currentNavIndex = index;
-                    updateNavButtons();
-                    loadEntryFromReddit(entry, editButton);
-                });
-                actions.appendChild(editButton);
-                
-
-            }
-
-            if (slugFromUrl) {
+            const slug = getEntrySlug(entry, state);
+            if (slug) {
                 const viewLink = document.createElement('a');
-                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slugFromUrl}/`;
+                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;
                 viewLink.target = '_blank';
                 viewLink.rel = 'noopener noreferrer';
                 viewLink.textContent = 'View on Reddit';

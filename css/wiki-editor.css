@@ -507,3 +507,121 @@ select {
     max-width: 500px;
     width: 90%;
 }
+/* ============================================
+   AUTOCOMPLETE DROPDOWNS
+   Suggestion menus for fields with
+   data-autocomplete-category. These styles live
+   in data-form.css, which the wiki editor page
+   does not enqueue, so they are duplicated here
+   to keep the editor self-contained.
+   ============================================ */
+.autocomplete-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.autocomplete-wrapper input {
+    width: 100%;
+}
+
+.autocomplete-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 250px;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FFF5CB 100%);
+    border: 2px solid #33A7B5;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 6px 12px rgba(51, 167, 181, 0.2), 0 2px 6px rgba(178, 225, 2, 0.15);
+    z-index: 9999;
+}
+
+.autocomplete-dropdown.active {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000435;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.15s ease;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.active {
+    background: linear-gradient(135deg, #ECF385 0%, #B6E3D4 100%);
+    color: #000435;
+    border-left: 3px solid #B2E102;
+    padding-left: 9px;
+}
+
+/* "Loading..." / "No matches found" rows are not selectable */
+.autocomplete-item[data-placeholder="true"],
+.autocomplete-item[data-placeholder="true"]:hover {
+    cursor: default;
+    color: #9ca3af;
+    font-style: italic;
+    background: transparent;
+    border-left: none;
+    padding-left: 12px;
+}
+
+.autocomplete-item strong {
+    color: #33A7B5;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .autocomplete-dropdown {
+        max-height: 180px;
+        font-size: 13px;
+    }
+}
+
+/* ============================================
+   FACILITIES BROWSER — GROUPING & STUBS
+   ============================================ */
+.index-entry-group-header {
+    margin: 14px 0 6px;
+    padding: 4px 0 5px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #004435;
+    border-bottom: 2px solid #33A7B5;
+}
+
+.index-entry-group-header:first-child {
+    margin-top: 0;
+}
+
+/* "Not yet created" / stubs group accent */
+.index-entry-group-header.is-stub {
+    color: #b0560b;
+    border-bottom-color: #f0a500;
+}
+
+/* State label shown next to a stub on the aggregated Stubs tab */
+.index-entry-state {
+    color: #888;
+    font-size: 0.85em;
+    font-weight: 400;
+}
+
+.stub-tab-help {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 6px 0 0;
+    line-height: 1.45;
+}

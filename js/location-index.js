@@ -369,6 +369,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
     };
 
+    const renderDetailSection = (title, content, extraClass = '') => {
+        if (!content) return '';
+        const className = extraClass ? `facility-detail-section ${extraClass}` : 'facility-detail-section';
+        return `
+            <section class="${className}">
+                <h4 class="facility-section-title">${escapeHtml(title)}</h4>
+                ${content}
+            </section>
+        `;
+    };
+
+    const consumeFieldNotesForKeys = (fieldNotes, keys, usedKeys) => {
+        if (!fieldNotes || typeof fieldNotes !== 'object') return [];
+        const notes = [];
+        keys.forEach(key => {
+            if (!key || typeof key !== 'string') return;
+            let matchedKey = key;
+            let matchedNotes = getNotesForKey(fieldNotes, key);
+            if (!matchedNotes.length && key.includes('.')) {
+                matchedKey = key.split('.').pop();
+                matchedNotes = getNotesForKey(fieldNotes, matchedKey);
+            }
+            if (!matchedNotes.length) return;
+            if (usedKeys && matchedKey) usedKeys.add(matchedKey);
+            notes.push(...matchedNotes);
+        });
+        return collectUniqueTexts(notes);
+    };
+
     const renderRemainingFieldNotes = (fieldNotes, usedKeys) => {
         if (!fieldNotes || typeof fieldNotes !== 'object') return '';
         const items = [];
@@ -381,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         if (!items.length) return '';
         const list = items.map(({ label, text }) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`).join('');
-        return `<div class="facility-field-notes"><p><strong>Additional Field Notes</strong></p><ul>${list}</ul></div>`;
+        return renderDetailSection('Additional Notes', `<ul>${list}</ul>`, 'facility-field-notes');
     };
 
     // --- Fetch Data ---
@@ -416,29 +445,58 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    function processData(projects) {
-        allLocations = [];
-        
-        Object.values(projects).forEach(project => {
-            let isLocation = false;
-            let category = project.category || (project.data && project.data.category) || 'companies';
-            
-            if (category === 'locations') isLocation = true;
-            if (!isLocation && US_STATES.has(project.name.toUpperCase())) isLocation = true;
+    const dedupeFacilities = facilities => {
+        const seen = new Set();
+        const unique = [];
+        toArray(facilities).forEach(facility => {
+            if (!facility) return;
+            const key = normalizeTextKey(getFacilityDisplayName(facility));
+            // Keep unnamed facilities (no reliable key) rather than collapsing them into one.
+            if (key && seen.has(key)) return;
+            if (key) seen.add(key);
+            unique.push(facility);
+        });
+        return unique;
+    };
 
-            if (isLocation) {
-                const pData = project.data || project;
-                const facilities = pData.facilities || [];
-                
-                if (facilities.length > 0) {
-                    allLocations.push({
-                        name: project.name,
-                        type: US_STATES.has(project.name.toUpperCase()) ? 'state' : 'country',
-                        facilities: sortFacilitiesAlphabetically(facilities)
-                    });
-                }
+    function processData(projects) {
+        // Merge duplicate location projects (e.g. a "Utah" row in locations_master
+        // plus a "Utah" aggregate derived from facilities_master) into a single
+        // entry keyed by normalized name, then dedupe their combined facilities.
+        const locationMap = new Map();
+
+        Object.values(projects).forEach(project => {
+            if (!project || !project.name) return;
+            const category = project.category || (project.data && project.data.category) || 'companies';
+
+            let isLocation = category === 'locations';
+            if (!isLocation && US_STATES.has(project.name.toUpperCase())) isLocation = true;
+            if (!isLocation) return;
+
+            const pData = project.data || project;
+            const facilities = toArray(pData.facilities);
+            if (facilities.length === 0) return;
+
+            const mergeKey = normalizeTextKey(project.name);
+            if (!mergeKey) return;
+
+            if (locationMap.has(mergeKey)) {
+                const existing = locationMap.get(mergeKey);
+                existing.facilities = existing.facilities.concat(facilities);
+            } else {
+                locationMap.set(mergeKey, {
+                    name: project.name,
+                    type: US_STATES.has(project.name.toUpperCase()) ? 'state' : 'country',
+                    facilities: facilities.slice()
+                });
             }
         });
+
+        allLocations = Array.from(locationMap.values()).map(loc => ({
+            name: loc.name,
+            type: loc.type,
+            facilities: sortFacilitiesAlphabetically(dedupeFacilities(loc.facilities))
+        }));
 
         allLocations.sort((a, b) => compareDisplayText(a.name, b.name));
         renderAlphabetFilter();
@@ -534,9 +592,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let contentHtml = `<div class="operator-content-scrollable">`;
             
             loc.facilities.forEach(facility => {
-                // Full Facility Card Logic adapted from TTI index
-                const identification = facility && facility.identification ? facility.identification : {};
-                const facilityDetails = facility && facility.facilityDetails ? facility.facilityDetails : {};
+                // Facility card rendering mirrors js/tti-program-index.js so both
+                // directories present the same structured layout.
                 const operatingPeriod = facility && facility.operatingPeriod ? facility.operatingPeriod : {};
                 const fieldNotes = (facility && facility.fieldNotes) || {};
                 const usedFieldNoteKeys = new Set();
@@ -552,13 +609,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
 
                 let yearRange = '';
-                let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active']);
+                let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
                 if (facYears && typeof facYears === 'string') {
                     yearRange = escapeHtml(facYears);
                 } else {
-                    const startYear = getValueFromKeys(operatingPeriod, ['startYear']) || getValueFromKeys(facility, ['founded', 'yearFounded']);
+                    const startYear = getValueFromKeys(operatingPeriod, ['startYear', 'start_year']) ||
+                                      getValueFromKeys(facility, ['founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year', 'operatingPeriod.startYear']);
                     if (startYear) {
-                        const endYear = getValueFromKeys(operatingPeriod, ['endYear']) || 'Present';
+                        const endYear = getValueFromKeys(operatingPeriod, ['endYear', 'end_year']) || 'Present';
                         yearRange = escapeHtml(`${startYear}-${endYear}`);
                     }
                 }
@@ -571,27 +629,130 @@ document.addEventListener('DOMContentLoaded', function() {
                 const otherNames = collectUniqueTexts(
                     getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
                 ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
-                const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'sourceOperator.name']);
+                const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator', 'sourceOperator.name']);
                 const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
-                
+
                 let subtextParts = [];
                 if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
                 if (otherNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
                 if (currentOp && !isValueEmpty(currentOp)) {
-                    subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
+                    if (statusClass === 'transferred' || statusClass === 'acquired') {
+                        subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);
+                    } else {
+                        subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
+                    }
                 }
                 let otherNamesHtml = subtextParts.length > 0 ? `<div class="facility-header-subtext">${subtextParts.join('<br>')}</div>` : '';
 
-                // Build other facility data
+                // "At a glance" facts (Type / Ages / Gender / Capacity)
+                const facilityFieldKeys = {
+                    type: ['facilityDetails.type', 'type', 'programType', 'program_type', 'facilityType', 'facility_type', 'category', 'identification.type'],
+                    capacity: ['facilityDetails.capacity', 'capacity', 'licensedCapacity', 'licensed_capacity', 'maxCapacity', 'max_capacity'],
+                    gender: ['facilityDetails.gender', 'gender', 'servedGender', 'served_gender', 'sex'],
+                    ageRangeText: ['facilityDetails.ageRange.label', 'facilityDetails.ageRange.display', 'facilityDetails.ageRange.text', 'ageRange.label', 'ageRange.display', 'ageRange.text', 'facilityDetails.ageRange', 'ageRange', 'age_range'],
+                    ageMin: ['facilityDetails.ageRange.min', 'facilityDetails.ageRange.minimum', 'facilityDetails.ageRange.minAge', 'facilityDetails.ageRange.min_age', 'ageRange.min', 'ageRange.minimum', 'ageRange.minAge', 'ageRange.min_age', 'ageMin', 'age_min'],
+                    ageMax: ['facilityDetails.ageRange.max', 'facilityDetails.ageRange.maximum', 'facilityDetails.ageRange.maxAge', 'facilityDetails.ageRange.max_age', 'ageRange.max', 'ageRange.maximum', 'ageRange.maxAge', 'ageRange.max_age', 'ageMax', 'age_max'],
+                    notes: ['notes', 'note', 'summary', 'description', 'facilityDetails.notes', 'facilityDetails.note', 'facilityDetails.summary', 'facilityDetails.description', 'identification.notes']
+                };
+
+                const typeValue = getValueFromKeys(facility, facilityFieldKeys.type);
+                const capacityValue = getValueFromKeys(facility, facilityFieldKeys.capacity);
+                const genderValue = getValueFromKeys(facility, facilityFieldKeys.gender);
+                const rawAgeRangeText = getValueFromKeys(facility, facilityFieldKeys.ageRangeText);
+                const ageMinValue = getValueFromKeys(facility, facilityFieldKeys.ageMin);
+                const ageMaxValue = getValueFromKeys(facility, facilityFieldKeys.ageMax);
+
+                let ageDisplay = '';
+                if (typeof rawAgeRangeText === 'string' && !isValueEmpty(rawAgeRangeText)) {
+                    ageDisplay = rawAgeRangeText;
+                } else if (!isValueEmpty(ageMinValue) && !isValueEmpty(ageMaxValue)) {
+                    ageDisplay = `${ageMinValue}-${ageMaxValue}`;
+                } else if (!isValueEmpty(ageMinValue)) {
+                    ageDisplay = `${ageMinValue}+`;
+                } else if (!isValueEmpty(ageMaxValue)) {
+                    ageDisplay = `Up to ${ageMaxValue}`;
+                }
+
+                const factItems = [];
+                if (!isValueEmpty(typeValue)) factItems.push({ label: 'Type', value: escapeHtml(typeValue) });
+                if (ageDisplay) factItems.push({ label: 'Ages', value: escapeHtml(ageDisplay) });
+                if (!isValueEmpty(genderValue)) factItems.push({ label: 'Gender', value: escapeHtml(toTitleCase(genderValue)) });
+                if (!isValueEmpty(capacityValue)) factItems.push({ label: 'Capacity', value: escapeHtml(String(capacityValue)) });
+
+                const factsHtml = factItems.length
+                    ? renderDetailSection(
+                        'At a glance',
+                        `<div class="facility-facts-grid">${
+                            factItems.map(item => `
+                                <div class="facility-fact">
+                                    <span class="facility-fact-label">${item.label}</span>
+                                    <span class="facility-fact-value">${item.value}</span>
+                                </div>
+                            `).join('')
+                        }</div>`,
+                        'facility-facts-section'
+                    )
+                    : '';
+
+                const noteItems = collectUniqueTexts(
+                    getValueFromKeys(facility, facilityFieldKeys.notes),
+                    consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.notes, usedFieldNoteKeys)
+                );
+                const notesHtml = noteItems.length
+                    ? renderDetailSection(
+                        'Notes',
+                        `<div class="facility-note-list">${
+                            noteItems.map(item => `<div class="facility-note-item">${escapeHtml(item)}</div>`).join('')
+                        }</div>`,
+                        'facility-notes-section'
+                    )
+                    : '';
+
+                // Suppress keys already shown in the header / facts / notes
+                const suppressedFieldKeys = new Set([
+                    'identification.name', 'identification.currentName',
+                    'name', 'programName', 'facilityName', 'title', 'program_name', 'facility_name',
+                    'identification.otherNames', 'otherNames',
+                    'identification.pastNames', 'pastNames',
+                    'identification.formerNames', 'formerNames',
+                    'identification.currentOperator', 'currentOperator', 'current_operator',
+                    'location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address',
+                    'city', 'state', 'locationCity', 'location_city', 'locationState', 'location_state',
+                    'operatingPeriod.status', 'status',
+                    'yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text',
+                    'founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year',
+                    'operatingPeriod.startYear', 'operatingPeriod.start_year',
+                    'operatingPeriod.endYear', 'operatingPeriod.end_year',
+                    ...facilityFieldKeys.type,
+                    ...facilityFieldKeys.capacity,
+                    ...facilityFieldKeys.gender,
+                    ...facilityFieldKeys.ageRangeText,
+                    ...facilityFieldKeys.ageMin,
+                    ...facilityFieldKeys.ageMax,
+                    ...facilityFieldKeys.notes
+                ]);
+
+                const shouldSuppressFacilityField = key => {
+                    if (!key || typeof key !== 'string') return false;
+                    if (suppressedFieldKeys.has(key)) return true;
+                    return /^(locationDetails|location_details)\.(city|state)$/i.test(key);
+                };
+
+                // Build remaining facility data ("More details")
                 let otherFacilityData = '';
                 const renderItemFac = (item) => {
                     if (isValueEmpty(item)) return '';
-                    if (typeof item === 'string') return escapeHtml(item);
+                    if (typeof item === 'boolean') return item ? 'Yes' : '';
+                    if (typeof item === 'string') return isValueEmpty(item) ? '' : escapeHtml(item);
+                    if (typeof item === 'number') return escapeHtml(String(item));
                     if (typeof item === 'object' && !Array.isArray(item)) {
-                        if (item.url) return `<a href="${escapeAttribute(item.url)}" target="_blank">${escapeHtml(item.name || item.text || item.url)}</a>`;
+                        if (item.url && typeof item.url === 'string' && (item.url.startsWith('http') || item.url.startsWith('/'))) {
+                            const label = item.displayText || item.name || item.text || item.url;
+                            return `<a href="${escapeAttribute(item.url)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+                        }
                         const parts = [];
-                        Object.entries(item).forEach(([k, v]) => { 
-                            if (!isValueEmpty(v) && (k === 'name' || k === 'value' || (k !== 'role' || v.trim()))) parts.push(escapeHtml(v)); 
+                        Object.entries(item).forEach(([k, v]) => {
+                            if (!isValueEmpty(v) && (k === 'name' || k === 'value' || k === 'text' || k !== 'role' || v.trim())) parts.push(escapeHtml(v));
                         });
                         return parts.join(' - ');
                     }
@@ -609,38 +770,94 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (isValueEmpty(value)) return;
                         if (Array.isArray(value)) {
                             if (value.length > 0 && !value.every(isValueEmpty)) fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: value, isList: true });
-                        } else if (typeof value === 'object') fields.push(...renderAllObjectFieldsFac(value, fullKey, depth + 1));
-                        else fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: cleanText(value) });
+                        } else if (typeof value === 'object' && Object.keys(value).length > 0) {
+                            fields.push(...renderAllObjectFieldsFac(value, fullKey, depth + 1));
+                        } else if (typeof value === 'boolean') {
+                            if (value) fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: 'Yes' });
+                        } else {
+                            const textValue = cleanText(value);
+                            if (textValue && !isValueEmpty(textValue)) fields.push({ key: fullKey, label: formatFieldLabel(fullKey), value: textValue });
+                        }
                     });
                     return fields;
                 };
 
                 const facilityFields = renderAllObjectFieldsFac(facility);
                 facilityFields.forEach(field => {
+                    if (shouldSuppressFacilityField(field.key)) return;
                     if (isValueEmpty(field.value)) return;
                     let renderedValue = '';
+                    let isMultiColumn = false;
                     if (field.isList) {
                         const items = Array.isArray(field.value) ? field.value : [field.value];
-                        renderedValue = items.map(item => renderItemFac(item)).filter(Boolean).join(', ');
+                        const validItems = items.filter(i => !isValueEmpty(i));
+                        if (!validItems.length) return;
+                        if (validItems.length > 1 || typeof validItems[0] === 'object' || ['certifications', 'licensing', 'memberships'].some(k => field.key.toLowerCase().includes(k))) {
+                            isMultiColumn = true;
+                        }
+                        const isUrlList = validItems.some(item => typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://')));
+                        if (isUrlList) {
+                            renderedValue = validItems.map(url => {
+                                if (typeof url !== 'string') return '';
+                                const safeUrl = escapeAttribute(url);
+                                let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
+                                if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
+                                return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+                            }).filter(Boolean).join('<br>');
+                        } else {
+                            renderedValue = validItems.map(item => renderItemFac(item)).filter(Boolean).join(', ');
+                            if (isMultiColumn && typeof validItems[0] === 'object') {
+                                renderedValue = validItems.map(item => `<div class="list-item">${renderItemFac(item)}</div>`).join('');
+                            }
+                        }
                     } else {
                         renderedValue = escapeHtml(field.value);
                     }
-                    if (!renderedValue) return;
-                    otherFacilityData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
+                    if (!renderedValue || isValueEmpty(renderedValue)) return;
+                    const rowClass = isMultiColumn ? 'field-row full-width-grid' : 'field-row';
+                    otherFacilityData += `<div class="${rowClass}"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
                     otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 });
 
-                let documentsHtml = '';
+                const additionalDetailsHtml = otherFacilityData
+                    ? renderDetailSection('More details', `<div class="facility-detail-grid">${otherFacilityData}</div>`, 'facility-additional-section')
+                    : '';
+
+                // Resources chips
+                let resourcesSectionHtml = '';
+                if (facility.resources) {
+                    const resources = [];
+                    const resourceMap = {
+                        'hasNews': 'News', 'hasPressReleases': 'Press Releases', 'hasInspections': 'Inspections',
+                        'hasStateReports': 'State Reports', 'hasRegulatoryFilings': 'Regulatory Filings', 'hasLawsuits': 'Lawsuits',
+                        'hasSettlements': 'Settlements', 'hasViolations': 'Violations', 'hasResearch': 'Research',
+                        'hasFinancial': 'Financial', 'hasNATSAP': 'NATSAP Profile', 'hasWebsite': 'Website Screenshots', 'hasOther': 'Other'
+                    };
+                    Object.keys(resourceMap).forEach(key => { if (facility.resources[key] === true) resources.push(resourceMap[key]); });
+                    if (facility.resources.customResources && facility.resources.customResources.length > 0) {
+                        resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
+                    }
+                    if (resources.length > 0) {
+                        resourcesSectionHtml = renderDetailSection(
+                            'Resources',
+                            `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`,
+                            'facility-resources-section'
+                        );
+                    }
+                }
+
+                // Documents (FileBird)
+                let documentsSectionHtml = '';
                 if (matchingFolder) {
-                    documentsHtml = `
-                        <div class="field-row full-width-grid" id="documents-${matchingFolder.id}">
-                            <span class="field-label">Documents</span>
+                    const documentsHtml = `
+                        <div class="field-row full-width-grid facility-document-row" id="documents-${matchingFolder.id}" data-documents-container="true">
                             <span class="field-value doc-library-btn-wrap">
                                 <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
                                     📂 View Document Library
                                 </button>
                             </span>
                         </div>`;
+                    documentsSectionHtml = renderDetailSection('Documents', `<div class="facility-detail-grid">${documentsHtml}</div>`, 'facility-documents-section');
                 }
 
                 contentHtml += `
@@ -658,8 +875,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             <details class="facility-expanded-info">
                                 <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
                                 <div class="facility-extra-content">
-                                    ${otherFacilityData}
-                                    ${documentsHtml}
+                                    ${factsHtml}
+                                    ${notesHtml}
+                                    ${resourcesSectionHtml}
+                                    ${documentsSectionHtml}
+                                    ${additionalDetailsHtml}
                                     ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                                 </div>
                             </details>

@@ -938,7 +938,7 @@ function parseWikiMarkdown(markdown) {
         if (typeFromHistory) {
             parsedData.programType = typeFromHistory[1].trim();
         } else {
-            const typeFromHistory2 = normalizedMarkdown.match(/(?:is|was)\s+(?:an?|the)\s+((?:Residential Treatment Center|Therapeutic Boarding School|Wilderness Program|Behavior Modification Program|Behavioral Health Facility|Outdoor Therapeutic Program|Group Home|Boot Camp|Youth Treatment Center|Psychiatric Residential Treatment Facility)[^.]*)/i);
+            const typeFromHistory2 = normalizedMarkdown.match(/(?:is|was)\s+(?:an?|the)\s+(Residential Treatment Center|Therapeutic Boarding School|Wilderness Program|Behavior Modification Program|Behavioral Health Facility|Outdoor Therapeutic Program|Group Home|Boot Camp|Youth Treatment Center|Psychiatric Residential Treatment Facility)/i);
             if (typeFromHistory2) {
                 parsedData.programType = typeFromHistory2[1].trim();
             }
@@ -955,9 +955,16 @@ function parseWikiMarkdown(markdown) {
     ]);
     if (historySection && !historySection.includes('No information is known')) {
         const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
+        // Link-inlined copy for keyword-based extractions: "[text](url)" -> "text".
+        // A markdown link sitting next to a keyword (e.g. "[NATSAP](...) member")
+        // otherwise breaks regexes that expect the keyword and its neighbor to be
+        // adjacent. Extractions that need the URL keep using normalizedHistory.
+        const historyPlain = normalizedHistory.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1');
 
-        // Year founded
-        const yearFoundedMatch = normalizedHistory.match(/(?:founded|opened|started|established|began)\s+(?:in\s+)?(\d{4})/i);
+        // Year founded. Allow an optional month between the verb and the year so
+        // "opened in March of 2007" is captured, rather than falling through to a
+        // later unrelated year (e.g. a sub-program "founded in 2014").
+        const yearFoundedMatch = historyPlain.match(/(?:founded|opened|started|established|began)\s+(?:in\s+)?(?:(?:january|february|march|april|may|june|july|august|september|october|november|december)\s+(?:of\s+)?)?(\d{4})/i);
         if (yearFoundedMatch) {
             parsedData.yearFounded = yearFoundedMatch[1].trim();
         }
@@ -969,7 +976,7 @@ function parseWikiMarkdown(markdown) {
         ];
 
         for (const pattern of headquartersPatterns) {
-            const match = normalizedHistory.match(pattern);
+            const match = historyPlain.match(pattern);
             if (match) {
                 parsedData.headquarters = match[1].trim().replace(/\s+/g, ' ');
                 break;
@@ -979,6 +986,9 @@ function parseWikiMarkdown(markdown) {
         // Owner
         const ownerPatternsWithLinks = [
             /is\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center|behavior))/i,
+            // "owned/operated/run by [a subsidiary of] [Name](url)" — captures the
+            // linked entity even when an intermediary phrase precedes the link.
+            /(?:owned|operated|run)(?:\s+and\s+(?:owned|operated|run))*\s+by\s+(?:a\s+(?:subsidiary|division|part|unit)\s+of\s+)?(?:the\s+)?\[([^\]]+)\]\(([^)]+)\)/i,
             /owned by \[([^\]]+)\]\(([^)]+)\)/i,
             /operated by \[([^\]]+)\]\(([^)]+)\)/i,
             /run by \[([^\]]+)\]\(([^)]+)\)/i,
@@ -986,10 +996,21 @@ function parseWikiMarkdown(markdown) {
             /was\s+(?:an?|the)?\s*\[([^\]]+)\]\(([^)]+)\)\s+(?:[^.\n]*?(?:program|school|facility|center))/i
         ];
 
+        // Skip an owner match that is negated just before it, e.g.
+        // "is not technically owned by [WWASP]" — that's the opposite of ownership.
+        const isNegatedBefore = (text, idx) => {
+            const before = text.slice(Math.max(0, idx - 20), idx).toLowerCase();
+            return /\bnot\b|n't\b|\bnever\b|\bno longer\b/.test(before);
+        };
+
+        // "is a [WWASP]-affiliated program" means affiliated, not owned — the
+        // linked entity is a modifier, not the operator. Skip those matches.
+        const isAffiliationContext = (matchText) => /\b(?:affiliated|associated)\b/i.test(matchText || '');
+
         let ownerCaptured = false;
         for (const pattern of ownerPatternsWithLinks) {
             const match = normalizedHistory.match(pattern);
-            if (match) {
+            if (match && !isNegatedBefore(normalizedHistory, match.index) && !isAffiliationContext(match[0])) {
                 parsedData.ownerName = match[1].trim();
                 parsedData.ownerLink = sanitizeUrl(match[2]);
                 ownerCaptured = true;
@@ -1002,23 +1023,31 @@ function parseWikiMarkdown(markdown) {
             parsedData.parentCompany = parentCompanyWithLinkMatch[1].trim();
             parsedData.parentCompanyLink = sanitizeUrl(parentCompanyWithLinkMatch[2]);
         } else {
-            const parentCompanyTextMatch = normalizedHistory.match(/(?:subsidiary of|parent company (?:is|was)|division of)\s+([^.\n]+)/i);
+            const parentCompanyTextMatch = normalizedHistory.match(/(?:subsidiary of|parent company (?:is|was)|division of)\s+([^.\n\[]+)/i);
             if (parentCompanyTextMatch) {
                 parsedData.parentCompany = parentCompanyTextMatch[1].trim();
             }
         }
 
         if (!ownerCaptured) {
+            // Reject captures that are clearly not a name — bare articles/pronouns
+            // or sentence fragments (e.g. "founded as a Mormon militaristic").
+            const isPlausibleOwnerName = (value) => {
+                const text = (value || '').trim();
+                if (text.length < 3) return false;
+                if (/^(?:a|an|the|its|their|his|her|this|that|part|one)$/i.test(text)) return false;
+                if (/\b(?:founded|opened|established|originally|behavior[- ]?modification)\b/i.test(text)) return false;
+                return true;
+            };
             const ownerTextPatterns = [
-                /owned by ([^.\n]+)/i,
-                /operated by ([^.\n]+)/i,
-                /run by ([^.\n]+)/i,
-                /part of ([^.\n]+)/i,
-                /was\s+(?:an?|the)?\s*([^.\n]+?)\s+(?:behavior|residential|therapeutic|treatment)[^.\n]*program/i
+                /owned by ([^.\n\[]+)/i,
+                /operated by ([^.\n\[]+)/i,
+                /run by ([^.\n\[]+)/i,
+                /part of ([^.\n\[]+)/i
             ];
             for (const pattern of ownerTextPatterns) {
                 const match = normalizedHistory.match(pattern);
-                if (match) {
+                if (match && isPlausibleOwnerName(match[1]) && !isNegatedBefore(normalizedHistory, match.index)) {
                     parsedData.ownerName = match[1].trim();
                     break;
                 }
@@ -1114,7 +1143,7 @@ function parseWikiMarkdown(markdown) {
             /aged?\s+(\d{1,2})\s*\+/i
         ];
         for (const pattern of agePatterns) {
-            const match = normalizedHistory.match(pattern);
+            const match = historyPlain.match(pattern);
             if (match) {
                 parsedData.ageRange = match[2] ? `${match[1]}-${match[2]}` : `${match[1]}+`;
                 break;
@@ -1218,14 +1247,14 @@ function parseWikiMarkdown(markdown) {
 
         // Capacity/Enrollment
         const capacityPatterns = [
-            /maximum enrollment of ([^.,\n]+?)(?:\.|,|$| and)/i,
-            /capacity (?:of|for) ([^.,\n]+?)(?:\.|,|$| and)/i,
-            /(?:can accommodate|accommodates) (?:up to )?([^.,\n]+?)(?:\.|,|$| and)/i,
-            /serves (?:up to )?([^.,\n]+?)(?:\.|,|$| and)/i,
+            /maximum enrollment of ([^.,\n]+?)(?:\.|,|$|\s+(?:and|who|which|that|between|divided|depending|across|spread|spanning)\b)/i,
+            /capacity (?:of|for) ([^.,\n]+?)(?:\.|,|$|\s+(?:and|who|which|that|between|divided|depending|across|spread|spanning)\b)/i,
+            /(?:can accommodate|accommodates) (?:up to )?([^.,\n]+?)(?:\.|,|$|\s+(?:and|who|which|that|between|divided|depending|across|spread|spanning)\b)/i,
+            /serves (?:up to )?([^.,\n]+?)(?:\.|,|$|\s+(?:and|who|which|that|between|divided|depending|across|spread|spanning)\b)/i,
             /enrollment (?:is|was) ([^.,\n]+?)(?:\.|,|$| and)/i
         ];
         for (const pattern of capacityPatterns) {
-            const match = normalizedHistory.match(pattern);
+            const match = historyPlain.match(pattern);
             if (match) {
                 parsedData.capacity = match[1].trim();
                 break;
@@ -1247,8 +1276,8 @@ function parseWikiMarkdown(markdown) {
         }
 
         // Average stay — handles "between X and Y months", "X-Y months", "X months"
-        const stayBetweenMatch = normalizedHistory.match(/average length of stay[^0-9]*(?:between\s+)?(\d+\s*(?:and|to|-)\s*\d+\s*(?:days?|weeks?|months?|years?))/i);
-        const staySingleMatch = normalizedHistory.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
+        const stayBetweenMatch = historyPlain.match(/average length of stay[^0-9]*?((?:between\s+)?\d+\s*(?:and|to|-)\s*\d+\s*(?:days?|weeks?|months?|years?))/i);
+        const staySingleMatch = historyPlain.match(/average length of stay[^0-9]*(\d+\s*(?:days?|weeks?|months?|years?)[^,\.\n]*)/i);
         const stayMatch = stayBetweenMatch || staySingleMatch;
         if (stayMatch) {
             parsedData.avgStay = stayMatch[1].trim();
@@ -1256,13 +1285,13 @@ function parseWikiMarkdown(markdown) {
 
         // Tuition
         // 1. Look for explicit "Unknown" / "Undisclosed"
-        const tuitionUnknownMatch = normalizedHistory.match(/(?:tuition|cost)[^.\n]*?(?:is|was|remains)\s+(?:presently\s+|currently\s+)?(unknown|undisclosed|not listed|not public|not known)/i);
+        const tuitionUnknownMatch = historyPlain.match(/(?:tuition|cost)[^.\n]*?(?:is|was|remains)\s+(?:presently\s+|currently\s+)?(unknown|undisclosed|not listed|not public|not known)/i);
         if (tuitionUnknownMatch) {
             parsedData.tuition = "Unknown"; // Normalize to standard "Unknown"
         } else {
             // 2. Look for currency amount (ensure we don't cross sentence boundaries)
             // Matches $xx,xxx or $xx,xxx.xx
-            const tuitionMatch = normalizedHistory.match(/(?:tuition|cost)[^.$\n]*?(\$[\d,]+(?:\.\d{2})?)/i);
+            const tuitionMatch = historyPlain.match(/(?:tuition|cost)[^.$\n]*?(\$[\d,]*\d(?:\.\d{2})?)/i);
             if (tuitionMatch) {
                 parsedData.tuition = tuitionMatch[1].trim();
             }
@@ -1280,7 +1309,7 @@ function parseWikiMarkdown(markdown) {
         ];
 
         for (const { pattern, value, yearGroup } of natsapPatterns) {
-            const natsapMatch = normalizedHistory.match(pattern);
+            const natsapMatch = historyPlain.match(pattern);
             if (natsapMatch) {
                 parsedData.natsapMember = value;
                 if (yearGroup && natsapMatch[yearGroup]) {
@@ -1302,26 +1331,54 @@ function parseWikiMarkdown(markdown) {
             }
         }
 
-        // Accrediting body
-        const accreditMatch = normalizedHistory.match(/accredited through the \[([^\]]+)\]\(([^)]+)\)/i);
+        // Accrediting body — handle "accredited by/through (the) [Name](url)",
+        // tolerating a stray quote after "accredited" (e.g. '"accredited" by ...').
+        const accreditMatch = normalizedHistory.match(/accredited["']?\s+(?:by|through)\s+(?:the\s+)?\[([^\]]+)\]\(([^)]+)\)/i);
         if (accreditMatch) {
-            parsedData.accreditingBody = accreditMatch[1];
+            parsedData.accreditingBody = accreditMatch[1].trim();
             parsedData.accreditingBodyLink = sanitizeUrl(accreditMatch[2]);
+        } else {
+            // Fallback for an accreditor named without a link.
+            const accreditTextMatch = normalizedHistory.match(/accredited["']?\s+(?:by|through)\s+(?:the\s+)?([^.\n\[]+)/i);
+            if (accreditTextMatch) {
+                parsedData.accreditingBody = accreditTextMatch[1].trim();
+            }
         }
 
         // Rebrand/Legacy
-        const rebrandKeywords = '(?:rebrand of|formerly known as|previously known as|successor to|reopened\\/rebranded as|integrated into|merged with|merged into|clone of)';
-        const rebrandMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+(?:the\\s+)?(?:notorious\\s+)?(?:and\\s+)?(?:confirmedly\\s+)?(?:abusive\\s+)?(?:program\\s+)?\\[([^\\]]+)\\]\\(([^)]+)\\)', 'i'));
+        const rebrandKeywords = '(?:rebrand of|spin-?off of|formerly known as|previously known as|successor to|reopened\\/rebranded as|integrated into|merged with|merged into|clone of)';
+        let rebrandName = '';
+        let rebrandLink = '';
+        // Optional run of editorial descriptors between the keyword and the name
+        // (e.g. "the notoriously abusive ", "the now-closed "). Matching these
+        // flexibly keeps the link form working so we don't fall through to the
+        // text form and capture raw "[Name](url" fragments.
+        const rebrandQualifiers = '(?:(?:the|a|an|notorious(?:ly)?|infamous|disgraced|abusive|confirmedly|formerly|former|now-closed|closed|and|program)\\s+)*';
+        const rebrandMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+' + rebrandQualifiers + '\\[([^\\]]+)\\]\\(([^)]+)\\)', 'i'));
         if (rebrandMatch) {
-            parsedData.rebrand = rebrandMatch[1].trim();
-            parsedData.rebrandLink = sanitizeUrl(rebrandMatch[2]);
+            rebrandName = rebrandMatch[1].trim();
+            rebrandLink = sanitizeUrl(rebrandMatch[2]);
         } else {
-             // Capture until next clause boundary: period, closing paren+space, "was", "is"
-             const rebrandTextMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+(?:the\\s+)?(?:notorious\\s+)?(?:and\\s+)?(?:confirmedly\\s+)?(?:abusive\\s+)?(?:program\\s+)?([^.)]+?)(?:\\)|\\s+was\\b|\\s+is\\b|\\.|$)', 'i'));
+             // Unlinked name: capture until the next clause boundary (period,
+             // comma, "[", closing paren, or a connective). Excluding "[" stops
+             // it from swallowing a malformed markdown link.
+             const rebrandTextMatch = normalizedHistory.match(new RegExp(rebrandKeywords + '\\s+' + rebrandQualifiers + '([^.)\\[]+?)(?:\\)|,|\\s+(?:was|is|which|except|but)\\b|\\.|$)', 'i'));
              if (rebrandTextMatch) {
-                 // Clean trailing comma, "and", etc.
-                 parsedData.rebrand = rebrandTextMatch[1].trim().replace(/[,\s]+$/, '');
+                 rebrandName = rebrandTextMatch[1].trim().replace(/[,\s]+$/, '');
              }
+        }
+
+        // A program can't be a rebrand of itself. Drop self-references, which
+        // arise when another program is described as a clone/rebrand of THIS one
+        // (e.g. "[Equinox], which is a clone of Solstice" on the Solstice page).
+        const progCore = (parsedData.programName || '').toLowerCase()
+            .replace(/\b(rtc|academy|school|programs?|hospital|center|inc\.?|llc|ranch)\b/g, '').trim();
+        const rebrandCore = rebrandName.toLowerCase();
+        const isSelfReference = progCore.length > 2 && rebrandCore &&
+            (rebrandCore.includes(progCore) || progCore.includes(rebrandCore));
+        if (rebrandName && !isSelfReference) {
+            parsedData.rebrand = rebrandName;
+            if (rebrandLink) parsedData.rebrandLink = rebrandLink;
         }
 
         // Affiliations
@@ -2242,10 +2299,15 @@ function parseWikiMarkdown(markdown) {
             parsedData.natsapMember ||
             parsedData.selectedDiagnoses.length > 0
         );
-        const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care| services)?|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/.test(programNameLower);
+        // "Health" alone (e.g. "Behavioral Health Hospital") is a facility type;
+        // only "Healthcare"/"Health Services" reads as a company.
+        const nameLooksLikeOrganization = /association|company|corporation|corp\.|group|health(?:care|\s+services)|holdings|institute|network|partners|services|collective|natsap|ieca|wwasp|uhs/.test(programNameLower);
         const typeLooksLikeOrganization = /organization|association|company|corporation|group|operator|network|membership/.test(programTypeLower);
 
-        parsedData.entryType = (typeLooksLikeOrganization || hasOrgOnlyFields || (hasProgramsTable && !hasFacilitySignals) || (nameLooksLikeOrganization && !hasFacilitySignals))
+        // A facility that merely names its parent company is still a facility, so
+        // org-only fields only imply an organization when there are no facility
+        // signals (city, address, age range, capacity, tuition, diagnoses, etc.).
+        parsedData.entryType = (typeLooksLikeOrganization || (hasOrgOnlyFields && !hasFacilitySignals) || (hasProgramsTable && !hasFacilitySignals) || (nameLooksLikeOrganization && !hasFacilitySignals))
             ? 'organization'
             : 'facility';
     }

@@ -41,6 +41,7 @@ get_header();
                 <div class="category-tabs">
                     <button class="category-tab active" data-category="location-indexes">📍 Locations</button>
                     <button class="category-tab" data-category="organization-indexes">🏢 Organizations</button>
+                    <button class="category-tab" data-category="stub-indexes">📝 Stubs</button>
                 </div>
 
                 <div class="category-contents-wrapper">
@@ -61,6 +62,14 @@ get_header();
                             <select id="orgIndexSelect" class="input-form">
                                 <option value="">Loading organizations...</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Stubs (entries needing creation) -->
+                    <div id="stub-indexes-content" class="category-content view-hidden">
+                        <div class="form-group">
+                            <label>Entries Needing Creation</label>
+                            <p class="stub-tab-help">Every wiki entry that is still empty across all states and organizations is gathered here. Pick one to start writing it. Use the filter on the right to narrow the list.</p>
                         </div>
                     </div>
                 </div>
