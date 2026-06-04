@@ -1,6 +1,77 @@
 {
-  "lastUpdated": "2026-05-31T08:05:33.580Z",
+  "lastUpdated": "2026-06-04T08:56:33.922Z",
   "entries": [
+    {
+      "ts": "2026-06-04T08:56:33.921Z",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBiQi03Zm1jTzE5MWgwaWphb1RmV0NUZDhEcGtyRnJhWnVpZ3VBQjBNN3E1VVVQZEcyekVIeEtkaFpnT01IZFhFQ19lZ1lFZ3hPV0p5SnBJSE83Z3hGLTgtQ2pKY0dpX1o5S2RFdUZVU2EwZ1c3VFRJS9IBfkFVX3lxTE90LUlxYllaVGpTM1Rob2JqMS1HXzVyU19vZnpfOXJQMmkteV94dGxUUWJ5M1BMRmJxZ2tEY0hMLWRyZm4yVnVfMzNnaTJKbGdnZTE4VVZKbnVIRXdMYnNPanY2SzJOVmdqS0J5MVozRVAxSDk1NW9GRWN0NUVtdw?oc=5",
+      "title": "Inside the \"troubled teen\" industry, when help sometimes does more harm - CBS News",
+      "origin": "google-news",
+      "host": "cbsnews.com",
+      "facilityQuery": "CALO Programs",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cbsnews.com"
+      }
+    },
+    {
+      "ts": "2026-06-04T08:56:33.922Z",
+      "link": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9fSEkxYl9Gc0NFdWdqRndUN3lhaW12NkRYekx3aEN1SGY3bGFLeVR6b2hWSUFWNUcwWjhseVAxRUcyWGxnTDJPZFZkYjRvcGdzczNhbmpFeGRVOVBRWU5FS2Y3NWZtQnh4ZDdlTWpJUmhodTJsMGFYcUxjelg4dw?oc=5",
+      "title": "Stanislaus County considers $6.75M project to remodel juvenile justice courtrooms - AOL.com",
+      "origin": "google-news",
+      "host": "aol.com",
+      "facilityQuery": "Juvenile Commitment Facility",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "aol.com"
+      }
+    },
+    {
+      "ts": "2026-06-04T08:56:33.922Z",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQQlRoOVF4My1DWHRIdFgzS3NuaWdBVDJXaTdDSjJKT2V1QjFWVXNIR2Z3bzZXWS1jNXR6V3FINWowZnZDa0lidXBNNUdfNkJtS3RWVmJIdVA4VFk3X1ZhN0JNTlVvWm5KeVpCWlhGUjMxLVc0eU5IdllxLUJqWWdSLU84V0ZnOTF2TnJfMWZKM2dlTjdqdV9aMjFrWDdSRzczb0hHcUR5MGJyaXE2RExFd3ZRb2xkaFhQcjJWa08xbHBoV1VJZHhzZQ?oc=5",
+      "title": "Stanislaus County considers $6.75M project to remodel juvenile justice courtrooms - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Juvenile Commitment Facility",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-06-04T08:56:33.922Z",
+      "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE83TXdjbnB6MjljcXdyc1RPT2FsMHI0OS1iWFNqUkZhQy1oVVppNTE5RFRreFpnNnZXWnZhQ1hMUjRvUHNpamotWmVWN2RXSHQ2YXJ5YmZCQTE4cmRpdTVvMVRDWjZXeUdaOE1n0gFrQVVfeXFMT2FlX2swaWduX3ZVM3ZjNlBCUW9vRTdZc3J3dFMxUXktRy16czVqU1gwdkpfU01pZTZlTnZ3QmoyaGUzTjluV0wwQmRrNWVDUGFhY0plY1Z3QW9lWXFKcUVNY3pSUUFNUXVlQ0k?oc=5",
+      "title": "CA teen accused of taunting cops with e-bike wheelies, using laser on kid’s eye - Sacramento Bee",
+      "origin": "google-news",
+      "host": "sacbee.com",
+      "facilityQuery": "Yolo County Juvenile Hall",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sacbee.com"
+      }
+    },
+    {
+      "ts": "2026-06-04T08:56:33.922Z",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE5QdERpa25NNE9XaVJxWUw2QVRuWnJYdDhIMlIwTlhLcVVQcUxDM0JkQVZXMHNGU3FfODF5U291c3RLcnV6SkJWREQ0QVBpbHlCbzRjYXI1WUNqNE0tNzRTNXh4UmdOOEM2Q2lERm1rMzM5ZHZxNlE?oc=5",
+      "title": "Embattled Kanakuk Kamps CEO to Retire - MinistryWatch",
+      "origin": "google-news",
+      "host": "ministrywatch.com",
+      "facilityQuery": "Kanakuk Kamps",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Kanakuk Kamps"
+        ],
+        "threshold": 3,
+        "host": "ministrywatch.com"
+      }
+    },
     {
       "ts": "2026-05-31T08:05:33.580Z",
       "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOT1dFaUdWLXUyX2FKa0lGTk5TUlhRblg5WEpIRnU1anpUTzQwbEtvMzRXbnhQTjd4ZG5oSEgxTGRBRGxoTWtYVWRhZkdGVDc3VzJFZzRGNFRxNHIwTGh1N0h6T0xlaVZTRGFjWGpDZ1RYckZfdkxiR043ZlRSNkx6RWQ1S3M3Y3pPeDEzNUx2ZXJyTW5rRmgwTg?oc=5",
