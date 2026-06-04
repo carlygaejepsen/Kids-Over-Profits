@@ -625,3 +625,31 @@ select {
     margin: 6px 0 0;
     line-height: 1.45;
 }
+
+/* Stubs tab: completion tracking */
+.stub-progress-summary {
+    margin: 0 0 10px;
+    padding: 8px 12px;
+    background: #f0f9fa;
+    border: 1px solid #AEE0ED;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #004435;
+}
+
+.index-entry-row.stub-completed {
+    opacity: 0.7;
+}
+
+.index-entry-row.stub-completed .index-entry-name {
+    text-decoration: line-through;
+    text-decoration-color: #9bbf8f;
+}
+
+.stub-done-check {
+    color: #2e7d32;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+}

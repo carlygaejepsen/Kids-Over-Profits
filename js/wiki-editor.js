@@ -116,9 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentNavList = [];
     let currentNavIndex = -1;
 
-    // --- Empty-slug mapping (loaded from markdown_output) ---
-    // Set of known-empty wiki slugs (derived from markdown_output/empty_files_updated.md)
+    // --- Empty-slug mapping ---
+    // Set of known-empty wiki slugs. Preferred source is a JSON list served from
+    // the same directory as the program index data (reliably web-accessible);
+    // markdown_output/empty_files_updated.md is a fallback.
     let emptySlugSet = null;
+    let emptySlugPromise = null;
+    let completedNamesSet = null; // normalized program names that already have a saved submission
 
     // --- Tab Switching Logic ---
     const categoryTabs = document.querySelectorAll('.category-tab');
@@ -165,44 +169,88 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Normalize a program/entry name for matching against DB submissions.
+    const normalizeEntryName = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+    function getStubsApiUrl() {
+        if (editorSettings.stubsApi) return editorSettings.stubsApi;
+        if (editorSettings.saveApi) return editorSettings.saveApi.replace(/[^\/]*$/, 'wiki-stubs.php');
+        return '/wp-content/themes/child/api/wiki-stubs.php';
+    }
+
     async function loadEmptySlugMapping() {
+        emptySlugSet = new Set();
+        completedNamesSet = new Set();
+
+        // 1. Preferred: server endpoint — auto-reads the current empty-file list
+        //    AND reports which entries already have a saved submission (completed).
+        try {
+            const resp = await fetch(getStubsApiUrl(), { cache: 'no-cache' });
+            if (resp.ok) {
+                const data = await resp.json();
+                (data.emptySlugs || []).forEach(slug => { if (slug) emptySlugSet.add(String(slug).toLowerCase()); });
+                (data.completedNames || []).forEach(name => { const n = normalizeEntryName(name); if (n) completedNamesSet.add(n); });
+                if (emptySlugSet.size > 0) {
+                    console.log('Loaded ' + emptySlugSet.size + ' empty slugs, ' + completedNamesSet.size + ' completed, from wiki-stubs.php');
+                    return;
+                }
+            }
+        } catch (err) {
+            console.warn('wiki-stubs.php unavailable, falling back to static list:', err);
+        }
+
+        // 2. Fallback: static empty-slugs.json next to the program index data.
+        const programsBase = document.querySelector('.entry-browser-section')?.dataset?.wikiProgramsBase;
+        if (programsBase) {
+            try {
+                const resp = await fetch(`${programsBase}empty-slugs.json`, { cache: 'no-cache' });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const slugs = Array.isArray(data) ? data : (data.slugs || []);
+                    slugs.forEach(slug => { if (slug) emptySlugSet.add(String(slug).toLowerCase()); });
+                    if (emptySlugSet.size > 0) {
+                        console.log('Loaded empty slug list (' + emptySlugSet.size + ' slugs) from empty-slugs.json');
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('empty-slugs.json unavailable, falling back to markdown_output:', err);
+            }
+        }
+
+        // 3. Fallback: legacy markdown_output/empty_files_updated.md
         try {
             const baseUrl = editorSettings.markdownBaseUrl || '/wp-content/themes/child/markdown_output/';
             const resp = await fetch(`${baseUrl}empty_files_updated.md`, { cache: 'no-cache' });
-                if (resp.ok && resp.status === 200) {
+            if (resp.ok && resp.status === 200) {
                 const text = await resp.text();
-                emptySlugSet = new Set();
                 text.split(/\r?\n/).forEach(line => {
                     const trimmed = line.trim();
                     if (!trimmed) return;
-                    // Lines are formatted like "- filename.md"
-                    const entry = trimmed.replace(/^[-\s]+/, '');
-                    const name = entry.split('/').pop();
+                    const name = trimmed.replace(/^[-\s]+/, '').split('/').pop();
                     if (!name) return;
-                    // We care about index_*.md files which map to wiki slugs
                     if (name.startsWith('index_')) {
-                        let slug = name.replace(/^index_/, '').replace(/\.md$/i, '');
-                        // Remove trailing underscores
-                        slug = slug.replace(/_$/, '');
+                        const slug = name.replace(/^index_/, '').replace(/\.md$/i, '').replace(/_$/, '');
                         if (slug) emptySlugSet.add(slug.toLowerCase());
                     } else if (/^[a-z0-9-]+\.md$/i.test(name)) {
-                        // Fallback: consider plain slug.md files as slugs
-                        const slug = name.replace(/\.md$/i, '');
-                        emptySlugSet.add(slug.toLowerCase());
+                        emptySlugSet.add(name.replace(/\.md$/i, '').toLowerCase());
                     }
                 });
-                console.log('Loaded empty slug list (' + (emptySlugSet.size || 0) + ' slugs)');
+                console.log('Loaded empty slug list (' + emptySlugSet.size + ' slugs) from markdown_output');
             } else {
-                emptySlugSet = new Set();
                 console.warn('Empty files list not found (HTTP ' + resp.status + ')');
             }
         } catch (err) {
-            emptySlugSet = new Set();
             console.warn('Failed to load empty files list:', err);
         }
     }
-    // Load mapping (no await so UI init continues)
-    loadEmptySlugMapping();
+
+    // Load once; callers that need the set ready should await ensureEmptySlugSet().
+    function ensureEmptySlugSet() {
+        if (!emptySlugPromise) emptySlugPromise = loadEmptySlugMapping();
+        return emptySlugPromise;
+    }
+    ensureEmptySlugSet();
 
     const emptyBannerEl = document.getElementById('emptyEntryBanner');
     const emptyBannerCreateBtn = document.getElementById('emptyBannerCreateBtn');
@@ -2750,11 +2798,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadAllStubs() {
         browseMode = 'stubs';
         setIndexSearchEnabled(true);
-        if (allStubsCache) { renderAllStubs(); return; }
 
         updateIndexEntriesMessage('Scanning every index for entries that still need to be created...');
         try {
-            if (!emptySlugSet) { await loadEmptySlugMapping(); }
+            // Re-fetch each time the tab opens so entries that were just submitted
+            // move into the Completed group without a full page reload.
+            await loadEmptySlugMapping();
             if (!allIndexData) { await initializeIndexes(); }
 
             const stateCodes = Object.keys((allIndexData && allIndexData.states) || {});
@@ -2783,6 +2832,59 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // A stub counts as "completed" once a submission for it exists in the database.
+    function isStubCompleted(entry) {
+        return !!(completedNamesSet && completedNamesSet.has(normalizeEntryName(entry.name || entry.normalizedName)));
+    }
+
+    function buildStubRow(entry, state, completed) {
+        const row = document.createElement('div');
+        row.className = 'index-entry-row' + (completed ? ' stub-completed' : '');
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'index-entry-name';
+        if (completed) {
+            const check = document.createElement('span');
+            check.className = 'stub-done-check';
+            check.textContent = '✓ ';
+            nameSpan.appendChild(check);
+        }
+        nameSpan.appendChild(document.createTextNode(entry.name || entry.normalizedName || 'Unnamed program'));
+        const stateTag = document.createElement('span');
+        stateTag.className = 'index-entry-state';
+        stateTag.textContent = ` (${STATE_DISPLAY_NAMES[state] || state})`;
+        nameSpan.appendChild(stateTag);
+
+        const actions = document.createElement('div');
+        actions.className = 'index-entry-actions';
+        const actionBtn = document.createElement('button');
+        actionBtn.type = 'button';
+        actionBtn.className = 'edit-entry-btn';
+        if (completed) {
+            // Already saved — open the existing submission for editing.
+            actionBtn.textContent = 'Edit';
+            actionBtn.addEventListener('click', (e) => { e.preventDefault(); loadEntryFromReddit(entry, actionBtn); });
+        } else {
+            actionBtn.textContent = 'Create';
+            actionBtn.addEventListener('click', (e) => { e.preventDefault(); createStubEntry(entry, state, actionBtn); });
+        }
+        actions.appendChild(actionBtn);
+
+        const slug = getEntrySlug(entry, state);
+        if (slug) {
+            const viewLink = document.createElement('a');
+            viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;
+            viewLink.target = '_blank';
+            viewLink.rel = 'noopener noreferrer';
+            viewLink.textContent = 'View on Reddit';
+            actions.appendChild(viewLink);
+        }
+
+        row.appendChild(nameSpan);
+        row.appendChild(actions);
+        return row;
+    }
+
     function renderAllStubs() {
         if (!indexEntriesList) return;
         if (!allStubsCache) { updateIndexEntriesMessage('Loading stubs...'); return; }
@@ -2800,46 +2902,24 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const needs = matches.filter(m => !isStubCompleted(m.entry));
+        const done = matches.filter(m => isStubCompleted(m.entry));
+
         indexEntriesList.innerHTML = '';
-        indexEntriesList.appendChild(buildGroupHeader(`Entries needing creation (${matches.length})`, true));
-        matches.forEach(({ entry, state }) => {
-            const row = document.createElement('div');
-            row.className = 'index-entry-row';
 
-            const nameSpan = document.createElement('span');
-            nameSpan.className = 'index-entry-name';
-            nameSpan.appendChild(document.createTextNode(entry.name || entry.normalizedName || 'Unnamed program'));
-            const stateTag = document.createElement('span');
-            stateTag.className = 'index-entry-state';
-            stateTag.textContent = ` (${STATE_DISPLAY_NAMES[state] || state})`;
-            nameSpan.appendChild(stateTag);
+        const summary = document.createElement('div');
+        summary.className = 'stub-progress-summary';
+        summary.textContent = `${done.length} completed · ${needs.length} still need creation`;
+        indexEntriesList.appendChild(summary);
 
-            const actions = document.createElement('div');
-            actions.className = 'index-entry-actions';
-            const createButton = document.createElement('button');
-            createButton.type = 'button';
-            createButton.textContent = 'Create';
-            createButton.className = 'edit-entry-btn';
-            createButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                createStubEntry(entry, state, createButton);
-            });
-            actions.appendChild(createButton);
-
-            const slug = getEntrySlug(entry, state);
-            if (slug) {
-                const viewLink = document.createElement('a');
-                viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;
-                viewLink.target = '_blank';
-                viewLink.rel = 'noopener noreferrer';
-                viewLink.textContent = 'View on Reddit';
-                actions.appendChild(viewLink);
-            }
-
-            row.appendChild(nameSpan);
-            row.appendChild(actions);
-            indexEntriesList.appendChild(row);
-        });
+        if (needs.length) {
+            indexEntriesList.appendChild(buildGroupHeader(`Needs creation (${needs.length})`, true));
+            needs.forEach(({ entry, state }) => indexEntriesList.appendChild(buildStubRow(entry, state, false)));
+        }
+        if (done.length) {
+            indexEntriesList.appendChild(buildGroupHeader(`Completed (${done.length})`));
+            done.forEach(({ entry, state }) => indexEntriesList.appendChild(buildStubRow(entry, state, true)));
+        }
     }
 
     async function loadOrgProgramsFromDatabase(orgName, button) {
