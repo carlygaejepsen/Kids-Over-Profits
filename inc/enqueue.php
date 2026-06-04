@@ -1518,6 +1518,7 @@ function kop_enqueue_wiki_editor_assets() {
         array(
             'isAdmin' => current_user_can('manage_options'),
             'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php',
+            'stubsApi' => get_stylesheet_directory_uri() . '/api/wiki-stubs.php',
             'markdownBaseUrl' => get_stylesheet_directory_uri() . '/markdown_output/'
         )
     );
