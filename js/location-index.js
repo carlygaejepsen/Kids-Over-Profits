@@ -634,6 +634,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
                 const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
                 const statusLabel = escapeHtml(statusLabelRaw);
+                // Only show the status badge when a real status exists; an absent or
+                // "unknown"/placeholder status renders no badge at all.
+                const hasStatus = !isValueEmpty(operatingPeriod.status);
 
                 const facilityHeaderRaw = getFacilityDisplayName(facility);
                 const facilityHeader = escapeHtml(facilityHeaderRaw || 'Unnamed Facility');
@@ -837,7 +840,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 const renderAllObjectFieldsFac = (obj, prefix = '', depth = 0) => {
                     if (!obj || typeof obj !== 'object' || depth > 3) return [];
                     const fields = [];
-                    const skipFullKeys = ['resources', 'fieldNotes', 'linked_news', 'facility_id'];
+                    const skipFullKeys = [
+                        'resources', 'fieldNotes', 'linked_news', 'facility_id',
+                        // Internal provenance metadata recorded when a facility is
+                        // aggregated into a location project (see api/save-master.php).
+                        // The operator is already shown in the header subtext.
+                        'sourceOperator', 'source_operator',
+                        'sourceProject', 'source_project',
+                        'sourceCategory', 'source_category'
+                    ];
                     Object.keys(obj).forEach(key => {
                         const fullKey = prefix ? `${prefix}.${key}` : key;
                         const value = obj[key];
@@ -942,9 +953,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${otherNamesHtml}
                             ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
                             ${yearRange ? `<p class="facility-years">${yearRange}</p>` : ''}
-                            <p class="facility-status">
+                            ${hasStatus ? `<p class="facility-status">
                                 <span class="status-badge status-${statusClass}">${statusLabel}</span>
-                            </p>
+                            </p>` : ''}
                         </div>
                         <div class="facility-details">
                             <details class="facility-expanded-info">

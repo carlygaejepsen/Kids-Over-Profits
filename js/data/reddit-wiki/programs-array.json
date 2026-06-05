@@ -2761,7 +2761,7 @@
     },
     {
       "name": "Lakeland Girls Academy",
-      "url": "/r/troubledteens/wiki/index/lakelandgirls/",
+      "url": "/r/troubledteens/wiki/index/lakeland/",
       "normalizedName": "lakeland girls academy",
       "state": "FL",
       "source": "state-file"
@@ -6302,6 +6302,6 @@
       "source": "state-file"
     }
   ],
-  "generated": "2026-06-05T16:15:28.288Z",
+  "generated": "2026-06-05T18:52:12.887Z",
   "source": "aggregated from state files and leftovers"
 }

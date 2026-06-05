@@ -933,6 +933,9 @@ function displayFacilities(facilitiesData, containerId) {
             const statusLabelRaw = cleanText(operatingPeriod.status) || 'Unknown';
             const statusClass = statusLabelRaw.toLowerCase().replace(/[^a-z0-9]+/g, '-');
             const statusLabel = escapeHtml(statusLabelRaw);
+            // Only show the status badge when a real status exists; an absent or
+            // "unknown"/placeholder status renders no badge at all.
+            const hasStatus = !isValueEmpty(operatingPeriod.status);
 
             // Build facility header with Name - Enhanced lookup
             const facilityHeaderRaw = getFacilityDisplayName(facility);
@@ -1188,7 +1191,14 @@ function displayFacilities(facilitiesData, containerId) {
 
                                                     'linked_news', // Rendered in the dedicated News section
 
-                                                    'facility_id' // Internal identifier stamped on by the server
+                                                    'facility_id', // Internal identifier stamped on by the server
+
+                                                    // Internal provenance recorded when a facility is aggregated
+                                                    // into a location project (see api/save-master.php). The
+                                                    // operator already shows in the header subtext.
+                                                    'sourceOperator', 'source_operator',
+                                                    'sourceProject', 'source_project',
+                                                    'sourceCategory', 'source_category'
 
                                                 ];
 
@@ -1480,9 +1490,9 @@ function displayFacilities(facilitiesData, containerId) {
                         ${otherNamesHtml}
                         ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
                         ${yearRange ? `<p class="facility-years">${yearRange}</p>` : ''}
-                        <p class="facility-status">
+                        ${hasStatus ? `<p class="facility-status">
                             <span class="status-badge status-${statusClass}">${statusLabel}</span>
-                        </p>
+                        </p>` : ''}
                     </div>
                     <div class="facility-details">
                         <details class="facility-expanded-info">

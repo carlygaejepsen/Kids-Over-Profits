@@ -4613,17 +4613,17 @@
     },
     "lakeland girls academy": {
       "name": "Lakeland Girls Academy",
-      "url": "/r/troubledteens/wiki/index/lakelandgirls/",
+      "url": "/r/troubledteens/wiki/index/lakeland/",
       "matchType": "exact"
     },
     "lakeland girls": {
       "name": "Lakeland Girls Academy",
-      "url": "/r/troubledteens/wiki/index/lakelandgirls/",
+      "url": "/r/troubledteens/wiki/index/lakeland/",
       "matchType": "variant"
     },
     "lga": {
       "name": "Lakeland Girls Academy",
-      "url": "/r/troubledteens/wiki/index/lakelandgirls/",
+      "url": "/r/troubledteens/wiki/index/lakeland/",
       "matchType": "acronym"
     },
     "lakeside academy": {
@@ -10777,6 +10777,6 @@
       "matchType": "acronym"
     }
   },
-  "generated": "2026-06-05T16:15:28.295Z",
+  "generated": "2026-06-05T18:52:12.894Z",
   "source": "aggregated from state files and leftovers"
 }
