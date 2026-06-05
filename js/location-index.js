@@ -305,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const formatFieldLabel = (key) => {
         if (!key || typeof key !== 'string') return 'Field';
-        let cleanKey = key.replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations)\./i, '').replace(/\./g, ' ');
+        let cleanKey = key.replace(/^(operator|facility|identification|facilityDetails|operatingPeriod|staff|accreditations|locationDetails|location_details)\./i, '').replace(/\./g, ' ');
         return cleanKey.replace(/([A-Z])/g, ' $1').replace(/has\s*/gi, '').replace(/\s+/g, ' ').trim().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') || 'Field';
     };
 
@@ -716,6 +716,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'identification.pastNames', 'pastNames',
                     'identification.formerNames', 'formerNames',
                     'identification.currentOperator', 'currentOperator', 'current_operator',
+                    'currentOwner', 'currentOwners', 'current_owner', 'current_owners',
+                    'currentOwnership', 'current_ownership',
                     'location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address',
                     'city', 'state', 'locationCity', 'location_city', 'locationState', 'location_state',
                     'operatingPeriod.status', 'status',
@@ -735,7 +737,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 const shouldSuppressFacilityField = key => {
                     if (!key || typeof key !== 'string') return false;
                     if (suppressedFieldKeys.has(key)) return true;
-                    return /^(locationDetails|location_details)\.(city|state)$/i.test(key);
+                    const lower = key.toLowerCase();
+                    // Broken-out address components duplicate the location in the header
+                    if (/(^|\.)address_?parts\./.test(lower)) return true;
+                    // Location-detail sub-fields that duplicate the header location
+                    if (/^(locationdetails|location_details)\.(city|state|country|zip|zip_?code|postal_?code|street|address|county|lat(itude)?|lng|long(itude)?)$/.test(lower)) return true;
+                    // Internal database identifiers, slugs, and timestamps
+                    if (/(^|\.)(facility_?id|location_?id|referrer_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
+                    return false;
                 };
 
                 // Build remaining facility data ("More details")
