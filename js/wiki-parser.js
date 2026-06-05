@@ -1961,6 +1961,24 @@ function parseWikiMarkdown(markdown) {
         // Split into lines to parse each entry
         const lines = relatedMediaSection.split('\n').filter(line => line.trim());
 
+        // A "Related Media" line that carries a news source AND date (the
+        // "[Title](URL) (Source, Date)" pattern) is really press coverage, so
+        // route it to the "In the Media" section (newsArticles) rather than
+        // Related Media. Plain resource links (the facility website, survivor
+        // sites, etc.) stay in Related Media. When anything is promoted we let
+        // the generator rebuild both sections from this split structured data —
+        // keeping the verbatim section text would re-emit the news under Related
+        // Media and duplicate it against In the Media.
+        let promotedToNews = false;
+        const addItem = (item) => {
+            if (item.source && item.date) {
+                parsedData.newsArticles.push(item);
+                promotedToNews = true;
+            } else {
+                parsedData.relatedMedia.push(item);
+            }
+        };
+
         lines.forEach(line => {
             const trimmed = line.trim();
 
@@ -1970,7 +1988,7 @@ function parseWikiMarkdown(markdown) {
                 if (isIgnoredWikiMetaLink(withSourceDateMatch[1], withSourceDateMatch[2], trimmed)) {
                     return;
                 }
-                parsedData.relatedMedia.push({
+                addItem({
                     title: withSourceDateMatch[1].trim(),
                     url: sanitizeUrl(withSourceDateMatch[2]),
                     source: withSourceDateMatch[3].trim(),
@@ -1989,7 +2007,7 @@ function parseWikiMarkdown(markdown) {
                 const annotation = withAnnotationMatch[3].replace(/^\*|\*$/g, '').trim();
                 // Check if annotation looks like a date (contains a year)
                 const yearMatch = annotation.match(/\d{4}/);
-                parsedData.relatedMedia.push({
+                addItem({
                     title: withAnnotationMatch[1].trim(),
                     url: sanitizeUrl(withAnnotationMatch[2]),
                     source: yearMatch ? '' : annotation,
@@ -2004,7 +2022,7 @@ function parseWikiMarkdown(markdown) {
                 if (isIgnoredWikiMetaLink(simpleMatch[1], simpleMatch[2], trimmed)) {
                     return;
                 }
-                parsedData.relatedMedia.push({
+                addItem({
                     title: simpleMatch[1].trim(),
                     url: sanitizeUrl(simpleMatch[2]),
                     source: '',
@@ -2013,9 +2031,14 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Preserve full section text to prevent content loss during round-trip
-        parsedData.relatedMediaMisc = relatedMediaSection;
-        parsedData.relatedMediaMiscIsImported = true;
+        // Only preserve the verbatim section (and substitute it on regenerate)
+        // when nothing was promoted to In the Media. If news was split out, the
+        // generator must build Related Media from structured items instead so the
+        // promoted articles don't appear in both sections.
+        if (!promotedToNews) {
+            parsedData.relatedMediaMisc = relatedMediaSection;
+            parsedData.relatedMediaMiscIsImported = true;
+        }
     }
 
     // Parse Campuses/Locations

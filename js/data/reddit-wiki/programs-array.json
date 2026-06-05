@@ -1,5 +1,5 @@
 {
-  "count": 903,
+  "count": 900,
   "programs": [
     {
       "name": "180 Ministries for Girls",
@@ -1294,13 +1294,6 @@
       "url": "/r/troubledteens/wiki/index/cumberlandheights/",
       "normalizedName": "cumberland heights",
       "state": "TN",
-      "source": "state-file"
-    },
-    {
-      "name": "Cumberland Hospital",
-      "url": "/r/troubledteens/wiki/index/BScumberland/",
-      "normalizedName": "cumberland hospital",
-      "state": "VA",
       "source": "state-file"
     },
     {
@@ -2806,13 +2799,6 @@
       "url": "/r/troubledteens/wiki/index/laureloaksbhc/",
       "normalizedName": "laurel oaks behavioral health center",
       "state": "AL",
-      "source": "state-file"
-    },
-    {
-      "name": "Laurel Ridge Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSlaurelridge/",
-      "normalizedName": "laurel ridge treatment center",
-      "state": "TX",
       "source": "state-file"
     },
     {
@@ -4658,13 +4644,6 @@
     },
     {
       "name": "San Marcos Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSsanmarcos/",
-      "normalizedName": "san marcos treatment center",
-      "state": "TX",
-      "source": "state-file"
-    },
-    {
-      "name": "San Marcos Treatment Center",
       "url": "/r/troubledteens/wiki/index/sanmarcos/",
       "normalizedName": "san marcos treatment center",
       "state": "TX",
@@ -6323,6 +6302,6 @@
       "source": "state-file"
     }
   ],
-  "generated": "2025-12-11T02:48:20.419Z",
+  "generated": "2026-06-05T14:52:50.740Z",
   "source": "aggregated from state files and leftovers"
 }

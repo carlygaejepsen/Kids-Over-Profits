@@ -4703,17 +4703,17 @@
     },
     "laurel ridge treatment": {
       "name": "Laurel Ridge Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSlaurelridge/",
+      "url": "/r/troubledteens/wiki/index/laurelridge/",
       "matchType": "variant"
     },
     "laurel ridge": {
       "name": "Laurel Ridge Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSlaurelridge/",
+      "url": "/r/troubledteens/wiki/index/laurelridge/",
       "matchType": "variant"
     },
     "lrtc": {
       "name": "Laurel Ridge Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSlaurelridge/",
+      "url": "/r/troubledteens/wiki/index/laurelridge/",
       "matchType": "acronym"
     },
     "lava heights academy": {
@@ -7913,17 +7913,17 @@
     },
     "san marcos treatment": {
       "name": "San Marcos Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSsanmarcos/",
+      "url": "/r/troubledteens/wiki/index/sanmarcos/",
       "matchType": "variant"
     },
     "san marcos": {
       "name": "San Marcos Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSsanmarcos/",
+      "url": "/r/troubledteens/wiki/index/sanmarcos/",
       "matchType": "variant"
     },
     "smtc": {
       "name": "San Marcos Treatment Center",
-      "url": "/r/troubledteens/wiki/index/BSsanmarcos/",
+      "url": "/r/troubledteens/wiki/index/sanmarcos/",
       "matchType": "acronym"
     },
     "sandhill center": {
@@ -10777,6 +10777,6 @@
       "matchType": "acronym"
     }
   },
-  "generated": "2025-12-11T02:48:20.423Z",
+  "generated": "2026-06-05T14:52:50.743Z",
   "source": "aggregated from state files and leftovers"
 }
