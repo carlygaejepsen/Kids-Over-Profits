@@ -706,7 +706,7 @@ ${relatedMediaSection}
     `;
 
     const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
-    const sanitizedOutput = output.replace(footerPattern, '');
+    const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
     return sanitizedOutput.trim();
 }
@@ -1034,12 +1034,39 @@ ${relatedMediaSection}
     `;
 
     const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
-    const sanitizedOutput = output.replace(footerPattern, '');
+    const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
     return sanitizedOutput.trim();
 }
 
 // --- Helper Functions ---
+
+// The page's point-of-contact handle. Every mention of it (and of the previous
+// handle it replaced) must render as a markdown link to the Reddit profile.
+const CONTACT_USERNAME = 'Miss_Nobody89';
+const CONTACT_LINK = `[u/${CONTACT_USERNAME}](/u/${CONTACT_USERNAME})`;
+
+// Normalize all contact-handle mentions to a single markdown link form. Handles
+// both the current handle and the prior "Signal-Strain9810" handle, whether they
+// appear as plain text (u/Name), a bare path (/u/Name, /user/Name), or an
+// existing markdown link. Run this AFTER the footer is stripped, so the footer
+// regex (which matches the old handle) still fires first.
+function normalizeContactTag(md) {
+    const names = 'Miss_Nobody89|Signal-Strain9810';
+    // ONE pass, alternation ordered most-specific first, so the replacement
+    // (which itself contains the handle) is never re-scanned and we never nest:
+    //   1. an existing markdown link referencing a handle (label or url)
+    //   2. a bare /u/, /user/, or u/ path mention
+    //   3. any leftover bare mention of the handle
+    const re = new RegExp(
+        `\\[[^\\]]*(?:${names})[^\\]]*\\]\\([^)]*\\)` +
+        `|\\[[^\\]]*\\]\\([^)]*(?:${names})[^)]*\\)` +
+        `|\\/?u(?:ser)?\\/(?:${names})\\/?` +
+        `|(?:${names})`,
+        'g'
+    );
+    return String(md || '').replace(re, CONTACT_LINK);
+}
 
 // Render a single lawsuit/incident record. Records extracted from imported prose
 // frequently lack a plaintiff and structured year (the parser stores the whole
@@ -1081,35 +1108,35 @@ function getPlaceholder(category, programName) {
     const placeholderByCategory = [
         {
             match: ['history', 'background'],
-            text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact u/Signal-Strain9810.`
+            text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['founders', 'staff'],
-            text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact u/Signal-Strain9810.`
+            text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['structure'],
-            text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact u/Signal-Strain9810.`
+            text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['rules', 'punishments'],
-            text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact u/Signal-Strain9810.`
+            text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['abuse', 'neglect', 'lawsuits'],
-            text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact u/Signal-Strain9810.`
+            text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'],
-            text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact u/Signal-Strain9810.`
+            text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['related media'],
-            text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact u/Signal-Strain9810.`
+            text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         },
         {
             match: ['related programs', 'affiliated programs'],
-            text: `Programs associated with ${name} have not been added yet. If you have reliable information about operated, affiliated, or successor programs to share, please contact u/Signal-Strain9810.`
+            text: `Programs associated with ${name} have not been added yet. If you have reliable information about operated, affiliated, or successor programs to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
         }
     ];
 
@@ -1122,10 +1149,10 @@ function getPlaceholder(category, programName) {
     }
 
     if (lowerCategory.includes('media')) {
-        return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact u/Signal-Strain9810.`;
+        return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`;
     }
 
-    return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact u/Signal-Strain9810.`;
+    return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`;
 }
 
 function sanitizeUrl(input) {
@@ -1152,8 +1179,9 @@ function escapeMarkdown(text) {
 
 // Export for use in other modules
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { generateWikiMarkdown, sanitizeUrl };
+    module.exports = { generateWikiMarkdown, sanitizeUrl, normalizeContactTag };
 } else if (typeof window !== 'undefined') {
     window.generateWikiMarkdown = generateWikiMarkdown;
     window.sanitizeUrlForWiki = sanitizeUrl;
+    window.normalizeContactTag = normalizeContactTag;
 }
