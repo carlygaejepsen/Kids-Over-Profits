@@ -1943,6 +1943,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setValue('testimoniesMisc', parsedData.testimoniesMisc);
         setValue('relatedMediaMisc', parsedData.relatedMediaMisc);
 
+        // These notes fields were just filled verbatim from the parsed markdown,
+        // so flag them as imported. Without this, collectCurrentFormData() computes
+        // *IsImported=false and the generator APPENDS the re-derived structured
+        // prose to this same text, duplicating Abuse/Testimonies/Related Media on
+        // every load. (populateFormFromParsedData does the same at its tail.)
+        // The marker clears automatically once the user edits a field.
+        APPEND_NOTE_FIELD_IDS.forEach(markFieldAsImported);
+
         // Store unparsed content to append at the end of generated output
         if (parsedData.unparsedContent && parsedData.unparsedContent.trim()) {
             // Store in a global variable so it can be appended during generation

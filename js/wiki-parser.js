@@ -238,6 +238,16 @@ function parseWikiMarkdown(markdown) {
         accreditingBody: '',
         accreditingBodyLink: '',
         historyMisc: '',
+
+        // Round-trip flags: set true when a section is imported verbatim into the
+        // matching *Misc text. The generator substitutes (not appends) that text so
+        // the re-derived structured prose isn't emitted alongside it (duplication).
+        // The browser editor recomputes these from DOM edit state; setting them here
+        // keeps headless paths (batch import, regenerate-from-record) correct too.
+        historyNotesIsImported: false,
+        lawsuitsMiscIsImported: false,
+        testimoniesMiscIsImported: false,
+        relatedMediaMiscIsImported: false,
         
         // Affiliations and History
         affiliations: [],
@@ -1404,6 +1414,7 @@ function parseWikiMarkdown(markdown) {
         // Structured fields (year, owner, etc.) are still extracted above for form inputs,
         // but historyMisc feeds the generation template and prevents content loss.
         parsedData.historyMisc = historySection;
+        parsedData.historyNotesIsImported = true;
     }
 
     // Parse Staff section
@@ -1566,6 +1577,7 @@ function parseWikiMarkdown(markdown) {
     if (abuseSection && !abuseSection.includes('No information is known')) {
         // Store the FULL abuse section text for preservation
         parsedData.lawsuitsMisc = abuseSection;
+        parsedData.lawsuitsMiscIsImported = true;
 
         // Main complaints - extract the summary statement
         const complaintsMatch = abuseSection.match(/(?:main|primary|common) complaints (?:are|include) (?:of )?([^\.]+)/i);
@@ -1919,7 +1931,8 @@ function parseWikiMarkdown(markdown) {
 
         // Preserve full section text to prevent content loss during round-trip
         parsedData.testimoniesMisc = testimoniesSection;
-        
+        parsedData.testimoniesMiscIsImported = true;
+
         // Scan testimonies for abuse allegations keywords
         const testimoniesLower = testimoniesSection.toLowerCase();
         commonComplaints.forEach(complaint => {
@@ -2002,6 +2015,7 @@ function parseWikiMarkdown(markdown) {
 
         // Preserve full section text to prevent content loss during round-trip
         parsedData.relatedMediaMisc = relatedMediaSection;
+        parsedData.relatedMediaMiscIsImported = true;
     }
 
     // Parse Campuses/Locations

@@ -61,6 +61,22 @@ function generateWikiMarkdown(formData) {
         return `[${escapeMarkdown(text)}](${safeUrl})`;
     };
 
+    // Helper: Drop duplicate list items (case-insensitive, order-preserving).
+    // Imported/round-tripped data can accumulate repeats (e.g. the same profile
+    // item or allegation several times); joining them raw produces "anger, anger,
+    // anger". Compare on a normalized key but keep the first original spelling.
+    const dedupeList = (items) => {
+        const seen = new Set();
+        const result = [];
+        (items || []).forEach((item) => {
+            const key = String(item == null ? '' : item).trim().toLowerCase();
+            if (!key || seen.has(key)) return;
+            seen.add(key);
+            result.push(item);
+        });
+        return result;
+    };
+
     // Helper: Join items with "and" for natural sentences
     const joinWithAnd = (items) => {
         if (items.length === 1) return items[0];
@@ -156,6 +172,7 @@ function generateWikiMarkdown(formData) {
             programName,
             createLink,
             joinWithAnd,
+            dedupeList,
             ensureSentence,
             ensureBoldNameSpacing,
             stripRedundantRoleIntro,
@@ -198,8 +215,9 @@ function generateWikiMarkdown(formData) {
             const customItems = formData.customDiagnoses.split(',').map(d => d.trim()).filter(Boolean);
             allDiagnoses.push(...customItems);
         }
-        if (allDiagnoses.length > 0) {
-            audienceParts.push(`marketed for students who struggle with a variety of challenges such as ${allDiagnoses.join(', ')}`);
+        const uniqueDiagnoses = dedupeList(allDiagnoses);
+        if (uniqueDiagnoses.length > 0) {
+            audienceParts.push(`marketed for students who struggle with a variety of challenges such as ${uniqueDiagnoses.join(', ')}`);
         } else if (formData.diagnosesList) {
             // Fallback to old comma-separated field
             const diagnoses = formData.diagnosesList.split(',')
@@ -496,9 +514,10 @@ function generateWikiMarkdown(formData) {
                 allAllegations.push(...customItems);
             }
 
-            if (allAllegations.length > 0) {
+            const uniqueAllegations = dedupeList(allAllegations);
+            if (uniqueAllegations.length > 0) {
                 abuseParts.push('Allegations of abuse and neglect that have been reported by survivors include ' +
-                    allAllegations.join(', ') + '.');
+                    uniqueAllegations.join(', ') + '.');
             }
         }
 
@@ -508,25 +527,13 @@ function generateWikiMarkdown(formData) {
                 settled: 'was settled', dismissed: 'was dismissed', plaintiff: 'was decided in favor of the plaintiff',
                 defendant: 'was decided in favor of the defendant', ongoing: 'is still ongoing'
             };
-            const lawsuitDescriptions = formData.lawsuits.map(lawsuit => {
-                const defendant = lawsuit.defendant || programName;
-                let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
-                if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
-                sentence += ` alleging ${escapeMarkdown(lawsuit.claims || lawsuit.allegations || lawsuit.description)}.`;
-
-                if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
-                    sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
-                    if (lawsuit.amount) {
-                        sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
-                    }
-                    sentence += '.';
-                } else if (lawsuit.amount) {
-                    sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
-                }
-
-                return sentence;
-            }).join('\n\n');
-            abuseParts.push(lawsuitDescriptions);
+            const lawsuitDescriptions = formData.lawsuits
+                .map(lawsuit => buildLawsuitSentence(lawsuit, programName, outcomeLabels))
+                .filter(Boolean)
+                .join('\n\n');
+            if (lawsuitDescriptions) {
+                abuseParts.push(lawsuitDescriptions);
+            }
         }
 
         structuredAbuse = abuseParts.join('\n\n');
@@ -698,6 +705,7 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         programName,
         createLink,
         joinWithAnd,
+        dedupeList,
         ensureSentence,
         ensureBoldNameSpacing,
         stripRedundantRoleIntro,
@@ -893,8 +901,9 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
                 allAllegations.push(...customItems);
             }
 
-            if (allAllegations.length > 0) {
-                abuseParts.push(`Reported allegations involving this organization or its programs include ${allAllegations.join(', ')}.`);
+            const uniqueAllegations = dedupeList(allAllegations);
+            if (uniqueAllegations.length > 0) {
+                abuseParts.push(`Reported allegations involving this organization or its programs include ${uniqueAllegations.join(', ')}.`);
             }
         }
 
@@ -907,26 +916,14 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
                 ongoing: 'is still ongoing'
             };
 
-            const lawsuitDescriptions = formData.lawsuits.map((lawsuit) => {
-                const defendant = lawsuit.defendant || programName;
-                let sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
-                if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
-                sentence += ` alleging ${escapeMarkdown(lawsuit.claims || lawsuit.allegations || lawsuit.description)}.`;
+            const lawsuitDescriptions = formData.lawsuits
+                .map((lawsuit) => buildLawsuitSentence(lawsuit, programName, outcomeLabels))
+                .filter(Boolean)
+                .join('\n\n');
 
-                if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
-                    sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
-                    if (lawsuit.amount) {
-                        sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
-                    }
-                    sentence += '.';
-                } else if (lawsuit.amount) {
-                    sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
-                }
-
-                return sentence;
-            }).join('\n\n');
-
-            abuseParts.push(lawsuitDescriptions);
+            if (lawsuitDescriptions) {
+                abuseParts.push(lawsuitDescriptions);
+            }
         }
 
         structuredAbuse = abuseParts.join('\n\n');
@@ -1032,6 +1029,40 @@ ${relatedMediaSection}
 }
 
 // --- Helper Functions ---
+
+// Render a single lawsuit/incident record. Records extracted from imported prose
+// frequently lack a plaintiff and structured year (the parser stores the whole
+// narrative in `description`); in that case emit the narrative as its own
+// sentence instead of "In undefined, undefined filed a lawsuit against ...".
+function buildLawsuitSentence(lawsuit, programName, outcomeLabels) {
+    if (!lawsuit) return '';
+    const defendant = lawsuit.defendant || programName;
+    const claims = lawsuit.claims || lawsuit.allegations || lawsuit.description || '';
+    const hasParties = !!(lawsuit.year && lawsuit.plaintiff);
+
+    let sentence;
+    if (hasParties) {
+        sentence = `In ${escapeMarkdown(lawsuit.year)}, ${escapeMarkdown(lawsuit.plaintiff)} filed a lawsuit against ${escapeMarkdown(defendant)}`;
+        if (lawsuit.court) sentence += ` in ${escapeMarkdown(lawsuit.court)}`;
+        if (claims) sentence += ` alleging ${escapeMarkdown(claims)}`;
+        sentence += '.';
+    } else if (claims) {
+        sentence = String(escapeMarkdown(claims)).trim();
+        if (sentence && !/[.!?]"?$/.test(sentence)) sentence += '.';
+    } else {
+        return '';
+    }
+
+    if (lawsuit.outcome && outcomeLabels[lawsuit.outcome]) {
+        sentence += ` The case ${outcomeLabels[lawsuit.outcome]}`;
+        if (lawsuit.amount) sentence += ` for ${escapeMarkdown(lawsuit.amount)}`;
+        sentence += '.';
+    } else if (lawsuit.amount) {
+        sentence += ` The settlement was ${escapeMarkdown(lawsuit.amount)}.`;
+    }
+
+    return sentence;
+}
 
 function getPlaceholder(category, programName) {
     const name = programName || '[Program Name]';
