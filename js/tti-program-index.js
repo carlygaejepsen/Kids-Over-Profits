@@ -1172,7 +1172,11 @@ function displayFacilities(facilitiesData, containerId) {
 
                                                     'resources', // Handled separately
 
-                                                    'fieldNotes' // Handled separately
+                                                    'fieldNotes', // Handled separately
+
+                                                    'linked_news', // Rendered in the dedicated News section
+
+                                                    'facility_id' // Internal identifier stamped on by the server
 
                                                 ];
 

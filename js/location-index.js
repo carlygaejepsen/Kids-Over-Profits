@@ -414,35 +414,52 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // --- Fetch Data ---
-    function fetchData() {
+    const extractProjects = data => {
+        if (!data || typeof data !== 'object') return null;
+        // REST kop/v1/facilities returns { source, projects }; get-master-data.php
+        // returns { success, projects }. Accept either as long as projects exist.
+        const projects = data.projects || (data.data && data.data.projects);
+        if (!projects) return null;
+        const count = Array.isArray(projects) ? projects.length : Object.keys(projects).length;
+        return count > 0 ? projects : null;
+    };
+
+    async function fetchData() {
         const config = window.locationConfig || {};
-        const url = config.jsonFileUrls ? config.jsonFileUrls[0] : '/api/get-master-data.php';
+        const urls = (Array.isArray(config.jsonFileUrls) && config.jsonFileUrls.length)
+            ? config.jsonFileUrls
+            : ['/api/get-master-data.php'];
 
-        fetch(url, { credentials: 'same-origin' })
-            .then(response => response.json())
-            .then(async data => {
-                if (data.success && data.projects) {
-                    try {
-                        const restBase = getRestBase();
-                        const foldersResponse = await fetch(`${restBase}folders`, { credentials: 'same-origin' });
-                        if (foldersResponse.ok) {
-                            window.filebirdFolders = await foldersResponse.json();
-                            window.filebirdFolderMap = null;
-                            console.log('Location index: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
-                        }
-                    } catch (error) {
-                        console.warn('Location index: failed to load FileBird folders', error);
-                    }
+        let projects = null;
+        for (const url of urls) {
+            try {
+                const response = await fetch(url, { credentials: 'same-origin' });
+                if (!response.ok) continue;
+                projects = extractProjects(await response.json());
+                if (projects) break;
+            } catch (err) {
+                console.warn('Location index: data source failed', url, err);
+            }
+        }
 
-                    processData(data.projects);
-                } else {
-                    document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
-                }
-            })
-            .catch(err => {
-                console.error('Fetch error:', err);
-                document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
-            });
+        if (!projects) {
+            document.getElementById(containerId).innerHTML = '<p>Error loading data.</p>';
+            return;
+        }
+
+        try {
+            const restBase = getRestBase();
+            const foldersResponse = await fetch(`${restBase}folders`, { credentials: 'same-origin' });
+            if (foldersResponse.ok) {
+                window.filebirdFolders = await foldersResponse.json();
+                window.filebirdFolderMap = null;
+                console.log('Location index: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
+            }
+        } catch (error) {
+            console.warn('Location index: failed to load FileBird folders', error);
+        }
+
+        processData(projects);
     }
 
     const dedupeFacilities = facilities => {
@@ -708,6 +725,39 @@ document.addEventListener('DOMContentLoaded', function() {
                     )
                     : '';
 
+                // News section: the REST endpoint attaches linked_news[] to each nested
+                // facility whose name matches a facilities_master row (see
+                // kop_attach_linked_news_to_projects in inc/database.php). Mirrors the
+                // News block in js/tti-program-index.js.
+                const linkedNews = Array.isArray(facility.linked_news) ? facility.linked_news : [];
+                let newsSectionHtml = '';
+                if (linkedNews.length > 0) {
+                    const formatNewsDate = value => {
+                        if (!value) return '';
+                        const ts = Date.parse(value);
+                        if (isNaN(ts)) return value;
+                        return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                    };
+                    const newsItemsHtml = linkedNews.map(n => {
+                        const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
+                        const titleHtml = n.article_url
+                            ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                            : `<span class="facility-news-title">${title}</span>`;
+                        const metaParts = [];
+                        if (n.publication_name) metaParts.push(escapeHtml(n.publication_name));
+                        if (n.publication_date) metaParts.push(escapeHtml(formatNewsDate(n.publication_date)));
+                        const metaHtml = metaParts.length
+                            ? `<div class="facility-news-meta">${metaParts.join(' &middot; ')}</div>`
+                            : '';
+                        return `<li class="facility-news-item">${titleHtml}${metaHtml}</li>`;
+                    }).join('');
+                    newsSectionHtml = renderDetailSection(
+                        `News (${linkedNews.length})`,
+                        `<ul class="facility-news-list">${newsItemsHtml}</ul>`,
+                        'facility-news-section'
+                    );
+                }
+
                 // Suppress keys already shown in the header / facts / notes
                 const suppressedFieldKeys = new Set([
                     'identification.name', 'identification.currentName',
@@ -771,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const renderAllObjectFieldsFac = (obj, prefix = '', depth = 0) => {
                     if (!obj || typeof obj !== 'object' || depth > 3) return [];
                     const fields = [];
-                    const skipFullKeys = ['resources', 'fieldNotes'];
+                    const skipFullKeys = ['resources', 'fieldNotes', 'linked_news', 'facility_id'];
                     Object.keys(obj).forEach(key => {
                         const fullKey = prefix ? `${prefix}.${key}` : key;
                         const value = obj[key];
@@ -886,6 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="facility-extra-content">
                                     ${factsHtml}
                                     ${notesHtml}
+                                    ${newsSectionHtml}
                                     ${resourcesSectionHtml}
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}

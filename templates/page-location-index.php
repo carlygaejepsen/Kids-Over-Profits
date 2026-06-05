@@ -66,7 +66,12 @@ get_header();
 <script>
 // Configure the JSON data source
 window.locationConfig = {
+    // REST endpoint first: it attaches linked_news[] (and stamps facility_id) onto
+    // nested facilities so cards can show News sections, just like the TTI index.
+    // get-master-data.php is kept as a fallback for environments where the REST
+    // route is unavailable (it returns the same projects, minus linked news).
     jsonFileUrls: [
+        '<?php echo esc_url_raw(rest_url('kop/v1/facilities')); ?>',
         '<?php echo get_stylesheet_directory_uri(); ?>/api/get-master-data.php'
     ]
 };
