@@ -284,13 +284,19 @@ function displayFacilities(facilitiesData, containerId) {
         const city = partsCity || getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
         const state = partsState || getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
 
+        // Show the country only when it isn't the US default — that keeps domestic
+        // cards clean while still surfacing the country for international facilities.
+        const country = getValueFromKeys(obj, ['addressParts.country', 'address_parts.country', 'locationDetails.country', 'location_details.country', 'country']);
+        const isUS = country && /^(us|usa|u\.s\.a?|united states( of america)?)$/i.test(cleanText(country).trim());
+        const countrySuffix = (country && !isUS) ? cleanText(country) : '';
+
         if (street) {
             const cityStateZip = [city, [state, zip].filter(Boolean).join(' ').trim()].filter(Boolean).join(', ');
-            return [street, cityStateZip].filter(Boolean).join(', ');
+            return [street, cityStateZip, countrySuffix].filter(Boolean).join(', ');
         }
-        if (loc) return loc;
-        if (city && state) return `${city}, ${state}`;
-        return city || state || null;
+        if (loc) return countrySuffix ? [loc, countrySuffix].filter(Boolean).join(', ') : loc;
+        if (city && state) return [`${city}, ${state}`, countrySuffix].filter(Boolean).join(', ');
+        return [city || state, countrySuffix].filter(Boolean).join(', ') || null;
     };
 
     const consumeFieldNotesForKeys = (fieldNotes, keys, usedKeys) => {
