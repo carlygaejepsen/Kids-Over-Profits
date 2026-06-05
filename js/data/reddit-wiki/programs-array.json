@@ -2460,14 +2460,14 @@
     },
     {
       "name": "Hyde School",
-      "url": "/r/troubledteens/wiki/index/hydeme/",
+      "url": "/r/troubledteens/wiki/index/hydect/",
       "normalizedName": "hyde school",
-      "state": "ME",
+      "state": "CT",
       "source": "state-file"
     },
     {
       "name": "Hyde School",
-      "url": "/r/troubledteens/wiki/index/hydect/",
+      "url": "/r/troubledteens/wiki/index/hydeme/",
       "normalizedName": "hyde school",
       "state": "ME",
       "source": "state-file"
@@ -6302,6 +6302,6 @@
       "source": "state-file"
     }
   ],
-  "generated": "2026-06-05T14:52:50.740Z",
+  "generated": "2026-06-05T16:15:28.288Z",
   "source": "aggregated from state files and leftovers"
 }

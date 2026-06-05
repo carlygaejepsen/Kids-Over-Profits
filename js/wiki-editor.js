@@ -123,6 +123,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let emptySlugSet = null;
     let emptySlugPromise = null;
     let completedNamesSet = null; // normalized program names that already have a saved submission
+    let completedSlugsSet = null; // wiki slugs whose submission recorded its source slug (precise completion)
+    // Normalized program names that map to more than one distinct wiki slug across
+    // the index (e.g. "Hyde School" -> hydeme + hydect). For these, a name-only
+    // match cannot prove a *specific* slug is done, so completion requires a slug
+    // match. Built from the index data in loadAllStubs().
+    let ambiguousStubNames = new Set();
+    // Slug of the entry currently loaded into the form, threaded into the saved
+    // submission as `sourceSlug` so completion can be matched by slug, not name.
+    let currentEntrySlug = '';
 
     // --- Tab Switching Logic ---
     const categoryTabs = document.querySelectorAll('.category-tab');
@@ -181,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadEmptySlugMapping() {
         emptySlugSet = new Set();
         completedNamesSet = new Set();
+        completedSlugsSet = new Set();
 
         // 1. Preferred: server endpoint — auto-reads the current empty-file list
         //    AND reports which entries already have a saved submission (completed).
@@ -190,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await resp.json();
                 (data.emptySlugs || []).forEach(slug => { if (slug) emptySlugSet.add(String(slug).toLowerCase()); });
                 (data.completedNames || []).forEach(name => { const n = normalizeEntryName(name); if (n) completedNamesSet.add(n); });
+                (data.completedSlugs || []).forEach(slug => { if (slug) completedSlugsSet.add(String(slug).toLowerCase()); });
                 if (emptySlugSet.size > 0) {
                     console.log('Loaded ' + emptySlugSet.size + ' empty slugs, ' + completedNamesSet.size + ' completed, from wiki-stubs.php');
                     return;
@@ -894,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (programName) {
                     setFieldValue('programName', programName);
                 }
-                finalizeEntryLoad(programName || entry.url, { source: 'index' });
+                finalizeEntryLoad(programName || entry.url, { source: 'index', sourceSlug: slug });
             }
 
             setEntryTypeValue('organization');
@@ -916,6 +927,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function finalizeEntryLoad(name) {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
+
+        // Track which wiki slug this load corresponds to so a later save records it
+        // as sourceSlug. Loads without a slug (manual/free-form entries) reset it.
+        currentEntrySlug = options.sourceSlug ? String(options.sourceSlug).toLowerCase() : '';
 
         // Older layouts used toggle buttons and hid the browser panels after load.
         // The current split-pane layout keeps the browser visible.
@@ -2174,6 +2189,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 organization: getOrganizationValueForSubmission(formData),
                 generatedMarkdown: outputCode,
                 originalMarkdown: importedMarkdown,
+                // Record which wiki slug this submission is for so stub completion can
+                // be matched precisely by slug instead of by (collision-prone) name.
+                sourceSlug: currentEntrySlug || '',
                 submittedBy: document.getElementById('submitterEmail')?.value || '',
                 submissionNotes: document.getElementById('submissionNotes')?.value || ''
             };
@@ -2792,12 +2810,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function createStubEntry(entry, stateCode, button) {
         const name = entry.name || entry.normalizedName || '';
         const entryType = stateCode === 'CORPORATE' ? 'organization' : 'facility';
+        const slug = getEntrySlug(entry, stateCode);
         if (button) button.disabled = true;
         showEmptyBanner(name);
         clearFormToEmpty(name, { entryType });
         importedMarkdown = '';
         updateMarkdownFromForm();
-        finalizeEntryLoad(name, { noScroll: true, source: 'index' });
+        finalizeEntryLoad(name, { noScroll: true, source: 'index', sourceSlug: slug });
         document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         if (button) button.disabled = false;
     }
@@ -2816,6 +2835,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const stateCodes = Object.keys((allIndexData && allIndexData.states) || {});
             const collected = [];
+            const nameToSlugs = new Map(); // normalized name -> Set of distinct slugs
             await Promise.all(stateCodes.map(async (code) => {
                 let programs = stateProgramsCache[code];
                 if (!programs) {
@@ -2828,9 +2848,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 programs.forEach(entry => {
+                    // Track every entry's name->slug so we know which names are ambiguous.
+                    const nm = normalizeEntryName(entry.name || entry.normalizedName);
+                    const eslug = getEntrySlug(entry, code);
+                    if (nm && eslug) {
+                        if (!nameToSlugs.has(nm)) nameToSlugs.set(nm, new Set());
+                        nameToSlugs.get(nm).add(eslug.toLowerCase());
+                    }
                     if (isStubEntry(entry, code)) collected.push({ entry, state: code });
                 });
             }));
+
+            // Names that resolve to more than one slug can't be completion-matched by
+            // name alone (e.g. "Hyde School" -> hydeme + hydect).
+            ambiguousStubNames = new Set();
+            nameToSlugs.forEach((slugs, nm) => { if (slugs.size > 1) ambiguousStubNames.add(nm); });
 
             collected.sort((a, b) => (a.entry.name || '').localeCompare(b.entry.name || ''));
             allStubsCache = collected;
@@ -2840,9 +2872,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // A stub counts as "completed" once a submission for it exists in the database.
-    function isStubCompleted(entry) {
-        return !!(completedNamesSet && completedNamesSet.has(normalizeEntryName(entry.name || entry.normalizedName)));
+    // A stub counts as "completed" once a submission for its specific slug exists.
+    // Preference order:
+    //   1. Slug match — precise; works for submissions saved with a sourceSlug.
+    //   2. Name match — fallback for older submissions that predate slug tracking,
+    //      BUT only when the name is unambiguous (maps to a single slug). For names
+    //      shared across multiple slugs (Hyde School, Eckerd, etc.) a name match
+    //      can't prove THIS slug is done, so we require the slug match.
+    function isStubCompleted(entry, stateCode) {
+        const slug = getEntrySlug(entry, stateCode);
+        if (slug && completedSlugsSet && completedSlugsSet.has(slug.toLowerCase())) return true;
+        const nm = normalizeEntryName(entry.name || entry.normalizedName);
+        if (!nm) return false;
+        if (ambiguousStubNames.has(nm)) return false;
+        return !!(completedNamesSet && completedNamesSet.has(nm));
     }
 
     function buildStubRow(entry, state, completed) {
@@ -2910,8 +2953,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const needs = matches.filter(m => !isStubCompleted(m.entry));
-        const done = matches.filter(m => isStubCompleted(m.entry));
+        const needs = matches.filter(m => !isStubCompleted(m.entry, m.state));
+        const done = matches.filter(m => isStubCompleted(m.entry, m.state));
 
         indexEntriesList.innerHTML = '';
 
@@ -2945,7 +2988,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         importedMarkdown = '';
                         updateMarkdownFromForm();
                         // Hide browser but do not auto-scroll to the form; scroll banner into view instead
-                        finalizeEntryLoad(orgName, { noScroll: true, source: 'index' });
+                        finalizeEntryLoad(orgName, { noScroll: true, source: 'index', sourceSlug: orgSlug });
                         document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         // Restore button state before returning
                         if (button) {
@@ -3068,7 +3111,7 @@ document.addEventListener('DOMContentLoaded', () => {
                          clearFormToEmpty(orgName, { entryType: 'organization' });
                          importedMarkdown = '';
                          updateMarkdownFromForm();
-                         finalizeEntryLoad(orgName, { noScroll: true, source: 'index' });
+                         finalizeEntryLoad(orgName, { noScroll: true, source: 'index', sourceSlug: normalizeToSlug(orgName || '') });
                          document.getElementById('emptyEntryBanner')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                      } catch (e) {
                          console.error('Error preparing empty form for organization:', e);
@@ -3250,10 +3293,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const entry = result.data;
+            // Preserve the slug recorded when this submission was first saved so a
+            // re-save keeps matching by slug rather than reverting to name-only.
+            const savedSlug = (entry.json_data && entry.json_data.sourceSlug)
+                ? String(entry.json_data.sourceSlug).toLowerCase()
+                : (entry.slug ? String(entry.slug).toLowerCase() : '');
+            currentEntrySlug = savedSlug;
             // If this entry corresponds to a known-empty wiki slug, show banner and load an empty form
             try {
                 const candidateName = entry.program_name || entry.programName || '';
-                const slug = entry.slug || normalizeToSlug(candidateName);
+                const slug = savedSlug || entry.slug || normalizeToSlug(candidateName);
                 if (emptySlugSet && slug && emptySlugSet.has(slug.toLowerCase())) {
                     console.log('Detected empty wiki slug for', slug);
                     showEmptyBanner(candidateName || '');
@@ -3267,7 +3316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     importedMarkdown = '';
                     updateMarkdownFromForm();
-                    finalizeEntryLoad(candidateName || entry.program_name, { source: 'index' });
+                    finalizeEntryLoad(candidateName || entry.program_name, { source: 'index', sourceSlug: slug });
                     return;
                 }
             } catch (e) {

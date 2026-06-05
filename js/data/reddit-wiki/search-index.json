@@ -4093,12 +4093,12 @@
     },
     "hyde school": {
       "name": "Hyde School",
-      "url": "/r/troubledteens/wiki/index/hydect/",
+      "url": "/r/troubledteens/wiki/index/hydeme/",
       "matchType": "exact"
     },
     "hyde": {
       "name": "Hyde School",
-      "url": "/r/troubledteens/wiki/index/hydeme/",
+      "url": "/r/troubledteens/wiki/index/hydect/",
       "matchType": "variant"
     },
     "idaho youth ranch": {
@@ -10777,6 +10777,6 @@
       "matchType": "acronym"
     }
   },
-  "generated": "2026-06-05T14:52:50.743Z",
+  "generated": "2026-06-05T16:15:28.295Z",
   "source": "aggregated from state files and leftovers"
 }

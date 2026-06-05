@@ -52,26 +52,52 @@ if (is_readable($scanFile)) {
     }
 }
 
-// --- 2. Completed entries = program names with a non-deleted submission ---
+// --- 2. Completed entries = non-deleted submissions ---
+// completedNames: program names (fallback match for legacy submissions).
+// completedSlugs: the source slug each submission recorded (precise match). The
+// slug is stored inside json_data.sourceSlug by the wiki editor when the entry
+// was loaded from a known index slug.
 $completedNames = [];
+$completedSlugs = [];
 try {
     require_once __DIR__ . '/config.php';
     if (isset($pdo) && $pdo instanceof PDO) {
         $stmt = $pdo->query(
-            "SELECT DISTINCT program_name FROM wiki_submissions " .
+            "SELECT program_name, json_data FROM wiki_submissions " .
             "WHERE status != 'deleted' AND program_name IS NOT NULL AND program_name != ''"
         );
         if ($stmt) {
-            $completedNames = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+            $seenName = [];
+            $seenSlug = [];
+            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                $name = isset($row['program_name']) ? trim((string) $row['program_name']) : '';
+                if ($name !== '' && !isset($seenName[$name])) {
+                    $seenName[$name] = true;
+                    $completedNames[] = $name;
+                }
+                $json = isset($row['json_data']) ? $row['json_data'] : '';
+                if (is_string($json) && $json !== '') {
+                    $decoded = json_decode($json, true);
+                    if (is_array($decoded) && !empty($decoded['sourceSlug'])) {
+                        $slug = strtolower(trim((string) $decoded['sourceSlug']));
+                        if ($slug !== '' && !isset($seenSlug[$slug])) {
+                            $seenSlug[$slug] = true;
+                            $completedSlugs[] = $slug;
+                        }
+                    }
+                }
+            }
         }
     }
 } catch (Throwable $e) {
     // DB unavailable — return the empty-slug list only; completion is best-effort.
     $completedNames = [];
+    $completedSlugs = [];
 }
 
 echo json_encode([
     'emptySlugs' => $emptySlugs,
     'completedNames' => array_values($completedNames),
+    'completedSlugs' => array_values($completedSlugs),
     'generated' => gmdate('c'),
 ]);

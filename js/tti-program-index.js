@@ -271,12 +271,24 @@ function displayFacilities(facilitiesData, containerId) {
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
 
+        // Prefer a full street address assembled from the structured parts. This is
+        // more complete than a bare city/state string and lets the broken-out
+        // addressParts.*/locationDetails.* fields stay suppressed in "More details"
+        // without actually hiding the address from the card.
+        const street = getValueFromKeys(obj, ['addressParts.street', 'address_parts.street', 'locationDetails.street', 'location_details.street', 'streetAddress', 'street_address', 'street']);
+        const partsCity = getValueFromKeys(obj, ['addressParts.city', 'address_parts.city', 'locationDetails.city', 'location_details.city']);
+        const partsState = getValueFromKeys(obj, ['addressParts.state', 'address_parts.state', 'locationDetails.state', 'location_details.state']);
+        const zip = getValueFromKeys(obj, ['addressParts.zip', 'address_parts.zip', 'addressParts.zipcode', 'address_parts.zipcode', 'locationDetails.zip', 'location_details.zip', 'postalCode', 'postal_code', 'zip', 'zipcode']);
+
         const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        const city = partsCity || getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
+        const state = partsState || getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
+
+        if (street) {
+            const cityStateZip = [city, [state, zip].filter(Boolean).join(' ').trim()].filter(Boolean).join(', ');
+            return [street, cityStateZip].filter(Boolean).join(', ');
+        }
         if (loc) return loc;
-
-        const city = getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
-        const state = getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
-
         if (city && state) return `${city}, ${state}`;
         return city || state || null;
     };

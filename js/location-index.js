@@ -243,6 +243,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof value === 'boolean') return !value; 
         if (typeof value === 'string') {
             const lower = value.trim().toLowerCase();
+            if (!lower) return true; // empty or whitespace-only
             const placeholders = ['none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 'unknown', 'null', 'undefined', 'false', 'empty', '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 'not specified', 'not available', 'not applicable', 'no data', 'no info', 'no information', 'pending', 'none reported', 'not reported', 'no report', 'nil', 'unspecified'];
             if (placeholders.includes(lower)) return true;
             const stripped = lower.replace(/[.,;:\-–—]+$/, '');
@@ -347,10 +348,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const getMergedLocation = (obj) => {
         if (!obj || typeof obj !== 'object') return null;
+
+        // Prefer a full street address assembled from the structured parts. This is
+        // more complete than a bare city/state string and lets the broken-out
+        // addressParts.*/locationDetails.* fields stay suppressed in "More details"
+        // without actually hiding the address from the card.
+        const street = getValueFromKeys(obj, ['addressParts.street', 'address_parts.street', 'locationDetails.street', 'location_details.street', 'streetAddress', 'street_address', 'street']);
+        const partsCity = getValueFromKeys(obj, ['addressParts.city', 'address_parts.city', 'locationDetails.city', 'location_details.city']);
+        const partsState = getValueFromKeys(obj, ['addressParts.state', 'address_parts.state', 'locationDetails.state', 'location_details.state']);
+        const zip = getValueFromKeys(obj, ['addressParts.zip', 'address_parts.zip', 'addressParts.zipcode', 'address_parts.zipcode', 'locationDetails.zip', 'location_details.zip', 'postalCode', 'postal_code', 'zip', 'zipcode']);
+
         const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        const city = partsCity || getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
+        const state = partsState || getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
+
+        if (street) {
+            const cityStateZip = [city, [state, zip].filter(Boolean).join(' ').trim()].filter(Boolean).join(', ');
+            return [street, cityStateZip].filter(Boolean).join(', ');
+        }
         if (loc) return loc;
-        const city = getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
-        const state = getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
         if (city && state) return `${city}, ${state}`;
         return city || state || null;
     };
