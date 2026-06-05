@@ -245,6 +245,7 @@ function parseWikiMarkdown(markdown) {
         // The browser editor recomputes these from DOM edit state; setting them here
         // keeps headless paths (batch import, regenerate-from-record) correct too.
         historyNotesIsImported: false,
+        structureMiscIsImported: false,
         lawsuitsMiscIsImported: false,
         testimoniesMiscIsImported: false,
         relatedMediaMiscIsImported: false,
@@ -1540,6 +1541,7 @@ function parseWikiMarkdown(markdown) {
 
         // Store any miscellaneous structure content for preservation
         parsedData.structureMisc = structureSection;
+        parsedData.structureMiscIsImported = true;
     }
 
     // Parse Abuse section

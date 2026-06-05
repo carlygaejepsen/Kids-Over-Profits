@@ -52,11 +52,13 @@ if (is_readable($scanFile)) {
     }
 }
 
-// --- 2. Completed entries = non-deleted submissions ---
+// --- 2. Completed entries = active (non-deleted, non-rejected) submissions ---
 // completedNames: program names (fallback match for legacy submissions).
 // completedSlugs: the source slug each submission recorded (precise match). The
 // slug is stored inside json_data.sourceSlug by the wiki editor when the entry
 // was loaded from a known index slug.
+// Rejected submissions are excluded: a rejected page still needs to be (re)done,
+// so it must not show as "completed" in the index browser.
 $completedNames = [];
 $completedSlugs = [];
 try {
@@ -64,7 +66,7 @@ try {
     if (isset($pdo) && $pdo instanceof PDO) {
         $stmt = $pdo->query(
             "SELECT program_name, json_data FROM wiki_submissions " .
-            "WHERE status != 'deleted' AND program_name IS NOT NULL AND program_name != ''"
+            "WHERE status NOT IN ('deleted', 'rejected') AND program_name IS NOT NULL AND program_name != ''"
         );
         if ($stmt) {
             $seenName = [];

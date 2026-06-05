@@ -461,13 +461,24 @@ function generateWikiMarkdown(formData) {
         structureParts.push(`The program offers ${joinWithAnd(therapyDescriptions)}.`);
     }
 
-    if (formData.structureMisc && !isEffectivelyEmpty(formData.structureMisc)) {
-        structureParts.push(formData.structureMisc.trim());
-    }
+    // Mirror the History/Abuse/Testimonies handling: when the structure notes
+    // were imported verbatim they already contain the full section, so substitute
+    // them instead of appending the re-derived structured sentences (which would
+    // duplicate the level system, level descriptions, etc.).
+    const structureNotes = (formData.structureMisc && !isEffectivelyEmpty(formData.structureMisc))
+        ? formData.structureMisc.trim()
+        : '';
 
-    structureSection = structureParts.length > 0
-        ? structureParts.join('\n\n')
-        : getPlaceholder('Program Structure', programName);
+    if (structureNotes && formData.structureMiscIsImported) {
+        structureSection = structureNotes;
+    } else {
+        if (structureNotes) {
+            structureParts.push(structureNotes);
+        }
+        structureSection = structureParts.length > 0
+            ? structureParts.join('\n\n')
+            : getPlaceholder('Program Structure', programName);
+    }
 
     // --- Build Rules & Punishments Section ---
     let rulesSection = '';

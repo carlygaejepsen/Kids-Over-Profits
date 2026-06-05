@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // for) the auto-generated section. Tracked so the generator knows which
     // fields may carry verbatim imported prose. Keep in sync with the matching
     // *IsImported handling in wiki-generation.js.
-    const APPEND_NOTE_FIELD_IDS = ['historyNotes', 'lawsuitsMisc', 'testimoniesMisc', 'relatedMediaMisc'];
+    const APPEND_NOTE_FIELD_IDS = ['historyNotes', 'structureMisc', 'lawsuitsMisc', 'testimoniesMisc', 'relatedMediaMisc'];
 
     // Record that a notes field currently holds verbatim imported content, so the
     // generator can substitute (not append) it and avoid round-trip duplication.
