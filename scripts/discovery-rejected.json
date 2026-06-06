@@ -1,6 +1,156 @@
 {
-  "lastUpdated": "2026-06-04T08:56:33.922Z",
+  "lastUpdated": "2026-06-06T08:23:36.268Z",
   "entries": [
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNV1lpa3d2RHBqNU5iNVc2N2hWdFNPSGIzNjAwV1RfZDh4VU15WWJlZ1VHTEdaa3FURFdoTmh0a1NsR1RMQm80TjlPbW55eFNWcUJxaVNWcGpXYzRHYUdEMHhsbS1EQmF2T0h5bkoyVEtEdnphY3hiWE80YzlNYjQwLTNHMXR6UGJ6QzEyM0dmM093LWN4ODVBTFVIa1R4eThiWHhhcHV2azhXY3d6bXNwcU5iU2pZalpLNFo3V1Z6ejdBak1sN21wWGNCeUR0VjRDRzY1UE1NMEFCMkJwd1JXUmJUcURpUXByLVUyQXlIZDlFUQ?oc=5",
+      "title": "Despite scrutiny, special education money flows to for-profit residential treatment centers - The Washington Post",
+      "origin": "google-news",
+      "host": "washingtonpost.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "washingtonpost.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQV3VwbTc3ZG9WNUF2ak0xa29lRUVlYkJyc1VwQjY5QzRHRUtLZ3RNcmhfaWVxd3dMeDFRVzIxWEViSXVKckROeG9mSkpmVjhMNkYwM1czWEg5RkJUU2I0Z1dsanFnUnkwNi01RnV3aVdtLWtjMlpuc283UVJHYXlRRFBZbmxtajk2WEZkMDZGQlZmR1RtYWVIam8xZGNoR25pS1Yxak9VbWJuSnhMN1lvYVNvYTJUamcxcEhqSE5lUWlqQmE0LW5fTzFxaXM2SGM2YzBCcmdIYzdyOWNNVEIzdnNxY2N0cEs0WVIyQm130gHzAUFVX3lxTE5kYk1oSUo5UzRZajNxR0Rla3N2ei1JZFlZMmU5YjV3MThzUUVVcHFXUWZOUURMcHhBd1NPTkdCbTVPY3g3Y2hHS3U0TzJQZnU2czV4WmJJNFhMaDUxNjVXOHFpUzQ5QVBBbkFtQWl1eDJpM2d1dXhrSkNQV3EtSlhUbTdDMlZPUU1WZ29iRjNIX3hiZmJsUzRHbHBueENQZTlnLXhzSEhXc2V2a05BeFE4ZGtmRU8yYS1wSjdWS243M2s4NFcxTnlUZ2tidHV1QXFQemFoRVhBUFZoLU5jMnEwbnI0TGZCMTlfRVFaRjlSX3F0SQ?oc=5",
+      "title": "Genesis Ranch purchases 86 acres in Prairie Grove to build mental health treatment campus for teen girls - KNWA FOX24",
+      "origin": "google-news",
+      "host": "nwahomepage.com",
+      "facilityQuery": "Teen Challenge Adventure Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nwahomepage.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPSV9pRE9xZ3BQMVh6VmJCdjcxc3RUU1hNeEU3NG53emJhZ0NBektDQnBTY1JacDA3UVUwNHBKQmtzZzZfaEtYbGJYdEVGRnlmeWRvTjk1ZGpkeVktTC03Rm1OUWR1WGgzYzNXUDVaTlpzMG01a09YUWc0NW9aOHNjVnVkd3d3eldGRmlVMmFud05faDY0MVV2VtIBngFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUQ?oc=5",
+      "title": "DHHS issues emergency actions against Utah behavioral school attended by Paris Hilton - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNMzd5Q2hlMGltSjhGMEREMWpESndodnJLa3lZUFdzbGJvdzBlaVIzanB5SS1CeUdtX2VrNmVFNGlXY1l3bmJZeTRtRjlkNlVNSnVRaXNRMVZlN0Vya1dIWmNxTUVUY1BvbE5lc2VfbnJ0SjFpbm9EVFZ5QlRReHVJYU5HaXVvTHFnZmZRb0dqeFFzSl9QVF9kSi01ZVJWQWJMam9hZFNVRDIwQmQ3WHVCUC1KMUtLRlNwQThBaEZxam53V1JJQXhWTmRycERJQQ?oc=5",
+      "title": "Action taken after Provo school staff failed to call 911 after client left unconscious - FOX 13 News Utah",
+      "origin": "google-news",
+      "host": "fox13now.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13now.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxNejd0OVBNdm9ZUXBZTXVMTEdxeVFkU1Z1T2h2a3FuOUc0NGRXOVZIYnhSaDUzS3MwdVIzeGg2OFVNVlEybUFZdmNGMy1UX0ZXNUt5QUl6dlRsNFk2MUV4eVpDeWZ3LW5YRU1LN1RQODRmbHhpaW9zREtId243V05pOFRYYzlOdHNlS2VyRWVKalJtNm5KRnhOS2dCd29Ddw?oc=5",
+      "title": "Dyess volunteers looking for RV ahead of Ben Richey ChiliBowl Cookoff - KTXS",
+      "origin": "google-news",
+      "host": "ktxs.com",
+      "facilityQuery": "Ben Richey’s Boys Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ktxs.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPa3lIMkoyWDNqRzltRTZxUXlYWERFME90aFlhS3E5NldVVW9FMUxaVzg4NFFENHNzazc1RW9jTGYyNF9FNm5VdXc2ODlLLXB1T2F5OHozcGJWZEQzMnNHRGI5bHNockVyc3Zjang1S2NwVzdLRDRVRXhfd2hTNGJudDc1aVl4VzRIZ05hWU1sTQ?oc=5",
+      "title": "Hope reborn as Angel of Hope Rehab welcomes 8th intake - Herald.co.zw",
+      "origin": "google-news",
+      "host": "heraldonline.co.zw",
+      "facilityQuery": "Sanctuary of Hope",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "heraldonline.co.zw"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5pbjk3QWVyZHBVck0tS3FQaFlqU0RTdmNaaXZaQjFpM0RBWnM1djN6S2VRaWg3NTdxeHI1UzBFeEVXT0phQmxBdlpnSGxEcDByRjlGOTBnTzhwZ0dW?oc=5",
+      "title": "Why illegal children's homes are being paid up to £2m per child by councils - BBC",
+      "origin": "google-news",
+      "host": "bbc.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "bbc.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE02eC1kREIzQUpiN2tiMUowbjE2SlNscGh6UWtQVldtR1p6Y1lJM0h1VXdDTURub2l4c1F2aGVFcVRIcFZHbnA2TDBrdE43N1JCUzhDcloxNFlnSDRYNWE4ZzBqMXV2ZTJmdm9fa1NB?oc=5",
+      "title": "Austin College SEPA students to work with local nonprofits - North Texas e-News",
+      "origin": "google-news",
+      "host": "ntxe-news.com",
+      "facilityQuery": "Open Arms Shelter",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ntxe-news.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPd2xKRDR1eDJoazIzLUlYX3ROOFRUTU1XQVR5SjR3TkJWSEprbmxQN1FjdnY5ZVFsVHh6eWZpcTdETkxPQk9ra19LX1loVW83eFZwbGxhdU8tUVVwUjhkT18xOTRNY2JCd2VDbEFsYzNfYnRFUlVCM2NiQU1BUEF1MExMYS1mZERzdUVsMktrM3BNRG9LdkFpckJ0MmFlWmM?oc=5",
+      "title": "Featured Local Job: Registered Nurse - exploreClarion",
+      "origin": "google-news",
+      "host": "exploreclarion.com",
+      "facilityQuery": "Abraxas I",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "exploreclarion.com"
+      }
+    },
     {
       "ts": "2026-06-04T08:56:33.921Z",
       "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBiQi03Zm1jTzE5MWgwaWphb1RmV0NUZDhEcGtyRnJhWnVpZ3VBQjBNN3E1VVVQZEcyekVIeEtkaFpnT01IZFhFQ19lZ1lFZ3hPV0p5SnBJSE83Z3hGLTgtQ2pKY0dpX1o5S2RFdUZVU2EwZ1c3VFRJS9IBfkFVX3lxTE90LUlxYllaVGpTM1Rob2JqMS1HXzVyU19vZnpfOXJQMmkteV94dGxUUWJ5M1BMRmJxZ2tEY0hMLWRyZm4yVnVfMzNnaTJKbGdnZTE4VVZKbnVIRXdMYnNPanY2SzJOVmdqS0J5MVozRVAxSDk1NW9GRWN0NUVtdw?oc=5",
