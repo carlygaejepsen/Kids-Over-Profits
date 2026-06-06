@@ -50,6 +50,71 @@ function isOrganizationFormData(formData = {}) {
         || (nameLooksLikeOrganization && !hasFacilitySignals);
 }
 
+// Markdown link helper shared by the address builders.
+function addressLinkMd(text, url) {
+    if (!text) return '';
+    const safeUrl = sanitizeUrl(url);
+    return safeUrl ? `[${escapeMarkdown(text)}](${safeUrl})` : escapeMarkdown(text);
+}
+
+// When the address changed but the user didn't also update the link field, the
+// old link points at the *previous* location, so it must not ride along with the
+// new address. Returns the link to use for the current address ('' = no link).
+function currentAddressLink(formData, changed) {
+    if (changed && String(formData.addressLink || '') === String(formData.formerAddressLink || '')) {
+        return '';
+    }
+    return formData.addressLink;
+}
+
+function addressChanged(formData) {
+    const former = String(formData.formerAddress || '').trim();
+    return !!former && former.toLowerCase() !== String(formData.mainAddress || '').trim().toLowerCase();
+}
+
+// Build a standalone "located at" sentence from the structured address fields.
+// Used when generating fresh (non-imported) history, where there is no existing
+// prose to preserve. A changed address still names the prior location.
+function buildAddressSentence(formData, subjectNoun) {
+    if (!String(formData.mainAddress || '').trim()) return '';
+    const changed = addressChanged(formData);
+    const current = addressLinkMd(formData.mainAddress, currentAddressLink(formData, changed));
+    if (changed) {
+        const subject = subjectNoun || 'facility';
+        return `The ${subject} was previously located at ${addressLinkMd(formData.formerAddress, formData.formerAddressLink)}, and is now located at ${current}.`;
+    }
+    return `The main office is located at ${current}.`;
+}
+
+// Update the address inside imported History prose WITHOUT rewriting the sentence
+// it lives in. Real prose phrases this many ways ("The outpatient facility is
+// located at...", "The program is located at...") and may list several campus
+// addresses, so only the address token after the first "located at/in/as" is
+// swapped — the surrounding wording (and every other campus) is left intact. A
+// changed address is noted in place with a "(previously located at ...)" aside.
+// If the prose has no address sentence at all, a standalone one is appended.
+function replaceAddressInProse(prose, formData, subjectNoun) {
+    const text = String(prose || '');
+    if (!String(formData.mainAddress || '').trim()) return text;
+
+    const changed = addressChanged(formData);
+    const newMd = addressLinkMd(formData.mainAddress, currentAddressLink(formData, changed));
+    const replacement = changed
+        ? `${newMd} (previously located at ${addressLinkMd(formData.formerAddress, formData.formerAddressLink)})`
+        : newMd;
+
+    // Capture: ("...located at ")(address token)(trailing space+period/newline/end).
+    // The address token is a markdown link (URLs contain periods, so match it
+    // atomically) or a short run of plain text up to the clause boundary.
+    const re = /(\blocated\s+(?:at|as|in)\s+)(\[[^\]]*\]\([^)]*\)|[^.\n]+?)(\s*(?:\.|\n|$))/i;
+    if (re.test(text)) {
+        return text.replace(re, (_m, lead, _addr, tail) => `${lead}${replacement}${tail}`);
+    }
+
+    const sentence = buildAddressSentence(formData, subjectNoun);
+    return sentence ? `${text}\n\n${sentence}` : text;
+}
+
 function generateWikiMarkdown(formData) {
     const programName = formData.programName || '[Program Name]';
 
@@ -260,8 +325,9 @@ function generateWikiMarkdown(formData) {
             historySentences.push(`It ${joinWithAnd(operationsParts)}.`);
         }
 
-        if (formData.mainAddress) {
-            historySentences.push(`The main office is located at ${createLink(formData.mainAddress, formData.addressLink)}.`);
+        const addressSentence = buildAddressSentence(formData, 'facility');
+        if (addressSentence) {
+            historySentences.push(addressSentence);
         }
 
         if (formData.accreditingBody) {
@@ -318,8 +384,11 @@ function generateWikiMarkdown(formData) {
     if (historyNotesText && formData.historyNotesIsImported) {
         // Imported entries already hold the full prose section, and the
         // structured fields were extracted from it — emitting both would
-        // duplicate content, so keep the original notes verbatim.
-        historySection = historyNotesText;
+        // duplicate content, so keep the original notes verbatim. The one
+        // exception is the address: swap that value in place so a structured
+        // address edit takes effect (and a former location is noted), without
+        // disturbing the wording of the sentence it lives in.
+        historySection = replaceAddressInProse(historyNotesText, formData, 'facility');
     } else {
         historySection = [structuredHistory, historyNotesText].filter(Boolean).join('\n\n');
     }
@@ -754,8 +823,11 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
             historySentences.push(`Its parent company is ${createLink(formData.parentCompany, formData.parentCompanyLink)}.`);
         }
 
-        if (!headquartersText && formData.mainAddress) {
-            historySentences.push(`The main office is located at ${createLink(formData.mainAddress, formData.addressLink)}.`);
+        if (!headquartersText) {
+            const addressSentence = buildAddressSentence(formData, 'organization');
+            if (addressSentence) {
+                historySentences.push(addressSentence);
+            }
         }
 
         if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
@@ -803,7 +875,12 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         : '';
 
     if (historyNotesText && formData.historyNotesIsImported) {
-        historySection = historyNotesText;
+        // Keep imported prose verbatim, but swap the address value in place so a
+        // structured edit takes effect. When the org is headquartered somewhere
+        // the address lives in the intro sentence, so leave it alone.
+        historySection = headquartersText
+            ? historyNotesText
+            : replaceAddressInProse(historyNotesText, formData, 'organization');
     } else {
         historySection = [structuredHistory, historyNotesText].filter(Boolean).join('\n\n');
     }

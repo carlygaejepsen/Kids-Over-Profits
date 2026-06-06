@@ -964,8 +964,20 @@ get_header();
                 </div>
                 <div class="form-group">
                     <label>Additional Locations</label>
-                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (city, address, ZIP).</div>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">Add other site addresses (address, city, state, ZIP).</div>
                     <div class="array-container" data-path="locationDetails.additionalLocations"></div>
+                </div>
+                <div class="form-group" id="former-locations-group">
+                    <label>Former Locations <small style="font-weight:400;color:#888;">(relocation history)</small></label>
+                    <div style="color: #6b7280; font-size: 13px; margin-bottom: 6px;">
+                        States this facility used to operate in before moving (state, city, address, from/to year).
+                        It will appear in both the old and new state directories. Use the button below to move it
+                        without retyping — that snapshots the current location here, then clear &amp; re-enter the new one above.
+                    </div>
+                    <div class="array-container" data-path="locationDetails.formerLocations"></div>
+                    <button type="button" id="move-to-new-state-btn" class="btn-secondary" style="margin-top: 8px;">
+                        📍 Move this facility to a new state…
+                    </button>
                 </div>
             </div>
         </div>

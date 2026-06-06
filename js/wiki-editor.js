@@ -109,6 +109,25 @@ document.addEventListener('DOMContentLoaded', () => {
             el.dataset.importedValue = el.value;
         }
     };
+
+    // Remember the address an entry was loaded with so a later edit can be
+    // detected. If the user then changes the Main Address, collectCurrentFormData
+    // emits the prior value as `formerAddress`, and the generator notes the old
+    // location in plain language. Cleared by clearFormToEmpty for fresh entries.
+    const markAddressAsLoaded = (address, link) => {
+        const el = document.getElementById('mainAddress');
+        if (el) {
+            el.dataset.loadedAddress = address || '';
+            el.dataset.loadedAddressLink = link || '';
+        }
+    };
+    const clearLoadedAddress = () => {
+        const el = document.getElementById('mainAddress');
+        if (el) {
+            delete el.dataset.loadedAddress;
+            delete el.dataset.loadedAddressLink;
+        }
+    };
     let currentPage = 1;
     let totalEntries = 0;
     const entriesPerPage = 25;
@@ -345,6 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         window.unparsedContentFromImport = '';
+        clearLoadedAddress();
         detectAndToggleOrganizationMode();
     }
 
@@ -710,6 +730,18 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         });
 
+        // If the entry was loaded with an address and the user has since changed
+        // it, surface the prior value so the generator can note the old location.
+        const mainAddressEl = document.getElementById('mainAddress');
+        if (mainAddressEl && typeof mainAddressEl.dataset.loadedAddress === 'string') {
+            const loaded = mainAddressEl.dataset.loadedAddress.trim();
+            const current = (vals.mainAddress || '').trim();
+            if (loaded && loaded.toLowerCase() !== current.toLowerCase()) {
+                vals.formerAddress = loaded;
+                vals.formerAddressLink = mainAddressEl.dataset.loadedAddressLink || '';
+            }
+        }
+
         return {
             ...vals,
             entryType,
@@ -762,6 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('natsapYear', data.natsapYear);
         setFieldValue('mainAddress', data.mainAddress);
         setFieldValue('addressLink', data.addressLink);
+        markAddressAsLoaded(data.mainAddress, data.addressLink);
         setFieldValue('accreditingBody', data.accreditingBody);
         setFieldValue('accreditingBodyLink', data.accreditingBodyLink);
         setFieldValue('historyNotes', data.historyNotes || data.historyMisc);
@@ -1943,6 +1976,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setValue('natsapYear', parsedData.natsapYear);
         setValue('mainAddress', parsedData.mainAddress);
         setValue('addressLink', parsedData.addressLink);
+        markAddressAsLoaded(parsedData.mainAddress, parsedData.addressLink);
         setValue('accreditingBody', parsedData.accreditingBody);
         setValue('accreditingBodyLink', parsedData.accreditingBodyLink);
         // Store full history section in historyNotes (the field that actually exists and gets output)

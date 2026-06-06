@@ -475,6 +475,7 @@
             const isPastTTIJobs = /pastTTIJobs$/.test(path);
             const isStaffRoleName = /^staff\./.test(path) || /^operator\.keyStaff\./.test(path);
             const isAdditionalLocation = /locationDetails\.additionalLocations$/.test(path);
+            const isFormerLocation = /locationDetails\.formerLocations$/.test(path);
 
             // Determine autocomplete category based on path
             let defaultCategory = null;
@@ -493,7 +494,9 @@
                 } else if (isStaffRoleName) {
                     data.push({ role: '', name: '' });
                 } else if (isAdditionalLocation) {
-                    data.push({ city: '', address: '', zip: '' });
+                    data.push({ address: '', city: '', state: '', zip: '' });
+                } else if (isFormerLocation) {
+                    data.push({ state: '', city: '', address: '', zip: '', fromYear: '', toYear: '' });
                 } else {
                     data.push('');
                 }
@@ -688,11 +691,26 @@
                 } else if (isAdditionalLocation) {
                     let normalized = item;
                     if (typeof normalized !== 'object' || normalized === null) {
-                        normalized = { city: '', address: item || '', zip: '' };
+                        normalized = { address: item || '', city: '', state: '', zip: '' };
                         data[index] = normalized;
-                    } else if (typeof normalized.zip !== 'string') {
-                        normalized.zip = '';
+                    } else {
+                        if (typeof normalized.state !== 'string') normalized.state = '';
+                        if (typeof normalized.zip !== 'string') normalized.zip = '';
                     }
+
+                    const addressInp = document.createElement('input');
+                    addressInp.type = 'text';
+                    addressInp.className = 'array-input array-input-name';
+                    addressInp.placeholder = 'Address';
+                    addressInp.value = normalized.address || '';
+                    addressInp.oninput = (e) => {
+                        if (typeof window.updateArrayObjectItemValue === 'function') {
+                            window.updateArrayObjectItemValue(path, index, 'address', e.target.value);
+                        } else {
+                            normalized.address = e.target.value;
+                            if (window.updateJSON) window.updateJSON();
+                        }
+                    };
 
                     const cityInp = document.createElement('input');
                     cityInp.type = 'text';
@@ -708,16 +726,18 @@
                         }
                     };
 
-                    const addressInp = document.createElement('input');
-                    addressInp.type = 'text';
-                    addressInp.className = 'array-input array-input-name';
-                    addressInp.placeholder = 'Address';
-                    addressInp.value = normalized.address || '';
-                    addressInp.oninput = (e) => {
+                    const stateInp = document.createElement('input');
+                    stateInp.type = 'text';
+                    stateInp.className = 'array-input array-input-role';
+                    stateInp.placeholder = 'State';
+                    stateInp.style.maxWidth = '90px';
+                    stateInp.setAttribute('data-autocomplete-category', 'location');
+                    stateInp.value = normalized.state || '';
+                    stateInp.oninput = (e) => {
                         if (typeof window.updateArrayObjectItemValue === 'function') {
-                            window.updateArrayObjectItemValue(path, index, 'address', e.target.value);
+                            window.updateArrayObjectItemValue(path, index, 'state', e.target.value);
                         } else {
-                            normalized.address = e.target.value;
+                            normalized.state = e.target.value;
                             if (window.updateJSON) window.updateJSON();
                         }
                     };
@@ -739,7 +759,44 @@
 
                     row.appendChild(addressInp);
                     row.appendChild(cityInp);
+                    row.appendChild(stateInp);
                     row.appendChild(zipInp);
+                } else if (isFormerLocation) {
+                    let normalized = item;
+                    if (typeof normalized !== 'object' || normalized === null) {
+                        normalized = { state: item || '', city: '', address: '', zip: '', fromYear: '', toYear: '' };
+                        data[index] = normalized;
+                    } else {
+                        ['state', 'city', 'address', 'zip', 'fromYear', 'toYear'].forEach(k => {
+                            if (typeof normalized[k] !== 'string') normalized[k] = normalized[k] != null ? String(normalized[k]) : '';
+                        });
+                    }
+
+                    const makeInput = (field, placeholder, opts = {}) => {
+                        const inp = document.createElement('input');
+                        inp.type = opts.type || 'text';
+                        inp.className = 'array-input ' + (opts.cls || 'array-input-name');
+                        inp.placeholder = placeholder;
+                        if (opts.maxWidth) inp.style.maxWidth = opts.maxWidth;
+                        if (opts.category) inp.setAttribute('data-autocomplete-category', opts.category);
+                        inp.value = normalized[field] || '';
+                        inp.oninput = (e) => {
+                            if (typeof window.updateArrayObjectItemValue === 'function') {
+                                window.updateArrayObjectItemValue(path, index, field, e.target.value);
+                            } else {
+                                normalized[field] = e.target.value;
+                                if (window.updateJSON) window.updateJSON();
+                            }
+                        };
+                        return inp;
+                    };
+
+                    // Order: State, City, Address, From Year, To Year
+                    row.appendChild(makeInput('state', 'State', { cls: 'array-input-role', maxWidth: '90px', category: 'location' }));
+                    row.appendChild(makeInput('city', 'City'));
+                    row.appendChild(makeInput('address', 'Address'));
+                    row.appendChild(makeInput('fromYear', 'From yr', { type: 'number', cls: 'array-input-role', maxWidth: '80px' }));
+                    row.appendChild(makeInput('toYear', 'To yr', { type: 'number', cls: 'array-input-role', maxWidth: '80px' }));
                 } else if (typeof item === 'object' && item !== null) {
                     const roleInp = document.createElement('input');
                     roleInp.type = 'text';
@@ -826,9 +883,21 @@
                         const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
                             ? liveArray[rowIndex] : {};
                         liveArray[rowIndex] = {
-                            city: inputs[1] ? inputs[1].value : (existing.city || ''),
                             address: inputs[0] ? inputs[0].value : (existing.address || ''),
-                            zip: inputs[2] ? inputs[2].value : (existing.zip || '')
+                            city: inputs[1] ? inputs[1].value : (existing.city || ''),
+                            state: inputs[2] ? inputs[2].value : (existing.state || ''),
+                            zip: inputs[3] ? inputs[3].value : (existing.zip || '')
+                        };
+                    } else if (isFormerLocation) {
+                        const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
+                            ? liveArray[rowIndex] : {};
+                        liveArray[rowIndex] = {
+                            state: inputs[0] ? inputs[0].value : (existing.state || ''),
+                            city: inputs[1] ? inputs[1].value : (existing.city || ''),
+                            address: inputs[2] ? inputs[2].value : (existing.address || ''),
+                            zip: existing.zip || '',
+                            fromYear: inputs[3] ? inputs[3].value : (existing.fromYear || ''),
+                            toYear: inputs[4] ? inputs[4].value : (existing.toYear || '')
                         };
                     } else if (isPastTTIJobs) {
                         const existing = (typeof liveArray[rowIndex] === 'object' && liveArray[rowIndex] !== null)
@@ -865,7 +934,9 @@
                 } else if (isStaffRoleName) {
                     liveArray.push({ role: '', name: '' });
                 } else if (isAdditionalLocation) {
-                    liveArray.push({ city: '', address: '', zip: '' });
+                    liveArray.push({ address: '', city: '', state: '', zip: '' });
+                } else if (isFormerLocation) {
+                    liveArray.push({ state: '', city: '', address: '', zip: '', fromYear: '', toYear: '' });
                 } else {
                     liveArray.push('');
                 }

@@ -1897,6 +1897,23 @@ function kop_state_abbrev_to_name() {
 }
 
 /**
+ * Resolve a state string (2-letter abbrev OR full name, any case) to its
+ * canonical full name ("UT" / "utah" -> "Utah"). Returns the input trimmed
+ * if it isn't a recognized state.
+ */
+function kop_state_canonical_name($s) {
+    $s = trim((string)$s);
+    if ($s === '') return '';
+    $abbr_to_name = kop_state_abbrev_to_name();
+    $upper = strtoupper($s);
+    if (isset($abbr_to_name[$upper])) return $abbr_to_name[$upper];
+    foreach ($abbr_to_name as $name) {
+        if (strcasecmp($s, $name) === 0) return $name;
+    }
+    return $s;
+}
+
+/**
  * Convert "Utah" -> "utah", "New York" -> "new-york".
  */
 function kop_state_slug($state_name) {
@@ -2109,6 +2126,82 @@ function kop_state_collect_programs($state_name) {
             }
         }
 
+        // --- Relocation history (locationDetails.formerLocations) ---------------
+        // Each entry — {state, city, address, zip, fromYear, toYear} — is a state
+        // the facility used to operate in before moving. A relocated facility is
+        // surfaced in BOTH the old state's directory (with a "Relocated to <new
+        // state>" badge, showing its historical in-state address) and the new
+        // state's directory (with a "Relocated from <old state>" note).
+        $former_raw = isset($location_details['formerLocations']) && is_array($location_details['formerLocations'])
+            ? $location_details['formerLocations']
+            : array();
+        $former_locations = array();
+        foreach ($former_raw as $fl) {
+            if (!is_array($fl)) continue;
+            $former_locations[] = array(
+                'state'    => trim((string)($fl['state']    ?? '')),
+                'city'     => trim((string)($fl['city']     ?? '')),
+                'address'  => trim((string)($fl['address']  ?? '')),
+                'zip'      => trim((string)($fl['zip']      ?? '')),
+                'fromYear' => trim((string)($fl['fromYear'] ?? '')),
+                'toYear'   => trim((string)($fl['toYear']   ?? '')),
+            );
+        }
+
+        $fmt_years = static function ($from, $to) {
+            $from = trim((string)$from); $to = trim((string)$to);
+            if ($from !== '' && $to !== '') return $from . '–' . $to;
+            if ($from !== '') return 'since ' . $from;
+            if ($to !== '')   return 'until ' . $to;
+            return '';
+        };
+
+        $relocation = null;
+        if (!empty($former_locations)) {
+            $viewed_canon  = kop_state_canonical_name($state_name);
+            $current_canon = kop_state_canonical_name($resolved_state);
+
+            // Is the viewed state one of the FORMER homes (and not the current one)?
+            $matched_former = null;
+            if ($viewed_canon !== '') {
+                foreach ($former_locations as $fl) {
+                    if (kop_state_canonical_name($fl['state']) === $viewed_canon) {
+                        $matched_former = $fl;
+                        break;
+                    }
+                }
+            }
+
+            if ($matched_former !== null && $current_canon !== '' && $current_canon !== $viewed_canon) {
+                // Viewing the OLD state: badge points to the new home; show the
+                // historical in-state address rather than the current one.
+                $relocation = array(
+                    'direction'   => 'to',
+                    'other_state' => $current_canon,
+                    'years'       => $fmt_years($matched_former['fromYear'], $matched_former['toYear']),
+                );
+                if ($matched_former['address'] !== '' || $matched_former['city'] !== '') {
+                    $resolved_street = $matched_former['address'];
+                    $resolved_city   = $matched_former['city'];
+                    $resolved_zip    = $matched_former['zip'];
+                }
+                $resolved_state = $viewed_canon;
+                // Don't carry the new-state campus addresses onto the old-state card.
+                $additional_addresses = array();
+            } elseif ($viewed_canon !== '' && $current_canon === $viewed_canon) {
+                // Viewing the CURRENT state: note where it came from (most recent former).
+                $origin = end($former_locations);
+                $origin_canon = kop_state_canonical_name($origin['state']);
+                if ($origin_canon !== '' && $origin_canon !== $viewed_canon) {
+                    $relocation = array(
+                        'direction'   => 'from',
+                        'other_state' => $origin_canon,
+                        'years'       => '',
+                    );
+                }
+            }
+        }
+
         // Operator resolution: prefer the per-facility `identification.currentOperator`
         // (set in the admin form's Identification section). Fall back to the project-level
         // `operator.name`, but ONLY when the project isn't a "Location Aggregate" — those
@@ -2187,6 +2280,8 @@ function kop_state_collect_programs($state_name) {
             'zip'              => $resolved_zip,
             'raw_address'      => $raw_address,
             'additional_addresses' => $additional_addresses,
+            'relocation'       => $relocation,
+            'former_locations' => $former_locations,
             'type'             => $as_string($facility_details['type'] ?? ''),
             'status'           => $as_string($operating['status'] ?? ''),
             'operating_period' => $operating_years,
@@ -2277,6 +2372,20 @@ function kop_state_collect_programs($state_name) {
                     $matched = true;
                 } elseif ($abbrev_lower !== '' && preg_match('/\b' . preg_quote($abbrev_lower, '/') . '\b/', $location_string)) {
                     $matched = true;
+                }
+
+                // Relocation: a facility that used to operate in this state (and has
+                // since moved) still belongs in this state's directory, flagged as
+                // relocated. Match on any locationDetails.formerLocations[].state.
+                if (!$matched && !empty($location_details['formerLocations']) && is_array($location_details['formerLocations'])) {
+                    foreach ($location_details['formerLocations'] as $fl) {
+                        if (!is_array($fl)) continue;
+                        $fl_canon = strtolower(kop_state_canonical_name($fl['state'] ?? ''));
+                        if ($fl_canon !== '' && $fl_canon === $state_lower) {
+                            $matched = true;
+                            break;
+                        }
+                    }
                 }
                 if (!$matched) continue;
 
@@ -3381,6 +3490,7 @@ function kop_state_collect_facilities($state_name) {
             }
             if (($existing['age_min'] ?? null) === null && ($p['age_min'] ?? null) !== null) $existing['age_min'] = $p['age_min'];
             if (($existing['age_max'] ?? null) === null && ($p['age_max'] ?? null) !== null) $existing['age_max'] = $p['age_max'];
+            if (empty($existing['relocation']) && !empty($p['relocation'])) $existing['relocation'] = $p['relocation'];
             // Array fields: union (dedup of scalars; objects pass through).
             foreach (array('operating_notes','current_owners','past_owners','other_names','past_names',
                            'known_referrers','other_operators','administrator','notable_staff',
@@ -3454,6 +3564,7 @@ function kop_state_collect_facilities($state_name) {
                 'status'            => $p['status'] ?? '',
                 'operating_period'  => $p['operating_period'] ?? '',
                 'operating_notes'   => $p['operating_notes'] ?? array(),
+                'relocation'        => $p['relocation'] ?? null,
                 'inspection_count'  => 0,
                 'violation_count'   => 0,
                 'latest_inspection_date' => '',

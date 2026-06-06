@@ -316,6 +316,24 @@
     font-weight: 500;
 }
 
+.facility-card-relocation {
+    display: inline-block;
+    margin-top: 0.35em;
+    padding: 0.15em 0.6em;
+    border-radius: 999px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border: 1px solid var(--kop-orange, #EF9034);
+    color: #8a4b00;
+    background: #fff3e2;
+}
+
+.facility-card-relocation-from {
+    border-color: var(--kop-teal, #33A7B5);
+    color: #0c5763;
+    background: #e3f5f8;
+}
+
 .facility-card-capacity {
     display: flex;
     flex-wrap: wrap;

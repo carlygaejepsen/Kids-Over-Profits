@@ -698,7 +698,7 @@ function loadFacilityData() {
     const facilityType = document.getElementById('facility-type');
     if (facilityType) facilityType.value = facility.facilityDetails?.type || '';
 
-    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'staff.pastTTIJobs', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes'];
+    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'staff.pastTTIJobs', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes', 'locationDetails.additionalLocations', 'locationDetails.formerLocations'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {

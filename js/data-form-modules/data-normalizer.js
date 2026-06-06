@@ -331,11 +331,14 @@
                 if (Array.isArray(additionalLocations)) {
                     normalized.locationDetails.additionalLocations = additionalLocations.map(item => {
                         if (typeof item === 'string') {
-                            return { city: '', address: item, zip: '' };
+                            return { address: item, city: '', state: '', zip: '' };
                         }
                         return {
-                            city: (item && typeof item.city === 'string') ? item.city : '',
                             address: (item && typeof item.address === 'string') ? item.address : '',
+                            city: (item && typeof item.city === 'string') ? item.city : '',
+                            state: (item && typeof item.state === 'string') ? item.state
+                                : (item && typeof item.State === 'string') ? item.State
+                                : '',
                             zip: (item && typeof item.zip === 'string') ? item.zip
                                 : (item && typeof item.zipCode === 'string') ? item.zipCode
                                 : (item && typeof item.postalCode === 'string') ? item.postalCode
@@ -343,9 +346,37 @@
                         };
                     });
                 } else if (typeof additionalLocations === 'string' && additionalLocations.trim()) {
-                    normalized.locationDetails.additionalLocations = [{ city: '', address: additionalLocations.trim(), zip: '' }];
+                    normalized.locationDetails.additionalLocations = [{ address: additionalLocations.trim(), city: '', state: '', zip: '' }];
                 } else {
                     normalized.locationDetails.additionalLocations = [];
+                }
+
+                // formerLocations: relocation history. Each entry records a state the
+                // facility used to operate in before moving — {state, city, address,
+                // zip, fromYear, toYear}. Surfaced in both the old and new state hubs.
+                const formerLocations = normalized.locationDetails.formerLocations;
+                if (Array.isArray(formerLocations)) {
+                    normalized.locationDetails.formerLocations = formerLocations
+                        .map(item => {
+                            if (typeof item === 'string') {
+                                return { state: item, city: '', address: '', zip: '', fromYear: '', toYear: '' };
+                            }
+                            return {
+                                state: (item && typeof item.state === 'string') ? item.state
+                                    : (item && typeof item.State === 'string') ? item.State : '',
+                                city: (item && typeof item.city === 'string') ? item.city : '',
+                                address: (item && typeof item.address === 'string') ? item.address : '',
+                                zip: (item && typeof item.zip === 'string') ? item.zip
+                                    : (item && typeof item.zipCode === 'string') ? item.zipCode
+                                    : (item && typeof item.postalCode === 'string') ? item.postalCode : '',
+                                fromYear: (item && (typeof item.fromYear === 'string' || typeof item.fromYear === 'number')) ? String(item.fromYear) : '',
+                                toYear: (item && (typeof item.toYear === 'string' || typeof item.toYear === 'number')) ? String(item.toYear) : ''
+                            };
+                        })
+                        // Drop fully-empty rows so the form's auto-seeded blank entry never persists.
+                        .filter(fl => fl.state || fl.city || fl.address || fl.zip || fl.fromYear || fl.toYear);
+                } else {
+                    normalized.locationDetails.formerLocations = [];
                 }
 
                 // Ensure array fields are actually arrays

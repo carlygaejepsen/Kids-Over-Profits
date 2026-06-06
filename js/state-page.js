@@ -365,6 +365,9 @@
         if (!normalizeText(target.operating_period) && normalizeText(source.operating_period)) {
             target.operating_period = source.operating_period;
         }
+        if (!target.relocation && source.relocation) {
+            target.relocation = source.relocation;
+        }
     };
 
     // Detects names that look like URL slugs (all lowercase, no spaces, no punctuation).
@@ -1195,6 +1198,12 @@
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
+                ${(facility.relocation && facility.relocation.other_state) ? `
+                    <div class="facility-card-relocation facility-card-relocation-${escapeHtml(String(facility.relocation.direction || 'to'))}">
+                        ${facility.relocation.direction === 'from'
+                            ? `↘ Relocated from ${escapeHtml(facility.relocation.other_state)}`
+                            : `↗ Relocated to ${escapeHtml(facility.relocation.other_state)}${facility.relocation.years ? ` (${escapeHtml(facility.relocation.years)})` : ''}`}
+                    </div>` : ''}
                 ${(() => {
                     const list = Array.isArray(facility.addresses) && facility.addresses.length
                         ? facility.addresses
