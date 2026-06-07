@@ -1,6 +1,386 @@
 {
-  "lastUpdated": "2026-06-04T08:56:33.922Z",
+  "lastUpdated": "2026-06-07T08:07:11.783Z",
   "entries": [
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPWFdYZVM1NHRJTy1ncE5EVThKbW9zY3F3YUxqX2hHMEg4ZWNVSmZVY3YtbzBRa2cySk5DZHlhVy1adDJQcWNCRU5MUVljTC0tTUxQTUNyd09MRUZvNVdpSDhFb21pT3ZUSUxuMUlrUzFyTk1vdHpyRm1rMFhiVi0zaw?oc=5",
+      "title": "Summer academy introduces kids to Palm Beach's first responders - AOL.com",
+      "origin": "google-news",
+      "host": "aol.com",
+      "facilityQuery": "Palm Beach Youth Academy",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "aol.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tTHVpbzNqVHV3eURBWUw1cjZEYS11SENEMTdacERfZFkwRlhiYkJVWFdOYjFZZGF1em9KLXRYb3RRWF9EM2E1RUZNdFNPZTVUbThlV2EtbmxfRDFfU3VacUtYTUtBV1F2SjgyNnZXQ0tMYVpDR0dDRw?oc=5",
+      "title": "Polcie Looking for Missing Isabella County Teen - WSGW 790 AM & 100.5 FM",
+      "origin": "google-news",
+      "host": "wsgw.com",
+      "facilityQuery": "New Hope Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wsgw.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNYUpJTUJsclRsV18wZFZXaVcycWFSazMwVU5yTUF4dTZJTXZRbHRORHlpRE81eGo4UW1NSUh2eFpWYVVxYnZMWXEtb0VYQm5RXzFSOEQ0Um9jNFZNYVZDamJSR3VEOEJ4S2xBTG1XMVA5a2tUSVgtQTFhRjlEeGVqTkFmb3N6UE92VFhuS0RR?oc=5",
+      "title": "MSP: Missing teen Leilani Gilmore last seen leaving youth center - Midland Daily News",
+      "origin": "google-news",
+      "host": "ourmidland.com",
+      "facilityQuery": "New Hope Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ourmidland.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxOS0JzQzY4WVJOZllCdTNMLW9yU0cwSHAxSVJSYmdFLTFPVklQeHRWblVMLUVGcEpyWVlxS0FXLWVXZHpmQjY0d0FfaVFBblpwaHRfeGZhVmxLWld3LUdCdVlBY1Q2NkVXWlljYUdkNWhtaXlmM3MxWFpIa2FoczRaRkRaR0d4UkViOWF3ZXJDaS1CMldfNk9reTNtdzNqQWUtdWl6cnJSRlUzXzM3VC1tT01jZGE5TGQtTTgyRnFuM1E?oc=5",
+      "title": "POLICE: Missing Mount Pleasant teen found - WSMH",
+      "origin": "google-news",
+      "host": "midmichigannow.com",
+      "facilityQuery": "New Hope Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "midmichigannow.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPcmsyOFFYWTF3bzMzT1JuNUIwZ25yZDdxQndVZ0ZJYVVhblF3R1hHSk1MN29CMjRwM1d0TGM0a0ZDZlotTERpOG14amZWMmNlOS1zanVvY0FuQ2t5UWF6SlhERlAzUDVFbTQyQmMzME9fQkdEblkyZk1BVDVaSEJRZGxLX3g3UTFLWHpQSUFVU0V3YTl5TFc3R3hjR3V0RlIwTHFqSTZ3QW84bVNMaTRUUDBxZXAwSEwxNUNkRF8zdEwzeWhIVG9fajhUbm42bE00VWZQMQ?oc=5",
+      "title": "San Diego Humane Society on day 13 of mass animal rescue in Julian - cbs8.com",
+      "origin": "google-news",
+      "host": "cbs8.com",
+      "facilityQuery": "The Ark",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cbs8.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxObW1KRXpOZW9ORjd3anVNdXpEZEtJT2M4NGlIc1BUdVRNVi12Z01qWjByU3hVY0dkdGI1OGVNUlhkS01FOFBiQ05udXVUMGE3Und1MFQyNUVkWWFLOS1fUERQM0Z4MnJyeXpkWG9wbDBuVGh2c2tNZ1ZXZ3dUUTk5R0pwSms2Vnd0ZWI1Zzk5ZlQ0RWlwYUpXTUpvZmE2dXRCUFFtZTRSZDNXT2MwQ25Wdm1qcnZ5QdIBuwFBVV95cUxOTnFfWVFpSkFzck43QzRjQmR2V1I1eUFYQU8yb1F0aWtBUmhLZlVXX18zWlQ4N3JTV1BuR0RRTUdTRU84bElsUndqRzhYalkyd2JrbWI5QjNfeFdteDBXRDJEU2NVOXp5b1JKY0JaX3RKWW5NUHR6aVZDM0ZJU3VnQUhmSmhQbzBNdGFkRzI5UDBtYTNYdVFfSDZOd1I4SnZZVzJPVXpaUzdFa1JhTjRTbUhaZEgwaVZROVpj?oc=5",
+      "title": "Lubbock, let’s show up: Help us fill a truck for the Children’s Home on June 12 - EverythingLubbock.com",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:The Children’s Home"
+        ],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxObFktWDlyNmJoek53d011N25aQXRKS096Y0pXOFN2RlRtYUQyRFR6TVpCMU9zZ2c4REZfVE5kMVgyQVlhUUE5NjRUN05xTUFid2w4ZnVpTlllRGZzYmFYajM2OHVYRnQyRTVjUXFpSlBnbURLaURJYTgzU0xEd3hwTGU4Mk5SUXNHRDlEVmtiTWVWbVlyWTdNMEVCVVZhdG0tdHBXZEJVeVYwVjNBUXlucXZzcFFrTW9Vc3IzVG5PUFNMVTg?oc=5",
+      "title": "Our Joy Drive is Friday, June 12th all to help the Children's Home of Lubbock - EverythingLubbock.com",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOYVk4WEhnTkFQdVV4WDlIc3BRS2VqUjI4NjI0Zk9maTdZWHA2ZlhlRkhIREZhR3JXWEowZ2tiNmlyck91eG1Jall4d1F0dkZ4NTQtWnJJczN4OVhMQ3NCV3N6bllTaXFkRXFkNzBxZWowbUMycHkzUUhSSU9rX1I1Z0ZZdUR3M0lMd2lnOV9XOG5LYVpkNUZFYTNxVQ?oc=5",
+      "title": "16-year-old girl was shot at prom after-party in Dauphin County, DA says - WGAL",
+      "origin": "google-news",
+      "host": "wgal.com",
+      "facilityQuery": "Summit View",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wgal.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMihwJBVV95cUxQMXJhUWhMOFZVY090S3Z2NnJqQ0pVVlduQnktTl9CLXlfTW1NY3JlRmR2eUt2OFJyZ3VwYVhoOGV6Z25LWV8wc09MTU9vM0s5SjRwQkxGeGVVcl82SDVDZUpVa0FwZE5TenZ2QVRuMTc3LWV1OFNiQ0g4LVZUZHZqX2J5RUdJYWRYa2h4Uy1nZE9LYmVIUkRBVVczUWt4bU5UY2JFRmluX2NOODBFN2dJbmNCcW1OVzIxXzVwLTF5NF9TZ0RFRFJuenZhTEoxQkpraDJyS2tRbllSSmpGYnhJU0J3YkoyZkNoV1g1T0lnc05HanRfZGR1N0ZCc0lMQ3ZZU3lGWGJVRQ?oc=5",
+      "title": "NH legislators investigate ‘illegal practices’ at Sununu Youth Services Center - UnionLeader.com",
+      "origin": "google-news",
+      "host": "unionleader.com",
+      "facilityQuery": "John H. Sununu Youth Services Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "unionleader.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMixwJBVV95cUxOa3k1b2ZGa1VDdG1IWXM2VERuNEYtelNJaC1IQTBuWVBvNFVVcHVvTlg5UXpKRW9WN0VDQzY5WG9mS3lOZFgwSEVKVWxkMkRZb3BTMkd3SWpfWUV4dmllMEc2V3RoUENWUGVld1VYMXBvUnBJZGxxV3RkVElyMk5kaGtRSWdQdnN3eU9aejZWemM2d1ZNMnRsd0NVOXNGMVM4WHJDMVZTZm5vTlRGUjBIRFg2bUR0eXNsM0kwNXBNNjNSWDllM1dMYS15ajNQX2Z6MjNSSVFRWXE0YlUzY2lFazRSNG1HMmlZbF82REFiNXozZTN5b24xamVhUmhjbUxuNnltbThJVXBQWThubEEwMDYzSmxROVZ3cWEyVE8wcFFfSkpPZEhwcXhlcXd3TFRyNjBmU1NtTzZPa3VUbmJ2VGt4RjFDeUE?oc=5",
+      "title": "Oregon’s ‘Dr. Cold Fingers’ faces new allegations of sexual abuse - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "MacLaren Youth Correctional Facility",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxOZ2dPYndTZUhjOVZ1SjFNSl9icFZqNS1WYkVLTXZSRmFPN3lyTlF3eEtzX29CWkJySkYyYjQ5dWFrOC1FT0JNRTJrSHRsbkhFWUtEYWRKZXFiRUNKUXAwMGtkWVRIbkZGMWZLMUZwOGdWaTFqZVlZeTJNQ0JXenZEWTJoaWp3OXpvZm9WQVVQY3hQVnUyZVpiMEhNbFJuQk9hc191Tlhjd0xsQndGNVJQUy00TnJoSVM1S1NmalJmWmRJbmJ3WWdvTTVaamlwcnRLeHBoVVZQamQ1N2FKUXJYb2ZRV3NhemJDcWtyX0k3RQ?oc=5",
+      "title": "Sex tapes, riots and drug burritos | Secrets of Green Hill - KING5.com",
+      "origin": "google-news",
+      "host": "king5.com",
+      "facilityQuery": "Green Hill School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "king5.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNZGU5MjRTTFc3d3NCS2Flb0hOQjFiaDk1bnBxcDdoeGM4STVaTjRKei1hS09hM2FjLTZlVVY3ODF3U25vREpHU1NhSkFrSVN2bTVHT0dJNW5BUGFLYTl0MlBLQlBmWVl1c0d0cXpTRndEOFBnOGhUd1dxU1VsQ3k4Qk9wZkFDQQ?oc=5",
+      "title": "Oregon's Scenic Lake Is A Mountain Haven For Boating, Camping, And Premier Fishing - AOL.com",
+      "origin": "google-news",
+      "host": "aol.com",
+      "facilityQuery": "Mountain Haven",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "aol.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMiiANBVV95cUxPOWE1djFqcS1BUjR0U09yeENwTFZ3cF9qTC02NkprLXU1alN6OEFvdmpnMU9FTzNVb2Y4RE1iLVYxSHRaYVNGZHhaU1FodUhobVBmTXdyXzQyV0F1enEwa1RoN0FBdEdoM01VZ013SmRza0dxOHlNNDM3c1Z6bmJoWWg2U3JKMXlVNzRKQlZhZU5VM0F3M095NkJMemNoVVlQNllwVGZ6NElLQmVzcXRDVXRUandpZFJQMHV5M0VrcWpIWEtyeERjbDhqMUNWZUFkUG5QbjU5SFZMb0VUMG5ZQzl5d3hzTkc1WWN4bC1HVTZucHNROWZOMkZVN1hsZElvNVk1akhMM05fWDMtYUxVQkRZUHFLc1RkVFU5NGJ2dDltaVA0ekpjT3NkbmdQQ0tQbFY5MDB2REk5R1hmdzB1Ym5Rd1d2YTBUQU1zeGU0aXpjU1ptS3pfQXZtNVFCUkw2R0NZWXlYMzlsM2EtMzY0VE9SODhuLTc5T3AtUU5EX1ItUktWaHVaUQ?oc=5",
+      "title": "Forget Philly, retire to Pennsylvania's mountain haven with cozy boroughs, scenic lakes, and idyllic resorts - MSN",
+      "origin": "google-news",
+      "host": "msn.com",
+      "facilityQuery": "Mountain Haven",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "msn.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNd0RJUmNTRmluUmV4cTVaZDE4OVFfQ2hqeVRPb1cxNlJPRGY3dXRXMDhVV21adjAydmtkMW5yUnhpRTk0LUxselpwbmhkQ3ZYdjBRNVpWWHU3eDNMRzAzYlJHdjhiZ3gxZUlGaHZEYWNMamlvZTMwSjlWbmZkMUVhM2NERjJqU0l4SmpwMXg1cmdVdFJ4bzhuZTBTMDFTQm1vQjdqVVZqZ0tkaHpsT29nSVVEWTdVUQ?oc=5",
+      "title": "Robert Redford honored at Sundance’s final Utah festival, founder’s legacy celebrated - artthreat.net",
+      "origin": "google-news",
+      "host": "artthreat.net",
+      "facilityQuery": "Mountain Haven",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "artthreat.net"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1TSUktYzVHLTZLMkh5blFGWG9kQzR5MzFqNG5SUXI2cld0VE1URHNHdXV1LUhULUxqeVN0WG5DNkVpUzJ3a2dmNEFrWjJOTmpNZWdDV0xYUFkxckVr?oc=5",
+      "title": "Murdaugh Family - Britannica",
+      "origin": "google-news",
+      "host": "britannica.com",
+      "facilityQuery": "Generations",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "britannica.com"
+      }
+    },
+    {
+      "ts": "2026-06-07T08:07:11.783Z",
+      "link": "https://news.google.com/rss/articles/CBMif0FVX3lxTFBxQ0R5dWVOODFQTmx3cnprSkFMRXJXUWdJWUlpcnQ2S3l0WkQyRmJBNGU5TExrSjAydU9GdXpaMUNWUW96OW1BX0FaTGQzWkJRdjdqRzIxWGd0cUxoemU2VjhDaEhGSHMtY0FtckdFTERUb2RvYWRPYzNJVWVqSUk?oc=5",
+      "title": "Where Is Buster Murdaugh Now? Inside His Life amid Dad Alex Murdaugh's New Trial - People.com",
+      "origin": "google-news",
+      "host": "people.com",
+      "facilityQuery": "Generations",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "people.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNV1lpa3d2RHBqNU5iNVc2N2hWdFNPSGIzNjAwV1RfZDh4VU15WWJlZ1VHTEdaa3FURFdoTmh0a1NsR1RMQm80TjlPbW55eFNWcUJxaVNWcGpXYzRHYUdEMHhsbS1EQmF2T0h5bkoyVEtEdnphY3hiWE80YzlNYjQwLTNHMXR6UGJ6QzEyM0dmM093LWN4ODVBTFVIa1R4eThiWHhhcHV2azhXY3d6bXNwcU5iU2pZalpLNFo3V1Z6ejdBak1sN21wWGNCeUR0VjRDRzY1UE1NMEFCMkJwd1JXUmJUcURpUXByLVUyQXlIZDlFUQ?oc=5",
+      "title": "Despite scrutiny, special education money flows to for-profit residential treatment centers - The Washington Post",
+      "origin": "google-news",
+      "host": "washingtonpost.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "washingtonpost.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQV3VwbTc3ZG9WNUF2ak0xa29lRUVlYkJyc1VwQjY5QzRHRUtLZ3RNcmhfaWVxd3dMeDFRVzIxWEViSXVKckROeG9mSkpmVjhMNkYwM1czWEg5RkJUU2I0Z1dsanFnUnkwNi01RnV3aVdtLWtjMlpuc283UVJHYXlRRFBZbmxtajk2WEZkMDZGQlZmR1RtYWVIam8xZGNoR25pS1Yxak9VbWJuSnhMN1lvYVNvYTJUamcxcEhqSE5lUWlqQmE0LW5fTzFxaXM2SGM2YzBCcmdIYzdyOWNNVEIzdnNxY2N0cEs0WVIyQm130gHzAUFVX3lxTE5kYk1oSUo5UzRZajNxR0Rla3N2ei1JZFlZMmU5YjV3MThzUUVVcHFXUWZOUURMcHhBd1NPTkdCbTVPY3g3Y2hHS3U0TzJQZnU2czV4WmJJNFhMaDUxNjVXOHFpUzQ5QVBBbkFtQWl1eDJpM2d1dXhrSkNQV3EtSlhUbTdDMlZPUU1WZ29iRjNIX3hiZmJsUzRHbHBueENQZTlnLXhzSEhXc2V2a05BeFE4ZGtmRU8yYS1wSjdWS243M2s4NFcxTnlUZ2tidHV1QXFQemFoRVhBUFZoLU5jMnEwbnI0TGZCMTlfRVFaRjlSX3F0SQ?oc=5",
+      "title": "Genesis Ranch purchases 86 acres in Prairie Grove to build mental health treatment campus for teen girls - KNWA FOX24",
+      "origin": "google-news",
+      "host": "nwahomepage.com",
+      "facilityQuery": "Teen Challenge Adventure Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nwahomepage.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPSV9pRE9xZ3BQMVh6VmJCdjcxc3RUU1hNeEU3NG53emJhZ0NBektDQnBTY1JacDA3UVUwNHBKQmtzZzZfaEtYbGJYdEVGRnlmeWRvTjk1ZGpkeVktTC03Rm1OUWR1WGgzYzNXUDVaTlpzMG01a09YUWc0NW9aOHNjVnVkd3d3eldGRmlVMmFud05faDY0MVV2VtIBngFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUQ?oc=5",
+      "title": "DHHS issues emergency actions against Utah behavioral school attended by Paris Hilton - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNMzd5Q2hlMGltSjhGMEREMWpESndodnJLa3lZUFdzbGJvdzBlaVIzanB5SS1CeUdtX2VrNmVFNGlXY1l3bmJZeTRtRjlkNlVNSnVRaXNRMVZlN0Vya1dIWmNxTUVUY1BvbE5lc2VfbnJ0SjFpbm9EVFZ5QlRReHVJYU5HaXVvTHFnZmZRb0dqeFFzSl9QVF9kSi01ZVJWQWJMam9hZFNVRDIwQmQ3WHVCUC1KMUtLRlNwQThBaEZxam53V1JJQXhWTmRycERJQQ?oc=5",
+      "title": "Action taken after Provo school staff failed to call 911 after client left unconscious - FOX 13 News Utah",
+      "origin": "google-news",
+      "host": "fox13now.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13now.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxNejd0OVBNdm9ZUXBZTXVMTEdxeVFkU1Z1T2h2a3FuOUc0NGRXOVZIYnhSaDUzS3MwdVIzeGg2OFVNVlEybUFZdmNGMy1UX0ZXNUt5QUl6dlRsNFk2MUV4eVpDeWZ3LW5YRU1LN1RQODRmbHhpaW9zREtId243V05pOFRYYzlOdHNlS2VyRWVKalJtNm5KRnhOS2dCd29Ddw?oc=5",
+      "title": "Dyess volunteers looking for RV ahead of Ben Richey ChiliBowl Cookoff - KTXS",
+      "origin": "google-news",
+      "host": "ktxs.com",
+      "facilityQuery": "Ben Richey’s Boys Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ktxs.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPa3lIMkoyWDNqRzltRTZxUXlYWERFME90aFlhS3E5NldVVW9FMUxaVzg4NFFENHNzazc1RW9jTGYyNF9FNm5VdXc2ODlLLXB1T2F5OHozcGJWZEQzMnNHRGI5bHNockVyc3Zjang1S2NwVzdLRDRVRXhfd2hTNGJudDc1aVl4VzRIZ05hWU1sTQ?oc=5",
+      "title": "Hope reborn as Angel of Hope Rehab welcomes 8th intake - Herald.co.zw",
+      "origin": "google-news",
+      "host": "heraldonline.co.zw",
+      "facilityQuery": "Sanctuary of Hope",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "heraldonline.co.zw"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5pbjk3QWVyZHBVck0tS3FQaFlqU0RTdmNaaXZaQjFpM0RBWnM1djN6S2VRaWg3NTdxeHI1UzBFeEVXT0phQmxBdlpnSGxEcDByRjlGOTBnTzhwZ0dW?oc=5",
+      "title": "Why illegal children's homes are being paid up to £2m per child by councils - BBC",
+      "origin": "google-news",
+      "host": "bbc.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "bbc.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE02eC1kREIzQUpiN2tiMUowbjE2SlNscGh6UWtQVldtR1p6Y1lJM0h1VXdDTURub2l4c1F2aGVFcVRIcFZHbnA2TDBrdE43N1JCUzhDcloxNFlnSDRYNWE4ZzBqMXV2ZTJmdm9fa1NB?oc=5",
+      "title": "Austin College SEPA students to work with local nonprofits - North Texas e-News",
+      "origin": "google-news",
+      "host": "ntxe-news.com",
+      "facilityQuery": "Open Arms Shelter",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ntxe-news.com"
+      }
+    },
+    {
+      "ts": "2026-06-06T08:23:36.268Z",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPd2xKRDR1eDJoazIzLUlYX3ROOFRUTU1XQVR5SjR3TkJWSEprbmxQN1FjdnY5ZVFsVHh6eWZpcTdETkxPQk9ra19LX1loVW83eFZwbGxhdU8tUVVwUjhkT18xOTRNY2JCd2VDbEFsYzNfYnRFUlVCM2NiQU1BUEF1MExMYS1mZERzdUVsMktrM3BNRG9LdkFpckJ0MmFlWmM?oc=5",
+      "title": "Featured Local Job: Registered Nurse - exploreClarion",
+      "origin": "google-news",
+      "host": "exploreclarion.com",
+      "facilityQuery": "Abraxas I",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "exploreclarion.com"
+      }
+    },
     {
       "ts": "2026-06-04T08:56:33.921Z",
       "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTFBiQi03Zm1jTzE5MWgwaWphb1RmV0NUZDhEcGtyRnJhWnVpZ3VBQjBNN3E1VVVQZEcyekVIeEtkaFpnT01IZFhFQ19lZ1lFZ3hPV0p5SnBJSE83Z3hGLTgtQ2pKY0dpX1o5S2RFdUZVU2EwZ1c3VFRJS9IBfkFVX3lxTE90LUlxYllaVGpTM1Rob2JqMS1HXzVyU19vZnpfOXJQMmkteV94dGxUUWJ5M1BMRmJxZ2tEY0hMLWRyZm4yVnVfMzNnaTJKbGdnZTE4VVZKbnVIRXdMYnNPanY2SzJOVmdqS0J5MVozRVAxSDk1NW9GRWN0NUVtdw?oc=5",
