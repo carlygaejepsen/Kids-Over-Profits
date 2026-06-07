@@ -2174,127 +2174,25 @@ function parseWikiMarkdown(markdown) {
         }
     }
 
-    // Collect unparsed sections
-    const parsedSectionTitles = [
-        'History and Background Information',
-        'History/Background Information',
-        'Hisory and Background Information',
-        'History and Bakcground Information',
-        'Background Information',
-        'Founders and Notable Staff',
-        'Staff',
-        'Notable Staff',
-        'Founders',
-        'Founders and Leadership',
-        'Founders and Notable Employees',
-        'Founders & Notable Employees',
-        'Founder & Notable Staff',
-        'Founders & Notable Staff',
-        'Notable Employees',
-        'WWASP Owners and Staff',
-        'Founders and Important People',
-        'Founders and Notable Figures',
-        'Founders & Notable Members',
-        'Founders and Employees',
-        'Program Structure',
-        'Structure',
-        'Program Model',
-        'Level System',
-        'Level Systems',
-        'Phase System',
-        'Phases',
-        'Program Phases',
-        'Program Structure & Rules',
-        'Seminar Structure',
-        'Abuse/Neglect Allegations and Lawsuits',
-        'Abuse Allegations',
-        'Abuse/Neglect Allegations',
-        'Allegations and Lawsuits',
-        'Abuse Allegations and Lawsuits',
-        'Abuse Allegations and Death',
-        'Abuse Allegations, Lawsuits, and Death',
-        'Abuse Allegations, Deaths, and Lawsuits',
-        'Abuse Allegations and Investigations',
-        'Abuse Allegations and Rebranding',
-        'Abuse and Closure',
-        'Abuse, Deaths, and Investigations',
-        'Abuse and Investigations',
-        'Abuse and Death',
-        'Abuse and Lawsuits',
-        'Abuse, Rebrands, and the Fire',
-        'Abuse Allegations and Red Flags',
-        'Abuse',
-        'Abuse and Violence',
-        'Controversy, Abuse, and Deaths',
-        'Abuse/Neglect Allegations',
-        'Abuse and Neglect Allegations',
-        'Rules and Punishments',
-        'Rules & Punishments',
-        'Rules',
-        'Punishments',
-        'Rules and Consequences',
-        'In the Media & News',
-        'In the Media',
-        'Media & News',
-        'Media and News',
-        'News',
-        'In the Media',
-        'Survivor/Parent Testimonials',
-        'Survivor Testimonials',
-        'Survivor Testimonies',
-        'Testimonies',
-        'Survivor Accounts',
-        'Survivor Stories',
-        'Survivor/Parent/Ex-Staff Testimonies',
-        'Survivor/Parent Testimonies',
-        'Related Media',
-        'Related Media (Links)',
-        'Related Links',
-        'External Links',
-        'Related External Resources',
-        'Lingo',
-        'Terminology',
-        'Program Lingo',
-        'CEDU Lingo/Terminology',
-        'Abuse and Closure',
-        'Closure',
-        'Closure and Rebranding',
-        'Deaths in Aspen Education Group Programs',
-        'Deaths in WWASP Programs',
-        'Deaths',
-        'The Death of Taylor Goodridge',
-        'WWASP Program Red Flags',
-        'Red Flags',
-        'Controversies',
-        'WWASP Programs',
-        'WWASP-Affiliated/WWASP Spin-Off Programs',
-        'Active Teen Challenge Programs',
-        'Closed Teen Challenge Program',
-        'CEDU Programs',
-        'CEDU Spin-off Programs',
-        'Open Acadia Teen Residential Programs',
-        'Closed Acadia Teen Residential Programs',
-        'Open Aspen Education Group Programs',
-        'Closed Aspen Education Group Programs',
-        'Open Sequel Programs',
-        'Closed Sequel Programs',
-        'Active Programs in Utah',
-        'Closed Programs in Utah',
-        'Active Programs in California',
-        'Closed Programs in California',
-        'Related Programs',
-        'Affiliated Programs',
-        'Active Programs',
-        'Closed Programs',
-        'Essential Information',
-        'Groups/Workshops',
-        'Groups',
-        'Workshops',
-        'Locations',
-        'Facilities',
-        'Campuses',
-        'Page title'
-    ];
+
+    // Decide which "## ..." sections were actually consumed into a field/array,
+    // so anything left over (e.g. a separate "Closure and Rebranding", "Deaths",
+    // or "Controversies" section) is preserved in unparsedContent rather than
+    // silently dropped. We compare normalized CONTENT against the section bodies
+    // captured above. This replaces the old static title allow-list, which marked
+    // unhandled-but-listed titles (like "Closure") as "parsed" and dropped them,
+    // and which could also drop a real section that merely shared a title keyword
+    // with one already consumed elsewhere.
+    const normForOverlap = (s) => String(s || '')
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+        .toLowerCase()
+        .replace(/[*_`#>~]/g, '')
+        .replace(/[^a-z0-9]+/g, ' ')
+        .trim();
+    const consumedBodies = [
+        historySection, staffSection, structureSection, abuseSection, rulesSection,
+        mediaSection, testimoniesSection, relatedMediaSection, locationSection, programTableSections
+    ].map(normForOverlap).filter(body => body.length > 20);
 
     // Split markdown into sections
     // Lookahead: next ## header, standalone *** or --- separator, or end of string
@@ -2305,12 +2203,11 @@ function parseWikiMarkdown(markdown) {
     while ((match = sectionPattern.exec(normalizedMarkdown)) !== null) {
         const sectionTitle = match[1].trim();
         const sectionContent = match[2].trim();
+        const normContent = normForOverlap(sectionContent);
 
-        // Check if this section was parsed
-        const wasParsed = parsedSectionTitles.some(title =>
-            sectionTitle.toLowerCase().includes(title.toLowerCase()) ||
-            title.toLowerCase().includes(sectionTitle.toLowerCase())
-        );
+        // Already handled if this section's content is contained in a body we
+        // consumed (equal to it, or a sub-part of it).
+        const wasParsed = !normContent || consumedBodies.some(body => body.includes(normContent));
 
         if (!wasParsed && sectionContent && !sectionContent.includes('No information is known')) {
             unparsedSections.push(`## ${sectionTitle}\n${sectionContent}`);
@@ -2352,339 +2249,6 @@ function parseWikiMarkdown(markdown) {
     }
 
     return parsedData;
-}
-
-/**
- * Generate markdown from parsed data structure
- * Reconstructs the wiki entry from form field data
- * @param {object} data - Parsed data structure with all form fields
- * @returns {string} - Markdown text that can be saved back to wiki
- */
-function generateWikiMarkdown(data) {
-    const lines = [];
-
-    // Header with program name, years, and location
-    if (data.programName) {
-        const yearsActive = data.yearsActive ? ` (${data.yearsActive})` : '';
-        const cityState = data.cityState ? ` ${data.cityState}` : '';
-        lines.push(`## **${data.programName}**${yearsActive}${cityState}\n`);
-    }
-
-    // Program type
-    if (data.programType) {
-        lines.push(`*${data.programType}*\n`);
-    }
-
-    // History and Background Information
-    if (
-        data.yearFounded || data.ownerName || data.ageRange || 
-        data.selectedDiagnoses.length > 0 || data.customDiagnoses ||
-        data.capacity || data.campusSize || data.avgStay || data.tuition ||
-        data.natsapMember || data.mainAddress || data.accreditingBody ||
-        data.ownershipChanges.length > 0
-    ) {
-        lines.push('## History and Background Information\n');
-
-        // Build history paragraph
-        let historyText = '';
-
-        if (data.yearFounded) {
-            historyText += `Founded in ${data.yearFounded}. `;
-        }
-
-        if (data.ownerName) {
-            if (data.ownerLink) {
-                historyText += `Is a [${data.ownerName}](${data.ownerLink}) program. `;
-            } else {
-                historyText += `Owned/operated by ${data.ownerName}. `;
-            }
-        }
-
-        if (data.ownershipChanges.length > 0) {
-            data.ownershipChanges.forEach(change => {
-                if (change.previous && change.previousLink) {
-                    historyText += `Prior to being purchased by ${change.newOwner} in ${change.year}, was owned by [${change.previous}](${change.previousLink}). `;
-                } else if (change.previous) {
-                    historyText += `Prior to being purchased by ${change.newOwner} in ${change.year}, was owned by ${change.previous}. `;
-                } else if (change.newOwnerLink) {
-                    historyText += `In ${change.year}, was purchased by [${change.newOwner}](${change.newOwnerLink}). `;
-                } else {
-                    historyText += `In ${change.year}, was purchased by ${change.newOwner}. `;
-                }
-            });
-        }
-
-        if (data.ageRange) {
-            historyText += `Serves ages ${data.ageRange}. `;
-        }
-
-        // Generate advertised student profile
-        if (data.selectedDiagnoses.length > 0 || data.customDiagnoses) {
-            const allProfileItems = [...data.selectedDiagnoses];
-            
-            // Add custom profile items
-            if (data.customDiagnoses) {
-                const customItems = data.customDiagnoses.split(',').map(d => d.trim()).filter(Boolean);
-                allProfileItems.push(...customItems);
-            }
-            
-            if (allProfileItems.length > 0) {
-                historyText += `Marketed for students who struggle with a variety of challenges such as ${allProfileItems.join(', ')}. `;
-            }
-        }
-
-        if (data.capacity) {
-            historyText += `Maximum enrollment: ${data.capacity}. `;
-        }
-
-        if (data.campusSize) {
-            historyText += `Campus size: ${data.campusSize}. `;
-        }
-
-        if (data.avgStay) {
-            historyText += `Average length of stay: ${data.avgStay}. `;
-        }
-
-        if (data.tuition) {
-            historyText += `Tuition: ${data.tuition}. `;
-        }
-
-        if (data.natsapMember) {
-            if (data.natsapMember === 'yes' && data.natsapYear) {
-                historyText += `NATSAP member since ${data.natsapYear}. `;
-            } else if (data.natsapMember === 'yes') {
-                historyText += `Is a current NATSAP member. `;
-            } else if (data.natsapMember === 'former') {
-                historyText += `Is a former NATSAP member. `;
-            }
-        }
-
-        if (data.mainAddress) {
-            if (data.addressLink) {
-                historyText += `Located at [${data.mainAddress}](${data.addressLink}). `;
-            } else {
-                historyText += `Located at ${data.mainAddress}. `;
-            }
-        }
-
-        if (data.accreditingBody) {
-            if (data.accreditingBodyLink) {
-                historyText += `Accredited through the [${data.accreditingBody}](${data.accreditingBodyLink}). `;
-            } else {
-                historyText += `Accredited through ${data.accreditingBody}. `;
-            }
-        }
-
-        if (data.rebrand) {
-            if (data.rebrandLink) {
-                historyText += `Believed to be a rebrand of [${data.rebrand}](${data.rebrandLink}). `;
-            } else {
-                historyText += `Believed to be a rebrand of ${data.rebrand}. `;
-            }
-        }
-
-        if (data.affiliations && data.affiliations.length > 0) {
-            const affLinks = data.affiliations.map(aff => {
-                return aff.link ? `[${aff.name}](${aff.link})` : aff.name;
-            });
-            historyText += `Affiliated with ${affLinks.join(', ')}. `;
-        }
-
-        if (historyText) {
-            lines.push(historyText.trim() + '\n');
-        }
-    }
-
-    // Staff section
-    if (data.staffMembers && data.staffMembers.length > 0) {
-        lines.push('## Founders and Notable Staff\n');
-        data.staffMembers.forEach(staff => {
-            let staffLine = `**${staff.name}** `;
-            if (staff.role) {
-                staffLine += `is ${staff.role}`;
-            }
-            if (staff.bio) {
-                // Ensure bio starts with proper spacing
-                let bio = staff.bio.trim();
-                // If we have a role, add a period if needed
-                if (staff.role && !staffLine.endsWith('.')) {
-                    staffLine += '.';
-                }
-                // Add bio with space
-                if (staff.role) {
-                    staffLine += ` ${bio}`;
-                } else {
-                    // If no role, bio might start with "is" or other verb
-                    staffLine += bio;
-                }
-            }
-            lines.push(staffLine);
-        });
-        lines.push('');
-    }
-
-    // Program Structure section
-    if (data.programLevels && data.programLevels.length > 0) {
-        lines.push('## Program Structure\n');
-
-        if (data.levelSystemDesc) {
-            lines.push(`The program ${data.levelSystemDesc}.\n`);
-        }
-
-        data.programLevels.forEach(level => {
-            // Output format: - **Level Name:** Description
-            lines.push(`- **${level.name}:** ${level.description}`);
-        });
-        lines.push('');
-    }
-
-    // Punishments section (if separate) or add to Program Structure
-    if (data.punishments && data.punishments.length > 0) {
-        if (!data.programLevels || data.programLevels.length === 0) {
-            lines.push('## Punishments\n');
-        } else {
-            // Add punishments to existing Program Structure section
-            lines.push('');  // Add spacing
-        }
-        data.punishments.forEach(punishment => {
-            lines.push(`There is also a level called **${punishment.name}** ${punishment.description}`);
-        });
-        lines.push('');
-    }
-
-    // Rules section
-    if (data.rules && data.rules.length > 0) {
-        lines.push('## Rules\n');
-        data.rules.forEach(rule => {
-            lines.push(`- ${rule}`);
-        });
-        lines.push('');
-    }
-
-    // Allegations and Lawsuits
-    if (
-        data.mainComplaints || data.selectedAllegations.length > 0 || 
-        data.customAllegations || data.lawsuits.length > 0
-    ) {
-        lines.push('## Abuse/Neglect Allegations and Lawsuits\n');
-
-        if (data.mainComplaints) {
-            lines.push(`Main complaints are of ${data.mainComplaints}.\n`);
-        }
-
-        // Generate allegations list from selected common + custom
-        if (data.selectedAllegations.length > 0 || data.customAllegations) {
-            const allAllegations = [...data.selectedAllegations];
-            
-            // Add custom allegations
-            if (data.customAllegations) {
-                const customItems = data.customAllegations.split(',').map(a => a.trim()).filter(Boolean);
-                allAllegations.push(...customItems);
-            }
-            
-            if (allAllegations.length > 0) {
-                lines.push('Allegations of abuse and neglect that have been reported by survivors include ' + 
-                    allAllegations.join(', ') + '.\n');
-            }
-        }
-
-        // Add lawsuits/incidents
-        if (data.lawsuits && data.lawsuits.length > 0) {
-            data.lawsuits.forEach(lawsuit => {
-                // Extract year from name if it starts with a year
-                const yearMatch = lawsuit.name.match(/^(\d{4})/);
-                if (yearMatch) {
-                    lines.push(`In ${yearMatch[1]}, ${lawsuit.description}`);
-                } else {
-                    lines.push(`**${lawsuit.name}**: ${lawsuit.description}`);
-                }
-                lines.push('');
-            });
-        }
-    }
-
-    // Media & News
-    if (data.newsArticles && data.newsArticles.length > 0) {
-        lines.push('## In the Media & News\n');
-        data.newsArticles.forEach(article => {
-            lines.push(`- [${article.title}](${article.url})`);
-        });
-        lines.push('');
-    }
-
-    // Testimonies
-    if (data.testimonies && data.testimonies.length > 0) {
-        lines.push('## Survivor/Parent Testimonials\n');
-        data.testimonies.forEach(testimony => {
-            let testimonyLine = '';
-            if (testimony.date && testimony.type) {
-                testimonyLine = `**${testimony.date}: (${testimony.type})**`;
-            }
-            if (testimony.quote) {
-                testimonyLine += ` "${testimony.quote}"`;
-            }
-            if (testimony.source) {
-                if (testimony.url) {
-                    testimonyLine += ` – [${testimony.source}](${testimony.url})`;
-                } else {
-                    testimonyLine += ` – ${testimony.source}`;
-                }
-            }
-            if (testimonyLine) {
-                lines.push(testimonyLine);
-            }
-        });
-        lines.push('');
-    }
-
-    // Campuses
-    if (data.campuses && data.campuses.length > 0) {
-        lines.push('## Locations\n');
-        data.campuses.forEach(campus => {
-            let campusLine = `**${campus.name}**`;
-            if (campus.location) campusLine += ` - ${campus.location}`;
-            if (campus.yearsActive) campusLine += ` (${campus.yearsActive})`;
-            lines.push(campusLine);
-        });
-        lines.push('');
-    }
-
-    // Related Programs Table
-    if (data.relatedPrograms && data.relatedPrograms.length > 0) {
-        lines.push('## Related Programs\n');
-        lines.push('|** Program Name**|** Years Active**|** Location**|** HEAL Information**|** Reopened?**|');
-        lines.push('|---|---|---|---|---|');
-        data.relatedPrograms.forEach(prog => {
-            let line = `| [** ${prog.name}**](${prog.link}) | ${prog.yearsActive} | ${prog.location} | `;
-            line += prog.healLink ? `[HEAL](${prog.healLink})` : 'N/A';
-            line += ` | ${prog.reopened || '-'} |`;
-            lines.push(line);
-        });
-        lines.push('');
-    }
-
-    // Related Media
-    if (data.relatedMedia && data.relatedMedia.length > 0) {
-        lines.push('## Related Media\n');
-        data.relatedMedia.forEach(media => {
-            let mediaLine = `[${media.title}](${media.url})`;
-            if (media.source && media.date) {
-                mediaLine += ` (${media.source}, ${media.date})`;
-            } else if (media.source) {
-                mediaLine += ` (${media.source})`;
-            }
-            lines.push(mediaLine);
-        });
-        lines.push('');
-    }
-
-    // Unparsed content (preserve anything we couldn't parse)
-    if (data.unparsedContent) {
-        lines.push(data.unparsedContent);
-        lines.push('');
-    }
-
-    return lines.join('\n').trim();
 }
 
 /**
@@ -2787,12 +2351,15 @@ function getLookupTables() {
 }
 
 // Export for use in other modules
+// NOTE: generateWikiMarkdown intentionally lives only in wiki-generation.js.
+// This module previously shipped a second, divergent copy whose output depended
+// on script load order; callers must use the wiki-generation.js version so there
+// is a single source of truth.
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { parseWikiMarkdown, generateWikiMarkdown, getLookupTables, findLookupMatches, sanitizeUrl };
+    module.exports = { parseWikiMarkdown, getLookupTables, findLookupMatches, sanitizeUrl };
 } else if (typeof window !== 'undefined') {
     // Expose to global scope for browser usage
     window.parseWikiMarkdown = parseWikiMarkdown;
-    window.generateWikiMarkdown = generateWikiMarkdown;
     window.getLookupTables = getLookupTables;
     window.findLookupMatches = findLookupMatches;
     window.sanitizeUrl = sanitizeUrl;

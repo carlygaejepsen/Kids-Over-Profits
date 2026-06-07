@@ -160,8 +160,12 @@ function generateWikiMarkdown(formData) {
     const ensureBoldNameSpacing = (text) => {
         if (!text) return text;
         return text
-            .replace(/\*\*\s+([^*]+?)\s*\*\*/g, '**$1**')
-            .replace(/\*\*([^*]+)\*\*([^\s*])/g, '**$1** $2');
+            // Collapse padding INSIDE a single bold span: "**  Name  **" -> "**Name**".
+            // The body must stay on one line ([^*\n]) so this can't latch onto a
+            // closing "**" and run through the "\n\n" separating two staff entries
+            // (which previously merged them into a run-on paragraph).
+            .replace(/\*\*[ \t]+([^*\n]+?)[ \t]*\*\*/g, '**$1**')
+            .replace(/\*\*([^*\n]+)\*\*([^\s*])/g, '**$1** $2');
     };
 
     const getFirstSentence = (text) => {
@@ -198,7 +202,7 @@ function generateWikiMarkdown(formData) {
     const addRoleArticle = (text) => {
         const trimmed = (text || '').trim();
         if (!trimmed) return '';
-        if (/^(?:the|a|an|one of|co-?founder|founder|in)\b/i.test(trimmed)) {
+        if (/^(?:the|a|an|one of|in)\b/i.test(trimmed)) {
             return trimmed;
         }
         return `the ${trimmed}`;
@@ -377,8 +381,12 @@ function generateWikiMarkdown(formData) {
         structuredHistory = historySentences.join('\n\n');
     }
 
-    const historyNotesText = (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes))
-        ? formData.historyNotes.trim()
+    // The parser writes imported History prose to `historyMisc`; the browser editor
+    // bridges it onto `historyNotes`, but headless callers (batch import,
+    // regenerate-from-record) may not — so fall back to `historyMisc` here.
+    const historyNotes = formData.historyNotes || formData.historyMisc;
+    const historyNotesText = (historyNotes && !isEffectivelyEmpty(historyNotes))
+        ? historyNotes.trim()
         : '';
 
     if (historyNotesText && formData.historyNotesIsImported) {
@@ -718,6 +726,13 @@ function generateWikiMarkdown(formData) {
         relatedMediaSection = getPlaceholder('Related Media', programName);
     }
 
+    // --- Build Additional Sections ---
+    // Sections the parser couldn't map to a known field (e.g. "Closure and
+    // Rebranding", "Deaths", "Controversies") are preserved verbatim in
+    // unparsedContent so they aren't silently dropped on a parse->generate
+    // round-trip. Bold their headers to match the rest of the page.
+    const additionalSections = formatUnparsedSections(formData.unparsedContent);
+
     // --- Assemble Final Output ---
     const headerLine = `# **${escapeMarkdown(programName)}** (${formData.yearsActive || '[Years Active]'}) ${formData.cityState || '[City, ST]'}`;
 
@@ -769,7 +784,7 @@ ${testimoniesSection}
 
 ***
 
-${relatedProgramsSection}## **Related Media**
+${relatedProgramsSection}${additionalSections}## **Related Media**
 
 ${relatedMediaSection}
     `;
@@ -870,8 +885,12 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         structuredHistory = historySentences.filter(Boolean).join('\n\n');
     }
 
-    const historyNotesText = (formData.historyNotes && !isEffectivelyEmpty(formData.historyNotes))
-        ? formData.historyNotes.trim()
+    // The parser writes imported History prose to `historyMisc`; the browser editor
+    // bridges it onto `historyNotes`, but headless callers (batch import,
+    // regenerate-from-record) may not — so fall back to `historyMisc` here.
+    const historyNotes = formData.historyNotes || formData.historyMisc;
+    const historyNotesText = (historyNotes && !isEffectivelyEmpty(historyNotes))
+        ? historyNotes.trim()
         : '';
 
     if (historyNotesText && formData.historyNotesIsImported) {
@@ -1071,6 +1090,9 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         relatedMediaSection = getPlaceholder('Related Media', programName);
     }
 
+    // Preserve sections the parser couldn't map to a known field (see facility path).
+    const additionalSections = formatUnparsedSections(formData.unparsedContent);
+
     const headerLine = formData.yearsActive
         ? `# **${escapeMarkdown(programName)}**(${formData.yearsActive})`
         : `# **${escapeMarkdown(programName)}**`;
@@ -1105,7 +1127,7 @@ ${mediaSection}
 
 ***
 
-## **Related Media**
+${additionalSections}## **Related Media**
 
 ${relatedMediaSection}
     `;
@@ -1177,6 +1199,20 @@ function buildLawsuitSentence(lawsuit, programName, outcomeLabels) {
     }
 
     return sentence;
+}
+
+// Format sections the parser captured into `unparsedContent` (titles it couldn't
+// map to a known field) for inclusion in generated output. Each is preserved
+// verbatim; headers are bolded ("## Title" -> "## **Title**") to match the page
+// style, and a trailing separator is added so it slots cleanly between sections.
+function formatUnparsedSections(raw) {
+    const text = String(raw || '').trim();
+    if (!text) return '';
+    const bolded = text
+        .replace(/^#{1,6}\s*\*{0,2}\s*(.+?)\s*\*{0,2}\s*$/gm, '## **$1**')
+        // Ensure a blank line between a header and the body that follows it.
+        .replace(/^(## \*\*.+\*\*)\n(?=\S)/gm, '$1\n\n');
+    return `${bolded}\n\n***\n\n`;
 }
 
 function getPlaceholder(category, programName) {
