@@ -124,6 +124,9 @@
                 category = (category || 'companies').toLowerCase();
 
                 if (category === 'company') category = 'companies';
+                // 'operators' is an edit-only view of company projects — treat any
+                // project mistakenly tagged that way as a company so it still shows.
+                if (category === 'operator' || category === 'operators') category = 'companies';
                 if (category === 'location' || category === 'states') category = 'locations';
                 if (category === 'referrer') category = 'referrers';
                 if (category === 'transporter') category = 'transporters';

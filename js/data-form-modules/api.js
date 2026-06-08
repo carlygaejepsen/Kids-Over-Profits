@@ -328,6 +328,12 @@
                     const activeTab = document.querySelector('.category-tab.active');
                     category = activeTab ? activeTab.dataset.category : 'companies';
                 }
+                // The Operators tab is an edit-only VIEW of company projects, not a
+                // real data category. Never persist 'operators' — it would route/
+                // categorize the project wrong and drop it from the companies list.
+                if (category === 'operators' || category === 'operator') {
+                    category = 'companies';
+                }
             }
 
             let canonicalProjectName = projectName;
