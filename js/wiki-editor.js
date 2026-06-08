@@ -761,7 +761,12 @@ document.addEventListener('DOMContentLoaded', () => {
             affiliations,
             relatedPrograms,
             selectedDiagnoses,
-            selectedAllegations
+            selectedAllegations,
+            // Thread imported-but-unparsed sections (e.g. "Closure and Rebranding")
+            // through to the generator, which places them just before Related Media.
+            // (The generator owns placement now; see the removed manual append in
+            // updateMarkdownFromForm.)
+            unparsedContent: window.unparsedContentFromImport || ''
         };
     }
 
@@ -1654,10 +1659,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Append unparsed content
-        if (window.unparsedContentFromImport && window.unparsedContentFromImport.trim()) {
-            output += '\n\n***\n\n' + window.unparsedContentFromImport;
-        }
+        // NOTE: unparsed/imported sections are now emitted by the generator
+        // (threaded via formData.unparsedContent), positioned just before Related
+        // Media. The old append-at-the-end of window.unparsedContentFromImport was
+        // removed so it no longer lands after Related Media (or duplicates it).
 
         if (outputCode) {
             outputCode.value = output.trim();
