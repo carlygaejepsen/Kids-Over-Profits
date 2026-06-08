@@ -2038,7 +2038,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (rules.length > 0) {
-            renderList(rules, 'ruleListOutput', item => escapeHtml(item));
+            renderList(rules, 'ruleListOutput', item => escapeHtml(item.name || item));
             console.log(`✓ Loaded ${rules.length} rules`);
         }
 
@@ -2069,7 +2069,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (testimonies.length > 0) {
             renderList(testimonies, 'testimonyListOutput', item => {
                 const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
-                return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source)}]`;
+                return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml((item.quote || '').substring(0, 30))}... [${escapeHtml(item.source || 'Unknown')}]`;
             });
         }
 
@@ -2404,7 +2404,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             entryType: parsedEntryType
                         }),
                         originalMarkdown: content,
-                        generatedMarkdown: content, // Store original as generated for now
+                        // Store the FORMATTED generator output, not the raw source.
+                        // (parsedData carries historyMisc + the *IsImported flags +
+                        // unparsedContent, which the generator reads directly.)
+                        generatedMarkdown: generateWikiMarkdown(parsedData),
                         submittedBy: 'bulk-upload',
                         submissionNotes: `Bulk uploaded from file: ${file.name}`
                     };
