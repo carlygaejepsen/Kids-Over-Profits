@@ -253,10 +253,18 @@ class TTIProgramAutoLinker {
             const searchTerm = program.searchTerm;
             if (searchTerm.length < minWordLength) return;
 
+            // Acronyms (e.g. "KIDS", "CEDU", "CAR") are stored lowercased in the
+            // index but are only ever written in CAPS in prose. Matching them
+            // case-insensitively turns common words into bogus links ("kids" ->
+            // KIDS Centers, "car" -> Crossroads Academy). So for acronym entries,
+            // require an exact uppercase, case-sensitive match.
+            const isAcronym = program.matchType === 'acronym';
+
             // Create regex for finding this term
             // Use word boundaries to avoid partial matches within words
-            const flags = caseSensitive ? 'g' : 'gi';
-            const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const flags = (caseSensitive || isAcronym) ? 'g' : 'gi';
+            const termForPattern = isAcronym ? searchTerm.toUpperCase() : searchTerm;
+            const escapedTerm = termForPattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const pattern = new RegExp(`\\b${escapedTerm}\\b`, flags);
 
             let match;
