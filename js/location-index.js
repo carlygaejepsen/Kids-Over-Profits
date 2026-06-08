@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!notes.length) return '';
         if (usedKeys && matchedKey) usedKeys.add(matchedKey);
         const noteText = notes.map(n => escapeHtml(n)).join('; ');
-        return `<div class="field-note-inline"><span class="field-note-label">Note:</span> ${noteText}</div>`;
+        return `<div class="field-note-inline">${noteText}</div>`;
     };
 
     const renderDetailSection = (title, content, extraClass = '') => {
@@ -448,21 +448,6 @@ document.addEventListener('DOMContentLoaded', function() {
             notes.push(...matchedNotes);
         });
         return collectUniqueTexts(notes);
-    };
-
-    const renderRemainingFieldNotes = (fieldNotes, usedKeys) => {
-        if (!fieldNotes || typeof fieldNotes !== 'object') return '';
-        const items = [];
-        Object.keys(fieldNotes).forEach(key => {
-            if (usedKeys && usedKeys.has(key)) return;
-            const notes = getNotesForKey(fieldNotes, key);
-            if (!notes.length) return;
-            const label = formatFieldLabel(key);
-            notes.forEach(text => { items.push({ label, text }); });
-        });
-        if (!items.length) return '';
-        const list = items.map(({ label, text }) => `<li><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</li>`).join('');
-        return renderDetailSection('Additional Notes', `<ul>${list}</ul>`, 'facility-field-notes');
     };
 
     // --- Fetch Data ---
@@ -696,12 +681,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 const currentOwners = collectUniqueTexts(
                     getValueFromKeys(facility, ['identification.currentOwners', 'currentOwners', 'current_owners', 'identification.currentOwner', 'currentOwner', 'current_owner'])
                 );
+                const previousOwners = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.previousOwners', 'previousOwners', 'previous_owners', 'identification.previousOwner', 'previousOwner', 'previous_owner', 'identification.formerOwners', 'formerOwners', 'former_owners', 'identification.formerOwner', 'formerOwner', 'former_owner'])
+                );
+
+                // Some records place historical ownership phrases inside
+                // current-owner fields. Reclassify those values to avoid
+                // misleading "Owned by" copy.
+                const currentOwnerList = [];
+                const previousOwnerList = [...previousOwners];
+                currentOwners.forEach(owner => {
+                    const ownerText = cleanText(owner);
+                    if (!ownerText) return;
+                    if (/\b(previously|former(?:ly)?|prior)\b/i.test(ownerText)) {
+                        previousOwnerList.push(ownerText.replace(/^\s*(previously|formerly|former|prior)\b[\s:;,-]*/i, '').trim() || ownerText);
+                    } else {
+                        currentOwnerList.push(ownerText);
+                    }
+                });
                 const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
 
                 let subtextParts = [];
                 if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
                 if (otherNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
-                if (currentOwners.length > 0) subtextParts.push(`Owned by: ${escapeHtml(currentOwners.join(', '))}`);
+                const uniqueCurrentOwners = collectUniqueTexts(currentOwnerList);
+                const uniquePreviousOwners = collectUniqueTexts(previousOwnerList);
+                if (uniqueCurrentOwners.length > 0) subtextParts.push(`Owned by: ${escapeHtml(uniqueCurrentOwners.join(', '))}`);
+                if (uniquePreviousOwners.length > 0) subtextParts.push(`Previously owned by: ${escapeHtml(uniquePreviousOwners.join(', '))}`);
                 if (currentOp && !isValueEmpty(currentOp)) {
                     if (statusClass === 'transferred' || statusClass === 'acquired') {
                         subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);
@@ -740,11 +746,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     ageDisplay = `Up to ${ageMaxValue}`;
                 }
 
+                const typeFactNotes = consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.type, usedFieldNoteKeys);
+                const ageFactNotes = collectUniqueTexts(
+                    consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.ageRangeText, usedFieldNoteKeys),
+                    consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.ageMin, usedFieldNoteKeys),
+                    consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.ageMax, usedFieldNoteKeys)
+                );
+                const genderFactNotes = consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.gender, usedFieldNoteKeys);
+                const capacityFactNotes = consumeFieldNotesForKeys(fieldNotes, facilityFieldKeys.capacity, usedFieldNoteKeys);
+
                 const factItems = [];
-                if (!isValueEmpty(typeValue)) factItems.push({ label: 'Type', value: escapeHtml(typeValue) });
-                if (ageDisplay) factItems.push({ label: 'Ages', value: escapeHtml(ageDisplay) });
-                if (!isValueEmpty(genderValue)) factItems.push({ label: 'Gender', value: escapeHtml(toTitleCase(genderValue)) });
-                if (!isValueEmpty(capacityValue)) factItems.push({ label: 'Capacity', value: escapeHtml(String(capacityValue)) });
+                if (!isValueEmpty(typeValue)) factItems.push({ label: 'Type', value: escapeHtml(typeValue), note: typeFactNotes.join('; ') });
+                if (ageDisplay) factItems.push({ label: 'Ages', value: escapeHtml(ageDisplay), note: ageFactNotes.join('; ') });
+                if (!isValueEmpty(genderValue)) factItems.push({ label: 'Gender', value: escapeHtml(toTitleCase(genderValue)), note: genderFactNotes.join('; ') });
+                if (!isValueEmpty(capacityValue)) factItems.push({ label: 'Capacity', value: escapeHtml(String(capacityValue)), note: capacityFactNotes.join('; ') });
 
                 const factsHtml = factItems.length
                     ? renderDetailSection(
@@ -754,6 +769,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="facility-fact">
                                     <span class="facility-fact-label">${item.label}</span>
                                     <span class="facility-fact-value">${item.value}</span>
+                                    ${item.note ? `<span class="facility-fact-note">${escapeHtml(item.note)}</span>` : ''}
                                 </div>
                             `).join('')
                         }</div>`,
@@ -816,6 +832,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     'identification.pastNames', 'pastNames',
                     'identification.formerNames', 'formerNames',
                     'identification.currentOperator', 'currentOperator', 'current_operator',
+                    'identification.currentOwner', 'identification.currentOwners',
+                    'identification.current_owner', 'identification.current_owners',
+                    'identification.currentOwnership', 'identification.current_ownership',
                     'currentOwner', 'currentOwners', 'current_owner', 'current_owners',
                     'currentOwnership', 'current_ownership',
                     'location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address',
@@ -838,12 +857,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!key || typeof key !== 'string') return false;
                     if (suppressedFieldKeys.has(key)) return true;
                     const lower = key.toLowerCase();
+                    // Ownership keys are shown in header subtext; suppress every nested variant.
+                    if (/(^|\.)(current_?owners?|current_?owner|current_?ownership|previous_?owners?|previous_?owner|former_?owners?|former_?owner)$/.test(lower)) return true;
                     // Broken-out address components duplicate the location in the header
                     if (/(^|\.)address_?parts\./.test(lower)) return true;
                     // Location-detail sub-fields that duplicate the header location
                     if (/^(locationdetails|location_details)\.(city|state|country|zip|zip_?code|postal_?code|street|address|county|lat(itude)?|lng|long(itude)?)$/.test(lower)) return true;
                     // Internal database identifiers, slugs, and timestamps
-                    if (/(^|\.)(facility_?id|location_?id|referrer_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
+                    if (/(^|\.)(facility_?id|location_?id|referrer_?id|source_?project_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
                     return false;
                 };
 
@@ -878,6 +899,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // The operator is already shown in the header subtext.
                         'sourceOperator', 'source_operator',
                         'sourceProject', 'source_project',
+                        'sourceProjectId', 'source_project_id',
                         'sourceCategory', 'source_category'
                     ];
                     Object.keys(obj).forEach(key => {
@@ -998,7 +1020,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${resourcesSectionHtml}
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
-                                    ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
                                 </div>
                             </details>
                         </div>
