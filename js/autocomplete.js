@@ -945,12 +945,10 @@ function createAutocomplete(input, getDataFunction, category) {
         }
 
         if (items.length === 0) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.className = 'autocomplete-item';
-            emptyDiv.textContent = 'No matches found';
-            emptyDiv.style.color = '#9ca3af';
-            emptyDiv.dataset.placeholder = 'true';
-            dropdown.appendChild(emptyDiv);
+            // Nothing to suggest. Don't pop an empty "No matches found" panel —
+            // on free-text fields (e.g. Other Names) it just covers the input the
+            // user is typing into. Keep the dropdown hidden instead.
+            hideDropdown();
             return;
         }
 
