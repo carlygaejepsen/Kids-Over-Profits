@@ -671,10 +671,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const formerNames = collectUniqueTexts(
                     getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
                 );
-                const formerNameKeys = new Set(formerNames.map(normalizeTextKey));
+                const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
+                const normalizedFormerNames = collectUniqueTexts(formerNames.map(cleanHeaderText));
+                const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
                 const otherNames = collectUniqueTexts(
                     getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
-                ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
+                ).map(cleanHeaderText).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
                 const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator', 'sourceOperator.name']);
                 // Current owner(s) for privately-owned facilities — suppressed from
                 // "More details", so surface here or they'd be hidden entirely.
@@ -690,9 +692,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 // misleading "Owned by" copy.
                 const currentOwnerList = [];
                 const previousOwnerList = [...previousOwners];
+                const legalNameAliases = [];
                 currentOwners.forEach(owner => {
                     const ownerText = cleanText(owner);
                     if (!ownerText) return;
+                    const legalNameMatch = ownerText.match(/\b(?:new\s+)?legal\s+name\b[\s:;,-]*(.+)$/i);
+                    if (legalNameMatch) {
+                        const alias = cleanHeaderText(legalNameMatch[1]);
+                        if (alias) legalNameAliases.push(alias);
+                        return;
+                    }
                     if (/\b(previously|former(?:ly)?|prior)\b/i.test(ownerText)) {
                         previousOwnerList.push(ownerText.replace(/^\s*(previously|formerly|former|prior)\b[\s:;,-]*/i, '').trim() || ownerText);
                     } else {
@@ -702,15 +711,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
 
                 let subtextParts = [];
-                if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
-                if (otherNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
+                if (normalizedFormerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(normalizedFormerNames.join(', '))}`);
+                const aliasNames = collectUniqueTexts(otherNames, legalNameAliases);
+                if (aliasNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(aliasNames.join(', '))}`);
                 const uniqueCurrentOwners = collectUniqueTexts(currentOwnerList);
                 const uniquePreviousOwners = collectUniqueTexts(previousOwnerList);
                 if (uniqueCurrentOwners.length > 0) subtextParts.push(`Owned by: ${escapeHtml(uniqueCurrentOwners.join(', '))}`);
                 if (uniquePreviousOwners.length > 0) subtextParts.push(`Previously owned by: ${escapeHtml(uniquePreviousOwners.join(', '))}`);
                 if (currentOp && !isValueEmpty(currentOp)) {
                     if (statusClass === 'transferred' || statusClass === 'acquired') {
-                        subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);
+                        subtextParts.push(`<strong>Operator at transfer: ${escapeHtml(currentOp)}</strong>`);
                     } else {
                         subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
                     }

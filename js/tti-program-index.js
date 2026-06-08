@@ -1024,10 +1024,12 @@ function displayFacilities(facilitiesData, containerId) {
             const formerNames = collectUniqueTexts(
                 getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
             );
-            const formerNameKeys = new Set(formerNames.map(normalizeTextKey));
+            const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
+            const normalizedFormerNames = collectUniqueTexts(formerNames.map(cleanHeaderText));
+            const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
             const otherNames = collectUniqueTexts(
                 getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
-            ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
+            ).map(cleanHeaderText).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
             const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
             // Current owner(s) — privately-owned facilities store this instead of a
             // corporate operator. These keys are suppressed from "More details", so
@@ -1044,9 +1046,16 @@ function displayFacilities(facilitiesData, containerId) {
             // entries so card copy reflects temporal context accurately.
             const currentOwnerList = [];
             const previousOwnerList = [...previousOwners];
+            const legalNameAliases = [];
             currentOwners.forEach(owner => {
                 const ownerText = cleanText(owner);
                 if (!ownerText) return;
+                const legalNameMatch = ownerText.match(/\b(?:new\s+)?legal\s+name\b[\s:;,-]*(.+)$/i);
+                if (legalNameMatch) {
+                    const alias = cleanHeaderText(legalNameMatch[1]);
+                    if (alias) legalNameAliases.push(alias);
+                    return;
+                }
                 if (/\b(previously|former(?:ly)?|prior)\b/i.test(ownerText)) {
                         previousOwnerList.push(ownerText.replace(/^\s*(previously|formerly|former|prior)\b[\s:;,-]*/i, '').trim() || ownerText);
                 } else {
@@ -1056,12 +1065,13 @@ function displayFacilities(facilitiesData, containerId) {
 
             let subtextParts = [];
 
-            if (formerNames.length > 0) {
-                subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
+            if (normalizedFormerNames.length > 0) {
+                subtextParts.push(`Formerly: ${escapeHtml(normalizedFormerNames.join(', '))}`);
             }
 
-            if (otherNames.length > 0) {
-                subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
+            const aliasNames = collectUniqueTexts(otherNames, legalNameAliases);
+            if (aliasNames.length > 0) {
+                subtextParts.push(`Also known as: ${escapeHtml(aliasNames.join(', '))}`);
             }
 
             const uniqueCurrentOwners = collectUniqueTexts(currentOwnerList);
@@ -1076,9 +1086,10 @@ function displayFacilities(facilitiesData, containerId) {
             }
 
             if (currentOp && !isValueEmpty(currentOp)) {
-                // If transferred, show current operator prominently
+                // For transferred/acquired records, avoid asserting this is the
+                // present-day operator because source data can be historical.
                 if (statusClass === 'transferred' || statusClass === 'acquired') {
-                    subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);
+                    subtextParts.push(`<strong>Operator at transfer: ${escapeHtml(currentOp)}</strong>`);
                 } 
                 // If open but listed under a different parent (historical context), might still be useful
                 else if (statusClass === 'open' && cleanText(operatorName) !== cleanText(currentOp)) {
