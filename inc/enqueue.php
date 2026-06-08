@@ -1406,11 +1406,19 @@ function enqueue_tti_processor_scripts() {
         );
     }
 
+    wp_enqueue_script(
+        'kop-facility-merge',
+        $theme_uri . '/js/facility-merge.js',
+        array(),
+        file_exists($theme_dir . '/js/facility-merge.js') ? filemtime($theme_dir . '/js/facility-merge.js') : time(),
+        true
+    );
+
     // Unified display script (shows all database fields) - standalone, no dependencies
     wp_enqueue_script(
         'tti-program-index-script',
         $theme_uri . '/js/tti-program-index.js',
-        array('jquery'),
+        array('jquery', 'kop-facility-merge'),
         file_exists($theme_dir . '/js/tti-program-index.js') ? filemtime($theme_dir . '/js/tti-program-index.js') : time(),
         true
     );

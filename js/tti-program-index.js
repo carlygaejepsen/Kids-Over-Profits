@@ -398,54 +398,29 @@ function displayFacilities(facilitiesData, containerId) {
         `;
     };
 
-    const getProjectData = project => {
-        let projectData = (project && project.data && typeof project.data === 'object') ? project.data : project;
-        let unwrapGuard = 0;
-        while (projectData
-            && typeof projectData === 'object'
-            && !projectData.operator
-            && !projectData.facilities
-            && projectData.data
-            && typeof projectData.data === 'object'
-            && unwrapGuard < 2
-        ) {
-            projectData = projectData.data;
-            unwrapGuard += 1;
-        }
-        return projectData;
-    };
+    const mergeToolkit = window.KOPFacilityMerge;
+    if (!mergeToolkit || typeof mergeToolkit.createApi !== 'function') {
+        console.error('KOPFacilityMerge helper is missing. Include js/facility-merge.js before js/tti-program-index.js.');
+        container.innerHTML = '<p>Error loading facility merge helpers.</p>';
+        return;
+    }
 
-    const isOperatorLike = project => {
-        const projectData = getProjectData(project);
-        return !!(projectData && typeof projectData === 'object' && (projectData.operator || projectData.facilities));
-    };
+    const mergeApi = mergeToolkit.createApi({
+        toArray,
+        cleanText,
+        isValueEmpty,
+        normalizeTextKey,
+        getFacilityDisplayName,
+        getValueFromKeys,
+    });
 
-    const normalizeProjectCategory = project => {
-        if (!project || typeof project !== 'object') {
-            return 'unknown';
-        }
+    const getProjectData = mergeToolkit.getProjectData;
+    const isOperatorCategory = mergeToolkit.isOperatorCategory;
+    const isLocationCategory = mergeToolkit.isLocationCategory;
 
-        const operatorLike = isOperatorLike(project);
-
-        let rawCategory = '';
-        if (typeof project.category === 'string' && project.category) {
-            rawCategory = project.category;
-        } else if (project.data && typeof project.data === 'object' && typeof project.data.category === 'string' && project.data.category) {
-            rawCategory = project.data.category;
-        }
-
-        if (!rawCategory) {
-            return operatorLike ? 'companies' : 'unknown';
-        }
-
-        return rawCategory.toLowerCase();
-    };
-
-    const isOperatorCategory = project => {
-        if (!isOperatorLike(project)) return false;
-        const category = normalizeProjectCategory(project);
-        return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
-    };
+    const buildLocationFacilityMap = projects => mergeApi.buildCategoryFacilityMapById(projects, isLocationCategory);
+    const mergeAndDedupeFacilities = (rawFacilities, locationFacilitiesById) =>
+        mergeApi.mergeAndDedupeFacilities(rawFacilities, locationFacilitiesById);
 
     // --- FileBird document-library matching (shared by operator + facility cards) ---
     // Find the FileBird folder that best matches a given name. Operators match
@@ -527,7 +502,10 @@ function displayFacilities(facilitiesData, containerId) {
     let operatorGroups = [];
     if (facilitiesData && facilitiesData.projects) {
         // Handle new JSON structure
-        const operatorProjects = Object.values(facilitiesData.projects).filter(isOperatorCategory);
+        const allProjects = Object.values(facilitiesData.projects)
+            .filter(project => project && typeof project === 'object');
+        const locationFacilitiesById = buildLocationFacilityMap(allProjects);
+        const operatorProjects = allProjects.filter(isOperatorCategory);
 
         const seenOperatorKeys = new Set();
 
@@ -550,7 +528,10 @@ function displayFacilities(facilitiesData, containerId) {
                 unwrapGuard += 1;
             }
             const operator = projectData.operator || {};
-            const facilities = toArray(projectData.facilities);
+            const facilities = mergeAndDedupeFacilities(
+                projectData.facilities,
+                locationFacilitiesById
+            );
 
             // Corporate-chain filter: a parent company is identified by
             //   (1) a populated operator name, AND
@@ -610,8 +591,6 @@ function displayFacilities(facilitiesData, containerId) {
         const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
         const rawFacilities = toArray(operatorGroup && operatorGroup.facilities).slice();
 
-        // Deduplicate facilities by name
-        const seenFacilityNames = new Set();
         const facilities = rawFacilities.filter(f => {
             if (!f) return false;
             // Enhanced name check for deduplication
@@ -639,10 +618,7 @@ function displayFacilities(facilitiesData, containerId) {
                 if (corporateNames.includes(strippedName)) return false;
             }
 
-            const nameKey = normalizeTextKey(name);
-            if (!nameKey || seenFacilityNames.has(nameKey)) return false;
-            seenFacilityNames.add(nameKey);
-            return true;
+            return !!normalizeTextKey(name);
         });
 
         // Check if this is a privately owned facility (has isPrivatelyOwned flag set)

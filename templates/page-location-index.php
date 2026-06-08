@@ -82,6 +82,7 @@ window.locationIndexConfig = {
 </script>
 
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/document-library.js?v=<?php echo time(); ?>"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/facility-merge.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/location-index.js?v=<?php echo time(); ?>"></script>
 
 <?php

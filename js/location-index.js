@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return matchingFolder;
     };
 
-    // --- Helper Functions (Copied from tti-program-index.js) ---
+    // --- Shared utility helpers for rendering ---
 
     const toArray = value => Array.isArray(value) ? value : [];
 
@@ -341,6 +341,30 @@ document.addEventListener('DOMContentLoaded', function() {
         'identification.name', 'identification.currentName',
         'name', 'programName', 'facilityName', 'title'
     ]) || '';
+
+    const mergeToolkit = window.KOPFacilityMerge;
+    if (!mergeToolkit || typeof mergeToolkit.createApi !== 'function') {
+        console.error('KOPFacilityMerge helper is missing. Include js/facility-merge.js before js/location-index.js.');
+        document.getElementById(containerId).innerHTML = '<p>Error loading facility merge helpers.</p>';
+        return;
+    }
+
+    const mergeApi = mergeToolkit.createApi({
+        toArray,
+        cleanText,
+        isValueEmpty,
+        normalizeTextKey,
+        getFacilityDisplayName,
+        getValueFromKeys,
+    });
+
+    const getProjectData = mergeToolkit.getProjectData;
+    const isOperatorCategory = mergeToolkit.isOperatorCategory;
+    const isLocationCategory = mergeToolkit.isLocationCategory;
+    const buildCategoryFacilityMapById = (projects, predicate) =>
+        mergeApi.buildCategoryFacilityMapById(projects, predicate);
+    const mergeAndDedupeFacilities = (rawFacilities, facilitiesById) =>
+        mergeApi.mergeAndDedupeFacilities(rawFacilities, facilitiesById);
 
     const sortFacilitiesAlphabetically = facilities => toArray(facilities)
         .slice()
@@ -490,35 +514,22 @@ document.addEventListener('DOMContentLoaded', function() {
         processData(projects);
     }
 
-    const dedupeFacilities = facilities => {
-        const seen = new Set();
-        const unique = [];
-        toArray(facilities).forEach(facility => {
-            if (!facility) return;
-            const key = normalizeTextKey(getFacilityDisplayName(facility));
-            // Keep unnamed facilities (no reliable key) rather than collapsing them into one.
-            if (key && seen.has(key)) return;
-            if (key) seen.add(key);
-            unique.push(facility);
-        });
-        return unique;
-    };
-
     function processData(projects) {
         // Merge duplicate location projects (e.g. a "Utah" row in locations_master
         // plus a "Utah" aggregate derived from facilities_master) into a single
-        // entry keyed by normalized name, then dedupe their combined facilities.
+        // entry keyed by normalized name, then enrich/dedupe facilities via shared
+        // facility_id merge logic from KOPFacilityMerge.
         const locationMap = new Map();
+        const projectList = Object.values(projects).filter(project => project && typeof project === 'object');
+        const operatorFacilitiesById = buildCategoryFacilityMapById(projectList, isOperatorCategory);
 
-        Object.values(projects).forEach(project => {
+        projectList.forEach(project => {
             if (!project || !project.name) return;
-            const category = project.category || (project.data && project.data.category) || 'companies';
-
-            let isLocation = category === 'locations';
+            let isLocation = isLocationCategory(project);
             if (!isLocation && US_STATES.has(project.name.toUpperCase())) isLocation = true;
             if (!isLocation) return;
 
-            const pData = project.data || project;
+            const pData = getProjectData(project);
             const facilities = toArray(pData.facilities);
             if (facilities.length === 0) return;
 
@@ -540,7 +551,9 @@ document.addEventListener('DOMContentLoaded', function() {
         allLocations = Array.from(locationMap.values()).map(loc => ({
             name: loc.name,
             type: loc.type,
-            facilities: sortFacilitiesAlphabetically(dedupeFacilities(loc.facilities))
+            facilities: sortFacilitiesAlphabetically(
+                mergeAndDedupeFacilities(loc.facilities, operatorFacilitiesById)
+            )
         }));
 
         allLocations.sort((a, b) => compareDisplayText(a.name, b.name));
