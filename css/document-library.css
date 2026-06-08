@@ -341,7 +341,8 @@
     border-bottom: 3px solid var(--kop-teal);
 }
 
-/* Nested subfolder sections (facility document views with merge=name) */
+/* Nested subfolder sections (facility document views with merge=name).
+   Rendered as collapsible <details>/<summary> so visitors can drill down. */
 .doc-subfolder {
     margin-top: 18px;
     padding-left: 16px;
@@ -353,10 +354,42 @@
     font-weight: 700;
     color: var(--kop-text-primary);
     margin-bottom: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    list-style: none;
+    user-select: none;
+}
+
+/* Replace the native disclosure triangle with a chevron that rotates open */
+.doc-subfolder-title::-webkit-details-marker {
+    display: none;
+}
+
+.doc-subfolder-title::before {
+    content: '\25B8'; /* ▸ */
+    color: var(--kop-teal);
+    transition: transform 0.2s ease;
+    flex: 0 0 auto;
+}
+
+.doc-subfolder[open] > .doc-subfolder-title::before {
+    transform: rotate(90deg);
+}
+
+.doc-subfolder-title:hover {
+    color: var(--kop-teal);
 }
 
 .doc-subfolder-title .folder-icon {
-    margin-right: 4px;
+    margin-right: 2px;
+}
+
+.doc-subfolder-count {
+    font-weight: 500;
+    font-size: 0.85em;
+    color: var(--kop-text-secondary);
 }
 
 .doc-subfolder-content > .doc-list {

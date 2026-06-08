@@ -176,15 +176,37 @@ function kop_register_facilities_rest_routes() {
                         
                         // FileBird API returns {success: true, data: {folders: [...]}}
                         if (isset($data['success']) && $data['success'] && isset($data['data']['folders'])) {
-                            // Transform to match our expected format
-                            $folders = array_map(function($folder) {
-                                return array(
-                                    'id' => $folder['id'],
-                                    'name' => $folder['text'],
-                                    'parent' => $folder['li_attr']['data-parent'] ?? '0'
-                                );
-                            }, $data['data']['folders']);
-                            
+                            // FileBird may return the tree either as a flat list
+                            // (hierarchy in `parent`/`li_attr.data-parent`) or as a
+                            // nested structure (each folder carries a `children`
+                            // array). Flatten recursively so subfolders — e.g. the
+                            // per-program folders nested under an operator — are
+                            // always surfaced, not just the top level.
+                            $flatten = function ($nodes, $parent_id = '0') use (&$flatten) {
+                                $out = array();
+                                foreach ((array) $nodes as $folder) {
+                                    if (!is_array($folder) || !isset($folder['id'])) {
+                                        continue;
+                                    }
+                                    $parent = $folder['li_attr']['data-parent']
+                                        ?? ($folder['parent'] ?? $parent_id);
+                                    $out[] = array(
+                                        'id' => $folder['id'],
+                                        'name' => $folder['text'] ?? '',
+                                        'parent' => (string) $parent,
+                                    );
+                                    if (!empty($folder['children']) && is_array($folder['children'])) {
+                                        $out = array_merge(
+                                            $out,
+                                            $flatten($folder['children'], (string) $folder['id'])
+                                        );
+                                    }
+                                }
+                                return $out;
+                            };
+
+                            $folders = $flatten($data['data']['folders']);
+
                             return rest_ensure_response($folders);
                         }
                     }

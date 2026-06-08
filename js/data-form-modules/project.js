@@ -44,7 +44,7 @@
                 location: "", locationCity: "", locationState: "",
                 headquarters: "", headquartersCity: "", headquartersState: "",
                 founded: "", operatingPeriod: "", status: "", parentCompanies: [],
-                websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
+                websites: [], investors: [], owners: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
                 notes: [], fieldNotes: {}
             },
             facilities: [{
@@ -121,7 +121,11 @@
         }
         
         projectName = resolvedName;
-        const projectCategory = determineProjectCategory(projectName);
+        // When the Operators (edit-only) view is active, stay in it and edit the
+        // operator fields rather than jumping to the project's own category tab.
+        const operatorsViewActive = document.querySelector('.category-tab.active')?.dataset.category === 'operators'
+            && determineProjectCategory(projectName) === 'companies';
+        const projectCategory = operatorsViewActive ? 'operators' : determineProjectCategory(projectName);
         debugLog('📂 Project category:', projectCategory);
 
         const targetTab = document.querySelector(`.category-tab[data-category="${projectCategory}"]`);

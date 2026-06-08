@@ -280,7 +280,12 @@ function displayFacilities(facilitiesData, containerId) {
         const partsState = getValueFromKeys(obj, ['addressParts.state', 'address_parts.state', 'locationDetails.state', 'location_details.state']);
         const zip = getValueFromKeys(obj, ['addressParts.zip', 'address_parts.zip', 'addressParts.zipcode', 'address_parts.zipcode', 'locationDetails.zip', 'location_details.zip', 'postalCode', 'postal_code', 'zip', 'zipcode']);
 
-        const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        // A populated free-text address is the most complete value we have (it
+        // typically already includes street + city + state + zip), so it wins over
+        // the bare "City, ST" location string. Listing `location` first here used
+        // to mask street addresses stored in `address`.
+        const fullAddress = getValueFromKeys(obj, ['fullAddress', 'full_address', 'address']);
+        const loc = getValueFromKeys(obj, ['location', 'cityState', 'city_state', 'hq_location', 'headquarters']);
         const city = partsCity || getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
         const state = partsState || getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
 
@@ -294,6 +299,7 @@ function displayFacilities(facilitiesData, containerId) {
             const cityStateZip = [city, [state, zip].filter(Boolean).join(' ').trim()].filter(Boolean).join(', ');
             return [street, cityStateZip, countrySuffix].filter(Boolean).join(', ');
         }
+        if (fullAddress) return countrySuffix ? [fullAddress, countrySuffix].filter(Boolean).join(', ') : fullAddress;
         if (loc) return countrySuffix ? [loc, countrySuffix].filter(Boolean).join(', ') : loc;
         if (city && state) return [`${city}, ${state}`, countrySuffix].filter(Boolean).join(', ');
         return [city || state, countrySuffix].filter(Boolean).join(', ') || null;
@@ -439,6 +445,78 @@ function displayFacilities(facilitiesData, containerId) {
         if (!isOperatorLike(project)) return false;
         const category = normalizeProjectCategory(project);
         return category === 'operators' || category === 'operator' || category === 'companies' || category === 'company';
+    };
+
+    // --- FileBird document-library matching (shared by operator + facility cards) ---
+    // Find the FileBird folder that best matches a given name. Operators match
+    // their parent folder (e.g. "Family Help & Wellness"); facilities match the
+    // program subfolder nested beneath it.
+    const findMatchingFolder = rawName => {
+        if (!window.filebirdFolders || !Array.isArray(window.filebirdFolders)) return null;
+        const name = cleanText(rawName).toLowerCase().trim();
+        if (!name) return null;
+
+        // Build parent lookup map lazily (once across all cards)
+        if (!window.filebirdFolderMap) {
+            window.filebirdFolderMap = {};
+            window.filebirdFolders.forEach(f => { window.filebirdFolderMap[String(f.id)] = f; });
+        }
+
+        const normalize = s => s.replace(/[^\w\s]/g, '').trim();
+        const normName = normalize(name);
+
+        try {
+            // 1. Exact match
+            let match = window.filebirdFolders.find(f => f.name && f.name.toLowerCase().trim() === name);
+            // 2. Normalized match
+            if (!match) {
+                match = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()) === normName);
+            }
+            // 3. Folder name contains target name
+            if (!match && normName.length > 6) {
+                match = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()).includes(normName));
+            }
+            // 4. Target name contains folder name
+            if (!match) {
+                match = window.filebirdFolders.find(f => {
+                    if (!f.name) return false;
+                    const nf = normalize(f.name.toLowerCase());
+                    return nf.length > 6 && normName.includes(nf);
+                });
+            }
+            // 5. Parent + child path match (subfolders organized under an operator)
+            if (!match && window.filebirdFolderMap) {
+                match = window.filebirdFolders.find(f => {
+                    if (!f.name) return false;
+                    const parentId = String(f.parent || '0');
+                    if (parentId === '0') return false;
+                    const parent = window.filebirdFolderMap[parentId];
+                    if (!parent || !parent.name) return false;
+                    const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
+                        .split(/\s+/)
+                        .filter(w => w.length > 2);
+                    if (pathWords.length < 2) return false;
+                    return pathWords.every(word => normName.includes(word));
+                });
+            }
+            return match || null;
+        } catch (e) {
+            console.warn('[KOP] Folder matching error for "' + name + '":', e);
+            return null;
+        }
+    };
+
+    const buildDocLibraryHtml = (folder, extraClass) => {
+        if (!folder) return '';
+        const cls = extraClass ? ' ' + extraClass : '';
+        return `
+            <div class="field-row full-width-grid facility-document-row${cls}" id="documents-${folder.id}" data-documents-container="true">
+                <span class="field-value doc-library-btn-wrap">
+                    <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${folder.id}" data-container-id="documents-${folder.id}">
+                        📂 View Document Library
+                    </button>
+                </span>
+            </div>`;
     };
 
     // --- Main Rendering Logic ---
@@ -634,6 +712,8 @@ function displayFacilities(facilitiesData, containerId) {
             headquarters: ['headquarters', 'hq_location', 'location', 'address'],
             founded: ['founded', 'yearFounded', 'year_founded'],
             parentCompanies: ['parentCompanies', 'parent_companies', 'parentCompany', 'parent_company', 'parents'],
+            investors: ['investors', 'investor', 'investmentFirms', 'investment_firms'],
+            owners: ['owners', 'owner', 'currentOwners', 'currentOwner', 'current_owners', 'current_owner', 'ownership', 'ownershipStructure', 'ownership_structure'],
             websites: ['websites', 'website', 'links', 'profileLinks', 'urls'],
             founders: ['keyStaff.founders', 'founders'],
             ceo: ['keyStaff.ceo', 'ceo', 'chiefExecutiveOfficer', 'chief_executive_officer'],
@@ -723,18 +803,36 @@ function displayFacilities(facilitiesData, containerId) {
             )
             : '';
 
-        const parentCompanyItems = normalizeDisplayItems(
-            getValueFromKeys(operator, operatorFieldKeys.parentCompanies),
+        // Parent-company profiles surface their investors and owners instead of
+        // a "parent companies" section (they ARE the parent company, so listing a
+        // parent above them is misleading — see the FHW/CEDU mix-up).
+        const investorItems = normalizeDisplayItems(
+            getValueFromKeys(operator, operatorFieldKeys.investors),
             true
         ).map(item => renderItemOp(item)).filter(Boolean);
 
-        const operatorParentCompaniesHtml = parentCompanyItems.length
+        const operatorInvestorsHtml = investorItems.length
             ? renderDetailSection(
-                'Parent companies',
+                'Investors',
                 `<div class="resource-chip-list">${
-                    parentCompanyItems.map(item => `<span class="resource-chip">${item}</span>`).join('')
+                    investorItems.map(item => `<span class="resource-chip">${item}</span>`).join('')
                 }</div>`,
-                'operator-parent-companies-section'
+                'operator-investors-section'
+            )
+            : '';
+
+        const ownerItems = normalizeDisplayItems(
+            getValueFromKeys(operator, operatorFieldKeys.owners),
+            true
+        ).map(item => renderItemOp(item)).filter(Boolean);
+
+        const operatorOwnersHtml = ownerItems.length
+            ? renderDetailSection(
+                'Owners',
+                `<div class="resource-chip-list">${
+                    ownerItems.map(item => `<span class="resource-chip">${item}</span>`).join('')
+                }</div>`,
+                'operator-owners-section'
             )
             : '';
 
@@ -798,6 +896,8 @@ function displayFacilities(facilitiesData, containerId) {
             'operatingPeriod.startYear', 'operatingPeriod.endYear',
             'operating_period.start_year', 'operating_period.end_year',
             ...operatorFieldKeys.parentCompanies,
+            ...operatorFieldKeys.investors,
+            ...operatorFieldKeys.owners,
             ...operatorFieldKeys.websites,
             ...operatorFieldKeys.founders,
             ...operatorFieldKeys.ceo,
@@ -903,11 +1003,27 @@ function displayFacilities(facilitiesData, containerId) {
             )
             : '';
 
+        // Parent-company document library: match a FileBird folder by the
+        // operator name. This is typically the top-level operator folder, so its
+        // library surfaces every document across the operator's program subfolders.
+        const operatorFolder = findMatchingFolder(
+            cleanText(operator.name) || cleanText(operator.currentName) || operatorName
+        );
+        const operatorDocLibraryHtml = operatorFolder
+            ? renderDetailSection(
+                'Documents',
+                buildDocLibraryHtml(operatorFolder, 'operator-document-row'),
+                'operator-documents-section'
+            )
+            : '';
+
         const operatorSectionsHtml = [
             operatorFactsHtml,
-            operatorParentCompaniesHtml,
+            operatorInvestorsHtml,
+            operatorOwnersHtml,
             operatorWebsitesHtml,
             operatorPeopleHtml,
+            operatorDocLibraryHtml,
             additionalOperatorDetailsHtml
         ].join('');
 
@@ -972,15 +1088,25 @@ function displayFacilities(facilitiesData, containerId) {
                 getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
             ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
             const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
-            
+            // Current owner(s) — privately-owned facilities store this instead of a
+            // corporate operator. These keys are suppressed from "More details", so
+            // surface them here or the owner info would be hidden entirely.
+            const currentOwners = collectUniqueTexts(
+                getValueFromKeys(facility, ['identification.currentOwners', 'currentOwners', 'current_owners', 'identification.currentOwner', 'currentOwner', 'current_owner'])
+            );
+
             let subtextParts = [];
-            
+
             if (formerNames.length > 0) {
                 subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
             }
 
             if (otherNames.length > 0) {
                 subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
+            }
+
+            if (currentOwners.length > 0) {
+                subtextParts.push(`Owned by: ${escapeHtml(currentOwners.join(', '))}`);
             }
 
             if (currentOp && !isValueEmpty(currentOp)) {
@@ -1309,86 +1435,9 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             });
 
-            // FileBird Document Matching (New)
-            let documentsHtml = '';
-            if (window.filebirdFolders && Array.isArray(window.filebirdFolders)) {
-                // Build parent lookup map lazily (once across all facilities)
-                if (!window.filebirdFolderMap) {
-                    window.filebirdFolderMap = {};
-                    window.filebirdFolders.forEach(f => { window.filebirdFolderMap[String(f.id)] = f; });
-                }
-
-                const facName = cleanText(facilityHeaderRaw).toLowerCase().trim();
-
-                // Normalize: remove punctuation, extra spaces
-                const normalize = s => s.replace(/[^\w\s]/g, '').trim();
-                const normFac = normalize(facName);
-                
-                // Debug matching for specific facilities (uncomment to debug globally)
-                // if (facName.includes('agape')) console.log(`Attempting match for: "${facName}" (norm: "${normFac}")`);
-
-                let matchingFolder = null;
-                try {
-                    // 1. Try Exact Match
-                    matchingFolder = window.filebirdFolders.find(f => f.name && f.name.toLowerCase().trim() === facName);
-
-                    // 2. Try Normalized Match
-                    if (!matchingFolder) {
-                        matchingFolder = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()) === normFac);
-                    }
-
-                    // 3. Try "Contains" — folder name contains facility name
-                    // e.g. Folder: "Agape Boarding School Documents", Fac: "Agape Boarding School"
-                    if (!matchingFolder && normFac.length > 6) {
-                        matchingFolder = window.filebirdFolders.find(f => {
-                            if (!f.name) return false;
-                            const normFolder = normalize(f.name.toLowerCase());
-                            return normFolder.includes(normFac);
-                        });
-                    }
-
-                    // 4. Try reverse contains — facility name contains folder name
-                    // e.g. Folder: "Teen Challenge", Fac: "Teen Challenge of the Carolinas"
-                    if (!matchingFolder) {
-                        matchingFolder = window.filebirdFolders.find(f => {
-                            if (!f.name) return false;
-                            const normFolder = normalize(f.name.toLowerCase());
-                            return normFolder.length > 6 && normFac.includes(normFolder);
-                        });
-                    }
-
-                    // 5. Try full path match for subfolders — all words in "parent + child" name appear in facility name
-                    // e.g. Parent: "Teen Challenge", Child: "Montana" → matches "Teen Challenge of Montana"
-                    if (!matchingFolder && window.filebirdFolderMap) {
-                        matchingFolder = window.filebirdFolders.find(f => {
-                            if (!f.name) return false;
-                            const parentId = String(f.parent || '0');
-                            if (parentId === '0') return false;
-                            const parent = window.filebirdFolderMap[parentId];
-                            if (!parent || !parent.name) return false;
-                            const pathWords = (normalize(parent.name.toLowerCase()) + ' ' + normalize(f.name.toLowerCase()))
-                                .split(/\s+/)
-                                .filter(w => w.length > 2);
-                            if (pathWords.length < 2) return false;
-                            return pathWords.every(word => normFac.includes(word));
-                        });
-                    }
-                } catch (e) {
-                    console.warn('[KOP] Folder matching error for facility "' + facName + '":', e);
-                }
-
-                if (matchingFolder) {
-                    // console.log(`MATCHED! Facility: "${facName}" -> Folder: "${matchingFolder.name}" (ID: ${matchingFolder.id})`);
-                    documentsHtml = `
-                        <div class="field-row full-width-grid facility-document-row" id="documents-${matchingFolder.id}" data-documents-container="true">
-                            <span class="field-value doc-library-btn-wrap">
-                                <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
-                                    📂 View Document Library
-                                </button>
-                            </span>
-                        </div>`;
-                }
-            }
+            // FileBird Document Matching — match this facility's program folder
+            // (often a subfolder nested under its operator's parent folder).
+            const documentsHtml = buildDocLibraryHtml(findMatchingFolder(facilityHeaderRaw));
 
             // Build resources available section
             let resourcesSectionHtml = '';
@@ -1490,6 +1539,29 @@ function displayFacilities(facilitiesData, containerId) {
             if (facLocation) searchParts.push(facLocation);
             const facilitySearchText = escapeAttribute(searchParts.join(' | '));
 
+            // Only render the "Learn more" disclosure when there's actually
+            // expanded content — otherwise empty facility cards show a button
+            // that opens to nothing.
+            const facilityExtraContent = [
+                factsHtml,
+                notesHtml,
+                newsSectionHtml,
+                resourcesSectionHtml,
+                documentsSectionHtml,
+                additionalDetailsHtml,
+                renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)
+            ].join('');
+            const hasExtraContent = facilityExtraContent.trim() !== '';
+
+            const facilityDetailsHtml = hasExtraContent
+                ? `<div class="facility-details">
+                        <details class="facility-expanded-info">
+                            <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                            <div class="facility-extra-content">${facilityExtraContent}</div>
+                        </details>
+                    </div>`
+                : '';
+
             html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-search="${facilitySearchText}" data-status="${statusClass}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
@@ -1500,20 +1572,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <span class="status-badge status-${statusClass}">${statusLabel}</span>
                         </p>` : ''}
                     </div>
-                    <div class="facility-details">
-                        <details class="facility-expanded-info">
-                            <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                            <div class="facility-extra-content">
-                                ${factsHtml}
-                                ${notesHtml}
-                                ${newsSectionHtml}
-                                ${resourcesSectionHtml}
-                                ${documentsSectionHtml}
-                                ${additionalDetailsHtml}
-                                ${renderRemainingFieldNotes(fieldNotes, usedFieldNoteKeys)}
-                            </div>
-                        </details>
-                    </div>
+                    ${facilityDetailsHtml}
                 </div>`;
         });
 

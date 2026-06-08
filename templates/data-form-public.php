@@ -830,6 +830,11 @@ get_header();
                             <label>Investors</label>
                             <div class="array-container" data-path="operator.investors"></div>
                         </div>
+
+                        <div class="form-group">
+                            <label>Owners</label>
+                            <div class="array-container" data-path="operator.owners" data-autocomplete-category="human"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1744,6 +1749,7 @@ get_header();
             ensureArray('operator.keyStaff.founders', operator.keyStaff?.founders, { ensureOne: true });
             ensureArray('operator.keyStaff.keyExecutives', operator.keyStaff?.keyExecutives, { ensureOne: true });
             ensureArray('operator.investors', operator.investors, { ensureOne: true });
+            ensureArray('operator.owners', operator.owners, { ensureOne: true });
         }, { once: true });
     </script>
 

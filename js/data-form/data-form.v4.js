@@ -1551,6 +1551,35 @@ function attachButtonListeners() {
         newBtnLocation.dataset.listenerAttached = 'true';
     }
 
+    // New Operator button (Operators edit-only view) — starts a blank parent-company
+    // project; the operator section is the first thing shown.
+    const newOperatorBtn = document.getElementById('new-operator-btn');
+    if (newOperatorBtn && !newOperatorBtn.dataset.listenerAttached) {
+        newOperatorBtn.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
+        newOperatorBtn.dataset.listenerAttached = 'true';
+    }
+
+    // Operators list client-side search (filters the rendered items by name).
+    const operatorsSearchInput = document.getElementById('operators-search-input');
+    if (operatorsSearchInput && !operatorsSearchInput.dataset.listenerAttached) {
+        operatorsSearchInput.addEventListener('input', () => {
+            const q = operatorsSearchInput.value.toLowerCase().trim();
+            const list = document.getElementById('operators-saved-projects-list');
+            if (!list) return;
+            list.querySelectorAll('.project-item').forEach(item => {
+                const nameEl = item.querySelector('.project-item-name');
+                const name = nameEl ? nameEl.textContent.toLowerCase() : '';
+                item.style.display = (!q || name.includes(q)) ? '' : 'none';
+            });
+        });
+        operatorsSearchInput.dataset.listenerAttached = 'true';
+    }
+
     const exportAllBtnLocation = document.getElementById('export-all-btn-location');
     if (exportAllBtnLocation && !exportAllBtnLocation.dataset.listenerAttached) {
         exportAllBtnLocation.onclick = () => {

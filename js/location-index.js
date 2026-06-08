@@ -358,7 +358,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const partsState = getValueFromKeys(obj, ['addressParts.state', 'address_parts.state', 'locationDetails.state', 'location_details.state']);
         const zip = getValueFromKeys(obj, ['addressParts.zip', 'address_parts.zip', 'addressParts.zipcode', 'address_parts.zipcode', 'locationDetails.zip', 'location_details.zip', 'postalCode', 'postal_code', 'zip', 'zipcode']);
 
-        const loc = getValueFromKeys(obj, ['location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address', 'hq_location', 'headquarters']);
+        // A populated free-text address is the most complete value we have (it
+        // typically already includes street + city + state + zip), so it wins over
+        // the bare "City, ST" location string. Listing `location` first here used
+        // to mask street addresses stored in `address`.
+        const fullAddress = getValueFromKeys(obj, ['fullAddress', 'full_address', 'address']);
+        const loc = getValueFromKeys(obj, ['location', 'cityState', 'city_state', 'hq_location', 'headquarters']);
         const city = partsCity || getValueFromKeys(obj, ['city', 'locationCity', 'location_city', 'headquartersCity', 'hq_city']);
         const state = partsState || getValueFromKeys(obj, ['state', 'locationState', 'location_state', 'headquartersState', 'hq_state', 'province']);
 
@@ -372,6 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const cityStateZip = [city, [state, zip].filter(Boolean).join(' ').trim()].filter(Boolean).join(', ');
             return [street, cityStateZip, countrySuffix].filter(Boolean).join(', ');
         }
+        if (fullAddress) return countrySuffix ? [fullAddress, countrySuffix].filter(Boolean).join(', ') : fullAddress;
         if (loc) return countrySuffix ? [loc, countrySuffix].filter(Boolean).join(', ') : loc;
         if (city && state) return [`${city}, ${state}`, countrySuffix].filter(Boolean).join(', ');
         return [city || state, countrySuffix].filter(Boolean).join(', ') || null;
@@ -672,11 +678,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
                 ).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
                 const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator', 'sourceOperator.name']);
+                // Current owner(s) for privately-owned facilities — suppressed from
+                // "More details", so surface here or they'd be hidden entirely.
+                const currentOwners = collectUniqueTexts(
+                    getValueFromKeys(facility, ['identification.currentOwners', 'currentOwners', 'current_owners', 'identification.currentOwner', 'currentOwner', 'current_owner'])
+                );
                 const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
 
                 let subtextParts = [];
                 if (formerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(formerNames.join(', '))}`);
                 if (otherNames.length > 0) subtextParts.push(`Also known as: ${escapeHtml(otherNames.join(', '))}`);
+                if (currentOwners.length > 0) subtextParts.push(`Owned by: ${escapeHtml(currentOwners.join(', '))}`);
                 if (currentOp && !isValueEmpty(currentOp)) {
                     if (statusClass === 'transferred' || statusClass === 'acquired') {
                         subtextParts.push(`<strong>Current Operator: ${escapeHtml(currentOp)}</strong>`);

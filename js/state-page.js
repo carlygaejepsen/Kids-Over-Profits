@@ -572,18 +572,29 @@
         }).join('')}</ul>`;
     };
 
+    // Total file count for a subfolder node, including nested subfolders.
+    const countTreeFiles = node => {
+        let total = Array.isArray(node && node.files) ? node.files.length : 0;
+        if (Array.isArray(node && node.subfolders)) {
+            node.subfolders.forEach(sf => { total += countTreeFiles(sf); });
+        }
+        return total;
+    };
+
     // Render a facility doc tree: the root's own files, then each subfolder as a
-    // labeled section, recursing into deeper subfolders.
+    // collapsible <details> section so visitors can drill down, recursing into
+    // deeper subfolders.
     const renderSubfolders = subs => {
         if (!Array.isArray(subs) || subs.length === 0) return '';
         return subs.map(sf => {
             const name = escapeHtml(sf.name || 'Folder');
             const files = Array.isArray(sf.files) ? sf.files : [];
+            const count = countTreeFiles(sf);
             const inner = (files.length ? renderFileGrid(files) : '') + renderSubfolders(sf.subfolders);
-            return `<div class="state-doc-subfolder">
-                        <div class="state-doc-subfolder-title">📁 ${name}</div>
-                        ${inner}
-                    </div>`;
+            return `<details class="state-doc-subfolder">
+                        <summary class="state-doc-subfolder-title">📁 ${name} <span class="state-doc-subfolder-count">(${count})</span></summary>
+                        <div class="state-doc-subfolder-content">${inner}</div>
+                    </details>`;
         }).join('');
     };
 

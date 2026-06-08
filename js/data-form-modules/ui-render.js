@@ -42,7 +42,11 @@
                 companies: document.getElementById('company-saved-projects-list'),
                 locations: document.getElementById('location-saved-projects-list'),
                 referrers: document.getElementById('referrer-saved-projects-list'),
-                transporters: document.getElementById('transporter-saved-projects-list')
+                transporters: document.getElementById('transporter-saved-projects-list'),
+                // Operators view: an edit-only list of the same parent-company
+                // projects (each carries the operator record). Populated below by
+                // aliasing the companies group.
+                operators: document.getElementById('operators-saved-projects-list')
             };
 
             const normalizeDisplayKey = (name, project) => {
@@ -108,7 +112,8 @@
                 companies: [],
                 locations: [],
                 referrers: [],
-                transporters: []
+                transporters: [],
+                operators: []
             };
 
             Object.entries(allProjects).forEach(([name, project]) => {
@@ -153,8 +158,15 @@
                 }
             });
 
+            // Operators view edits the same parent-company projects, so mirror the
+            // companies group into the operators list (a separate client-side
+            // search box on that panel filters the rendered items).
+            if (containers.operators) {
+                projectsByCategory.operators = projectsByCategory.companies.slice();
+            }
+
             // Admin check
-            const isAdmin = (window.KOP_FormConfig && window.KOP_FormConfig.DATA_FORM_CONFIG && window.KOP_FormConfig.DATA_FORM_CONFIG.isAdmin) || 
+            const isAdmin = (window.KOP_FormConfig && window.KOP_FormConfig.DATA_FORM_CONFIG && window.KOP_FormConfig.DATA_FORM_CONFIG.isAdmin) ||
                             (typeof window.FORM_MODE === 'string' && window.FORM_MODE === 'admin');
 
             // Render lists
@@ -995,12 +1007,16 @@
             // Set facility index
             window.currentFacilityIndex = 0;
 
-            // Switch to the correct category tab
-            const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', companies: 'companies' };
-            const tabCategory = categoryMap[projectData.category] || projectData.category;
-            const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
-            if (targetTab && !targetTab.classList.contains('active')) {
-                targetTab.click();
+            // Switch to the correct category tab — unless we're in the Operators
+            // (edit-only) view, where we stay put and just edit the operator fields.
+            const operatorsViewActive = document.querySelector('.category-tab.active')?.dataset.category === 'operators';
+            if (!operatorsViewActive) {
+                const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', companies: 'companies' };
+                const tabCategory = categoryMap[projectData.category] || projectData.category;
+                const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
+                if (targetTab && !targetTab.classList.contains('active')) {
+                    targetTab.click();
+                }
             }
 
             // Load the project data into the form

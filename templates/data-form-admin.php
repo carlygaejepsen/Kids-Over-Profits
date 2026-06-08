@@ -22,6 +22,7 @@ get_header();
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
                 <button type="button" class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
+                <button type="button" class="category-tab" data-category="operators">🏛️ Operators (Edit Only)</button>
                 <button type="button" class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
                 <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
                 <button type="button" class="category-tab" data-category="transporters">🚐 Transporters</button>
@@ -49,6 +50,30 @@ get_header();
                         </div>
                     </div>
                     <div id="upload-status" style="display: none;"></div>
+                </div>
+
+                <!-- Operators Content (edit a parent company's operator fields without the facility form) -->
+                <div id="operators-content" class="category-content view-hidden" data-section-views="operators">
+                    <div class="content-header">
+                        <h3>🏛️ Operators (Edit Only)</h3>
+                    </div>
+                    <div class="project-management">
+                        <p style="margin: 12px 0; color: #6b7280; font-size: 14px;">
+                            Pick an operator/parent company below to edit its details on their own — without stepping through the facility form. Facilities stay untouched; only the operator fields are shown. Use <strong>💾 Save to Master Database</strong> at the bottom to save.
+                        </p>
+                        <div class="form-group">
+                            <label>Operators</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="operators-search-input" class="input-form project-search-input" placeholder="🔍 Search operators by name..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div id="operators-saved-projects-list" style="max-height: 220px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
+                                <div style="color: #6b7280; font-style: italic;">No saved operators</div>
+                            </div>
+                        </div>
+                        <div class="project-actions">
+                            <button type="button" id="new-operator-btn" class="kop-btn project-action-btn">New Operator</button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- States Content -->
@@ -607,7 +632,7 @@ get_header();
         </div>
 
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar minimized" id="fixed-toolbar">
+        <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Admin Editor</strong>
@@ -647,7 +672,7 @@ get_header();
         </div>
 
         <!-- Facility Loader Panel -->
-        <div class="facility-loader-panel">
+        <div class="facility-loader-panel" data-section-views="companies,locations,referrers,transporters">
             <h2 id="quick-loader-heading">🏢 Jump to Facility</h2>
             <div class="form-group">
                 <label id="quick-loader-label">All Facilities in Current Project</label>
@@ -743,7 +768,7 @@ get_header();
         </div>
 
         <!-- Operator Information Section -->
-        <div class="section expanded" id="operator-section" data-section-views="companies,locations">
+        <div class="section expanded" id="operator-section" data-section-views="companies,locations,operators">
             <div class="section-header">
                 <h2 class="section-title">Parent Company Information</h2>
                 <span class="section-toggle">🔎</span>
@@ -854,6 +879,11 @@ get_header();
                 <div class="form-group">
                     <label>Investors</label>
                     <div class="array-container" data-path="operator.investors"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Owners</label>
+                    <div class="array-container" data-path="operator.owners" data-autocomplete-category="human"></div>
                 </div>
 
                 <div class="form-group">
@@ -1478,7 +1508,7 @@ get_header();
         </div>
 
         <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #1e40af; background: #f8fafc;">
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters,operators" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
             </div>

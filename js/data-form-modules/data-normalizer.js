@@ -30,7 +30,7 @@
                                 name: "",
                                 otherNames: [],
                                 profitStatus: "for-profit",
-                                websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] }, notes: [] },
+                                websites: [], investors: [], owners: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] }, notes: [] },
                 facilities: [],
                 referrerAgency: typeof createDefaultReferrerGroup === 'function' ? createDefaultReferrerGroup() : { name: "", affiliations: [], keyPersonnel: [], notes: "", fieldNotes: {} },
                 referrerConsultants: [typeof createDefaultReferrerIndividual === 'function' ? createDefaultReferrerIndividual() : { firstName: "", lastName: "", affiliations: [], facilitiesReferred: [], fieldNotes: {} }],
@@ -151,11 +151,12 @@
                 otherNames: ['otherNames', 'other_names', 'aliases', 'alternateNames'],
                 parentCompanies: ['parentCompanies', 'parent_companies', 'parents'],
                 websites: ['websites', 'Websites', 'urls'],
-                investors: ['investors', 'Investors']
+                investors: ['investors', 'Investors'],
+                owners: ['owners', 'Owners', 'currentOwners', 'current_owners']
             });
 
             // Normalize array fields to ensure they're arrays
-            ['otherNames', 'parentCompanies', 'websites', 'investors'].forEach(field => {
+            ['otherNames', 'parentCompanies', 'websites', 'investors', 'owners'].forEach(field => {
                 if (data.operator[field] && !Array.isArray(data.operator[field])) {
                     // Convert string to array
                     if (typeof data.operator[field] === 'string') {
@@ -608,7 +609,7 @@
             data.operator = {
                 name: "", currentName: "", otherNames: [], location: "", headquarters: "",
                 founded: "", operatingPeriod: "", status: "", parentCompanies: [],
-                websites: [], investors: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
+                websites: [], investors: [], owners: [], keyStaff: { ceo: "", founders: [], keyExecutives: [] },
                 notes: []
             };
         }

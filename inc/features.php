@@ -694,7 +694,8 @@ function kop_render_doc_file_list($attachments, $layout = 'grid') {
 
 /**
  * Render nested subfolder nodes (from kop_build_facility_doc_tree) as a set of
- * labeled sections, recursing into deeper subfolders.
+ * collapsible <details> sections so visitors can drill down into the folder
+ * tree, recursing into deeper subfolders.
  */
 function kop_render_doc_subfolders($nodes, $layout = 'grid') {
     if (empty($nodes)) {
@@ -702,13 +703,18 @@ function kop_render_doc_subfolders($nodes, $layout = 'grid') {
     }
     $html = '';
     foreach ($nodes as $node) {
+        $count = count($node['attachments'])
+               + (function_exists('kop_count_facility_doc_tree')
+                    ? kop_count_facility_doc_tree($node['children'])
+                    : 0);
         $inner = kop_render_doc_file_list($node['attachments'], $layout)
                . kop_render_doc_subfolders($node['children'], $layout);
-        $html .= '<div class="doc-subfolder">'
-               . '<div class="doc-subfolder-title"><span class="folder-icon">📁</span> '
-               . esc_html($node['name']) . '</div>'
+        $html .= '<details class="doc-subfolder">'
+               . '<summary class="doc-subfolder-title"><span class="folder-icon">📁</span> '
+               . esc_html($node['name'])
+               . ' <span class="doc-subfolder-count">(' . (int) $count . ')</span></summary>'
                . '<div class="doc-subfolder-content">' . $inner . '</div>'
-               . '</div>';
+               . '</details>';
     }
     return $html;
 }
