@@ -14,8 +14,6 @@ Before a resident was able to be enrolled at Carlbrook, they first had to comple
 
 Carlbrook School is widely recognized as having been modelled off of the program used at the** confirmedly abusive** and now-closed [Cascade School](https://www.reddit.com/r/troubledteens/wiki/index/cascade) . The Cascade School was a [CEDU](https://www.reddit.com/r/troubledteens/wiki/index/cedu) program that closed in 2003. Both of Carlbrook's founders, Justin Merritt and Grant Price, were sent to Cascade as teenagers in the mid-80s, and many former Cascade staff went on to work at Carlbrook after Cascade's closure. In addition, the program structure used at Carlbrook is nearly identical to the program used by Cascade, including the multi-day workshops and "smushing" (forced cuddling between both students and staff)
 
-In 2021, a former Carlbrook resident, Elizabeth Gilpin, published a memoir called '[Stolen](https://www.amazon.com/Stolen-Memoir-Elizabeth-Gilpin-ebook/dp/B08MZT413D) ' detailing her horrific experience during the two years she spent at the program. The memoir was very well-received, making it onto several websites' lists of "must-read" books.
-
 ---
 
 ## ** Founders and Notable Staff**
