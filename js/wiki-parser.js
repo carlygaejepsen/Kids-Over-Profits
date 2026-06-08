@@ -2192,7 +2192,7 @@ function parseWikiMarkdown(markdown) {
     const consumedBodies = [
         historySection, staffSection, structureSection, abuseSection, rulesSection,
         mediaSection, testimoniesSection, relatedMediaSection, locationSection, programTableSections
-    ].map(normForOverlap).filter(body => body.length > 20);
+    ].map(normForOverlap).filter(Boolean);
 
     // Split markdown into sections
     // Lookahead: next ## header, standalone *** or --- separator, or end of string
@@ -2205,9 +2205,15 @@ function parseWikiMarkdown(markdown) {
         const sectionContent = match[2].trim();
         const normContent = normForOverlap(sectionContent);
 
-        // Already handled if this section's content is contained in a body we
-        // consumed (equal to it, or a sub-part of it).
-        const wasParsed = !normContent || consumedBodies.some(body => body.includes(normContent));
+        // Already handled if this section's content matches a body we consumed:
+        // exact-equal (covers short placeholders like "[To be completed]" that a
+        // length cutoff would otherwise miss and re-emit), or — for substantial
+        // content — contained within a consumed body. The length floor on the
+        // substring case avoids a short distinct section being swallowed just
+        // because its few words happen to appear inside a longer consumed body.
+        const wasParsed = !normContent || consumedBodies.some(body =>
+            body === normContent || (normContent.length >= 20 && body.includes(normContent))
+        );
 
         if (!wasParsed && sectionContent && !sectionContent.includes('No information is known')) {
             unparsedSections.push(`## ${sectionTitle}\n${sectionContent}`);

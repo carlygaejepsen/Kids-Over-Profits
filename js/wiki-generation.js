@@ -792,7 +792,7 @@ ${relatedMediaSection}
     const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return sanitizedOutput.trim();
+    return dropDuplicateParagraphs(sanitizedOutput).trim();
 }
 
 function generateOrganizationWikiMarkdown(formData, helpers) {
@@ -1135,7 +1135,7 @@ ${relatedMediaSection}
     const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return sanitizedOutput.trim();
+    return dropDuplicateParagraphs(sanitizedOutput).trim();
 }
 
 // --- Helper Functions ---
@@ -1213,6 +1213,28 @@ function formatUnparsedSections(raw) {
         // Ensure a blank line between a header and the body that follows it.
         .replace(/^(## \*\*.+\*\*)\n(?=\S)/gm, '$1\n\n');
     return `${bolded}\n\n***\n\n`;
+}
+
+// Final safety net: drop any exact-duplicate paragraph block, keeping the first.
+// Source pages occasionally repeat the same paragraph across two sections (e.g.
+// the same memoir blurb under both History and Abuse), which the verbatim section
+// passthrough would otherwise emit twice. Separators, headers, and short lines are
+// never deduped, so distinct per-section placeholders (which differ in wording)
+// are unaffected.
+function dropDuplicateParagraphs(md) {
+    const seen = new Set();
+    const kept = [];
+    for (const block of String(md || '').split(/\n{2,}/)) {
+        const trimmed = block.trim();
+        const isSeparator = trimmed === '***' || trimmed === '---';
+        const isHeader = /^#{1,6}\s/.test(trimmed);
+        if (!isSeparator && !isHeader && trimmed.length >= 40) {
+            if (seen.has(trimmed)) continue;
+            seen.add(trimmed);
+        }
+        kept.push(block);
+    }
+    return kept.join('\n\n');
 }
 
 function getPlaceholder(category, programName) {
