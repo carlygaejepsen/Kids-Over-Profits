@@ -13,6 +13,16 @@ if (!fs.existsSync(parserPath)) {
 
 const { parseWikiMarkdown } = require(parserPath);
 
+// The generator lives in a separate module (wiki-generation.js is the single
+// source of truth). We run it so the stored generated_markdown is the formatted
+// page, not the raw source.
+const generationPath = path.join(__dirname, '../js/wiki-generation.js');
+if (!fs.existsSync(generationPath)) {
+    console.error(`Error: Could not find generator at ${generationPath}`);
+    process.exit(1);
+}
+const { generateWikiMarkdown } = require(generationPath);
+
 // Configuration
 const API_URL = process.env.API_URL || 'http://127.0.0.1/wp-content/themes/child/api/save-wiki-submission.php';
 // Default to the path provided by the user, but allow CLI override
@@ -60,6 +70,8 @@ async function importFiles() {
 
             // CHECK FOR EXISTING ENTRY
             let existingId = null;
+            let existingStatus = null;
+            let existingSubmittedBy = null;
             try {
                 const searchUrl = `${API_URL}?search=${encodeURIComponent(parsedData.programName)}`;
                 const searchRes = await fetch(searchUrl);
@@ -69,7 +81,9 @@ async function importFiles() {
                         const match = searchResult.data.find(e => e.program_name.toLowerCase() === parsedData.programName.toLowerCase());
                         if (match) {
                             existingId = match.id;
-                            console.log(`[INFO] ${file} - Found existing entry ID: ${existingId}. Updating...`);
+                            existingStatus = match.status;
+                            existingSubmittedBy = match.submitted_by;
+                            console.log(`[INFO] ${file} - Found existing entry ID: ${existingId} (status: ${existingStatus}). Updating...`);
                         }
                     }
                 }
@@ -82,9 +96,14 @@ async function importFiles() {
                 ...parsedData,
                 id: existingId, // Include ID if updating
                 originalMarkdown: content,
-                generatedMarkdown: content, // Treat imported content as the "generated" state initially
-                status: 'submitted', // Auto-submit
-                submittedBy: 'batch-import-script',
+                // Store the FORMATTED output, not the raw source. The generator
+                // reads historyMisc directly (fallback), so no manual bridge needed.
+                generatedMarkdown: generateWikiMarkdown(parsedData),
+                // Preserve the existing status when updating an entry; only brand-new
+                // imports default to 'submitted'. (Avoids flipping approved/live
+                // pages back to draft.)
+                status: existingId ? (existingStatus || 'submitted') : 'submitted',
+                submittedBy: existingId ? (existingSubmittedBy || 'batch-import-script') : 'batch-import-script',
                 submissionNotes: `Batch imported from file: ${file}`
             };
 
