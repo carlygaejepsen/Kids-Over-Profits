@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-mentions.php';
+require_once __DIR__ . '/facility-aliases.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
@@ -39,16 +40,39 @@ if (!defined('ABSPATH')) {
  *   - Deletes any existing links whose facility_id is no longer in the list.
  *   - Inserts new links for facility_ids that aren't already linked.
  *
- * Mentions without a facility_id (free-text entries the user hasn't picked
- * a facility for yet) are ignored - they remain in facilities_mentioned only.
+ * Mentions that arrive without a facility_id (free-text or AI-extracted names)
+ * are resolved by name against facilities_master - matching unique_name, the
+ * operating company's name, and the curated "Other Names / Former Names" aliases
+ * via the shared index in api/facility-aliases.php. This is the same resolution
+ * the retroactive backfill uses, so new articles link operators and renamed
+ * facilities the same way. A name with no confident match stays text-only.
  */
 function kop_sync_news_facility_links(PDO $pdo, int $newsId, array $normalizedMentions, ?string $createdBy = null): void {
     $desiredIds = [];
+    $unresolvedNames = [];
     foreach ($normalizedMentions as $m) {
         if (!empty($m['facility_id'])) {
             $desiredIds[(int)$m['facility_id']] = true;
+        } elseif (!empty($m['name'])) {
+            $unresolvedNames[$m['name']] = true;
         }
     }
+
+    if (!empty($unresolvedNames)) {
+        // Built once per request and cached; the index decodes facilities_master
+        // so we avoid rebuilding it if this runs again in the same save.
+        static $aliasIndex = null;
+        if ($aliasIndex === null) {
+            $aliasIndex = kop_build_facility_alias_index($pdo);
+        }
+        foreach (array_keys($unresolvedNames) as $name) {
+            $fid = kop_resolve_name_to_facility((string)$name, $aliasIndex);
+            if ($fid !== null) {
+                $desiredIds[$fid] = true;
+            }
+        }
+    }
+
     $desiredIds = array_keys($desiredIds);
 
     if (empty($desiredIds)) {

@@ -11,6 +11,23 @@
  * row inserted into news_facility_links. Unmatched names keep facility_id=null
  * and are reported back so they can be fixed up via the admin UI later.
  *
+ * Matching uses the shared alias index (api/facility-aliases.php), so beyond
+ * unique_name it also resolves operating-company names and the curated
+ * "Other Names / DBAs / Former Names" admins maintain in the facility editor.
+ * That means renamed facilities and operators (e.g. an article saying
+ * "Acadia Healthcare") link even when the mention doesn't equal the unique_name.
+ * An alias that resolves to two different facilities is dropped as ambiguous.
+ *
+ * Optional fuzzy pass (?fuzzy=1 or CLI "fuzzy"): for names the exact pass could
+ * not match, link on a *distinctive token* - a word that (a) belongs to exactly
+ * one facility's unique_name, (b) isn't a generic facility/place word, and
+ * (c) is >= 4 chars. This catches "Anasazi" -> "Anasazi Foundation" or
+ * "Sununu Youth Services" -> "John H. Sununu Youth Services Center" without the
+ * false positives a full-string fuzzy match would produce on words like
+ * "academy" or "ranch". A name only links if its distinctive tokens all point
+ * at a single facility; ambiguous names are left unmatched. Always dry-run and
+ * review the `fuzzy_matches` report before committing.
+ *
  * Safe to re-run: rows already in object shape are left intact; INSERT IGNORE
  * prevents duplicate link rows.
  *
@@ -19,20 +36,26 @@
  *
  *   Browser:  /api/migrate-news-facilities-to-objects.php?run=1
  *   Dry run:  /api/migrate-news-facilities-to-objects.php?run=1&dry=1
+ *   Fuzzy:    /api/migrate-news-facilities-to-objects.php?run=1&fuzzy=1&dry=1
  *   CLI:      php api/migrate-news-facilities-to-objects.php
  *   CLI dry:  php api/migrate-news-facilities-to-objects.php dry
+ *   CLI fuzzy:php api/migrate-news-facilities-to-objects.php fuzzy dry
  */
 
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-mentions.php';
+require_once __DIR__ . '/facility-aliases.php';
 
 $is_cli = php_sapi_name() === 'cli';
 $run_param = $_GET['run'] ?? null;
 $dry_run = $is_cli
     ? (in_array('dry', $argv ?? [], true))
     : !empty($_GET['dry']);
+$fuzzy = $is_cli
+    ? (in_array('fuzzy', $argv ?? [], true))
+    : !empty($_GET['fuzzy']);
 
 if (!$is_cli) {
     if (!defined('ABSPATH')) {
@@ -58,13 +81,13 @@ if (!$is_cli) {
 }
 
 try {
-    // Build a case-insensitive name -> id map from facilities_master.
-    $facilityMap = [];
-    $rows = $pdo->query("SELECT id, unique_name FROM facilities_master")->fetchAll();
-    foreach ($rows as $r) {
-        $key = strtolower(trim((string)$r['unique_name']));
-        if ($key !== '') $facilityMap[$key] = (int)$r['id'];
-    }
+    // Build the name -> facility_id index from facilities_master. This covers
+    // unique_name, operator names, and the curated "Other Names / Former Names"
+    // aliases - the same index the save endpoint uses, so backfill and live saves
+    // match identically. See api/facility-aliases.php.
+    $index = kop_build_facility_alias_index($pdo);
+    $facilityMap   = $index['exact'];  // lower(name) => id  (uniques + non-ambiguous aliases)
+    $facilityNames = $index['names'];  // id => unique_name (for the audit log)
 
     $news = $pdo->query("SELECT id, facilities_mentioned FROM news_submissions")->fetchAll();
 
@@ -72,10 +95,12 @@ try {
         'news_scanned'         => 0,
         'news_rewritten'       => 0,
         'mentions_upgraded'    => 0, // string -> object conversions
-        'mentions_id_stamped'  => 0, // entries that gained a facility_id
+        'mentions_id_stamped'  => 0, // entries that gained a facility_id (exact)
+        'mentions_fuzzy_matched' => 0, // entries linked via distinctive token
         'mentions_unmatched'   => 0,
         'links_inserted'       => 0,
         'unmatched_names'      => [],
+        'fuzzy_matches'        => [], // audit: [{mention, facility_id, matched_name, via_token}]
     ];
     $unmatchedSeen = [];
 
@@ -117,12 +142,29 @@ try {
                 $normalized[$i]['facility_id'] = $facilityMap[$key];
                 $stats['mentions_id_stamped']++;
                 $rowChanged = true;
-            } else {
-                $stats['mentions_unmatched']++;
-                if (!isset($unmatchedSeen[$key]) && count($stats['unmatched_names']) < 500) {
-                    $unmatchedSeen[$key] = true;
-                    $stats['unmatched_names'][] = $m['name'];
+                continue;
+            }
+
+            $fz = $fuzzy ? kop_fuzzy_resolve_name($m['name'], $index) : null;
+            if ($fz) {
+                $normalized[$i]['facility_id'] = $fz['facility_id'];
+                $stats['mentions_fuzzy_matched']++;
+                $rowChanged = true;
+                if (count($stats['fuzzy_matches']) < 500) {
+                    $stats['fuzzy_matches'][] = [
+                        'mention'      => $m['name'],
+                        'facility_id'  => $fz['facility_id'],
+                        'matched_name' => $facilityNames[$fz['facility_id']] ?? null,
+                        'via_token'    => $fz['token'],
+                    ];
                 }
+                continue;
+            }
+
+            $stats['mentions_unmatched']++;
+            if (!isset($unmatchedSeen[$key]) && count($stats['unmatched_names']) < 500) {
+                $unmatchedSeen[$key] = true;
+                $stats['unmatched_names'][] = $m['name'];
             }
         }
 
@@ -154,6 +196,7 @@ try {
     echo json_encode([
         'success' => true,
         'dry_run' => (bool)$dry_run,
+        'fuzzy'   => (bool)$fuzzy,
         'stats'   => $stats,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 } catch (PDOException $e) {
