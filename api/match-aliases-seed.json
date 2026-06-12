@@ -24,6 +24,8 @@
     { "id": 13661, "target": "Hill Crest RTC", "names": ["Hill Crest"] },
     { "id": 10011, "target": "LA Central Juvenile Hall", "names": ["Central Juvenile Hall"] },
     { "id": 12, "target": "Wilderness Training & Consulting LLC", "names": ["Wilderness Training & Consulting"] },
-    { "id": 12584, "target": "Kansas Juvenile Correctional Complex", "names": ["Kansas Juvenile Correction Complex"] }
+    { "id": 12584, "target": "Kansas Juvenile Correctional Complex", "names": ["Kansas Juvenile Correction Complex"] },
+    { "id": 13026, "target": "Leo A Hoffmann Center", "names": ["Hoffmann Center"] },
+    { "id": 13014, "target": "Grafton - Cold Spring", "names": ["Grafton Integrated Health Network Minnesota"] }
   ]
 }
