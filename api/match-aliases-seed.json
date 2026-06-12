@@ -28,6 +28,14 @@
     { "id": 13026, "target": "Leo A Hoffmann Center", "names": ["Hoffmann Center"] },
     { "id": 13014, "target": "Grafton - Cold Spring", "names": ["Grafton Integrated Health Network Minnesota"] },
     { "id": 8, "target": "Devereux", "names": ["Devereux Advanced Behavioral Health"] },
-    { "id": 11361, "target": "Agape Baptist Academy", "names": ["Agape Boarding School"] }
+    { "id": 11361, "target": "Agape Baptist Academy", "names": ["Agape Boarding School"] },
+    { "id": 20, "target": "Sequel (Sequel TSI)", "names": ["Sequel Youth and Family Services", "Sequel TSI"] },
+    { "id": 12800, "target": "Cumberland Hospital", "names": ["Cumberland Hospital", "Cumberland Hospital for Children and Adolescents"] },
+    { "id": 10602, "target": "Laurel Ridge Treatment Center", "names": ["Laurel Ridge Treatment Center"] },
+    { "id": 13927, "target": "Bethel Boys Academy", "names": ["Bethel Boys Academy"] },
+    { "id": 11462, "target": "Refuge of Grace / Wings of Faith Girls Academy", "names": ["Refuge of Grace"] },
+    { "id": 10377, "target": "Second Nature Wilderness Program", "names": ["Second Nature"] },
+    { "id": 12016, "target": "The Pavilion Behavioral Health System RTC (UHS)", "names": ["Pavilion hospital", "Pavilion"] },
+    { "id": 10350, "target": "Outback Therapeutic Expeditions (Acadia)", "names": ["Outback Wilderness", "Outback"] }
   ]
 }

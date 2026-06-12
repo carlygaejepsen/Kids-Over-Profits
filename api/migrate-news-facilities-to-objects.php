@@ -201,14 +201,19 @@ try {
     // whether nested-facility aliases are being indexed. If alias_index_keys is
     // in the thousands and the probes resolve to ids, the nested-alias fix is
     // active. (Probe names are known nested otherNames.)
+    $probe = [];
+    foreach ([
+        'Solstice East', 'Agape Boarding School', 'Devereux Advanced Behavioral Health',
+        'El Pueblo Boys & Girls Ranch', 'Sequel Youth and Family Services',
+        'Cumberland Hospital', 'Laurel Ridge Treatment Center', 'Bethel Boys Academy',
+        'Refuge of Grace', 'Pavilion hospital', 'Outback Wilderness', 'Second Nature',
+        'Youth of Vision School Academy (YOVA)',
+    ] as $probeName) {
+        $probe[$probeName] = $facilityMap[kop_normalize_name_key($probeName)] ?? null;
+    }
     $debug = [
         'alias_index_keys' => count($facilityMap),
-        'probe' => [
-            'Solstice East'                       => $facilityMap[kop_normalize_name_key('Solstice East')] ?? null,
-            'Agape Boarding School'               => $facilityMap[kop_normalize_name_key('Agape Boarding School')] ?? null,
-            'Devereux Advanced Behavioral Health' => $facilityMap[kop_normalize_name_key('Devereux Advanced Behavioral Health')] ?? null,
-            'El Pueblo Boys & Girls Ranch'        => $facilityMap[kop_normalize_name_key('El Pueblo Boys & Girls Ranch')] ?? null,
-        ],
+        'probe'            => $probe,
     ];
 
     echo json_encode([
