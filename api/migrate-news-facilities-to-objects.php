@@ -137,9 +137,13 @@ try {
         // Try to stamp facility_id on any entry that doesn't have one.
         foreach ($normalized as $i => $m) {
             if (!empty($m['facility_id'])) continue;
-            $key = strtolower($m['name']);
-            if (isset($facilityMap[$key])) {
-                $normalized[$i]['facility_id'] = $facilityMap[$key];
+            // Normalize the same way the index is keyed (handles & -> and,
+            // punctuation, "the"), and honour ambiguity. Same resolver the save
+            // path uses, so backfill and live saves match identically.
+            $key = kop_normalize_name_key($m['name']);
+            $resolvedId = kop_resolve_name_to_facility($m['name'], $index);
+            if ($resolvedId !== null) {
+                $normalized[$i]['facility_id'] = $resolvedId;
                 $stats['mentions_id_stamped']++;
                 $rowChanged = true;
                 continue;

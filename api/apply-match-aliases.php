@@ -111,6 +111,9 @@ try {
         foreach (kop_collect_self_names($decoded) as $known) {
             $existing[kop_normalize_name_key($known)] = true;
         }
+        foreach (kop_collect_match_aliases($decoded) as $known) {
+            $existing[kop_normalize_name_key($known)] = true;
+        }
 
         if (!isset($decoded['data']) || !is_array($decoded['data'])) $decoded['data'] = [];
         if (!isset($decoded['data']['matchAliases']) || !is_array($decoded['data']['matchAliases'])) {

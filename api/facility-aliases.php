@@ -88,7 +88,6 @@ if (!function_exists('kop_collect_self_names')) {
                 $push($op['name'] ?? null);
                 $push($op['currentName'] ?? null);
                 $pushList($op['otherNames'] ?? null);
-                $pushList($op['matchAliases'] ?? null); // hidden, match-only
             }
         }
 
@@ -100,13 +99,36 @@ if (!function_exists('kop_collect_self_names')) {
             $push($ident['currentName'] ?? null);
             $pushList($ident['otherNames'] ?? null);
             $pushList($ident['pastNames'] ?? null);
-            $pushList($ident['matchAliases'] ?? null); // hidden, match-only
         }
 
-        // Project-level hidden match aliases (apply to whichever row this is,
-        // facility or company). Match-only - never rendered on a card.
-        $pushList($decoded['data']['matchAliases'] ?? $decoded['matchAliases'] ?? null);
+        return $out;
+    }
+}
 
+if (!function_exists('kop_collect_match_aliases')) {
+    /**
+     * Pull the curated, hidden matchAliases for THIS row. These are the names an
+     * admin explicitly assigned to this facility, so they are AUTHORITATIVE -
+     * they override the ambiguity guard (a curated alias always wins, even if the
+     * same text appears on other facilities).
+     *
+     * @return string[] trimmed, non-empty alias strings
+     */
+    function kop_collect_match_aliases($decoded): array {
+        if (!is_array($decoded)) return [];
+        $out = [];
+        $pushList = static function ($list) use (&$out) {
+            if (is_array($list)) {
+                foreach ($list as $v) {
+                    if (is_string($v) && trim($v) !== '') $out[] = trim($v);
+                }
+            }
+        };
+        $op = $decoded['data']['operator'] ?? $decoded['operator'] ?? null;
+        if (is_array($op)) $pushList($op['matchAliases'] ?? null);
+        $ident = $decoded['data']['identification'] ?? $decoded['identification'] ?? null;
+        if (is_array($ident)) $pushList($ident['matchAliases'] ?? null);
+        $pushList($decoded['data']['matchAliases'] ?? $decoded['matchAliases'] ?? null);
         return $out;
     }
 }
@@ -123,8 +145,9 @@ if (!function_exists('kop_build_facility_alias_index')) {
      * }
      */
     function kop_build_facility_alias_index(PDO $pdo): array {
-        $exactUnique    = []; // normkey(unique_name) => id (authoritative)
-        $aliasTo        = []; // normkey(alias) => id
+        $exactUnique    = []; // normkey(unique_name) => id  (authoritative)
+        $curatedTo      = []; // normkey(matchAlias) => id   (authoritative, admin-assigned)
+        $aliasTo        = []; // normkey(alias) => id        (auto, ambiguity-checked)
         $aliasAmbiguous = []; // normkey(alias) => true
         $tokens         = []; // token => [id => true]
         $names          = []; // id => unique_name
@@ -133,6 +156,16 @@ if (!function_exists('kop_build_facility_alias_index')) {
             foreach (array_unique(preg_split('/[^a-z0-9]+/', strtolower($value), -1, PREG_SPLIT_NO_EMPTY) ?: []) as $t) {
                 $tokens[$t][$id] = true;
             }
+        };
+
+        // Curated matchAliases are authoritative: an admin explicitly assigned
+        // the target, so they bypass the ambiguity guard entirely (last write
+        // wins on the rare chance the same curated alias is put on two rows).
+        $addCurated = static function ($alias, int $toId) use (&$curatedTo, $addTokens) {
+            $akey = kop_normalize_name_key((string)$alias);
+            if ($akey === '') return;
+            $curatedTo[$akey] = $toId;
+            $addTokens((string)$alias, $toId);
         };
 
         $rows = $pdo->query("SELECT id, unique_name, json_data FROM facilities_master")->fetchAll();
@@ -164,6 +197,9 @@ if (!function_exists('kop_build_facility_alias_index')) {
                 if (kop_normalize_name_key($alias) === $ukey) continue; // already the unique_name
                 $addAlias($alias, $id);
             }
+            foreach (kop_collect_match_aliases($decoded) as $ma) {
+                $addCurated($ma, $id);
+            }
 
             // Descend into nested facilities. A facility's own names/aliases live
             // in its PARENT project's data.facilities[] entry, keyed by that
@@ -181,31 +217,40 @@ if (!function_exists('kop_build_facility_alias_index')) {
                         $names[$fid] = $idf['name'];
                     }
 
+                    // Auto names (ambiguity-checked).
                     $nestedNames = [];
                     foreach (['name', 'currentName'] as $k) {
                         if (!empty($idf[$k]) && is_string($idf[$k])) $nestedNames[] = $idf[$k];
                     }
-                    foreach (['otherNames', 'pastNames', 'matchAliases'] as $k) {
+                    foreach (['otherNames', 'pastNames'] as $k) {
                         if (!empty($idf[$k]) && is_array($idf[$k])) {
                             foreach ($idf[$k] as $n) if (is_string($n)) $nestedNames[] = $n;
                         }
                     }
-                    if (!empty($f['matchAliases']) && is_array($f['matchAliases'])) {
-                        foreach ($f['matchAliases'] as $n) if (is_string($n)) $nestedNames[] = $n;
-                    }
-
                     foreach ($nestedNames as $nm) {
                         $addAlias($nm, $fid);
+                    }
+
+                    // Curated matchAliases on the nested entry (authoritative).
+                    foreach ([$idf['matchAliases'] ?? null, $f['matchAliases'] ?? null] as $maList) {
+                        if (is_array($maList)) {
+                            foreach ($maList as $n) if (is_string($n)) $addCurated($n, $fid);
+                        }
                     }
                 }
             }
         }
 
-        // Compose the exact map: non-ambiguous aliases first, then overlay the
-        // authoritative unique_names so a real name always beats a colliding alias.
+        // Compose the exact map in priority order (lowest to highest):
+        //   1. auto aliases that aren't ambiguous
+        //   2. curated matchAliases (admin-assigned) - override the ambiguity guard
+        //   3. unique_names - always win
         $exact = [];
         foreach ($aliasTo as $k => $id) {
             if (!isset($aliasAmbiguous[$k])) $exact[$k] = $id;
+        }
+        foreach ($curatedTo as $k => $id) {
+            $exact[$k] = $id;
         }
         foreach ($exactUnique as $k => $id) {
             $exact[$k] = $id;
@@ -213,8 +258,8 @@ if (!function_exists('kop_build_facility_alias_index')) {
 
         return [
             'exact'     => $exact,
-            // A key that is also a unique_name is not ambiguous - the name wins.
-            'ambiguous' => array_diff_key($aliasAmbiguous, $exactUnique),
+            // A key that a curated alias or unique_name resolves is never ambiguous.
+            'ambiguous' => array_diff_key($aliasAmbiguous, $curatedTo, $exactUnique),
             'tokens'    => $tokens,
             'names'     => $names,
         ];
