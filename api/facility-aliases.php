@@ -24,12 +24,38 @@
  * behave identically.
  */
 
+if (!function_exists('kop_normalize_name_key')) {
+    /**
+     * Normalize a name into a comparison key so alternate spellings/punctuation
+     * collapse together: lowercase, "&" -> "and", drop apostrophes and other
+     * punctuation, drop the article "the", and collapse whitespace.
+     *
+     * So "El Pueblo Boys & Girls Ranch", "El Pueblo Boys and Girls Ranch" and
+     * "El Pueblo Boys & Girls' Ranch" all key to "el pueblo boys and girls ranch"
+     * and match without anyone curating an alias.
+     */
+    function kop_normalize_name_key(string $s): string {
+        $s = strtolower($s);
+        $s = str_replace('&', ' and ', $s);
+        $s = preg_replace('/[^a-z0-9]+/', ' ', $s);   // strip punctuation/apostrophes
+        $s = preg_replace('/\bthe\b/', ' ', $s);      // drop the article "the"
+        $s = preg_replace('/\s+/', ' ', $s);
+        return trim((string)$s);
+    }
+}
+
 if (!function_exists('kop_collect_self_names')) {
     /**
      * Pull every name that identifies THIS facilities_master row out of its
      * decoded json_data. Excludes the unique_name (added separately by the
      * index builder) and does not descend into nested data.facilities[] (those
      * are promoted to their own rows and indexed in their own right).
+     *
+     * Includes the hidden `matchAliases` lists (data.matchAliases,
+     * operator.matchAliases, identification.matchAliases). These are match-only:
+     * they feed news linking but no display code renders them, so an admin can
+     * add spelling variants / abbreviations an article uses without changing what
+     * shows on the facility card.
      *
      * @return string[] trimmed, non-empty name strings
      */
@@ -62,6 +88,7 @@ if (!function_exists('kop_collect_self_names')) {
                 $push($op['name'] ?? null);
                 $push($op['currentName'] ?? null);
                 $pushList($op['otherNames'] ?? null);
+                $pushList($op['matchAliases'] ?? null); // hidden, match-only
             }
         }
 
@@ -73,7 +100,12 @@ if (!function_exists('kop_collect_self_names')) {
             $push($ident['currentName'] ?? null);
             $pushList($ident['otherNames'] ?? null);
             $pushList($ident['pastNames'] ?? null);
+            $pushList($ident['matchAliases'] ?? null); // hidden, match-only
         }
+
+        // Project-level hidden match aliases (apply to whichever row this is,
+        // facility or company). Match-only - never rendered on a card.
+        $pushList($decoded['data']['matchAliases'] ?? $decoded['matchAliases'] ?? null);
 
         return $out;
     }
@@ -91,9 +123,9 @@ if (!function_exists('kop_build_facility_alias_index')) {
      * }
      */
     function kop_build_facility_alias_index(PDO $pdo): array {
-        $exactUnique    = []; // lower(unique_name) => id (authoritative)
-        $aliasTo        = []; // lower(alias) => id
-        $aliasAmbiguous = []; // lower(alias) => true
+        $exactUnique    = []; // normkey(unique_name) => id (authoritative)
+        $aliasTo        = []; // normkey(alias) => id
+        $aliasAmbiguous = []; // normkey(alias) => true
         $tokens         = []; // token => [id => true]
         $names          = []; // id => unique_name
 
@@ -109,7 +141,7 @@ if (!function_exists('kop_build_facility_alias_index')) {
             $uname = trim((string)$r['unique_name']);
             $names[$id] = $r['unique_name'];
 
-            $ukey = strtolower($uname);
+            $ukey = kop_normalize_name_key($uname);
             if ($ukey !== '') {
                 $exactUnique[$ukey] = $id;
                 $addTokens($uname, $id);
@@ -117,7 +149,7 @@ if (!function_exists('kop_build_facility_alias_index')) {
 
             $decoded = json_decode((string)$r['json_data'], true);
             foreach (kop_collect_self_names($decoded) as $alias) {
-                $akey = strtolower(trim($alias));
+                $akey = kop_normalize_name_key($alias);
                 if ($akey === '' || $akey === $ukey) continue;
                 if (isset($aliasTo[$akey]) && $aliasTo[$akey] !== $id) {
                     $aliasAmbiguous[$akey] = true;
@@ -154,7 +186,7 @@ if (!function_exists('kop_resolve_name_to_facility')) {
      * Returns null when there's no confident match.
      */
     function kop_resolve_name_to_facility(string $name, array $index): ?int {
-        $key = strtolower(trim($name));
+        $key = kop_normalize_name_key($name);
         if ($key === '' || isset($index['ambiguous'][$key])) return null;
         return $index['exact'][$key] ?? null;
     }

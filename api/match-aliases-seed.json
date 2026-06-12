@@ -1,0 +1,29 @@
+{
+  "_comment": "Hidden, match-only aliases for news linking. Each entry targets a facilities_master row by id (the stable primary key that news_facility_links references); 'target' is just a human label. 'names' are the names articles use that should resolve to that row. They are written to json_data.data.matchAliases and are NOT shown on facility cards. Pure punctuation/'&'/apostrophe spelling variants are handled by normalization and do NOT need listing here. Preview with api/apply-match-aliases.php?run=1&dry=1, then drop &dry=1 to apply. ids verified against production 2026-06-12.",
+  "aliases": [
+    { "id": 12176, "target": "Anasazi Foundation", "names": ["Anasazi"] },
+    { "id": 11355, "target": "CALO Programs", "names": ["Calo", "Calo Programs Residential Treatment Center", "Change Academy at Lake of the Ozarks"] },
+    { "id": 10356, "target": "Elevations RTC", "names": ["Elevations"] },
+    { "id": 13472, "target": "Hartgrove Hospital", "names": ["Hartgrove Behavioral Health Hospital"] },
+    { "id": 11049, "target": "John H. Sununu Youth Services Center", "names": ["Sununu Youth Services Center", "Sununu Youth Center", "Sununu Center", "Sununu"] },
+    { "id": 12666, "target": "Tennyson Center for Children", "names": ["Tennyson Center"] },
+    { "id": 13340, "target": "Oaklawn", "names": ["Oaklawn's Children's Campus"] },
+    { "id": 10019, "target": "Los Padrinos Juvenile Hall SYTF", "names": ["Los Padrinos Juvenile Hall"] },
+    { "id": 9807, "target": "Barry J. Nidorf Juvenile Hall SYTF", "names": ["Barry J. Nidorf Juvenile Hall", "Barry J. Nidorf Secure Youth Treatment Facility"] },
+    { "id": 9854, "target": "Campus Kilpatrick SYTF", "names": ["Campus Kilpatrick"] },
+    { "id": 12955, "target": "Okanogan County Juvenile Detention", "names": ["Okanogan County Juvenile Detention Center"] },
+    { "id": 11659, "target": "Magnolia Mill School", "names": ["Magnolia Mill"] },
+    { "id": 11462, "target": "Wings of Faith Girls Academy", "names": ["Wings of Faith Academy"] },
+    { "id": 11656, "target": "Asheville Academy for Girls", "names": ["Asheville Academy"] },
+    { "id": 12506, "target": "Blue Ridge Therapeutic Wilderness", "names": ["Blue Ridge Wilderness Therapy", "Blue Ridge"] },
+    { "id": 12621, "target": "Devereux Cleo Wallace Center", "names": ["Cleo Wallace Academy", "Devereux Cleo Wallace"] },
+    { "id": 13213, "target": "Vista Maria School for Girls", "names": ["Vista Maria"] },
+    { "id": 12651, "target": "Mount Saint Vincent QRTP", "names": ["Mount Saint Vincent"] },
+    { "id": 13241, "target": "Cornell Abraxas Group, Inc.", "names": ["Abraxas"] },
+    { "id": 13694, "target": "Southeast Alabama Youth Leadership Academy", "names": ["Camp SAYLA", "SAYLA", "Southern Alabama Leadership Youth Academy"] },
+    { "id": 13661, "target": "Hill Crest RTC", "names": ["Hill Crest"] },
+    { "id": 10011, "target": "LA Central Juvenile Hall", "names": ["Central Juvenile Hall"] },
+    { "id": 12, "target": "Wilderness Training & Consulting LLC", "names": ["Wilderness Training & Consulting"] },
+    { "id": 12584, "target": "Kansas Juvenile Correctional Complex", "names": ["Kansas Juvenile Correction Complex"] }
+  ]
+}
