@@ -524,7 +524,8 @@ function displayFacilities(facilitiesData, containerId) {
             operatorGroups.push({
                 operator,
                 facilities,
-                name: cleanText(project.name)
+                name: cleanText(project.name),
+                linked_news: Array.isArray(project.linked_news) ? project.linked_news : []
             });
         });
     } else if (Array.isArray(facilitiesData)) {
@@ -958,7 +959,53 @@ function displayFacilities(facilitiesData, containerId) {
             )
             : '';
 
+        // Operator-level linked news (articles linked to the company/operator row
+        // itself, attached as project.linked_news by the server).
+        const operatorLinkedNews = Array.isArray(operatorGroup.linked_news) ? operatorGroup.linked_news : [];
+        let operatorLatestNewsHtml = '';
+        let operatorNewsSectionHtml = '';
+        if (operatorLinkedNews.length > 0) {
+            const fmtDate = value => {
+                if (!value) return '';
+                const ts = Date.parse(value);
+                if (isNaN(ts)) return value;
+                return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+            };
+            const itemsHtml = operatorLinkedNews.map(n => {
+                const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
+                const titleHtml = n.article_url
+                    ? `<a href="${escapeAttribute(n.article_url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                    : `<span class="facility-news-title">${title}</span>`;
+                const meta = [];
+                if (n.publication_name) meta.push(escapeHtml(n.publication_name));
+                if (n.publication_date) meta.push(escapeHtml(fmtDate(n.publication_date)));
+                return `<li class="facility-news-item">${titleHtml}${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}</li>`;
+            }).join('');
+            operatorNewsSectionHtml = renderDetailSection(
+                `News (${operatorLinkedNews.length})`,
+                `<ul class="facility-news-list">${itemsHtml}</ul>`,
+                'operator-news-section'
+            );
+
+            const latest = operatorLinkedNews[0];
+            const latestTitle = escapeHtml(latest.display_title || latest.article_title || '(untitled)');
+            const latestTitleHtml = latest.article_url
+                ? `<a href="${escapeAttribute(latest.article_url)}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>`
+                : `<span class="facility-latest-news-title">${latestTitle}</span>`;
+            const latestMeta = [];
+            if (latest.publication_name) latestMeta.push(escapeHtml(latest.publication_name));
+            if (latest.publication_date) latestMeta.push(escapeHtml(fmtDate(latest.publication_date)));
+            const moreCount = operatorLinkedNews.length - 1;
+            operatorLatestNewsHtml = `<div class="facility-latest-news operator-latest-news">
+                    <span class="facility-latest-news-label">📰 Latest news</span>
+                    ${latestTitleHtml}
+                    ${latestMeta.length ? `<span class="facility-latest-news-meta">${latestMeta.join(' &middot; ')}</span>` : ''}
+                    ${moreCount > 0 ? `<span class="facility-latest-news-more">+${moreCount} more below</span>` : ''}
+                </div>`;
+        }
+
         const operatorSectionsHtml = [
+            operatorNewsSectionHtml,
             operatorFactsHtml,
             operatorInvestorsHtml,
             operatorOwnersHtml,
@@ -978,6 +1025,7 @@ function displayFacilities(facilitiesData, containerId) {
                     locationYearsLine +
                 '</summary>' +
                 '<div class="operator-content-scrollable">' +
+                    operatorLatestNewsHtml +
                     operatorDetailsDiv;
 
         facilities.forEach(facility => {
@@ -1494,6 +1542,7 @@ function displayFacilities(facilitiesData, containerId) {
             // kop_attach_linked_news_to_projects in inc/database.php).
             const linkedNews = Array.isArray(facility.linked_news) ? facility.linked_news : [];
             let newsSectionHtml = '';
+            let latestNewsHtml = '';
             if (linkedNews.length > 0) {
                 const formatDate = value => {
                     if (!value) return '';
@@ -1501,6 +1550,25 @@ function displayFacilities(facilitiesData, containerId) {
                     if (isNaN(ts)) return value;
                     return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
                 };
+
+                // Most-recent item, shown on the card itself (before "Learn more").
+                // linked_news arrives ordered newest-first from the server.
+                const latest = linkedNews[0];
+                const latestTitle = escapeHtml(latest.display_title || latest.article_title || '(untitled)');
+                const latestTitleHtml = latest.article_url
+                    ? `<a href="${escapeAttribute(latest.article_url)}" target="_blank" rel="noopener" class="facility-latest-news-title">${latestTitle}</a>`
+                    : `<span class="facility-latest-news-title">${latestTitle}</span>`;
+                const latestMeta = [];
+                if (latest.publication_name) latestMeta.push(escapeHtml(latest.publication_name));
+                if (latest.publication_date) latestMeta.push(escapeHtml(formatDate(latest.publication_date)));
+                const moreCount = linkedNews.length - 1;
+                latestNewsHtml = `<div class="facility-latest-news">
+                        <span class="facility-latest-news-label">📰 Latest news</span>
+                        ${latestTitleHtml}
+                        ${latestMeta.length ? `<span class="facility-latest-news-meta">${latestMeta.join(' &middot; ')}</span>` : ''}
+                        ${moreCount > 0 ? `<span class="facility-latest-news-more">+${moreCount} more below</span>` : ''}
+                    </div>`;
+
                 const itemsHtml = linkedNews.map(n => {
                     const title = escapeHtml(n.display_title || n.article_title || '(untitled)');
                     const titleHtml = n.article_url
@@ -1564,6 +1632,7 @@ function displayFacilities(facilitiesData, containerId) {
                             <span class="status-badge status-${statusClass}">${statusLabel}</span>
                         </p>` : ''}
                     </div>
+                    ${latestNewsHtml}
                     ${facilityDetailsHtml}
                 </div>`;
         });
