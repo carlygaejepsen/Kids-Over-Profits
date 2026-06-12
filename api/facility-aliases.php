@@ -148,15 +148,56 @@ if (!function_exists('kop_build_facility_alias_index')) {
             }
 
             $decoded = json_decode((string)$r['json_data'], true);
-            foreach (kop_collect_self_names($decoded) as $alias) {
-                $akey = kop_normalize_name_key($alias);
-                if ($akey === '' || $akey === $ukey) continue;
-                if (isset($aliasTo[$akey]) && $aliasTo[$akey] !== $id) {
+
+            $addAlias = static function ($alias, int $toId) use (&$aliasTo, &$aliasAmbiguous, $addTokens) {
+                $akey = kop_normalize_name_key((string)$alias);
+                if ($akey === '') return;
+                if (isset($aliasTo[$akey]) && $aliasTo[$akey] !== $toId) {
                     $aliasAmbiguous[$akey] = true;
                 } else {
-                    $aliasTo[$akey] = $id;
+                    $aliasTo[$akey] = $toId;
                 }
-                $addTokens($alias, $id);
+                $addTokens((string)$alias, $toId);
+            };
+
+            foreach (kop_collect_self_names($decoded) as $alias) {
+                if (kop_normalize_name_key($alias) === $ukey) continue; // already the unique_name
+                $addAlias($alias, $id);
+            }
+
+            // Descend into nested facilities. A facility's own names/aliases live
+            // in its PARENT project's data.facilities[] entry, keyed by that
+            // facility's facilities_master id (facility_id) - NOT on the promoted
+            // row - so without this they're invisible to matching.
+            $nested = $decoded['data']['facilities'] ?? null;
+            if (is_array($nested)) {
+                foreach ($nested as $f) {
+                    if (!is_array($f)) continue;
+                    $fid = isset($f['facility_id']) ? (int)$f['facility_id'] : 0;
+                    if ($fid <= 0) continue;
+
+                    $idf = is_array($f['identification'] ?? null) ? $f['identification'] : [];
+                    if (!isset($names[$fid]) && !empty($idf['name'])) {
+                        $names[$fid] = $idf['name'];
+                    }
+
+                    $nestedNames = [];
+                    foreach (['name', 'currentName'] as $k) {
+                        if (!empty($idf[$k]) && is_string($idf[$k])) $nestedNames[] = $idf[$k];
+                    }
+                    foreach (['otherNames', 'pastNames', 'matchAliases'] as $k) {
+                        if (!empty($idf[$k]) && is_array($idf[$k])) {
+                            foreach ($idf[$k] as $n) if (is_string($n)) $nestedNames[] = $n;
+                        }
+                    }
+                    if (!empty($f['matchAliases']) && is_array($f['matchAliases'])) {
+                        foreach ($f['matchAliases'] as $n) if (is_string($n)) $nestedNames[] = $n;
+                    }
+
+                    foreach ($nestedNames as $nm) {
+                        $addAlias($nm, $fid);
+                    }
+                }
             }
         }
 
