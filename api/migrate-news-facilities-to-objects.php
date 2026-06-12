@@ -193,10 +193,25 @@ try {
         }
     }
 
+    // Diagnostic: proves which version of facility-aliases.php is live and
+    // whether nested-facility aliases are being indexed. If alias_index_keys is
+    // in the thousands and the probes resolve to ids, the nested-alias fix is
+    // active. (Probe names are known nested otherNames.)
+    $debug = [
+        'alias_index_keys' => count($facilityMap),
+        'probe' => [
+            'Solstice East'                       => $facilityMap[kop_normalize_name_key('Solstice East')] ?? null,
+            'Agape Boarding School'               => $facilityMap[kop_normalize_name_key('Agape Boarding School')] ?? null,
+            'Devereux Advanced Behavioral Health' => $facilityMap[kop_normalize_name_key('Devereux Advanced Behavioral Health')] ?? null,
+            'El Pueblo Boys & Girls Ranch'        => $facilityMap[kop_normalize_name_key('El Pueblo Boys & Girls Ranch')] ?? null,
+        ],
+    ];
+
     echo json_encode([
         'success' => true,
         'dry_run' => (bool)$dry_run,
         'fuzzy'   => (bool)$fuzzy,
+        'debug'   => $debug,
         'stats'   => $stats,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 } catch (PDOException $e) {
