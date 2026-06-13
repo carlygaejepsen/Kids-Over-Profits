@@ -586,18 +586,19 @@ details.operator-section[open] .facility-card {
     margin-top: 2px;
 }
 
-/* Latest-news snippet shown on the card itself, before "Learn more".
-   Per palette guidance: white surface with an accent outline (teal left rule),
-   not a large background fill; brand text colors for readable contrast. */
+/* Latest-news snippet shown before the "Learn more"/details section.
+   White surface with a teal accent rule (outline, not a large fill); brand
+   hex values because colors.css / --kop-* vars aren't enqueued on this page. */
 .facility-latest-news {
-    margin: 8px 0 4px;
+    margin: 8px 0 10px;
     padding: 8px 10px;
-    background: var(--kop-white);
-    border: 1px solid var(--kop-border-primary);
-    border-left: 3px solid var(--kop-teal);
+    background: #FFFFFF;
+    border: 1px solid #B6E3D4;        /* mint */
+    border-left: 3px solid #33A7B5;   /* teal */
     border-radius: 3px;
     font-size: 0.9em;
     line-height: 1.35;
+    color: #000435;                   /* midnight - ensures readable inherited text */
 }
 
 .facility-latest-news-label {
@@ -606,25 +607,24 @@ details.operator-section[open] .facility-card {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    color: var(--kop-teal);
+    color: #0d4450;                   /* dark teal */
     margin-right: 6px;
 }
 
 .facility-latest-news .facility-latest-news-title {
     font-weight: 600;
-    color: var(--kop-navy-blue);
+    color: #000080 !important;        /* navy; beat theme link colors */
     text-decoration: underline;
 }
 
 .facility-latest-news .facility-latest-news-title:hover {
-    color: var(--kop-teal);
+    color: #33A7B5 !important;
 }
 
 .facility-latest-news-meta {
     display: block;
     font-size: 0.82em;
-    color: var(--kop-text-primary);
-    opacity: 0.75;
+    color: #555555;
     margin-top: 2px;
 }
 
@@ -633,12 +633,11 @@ details.operator-section[open] .facility-card {
     margin-top: 3px;
     font-size: 0.8em;
     font-style: italic;
-    color: var(--kop-text-primary);
-    opacity: 0.65;
+    color: #6b7280;
 }
 
 .operator-latest-news {
-    margin: 4px 0 12px;
+    margin: 0 0 12px;
 }
 
 .facility-detail-grid {
