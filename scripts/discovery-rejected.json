@@ -1,6 +1,203 @@
 {
-  "lastUpdated": "2026-06-07T08:07:11.783Z",
+  "lastUpdated": "2026-06-13T10:22:03.158Z",
   "entries": [
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNV1lpa3d2RHBqNU5iNVc2N2hWdFNPSGIzNjAwV1RfZDh4VU15WWJlZ1VHTEdaa3FURFdoTmh0a1NsR1RMQm80TjlPbW55eFNWcUJxaVNWcGpXYzRHYUdEMHhsbS1EQmF2T0h5bkoyVEtEdnphY3hiWE80YzlNYjQwLTNHMXR6UGJ6QzEyM0dmM093LWN4ODVBTFVIa1R4eThiWHhhcHV2azhXY3d6bXNwcU5iU2pZalpLNFo3V1Z6ejdBak1sN21wWGNCeUR0VjRDRzY1UE1NMEFCMkJwd1JXUmJUcURpUXByLVUyQXlIZDlFUQ?oc=5",
+      "title": "Despite scrutiny, special education money flows to for-profit residential treatment centers - The Washington Post",
+      "origin": "google-news",
+      "host": "washingtonpost.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "washingtonpost.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQV3VwbTc3ZG9WNUF2ak0xa29lRUVlYkJyc1VwQjY5QzRHRUtLZ3RNcmhfaWVxd3dMeDFRVzIxWEViSXVKckROeG9mSkpmVjhMNkYwM1czWEg5RkJUU2I0Z1dsanFnUnkwNi01RnV3aVdtLWtjMlpuc283UVJHYXlRRFBZbmxtajk2WEZkMDZGQlZmR1RtYWVIam8xZGNoR25pS1Yxak9VbWJuSnhMN1lvYVNvYTJUamcxcEhqSE5lUWlqQmE0LW5fTzFxaXM2SGM2YzBCcmdIYzdyOWNNVEIzdnNxY2N0cEs0WVIyQm130gHzAUFVX3lxTE5kYk1oSUo5UzRZajNxR0Rla3N2ei1JZFlZMmU5YjV3MThzUUVVcHFXUWZOUURMcHhBd1NPTkdCbTVPY3g3Y2hHS3U0TzJQZnU2czV4WmJJNFhMaDUxNjVXOHFpUzQ5QVBBbkFtQWl1eDJpM2d1dXhrSkNQV3EtSlhUbTdDMlZPUU1WZ29iRjNIX3hiZmJsUzRHbHBueENQZTlnLXhzSEhXc2V2a05BeFE4ZGtmRU8yYS1wSjdWS243M2s4NFcxTnlUZ2tidHV1QXFQemFoRVhBUFZoLU5jMnEwbnI0TGZCMTlfRVFaRjlSX3F0SQ?oc=5",
+      "title": "Genesis Ranch purchases 86 acres in Prairie Grove to build mental health treatment campus for teen girls - KNWA FOX24",
+      "origin": "google-news",
+      "host": "nwahomepage.com",
+      "facilityQuery": "Teen Challenge Adventure Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nwahomepage.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPSV9pRE9xZ3BQMVh6VmJCdjcxc3RUU1hNeEU3NG53emJhZ0NBektDQnBTY1JacDA3UVUwNHBKQmtzZzZfaEtYbGJYdEVGRnlmeWRvTjk1ZGpkeVktTC03Rm1OUWR1WGgzYzNXUDVaTlpzMG01a09YUWc0NW9aOHNjVnVkd3d3eldGRmlVMmFud05faDY0MVV2VtIBngFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUQ?oc=5",
+      "title": "DHHS issues emergency actions against Utah behavioral school attended by Paris Hilton - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNMzd5Q2hlMGltSjhGMEREMWpESndodnJLa3lZUFdzbGJvdzBlaVIzanB5SS1CeUdtX2VrNmVFNGlXY1l3bmJZeTRtRjlkNlVNSnVRaXNRMVZlN0Vya1dIWmNxTUVUY1BvbE5lc2VfbnJ0SjFpbm9EVFZ5QlRReHVJYU5HaXVvTHFnZmZRb0dqeFFzSl9QVF9kSi01ZVJWQWJMam9hZFNVRDIwQmQ3WHVCUC1KMUtLRlNwQThBaEZxam53V1JJQXhWTmRycERJQQ?oc=5",
+      "title": "Action taken after Provo school staff failed to call 911 after client left unconscious - FOX 13 News Utah",
+      "origin": "google-news",
+      "host": "fox13now.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13now.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPa3lIMkoyWDNqRzltRTZxUXlYWERFME90aFlhS3E5NldVVW9FMUxaVzg4NFFENHNzazc1RW9jTGYyNF9FNm5VdXc2ODlLLXB1T2F5OHozcGJWZEQzMnNHRGI5bHNockVyc3Zjang1S2NwVzdLRDRVRXhfd2hTNGJudDc1aVl4VzRIZ05hWU1sTQ?oc=5",
+      "title": "Hope reborn as Angel of Hope Rehab welcomes 8th intake - The Herald ZW",
+      "origin": "google-news",
+      "host": "heraldonline.co.zw",
+      "facilityQuery": "Sanctuary of Hope",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "heraldonline.co.zw"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQT1dMVFRvTlRNWjRBYmp6VV8zX3pieTFDSjU1MUNFNWxUUnhXRHNpV2JiVWd6TjFuajN5UzV0S0pjX3EzQ3NfeFl0amdqbG5LY3N5YzJpV2toSUNtdHgxQXdPRXJ5LTVOcUpqMnJSSlVVY2RVcnhXZVBiRENNdGxockZUc0pTRWZDNnE0aktGdlFVZnN6bF9BT2NxUTNhaVNwSDkwTVBLZW03VGwtRkRyR3hGN01JZFFEQTZldWhfQ2k4STFFaVA2WA?oc=5",
+      "title": "Children's home review risks being skewed by DfE's aim to shrink sector, providers warn - communitycare.co.uk",
+      "origin": "google-news",
+      "host": "communitycare.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "communitycare.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5pbjk3QWVyZHBVck0tS3FQaFlqU0RTdmNaaXZaQjFpM0RBWnM1djN6S2VRaWg3NTdxeHI1UzBFeEVXT0phQmxBdlpnSGxEcDByRjlGOTBnTzhwZ0dW?oc=5",
+      "title": "Why illegal children's homes are being paid up to £2m per child by councils - BBC",
+      "origin": "google-news",
+      "host": "bbc.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "bbc.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5VZ3ZtLVFqUjhFYWFRVmZPTFBMYXNVMDE3TDcwV3FlNzl4cW1tWEZ3RlQyTm0xdnloN0xpSWYyQ2ViODB0VnVqVjRnYVRER2c?oc=5",
+      "title": "Let discovery proceed in Hyde School case | Opinion - Portland Press Herald - Maine Sunday Telegram",
+      "origin": "google-news",
+      "host": "pressherald.com",
+      "facilityQuery": "Hyde School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Hyde School"
+        ],
+        "threshold": 3,
+        "host": "pressherald.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNa084MXFuazV6RGRCMjl6a214ekgyWUhQWl81RWkyazNUR3V4eHM3akN2Z0ZxT2txeVlNZWhUSkMxRTZyUmttaTdmQ3lkdGxPQzdpSzVaQ01lNEwxamExcXdiUVdUeC1tUjg5blg3VUEzR212TjMySFhmZnZqRzVnNg?oc=5",
+      "title": "Getting the ‘Edge’ on with United Way of Greater Nashua - NH Business Review",
+      "origin": "google-news",
+      "host": "nhbr.com",
+      "facilityQuery": "Dover Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nhbr.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPV0hUMDJyaW0xaTBXN1pfRGIzOXNiVHBpbGxzaFRTVUtjOFk4YzVRdmJYY0lvME1renhwYU9XZTNtSlJfR3htbzAzMXJyR2l1SjkzbTlyc0FDMXNzWUFvSFpOSlZOMFFpaWFwd1BZQTZ3Qlg1c1RSMUhVQ3JyeF9uUk1MSFNubklrd0RTclA1clQ0c2dsbmp2Q25yUzBqTjZFV0ZJV3JOakx0dmVDMng4ZnRMdGVRZ3U5ZmRnVV9QajdYX2hBUE1WZ255d1hlajd5YzMzYkk1cEpubE5xRDhzMjJhUDd0Mkw0TGRXeFQ3aw?oc=5",
+      "title": "Memphis receives $1M in funding for youth violence prevention, officials say - FOX13 Memphis",
+      "origin": "google-news",
+      "host": "fox13memphis.com",
+      "facilityQuery": "PURE Academy",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13memphis.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQT0RFcUF1MmI3cHlxV0M4STN1T1NjLTRYb0sxX3JZSTN3YXJCMTAyMDBNMTgta3dzRVhRTnhZQnBtT2NWbVdqZDRaeWc4bGtBVGFSd195WEFueWNCS1hMSTJKZ2ZIUGd2dFJrblljNGR3cHdreTZ0bHFXYTRfbjdISmJUanRFeHFUdkxQWGJQd1dYZllkTExXNkwyRdIBoAFBVV95cUxOOGlHVUk0aVkzMzdiS0Y1N2RNNTlkSk9hOTVwTGVWNnBtVDZLazZlY2NYdXlpVUxXbk0yd1NnWnFUTHhWX1k3UEwtN18wM0s2RUZpMHhraVptRkNVUG03c1htaHNpaDhXQVozUkdFNUprWVRJY2lSVG4zSUp6MC1SWURzUXRDY1l2ZVdkSGo0amtwZGQydkY0QVFBSTMwOUFR?oc=5",
+      "title": "UPDATE: Juvenile escapes from youth center north of Las Vegas - KLAS 8 News Now",
+      "origin": "google-news",
+      "host": "8newsnow.com",
+      "facilityQuery": "Caliente Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "8newsnow.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE10WlhGVUNfOHBxTk1EU2JwcWFPY0VjX1FGWXI1NnFvMkZSSWZ0QmxLdmFCeXBnRVVEeGpQeTZVS2NFMjFpdHFwdWJCX2hMX3ZoZFNpbkFYTWtSR1B4ZXZPZmltQjlfQ1IxVFE?oc=5",
+      "title": "What Is the Biggest Complaint in Nursing Homes in 2026? - Sokolove Law",
+      "origin": "google-news",
+      "host": "sokolovelaw.com",
+      "facilityQuery": "Ridge House",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sokolovelaw.com"
+      }
+    },
     {
       "ts": "2026-06-07T08:07:11.783Z",
       "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPWFdYZVM1NHRJTy1ncE5EVThKbW9zY3F3YUxqX2hHMEg4ZWNVSmZVY3YtbzBRa2cySk5DZHlhVy1adDJQcWNCRU5MUVljTC0tTUxQTUNyd09MRUZvNVdpSDhFb21pT3ZUSUxuMUlrUzFyTk1vdHpyRm1rMFhiVi0zaw?oc=5",
