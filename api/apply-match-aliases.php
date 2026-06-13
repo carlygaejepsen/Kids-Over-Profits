@@ -73,8 +73,8 @@ try {
         $aliases = (is_array($seed) && isset($seed['aliases']) && is_array($seed['aliases'])) ? $seed['aliases'] : [];
     }
 
-    $findById   = $pdo->prepare("SELECT id, json_data FROM facilities_master WHERE id = ? LIMIT 1");
-    $findByName = $pdo->prepare("SELECT id, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
+    $findById   = $pdo->prepare("SELECT id, unique_name, json_data FROM facilities_master WHERE id = ? LIMIT 1");
+    $findByName = $pdo->prepare("SELECT id, unique_name, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
     $update     = $pdo->prepare("UPDATE facilities_master SET json_data = ? WHERE id = ?");
 
     $stats = [
@@ -105,9 +105,14 @@ try {
         $decoded = json_decode((string)$row['json_data'], true);
         if (!is_array($decoded)) { $stats['targets_not_found'][] = $target . ' (unparseable json_data)'; continue; }
 
-        // Names this row already answers to, for idempotency.
+        // Names this row already answers to, for idempotency. Seed from the row's
+        // REAL unique_name - NOT the human "target" label, which may equal an
+        // alias we actually need to write (that bug skipped Bethel/Cumberland/
+        // Laurel Ridge, whose alias text matched their label).
         $existing = [];
-        $existing[kop_normalize_name_key($target)] = true;
+        if (!empty($row['unique_name'])) {
+            $existing[kop_normalize_name_key((string)$row['unique_name'])] = true;
+        }
         foreach (kop_collect_self_names($decoded) as $known) {
             $existing[kop_normalize_name_key($known)] = true;
         }
