@@ -592,22 +592,22 @@ details.operator-section[open] .facility-card {
 .facility-latest-news {
     margin: 8px 0 10px;
     padding: 8px 10px;
-    background: #FFFFFF;
+    background: #FFFFFF !important;    /* force white surface over theme card bg */
     border: 1px solid #B6E3D4;        /* mint */
     border-left: 3px solid #33A7B5;   /* teal */
     border-radius: 3px;
     font-size: 0.9em;
     line-height: 1.35;
-    color: #000435;                   /* midnight - ensures readable inherited text */
+    color: #000435 !important;        /* midnight - readable default text */
 }
 
-.facility-latest-news-label {
+.facility-latest-news .facility-latest-news-label {
     display: inline-block;
     font-size: 0.78em;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    color: #0d4450;                   /* dark teal */
+    color: #0d4450 !important;        /* dark teal */
     margin-right: 6px;
 }
 
@@ -621,19 +621,20 @@ details.operator-section[open] .facility-card {
     color: #33A7B5 !important;
 }
 
-.facility-latest-news-meta {
+.facility-latest-news .facility-latest-news-meta {
     display: block;
     font-size: 0.82em;
-    color: #555555;
+    color: #555555 !important;        /* force over theme span color */
+    opacity: 1 !important;
     margin-top: 2px;
 }
 
-.facility-latest-news-more {
+.facility-latest-news .facility-latest-news-more {
     display: inline-block;
     margin-top: 3px;
     font-size: 0.8em;
     font-style: italic;
-    color: #6b7280;
+    color: #6b7280 !important;
 }
 
 .operator-latest-news {
