@@ -1506,13 +1506,41 @@ document.addEventListener('DOMContentLoaded', () => {
             : inferredEntryType === 'organization';
 
         // Toggle the organization-mode class
+        const wasOrgMode = pageContainer.classList.contains('organization-mode');
         if (isOrganizationEntry) {
             pageContainer.classList.add('organization-mode');
-            console.log('Organization mode enabled for:', programName);
+            if (!wasOrgMode) {
+                // Brief flash class so CSS can animate the transition
+                pageContainer.classList.add('mode-switching');
+                setTimeout(() => pageContainer.classList.remove('mode-switching'), 350);
+            }
             // Update facilities list when switching to organization mode
             updateOrganizationFacilitiesList();
         } else {
+            if (wasOrgMode) {
+                pageContainer.classList.add('mode-switching');
+                setTimeout(() => pageContainer.classList.remove('mode-switching'), 350);
+            }
             pageContainer.classList.remove('organization-mode');
+        }
+
+        // Swap dynamic labels for fields shared between both modes
+        document.querySelectorAll('[data-facility-label][data-org-label]').forEach(el => {
+            el.textContent = isOrganizationEntry
+                ? el.dataset.orgLabel
+                : el.dataset.facilityLabel;
+        });
+
+        // Update mode badge
+        const modeBadge = document.getElementById('entryModeBadge');
+        if (modeBadge) {
+            if (isOrganizationEntry) {
+                modeBadge.textContent = '🏢 Organization Mode';
+                modeBadge.className = 'entry-mode-badge mode-org';
+            } else {
+                modeBadge.textContent = '📋 Facility Mode';
+                modeBadge.className = 'entry-mode-badge mode-facility';
+            }
         }
     }
 

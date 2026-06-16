@@ -136,21 +136,26 @@ get_header();
             <fieldset>
                 <legend>Basic Information</legend>
                 <label for="entryType">Entry Type:</label>
-                <select id="entryType" name="entryType">
-                    <option value="facility">Individual Facility / Program</option>
-                    <option value="organization">Parent Organization</option>
-                </select>
+                <div class="entry-type-row">
+                    <select id="entryType" name="entryType">
+                        <option value="facility">Individual Facility / Program</option>
+                        <option value="organization">Parent Organization</option>
+                    </select>
+                    <span class="entry-mode-badge" id="entryModeBadge">📋 Facility Mode</span>
+                </div>
 
-                <label for="programName">Program Name:</label>
+                <label for="programName" data-facility-label="Program Name" data-org-label="Organization Name">Program Name</label>
                 <input type="text" id="programName" name="programName" data-autocomplete-category="facility" placeholder="e.g., Turn-About Ranch">
 
                 <label for="yearsActive">Years Active:</label>
                 <input type="text" id="yearsActive" name="yearsActive" placeholder="e.g., 1989-present">
 
-                <label for="cityState">City, ST:</label>
-                <input type="text" id="cityState" name="cityState" data-autocomplete-category="location" placeholder="e.g., Escalante, UT">
+                <div class="facility-only-field">
+                    <label for="cityState">City, ST:</label>
+                    <input type="text" id="cityState" name="cityState" data-autocomplete-category="location" placeholder="e.g., Escalante, UT">
+                </div>
 
-                <label for="programType">Program Type:</label>
+                <label for="programType" data-facility-label="Program Type" data-org-label="Organization Type">Program Type</label>
                 <input type="text" id="programType" name="programType" data-autocomplete-category="type" placeholder="e.g., Residential Treatment Center">
             </fieldset>
 
@@ -412,7 +417,7 @@ get_header();
                 <div class="list-preview" id="staffListOutput"></div>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="facility-only-field">
                 <legend>Program Structure</legend>
                 <div class="field-row">
                     <div class="field-group">
@@ -484,7 +489,7 @@ get_header();
                 <textarea id="structureMisc" name="structureMisc" rows="4" placeholder="Any additional program structure information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
-            <fieldset>
+            <fieldset class="facility-only-field">
                 <legend>Rules and Punishments</legend>
                 <h4>Rules</h4>
                 <div class="form-adder">

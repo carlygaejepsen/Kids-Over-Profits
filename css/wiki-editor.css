@@ -500,6 +500,61 @@ select {
     display: none;
 }
 
+/* Fieldset facility-only: restore block when not in org mode */
+fieldset.facility-only-field {
+    display: block;
+}
+.organization-mode fieldset.facility-only-field {
+    display: none;
+}
+
+/* Brief fade on all form fieldsets during a mode switch */
+.mode-switching fieldset {
+    animation: kop-mode-fade 0.3s ease;
+}
+@keyframes kop-mode-fade {
+    0%   { opacity: 1; }
+    30%  { opacity: 0.55; }
+    100% { opacity: 1; }
+}
+
+/* Entry type row: select + badge side by side */
+.entry-type-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 4px;
+}
+
+.entry-type-row select {
+    flex-shrink: 0;
+}
+
+/* Mode badge */
+.entry-mode-badge {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    transition: background 0.25s, color 0.25s;
+    pointer-events: none;
+}
+
+.entry-mode-badge.mode-facility {
+    background: var(--kop-powder-blue, #AEE0ED);
+    color: #004050;
+    border: 1px solid #7ecfe0;
+}
+
+.entry-mode-badge.mode-org {
+    background: var(--kop-soft-yellow, #FFF5CB);
+    color: #6a5000;
+    border: 1px solid #e5c800;
+}
+
 .submit-modal-content {
     background: #fff;
     padding: 30px;
