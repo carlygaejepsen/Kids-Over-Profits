@@ -1134,13 +1134,21 @@ function displayFacilities(facilitiesData, containerId) {
             }
 
             if (currentOp && !isValueEmpty(currentOp)) {
-                // For transferred/acquired records, avoid asserting this is the
-                // present-day operator because source data can be historical.
-                if (statusClass === 'transferred' || statusClass === 'acquired') {
+                const currentOpText = cleanText(currentOp);
+                // Some datasets stuff historical strings ("Previously X; Y") into
+                // the current-operator field. Those are already surfaced by the
+                // "Previously owned by" line, so don't re-assert them as the
+                // present-day operator (which also reads ungrammatically).
+                const isHistoricalOp = /\b(previously|former(?:ly)?|prior)\b/i.test(currentOpText);
+                if (isHistoricalOp) {
+                    // skip: covered by previous-owner/former-name copy above
+                } else if (statusClass === 'transferred' || statusClass === 'acquired') {
+                    // For transferred/acquired records, avoid asserting this is the
+                    // present-day operator because source data can be historical.
                     subtextParts.push(`<strong>Operator at transfer: ${escapeHtml(currentOp)}</strong>`);
-                } 
+                }
                 // If open but listed under a different parent (historical context), might still be useful
-                else if (statusClass === 'open' && cleanText(operatorName) !== cleanText(currentOp)) {
+                else if (statusClass === 'open' && cleanText(operatorName) !== currentOpText) {
                      subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
                 }
             }
