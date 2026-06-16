@@ -10,17 +10,63 @@
  * server's disk, so it stays in sync automatically and does not rely on .md
  * files being web-served (they often are not in production).
  *
- * GET /api/wiki-stubs.php  ->  { emptySlugs: [...], completedNames: [...], generated }
+ * GET /api/wiki-stubs.php  ->  { emptySlugs: [...], completedNames: [...], completedSlugs: [...], manualCompletedSlugs: [...], manualStubSlugs: [...], generated }
  */
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
+}
+
+$overrideFile = __DIR__ . '/../markdown_output/wiki_stub_overrides.json';
+
+function kop_wiki_stub_default_overrides() {
+    return [
+        'updated' => gmdate('c'),
+        'manualCompletedSlugs' => [],
+        'manualStubSlugs' => [],
+    ];
+}
+
+function kop_wiki_stub_load_overrides($path) {
+    if (!is_readable($path)) {
+        return kop_wiki_stub_default_overrides();
+    }
+    $decoded = json_decode((string) file_get_contents($path), true);
+    if (!is_array($decoded)) {
+        return kop_wiki_stub_default_overrides();
+    }
+    return [
+        'updated' => isset($decoded['updated']) ? (string) $decoded['updated'] : gmdate('c'),
+        'manualCompletedSlugs' => array_values(array_filter(array_map('strval', $decoded['manualCompletedSlugs'] ?? []))),
+        'manualStubSlugs' => array_values(array_filter(array_map('strval', $decoded['manualStubSlugs'] ?? []))),
+    ];
+}
+
+function kop_wiki_stub_write_overrides($path, array $data) {
+    $dir = dirname($path);
+    if (!is_dir($dir) || (!is_writable($dir) && !file_exists($path))) {
+        return false;
+    }
+    $payload = json_encode([
+        'updated' => gmdate('c'),
+        'manualCompletedSlugs' => array_values(array_unique(array_map('strtolower', $data['manualCompletedSlugs'] ?? []))),
+        'manualStubSlugs' => array_values(array_unique(array_map('strtolower', $data['manualStubSlugs'] ?? []))),
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    if ($payload === false) {
+        return false;
+    }
+    return file_put_contents($path, $payload . "\n") !== false;
+}
+
+function kop_wiki_stub_normalize_slug($slug) {
+    $slug = strtolower(trim((string) $slug));
+    return preg_match('/^[a-z0-9][a-z0-9\-]*$/', $slug) ? $slug : '';
 }
 
 // --- 1. Empty slugs from the scan file (read server-side) ---
@@ -101,6 +147,7 @@ $COMPLETED_MIN_CHARS = 40;
 $IMPORT_SUBMITTERS = ['bulk-upload', 'batch-import-script', 'reimport-regenerated', 'import', 'system'];
 $completedNames = [];
 $completedSlugs = [];
+$overrides = kop_wiki_stub_load_overrides($overrideFile);
 try {
     require_once __DIR__ . '/config.php';
     if (isset($pdo) && $pdo instanceof PDO) {
@@ -160,9 +207,70 @@ try {
     $completedSlugs = [];
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!defined('ABSPATH')) {
+        $current = __DIR__;
+        for ($i = 0; $i < 6; $i++) {
+            $current = dirname($current);
+            if (file_exists($current . '/wp-load.php')) { require_once $current . '/wp-load.php'; break; }
+        }
+    }
+    $is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+    if (!$is_admin) {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Admin privileges required']);
+        exit;
+    }
+
+    $raw = file_get_contents('php://input');
+    $payload = json_decode((string) $raw, true);
+    $slug = kop_wiki_stub_normalize_slug($payload['slug'] ?? '');
+    $mode = strtolower(trim((string) ($payload['mode'] ?? '')));
+    if ($slug === '' || !in_array($mode, ['completed', 'stub'], true)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Expected slug and mode=completed|stub']);
+        exit;
+    }
+
+    $manualCompleted = array_values(array_filter(array_map('strtolower', $overrides['manualCompletedSlugs'] ?? [])));
+    $manualStub = array_values(array_filter(array_map('strtolower', $overrides['manualStubSlugs'] ?? [])));
+
+    $manualCompleted = array_values(array_diff($manualCompleted, [$slug]));
+    $manualStub = array_values(array_diff($manualStub, [$slug]));
+    if ($mode === 'completed') {
+        $manualCompleted[] = $slug;
+    } else {
+        $manualStub[] = $slug;
+    }
+
+    $writeOk = kop_wiki_stub_write_overrides($overrideFile, [
+        'manualCompletedSlugs' => $manualCompleted,
+        'manualStubSlugs' => $manualStub,
+    ]);
+    if (!$writeOk) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Unable to save overrides']);
+        exit;
+    }
+
+    $overrides = kop_wiki_stub_load_overrides($overrideFile);
+
+    echo json_encode([
+        'success' => true,
+        'slug' => $slug,
+        'mode' => $mode,
+        'manualCompletedSlugs' => $overrides['manualCompletedSlugs'],
+        'manualStubSlugs' => $overrides['manualStubSlugs'],
+        'generated' => gmdate('c'),
+    ]);
+    exit;
+}
+
 echo json_encode([
     'emptySlugs' => $emptySlugs,
     'completedNames' => array_values($completedNames),
     'completedSlugs' => array_values($completedSlugs),
+    'manualCompletedSlugs' => array_values($overrides['manualCompletedSlugs'] ?? []),
+    'manualStubSlugs' => array_values($overrides['manualStubSlugs'] ?? []),
     'generated' => gmdate('c'),
 ]);

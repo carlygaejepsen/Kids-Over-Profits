@@ -555,6 +555,95 @@ fieldset.facility-only-field {
     border: 1px solid #e5c800;
 }
 
+.related-program-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.related-program-group-heading {
+    margin: 14px 0 6px;
+    color: #000435;
+    font-size: 0.95rem;
+}
+
+.stub-override-btn {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #33A7B5;
+    background: #FFF5CB;
+    color: #000435;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.stub-override-btn:hover:not(:disabled) {
+    background: #ECF385;
+}
+
+.stub-override-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.stub-manual-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.stub-manual-badge.is-completed {
+    background: #B6E3D4;
+    border: 1px solid #33A7B5;
+    color: #000435;
+}
+
+.stub-manual-badge.is-stub {
+    background: #FFF5CB;
+    border: 1px solid #EF9034;
+    color: #000435;
+}
+
+.related-program-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.related-program-summary {
+    display: block;
+    flex: 1 1 auto;
+}
+
+.related-program-meta {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.related-program-actions {
+    display: flex;
+    gap: 8px;
+    flex: 0 0 auto;
+}
+
+.related-program-edit-btn,
+.related-program-remove-btn {
+    white-space: nowrap;
+}
+
+.related-program-heal-link {
+    margin-left: 6px;
+    font-size: 0.8rem;
+}
+
 .submit-modal-content {
     background: #fff;
     padding: 30px;

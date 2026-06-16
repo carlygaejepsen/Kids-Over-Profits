@@ -91,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let programLevels = [];
     let affiliations = [];
     let relatedPrograms = [];
+    let editingRelatedProgramIndex = null;
     let importedMarkdown = ''; // Store original imported markdown
     let isOrganizationEntry = false; // Track if current entry is an organization
 
@@ -143,6 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let emptySlugPromise = null;
     let completedNamesSet = null; // normalized program names that already have a saved submission
     let completedSlugsSet = null; // wiki slugs whose submission recorded its source slug (precise completion)
+    let manualCompletedSlugsSet = new Set();
+    let manualStubSlugsSet = new Set();
     // Normalized program names that map to more than one distinct wiki slug across
     // the index (e.g. "Hyde School" -> hydeme + hydect). For these, a name-only
     // match cannot prove a *specific* slug is done, so completion requires a slug
@@ -210,6 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
         emptySlugSet = new Set();
         completedNamesSet = new Set();
         completedSlugsSet = new Set();
+        manualCompletedSlugsSet = new Set();
+        manualStubSlugsSet = new Set();
 
         // 1. Preferred: server endpoint — auto-reads the current empty-file list
         //    AND reports which entries already have a saved submission (completed).
@@ -220,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 (data.emptySlugs || []).forEach(slug => { if (slug) emptySlugSet.add(String(slug).toLowerCase()); });
                 (data.completedNames || []).forEach(name => { const n = normalizeEntryName(name); if (n) completedNamesSet.add(n); });
                 (data.completedSlugs || []).forEach(slug => { if (slug) completedSlugsSet.add(String(slug).toLowerCase()); });
+                (data.manualCompletedSlugs || []).forEach(slug => { if (slug) manualCompletedSlugsSet.add(String(slug).toLowerCase()); });
+                (data.manualStubSlugs || []).forEach(slug => { if (slug) manualStubSlugsSet.add(String(slug).toLowerCase()); });
                 if (emptySlugSet.size > 0) {
                     console.log('Loaded ' + emptySlugSet.size + ' empty slugs, ' + completedNamesSet.size + ' completed, from wiki-stubs.php');
                     return;
@@ -348,6 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         programLevels = [];
         affiliations = [];
         relatedPrograms = preservedRelatedPrograms;
+        editingRelatedProgramIndex = null;
 
         initializeEmptyLists();
 
@@ -368,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         window.unparsedContentFromImport = '';
         clearLoadedAddress();
+        renderRelatedProgramsList();
         detectAndToggleOrganizationMode();
     }
 
@@ -484,6 +493,136 @@ document.addEventListener('DOMContentLoaded', () => {
         editingStaffIndex = null;
         if (addStaffBtn) {
             addStaffBtn.textContent = 'Add Staff Member';
+        }
+    }
+
+    function resetRelatedProgramForm() {
+        clearInputs(['relProgName', 'relProgLink', 'relProgYears', 'relProgLocation', 'relProgHeal', 'relProgReopened']);
+        editingRelatedProgramIndex = null;
+        const addBtn = document.getElementById('addRelatedProgBtn');
+        if (addBtn) addBtn.textContent = 'Add Program';
+    }
+
+    function renderRelatedProgramsList() {
+        const container = document.getElementById('relatedProgramsListOutput');
+        if (!container) return;
+
+        container.innerHTML = '';
+        if (!Array.isArray(relatedPrograms) || relatedPrograms.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+
+        container.style.display = 'block';
+        const isOpenProgram = (item) => {
+            if (!item) return true;
+            if (item.reopened) {
+                return !/closed|inactive|former|past/i.test(String(item.reopened));
+            }
+            const yearsActive = String(item.yearsActive || '').toLowerCase();
+            if (!yearsActive) return true;
+            if (/present|current|ongoing|now\b/.test(yearsActive)) return true;
+            return !/\d{4}\s*[-–—]\s*\d{4}/.test(yearsActive);
+        };
+
+        const rows = relatedPrograms.map((item, index) => ({ item, index }));
+        const openRows = rows.filter(({ item }) => isOpenProgram(item));
+        const closedRows = rows.filter(({ item }) => !isOpenProgram(item));
+
+        const renderGroup = (title, items) => {
+            if (!items.length) return;
+
+            const heading = document.createElement('h4');
+            heading.className = 'related-program-group-heading';
+            heading.textContent = `${title} (${items.length})`;
+            container.appendChild(heading);
+
+            items.forEach(({ item, index }) => {
+                const row = document.createElement('div');
+                row.className = 'list-preview-item related-program-item';
+
+                const titleWrap = document.createElement('div');
+                titleWrap.className = 'related-program-summary';
+                const name = document.createElement('strong');
+                name.textContent = item.name || '';
+                titleWrap.appendChild(name);
+
+                const meta = document.createElement('span');
+                meta.className = 'related-program-meta';
+                const statusBits = [];
+                if (item.yearsActive) statusBits.push(item.yearsActive);
+                if (item.location) statusBits.push(item.location);
+                if (item.reopened) statusBits.push(item.reopened);
+                meta.textContent = statusBits.length ? ` — ${statusBits.join(' · ')}` : '';
+                titleWrap.appendChild(meta);
+
+                if (item.healLink) {
+                    const heal = document.createElement('a');
+                    heal.href = item.healLink;
+                    heal.target = '_blank';
+                    heal.rel = 'noopener noreferrer';
+                    heal.className = 'related-program-heal-link';
+                    heal.textContent = '[HEAL]';
+                    titleWrap.appendChild(document.createTextNode(' '));
+                    titleWrap.appendChild(heal);
+                }
+
+                const actions = document.createElement('div');
+                actions.className = 'related-program-actions';
+
+                const editBtn = document.createElement('button');
+                editBtn.type = 'button';
+                editBtn.className = 'btn-secondary related-program-edit-btn';
+                editBtn.textContent = 'Edit';
+                editBtn.addEventListener('click', () => startEditRelatedProgram(index));
+                actions.appendChild(editBtn);
+
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-btn related-program-remove-btn';
+                removeBtn.textContent = 'Remove';
+                removeBtn.addEventListener('click', () => removeRelatedProgram(index));
+                actions.appendChild(removeBtn);
+
+                row.appendChild(titleWrap);
+                row.appendChild(actions);
+                container.appendChild(row);
+            });
+        };
+
+        renderGroup('Open Programs', openRows);
+        renderGroup('Closed Programs', closedRows);
+    }
+
+    function startEditRelatedProgram(index) {
+        const item = relatedPrograms[index];
+        if (!item) return;
+        editingRelatedProgramIndex = index;
+        setFieldValue('relProgName', item.name || '');
+        setFieldValue('relProgLink', item.link || '');
+        setFieldValue('relProgYears', item.yearsActive || '');
+        setFieldValue('relProgLocation', item.location || '');
+        setFieldValue('relProgHeal', item.healLink || '');
+        setFieldValue('relProgReopened', item.reopened || '');
+        const addBtn = document.getElementById('addRelatedProgBtn');
+        if (addBtn) addBtn.textContent = 'Save Program';
+        document.getElementById('relProgName')?.focus();
+    }
+
+    function removeRelatedProgram(index) {
+        if (index < 0 || index >= relatedPrograms.length) return;
+        relatedPrograms.splice(index, 1);
+        if (editingRelatedProgramIndex !== null) {
+            if (editingRelatedProgramIndex === index) {
+                resetRelatedProgramForm();
+            } else if (editingRelatedProgramIndex > index) {
+                editingRelatedProgramIndex -= 1;
+            }
+        }
+        renderRelatedProgramsList();
+        updateMarkdownFromForm();
+        if (isOrganizationEntry) {
+            updateOrganizationFacilitiesList();
         }
     }
 
@@ -1467,14 +1606,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const reopened = document.getElementById('relProgReopened').value.trim();
 
             if (name) {
-                relatedPrograms.push({ name, link, yearsActive, location, healLink, reopened });
-                renderList(relatedPrograms, 'relatedProgramsListOutput', item => {
-                    const healPart = item.healLink ? ` <a href="${escapeHtml(item.healLink)}" target="_blank">[HEAL]</a>` : '';
-                    return `<strong>${escapeHtml(item.name)}</strong> (${escapeHtml(item.yearsActive || '?')}) - ${escapeHtml(item.location || '?')}${healPart}`;
-                });
-                clearInputs(['relProgName', 'relProgLink', 'relProgYears', 'relProgLocation', 'relProgHeal', 'relProgReopened']);
+                const payload = { name, link, yearsActive, location, healLink, reopened };
+                if (editingRelatedProgramIndex !== null && relatedPrograms[editingRelatedProgramIndex]) {
+                    relatedPrograms[editingRelatedProgramIndex] = payload;
+                } else {
+                    relatedPrograms.push(payload);
+                }
+                resetRelatedProgramForm();
+                renderRelatedProgramsList();
+                updateMarkdownFromForm();
+                if (isOrganizationEntry) {
+                    updateOrganizationFacilitiesList();
+                }
             } else {
                 alert('Please enter at least a program name.');
+            }
+        });
+    }
+
+    const refreshRelatedProgBtn = document.getElementById('refreshRelatedProgBtn');
+    if (refreshRelatedProgBtn) {
+        refreshRelatedProgBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            renderRelatedProgramsList();
+            updateMarkdownFromForm();
+            if (isOrganizationEntry) {
+                updateOrganizationFacilitiesList();
             }
         });
     }
@@ -2129,10 +2286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (relatedPrograms.length > 0) {
-            renderList(relatedPrograms, 'relatedProgramsListOutput', item => {
-                const healPart = item.healLink ? ` <a href="${escapeHtml(item.healLink)}" target="_blank">[HEAL]</a>` : '';
-                return `<strong>${escapeHtml(item.name)}</strong> (${escapeHtml(item.yearsActive || '?')}) - ${escapeHtml(item.location || '?')}${healPart}`;
-            });
+            renderRelatedProgramsList();
         }
 
         // Set diagnosis checkboxes from parsed data
@@ -2539,6 +2693,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function isStubEntry(entry, stateCode) {
         const slug = getEntrySlug(entry, stateCode);
         return !!(emptySlugSet && slug && emptySlugSet.has(slug.toLowerCase()));
+    }
+    function isManualStubOverride(entry, stateCode) {
+        const slug = getEntrySlug(entry, stateCode);
+        return !!(manualStubSlugsSet && slug && manualStubSlugsSet.has(slug.toLowerCase()));
     }
     function buildGroupHeader(text, isStub) {
         const header = document.createElement('div');
@@ -2949,7 +3107,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!nameToSlugs.has(nm)) nameToSlugs.set(nm, new Set());
                         nameToSlugs.get(nm).add(eslug.toLowerCase());
                     }
-                    if (isStubEntry(entry, code)) collected.push({ entry, state: code });
+                    if (isStubEntry(entry, code) || isManualStubOverride(entry, code)) collected.push({ entry, state: code });
                 });
             }));
 
@@ -2975,6 +3133,8 @@ document.addEventListener('DOMContentLoaded', () => {
     //      can't prove THIS slug is done, so we require the slug match.
     function isStubCompleted(entry, stateCode) {
         const slug = getEntrySlug(entry, stateCode);
+        if (slug && manualCompletedSlugsSet && manualCompletedSlugsSet.has(slug.toLowerCase())) return true;
+        if (slug && manualStubSlugsSet && manualStubSlugsSet.has(slug.toLowerCase())) return false;
         if (slug && completedSlugsSet && completedSlugsSet.has(slug.toLowerCase())) return true;
         const nm = normalizeEntryName(entry.name || entry.normalizedName);
         if (!nm) return false;
@@ -2982,9 +3142,47 @@ document.addEventListener('DOMContentLoaded', () => {
         return !!(completedNamesSet && completedNamesSet.has(nm));
     }
 
+    async function setStubOverride(entry, stateCode, mode, button) {
+        const slug = getEntrySlug(entry, stateCode);
+        if (!slug) return;
+
+        const originalLabel = button?.textContent || (mode === 'completed' ? 'Mark Completed' : 'Mark Stub');
+        if (button) {
+            button.disabled = true;
+            button.textContent = 'Saving...';
+        }
+
+        try {
+            const resp = await fetch(getStubsApiUrl(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ slug, mode })
+            });
+            const data = await resp.json().catch(() => ({}));
+            if (!resp.ok || !data.success) {
+                throw new Error(data.error || `HTTP ${resp.status}`);
+            }
+
+            manualCompletedSlugsSet = new Set((data.manualCompletedSlugs || []).map(value => String(value).toLowerCase()));
+            manualStubSlugsSet = new Set((data.manualStubSlugs || []).map(value => String(value).toLowerCase()));
+            renderAllStubs();
+        } catch (error) {
+            alert(`Unable to save the override: ${error.message || 'Unknown error'}`);
+        } finally {
+            if (button) {
+                button.disabled = false;
+                button.textContent = originalLabel;
+            }
+        }
+    }
+
     function buildStubRow(entry, state, completed) {
         const row = document.createElement('div');
         row.className = 'index-entry-row' + (completed ? ' stub-completed' : '');
+        const slug = getEntrySlug(entry, state);
+        const slugKey = slug.toLowerCase();
+        const manualCompleted = !!(slugKey && manualCompletedSlugsSet && manualCompletedSlugsSet.has(slugKey));
+        const manualStub = !!(slugKey && manualStubSlugsSet && manualStubSlugsSet.has(slugKey));
 
         const nameSpan = document.createElement('span');
         nameSpan.className = 'index-entry-name';
@@ -3015,7 +3213,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         actions.appendChild(actionBtn);
 
-        const slug = getEntrySlug(entry, state);
+        const overrideBtn = document.createElement('button');
+        overrideBtn.type = 'button';
+        overrideBtn.className = 'stub-override-btn';
+        overrideBtn.textContent = completed ? 'Mark Stub' : 'Mark Completed';
+        if (!slug) {
+            overrideBtn.disabled = true;
+            overrideBtn.title = 'This entry does not have a resolvable slug yet.';
+        } else {
+            overrideBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                setStubOverride(entry, state, completed ? 'stub' : 'completed', overrideBtn);
+            });
+        }
+        actions.appendChild(overrideBtn);
+
+        if (manualCompleted || manualStub) {
+            const badge = document.createElement('span');
+            badge.className = 'stub-manual-badge' + (manualCompleted ? ' is-completed' : ' is-stub');
+            badge.textContent = manualCompleted ? 'Manual completed' : 'Manual stub';
+            actions.appendChild(badge);
+        }
+
         if (slug) {
             const viewLink = document.createElement('a');
             viewLink.href = `https://www.reddit.com/r/troubledteens/wiki/index/${slug}/`;

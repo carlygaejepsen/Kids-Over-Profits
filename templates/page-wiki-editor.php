@@ -652,8 +652,8 @@ get_header();
             </fieldset>
 
             <fieldset>
-                <legend>Related Programs</legend>
-                <p style="color: #004435; font-size: 0.9rem;">Add related or affiliated programs here to generate a table.</p>
+                <legend>Facilities / Related Programs</legend>
+                <p style="color: #004435; font-size: 0.9rem;">Use this section to edit the organization's facilities table. Open and closed programs both belong here.</p>
                 <div class="form-adder">
                     <div class="field-row">
                         <div class="field-group">
@@ -685,7 +685,10 @@ get_header();
                             <input type="text" id="relProgReopened">
                         </div>
                     </div>
-                    <button type="button" class="add-btn" id="addRelatedProgBtn">Add Program</button>
+                    <div class="related-program-controls">
+                        <button type="button" class="add-btn" id="addRelatedProgBtn">Add Program</button>
+                        <button type="button" class="btn btn-secondary" id="refreshRelatedProgBtn">Regenerate Table</button>
+                    </div>
                 </div>
                 <div class="list-preview" id="relatedProgramsListOutput"></div>
             </fieldset>
