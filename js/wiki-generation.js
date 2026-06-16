@@ -233,7 +233,9 @@ function generateWikiMarkdown(formData) {
                lower.startsWith('no survivor testimonies for ') ||
                lower.startsWith('no related media links for ') ||
                lower.startsWith('no media coverage for ') ||
-               lower.startsWith('additional information about ');
+               lower.startsWith('additional information about ') ||
+               // Reddit wiki page footer accidentally stored in a notes field
+               /^last revised by(\s+\[[^\]]*\]\([^)]*\))?$/i.test(trimmed);
     };
 
     if (isOrganizationFormData(formData)) {
@@ -789,7 +791,10 @@ ${relatedProgramsSection}${additionalSections}## **Related Media**
 ${relatedMediaSection}
     `;
 
-    const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
+    // Strip any Reddit wiki footer regardless of which username appears.
+    // Matches: "Last revised by [anyone](link)" or bare "Last revised by"
+    // followed optionally by "## Page title", "SaveCancel", trailing whitespace.
+    const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
     return dropDuplicateParagraphs(sanitizedOutput).trim();
@@ -1159,7 +1164,8 @@ ${additionalSections}## **Related Media**
 ${relatedMediaSection}
     `;
 
-    const footerPattern = /Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)(?:\s*## Page title)?(?:\s*SaveCancel)?\s*$/gi;
+    // Strip any Reddit wiki footer regardless of which username appears.
+    const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
     return dropDuplicateParagraphs(sanitizedOutput).trim();

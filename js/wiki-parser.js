@@ -75,18 +75,24 @@ function isIgnoredWikiMetaLink(title, url, lineText = '') {
 
     if (!normalizedUrl) return false;
 
-    const isUserLink = /\/(?:u|user)\/signal-strain9810\/?$/i.test(normalizedUrl)
-        || /\/(?:u|user)\/shroomskillet\/?$/i.test(normalizedUrl);
+    // Any Reddit user/profile link is a meta-link, not real content.
+    const isUserLink = /\/(?:u|user)\/[^/]+\/?$/.test(normalizedUrl)
+        || normalizedUrl.startsWith('https://www.reddit.com/user/')
+        || normalizedUrl.startsWith('https://reddit.com/user/');
 
     if (!isUserLink) return false;
 
-    return normalizedTitle.includes('signal-strain9810')
-        || normalizedTitle.includes('shroomskillet')
-        || normalizedTitle === 'u/signaI-strain9810'
-        || normalizedTitle === 'u/signal-strain9810'
-        || normalizedLine.includes('last revised by')
+    // When the surrounding line is editorial boilerplate, always ignore.
+    if (normalizedLine.includes('last revised by')
         || normalizedLine.includes('please contact')
-        || normalizedLine.includes('submitted directly to wiki');
+        || normalizedLine.includes('submitted directly to wiki')
+        || normalizedLine.includes('have been added yet')
+        || normalizedLine.includes('to share, please')) {
+        return true;
+    }
+
+    // A link whose label looks like a username (u/Handle) is also meta.
+    return /^u\//.test(normalizedTitle);
 }
 
 function escapeRegExp(text) {
@@ -1959,7 +1965,18 @@ function parseWikiMarkdown(markdown) {
         'Related External Resources'
     ]);
 
-    if (relatedMediaSection && !relatedMediaSection.includes('No information is known')) {
+    // Treat the section as absent when every non-empty line is placeholder
+    // boilerplate or a contact user-link (e.g. the Miss_Nobody89 "please contact"
+    // sentence that getPlaceholder() emits).
+    const relatedMediaLines = (relatedMediaSection || '').split('\n').map(l => l.trim()).filter(Boolean);
+    const allPlaceholder = relatedMediaLines.length > 0 && relatedMediaLines.every(l =>
+        /no related media links/i.test(l)
+        || /please contact/i.test(l)
+        || /have been added yet/i.test(l)
+        || /\/(?:u|user)\/[^\s)]+/i.test(l)
+    );
+
+    if (relatedMediaSection && !relatedMediaSection.includes('No information is known') && !allPlaceholder) {
         // Split into lines to parse each entry
         const lines = relatedMediaSection.split('\n').filter(line => line.trim());
 
