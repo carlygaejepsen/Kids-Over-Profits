@@ -2079,98 +2079,100 @@ function parseWikiMarkdown(markdown) {
         });
     }
 
-    // Parse Program Tables (e.g. WWASP Programs, Closed Programs)
-    // Look for sections that might contain lists of programs
-    const programTableSections = getSectionAny(normalizedMarkdown, [
-        'WWASP Programs',
-        'WWASP-Affiliated/WWASP Spin-Off Programs',
-        'Active Teen Challenge Programs',
-        'Closed Teen Challenge Program',
-        'CEDU Programs',
-        'CEDU Spin-off Programs',
-        'Open Acadia Teen Residential Programs',
-        'Closed Acadia Teen Residential Programs',
-        'Open Aspen Education Group Programs',
-        'Closed Aspen Education Group Programs',
-        'Open Sequel Programs',
-        'Closed Sequel Programs',
-        'Active Programs in Utah',
-        'Closed Programs in Utah',
-        'Active Programs in California',
-        'Closed Programs in California',
-        'Related Programs',
-        'Affiliated Programs',
-        'Active Programs',
-        'Closed Programs'
-    ]);
+    // Parse Program Tables. Operator pages split their programs into two tables —
+    // "Open <Company> Programs" and "Closed <Company> Programs" — and other pages
+    // use "WWASP Programs", "Active/Closed Programs", "Related/Affiliated Programs"
+    // etc. Find EVERY such section by pattern (not a fixed company list), parse its
+    // table, and tag each program open/closed from its heading so the split
+    // round-trips. The accumulated bodies feed the unparsed-overlap check below.
 
-    if (programTableSections) {
-        // More robust table parser
-        const lines = programTableSections.split('\n');
-        let headerIndex = -1;
-        let columnMap = {};
-        
+    // Parse one section's first markdown table into program entries.
+    const parseProgramTable = (sectionText) => {
+        const out = [];
+        const lines = sectionText.split('\n');
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
-            if (line.startsWith('|') && line.includes('---')) {
-                // Previous line was the header
-                if (i > 0) {
-                    headerIndex = i - 1;
-                    const headers = lines[headerIndex].split('|').map(h => h.trim().toLowerCase()).filter(h => h);
-                    headers.forEach((h, idx) => {
-                        if (h.includes('name')) columnMap.name = idx;
-                        else if (h.includes('year') || h.includes('active')) columnMap.years = idx;
-                        else if (h.includes('location')) columnMap.location = idx;
-                        else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
-                        else if (h.includes('reopened')) columnMap.reopened = idx;
-                        else if (h.includes('type')) columnMap.type = idx;
-                        else if (h.includes('abuse')) columnMap.abuse = idx;
-                        else if (h.includes('death')) columnMap.deaths = idx;
-                        else if (h.includes('warning')) columnMap.warning = idx;
-                    });
-                }
-                
-                // Process data rows after the separator
-                for (let j = i + 1; j < lines.length; j++) {
-                    const dataLine = lines[j].trim();
-                    if (!dataLine.startsWith('|')) continue;
-                    
-                    const cells = dataLine.split('|').map(c => c.trim()).filter(c => c);
-                    if (cells.length < 2) continue;
-
-                    // Extract name and link from the name cell
-                    const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
-                    const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
-                    const name = nameMatch ? nameMatch[1].trim() : nameCell.replace(/\*\*/g, '').trim();
-                    const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
-
-                    if (name && !name.includes('---') && name.toLowerCase() !== 'program name') {
-                        const entry = {
-                            name,
-                            link,
-                            yearsActive: columnMap.years !== undefined ? cells[columnMap.years] : '',
-                            location: columnMap.location !== undefined ? cells[columnMap.location] : '',
-                            type: columnMap.type !== undefined ? cells[columnMap.type] : '',
-                            reopened: columnMap.reopened !== undefined ? cells[columnMap.reopened] : ''
-                        };
-
-                        // HEAL link
-                        const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
-                        if (healCell && healCell.includes('http')) {
-                            const healMatch = healCell.match(/\(([^)]+)\)/);
-                            if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
-                        }
-
-                        // Watchlist specific fields
-                        if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
-                        if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
-                        if (columnMap.warning !== undefined) entry.warningLevel = cells[columnMap.warning];
-
-                        parsedData.relatedPrograms.push(entry);
-                    }
-                }
-                break; // Only process the first table found in the section
+            if (!(line.startsWith('|') && line.includes('---'))) continue;
+            const columnMap = {};
+            if (i > 0) {
+                const headers = lines[i - 1].split('|').map(h => h.trim().toLowerCase()).filter(h => h);
+                headers.forEach((h, idx) => {
+                    if (h.includes('name')) columnMap.name = idx;
+                    else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
+                    else if (h.includes('location')) columnMap.location = idx;
+                    else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
+                    else if (h.includes('reopened') || h.includes('rebrand') || h.includes('status')) columnMap.reopened = idx;
+                    else if (h.includes('type')) columnMap.type = idx;
+                    else if (h.includes('abuse')) columnMap.abuse = idx;
+                    else if (h.includes('death')) columnMap.deaths = idx;
+                    else if (h.includes('warning')) columnMap.warning = idx;
+                });
             }
+            for (let j = i + 1; j < lines.length; j++) {
+                const dataLine = lines[j].trim();
+                if (!dataLine.startsWith('|')) continue;
+                const cells = dataLine.split('|').map(c => c.trim()).filter(c => c);
+                if (cells.length < 2) continue;
+
+                const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
+                const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
+                const name = (nameMatch ? nameMatch[1] : nameCell).replace(/\*\*/g, '').trim();
+                const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
+                if (!name || name.includes('---') || name.toLowerCase() === 'program name') continue;
+
+                const entry = {
+                    name,
+                    link,
+                    yearsActive: columnMap.years !== undefined ? cells[columnMap.years] : '',
+                    location: columnMap.location !== undefined ? cells[columnMap.location] : '',
+                    type: columnMap.type !== undefined ? cells[columnMap.type] : '',
+                    reopened: columnMap.reopened !== undefined ? cells[columnMap.reopened] : ''
+                };
+                const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
+                if (healCell && healCell.includes('http')) {
+                    const healMatch = healCell.match(/\(([^)]+)\)/);
+                    if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
+                }
+                if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
+                if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
+                if (columnMap.warning !== undefined) entry.warningLevel = cells[columnMap.warning];
+
+                out.push(entry);
+            }
+            break; // first table in the section only
+        }
+        return out;
+    };
+
+    // Discover all program-listing headings (anything ending in "Programs"/"Program"),
+    // excluding prose sections like "Program Structure".
+    const programHeadings = [];
+    const headingScan = /^#{1,6}[ \t]*\*{0,2}[ \t]*([^\n*]*?\bprograms?\b)[ \t]*\*{0,2}[ \t]*$/gim;
+    let hMatch;
+    while ((hMatch = headingScan.exec(normalizedMarkdown)) !== null) {
+        const heading = hMatch[1].trim();
+        if (/program\s+structure|level\s+system|daily\s+(?:schedule|program)/i.test(heading)) continue;
+        if (!programHeadings.includes(heading)) programHeadings.push(heading);
+    }
+    if (programHeadings.length === 0) {
+        programHeadings.push('Related Programs', 'Affiliated Programs', 'Active Programs', 'Closed Programs');
+    }
+
+    let programTableSections = '';
+    const seenProgramKeys = new Set();
+    for (const heading of programHeadings) {
+        const body = getSection(normalizedMarkdown, heading);
+        if (!body || !body.includes('|')) continue;
+        programTableSections += (programTableSections ? '\n\n' : '') + body;
+        const status = /\bclosed\b/i.test(heading)
+            ? 'closed'
+            : (/\bopen\b|\bactive\b|\bcurrent\b/i.test(heading) ? 'open' : '');
+        for (const entry of parseProgramTable(body)) {
+            const key = entry.name.toLowerCase() + '|' + (entry.yearsActive || '');
+            if (seenProgramKeys.has(key)) continue;
+            seenProgramKeys.add(key);
+            if (status) entry.status = status;
+            parsedData.relatedPrograms.push(entry);
         }
     }
 

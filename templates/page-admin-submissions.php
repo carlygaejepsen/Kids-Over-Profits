@@ -183,6 +183,40 @@ get_header();
                         </details>
                     </div>
 
+                    <!-- Facility Link Section (wiki submissions only) -->
+                    <div class="facility-link-section" id="facilityLinkSection" style="display: none;">
+                        <h3>Facility Link</h3>
+                        <p class="facility-link-intro">Link this wiki entry to a record in the master facilities database. Suggested links require admin confirmation before they are considered active.</p>
+
+                        <div class="facility-link-current" id="facilityLinkCurrent">
+                            <span class="facility-link-status-label">Status:</span>
+                            <span id="facilityLinkStatusBadge" class="facility-link-badge">Unlinked</span>
+                            <span id="facilityLinkName" class="facility-link-name"></span>
+                            <div class="facility-link-actions" id="facilityLinkExistingActions" style="display:none;">
+                                <button type="button" id="confirmLinkBtn" class="btn-confirm-link" style="display:none;">✓ Confirm Link</button>
+                                <button type="button" id="unlinkBtn" class="btn-unlink">✕ Remove Link</button>
+                            </div>
+                        </div>
+
+                        <div class="facility-link-suggest-wrap">
+                            <button type="button" id="suggestLinksBtn" class="btn-secondary btn-suggest-links">🔍 Find Matching Facilities</button>
+                        </div>
+
+                        <div id="facilityLinkCandidates" class="facility-link-candidates" style="display:none;">
+                            <p class="candidates-label">Select a facility to link:</p>
+                            <div id="facilityLinkCandidateList" class="facility-link-candidate-list"></div>
+                            <div class="manual-link-wrap">
+                                <label for="manualFacilityName">Or enter unique_name directly:</label>
+                                <div class="manual-link-row">
+                                    <input type="text" id="manualFacilityName" placeholder="e.g. Alpine Academy" autocomplete="off">
+                                    <button type="button" id="manualLinkBtn" class="btn-secondary">Link</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="facilityLinkMessage" class="facility-link-message" style="display:none;"></div>
+                    </div>
+
                     <!-- Reviewer Section -->
                     <div class="reviewer-section">
                         <h3>Review Actions</h3>

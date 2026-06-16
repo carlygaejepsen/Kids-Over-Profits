@@ -68,39 +68,63 @@ function kop_wiki_meaningful_len($markdown) {
         if ($t === '') continue;
         if (preg_match('/^#{1,6}\s/u', $t)) continue;                 // markdown header
         if (preg_match('/^[-*_]{3,}$/u', $t)) continue;               // horizontal rule
+        if (preg_match('/^\|/u', $t)) continue;                       // table row (program-listing table)
         if (preg_match('/^last revised by/iu', $t)) continue;         // wiki footer
-        if (preg_match('/^(no information( is)?( known| available)|nothing is known|unknown|n\/a|tbd|page title)\.?$/iu', $t)) continue;
+        if (preg_match('/^\[[^\]]*\]$/u', $t)) continue;              // bracketed placeholder, e.g. [To be completed]
+        $plain = preg_replace('/[*_]/u', '', $t);
+        if (preg_match('/^(no information( is)?( known| available)|nothing is known|unknown|n\/a|tbd|to be completed|page title)\.?$/iu', $plain)) continue;
+        if (preg_match('/^below is a list of .*programs?\.?$/iu', $plain)) continue; // operator-template table intro
         $s = preg_replace('/\[([^\]]*)\]\([^)]*\)/u', '$1', $t);      // links -> text
         $s = trim(preg_replace('/\s+/u', ' ', preg_replace('/[*_`>#|]/u', '', $s)));
-        if ($s !== '') $kept[] = $s;
+        if ($s === '') continue;
+        if (preg_match('#^https?://\S+$#u', $s)) continue;            // bare-link-only line
+        $kept[] = $s;
     }
     return strlen(implode(' ', $kept));
 }
 
-// --- 2. Completed entries = active submissions that actually have content ---
+// --- 2. Completed entries = real editorial work, not the initial scan import ---
 // completedNames: program names (fallback match for legacy submissions).
 // completedSlugs: the source slug each submission recorded (precise match). The
 // slug is stored inside json_data.sourceSlug by the wiki editor when the entry
 // was loaded from a known index slug.
-// Excluded:
+//
+// A submission only counts as "completed" when it represents a page someone
+// actually wrote/edited. Excluded:
 //   - deleted/rejected submissions: a rejected page still needs to be (re)done.
-//   - stub submissions: rows whose saved markdown is only headers / placeholders
-//     (e.g. a page opened from a stub and saved without content). These must NOT
-//     count as completed, or empty pages show as done in the index browser.
+//   - bulk-import rows: the whole wiki was seed-imported from the Reddit scan
+//     (submitted_by 'bulk-upload' / 'batch-import-script' / etc.). Those are a
+//     STARTING POINT, not finished work, so they must not show as completed.
+//   - stub content: rows whose saved markdown is only headers / placeholders.
 $COMPLETED_MIN_CHARS = 40;
+// submitted_by values that mark a row as scan/seed data rather than human work.
+$IMPORT_SUBMITTERS = ['bulk-upload', 'batch-import-script', 'reimport-regenerated', 'import', 'system'];
 $completedNames = [];
 $completedSlugs = [];
 try {
     require_once __DIR__ . '/config.php';
     if (isset($pdo) && $pdo instanceof PDO) {
         $stmt = $pdo->query(
-            "SELECT program_name, json_data, generated_markdown, original_markdown FROM wiki_submissions " .
+            "SELECT program_name, json_data, generated_markdown, original_markdown, submitted_by, submission_notes FROM wiki_submissions " .
             "WHERE status NOT IN ('deleted', 'rejected') AND program_name IS NOT NULL AND program_name != ''"
         );
         if ($stmt) {
             $seenName = [];
             $seenSlug = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // Skip the initial scan import — it is not completed work. A row is
+                // import/seed data when it has no real submitter or carries an
+                // import marker (submitter or "Batch imported from file:" note).
+                $submitter = strtolower(trim((string) ($row['submitted_by'] ?? '')));
+                $notes = (string) ($row['submission_notes'] ?? '');
+                $isImport = $submitter === ''
+                    || in_array($submitter, $IMPORT_SUBMITTERS, true)
+                    || stripos($notes, 'batch imported') === 0
+                    || stripos($notes, 'bulk') === 0;
+                if ($isImport) {
+                    continue;
+                }
+
                 // A submission counts only if its saved content is real. Check the
                 // rendered markdown first, then the source it was loaded from.
                 $contentLen = max(

@@ -60,7 +60,12 @@
       "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?search=Abundant%20Life%20Academy\")",
       "Bash(curl -s --max-time 90 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php\")",
       "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?search=NorthStar%20Center\")",
-      "Bash(node \"c:/tmp/index-gap.js\")"
+      "Bash(node \"c:/tmp/index-gap.js\")",
+      "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/debug-wiki-feed.php\")",
+      "Bash(node \"c:/tmp/refine-test.js\")",
+      "Bash(curl -s --max-time 60 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?limit=2000\")",
+      "Bash(node c:/tmp/rt.js)",
+      "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?search=Aspen%20Education%20Group\")"
     ],
     "deny": [],
     "ask": [],

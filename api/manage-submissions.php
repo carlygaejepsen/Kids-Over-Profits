@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/sync-wiki-facilities.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? 'wiki';
@@ -265,6 +266,26 @@ try {
                     } catch (PDOException $e) {
                         error_log("Failed to update wiki_master for ID $id: " . $e->getMessage());
                         // We don't fail the whole request, but we log it
+                    }
+
+                    // Wiki → Facilities merge: fill blank fields in facilities_master
+                    // from the newly-approved wiki entry (no overwrite).
+                    try {
+                        $wikiRow = $pdo->prepare(
+                            "SELECT * FROM wiki_master WHERE slug = ? LIMIT 1"
+                        );
+                        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $sub['program_name'] ?? '')));
+                        $wikiRow->execute([$slug]);
+                        $wikiEntry = $wikiRow->fetch(PDO::FETCH_ASSOC);
+                        if ($wikiEntry) {
+                            $mergeResult = kop_merge_wiki_into_facility($pdo, $wikiEntry);
+                            if ($mergeResult['merged']) {
+                                error_log("Wiki→Facility merge for '{$sub['program_name']}': {$mergeResult['reason']}");
+                            }
+                        }
+                    } catch (Exception $e) {
+                        error_log("Wiki→Facility merge failed for ID $id: " . $e->getMessage());
+                        // Non-fatal – do not interrupt the approval response
                     }
                 }
             }

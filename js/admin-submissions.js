@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Admin Submissions Management JavaScript
  * Handles wiki and data submission review, approval, and management
  */
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Move the submission modal back to its original DOM location and reset
-     * any expanded-card visual state. Does NOT change modal visibility — the
+     * any expanded-card visual state. Does NOT change modal visibility â€” the
      * caller decides whether to hide (closeModal) or leave it shown so a
      * subsequent viewSubmission can re-place it in a new card.
      *
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Render submissions list
      */
     function renderSubmissions(submissions) {
-        detachModal();              // see comment in loadSubmissions — must precede wiping list
+        detachModal();              // see comment in loadSubmissions â€” must precede wiping list
         submissionsList.innerHTML = '';
         const currentType = typeFilter ? typeFilter.value : 'wiki';
 
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.classList.add('has-duplicate');
                 }
                 
-                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">⚠ Duplicate</span>' : '';
+                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">âš  Duplicate</span>' : '';
                 
                 card.innerHTML = `
                     <div class="submission-header">
@@ -366,9 +366,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>📰 ${escapeHtml(source)}</span>
-                        <span>✍️ ${escapeHtml(author)}</span>
-                        <span>🏷️ ${escapeHtml(submission.article_type || 'general')}</span>
+                        <span>ðŸ“° ${escapeHtml(source)}</span>
+                        <span>âœï¸ ${escapeHtml(author)}</span>
+                        <span>ðŸ·ï¸ ${escapeHtml(submission.article_type || 'general')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -382,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>🔄 Data Update</span>
+                        <span>ðŸ”„ Data Update</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -396,9 +396,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>📍 ${escapeHtml(submission.city_state || 'Location unknown')}</span>
-                        <span>📅 ${escapeHtml(submission.years_active || 'Years unknown')}</span>
-                        <span>🏷️ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
+                        <span>ðŸ“ ${escapeHtml(submission.city_state || 'Location unknown')}</span>
+                        <span>ðŸ“… ${escapeHtml(submission.years_active || 'Years unknown')}</span>
+                        <span>ðŸ·ï¸ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -413,7 +413,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * View submission details — inline expansion. Clicking on the
+     * View submission details â€” inline expansion. Clicking on the
      * already-expanded card collapses it; clicking another card collapses
      * the current one first, then expands the new one. The detail panel
      * (#submissionModal) is physically moved into the active card.
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         // Collapse any other open card before opening the new one
-        // (don't hide the modal — we'll move it into the new card)
+        // (don't hide the modal â€” we'll move it into the new card)
         if (expandedCardId !== null) detachModal();
         try {
             const currentType = typeFilter ? typeFilter.value : 'wiki';
@@ -611,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // -- Relocate the detail panel into the active card (inline expansion) --
         // Falls back to the original "panel at bottom" placement if the card
-        // can't be found — most commonly during the brief race window after
+        // can't be found â€” most commonly during the brief race window after
         // an approve/reject when the list is being re-fetched. In that case
         // we scrollIntoView so the user can still see the result.
         const card = submissionsList.querySelector(`.submission-card[data-id="${submission.id}"]`);
@@ -638,10 +638,10 @@ document.addEventListener('DOMContentLoaded', () => {
         publishBtn.disabled = false;
         deleteBtn.disabled = false;
 
-        // Publish is a wiki/news concept (approved → live on wiki). The
+        // Publish is a wiki/news concept (approved â†’ live on wiki). The
         // suggested_edits enum for data submissions only allows
         // ('pending','approved','rejected'), so hide the button entirely
-        // for data — approve already applies the edit.
+        // for data â€” approve already applies the edit.
         const currentType = typeFilter ? typeFilter.value : 'wiki';
         publishBtn.style.display = currentType === 'data' ? 'none' : '';
 
@@ -688,7 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="duplicate-submission-link">
                             <a href="javascript:void(0)" onclick="document.querySelector('[data-id=\"${dup.id}\"] .btn-view').click()">
-                                View Submission #${dup.id} →
+                                View Submission #${dup.id} â†’
                             </a>
                         </div>
                     </div>
@@ -710,7 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!section || !status || !list) return;
 
         section.style.display = 'block';
-        status.textContent = 'Scanning URLs…';
+        status.textContent = 'Scanning URLsâ€¦';
         status.className = 'url-safety-status scanning';
         list.innerHTML = '';
 
@@ -725,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ type: scanType, id: requestedId })
             });
 
-            // The modal may have closed or switched submissions while we were waiting —
+            // The modal may have closed or switched submissions while we were waiting â€”
             // bail out so we don't paint stale results onto a different submission.
             if (!currentSubmission || currentSubmission.id !== requestedId) return;
 
@@ -748,10 +748,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (result.flagged > 0) {
-                status.textContent = `⚠ ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
+                status.textContent = `âš  ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
                 status.className = 'url-safety-status flagged';
             } else {
-                status.textContent = `✓ All ${result.scanned} URL(s) clean.`;
+                status.textContent = `âœ“ All ${result.scanned} URL(s) clean.`;
                 status.className = 'url-safety-status clean';
             }
 
@@ -766,7 +766,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const icon = document.createElement('span');
                 icon.className = 'url-safety-icon';
-                icon.textContent = r.clean === true ? '✓' : r.clean === false ? '⚠' : '?';
+                icon.textContent = r.clean === true ? 'âœ“' : r.clean === false ? 'âš ' : '?';
                 li.appendChild(icon);
 
                 const safe = safeUrl(r.url);
@@ -825,9 +825,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function copyMarkdown() {
         try {
             await navigator.clipboard.writeText(modalMarkdown.value);
-            copyMarkdownBtn.textContent = '✓ Copied!';
+            copyMarkdownBtn.textContent = 'âœ“ Copied!';
             setTimeout(() => {
-                copyMarkdownBtn.textContent = '📋 Copy';
+                copyMarkdownBtn.textContent = 'ðŸ“‹ Copy';
             }, 2000);
         } catch (error) {
             alert('Failed to copy to clipboard');
@@ -962,10 +962,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                saveEditsBtn.textContent = '✓ Saved!';
+                saveEditsBtn.textContent = 'âœ“ Saved!';
                 currentSubmission.generated_markdown = editedMarkdown;
                 setTimeout(() => {
-                    saveEditsBtn.textContent = '💾 Save Edits';
+                    saveEditsBtn.textContent = 'ðŸ’¾ Save Edits';
                     saveEditsBtn.disabled = false;
                 }, 2000);
             } else {
@@ -973,9 +973,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Save failed:', error);
-            saveEditsBtn.textContent = '✗ Error';
+            saveEditsBtn.textContent = 'âœ— Error';
             setTimeout(() => {
-                saveEditsBtn.textContent = '💾 Save Edits';
+                saveEditsBtn.textContent = 'ðŸ’¾ Save Edits';
                 saveEditsBtn.disabled = false;
             }, 2000);
             alert(`Failed to save edits: ${error.message}`);
@@ -1026,7 +1026,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                actionStatus.innerHTML = `<span class="success">✓ ${result.message}</span>`;
+                actionStatus.innerHTML = `<span class="success">âœ“ ${result.message}</span>`;
 
                 // Refresh data
                 setTimeout(() => {
@@ -1040,12 +1040,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 1000);
             } else {
-                actionStatus.innerHTML = `<span class="error">✗ ${result.error || 'Action failed'}</span>`;
+                actionStatus.innerHTML = `<span class="error">âœ— ${result.error || 'Action failed'}</span>`;
                 updateButtonStates(currentSubmission.status);
             }
         } catch (error) {
             console.error('Action failed:', error);
-            actionStatus.innerHTML = '<span class="error">✗ Network error</span>';
+            actionStatus.innerHTML = '<span class="error">âœ— Network error</span>';
             updateButtonStates(currentSubmission.status);
         }
     }
@@ -1109,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Network error while rejecting submissions.');
         } finally {
             rejectAllBtn.disabled = false;
-            rejectAllBtn.textContent = '✗ Reject All Pending';
+            rejectAllBtn.textContent = 'âœ— Reject All Pending';
         }
     }
 
@@ -1169,5 +1169,191 @@ document.addEventListener('DOMContentLoaded', () => {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    }
+    // =========================================================================
+    // Facility Link UI
+    // =========================================================================
+
+    const LINK_API = (config.linkApi) || `${API_BASE}/link-wiki-facility.php`;
+
+    const facilityLinkSection         = document.getElementById('facilityLinkSection');
+    const facilityLinkStatusBadge     = document.getElementById('facilityLinkStatusBadge');
+    const facilityLinkName            = document.getElementById('facilityLinkName');
+    const facilityLinkExistingActions = document.getElementById('facilityLinkExistingActions');
+    const confirmLinkBtn              = document.getElementById('confirmLinkBtn');
+    const unlinkBtn                   = document.getElementById('unlinkBtn');
+    const suggestLinksBtn             = document.getElementById('suggestLinksBtn');
+    const facilityLinkCandidates      = document.getElementById('facilityLinkCandidates');
+    const facilityLinkCandidateList   = document.getElementById('facilityLinkCandidateList');
+    const manualFacilityName          = document.getElementById('manualFacilityName');
+    const manualLinkBtn               = document.getElementById('manualLinkBtn');
+    const facilityLinkMessage         = document.getElementById('facilityLinkMessage');
+
+    /** Show the facility-link section and load the current link state. */
+    async function initFacilityLink(submissionId) {
+        if (!facilityLinkSection) return;
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        if (currentType !== 'wiki') {
+            facilityLinkSection.style.display = 'none';
+            return;
+        }
+        facilityLinkSection.style.display = 'block';
+        if (facilityLinkCandidates) facilityLinkCandidates.style.display = 'none';
+        hideLinkMessage();
+        try {
+            const params = new URLSearchParams({
+                action: 'get', type: 'submission', wiki_id: submissionId
+            });
+            const res = await fetch(`${LINK_API}?${params}`);
+            const result = await res.json();
+            if (result.success) renderLinkState(result.data);
+        } catch (e) {
+            console.warn('Could not load facility link state:', e);
+        }
+    }
+
+    /** Render the current link state into the panel. */
+    function renderLinkState(data) {
+        const status = data.facility_link_status;
+        const name   = data.facility_unique_name || '';
+        if (facilityLinkName) facilityLinkName.textContent = name ? `\u2192 ${name}` : '';
+        if (!facilityLinkStatusBadge) return;
+        if (!status) {
+            facilityLinkStatusBadge.textContent = 'Unlinked';
+            facilityLinkStatusBadge.className = 'facility-link-badge badge-unlinked';
+            if (facilityLinkExistingActions) facilityLinkExistingActions.style.display = 'none';
+        } else if (status === 'suggested') {
+            facilityLinkStatusBadge.textContent = 'Suggested \u2013 awaiting confirmation';
+            facilityLinkStatusBadge.className = 'facility-link-badge badge-suggested';
+            if (facilityLinkExistingActions) facilityLinkExistingActions.style.display = 'flex';
+            if (confirmLinkBtn) confirmLinkBtn.style.display = 'inline-block';
+        } else if (status === 'confirmed') {
+            facilityLinkStatusBadge.textContent = 'Confirmed';
+            facilityLinkStatusBadge.className = 'facility-link-badge badge-confirmed';
+            if (facilityLinkExistingActions) facilityLinkExistingActions.style.display = 'flex';
+            if (confirmLinkBtn) confirmLinkBtn.style.display = 'none';
+        }
+    }
+
+    function showLinkMessage(text, isError = false) {
+        if (!facilityLinkMessage) return;
+        facilityLinkMessage.textContent = text;
+        facilityLinkMessage.className = 'facility-link-message ' + (isError ? 'link-msg-error' : 'link-msg-ok');
+        facilityLinkMessage.style.display = 'block';
+    }
+
+    function hideLinkMessage() {
+        if (facilityLinkMessage) facilityLinkMessage.style.display = 'none';
+    }
+
+    /** Fetch and render ranked facility candidates. */
+    async function loadLinkCandidates() {
+        if (!currentSubmission || !suggestLinksBtn) return;
+        suggestLinksBtn.disabled = true;
+        suggestLinksBtn.textContent = 'Searching\u2026';
+        try {
+            const params = new URLSearchParams({
+                action: 'suggest', type: 'submission', wiki_id: currentSubmission.id
+            });
+            const res = await fetch(`${LINK_API}?${params}`);
+            const result = await res.json();
+            if (facilityLinkCandidates) facilityLinkCandidates.style.display = 'block';
+            if (!facilityLinkCandidateList) return;
+            facilityLinkCandidateList.innerHTML = '';
+            if (!result.success || !result.candidates || !result.candidates.length) {
+                facilityLinkCandidateList.innerHTML =
+                    '<p class="no-candidates">No close matches found. Use the manual field below.</p>';
+            } else {
+                result.candidates.forEach(c => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'facility-candidate-btn';
+                    btn.innerHTML =
+                        `<span class="candidate-name">${escapeHtml(c.display_name || c.unique_name)}</span>` +
+                        `<span class="candidate-score">${c.score}% match \u00B7 ${escapeHtml(c.match_reason)}</span>`;
+                    btn.addEventListener('click', () => linkFacility(c.unique_name));
+                    facilityLinkCandidateList.appendChild(btn);
+                });
+            }
+        } catch (e) {
+            showLinkMessage('Failed to load suggestions: ' + e.message, true);
+        } finally {
+            suggestLinksBtn.disabled = false;
+            suggestLinksBtn.textContent = '\uD83D\uDD0D Find Matching Facilities';
+        }
+    }
+
+    /** POST a link action and refresh the panel. */
+    async function postLinkAction(payload) {
+        hideLinkMessage();
+        try {
+            const res = await fetch(LINK_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const result = await res.json();
+            if (result.success) {
+                showLinkMessage(result.message || 'Done.');
+                await initFacilityLink(currentSubmission.id);
+            } else {
+                showLinkMessage(result.error || 'Request failed.', true);
+            }
+        } catch (e) {
+            showLinkMessage('Network error: ' + e.message, true);
+        }
+    }
+
+    function linkFacility(uniqueName) {
+        if (!currentSubmission) return;
+        postLinkAction({
+            action: 'link', type: 'submission',
+            wiki_id: currentSubmission.id,
+            facility_unique_name: uniqueName,
+        });
+        if (facilityLinkCandidates) facilityLinkCandidates.style.display = 'none';
+    }
+
+    // Wire up static button events
+    if (suggestLinksBtn)  suggestLinksBtn.addEventListener('click', loadLinkCandidates);
+    if (confirmLinkBtn) {
+        confirmLinkBtn.addEventListener('click', () => {
+            if (!currentSubmission) return;
+            postLinkAction({ action: 'confirm', type: 'submission', wiki_id: currentSubmission.id });
+        });
+    }
+    if (unlinkBtn) {
+        unlinkBtn.addEventListener('click', () => {
+            if (!currentSubmission) return;
+            if (!confirm('Remove the facility link from this wiki entry?')) return;
+            postLinkAction({ action: 'unlink', type: 'submission', wiki_id: currentSubmission.id });
+        });
+    }
+    if (manualLinkBtn) {
+        manualLinkBtn.addEventListener('click', () => {
+            const name = manualFacilityName ? manualFacilityName.value.trim() : '';
+            if (!name) { showLinkMessage('Enter a facility unique_name first.', true); return; }
+            linkFacility(name);
+        });
+    }
+
+    // Trigger initFacilityLink whenever the modal becomes visible for a wiki submission.
+    // showModal() is a function declaration so we cannot wrap it; instead we observe
+    // the modal element's style attribute for display changes.
+    const _facilityLinkObserver = new MutationObserver((_mutations) => {
+        if (
+            facilityLinkSection &&
+            submissionModal &&
+            submissionModal.style.display !== 'none' &&
+            currentSubmission
+        ) {
+            const currentType = typeFilter ? typeFilter.value : 'wiki';
+            if (currentType === 'wiki') {
+                initFacilityLink(currentSubmission.id);
+            }
+        }
+    });
+    if (submissionModal) {
+        _facilityLinkObserver.observe(submissionModal, { attributes: true, attributeFilter: ['style'] });
     }
 });

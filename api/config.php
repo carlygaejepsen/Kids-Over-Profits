@@ -139,3 +139,7 @@ if (!defined('SKIP_DB_CONNECTION') || !SKIP_DB_CONNECTION) {
         exit;
     }
 }
+
+if (!defined('KOP_DB_CONFIG_LOADED')) {
+    define('KOP_DB_CONFIG_LOADED', true);
+}

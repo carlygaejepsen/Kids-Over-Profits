@@ -329,6 +329,7 @@
 - index_imperialhealing.md
 - index_inbalance.md
 - index_indianatc.md
+- index_innerchange.md
 - index_innerharbour.md
 - index_integratedteen.md
 - index_intermountain.md
@@ -819,6 +820,7 @@
 - teenmentor.md
 - timberlawn.md
 - turningpointmi.md
+- universalhealth.md
 - vallevista.md
 - wacoyouth.md
 - wellstone.md

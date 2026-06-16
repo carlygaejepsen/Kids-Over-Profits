@@ -50,7 +50,9 @@ const BOILERPLATE = [
     /^unknown\.?$/i,
     /^n\/a\.?$/i,
     /^tbd\.?$/i,
+    /^to be completed\.?$/i,
     /^page title$/i,
+    /^below is a list of .*programs?\.?$/i, // operator-template table intro
 ];
 
 /** Derive the wiki slug from a markdown filename, matching api/wiki-stubs.php. */
@@ -71,7 +73,11 @@ function slugFromUrl(url) {
     return m ? decodeURIComponent(m[1]).toLowerCase() : null;
 }
 
-/** Characters of real prose left after stripping structure and placeholders. */
+// Real prose only: ignores structure, tables (operator program-listings),
+// bracketed placeholders ([To be completed]), bare links, and boilerplate.
+// A page whose sections are all empty/placeholder, or that is just a program
+// table, scores ~0. Mirrors kop_wiki_meaningful_len() in api/wiki-stubs.php —
+// keep the two in sync so the file scan and the API agree on "stub".
 function meaningfulContent(text) {
     const kept = [];
     let titleConsumed = false;
@@ -80,20 +86,25 @@ function meaningfulContent(text) {
         if (!t) continue;
         if (/^#{1,6}\s/.test(t)) continue;          // markdown header (## Section)
         if (/^[-*_]{3,}$/.test(t)) continue;         // horizontal rule
+        if (/^\|/.test(t)) continue;                 // table row (program-listing table)
         if (/^last revised by/i.test(t)) continue;   // wiki footer
+        if (/^\[[^\]]*\]$/.test(t)) continue;        // bracketed placeholder, e.g. [To be completed]
+        const plain = t.replace(/[*_]/g, '');
+        if (BOILERPLATE.some((re) => re.test(plain))) continue;
         // First non-structural line is usually the bare page title; skip it once
         // so a long facility name never counts as content.
         if (!titleConsumed && kept.length === 0 && !/[.!?]/.test(t) && t.split(/\s+/).length <= 12) {
             titleConsumed = true;
             continue;
         }
-        if (BOILERPLATE.some((re) => re.test(t))) continue;
         const stripped = t
             .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1') // [text](url) -> text
             .replace(/[*_`>#|]/g, '')
             .replace(/\s+/g, ' ')
             .trim();
-        if (stripped) kept.push(stripped);
+        if (!stripped) continue;
+        if (/^https?:\/\/\S+$/i.test(stripped)) continue; // bare-link-only line
+        kept.push(stripped);
     }
     return kept.join(' ');
 }

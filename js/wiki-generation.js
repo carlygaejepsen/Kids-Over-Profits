@@ -971,25 +971,48 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         staffSection = getPlaceholder('Founders and Notable Staff', programName);
     }
 
-    let programsSection = '';
-    if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
-        const tableHeader = '|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened/Status**|';
-        const tableSep = '|---|---|---|---|---|';
-        const tableRows = formData.relatedPrograms
-            .filter((prog) => prog && prog.name)
-            .map((prog) => {
-                const nameLink = prog.link
-                    ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})`
-                    : `**${escapeMarkdown(prog.name)}**`;
-                const healLink = prog.healLink
-                    ? `[HEAL](${sanitizeUrl(prog.healLink)})`
-                    : (escapeMarkdown(prog.healInfo || '-') || '-');
-                return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
-            });
+    // Operator pages list their programs in two tables — "Open <Company> Programs"
+    // and "Closed <Company> Programs" — with different columns (open shows Year
+    // Opened; closed shows Years Active + Reopened?). Split by each program's
+    // status (set by the parser from the source heading), falling back to
+    // inferring from the year span ("…-present"/open-ended => open).
+    const isOpenProgram = (prog) => {
+        if (prog.status) return String(prog.status).toLowerCase() !== 'closed';
+        const ya = String(prog.yearsActive || '').toLowerCase();
+        if (!ya) return true;                                   // unknown -> treat as current
+        if (/present|current|ongoing|now\b/.test(ya)) return true;
+        return !/\d{4}\s*[-–—]\s*\d{4}/.test(ya);               // an explicit end year => closed
+    };
+    const programNameCell = (prog) => prog.link
+        ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})`
+        : `**${escapeMarkdown(prog.name)}**`;
+    const programHealCell = (prog) => prog.healLink
+        ? `[HEAL](${sanitizeUrl(prog.healLink)})`
+        : (escapeMarkdown(prog.healInfo || '-') || '-');
 
-        programsSection = `## **Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
-    } else {
-        programsSection = `## **Related Programs**\n\n${getPlaceholder('Related Programs', programName)}\n\n***\n\n`;
+    let programsSection = '';
+    const listedPrograms = (formData.relatedPrograms || []).filter((prog) => prog && prog.name);
+    if (listedPrograms.length > 0) {
+        const openPrograms = listedPrograms.filter(isOpenProgram);
+        const closedPrograms = listedPrograms.filter((prog) => !isOpenProgram(prog));
+
+        if (openPrograms.length > 0) {
+            const header = '|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|';
+            const sep = '|---|---|---|---|';
+            const rows = openPrograms.map((prog) =>
+                `| ${programNameCell(prog)} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${programHealCell(prog)} |`);
+            programsSection += `## **Open ${programName} Programs**\n\n${header}\n${sep}\n${rows.join('\n')}\n\n***\n\n`;
+        }
+        if (closedPrograms.length > 0) {
+            const header = '|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|**Reopened?**|';
+            const sep = '|---|---|---|---|---|';
+            const rows = closedPrograms.map((prog) =>
+                `| ${programNameCell(prog)} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${programHealCell(prog)} | ${escapeMarkdown(prog.reopened || '-')} |`);
+            programsSection += `## **Closed ${programName} Programs**\n\n${header}\n${sep}\n${rows.join('\n')}\n\n***\n\n`;
+        }
+    }
+    if (!programsSection) {
+        programsSection = `## **Open ${programName} Programs**\n\n${getPlaceholder('Related Programs', programName)}\n\n***\n\n`;
     }
 
     let abuseSection = '';
@@ -1093,9 +1116,13 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     // Preserve sections the parser couldn't map to a known field (see facility path).
     const additionalSections = formatUnparsedSections(formData.unparsedContent);
 
-    const headerLine = formData.yearsActive
+    let headerLine = formData.yearsActive
         ? `# **${escapeMarkdown(programName)}**(${formData.yearsActive})`
         : `# **${escapeMarkdown(programName)}**`;
+    const orgLocation = String(formData.headquarters || formData.cityState || '').trim();
+    if (orgLocation) {
+        headerLine += ` ${escapeMarkdown(orgLocation)}`;
+    }
 
     const output = `
 ${headerLine}
