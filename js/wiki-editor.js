@@ -3013,12 +3013,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Separate created entries from stubs (not yet created). Keep one combined
-        // order so Prev/Next navigation still walks the whole visible list.
+        // Separate created entries from stubs (not yet created). If an entry is
+        // in the empty-slug list but has been marked/computed completed, treat it
+        // as created so editors get the Edit path instead of Create-only.
+        // Keep one combined order so Prev/Next navigation still walks the whole
+        // visible list.
         const created = [];
         const stubs = [];
         matches.forEach(entry => {
-            (isStubEntry(entry, selectedIndexState) ? stubs : created).push(entry);
+            const stub = isStubEntry(entry, selectedIndexState);
+            const completed = stub && isStubCompleted(entry, selectedIndexState);
+            (stub && !completed ? stubs : created).push(entry);
         });
         const ordered = [...created, ...stubs];
 
