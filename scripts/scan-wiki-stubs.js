@@ -15,8 +15,13 @@
  * content-based (it strips structural lines and boilerplate, then measures what
  * is left), so it is independent of name/title length.
  *
+ * Outputs (both must stay in sync — the front end uses whichever it can reach):
+ *   markdown_output/empty_files_updated.md   read server-side by wiki-stubs.php
+ *   js/data/reddit-wiki/empty-slugs.json     static fallback fetched by the
+ *                                            browser when the API is unavailable
+ *
  * Usage:
- *   node scripts/scan-wiki-stubs.js            # rewrite the list
+ *   node scripts/scan-wiki-stubs.js            # rewrite both outputs
  *   node scripts/scan-wiki-stubs.js --dry-run  # report only, write nothing
  */
 
@@ -25,6 +30,22 @@ const path = require('path');
 
 const MD_DIR = path.join(__dirname, '..', 'markdown_output');
 const LIST_FILE = path.join(MD_DIR, 'empty_files_updated.md');
+const SLUGS_JSON = path.join(__dirname, '..', 'js', 'data', 'reddit-wiki', 'empty-slugs.json');
+
+/**
+ * Derive the wiki slug from a markdown filename exactly as api/wiki-stubs.php
+ * does, so the static JSON and the API agree. Returns null for names php skips.
+ */
+function slugFromFilename(name) {
+    name = path.basename(name);
+    if (name.indexOf('index_') === 0) {
+        return name.replace(/\.md$/i, '').slice('index_'.length).replace(/_+$/, '').toLowerCase();
+    }
+    if (/^[a-z0-9\-]+\.md$/i.test(name)) {
+        return name.replace(/\.md$/i, '').toLowerCase();
+    }
+    return null; // underscore-containing non-index names (e.g. active-programs_*) are not slugged
+}
 
 // Lines that count as boilerplate placeholders, not real content.
 const BOILERPLATE = [
@@ -106,16 +127,30 @@ function main() {
     console.log(`  + ${added.length} new (were missing / mis-flagged as complete)`);
     console.log(`  - ${removed.length} dropped (no longer a stub, or stale "ghost" entry)`);
 
+    // Derive the deduped slug set for the static JSON fallback.
+    const slugs = [...new Set(stubs.map(slugFromFilename).filter(Boolean))].sort((a, b) =>
+        a.localeCompare(b)
+    );
+    const rel = (p) => path.relative(path.join(__dirname, '..'), p);
+
     if (dryRun) {
         if (added.length) console.log('\nWould add:\n  ' + added.join('\n  '));
         if (removed.length) console.log('\nWould remove:\n  ' + removed.join('\n  '));
+        console.log(`\nWould write ${stubs.length} entries to ${rel(LIST_FILE)}`);
+        console.log(`Would write ${slugs.length} slugs to ${rel(SLUGS_JSON)}`);
         console.log('\n(dry run — nothing written)');
         return;
     }
 
     const out = stubs.map((n) => `- ${n}`).join('\n') + '\n';
     fs.writeFileSync(LIST_FILE, out);
-    console.log(`\nWrote ${stubs.length} entries to ${path.relative(path.join(__dirname, '..'), LIST_FILE)}`);
+    console.log(`\nWrote ${stubs.length} entries to ${rel(LIST_FILE)}`);
+
+    fs.writeFileSync(
+        SLUGS_JSON,
+        JSON.stringify({ generated: new Date().toISOString(), count: slugs.length, slugs }) + '\n'
+    );
+    console.log(`Wrote ${slugs.length} slugs to ${rel(SLUGS_JSON)}`);
 }
 
 main();

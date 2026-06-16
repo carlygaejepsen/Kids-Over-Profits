@@ -35,6 +35,49 @@ const splitNames = value =>
         .map(part => part.trim())
         .filter(Boolean);
 
+// Mirrors splitNameList in js/tti-program-index.js: some name-list fields store
+// several names in one comma/semicolon-joined string. Split into individual
+// names, re-attaching bare corporate suffixes ("Foo, Inc.") to the prior name.
+const CORP_SUFFIX_RE = /^(?:inc|llc|l\.l\.c|ltd|co|corp|corporation|company|llp|lp|plc|pllc|pc|p\.c|n\.a)\.?$/i;
+const splitNameList = value => {
+    const out = [];
+    cleanText(value).split(/\s*[;,]\s*/).map(part => part.trim()).filter(Boolean).forEach(part => {
+        if (out.length && CORP_SUFFIX_RE.test(part)) {
+            out[out.length - 1] = `${out[out.length - 1]}, ${part}`;
+        } else {
+            out.push(part);
+        }
+    });
+    return out;
+};
+
+// Split & de-duplicate a name-list array in place. Returns true if it changed.
+const normalizeNameArray = (obj, field) => {
+    if (!Array.isArray(obj[field])) return false;
+    const result = [];
+    const seen = new Set();
+    let changed = false;
+    obj[field].forEach(entry => {
+        if (typeof entry !== 'string') {
+            result.push(entry);
+            return;
+        }
+        const parts = splitNameList(entry);
+        if (parts.length !== 1 || parts[0] !== entry.trim()) changed = true;
+        parts.forEach(name => {
+            const key = name.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                result.push(name);
+            } else {
+                changed = true;
+            }
+        });
+    });
+    if (changed) obj[field] = result;
+    return changed;
+};
+
 /**
  * Clean one identification-like object in place. Returns the number of fields
  * that were modified.
@@ -78,13 +121,22 @@ function cleanIdentification(obj) {
         });
     }
 
+    // Normalize name-list fields: split comma/semicolon-joined strings into
+    // individual, de-duplicated entries so stored data matches what the card
+    // renders (and the Formerly / Also-known-as lines stop overlapping).
+    ['otherNames', 'pastNames', 'formerNames'].forEach(field => {
+        if (normalizeNameArray(obj, field)) changes += 1;
+    });
+
     return changes;
 }
 
+const NAME_LIST_FIELDS = ['otherNames', 'pastNames', 'formerNames'];
 const hasIdentificationFields = node =>
     node && typeof node === 'object' && !Array.isArray(node) &&
     ('currentOperator' in node || 'currentOwner' in node ||
-     'currentOwners' in node || 'currentName' in node);
+     'currentOwners' in node || 'currentName' in node ||
+     NAME_LIST_FIELDS.some(field => field in node));
 
 /**
  * Recursively walk any JSON structure and clean every identification-like object.
@@ -113,6 +165,8 @@ module.exports = {
     isHistoricalText,
     stripHistoricalPrefix,
     splitNames,
+    splitNameList,
+    normalizeNameArray,
     cleanIdentification,
     cleanTree,
 };

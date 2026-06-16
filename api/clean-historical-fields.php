@@ -78,6 +78,66 @@ function kop_split_names($value) {
 }
 
 /**
+ * Mirrors splitNameList in js/tti-program-index.js: split a comma/semicolon-
+ * joined name string into individual names, re-attaching bare corporate
+ * suffixes ("Foo, Inc.") to the preceding name.
+ */
+function kop_split_name_list($value) {
+    if (!is_string($value)) {
+        return array();
+    }
+    $parts = preg_split('/\s*[;,]\s*/', trim($value));
+    $out = array();
+    foreach ($parts as $part) {
+        $part = trim($part);
+        if ($part === '') {
+            continue;
+        }
+        if (!empty($out) && preg_match('/^(?:inc|llc|l\.l\.c|ltd|co|corp|corporation|company|llp|lp|plc|pllc|pc|p\.c|n\.a)\.?$/i', $part)) {
+            $out[count($out) - 1] .= ', ' . $part;
+        } else {
+            $out[] = $part;
+        }
+    }
+    return $out;
+}
+
+/**
+ * Split & de-duplicate a name-list field in place. Returns true if it changed.
+ */
+function kop_normalize_name_array(array &$obj, $field) {
+    if (!isset($obj[$field]) || !is_array($obj[$field])) {
+        return false;
+    }
+    $result = array();
+    $seen = array();
+    $changed = false;
+    foreach ($obj[$field] as $entry) {
+        if (!is_string($entry)) {
+            $result[] = $entry;
+            continue;
+        }
+        $parts = kop_split_name_list($entry);
+        if (count($parts) !== 1 || $parts[0] !== trim($entry)) {
+            $changed = true;
+        }
+        foreach ($parts as $name) {
+            $key = mb_strtolower($name);
+            if (!isset($seen[$key])) {
+                $seen[$key] = true;
+                $result[] = $name;
+            } else {
+                $changed = true;
+            }
+        }
+    }
+    if ($changed) {
+        $obj[$field] = array_values($result);
+    }
+    return $changed;
+}
+
+/**
  * Clean one identification-like array in place. Returns number of fields changed.
  */
 function kop_clean_identification(array &$obj) {
@@ -130,6 +190,15 @@ function kop_clean_identification(array &$obj) {
         }
     }
 
+    // Normalize name-list fields: split comma/semicolon-joined strings into
+    // individual, de-duplicated entries so stored data matches what the card
+    // renders (and the Formerly / Also-known-as lines stop overlapping).
+    foreach (array('otherNames', 'pastNames', 'formerNames') as $field) {
+        if (kop_normalize_name_array($obj, $field)) {
+            $changes++;
+        }
+    }
+
     return $changes;
 }
 
@@ -138,7 +207,10 @@ function kop_has_identification_fields($node) {
         array_key_exists('currentOperator', $node) ||
         array_key_exists('currentOwner', $node) ||
         array_key_exists('currentOwners', $node) ||
-        array_key_exists('currentName', $node)
+        array_key_exists('currentName', $node) ||
+        array_key_exists('otherNames', $node) ||
+        array_key_exists('pastNames', $node) ||
+        array_key_exists('formerNames', $node)
     );
 }
 

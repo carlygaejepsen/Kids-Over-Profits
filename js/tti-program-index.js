@@ -1069,9 +1069,6 @@ function displayFacilities(facilitiesData, containerId) {
             }
 
             // Subtext for former names, aliases, and current operator
-            const formerNames = collectUniqueTexts(
-                getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
-            );
             const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
             // Source data frequently stores historical markers ("Previously X",
             // "Formerly Y") inside fields that are rendered as present-tense
@@ -1081,10 +1078,32 @@ function displayFacilities(facilitiesData, containerId) {
             const HISTORICAL_PREFIX_RE = /^\s*(?:previously|formerly|former|prior(?:\s+to)?)\b[\s:;,.\-–—]*/i;
             const isHistoricalText = value => /\b(?:previously|former(?:ly)?|prior)\b/i.test(cleanText(value));
             const stripHistoricalPrefix = value => cleanHeaderText(value).replace(HISTORICAL_PREFIX_RE, '').trim();
+            // Some records pack several names into one string ("A, B, C" or "A; B"),
+            // and merged cards combine name lists from multiple source records. Split
+            // them into individual names so they can be de-duplicated against each
+            // other and across the Formerly / Also-known-as lines. Bare corporate
+            // suffixes (Inc, LLC, …) are re-attached so "Foo, Inc." is not split.
+            const CORP_SUFFIX_RE = /^(?:inc|llc|l\.l\.c|ltd|co|corp|corporation|company|llp|lp|plc|pllc|pc|p\.c|n\.a)\.?$/i;
+            const splitNameList = value => {
+                const out = [];
+                cleanText(value).split(/\s*[;,]\s*/).map(part => part.trim()).filter(Boolean).forEach(part => {
+                    if (out.length && CORP_SUFFIX_RE.test(part)) {
+                        out[out.length - 1] = `${out[out.length - 1]}, ${part}`;
+                    } else {
+                        out.push(part);
+                    }
+                });
+                return out;
+            };
+            const expandNames = raw => (Array.isArray(raw) ? raw : (raw ? [raw] : [])).flatMap(splitNameList);
+
+            const formerNames = collectUniqueTexts(
+                expandNames(getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames']))
+            );
             // Aliases that are really historical ("Previously X") belong under
             // "Formerly", not "Also known as" — reclassify them.
             const rawOtherNames = collectUniqueTexts(
-                getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
+                expandNames(getValueFromKeys(facility, ['identification.otherNames', 'otherNames']))
             ).map(cleanHeaderText);
             const historicalOtherNames = rawOtherNames.filter(isHistoricalText).map(stripHistoricalPrefix);
             const normalizedFormerNames = collectUniqueTexts(
@@ -1092,9 +1111,13 @@ function displayFacilities(facilitiesData, containerId) {
                 historicalOtherNames
             );
             const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
+            // Drop anything already shown as a former name, plus the facility's own
+            // display name (the card header already shows it), from the alias line.
+            const selfNameKey = normalizeTextKey(facilityHeaderRaw || '');
             const otherNames = rawOtherNames
                 .filter(name => !isHistoricalText(name))
-                .filter(name => !formerNameKeys.has(normalizeTextKey(name)));
+                .filter(name => !formerNameKeys.has(normalizeTextKey(name)))
+                .filter(name => normalizeTextKey(name) !== selfNameKey);
             const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
             // Current owner(s) — privately-owned facilities store this instead of a
             // corporate operator. These keys are suppressed from "More details", so
@@ -1165,7 +1188,7 @@ function displayFacilities(facilitiesData, containerId) {
                 }
                 // If open but listed under a different parent (historical context), might still be useful
                 else if (statusClass === 'open' && cleanText(operatorName) !== currentOpText) {
-                     subtextParts.push(`Operated by: ${escapeHtml(currentOp)}`);
+                     subtextParts.push(`Currently operated by: ${escapeHtml(currentOp)}`);
                 }
             }
 

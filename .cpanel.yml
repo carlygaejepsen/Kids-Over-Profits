@@ -9,6 +9,11 @@ deployment:
     - /bin/cp -R docs $DEPLOYPATH
     - /bin/cp -R templates $DEPLOYPATH
     - /bin/cp -R scripts $DEPLOYPATH
+    # wiki-stubs.php reads markdown_output/empty_files_updated.md server-side to
+    # know which wiki pages are still stubs. Ship that one file (the full
+    # markdown_output/ dir is large and not otherwise needed in the theme).
+    - /bin/mkdir -p $DEPLOYPATH/markdown_output
+    - /bin/cp markdown_output/empty_files_updated.md $DEPLOYPATH/markdown_output/
     - /bin/cp functions.php $DEPLOYPATH
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
