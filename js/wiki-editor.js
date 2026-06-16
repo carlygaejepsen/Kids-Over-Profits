@@ -325,6 +325,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function clearFormToEmpty(programName, options = {}) {
         const entryType = options.entryType === 'organization' ? 'organization' : 'facility';
+        const preservedRelatedPrograms = entryType === 'organization' && Array.isArray(relatedPrograms)
+            ? [...relatedPrograms]
+            : [];
 
         // Basic fields to clear
         const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
@@ -344,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         therapies = [];
         programLevels = [];
         affiliations = [];
-        relatedPrograms = [];
+        relatedPrograms = preservedRelatedPrograms;
 
         initializeEmptyLists();
 
