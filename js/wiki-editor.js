@@ -2890,17 +2890,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Organization creates should carry over the currently loaded facility
         // list so the parent-organization table doesn't disappear when a new
         // page is opened from the org browser.
-        if (entryType === 'organization' && selectedIndexState === 'ORG_PROGRAMS' && Array.isArray(currentIndexPrograms)) {
-            relatedPrograms = currentIndexPrograms
-                .map(program => ({
-                    name: program.name || program.normalizedName || '',
-                    link: program.url || '',
-                    yearsActive: program.yearsActive || '',
-                    location: program.location || '',
-                    healLink: program.healLink || '',
-                    reopened: program.reopened || ''
-                }))
-                .filter(program => program.name);
+        if (entryType === 'organization') {
+            if (Array.isArray(relatedPrograms) && relatedPrograms.length > 0) {
+                relatedPrograms = relatedPrograms.map(program => ({ ...program }));
+            } else if (selectedIndexState === 'ORG_PROGRAMS' && Array.isArray(currentIndexPrograms)) {
+                relatedPrograms = currentIndexPrograms
+                    .map(program => ({
+                        name: program.name || program.normalizedName || '',
+                        link: program.url || '',
+                        yearsActive: program.yearsActive || '',
+                        location: program.location || '',
+                        healLink: program.healLink || '',
+                        reopened: program.reopened || ''
+                    }))
+                    .filter(program => program.name);
+            }
         }
 
         clearFormToEmpty(name, { entryType });
