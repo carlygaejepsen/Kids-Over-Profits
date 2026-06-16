@@ -52,26 +52,65 @@ if (is_readable($scanFile)) {
     }
 }
 
-// --- 2. Completed entries = active (non-deleted, non-rejected) submissions ---
+/**
+ * Length of the meaningful prose in a markdown body, ignoring structure and
+ * placeholders. A header-only stub (title + empty "## Section" headings, or
+ * "No information is known.") returns ~0. Mirrors scripts/scan-wiki-stubs.js so
+ * the API and the file scan agree on what counts as a stub.
+ */
+function kop_wiki_meaningful_len($markdown) {
+    if (!is_string($markdown) || $markdown === '') {
+        return 0;
+    }
+    $kept = [];
+    foreach (preg_split('/\r\n|\r|\n/', $markdown) as $line) {
+        $t = trim($line);
+        if ($t === '') continue;
+        if (preg_match('/^#{1,6}\s/u', $t)) continue;                 // markdown header
+        if (preg_match('/^[-*_]{3,}$/u', $t)) continue;               // horizontal rule
+        if (preg_match('/^last revised by/iu', $t)) continue;         // wiki footer
+        if (preg_match('/^(no information( is)?( known| available)|nothing is known|unknown|n\/a|tbd|page title)\.?$/iu', $t)) continue;
+        $s = preg_replace('/\[([^\]]*)\]\([^)]*\)/u', '$1', $t);      // links -> text
+        $s = trim(preg_replace('/\s+/u', ' ', preg_replace('/[*_`>#|]/u', '', $s)));
+        if ($s !== '') $kept[] = $s;
+    }
+    return strlen(implode(' ', $kept));
+}
+
+// --- 2. Completed entries = active submissions that actually have content ---
 // completedNames: program names (fallback match for legacy submissions).
 // completedSlugs: the source slug each submission recorded (precise match). The
 // slug is stored inside json_data.sourceSlug by the wiki editor when the entry
 // was loaded from a known index slug.
-// Rejected submissions are excluded: a rejected page still needs to be (re)done,
-// so it must not show as "completed" in the index browser.
+// Excluded:
+//   - deleted/rejected submissions: a rejected page still needs to be (re)done.
+//   - stub submissions: rows whose saved markdown is only headers / placeholders
+//     (e.g. a page opened from a stub and saved without content). These must NOT
+//     count as completed, or empty pages show as done in the index browser.
+$COMPLETED_MIN_CHARS = 40;
 $completedNames = [];
 $completedSlugs = [];
 try {
     require_once __DIR__ . '/config.php';
     if (isset($pdo) && $pdo instanceof PDO) {
         $stmt = $pdo->query(
-            "SELECT program_name, json_data FROM wiki_submissions " .
+            "SELECT program_name, json_data, generated_markdown, original_markdown FROM wiki_submissions " .
             "WHERE status NOT IN ('deleted', 'rejected') AND program_name IS NOT NULL AND program_name != ''"
         );
         if ($stmt) {
             $seenName = [];
             $seenSlug = [];
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                // A submission counts only if its saved content is real. Check the
+                // rendered markdown first, then the source it was loaded from.
+                $contentLen = max(
+                    kop_wiki_meaningful_len($row['generated_markdown'] ?? ''),
+                    kop_wiki_meaningful_len($row['original_markdown'] ?? '')
+                );
+                if ($contentLen < $COMPLETED_MIN_CHARS) {
+                    continue; // header-only stub — still needs creation
+                }
+
                 $name = isset($row['program_name']) ? trim((string) $row['program_name']) : '';
                 if ($name !== '' && !isset($seenName[$name])) {
                     $seenName[$name] = true;

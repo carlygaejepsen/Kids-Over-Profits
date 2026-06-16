@@ -56,7 +56,11 @@
       "Bash(node scripts/backfill-articles.js --dry-run --facility=\"Provo Canyon\" --max-facilities=1 --skip-reddit)",
       "Bash(curl -sS -m 60 -w \"\\\\nHTTP %{http_code}\\\\n\" \"https://api.gdeltproject.org/api/v2/doc/doc?query=%22Provo+Canyon+School%22+sourcecountry%3AUS&mode=ArtList&format=json&maxrecords=10&startdatetime=20170101000000&enddatetime=20260521235959\")",
       "Bash(curl -sS -m 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/manage-submissions.php?action=list&type=data&status=submitted&limit=5\")",
-      "Bash(curl -sS -m 30 -w \"\\\\nHTTP %{http_code}\\\\n\" \"https://kidsoverprofits.org/wp-content/themes/child/api/manage-submissions.php?action=list&type=data&status=submitted&limit=5\")"
+      "Bash(curl -sS -m 30 -w \"\\\\nHTTP %{http_code}\\\\n\" \"https://kidsoverprofits.org/wp-content/themes/child/api/manage-submissions.php?action=list&type=data&status=submitted&limit=5\")",
+      "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?search=Abundant%20Life%20Academy\")",
+      "Bash(curl -s --max-time 90 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php\")",
+      "Bash(curl -s --max-time 30 \"https://kidsoverprofits.org/wp-content/themes/child/api/save-wiki-submission.php?search=NorthStar%20Center\")",
+      "Bash(node \"c:/tmp/index-gap.js\")"
     ],
     "deny": [],
     "ask": [],
