@@ -1,6 +1,555 @@
 {
-  "lastUpdated": "2026-06-07T08:07:11.783Z",
+  "lastUpdated": "2026-06-14T10:21:48.491Z",
   "entries": [
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMingFBVV95cUxOZ1RVRG1TQkpNTzZIT2lQSG1ENFREdTJYWl9Nd1BKOUtOU2pvWTNCUkluSEZSZXJYOUxydHZUc3V1UG9GbW1WdjFtaWwtU0M2a0dpZ1ZEaDI2YXlVRnotSW1oQ3pJSWw5eVE5VFZITFhVMWpTSWxjb2tLQ0RyR2pzMTEteG53RlhtbmpReHZzRnpxUGZnNTBuUS1IWTh3QdIBsgFBVV95cUxPVG9wQk1MbDVDYUQ2ZkpqUU1VWXMtRkU0LUc3NzUtbDRRQmJ2SDlQZEgwcklRN0NKakp1NUVFUlE1V0ZqMnJKRW9yZU9rc1RSLWtGYUktZ1B4V2RjVnVabWFqZnR2c2lEZDZvZGNhcmxpa1ZsemREVEZQSVJlZ2c5cnMxMm4zNGtPalpaY0RlUmd4LWRKdVFPT3dzQnlPY2NsdGhTcHpEd1NBQk9qREZLd0Jn?oc=5",
+      "title": "Faith-based nonprofit expands addiction recovery services in Wausau - WSAW",
+      "origin": "google-news",
+      "host": "wsaw.com",
+      "facilityQuery": "Teen Challenge",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wsaw.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOT1dFaUdWLXUyX2FKa0lGTk5TUlhRblg5WEpIRnU1anpUTzQwbEtvMzRXbnhQTjd4ZG5oSEgxTGRBRGxoTWtYVWRhZkdGVDc3VzJFZzRGNFRxNHIwTGh1N0h6T0xlaVZTRGFjWGpDZ1RYckZfdkxiR043ZlRSNkx6RWQ1S3M3Y3pPeDEzNUx2ZXJyTW5rRmgwTg?oc=5",
+      "title": "Ep. 596: Teen Challenge, Zoe Ministries, and Remembering James Robison - MinistryWatch",
+      "origin": "google-news",
+      "host": "ministrywatch.com",
+      "facilityQuery": "Teen Challenge",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Teen Challenge"
+        ],
+        "threshold": 3,
+        "host": "ministrywatch.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9TSUpkQVRnR2xYNTZrYVUyZlBVZjNpRzY1RXV5V3U3Q0V4ODdjSzRZNHRnVG44MHVtbkxHOEFPS2V0bmxiQUF5YTNkRTRwUkdnWm5ZRU15Z0dUUjk5SjItOTVOcDFmYmZCaGtRYw?oc=5",
+      "title": "Colleen Herman | Four Directions (2026) | For Sale - Artsy",
+      "origin": "google-news",
+      "host": "artsy.net",
+      "facilityQuery": "Four Directions",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Four Directions"
+        ],
+        "threshold": 3,
+        "host": "artsy.net"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxONlEyTE9VRFpsbGJLb2piSTVRLTRaRldEcExNcDhaWnZsQ2lkcWNYVDVMd2s2anlnRW5mME9faVlPUFJZXzZvMGJiR0dlMWJkb254b09yMGptU0FfTVY5UVNzbm1Yd21wUjZhWl85TFN4TVNMSlZJQjZKMG01ckNwdg?oc=5",
+      "title": "Youth Offender Camp Pilot Program - California Department of Corrections and Rehabilitation - CDCR (.gov)",
+      "origin": "google-news",
+      "host": "cdcr.ca.gov",
+      "facilityQuery": "Pine Grove Youth Conservation Camp",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cdcr.ca.gov"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPb2MtTnV1SmZYTWlyTHpINlZDWUlBSm1UU2dvOHFheXJidkNRLV9YVkRyZ2xnUXctZDlBUDhESGtuanoybk1MMThkVXpyV3dfNzdkTjNFMmxsd3ZqVmh6S1MxeTcydFF1QlIxVC10akxPTE5DcnpjVkV4TnI3RzFoeUJBcFlqcWI1Ym4zbm5fTUk0d3ptZV9GRGFISTk2M1BlNlFmcDlqRQ?oc=5",
+      "title": "50th Anniversary: Knorr - appeal-democrat.com",
+      "origin": "google-news",
+      "host": "appeal-democrat.com",
+      "facilityQuery": "Yuba County Juvenile Hall",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "appeal-democrat.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPWWplYTMtV3NyU3hRR2xPay1pd2VXZFlGYTA5T0ZMSkJXVWo4aVhoRF9lR3ZsNUxvWVhlOUw4VWpUNm91dlBPSUFzRG83NFNiRXlRRnFmeE14bVN4dlVHN1V6UkVHekV6dXJqM1pTcWNnSGRkVDVrQmF0ZG1nc3JGODVsUS1OM0J5dzh1OW9UNjYyOUwtMmFCQndUckF6TzJ1SjJxaWtwUEhkbnVIaTRWOHpR?oc=5",
+      "title": "Provo teen critically injured after attempting viral trend of 'couch surfing' - KSL News",
+      "origin": "google-news",
+      "host": "ksl.com",
+      "facilityQuery": "Timpview",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ksl.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNMGlUTlNfR2E0a0hsSVpJY29STnUwUkg3RTdhdTJXeEJ4dHRadzVRSzVhRWJKUHpzYVpFUmJ0RVViNmpfbkhLbk03eUE1S3llWVNUdzEtN0hMNS1kbzltLV85WFc2ZjZVbHBob1MtcmdVaXlfdi1aMTVYZmlKWGNOd2RZNFNsSk1weWVFZ1pTdFVEQQ?oc=5",
+      "title": "High school boys tennis: Timpview wins 5A state crown for fallen teammate - Deseret News",
+      "origin": "google-news",
+      "host": "deseret.com",
+      "facilityQuery": "Timpview",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Timpview"
+        ],
+        "threshold": 3,
+        "host": "deseret.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE8tTHVpbzNqVHV3eURBWUw1cjZEYS11SENEMTdacERfZFkwRlhiYkJVWFdOYjFZZGF1em9KLXRYb3RRWF9EM2E1RUZNdFNPZTVUbThlV2EtbmxfRDFfU3VacUtYTUtBV1F2SjgyNnZXQ0tMYVpDR0dDRw?oc=5",
+      "title": "Polcie Looking for Missing Isabella County Teen - WSGW 790 AM & 100.5 FM",
+      "origin": "google-news",
+      "host": "wsgw.com",
+      "facilityQuery": "New Hope Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wsgw.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQVC1Na3N2emJPSnBfU1pLeWZjUmg0U0xXMnkwcTRmcmVZVkV1bDdmRmJBNG1NeHRPUE9LcnU0d3lIUWQwSHl1aHVMVEJyQTN6ODc3MG4xNDdTSEFEcXM0dmtUOFhmUEozb0tKQ1dXd0pOb0g1R3lvR0txRkh5bGR3NGtfeEVsM3BlYkN2TVR5cmRQaFFBM0pSWHFUNkdLRHk0OVlDcUxmQ29DMkEzNTNhXw?oc=5",
+      "title": "Youths from New Hope Youth Center ran away 46 times this year, MSP says - The Morning Sun",
+      "origin": "google-news",
+      "host": "themorningsun.com",
+      "facilityQuery": "New Hope Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:New Hope Youth Center"
+        ],
+        "threshold": 3,
+        "host": "themorningsun.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE9VbHBBYzEzQkIyU2ZEZ3pkYWhTMXRLQ2xuX293MzNvSUdjTVhIY2Y0YUxocnZrVmszMndmZDVrYWZxQ1hvQTJDcDJHRFc2WDE0ZVFRV1U4WEQ4V29aNm0zN1M5NXQyMXY0ZVBaMTkzNkRldkIz?oc=5",
+      "title": "Screwworm update in the Ark-La-Tex - KSLA",
+      "origin": "google-news",
+      "host": "ksla.com",
+      "facilityQuery": "The Ark",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ksla.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1VRGxyQ1BuQ0RTdklxbkJVdk1NOHZ5dTFzODRSbmY2SnJfaVZDOEE5VGJsRVN3UUthY0JCSHI0RkdpV2hBUmQ3c2YyNkVoMUFmeXJkTjNNcW1FaU82STRUdWs3dmZqYVd5N1IxWdIBgAFBVV95cUxQekJ3bEpBd0FWbFpQR0hOUl9HSDk1R3VUdVhsSU9BR0tMVUJkNXNXNmdVR01KY1NpTUxEWlhPZ05zSEpYbjNtYmNfdkEtWGJteFVfUENOU204QnJKa1FIemtrcmVtMkd2QU52YVhUS05KLXFYVFhpNnU3eHlHYTYxZg?oc=5",
+      "title": "LSU AgCenter weighs in on screwworms appearing in Texas - KSLA",
+      "origin": "google-news",
+      "host": "ksla.com",
+      "facilityQuery": "The Ark",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "ksla.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMixgFBVV95cUxNcjJLU1B5RzYzM2NJQ05obzluYldBM3dVVmZ6V09seEtlNlJGNU5sNHVSdy0wbzdkZlEzOWpjeWh2LUdKcTVQSkF2TWdvdGJVaDVmRlZ1Yk1XeWFOdTJjMjdBclYxelRheEhBVjNtc1RFREMtTTAyTkd6SlJ2VWxudHpVS0FxMjVJS3B2N1VXUmszWEpYNVpjSEVBVm1PSjJtY1lralFyU0dmakpOckl1QzhMYXlVV0NRRHUwYWg3QW1NUXpoV1HSAcsBQVVfeXFMUEcxYnB0Ui1KSHFNQlBadXN6SWgweDE3WjctTGs4RTl4M0p1RGNlUjM2ZlJfZ012Ni12NC05VFVuc2xIdkZyUmZCbXQ1cUUydTlfMl81UEpIRlNJVG9tU3pVZXpGVWZ3em50RmZJVU41WXRyZUZDbGhHeWpZSC1nY3VPcklHYm1rMVIyY3JzY0FIU054SXlVeHRUUm15Rkx5WmRiZFhWblRiNnk3MEJSMTJuUDZ1X054dXpqQ3VCdU1mblVrOXQ1OHpXdTA?oc=5",
+      "title": "Support the Children’s Home of Lubbock at our Founder’s Day of Caring tomorrow - KLBK",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:The Children’s Home of Lubbock"
+        ],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNZll4SE0zLXZXa3RQZnBMZHFLS1pBM0NHVzBXLTkwc2xueU1yeWdTUFBHS2p2cmp2VnU5dTdYYnJpdk5OQng4S1Y0VmVTSDg4T2ZZdHR0cnJicUI3ZXFOcjlEZHQ5QmtSQ3pYTGpNclBpUXZLNDRNb0cxekk2U2lRWVVRVnRJSnl6VnAweE1tUGQ2QjZZeW8ycGxfUnF4OGc2V3c2WkxWVEHSAa4BQVVfeXFMTWU0anhyNlRHUUp5WVF5RUJtZWJ0M2lBSWx0Nl8teWtqamJTaENIMkpsQzVpQmI1QmN1cGRVbXNsUW5ZbjZtLWtNUE5LSnBUc1AzallwZVhqOFoyem5rcmE0WVNNYjIwTmhlMk5DZmREeVF1UVlqTWhublRHQk43alZZRVFhMnBrQ3Y0ZGI4cE05Y2drV3poWUFYaFRtd1lxNkp3ZEVDYk9XZlAtYWd3?oc=5",
+      "title": "What to donate for ‘Joy Drive’ supporting Children’s Home of Lubbock - KLBK",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNT2FQdWUwTUUyVnVhcG5aNC1XQ1ZqVW9iM2xBREt5VDdjNGhKUGdKenphX1hhR2RPSEp4cExWcUl6TlNzeGtYOWNZUmFWNUdaNWVTUW5lWGNNVnJsNVpKZV9hQm5uY25jdlU2bmVKOUNkcUR0Rkk4cHo2UlFuN1BzRA?oc=5",
+      "title": "Please join us on Friday, June 12 for Nexstar's Founder's Day of Caring benefitting the Children's Home of Lubbock - Yahoo",
+      "origin": "google-news",
+      "host": "yahoo.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "yahoo.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxOTGxqck1rR3NhTlg3dHNtd2V6UWtDdFZhNktiVS1qS1NWdXoyYUdaekJKZFFPZ0dNQjZxYnBrRk01NjREWTNsU3FhZFFZV2xfMWJYX3J5SjluRS13MERtWlh5c3RvLXBDWWQtT3dOa2xfMW1EU3dzRUF0bUZZSTJaS2dsNWw5MExZSFpRSzRMVS1ub193X0VoTEdpU081bnR40gGmAUFVX3lxTE5fOVhBSWg4a3ZYbU8zN19pLTZKeGs4eENxSVhLMHdCTW51WUR2ZUVHN3ZvOTNubXZCLUNIVDQxbVN0UFQwT3Zqei1wbi1HbmRwcW43RWtmMS1OSHZTYjdwd3JQdnE4OERDRHVHQUU5eC1sWm16TnpyVThFMndqVUw3eVBJZ2VkT3Q1QktlZmZuRlh6SExZcTRUYnFMT1k1Um8yWjhUR1E?oc=5",
+      "title": "Founder’s Day of Caring: Children’s Home of Lubbock - KLBK",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPTmZNQS1EbWVzRGxyNlE0MHpFMk5zcXZrMjJBdXJQTDVpRnRnMVBuQ0NuVm1XZnY5Nm5LUHlmSmtFZkRRLWhZemZkZDlaZnI1M0NnRDc5Tkl3NllRRU9mamdQVVRTTmRlQUR6ZVg0RmRSaWdSeHlSZ2YwU2RzcC12b3R3OVFzS1gtRTZfdjNXSHFTVWdzT3EtWlNUUDFjdW9ZSUZtVlREWkZTTnpnNldkMVlpVHZXMm_SAbwBQVVfeXFMTWtkYXFOcEFjdG12VmJlaV9WN0VhTFllRS13V294cVBZamYzM0dyY1BlUE5QcFFyYm9sN0ZWdGRJUHNuNVY0bkMyamRtRU9SQkxMd2ttVkJzZUxIczlHUjROanBQdTJncHJpTktybWFVdXk3N1NaanJMRXlaWHRZSVg4d2VaRllES3dORFJTeDh6U09zRVRFc1JwRWQxVGNfbUN4c3N3TEw4bXVaME5pTjl5YmFSN2E1b25lSmc?oc=5",
+      "title": "Baby has serious injuries after Lubbock man admits to shaking ‘in frustration’ - KLBK",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPbzEwdEx4eTlnT2VHa1VqVThnUDRPQ3B5aVBwNXdhWWJHU3gxVzM4MUk5YjZmUUFMR25vczZRY3k4S0tSLVFPLVMwVkp5WVYzeEdrUkRudUlJWkpsT2gxODQtLTRrTHMzMXdOc0VkY3NFNDFKd0xqeGpYT2xxOEZqOERNcTB0RVVydVpZNGItZkFBaXdVVlNzZjR5S3BSRk0?oc=5",
+      "title": "KAMC presents check to Children's Home of Lubbock - KLBK",
+      "origin": "google-news",
+      "host": "everythinglubbock.com",
+      "facilityQuery": "The Children’s Home of Lubbock",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "everythinglubbock.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPQ1JUeVBkSVQtMmxta1hDaG5Yd29sUS03VXpQSkU1cldBNUhkQ2FERGVOdnpHc0VLSDJfcGpCeDdoV0xlcWJhSTJ1N2tObGUwdjA1MmRyTmpZWUVCcjFwY1lwMlVSaXNaNXcySFRkdmRJZkFQYkNCMFBuaXZaeTE0d0dlZHVJNTEySXc?oc=5",
+      "title": "16-year-old left paralyzed after a bullet lodged in her spine in Dauphin County - WGAL",
+      "origin": "google-news",
+      "host": "wgal.com",
+      "facilityQuery": "Summit View",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "wgal.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMihwJBVV95cUxQMXJhUWhMOFZVY090S3Z2NnJqQ0pVVlduQnktTl9CLXlfTW1NY3JlRmR2eUt2OFJyZ3VwYVhoOGV6Z25LWV8wc09MTU9vM0s5SjRwQkxGeGVVcl82SDVDZUpVa0FwZE5TenZ2QVRuMTc3LWV1OFNiQ0g4LVZUZHZqX2J5RUdJYWRYa2h4Uy1nZE9LYmVIUkRBVVczUWt4bU5UY2JFRmluX2NOODBFN2dJbmNCcW1OVzIxXzVwLTF5NF9TZ0RFRFJuenZhTEoxQkpraDJyS2tRbllSSmpGYnhJU0J3YkoyZkNoV1g1T0lnc05HanRfZGR1N0ZCc0lMQ3ZZU3lGWGJVRQ?oc=5",
+      "title": "NH legislators investigate ‘illegal practices’ at Sununu Youth Services Center - UnionLeader.com",
+      "origin": "google-news",
+      "host": "unionleader.com",
+      "facilityQuery": "John H. Sununu Youth Services Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "unionleader.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxOZ2dPYndTZUhjOVZ1SjFNSl9icFZqNS1WYkVLTXZSRmFPN3lyTlF3eEtzX29CWkJySkYyYjQ5dWFrOC1FT0JNRTJrSHRsbkhFWUtEYWRKZXFiRUNKUXAwMGtkWVRIbkZGMWZLMUZwOGdWaTFqZVlZeTJNQ0JXenZEWTJoaWp3OXpvZm9WQVVQY3hQVnUyZVpiMEhNbFJuQk9hc191Tlhjd0xsQndGNVJQUy00TnJoSVM1S1NmalJmWmRJbmJ3WWdvTTVaamlwcnRLeHBoVVZQamQ1N2FKUXJYb2ZRV3NhemJDcWtyX0k3RQ?oc=5",
+      "title": "Sex tapes, riots and drug burritos | Secrets of Green Hill - KING5.com",
+      "origin": "google-news",
+      "host": "king5.com",
+      "facilityQuery": "Green Hill School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "king5.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxNbmRvTVRCSjV3cUdnSWNvNDlvTXlmMU01ZEpKT0hCVHZfXzNFT0hUeEgyNXhnVkk1WTN0TDlxQjZTNHY4QWhlemo3WG1iMENMeXMyUS10dmNGUDRhNmJ6OGFIWUVYMzJhUExyNWM0RUNDVklZQXpKa0V3ZllvOUtSWF9qWWZHUDVmQTctajJ5NWo5dw?oc=5",
+      "title": "Forget Philly, Retire To Pennsylvania's Mountain Haven With Cozy Boroughs, Scenic Lakes, And Idyllic Resorts - AOL.com",
+      "origin": "google-news",
+      "host": "aol.com",
+      "facilityQuery": "Mountain Haven",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "aol.com"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNd0RJUmNTRmluUmV4cTVaZDE4OVFfQ2hqeVRPb1cxNlJPRGY3dXRXMDhVV21adjAydmtkMW5yUnhpRTk0LUxselpwbmhkQ3ZYdjBRNVpWWHU3eDNMRzAzYlJHdjhiZ3gxZUlGaHZEYWNMamlvZTMwSjlWbmZkMUVhM2NERjJqU0l4SmpwMXg1cmdVdFJ4bzhuZTBTMDFTQm1vQjdqVVZqZ0tkaHpsT29nSVVEWTdVUQ?oc=5",
+      "title": "Robert Redford honored at Sundance’s final Utah festival, founder’s legacy celebrated - artthreat.net",
+      "origin": "google-news",
+      "host": "artthreat.net",
+      "facilityQuery": "Mountain Haven",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "artthreat.net"
+      }
+    },
+    {
+      "ts": "2026-06-14T10:21:48.491Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE1TSUktYzVHLTZLMkh5blFGWG9kQzR5MzFqNG5SUXI2cld0VE1URHNHdXV1LUhULUxqeVN0WG5DNkVpUzJ3a2dmNEFrWjJOTmpNZWdDV0xYUFkxckVr?oc=5",
+      "title": "Murdaugh Family - Britannica",
+      "origin": "google-news",
+      "host": "britannica.com",
+      "facilityQuery": "Generations",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "britannica.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxNV1lpa3d2RHBqNU5iNVc2N2hWdFNPSGIzNjAwV1RfZDh4VU15WWJlZ1VHTEdaa3FURFdoTmh0a1NsR1RMQm80TjlPbW55eFNWcUJxaVNWcGpXYzRHYUdEMHhsbS1EQmF2T0h5bkoyVEtEdnphY3hiWE80YzlNYjQwLTNHMXR6UGJ6QzEyM0dmM093LWN4ODVBTFVIa1R4eThiWHhhcHV2azhXY3d6bXNwcU5iU2pZalpLNFo3V1Z6ejdBak1sN21wWGNCeUR0VjRDRzY1UE1NMEFCMkJwd1JXUmJUcURpUXByLVUyQXlIZDlFUQ?oc=5",
+      "title": "Despite scrutiny, special education money flows to for-profit residential treatment centers - The Washington Post",
+      "origin": "google-news",
+      "host": "washingtonpost.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "washingtonpost.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTE8xQ0h5SENQNkdSZzUxUk5hSXkzZTNwd1NTU0tCbkxjUTNaendXbTNDenA1aFZub3lIN2ZCODA4ODlqRnRtUmpteFp2eWZsN1czbWRwVGZRR0JDTEVTb3ZsS2pxTDRGNzJER05wbHpQZw?oc=5",
+      "title": "Common pesticide linked to hidden brain damage, scientists warn - ScienceDaily",
+      "origin": "google-news",
+      "host": "sciencedaily.com",
+      "facilityQuery": "Evolve Adolescent Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sciencedaily.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxQV3VwbTc3ZG9WNUF2ak0xa29lRUVlYkJyc1VwQjY5QzRHRUtLZ3RNcmhfaWVxd3dMeDFRVzIxWEViSXVKckROeG9mSkpmVjhMNkYwM1czWEg5RkJUU2I0Z1dsanFnUnkwNi01RnV3aVdtLWtjMlpuc283UVJHYXlRRFBZbmxtajk2WEZkMDZGQlZmR1RtYWVIam8xZGNoR25pS1Yxak9VbWJuSnhMN1lvYVNvYTJUamcxcEhqSE5lUWlqQmE0LW5fTzFxaXM2SGM2YzBCcmdIYzdyOWNNVEIzdnNxY2N0cEs0WVIyQm130gHzAUFVX3lxTE5kYk1oSUo5UzRZajNxR0Rla3N2ei1JZFlZMmU5YjV3MThzUUVVcHFXUWZOUURMcHhBd1NPTkdCbTVPY3g3Y2hHS3U0TzJQZnU2czV4WmJJNFhMaDUxNjVXOHFpUzQ5QVBBbkFtQWl1eDJpM2d1dXhrSkNQV3EtSlhUbTdDMlZPUU1WZ29iRjNIX3hiZmJsUzRHbHBueENQZTlnLXhzSEhXc2V2a05BeFE4ZGtmRU8yYS1wSjdWS243M2s4NFcxTnlUZ2tidHV1QXFQemFoRVhBUFZoLU5jMnEwbnI0TGZCMTlfRVFaRjlSX3F0SQ?oc=5",
+      "title": "Genesis Ranch purchases 86 acres in Prairie Grove to build mental health treatment campus for teen girls - KNWA FOX24",
+      "origin": "google-news",
+      "host": "nwahomepage.com",
+      "facilityQuery": "Teen Challenge Adventure Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nwahomepage.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPSV9pRE9xZ3BQMVh6VmJCdjcxc3RUU1hNeEU3NG53emJhZ0NBektDQnBTY1JacDA3UVUwNHBKQmtzZzZfaEtYbGJYdEVGRnlmeWRvTjk1ZGpkeVktTC03Rm1OUWR1WGgzYzNXUDVaTlpzMG01a09YUWc0NW9aOHNjVnVkd3d3eldGRmlVMmFud05faDY0MVV2VtIBngFBVV95cUxQNEhyRnhuTG1PQklRZ1hKTkh2X3dlRE5WcEV5U09GcWd3ZWEyRlFCeTZYSThxVDRGdUlaeWVtMUxOYXFuT3JOUXo1cWdFSnAyTDl5RFNybzRSUkNjSEhWZ3lUWGFKZjEwUVRIREtYWk9oR21pWGRQd0Jod1lkZ0x3amVZbzJ4a2FXdjM2M2kxX3lvc2U0U2hsVndvdEZvUQ?oc=5",
+      "title": "DHHS issues emergency actions against Utah behavioral school attended by Paris Hilton - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxNMzd5Q2hlMGltSjhGMEREMWpESndodnJLa3lZUFdzbGJvdzBlaVIzanB5SS1CeUdtX2VrNmVFNGlXY1l3bmJZeTRtRjlkNlVNSnVRaXNRMVZlN0Vya1dIWmNxTUVUY1BvbE5lc2VfbnJ0SjFpbm9EVFZ5QlRReHVJYU5HaXVvTHFnZmZRb0dqeFFzSl9QVF9kSi01ZVJWQWJMam9hZFNVRDIwQmQ3WHVCUC1KMUtLRlNwQThBaEZxam53V1JJQXhWTmRycERJQQ?oc=5",
+      "title": "Action taken after Provo school staff failed to call 911 after client left unconscious - FOX 13 News Utah",
+      "origin": "google-news",
+      "host": "fox13now.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13now.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPa3lIMkoyWDNqRzltRTZxUXlYWERFME90aFlhS3E5NldVVW9FMUxaVzg4NFFENHNzazc1RW9jTGYyNF9FNm5VdXc2ODlLLXB1T2F5OHozcGJWZEQzMnNHRGI5bHNockVyc3Zjang1S2NwVzdLRDRVRXhfd2hTNGJudDc1aVl4VzRIZ05hWU1sTQ?oc=5",
+      "title": "Hope reborn as Angel of Hope Rehab welcomes 8th intake - The Herald ZW",
+      "origin": "google-news",
+      "host": "heraldonline.co.zw",
+      "facilityQuery": "Sanctuary of Hope",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "heraldonline.co.zw"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQT1dMVFRvTlRNWjRBYmp6VV8zX3pieTFDSjU1MUNFNWxUUnhXRHNpV2JiVWd6TjFuajN5UzV0S0pjX3EzQ3NfeFl0amdqbG5LY3N5YzJpV2toSUNtdHgxQXdPRXJ5LTVOcUpqMnJSSlVVY2RVcnhXZVBiRENNdGxockZUc0pTRWZDNnE0aktGdlFVZnN6bF9BT2NxUTNhaVNwSDkwTVBLZW03VGwtRkRyR3hGN01JZFFEQTZldWhfQ2k4STFFaVA2WA?oc=5",
+      "title": "Children's home review risks being skewed by DfE's aim to shrink sector, providers warn - communitycare.co.uk",
+      "origin": "google-news",
+      "host": "communitycare.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "communitycare.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5pbjk3QWVyZHBVck0tS3FQaFlqU0RTdmNaaXZaQjFpM0RBWnM1djN6S2VRaWg3NTdxeHI1UzBFeEVXT0phQmxBdlpnSGxEcDByRjlGOTBnTzhwZ0dW?oc=5",
+      "title": "Why illegal children's homes are being paid up to £2m per child by councils - BBC",
+      "origin": "google-news",
+      "host": "bbc.co.uk",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "bbc.co.uk"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5VZ3ZtLVFqUjhFYWFRVmZPTFBMYXNVMDE3TDcwV3FlNzl4cW1tWEZ3RlQyTm0xdnloN0xpSWYyQ2ViODB0VnVqVjRnYVRER2c?oc=5",
+      "title": "Let discovery proceed in Hyde School case | Opinion - Portland Press Herald - Maine Sunday Telegram",
+      "origin": "google-news",
+      "host": "pressherald.com",
+      "facilityQuery": "Hyde School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Hyde School"
+        ],
+        "threshold": 3,
+        "host": "pressherald.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNa084MXFuazV6RGRCMjl6a214ekgyWUhQWl81RWkyazNUR3V4eHM3akN2Z0ZxT2txeVlNZWhUSkMxRTZyUmttaTdmQ3lkdGxPQzdpSzVaQ01lNEwxamExcXdiUVdUeC1tUjg5blg3VUEzR212TjMySFhmZnZqRzVnNg?oc=5",
+      "title": "Getting the ‘Edge’ on with United Way of Greater Nashua - NH Business Review",
+      "origin": "google-news",
+      "host": "nhbr.com",
+      "facilityQuery": "Dover Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nhbr.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMi7wFBVV95cUxPV0hUMDJyaW0xaTBXN1pfRGIzOXNiVHBpbGxzaFRTVUtjOFk4YzVRdmJYY0lvME1renhwYU9XZTNtSlJfR3htbzAzMXJyR2l1SjkzbTlyc0FDMXNzWUFvSFpOSlZOMFFpaWFwd1BZQTZ3Qlg1c1RSMUhVQ3JyeF9uUk1MSFNubklrd0RTclA1clQ0c2dsbmp2Q25yUzBqTjZFV0ZJV3JOakx0dmVDMng4ZnRMdGVRZ3U5ZmRnVV9QajdYX2hBUE1WZ255d1hlajd5YzMzYkk1cEpubE5xRDhzMjJhUDd0Mkw0TGRXeFQ3aw?oc=5",
+      "title": "Memphis receives $1M in funding for youth violence prevention, officials say - FOX13 Memphis",
+      "origin": "google-news",
+      "host": "fox13memphis.com",
+      "facilityQuery": "PURE Academy",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fox13memphis.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQT0RFcUF1MmI3cHlxV0M4STN1T1NjLTRYb0sxX3JZSTN3YXJCMTAyMDBNMTgta3dzRVhRTnhZQnBtT2NWbVdqZDRaeWc4bGtBVGFSd195WEFueWNCS1hMSTJKZ2ZIUGd2dFJrblljNGR3cHdreTZ0bHFXYTRfbjdISmJUanRFeHFUdkxQWGJQd1dYZllkTExXNkwyRdIBoAFBVV95cUxOOGlHVUk0aVkzMzdiS0Y1N2RNNTlkSk9hOTVwTGVWNnBtVDZLazZlY2NYdXlpVUxXbk0yd1NnWnFUTHhWX1k3UEwtN18wM0s2RUZpMHhraVptRkNVUG03c1htaHNpaDhXQVozUkdFNUprWVRJY2lSVG4zSUp6MC1SWURzUXRDY1l2ZVdkSGo0amtwZGQydkY0QVFBSTMwOUFR?oc=5",
+      "title": "UPDATE: Juvenile escapes from youth center north of Las Vegas - KLAS 8 News Now",
+      "origin": "google-news",
+      "host": "8newsnow.com",
+      "facilityQuery": "Caliente Youth Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "8newsnow.com"
+      }
+    },
+    {
+      "ts": "2026-06-13T10:22:03.158Z",
+      "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE10WlhGVUNfOHBxTk1EU2JwcWFPY0VjX1FGWXI1NnFvMkZSSWZ0QmxLdmFCeXBnRVVEeGpQeTZVS2NFMjFpdHFwdWJCX2hMX3ZoZFNpbkFYTWtSR1B4ZXZPZmltQjlfQ1IxVFE?oc=5",
+      "title": "What Is the Biggest Complaint in Nursing Homes in 2026? - Sokolove Law",
+      "origin": "google-news",
+      "host": "sokolovelaw.com",
+      "facilityQuery": "Ridge House",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sokolovelaw.com"
+      }
+    },
     {
       "ts": "2026-06-07T08:07:11.783Z",
       "link": "https://news.google.com/rss/articles/CBMigAFBVV95cUxPWFdYZVM1NHRJTy1ncE5EVThKbW9zY3F3YUxqX2hHMEg4ZWNVSmZVY3YtbzBRa2cySk5DZHlhVy1adDJQcWNCRU5MUVljTC0tTUxQTUNyd09MRUZvNVdpSDhFb21pT3ZUSUxuMUlrUzFyTk1vdHpyRm1rMFhiVi0zaw?oc=5",
