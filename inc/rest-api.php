@@ -638,10 +638,17 @@ function kop_save_project_rest_callback($request) {
         $unwrap_guard += 1;
     }
 
-    // If payload contains operator/facility data, force companies unless it's clearly a location.
+    // Payloads with operator/facility data default to companies, BUT only when the
+    // caller hasn't explicitly tagged the project as another known type. Location
+    // aggregates (and referrer/transporter groupings) legitimately carry
+    // operator/facilities data, so blindly forcing companies here would write the
+    // row into facilities_master and orphan the real row in its own table.
     if (is_array($data)) {
         $has_operator_data = isset($data['operator']) || isset($data['facilities']);
-        if ($has_operator_data && $category !== 'companies' && $category !== 'company') {
+        $known_non_company = in_array($category, array(
+            'referrers', 'referrer', 'transporters', 'transporter', 'locations', 'location'
+        ), true);
+        if ($has_operator_data && !$known_non_company) {
             $category = 'companies';
         }
     }

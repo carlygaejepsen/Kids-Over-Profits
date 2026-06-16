@@ -17377,13 +17377,13 @@
             "identification": {
               "name": "Mingus Mountain Estate Residential Center, Inc.",
               "currentName": "",
-              "currentOperator": "previously Ascend Behavioral Health",
-              "currentOwner": "previously Ascend Behavioral Health",
-              "currentOwners": [
-                "previously Ascend Behavioral Health"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Ascend Behavioral Health"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -83753,13 +83753,13 @@
             "identification": {
               "name": "AMIkids Pinellas",
               "currentName": "",
-              "currentOperator": "Previously Pinellas Marine Institute",
-              "currentOwner": "Previously Pinellas Marine Institute",
-              "currentOwners": [
-                "Previously Pinellas Marine Institute"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Pinellas Marine Institute"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -83833,13 +83833,13 @@
             "identification": {
               "name": "AMIkids Polk Inc.",
               "currentName": "",
-              "currentOperator": "Previously Polk Halfway House",
-              "currentOwner": "Previously Polk Halfway House",
-              "currentOwners": [
-                "Previously Polk Halfway House"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Polk Halfway House"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -84622,14 +84622,15 @@
             "identification": {
               "name": "Britt Technical Youth Academy",
               "currentName": "",
-              "currentOperator": "Previously Charles Britt Academy",
-              "currentOwner": "Previously Charles Britt Academy",
+              "currentOperator": "",
+              "currentOwner": "",
               "currentOwners": [
-                "Previously Charles Britt Academy",
                 "Wayne Halfway House"
               ],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Charles Britt Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -84703,13 +84704,15 @@
             "identification": {
               "name": "Brooksville Youth Academy",
               "currentName": "",
-              "currentOperator": "Previously Camp E-How-Kee; Eckerd Youth Challenge Program; Eckerd Academy at Brooksville",
-              "currentOwner": "Previously Camp E-How-Kee; Eckerd Youth Challenge Program; Eckerd Academy at Brooksville",
-              "currentOwners": [
-                "Previously Camp E-How-Kee; Eckerd Youth Challenge Program; Eckerd Academy at Brooksville"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp E-How-Kee",
+                "Eckerd Youth Challenge Program",
+                "Eckerd Academy at Brooksville"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -87869,13 +87872,13 @@
             "identification": {
               "name": "Family Center for Recovery Teen Addiction Treatment & Rehab Center",
               "currentName": "",
-              "currentOperator": "Previously Wellington Retreat RTC for Children and Adolescents",
-              "currentOwner": "Previously Wellington Retreat RTC for Children and Adolescents",
-              "currentOwners": [
-                "Previously Wellington Retreat RTC for Children and Adolescents"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Wellington Retreat RTC for Children and Adolescents"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -88889,13 +88892,13 @@
             "identification": {
               "name": "Highland Youth Academy",
               "currentName": "",
-              "currentOperator": "Previously Avon Park Youth Academy",
-              "currentOwner": "Previously Avon Park Youth Academy",
-              "currentOwners": [
-                "Previously Avon Park Youth Academy"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Avon Park Youth Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -89047,13 +89050,13 @@
             "identification": {
               "name": "Honey Lake Clinic",
               "currentName": "",
-              "currentOperator": "Previously Hazel House RTC",
-              "currentOwner": "Previously Hazel House RTC",
-              "currentOwners": [
-                "Previously Hazel House RTC"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Hazel House RTC"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -91567,13 +91570,13 @@
             "identification": {
               "name": "Okeechobee Youth Development Center",
               "currentName": "",
-              "currentOperator": "Previously Eckerd Youth Development Center",
-              "currentOwner": "Previously Eckerd Youth Development Center",
-              "currentOwners": [
-                "Previously Eckerd Youth Development Center"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Eckerd Youth Development Center"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -93534,14 +93537,15 @@
             "identification": {
               "name": "St. Augustine Youth Academy",
               "currentName": "",
-              "currentOperator": "Previously St. John’s Youth Academy",
-              "currentOwner": "Previously St. John’s Youth Academy",
+              "currentOperator": "",
+              "currentOwner": "",
               "currentOwners": [
-                "Previously St. John’s Youth Academy",
                 "YOI"
               ],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "St. John’s Youth Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -94086,11 +94090,12 @@
               "currentOperator": "SAFE",
               "currentOwner": "SAFE",
               "currentOwners": [
-                "SAFE",
-                "Previously Straight – Orlando"
+                "SAFE"
               ],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Straight – Orlando"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -94710,13 +94715,13 @@
             "identification": {
               "name": "The Parent Help Center Summer Success Camp",
               "currentName": "",
-              "currentOperator": "Previously Camp Consequence",
-              "currentOwner": "Previously Camp Consequence",
-              "currentOwners": [
-                "Previously Camp Consequence"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp Consequence"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -95024,13 +95029,14 @@
             "identification": {
               "name": "Treasure Coast Boys Academy",
               "currentName": "",
-              "currentOperator": "Previously Teen Challenge Vero Beach; Anderson Academy",
-              "currentOwner": "Previously Teen Challenge Vero Beach; Anderson Academy",
-              "currentOwners": [
-                "Previously Teen Challenge Vero Beach; Anderson Academy"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Teen Challenge Vero Beach",
+                "Anderson Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -96556,13 +96562,13 @@
             "identification": {
               "name": "Blue Ridge Therapeutic Wilderness",
               "currentName": "",
-              "currentOperator": "Previously Second Nature Blue Ridge",
-              "currentOwner": "Previously Second Nature Blue Ridge",
-              "currentOwners": [
-                "Previously Second Nature Blue Ridge"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Second Nature Blue Ridge"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -99368,13 +99374,13 @@
             "identification": {
               "name": "Hidden Lake Academy",
               "currentName": "",
-              "currentOperator": "Previously Ridge Creek School",
-              "currentOwner": "Previously Ridge Creek School",
-              "currentOwners": [
-                "Previously Ridge Creek School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Ridge Creek School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -100462,14 +100468,15 @@
             "identification": {
               "name": "Pine Mountain Boys Academy",
               "currentName": "",
-              "currentOperator": "Previously Prayer Mountain Boys Academy",
-              "currentOwner": "Previously Prayer Mountain Boys Academy",
+              "currentOperator": "",
+              "currentOwner": "",
               "currentOwners": [
-                "Previously Prayer Mountain Boys Academy",
                 "Teen Challenge"
               ],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Prayer Mountain Boys Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -101564,13 +101571,14 @@
             "identification": {
               "name": "Youth Villages – Inner Harbour Campus",
               "currentName": "",
-              "currentOperator": "Previously Inner Harbour for Children and Families; Anneewakee Treatment Center for Emotionally Disturbed Youth",
-              "currentOwner": "Previously Inner Harbour for Children and Families; Anneewakee Treatment Center for Emotionally Disturbed Youth",
-              "currentOwners": [
-                "Previously Inner Harbour for Children and Families; Anneewakee Treatment Center for Emotionally Disturbed Youth"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Inner Harbour for Children and Families",
+                "Anneewakee Treatment Center for Emotionally Disturbed Youth"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -106561,13 +106569,13 @@
             "identification": {
               "name": "Abraxas Alliance Woodridge Interventions",
               "currentName": "",
-              "currentOperator": "previously Cornell Interventions",
-              "currentOwner": "previously Cornell Interventions",
-              "currentOwners": [
-                "previously Cornell Interventions"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Cornell Interventions"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -113531,11 +113539,12 @@
               "currentOwner": "Acadia",
               "currentOwners": [
                 "Acadia",
-                "previously Rock Creek Center",
                 "f. 2006"
               ],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Rock Creek Center"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -114114,13 +114123,13 @@
             "identification": {
               "name": "Beacon Medical Group Behavioral Health",
               "currentName": "",
-              "currentOperator": "formerly Riverbend",
-              "currentOwner": "formerly Riverbend",
-              "currentOwners": [
-                "formerly Riverbend"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Riverbend"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -136751,13 +136760,13 @@
             "identification": {
               "name": "Becket House at Belgrade",
               "currentName": "",
-              "currentOperator": "Previously Becket Academy",
-              "currentOwner": "Previously Becket Academy",
-              "currentOwners": [
-                "Previously Becket Academy"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Becket Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -139713,13 +139722,13 @@
             "identification": {
               "name": "Savage Mountain Youth Center",
               "currentName": "",
-              "currentOperator": "Previously Lonaconing Forestry Camp for Boys",
-              "currentOwner": "Previously Lonaconing Forestry Camp for Boys",
-              "currentOwners": [
-                "Previously Lonaconing Forestry Camp for Boys"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Lonaconing Forestry Camp for Boys"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -140618,13 +140627,13 @@
             "identification": {
               "name": "Chamberlain International School",
               "currentName": "",
-              "currentOperator": "previously F.L. Chamberlain School",
-              "currentOwner": "previously F.L. Chamberlain School",
-              "currentOwners": [
-                "previously F.L. Chamberlain School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "F.L. Chamberlain School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -142347,13 +142356,13 @@
             "identification": {
               "name": "Hillcrest Educational Foundation Brookside ITU",
               "currentName": "",
-              "currentOperator": "Previously Brookside School",
-              "currentOwner": "Previously Brookside School",
-              "currentOwners": [
-                "Previously Brookside School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Brookside School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -151306,13 +151315,13 @@
             "identification": {
               "name": "Pathway Youth Center",
               "currentName": "",
-              "currentOperator": "previously Muskegon River Pathway of Hope",
-              "currentOwner": "previously Muskegon River Pathway of Hope",
-              "currentOwners": [
-                "previously Muskegon River Pathway of Hope"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Muskegon River Pathway of Hope"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -186607,13 +186616,13 @@
             "identification": {
               "name": "John H. Sununu Youth Services Center",
               "currentName": "",
-              "currentOperator": "formerly New Hampshire Youth Development Center",
-              "currentOwner": "formerly New Hampshire Youth Development Center",
-              "currentOwners": [
-                "formerly New Hampshire Youth Development Center"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "New Hampshire Youth Development Center"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -199260,13 +199269,13 @@
             "identification": {
               "name": "Rising Ground RTC",
               "currentName": "",
-              "currentOperator": "Previously Leake & Watts RTC",
-              "currentOwner": "Previously Leake & Watts RTC",
-              "currentOwners": [
-                "Previously Leake & Watts RTC"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Leake & Watts RTC"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -199496,13 +199505,13 @@
             "identification": {
               "name": "Samaritan Daytop Village",
               "currentName": "",
-              "currentOperator": "previously Daytop Village",
-              "currentOwner": "previously Daytop Village",
-              "currentOwners": [
-                "previously Daytop Village"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Daytop Village"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -201375,13 +201384,13 @@
             "identification": {
               "name": "Villa of Hope",
               "currentName": "",
-              "currentOperator": "Previously St. Joseph’s Villa",
-              "currentOwner": "Previously St. Joseph’s Villa",
-              "currentOwners": [
-                "Previously St. Joseph’s Villa"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "St. Joseph’s Villa"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -203128,13 +203137,13 @@
             "identification": {
               "name": "Adrienne’s House",
               "currentName": "",
-              "currentOperator": "Previously A World of Opportunity, LLC",
-              "currentOwner": "Previously A World of Opportunity, LLC",
-              "currentOwners": [
-                "Previously A World of Opportunity, LLC"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "A World of Opportunity, LLC"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -204222,13 +204231,13 @@
             "identification": {
               "name": "Asheville Academy for Girls",
               "currentName": "",
-              "currentOperator": "Previously Stone Mountain School",
-              "currentOwner": "Previously Stone Mountain School",
-              "currentOwners": [
-                "Previously Stone Mountain School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Stone Mountain School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -209231,13 +209240,13 @@
             "identification": {
               "name": "Eckerd Connects Boys Residential Academy at Boomer",
               "currentName": "",
-              "currentOperator": "Previously Camp E-Ma-Etu",
-              "currentOwner": "Previously Camp E-Ma-Etu",
-              "currentOwners": [
-                "Previously Camp E-Ma-Etu"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp E-Ma-Etu"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -209311,13 +209320,13 @@
             "identification": {
               "name": "Eckerd Connects Boys Residential Academy at Candor",
               "currentName": "",
-              "currentOperator": "Previously Camp E-Ku-Sumee",
-              "currentOwner": "Previously Camp E-Ku-Sumee",
-              "currentOwners": [
-                "Previously Camp E-Ku-Sumee"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp E-Ku-Sumee"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -209469,13 +209478,13 @@
             "identification": {
               "name": "Eckerd Connects Girls Residential Academy at Kerr Lake",
               "currentName": "",
-              "currentOperator": "Previously Camp E-Ten-Etu",
-              "currentOwner": "Previously Camp E-Ten-Etu",
-              "currentOwners": [
-                "Previously Camp E-Ten-Etu"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp E-Ten-Etu"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -211031,13 +211040,13 @@
             "identification": {
               "name": "Glenside Home",
               "currentName": "",
-              "currentOperator": "Previously Center of Progressive Strides",
-              "currentOwner": "Previously Center of Progressive Strides",
-              "currentOwners": [
-                "Previously Center of Progressive Strides"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Center of Progressive Strides"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -211501,13 +211510,13 @@
             "identification": {
               "name": "Healthy Choices",
               "currentName": "",
-              "currentOperator": "Previously New Hope Home II",
-              "currentOwner": "Previously New Hope Home II",
-              "currentOwners": [
-                "Previously New Hope Home II"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "New Hope Home II"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -214233,13 +214242,13 @@
             "identification": {
               "name": "King Family Ministries",
               "currentName": "",
-              "currentOperator": "Previously Second Chance Ranch",
-              "currentOwner": "Previously Second Chance Ranch",
-              "currentOwners": [
-                "Previously Second Chance Ranch"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Second Chance Ranch"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -214469,13 +214478,13 @@
             "identification": {
               "name": "Laurelwood Group Home",
               "currentName": "",
-              "currentOperator": "Previously Luv-N-Arms",
-              "currentOwner": "Previously Luv-N-Arms",
-              "currentOwners": [
-                "Previously Luv-N-Arms"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Luv-N-Arms"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -215563,13 +215572,13 @@
             "identification": {
               "name": "Magnolia Mill School",
               "currentName": "",
-              "currentOperator": "Previously Solstice East",
-              "currentOwner": "Previously Solstice East",
-              "currentOwners": [
-                "Previously Solstice East"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Solstice East"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -216657,13 +216666,13 @@
             "identification": {
               "name": "Miracle Houses Winchester I",
               "currentName": "",
-              "currentOperator": "Previously Realistic Change by Choice Winchester",
-              "currentOwner": "Previously Realistic Change by Choice Winchester",
-              "currentOwners": [
-                "Previously Realistic Change by Choice Winchester"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Realistic Change by Choice Winchester"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -221580,13 +221589,13 @@
             "identification": {
               "name": "Sequel TSI of North Carolina",
               "currentName": "",
-              "currentOperator": "Previously Three Springs of North Carolina",
-              "currentOwner": "Previously Three Springs of North Carolina",
-              "currentOwners": [
-                "Previously Three Springs of North Carolina"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Three Springs of North Carolina"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -226269,13 +226278,13 @@
             "identification": {
               "name": "Wellspring Academy of the Carolinas",
               "currentName": "",
-              "currentOperator": "Previously Academy of the Sierras",
-              "currentOwner": "Previously Academy of the Sierras",
-              "currentOwners": [
-                "Previously Academy of the Sierras"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Academy of the Sierras"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -226817,13 +226826,13 @@
             "identification": {
               "name": "Wolf Creek Academy",
               "currentName": "",
-              "currentOperator": "Previously Harbor Oaks Boarding School",
-              "currentOwner": "Previously Harbor Oaks Boarding School",
-              "currentOwners": [
-                "Previously Harbor Oaks Boarding School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Harbor Oaks Boarding School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -246352,13 +246361,13 @@
             "identification": {
               "name": "Abraxas Academy",
               "currentName": "",
-              "currentOperator": "Previously New Morgan Academy",
-              "currentOwner": "Previously New Morgan Academy",
-              "currentOwners": [
-                "Previously New Morgan Academy"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "New Morgan Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -246588,13 +246597,13 @@
             "identification": {
               "name": "Abraxas Specialized Treatment Program",
               "currentName": "",
-              "currentOperator": "Previously The Open Residential Firesetting and Sexual Behavior Treatment Program",
-              "currentOwner": "Previously The Open Residential Firesetting and Sexual Behavior Treatment Program",
-              "currentOwners": [
-                "Previously The Open Residential Firesetting and Sexual Behavior Treatment Program"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "The Open Residential Firesetting and Sexual Behavior Treatment Program"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -246668,13 +246677,13 @@
             "identification": {
               "name": "Abraxas Youth Center",
               "currentName": "",
-              "currentOperator": "Previously South Mountain Secure Treatment Unit",
-              "currentOwner": "Previously South Mountain Secure Treatment Unit",
-              "currentOwners": [
-                "Previously South Mountain Secure Treatment Unit"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "South Mountain Secure Treatment Unit"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -250102,13 +250111,13 @@
             "identification": {
               "name": "Embark Behavioral Health RTC",
               "currentName": "",
-              "currentOperator": "Previously Embark at the Poconos",
-              "currentOwner": "Previously Embark at the Poconos",
-              "currentOwners": [
-                "Previously Embark at the Poconos"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Embark at the Poconos"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -250494,13 +250503,13 @@
             "identification": {
               "name": "Highland Detention at Shuman Center",
               "currentName": "",
-              "currentOperator": "Previously Shuman Juvenile Detention Center",
-              "currentOwner": "Previously Shuman Juvenile Detention Center",
-              "currentOwners": [
-                "Previously Shuman Juvenile Detention Center"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Shuman Juvenile Detention Center"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -252452,13 +252461,13 @@
             "identification": {
               "name": "The Clock Tower Schools",
               "currentName": "",
-              "currentOperator": "Previously Glen Mills Schools, Philadelphia House of Refuge",
-              "currentOwner": "Previously Glen Mills Schools, Philadelphia House of Refuge",
-              "currentOwners": [
-                "Previously Glen Mills Schools, Philadelphia House of Refuge"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Glen Mills Schools, Philadelphia House of Refuge"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -254318,13 +254327,13 @@
             "identification": {
               "name": "AMIkids Beaufort",
               "currentName": "",
-              "currentOperator": "Previously Beaufort Marine Institute",
-              "currentOwner": "Previously Beaufort Marine Institute",
-              "currentOwners": [
-                "Previously Beaufort Marine Institute"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Beaufort Marine Institute"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -254398,13 +254407,13 @@
             "identification": {
               "name": "AMIkids Sand Hills",
               "currentName": "",
-              "currentOperator": "Previously Camp Sand Hills",
-              "currentOwner": "Previously Camp Sand Hills",
-              "currentOwners": [
-                "Previously Camp Sand Hills"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp Sand Hills"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -254478,13 +254487,13 @@
             "identification": {
               "name": "AMIkids White Pines",
               "currentName": "",
-              "currentOperator": "Previously Camp White Pines",
-              "currentOwner": "Previously Camp White Pines",
-              "currentOwners": [
-                "Previously Camp White Pines"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Camp White Pines"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -254948,13 +254957,13 @@
             "identification": {
               "name": "Camp Aspen",
               "currentName": "",
-              "currentOperator": "Previously Aspen Youth Alternatives of South Carolina",
-              "currentOwner": "Previously Aspen Youth Alternatives of South Carolina",
-              "currentOwners": [
-                "Previously Aspen Youth Alternatives of South Carolina"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Aspen Youth Alternatives of South Carolina"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -315032,13 +315041,13 @@
             "identification": {
               "name": "University of Utah Neuropsychiatric Institute – Youth Residential Treatment",
               "currentName": "",
-              "currentOperator": "Formerly Girls Transition Center",
-              "currentOwner": "Formerly Girls Transition Center",
-              "currentOwners": [
-                "Formerly Girls Transition Center"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Girls Transition Center"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -320033,13 +320042,13 @@
             "identification": {
               "name": "Blue Ridge School",
               "currentName": "",
-              "currentOperator": "Previously Blue Ridge Industrial School",
-              "currentOwner": "Previously Blue Ridge Industrial School",
-              "currentOwners": [
-                "Previously Blue Ridge Industrial School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Blue Ridge Industrial School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -324953,13 +324962,13 @@
             "identification": {
               "name": "Kempsville Center for Behavioral Health Adolescent Residential Treatment Program",
               "currentName": "",
-              "currentOperator": "Previously Pines RTC: Kempsville Campus",
-              "currentOwner": "Previously Pines RTC: Kempsville Campus",
-              "currentOwners": [
-                "Previously Pines RTC: Kempsville Campus"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Pines RTC: Kempsville Campus"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -325033,13 +325042,13 @@
             "identification": {
               "name": "Keswick School",
               "currentName": "",
-              "currentOperator": "Previously Little Keswick School",
-              "currentOwner": "Previously Little Keswick School",
-              "currentOwners": [
-                "Previously Little Keswick School"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Little Keswick School"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {
@@ -335758,13 +335767,13 @@
             "identification": {
               "name": "Joshua Scott Boarding School",
               "currentName": "",
-              "currentOperator": "Previously Blue Creek Academy",
-              "currentOwner": "Previously Blue Creek Academy",
-              "currentOwners": [
-                "Previously Blue Creek Academy"
-              ],
+              "currentOperator": "",
+              "currentOwner": "",
+              "currentOwners": [],
               "otherNames": [],
-              "pastNames": [],
+              "pastNames": [
+                "Blue Creek Academy"
+              ],
               "knownReferrers": []
             },
             "locationDetails": {

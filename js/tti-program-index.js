@@ -1073,11 +1073,28 @@ function displayFacilities(facilitiesData, containerId) {
                 getValueFromKeys(facility, ['identification.pastNames', 'pastNames', 'identification.formerNames', 'formerNames'])
             );
             const cleanHeaderText = value => cleanText(value).replace(/\s*\($/, '').trim();
-            const normalizedFormerNames = collectUniqueTexts(formerNames.map(cleanHeaderText));
-            const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
-            const otherNames = collectUniqueTexts(
+            // Source data frequently stores historical markers ("Previously X",
+            // "Formerly Y") inside fields that are rendered as present-tense
+            // (operator, owner, alias). These helpers detect and strip those markers
+            // so each value lands in the right line ("Formerly:" / "Previously owned
+            // by:") and reads grammatically instead of e.g. "Operated by: Previously…".
+            const HISTORICAL_PREFIX_RE = /^\s*(?:previously|formerly|former|prior(?:\s+to)?)\b[\s:;,.\-–—]*/i;
+            const isHistoricalText = value => /\b(?:previously|former(?:ly)?|prior)\b/i.test(cleanText(value));
+            const stripHistoricalPrefix = value => cleanHeaderText(value).replace(HISTORICAL_PREFIX_RE, '').trim();
+            // Aliases that are really historical ("Previously X") belong under
+            // "Formerly", not "Also known as" — reclassify them.
+            const rawOtherNames = collectUniqueTexts(
                 getValueFromKeys(facility, ['identification.otherNames', 'otherNames'])
-            ).map(cleanHeaderText).filter(name => !formerNameKeys.has(normalizeTextKey(name)));
+            ).map(cleanHeaderText);
+            const historicalOtherNames = rawOtherNames.filter(isHistoricalText).map(stripHistoricalPrefix);
+            const normalizedFormerNames = collectUniqueTexts(
+                formerNames.map(stripHistoricalPrefix),
+                historicalOtherNames
+            );
+            const formerNameKeys = new Set(normalizedFormerNames.map(normalizeTextKey));
+            const otherNames = rawOtherNames
+                .filter(name => !isHistoricalText(name))
+                .filter(name => !formerNameKeys.has(normalizeTextKey(name)));
             const currentOp = getValueFromKeys(facility, ['identification.currentOperator', 'currentOperator', 'current_operator']);
             // Current owner(s) — privately-owned facilities store this instead of a
             // corporate operator. These keys are suppressed from "More details", so
@@ -1104,8 +1121,8 @@ function displayFacilities(facilitiesData, containerId) {
                     if (alias) legalNameAliases.push(alias);
                     return;
                 }
-                if (/\b(previously|former(?:ly)?|prior)\b/i.test(ownerText)) {
-                        previousOwnerList.push(ownerText.replace(/^\s*(previously|formerly|former|prior)\b[\s:;,-]*/i, '').trim() || ownerText);
+                if (isHistoricalText(ownerText)) {
+                        previousOwnerList.push(stripHistoricalPrefix(ownerText) || ownerText);
                 } else {
                     currentOwnerList.push(ownerText);
                 }
@@ -1139,8 +1156,7 @@ function displayFacilities(facilitiesData, containerId) {
                 // the current-operator field. Those are already surfaced by the
                 // "Previously owned by" line, so don't re-assert them as the
                 // present-day operator (which also reads ungrammatically).
-                const isHistoricalOp = /\b(previously|former(?:ly)?|prior)\b/i.test(currentOpText);
-                if (isHistoricalOp) {
+                if (isHistoricalText(currentOpText)) {
                     // skip: covered by previous-owner/former-name copy above
                 } else if (statusClass === 'transferred' || statusClass === 'acquired') {
                     // For transferred/acquired records, avoid asserting this is the
