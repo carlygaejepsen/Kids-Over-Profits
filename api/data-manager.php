@@ -138,6 +138,28 @@ function kop_dm_set_facilities(array &$project, string $path, array $facilities)
     }
 }
 
+/** Resolve a facility's array index by facility_id (preferred) or index. */
+function kop_dm_resolve_facility_index(array $facs, $facilityId, $facilityIndex): ?int {
+    if ($facilityId !== null) {
+        foreach ($facs as $i => $f) {
+            if (is_array($f) && isset($f['facility_id']) && (int)$f['facility_id'] === (int)$facilityId) {
+                return (int)$i;
+            }
+        }
+    }
+    if ($facilityIndex !== null && isset($facs[$facilityIndex])) {
+        return (int)$facilityIndex;
+    }
+    return null;
+}
+
+/** Best-effort display name for a nested facility entry. */
+function kop_dm_facility_name(array $facility): string {
+    return $facility['identification']['name']
+        ?? $facility['identification']['currentName']
+        ?? 'facility';
+}
+
 /** Find a record by unique_name across the given tables. */
 function kop_dm_find_record(PDO $pdo, array $tables, string $uniqueName): ?array {
     foreach ($tables as $table) {
@@ -270,10 +292,11 @@ try {
             foreach ($facs as $i => $f) {
                 $ident = is_array($f) && isset($f['identification']) ? $f['identification'] : [];
                 $out[] = [
-                    'index'       => $i,
-                    'facility_id' => is_array($f) && isset($f['facility_id']) ? (int)$f['facility_id'] : null,
-                    'name'        => $ident['name'] ?? ($ident['currentName'] ?? ('Facility #' . ($i + 1))),
-                    'location'    => is_array($f) ? ($f['location'] ?? ($f['address'] ?? '')) : '',
+                    'index'              => $i,
+                    'facility_id'        => is_array($f) && isset($f['facility_id']) ? (int)$f['facility_id'] : null,
+                    'name'               => $ident['name'] ?? ($ident['currentName'] ?? ('Facility #' . ($i + 1))),
+                    'location'           => is_array($f) ? ($f['location'] ?? ($f['address'] ?? '')) : '',
+                    'document_folder_id' => is_array($f) && !empty($f['documentFolderId']) ? (int)$f['documentFolderId'] : null,
                 ];
             }
             echo json_encode(['success' => true, 'unique_name' => $uniqueName, 'facilities' => $out]);
@@ -683,9 +706,99 @@ try {
         exit;
     }
 
+    // -----------------------------------------------------------------------
+    // Facility-level actions: operate on one nested facility inside an operator
+    // record's data.facilities[]. The facility is identified by facility_id
+    // (preferred) or facility_index within the named operator record.
+    // -----------------------------------------------------------------------
+    if (in_array($action, ['rename_facility', 'set_facility_doc_folder', 'delete_facility'], true)) {
+        $operator = trim((string)($input['operator_unique_name'] ?? $input['unique_name'] ?? ''));
+        $facilityId = isset($input['facility_id']) && $input['facility_id'] !== '' ? (int)$input['facility_id'] : null;
+        $hasIndex = array_key_exists('facility_index', $input) && $input['facility_index'] !== '' && $input['facility_index'] !== null;
+        $facilityIndex = $hasIndex ? (int)$input['facility_index'] : null;
+
+        if ($operator === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'operator_unique_name is required']);
+            exit;
+        }
+        if ($facilityId === null && $facilityIndex === null) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Provide facility_id or facility_index']);
+            exit;
+        }
+
+        $rec = kop_dm_find_record($pdo, $CATEGORY_TABLE, $operator);
+        if (!$rec) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => "Operator record '$operator' not found"]);
+            exit;
+        }
+        $project = json_decode($rec['json_data'] ?: '{}', true);
+        if (!is_array($project)) $project = [];
+        $path = kop_dm_facilities_path($project);
+        $facs = kop_dm_get_facilities($project, $path);
+
+        $idx = kop_dm_resolve_facility_index($facs, $facilityId, $facilityIndex);
+        if ($idx === null || !isset($facs[$idx]) || !is_array($facs[$idx])) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Facility not found in that record']);
+            exit;
+        }
+
+        // -- rename_facility --
+        if ($action === 'rename_facility') {
+            $newName = trim((string)($input['new_name'] ?? ''));
+            if ($newName === '') {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'new_name is required']);
+                exit;
+            }
+            if (!isset($facs[$idx]['identification']) || !is_array($facs[$idx]['identification'])) {
+                $facs[$idx]['identification'] = [];
+            }
+            $facs[$idx]['identification']['name'] = $newName;
+        }
+
+        // -- set_facility_doc_folder --
+        if ($action === 'set_facility_doc_folder') {
+            $folderRaw = $input['document_folder_id'] ?? null;
+            if ($folderRaw !== null && $folderRaw !== '' && (int)$folderRaw > 0) {
+                $facs[$idx]['documentFolderId'] = (int)$folderRaw;
+            } else {
+                unset($facs[$idx]['documentFolderId']);
+            }
+        }
+
+        // -- delete_facility --
+        $removedName = kop_dm_facility_name($facs[$idx]);
+        if ($action === 'delete_facility') {
+            array_splice($facs, $idx, 1);
+        }
+
+        kop_dm_set_facilities($project, $path, $facs);
+        $newJson = json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $upd = $pdo->prepare("UPDATE `{$rec['table']}` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $upd->execute([$newJson, $rec['id']]);
+
+        $messages = [
+            'rename_facility'         => "Renamed facility to '" . ($input['new_name'] ?? '') . "'.",
+            'set_facility_doc_folder' => 'Facility document folder updated.',
+            'delete_facility'         => "Removed facility '$removedName'.",
+        ];
+        echo json_encode([
+            'success'     => true,
+            'operator'    => $operator,
+            'facility_id' => $facilityId,
+            'message'     => $messages[$action],
+        ]);
+        exit;
+    }
+
     http_response_code(400);
     echo json_encode(['success' => false,
-        'error' => "Unknown action '$action'. Use: move_category, reassign_facility, rename, delete"]);
+        'error' => "Unknown action '$action'. Use: move_category, reassign_facility, rename, delete, "
+            . "rename_facility, set_facility_doc_folder, delete_facility"]);
 
 } catch (PDOException $e) {
     http_response_code(500);

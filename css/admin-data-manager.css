@@ -256,6 +256,40 @@
 .dm-fb-move label { margin: 0; font-size: 0.82rem; }
 .dm-fb-move select { flex: 1 1 auto; padding: 6px 8px; border: 1px solid var(--kop-teal, #33A7B5); border-radius: 6px; }
 
+/* Nested facility rows (expand a company to manage its facilities) */
+.dm-fac-toggle {
+    border: 1px solid var(--kop-teal, #33A7B5);
+    background: #fff;
+    color: var(--kop-navy, #000080);
+    border-radius: 6px;
+    padding: 2px 9px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.dm-fac-toggle:hover { background: var(--kop-mint, #B6E3D4); }
+.dm-fac-toggle[aria-expanded="true"] { background: var(--kop-mint, #B6E3D4); }
+
+.dm-fac-subcell { background: var(--kop-sand, #F2EEDF); padding: 10px 16px 14px; }
+.dm-fac-subhead { font-size: 0.82rem; color: #555; margin-bottom: 8px; }
+.dm-fac-loading { padding: 8px; }
+
+.dm-fac-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 7px 10px;
+    background: #fff;
+    border: 1px solid rgba(0, 4, 53, 0.1);
+    border-radius: 7px;
+    margin-bottom: 6px;
+}
+.dm-fac-item-name { font-size: 0.9rem; }
+.dm-fac-item-acts { display: flex; gap: 4px; flex: 0 0 auto; }
+.dm-fac-doc { color: #1b7e3c; font-size: 0.78rem; }
+
 /* Facility radio list */
 .dm-fac-list { margin: 4px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(0,4,53,0.12); border-radius: 8px; background: #fff; }
 .dm-fac-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-bottom: 1px solid rgba(0,4,53,0.06); font-weight: 400; cursor: pointer; }

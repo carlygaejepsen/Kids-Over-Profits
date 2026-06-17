@@ -1543,7 +1543,10 @@ function displayFacilities(facilitiesData, containerId) {
 
             // FileBird Document Matching — match this facility's program folder
             // (often a subfolder nested under its operator's parent folder).
-            const documentsHtml = buildDocLibraryHtml(findMatchingFolder(facilityHeaderRaw));
+            const documentsHtml = buildDocLibraryHtml(resolveDocFolder(
+                facility && facility.documentFolderId,
+                facilityHeaderRaw
+            ));
 
             // Build resources available section
             let resourcesSectionHtml = '';

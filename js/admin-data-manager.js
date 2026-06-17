@@ -151,13 +151,16 @@
 
         state.items.forEach(function (it) {
             var tr = el('tr');
+            var facCell = it.facility_count > 0
+                ? '<button type="button" class="dm-fac-toggle" aria-expanded="false">▶ ' + esc(it.facility_count) + '</button>'
+                : '<span class="dm-muted">0</span>';
             tr.innerHTML =
                 '<td class="dm-name">' + esc(it.display_name || it.unique_name) +
                     (it.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
                     '<div class="dm-uniquename">' + esc(it.unique_name) + '</div></td>' +
                 '<td>' + badge(it.category) + '</td>' +
                 '<td class="dm-mono">#' + esc(it.id) + '</td>' +
-                '<td class="dm-center">' + esc(it.facility_count) + '</td>' +
+                '<td class="dm-center dm-fac-cell">' + facCell + '</td>' +
                 '<td class="dm-center">' + (it.document_folder_id ? '📂 ' + esc(it.document_folder_id) : '<span class="dm-muted">—</span>') + '</td>' +
                 '<td class="dm-center">' + wikiBadge(it.wiki_links) + '</td>';
 
@@ -166,22 +169,190 @@
                 ['Rename', 'rename'],
                 ['Doc ID', 'docfolder'],
                 ['Category', 'category'],
-                ['Facility', 'reassign'],
+                ['Reassign', 'reassign'],
                 ['Wiki', 'wiki'],
                 ['Delete', 'delete']
             ].forEach(function (a) {
-                var btn = el('button', 'dm-act dm-act-' + a[1], a[0]);
+                var btn = el('button', 'dm-act dm-act-' + a[1].replace(/\W/g, ''), a[0]);
                 btn.type = 'button';
                 btn.addEventListener('click', function () { handleAction(a[1], it); });
                 actions.appendChild(btn);
             });
             tr.appendChild(actions);
             tbody.appendChild(tr);
+
+            // Expandable sub-row holding this record's nested facilities.
+            var subTr = el('tr', 'dm-fac-subrow');
+            subTr.style.display = 'none';
+            var subTd = el('td', 'dm-fac-subcell');
+            subTd.colSpan = 7;
+            subTr.appendChild(subTd);
+            tbody.appendChild(subTr);
+
+            if (it.facility_count > 0) {
+                var toggle = tr.querySelector('.dm-fac-toggle');
+                toggle.addEventListener('click', function () {
+                    var open = subTr.style.display !== 'none';
+                    if (open) {
+                        subTr.style.display = 'none';
+                        toggle.textContent = '▶ ' + it.facility_count;
+                        toggle.setAttribute('aria-expanded', 'false');
+                    } else {
+                        subTr.style.display = '';
+                        toggle.textContent = '▼ ' + it.facility_count;
+                        toggle.setAttribute('aria-expanded', 'true');
+                        loadFacilitySubrows(it, subTd);
+                    }
+                });
+            }
         });
 
         table.appendChild(tbody);
         wrap.innerHTML = '';
         wrap.appendChild(table);
+    }
+
+    // ---- facility-level (nested) management ----
+    function loadFacilitySubrows(operator, container) {
+        container.innerHTML = '<div class="dm-muted dm-fac-loading">Loading facilities…</div>';
+        getJson(API.manager + '?action=get_facilities&unique_name=' + encodeURIComponent(operator.unique_name))
+            .then(function (d) {
+                if (!d || !d.success) { container.innerHTML = '<div class="dm-error">Failed to load facilities.</div>'; return; }
+                if (!d.facilities || !d.facilities.length) {
+                    container.innerHTML = '<div class="dm-muted">No facilities in this record.</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                var head = el('div', 'dm-fac-subhead', 'Facilities in <strong>' + esc(operator.unique_name) + '</strong>');
+                container.appendChild(head);
+                d.facilities.forEach(function (f) {
+                    var row = el('div', 'dm-fac-item');
+                    row.innerHTML =
+                        '<span class="dm-fac-item-name">🏫 ' + esc(f.name) +
+                        (f.location ? ' <span class="dm-muted">(' + esc(f.location) + ')</span>' : '') +
+                        (f.facility_id ? ' <span class="dm-id">id ' + esc(f.facility_id) + '</span>' : '') +
+                        (f.document_folder_id ? ' <span class="dm-fac-doc">📂 ' + esc(f.document_folder_id) + '</span>' : '') +
+                        '</span>';
+                    var acts = el('span', 'dm-fac-item-acts');
+                    [
+                        ['Rename', function () { facilityRename(operator, f, container); }],
+                        ['Doc ID', function () { facilityDocFolder(operator, f, container); }],
+                        ['Move', function () { facilityReassign(operator, f, container); }],
+                        ['Delete', function () { facilityDelete(operator, f, container); }]
+                    ].forEach(function (a) {
+                        var b = el('button', 'dm-act' + (a[0] === 'Delete' ? ' dm-act-delete' : ''), a[0]);
+                        b.type = 'button';
+                        b.addEventListener('click', a[1]);
+                        acts.appendChild(b);
+                    });
+                    row.appendChild(acts);
+                    container.appendChild(row);
+                });
+            })
+            .catch(function () { container.innerHTML = '<div class="dm-error">Network error.</div>'; });
+    }
+
+    // Common payload bits to address one facility within its operator.
+    function facilityRef(operator, f) {
+        return { operator_unique_name: operator.unique_name, facility_id: f.facility_id, facility_index: f.index };
+    }
+    function facilityPost(payload, operator, container) {
+        return postJson(API.manager, payload).then(function (res) {
+            if (res.data && res.data.success) { loadFacilitySubrows(operator, container); load(); return true; }
+            alert((res.data && res.data.error) || 'Action failed.');
+            return false;
+        }).catch(function () { alert('Network error.'); return false; });
+    }
+
+    function facilityRename(operator, f, container) {
+        var name = prompt('Rename facility:', f.name);
+        if (name && name.trim() && name.trim() !== f.name) {
+            var p = facilityRef(operator, f); p.action = 'rename_facility'; p.new_name = name.trim();
+            facilityPost(p, operator, container);
+        }
+    }
+
+    function facilityDelete(operator, f, container) {
+        if (confirm('Remove facility “' + f.name + '” from ' + operator.unique_name + '? This cannot be undone.')) {
+            var p = facilityRef(operator, f); p.action = 'delete_facility';
+            facilityPost(p, operator, container);
+        }
+    }
+
+    function facilityDocFolder(operator, f, container) {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<p class="dm-muted">Document library folder for facility “' + esc(f.name) + '”. Browse to pick one, or clear.</p>' +
+            '<div class="dm-doc-row">' +
+            '<input type="number" min="1" step="1" class="dm-doc-input" placeholder="folder ID" value="' + (f.document_folder_id || '') + '">' +
+            '<button type="button" class="kop-dm-btn dm-doc-browse">📁 Browse folders…</button></div>' +
+            '<div class="dm-doc-chosen dm-muted"></div>' +
+            '<div class="dm-form-actions">' +
+            '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Save</button></div>';
+        openModal('Facility document folder', body);
+        var docInput = body.querySelector('.dm-doc-input');
+        var docChosen = body.querySelector('.dm-doc-chosen');
+        body.querySelector('.dm-doc-browse').addEventListener('click', function () {
+            if (!window.KOPFolderBrowser) { docChosen.innerHTML = '<span class="dm-error">Folder browser failed to load.</span>'; return; }
+            window.KOPFolderBrowser.open({ foldersUrl: API.folders, currentId: docInput.value }).then(function (res) {
+                if (!res) return;
+                if (res.id === null) { docInput.value = ''; docChosen.textContent = ''; }
+                else { docInput.value = res.id; docChosen.classList.remove('dm-muted'); docChosen.innerHTML = 'Selected: <strong>' + esc(res.name) + '</strong> #' + esc(res.id); }
+            });
+        });
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        body.querySelector('.dm-confirm').addEventListener('click', function () {
+            var val = docInput.value.trim();
+            var p = facilityRef(operator, f);
+            p.action = 'set_facility_doc_folder';
+            p.document_folder_id = val === '' ? null : parseInt(val, 10);
+            setStatus('Saving…');
+            postJson(API.manager, p).then(function (res) {
+                if (res.data && res.data.success) {
+                    setStatus('Saved.', 'ok');
+                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); load(); }, 600);
+                } else { setStatus(esc((res.data && res.data.error) || 'Save failed.'), 'error'); }
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    function facilityReassign(operator, f, container) {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<p class="dm-muted">Move facility “' + esc(f.name) + '” into a different program. Its ID stays the same.</p>' +
+            '<div class="dm-dest"></div><div class="dm-dest-chosen dm-muted">No destination selected.</div>' +
+            '<div class="dm-form-actions">' +
+            '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm" disabled>Move facility</button></div>';
+        openModal('Move facility from: ' + operator.unique_name, body);
+        var chosenEl = body.querySelector('.dm-dest-chosen');
+        var confirmBtn = body.querySelector('.dm-confirm');
+        var dest = null;
+        var search = buildProgramSearch(function (uniqueName, id) {
+            if (uniqueName === operator.unique_name) { chosenEl.innerHTML = '<span class="dm-error">Cannot move to the same record.</span>'; return; }
+            dest = uniqueName;
+            chosenEl.classList.remove('dm-muted');
+            chosenEl.innerHTML = 'Destination: <strong>' + esc(uniqueName) + '</strong> #' + esc(id);
+            confirmBtn.disabled = false;
+        }, 'Search destination program…');
+        body.querySelector('.dm-dest').appendChild(search);
+        body.querySelector('.dm-cancel').addEventListener('click', closeModal);
+        confirmBtn.addEventListener('click', function () {
+            setStatus('Moving…');
+            postJson(API.manager, {
+                action: 'reassign_facility',
+                from_unique_name: operator.unique_name,
+                to_unique_name: dest,
+                facility_id: f.facility_id,
+                facility_index: f.index
+            }).then(function (res) {
+                if (res.data && res.data.success) {
+                    setStatus(esc(res.data.message || 'Moved.'), 'ok');
+                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); load(); }, 800);
+                } else { setStatus(esc((res.data && res.data.error) || 'Move failed.'), 'error'); }
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        });
     }
 
     function renderPagination() {
