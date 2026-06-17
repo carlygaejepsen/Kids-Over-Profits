@@ -137,6 +137,26 @@ try {
     $submissionId = $data['id'] ?? null;
     $organization = $data['organization'] ?? $data['organizationName'] ?? $data['org'] ?? null;
 
+    // Program-index linkage: every non-draft submission must be tied to a
+    // facilities_master record by its unique_name (the program's unique ID).
+    // The wiki editor's program picker supplies this.
+    $facilityUniqueName = trim((string)($data['facilityUniqueName'] ?? $data['facility_unique_name'] ?? ''));
+    $documentFolderIdRaw = $data['documentFolderId'] ?? $data['document_folder_id'] ?? null;
+
+    // Make sure the link columns exist (idempotent; safe on every save).
+    foreach (['facility_unique_name' => "VARCHAR(255) DEFAULT NULL",
+              'facility_link_status' => "ENUM('suggested','confirmed') DEFAULT NULL"] as $col => $def) {
+        try {
+            $pdo->exec("ALTER TABLE wiki_submissions ADD COLUMN `$col` $def");
+        } catch (PDOException $colEx) {
+            // 1060 = duplicate column; already migrated. Anything else re-throws.
+            if (strpos($colEx->getMessage(), 'Duplicate column') === false
+                && strpos($colEx->getMessage(), '1060') === false) {
+                throw $colEx;
+            }
+        }
+    }
+
     if ($status === 'deleted' && !current_user_can('manage_options')) {
         http_response_code(403);
         echo json_encode([
@@ -155,7 +175,20 @@ try {
         echo json_encode(['success' => false, 'error' => 'Program name is required']);
         exit;
     }
-    
+
+    // Require a linked program for anything that is actually being submitted.
+    // Drafts and deletions are exempt so work-in-progress can still be saved.
+    $linkExempt = in_array($status, ['draft', 'deleted'], true);
+    if (!$linkExempt && $facilityUniqueName === '') {
+        http_response_code(422);
+        echo json_encode([
+            'success' => false,
+            'error'   => 'A matching program index entry is required. Pick or create one in the program selector before submitting.',
+            'code'    => 'facility_link_required'
+        ]);
+        exit;
+    }
+
     // Remove meta fields from JSON data to avoid duplication
     $jsonData = $data;
     unset($jsonData['generatedMarkdown'], $jsonData['generated_markdown']);
@@ -164,7 +197,52 @@ try {
     unset($jsonData['submissionNotes'], $jsonData['submission_notes']);
     unset($jsonData['organization'], $jsonData['organizationName'], $jsonData['org']);
     unset($jsonData['id']);
+    unset($jsonData['facilityUniqueName'], $jsonData['facility_unique_name']);
+    unset($jsonData['documentFolderId'], $jsonData['document_folder_id']);
+
+    // 'suggested' = picked but pending admin confirmation. Unlinked drafts stay NULL.
+    $facilityLinkStatus = $facilityUniqueName !== '' ? 'suggested' : null;
+    $facilityUniqueNameForDb = $facilityUniqueName !== '' ? $facilityUniqueName : null;
     
+    // If the picker supplied a document-library folder ID, store it on the
+    // linked program (facilities_master) so the program index surfaces that
+    // library by ID. Only write when a positive ID was provided so we never
+    // clobber an existing folder link with a blank.
+    if ($facilityUniqueNameForDb !== null
+        && $documentFolderIdRaw !== null && $documentFolderIdRaw !== ''
+        && (int)$documentFolderIdRaw > 0) {
+        try {
+            $facStmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
+            $facStmt->execute([$facilityUniqueNameForDb]);
+            $facJson = $facStmt->fetchColumn();
+            if ($facJson !== false) {
+                $facProject = json_decode($facJson ?: '{}', true);
+                if (!is_array($facProject)) {
+                    $facProject = [];
+                }
+                if (!isset($facProject['data']) || !is_array($facProject['data'])) {
+                    $facProject['data'] = [];
+                }
+                // Store inside data (passed through by the REST layer) and at root.
+                $facProject['documentFolderId'] = (int)$documentFolderIdRaw;
+                $facProject['data']['documentFolderId'] = (int)$documentFolderIdRaw;
+                $facUpd = $pdo->prepare(
+                    "UPDATE facilities_master
+                     SET json_data = ?, updated_at = CURRENT_TIMESTAMP
+                     WHERE unique_name = ?"
+                );
+                $facUpd->execute([
+                    json_encode($facProject, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    $facilityUniqueNameForDb
+                ]);
+            }
+        } catch (PDOException $docEx) {
+            // Non-fatal: the wiki submission still saves even if the doc-folder
+            // write fails. Surface in logs only.
+            error_log('Wiki submission doc-folder link failed: ' . $docEx->getMessage());
+        }
+    }
+
     if ($submissionId) {
         // Update existing submission
         $sql = "UPDATE wiki_submissions SET 
@@ -179,9 +257,11 @@ try {
                     status = ?,
                     submitted_by = ?,
                     submission_notes = ?,
+                    facility_unique_name = ?,
+                    facility_link_status = ?,
                     updated_at = CURRENT_TIMESTAMP
                 WHERE id = ?";
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $programName,
@@ -195,6 +275,8 @@ try {
             $status,
             $submittedBy,
             $submissionNotes,
+            $facilityUniqueNameForDb,
+            $facilityLinkStatus,
             $submissionId
         ]);
         
@@ -211,11 +293,12 @@ try {
         ]);
     } else {
         // Create new submission
-        $sql = "INSERT INTO wiki_submissions 
-                    (program_name, city_state, organization, program_type, years_active, json_data, 
-                     generated_markdown, original_markdown, status, submitted_by, submission_notes)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        $sql = "INSERT INTO wiki_submissions
+                    (program_name, city_state, organization, program_type, years_active, json_data,
+                     generated_markdown, original_markdown, status, submitted_by, submission_notes,
+                     facility_unique_name, facility_link_status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $programName,
@@ -228,7 +311,9 @@ try {
             $originalMarkdown,
             $status,
             $submittedBy,
-            $submissionNotes
+            $submissionNotes,
+            $facilityUniqueNameForDb,
+            $facilityLinkStatus
         ]);
         
         $newId = $pdo->lastInsertId();

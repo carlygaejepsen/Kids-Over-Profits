@@ -1,0 +1,251 @@
+/**
+ * Wiki Program Picker popup styles.
+ * Uses the shared --kop-* palette from css/colors.css.
+ */
+
+.kop-pp-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 4, 53, 0.55); /* Midnight Blue, translucent */
+    padding: 20px;
+}
+
+.kop-pp-dialog {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight, #000435);
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(0, 4, 53, 0.4);
+    border-top: 5px solid var(--kop-teal, #33A7B5);
+}
+
+.kop-pp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px 6px;
+}
+
+.kop-pp-title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--kop-navy, #000080);
+}
+
+.kop-pp-close {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--kop-navy, #000080);
+}
+.kop-pp-close:hover { color: var(--kop-orange, #EF9034); }
+
+.kop-pp-intro {
+    margin: 0 22px 12px;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.kop-pp-search { padding: 0 22px; }
+
+.kop-pp-search-input,
+.kop-pp-create-panel input,
+.kop-pp-doc-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 2px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+}
+.kop-pp-search-input:focus,
+.kop-pp-create-panel input:focus,
+.kop-pp-doc-input:focus {
+    outline: none;
+    border-color: var(--kop-orange, #EF9034);
+}
+
+.kop-pp-results {
+    margin: 12px 22px;
+    max-height: 240px;
+    overflow-y: auto;
+    border: 1px solid rgba(0, 4, 53, 0.12);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.kop-pp-result {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 4, 53, 0.08);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--kop-midnight, #000435);
+}
+.kop-pp-result:last-child { border-bottom: none; }
+.kop-pp-result:hover { background: var(--kop-mint, #B6E3D4); }
+.kop-pp-result.is-active {
+    background: var(--kop-soft-yellow, #FFF5CB);
+    box-shadow: inset 4px 0 0 var(--kop-orange, #EF9034);
+}
+
+.kop-pp-result-name { font-weight: 600; flex: 1 1 auto; }
+.kop-pp-result-meta { color: #555; font-size: 0.82rem; flex: 0 0 auto; }
+.kop-pp-result-id { color: #888; font-size: 0.78rem; flex: 0 0 auto; }
+
+.kop-pp-empty,
+.kop-pp-loading,
+.kop-pp-error {
+    padding: 14px;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+}
+.kop-pp-error { color: #b00020; }
+
+.kop-pp-create-toggle {
+    display: block;
+    margin: 4px 22px 0;
+    background: none;
+    border: none;
+    color: var(--kop-navy, #000080);
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 0;
+}
+.kop-pp-create-toggle:hover { color: var(--kop-orange, #EF9034); }
+.kop-pp-create-toggle.is-open { color: var(--kop-orange, #EF9034); }
+
+.kop-pp-create-panel {
+    margin: 6px 22px 0;
+    padding: 14px;
+    background: #fff;
+    border: 1px dashed var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+}
+.kop-pp-field { margin-bottom: 10px; }
+.kop-pp-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--kop-navy, #000080);
+}
+
+.kop-pp-create-btn {
+    background: var(--kop-teal, #33A7B5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.kop-pp-create-btn:hover { background: var(--kop-navy, #000080); }
+.kop-pp-create-btn:disabled { opacity: 0.6; cursor: default; }
+
+.kop-pp-create-status { margin-top: 8px; font-size: 0.85rem; }
+.kop-pp-ok { color: #1b7e3c; }
+
+.kop-pp-doc {
+    margin: 14px 22px 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 4, 53, 0.12);
+}
+.kop-pp-doc-label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--kop-navy, #000080);
+}
+.kop-pp-doc-hint { font-weight: 400; color: #777; font-size: 0.8rem; }
+
+.kop-pp-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 16px 22px 20px;
+    margin-top: 14px;
+    border-top: 1px solid rgba(0, 4, 53, 0.12);
+}
+.kop-pp-selected { font-size: 0.9rem; }
+.kop-pp-selected .kop-pp-none { color: #999; }
+.kop-pp-selected .kop-pp-id { color: #888; font-size: 0.8rem; }
+
+.kop-pp-actions { display: flex; gap: 10px; }
+.kop-pp-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.kop-pp-cancel { background: #e3ded0; color: var(--kop-midnight, #000435); }
+.kop-pp-cancel:hover { background: #d4ceba; }
+.kop-pp-confirm { background: var(--kop-orange, #EF9034); color: #fff; }
+.kop-pp-confirm:hover { background: var(--kop-navy, #000080); }
+.kop-pp-confirm:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 540px) {
+    .kop-pp-footer { flex-direction: column; align-items: stretch; }
+    .kop-pp-actions { justify-content: flex-end; }
+}
+
+/* --- Linked-program block inside the wiki editor submit modal --- */
+.submit-program-link { margin-top: 4px; }
+
+.linked-program-display {
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin: 4px 0 8px;
+    word-break: break-word;
+}
+.linked-program-none {
+    background: var(--kop-soft-yellow, #FFF5CB);
+    border: 1px dashed var(--kop-orange, #EF9034);
+    color: #7a5b15;
+}
+.linked-program-set {
+    background: var(--kop-mint, #B6E3D4);
+    border: 1px solid var(--kop-teal, #33A7B5);
+    color: var(--kop-midnight, #000435);
+    font-weight: 600;
+}
+
+.select-program-btn {
+    background: var(--kop-teal, #33A7B5);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.select-program-btn:hover { background: var(--kop-navy, #000080); }
+
+.linked-program-help {
+    font-size: 0.78rem;
+    color: #666;
+    margin: 8px 0 0;
+}

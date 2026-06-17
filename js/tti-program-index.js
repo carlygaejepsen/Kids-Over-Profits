@@ -443,6 +443,20 @@ function displayFacilities(facilitiesData, containerId) {
         }
     };
 
+    // Resolve a folder for a card: an explicit FileBird folder ID (set via the
+    // wiki program picker) always wins over fuzzy name matching. Returns a folder
+    // object with at least an `id`, or null.
+    const resolveDocFolder = (explicitId, rawName) => {
+        const idNum = parseInt(explicitId, 10);
+        if (Number.isFinite(idNum) && idNum > 0) {
+            if (window.filebirdFolderMap && window.filebirdFolderMap[String(idNum)]) {
+                return window.filebirdFolderMap[String(idNum)];
+            }
+            return { id: idNum };
+        }
+        return findMatchingFolder(rawName);
+    };
+
     const buildDocLibraryHtml = (folder, extraClass) => {
         if (!folder) return '';
         const cls = extraClass ? ' ' + extraClass : '';
@@ -525,6 +539,9 @@ function displayFacilities(facilitiesData, containerId) {
                 operator,
                 facilities,
                 name: cleanText(project.name),
+                // Explicit document-library folder ID (set via the wiki program
+                // picker). Preferred over fuzzy folder-name matching when present.
+                documentFolderId: projectData.documentFolderId || project.documentFolderId || null,
                 linked_news: Array.isArray(project.linked_news) ? project.linked_news : []
             });
         });
@@ -948,7 +965,8 @@ function displayFacilities(facilitiesData, containerId) {
         // Parent-company document library: match a FileBird folder by the
         // operator name. This is typically the top-level operator folder, so its
         // library surfaces every document across the operator's program subfolders.
-        const operatorFolder = findMatchingFolder(
+        const operatorFolder = resolveDocFolder(
+            operatorGroup.documentFolderId,
             cleanText(operator.name) || cleanText(operator.currentName) || operatorName
         );
         const operatorDocLibraryHtml = operatorFolder

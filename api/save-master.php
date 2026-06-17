@@ -53,6 +53,25 @@ if (!$request) {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/facility-promotion.php';
 
+// --- Admin authentication ---
+// This endpoint writes directly to the master tables, so it must be admin-only.
+// Ensure WordPress is fully loaded so capability checks work, then require it.
+if (!function_exists('current_user_can')) {
+    $kop_wp = __DIR__;
+    for ($i = 0; $i < 6; $i++) {
+        $kop_wp = dirname($kop_wp);
+        if (file_exists($kop_wp . '/wp-load.php')) {
+            require_once $kop_wp . '/wp-load.php';
+            break;
+        }
+    }
+}
+if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Admin access required.']);
+    exit;
+}
+
 // Prefer the WordPress table prefix when available, but fall back to unprefixed tables.
 $prefix = '';
 if (isset($table_prefix) && is_string($table_prefix)) {

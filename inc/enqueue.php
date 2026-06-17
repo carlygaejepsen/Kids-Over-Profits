@@ -96,6 +96,51 @@ function kop_enqueue_admin_submissions() {
 add_action('wp_enqueue_scripts', 'kop_enqueue_admin_submissions');
 
 /**
+ * Enqueue the Data Manager admin page assets.
+ */
+function kop_enqueue_admin_data_manager() {
+    if (!is_page_template('page-admin-data-manager.php')
+        && !is_page_template('templates/page-admin-data-manager.php')) {
+        return;
+    }
+
+    $theme_uri = get_stylesheet_directory_uri();
+    $theme_dir = get_stylesheet_directory();
+
+    $css_rel = '/css/admin-data-manager.css';
+    if (file_exists($theme_dir . $css_rel)) {
+        wp_enqueue_style(
+            'kop-admin-data-manager',
+            $theme_uri . $css_rel,
+            array('kop-colors'),
+            filemtime($theme_dir . $css_rel)
+        );
+    }
+
+    $js_rel = '/js/admin-data-manager.js';
+    wp_enqueue_script(
+        'kop-admin-data-manager',
+        $theme_uri . $js_rel,
+        array(),
+        file_exists($theme_dir . $js_rel) ? filemtime($theme_dir . $js_rel) : time(),
+        true
+    );
+
+    wp_localize_script(
+        'kop-admin-data-manager',
+        'dmConfig',
+        array(
+            'dataManagerApi'    => $theme_uri . '/api/data-manager.php',
+            'saveMasterApi'     => $theme_uri . '/api/save-master.php',
+            'facilityPickerApi' => $theme_uri . '/api/facility-picker.php',
+            'linkWikiApi'       => $theme_uri . '/api/link-wiki-facility.php',
+            'facilitySearchApi' => $theme_uri . '/api/facility-search.php',
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_admin_data_manager');
+
+/**
  * Enqueue the Kadence navigation guard script on headerless pages.
  * This intercepts DOM queries for navigation elements and suppresses errors.
  */
@@ -1511,12 +1556,34 @@ function kop_enqueue_wiki_editor_assets() {
         true
     );
 
+    // Program picker popup styles + module (must load before wiki-editor.js).
+    $picker_style_relative = '/css/wiki-program-picker.css';
+    $picker_style_path = get_stylesheet_directory() . $picker_style_relative;
+    if (file_exists($picker_style_path)) {
+        wp_enqueue_style(
+            'kop-wiki-program-picker-style',
+            get_stylesheet_directory_uri() . $picker_style_relative,
+            array('kop-colors'),
+            filemtime($picker_style_path)
+        );
+    }
+
+    $picker_script_relative = '/js/wiki-program-picker.js';
+    $picker_script_path = get_stylesheet_directory() . $picker_script_relative;
+    wp_enqueue_script(
+        'kop-wiki-program-picker-script',
+        get_stylesheet_directory_uri() . $picker_script_relative,
+        array(),
+        file_exists($picker_script_path) ? filemtime($picker_script_path) : time(),
+        true
+    );
+
     $script_relative = '/js/wiki-editor.js';
     $script_path = get_stylesheet_directory() . $script_relative;
     wp_enqueue_script(
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
-        array('kop-auto-linker-script', 'kop-wiki-parser-script', 'kop-wiki-generation-script', 'autocomplete-module-script'),
+        array('kop-auto-linker-script', 'kop-wiki-parser-script', 'kop-wiki-generation-script', 'autocomplete-module-script', 'kop-wiki-program-picker-script'),
         (file_exists($script_path) ? filemtime($script_path) : time()) . '&v=FIXED8',
         true
     );
@@ -1527,6 +1594,8 @@ function kop_enqueue_wiki_editor_assets() {
             'isAdmin' => current_user_can('manage_options'),
             'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php',
             'stubsApi' => get_stylesheet_directory_uri() . '/api/wiki-stubs.php',
+            'facilitySearchUrl' => get_stylesheet_directory_uri() . '/api/facility-search.php',
+            'facilityPickerApi' => get_stylesheet_directory_uri() . '/api/facility-picker.php',
             'markdownBaseUrl' => get_stylesheet_directory_uri() . '/markdown_output/'
         )
     );

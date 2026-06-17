@@ -741,6 +741,19 @@ get_header();
                     <label for="submissionNotes">Notes (optional):</label>
                     <textarea id="submissionNotes" rows="3" placeholder="Any additional context or notes..."></textarea>
                 </div>
+                <div class="submit-form-group submit-program-link">
+                    <label>Linked Program Index Entry (required):</label>
+                    <div id="linkedProgramDisplay" class="linked-program-display linked-program-none">
+                        No program selected yet.
+                    </div>
+                    <button type="button" id="selectProgramBtn" class="select-program-btn">
+                        🔗 Select / Create Program
+                    </button>
+                    <p class="linked-program-help">
+                        Each wiki entry must match a program in the index so it carries a unique ID.
+                        Document libraries attach to the program by folder ID number.
+                    </p>
+                </div>
                 <div class="submit-modal-actions">
                     <button type="button" id="cancelSubmitBtn" class="cancel-btn">Cancel</button>
                     <button type="button" id="confirmSubmitBtn" class="submit-btn">Submit</button>

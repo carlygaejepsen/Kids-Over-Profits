@@ -155,6 +155,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // submission as `sourceSlug` so completion can be matched by slug, not name.
     let currentEntrySlug = '';
 
+    // Program index entry this wiki entry is tied to. Required before a non-draft
+    // submission can be saved. Shape: { uniqueName, id, documentFolderId }.
+    let linkedProgram = null;
+
+    // Render the linked-program status into the submit modal (if present).
+    function renderLinkedProgram() {
+        const display = document.getElementById('linkedProgramDisplay');
+        if (!display) return;
+        if (linkedProgram && linkedProgram.uniqueName) {
+            const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
+            const folderText = linkedProgram.documentFolderId
+                ? ` · 📂 folder ${linkedProgram.documentFolderId}`
+                : '';
+            display.classList.remove('linked-program-none');
+            display.classList.add('linked-program-set');
+            display.textContent = `✅ ${linkedProgram.uniqueName}${idText}${folderText}`;
+        } else {
+            display.classList.add('linked-program-none');
+            display.classList.remove('linked-program-set');
+            display.textContent = 'No program selected yet.';
+        }
+    }
+
     // --- Tab Switching Logic ---
     const categoryTabs = document.querySelectorAll('.category-tab');
     const categoryContents = document.querySelectorAll('.category-content');
@@ -331,6 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function clearFormToEmpty(programName, options = {}) {
+        // A fresh form starts with no program link; the user must pick one at submit.
+        linkedProgram = null;
+        renderLinkedProgram();
         const entryType = options.entryType === 'organization' ? 'organization' : 'facility';
         const preservedRelatedPrograms = entryType === 'organization' && Array.isArray(relatedPrograms)
             ? [...relatedPrograms]
@@ -2374,10 +2400,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
     const submitStatus = document.getElementById('submitStatus');
 
+    const selectProgramBtn = document.getElementById('selectProgramBtn');
+
+    // Open the program picker, prefilled from the current form, and remember the
+    // chosen/created program. Returns the selection (or null if cancelled).
+    async function openProgramPicker() {
+        if (!window.KOPProgramPicker || typeof window.KOPProgramPicker.open !== 'function') {
+            alert('Program picker failed to load. Please refresh the page and try again.');
+            return null;
+        }
+        const formData = collectCurrentFormData();
+        const result = await window.KOPProgramPicker.open({
+            searchUrl: editorSettings.facilitySearchUrl,
+            pickerApi: editorSettings.facilityPickerApi,
+            name: formData.programName || document.getElementById('programName')?.value || '',
+            organization: getOrganizationValueForSubmission(formData) || '',
+            cityState: formData.cityState || document.getElementById('cityState')?.value || '',
+            programType: formData.programType || '',
+            yearsActive: formData.yearsActive || '',
+            current: linkedProgram || {}
+        });
+        if (result && result.uniqueName) {
+            linkedProgram = result;
+            renderLinkedProgram();
+        }
+        return result;
+    }
+
+    if (selectProgramBtn) {
+        selectProgramBtn.addEventListener('click', () => { openProgramPicker(); });
+    }
+
     if (submitToDbBtn && submitModal) {
         submitToDbBtn.addEventListener('click', () => {
             submitModal.style.display = 'flex';
             submitStatus.innerHTML = '';
+            renderLinkedProgram();
         });
 
         cancelSubmitBtn.addEventListener('click', () => {
@@ -2404,6 +2462,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Require a linked program. If none yet, open the picker inline so the
+            // user can select/create one without losing their place.
+            if (!linkedProgram || !linkedProgram.uniqueName) {
+                submitStatus.innerHTML = '<span class="loading">🔗 Select a matching program to continue…</span>';
+                const picked = await openProgramPicker();
+                if (!picked || !picked.uniqueName) {
+                    submitStatus.innerHTML = '<span class="error">❌ A matching program index entry is required before submitting.</span>';
+                    return;
+                }
+            }
+
             submitStatus.innerHTML = '<span class="loading">⏳ Submitting...</span>';
             confirmSubmitBtn.disabled = true;
 
@@ -2417,7 +2486,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // be matched precisely by slug instead of by (collision-prone) name.
                 sourceSlug: currentEntrySlug || '',
                 submittedBy: document.getElementById('submitterEmail')?.value || '',
-                submissionNotes: document.getElementById('submissionNotes')?.value || ''
+                submissionNotes: document.getElementById('submissionNotes')?.value || '',
+                // Program index linkage (required server-side for non-drafts).
+                facilityUniqueName: linkedProgram.uniqueName,
+                documentFolderId: linkedProgram.documentFolderId || null
             };
 
             try {
@@ -3611,6 +3683,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const entry = result.data;
+            // Restore any existing program link so the submit modal shows it and a
+            // re-save keeps the connection. documentFolderId is resolved lazily when
+            // the picker is opened (it lives on the program record, not the wiki row).
+            if (entry.facility_unique_name) {
+                linkedProgram = {
+                    uniqueName: entry.facility_unique_name,
+                    id: null,
+                    documentFolderId: null
+                };
+            } else {
+                linkedProgram = null;
+            }
+            renderLinkedProgram();
             // Preserve the slug recorded when this submission was first saved so a
             // re-save keeps matching by slug rather than reverting to name-only.
             const savedSlug = (entry.json_data && entry.json_data.sourceSlug)

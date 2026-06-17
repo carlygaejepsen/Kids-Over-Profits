@@ -25,6 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sync-wiki-facilities.php';
 
+// --- Admin authentication ---
+// This endpoint reads and mutates submissions (approve/reject/publish/delete),
+// so it is admin-only. Ensure WordPress is loaded, then require the capability.
+if (!function_exists('current_user_can')) {
+    $kop_wp = __DIR__;
+    for ($i = 0; $i < 6; $i++) {
+        $kop_wp = dirname($kop_wp);
+        if (file_exists($kop_wp . '/wp-load.php')) {
+            require_once $kop_wp . '/wp-load.php';
+            break;
+        }
+    }
+}
+if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Admin access required.']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? 'wiki';
     if (!in_array($type, ['wiki', 'news', 'data'], true)) {
