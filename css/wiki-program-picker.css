@@ -211,8 +211,23 @@
     .kop-pp-actions { justify-content: flex-end; }
 }
 
-/* --- Linked-program block inside the wiki editor submit modal --- */
+/* --- Linked-program block (submit modal + inline form panel) --- */
 .submit-program-link { margin-top: 4px; }
+
+/* The always-visible panel at the top of the wiki edit form. */
+.inline-program-link {
+    margin: 10px 0 18px;
+    padding: 14px 16px;
+    background: var(--kop-soft-yellow, #FFF5CB);
+    border: 2px solid var(--kop-teal, #33A7B5);
+    border-radius: 10px;
+}
+.inline-program-link > label {
+    display: block;
+    font-weight: 700;
+    color: var(--kop-navy, #000080);
+    margin-bottom: 6px;
+}
 
 .linked-program-display {
     padding: 8px 12px;

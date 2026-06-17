@@ -159,23 +159,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // submission can be saved. Shape: { uniqueName, id, documentFolderId }.
     let linkedProgram = null;
 
-    // Render the linked-program status into the submit modal (if present).
+    // Render the linked-program status into every display instance (the inline
+    // form panel and the submit modal both use .linked-program-display).
     function renderLinkedProgram() {
-        const display = document.getElementById('linkedProgramDisplay');
-        if (!display) return;
-        if (linkedProgram && linkedProgram.uniqueName) {
-            const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
-            const folderText = linkedProgram.documentFolderId
-                ? ` · 📂 folder ${linkedProgram.documentFolderId}`
-                : '';
-            display.classList.remove('linked-program-none');
-            display.classList.add('linked-program-set');
-            display.textContent = `✅ ${linkedProgram.uniqueName}${idText}${folderText}`;
-        } else {
-            display.classList.add('linked-program-none');
-            display.classList.remove('linked-program-set');
-            display.textContent = 'No program selected yet.';
-        }
+        const displays = document.querySelectorAll('.linked-program-display');
+        if (!displays.length) return;
+        displays.forEach(display => {
+            if (linkedProgram && linkedProgram.uniqueName) {
+                const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
+                const folderText = linkedProgram.documentFolderId
+                    ? ` · 📂 folder ${linkedProgram.documentFolderId}`
+                    : '';
+                display.classList.remove('linked-program-none');
+                display.classList.add('linked-program-set');
+                display.textContent = `✅ ${linkedProgram.uniqueName}${idText}${folderText}`;
+            } else {
+                display.classList.add('linked-program-none');
+                display.classList.remove('linked-program-set');
+                display.textContent = 'No program selected yet.';
+            }
+        });
     }
 
     // --- Tab Switching Logic ---
@@ -2400,7 +2403,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const confirmSubmitBtn = document.getElementById('confirmSubmitBtn');
     const submitStatus = document.getElementById('submitStatus');
 
-    const selectProgramBtn = document.getElementById('selectProgramBtn');
+    const selectProgramBtns = document.querySelectorAll('.select-program-btn');
 
     // Open the program picker, prefilled from the current form, and remember the
     // chosen/created program. Returns the selection (or null if cancelled).
@@ -2427,9 +2430,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return result;
     }
 
-    if (selectProgramBtn) {
-        selectProgramBtn.addEventListener('click', () => { openProgramPicker(); });
-    }
+    selectProgramBtns.forEach(btn => {
+        btn.addEventListener('click', () => { openProgramPicker(); });
+    });
+
+    // Show the current link state in the inline form panel as soon as the page loads.
+    renderLinkedProgram();
 
     if (submitToDbBtn && submitModal) {
         submitToDbBtn.addEventListener('click', () => {

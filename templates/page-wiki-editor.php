@@ -144,6 +144,20 @@ get_header();
                     <span class="entry-mode-badge" id="entryModeBadge">📋 Facility Mode</span>
                 </div>
 
+                <div class="submit-program-link inline-program-link">
+                    <label>🔗 Linked Program Index Entry (required):</label>
+                    <div class="linked-program-display linked-program-none">
+                        No program selected yet.
+                    </div>
+                    <button type="button" class="select-program-btn">
+                        🔗 Select / Create Program ID
+                    </button>
+                    <p class="linked-program-help">
+                        Pick the matching program in the index now so this entry carries a unique ID.
+                        You don't have to wait until submit. Document libraries attach by folder ID number.
+                    </p>
+                </div>
+
                 <label for="programName" data-facility-label="Program Name" data-org-label="Organization Name">Program Name</label>
                 <input type="text" id="programName" name="programName" data-autocomplete-category="facility" placeholder="e.g., Turn-About Ranch">
 
