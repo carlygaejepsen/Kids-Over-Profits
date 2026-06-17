@@ -39,6 +39,7 @@ get_header();
             <option value="locations">Locations</option>
         </select>
         <button type="button" id="dmRefresh" class="kop-dm-btn kop-dm-btn-ghost">↻ Refresh</button>
+        <button type="button" id="dmManageFolders" class="kop-dm-btn">📁 Manage Folders</button>
         <span id="dmCount" class="kop-dm-result-count"></span>
     </div>
 

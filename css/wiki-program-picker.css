@@ -177,6 +177,20 @@
     color: var(--kop-navy, #000080);
 }
 .kop-pp-doc-hint { font-weight: 400; color: #777; font-size: 0.8rem; }
+.kop-pp-doc-row { display: flex; gap: 8px; align-items: stretch; }
+.kop-pp-doc-row .kop-pp-doc-input { flex: 0 0 130px; }
+.kop-pp-doc-browse {
+    flex: 1 1 auto;
+    border: 2px solid var(--kop-teal, #33A7B5);
+    background: #fff;
+    color: var(--kop-navy, #000080);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 12px;
+}
+.kop-pp-doc-browse:hover { background: var(--kop-mint, #B6E3D4); }
+.kop-pp-doc-chosen { font-size: 0.85rem; color: #1b7e3c; margin-top: 6px; }
 
 .kop-pp-footer {
     display: flex;

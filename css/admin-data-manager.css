@@ -216,6 +216,46 @@
 .dm-form input:focus, .dm-form select:focus { outline: none; border-color: var(--kop-orange, #EF9034); }
 .dm-form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
 
+/* Document folder row (input + browse button) */
+.dm-doc-row { display: flex; gap: 8px; align-items: stretch; }
+.dm-doc-row .dm-doc-input { flex: 0 0 130px; }
+.dm-doc-browse { flex: 1 1 auto; white-space: nowrap; }
+.dm-doc-chosen { font-size: 0.85rem; margin-top: 8px; color: #1b7e3c; }
+
+/* FileBird folder manager */
+.dm-fb-new { display: flex; gap: 8px; margin: 8px 0 12px; }
+.dm-fb-new-name { flex: 1 1 auto; }
+.dm-fb-tree {
+    border: 1px solid rgba(0,4,53,0.12);
+    border-radius: 8px;
+    background: #fff;
+    max-height: 360px;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+.dm-fb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 6px 12px;
+    border-bottom: 1px solid rgba(0,4,53,0.05);
+}
+.dm-fb-row:last-child { border-bottom: none; }
+.dm-fb-row:hover { background: var(--kop-sand, #F2EEDF); }
+.dm-fb-name { font-size: 0.9rem; }
+.dm-fb-acts { display: flex; gap: 4px; flex: 0 0 auto; }
+.dm-fb-move {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px 8px 30px;
+    background: var(--kop-soft-yellow, #FFF5CB);
+    border-bottom: 1px solid rgba(0,4,53,0.05);
+}
+.dm-fb-move label { margin: 0; font-size: 0.82rem; }
+.dm-fb-move select { flex: 1 1 auto; padding: 6px 8px; border: 1px solid var(--kop-teal, #33A7B5); border-radius: 6px; }
+
 /* Facility radio list */
 .dm-fac-list { margin: 4px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(0,4,53,0.12); border-radius: 8px; background: #fff; }
 .dm-fac-row { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border-bottom: 1px solid rgba(0,4,53,0.06); font-weight: 400; cursor: pointer; }

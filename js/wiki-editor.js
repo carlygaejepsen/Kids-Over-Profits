@@ -2416,6 +2416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await window.KOPProgramPicker.open({
             searchUrl: editorSettings.facilitySearchUrl,
             pickerApi: editorSettings.facilityPickerApi,
+            foldersUrl: editorSettings.foldersUrl,
             name: formData.programName || document.getElementById('programName')?.value || '',
             organization: getOrganizationValueForSubmission(formData) || '',
             cityState: formData.cityState || document.getElementById('cityState')?.value || '',

@@ -53,6 +53,7 @@
         opts = opts || {};
         var searchUrl = opts.searchUrl || (THEME_API + 'facility-search.php');
         var pickerApi = opts.pickerApi || (THEME_API + 'facility-picker.php');
+        var foldersUrl = opts.foldersUrl || '/wp-json/kop/v1/folders';
         var current = opts.current || {};
 
         return new Promise(function (resolve) {
@@ -115,13 +116,36 @@
             // Document library folder id
             var docWrap = el('div', 'kop-pp-doc');
             docWrap.innerHTML =
-                '<label class="kop-pp-doc-label">📂 Document library folder ID ' +
-                '<span class="kop-pp-doc-hint">(FileBird folder ID number — optional)</span></label>' +
+                '<label class="kop-pp-doc-label">📂 Document library folder ' +
+                '<span class="kop-pp-doc-hint">(FileBird folder — optional)</span></label>' +
+                '<div class="kop-pp-doc-row">' +
                 '<input type="number" min="1" step="1" class="kop-pp-doc-input" ' +
                 'value="' + (selected.documentFolderId ? escapeHtml(selected.documentFolderId) : '') + '" ' +
-                'placeholder="e.g. 12">';
+                'placeholder="folder ID">' +
+                '<button type="button" class="kop-pp-doc-browse">📁 Browse folders…</button>' +
+                '</div>' +
+                '<div class="kop-pp-doc-chosen"></div>';
             dialog.appendChild(docWrap);
             var docInput = docWrap.querySelector('.kop-pp-doc-input');
+            var docChosen = docWrap.querySelector('.kop-pp-doc-chosen');
+
+            docWrap.querySelector('.kop-pp-doc-browse').addEventListener('click', function () {
+                if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                    docChosen.innerHTML = '<span class="kop-pp-error">Folder browser failed to load.</span>';
+                    return;
+                }
+                window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: docInput.value })
+                    .then(function (res) {
+                        if (!res) return; // cancelled
+                        if (res.id === null) {
+                            docInput.value = '';
+                            docChosen.textContent = '';
+                        } else {
+                            docInput.value = res.id;
+                            docChosen.innerHTML = 'Selected folder: <strong>' + escapeHtml(res.name) + '</strong> #' + escapeHtml(res.id);
+                        }
+                    });
+            });
 
             // Footer
             var footer = el('div', 'kop-pp-footer');

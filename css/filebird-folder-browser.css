@@ -1,0 +1,110 @@
+/**
+ * FileBird Folder Browser popup styles. Uses the shared --kop-* palette.
+ * Sits above the picker/data-manager modals (higher z-index).
+ */
+
+.kop-fb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 4, 53, 0.55);
+    padding: 20px;
+}
+
+.kop-fb-dialog {
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-midnight, #000435);
+    width: 100%;
+    max-width: 560px;
+    max-height: 86vh;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(0, 4, 53, 0.45);
+    border-top: 5px solid var(--kop-orange, #EF9034);
+}
+
+.kop-fb-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 6px;
+}
+.kop-fb-title { margin: 0; font-size: 1.15rem; color: var(--kop-navy, #000080); }
+.kop-fb-close {
+    background: none; border: none; font-size: 1.7rem; line-height: 1;
+    cursor: pointer; color: var(--kop-navy, #000080);
+}
+.kop-fb-close:hover { color: var(--kop-orange, #EF9034); }
+
+.kop-fb-search {
+    margin: 6px 20px 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fff;
+}
+.kop-fb-search:focus { outline: none; border-color: var(--kop-orange, #EF9034); }
+
+.kop-fb-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    margin: 0 20px;
+    border: 1px solid rgba(0, 4, 53, 0.12);
+    border-radius: 8px;
+    background: #fff;
+}
+
+.kop-fb-loading, .kop-fb-empty {
+    padding: 22px;
+    text-align: center;
+    color: #777;
+    font-size: 0.9rem;
+}
+
+.kop-fb-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    text-align: left;
+    padding: 9px 12px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 4, 53, 0.07);
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.92rem;
+    color: var(--kop-midnight, #000435);
+}
+.kop-fb-row:last-child { border-bottom: none; }
+.kop-fb-row:hover { background: var(--kop-mint, #B6E3D4); }
+.kop-fb-row.is-current {
+    background: var(--kop-soft-yellow, #FFF5CB);
+    box-shadow: inset 4px 0 0 var(--kop-orange, #EF9034);
+}
+.kop-fb-name { flex: 1 1 auto; }
+.kop-fb-indent { white-space: pre; }
+.kop-fb-id { flex: 0 0 auto; color: #999; font-size: 0.78rem; font-family: monospace; }
+
+.kop-fb-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 14px 20px 18px;
+}
+.kop-fb-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.kop-fb-cancel { background: #e3ded0; color: var(--kop-midnight, #000435); }
+.kop-fb-cancel:hover { background: #d4ceba; }
+.kop-fb-clear { background: var(--kop-teal, #33A7B5); color: #fff; }
+.kop-fb-clear:hover { background: var(--kop-navy, #000080); }

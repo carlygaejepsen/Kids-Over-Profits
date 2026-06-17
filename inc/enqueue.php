@@ -117,11 +117,14 @@ function kop_enqueue_admin_data_manager() {
         );
     }
 
+    // Shared FileBird folder browser (modal) — load before the manager script.
+    kop_enqueue_filebird_folder_browser();
+
     $js_rel = '/js/admin-data-manager.js';
     wp_enqueue_script(
         'kop-admin-data-manager',
         $theme_uri . $js_rel,
-        array(),
+        array('kop-filebird-folder-browser-script'),
         file_exists($theme_dir . $js_rel) ? filemtime($theme_dir . $js_rel) : time(),
         true
     );
@@ -135,6 +138,8 @@ function kop_enqueue_admin_data_manager() {
             'facilityPickerApi' => $theme_uri . '/api/facility-picker.php',
             'linkWikiApi'       => $theme_uri . '/api/link-wiki-facility.php',
             'facilitySearchApi' => $theme_uri . '/api/facility-search.php',
+            'foldersUrl'        => rest_url('kop/v1/folders'),
+            'foldersAdminApi'   => $theme_uri . '/api/filebird-folders.php',
         )
     );
 }
@@ -1556,6 +1561,9 @@ function kop_enqueue_wiki_editor_assets() {
         true
     );
 
+    // FileBird folder browser (shared) — load before the picker that uses it.
+    kop_enqueue_filebird_folder_browser();
+
     // Program picker popup styles + module (must load before wiki-editor.js).
     $picker_style_relative = '/css/wiki-program-picker.css';
     $picker_style_path = get_stylesheet_directory() . $picker_style_relative;
@@ -1573,7 +1581,7 @@ function kop_enqueue_wiki_editor_assets() {
     wp_enqueue_script(
         'kop-wiki-program-picker-script',
         get_stylesheet_directory_uri() . $picker_script_relative,
-        array(),
+        array('kop-filebird-folder-browser-script'),
         file_exists($picker_script_path) ? filemtime($picker_script_path) : time(),
         true
     );
@@ -1596,11 +1604,38 @@ function kop_enqueue_wiki_editor_assets() {
             'stubsApi' => get_stylesheet_directory_uri() . '/api/wiki-stubs.php',
             'facilitySearchUrl' => get_stylesheet_directory_uri() . '/api/facility-search.php',
             'facilityPickerApi' => get_stylesheet_directory_uri() . '/api/facility-picker.php',
+            'foldersUrl' => rest_url('kop/v1/folders'),
             'markdownBaseUrl' => get_stylesheet_directory_uri() . '/markdown_output/'
         )
     );
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');
+
+/**
+ * Enqueue the reusable FileBird folder browser (modal). Idempotent — safe to
+ * call from multiple page-specific enqueue functions.
+ */
+function kop_enqueue_filebird_folder_browser() {
+    $css_rel = '/css/filebird-folder-browser.css';
+    $css_path = get_stylesheet_directory() . $css_rel;
+    if (file_exists($css_path)) {
+        wp_enqueue_style(
+            'kop-filebird-folder-browser-style',
+            get_stylesheet_directory_uri() . $css_rel,
+            array('kop-colors'),
+            filemtime($css_path)
+        );
+    }
+    $js_rel = '/js/filebird-folder-browser.js';
+    $js_path = get_stylesheet_directory() . $js_rel;
+    wp_enqueue_script(
+        'kop-filebird-folder-browser-script',
+        get_stylesheet_directory_uri() . $js_rel,
+        array(),
+        file_exists($js_path) ? filemtime($js_path) : time(),
+        true
+    );
+}
 
 function kop_enqueue_document_library_assets() {
     // Check if we are on a page with document library shortcodes

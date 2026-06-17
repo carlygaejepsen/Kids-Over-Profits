@@ -20,7 +20,9 @@
         saveMaster: cfg.saveMasterApi || '/wp-content/themes/child/api/save-master.php',
         picker: cfg.facilityPickerApi || '/wp-content/themes/child/api/facility-picker.php',
         linkWiki: cfg.linkWikiApi || '/wp-content/themes/child/api/link-wiki-facility.php',
-        search: cfg.facilitySearchApi || '/wp-content/themes/child/api/facility-search.php'
+        search: cfg.facilitySearchApi || '/wp-content/themes/child/api/facility-search.php',
+        folders: cfg.foldersUrl || '/wp-json/kop/v1/folders',
+        foldersAdmin: cfg.foldersAdminApi || '/wp-content/themes/child/api/filebird-folders.php'
     };
 
     var CATEGORY_LABELS = {
@@ -255,13 +257,35 @@
     function actionDocFolder(item) {
         var body = el('div', 'dm-form');
         body.innerHTML =
-            '<p class="dm-muted">FileBird folder ID number for this record\'s document library. Leave blank to clear.</p>' +
-            '<label>Document library folder ID</label>' +
-            '<input type="number" min="1" step="1" class="dm-doc-input" value="' + (item.document_folder_id || '') + '">' +
+            '<p class="dm-muted">FileBird folder for this record\'s document library. Browse to pick one, or leave blank to clear.</p>' +
+            '<label>Document library folder</label>' +
+            '<div class="dm-doc-row">' +
+            '<input type="number" min="1" step="1" class="dm-doc-input" placeholder="folder ID" value="' + (item.document_folder_id || '') + '">' +
+            '<button type="button" class="kop-dm-btn dm-doc-browse">📁 Browse folders…</button>' +
+            '</div>' +
+            '<div class="dm-doc-chosen dm-muted"></div>' +
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
             '<button type="button" class="kop-dm-btn dm-confirm">Save</button></div>';
         openModal('Document folder: ' + item.unique_name, body);
+        var docInput = body.querySelector('.dm-doc-input');
+        var docChosen = body.querySelector('.dm-doc-chosen');
+        body.querySelector('.dm-doc-browse').addEventListener('click', function () {
+            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                docChosen.innerHTML = '<span class="dm-error">Folder browser failed to load.</span>';
+                return;
+            }
+            window.KOPFolderBrowser.open({ foldersUrl: API.folders, currentId: docInput.value })
+                .then(function (res) {
+                    if (!res) return;
+                    if (res.id === null) { docInput.value = ''; docChosen.textContent = ''; }
+                    else {
+                        docInput.value = res.id;
+                        docChosen.classList.remove('dm-muted');
+                        docChosen.innerHTML = 'Selected: <strong>' + esc(res.name) + '</strong> #' + esc(res.id);
+                    }
+                });
+        });
         body.querySelector('.dm-cancel').addEventListener('click', closeModal);
         body.querySelector('.dm-confirm').addEventListener('click', function () {
             var val = body.querySelector('.dm-doc-input').value.trim();
@@ -499,6 +523,146 @@
         });
     }
 
+    // ---- FileBird folder manager ----
+    function fbBuildTree(folders) {
+        var byId = {};
+        folders.forEach(function (f) { byId[String(f.id)] = { id: f.id, name: f.name, parent: String(f.parent || 0), children: [] }; });
+        var roots = [];
+        Object.keys(byId).forEach(function (k) {
+            var f = byId[k];
+            if (f.parent === '0' || !byId[f.parent]) roots.push(f);
+            else byId[f.parent].children.push(f);
+        });
+        function sortRec(nodes) {
+            nodes.sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+            nodes.forEach(function (n) { sortRec(n.children); });
+        }
+        sortRec(roots);
+        return roots;
+    }
+
+    // Flat list of {id, name, depth} for the "move to" parent dropdown.
+    function fbFlatten(roots) {
+        var out = [];
+        (function walk(nodes, depth) {
+            nodes.forEach(function (n) { out.push({ id: n.id, name: n.name, depth: depth }); walk(n.children, depth + 1); });
+        })(roots, 0);
+        return out;
+    }
+
+    function openFolderManager() {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<p class="dm-muted">Create, rename, move, or delete FileBird folders. Deleting a folder moves its ' +
+            'subfolders and files up to its parent (files stay in the Media Library).</p>' +
+            '<div class="dm-fb-new">' +
+            '<input type="text" class="dm-fb-new-name" placeholder="New top-level folder name">' +
+            '<button type="button" class="kop-dm-btn dm-fb-new-btn">+ Create</button>' +
+            '</div>' +
+            '<div class="dm-fb-tree dm-muted">Loading folders…</div>';
+        openModal('Manage FileBird Folders', body);
+
+        var treeEl = body.querySelector('.dm-fb-tree');
+        var flatFolders = [];
+
+        function reload() {
+            treeEl.classList.add('dm-muted');
+            treeEl.innerHTML = 'Loading folders…';
+            getJson(API.foldersAdmin + '?action=list')
+                .then(function (d) {
+                    if (!d || !d.success) { treeEl.innerHTML = '<div class="dm-error">' + esc((d && d.error) || 'Failed to load.') + '</div>'; return; }
+                    var roots = fbBuildTree(d.folders || []);
+                    flatFolders = fbFlatten(roots);
+                    treeEl.classList.remove('dm-muted');
+                    treeEl.innerHTML = '';
+                    if (!roots.length) { treeEl.innerHTML = '<div class="dm-muted">No folders yet. Create one above.</div>'; return; }
+                    renderNodes(roots, treeEl, 0);
+                })
+                .catch(function () { treeEl.innerHTML = '<div class="dm-error">Network error.</div>'; });
+        }
+
+        function fbOp(payload, okMsg) {
+            setStatus(okMsg || 'Working…');
+            postJson(API.foldersAdmin, payload).then(function (res) {
+                if (res.data && res.data.success) { setStatus('Done.', 'ok'); reload(); }
+                else { setStatus(esc((res.data && res.data.error) || 'Action failed.'), 'error'); }
+            }).catch(function () { setStatus('Network error.', 'error'); });
+        }
+
+        function renderNodes(nodes, container, depth) {
+            nodes.forEach(function (node) {
+                var row = el('div', 'dm-fb-row');
+                row.style.paddingLeft = (depth * 18) + 'px';
+                row.innerHTML = '<span class="dm-fb-name">📁 ' + esc(node.name) + ' <span class="dm-id">#' + esc(node.id) + '</span></span>';
+
+                var acts = el('span', 'dm-fb-acts');
+
+                var addB = el('button', 'dm-act', '+ Sub');
+                addB.type = 'button';
+                addB.addEventListener('click', function () {
+                    var name = prompt('New subfolder name under “' + node.name + '”:');
+                    if (name && name.trim()) fbOp({ action: 'create', name: name.trim(), parent: node.id }, 'Creating…');
+                });
+                acts.appendChild(addB);
+
+                var renB = el('button', 'dm-act', 'Rename');
+                renB.type = 'button';
+                renB.addEventListener('click', function () {
+                    var name = prompt('Rename folder:', node.name);
+                    if (name && name.trim() && name.trim() !== node.name) fbOp({ action: 'rename', id: node.id, name: name.trim() }, 'Renaming…');
+                });
+                acts.appendChild(renB);
+
+                var moveB = el('button', 'dm-act', 'Move');
+                moveB.type = 'button';
+                moveB.addEventListener('click', function () { toggleMove(node, row); });
+                acts.appendChild(moveB);
+
+                var delB = el('button', 'dm-act dm-act-delete', 'Delete');
+                delB.type = 'button';
+                delB.addEventListener('click', function () {
+                    if (confirm('Delete “' + node.name + '”? Its subfolders and files move up to the parent.')) {
+                        fbOp({ action: 'delete', id: node.id }, 'Deleting…');
+                    }
+                });
+                acts.appendChild(delB);
+
+                row.appendChild(acts);
+                container.appendChild(row);
+
+                if (node.children.length) renderNodes(node.children, container, depth + 1);
+            });
+        }
+
+        function toggleMove(node, row) {
+            var existing = row.nextSibling && row.nextSibling.classList && row.nextSibling.classList.contains('dm-fb-move')
+                ? row.nextSibling : null;
+            if (existing) { existing.parentNode.removeChild(existing); return; }
+            var mv = el('div', 'dm-fb-move');
+            var opts = '<option value="0">— Top level —</option>' + flatFolders
+                .filter(function (f) { return f.id !== node.id; })
+                .map(function (f) { return '<option value="' + f.id + '">' + '— '.repeat(f.depth) + esc(f.name) + '</option>'; })
+                .join('');
+            mv.innerHTML = '<label>Move “' + esc(node.name) + '” into:</label><select class="dm-fb-move-sel">' + opts + '</select>' +
+                '<button type="button" class="kop-dm-btn dm-fb-move-go">Move</button>';
+            mv.querySelector('.dm-fb-move-go').addEventListener('click', function () {
+                var parent = parseInt(mv.querySelector('.dm-fb-move-sel').value, 10) || 0;
+                fbOp({ action: 'move', id: node.id, parent: parent }, 'Moving…');
+            });
+            row.parentNode.insertBefore(mv, row.nextSibling);
+        }
+
+        body.querySelector('.dm-fb-new-btn').addEventListener('click', function () {
+            var input = body.querySelector('.dm-fb-new-name');
+            var name = input.value.trim();
+            if (!name) { setStatus('Enter a folder name.', 'error'); return; }
+            input.value = '';
+            fbOp({ action: 'create', name: name, parent: 0 }, 'Creating…');
+        });
+
+        reload();
+    }
+
     // ---- wire up ----
     document.addEventListener('DOMContentLoaded', function () {
         if (!$('dmTableWrap')) return;
@@ -509,6 +673,7 @@
 
         $('dmCategory').addEventListener('change', function () { state.category = this.value; state.offset = 0; load(); });
         $('dmRefresh').addEventListener('click', load);
+        if ($('dmManageFolders')) $('dmManageFolders').addEventListener('click', openFolderManager);
         $('dmPrev').addEventListener('click', function () { if (state.offset > 0) { state.offset -= state.limit; load(); } });
         $('dmNext').addEventListener('click', function () { if (state.offset + state.limit < state.total) { state.offset += state.limit; load(); } });
 

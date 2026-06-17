@@ -109,8 +109,49 @@ function kop_get_attachment_preview_url($attachment_id, $size = 'medium') {
         }
     }
 
+    // Requested size first.
     $url = wp_get_attachment_image_url($attachment_id, $size);
-    return $url ? $url : '';
+    if ($url) {
+        return $url;
+    }
+
+    // For PDFs (and any attachment whose requested sub-size wasn't generated)
+    // fall back through the other standard sizes. WordPress only returns a URL
+    // for a PDF when that exact preview sub-size exists, so a PDF missing its
+    // "large" preview would otherwise show no image even when "medium" exists.
+    foreach (array('large', 'medium_large', 'medium', 'thumbnail', 'full') as $fallback_size) {
+        if ($fallback_size === $size) {
+            continue;
+        }
+        $candidate = wp_get_attachment_image_url($attachment_id, $fallback_size);
+        if ($candidate) {
+            return $candidate;
+        }
+    }
+
+    // Last resort: pick the largest generated size actually present in the
+    // attachment metadata. Covers custom preview size names added by plugins.
+    $meta = wp_get_attachment_metadata($attachment_id);
+    if (is_array($meta) && !empty($meta['sizes']) && is_array($meta['sizes'])) {
+        $best_url = '';
+        $best_width = -1;
+        foreach ($meta['sizes'] as $size_name => $info) {
+            $candidate = wp_get_attachment_image_url($attachment_id, $size_name);
+            if (!$candidate) {
+                continue;
+            }
+            $width = isset($info['width']) ? (int) $info['width'] : 0;
+            if ($width > $best_width) {
+                $best_width = $width;
+                $best_url = $candidate;
+            }
+        }
+        if ($best_url) {
+            return $best_url;
+        }
+    }
+
+    return '';
 }
 
 /**
