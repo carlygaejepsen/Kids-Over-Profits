@@ -497,7 +497,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetRelatedProgramForm() {
-        clearInputs(['relProgName', 'relProgLink', 'relProgYears', 'relProgLocation', 'relProgHeal', 'relProgReopened']);
+        clearInputs(['relProgName', 'relProgLink', 'relProgYears', 'relProgLocation', 'relProgHeal', 'relProgReopened', 'relProgStatus']);
         editingRelatedProgramIndex = null;
         const addBtn = document.getElementById('addRelatedProgBtn');
         if (addBtn) addBtn.textContent = 'Add Program';
@@ -514,8 +514,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         container.style.display = 'block';
+        // Mirror generateOrganizationWikiMarkdown(): explicit status wins, then the
+        // "reopened" hint, then infer from the year span.
         const isOpenProgram = (item) => {
             if (!item) return true;
+            if (item.status) return String(item.status).toLowerCase() !== 'closed';
             if (item.reopened) {
                 return !/closed|inactive|former|past/i.test(String(item.reopened));
             }
@@ -604,6 +607,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('relProgLocation', item.location || '');
         setFieldValue('relProgHeal', item.healLink || '');
         setFieldValue('relProgReopened', item.reopened || '');
+        setFieldValue('relProgStatus', item.status || '');
         const addBtn = document.getElementById('addRelatedProgBtn');
         if (addBtn) addBtn.textContent = 'Save Program';
         document.getElementById('relProgName')?.focus();
@@ -1604,9 +1608,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const location = document.getElementById('relProgLocation').value.trim();
             const healLink = sanitizeUrl(document.getElementById('relProgHeal').value);
             const reopened = document.getElementById('relProgReopened').value.trim();
+            const status = (document.getElementById('relProgStatus')?.value || '').trim();
 
             if (name) {
                 const payload = { name, link, yearsActive, location, healLink, reopened };
+                if (status) payload.status = status; // explicit Open/Closed; '' = auto-infer
                 if (editingRelatedProgramIndex !== null && relatedPrograms[editingRelatedProgramIndex]) {
                     relatedPrograms[editingRelatedProgramIndex] = payload;
                 } else {

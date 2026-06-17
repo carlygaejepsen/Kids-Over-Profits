@@ -1074,9 +1074,13 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         abuseSection = [structuredAbuse, lawsuitsNotesText].filter(Boolean).join('\n\n');
     }
 
-    if (!abuseSection) {
-        abuseSection = getPlaceholder('Abuse/Neglect Allegations and Lawsuits', programName);
-    }
+    // Operator pages don't carry an empty "Abuse" placeholder. When there is no
+    // structured abuse/lawsuit content, the section is omitted entirely — real
+    // lawsuit/controversy material imported under its own heading (e.g.
+    // "Lawsuits and Controversies") is preserved verbatim via additionalSections.
+    const abuseBlock = abuseSection
+        ? `## **Abuse/Neglect Allegations and Lawsuits**\n\n${abuseSection}\n\n***\n\n`
+        : '';
 
     let mediaSection;
     if (formData.mediaInfo && !isEffectivelyEmpty(formData.mediaInfo)) {
@@ -1147,13 +1151,7 @@ ${staffSection}
 
 ***
 
-${programsSection}## **Abuse/Neglect Allegations and Lawsuits**
-
-${abuseSection}
-
-***
-
-## **In the Media**
+${programsSection}${abuseBlock}## **In the Media**
 
 ${mediaSection}
 
