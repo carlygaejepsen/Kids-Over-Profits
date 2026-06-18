@@ -126,20 +126,28 @@ function kop_dm_describe(array $project, string $table): array {
 }
 
 /**
- * Decide where the facilities array lives in a decoded payload, creating an
- * empty one if absent. Returns 'data' (new format: data.facilities) or
- * 'root' (legacy: facilities at the top level).
+ * Decide where the facilities array lives in a decoded payload. Resolves to
+ * wherever the facilities ACTUALLY are (matching kop_dm_describe): prefer
+ * data.facilities, then root-level facilities. Some records keep `operator`
+ * under `data` but `facilities` at the root, so picking the `data` branch just
+ * because a `data` key exists would wrongly report zero facilities.
+ *
+ * Only creates an empty array when neither location has one yet. Returns
+ * 'data' (new format: data.facilities) or 'root' (legacy: top-level facilities).
  */
 function kop_dm_facilities_path(array &$project): string {
-    if (isset($project['data']) && is_array($project['data'])) {
-        if (!isset($project['data']['facilities']) || !is_array($project['data']['facilities'])) {
-            $project['data']['facilities'] = [];
-        }
+    if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
         return 'data';
     }
-    if (!isset($project['facilities']) || !is_array($project['facilities'])) {
-        $project['facilities'] = [];
+    if (isset($project['facilities']) && is_array($project['facilities'])) {
+        return 'root';
     }
+    // Neither exists yet — create one. Prefer the data wrapper when present.
+    if (isset($project['data']) && is_array($project['data'])) {
+        $project['data']['facilities'] = [];
+        return 'data';
+    }
+    $project['facilities'] = [];
     return 'root';
 }
 

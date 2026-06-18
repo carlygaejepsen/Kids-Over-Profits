@@ -8,8 +8,14 @@ Kids Over Profits is a WordPress child theme (Kadence parent) that powers a data
 
 ## Development Environment
 
-- **Local**: Flywheel Local at `https://kids-over-profits.local`
-- **Production**: NixiHost shared hosting (Apache/LiteSpeed, PHP 8.2, MySQL)
+> **DEFAULT TARGET: the live site.** Unless the user explicitly says otherwise,
+> always assume work, testing, URLs, and diagnostics refer to the production
+> site at `https://kidsoverprofits.org`. Only treat the task as local
+> (Flywheel) when the user explicitly says "local", "Flywheel", or
+> "kids-over-profits.local".
+
+- **Production (default)**: `https://kidsoverprofits.org` — NixiHost shared hosting (Apache/LiteSpeed, PHP 8.2, MySQL)
+- **Local (only when specified)**: Flywheel Local at `https://kids-over-profits.local`
 - **CMS**: WordPress with Kadence parent theme
 - **No build process**: Plain PHP, vanilla JavaScript (ES6 modules), CSS
 
