@@ -189,6 +189,78 @@ function kop_dm_facility_name(array $facility): string {
         ?? 'facility';
 }
 
+/** Normalize a name for matching: lowercase, strip everything but a-z0-9. */
+function kop_dm_norm($s): string {
+    return preg_replace('/[^a-z0-9]/', '', strtolower((string)$s));
+}
+
+/**
+ * Best FileBird folder for a program, STRONG matches only:
+ *   1. normalized-equal folder name, or
+ *   2. folder name normalized-starts-with the program name (len >= 4).
+ * Returns ['id','name'] or null. $names = candidate program names to try.
+ */
+function kop_dm_best_folder(array $names): ?array {
+    if (!function_exists('kop_get_filebird_folders')) {
+        return null;
+    }
+    $folders = kop_get_filebird_folders();
+    if (!is_array($folders) || !$folders) {
+        return null;
+    }
+    // Pass 1: exact normalized equality.
+    foreach ($names as $name) {
+        $n = kop_dm_norm($name);
+        if ($n === '') continue;
+        foreach ($folders as $f) {
+            if (kop_dm_norm($f->name) === $n) {
+                return ['id' => (int)$f->id, 'name' => $f->name];
+            }
+        }
+    }
+    // Pass 2: folder name starts with the program name (e.g. "Acadia" -> "Acadia Healthcare").
+    foreach ($names as $name) {
+        $n = kop_dm_norm($name);
+        if (strlen($n) < 4) continue;
+        foreach ($folders as $f) {
+            $fn = kop_dm_norm($f->name);
+            if ($fn !== '' && strpos($fn, $n) === 0) {
+                return ['id' => (int)$f->id, 'name' => $f->name];
+            }
+        }
+    }
+    return null;
+}
+
+/**
+ * Best wiki entry for a program, STRONG match only: program_name exactly equals
+ * one of the candidate names (case-insensitive). Prefers unlinked entries.
+ * Returns row with 'type' or null.
+ */
+function kop_dm_best_wiki(PDO $pdo, array $names): ?array {
+    foreach (['submission' => 'wiki_submissions', 'master' => 'wiki_master'] as $type => $t) {
+        foreach ($names as $name) {
+            if (trim((string)$name) === '') continue;
+            try {
+                $stmt = $pdo->prepare(
+                    "SELECT id, program_name, facility_unique_name, facility_link_status
+                     FROM `$t` WHERE LOWER(program_name) = LOWER(?)
+                     ORDER BY (facility_unique_name IS NULL) DESC LIMIT 1"
+                );
+                $stmt->execute([$name]);
+                $r = $stmt->fetch(PDO::FETCH_ASSOC);
+                if ($r) {
+                    $r['type'] = $type;
+                    return $r;
+                }
+            } catch (PDOException $e) {
+                // table/column missing; skip
+            }
+        }
+    }
+    return null;
+}
+
 /** Find a record by unique_name across the given tables. */
 function kop_dm_find_record(PDO $pdo, array $tables, string $uniqueName): ?array {
     foreach ($tables as $table) {
@@ -758,6 +830,88 @@ try {
             'wiki_unlinked'  => $wikiUnlinked,
             'message'        => "Deleted '$uniqueName'." .
                 ($wikiUnlinked ? " $wikiUnlinked wiki entr(ies) are now unlinked and need re-linking." : ''),
+        ]);
+        exit;
+    }
+
+    // ---- auto_apply ----
+    // Auto-assign the best STRONG matches for a program: a FileBird document
+    // folder and a wiki link. Never overwrites an existing doc folder, never
+    // steals a wiki entry already linked elsewhere, and links wiki as
+    // 'suggested' for later confirmation. Leaves things empty when no strong
+    // match exists.
+    if ($action === 'auto_apply') {
+        $uniqueName = trim((string)($input['unique_name'] ?? ''));
+        if ($uniqueName === '') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'unique_name is required']);
+            exit;
+        }
+        $rec = kop_dm_find_record($pdo, $CATEGORY_TABLE, $uniqueName);
+        if (!$rec) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Record not found']);
+            exit;
+        }
+        $project = kop_dm_decode($rec['json_data']);
+        $meta = kop_dm_describe($project, $rec['table']);
+        $names = array_values(array_unique(array_filter([$meta['display_name'], $uniqueName])));
+
+        $result = ['folder' => null, 'wiki' => null, 'notes' => []];
+
+        // --- Document folder (only if empty) ---
+        if (!empty($meta['document_folder_id'])) {
+            $result['notes'][] = 'Document folder already set (#' . $meta['document_folder_id'] . ') — left as is.';
+        } else {
+            $folder = kop_dm_best_folder($names);
+            if ($folder) {
+                if (!isset($project['data']) || !is_array($project['data'])) {
+                    $project['data'] = [];
+                }
+                $project['documentFolderId'] = $folder['id'];
+                $project['data']['documentFolderId'] = $folder['id'];
+                $upd = $pdo->prepare("UPDATE `{$rec['table']}` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                $upd->execute([json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $rec['id']]);
+                $result['folder'] = $folder;
+            } else {
+                $result['notes'][] = 'No strong folder match found.';
+            }
+        }
+
+        // --- Wiki link (only if a strong, not-already-linked-elsewhere match) ---
+        $wiki = kop_dm_best_wiki($pdo, $names);
+        if (!$wiki) {
+            $result['notes'][] = 'No strong wiki match found.';
+        } elseif ($wiki['facility_unique_name'] === $uniqueName) {
+            $result['notes'][] = 'Best wiki entry is already linked here.';
+        } elseif (!empty($wiki['facility_unique_name'])) {
+            $result['notes'][] = 'Best wiki entry ("' . $wiki['program_name'] . '") is already linked to ' . $wiki['facility_unique_name'] . ' — left as is.';
+        } else {
+            $wTable = $wiki['type'] === 'master' ? 'wiki_master' : 'wiki_submissions';
+            try {
+                $w = $pdo->prepare(
+                    "UPDATE `$wTable` SET facility_unique_name = ?, facility_link_status = 'suggested',
+                     updated_at = CURRENT_TIMESTAMP WHERE id = ?"
+                );
+                $w->execute([$uniqueName, (int)$wiki['id']]);
+                $result['wiki'] = ['id' => (int)$wiki['id'], 'type' => $wiki['type'], 'program_name' => $wiki['program_name']];
+            } catch (PDOException $e) {
+                $result['notes'][] = 'Wiki link failed: ' . $e->getMessage();
+            }
+        }
+
+        $parts = [];
+        if ($result['folder']) $parts[] = 'folder “' . $result['folder']['name'] . '” (#' . $result['folder']['id'] . ')';
+        if ($result['wiki'])   $parts[] = 'wiki “' . $result['wiki']['program_name'] . '”';
+        $msg = $parts ? ('Auto-linked ' . implode(' and ', $parts) . '.') : 'No new strong matches to apply.';
+
+        echo json_encode([
+            'success'     => true,
+            'unique_name' => $uniqueName,
+            'folder'      => $result['folder'],
+            'wiki'        => $result['wiki'],
+            'notes'       => $result['notes'],
+            'message'     => $msg,
         ]);
         exit;
     }

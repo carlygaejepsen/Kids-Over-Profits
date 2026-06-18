@@ -165,14 +165,18 @@
                 '<td class="dm-center">' + wikiBadge(it.wiki_links) + '</td>';
 
             var actions = el('td', 'dm-actions');
-            [
+            var actionDefs = [];
+            // Auto-link only makes sense for actual programs, not location aggregates.
+            if (it.category !== 'locations') actionDefs.push(['✨ Auto', 'auto']);
+            actionDefs.push(
                 ['Rename', 'rename'],
                 ['Doc ID', 'docfolder'],
                 ['Category', 'category'],
                 ['Reassign', 'reassign'],
                 ['Wiki', 'wiki'],
                 ['Delete', 'delete']
-            ].forEach(function (a) {
+            );
+            actionDefs.forEach(function (a) {
                 var btn = el('button', 'dm-act dm-act-' + a[1].replace(/\W/g, ''), a[0]);
                 btn.type = 'button';
                 btn.addEventListener('click', function () { handleAction(a[1], it); });
@@ -389,12 +393,45 @@
 
     // ---- actions ----
     function handleAction(kind, item) {
+        if (kind === 'auto') return actionAuto(item);
         if (kind === 'rename') return actionRename(item);
         if (kind === 'docfolder') return actionDocFolder(item);
         if (kind === 'category') return actionCategory(item);
         if (kind === 'reassign') return actionReassign(item);
         if (kind === 'wiki') return actionWiki(item);
         if (kind === 'delete') return actionDelete(item);
+    }
+
+    // One-click: auto-assign the best strong FileBird folder + wiki link, then
+    // show what happened so you can correct anything wrong. Never overwrites
+    // existing values; wiki links are applied as 'suggested' for confirmation.
+    function actionAuto(item) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p class="dm-muted">Finding strong matches for <strong>' + esc(item.unique_name) + '</strong>…</p>';
+        openModal('Auto-link: ' + item.unique_name, body);
+        postJson(API.manager, { action: 'auto_apply', unique_name: item.unique_name })
+            .then(function (res) {
+                if (!res.data || !res.data.success) {
+                    body.innerHTML = '<p class="dm-error">' + esc((res.data && res.data.error) || 'Failed.') + '</p>';
+                    return;
+                }
+                var d = res.data;
+                if (d.folder) item.document_folder_id = d.folder.id; // keep in-memory item fresh
+                var html = '<p class="dm-status-ok">' + esc(d.message) + '</p><ul class="dm-auto-notes">';
+                if (d.folder) html += '<li>📂 Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
+                if (d.wiki) html += '<li>🔗 Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
+                (d.notes || []).forEach(function (n) { html += '<li class="dm-muted">' + esc(n) + '</li>'; });
+                html += '</ul><div class="dm-form-actions">' +
+                    '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-fix-doc">Edit folder</button>' +
+                    '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-fix-wiki">Edit wiki</button>' +
+                    '<button type="button" class="kop-dm-btn dm-done">Done</button></div>';
+                body.innerHTML = html;
+                body.querySelector('.dm-fix-doc').addEventListener('click', function () { actionDocFolder(item); });
+                body.querySelector('.dm-fix-wiki').addEventListener('click', function () { actionWiki(item); });
+                body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); load(); });
+                load(); // refresh the table badges underneath
+            })
+            .catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
     }
 
     function actionRename(item) {
