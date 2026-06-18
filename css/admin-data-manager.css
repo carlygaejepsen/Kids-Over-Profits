@@ -308,6 +308,8 @@
 .dm-wiki-row { padding: 10px; border: 1px solid rgba(0,4,53,0.1); border-radius: 8px; margin-bottom: 8px; background: #fff; }
 .dm-wiki-meta { font-size: 0.9rem; margin-bottom: 6px; }
 .dm-wiki-acts { display: flex; gap: 6px; flex-wrap: wrap; }
+.dm-wiki-sep { border: none; border-top: 1px solid rgba(0,4,53,0.12); margin: 16px 0 4px; }
+.dm-wiki-results { margin-top: 8px; max-height: 260px; overflow-y: auto; }
 
 @media (max-width: 720px) {
     .kop-dm-table { font-size: 0.82rem; }

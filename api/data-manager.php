@@ -358,6 +358,39 @@ try {
             exit;
         }
 
+        // ---- search_wiki ----
+        // Find wiki entries (submissions + master) to link to a program. Returns
+        // each entry's current link state so the admin can see what's free.
+        if ($action === 'search_wiki') {
+            $q     = trim((string)($_GET['q'] ?? ''));
+            $limit = min(max((int)($_GET['limit'] ?? 25), 1), 100);
+            $results = [];
+            if ($q !== '') {
+                $like  = '%' . $q . '%';
+                $starts = $q . '%';
+                foreach (['submission' => 'wiki_submissions', 'master' => 'wiki_master'] as $type => $wTable) {
+                    try {
+                        $stmt = $pdo->prepare(
+                            "SELECT id, program_name, city_state, facility_unique_name, facility_link_status
+                             FROM `$wTable`
+                             WHERE program_name LIKE ? OR city_state LIKE ?
+                             ORDER BY (CASE WHEN program_name LIKE ? THEN 0 ELSE 1 END), program_name ASC
+                             LIMIT $limit"
+                        );
+                        $stmt->execute([$like, $like, $starts]);
+                        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                            $r['type'] = $type;
+                            $results[] = $r;
+                        }
+                    } catch (PDOException $e) {
+                        // table/columns missing; skip
+                    }
+                }
+            }
+            echo json_encode(['success' => true, 'results' => $results]);
+            exit;
+        }
+
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => "Unknown GET action '$action'"]);
         exit;

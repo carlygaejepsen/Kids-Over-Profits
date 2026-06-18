@@ -580,9 +580,71 @@
     function actionWiki(item) {
         var body = el('div', 'dm-form');
         body.innerHTML =
-            '<p class="dm-muted">Wiki entries linked to this program. Confirm a suggested link, unlink it, or repoint it to a different program.</p>' +
-            '<div class="dm-wiki-list dm-muted">Loading…</div>';
+            '<p class="dm-muted">Wiki entries linked to this program. Confirm a suggested link, unlink it, or repoint it.</p>' +
+            '<div class="dm-wiki-list dm-muted">Loading…</div>' +
+            '<hr class="dm-wiki-sep">' +
+            '<label>Find a wiki entry to link to this program</label>' +
+            '<input type="search" class="dm-wiki-search" placeholder="Search wiki entries by name…" value="' + esc(item.display_name || item.unique_name) + '">' +
+            '<div class="dm-wiki-results dm-muted"></div>';
         openModal('Wiki links: ' + item.unique_name, body);
+
+        // --- search & link unlinked wiki entries ---
+        var searchInput = body.querySelector('.dm-wiki-search');
+        var resultsEl = body.querySelector('.dm-wiki-results');
+
+        function renderWikiSearch(rows) {
+            resultsEl.innerHTML = '';
+            if (!rows || !rows.length) {
+                resultsEl.classList.add('dm-muted');
+                resultsEl.innerHTML = 'No matching wiki entries.';
+                return;
+            }
+            resultsEl.classList.remove('dm-muted');
+            rows.forEach(function (r) {
+                var row = el('div', 'dm-wiki-row');
+                var here = r.facility_unique_name === item.unique_name;
+                var linkedElsewhere = r.facility_unique_name && !here;
+                var statusHtml = here
+                    ? '<span class="dm-wiki-confirmed">already linked here</span>'
+                    : (linkedElsewhere
+                        ? '<span class="dm-wiki-suggested">linked to ' + esc(r.facility_unique_name) + '</span>'
+                        : '<span class="dm-muted">unlinked</span>');
+                row.innerHTML =
+                    '<div class="dm-wiki-meta"><strong>' + esc(r.program_name || ('#' + r.id)) + '</strong>' +
+                    (r.city_state ? ' <span class="dm-muted">(' + esc(r.city_state) + ')</span>' : '') +
+                    ' <span class="dm-muted">[' + esc(r.type) + ' #' + esc(r.id) + ']</span> ' + statusHtml + '</div>';
+                if (!here) {
+                    var acts = el('div', 'dm-wiki-acts');
+                    var linkB = el('button', 'dm-act', linkedElsewhere ? 'Relink here' : 'Link');
+                    linkB.type = 'button';
+                    linkB.addEventListener('click', function () {
+                        wikiOp({ action: 'link', type: r.type, wiki_id: parseInt(r.id, 10),
+                            facility_unique_name: item.unique_name, force: true }, function () {
+                            reload(); runWikiSearch();
+                        });
+                    });
+                    acts.appendChild(linkB);
+                    row.appendChild(acts);
+                }
+                resultsEl.appendChild(row);
+            });
+        }
+
+        function runWikiSearch() {
+            var q = searchInput.value.trim();
+            if (q.length < 2) { resultsEl.classList.add('dm-muted'); resultsEl.innerHTML = 'Type at least 2 characters.'; return; }
+            resultsEl.classList.add('dm-muted');
+            resultsEl.innerHTML = 'Searching…';
+            getJson(API.manager + '?action=search_wiki&q=' + encodeURIComponent(q))
+                .then(function (d) {
+                    if (!d || !d.success) { resultsEl.innerHTML = '<span class="dm-error">Search failed.</span>'; return; }
+                    renderWikiSearch(d.results || []);
+                })
+                .catch(function () { resultsEl.innerHTML = '<span class="dm-error">Network error.</span>'; });
+        }
+
+        searchInput.addEventListener('input', debounce(runWikiSearch, 300));
+        runWikiSearch();
 
         function reload() {
             var list = body.querySelector('.dm-wiki-list');
