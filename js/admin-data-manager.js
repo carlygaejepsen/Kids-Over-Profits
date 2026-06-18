@@ -240,13 +240,17 @@
                         '</span>';
                     var acts = el('span', 'dm-fac-item-acts');
                     [
+                        ['✨ Auto', function () { facilityAuto(operator, f, container); }],
                         ['Rename', function () { facilityRename(operator, f, container); }],
                         ['Doc ID', function () { facilityDocFolder(operator, f, container); }],
                         ['Wiki', function () { facilityWiki(operator, f, container); }],
                         ['Move', function () { facilityReassign(operator, f, container); }],
                         ['Delete', function () { facilityDelete(operator, f, container); }]
                     ].forEach(function (a) {
-                        var b = el('button', 'dm-act' + (a[0] === 'Delete' ? ' dm-act-delete' : ''), a[0]);
+                        var cls = 'dm-act';
+                        if (a[0] === 'Delete') cls += ' dm-act-delete';
+                        if (a[0] === '✨ Auto') cls += ' dm-act-auto';
+                        var b = el('button', cls, a[0]);
                         b.type = 'button';
                         b.addEventListener('click', a[1]);
                         acts.appendChild(b);
@@ -276,6 +280,33 @@
             var p = facilityRef(operator, f); p.action = 'rename_facility'; p.new_name = name.trim();
             facilityPost(p, operator, container);
         }
+    }
+
+    // One-click auto-link for a single facility (folder + wiki, strong matches).
+    function facilityAuto(operator, f, container) {
+        var body = el('div', 'dm-form');
+        body.innerHTML = '<p class="dm-muted">Finding strong matches for facility <strong>' + esc(f.name) + '</strong>…</p>';
+        openModal('Auto-link facility: ' + f.name, body);
+        postJson(API.manager, {
+            action: 'auto_apply_facility',
+            operator_unique_name: operator.unique_name,
+            facility_id: f.facility_id,
+            facility_index: f.index
+        }).then(function (res) {
+            if (!res.data || !res.data.success) {
+                body.innerHTML = '<p class="dm-error">' + esc((res.data && res.data.error) || 'Failed.') + '</p>';
+                return;
+            }
+            var d = res.data;
+            var html = '<p class="dm-status-ok">' + esc(d.message) + '</p><ul class="dm-auto-notes">';
+            if (d.folder) html += '<li>📂 Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
+            if (d.wiki) html += '<li>🔗 Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
+            (d.notes || []).forEach(function (n) { html += '<li class="dm-muted">' + esc(n) + '</li>'; });
+            html += '</ul><div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-done">Done</button></div>';
+            body.innerHTML = html;
+            body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); loadFacilitySubrows(operator, container); load(); });
+            loadFacilitySubrows(operator, container); // refresh badges underneath
+        }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
     }
 
     // Manage wiki links for one facility. Resolves the facility's own

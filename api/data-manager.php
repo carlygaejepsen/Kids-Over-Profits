@@ -262,12 +262,17 @@ function kop_dm_best_wiki(PDO $pdo, array $names): ?array {
     return null;
 }
 
-/** Find a record by unique_name across the given tables. */
+/** Find a record by unique_name across the given tables. Skips tables that
+ *  don't exist on this install (e.g. transporters_master may be absent). */
 function kop_dm_find_record(PDO $pdo, array $tables, string $uniqueName): ?array {
     foreach ($tables as $table) {
-        $stmt = $pdo->prepare("SELECT id, unique_name, json_data FROM `$table` WHERE unique_name = ? LIMIT 1");
-        $stmt->execute([$uniqueName]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            $stmt = $pdo->prepare("SELECT id, unique_name, json_data FROM `$table` WHERE unique_name = ? LIMIT 1");
+            $stmt->execute([$uniqueName]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            continue; // table missing on this install
+        }
         if ($row) {
             $row['table'] = $table;
             return $row;
@@ -1018,6 +1023,113 @@ try {
             'facility_id'          => $fid,
             'facility_unique_name' => $funique,
             'facility_name'        => kop_dm_facility_name($facility),
+        ]);
+        exit;
+    }
+
+    // ---- auto_apply_facility ----
+    // Strong-match auto-assign for ONE facility: a FileBird folder (set on the
+    // facility) and a wiki link (to the facility's own record, promoting it if
+    // needed). Never overwrites an existing folder or steals a linked wiki entry.
+    if ($action === 'auto_apply_facility') {
+        $operator = trim((string)($input['operator_unique_name'] ?? ''));
+        $facilityId = isset($input['facility_id']) && $input['facility_id'] !== '' ? (int)$input['facility_id'] : null;
+        $hasIndex = array_key_exists('facility_index', $input) && $input['facility_index'] !== '' && $input['facility_index'] !== null;
+        $facilityIndex = $hasIndex ? (int)$input['facility_index'] : null;
+
+        if ($operator === '' || ($facilityId === null && $facilityIndex === null)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'operator_unique_name and facility_id/facility_index are required']);
+            exit;
+        }
+        $rec = kop_dm_find_record($pdo, $CATEGORY_TABLE, $operator);
+        if (!$rec) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => "Operator record '$operator' not found"]);
+            exit;
+        }
+        $project = kop_dm_decode($rec['json_data']);
+        $path = kop_dm_facilities_path($project);
+        $facs = kop_dm_get_facilities($project, $path);
+        $idx = kop_dm_resolve_facility_index($facs, $facilityId, $facilityIndex);
+        if ($idx === null || !isset($facs[$idx]) || !is_array($facs[$idx])) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Facility not found in that record']);
+            exit;
+        }
+
+        $name  = kop_dm_facility_name($facs[$idx]);
+        $names = array_values(array_filter([$name]));
+        $result = ['folder' => null, 'wiki' => null, 'notes' => []];
+        $dirty = false;
+
+        // Folder (only if empty).
+        if (!empty($facs[$idx]['documentFolderId'])) {
+            $result['notes'][] = 'Facility document folder already set — left as is.';
+        } else {
+            $folder = $names ? kop_dm_best_folder($names) : null;
+            if ($folder) {
+                $facs[$idx]['documentFolderId'] = $folder['id'];
+                $result['folder'] = $folder;
+                $dirty = true;
+            } else {
+                $result['notes'][] = 'No strong folder match found.';
+            }
+        }
+
+        // Ensure the facility has a stable record (promote if needed).
+        $fid = !empty($facs[$idx]['facility_id']) ? (int)$facs[$idx]['facility_id'] : null;
+        if (!$fid && function_exists('kop_promote_single_nested_facility')) {
+            $tmp = $facs[$idx];
+            $fid = kop_promote_single_nested_facility($pdo, $tmp);
+            if ($fid) { $facs[$idx] = $tmp; $dirty = true; }
+        }
+
+        if ($dirty) {
+            kop_dm_set_facilities($project, $path, $facs);
+            $upd = $pdo->prepare("UPDATE `{$rec['table']}` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+            $upd->execute([json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $rec['id']]);
+        }
+
+        // Wiki (to the facility's own unique_name).
+        if ($fid) {
+            $stmt = $pdo->prepare("SELECT unique_name FROM facilities_master WHERE id = ? LIMIT 1");
+            $stmt->execute([$fid]);
+            $funique = $stmt->fetchColumn();
+            $wiki = $names ? kop_dm_best_wiki($pdo, $names) : null;
+            if (!$funique) {
+                $result['notes'][] = 'Could not resolve the facility record for wiki linking.';
+            } elseif (!$wiki) {
+                $result['notes'][] = 'No strong wiki match found.';
+            } elseif ($wiki['facility_unique_name'] === $funique) {
+                $result['notes'][] = 'Best wiki entry is already linked to this facility.';
+            } elseif (!empty($wiki['facility_unique_name'])) {
+                $result['notes'][] = 'Best wiki entry ("' . $wiki['program_name'] . '") is already linked elsewhere — left as is.';
+            } else {
+                $wTable = $wiki['type'] === 'master' ? 'wiki_master' : 'wiki_submissions';
+                try {
+                    $w = $pdo->prepare("UPDATE `$wTable` SET facility_unique_name = ?, facility_link_status = 'suggested', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                    $w->execute([$funique, (int)$wiki['id']]);
+                    $result['wiki'] = ['id' => (int)$wiki['id'], 'type' => $wiki['type'], 'program_name' => $wiki['program_name']];
+                } catch (PDOException $e) {
+                    $result['notes'][] = 'Wiki link failed: ' . $e->getMessage();
+                }
+            }
+        } else {
+            $result['notes'][] = 'Could not create a linkable facility record.';
+        }
+
+        $parts = [];
+        if ($result['folder']) $parts[] = 'folder “' . $result['folder']['name'] . '” (#' . $result['folder']['id'] . ')';
+        if ($result['wiki'])   $parts[] = 'wiki “' . $result['wiki']['program_name'] . '”';
+        $msg = $parts ? ('Auto-linked ' . implode(' and ', $parts) . '.') : 'No new strong matches to apply.';
+
+        echo json_encode([
+            'success' => true,
+            'folder'  => $result['folder'],
+            'wiki'    => $result['wiki'],
+            'notes'   => $result['notes'],
+            'message' => $msg,
         ]);
         exit;
     }
