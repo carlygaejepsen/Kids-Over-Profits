@@ -73,6 +73,27 @@ $CATEGORY_TABLE = [
 ];
 $TABLE_CATEGORY = array_flip($CATEGORY_TABLE);
 
+/**
+ * Decode a stored json_data payload AND normalize nested-wrapping, mirroring the
+ * REST layer (kop_unwrap_project_payload). Records are sometimes saved as
+ * {data:{data:{operator,facilities}}}; without unwrapping, facilities are
+ * invisible here and the program index (which unwraps) would disagree.
+ */
+function kop_dm_decode($json): array {
+    $p = json_decode($json ?: '{}', true);
+    if (!is_array($p)) {
+        $p = [];
+    }
+    if (function_exists('kop_unwrap_project_payload')) {
+        $p = kop_unwrap_project_payload($p);
+    } elseif (isset($p['data']['data']) && is_array($p['data']['data'])
+        && !isset($p['data']['operator']) && !isset($p['data']['facilities'])) {
+        // Fallback unwrap (one level) if the theme helper isn't loaded.
+        $p['data'] = $p['data']['data'];
+    }
+    return $p;
+}
+
 /** Human-friendly name + category metadata extracted from a decoded payload. */
 function kop_dm_describe(array $project, string $table): array {
     $data = isset($project['data']) && is_array($project['data']) ? $project['data'] : $project;
@@ -234,8 +255,7 @@ try {
                     continue; // table missing
                 }
                 foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-                    $project = json_decode($row['json_data'] ?: '{}', true);
-                    if (!is_array($project)) $project = [];
+                    $project = kop_dm_decode($row['json_data']);
                     if (!empty($project['__facility_ref'])) continue; // hidden id rows
 
                     $meta = kop_dm_describe($project, $table);
@@ -284,8 +304,7 @@ try {
                 echo json_encode(['success' => false, 'error' => 'Record not found']);
                 exit;
             }
-            $project = json_decode($rec['json_data'] ?: '{}', true);
-            if (!is_array($project)) $project = [];
+            $project = kop_dm_decode($rec['json_data']);
             $facs = kop_dm_get_facilities($project, kop_dm_facilities_path($project));
 
             $out = [];
@@ -410,8 +429,7 @@ try {
         }
 
         // Update the embedded category label, then move the row atomically.
-        $project = json_decode($rec['json_data'] ?: '{}', true);
-        if (!is_array($project)) $project = [];
+        $project = kop_dm_decode($rec['json_data']);
         $project['category'] = $target;
         $newJson = json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
@@ -480,10 +498,8 @@ try {
             exit;
         }
 
-        $srcProject = json_decode($srcRec['json_data'] ?: '{}', true);
-        $dstProject = json_decode($dstRec['json_data'] ?: '{}', true);
-        if (!is_array($srcProject)) $srcProject = [];
-        if (!is_array($dstProject)) $dstProject = [];
+        $srcProject = kop_dm_decode($srcRec['json_data']);
+        $dstProject = kop_dm_decode($dstRec['json_data']);
 
         $srcPath = kop_dm_facilities_path($srcProject);
         $srcFacs = kop_dm_get_facilities($srcProject, $srcPath);
@@ -584,8 +600,7 @@ try {
         }
 
         // Keep the embedded name in sync.
-        $project = json_decode($rec['json_data'] ?: '{}', true);
-        if (!is_array($project)) $project = [];
+        $project = kop_dm_decode($rec['json_data']);
         if (isset($project['name'])) $project['name'] = $newName;
         $newJson = json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
@@ -734,8 +749,7 @@ try {
             echo json_encode(['success' => false, 'error' => "Operator record '$operator' not found"]);
             exit;
         }
-        $project = json_decode($rec['json_data'] ?: '{}', true);
-        if (!is_array($project)) $project = [];
+        $project = kop_dm_decode($rec['json_data']);
         $path = kop_dm_facilities_path($project);
         $facs = kop_dm_get_facilities($project, $path);
 
