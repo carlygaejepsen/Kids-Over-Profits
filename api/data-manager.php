@@ -41,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/facility-promotion.php'; // kop_promote_single_nested_facility()
 
 // Ensure the full WordPress API is loaded so we can check capabilities.
 if (!function_exists('current_user_can')) {
@@ -387,15 +388,51 @@ try {
             $project = kop_dm_decode($rec['json_data']);
             $facs = kop_dm_get_facilities($project, kop_dm_facilities_path($project));
 
+            // Batch-resolve each facility's own facilities_master.unique_name (the
+            // wiki-link target) from its facility_id, plus wiki link counts.
+            $facIds = [];
+            foreach ($facs as $f) {
+                if (is_array($f) && !empty($f['facility_id'])) $facIds[] = (int)$f['facility_id'];
+            }
+            $idToUnique = [];
+            if ($facIds) {
+                $in = implode(',', array_map('intval', array_unique($facIds)));
+                foreach ($pdo->query("SELECT id, unique_name FROM facilities_master WHERE id IN ($in)")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                    $idToUnique[(int)$r['id']] = $r['unique_name'];
+                }
+            }
+            // Wiki link counts keyed by facility unique_name.
+            $wikiCounts = [];
+            if ($idToUnique) {
+                $names = array_values($idToUnique);
+                $place = implode(',', array_fill(0, count($names), '?'));
+                foreach (['wiki_submissions', 'wiki_master'] as $wTable) {
+                    try {
+                        $stmt = $pdo->prepare(
+                            "SELECT facility_unique_name, COUNT(*) c FROM `$wTable`
+                             WHERE facility_unique_name IN ($place) GROUP BY facility_unique_name"
+                        );
+                        $stmt->execute($names);
+                        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                            $wikiCounts[$r['facility_unique_name']] = ($wikiCounts[$r['facility_unique_name']] ?? 0) + (int)$r['c'];
+                        }
+                    } catch (PDOException $e) { /* table/column missing */ }
+                }
+            }
+
             $out = [];
             foreach ($facs as $i => $f) {
                 $ident = is_array($f) && isset($f['identification']) ? $f['identification'] : [];
+                $fid = is_array($f) && isset($f['facility_id']) ? (int)$f['facility_id'] : null;
+                $funique = $fid && isset($idToUnique[$fid]) ? $idToUnique[$fid] : null;
                 $out[] = [
-                    'index'              => $i,
-                    'facility_id'        => is_array($f) && isset($f['facility_id']) ? (int)$f['facility_id'] : null,
-                    'name'               => $ident['name'] ?? ($ident['currentName'] ?? ('Facility #' . ($i + 1))),
-                    'location'           => is_array($f) ? ($f['location'] ?? ($f['address'] ?? '')) : '',
-                    'document_folder_id' => is_array($f) && !empty($f['documentFolderId']) ? (int)$f['documentFolderId'] : null,
+                    'index'                => $i,
+                    'facility_id'          => $fid,
+                    'facility_unique_name' => $funique,
+                    'wiki_count'           => $funique && isset($wikiCounts[$funique]) ? $wikiCounts[$funique] : 0,
+                    'name'                 => $ident['name'] ?? ($ident['currentName'] ?? ('Facility #' . ($i + 1))),
+                    'location'             => is_array($f) ? ($f['location'] ?? ($f['address'] ?? '')) : '',
+                    'document_folder_id'   => is_array($f) && !empty($f['documentFolderId']) ? (int)$f['documentFolderId'] : null,
                 ];
             }
             echo json_encode(['success' => true, 'unique_name' => $uniqueName, 'facilities' => $out]);
@@ -912,6 +949,75 @@ try {
             'wiki'        => $result['wiki'],
             'notes'       => $result['notes'],
             'message'     => $msg,
+        ]);
+        exit;
+    }
+
+    // ---- facility_link_target ----
+    // Resolve (and if needed create) the facilities_master.unique_name that wiki
+    // entries link to for a specific nested facility. If the facility has no
+    // facility_id yet, promote it (creates a hidden __facility_ref row) so it
+    // gets a stable unique_name to link against.
+    if ($action === 'facility_link_target') {
+        $operator = trim((string)($input['operator_unique_name'] ?? ''));
+        $facilityId = isset($input['facility_id']) && $input['facility_id'] !== '' ? (int)$input['facility_id'] : null;
+        $hasIndex = array_key_exists('facility_index', $input) && $input['facility_index'] !== '' && $input['facility_index'] !== null;
+        $facilityIndex = $hasIndex ? (int)$input['facility_index'] : null;
+
+        if ($operator === '' || ($facilityId === null && $facilityIndex === null)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'operator_unique_name and facility_id/facility_index are required']);
+            exit;
+        }
+        $rec = kop_dm_find_record($pdo, $CATEGORY_TABLE, $operator);
+        if (!$rec) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => "Operator record '$operator' not found"]);
+            exit;
+        }
+        $project = kop_dm_decode($rec['json_data']);
+        $path = kop_dm_facilities_path($project);
+        $facs = kop_dm_get_facilities($project, $path);
+        $idx = kop_dm_resolve_facility_index($facs, $facilityId, $facilityIndex);
+        if ($idx === null || !isset($facs[$idx]) || !is_array($facs[$idx])) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Facility not found in that record']);
+            exit;
+        }
+
+        $facility = $facs[$idx];
+        $fid = !empty($facility['facility_id']) ? (int)$facility['facility_id'] : null;
+
+        // Promote on demand to get a stable id + unique_name.
+        if (!$fid && function_exists('kop_promote_single_nested_facility')) {
+            $fid = kop_promote_single_nested_facility($pdo, $facility);
+            if ($fid) {
+                $facs[$idx] = $facility; // promotion stamped facility_id
+                kop_dm_set_facilities($project, $path, $facs);
+                $upd = $pdo->prepare("UPDATE `{$rec['table']}` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                $upd->execute([json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $rec['id']]);
+            }
+        }
+        if (!$fid) {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'error' => 'This facility has no name to create a linkable record from.']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("SELECT unique_name FROM facilities_master WHERE id = ? LIMIT 1");
+        $stmt->execute([$fid]);
+        $funique = $stmt->fetchColumn();
+        if (!$funique) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'Could not resolve the facility record.']);
+            exit;
+        }
+
+        echo json_encode([
+            'success'              => true,
+            'facility_id'          => $fid,
+            'facility_unique_name' => $funique,
+            'facility_name'        => kop_dm_facility_name($facility),
         ]);
         exit;
     }

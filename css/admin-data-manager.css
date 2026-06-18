@@ -299,6 +299,7 @@
 .dm-fac-item-name { font-size: 0.9rem; }
 .dm-fac-item-acts { display: flex; gap: 4px; flex: 0 0 auto; }
 .dm-fac-doc { color: #1b7e3c; font-size: 0.78rem; }
+.dm-fac-wiki { color: var(--kop-navy, #000080); font-size: 0.78rem; }
 
 /* Facility radio list */
 .dm-fac-list { margin: 4px 0; max-height: 180px; overflow-y: auto; border: 1px solid rgba(0,4,53,0.12); border-radius: 8px; background: #fff; }

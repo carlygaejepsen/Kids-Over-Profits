@@ -236,11 +236,13 @@
                         (f.location ? ' <span class="dm-muted">(' + esc(f.location) + ')</span>' : '') +
                         (f.facility_id ? ' <span class="dm-id">id ' + esc(f.facility_id) + '</span>' : '') +
                         (f.document_folder_id ? ' <span class="dm-fac-doc">📂 ' + esc(f.document_folder_id) + '</span>' : '') +
+                        (f.wiki_count ? ' <span class="dm-fac-wiki">🔗 ' + esc(f.wiki_count) + '</span>' : '') +
                         '</span>';
                     var acts = el('span', 'dm-fac-item-acts');
                     [
                         ['Rename', function () { facilityRename(operator, f, container); }],
                         ['Doc ID', function () { facilityDocFolder(operator, f, container); }],
+                        ['Wiki', function () { facilityWiki(operator, f, container); }],
                         ['Move', function () { facilityReassign(operator, f, container); }],
                         ['Delete', function () { facilityDelete(operator, f, container); }]
                     ].forEach(function (a) {
@@ -274,6 +276,31 @@
             var p = facilityRef(operator, f); p.action = 'rename_facility'; p.new_name = name.trim();
             facilityPost(p, operator, container);
         }
+    }
+
+    // Manage wiki links for one facility. Resolves the facility's own
+    // facilities_master record (promoting it if needed) and opens the shared
+    // wiki manager against that unique_name.
+    function facilityWiki(operator, f, container) {
+        var label = f.name + ' — facility';
+        if (f.facility_unique_name) {
+            openWikiManager(f.facility_unique_name, label);
+            return;
+        }
+        postJson(API.manager, {
+            action: 'facility_link_target',
+            operator_unique_name: operator.unique_name,
+            facility_id: f.facility_id,
+            facility_index: f.index
+        }).then(function (res) {
+            if (res.data && res.data.success) {
+                f.facility_unique_name = res.data.facility_unique_name;
+                openWikiManager(res.data.facility_unique_name, label);
+                loadFacilitySubrows(operator, container); // refresh badges/targets
+            } else {
+                alert((res.data && res.data.error) || 'Could not prepare this facility for wiki linking.');
+            }
+        }).catch(function () { alert('Network error.'); });
     }
 
     function facilityDelete(operator, f, container) {
@@ -614,16 +641,23 @@
         });
     }
 
+    // Company Wiki action delegates to the shared manager.
     function actionWiki(item) {
+        openWikiManager(item.unique_name, item.display_name || item.unique_name);
+    }
+
+    // Shared wiki-link manager. targetUnique is the facilities_master unique_name
+    // to link against — a company OR an individual facility's own record.
+    function openWikiManager(targetUnique, label) {
         var body = el('div', 'dm-form');
         body.innerHTML =
-            '<p class="dm-muted">Wiki entries linked to this program. Confirm a suggested link, unlink it, or repoint it.</p>' +
+            '<p class="dm-muted">Wiki entries linked to <strong>' + esc(label) + '</strong>. Confirm a suggested link, unlink it, or repoint it.</p>' +
             '<div class="dm-wiki-list dm-muted">Loading…</div>' +
             '<hr class="dm-wiki-sep">' +
-            '<label>Find a wiki entry to link to this program</label>' +
-            '<input type="search" class="dm-wiki-search" placeholder="Search wiki entries by name…" value="' + esc(item.display_name || item.unique_name) + '">' +
+            '<label>Find a wiki entry to link here</label>' +
+            '<input type="search" class="dm-wiki-search" placeholder="Search wiki entries by name…" value="' + esc(label) + '">' +
             '<div class="dm-wiki-results dm-muted"></div>';
-        openModal('Wiki links: ' + item.unique_name, body);
+        openModal('Wiki links: ' + label, body);
 
         // --- search & link unlinked wiki entries ---
         var searchInput = body.querySelector('.dm-wiki-search');
@@ -639,7 +673,7 @@
             resultsEl.classList.remove('dm-muted');
             rows.forEach(function (r) {
                 var row = el('div', 'dm-wiki-row');
-                var here = r.facility_unique_name === item.unique_name;
+                var here = r.facility_unique_name === targetUnique;
                 var linkedElsewhere = r.facility_unique_name && !here;
                 var statusHtml = here
                     ? '<span class="dm-wiki-confirmed">already linked here</span>'
@@ -656,7 +690,7 @@
                     linkB.type = 'button';
                     linkB.addEventListener('click', function () {
                         wikiOp({ action: 'link', type: r.type, wiki_id: parseInt(r.id, 10),
-                            facility_unique_name: item.unique_name, force: true }, function () {
+                            facility_unique_name: targetUnique, force: true }, function () {
                             reload(); runWikiSearch();
                         });
                     });
@@ -687,7 +721,7 @@
             var list = body.querySelector('.dm-wiki-list');
             list.classList.add('dm-muted');
             list.innerHTML = 'Loading…';
-            getJson(API.manager + '?action=get_wiki_links&unique_name=' + encodeURIComponent(item.unique_name))
+            getJson(API.manager + '?action=get_wiki_links&unique_name=' + encodeURIComponent(targetUnique))
                 .then(function (d) {
                     if (!d || !d.success) { list.innerHTML = '<div class="dm-error">Failed to load.</div>'; return; }
                     if (!d.links || !d.links.length) {
@@ -742,13 +776,13 @@
                 setStatus('Repointing…');
                 wikiOp({ action: 'link', type: lk.type, wiki_id: parseInt(lk.id, 10), facility_unique_name: uniqueName, force: true }, function () {
                     setStatus('Repointed to ' + esc(uniqueName) + '.', 'ok');
-                    setTimeout(function () { actionWiki(item); }, 700);
+                    setTimeout(function () { openWikiManager(targetUnique, label); }, 700);
                 });
             }, 'Search new program…');
             bodyNode.appendChild(search);
             var back = el('button', 'kop-dm-btn kop-dm-btn-ghost', '← Back to links');
             back.type = 'button';
-            back.addEventListener('click', function () { actionWiki(item); });
+            back.addEventListener('click', function () { openWikiManager(targetUnique, label); });
             bodyNode.appendChild(back);
             openModal('Repoint wiki link', bodyNode);
         }
