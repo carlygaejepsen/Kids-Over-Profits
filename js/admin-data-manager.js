@@ -135,6 +135,33 @@
         return parts.join(' ') || ('<span>' + w.total + '</span>');
     }
 
+    // --- in-place row updates (so saving never rebuilds the table / loses place) ---
+    function docCellHtml(id) { return id ? '📂 ' + esc(id) : '<span class="dm-muted">—</span>'; }
+    function setDocCell(item) { if (item._docCell) item._docCell.innerHTML = docCellHtml(item.document_folder_id); }
+    function setWikiCell(item) { if (item._wikiCell) item._wikiCell.innerHTML = wikiBadge(item.wiki_links); }
+    function setFacCount(item) {
+        if (item._toggle) item._toggle.textContent = (item._toggle.getAttribute('aria-expanded') === 'true' ? '▼ ' : '▶ ') + item.facility_count;
+    }
+    function removeRowDom(item) {
+        if (item._tr && item._tr.parentNode) item._tr.parentNode.removeChild(item._tr);
+        if (item._subTr && item._subTr.parentNode) item._subTr.parentNode.removeChild(item._subTr);
+    }
+    function countsFromLinks(links) {
+        var c = { suggested: 0, confirmed: 0, total: 0 };
+        (links || []).forEach(function (lk) {
+            c.total++;
+            if (lk.facility_link_status === 'confirmed') c.confirmed++; else c.suggested++;
+        });
+        return c;
+    }
+    // Refresh just one company row's wiki badge without touching the rest of the table.
+    function refreshWikiCell(item) {
+        getJson(API.manager + '?action=get_wiki_links&unique_name=' + encodeURIComponent(item.unique_name))
+            .then(function (d) {
+                if (d && d.success) { item.wiki_links = countsFromLinks(d.links); setWikiCell(item); }
+            }).catch(function () {});
+    }
+
     function renderTable() {
         var wrap = $('dmTableWrap');
         if (!state.items.length) {
@@ -164,6 +191,13 @@
                 '<td class="dm-center">' + (it.document_folder_id ? '📂 ' + esc(it.document_folder_id) : '<span class="dm-muted">—</span>') + '</td>' +
                 '<td class="dm-center">' + wikiBadge(it.wiki_links) + '</td>';
 
+            // Cache cell refs for in-place updates (avoids full table reloads on save).
+            it._tr = tr;
+            it._nameCell = tr.children[0];
+            it._catCell = tr.children[1];
+            it._docCell = tr.children[4];
+            it._wikiCell = tr.children[5];
+
             var actions = el('td', 'dm-actions');
             var actionDefs = [];
             // Auto-link only makes sense for actual programs, not location aggregates.
@@ -177,7 +211,19 @@
                 ['Delete', 'delete']
             );
             actionDefs.forEach(function (a) {
-                var btn = el('button', 'dm-act dm-act-' + a[1].replace(/\W/g, ''), a[0]);
+                var label = a[0];
+                var cls = 'dm-act dm-act-' + a[1].replace(/\W/g, '');
+                // No-link fallback indicator: wiki entries name-match this program
+                // but aren't explicitly linked — flag the Wiki button for review.
+                if (a[1] === 'wiki' && it.name_match_unlinked > 0) {
+                    label = 'Wiki ⚠' + it.name_match_unlinked;
+                    cls += ' dm-act-attention';
+                }
+                var btn = el('button', cls, label);
+                if (a[1] === 'wiki' && it.name_match_unlinked > 0) {
+                    btn.title = it.name_match_unlinked + ' wiki entr' + (it.name_match_unlinked === 1 ? 'y' : 'ies') +
+                        ' name-match this program but are not linked. Open Wiki to link them.';
+                }
                 btn.type = 'button';
                 btn.addEventListener('click', function () { handleAction(a[1], it); });
                 actions.appendChild(btn);
@@ -192,9 +238,12 @@
             subTd.colSpan = 7;
             subTr.appendChild(subTd);
             tbody.appendChild(subTr);
+            it._subTr = subTr;
+            it._subTd = subTd;
 
             if (it.facility_count > 0) {
                 var toggle = tr.querySelector('.dm-fac-toggle');
+                it._toggle = toggle;
                 toggle.addEventListener('click', function () {
                     var open = subTr.style.display !== 'none';
                     if (open) {
@@ -222,6 +271,11 @@
         getJson(API.manager + '?action=get_facilities&unique_name=' + encodeURIComponent(operator.unique_name))
             .then(function (d) {
                 if (!d || !d.success) { container.innerHTML = '<div class="dm-error">Failed to load facilities.</div>'; return; }
+                // Keep the parent row's facility count badge fresh in place.
+                if (d.facilities && typeof d.facilities.length === 'number') {
+                    operator.facility_count = d.facilities.length;
+                    setFacCount(operator);
+                }
                 if (!d.facilities || !d.facilities.length) {
                     container.innerHTML = '<div class="dm-muted">No facilities in this record.</div>';
                     return;
@@ -268,7 +322,7 @@
     }
     function facilityPost(payload, operator, container) {
         return postJson(API.manager, payload).then(function (res) {
-            if (res.data && res.data.success) { loadFacilitySubrows(operator, container); load(); return true; }
+            if (res.data && res.data.success) { loadFacilitySubrows(operator, container); return true; }
             alert((res.data && res.data.error) || 'Action failed.');
             return false;
         }).catch(function () { alert('Network error.'); return false; });
@@ -304,7 +358,7 @@
             (d.notes || []).forEach(function (n) { html += '<li class="dm-muted">' + esc(n) + '</li>'; });
             html += '</ul><div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-done">Done</button></div>';
             body.innerHTML = html;
-            body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); loadFacilitySubrows(operator, container); load(); });
+            body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); loadFacilitySubrows(operator, container); });
             loadFacilitySubrows(operator, container); // refresh badges underneath
         }).catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
     }
@@ -314,8 +368,9 @@
     // wiki manager against that unique_name.
     function facilityWiki(operator, f, container) {
         var label = f.name + ' — facility';
+        var onCounts = function () { loadFacilitySubrows(operator, container); };
         if (f.facility_unique_name) {
-            openWikiManager(f.facility_unique_name, label);
+            openWikiManager(f.facility_unique_name, label, onCounts);
             return;
         }
         postJson(API.manager, {
@@ -326,7 +381,7 @@
         }).then(function (res) {
             if (res.data && res.data.success) {
                 f.facility_unique_name = res.data.facility_unique_name;
-                openWikiManager(res.data.facility_unique_name, label);
+                openWikiManager(res.data.facility_unique_name, label, onCounts);
                 loadFacilitySubrows(operator, container); // refresh badges/targets
             } else {
                 alert((res.data && res.data.error) || 'Could not prepare this facility for wiki linking.');
@@ -373,7 +428,7 @@
             postJson(API.manager, p).then(function (res) {
                 if (res.data && res.data.success) {
                     setStatus('Saved.', 'ok');
-                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); load(); }, 600);
+                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); }, 600);
                 } else { setStatus(esc((res.data && res.data.error) || 'Save failed.'), 'error'); }
             }).catch(function () { setStatus('Network error.', 'error'); });
         });
@@ -411,7 +466,7 @@
             }).then(function (res) {
                 if (res.data && res.data.success) {
                     setStatus(esc(res.data.message || 'Moved.'), 'ok');
-                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); load(); }, 800);
+                    setTimeout(function () { closeModal(); loadFacilitySubrows(operator, container); }, 800);
                 } else { setStatus(esc((res.data && res.data.error) || 'Move failed.'), 'error'); }
             }).catch(function () { setStatus('Network error.', 'error'); });
         });
@@ -486,8 +541,10 @@
                 body.innerHTML = html;
                 body.querySelector('.dm-fix-doc').addEventListener('click', function () { actionDocFolder(item); });
                 body.querySelector('.dm-fix-wiki').addEventListener('click', function () { actionWiki(item); });
-                body.querySelector('.dm-done').addEventListener('click', function () { closeModal(); load(); });
-                load(); // refresh the table badges underneath
+                body.querySelector('.dm-done').addEventListener('click', closeModal);
+                // In-place badge updates only — never rebuild the table.
+                if (d.folder) setDocCell(item);
+                if (d.wiki) refreshWikiCell(item);
             })
             .catch(function () { body.innerHTML = '<p class="dm-error">Network error.</p>'; });
     }
@@ -511,7 +568,14 @@
                 .then(function (res) {
                     if (res.data && res.data.success) {
                         setStatus(esc(res.data.message || 'Renamed.'), 'ok');
-                        setTimeout(function () { closeModal(); load(); }, 900);
+                        // Update this row in place; keep everything else as-is.
+                        item.unique_name = newName;
+                        if (item._nameCell) {
+                            item._nameCell.innerHTML = esc(item.display_name || newName) +
+                                (item.is_stub ? ' <span class="dm-stub">stub</span>' : '') +
+                                '<div class="dm-uniquename">' + esc(newName) + '</div>';
+                        }
+                        setTimeout(closeModal, 800);
                     } else {
                         setStatus(esc((res.data && (res.data.error || res.data.message)) || 'Rename failed.'), 'error');
                     }
@@ -560,7 +624,9 @@
                 .then(function (res) {
                     if (res.data && res.data.success) {
                         setStatus('Saved.', 'ok');
-                        setTimeout(function () { closeModal(); load(); }, 600);
+                        item.document_folder_id = val === '' ? null : parseInt(val, 10);
+                        setDocCell(item); // in-place; no table reload
+                        setTimeout(closeModal, 600);
                     } else {
                         setStatus(esc((res.data && res.data.error) || 'Save failed.'), 'error');
                     }
@@ -592,7 +658,9 @@
                 .then(function (res) {
                     if (res.data && res.data.success) {
                         setStatus(esc(res.data.message || 'Moved.'), 'ok');
-                        setTimeout(function () { closeModal(); load(); }, 700);
+                        item.category = target;
+                        if (item._catCell) item._catCell.innerHTML = badge(target);
+                        setTimeout(closeModal, 700);
                     } else {
                         setStatus(esc((res.data && res.data.error) || 'Move failed.'), 'error');
                     }
@@ -664,7 +732,12 @@
             }).then(function (res) {
                 if (res.data && res.data.success) {
                     setStatus(esc(res.data.message || 'Moved.'), 'ok');
-                    setTimeout(function () { closeModal(); load(); }, 800);
+                    // Update this record's facility count in place; refresh its
+                    // sub-list if it's open. Destination row updates on next expand.
+                    item.facility_count = Math.max(0, (item.facility_count || 1) - 1);
+                    setFacCount(item);
+                    if (item._subTr && item._subTr.style.display !== 'none') loadFacilitySubrows(item, item._subTd);
+                    setTimeout(closeModal, 800);
                 } else {
                     setStatus(esc((res.data && res.data.error) || 'Move failed.'), 'error');
                 }
@@ -672,14 +745,18 @@
         });
     }
 
-    // Company Wiki action delegates to the shared manager.
+    // Company Wiki action delegates to the shared manager, updating the row badge.
     function actionWiki(item) {
-        openWikiManager(item.unique_name, item.display_name || item.unique_name);
+        openWikiManager(item.unique_name, item.display_name || item.unique_name, function (counts) {
+            item.wiki_links = counts;
+            setWikiCell(item);
+        });
     }
 
     // Shared wiki-link manager. targetUnique is the facilities_master unique_name
     // to link against — a company OR an individual facility's own record.
-    function openWikiManager(targetUnique, label) {
+    // onCounts(counts) is called whenever the linked set changes (for badge updates).
+    function openWikiManager(targetUnique, label, onCounts) {
         var body = el('div', 'dm-form');
         body.innerHTML =
             '<p class="dm-muted">Wiki entries linked to <strong>' + esc(label) + '</strong>. Confirm a suggested link, unlink it, or repoint it.</p>' +
@@ -755,6 +832,7 @@
             getJson(API.manager + '?action=get_wiki_links&unique_name=' + encodeURIComponent(targetUnique))
                 .then(function (d) {
                     if (!d || !d.success) { list.innerHTML = '<div class="dm-error">Failed to load.</div>'; return; }
+                    if (onCounts) onCounts(countsFromLinks(d.links)); // update row badge in place
                     if (!d.links || !d.links.length) {
                         list.innerHTML = '<div class="dm-muted">No wiki entries are linked to this program.</div>';
                         return;
@@ -807,20 +885,22 @@
                 setStatus('Repointing…');
                 wikiOp({ action: 'link', type: lk.type, wiki_id: parseInt(lk.id, 10), facility_unique_name: uniqueName, force: true }, function () {
                     setStatus('Repointed to ' + esc(uniqueName) + '.', 'ok');
-                    setTimeout(function () { openWikiManager(targetUnique, label); }, 700);
+                    setTimeout(function () { openWikiManager(targetUnique, label, onCounts); }, 700);
                 });
             }, 'Search new program…');
             bodyNode.appendChild(search);
             var back = el('button', 'kop-dm-btn kop-dm-btn-ghost', '← Back to links');
             back.type = 'button';
-            back.addEventListener('click', function () { openWikiManager(targetUnique, label); });
+            back.addEventListener('click', function () { openWikiManager(targetUnique, label, onCounts); });
             bodyNode.appendChild(back);
             openModal('Repoint wiki link', bodyNode);
         }
 
         function wikiOp(payload, done) {
             postJson(API.linkWiki, payload).then(function (res) {
-                if (res.data && res.data.success) { if (done) done(); load(); }
+                // reload() (called via done) refreshes the modal list AND the row
+                // badge through onCounts — no full table rebuild needed.
+                if (res.data && res.data.success) { if (done) done(); }
                 else { setStatus(esc((res.data && res.data.error) || 'Action failed.'), 'error'); }
             }).catch(function () { setStatus('Network error.', 'error'); });
         }
@@ -849,12 +929,84 @@
                 .then(function (res) {
                     if (res.data && res.data.success) {
                         setStatus(esc(res.data.message || 'Deleted.'), 'ok');
-                        setTimeout(function () { closeModal(); load(); }, 900);
+                        removeRowDom(item); // drop just this row; keep place
+                        state.total = Math.max(0, state.total - 1);
+                        renderPagination();
+                        setTimeout(closeModal, 800);
                     } else {
                         setStatus(esc((res.data && (res.data.error || res.data.message)) || 'Delete failed.'), 'error');
                     }
                 })
                 .catch(function () { setStatus('Network error.', 'error'); });
+        });
+    }
+
+    // ---- initial scrape (bulk link everything) ----
+    function actionScrape() {
+        var body = el('div', 'dm-form');
+        body.innerHTML =
+            '<p class="dm-muted">This walks every program (skipping location aggregates) and, using strong name matches:</p>' +
+            '<ul class="dm-auto-notes">' +
+            '<li>📂 sets a document folder where one is <strong>empty</strong> and a folder name matches,</li>' +
+            '<li>🔗 links every <strong>unlinked</strong> wiki entry whose organization matches a program (as <em>suggested</em>, for review).</li>' +
+            '</ul>' +
+            '<p class="dm-muted">It never overwrites an existing folder and never moves an already-linked wiki entry. Safe to re-run.</p>' +
+            '<div class="dm-scrape-progress" style="display:none;"><div class="dm-scrape-bar"><div class="dm-scrape-fill"></div></div>' +
+            '<div class="dm-scrape-stat dm-muted"></div></div>' +
+            '<div class="dm-form-actions">' +
+            '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
+            '<button type="button" class="kop-dm-btn dm-confirm">Run scrape</button></div>';
+        openModal('Initial Scrape — link everything', body);
+
+        var cancelBtn = body.querySelector('.dm-cancel');
+        var runBtn = body.querySelector('.dm-confirm');
+        var progressWrap = body.querySelector('.dm-scrape-progress');
+        var fill = body.querySelector('.dm-scrape-fill');
+        var stat = body.querySelector('.dm-scrape-stat');
+        var cancelled = false;
+        cancelBtn.addEventListener('click', function () { cancelled = true; closeModal(); });
+
+        runBtn.addEventListener('click', function () {
+            runBtn.disabled = true;
+            cancelBtn.textContent = 'Stop';
+            progressWrap.style.display = 'block';
+            var totals = { folders: 0, wiki: 0, total: 0 };
+
+            function step(offset) {
+                if (cancelled) return;
+                postJson(API.manager, { action: 'scrape', offset: offset, limit: 50 })
+                    .then(function (res) {
+                        if (!res.data || !res.data.success) {
+                            stat.innerHTML = '<span class="dm-error">' + esc((res.data && res.data.error) || 'Scrape failed.') + '</span>';
+                            runBtn.disabled = false;
+                            return;
+                        }
+                        var d = res.data;
+                        totals.folders += d.folders_set || 0;
+                        totals.wiki += d.wiki_linked || 0;
+                        totals.total = d.total || 0;
+                        var done = Math.min(d.next_offset, d.total);
+                        var pct = d.total ? Math.round(done / d.total * 100) : 100;
+                        fill.style.width = pct + '%';
+                        stat.textContent = done + ' / ' + d.total + ' programs · ' +
+                            totals.folders + ' folders set · ' + totals.wiki + ' wiki links';
+                        if (d.done || cancelled) {
+                            stat.innerHTML = '<span class="dm-status-ok">✓ Done — ' + totals.folders +
+                                ' folders set, ' + totals.wiki + ' wiki entries linked (suggested).</span>';
+                            cancelBtn.textContent = 'Close';
+                            runBtn.disabled = false;
+                            runBtn.textContent = 'Re-run';
+                            load(); // refresh the table to show new links/badges
+                        } else {
+                            step(d.next_offset);
+                        }
+                    })
+                    .catch(function () {
+                        stat.innerHTML = '<span class="dm-error">Network error — stopped. Re-run to continue (it skips already-linked items).</span>';
+                        runBtn.disabled = false;
+                    });
+            }
+            step(0);
         });
     }
 
@@ -1009,6 +1161,7 @@
         $('dmCategory').addEventListener('change', function () { state.category = this.value; state.offset = 0; load(); });
         $('dmRefresh').addEventListener('click', load);
         if ($('dmManageFolders')) $('dmManageFolders').addEventListener('click', openFolderManager);
+        if ($('dmScrape')) $('dmScrape').addEventListener('click', actionScrape);
         $('dmPrev').addEventListener('click', function () { if (state.offset > 0) { state.offset -= state.limit; load(); } });
         $('dmNext').addEventListener('click', function () { if (state.offset + state.limit < state.total) { state.offset += state.limit; load(); } });
 

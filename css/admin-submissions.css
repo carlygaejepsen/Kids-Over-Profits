@@ -12,11 +12,18 @@
     color: var(--kop-text-primary);
     min-height: 100vh;
     padding: 48px 20px 64px;
+    /* Break out of the theme's (often ~1140px) content column so the review
+       interface can use the real screen width. */
+    width: 98vw;
+    max-width: 98vw;
+    margin-left: calc(50% - 49vw);
+    margin-right: calc(50% - 49vw);
+    box-sizing: border-box;
 }
 
 .admin-submissions-container {
     margin: 0 auto;
-    max-width: 1400px;
+    max-width: min(1900px, 96vw);
     background: var(--kop-bg-secondary);
     border-radius: 24px;
     box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
@@ -139,7 +146,7 @@
 
 .submissions-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: 1fr;
     gap: 24px;
 }
 

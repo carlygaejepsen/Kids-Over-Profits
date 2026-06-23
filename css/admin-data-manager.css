@@ -148,6 +148,31 @@
 .dm-auto-notes { margin: 8px 0 4px; padding-left: 18px; font-size: 0.9rem; }
 .dm-auto-notes li { margin-bottom: 4px; }
 
+/* No-link fallback: wiki entries name-match but aren't linked yet. */
+.dm-act-attention {
+    border-color: var(--kop-coral, #FE8088);
+    background: #ffe9ec;
+    color: #a31d2b;
+    font-weight: 700;
+}
+.dm-act-attention:hover { background: var(--kop-coral, #FE8088); color: #fff; }
+
+/* Initial scrape progress */
+.dm-scrape-progress { margin: 14px 0 4px; }
+.dm-scrape-bar {
+    height: 14px;
+    background: #e3ded0;
+    border-radius: 7px;
+    overflow: hidden;
+}
+.dm-scrape-fill {
+    height: 100%;
+    width: 0;
+    background: var(--kop-teal, #33A7B5);
+    transition: width 0.2s ease;
+}
+.dm-scrape-stat { margin-top: 8px; font-size: 0.85rem; }
+
 .kop-dm-loading, .kop-dm-empty {
     padding: 30px;
     text-align: center;

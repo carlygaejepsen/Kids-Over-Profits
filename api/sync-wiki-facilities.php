@@ -75,70 +75,112 @@ function kop_facility_to_wiki_json(array $facility, array $operator): array {
 }
 
 /**
- * Merge wiki_master data into the matching facility in facilities_master.
+ * Merge wiki data into the matching facility in facilities_master.
  * Only fills fields that are blank / null / empty – never overwrites.
+ *
+ * Target resolution:
+ *   1. If the wiki row carries a facility_unique_name link (set via the Data
+ *      Manager / picker / auto-link), resolve the target by that link.
+ *   2. Otherwise (no link yet), fall back to matching the organization name
+ *      against facilities_master.unique_name (legacy behavior).
+ *
+ * Within the matched record the fill target is:
+ *   - the sub-facility matching program_name (or the only one) for operator
+ *     records that carry data.facilities[]; or
+ *   - data.facility for a single-facility record (e.g. a promoted
+ *     __facility_ref linked at the facility level).
  *
  * @return array{merged:bool, reason:string}
  */
 function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
-    $orgName      = trim($wiki['organization'] ?? '');
-    $programName  = trim($wiki['program_name'] ?? '');
+    $orgName     = trim($wiki['organization'] ?? '');
+    $programName = trim($wiki['program_name'] ?? '');
+    $linkName    = trim($wiki['facility_unique_name'] ?? '');
 
-    if (!$orgName || !$programName) {
-        return ['merged' => false, 'reason' => 'missing organization or program_name in wiki entry'];
-    }
-
-    // Find the facilities_master row whose unique_name matches the organization
-    $stmt = $pdo->prepare(
-        "SELECT id, json_data FROM facilities_master
-         WHERE LOWER(unique_name) = LOWER(:org) LIMIT 1"
-    );
-    $stmt->execute([':org' => $orgName]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$row) {
-        return ['merged' => false, 'reason' => "no facilities_master row for organization '$orgName'"];
+    // 1. Resolve the target facilities_master row — prefer the explicit link.
+    $row = null;
+    $matchedBy = '';
+    if ($linkName !== '') {
+        $stmt = $pdo->prepare(
+            "SELECT id, unique_name, json_data FROM facilities_master
+             WHERE LOWER(unique_name) = LOWER(:u) LIMIT 1"
+        );
+        $stmt->execute([':u' => $linkName]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        if (!$row) {
+            // A link is set but points nowhere — don't silently name-match to a
+            // different record; surface it instead.
+            return ['merged' => false, 'reason' => "linked record '$linkName' not found in facilities_master"];
+        }
+        $matchedBy = 'link';
+    } else {
+        // 2. No link yet — fall back to matching by organization name.
+        if (!$orgName || !$programName) {
+            return ['merged' => false, 'reason' => 'no facility link, and missing organization/program_name to match by name'];
+        }
+        $stmt = $pdo->prepare(
+            "SELECT id, unique_name, json_data FROM facilities_master
+             WHERE LOWER(unique_name) = LOWER(:org) LIMIT 1"
+        );
+        $stmt->execute([':org' => $orgName]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        if (!$row) {
+            return ['merged' => false, 'reason' => "no facilities_master row for organization '$orgName' (and no link)"];
+        }
+        $matchedBy = 'name';
     }
 
     $project = json_decode($row['json_data'], true);
-    if (!is_array($project) || !isset($project['data'])) {
+    if (!is_array($project)) {
         return ['merged' => false, 'reason' => 'facilities_master json_data malformed'];
     }
+    if (!isset($project['data']) || !is_array($project['data'])) {
+        $project['data'] = [];
+    }
 
-    $wikiJson = is_string($wiki['json_data'])
+    $wikiJson = is_string($wiki['json_data'] ?? '')
         ? json_decode($wiki['json_data'], true)
-        : $wiki['json_data'];
-
+        : ($wiki['json_data'] ?? []);
     $wikiJson = is_array($wikiJson) ? $wikiJson : [];
 
-    // Locate the matching sub-facility by name (case-insensitive)
-    $facilities  = &$project['data']['facilities'];
-    $targetIndex = null;
-    if (is_array($facilities)) {
-        foreach ($facilities as $idx => $fac) {
-            $facName = $fac['identification']['name']
-                    ?? $fac['identification']['currentName']
-                    ?? '';
-            if (strcasecmp(trim($facName), $programName) === 0) {
+    // 2b. Resolve which node inside the record to fill.
+    $data = &$project['data'];
+    if (isset($data['facilities']) && is_array($data['facilities']) && count($data['facilities']) > 0) {
+        // Operator with sub-facilities: match by program_name, or use the only one.
+        $targetIndex = null;
+        foreach ($data['facilities'] as $idx => $f) {
+            $facName = $f['identification']['name'] ?? $f['identification']['currentName'] ?? '';
+            if ($programName !== '' && strcasecmp(trim($facName), $programName) === 0) {
                 $targetIndex = $idx;
                 break;
             }
         }
+        if ($targetIndex === null && count($data['facilities']) === 1) {
+            $targetIndex = 0;
+        }
+        if ($targetIndex === null) {
+            return ['merged' => false,
+                'reason' => "matched '{$row['unique_name']}' by $matchedBy, but sub-facility '$programName' not found inside it"];
+        }
+        $fac = &$data['facilities'][$targetIndex];
+    } elseif (isset($data['facility']) && is_array($data['facility'])) {
+        // Single-facility record (promoted __facility_ref linked at facility level).
+        $fac = &$data['facility'];
+    } else {
+        return ['merged' => false, 'reason' => "matched '{$row['unique_name']}' by $matchedBy, but it has no facility data to fill"];
     }
 
-    if ($targetIndex === null) {
-        return ['merged' => false, 'reason' => "sub-facility '$programName' not found inside '$orgName'"];
-    }
+    // Ensure sub-structures exist.
+    if (!isset($fac['identification']) || !is_array($fac['identification']))   $fac['identification'] = [];
+    if (!isset($fac['facilityDetails']) || !is_array($fac['facilityDetails'])) $fac['facilityDetails'] = [];
+    if (!isset($fac['operatingPeriod']) || !is_array($fac['operatingPeriod'])) $fac['operatingPeriod'] = [];
+    if (!array_key_exists('location', $fac)) $fac['location'] = '';
 
-    $fac    = &$facilities[$targetIndex];
     $det    = &$fac['facilityDetails'];
     $period = &$fac['operatingPeriod'];
     $ident  = &$fac['identification'];
-    $op     = &$project['data']['operator'];
 
     $changed = false;
-
-    // Helper: set only if the target is blank
     $fill = function(&$target, $value) use (&$changed) {
         if (($target === null || $target === '' || $target === [])
             && $value !== null && $value !== '' && $value !== []) {
@@ -148,18 +190,20 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
     };
 
     // --- location / identification
-    $fill($fac['location'],          $wiki['city_state'] ?? '');
-    $fill($ident['name'],            $programName);
+    $fill($fac['location'], $wiki['city_state'] ?? '');
+    $fill($ident['name'],   $programName);
 
-    // --- operator
-    $fill($op['name'],               $orgName);
+    // --- operator (only when the record actually carries an operator node)
+    if (isset($data['operator']) && is_array($data['operator'])) {
+        $fill($data['operator']['name'], $orgName);
+    }
 
     // --- facility details
-    $fill($det['type'],              $wiki['program_type'] ?? $wikiJson['programType'] ?? '');
-    $fill($det['capacity'],          $wikiJson['capacity'] ?? '');
-    $fill($det['gender'],            $wikiJson['gender'] ?? '');
-    $fill($det['tuition'],           $wikiJson['tuition'] ?? '');
-    $fill($det['avgStay'],           $wikiJson['avgStay'] ?? '');
+    $fill($det['type'],     $wiki['program_type'] ?? $wikiJson['programType'] ?? '');
+    $fill($det['capacity'], $wikiJson['capacity'] ?? '');
+    $fill($det['gender'],   $wikiJson['gender'] ?? '');
+    $fill($det['tuition'],  $wikiJson['tuition'] ?? '');
+    $fill($det['avgStay'],  $wikiJson['avgStay'] ?? '');
 
     if (empty($det['ageRange']) && !empty($wikiJson['ageRange'])) {
         $det['ageRange'] = $wikiJson['ageRange'];
@@ -167,28 +211,25 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
     }
 
     // --- operating period
-    $fill($period['text'],           $wiki['years_active'] ?? '');
-    $fill($period['status'],         $wikiJson['status'] ?? '');
+    $fill($period['text'],   $wiki['years_active'] ?? '');
+    $fill($period['status'], $wikiJson['status'] ?? '');
 
-    // Parse startYear / endYear from years_active string if not set
-    if (empty($period['startYear']) && !empty($wiki['years_active'])) {
-        if (preg_match('/(\d{4})/', $wiki['years_active'], $m)) {
-            $period['startYear'] = (int)$m[1];
-            $changed = true;
-        }
+    if (empty($period['startYear']) && !empty($wiki['years_active'])
+        && preg_match('/(\d{4})/', $wiki['years_active'], $m)) {
+        $period['startYear'] = (int)$m[1];
+        $changed = true;
     }
 
-    // --- staff / accreditations (append only)
+    // --- staff / accreditations (append; accreditations de-duped)
     if (!empty($wikiJson['staffMembers']) && is_array($wikiJson['staffMembers'])) {
-        if (!isset($fac['staffMembers'])) $fac['staffMembers'] = [];
+        if (!isset($fac['staffMembers']) || !is_array($fac['staffMembers'])) $fac['staffMembers'] = [];
         foreach ($wikiJson['staffMembers'] as $staff) {
             $fac['staffMembers'][] = $staff;
             $changed = true;
         }
     }
-
     if (!empty($wikiJson['accreditations']) && is_array($wikiJson['accreditations'])) {
-        if (!isset($fac['accreditations'])) $fac['accreditations'] = [];
+        if (!isset($fac['accreditations']) || !is_array($fac['accreditations'])) $fac['accreditations'] = [];
         $existing = array_map('strtolower', $fac['accreditations']);
         foreach ($wikiJson['accreditations'] as $acc) {
             if (!in_array(strtolower($acc), $existing, true)) {
@@ -199,19 +240,18 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
     }
 
     if (!$changed) {
-        return ['merged' => false, 'reason' => 'no blank fields to fill – facility already complete'];
+        return ['merged' => false, 'reason' => "matched '{$row['unique_name']}' by $matchedBy; no blank fields to fill"];
     }
 
     $updateStmt = $pdo->prepare(
-        "UPDATE facilities_master SET json_data = :json, updated_at = CURRENT_TIMESTAMP
-         WHERE id = :id"
+        "UPDATE facilities_master SET json_data = :json, updated_at = CURRENT_TIMESTAMP WHERE id = :id"
     );
     $updateStmt->execute([
         ':json' => json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ':id'   => $row['id'],
     ]);
 
-    return ['merged' => true, 'reason' => 'blank fields filled from wiki entry'];
+    return ['merged' => true, 'reason' => "blank fields filled (matched by $matchedBy)"];
 }
 
 // ---------------------------------------------------------------------------

@@ -321,6 +321,36 @@ try {
                 }
             }
 
+            // Pre-aggregate UNLINKED wiki entries by organization name. These are
+            // the "no-link fallback" cases: a wiki entry name-matches a program
+            // but isn't explicitly linked, so we flag it for review/linking.
+            $nameUnlinked = [];
+            // Submissions carry a status; exclude rejected/deleted noise.
+            try {
+                $stmt = $pdo->query(
+                    "SELECT LOWER(organization) AS org, COUNT(*) AS c FROM wiki_submissions
+                     WHERE organization IS NOT NULL AND organization != ''
+                       AND (facility_unique_name IS NULL OR facility_unique_name = '')
+                       AND status NOT IN ('rejected','deleted')
+                     GROUP BY LOWER(organization)"
+                );
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                    $nameUnlinked[$r['org']] = ($nameUnlinked[$r['org']] ?? 0) + (int)$r['c'];
+                }
+            } catch (PDOException $e) { /* table/column missing */ }
+            // Master may not have a status column.
+            try {
+                $stmt = $pdo->query(
+                    "SELECT LOWER(organization) AS org, COUNT(*) AS c FROM wiki_master
+                     WHERE organization IS NOT NULL AND organization != ''
+                       AND (facility_unique_name IS NULL OR facility_unique_name = '')
+                     GROUP BY LOWER(organization)"
+                );
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                    $nameUnlinked[$r['org']] = ($nameUnlinked[$r['org']] ?? 0) + (int)$r['c'];
+                }
+            } catch (PDOException $e) { /* table/column missing */ }
+
             $tables = $category && isset($CATEGORY_TABLE[$category])
                 ? [$category => $CATEGORY_TABLE[$category]]
                 : $CATEGORY_TABLE;
@@ -356,6 +386,7 @@ try {
                         'document_folder_id' => $meta['document_folder_id'],
                         'is_stub'            => $meta['is_stub'],
                         'wiki_links'         => $wikiCounts[$un] ?? ['suggested' => 0, 'confirmed' => 0, 'total' => 0],
+                        'name_match_unlinked' => $nameUnlinked[strtolower($un)] ?? 0,
                         'updated_at'         => $row['updated_at'] ?? null,
                     ];
                 }
@@ -1023,6 +1054,104 @@ try {
             'facility_id'          => $fid,
             'facility_unique_name' => $funique,
             'facility_name'        => kop_dm_facility_name($facility),
+        ]);
+        exit;
+    }
+
+    // ---- scrape ----
+    // One-time bulk linker: walk every program (companies/referrers/transporters,
+    // skipping location aggregates and hidden __facility_ref rows) in batches and
+    //   • set a document folder where one is empty and a STRONG name match exists,
+    //   • link every unlinked wiki entry whose organization equals the program's
+    //     unique_name (as 'suggested', for review).
+    // Never overwrites an existing folder; never steals an already-linked wiki
+    // entry. Paged via offset/limit so it can't time out. Returns progress so the
+    // client can loop until done.
+    if ($action === 'scrape') {
+        $offset    = max((int)($input['offset'] ?? 0), 0);
+        $limit     = min(max((int)($input['limit'] ?? 50), 1), 200);
+        $doFolders = !array_key_exists('do_folders', $input) || $input['do_folders'];
+        $doWiki    = !array_key_exists('do_wiki', $input) || $input['do_wiki'];
+
+        // Build the ordered work list (cheap: id + unique_name only).
+        $work = [];
+        foreach (['facilities_master', 'referrers_master', 'transporters_master'] as $table) {
+            try {
+                $stmt = $pdo->query("SELECT id, unique_name FROM `$table` ORDER BY id ASC");
+                foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+                    $work[] = ['table' => $table, 'id' => (int)$r['id'], 'unique_name' => $r['unique_name']];
+                }
+            } catch (PDOException $e) { /* table missing */ }
+        }
+        $total = count($work);
+        $batch = array_slice($work, $offset, $limit);
+
+        $foldersSet = 0;
+        $wikiLinked = 0;
+        $processed  = 0;
+
+        foreach ($batch as $w) {
+            $processed++;
+            $sel = $pdo->prepare("SELECT json_data FROM `{$w['table']}` WHERE id = ?");
+            $sel->execute([$w['id']]);
+            $json = $sel->fetchColumn();
+            if ($json === false) continue;
+
+            $project = kop_dm_decode($json);
+            if (!empty($project['__facility_ref'])) continue; // hidden id rows
+
+            $meta  = kop_dm_describe($project, $w['table']);
+            $names = array_values(array_unique(array_filter([$meta['display_name'], $w['unique_name']])));
+
+            // Folder (only when empty + strong match).
+            if ($doFolders && empty($meta['document_folder_id']) && $names) {
+                $folder = kop_dm_best_folder($names);
+                if ($folder) {
+                    if (!isset($project['data']) || !is_array($project['data'])) $project['data'] = [];
+                    $project['documentFolderId'] = $folder['id'];
+                    $project['data']['documentFolderId'] = $folder['id'];
+                    $u = $pdo->prepare("UPDATE `{$w['table']}` SET json_data = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                    $u->execute([json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $w['id']]);
+                    $foldersSet++;
+                }
+            }
+
+            // Wiki: link all unlinked entries whose organization == this program.
+            if ($doWiki) {
+                try {
+                    $u = $pdo->prepare(
+                        "UPDATE wiki_submissions
+                         SET facility_unique_name = ?, facility_link_status = 'suggested', updated_at = CURRENT_TIMESTAMP
+                         WHERE LOWER(organization) = LOWER(?)
+                           AND (facility_unique_name IS NULL OR facility_unique_name = '')
+                           AND status NOT IN ('rejected','deleted')"
+                    );
+                    $u->execute([$w['unique_name'], $w['unique_name']]);
+                    $wikiLinked += $u->rowCount();
+                } catch (PDOException $e) { /* table/column missing */ }
+                try {
+                    $u = $pdo->prepare(
+                        "UPDATE wiki_master
+                         SET facility_unique_name = ?, facility_link_status = 'suggested', updated_at = CURRENT_TIMESTAMP
+                         WHERE LOWER(organization) = LOWER(?)
+                           AND (facility_unique_name IS NULL OR facility_unique_name = '')"
+                    );
+                    $u->execute([$w['unique_name'], $w['unique_name']]);
+                    $wikiLinked += $u->rowCount();
+                } catch (PDOException $e) { /* table/column missing */ }
+            }
+        }
+
+        $nextOffset = $offset + $limit;
+        echo json_encode([
+            'success'     => true,
+            'total'       => $total,
+            'offset'      => $offset,
+            'processed'   => $processed,
+            'next_offset' => $nextOffset,
+            'done'        => $nextOffset >= $total,
+            'folders_set' => $foldersSet,
+            'wiki_linked' => $wikiLinked,
         ]);
         exit;
     }

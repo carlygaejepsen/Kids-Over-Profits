@@ -245,7 +245,7 @@ try {
                 foreach ($ids as $id) {
                     try {
                         // Fetch the submission data
-                        $fetchStmt = $pdo->prepare("SELECT program_name, city_state, organization, program_type, years_active, json_data, generated_markdown FROM wiki_submissions WHERE id = ?");
+                        $fetchStmt = $pdo->prepare("SELECT program_name, city_state, organization, program_type, years_active, json_data, generated_markdown, facility_unique_name FROM wiki_submissions WHERE id = ?");
                         $fetchStmt->execute([$id]);
                         $sub = $fetchStmt->fetch(PDO::FETCH_ASSOC);
                         
@@ -297,6 +297,11 @@ try {
                         $wikiRow->execute([$slug]);
                         $wikiEntry = $wikiRow->fetch(PDO::FETCH_ASSOC);
                         if ($wikiEntry) {
+                            // Carry the submission's facility link into the merge so it
+                            // follows the explicit link rather than name-matching.
+                            if (empty($wikiEntry['facility_unique_name']) && !empty($sub['facility_unique_name'])) {
+                                $wikiEntry['facility_unique_name'] = $sub['facility_unique_name'];
+                            }
                             $mergeResult = kop_merge_wiki_into_facility($pdo, $wikiEntry);
                             if ($mergeResult['merged']) {
                                 error_log("Wiki→Facility merge for '{$sub['program_name']}': {$mergeResult['reason']}");

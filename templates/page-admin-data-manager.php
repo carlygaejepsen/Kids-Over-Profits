@@ -40,6 +40,7 @@ get_header();
         </select>
         <button type="button" id="dmRefresh" class="kop-dm-btn kop-dm-btn-ghost">↻ Refresh</button>
         <button type="button" id="dmManageFolders" class="kop-dm-btn">📁 Manage Folders</button>
+        <button type="button" id="dmScrape" class="kop-dm-btn">🔗 Initial Scrape</button>
         <span id="dmCount" class="kop-dm-result-count"></span>
     </div>
 
