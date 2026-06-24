@@ -135,16 +135,19 @@ get_header();
                     <div id="markdownEditorSection" class="markdown-editor-section">
                         <div class="markdown-editor-header">
                             <h3>Review & Edit Markdown</h3>
-                            <p>Compare the original submission with the generated output. Edit the right panel before approving.</p>
+                            <p>Compare the original submission with the generated output. Keep <strong>Diff view</strong> on to review changes (<span class="diff-key-ins">green = added</span>, <span class="diff-key-del">red = removed</span>); turn it off to edit the right panel before approving.</p>
                             <div class="markdown-editor-actions">
                                 <button type="button" id="copyMarkdownBtn" class="btn-secondary">📋 Copy</button>
                                 <button type="button" id="saveEditsBtn" class="btn-save-edits">💾 Save Edits</button>
                                 <label class="diff-toggle">
                                     <input type="checkbox" id="showDiffHighlights" checked>
-                                    <span>Highlight differences</span>
+                                    <span>Diff view</span>
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Rendered colored diff (read-only); shown when Diff view is on. -->
+                        <div id="diffView" class="markdown-diff-view"></div>
 
                         <div class="markdown-side-by-side">
                             <div class="markdown-panel original-panel">

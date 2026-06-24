@@ -539,6 +539,51 @@
     color: var(--kop-coral-pink);
 }
 
+/* --- Rendered colored diff view --- */
+.markdown-diff-view {
+    display: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 13px;
+    line-height: 1.55;
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 10px;
+    overflow: auto;
+    max-height: 62vh;
+    background: var(--kop-white);
+    margin-bottom: 12px;
+}
+.diff-line {
+    display: flex;
+    white-space: pre-wrap;
+}
+.diff-gutter {
+    flex: 0 0 26px;
+    text-align: center;
+    color: #aaa;
+    user-select: none;
+    border-right: 1px solid #eee;
+    background: rgba(0, 0, 0, 0.02);
+}
+.diff-text {
+    flex: 1 1 auto;
+    padding: 0 10px;
+    word-break: break-word;
+}
+.diff-equal { color: #444; }
+.diff-del { background: #ffe2e2; }
+.diff-del .diff-gutter { color: #c0392b; }
+.diff-ins { background: #e2f6e3; }
+.diff-ins .diff-gutter { color: #1b7e3c; }
+/* Inline word-level emphasis within an edited line */
+.diff-word-del { background: #ffb3b3; text-decoration: line-through; border-radius: 2px; }
+.diff-word-ins { background: #9fe6a0; border-radius: 2px; }
+.diff-empty { padding: 16px; color: #888; }
+
+/* Legend chips in the editor header */
+.diff-key-ins, .diff-key-del { padding: 0 5px; border-radius: 3px; font-weight: 600; }
+.diff-key-ins { background: #e2f6e3; color: #1b7e3c; }
+.diff-key-del { background: #ffe2e2; color: #c0392b; }
+
 @media (max-width: 600px) {
     .markdown-side-by-side {
         grid-template-columns: 1fr;

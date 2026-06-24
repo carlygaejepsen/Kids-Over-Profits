@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const showDiffHighlights = document.getElementById('showDiffHighlights');
     const diffSummary = document.getElementById('diffSummary');
     const diffCount = document.getElementById('diffCount');
+    const diffView = document.getElementById('diffView');
     const markdownEditorSection = document.getElementById('markdownEditorSection');
     const originalLineNumbers = document.getElementById('originalLineNumbers');
     const generatedLineNumbers = document.getElementById('generatedLineNumbers');
@@ -856,62 +857,144 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function diffEscapeHtml(s) {
+        return String(s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
     /**
-     * Update diff highlighting between original and generated markdown
+     * Ordered line diff via LCS. Returns a sequence of operations:
+     *   { type:'equal'|'del'|'ins', text }
+     * 'del' = present in original only (removed), 'ins' = in generated only (added).
+     * Comparison is on trimmed text; the original text is kept for display.
+     */
+    function computeDiffOps(aLines, bLines) {
+        const at = aLines.map(s => s.trim());
+        const bt = bLines.map(s => s.trim());
+        const n = aLines.length, m = bLines.length;
+        const ops = [];
+
+        // O(n*m) guard — fall back to a positional diff for huge inputs.
+        if (n * m > 4000000) {
+            const max = Math.max(n, m);
+            for (let i = 0; i < max; i++) {
+                if (i < n && i < m && at[i] === bt[i]) ops.push({ type: 'equal', text: aLines[i] });
+                else {
+                    if (i < n) ops.push({ type: 'del', text: aLines[i] });
+                    if (i < m) ops.push({ type: 'ins', text: bLines[i] });
+                }
+            }
+            return ops;
+        }
+
+        const dp = Array.from({ length: n + 1 }, () => new Int32Array(m + 1));
+        for (let i = n - 1; i >= 0; i--) {
+            for (let j = m - 1; j >= 0; j--) {
+                dp[i][j] = at[i] === bt[j]
+                    ? dp[i + 1][j + 1] + 1
+                    : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            }
+        }
+        let i = 0, j = 0;
+        while (i < n && j < m) {
+            if (at[i] === bt[j]) { ops.push({ type: 'equal', text: aLines[i] }); i++; j++; }
+            else if (dp[i + 1][j] >= dp[i][j + 1]) { ops.push({ type: 'del', text: aLines[i] }); i++; }
+            else { ops.push({ type: 'ins', text: bLines[j] }); j++; }
+        }
+        while (i < n) { ops.push({ type: 'del', text: aLines[i] }); i++; }
+        while (j < m) { ops.push({ type: 'ins', text: bLines[j] }); j++; }
+        return ops;
+    }
+
+    /** Word-level diff between two changed lines; wraps differing tokens. */
+    function diffWords(aStr, bStr) {
+        const a = String(aStr).split(/(\s+)/);
+        const b = String(bStr).split(/(\s+)/);
+        const n = a.length, m = b.length;
+        const dp = Array.from({ length: n + 1 }, () => new Int32Array(m + 1));
+        for (let i = n - 1; i >= 0; i--) {
+            for (let j = m - 1; j >= 0; j--) {
+                dp[i][j] = a[i] === b[j]
+                    ? dp[i + 1][j + 1] + 1
+                    : Math.max(dp[i + 1][j], dp[i][j + 1]);
+            }
+        }
+        let i = 0, j = 0, aHtml = '', bHtml = '';
+        while (i < n && j < m) {
+            if (a[i] === b[j]) { const t = diffEscapeHtml(a[i]); aHtml += t; bHtml += t; i++; j++; }
+            else if (dp[i + 1][j] >= dp[i][j + 1]) { aHtml += '<span class="diff-word-del">' + diffEscapeHtml(a[i]) + '</span>'; i++; }
+            else { bHtml += '<span class="diff-word-ins">' + diffEscapeHtml(b[j]) + '</span>'; j++; }
+        }
+        while (i < n) { aHtml += '<span class="diff-word-del">' + diffEscapeHtml(a[i]) + '</span>'; i++; }
+        while (j < m) { bHtml += '<span class="diff-word-ins">' + diffEscapeHtml(b[j]) + '</span>'; j++; }
+        return { aHtml, bHtml };
+    }
+
+    function diffLineHtml(type, gutter, contentHtml) {
+        return '<div class="diff-line diff-' + type + '">' +
+            '<span class="diff-gutter">' + gutter + '</span>' +
+            '<span class="diff-text">' + (contentHtml || '&nbsp;') + '</span></div>';
+    }
+
+    /** Render the ordered ops into colored diff HTML, with inline word emphasis
+     *  on paired del/ins lines (edited lines). */
+    function buildDiffHtml(ops) {
+        let html = '';
+        let k = 0;
+        while (k < ops.length) {
+            if (ops[k].type === 'equal') {
+                html += diffLineHtml('equal', ' ', diffEscapeHtml(ops[k].text));
+                k++;
+                continue;
+            }
+            const dels = [], inses = [];
+            while (k < ops.length && ops[k].type === 'del') { dels.push(ops[k].text); k++; }
+            while (k < ops.length && ops[k].type === 'ins') { inses.push(ops[k].text); k++; }
+            const pairs = Math.min(dels.length, inses.length);
+            for (let p = 0; p < pairs; p++) {
+                const { aHtml, bHtml } = diffWords(dels[p], inses[p]);
+                html += diffLineHtml('del', '−', aHtml);
+                html += diffLineHtml('ins', '+', bHtml);
+            }
+            for (let p = pairs; p < dels.length; p++)  html += diffLineHtml('del', '−', diffEscapeHtml(dels[p]));
+            for (let p = pairs; p < inses.length; p++) html += diffLineHtml('ins', '+', diffEscapeHtml(inses[p]));
+        }
+        return html || '<div class="diff-empty">No content to compare.</div>';
+    }
+
+    /**
+     * Render the colored diff (when Diff view is on) or fall back to the
+     * editable side-by-side textareas (when off, for editing).
      */
     function updateDiffHighlighting() {
         if (!modalOriginalMarkdown || !modalMarkdown) return;
 
-        const showHighlights = showDiffHighlights ? showDiffHighlights.checked : true;
+        const show = showDiffHighlights ? showDiffHighlights.checked : true;
         const originalLines = (modalOriginalMarkdown.value || '').split('\n');
         const generatedLines = (modalMarkdown.value || '').split('\n');
-        const maxLines = Math.max(originalLines.length, generatedLines.length);
+        const ops = computeDiffOps(originalLines, generatedLines);
 
-        let diffCountNum = 0;
-        const originalDiffLines = [];
-        const generatedDiffLines = [];
+        let added = 0, removed = 0;
+        ops.forEach(o => { if (o.type === 'ins') added++; else if (o.type === 'del') removed++; });
 
-        for (let i = 0; i < maxLines; i++) {
-            const origLine = originalLines[i] ?? '';
-            const genLine = generatedLines[i] ?? '';
-            const isDifferent = origLine.trim() !== genLine.trim();
-
-            if (isDifferent) {
-                diffCountNum++;
-                originalDiffLines.push(i + 1);
-                generatedDiffLines.push(i + 1);
-            }
-        }
-
-        // Update diff count display
         if (diffCount) {
-            diffCount.textContent = `${diffCountNum} difference${diffCountNum !== 1 ? 's' : ''}`;
+            diffCount.textContent = `${added} added, ${removed} removed`;
             if (diffSummary) {
-                diffSummary.className = 'diff-summary' + (diffCountNum > 0 ? ' has-diffs' : '');
+                diffSummary.className = 'diff-summary' + ((added + removed) > 0 ? ' has-diffs' : '');
             }
         }
 
-        // Update line number highlighting
-        if (showHighlights && originalLineNumbers) {
-            const lineNums = originalLineNumbers.querySelectorAll('.line-num');
-            lineNums.forEach((el, i) => {
-                el.classList.toggle('diff-highlight', originalDiffLines.includes(i + 1));
-            });
-        } else if (originalLineNumbers) {
-            originalLineNumbers.querySelectorAll('.line-num').forEach(el => {
-                el.classList.remove('diff-highlight');
-            });
-        }
+        const sideBySide = markdownEditorSection
+            ? markdownEditorSection.querySelector('.markdown-side-by-side')
+            : document.querySelector('.markdown-side-by-side');
 
-        if (showHighlights && generatedLineNumbers) {
-            const lineNums = generatedLineNumbers.querySelectorAll('.line-num');
-            lineNums.forEach((el, i) => {
-                el.classList.toggle('diff-highlight', generatedDiffLines.includes(i + 1));
-            });
-        } else if (generatedLineNumbers) {
-            generatedLineNumbers.querySelectorAll('.line-num').forEach(el => {
-                el.classList.remove('diff-highlight');
-            });
+        if (show && diffView) {
+            diffView.innerHTML = buildDiffHtml(ops);
+            diffView.style.display = 'block';
+            if (sideBySide) sideBySide.style.display = 'none';
+        } else {
+            if (diffView) diffView.style.display = 'none';
+            if (sideBySide) sideBySide.style.display = '';
         }
     }
 
