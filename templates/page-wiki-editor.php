@@ -667,7 +667,7 @@ get_header();
 
             <fieldset>
                 <legend>Facilities / Related Programs</legend>
-                <p style="color: #004435; font-size: 0.9rem;">Use this section to edit the organization's facilities table. Open and closed programs both belong here.</p>
+                <p style="color: #004435; font-size: 0.9rem;">Use this section to edit the organization's facilities table. Open and closed programs both belong here — set each program's <strong>Status</strong>, or leave it on Auto to infer Open/Closed from its years.</p>
                 <div class="form-adder">
                     <div class="field-row">
                         <div class="field-group">
@@ -695,7 +695,17 @@ get_header();
                             <input type="text" id="relProgHeal">
                         </div>
                         <div class="field-group">
-                            <label for="relProgReopened">Reopened/Status:</label>
+                            <label for="relProgStatus">Status:</label>
+                            <select id="relProgStatus">
+                                <option value="">Auto (infer from years)</option>
+                                <option value="open">Open</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label for="relProgReopened">Reopened? (closed table only):</label>
                             <input type="text" id="relProgReopened">
                         </div>
                     </div>

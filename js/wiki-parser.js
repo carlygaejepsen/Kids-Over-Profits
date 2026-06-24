@@ -2103,84 +2103,100 @@ function parseWikiMarkdown(markdown) {
     // table, and tag each program open/closed from its heading so the split
     // round-trips. The accumulated bodies feed the unparsed-overlap check below.
 
-    // Parse one section's first markdown table into program entries.
+    // Parse a section's markdown table into program entries. Handles tables both
+    // WITH a "|---|---|" separator row (what we generate) and WITHOUT one (the
+    // scraped Reddit pages omit it). Columns are mapped from a header row when one
+    // is present, else assumed positional: Name | Years | Location | HEAL | Reopened.
     const parseProgramTable = (sectionText) => {
         const out = [];
-        const lines = sectionText.split('\n');
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!(line.startsWith('|') && line.includes('---'))) continue;
-            const columnMap = {};
-            if (i > 0) {
-                const headers = lines[i - 1].split('|').map(h => h.trim().toLowerCase()).filter(h => h);
-                headers.forEach((h, idx) => {
-                    if (h.includes('name')) columnMap.name = idx;
-                    else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
-                    else if (h.includes('location')) columnMap.location = idx;
-                    else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
-                    else if (h.includes('reopened') || h.includes('rebrand') || h.includes('status')) columnMap.reopened = idx;
-                    else if (h.includes('type')) columnMap.type = idx;
-                    else if (h.includes('abuse')) columnMap.abuse = idx;
-                    else if (h.includes('death')) columnMap.deaths = idx;
-                    else if (h.includes('warning')) columnMap.warning = idx;
-                });
+        const cellsOf = (line) => line.split('|').map(c => c.trim()).filter(c => c);
+        const tableRows = sectionText.split('\n')
+            .map(l => l.trim())
+            .filter(l => l.startsWith('|'))
+            .filter(l => !/^\|[\s\-:|]+\|?$/.test(l)); // drop "|---|---|" separator rows
+        if (tableRows.length === 0) return out;
+
+        let columnMap = {};
+        let dataRows = tableRows;
+        const firstCells = cellsOf(tableRows[0]).map(h => h.toLowerCase());
+        const isHeaderRow = firstCells.some(h => h.includes('name'))
+            && firstCells.some(h => /year|active|date|location|heal|information/.test(h));
+        if (isHeaderRow) {
+            firstCells.forEach((h, idx) => {
+                if (h.includes('name')) columnMap.name = idx;
+                else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
+                else if (h.includes('location')) columnMap.location = idx;
+                else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
+                else if (h.includes('reopened') || h.includes('rebrand') || h.includes('status')) columnMap.reopened = idx;
+                else if (h.includes('type')) columnMap.type = idx;
+                else if (h.includes('abuse')) columnMap.abuse = idx;
+                else if (h.includes('death')) columnMap.deaths = idx;
+                else if (h.includes('warning')) columnMap.warning = idx;
+            });
+            dataRows = tableRows.slice(1);
+        } else {
+            columnMap = { name: 0, years: 1, location: 2, heal: 3, reopened: 4 };
+        }
+
+        for (const dataLine of dataRows) {
+            const cells = cellsOf(dataLine);
+            if (cells.length < 2) continue;
+
+            const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
+            const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
+            const name = (nameMatch ? nameMatch[1] : nameCell).replace(/\*\*/g, '').trim();
+            const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
+            if (!name || name.includes('---') || name.toLowerCase() === 'program name') continue;
+
+            const entry = {
+                name,
+                link,
+                yearsActive: columnMap.years !== undefined ? (cells[columnMap.years] || '') : '',
+                location: columnMap.location !== undefined ? (cells[columnMap.location] || '') : '',
+                type: columnMap.type !== undefined ? (cells[columnMap.type] || '') : '',
+                reopened: columnMap.reopened !== undefined ? (cells[columnMap.reopened] || '') : ''
+            };
+            const healCell = columnMap.heal !== undefined ? (cells[columnMap.heal] || '') : '';
+            if (healCell && healCell.includes('http')) {
+                const healMatch = healCell.match(/\(([^)]+)\)/);
+                if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
             }
-            for (let j = i + 1; j < lines.length; j++) {
-                const dataLine = lines[j].trim();
-                if (!dataLine.startsWith('|')) continue;
-                const cells = dataLine.split('|').map(c => c.trim()).filter(c => c);
-                if (cells.length < 2) continue;
+            if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
+            if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
+            if (columnMap.warning !== undefined) entry.warningLevel = cells[columnMap.warning];
 
-                const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
-                const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
-                const name = (nameMatch ? nameMatch[1] : nameCell).replace(/\*\*/g, '').trim();
-                const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
-                if (!name || name.includes('---') || name.toLowerCase() === 'program name') continue;
-
-                const entry = {
-                    name,
-                    link,
-                    yearsActive: columnMap.years !== undefined ? cells[columnMap.years] : '',
-                    location: columnMap.location !== undefined ? cells[columnMap.location] : '',
-                    type: columnMap.type !== undefined ? cells[columnMap.type] : '',
-                    reopened: columnMap.reopened !== undefined ? cells[columnMap.reopened] : ''
-                };
-                const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
-                if (healCell && healCell.includes('http')) {
-                    const healMatch = healCell.match(/\(([^)]+)\)/);
-                    if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
-                }
-                if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
-                if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
-                if (columnMap.warning !== undefined) entry.warningLevel = cells[columnMap.warning];
-
-                out.push(entry);
-            }
-            break; // first table in the section only
+            out.push(entry);
         }
         return out;
     };
 
-    // Discover all program-listing headings (anything ending in "Programs"/"Program"),
-    // excluding prose sections like "Program Structure".
-    const programHeadings = [];
-    const headingScan = /^#{1,6}[ \t]*\*{0,2}[ \t]*([^\n*]*?\bprograms?\b)[ \t]*\*{0,2}[ \t]*$/gim;
-    let hMatch;
-    while ((hMatch = headingScan.exec(normalizedMarkdown)) !== null) {
-        const heading = hMatch[1].trim();
-        if (/program\s+structure|level\s+system|daily\s+(?:schedule|program)/i.test(heading)) continue;
-        if (!programHeadings.includes(heading)) programHeadings.push(heading);
-    }
-    if (programHeadings.length === 0) {
-        programHeadings.push('Related Programs', 'Affiliated Programs', 'Active Programs', 'Closed Programs');
-    }
+    // Scan every heading line for a program-listing section. Operator pages put
+    // "---"/"***" rules (and an intro line) BETWEEN the heading and the table, so
+    // we capture from the heading down to the NEXT heading (getSection would stop
+    // at the first separator and miss the table). Deaths/structure sections that
+    // merely contain the word "Programs" are excluded.
+    const mdLines = normalizedMarkdown.split(/\r?\n/);
+    const cleanHeading = (line) => {
+        const m = String(line).match(/^#{1,6}(.*)$/);
+        return m ? m[1].replace(/\*\*/g, '').trim() : null;
+    };
 
     let programTableSections = '';
     const seenProgramKeys = new Set();
-    for (const heading of programHeadings) {
-        const body = getSection(normalizedMarkdown, heading);
-        if (!body || !body.includes('|')) continue;
+    for (let i = 0; i < mdLines.length; i++) {
+        const heading = cleanHeading(mdLines[i]);
+        if (!heading || !/\bprograms?\b/i.test(heading)) continue;
+        if (/program\s+structure|level\s+system|daily\s+(?:schedule|program)|\bdeaths?\b/i.test(heading)) continue;
+
+        const bodyLines = [];
+        for (let j = i + 1; j < mdLines.length; j++) {
+            if (/^#{1,6}[ \t*]/.test(mdLines[j])) break; // next heading ends the section
+            bodyLines.push(mdLines[j]);
+        }
+        const body = bodyLines.join('\n');
+        if (!body.includes('|')) continue;
         programTableSections += (programTableSections ? '\n\n' : '') + body;
+
         const status = /\bclosed\b/i.test(heading)
             ? 'closed'
             : (/\bopen\b|\bactive\b|\bcurrent\b/i.test(heading) ? 'open' : '');
