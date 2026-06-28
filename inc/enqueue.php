@@ -1637,6 +1637,65 @@ function kop_enqueue_filebird_folder_browser() {
     );
 }
 
+/**
+ * Enqueue the docked document-viewer panel on the editor pages so users can
+ * read FileBird documents while filling in the form (easy copy/paste).
+ */
+function kop_enqueue_document_viewer_panel() {
+    $is_wiki = is_page_template('page-wiki-editor.php')
+        || is_page_template('templates/page-wiki-editor.php');
+    $is_data = is_page_template('page-admin-data.php')
+        || is_page_template('templates/page-admin-data.php')
+        || is_page_template('child/page-admin-data.php')
+        || is_page_template('templates/data-form-admin.php')
+        || is_page('admin-data')
+        || is_page('tti-admin-data')
+        // Public data form too (open data project — nothing to hide).
+        || is_page_template('page-data.php')
+        || is_page_template('templates/page-data.php')
+        || is_page_template('child/page-data.php')
+        || is_page_template('templates/data-form-public.php')
+        || is_page('data')
+        || is_page('tti-data');
+
+    if (!$is_wiki && !$is_data) {
+        return;
+    }
+
+    // Reuses the folder browser to pick a folder.
+    kop_enqueue_filebird_folder_browser();
+
+    $css_rel = '/css/document-viewer-panel.css';
+    $css_path = get_stylesheet_directory() . $css_rel;
+    if (file_exists($css_path)) {
+        wp_enqueue_style(
+            'kop-document-viewer-panel',
+            get_stylesheet_directory_uri() . $css_rel,
+            array('kop-colors'),
+            filemtime($css_path)
+        );
+    }
+
+    $js_rel = '/js/document-viewer-panel.js';
+    $js_path = get_stylesheet_directory() . $js_rel;
+    wp_enqueue_script(
+        'kop-document-viewer-panel',
+        get_stylesheet_directory_uri() . $js_rel,
+        array('kop-filebird-folder-browser-script'),
+        file_exists($js_path) ? filemtime($js_path) : time(),
+        true
+    );
+    wp_localize_script(
+        'kop-document-viewer-panel',
+        'kopDocViewer',
+        array(
+            'foldersUrl' => rest_url('kop/v1/folders'),
+            'restBase'   => rest_url('kop/v1/'),
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_document_viewer_panel');
+
 function kop_enqueue_document_library_assets() {
     // Check if we are on a page with document library shortcodes
     global $post;
