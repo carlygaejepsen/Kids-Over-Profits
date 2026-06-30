@@ -18,6 +18,20 @@ class TTIProgramAutoLinker {
             'wilderness program',
             'residential treatment'
         ]);
+        // Common single words that are too generic to auto-link on their own.
+        // Programs like "Hope Academy" / "The Hope Group" otherwise produce a
+        // bare "hope" variant that links every occurrence of the word.
+        this.genericSingleWords = new Set([
+            'hope', 'discovery', 'summit', 'journey', 'turning', 'new', 'life',
+            'family', 'recovery', 'freedom', 'liberty', 'horizon', 'vista',
+            'spring', 'springs', 'oak', 'oaks', 'pine', 'pines', 'cross',
+            'eagle', 'sunrise', 'sunset', 'mountain', 'valley', 'river',
+            'meadow', 'meadows', 'haven', 'harbor', 'bridge', 'bridges',
+            'pathway', 'pathways', 'foundation', 'grove', 'ridge', 'creek',
+            'lake', 'hill', 'hills', 'park', 'grace', 'faith', 'trinity',
+            'genesis', 'legacy', 'heritage', 'cornerstone', 'crossroads',
+            'sanctuary', 'lodge', 'retreat', 'compass', 'anchor', 'phoenix'
+        ]);
     }
 
     /**
@@ -213,6 +227,23 @@ class TTIProgramAutoLinker {
 
                 if (this.genericAliasTerms.has(normalizedSearchTerm)) {
                     return false;
+                }
+
+                // Guard against over-linking generic single words. Acronyms are
+                // matched case-sensitively (uppercase) later, so they're exempt.
+                const wordCount = normalizedSearchTerm.split(/\s+/).filter(Boolean).length;
+                if (wordCount === 1 && program.matchType !== 'acronym') {
+                    // Suffix-stripped variants ("Hope Academy" -> "hope") are too
+                    // generic to link on a single bare word — require the fuller
+                    // name to appear (multi-word exact/variant still links).
+                    if (program.matchType === 'variant') {
+                        return false;
+                    }
+                    // Even an exact single-word name that is a common English
+                    // word ("Discovery", "Summit") links far too much in prose.
+                    if (this.genericSingleWords.has(normalizedSearchTerm)) {
+                        return false;
+                    }
                 }
 
                 if (!linkCurrentProgram && normalizedCurrentProgramName) {

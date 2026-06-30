@@ -37,7 +37,12 @@ function buildSearchIndex(programs) {
             const variant = name.replace(regex, '').trim();
             const variantKey = variant.toLowerCase();
 
-            if (variantKey !== exactKey && variantKey.length >= 3 && !index[variantKey]) {
+            // Require multi-word variants. Stripping a suffix off a two-word
+            // name ("Hope Academy" -> "hope") leaves a bare generic word that
+            // would auto-link every occurrence of it in prose. Keeping only
+            // multi-word variants ("Hope Valley Academy" -> "hope valley")
+            // preserves specificity.
+            if (variantKey !== exactKey && variantKey.includes(' ') && !index[variantKey]) {
                 index[variantKey] = { name, url, matchType: 'variant' };
             }
         });
