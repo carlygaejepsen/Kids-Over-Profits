@@ -222,11 +222,26 @@
         const assignProject = (projectName, projectPayload) => {
             if (!projectName) return;
             const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
-            
-            // Handle cases where data is double-nested (e.g., { data: { data: {...} } })
-            let rawData = source.data || source;
-            if (rawData.data && Object.keys(rawData).length <= 3) { // Heuristic: if outer 'data' has few keys besides 'data' itself
-                rawData = rawData.data;
+
+            // Pick the object layer that actually holds project content. Records vary:
+            // content may sit at the top level alongside a thin `data` sibling (e.g.
+            // { documentFolderId }), be nested under `data`, or double-nested under
+            // `data.data`. Choosing `source.data` blindly drops top-level facilities
+            // for company projects (showing only a blank "Facility 1").
+            const hasProjectContent = (obj) => obj && typeof obj === 'object' && [
+                'facilities', 'operator', 'referrerConsultants', 'referrerAgency',
+                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual'
+            ].some(key => obj[key] !== undefined);
+
+            let rawData;
+            if (hasProjectContent(source.data && source.data.data)) {
+                rawData = source.data.data; // double-nested { data: { data: {...} } }
+            } else if (hasProjectContent(source.data)) {
+                rawData = source.data;
+            } else if (hasProjectContent(source)) {
+                rawData = source; // content at top level; `data` is just metadata
+            } else {
+                rawData = source.data || source; // nothing obvious — preserve legacy behavior
             }
 
             const name = source.name || projectName;

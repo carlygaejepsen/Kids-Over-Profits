@@ -43,6 +43,8 @@ get_header();
                     <option value="wiki" selected>Wiki Submissions</option>
                     <option value="news">News Submissions</option>
                     <option value="data">Data Form Submissions</option>
+                    <option value="legislation">Legislation Submissions</option>
+                    <option value="lawsuit">Lawsuit Submissions</option>
                 </select>
 
                 <label for="statusFilter">Status:</label>

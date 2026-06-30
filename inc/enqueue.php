@@ -47,11 +47,14 @@ function kadence_child_enqueue_styles() {
         }
     }
 
-    // Public record pages: Lawsuits, Legislation, Volunteer
+    // Public record pages: Lawsuits, Legislation, Volunteer, and the public
+    // submission forms for legislation/lawsuits.
     $record_templates = [
         'templates/page-lawsuits.php',
         'templates/page-legislation.php',
         'templates/page-volunteers.php',
+        'templates/page-submit-legislation.php',
+        'templates/page-submit-lawsuit.php',
     ];
     if (is_page_template($record_templates)) {
         $pr_css = get_stylesheet_directory() . '/css/public-records.css';
@@ -1346,7 +1349,7 @@ function enqueue_data_form_script() {
                 'nonce' => wp_create_nonce('wp_rest'),
                 'isAdmin' => current_user_can('manage_options'),
                 'isMockData' => false,
-                'mode' => $is_admin_template ? 'admin' : 'suggestion',
+                'mode' => $is_admin_template ? 'admin' : 'suggestions',
                 'api' => array(
                     'root' => esc_url_raw(rest_url('kop/v1/')),
                     'nonce' => wp_create_nonce('wp_rest')

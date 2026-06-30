@@ -54,6 +54,10 @@ try {
     <div class="kop-records-header">
         <h1>Lawsuits &amp; Legal Cases</h1>
         <p>Court cases involving Troubled Teen Industry facilities, operators, and staff.</p>
+        <p class="kop-records-cta">
+            Know of a case we're missing?
+            <a class="kop-card-link" href="<?php echo esc_url(home_url('/submit-lawsuit')); ?>">Submit a lawsuit for review &rarr;</a>
+        </p>
     </div>
 
     <div class="kop-records-filters" id="lawsuits-filters">

@@ -260,11 +260,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 let stats = {};
                 if (currentType === 'news' && result.news) {
                     stats = result.news.by_status || {};
+                } else if (result.stats) {
+                    // legislation / lawsuits return a generic per-type stats block
+                    stats = result.stats.by_status || {};
                 } else if (result.wiki) {
                     stats = result.wiki.by_status || {};
                 }
-                
-                statPending.textContent = stats.submitted || 0;
+
+                // "Pending" is called 'submitted' in wiki/news and 'pending' in
+                // the data / legislation / lawsuit tables.
+                statPending.textContent = (stats.submitted || stats.pending) || 0;
                 statApproved.textContent = stats.approved || 0;
                 statPublished.textContent = stats.published || 0;
                 statRejected.textContent = stats.rejected || 0;
@@ -384,6 +389,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="submission-meta">
                         <span>ðŸ”„ Data Update</span>
+                    </div>
+                    <div class="submission-footer">
+                        <span class="submission-date">Submitted: ${date}</span>
+                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
+                    </div>
+                `;
+            } else if (currentType === 'legislation' || currentType === 'lawsuit') {
+                const icon  = currentType === 'legislation' ? 'ðŸ›ï¸' : 'âš–ï¸';
+                const label = currentType === 'legislation' ? 'Bill' : 'Court case';
+                card.innerHTML = `
+                    <div class="submission-header">
+                        <h3>${escapeHtml(submission.program_name || 'Untitled')}</h3>
+                        <span class="status-badge ${statusClass}">${submission.status}</span>
+                    </div>
+                    <div class="submission-meta">
+                        <span>${icon} ${label}</span>
+                        <span>ðŸ“ ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -535,6 +557,23 @@ document.addEventListener('DOMContentLoaded', () => {
             modalYearsActive.textContent = '-';
 
             // Hide markdown editor section
+            if (markdownEditorSection) markdownEditorSection.style.display = 'none';
+
+        } else if (currentType === 'legislation' || currentType === 'lawsuit') {
+            modalProgramName.textContent = submission.program_name || '(untitled)';
+
+            // Re-label the generic info rows for record-style submissions.
+            const recRows = document.querySelectorAll('.submission-info .info-row');
+            if (recRows[3]) recRows[3].querySelector('.info-label').textContent = 'Jurisdiction:';
+            if (recRows[4]) recRows[4].querySelector('.info-label').textContent = 'Type:';
+            if (recRows[5]) recRows[5].querySelector('.info-label').textContent = 'Current status:';
+
+            modalLocation.textContent = submission.city_state || '-';
+            modalProgramType.textContent = currentType === 'legislation' ? 'Legislation' : 'Lawsuit';
+            modalYearsActive.textContent = submission.status || '-';
+
+            // No markdown / facility-link tooling for these — the full record is
+            // shown in the "View Full Form Data" panel below.
             if (markdownEditorSection) markdownEditorSection.style.display = 'none';
 
         } else {
@@ -709,6 +748,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = document.getElementById('urlSafetyStatus');
         const list = document.getElementById('urlSafetyList');
         if (!section || !status || !list) return;
+
+        // The URL scanner only understands the wiki/news/data staging tables.
+        if (submissionType === 'legislation' || submissionType === 'lawsuit') {
+            section.style.display = 'none';
+            return;
+        }
 
         section.style.display = 'block';
         status.textContent = 'Scanning URLsâ€¦';
@@ -1137,8 +1182,9 @@ document.addEventListener('DOMContentLoaded', () => {
      * Reject all pending submissions currently displayed
      */
     async function rejectAllPending() {
-        // Get all pending submissions from the current list
-        const pendingSubmissions = allSubmissions.filter(s => s.status === 'submitted');
+        // Get all pending submissions from the current list. "Pending" is
+        // 'submitted' in wiki/news and 'pending' in data/legislation/lawsuit.
+        const pendingSubmissions = allSubmissions.filter(s => s.status === 'submitted' || s.status === 'pending');
 
         if (pendingSubmissions.length === 0) {
             alert('No pending submissions to reject.');

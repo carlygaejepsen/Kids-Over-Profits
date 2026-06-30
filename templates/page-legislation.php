@@ -68,6 +68,10 @@ $status_labels = [
     <div class="kop-records-header">
         <h1>Legislation Tracker</h1>
         <p>Bills and laws affecting Troubled Teen Industry facilities, tracked across all 50 states and Congress.</p>
+        <p class="kop-records-cta">
+            Know of a bill we're missing?
+            <a class="kop-card-link" href="<?php echo esc_url(home_url('/submit-legislation')); ?>">Submit legislation for review &rarr;</a>
+        </p>
     </div>
 
     <div class="kop-records-filters" id="legislation-filters">

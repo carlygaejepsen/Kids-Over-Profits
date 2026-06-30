@@ -115,7 +115,12 @@
     };
 
     const resolvedFormMode = typeof DATA_FORM_CONFIG.mode === 'string' ? DATA_FORM_CONFIG.mode : (typeof window !== 'undefined' && typeof window.FORM_MODE === 'string' ? window.FORM_MODE : 'master');
-    const FORM_MODE = typeof resolvedFormMode === 'string' ? resolvedFormMode.toLowerCase() : 'master';
+    let FORM_MODE = typeof resolvedFormMode === 'string' ? resolvedFormMode.toLowerCase() : 'master';
+    // Normalize legacy/singular spelling so 'suggestion' and 'suggestions' both
+    // count as suggestion mode (the rest of the code compares against 'suggestions').
+    if (FORM_MODE === 'suggestion') {
+        FORM_MODE = 'suggestions';
+    }
 
     function isSuggestionMode() {
         // Use the centrally defined FORM_MODE

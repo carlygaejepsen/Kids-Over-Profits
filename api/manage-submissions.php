@@ -44,15 +44,77 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
     exit;
 }
 
+/**
+ * Per-type submission schema.
+ *
+ * wiki/news/data each live in their own staging table and track review state in
+ * a `status` column. Legislation and lawsuits, by contrast, live in their own
+ * single content table and track lifecycle in `publication_status` — the
+ * canonical "unreviewed" value there is `pending` (not `submitted`), and those
+ * tables have no reviewed_by/reviewed_at columns. This map lets the queue treat
+ * all five types uniformly. Returns null for an unknown type.
+ */
+function kop_submission_schema($type) {
+    switch ($type) {
+        case 'wiki':
+            return ['table' => 'wiki_submissions', 'status_col' => 'status', 'pending' => 'submitted', 'title_col' => 'program_name', 'reviewer_meta' => true,  'record' => false];
+        case 'news':
+            return ['table' => 'news_submissions', 'status_col' => 'status', 'pending' => 'submitted', 'title_col' => 'article_title', 'reviewer_meta' => true,  'record' => false];
+        case 'data':
+            return ['table' => 'suggested_edits',  'status_col' => 'status', 'pending' => 'pending',   'title_col' => 'master_id',    'reviewer_meta' => false, 'record' => false];
+        case 'legislation':
+            return ['table' => 'legislation',       'status_col' => 'publication_status', 'pending' => 'pending', 'title_col' => 'bill_title', 'reviewer_meta' => false, 'record' => true];
+        case 'lawsuit':
+            return ['table' => 'lawsuits',          'status_col' => 'publication_status', 'pending' => 'pending', 'title_col' => 'case_name',  'reviewer_meta' => false, 'record' => true];
+        default:
+            return null;
+    }
+}
+
+/**
+ * Decode any JSON-array/object text columns so the admin "form data" view shows
+ * structured values instead of raw JSON strings.
+ */
+function kop_decode_record_json(array $row): array {
+    $out = [];
+    foreach ($row as $k => $v) {
+        if (is_string($v) && $v !== '' && ($v[0] === '[' || $v[0] === '{')) {
+            $decoded = json_decode($v, true);
+            $out[$k] = ($decoded !== null) ? $decoded : $v;
+        } else {
+            $out[$k] = $v;
+        }
+    }
+    return $out;
+}
+
+/**
+ * Map a legislation/lawsuit content row into the generic submission shape the
+ * admin queue JS expects (program_name / city_state / status / submitted_by /
+ * submission_notes / json_data).
+ */
+function kop_map_record_submission(array $row, array $schema): array {
+    $titleCol = $schema['title_col'];
+    $mapped = $row;
+    $mapped['program_name']     = $row[$titleCol] ?? '';
+    $mapped['city_state']       = $row['jurisdiction'] ?? '';
+    $mapped['status']           = $row['publication_status'] ?? '';
+    $mapped['submitted_by']     = (isset($row['submitted_by']) && $row['submitted_by'] !== '') ? $row['submitted_by'] : 'Anonymous';
+    $mapped['submission_notes'] = $row['reviewer_notes'] ?? '';
+    $mapped['json_data']        = kop_decode_record_json($row);
+    return $mapped;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? 'wiki';
-    if (!in_array($type, ['wiki', 'news', 'data'], true)) {
+    $schema = kop_submission_schema($type);
+    if (!$schema) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", or "data"']);
+        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", "data", "legislation", or "lawsuit"']);
         exit;
     }
 
-    $table = $type === 'wiki' ? 'wiki_submissions' : ($type === 'news' ? 'news_submissions' : 'suggested_edits');
+    $table = $schema['table'];
     $action = $_GET['action'] ?? 'list';
 
     if ($action === 'get') {
@@ -70,6 +132,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         if (!$submission) {
             http_response_code(404);
             echo json_encode(['success' => false, 'error' => 'Submission not found']);
+            exit;
+        }
+
+        if ($schema['record']) {
+            echo json_encode(['success' => true, 'data' => kop_map_record_submission($submission, $schema)]);
             exit;
         }
 
@@ -94,14 +161,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $params = [];
 
     if ($status) {
-        // suggested_edits uses 'pending' for unreviewed rows (schema enum
-        // ('pending','approved','rejected')); wiki/news tables use 'submitted'.
-        // Translate the admin UI's canonical "Pending Review" value so the
-        // same filter works across all three types.
-        if ($type === 'data' && $status === 'submitted') {
-            $status = 'pending';
+        // Tables vary in how they name the "unreviewed" state: suggested_edits
+        // and the legislation/lawsuits content tables use 'pending'; wiki/news
+        // use 'submitted'. Translate the admin UI's canonical "Pending Review"
+        // value, and target each type's own status column.
+        if ($status === 'submitted' && $schema['pending'] !== 'submitted') {
+            $status = $schema['pending'];
         }
-        $where[] = "status = :status";
+        $where[] = $schema['status_col'] . " = :status";
         $params[':status'] = $status;
     }
 
@@ -111,6 +178,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             // sanitized program-name string, not a numeric FK)
             $where[] = "(master_id LIKE :search)";
             $params[':search'] = "%$search%";
+        } elseif ($type === 'legislation') {
+            $where[] = "(bill_title LIKE :search1 OR bill_number LIKE :search2 OR jurisdiction LIKE :search3)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
+            $params[':search3'] = "%$search%";
+        } elseif ($type === 'lawsuit') {
+            $where[] = "(case_name LIKE :search1 OR case_number LIKE :search2 OR jurisdiction LIKE :search3)";
+            $params[':search1'] = "%$search%";
+            $params[':search2'] = "%$search%";
+            $params[':search3'] = "%$search%";
         } elseif ($type === 'news') {
             $where[] = "(article_title LIKE :search1 OR publication_name LIKE :search2 OR author LIKE :search3)";
             $params[':search1'] = "%$search%";
@@ -130,7 +207,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $countStmt->execute($params);
     $total = (int)$countStmt->fetchColumn();
 
-    if ($type === 'data') {
+    if ($type === 'legislation' || $type === 'lawsuit') {
+        // Single content table — pull the whole row and map it to the generic
+        // submission shape in PHP (see kop_map_record_submission below).
+        $sql = "SELECT * FROM $table $whereClause
+                ORDER BY created_at DESC
+                LIMIT {$limit} OFFSET {$offset}";
+    } elseif ($type === 'data') {
         // suggested_edits real columns: id, master_id, edited_json_data,
         // reason, submitter_ip, status, created_at. Alias to the names the
         // admin JS expects so news/wiki/data rendering can share the
@@ -162,6 +245,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $submissions = $stmt->fetchAll();
 
     foreach ($submissions as &$row) {
+        if ($schema['record']) {
+            $row = kop_map_record_submission($row, $schema);
+            continue;
+        }
         $row['json_data'] = json_decode($row['json_data'] ?? '', true);
         if ($type === 'data' && empty($row['submitted_by'])) {
              $row['submitted_by'] = 'Anonymous';
@@ -191,17 +278,18 @@ try {
     }
     
     $action = $data['action'] ?? '';
-    $type = $data['type'] ?? ''; // 'wiki' or 'news'
+    $type = $data['type'] ?? ''; // wiki | news | data | legislation | lawsuit
     $ids = $data['ids'] ?? ($data['id'] ? [$data['id']] : []);
-    
+
     // Validate type
-    if (!in_array($type, ['wiki', 'news', 'data'])) {
+    $schema = kop_submission_schema($type);
+    if (!$schema) {
         http_response_code(400);
-        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", or "data"']);
+        echo json_encode(['success' => false, 'error' => 'Invalid submission type. Use "wiki", "news", "data", "legislation", or "lawsuit"']);
         exit;
     }
-    
-    $table = $type === 'wiki' ? 'wiki_submissions' : ($type === 'news' ? 'news_submissions' : 'suggested_edits');
+
+    $table = $schema['table'];
     
     switch ($action) {
         case 'approve':
@@ -218,10 +306,27 @@ try {
             $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
             
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            
-            if ($type === 'data') {
+
+            if ($schema['record']) {
+                // legislation / lawsuits: lifecycle lives in publication_status.
+                // These tables have no reviewed_by/reviewed_at columns, so append
+                // any reviewer note to the existing notes log rather than relying
+                // on the wiki/news column set, and stamp published_at on publish.
+                $statusCol = $schema['status_col'];
+                $set = "$statusCol = ?";
+                $upParams = [$status];
+                if ($reviewerNotes !== '') {
+                    $set .= ", reviewer_notes = TRIM(LEADING '\n' FROM CONCAT(COALESCE(reviewer_notes, ''), '\n[review] ', ?))";
+                    $upParams[] = $reviewerNotes;
+                }
+                if ($status === 'published') {
+                    $set .= ", published_at = NOW()";
+                }
+                $sql = "UPDATE $table SET $set WHERE id IN ($placeholders)";
+                $params = array_merge($upParams, $ids);
+            } elseif ($type === 'data') {
                 // suggested_edits table has limited columns
-                $sql = "UPDATE $table SET 
+                $sql = "UPDATE $table SET
                             status = ?
                         WHERE id IN ($placeholders)";
                 $params = array_merge([$status], $ids);
@@ -358,16 +463,22 @@ try {
             }
             
             $newStatus = $data['status'] ?? '';
-            $validStatuses = ['draft', 'submitted', 'approved', 'published', 'rejected'];
-            
+            $validStatuses = ['draft', 'submitted', 'pending', 'approved', 'published', 'rejected'];
+
             if (!in_array($newStatus, $validStatuses)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Invalid status']);
                 exit;
             }
-            
+
+            // Map the UI's canonical "submitted" to whatever the target table
+            // calls its unreviewed state, and write to that table's status column.
+            if ($newStatus === 'submitted' && $schema['pending'] !== 'submitted') {
+                $newStatus = $schema['pending'];
+            }
+
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
-            $sql = "UPDATE $table SET status = ? WHERE id IN ($placeholders)";
+            $sql = "UPDATE $table SET {$schema['status_col']} = ? WHERE id IN ($placeholders)";
             $params = array_merge([$newStatus], $ids);
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
@@ -381,6 +492,19 @@ try {
             break;
             
         case 'stats':
+            // legislation / lawsuits: single content table keyed on publication_status.
+            if ($schema['record']) {
+                $byStatus = $pdo->query(
+                    "SELECT {$schema['status_col']} AS status, COUNT(*) AS count
+                     FROM {$schema['table']} GROUP BY {$schema['status_col']}"
+                )->fetchAll(PDO::FETCH_KEY_PAIR);
+                echo json_encode([
+                    'success' => true,
+                    'stats' => ['by_status' => $byStatus, 'total' => array_sum($byStatus)],
+                ]);
+                break;
+            }
+
             // Get submission statistics
             $wikiStats = $pdo->query("
                 SELECT status, COUNT(*) as count

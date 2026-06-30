@@ -33,14 +33,38 @@
             if (!projectName) return;
             const source = projectPayload && typeof projectPayload === 'object' ? projectPayload : {};
 
-            let rawData = source.data ? source.data : source;
-            if (typeof rawData === 'string') {
+            const parseIfString = (val) => {
+                if (typeof val !== 'string') return val;
                 try {
-                    rawData = JSON.parse(rawData);
+                    return JSON.parse(val);
                 } catch (parseErr) {
                     console.warn('Failed to parse project data string for', projectName, parseErr);
-                    rawData = {};
+                    return {};
                 }
+            };
+
+            // Pick the object layer that actually holds project content. Company
+            // projects store facilities/operator at the top level alongside a thin
+            // `data` sibling (e.g. { documentFolderId }); others nest content under
+            // `data` or `data.data`. Blindly preferring `source.data` drops the
+            // top-level facilities and shows only a blank "Facility 1".
+            const hasProjectContent = (obj) => obj && typeof obj === 'object' && [
+                'facilities', 'operator', 'referrerConsultants', 'referrerAgency',
+                'referrerIndividual', 'transporters', 'transporterCompany', 'transporterIndividual'
+            ].some(key => obj[key] !== undefined);
+
+            const dataLayer = parseIfString(source.data);
+            const innerLayer = dataLayer && parseIfString(dataLayer.data);
+
+            let rawData;
+            if (hasProjectContent(innerLayer)) {
+                rawData = innerLayer; // double-nested { data: { data: {...} } }
+            } else if (hasProjectContent(dataLayer)) {
+                rawData = dataLayer;
+            } else if (hasProjectContent(source)) {
+                rawData = source; // content at top level; `data` is just metadata
+            } else {
+                rawData = dataLayer || source; // nothing obvious — preserve legacy behavior
             }
 
             const name = source.name || projectName;
