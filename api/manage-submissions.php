@@ -105,6 +105,64 @@ function kop_map_record_submission(array $row, array $schema): array {
     return $mapped;
 }
 
+/**
+ * Per-type whitelist of fields an admin may edit from the submission viewer's
+ * structured editor. Returns null for types with no structured editor (wiki
+ * uses its own markdown editor).
+ *
+ *   cols       - columns that may be written directly
+ *   json_array - subset of cols stored as a JSON array (normalized on save)
+ *   enums      - col => [allowed values]; values outside the list are ignored
+ *
+ * For 'data' the edit surface is the raw edited_json_data blob (plus reason).
+ */
+function kop_editable_fields($type) {
+    switch ($type) {
+        case 'legislation':
+            return [
+                'cols' => ['bill_number','bill_title','jurisdiction','chamber','session_year','bill_type','sponsors','status','introduced_date','last_action_date','last_action_text','subject_tags','summary','full_text_url','official_url','position','facilities_affected','tags','reviewer_notes'],
+                'json_array' => ['sponsors','subject_tags','facilities_affected','tags'],
+                'enums' => [
+                    'chamber'  => ['house','senate','assembly','joint','federal_house','federal_senate','other','unknown'],
+                    'status'   => ['introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown'],
+                    'position' => ['support','oppose','neutral','watch','unknown'],
+                ],
+            ];
+        case 'lawsuit':
+            return [
+                'cols' => ['case_name','case_number','court','jurisdiction','filing_date','status','plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','outcome','settlement_amount','summary','source_urls','document_urls','tags','reviewer_notes'],
+                'json_array' => ['plaintiffs','defendants','facilities_mentioned','staff_mentioned','organizations_mentioned','claims','source_urls','document_urls','tags'],
+                'enums' => [
+                    'status' => ['filed','in_progress','settled','dismissed','ruling','appeal','closed','unknown'],
+                ],
+            ];
+        case 'news':
+            return [
+                'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
+                'json_array' => ['facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings'],
+                'enums' => [
+                    'article_type' => ['lawsuit','event','expose','arrest','closure','corporate','general'],
+                ],
+            ];
+        case 'data':
+            return ['cols' => ['edited_json_data','reason'], 'json_array' => [], 'enums' => []];
+        default:
+            return null; // wiki has its own editor
+    }
+}
+
+/** Trim/dedupe a list that may arrive as an array or newline-separated text. */
+function kop_normalize_list($value): array {
+    if (is_array($value)) {
+        $items = array_map(static function ($v) { return is_string($v) ? trim($v) : $v; }, $value);
+    } elseif (is_string($value) && trim($value) !== '') {
+        $items = array_map('trim', preg_split('/[\r\n]+/', $value));
+    } else {
+        return [];
+    }
+    return array_values(array_filter($items, static function ($v) { return $v !== '' && $v !== null; }));
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $type = $_GET['type'] ?? 'wiki';
     $schema = kop_submission_schema($type);
@@ -581,12 +639,83 @@ try {
             }
             break;
 
+        case 'update_fields':
+            // Structured-editor save: write whitelisted fields for a single
+            // submission. Lifecycle (publication_status / status) is NOT editable
+            // here — that stays with approve/reject/publish.
+            $id = $data['id'] ?? ($ids[0] ?? null);
+            $fields = $data['fields'] ?? null;
+            if (!$id || !is_array($fields)) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Submission id and fields are required']);
+                exit;
+            }
+
+            $editable = kop_editable_fields($type);
+            if (!$editable) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Structured editing is not supported for this type']);
+                exit;
+            }
+
+            $set = [];
+            $params = [];
+            foreach ($fields as $col => $val) {
+                if (!in_array($col, $editable['cols'], true)) {
+                    continue; // not editable
+                }
+                if ($col === 'edited_json_data') {
+                    // data submissions: accept an object/array or JSON string,
+                    // re-encode so we store canonical JSON (and reject garbage).
+                    if (is_string($val)) {
+                        $decoded = json_decode($val, true);
+                        if ($decoded === null && trim($val) !== 'null') {
+                            http_response_code(400);
+                            echo json_encode(['success' => false, 'error' => 'edited_json_data is not valid JSON']);
+                            exit;
+                        }
+                        $val = json_encode($decoded);
+                    } else {
+                        $val = json_encode($val);
+                    }
+                } elseif (in_array($col, $editable['json_array'], true)) {
+                    $val = json_encode(kop_normalize_list($val), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                } elseif (isset($editable['enums'][$col])) {
+                    if (!in_array($val, $editable['enums'][$col], true)) {
+                        continue; // ignore invalid enum value
+                    }
+                } elseif (preg_match('/_date$/', $col) && (is_null($val) || $val === '')) {
+                    $val = null; // empty DATE -> NULL, not '0000-00-00'
+                } elseif (is_array($val)) {
+                    $val = json_encode($val);
+                }
+                $set[] = "`$col` = ?";
+                $params[] = $val;
+            }
+
+            if (!$set) {
+                echo json_encode(['success' => false, 'error' => 'No editable fields provided']);
+                break;
+            }
+
+            $params[] = (int)$id;
+            $sql = "UPDATE $table SET " . implode(', ', $set) . " WHERE id = ?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+
+            echo json_encode([
+                'success' => true,
+                'message' => 'Submission updated',
+                'affected' => $stmt->rowCount()
+            ]);
+            break;
+
         default:
             http_response_code(400);
             echo json_encode([
                 'success' => false,
                 'error' => 'Invalid action',
-                'valid_actions' => ['approve', 'reject', 'publish', 'delete', 'update_status', 'update_markdown', 'stats']
+                'valid_actions' => ['approve', 'reject', 'publish', 'delete', 'update_status', 'update_fields', 'update_markdown', 'stats']
             ]);
     }
     

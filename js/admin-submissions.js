@@ -48,6 +48,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const existingReviewerNotes = document.getElementById('existingReviewerNotes');
     const actionStatus = document.getElementById('actionStatus');
 
+    // Structured field editor (legislation / lawsuit / news / data)
+    const structuredEditorSection = document.getElementById('structuredEditorSection');
+    const structuredEditorBody = document.getElementById('structuredEditorBody');
+    const saveFieldsBtn = document.getElementById('saveFieldsBtn');
+    const structuredEditorStatus = document.getElementById('structuredEditorStatus');
+
     // Action buttons
     const approveBtn = document.getElementById('approveBtn');
     const rejectBtn = document.getElementById('rejectBtn');
@@ -76,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Move the submission modal back to its original DOM location and reset
-     * any expanded-card visual state. Does NOT change modal visibility â€” the
+     * any expanded-card visual state. Does NOT change modal visibility — the
      * caller decides whether to hide (closeModal) or leave it shown so a
      * subsequent viewSubmission can re-place it in a new card.
      *
@@ -108,6 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE = config.apiBase || '/wp-content/themes/child/api';
     const MANAGE_API = config.manageApi || `${API_BASE}/manage-submissions.php`;
     const SCAN_API = config.scanApi || `${API_BASE}/scan-submission-urls.php`;
+    // Reviewer identity comes from the logged-in WordPress user (localized by
+    // PHP). Admins are already authenticated, so we never need to ask them to
+    // type a name/email. Fall back to any previously-saved value for safety.
+    const REVIEWER = config.reviewer || localStorage.getItem('adminEmail') || '';
 
     // Initialize
     loadStats();
@@ -151,6 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (saveEditsBtn) {
         saveEditsBtn.addEventListener('click', saveMarkdownEdits);
+    }
+
+    if (saveFieldsBtn) {
+        saveFieldsBtn.addEventListener('click', saveStructuredFields);
     }
 
     if (showDiffHighlights) {
@@ -338,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * Render submissions list
      */
     function renderSubmissions(submissions) {
-        detachModal();              // see comment in loadSubmissions â€” must precede wiping list
+        detachModal();              // see comment in loadSubmissions — must precede wiping list
         submissionsList.innerHTML = '';
         const currentType = typeFilter ? typeFilter.value : 'wiki';
 
@@ -364,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.classList.add('has-duplicate');
                 }
                 
-                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">âš  Duplicate</span>' : '';
+                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">⚠ Duplicate</span>' : '';
                 
                 card.innerHTML = `
                     <div class="submission-header">
@@ -372,9 +386,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>ðŸ“° ${escapeHtml(source)}</span>
-                        <span>âœï¸ ${escapeHtml(author)}</span>
-                        <span>ðŸ·ï¸ ${escapeHtml(submission.article_type || 'general')}</span>
+                        <span>📰 ${escapeHtml(source)}</span>
+                        <span>✍️ ${escapeHtml(author)}</span>
+                        <span>🏷️ ${escapeHtml(submission.article_type || 'general')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -388,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>ðŸ”„ Data Update</span>
+                        <span>🔄 Data Update</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -396,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else if (currentType === 'legislation' || currentType === 'lawsuit') {
-                const icon  = currentType === 'legislation' ? 'ðŸ›ï¸' : 'âš–ï¸';
+                const icon  = currentType === 'legislation' ? '🏛️' : '⚖️';
                 const label = currentType === 'legislation' ? 'Bill' : 'Court case';
                 card.innerHTML = `
                     <div class="submission-header">
@@ -405,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="submission-meta">
                         <span>${icon} ${label}</span>
-                        <span>ðŸ“ ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
+                        <span>📍 ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -419,9 +433,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>ðŸ“ ${escapeHtml(submission.city_state || 'Location unknown')}</span>
-                        <span>ðŸ“… ${escapeHtml(submission.years_active || 'Years unknown')}</span>
-                        <span>ðŸ·ï¸ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
+                        <span>📍 ${escapeHtml(submission.city_state || 'Location unknown')}</span>
+                        <span>📅 ${escapeHtml(submission.years_active || 'Years unknown')}</span>
+                        <span>🏷️ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -436,7 +450,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * View submission details â€” inline expansion. Clicking on the
+     * View submission details — inline expansion. Clicking on the
      * already-expanded card collapses it; clicking another card collapses
      * the current one first, then expands the new one. The detail panel
      * (#submissionModal) is physically moved into the active card.
@@ -449,7 +463,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         // Collapse any other open card before opening the new one
-        // (don't hide the modal â€” we'll move it into the new card)
+        // (don't hide the modal — we'll move it into the new card)
         if (expandedCardId !== null) detachModal();
         try {
             const currentType = typeFilter ? typeFilter.value : 'wiki';
@@ -626,9 +640,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Form data
         modalFormData.textContent = JSON.stringify(jsonData, null, 2);
 
+        // Structured field editor (legislation / lawsuit / news / data; hidden
+        // for wiki, which uses the markdown editor above).
+        renderStructuredEditor(currentType, submission, jsonData);
+
         // Clear reviewer inputs
         reviewerNotes.value = '';
-        reviewerEmail.value = localStorage.getItem('adminEmail') || '';
+        reviewerEmail.value = reviewerEmail.value || REVIEWER;
 
         // Show existing review if available
         if (submission.reviewed_by) {
@@ -651,7 +669,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // -- Relocate the detail panel into the active card (inline expansion) --
         // Falls back to the original "panel at bottom" placement if the card
-        // can't be found â€” most commonly during the brief race window after
+        // can't be found — most commonly during the brief race window after
         // an approve/reject when the list is being re-fetched. In that case
         // we scrollIntoView so the user can still see the result.
         const card = submissionsList.querySelector(`.submission-card[data-id="${submission.id}"]`);
@@ -678,10 +696,10 @@ document.addEventListener('DOMContentLoaded', () => {
         publishBtn.disabled = false;
         deleteBtn.disabled = false;
 
-        // Publish is a wiki/news concept (approved â†’ live on wiki). The
+        // Publish is a wiki/news concept (approved → live on wiki). The
         // suggested_edits enum for data submissions only allows
         // ('pending','approved','rejected'), so hide the button entirely
-        // for data â€” approve already applies the edit.
+        // for data — approve already applies the edit.
         const currentType = typeFilter ? typeFilter.value : 'wiki';
         publishBtn.style.display = currentType === 'data' ? 'none' : '';
 
@@ -728,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="duplicate-submission-link">
                             <a href="javascript:void(0)" onclick="document.querySelector('[data-id=\"${dup.id}\"] .btn-view').click()">
-                                View Submission #${dup.id} â†’
+                                View Submission #${dup.id} →
                             </a>
                         </div>
                     </div>
@@ -756,7 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         section.style.display = 'block';
-        status.textContent = 'Scanning URLsâ€¦';
+        status.textContent = 'Scanning URLs…';
         status.className = 'url-safety-status scanning';
         list.innerHTML = '';
 
@@ -771,7 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ type: scanType, id: requestedId })
             });
 
-            // The modal may have closed or switched submissions while we were waiting â€”
+            // The modal may have closed or switched submissions while we were waiting —
             // bail out so we don't paint stale results onto a different submission.
             if (!currentSubmission || currentSubmission.id !== requestedId) return;
 
@@ -794,10 +812,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (result.flagged > 0) {
-                status.textContent = `âš  ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
+                status.textContent = `⚠ ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
                 status.className = 'url-safety-status flagged';
             } else {
-                status.textContent = `âœ“ All ${result.scanned} URL(s) clean.`;
+                status.textContent = `✓ All ${result.scanned} URL(s) clean.`;
                 status.className = 'url-safety-status clean';
             }
 
@@ -812,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const icon = document.createElement('span');
                 icon.className = 'url-safety-icon';
-                icon.textContent = r.clean === true ? 'âœ“' : r.clean === false ? 'âš ' : '?';
+                icon.textContent = r.clean === true ? '✓' : r.clean === false ? '⚠' : '?';
                 li.appendChild(icon);
 
                 const safe = safeUrl(r.url);
@@ -871,9 +889,9 @@ document.addEventListener('DOMContentLoaded', () => {
     async function copyMarkdown() {
         try {
             await navigator.clipboard.writeText(modalMarkdown.value);
-            copyMarkdownBtn.textContent = 'âœ“ Copied!';
+            copyMarkdownBtn.textContent = '✓ Copied!';
             setTimeout(() => {
-                copyMarkdownBtn.textContent = 'ðŸ“‹ Copy';
+                copyMarkdownBtn.textContent = '📋 Copy';
             }, 2000);
         } catch (error) {
             alert('Failed to copy to clipboard');
@@ -1090,10 +1108,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                saveEditsBtn.textContent = 'âœ“ Saved!';
+                saveEditsBtn.textContent = '✓ Saved!';
                 currentSubmission.generated_markdown = editedMarkdown;
                 setTimeout(() => {
-                    saveEditsBtn.textContent = 'ðŸ’¾ Save Edits';
+                    saveEditsBtn.textContent = '💾 Save Edits';
                     saveEditsBtn.disabled = false;
                 }, 2000);
             } else {
@@ -1101,12 +1119,266 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Save failed:', error);
-            saveEditsBtn.textContent = 'âœ— Error';
+            saveEditsBtn.textContent = '✗ Error';
             setTimeout(() => {
-                saveEditsBtn.textContent = 'ðŸ’¾ Save Edits';
+                saveEditsBtn.textContent = '💾 Save Edits';
                 saveEditsBtn.disabled = false;
             }, 2000);
             alert(`Failed to save edits: ${error.message}`);
+        }
+    }
+
+    // =========================================================================
+    // Structured field editor
+    // =========================================================================
+
+    // Per-type editable field definitions. Mirrors the server-side whitelist in
+    // manage-submissions.php (kop_editable_fields). type: text | textarea | date
+    // | url | select | list (newline-separated -> JSON array).
+    const FIELD_CONFIGS = {
+        legislation: [
+            { key: 'bill_title', label: 'Bill title', type: 'text' },
+            { key: 'bill_number', label: 'Bill number', type: 'text' },
+            { key: 'jurisdiction', label: 'Jurisdiction', type: 'text' },
+            { key: 'chamber', label: 'Chamber', type: 'select', options: ['unknown','house','senate','assembly','joint','federal_house','federal_senate','other'] },
+            { key: 'session_year', label: 'Session / year', type: 'text' },
+            { key: 'bill_type', label: 'Bill type', type: 'text' },
+            { key: 'status', label: 'Bill status', type: 'select', options: ['unknown','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted'] },
+            { key: 'position', label: 'KOP position', type: 'select', options: ['unknown','support','oppose','neutral','watch'] },
+            { key: 'introduced_date', label: 'Introduced date', type: 'date' },
+            { key: 'last_action_date', label: 'Last action date', type: 'date' },
+            { key: 'last_action_text', label: 'Last action', type: 'text' },
+            { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'sponsors', label: 'Sponsors (one per line)', type: 'list' },
+            { key: 'subject_tags', label: 'Subject tags (one per line)', type: 'list' },
+            { key: 'facilities_affected', label: 'Facilities affected (one per line)', type: 'list' },
+            { key: 'tags', label: 'Tags (one per line)', type: 'list' },
+            { key: 'full_text_url', label: 'Full text URL', type: 'url' },
+            { key: 'official_url', label: 'Official tracker URL', type: 'url' },
+            { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
+        ],
+        lawsuit: [
+            { key: 'case_name', label: 'Case name', type: 'text' },
+            { key: 'case_number', label: 'Case number', type: 'text' },
+            { key: 'court', label: 'Court', type: 'text' },
+            { key: 'jurisdiction', label: 'Jurisdiction', type: 'text' },
+            { key: 'status', label: 'Case status', type: 'select', options: ['unknown','filed','in_progress','settled','dismissed','ruling','appeal','closed'] },
+            { key: 'filing_date', label: 'Filing date', type: 'date' },
+            { key: 'settlement_amount', label: 'Settlement amount', type: 'text' },
+            { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'outcome', label: 'Outcome / disposition', type: 'textarea' },
+            { key: 'plaintiffs', label: 'Plaintiffs (one per line)', type: 'list' },
+            { key: 'defendants', label: 'Defendants (one per line)', type: 'list' },
+            { key: 'facilities_mentioned', label: 'Facilities mentioned (one per line)', type: 'list' },
+            { key: 'staff_mentioned', label: 'Staff/owners mentioned (one per line)', type: 'list' },
+            { key: 'organizations_mentioned', label: 'Organizations mentioned (one per line)', type: 'list' },
+            { key: 'claims', label: 'Claims (one per line)', type: 'list' },
+            { key: 'source_urls', label: 'Source URLs (one per line)', type: 'list' },
+            { key: 'document_urls', label: 'Document URLs (one per line)', type: 'list' },
+            { key: 'tags', label: 'Tags (one per line)', type: 'list' },
+            { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
+        ],
+        news: [
+            { key: 'article_title', label: 'Article title', type: 'text' },
+            { key: 'alternate_title', label: 'Alternate (trauma-sensitive) title', type: 'text' },
+            { key: 'author', label: 'Author', type: 'text' },
+            { key: 'publication_name', label: 'Publication', type: 'text' },
+            { key: 'publication_date', label: 'Publication date', type: 'date' },
+            { key: 'article_url', label: 'Article URL', type: 'url' },
+            { key: 'article_type', label: 'Article type', type: 'select', options: ['general','lawsuit','event','expose','arrest','closure','corporate'] },
+            { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'facilities_mentioned', label: 'Facilities mentioned (one per line)', type: 'list' },
+            { key: 'staff_mentioned', label: 'Staff/owners mentioned (one per line)', type: 'list' },
+            { key: 'survivors_mentioned', label: 'Survivors mentioned (one per line)', type: 'list' },
+            { key: 'content_warnings', label: 'Content warnings (one per line)', type: 'list' },
+            { key: 'reviewer_notes', label: 'Reviewer notes (internal)', type: 'textarea' },
+        ],
+    };
+
+    // Types whose real column values are nested in decoded json_data (the GET
+    // 'get' response remaps top-level status/submitted_by for these).
+    const RECORD_TYPES = new Set(['legislation', 'lawsuit']);
+
+    /** Coerce a stored list value (array, JSON string, or text) to an array. */
+    function coerceList(raw) {
+        if (Array.isArray(raw)) return raw;
+        if (raw == null || raw === '') return [];
+        if (typeof raw === 'string') {
+            const s = raw.trim();
+            if (s.startsWith('[')) {
+                try { const a = JSON.parse(s); if (Array.isArray(a)) return a; } catch (e) { /* fall through */ }
+            }
+            return s.split(/[\r\n]+/).map(x => x.trim()).filter(Boolean);
+        }
+        return [];
+    }
+
+    /** Where to read a field's current value from, per type. */
+    function editorValueSource(type, submission) {
+        if (RECORD_TYPES.has(type)) return submission.json_data || {};
+        return submission;
+    }
+
+    /**
+     * Render the structured editor for the current submission. Shows a labeled
+     * field form for legislation/lawsuit/news, a raw-JSON editor for data, and
+     * hides itself for wiki (which uses the markdown editor).
+     */
+    function renderStructuredEditor(type, submission, jsonData) {
+        if (!structuredEditorSection || !structuredEditorBody) return;
+        setEditorStatus('');
+
+        if (type === 'data') {
+            structuredEditorSection.style.display = 'block';
+            structuredEditorBody.innerHTML = '';
+            const wrap = document.createElement('div');
+            wrap.className = 'kop-edit-field kop-edit-full';
+            const label = document.createElement('label');
+            label.setAttribute('for', 'dataJsonEditor');
+            label.textContent = 'Edited facility data (JSON)';
+            const ta = document.createElement('textarea');
+            ta.id = 'dataJsonEditor';
+            ta.className = 'kop-edit-input kop-edit-json';
+            ta.rows = 20;
+            ta.spellcheck = false;
+            ta.value = JSON.stringify(jsonData || {}, null, 2);
+            const hint = document.createElement('p');
+            hint.className = 'kop-edit-hint';
+            hint.textContent = 'This submission is a full facility record. Edit the JSON directly — it must stay valid JSON.';
+            wrap.appendChild(label);
+            wrap.appendChild(ta);
+            wrap.appendChild(hint);
+            structuredEditorBody.appendChild(wrap);
+            return;
+        }
+
+        const fields = FIELD_CONFIGS[type];
+        if (!fields) {
+            structuredEditorSection.style.display = 'none';
+            structuredEditorBody.innerHTML = '';
+            return;
+        }
+
+        structuredEditorSection.style.display = 'block';
+        structuredEditorBody.innerHTML = '';
+        const src = editorValueSource(type, submission);
+        const grid = document.createElement('div');
+        grid.className = 'kop-edit-grid';
+
+        fields.forEach(f => {
+            const wrap = document.createElement('div');
+            wrap.className = 'kop-edit-field' + (f.type === 'textarea' || f.type === 'list' ? ' kop-edit-full' : '');
+            const id = `edit-${type}-${f.key}`;
+
+            const label = document.createElement('label');
+            label.setAttribute('for', id);
+            label.textContent = f.label;
+            wrap.appendChild(label);
+
+            let input;
+            if (f.type === 'select') {
+                input = document.createElement('select');
+                (f.options || []).forEach(opt => {
+                    const o = document.createElement('option');
+                    o.value = opt;
+                    o.textContent = opt;
+                    input.appendChild(o);
+                });
+                input.value = (src[f.key] != null && src[f.key] !== '') ? String(src[f.key]) : (f.options[0] || '');
+            } else if (f.type === 'textarea') {
+                input = document.createElement('textarea');
+                input.rows = 3;
+                input.value = src[f.key] != null ? String(src[f.key]) : '';
+            } else if (f.type === 'list') {
+                input = document.createElement('textarea');
+                input.rows = 3;
+                input.value = coerceList(src[f.key]).join('\n');
+            } else {
+                input = document.createElement('input');
+                input.type = (f.type === 'date') ? 'date' : (f.type === 'url' ? 'url' : 'text');
+                let v = src[f.key];
+                if (f.type === 'date' && typeof v === 'string') v = v.slice(0, 10); // YYYY-MM-DD
+                input.value = (v != null) ? String(v) : '';
+            }
+            input.id = id;
+            input.className = (input.className ? input.className + ' ' : '') + 'kop-edit-input';
+            input.dataset.fieldKey = f.key;
+            input.dataset.fieldType = f.type;
+            wrap.appendChild(input);
+            grid.appendChild(wrap);
+        });
+
+        structuredEditorBody.appendChild(grid);
+    }
+
+    /** Gather edited values into a {col: value} map for update_fields. */
+    function collectStructuredFields(type) {
+        if (type === 'data') {
+            const ta = document.getElementById('dataJsonEditor');
+            if (!ta) return null;
+            let parsed;
+            try {
+                parsed = JSON.parse(ta.value);
+            } catch (e) {
+                return { __error: 'The JSON is invalid: ' + e.message };
+            }
+            return { edited_json_data: parsed };
+        }
+        if (!structuredEditorBody) return null;
+        const fields = {};
+        structuredEditorBody.querySelectorAll('[data-field-key]').forEach(el => {
+            const key = el.dataset.fieldKey;
+            if (el.dataset.fieldType === 'list') {
+                fields[key] = el.value.split(/[\r\n]+/).map(s => s.trim()).filter(Boolean);
+            } else {
+                fields[key] = el.value;
+            }
+        });
+        return fields;
+    }
+
+    function setEditorStatus(msg, isError) {
+        if (!structuredEditorStatus) return;
+        structuredEditorStatus.textContent = msg || '';
+        structuredEditorStatus.className = 'structured-editor-status' + (msg ? (isError ? ' error' : ' success') : '');
+    }
+
+    /** Persist structured-editor changes via the update_fields action. */
+    async function saveStructuredFields() {
+        if (!currentSubmission) return;
+        const type = typeFilter ? typeFilter.value : 'wiki';
+        const fields = collectStructuredFields(type);
+        if (!fields) return;
+        if (fields.__error) { setEditorStatus(fields.__error, true); return; }
+
+        const id = currentSubmission.id;
+        saveFieldsBtn.disabled = true;
+        const original = saveFieldsBtn.textContent;
+        saveFieldsBtn.textContent = 'Saving...';
+        setEditorStatus('');
+
+        try {
+            const response = await fetch(MANAGE_API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'update_fields', type, id, fields })
+            });
+            const result = await response.json();
+            if (result.success) {
+                setEditorStatus('✓ Saved', false);
+                // Refresh the list (titles/locations on cards may have changed)
+                // and re-open this submission so the editor shows stored values.
+                loadSubmissions();
+                viewSubmission(id);
+            } else {
+                setEditorStatus('✗ ' + (result.error || 'Save failed'), true);
+            }
+        } catch (error) {
+            console.error('Save fields failed:', error);
+            setEditorStatus('✗ Network error', true);
+        } finally {
+            saveFieldsBtn.disabled = false;
+            saveFieldsBtn.textContent = original;
         }
     }
 
@@ -1118,12 +1390,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentType = typeFilter ? typeFilter.value : 'wiki';
 
         const notes = reviewerNotes.value.trim();
-        const email = reviewerEmail.value.trim();
-
-        if (!email && action !== 'delete') {
-            alert('Please enter your email/name');
-            return;
-        }
+        // Reviewer identity is the logged-in admin (REVIEWER); the editable
+        // field just lets them override it. No prompt needed.
+        const email = reviewerEmail.value.trim() || REVIEWER;
 
         // Save email for future use
         if (email) {
@@ -1154,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                actionStatus.innerHTML = `<span class="success">âœ“ ${result.message}</span>`;
+                actionStatus.innerHTML = `<span class="success">✓ ${result.message}</span>`;
 
                 // Refresh data
                 setTimeout(() => {
@@ -1168,12 +1437,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 1000);
             } else {
-                actionStatus.innerHTML = `<span class="error">âœ— ${result.error || 'Action failed'}</span>`;
+                actionStatus.innerHTML = `<span class="error">✗ ${result.error || 'Action failed'}</span>`;
                 updateButtonStates(currentSubmission.status);
             }
         } catch (error) {
             console.error('Action failed:', error);
-            actionStatus.innerHTML = '<span class="error">âœ— Network error</span>';
+            actionStatus.innerHTML = '<span class="error">✗ Network error</span>';
             updateButtonStates(currentSubmission.status);
         }
     }
@@ -1196,13 +1465,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Get reviewer email
-        const email = localStorage.getItem('adminEmail') || prompt('Enter your email/name for the review record:');
-        if (!email) {
-            alert('Reviewer email/name is required.');
-            return;
+        // Reviewer identity is the logged-in admin — no prompt needed.
+        const email = REVIEWER || localStorage.getItem('adminEmail') || '';
+        if (email) {
+            localStorage.setItem('adminEmail', email);
         }
-        localStorage.setItem('adminEmail', email);
 
         const currentType = typeFilter ? typeFilter.value : 'wiki';
         const ids = pendingSubmissions.map(s => s.id);
@@ -1238,7 +1505,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Network error while rejecting submissions.');
         } finally {
             rejectAllBtn.disabled = false;
-            rejectAllBtn.textContent = 'âœ— Reject All Pending';
+            rejectAllBtn.textContent = '✗ Reject All Pending';
         }
     }
 

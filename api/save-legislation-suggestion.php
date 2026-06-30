@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/url-dedupe.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -86,6 +87,13 @@ try {
 
     $note = trim((string)($input['notes'] ?? $input['submission_notes'] ?? ''));
     $reviewerNotes = $note !== '' ? '[submitter] ' . $note : '';
+
+    // Block duplicate bills by their linked URL (bill text / official tracker).
+    // Re-submitting something previously rejected is still allowed.
+    $dupUrls = kop_collect_urls($input['full_text_url'] ?? '', $input['official_url'] ?? '');
+    if (!empty($dupUrls)) {
+        kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'legislation', $dupUrls));
+    }
 
     $fields = [
         'bill_number'        => trim((string)($input['bill_number'] ?? '')),

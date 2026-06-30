@@ -1216,6 +1216,48 @@
         processBtn.addEventListener('click', processWithAI);
     }
 
+    // ---- Duplicate-URL guard --------------------------------------------------
+    // Before AI processing or submitting, ask the server whether a news entry
+    // already exists for this article URL. Fails open (never blocks) on error;
+    // the submit endpoint still rejects true duplicates with a 409 as a backstop.
+    const newsDupeCheckUrl = (() => {
+        const base = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.submissionUrl)
+            ? window.KOP_NewsProcessor_Settings.submissionUrl
+            : '/wp-content/themes/child/api/save-news-submission.php';
+        return base.replace(/[^/]*$/, 'check-duplicate-url.php');
+    })();
+
+    async function newsFindUrlDuplicates(url) {
+        const clean = (url || '').trim();
+        if (!clean) return [];
+        try {
+            const res = await fetch(newsDupeCheckUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'news', url: clean })
+            });
+            const data = await res.json();
+            if (data && data.success) return data.duplicates || [];
+        } catch (e) {
+            console.warn('Duplicate URL check failed:', e);
+        }
+        return [];
+    }
+
+    /** Returns true and shows a popup if a news entry already uses this URL. */
+    async function newsBlockedByDuplicate(url) {
+        const dupes = await newsFindUrlDuplicates(url);
+        if (!dupes.length) return false;
+        const d = dupes[0] || {};
+        const title = d.title ? `\n\nExisting entry: "${d.title}"` : '';
+        window.alert(
+            'This article already appears to be in our records, so it was not added again.'
+            + title
+            + '\n\nThank you for helping! There is nothing more you need to do.'
+        );
+        return true;
+    }
+
     async function processWithAI() {
         const aiUrlInput = document.getElementById('ai-article-url');
         const url = aiUrlInput ? aiUrlInput.value.trim() : '';
@@ -1227,6 +1269,12 @@
 
         if (!url && !pastedText) {
             statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';
+            return;
+        }
+
+        // Block generation if this article URL is already in the system.
+        if (url && await newsBlockedByDuplicate(url)) {
+            statusEl.innerHTML = '';
             return;
         }
 
@@ -1339,6 +1387,12 @@
             
             if (!title.trim()) {
                 statusEl.innerHTML = '<span class="error">❌ Article title is required</span>';
+                return;
+            }
+
+            // Block submission if this article URL is already in the system.
+            if (formData.url && await newsBlockedByDuplicate(formData.url)) {
+                modal.style.display = 'none';
                 return;
             }
 

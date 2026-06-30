@@ -180,6 +180,19 @@ get_header();
                         </div>
                     </div>
 
+                    <!-- Structured Field Editor (legislation / lawsuit / news / data) -->
+                    <div id="structuredEditorSection" class="structured-editor-section" style="display: none;">
+                        <div class="structured-editor-header">
+                            <h3>Review &amp; Edit Fields</h3>
+                            <p class="structured-editor-intro">Edit any field below, then <strong>Save Edits</strong>. Saving does not change the submission's status — use Approve / Reject / Publish for that.</p>
+                            <div class="structured-editor-actions">
+                                <button type="button" id="saveFieldsBtn" class="btn-save-edits">💾 Save Edits</button>
+                                <span id="structuredEditorStatus" class="structured-editor-status"></span>
+                            </div>
+                        </div>
+                        <div id="structuredEditorBody" class="structured-editor-body"></div>
+                    </div>
+
                     <!-- Form Data Preview -->
                     <div class="form-data-preview">
                         <details>

@@ -92,6 +92,48 @@
         return el ? el.value : '';
     };
 
+    // ---- Duplicate-URL guard ----------------------------------------------
+    // Before an AI auto-populate or a save, ask the server whether an entry
+    // already exists for the record's URL(s). The check endpoint lives next to
+    // the save endpoint in /api. Fails open (never blocks) if it errors.
+    const dupeCheckUrl = (config.apiUrl || '').replace(/[^/]*$/, 'check-duplicate-url.php');
+
+    async function findUrlDuplicates(urls, excludeId) {
+        const clean = (urls || []).map(u => (u || '').trim()).filter(Boolean);
+        if (!clean.length || !dupeCheckUrl) return [];
+        try {
+            const res = await fetch(dupeCheckUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: config.kind, urls: clean, exclude_id: excludeId || 0 })
+            });
+            const data = await res.json();
+            if (data && data.success) return data.duplicates || [];
+        } catch (e) {
+            console.warn('Duplicate URL check failed:', e);
+        }
+        return [];
+    }
+
+    function duplicateMessage(dupes) {
+        const d = dupes[0] || {};
+        const title = d.title ? `\n\nExisting entry: "${d.title}"` : '';
+        return 'This already appears to be in our records, so it was not added again.'
+            + title
+            + '\n\nThank you for helping! There is nothing more you need to do.';
+    }
+
+    /** Returns true and shows a popup if any of the URLs already exist. */
+    async function blockedByDuplicate(urls, excludeId) {
+        const dupes = await findUrlDuplicates(urls, excludeId);
+        if (dupes.length) {
+            window.alert(duplicateMessage(dupes));
+            return true;
+        }
+        return false;
+    }
+
     // ---- Lawsuits ----
     if (isLawsuitsPage) {
         const form = document.getElementById('lawsuitForm');
@@ -293,6 +335,11 @@
                     return;
                 }
 
+                if (await blockedByDuplicate(
+                    [...linesToArray(getFieldValue('lawsuit-sources')), ...linesToArray(getFieldValue('lawsuit-docs'))],
+                    parseInt(getFieldValue('lawsuit-id'), 10) || 0
+                )) return;
+
                 fetchLawsuitBtn.disabled = true;
                 const originalHTML = fetchLawsuitBtn.innerHTML;
                 fetchLawsuitBtn.textContent = '✨ Fetching...';
@@ -429,6 +476,10 @@
 
         form.addEventListener('submit', async e => {
             e.preventDefault();
+            if (await blockedByDuplicate(
+                [...linesToArray(getFieldValue('lawsuit-sources')), ...linesToArray(getFieldValue('lawsuit-docs'))],
+                parseInt(getFieldValue('lawsuit-id'), 10) || 0
+            )) { status.textContent = ''; return; }
             status.textContent = 'Saving...';
             const payload = collectPayload();
             const res = await fetch(config.apiUrl, {
@@ -617,6 +668,10 @@
 
         form.addEventListener('submit', async e => {
             e.preventDefault();
+            if (await blockedByDuplicate(
+                [getFieldValue('leg-full-text-url'), getFieldValue('leg-official-url')],
+                parseInt(getFieldValue('leg-id'), 10) || 0
+            )) { status.textContent = ''; return; }
             status.textContent = 'Saving...';
             const payload = collectPayload();
             const res = await fetch(config.apiUrl, {
@@ -661,6 +716,11 @@
                     status.style.color = '#dc2626';
                     return;
                 }
+
+                if (await blockedByDuplicate(
+                    [getFieldValue('leg-full-text-url'), getFieldValue('leg-official-url')],
+                    parseInt(getFieldValue('leg-id'), 10) || 0
+                )) return;
 
                 // Combine bill type + number if the user gave them separately
                 // (e.g. type "SB" + number "1190" -> "SB 1190"). If they already

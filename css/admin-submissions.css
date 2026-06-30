@@ -1037,7 +1037,7 @@
 
 
 /* ============================================================
-   Inline card expansion â€” when #submissionModal is moved into
+   Inline card expansion — when #submissionModal is moved into
    an active card by admin-submissions.js viewSubmission()
    ============================================================ */
 .submission-card.expanded {
@@ -1053,7 +1053,7 @@
     margin-top: 16px;
 }
 
-/* Inside a card, the detail panel already has a card around it â€” drop
+/* Inside a card, the detail panel already has a card around it — drop
    the inner shadow/radius so it blends rather than nests. */
 .submission-card.expanded .submission-modal-content {
     box-shadow: none;
@@ -1245,3 +1245,105 @@
 
 .link-msg-ok    { background: var(--kop-mint, #B6E3D4); color: #1a5c45; }
 .link-msg-error { background: #fdecea; color: #c0392b; }
+
+/* =========================================================================
+   Structured field editor (legislation / lawsuit / news / data)
+   ========================================================================= */
+.structured-editor-section {
+    margin: 18px 0;
+    padding: 16px;
+    border: 1px solid var(--kop-border-secondary);
+    border-radius: 10px;
+    background: var(--kop-bg-secondary);
+}
+
+.structured-editor-header h3 {
+    margin: 0 0 4px;
+    color: var(--kop-midnight-blue);
+    font-size: 1rem;
+}
+
+.structured-editor-intro {
+    margin: 0 0 10px;
+    font-size: 0.82rem;
+    color: var(--kop-text-secondary);
+}
+
+.structured-editor-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.structured-editor-status {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.structured-editor-status.success { color: #1a7f4b; }
+.structured-editor-status.error   { color: #c0392b; }
+
+.kop-edit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+}
+
+.kop-edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+/* Textareas, lists, and the JSON editor span the full width. */
+.kop-edit-field.kop-edit-full {
+    grid-column: 1 / -1;
+}
+
+.kop-edit-field label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--kop-text-secondary);
+}
+
+.kop-edit-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px 10px;
+    border: 1px solid var(--kop-border-primary);
+    border-radius: 6px;
+    background: var(--kop-white);
+    color: var(--kop-text-primary);
+    font-size: 0.88rem;
+    font-family: inherit;
+}
+
+.kop-edit-input:focus {
+    outline: none;
+    border-color: var(--kop-teal);
+    box-shadow: 0 0 0 2px rgba(51, 167, 181, 0.25);
+}
+
+textarea.kop-edit-input {
+    resize: vertical;
+    line-height: 1.4;
+}
+
+.kop-edit-json {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.82rem;
+    white-space: pre;
+}
+
+.kop-edit-hint {
+    margin: 4px 0 0;
+    font-size: 0.78rem;
+    color: var(--kop-text-secondary);
+}
+
+@media (max-width: 640px) {
+    .kop-edit-grid {
+        grid-template-columns: 1fr;
+    }
+}

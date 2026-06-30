@@ -85,13 +85,23 @@ function kop_enqueue_admin_submissions() {
             true
         );
 
+        // Identify the reviewer from the logged-in WordPress user so the admin
+        // isn't asked to type a name/email for every approval. Prefer display
+        // name, fall back to email.
+        $reviewer = '';
+        if (is_user_logged_in()) {
+            $current_user = wp_get_current_user();
+            $reviewer = $current_user->display_name ?: $current_user->user_email;
+        }
+
         wp_localize_script(
             'kop-admin-submissions',
             'adminSubmissionsConfig',
             array(
                 'apiBase' => get_stylesheet_directory_uri() . '/api',
                 'manageApi' => get_stylesheet_directory_uri() . '/api/manage-submissions.php',
-                'scanApi' => get_stylesheet_directory_uri() . '/api/scan-submission-urls.php'
+                'scanApi' => get_stylesheet_directory_uri() . '/api/scan-submission-urls.php',
+                'reviewer' => $reviewer
             )
         );
     }

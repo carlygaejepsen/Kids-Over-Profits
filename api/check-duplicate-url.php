@@ -1,0 +1,95 @@
+<?php
+/**
+ * Pre-submit duplicate-URL check (public, read-only).
+ *
+ * Lets a form ask "does an entry already exist for this URL?" BEFORE running an
+ * AI generation or submitting, so the user can be warned and blocked instead of
+ * creating a duplicate. Mirrors exactly the matching rules the submit endpoints
+ * enforce server-side (api/url-dedupe.php).
+ *
+ * Request (GET or POST/JSON):
+ *   type        : 'news' | 'legislation' | 'lawsuit'   (required)
+ *   url         : a single URL                          (url or urls required)
+ *   urls        : array of URLs (or newline string)
+ *   exclude_id  : id of the record being edited, so it doesn't match itself
+ *
+ * Response: { success, blocked: bool, duplicates: [ {id,status,title,url} ] }
+ */
+
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/url-dedupe.php';
+
+// Accept JSON body or form/query params.
+$body = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $raw = file_get_contents('php://input');
+    $decoded = json_decode($raw, true);
+    if (is_array($decoded)) {
+        $body = $decoded;
+    }
+}
+$param = static function (string $key) use ($body) {
+    if (array_key_exists($key, $body)) {
+        return $body[$key];
+    }
+    return $_REQUEST[$key] ?? null;
+};
+
+$type = (string) ($param('type') ?? '');
+if (!kop_url_dedupe_config($type)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid or missing type. Use news, legislation, or lawsuit.']);
+    exit;
+}
+
+// Gather URLs from `url` (scalar) and/or `urls` (array or newline string).
+$rawUrls = [];
+$single = $param('url');
+if (is_string($single)) {
+    $rawUrls[] = $single;
+}
+$multi = $param('urls');
+if (is_array($multi)) {
+    foreach ($multi as $u) {
+        if (is_string($u)) {
+            $rawUrls[] = $u;
+        }
+    }
+} elseif (is_string($multi) && $multi !== '') {
+    foreach (preg_split('/[\r\n]+/', $multi) as $u) {
+        $rawUrls[] = $u;
+    }
+}
+
+$excludeId = (int) ($param('exclude_id') ?? 0);
+
+try {
+    $normalized = kop_collect_urls(...$rawUrls);
+    $duplicates = kop_check_url_duplicates($pdo, $type, $normalized);
+
+    if ($excludeId > 0) {
+        $duplicates = array_values(array_filter($duplicates, static function ($d) use ($excludeId) {
+            return (int) $d['id'] !== $excludeId;
+        }));
+    }
+
+    echo json_encode([
+        'success'    => true,
+        'blocked'    => !empty($duplicates),
+        'duplicates' => $duplicates,
+    ]);
+} catch (PDOException $e) {
+    error_log('check-duplicate-url.php error: ' . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'A database error occurred.']);
+}

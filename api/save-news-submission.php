@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-mentions.php';
 require_once __DIR__ . '/facility-aliases.php';
+require_once __DIR__ . '/url-dedupe.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
@@ -332,8 +333,16 @@ try {
             'id' => (int)$submissionId
         ]);
     } else {
+        // Block duplicate article submissions by URL (the strongest news
+        // identity key). Re-submitting something previously rejected/deleted is
+        // still allowed.
+        $dupUrls = kop_collect_urls($articleUrl);
+        if (!empty($dupUrls)) {
+            kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'news', $dupUrls));
+        }
+
         // Create new submission
-        $sql = "INSERT INTO news_submissions 
+        $sql = "INSERT INTO news_submissions
                     (article_title, alternate_title, author, publication_name, publication_date,
                      article_url, article_type, article_location, tags, facilities_mentioned, staff_mentioned,
                      survivors_mentioned, content_warnings, summary, json_data, 
