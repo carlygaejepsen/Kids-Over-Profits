@@ -360,6 +360,12 @@ try {
             }
             
             $status = $action === 'approve' ? 'approved' : ($action === 'publish' ? 'published' : 'rejected');
+            // Legislation and lawsuits go live the moment they're approved —
+            // there's no separate publish step in those workflows, so approving
+            // publishes (and stamps published_at via the record branch below).
+            if ($action === 'approve' && in_array($type, ['legislation', 'lawsuit'], true)) {
+                $status = 'published';
+            }
             $reviewerNotes = $data['reviewerNotes'] ?? $data['reviewer_notes'] ?? '';
             $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
             
