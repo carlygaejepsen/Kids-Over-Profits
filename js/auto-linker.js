@@ -229,10 +229,17 @@ class TTIProgramAutoLinker {
                     return false;
                 }
 
-                // Guard against over-linking generic single words. Acronyms are
-                // matched case-sensitively (uppercase) later, so they're exempt.
+                // Don't auto-link acronyms. Generated/abbreviated acronyms (e.g.
+                // "CMS" from "Cedar Mountain School") collide with very common
+                // terms and produce nonsense links. Real program names still
+                // link via their exact name, so nothing important is lost.
+                if (program.matchType === 'acronym') {
+                    return false;
+                }
+
+                // Guard against over-linking generic single words.
                 const wordCount = normalizedSearchTerm.split(/\s+/).filter(Boolean).length;
-                if (wordCount === 1 && program.matchType !== 'acronym') {
+                if (wordCount === 1) {
                     // Suffix-stripped variants ("Hope Academy" -> "hope") are too
                     // generic to link on a single bare word — require the fuller
                     // name to appear (multi-word exact/variant still links).

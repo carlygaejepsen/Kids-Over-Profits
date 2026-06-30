@@ -62,22 +62,11 @@ function buildSearchIndex(programs) {
             }
         }
 
-        // Generate acronym from multi-word names
-        const words = name.split(/[\s-]+/);
-        if (words.length >= 2 && words.length <= 5) {
-            const acronym = words
-                .filter(w => /^[A-Z]/i.test(w))
-                .map(w => w[0])
-                .join('')
-                .toUpperCase();
-
-            if (acronym.length >= 2 && acronym.length <= 6) {
-                const acronymKey = acronym.toLowerCase();
-                if (!index[acronymKey]) {
-                    index[acronymKey] = { name, url, matchType: 'acronym' };
-                }
-            }
-        }
+        // NOTE: We intentionally do NOT generate speculative acronyms from the
+        // first letters of multi-word names. Abbreviations like "CMS" (from
+        // "Cedar Mountain School") collide with extremely common terms and
+        // produced nonsense auto-links. Real names still link via their exact
+        // name. (The auto-linker also skips matchType 'acronym' at runtime.)
 
         // Add existing acronyms in name
         const acronymMatches = name.match(/\b[A-Z]{2,}\b/g);
