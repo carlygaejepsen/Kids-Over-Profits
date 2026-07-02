@@ -2100,6 +2100,112 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- EXTRACT FROM PROSE (AI) ---
+    const toggleExtractProseBtn = document.getElementById('toggleExtractProseBtn');
+    const extractProsePanel = document.getElementById('extractProsePanel');
+    const extractProseTextarea = document.getElementById('extractProseTextarea');
+    const extractProseBtn = document.getElementById('extractProseBtn');
+    const cancelExtractProseBtn = document.getElementById('cancelExtractProseBtn');
+    const extractProseStatus = document.getElementById('extractProseStatus');
+
+    const wikiExtractBase = (typeof editorSettings !== 'undefined' && editorSettings && editorSettings.saveApi)
+        ? editorSettings.saveApi
+        : '/wp-content/themes/child/api/save-wiki-submission.php';
+    const wikiExtractUrl = wikiExtractBase.replace(/[^/]*$/, 'extract-wiki-from-prose.php');
+
+    if (toggleExtractProseBtn && extractProsePanel) {
+        toggleExtractProseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const isHidden = extractProsePanel.style.display === 'none' || extractProsePanel.style.display === '';
+            extractProsePanel.style.display = isHidden ? 'block' : 'none';
+            toggleExtractProseBtn.textContent = isHidden ? '✖️ Close Extractor' : '🤖 Extract from Prose (AI)';
+        });
+    }
+    if (cancelExtractProseBtn && extractProsePanel) {
+        cancelExtractProseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            extractProsePanel.style.display = 'none';
+            if (toggleExtractProseBtn) toggleExtractProseBtn.textContent = '🤖 Extract from Prose (AI)';
+        });
+    }
+
+    // Fill only the fields the AI found — never clobber existing content with a
+    // blank, and check diagnoses additively. Returns the number of fields filled.
+    function applyExtractedWikiFields(data) {
+        if (!data || typeof data !== 'object') return 0;
+        let filled = 0;
+        const textIds = [
+            'programName', 'yearsActive', 'cityState', 'programType', 'yearFounded', 'ageRange',
+            'capacity', 'ownerName', 'parentCompany', 'headquarters', 'rebrand', 'avgStay', 'tuition',
+            'natsapYear', 'mainAddress', 'accreditingBody', 'natsapMember',
+            'historyNotes', 'levelSystemDesc', 'structureMisc', 'punishmentsMisc', 'lawsuitsMisc',
+            'mediaInfo', 'testimoniesMisc', 'relatedMediaMisc'
+        ];
+        textIds.forEach((id) => {
+            const val = data[id];
+            if (val == null) return;
+            const v = String(val).trim();
+            if (v === '') return;
+            const el = document.getElementById(id);
+            if (el) { el.value = v; filled++; }
+        });
+
+        if (Array.isArray(data.diagnoses) && data.diagnoses.length) {
+            const wanted = new Set(data.diagnoses.map((d) => String(d).toLowerCase().trim()));
+            document.querySelectorAll('input[name="diagnoses"]').forEach((cb) => {
+                if (wanted.has((cb.value || '').toLowerCase().trim()) && !cb.checked) {
+                    cb.checked = true;
+                    filled++;
+                }
+            });
+        }
+        return filled;
+    }
+
+    if (extractProseBtn) {
+        extractProseBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const prose = extractProseTextarea ? extractProseTextarea.value.trim() : '';
+            if (!prose) {
+                alert('Please paste some prose to extract from first!');
+                return;
+            }
+            const provider = 'groq'; // provider dropdown removed — always use Groq
+            const setStatus = (msg, color) => {
+                if (extractProseStatus) {
+                    extractProseStatus.textContent = msg;
+                    extractProseStatus.style.color = color || '';
+                }
+            };
+
+            extractProseBtn.disabled = true;
+            const originalText = extractProseBtn.textContent;
+            extractProseBtn.textContent = '🤖 Extracting…';
+            setStatus('Analyzing prose…', '');
+
+            try {
+                const res = await fetch(wikiExtractUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prose, provider })
+                });
+                const result = await res.json();
+                if (result.success && result.data) {
+                    const n = applyExtractedWikiFields(result.data);
+                    setStatus(`✓ Filled ${n} field${n === 1 ? '' : 's'} — review before saving.`, '#15803d');
+                } else {
+                    setStatus('✗ ' + (result.error || 'Extraction failed.'), '#dc2626');
+                }
+            } catch (err) {
+                console.error('Prose extraction failed:', err);
+                setStatus('✗ Network error: ' + err.message, '#dc2626');
+            } finally {
+                extractProseBtn.disabled = false;
+                extractProseBtn.textContent = originalText;
+            }
+        });
+    }
+
     // Import and parse Reddit markdown
     if (importBtn) {
         importBtn.addEventListener('click', (e) => {

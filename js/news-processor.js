@@ -1201,8 +1201,16 @@
 
         // Provider selection
         if (providerSelect && providerInfo) {
-            // Restore saved provider
-            const savedProvider = localStorage.getItem('news_ai_provider') || 'ollama';
+            // Default to Groq (the others' keys are unreliable here). One-time
+            // migration flips users still on the old 'ollama' default to Groq,
+            // but respects any deliberate choice made afterward.
+            if (!localStorage.getItem('news_ai_provider_default_groq')) {
+                if ((localStorage.getItem('news_ai_provider') || 'ollama') === 'ollama') {
+                    localStorage.setItem('news_ai_provider', 'groq');
+                }
+                localStorage.setItem('news_ai_provider_default_groq', '1');
+            }
+            const savedProvider = localStorage.getItem('news_ai_provider') || 'groq';
             providerSelect.value = savedProvider;
             providerInfo.textContent = providerDescriptions[savedProvider];
 
@@ -1265,7 +1273,7 @@
         const customInstructions = document.getElementById('ai-custom-instructions') && document.getElementById('ai-custom-instructions').value || '';
         const statusEl = document.getElementById('ai-status');
         const processBtn = document.getElementById('process-with-ai');
-        const provider = document.getElementById('ai-provider') && document.getElementById('ai-provider').value || 'ollama';
+        const provider = 'groq'; // provider dropdown removed — always use Groq
 
         if (!url && !pastedText) {
             statusEl.innerHTML = '<span class="error">Please enter a URL or paste article text</span>';

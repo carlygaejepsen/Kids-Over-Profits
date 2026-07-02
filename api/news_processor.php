@@ -50,17 +50,6 @@ get_header();
                     </div>
 
                     <div class="news-form-group">
-                        <label>Choose AI Provider</label>
-                        <select id="ai-provider" class="news-input">
-                            <option value="groq">Groq (Free Tier - Very Fast)</option>
-                            <option value="huggingface">Hugging Face (Free Tier)</option>
-                        </select>
-                        <small style="display: block; margin-top: 0.25rem; color: #004435;">
-                            <span id="provider-info">Groq offers 14,400 free requests/day. Get API key from console.groq.com</span>
-                        </small>
-                    </div>
-
-                    <div class="news-form-group">
                         <label>Article URL</label>
                         <input type="url" id="ai-article-url" class="news-input" placeholder="https://example.com/article...">
                     </div>

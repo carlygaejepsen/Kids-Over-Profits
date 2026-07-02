@@ -98,6 +98,7 @@ get_header();
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
                 <button type="button" id="toggleBulkUploadBtn" class="btn btn-secondary">📤 Bulk Upload Markdown Files</button>
                 <button type="button" id="toggleImportBtn" class="btn btn-secondary">📥 Import from Clipboard</button>
+                <button type="button" id="toggleExtractProseBtn" class="btn btn-secondary">🤖 Extract from Prose (AI)</button>
             </div>
             
             <!-- Bulk Upload Panel -->
@@ -128,6 +129,18 @@ get_header();
                 <div class="import-controls" style="margin-top:15px; display:flex; gap:10px;">
                     <button type="button" id="importBtn" class="btn btn-primary">Import & Fill Form</button>
                     <button type="button" id="cancelImportBtn" class="btn btn-danger">Close</button>
+                </div>
+            </div>
+
+            <!-- Extract-from-Prose Panel (AI) -->
+            <div id="extractProsePanel" class="import-panel" style="display: none;">
+                <h3>🤖 Extract Fields from Prose</h3>
+                <p>Paste any prose about a program (a description, article, report, or notes) and the AI will fill in the fields it can identify. <strong>Review everything before saving</strong> — AI can be wrong or incomplete. Long narrative lists (complaints, allegations, staff) still need manual entry.</p>
+                <textarea id="extractProseTextarea" class="import-textarea" rows="10" placeholder="Paste prose about the program here..."></textarea>
+                <div class="import-controls" style="margin-top:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <button type="button" id="extractProseBtn" class="btn btn-primary">Extract &amp; Fill Fields</button>
+                    <button type="button" id="cancelExtractProseBtn" class="btn btn-danger">Close</button>
+                    <span id="extractProseStatus" style="font-weight:600;"></span>
                 </div>
             </div>
         </div>

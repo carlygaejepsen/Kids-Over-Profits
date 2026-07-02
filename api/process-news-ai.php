@@ -46,7 +46,7 @@ if (!$data) {
 
 $url = $data['url'] ?? '';
 $articleText = $data['articleText'] ?? '';
-$provider = $data['provider'] ?? 'ollama';
+$provider = $data['provider'] ?? 'groq';
 $customInstructions = $data['customInstructions'] ?? '';
 
 if (empty($url) && empty($articleText)) {
