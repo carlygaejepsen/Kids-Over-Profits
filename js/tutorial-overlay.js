@@ -277,6 +277,12 @@ if (window.TutorialOverlay) {
             const step = this.steps[index];
             if (!step) return;
 
+            // Execute onShow handler if present (e.g., expand the toolbar before highlighting
+            // elements that live inside its collapsible content)
+            if (typeof step.onShow === 'function') {
+                step.onShow();
+            }
+
             // Update Content
             this.card.querySelector('.tutorial-title').textContent = step.title;
             this.card.querySelector('.tutorial-content').innerHTML = step.content;
@@ -1015,10 +1021,41 @@ if (window.TutorialOverlay) {
                 highlightAll: true
             },
             {
+                title: 'Open the Data Toolbar',
+                content: 'The <strong>Data Toolbar</strong> sits pinned at the top of the screen and stays visible as you scroll. It starts minimized to save space. Click the <strong>▼ button</strong> on the right of the toolbar (or just click <strong>Next</strong>) to expand it and reveal the quick-action buttons.',
+                target: '#toolbar-toggle-btn',
+                position: 'bottom',
+                highlightPadding: 6,
+                onNext: () => {
+                    const toolbar = document.getElementById('fixed-toolbar');
+                    if (toolbar && toolbar.classList.contains('minimized')) {
+                        const toggle = document.getElementById('toolbar-toggle-btn');
+                        if (toggle) toggle.click();
+                    }
+                }
+            },
+            {
                 title: 'The Data Toolbar',
-                content: 'This toolbar stays visible as you scroll and provides quick access to essential functions. Let\'s explore each button...',
+                content: 'Now that it\'s open, this toolbar provides quick access to essential functions. Let\'s explore each button...',
                 target: '.toolbar-content',
-                position: 'bottom'
+                position: 'bottom',
+                // Defensive: make sure the toolbar is expanded (e.g. when navigating back to
+                // this step) so the buttons are visible and the card doesn't land on the toolbar.
+                onShow: () => {
+                    const toolbar = document.getElementById('fixed-toolbar');
+                    if (toolbar && toolbar.classList.contains('minimized')) {
+                        const toggle = document.getElementById('toolbar-toggle-btn');
+                        if (toggle) toggle.click();
+                    }
+                    // Reposition after the expand animation settles (max-height transition ~0.3s).
+                    // Runs unconditionally because the previous step's onNext may have just
+                    // triggered the expand, so the .toolbar-content is still animating from 0 height.
+                    setTimeout(() => {
+                        if (window.kopTutorial && window.kopTutorial.isActive) {
+                            window.kopTutorial.positionOverlay();
+                        }
+                    }, 350);
+                }
             },
             {
                 title: 'New Project',

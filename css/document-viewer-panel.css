@@ -23,8 +23,9 @@
 .kop-dv-toggle.is-hidden { display: none; }
 
 /* Smooth reflow of page content when docked */
-body { transition: padding-right 0.15s ease; }
+body { transition: padding-right 0.15s ease, padding-bottom 0.15s ease; }
 body.kop-dv-resizing { user-select: none; cursor: col-resize; }
+body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
 
 /* Panel */
 .kop-dv-panel {
@@ -174,7 +175,28 @@ body.kop-dv-resizing { user-select: none; cursor: col-resize; }
 }
 .kop-dv-imgwrap img { max-width: 100%; height: auto; }
 
-@media (max-width: 1023px) {
-    /* Overlay (no reflow) on narrow screens. */
-    .kop-dv-panel { width: 92vw !important; }
+/* Bottom-docked (top/bottom split) layout for narrow screens.
+   Driven by JS toggling body.kop-dv-bottom below the desktop breakpoint. */
+body.kop-dv-bottom .kop-dv-panel {
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100% !important;
+    height: 50vh; /* overridden inline by JS; resizable via the top edge */
+    border-left: none;
+    border-top: 1px solid rgba(0, 4, 53, 0.18);
+    box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
 }
+
+/* Resizer moves to the top edge and drags vertically when bottom-docked. */
+body.kop-dv-bottom .kop-dv-resizer {
+    left: 0;
+    right: 0;
+    top: -4px;
+    bottom: auto;
+    width: auto;
+    height: 8px;
+    cursor: row-resize;
+}
+body.kop-dv-bottom .kop-dv-resizer:hover { background: rgba(51, 167, 181, 0.4); }

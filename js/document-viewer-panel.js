@@ -21,9 +21,16 @@
     var FOLDERS_URL = cfg.foldersUrl || '/wp-json/kop/v1/folders';
     var REST_BASE = cfg.restBase || '/wp-json/kop/v1/';
 
-    var MIN_W = 320;
+    var MIN_W = 320;     // min panel width (desktop, side-by-side)
+    var MIN_H = 200;     // min panel height (mobile, top/bottom split)
+    var panelW = 480;    // remembered desktop width
+    var panelH = null;   // remembered mobile height (null = default to ~50vh)
     var els = {};        // cached DOM refs
     var currentDocs = []; // docs in the loaded folder
+
+    // Below this viewport width we dock to the bottom (top/bottom split) instead
+    // of the right (side-by-side), so the form still fits on narrow screens.
+    function isDesktop() { return window.innerWidth >= 1024; }
 
     function el(tag, cls, html) {
         var n = document.createElement(tag);
@@ -76,14 +83,32 @@
         initResizer(panel.querySelector('.kop-dv-resizer'));
     }
 
-    function setWidth(px) {
-        px = Math.max(MIN_W, Math.min(px, Math.round(window.innerWidth * 0.85)));
-        els.panel.style.width = px + 'px';
-        // Reflow page content on wide screens; overlay on narrow ones.
-        if (window.innerWidth >= 1024) {
-            document.body.style.paddingRight = px + 'px';
-        } else {
+    // Size and dock the panel for the current viewport, reflowing the page so
+    // the form is never covered: side-by-side (reserve width) on desktop,
+    // top/bottom split (reserve height) on mobile.
+    function applyLayout() {
+        if (!els.panel || !els.panel.classList.contains('is-open')) {
             document.body.style.paddingRight = '';
+            document.body.style.paddingBottom = '';
+            return;
+        }
+        if (isDesktop()) {
+            document.body.classList.remove('kop-dv-bottom');
+            var w = Math.max(MIN_W, Math.min(panelW, Math.round(window.innerWidth * 0.85)));
+            panelW = w;
+            els.panel.style.width = w + 'px';
+            els.panel.style.height = '';
+            document.body.style.paddingBottom = '';
+            document.body.style.paddingRight = w + 'px';
+        } else {
+            document.body.classList.add('kop-dv-bottom');
+            var maxH = Math.round(window.innerHeight * 0.85);
+            var h = Math.max(MIN_H, Math.min(panelH || Math.round(window.innerHeight * 0.5), maxH));
+            panelH = h;
+            els.panel.style.height = h + 'px';
+            els.panel.style.width = '';
+            document.body.style.paddingRight = '';
+            document.body.style.paddingBottom = h + 'px';
         }
     }
 
@@ -91,31 +116,58 @@
         if (!els.panel.classList.contains('is-open')) {
             els.panel.classList.add('is-open');
             els.toggle.classList.add('is-hidden');
-            var w = parseInt(els.panel.style.width, 10) || 480;
-            setWidth(w);
+            applyLayout();
         }
     }
     function closePanel() {
         els.panel.classList.remove('is-open');
         els.toggle.classList.remove('is-hidden');
+        document.body.classList.remove('kop-dv-bottom');
         document.body.style.paddingRight = '';
+        document.body.style.paddingBottom = '';
     }
 
     function initResizer(handle) {
         if (!handle) return;
         var dragging = false;
+
+        function move(clientX, clientY) {
+            if (!dragging) return;
+            if (isDesktop()) {
+                panelW = window.innerWidth - clientX;
+            } else {
+                panelH = window.innerHeight - clientY;
+            }
+            applyLayout();
+        }
+        function endDrag() {
+            if (dragging) { dragging = false; document.body.classList.remove('kop-dv-resizing'); }
+        }
+
         handle.addEventListener('mousedown', function (e) {
             dragging = true;
             document.body.classList.add('kop-dv-resizing');
             e.preventDefault();
         });
-        document.addEventListener('mousemove', function (e) {
-            if (!dragging) return;
-            setWidth(window.innerWidth - e.clientX);
-        });
-        document.addEventListener('mouseup', function () {
-            if (dragging) { dragging = false; document.body.classList.remove('kop-dv-resizing'); }
-        });
+        handle.addEventListener('touchstart', function (e) {
+            dragging = true;
+            document.body.classList.add('kop-dv-resizing');
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('mousemove', function (e) { move(e.clientX, e.clientY); });
+        document.addEventListener('touchmove', function (e) {
+            if (!dragging || !e.touches.length) return;
+            move(e.touches[0].clientX, e.touches[0].clientY);
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('mouseup', endDrag);
+        document.addEventListener('touchend', endDrag);
+
+        // Re-dock when the viewport crosses the desktop/mobile breakpoint
+        // (window resize or device rotation).
+        window.addEventListener('resize', applyLayout);
     }
 
     function browse() {
