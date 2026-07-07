@@ -84,12 +84,14 @@ try {
     $note = trim((string)($input['notes'] ?? $input['submission_notes'] ?? ''));
     $reviewerNotes = $note !== '' ? '[submitter] ' . $note : '';
 
-    // Block duplicate cases by their source/document URLs. Re-submitting
-    // something previously rejected is still allowed.
-    $dupUrls = kop_collect_urls($input['source_urls'] ?? [], $input['document_urls'] ?? []);
-    if (!empty($dupUrls)) {
-        kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'lawsuit', $dupUrls));
-    }
+    // Block duplicate cases by their source/document URLs, matched exactly and
+    // PER FIELD (source_urls only against source_urls, document_urls only against
+    // document_urls) so unrelated cases sharing a court/docket page don't collide.
+    // Re-submitting something previously rejected is still allowed.
+    kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'lawsuit', [
+        'source_urls'   => $input['source_urls'] ?? [],
+        'document_urls' => $input['document_urls'] ?? [],
+    ]));
 
     $fields = [
         'case_name'              => $caseName,

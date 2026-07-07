@@ -98,15 +98,28 @@
     // the save endpoint in /api. Fails open (never blocks) if it errors.
     const dupeCheckUrl = (config.apiUrl || '').replace(/[^/]*$/, 'check-duplicate-url.php');
 
-    async function findUrlDuplicates(urls, excludeId) {
-        const clean = (urls || []).map(u => (u || '').trim()).filter(Boolean);
-        if (!clean.length || !dupeCheckUrl) return [];
+    // `fields` maps a DB url column to its value(s), e.g.
+    // { full_text_url: '…', official_url: '…' } or { source_urls: [...], document_urls: [...] }.
+    // Each field is matched only against the same column server-side, so distinct
+    // records that share a tracker/landing page aren't flagged as duplicates.
+    async function findUrlDuplicates(fields, excludeId) {
+        const clean = {};
+        Object.entries(fields || {}).forEach(([col, val]) => {
+            if (Array.isArray(val)) {
+                const arr = val.map(u => (u || '').trim()).filter(Boolean);
+                if (arr.length) clean[col] = arr;
+            } else {
+                const s = (val || '').trim();
+                if (s) clean[col] = s;
+            }
+        });
+        if (!Object.keys(clean).length || !dupeCheckUrl) return [];
         try {
             const res = await fetch(dupeCheckUrl, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: config.kind, urls: clean, exclude_id: excludeId || 0 })
+                body: JSON.stringify({ type: config.kind, fields: clean, exclude_id: excludeId || 0 })
             });
             const data = await res.json();
             if (data && data.success) return data.duplicates || [];
@@ -124,9 +137,9 @@
             + '\n\nThank you for helping! There is nothing more you need to do.';
     }
 
-    /** Returns true and shows a popup if any of the URLs already exist. */
-    async function blockedByDuplicate(urls, excludeId) {
-        const dupes = await findUrlDuplicates(urls, excludeId);
+    /** Returns true and shows a popup if any field's URL already exists. */
+    async function blockedByDuplicate(fields, excludeId) {
+        const dupes = await findUrlDuplicates(fields, excludeId);
         if (dupes.length) {
             window.alert(duplicateMessage(dupes));
             return true;
@@ -336,7 +349,10 @@
                 }
 
                 if (await blockedByDuplicate(
-                    [...linesToArray(getFieldValue('lawsuit-sources')), ...linesToArray(getFieldValue('lawsuit-docs'))],
+                    {
+                        source_urls:   linesToArray(getFieldValue('lawsuit-sources')),
+                        document_urls: linesToArray(getFieldValue('lawsuit-docs')),
+                    },
                     parseInt(getFieldValue('lawsuit-id'), 10) || 0
                 )) return;
 
@@ -477,7 +493,10 @@
         form.addEventListener('submit', async e => {
             e.preventDefault();
             if (await blockedByDuplicate(
-                [...linesToArray(getFieldValue('lawsuit-sources')), ...linesToArray(getFieldValue('lawsuit-docs'))],
+                {
+                    source_urls:   linesToArray(getFieldValue('lawsuit-sources')),
+                    document_urls: linesToArray(getFieldValue('lawsuit-docs')),
+                },
                 parseInt(getFieldValue('lawsuit-id'), 10) || 0
             )) { status.textContent = ''; return; }
             status.textContent = 'Saving...';
@@ -669,7 +688,7 @@
         form.addEventListener('submit', async e => {
             e.preventDefault();
             if (await blockedByDuplicate(
-                [getFieldValue('leg-full-text-url'), getFieldValue('leg-official-url')],
+                { full_text_url: getFieldValue('leg-full-text-url') },
                 parseInt(getFieldValue('leg-id'), 10) || 0
             )) { status.textContent = ''; return; }
             status.textContent = 'Saving...';
@@ -718,7 +737,7 @@
                 }
 
                 if (await blockedByDuplicate(
-                    [getFieldValue('leg-full-text-url'), getFieldValue('leg-official-url')],
+                    { full_text_url: getFieldValue('leg-full-text-url') },
                     parseInt(getFieldValue('leg-id'), 10) || 0
                 )) return;
 

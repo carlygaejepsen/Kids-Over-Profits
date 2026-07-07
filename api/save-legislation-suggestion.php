@@ -88,12 +88,14 @@ try {
     $note = trim((string)($input['notes'] ?? $input['submission_notes'] ?? ''));
     $reviewerNotes = $note !== '' ? '[submitter] ' . $note : '';
 
-    // Block duplicate bills by their linked URL (bill text / official tracker).
-    // Re-submitting something previously rejected is still allowed.
-    $dupUrls = kop_collect_urls($input['full_text_url'] ?? '', $input['official_url'] ?? '');
-    if (!empty($dupUrls)) {
-        kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'legislation', $dupUrls));
-    }
+    // Block duplicate bills by their official full-text URL, which is unique per
+    // bill. Matched exactly (see api/url-dedupe.php). official_url is intentionally
+    // NOT a dedupe key — tracker/landing pages (LegiScan, OpenStates, session
+    // indexes) are shared across bills and would cause false positives. Re-submitting
+    // a previously-rejected bill is still allowed.
+    kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'legislation', [
+        'full_text_url' => $input['full_text_url'] ?? '',
+    ]));
 
     $fields = [
         'bill_number'        => trim((string)($input['bill_number'] ?? '')),

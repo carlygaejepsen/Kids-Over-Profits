@@ -6,21 +6,27 @@
  * case. Before inserting a new row, an endpoint normalizes the URL(s) attached
  * to the submission and asks whether any existing (non-rejected) row already
  * references the same URL. If so, the endpoint blocks the insert with a 409 so
- * we don't accumulate duplicate entries — this matters most for news, where the
- * article URL is a strong identity key.
+ * we don't accumulate duplicate entries.
  *
- * Matching is URL-only and tolerant of scheme/www/trailing-slash/query/fragment
- * differences (see kop_normalize_url).
+ * Matching is exact after normalization (see kop_normalize_url) and PER FIELD:
+ * a submission's full_text_url is compared only against other rows' full_text_url,
+ * official_url only against official_url, and so on. URLs are never cross-pooled
+ * across fields, so two different bills that merely share a tracker/landing page
+ * do not collide. A legacy flat-list form is still accepted for single-URL types
+ * like news, where it matches against every configured column.
  */
 
 if (!function_exists('kop_normalize_url')) {
 
     /**
-     * Normalize a URL for comparison. Strips scheme, leading "www.", trailing
-     * slash, and #fragment; lowercases host+path; keeps the query string (it can
-     * be meaningful, e.g. ?id=123). Returns null for empty/non-URL input.
+     * Normalize a URL for comparison. Strips scheme, leading "www.", and trailing
+     * slash; lowercases host+path; keeps the query string (it can be meaningful,
+     * e.g. ?id=123). The #fragment is stripped only when $keepFragment is false —
+     * legislative/court trackers that hash-route (e.g. .../bills#/bill/AB123) carry
+     * the record's identity in the fragment, so those types keep it. Returns null
+     * for empty/non-URL input.
      */
-    function kop_normalize_url($url): ?string {
+    function kop_normalize_url($url, bool $keepFragment = false): ?string {
         if (!is_string($url)) {
             return null;
         }
@@ -30,65 +36,88 @@ if (!function_exists('kop_normalize_url')) {
         }
         $u = preg_replace('#^[a-z][a-z0-9+.\-]*://#i', '', $url); // strip scheme
         $u = preg_replace('#^www\.#i', '', $u);                   // strip www.
-        $u = preg_replace('/#.*$/', '', $u);                      // strip fragment
+        if (!$keepFragment) {
+            $u = preg_replace('/#.*$/', '', $u);                  // strip fragment
+        }
         $u = rtrim($u, '/');
         $u = strtolower(trim($u));
         return $u !== '' ? $u : null;
     }
 
     /**
-     * Collect a de-duplicated list of normalized URLs from any number of raw
-     * values, each of which may be a string or an array of strings.
+     * Normalize a single raw value (a string, or an array of strings) into a
+     * de-duplicated list of normalized URLs.
      */
-    function kop_collect_urls(...$values): array {
+    function kop_normalize_urls($value, bool $keepFragment = false): array {
         $out = [];
-        foreach ($values as $v) {
-            $candidates = is_array($v) ? $v : [$v];
-            foreach ($candidates as $item) {
-                $n = kop_normalize_url(is_string($item) ? $item : '');
-                if ($n !== null) {
-                    $out[$n] = true;
-                }
+        $candidates = is_array($value) ? $value : [$value];
+        foreach ($candidates as $item) {
+            $n = kop_normalize_url(is_string($item) ? $item : '', $keepFragment);
+            if ($n !== null) {
+                $out[$n] = true;
             }
         }
         return array_keys($out);
     }
 
     /**
-     * Find existing rows in $table that reference any of $normalizedUrls.
+     * Collect a de-duplicated list of normalized URLs from any number of raw
+     * values. Uses fragment-stripping (the single-URL caller default, e.g. news).
+     */
+    function kop_collect_urls(...$values): array {
+        $out = [];
+        foreach ($values as $v) {
+            foreach (kop_normalize_urls($v, false) as $n) {
+                $out[$n] = true;
+            }
+        }
+        return array_keys($out);
+    }
+
+    /** True for a non-empty associative array (i.e. keys are not 0..n-1). */
+    function kop_is_assoc(array $a): bool {
+        if ($a === []) {
+            return false;
+        }
+        return array_keys($a) !== range(0, count($a) - 1);
+    }
+
+    /**
+     * Find existing rows in $table that reference any of the per-column needles.
      *
-     * @param array         $urlColumns      Columns that may hold a URL — a scalar
-     *                                        varchar or a JSON array of URLs.
-     * @param string        $statusCol       Lifecycle status column.
-     * @param array         $ignoreStatuses  Statuses that should NOT block (e.g.
-     *                                        'rejected'), so a previously-rejected
-     *                                        item can be re-submitted.
-     * @param callable|null $extractor        function(array $row, array $cols): string[]
-     *                                        Custom URL extractor (used for wiki,
-     *                                        whose URLs live inside json_data).
-     * @return array  List of ['id','status','title','url'] for confirmed matches.
+     * @param array $needlesByColumn Map of url column => list of normalized URLs the
+     *                               submission supplied for THAT column. Each stored
+     *                               column value is confirmed only against its own
+     *                               needle list, so fields never cross-match.
+     * @return array List of ['id','status','title','url'] for confirmed matches.
      */
     function kop_find_url_duplicates(
         PDO $pdo,
         string $table,
         array $urlColumns,
-        array $normalizedUrls,
+        array $needlesByColumn,
         string $statusCol,
         array $ignoreStatuses,
         string $titleCol,
-        ?callable $extractor = null
+        bool $keepFragment = false
     ): array {
-        if (empty($normalizedUrls) || empty($urlColumns)) {
+        // Flatten needles for the coarse SQL prefilter. Precise per-column
+        // confirmation happens in PHP below, so LIKE over-matching is harmless.
+        $allNeedles = [];
+        foreach ($needlesByColumn as $list) {
+            foreach ($list as $n) {
+                $allNeedles[$n] = true;
+            }
+        }
+        $allNeedles = array_keys($allNeedles);
+        if (empty($allNeedles) || empty($urlColumns)) {
             return [];
         }
 
-        // Coarse SQL prefilter: any URL column text LIKE any normalized needle.
-        // Precise confirmation happens in PHP below, so LIKE false-positives are
-        // harmless (they just get filtered out).
         $likeClauses = [];
         $params = [];
         foreach ($urlColumns as $col) {
-            foreach ($normalizedUrls as $nu) {
+            foreach ($allNeedles as $nu) {
                 $likeClauses[] = "LOWER(`$col`) LIKE ?";
                 $params[] = '%' . $nu . '%';
             }
@@ -109,34 +138,45 @@ if (!function_exists('kop_normalize_url')) {
         $stmt->execute($params);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        // Default extractor: scalar value, or every string inside a JSON array.
-        if ($extractor === null) {
-            $extractor = static function (array $row, array $cols): array {
+        // Extract URL strings from a single column: a scalar value, or every
+        // string inside a JSON array (e.g. lawsuit source_urls/document_urls).
+        $extractColumn = static function (array $row, string $col): array {
+            $val = $row[$col] ?? '';
+            $decoded = is_string($val) ? json_decode($val, true) : null;
+            if (is_array($decoded)) {
                 $urls = [];
-                foreach ($cols as $c) {
-                    $val = $row[$c] ?? '';
-                    $decoded = is_string($val) ? json_decode($val, true) : null;
-                    if (is_array($decoded)) {
-                        array_walk_recursive($decoded, static function ($v) use (&$urls) {
-                            if (is_string($v)) { $urls[] = $v; }
-                        });
-                    } elseif (is_string($val) && $val !== '') {
-                        $urls[] = $val;
-                    }
-                }
+                array_walk_recursive($decoded, static function ($v) use (&$urls) {
+                    if (is_string($v)) { $urls[] = $v; }
+                });
                 return $urls;
-            };
+            }
+            if (is_string($val) && $val !== '') {
+                return [$val];
+            }
+            return [];
+        };
+
+        // Pre-flip each column's needle list for O(1) membership tests.
+        $needleFlips = [];
+        foreach ($needlesByColumn as $col => $list) {
+            if (!empty($list)) {
+                $needleFlips[$col] = array_flip($list);
+            }
         }
 
-        $needle = array_flip($normalizedUrls);
         $matches = [];
         foreach ($rows as $row) {
             $matchedUrl = null;
-            foreach ($extractor($row, $urlColumns) as $candidate) {
-                $n = kop_normalize_url($candidate);
-                if ($n !== null && isset($needle[$n])) {
-                    $matchedUrl = $candidate;
-                    break;
+            foreach ($urlColumns as $col) {
+                if (empty($needleFlips[$col])) {
+                    continue; // submission supplied no URL for this field
+                }
+                foreach ($extractColumn($row, $col) as $candidate) {
+                    $n = kop_normalize_url($candidate, $keepFragment);
+                    if ($n !== null && isset($needleFlips[$col][$n])) {
+                        $matchedUrl = $candidate;
+                        break 2;
+                    }
                 }
             }
             if ($matchedUrl !== null) {
@@ -152,38 +192,79 @@ if (!function_exists('kop_normalize_url')) {
     }
 
     /**
-     * Single source of truth for which columns/table identify a duplicate per
-     * submission type. Shared by the submit endpoints and the pre-submit check
-     * endpoint so they can never drift. Returns null for unsupported types.
+     * Single source of truth for which table/columns identify a duplicate per
+     * submission type. `keepFragment` is true for types whose trackers hash-route
+     * (the fragment carries record identity). Shared by the submit endpoints and
+     * the pre-submit check endpoint so they can never drift. Null for unknown types.
      */
     function kop_url_dedupe_config(string $type): ?array {
         switch ($type) {
             case 'news':
                 return ['table' => 'news_submissions', 'urlColumns' => ['article_url'],
-                        'statusCol' => 'status', 'ignoreStatuses' => ['rejected', 'deleted'], 'titleCol' => 'article_title'];
+                        'statusCol' => 'status', 'ignoreStatuses' => ['rejected', 'deleted'],
+                        'titleCol' => 'article_title', 'keepFragment' => false];
             case 'legislation':
-                return ['table' => 'legislation', 'urlColumns' => ['full_text_url', 'official_url'],
-                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'], 'titleCol' => 'bill_title'];
+                // A bill's official full-text URL is a genuinely unique per-bill
+                // identity, so it is the ONLY dedupe key. official_url is deliberately
+                // excluded: LegiScan/OpenStates/session-tracker pages are shared across
+                // many bills and keying on them produced false-positive blocks. A
+                // full-text link isn't hash-routed, so fragments are stripped.
+                return ['table' => 'legislation', 'urlColumns' => ['full_text_url'],
+                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'],
+                        'titleCol' => 'bill_title', 'keepFragment' => false];
             case 'lawsuit':
                 return ['table' => 'lawsuits', 'urlColumns' => ['source_urls', 'document_urls'],
-                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'], 'titleCol' => 'case_name'];
+                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'],
+                        'titleCol' => 'case_name', 'keepFragment' => true];
             default:
                 return null;
         }
     }
 
     /**
-     * Convenience wrapper: look up the per-type config and return any existing
-     * rows matching $normalizedUrls. Empty array for unknown types / no URLs.
+     * Look up the per-type config and return existing rows that duplicate the
+     * submission's URLs. $input may be either:
+     *   - a per-field map, e.g. ['full_text_url' => '…', 'official_url' => '…'],
+     *     giving exact per-field matching (the preferred form); or
+     *   - a flat list of URLs, matched against every configured column (legacy;
+     *     fine for single-column types like news).
+     * Empty array for unknown types / no URLs.
      */
-    function kop_check_url_duplicates(PDO $pdo, string $type, array $normalizedUrls): array {
+    function kop_check_url_duplicates(PDO $pdo, string $type, array $input): array {
         $cfg = kop_url_dedupe_config($type);
-        if (!$cfg || empty($normalizedUrls)) {
+        if (!$cfg) {
             return [];
         }
+        $keepFragment = !empty($cfg['keepFragment']);
+
+        $needlesByColumn = [];
+        if (kop_is_assoc($input)) {
+            // Per-field: normalize each field's raw value under this type's rules.
+            foreach ($cfg['urlColumns'] as $col) {
+                $needlesByColumn[$col] = array_key_exists($col, $input)
+                    ? kop_normalize_urls($input[$col], $keepFragment)
+                    : [];
+            }
+        } else {
+            // Legacy flat list: applies to every configured column. Re-normalizing
+            // is idempotent and lets keepFragment apply even to pre-normalized input.
+            $flat = kop_normalize_urls($input, $keepFragment);
+            foreach ($cfg['urlColumns'] as $col) {
+                $needlesByColumn[$col] = $flat;
+            }
+        }
+
+        $hasNeedles = false;
+        foreach ($needlesByColumn as $list) {
+            if (!empty($list)) { $hasNeedles = true; break; }
+        }
+        if (!$hasNeedles) {
+            return [];
+        }
+
         return kop_find_url_duplicates(
-            $pdo, $cfg['table'], $cfg['urlColumns'], $normalizedUrls,
-            $cfg['statusCol'], $cfg['ignoreStatuses'], $cfg['titleCol']
+            $pdo, $cfg['table'], $cfg['urlColumns'], $needlesByColumn,
+            $cfg['statusCol'], $cfg['ignoreStatuses'], $cfg['titleCol'], $keepFragment
         );
     }
 

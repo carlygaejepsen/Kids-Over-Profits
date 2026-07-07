@@ -73,9 +73,19 @@ if (is_array($multi)) {
 
 $excludeId = (int) ($param('exclude_id') ?? 0);
 
+// Preferred form: a per-field map keyed by DB column, e.g.
+// { "full_text_url": "…", "official_url": "…" }. Each field is matched only
+// against the same column, exactly. Falls back to the flat url/urls list
+// (matched against every column) for single-URL types like news.
+$fields = $param('fields');
+
 try {
-    $normalized = kop_collect_urls(...$rawUrls);
-    $duplicates = kop_check_url_duplicates($pdo, $type, $normalized);
+    if (is_array($fields) && kop_is_assoc($fields)) {
+        $duplicates = kop_check_url_duplicates($pdo, $type, $fields);
+    } else {
+        $normalized = kop_collect_urls(...$rawUrls);
+        $duplicates = kop_check_url_duplicates($pdo, $type, $normalized);
+    }
 
     if ($excludeId > 0) {
         $duplicates = array_values(array_filter($duplicates, static function ($d) use ($excludeId) {
