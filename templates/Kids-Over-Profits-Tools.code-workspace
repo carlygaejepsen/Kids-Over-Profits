@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "../../Tools/Kids-Over-Profits-Tools"
+			"path": ".."
 		},
 		{
-			"path": ".."
+			"path": "../../../../OneDrive/Documents/GitHub/Tools/Kids-Over-Profits-Tools"
 		}
 	],
 	"settings": {}
