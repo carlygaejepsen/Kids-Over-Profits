@@ -15,6 +15,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const clean = v => (typeof v === 'string' ? v.trim() : (v ? String(v) : ''));
     const esc = v => clean(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c] || c));
 
+    const STATE_CODES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
+    const STATE_NAMES = {'ALABAMA':'AL','ALASKA':'AK','ARIZONA':'AZ','ARKANSAS':'AR','CALIFORNIA':'CA','COLORADO':'CO','CONNECTICUT':'CT','DELAWARE':'DE','FLORIDA':'FL','GEORGIA':'GA','HAWAII':'HI','IDAHO':'ID','ILLINOIS':'IL','INDIANA':'IN','IOWA':'IA','KANSAS':'KS','KENTUCKY':'KY','LOUISIANA':'LA','MAINE':'ME','MARYLAND':'MD','MASSACHUSETTS':'MA','MICHIGAN':'MI','MINNESOTA':'MN','MISSISSIPPI':'MS','MISSOURI':'MO','MONTANA':'MT','NEBRASKA':'NE','NEVADA':'NV','NEW HAMPSHIRE':'NH','NEW JERSEY':'NJ','NEW MEXICO':'NM','NEW YORK':'NY','NORTH CAROLINA':'NC','NORTH DAKOTA':'ND','OHIO':'OH','OKLAHOMA':'OK','OREGON':'OR','PENNSYLVANIA':'PA','RHODE ISLAND':'RI','SOUTH CAROLINA':'SC','SOUTH DAKOTA':'SD','TENNESSEE':'TN','TEXAS':'TX','UTAH':'UT','VERMONT':'VT','VIRGINIA':'VA','WASHINGTON':'WA','WEST VIRGINIA':'WV','WISCONSIN':'WI','WYOMING':'WY'};
+
+    // Collect the record's actual state values from `state` fields instead of
+    // substring-scanning its JSON — that matched "IN" inside "consulting",
+    // "ME" inside names, etc., making the filter meaningless for many states.
+    function recordStates(p) {
+        const found = new Set();
+        const addState = raw => {
+            const s = clean(raw).toUpperCase().replace(/\./g, '').trim();
+            if (!s) return;
+            if (STATE_CODES.indexOf(s) !== -1) { found.add(s); return; }
+            if (STATE_NAMES[s]) found.add(STATE_NAMES[s]);
+        };
+        const stack = [p];
+        let guard = 0;
+        while (stack.length && guard < 500) {
+            const cur = stack.pop();
+            guard++;
+            if (!cur || typeof cur !== 'object') continue;
+            if (typeof cur.state === 'string') addState(cur.state);
+            if (typeof cur.locationState === 'string') addState(cur.locationState);
+            Object.values(cur).forEach(v => { if (v && typeof v === 'object') stack.push(v); });
+        }
+        return found;
+    }
+
     // Load Data
     fetch('/wp-content/themes/child/api/get-referrers-only.php?t=' + Date.now())
         .then(res => res.json())
@@ -22,13 +49,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (res.success && res.projects) {
                 allReferrers = Object.values(res.projects);
                 allReferrers.sort((a, b) => (a.db_name || '').localeCompare(b.db_name || ''));
-                
+
                 const locs = new Set();
-                allReferrers.forEach(p => {
-                    const str = JSON.stringify(p).toUpperCase();
-                    const states = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'];
-                    states.forEach(s => { if(str.includes('"' + s + '"') || str.includes(', ' + s)) locs.add(s); });
-                });
+                allReferrers.forEach(p => { recordStates(p).forEach(s => locs.add(s)); });
                 statusFilter.innerHTML = '<option value="">All Locations</option>' + Array.from(locs).sort().map(l => `<option value="${l}">${l}</option>`).join('');
 
                 renderAlphabet();
@@ -49,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function filterAndRender() {
         const q = (searchInput.value || '').toLowerCase();
-        const l = (statusFilter.value || '').toLowerCase();
+        const l = (statusFilter.value || '').toUpperCase();
         const a = (window.currentAlphaFilter || '').toLowerCase();
 
         const filtered = allReferrers.filter(p => {
@@ -58,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (a && a === '#' && !/^[0-9]/.test(name)) return false;
             if (a && a !== '#' && !name.startsWith(a)) return false;
             if (q && !name.includes(q) && !dataStr.includes(q)) return false;
-            if (l && !dataStr.includes(l)) return false;
+            if (l && !recordStates(p).has(l)) return false;
             return true;
         });
         renderList(filtered);
@@ -89,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderField(label, value) {
         const val = clean(value);
         if (!val || val === 'null') return '';
-        if (val.startsWith('http')) return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value"><a href="${val}" target="_blank">Link</a></span></div>`;
+        if (val.startsWith('http')) return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value"><a href="${esc(val)}" target="_blank">Link</a></span></div>`;
         return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
@@ -216,4 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', filterAndRender);
     statusFilter.addEventListener('change', filterAndRender);
+
+    // The template's Clear Search button calls window.clearSearch().
+    window.clearSearch = function() {
+        searchInput.value = '';
+        statusFilter.value = '';
+        window.currentAlphaFilter = '';
+        document.querySelectorAll('.alpha-btn').forEach(b => b.classList.toggle('active', b.innerText === 'All'));
+        filterAndRender();
+    };
 });

@@ -82,46 +82,67 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             console.log('Starting to initialize CT DCF report...');
             const url = '/wp-content/themes/child/api/inspections-read.php?state=CT';
-            console.log('URL to fetch:', url);
 
             // Fetch the CT DCF data
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Failed to fetch data: ${response.status}`);
             }
-            
+
             const jsonData = await response.json();
-            console.log('Loaded CT DCF data:', jsonData);
-
-            // Extract facilities from the CT DCF data structure
-            let facilities = jsonData.facilities || [];
-            scrapedTimestamp = jsonData.scraped_timestamp || '';
-            renderLastUpdated();
-            console.log(`Found ${facilities.length} facilities`);
-
-            // Sort reports within each facility by date (newest first)
-            facilities = facilities.map(facility => ({
-                ...facility,
-                reports: (facility.reports || []).sort((a, b) => {
-                    const dateA = new Date(a.report_date || 0);
-                    const dateB = new Date(b.report_date || 0);
-                    return dateB - dateA;
-                })
-            }));
-
-            allFacilitiesData = groupFacilitiesFromArray(facilities);
-            console.log('Processed facilities data:', allFacilitiesData);
-            console.log('Available letters:', Object.keys(allFacilitiesData));
-            
-            renderAlphabetFilter();
-            if (Object.keys(allFacilitiesData).length) {
-                renderFacilitiesForLetter('ALL');
-            } else {
-                reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
+            if (!jsonData.facilities || !jsonData.facilities.length) {
+                throw new Error('API returned no facilities');
             }
+            processData(jsonData);
         } catch (error) {
-            console.error('Failed to load or process CT DCF data:', error);
-            reportContainer.innerHTML = `<p class="error">Error processing data. Please check the console.</p>`;
+            console.warn('CT API unavailable, trying fallback JSON:', error.message);
+            await loadFromFallback();
+        }
+    }
+
+    // The theme localizes a shape-compatible static dataset (ct_reports.json)
+    // as ctReportsData.jsonFileUrls — use it when the API is unreachable.
+    async function loadFromFallback() {
+        const urls = (themeData && themeData.jsonFileUrls) || [];
+        for (const url of urls) {
+            try {
+                const resp = await fetch(url);
+                if (!resp.ok) continue;
+                const data = await resp.json();
+                if (!data.facilities || !data.facilities.length) continue;
+                processData(data);
+                return;
+            } catch (e) {
+                console.warn('Failed to load CT fallback:', url, e.message);
+            }
+        }
+        reportContainer.innerHTML = `<p class="error">Error processing data. Please check the console.</p>`;
+    }
+
+    function processData(jsonData) {
+        // Extract facilities from the CT DCF data structure
+        let facilities = jsonData.facilities || [];
+        scrapedTimestamp = jsonData.scraped_timestamp || '';
+        renderLastUpdated();
+        console.log(`Found ${facilities.length} facilities`);
+
+        // Sort reports within each facility by date (newest first)
+        facilities = facilities.map(facility => ({
+            ...facility,
+            reports: (facility.reports || []).sort((a, b) => {
+                const dateA = new Date(a.report_date || 0);
+                const dateB = new Date(b.report_date || 0);
+                return dateB - dateA;
+            })
+        }));
+
+        allFacilitiesData = groupFacilitiesFromArray(facilities);
+
+        renderAlphabetFilter();
+        if (Object.keys(allFacilitiesData).length) {
+            renderFacilitiesForLetter('ALL');
+        } else {
+            reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
         }
     }
 
@@ -453,21 +474,32 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
+    // Report text comes from the DB API (unvalidated scraper output) — escape
+    // everything interpolated into innerHTML so a stray '<' can't break the DOM.
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function createReportHTML(report) {
         const hasViolations = reportHasViolations(report);
         const reportClass = hasViolations ? 'inspection-box-violation' : 'inspection-box-clean';
-        
+
         return `
             <details class="inspection-box ${reportClass}">
                 <summary class="inspection-header">
-                    Report ${report.report_id} - ${report.report_date || 'N/A'}
+                    Report ${escapeHtml(report.report_id)} - ${escapeHtml(report.report_date || 'N/A')}
                 </summary>
                 <div class="inspection-content">
                     <div class="inspection-details-block">
-                        <strong>Report ID:</strong> ${report.report_id || 'N/A'}<br>
-                        <strong>Report Date:</strong> ${report.report_date || 'N/A'}<br>
+                        <strong>Report ID:</strong> ${escapeHtml(report.report_id || 'N/A')}<br>
+                        <strong>Report Date:</strong> ${escapeHtml(report.report_date || 'N/A')}<br>
                         <strong>Content Length:</strong> ${report.content_length || 0} characters<br>
-                        <strong>Summary:</strong> ${report.summary || 'No summary available'}
+                        <strong>Summary:</strong> ${escapeHtml(report.summary || 'No summary available')}
                     </div>
                     ${createReportCategoriesHTML(report)}
                 </div>
@@ -488,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="category-section">
                     <h4>Areas/Topics Covered During Visit:</h4>
                     <ul>
-                        ${report.categories.areas_topics_covered.map(topic => `<li>${topic}</li>`).join('')}
+                        ${report.categories.areas_topics_covered.map(topic => `<li>${escapeHtml(topic)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -504,9 +536,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 ${hasRealViolations ? 
                     nonCompliance.filter(item => item.type !== 'none').map(item => `
                         <div class="violation-item">
-                            ${item.area_type ? `<strong>Area:</strong> ${item.area_type}<br>` : ''}
-                            ${item.regulation ? `<strong>Regulation:</strong> ${item.regulation}<br>` : ''}
-                            <strong>Description:</strong> ${item.description || 'N/A'}
+                            ${item.area_type ? `<strong>Area:</strong> ${escapeHtml(item.area_type)}<br>` : ''}
+                            ${item.regulation ? `<strong>Regulation:</strong> ${escapeHtml(item.regulation)}<br>` : ''}
+                            <strong>Description:</strong> ${escapeHtml(item.description || 'N/A')}
                         </div>
                     `).join('') :
                     '<div class="no-violations"><p><strong>No violations noted in this report.</strong></p></div>'
@@ -520,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="category-section">
                     <h4>Corrective Actions:</h4>
                     <ul>
-                        ${report.categories.corrective_actions.map(action => `<li>${action}</li>`).join('')}
+                        ${report.categories.corrective_actions.map(action => `<li>${escapeHtml(action)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -532,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="category-section">
                     <h4>Recommendations:</h4>
                     <ul>
-                        ${report.categories.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                        ${report.categories.recommendations.map(rec => `<li>${escapeHtml(rec)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -545,10 +577,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="category-section">
                     <h4>Visit Details:</h4>
                     <div class="visit-details">
-                        ${details.facility_name ? `<strong>Facility:</strong> ${details.facility_name}<br>` : ''}
-                        ${details.visit_date ? `<strong>Visit Date:</strong> ${details.visit_date}<br>` : ''}
-                        ${details.visit_time ? `<strong>Visit Time:</strong> ${details.visit_time}<br>` : ''}
-                        ${details.personnel ? `<strong>Personnel:</strong> ${details.personnel.join(', ')}<br>` : ''}
+                        ${details.facility_name ? `<strong>Facility:</strong> ${escapeHtml(details.facility_name)}<br>` : ''}
+                        ${details.visit_date ? `<strong>Visit Date:</strong> ${escapeHtml(details.visit_date)}<br>` : ''}
+                        ${details.visit_time ? `<strong>Visit Time:</strong> ${escapeHtml(details.visit_time)}<br>` : ''}
+                        ${details.personnel ? `<strong>Personnel:</strong> ${escapeHtml(details.personnel.join(', '))}<br>` : ''}
                     </div>
                 </div>
             `;
@@ -560,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="category-section">
                     <h4>Incidents:</h4>
                     <ul>
-                        ${report.categories.incidents.map(incident => `<li>${incident}</li>`).join('')}
+                        ${report.categories.incidents.map(incident => `<li>${escapeHtml(incident)}</li>`).join('')}
                     </ul>
                 </div>
             `;
@@ -568,7 +600,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Full report content for unstructured reports
         if (report.categories.full_report_content) {
-            const content = report.categories.full_report_content.replace(/\n/g, '<br>');
+            const content = escapeHtml(report.categories.full_report_content).replace(/\n/g, '<br>');
             html += `
                 <div class="category-section">
                     <h4>Full Report Content:</h4>

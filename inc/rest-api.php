@@ -138,6 +138,18 @@ function kop_register_facilities_rest_routes() {
                     'default' => '',
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
+                'company' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+                'referrer' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
                 'limit' => array(
                     'required' => false,
                     'type' => 'integer',
@@ -1644,11 +1656,14 @@ function kop_search_database_rest_callback($request) {
     $staff_query = $request->get_param('staff');
     $location_query = $request->get_param('location');
     $program_type_query = $request->get_param('programType');
+    $company_query = $request->get_param('company');
+    $referrer_query = $request->get_param('referrer');
     $limit = $request->get_param('limit');
     $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
 
     // At least one search query must be provided
-    if (empty($keyword_query) && empty($staff_query) && empty($location_query) && empty($program_type_query)) {
+    if (empty($keyword_query) && empty($staff_query) && empty($location_query)
+        && empty($program_type_query) && empty($company_query) && empty($referrer_query)) {
         return rest_ensure_response(array(
             'success' => true,
             'results' => array(),
@@ -1750,6 +1765,26 @@ function kop_search_database_rest_callback($request) {
             }
         }
 
+        // Company search - matches project, operator, and facility names
+        if (!empty($company_query) && !$match_snippet) {
+            if (stripos($unique_name, $company_query) !== false) {
+                $match_snippet = 'Name: ' . $unique_name;
+                $match_type = 'company';
+            } elseif (!empty($data['operator']['name']) && stripos($data['operator']['name'], $company_query) !== false) {
+                $match_snippet = 'Operator: ' . $data['operator']['name'];
+                $match_type = 'company';
+            } elseif (!empty($data['facilities']) && is_array($data['facilities'])) {
+                foreach ($data['facilities'] as $facility) {
+                    $facility_name = isset($facility['identification']['name']) ? $facility['identification']['name'] : '';
+                    if ($facility_name !== '' && stripos($facility_name, $company_query) !== false) {
+                        $match_snippet = 'Facility: ' . $facility_name;
+                        $match_type = 'company';
+                        break;
+                    }
+                }
+            }
+        }
+
         if ($match_snippet) {
             // Extract summary info
             $operator_name = '';
@@ -1773,6 +1808,54 @@ function kop_search_database_rest_callback($request) {
                 'source' => 'database',
                 'data' => $data,
             );
+        }
+    }
+
+    // Referrer search - searches referrers_master rows (separate table from
+    // facilities; the referrer search box on the data form targets these).
+    if (!empty($referrer_query)) {
+        $referrers_table = 'referrers_master';
+        $referrers_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $referrers_table
+        ));
+
+        if ($referrers_exists) {
+            $referrer_rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$referrers_table}", ARRAY_A);
+            if (is_array($referrer_rows)) {
+                foreach ($referrer_rows as $row) {
+                    if (empty($row['json_data'])) {
+                        continue;
+                    }
+                    $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
+                    $data = kop_normalize_project_payload($row['json_data']);
+                    if (!$data) {
+                        continue;
+                    }
+
+                    $match_snippet = null;
+                    if (stripos($unique_name, $referrer_query) !== false) {
+                        $match_snippet = 'Name: ' . $unique_name;
+                    } else {
+                        $match_snippet = kop_search_in_data($data, $referrer_query);
+                    }
+
+                    if ($match_snippet) {
+                        $all_results[] = array(
+                            'name' => $unique_name,
+                            'label' => $unique_name,
+                            'category' => 'referrers',
+                            'operator' => isset($data['referrerAgency']['name']) ? $data['referrerAgency']['name'] : '',
+                            'facilityCount' => 0,
+                            'matchSnippet' => $match_snippet,
+                            'matchType' => 'referrer',
+                            'source' => 'database',
+                            'data' => $data,
+                        );
+                    }
+                }
+            }
         }
     }
 

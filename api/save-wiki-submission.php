@@ -128,7 +128,9 @@ try {
     $programName = $data['programName'] ?? $data['program_name'] ?? '';
     $cityState = $data['cityState'] ?? $data['city_state'] ?? '';
     $programType = $data['programType'] ?? $data['program_type'] ?? '';
-    $yearsActive = $data['yearsActive'] ?? $data['years_active'] ?? '';
+    // years_active is varchar(100); free-text longer than that would make the
+    // INSERT/UPDATE throw under strict SQL mode.
+    $yearsActive = mb_substr((string)($data['yearsActive'] ?? $data['years_active'] ?? ''), 0, 100);
     $generatedMarkdown = $data['generatedMarkdown'] ?? $data['generated_markdown'] ?? '';
     $status = $data['status'] ?? 'submitted';
     $submittedBy = $data['submittedBy'] ?? $data['submitted_by'] ?? '';
@@ -162,6 +164,36 @@ try {
         echo json_encode([
             'success' => false,
             'error' => 'You do not have permission to delete entries'
+        ]);
+        exit;
+    }
+
+    // Deletions arrive as {id, status:'deleted'} with no content fields.
+    // Handle them as a status-only update: the content validation below would
+    // reject the empty programName, and the full-column UPDATE would blank
+    // every other field of the record.
+    if ($status === 'deleted') {
+        if (!$submissionId) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Submission ID is required to delete']);
+            exit;
+        }
+
+        $checkStmt = $pdo->prepare("SELECT id FROM wiki_submissions WHERE id = ? LIMIT 1");
+        $checkStmt->execute([(int)$submissionId]);
+        if (!$checkStmt->fetchColumn()) {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => 'Submission not found']);
+            exit;
+        }
+
+        $stmt = $pdo->prepare("UPDATE wiki_submissions SET status = 'deleted', updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+        $stmt->execute([(int)$submissionId]);
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Entry deleted',
+            'id' => (int)$submissionId
         ]);
         exit;
     }
@@ -281,11 +313,17 @@ try {
         ]);
         
         if ($stmt->rowCount() === 0) {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'error' => 'Submission not found']);
-            exit;
+            // 0 affected rows also happens when nothing changed (PDO counts
+            // CHANGED rows) — only report 404 if the row truly doesn't exist.
+            $check = $pdo->prepare("SELECT id FROM wiki_submissions WHERE id = ? LIMIT 1");
+            $check->execute([$submissionId]);
+            if (!$check->fetchColumn()) {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'error' => 'Submission not found']);
+                exit;
+            }
         }
-        
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission updated successfully',

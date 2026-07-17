@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sync-wiki-facilities.php';
+require_once __DIR__ . '/lib-suggested-edits.php';
 
 // --- Admin authentication ---
 // This endpoint reads and mutates submissions (approve/reject/publish/delete),
@@ -284,8 +285,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 ORDER BY created_at DESC
                 LIMIT {$limit} OFFSET {$offset}";
     } elseif ($type === 'news') {
-        $sql = "SELECT id, article_title as program_name, publication_name as organization, 
-                       article_type as program_type, author as submitted_by, 
+        // Select the real news columns (the JS card reads article_title,
+        // publication_name, author, article_type, and the duplicate map needs
+        // article_url) plus the generic aliases shared with wiki/data rows.
+        $sql = "SELECT id, article_title, publication_name, author, article_type, article_url,
+                       article_title as program_name, publication_name as organization,
+                       article_type as program_type, author as submitted_by,
                        publication_date as years_active, status, created_at, updated_at, json_data
                 FROM $table $whereClause
                 ORDER BY created_at DESC
@@ -337,7 +342,7 @@ try {
     
     $action = $data['action'] ?? '';
     $type = $data['type'] ?? ''; // wiki | news | data | legislation | lawsuit
-    $ids = $data['ids'] ?? ($data['id'] ? [$data['id']] : []);
+    $ids = $data['ids'] ?? (isset($data['id']) && $data['id'] ? [$data['id']] : []);
 
     // Validate type
     $schema = kop_submission_schema($type);
@@ -368,7 +373,38 @@ try {
             }
             $reviewerNotes = $data['reviewerNotes'] ?? $data['reviewer_notes'] ?? '';
             $reviewedBy = $data['reviewedBy'] ?? $data['reviewed_by'] ?? '';
-            
+
+            if ($type === 'data' && $action !== 'reject') {
+                // Approving a suggested edit is more than a status flip: the
+                // edited JSON must be merged into the master tables. The shared
+                // library handles the merge + status update per submission.
+                // ('publish' is treated as approve — suggested_edits has no
+                // 'published' status.)
+                $wp_prefix = isset($table_prefix) && is_string($table_prefix) ? $table_prefix : '';
+                $applied = 0;
+                $errors = [];
+                foreach ($ids as $sid) {
+                    $result = kop_apply_suggested_edit($pdo, (int) $sid, $wp_prefix);
+                    if ($result['success']) {
+                        $applied++;
+                    } else {
+                        $errors[] = 'ID ' . (int) $sid . ': ' . $result['error'];
+                    }
+                }
+
+                $response = [
+                    'success' => empty($errors),
+                    'message' => "$applied submission(s) approved and applied to master records",
+                    'affected' => $applied
+                ];
+                if (!empty($errors)) {
+                    $response['error'] = implode('; ', $errors);
+                    $response['errors'] = $errors;
+                }
+                echo json_encode($response);
+                break;
+            }
+
             $placeholders = implode(',', array_fill(0, count($ids), '?'));
 
             if ($schema['record']) {
@@ -462,7 +498,14 @@ try {
                         $wikiRow = $pdo->prepare(
                             "SELECT * FROM wiki_master WHERE slug = ? LIMIT 1"
                         );
-                        $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $sub['program_name'] ?? '')));
+                        // Use the same slug the upsert above keyed on: prefer
+                        // the submission's own slug from json_data, fall back
+                        // to the name-derived one. Recomputing from the name
+                        // alone missed entries saved under a custom slug.
+                        $mergeJson = isset($sub['json_data']) ? json_decode($sub['json_data'], true) : null;
+                        $slug = (is_array($mergeJson) && !empty($mergeJson['slug']))
+                            ? $mergeJson['slug']
+                            : strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $sub['program_name'] ?? '')));
                         $wikiRow->execute([$slug]);
                         $wikiEntry = $wikiRow->fetch(PDO::FETCH_ASSOC);
                         if ($wikiEntry) {
@@ -527,7 +570,11 @@ try {
             }
             
             $newStatus = $data['status'] ?? '';
-            $validStatuses = ['draft', 'submitted', 'pending', 'approved', 'published', 'rejected'];
+            // suggested_edits.status is a strict enum — statuses valid for
+            // other tables (draft/published) would error or truncate there.
+            $validStatuses = ($type === 'data')
+                ? ['submitted', 'pending', 'approved', 'rejected']
+                : ['draft', 'submitted', 'pending', 'approved', 'published', 'rejected'];
 
             if (!in_array($newStatus, $validStatuses)) {
                 http_response_code(400);
@@ -561,6 +608,20 @@ try {
                 $byStatus = $pdo->query(
                     "SELECT {$schema['status_col']} AS status, COUNT(*) AS count
                      FROM {$schema['table']} GROUP BY {$schema['status_col']}"
+                )->fetchAll(PDO::FETCH_KEY_PAIR);
+                echo json_encode([
+                    'success' => true,
+                    'stats' => ['by_status' => $byStatus, 'total' => array_sum($byStatus)],
+                ]);
+                break;
+            }
+
+            // data: suggested_edits keyed on status. Without this branch the
+            // JS falls through to the wiki counts below.
+            if ($type === 'data') {
+                $byStatus = $pdo->query(
+                    "SELECT status, COUNT(*) as count
+                     FROM {$schema['table']} GROUP BY status"
                 )->fetchAll(PDO::FETCH_KEY_PAIR);
                 echo json_encode([
                     'success' => true,
@@ -638,10 +699,22 @@ try {
                     'message' => 'Markdown updated successfully'
                 ]);
             } else {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'No submission found with that ID or no changes made'
-                ]);
+                // rowCount() is 0 both when the row doesn't exist AND when the
+                // new markdown is identical to the stored value — only the
+                // former is an error.
+                $check = $pdo->prepare("SELECT id FROM wiki_submissions WHERE id = ? LIMIT 1");
+                $check->execute([$id]);
+                if ($check->fetchColumn()) {
+                    echo json_encode([
+                        'success' => true,
+                        'message' => 'Markdown unchanged'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'No submission found with that ID'
+                    ]);
+                }
             }
             break;
 

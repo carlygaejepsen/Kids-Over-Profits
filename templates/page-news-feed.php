@@ -525,7 +525,8 @@ try {
                 // So yes, alternate_title is likely the preferred one for display if it exists.
                 $displayTitle = !empty($item['alternate_title']) ? $item['alternate_title'] : $item['article_title'];
             ?>
-                <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode(',', $tags)); ?>">
+                <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
+                <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
                     <div class="news-card-header">
                         <span class="news-type-badge type-<?php echo esc_attr($item['article_type']); ?>">
                             <?php echo esc_html(ucfirst($item['article_type'])); ?>
@@ -710,7 +711,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         cards.forEach(card => {
             const cardType = card.dataset.type || '';
-            const cardTags = card.dataset.tags ? card.dataset.tags.split(',') : [];
+            const cardTags = card.dataset.tags ? card.dataset.tags.split('|') : [];
 
             const typeMatch = activeType === 'all' || cardType === activeType;
             const tagMatch = activeTag === 'all' || cardTags.includes(activeTag);

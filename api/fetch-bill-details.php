@@ -129,9 +129,20 @@ try {
         }
         $congress_label = $congress . $suffix;
 
-        preg_match('/([a-zA-Z]+)\s*(\d+)/', $bill_number, $matches);
-        $type = strtolower($matches[1] ?? 'hr');
-        $num = $matches[2] ?? preg_replace('/\D/', '', $bill_number);
+        // Parse the bill number. Strip punctuation/spacing first so inputs
+        // like "S. 1234", "H.R. 45", or "H.J.Res. 12" parse correctly — the
+        // old pattern stopped at the first dot and silently defaulted to
+        // 'hr', fetching a completely different bill.
+        $normalized = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $bill_number));
+        if (!preg_match('/^([a-z]+)(\d+)$/', $normalized, $matches)) {
+            throw new Exception("Could not parse the federal bill number '{$bill_number}'. Use a format like 'HR 1234' or 'S. 567'.");
+        }
+        $validTypes = ['hr', 's', 'hjres', 'sjres', 'hconres', 'sconres', 'hres', 'sres'];
+        $type = $matches[1];
+        if (!in_array($type, $validTypes, true)) {
+            throw new Exception("Unrecognized federal bill type '{$matches[1]}'. Expected one of: HR, S, HJRes, SJRes, HConRes, SConRes, HRes, SRes.");
+        }
+        $num = $matches[2];
 
         if (empty($CONGRESS_API_KEY)) {
             echo json_encode([
@@ -231,7 +242,16 @@ try {
             'subject_tags'       => $subject_tags,
             'full_text_url'      => $full_text_url,
             'official_url'       => "https://www.congress.gov/bill/{$congress_label}-congress/" .
-                                    (($type === 'hr') ? 'house-bill' : 'senate-bill') . "/{$num}",
+                                    ([
+                                        'hr'      => 'house-bill',
+                                        's'       => 'senate-bill',
+                                        'hjres'   => 'house-joint-resolution',
+                                        'sjres'   => 'senate-joint-resolution',
+                                        'hconres' => 'house-concurrent-resolution',
+                                        'sconres' => 'senate-concurrent-resolution',
+                                        'hres'    => 'house-resolution',
+                                        'sres'    => 'senate-resolution',
+                                    ][$type] ?? 'house-bill') . "/{$num}",
             'position'           => 'unknown',
             'publication_status' => 'draft',
         ];

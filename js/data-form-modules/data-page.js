@@ -2427,11 +2427,11 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 const facilityCount = project.data?.facilities?.length || 0;
                 
-                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeJsStringForAttr(name)}')">
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeJsStringForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');
@@ -2479,11 +2479,11 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 const facilityCount = project.data?.facilities?.length || 0;
                 
-                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeJsStringForAttr(name)}')">
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeJsStringForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');
@@ -2493,7 +2493,26 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
         }
         
         function escapeHtmlForAttr(text) {
-            return text.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // For a single-quoted JS string inside a double-quoted HTML attribute
+        // (onclick="fn('...')"): JS-escape first, then HTML-escape. Entity
+        // escaping alone fails because the HTML parser decodes &#39; back to a
+        // raw quote before the JS is parsed.
+        function escapeJsStringForAttr(text) {
+            return String(text)
+                .replace(/\\/g, '\\\\')
+                .replace(/'/g, "\\'")
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
@@ -2556,11 +2575,11 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                 const dateStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 const facilityCount = project.data?.facilities?.length || 0;
                 
-                return `<div class="project-item" onclick="loadProjectAndSync('${escapeHtmlForAttr(name)}')">
+                return `<div class="project-item" onclick="loadProjectAndSync('${escapeJsStringForAttr(name)}')">
                             <div class="project-item-name" title="Click to load project">${escapeHtmlForAttr(name)}</div>
                             <div class="project-item-date">${dateStr}<br><small>${facilityCount} facilities</small></div>
                             <div class="project-item-actions">
-                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeHtmlForAttr(name)}')">Load</button>
+                                <button class="project-item-btn project-item-load" onclick="event.stopPropagation(); loadProjectAndSync('${escapeJsStringForAttr(name)}')">Load</button>
                             </div>
                         </div>`;
             }).join('');

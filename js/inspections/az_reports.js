@@ -406,8 +406,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function countViolations(facility) {
         if (!facility.inspections) return 0;
+        // Count with the same predicate the violations filter uses
+        // (inspectionHasViolations) — counting every array element ranked
+        // facilities on deficiencies the filter simultaneously hides.
         return facility.inspections.reduce((total, inspection) => {
-            return total + (inspection.deficiencies ? inspection.deficiencies.length : 0);
+            const deficiencies = Array.isArray(inspection.deficiencies) ? inspection.deficiencies : [];
+            return total + deficiencies.filter(d =>
+                d && typeof d === 'object' && (d.rule || d.evidence || d.findings)
+            ).length;
         }, 0);
     }
 
@@ -564,14 +570,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
         <details class="inspection-box ${inspectionClass}">
             <summary class="inspection-header">
-                ${inspection.inspection_type || 'Inspection'} - ${inspection.inspection_date || 'N/A'}
+                ${escapeHtml(inspection.inspection_type || 'Inspection')} - ${escapeHtml(inspection.inspection_date || 'N/A')}
             </summary>
             <div class="inspection-content">
                 <div class="inspection-details-block">
-                    <strong>Inspection Date:</strong> ${inspection.inspection_date || 'N/A'}<br>
-                    <strong>Inspection Type:</strong> ${inspection.inspection_type || 'N/A'}<br>
-                    <strong>Inspection Number:</strong> ${inspection.inspection_number || 'N/A'}<br>
-                    <strong>Certificate Number:</strong> ${inspection.certificate_number || 'N/A'}
+                    <strong>Inspection Date:</strong> ${escapeHtml(inspection.inspection_date || 'N/A')}<br>
+                    <strong>Inspection Type:</strong> ${escapeHtml(inspection.inspection_type || 'N/A')}<br>
+                    <strong>Inspection Number:</strong> ${escapeHtml(inspection.inspection_number || 'N/A')}<br>
+                    <strong>Certificate Number:</strong> ${escapeHtml(inspection.certificate_number || 'N/A')}
                 </div>
                 <h4>Deficiencies:</h4>
                 ${hasViolations ? inspection.deficiencies?.map((def, index) => createDeficiencyHTML(def, index)).join('') || '<div class="no-violations"><p><strong>Violations found but no deficiency details available.</strong></p></div>' : '<div class="no-violations"><p><strong>No violations noted in this inspection.</strong></p></div>'}
@@ -580,10 +586,21 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Report text comes from scraper output — escape everything interpolated
+    // into innerHTML so a stray '<' can't break the DOM.
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function createDeficiencyHTML(deficiency, index) {
-        const rule = (deficiency.rule || '').replace(/\n/g, '<br>');
-        const evidence = (deficiency.evidence || '').replace(/\n/g, '<br>');
-        const findings = (deficiency.findings || '').replace(/\n/g, '<br>');
+        const rule = escapeHtml(deficiency.rule || '').replace(/\n/g, '<br>');
+        const evidence = escapeHtml(deficiency.evidence || '').replace(/\n/g, '<br>');
+        const findings = escapeHtml(deficiency.findings || '').replace(/\n/g, '<br>');
         
         return `
             <details class="violation-box">

@@ -270,7 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return 0;
         }
 
-        const dateToken = match[1].replace(/-/g, '');
+        let dateToken = match[1].replace(/-/g, '');
+        // Filenames use MMDDYYYY (e.g. ut_reports_03182026.json). Comparing
+        // that as a plain integer ranks 12312025 above 01012026 — reorder to
+        // YYYYMMDD before comparing. (YYYY-MM-DD tokens are already
+        // year-first after the dash strip.)
+        if (/^\d{8}$/.test(dateToken) && !/^(19|20)/.test(dateToken) && /^(19|20)/.test(dateToken.slice(4))) {
+            dateToken = dateToken.slice(4) + dateToken.slice(0, 4);
+        }
         const parsed = Number.parseInt(dateToken, 10);
         return Number.isFinite(parsed) ? parsed : 0;
     }
@@ -690,8 +697,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </summary>
             <div class="inspection-content">
                 <div class="inspection-details-block">
-                    <strong>Inspection Date:</strong> ${inspection.inspection_date || 'N/A'}<br>
-                    <strong>Inspection Type:</strong> ${inspection.inspection_type || 'N/A'}
+                    <strong>Inspection Date:</strong> ${escapeHtml(inspection.inspection_date || 'N/A')}<br>
+                    <strong>Inspection Type:</strong> ${escapeHtml(inspection.inspection_type || 'N/A')}
                 </div>
                 <h4>Findings:</h4>
                 ${hasViolations ? findings.map((finding, index) => createFindingHTML(finding, index)).join('') || '<div class="no-violations"><p><strong>Violations found but no finding details available.</strong></p></div>' : '<div class="no-violations"><p><strong>No violations noted in this inspection.</strong></p></div>'}
@@ -702,17 +709,35 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Report text comes from scraper output — escape it before interpolating
+    // into innerHTML. Some UT finding_text carries intentional literal <br/>
+    // line breaks; restore those (and only those) after escaping.
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function escapeReportText(s) {
+        return escapeHtml(s)
+            .replace(/&lt;br\s*\/?&gt;/gi, '<br>')
+            .replace(/\n/g, '<br>');
+    }
+
     function createFindingHTML(finding, index) {
         if (!finding) {
             return '';
         }
 
-        const ruleNumber = finding.rule_number || finding.ruleNumber || 'N/A';
+        const ruleNumber = escapeHtml(finding.rule_number || finding.ruleNumber || 'N/A');
         const ruleDescriptionRaw = finding.description || finding.rule_description || '';
         const findingTextRaw = finding.text || finding.finding_text || '';
-        const ruleDescription = ruleDescriptionRaw.replace(/\n/g, '<br>');
-        const findingText = findingTextRaw.replace(/\n/g, '<br>');
-        
+        const ruleDescription = escapeReportText(ruleDescriptionRaw);
+        const findingText = escapeReportText(findingTextRaw);
+
         return `
             <details class="violation-box">
                 <summary class="deficiency-header">Finding ${index + 1} - Rule ${ruleNumber}</summary>

@@ -51,7 +51,9 @@ function lawsuit_normalize_array($value): array {
         }));
     }
     if (is_string($value) && trim($value) !== '') {
-        return array_values(array_filter(array_map('trim', preg_split('/[\r\n,]+/', $value))));
+        // Newlines only — these are one-per-line fields, and names legitimately
+        // contain commas ("Doe, Jane" must not become two entries).
+        return array_values(array_filter(array_map('trim', preg_split('/[\r\n]+/', $value))));
     }
     return [];
 }
@@ -183,11 +185,10 @@ try {
         'tags'                   => $jsonEncode($data['tags'] ?? []),
         'filebird_folder_id'     => isset($data['filebird_folder_id']) && $data['filebird_folder_id'] !== '' ? (int)$data['filebird_folder_id'] : null,
         'publication_status'     => $pubStatus,
-        'submitted_by'           => trim((string)($data['submitted_by'] ?? wp_get_current_user()->user_login ?? '')),
         'reviewer_notes'         => trim((string)($data['reviewer_notes'] ?? '')),
     ];
 
-    $fields['published_at'] = ($pubStatus === 'published') ? date('Y-m-d H:i:s') : null;
+    $submittedBy = trim((string)($data['submitted_by'] ?? ''));
 
     $id = isset($data['id']) ? (int)$data['id'] : 0;
 
@@ -198,12 +199,28 @@ try {
             $set[] = "`$col` = ?";
             $params[] = $val;
         }
+        // Preserve provenance: the admin form never sends submitted_by, so
+        // only overwrite it when the caller explicitly provided a value —
+        // otherwise publishing a public submission would replace the original
+        // submitter with the admin's username.
+        if ($submittedBy !== '') {
+            $set[] = "`submitted_by` = ?";
+            $params[] = $submittedBy;
+        }
+        // Stamp published_at on first publish only; never re-stamp on later
+        // edits and never clear it on a status change.
+        if ($pubStatus === 'published') {
+            $set[] = "`published_at` = COALESCE(`published_at`, ?)";
+            $params[] = date('Y-m-d H:i:s');
+        }
         $params[] = $id;
         $sql = "UPDATE lawsuits SET " . implode(', ', $set) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         echo json_encode(['success' => true, 'id' => $id, 'updated' => true]);
     } else {
+        $fields['submitted_by'] = $submittedBy !== '' ? $submittedBy : (wp_get_current_user()->user_login ?? '');
+        $fields['published_at'] = ($pubStatus === 'published') ? date('Y-m-d H:i:s') : null;
         $cols = array_keys($fields);
         $placeholders = array_fill(0, count($cols), '?');
         $sql = "INSERT INTO lawsuits (`" . implode('`,`', $cols) . "`) VALUES (" . implode(',', $placeholders) . ")";

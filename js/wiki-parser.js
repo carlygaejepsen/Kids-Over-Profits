@@ -2110,10 +2110,22 @@ function parseWikiMarkdown(markdown) {
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             if (!(line.startsWith('|') && line.includes('---'))) continue;
+            // Split a table row into cells, dropping ONLY the boundary empties
+            // produced by the leading/trailing pipes. Filtering out all empty
+            // cells (the old behavior) shifted every column after an empty
+            // cell one position left, mis-assigning the row's data.
+            const splitRow = (rowText) => {
+                const parts = rowText.split('|').map(c => c.trim());
+                if (parts.length && parts[0] === '') parts.shift();
+                if (parts.length && parts[parts.length - 1] === '') parts.pop();
+                return parts;
+            };
+
             const columnMap = {};
             if (i > 0) {
-                const headers = lines[i - 1].split('|').map(h => h.trim().toLowerCase()).filter(h => h);
+                const headers = splitRow(lines[i - 1]).map(h => h.toLowerCase());
                 headers.forEach((h, idx) => {
+                    if (!h) return;
                     if (h.includes('name')) columnMap.name = idx;
                     else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
                     else if (h.includes('location')) columnMap.location = idx;
@@ -2128,8 +2140,8 @@ function parseWikiMarkdown(markdown) {
             for (let j = i + 1; j < lines.length; j++) {
                 const dataLine = lines[j].trim();
                 if (!dataLine.startsWith('|')) continue;
-                const cells = dataLine.split('|').map(c => c.trim()).filter(c => c);
-                if (cells.length < 2) continue;
+                const cells = splitRow(dataLine);
+                if (cells.filter(c => c).length < 2) continue;
 
                 const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
                 const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
@@ -2140,10 +2152,10 @@ function parseWikiMarkdown(markdown) {
                 const entry = {
                     name,
                     link,
-                    yearsActive: columnMap.years !== undefined ? cells[columnMap.years] : '',
-                    location: columnMap.location !== undefined ? cells[columnMap.location] : '',
-                    type: columnMap.type !== undefined ? cells[columnMap.type] : '',
-                    reopened: columnMap.reopened !== undefined ? cells[columnMap.reopened] : ''
+                    yearsActive: columnMap.years !== undefined ? (cells[columnMap.years] || '') : '',
+                    location: columnMap.location !== undefined ? (cells[columnMap.location] || '') : '',
+                    type: columnMap.type !== undefined ? (cells[columnMap.type] || '') : '',
+                    reopened: columnMap.reopened !== undefined ? (cells[columnMap.reopened] || '') : ''
                 };
                 const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
                 if (healCell && healCell.includes('http')) {

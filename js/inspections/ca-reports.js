@@ -413,9 +413,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Fetch all 21 files concurrently for better performance
-            const fetchPromises = urls.map(url => fetch(url));
-            const responses = await Promise.all(fetchPromises);
+            // Fetch all batch files concurrently. Use allSettled so a single
+            // network failure drops that batch instead of blanking the page —
+            // with Promise.all, 1 rejection discarded the other 20 batches.
+            const settled = await Promise.allSettled(urls.map(url => fetch(url)));
+            const failed = settled.filter(r => r.status === 'rejected').length;
+            if (failed > 0) {
+                console.warn(`CA reports: ${failed} of ${urls.length} batch files failed to load; continuing with the rest.`);
+            }
+            const responses = settled
+                .filter(r => r.status === 'fulfilled')
+                .map(r => r.value);
             const lastModifiedDates = responses
                 .map(r => r.headers.get('Last-Modified'))
                 .filter(Boolean)
@@ -425,7 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 scrapedTimestamp = new Date(Math.max(...lastModifiedDates.map(d => d.getTime()))).toISOString();
                 renderLastUpdated();
             }
-            const jsonPromises = responses.map(response => response.ok ? response.json() : Promise.resolve([]));
+            const jsonPromises = responses.map(response => response.ok ? response.json().catch(() => []) : Promise.resolve([]));
             const allJsonData = await Promise.all(jsonPromises);
 
             // Normalize mixed payloads (legacy flat rows and API facility/reports rows).
@@ -903,34 +911,46 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 }
     
+    // Report text comes from scraper output — escape everything interpolated
+    // into innerHTML so a stray '<' can't break the DOM. (safeString only
+    // null-guards and trims; it does not escape.)
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function createInspectionHTML(inspection) {
     // Use the same violation detection logic as filtering - just check if deficiencies field exists
     const hasViolations = inspectionHasViolations(inspection);
-    
+
     const inspectionClass = hasViolations ? 'inspection-box-violation' : 'inspection-box-clean';
-    const narrative = (inspection.narrative || '').replace(/\n/g, '<br>');
-    const findings = (inspection.investigation_findings || '').replace(/\n/g, '<br>');
-    
+    const narrative = escapeHtml(inspection.narrative || '').replace(/\n/g, '<br>');
+    const findings = escapeHtml(inspection.investigation_findings || '').replace(/\n/g, '<br>');
+
     // Create facility detail link using facility number
     const facilityNumber = isValidFacilityNumber(inspection.facility_number) ? inspection.facility_number : '';
-    const facilityDetailLink = facilityNumber ? 
-        `<a href="https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${facilityNumber}" target="_blank" rel="noopener noreferrer">View Facility Details</a>` : 
+    const facilityDetailLink = facilityNumber ?
+        `<a href="https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${encodeURIComponent(facilityNumber)}" target="_blank" rel="noopener noreferrer">View Facility Details</a>` :
         'N/A';
-            
+
         return `
         <details class="inspection-box ${inspectionClass}">
             <summary class="inspection-header">
-                ${safeString(inspection.report_type) || 'Report'} - ${safeString(inspection.visit_date) || 'N/A'}
+                ${escapeHtml(safeString(inspection.report_type) || 'Report')} - ${escapeHtml(safeString(inspection.visit_date) || 'N/A')}
             </summary>
             <div class="inspection-content">
                 <div class="inspection-details-block">
-                    <strong>Report Type:</strong> ${safeString(inspection.report_type) || 'N/A'}<br>
-                    <strong>Visit Date:</strong> ${safeString(inspection.visit_date) || 'N/A'}<br>
-                    <strong>Report Date:</strong> ${safeString(inspection.report_date) || 'N/A'}<br>
-                    <strong>Form Number:</strong> ${safeString(inspection.form_number) || 'N/A'}<br>
-                    <strong>Census:</strong> ${safeString(inspection.census) || 'N/A'}<br>
-                    <strong>Complaint Status:</strong> ${safeString(inspection.complaint_status) || 'N/A'}<br>
-                    <strong>Met With:</strong> ${safeString(inspection.met_with) || 'N/A'}<br>
+                    <strong>Report Type:</strong> ${escapeHtml(safeString(inspection.report_type) || 'N/A')}<br>
+                    <strong>Visit Date:</strong> ${escapeHtml(safeString(inspection.visit_date) || 'N/A')}<br>
+                    <strong>Report Date:</strong> ${escapeHtml(safeString(inspection.report_date) || 'N/A')}<br>
+                    <strong>Form Number:</strong> ${escapeHtml(safeString(inspection.form_number) || 'N/A')}<br>
+                    <strong>Census:</strong> ${escapeHtml(safeString(inspection.census) || 'N/A')}<br>
+                    <strong>Complaint Status:</strong> ${escapeHtml(safeString(inspection.complaint_status) || 'N/A')}<br>
+                    <strong>Met With:</strong> ${escapeHtml(safeString(inspection.met_with) || 'N/A')}<br>
                     <strong>Source:</strong> ${facilityDetailLink}
                 </div>
                 ${narrative ? `<div class="narrative-section"><h4>Narrative:</h4><p>${narrative}</p></div>` : ''}
@@ -943,9 +963,9 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
     function createDeficiencyHTML(deficiency, index) {
-        const section = safeString(deficiency.section_cited || '').replace(/\n/g, '<br>');
-        const description = safeString(deficiency.description || '').replace(/\n/g, '<br>');
-        const poc = safeString(deficiency.plan_of_correction || '').replace(/\n/g, '<br>');
+        const section = escapeHtml(safeString(deficiency.section_cited || '')).replace(/\n/g, '<br>');
+        const description = escapeHtml(safeString(deficiency.description || '')).replace(/\n/g, '<br>');
+        const poc = escapeHtml(safeString(deficiency.plan_of_correction || '')).replace(/\n/g, '<br>');
         return `
             <details class="violation-box">
                 <summary class="deficiency-header">Violation ${index + 1}</summary>

@@ -23,15 +23,14 @@ $type_labels = [
 ];
 
 try {
-    $where  = ["publication_status = 'published'"];
-    $params = [];
-    if ($type_filter)   { $where[] = 'project_type = ?'; $params[] = $type_filter; }
-    if ($status_filter) { $where[] = 'status = ?';       $params[] = $status_filter; }
-
-    $sql = 'SELECT * FROM volunteer_projects WHERE ' . implode(' AND ', $where)
-         . " ORDER BY FIELD(status,'open','filled','completed','archived'), title ASC";
+    // Render ALL published projects and let the client-side filter handle
+    // status/type — filtering the SQL here made the dropdowns useless, since
+    // they only re-filter the already-rendered cards (selecting "Filled"
+    // against an open-only page always showed 0 projects).
+    $sql = "SELECT * FROM volunteer_projects WHERE publication_status = 'published'
+            ORDER BY FIELD(status,'open','filled','completed','archived'), title ASC";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute($params);
+    $stmt->execute();
     $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Status counts for filter tabs
@@ -171,6 +170,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.kop-filter-select').forEach(sel => sel.value = '');
         applyFilters();
     });
+
+    // All published projects are rendered; apply the initial selection
+    // (default: Open) so the page starts filtered.
+    applyFilters();
 });
 </script>
 

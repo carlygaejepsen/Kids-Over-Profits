@@ -208,7 +208,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 form.hidden = true;
                 if (thanks) thanks.hidden = false;
             } else {
-                statusEl.textContent = (result && result.error) ? result.error : 'Something went wrong. Please try again.';
+                // Duplicate rejections carry the readable text in `message`
+                // (`error` is just the token 'duplicate').
+                statusEl.textContent = (result && (result.message || result.error)) || 'Something went wrong. Please try again.';
                 statusEl.className = 'kop-submit-status error';
                 btn.disabled = false;
             }

@@ -140,16 +140,21 @@ function kop_action_upload(): void {
     $doc_text = iconv('UTF-8', 'UTF-8//IGNORE', $doc_text) ?: $doc_text;
     $doc_text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $doc_text);
 
-    // Split into chunks
+    // Split into chunks. Use mb_substr (character-based): byte-based substr
+    // can cut a multibyte character in half, making the chunk invalid UTF-8 —
+    // json_encode of the AI request body then fails and the extraction aborts.
     $chunks     = [];
     $chunk_size = 12000;
     $overlap    = 300;
     $offset     = 0;
-    $len        = strlen($doc_text);
+    $len        = mb_strlen($doc_text, 'UTF-8');
     $max_chunks = 10;
     while ($offset < $len && count($chunks) < $max_chunks) {
-        $chunks[] = substr($doc_text, $offset, $chunk_size);
+        $chunks[] = mb_substr($doc_text, $offset, $chunk_size, 'UTF-8');
         $offset  += $chunk_size - $overlap;
+    }
+    if ($offset < $len) {
+        error_log("extract-lawsuit-from-document: document truncated at $max_chunks chunks (" . ($len - $offset) . ' chars dropped)');
     }
 
     $job_id = wp_generate_uuid4();

@@ -1725,6 +1725,7 @@ function filterFacilities() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
     const statusFilterSelect = document.getElementById('statusFilter');
     const statusFilter = statusFilterSelect ? statusFilterSelect.value : '';
+    const letterFilter = (window.currentLetterFilter || '').toLowerCase();
 
     const operatorSections = document.querySelectorAll('.operator-section');
 
@@ -1733,6 +1734,10 @@ function filterFacilities() {
         const facilityCards = section.querySelectorAll('.facility-card');
         let visibleFacilities = 0;
 
+        // Alphabet filter matches on the FIRST letter of the operator name —
+        // substring matching showed every record merely containing the letter.
+        const matchesLetter = !letterFilter || operatorName.startsWith(letterFilter);
+
         facilityCards.forEach(card => {
             const facilitySearch = (card.dataset.search || card.dataset.facility || '').toLowerCase();
             const facilityStatus = card.dataset.status;
@@ -1740,7 +1745,7 @@ function filterFacilities() {
             const matchesSearch = operatorName.includes(searchTerm) || facilitySearch.includes(searchTerm);
             const matchesStatus = !statusFilter || facilityStatus === statusFilter;
 
-            if (matchesSearch && matchesStatus) {
+            if (matchesLetter && matchesSearch && matchesStatus) {
                 card.style.display = 'block';
                 visibleFacilities++;
             } else {
@@ -1769,8 +1774,10 @@ function clearSearch() {
 
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = '';
-    if (sortBy) sortBy.value = '';
-    if (clearButton) clearButton.style.display = 'none';       
+    // The select has no ''-valued option; reset to its first (default) option.
+    if (sortBy) sortBy.selectedIndex = 0;
+    if (clearButton) clearButton.style.display = 'none';
+    window.currentLetterFilter = '';
     filterFacilities();
 }
 
@@ -2116,15 +2123,10 @@ function setupAlphabetFilter() {
 }
 
 function filterByLetter(letter) {
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        if (letter === '') {
-            searchInput.value = '';
-        } else {
-            searchInput.value = letter;
-        }
-        filterFacilities();
-    }
+    // Track the letter separately instead of stuffing it into the search box
+    // (which substring-matched it anywhere in the name/location).
+    window.currentLetterFilter = letter || '';
+    filterFacilities();
 }
 
 // Expose to global scope for inline onclick handlers
@@ -2158,16 +2160,27 @@ function setupEventListeners() {
 }
 
 function handleSort() {
-    const sortDropdown = document.getElementById('sortBy');    
+    const sortDropdown = document.getElementById('sortBy');
     const sortValue = sortDropdown ? sortDropdown.value : 'name';
     const operatorSections = Array.from(document.querySelectorAll('.operator-section'));
     const container = document.querySelector('.facilities-database');
 
     if (!container) return;
 
+    // Local comparator: compareDisplayText is scoped inside displayFacilities
+    // and is not reachable from this top-level function.
+    const compareOperatorText = (a, b) => {
+        const textA = (a || '').toString().trim();
+        const textB = (b || '').toString().trim();
+        if (!textA && !textB) return 0;
+        if (!textA) return 1;
+        if (!textB) return -1;
+        return textA.localeCompare(textB, undefined, { numeric: true, sensitivity: 'base' });
+    };
+
     switch(sortValue) {
         case 'name':
-            operatorSections.sort((a, b) => compareDisplayText(a.dataset.operator, b.dataset.operator));
+            operatorSections.sort((a, b) => compareOperatorText(a.dataset.operator, b.dataset.operator));
             break;
         case 'violations-only':
             // Filter to show only facilities with violations (you'll need to add violation data to your JSON)
@@ -2192,7 +2205,7 @@ function handleSort() {
             break;
         default:
             // Default A-Z sort
-            operatorSections.sort((a, b) => compareDisplayText(a.dataset.operator, b.dataset.operator));
+            operatorSections.sort((a, b) => compareOperatorText(a.dataset.operator, b.dataset.operator));
     }
 
     // Re-append sorted sections

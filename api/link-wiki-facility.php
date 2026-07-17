@@ -56,6 +56,27 @@ function kop_wiki_table(string $type): string {
 }
 
 /**
+ * Make sure the facility-link columns exist (idempotent; mirrors
+ * save-wiki-submission.php). init-wiki-master.php creates wiki_master WITHOUT
+ * these columns, so on an install where migrate-wiki-facility-link.php hasn't
+ * run yet, every master-type request would 500 with "Unknown column".
+ */
+function kop_ensure_wiki_link_columns(PDO $pdo, string $table): void {
+    foreach (['facility_unique_name' => "VARCHAR(255) DEFAULT NULL",
+              'facility_link_status' => "ENUM('suggested','confirmed') DEFAULT NULL"] as $col => $def) {
+        try {
+            $pdo->exec("ALTER TABLE `$table` ADD COLUMN `$col` $def");
+        } catch (PDOException $colEx) {
+            // 1060 = duplicate column; already migrated. Anything else re-throws.
+            if (strpos($colEx->getMessage(), 'Duplicate column') === false
+                && strpos($colEx->getMessage(), '1060') === false) {
+                throw $colEx;
+            }
+        }
+    }
+}
+
+/**
  * Validate the type parameter and send a 400 on failure.
  */
 function kop_require_type(string $type): void {
@@ -166,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         kop_require_type($type);
         $table = kop_wiki_table($type);
+        kop_ensure_wiki_link_columns($pdo, $table);
 
         // -- get --
         if ($action === 'get') {
@@ -286,6 +308,7 @@ $wikiId = (int)($input['wiki_id'] ?? 0);
 try {
     kop_require_type($type);
     $table = kop_wiki_table($type);
+    kop_ensure_wiki_link_columns($pdo, $table);
 
     if (!$wikiId) {
         http_response_code(400);

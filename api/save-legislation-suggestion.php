@@ -36,7 +36,8 @@ function leg_sugg_normalize_array($value): array {
     if (is_array($value)) {
         $items = array_map(static function ($v) { return is_string($v) ? trim($v) : $v; }, $value);
     } elseif (is_string($value) && trim($value) !== '') {
-        $items = array_map('trim', preg_split('/[\r\n,]+/', $value));
+        // Newlines only — one-per-line fields; names contain commas ("Doe, Jane").
+        $items = array_map('trim', preg_split('/[\r\n]+/', $value));
     } else {
         return [];
     }

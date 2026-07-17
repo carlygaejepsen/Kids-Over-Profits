@@ -18,13 +18,28 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Don't display errors in JSON response
 
-// Custom error handler to return JSON
+// Custom error handler to return JSON for FATAL error types only.
+// WordPress core and plugins load below this handler and routinely raise
+// notices/warnings/deprecations (especially on PHP 8.2) — aborting on those
+// would break every admin save site-wide. Non-fatal errors are logged and
+// deferred to PHP's normal handling; suppressed errors (@ / error_reporting
+// masks) are respected.
 set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    echo json_encode([
-        'success' => false,
-        'error' => "PHP Error: $errstr in $errfile on line $errline"
-    ]);
-    exit;
+    if (!(error_reporting() & $errno)) {
+        return false; // suppressed via @ or error_reporting mask
+    }
+
+    $fatal = E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR | E_RECOVERABLE_ERROR;
+    if ($errno & $fatal) {
+        echo json_encode([
+            'success' => false,
+            'error' => "PHP Error: $errstr in $errfile on line $errline"
+        ]);
+        exit;
+    }
+
+    error_log("save-master.php non-fatal PHP error ($errno): $errstr in $errfile on line $errline");
+    return true; // handled; don't let display_errors leak into the JSON body
 });
 
 // Security: Check if user is admin (uncomment when WordPress is available)

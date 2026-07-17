@@ -1014,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderList(newsArticles, 'articleListOutput', item => `<strong>${escapeHtml(item.title)}</strong> (${escapeHtml(item.source || 'No Source')})`);
         renderList(testimonies, 'testimonyListOutput', item => {
             const dateStr = item.date ? `${escapeHtml(item.date)}: ` : '';
-            return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml(item.quote.substring(0, 30))}... [${escapeHtml(item.source || 'Unknown')}]`;
+            return `<strong>${dateStr}(${escapeHtml(item.type)})</strong> ${escapeHtml((item.quote || '').substring(0, 30))}... [${escapeHtml(item.source || 'Unknown')}]`;
         });
         renderList(relatedMedia, 'mediaListOutput', item => `[${escapeHtml(item.title)}]`);
         renderList(campuses, 'campusListOutput', item => `<strong>${escapeHtml(item.name)}</strong> — ${escapeHtml(item.location)}`);
@@ -1055,7 +1055,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) return null;
             const result = await response.json();
             if (result.success && Array.isArray(result.data) && result.data.length > 0) {
-                return result.data[0];
+                // The API's ?search does a LIKE over program_name, city_state
+                // AND organization, newest first — the first row can be a
+                // different program (e.g. "Elan One" when editing "Elan").
+                // Prefer an exact program-name match; only fall back to the
+                // newest row when the name matches nothing exactly.
+                const wanted = programName.trim().toLowerCase();
+                const exact = result.data.find(row =>
+                    (row.program_name || '').trim().toLowerCase() === wanted
+                );
+                return exact || result.data[0];
             }
         } catch (error) {
             console.error(`Wiki Editor: failed to lookup "${programName}":`, error);
@@ -2623,7 +2632,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         submitStatus.innerHTML = '';
                     }, 3000);
                 } else {
-                    submitStatus.innerHTML = `<span class="error">❌ ${result.message || 'Submission failed'}</span>`;
+                    // API failure responses use `error` (message is unused there)
+                    submitStatus.innerHTML = `<span class="error">❌ ${result.error || result.message || 'Submission failed'}</span>`;
                 }
             } catch (error) {
                 console.error('Submission error:', error);
@@ -2779,7 +2789,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         // unparsedContent, which the generator reads directly.)
                         generatedMarkdown: generateWikiMarkdown(parsedData),
                         submittedBy: 'bulk-upload',
-                        submissionNotes: `Bulk uploaded from file: ${file.name}`
+                        submissionNotes: `Bulk uploaded from file: ${file.name}`,
+                        // Bulk uploads carry no facility link, and the API rejects
+                        // non-draft submissions without one. Save as drafts; each
+                        // entry gets linked via the program picker before submission.
+                        status: 'draft'
                     };
 
                     // Submit to database

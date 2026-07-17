@@ -67,8 +67,28 @@ try {
                 ? $project['data']['identification']
                 : null;
 
-            // Try identification first (it's the program-level info), then operator.
-            foreach ([$identification, $operator] as $src) {
+            // facilities_master projects actually store identification per
+            // facility (data.facilities[i].identification / .locationDetails) —
+            // the top-level paths above exist only in legacy payloads. Without
+            // these sources, state/city/status came back null for most rows.
+            $facilityIdentification = null;
+            $facilityLocation = null;
+            if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
+                foreach ($project['data']['facilities'] as $fac) {
+                    if (!is_array($fac)) continue;
+                    if (!$facilityIdentification && isset($fac['identification']) && is_array($fac['identification'])) {
+                        $facilityIdentification = $fac['identification'];
+                    }
+                    if (!$facilityLocation && isset($fac['locationDetails']) && is_array($fac['locationDetails'])) {
+                        $facilityLocation = $fac['locationDetails'];
+                    }
+                    if ($facilityIdentification && $facilityLocation) break;
+                }
+            }
+
+            $sources = [$facilityLocation, $facilityIdentification, $identification, $operator];
+
+            foreach ($sources as $src) {
                 if (!is_array($src)) continue;
                 if (!$state && !empty($src['state'])) $state = $src['state'];
                 if (!$state && !empty($src['locationState'])) $state = $src['locationState'];
@@ -80,9 +100,9 @@ try {
             // Some projects only have free-form 'location' / 'address' strings; try to
             // pull a "City, ST" out of those when nothing structured was found.
             if (!$state || !$city) {
-                foreach ([$identification, $operator] as $src) {
+                foreach ($sources as $src) {
                     if (!is_array($src)) continue;
-                    foreach (['location', 'address', 'cityState', 'city_state'] as $k) {
+                    foreach (['location', 'address', 'cityState', 'city_state', 'headquarters'] as $k) {
                         if (!empty($src[$k]) && is_string($src[$k])) {
                             if (preg_match('/([^,]+),\s*([A-Z]{2}|[A-Za-z .]+)\s*$/', trim($src[$k]), $m)) {
                                 if (!$city)  $city  = trim($m[1]);

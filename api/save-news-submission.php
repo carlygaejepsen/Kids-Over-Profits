@@ -76,13 +76,16 @@ function kop_sync_news_facility_links(PDO $pdo, int $newsId, array $normalizedMe
 
     $desiredIds = array_keys($desiredIds);
 
+    // Only prune links this sync owns (link_type 'mentioned'). Links created
+    // manually in the admin panel (primary/related) must survive a re-save
+    // whose facilities_mentioned list doesn't include them.
     if (empty($desiredIds)) {
-        $stmt = $pdo->prepare("DELETE FROM news_facility_links WHERE news_id = ?");
+        $stmt = $pdo->prepare("DELETE FROM news_facility_links WHERE news_id = ? AND link_type = 'mentioned'");
         $stmt->execute([$newsId]);
     } else {
         $placeholders = implode(',', array_fill(0, count($desiredIds), '?'));
         $stmt = $pdo->prepare(
-            "DELETE FROM news_facility_links WHERE news_id = ? AND facility_id NOT IN ($placeholders)"
+            "DELETE FROM news_facility_links WHERE news_id = ? AND link_type = 'mentioned' AND facility_id NOT IN ($placeholders)"
         );
         $stmt->execute(array_merge([$newsId], $desiredIds));
 
@@ -103,8 +106,8 @@ try {
         $status = $_GET['status'] ?? null;
         $type = $_GET['type'] ?? null;
         $search = $_GET['search'] ?? null;
-        $limit = min((int)($_GET['limit'] ?? 50), 100);
-        $offset = (int)($_GET['offset'] ?? 0);
+        $limit = max(1, min((int)($_GET['limit'] ?? 50), 100));
+        $offset = max(0, (int)($_GET['offset'] ?? 0));
         
         if ($id) {
             // Get single submission
@@ -155,14 +158,14 @@ try {
         $total = $countStmt->fetchColumn();
         
         // Get submissions
-        $sql = "SELECT id, article_title, alternate_title, author, publication_name, 
-                       publication_date, article_type, status, submitted_by, created_at, updated_at 
-                FROM news_submissions $whereClause 
-                ORDER BY created_at DESC 
-                LIMIT ? OFFSET ?";
-        $params[] = $limit;
-        $params[] = $offset;
-        
+        // $limit/$offset are int-cast above; inline them — execute() binds
+        // placeholders as strings, and MySQL rejects a quoted LIMIT.
+        $sql = "SELECT id, article_title, alternate_title, author, publication_name,
+                       publication_date, article_type, status, submitted_by, created_at, updated_at
+                FROM news_submissions $whereClause
+                ORDER BY created_at DESC
+                LIMIT $limit OFFSET $offset";
+
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $submissions = $stmt->fetchAll();

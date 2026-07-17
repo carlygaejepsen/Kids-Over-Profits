@@ -514,26 +514,37 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
+    // Report text comes from scraper output — escape everything interpolated
+    // into innerHTML so a stray '<' can't break the DOM.
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function createInspectionHTML(inspection) {
         const hasViolations = inspectionHasViolations(inspection);
         const inspectionClass = hasViolations ? 'inspection-box-violation' : 'inspection-box-clean';
-        const narrative = (inspection.narrative || '').replace(/\n/g, '<br>');
-        const findings = (inspection.investigation_findings || '').replace(/\n/g, '<br>');
-        
+        const narrative = escapeHtml(inspection.narrative || '').replace(/\n/g, '<br>');
+        const findings = escapeHtml(inspection.investigation_findings || '').replace(/\n/g, '<br>');
+
         // Montana doesn't have facility detail links, so we'll omit that
         const facilityDetailLink = 'N/A';
-        
+
         return `
             <details class="inspection-box ${inspectionClass}">
                 <summary class="inspection-header">
-                    ${inspection.report_type || 'Survey'} - ${inspection.visit_date || 'N/A'}
+                    ${escapeHtml(inspection.report_type || 'Survey')} - ${escapeHtml(inspection.visit_date || 'N/A')}
                 </summary>
                 <div class="inspection-content">
                     <div class="inspection-details-block">
-                        <strong>Survey Type:</strong> ${inspection.report_type || 'N/A'}<br>
-                        <strong>Survey Date:</strong> ${inspection.visit_date || 'N/A'}<br>
-                        <strong>Form Number:</strong> ${inspection.form_number || 'N/A'}<br>
-                        <strong>Survey Team Leader:</strong> ${inspection.met_with || 'N/A'}<br>
+                        <strong>Survey Type:</strong> ${escapeHtml(inspection.report_type || 'N/A')}<br>
+                        <strong>Survey Date:</strong> ${escapeHtml(inspection.visit_date || 'N/A')}<br>
+                        <strong>Form Number:</strong> ${escapeHtml(inspection.form_number || 'N/A')}<br>
+                        <strong>Survey Team Leader:</strong> ${escapeHtml(inspection.met_with || 'N/A')}<br>
                         <strong>Source:</strong> Montana Department of Health
                     </div>
                     ${narrative ? `<div class="narrative-section"><h4>Narrative:</h4><p>${narrative}</p></div>` : ''}
@@ -546,10 +557,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createDeficiencyHTML(deficiency, index) {
-        const section = (deficiency.section_cited || '').replace(/\n/g, '<br>');
-        const description = (deficiency.description || '').replace(/\n/g, '<br>');
-        const poc = (deficiency.plan_of_correction || '').replace(/\n/g, '<br>');
-        const itemNumber = deficiency.item_number ? ` (Item #${deficiency.item_number})` : '';
+        const section = escapeHtml(deficiency.section_cited || '').replace(/\n/g, '<br>');
+        const description = escapeHtml(deficiency.description || '').replace(/\n/g, '<br>');
+        const poc = escapeHtml(deficiency.plan_of_correction || '').replace(/\n/g, '<br>');
+        const itemNumber = deficiency.item_number ? ` (Item #${escapeHtml(deficiency.item_number)})` : '';
         const repeatFlag = deficiency.is_repeat ? ' - REPEAT DEFICIENCY' : '';
         
         return `

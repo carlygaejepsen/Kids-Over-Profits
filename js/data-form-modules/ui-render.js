@@ -371,7 +371,7 @@
                     item.className = 'consultant-item';
                     if (window.currentConsultantIndex === index) item.classList.add('active');
                     
-                    const name = (c.firstName || c.lastName) ? `${c.firstName} ${c.lastName}`.trim() : `Consultant #${index + 1}`;
+                    const name = (c.firstName || c.lastName) ? [c.firstName, c.lastName].filter(Boolean).join(' ') : `Consultant #${index + 1}`;
                     item.innerHTML = `
                         <div class="consultant-item-number">${index + 1}</div>
                         <div class="consultant-item-info">

@@ -490,24 +490,28 @@
     }
 
     function attachButtonListeners() {
+        // Resolve handlers at attach time from the live global — the parse-time
+        // `KOP_UI_Actions` snapshot above is {} when this file loads before
+        // ui-actions.js, which would silently bind undefined handlers.
+        const actions = window.KOP_UI_Actions || KOP_UI_Actions || {};
         const facilityButtons = {
-            'add-facility-btn': KOP_UI_Actions.addFacility,
-            'add-facility-main-btn': KOP_UI_Actions.addFacility,
-            'remove-facility-btn': KOP_UI_Actions.removeFacility,
-            'clone-facility-btn': KOP_UI_Actions.cloneFacility,
-            'prev-facility-btn': KOP_UI_Actions.previousFacility,
-            'next-facility-btn': KOP_UI_Actions.nextFacility,
-            'sort-facilities-btn': KOP_UI_Actions.sortFacilities
+            'add-facility-btn': actions.addFacility,
+            'add-facility-main-btn': actions.addFacility,
+            'remove-facility-btn': actions.removeFacility,
+            'clone-facility-btn': actions.cloneFacility,
+            'prev-facility-btn': actions.previousFacility,
+            'next-facility-btn': actions.nextFacility,
+            'sort-facilities-btn': actions.sortFacilities
         };
 
         Object.keys(facilityButtons).forEach(id => {
             const btn = document.getElementById(id);
-            if (btn && !btn.dataset.listenerAttached) {
+            if (btn && typeof facilityButtons[id] === 'function' && !btn.dataset.listenerAttached) {
                 btn.addEventListener('click', facilityButtons[id]);
                 btn.dataset.listenerAttached = 'true';
             }
         });
-        
+
         // Other button listeners can be added here
     }
 

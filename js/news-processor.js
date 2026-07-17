@@ -204,7 +204,12 @@
             }
         });
 
-        // Restore content warnings
+        // Restore content warnings. Guard against a non-array value from an
+        // older corrupted localStorage save — a TypeError here aborts init()
+        // on every page load until storage is cleared.
+        if (!Array.isArray(formData.contentWarnings)) {
+            formData.contentWarnings = formData.contentWarnings ? [String(formData.contentWarnings)] : [];
+        }
         formData.contentWarnings.forEach(warning => {
             const btn = Array.from(document.querySelectorAll('.news-warning-btn'))
                 .find(b => b.textContent === warning);
@@ -315,6 +320,18 @@
         });
     }
 
+    // Escape a value for interpolation into HTML (attribute values and
+    // textarea bodies). Without this, a double quote in an AI-extracted name
+    // truncates the input's value and the corrupted value gets saved back.
+    function escAttr(value) {
+        return String(value == null ? '' : value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function showTypeSpecificForm(type) {
         const container = document.getElementById('type-specific-forms');
         container.innerHTML = '';
@@ -326,17 +343,17 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Plaintiffs</label>
-                            <input type="text" name="plaintiffs" class="news-input" data-autocomplete-category="human" value="${formData.plaintiffs || ''}">
+                            <input type="text" name="plaintiffs" class="news-input" data-autocomplete-category="human" value="${escAttr(formData.plaintiffs)}">
                         </div>
                         <div class="news-form-group">
                             <label>Defendants</label>
-                            <input type="text" name="defendants" class="news-input" data-autocomplete-category="human" value="${formData.defendants || ''}">
+                            <input type="text" name="defendants" class="news-input" data-autocomplete-category="human" value="${escAttr(formData.defendants)}">
                         </div>
                     </div>
                     <div class="news-form-group">
                         <label>Legal Representation</label>
                         <div class="news-input-with-save">
-                            <input type="text" name="legalRep" class="news-input" data-autocomplete-category="human" list="legalReps-list" value="${formData.legalRep || ''}">
+                            <input type="text" name="legalRep" class="news-input" data-autocomplete-category="human" list="legalReps-list" value="${escAttr(formData.legalRep)}">
                             <datalist id="legalReps-list"></datalist>
                             <button class="news-save-btn" data-save="legalReps" data-field="legalRep">💾</button>
                         </div>
@@ -345,12 +362,12 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Date Filed</label>
-                            <input type="date" name="dateFiled" class="news-input" value="${formData.dateFiled || ''}">
+                            <input type="date" name="dateFiled" class="news-input" value="${escAttr(formData.dateFiled)}">
                         </div>
                         <div class="news-form-group">
                             <label>Jurisdiction</label>
                             <div class="news-input-with-save">
-                                <input type="text" name="jurisdiction" class="news-input" data-autocomplete-category="location" list="jurisdictions-list" value="${formData.jurisdiction || ''}">
+                                <input type="text" name="jurisdiction" class="news-input" data-autocomplete-category="location" list="jurisdictions-list" value="${escAttr(formData.jurisdiction)}">
                                 <datalist id="jurisdictions-list"></datalist>
                                 <button class="news-save-btn" data-save="jurisdictions" data-field="jurisdiction">💾</button>
                             </div>
@@ -359,7 +376,7 @@
                     </div>
                     <div class="news-form-group">
                         <label>Press Releases (URLs)</label>
-                        <textarea name="pressReleases" class="news-textarea" rows="2" placeholder="One URL per line">${formData.pressReleases || ''}</textarea>
+                        <textarea name="pressReleases" class="news-textarea" rows="2" placeholder="One URL per line">${escAttr(formData.pressReleases)}</textarea>
                     </div>
                 </div>
             `;
@@ -369,7 +386,7 @@
                     <h3>Event Details</h3>
                     <div class="news-form-group">
                         <label>Related Coverage (URLs)</label>
-                        <textarea name="relatedCoverage" class="news-textarea" rows="3" placeholder="One URL per line">${formData.relatedCoverage || ''}</textarea>
+                        <textarea name="relatedCoverage" class="news-textarea" rows="3" placeholder="One URL per line">${escAttr(formData.relatedCoverage)}</textarea>
                     </div>
                 </div>
             `;
@@ -380,24 +397,24 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Staff Member Name</label>
-                            <input type="text" name="staffMemberName" class="news-input" data-autocomplete-category="human" value="${formData.staffMemberName || ''}">
+                            <input type="text" name="staffMemberName" class="news-input" data-autocomplete-category="human" value="${escAttr(formData.staffMemberName)}">
                         </div>
                         <div class="news-form-group">
                             <label>Facility Name</label>
-                            <input type="text" name="arrestFacilityName" class="news-input" data-autocomplete-category="facility" value="${formData.arrestFacilityName || ''}">
+                            <input type="text" name="arrestFacilityName" class="news-input" data-autocomplete-category="facility" value="${escAttr(formData.arrestFacilityName)}">
                         </div>
                     </div>
                     <div class="news-form-group">
                         <label>Date(s) of Alleged Misconduct</label>
-                        <input type="text" name="misconductDates" class="news-input" value="${formData.misconductDates || ''}">
+                        <input type="text" name="misconductDates" class="news-input" value="${escAttr(formData.misconductDates)}">
                     </div>
                     <div class="news-form-group">
                         <label>Charges</label>
-                        <textarea name="charges" class="news-textarea" rows="2">${formData.charges || ''}</textarea>
+                        <textarea name="charges" class="news-textarea" rows="2">${escAttr(formData.charges)}</textarea>
                     </div>
                         <div class="news-form-group">
                             <label>Case Status</label>
-                            <input type="text" name="caseStatus" class="news-input" data-autocomplete-category="status" placeholder="e.g., awaiting trial, convicted" value="${formData.caseStatus || ''}">
+                            <input type="text" name="caseStatus" class="news-input" data-autocomplete-category="status" placeholder="e.g., awaiting trial, convicted" value="${escAttr(formData.caseStatus)}">
                         </div>
                 </div>
             `;
@@ -408,20 +425,20 @@
                     <div class="news-grid-2">
                         <div class="news-form-group">
                             <label>Facility Name</label>
-                            <input type="text" name="closureFacilityName" class="news-input" data-autocomplete-category="facility" value="${formData.closureFacilityName || ''}">
+                            <input type="text" name="closureFacilityName" class="news-input" data-autocomplete-category="facility" value="${escAttr(formData.closureFacilityName)}">
                         </div>
                         <div class="news-form-group">
                             <label>Location (City, State)</label>
-                            <input type="text" name="closureLocation" class="news-input" data-autocomplete-category="location" value="${formData.closureLocation || ''}">
+                            <input type="text" name="closureLocation" class="news-input" data-autocomplete-category="location" value="${escAttr(formData.closureLocation)}">
                         </div>
                     </div>
                     <div class="news-form-group">
                         <label>Date of Closure</label>
-                        <input type="date" name="closureDate" class="news-input" value="${formData.closureDate || ''}">
+                        <input type="date" name="closureDate" class="news-input" value="${escAttr(formData.closureDate)}">
                     </div>
                     <div class="news-form-group">
                         <label>Context/Reason</label>
-                        <textarea name="closureContext" class="news-textarea" rows="3">${formData.closureContext || ''}</textarea>
+                        <textarea name="closureContext" class="news-textarea" rows="3">${escAttr(formData.closureContext)}</textarea>
                     </div>
                 </div>
             `;
@@ -431,19 +448,19 @@
                     <h3>Corporate Change Details</h3>
                     <div class="news-form-group">
                         <label>Facility Name(s)</label>
-                        <textarea name="corporateFacilityNames" class="news-textarea" rows="2" placeholder="Include old and new names for rebrand/merger">${formData.corporateFacilityNames || ''}</textarea>
+                        <textarea name="corporateFacilityNames" class="news-textarea" rows="2" placeholder="Include old and new names for rebrand/merger">${escAttr(formData.corporateFacilityNames)}</textarea>
                     </div>
                     <div class="news-form-group">
                         <label>Location (City, State)</label>
-                        <input type="text" name="corporateLocation" class="news-input" data-autocomplete-category="location" value="${formData.corporateLocation || ''}">
+                        <input type="text" name="corporateLocation" class="news-input" data-autocomplete-category="location" value="${escAttr(formData.corporateLocation)}">
                     </div>
                     <div class="news-form-group">
                         <label>Key Personnel</label>
-                        <textarea name="keyPersonnel" class="news-textarea" rows="2" placeholder="Names of executives or staff central to the change">${formData.keyPersonnel || ''}</textarea>
+                        <textarea name="keyPersonnel" class="news-textarea" rows="2" placeholder="Names of executives or staff central to the change">${escAttr(formData.keyPersonnel)}</textarea>
                     </div>
                     <div class="news-form-group">
                         <label>Ownership/Funding</label>
-                        <textarea name="ownership" class="news-textarea" rows="2" placeholder="Owners, parent companies, funders, or key stakeholders">${formData.ownership || ''}</textarea>
+                        <textarea name="ownership" class="news-textarea" rows="2" placeholder="Owners, parent companies, funders, or key stakeholders">${escAttr(formData.ownership)}</textarea>
                     </div>
                 </div>
             `;
@@ -512,12 +529,18 @@
         
         container.innerHTML = '';
         savedValues[category].forEach(value => {
+            // Build via DOM APIs: values with quotes broke the data-value
+            // attribute (making tags unremovable) when interpolated raw.
             const tag = document.createElement('span');
             tag.className = 'news-tag';
-            tag.innerHTML = `
-                ${value}
-                <button type="button" class="news-tag-remove" data-category="${category}" data-value="${value}">×</button>
-            `;
+            tag.appendChild(document.createTextNode(` ${value} `));
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'news-tag-remove';
+            removeBtn.dataset.category = category;
+            removeBtn.dataset.value = value;
+            removeBtn.textContent = '×';
+            tag.appendChild(removeBtn);
             container.appendChild(tag);
         });
     }
@@ -1335,14 +1358,23 @@
                         window.refreshFacilityPicker();
                     }
                 }
-                if (data.staff) formData.staff = data.staff.join('\n');
-                if (data.survivors) formData.survivors = data.survivors.join('\n');
+                // The AI response is not schema-enforced — a model may return a
+                // string where an array is expected. Coerce instead of calling
+                // array methods blindly: a non-array contentWarnings persisted
+                // to localStorage broke init() on every reload until cleared.
+                const toLines = v => Array.isArray(v) ? v.join('\n') : String(v || '');
+                if (data.staff) formData.staff = toLines(data.staff);
+                if (data.survivors) formData.survivors = toLines(data.survivors);
                 if (data.summary) formData.summary = data.summary;
                 if (data.alternateTitle) {
                     formData.alternateTitle = data.alternateTitle;
                     formData.needsAlternateTitle = true;
                 }
-                if (data.contentWarnings) formData.contentWarnings = data.contentWarnings;
+                if (data.contentWarnings) {
+                    formData.contentWarnings = Array.isArray(data.contentWarnings)
+                        ? data.contentWarnings
+                        : [String(data.contentWarnings)];
+                }
                 if (data.articleType) formData.articleType = data.articleType;
 
                 // Update type-specific fields
@@ -1471,7 +1503,9 @@
                         modal.style.display = 'none';
                     }, 2000);
                 } else {
-                    statusEl.innerHTML = `<span class="error">❌ ${result.error || 'Submission failed'}</span>`;
+                    // Duplicate rejections put the human-readable text in
+                    // `message` (error is just the token 'duplicate').
+                    statusEl.innerHTML = `<span class="error">❌ ${escAttr(result.message || result.error || 'Submission failed')}</span>`;
                 }
             } catch (error) {
                 console.error('Submission error:', error);

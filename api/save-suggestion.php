@@ -238,12 +238,21 @@ try {
     $reason = trim($input['reason']);
     $active_category = kop_normalize_submission_category($input['metadata']['activeCategory'] ?? '');
     $effective_category = kop_infer_submission_category($input, $data, $active_category);
-    $project_name_hint = trim((string) (
-        $input['projectName']
-        ?? ($input['metadata']['actualProjectName'] ?? '')
-        ?? ($data['projectName'] ?? '')
-        ?? ($data['name'] ?? '')
-    ));
+    // Take the first non-empty candidate. A ?? chain doesn't work here:
+    // ($x ?? '') never yields null, so everything after it was unreachable.
+    $project_name_hint = '';
+    foreach ([
+        $input['projectName'] ?? null,
+        $input['metadata']['actualProjectName'] ?? null,
+        $data['projectName'] ?? null,
+        $data['name'] ?? null,
+    ] as $candidate) {
+        $candidate = trim((string) $candidate);
+        if ($candidate !== '') {
+            $project_name_hint = $candidate;
+            break;
+        }
+    }
 
     if ($effective_category !== 'referrers') {
         kop_strip_referrer_submission_data($data);

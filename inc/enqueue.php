@@ -1130,9 +1130,23 @@ function enqueue_data_form_script() {
 
     
 
+        // Enqueue UI State module (project status panels + referrer relabeling).
+        // Depends on utilities.js for window.escapeHtmlForAttr.
+        $ui_state_relative_path = '/js/data-form-modules/ui-state.js';
+        $ui_state_file_path = get_stylesheet_directory() . $ui_state_relative_path;
+        $ui_state_uri = get_stylesheet_directory_uri() . $ui_state_relative_path;
+
+        wp_enqueue_script(
+            'kop-ui-state-script',
+            $ui_state_uri,
+            array('jquery', 'utilities-module-script'),
+            file_exists($ui_state_file_path) ? filemtime($ui_state_file_path) : time(),
+            true
+        );
+
         $ui_deps = ['jquery', 'kop-form-config-script', 'kop-project-script', 'kop-ui-render-script'];
 
-    
+
 
         // Enqueue UI Events module
         $ui_events_relative_path = '/js/data-form-modules/ui-events.js';
@@ -1289,7 +1303,7 @@ function enqueue_data_form_script() {
 
 
 
-                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
+                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
 
 
 

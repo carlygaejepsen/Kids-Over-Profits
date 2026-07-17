@@ -489,42 +489,53 @@ document.addEventListener('DOMContentLoaded', () => {
         el.innerHTML = `<p>Last updated: ${updateDate}</p>`;
     }
 
+    // Report text comes from scraper output — escape everything interpolated
+    // into innerHTML so a stray '<' can't break the DOM.
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function createCitationHTML(citation) {
         const riskLevel = citation['Standard Risk Level'] || 'Unknown';
         const riskClass = getRiskLevelClass(riskLevel);
         const corrected = citation['Corrected at Inspection'] === 'Yes';
-        
+
         // Use inspection-box-violation for violations, inspection-box-clean for others
         const hasViolation = citation['Deficiency Narrative'] && citation['Deficiency Narrative'].trim();
         const boxClass = hasViolation ? 'inspection-box-violation' : 'inspection-box-clean';
-        
+
         return `
             <details class="inspection-box ${boxClass}">
                 <summary class="inspection-header">
-                    ${citation['Citation Date'] || 'N/A'} - ${citation['Standard Number / Description'] || 'Citation'}
+                    ${escapeHtml(citation['Citation Date'] || 'N/A')} - ${escapeHtml(citation['Standard Number / Description'] || 'Citation')}
                 </summary>
                 <div class="inspection-content">
                     <div class="inspection-details-block">
-                        <strong>Citation Date:</strong> ${citation['Citation Date'] || 'N/A'}<br>
-                        <strong>Standard Number / Description:</strong> ${citation['Standard Number / Description'] || 'N/A'}<br>
-                        <strong>Category:</strong> ${citation['Category'] || 'N/A'}<br>
-                        <strong>Sections Violated:</strong> ${citation['Sections Violated'] || 'N/A'}<br>
-                        <strong>Standard Risk Level:</strong> ${riskLevel}<br>
-                        <strong>Corrected at Inspection:</strong> ${citation['Corrected at Inspection'] || 'N/A'}<br>
-                        ${citation['Date Correction Evaluated'] ? `<strong>Date Correction Evaluated:</strong> ${citation['Date Correction Evaluated']}<br>` : ''}
+                        <strong>Citation Date:</strong> ${escapeHtml(citation['Citation Date'] || 'N/A')}<br>
+                        <strong>Standard Number / Description:</strong> ${escapeHtml(citation['Standard Number / Description'] || 'N/A')}<br>
+                        <strong>Category:</strong> ${escapeHtml(citation['Category'] || 'N/A')}<br>
+                        <strong>Sections Violated:</strong> ${escapeHtml(citation['Sections Violated'] || 'N/A')}<br>
+                        <strong>Standard Risk Level:</strong> ${escapeHtml(riskLevel)}<br>
+                        <strong>Corrected at Inspection:</strong> ${escapeHtml(citation['Corrected at Inspection'] || 'N/A')}<br>
+                        ${citation['Date Correction Evaluated'] ? `<strong>Date Correction Evaluated:</strong> ${escapeHtml(citation['Date Correction Evaluated'])}<br>` : ''}
                     </div>
-                    
+
                     ${citation['Deficiency Narrative'] ? `
                         <div class="narrative-section">
                             <h4>Deficiency Narrative:</h4>
-                            <p>${citation['Deficiency Narrative']}</p>
+                            <p>${escapeHtml(citation['Deficiency Narrative'])}</p>
                         </div>
                     ` : ''}
-                    
+
                     ${citation['Correction Narrative'] ? `
                         <div class="narrative-section">
                             <h4>Correction Narrative:</h4>
-                            <p>${citation['Correction Narrative']}</p>
+                            <p>${escapeHtml(citation['Correction Narrative'])}</p>
                         </div>
                     ` : ''}
                     

@@ -89,6 +89,7 @@ $facilityStmt = $pdo->prepare("
          license_exp_date, relicense_visit_date, action, scraped_timestamp)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ON DUPLICATE KEY UPDATE
+        id = LAST_INSERT_ID(id),
         full_address = VALUES(full_address),
         phone = VALUES(phone),
         program_category = VALUES(program_category),

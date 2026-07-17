@@ -290,6 +290,24 @@
         const API_ENDPOINTS = getAPIEndpoints();
 
         if (action === 'delete') {
+            // In suggestion mode there is no server-side delete — the public
+            // endpoint only accepts suggestion payloads (data + reason) and
+            // would reject this request with a 400. Remove the local draft.
+            if (isSuggestionMode()) {
+                delete window.projects[projectName];
+                localStorage.removeItem(`project_${projectName}`);
+                try {
+                    saveToLocalStorage('cloudProjects', window.projects);
+                } catch (storageError) {
+                    console.warn('Local persistence failed:', storageError);
+                }
+                if (window.currentProjectName === projectName) newProject();
+                showUploadStatus(`✅ Removed local draft "${projectName}".`, 'success');
+                if (typeof updateAllUI === 'function') updateAllUI();
+                if (typeof refreshSavedProjectPanels === 'function') refreshSavedProjectPanels();
+                return true;
+            }
+
             try {
                 showUploadStatus(`🗑️ Deleting "${projectName}"...`, 'info');
                 const payload = { projectName: projectName, action: 'delete' };

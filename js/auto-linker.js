@@ -341,6 +341,18 @@ class TTIProgramAutoLinker {
                         markdownLink +
                         result.substring(matchEnd);
 
+                // The insertion shifted every character after it: move
+                // previously recorded ranges so later overlap checks compare
+                // against current coordinates (stale ranges let shorter names
+                // link inside already-inserted links, corrupting the markdown).
+                const lengthDelta = markdownLink.length - matchedText.length;
+                linkedRanges.forEach(range => {
+                    if (range.start >= matchEnd) {
+                        range.start += lengthDelta;
+                        range.end += lengthDelta;
+                    }
+                });
+
                 // Track this linked range (adjusted for the new link length)
                 linkedRanges.push({
                     start: matchStart,

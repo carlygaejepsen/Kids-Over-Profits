@@ -337,7 +337,9 @@ Click Cancel to stay on the current tab.`);
                 if (window.currentProjectName === oldName) {
                     window.currentProjectName = newName.trim();
                     window.formData.projectName = newName.trim();
-                    document.getElementById('project-name').value = newName.trim();
+                    // #project-name only exists on the admin template
+                    const projectNameInput = document.getElementById('project-name');
+                    if (projectNameInput) projectNameInput.value = newName.trim();
                 }
                 showUploadStatus(`✅ Project renamed to "${newName.trim()}"`, 'success');
                 updateAllUI();
