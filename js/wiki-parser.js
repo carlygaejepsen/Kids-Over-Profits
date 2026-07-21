@@ -251,10 +251,12 @@ function parseWikiMarkdown(markdown) {
         // The browser editor recomputes these from DOM edit state; setting them here
         // keeps headless paths (batch import, regenerate-from-record) correct too.
         historyNotesIsImported: false,
+        staffMiscIsImported: false,
         structureMiscIsImported: false,
         lawsuitsMiscIsImported: false,
         testimoniesMiscIsImported: false,
         relatedMediaMiscIsImported: false,
+        staffMisc: '',
         
         // Affiliations and History
         affiliations: [],
@@ -309,6 +311,15 @@ function parseWikiMarkdown(markdown) {
     // Normalize user signature
     normalizedMarkdown = normalizedMarkdown.replace(/- \[shroomskillet\]\(\/user\/shroomskillet\/\)/g, '- [Signal-Strain9810](/user/Signal-Strain9810/)');
     normalizedMarkdown = normalizedMarkdown.replace(/^\s*Last revised by \[(?:shroomskillet|Signal-Strain9810)\]\(\/(?:user|u)\/(?:shroomskillet|Signal-Strain9810)\/?\)\s*$/gim, '');
+    // Generic Reddit wiki footer/editor chrome, regardless of which username
+    // appears (pages exist signed by rjm2013 and others, and some carry a bare
+    // "Last revised by" with no link at all). Also drop the "## Page title"
+    // header the wiki editor appends after the footer.
+    normalizedMarkdown = normalizedMarkdown.replace(/^\s*Last revised by\s*(?:\[[^\]]*\]\([^)]*\))?\s*$/gim, '');
+    normalizedMarkdown = normalizedMarkdown.replace(/^#{1,6}\s*Page title\s*$/gim, '');
+    // Unwrap empty markdown links ("[NATSAP]()") left behind by authoring
+    // mistakes — keep the label, drop the dead link syntax.
+    normalizedMarkdown = normalizedMarkdown.replace(/\[([^\]]+)\]\(\s*\)/g, '$1');
 
 
     // Common acronym expansions for TTI industry companies
@@ -882,18 +893,24 @@ function parseWikiMarkdown(markdown) {
     const getSection = (source, sectionTitle) => {
         const escapedTitle = escapeRegex(sectionTitle);
         // Handle both "## **Title**" and "##**Title**" (no space between # and *)
-        const headerPattern = `#{1,6}\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*`;
-        const regex = new RegExp(
-            // Lookahead: next ## header, standalone *** or --- separator (on its own line), or end
-            // The separator must be on its own line (not ***bold*** mid-content)
-            headerPattern + '\\n([\\s\\S]*?)(?=\\n#{1,2}(?:\\s|\\*)|\\n(?:\\*\\*\\*|---)\\s*\\n|\\n(?:\\*\\*\\*|---)\\s*$|$)',
-            'i'
-        );
-
-        const match = source.match(regex);
-        let result = match ? match[1].trim() : '';
-        // Strip standalone *** or --- separators at start/end of captured content
-        result = result.replace(/^(?:\*\*\*|---)\s*$|(?:\r\n|\n|\r)?(?:\*\*\*|---)\s*$/gm, '').trim();
+        const headerRegex = new RegExp(`(#{1,6})\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*\\n`, 'i');
+        const match = source.match(headerRegex);
+        let result = '';
+        if (match) {
+            // The section ends at the next heading of the SAME or HIGHER level
+            // (a "### Photos" subsection stays inside its "## Related Media"
+            // parent, while pages that use "###" for their main sections still
+            // terminate at the next "###"). Standalone ***/--- separators do NOT
+            // terminate a section: index-style pages put one between every
+            // block, and a separator-stop truncated those sections to nothing.
+            const level = match[1].length;
+            const bodyStart = match.index + match[0].length;
+            const rest = source.slice(bodyStart);
+            const nextHeader = rest.match(new RegExp(`\\n#{1,${level}}(?:[ \\t]|\\*)`));
+            result = (nextHeader ? rest.slice(0, nextHeader.index) : rest).trim();
+            // Strip standalone *** or --- separators at start/end of captured content
+            result = result.replace(/^(?:\*\*\*|---)\s*$|(?:\r\n|\n|\r)?(?:\*\*\*|---)\s*$/gm, '').trim();
+        }
 
         console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
         return result;
@@ -907,6 +924,16 @@ function parseWikiMarkdown(markdown) {
         return '';
     };
 
+    // True only when a section is NOTHING BUT the "No information is known"
+    // stub. A section that merely contains the phrase mid-content ("No
+    // information is known about the level system. However, ...") still holds
+    // real content and must be imported, not discarded.
+    const isNoInfoSection = (text) => {
+        const t = String(text || '').trim();
+        if (!t) return true;
+        return /^no information is known/i.test(t) && t.length < 120;
+    };
+
     // Parse header
     // 1. Try standard TTI format: ## **Name** (Years) Location
     let headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)\s+([^\r\n]+)/m);
@@ -915,12 +942,24 @@ function parseWikiMarkdown(markdown) {
         parsedData.programName = headerMatch[1].trim().replace(/:$/, '');
         parsedData.yearsActive = headerMatch[2].trim();
         parsedData.cityState = headerMatch[3].trim();
+        // Some pages jam the program type onto the header line as trailing
+        // italics: "## **Name**(Years) City, ST*Program Type*". Split it out so
+        // the type doesn't pollute the location field.
+        const inlineType = parsedData.cityState.match(/^(.*?)\s*\*([^*]+)\*\s*$/);
+        if (inlineType) {
+            parsedData.cityState = inlineType[1].trim();
+            parsedData.programType = inlineType[2].trim();
+        }
     } else {
         // 2. Try simpler format: ## **Name** (Years)
         headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*{0,2}(.+?)\*{0,2}\s*\(([^)]+)\)/m);
         if (headerMatch) {
             parsedData.programName = headerMatch[1].trim().replace(/:$/, '');
             parsedData.yearsActive = headerMatch[2].trim();
+        } else if ((headerMatch = normalizedMarkdown.match(/^#{1,3}\s*\*\*([^*\n]+?)\*\*\s*[-–—]\s*\*([^*\n]+?)\*/m))) {
+            // 2b. Consultant-style header: # **Name**-*Location*
+            parsedData.programName = headerMatch[1].trim().replace(/:$/, '');
+            parsedData.cityState = headerMatch[2].trim();
         } else {
             // 3. Try simplest format: ## Name
             // We search for the first header that isn't a known section header
@@ -935,19 +974,40 @@ function parseWikiMarkdown(markdown) {
                 
                 // If it doesn't contain invalid titles and is reasonably short (program name)
                 if (!invalidTitles.some(t => candidate.toLowerCase().includes(t.toLowerCase())) && candidate.length < 100) {
-                     parsedData.programName = candidate;
+                     parsedData.programName = candidate.replace(/\*+/g, ' ').replace(/\s+/g, ' ').trim();
                      break; // Found the first valid-looking program name
                 }
             }
+        }
+    }
+
+    // 4. Stub pages ("Lakeland" followed only by a footer) carry the program
+    // name as a bare first line with no header markup at all.
+    if (!parsedData.programName) {
+        const firstLine = normalizedMarkdown.split('\n').map(l => l.trim()).find(Boolean);
+        if (firstLine
+            && firstLine.length < 80
+            && !/^[#|[\-]/.test(firstLine)
+            && !/^(?:\*\*\*|---)/.test(firstLine)
+            && !firstLine.includes('.')) {
+            parsedData.programName = firstLine.replace(/[*_]/g, '').trim();
         }
     }
     console.log('Header match result:', parsedData.programName);
 
     // Parse program type — first try the standalone *Type* line
     const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
-    if (typeMatch) {
+    if (typeMatch && !parsedData.programType) {
         parsedData.programType = typeMatch[1].trim();
     }
+
+    // A previously GENERATED page can carry unfilled template tokens in its
+    // header ("# **Name** ([Years Active]) [City, ST]" / "*[Program Type]*").
+    // Re-importing must treat those as empty, not as literal values.
+    const isTemplateToken = (v) => /^\[[^\]]*\]$/.test(String(v || '').trim());
+    ['programName', 'yearsActive', 'cityState', 'programType'].forEach((key) => {
+        if (isTemplateToken(parsedData[key])) parsedData[key] = '';
+    });
 
     // Fallback: extract program type from history text if not found
     if (!parsedData.programType) {
@@ -970,7 +1030,7 @@ function parseWikiMarkdown(markdown) {
         'History and Bakcground Information',
         'Background Information'
     ]);
-    if (historySection && !historySection.includes('No information is known')) {
+    if (historySection && !isNoInfoSection(historySection)) {
         const normalizedHistory = historySection.replace(/[\u2013\u2014]/g, '-');
         // Link-inlined copy for keyword-based extractions: "[text](url)" -> "text".
         // A markdown link sitting next to a keyword (e.g. "[NATSAP](...) member")
@@ -1443,15 +1503,29 @@ function parseWikiMarkdown(markdown) {
         'Founders and Employees'
     ]);
 
-    if (staffSection && !staffSection.includes('No information is known')) {
-        const staffEntryPattern = /(?:^|\n)\*\*\s*([^*]+?)\s*\*\*\s*(?:\(([^)]*)\)\s*)?([\s\S]*?)(?=\n\s*\*\*\s*[^*]+?\s*\*\*\s*(?:\([^)]*\)\s*)?(?:is |was |formerly |previously |worked |served |has |co-founded |founded |also |does |currently )|\s*$)/gi;
+    if (staffSection && !isNoInfoSection(staffSection)) {
+        // Accepts "**Name**", "*** Name:***" (bold-italic with optional colon),
+        // and an optional leading bullet. Names never span lines.
+        const staffEntryPattern = /(?:^|\n)[ \t]*(?:[-•]\s+)?\*{2,3}\s*([^*\n]+?)\s*:?\s*\*{2,3}[ \t]*(?:\(([^)]*)\)\s*)?([\s\S]*?)(?=\n[ \t]*(?:[-•]\s+)?\*{2,3}\s*[^*\n]+?\s*:?\s*\*{2,3}[ \t]*(?:\([^)]*\)\s*)?(?:is |was |formerly |previously |worked |served |has |co-founded |founded |also |does |currently )|\s*$)/gi;
 
         for (const blockMatch of staffSection.matchAll(staffEntryPattern)) {
-            const name = (blockMatch[1] || '').trim();
-            const staffDates = blockMatch[2] ? blockMatch[2].trim() : '';
+            let name = (blockMatch[1] || '').trim();
+            let staffDates = blockMatch[2] ? blockMatch[2].trim() : '';
             const bioText = (blockMatch[3] || '').trim();
 
+            // Split a parenthetical embedded in the bold name itself, e.g.
+            // "***Jane Doe (COO 2008-2018):**" -> name + dates.
+            const nameParen = name.match(/^(.+?)\s*\(([^)]*)\)$/);
+            if (nameParen) {
+                name = nameParen[1].trim();
+                if (!staffDates) staffDates = nameParen[2].trim();
+            }
+            name = name.replace(/:$/, '').trim();
+
             if (!name || !bioText) continue;
+            // Skip sub-bullets that are attributes of the previous person, not
+            // a new staff member ("***Role at X:**", "***Current Role:**").
+            if (/^(?:role(?:s)?\b|current role|previous role|pre-|post-|note[s:]?$|source[s:]?$)/i.test(name)) continue;
 
             const isFormer = /formerly|former|ex-|passed away|death|no longer/i.test(bioText)
                 || /^worked\b/i.test(bioText)       // "worked as..." implies past
@@ -1489,6 +1563,13 @@ function parseWikiMarkdown(markdown) {
                 isFormer
             });
         }
+
+        // Preserve the full staff section verbatim, like the other sections.
+        // Staff was the only section rebuilt purely from structured entries, so
+        // any bio the entry regex misparsed was silently lost or reworded on
+        // round-trip. The generator substitutes this text when imported.
+        parsedData.staffMisc = staffSection;
+        parsedData.staffMiscIsImported = true;
     }
 
     // Parse Program Structure section
@@ -1505,7 +1586,7 @@ function parseWikiMarkdown(markdown) {
         'Seminar Structure'
     ]);
 
-    if (structureSection && !structureSection.includes('No information is known')) {
+    if (structureSection && !isNoInfoSection(structureSection)) {
         // Extract level system description (first sentence or paragraph mentioning level/phase system)
         const levelDescMatch = structureSection.match(/(?:uses|used|utilizes|utilized|implements|implemented)\s+([^\.]*(?:level|phase|tier|point)[^\.]+)/i);
         if (levelDescMatch) {
@@ -1582,7 +1663,7 @@ function parseWikiMarkdown(markdown) {
         'Controversies'
     ]);
 
-    if (abuseSection && !abuseSection.includes('No information is known')) {
+    if (abuseSection && !isNoInfoSection(abuseSection)) {
         // Store the FULL abuse section text for preservation
         parsedData.lawsuitsMisc = abuseSection;
         parsedData.lawsuitsMiscIsImported = true;
@@ -1756,7 +1837,7 @@ function parseWikiMarkdown(markdown) {
         'Rules and Consequences'
     ]);
 
-    if (rulesSection && !rulesSection.includes('No information is known')) {
+    if (rulesSection && !isNoInfoSection(rulesSection)) {
         // Extract rules (bulleted list)
         const ruleMatches = rulesSection.matchAll(/^[*-]\s+(.+)$/gm);
         for (const match of ruleMatches) {
@@ -1804,7 +1885,7 @@ function parseWikiMarkdown(markdown) {
         'In the Media'
     ]);
 
-    if (mediaSection && !mediaSection.includes('No information is known')) {
+    if (mediaSection && !isNoInfoSection(mediaSection)) {
         // Extract news articles with links [Title](URL)
         const articleMatches = mediaSection.matchAll(/\[([^\]]+)\]\(([^)]+)\)/g);
         for (const match of articleMatches) {
@@ -1833,7 +1914,7 @@ function parseWikiMarkdown(markdown) {
         'Survivor/Parent Testimonies'
     ]);
 
-    if (testimoniesSection && !testimoniesSection.includes('No information is known')) {
+    if (testimoniesSection && !isNoInfoSection(testimoniesSection)) {
         // Split by double newlines to preserve multi-line testimonies
         let testimonyBlocks = testimoniesSection.split(/\n\n+/);
         
@@ -1976,7 +2057,7 @@ function parseWikiMarkdown(markdown) {
         || /\/(?:u|user)\/[^\s)]+/i.test(l)
     );
 
-    if (relatedMediaSection && !relatedMediaSection.includes('No information is known') && !allPlaceholder) {
+    if (relatedMediaSection && !isNoInfoSection(relatedMediaSection) && !allPlaceholder) {
         // Split into lines to parse each entry
         const lines = relatedMediaSection.split('\n').filter(line => line.trim());
 
@@ -2050,19 +2131,20 @@ function parseWikiMarkdown(markdown) {
             }
         });
 
-        // Only preserve the verbatim section (and substitute it on regenerate)
-        // when nothing was promoted to In the Media. If news was split out, the
-        // generator must build Related Media from structured items instead so the
-        // promoted articles don't appear in both sections.
-        if (!promotedToNews) {
-            parsedData.relatedMediaMisc = relatedMediaSection;
-            parsedData.relatedMediaMiscIsImported = true;
-        }
+        // Always preserve the verbatim section (and substitute it on
+        // regenerate): it keeps subsection structure ("### Photos"), item
+        // annotations, and dates that a rebuild from structured items would
+        // lose. Items promoted to In the Media above still populate the
+        // newsArticles FIELDS; the generator suppresses re-rendering any
+        // promoted article whose URL already appears in this verbatim text, so
+        // nothing is emitted twice.
+        parsedData.relatedMediaMisc = relatedMediaSection;
+        parsedData.relatedMediaMiscIsImported = true;
     }
 
     // Parse Campuses/Locations
     const locationSection = getSectionAny(normalizedMarkdown, ['Locations', 'Facilities', 'Campuses']);
-    if (locationSection && !locationSection.includes('No information is known')) {
+    if (locationSection && !isNoInfoSection(locationSection)) {
         // Split by bold state/region headers or just lines
         const lines = locationSection.split('\n');
         let currentRegion = '';
@@ -2106,10 +2188,19 @@ function parseWikiMarkdown(markdown) {
     // Parse one section's first markdown table into program entries.
     const parseProgramTable = (sectionText) => {
         const out = [];
-        const lines = sectionText.split('\n');
+        // Scan only up to the first heading line: a heading marks the next
+        // (sub)section, and rows past it belong to a DIFFERENT table whose
+        // open/closed status comes from its own heading. Without this cutoff a
+        // page-title-level section (whose body spans the whole document) would
+        // swallow every table on the page under one status.
+        let lines = sectionText.split('\n');
+        const boundary = lines.findIndex(l => /^#{1,6}[ \t*]/.test(l.trim()));
+        if (boundary !== -1) lines = lines.slice(0, boundary);
+        // A row of only dashes/colons/pipes is a markdown alignment separator
+        const isSeparatorRow = (t) => t.startsWith('|') && /^[|\s:\-]+$/.test(t) && t.includes('-');
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
-            if (!(line.startsWith('|') && line.includes('---'))) continue;
+            if (!line.startsWith('|') || isSeparatorRow(line)) continue;
             // Split a table row into cells, dropping ONLY the boundary empties
             // produced by the leading/trailing pipes. Filtering out all empty
             // cells (the old behavior) shifted every column after an empty
@@ -2121,33 +2212,40 @@ function parseWikiMarkdown(markdown) {
                 return parts;
             };
 
+            // The first non-separator "|" line is the header row. Reddit wiki
+            // index tables frequently omit the |---| separator row entirely, so
+            // header detection must not depend on it: accept a row whose cells
+            // look like column titles (contains a "name" header).
+            const headers = splitRow(line).map(h => h.replace(/\*+/g, '').trim().toLowerCase());
+            const looksLikeHeader = headers.some(h => h.includes('name'));
+            const nextLine = (lines[i + 1] || '').trim();
+            if (!looksLikeHeader && !isSeparatorRow(nextLine)) continue;
+
             const columnMap = {};
-            if (i > 0) {
-                const headers = splitRow(lines[i - 1]).map(h => h.toLowerCase());
-                headers.forEach((h, idx) => {
-                    if (!h) return;
-                    if (h.includes('name')) columnMap.name = idx;
-                    else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
-                    else if (h.includes('location')) columnMap.location = idx;
-                    else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
-                    else if (h.includes('reopened') || h.includes('rebrand') || h.includes('status')) columnMap.reopened = idx;
-                    else if (h.includes('type')) columnMap.type = idx;
-                    else if (h.includes('abuse')) columnMap.abuse = idx;
-                    else if (h.includes('death')) columnMap.deaths = idx;
-                    else if (h.includes('warning')) columnMap.warning = idx;
-                });
-            }
+            headers.forEach((h, idx) => {
+                if (!h) return;
+                if (h.includes('name')) columnMap.name = idx;
+                else if (h.includes('year') || h.includes('active') || h.includes('date')) columnMap.years = idx;
+                else if (h.includes('location')) columnMap.location = idx;
+                else if (h.includes('heal') || h.includes('information')) columnMap.heal = idx;
+                else if (h.includes('reopened') || h.includes('rebrand') || h.includes('status')) columnMap.reopened = idx;
+                else if (h.includes('type')) columnMap.type = idx;
+                else if (h.includes('abuse')) columnMap.abuse = idx;
+                else if (h.includes('death')) columnMap.deaths = idx;
+                else if (h.includes('warning')) columnMap.warning = idx;
+            });
             for (let j = i + 1; j < lines.length; j++) {
                 const dataLine = lines[j].trim();
                 if (!dataLine.startsWith('|')) continue;
                 const cells = splitRow(dataLine);
-                if (cells.filter(c => c).length < 2) continue;
 
                 const nameCell = cells[columnMap.name !== undefined ? columnMap.name : 0] || '';
                 const nameMatch = nameCell.match(/\[([^\]]+)\]\(([^)]+)\)/);
                 const name = (nameMatch ? nameMatch[1] : nameCell).replace(/\*\*/g, '').trim();
                 const link = nameMatch ? sanitizeUrl(nameMatch[2]) : '';
-                if (!name || name.includes('---') || name.toLowerCase() === 'program name') continue;
+                // A row with just a program name (all other cells empty) is
+                // still a valid entry; only skip rows with no real name at all.
+                if (!name || /^[-\s]+$/.test(name) || name.includes('---') || name.toLowerCase() === 'program name') continue;
 
                 const entry = {
                     name,
@@ -2157,10 +2255,18 @@ function parseWikiMarkdown(markdown) {
                     type: columnMap.type !== undefined ? (cells[columnMap.type] || '') : '',
                     reopened: columnMap.reopened !== undefined ? (cells[columnMap.reopened] || '') : ''
                 };
-                const healCell = columnMap.heal !== undefined ? cells[columnMap.heal] : '';
-                if (healCell && healCell.includes('http')) {
+                const healCell = columnMap.heal !== undefined ? (cells[columnMap.heal] || '') : '';
+                const healLinkCount = (healCell.match(/\]\(/g) || []).length;
+                if (healLinkCount > 1) {
+                    // Multiple links in one cell — keep the raw cell so none are lost.
+                    entry.healInfo = healCell;
+                } else if (healCell && healCell.includes('http')) {
                     const healMatch = healCell.match(/\(([^)]+)\)/);
                     if (healMatch) entry.healLink = sanitizeUrl(healMatch[1]);
+                } else if (healCell && healCell !== '-' && !/^[-\s]+$/.test(healCell)) {
+                    // Plain text in the HEAL column (often a location misfiled by
+                    // the source table) — preserve it rather than dropping it.
+                    entry.healInfo = healCell;
                 }
                 if (columnMap.abuse !== undefined) entry.reportedAbuse = cells[columnMap.abuse];
                 if (columnMap.deaths !== undefined) entry.reportedDeaths = cells[columnMap.deaths];
@@ -2173,26 +2279,37 @@ function parseWikiMarkdown(markdown) {
         return out;
     };
 
-    // Discover all program-listing headings (anything ending in "Programs"/"Program"),
-    // excluding prose sections like "Program Structure".
+    // Discover all program-listing headings (anything CONTAINING "Programs" —
+    // index pages use "Active Programs in Utah", operator pages "Open X
+    // Programs", the watchlist "The Program Watchlist"), excluding prose
+    // sections like "Program Structure". Sections without a table are skipped
+    // below, so a loose match here is safe.
     const programHeadings = [];
-    const headingScan = /^#{1,6}[ \t]*\*{0,2}[ \t]*([^\n*]*?\bprograms?\b)[ \t]*\*{0,2}[ \t]*$/gim;
+    const headingScan = /^#{1,6}[ \t]*\*{0,2}[ \t]*([^\n]+?)[ \t]*\*{0,2}[ \t]*$/gm;
     let hMatch;
     while ((hMatch = headingScan.exec(normalizedMarkdown)) !== null) {
-        const heading = hMatch[1].trim();
-        if (/program\s+structure|level\s+system|daily\s+(?:schedule|program)/i.test(heading)) continue;
+        const heading = hMatch[1].replace(/\*+/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!/\bprograms?\b|\bwatchlist\b/i.test(heading)) continue;
+        if (/program\s+structure|program\s+model|level\s+system|daily\s+(?:schedule|program)/i.test(heading)) continue;
         if (!programHeadings.includes(heading)) programHeadings.push(heading);
     }
     if (programHeadings.length === 0) {
         programHeadings.push('Related Programs', 'Affiliated Programs', 'Active Programs', 'Closed Programs');
     }
 
+    // Consume only the TABLE lines of each program section. The surrounding
+    // prose ("Essential Information" blocks on state index pages, "Below is a
+    // list..." lead-ins) is NOT consumed here, so the unparsed-content salvage
+    // below preserves it instead of dropping it.
     let programTableSections = '';
     const seenProgramKeys = new Set();
     for (const heading of programHeadings) {
         const body = getSection(normalizedMarkdown, heading);
         if (!body || !body.includes('|')) continue;
-        programTableSections += (programTableSections ? '\n\n' : '') + body;
+        const tableLines = body.split('\n').filter(l => l.trim().startsWith('|')).join('\n');
+        if (tableLines) {
+            programTableSections += (programTableSections ? '\n\n' : '') + tableLines;
+        }
         const status = /\bclosed\b/i.test(heading)
             ? 'closed'
             : (/\bopen\b|\bactive\b|\bcurrent\b/i.test(heading) ? 'open' : '');
@@ -2220,36 +2337,93 @@ function parseWikiMarkdown(markdown) {
         .replace(/[*_`#>~]/g, '')
         .replace(/[^a-z0-9]+/g, ' ')
         .trim();
+    // locationSection is intentionally NOT consumed: campuses are extracted from
+    // it as structured data, but the generator only produces a one-line summary
+    // from those, so the section itself must survive via the salvage below.
     const consumedBodies = [
         historySection, staffSection, structureSection, abuseSection, rulesSection,
-        mediaSection, testimoniesSection, relatedMediaSection, locationSection, programTableSections
+        mediaSection, testimoniesSection, relatedMediaSection, programTableSections
     ].map(normForOverlap).filter(Boolean);
 
-    // Split markdown into sections
-    // Lookahead: next ## header, standalone *** or --- separator, or end of string
-    const sectionPattern = /##\s*\*{0,2}\s*([^\n*]+?)\s*\*{0,2}\s*\n([\s\S]*?)(?=\n##(?:\s|\*)|\n(?:\*\*\*|---)\s*\n|\n(?:\*\*\*|---)\s*$|$)/g;
-    const unparsedSections = [];
-    let match;
+    // Salvage at the PARAGRAPH level: a section may be only partially consumed
+    // (e.g. the table of a program-index section is parsed into relatedPrograms
+    // while its surrounding prose is not), so comparing whole sections would
+    // either drop the remainder or duplicate the consumed part. A block is
+    // "consumed" when it exactly equals, or is contained in, a consumed body.
+    // The length floor on the substring case avoids a short distinct block being
+    // swallowed just because its few words appear inside a longer consumed body.
+    // The containment floor matches the salvage minimum below (12): any block
+    // long enough to be salvaged must also be long enough to be recognized as
+    // already-consumed, otherwise shortish consumed blocks (e.g. a lone
+    // "[Title](url)" line) get re-salvaged as duplicates.
+    const isConsumedBlock = (normBlock) => !normBlock || consumedBodies.some(body =>
+        body === normBlock || (normBlock.length >= 12 && body.includes(normBlock))
+    );
 
-    while ((match = sectionPattern.exec(normalizedMarkdown)) !== null) {
-        const sectionTitle = match[1].trim();
-        const sectionContent = match[2].trim();
-        const normContent = normForOverlap(sectionContent);
-
-        // Already handled if this section's content matches a body we consumed:
-        // exact-equal (covers short placeholders like "[To be completed]" that a
-        // length cutoff would otherwise miss and re-emit), or — for substantial
-        // content — contained within a consumed body. The length floor on the
-        // substring case avoids a short distinct section being swallowed just
-        // because its few words happen to appear inside a longer consumed body.
-        const wasParsed = !normContent || consumedBodies.some(body =>
-            body === normContent || (normContent.length >= 20 && body.includes(normContent))
-        );
-
-        if (!wasParsed && sectionContent && !sectionContent.includes('No information is known')) {
-            unparsedSections.push(`## ${sectionTitle}\n${sectionContent}`);
+    const salvageBlocks = (bodyText) => {
+        const kept = [];
+        for (const block of String(bodyText || '').split(/\n{2,}/)) {
+            const trimmed = block.trim();
+            if (!trimmed) continue;
+            if (/^(?:\*{3,}|-{3,})$/.test(trimmed)) continue; // layout separators
+            if (/^no information is known/i.test(trimmed) && trimmed.length < 120) continue;
+            const normBlock = normForOverlap(trimmed);
+            if (normBlock.length < 12) continue; // slugs/fragments
+            if (isConsumedBlock(normBlock)) continue;
+            kept.push(trimmed);
         }
+        return kept;
+    };
+
+    const unparsedSections = [];
+
+    // Tokenize the document by heading lines (any level) so every block of
+    // content belongs to exactly ONE region: the preamble before the first
+    // heading, or the span between one heading and the next. This handles
+    // pages whose main sections are "###" as well as "##", without ever
+    // double-counting a block.
+    const headingTokens = [];
+    const headingTokenScan = /^(#{1,6})[ \t]*\*{0,2}[ \t]*([^\n]*?)[ \t]*\*{0,2}[ \t]*$/gm;
+    let tokenMatch;
+    while ((tokenMatch = headingTokenScan.exec(normalizedMarkdown)) !== null) {
+        headingTokens.push({
+            level: tokenMatch[1].length,
+            title: tokenMatch[2].replace(/\*+/g, ' ').replace(/\s+/g, ' ').trim(),
+            start: tokenMatch.index,
+            bodyStart: tokenMatch.index + tokenMatch[0].length
+        });
     }
+
+    const dropTypeLine = (text) => typeMatch
+        ? text.split('\n').filter(line => line.trim() !== typeMatch[0].trim()).join('\n')
+        : text;
+
+    const pageTitleNorm = normForOverlap(parsedData.programName);
+    const isPageTitleHeading = (token) => {
+        if (token.level === 1) return true;
+        const tNorm = normForOverlap(token.title);
+        return !!pageTitleNorm && tNorm.startsWith(pageTitleNorm);
+    };
+
+    const preambleEnd = headingTokens.length > 0 ? headingTokens[0].start : normalizedMarkdown.length;
+    const preambleKept = salvageBlocks(dropTypeLine(normalizedMarkdown.slice(0, preambleEnd)));
+    if (preambleKept.length > 0) {
+        unparsedSections.push(preambleKept.join('\n\n'));
+    }
+
+    headingTokens.forEach((token, idx) => {
+        const bodyEnd = idx + 1 < headingTokens.length ? headingTokens[idx + 1].start : normalizedMarkdown.length;
+        const body = dropTypeLine(normalizedMarkdown.slice(token.bodyStart, bodyEnd));
+        const kept = salvageBlocks(body);
+        if (kept.length === 0) return;
+        if (isPageTitleHeading(token) || !token.title) {
+            // Content sitting directly under the page-title header — keep it,
+            // but don't re-emit the title as a section heading.
+            unparsedSections.push(kept.join('\n\n'));
+        } else {
+            unparsedSections.push(`${'#'.repeat(Math.max(2, token.level))} ${token.title}\n${kept.join('\n\n')}`);
+        }
+    });
 
     if (unparsedSections.length > 0) {
         parsedData.unparsedContent = unparsedSections.join('\n\n');

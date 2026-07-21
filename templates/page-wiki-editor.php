@@ -442,6 +442,8 @@ get_header();
                     <button type="button" class="add-btn" id="addStaffBtn">Add Staff Member</button>
                 </div>
                 <div class="list-preview" id="staffListOutput"></div>
+                <label for="staffMisc">Additional Staff Notes (will be included as-is):</label>
+                <textarea id="staffMisc" name="staffMisc" rows="4" placeholder="Any additional founders/staff information that doesn't fit the fields above..."></textarea>
             </fieldset>
 
             <fieldset class="facility-only-field">

@@ -60,16 +60,16 @@ try {
         $where = [];
         $params = [];
 
-        // Always exclude deleted entries unless specifically requested
-        if ($status && $status === 'deleted') {
-            $where[] = "status = :status";
-            $params[':status'] = $status;
-        } else if ($status) {
+        // A specific status can always be requested explicitly (including
+        // 'deleted' or 'rejected' to review those queues).
+        if ($status) {
             $where[] = "status = :status";
             $params[':status'] = $status;
         } else {
-            // Default: exclude deleted entries
-            $where[] = "status != 'deleted'";
+            // Default: exclude deleted entries AND declined submissions — a
+            // rejected update must not keep appearing in the wiki editor's
+            // entry browser / program-linker list.
+            $where[] = "status NOT IN ('deleted', 'rejected')";
         }
 
         if ($search) {

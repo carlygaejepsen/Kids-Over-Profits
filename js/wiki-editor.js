@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // for) the auto-generated section. Tracked so the generator knows which
     // fields may carry verbatim imported prose. Keep in sync with the matching
     // *IsImported handling in wiki-generation.js.
-    const APPEND_NOTE_FIELD_IDS = ['historyNotes', 'structureMisc', 'lawsuitsMisc', 'testimoniesMisc', 'relatedMediaMisc'];
+    const APPEND_NOTE_FIELD_IDS = ['historyNotes', 'staffMisc', 'structureMisc', 'lawsuitsMisc', 'testimoniesMisc', 'relatedMediaMisc'];
 
     // Record that a notes field currently holds verbatim imported content, so the
     // generator can substitute (not append) it and avoid round-trip duplication.
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : [];
 
         // Basic fields to clear
-        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','staffMisc','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
         clearInputs(fieldIds);
 
         // Reset arrays and lists
@@ -974,6 +974,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('accreditingBody', data.accreditingBody);
         setFieldValue('accreditingBodyLink', data.accreditingBodyLink);
         setFieldValue('historyNotes', data.historyNotes || data.historyMisc);
+        setFieldValue('staffMisc', data.staffMisc);
         setFieldValue('levelSystemDesc', data.levelSystemDesc);
         setFieldValue('structureMisc', data.structureMisc);
         setFieldValue('punishmentsMisc', data.punishmentsMisc);
@@ -2147,7 +2148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'programName', 'yearsActive', 'cityState', 'programType', 'yearFounded', 'ageRange',
             'capacity', 'ownerName', 'parentCompany', 'headquarters', 'rebrand', 'avgStay', 'tuition',
             'natsapYear', 'mainAddress', 'accreditingBody', 'natsapMember',
-            'historyNotes', 'levelSystemDesc', 'structureMisc', 'punishmentsMisc', 'lawsuitsMisc',
+            'historyNotes', 'staffMisc', 'levelSystemDesc', 'structureMisc', 'punishmentsMisc', 'lawsuitsMisc',
             'mediaInfo', 'testimoniesMisc', 'relatedMediaMisc'
         ];
         textIds.forEach((id) => {
@@ -2318,6 +2319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setValue('accreditingBodyLink', parsedData.accreditingBodyLink);
         // Store full history section in historyNotes (the field that actually exists and gets output)
         setValue('historyNotes', parsedData.historyMisc);
+        setValue('staffMisc', parsedData.staffMisc);
         setValue('levelSystemDesc', parsedData.levelSystemDesc);
         setValue('structureMisc', parsedData.structureMisc);
         setValue('punishmentsMisc', parsedData.punishmentsMisc);
@@ -2747,6 +2749,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         natsapMember: parsedData.natsapMember || '',
                         natsapYear: parsedData.natsapYear || '',
                         historyNotes: parsedData.historyMisc || '',
+                        staffMisc: parsedData.staffMisc || '',
                         levelSystemDesc: parsedData.levelSystemDesc || '',
                         structureMisc: parsedData.structureMisc || '',
                         punishmentsMisc: parsedData.punishmentsMisc || '',

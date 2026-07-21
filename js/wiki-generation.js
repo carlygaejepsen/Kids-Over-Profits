@@ -103,12 +103,21 @@ function replaceAddressInProse(prose, formData, subjectNoun) {
         ? `${newMd} (previously located at ${addressLinkMd(formData.formerAddress, formData.formerAddressLink)})`
         : newMd;
 
-    // Capture: ("...located at ")(address token)(trailing space+period/newline/end).
-    // The address token is a markdown link (URLs contain periods, so match it
-    // atomically) or a short run of plain text up to the clause boundary.
-    const re = /(\blocated\s+(?:at|as|in)\s+)(\[[^\]]*\]\([^)]*\)|[^.\n]+?)(\s*(?:\.|\n|$))/i;
-    if (re.test(text)) {
-        return text.replace(re, (_m, lead, _addr, tail) => `${lead}${replacement}${tail}`);
+    // Prefer swapping a linked address token: "...located at [addr](url)". The
+    // link is matched atomically and the surrounding prose is left untouched —
+    // the sentence may continue after the link ("...(url) on the appropriately
+    // named Shady Lane."), so no trailing clause boundary is required here.
+    // (A combined link-or-plain-text alternation previously backtracked into
+    // the plain-text branch on such sentences and cut the URL at its first
+    // dot, leaving raw URL fragments in the output.)
+    const linkRe = /(\blocated\s+(?:at|as|in)\s+)\[[^\]\n]*\]\([^)\n]*\)/i;
+    if (linkRe.test(text)) {
+        return text.replace(linkRe, (_m, lead) => `${lead}${replacement}`);
+    }
+    // Otherwise swap a plain-text address, which runs to the clause boundary.
+    const plainRe = /(\blocated\s+(?:at|as|in)\s+)([^.\n]+?)(\s*(?:\.|\n|$))/i;
+    if (plainRe.test(text)) {
+        return text.replace(plainRe, (_m, lead, _addr, tail) => `${lead}${replacement}${tail}`);
     }
 
     const sentence = buildAddressSentence(formData, subjectNoun);
@@ -222,10 +231,16 @@ function generateWikiMarkdown(formData) {
         const trimmed = text.trim();
         if (trimmed.length === 0) return true;
         const lower = trimmed.toLowerCase();
-        return lower === 'no information is known' || 
-               lower === 'no information available' ||
-               lower.startsWith('no information is known about') ||
-               lower.startsWith('background information for ') ||
+        if (lower === 'no information is known' || lower === 'no information available') return true;
+        // A short standalone "No information is known about..." stub is empty;
+        // longer text that merely OPENS with the phrase ("No information is
+        // known about the program used by X. It uses a level system, ...")
+        // still carries real content and must be preserved.
+        if (lower.startsWith('no information is known about')) return trimmed.length < 120;
+        // The placeholder texts below run ~150-250 characters; anything much
+        // longer than that has had real content appended to it.
+        if (trimmed.length > 350) return false;
+        return lower.startsWith('background information for ') ||
                lower.startsWith('detailed information about the founders or notable staff at ') ||
                lower.startsWith('detailed information about the program structure at ') ||
                lower.startsWith('detailed information about the rules, consequences, or disciplinary practices at ') ||
@@ -408,10 +423,15 @@ function generateWikiMarkdown(formData) {
     }
 
     // --- Build Staff Section ---
-    let staffSection;
-    if (formData.staffMembers && formData.staffMembers.length > 0) {
-        // Sort staff: current staff first, then former staff
-        const sortedStaff = [...formData.staffMembers].sort((a, b) => {
+    // Imported staff prose is substituted verbatim (like History/Structure/etc.)
+    // so bios the entry regex couldn't fully parse are never reworded or lost.
+    const staffNotesText = (formData.staffMisc && !isEffectivelyEmpty(formData.staffMisc))
+        ? formData.staffMisc.trim()
+        : '';
+    // Sort staff: current staff first, then former staff — then render each as
+    // a "**Name** is/was the Role. Bio" paragraph.
+    const buildStaffEntries = (staffList) => {
+        const sortedStaff = [...staffList].sort((a, b) => {
             const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
             const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
             if (aIsFormer && !bIsFormer) return 1;
@@ -419,7 +439,7 @@ function generateWikiMarkdown(formData) {
             return 0;
         });
 
-        staffSection = sortedStaff.map(s => {
+        return sortedStaff.map(s => {
             const safeStaffName = escapeMarkdown((s.name || '').trim());
             let roleText = escapeMarkdown(s.role);
 
@@ -478,7 +498,20 @@ function generateWikiMarkdown(formData) {
 
             return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
         }).join('\n\n');
-        staffSection = ensureBoldNameSpacing(staffSection);
+    };
+
+    let staffSection;
+    if (staffNotesText && formData.staffMiscIsImported) {
+        // Imported staff prose verbatim, plus entries added in the form since
+        // the import (anyone whose name doesn't already appear in the text).
+        const extraStaff = (formData.staffMembers || []).filter(s =>
+            s && s.name && !staffNotesText.includes(String(s.name).trim()));
+        staffSection = ensureBoldNameSpacing(
+            [staffNotesText, extraStaff.length > 0 ? buildStaffEntries(extraStaff) : '']
+                .filter(Boolean).join('\n\n')
+        );
+    } else if (formData.staffMembers && formData.staffMembers.length > 0) {
+        staffSection = ensureBoldNameSpacing(buildStaffEntries(formData.staffMembers));
     } else {
         staffSection = getPlaceholder('Founders and Notable Staff', programName);
     }
@@ -645,10 +678,11 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Media Section ---
     let mediaSection;
+    const renderableArticles = filterArticlesAlreadyInRelatedMedia(formData.newsArticles, formData);
     if (formData.mediaInfo && !isEffectivelyEmpty(formData.mediaInfo)) {
         mediaSection = formData.mediaInfo.trim();
-    } else if (formData.newsArticles && formData.newsArticles.length > 0) {
-        const newsList = formData.newsArticles.map(a => {
+    } else if (renderableArticles.length > 0) {
+        const newsList = renderableArticles.map(a => {
             let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
             if (sourceDate) sourceDate = ` (${sourceDate})`;
             const safeUrl = sanitizeUrl(a.url);
@@ -692,15 +726,10 @@ function generateWikiMarkdown(formData) {
 
     // --- Build Related Programs Section ---
     let relatedProgramsSection = '';
-    if (formData.relatedPrograms && formData.relatedPrograms.length > 0) {
-        const tableHeader = '|**Program Name**|**Years Active**|**Location**|**HEAL Information**|**Reopened?**|';
-        const tableSep = '|---|---|---|---|---|';
-        const tableRows = formData.relatedPrograms.map(prog => {
-            const nameLink = prog.link ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})` : `**${escapeMarkdown(prog.name)}**`;
-            const healLink = prog.healLink ? `[HEAL](${sanitizeUrl(prog.healLink)})` : (prog.healInfo || '-');
-            return `| ${nameLink} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${healLink} | ${escapeMarkdown(prog.reopened || '-')} |`;
-        });
-        relatedProgramsSection = `## **Related Programs**\n\n${tableHeader}\n${tableSep}\n${tableRows.join('\n')}\n\n***\n\n`;
+    const listedRelatedPrograms = (formData.relatedPrograms || []).filter(prog => prog && prog.name);
+    if (listedRelatedPrograms.length > 0) {
+        const table = buildProgramsTableMd(listedRelatedPrograms, 'Years Active', true);
+        relatedProgramsSection = `## **Related Programs**\n\n${table}\n\n***\n\n`;
     }
 
     // --- Build Related Media Section ---
@@ -709,7 +738,9 @@ function generateWikiMarkdown(formData) {
         structuredRelatedMedia = formData.relatedMedia.map(m => {
             const safeUrl = sanitizeUrl(m.url);
             const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
-            return `- ${linkText}`;
+            let annotation = [m.source, m.date].filter(Boolean).join(', ');
+            if (annotation) annotation = ` (${annotation})`;
+            return `- ${linkText}${annotation}`;
         }).join('\n\n');
     }
 
@@ -797,7 +828,7 @@ ${relatedMediaSection}
     const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return dropDuplicateParagraphs(sanitizedOutput).trim();
+    return dropDuplicateParagraphs(normalizeBoldSpacing(sanitizedOutput)).trim();
 }
 
 function generateOrganizationWikiMarkdown(formData, helpers) {
@@ -913,9 +944,11 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         historySection = getPlaceholder('History and Background Information', programName);
     }
 
-    let staffSection;
-    if (formData.staffMembers && formData.staffMembers.length > 0) {
-        const sortedStaff = [...formData.staffMembers].sort((a, b) => {
+    const staffNotesText = (formData.staffMisc && !isEffectivelyEmpty(formData.staffMisc))
+        ? formData.staffMisc.trim()
+        : '';
+    const buildStaffEntries = (staffList) => {
+        const sortedStaff = [...staffList].sort((a, b) => {
             const aIsFormer = a.isFormer || /\b(former|previous|ex[\s-])/i.test(a.role || '');
             const bIsFormer = b.isFormer || /\b(former|previous|ex[\s-])/i.test(b.role || '');
             if (aIsFormer && !bIsFormer) return 1;
@@ -923,7 +956,7 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
             return 0;
         });
 
-        staffSection = sortedStaff.map((s) => {
+        return sortedStaff.map((s) => {
             const safeStaffName = escapeMarkdown((s.name || '').trim());
             let roleText = escapeMarkdown(s.role);
 
@@ -970,8 +1003,20 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
 
             return [roleSentence, previousSentence, bioSentence].filter(Boolean).join(' ');
         }).join('\n\n');
+    };
 
-        staffSection = ensureBoldNameSpacing(staffSection);
+    let staffSection;
+    if (staffNotesText && formData.staffMiscIsImported) {
+        // Imported staff prose verbatim, plus entries added in the form since
+        // the import (anyone whose name doesn't already appear in the text).
+        const extraStaff = (formData.staffMembers || []).filter(s =>
+            s && s.name && !staffNotesText.includes(String(s.name).trim()));
+        staffSection = ensureBoldNameSpacing(
+            [staffNotesText, extraStaff.length > 0 ? buildStaffEntries(extraStaff) : '']
+                .filter(Boolean).join('\n\n')
+        );
+    } else if (formData.staffMembers && formData.staffMembers.length > 0) {
+        staffSection = ensureBoldNameSpacing(buildStaffEntries(formData.staffMembers));
     } else {
         staffSection = getPlaceholder('Founders and Notable Staff', programName);
     }
@@ -988,12 +1033,11 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         if (/present|current|ongoing|now\b/.test(ya)) return true;
         return !/\d{4}\s*[-–—]\s*\d{4}/.test(ya);               // an explicit end year => closed
     };
-    const programNameCell = (prog) => prog.link
-        ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})`
-        : `**${escapeMarkdown(prog.name)}**`;
-    const programHealCell = (prog) => prog.healLink
-        ? `[HEAL](${sanitizeUrl(prog.healLink)})`
-        : (escapeMarkdown(prog.healInfo || '-') || '-');
+
+    // Index-style pages already have "Programs" in their own name ("Active
+    // Programs in Utah", "The Program Watchlist") — don't produce headings like
+    // "Open Active Programs in Utah Programs".
+    const tableNoun = /\bprograms?\b/i.test(programName) ? 'Programs' : `${programName} Programs`;
 
     let programsSection = '';
     const listedPrograms = (formData.relatedPrograms || []).filter((prog) => prog && prog.name);
@@ -1002,22 +1046,16 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         const closedPrograms = listedPrograms.filter((prog) => !isOpenProgram(prog));
 
         if (openPrograms.length > 0) {
-            const header = '|**Program Name**|**Year Opened**|**Location(s)**|**HEAL Information**|';
-            const sep = '|---|---|---|---|';
-            const rows = openPrograms.map((prog) =>
-                `| ${programNameCell(prog)} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${programHealCell(prog)} |`);
-            programsSection += `## **Open ${programName} Programs**\n\n${header}\n${sep}\n${rows.join('\n')}\n\n***\n\n`;
+            const table = buildProgramsTableMd(openPrograms, 'Year Opened', false);
+            programsSection += `## **Open ${tableNoun}**\n\n${table}\n\n***\n\n`;
         }
         if (closedPrograms.length > 0) {
-            const header = '|**Program Name**|**Years Active**|**Location(s)**|**HEAL Information**|**Reopened?**|';
-            const sep = '|---|---|---|---|---|';
-            const rows = closedPrograms.map((prog) =>
-                `| ${programNameCell(prog)} | ${escapeMarkdown(prog.yearsActive || '-')} | ${escapeMarkdown(prog.location || '-')} | ${programHealCell(prog)} | ${escapeMarkdown(prog.reopened || '-')} |`);
-            programsSection += `## **Closed ${programName} Programs**\n\n${header}\n${sep}\n${rows.join('\n')}\n\n***\n\n`;
+            const table = buildProgramsTableMd(closedPrograms, 'Years Active', true);
+            programsSection += `## **Closed ${tableNoun}**\n\n${table}\n\n***\n\n`;
         }
     }
     if (!programsSection) {
-        programsSection = `## **Open ${programName} Programs**\n\n${getPlaceholder('Related Programs', programName)}\n\n***\n\n`;
+        programsSection = `## **Open ${tableNoun}**\n\n${getPlaceholder('Related Programs', programName)}\n\n***\n\n`;
     }
 
     let abuseSection = '';
@@ -1079,10 +1117,11 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
     }
 
     let mediaSection;
+    const renderableArticles = filterArticlesAlreadyInRelatedMedia(formData.newsArticles, formData);
     if (formData.mediaInfo && !isEffectivelyEmpty(formData.mediaInfo)) {
         mediaSection = formData.mediaInfo.trim();
-    } else if (formData.newsArticles && formData.newsArticles.length > 0) {
-        const newsList = formData.newsArticles.map((a) => {
+    } else if (renderableArticles.length > 0) {
+        const newsList = renderableArticles.map((a) => {
             let sourceDate = [a.source, a.date].filter(Boolean).join(', ');
             if (sourceDate) sourceDate = ` (${sourceDate})`;
             const safeUrl = sanitizeUrl(a.url);
@@ -1099,7 +1138,9 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
         structuredRelatedMedia = formData.relatedMedia.map((m) => {
             const safeUrl = sanitizeUrl(m.url);
             const linkText = safeUrl ? `[${escapeMarkdown(m.title)}](${safeUrl})` : escapeMarkdown(m.title);
-            return `- ${linkText}`;
+            let annotation = [m.source, m.date].filter(Boolean).join(', ');
+            if (annotation) annotation = ` (${annotation})`;
+            return `- ${linkText}${annotation}`;
         }).join('\n\n');
     }
 
@@ -1120,6 +1161,19 @@ function generateOrganizationWikiMarkdown(formData, helpers) {
 
     // Preserve sections the parser couldn't map to a known field (see facility path).
     const additionalSections = formatUnparsedSections(formData.unparsedContent);
+
+    // Safety net: an entry classified as an organization can still carry
+    // facility-style sections (imported pages whose type detection is fuzzy).
+    // The organization template has no fixed slots for them, so emit them as
+    // extra sections rather than silently dropping the content.
+    const orgStructureNotes = (formData.structureMisc && !isEffectivelyEmpty(formData.structureMisc)) ? formData.structureMisc.trim() : '';
+    const orgRulesNotes = (formData.punishmentsMisc && !isEffectivelyEmpty(formData.punishmentsMisc)) ? formData.punishmentsMisc.trim() : '';
+    const orgTestimoniesNotes = (formData.testimoniesMisc && !isEffectivelyEmpty(formData.testimoniesMisc)) ? formData.testimoniesMisc.trim() : '';
+    let orgStructureSections = '';
+    if (orgStructureNotes) orgStructureSections += `## **Program Structure**\n\n${orgStructureNotes}\n\n***\n\n`;
+    if (orgRulesNotes) orgStructureSections += `## **Rules and Punishments**\n\n${orgRulesNotes}\n\n***\n\n`;
+    let orgTestimoniesSection = '';
+    if (orgTestimoniesNotes) orgTestimoniesSection = `## **Survivor Testimonies**\n\n${orgTestimoniesNotes}\n\n***\n\n`;
 
     let headerLine = formData.yearsActive
         ? `# **${escapeMarkdown(programName)}**(${formData.yearsActive})`
@@ -1147,7 +1201,7 @@ ${staffSection}
 
 ***
 
-${programsSection}## **Abuse/Neglect Allegations and Lawsuits**
+${programsSection}${orgStructureSections}## **Abuse/Neglect Allegations and Lawsuits**
 
 ${abuseSection}
 
@@ -1159,7 +1213,7 @@ ${mediaSection}
 
 ***
 
-${additionalSections}## **Related Media**
+${orgTestimoniesSection}${additionalSections}## **Related Media**
 
 ${relatedMediaSection}
     `;
@@ -1168,7 +1222,7 @@ ${relatedMediaSection}
     const footerPattern = /\n?\s*Last revised by(?:\s+\[[^\]]*\]\([^)]*\))?(?:\s*##\s*Page title)?(?:\s*SaveCancel)?\s*$/gi;
     const sanitizedOutput = normalizeContactTag(output.replace(footerPattern, ''));
 
-    return dropDuplicateParagraphs(sanitizedOutput).trim();
+    return dropDuplicateParagraphs(normalizeBoldSpacing(sanitizedOutput)).trim();
 }
 
 // --- Helper Functions ---
@@ -1190,9 +1244,13 @@ function normalizeContactTag(md) {
     //   1. an existing markdown link referencing a handle (label or url)
     //   2. a bare /u/, /user/, or u/ path mention
     //   3. any leftover bare mention of the handle
+    // Character classes exclude newlines: markdown links never span lines, and
+    // letting them match "\n" allowed a stray unclosed "[" in the source to
+    // swallow everything up to a far-away link and replace it with the contact
+    // handle.
     const re = new RegExp(
-        `\\[[^\\]]*(?:${names})[^\\]]*\\]\\([^)]*\\)` +
-        `|\\[[^\\]]*\\]\\([^)]*(?:${names})[^)]*\\)` +
+        `\\[[^\\]\\n]*(?:${names})[^\\]\\n]*\\]\\([^)\\n]*\\)` +
+        `|\\[[^\\]\\n]*\\]\\([^)\\n]*(?:${names})[^)\\n]*\\)` +
         `|\\/?u(?:ser)?\\/(?:${names})\\/?` +
         `|(?:${names})`,
         'g'
@@ -1234,6 +1292,37 @@ function buildLawsuitSentence(lawsuit, programName, outcomeLabels) {
     return sentence;
 }
 
+// Build one markdown table of programs. Columns are included only when at
+// least one program carries data for them, so watchlist-style tables (Program
+// Type / Reported Abuse? / Reported Deaths? / Warning Level) round-trip without
+// dropping those cells, while ordinary tables stay compact.
+function buildProgramsTableMd(programs, yearsLabel, includeReopened) {
+    const nameCell = (prog) => prog.link
+        ? `[**${escapeMarkdown(prog.name)}**](${sanitizeUrl(prog.link)})`
+        : `**${escapeMarkdown(prog.name)}**`;
+    const healCell = (prog) => prog.healLink
+        ? `[HEAL](${sanitizeUrl(prog.healLink)})`
+        : (escapeMarkdown(prog.healInfo || '-') || '-');
+    const textCell = (key) => (prog) => escapeMarkdown(prog[key] || '-');
+
+    const columns = [
+        { label: '**Program Name**', cell: nameCell, present: true },
+        { label: `**${yearsLabel}**`, cell: textCell('yearsActive'), present: programs.some(p => p.yearsActive && p.yearsActive !== '-') },
+        { label: '**Location(s)**', cell: textCell('location'), present: programs.some(p => p.location && p.location !== '-') },
+        { label: '**Program Type**', cell: textCell('type'), present: programs.some(p => p.type && p.type !== '-') },
+        { label: '**Reported Abuse?**', cell: textCell('reportedAbuse'), present: programs.some(p => p.reportedAbuse) },
+        { label: '**Reported Deaths?**', cell: textCell('reportedDeaths'), present: programs.some(p => p.reportedDeaths) },
+        { label: '**Warning Level**', cell: textCell('warningLevel'), present: programs.some(p => p.warningLevel) },
+        { label: '**HEAL Information**', cell: healCell, present: programs.some(p => p.healLink || (p.healInfo && p.healInfo !== '-')) },
+        { label: '**Reopened?**', cell: textCell('reopened'), present: includeReopened && programs.some(p => p.reopened && p.reopened !== '-') }
+    ].filter(c => c.present);
+
+    const header = `|${columns.map(c => c.label).join('|')}|`;
+    const sep = `|${columns.map(() => '---').join('|')}|`;
+    const rows = programs.map(prog => `| ${columns.map(c => c.cell(prog)).join(' | ')} |`);
+    return `${header}\n${sep}\n${rows.join('\n')}`;
+}
+
 // Format sections the parser captured into `unparsedContent` (titles it couldn't
 // map to a known field) for inclusion in generated output. Each is preserved
 // verbatim; headers are bolded ("## Title" -> "## **Title**") to match the page
@@ -1242,18 +1331,59 @@ function formatUnparsedSections(raw) {
     const text = String(raw || '').trim();
     if (!text) return '';
     const bolded = text
-        .replace(/^#{1,6}\s*\*{0,2}\s*(.+?)\s*\*{0,2}\s*$/gm, '## **$1**')
+        // Keep each heading's original level so subsections ("### Photos")
+        // aren't flattened into top-level sections.
+        .replace(/^(#{1,6})\s*\*{0,2}\s*(.+?)\s*\*{0,2}\s*$/gm, '$1 **$2**')
         // Ensure a blank line between a header and the body that follows it.
-        .replace(/^(## \*\*.+\*\*)\n(?=\S)/gm, '$1\n\n');
+        .replace(/^(#{1,6} \*\*.+\*\*)\n(?=\S)/gm, '$1\n\n');
     return `${bolded}\n\n***\n\n`;
 }
 
-// Final safety net: drop any exact-duplicate paragraph block, keeping the first.
+// News articles promoted out of an imported Related Media section still live in
+// that section's verbatim text (which the generator re-emits). Rendering them
+// again under "In the Media" would duplicate them, so filter out any article
+// whose URL already appears in the preserved Related Media text.
+function filterArticlesAlreadyInRelatedMedia(articles, formData) {
+    const misc = (formData.relatedMediaMiscIsImported && formData.relatedMediaMisc)
+        ? String(formData.relatedMediaMisc)
+        : '';
+    if (!misc) return articles || [];
+    return (articles || []).filter((a) => {
+        const url = String(a.url || '');
+        if (!url) return true;
+        const raw = url.replace(/%20/g, ' ').replace(/%28/g, '(').replace(/%29/g, ')');
+        return !misc.includes(url) && !misc.includes(raw);
+    });
+}
+
+// Fix malformed bold spacing that HTML->markdown conversions leave behind:
+// "** Name**" (padding inside the span, which breaks Reddit's renderer) and
+// "at**Name**"/"**Name**text" (missing space at the span boundary). Also
+// repairs the inline-italic variant "by*many*survivors". Applied as a final
+// pass over generated output.
+function normalizeBoldSpacing(md) {
+    // Span content excludes "|" so adjacent bold table cells ("**A**|**B**")
+    // are never mistaken for one bold span containing a pipe.
+    return String(md || '')
+        // padding inside a bold span: "** text **" -> "**text**"
+        .replace(/\*\*[ \t]+([^*\n|]+?)[ \t]*\*\*/g, '**$1**')
+        .replace(/\*\*([^*\n|]+?)[ \t]+\*\*/g, '**$1**')
+        // missing space BEFORE a bold span: "at**Name**" -> "at **Name**"
+        .replace(/([^\s*\n|[("'])\*\*([^*\n|]+?)\*\*/g, '$1 **$2**')
+        // missing space AFTER a bold span: "**Name**text" -> "**Name** text"
+        .replace(/\*\*([^*\n|]+?)\*\*([^\s*\n|).,;:!?'"\]])/g, '**$1** $2')
+        // inline italic jammed between letters: "by*many*survivors"
+        .replace(/([A-Za-z])\*([A-Za-z][^*\n|]{0,60}?)\*([A-Za-z])/g, '$1 *$2* $3');
+}
+
+// Final safety net: drop any duplicate paragraph block, keeping the first.
 // Source pages occasionally repeat the same paragraph across two sections (e.g.
 // the same memoir blurb under both History and Abuse), which the verbatim section
-// passthrough would otherwise emit twice. Separators, headers, and short lines are
-// never deduped, so distinct per-section placeholders (which differ in wording)
-// are unaffected.
+// passthrough would otherwise emit twice. Compared on a whitespace-collapsed key
+// so an incidental line-wrap difference doesn't defeat the dedupe; URLs and
+// wording still count, so same-label links to different sources are kept.
+// Separators, headers, and short lines are never deduped, so distinct
+// per-section placeholders (which differ in wording) are unaffected.
 function dropDuplicateParagraphs(md) {
     const seen = new Set();
     const kept = [];
@@ -1262,8 +1392,9 @@ function dropDuplicateParagraphs(md) {
         const isSeparator = trimmed === '***' || trimmed === '---';
         const isHeader = /^#{1,6}\s/.test(trimmed);
         if (!isSeparator && !isHeader && trimmed.length >= 40) {
-            if (seen.has(trimmed)) continue;
-            seen.add(trimmed);
+            const key = trimmed.replace(/\s+/g, ' ');
+            if (seen.has(key)) continue;
+            seen.add(key);
         }
         kept.push(block);
     }

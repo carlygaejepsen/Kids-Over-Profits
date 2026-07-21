@@ -240,10 +240,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $limit  = min((int)($_GET['limit'] ?? 50), 200);
             $offset = max((int)($_GET['offset'] ?? 0), 0);
 
+            // A declined or deleted submission is out of the review pipeline,
+            // so it must not linger in the linker queue even though its link
+            // was never confirmed. (wiki_master rows have no lifecycle status
+            // column, so the extra filter only applies to submissions.)
+            $unlinkedWhere = "(facility_link_status IS NULL
+                    OR facility_link_status != 'confirmed')";
+            if ($table === 'wiki_submissions') {
+                $unlinkedWhere .= " AND status NOT IN ('rejected', 'deleted')";
+            }
+
             $countStmt = $pdo->query(
-                "SELECT COUNT(*) FROM $table
-                 WHERE facility_link_status IS NULL
-                    OR facility_link_status != 'confirmed'"
+                "SELECT COUNT(*) FROM $table WHERE $unlinkedWhere"
             );
             $total = (int)$countStmt->fetchColumn();
 
@@ -252,8 +260,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                         years_active, facility_unique_name, facility_link_status,
                         created_at
                  FROM $table
-                 WHERE facility_link_status IS NULL
-                    OR facility_link_status != 'confirmed'
+                 WHERE $unlinkedWhere
                  ORDER BY updated_at DESC
                  LIMIT $limit OFFSET $offset"
             );
