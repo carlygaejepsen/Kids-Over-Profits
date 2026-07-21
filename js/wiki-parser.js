@@ -96,79 +96,232 @@ function looksLikeWikiMarkdown(text) {
  * @returns {string} - Wiki-style markdown
  */
 function convertPlainTextToWikiMarkdown(text) {
+    // Exact (whole-line) heading forms, anchored so keyword-bearing prose or
+    // distinct headings ("Staff Vetting Concerns", "Phase 1") never match.
     const CANONICAL_SECTIONS = [
-        { canon: 'History and Background Information', re: /\b(history|background|about|overview|founding)\b/i },
-        { canon: 'Founders and Notable Staff', re: /\b(founders?|staff|leadership|employees|owners?|personnel)\b/i },
-        { canon: 'Program Structure', re: /\b(structure|level system|levels?|phases?|daily (schedule|life)|program model|therap(y|ies))\b/i },
-        { canon: 'Rules and Punishments', re: /\b(rules?|punishments?|consequences?|discipline)\b/i },
-        { canon: 'Abuse/Neglect Allegations and Lawsuits', re: /\b(abuse|allegations?|lawsuits?|neglect|investigations?|controvers(y|ies)|complaints?|deaths?|closure)\b/i },
-        { canon: 'In the Media', re: /\b(media coverage|in the (media|news)|news|press|articles?|coverage)\b/i },
-        { canon: 'Survivor Testimonies', re: /\b(testimon(y|ies)|survivor (stories|accounts|experiences)|firsthand|accounts?)\b/i },
-        { canon: 'Related Media', re: /\b(related media|links?|resources?|sources?|references?|further reading|external)\b/i }
+        { canon: 'History and Background Information',
+          exact: /^(?:(?:program |the )?(?:history|background|overview|founding|about(?: the program)?)(?:(?: and| &|\/) ?background)?(?: information| info)?)$/i },
+        { canon: 'Founders and Notable Staff',
+          exact: /^(?:founders?(?:(?: and| &)(?: notable| important)? (?:staff|employees|figures|leadership|members|people))?|(?:notable )?staff|notable employees|leadership)$/i },
+        { canon: 'Program Structure',
+          exact: /^(?:(?:program |the )?structure|program model|level system|levels?(?: and phases?)?|phases|daily (?:schedule|structure|life))$/i },
+        { canon: 'Rules and Punishments',
+          exact: /^(?:rules?(?:(?: and| &) (?:punishments?|consequences?))?|punishments?|discipline|consequences)$/i },
+        { canon: 'Abuse/Neglect Allegations and Lawsuits',
+          exact: /^(?:abuse(?:\/neglect)?(?: (?:allegations?|and neglect|history))?|allegations?(?: of abuse)?|abuse and (?:lawsuits?|neglect|closure|investigations?|deaths?)|lawsuits?(?: and investigations?)?|investigations?|controvers(?:y|ies)|complaints)$/i },
+        { canon: 'In the Media',
+          exact: /^(?:in the (?:media|news)|media(?: coverage|(?: and| &) news)?|news(?: coverage| articles| stories)?|press(?: coverage)?)$/i },
+        { canon: 'Survivor Testimonies',
+          exact: /^(?:(?:survivor|parent)s?(?:\s*(?:\/|and|&)\s*(?:survivor|parent)s?)?[ -]?(?:testimon(?:y|ies)|testimonials?|stories|accounts)|testimon(?:y|ies)|testimonials?)$/i },
+        { canon: 'Related Media',
+          exact: /^(?:(?:addendum:? )?(?:related (?:media|links)|links?|resources?|sources?|references?|further reading|external (?:links?|resources?)|see also))$/i }
+    ];
+
+    // Doc exports (Google Docs etc.) often jam a heading and the text that
+    // follows it onto ONE line ("Founders and Notable Staff David Vieau").
+    // These prefixes are distinctive enough to split safely.
+    const MERGE_PREFIXES = [
+        [/^history and background information/i, 'History and Background Information'],
+        [/^founders? (?:and|&) notable staff/i, 'Founders and Notable Staff'],
+        [/^program structure/i, 'Program Structure'],
+        [/^rules and punishments?/i, 'Rules and Punishments'],
+        [/^abuse(?:\/neglect)? allegations?/i, 'Abuse/Neglect Allegations and Lawsuits'],
+        [/^in the media/i, 'In the Media'],
+        [/^survivor(?: and parent|\/parent)? testimon(?:y|ies|ials)/i, 'Survivor Testimonies'],
+        [/^related media/i, 'Related Media']
     ];
 
     const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
     const out = [];
+    const consumed = new Set(); // indices folded into the header block
     let titleEmitted = false;
-    let sawContent = false;
+    let firstContentSeen = false;
     let currentSection = '';
+    let anyHeadingEmitted = false;
 
+    const isSeparatorLine = (s) => /^[-_=*]{3,}\s*$/.test(s.trim()) && !/[a-z0-9]/i.test(s);
     const isHeadingCandidate = (line) => {
         const t = line.trim();
         if (!t || t.length > 60) return false;
         if (/^[-*•·▪‣]/.test(t)) return false;          // bullet, not heading
         if (/^https?:\/\//i.test(t)) return false;
-        if (/[.!?]"?$/.test(t)) return false;            // sentences aren't headings
+        if (/[.!?]"”?$/.test(t)) return false;           // sentences aren't headings
         if (t.split(/\s+/).length > 7) return false;
         return true;
     };
     const canonicalFor = (line) => {
-        if (!isHeadingCandidate(line)) return null;
-        const key = line.trim().replace(/:$/, '');
-        const hit = CANONICAL_SECTIONS.find(s => s.re.test(key));
+        const key = line.trim().replace(/:$/, '').trim();
+        const hit = CANONICAL_SECTIONS.find(s => s.exact.test(key));
         return hit ? hit.canon : null;
+    };
+    const titleCaseish = (line) => {
+        const words = line.trim().split(/\s+/);
+        if (!/^[A-Z0-9"“]/.test(words[0])) return false;
+        const capped = words.filter(w => /^[A-Z0-9"“(]/.test(w) || /^(?:and|or|of|the|for|to|in|a|an)$/i.test(w));
+        return capped.length >= Math.ceil(words.length * 0.8);
     };
     const linkLabelFor = (url) => {
         let label = url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
         if (label.length > 50) label = label.slice(0, 47) + '...';
         return label;
     };
+    const pushHeading = (level, title) => {
+        if (out.length && out[out.length - 1] !== '') out.push('');
+        out.push(`${'#'.repeat(level)} **${title}**`);
+        out.push('');
+        anyHeadingEmitted = true;
+    };
+
+    // Document-context helpers computed from the ORIGINAL lines, so hard-wrapped
+    // paragraph fragments (whose neighbors are non-blank) are never mistaken for
+    // headings while real headings (blank- or separator-preceded) are.
+    const prevLineBlank = (i) => i === 0 || lines[i - 1].trim() === '';
+    const nextLineBlank = (i) => i + 1 >= lines.length || lines[i + 1].trim() === '';
+    const separatorBefore = (i) => {
+        for (let j = i - 1; j >= 0; j--) {
+            const s = lines[j].trim();
+            if (s === '') continue;
+            return isSeparatorLine(s);
+        }
+        return true; // start of document
+    };
 
     for (let i = 0; i < lines.length; i++) {
+        if (consumed.has(i)) continue;
         const raw = lines[i];
         const t = raw.trim();
 
         if (!t) { out.push(''); continue; }
 
-        // Page title: the first short non-sentence line of the document.
-        if (!titleEmitted && !sawContent) {
-            sawContent = true;
-            if (t.length <= 80 && !/[.!?]"?$/.test(t) && !canonicalFor(t)) {
-                // Keep an inline "(1990-2004) City, ST" suffix out of the bold name
+        // Separator rows (----- etc.) are layout, not content
+        if (isSeparatorLine(t)) { out.push(''); continue; }
+
+        // Page title handling on the FIRST content line only.
+        if (!firstContentSeen) {
+            firstContentSeen = true;
+            // A real title stands alone: short, no sentence punctuation, and
+            // followed by a blank line.
+            if (t.length <= 80 && !/[.!?]"”?$/.test(t) && !canonicalFor(t) && nextLineBlank(i)) {
                 const m = t.match(/^(.+?)\s*(\(\d{4}[^)]*\).*)$/);
-                out.push(m ? `# **${m[1].trim()}** ${m[2].trim()}` : `# **${t}**`);
+                const titleName = (m ? m[1] : t).trim();
+                let titleSuffix = m ? ` ${m[2].trim()}` : '';
+
+                // Front-matter run: consecutive italic-only lines right after
+                // the title carry the years, former name, type, or locations.
+                // Fold them into the standard header instead of leaving them
+                // stranded as prose.
+                let years = '';
+                let location = '';
+                let typeLine = '';
+                const keepLines = [];
+                for (let j = i + 1; j < lines.length; j++) {
+                    const s = lines[j].trim();
+                    if (!s) { consumed.add(j); continue; }
+                    const it = s.match(/^\*([^*\n]+)\*$/);
+                    if (!it) break;
+                    const val = it[1].trim();
+                    if (/^\d{4}\s*[–—-]\s*(?:\d{4}|present|now|current)$/i.test(val)) {
+                        years = val;
+                    } else if (/^(?:formerly|previously|f\.?k\.?a\.?|a\.?k\.?a\.?|also known as)\b/i.test(val)) {
+                        keepLines.push(s); // rebrand note: keep verbatim under the header
+                    } else if (!typeLine && !val.includes(',')
+                        && /(school|center|program|hospital|academy|ranch|facility|treatment|wilderness|organization|company)/i.test(val)) {
+                        typeLine = val;
+                    } else if (!location && val.length <= 130) {
+                        location = val;
+                    } else {
+                        keepLines.push(s);
+                    }
+                    consumed.add(j);
+                }
+                if (!titleSuffix && (years || location)) {
+                    titleSuffix = `${years ? ` (${years})` : ''}${location ? ` ${location}` : ''}`;
+                }
+
+                out.push(`# **${titleName}**${titleSuffix}`);
+                if (typeLine) out.push(`*${typeLine}*`);
                 out.push('');
+                keepLines.forEach(l => { out.push(l); out.push(''); });
                 titleEmitted = true;
                 continue;
             }
-        }
-        sawContent = true;
-
-        // Known section heading -> canonical "## **Section**"
-        const canon = canonicalFor(t);
-        if (canon) {
-            if (out.length && out[out.length - 1] !== '') out.push('');
-            out.push(`## **${canon}**`);
-            out.push('');
-            currentSection = canon;
-            continue;
+            // Otherwise try to lift the program name out of the first sentence
+            // ("Turnbridge, formerly known as ... , is a private ...").
+            const subject = t.match(/^([A-Z][\w'’&.-]*(?:\s+[A-Z][\w'’&.-]*){0,4}),?\s+(?:formerly|also|is|was|opened|operates|provides|founded)\b/);
+            if (subject) {
+                out.push(`# **${subject[1].trim()}**`);
+                out.push('');
+                titleEmitted = true;
+                // fall through: the line itself is still content
+            }
         }
 
-        // Staff section: bold "First Last was/is/worked..." lead-ins so the
-        // importer can extract each person as a staff entry. Requires at least
-        // two capitalized name words directly before the verb, so ordinary
-        // sentences ("The program was...", "He previously worked...") pass through.
+        const blankBefore = prevLineBlank(i);
+        const sepBefore = separatorBefore(i);
+
+        // Known section heading (whole line) -> canonical "## **Section**".
+        // A heading is blank/separator-preceded OR followed by a blank line
+        // (doc exports sometimes butt the heading against the previous block);
+        // hard-wrapped prose fragments have non-blank neighbors on both sides.
+        if (isHeadingCandidate(t) && (blankBefore || sepBefore || nextLineBlank(i))) {
+            const canon = canonicalFor(t);
+            if (canon) {
+                pushHeading(2, canon);
+                currentSection = canon;
+                continue;
+            }
+        }
+
+        // Merged heading + trailing content on one line
+        if ((blankBefore || sepBefore) && t.length <= 140 && !/[.!?]"”?$/.test(t)) {
+            const hit = MERGE_PREFIXES.map(([re, canon]) => {
+                const m = t.match(re);
+                return m ? { canon, len: m[0].length } : null;
+            }).find(Boolean);
+            if (hit) {
+                let rest = t.slice(hit.len).trim().replace(/^[:—–-]\s*/, '');
+                // Swallow a few lowercase connector words that belong to the
+                // heading ("and institutional concerns") before the remainder.
+                let guard = 0;
+                while (rest && guard < 4) {
+                    const w = rest.match(/^([a-z][\w'’-]*)\s+(.*)$/);
+                    if (!w) break;
+                    rest = w[2];
+                    guard++;
+                }
+                pushHeading(2, hit.canon);
+                currentSection = hit.canon;
+                if (rest) lines.splice(i + 1, 0, rest, '');
+                continue;
+            }
+        }
+
+        // Unknown headings: keep their own title. Separator-preceded ones are
+        // top-level sections; blank-surrounded title-case lines are subsections
+        // (### stays inside its parent section on import).
+        if (isHeadingCandidate(t) && !/:$/.test(t) && titleCaseish(t)) {
+            if (sepBefore) {
+                pushHeading(2, t);
+                currentSection = t;
+                continue;
+            }
+            if (blankBefore && nextLineBlank(i) && anyHeadingEmitted) {
+                pushHeading(3, t);
+                continue;
+            }
+        }
+
+        // Staff section: names introduce people. Bold both the standalone
+        // "Dr. Hassan Minhas" sub-header form and the "Jane Doe was/is ..."
+        // lead-in form so the importer can split staff entries.
         if (currentSection === 'Founders and Notable Staff') {
+            const nameOnly = t.match(/^(?:(?:Dr|Mr|Ms|Mrs)\.?\s+)?[A-Z][\w.'’-]*(?:\s+(?:\/|[A-Z][\w.'’-]*|[A-Z]\.)){1,6}$/);
+            if (nameOnly && t.split(/\s+/).length <= 7) {
+                if (out.length && out[out.length - 1] !== '') out.push('');
+                out.push(`**${t}**`);
+                out.push('');
+                continue;
+            }
             const staffLead = t.match(/^([A-Z][\w.'’-]+(?:\s+[A-Z][\w.'’-]+){1,3})\s+((?:was|is|worked|served|has been|founded|co-founded)\b.*)$/);
             if (staffLead) {
                 out.push(`**${staffLead[1]}** ${staffLead[2]}`);
@@ -176,9 +329,16 @@ function convertPlainTextToWikiMarkdown(text) {
             }
         }
 
-        // Structure section: turn "- Level 1 - description" bullets into the
-        // "- **Level 1:** description" form the level parser recognizes.
+        // Structure section: "Phase 1" / "Level 2" sub-labels and
+        // "- Level 1 - description" bullets become the bold forms the level
+        // parser recognizes.
         if (currentSection === 'Program Structure') {
+            if (/^(?:phase|level|stage|step)s?\s+[\w-]+$/i.test(t)) {
+                if (out.length && out[out.length - 1] !== '') out.push('');
+                out.push(`**${t}**`);
+                out.push('');
+                continue;
+            }
             const levelBullet = t.match(/^[-*•·]\s*([^:\-–—]{2,30}?)\s*[-–—:]\s+(.+)$/);
             if (levelBullet && !/https?:\/\//i.test(t)) {
                 out.push(`- **${levelBullet[1].trim()}:** ${levelBullet[2].trim()}`);
@@ -207,12 +367,18 @@ function convertPlainTextToWikiMarkdown(text) {
             continue;
         }
 
-        // Short unknown "Label:" line -> bold lead-in (safe; the importer keeps
-        // it verbatim inside whatever section it falls under)
-        if (isHeadingCandidate(t) && /:$/.test(t)) {
+        // Short "Label:" line at a paragraph boundary -> bold lead-in
+        if (isHeadingCandidate(t) && /:$/.test(t) && blankBefore) {
             if (out.length && out[out.length - 1] !== '') out.push('');
             out.push(`**${t.replace(/:$/, '')}:**`);
             continue;
+        }
+
+        // Untitled leading prose belongs to History — the natural home for the
+        // opening description of a program article.
+        if (!currentSection && !anyHeadingEmitted) {
+            pushHeading(2, 'History and Background Information');
+            currentSection = 'History and Background Information';
         }
 
         out.push(raw.trimEnd());
@@ -1047,10 +1213,13 @@ function parseWikiMarkdown(markdown) {
     const getSection = (source, sectionTitle) => {
         const escapedTitle = escapeRegex(sectionTitle);
         // Handle both "## **Title**" and "##**Title**" (no space between # and *)
-        const headerRegex = new RegExp(`(#{1,6})\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*\\n`, 'i');
-        const match = source.match(headerRegex);
-        let result = '';
-        if (match) {
+        const headerRegex = new RegExp(`(#{1,6})\\s*\\*{0,2}\\s*${escapedTitle}\\s*\\*{0,2}\\s*\\n`, 'gi');
+        // A title can appear MORE THAN ONCE (converted articles and some wiki
+        // pages repeat e.g. "Related Media"); merge every same-title section so
+        // no occurrence is left behind to duplicate via the salvage pass.
+        const bodies = [];
+        let match;
+        while ((match = headerRegex.exec(source)) !== null) {
             // The section ends at the next heading of the SAME or HIGHER level
             // (a "### Photos" subsection stays inside its "## Related Media"
             // parent, while pages that use "###" for their main sections still
@@ -1061,10 +1230,14 @@ function parseWikiMarkdown(markdown) {
             const bodyStart = match.index + match[0].length;
             const rest = source.slice(bodyStart);
             const nextHeader = rest.match(new RegExp(`\\n#{1,${level}}(?:[ \\t]|\\*)`));
-            result = (nextHeader ? rest.slice(0, nextHeader.index) : rest).trim();
+            let body = (nextHeader ? rest.slice(0, nextHeader.index) : rest).trim();
             // Strip standalone *** or --- separators at start/end of captured content
-            result = result.replace(/^(?:\*\*\*|---)\s*$|(?:\r\n|\n|\r)?(?:\*\*\*|---)\s*$/gm, '').trim();
+            body = body.replace(/^(?:\*\*\*|---)\s*$|(?:\r\n|\n|\r)?(?:\*\*\*|---)\s*$/gm, '').trim();
+            if (body) bodies.push(body);
+            // Resume scanning after this section's body
+            headerRegex.lastIndex = bodyStart + (nextHeader ? nextHeader.index : rest.length);
         }
+        const result = bodies.join('\n\n');
 
         console.log(`getSection("${sectionTitle}"):`, result ? `Found (${result.length} chars)` : 'Not found');
         return result;
@@ -1149,10 +1322,31 @@ function parseWikiMarkdown(markdown) {
     }
     console.log('Header match result:', parsedData.programName);
 
-    // Parse program type — first try the standalone *Type* line
-    const typeMatch = normalizedMarkdown.match(/^\s*\*([^*]+)\*\s*$/m);
+    // Parse program type — first try the standalone *Type* line. Only look in
+    // the head of the document (the type line sits directly under the title);
+    // a doc-wide search latched onto any later italic label line (e.g.
+    // "*Some Source:*" in a links section) and imported it as the type.
+    const headZone = normalizedMarkdown.split('\n').slice(0, 8).join('\n');
+    let typeMatch = headZone.match(/^\s*\*([^*\n]+)\*\s*$/m);
+    // An italic line near the top that is long, carries a URL, ends with a
+    // colon, is a rebrand note ("Formerly X"), or is a year range is NOT a
+    // type line. Null the match entirely so the salvage pass keeps that line
+    // as content (dropTypeLine consumes whatever this matches).
+    if (typeMatch && (/https?:\/\//i.test(typeMatch[1])
+        || /:$/.test(typeMatch[1].trim())
+        || typeMatch[1].trim().length > 60
+        || /^(?:formerly|previously|f\.?k\.?a\.?|a\.?k\.?a\.?|also known as|now)\b/i.test(typeMatch[1].trim())
+        || /^\d{4}\s*[–—-]/.test(typeMatch[1].trim()))) {
+        typeMatch = null;
+    }
     if (typeMatch && !parsedData.programType) {
         parsedData.programType = typeMatch[1].trim();
+    }
+
+    // A "*Formerly Old Name*" note under the header names the prior identity.
+    const rebrandNoteMatch = headZone.match(/^\s*\*(?:formerly|previously)(?:\s+known\s+as)?\s+([^*\n]+?)\s*\*\s*$/im);
+    if (rebrandNoteMatch && !parsedData.rebrand) {
+        parsedData.rebrand = rebrandNoteMatch[1].trim();
     }
 
     // A previously GENERATED page can carry unfilled template tokens in its
@@ -1661,8 +1855,11 @@ function parseWikiMarkdown(markdown) {
 
     if (staffSection && !isNoInfoSection(staffSection)) {
         // Accepts "**Name**", "*** Name:***" (bold-italic with optional colon),
-        // and an optional leading bullet. Names never span lines.
-        const staffEntryPattern = /(?:^|\n)[ \t]*(?:[-•]\s+)?\*{2,3}\s*([^*\n]+?)\s*:?\s*\*{2,3}[ \t]*(?:\(([^)]*)\)\s*)?([\s\S]*?)(?=\n[ \t]*(?:[-•]\s+)?\*{2,3}\s*[^*\n]+?\s*:?\s*\*{2,3}[ \t]*(?:\([^)]*\)\s*)?(?:is |was |formerly |previously |worked |served |has |co-founded |founded |also |does |currently )|\s*$)/gi;
+        // and an optional leading bullet. Names never span lines. The next
+        // entry starts at a bold name followed by a bio verb OR a bold name
+        // standing alone on its line (converted plain-text articles use
+        // "**Name**" sub-headers with the bio in following paragraphs).
+        const staffEntryPattern = /(?:^|\n)[ \t]*(?:[-•]\s+)?\*{2,3}\s*([^*\n]+?)\s*:?\s*\*{2,3}[ \t]*(?:\(([^)]*)\)\s*)?([\s\S]*?)(?=\n[ \t]*(?:[-•]\s+)?\*{2,3}\s*[^*\n]+?\s*:?\s*\*{2,3}[ \t]*(?:\([^)]*\)\s*)?(?:is |was |formerly |previously |worked |served |has |co-founded |founded |also |does |currently |[ \t]*\n)|\s*$)/gi;
 
         for (const blockMatch of staffSection.matchAll(staffEntryPattern)) {
             let name = (blockMatch[1] || '').trim();
@@ -2531,6 +2728,9 @@ function parseWikiMarkdown(markdown) {
             if (/^no information is known/i.test(trimmed) && trimmed.length < 120) continue;
             const normBlock = normForOverlap(trimmed);
             if (normBlock.length < 12) continue; // slugs/fragments
+            // A lone word (page slug like "inherentabuse" left at the top of a
+            // wiki export) is chrome, not content.
+            if (normBlock.length < 30 && !normBlock.includes(' ')) continue;
             if (isConsumedBlock(normBlock)) continue;
             kept.push(trimmed);
         }
@@ -2556,8 +2756,14 @@ function parseWikiMarkdown(markdown) {
         });
     }
 
-    const dropTypeLine = (text) => typeMatch
-        ? text.split('\n').filter(line => line.trim() !== typeMatch[0].trim()).join('\n')
+    // Header metadata lines already captured into fields (the *Type* line and
+    // a "*Formerly X*" rebrand note) must not be re-salvaged as content.
+    const headerNoteLines = [
+        typeMatch && typeMatch[0].trim(),
+        rebrandNoteMatch && rebrandNoteMatch[0].trim()
+    ].filter(Boolean);
+    const dropTypeLine = (text) => headerNoteLines.length
+        ? text.split('\n').filter(line => !headerNoteLines.includes(line.trim())).join('\n')
         : text;
 
     const pageTitleNorm = normForOverlap(parsedData.programName);
