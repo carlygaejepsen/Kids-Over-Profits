@@ -2216,17 +2216,45 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Import and parse Reddit markdown
+    // Single-file upload (.txt/.md) feeding the import textarea
+    const importFileInput = document.getElementById('importFileInput');
+    if (importFileInput && importTextarea) {
+        importFileInput.addEventListener('change', () => {
+            const file = importFileInput.files && importFileInput.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                importTextarea.value = String(reader.result || '');
+                importTextarea.focus();
+            };
+            reader.onerror = () => alert('Could not read the selected file.');
+            reader.readAsText(file);
+        });
+    }
+
+    // Import and parse Reddit markdown OR plain text (converted automatically)
     if (importBtn) {
         importBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const markdown = importTextarea ? importTextarea.value.trim() : '';
+            let markdown = importTextarea ? importTextarea.value.trim() : '';
             if (!markdown) {
-                alert('Please paste some Reddit markdown first!');
+                alert('Please paste some markdown or article text first!');
                 return;
             }
 
+            // Volunteer-written articles arrive as plain text. When the pasted
+            // content has no markdown structure, convert it to wiki markdown
+            // first so the same import pipeline handles both.
+            let wasConverted = false;
+            if (typeof looksLikeWikiMarkdown === 'function'
+                && typeof convertPlainTextToWikiMarkdown === 'function'
+                && !looksLikeWikiMarkdown(markdown)) {
+                markdown = convertPlainTextToWikiMarkdown(markdown);
+                wasConverted = true;
+            }
+
             console.log('=== IMPORT DEBUG ===');
+            console.log('Converted from plain text:', wasConverted);
             console.log('Markdown length:', markdown.length);
             console.log('First 200 characters:', markdown.substring(0, 200));
 
@@ -2234,10 +2262,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Store the imported markdown before clearing
                 importedMarkdown = markdown;
                 parseAndPopulate(markdown);
-                alert('Import successful! Form fields have been populated. Review and edit as needed.');
+                alert(wasConverted
+                    ? 'Plain text converted to wiki markdown and imported! Form fields have been populated — review the section assignments and formatting before saving.'
+                    : 'Import successful! Form fields have been populated. Review and edit as needed.');
                 if (importPanel) importPanel.style.display = 'none';
-                if (toggleImportBtn) toggleImportBtn.textContent = '📥 Import from Reddit Markdown';
+                if (toggleImportBtn) toggleImportBtn.textContent = '📥 Import from Clipboard';
                 if (importTextarea) importTextarea.value = '';
+                if (importFileInput) importFileInput.value = '';
             } catch (error) {
                 console.error('Import error:', error);
                 alert('Error importing markdown. Please check the format and try again.\n\n' + error.message);
@@ -2706,12 +2737,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 try {
                     // Read file content
-                    const content = await readFileAsText(file);
+                    let content = await readFileAsText(file);
 
                     // Parse the markdown
                     if (typeof parseWikiMarkdown !== 'function') {
                         throw new Error('Parser not loaded');
                     }
+
+                    // Plain-text files (volunteer articles) are converted to
+                    // wiki markdown first, same as the single-entry importer.
+                    if (typeof looksLikeWikiMarkdown === 'function'
+                        && typeof convertPlainTextToWikiMarkdown === 'function'
+                        && !looksLikeWikiMarkdown(content)) {
+                        content = convertPlainTextToWikiMarkdown(content);
+                    }
+
                     const parsedData = parseWikiMarkdown(content);
 
                     // Handle empty files

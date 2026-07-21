@@ -68,6 +68,160 @@ function sanitizeUrl(input) {
     return url;
 }
 
+/**
+ * Heuristic: does this text already look like wiki/Reddit markdown?
+ * Used to decide whether pasted/uploaded content needs plain-text conversion.
+ * @param {string} text
+ * @returns {boolean}
+ */
+function looksLikeWikiMarkdown(text) {
+    const src = String(text || '');
+    if (/^#{1,6}[ \t*]/m.test(src)) return true;              // headings
+    if (/\[[^\]\n]+\]\([^)\n]+\)/.test(src)) return true;     // markdown links
+    if (/\*\*[^*\n]+\*\*/.test(src)) return true;             // bold spans
+    if (/^\|.+\|\s*$/m.test(src)) return true;                // tables
+    return false;
+}
+
+/**
+ * Convert a plain-text article (volunteer-written, no markdown) into wiki
+ * markdown the importer understands. Deterministic — no AI, nothing dropped:
+ *   - first short line becomes the "# **Title**" header
+ *   - recognizable section headings become canonical "## **Section**" headers
+ *   - other short "Label:" lines become bold lead-ins
+ *   - bullet markers (dot, star, dash) become "- " list items
+ *   - "Title - URL" / "Title: URL" / bare-URL lines become markdown links
+ * Everything else passes through untouched.
+ * @param {string} text - Plain article text
+ * @returns {string} - Wiki-style markdown
+ */
+function convertPlainTextToWikiMarkdown(text) {
+    const CANONICAL_SECTIONS = [
+        { canon: 'History and Background Information', re: /\b(history|background|about|overview|founding)\b/i },
+        { canon: 'Founders and Notable Staff', re: /\b(founders?|staff|leadership|employees|owners?|personnel)\b/i },
+        { canon: 'Program Structure', re: /\b(structure|level system|levels?|phases?|daily (schedule|life)|program model|therap(y|ies))\b/i },
+        { canon: 'Rules and Punishments', re: /\b(rules?|punishments?|consequences?|discipline)\b/i },
+        { canon: 'Abuse/Neglect Allegations and Lawsuits', re: /\b(abuse|allegations?|lawsuits?|neglect|investigations?|controvers(y|ies)|complaints?|deaths?|closure)\b/i },
+        { canon: 'In the Media', re: /\b(media coverage|in the (media|news)|news|press|articles?|coverage)\b/i },
+        { canon: 'Survivor Testimonies', re: /\b(testimon(y|ies)|survivor (stories|accounts|experiences)|firsthand|accounts?)\b/i },
+        { canon: 'Related Media', re: /\b(related media|links?|resources?|sources?|references?|further reading|external)\b/i }
+    ];
+
+    const lines = String(text || '').replace(/\r\n?/g, '\n').split('\n');
+    const out = [];
+    let titleEmitted = false;
+    let sawContent = false;
+    let currentSection = '';
+
+    const isHeadingCandidate = (line) => {
+        const t = line.trim();
+        if (!t || t.length > 60) return false;
+        if (/^[-*•·▪‣]/.test(t)) return false;          // bullet, not heading
+        if (/^https?:\/\//i.test(t)) return false;
+        if (/[.!?]"?$/.test(t)) return false;            // sentences aren't headings
+        if (t.split(/\s+/).length > 7) return false;
+        return true;
+    };
+    const canonicalFor = (line) => {
+        if (!isHeadingCandidate(line)) return null;
+        const key = line.trim().replace(/:$/, '');
+        const hit = CANONICAL_SECTIONS.find(s => s.re.test(key));
+        return hit ? hit.canon : null;
+    };
+    const linkLabelFor = (url) => {
+        let label = url.replace(/^https?:\/\//i, '').replace(/\/$/, '');
+        if (label.length > 50) label = label.slice(0, 47) + '...';
+        return label;
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+        const raw = lines[i];
+        const t = raw.trim();
+
+        if (!t) { out.push(''); continue; }
+
+        // Page title: the first short non-sentence line of the document.
+        if (!titleEmitted && !sawContent) {
+            sawContent = true;
+            if (t.length <= 80 && !/[.!?]"?$/.test(t) && !canonicalFor(t)) {
+                // Keep an inline "(1990-2004) City, ST" suffix out of the bold name
+                const m = t.match(/^(.+?)\s*(\(\d{4}[^)]*\).*)$/);
+                out.push(m ? `# **${m[1].trim()}** ${m[2].trim()}` : `# **${t}**`);
+                out.push('');
+                titleEmitted = true;
+                continue;
+            }
+        }
+        sawContent = true;
+
+        // Known section heading -> canonical "## **Section**"
+        const canon = canonicalFor(t);
+        if (canon) {
+            if (out.length && out[out.length - 1] !== '') out.push('');
+            out.push(`## **${canon}**`);
+            out.push('');
+            currentSection = canon;
+            continue;
+        }
+
+        // Staff section: bold "First Last was/is/worked..." lead-ins so the
+        // importer can extract each person as a staff entry. Requires at least
+        // two capitalized name words directly before the verb, so ordinary
+        // sentences ("The program was...", "He previously worked...") pass through.
+        if (currentSection === 'Founders and Notable Staff') {
+            const staffLead = t.match(/^([A-Z][\w.'’-]+(?:\s+[A-Z][\w.'’-]+){1,3})\s+((?:was|is|worked|served|has been|founded|co-founded)\b.*)$/);
+            if (staffLead) {
+                out.push(`**${staffLead[1]}** ${staffLead[2]}`);
+                continue;
+            }
+        }
+
+        // Structure section: turn "- Level 1 - description" bullets into the
+        // "- **Level 1:** description" form the level parser recognizes.
+        if (currentSection === 'Program Structure') {
+            const levelBullet = t.match(/^[-*•·]\s*([^:\-–—]{2,30}?)\s*[-–—:]\s+(.+)$/);
+            if (levelBullet && !/https?:\/\//i.test(t)) {
+                out.push(`- **${levelBullet[1].trim()}:** ${levelBullet[2].trim()}`);
+                continue;
+            }
+        }
+
+        // "Title - URL" / "Title: URL" -> markdown link line
+        const titledUrl = t.match(/^(?:[-*•·]\s*)?(.{3,120}?)\s*(?:[-–—:]|–|—)\s*(https?:\/\/\S+)$/i);
+        if (titledUrl && !/https?:\/\//i.test(titledUrl[1])) {
+            out.push(`- [${titledUrl[1].trim()}](${titledUrl[2]})`);
+            continue;
+        }
+
+        // Bare URL line -> readable markdown link
+        const bareUrl = t.match(/^(?:[-*•·]\s*)?(https?:\/\/\S+)$/i);
+        if (bareUrl) {
+            out.push(`- [${linkLabelFor(bareUrl[1])}](${bareUrl[1]})`);
+            continue;
+        }
+
+        // Bullets: normalize any marker to "- "
+        const bullet = t.match(/^[•·▪‣]\s*(.+)$/) || t.match(/^\*\s+(.+)$/);
+        if (bullet) {
+            out.push(`- ${bullet[1].trim()}`);
+            continue;
+        }
+
+        // Short unknown "Label:" line -> bold lead-in (safe; the importer keeps
+        // it verbatim inside whatever section it falls under)
+        if (isHeadingCandidate(t) && /:$/.test(t)) {
+            if (out.length && out[out.length - 1] !== '') out.push('');
+            out.push(`**${t.replace(/:$/, '')}:**`);
+            continue;
+        }
+
+        out.push(raw.trimEnd());
+    }
+
+    // Collapse runs of 3+ blank lines and trim
+    return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
+
 function isIgnoredWikiMetaLink(title, url, lineText = '') {
     const normalizedTitle = String(title || '').trim().toLowerCase();
     const normalizedUrl = sanitizeUrl(url).toLowerCase();
@@ -1012,7 +1166,9 @@ function parseWikiMarkdown(markdown) {
     // Fallback: extract program type from history text if not found
     if (!parsedData.programType) {
         const typeFromHistory = normalizedMarkdown.match(/marketed as (?:an?|the)\s+([^.]+?)\s+(?:for|program|that|who|serving|located)/i);
-        if (typeFromHistory) {
+        // Reject bare generic captures ("program", "school") so real phrasings
+        // like "was a Therapeutic Boarding School" (pattern 2) can win instead.
+        if (typeFromHistory && !/^(?:program|school|facility|center|place)$/i.test(typeFromHistory[1].trim())) {
             parsedData.programType = typeFromHistory[1].trim();
         } else {
             const typeFromHistory2 = normalizedMarkdown.match(/(?:is|was)\s+(?:an?|the)\s+(Residential Treatment Center|Therapeutic Boarding School|Wilderness Program|Behavior Modification Program|Behavioral Health Facility|Outdoor Therapeutic Program|Group Home|Boot Camp|Youth Treatment Center|Psychiatric Residential Treatment Facility)/i);
@@ -1695,6 +1851,12 @@ function parseWikiMarkdown(markdown) {
             // Fallback to generic comma-separated pattern
             if (!commaSeparatedMatch) {
                 commaSeparatedMatch = abuseSection.match(/(?:Allegations?|Reports?|Complaints?)[^:]*(?:include|included)[:\s]+([^\.]+)\./i);
+            }
+
+            // "Survivors have reported food deprivation, solitary confinement, ..."
+            // (the negative lookahead skips narrative "reported that ..." phrasing)
+            if (!commaSeparatedMatch) {
+                commaSeparatedMatch = abuseSection.match(/survivors\s+(?:have\s+)?report(?:ed)?\s+(?!that\b)([^.]+)\./i);
             }
             
             if (commaSeparatedMatch) {
@@ -2567,11 +2729,13 @@ function getLookupTables() {
 // on script load order; callers must use the wiki-generation.js version so there
 // is a single source of truth.
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { parseWikiMarkdown, getLookupTables, findLookupMatches, sanitizeUrl };
+    module.exports = { parseWikiMarkdown, getLookupTables, findLookupMatches, sanitizeUrl, looksLikeWikiMarkdown, convertPlainTextToWikiMarkdown };
 } else if (typeof window !== 'undefined') {
     // Expose to global scope for browser usage
     window.parseWikiMarkdown = parseWikiMarkdown;
     window.getLookupTables = getLookupTables;
     window.findLookupMatches = findLookupMatches;
     window.sanitizeUrl = sanitizeUrl;
+    window.looksLikeWikiMarkdown = looksLikeWikiMarkdown;
+    window.convertPlainTextToWikiMarkdown = convertPlainTextToWikiMarkdown;
 }

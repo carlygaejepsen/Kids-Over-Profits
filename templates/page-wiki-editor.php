@@ -123,9 +123,13 @@ get_header();
 
             <!-- Import Panel -->
             <div id="importPanel" class="import-panel" style="display: none;">
-                <h3>Paste Reddit Markdown</h3>
-                <p>Paste an existing Reddit wiki entry below to import it.</p>
-                <textarea id="importTextarea" class="import-textarea" rows="10" placeholder="Paste your Reddit markdown here..."></textarea>
+                <h3>Paste Markdown or Plain Text</h3>
+                <p>Paste an existing Reddit wiki entry <strong>or a plain-text article</strong> below. Plain text (e.g. a volunteer-written article) is converted to wiki markdown automatically — section headings like &ldquo;History&rdquo;, &ldquo;Staff&rdquo;, or &ldquo;Rules&rdquo; are recognized, bullets and links are formatted, and nothing is dropped.</p>
+                <div class="upload-controls" style="margin-bottom:10px;">
+                    <label for="importFileInput" style="display:block; font-weight:600; margin-bottom:4px;">&hellip;or upload a .txt / .md file:</label>
+                    <input type="file" id="importFileInput" accept=".txt,.md,.markdown" class="input-form">
+                </div>
+                <textarea id="importTextarea" class="import-textarea" rows="10" placeholder="Paste Reddit markdown or plain article text here..."></textarea>
                 <div class="import-controls" style="margin-top:15px; display:flex; gap:10px;">
                     <button type="button" id="importBtn" class="btn btn-primary">Import & Fill Form</button>
                     <button type="button" id="cancelImportBtn" class="btn btn-danger">Close</button>
