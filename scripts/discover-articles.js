@@ -70,6 +70,9 @@ const MAX_ARTICLE_AGE_DAYS = 30;
 // constantly produce false positives.
 const GENERIC_ALIAS_MIN_FACILITIES = 3;
 const USER_AGENT = 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.org)';
+// Fallback UA: some hosts serve an HTML bot-challenge page (HTTP 200) to
+// non-browser UAs / datacenter IPs, which breaks JSON parsing.
+const BROWSER_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36';
 
 // Statuses to skip when building the facility list
 const EXCLUDED_FACILITY_STATUSES = new Set(['closed', 'transferred', 'adults only']);
@@ -188,6 +191,38 @@ async function fetchWithTimeout(url, opts = {}) {
     } finally {
         clearTimeout(timer);
     }
+}
+
+/**
+ * GET a JSON endpoint, retrying with a browser UA if the response isn't
+ * parseable JSON. On each failure, logs status/content-type and the start of
+ * the body so CI logs show WHAT came back instead of a bare SyntaxError.
+ */
+async function fetchJson(url, opts = {}) {
+    const attemptHeaders = [
+        { 'User-Agent': USER_AGENT },
+        { 'User-Agent': BROWSER_USER_AGENT, 'Accept': 'application/json' },
+        { 'User-Agent': BROWSER_USER_AGENT, 'Accept': 'application/json' }
+    ];
+    let lastErr;
+    for (let i = 0; i < attemptHeaders.length; i++) {
+        if (i > 0) await sleep(5000 * i);
+        let res, text;
+        try {
+            res = await fetchWithTimeout(url, { ...opts, headers: { ...attemptHeaders[i], ...(opts.headers || {}) } });
+            text = await res.text();
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return JSON.parse(text);
+        } catch (err) {
+            lastErr = err;
+            warn(`  ! fetchJson attempt ${i + 1}/${attemptHeaders.length} failed for ${url}: ${err.message}`);
+            if (res) {
+                warn(`    status=${res.status} content-type=${res.headers.get('content-type') || '(none)'}`);
+                if (text) warn(`    body starts: ${text.slice(0, 300).replace(/\s+/g, ' ')}`);
+            }
+        }
+    }
+    throw lastErr;
 }
 
 async function fetchText(url, opts = {}) {
@@ -613,55 +648,160 @@ async function fetchGoogleNewsForFacility(facility) {
     }
 }
 
+// Reddit hard-blocks unauthenticated .json API requests (403 since ~mid-2026),
+// but the Atom feeds remain open — under a tight per-IP rate limit, so this
+// script makes exactly one feed request per run and waits out any 429.
+//
+// Preferred path: OAuth via a free reddit "script" app (100 req/min, works
+// from datacenter IPs). Set REDDIT_CLIENT_ID + REDDIT_CLIENT_SECRET to enable;
+// without them the script falls back to the Atom feed.
+const REDDIT_FEED_URL = 'https://www.reddit.com/r/troubledteens/new.rss?limit=100';
+const REDDIT_CLIENT_ID = process.env.REDDIT_CLIENT_ID || '';
+const REDDIT_CLIENT_SECRET = process.env.REDDIT_CLIENT_SECRET || '';
+
+async function fetchRedditOAuthListing() {
+    const tokenRes = await fetchWithTimeout('https://www.reddit.com/api/v1/access_token', {
+        method: 'POST',
+        timeoutMs: 30000,
+        headers: {
+            'Authorization': 'Basic ' + Buffer.from(`${REDDIT_CLIENT_ID}:${REDDIT_CLIENT_SECRET}`).toString('base64'),
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'grant_type=client_credentials'
+    });
+    const tokenBody = await tokenRes.json().catch(() => ({}));
+    if (!tokenRes.ok || !tokenBody.access_token) {
+        throw new Error(`OAuth token request failed: HTTP ${tokenRes.status}`);
+    }
+    const res = await fetchWithTimeout('https://oauth.reddit.com/r/troubledteens/new?limit=100', {
+        timeoutMs: 30000,
+        headers: { 'Authorization': `Bearer ${tokenBody.access_token}` }
+    });
+    if (!res.ok) throw new Error(`OAuth listing failed: HTTP ${res.status}`);
+    return res.json();
+}
+
+/** Original .json-listing candidate extraction, now fed by the OAuth API. */
+function candidatesFromListing(json) {
+    const posts = (json.data && json.data.children) || [];
+    const out = [];
+    for (const p of posts) {
+        const post = p.data || {};
+        const title = post.title || '';
+        const permalink = post.permalink ? `https://www.reddit.com${post.permalink}` : '';
+        const created = post.created_utc ? new Date(post.created_utc * 1000).toUTCString() : '';
+
+        if (post.url && !post.is_self) {
+            const h = hostOf(post.url);
+            if (h && !HARD_BLOCKED_HOSTS.has(h)) {
+                out.push({
+                    title, link: post.url, pubDate: created,
+                    description: (post.selftext || '').slice(0, 500),
+                    sourceUrl: '', sourceName: '',
+                    origin: 'reddit-link',
+                    facilityQuery: null, facilityState: '', facilityCity: '',
+                    redditPermalink: permalink
+                });
+            }
+        }
+
+        // External URLs in body — stop at whitespace, brackets, quotes, and
+        // markdown delimiters (*, _, `, [, ])
+        if (post.selftext) {
+            const urls = post.selftext.match(/https?:\/\/[^\s()<>"'\[\]*_`]+/g) || [];
+            const dedup = new Set();
+            for (const raw of urls) {
+                const u = raw.replace(/[.,;:!?*_`)\]]+$/, '');
+                const h = hostOf(u);
+                if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) continue;
+                dedup.add(u);
+                out.push({
+                    title, link: u, pubDate: created,
+                    description: post.selftext.slice(0, 500),
+                    sourceUrl: '', sourceName: '',
+                    origin: 'reddit-selftext',
+                    facilityQuery: null, facilityState: '', facilityCity: '',
+                    redditPermalink: permalink
+                });
+            }
+        }
+    }
+    return out;
+}
+
+function decodeXmlEntities(s) {
+    return String(s)
+        .replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#0?39;/g, "'").replace(/&#x27;/gi, "'")
+        .replace(/&#32;/g, ' ')
+        .replace(/&amp;/g, '&');
+}
+
+async function fetchRedditFeed() {
+    let lastErr;
+    for (let i = 0; i < 3; i++) {
+        if (i > 0) await sleep(35000); // unauthenticated rate window is ~1/min
+        try {
+            // The explicit Accept header matters: reddit's edge 403s Node
+            // requests without it (curl sends Accept: */* by default).
+            const res = await fetchWithTimeout(REDDIT_FEED_URL, { timeoutMs: 30000, headers: { 'Accept': '*/*' } });
+            const text = await res.text();
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            if (!text.includes('<entry>')) throw new Error('feed empty or challenge page');
+            return text;
+        } catch (err) {
+            lastErr = err;
+            warn(`  ! Reddit feed attempt ${i + 1}/3: ${err.message}`);
+        }
+    }
+    throw lastErr;
+}
+
 async function fetchRedditCandidates() {
-    const url = 'https://www.reddit.com/r/troubledteens/new.json?limit=100';
+    if (REDDIT_CLIENT_ID && REDDIT_CLIENT_SECRET) {
+        try {
+            return candidatesFromListing(await fetchRedditOAuthListing());
+        } catch (err) {
+            warn(`  ! Reddit OAuth path failed (${err.message}); falling back to Atom feed`);
+        }
+    }
     try {
-        const res = await fetchWithTimeout(url);
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-        const posts = (json.data && json.data.children) || [];
+        const xml = await fetchRedditFeed();
         const out = [];
 
-        for (const p of posts) {
-            const post = p.data || {};
-            const title = post.title || '';
-            const permalink = post.permalink ? `https://www.reddit.com${post.permalink}` : '';
-            const created = post.created_utc ? new Date(post.created_utc * 1000).toUTCString() : '';
+        for (const block of xml.split('<entry>').slice(1)) {
+            const title = decodeXmlEntities((block.match(/<title>([\s\S]*?)<\/title>/) || [, ''])[1]);
+            const permalink = decodeXmlEntities((block.match(/<link href="([^"]+)"/) || [, ''])[1]);
+            const published = (block.match(/<(?:published|updated)>([^<]+)</) || [, ''])[1];
+            const created = published ? new Date(published).toUTCString() : '';
+            const html = decodeXmlEntities((block.match(/<content type="html">([\s\S]*?)<\/content>/) || [, ''])[1]);
+            const bodyText = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
-            // Link posts
-            if (post.url && !post.is_self) {
-                const h = hostOf(post.url);
-                if (h && !HARD_BLOCKED_HOSTS.has(h)) {
-                    out.push({
-                        title, link: post.url, pubDate: created,
-                        description: (post.selftext || '').slice(0, 500),
-                        sourceUrl: '', sourceName: '',
-                        origin: 'reddit-link',
-                        facilityQuery: null, facilityState: '', facilityCity: '',
-                        redditPermalink: permalink
-                    });
-                }
-            }
+            const dedup = new Set();
+            const pushCandidate = (u, origin) => {
+                const h = hostOf(u);
+                if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) return;
+                dedup.add(u);
+                out.push({
+                    title, link: u, pubDate: created,
+                    description: bodyText.slice(0, 500),
+                    sourceUrl: '', sourceName: '',
+                    origin,
+                    facilityQuery: null, facilityState: '', facilityCity: '',
+                    redditPermalink: permalink
+                });
+            };
 
-            // External URLs in body — stop at whitespace, brackets, quotes, and
-            // markdown delimiters (*, _, `, [, ])
-            if (post.selftext) {
-                const urls = post.selftext.match(/https?:\/\/[^\s()<>"'\[\]*_`]+/g) || [];
-                const dedup = new Set();
-                for (const raw of urls) {
-                    const u = raw.replace(/[.,;:!?*_`)\]]+$/, '');
-                    const h = hostOf(u);
-                    if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) continue;
-                    dedup.add(u);
-                    out.push({
-                        title, link: u, pubDate: created,
-                        description: post.selftext.slice(0, 500),
-                        sourceUrl: '', sourceName: '',
-                        origin: 'reddit-selftext',
-                        facilityQuery: null, facilityState: '', facilityCity: '',
-                        redditPermalink: permalink
-                    });
-                }
+            // The "[link]" anchor is the post target: an external URL for link
+            // posts, the permalink itself for self posts (blocked host → no-op).
+            const linkAnchor = (html.match(/<a href="([^"]+)">\s*\[link\]/) || [, ''])[1];
+            if (linkAnchor) pushCandidate(linkAnchor, 'reddit-link');
+
+            // Remaining anchors are rendered selftext links; reddit-internal
+            // hosts (user pages, [comments]) drop out via HARD_BLOCKED_HOSTS.
+            for (const m of html.matchAll(/<a href="([^"]+)"/g)) {
+                if (m[1] !== linkAnchor) pushCandidate(m[1], 'reddit-selftext');
             }
         }
         return out;
@@ -1057,11 +1197,7 @@ async function main() {
 
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
-    const facJson = await (async () => {
-        const res = await fetchWithTimeout(FACILITIES_URL, { timeoutMs: 60000 });
-        if (!res.ok) throw new Error(`Facilities API HTTP ${res.status}`);
-        return res.json();
-    })();
+    const facJson = await fetchJson(FACILITIES_URL, { timeoutMs: 60000 });
     const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson);
     log(`  built facility index: ${facilityIndex.length} unique active entries`);
     log(`  facility-owned hosts: ${facilityOwnHosts.size} (skipped as candidates)`);
@@ -1281,6 +1417,7 @@ module.exports = {
     normalizeName,
     fetchWithTimeout,
     fetchText,
+    fetchJson,
     postJson,
     loadJson,
     saveJson,
