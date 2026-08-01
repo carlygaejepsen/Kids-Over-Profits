@@ -1359,12 +1359,29 @@ async function main() {
         seen.add(q.urlHash);
 
         await sleep(AI_REQUEST_DELAY_MS);
-        const r = await submitCandidate(q.candidate, q.evalResult);
+        let r = await submitCandidate(q.candidate, q.evalResult);
+
+        // Provider rate limits are transient — wait one cool-down and retry
+        // once within the run.
+        if (!r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || '')) {
+            log('    rate-limited; retrying once after cool-down…');
+            await sleep(30000);
+            r = await submitCandidate(q.candidate, q.evalResult);
+        }
+
         if (r.ok) {
             submitted++;
             state.stats.submitted += 1;
         } else {
             submitErrors++;
+            // A failure at the AI stage says nothing bad about the URL itself
+            // (rate limit, provider hiccup, timeout) — un-mark both the
+            // original and canonical hashes so the next daily run retries.
+            // Submit-stage failures (e.g. duplicates) stay marked.
+            if (r.stage === 'ai') {
+                seen.delete(q.urlHash);
+                seen.delete(hashUrl(q.candidate.link));
+            }
         }
     }
 
