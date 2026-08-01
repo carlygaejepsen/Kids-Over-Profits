@@ -144,6 +144,17 @@
         return hasJunkPlaceholderName(facility);
     };
 
+    // CCL batch rows carry source_url pointing at the CA transparency API,
+    // which returns raw JSON if opened in a browser. Rewrite those to the
+    // human-readable facility-detail page; leave any other URL untouched.
+    const toCaFacilityDetailUrl = (sourceUrl, facilityNumber) => {
+        const url = normalizeText(sourceUrl);
+        if (!/transparencyapi/i.test(url)) return url;
+        const num = normalizeText(facilityNumber).replace(/\D+/g, '')
+            || (url.match(/(\d{6,})/) || [])[1] || '';
+        return num ? `https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${num}` : '';
+    };
+
     const normalizeCaliforniaDetailedReport = raw => {
         if (!raw || typeof raw !== 'object') return null;
 
@@ -167,7 +178,10 @@
             narrative: normalizeText(raw.narrative || categories.narrative || raw.raw_content),
             investigation_findings: normalizeText(raw.investigation_findings || categories.investigation_findings),
             deficiencies,
-            source_url: normalizeText(raw.source_url || categories.source_url || raw.report_url),
+            source_url: toCaFacilityDetailUrl(
+                raw.source_url || categories.source_url || raw.report_url,
+                raw.facility_number || categories.facility_number
+            ),
         };
     };
 

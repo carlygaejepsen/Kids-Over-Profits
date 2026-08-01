@@ -1199,14 +1199,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // 'get' response remaps top-level status/submitted_by for these).
     const RECORD_TYPES = new Set(['legislation', 'lawsuit']);
 
-    /** Coerce a stored list value (array, JSON string, or text) to an array. */
+    /** Coerce a stored list value (array, JSON string, or text) to an array of strings. */
     function coerceList(raw) {
-        if (Array.isArray(raw)) return raw;
+        // Entries may be objects — facilities_mentioned stores {name, facility_id}
+        // since the news-linking migration — so render the name, not the object.
+        const toText = x => {
+            if (x == null) return '';
+            if (typeof x === 'object') return String(x.name || '').trim();
+            return String(x).trim();
+        };
+        if (Array.isArray(raw)) return raw.map(toText).filter(Boolean);
         if (raw == null || raw === '') return [];
         if (typeof raw === 'string') {
             const s = raw.trim();
             if (s.startsWith('[')) {
-                try { const a = JSON.parse(s); if (Array.isArray(a)) return a; } catch (e) { /* fall through */ }
+                try {
+                    const a = JSON.parse(s);
+                    if (Array.isArray(a)) return a.map(toText).filter(Boolean);
+                } catch (e) { /* fall through */ }
             }
             return s.split(/[\r\n]+/).map(x => x.trim()).filter(Boolean);
         }

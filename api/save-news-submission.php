@@ -34,70 +34,8 @@ if (!defined('ABSPATH')) {
     }
 }
 
-/**
- * Sync news_facility_links rows for a given news submission based on the
- * normalized facilities_mentioned list.
- *
- *   - Deletes any existing links whose facility_id is no longer in the list.
- *   - Inserts new links for facility_ids that aren't already linked.
- *
- * Mentions that arrive without a facility_id (free-text or AI-extracted names)
- * are resolved by name against facilities_master - matching unique_name, the
- * operating company's name, and the curated "Other Names / Former Names" aliases
- * via the shared index in api/facility-aliases.php. This is the same resolution
- * the retroactive backfill uses, so new articles link operators and renamed
- * facilities the same way. A name with no confident match stays text-only.
- */
-function kop_sync_news_facility_links(PDO $pdo, int $newsId, array $normalizedMentions, ?string $createdBy = null): void {
-    $desiredIds = [];
-    $unresolvedNames = [];
-    foreach ($normalizedMentions as $m) {
-        if (!empty($m['facility_id'])) {
-            $desiredIds[(int)$m['facility_id']] = true;
-        } elseif (!empty($m['name'])) {
-            $unresolvedNames[$m['name']] = true;
-        }
-    }
-
-    if (!empty($unresolvedNames)) {
-        // Built once per request and cached; the index decodes facilities_master
-        // so we avoid rebuilding it if this runs again in the same save.
-        static $aliasIndex = null;
-        if ($aliasIndex === null) {
-            $aliasIndex = kop_build_facility_alias_index($pdo);
-        }
-        foreach (array_keys($unresolvedNames) as $name) {
-            $fid = kop_resolve_name_to_facility((string)$name, $aliasIndex);
-            if ($fid !== null) {
-                $desiredIds[$fid] = true;
-            }
-        }
-    }
-
-    $desiredIds = array_keys($desiredIds);
-
-    // Only prune links this sync owns (link_type 'mentioned'). Links created
-    // manually in the admin panel (primary/related) must survive a re-save
-    // whose facilities_mentioned list doesn't include them.
-    if (empty($desiredIds)) {
-        $stmt = $pdo->prepare("DELETE FROM news_facility_links WHERE news_id = ? AND link_type = 'mentioned'");
-        $stmt->execute([$newsId]);
-    } else {
-        $placeholders = implode(',', array_fill(0, count($desiredIds), '?'));
-        $stmt = $pdo->prepare(
-            "DELETE FROM news_facility_links WHERE news_id = ? AND link_type = 'mentioned' AND facility_id NOT IN ($placeholders)"
-        );
-        $stmt->execute(array_merge([$newsId], $desiredIds));
-
-        $ins = $pdo->prepare(
-            "INSERT IGNORE INTO news_facility_links (news_id, facility_id, link_type, created_by)
-             VALUES (?, ?, 'mentioned', ?)"
-        );
-        foreach ($desiredIds as $fid) {
-            $ins->execute([$newsId, $fid, $createdBy]);
-        }
-    }
-}
+// kop_sync_news_facility_links lives in api/news-mentions.php (shared with
+// manage-submissions.php so admin edits keep news_facility_links in sync).
 
 try {
     // GET request - retrieve submissions

@@ -3383,17 +3383,27 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $findings_arr[] = array('rule_number' => '', 'description' => $findings_text);
                 }
 
+                // source_url in the CCL batches is the transparency API endpoint,
+                // which returns raw JSON — useless opened in a browser. Link
+                // humans to the CCL facility-detail page instead; the report
+                // content itself is already rendered inline on our page.
+                $ccl_fac_num = preg_replace('/\D+/', '', (string)($report['facility_number'] ?? ''));
+                $ccl_detail_url = $ccl_fac_num !== ''
+                    ? 'https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/' . $ccl_fac_num
+                    : '';
+
                 $grouped[$key]['inspections'][] = array(
                     'inspection_date' => $date_str,
                     'inspection_type' => $report_type,
                     'inspection_findings' => $findings_arr,
-                    'checklist_urls' => array_filter(array((string)($report['source_url'] ?? ''))),
+                    'checklist_urls' => array_filter(array($ccl_detail_url)),
                     // Embed remaining CCL fields in 'categories' so the state-page UI
                     // can render administrator/capacity/census/met_with/narrative
                     // when the toggle expands.
                     'categories' => array(
                         'report_type'      => $report_type,
-                        'pdf_url'          => (string)($report['source_url'] ?? ''),
+                        'pdf_url'          => '',
+                        'report_url'       => $ccl_detail_url,
                         'licensee'         => (string)($report['administrator'] ?? ''),
                         'visit_date'       => (string)($report['visit_date'] ?? ''),
                         'capacity_age_range' => isset($report['capacity']) ? 'Capacity: ' . $report['capacity'] : '',
@@ -3468,7 +3478,7 @@ function kop_state_collect_inspection_summaries($state_name) {
                         'finding_count' => $passthrough_categories['finding_count'] ?? count($findings_raw),
                         'findings'      => $findings,
                         'pdf_url'       => $passthrough_categories['pdf_url'] ?? ($checklist_urls[0] ?? ''),
-                        'report_url'    => $passthrough_categories['pdf_url'] ?? '',
+                        'report_url'    => $passthrough_categories['report_url'] ?? $passthrough_categories['pdf_url'] ?? '',
                         'summary'       => '',
                         'categories'    => $passthrough_categories ?: array(),
                     );

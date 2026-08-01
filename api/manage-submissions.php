@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/sync-wiki-facilities.php';
 require_once __DIR__ . '/lib-suggested-edits.php';
+require_once __DIR__ . '/news-mentions.php';
 
 // --- Admin authentication ---
 // This endpoint reads and mutates submissions (approve/reject/publish/delete),
@@ -739,9 +740,44 @@ try {
 
             $set = [];
             $params = [];
+            $newsMentions = null; // normalized facilities_mentioned, for post-update link sync
             foreach ($fields as $col => $val) {
                 if (!in_array($col, $editable['cols'], true)) {
                     continue; // not editable
+                }
+                if ($type === 'news' && $col === 'facilities_mentioned') {
+                    // Stored as [{name, facility_id}] objects since the
+                    // news-linking migration. The structured editor round-trips
+                    // plain names, so re-stamp facility_id: keep the id from the
+                    // row's current list where the name matches, and resolve new
+                    // names against facilities_master/aliases.
+                    $mentions = kop_normalize_facility_mentions($val);
+                    $cur = $pdo->prepare("SELECT facilities_mentioned FROM $table WHERE id = ?");
+                    $cur->execute([(int)$id]);
+                    $existingByName = [];
+                    foreach (kop_normalize_facility_mentions($cur->fetchColumn() ?: '[]') as $m) {
+                        if ($m['facility_id'] !== null) {
+                            $existingByName[strtolower($m['name'])] = $m['facility_id'];
+                        }
+                    }
+                    $aliasIndex = null;
+                    foreach ($mentions as &$m) {
+                        if ($m['facility_id'] !== null) continue;
+                        $nameKey = strtolower($m['name']);
+                        if (isset($existingByName[$nameKey])) {
+                            $m['facility_id'] = $existingByName[$nameKey];
+                            continue;
+                        }
+                        if ($aliasIndex === null) {
+                            $aliasIndex = kop_build_facility_alias_index($pdo);
+                        }
+                        $m['facility_id'] = kop_resolve_name_to_facility($m['name'], $aliasIndex);
+                    }
+                    unset($m);
+                    $newsMentions = $mentions;
+                    $set[] = "`$col` = ?";
+                    $params[] = json_encode($mentions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    continue;
                 }
                 if ($col === 'edited_json_data') {
                     // data submissions: accept an object/array or JSON string,
@@ -781,6 +817,12 @@ try {
             $sql = "UPDATE $table SET " . implode(', ', $set) . " WHERE id = ?";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
+
+            // Keep news_facility_links in step with an edited mention list —
+            // same sync save-news-submission.php runs on (re)submission.
+            if ($newsMentions !== null) {
+                kop_sync_news_facility_links($pdo, (int)$id, $newsMentions);
+            }
 
             echo json_encode([
                 'success' => true,
