@@ -1,0 +1,54 @@
+name: Deploy to cPanel
+
+# On every push to main: tell cPanel to pull from GitHub, then run the
+# .cpanel.yml deployment tasks (copies theme files into public_html).
+# Requires repo secrets: CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN, CPANEL_REPO_ROOT.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cpanel-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull latest commit on server
+        run: |
+          root=$(printf %s "${{ secrets.CPANEL_REPO_ROOT }}" | jq -sRr @uri)
+          resp=$(curl -sS --fail-with-body \
+            "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControl/update?repository_root=${root}&branch=main" \
+            -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
+          echo "$resp" | jq -e '.status == 1' > /dev/null || { echo "$resp" | jq . ; exit 1; }
+          echo "Server repo updated to: $(echo "$resp" | jq -r '.data.last_update.identifier // "unknown"')"
+
+      - name: Run .cpanel.yml deployment
+        run: |
+          root=$(printf %s "${{ secrets.CPANEL_REPO_ROOT }}" | jq -sRr @uri)
+          resp=$(curl -sS --fail-with-body \
+            "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/create?repository_root=${root}" \
+            -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
+          echo "$resp" | jq -e '.status == 1' > /dev/null || { echo "$resp" | jq . ; exit 1; }
+          deploy_id=$(echo "$resp" | jq -r '.data.deploy_id')
+          echo "Deployment ${deploy_id} queued"
+
+          # Poll until the deployment finishes (usually a few seconds).
+          for i in $(seq 1 18); do
+            sleep 10
+            list=$(curl -sS \
+              "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/retrieve?repository_root=${root}" \
+              -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
+            row=$(echo "$list" | jq --argjson id "$deploy_id" '.data[]? | select(.deploy_id == $id)')
+            [ -z "$row" ] && continue
+            if echo "$row" | jq -e '.timestamps.succeeded // empty' > /dev/null; then
+              echo "Deployment succeeded"; exit 0
+            fi
+            if echo "$row" | jq -e '.timestamps.failed // empty' > /dev/null; then
+              echo "Deployment FAILED:"; echo "$row" | jq .; exit 1
+            fi
+          done
+          echo "Timed out waiting for deployment result (it may still complete server-side)"
+          exit 1
