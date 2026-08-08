@@ -1,6 +1,650 @@
 {
-  "lastUpdated": "2026-08-01T07:57:20.337Z",
+  "lastUpdated": "2026-08-08T08:04:23.855Z",
   "entries": [
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNS0dST1VhQVl1SmlFLWZnSUxUUzBxUFpTSks5bC1NVElfbXdLQmNodlFWa3hiSUItV3pkMTZuSGVrLXJualZ2eE9HcTk1bnJFdldQNzlFMXNlcjRqS3YwWnNFalU0YWR1elJCSmtWRVlEUDJULUhjM0MxOUtIZlN3Wk1QeHdYRjJDeVpkVw?oc=5",
+      "resolvedTo": "https://www.sltrib.com/opinion/commentary/2026/08/04/paris-hilton-utah-must-not-let/",
+      "reason": "duplicate-after-resolution"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNcnVjTEctZ1RTdjg0MTVIc2NwbTUtNWdnOVBxWWlkdDd3eloxc2t1dkgwbndwdDZLRDFjT3BTUU42aFpoYWJCMGpqV0V5dTcxS3JQdnMwOHZXWE05cGFvU1lhTXFieWR1dVBRSWtWRFpxV3ExNkFZYVV0NjNlMVVseEJLazNJLUhUcWRGb3BjOXRsTlBIeU5sbkhlSklpSUtF?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Provo Canyon School"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNVmk5M2NVTjl6WEEySnNMcjlaZ2U3YUo4X1hxdlpaQnJQeXVBRUxSVWZadERWYVNiNGh2N3ZZWE5oYjhHLUxyNFJhWHBsOW1CQW5wbmtyNDEtZEFVT1Q2bFp5VkRyS0JnUEt1TFE0WXh5SHNaa0t2c2ZrWk05Z0NjVjBhNFUyV0hfa01XSG9HSmFYYUxLM2lmMktPOHo5b3FiZFNCZzYxcWxpWGFmS1VQVA?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Provo Canyon School"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMiigFBVV95cUxQWXlFckVzRTNoNjRaRFJ2Tk01dHU3ajVrLWlYUUNtaHRoa2xwOE9CUy1VcXB4dmhIZXNLUFF3TF92ZXpZbjJodUNLNHdWcm05Mk5tRVRvQlNjeElmcWkyY3ZjWUF1REt0clR3elFHd0ZoWS1ub3A5cVIyVno3RTV5SVZ4MG1XWjhnMmc?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Juvenile Detention Center"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNeE1BSzQ2dnd0UTFxQjgwaVByb1h3Z2FrNWNnUFlnajh4NlJ2djFIYWNzcmNLUGxFUkJHV3ZFTUFVWl92aGpmTXpNMHNwbk82VnlUYnNJSWk4Qm5mWURDSWc5bEthRDg4czNyN1V0WHpRMTcxZnpvMUtsM1E3eVMyWVRETGdVdw?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Juvenile Detention Center"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMigwJBVV95cUxPb2JGdDMtSWwwcWI4emd3UnRoQUxFLWZSQ0hJWG1WTWpuNzZJZmkxckV3T0M5ZWRnOUEwLUthUmh4T1FmOHpfWHhJYWNWa25xdW9HNHBMdWV2REhVbjNfRGJ3eGhiY2pDNlE5ODhVR0hlRXNUNTNiODJWU01SWGw1bUltZVYtM3JUR3lBWWlzZHVwQW1hME9pZ3dpTGhWcjIxR04takstaGVFMERSbXc5WGxrUUhFZmtzSV9RamEyZXhvSWE0Unc4TUMycUJrdF9FNWVWQTdGdkJueWk0amU2M3I0S2huVHVkUFRRWHZpeHlOSng3c2tfX2hYYlJKMUtabWJ3?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Juvenile Detention Center"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9kbDFwUHdNSjJhOWdJUnNqamc3bXpjQzF2OWl6S3BrMmE2TlJwR1hzbl9XaGpBOW5KbTBiMm84V09NcHhhMElfWG03LXpRN3hyMHd1eGl3RVViQQ?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "The Children’s Home"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMitAFBVV95cUxOUmNRSmhMcUY5RjlEamhoaDNYeGlsbGJRcnpDRU92WXNkZTI4aXV3UnRyMC1Ld2w5ZFVSbFB0TUpXQzRqYVc2UU1PTTNvZlctNjU2Y0M1LXRTSlBKS0RvZXhXdGVGcXhDOHBGcG5yODdaZVZIVm9nbVQ0SGt5WV9PclVUeDlUTzJhVTN4TkdaSTZLMGZkX3l0SWhLRkNHeGQ0V2hzWm8wRHF0UzZyOTZOeEJDdTHSAbQBQVVfeXFMTlJjUUpoTHFGOUY5RGpoaGgzWHhpbGxiUXJ6Q0VPdllzZGUyOGl1d1J0cjAtS3dsOWRVUmxQdE1KV0M0amFXNlFNT00zb2ZXLTY1NmNDNS10U0pQSktEb2V4V3RlRnF4QzhwRnBucjg3WmVWSFZvZ21UNEhreVlfT3JVVHg5VE8yYVUzeE5HWkk2SzBmZF95dEloS0ZDR3hkNFdoc1pvMERxdFM2cjk2TnhCQ3Ux?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "The Meridian"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNWmQ3dk9PX3hoU0RuSVNkUUdPUllYcWNiWmV1OUM2WkJINnlVSG5yelN0c19FMmsxeE1KNkdhcFZ5Zl9mNGF5clhRZnQ4N1lRVnhGeVU4dUFESzZwX1ZMNDNUdTBzazI2aHA2RGtOV0VXZkkxMW9rOUFDZFp0TVVlVlJJanNuVWcyalJzY1l1SW9tcnBnd3FmZUFjUGJtMkJqVm1lci1iSUlmNGpENG03ZjJxd0M0ZHpsVmNOVFA2TmQ3NHY3QVNIaWZSQQ?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Cole Home"
+    },
+    {
+      "ts": "2026-08-08T08:04:23.855Z",
+      "link": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxOUGdsNkdIb0pmVmtSMUVnbzZ6UnNGRWZPRHIwYVBDOWN2bGU3QU1IeW5SR3ZyVmUwLXVGNUJNNVZJWDBva1MzYUV4WlJYXzNyZWtvU00xWWhaUmxYZHpnMGxIR3JQLTdSY2dMMmMyblRaWGR2TUhhRGZ1MW9PQi1lcUZDVUlMVG0yTWMwNkdaZGRIdmZ1TzQwOWtYcUVoa0xuZUFORkFLa1M2dU9yTzh0c0N5dW9qSWYwNGJGR1V1NVJRZ9IB1gFBVV95cUxNZU1qMXZBQUNsTUdjMC1jeVVMTWRBR0pLNWgtYko2VWdnSkJGRV9vaXJFZXZaYVVUVC1FVmR1Q1RhZ0ZZUzNvOENjOThLTG1uZ01FSG1tdFJ6X1NBZWc3dDRFZGR4Qzg3cUtUSjNReFFEa0R3Q0E4eEJFSEZTRU81M29RajR2RnNpVG1LeXl1aEhLdHRtWERCRU5TaE04QjVRX3dacXZGOTVtc3UwajE0QlJ0ZHh4aTd4VEY5QnNvTVhHeng5QWwyRjYxV3Mzd0ZXSXVJUF9n?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Wayne County Juvenile Detention Facility"
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://cafemom.com/entertainment/jenelle-evans-jace-evans-birthday-post-backlash",
+      "title": "Teen Mom son update",
+      "origin": "reddit-selftext",
+      "host": "cafemom.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cafemom.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.telegraph.co.uk/news/2026/08/05/yes-we-can-detox-clinic-where-british-teens-claim-abuse/",
+      "title": "Expose on TTI in Europe",
+      "origin": "reddit-link",
+      "host": "telegraph.co.uk",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "telegraph.co.uk"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.theashleysrealityroundup.com/2026/07/31/rowdy-robertson-son-of-duck-dynasty-stars-willie-korie-robertson-claims-parents-sent-him-away-to-boarding-school-for-being-gay-acting-out/",
+      "title": "'Duck Dynasty' Stars' Gay Son Rowdy Says He Was Sent Away",
+      "origin": "reddit-link",
+      "host": "theashleysrealityroundup.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "theashleysrealityroundup.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://podcasts.apple.com/us/podcast/infamous/id1652941051?i=1000778931060",
+      "title": "All Parents should listen to this podcast",
+      "origin": "reddit-link",
+      "host": "podcasts.apple.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "desc-kw:closed",
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.mlive.com/news/2026/07/michigan-misses-foster-care-safety-benchmarks-again-court-oversight-continues.html",
+      "title": "Michigan misses foster care safety benchmarks again, court oversight continues",
+      "origin": "reddit-link",
+      "host": "mlive.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mlive.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.abc15.com/news/local-news/investigations/arizona-foster-care-facility-faces-79-licensing-complaints-eight-violations-in-two-years",
+      "title": "Arizona foster care facility faces 79 licensing complaints, eight violations in two years",
+      "origin": "reddit-link",
+      "host": "abc15.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "abc15.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://mg.co.za/friday/2026-07-31-when-parenting-reaches-breaking-point-bad-behaviour-asks-who-we-trust-with-our-children/",
+      "title": "When parenting reaches breaking point, ‘Bad Behaviour’ asks who we trust with our children",
+      "origin": "reddit-link",
+      "host": "mg.co.za",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mg.co.za"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://mmajunkie.usatoday.com/story/sports/ufc/2026/07/29/ufc-news-joseph-kropschot-dana-whites-contender-series-origin/91077597007/?fbclid=PAVERFWATZBKlwZG9mAmV4dG4DYWVtAjEwAHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABpzARfx1A1Pc68EQPkAg-Gu6j2-T-fbQxYldLcVeYR33OfC3PSIA9vcCqghfF_aem_naeBgScBcxhSPGRNFJpC3A",
+      "title": "Hoping to Inspire",
+      "origin": "reddit-link",
+      "host": "mmajunkie.usatoday.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mmajunkie.usatoday.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://linknky.com/news/2026/07/30/matt-bevin-skips-court-hearing-son-support-case/",
+      "title": "Former Gov. Matt Bevin once again a no-show at child support hearing",
+      "origin": "reddit-link",
+      "host": "linknky.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "linknky.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.wosu.org/2026-07-30/it-was-supposed-to-be-a-haven-for-troubled-teens-they-risked-everything-to-escape?_amp=true",
+      "title": "It was supposed to be a haven for troubled teens. They risked everything to escape",
+      "origin": "reddit-link",
+      "host": "wosu.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "wosu.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://whetstoneacademy.com/",
+      "title": "New activity on the Whetstone Academy Docket (Roe v. Singleton Investment Properties, LLC, 8:25-cv-00318)",
+      "origin": "reddit-selftext",
+      "host": "whetstoneacademy.com",
+      "facilityQuery": null,
+      "reason": "facility-own-website-inferred",
+      "meta": {
+        "host": "whetstoneacademy.com",
+        "matchedAlias": "Whetstone Academy",
+        "facility": "Whetstone Academy"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.themarshallproject.org/2026/07/30/youth-residential-treatment-program-records-foia",
+      "title": "Were You in Youth Residential Treatment? Learn How to Get Your Records.",
+      "origin": "reddit-link",
+      "host": "themarshallproject.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "themarshallproject.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.themarshallproject.org/2026/07/30/fox-run-youth-residential-treatment-runaways",
+      "title": "How Fox Run Treatment Center Traumatized Troubled Children",
+      "origin": "reddit-link",
+      "host": "themarshallproject.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "themarshallproject.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.wtvr.com/news/local-news/hallmark-youthcare-sued-july-27-2026",
+      "title": "'We couldn't get any further than the lobby': Virginia nonprofit sues Hallmark Youthcare",
+      "origin": "reddit-link",
+      "host": "wtvr.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "wtvr.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.abc.net.au/news/2026-07-29/qld-human-rights-commission-silent-about-youth-boot-camp/106962234",
+      "title": "Queensland plan to send youth offenders to boot camps scrutinised",
+      "origin": "reddit-link",
+      "host": "abc.net.au",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "abc.net.au"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://kentuckylantern.com/2026/07/28/former-gov-matt-bevin-once-again-a-no-show-at-child-support-hearing/",
+      "title": "Former Gov. Matt Bevin once again a no-show at child support hearing • Kentucky Lantern",
+      "origin": "reddit-link",
+      "host": "kentuckylantern.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "kentuckylantern.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://brandielliott.com/",
+      "title": "Can we report these \"educational consultants\" to any legal entities?",
+      "origin": "reddit-selftext",
+      "host": "brandielliott.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:shut down"
+        ],
+        "threshold": 3,
+        "host": "brandielliott.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.dropbox.com/scl/fi/shnf0beypi7o5rbb1bei7/11302405-_Affirmed__Terminated_on_the_merits_after_oral_hearing__Written-_signed-_published..pdf?rlkey=wakmhuuukq9a1tdztvq7wowum&amp;st=ftvqf2b4&amp;dl=0",
+      "title": "10th Circuit just affirmed dismissal of Narvin Lichfield’s defamation suit against Katherine Kubler & Netflix over “The Program: Cons, Cults and Kidnapping” 🍿🎉🥳",
+      "origin": "reddit-link",
+      "host": "dropbox.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "desc-kw:sued",
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "dropbox.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.netflix.com/title/81579761",
+      "title": "10th Circuit just affirmed dismissal of Narvin Lichfield’s defamation suit against Katherine Kubler & Netflix over “The Program: Cons, Cults and Kidnapping” 🍿🎉🥳",
+      "origin": "reddit-selftext",
+      "host": "netflix.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:sued"
+        ],
+        "threshold": 3,
+        "host": "netflix.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.kansascity.com/news/local/article316613493.html",
+      "title": "Lawsuits allege negligence, strip searches at Kansas City faith-based boarding school",
+      "origin": "reddit-link",
+      "host": "kansascity.com",
+      "facilityQuery": null,
+      "reason": "facility-own-website-inferred",
+      "meta": {
+        "host": "kansascity.com",
+        "matchedAlias": "Kansas",
+        "facility": "Kansas"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://provider.dlbc.utah.gov/ccl/facilities#93443",
+      "title": "Elevations Down to 17 kids as of 6/30/26",
+      "origin": "reddit-selftext",
+      "host": "provider.dlbc.utah.gov",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "provider.dlbc.utah.gov"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://www.seattletimes.com/seattle-news/mental-health/when-spit-hoods-are-used-on-children-troubling-patterns-emerge/",
+      "title": "When spit hoods are used on children, troubling patterns emerge",
+      "origin": "reddit-link",
+      "host": "seattletimes.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "seattletimes.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://psychtools.ca/",
+      "title": "Twitter follow I recommend: Dr. Tyler Black",
+      "origin": "reddit-selftext",
+      "host": "psychtools.ca",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "psychtools.ca"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOWXVtRzRDTXZWMzZ4d0t4UDlKbU5uZWtJVDVWalI1R3lZelV0T2NQM195QmZ0dER3RDFtUmFaNXdZeE5oMm5ZbFF1elhfU21WVkZ1cE52QVJrek9UOE5RVmpSRzhyRkxkMDNvNjZCcC1IN1BWb1ZTTVdXRG01Uk96TndNdkZ6MWNRZ0xHWXRfbGluZ9IBlwFBVV95cUxONTJHM1ROYkV5WUNvOXlKZGN2eU9ZODQ0M045cmJEeVRiNTJMVDUyR043VUZSTXQ5NENPSktyanpfOGhiLXE1MlIyNjFxUkI4UF9ROGg0STFsMWFjaEpaRzlpaGlXTTNvUlNLcXFUd0hmeGx3SWdWblY2dndVQmtEWjQ3Yi1WckN3bS01M1RkN2RJTHQ3aTZN?oc=5",
+      "title": "DHHS also revokes license of Provo Canyon School’s Provo campus for failing to protect clients from harm and mistreatment - ABC4 Utah",
+      "origin": "google-news",
+      "host": "abc4.com",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "abc4.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOZU5XT1ljbkFCREI1cmZXSnFyRlJXWVdPc25ZR29aUW0zLXhxa1BGWG5EaE1HdVRtOWxyNFVaWFh6REZoeGt4bmx6Qkw1bWt3LUJpRUt0ZUtNSnRIdVcyNHdKcjZJaEprTmxUdVJzVEpNU0NBUzcyTWxGOHM0dXpScFNaN29IUFVZWmxILWVVd0Nta1d2UXBvejMzX2RuSnF5aHpobUhvWUN1RDNJX3VaZWFpRXhfLW5mbXpnZmFQMW9Rb3JLNXg0?oc=5",
+      "title": "Utah Residential Facility Loses Licenses to Operate Statewide - The Imprint",
+      "origin": "google-news",
+      "host": "imprintnews.org",
+      "facilityQuery": "Provo Canyon School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "imprintnews.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE4xM0tiTXY1Q0loTVVYbzFuYWp6cmc4dG12Z1R2cHhQb0N6d1Jrb0RoclBxME8tS3REdEtPTGg2enpieXNHdU1LSFdTNmpNODRJM0tpTlBvcV9weVZ2M1lRaVJn0gFiQVVfeXFMUGJXNXpLenVYTi1GcU5yY3FTYy1iS1EtenZtUl9EdFM3M0NrVmYzMkJiemk1NHJENU4yamgyeUZKUHFrRkp5RjdZTlNyMEgzNy1lZlkwUVcybW8zV3J6SDFNaEE?oc=5",
+      "title": "Sacramento County government cares more about cops than vulnerable kids | Opinion - Sacramento Bee",
+      "origin": "google-news",
+      "host": "sacbee.com",
+      "facilityQuery": "Progress Ranch",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sacbee.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE03eG4zelZNWlZ1dHFQUUVNNzhtUWtmX0VKZmVEM0lmSXpqMjQ1VEFFbm1zQTVvdFJONzg3NjdDQ0tjWTBMNkNmOVBUZjBiaXZsYmxubmtocTdJMU5DOFNqaG1WMXU1NnRSME9kUHVzVEpJMGJaendoa0VR?oc=5",
+      "title": "How did a girl fall from a children's home roof? - Daily News Hungary",
+      "origin": "google-news",
+      "host": "dailynewshungary.com",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "dailynewshungary.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxPVVptUmNmODNRemJDcVJacEdQQUtQb3l6ZC1ybExnMDdCXzlTZVR0cjg4UTNxN21Bb3FpR0lDclctMXVheDlzUVEyazJRUjl6T0dLOFJqbG9UWVVMellpMGQyNHpscmhKTDFEUFZtWGZ3RGdpSS0zSkJSa3lISG1COFFKcmdncFZGUy1lZC1KSHJWVHpuVXR4T1RNendMNGdPM2JqNzktTTRRVTJqd1BHaVlFcFZwczA2dk5pWXA3VUhPTW13ci1Vdg?oc=5",
+      "title": "Faridpur children’s home resident found pregnant; man jailed in rape case - The Daily Star",
+      "origin": "google-news",
+      "host": "thedailystar.net",
+      "facilityQuery": "The Children’s Home",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "thedailystar.net"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNaDQtczVDMklYYU1rM1FzdXhmQkRnenlvS0cxQkk4cWpvUjI5TkZyVS1Lbkx1dld4Rjg0NlZmY3QwalFPXzZxT3pFckpDVFdwYVZoYU1TX3ZTMHY1djlVa2RyZ21jbGRpUzRRN2VfbE53cjh5Wml6dVQwazE0Y3pYVllOZ0syRFRpZ2FNSHZiR1NlVVlMU3FFdjA0eFB6Ri1hM2JxM0FYNGItcU04a09UYkQ1alJkQQ?oc=5",
+      "title": "Federal judge allows suit against Hyde School to proceed - The Portland Press Herald",
+      "origin": "google-news",
+      "host": "pressherald.com",
+      "facilityQuery": "Hyde School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Hyde School"
+        ],
+        "threshold": 3,
+        "host": "pressherald.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMihgJBVV95cUxOY0NhdFdWTF9Da1Fid3BoNFNacFhnQkxXSEg5WHYwclp1d3BnMnVsbzdpUkRzVUYwRXpKQ2lCUFJLMGN3NnhjZy1iMVgtOWVVZ2hlYjl3NVAtSXpQVFRSemdMbFNuNUNCaHYwT2NLaWdBaDBqWFQ5bEt2cy14ZTd5NkZwUlpvVVZhNWY2LVF5cXF5bDNYRFRfVi11YmhLLXoxLUhlVkpiYlBPZkJSeXpXeVVmcG5BVGx2akY5aEgweGR6VDFIbGR6MkNXdEpDMkpVdzVqZFJ2ZGJ1VXVIWEJTR0VDSDR4WWRVdDNxMXR5OHRMWXBUXzNmUjhyNl9QUUpjU3R6eVdB?oc=5",
+      "title": "'Over time, we see change': At Gator Wilderness Camp School, troubled boys make choices to change - yoursun.com",
+      "origin": "google-news",
+      "host": "yoursun.com",
+      "facilityQuery": "Gator Wilderness Camp School",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Gator Wilderness Camp School"
+        ],
+        "threshold": 3,
+        "host": "yoursun.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQaXJZdTZoeHVGZ1cyTlB2OWZVbHZIdzRuLWZzeDBCOGNrZURXZUhkTFY4SHdsMzZkLVZXYWZ3Y3hIcDU2OE1CM2h4T1BWNTFQbmlsQ214ZzRQcGVkQzRZTG5CMW11QktzYnRUR0c4OGlqN1owdnozY3pGSi0xYXloUWlvYk1yTnAwZmJUcjI5RzdRS3JzY0F2a9IBngFBVV95cUxPck5PN1pYTUtCaHRXbTJ6emFGdXhXNWFwQjYzdkZQR3V1THZXb19YYzM1Zzhvb3BlNDJYQmdpUnNOLXFZQ1JUQUtldjNocjc5dHBjM0hmWUpGOWdyX0VoaVZ5YTdUR3YybmZWRjRWVHFkNjRwNDZyUmJndEU4Tm1wcUJYQUhuSVgzZ2lDMUZaUFlQN3lwdEFWMHkzNUtodw?oc=5",
+      "title": "KVC Missouri expands child advocacy services in the region - FOX 2",
+      "origin": "google-news",
+      "host": "fox2now.com",
+      "facilityQuery": "KVC Missouri",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:KVC Missouri"
+        ],
+        "threshold": 3,
+        "host": "fox2now.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQbVIxc0J1anFUNDkxQmU2ZGNjUy1rcGpZNVgyaFRfOUswNnNyS0hZMWkxbTEtMHhEUTl0T1RYcWk5T3NET0lXSWphWFZ6YnlWSXpybVdnaHhCUG5mcUtYdEFoQVlNRUV6bjNDT1dLOW42U1RrcmxhaGtleElJdExOazdBbzNnQQ?oc=5",
+      "title": "KVC Missouri adds 3 locations - Spectrum News",
+      "origin": "google-news",
+      "host": "spectrumlocalnews.com",
+      "facilityQuery": "KVC Missouri",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:KVC Missouri"
+        ],
+        "threshold": 3,
+        "host": "spectrumlocalnews.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiigJBVV95cUxPeFdiTnZKQmJZZTBxYmEyd2VteEx6cFhCczdBQWhBN3g3cVRVWldLQ0dJbGhGbjdLX1FwXy1fUFplZWxSMGxVRUVlT3R6clZWOHJwWW9ud0tkcWFpMWEtQXRjLXdUUng4cEtiU2JKbWVEWEFHdG9DYTZ4OVlCSktDZndlMEZ1eTFKUDJrMXNxejNlLWUxcjZnTnQzcFA3NFktZDh4WmV0N2loWlYyMldlUWVhU0dPdmRzWjVYdGVnOGJhS3Y0UGpLYXpTM0JNdGNaTGhiOXhuSFV0c2tnV3FTQkhhMGg3VFUtS3NJRDZVQ2NWd0VObE1fUDI5TGpHZWRIeXRZRnhXWHRkQQ?oc=5",
+      "title": "Hair program at Oak Creek helps incarcerated girls build self-confidence, find future employment - NPR for Oregonians",
+      "origin": "google-news",
+      "host": "klcc.org",
+      "facilityQuery": "Jackie Winters Transition Program",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "klcc.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE10WlhGVUNfOHBxTk1EU2JwcWFPY0VjX1FGWXI1NnFvMkZSSWZ0QmxLdmFCeXBnRVVEeGpQeTZVS2NFMjFpdHFwdWJCX2hMX3ZoZFNpbkFYTWtSR1B4ZXZPZmltQjlfQ1IxVFE?oc=5",
+      "title": "What Is the Biggest Complaint in Nursing Homes in 2026? - Sokolove Law",
+      "origin": "google-news",
+      "host": "sokolovelaw.com",
+      "facilityQuery": "Ridge House",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "sokolovelaw.com"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOcjk0dlpyeTNka1Z5UFFzb1RwS1Z2NS1NTXNwS3I1M183cXQxbWNmTVk2UkhJSmYwcWowYmhNWnh3YVY4VUNVQlpLVko4TmZ0Mm5KS3JmSGdsVWlJZVdlR0ZJRW1ZTDlWQXd5QkdkRlI3TEJ4WFVveHNjZEJmbU5SSktfSVZCWXJYYTdxS1JLTUw0OF9uZXgwOGxZSU9RMXpocHFF?oc=5",
+      "title": "Almost All the Toddler Towers We Tested Raised Safety Concerns. Here’s Why. - Consumer Reports",
+      "origin": "google-news",
+      "host": "consumerreports.org",
+      "facilityQuery": "STEP2",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "consumerreports.org"
+      }
+    },
+    {
+      "ts": "2026-08-08T08:00:05.936Z",
+      "link": "https://news.google.com/rss/articles/CBMiywFBVV95cUxPenBfTnQtcnFpaE5ROWFZS3lDWUxnTG5LbThmOXdsZ01KWmU1eUZXZktQdENsM184bFNCTDFnUGNianFnLUM5SWVNRjdVYW9TaUFsUHAyZ0pDWll6VlRQQ2VTRXBKUF94NWZFSEQzT2tjQVZyMWpERVBlNHE3QmNpOVVPb2R6Rmhad1BmU2hoMXFRQ3J3dnpidUNXQmp1YjZsWDlRbXhTMi1YRlpMXzN2VFFibzVySTg4aDJuRFRJLThNZ082RFFqNk5faw?oc=5",
+      "title": "County commission rejects motion to set aside $300,000 to en... - The Fort Scott Tribune",
+      "origin": "google-news",
+      "host": "fstribune.com",
+      "facilityQuery": "Kansas Renewal Institute",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "fstribune.com"
+      }
+    },
     {
       "ts": "2026-08-01T07:57:20.337Z",
       "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOVGYtUGNlb1VtOVU4QkRfRWMyWE1JRXVoVVZXdDNPbDhzWDFVcnhxZzk4S0pSZXQxS0syUFJHN3d3a0lncWFmWG1VTTFVZl9uUXZGRnNTWGtuZzJjUzBXUkRFQlVlSmNqc19wWHdnUzg2VkJPbEgzMThZZmRhUS1UQjQ5Z1lSWFM3U1pDcGxwNzJVMEUwNkFXdQ?oc=5",
@@ -6766,228 +7410,6 @@
         ],
         "threshold": 3,
         "host": "knoxfocus.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.courthousenews.com/businessman-asks-10th-circuit-to-revive-defamation-suit-over-netflix-troubled-teen-documentary/",
-      "title": "Businessman asks 10th Circuit to revive defamation suit over Netflix 'troubled teen' documentary",
-      "origin": "reddit-link",
-      "host": "courthousenews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "courthousenews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-link",
-      "host": "dispatch.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "dispatch.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://archive.is/2026.05.13-200845/https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/**",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "archive.is",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "archive.is"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.themarshallproject.org/2025/11/06/residential-treatment-center-youth-ohio",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "themarshallproject.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "themarshallproject.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://mohicanysa.com/home/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "mohicanysa.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "mohicanysa.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://wisconsinexaminer.com/2026/05/11/racine-county-staff-sued-in-brutal-beating-of-teen/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-link",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://wisconsinexaminer.com/2025/12/18/violent-incident-raises-scrutiny-on-new-facility-built-as-an-alternative-to-lincoln-hills/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://racinecountyeye.com/2025/04/17/jdydcc-youth-corrections-delagrave/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "racinecountyeye.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.usatoday.com/story/life/health-wellness/2026/05/11/asheville-academy-shut-down-teens-mental-health-help/89881288007/",
-      "title": "They sent their teens away for treatment. Then, everything unraveled.",
-      "origin": "reddit-link",
-      "host": "usatoday.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:closure",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "usatoday.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.nhpr.org/nh-news/2026-05-10/sununu-youth-services-center-ydc-abuse-neglect-children-investigation-nh-newhampshire",
-      "title": "They spent time in NH’s youth detention center. They worry for children there now.",
-      "origin": "reddit-link",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://www.ozarksfirst.com/news/agape-boarding-school-case/",
-      "title": "Former Agape Boarding School near Stockton resurfaces in federal kidnapping-related case",
-      "origin": "reddit-link",
-      "host": "ozarksfirst.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "ozarksfirst.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://splashmags.com/2026/05/the-kids-are-not-alright-review/",
-      "title": "The Kids Are Not Alright Review 🍿🎥",
-      "origin": "reddit-link",
-      "host": "splashmags.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "splashmags.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:36:31.189Z",
-      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPZ04xbE11TFVadVh6eVJKM3FRRmFYbkVleGZUMmZ4YkQ5RXZsYUhVTmc4QWRFWEdrUEY0WjVaNEZpSmtoT0RDc3dwbllTYWc1TWFaejBrYV94YjVkUHM3S2g1OWU5Y1pLZWdQQ0lqeGt4M3BnNm9xTWlJQVVqWHprQzRZaVZrUjVYZWN0N2tDSW9rV3dxM0hzQXloMEYwc1lSeWxPUkQ5SWMyODRCcFRZQURzTnRNTHM3TUdLYndFZUVkVTlKZGkxQU9fQXk0SmdJWVJCag?oc=5",
-      "title": "Idaho investigators repeatedly found kids in danger. Youth treatment programs faced few consequences. - East Idaho News",
-      "origin": "google-news",
-      "host": "eastidahonews.com",
-      "facilityQuery": "Innercept",
-      "reason": "low-score",
-      "meta": {
-        "score": 0,
-        "reasons": [],
-        "threshold": 3,
-        "host": "eastidahonews.com"
       }
     }
   ]
