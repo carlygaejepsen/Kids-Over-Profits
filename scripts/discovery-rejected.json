@@ -1,6 +1,526 @@
 {
-  "lastUpdated": "2026-08-15T07:48:31.476Z",
+  "lastUpdated": "2026-08-16T07:27:24.002Z",
   "entries": [
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMinwJBVV95cUxQS203d19QR04yQjB3dkVoOHRfMmtTRHk5bUpQMTdTbkZGVkVzYWs2bVpOdk40cF9UU3JSMTBKWjBEUFdPMFpGZ3ZuREstNWppbm1QcTd4Ymhxd190a29NRXVzTGVxc28yYXhMdVRYbXZUaV9ubXhPVmZyTmQ2UFMzMXRZMEg0X05DbEw0YUx5aldxT01mLTNqSVpqaWdodVR3NWtuN0EzeHIzUzhVbm5vQ0Nxd2tEVHVYbkFpVlNOVlljXzJBc3dNLU54bWlMUG82ODk5N2JXalNKVVdvellyUThGeTg5b2wxbDBmZVVQNGJFRXJzUjM5RVFsekE0V3lDV2h5RXR3UkkwQURpZDZxM29nQTJqOGJwSjV0Q0staw?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "John H. Sununu Youth Services Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNOGhFSnhnX0RaVy1zcE41X3NQQm15am1oR0x1VXlDY1RxVE54NmJhVllGRi1zd2htUG14S0hNWXRRVWw4Y1laTXM1Mk1hdWlfeGJDS1VCUmlOMHB4X285UzFwSF9fZ1BwZThfdENVTUxLWG1WWXF0eldUM294WGNaZU0zekJ5UUVWcDVIUQ?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "John H. Sununu Youth Services Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNVTRTdEJCbmtaOVN6dVZ2UnhLYmtMTDNMY2w2TXNoTXJnMllmSHBhTWVLbmd3ZFdOR0YxejlYbFJYc3dZXy1wYWwxdzduQ0xidkhSNEFUT2lITVp5M0M5OXdkY0YwcDNqd1FHTTFXaEZ2VnVFcUZtcmlFeWUtenhLQ2tfS0ZwbGYzajVwYWtxMS1HZTJNNUFRMGhWUzlOOWtwaGFjdEZaRmd3OWdaemhrOWZOYkN3eWZrdGN4SGtTNnc?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "John H. Sununu Youth Services Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPQkFDN25wSE1CZGRBeC1OYzRBVGxpNjVkZWxkSld2YXR0X3Y4SVR2RzJYR3pYWlNVcDI5MnJNdHpVNXFaNlAtVGQyUTRBelcwSllrMjhEQ0Rndml6dTU4VFNhMEcxMEF3SjR5RkNlbVd2cEtkcjlLenk2VEI3akdRN3dn?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Mountain View Academy"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxONGtYcHgyVFF2dEdCQVcyMWNhMnc3aHNEN2ZkcHMzak9DZzNncFR4TTNfWFlHbjhCSzBZOU9mdG9oTHdsYXE2TVJYY2g2dzBJSUxZbmNZaUtLZmtMbXhmaWdTLXdTS3VWUXFIVEZnVXRkNzg4M0FEYU5aQmk2NVpPbkF4SEFNVmZQVV9tX2NUemQ0SWlHb0czSEJ6VnRDRDk2SThNZERKVGZ3Zw?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Mountain View Academy"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNZHJPcXZvNExYWUlDM3hPZEZyQUg2ODlSNkpGNnhsRFBJSlZEUDhnd2tueHVYNm1JVTlabTgwd3pGYUJXVUR6cEpOT0xrdFQxVDVKUzBfVjZHYVFoLXBSZ2JYOUdwMGhfbTVoRzdxU0JlMS0xYzVIQ09DX3NCWl9LTlRXQjlmN1dIYzhEczRka1lzSWdzV0lqSDhGTjN4cTNXekh3ekpvaTRWczlZZUZ2bGVqajRTcVdURnBKMXNYa24?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Craighead County Detention Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQOU9JdFktUkY1YmgtbENHYXNjVFFlVWNmbW1kVWhQN290MzZTSWwwVl9JUzFpamlDMWZVVnJkc21xU2FKam9BRTdvZWREbVRteFFldmpyYWpkUm83ODdEa2NiY2lpdHZsakg4OUdGcC1lR3Etcjl2TWRfcE9YVWlNWVhLbzY?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Crossroads Juvenile Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQQ1lQV1AtQzdjWDNzME1XM1MxZmNXVzZNQ3BiN0pBT3pXNTRwTG5xdGVQbUVkRlJrd0UxWFp3dVY2alBaeFEwSnB0TFY0S3hFZU5mSHpTVkkwZkdFNllnMU9FZElFT0FxMGFwSjVBVmFGMjk2MTlKcW85RzhMV2RkMEJqRHJWUkZZUFBERG9oSldUS0lMR0JHQThvZmNQb2pfUTRjd0VoYTEydDZtQTVCQ0NJaw?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Clark County Juvenile Justice"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOT21pVmRKc2VTVkNCc0lxaU9uRzdIOTlTdHdYUXc3ZFB6c3JOVHBzRnphMTJyR0JsNEN3MFl5UkJqb3BRZGlUTzJrMDNvbDFKMUVPeG8zSjJXbTU5Wl9JYkhTQVlRLXN1UjVfbGFDc0xlUkxRblJtSTJmejlINlVEY1NST0lGNXdmRm5OaHJLbDY4ajlJbDJsMXBnN25CUUlHaEdJVU5sVmhKdmxQRXJVcmVKZ9IBuAFBVV95cUxNUVJfN3ZvcFRJcUJ6SGRxMHpYSUlCR0prcEd4bkJVejFuT3ZvZFJrcjNYOUt4UmxodkVZanVTX213MzlwNDNkSGtqTU1tQlRieTBycTB0VXJrQlpNM3dXRkttX2doUmlaTC1acVNoTzZIOHBNb19mdkN1dGxIRktKWEJyenliYzVsdlFXcFR0Z2Iwd1ZPd2Q0RWJKMngwa2lnWHh6SUQ2WEw2Nlg5S2IxTDV5UFQtWFRT?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Clark County Juvenile Justice"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMi3gFBVV95cUxNLW80RkRPSVN5MXRTM1FmaUIyQm9rZWpwR3dHcEQ4QlJGeERsdnNDTkRKWTdrRHpBNndISkU3SE9CdENwbnZyRzhLMjJ5RDhoaHphMnUxbXZVbnJ1R05CWllyOGNzbkZaV3dZbXZ2MWJzNkx0MGY1ZFZZc29fZnozZXM4bXBZbFZxVThZUS1FeGZPRl9RMTRfVkZMbFl1Zk1IUUtQcENkbXFod2FzU0FWVjhrclFMT0hBOW9ZcFRESzB4czgzSTR0RWt0bEdsT0o4R2RIRlVvWWVKX3ZTd1E?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Clark County Juvenile Justice"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQcm5DSG1QdmVLMk9nVl9VcU1wMDhzeEV5Mk94S1NLMnV3WGpQQTFtS1dZbUFJbUZFX1B3N3V3Q0JtQ1dRSlljZU10ZVRFcG9XRXo3QmI4RzBhQkxXaUJrcW4tSWJCc1c3bTZqbWtKWGxBbUFMUkE1eldyTmp2TmJiMXNFVEdSVVB2aHlaa0JQbnIwR0VrNEMwZ1JkWmRBRGZreEE?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Hennepin County Juvenile Detention Center"
+    },
+    {
+      "ts": "2026-08-16T07:27:24.002Z",
+      "link": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxPdDJUWUQ0X3lza21lWUFyZXBpeGUwMVB1OGEtQWpxR1RUUXhtRWVnLUlOR2ZpU254aU4zcmJIUmJQY0h2MEtZN0w1WXZSczNjRmVMSzVFVkRLd0hnTi1fUnZraUxWN2o2YTVlYjdYVzJIbWFTN0tKNW9mU0lXSFQ5MzVBcy1FWEdGODdr?oc=5",
+      "reason": "gn-resolution-failed",
+      "facilityQuery": "Cornerstone"
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://bridgemi.com/michigan-government/she-investigated-michigan-indian-boarding-schools-and-found-her-family/",
+      "title": "She investigated Michigan Indian boarding schools — and found her family - Bridge Michigan",
+      "origin": "reddit-link",
+      "host": "bridgemi.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "bridgemi.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.nhpr.org/nh-news/2026-08-06/legal-accountability-nh-newhampshire-youth-detention-center-sununu-center-ydc",
+      "title": "What does legal accountability look like for the state at NH’s youth detention center?",
+      "origin": "reddit-link",
+      "host": "nhpr.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "nhpr.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.theashleysrealityroundup.com/2026/07/22/exclusive-andrew-lewis-speaks-out-about-jenelle-evans-recent-fake-update-on-son-jace-gives-details-on-whats-allegedly-really-going-on/",
+      "title": "Teen Mom/Jace Evans REAL update!!",
+      "origin": "reddit-selftext",
+      "host": "theashleysrealityroundup.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "theashleysrealityroundup.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.theashleysrealityroundup.com/2026/08/12/jace-evans-out-of-mental-health-facility-after-months-long-stay-plus-details-about-who-picked-him-up-exclusive/",
+      "title": "Teen Mom/Jace Evans REAL update!!",
+      "origin": "reddit-selftext",
+      "host": "theashleysrealityroundup.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "theashleysrealityroundup.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.latimes.com/california/story/2026-08-12/nick-reiner-indictment-rob-michele-slayings",
+      "title": "Nick Reiner lay in wait before killing his parents, prosecutors allege",
+      "origin": "reddit-link",
+      "host": "latimes.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "latimes.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://c.org/KNjvFjRJ2T",
+      "title": "My 18-year-old son is at Louisiana's Swanson Center - and I need your help exposing what's happening there",
+      "origin": "reddit-link",
+      "host": "c.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "c.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://c.org/DFbh6phQvr",
+      "title": "Require Trauma-Informed Training for Child Welfare and Juvenile System Professionals",
+      "origin": "reddit-link",
+      "host": "c.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "c.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://marylandmatters.org/2026/08/05/commission-to-assess-tragedy-of-black-youth-at-former-reform-school-holds-first-meeting/",
+      "title": "Commission to assess tragedy of Black youth at former reform school holds first meeting",
+      "origin": "reddit-link",
+      "host": "marylandmatters.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "desc-kw:died",
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "marylandmatters.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://cafemom.com/entertainment/jenelle-evans-jace-evans-birthday-post-backlash",
+      "title": "Teen Mom son update",
+      "origin": "reddit-selftext",
+      "host": "cafemom.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "cafemom.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.telegraph.co.uk/news/2026/08/05/yes-we-can-detox-clinic-where-british-teens-claim-abuse/",
+      "title": "Expose on TTI in Europe",
+      "origin": "reddit-link",
+      "host": "telegraph.co.uk",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "telegraph.co.uk"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.theashleysrealityroundup.com/2026/07/31/rowdy-robertson-son-of-duck-dynasty-stars-willie-korie-robertson-claims-parents-sent-him-away-to-boarding-school-for-being-gay-acting-out/",
+      "title": "'Duck Dynasty' Stars' Gay Son Rowdy Says He Was Sent Away",
+      "origin": "reddit-link",
+      "host": "theashleysrealityroundup.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "theashleysrealityroundup.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://podcasts.apple.com/us/podcast/infamous/id1652941051?i=1000778931060",
+      "title": "All Parents should listen to this podcast",
+      "origin": "reddit-link",
+      "host": "podcasts.apple.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "desc-kw:closed",
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "podcasts.apple.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.mlive.com/news/2026/07/michigan-misses-foster-care-safety-benchmarks-again-court-oversight-continues.html",
+      "title": "Michigan misses foster care safety benchmarks again, court oversight continues",
+      "origin": "reddit-link",
+      "host": "mlive.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mlive.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.abc15.com/news/local-news/investigations/arizona-foster-care-facility-faces-79-licensing-complaints-eight-violations-in-two-years",
+      "title": "Arizona foster care facility faces 79 licensing complaints, eight violations in two years",
+      "origin": "reddit-link",
+      "host": "abc15.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "abc15.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://mg.co.za/friday/2026-07-31-when-parenting-reaches-breaking-point-bad-behaviour-asks-who-we-trust-with-our-children/",
+      "title": "When parenting reaches breaking point, ‘Bad Behaviour’ asks who we trust with our children",
+      "origin": "reddit-link",
+      "host": "mg.co.za",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mg.co.za"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://mmajunkie.usatoday.com/story/sports/ufc/2026/07/29/ufc-news-joseph-kropschot-dana-whites-contender-series-origin/91077597007/?fbclid=PAVERFWATZBKlwZG9mAmV4dG4DYWVtAjEwAHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABpzARfx1A1Pc68EQPkAg-Gu6j2-T-fbQxYldLcVeYR33OfC3PSIA9vcCqghfF_aem_naeBgScBcxhSPGRNFJpC3A",
+      "title": "Hoping to Inspire",
+      "origin": "reddit-link",
+      "host": "mmajunkie.usatoday.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "mmajunkie.usatoday.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://linknky.com/news/2026/07/30/matt-bevin-skips-court-hearing-son-support-case/",
+      "title": "Former Gov. Matt Bevin once again a no-show at child support hearing",
+      "origin": "reddit-link",
+      "host": "linknky.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "linknky.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://www.wosu.org/2026-07-30/it-was-supposed-to-be-a-haven-for-troubled-teens-they-risked-everything-to-escape?_amp=true",
+      "title": "It was supposed to be a haven for troubled teens. They risked everything to escape",
+      "origin": "reddit-link",
+      "host": "wosu.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "wosu.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://whetstoneacademy.com/",
+      "title": "New activity on the Whetstone Academy Docket (Roe v. Singleton Investment Properties, LLC, 8:25-cv-00318)",
+      "origin": "reddit-selftext",
+      "host": "whetstoneacademy.com",
+      "facilityQuery": null,
+      "reason": "facility-own-website-inferred",
+      "meta": {
+        "host": "whetstoneacademy.com",
+        "matchedAlias": "Whetstone Academy",
+        "facility": "Whetstone Academy"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE80TDFILVlQSHNnM0RBa3NpaHVReFdDWVl6eTVZckVOM24xQnlrQzhQb1luc1NJbmdJWW5jRmhnUDNXSWhLVW1yTDdrMDF3bzB1WE4xams5c0lJTG1hNlZYN2NlX0tXUjlmYkx1ZXF4YkRKZw?oc=5",
+      "title": "Texas' Gem Of The Ark-La-Tex Region Is A Thriving Cultural Oasis With College Charm, Arts, And Entertainment - AOL.com",
+      "origin": "google-news",
+      "host": "aol.com",
+      "facilityQuery": "The Ark",
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "aol.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxPYUFSZ2RwYkwtMTV1MGdwZFZNWkRhMnZLSDRuN3ZwLXFnX2s0OXlWQ0VpcGgtcTR4VzhzUXh3YXNuUE9iTXNUNEhzTjRHZ1V4eWpOc0REZmh1dloycW90b2RkemlwN0ptd2NDbFd4dUpsMEJRNW1FZ0ZNanhybnVkaGVMYlZYQUx1b0h2QmVzZXExZV9QMXpfc3Bqd2lkYVItQlVWSFFzSDYzWEcyRnhUNUg3T3RSamlnRVMxU0RfbHBlOVJiaUFqMnhiRWxrSWhQ?oc=5",
+      "title": "Press Release: Maggie Goodlander Calls for Federal Review of Sununu Youth Services Center Conditions - Quiver Quantitative",
+      "origin": "google-news",
+      "host": "quiverquant.com",
+      "facilityQuery": "John H. Sununu Youth Services Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "quiverquant.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMihwJBVV95cUxQMXJhUWhMOFZVY090S3Z2NnJqQ0pVVlduQnktTl9CLXlfTW1NY3JlRmR2eUt2OFJyZ3VwYVhoOGV6Z25LWV8wc09MTU9vM0s5SjRwQkxGeGVVcl82SDVDZUpVa0FwZE5TenZ2QVRuMTc3LWV1OFNiQ0g4LVZUZHZqX2J5RUdJYWRYa2h4Uy1nZE9LYmVIUkRBVVczUWt4bU5UY2JFRmluX2NOODBFN2dJbmNCcW1OVzIxXzVwLTF5NF9TZ0RFRFJuenZhTEoxQkpraDJyS2tRbllSSmpGYnhJU0J3YkoyZkNoV1g1T0lnc05HanRfZGR1N0ZCc0lMQ3ZZU3lGWGJVRQ?oc=5",
+      "title": "NH legislators investigate ‘illegal practices’ at Sununu Youth Services Center | Manchester - UnionLeader.com",
+      "origin": "google-news",
+      "host": "unionleader.com",
+      "facilityQuery": "John H. Sununu Youth Services Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "unionleader.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxOTlhVa0FNbEZVWG0yZ0tnRzdRUmtuM0RqU01ONHJ3NVZnbVJjU2N6LWk5UHZRQVdfUU9WanNIWTZlbXFrd2d3QkFYajRPakt5SU5JX0V1cTJjbFhXbjFTdWZmaDdsYnNIQUI1WWhBczY2a2FtZWQ1TTRwR0Vad2lUUjIzejNXeV9jdGhqTWhjN0xkOXFTWl92WEJmQ3lBSXJrV1JENTNIb1ZvaFFu?oc=5",
+      "title": "Young Woman Sues ASP Trooper After Traffic Stop Punch Near Manila - Jonesboro Right Now",
+      "origin": "google-news",
+      "host": "jonesbororightnow.com",
+      "facilityQuery": "Craighead County Detention Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "jonesbororightnow.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMipAFBVV95cUxPNng2SWdpOUJ2NW1aRnRCZVJOWkRtaHRwUm1tYW05NlZ2SXdGU0ctaU43MTZRdFdFZE9pSmxzWVFHd2hhNHZxclpmZUs4ZXBzZzdaUlllS3dvQ0xZYUlWT3A3UDc2a1U2SVJuVHBhV1VGdnlpdmQtWlc4WnY1cHV6SjVkMGlrVHlBQlR0a1QtMGxtTElnT3B2VExLdXZ4a2p0bFpPNw?oc=5",
+      "title": "State audit points to gaps in services for incarcerated Oregonians - Oregon Public Broadcasting - OPB",
+      "origin": "google-news",
+      "host": "opb.org",
+      "facilityQuery": "MacLaren Youth Correctional Facility",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "opb.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE5VN0RtNGZldHhxLUlaX1E3RTE5T0VGYzdDOXFyQ1ZEMmFDUDl3S0IyN3ctb2l5MEVad2ZDS1RfWkxNVURqNnBFbmpQbFNBRl9WNzU5MjZqRXZ4Ymwx0gFkQVVfeXFMTXNRS3NQS0MyM19DdUhoeHhFdkdFb3k3LS1GM0Y2WElQYVEtc1ZnaDkwUXFyczI3ZXFDYmV4YU5GRFNYOGNFMzkzS0FsblZmLTRRSEViRTFKT29ReTR0cWwyZmtiYQ?oc=5",
+      "title": "John Phillips Net Worth - Kahawatungu",
+      "origin": "google-news",
+      "host": "kahawatungu.com",
+      "facilityQuery": "Linton Hall Military School",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "kahawatungu.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxOT1JRRHdWbERLeUthRjdqNW1KQ05KRTl4X0tNNW1FV1BuMjA2NXoxSVBsYzcwNGM0blhEVEdFQ3R1dUJUaG9Wb2tZWEd1SUc0aEZ5SHVubzFMY2phSkZGVzdnY3c3N2JaVlAtejBpNFVVa0pTazN5LVFpQ0liRmdUX0pGd2xSdnFCaElWYVBOMlZqMGpfdTc2a2hTM0FJUTBnYzg5bmlSbXpGWFl6NVFhcnZLeWUtWG80ekNuai16MnVqQUR0TGNLaWJ1NUFNclhnRl9aMUhR?oc=5",
+      "title": "Tucannon Road Fire near Dayton 100% contained - nbcrightnow.com",
+      "origin": "google-news",
+      "host": "nbcrightnow.com",
+      "facilityQuery": "Clark County Juvenile Justice",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "nbcrightnow.com"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxQa0tHTGNKR044TXFKQWUtWUFwMHlla1NpUVFwekNLMmFvbllJdGJ1Z1NPUzJTejBDZU8yakstLVFIdEN3dy1vVjFveDgtc283bS1IOHZnN2RVbXNtS09MUTBNNHBQMzhoYkdpNGVQQUFrU3VCcHNaejZfaUpubHY1ZEJRUTIyTmIydkRzM1J0TmNDV05lUXExUEJKSFJyWi10VVB5Mkg3Rk1HNTlGeFo3MUJzWUZBVFJnS0VmcnM3YmFvOEl1QWNVZ2hyRHhma3BfcUl4RERqMEhiMkR3VnFIZWZGTHFrVDVsWkY3dl9XMnNQM2RJSm0zX2RZU1M5QQ?oc=5",
+      "title": "Why are so many of Illinois' county juvenile detention centers non-compliant with state standards year after year? - Northern Public Radio",
+      "origin": "google-news",
+      "host": "northernpublicradio.org",
+      "facilityQuery": "Franklin County Juvenile Detention Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "northernpublicradio.org"
+      }
+    },
+    {
+      "ts": "2026-08-16T07:26:04.306Z",
+      "link": "https://news.google.com/rss/articles/CBMigwJBVV95cUxPaEp6aUc2SE1pLVd5U3RaOVVfcFY2WmRXLU1BN0ZnV0s1aVhoMUhqangzS0RsTlJkd3gtbkVLVEVOUWk0VndZMTFHYk81QUFwSHdHVUJKVHhxN3FRVzRXRDhielhJb3d5RGJNQ2JvdENJQmpfaG9kbTJFLVNJN3hlQWFBSGNwVlR5cjlyc1lsRVRLc2lIR3oxTVAtdTIxM1ZiMTd1TEU0MWV6cFdCVzJCR19BX00zMUVCUzE2YnZXUjVOVUozalVid1luYzN5UEdFdks0WElyWm5GclB4bktpX3lLVVpibzYxVGZINlhoZU41V3VlUkpHaE9iT000UzViekow?oc=5",
+      "title": "Ghosts of Glen Dale: Former children’s home filled with memories, broken windows - The News-Enterprise",
+      "origin": "google-news",
+      "host": "thenewsenterprise.com",
+      "facilityQuery": "Glen Dale Center",
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "thenewsenterprise.com"
+      }
+    },
     {
       "ts": "2026-08-15T07:48:31.476Z",
       "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNVElYSjQ0SWQ5QldwVGh2R3B5ZHpaQWRwdFRBbkx6OHJCakgxNEZaVVVfQWxDWlJKbkJudU5tY1drYXhaS25tdDFHSEh0VEphamtEc2hMaGFRbVo2NGhCbWwzU3lYYUNIQkRwYmVsUU44c0hWY2FzWjBNRXdueUJLb3VSODByNlg3dlVSWGJnM0hJcXc4dU5yWWxhckR2RWtmUWluVnFKZ1F5N0c2a1ZkTldaUnVsenl5VGdoZEFMMXRaSklXdVZSUWNka0d1Ti1L?oc=5",
@@ -6686,685 +7206,6 @@
         ],
         "threshold": 3,
         "host": "themarshallproject.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://mohicanysa.com/home/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "mohicanysa.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "mohicanysa.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://wisconsinexaminer.com/2026/05/11/racine-county-staff-sued-in-brutal-beating-of-teen/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-link",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://wisconsinexaminer.com/2025/12/18/violent-incident-raises-scrutiny-on-new-facility-built-as-an-alternative-to-lincoln-hills/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://racinecountyeye.com/2025/04/17/jdydcc-youth-corrections-delagrave/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "racinecountyeye.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://www.usatoday.com/story/life/health-wellness/2026/05/11/asheville-academy-shut-down-teens-mental-health-help/89881288007/",
-      "title": "They sent their teens away for treatment. Then, everything unraveled.",
-      "origin": "reddit-link",
-      "host": "usatoday.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:closure",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "usatoday.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://www.nhpr.org/nh-news/2026-05-10/sununu-youth-services-center-ydc-abuse-neglect-children-investigation-nh-newhampshire",
-      "title": "They spent time in NH’s youth detention center. They worry for children there now.",
-      "origin": "reddit-link",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://www.ozarksfirst.com/news/agape-boarding-school-case/",
-      "title": "Former Agape Boarding School near Stockton resurfaces in federal kidnapping-related case",
-      "origin": "reddit-link",
-      "host": "ozarksfirst.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "ozarksfirst.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://splashmags.com/2026/05/the-kids-are-not-alright-review/",
-      "title": "The Kids Are Not Alright Review 🍿🎥",
-      "origin": "reddit-link",
-      "host": "splashmags.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "splashmags.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:47:26.313Z",
-      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPZ04xbE11TFVadVh6eVJKM3FRRmFYbkVleGZUMmZ4YkQ5RXZsYUhVTmc4QWRFWEdrUEY0WjVaNEZpSmtoT0RDc3dwbllTYWc1TWFaejBrYV94YjVkUHM3S2g1OWU5Y1pLZWdQQ0lqeGt4M3BnNm9xTWlJQVVqWHprQzRZaVZrUjVYZWN0N2tDSW9rV3dxM0hzQXloMEYwc1lSeWxPUkQ5SWMyODRCcFRZQURzTnRNTHM3TUdLYndFZUVkVTlKZGkxQU9fQXk0SmdJWVJCag?oc=5",
-      "title": "Idaho investigators repeatedly found kids in danger. Youth treatment programs faced few consequences. - East Idaho News",
-      "origin": "google-news",
-      "host": "eastidahonews.com",
-      "facilityQuery": "Innercept",
-      "reason": "low-score",
-      "meta": {
-        "score": 0,
-        "reasons": [],
-        "threshold": 3,
-        "host": "eastidahonews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.nhpr.org/nh-news/2026-05-19/sununu-youth-services-center-juvenille-justice-abuse-allegations-investigation-joshua-nye",
-      "title": "Lawmakers say head of youth detention center must go, citing ‘extreme failure of leadership’",
-      "origin": "reddit-link",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.nhpr.org/nh-news/2026-04-20/sununu-youth-services-center-ydc-abuse-allegations-child-advocate-nh",
-      "title": "Lawmakers say head of youth detention center must go, citing ‘extreme failure of leadership’",
-      "origin": "reddit-selftext",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.cbsnews.com/news/troubled-teen-treatment-help-harm-costs/",
-      "title": "Inside the \"troubled teen\" industry, when help sometimes does more harm",
-      "origin": "reddit-link",
-      "host": "cbsnews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "cbsnews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.clickondetroit.com/news/local/2026/05/18/federal-lawsuit-alleges-teen-sexual-abuse-systemic-failures-at-wayne-county-juvenile-detention-center/",
-      "title": "Federal lawsuit alleges teen sexual abuse, systemic failures at Wayne County Juvenile Detention Center",
-      "origin": "reddit-link",
-      "host": "clickondetroit.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "MI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.manilatimes.net/2026/05/18/tmt-newswire/globenewswire/federal-lawsuit-alleges-systematic-civil-rights-abuses-at-the-maine-youth-center/2346492",
-      "title": "Federal Lawsuit Alleges Systematic Civil Rights Abuses at the Maine Youth Center",
-      "origin": "reddit-link",
-      "host": "manilatimes.net",
-      "facilityQuery": null,
-      "reason": "blacklist-path",
-      "meta": {
-        "pattern": "/globenewswire/",
-        "link": "https://www.manilatimes.net/2026/05/18/tmt-newswire/globenewswire/federal-lawsuit-alleges-systematic-civil-rights-abuses-at-the-maine-youth-center/2346492"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.caloprograms.com/",
-      "title": "It's not just the bad eggs: A post about CALO",
-      "origin": "reddit-selftext",
-      "host": "caloprograms.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "caloprograms.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "http://cbsnews.com/residentialtreatment",
-      "title": "CALO GETS EXPOSED ON CBS!!",
-      "origin": "reddit-link",
-      "host": "cbsnews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "cbsnews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://sandhillssentinel.com/vp-vances-mother-speaks-at-satc-gala/",
-      "title": "Vice President Vance's mother speaks at SATC gala (Teen Challenge)",
-      "origin": "reddit-link",
-      "host": "sandhillssentinel.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "sandhillssentinel.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.mondaq.com/unitedstates/employee-rights-labour-relations/1787426/court-allows-bluecross-blueshield-erisa-suit-over-mental-health-parity-to-proceed",
-      "title": "Court Allows BlueCross BlueShield ERISA Suit Over Mental Health Parity To Proceed",
-      "origin": "reddit-link",
-      "host": "mondaq.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "mondaq.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.law360.com/washington/articles/2477870?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=section",
-      "title": "Moda Health Settles Wilderness Therapy Coverage Suit",
-      "origin": "reddit-link",
-      "host": "law360.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "law360.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.justjared.com/2026/05/14/king-charles-announces-plan-to-ban-conversion-therapy-in-england-wales/",
-      "title": "King Charles Announces Plan to Ban Conversion Therapy in England &amp; Wales",
-      "origin": "reddit-link",
-      "host": "justjared.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "justjared.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.nytimes.com/2026/05/15/magazine/rfk-jr-antidepressants-ssris-psychiatry.html?unlocked_article_code=1.ilA.FILg.ijbUzYJOkSuN&amp;smid=nytcore-ios-share",
-      "title": "The Strange Alliance Trying to Remake American Psychiatry (Gift Article)",
-      "origin": "reddit-link",
-      "host": "nytimes.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nytimes.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://wamu.org/story/26/05/14/md-house-of-reformation-black-youth-graves/",
-      "title": "Maryland acknowledges a painful history as the state reckons with the graves of over 200 Black youth",
-      "origin": "reddit-link",
-      "host": "wamu.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "wamu.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.change.org/See-trauma-not-misconduct",
-      "title": "Trauma informed training for welfare and juvenile professionals",
-      "origin": "reddit-selftext",
-      "host": "change.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:misconduct"
-        ],
-        "threshold": 3,
-        "host": "change.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.knoxfocus.com/archives/the-daily-focus/blue-ridge-yoga-zoo-knoxville-present-yoga-at-the-zoo-fundraiser-on-may-29/",
-      "title": "Blue Ridge Yoga -- does anyone know her from her WT days?",
-      "origin": "reddit-link",
-      "host": "knoxfocus.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "knoxfocus.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.courthousenews.com/businessman-asks-10th-circuit-to-revive-defamation-suit-over-netflix-troubled-teen-documentary/",
-      "title": "Businessman asks 10th Circuit to revive defamation suit over Netflix 'troubled teen' documentary",
-      "origin": "reddit-link",
-      "host": "courthousenews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "courthousenews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-link",
-      "host": "dispatch.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "dispatch.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://archive.is/2026.05.13-200845/https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "archive.is",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "archive.is"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.themarshallproject.org/2025/11/06/residential-treatment-center-youth-ohio",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "themarshallproject.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "themarshallproject.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://mohicanysa.com/home/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "mohicanysa.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "mohicanysa.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://wisconsinexaminer.com/2026/05/11/racine-county-staff-sued-in-brutal-beating-of-teen/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-link",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://wisconsinexaminer.com/2025/12/18/violent-incident-raises-scrutiny-on-new-facility-built-as-an-alternative-to-lincoln-hills/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "wisconsinexaminer.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://racinecountyeye.com/2025/04/17/jdydcc-youth-corrections-delagrave/",
-      "title": "Racine County, staff sued in ‘brutal beating’ of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "racinecountyeye.com",
-      "facilityQuery": null,
-      "reason": "state-mismatch",
-      "meta": {
-        "matchedAlias": "Juvenile Detention Center",
-        "facility": "Juvenile Detention Center",
-        "expectedState": "CA",
-        "detectedStates": [
-          "WI"
-        ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.usatoday.com/story/life/health-wellness/2026/05/11/asheville-academy-shut-down-teens-mental-health-help/89881288007/",
-      "title": "They sent their teens away for treatment. Then, everything unraveled.",
-      "origin": "reddit-link",
-      "host": "usatoday.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:closure",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "usatoday.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.nhpr.org/nh-news/2026-05-10/sununu-youth-services-center-ydc-abuse-neglect-children-investigation-nh-newhampshire",
-      "title": "They spent time in NH’s youth detention center. They worry for children there now.",
-      "origin": "reddit-link",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://www.ozarksfirst.com/news/agape-boarding-school-case/",
-      "title": "Former Agape Boarding School near Stockton resurfaces in federal kidnapping-related case",
-      "origin": "reddit-link",
-      "host": "ozarksfirst.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "ozarksfirst.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://splashmags.com/2026/05/the-kids-are-not-alright-review/",
-      "title": "The Kids Are Not Alright Review 🍿🎥",
-      "origin": "reddit-link",
-      "host": "splashmags.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "splashmags.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:45:46.837Z",
-      "link": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxPZ04xbE11TFVadVh6eVJKM3FRRmFYbkVleGZUMmZ4YkQ5RXZsYUhVTmc4QWRFWEdrUEY0WjVaNEZpSmtoT0RDc3dwbllTYWc1TWFaejBrYV94YjVkUHM3S2g1OWU5Y1pLZWdQQ0lqeGt4M3BnNm9xTWlJQVVqWHprQzRZaVZrUjVYZWN0N2tDSW9rV3dxM0hzQXloMEYwc1lSeWxPUkQ5SWMyODRCcFRZQURzTnRNTHM3TUdLYndFZUVkVTlKZGkxQU9fQXk0SmdJWVJCag?oc=5",
-      "title": "Idaho investigators repeatedly found kids in danger. Youth treatment programs faced few consequences. - East Idaho News",
-      "origin": "google-news",
-      "host": "eastidahonews.com",
-      "facilityQuery": "Innercept",
-      "reason": "low-score",
-      "meta": {
-        "score": 0,
-        "reasons": [],
-        "threshold": 3,
-        "host": "eastidahonews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:37:30.184Z",
-      "link": "https://www.nhpr.org/nh-news/2026-05-19/sununu-youth-services-center-juvenille-justice-abuse-allegations-investigation-joshua-nye",
-      "title": "Lawmakers say head of youth detention center must go, citing ‘extreme failure of leadership’",
-      "origin": "reddit-link",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:37:30.184Z",
-      "link": "https://www.nhpr.org/nh-news/2026-04-20/sununu-youth-services-center-ydc-abuse-allegations-child-advocate-nh",
-      "title": "Lawmakers say head of youth detention center must go, citing ‘extreme failure of leadership’",
-      "origin": "reddit-selftext",
-      "host": "nhpr.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "nhpr.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:37:30.184Z",
-      "link": "https://www.cbsnews.com/news/troubled-teen-treatment-help-harm-costs/",
-      "title": "Inside the \"troubled teen\" industry, when help sometimes does more harm",
-      "origin": "reddit-link",
-      "host": "cbsnews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "cbsnews.com"
       }
     }
   ]
