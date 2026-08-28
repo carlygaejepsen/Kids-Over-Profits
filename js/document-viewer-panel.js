@@ -70,13 +70,17 @@
                 '</div>' +
             '</div>' +
             '<div class="kop-dv-folder dk-muted"></div>' +
+            '<button type="button" class="kop-dv-list-toggle" hidden></button>' +
             '<div class="kop-dv-list"></div>' +
             '<div class="kop-dv-preview"><div class="kop-dv-empty">Browse a folder, then pick a document to view it here.</div></div>';
         document.body.appendChild(panel);
         els.panel = panel;
         els.folder = panel.querySelector('.kop-dv-folder');
         els.list = panel.querySelector('.kop-dv-list');
+        els.listToggle = panel.querySelector('.kop-dv-list-toggle');
         els.preview = panel.querySelector('.kop-dv-preview');
+
+        els.listToggle.addEventListener('click', function () { setListCollapsed(false); });
 
         panel.querySelector('.kop-dv-close').addEventListener('click', closePanel);
         panel.querySelector('.kop-dv-browse').addEventListener('click', browse);
@@ -85,6 +89,25 @@
         // Feature-scoped bug reporting for the document viewer.
         if (window.KOPBugReporter && typeof window.KOPBugReporter.attach === 'function') {
             window.KOPBugReporter.attach(panel, 'document-viewer', 'Document Viewer');
+        }
+    }
+
+    // On small screens the panel is only ~half the viewport tall, so once a
+    // document is chosen the list (filter + items) collapses into a one-line
+    // bar to give the preview the room; tapping the bar brings the list back.
+    function setListCollapsed(collapsed, currentTitle) {
+        if (!els.list || !els.listToggle) return;
+        if (collapsed) {
+            els.list.style.display = 'none';
+            els.listToggle.hidden = false;
+            els.listToggle.innerHTML =
+                '<span class="kop-dv-list-toggle-name">📑 ' + esc(currentTitle || 'Documents') + '</span>' +
+                '<span class="kop-dv-list-toggle-hint">' +
+                (currentDocs.length ? 'choose another (' + currentDocs.length + ') ▾' : 'show list ▾') +
+                '</span>';
+        } else {
+            els.list.style.display = '';
+            els.listToggle.hidden = true;
         }
     }
 
@@ -99,6 +122,8 @@
         }
         if (isDesktop()) {
             document.body.classList.remove('kop-dv-bottom');
+            // Desktop has the height for both; always show the list.
+            setListCollapsed(false);
             var w = Math.max(MIN_W, Math.min(panelW, Math.round(window.innerWidth * 0.85)));
             panelW = w;
             els.panel.style.width = w + 'px';
@@ -187,6 +212,7 @@
     }
 
     function loadFolder(id, name) {
+        setListCollapsed(false);
         els.folder.classList.remove('dk-muted');
         els.folder.innerHTML = '📁 <strong>' + esc(name || ('Folder #' + id)) + '</strong>';
         els.list.innerHTML = '<div class="kop-dv-loading">Loading documents…</div>';
@@ -271,6 +297,11 @@
                 '<span class="kop-dv-preview-title">' + esc(doc.title || url) + '</span>' +
                 '<a class="kop-dv-open" href="' + esc(url) + '" target="_blank" rel="noopener">Open ↗</a>' +
             '</div>' + body;
+
+        // Small screens: give the preview the space the list was using.
+        if (!isDesktop()) {
+            setListCollapsed(true, doc.title || '');
+        }
     }
 
     function init() {

@@ -94,6 +94,38 @@ body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
 }
 .kop-dv-folder.dk-muted { color: #999; }
 
+/* Collapsed-list bar (small screens): shows the current document and brings
+   the list back on tap. Hidden entirely while the list itself is visible. */
+.kop-dv-list-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 14px;
+    background: var(--kop-soft-yellow, #FFF5CB);
+    border: none;
+    border-bottom: 1px solid rgba(0, 4, 53, 0.12);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kop-midnight, #000435);
+    text-align: left;
+    cursor: pointer;
+}
+.kop-dv-list-toggle[hidden] { display: none; }
+.kop-dv-list-toggle-name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.kop-dv-list-toggle-hint {
+    flex: 0 0 auto;
+    color: var(--kop-navy, #000080);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
 /* Document list (capped height; preview takes the rest) */
 .kop-dv-list {
     flex: 0 0 auto;
@@ -188,6 +220,14 @@ body.kop-dv-bottom .kop-dv-panel {
     border-top: 1px solid rgba(0, 4, 53, 0.18);
     box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
 }
+
+/* Bottom-docked: every row of chrome costs preview height — slim it down.
+   The list may take more of the panel while it IS open, because picking a
+   document collapses it to the one-line toggle bar. */
+body.kop-dv-bottom .kop-dv-header { padding: 8px 12px; }
+body.kop-dv-bottom .kop-dv-folder { padding: 5px 12px; font-size: 0.8rem; }
+body.kop-dv-bottom .kop-dv-list { max-height: 55%; }
+body.kop-dv-bottom .kop-dv-preview-bar { padding: 6px 10px; font-size: 0.8rem; }
 
 /* Resizer moves to the top edge and drags vertically when bottom-docked. */
 body.kop-dv-bottom .kop-dv-resizer {
