@@ -1,20 +1,26 @@
 /**
- * KOP Bug Reporter Widget
+ * KOP Bug Reporter — feature-scoped reporting
  *
- * Floating "Report a problem" button + modal, loaded site-wide. Auto-captures
- * recent JS errors and failed API calls (fetch and XHR: theme /api/ endpoints,
- * the WP REST API, and admin-ajax) so reports arrive with technical context —
- * covering the public data form, the anonymous document portal, and every
- * other site feature.
+ * No global button. Instead, small "Report a problem" links attach to
+ * SPECIFIC features, so every report says exactly which feature broke:
+ *
+ *   - Markup:  any element with `data-kop-bug-feature="wiki-editor/import"`
+ *     (optional `data-kop-bug-label="Markdown Import"`) gets a report link
+ *     appended automatically on page load.
+ *   - JS-built UIs: KOPBugReporter.attach(el, feature, label) injects the
+ *     same link into a dynamically created container.
+ *   - Programmatic: KOPBugReporter.open({feature, featureLabel, category,
+ *     description, context}) — e.g. from a failed save's error message.
+ *
+ * The script still loads site-wide to auto-capture recent JS errors and
+ * failed API calls (fetch and XHR: theme /api/ endpoints, the WP REST API,
+ * and admin-ajax), so reports arrive with technical context attached.
  *
  * Config comes from `kopBugReporterSettings` (localized by inc/enqueue.php):
  *   { endpoint: '.../api/save-bug-report.php', fallbackEmail: '...' }
  *
- * Public API (for other scripts, e.g. wiki-editor.js):
- *   window.KOPBugReporter.open(prefill)       — open the modal, optionally
- *       prefilled: { category, description, context }
- *   window.KOPBugReporter.captureError(label) — push a custom entry into the
- *       technical log (e.g. a caught save failure)
+ * KOPBugReporter.captureError(label) pushes a custom entry into the
+ * technical log (e.g. a caught save failure).
  */
 (function () {
     'use strict';
@@ -130,7 +136,6 @@
         { value: 'other', label: 'Something else' }
     ];
 
-    var root = null;
     var modal = null;
     var lastFocused = null;
 
@@ -141,24 +146,32 @@
         return node;
     }
 
-    function buildWidget() {
-        if (root) return;
-        root = el('div', 'kop-bug-reporter');
+    /**
+     * Inject a small "Report a problem" link into a feature's container.
+     * `feature` is a stable id like "wiki-editor/bulk-upload"; `label` is the
+     * human name shown in the modal ("Bulk Upload").
+     */
+    function attach(container, feature, label) {
+        if (!container || !feature) return null;
+        if (container.querySelector(':scope > .kop-bug-report-link')) return null; // already attached
+        var link = el('button', 'kop-bug-report-link');
+        link.type = 'button';
+        link.innerHTML = '<span aria-hidden="true">🐞</span> Report a problem';
+        link.setAttribute('aria-label', 'Report a problem with ' + (label || feature));
+        link.addEventListener('click', function () {
+            openModal({ feature: feature, featureLabel: label || feature });
+        });
+        container.appendChild(link);
+        return link;
+    }
 
-        // Kadence's scroll-to-top button lives in the same corner on regular
-        // site pages; raise the FAB above it so neither is covered.
-        if (document.querySelector('#kt-scroll-up, .scroll-up-wrap')) {
-            root.className += ' kop-bug-reporter--raised';
-        }
-
-        var button = el('button', 'kop-bug-reporter__fab');
-        button.type = 'button';
-        button.setAttribute('aria-label', 'Report a problem with this page');
-        button.innerHTML = '<span class="kop-bug-reporter__fab-icon" aria-hidden="true">🐞</span><span class="kop-bug-reporter__fab-text">Report a problem</span>';
-        button.addEventListener('click', function () { openModal(); });
-        root.appendChild(button);
-
-        document.body.appendChild(root);
+    // Auto-attach to any markup tagged with data-kop-bug-feature.
+    function scanForFeatures() {
+        var tagged = document.querySelectorAll('[data-kop-bug-feature]');
+        Array.prototype.forEach.call(tagged, function (node) {
+            attach(node, node.getAttribute('data-kop-bug-feature'),
+                node.getAttribute('data-kop-bug-label') || '');
+        });
     }
 
     function buildModal() {
@@ -184,6 +197,11 @@
 
         var form = el('form', 'kop-bug-reporter__form');
         form.noValidate = true;
+
+        // Which feature this report is about — filled by openModal().
+        var featureChip = el('p', 'kop-bug-reporter__feature');
+        featureChip.hidden = true;
+        form.appendChild(featureChip);
 
         // Category
         var catLabel = el('label', 'kop-bug-reporter__label', 'What kind of problem is it?');
@@ -293,6 +311,7 @@
         document.body.appendChild(modal);
 
         modal._fields = {
+            featureChip: featureChip,
             category: catSelect,
             description: desc,
             steps: steps,
@@ -306,6 +325,7 @@
     }
 
     var prefillContext = null;
+    var currentFeature = null; // { id, label } for the report being written
 
     function techSnapshot() {
         return {
@@ -335,12 +355,20 @@
     }
 
     function openModal(prefill) {
-        buildWidget();
         buildModal();
         var f = modal._fields;
 
         prefill = prefill || {};
         prefillContext = prefill.context || null;
+        currentFeature = prefill.feature
+            ? { id: String(prefill.feature), label: String(prefill.featureLabel || prefill.feature) }
+            : null;
+        if (currentFeature) {
+            f.featureChip.textContent = 'Reporting a problem with: ' + currentFeature.label;
+            f.featureChip.hidden = false;
+        } else {
+            f.featureChip.hidden = true;
+        }
         if (prefill.category) f.category.value = prefill.category;
         if (prefill.description) f.description.value = prefill.description;
 
@@ -369,6 +397,8 @@
         f.steps.value = '';
         f.category.value = 'other';
         prefillContext = null;
+        currentFeature = null;
+        f.featureChip.hidden = true;
     }
 
     function submitReport() {
@@ -378,6 +408,8 @@
         var snap = techSnapshot();
 
         var payload = {
+            feature: currentFeature ? currentFeature.id : '',
+            featureLabel: currentFeature ? currentFeature.label : '',
             category: f.category.value,
             description: description,
             steps: f.steps.value.trim(),
@@ -442,12 +474,13 @@
     // ---------------------------------------------------------------
     window.KOPBugReporter = {
         open: openModal,
+        attach: attach,
         captureError: function (label) { logEntry('app', label); }
     };
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', buildWidget);
+        document.addEventListener('DOMContentLoaded', scanForFeatures);
     } else {
-        buildWidget();
+        scanForFeatures();
     }
 })();

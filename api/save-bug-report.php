@@ -24,6 +24,7 @@ const KOP_BUG_STATUSES = ['new', 'in_progress', 'resolved', 'dismissed'];
 // One-time, idempotent table creation.
 $pdo->exec("CREATE TABLE IF NOT EXISTS bug_reports (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    feature VARCHAR(120) NULL,
     category VARCHAR(60) NOT NULL DEFAULT 'other',
     description TEXT NOT NULL,
     steps TEXT NULL,
@@ -149,6 +150,10 @@ try {
         $category = 'other';
     }
 
+    // Which feature the report is scoped to (e.g. "wiki-editor/bulk-upload").
+    $feature = mb_substr(trim((string)($input['feature'] ?? '')), 0, 120) ?: null;
+    $featureLabel = mb_substr(trim((string)($input['featureLabel'] ?? '')), 0, 120);
+
     $consoleErrors = null;
     if (isset($input['consoleErrors']) && is_array($input['consoleErrors'])) {
         // Cap at 20 entries / ~40KB so nobody can stuff megabytes in.
@@ -166,10 +171,8 @@ try {
         }
     }
 
-    $stmt = $pdo->prepare("INSERT INTO bug_reports
-        (category, description, steps, contact, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->execute([
+    $insertValues = [
+        $feature,
         $category,
         mb_substr($description, 0, 10000),
         mb_substr(trim((string)($input['steps'] ?? '')), 0, 10000) ?: null,
@@ -181,15 +184,34 @@ try {
         $consoleErrors,
         $context,
         $ipHash,
-    ]);
+    ];
+
+    try {
+        $stmt = $pdo->prepare("INSERT INTO bug_reports
+            (feature, category, description, steps, contact, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute($insertValues);
+    } catch (PDOException $insEx) {
+        // A bug_reports table created before the feature column existed:
+        // don't lose the report — insert without it (the wp-admin triage page
+        // adds the column the next time it's opened).
+        if (strpos($insEx->getMessage(), 'feature') === false) {
+            throw $insEx;
+        }
+        $stmt = $pdo->prepare("INSERT INTO bug_reports
+            (category, description, steps, contact, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute(array_slice($insertValues, 1));
+    }
     $newId = (int)$pdo->lastInsertId();
 
     // Email notification — best effort, never blocks the response.
     if (function_exists('wp_mail') && function_exists('get_option')) {
         $adminEmail = get_option('admin_email');
         if ($adminEmail) {
-            $subject = '[KOP] Bug report #' . $newId . ' — ' . $category;
+            $subject = '[KOP] Bug report #' . $newId . ' — ' . ($featureLabel ?: $feature ?: $category);
             $body = "A new bug report was submitted on kidsoverprofits.org.\n\n"
+                . ($feature ? "Feature: " . ($featureLabel ?: $feature) . " ($feature)\n" : '')
                 . "Category: $category\n"
                 . "Page: " . (string)($input['pageUrl'] ?? '(unknown)') . "\n\n"
                 . "Description:\n$description\n\n"

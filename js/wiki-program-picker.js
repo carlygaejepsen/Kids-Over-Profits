@@ -166,6 +166,11 @@
             footer.appendChild(actions);
             dialog.appendChild(footer);
 
+            // Feature-scoped bug reporting for the picker itself.
+            if (window.KOPBugReporter && typeof window.KOPBugReporter.attach === 'function') {
+                window.KOPBugReporter.attach(dialog, 'wiki-editor/program-picker', 'Program Picker');
+            }
+
             document.body.appendChild(overlay);
             searchInput.focus();
 

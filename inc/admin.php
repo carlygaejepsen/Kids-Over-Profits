@@ -155,6 +155,12 @@ function kop_render_bug_reports_page() {
         return;
     }
 
+    // Tables created before feature-scoped reporting lack the column; add it
+    // here (admin context) so the public insert path never needs to run DDL.
+    if (!$wpdb->get_var("SHOW COLUMNS FROM bug_reports LIKE 'feature'")) {
+        $wpdb->query('ALTER TABLE bug_reports ADD COLUMN feature VARCHAR(120) NULL AFTER id');
+    }
+
     // Status filter tabs with counts.
     $counts = array();
     foreach ($wpdb->get_results('SELECT status, COUNT(*) AS n FROM bug_reports GROUP BY status') as $row) {
@@ -196,7 +202,7 @@ function kop_render_bug_reports_page() {
     );
 
     echo '<table class="widefat striped"><thead><tr>'
-        . '<th style="width:60px">#</th><th style="width:130px">When</th><th style="width:150px">Category</th>'
+        . '<th style="width:60px">#</th><th style="width:130px">When</th><th style="width:170px">Feature / Category</th>'
         . '<th>Report</th><th style="width:120px">Status</th><th style="width:220px">Actions</th>'
         . '</tr></thead><tbody>';
 
@@ -205,7 +211,11 @@ function kop_render_bug_reports_page() {
         echo '<tr>';
         echo '<td>' . (int) $r->id . '</td>';
         echo '<td>' . esc_html(mysql2date('M j, Y g:ia', $r->created_at)) . '</td>';
-        echo '<td>' . esc_html(isset($category_labels[$r->category]) ? $category_labels[$r->category] : $r->category) . '</td>';
+        echo '<td>';
+        if (!empty($r->feature)) {
+            echo '<strong>' . esc_html($r->feature) . '</strong><br>';
+        }
+        echo '<span style="color:#666">' . esc_html(isset($category_labels[$r->category]) ? $category_labels[$r->category] : $r->category) . '</span></td>';
 
         echo '<td>';
         echo '<p style="margin:0 0 6px"><strong>' . nl2br(esc_html($r->description)) . '</strong></p>';

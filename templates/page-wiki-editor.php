@@ -36,7 +36,7 @@ get_header();
         <div class="wiki-management-grid entry-browser-section" data-wiki-index-json="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/js/data/reddit-wiki/">
             
             <!-- LEFT PANE: Index Selection -->
-            <div class="index-selection-pane project-management">
+            <div class="index-selection-pane project-management" data-kop-bug-feature="wiki-editor/entry-browser" data-kop-bug-label="Entry Browser">
                 <h2>Browse Indexes</h2>
                 <div class="category-tabs">
                     <button class="category-tab active" data-category="location-indexes">📍 Locations</button>
@@ -102,7 +102,7 @@ get_header();
             </div>
             
             <!-- Bulk Upload Panel -->
-            <div id="bulkUploadPanel" class="bulk-upload-panel" style="display: none;">
+            <div id="bulkUploadPanel" class="bulk-upload-panel" style="display: none;" data-kop-bug-feature="wiki-editor/bulk-upload" data-kop-bug-label="Bulk Upload">
                 <h3>Upload Multiple Markdown Files</h3>
                 <p>Select multiple .md files or a folder containing wiki entry markdown files.</p>
                 <div class="upload-controls" style="margin-bottom:15px;">
@@ -122,7 +122,7 @@ get_header();
             </div>
 
             <!-- Import Panel -->
-            <div id="importPanel" class="import-panel" style="display: none;">
+            <div id="importPanel" class="import-panel" style="display: none;" data-kop-bug-feature="wiki-editor/import" data-kop-bug-label="Markdown Import">
                 <h3>Paste Markdown or Plain Text</h3>
                 <p>Paste an existing Reddit wiki entry <strong>or a plain-text article</strong> below. Plain text (e.g. a volunteer-written article) is converted to wiki markdown automatically — section headings like &ldquo;History&rdquo;, &ldquo;Staff&rdquo;, or &ldquo;Rules&rdquo; are recognized, bullets and links are formatted, and nothing is dropped.</p>
                 <div class="upload-controls" style="margin-bottom:10px;">
@@ -137,7 +137,7 @@ get_header();
             </div>
 
             <!-- Extract-from-Prose Panel (AI) -->
-            <div id="extractProsePanel" class="import-panel" style="display: none;">
+            <div id="extractProsePanel" class="import-panel" style="display: none;" data-kop-bug-feature="wiki-editor/ai-extract" data-kop-bug-label="AI Prose Extraction">
                 <h3>🤖 Extract Fields from Prose</h3>
                 <p>Paste any prose about a program (a description, article, report, or notes) and the AI will fill in the fields it can identify. <strong>Review everything before saving</strong> — AI can be wrong or incomplete. Long narrative lists (complaints, allegations, staff) still need manual entry.</p>
                 <textarea id="extractProseTextarea" class="import-textarea" rows="10" placeholder="Paste prose about the program here..."></textarea>
@@ -149,7 +149,7 @@ get_header();
             </div>
         </div>
 
-        <form id="wikiForm">
+        <form id="wikiForm" data-kop-bug-feature="wiki-editor/form" data-kop-bug-label="Wiki Entry Form">
             <fieldset>
                 <legend>Basic Information</legend>
                 <label for="entryType">Entry Type:</label>
@@ -756,7 +756,7 @@ get_header();
         <h2>Generated Wiki Code</h2>
         <p>Copy the text below and paste it directly into the Reddit wiki editor.</p>
         <textarea id="outputCode" placeholder="Generated markdown will appear here. You can edit it before copying or submitting."></textarea>
-        <div class="output-actions">
+        <div class="output-actions" data-kop-bug-feature="wiki-editor/generated-code" data-kop-bug-label="Generated Wiki Code">
             <button type="button" id="convertPastBtn">Convert to Past Tense</button>
             <button type="button" id="copyBtn">Copy to Clipboard</button>
             <button type="button" id="submitToDbBtn" class="submit-db-btn">💾 Submit to Database</button>
@@ -764,7 +764,7 @@ get_header();
         
         <!-- Submission Modal -->
         <div id="submitModal" class="submit-modal" style="display: none;">
-            <div class="submit-modal-content">
+            <div class="submit-modal-content" data-kop-bug-feature="wiki-editor/submit" data-kop-bug-label="Database Submission">
                 <h3>Submit Wiki Entry to Database</h3>
                 <div class="submit-form-group">
                     <label for="submitterEmail">Your Email (optional):</label>

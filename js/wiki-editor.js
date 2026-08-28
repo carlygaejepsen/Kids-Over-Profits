@@ -124,9 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return headers;
     };
 
-    // When a save/load fails, offer a one-click prefilled bug report (widget
-    // provided by js/bug-reporter.js; no-op if it isn't loaded).
-    const offerBugReport = (category, message, statusEl) => {
+    // When a save/load fails, offer a one-click prefilled bug report tied to
+    // the specific feature that failed (widget provided by js/bug-reporter.js;
+    // no-op if it isn't loaded).
+    const offerBugReport = (category, message, statusEl, feature, featureLabel) => {
         if (!window.KOPBugReporter || !statusEl) return;
         const btn = document.createElement('button');
         btn.type = 'button';
@@ -135,9 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.style.cssText = 'margin-left:8px;background:none;border:none;color:#000080;text-decoration:underline;cursor:pointer;font-size:inherit;padding:0;';
         btn.addEventListener('click', () => {
             window.KOPBugReporter.open({
+                feature: feature || 'wiki-editor/submit',
+                featureLabel: featureLabel || 'Database Submission',
                 category: category,
-                description: `Something went wrong in the wiki editor: ${message}`,
-                context: { feature: 'wiki-editor', failedAction: category, errorMessage: String(message) }
+                description: `Something went wrong: ${message}`,
+                context: { failedAction: category, errorMessage: String(message) }
             });
         });
         statusEl.appendChild(btn);

@@ -3,66 +3,47 @@
  * Floating "Report a problem" button + modal. Colors come from css/colors.css.
  */
 
-.kop-bug-reporter__fab {
-    position: fixed;
-    right: 18px;
-    bottom: 18px;
-    z-index: 99990;
+/* Small feature-scoped "Report a problem" link, injected into containers
+   tagged with data-kop-bug-feature (or via KOPBugReporter.attach). */
+.kop-bug-report-link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border: 2px solid var(--kop-midnight-blue, #000435);
-    border-radius: 999px;
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
-    color: var(--kop-midnight-blue, #000435);
-    font-size: 0.95rem;
-    font-weight: 600;
+    gap: 4px;
+    margin: 6px 0 0;
+    padding: 2px 6px;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    color: var(--kop-navy, #000080);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: underline;
+    text-decoration-style: dotted;
     cursor: pointer;
-    box-shadow: 0 3px 10px rgba(0, 4, 53, 0.25);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    opacity: 0.75;
 }
 
-.kop-bug-reporter__fab:hover,
-.kop-bug-reporter__fab:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 14px rgba(0, 4, 53, 0.3);
+.kop-bug-report-link:hover,
+.kop-bug-report-link:focus-visible {
+    opacity: 1;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    text-decoration-style: solid;
 }
 
-/* When Kadence's scroll-to-top button occupies the corner, sit above it. */
-.kop-bug-reporter--raised .kop-bug-reporter__fab {
-    bottom: 84px;
+/* "Reporting a problem with: <feature>" chip at the top of the modal */
+.kop-bug-reporter__feature {
+    margin: 0 0 12px;
+    padding: 6px 10px;
+    background: var(--kop-mint, #B6E3D4);
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
 }
 
-/* The document viewer's "Source Docs" toggle (editor pages) uses the same
-   corner — stack the bug FAB above it so both stay clickable. */
-body:has(.kop-dv-toggle) .kop-bug-reporter__fab {
-    bottom: 74px;
-}
-
-body:has(.kop-dv-toggle) .kop-bug-reporter--raised .kop-bug-reporter__fab {
-    bottom: 130px;
-}
-
-/* While the doc panel is docked open (desktop, right side), move the FAB to
-   the bottom-left so it never covers the document preview. */
-body:has(.kop-dv-panel.is-open) .kop-bug-reporter .kop-bug-reporter__fab,
-body:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug-reporter__fab {
-    right: auto;
-    left: 18px;
-    bottom: 18px;
-}
-
-/* Mobile bottom-dock: the panel spans the full width, so hide the FAB while
-   it's open (the report modal is still reachable from error messages). */
-body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter .kop-bug-reporter__fab,
-body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug-reporter__fab {
+.kop-bug-reporter__feature[hidden] {
     display: none;
-}
-
-.kop-bug-reporter__fab-icon {
-    font-size: 1.1rem;
-    line-height: 1;
 }
 
 /* Overlay + panel */
@@ -261,15 +242,6 @@ body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug
 }
 
 @media (max-width: 640px) {
-    .kop-bug-reporter__fab-text {
-        display: none;
-    }
-
-    .kop-bug-reporter__fab {
-        padding: 12px 14px;
-        border-radius: 50%;
-    }
-
     .kop-bug-reporter__overlay {
         align-items: flex-end;
         padding: 0;
@@ -287,8 +259,3 @@ body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .kop-bug-reporter__fab {
-        transition: none;
-    }
-}

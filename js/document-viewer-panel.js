@@ -81,6 +81,11 @@
         panel.querySelector('.kop-dv-close').addEventListener('click', closePanel);
         panel.querySelector('.kop-dv-browse').addEventListener('click', browse);
         initResizer(panel.querySelector('.kop-dv-resizer'));
+
+        // Feature-scoped bug reporting for the document viewer.
+        if (window.KOPBugReporter && typeof window.KOPBugReporter.attach === 'function') {
+            window.KOPBugReporter.attach(panel, 'document-viewer', 'Document Viewer');
+        }
     }
 
     // Size and dock the panel for the current viewport, reflowing the page so
