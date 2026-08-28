@@ -34,6 +34,32 @@
     bottom: 84px;
 }
 
+/* The document viewer's "Source Docs" toggle (editor pages) uses the same
+   corner — stack the bug FAB above it so both stay clickable. */
+body:has(.kop-dv-toggle) .kop-bug-reporter__fab {
+    bottom: 74px;
+}
+
+body:has(.kop-dv-toggle) .kop-bug-reporter--raised .kop-bug-reporter__fab {
+    bottom: 130px;
+}
+
+/* While the doc panel is docked open (desktop, right side), move the FAB to
+   the bottom-left so it never covers the document preview. */
+body:has(.kop-dv-panel.is-open) .kop-bug-reporter .kop-bug-reporter__fab,
+body:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug-reporter__fab {
+    right: auto;
+    left: 18px;
+    bottom: 18px;
+}
+
+/* Mobile bottom-dock: the panel spans the full width, so hide the FAB while
+   it's open (the report modal is still reachable from error messages). */
+body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter .kop-bug-reporter__fab,
+body.kop-dv-bottom:has(.kop-dv-panel.is-open) .kop-bug-reporter--raised .kop-bug-reporter__fab {
+    display: none;
+}
+
 .kop-bug-reporter__fab-icon {
     font-size: 1.1rem;
     line-height: 1;

@@ -279,5 +279,16 @@
         init();
     }
 
-    window.KOPDocViewer = { open: openPanel, close: closePanel };
+    window.KOPDocViewer = {
+        open: openPanel,
+        close: closePanel,
+        // Open the panel and load a specific FileBird folder in one step —
+        // used by the wiki editor to jump straight to the linked program's
+        // document library.
+        openFolder: function (id, name) {
+            if (!els.panel) init();
+            openPanel();
+            loadFolder(id, name);
+        }
+    };
 })();

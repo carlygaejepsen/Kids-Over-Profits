@@ -215,12 +215,31 @@ document.addEventListener('DOMContentLoaded', () => {
         displays.forEach(display => {
             if (linkedProgram && linkedProgram.uniqueName) {
                 const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
-                const folderText = linkedProgram.documentFolderId
-                    ? ` · 📂 folder ${linkedProgram.documentFolderId}`
-                    : '';
                 display.classList.remove('linked-program-none');
                 display.classList.add('linked-program-set');
-                display.textContent = `✅ ${linkedProgram.uniqueName}${idText}${folderText}`;
+                display.textContent = `✅ ${linkedProgram.uniqueName}${idText}`;
+
+                // One-click jump to the program's document library in the
+                // split-screen viewer, so sources sit beside the form.
+                if (linkedProgram.documentFolderId
+                    && window.KOPDocViewer
+                    && typeof window.KOPDocViewer.openFolder === 'function') {
+                    const docsBtn = document.createElement('button');
+                    docsBtn.type = 'button';
+                    docsBtn.className = 'linked-program-docs-btn';
+                    docsBtn.textContent = '📄 View documents';
+                    docsBtn.title = 'Open this program’s document folder beside the form';
+                    docsBtn.addEventListener('click', () => {
+                        window.KOPDocViewer.openFolder(
+                            linkedProgram.documentFolderId,
+                            `${linkedProgram.uniqueName} documents`
+                        );
+                    });
+                    display.appendChild(document.createTextNode(' '));
+                    display.appendChild(docsBtn);
+                } else if (linkedProgram.documentFolderId) {
+                    display.textContent += ` · 📂 folder ${linkedProgram.documentFolderId}`;
+                }
             } else {
                 display.classList.add('linked-program-none');
                 display.classList.remove('linked-program-set');
@@ -3934,6 +3953,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     id: null,
                     documentFolderId: null
                 };
+                // Resolve the program's document folder in the background so
+                // the "View documents" button appears without opening the
+                // picker. Best-effort; the link works fine without it.
+                const lookupName = entry.facility_unique_name;
+                fetch(`${editorSettings.facilityPickerApi || '/wp-content/themes/child/api/facility-picker.php'}?action=get&unique_name=${encodeURIComponent(lookupName)}`)
+                    .then(r => r.json())
+                    .then(info => {
+                        if (info && info.success
+                            && linkedProgram && linkedProgram.uniqueName === lookupName) {
+                            linkedProgram.id = info.id || linkedProgram.id;
+                            linkedProgram.documentFolderId = info.document_folder_id || null;
+                            renderLinkedProgram();
+                        }
+                    })
+                    .catch(() => { /* banner just omits the docs button */ });
             } else {
                 linkedProgram = null;
             }

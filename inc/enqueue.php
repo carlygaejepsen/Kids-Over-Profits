@@ -47,6 +47,20 @@ function kadence_child_enqueue_styles() {
         }
     }
 
+    // Deep-link support: pre-fills #searchInput from ?search= on the
+    // JS-rendered index/report pages (linked from the search results page).
+    // Loaded site-wide; no-ops unless the param and a search box are present.
+    $deeplink_js = get_stylesheet_directory() . '/js/search-deeplink.js';
+    if (file_exists($deeplink_js)) {
+        wp_enqueue_script(
+            'kop-search-deeplink',
+            get_stylesheet_directory_uri() . '/js/search-deeplink.js',
+            array(),
+            filemtime($deeplink_js),
+            true
+        );
+    }
+
     // Public record pages: Lawsuits, Legislation, Volunteer, and the public
     // submission forms for legislation/lawsuits.
     $record_templates = [

@@ -135,6 +135,15 @@ function kop_get_facilities_database_connection() {
  * @return string|null Fully qualified table name when found, otherwise null.
  */
 function kop_discover_facilities_master_table($connection, $prefix = '') {
+    // Accept the {db, prefix} array returned by kop_get_facilities_database_connection()
+    // so callers can pass its result straight in without unwrapping it themselves.
+    if (is_array($connection)) {
+        if ($prefix === '' && isset($connection['prefix']) && is_string($connection['prefix'])) {
+            $prefix = $connection['prefix'];
+        }
+        $connection = isset($connection['db']) ? $connection['db'] : null;
+    }
+
     if (!($connection instanceof wpdb)) {
         return null;
     }

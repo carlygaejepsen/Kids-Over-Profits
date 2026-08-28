@@ -24,6 +24,12 @@ get_header();
     <div class="wiki-feed-header">
         <h1>Program Database Additions</h1>
         <p>Recently approved contributions to the TTI Program Database.</p>
+        <?php if (!empty($_GET['search'])): ?>
+            <p class="wiki-feed-filter-notice">
+                Showing entries matching <strong><?php echo esc_html(sanitize_text_field(wp_unslash($_GET['search']))); ?></strong>
+                &mdash; <a href="<?php echo esc_url(remove_query_arg('search')); ?>">show all</a>
+            </p>
+        <?php endif; ?>
     </div>
 
     <?php
@@ -33,16 +39,27 @@ get_header();
     $status_filter = ['published', 'approved'];
     $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
 
+    // Deep link from the site search results page: ?search= narrows the feed.
+    $feed_search = isset($_GET['search']) ? sanitize_text_field(wp_unslash($_GET['search'])) : '';
+
     try {
-        $sql = "SELECT * FROM wiki_submissions 
-                WHERE status IN ($placeholders) 
-                ORDER BY created_at DESC 
+        $sql = "SELECT * FROM wiki_submissions
+                WHERE status IN ($placeholders) ";
+        $params = $status_filter;
+
+        if ($feed_search !== '') {
+            $sql .= "AND (program_name LIKE ? OR organization LIKE ? OR city_state LIKE ? OR program_type LIKE ?) ";
+            $like = '%' . $feed_search . '%';
+            array_push($params, $like, $like, $like, $like);
+        }
+
+        $sql .= "ORDER BY created_at DESC
                 LIMIT 50";
-        
+
         $stmt = $pdo->prepare($sql);
-        $stmt->execute($status_filter);
+        $stmt->execute($params);
         $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
     } catch (PDOException $e) {
         // Raw DB errors leak schema details to public visitors — log instead.
         error_log('Wiki feed error: ' . $e->getMessage());
@@ -58,7 +75,11 @@ get_header();
 
     <?php if (empty($submissions)): ?>
         <div style="text-align: center; padding: 40px; color: #666;">
-            <p>No recently approved programs found.</p>
+            <?php if ($feed_search !== ''): ?>
+                <p>No approved programs match that search. <a href="<?php echo esc_url(remove_query_arg('search')); ?>">Show all entries</a></p>
+            <?php else: ?>
+                <p>No recently approved programs found.</p>
+            <?php endif; ?>
         </div>
     <?php else: ?>
         <div class="wiki-feed-grid">

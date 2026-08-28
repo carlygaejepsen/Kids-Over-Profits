@@ -2296,6 +2296,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Re-setup event listeners after data is loaded to ensure they work
                 setupEventListeners();
 
+                // Deep link: ?search= (used by the site search results page)
+                // pre-fills the filter once the facilities are rendered.
+                const initialSearch = new URLSearchParams(window.location.search).get('search');
+                if (initialSearch) {
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.value = initialSearch;
+                        const clearBtn = document.getElementById('clearSearch');
+                        if (clearBtn) clearBtn.style.display = 'inline-block';
+                        filterFacilities();
+                    }
+                }
+
                 return;
             } catch (candidateError) {
                 console.warn('Facilities script: failed to load dataset from', candidateUrl, candidateError);

@@ -329,3 +329,22 @@
     font-size: 0.82rem;
     color: #7a5b15;
 }
+
+/* "View documents" jump on the linked-program banner (opens the split-screen
+   document viewer on the program's FileBird folder). */
+.linked-program-docs-btn {
+    margin-left: 8px;
+    background: var(--kop-teal, #33A7B5);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.linked-program-docs-btn:hover {
+    background: var(--kop-navy, #000080);
+}
