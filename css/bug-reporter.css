@@ -5,19 +5,29 @@
 
 /* Small feature-scoped bug link, injected into containers tagged with
    data-kop-bug-feature (or via KOPBugReporter.attach). Icon-only at rest;
-   the "Report a bug" label slides out on hover/focus. */
-.kop-bug-report-link {
+   the "Report a bug" label slides out on hover/focus. The !important flags
+   defend against the theme's global button styling (white text, shadows,
+   uppercase), which otherwise wins on hover. */
+.kop-bug-report-link,
+.kop-bug-report-link:hover,
+.kop-bug-report-link:focus,
+.kop-bug-report-link:focus-visible,
+.kop-bug-report-link:active {
     display: inline-flex;
     align-items: center;
     margin: 6px 0 0;
     padding: 3px 6px;
     background: none;
-    border: none;
+    border: none !important;
     border-radius: 999px;
-    color: var(--kop-navy, #000080);
+    box-shadow: none !important;
+    color: var(--kop-navy, #000080) !important;
     font-size: 0.78rem;
     font-weight: 600;
     line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    text-decoration: none;
     cursor: pointer;
     opacity: 0.55;
 }
@@ -47,6 +57,29 @@
     max-width: 8em;
     margin-left: 5px;
     opacity: 1;
+}
+
+/* Small screens / touch: hover can't reveal the label, so show it always
+   and give the button a comfortable tap size. */
+@media (hover: none), (max-width: 640px) {
+    .kop-bug-report-link,
+    .kop-bug-report-link:hover,
+    .kop-bug-report-link:focus,
+    .kop-bug-report-link:focus-visible,
+    .kop-bug-report-link:active {
+        padding: 7px 12px;
+        min-height: 32px;
+        opacity: 0.75;
+        background: var(--kop-soft-pastel-yellow, #FFF5CB);
+        border: 1px solid var(--kop-teal, #33A7B5) !important;
+    }
+
+    .kop-bug-report-link__text {
+        max-width: none;
+        margin-left: 6px;
+        opacity: 1;
+        transition: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
