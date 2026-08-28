@@ -141,13 +141,13 @@ $safe_query   = esc_html($search_query);
 global $wpdb;
 ?>
 
-<div class="kop-search-results-page">
+<div class="kop-search-results-page" data-kop-bug-feature="search/results" data-kop-bug-label="Search Results">
     <div class="kop-search-header">
         <h1>Search Results</h1>
         <?php if ($search_query): ?>
             <p class="kop-search-for">Results for: <strong><?php echo $safe_query; ?></strong></p>
         <?php endif; ?>
-        <form role="search" method="get" class="kop-search-form" action="<?php echo esc_url(home_url('/')); ?>">
+        <form role="search" method="get" class="kop-search-form" action="<?php echo esc_url(home_url('/')); ?>" data-kop-bug-feature="search/form" data-kop-bug-label="Search Form">
             <input type="search" class="kop-search-input" placeholder="Search facilities, inspections, wiki, news, pages…"
                    value="<?php echo esc_attr($search_query); ?>" name="s">
             <button type="submit" class="kop-search-submit">Search</button>

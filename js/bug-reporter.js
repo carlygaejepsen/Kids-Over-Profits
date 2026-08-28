@@ -156,8 +156,11 @@
         if (container.querySelector(':scope > .kop-bug-report-link')) return null; // already attached
         var link = el('button', 'kop-bug-report-link');
         link.type = 'button';
-        link.innerHTML = '<span aria-hidden="true">🐞</span> Report a problem';
-        link.setAttribute('aria-label', 'Report a problem with ' + (label || feature));
+        // Icon-only; the text expands on hover/focus (CSS).
+        link.innerHTML = '<span class="kop-bug-report-link__icon" aria-hidden="true">🐞</span>'
+            + '<span class="kop-bug-report-link__text">Report a bug</span>';
+        link.setAttribute('aria-label', 'Report a bug in ' + (label || feature));
+        link.title = 'Report a bug';
         link.addEventListener('click', function () {
             openModal({ feature: feature, featureLabel: label || feature });
         });
@@ -172,6 +175,22 @@
             attach(node, node.getAttribute('data-kop-bug-feature'),
                 node.getAttribute('data-kop-bug-label') || '');
         });
+    }
+
+    // Many pages re-render tagged containers with innerHTML (wiping injected
+    // links) or add tagged markup after load — re-scan on DOM changes.
+    // attach() skips containers that already have a link, so this is cheap.
+    function watchForFeatures() {
+        if (!window.MutationObserver) return;
+        var pending = null;
+        var observer = new MutationObserver(function () {
+            if (pending) return;
+            pending = setTimeout(function () {
+                pending = null;
+                scanForFeatures();
+            }, 250);
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
     }
 
     function buildModal() {
@@ -478,9 +497,14 @@
         captureError: function (label) { logEntry('app', label); }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', scanForFeatures);
-    } else {
+    function init() {
         scanForFeatures();
+        watchForFeatures();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 })();

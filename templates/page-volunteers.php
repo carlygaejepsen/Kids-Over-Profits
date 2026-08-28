@@ -53,7 +53,7 @@ try {
         <p>Help us track and expose the Troubled Teen Industry. All skill levels welcome.</p>
     </div>
 
-    <div class="kop-records-filters" id="volunteer-filters">
+    <div class="kop-records-filters" id="volunteer-filters" data-kop-bug-feature="volunteers/filters" data-kop-bug-label="Volunteer Filters">
         <select class="kop-filter-select" id="filter-status" data-filter="status">
             <option value="" <?php selected($status_filter, ''); ?>>All statuses</option>
             <option value="open"      <?php selected($status_filter, 'open'); ?>>Open<?php if (!empty($status_counts['open'])): ?> (<?php echo $status_counts['open']; ?>)<?php endif; ?></option>
@@ -72,7 +72,7 @@ try {
         <span class="kop-filter-count" id="filter-count"><?php echo count($projects); ?> project<?php echo count($projects) !== 1 ? 's' : ''; ?></span>
     </div>
 
-    <div class="kop-records-grid" id="volunteers-grid">
+    <div class="kop-records-grid" id="volunteers-grid" data-kop-bug-feature="volunteers/grid" data-kop-bug-label="Volunteer Projects List">
         <?php if (empty($projects)): ?>
             <div class="kop-records-empty">
                 <p>No open volunteer projects right now &mdash; check back soon, or <a href="<?php echo esc_url(home_url('/contact')); ?>">get in touch</a> if you'd like to help.</p>

@@ -14,14 +14,14 @@ get_header();
 
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/referrer-index.css?v=<?php echo time(); ?>">
 
-<div class="referrer-directory-container">
+<div class="referrer-directory-container" data-kop-bug-feature="referrer-index/directory" data-kop-bug-label="Consultant Directory">
     <div class="directory-header" style="margin-bottom: 2em; text-align: center;">
         <h1 style="color: #00004d; font-size: 2.5em; margin-bottom: 0.2em;">Educational Consultant Directory</h1>
         <p style="font-size: 1.1em; color: #666;">Searchable database of Educational Consultants, Ed Cons, and Referral Agencies</p>
     </div>
 
     <!-- Search & Filter Controls -->
-    <div class="controls" style="margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #eee;">
+    <div class="controls" data-kop-bug-feature="referrer-index/search" data-kop-bug-label="Consultant Search" style="margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #eee;">
         <input
             type="text"
             id="searchInput"

@@ -266,7 +266,7 @@ try {
         ksort($allTypes);
         ?>
 
-        <div class="news-filters">
+        <div class="news-filters" data-kop-bug-feature="news-feed/filters" data-kop-bug-label="News Filters">
             <div class="filter-group">
                 <label class="filter-label">Filter by Type:</label>
                 <div class="filter-buttons" id="type-filters">
@@ -478,7 +478,7 @@ try {
             <div class="filter-status" id="filter-status"></div>
         </div>
 
-        <div class="news-feed-grid">
+        <div class="news-feed-grid" data-kop-bug-feature="news-feed/grid" data-kop-bug-label="News Feed">
             <?php foreach ($submissions as $item):
                 // Decode JSON fields
                 $facilities = kop_facility_mention_names($item['facilities_mentioned'] ?? '[]');

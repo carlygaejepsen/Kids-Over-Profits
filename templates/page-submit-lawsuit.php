@@ -38,7 +38,7 @@ if (!$tracker_url) { $tracker_url = home_url('/lawsuits'); }
         <p>Know of a court case involving a Troubled Teen Industry facility, operator, or staff member? Share it here. Submissions are reviewed by our team before they appear on the public <a href="<?php echo esc_url($tracker_url); ?>">Lawsuits tracker</a>. Share only what you're comfortable with — a case name and a source link are enough to get started.</p>
     </div>
 
-    <form id="kop-submit-lawsuit-form" class="kop-submit-form" novalidate>
+    <form id="kop-submit-lawsuit-form" class="kop-submit-form" novalidate data-kop-bug-feature="submit-lawsuit/form" data-kop-bug-label="Lawsuit Submission Form">
         <div class="kop-form-grid">
             <label class="kop-field kop-field-wide">
                 <span class="kop-field-label">Case name or short description <span class="req">*</span></span>

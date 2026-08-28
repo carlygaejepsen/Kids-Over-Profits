@@ -74,7 +74,7 @@ $status_labels = [
         </p>
     </div>
 
-    <div class="kop-records-filters" id="legislation-filters">
+    <div class="kop-records-filters" id="legislation-filters" data-kop-bug-feature="legislation/filters" data-kop-bug-label="Legislation Filters">
         <select class="kop-filter-select" id="filter-level" data-filter="level">
             <option value="">Federal &amp; State</option>
             <option value="federal" <?php selected($level_filter, 'federal'); ?>>Federal only</option>
@@ -110,7 +110,7 @@ $status_labels = [
         <span class="kop-filter-count" id="filter-count"><?php echo count($bills); ?> bill<?php echo count($bills) !== 1 ? 's' : ''; ?></span>
     </div>
 
-    <div class="kop-records-grid" id="legislation-grid">
+    <div class="kop-records-grid" id="legislation-grid" data-kop-bug-feature="legislation/table" data-kop-bug-label="Legislation Table">
         <?php if (empty($bills)): ?>
             <div class="kop-records-empty">No legislation records found. Check back soon.</div>
         <?php else: ?>

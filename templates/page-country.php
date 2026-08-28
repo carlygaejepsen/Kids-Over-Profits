@@ -57,23 +57,23 @@ $rest_url = esc_url_raw(rest_url('kop/v1/country/' . $country_slug));
         <button class="state-tab" data-tab="legislation" role="tab">Legislation</button>
     </nav>
 
-    <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel">
+    <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel" data-kop-bug-feature="country-hub/facilities" data-kop-bug-label="Country Facilities List">
         <h2>Facilities in <?php echo esc_html($country_name); ?></h2>
         <p class="facilities-intro">Residential facilities providing religious, behavioral, and mental health treatment to children operate in many countries beyond the United States. Some are known to be part of the Troubled Teen Industry pipeline that places American children abroad; others serve local populations under less oversight. This directory helps families and advocates identify programs and push for accountability across borders.</p>
         <div class="section-content"><p class="loading">Loading facilities…</p></div>
     </section>
 
-    <section class="state-section" id="section-news" data-section="news" role="tabpanel" hidden>
+    <section class="state-section" id="section-news" data-section="news" role="tabpanel" hidden data-kop-bug-feature="country-hub/news" data-kop-bug-label="Country News">
         <h2>News</h2>
         <div class="section-content"><p class="loading">Loading news…</p></div>
     </section>
 
-    <section class="state-section" id="section-lawsuits" data-section="lawsuits" role="tabpanel" hidden>
+    <section class="state-section" id="section-lawsuits" data-section="lawsuits" role="tabpanel" hidden data-kop-bug-feature="country-hub/lawsuits" data-kop-bug-label="Country Lawsuits">
         <h2>Lawsuits</h2>
         <div class="section-content"><p class="loading">Loading lawsuits…</p></div>
     </section>
 
-    <section class="state-section" id="section-legislation" data-section="legislation" role="tabpanel" hidden>
+    <section class="state-section" id="section-legislation" data-section="legislation" role="tabpanel" hidden data-kop-bug-feature="country-hub/legislation" data-kop-bug-label="Country Legislation">
         <h2>Legislation</h2>
         <div class="section-content"><p class="loading">Loading legislation…</p></div>
     </section>

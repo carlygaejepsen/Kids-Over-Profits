@@ -18,7 +18,7 @@ get_header();
         </div>
         
         <!-- Category Navigation -->
-        <div class="category-navigation" id="category-navigation">
+        <div class="category-navigation" id="category-navigation" data-kop-bug-feature="data-form/project-picker" data-kop-bug-label="Project Picker &amp; Categories">
             <div class="category-tabs">
                 <button class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
                 <button class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
@@ -145,7 +145,7 @@ get_header();
         </div>
 
         <!-- Referrer-Specific Sections (shown when Referrers tab is active) -->
-        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers">
+        <div id="referrer-main-wrapper" class="view-hidden" data-section-views="referrers" data-kop-bug-feature="data-form/referrer-editor" data-kop-bug-label="Referrer Editor">
 
             <!-- Agency Choice - HIDDEN: Now using per-consultant badges in overview -->
             <div id="referrer-agency-toggle-section" class="referrer-card" style="display: none;">
@@ -327,7 +327,7 @@ get_header();
         </div>
 
         <!-- Transporter-Specific Sections (shown when Transporters tab is active) -->
-        <div id="transporter-main-wrapper" class="view-hidden" data-section-views="transporters">
+        <div id="transporter-main-wrapper" class="view-hidden" data-section-views="transporters" data-kop-bug-feature="data-form/transporter-editor" data-kop-bug-label="Transporter Editor">
 
             <!-- Transporters Overview (Table of Contents) -->
             <div class="facility-toc" id="transporters-toc">
@@ -612,7 +612,7 @@ get_header();
                 </div>
                 <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Expand toolbar">▼</button>
             </div>
-            <div class="toolbar-content" id="toolbar-content">
+            <div class="toolbar-content" id="toolbar-content" data-kop-bug-feature="data-form/toolbar" data-kop-bug-label="Facility Toolbar">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
                         <a href="<?php echo esc_url(home_url('/')); ?>" class="btn-toolbar btn-secondary" title="Go back to homepage">🏠<span class="toolbar-label">Home</span></a>
@@ -651,7 +651,7 @@ get_header();
             </div>
         </div>
 
-        <div id="facility-main-wrapper"><!-- Start of main wrapper -->
+        <div id="facility-main-wrapper" data-kop-bug-feature="data-form/facility-editor" data-kop-bug-label="Facility Editor"><!-- Start of main wrapper -->
             <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>
@@ -1592,7 +1592,7 @@ get_header();
         </div>
         
         <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #1e40af; background: #f8fafc;">
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" data-kop-bug-feature="data-form/submit" data-kop-bug-label="Submit Suggestions" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
             </div>
@@ -1614,7 +1614,7 @@ get_header();
         </div>
         
         <!-- Advanced User Mode Section -->
-        <div class="section" id="advanced-mode-section" style="border: 2px solid #6b7280; background: #f9fafb;">
+        <div class="section" id="advanced-mode-section" data-kop-bug-feature="data-form/import-export" data-kop-bug-label="Import / Export" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
                 <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
                 <span class="section-toggle">🔎</span>
@@ -1755,7 +1755,7 @@ get_header();
 
     <!-- Data Organizer Modal -->
     <div id="data-organizer-modal" class="organizer-modal">
-        <div class="organizer-modal-content">
+        <div class="organizer-modal-content" data-kop-bug-feature="data-form/data-search" data-kop-bug-label="Data Search">
             <div class="organizer-modal-header" style="padding: 12px 20px;">
                 <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>

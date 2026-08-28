@@ -18,7 +18,7 @@ get_header();
 					?>
 					<div class="entry-content">
 						<div class="state-reports-wrapper">
-							<div class="facility-report-container">
+							<div class="facility-report-container" data-kop-bug-feature="state-reports/viewer" data-kop-bug-label="Inspection Report Viewer">
 								<h1 class="state-reports-title"><?php the_title(); ?></h1>
 
 								<?php
@@ -50,7 +50,7 @@ get_header();
 									<!-- JavaScript will populate this -->
 								</nav>
 
-								<div class="controls">
+								<div class="controls" data-kop-bug-feature="state-reports/search" data-kop-bug-label="Report Search &amp; Filters">
 									<input type="text" id="searchInput" placeholder="Search all facilities...">
 									<select id="sortBy">
 										<option value="">Default Order (A-Z)</option>

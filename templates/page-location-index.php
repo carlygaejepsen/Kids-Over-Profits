@@ -16,7 +16,7 @@ get_header();
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/document-library.css">
 
 <div class="tti-program-index-wrapper">
-    <div class="facility-report-container">
+    <div class="facility-report-container" data-kop-bug-feature="location-index/list" data-kop-bug-label="Location Directory">
 
         <!-- Page Header -->
         <div class="page-header" style="margin-bottom: 2em;">
@@ -25,7 +25,7 @@ get_header();
         </div>
 
         <!-- Search & Filter Controls -->
-        <div class="controls">
+        <div class="controls" data-kop-bug-feature="location-index/search" data-kop-bug-label="Location Search">
             <div class="controls-row">
                 <input
                     type="text"

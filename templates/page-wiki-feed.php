@@ -82,7 +82,7 @@ get_header();
             <?php endif; ?>
         </div>
     <?php else: ?>
-        <div class="wiki-feed-grid">
+        <div class="wiki-feed-grid" data-kop-bug-feature="wiki-feed/grid" data-kop-bug-label="Wiki Feed">
             <?php foreach ($submissions as $item): 
                 // Format Date
                 $dateAdded = $item['created_at'] ? date('M j, Y', strtotime($item['created_at'])) : 'Unknown Date';

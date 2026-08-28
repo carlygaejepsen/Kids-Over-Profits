@@ -24,7 +24,7 @@ get_header();
         </div>
 
         <!-- Search & Filter Controls -->
-        <div class="controls">
+        <div class="controls" data-kop-bug-feature="program-index/search" data-kop-bug-label="Program Search">
             <div class="controls-row">
                 <input
                     type="text"
@@ -56,7 +56,7 @@ get_header();
         </div>
 
         <!-- Facilities Container (populated by JavaScript) -->
-        <div id="facilities-container">
+        <div id="facilities-container" data-kop-bug-feature="program-index/directory" data-kop-bug-label="Program Directory">
             <div class="loading-message">
                 <p>Loading facility data...</p>
             </div>

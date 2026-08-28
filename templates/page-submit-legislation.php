@@ -39,7 +39,7 @@ if (!$tracker_url) { $tracker_url = home_url('/legislation'); }
         <p>Know of a bill or law affecting Troubled Teen Industry facilities? Share it here. Submissions are reviewed by our team before they appear on the public <a href="<?php echo esc_url($tracker_url); ?>">Legislation Tracker</a>. You don't need to fill in everything — a title and a link are plenty.</p>
     </div>
 
-    <form id="kop-submit-legislation-form" class="kop-submit-form" novalidate>
+    <form id="kop-submit-legislation-form" class="kop-submit-form" novalidate data-kop-bug-feature="submit-legislation/form" data-kop-bug-label="Legislation Submission Form">
         <div class="kop-form-grid">
             <label class="kop-field kop-field-wide">
                 <span class="kop-field-label">Bill title or short description <span class="req">*</span></span>

@@ -196,7 +196,7 @@ class AnonymousDocPortal {
     public function render_portal($atts) {
         ob_start();
         ?>
-        <div class="anonymous-portal-container">
+        <div class="anonymous-portal-container" data-kop-bug-feature="document-portal/upload" data-kop-bug-label="Anonymous Document Portal">
             <div class="anonymous-portal-header">
                 <h3><span class="dashicons dashicons-lock"></span> Secure Anonymous Document Drop</h3>
                 <p>Submit documents securely and anonymously. All files are scanned for malware and stored in an encrypted directory.</p>

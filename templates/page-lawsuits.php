@@ -60,7 +60,7 @@ try {
         </p>
     </div>
 
-    <div class="kop-records-filters" id="lawsuits-filters">
+    <div class="kop-records-filters" id="lawsuits-filters" data-kop-bug-feature="lawsuits/filters" data-kop-bug-label="Lawsuits Filters">
         <select class="kop-filter-select" id="filter-status" data-filter="status">
             <option value="">All case statuses</option>
             <?php foreach ($statuses as $s => $_): ?>
@@ -92,7 +92,7 @@ try {
         <span class="kop-filter-count" id="filter-count"><?php echo count($lawsuits); ?> cases</span>
     </div>
 
-    <div class="kop-records-grid" id="lawsuits-grid">
+    <div class="kop-records-grid" id="lawsuits-grid" data-kop-bug-feature="lawsuits/table" data-kop-bug-label="Lawsuits Table">
         <?php if (empty($lawsuits)): ?>
             <div class="kop-records-empty">No lawsuits found. Check back soon.</div>
         <?php else: ?>
