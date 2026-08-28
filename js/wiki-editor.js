@@ -95,6 +95,54 @@ document.addEventListener('DOMContentLoaded', () => {
     let importedMarkdown = ''; // Store original imported markdown
     let isOrganizationEntry = false; // Track if current entry is an organization
 
+    // --- Unsaved-work protection ---
+    // Set on any user input inside the form; cleared on successful submit and
+    // right after a programmatic populate (loading an entry marks the form
+    // clean, typing dirties it again).
+    let formIsDirty = false;
+    wikiForm.addEventListener('input', () => { formIsDirty = true; });
+    wikiForm.addEventListener('change', () => { formIsDirty = true; });
+    window.addEventListener('beforeunload', (e) => {
+        if (formIsDirty) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+    // Ask before any action that wipes/replaces the form while it has unsaved
+    // edits (loading an entry, importing markdown, creating a stub).
+    const confirmDiscardIfDirty = (what) => {
+        if (!formIsDirty) return true;
+        return confirm(`You have unsaved changes in the form. ${what} will replace them.\n\nContinue and discard your changes?`);
+    };
+    const markFormClean = () => { formIsDirty = false; };
+
+    // Standard headers for the wiki APIs. The nonce authenticates admin
+    // actions (e.g. delete) against CSRF server-side.
+    const kopApiHeaders = () => {
+        const headers = { 'Content-Type': 'application/json' };
+        if (editorSettings.nonce) headers['X-KOP-Nonce'] = editorSettings.nonce;
+        return headers;
+    };
+
+    // When a save/load fails, offer a one-click prefilled bug report (widget
+    // provided by js/bug-reporter.js; no-op if it isn't loaded).
+    const offerBugReport = (category, message, statusEl) => {
+        if (!window.KOPBugReporter || !statusEl) return;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'kop-report-problem-link';
+        btn.textContent = 'Report this problem';
+        btn.style.cssText = 'margin-left:8px;background:none;border:none;color:#000080;text-decoration:underline;cursor:pointer;font-size:inherit;padding:0;';
+        btn.addEventListener('click', () => {
+            window.KOPBugReporter.open({
+                category: category,
+                description: `Something went wrong in the wiki editor: ${message}`,
+                context: { feature: 'wiki-editor', failedAction: category, errorMessage: String(message) }
+            });
+        });
+        statusEl.appendChild(btn);
+    };
+
     // "Additional Notes" textareas whose content is appended to (not substituted
     // for) the auto-generated section. Tracked so the generator knows which
     // fields may carry verbatim imported prose. Keep in sync with the matching
@@ -366,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : [];
 
         // Basic fields to clear
-        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','avgStay','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','staffMisc','levelSystemDesc','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
+        const fieldIds = ['programName','yearsActive','cityState','programType','yearFounded','ageRange','capacity','ownerName','ownerLink','avgStay','tuition','natsapMember','natsapYear','diagnosesList','mainAddress','addressLink','accreditingBody','accreditingBodyLink','historyNotes','staffMisc','levelSystemType','levelCount','levelSystemDesc','educationType','educationAccreditor','structureMisc','punishmentsMisc','lawsuitsMisc','rulesList','mainComplaints','otherAllegationsList','mediaInfo','testimoniesMisc','relatedMediaMisc','customDiagnoses','customAllegations','rebrand','rebrandLink','headquarters','parentCompany','parentCompanyLink'];
         clearInputs(fieldIds);
 
         // Reset arrays and lists
@@ -847,6 +895,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setFieldValue('parentCompany', storedData.parentCompany);
         setFieldValue('parentCompanyLink', storedData.parentCompanyLink);
 
+        // These four aren't recoverable from the generated markdown (they are
+        // select-driven), so restore them from the stored JSON — otherwise
+        // values from the previously loaded entry would silently leak in.
+        setFieldValue('levelSystemType', storedData.levelSystemType);
+        setFieldValue('levelCount', storedData.levelCount);
+        setFieldValue('educationType', storedData.educationType);
+        setFieldValue('educationAccreditor', storedData.educationAccreditor);
+
         const inferredEntryType = inferEntryTypeFromData(storedData);
         if (storedData.entryType || inferredEntryType === 'organization') {
             setEntryTypeValue(storedData.entryType || inferredEntryType);
@@ -1147,6 +1203,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Backwards-compatible: accept optional options object as second arg
         const options = arguments[1] || {};
 
+        // A fresh load starts clean; typing afterwards re-dirties the form.
+        markFormClean();
+
         // Track which wiki slug this load corresponds to so a later save records it
         // as sourceSlug. Loads without a slug (manual/free-form entries) reset it.
         currentEntrySlug = options.sourceSlug ? String(options.sourceSlug).toLowerCase() : '';
@@ -1257,6 +1316,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         url = url.replace(/\s+/g, '%20');
         url = url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+        // Only http(s) and site-relative URLs may pass — blocks javascript:,
+        // data:, and other script-bearing schemes (including "javascript://…").
+        if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return '';
         return url;
     };
 
@@ -2196,7 +2258,8 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const res = await fetch(wikiExtractUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: kopApiHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify({ prose, provider })
                 });
                 const result = await res.json();
@@ -2241,6 +2304,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Please paste some markdown or article text first!');
                 return;
             }
+            if (!confirmDiscardIfDirty('Importing this text')) return;
 
             // Volunteer-written articles arrive as plain text. When the pasted
             // content has no markdown structure, convert it to wiki markdown
@@ -2269,6 +2333,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (toggleImportBtn) toggleImportBtn.textContent = '📥 Import from Clipboard';
                 if (importTextarea) importTextarea.value = '';
                 if (importFileInput) importFileInput.value = '';
+                // The pasted source was just cleared, so the populated form is
+                // now the only copy — protect it until it's saved.
+                formIsDirty = true;
             } catch (error) {
                 console.error('Import error:', error);
                 alert('Error importing markdown. Please check the format and try again.\n\n' + error.message);
@@ -2650,27 +2717,29 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: kopApiHeaders(),
+                    credentials: 'same-origin',
                     body: JSON.stringify(submissionPayload)
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    submitStatus.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${result.id})</span>`;
+                    submitStatus.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${escapeHtml(String(result.id))})</span>`;
+                    formIsDirty = false;
                     setTimeout(() => {
                         submitModal.style.display = 'none';
                         submitStatus.innerHTML = '';
                     }, 3000);
                 } else {
                     // API failure responses use `error` (message is unused there)
-                    submitStatus.innerHTML = `<span class="error">❌ ${result.error || result.message || 'Submission failed'}</span>`;
+                    submitStatus.innerHTML = `<span class="error">❌ ${escapeHtml(result.error || result.message || 'Submission failed')}</span>`;
+                    offerBugReport('save-failed', result.error || 'Submission failed', submitStatus);
                 }
             } catch (error) {
                 console.error('Submission error:', error);
                 submitStatus.innerHTML = '<span class="error">❌ Network error. Please try again.</span>';
+                offerBugReport('save-failed', error.message || 'Network error while saving', submitStatus);
             } finally {
                 confirmSubmitBtn.disabled = false;
             }
@@ -2842,9 +2911,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Submit to database
                     const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
+                        headers: kopApiHeaders(),
+                        credentials: 'same-origin',
                         body: JSON.stringify(submissionData)
                     });
 
@@ -2877,7 +2945,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (results.success.length > 0) {
                     resultsHtml += `<div class="upload-success"><h5>✅ Successfully uploaded (${results.success.length}):</h5><ul>`;
                     results.success.forEach(item => {
-                        resultsHtml += `<li><strong>${item.program}</strong> (${item.file}) - ID: ${item.id}</li>`;
+                        // File names / parsed titles / server messages are untrusted — escape them.
+                        resultsHtml += `<li><strong>${escapeHtml(item.program)}</strong> (${escapeHtml(item.file)}) - ID: ${escapeHtml(String(item.id))}</li>`;
                     });
                     resultsHtml += '</ul></div>';
                 }
@@ -2885,7 +2954,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (results.failed.length > 0) {
                     resultsHtml += `<div class="upload-failed"><h5>❌ Failed (${results.failed.length}):</h5><ul>`;
                     results.failed.forEach(item => {
-                        resultsHtml += `<li><strong>${item.file}</strong>: ${item.error}</li>`;
+                        resultsHtml += `<li><strong>${escapeHtml(item.file)}</strong>: ${escapeHtml(item.error)}</li>`;
                     });
                     resultsHtml += '</ul></div>';
                 }
@@ -3286,6 +3355,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Open a blank form for an entry that hasn't been written yet.
     function createStubEntry(entry, stateCode, button) {
+        if (!confirmDiscardIfDirty('Starting a new entry')) return;
         const name = entry.name || entry.normalizedName || '';
         const entryType = stateCode === 'CORPORATE' ? 'organization' : 'facility';
         const slug = getEntrySlug(entry, stateCode);
@@ -3402,7 +3472,8 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const resp = await fetch(getStubsApiUrl(), {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: kopApiHeaders(),
+                credentials: 'same-origin',
                 body: JSON.stringify({ slug, mode })
             });
             const data = await resp.json().catch(() => ({}));
@@ -3832,12 +3903,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (error) {
             console.error('Error loading entries:', error);
-            entriesList.innerHTML = `<p class="error">Error loading entries: ${error.message}</p>`;
+            entriesList.innerHTML = `<p class="error">Error loading entries: ${escapeHtml(error.message)}</p>`;
         }
     }
 
     // Load entry into form
     async function loadEntryIntoForm(entryId) {
+        if (!confirmDiscardIfDirty('Loading this entry')) return;
         // Reset to facility mode by default; org mode set explicitly if needed after load
         isOrganizationEntry = false;
         setEntryTypeValue('facility');
@@ -3907,7 +3979,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Ensure critical DB fields override the parse if they are empty/different?
                 // Actually, trust the parse, but ensure Program Name matches DB if parse failed to find it.
                 const programNameInput = document.getElementById('programName');
-                if (programNameInput && (!programNameInput.value || entry.program_name)) {
+                if (programNameInput && !programNameInput.value && entry.program_name) {
                     programNameInput.value = entry.program_name;
                 }
             } else {
@@ -3952,9 +4024,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // For now, we can use a workaround by setting status to 'deleted'
             const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: kopApiHeaders(),
+                credentials: 'same-origin',
                 body: JSON.stringify({
                     id: entryId,
                     status: 'deleted'

@@ -278,3 +278,54 @@
     color: #666;
     margin: 8px 0 0;
 }
+
+/* Duplicate-detection warning shown when creating a program that looks like
+   an existing index entry. */
+.kop-pp-dup-warning {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: var(--kop-soft-yellow, #FFF5CB);
+    border: 2px solid var(--kop-orange, #EF9034);
+    border-radius: 8px;
+}
+
+.kop-pp-dup-title {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--kop-midnight, #000435);
+}
+
+.kop-pp-dup-list {
+    background: #fff;
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.kop-pp-dup-result .kop-pp-result-meta {
+    color: #7a5b15;
+}
+
+.kop-pp-dup-anyway {
+    display: block;
+    margin-top: 10px;
+    background: none;
+    border: none;
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+}
+
+.kop-pp-dup-anyway:hover {
+    color: var(--kop-teal, #33A7B5);
+}
+
+.kop-pp-dup-note {
+    margin: 10px 0 0;
+    font-size: 0.82rem;
+    color: #7a5b15;
+}

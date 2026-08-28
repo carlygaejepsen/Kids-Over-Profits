@@ -42,6 +42,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 
+// config.php boots WordPress, so capability checks are available. Guard so a
+// partial load fails closed.
+$kop_is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -88,6 +92,60 @@ function kop_require_type(string $type): void {
 }
 
 /**
+ * Shared over-match guard helpers (same definitions as facility-picker.php;
+ * function_exists-guarded so either file can load first).
+ */
+if (!function_exists('kop_picker_normalize_name')) {
+    function kop_picker_normalize_name(string $name): string {
+        $n = mb_strtolower(trim($name));
+        $n = preg_replace('/[^a-z0-9\s]/u', ' ', $n);
+        $n = preg_replace('/\s+/', ' ', trim($n));
+        if (strpos($n, 'the ') === 0) {
+            $n = substr($n, 4);
+        }
+        return $n;
+    }
+}
+if (!function_exists('kop_picker_generic_terms')) {
+    function kop_picker_generic_terms(): array {
+        return ['the', 'a', 'an', 'of', 'and', 'for', 'at', 'in', 'inc', 'llc', 'co',
+                'rtc', 'rtf', 'tbs',
+                'academy', 'academies', 'school', 'schools', 'ranch', 'ranches',
+                'center', 'centre', 'centers', 'centres', 'program', 'programs',
+                'camp', 'camps', 'institute', 'institution', 'institutions',
+                'residential', 'treatment', 'therapeutic', 'therapy', 'wilderness',
+                'behavioral', 'behavioural', 'health', 'healthcare', 'recovery',
+                'boarding', 'christian', 'youth', 'teen', 'teens', 'boy', 'boys',
+                'girl', 'girls', 'kids', 'children', 'childrens', 'child',
+                'adolescent', 'adolescents', 'juvenile', 'home', 'homes', 'house',
+                'group', 'ministries', 'ministry', 'hospital', 'services',
+                'solutions', 'care', 'facility', 'facilities', 'international',
+                'education', 'educational', 'emotional', 'growth'];
+    }
+}
+if (!function_exists('kop_picker_distinctive_tokens')) {
+    function kop_picker_distinctive_tokens(string $normalized): array {
+        $generic = kop_picker_generic_terms();
+        $tokens = array_filter(explode(' ', $normalized), static function ($t) use ($generic) {
+            return strlen($t) >= 3 && !ctype_digit($t) && !in_array($t, $generic, true);
+        });
+        return array_values($tokens);
+    }
+}
+
+/**
+ * True when a term is safe to use for PARTIAL (LIKE %term%) matching: long
+ * enough, and carrying at least one distinctive token. Bare acronyms ("RTC")
+ * and purely generic names ("Wilderness Academy") fail — partial-matching
+ * those would rank half the index as candidates. Exact matching is always
+ * allowed regardless.
+ */
+function kop_link_partial_match_ok(string $term): bool {
+    $norm = kop_picker_normalize_name($term);
+    return strlen($norm) >= 5 && count(kop_picker_distinctive_tokens($norm)) > 0;
+}
+
+/**
  * Return ranked facility candidates for a wiki entry row.
  *
  * Ranking:
@@ -95,6 +153,10 @@ function kop_require_type(string $type): void {
  *    80 – unique_name exact-matches the wiki's program_name
  *    60 – unique_name LIKE-matches the organization (partial)
  *    40 – unique_name LIKE-matches the program_name (partial)
+ *
+ * Partial probes are skipped for short/generic terms and acronyms
+ * (kop_link_partial_match_ok) so e.g. organization "RTC" doesn't rank the
+ * whole index; exact probes always run.
  *
  * Location bonus: +10 if the facility json_data mentions the wiki's city_state.
  * Results capped at 20.
@@ -155,18 +217,23 @@ function kop_suggest_facilities(PDO $pdo, array $wiki): array {
         // Exact org match
         $fetch("$baseSql AND LOWER(unique_name) = LOWER(:v) LIMIT 5",
             [':v' => $org], 100, "organization exact");
-        // Partial org match
-        $fetch("$baseSql AND unique_name LIKE :v LIMIT 10",
-            [':v' => '%' . $org . '%'], 60, "organization partial");
+        // Partial org match — only for terms distinctive enough to mean
+        // something (guards against acronyms/generic names over-matching)
+        if (kop_link_partial_match_ok($org)) {
+            $fetch("$baseSql AND unique_name LIKE :v LIMIT 10",
+                [':v' => '%' . $org . '%'], 60, "organization partial");
+        }
     }
 
     if ($progName) {
         // Exact program name match
         $fetch("$baseSql AND LOWER(unique_name) = LOWER(:v) LIMIT 5",
             [':v' => $progName], 80, "program name exact");
-        // Partial program name match
-        $fetch("$baseSql AND unique_name LIKE :v LIMIT 10",
-            [':v' => '%' . $progName . '%'], 40, "program name partial");
+        // Partial program name match — same distinctiveness guard
+        if (kop_link_partial_match_ok($progName)) {
+            $fetch("$baseSql AND unique_name LIKE :v LIMIT 10",
+                [':v' => '%' . $progName . '%'], 40, "program name partial");
+        }
     }
 
     // Sort by score descending
@@ -187,7 +254,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     try {
         kop_require_type($type);
         $table = kop_wiki_table($type);
-        kop_ensure_wiki_link_columns($pdo, $table);
+        // DDL migration only runs for admins.
+        if ($kop_is_admin) {
+            kop_ensure_wiki_link_columns($pdo, $table);
+        }
 
         // -- get --
         if ($action === 'get') {
@@ -285,8 +355,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => $e->getMessage()]);
     } catch (PDOException $e) {
+        error_log('link-wiki-facility error: ' . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+        echo json_encode(['success' => false, 'error' => 'A database error occurred.']);
     }
     exit;
 }
@@ -315,7 +386,20 @@ $wikiId = (int)($input['wiki_id'] ?? 0);
 try {
     kop_require_type($type);
     $table = kop_wiki_table($type);
-    kop_ensure_wiki_link_columns($pdo, $table);
+
+    // All POST actions rewire the wiki ↔ facility linkage. confirm/unlink and
+    // forced overwrites are admin-only; a plain 'link' (suggested, pending
+    // admin review) is allowed for public submitters via the program picker.
+    if (!$kop_is_admin && $action !== 'link') {
+        http_response_code(403);
+        echo json_encode(['success' => false, 'error' => 'Not authorized']);
+        exit;
+    }
+
+    // DDL migration only runs for admins — anonymous requests never alter schema.
+    if ($kop_is_admin) {
+        kop_ensure_wiki_link_columns($pdo, $table);
+    }
 
     if (!$wikiId) {
         http_response_code(400);
@@ -326,7 +410,8 @@ try {
     // -- link --
     if ($action === 'link') {
         $facilityUniqueName = trim($input['facility_unique_name'] ?? '');
-        $force              = !empty($input['force']);
+        // Overwriting a confirmed link is an admin decision.
+        $force              = $kop_is_admin && !empty($input['force']);
 
         if (!$facilityUniqueName) {
             http_response_code(400);
@@ -438,6 +523,7 @@ try {
     http_response_code(400);
     echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 } catch (PDOException $e) {
+    error_log('link-wiki-facility error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'A database error occurred.']);
 }

@@ -12,8 +12,14 @@ require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json');
 
-// Check if fix parameter is present (security)
+// Schema changes are admin-only (CLI allowed). The ?fix=1 param alone is not
+// security — it only prevents accidental runs.
 $is_cli = php_sapi_name() === 'cli';
+if (!$is_cli && (!function_exists('current_user_can') || !current_user_can('manage_options'))) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
 $fix_param = $_GET['fix'] ?? null;
 
 if (!$is_cli && $fix_param !== '1') {

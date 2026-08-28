@@ -44,7 +44,9 @@ get_header();
         $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
     } catch (PDOException $e) {
-        $error_message = "Error fetching wiki entries: " . $e->getMessage();
+        // Raw DB errors leak schema details to public visitors — log instead.
+        error_log('Wiki feed error: ' . $e->getMessage());
+        $error_message = 'The wiki feed is temporarily unavailable. Please try again later.';
         $submissions = [];
     }
 
@@ -129,7 +131,7 @@ get_header();
                         
                         <div class="wiki-markdown-section" style="margin-top: 15px;">
                             <button type="button" class="toggle-markdown-btn" 
-                                    data-id="<?php echo $item['id']; ?>"
+                                    data-id="<?php echo esc_attr($item['id']); ?>"
                                     data-label="<?php echo esc_attr($btnLabel); ?>"
                                     onclick="toggleMarkdown(this)">
                                 <?php echo esc_html($btnLabel); ?>

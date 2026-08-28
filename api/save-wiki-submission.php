@@ -10,12 +10,12 @@
  * Returns: JSON with submission ID and status
  */
 
+// Same-origin API: no CORS headers on purpose (the wiki editor lives on this
+// domain). The old wildcard Access-Control-Allow-Origin let any website read
+// and write submissions cross-origin.
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('X-Content-Type-Options: nosniff');
 
-// Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -31,23 +31,40 @@ if (!defined('ABSPATH')) {
     }
 }
 
+// Capability + CSRF context. config.php boots WordPress via wp-config.php, so
+// these are available; guard anyway so a partial load fails closed (not open).
+$kop_is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+$kop_nonce_ok = false;
+if (function_exists('wp_verify_nonce')) {
+    $kop_nonce = $_SERVER['HTTP_X_KOP_NONCE'] ?? '';
+    $kop_nonce_ok = $kop_nonce !== '' && wp_verify_nonce($kop_nonce, 'kop_wiki_editor');
+}
+
+// Statuses an anonymous/non-admin user may write. Everything else (approved,
+// published, rejected, deleted, ...) is an admin-only state transition.
+const KOP_PUBLIC_STATUSES = ['draft', 'submitted'];
+
 try {
     // GET request - retrieve submissions
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         $id = $_GET['id'] ?? null;
         $status = $_GET['status'] ?? null;
         $search = $_GET['search'] ?? null;
-        $limit = min((int)($_GET['limit'] ?? 50), 100);
-        $offset = (int)($_GET['offset'] ?? 0);
-        
+        $limit = max(1, min((int)($_GET['limit'] ?? 50), 100));
+        $offset = max(0, (int)($_GET['offset'] ?? 0));
+
         if ($id) {
             // Get single submission
             $stmt = $pdo->prepare("SELECT * FROM wiki_submissions WHERE id = ?");
             $stmt->execute([$id]);
             $submission = $stmt->fetch();
-            
+
             if ($submission) {
                 $submission['json_data'] = json_decode($submission['json_data'], true);
+                if (!$kop_is_admin) {
+                    // Submitter contact info is for admins only.
+                    unset($submission['submitted_by']);
+                }
                 echo json_encode(['success' => true, 'data' => $submission]);
             } else {
                 http_response_code(404);
@@ -96,7 +113,14 @@ try {
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
         $submissions = $stmt->fetchAll();
-        
+
+        if (!$kop_is_admin) {
+            foreach ($submissions as &$kopRow) {
+                unset($kopRow['submitted_by']);
+            }
+            unset($kopRow);
+        }
+
         echo json_encode([
             'success' => true,
             'data' => $submissions,
@@ -145,27 +169,55 @@ try {
     $facilityUniqueName = trim((string)($data['facilityUniqueName'] ?? $data['facility_unique_name'] ?? ''));
     $documentFolderIdRaw = $data['documentFolderId'] ?? $data['document_folder_id'] ?? null;
 
-    // Make sure the link columns exist (idempotent; safe on every save).
-    foreach (['facility_unique_name' => "VARCHAR(255) DEFAULT NULL",
-              'facility_link_status' => "ENUM('suggested','confirmed') DEFAULT NULL"] as $col => $def) {
-        try {
-            $pdo->exec("ALTER TABLE wiki_submissions ADD COLUMN `$col` $def");
-        } catch (PDOException $colEx) {
-            // 1060 = duplicate column; already migrated. Anything else re-throws.
-            if (strpos($colEx->getMessage(), 'Duplicate column') === false
-                && strpos($colEx->getMessage(), '1060') === false) {
-                throw $colEx;
+    // Non-admins may only put a submission into a public status. Anything
+    // else (approved/published/rejected/deleted/...) is an admin transition —
+    // previously the client-supplied status was trusted verbatim, letting an
+    // anonymous POST self-approve content.
+    if (!$kop_is_admin && !in_array($status, KOP_PUBLIC_STATUSES, true)) {
+        http_response_code(403);
+        echo json_encode([
+            'success' => false,
+            'error' => 'You do not have permission to set that status'
+        ]);
+        exit;
+    }
+
+    // Make sure the link columns exist (idempotent). Only admins trigger the
+    // migration — anonymous requests must never run DDL.
+    if ($kop_is_admin) {
+        foreach (['facility_unique_name' => "VARCHAR(255) DEFAULT NULL",
+                  'facility_link_status' => "ENUM('suggested','confirmed') DEFAULT NULL"] as $col => $def) {
+            try {
+                $pdo->exec("ALTER TABLE wiki_submissions ADD COLUMN `$col` $def");
+            } catch (PDOException $colEx) {
+                // 1060 = duplicate column; already migrated. Anything else re-throws.
+                if (strpos($colEx->getMessage(), 'Duplicate column') === false
+                    && strpos($colEx->getMessage(), '1060') === false) {
+                    throw $colEx;
+                }
             }
         }
     }
 
-    if ($status === 'deleted' && !current_user_can('manage_options')) {
-        http_response_code(403);
-        echo json_encode([
-            'success' => false,
-            'error' => 'You do not have permission to delete entries'
-        ]);
-        exit;
+    if ($status === 'deleted') {
+        if (!$kop_is_admin) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => 'You do not have permission to delete entries'
+            ]);
+            exit;
+        }
+        // CSRF guard: deletion rides on the admin's cookies, so require the
+        // nonce localized into wikiEditorSettings (sent as X-KOP-Nonce).
+        if (!$kop_nonce_ok) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => 'Security check failed — reload the page and try again.'
+            ]);
+            exit;
+        }
     }
 
     // Deletions arrive as {id, status:'deleted'} with no content fields.
@@ -198,9 +250,23 @@ try {
         exit;
     }
 
-    // DEBUG: Log if originalMarkdown is being received
-    error_log("Save Wiki Submission - originalMarkdown length: " . strlen($originalMarkdown));
-    
+    // Non-admins may only update rows that are still in a public status —
+    // otherwise an anonymous POST could overwrite approved/published content
+    // (and demote its status) just by guessing a sequential id.
+    if ($submissionId && !$kop_is_admin) {
+        $curStmt = $pdo->prepare("SELECT status FROM wiki_submissions WHERE id = ? LIMIT 1");
+        $curStmt->execute([(int)$submissionId]);
+        $currentStatus = $curStmt->fetchColumn();
+        if ($currentStatus !== false && !in_array($currentStatus, KOP_PUBLIC_STATUSES, true)) {
+            http_response_code(403);
+            echo json_encode([
+                'success' => false,
+                'error' => 'This entry can no longer be edited directly. Please submit a new suggestion.'
+            ]);
+            exit;
+        }
+    }
+
     // Validate required fields
     if (empty($programName)) {
         http_response_code(400);
@@ -240,7 +306,10 @@ try {
     // linked program (facilities_master) so the program index surfaces that
     // library by ID. Only write when a positive ID was provided so we never
     // clobber an existing folder link with a blank.
-    if ($facilityUniqueNameForDb !== null
+    // Admin-only: facilities_master is the official record — anonymous
+    // submissions must never write to it.
+    if ($kop_is_admin
+        && $facilityUniqueNameForDb !== null
         && $documentFolderIdRaw !== null && $documentFolderIdRaw !== ''
         && (int)$documentFolderIdRaw > 0) {
         try {
@@ -364,19 +433,18 @@ try {
     }
     
 } catch (PDOException $e) {
+    // Details go to the server log only — raw SQL errors leak schema info.
     error_log("Wiki submission error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'Database error occurred',
-        'details' => $e->getMessage()
+        'error' => 'A database error occurred. Please try again later.'
     ]);
 } catch (Exception $e) {
     error_log("Wiki submission error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'An error occurred',
-        'details' => $e->getMessage()
+        'error' => 'An unexpected error occurred. Please try again later.'
     ]);
 }

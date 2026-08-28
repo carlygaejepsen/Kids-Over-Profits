@@ -100,6 +100,167 @@ function kop_register_data_tools_menu() {
 add_action('admin_menu', 'kop_register_data_tools_menu');
 
 /**
+ * Bug Reports triage screen under KOP Data Tools. Reads the bug_reports table
+ * written by api/save-bug-report.php (front-end widget).
+ */
+function kop_register_bug_reports_menu() {
+    add_submenu_page(
+        'kop-data-tools',
+        'Bug Reports',
+        'Bug Reports',
+        'manage_options',
+        'kop-bug-reports',
+        'kop_render_bug_reports_page'
+    );
+}
+add_action('admin_menu', 'kop_register_bug_reports_menu', 20);
+
+function kop_render_bug_reports_page() {
+    global $wpdb;
+
+    if (!current_user_can('manage_options')) {
+        wp_die('Not authorized');
+    }
+
+    $statuses = array('new', 'in_progress', 'resolved', 'dismissed');
+
+    // Handle a triage action (status change) from the buttons below.
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kop_bug_id'], $_POST['kop_bug_status'])) {
+        check_admin_referer('kop_bug_triage');
+        $id = (int) $_POST['kop_bug_id'];
+        $new_status = sanitize_key($_POST['kop_bug_status']);
+        if ($id > 0 && in_array($new_status, $statuses, true)) {
+            $wpdb->query($wpdb->prepare(
+                'UPDATE bug_reports SET status = %s WHERE id = %d',
+                $new_status,
+                $id
+            ));
+            echo '<div class="notice notice-success is-dismissible"><p>Report #' . esc_html($id)
+                . ' marked as ' . esc_html(str_replace('_', ' ', $new_status)) . '.</p></div>';
+        }
+    }
+
+    $filter = isset($_GET['bug_status']) ? sanitize_key($_GET['bug_status']) : '';
+    if (!in_array($filter, $statuses, true)) {
+        $filter = '';
+    }
+
+    // Table may not exist until the first report is submitted.
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE 'bug_reports'") === 'bug_reports';
+
+    echo '<div class="wrap"><h1>Bug Reports</h1>';
+
+    if (!$table_exists) {
+        echo '<p>No reports yet — the <code>bug_reports</code> table is created automatically when the first report is submitted from the site.</p></div>';
+        return;
+    }
+
+    // Status filter tabs with counts.
+    $counts = array();
+    foreach ($wpdb->get_results('SELECT status, COUNT(*) AS n FROM bug_reports GROUP BY status') as $row) {
+        $counts[$row->status] = (int) $row->n;
+    }
+    $base_url = admin_url('admin.php?page=kop-bug-reports');
+    echo '<ul class="subsubsub">';
+    echo '<li><a href="' . esc_url($base_url) . '"' . ($filter === '' ? ' class="current"' : '') . '>All ('
+        . array_sum($counts) . ')</a> | </li>';
+    foreach ($statuses as $i => $s) {
+        $label = ucwords(str_replace('_', ' ', $s));
+        echo '<li><a href="' . esc_url(add_query_arg('bug_status', $s, $base_url)) . '"'
+            . ($filter === $s ? ' class="current"' : '') . '>' . esc_html($label) . ' ('
+            . (isset($counts[$s]) ? $counts[$s] : 0) . ')</a>'
+            . ($i < count($statuses) - 1 ? ' | ' : '') . '</li>';
+    }
+    echo '</ul><div style="clear:both"></div>';
+
+    if ($filter !== '') {
+        $reports = $wpdb->get_results($wpdb->prepare(
+            'SELECT * FROM bug_reports WHERE status = %s ORDER BY created_at DESC LIMIT 200',
+            $filter
+        ));
+    } else {
+        $reports = $wpdb->get_results('SELECT * FROM bug_reports ORDER BY created_at DESC LIMIT 200');
+    }
+
+    if (empty($reports)) {
+        echo '<p>No reports' . ($filter ? ' with this status' : '') . '.</p></div>';
+        return;
+    }
+
+    $category_labels = array(
+        'save-failed' => 'Saving/submitting failed',
+        'load-failed' => 'Something didn’t load',
+        'broken-ui'   => 'Broken UI',
+        'wrong-data'  => 'Wrong/missing data',
+        'other'       => 'Other',
+    );
+
+    echo '<table class="widefat striped"><thead><tr>'
+        . '<th style="width:60px">#</th><th style="width:130px">When</th><th style="width:150px">Category</th>'
+        . '<th>Report</th><th style="width:120px">Status</th><th style="width:220px">Actions</th>'
+        . '</tr></thead><tbody>';
+
+    foreach ($reports as $r) {
+        $tech = json_decode($r->console_errors ? $r->console_errors : 'null', true);
+        echo '<tr>';
+        echo '<td>' . (int) $r->id . '</td>';
+        echo '<td>' . esc_html(mysql2date('M j, Y g:ia', $r->created_at)) . '</td>';
+        echo '<td>' . esc_html(isset($category_labels[$r->category]) ? $category_labels[$r->category] : $r->category) . '</td>';
+
+        echo '<td>';
+        echo '<p style="margin:0 0 6px"><strong>' . nl2br(esc_html($r->description)) . '</strong></p>';
+        if (!empty($r->steps)) {
+            echo '<p style="margin:0 0 6px"><em>Steps:</em> ' . nl2br(esc_html($r->steps)) . '</p>';
+        }
+        if (!empty($r->page_url)) {
+            echo '<p style="margin:0 0 6px"><em>Page:</em> <a href="' . esc_url($r->page_url) . '" target="_blank" rel="noopener">'
+                . esc_html($r->page_url) . '</a></p>';
+        }
+        if (!empty($r->contact)) {
+            echo '<p style="margin:0 0 6px"><em>Contact:</em> ' . esc_html($r->contact) . '</p>';
+        }
+        if (!empty($tech) || !empty($r->user_agent)) {
+            echo '<details><summary style="cursor:pointer">Technical details</summary><div style="font-size:12px;padding:6px 0">';
+            if (!empty($r->user_agent)) {
+                echo '<p style="margin:0 0 4px"><em>Browser:</em> ' . esc_html($r->user_agent)
+                    . ($r->viewport ? ' — ' . esc_html($r->viewport) : '') . '</p>';
+            }
+            if (!empty($tech) && is_array($tech)) {
+                echo '<ul style="margin:4px 0 0 16px;list-style:disc">';
+                foreach ($tech as $err) {
+                    if (is_array($err)) {
+                        echo '<li><code>[' . esc_html(isset($err['type']) ? $err['type'] : '?') . ']</code> '
+                            . esc_html(isset($err['message']) ? $err['message'] : '') . '</li>';
+                    }
+                }
+                echo '</ul>';
+            }
+            echo '</div></details>';
+        }
+        echo '</td>';
+
+        echo '<td>' . esc_html(ucwords(str_replace('_', ' ', $r->status))) . '</td>';
+
+        echo '<td>';
+        foreach ($statuses as $s) {
+            if ($s === $r->status) {
+                continue;
+            }
+            echo '<form method="post" style="display:inline-block;margin:0 4px 4px 0">';
+            wp_nonce_field('kop_bug_triage');
+            echo '<input type="hidden" name="kop_bug_id" value="' . (int) $r->id . '">';
+            echo '<input type="hidden" name="kop_bug_status" value="' . esc_attr($s) . '">';
+            echo '<button type="submit" class="button button-small">' . esc_html(ucwords(str_replace('_', ' ', $s))) . '</button>';
+            echo '</form>';
+        }
+        echo '</td>';
+        echo '</tr>';
+    }
+
+    echo '</tbody></table></div>';
+}
+
+/**
  * Landing page for the KOP Data Tools menu. Lists each tool and flags any that
  * don't yet have a Page assigned to their template (with setup guidance).
  */

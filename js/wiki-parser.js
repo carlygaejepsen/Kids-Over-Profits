@@ -65,6 +65,9 @@ function sanitizeUrl(input) {
 
     url = url.replace(/\s+/g, '%20');
     url = url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+    // Only http(s) and site-relative URLs may pass — blocks javascript:,
+    // data:, and other script-bearing schemes (including "javascript://…").
+    if (!/^https?:\/\//i.test(url) && !url.startsWith('/')) return '';
     return url;
 }
 

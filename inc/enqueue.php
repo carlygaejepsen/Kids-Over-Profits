@@ -1545,7 +1545,7 @@ function kop_enqueue_wiki_editor_assets() {
         'kop-wiki-editor-style',
         get_stylesheet_directory_uri() . $style_relative,
         array('kop-colors'),
-        (file_exists($style_path) ? filemtime($style_path) : time()) . '&v=FIXED8'
+        file_exists($style_path) ? filemtime($style_path) : time()
     );
 
     // Enqueue auto-linker first (wiki-editor depends on it)
@@ -1619,7 +1619,7 @@ function kop_enqueue_wiki_editor_assets() {
         'kop-wiki-editor-script',
         get_stylesheet_directory_uri() . $script_relative,
         array('kop-auto-linker-script', 'kop-wiki-parser-script', 'kop-wiki-generation-script', 'autocomplete-module-script', 'kop-wiki-program-picker-script'),
-        (file_exists($script_path) ? filemtime($script_path) : time()) . '&v=FIXED8',
+        file_exists($script_path) ? filemtime($script_path) : time(),
         true
     );
     wp_localize_script(
@@ -1627,6 +1627,7 @@ function kop_enqueue_wiki_editor_assets() {
         'wikiEditorSettings',
         array(
             'isAdmin' => current_user_can('manage_options'),
+            'nonce' => wp_create_nonce('kop_wiki_editor'),
             'saveApi' => get_stylesheet_directory_uri() . '/api/save-wiki-submission.php',
             'stubsApi' => get_stylesheet_directory_uri() . '/api/wiki-stubs.php',
             'facilitySearchUrl' => get_stylesheet_directory_uri() . '/api/facility-search.php',
@@ -1637,6 +1638,56 @@ function kop_enqueue_wiki_editor_assets() {
     );
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');
+
+/**
+ * Bug reporter widget: floating "Report a problem" button + modal, loaded
+ * site-wide on the front end so every feature is covered — the public data
+ * form, the anonymous document portal (shortcode pages a template check
+ * would miss), state report pages, the program index, and everything else.
+ * Auto-captures recent JS/API errors so reports arrive with technical
+ * context. Exclude a page via:
+ *   add_filter('kop_bug_reporter_enabled', fn($on) => !is_page('slug') && $on);
+ */
+function kop_enqueue_bug_reporter() {
+    if (is_embed() || !apply_filters('kop_bug_reporter_enabled', true)) {
+        return;
+    }
+
+    $css_rel = '/css/bug-reporter.css';
+    $css_path = get_stylesheet_directory() . $css_rel;
+    if (file_exists($css_path)) {
+        wp_enqueue_style(
+            'kop-bug-reporter-style',
+            get_stylesheet_directory_uri() . $css_rel,
+            array('kop-colors'),
+            filemtime($css_path)
+        );
+    }
+
+    $js_rel = '/js/bug-reporter.js';
+    $js_path = get_stylesheet_directory() . $js_rel;
+    wp_enqueue_script(
+        'kop-bug-reporter-script',
+        get_stylesheet_directory_uri() . $js_rel,
+        array(),
+        file_exists($js_path) ? filemtime($js_path) : time(),
+        true
+    );
+    wp_localize_script(
+        'kop-bug-reporter-script',
+        'kopBugReporterSettings',
+        array(
+            'endpoint' => get_stylesheet_directory_uri() . '/api/save-bug-report.php',
+            // Mailto fallback shown if the API is unreachable. Defaults to the
+            // site admin email (the same address bug notifications go to).
+            // Note: this appears in the page source, so use an address that's
+            // OK being public. Override or disable via:
+            //   add_filter('kop_bug_reporter_fallback_email', fn() => 'you@example.org');
+            'fallbackEmail' => apply_filters('kop_bug_reporter_fallback_email', get_option('admin_email')),
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_bug_reporter');
 
 /**
  * Enqueue the reusable FileBird folder browser (modal). Idempotent — safe to

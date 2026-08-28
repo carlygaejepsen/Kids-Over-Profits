@@ -1,0 +1,268 @@
+/**
+ * KOP Bug Reporter Widget
+ * Floating "Report a problem" button + modal. Colors come from css/colors.css.
+ */
+
+.kop-bug-reporter__fab {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 99990;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 999px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 4, 53, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kop-bug-reporter__fab:hover,
+.kop-bug-reporter__fab:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(0, 4, 53, 0.3);
+}
+
+/* When Kadence's scroll-to-top button occupies the corner, sit above it. */
+.kop-bug-reporter--raised .kop-bug-reporter__fab {
+    bottom: 84px;
+}
+
+.kop-bug-reporter__fab-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+/* Overlay + panel */
+.kop-bug-reporter__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99995;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 4, 53, 0.55);
+}
+
+.kop-bug-reporter__overlay[hidden] {
+    display: none;
+}
+
+.kop-bug-reporter__panel {
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    background: var(--kop-sand, #F2EEDF);
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 4, 53, 0.35);
+}
+
+.kop-bug-reporter__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: var(--kop-midnight-blue, #000435);
+    border-radius: 9px 9px 0 0;
+}
+
+.kop-bug-reporter__title {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.kop-bug-reporter__close {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.kop-bug-reporter__form {
+    padding: 16px 18px 18px;
+}
+
+.kop-bug-reporter__label {
+    display: block;
+    margin: 12px 0 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-bug-reporter__label:first-child {
+    margin-top: 0;
+}
+
+.kop-bug-reporter__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid var(--kop-navy, #000080);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.95rem;
+    font-family: inherit;
+}
+
+.kop-bug-reporter__input:focus {
+    outline: 2px solid var(--kop-teal, #33A7B5);
+    outline-offset: 1px;
+}
+
+.kop-bug-reporter__textarea {
+    resize: vertical;
+    min-height: 70px;
+}
+
+/* Honeypot: off-screen, not display:none (some bots skip hidden inputs) */
+.kop-bug-reporter__hp {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+.kop-bug-reporter__tech {
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border: 1px dashed var(--kop-teal, #33A7B5);
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.kop-bug-reporter__checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-bug-reporter__checkbox-label input {
+    margin-top: 2px;
+}
+
+.kop-bug-reporter__tech-preview {
+    margin-top: 8px;
+}
+
+.kop-bug-reporter__tech-preview summary {
+    cursor: pointer;
+    color: var(--kop-navy, #000080);
+    text-decoration: underline;
+}
+
+.kop-bug-reporter__tech-pre {
+    margin: 8px 0 0;
+    padding: 8px;
+    max-height: 160px;
+    overflow: auto;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.kop-bug-reporter__status {
+    min-height: 1.2em;
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+}
+
+.kop-bug-reporter__status--error {
+    color: #b00020;
+    font-weight: 600;
+}
+
+.kop-bug-reporter__status--success {
+    color: var(--kop-navy, #000080);
+    font-weight: 600;
+}
+
+.kop-bug-reporter__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.kop-bug-reporter__btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid var(--kop-midnight-blue, #000435);
+}
+
+.kop-bug-reporter__btn--primary {
+    background: var(--kop-teal, #33A7B5);
+    color: #fff;
+    border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-bug-reporter__btn--primary:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.kop-bug-reporter__btn--ghost {
+    background: transparent;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-bug-reporter--modal-open {
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .kop-bug-reporter__fab-text {
+        display: none;
+    }
+
+    .kop-bug-reporter__fab {
+        padding: 12px 14px;
+        border-radius: 50%;
+    }
+
+    .kop-bug-reporter__overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+
+    .kop-bug-reporter__panel {
+        max-width: none;
+        max-height: 92vh;
+        border-radius: 12px 12px 0 0;
+        border-bottom: none;
+    }
+
+    .kop-bug-reporter__header {
+        border-radius: 9px 9px 0 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kop-bug-reporter__fab {
+        transition: none;
+    }
+}

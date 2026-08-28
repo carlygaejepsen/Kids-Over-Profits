@@ -797,3 +797,29 @@ fieldset.facility-only-field {
     text-decoration: none;
     display: inline-block;
 }
+
+/* ============================================
+   MOBILE / NARROW-SCREEN ADJUSTMENTS
+   ============================================ */
+@media (max-width: 640px) {
+    /* Tab rows are non-wrapping flex — let them wrap instead of overflowing */
+    .category-tabs {
+        flex-wrap: wrap;
+    }
+
+    .category-tab {
+        white-space: normal;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .editor-mode-toggle {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .mode-btn {
+        flex: 1 1 45%;
+        padding: 10px 12px;
+    }
+}

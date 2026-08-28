@@ -33,7 +33,7 @@ get_header();
         </div>
 
         <!-- Wiki Entry Management (Refactored Split-Pane View) -->
-        <div class="wiki-management-grid entry-browser-section" data-wiki-index-json="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo get_stylesheet_directory_uri(); ?>/js/data/reddit-wiki/">
+        <div class="wiki-management-grid entry-browser-section" data-wiki-index-json="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/js/data/reddit-wiki/index.json" data-wiki-programs-base="<?php echo esc_url(get_stylesheet_directory_uri()); ?>/js/data/reddit-wiki/">
             
             <!-- LEFT PANE: Index Selection -->
             <div class="index-selection-pane project-management">

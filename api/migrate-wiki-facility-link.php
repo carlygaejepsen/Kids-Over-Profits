@@ -12,6 +12,14 @@
 header('Content-Type: application/json');
 require_once __DIR__ . '/config.php';
 
+// Schema changes are admin-only (CLI allowed). A query param is not security.
+if (php_sapi_name() !== 'cli'
+    && (!function_exists('current_user_can') || !current_user_can('manage_options'))) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
+
 if (($_GET['run'] ?? '') !== '1') {
     echo json_encode(['success' => false, 'error' => 'Add ?run=1 to execute this migration.']);
     exit;

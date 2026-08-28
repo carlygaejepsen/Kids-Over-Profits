@@ -11,10 +11,9 @@
  * Returns: { success, data: {field: value, ...}, provider }
  */
 
+// Same-origin API: no CORS headers on purpose.
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('X-Content-Type-Options: nosniff');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
@@ -29,6 +28,17 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 define('SKIP_DB_CONNECTION', true);
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/ai-providers.php';
+
+// This endpoint spends paid AI-provider quota on arbitrary 20KB prompts, so
+// it requires a logged-in user (config.php boots WordPress; fail closed).
+if (!function_exists('is_user_logged_in') || !is_user_logged_in()) {
+    http_response_code(403);
+    echo json_encode([
+        'success' => false,
+        'error' => 'AI extraction requires a logged-in account. You can still fill in the form manually.'
+    ]);
+    exit;
+}
 
 // Field groups the extractor targets (must match the wiki-editor form ids).
 $SCALAR_FIELDS = [

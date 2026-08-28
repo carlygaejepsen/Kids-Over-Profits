@@ -144,6 +144,10 @@
                             docInput.value = res.id;
                             docChosen.innerHTML = 'Selected folder: <strong>' + escapeHtml(res.name) + '</strong> #' + escapeHtml(res.id);
                         }
+                    })
+                    .catch(function (err) {
+                        docChosen.innerHTML = '<span class="kop-pp-error">Folder browser error: '
+                            + escapeHtml(err && err.message ? err.message : 'unknown error') + '</span>';
                     });
             });
 
@@ -250,7 +254,66 @@
                 createToggle.classList.toggle('is-open', !showing);
             });
 
-            createPanel.querySelector('.kop-pp-create-btn').addEventListener('click', function () {
+            // Show the server's "these already exist" candidates and let the
+            // user pick one instead — or, when allowed, insist on creating.
+            function renderDuplicateWarning(statusEl, data, retryCreate) {
+                statusEl.innerHTML = '';
+
+                var warn = el('div', 'kop-pp-dup-warning');
+                warn.appendChild(el('p', 'kop-pp-dup-title',
+                    '⚠️ ' + escapeHtml(data.error || 'Similar programs already exist.') +
+                    ' Please check this list before creating a new entry:'));
+
+                var list = el('div', 'kop-pp-dup-list');
+                (data.duplicates || []).forEach(function (dup) {
+                    var meta = [];
+                    if (dup.location) meta.push(escapeHtml(dup.location));
+                    // The match may be on a former or alternate name rather
+                    // than the current index name — say so.
+                    var viaAltName = dup.matched_name && dup.matched_name !== dup.unique_name;
+                    if (viaAltName) {
+                        meta.push((dup.exact ? 'exactly matches' : 'similar to') +
+                            ' its past/other name “' + escapeHtml(dup.matched_name) + '”');
+                    } else if (dup.exact) {
+                        meta.push('exact name match');
+                    } else if (dup.similarity) {
+                        meta.push(escapeHtml(dup.similarity) + '% similar');
+                    }
+                    var row = el('button', 'kop-pp-result kop-pp-dup-result',
+                        '<span class="kop-pp-result-name">' + escapeHtml(dup.unique_name) + '</span>' +
+                        (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +
+                        '<span class="kop-pp-result-id">#' + escapeHtml(dup.id) + '</span>');
+                    row.type = 'button';
+                    row.dataset.uniqueName = dup.unique_name;
+                    row.addEventListener('click', function () {
+                        selectProgram(dup.unique_name, dup.id);
+                        statusEl.innerHTML = '<span class="kop-pp-ok">Selected the existing entry “' +
+                            escapeHtml(dup.unique_name) + '”.</span>';
+                        createPanel.style.display = 'none';
+                        createToggle.classList.remove('is-open');
+                    });
+                    list.appendChild(row);
+                });
+                warn.appendChild(list);
+
+                if (data.canOverride) {
+                    var anyway = el('button', 'kop-pp-dup-anyway',
+                        'None of these match — create a new entry anyway');
+                    anyway.type = 'button';
+                    anyway.addEventListener('click', function () { retryCreate(true); });
+                    warn.appendChild(anyway);
+                } else {
+                    warn.appendChild(el('p', 'kop-pp-dup-note',
+                        'This name exactly matches an existing program (possibly under a past or ' +
+                        'alternate name), so a duplicate can’t be created. If it really is a ' +
+                        'different program, select the closest entry and mention it in your ' +
+                        'submission notes.'));
+                }
+
+                statusEl.appendChild(warn);
+            }
+
+            function submitCreate(createAnyway) {
                 var nameEl = createPanel.querySelector('.kop-pp-c-name');
                 var statusEl = createPanel.querySelector('.kop-pp-create-status');
                 var name = nameEl.value.trim();
@@ -260,7 +323,8 @@
                 }
                 var btn = createPanel.querySelector('.kop-pp-create-btn');
                 btn.disabled = true;
-                statusEl.innerHTML = '<span class="kop-pp-loading">Creating…</span>';
+                statusEl.innerHTML = '<span class="kop-pp-loading">' +
+                    (createAnyway ? 'Creating anyway…' : 'Checking for existing entries…') + '</span>';
 
                 var folderVal = parseInt(docInput.value, 10);
                 fetch(pickerApi, {
@@ -271,7 +335,8 @@
                         name: name,
                         organization: createPanel.querySelector('.kop-pp-c-org').value.trim(),
                         city_state: createPanel.querySelector('.kop-pp-c-loc').value.trim(),
-                        document_folder_id: folderVal > 0 ? folderVal : null
+                        document_folder_id: folderVal > 0 ? folderVal : null,
+                        create_anyway: !!createAnyway
                     })
                 })
                     .then(function (r) { return r.json(); })
@@ -286,6 +351,8 @@
                             selectProgram(data.unique_name, data.id);
                             createPanel.style.display = 'none';
                             createToggle.classList.remove('is-open');
+                        } else if (data && data.code === 'possible_duplicate') {
+                            renderDuplicateWarning(statusEl, data, submitCreate);
                         } else {
                             statusEl.innerHTML = '<span class="kop-pp-error">' +
                                 escapeHtml((data && data.error) || 'Could not create program.') + '</span>';
@@ -295,6 +362,10 @@
                         btn.disabled = false;
                         statusEl.innerHTML = '<span class="kop-pp-error">Network error creating program.</span>';
                     });
+            }
+
+            createPanel.querySelector('.kop-pp-create-btn').addEventListener('click', function () {
+                submitCreate(false);
             });
 
             // ---- close / confirm ----

@@ -304,8 +304,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                 'facilities_without_wiki' => max(0, $facTotal - $covered),
             ]);
         } catch (PDOException $e) {
+            error_log('sync-wiki-facilities error: ' . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+            echo json_encode(['success' => false, 'error' => 'A database error occurred.']);
         }
         exit;
     }
@@ -322,6 +323,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['success' => false, 'error' => 'Method not allowed']);
+    exit;
+}
+
+// Every POST action mass-writes wiki_submissions and/or facilities_master —
+// strictly an admin tool. (config.php boots WordPress, so the check works;
+// fail closed if it somehow didn't.)
+if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
     exit;
 }
 
@@ -588,6 +598,7 @@ try {
     ]);
 
 } catch (PDOException $e) {
+    error_log('sync-wiki-facilities error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'A database error occurred.']);
 }
