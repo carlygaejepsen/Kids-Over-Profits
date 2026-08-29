@@ -626,6 +626,24 @@ function displayFacilities(facilitiesData, containerId) {
             return;
         }
 
+        // Operator-level searchable text: display name + the organization's
+        // alternate/past names + the project name, so searching an old or
+        // alternate org name still surfaces the whole section (facility cards
+        // already index their own former/other names separately). For search
+        // purposes a comma-joined alias string works as-is, so plain array
+        // coercion is enough here.
+        const toNameArray = raw => (Array.isArray(raw) ? raw : (raw ? [raw] : []));
+        const operatorSearchText = collectUniqueTexts(
+            [operatorName],
+            toNameArray(getValueFromKeys(operator, [
+                'otherNames', 'other_names', 'aliases', 'alternateNames'
+            ])),
+            toNameArray(getValueFromKeys(operator, [
+                'pastNames', 'past_names', 'formerNames', 'former_names'
+            ])),
+            [cleanText(operatorGroup && operatorGroup.name) || '']
+        ).join(' | ');
+
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
             return compareDisplayText(getFacilityDisplayName(a), getFacilityDisplayName(b));
@@ -1037,7 +1055,7 @@ function displayFacilities(facilitiesData, containerId) {
             ? `<div class="operator-details">${operatorSectionsHtml}</div>`
             : '';
 
-        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '">' +
+        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '" data-operator-search="' + escapeAttribute(operatorSearchText) + '">' +
                 '<summary class="operator-header">' +
                     operatorHeader +
                     locationYearsLine +
@@ -1731,6 +1749,9 @@ function filterFacilities() {
 
     operatorSections.forEach(section => {
         const operatorName = section.dataset.operator.toLowerCase();
+        // Includes the organization's alternate/past names, not just the
+        // display name, so old org names still match.
+        const operatorSearch = (section.dataset.operatorSearch || section.dataset.operator || '').toLowerCase();
         const facilityCards = section.querySelectorAll('.facility-card');
         let visibleFacilities = 0;
 
@@ -1742,7 +1763,7 @@ function filterFacilities() {
             const facilitySearch = (card.dataset.search || card.dataset.facility || '').toLowerCase();
             const facilityStatus = card.dataset.status;
 
-            const matchesSearch = operatorName.includes(searchTerm) || facilitySearch.includes(searchTerm);
+            const matchesSearch = operatorSearch.includes(searchTerm) || facilitySearch.includes(searchTerm);
             const matchesStatus = !statusFilter || facilityStatus === statusFilter;
 
             if (matchesLetter && matchesSearch && matchesStatus) {
