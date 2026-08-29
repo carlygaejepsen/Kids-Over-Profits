@@ -15,6 +15,7 @@ deployment:
     - /bin/mkdir -p $DEPLOYPATH/markdown_output
     - /bin/cp markdown_output/empty_files_updated.md $DEPLOYPATH/markdown_output/
     - /bin/cp functions.php $DEPLOYPATH
+    - /bin/cp search.php $DEPLOYPATH
     - /bin/cp style.css $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp .env.example $DEPLOYPATH
