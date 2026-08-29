@@ -981,6 +981,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     otherFacilityData += renderInlineFieldNotes(field.key, fieldNotes, usedFieldNoteKeys);
                 });
 
+                // Field notes attached to header-only or suppressed fields (name,
+                // address, status, ownership, resources.*) never hit the inline
+                // note renderer above — surface whatever wasn't consumed so no
+                // saved note is silently dropped.
+                const leftoverNoteRows = Object.keys(fieldNotes)
+                    .filter(key => !usedFieldNoteKeys.has(key))
+                    .map(key => {
+                        const notes = getNotesForKey(fieldNotes, key);
+                        if (!notes.length) return '';
+                        return `<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(formatFieldLabel(key))}</span><span class="field-value">${notes.map(note => escapeHtml(note)).join('; ')}</span></div>`;
+                    })
+                    .filter(Boolean)
+                    .join('');
+                const fieldNotesSectionHtml = leftoverNoteRows
+                    ? renderDetailSection(
+                        'Field notes',
+                        `<div class="facility-detail-grid">${leftoverNoteRows}</div>`,
+                        'facility-fieldnotes-section'
+                    )
+                    : '';
+
                 const additionalDetailsHtml = otherFacilityData
                     ? renderDetailSection('More details', `<div class="facility-detail-grid">${otherFacilityData}</div>`, 'facility-additional-section')
                     : '';
@@ -992,6 +1013,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     const resourceMap = {
                         'hasNews': 'News', 'hasPressReleases': 'Press Releases', 'hasInspections': 'Inspections',
                         'hasStateReports': 'State Reports', 'hasRegulatoryFilings': 'Regulatory Filings', 'hasLawsuits': 'Lawsuits',
+                        'hasPoliceReports': 'Police Reports', 'hasArticlesOfOrganization': 'Articles of Organization',
+                        'hasPropertyRecords': 'Property Records', 'hasPromotionalMaterials': 'Promotional Materials',
+                        'hasEnrollmentDocuments': 'Enrollment Documents', 'hasStudent': 'Student Records',
+                        'hasStaff': 'Staff Records', 'hasParent': 'Parent Records', 'hasSurvivorStories': 'Survivor Stories',
                         'hasSettlements': 'Settlements', 'hasViolations': 'Violations', 'hasResearch': 'Research',
                         'hasFinancial': 'Financial', 'hasNATSAP': 'NATSAP Profile', 'hasWebsite': 'Website Screenshots', 'hasOther': 'Other'
                     };
@@ -999,10 +1024,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (facility.resources.customResources && facility.resources.customResources.length > 0) {
                         resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
                     }
-                    if (resources.length > 0) {
+                    // Details textareas and the resource-notes box from the form —
+                    // rendered alongside the chips so nothing entered in the
+                    // Resources section is saved invisibly.
+                    const resourceExtraRows = [];
+                    [['newsDetails', 'News details'], ['pressReleasesDetails', 'Press release details']].forEach(([key, label]) => {
+                        const text = cleanText(facility.resources[key] || '');
+                        if (text && !isValueEmpty(text)) {
+                            resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(label)}</span><span class="field-value">${escapeHtml(text)}</span></div>`);
+                        }
+                    });
+                    const resourceNotes = (Array.isArray(facility.resources.notes) ? facility.resources.notes : (facility.resources.notes ? [facility.resources.notes] : []))
+                        .map(note => typeof note === 'string' ? cleanText(note) : (note && note.text ? cleanText(note.text) : ''))
+                        .filter(note => note && !isValueEmpty(note));
+                    if (resourceNotes.length > 0) {
+                        resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div>`);
+                    }
+
+                    if (resources.length > 0 || resourceExtraRows.length > 0) {
+                        const chipsHtml = resources.length > 0
+                            ? `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`
+                            : '';
+                        const extrasHtml = resourceExtraRows.length > 0
+                            ? `<div class="facility-detail-grid">${resourceExtraRows.join('')}</div>`
+                            : '';
                         resourcesSectionHtml = renderDetailSection(
                             'Resources',
-                            `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`,
+                            chipsHtml + extrasHtml,
                             'facility-resources-section'
                         );
                     }
@@ -1043,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${resourcesSectionHtml}
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
+                                    ${fieldNotesSectionHtml}
                                 </div>
                             </details>
                         </div>

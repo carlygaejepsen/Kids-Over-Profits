@@ -947,6 +947,12 @@ function displayFacilities(facilitiesData, containerId) {
             return fields;
         };
 
+        // Operator-level field notes: consumed inline for fields rendered in
+        // "More details" below; anything left over gets its own section so no
+        // saved note is silently dropped.
+        const operatorFieldNotes = (operator && operator.fieldNotes) || {};
+        const usedOperatorNoteKeys = new Set();
+
         // Get all fields from the operator object
         const operatorFields = renderAllObjectFieldsOp(operator);
 
@@ -980,11 +986,29 @@ function displayFacilities(facilitiesData, containerId) {
             if (!renderedValue || isValueEmpty(renderedValue)) return;
 
             if (field.label) {
-                otherOperatorData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;  
+                otherOperatorData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
+                otherOperatorData += renderInlineFieldNotes(field.key, operatorFieldNotes, usedOperatorNoteKeys);  
             } else {
                 otherOperatorData += `<div class="field-row"><span class="field-value">${renderedValue}</span></div>`;   
             }
         });
+
+        const operatorLeftoverNoteRows = Object.keys(operatorFieldNotes)
+            .filter(key => !usedOperatorNoteKeys.has(key))
+            .map(key => {
+                const notes = getNotesForKey(operatorFieldNotes, key);
+                if (!notes.length) return '';
+                return `<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(formatFieldLabel(key))}</span><span class="field-value">${notes.map(note => escapeHtml(note)).join('; ')}</span></div>`;
+            })
+            .filter(Boolean)
+            .join('');
+        const operatorFieldNotesSectionHtml = operatorLeftoverNoteRows
+            ? renderDetailSection(
+                'Field notes',
+                `<div class="facility-detail-grid">${operatorLeftoverNoteRows}</div>`,
+                'operator-fieldnotes-section'
+            )
+            : '';
 
         const additionalOperatorDetailsHtml = otherOperatorData
             ? renderDetailSection(
@@ -1062,7 +1086,8 @@ function displayFacilities(facilitiesData, containerId) {
             operatorWebsitesHtml,
             operatorPeopleHtml,
             operatorDocLibraryHtml,
-            additionalOperatorDetailsHtml
+            additionalOperatorDetailsHtml,
+            operatorFieldNotesSectionHtml
         ].join('');
 
         const operatorDetailsDiv = operatorSectionsHtml
@@ -1574,6 +1599,27 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             });
 
+            // Field notes attached to header-only or suppressed fields (name,
+            // address, status, ownership, resources.*) never hit the inline
+            // note renderer above — surface whatever wasn't consumed so no
+            // saved note is silently dropped.
+            const leftoverNoteRows = Object.keys(fieldNotes)
+                .filter(key => !usedFieldNoteKeys.has(key))
+                .map(key => {
+                    const notes = getNotesForKey(fieldNotes, key);
+                    if (!notes.length) return '';
+                    return `<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(formatFieldLabel(key))}</span><span class="field-value">${notes.map(note => escapeHtml(note)).join('; ')}</span></div>`;
+                })
+                .filter(Boolean)
+                .join('');
+            const fieldNotesSectionHtml = leftoverNoteRows
+                ? renderDetailSection(
+                    'Field notes',
+                    `<div class="facility-detail-grid">${leftoverNoteRows}</div>`,
+                    'facility-fieldnotes-section'
+                )
+                : '';
+
             // FileBird Document Matching — match this facility's program folder
             // (often a subfolder nested under its operator's parent folder).
             const documentsHtml = buildDocLibraryHtml(resolveDocFolder(
@@ -1592,6 +1638,15 @@ function displayFacilities(facilitiesData, containerId) {
                     'hasStateReports': 'State Reports',        
                     'hasRegulatoryFilings': 'Regulatory Filings',
                     'hasLawsuits': 'Lawsuits',
+                    'hasPoliceReports': 'Police Reports',
+                    'hasArticlesOfOrganization': 'Articles of Organization',
+                    'hasPropertyRecords': 'Property Records',
+                    'hasPromotionalMaterials': 'Promotional Materials',
+                    'hasEnrollmentDocuments': 'Enrollment Documents',
+                    'hasStudent': 'Student Records',
+                    'hasStaff': 'Staff Records',
+                    'hasParent': 'Parent Records',
+                    'hasSurvivorStories': 'Survivor Stories',
                     'hasSettlements': 'Settlements',
                     'hasViolations': 'Violations',
                     'hasResearch': 'Research',
@@ -1611,12 +1666,33 @@ function displayFacilities(facilitiesData, containerId) {
                     resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
                 }
 
-                if (resources.length > 0) {
+                // Details textareas and the resource-notes box from the form —
+                // rendered alongside the chips so nothing entered in the
+                // Resources section is saved invisibly.
+                const resourceExtraRows = [];
+                [['newsDetails', 'News details'], ['pressReleasesDetails', 'Press release details']].forEach(([key, label]) => {
+                    const text = cleanText(facility.resources[key] || '');
+                    if (text && !isValueEmpty(text)) {
+                        resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(label)}</span><span class="field-value">${escapeHtml(text)}</span></div>`);
+                    }
+                });
+                const resourceNotes = (Array.isArray(facility.resources.notes) ? facility.resources.notes : (facility.resources.notes ? [facility.resources.notes] : []))
+                    .map(note => typeof note === 'string' ? cleanText(note) : (note && note.text ? cleanText(note.text) : ''))
+                    .filter(note => note && !isValueEmpty(note));
+                if (resourceNotes.length > 0) {
+                    resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div>`);
+                }
+
+                if (resources.length > 0 || resourceExtraRows.length > 0) {
+                    const chipsHtml = resources.length > 0
+                        ? `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`
+                        : '';
+                    const extrasHtml = resourceExtraRows.length > 0
+                        ? `<div class="facility-detail-grid">${resourceExtraRows.join('')}</div>`
+                        : '';
                     resourcesSectionHtml = renderDetailSection(
                         'Resources',
-                        `<div class="resource-chip-list">${
-                            resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')
-                        }</div>`,
+                        chipsHtml + extrasHtml,
                         'facility-resources-section'
                     );
                 }
@@ -1729,7 +1805,8 @@ function displayFacilities(facilitiesData, containerId) {
                 newsSectionHtml,
                 resourcesSectionHtml,
                 documentsSectionHtml,
-                additionalDetailsHtml
+                additionalDetailsHtml,
+                fieldNotesSectionHtml
             ].join('');
             const hasExtraContent = facilityExtraContent.trim() !== '';
 
