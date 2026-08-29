@@ -258,7 +258,7 @@ window.KOP_NewsProcessor_Settings = {
     apiUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/process-news-ai.php',
     submissionUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/save-news-submission.php',
     savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php',
-    duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-news-duplicate.php',
+    duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-duplicate-url.php',
     facilitySearchUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/facility-search.php'
 };
 

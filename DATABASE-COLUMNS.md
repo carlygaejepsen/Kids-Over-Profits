@@ -57,12 +57,13 @@ Quick reference for all database tables and their columns.
 ---
 
 ### news_submissions
-**Columns:** `id`, `article_title`, `alternate_title`, `author`, `publication_name`, `publication_date`, `article_url`, `article_type`, `facilities_mentioned`, `staff_mentioned`, `survivors_mentioned`, `content_warnings`, `summary`, `json_data`, `generated_output`, `status`, `submitted_by`, `submission_notes`, `reviewer_notes`, `reviewed_by`, `reviewed_at`, `created_at`, `updated_at`
+**Columns:** `id`, `article_title`, `alternate_title`, `author`, `publication_name`, `publication_date`, `article_url`, `article_type`, `facilities_mentioned`, `staff_mentioned`, `survivors_mentioned`, `content_warnings`, `summary`, `json_data`, `generated_output`, `story_group_id`, `status`, `submitted_by`, `submission_notes`, `reviewer_notes`, `reviewed_by`, `reviewed_at`, `created_at`, `updated_at`
 
 **Purpose:** News processor form submissions
 **Primary Key:** `id`
 **Article Types:** `lawsuit`, `event`, `expose`, `arrest`, `closure`, `corporate`, `general`
 **Status Values:** `draft`, `submitted`, `approved`, `published`, `rejected`
+**Notes:** `story_group_id` clusters articles about the same story from different outlets (set automatically on save by `api/news-story-groups.php`; value is the lowest article id in the group, NULL = standalone). Rebuild all clusters with `api/rebuild-news-story-groups.php`.
 
 ---
 

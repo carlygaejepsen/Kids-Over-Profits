@@ -1458,7 +1458,7 @@ function enqueue_news_processor_scripts() {
                 'apiUrl' => $theme_uri . '/api/process-news-ai.php',
                 'submissionUrl' => $theme_uri . '/api/save-news-submission.php',
                 'savedValuesUrl' => $theme_uri . '/api/saved-values.php',
-                'duplicateCheckUrl' => $theme_uri . '/api/check-news-duplicate.php',
+                'duplicateCheckUrl' => $theme_uri . '/api/check-duplicate-url.php',
                 'facilitySearchUrl' => $theme_uri . '/api/facility-search.php',
                 'nonce' => wp_create_nonce('news_processor_nonce')
             )

@@ -19,12 +19,12 @@
 if (!function_exists('kop_normalize_url')) {
 
     /**
-     * Normalize a URL for comparison. Strips scheme, leading "www.", and trailing
-     * slash; lowercases host+path; keeps the query string (it can be meaningful,
-     * e.g. ?id=123). The #fragment is stripped only when $keepFragment is false —
-     * legislative/court trackers that hash-route (e.g. .../bills#/bill/AB123) carry
-     * the record's identity in the fragment, so those types keep it. Returns null
-     * for empty/non-URL input.
+     * Normalize a URL for comparison. Strips scheme, leading "www.", trailing
+     * slash, and tracking query params (utm_*, fbclid, …); lowercases; keeps the
+     * remaining query string (it can be meaningful, e.g. ?id=123). The #fragment
+     * is stripped only when $keepFragment is false — legislative/court trackers
+     * that hash-route (e.g. .../bills#/bill/AB123) carry the record's identity in
+     * the fragment, so those types keep it. Returns null for empty/non-URL input.
      */
     function kop_normalize_url($url, bool $keepFragment = false): ?string {
         if (!is_string($url)) {
@@ -39,6 +39,26 @@ if (!function_exists('kop_normalize_url')) {
         if (!$keepFragment) {
             $u = preg_replace('/#.*$/', '', $u);                  // strip fragment
         }
+        // Drop tracking params so a share-link variant of an article matches
+        // the clean URL. Everything else in the query string is kept. A kept
+        // fragment is set aside first so it can't be mistaken for a param.
+        $fragment = '';
+        $fPos = strpos($u, '#');
+        if ($fPos !== false) {
+            $fragment = substr($u, $fPos);
+            $u = substr($u, 0, $fPos);
+        }
+        $qPos = strpos($u, '?');
+        if ($qPos !== false) {
+            $path = substr($u, 0, $qPos);
+            $pairs = explode('&', substr($u, $qPos + 1));
+            $kept = array_filter($pairs, static function ($pair) {
+                $key = strtolower(explode('=', $pair, 2)[0]);
+                return !preg_match('/^(utm_[a-z]+|fbclid|gclid|msclkid|igshid|mc_cid|mc_eid|cmpid|smid|ref)$/', $key);
+            });
+            $u = $path . (empty($kept) ? '' : '?' . implode('&', $kept));
+        }
+        $u .= $fragment;
         $u = rtrim($u, '/');
         $u = strtolower(trim($u));
         return $u !== '' ? $u : null;

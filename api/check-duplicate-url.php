@@ -11,6 +11,8 @@
  *   type        : 'news' | 'legislation' | 'lawsuit'   (required)
  *   url         : a single URL                          (url or urls required)
  *   urls        : array of URLs (or newline string)
+ *   title       : news only — article title, checked (with outlet) against
+ *   outlet      : news only — publication name          existing titles
  *   exclude_id  : id of the record being edited, so it doesn't match itself
  *
  * Response: { success, blocked: bool, duplicates: [ {id,status,title,url} ] }
@@ -28,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/url-dedupe.php';
+require_once __DIR__ . '/news-story-groups.php';
 
 // Accept JSON body or form/query params.
 $body = [];
@@ -85,6 +88,19 @@ try {
     } else {
         $normalized = kop_collect_urls(...$rawUrls);
         $duplicates = kop_check_url_duplicates($pdo, $type, $normalized);
+    }
+
+    // News also matches on identical title + outlet (URL variants of one
+    // article), mirroring the guard in save-news-submission.php.
+    $checkTitle = $param('title');
+    if ($type === 'news' && is_string($checkTitle) && trim($checkTitle) !== '') {
+        $outlet = $param('outlet');
+        $seen = array_column($duplicates, null, 'id');
+        foreach (kop_news_find_title_duplicates($pdo, $checkTitle, is_string($outlet) ? $outlet : '') as $d) {
+            if (!isset($seen[$d['id']])) {
+                $duplicates[] = $d;
+            }
+        }
     }
 
     if ($excludeId > 0) {

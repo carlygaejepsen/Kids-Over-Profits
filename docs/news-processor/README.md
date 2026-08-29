@@ -33,7 +33,8 @@ Typical workflow:
 ### Backend
 - `api/process-news-ai.php` handles AI extraction requests.
 - `api/save-news-submission.php` persists processed news submissions.
-- `api/check-news-duplicate.php` checks for likely duplicate articles.
+- `api/check-duplicate-url.php` checks for existing entries by URL (and, for news, by title + outlet) before AI processing or submission.
+- `api/news-story-groups.php` provides the title/outlet duplicate check and clusters articles about the same story from different outlets (`story_group_id`).
 - `api/saved-values.php` stores and returns reusable saved values.
 
 ## AI Providers
@@ -75,8 +76,14 @@ The form captures:
 - accidental refreshes should not wipe the current draft
 
 ### Duplicate Protection
-- the processor can call `api/check-news-duplicate.php` before submission
-- this helps avoid storing the same article multiple times under slightly different metadata
+- the processor calls `api/check-duplicate-url.php` before AI processing and again before submission
+- matching is by normalized URL (tracking params like `utm_*` stripped) and, at submit time, by identical title on the same outlet — so URL variants of one article are caught too
+- `api/save-news-submission.php` enforces the same checks server-side with a 409 on both insert and update, so the pre-check failing open never admits a duplicate
+
+### Story Grouping
+- articles about the same story from different outlets are not duplicates; they are clustered under a shared `story_group_id` (assigned automatically on save by `api/news-story-groups.php`)
+- the news feed renders one card per story with an "Also covered by" list of the other outlets
+- `api/rebuild-news-story-groups.php` (admin-only, POST) re-clusters the whole archive — run it once after the schema migration
 
 ## Usage Notes
 

@@ -1252,20 +1252,25 @@
     // already exists for this article URL. Fails open (never blocks) on error;
     // the submit endpoint still rejects true duplicates with a 409 as a backstop.
     const newsDupeCheckUrl = (() => {
-        const base = (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.submissionUrl)
-            ? window.KOP_NewsProcessor_Settings.submissionUrl
-            : '/wp-content/themes/child/api/save-news-submission.php';
+        const settings = window.KOP_NewsProcessor_Settings || {};
+        if (settings.duplicateCheckUrl) return settings.duplicateCheckUrl;
+        const base = settings.submissionUrl || '/wp-content/themes/child/api/save-news-submission.php';
         return base.replace(/[^/]*$/, 'check-duplicate-url.php');
     })();
 
-    async function newsFindUrlDuplicates(url) {
+    async function newsFindUrlDuplicates(url, extra) {
         const clean = (url || '').trim();
-        if (!clean) return [];
+        const payload = { type: 'news', url: clean };
+        if (extra && (extra.title || '').trim()) {
+            payload.title = extra.title.trim();
+            payload.outlet = (extra.outlet || '').trim();
+        }
+        if (!clean && !payload.title) return [];
         try {
             const res = await fetch(newsDupeCheckUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type: 'news', url: clean })
+                body: JSON.stringify(payload)
             });
             const data = await res.json();
             if (data && data.success) return data.duplicates || [];
@@ -1275,9 +1280,10 @@
         return [];
     }
 
-    /** Returns true and shows a popup if a news entry already uses this URL. */
-    async function newsBlockedByDuplicate(url) {
-        const dupes = await newsFindUrlDuplicates(url);
+    /** Returns true and shows a popup if a news entry already uses this URL
+     *  (or, when extra.title is given, the same title on the same outlet). */
+    async function newsBlockedByDuplicate(url, extra) {
+        const dupes = await newsFindUrlDuplicates(url, extra);
         if (!dupes.length) return false;
         const d = dupes[0] || {};
         const title = d.title ? `\n\nExisting entry: "${d.title}"` : '';
@@ -1430,8 +1436,10 @@
                 return;
             }
 
-            // Block submission if this article URL is already in the system.
-            if (formData.url && await newsBlockedByDuplicate(formData.url)) {
+            // Block submission if this article URL — or the same title on the
+            // same outlet — is already in the system.
+            const dupExtra = { title: formData.title, outlet: formData.publicationName };
+            if (await newsBlockedByDuplicate(formData.url, dupExtra)) {
                 modal.style.display = 'none';
                 return;
             }

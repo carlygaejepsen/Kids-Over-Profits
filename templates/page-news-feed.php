@@ -58,6 +58,53 @@ try {
     $stmt->execute($params);
     $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Collapse cross-outlet coverage: rows sharing a story_group_id render as
+    // one card (the most recent article) with an "Also covered by" list.
+    // Pre-migration databases have no story_group_id column; ?? null keeps
+    // the feed working there.
+    $grouped = [];
+    $story_coverage = [];
+    foreach ($submissions as $row) {
+        $gid = $row['story_group_id'] ?? null;
+        $story_key = $gid ? 'g' . $gid : 'i' . $row['id'];
+        if (isset($grouped[$story_key])) {
+            $story_coverage[$story_key][] = $row;
+        } else {
+            $grouped[$story_key] = $row;
+            $story_coverage[$story_key] = [];
+        }
+    }
+
+    // Coverage of a displayed story can also live outside this page's window
+    // (other pages, other months). Pull those rows into the coverage lists.
+    $page_gids = [];
+    foreach ($grouped as $row) {
+        if (!empty($row['story_group_id'])) {
+            $page_gids[(int) $row['story_group_id']] = true;
+        }
+    }
+    if (!empty($page_gids)) {
+        $shown_ids = [];
+        foreach ($submissions as $row) {
+            $shown_ids[(int) $row['id']] = true;
+        }
+        $gid_ph = implode(',', array_fill(0, count($page_gids), '?'));
+        $cov_sql = "SELECT id, article_title, alternate_title, publication_name,
+                           publication_date, article_url, story_group_id
+                    FROM news_submissions
+                    WHERE story_group_id IN ($gid_ph) AND status IN ($placeholders)
+                    ORDER BY publication_date DESC, id DESC";
+        $cov_stmt = $pdo->prepare($cov_sql);
+        $cov_stmt->execute(array_merge(array_keys($page_gids), $status_filter));
+        foreach ($cov_stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            if (isset($shown_ids[(int) $row['id']])) {
+                continue;
+            }
+            $story_coverage['g' . (int) $row['story_group_id']][] = $row;
+        }
+    }
+    $submissions = array_values($grouped);
+
     // Fetch available archive months for the dropdown
     $archive_sql = "SELECT DATE_FORMAT(publication_date, '%Y-%m') AS month_key,
                            DATE_FORMAT(publication_date, '%M %Y') AS month_label,
@@ -524,6 +571,11 @@ try {
                 // Re-reading news_processor.php: "Original title is sensationalist... (create alternate title)"
                 // So yes, alternate_title is likely the preferred one for display if it exists.
                 $displayTitle = !empty($item['alternate_title']) ? $item['alternate_title'] : $item['article_title'];
+
+                // Other outlets' articles about this same story (see the
+                // story_group_id collapse above the card loop).
+                $story_key = !empty($item['story_group_id']) ? 'g' . $item['story_group_id'] : 'i' . $item['id'];
+                $also_covered = $story_coverage[$story_key] ?? [];
             ?>
                 <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
                 <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
@@ -551,6 +603,26 @@ try {
                             <?php echo esc_html($pubDate); ?>
                         </span>
                     </div>
+
+                    <?php if (!empty($also_covered)): ?>
+                        <div class="news-coverage">
+                            <span class="coverage-label">📰 Also covered by:</span>
+                            <?php foreach ($also_covered as $cov):
+                                $covTitle = !empty($cov['alternate_title']) ? $cov['alternate_title'] : $cov['article_title'];
+                                $covOutlet = $cov['publication_name'] ?: (parse_url($cov['article_url'] ?? '', PHP_URL_HOST) ?: 'Unknown outlet');
+                                $covDate = !empty($cov['publication_date']) ? date('M j, Y', strtotime($cov['publication_date'])) : '';
+                                $covLabel = $covOutlet . ($covDate ? " ($covDate)" : '');
+                            ?>
+                                <?php if (!empty($cov['article_url'])): ?>
+                                    <a class="coverage-link" href="<?php echo esc_url($cov['article_url']); ?>" target="_blank" rel="noopener noreferrer" title="<?php echo esc_attr($covTitle); ?>">
+                                        <?php echo esc_html($covLabel); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="coverage-link" title="<?php echo esc_attr($covTitle); ?>"><?php echo esc_html($covLabel); ?></span>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
 
                     <?php if (!empty($warnings)): ?>
                         <div class="news-warnings">

@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS `news_submissions` (
   `summary` text COMMENT 'Trauma-sensitive summary',
   `json_data` longtext NOT NULL COMMENT 'Full form data as JSON',
   `generated_output` longtext COMMENT 'Generated formatted output',
+  `story_group_id` int(11) DEFAULT NULL COMMENT 'Cross-outlet story cluster: id of the lowest-id article in the group; NULL = standalone',
   `status` enum('draft','submitted','approved','published','rejected','deleted') NOT NULL DEFAULT 'submitted',
   `submitted_by` varchar(255) DEFAULT NULL COMMENT 'User identifier or email',
   `submission_notes` text COMMENT 'Notes from submitter',
@@ -101,7 +102,8 @@ CREATE TABLE IF NOT EXISTS `news_submissions` (
   KEY `article_type` (`article_type`),
   KEY `status` (`status`),
   KEY `publication_date` (`publication_date`),
-  KEY `created_at` (`created_at`)
+  KEY `created_at` (`created_at`),
+  KEY `story_group_id` (`story_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='News processor form submissions'
 SQL;
 

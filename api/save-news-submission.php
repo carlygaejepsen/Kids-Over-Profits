@@ -25,6 +25,7 @@ require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-mentions.php';
 require_once __DIR__ . '/facility-aliases.php';
 require_once __DIR__ . '/url-dedupe.php';
+require_once __DIR__ . '/news-story-groups.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
@@ -206,8 +207,25 @@ try {
     unset($jsonData['id']);
     
     if ($submissionId) {
+        // The same duplicate guards as the insert path, excluding the row
+        // being edited — otherwise an edit could steer article_url or the
+        // title into an existing entry and create a silent duplicate.
+        $dupUrls = kop_collect_urls($articleUrl);
+        if (!empty($dupUrls)) {
+            $urlDupes = array_values(array_filter(
+                kop_check_url_duplicates($pdo, 'news', $dupUrls),
+                static function ($d) use ($submissionId) {
+                    return (int) $d['id'] !== (int) $submissionId;
+                }
+            ));
+            kop_block_if_duplicate($urlDupes);
+        }
+        kop_block_if_duplicate(kop_news_find_title_duplicates(
+            $pdo, $articleTitle, $publicationName, (int) $submissionId
+        ));
+
         // Update existing submission
-        $sql = "UPDATE news_submissions SET 
+        $sql = "UPDATE news_submissions SET
                     article_title = ?,
                     alternate_title = ?,
                     author = ?,
@@ -267,6 +285,7 @@ try {
         }
 
         kop_sync_news_facility_links($pdo, (int)$submissionId, $facilities, $submittedBy ?: null);
+        kop_news_assign_story_group($pdo, (int)$submissionId);
 
         echo json_encode([
             'success' => true,
@@ -275,12 +294,14 @@ try {
         ]);
     } else {
         // Block duplicate article submissions by URL (the strongest news
-        // identity key). Re-submitting something previously rejected/deleted is
-        // still allowed.
+        // identity key), then by identical title on the same outlet (catches
+        // AMP/print/share-link URL variants of one page). Re-submitting
+        // something previously rejected/deleted is still allowed.
         $dupUrls = kop_collect_urls($articleUrl);
         if (!empty($dupUrls)) {
             kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'news', $dupUrls));
         }
+        kop_block_if_duplicate(kop_news_find_title_duplicates($pdo, $articleTitle, $publicationName));
 
         // Create new submission
         $sql = "INSERT INTO news_submissions
@@ -316,6 +337,7 @@ try {
         $newId = (int)$pdo->lastInsertId();
 
         kop_sync_news_facility_links($pdo, $newId, $facilities, $submittedBy ?: null);
+        kop_news_assign_story_group($pdo, $newId);
 
         echo json_encode([
             'success' => true,

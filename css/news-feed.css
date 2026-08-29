@@ -507,3 +507,34 @@
         font-size: 0.8rem;
     }
 }
+
+/* Cross-outlet coverage of the same story (story_group_id clusters) */
+.news-coverage {
+    padding: 0 1.5rem 1rem;
+    font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.coverage-label {
+    color: var(--kop-midnight-blue);
+    font-weight: 600;
+}
+
+.coverage-link {
+    display: inline-block;
+    background-color: var(--kop-mint-green);
+    color: var(--kop-midnight-blue);
+    border: 1px solid var(--kop-teal);
+    padding: 2px 10px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+a.coverage-link:hover {
+    background-color: var(--kop-teal);
+    color: var(--kop-white);
+}
