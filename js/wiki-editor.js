@@ -1280,31 +1280,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const placeholderByCategory = [
             {
                 match: ['history', 'background'],
-                text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `Background information for ${name} has not been added yet. If you have reliable historical details or sources to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['founders', 'staff'],
-                text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `Information about the founders or notable staff at ${name} has not been added yet. If you have reliable names, roles, or source material to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['structure'],
-                text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `Information about the program structure at ${name} has not been added yet. If you have reliable descriptions or source material to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['rules', 'punishments'],
-                text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `Information about the rules, consequences, or disciplinary practices at ${name} has not been added yet. If you have reliable source material to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['abuse', 'neglect', 'lawsuits'],
-                text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `Information about abuse allegations, neglect, or lawsuits involving ${name} has not been added yet. If you have reliable reports or source material to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['survivor testimonies', 'survivor testimony', 'testimonies', 'testimonials'],
-                text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `No survivor testimonies for ${name} have been added here yet. If you have a firsthand account or reliable source material to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             },
             {
                 match: ['related media'],
-                text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`
+                text: `No related media links for ${name} have been added yet. If you have reliable external resources to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`
             }
         ];
 
@@ -1317,10 +1317,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (lowerCategory.includes('media')) {
-            return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`;
+            return `No media coverage for ${name} has been added yet. If you have seen a news item about ${name} and would like to share it, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`;
         }
 
-        return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).`;
+        return `Additional information about ${name} has not been added yet. If you have reliable updates or references to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).`;
     };
 
     // --- Helper: Normalize/Sanitize URLs for Markdown ---
@@ -2127,7 +2127,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         // Boilerplate placeholder paragraphs (e.g. "...has not been added yet.
-        // If you have ... to share, please contact [u/Miss_Nobody89](/u/Miss_Nobody89).") are an
+        // If you have ... to share, please contact [u/Signal-Strain9810](/u/Signal-Strain9810).") are an
         // invitation to contribute, not statements of fact, so they must stay in
         // the present tense. Skip any line carrying the placeholder signature.
         const isPlaceholderLine = (line) =>
