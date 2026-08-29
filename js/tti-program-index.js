@@ -567,6 +567,12 @@ function displayFacilities(facilitiesData, containerId) {
     });
 
     // Generate operator sections
+    // Cross-reference rows: every past/alternate name becomes its own index
+    // entry linking to the current profile ("Island View RTC — see Elevations
+    // RTC"). Collected while rendering, emitted after the real sections.
+    const aliasEntries = [];
+    const renderedOperatorKeys = new Set();
+
     operatorGroups.forEach(operatorGroup => {
         const operator = operatorGroup && operatorGroup.operator ? operatorGroup.operator : {};
         const rawFacilities = toArray(operatorGroup && operatorGroup.facilities).slice();
@@ -633,16 +639,24 @@ function displayFacilities(facilitiesData, containerId) {
         // purposes a comma-joined alias string works as-is, so plain array
         // coercion is enough here.
         const toNameArray = raw => (Array.isArray(raw) ? raw : (raw ? [raw] : []));
-        const operatorSearchText = collectUniqueTexts(
-            [operatorName],
+        const operatorAltNames = collectUniqueTexts(
             toNameArray(getValueFromKeys(operator, [
                 'otherNames', 'other_names', 'aliases', 'alternateNames'
             ])),
             toNameArray(getValueFromKeys(operator, [
                 'pastNames', 'past_names', 'formerNames', 'former_names'
-            ])),
+            ]))
+        );
+        const operatorSearchText = collectUniqueTexts(
+            [operatorName],
+            operatorAltNames,
             [cleanText(operatorGroup && operatorGroup.name) || '']
         ).join(' | ');
+
+        renderedOperatorKeys.add(normalizeTextKey(operatorName));
+        operatorAltNames.forEach(alias => {
+            aliasEntries.push({ alias, target: operatorName, facility: '' });
+        });
 
         // Sort facilities alphabetically by name
         facilities.sort((a, b) => {
@@ -1686,6 +1700,13 @@ function displayFacilities(facilitiesData, containerId) {
             if (facLocation) searchParts.push(facLocation);
             const facilitySearchText = escapeAttribute(searchParts.join(' | '));
 
+            // Cross-reference rows for this facility's past/alternate names,
+            // pointing back to its card inside this operator's section.
+            collectUniqueTexts(normalizedFormerNames, aliasNames).forEach(alias => {
+                if (normalizeTextKey(alias) === normalizeTextKey(facilityDatasetNameRaw)) return;
+                aliasEntries.push({ alias, target: operatorName, facility: facilityDatasetNameRaw });
+            });
+
             // Only render the "Learn more" disclosure when there's actually
             // expanded content — otherwise empty facility cards show a button
             // that opens to nothing.
@@ -1723,13 +1744,43 @@ function displayFacilities(facilitiesData, containerId) {
                 </div>`;
         });
 
-        html += '</div>' + 
+        html += '</div>' +
             '</details>';
+    });
+
+    // Emit the cross-reference rows. They share .operator-section and
+    // data-operator so the A–Z sort and alphabet filter slot them in
+    // alphabetically under the OLD name. Aliases that match a real operator
+    // entry are skipped (the real entry already covers them).
+    const seenAliasKeys = new Set();
+    aliasEntries.forEach(entry => {
+        const aliasKey = normalizeTextKey(entry.alias);
+        if (!aliasKey || renderedOperatorKeys.has(aliasKey)) return;
+        const dedupeKey = aliasKey + '→' + normalizeTextKey(entry.target) + '→' + normalizeTextKey(entry.facility);
+        if (seenAliasKeys.has(dedupeKey)) return;
+        seenAliasKeys.add(dedupeKey);
+
+        const showFacility = entry.facility
+            && normalizeTextKey(entry.facility) !== normalizeTextKey(entry.target);
+        const targetLabel = showFacility
+            ? `${entry.target} › ${entry.facility}`
+            : entry.target;
+
+        html += `<div class="operator-section alias-entry" data-operator="${escapeAttribute(entry.alias)}"
+                data-alias-target="${escapeAttribute(entry.target)}"
+                data-alias-facility="${escapeAttribute(entry.facility || '')}">
+                <button type="button" class="alias-entry-row">
+                    <span class="alias-entry-name">${escapeHtml(entry.alias)}</span>
+                    <span class="alias-entry-note">former / alternate name — see <strong>${escapeHtml(targetLabel)}</strong> →</span>
+                </button>
+            </div>`;
     });
 
     html += '</div>';        container.innerHTML = html;
 
         attachDocumentButtons(container);
+
+        attachAliasEntryLinks(container);
 
         loadLinkPreviews(container);
 
@@ -1737,6 +1788,41 @@ function displayFacilities(facilitiesData, containerId) {
     window.facilitiesData = facilitiesData;
 }
 
+
+// Clicking a cross-reference row jumps to (and opens) the current profile it
+// points at, scrolling to the specific facility card when one is named.
+function attachAliasEntryLinks(container) {
+    container.querySelectorAll('.alias-entry .alias-entry-row').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const entry = btn.closest('.alias-entry');
+            const targetName = entry.dataset.aliasTarget || '';
+            const facilityName = entry.dataset.aliasFacility || '';
+
+            let target = null;
+            document.querySelectorAll('.operator-section:not(.alias-entry)').forEach(sec => {
+                if (!target && sec.dataset.operator === targetName) target = sec;
+            });
+            if (!target) return;
+
+            // The target may be hidden by an active search/filter — reveal it.
+            target.style.display = 'block';
+            target.open = true;
+
+            let scrollEl = target;
+            if (facilityName) {
+                target.querySelectorAll('.facility-card').forEach(card => {
+                    if (scrollEl === target && card.dataset.facility === facilityName) {
+                        card.style.display = 'block';
+                        scrollEl = card;
+                    }
+                });
+            }
+            scrollEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            scrollEl.classList.add('alias-jump-highlight');
+            setTimeout(() => scrollEl.classList.remove('alias-jump-highlight'), 2200);
+        });
+    });
+}
 
 function filterFacilities() {
     const searchInput = document.getElementById('searchInput');
@@ -1749,6 +1835,19 @@ function filterFacilities() {
 
     operatorSections.forEach(section => {
         const operatorName = section.dataset.operator.toLowerCase();
+
+        // Cross-reference rows: no facility cards or status of their own.
+        // Match on the old name (and its target); hide under a status filter.
+        if (section.classList.contains('alias-entry')) {
+            const aliasSearch = (operatorName + ' '
+                + (section.dataset.aliasTarget || '') + ' '
+                + (section.dataset.aliasFacility || '')).toLowerCase();
+            const show = (!letterFilter || operatorName.startsWith(letterFilter))
+                && aliasSearch.includes(searchTerm)
+                && !statusFilter;
+            section.style.display = show ? 'block' : 'none';
+            return;
+        }
         // Includes the organization's alternate/past names, not just the
         // display name, so old org names still match.
         const operatorSearch = (section.dataset.operatorSearch || section.dataset.operator || '').toLowerCase();

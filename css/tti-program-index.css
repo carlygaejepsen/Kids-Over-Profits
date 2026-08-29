@@ -1249,3 +1249,62 @@ body.kop-doc-modal-open {
     }
 }
 
+
+/* ============================================
+   CROSS-REFERENCE TILES
+   Past/alternate names shown as their own index entries linking to the
+   current profile ("Island View RTC — see Elevations RTC").
+   ============================================ */
+.operator-section.alias-entry {
+    background: var(--kop-sand, #F2EEDF);
+    border: 2px dashed var(--kop-teal, #33A7B5);
+    min-height: 0;
+    padding: 0;
+}
+
+.operator-section.alias-entry:hover {
+    box-shadow: 0 4px 12px rgba(51, 167, 181, 0.35);
+    transform: translateY(-2px);
+}
+
+/* Undo the section-wide white-text rule for these light tiles */
+.operator-section.alias-entry *,
+.operator-section.alias-entry span,
+.operator-section.alias-entry strong {
+    color: var(--kop-midnight-blue, #000435) !important;
+}
+
+.alias-entry-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.alias-entry-name {
+    font-size: 1.15em;
+    font-weight: 700;
+}
+
+.alias-entry-note {
+    font-size: 0.85em;
+    line-height: 1.35;
+}
+
+.alias-entry-note strong {
+    text-decoration: underline;
+}
+
+/* Brief flash on the profile a cross-reference jumps to */
+.alias-jump-highlight {
+    outline: 3px solid var(--kop-chartreuse, #B2E102);
+    outline-offset: 2px;
+}
