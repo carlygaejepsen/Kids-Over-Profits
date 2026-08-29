@@ -210,6 +210,9 @@
                     if (row.city) meta.push(escapeHtml(row.city));
                     if (row.state) meta.push(escapeHtml(row.state));
                     if (row.status) meta.push(escapeHtml(row.status));
+                    // Hit was on a past/alternate name — explain why this
+                    // differently-named program is in the results.
+                    if (row.matched_name) meta.push('aka “' + escapeHtml(row.matched_name) + '”');
                     var rowEl = el('button', 'kop-pp-result',
                         '<span class="kop-pp-result-name">' + escapeHtml(row.unique_name) + '</span>' +
                         (meta.length ? '<span class="kop-pp-result-meta">' + meta.join(' · ') + '</span>' : '') +
