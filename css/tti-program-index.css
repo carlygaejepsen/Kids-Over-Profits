@@ -1308,3 +1308,10 @@ body.kop-doc-modal-open {
     outline: 3px solid var(--kop-chartreuse, #B2E102);
     outline-offset: 2px;
 }
+
+.alias-entry-operator {
+    font-size: 0.8em;
+    font-style: italic;
+    line-height: 1.3;
+    opacity: 0.85;
+}

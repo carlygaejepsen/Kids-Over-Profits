@@ -1701,10 +1701,22 @@ function displayFacilities(facilitiesData, containerId) {
             const facilitySearchText = escapeAttribute(searchParts.join(' | '));
 
             // Cross-reference rows for this facility's past/alternate names,
-            // pointing back to its card inside this operator's section.
+            // pointing back to its card inside this operator's section. The
+            // facility's previous operators/owners ride along — the old name
+            // is usually remembered together with who ran it at the time.
+            // (The data doesn't record which owner goes with which name, so
+            // the tile lists them jointly.)
+            const aliasPastOperators = collectUniqueTexts(previousOwnerList)
+                .filter(op => normalizeTextKey(op) !== normalizeTextKey(operatorName))
+                .slice(0, 3);
             collectUniqueTexts(normalizedFormerNames, aliasNames).forEach(alias => {
                 if (normalizeTextKey(alias) === normalizeTextKey(facilityDatasetNameRaw)) return;
-                aliasEntries.push({ alias, target: operatorName, facility: facilityDatasetNameRaw });
+                aliasEntries.push({
+                    alias,
+                    target: operatorName,
+                    facility: facilityDatasetNameRaw,
+                    pastOperators: aliasPastOperators
+                });
             });
 
             // Only render the "Learn more" disclosure when there's actually
@@ -1766,11 +1778,18 @@ function displayFacilities(facilitiesData, containerId) {
             ? `${entry.target} › ${entry.facility}`
             : entry.target;
 
+        const pastOperators = Array.isArray(entry.pastOperators) ? entry.pastOperators : [];
+        const pastOperatorHtml = pastOperators.length
+            ? `<span class="alias-entry-operator">past operator: ${escapeHtml(pastOperators.join(', '))}</span>`
+            : '';
+
         html += `<div class="operator-section alias-entry" data-operator="${escapeAttribute(entry.alias)}"
                 data-alias-target="${escapeAttribute(entry.target)}"
-                data-alias-facility="${escapeAttribute(entry.facility || '')}">
+                data-alias-facility="${escapeAttribute(entry.facility || '')}"
+                data-alias-operators="${escapeAttribute(pastOperators.join(' | '))}">
                 <button type="button" class="alias-entry-row">
                     <span class="alias-entry-name">${escapeHtml(entry.alias)}</span>
+                    ${pastOperatorHtml}
                     <span class="alias-entry-note">former / alternate name — see <strong>${escapeHtml(targetLabel)}</strong> →</span>
                 </button>
             </div>`;
@@ -1841,7 +1860,8 @@ function filterFacilities() {
         if (section.classList.contains('alias-entry')) {
             const aliasSearch = (operatorName + ' '
                 + (section.dataset.aliasTarget || '') + ' '
-                + (section.dataset.aliasFacility || '')).toLowerCase();
+                + (section.dataset.aliasFacility || '') + ' '
+                + (section.dataset.aliasOperators || '')).toLowerCase();
             const show = (!letterFilter || operatorName.startsWith(letterFilter))
                 && aliasSearch.includes(searchTerm)
                 && !statusFilter;
