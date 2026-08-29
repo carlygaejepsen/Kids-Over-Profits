@@ -897,7 +897,7 @@ function displayFacilities(facilitiesData, containerId) {
             if (suppressedOperatorFieldKeys.has(key)) return true;
             if (/^(locationDetails|location_details)\.(city|state)$/i.test(key)) return true;
             const lower = key.toLowerCase();
-            if (/(^|\.)(source_?project_?id|project_?id|post_?id|wp_?id|master_?id|record_?id|row_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at)$/.test(lower)) return true;
+            if (/(^|\.)(source_?project_?id|project_?id|post_?id|wp_?id|master_?id|record_?id|row_?id|document_?folder_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at)$/.test(lower)) return true;
             return false;
         };
 
@@ -1438,8 +1438,9 @@ function displayFacilities(facilitiesData, containerId) {
                 if (/(^|\.)address_?parts\./.test(lower)) return true;
                 // Location-detail sub-fields that duplicate the header location
                 if (/^(locationdetails|location_details)\.(city|state|country|zip|zip_?code|postal_?code|street|address|county|lat(itude)?|lng|long(itude)?)$/.test(lower)) return true;
-                // Internal database identifiers, slugs, and timestamps
-                if (/(^|\.)(facility_?id|location_?id|referrer_?id|source_?project_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
+                // Internal database identifiers, slugs, and timestamps.
+                // documentFolderId is rendered as the Documents button, not a field.
+                if (/(^|\.)(facility_?id|location_?id|referrer_?id|source_?project_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|document_?folder_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
                 return false;
             };
 

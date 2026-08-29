@@ -708,7 +708,20 @@ document.addEventListener('DOMContentLoaded', function() {
                         currentOwnerList.push(ownerText);
                     }
                 });
-                const matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
+                // An explicit FileBird folder ID (set via the wiki program picker)
+                // wins over fuzzy name matching — merged/renamed facilities often
+                // have folders named for a former name that fuzzy matching misses.
+                // Fall back to a bare {id} so the button still works even if the
+                // folder list hasn't loaded.
+                const explicitFolderId = parseInt(facility && facility.documentFolderId, 10);
+                let matchingFolder;
+                if (Number.isFinite(explicitFolderId) && explicitFolderId > 0) {
+                    matchingFolder = (Array.isArray(window.filebirdFolders)
+                        ? window.filebirdFolders.find(folder => Number(folder.id) === explicitFolderId)
+                        : null) || { id: explicitFolderId };
+                } else {
+                    matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
+                }
 
                 let subtextParts = [];
                 if (normalizedFormerNames.length > 0) subtextParts.push(`Formerly: ${escapeHtml(normalizedFormerNames.join(', '))}`);
@@ -874,7 +887,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Location-detail sub-fields that duplicate the header location
                     if (/^(locationdetails|location_details)\.(city|state|country|zip|zip_?code|postal_?code|street|address|county|lat(itude)?|lng|long(itude)?)$/.test(lower)) return true;
                     // Internal database identifiers, slugs, and timestamps
-                    if (/(^|\.)(facility_?id|location_?id|referrer_?id|source_?project_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
+                    if (/(^|\.)(facility_?id|location_?id|referrer_?id|source_?project_?id|project_?id|post_?id|wp_?id|master_?id|row_?id|record_?id|parent_?id|document_?folder_?id|_?id|slug|guid|uuid|created_?at|updated_?at|modified_?at|date_?added|date_?modified|sort_?order)$/.test(lower)) return true;
                     return false;
                 };
 
