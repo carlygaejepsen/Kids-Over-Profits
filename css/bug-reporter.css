@@ -22,11 +22,11 @@
     border-radius: 999px;
     box-shadow: none !important;
     color: var(--kop-navy, #000080) !important;
-    font-size: 0.78rem;
+    font-size: 0.78rem !important;
     font-weight: 600;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
+    line-height: 1 !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
     text-decoration: none;
     cursor: pointer;
     opacity: 0.55;
@@ -54,7 +54,8 @@
 
 .kop-bug-report-link:hover .kop-bug-report-link__text,
 .kop-bug-report-link:focus-visible .kop-bug-report-link__text {
-    max-width: 8em;
+    /* Generous cap — only paces the slide-out; must never clip the label. */
+    max-width: 16em;
     margin-left: 5px;
     opacity: 1;
 }
