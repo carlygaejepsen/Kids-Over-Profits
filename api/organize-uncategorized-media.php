@@ -257,6 +257,7 @@ td a { color: #000080; }
     <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
     <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick visible</button>
     <button type="button" id="kop-bulk-pick">🗂️ Send ticked to one folder…</button>
+    <button type="button" id="kop-new-folder" style="background:#EF9034">➕ New folder…</button>
     <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
     <br><small>Click anywhere on a row to tick it; shift-click ticks the whole range. <span id="kop-count"></span></small>
 </div>
@@ -301,6 +302,7 @@ td a { color: #000080; }
 // folder-ID input (and tick the row) with the chosen folder.
 (function () {
     var foldersUrl = <?php echo wp_json_encode(rest_url('kop/v1/folders')); ?>;
+    var foldersAdminApi = <?php echo wp_json_encode(get_stylesheet_directory_uri() . '/api/filebird-folders.php'); ?>;
     document.querySelectorAll('.kop-pick').forEach(function (btn) {
         btn.addEventListener('click', function () {
             if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
@@ -400,6 +402,62 @@ td a { color: #000080; }
     var untickBtn = document.getElementById('kop-untick-visible');
     if (tickBtn) tickBtn.addEventListener('click', function () { setVisible(true); });
     if (untickBtn) untickBtn.addEventListener('click', function () { setVisible(false); });
+
+    // Apply a folder {id, name} as the target of every ticked row.
+    function targetTickedRows(id, name) {
+        var ticked = allRows.filter(function (r) { var c = rowCheck(r); return c && c.checked; });
+        ticked.forEach(function (row) {
+            var input = row.querySelector('input[type=number]');
+            var label = row.querySelector('.kop-picked-name');
+            input.value = id;
+            if (label) label.textContent = '→ ' + name;
+        });
+        if (ticked.length) {
+            document.getElementById('kop-bulk-name').textContent =
+                ticked.length + ' row(s) → ' + name + ' — review, then click Apply';
+        }
+        return ticked.length;
+    }
+
+    // New folder: name it, pick where it goes (the browser's "no folder"
+    // choice = top level), create it, and target the ticked rows at it.
+    var newBtn = document.getElementById('kop-new-folder');
+    if (newBtn) {
+        newBtn.addEventListener('click', function () {
+            var name = window.prompt('Name for the new folder:');
+            if (!name || !name.trim()) return;
+            name = name.trim();
+            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                alert('Folder browser failed to load.');
+                return;
+            }
+            alert('Now choose the PARENT folder for “' + name + '” — or choose “no folder” to create it at the top level.');
+            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl })
+                .then(function (res) {
+                    if (!res) return; // cancelled entirely
+                    var parent = res.id === null ? 0 : parseInt(res.id, 10);
+                    return fetch(foldersAdminApi, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'same-origin',
+                        body: JSON.stringify({ action: 'create', name: name, parent: parent })
+                    }).then(function (r) { return r.json(); }).then(function (data) {
+                        if (!data || !data.success || !data.id) {
+                            throw new Error((data && data.error) || 'Could not create folder.');
+                        }
+                        var fullName = (res.id !== null ? res.name + ' / ' : '') + name;
+                        var n = targetTickedRows(data.id, fullName);
+                        document.getElementById('kop-bulk-name').textContent =
+                            'Created “' + fullName + '” (#' + data.id + ')' +
+                            (n ? ' — ' + n + ' ticked row(s) targeted; review, then click Apply'
+                               : ' — tick rows and use the bulk button, or 📁 pick it per row');
+                    });
+                })
+                .catch(function (err) {
+                    alert('New folder failed: ' + (err && err.message ? err.message : 'unknown error'));
+                });
+        });
+    }
 
     // Bulk move: pick one folder, set it as the target for every TICKED row.
     var bulkBtn = document.getElementById('kop-bulk-pick');
