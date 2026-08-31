@@ -64,6 +64,13 @@
                 highlightPadding: 8
             },
             {
+                title: 'Read Source Documents Side-by-Side',
+                content: 'Click <strong>📄 Source Docs</strong> to open a split-screen document viewer — browse a program\'s document folder and read PDFs, images, and other files right next to the form while you type. Drag its edge to resize. Once you\'ve linked a program, the <strong>📄 View documents</strong> button on the linked-program banner jumps straight to that program\'s folder.',
+                target: '.kop-dv-toggle',
+                position: 'top',
+                highlightPadding: 6
+            },
+            {
                 title: 'Fill in the Fields',
                 content: 'Work through the sections: basic info, history, staff, program structure, rules, allegations, media, and testimonies. Many fields have <strong>autocomplete</strong> — start typing to match existing entries and keep names consistent across the wiki.',
                 target: '#programName',
