@@ -542,6 +542,8 @@ into the target folder and deletes it (only for folders with no subfolders).</p>
                 <option value="merge">merge into…</option>
             </select>
             <input type="number" name="resolve[<?php echo (int)$oid; ?>][target]" placeholder="folder ID" min="0" style="width:90px">
+            <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
+            <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
         <?php endif; ?></td>
     </tr>
 <?php endforeach; ?>
@@ -552,4 +554,37 @@ into the target folder and deletes it (only for folders with no subfolders).</p>
         >Apply manual fixes</button></p>
 <?php endif; ?>
 </form>
+
+<link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
+<script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
+<script>
+// "pick" buttons: open the searchable folder browser and fill the row's
+// target-ID input with the chosen folder.
+(function () {
+    var foldersUrl = <?php echo wp_json_encode(rest_url('kop/v1/folders')); ?>;
+    document.querySelectorAll('.kop-pick').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                alert('Folder browser failed to load.');
+                return;
+            }
+            var cell = btn.closest('td');
+            var input = cell.querySelector('input[type=number]');
+            var label = cell.querySelector('.kop-picked-name');
+            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: input.value })
+                .then(function (res) {
+                    if (!res) return; // cancelled
+                    if (res.id === null) {
+                        input.value = '';
+                        if (label) label.textContent = '';
+                    } else {
+                        input.value = res.id;
+                        if (label) label.textContent = '→ ' + res.name;
+                    }
+                })
+                .catch(function () { alert('Folder browser error.'); });
+        });
+    });
+})();
+</script>
 </body></html>

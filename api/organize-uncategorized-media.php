@@ -265,8 +265,12 @@ td a { color: #000080; }
             <br><small><?php echo esc_html($r['mime']); ?> · #<?php echo $r['id']; ?></small>
         </td>
         <td><?php echo $sug_label; ?></td>
-        <td><input type="number" name="file[<?php echo $r['id']; ?>][target]" min="1"
-            value="<?php echo $r['sug'] !== null ? (int)$r['sug'] : ''; ?>" placeholder="folder ID"></td>
+        <td>
+            <input type="number" name="file[<?php echo $r['id']; ?>][target]" min="1"
+                value="<?php echo $r['sug'] !== null ? (int)$r['sug'] : ''; ?>" placeholder="folder ID">
+            <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
+            <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
+        </td>
     </tr>
 <?php endforeach; ?>
 </tbody></table>
@@ -277,4 +281,40 @@ td a { color: #000080; }
 <?php else: ?>
 <p class="ok">🎉 Nothing uncategorized — the media library is fully filed.</p>
 <?php endif; ?>
+
+<link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
+<script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
+<script>
+// "pick" buttons: open the searchable folder browser and fill the row's
+// folder-ID input (and tick the row) with the chosen folder.
+(function () {
+    var foldersUrl = <?php echo wp_json_encode(rest_url('kop/v1/folders')); ?>;
+    document.querySelectorAll('.kop-pick').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                alert('Folder browser failed to load.');
+                return;
+            }
+            var row = btn.closest('tr');
+            var input = row.querySelector('input[type=number]');
+            var label = row.querySelector('.kop-picked-name');
+            var check = row.querySelector('input[type=checkbox]');
+            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: input.value })
+                .then(function (res) {
+                    if (!res) return; // cancelled
+                    if (res.id === null) {
+                        input.value = '';
+                        if (label) label.textContent = '';
+                        if (check) check.checked = false;
+                    } else {
+                        input.value = res.id;
+                        if (label) label.textContent = '→ ' + res.name;
+                        if (check) check.checked = true;
+                    }
+                })
+                .catch(function () { alert('Folder browser error.'); });
+        });
+    });
+})();
+</script>
 </body></html>
