@@ -250,6 +250,9 @@ td a { color: #000080; }
     onclick="return window.confirm('File the ticked attachments into their folders?');">
     📁 Apply filing for ticked rows</button>
     <label style="margin-left:12px"><input type="checkbox" onclick="document.querySelectorAll('input[name$=\'[go]\']').forEach(c => c.checked = this.checked);"> tick/untick all</label>
+    <button type="button" id="kop-bulk-pick" style="margin-left:12px;background:#000080">
+        🗂️ Bulk: send all ticked rows to one folder…</button>
+    <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
 </p>
 <table><thead><tr><th></th><th>File</th><th>Suggested folder</th><th>Folder ID</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
@@ -315,6 +318,39 @@ td a { color: #000080; }
                 .catch(function () { alert('Folder browser error.'); });
         });
     });
+
+    // Bulk move: pick one folder, set it as the target for every TICKED row.
+    var bulkBtn = document.getElementById('kop-bulk-pick');
+    if (bulkBtn) {
+        bulkBtn.addEventListener('click', function () {
+            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+                alert('Folder browser failed to load.');
+                return;
+            }
+            var ticked = Array.prototype.filter.call(
+                document.querySelectorAll('input[name$="[go]"]'),
+                function (c) { return c.checked; }
+            );
+            if (!ticked.length) {
+                alert('Tick the rows you want to move first (or use tick-all).');
+                return;
+            }
+            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl })
+                .then(function (res) {
+                    if (!res || res.id === null) return; // cancelled/cleared
+                    ticked.forEach(function (check) {
+                        var row = check.closest('tr');
+                        var input = row.querySelector('input[type=number]');
+                        var label = row.querySelector('.kop-picked-name');
+                        input.value = res.id;
+                        if (label) label.textContent = '→ ' + res.name;
+                    });
+                    document.getElementById('kop-bulk-name').textContent =
+                        ticked.length + ' row(s) → ' + res.name + ' — review, then click Apply';
+                })
+                .catch(function () { alert('Folder browser error.'); });
+        });
+    }
 })();
 </script>
 </body></html>
