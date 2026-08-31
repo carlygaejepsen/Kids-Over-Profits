@@ -4,7 +4,10 @@ if (window.TutorialOverlay) {
     window.initTutorialOverlay = window.initTutorialOverlay || function() {};
 } else {
     class TutorialOverlay {
-        constructor(steps) {
+        constructor(steps, options) {
+            // Per-page "seen" flag so each tutorial (data form, wiki editor, …)
+            // tracks its own notification badge independently.
+            this.storageKey = (options && options.storageKey) || 'kop_data_form_tutorial_seen';
             this.steps = Array.isArray(steps) ? steps : [];
             this.currentStepIndex = 0;
             this.isActive = false;
@@ -27,7 +30,7 @@ if (window.TutorialOverlay) {
             this.createToggleButton();
 
             // Check if tutorial has been seen
-            if (!localStorage.getItem('kop_data_form_tutorial_seen')) {
+            if (!localStorage.getItem(this.storageKey)) {
                 // Let's just show the button with a notification badge instead of auto-start
                 this.showNotification();
             }
@@ -226,7 +229,7 @@ if (window.TutorialOverlay) {
             this.overlay.classList.add('active');
             document.body.classList.add('tutorial-active');
             this.showStep(0);
-            localStorage.setItem('kop_data_form_tutorial_seen', 'true');
+            localStorage.setItem(this.storageKey, 'true');
         }
 
         stop() {
@@ -334,7 +337,8 @@ if (window.TutorialOverlay) {
                     const targetEls = Array.from(document.querySelectorAll(step.target)).filter(el => el.offsetParent !== null);
                     if (targetEls.length > 0) {
                         if (step.scrollTarget) {
-                            const scrollEl = document.querySelector(step.scrollTarget);
+                            const scrollEl = Array.from(document.querySelectorAll(step.scrollTarget)).find(el => el.offsetParent !== null)
+                                || document.querySelector(step.scrollTarget);
                             if (scrollEl) {
                                 // Manual scroll calculation to ensure correct positioning under fixed toolbar
                                 setTimeout(() => {
@@ -383,12 +387,17 @@ if (window.TutorialOverlay) {
                         this.centerCard();
                     }
                 } else {
-                    // Single element highlighting (original behavior)
-                    const targetEl = document.querySelector(step.target);
+                    // Single element highlighting (original behavior).
+                    // Prefer the first VISIBLE match — comma-separated targets often
+                    // list per-category elements where only one is displayed at a time
+                    // (e.g. the saved-projects list of the active category tab).
+                    const targetEl = Array.from(document.querySelectorAll(step.target)).find(el => el.offsetParent !== null)
+                        || document.querySelector(step.target);
                     if (targetEl && targetEl.offsetParent !== null) {
                         const padding = step.highlightPadding !== undefined ? step.highlightPadding : 5;
                         if (step.scrollTarget) {
-                            const scrollEl = document.querySelector(step.scrollTarget);
+                            const scrollEl = Array.from(document.querySelectorAll(step.scrollTarget)).find(el => el.offsetParent !== null)
+                                || document.querySelector(step.scrollTarget);
                             if (scrollEl) {
                                 setTimeout(() => {
                                     const rect = scrollEl.getBoundingClientRect();
@@ -928,6 +937,10 @@ if (window.TutorialOverlay) {
         }
     }
 
+    // Expose the class so other pages (e.g. the wiki editor tour in
+    // wiki-editor-tutorial.js) can instantiate it with their own steps.
+    window.TutorialOverlay = TutorialOverlay;
+
     // Initialize Tutorial Data
     const initTutorialOverlay = () => {
         // Only run on data form pages
@@ -942,7 +955,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Category Selection',
-                content: 'Let\'s explore the three types of data you can collect. Each category organizes information differently to help you research the TTI effectively.',
+                content: 'Let\'s explore the four types of data you can collect. Each category organizes information differently to help you research the TTI effectively.',
                 target: '.category-tabs',
                 position: 'bottom'
             },
@@ -954,7 +967,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Locations',
-                content: 'Browse programs organized by state or country. Useful for logging facilities that are not part of a bigger chain or parent organization..',
+                content: 'Browse programs organized by state or country. Useful for logging facilities that are not part of a bigger chain or parent organization.',
                 target: '.category-tab[data-category="locations"]',
                 position: 'bottom'
             },
@@ -962,6 +975,12 @@ if (window.TutorialOverlay) {
                 title: 'Referrers',
                 content: 'Track education consultants and agencies that refer kids to TTI programs. Research who is sending children to these facilities and their professional networks.',
                 target: '.category-tab[data-category="referrers"]',
+                position: 'bottom'
+            },
+            {
+                title: 'Transporters',
+                content: 'Track youth transport companies and the individuals who escort kids to TTI programs. Log companies, personnel, service areas, and their affiliations with facilities.',
+                target: '.category-tab[data-category="transporters"]',
                 position: 'bottom'
             },
             {
@@ -973,9 +992,9 @@ if (window.TutorialOverlay) {
             {
                 title: 'Select a Saved Project',
                 content: 'Click a project in the Saved Projects list to load it for editing.',
-                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list',
+                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list',
                 position: 'right',
-                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list',
+                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list',
                 highlightPadding: 8
             },
             {

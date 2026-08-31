@@ -1650,6 +1650,39 @@ function kop_enqueue_wiki_editor_assets() {
             'markdownBaseUrl' => get_stylesheet_directory_uri() . '/markdown_output/'
         )
     );
+
+    // Shared tutorial overlay (class + styles) and the wiki-editor tour steps.
+    $tutorial_css = get_stylesheet_directory() . '/css/tutorial-overlay.css';
+    if (file_exists($tutorial_css)) {
+        wp_enqueue_style(
+            'kop-tutorial-overlay-style',
+            get_stylesheet_directory_uri() . '/css/tutorial-overlay.css',
+            array('kop-wiki-editor-style'),
+            filemtime($tutorial_css)
+        );
+    }
+
+    $tutorial_js = get_stylesheet_directory() . '/js/tutorial-overlay.js';
+    if (file_exists($tutorial_js)) {
+        wp_enqueue_script(
+            'kop-tutorial-overlay-script',
+            get_stylesheet_directory_uri() . '/js/tutorial-overlay.js',
+            array('jquery'),
+            filemtime($tutorial_js),
+            true
+        );
+    }
+
+    $wiki_tutorial_js = get_stylesheet_directory() . '/js/wiki-editor-tutorial.js';
+    if (file_exists($wiki_tutorial_js)) {
+        wp_enqueue_script(
+            'kop-wiki-editor-tutorial-script',
+            get_stylesheet_directory_uri() . '/js/wiki-editor-tutorial.js',
+            array('kop-tutorial-overlay-script'),
+            filemtime($wiki_tutorial_js),
+            true
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_wiki_editor_assets');
 
