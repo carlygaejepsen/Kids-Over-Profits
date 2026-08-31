@@ -182,6 +182,123 @@ foreach ($plan as $oid => $p) {
 }
 
 // ---------------------------------------------------------------------------
+// Manual resolution: per-folder "move under X" / "merge into X" submitted
+// from the report table (for the folders the automatic pass kept).
+// ---------------------------------------------------------------------------
+$resolved = false;
+$resolve_log = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_resolve'])
+    && check_admin_referer('kop_cff_resolve', '_wpnonce_resolve')) {
+
+    $requests = isset($_POST['resolve']) && is_array($_POST['resolve']) ? $_POST['resolve'] : [];
+
+    // True when $maybe_child sits inside $root_id's subtree (cycle guard).
+    $in_subtree = static function ($root_id, $maybe_child) use ($by_id) {
+        $cur = (int)$maybe_child;
+        for ($i = 0; $i < 25 && $cur; $i++) {
+            if ($cur === (int)$root_id) {
+                return true;
+            }
+            $cur = isset($by_id[$cur]) ? (int)$by_id[$cur]->parent : 0;
+        }
+        return false;
+    };
+
+    $wpdb->query('START TRANSACTION');
+    try {
+        foreach ($requests as $oid => $req) {
+            $oid = (int)$oid;
+            $mode = isset($req['mode']) ? $req['mode'] : 'skip';
+            $target = isset($req['target']) ? (int)$req['target'] : -1;
+            if ($mode === 'skip' || $target < 0 || !isset($orphan_set[$oid])) {
+                continue;
+            }
+            $oname = isset($by_id[$oid]) ? $by_id[$oid]->name : ('#' . $oid);
+
+            // Target must be root (0) or an existing, non-orphaned folder
+            // outside the folder's own subtree.
+            if ($target !== 0) {
+                if (!isset($by_id[$target])) {
+                    $resolve_log[] = "SKIPPED “{$oname}” (#{$oid}): target #{$target} does not exist";
+                    continue;
+                }
+                if (isset($orphan_set[$target])) {
+                    $resolve_log[] = "SKIPPED “{$oname}” (#{$oid}): target #{$target} is itself orphaned";
+                    continue;
+                }
+                if ($in_subtree($oid, $target)) {
+                    $resolve_log[] = "SKIPPED “{$oname}” (#{$oid}): target #{$target} is inside its own subtree";
+                    continue;
+                }
+            }
+
+            if ($mode === 'move') {
+                // Re-parent: the folder (and its whole subtree) rejoins the
+                // real tree; nothing else needs to change.
+                $wpdb->update($fbv, ['parent' => $target], ['id' => $oid], ['%d'], ['%d']);
+                $tname = $target === 0 ? 'root' : ('#' . $target . ' “' . $by_id[$target]->name . '”');
+                $resolve_log[] = "Moved “{$oname}” (#{$oid}) under {$tname}";
+            } elseif ($mode === 'merge') {
+                if ($target === 0) {
+                    $resolve_log[] = "SKIPPED “{$oname}” (#{$oid}): can't merge into root — use move";
+                    continue;
+                }
+                $has_children = (int)$wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM {$fbv} WHERE parent = %d", $oid
+                ));
+                if ($has_children > 0) {
+                    $resolve_log[] = "SKIPPED “{$oname}” (#{$oid}): has subfolders — move it instead of merging";
+                    continue;
+                }
+                // Move attachments (deduped), remap program refs, delete.
+                $wpdb->query($wpdb->prepare(
+                    "DELETE af FROM {$fbv_rel} af
+                     JOIN {$fbv_rel} s ON s.attachment_id = af.attachment_id AND s.folder_id = %d
+                     WHERE af.folder_id = %d",
+                    $target, $oid
+                ));
+                $moved = $wpdb->query($wpdb->prepare(
+                    "UPDATE {$fbv_rel} SET folder_id = %d WHERE folder_id = %d",
+                    $target, $oid
+                ));
+                if (isset($facility_refs[$oid])) {
+                    foreach ($facility_refs[$oid] as $uname) {
+                        $json = $wpdb->get_var($wpdb->prepare(
+                            'SELECT json_data FROM facilities_master WHERE unique_name = %s', $uname
+                        ));
+                        $decoded = json_decode($json, true);
+                        if (!is_array($decoded)) {
+                            continue;
+                        }
+                        if ((int)($decoded['documentFolderId'] ?? 0) === $oid) {
+                            $decoded['documentFolderId'] = $target;
+                        }
+                        if ((int)($decoded['data']['documentFolderId'] ?? 0) === $oid) {
+                            $decoded['data']['documentFolderId'] = $target;
+                        }
+                        $wpdb->update(
+                            'facilities_master',
+                            ['json_data' => wp_json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)],
+                            ['unique_name' => $uname]
+                        );
+                        $resolve_log[] = "Remapped documentFolderId {$oid} → {$target} on “{$uname}”";
+                    }
+                }
+                $wpdb->delete($fbv, ['id' => $oid], ['%d']);
+                $resolve_log[] = "Merged “{$oname}” (#{$oid}) into #{$target} “{$by_id[$target]->name}” ({$moved} file(s) moved), folder deleted";
+            }
+        }
+        $wpdb->query('COMMIT');
+        $resolved = true;
+    } catch (Throwable $e) {
+        $wpdb->query('ROLLBACK');
+        $resolve_log[] = 'FAILED — rolled back: ' . $e->getMessage();
+        error_log('consolidate-filebird-folders resolve failed: ' . $e->getMessage());
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Execute?
 // ---------------------------------------------------------------------------
 $executed = false;
@@ -277,6 +394,15 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $exec_log)); ?></div>
 <?php endif; ?>
 
+<?php if ($resolved): ?>
+    <h2 class="ok">✅ Manual resolutions applied</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
+    <p><strong><a href="">Reload the page</a></strong> — the report below is stale. After moves, previously-held parent folders become deletable on the next automatic pass.</p>
+<?php elseif ($resolve_log): ?>
+    <h2 class="bad">❌ Manual resolution failed (rolled back)</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
+<?php endif; ?>
+
 <div class="summary">
     <strong>Dry-run summary</strong><br>
     Total folders: <?php echo count($folders); ?><br>
@@ -298,17 +424,35 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
 <?php endif; ?>
 
 <h2>Orphaned folders</h2>
-<table><thead><tr><th>ID</th><th>Name</th><th>Files</th><th>Referenced by programs</th><th>Action</th></tr></thead><tbody>
+<p style="max-width:760px">For rows the automatic pass keeps, use <strong>Manual fix</strong>:
+<strong>move</strong> re-parents the folder (and its whole subtree, files intact) under the
+target folder ID — use <code>0</code> for the top level; <strong>merge</strong> moves its files
+into the target folder and deletes it (only for folders with no subfolders).</p>
+
+<form method="post">
+<?php wp_nonce_field('kop_cff_resolve', '_wpnonce_resolve'); ?>
+<table><thead><tr><th>ID</th><th>Name</th><th>Files</th><th>Referenced by programs</th><th>Action</th><th>Manual fix</th></tr></thead><tbody>
 <?php foreach ($plan as $oid => $p):
+    $held = isset($keep[$oid]);
     if ($p['survivor'] !== null) {
         $sname = isset($by_id[$p['survivor']]) ? $by_id[$p['survivor']]->name : '';
-        $action = ($p['files'] || $p['facilities'])
-            ? "<span class='ok'>merge into #{$p['survivor']} “" . esc_html($sname) . '”, then delete</span>'
-            : "<span class='ok'>delete (empty; survivor #{$p['survivor']} exists)</span>";
-    } elseif (isset($keep[$oid])) {
-        $action = $p['ambiguous']
-            ? "<span class='warn'>KEEP — multiple same-name survivors, review manually</span>"
-            : "<span class='warn'>KEEP — has content but no surviving folder with this name</span>";
+        if ($held) {
+            // Kept only because a descendant is under review — resolves
+            // automatically once the children are moved out.
+            $action = "<span class='warn'>HELD — contains folders under review; auto-resolves after they move (survivor #{$p['survivor']} “" . esc_html($sname) . '”)</span>';
+        } elseif ($p['files'] || $p['facilities']) {
+            $action = "<span class='ok'>merge into #{$p['survivor']} “" . esc_html($sname) . '”, then delete</span>';
+        } else {
+            $action = "<span class='ok'>delete (empty; survivor #{$p['survivor']} exists)</span>";
+        }
+    } elseif ($held) {
+        if ($p['files'] > 0 || $p['facilities']) {
+            $action = $p['ambiguous']
+                ? "<span class='warn'>KEEP — multiple same-name survivors, review manually</span>"
+                : "<span class='warn'>KEEP — has content but no surviving folder with this name</span>";
+        } else {
+            $action = "<span class='warn'>HELD — parent of folders under review; auto-resolves after they move</span>";
+        }
     } else {
         $action = "<span class='ok'>delete (empty)</span>";
     }
@@ -319,7 +463,21 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
         <td><?php echo (int)$p['files']; ?></td>
         <td><?php echo esc_html(implode(', ', $p['facilities'])); ?></td>
         <td><?php echo $action; ?></td>
+        <td><?php if ($held): ?>
+            <select name="resolve[<?php echo (int)$oid; ?>][mode]">
+                <option value="skip">— skip —</option>
+                <option value="move">move under…</option>
+                <option value="merge">merge into…</option>
+            </select>
+            <input type="number" name="resolve[<?php echo (int)$oid; ?>][target]" placeholder="folder ID" min="0" style="width:90px">
+        <?php endif; ?></td>
     </tr>
 <?php endforeach; ?>
 </tbody></table>
+<?php if ($keep): ?>
+    <p><button type="submit" name="do_resolve" value="1"
+        onclick="return window.confirm('Apply the manual moves/merges you selected? This modifies the live database (inside a transaction).');"
+        >Apply manual fixes</button></p>
+<?php endif; ?>
+</form>
 </body></html>
