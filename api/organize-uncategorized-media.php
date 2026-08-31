@@ -138,6 +138,33 @@ function kop_oum_suggest($fileText, $matchable) {
 // ---------------------------------------------------------------------------
 $applied = false;
 $apply_log = [];
+
+// Permanently delete the ticked attachments (files + thumbnails + DB rows).
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_delete'])
+    && check_admin_referer('kop_oum_apply')) {
+
+    $requests = isset($_POST['file']) && is_array($_POST['file']) ? $_POST['file'] : [];
+    $deleted = 0;
+    $failed = 0;
+    foreach ($requests as $att_id => $req) {
+        if (empty($req['go'])) {
+            continue;
+        }
+        $att_id = (int)$att_id;
+        if ($att_id <= 0 || get_post_type($att_id) !== 'attachment') {
+            continue;
+        }
+        if (wp_delete_attachment($att_id, true)) {
+            $deleted++;
+        } else {
+            $failed++;
+        }
+    }
+    $applied = true;
+    $apply_log[] = "Permanently deleted {$deleted} file(s)" . ($failed ? " — {$failed} failed" : '') . '.';
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['do_file'])
     && check_admin_referer('kop_oum_apply')) {
@@ -251,19 +278,30 @@ td a { color: #000080; }
 <form method="post">
 <?php wp_nonce_field('kop_oum_apply'); ?>
 <div style="background:#fff;border:2px solid #33A7B5;border-radius:8px;padding:10px 14px;margin-bottom:12px">
-    <strong>Group workflow:</strong> filter → tick visible → send to one folder → Apply.<br>
+    <strong>Group workflow:</strong> filter → tick visible → send to one folder (or delete) → Apply.<br>
     <input type="search" id="kop-filter" placeholder="Filter files… e.g. elan"
         style="width:260px;padding:6px 9px;margin:8px 8px 0 0;border:1px solid #000080;border-radius:6px">
     <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
     <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick visible</button>
     <button type="button" id="kop-bulk-pick">🗂️ Send ticked to one folder…</button>
-    <button type="button" id="kop-new-folder" style="background:#EF9034">➕ New folder…</button>
     <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
     <br><small>Click anywhere on a row to tick it; shift-click ticks the whole range. <span id="kop-count"></span></small>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #33A7B5">
+        <strong>➕ New folder:</strong>
+        <input type="text" id="kop-nf-name" placeholder="folder name" style="width:200px;padding:6px 9px;border:1px solid #000080;border-radius:6px">
+        <button type="button" id="kop-nf-parent" style="background:#7a7a7a">📁 parent: top level</button>
+        <button type="button" id="kop-nf-create" style="background:#EF9034">Create folder</button>
+        <small>— creates the folder and targets the ticked rows at it</small>
+    </div>
 </div>
-<p><button type="submit" name="do_file" value="1"
-    onclick="return window.confirm('File the ticked attachments into their folders?');">
-    📁 Apply filing for ticked rows</button></p>
+<p>
+    <button type="submit" name="do_file" value="1"
+        onclick="return window.confirm('File the ticked attachments into their folders?');">
+        📁 Apply filing for ticked rows</button>
+    <button type="submit" name="do_delete" value="1" style="background:#7a1f1f;margin-left:10px"
+        onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
+        🗑️ Permanently delete ticked files</button>
+</p>
 <table><thead><tr><th></th><th>File</th><th>Suggested folder</th><th>Folder ID</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
     $sug_label = $r['sug'] !== null
@@ -419,43 +457,61 @@ td a { color: #000080; }
         return ticked.length;
     }
 
-    // New folder: name it, pick where it goes (the browser's "no folder"
-    // choice = top level), create it, and target the ticked rows at it.
-    var newBtn = document.getElementById('kop-new-folder');
-    if (newBtn) {
-        newBtn.addEventListener('click', function () {
-            var name = window.prompt('Name for the new folder:');
-            if (!name || !name.trim()) return;
-            name = name.trim();
+    // New-folder inline form: [name] [parent picker] [Create]. Creates the
+    // folder and targets the ticked rows at it.
+    var nfParent = { id: 0, name: 'top level' };
+    var nfParentBtn = document.getElementById('kop-nf-parent');
+    var nfCreateBtn = document.getElementById('kop-nf-create');
+    var nfNameInput = document.getElementById('kop-nf-name');
+    if (nfParentBtn) {
+        nfParentBtn.addEventListener('click', function () {
             if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
                 alert('Folder browser failed to load.');
                 return;
             }
-            alert('Now choose the PARENT folder for “' + name + '” — or choose “no folder” to create it at the top level.');
-            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl })
+            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: nfParent.id || '' })
                 .then(function (res) {
-                    if (!res) return; // cancelled entirely
-                    var parent = res.id === null ? 0 : parseInt(res.id, 10);
-                    return fetch(foldersAdminApi, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'same-origin',
-                        body: JSON.stringify({ action: 'create', name: name, parent: parent })
-                    }).then(function (r) { return r.json(); }).then(function (data) {
-                        if (!data || !data.success || !data.id) {
-                            throw new Error((data && data.error) || 'Could not create folder.');
-                        }
-                        var fullName = (res.id !== null ? res.name + ' / ' : '') + name;
-                        var n = targetTickedRows(data.id, fullName);
-                        document.getElementById('kop-bulk-name').textContent =
-                            'Created “' + fullName + '” (#' + data.id + ')' +
-                            (n ? ' — ' + n + ' ticked row(s) targeted; review, then click Apply'
-                               : ' — tick rows and use the bulk button, or 📁 pick it per row');
-                    });
+                    if (!res) return; // cancelled
+                    if (res.id === null) {
+                        nfParent = { id: 0, name: 'top level' };
+                    } else {
+                        nfParent = { id: parseInt(res.id, 10), name: res.name };
+                    }
+                    nfParentBtn.textContent = '📁 parent: ' + nfParent.name;
                 })
-                .catch(function (err) {
-                    alert('New folder failed: ' + (err && err.message ? err.message : 'unknown error'));
-                });
+                .catch(function () { alert('Folder browser error.'); });
+        });
+    }
+    if (nfCreateBtn) {
+        nfCreateBtn.addEventListener('click', function () {
+            var name = (nfNameInput.value || '').trim();
+            if (!name) {
+                alert('Type a name for the new folder first.');
+                nfNameInput.focus();
+                return;
+            }
+            nfCreateBtn.disabled = true;
+            fetch(foldersAdminApi, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({ action: 'create', name: name, parent: nfParent.id })
+            }).then(function (r) { return r.json(); }).then(function (data) {
+                nfCreateBtn.disabled = false;
+                if (!data || !data.success || !data.id) {
+                    throw new Error((data && data.error) || 'Could not create folder.');
+                }
+                var fullName = (nfParent.id ? nfParent.name + ' / ' : '') + name;
+                var n = targetTickedRows(data.id, fullName);
+                document.getElementById('kop-bulk-name').textContent =
+                    'Created “' + fullName + '” (#' + data.id + ')' +
+                    (n ? ' — ' + n + ' ticked row(s) targeted; review, then click Apply'
+                       : ' — tick rows and use the bulk button, or 📁 pick it per row');
+                nfNameInput.value = '';
+            }).catch(function (err) {
+                nfCreateBtn.disabled = false;
+                alert('New folder failed: ' + (err && err.message ? err.message : 'unknown error'));
+            });
         });
     }
 
