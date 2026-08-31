@@ -220,6 +220,10 @@ h1 { font-size: 1.3rem; }
 table { border-collapse: collapse; background: #fff; font-size: 0.83rem; }
 th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; vertical-align: top; }
 th { background: #000080; color: #fff; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: #FFF5CB; }
+tbody tr.kop-ticked { background: #B6E3D4; }
+input[name$="[go]"] { transform: scale(1.5); margin: 4px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; }
 .summary { background: #FFF5CB; border: 2px solid #33A7B5; border-radius: 8px; padding: 12px 16px; max-width: 760px; margin-bottom: 14px; }
 button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-weight: 700; cursor: pointer; }
@@ -246,14 +250,19 @@ td a { color: #000080; }
 <?php if ($rows): ?>
 <form method="post">
 <?php wp_nonce_field('kop_oum_apply'); ?>
+<div style="background:#fff;border:2px solid #33A7B5;border-radius:8px;padding:10px 14px;margin-bottom:12px">
+    <strong>Group workflow:</strong> filter → tick visible → send to one folder → Apply.<br>
+    <input type="search" id="kop-filter" placeholder="Filter files… e.g. elan"
+        style="width:260px;padding:6px 9px;margin:8px 8px 0 0;border:1px solid #000080;border-radius:6px">
+    <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
+    <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick visible</button>
+    <button type="button" id="kop-bulk-pick">🗂️ Send ticked to one folder…</button>
+    <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
+    <br><small>Click anywhere on a row to tick it; shift-click ticks the whole range. <span id="kop-count"></span></small>
+</div>
 <p><button type="submit" name="do_file" value="1"
     onclick="return window.confirm('File the ticked attachments into their folders?');">
-    📁 Apply filing for ticked rows</button>
-    <label style="margin-left:12px"><input type="checkbox" onclick="document.querySelectorAll('input[name$=\'[go]\']').forEach(c => c.checked = this.checked);"> tick/untick all</label>
-    <button type="button" id="kop-bulk-pick" style="margin-left:12px;background:#000080">
-        🗂️ Bulk: send all ticked rows to one folder…</button>
-    <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
-</p>
+    📁 Apply filing for ticked rows</button></p>
 <table><thead><tr><th></th><th>File</th><th>Suggested folder</th><th>Folder ID</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
     $sug_label = $r['sug'] !== null
@@ -314,10 +323,83 @@ td a { color: #000080; }
                         if (label) label.textContent = '→ ' + res.name;
                         if (check) check.checked = true;
                     }
+                    paintRow(row);
+                    refreshCount();
                 })
                 .catch(function () { alert('Folder browser error.'); });
         });
     });
+
+    // ---- Group selection helpers ----
+    var allRows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
+    var lastClicked = null;
+
+    function rowCheck(row) { return row.querySelector('input[name$="[go]"]'); }
+    function paintRow(row) {
+        var c = rowCheck(row);
+        if (c) row.classList.toggle('kop-ticked', c.checked);
+    }
+    function refreshCount() {
+        var n = allRows.filter(function (r) { var c = rowCheck(r); return c && c.checked; }).length;
+        var el = document.getElementById('kop-count');
+        if (el) el.textContent = n + ' ticked.';
+    }
+    allRows.forEach(paintRow);
+    refreshCount();
+
+    // Click anywhere on a row toggles it; shift-click toggles the range from
+    // the last clicked row. Clicks on links/inputs/buttons behave normally.
+    allRows.forEach(function (row) {
+        row.addEventListener('click', function (e) {
+            if (e.target.closest('a, button, input, select, label')) {
+                if (e.target === rowCheck(row)) { paintRow(row); refreshCount(); lastClicked = row; }
+                return;
+            }
+            var check = rowCheck(row);
+            if (!check) return;
+            if (e.shiftKey && lastClicked && lastClicked !== row) {
+                var a = allRows.indexOf(lastClicked);
+                var b = allRows.indexOf(row);
+                var from = Math.min(a, b), to = Math.max(a, b);
+                var state = rowCheck(lastClicked).checked;
+                for (var i = from; i <= to; i++) {
+                    if (allRows[i].style.display === 'none') continue;
+                    var c = rowCheck(allRows[i]);
+                    if (c) { c.checked = state; paintRow(allRows[i]); }
+                }
+            } else {
+                check.checked = !check.checked;
+                paintRow(row);
+            }
+            lastClicked = row;
+            refreshCount();
+        });
+    });
+
+    // Filter: hide rows not matching the text (matches filename, title,
+    // suggestion — the whole row's text).
+    var filter = document.getElementById('kop-filter');
+    if (filter) {
+        filter.addEventListener('input', function () {
+            var q = filter.value.toLowerCase().trim();
+            allRows.forEach(function (row) {
+                row.style.display = (!q || row.textContent.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+            });
+        });
+    }
+
+    function setVisible(state) {
+        allRows.forEach(function (row) {
+            if (row.style.display === 'none') return;
+            var c = rowCheck(row);
+            if (c) { c.checked = state; paintRow(row); }
+        });
+        refreshCount();
+    }
+    var tickBtn = document.getElementById('kop-tick-visible');
+    var untickBtn = document.getElementById('kop-untick-visible');
+    if (tickBtn) tickBtn.addEventListener('click', function () { setVisible(true); });
+    if (untickBtn) untickBtn.addEventListener('click', function () { setVisible(false); });
 
     // Bulk move: pick one folder, set it as the target for every TICKED row.
     var bulkBtn = document.getElementById('kop-bulk-pick');
