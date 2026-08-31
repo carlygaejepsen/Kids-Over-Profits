@@ -182,6 +182,62 @@ foreach ($plan as $oid => $p) {
 }
 
 // ---------------------------------------------------------------------------
+// Nuke option: delete EVERY remaining orphaned folder, content or not.
+// The folder rows and their folder↔attachment relations are removed; the
+// media files themselves are NOT deleted — they stay in the library, unfiled.
+// Stale documentFolderId references on programs are cleared.
+// ---------------------------------------------------------------------------
+$nuked = false;
+$nuke_log = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_nuke'])
+    && check_admin_referer('kop_cff_nuke', '_wpnonce_nuke')) {
+
+    $wpdb->query('START TRANSACTION');
+    try {
+        if ($orphan_ids) {
+            $in = implode(',', array_map('intval', $orphan_ids));
+            $rels = $wpdb->query("DELETE FROM {$fbv_rel} WHERE folder_id IN ($in)");
+            $dels = $wpdb->query("DELETE FROM {$fbv} WHERE id IN ($in)");
+            $nuke_log[] = "Deleted {$dels} orphaned folder(s) and {$rels} folder↔file relation(s). The files themselves remain in the media library (unfiled).";
+
+            // Clear now-dangling documentFolderId references on programs.
+            foreach ($facility_refs as $oid => $unames) {
+                foreach ($unames as $uname) {
+                    $json = $wpdb->get_var($wpdb->prepare(
+                        'SELECT json_data FROM facilities_master WHERE unique_name = %s', $uname
+                    ));
+                    $decoded = json_decode($json, true);
+                    if (!is_array($decoded)) {
+                        continue;
+                    }
+                    if ((int)($decoded['documentFolderId'] ?? 0) === (int)$oid) {
+                        unset($decoded['documentFolderId']);
+                    }
+                    if ((int)($decoded['data']['documentFolderId'] ?? 0) === (int)$oid) {
+                        unset($decoded['data']['documentFolderId']);
+                    }
+                    $wpdb->update(
+                        'facilities_master',
+                        ['json_data' => wp_json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)],
+                        ['unique_name' => $uname]
+                    );
+                    $nuke_log[] = "Cleared stale documentFolderId {$oid} on “{$uname}”";
+                }
+            }
+        } else {
+            $nuke_log[] = 'No orphaned folders remain.';
+        }
+        $wpdb->query('COMMIT');
+        $nuked = true;
+    } catch (Throwable $e) {
+        $wpdb->query('ROLLBACK');
+        $nuke_log[] = 'FAILED — rolled back: ' . $e->getMessage();
+        error_log('consolidate-filebird-folders nuke failed: ' . $e->getMessage());
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Manual resolution: per-folder "move under X" / "merge into X" submitted
 // from the report table (for the folders the automatic pass kept).
 // ---------------------------------------------------------------------------
@@ -394,6 +450,15 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $exec_log)); ?></div>
 <?php endif; ?>
 
+<?php if ($nuked): ?>
+    <h2 class="ok">🗑️ Orphans deleted</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $nuke_log)); ?></div>
+    <p><a href="">Reload for a fresh report</a>.</p>
+<?php elseif ($nuke_log): ?>
+    <h2 class="bad">❌ Delete-all failed (rolled back)</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $nuke_log)); ?></div>
+<?php endif; ?>
+
 <?php if ($resolved): ?>
     <h2 class="ok">✅ Manual resolutions applied</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
@@ -413,12 +478,19 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     Kept for manual review (content but no clear match): <strong><?php echo count($keep); ?></strong>
 </div>
 
-<?php if ($orphan_ids && !$executed): ?>
-<form method="post" style="margin:16px 0">
+<?php if ($orphan_ids && !$executed && !$nuked): ?>
+<form method="post" style="margin:16px 0;display:inline-block">
     <?php wp_nonce_field('kop_cff_execute'); ?>
     <input type="hidden" name="confirm" value="1">
     <button type="submit" onclick="return window.confirm('Execute the consolidation shown below? This modifies the live database (inside a transaction).');">
         ⚠️ Execute consolidation
+    </button>
+</form>
+<form method="post" style="margin:16px 0 16px 10px;display:inline-block">
+    <?php wp_nonce_field('kop_cff_nuke', '_wpnonce_nuke'); ?>
+    <button type="submit" name="do_nuke" value="1" style="background:#7a1f1f"
+        onclick="return window.confirm('Delete ALL <?php echo count($orphan_ids); ?> remaining orphaned folders, including those with files?\n\nThe folders and their filing are removed; the media files themselves stay in the library (unfiled). Stale program references are cleared.');">
+        🗑️ Delete ALL remaining orphans (files stay in library)
     </button>
 </form>
 <?php endif; ?>
