@@ -38,14 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_manage_arc
             } else {
                 $slug = kop_news_arc_slug($title);
                 $stmt = $pdo->prepare(
-                    "INSERT INTO news_story_arcs (title, slug, description, match_terms, display_order)
-                     VALUES (?, ?, ?, ?, ?)"
+                    "INSERT INTO news_story_arcs (title, slug, description, match_terms, facility_label, facility_url, display_order)
+                     VALUES (?, ?, ?, ?, ?, ?, ?)"
                 );
                 $stmt->execute([
                     $title,
                     $slug,
                     trim((string) ($_POST['description'] ?? '')),
                     trim((string) ($_POST['match_terms'] ?? '')),
+                    trim((string) ($_POST['facility_label'] ?? '')),
+                    trim((string) ($_POST['facility_url'] ?? '')),
                     (int) ($_POST['display_order'] ?? 0),
                 ]);
                 $arcId = (int) $pdo->lastInsertId();
@@ -60,13 +62,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_manage_arc
             } else {
                 $stmt = $pdo->prepare(
                     "UPDATE news_story_arcs
-                     SET title = ?, description = ?, match_terms = ?, status = ?, display_order = ?
+                     SET title = ?, description = ?, match_terms = ?, facility_label = ?, facility_url = ?,
+                         status = ?, display_order = ?
                      WHERE id = ?"
                 );
                 $stmt->execute([
                     $title,
                     trim((string) ($_POST['description'] ?? '')),
                     trim((string) ($_POST['match_terms'] ?? '')),
+                    trim((string) ($_POST['facility_label'] ?? '')),
+                    trim((string) ($_POST['facility_url'] ?? '')),
                     ($_POST['status'] ?? 'active') === 'archived' ? 'archived' : 'active',
                     (int) ($_POST['display_order'] ?? 0),
                     $arcId,
@@ -94,6 +99,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_manage_arc
     } catch (PDOException $e) {
         $errors[] = 'Database error: ' . $e->getMessage()
             . ' (has api/update-schema.php been run since the arcs migration was added?)';
+    }
+
+    // fetch()-submitted forms (admin-inline-actions.js) get JSON back instead
+    // of a full re-render, so the page doesn't reload under the admin.
+    if (!empty($_POST['kop_ajax'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => empty($errors), 'notices' => $notices, 'errors' => $errors]);
+        exit;
     }
 }
 
@@ -185,7 +198,8 @@ form.inline { display: inline; }
 <a href="/news/">news feed</a> — e.g. a lawsuit and everything that follows it, or a facility's closure.
 Articles attach automatically when they contain one of an arc's <strong>match terms</strong>
 (checked against title, summary, and facility names), or manually below.
-This is separate from the automatic "Also covered by" grouping of same-event coverage.</p>
+This is separate from the automatic "Also covered by" grouping of same-event coverage.
+Duplicate copies of one article are cleaned up in <a href="manage-duplicate-articles.php">Manage Duplicate Articles</a>.</p>
 
 <?php foreach ($notices as $n): ?><div class="notice"><?php echo esc_html($n); ?></div><?php endforeach; ?>
 <?php foreach ($errors as $e): ?><div class="error"><?php echo esc_html($e); ?></div><?php endforeach; ?>
@@ -212,6 +226,12 @@ This is separate from the automatic "Also covered by" grouping of same-event cov
         <label>Match terms (one per line — new articles containing one are auto-attached)</label>
         <textarea name="match_terms" placeholder="hyde school&#10;fuller v. hyde"><?php echo esc_textarea($arc['match_terms'] ?? ''); ?></textarea>
         <p class="hint">Keep terms specific: “hyde school”, not “school”. Checked case-insensitively against title, summary, and facility names.</p>
+        <label>Facility button (optional)</label>
+        <input type="text" name="facility_label" value="<?php echo esc_attr($arc['facility_label'] ?? ''); ?>" placeholder="Hyde School" style="max-width:280px">
+        <input type="text" name="facility_url" value="<?php echo esc_attr($arc['facility_url'] ?? ''); ?>" placeholder="/hyde" style="max-width:280px">
+        <p class="hint">With a name filled in, story cards get a “Learn more about …” button. Leave the URL blank
+        to send readers to the program index filtered to that name (everything in facilities_master);
+        set it (e.g. /hyde) once a dedicated profile page exists.</p>
         <label>Status / order</label>
         <select name="status" style="max-width:160px">
             <option value="active" <?php echo $arc['status'] === 'active' ? 'selected' : ''; ?>>active (featured)</option>
@@ -243,7 +263,7 @@ This is separate from the automatic "Also covered by" grouping of same-event cov
                 <td><?php echo esc_html($m['publication_date'] ?? ''); ?></td>
                 <td><?php echo esc_html($m['status']); ?></td>
                 <td>
-                    <form method="post" class="inline">
+                    <form method="post" class="inline" data-inline-action data-remove="row">
                         <?php wp_nonce_field('kop_manage_arcs'); ?>
                         <input type="hidden" name="action" value="detach">
                         <input type="hidden" name="article_id" value="<?php echo (int) $m['id']; ?>">
@@ -268,6 +288,9 @@ This is separate from the automatic "Also covered by" grouping of same-event cov
         <textarea name="description" placeholder="A former student's 2026 lawsuit against Hyde School in Bath, Maine, alleging…"></textarea>
         <label>Match terms (one per line)</label>
         <textarea name="match_terms" placeholder="hyde school&#10;fuller v. hyde"></textarea>
+        <label>Facility button (optional): name + profile URL</label>
+        <input type="text" name="facility_label" placeholder="Hyde School" style="max-width:280px">
+        <input type="text" name="facility_url" placeholder="/hyde (blank = program index search)" style="max-width:280px">
         <label>Display order (lower = higher on the page)</label>
         <input type="number" name="display_order" value="0" style="max-width:90px">
         <br>
@@ -297,7 +320,7 @@ This is separate from the automatic "Also covered by" grouping of same-event cov
             <td><?php echo esc_html($r['status']); ?></td>
             <td><?php echo esc_html($currentArc); ?></td>
             <td>
-                <form method="post" class="inline">
+                <form method="post" class="inline" data-inline-action>
                     <?php wp_nonce_field('kop_manage_arcs'); ?>
                     <input type="hidden" name="action" value="attach">
                     <input type="hidden" name="article_id" value="<?php echo (int) $r['id']; ?>">
@@ -315,4 +338,5 @@ This is separate from the automatic "Also covered by" grouping of same-event cov
     <?php endif; ?>
 <?php endif; ?>
 
+<script src="admin-inline-actions.js?v=1"></script>
 </body></html>

@@ -1,9 +1,22 @@
 /* Home Page template (templates/page-home.php) */
 
+/* The template bypasses Kadence's content wrapper, so the white content
+   sheet behind the page body is drawn here. */
 .kop-home {
     max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1rem 2rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 2.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+}
+
+/* Ongoing Stories (shortcode) sits at the same width as the other
+   home sections instead of spanning the full sheet. */
+.kop-home .ongoing-stories {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .kop-home section {
@@ -114,7 +127,8 @@
 /* Tablet */
 @media (max-width: 1024px) {
     .kop-home {
-        padding: 0 1.25rem 2rem;
+        margin: 1rem auto 2rem;
+        padding: 1.5rem 1.25rem 2rem;
     }
     .kop-home-reports {
         max-width: 580px;
@@ -123,6 +137,11 @@
 
 /* Phones */
 @media (max-width: 640px) {
+    .kop-home {
+        margin: 0 auto 1.5rem;
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 0;
+    }
     .kop-home section {
         margin-bottom: 1.75rem;
     }

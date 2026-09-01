@@ -651,6 +651,27 @@ a.coverage-link:hover {
     text-decoration: underline;
 }
 
+/* Facility learn-more button under a story card (or the story-view header) */
+.ongoing-card-facility-btn {
+    display: inline-block;
+    align-self: flex-start;
+    margin-top: 0.6rem;
+    background-color: var(--kop-teal, #33A7B5);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.ongoing-card-facility-btn:hover,
+.ongoing-card-facility-btn:focus {
+    background-color: var(--kop-navy-blue, #000080);
+    color: #fff;
+    text-decoration: none;
+}
+
 /* Per-card badge linking into an ongoing story */
 .arc-badge {
     display: inline-block;

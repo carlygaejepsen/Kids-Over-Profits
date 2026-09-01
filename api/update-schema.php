@@ -49,6 +49,8 @@ try {
             slug varchar(191) NOT NULL COMMENT 'URL key for the story view (?story=slug)',
             description text DEFAULT NULL,
             match_terms text DEFAULT NULL COMMENT 'Newline-separated phrases; a new article containing one is auto-attached on save',
+            facility_label varchar(255) DEFAULT NULL COMMENT 'Facility name for the story cards'' learn-more button',
+            facility_url varchar(500) DEFAULT NULL COMMENT 'Facility profile page URL (e.g. /hyde); empty = no button',
             status enum('active','archived') NOT NULL DEFAULT 'active',
             display_order int(11) NOT NULL DEFAULT 0,
             created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -58,6 +60,16 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
     );
     echo "'news_story_arcs' table ready.\n";
+
+    // Facility learn-more button on story arc cards (label + profile URL).
+    $check = $pdo->query("SHOW COLUMNS FROM news_story_arcs LIKE 'facility_label'");
+    if ($check->rowCount() == 0) {
+        $pdo->exec("ALTER TABLE news_story_arcs ADD COLUMN facility_label varchar(255) DEFAULT NULL COMMENT 'Facility name for the story cards'' learn-more button' AFTER match_terms");
+        $pdo->exec("ALTER TABLE news_story_arcs ADD COLUMN facility_url varchar(500) DEFAULT NULL COMMENT 'Facility profile page URL (e.g. /hyde); empty = no button' AFTER facility_label");
+        echo "Added 'facility_label' and 'facility_url' columns to news_story_arcs.\n";
+    } else {
+        echo "'facility_label'/'facility_url' columns already exist.\n";
+    }
 
     $check = $pdo->query("SHOW COLUMNS FROM news_submissions LIKE 'story_arc_id'");
     if ($check->rowCount() == 0) {

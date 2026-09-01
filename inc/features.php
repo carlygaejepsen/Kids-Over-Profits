@@ -909,6 +909,24 @@ add_shortcode('kop_document', 'kop_document_shortcode');
  * Renders nothing when no active arc has published articles (or the
  * news_story_arcs migration hasn't run), so it's safe to leave in place.
  */
+/**
+ * Facility learn-more link for a story arc row, or null when the arc has no
+ * facility_label. A custom facility_url (a dedicated profile page like /hyde)
+ * wins; without one the button goes to the program index filtered to the
+ * facility name, which shows everything facilities_master has on it.
+ */
+function kop_news_arc_facility_link(array $arc): ?array {
+    $label = trim((string) ($arc['facility_label'] ?? ''));
+    if ($label === '') {
+        return null;
+    }
+    $url = trim((string) ($arc['facility_url'] ?? ''));
+    if ($url === '') {
+        $url = '/tti-program-index/?search=' . rawurlencode($label);
+    }
+    return ['label' => $label, 'url' => $url];
+}
+
 function kop_ongoing_stories_shortcode($atts) {
     global $wpdb;
     $atts = shortcode_atts(array(
@@ -922,7 +940,7 @@ function kop_ongoing_stories_shortcode($atts) {
 
     $suppress = $wpdb->suppress_errors(true);
     $arcs = $wpdb->get_results(
-        "SELECT a.id, a.title, a.slug, a.description,
+        "SELECT a.id, a.title, a.slug, a.description, a.facility_label, a.facility_url,
                 (SELECT COUNT(*) FROM news_submissions s
                  WHERE s.story_arc_id = a.id AND s.status IN ('approved','published')) AS article_count,
                 (SELECT MAX(s.publication_date) FROM news_submissions s
@@ -1016,6 +1034,9 @@ function kop_ongoing_stories_shortcode($atts) {
                         </ul>
                     <?php endif; ?>
                     <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
+                    <?php $facility = kop_news_arc_facility_link($arc); if ($facility): ?>
+                        <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>

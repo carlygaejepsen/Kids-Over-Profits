@@ -143,7 +143,7 @@ try {
     $arc_index = [];
     try {
         $arc_rows = $pdo->query(
-            "SELECT a.id, a.title, a.slug, a.description, a.status,
+            "SELECT a.id, a.title, a.slug, a.description, a.status, a.facility_label, a.facility_url,
                     (SELECT COUNT(*) FROM news_submissions s
                      WHERE s.story_arc_id = a.id AND s.status IN ('approved', 'published')) AS article_count,
                     (SELECT MAX(s.publication_date) FROM news_submissions s
@@ -200,6 +200,9 @@ try {
                 <p><?php echo esc_html($current_arc['description']); ?></p>
             <?php endif; ?>
             <p class="story-arc-count"><?php echo (int) $total_items; ?> article<?php echo $total_items === 1 ? '' : 's'; ?> in this story, newest first.</p>
+            <?php $facility = function_exists('kop_news_arc_facility_link') ? kop_news_arc_facility_link($current_arc) : null; if ($facility): ?>
+                <p><a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a></p>
+            <?php endif; ?>
         <?php else: ?>
             <h1>Troubled Teen Industry News</h1>
             <p>Latest updates, investigations, and reports monitored by our team.</p>
@@ -268,6 +271,9 @@ try {
                             </ul>
                         <?php endif; ?>
                         <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
+                        <?php $facility = function_exists('kop_news_arc_facility_link') ? kop_news_arc_facility_link($oa) : null; if ($facility): ?>
+                            <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
