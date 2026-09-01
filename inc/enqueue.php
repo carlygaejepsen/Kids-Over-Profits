@@ -506,6 +506,12 @@ function kop_enqueue_report_scripts() {
             'data_object'   => 'flReportsData',
             'json_glob'     => '',
         ),
+        'ga-reports' => array(
+            'script_handle' => 'ga-reports-script',
+            'script_path'   => '/js/inspections/ga_reports.js',
+            'data_object'   => 'gaReportsData',
+            'json_glob'     => '',
+        ),
     );
 
     foreach ($reports as $page_slug => $config) {
@@ -590,7 +596,7 @@ add_action('wp_enqueue_scripts', 'kop_enqueue_report_scripts');
 function kop_state_reports_body_class($classes) {
     $state_report_slugs = array(
         'ca-reports', 'ut-reports', 'az-reports', 'tx-reports',
-        'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mn-reports', 'nc-reports', 'nv-reports', 'or-reports', 'fl-reports',
+        'mt-reports', 'ct-reports', 'wa-reports', 'ar-reports', 'mn-reports', 'nc-reports', 'nv-reports', 'or-reports', 'fl-reports', 'ga-reports',
     );
     foreach ($state_report_slugs as $slug) {
         if (is_page($slug)) {
@@ -1509,6 +1515,16 @@ function enqueue_tti_processor_scripts() {
         $theme_uri . '/js/facility-merge.js',
         array(),
         file_exists($theme_dir . '/js/facility-merge.js') ? filemtime($theme_dir . '/js/facility-merge.js') : time(),
+        true
+    );
+
+    // Per-entry "Submit info" mini-form (delegated click handler; also used on
+    // state pages and the location/referrer/transporter indexes)
+    wp_enqueue_script(
+        'kop-submit-info',
+        $theme_uri . '/js/submit-info.js',
+        array(),
+        file_exists($theme_dir . '/js/submit-info.js') ? filemtime($theme_dir . '/js/submit-info.js') : time(),
         true
     );
 
