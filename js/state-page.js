@@ -850,6 +850,8 @@
                 cats.licensee ? `<strong>Licensee:</strong> ${escapeHtml(cats.licensee)}` : '',
                 `<strong>Type:</strong> ${typeStr}`,
                 `<strong>Date:</strong> ${escapeHtml(dateStr)}`,
+                cats.status ? `<strong>Status:</strong> ${escapeHtml(cats.status)}` : '',
+                cats.under_appeal ? `<strong>Under appeal:</strong> ${escapeHtml(cats.under_appeal)}` : '',
                 insp.inspected_by ? `<strong>Inspected by:</strong> ${escapeHtml(insp.inspected_by)} authority (out-of-state)` : '',
                 cats.visit_date ? `<strong>Visit:</strong> ${escapeHtml(cats.visit_date)}` : '',
                 cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
@@ -1085,6 +1087,24 @@
         return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
     };
 
+    // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"
+    const humanizeFlagKey = key => String(key)
+        .replace(/^has(?=[A-Z0-9])/, '')
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+        .trim()
+        .replace(/^./, c => c.toUpperCase());
+
+    // Checkbox-group sections (treatment types, philosophy, critical incidents)
+    // arrive as arrays of raw has* keys — render them as chips like resources.
+    const renderFlagChips = (label, keys, chipClass) => {
+        if (!Array.isArray(keys) || !keys.length) return '';
+        const chips = keys
+            .map(k => `<span class="${chipClass || 'resource-chip'}">${escapeHtml(humanizeFlagKey(k))}</span>`)
+            .join('');
+        return `<div class="detail-row detail-resources"><strong>${escapeHtml(label)}:</strong> ${chips}</div>`;
+    };
+
     // "has*" resource flag -> human label
     const RESOURCE_FLAG_LABELS = {
         hasNews: 'News articles', hasPressReleases: 'Press releases',
@@ -1157,6 +1177,11 @@
         detailRows.push(renderListSection('Certifications', facility.certifications));
         detailRows.push(renderListSection('Licensing', facility.licensing));
 
+        // Program characteristics (checkbox groups from the admin form)
+        detailRows.push(renderFlagChips('Treatment types', facility.treatment_types));
+        detailRows.push(renderFlagChips('Philosophy', facility.philosophy_flags));
+        detailRows.push(renderFlagChips('Critical incidents', facility.critical_incidents, 'resource-chip incident-chip'));
+
         // Resources: turn the populated has* flags into chips, plus any details strings
         if (Array.isArray(facility.resource_flags) && facility.resource_flags.length) {
             const chips = facility.resource_flags
@@ -1168,11 +1193,31 @@
         const rd = facility.resource_details || {};
         if (rd.newsDetails)          detailRows.push(renderScalarRow('News details', rd.newsDetails));
         if (rd.pressReleasesDetails) detailRows.push(renderScalarRow('Press release details', rd.pressReleasesDetails));
-        if (rd.notes)                detailRows.push(renderScalarRow('Resource notes', rd.notes));
+        if (Array.isArray(rd.notes)) detailRows.push(renderListSection('Resource notes', rd.notes));
+        else if (rd.notes)           detailRows.push(renderScalarRow('Resource notes', rd.notes));
         detailRows.push(renderListSection('Custom resources', rd.customResources));
 
         // Facility-level notes
         detailRows.push(renderListSection('Notes', facility.notes));
+
+        // Per-field research notes, keyed by dotted field path
+        // (e.g. "treatmentTypes.hasABA" -> "Treatment Types — ABA").
+        const fieldNotes = facility.field_notes;
+        if (fieldNotes && typeof fieldNotes === 'object' && !Array.isArray(fieldNotes)) {
+            const noteItems = [];
+            Object.keys(fieldNotes).forEach(key => {
+                // Auto-generated "field-<timestamp>" keys carry no readable label.
+                const label = /^field-\d/.test(String(key)) ? '' : String(key).split('.').map(humanizeFlagKey).join(' — ');
+                const vals = Array.isArray(fieldNotes[key]) ? fieldNotes[key] : [fieldNotes[key]];
+                vals.forEach(v => {
+                    const text = (v && typeof v === 'object') ? String(v.text || '').trim() : String(v == null ? '' : v).trim();
+                    if (text) noteItems.push(`<li>${label ? `<strong>${escapeHtml(label)}:</strong> ` : ''}${escapeHtml(text)}</li>`);
+                });
+            });
+            if (noteItems.length) {
+                detailRows.push(`<div class="detail-row detail-list"><strong>Field notes:</strong><ul>${noteItems.join('')}</ul></div>`);
+            }
+        }
 
         // Inspection / violation summary chips (kept at the bottom of details)
         const statChips = [];
@@ -1218,7 +1263,7 @@
         const firstLetter = (displayName.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
         const letterAttr = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
         return `
-            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}">
+            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}" data-kop-bug-feature="state-page/facility-card" data-kop-bug-label="Facility: ${escapeHtml(displayName)}">
                 <div class="facility-card-header">
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
@@ -1250,8 +1295,8 @@
                         ${facility.capacity ? `<span><strong>Capacity:</strong> ${escapeHtml(String(facility.capacity))}</span>` : ''}
                         ${facility.census   ? `<span><strong>Census:</strong> ${escapeHtml(String(facility.census))}</span>`     : ''}
                     </div>` : ''}
+                <div class="facility-card-actions">${toggleButtons.join('')}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">✏️ Submit info</button></div>
                 ${toggleButtons.length ? `
-                    <div class="facility-card-actions">${toggleButtons.join('')}</div>
                     <div class="facility-card-panels">
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
                         ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}

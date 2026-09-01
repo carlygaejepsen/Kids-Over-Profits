@@ -406,6 +406,13 @@
     line-height: 1.4;
 }
 
+/* Critical-incident chips read as warnings, not neutral resources */
+.resource-chip.incident-chip {
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
+}
+
 /* Per-facility news list inside expand panel */
 .facility-news-list {
     list-style: none;

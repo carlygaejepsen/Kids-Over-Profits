@@ -2066,6 +2066,8 @@ function kop_state_inspection_page_map() {
         'Arizona'    => 'az-reports',
         'California' => 'ca-reports',
         'Connecticut'=> 'ct-reports',
+        'Florida'    => 'fl-reports',
+        'Georgia'    => 'ga-reports',
         'Minnesota'  => 'mn-reports',
         'North Carolina' => 'nc-reports',
         'Montana'    => 'mt-reports',
@@ -2171,6 +2173,17 @@ function kop_state_inspection_dataset_urls($state_name) {
  * normalized facility name; the locations_master copy wins because it is the
  * richer aggregate.
  */
+/**
+ * True when a name field holds a licensing-system closure marker instead of a
+ * real organization. Michigan LARA overwrites the licensee name with
+ * "JUVENILE PROGRAM CLOSED" once a juvenile program's license closes, and
+ * imports copied that marker into operator/owner fields.
+ */
+function kop_is_closed_program_marker($value) {
+    if (!is_string($value)) return false;
+    return strpos(strtoupper($value), 'JUVENILE PROGRAM CLOSED') !== false;
+}
+
 function kop_state_collect_programs($state_name) {
     global $wpdb;
 
@@ -2363,6 +2376,34 @@ function kop_state_collect_programs($state_name) {
             return is_scalar($v) ? trim((string)$v) : '';
         };
 
+        // Scrub the "JUVENILE PROGRAM CLOSED" closure marker out of every
+        // operator/owner field — it's a status flag from the licensing system,
+        // not a name. Finding it anywhere also corrects a stale "Open" status.
+        $closed_marker = false;
+        $scrub_scalar = static function ($v) use (&$closed_marker) {
+            if (kop_is_closed_program_marker($v)) { $closed_marker = true; return ''; }
+            return $v;
+        };
+        $scrub_list = static function ($items) use (&$closed_marker) {
+            if (!is_array($items)) return array();
+            $out = array();
+            foreach ($items as $item) {
+                $name = is_array($item) ? ($item['name'] ?? '') : $item;
+                if (kop_is_closed_program_marker($name)) { $closed_marker = true; continue; }
+                $out[] = $item;
+            }
+            return $out;
+        };
+        $resolved_operator = $scrub_scalar($resolved_operator);
+        $current_owner    = $scrub_scalar($as_string($identification['currentOwner'] ?? ''));
+        $current_owners   = $scrub_list($as_array($identification['currentOwners'] ?? null));
+        $past_owners      = $scrub_list($as_array($identification['pastOwners'] ?? null));
+        $other_operators  = $scrub_list($as_array($facility['otherOperators'] ?? null));
+        $status = $as_string($operating['status'] ?? '');
+        if ($closed_marker && ($status === '' || strcasecmp($status, 'open') === 0)) {
+            $status = 'Closed';
+        }
+
         $age_min = $facility_details['ageRange']['min'] ?? null;
         $age_max = $facility_details['ageRange']['max'] ?? null;
 
@@ -2376,8 +2417,48 @@ function kop_state_collect_programs($state_name) {
                 $resource_flags[] = $rkey;
             } elseif ($rkey === 'customResources' && is_array($rval) && !empty($rval)) {
                 $resource_details['customResources'] = $rval;
+            } elseif ($rkey === 'notes' && is_array($rval)) {
+                // The form schema stores resources.notes as an array of strings.
+                $texts = array();
+                foreach ($rval as $note) {
+                    if (is_string($note) && trim($note) !== '') $texts[] = trim($note);
+                }
+                if ($texts) $resource_details['notes'] = $texts;
             } elseif (is_string($rval) && trim($rval) !== '' && in_array($rkey, array('newsDetails', 'pressReleasesDetails', 'notes'), true)) {
                 $resource_details[$rkey] = trim($rval);
+            }
+        }
+
+        // Flag-object sections (the admin form's checkbox groups): keep only the
+        // keys set true, passed through as raw has* keys the JS turns into labels.
+        $collect_flags = static function ($obj) {
+            $flags = array();
+            if (is_array($obj)) {
+                foreach ($obj as $k => $v) {
+                    if ($v === true) $flags[] = $k;
+                }
+            }
+            return $flags;
+        };
+
+        // Per-field research notes ("fieldNotes"), keyed by dotted field path
+        // (e.g. "treatmentTypes.hasABA") or a generated "field-<ts>" id. Entries
+        // are strings or {id, text, timestamp} objects — keep the text only.
+        $field_notes = array();
+        $raw_field_notes = is_array($facility['fieldNotes'] ?? null) ? $facility['fieldNotes'] : array();
+        foreach ($raw_field_notes as $fk => $fv) {
+            if (is_string($fv) && trim($fv) !== '') {
+                $field_notes[$fk] = trim($fv);
+            } elseif (is_array($fv)) {
+                $texts = array();
+                foreach ($fv as $note) {
+                    if (is_string($note) && trim($note) !== '') {
+                        $texts[] = trim($note);
+                    } elseif (is_array($note) && isset($note['text']) && is_string($note['text']) && trim($note['text']) !== '') {
+                        $texts[] = trim($note['text']);
+                    }
+                }
+                if ($texts) $field_notes[$fk] = $texts;
             }
         }
 
@@ -2395,7 +2476,7 @@ function kop_state_collect_programs($state_name) {
             'relocation'       => $relocation,
             'former_locations' => $former_locations,
             'type'             => $as_string($facility_details['type'] ?? ''),
-            'status'           => $as_string($operating['status'] ?? ''),
+            'status'           => $status,
             'operating_period' => $operating_years,
             'operating_notes'  => $as_array($operating['notes'] ?? null),
             'capacity'         => $facility_capacity,
@@ -2404,13 +2485,13 @@ function kop_state_collect_programs($state_name) {
             'age_max'          => ($age_max === null || $age_max === '') ? null : (int)$age_max,
             'gender'           => $as_string($facility_details['gender'] ?? ''),
             'current_name'     => $as_string($identification['currentName'] ?? ''),
-            'current_owner'    => $as_string($identification['currentOwner'] ?? ''),
-            'current_owners'   => $as_array($identification['currentOwners'] ?? null),
-            'past_owners'      => $as_array($identification['pastOwners'] ?? null),
+            'current_owner'    => $current_owner,
+            'current_owners'   => $current_owners,
+            'past_owners'      => $past_owners,
             'other_names'      => $as_array($identification['otherNames'] ?? null),
             'past_names'       => $as_array($identification['pastNames'] ?? null),
             'known_referrers'  => $as_array($identification['knownReferrers'] ?? null),
-            'other_operators'  => $as_array($facility['otherOperators'] ?? null),
+            'other_operators'  => $other_operators,
             'administrator'    => $as_array($facility['staff']['administrator'] ?? null),
             'notable_staff'    => $as_array($facility['staff']['notableStaff'] ?? null),
             'past_tti_jobs'    => $as_array($facility['staff']['pastTTIJobs'] ?? null),
@@ -2422,6 +2503,10 @@ function kop_state_collect_programs($state_name) {
             'licensing'        => $as_array($facility['licensing'] ?? null),
             'resource_flags'   => $resource_flags,
             'resource_details' => $resource_details,
+            'treatment_types'    => $collect_flags($facility['treatmentTypes'] ?? null),
+            'philosophy_flags'   => $collect_flags($facility['philosophy'] ?? null),
+            'critical_incidents' => $collect_flags($facility['criticalIncidents'] ?? null),
+            'field_notes'      => $field_notes,
             'notes'            => $as_array($facility['notes'] ?? null),
         );
     };
@@ -3159,7 +3244,11 @@ function kop_state_collect_inspection_summaries($state_name) {
                     if (!$finding_count && $corrective !== '' && strcasecmp($corrective, 'none') !== 0) {
                         $finding_count = max(1, $finding_count);
                     }
-                    $type = (string)($categories['report_type'] ?? '');
+                    // Report type: most states write report_type; GA writes
+                    // survey_type ("Incident", "Re-Licensure", "Follow-up/Revisit").
+                    $type = trim((string)($categories['report_type'] ?? ''));
+                    if ($type === '') $type = trim((string)($categories['survey_type'] ?? ''));
+                    if ($type === '') $type = trim((string)($categories['inspection_type'] ?? ''));
                     $pdf_url = (string)($categories['pdf_url'] ?? '');
                     $stats_by_facility[$fid]['violations'] += $finding_count;
                     $update_latest($date_str);
@@ -3189,14 +3278,38 @@ function kop_state_collect_inspection_summaries($state_name) {
                             }
                         }
 
+                        // GA-specific category mapping (ga_scraper.py writes
+                        // survey_* keys): status, appeal flag, visit date, and
+                        // the Statement-of-Deficiencies page link.
+                        $ga_status = trim((string)($cats['survey_status'] ?? ''));
+                        if ($ga_status !== '') $picked_categories['status'] = $ga_status;
+                        $ga_appeal = trim((string)($cats['under_appeal'] ?? ''));
+                        if ($ga_appeal !== '' && !in_array(strtolower($ga_appeal), array('n', 'no', 'false', '0'), true)) {
+                            $picked_categories['under_appeal'] = $ga_appeal;
+                        }
+                        $ga_start = trim((string)($cats['survey_start_date'] ?? ''));
+                        if ($ga_start !== '' && empty($picked_categories['visit_date']) && $ga_start !== (string)$date_str) {
+                            $picked_categories['visit_date'] = $ga_start;
+                        }
+                        $report_url = (string)($r['report_url'] ?? '');
+                        if ($report_url === '') $report_url = trim((string)($cats['sod_url'] ?? ''));
+
+                        // Drop the summary when it just repeats "<type> - <status>"
+                        // (GA builds it that way) — those render as their own rows.
+                        $summary_out = mb_substr((string)($r['summary'] ?? ''), 0, 1200);
+                        $type_status = trim($type . ' - ' . $ga_status, ' -');
+                        if ($summary_out !== '' && strcasecmp(trim($summary_out), $type_status) === 0) {
+                            $summary_out = '';
+                        }
+
                         $inspections_by_facility[$fid][] = array(
                             'date'          => (string)$date_str,
                             'type'          => $type,
                             'finding_count' => $finding_count,
                             'findings'      => $findings,
                             'pdf_url'       => $pdf_url,
-                            'report_url'    => (string)($r['report_url'] ?? ''),
-                            'summary'       => mb_substr((string)($r['summary'] ?? ''), 0, 1200),
+                            'report_url'    => $report_url,
+                            'summary'       => $summary_out,
                             'categories'    => $picked_categories,
                         );
                     }
@@ -3617,7 +3730,8 @@ function kop_state_collect_facilities($state_name) {
             foreach (array('operating_notes','current_owners','past_owners','other_names','past_names',
                            'known_referrers','other_operators','administrator','notable_staff',
                            'past_tti_jobs','profile_links','accreditations_current','accreditations_past',
-                           'memberships','certifications','licensing','resource_flags','notes') as $ak) {
+                           'memberships','certifications','licensing','resource_flags',
+                           'treatment_types','philosophy_flags','critical_incidents','notes') as $ak) {
                 if (empty($p[$ak]) || !is_array($p[$ak])) continue;
                 if (!isset($existing[$ak]) || !is_array($existing[$ak])) $existing[$ak] = array();
                 foreach ($p[$ak] as $item) {
@@ -3633,6 +3747,12 @@ function kop_state_collect_facilities($state_name) {
                     $existing['resource_details'] = array();
                 }
                 $existing['resource_details'] = array_merge($existing['resource_details'], $p['resource_details']);
+            }
+            if (!empty($p['field_notes']) && is_array($p['field_notes'])) {
+                if (!isset($existing['field_notes']) || !is_array($existing['field_notes'])) {
+                    $existing['field_notes'] = array();
+                }
+                $existing['field_notes'] = array_merge($existing['field_notes'], $p['field_notes']);
             }
 
             $incoming_address = (!$has_real_structured && !empty($p['raw_address']))
@@ -3714,6 +3834,10 @@ function kop_state_collect_facilities($state_name) {
                 'licensing'         => $p['licensing'] ?? array(),
                 'resource_flags'    => $p['resource_flags'] ?? array(),
                 'resource_details'  => $p['resource_details'] ?? array(),
+                'treatment_types'    => $p['treatment_types'] ?? array(),
+                'philosophy_flags'   => $p['philosophy_flags'] ?? array(),
+                'critical_incidents' => $p['critical_incidents'] ?? array(),
+                'field_notes'       => $p['field_notes'] ?? array(),
                 'notes'             => $p['notes'] ?? array(),
                 'inspections'       => array(),
                 'in_master'         => true,
@@ -3846,6 +3970,10 @@ function kop_state_collect_facilities($state_name) {
                 'licensing'         => array(),
                 'resource_flags'    => array(),
                 'resource_details'  => array(),
+                'treatment_types'    => array(),
+                'philosophy_flags'   => array(),
+                'critical_incidents' => array(),
+                'field_notes'       => array(),
                 'notes'             => array(),
                 'inspections'       => $insp['inspections'] ?? array(),
                 'in_master'         => false,
