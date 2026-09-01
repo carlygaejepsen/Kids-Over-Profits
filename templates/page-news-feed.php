@@ -27,6 +27,10 @@ $offset = ($current_page - 1) * $per_page;
 // Archive month filter (format: YYYY-MM)
 $archive_month = isset($_GET['archive']) ? sanitize_text_field($_GET['archive']) : '';
 
+// Ongoing-story view (?story=slug): show only that arc's articles.
+$story_slug = isset($_GET['story']) ? sanitize_title($_GET['story']) : '';
+$current_arc = null;
+
 // Fetch approved submissions
 $status_filter = ['approved', 'published'];
 $placeholders = implode(',', array_fill(0, count($status_filter), '?'));
@@ -39,6 +43,21 @@ try {
     if ($archive_month && preg_match('/^\d{4}-\d{2}$/', $archive_month)) {
         $where .= " AND DATE_FORMAT(publication_date, '%Y-%m') = ?";
         $params[] = $archive_month;
+    }
+
+    if ($story_slug !== '') {
+        // Tolerates a database that predates the news_story_arcs migration.
+        try {
+            $arc_stmt = $pdo->prepare("SELECT * FROM news_story_arcs WHERE slug = ?");
+            $arc_stmt->execute([$story_slug]);
+            $current_arc = $arc_stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            $current_arc = null;
+        }
+        if ($current_arc) {
+            $where .= " AND story_arc_id = ?";
+            $params[] = (int) $current_arc['id'];
+        }
     }
 
     // Get total count for pagination
@@ -117,21 +136,76 @@ try {
     $archive_stmt->execute($status_filter);
     $archive_months = $archive_stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // Ongoing story arcs: $arc_index (id => title/slug) powers the per-card
+    // badge; $ongoing_arcs feeds the featured section on the unfiltered front
+    // page. Tolerates a pre-migration database (no news_story_arcs table).
+    $ongoing_arcs = [];
+    $arc_index = [];
+    try {
+        $arc_rows = $pdo->query(
+            "SELECT a.id, a.title, a.slug, a.description, a.status,
+                    (SELECT COUNT(*) FROM news_submissions s
+                     WHERE s.story_arc_id = a.id AND s.status IN ('approved', 'published')) AS article_count,
+                    (SELECT MAX(s.publication_date) FROM news_submissions s
+                     WHERE s.story_arc_id = a.id AND s.status IN ('approved', 'published')) AS latest_date
+             FROM news_story_arcs a
+             ORDER BY a.display_order ASC, a.id ASC"
+        )->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($arc_rows as $a) {
+            $arc_index[(int) $a['id']] = ['title' => $a['title'], 'slug' => $a['slug']];
+            if ($a['status'] === 'active' && (int) $a['article_count'] > 0) {
+                $ongoing_arcs[] = $a;
+            }
+        }
+        // Latest developments per featured arc (front page only).
+        $show_ongoing = !$current_arc && $story_slug === '' && !$archive_month && $current_page === 1;
+        if ($ongoing_arcs && $show_ongoing) {
+            $dev_stmt = $pdo->prepare(
+                "SELECT article_title, alternate_title, publication_name, publication_date, article_url
+                 FROM news_submissions
+                 WHERE story_arc_id = ? AND status IN ('approved', 'published')
+                 ORDER BY publication_date DESC, id DESC
+                 LIMIT 3"
+            );
+            foreach ($ongoing_arcs as &$oa) {
+                $dev_stmt->execute([(int) $oa['id']]);
+                $oa['latest'] = $dev_stmt->fetchAll(PDO::FETCH_ASSOC);
+            }
+            unset($oa);
+        }
+    } catch (PDOException $e) {
+        $ongoing_arcs = [];
+        $arc_index = [];
+        $show_ongoing = false;
+    }
+
 } catch (PDOException $e) {
     $error_message = "Error fetching news: " . $e->getMessage();
     $submissions = [];
     $total_pages = 1;
     $archive_months = [];
+    $ongoing_arcs = [];
+    $arc_index = [];
+    $show_ongoing = false;
 }
 
 ?>
 
 <div class="news-feed-container">
     <div class="news-feed-header">
-        <h1>Troubled Teen Industry News</h1>
-        <p>Latest updates, investigations, and reports monitored by our team.</p>
+        <?php if ($current_arc): ?>
+            <a class="story-arc-back" href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>">&laquo; All news</a>
+            <h1><span class="story-arc-flag">Ongoing story</span> <?php echo esc_html($current_arc['title']); ?></h1>
+            <?php if (!empty($current_arc['description'])): ?>
+                <p><?php echo esc_html($current_arc['description']); ?></p>
+            <?php endif; ?>
+            <p class="story-arc-count"><?php echo (int) $total_items; ?> article<?php echo $total_items === 1 ? '' : 's'; ?> in this story, newest first.</p>
+        <?php else: ?>
+            <h1>Troubled Teen Industry News</h1>
+            <p>Latest updates, investigations, and reports monitored by our team.</p>
+        <?php endif; ?>
 
-        <?php if (!empty($archive_months)): ?>
+        <?php if (!empty($archive_months) && !$current_arc): ?>
         <div class="news-archive-picker">
             <form method="get" action="">
                 <label for="archive-select">Browse by month:</label>
@@ -156,6 +230,48 @@ try {
         <div class="news-error">
             <?php echo esc_html($error_message); ?>
         </div>
+    <?php endif; ?>
+
+    <?php if (!empty($ongoing_arcs) && !empty($show_ongoing)): ?>
+        <section class="ongoing-stories" data-kop-bug-feature="news-feed/ongoing-stories" data-kop-bug-label="Ongoing Stories">
+            <h2 class="ongoing-stories-title">Ongoing Stories</h2>
+            <p class="ongoing-stories-sub">Big stories we're following as they develop.</p>
+            <div class="ongoing-stories-grid">
+                <?php foreach ($ongoing_arcs as $oa):
+                    $arc_url = '?story=' . rawurlencode($oa['slug']);
+                    $latest_label = !empty($oa['latest_date']) ? date('M j, Y', strtotime($oa['latest_date'])) : '';
+                ?>
+                    <div class="ongoing-card">
+                        <h3 class="ongoing-card-title"><a href="<?php echo esc_url($arc_url); ?>"><?php echo esc_html($oa['title']); ?></a></h3>
+                        <div class="ongoing-card-meta">
+                            <?php echo (int) $oa['article_count']; ?> article<?php echo (int) $oa['article_count'] === 1 ? '' : 's'; ?>
+                            <?php if ($latest_label): ?> · updated <?php echo esc_html($latest_label); ?><?php endif; ?>
+                        </div>
+                        <?php if (!empty($oa['description'])): ?>
+                            <p class="ongoing-card-desc"><?php echo esc_html($oa['description']); ?></p>
+                        <?php endif; ?>
+                        <?php if (!empty($oa['latest'])): ?>
+                            <ul class="ongoing-card-latest">
+                                <?php foreach ($oa['latest'] as $dev):
+                                    $devTitle = !empty($dev['alternate_title']) ? $dev['alternate_title'] : $dev['article_title'];
+                                    $devDate = !empty($dev['publication_date']) ? date('M j', strtotime($dev['publication_date'])) : '';
+                                ?>
+                                    <li>
+                                        <?php if (!empty($dev['article_url'])): ?>
+                                            <a href="<?php echo esc_url($dev['article_url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($devTitle); ?></a>
+                                        <?php else: ?>
+                                            <?php echo esc_html($devTitle); ?>
+                                        <?php endif; ?>
+                                        <span class="ongoing-dev-meta"><?php echo esc_html(trim(($dev['publication_name'] ?? '') . ($devDate ? ' · ' . $devDate : ''), ' ·')); ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                        <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </section>
     <?php endif; ?>
 
     <?php if (empty($submissions)): ?>
@@ -450,7 +566,7 @@ try {
                     <?php if (!empty($stateTags)): ?>
                     <div class="filter-tag-category">
                         <button class="filter-category-header" data-category="states">
-                            <span class="category-label">📍 Location (<?php echo count($stateTags); ?>)</span>
+                            <span class="category-label">Location (<?php echo count($stateTags); ?>)</span>
                             <span class="category-arrow">▸</span>
                         </button>
                         <div class="filter-category-content" data-category-content="states" style="display: none;">
@@ -468,7 +584,7 @@ try {
                     <?php if (!empty($orgTags)): ?>
                     <div class="filter-tag-category">
                         <button class="filter-category-header" data-category="orgs">
-                            <span class="category-label">🏢 Parent Organizations (<?php echo count($orgTags); ?>)</span>
+                            <span class="category-label">Parent Organizations (<?php echo count($orgTags); ?>)</span>
                             <span class="category-arrow">▸</span>
                         </button>
                         <div class="filter-category-content" data-category-content="orgs" style="display: none;">
@@ -486,7 +602,7 @@ try {
                     <?php if (!empty($facilityTags)): ?>
                     <div class="filter-tag-category">
                         <button class="filter-category-header" data-category="facilities">
-                            <span class="category-label">🏫 Facilities (<?php echo count($facilityTags); ?>)</span>
+                            <span class="category-label">Facilities (<?php echo count($facilityTags); ?>)</span>
                             <span class="category-arrow">▸</span>
                         </button>
                         <div class="filter-category-content" data-category-content="facilities" style="display: none;">
@@ -504,7 +620,7 @@ try {
                     <?php if (!empty($otherTags)): ?>
                     <div class="filter-tag-category">
                         <button class="filter-category-header" data-category="topics">
-                            <span class="category-label">🏷️ Topics (<?php echo count($otherTags); ?>)</span>
+                            <span class="category-label">Topics (<?php echo count($otherTags); ?>)</span>
                             <span class="category-arrow">▸</span>
                         </button>
                         <div class="filter-category-content" data-category-content="topics" style="display: none;">
@@ -576,6 +692,10 @@ try {
                 // story_group_id collapse above the card loop).
                 $story_key = !empty($item['story_group_id']) ? 'g' . $item['story_group_id'] : 'i' . $item['id'];
                 $also_covered = $story_coverage[$story_key] ?? [];
+
+                // Ongoing-story badge (hidden inside the story's own view).
+                $card_arc = (!$current_arc && !empty($item['story_arc_id']))
+                    ? ($arc_index[(int) $item['story_arc_id']] ?? null) : null;
             ?>
                 <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
                 <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
@@ -583,6 +703,11 @@ try {
                         <span class="news-type-badge type-<?php echo esc_attr($item['article_type']); ?>">
                             <?php echo esc_html(ucfirst($item['article_type'])); ?>
                         </span>
+                        <?php if ($card_arc): ?>
+                            <a class="arc-badge" href="<?php echo esc_url('?story=' . rawurlencode($card_arc['slug'])); ?>" title="Part of an ongoing story — view all coverage">
+                                <?php echo esc_html($card_arc['title']); ?>
+                            </a>
+                        <?php endif; ?>
                         <h2 class="news-card-title">
                             <a href="<?php echo esc_url($item['article_url']); ?>" target="_blank" rel="noopener noreferrer">
                                 <?php echo esc_html($displayTitle); ?>
@@ -606,7 +731,7 @@ try {
 
                     <?php if (!empty($also_covered)): ?>
                         <div class="news-coverage">
-                            <span class="coverage-label">📰 Also covered by:</span>
+                            <span class="coverage-label">Also covered by:</span>
                             <?php foreach ($also_covered as $cov):
                                 $covTitle = !empty($cov['alternate_title']) ? $cov['alternate_title'] : $cov['article_title'];
                                 $covOutlet = $cov['publication_name'] ?: (parse_url($cov['article_url'] ?? '', PHP_URL_HOST) ?: 'Unknown outlet');
@@ -627,7 +752,7 @@ try {
                     <?php if (!empty($warnings)): ?>
                         <div class="news-warnings">
                             <?php foreach ($warnings as $warning): ?>
-                                <span class="warning-tag">⚠️ <?php echo esc_html($warning); ?></span>
+                                <span class="warning-tag"><?php echo esc_html($warning); ?></span>
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
@@ -687,6 +812,7 @@ try {
             // Build base URL preserving archive filter
             $base_params = [];
             if ($archive_month) $base_params['archive'] = $archive_month;
+            if ($current_arc) $base_params['story'] = $current_arc['slug'];
 
             function kop_pagination_url($page, $base_params) {
                 $params = $base_params;

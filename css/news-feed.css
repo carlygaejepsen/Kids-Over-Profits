@@ -538,3 +538,195 @@ a.coverage-link:hover {
     background-color: var(--kop-teal);
     color: var(--kop-white);
 }
+
+/* ============================================================
+   Ongoing Stories (story arcs)
+   ============================================================ */
+
+.ongoing-stories {
+    background: #FFF5CB;
+    border: 2px solid #33A7B5;
+    border-radius: 12px;
+    padding: 1.5rem 2rem 2rem;
+    margin-bottom: 3rem;
+}
+
+.ongoing-stories-title {
+    font-size: 1.5rem;
+    color: #000435;
+    margin: 0 0 0.25rem;
+}
+
+.ongoing-stories-sub {
+    color: #4a5568;
+    font-size: 0.95rem;
+    margin: 0 0 1.25rem;
+}
+
+.ongoing-stories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.25rem;
+}
+
+.ongoing-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #EF9034;
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.ongoing-card-title {
+    font-size: 1.15rem;
+    margin: 0 0 0.25rem;
+    line-height: 1.35;
+}
+
+.ongoing-card-title a {
+    color: #000080;
+    text-decoration: none;
+}
+
+.ongoing-card-title a:hover {
+    text-decoration: underline;
+}
+
+.ongoing-card-meta {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.ongoing-card-desc {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0 0 0.75rem;
+    line-height: 1.5;
+}
+
+.ongoing-card-latest {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    border-top: 1px solid #edf2f7;
+}
+
+.ongoing-card-latest li {
+    padding: 0.45rem 0;
+    border-bottom: 1px solid #edf2f7;
+    font-size: 0.88rem;
+    line-height: 1.4;
+}
+
+.ongoing-card-latest a {
+    color: #2d3748;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.ongoing-card-latest a:hover {
+    color: #000080;
+    text-decoration: underline;
+}
+
+.ongoing-dev-meta {
+    display: block;
+    font-size: 0.75rem;
+    color: #a0aec0;
+}
+
+.ongoing-card-viewall {
+    margin-top: auto;
+    align-self: flex-start;
+    color: #000080;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.ongoing-card-viewall:hover {
+    text-decoration: underline;
+}
+
+/* Per-card badge linking into an ongoing story */
+.arc-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0.35rem;
+    background-color: #FFF5CB;
+    color: #000080;
+    border: 1px solid #EF9034;
+    text-decoration: none;
+}
+
+.arc-badge:hover {
+    background-color: #EF9034;
+    color: #fff;
+}
+
+/* Story view header */
+.story-arc-back {
+    display: inline-block;
+    color: #000080;
+    font-weight: 600;
+    text-decoration: none;
+    margin-bottom: 0.75rem;
+}
+
+.story-arc-back:hover {
+    text-decoration: underline;
+}
+
+.story-arc-flag {
+    display: inline-block;
+    vertical-align: middle;
+    background: #EF9034;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 6px;
+    padding: 0.25rem 0.6rem;
+    margin-right: 0.5rem;
+}
+
+.story-arc-count {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+    .ongoing-stories {
+        padding: 1rem 1.1rem 1.25rem;
+    }
+    .ongoing-stories-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Home-page shortcode variant */
+.kop-ongoing-shortcode {
+    margin: 2rem 0;
+}
+
+.ongoing-stories-allnews {
+    margin: 1rem 0 0;
+    text-align: right;
+}
+
+.ongoing-stories-allnews a {
+    color: #000080;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ongoing-stories-allnews a:hover {
+    text-decoration: underline;
+}
