@@ -57,7 +57,9 @@ if (!function_exists('kop_ai_api_keys')) {
                     throw new Exception('Groq API key not configured. Add GROQ_API_KEY to your .env file (https://console.groq.com/keys).');
                 }
                 $r = kop_ai_curl('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'           => $opts['groqModel'] ?? 'llama-3.3-70b-versatile',
+                    // llama-3.3-70b-versatile went 404 for this account Sep 2026;
+                    // GROQ_MODEL in .env overrides for future retirements.
+                    'model'           => $opts['groqModel'] ?? (getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b'),
                     'messages'        => [['role' => 'user', 'content' => $prompt]],
                     'temperature'     => $temp,
                     'max_tokens'      => $maxTokens,

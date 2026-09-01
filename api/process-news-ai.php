@@ -493,54 +493,82 @@ function processWithOllama($content, $url = '', $customInstructions = '') {
 function processWithGroq($apiKey, $content, $url = '', $customInstructions = '') {
     $prompt = buildPrompt($content, $url, $customInstructions);
 
-    $requestData = [
-        'model' => 'llama-3.3-70b-versatile', // Fast and free
-        'messages' => [
-            ['role' => 'user', 'content' => $prompt]
-        ],
-        'temperature' => 0.1,
-        'max_tokens' => 4096
-    ];
+    // Model fallback chain: Groq retires/gates models per account over time
+    // (llama-3.3-70b-versatile started 404ing for this account in Sep 2026),
+    // so a dead model must not kill the pipeline. Set GROQ_MODEL in .env to
+    // pin/override; otherwise each model is tried until one isn't rejected.
+    $models = array_values(array_unique(array_filter([
+        getenv('GROQ_MODEL') ?: null,
+        'llama-3.3-70b-versatile',
+        'openai/gpt-oss-120b',
+        'llama-3.1-8b-instant',
+        'openai/gpt-oss-20b',
+    ])));
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'Authorization: Bearer ' . $apiKey
-    ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    $lastError = null;
+    foreach ($models as $model) {
+        $requestData = [
+            'model' => $model,
+            'messages' => [
+                ['role' => 'user', 'content' => $prompt]
+            ],
+            'temperature' => 0.1,
+            'max_tokens' => 4096
+        ];
 
-    $result = executeCurlRequest($ch, 'Groq');
-    curl_close($ch);
-    
-    $response = $result['response'];
-    $httpCode = $result['httpCode'];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/chat/completions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($requestData));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Authorization: Bearer ' . $apiKey
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
-    if ($httpCode !== 200) {
-        $errorData = json_decode($response, true);
-        $errorMsg = $errorData['error']['message'] ?? 'API request failed';
-        
-        // Check for common Groq errors
-        if ($httpCode === 401) {
-            throw new Exception("Groq API key is invalid or expired. Please check your GROQ_API_KEY in .env file. Get a new key at: https://console.groq.com/keys");
-        } elseif ($httpCode === 429) {
-            throw new Exception("Groq rate limit exceeded. Please wait a moment and try again.");
+        $result = executeCurlRequest($ch, 'Groq');
+        curl_close($ch);
+
+        $response = $result['response'];
+        $httpCode = $result['httpCode'];
+
+        if ($httpCode !== 200) {
+            $errorData = json_decode($response, true);
+            $errorMsg = $errorData['error']['message'] ?? 'API request failed';
+
+            // Model unavailable for this account (retired, gated, renamed):
+            // log and try the next model in the chain.
+            $modelGone = $httpCode === 404
+                || stripos($errorMsg, 'decommissioned') !== false
+                || (stripos($errorMsg, 'model') !== false && stripos($errorMsg, 'does not exist') !== false);
+            if ($modelGone) {
+                error_log("[Groq] model '$model' unavailable (HTTP $httpCode): $errorMsg — trying next");
+                $lastError = new Exception("Groq API error (HTTP $httpCode): $errorMsg");
+                continue;
+            }
+
+            // Check for common Groq errors
+            if ($httpCode === 401) {
+                throw new Exception("Groq API key is invalid or expired. Please check your GROQ_API_KEY in .env file. Get a new key at: https://console.groq.com/keys");
+            } elseif ($httpCode === 429) {
+                throw new Exception("Groq rate limit exceeded. Please wait a moment and try again.");
+            }
+
+            throw new Exception("Groq API error (HTTP $httpCode): $errorMsg");
         }
-        
-        throw new Exception("Groq API error (HTTP $httpCode): $errorMsg");
+
+        $responseData = json_decode($response, true);
+        if (!isset($responseData['choices'][0]['message']['content'])) {
+            error_log("[Groq] Unexpected response structure: " . substr($response, 0, 500));
+            throw new Exception('Invalid response from Groq - missing choices.message.content');
+        }
+
+        return parseAIResponse($responseData['choices'][0]['message']['content'], 'Groq');
     }
 
-    $responseData = json_decode($response, true);
-    if (!isset($responseData['choices'][0]['message']['content'])) {
-        error_log("[Groq] Unexpected response structure: " . substr($response, 0, 500));
-        throw new Exception('Invalid response from Groq - missing choices.message.content');
-    }
-
-    return parseAIResponse($responseData['choices'][0]['message']['content'], 'Groq');
+    throw $lastError ?: new Exception('Groq API error: no usable model in the fallback chain');
 }
 
 /**

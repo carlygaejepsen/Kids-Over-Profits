@@ -204,7 +204,11 @@ function kop_action_chunk(): void {
     }
 
     $groq_key = kop_resolve_secret('GROQ_API_KEY') ?: kop_resolve_secret('GROK_API_KEY');
-    $model    = ($total === 1) ? 'llama-3.3-70b-versatile' : 'llama-3.1-8b-instant';
+    // llama-3.3-70b-versatile went 404 for this account Sep 2026; GROQ_MODEL
+    // in .env overrides the single-chunk model for future retirements.
+    $model    = ($total === 1)
+        ? (getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b')
+        : 'llama-3.1-8b-instant';
     $result   = kop_groq_call($groq_key, $model, $job['chunks'][$chunk_index], $chunk_index + 1, $total);
 
     if (!$result['ok']) {
