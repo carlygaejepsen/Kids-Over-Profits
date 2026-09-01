@@ -105,8 +105,10 @@ if ($orphan_ids) {
     }
 }
 
-// facilities_master documentFolderId references into the orphan set.
+// facilities_master documentFolderId references — into the orphan set (for
+// the orphan plan) and onto ANY folder (for duplicate merges).
 $facility_refs = []; // orphan_id => [unique_name, ...]
+$all_refs = [];      // folder_id => [unique_name, ...]
 $fac_rows = $wpdb->get_results(
     "SELECT unique_name, json_data FROM facilities_master
      WHERE json_data LIKE '%documentFolderId%'"
@@ -124,6 +126,7 @@ foreach ($fac_rows as $fr) {
         $ref_ids[] = (int)$decoded['data']['documentFolderId'];
     }
     foreach (array_unique($ref_ids) as $rid) {
+        $all_refs[$rid][] = $fr->unique_name;
         if (isset($orphan_set[$rid])) {
             $facility_refs[$rid][] = $fr->unique_name;
         }
@@ -178,6 +181,150 @@ foreach ($plan as $oid => $p) {
     }
     if ($p['survivor'] !== null && $p['facilities']) {
         $remaps[$oid] = $p['survivor'];
+    }
+}
+
+/** Full "Parent / Child" path of a folder. */
+function kop_cff_path($fid, $by_id, $depth = 0) {
+    if ($depth > 10 || !isset($by_id[(int)$fid])) {
+        return '';
+    }
+    $f = $by_id[(int)$fid];
+    $prefix = ((int)$f->parent !== 0) ? kop_cff_path($f->parent, $by_id, $depth + 1) : '';
+    return ($prefix !== '' ? $prefix . ' / ' : '') . $f->name;
+}
+
+/** True when $a is an ancestor of $b in the folder tree. */
+function kop_cff_is_ancestor($a, $b, $by_id) {
+    $cur = isset($by_id[(int)$b]) ? (int)$by_id[(int)$b]->parent : 0;
+    for ($i = 0; $i < 25 && $cur; $i++) {
+        if ($cur === (int)$a) {
+            return true;
+        }
+        $cur = isset($by_id[$cur]) ? (int)$by_id[$cur]->parent : 0;
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
+// Duplicate NAME groups among the healthy (non-orphan) tree — for the
+// opt-in merge section. Many same-name folders are legitimate (a "Lawsuits"
+// subfolder under different programs), so nothing merges without a tick.
+// ---------------------------------------------------------------------------
+$dupe_groups = []; // norm => [ids]
+foreach ($survivors_by_name as $dnorm => $dids) {
+    if ($dnorm !== '' && count($dids) > 1) {
+        $dupe_groups[$dnorm] = $dids;
+    }
+}
+ksort($dupe_groups);
+$dupe_attach = [];
+if ($dupe_groups) {
+    $dupe_member_ids = array_merge(...array_values($dupe_groups));
+    $in = implode(',', array_map('intval', $dupe_member_ids));
+    foreach ($wpdb->get_results(
+        "SELECT folder_id, COUNT(*) AS n FROM {$fbv_rel} WHERE folder_id IN ($in) GROUP BY folder_id"
+    ) as $r) {
+        $dupe_attach[(int)$r->folder_id] = (int)$r->n;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Merge ticked duplicate groups: files and subfolders of the losers move to
+// the chosen survivor, program references remap, losers are deleted.
+// ---------------------------------------------------------------------------
+$merged_dupes = false;
+$merge_log = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_merge_dupes'])
+    && check_admin_referer('kop_cff_merge', '_wpnonce_merge')) {
+
+    $requests = isset($_POST['dupes']) && is_array($_POST['dupes']) ? $_POST['dupes'] : [];
+    $wpdb->query('START TRANSACTION');
+    try {
+        foreach ($requests as $req) {
+            if (empty($req['merge'])) {
+                continue;
+            }
+            $survivor = (int)($req['survivor'] ?? 0);
+            if (!isset($by_id[$survivor]) || isset($orphan_set[$survivor])) {
+                $merge_log[] = "SKIPPED a group: survivor #{$survivor} is missing or orphaned";
+                continue;
+            }
+            $snorm = kop_cff_norm($by_id[$survivor]->name);
+            $members = isset($survivors_by_name[$snorm]) ? $survivors_by_name[$snorm] : [];
+
+            // Nesting guard: merging folders that contain each other would
+            // create cycles — leave those to the manual move/merge tools.
+            $nested = false;
+            foreach ($members as $ma) {
+                foreach ($members as $mb) {
+                    if ($ma !== $mb && kop_cff_is_ancestor($ma, $mb, $by_id)) {
+                        $nested = true;
+                    }
+                }
+            }
+            if ($nested) {
+                $merge_log[] = "SKIPPED “{$by_id[$survivor]->name}”: the same-name folders are nested inside each other — resolve manually";
+                continue;
+            }
+
+            foreach ($members as $mid) {
+                $mid = (int)$mid;
+                if ($mid === $survivor) {
+                    continue;
+                }
+                // Files: dedupe against the survivor, then move the rest.
+                $wpdb->query($wpdb->prepare(
+                    "DELETE af FROM {$fbv_rel} af
+                     JOIN {$fbv_rel} s ON s.attachment_id = af.attachment_id AND s.folder_id = %d
+                     WHERE af.folder_id = %d",
+                    $survivor, $mid
+                ));
+                $moved = $wpdb->query($wpdb->prepare(
+                    "UPDATE {$fbv_rel} SET folder_id = %d WHERE folder_id = %d",
+                    $survivor, $mid
+                ));
+                // Subfolders follow the survivor.
+                $wpdb->query($wpdb->prepare(
+                    "UPDATE {$fbv} SET parent = %d WHERE parent = %d",
+                    $survivor, $mid
+                ));
+                // Program references remap.
+                foreach ($all_refs[$mid] ?? [] as $uname) {
+                    $json = $wpdb->get_var($wpdb->prepare(
+                        'SELECT json_data FROM facilities_master WHERE unique_name = %s', $uname
+                    ));
+                    $decoded = json_decode($json, true);
+                    if (!is_array($decoded)) {
+                        continue;
+                    }
+                    if ((int)($decoded['documentFolderId'] ?? 0) === $mid) {
+                        $decoded['documentFolderId'] = $survivor;
+                    }
+                    if ((int)($decoded['data']['documentFolderId'] ?? 0) === $mid) {
+                        $decoded['data']['documentFolderId'] = $survivor;
+                    }
+                    $wpdb->update(
+                        'facilities_master',
+                        ['json_data' => wp_json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)],
+                        ['unique_name' => $uname]
+                    );
+                    $merge_log[] = "Remapped documentFolderId {$mid} → {$survivor} on “{$uname}”";
+                }
+                $wpdb->delete($fbv, ['id' => $mid], ['%d']);
+                $merge_log[] = "Merged “{$by_id[$mid]->name}” (#{$mid}) into #{$survivor} — {$moved} file(s) moved, subfolders re-parented, folder deleted";
+            }
+        }
+        if (!$merge_log) {
+            $merge_log[] = 'No duplicate groups were ticked.';
+        }
+        $wpdb->query('COMMIT');
+        $merged_dupes = true;
+    } catch (Throwable $e) {
+        $wpdb->query('ROLLBACK');
+        $merge_log[] = 'FAILED — rolled back: ' . $e->getMessage();
+        error_log('consolidate-filebird-folders dupe merge failed: ' . $e->getMessage());
     }
 }
 
@@ -531,6 +678,15 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $park_log)); ?></div>
 <?php endif; ?>
 
+<?php if ($merged_dupes): ?>
+    <h2 class="ok">Duplicate folders merged</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $merge_log)); ?></div>
+    <p><a href="">Reload for a fresh report</a>.</p>
+<?php elseif ($merge_log): ?>
+    <h2 class="bad">Duplicate merge failed (rolled back)</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $merge_log)); ?></div>
+<?php endif; ?>
+
 <?php if ($resolved): ?>
     <h2 class="ok">Manual resolutions applied</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
@@ -638,6 +794,69 @@ the rest — file them from FileBird whenever.</p>
         >Apply manual fixes</button></p>
 <?php endif; ?>
 </form>
+
+<h2>Duplicate folder names (<?php echo count($dupe_groups); ?> groups)</h2>
+<p style="max-width:760px">Folders in the healthy tree sharing a name. <strong>Many are
+legitimate</strong> — a “Lawsuits” subfolder under different programs, a state folder
+under different sections — so check the paths before merging. Tick a group, choose the
+<strong>survivor</strong> (pre-selected: the copy with the most files), and merge: the
+others’ files and subfolders move into the survivor, program references are remapped,
+and the extra folders are deleted.</p>
+
+<?php if ($dupe_groups): ?>
+<input type="search" id="kop-dupe-filter" placeholder="Filter duplicate groups… e.g. aspen"
+    style="width:260px;padding:6px 9px;margin-bottom:8px;border:1px solid #000080;border-radius:6px">
+<form method="post">
+<?php wp_nonce_field('kop_cff_merge', '_wpnonce_merge'); ?>
+<table id="kop-dupe-table"><thead><tr><th>Merge?</th><th>Name</th><th>Copies — pick the survivor</th></tr></thead><tbody>
+<?php $gi = 0; foreach ($dupe_groups as $dnorm => $dids):
+    // Default survivor: most files, then lowest id.
+    $default = null;
+    foreach ($dids as $did) {
+        $files = isset($dupe_attach[$did]) ? $dupe_attach[$did] : 0;
+        if ($default === null
+            || $files > $default[1]
+            || ($files === $default[1] && $did < $default[0])) {
+            $default = [$did, $files];
+        }
+    }
+?>
+    <tr>
+        <td><input type="checkbox" name="dupes[<?php echo $gi; ?>][merge]" value="1" style="transform:scale(1.4)"></td>
+        <td><strong><?php echo esc_html($by_id[$dids[0]]->name); ?></strong><br><small><?php echo count($dids); ?> copies</small></td>
+        <td>
+        <?php foreach ($dids as $did): $files = isset($dupe_attach[$did]) ? $dupe_attach[$did] : 0; ?>
+            <label style="display:block;margin:2px 0;cursor:pointer">
+                <input type="radio" name="dupes[<?php echo $gi; ?>][survivor]" value="<?php echo (int)$did; ?>"
+                    <?php echo $did === $default[0] ? 'checked' : ''; ?>>
+                #<?php echo (int)$did; ?> — <?php echo esc_html(kop_cff_path($did, $by_id)); ?>
+                (<?php echo $files; ?> file<?php echo $files === 1 ? '' : 's'; ?><?php
+                    echo isset($all_refs[$did]) ? ', referenced by ' . count($all_refs[$did]) . ' program(s)' : ''; ?>)
+            </label>
+        <?php endforeach; ?>
+        </td>
+    </tr>
+<?php $gi++; endforeach; ?>
+</tbody></table>
+<p><button type="submit" name="do_merge_dupes" value="1" style="background:#000080"
+    onclick="var n=document.querySelectorAll('#kop-dupe-table input[type=checkbox]:checked').length; if(!n){alert('Tick the groups to merge first.');return false;} return window.confirm('Merge '+n+' ticked group(s) into their chosen survivors?\n\nFiles and subfolders move to the survivor; the other copies are deleted. Runs in a transaction.');">
+    Merge ticked groups into their survivors</button></p>
+</form>
+<script>
+(function () {
+    var f = document.getElementById('kop-dupe-filter');
+    if (!f) return;
+    f.addEventListener('input', function () {
+        var q = f.value.toLowerCase().trim();
+        document.querySelectorAll('#kop-dupe-table tbody tr').forEach(function (row) {
+            row.style.display = (!q || row.textContent.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+        });
+    });
+})();
+</script>
+<?php else: ?>
+<p class="ok">No duplicate folder names in the tree.</p>
+<?php endif; ?>
 
 <link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
 <script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
