@@ -15,6 +15,16 @@
 require_once __DIR__ . '/config.php';
 
 $is_cli = php_sapi_name() === 'cli';
+
+// Full schema disclosure (every table and column, 110+ tables including WP
+// core) — admin-only. CLI use for local development stays open.
+if (!$is_cli && (!function_exists('current_user_can') || !current_user_can('manage_options'))) {
+    http_response_code(403);
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
+
 $format = $_GET['format'] ?? 'json';
 
 try {
