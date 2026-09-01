@@ -210,13 +210,11 @@
 
     var STYLE = [
         '.kop-submit-info-row{margin-top:12px;text-align:right;}',
-        // The !important flags defend against the theme's global button
-        // styling (navy background, white text, uppercase), which otherwise
-        // leaves white text on this white pill.
-        '.kop-submit-info-btn{display:inline-block;background:#fff !important;color:#000080 !important;border:1px solid #000080 !important;border-radius:999px;',
-        'padding:0.3em 0.9em;font-size:0.85em !important;font-weight:600;cursor:pointer;line-height:1.4 !important;',
-        'box-shadow:none !important;text-transform:none !important;letter-spacing:normal !important;}',
-        '.kop-submit-info-btn:hover,.kop-submit-info-btn:focus{background:#000080 !important;color:#fff !important;}',
+        // Navy pill with white text - the theme forces white text onto
+        // buttons anyway, so the pill never uses a white background.
+        '.kop-submit-info-btn{display:inline-block;background:#000080;color:#fff;border:1px solid #000080;border-radius:999px;',
+        'padding:0.3em 0.9em;font-size:0.85em;font-weight:600;cursor:pointer;line-height:1.4;}',
+        '.kop-submit-info-btn:hover,.kop-submit-info-btn:focus{background:#33A7B5;border-color:#33A7B5;color:#fff;}',
         '.kop-si-overlay{position:fixed;inset:0;background:rgba(0,4,53,0.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;}',
         '.kop-si-modal{background:#fff;color:#1f2937;border-radius:12px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,0.35);}',
         '.kop-si-header{background:#000435;color:#fff;border-radius:12px 12px 0 0;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;}',
