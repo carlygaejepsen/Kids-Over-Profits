@@ -44,6 +44,10 @@ $kop_report_states = array(
 
 <div class="kop-home">
 
+    <?php if (has_post_thumbnail()): ?>
+        <div class="kop-home-banner"><?php the_post_thumbnail('full'); ?></div>
+    <?php endif; ?>
+
     <section class="kop-home-hero">
         <h2>Survivor-led accountability for the Troubled Teen Industry.</h2>
         <p>Click the button that best describes you to get started.</p>
@@ -53,6 +57,15 @@ $kop_report_states = array(
             <a class="kop-home-btn" href="/families">Friends &amp; Families</a>
             <a class="kop-home-btn" href="/journalists">Journalists</a>
         </div>
+    </section>
+
+    <section class="kop-home-search-section">
+        <form role="search" method="get" class="kop-home-search" action="<?php echo esc_url(home_url('/')); ?>">
+            <label class="screen-reader-text" for="kop-home-search-input">Search the site</label>
+            <input type="search" id="kop-home-search-input" name="s" value=""
+                   placeholder="Search facilities, news, reports&hellip;">
+            <button type="submit">Search</button>
+        </form>
     </section>
 
     <section class="kop-home-mission">

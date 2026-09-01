@@ -13,9 +13,13 @@
 .kop-bug-report-link:focus,
 .kop-bug-report-link:focus-visible,
 .kop-bug-report-link:active {
-    display: inline-flex;
+    /* Sits in the lower-right corner of its feature section: the link is the
+       container's last child, and flex display + auto left margin right-align
+       it in block, flex, and grid parents alike. */
+    display: flex;
+    width: fit-content;
     align-items: center;
-    margin: 6px 0 0;
+    margin: 6px 0 0 auto;
     padding: 3px 6px;
     background: none;
     border: none !important;
