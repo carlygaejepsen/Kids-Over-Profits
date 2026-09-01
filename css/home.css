@@ -1,0 +1,112 @@
+/* Home Page template (templates/page-home.php) */
+
+.kop-home {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem;
+}
+
+.kop-home section {
+    margin-bottom: 2.5rem;
+}
+
+/* Hero + audience buttons */
+.kop-home-hero {
+    text-align: center;
+}
+
+.kop-home-hero h2 {
+    color: var(--kop-midnight-blue, #000435);
+    margin-bottom: 0.5rem;
+}
+
+.kop-home-audience {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 1.25rem 0;
+}
+
+.kop-home-btn {
+    background-color: var(--kop-teal, #33A7B5);
+    color: #fff;
+    padding: 8px 22px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.kop-home-btn:hover {
+    background-color: var(--kop-navy-blue, #000080);
+    color: #fff;
+}
+
+/* Mission */
+.kop-home-mission p {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0.5rem 0;
+}
+
+/* Inspection reports box (matches the original navy callout) */
+.kop-home-reports {
+    background-color: #00004d;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 640px;
+    margin: 20px auto 2.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.kop-home-reports h2 {
+    margin: 0 0 15px;
+    color: #fff;
+}
+
+.kop-home-reports p {
+    margin: 0 0 25px;
+    color: #fff;
+    text-align: left;
+}
+
+.kop-home-reports-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.kop-home-report-btn {
+    background-color: var(--kop-teal, #33A7B5);
+    color: #fff;
+    padding: 12px 24px;
+    border: 2px solid #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.kop-home-report-btn:hover {
+    background-color: #fff;
+    color: var(--kop-navy-blue, #000080);
+}
+
+/* Map + directory text */
+.kop-home-map p {
+    max-width: 860px;
+    margin: 1.25rem auto 0;
+}
+
+/* Help / share */
+.kop-home-help p {
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.kop-home-share {
+    max-width: 860px;
+    margin: 0 auto;
+}

@@ -26,6 +26,7 @@ function kop_register_homepage_sidebar() {
     register_widget('KOP_News_Reel_Widget');
     register_widget('KOP_Recent_Facilities_Widget');
     register_widget('KOP_Stats_Widget');
+    register_widget('KOP_Ongoing_Stories_Widget');
 }
 
 
@@ -328,6 +329,93 @@ class KOP_Stats_Widget extends WP_Widget {
     public function update($new_instance, $old_instance) {
         return array(
             'title' => sanitize_text_field($new_instance['title'] ?? ''),
+        );
+    }
+}
+
+
+// =============================================================================
+// Widget 4: Ongoing Stories
+// =============================================================================
+
+/**
+ * Featured ongoing stories (news story arcs, curated in
+ * api/manage-story-arcs.php). Thin wrapper around the
+ * [kop_ongoing_stories] shortcode renderer in inc/features.php, so the
+ * cards match the news feed's Ongoing Stories section. Renders nothing
+ * when no active arc has published articles.
+ */
+class KOP_Ongoing_Stories_Widget extends WP_Widget {
+
+    public function __construct() {
+        parent::__construct(
+            'kop_ongoing_stories',
+            'KOP Ongoing Stories',
+            array('description' => 'Big ongoing stories (e.g. a lawsuit, a closure) with their latest developments.')
+        );
+    }
+
+    public function widget($args, $instance) {
+        if (!function_exists('kop_ongoing_stories_shortcode')) {
+            return;
+        }
+        $title = apply_filters('widget_title', $instance['title'] ?? 'Ongoing Stories');
+        $limit = max(1, min(12, intval($instance['limit'] ?? 3)));
+        $articles = max(0, min(5, intval($instance['articles'] ?? 3)));
+
+        // The widget title takes over as the heading; suppress the
+        // shortcode's built-in one.
+        $body = kop_ongoing_stories_shortcode(array(
+            'limit'    => $limit,
+            'articles' => $articles,
+            'heading'  => '',
+        ));
+        if ($body === '') {
+            return;   // no active stories — render no widget shell either
+        }
+
+        echo $args['before_widget'];
+        if ($title) {
+            echo $args['before_title'] . esc_html($title) . $args['after_title'];
+        }
+        echo $body;
+        echo $args['after_widget'];
+    }
+
+    public function form($instance) {
+        $title = $instance['title'] ?? 'Ongoing Stories';
+        $limit = $instance['limit'] ?? 3;
+        $articles = $instance['articles'] ?? 3;
+        ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>">Title:</label>
+            <input class="widefat" type="text"
+                   id="<?php echo esc_attr($this->get_field_id('title')); ?>"
+                   name="<?php echo esc_attr($this->get_field_name('title')); ?>"
+                   value="<?php echo esc_attr($title); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('limit')); ?>">Number of stories (1–12):</label>
+            <input class="tiny-text" type="number" min="1" max="12"
+                   id="<?php echo esc_attr($this->get_field_id('limit')); ?>"
+                   name="<?php echo esc_attr($this->get_field_name('limit')); ?>"
+                   value="<?php echo esc_attr($limit); ?>">
+        </p>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('articles')); ?>">Latest articles per story (0–5):</label>
+            <input class="tiny-text" type="number" min="0" max="5"
+                   id="<?php echo esc_attr($this->get_field_id('articles')); ?>"
+                   name="<?php echo esc_attr($this->get_field_name('articles')); ?>"
+                   value="<?php echo esc_attr($articles); ?>">
+        </p>
+        <?php
+    }
+
+    public function update($new_instance, $old_instance) {
+        return array(
+            'title'    => sanitize_text_field($new_instance['title'] ?? ''),
+            'limit'    => max(1, min(12, intval($new_instance['limit'] ?? 3))),
+            'articles' => max(0, min(5, intval($new_instance['articles'] ?? 3))),
         );
     }
 }

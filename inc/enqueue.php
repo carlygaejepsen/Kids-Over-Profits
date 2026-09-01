@@ -37,6 +37,13 @@ function kadence_child_enqueue_styles() {
         if (file_exists($hp_css)) {
             wp_enqueue_style('kop-homepage', get_stylesheet_directory_uri() . '/css/homepage.css', array('kop-colors'), filemtime($hp_css));
         }
+        // The Ongoing Stories widget's cards share the news feed stylesheet;
+        // load it in <head> so the widget doesn't flash unstyled while its
+        // render-time enqueue lands in the footer.
+        $nf_css = get_stylesheet_directory() . '/css/news-feed.css';
+        if (file_exists($nf_css)) {
+            wp_enqueue_style('news-feed-css', get_stylesheet_directory_uri() . '/css/news-feed.css', array('kop-colors'), filemtime($nf_css));
+        }
     }
 
     // Search results page styles

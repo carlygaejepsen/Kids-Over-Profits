@@ -551,7 +551,7 @@ function kop_filebird_library_shortcode($atts) {
                 <div class="doc-folder" data-folder-id="<?php echo esc_attr($folder->id); ?>" data-folder-name="<?php echo esc_attr($folder->name); ?>">
                     <div class="doc-folder-header">
                         <div class="doc-folder-title" style="font-size: 1.1em; font-weight: 700;">
-                            <span class="folder-icon">📁</span>
+                            <span class="folder-icon"></span>
                             <?php echo esc_html($folder->name); ?>
                             <?php if ($atts['show_count'] === 'yes'): ?>
                             <span class="doc-count">(<?php echo $file_count; ?>)</span>
@@ -710,7 +710,7 @@ function kop_render_doc_subfolders($nodes, $layout = 'grid') {
         $inner = kop_render_doc_file_list($node['attachments'], $layout)
                . kop_render_doc_subfolders($node['children'], $layout);
         $html .= '<details class="doc-subfolder">'
-               . '<summary class="doc-subfolder-title"><span class="folder-icon">📁</span> '
+               . '<summary class="doc-subfolder-title"><span class="folder-icon"></span> '
                . esc_html($node['name'])
                . ' <span class="doc-subfolder-count">(' . (int) $count . ')</span></summary>'
                . '<div class="doc-subfolder-content">' . $inner . '</div>'
@@ -898,3 +898,130 @@ function kop_document_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('kop_document', 'kop_document_shortcode');
+
+/**
+ * Shortcode: featured ongoing stories (news story arcs) for the home page.
+ * Usage: [kop_ongoing_stories limit="3" articles="3" heading="Ongoing Stories"]
+ *
+ * Renders the active arcs curated in api/manage-story-arcs.php as cards —
+ * same look as the news feed's Ongoing Stories section (css/news-feed.css) —
+ * each linking to its full story view on the news page (?story=slug).
+ * Renders nothing when no active arc has published articles (or the
+ * news_story_arcs migration hasn't run), so it's safe to leave in place.
+ */
+function kop_ongoing_stories_shortcode($atts) {
+    global $wpdb;
+    $atts = shortcode_atts(array(
+        'limit'    => 3,   // max stories shown
+        'articles' => 3,   // latest developments listed per story
+        'heading'  => 'Ongoing Stories',
+    ), $atts);
+
+    $limit = max(1, min(12, (int) $atts['limit']));
+    $per   = max(0, min(5, (int) $atts['articles']));
+
+    $suppress = $wpdb->suppress_errors(true);
+    $arcs = $wpdb->get_results(
+        "SELECT a.id, a.title, a.slug, a.description,
+                (SELECT COUNT(*) FROM news_submissions s
+                 WHERE s.story_arc_id = a.id AND s.status IN ('approved','published')) AS article_count,
+                (SELECT MAX(s.publication_date) FROM news_submissions s
+                 WHERE s.story_arc_id = a.id AND s.status IN ('approved','published')) AS latest_date
+         FROM news_story_arcs a
+         WHERE a.status = 'active'
+         ORDER BY a.display_order ASC, a.id ASC",
+        ARRAY_A
+    );
+    $wpdb->suppress_errors($suppress);
+
+    if (empty($arcs)) {
+        return '';
+    }
+    $arcs = array_values(array_filter($arcs, static function ($a) {
+        return (int) $a['article_count'] > 0;
+    }));
+    $arcs = array_slice($arcs, 0, $limit);
+    if (empty($arcs)) {
+        return '';
+    }
+
+    // Resolve the news feed page for the story links.
+    $news_url = '';
+    $news_pages = get_pages(array(
+        'meta_key'   => '_wp_page_template',
+        'meta_value' => 'templates/page-news-feed.php',
+        'number'     => 1,
+    ));
+    if (!empty($news_pages)) {
+        $news_url = get_permalink($news_pages[0]->ID);
+    }
+    if (!$news_url) {
+        $news_url = home_url('/news/');
+    }
+
+    // Same stylesheet (and handle) the news feed template enqueues.
+    wp_enqueue_style(
+        'news-feed-css',
+        get_stylesheet_directory_uri() . '/css/news-feed.css',
+        array(),
+        filemtime(get_stylesheet_directory() . '/css/news-feed.css')
+    );
+
+    ob_start();
+    ?>
+    <section class="ongoing-stories kop-ongoing-shortcode">
+        <?php if (trim($atts['heading']) !== ''): ?>
+            <h2 class="ongoing-stories-title"><?php echo esc_html($atts['heading']); ?></h2>
+        <?php endif; ?>
+        <div class="ongoing-stories-grid">
+            <?php foreach ($arcs as $arc):
+                $arc_url = add_query_arg('story', $arc['slug'], $news_url);
+                $latest_label = !empty($arc['latest_date']) ? date('M j, Y', strtotime($arc['latest_date'])) : '';
+                $devs = array();
+                if ($per > 0) {
+                    $devs = $wpdb->get_results($wpdb->prepare(
+                        "SELECT article_title, alternate_title, publication_name, publication_date, article_url
+                         FROM news_submissions
+                         WHERE story_arc_id = %d AND status IN ('approved','published')
+                         ORDER BY publication_date DESC, id DESC
+                         LIMIT %d",
+                        (int) $arc['id'], $per
+                    ), ARRAY_A);
+                }
+            ?>
+                <div class="ongoing-card">
+                    <h3 class="ongoing-card-title"><a href="<?php echo esc_url($arc_url); ?>"><?php echo esc_html($arc['title']); ?></a></h3>
+                    <div class="ongoing-card-meta">
+                        <?php echo (int) $arc['article_count']; ?> article<?php echo (int) $arc['article_count'] === 1 ? '' : 's'; ?>
+                        <?php if ($latest_label): ?> · updated <?php echo esc_html($latest_label); ?><?php endif; ?>
+                    </div>
+                    <?php if (!empty($arc['description'])): ?>
+                        <p class="ongoing-card-desc"><?php echo esc_html($arc['description']); ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($devs)): ?>
+                        <ul class="ongoing-card-latest">
+                            <?php foreach ($devs as $dev):
+                                $dev_title = !empty($dev['alternate_title']) ? $dev['alternate_title'] : $dev['article_title'];
+                                $dev_date = !empty($dev['publication_date']) ? date('M j', strtotime($dev['publication_date'])) : '';
+                            ?>
+                                <li>
+                                    <?php if (!empty($dev['article_url'])): ?>
+                                        <a href="<?php echo esc_url($dev['article_url']); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html($dev_title); ?></a>
+                                    <?php else: ?>
+                                        <?php echo esc_html($dev_title); ?>
+                                    <?php endif; ?>
+                                    <span class="ongoing-dev-meta"><?php echo esc_html(trim(($dev['publication_name'] ?? '') . ($dev_date ? ' · ' . $dev_date : ''), ' ·')); ?></span>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <p class="ongoing-stories-allnews"><a href="<?php echo esc_url($news_url); ?>">All news &raquo;</a></p>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('kop_ongoing_stories', 'kop_ongoing_stories_shortcode');
