@@ -36,6 +36,14 @@
     opacity: 0.55;
 }
 
+/* Inside a "Submit info" row the flag sits inline, right of the button. */
+.kop-submit-info-row .kop-bug-report-link {
+    display: inline-flex;
+    width: auto;
+    margin: 0 0 0 8px;
+    vertical-align: middle;
+}
+
 .kop-bug-report-link__icon {
     font-size: 0.95rem;
     line-height: 1;

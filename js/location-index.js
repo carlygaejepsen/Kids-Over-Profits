@@ -1104,7 +1104,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${additionalDetailsHtml}
                                     ${fieldNotesSectionHtml}
                                     <div class="kop-submit-info-row">
-                                        <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">✏️ Submit info about this facility</button>
+                                        <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">Submit info about this facility</button>
                                     </div>
                                 </div>
                             </details>

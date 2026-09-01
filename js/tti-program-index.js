@@ -1102,7 +1102,7 @@ function displayFacilities(facilitiesData, containerId) {
                 '<div class="operator-content-scrollable">' +
                     operatorLatestNewsHtml +
                     operatorDetailsDiv +
-                    '<div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="operator" data-kop-submit-name="' + escapeAttribute(operatorName) + '">✏️ Submit info about this operator</button></div>';
+                    '<div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="operator" data-kop-submit-name="' + escapeAttribute(operatorName) + '">Submit info about this operator</button></div>';
 
         facilities.forEach(facility => {
             const identification = facility && facility.identification ? facility.identification : {};
@@ -1832,7 +1832,7 @@ function displayFacilities(facilitiesData, containerId) {
                     </div>
                     ${latestNewsHtml}
                     ${facilityDetailsHtml}
-                    <div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityDatasetNameRaw || '')}">✏️ Submit info</button></div>
+                    <div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityDatasetNameRaw || '')}">Submit info</button></div>
                 </div>`;
         });
 

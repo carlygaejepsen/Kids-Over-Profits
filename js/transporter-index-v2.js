@@ -334,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             html += `
                 <div class="kop-submit-info-row">
-                    <button type="button" class="kop-submit-info-btn" data-kop-submit-type="transporter" data-kop-submit-name="${esc(p.db_name)}">✏️ Submit info about this transporter</button>
+                    <button type="button" class="kop-submit-info-btn" data-kop-submit-type="transporter" data-kop-submit-name="${esc(p.db_name)}">Submit info about this transporter</button>
                 </div>
             </div>`;
             card.innerHTML = html;

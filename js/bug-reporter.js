@@ -153,7 +153,7 @@
      */
     function attach(container, feature, label) {
         if (!container || !feature) return null;
-        if (container.querySelector(':scope > .kop-bug-report-link')) return null; // already attached
+        if (container.querySelector(':scope > .kop-bug-report-link, :scope > .kop-submit-info-row > .kop-bug-report-link')) return null; // already attached
         var link = el('button', 'kop-bug-report-link');
         link.type = 'button';
         // Icon-only; the text expands on hover/focus (CSS). The icon is an
@@ -169,7 +169,14 @@
         link.addEventListener('click', function () {
             openModal({ feature: feature, featureLabel: label || feature });
         });
-        container.appendChild(link);
+        // When the container ends with a "Submit info" row, the flag joins
+        // that row (next to the button) instead of sitting on its own line.
+        var lastEl = container.lastElementChild;
+        if (lastEl && lastEl.classList && lastEl.classList.contains('kop-submit-info-row')) {
+            lastEl.appendChild(link);
+        } else {
+            container.appendChild(link);
+        }
         return link;
     }
 

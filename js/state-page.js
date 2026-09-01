@@ -1295,7 +1295,7 @@
                         ${facility.capacity ? `<span><strong>Capacity:</strong> ${escapeHtml(String(facility.capacity))}</span>` : ''}
                         ${facility.census   ? `<span><strong>Census:</strong> ${escapeHtml(String(facility.census))}</span>`     : ''}
                     </div>` : ''}
-                <div class="facility-card-actions">${toggleButtons.join('')}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">✏️ Submit info</button></div>
+                <div class="facility-card-actions">${toggleButtons.join('')}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">Submit info</button></div>
                 ${toggleButtons.length ? `
                     <div class="facility-card-panels">
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
