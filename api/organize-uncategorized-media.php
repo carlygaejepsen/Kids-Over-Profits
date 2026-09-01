@@ -138,6 +138,7 @@ function kop_oum_suggest($fileText, $matchable) {
 // ---------------------------------------------------------------------------
 $applied = false;
 $apply_log = [];
+$processed_ids = [];   // attachment ids actually filed/deleted (for the AJAX response)
 
 // Permanently delete the ticked attachments (files + thumbnails + DB rows).
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
@@ -157,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         }
         if (wp_delete_attachment($att_id, true)) {
             $deleted++;
+            $processed_ids[] = $att_id;
         } else {
             $failed++;
         }
@@ -191,15 +193,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             }
             $wpdb->insert($fbv_rel, ['folder_id' => $target, 'attachment_id' => $att_id], ['%d', '%d']);
             $filed++;
+            $processed_ids[] = $att_id;
         }
         $wpdb->query('COMMIT');
         $applied = true;
         $apply_log[] = "Filed {$filed} attachment(s).";
     } catch (Throwable $e) {
         $wpdb->query('ROLLBACK');
+        $processed_ids = [];
         $apply_log[] = 'FAILED — rolled back: ' . $e->getMessage();
         error_log('organize-uncategorized-media failed: ' . $e->getMessage());
     }
+}
+
+// fetch()-submitted applies (admin-inline-actions.js) get JSON instead of a
+// full re-render; `ids` tells the page exactly which rows to drop, so filter
+// and scroll position survive.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['kop_ajax'])) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => $applied,
+        'notices' => $applied ? $apply_log : [],
+        'errors'  => $applied ? [] : ($apply_log ?: ['Nothing was applied.']),
+        'ids'     => $processed_ids,
+    ]);
+    exit;
 }
 
 // ---------------------------------------------------------------------------
@@ -272,11 +290,11 @@ td a { color: #000080; }
 <?php endif; ?>
 
 <?php if ($rows): ?>
-<form method="post">
+<form method="post" data-inline-action>
 <?php wp_nonce_field('kop_oum_apply'); ?>
 <div class="kop-toolbar">
     <div class="summary">
-        <strong><?php echo $total_uncat; ?></strong> uncategorized
+        <strong id="kop-total"><?php echo $total_uncat; ?></strong> uncategorized
         (showing newest <?php echo count($rows); ?>;
         <?php echo $suggested_count; ?> auto-matched &amp; pre-ticked) ·
         <span id="kop-count"></span>
@@ -284,20 +302,20 @@ td a { color: #000080; }
     </div>
     <div class="bar">
         <input type="search" id="kop-filter" placeholder="Filter files… e.g. elan" style="width:220px">
-        <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
-        <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick</button>
-        <button type="button" id="kop-bulk-pick">🗂️ Send ticked to folder…</button>
+        <button type="button" id="kop-tick-visible" style="background:#000080">Tick visible</button>
+        <button type="button" id="kop-untick-visible" style="background:#7a7a7a">Untick</button>
+        <button type="button" id="kop-bulk-pick">Send ticked to folder…</button>
         <button type="submit" name="do_file" value="1" style="background:#1b7e3c"
             onclick="return window.confirm('File the ticked attachments into their folders?');">
-            ✅ Apply filing</button>
+            Apply filing</button>
         <button type="submit" name="do_delete" value="1" style="background:#7a1f1f"
             onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
-            🗑️ Delete ticked</button>
+            Delete ticked</button>
     </div>
     <div class="bar">
-        <strong style="font-size:0.85rem">➕ New folder:</strong>
+        <strong style="font-size:0.85rem">New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
-        <button type="button" id="kop-nf-parent" style="background:#7a7a7a">📁 parent: top level</button>
+        <button type="button" id="kop-nf-parent" style="background:#7a7a7a">parent: top level</button>
         <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
@@ -319,7 +337,7 @@ td a { color: #000080; }
         <td>
             <input type="number" name="file[<?php echo $r['id']; ?>][target]" min="1"
                 value="<?php echo $r['sug'] !== null ? (int)$r['sug'] : ''; ?>" placeholder="folder ID">
-            <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
+            <button type="button" class="kop-pick" title="Browse folders">pick</button>
             <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
         </td>
     </tr>
@@ -327,14 +345,15 @@ td a { color: #000080; }
 </tbody></table>
 <p><button type="submit" name="do_file" value="1"
     onclick="return window.confirm('File the ticked attachments into their folders?');">
-    📁 Apply filing for ticked rows</button></p>
+    Apply filing for ticked rows</button></p>
 </form>
 <?php else: ?>
-<p class="ok">🎉 Nothing uncategorized — the media library is fully filed.</p>
+<p class="ok">Nothing uncategorized — the media library is fully filed.</p>
 <?php endif; ?>
 
 <link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
 <script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
+<script src="admin-inline-actions.js?v=1"></script>
 <script>
 // "pick" buttons: open the searchable folder browser and fill the row's
 // folder-ID input (and tick the row) with the chosen folder.
@@ -477,7 +496,7 @@ td a { color: #000080; }
                     } else {
                         nfParent = { id: parseInt(res.id, 10), name: res.name };
                     }
-                    nfParentBtn.textContent = '📁 parent: ' + nfParent.name;
+                    nfParentBtn.textContent = 'parent: ' + nfParent.name;
                 })
                 .catch(function () { alert('Folder browser error.'); });
         });
@@ -506,7 +525,7 @@ td a { color: #000080; }
                 document.getElementById('kop-bulk-name').textContent =
                     'Created “' + fullName + '” (#' + data.id + ')' +
                     (n ? ' — ' + n + ' ticked row(s) targeted; review, then click Apply'
-                       : ' — tick rows and use the bulk button, or 📁 pick it per row');
+                       : ' — tick rows and use the bulk button, or pick it per row');
                 nfNameInput.value = '';
             }).catch(function (err) {
                 nfCreateBtn.disabled = false;
@@ -545,6 +564,40 @@ td a { color: #000080; }
                         ticked.length + ' row(s) → ' + res.name + ' — review, then click Apply';
                 })
                 .catch(function () { alert('Folder browser error.'); });
+        });
+    }
+
+    // Apply/Delete go through fetch (admin-inline-actions.js): the server
+    // answers with the attachment ids it actually processed and only those
+    // rows are dropped — the filter, ticks, and scroll position all survive.
+    var orgForm = document.querySelector('form[data-inline-action]');
+    if (orgForm) {
+        orgForm.addEventListener('kop:inline-success', function (e) {
+            var ids = (e.detail && e.detail.ids) || [];
+            ids.forEach(function (id) {
+                var check = document.querySelector('input[name="file[' + id + '][go]"]');
+                var row = check && check.closest('tr');
+                if (!row) return;
+                if (row === lastClicked) lastClicked = null;
+                var i = allRows.indexOf(row);
+                if (i !== -1) allRows.splice(i, 1);
+                row.remove();
+            });
+            var totalEl = document.getElementById('kop-total');
+            if (totalEl && ids.length) {
+                totalEl.textContent = Math.max(0, (parseInt(totalEl.textContent, 10) || 0) - ids.length);
+            }
+            document.getElementById('kop-bulk-name').textContent = '';
+            refreshCount();
+            if (!allRows.length) {
+                var tbody = document.querySelector('tbody');
+                var tr = document.createElement('tr');
+                var td = document.createElement('td');
+                td.colSpan = 4;
+                td.innerHTML = 'Batch cleared — <a href="">reload for the next batch</a>.';
+                tr.appendChild(td);
+                tbody.appendChild(tr);
+            }
         });
     }
 })();
