@@ -1019,7 +1019,10 @@ function kop_ongoing_stories_shortcode($atts) {
                 </div>
             <?php endforeach; ?>
         </div>
-        <p class="ongoing-stories-allnews"><a href="<?php echo esc_url($news_url); ?>">All news &raquo;</a></p>
+        <div class="ongoing-stories-cta">
+            <p>New developments are added daily from our monitoring system.</p>
+            <a class="ongoing-stories-cta-btn" href="<?php echo esc_url($news_url); ?>">Visit the TTI News Feed</a>
+        </div>
     </section>
     <?php
     return ob_get_clean();

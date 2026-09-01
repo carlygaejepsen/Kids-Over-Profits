@@ -110,3 +110,56 @@
     max-width: 860px;
     margin: 0 auto;
 }
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .kop-home {
+        padding: 0 1.25rem 2rem;
+    }
+    .kop-home-reports {
+        max-width: 580px;
+    }
+}
+
+/* Phones */
+@media (max-width: 640px) {
+    .kop-home section {
+        margin-bottom: 1.75rem;
+    }
+    .kop-home-hero h2 {
+        font-size: 1.35rem;
+    }
+    .kop-home-audience {
+        gap: 8px;
+        padding: 1rem 0;
+    }
+    .kop-home-btn {
+        flex: 1 1 45%;
+        text-align: center;
+        padding: 10px 12px;
+    }
+    .kop-home-reports {
+        padding: 20px 16px;
+        margin: 16px auto 1.75rem;
+    }
+    .kop-home-reports-buttons {
+        gap: 8px;
+    }
+    .kop-home-report-btn {
+        flex: 1 1 40%;
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Small phones: stack the audience buttons */
+@media (max-width: 400px) {
+    .kop-home-audience {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .kop-home-btn {
+        flex: none;
+    }
+}

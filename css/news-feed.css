@@ -702,31 +702,71 @@ a.coverage-link:hover {
     font-size: 0.9rem;
 }
 
+/* Home-page shortcode variant */
+.kop-ongoing-shortcode {
+    margin: 2rem 0;
+}
+
+/* Call-to-action block under the story cards */
+.ongoing-stories-cta {
+    margin-top: 1.75rem;
+    text-align: center;
+}
+
+.ongoing-stories-cta p {
+    margin: 0 0 0.85rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.ongoing-stories-cta-btn {
+    display: inline-block;
+    background-color: var(--kop-navy-blue, #000080);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 14px 32px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+.ongoing-stories-cta-btn:hover,
+.ongoing-stories-cta-btn:focus {
+    background-color: var(--kop-teal, #33A7B5);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Tablet: two columns of story cards fit comfortably */
+@media (max-width: 1024px) {
+    .ongoing-stories {
+        padding: 1.25rem 1.5rem 1.75rem;
+    }
+    .ongoing-stories-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Phones: single column, full-width CTA, tighter padding */
 @media (max-width: 640px) {
     .ongoing-stories {
         padding: 1rem 1.1rem 1.25rem;
     }
     .ongoing-stories-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
-}
-
-/* Home-page shortcode variant */
-.kop-ongoing-shortcode {
-    margin: 2rem 0;
-}
-
-.ongoing-stories-allnews {
-    margin: 1rem 0 0;
-    text-align: right;
-}
-
-.ongoing-stories-allnews a {
-    color: #000080;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-.ongoing-stories-allnews a:hover {
-    text-decoration: underline;
+    .ongoing-card {
+        padding: 1rem;
+    }
+    .ongoing-stories-title {
+        font-size: 1.3rem;
+    }
+    .ongoing-stories-cta-btn {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 16px;
+    }
 }
