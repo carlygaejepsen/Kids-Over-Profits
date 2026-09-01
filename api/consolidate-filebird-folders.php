@@ -238,6 +238,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 }
 
 // ---------------------------------------------------------------------------
+// Park option: re-parent every folder kept for manual review (topmost kept
+// folders only — their subtrees follow) under a real "_To sort" folder at
+// the top level. Nothing is deleted and no files move, so folder IDs — and
+// therefore program documentFolderId references — stay valid. The parked
+// folders rejoin the real tree, become browsable in FileBird again, and
+// drop out of this report; decide on them whenever.
+// ---------------------------------------------------------------------------
+$parked = false;
+$park_log = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_park'])
+    && check_admin_referer('kop_cff_park', '_wpnonce_park')) {
+
+    $wpdb->query('START TRANSACTION');
+    try {
+        if ($keep) {
+            $park_name = '_To sort (recovered orphans)';
+            $park_id = (int)$wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM {$fbv} WHERE name = %s AND parent = 0 AND type = 0 LIMIT 1",
+                $park_name
+            ));
+            if (!$park_id) {
+                // fbv columns vary across FileBird versions — only set the
+                // optional ones that actually exist.
+                $cols = $wpdb->get_col("SHOW COLUMNS FROM {$fbv}", 0);
+                $row = ['name' => $park_name, 'parent' => 0];
+                foreach (['type', 'ord', 'created_by'] as $c) {
+                    if (in_array($c, $cols, true)) {
+                        $row[$c] = 0;
+                    }
+                }
+                if ($wpdb->insert($fbv, $row) === false || !$wpdb->insert_id) {
+                    throw new RuntimeException('could not create the holding folder: ' . $wpdb->last_error);
+                }
+                $park_id = (int)$wpdb->insert_id;
+                $park_log[] = "Created holding folder “{$park_name}” (#{$park_id})";
+            }
+
+            $moved = 0;
+            foreach (array_keys($keep) as $kid) {
+                $parent = isset($by_id[$kid]) ? (int)$by_id[$kid]->parent : 0;
+                if (isset($keep[$parent])) {
+                    continue; // not topmost — follows its parked ancestor
+                }
+                $wpdb->update($fbv, ['parent' => $park_id], ['id' => (int)$kid], ['%d'], ['%d']);
+                $kname = isset($by_id[$kid]) ? $by_id[$kid]->name : ('#' . $kid);
+                $park_log[] = "Parked “{$kname}” (#{$kid}) with its subtree";
+                $moved++;
+            }
+            $park_log[] = "Parked {$moved} folder subtree(s) under “{$park_name}” (#{$park_id}). Nothing was deleted; files and program references are untouched.";
+        } else {
+            $park_log[] = 'Nothing is kept for manual review — nothing to park.';
+        }
+        $wpdb->query('COMMIT');
+        $parked = true;
+    } catch (Throwable $e) {
+        $wpdb->query('ROLLBACK');
+        $park_log[] = 'FAILED — rolled back: ' . $e->getMessage();
+        error_log('consolidate-filebird-folders park failed: ' . $e->getMessage());
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Manual resolution: per-folder "move under X" / "merge into X" submitted
 // from the report table (for the folders the automatic pass kept).
 // ---------------------------------------------------------------------------
@@ -459,6 +522,15 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $nuke_log)); ?></div>
 <?php endif; ?>
 
+<?php if ($parked): ?>
+    <h2 class="ok">⏳ Undecided folders parked</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $park_log)); ?></div>
+    <p><a href="">Reload for a fresh report</a> — the parked folders now live in the real tree under “_To sort (recovered orphans)”, so you can browse and file them in FileBird whenever you're ready. The orphans that remain are the auto-resolvable ones.</p>
+<?php elseif ($park_log): ?>
+    <h2 class="bad">❌ Parking failed (rolled back)</h2>
+    <div class="log"><?php echo implode('<br>', array_map('esc_html', $park_log)); ?></div>
+<?php endif; ?>
+
 <?php if ($resolved): ?>
     <h2 class="ok">✅ Manual resolutions applied</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
@@ -478,7 +550,7 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     Kept for manual review (content but no clear match): <strong><?php echo count($keep); ?></strong>
 </div>
 
-<?php if ($orphan_ids && !$executed && !$nuked): ?>
+<?php if ($orphan_ids && !$executed && !$nuked && !$parked): ?>
 <form method="post" style="margin:16px 0;display:inline-block">
     <?php wp_nonce_field('kop_cff_execute'); ?>
     <input type="hidden" name="confirm" value="1">
@@ -493,13 +565,25 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
         🗑️ Delete ALL remaining orphans (files stay in library)
     </button>
 </form>
+<?php if ($keep): ?>
+<form method="post" style="margin:16px 0 16px 10px;display:inline-block">
+    <?php wp_nonce_field('kop_cff_park', '_wpnonce_park'); ?>
+    <button type="submit" name="do_park" value="1" style="background:#000080"
+        onclick="return window.confirm('Park all <?php echo count($keep); ?> folder(s) kept for manual review?\n\nThey are moved (with their subtrees and files — nothing deleted) into a “_To sort (recovered orphans)” folder at the top level, where you can browse and file them in FileBird whenever you decide. They drop out of this report.');">
+        ⏳ Park undecided folders for later
+    </button>
+</form>
+<?php endif; ?>
 <?php endif; ?>
 
 <h2>Orphaned folders</h2>
 <p style="max-width:760px">For rows the automatic pass keeps, use <strong>Manual fix</strong>:
 <strong>move</strong> re-parents the folder (and its whole subtree, files intact) under the
 target folder ID — use <code>0</code> for the top level; <strong>merge</strong> moves its files
-into the target folder and deletes it (only for folders with no subfolders).</p>
+into the target folder and deletes it (only for folders with no subfolders).
+Not ready to decide? <strong>⏳ Park undecided folders for later</strong> (above) shelves all
+kept rows into a top-level “_To sort (recovered orphans)” folder so they stop blocking
+the rest — file them from FileBird whenever.</p>
 
 <form method="post">
 <?php wp_nonce_field('kop_cff_resolve', '_wpnonce_resolve'); ?>
