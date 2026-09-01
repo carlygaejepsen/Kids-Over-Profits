@@ -298,12 +298,69 @@ foreach ($lib as $a) {
     ];
 }
 
-// Folder options for the browse dropdown (sorted by path).
-$folder_opts = [];
+// ---------------------------------------------------------------------------
+// Folder tree for the browser sidebar
+// ---------------------------------------------------------------------------
+$children = [];
 foreach ($folders as $f) {
-    $folder_opts[(int)$f->id] = kop_sm_path($f->id, $by_id);
+    $children[(int)$f->parent][] = (int)$f->id;
 }
-asort($folder_opts, SORT_NATURAL | SORT_FLAG_CASE);
+foreach ($children as &$kids) {
+    usort($kids, static function ($a, $b) use ($by_id) {
+        return strcasecmp($by_id[$a]->name, $by_id[$b]->name);
+    });
+}
+unset($kids);
+
+// Direct file counts per folder.
+$fcounts = [];
+foreach ($wpdb->get_results("SELECT folder_id, COUNT(*) AS n FROM {$fbv_rel} GROUP BY folder_id") as $r) {
+    $fcounts[(int)$r->folder_id] = (int)$r->n;
+}
+$uncat_count = (int)$wpdb->get_var(
+    "SELECT COUNT(*) FROM {$wpdb->posts} p
+     LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
+     WHERE p.post_type = 'attachment' AND r.attachment_id IS NULL"
+);
+
+// Auto-open the tree along the selected folder's ancestry.
+$open_set = [];
+if ($folder_filter !== '' && $folder_filter !== 'uncat') {
+    $cur = (int)$folder_filter;
+    for ($i = 0; $i < 15 && $cur; $i++) {
+        $open_set[$cur] = true;
+        $cur = isset($by_id[$cur]) ? (int)$by_id[$cur]->parent : 0;
+    }
+}
+
+/** Render the folder tree as nested collapsibles with links. */
+function kop_sm_tree($pid, $children, $by_id, $fcounts, $selected, $open_set) {
+    if (empty($children[$pid])) {
+        return;
+    }
+    foreach ($children[$pid] as $fid) {
+        $name = $by_id[$fid]->name;
+        $n = isset($fcounts[$fid]) ? $fcounts[$fid] : 0;
+        $is_sel = (string)$fid === (string)$selected;
+        $link = '<a class="' . ($is_sel ? 'sel' : '') . '" href="?folder=' . $fid . '">'
+            . esc_html($name)
+            . ($n ? ' <span class="cnt">(' . $n . ')</span>' : '')
+            . '</a>';
+        if (!empty($children[$fid])) {
+            echo '<details' . (isset($open_set[$fid]) ? ' open' : '') . '><summary>' . $link . '</summary>';
+            kop_sm_tree($fid, $children, $by_id, $fcounts, $selected, $open_set);
+            echo '</details>';
+        } else {
+            echo '<div class="leaf">' . $link . '</div>';
+        }
+    }
+}
+
+// Browse mode with nothing selected and no search: prompt instead of a dump.
+$need_pick = ($mode === 'browse' && $folder_filter === '' && $q === '');
+if ($need_pick) {
+    $rows = [];
+}
 ?><!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Sort Media</title>
 <style>
@@ -324,6 +381,21 @@ a.tab.active { background: #000080; color: #fff; }
 input[type=number] { width: 84px; }
 td a { color: #000080; }
 select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px solid #000080; border-radius: 6px; }
+/* Two-pane file browser: folder tree left, files right */
+.kop-layout { display: flex; gap: 14px; align-items: flex-start; }
+.kop-tree { flex: 0 0 300px; background: #fff; border: 2px solid #33A7B5; border-radius: 8px; padding: 10px 12px; position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow: auto; font-size: 0.84rem; }
+.kop-tree a { color: #000435; text-decoration: none; display: inline-block; padding: 2px 5px; border-radius: 4px; }
+.kop-tree a:hover { background: #FFF5CB; }
+.kop-tree a.sel { background: #33A7B5; color: #fff; }
+.kop-tree details { margin-left: 12px; }
+.kop-tree > details, .kop-tree > .leaf { margin-left: 0; }
+.kop-tree .leaf { margin-left: 12px; }
+.kop-tree > .leaf { margin-left: 0; }
+.kop-tree summary { cursor: pointer; }
+.kop-tree .cnt { color: #888; font-size: 0.75rem; }
+.kop-tree .special { display: block; margin-bottom: 4px; font-weight: 700; }
+.kop-tree hr { border: none; border-top: 1px dashed #33A7B5; margin: 8px 0; }
+.kop-main { flex: 1 1 auto; min-width: 0; }
 .kop-toolbar { position: sticky; top: 0; z-index: 60; background: #F2EEDF; padding: 8px 0 6px; border-bottom: 2px solid #33A7B5; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,4,53,0.08); }
 .kop-toolbar .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
 .kop-toolbar small { color: #555; }
@@ -337,25 +409,29 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
     <div class="log warn"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?></div>
 <?php endif; ?>
 
-<p style="margin:0 0 10px">
-    <a class="tab <?php echo $mode === 'misfiled' ? 'active' : ''; ?>" href="?mode=misfiled">⚠ Likely mis-filed</a>
-    <a class="tab <?php echo $mode === 'browse' ? 'active' : ''; ?>" href="?">Browse by folder</a>
-</p>
+<div class="kop-layout">
+<nav class="kop-tree">
+    <a class="special <?php echo $mode === 'misfiled' ? 'sel' : ''; ?>" href="?mode=misfiled">⚠ Likely mis-filed</a>
+    <a class="special <?php echo $folder_filter === 'uncat' ? 'sel' : ''; ?>" href="?folder=uncat">🗃 Uncategorized <span class="cnt">(<?php echo $uncat_count; ?>)</span></a>
+    <hr>
+    <?php kop_sm_tree(0, $children, $by_id, $fcounts, $folder_filter, $open_set); ?>
+</nav>
+<main class="kop-main">
 
 <form method="get" style="margin-bottom:10px">
     <?php if ($mode === 'misfiled'): ?><input type="hidden" name="mode" value="misfiled"><?php endif; ?>
-    <?php if ($mode === 'browse'): ?>
-    <select name="folder">
-        <option value="">— all folders —</option>
-        <option value="uncat" <?php echo $folder_filter === 'uncat' ? 'selected' : ''; ?>>(uncategorized)</option>
-        <?php foreach ($folder_opts as $fid => $fpath): ?>
-            <option value="<?php echo $fid; ?>" <?php echo (string)$fid === $folder_filter ? 'selected' : ''; ?>><?php echo esc_html($fpath); ?></option>
-        <?php endforeach; ?>
-    </select>
+    <?php if ($folder_filter !== ''): ?><input type="hidden" name="folder" value="<?php echo esc_attr($folder_filter); ?>"><?php endif; ?>
+    <input type="search" name="q" value="<?php echo esc_attr($q); ?>"
+        placeholder="<?php echo $mode === 'misfiled' ? 'Search within mis-filed…' : ($folder_filter !== '' ? 'Search this folder…' : 'Search the whole library…'); ?>" style="width:260px">
+    <button type="submit" style="background:#000080">Search</button>
+    <?php if ($mode === 'browse' && $folder_filter !== '' && $folder_filter !== 'uncat' && isset($by_id[(int)$folder_filter])): ?>
+        <strong style="margin-left:8px">📂 <?php echo esc_html(kop_sm_path((int)$folder_filter, $by_id)); ?></strong>
     <?php endif; ?>
-    <input type="search" name="q" value="<?php echo esc_attr($q); ?>" placeholder="Search titles/filenames…">
-    <button type="submit" style="background:#000080">Load</button>
 </form>
+
+<?php if ($need_pick): ?>
+<div class="log">Pick a folder from the tree on the left (or a special view above it) — or search the whole library.</div>
+<?php endif; ?>
 
 <?php if ($mode === 'misfiled'): ?>
 <div class="log">Scanned <?php echo $total_files; ?> files —
@@ -431,9 +507,12 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 <?php endforeach; ?>
 </tbody></table>
 </form>
-<?php else: ?>
+<?php elseif (!$need_pick): ?>
 <p class="ok"><?php echo $mode === 'misfiled' ? 'No likely mis-filed documents found — names agree with their folders.' : 'No files match this view.'; ?></p>
 <?php endif; ?>
+
+</main>
+</div><!-- /.kop-layout -->
 
 <link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
 <script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
