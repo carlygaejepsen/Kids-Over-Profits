@@ -243,20 +243,25 @@ foreach ($attachments as $a) {
 <html><head><meta charset="utf-8"><title>Organize Uncategorized Media</title>
 <style>
 body { font-family: system-ui, sans-serif; margin: 24px; color: #000435; background: #F2EEDF; }
-h1 { font-size: 1.3rem; }
-table { border-collapse: collapse; background: #fff; font-size: 0.83rem; }
-th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; vertical-align: top; }
+h1 { font-size: 1.15rem; margin: 0 0 8px; }
+table { border-collapse: collapse; background: #fff; font-size: 0.82rem; width: 100%; }
+th, td { border: 1px solid #ccc; padding: 3px 7px; text-align: left; vertical-align: top; }
 th { background: #000080; color: #fff; }
 tbody tr { cursor: pointer; }
 tbody tr:hover { background: #FFF5CB; }
 tbody tr.kop-ticked { background: #B6E3D4; }
-input[name$="[go]"] { transform: scale(1.5); margin: 4px; }
+input[name$="[go]"] { transform: scale(1.4); margin: 3px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; }
-.summary { background: #FFF5CB; border: 2px solid #33A7B5; border-radius: 8px; padding: 12px 16px; max-width: 760px; margin-bottom: 14px; }
-button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 10px 18px; font-weight: 700; cursor: pointer; }
+.summary { font-size: 0.85rem; margin-bottom: 6px; }
+button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
 .log { background: #fff; border: 1px solid #ccc; padding: 10px 14px; font-family: monospace; font-size: 0.8rem; margin-bottom: 12px; }
 input[type=number] { width: 84px; }
 td a { color: #000080; }
+/* Toolbar stays pinned while the table scrolls — no hunting for buttons. */
+.kop-toolbar { position: sticky; top: 0; z-index: 60; background: #F2EEDF; padding: 8px 0 6px; border-bottom: 2px solid #33A7B5; margin-bottom: 8px; box-shadow: 0 4px 8px rgba(0,4,53,0.08); }
+.kop-toolbar .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+.kop-toolbar input[type=search], .kop-toolbar input[type=text] { padding: 6px 9px; border: 1px solid #000080; border-radius: 6px; }
+.kop-toolbar small { color: #555; }
 </style></head><body>
 <h1>Organize Uncategorized Media</h1>
 
@@ -266,42 +271,37 @@ td a { color: #000080; }
     <div class="log warn"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?></div>
 <?php endif; ?>
 
-<div class="summary">
-    Uncategorized attachments: <strong><?php echo $total_uncat; ?></strong>
-    (showing newest <?php echo count($rows); ?>)<br>
-    Auto-suggestions found for <strong><?php echo $suggested_count; ?></strong> of them —
-    pre-ticked below. Untick anything wrong, or type a folder ID to override /
-    file the unmatched ones. Nothing is moved until you click Apply.
-</div>
-
 <?php if ($rows): ?>
 <form method="post">
 <?php wp_nonce_field('kop_oum_apply'); ?>
-<div style="background:#fff;border:2px solid #33A7B5;border-radius:8px;padding:10px 14px;margin-bottom:12px">
-    <strong>Group workflow:</strong> filter → tick visible → send to one folder (or delete) → Apply.<br>
-    <input type="search" id="kop-filter" placeholder="Filter files… e.g. elan"
-        style="width:260px;padding:6px 9px;margin:8px 8px 0 0;border:1px solid #000080;border-radius:6px">
-    <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
-    <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick visible</button>
-    <button type="button" id="kop-bulk-pick">🗂️ Send ticked to one folder…</button>
-    <span id="kop-bulk-name" style="font-size:0.85rem;color:#000080;font-weight:600"></span>
-    <br><small>Click anywhere on a row to tick it; shift-click ticks the whole range. <span id="kop-count"></span></small>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #33A7B5">
-        <strong>➕ New folder:</strong>
-        <input type="text" id="kop-nf-name" placeholder="folder name" style="width:200px;padding:6px 9px;border:1px solid #000080;border-radius:6px">
+<div class="kop-toolbar">
+    <div class="summary">
+        <strong><?php echo $total_uncat; ?></strong> uncategorized
+        (showing newest <?php echo count($rows); ?>;
+        <?php echo $suggested_count; ?> auto-matched &amp; pre-ticked) ·
+        <span id="kop-count"></span>
+        <span id="kop-bulk-name" style="color:#000080;font-weight:600"></span>
+    </div>
+    <div class="bar">
+        <input type="search" id="kop-filter" placeholder="Filter files… e.g. elan" style="width:220px">
+        <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
+        <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick</button>
+        <button type="button" id="kop-bulk-pick">🗂️ Send ticked to folder…</button>
+        <button type="submit" name="do_file" value="1" style="background:#1b7e3c"
+            onclick="return window.confirm('File the ticked attachments into their folders?');">
+            ✅ Apply filing</button>
+        <button type="submit" name="do_delete" value="1" style="background:#7a1f1f"
+            onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
+            🗑️ Delete ticked</button>
+    </div>
+    <div class="bar">
+        <strong style="font-size:0.85rem">➕ New folder:</strong>
+        <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
         <button type="button" id="kop-nf-parent" style="background:#7a7a7a">📁 parent: top level</button>
-        <button type="button" id="kop-nf-create" style="background:#EF9034">Create folder</button>
-        <small>— creates the folder and targets the ticked rows at it</small>
+        <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
+        <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
 </div>
-<p>
-    <button type="submit" name="do_file" value="1"
-        onclick="return window.confirm('File the ticked attachments into their folders?');">
-        📁 Apply filing for ticked rows</button>
-    <button type="submit" name="do_delete" value="1" style="background:#7a1f1f;margin-left:10px"
-        onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
-        🗑️ Permanently delete ticked files</button>
-</p>
 <table><thead><tr><th></th><th>File</th><th>Suggested folder</th><th>Folder ID</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
     $sug_label = $r['sug'] !== null
