@@ -505,38 +505,38 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
 <h1>Consolidate FileBird Folders</h1>
 
 <?php if ($executed): ?>
-    <h2 class="ok">✅ Executed</h2>
+    <h2 class="ok">Executed</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $exec_log)); ?></div>
     <p><a href="">Reload for a fresh dry run</a> — remaining orphans (if any) are ones kept for manual review.</p>
 <?php elseif ($exec_log): ?>
-    <h2 class="bad">❌ Failed (rolled back)</h2>
+    <h2 class="bad">Failed (rolled back)</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $exec_log)); ?></div>
 <?php endif; ?>
 
 <?php if ($nuked): ?>
-    <h2 class="ok">🗑️ Orphans deleted</h2>
+    <h2 class="ok">Orphans deleted</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $nuke_log)); ?></div>
     <p><a href="">Reload for a fresh report</a>.</p>
 <?php elseif ($nuke_log): ?>
-    <h2 class="bad">❌ Delete-all failed (rolled back)</h2>
+    <h2 class="bad">Delete-all failed (rolled back)</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $nuke_log)); ?></div>
 <?php endif; ?>
 
 <?php if ($parked): ?>
-    <h2 class="ok">⏳ Undecided folders parked</h2>
+    <h2 class="ok">Undecided folders parked</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $park_log)); ?></div>
     <p><a href="">Reload for a fresh report</a> — the parked folders now live in the real tree under “_To sort (recovered orphans)”, so you can browse and file them in FileBird whenever you're ready. The orphans that remain are the auto-resolvable ones.</p>
 <?php elseif ($park_log): ?>
-    <h2 class="bad">❌ Parking failed (rolled back)</h2>
+    <h2 class="bad">Parking failed (rolled back)</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $park_log)); ?></div>
 <?php endif; ?>
 
 <?php if ($resolved): ?>
-    <h2 class="ok">✅ Manual resolutions applied</h2>
+    <h2 class="ok">Manual resolutions applied</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
     <p><strong><a href="">Reload the page</a></strong> — the report below is stale. After moves, previously-held parent folders become deletable on the next automatic pass.</p>
 <?php elseif ($resolve_log): ?>
-    <h2 class="bad">❌ Manual resolution failed (rolled back)</h2>
+    <h2 class="bad">Manual resolution failed (rolled back)</h2>
     <div class="log"><?php echo implode('<br>', array_map('esc_html', $resolve_log)); ?></div>
 <?php endif; ?>
 
@@ -555,14 +555,14 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <?php wp_nonce_field('kop_cff_execute'); ?>
     <input type="hidden" name="confirm" value="1">
     <button type="submit" onclick="return window.confirm('Execute the consolidation shown below? This modifies the live database (inside a transaction).');">
-        ⚠️ Execute consolidation
+        Execute consolidation
     </button>
 </form>
 <form method="post" style="margin:16px 0 16px 10px;display:inline-block">
     <?php wp_nonce_field('kop_cff_nuke', '_wpnonce_nuke'); ?>
     <button type="submit" name="do_nuke" value="1" style="background:#7a1f1f"
         onclick="return window.confirm('Delete ALL <?php echo count($orphan_ids); ?> remaining orphaned folders, including those with files?\n\nThe folders and their filing are removed; the media files themselves stay in the library (unfiled). Stale program references are cleared.');">
-        🗑️ Delete ALL remaining orphans (files stay in library)
+        Delete ALL remaining orphans (files stay in library)
     </button>
 </form>
 <?php if ($keep): ?>
@@ -570,7 +570,7 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
     <?php wp_nonce_field('kop_cff_park', '_wpnonce_park'); ?>
     <button type="submit" name="do_park" value="1" style="background:#000080"
         onclick="return window.confirm('Park all <?php echo count($keep); ?> folder(s) kept for manual review?\n\nThey are moved (with their subtrees and files — nothing deleted) into a “_To sort (recovered orphans)” folder at the top level, where you can browse and file them in FileBird whenever you decide. They drop out of this report.');">
-        ⏳ Park undecided folders for later
+        Park undecided folders for later
     </button>
 </form>
 <?php endif; ?>
@@ -581,7 +581,7 @@ button { background: #c0392b; color: #fff; border: none; border-radius: 6px; pad
 <strong>move</strong> re-parents the folder (and its whole subtree, files intact) under the
 target folder ID — use <code>0</code> for the top level; <strong>merge</strong> moves its files
 into the target folder and deletes it (only for folders with no subfolders).
-Not ready to decide? <strong>⏳ Park undecided folders for later</strong> (above) shelves all
+Not ready to decide? <strong>Park undecided folders for later</strong> (above) shelves all
 kept rows into a top-level “_To sort (recovered orphans)” folder so they stop blocking
 the rest — file them from FileBird whenever.</p>
 
@@ -626,7 +626,7 @@ the rest — file them from FileBird whenever.</p>
                 <option value="merge">merge into…</option>
             </select>
             <input type="number" name="resolve[<?php echo (int)$oid; ?>][target]" placeholder="folder ID" min="0" style="width:90px">
-            <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
+            <button type="button" class="kop-pick" title="Browse folders">pick</button>
             <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
         <?php endif; ?></td>
     </tr>
