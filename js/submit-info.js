@@ -210,11 +210,19 @@
 
     var STYLE = [
         '.kop-submit-info-row{margin-top:12px;text-align:right;}',
-        // Navy pill with white text - the theme forces white text onto
-        // buttons anyway, so the pill never uses a white background.
-        '.kop-submit-info-btn{display:inline-block;background:#000080;color:#fff;border:1px solid #000080;border-radius:999px;',
-        'padding:0.3em 0.9em;font-size:0.85em;font-weight:600;cursor:pointer;line-height:1.4;}',
-        '.kop-submit-info-btn:hover,.kop-submit-info-btn:focus{background:#33A7B5;border-color:#33A7B5;color:#fff;}',
+        // Icon-only navy pill; the label slides out on hover/focus (same
+        // pattern as the bug-report flag). The icon's stroke and the label
+        // span's color are set directly, so the theme's global button text
+        // color (which varies per page) can't produce a low-contrast pill.
+        '.kop-submit-info-btn{display:inline-flex;align-items:center;vertical-align:middle;background:#000080;border:1px solid #000080;border-radius:999px;',
+        'padding:0.35em 0.6em;cursor:pointer;line-height:1;}',
+        '.kop-submit-info-btn__icon{display:inline-flex;align-items:center;}',
+        '.kop-submit-info-btn__icon svg{display:block;}',
+        '.kop-submit-info-btn__text{max-width:0;margin-left:0;overflow:hidden;white-space:nowrap;color:#fff;',
+        'font-size:0.85em;font-weight:600;transition:max-width 0.2s ease,margin-left 0.2s ease;}',
+        '.kop-submit-info-btn:hover,.kop-submit-info-btn:focus{background:#33A7B5;border-color:#33A7B5;}',
+        '.kop-submit-info-btn:hover .kop-submit-info-btn__text,.kop-submit-info-btn:focus .kop-submit-info-btn__text,',
+        '.kop-submit-info-btn:focus-visible .kop-submit-info-btn__text{max-width:280px;margin-left:6px;}',
         '.kop-si-overlay{position:fixed;inset:0;background:rgba(0,4,53,0.55);z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;}',
         '.kop-si-modal{background:#fff;color:#1f2937;border-radius:12px;max-width:560px;width:100%;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,0.35);}',
         '.kop-si-header{background:#000435;color:#fff;border-radius:12px 12px 0 0;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;}',
@@ -244,11 +252,42 @@
         document.head.appendChild(el);
     }
 
+    // Pencil icon; stroke is hardcoded white so the theme's button text
+    // color never applies to it.
+    var ICON_SVG = '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">'
+        + '<path d="M11.3 1.7l3 3L4.9 14.1l-3.7.7.7-3.7z"/><path d="M9.4 3.6l3 3"/></svg>';
+
+    // Rebuild each button as icon + sliding label, keeping its original text
+    // (e.g. "Submit info about this operator") as the label and tooltip.
+    function enhance(btn) {
+        if (btn.getAttribute('data-kop-si-enhanced')) return;
+        btn.setAttribute('data-kop-si-enhanced', '1');
+        var label = (btn.textContent || '').trim() || 'Submit info';
+        btn.setAttribute('aria-label', label);
+        btn.title = label;
+        btn.innerHTML = '<span class="kop-submit-info-btn__icon" aria-hidden="true">' + ICON_SVG + '</span>'
+            + '<span class="kop-submit-info-btn__text">' + esc(label) + '</span>';
+    }
+
+    function enhanceAll() {
+        var btns = document.querySelectorAll('.kop-submit-info-btn:not([data-kop-si-enhanced])');
+        Array.prototype.forEach.call(btns, enhance);
+    }
+
+    // Buttons are rendered at any time by the index scripts, so keep
+    // enhancing as cards appear. The data attribute guard makes the
+    // observer's own mutations no-ops.
+    function initEnhance() {
+        enhanceAll();
+        new MutationObserver(enhanceAll).observe(document.body, { childList: true, subtree: true });
+    }
+
     // Style the buttons as soon as the module loads, not on first click.
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectStyle);
+        document.addEventListener('DOMContentLoaded', function () { injectStyle(); initEnhance(); });
     } else {
         injectStyle();
+        initEnhance();
     }
 
     var overlay = null;
