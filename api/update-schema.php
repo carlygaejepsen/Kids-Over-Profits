@@ -39,6 +39,36 @@ try {
         echo "'story_group_id' column already exists.\n";
     }
 
+    // Ongoing story arcs: curated long-running stories (a lawsuit, a closure)
+    // spanning many distinct articles — separate from story_group_id's
+    // same-event cross-outlet clustering.
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS news_story_arcs (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            title varchar(255) NOT NULL,
+            slug varchar(191) NOT NULL COMMENT 'URL key for the story view (?story=slug)',
+            description text DEFAULT NULL,
+            match_terms text DEFAULT NULL COMMENT 'Newline-separated phrases; a new article containing one is auto-attached on save',
+            status enum('active','archived') NOT NULL DEFAULT 'active',
+            display_order int(11) NOT NULL DEFAULT 0,
+            created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY slug (slug)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    );
+    echo "'news_story_arcs' table ready.\n";
+
+    $check = $pdo->query("SHOW COLUMNS FROM news_submissions LIKE 'story_arc_id'");
+    if ($check->rowCount() == 0) {
+        $pdo->exec("ALTER TABLE news_submissions ADD COLUMN story_arc_id int(11) DEFAULT NULL COMMENT 'FK -> news_story_arcs.id; the big ongoing story this article belongs to; NULL = none' AFTER story_group_id");
+        $pdo->exec("ALTER TABLE news_submissions ADD KEY story_arc_id (story_arc_id)");
+        echo "Added 'story_arc_id' column and index.\n";
+        echo "Create arcs in api/manage-story-arcs.php (as an admin) and scan to attach existing articles.\n";
+    } else {
+        echo "'story_arc_id' column already exists.\n";
+    }
+
     echo "Schema update complete.\n";
 
 } catch (PDOException $e) {
