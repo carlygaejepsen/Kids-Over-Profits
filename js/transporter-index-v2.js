@@ -124,15 +124,87 @@ document.addEventListener('DOMContentLoaded', function() {
         return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
+    // One display string per array entry — handles plain strings and the
+    // {role, name} / {url, displayText} object shapes the form saves.
+    function itemText(item) {
+        if (item == null) return '';
+        if (typeof item === 'object' && !Array.isArray(item)) {
+            const name = clean(item.name || item.text || item.value || item.employer || item.organization || item.displayText || item.url);
+            const role = clean(item.role || item.title);
+            return role && name ? `${name} — ${role}` : (name || role);
+        }
+        return clean(item);
+    }
+
     function renderArrayList(label, arr) {
-        if (!Array.isArray(arr) || !arr.length || !clean(arr[0])) return '';
+        const items = (Array.isArray(arr) ? arr : (arr ? [arr] : [])).map(itemText).filter(Boolean);
+        if (!items.length) return '';
         return `
             <div class="list-section">
                 <div class="section-label">${esc(label)}</div>
                 <ul class="data-list">
-                    ${arr.filter(clean).map(a => `<li class="data-list-item"><span class="job-role">${esc(a)}</span></li>`).join('')}
+                    ${items.map(a => `<li class="data-list-item"><span class="job-role">${esc(a)}</span></li>`).join('')}
                 </ul>
             </div>`;
+    }
+
+    function renderLinkList(label, arr) {
+        const items = (Array.isArray(arr) ? arr : (arr ? [arr] : [])).map(itemText).filter(Boolean);
+        if (!items.length) return '';
+        const lis = items.map(u => {
+            if (/^https?:\/\//i.test(u)) {
+                let d = u.replace(/^https?:\/\/(www\.)?/i, '');
+                if (d.length > 50) d = d.slice(0, 47) + '…';
+                return `<li class="data-list-item"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(d)}</a></li>`;
+            }
+            return `<li class="data-list-item"><span class="job-role">${esc(u)}</span></li>`;
+        }).join('');
+        return `<div class="list-section"><div class="section-label">${esc(label)}</div><ul class="data-list">${lis}</ul></div>`;
+    }
+
+    // Notes may be a plain string, an array of strings, or [{text}] objects.
+    function renderNotes(label, notes) {
+        const items = (Array.isArray(notes) ? notes : (notes ? [notes] : []))
+            .map(n => (typeof n === 'object' && n) ? clean(n.text || n.value) : clean(n))
+            .filter(Boolean);
+        if (!items.length) return '';
+        return `<div class="list-section"><div class="section-label">${esc(label)}</div>${items.map(t => `<div class="data-value">${esc(t)}</div>`).join('')}</div>`;
+    }
+
+    // Per-field research notes: {key: "text"} / {key: ["text"]} / {key: [{text}]}.
+    // Auto-generated "field-<timestamp>" keys carry no readable label, so those
+    // notes render bare.
+    function renderFieldNotes(fieldNotes) {
+        if (!fieldNotes || typeof fieldNotes !== 'object' || Array.isArray(fieldNotes)) return '';
+        const rows = [];
+        Object.keys(fieldNotes).forEach(key => {
+            const raw = fieldNotes[key];
+            const texts = (Array.isArray(raw) ? raw : [raw])
+                .map(n => (typeof n === 'object' && n) ? clean(n.text) : clean(n))
+                .filter(Boolean);
+            if (!texts.length) return;
+            const leaf = String(key).split('.').pop();
+            const label = /^field-\d/.test(leaf) ? '' : leaf
+                .replace(/^has(?=[A-Z0-9])/, '')
+                .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                .trim().replace(/^./, c => c.toUpperCase());
+            texts.forEach(t => rows.push(`<li class="data-list-item"><span class="job-role">${label ? esc(label) + ': ' : ''}${esc(t)}</span></li>`));
+        });
+        if (!rows.length) return '';
+        return `<div class="list-section"><div class="section-label">Research Notes</div><ul class="data-list">${rows.join('')}</ul></div>`;
+    }
+
+    // True when the record holds anything renderable besides its name.
+    function hasMeaningfulData(obj, skipKeys) {
+        if (!obj || typeof obj !== 'object') return false;
+        return Object.keys(obj).some(k => {
+            if (skipKeys.indexOf(k) !== -1) return false;
+            const v = obj[k];
+            if (Array.isArray(v)) return v.some(x => itemText(x));
+            if (v && typeof v === 'object') return hasMeaningfulData(v, []);
+            const t = clean(v);
+            return t !== '' && t !== 'null';
+        });
     }
 
     function renderList(list) {
@@ -143,6 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
         list.forEach(p => {
             const card = document.createElement('details');
             card.className = 'transporter-card';
+            card.setAttribute('data-kop-bug-feature', 'transporter-index/card');
+            card.setAttribute('data-kop-bug-label', 'Transporter: ' + (p.db_name || ''));
 
             const rawProfiles = findTransporterData(p);
             const company = findCompanyInfo(p);
@@ -178,11 +252,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 <div class="transporter-card-body">`;
 
-            if (label !== 'Independent Transporter' && companyName && companyName.toLowerCase() !== p.db_name.toLowerCase()) {
+            // Render company details whenever the record holds any — previously
+            // this whole section was skipped for independent transporters and for
+            // companies whose name matches the card title, hiding restraint
+            // practices, licensing, lawsuits, etc. saved on the company record.
+            const companyHasData = hasMeaningfulData(company, ['name']);
+            if (companyHasData || (companyName && companyName.toLowerCase() !== p.db_name.toLowerCase())) {
+                const showName = companyName && companyName.toLowerCase() !== p.db_name.toLowerCase();
                 html += `
                     <div class="company-info-section">
                         <div class="section-label">Company Details</div>
-                        ${renderField('Name', company.name)}
+                        ${showName ? renderField('Name', company.name) : ''}
                         ${renderField('Location', [company.city, company.state, company.country].filter(Boolean).join(', '))}
                         ${renderField('Founded', company.founded)}
                         ${renderField('Status', company.status)}
@@ -190,6 +270,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${renderField('Insured', company.insured)}
                         ${renderField('BBB Rating', company.bbbRating)}
                         ${renderField('Website', company.website)}
+                        ${renderArrayList('Other Names', company.otherNames)}
+                        ${renderArrayList('Parent Companies', company.parentCompanies)}
+                        ${renderLinkList('Websites', company.websites)}
+                        ${renderLinkList('Social Media', company.socialMedia)}
                         ${renderArrayList('Service Areas', company.serviceAreas)}
                         ${renderArrayList('Vehicle Types', company.vehicleTypes)}
                         ${renderArrayList('Pickup Methods', company.pickupMethods)}
@@ -200,9 +284,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${renderArrayList('Known Facilities Transported To', company.knownFacilities)}
                         ${renderArrayList('Known Referrers', company.knownReferrers)}
                         ${renderArrayList('Lawsuits', company.lawsuits)}
-                        ${renderArrayList('Source URLs', company.sourceUrls)}
-                        ${company.pricingNotes ? `<div class="list-section"><div class="section-label">Pricing Notes</div><div class="data-value">${esc(company.pricingNotes)}</div></div>` : ''}
-                        ${company.notes ? `<div class="list-section"><div class="section-label">Notes</div><div class="data-value">${esc(company.notes)}</div></div>` : ''}
+                        ${renderLinkList('Source URLs', company.sourceUrls)}
+                        ${renderNotes('Pricing Notes', company.pricingNotes)}
+                        ${renderNotes('Notes', company.notes)}
+                        ${renderFieldNotes(company.fieldNotes)}
                     </div>`;
             }
 
@@ -240,12 +325,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
                         ${renderArrayList('Affiliated Transport Companies', affCos)}
                         ${renderArrayList('Affiliations', affs)}
+                        ${renderLinkList('Websites', c.websites)}
 
-                        ${c.notes ? `<div class="list-section"><div class="section-label">Notes</div><div class="data-value">${esc(c.notes)}</div></div>` : ''}
+                        ${renderNotes('Notes', c.notes)}
+                        ${renderFieldNotes(c.fieldNotes)}
                     </div>`;
             });
 
-            html += `</div>`;
+            html += `
+                <div class="kop-submit-info-row">
+                    <button type="button" class="kop-submit-info-btn" data-kop-submit-type="transporter" data-kop-submit-name="${esc(p.db_name)}">✏️ Submit info about this transporter</button>
+                </div>
+            </div>`;
             card.innerHTML = html;
             grid.appendChild(card);
         });

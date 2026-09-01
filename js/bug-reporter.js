@@ -156,11 +156,16 @@
         if (container.querySelector(':scope > .kop-bug-report-link')) return null; // already attached
         var link = el('button', 'kop-bug-report-link');
         link.type = 'button';
-        // Icon-only; the text expands on hover/focus (CSS).
-        link.innerHTML = '<span class="kop-bug-report-link__icon" aria-hidden="true">🐞</span>'
-            + '<span class="kop-bug-report-link__text">Report a bug</span>';
-        link.setAttribute('aria-label', 'Report a bug in ' + (label || feature));
-        link.title = 'Report a bug';
+        // Icon-only; the text expands on hover/focus (CSS). The icon is an
+        // inline SVG flag ("flag an issue") — it inherits currentColor, so it
+        // follows the link's styling instead of platform emoji rendering.
+        link.innerHTML = '<span class="kop-bug-report-link__icon" aria-hidden="true">'
+            + '<svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" focusable="false">'
+            + '<path d="M3.5 14.5V2"/><path d="M3.5 2.5h8.8l-2.1 3 2.1 3H3.5"/></svg>'
+            + '</span>'
+            + '<span class="kop-bug-report-link__text">Report a problem</span>';
+        link.setAttribute('aria-label', 'Report a problem with ' + (label || feature));
+        link.title = 'Report a problem';
         link.addEventListener('click', function () {
             openModal({ feature: feature, featureLabel: label || feature });
         });

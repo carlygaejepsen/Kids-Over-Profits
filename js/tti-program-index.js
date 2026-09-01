@@ -1094,14 +1094,15 @@ function displayFacilities(facilitiesData, containerId) {
             ? `<div class="operator-details">${operatorSectionsHtml}</div>`
             : '';
 
-        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '" data-operator-search="' + escapeAttribute(operatorSearchText) + '">' +
+        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '" data-operator-search="' + escapeAttribute(operatorSearchText) + '" data-kop-bug-feature="program-index/operator-card" data-kop-bug-label="Operator: ' + escapeAttribute(operatorName) + '">' +
                 '<summary class="operator-header">' +
                     operatorHeader +
                     locationYearsLine +
                 '</summary>' +
                 '<div class="operator-content-scrollable">' +
                     operatorLatestNewsHtml +
-                    operatorDetailsDiv;
+                    operatorDetailsDiv +
+                    '<div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="operator" data-kop-submit-name="' + escapeAttribute(operatorName) + '">✏️ Submit info about this operator</button></div>';
 
         facilities.forEach(facility => {
             const identification = facility && facility.identification ? facility.identification : {};
@@ -1819,7 +1820,7 @@ function displayFacilities(facilitiesData, containerId) {
                     </div>`
                 : '';
 
-            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-search="${facilitySearchText}" data-status="${statusClass}">
+            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-search="${facilitySearchText}" data-status="${statusClass}" data-kop-bug-feature="program-index/facility-card" data-kop-bug-label="Facility: ${facilityDatasetName}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
                         ${otherNamesHtml}
@@ -1831,6 +1832,7 @@ function displayFacilities(facilitiesData, containerId) {
                     </div>
                     ${latestNewsHtml}
                     ${facilityDetailsHtml}
+                    <div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityDatasetNameRaw || '')}">✏️ Submit info</button></div>
                 </div>`;
         });
 

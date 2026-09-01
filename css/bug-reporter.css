@@ -35,6 +35,12 @@
 .kop-bug-report-link__icon {
     font-size: 0.95rem;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+}
+
+.kop-bug-report-link__icon svg {
+    display: block;
 }
 
 .kop-bug-report-link__text {

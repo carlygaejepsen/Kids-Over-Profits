@@ -1021,6 +1021,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         'hasFinancial': 'Financial', 'hasNATSAP': 'NATSAP Profile', 'hasWebsite': 'Website Screenshots', 'hasOther': 'Other'
                     };
                     Object.keys(resourceMap).forEach(key => { if (facility.resources[key] === true) resources.push(resourceMap[key]); });
+                    // Catch-all for flags the map doesn't know (hasVideo, hasAudio,
+                    // hasSocialMedia, future additions): humanize the key itself.
+                    Object.keys(facility.resources).forEach(key => {
+                        if (facility.resources[key] !== true || resourceMap[key]) return;
+                        if (key.indexOf('has') !== 0) return;
+                        const label = key.replace(/^has/, '')
+                            .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+                            .trim();
+                        if (label) resources.push(label);
+                    });
                     if (facility.resources.customResources && facility.resources.customResources.length > 0) {
                         resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
                     }
@@ -1071,7 +1082,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 contentHtml += `
-                    <div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
+                    <div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}" data-kop-bug-feature="location-index/facility-card" data-kop-bug-label="Facility: ${facilityDatasetName}">
                         <div class="facility-summary">
                             <h3 class="facility-name">${facilityHeader}</h3>
                             ${otherNamesHtml}
@@ -1092,6 +1103,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
                                     ${fieldNotesSectionHtml}
+                                    <div class="kop-submit-info-row">
+                                        <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">✏️ Submit info about this facility</button>
+                                    </div>
                                 </div>
                             </details>
                         </div>

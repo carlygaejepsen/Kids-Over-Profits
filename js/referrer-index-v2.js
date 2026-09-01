@@ -116,6 +116,87 @@ document.addEventListener('DOMContentLoaded', function() {
         return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
+    // One display string per array entry — handles plain strings and the
+    // {role, name} / {url, displayText} object shapes the form saves.
+    function itemText(item) {
+        if (item == null) return '';
+        if (typeof item === 'object' && !Array.isArray(item)) {
+            const name = clean(item.name || item.text || item.value || item.employer || item.organization || item.displayText || item.url);
+            const role = clean(item.role || item.title);
+            return role && name ? `${name} — ${role}` : (name || role);
+        }
+        return clean(item);
+    }
+
+    function renderArrayList(label, arr) {
+        const items = (Array.isArray(arr) ? arr : (arr ? [arr] : [])).map(itemText).filter(Boolean);
+        if (!items.length) return '';
+        return `
+            <div class="list-section">
+                <div class="section-label">${esc(label)}</div>
+                <ul class="data-list">
+                    ${items.map(a => `<li class="data-list-item"><span class="job-role">${esc(a)}</span></li>`).join('')}
+                </ul>
+            </div>`;
+    }
+
+    function renderLinkList(label, arr) {
+        const items = (Array.isArray(arr) ? arr : (arr ? [arr] : [])).map(itemText).filter(Boolean);
+        if (!items.length) return '';
+        const lis = items.map(u => {
+            if (/^https?:\/\//i.test(u)) {
+                let d = u.replace(/^https?:\/\/(www\.)?/i, '');
+                if (d.length > 50) d = d.slice(0, 47) + '…';
+                return `<li class="data-list-item"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(d)}</a></li>`;
+            }
+            return `<li class="data-list-item"><span class="job-role">${esc(u)}</span></li>`;
+        }).join('');
+        return `<div class="list-section"><div class="section-label">${esc(label)}</div><ul class="data-list">${lis}</ul></div>`;
+    }
+
+    // Notes may be a plain string, an array of strings, or [{text}] objects.
+    function renderNotes(label, notes) {
+        const items = (Array.isArray(notes) ? notes : (notes ? [notes] : []))
+            .map(n => (typeof n === 'object' && n) ? clean(n.text || n.value) : clean(n))
+            .filter(Boolean);
+        if (!items.length) return '';
+        return `<div class="list-section"><div class="section-label">${esc(label)}</div>${items.map(t => `<div class="data-value">${esc(t)}</div>`).join('')}</div>`;
+    }
+
+    // Per-field research notes: {key: "text"} / {key: ["text"]} / {key: [{text}]}.
+    function renderFieldNotes(fieldNotes) {
+        if (!fieldNotes || typeof fieldNotes !== 'object' || Array.isArray(fieldNotes)) return '';
+        const rows = [];
+        Object.keys(fieldNotes).forEach(key => {
+            const raw = fieldNotes[key];
+            const texts = (Array.isArray(raw) ? raw : [raw])
+                .map(n => (typeof n === 'object' && n) ? clean(n.text) : clean(n))
+                .filter(Boolean);
+            if (!texts.length) return;
+            const leaf = String(key).split('.').pop();
+            const label = /^field-\d/.test(leaf) ? '' : leaf
+                .replace(/^has(?=[A-Z0-9])/, '')
+                .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+                .trim().replace(/^./, c => c.toUpperCase());
+            texts.forEach(t => rows.push(`<li class="data-list-item"><span class="job-role">${label ? esc(label) + ': ' : ''}${esc(t)}</span></li>`));
+        });
+        if (!rows.length) return '';
+        return `<div class="list-section"><div class="section-label">Research Notes</div><ul class="data-list">${rows.join('')}</ul></div>`;
+    }
+
+    // True when the record holds anything renderable besides its name.
+    function hasMeaningfulData(obj, skipKeys) {
+        if (!obj || typeof obj !== 'object') return false;
+        return Object.keys(obj).some(k => {
+            if (skipKeys.indexOf(k) !== -1) return false;
+            const v = obj[k];
+            if (Array.isArray(v)) return v.some(x => itemText(x));
+            if (v && typeof v === 'object') return hasMeaningfulData(v, []);
+            const t = clean(v);
+            return t !== '' && t !== 'null';
+        });
+    }
+
     function renderList(list) {
         container.innerHTML = '';
         const grid = document.createElement('div');
@@ -125,6 +206,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Collapsible Card Container
             const card = document.createElement('details');
             card.className = 'referrer-card';
+            card.setAttribute('data-kop-bug-feature', 'referrer-index/card');
+            card.setAttribute('data-kop-bug-label', 'Referrer: ' + (p.db_name || ''));
             
             const rawProfiles = findConsultantData(p);
             const agency = findAgencyInfo(p);
@@ -162,13 +245,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 <!-- BODY: The Expanded View -->
                 <div class="referrer-card-body">`;
 
-            if (label !== 'Independent Consultant' && agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase()) {
+            // Render organization details whenever the record holds any —
+            // previously this whole section was skipped for independent
+            // consultants and for agencies whose name matches the card title,
+            // hiding affiliations, key personnel, and notes saved on the agency.
+            const agencyHasData = hasMeaningfulData(agency, ['name']);
+            if (agencyHasData || (agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase())) {
+                const showName = agencyName && agencyName.toLowerCase() !== p.db_name.toLowerCase();
                 html += `
                     <div class="agency-info-section">
                         <div class="section-label">Organization Details</div>
-                        ${renderField('Name', agency.name)}
+                        ${showName ? renderField('Name', agency.name) : ''}
                         ${renderField('Location', [agency.city, agency.state].filter(Boolean).join(', '))}
+                        ${renderField('Address', agency.address)}
+                        ${renderField('Founded', agency.founded)}
+                        ${renderField('Status', agency.status)}
                         ${renderField('Website', agency.website)}
+                        ${renderLinkList('Websites', agency.websites)}
+                        ${renderArrayList('Affiliations', agency.affiliations)}
+                        ${renderArrayList('Key Personnel', agency.keyPersonnel)}
+                        ${renderNotes('Notes', agency.notes)}
+                        ${renderFieldNotes(agency.fieldNotes)}
                     </div>`;
             }
 
@@ -198,7 +295,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="list-section">
                                 <div class="section-label">Career History</div>
                                 <ul class="data-list">
-                                    ${pastJobs.map(j => `<li class="data-list-item"><span class="job-role">${esc(j.role)}</span><span class="job-meta">at ${esc(j.employer || j.organization)}</span></li>`).join('')}
+                                    ${pastJobs.map(j => {
+                                        if (typeof j === 'string') return clean(j) ? `<li class="data-list-item"><span class="job-role">${esc(j)}</span></li>` : '';
+                                        if (!j) return '';
+                                        return `<li class="data-list-item"><span class="job-role">${esc(j.role)}</span><span class="job-meta">at ${esc(j.employer || j.organization)}</span></li>`;
+                                    }).join('')}
                                 </ul>
                             </div>` : ''}
 
@@ -226,11 +327,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </ul>
                             </div>` : ''}
 
-                        ${c.notes ? `<div class="list-section"><div class="section-label">Notes</div><div class="data-value">${esc(c.notes)}</div></div>` : ''}
+                        ${renderLinkList('Websites', c.websites)}
+                        ${renderNotes('Notes', c.notes)}
+                        ${renderFieldNotes(c.fieldNotes)}
                     </div>`;
             });
 
-            html += `</div>`;
+            html += `
+                <div class="kop-submit-info-row">
+                    <button type="button" class="kop-submit-info-btn" data-kop-submit-type="referrer" data-kop-submit-name="${esc(p.db_name)}">✏️ Submit info about this referrer</button>
+                </div>
+            </div>`;
             card.innerHTML = html;
             grid.appendChild(card);
         });
