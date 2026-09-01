@@ -43,7 +43,19 @@
     font-size: 17px;
     line-height: 1.6;
     max-width: 900px;
-    margin: 0 auto;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 2.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+}
+
+@media (max-width: 640px) {
+    .tti-program-index-wrapper {
+        margin: 0 auto 1.5rem;
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 0;
+    }
 }
 
 .tti-program-index-wrapper h1,
