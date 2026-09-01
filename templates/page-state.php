@@ -58,7 +58,7 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
         <button class="state-tab" data-tab="legislation" role="tab">Legislation</button>
     </nav>
 
-    <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel" data-kop-bug-feature="state-hub/facilities" data-kop-bug-label="State Facilities List">
+    <section class="state-section active" id="section-facilities" data-section="facilities" role="tabpanel">
         <h2>Facilities in <?php echo esc_html($state_name); ?></h2>
         <p class="facilities-intro">Residential facilities providing religious, behavioral, and mental health treatment to children exist in all 50 states. Some of these facilities are known to be part of the Troubled Teen Industry, while others have not yet been verified. Any facility where children live and receive care requires additional oversight. This directory helps communities monitor local programs and advocate for accountability.</p>
         <div class="section-content"><p class="loading">Loading facilities…</p></div>
@@ -116,6 +116,7 @@ window.statePageConfig = {
     ?>
 };
 </script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/state-page.js?v=<?php echo time(); ?>"></script>
 
 <?php get_footer(); ?>

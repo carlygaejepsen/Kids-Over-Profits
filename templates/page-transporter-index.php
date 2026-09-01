@@ -14,7 +14,7 @@ get_header();
 
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/transporter-index.css?v=<?php echo time(); ?>">
 
-<div class="transporter-directory-container" data-kop-bug-feature="transporter-index/directory" data-kop-bug-label="Transporter Directory">
+<div class="transporter-directory-container">
     <div class="directory-header" style="margin-bottom: 2em; text-align: center;">
         <h1 style="color: #00004d; font-size: 2.5em; margin-bottom: 0.2em;">Youth Transport Company Directory</h1>
         <p style="font-size: 1.1em; color: #666;">Searchable database of companies and individuals that transport youth to facilities</p>
@@ -59,6 +59,7 @@ window.transporterConfig = {
 };
 </script>
 
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/transporter-index-v2.js?v=<?php echo time(); ?>"></script>
 
 <?php

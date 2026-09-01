@@ -16,7 +16,7 @@ get_header();
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/document-library.css">
 
 <div class="tti-program-index-wrapper">
-    <div class="facility-report-container" data-kop-bug-feature="location-index/list" data-kop-bug-label="Location Directory">
+    <div class="facility-report-container">
 
         <!-- Page Header -->
         <div class="page-header" style="margin-bottom: 2em;">
@@ -83,6 +83,7 @@ window.locationIndexConfig = {
 
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/document-library.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/facility-merge.js?v=<?php echo time(); ?>"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/location-index.js?v=<?php echo time(); ?>"></script>
 
 <?php

@@ -56,7 +56,7 @@ get_header();
         </div>
 
         <!-- Facilities Container (populated by JavaScript) -->
-        <div id="facilities-container" data-kop-bug-feature="program-index/directory" data-kop-bug-label="Program Directory">
+        <div id="facilities-container">
             <div class="loading-message">
                 <p>Loading facility data...</p>
             </div>
