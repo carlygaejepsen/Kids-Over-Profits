@@ -522,6 +522,52 @@ function kop_get_facilities_projects_from_database() {
 }
 
 /**
+ * Drop folders whose ancestry is broken (a parent id that no longer exists —
+ * the "ghost tree" left behind when a parent folder is deleted without its
+ * children). Ghost folders are invisible in FileBird's UI but would otherwise
+ * haunt every picker and feed that lists the raw table. Accepts arrays or
+ * objects with id/parent keys; returns the same shape it was given.
+ */
+function kop_filter_orphan_folders($folders) {
+    $parent_of = array();
+    foreach ($folders as $f) {
+        $id = is_array($f) ? ($f['id'] ?? null) : ($f->id ?? null);
+        $parent = is_array($f) ? ($f['parent'] ?? 0) : ($f->parent ?? 0);
+        if ($id !== null) {
+            $parent_of[(int)$id] = (int)$parent;
+        }
+    }
+
+    $reachable = array(); // id => bool, memoized
+    $check = function ($id) use (&$check, &$reachable, $parent_of) {
+        if (isset($reachable[$id])) {
+            return $reachable[$id];
+        }
+        $cur = $id;
+        $seen = array();
+        for ($i = 0; $i < 25; $i++) {
+            if (isset($seen[$cur])) {
+                return $reachable[$id] = false; // cycle
+            }
+            $seen[$cur] = true;
+            if (!isset($parent_of[$cur])) {
+                return $reachable[$id] = false; // dangling parent
+            }
+            if ($parent_of[$cur] === 0) {
+                return $reachable[$id] = true;  // reaches the root
+            }
+            $cur = $parent_of[$cur];
+        }
+        return $reachable[$id] = false;
+    };
+
+    return array_values(array_filter((array) $folders, function ($f) use ($check) {
+        $id = is_array($f) ? ($f['id'] ?? null) : ($f->id ?? null);
+        return $id !== null && $check((int)$id);
+    }));
+}
+
+/**
  * Get FileBird folders for dropdown
  * @return array
  */
@@ -540,7 +586,8 @@ function kop_get_filebird_folders() {
         "SELECT id, name, parent FROM $table_name WHERE type = 0 ORDER BY name ASC"
     );
 
-    return $folders;
+    // Ghost-tree members never reach the pickers.
+    return kop_filter_orphan_folders($folders);
 }
 
 /**

@@ -219,6 +219,11 @@ function kop_register_facilities_rest_routes() {
 
                             $folders = $flatten($data['data']['folders']);
 
+                            // Exclude ghost-tree orphans (broken ancestry).
+                            if (function_exists('kop_filter_orphan_folders')) {
+                                $folders = kop_filter_orphan_folders($folders);
+                            }
+
                             return rest_ensure_response($folders);
                         }
                     }
