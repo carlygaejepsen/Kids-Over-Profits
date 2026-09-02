@@ -335,6 +335,16 @@ function kop_register_facilities_rest_routes() {
                         }
                     }
 
+                    // Theme-level multi-folder tags: documents that also
+                    // appear in these folders beyond their FileBird filing.
+                    if (function_exists('kop_get_tagged_attachment_ids')) {
+                        $tagged = kop_get_tagged_attachment_ids($folder_ids);
+                        if ($tagged) {
+                            $api_ok = true;
+                            $attachment_ids = array_merge($attachment_ids, $tagged);
+                        }
+                    }
+
                     if ($api_ok) {
                         $attachment_ids = array_values(array_unique($attachment_ids));
 

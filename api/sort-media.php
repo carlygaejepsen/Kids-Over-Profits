@@ -32,8 +32,20 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 global $wpdb;
 $fbv = $wpdb->prefix . 'fbv';
 $fbv_rel = $wpdb->prefix . 'fbv_attachment_folder';
+$tags_tbl = $wpdb->prefix . 'kop_media_folder_tags';
 
 header('Content-Type: text/html; charset=utf-8');
+
+// The theme's own multi-folder tag table (idempotent). FileBird's model is
+// one folder per file and its UI resets extra fbv relations on drag — so
+// "appears in multiple folders" lives here instead, merged into every
+// folder feed by kop_get_tagged_attachment_ids().
+$wpdb->query("CREATE TABLE IF NOT EXISTS {$tags_tbl} (
+    folder_id BIGINT UNSIGNED NOT NULL,
+    attachment_id BIGINT UNSIGNED NOT NULL,
+    PRIMARY KEY (folder_id, attachment_id),
+    KEY idx_attachment (attachment_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
 $SHOW = 300; // rows rendered per view
 
@@ -228,19 +240,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
                 continue;
             }
             if ($kop_sm_action === 'move') {
-                // Replace whatever filing the attachment has.
+                // Replace the FileBird filing; drop any tag that would now
+                // duplicate the new primary home.
                 $wpdb->delete($fbv_rel, ['attachment_id' => $att_id], ['%d']);
                 $wpdb->insert($fbv_rel, ['folder_id' => $target, 'attachment_id' => $att_id], ['%d', '%d']);
+                $wpdb->delete($tags_tbl, ['attachment_id' => $att_id, 'folder_id' => $target], ['%d', '%d']);
                 $done++;
             } else {
-                // Tag: add membership, keep existing ones; skip if present.
-                $exists = (int)$wpdb->get_var($wpdb->prepare(
+                // Tag: an EXTRA membership in the theme's table — the primary
+                // FileBird filing is untouched, and FileBird can't undo it.
+                $already_primary = (int)$wpdb->get_var($wpdb->prepare(
                     "SELECT COUNT(*) FROM {$fbv_rel} WHERE attachment_id = %d AND folder_id = %d",
                     $att_id, $target
                 ));
-                if (!$exists) {
-                    $wpdb->insert($fbv_rel, ['folder_id' => $target, 'attachment_id' => $att_id], ['%d', '%d']);
-                    $done++;
+                if (!$already_primary) {
+                    $ins = $wpdb->query($wpdb->prepare(
+                        "INSERT IGNORE INTO {$tags_tbl} (folder_id, attachment_id) VALUES (%d, %d)",
+                        $target, $att_id
+                    ));
+                    if ($ins) {
+                        $done++;
+                    }
                 }
             }
         }
@@ -274,7 +294,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             continue;
         }
         $ids = $wpdb->get_col($wpdb->prepare(
-            "SELECT folder_id FROM {$fbv_rel} WHERE attachment_id = %d ORDER BY folder_id", $att_id
+            "SELECT folder_id FROM {$fbv_rel} WHERE attachment_id = %d
+             UNION SELECT folder_id FROM {$tags_tbl} WHERE attachment_id = %d
+             ORDER BY folder_id", $att_id, $att_id
         ));
         update_post_meta($att_id, '_kop_filing_ok', implode(',', array_map('intval', $ids)));
         $confirmed++;
@@ -300,6 +322,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             continue;
         }
         if (wp_delete_attachment($att_id, true)) {
+            $wpdb->delete($tags_tbl, ['attachment_id' => $att_id], ['%d']);
             $deleted++;
         } else {
             $failed++;
@@ -321,10 +344,12 @@ $folder_filter = trim((string)($_GET['folder'] ?? ''));
 $lib = $wpdb->get_results(
     "SELECT p.ID, p.post_title, p.post_mime_type,
             GROUP_CONCAT(DISTINCT r.folder_id) AS folder_ids,
+            GROUP_CONCAT(DISTINCT t.folder_id) AS tag_folder_ids,
             pm.meta_value AS attached_file,
             ok.meta_value AS filing_ok
      FROM {$wpdb->posts} p
      LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
+     LEFT JOIN {$tags_tbl} t ON t.attachment_id = p.ID
      LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = '_wp_attached_file'
      LEFT JOIN {$wpdb->postmeta} ok ON ok.post_id = p.ID AND ok.meta_key = '_kop_filing_ok'
      WHERE p.post_type = 'attachment'
@@ -341,15 +366,19 @@ foreach ($lib as $a) {
     $curs = $a->folder_ids !== null && $a->folder_ids !== ''
         ? array_map('intval', explode(',', $a->folder_ids))
         : [];
+    $tag_ids = $a->tag_folder_ids !== null && $a->tag_folder_ids !== ''
+        ? array_values(array_diff(array_map('intval', explode(',', $a->tag_folder_ids)), $curs))
+        : [];
+    $all_in = array_merge($curs, $tag_ids);
     $basename = $a->attached_file ? basename($a->attached_file) : '';
     $title = $a->post_title !== '' ? $a->post_title : $basename;
 
-    // Browse filters.
+    // Browse filters (a folder view includes files tagged into it).
     if ($mode === 'browse') {
-        if ($folder_filter === 'uncat' && $curs) {
+        if ($folder_filter === 'uncat' && $all_in) {
             continue;
         }
-        if ($folder_filter !== '' && $folder_filter !== 'uncat' && !in_array((int)$folder_filter, $curs, true)) {
+        if ($folder_filter !== '' && $folder_filter !== 'uncat' && !in_array((int)$folder_filter, $all_in, true)) {
             continue;
         }
         if ($q !== '' && mb_stripos($title . ' ' . $basename, $q) === false) {
@@ -362,18 +391,18 @@ foreach ($lib as $a) {
 
     if ($mode === 'misfiled') {
         // Mis-filed = confident suggestion pointing somewhere the file is NOT
-        // already filed (files can hold multiple memberships).
-        if ($sug === null || !$curs || in_array($sug, $curs, true)) {
+        // already filed or tagged (files can hold multiple memberships).
+        if ($sug === null || !$all_in || in_array($sug, $all_in, true)) {
             continue;
         }
         // Skip files an admin confirmed as correctly filed — as long as their
-        // membership set hasn't changed since the confirmation.
+        // membership set (filings + tags) hasn't changed since.
         if ($a->filing_ok !== null) {
             $ok_ids = array_map('intval', array_filter(explode(',', $a->filing_ok), 'strlen'));
-            $now_ids = $curs;
+            $now_ids = $all_in;
             sort($ok_ids);
             sort($now_ids);
-            if ($ok_ids === $now_ids) {
+            if ($ok_ids === array_values(array_unique($now_ids))) {
                 continue;
             }
         }
@@ -395,6 +424,7 @@ foreach ($lib as $a) {
         'mime'  => $a->post_mime_type,
         'url'   => wp_get_attachment_url($a->ID),
         'curs'  => $curs,
+        'tags'  => $tag_ids,
         'sug'   => $sug,
         'why'   => $why,
     ];
@@ -581,12 +611,16 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 <table><thead><tr><th></th><th>File</th><th>Currently in</th><th>Suggested</th><th>Move to</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
     $ticked = $mode === 'misfiled' && $r['sug'] !== null;
-    if ($r['curs']) {
-        $cur_label = implode('<br>', array_map(static function ($cid) use ($by_id) {
-            return esc_html(kop_sm_path($cid, $by_id));
-        }, $r['curs']));
-        if (count($r['curs']) > 1) {
-            $cur_label .= '<br><small class="ok">(in ' . count($r['curs']) . ' folders)</small>';
+    $cur_parts = array_map(static function ($cid) use ($by_id) {
+        return esc_html(kop_sm_path($cid, $by_id));
+    }, $r['curs']);
+    foreach ($r['tags'] as $tid) {
+        $cur_parts[] = '🏷 ' . esc_html(kop_sm_path($tid, $by_id)) . ' <small class="ok">(tag)</small>';
+    }
+    if ($cur_parts) {
+        $cur_label = implode('<br>', $cur_parts);
+        if (count($cur_parts) > 1) {
+            $cur_label .= '<br><small class="ok">(in ' . count($cur_parts) . ' folders)</small>';
         }
     } else {
         $cur_label = '<span class="warn">(uncategorized)</span>';
@@ -606,7 +640,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <td><?php echo $sug_label; ?></td>
         <td>
             <input type="number" name="file[<?php echo $r['id']; ?>][target]" min="1"
-                value="<?php echo $r['sug'] !== null && !in_array($r['sug'], $r['curs'], true) ? (int)$r['sug'] : ''; ?>" placeholder="folder ID">
+                value="<?php echo $r['sug'] !== null && !in_array($r['sug'], array_merge($r['curs'], $r['tags']), true) ? (int)$r['sug'] : ''; ?>" placeholder="folder ID">
             <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
             <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
         </td>

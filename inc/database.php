@@ -665,11 +665,46 @@ function kop_get_folder_attachments($folder_id) {
 }
 
 /**
+ * Attachment IDs "tagged" into the given folders via the theme's own
+ * multi-folder table (kop_media_folder_tags). Tags let one document appear
+ * in additional folders without touching FileBird's one-folder-per-file
+ * model — FileBird's UI can neither see nor destroy them. Written by
+ * api/sort-media.php; read by every folder feed.
+ *
+ * @param int[] $folder_ids
+ * @return int[]
+ */
+function kop_get_tagged_attachment_ids($folder_ids) {
+    global $wpdb;
+    static $table_exists = null;
+
+    $table = $wpdb->prefix . 'kop_media_folder_tags';
+    if ($table_exists === null) {
+        $table_exists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table);
+    }
+    if (!$table_exists) {
+        return array();
+    }
+
+    $folder_ids = array_values(array_unique(array_map('intval', (array) $folder_ids)));
+    if (empty($folder_ids)) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($folder_ids), '%d'));
+    return array_map('intval', (array) $wpdb->get_col($wpdb->prepare(
+        "SELECT DISTINCT attachment_id FROM $table WHERE folder_id IN ($placeholders)",
+        $folder_ids
+    )));
+}
+
+/**
  * Get attachments that live directly in any of the supplied folder IDs.
  *
  * Callers are expected to have already expanded subtrees (see
  * kop_get_folder_descendant_ids / kop_get_descendant_ids_for_roots) — this
- * function does NOT walk the tree itself.
+ * function does NOT walk the tree itself. Includes both FileBird filings
+ * and theme-level multi-folder tags.
  *
  * @param int[] $folder_ids Folder IDs to pull attachments from.
  * @return WP_Post[]
@@ -698,6 +733,12 @@ function kop_get_attachments_in_folder_ids($folder_ids) {
             $folder_ids
         )
     );
+
+    // Plus documents tagged into these folders (multi-folder membership).
+    $attachment_ids = array_values(array_unique(array_merge(
+        array_map('intval', (array) $attachment_ids),
+        kop_get_tagged_attachment_ids($folder_ids)
+    )));
 
     if (empty($attachment_ids)) {
         return array();
