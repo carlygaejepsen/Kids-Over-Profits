@@ -94,8 +94,70 @@ foreach ($folders as $f) {
     $matchable[] = ['id' => (int)$f->id, 'norm' => $norm, 'tokens' => array_values($tokens)];
 }
 
+$custom_rules = kop_sm_resolve_rules($folders, $by_id);
+
+/**
+ * Custom filename → folder rules, checked BEFORE name matching. Keys are
+ * substrings of the NORMALIZED file text (lowercase, separators become
+ * spaces — so "treatment_times" matches 'treatment times'); values are
+ * candidate folder names (also normalized), first one that resolves to a
+ * folder wins. Healthy folders beat orphaned ones with the same name.
+ */
+function kop_sm_custom_rules() {
+    return [
+        // "Treatment Times" is The Ridge (Maine)'s publication.
+        'treatment times' => ['the ridge maine', 'the ridge me'],
+    ];
+}
+
+/** Is the folder's ancestry broken (an orphaned ghost-tree member)? */
+function kop_sm_is_orphan($fid, $by_id) {
+    $cur = (int)$fid;
+    for ($i = 0; $i < 15; $i++) {
+        if (!isset($by_id[$cur])) {
+            return true; // missing link in the chain
+        }
+        $parent = (int)$by_id[$cur]->parent;
+        if ($parent === 0) {
+            return false;
+        }
+        $cur = $parent;
+    }
+    return false;
+}
+
+/** Resolve the custom rules to folder ids: [substring => [id, label]]. */
+function kop_sm_resolve_rules($folders, $by_id) {
+    $by_norm = [];
+    foreach ($folders as $f) {
+        $by_norm[kop_sm_norm($f->name)][] = (int)$f->id;
+    }
+    $resolved = [];
+    foreach (kop_sm_custom_rules() as $needle => $names) {
+        foreach ((array)$names as $name) {
+            $ids = isset($by_norm[$name]) ? $by_norm[$name] : [];
+            // Prefer folders with intact ancestry over ghost-tree orphans.
+            $healthy = array_values(array_filter($ids, static function ($fid) use ($by_id) {
+                return !kop_sm_is_orphan($fid, $by_id);
+            }));
+            $pick = $healthy ?: $ids;
+            if (count($pick) === 1) {
+                $resolved[$needle] = [$pick[0], $by_id[$pick[0]]->name];
+                break;
+            }
+        }
+    }
+    return $resolved;
+}
+
 /** Suggest a folder for file text. Returns [folder_id|null, why]. */
-function kop_sm_suggest($fileText, $matchable) {
+function kop_sm_suggest($fileText, $matchable, $rules = []) {
+    // Custom rules win outright.
+    foreach ($rules as $needle => $target) {
+        if (strpos($fileText, $needle) !== false) {
+            return [$target[0], 'rule: “' . $needle . '” → ' . $target[1]];
+        }
+    }
     $best = null;
     $bestScore = 0;
     $bestNames = [];
@@ -296,7 +358,7 @@ foreach ($lib as $a) {
     }
 
     $fileText = kop_sm_norm($title . ' ' . $basename);
-    list($sug, $why) = kop_sm_suggest($fileText, $matchable);
+    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules);
 
     if ($mode === 'misfiled') {
         // Mis-filed = confident suggestion pointing somewhere the file is NOT
