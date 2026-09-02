@@ -194,6 +194,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     }
 }
 
+// Confirm ticked files as correctly filed ("not mis-filed"): remember the
+// membership set they were approved with, so the mis-filed scan skips them —
+// until they move, which invalidates the approval automatically.
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_confirm'])
+    && check_admin_referer('kop_sm_apply')) {
+
+    $requests = isset($_POST['file']) && is_array($_POST['file']) ? $_POST['file'] : [];
+    $confirmed = 0;
+    foreach ($requests as $att_id => $req) {
+        if (empty($req['go'])) {
+            continue;
+        }
+        $att_id = (int)$att_id;
+        if ($att_id <= 0 || get_post_type($att_id) !== 'attachment') {
+            continue;
+        }
+        $ids = $wpdb->get_col($wpdb->prepare(
+            "SELECT folder_id FROM {$fbv_rel} WHERE attachment_id = %d ORDER BY folder_id", $att_id
+        ));
+        update_post_meta($att_id, '_kop_filing_ok', implode(',', array_map('intval', $ids)));
+        $confirmed++;
+    }
+    $applied = true;
+    $apply_log[] = "Marked {$confirmed} file(s) as correctly filed — the mis-filed scan will skip them unless they move.";
+}
+
 // Permanently delete ticked files.
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['do_delete'])
@@ -232,12 +259,14 @@ $folder_filter = trim((string)($_GET['folder'] ?? ''));
 $lib = $wpdb->get_results(
     "SELECT p.ID, p.post_title, p.post_mime_type,
             GROUP_CONCAT(DISTINCT r.folder_id) AS folder_ids,
-            pm.meta_value AS attached_file
+            pm.meta_value AS attached_file,
+            ok.meta_value AS filing_ok
      FROM {$wpdb->posts} p
      LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
      LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = '_wp_attached_file'
+     LEFT JOIN {$wpdb->postmeta} ok ON ok.post_id = p.ID AND ok.meta_key = '_kop_filing_ok'
      WHERE p.post_type = 'attachment'
-     GROUP BY p.ID, p.post_title, p.post_mime_type, pm.meta_value
+     GROUP BY p.ID, p.post_title, p.post_mime_type, pm.meta_value, ok.meta_value
      ORDER BY p.ID DESC"
 );
 $total_files = count($lib);
@@ -274,6 +303,17 @@ foreach ($lib as $a) {
         // already filed (files can hold multiple memberships).
         if ($sug === null || !$curs || in_array($sug, $curs, true)) {
             continue;
+        }
+        // Skip files an admin confirmed as correctly filed — as long as their
+        // membership set hasn't changed since the confirmation.
+        if ($a->filing_ok !== null) {
+            $ok_ids = array_map('intval', array_filter(explode(',', $a->filing_ok), 'strlen'));
+            $now_ids = $curs;
+            sort($ok_ids);
+            sort($now_ids);
+            if ($ok_ids === $now_ids) {
+                continue;
+            }
         }
         if ($q !== '' && mb_stripos($title . ' ' . $basename, $q) === false) {
             continue;
@@ -459,6 +499,11 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <button type="submit" name="do_tag" value="1" style="background:#000080"
             onclick="return window.confirm('ADD the ticked files to their target folders?\n\nCurrent folder memberships are KEPT — the file will show up in both places (no duplicate file is created).');">
             🏷️ Add to folder (keep current)</button>
+        <?php if ($mode === 'misfiled'): ?>
+        <button type="submit" name="do_confirm" value="1" style="background:#b8860b"
+            onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files that are correctly filed first.');return false;} return window.confirm('Mark '+n+' ticked file(s) as CORRECTLY filed?\n\nThey stay exactly where they are and stop appearing in the mis-filed scan (until they move).');">
+            ✔ Not mis-filed (approve as is)</button>
+        <?php endif; ?>
         <button type="submit" name="do_delete" value="1" style="background:#7a1f1f"
             onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
             🗑️ Delete ticked</button>
