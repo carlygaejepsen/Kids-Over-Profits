@@ -1481,6 +1481,57 @@ function enqueue_news_processor_scripts() {
 add_action('wp_enqueue_scripts', 'enqueue_news_processor_scripts');
 
 /**
+ * Guided tours for the contribution tools that don't bundle their own
+ * (js/tool-tutorials.js): the News Processor, the lawsuit and legislation
+ * submission forms, and any page carrying the anonymous document portal
+ * shortcode. The data form and wiki editor keep their existing tutorials.
+ */
+function kop_enqueue_tool_tutorials() {
+    $tour_templates = [
+        'page-news-processor.php',
+        'templates/page-news-processor.php',
+        'templates/page-submit-legislation.php',
+        'templates/page-submit-lawsuit.php',
+    ];
+    global $post;
+    $has_portal = is_a($post, 'WP_Post') && has_shortcode($post->post_content, 'anonymous_doc_portal');
+    if (!is_page_template($tour_templates) && !$has_portal) {
+        return;
+    }
+
+    $theme_uri = get_stylesheet_directory_uri();
+    $theme_dir = get_stylesheet_directory();
+
+    if (file_exists($theme_dir . '/css/tutorial-overlay.css')) {
+        wp_enqueue_style(
+            'kop-tutorial-overlay-style',
+            $theme_uri . '/css/tutorial-overlay.css',
+            array(),
+            filemtime($theme_dir . '/css/tutorial-overlay.css')
+        );
+    }
+    if (file_exists($theme_dir . '/js/tutorial-overlay.js')) {
+        wp_enqueue_script(
+            'kop-tutorial-overlay-script',
+            $theme_uri . '/js/tutorial-overlay.js',
+            array('jquery'),
+            filemtime($theme_dir . '/js/tutorial-overlay.js'),
+            true
+        );
+    }
+    if (file_exists($theme_dir . '/js/tool-tutorials.js')) {
+        wp_enqueue_script(
+            'kop-tool-tutorials',
+            $theme_uri . '/js/tool-tutorials.js',
+            array('kop-tutorial-overlay-script'),
+            filemtime($theme_dir . '/js/tool-tutorials.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_tool_tutorials');
+
+/**
  * Enqueue scripts for TTI Program Index page
  */
 function enqueue_tti_processor_scripts() {
