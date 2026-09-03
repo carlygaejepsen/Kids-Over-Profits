@@ -711,14 +711,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 // An explicit FileBird folder ID (set via the wiki program picker)
                 // wins over fuzzy name matching — merged/renamed facilities often
                 // have folders named for a former name that fuzzy matching misses.
-                // Fall back to a bare {id} so the button still works even if the
-                // folder list hasn't loaded.
+                // But folder merges delete IDs: when the folder list is loaded and
+                // the stored ID isn't in it, fall back to name matching. Only trust
+                // a bare {id} while the folder list hasn't loaded yet.
                 const explicitFolderId = parseInt(facility && facility.documentFolderId, 10);
                 let matchingFolder;
                 if (Number.isFinite(explicitFolderId) && explicitFolderId > 0) {
-                    matchingFolder = (Array.isArray(window.filebirdFolders)
-                        ? window.filebirdFolders.find(folder => Number(folder.id) === explicitFolderId)
-                        : null) || { id: explicitFolderId };
+                    if (Array.isArray(window.filebirdFolders)) {
+                        matchingFolder = window.filebirdFolders.find(folder => Number(folder.id) === explicitFolderId)
+                            || findMatchingFilebirdFolder(facilityHeaderRaw);
+                    } else {
+                        matchingFolder = { id: explicitFolderId };
+                    }
                 } else {
                     matchingFolder = findMatchingFilebirdFolder(facilityHeaderRaw);
                 }

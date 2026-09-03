@@ -444,7 +444,9 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     // Resolve a folder for a card: an explicit FileBird folder ID (set via the
-    // wiki program picker) always wins over fuzzy name matching. Returns a folder
+    // wiki program picker) wins over fuzzy name matching, but only while that
+    // folder still exists — folder merges delete IDs, so a stored ID missing
+    // from the loaded folder list falls back to name matching. Returns a folder
     // object with at least an `id`, or null.
     const resolveDocFolder = (explicitId, rawName) => {
         const idNum = parseInt(explicitId, 10);
@@ -452,7 +454,10 @@ function displayFacilities(facilitiesData, containerId) {
             if (window.filebirdFolderMap && window.filebirdFolderMap[String(idNum)]) {
                 return window.filebirdFolderMap[String(idNum)];
             }
-            return { id: idNum };
+            if (!window.filebirdFolderMap) {
+                // Folder list not loaded (yet); trust the stored ID.
+                return { id: idNum };
+            }
         }
         return findMatchingFolder(rawName);
     };
