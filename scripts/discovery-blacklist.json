@@ -1,5 +1,10 @@
 {
   "_comment": "Domains whose articles are skipped during automated discovery. Match is exact host OR '*.suffix.com' wildcard. Edit freely — script reads this fresh each run.",
+  "selfDomains": [
+    "kidsoverprofits.org",
+    "*.kidsoverprofits.org"
+  ],
+  "_selfDomainsComment": "Our own site. Reddit posts linking to our uploads (case-summary PDFs etc.) are not news candidates — and PDFs break the AI extraction stage anyway.",
   "spamDomains": [
     "newsbreak.com",
     "msn.com",

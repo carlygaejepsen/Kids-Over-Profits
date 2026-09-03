@@ -346,6 +346,7 @@ function persistRejected(newEntries) {
 function buildBlacklistMatcher() {
     const bl = loadJson(BLACKLIST_FILE, {});
     const allDomains = []
+        .concat(Array.isArray(bl.selfDomains) ? bl.selfDomains : [])
         .concat(Array.isArray(bl.spamDomains) ? bl.spamDomains : [])
         .concat(Array.isArray(bl.pressReleaseWires) ? bl.pressReleaseWires : [])
         .concat(Array.isArray(bl.industryPromoDomains) ? bl.industryPromoDomains : []);
