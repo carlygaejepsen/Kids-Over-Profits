@@ -251,12 +251,14 @@ function kop_register_facilities_rest_routes() {
 
                 // Facility views pass merge=name so that duplicate folders sharing
                 // the facility's name (e.g. the same program filed under "Active
-                // Programs" and again under "Closed Programs") are all surfaced.
+                // Programs" and again under "Closed Programs") are all surfaced,
+                // along with folders LINKED as the same facility under a legacy /
+                // current name (kop_folder_links, curated in api/link-folders.php).
                 // Lawsuit/legislation views omit it and target their exact folder.
                 $merge_same_name = ($request->get_param('merge') === 'name')
-                    && function_exists('kop_get_same_name_folder_ids');
+                    && function_exists('kop_get_equivalent_folder_ids');
                 $root_ids = $merge_same_name
-                    ? kop_get_same_name_folder_ids($folder_id)
+                    ? kop_get_equivalent_folder_ids($folder_id)
                     : array((int) $folder_id);
                 if (empty($root_ids)) {
                     $root_ids = array((int) $folder_id);

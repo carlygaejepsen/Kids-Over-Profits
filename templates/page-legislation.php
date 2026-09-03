@@ -196,10 +196,10 @@ $status_labels = [
             <?php if ($bill['full_text_url'] || $bill['official_url']): ?>
             <div class="kop-card-links">
                 <?php if ($bill['official_url']): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($bill['official_url']); ?>" target="_blank" rel="noopener">&#128196; Official tracker</a>
+                    <a class="kop-card-link" href="<?php echo esc_url($bill['official_url']); ?>" target="_blank" rel="noopener">Official tracker &rarr;</a>
                 <?php endif; ?>
                 <?php if ($bill['full_text_url']): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($bill['full_text_url']); ?>" target="_blank" rel="noopener">&#128196; Full text</a>
+                    <a class="kop-card-link" href="<?php echo esc_url($bill['full_text_url']); ?>" target="_blank" rel="noopener">Full text &rarr;</a>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
@@ -208,14 +208,6 @@ $status_labels = [
         <?php endif; ?>
     </div>
 </div>
-
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/public-records.css?v=<?php echo filemtime(get_stylesheet_directory() . '/css/public-records.css'); ?>">
-<style>
-.kop-card-parties, .kop-bill-sponsors, .kop-bill-last-action { font-size: 0.86em; color: #555; }
-.kop-party-label  { font-weight: 600; margin-right: 0.3em; color: var(--kop-midnight-blue); }
-.kop-bill-number  { font-size: 0.85em; font-weight: 700; color: var(--kop-teal); display: block; margin-bottom: 0.15em; }
-.kop-last-date    { font-weight: 600; }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

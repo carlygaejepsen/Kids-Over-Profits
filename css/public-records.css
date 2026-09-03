@@ -1,30 +1,45 @@
-/* Shared styles for public record pages: Lawsuits, Legislation, Volunteer */
+/* Shared styles for public record pages: Lawsuits, Legislation, Volunteer.
+   Visual language mirrors the TTI News Feed (css/news-feed.css): white cards
+   with soft shadows and hover lift, pill badges, teal summary toggles, and
+   sand summary panels. */
 
 .kop-records-page {
     max-width: 1100px;
-    margin: 0 auto;
-    padding: 2em 1.5em 4em;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 2.5rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
     color: var(--kop-text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* ── Page header ─────────────────────────────────────── */
 
 .kop-records-header {
-    margin-bottom: 2em;
-    padding-bottom: 1.25em;
-    border-bottom: 2px solid var(--kop-border-primary);
+    text-align: center;
+    margin-bottom: 2.5rem;
 }
 
 .kop-records-header h1 {
-    font-size: 2em;
+    font-size: 2.5rem;
     color: var(--kop-midnight-blue);
-    margin-bottom: 0.25em;
+    margin-bottom: 0.5rem;
 }
 
 .kop-records-header p {
-    color: #555;
-    font-size: 1.05em;
+    color: #4a5568;
+    font-size: 1.1rem;
     margin: 0;
+}
+
+.kop-records-cta {
+    margin-top: 0.75rem !important;
+}
+
+.kop-records-cta .kop-card-link {
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 /* ── Filter bar ──────────────────────────────────────── */
@@ -32,45 +47,52 @@
 .kop-records-filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6em;
-    margin-bottom: 1.75em;
+    gap: 0.6rem;
     align-items: center;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-mint-green);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .kop-filter-select {
-    padding: 0.45em 0.8em;
-    border: 1.5px solid var(--kop-border-secondary);
-    border-radius: 4px;
-    font-size: 0.92em;
-    background: var(--kop-bg-secondary);
-    color: var(--kop-text-primary);
+    padding: 0.4rem 0.75rem;
+    border: 2px solid var(--kop-teal);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue);
     cursor: pointer;
 }
 
 .kop-filter-select:focus {
     outline: none;
-    border-color: var(--kop-teal);
+    border-color: var(--kop-navy-blue);
+    box-shadow: var(--kop-focus-shadow, 0 0 0 3px rgba(51, 167, 181, 0.25));
 }
 
 .kop-filter-clear {
-    padding: 0.45em 1em;
-    background: transparent;
-    border: 1.5px solid var(--kop-border-secondary);
-    border-radius: 4px;
-    font-size: 0.88em;
-    color: #666;
+    padding: 0.4rem 0.9rem;
+    background: var(--kop-sand);
+    border: 1px solid var(--kop-mint-green);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--kop-midnight-blue);
     cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
+    transition: all 0.2s;
 }
 
 .kop-filter-clear:hover {
+    background: var(--kop-mint-green);
     border-color: var(--kop-teal);
-    color: var(--kop-teal);
 }
 
 .kop-filter-count {
-    font-size: 0.88em;
-    color: #888;
+    font-size: 0.88rem;
+    color: var(--kop-navy-blue);
+    font-style: italic;
     margin-left: auto;
 }
 
@@ -78,24 +100,25 @@
 
 .kop-records-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.25em;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
 }
 
 .kop-record-card {
-    background: var(--kop-bg-secondary);
-    border: 1px solid var(--kop-border-secondary);
-    border-radius: 8px;
-    padding: 1.2em 1.4em;
+    background: var(--kop-white, #fff);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.6em;
-    transition: border-color 0.15s, box-shadow 0.15s;
+    gap: 0.75rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .kop-record-card:hover {
-    border-color: var(--kop-teal);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .kop-record-card[hidden] { display: none; }
@@ -106,22 +129,23 @@
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
-    gap: 0.4em;
+    gap: 0.5rem;
     justify-content: space-between;
 }
 
 .kop-card-title {
-    font-size: 1em;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--kop-midnight-blue);
     margin: 0;
     flex: 1 1 60%;
-    line-height: 1.35;
+    line-height: 1.4;
 }
 
 .kop-card-title a {
     color: inherit;
     text-decoration: none;
+    transition: color 0.2s;
 }
 
 .kop-card-title a:hover {
@@ -133,12 +157,12 @@
 
 .kop-badge {
     display: inline-block;
-    font-size: 0.74em;
-    font-weight: 700;
-    padding: 0.15em 0.55em;
-    border-radius: 3px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
     text-transform: uppercase;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.05em;
     white-space: nowrap;
     flex-shrink: 0;
 }
@@ -147,11 +171,11 @@
 .kop-badge-filed       { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
 .kop-badge-in_progress { background: var(--kop-soft-pastel-yellow); color: #6b5000; }
 .kop-badge-settled     { background: var(--kop-mint-green); color: #004a30; }
-.kop-badge-dismissed   { background: #e0e0e0; color: #555; }
+.kop-badge-dismissed   { background: #e2e8f0; color: #4a5568; }
 .kop-badge-ruling      { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
 .kop-badge-appeal      { background: var(--kop-orange); color: #fff; }
-.kop-badge-closed      { background: #ccc; color: #444; }
-.kop-badge-unknown     { background: #eee; color: #888; }
+.kop-badge-closed      { background: #cbd5e0; color: #2d3748; }
+.kop-badge-unknown     { background: #edf2f7; color: #718096; }
 
 /* Legislation status badges */
 .kop-badge-introduced     { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
@@ -166,13 +190,13 @@
 /* Volunteer status badges */
 .kop-badge-open      { background: var(--kop-mint-green); color: #004a30; }
 .kop-badge-filled    { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
-.kop-badge-completed { background: #e0e0e0; color: #555; }
+.kop-badge-completed { background: #e2e8f0; color: #4a5568; }
 
 /* Position badges (legislation) */
 .kop-badge-support  { background: var(--kop-chartreuse); color: var(--kop-midnight-blue); }
 .kop-badge-oppose   { background: var(--kop-coral-pink); color: #5a0010; }
 .kop-badge-watch    { background: var(--kop-orange); color: #fff; }
-.kop-badge-neutral  { background: #e0e0e0; color: #555; }
+.kop-badge-neutral  { background: #e2e8f0; color: #4a5568; }
 
 /* Type badges */
 .kop-badge-type {
@@ -190,56 +214,130 @@
 /* ── Card meta row ───────────────────────────────────── */
 
 .kop-card-meta {
-    font-size: 0.83em;
-    color: #777;
+    font-size: 0.875rem;
+    color: #718096;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3em 0.8em;
+    align-items: center;
+    gap: 0.3rem 0.8rem;
 }
+
+/* ── Parties (plaintiffs / defendants) ───────────────── */
+
+.kop-card-parties {
+    font-size: 0.875rem;
+    color: #4a5568;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    line-height: 1.5;
+}
+
+.kop-party-label {
+    font-weight: 600;
+    margin-right: 0.3rem;
+    color: var(--kop-midnight-blue);
+}
+
+/* ── Legislation card details ────────────────────────── */
+
+.kop-bill-sponsors,
+.kop-bill-last-action {
+    font-size: 0.875rem;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.kop-bill-number {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--kop-teal);
+    display: block;
+    margin-bottom: 0.15em;
+}
+
+.kop-last-date { font-weight: 600; }
 
 /* ── Tag chips ───────────────────────────────────────── */
 
 .kop-card-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3em;
-    margin-top: 0.1em;
+    gap: 0.4rem;
 }
 
 .kop-tag {
-    font-size: 0.76em;
-    padding: 0.1em 0.5em;
-    background: var(--kop-bg-accent);
-    border: 1px solid var(--kop-border-secondary);
-    border-radius: 3px;
-    color: var(--kop-text-secondary);
+    display: inline-block;
+    font-size: 0.75rem;
+    background-color: var(--kop-soft-pastel-yellow);
+    color: var(--kop-midnight-blue);
+    border: 1px solid var(--kop-orange);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    transition: all 0.2s;
+}
+
+.kop-tag:hover {
+    background-color: var(--kop-orange);
+    color: var(--kop-white, #fff);
+}
+
+.kop-tag-facility {
+    background-color: var(--kop-mint-green);
+    border-color: var(--kop-teal);
+}
+
+.kop-tag-facility:hover {
+    background-color: var(--kop-teal);
+    color: var(--kop-white, #fff);
 }
 
 /* ── Summary (expandable) ────────────────────────────── */
 
 .kop-card-summary-toggle {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: 0.88em;
-    color: var(--kop-teal);
     cursor: pointer;
-    text-align: left;
+    background-color: var(--kop-teal);
+    color: var(--kop-white, #fff);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.65rem 1rem;
+    border: none;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 0.3em;
-    margin-top: 0.25em;
+    justify-content: center;
+    gap: 0.6rem;
+    user-select: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.kop-card-summary-toggle:hover { color: var(--kop-navy-blue); }
+.kop-card-summary-toggle:hover {
+    background-color: var(--kop-navy-blue);
+    color: var(--kop-white, #fff);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.kop-card-summary-toggle:active {
+    transform: translateY(0);
+}
+
+.kop-card-summary-toggle .toggle-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
 
 .kop-card-summary {
-    font-size: 0.9em;
+    color: var(--kop-midnight-blue);
+    font-size: 0.95rem;
     line-height: 1.6;
-    color: #444;
-    margin-top: 0.4em;
-    padding-top: 0.4em;
-    border-top: 1px solid var(--kop-border-secondary);
+    padding: 1rem;
+    background-color: var(--kop-sand);
+    border-radius: 6px;
+    border-left: 3px solid var(--kop-teal);
 }
 
 /* ── Links row ───────────────────────────────────────── */
@@ -247,37 +345,42 @@
 .kop-card-links {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5em;
+    gap: 0.4rem 1rem;
     margin-top: auto;
-    padding-top: 0.5em;
-    border-top: 1px solid var(--kop-border-secondary);
+    padding-top: 0.75rem;
+    border-top: 1px solid #edf2f7;
 }
 
 .kop-card-link {
-    font-size: 0.82em;
-    color: var(--kop-teal);
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
-    gap: 0.2em;
+    gap: 0.2rem;
+    color: var(--kop-teal);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.2s;
 }
 
-.kop-card-link:hover { color: var(--kop-navy-blue); text-decoration: underline; }
+.kop-card-link:hover {
+    color: var(--kop-navy-blue);
+    text-decoration: underline;
+}
 
 /* ── Signup / CTA button ─────────────────────────────── */
 
 .kop-card-cta {
     display: inline-block;
     margin-top: auto;
-    padding: 0.5em 1.1em;
+    padding: 0.6rem 1.25rem;
     background: var(--kop-teal);
     color: #fff;
-    border-radius: 4px;
-    font-size: 0.9em;
+    border-radius: 8px;
+    font-size: 0.9rem;
     font-weight: 600;
     text-decoration: none;
     text-align: center;
-    transition: background 0.15s;
+    transition: background 0.2s;
     align-self: flex-start;
 }
 
@@ -287,7 +390,7 @@
     background: transparent;
     color: var(--kop-teal);
     border: 1.5px solid var(--kop-teal);
-    padding: 0.45em 1em;
+    padding: 0.55rem 1.15rem;
 }
 
 .kop-card-cta-email:hover { background: var(--kop-teal); color: #fff; }
@@ -295,26 +398,39 @@
 /* ── Empty state ─────────────────────────────────────── */
 
 .kop-records-empty {
-    background: var(--kop-bg-accent);
-    border: 1px solid var(--kop-border-primary);
-    border-radius: 6px;
-    padding: 2em;
+    background: var(--kop-sand);
+    border: 1px solid var(--kop-mint-green);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
     text-align: center;
-    color: var(--kop-text-secondary);
-    font-size: 1em;
+    color: var(--kop-navy-blue);
+    font-size: 1.05rem;
     grid-column: 1 / -1;
 }
 
 /* ── Responsive ──────────────────────────────────────── */
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
     .kop-records-grid {
         grid-template-columns: 1fr;
+    }
+
+    .kop-records-header h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .kop-records-page {
+        margin: 0 auto 1.5rem;
+        padding: 1.25rem 1rem 1.5rem;
+        border-radius: 0;
     }
 
     .kop-records-filters {
         flex-direction: column;
         align-items: stretch;
+        padding: 1rem;
     }
 
     .kop-filter-count { margin-left: 0; }

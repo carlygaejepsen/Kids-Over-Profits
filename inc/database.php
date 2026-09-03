@@ -704,6 +704,71 @@ function kop_get_same_name_folder_ids($folder_id) {
 }
 
 /**
+ * Folders explicitly linked to the given folders via the theme's own
+ * kop_folder_links table (written by api/link-folders.php). A link marks two
+ * folders as the SAME facility under different names — e.g. "Viewpoint Center"
+ * and "Aspen Institute for Behavioral Assessment", each nested under its own
+ * parent org — so folder feeds show the union of their contents. Returns
+ * DIRECT links only; kop_get_equivalent_folder_ids() walks the whole group.
+ *
+ * @param int[] $folder_ids
+ * @return int[] IDs on the other end of any link touching the input set.
+ */
+function kop_get_linked_folder_ids($folder_ids) {
+    global $wpdb;
+    static $table_exists = null;
+
+    $table = $wpdb->prefix . 'kop_folder_links';
+    if ($table_exists === null) {
+        $table_exists = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) === $table);
+    }
+    if (!$table_exists) {
+        return array();
+    }
+
+    $folder_ids = array_values(array_unique(array_map('intval', (array) $folder_ids)));
+    if (empty($folder_ids)) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($folder_ids), '%d'));
+    return array_map('intval', (array) $wpdb->get_col($wpdb->prepare(
+        "SELECT folder_b FROM $table WHERE folder_a IN ($placeholders)
+         UNION
+         SELECT folder_a FROM $table WHERE folder_b IN ($placeholders)",
+        array_merge($folder_ids, $folder_ids)
+    )));
+}
+
+/**
+ * The full equivalence group for a folder: same-name duplicates PLUS curated
+ * legacy/current-name links (kop_folder_links), expanded transitively — a
+ * linked folder brings in ITS same-name duplicates and onward links too.
+ * This is what facility document feeds should merge on, superseding bare
+ * kop_get_same_name_folder_ids().
+ *
+ * @param int $folder_id Any folder in the group.
+ * @return int[] Every folder ID in the group (including the input).
+ */
+function kop_get_equivalent_folder_ids($folder_id) {
+    $all = kop_get_same_name_folder_ids($folder_id);
+
+    // Groups are tiny (a handful of folders); a few fixpoint rounds suffice.
+    for ($i = 0; $i < 5; $i++) {
+        $new = array_diff(kop_get_linked_folder_ids($all), $all);
+        if (empty($new)) {
+            break;
+        }
+        foreach ($new as $nid) {
+            $all = array_merge($all, kop_get_same_name_folder_ids($nid));
+        }
+        $all = array_values(array_unique(array_map('intval', $all)));
+    }
+
+    return $all;
+}
+
+/**
  * Get attachments from a FileBird folder and all of its nested subfolders.
  */
 function kop_get_folder_attachments($folder_id) {
@@ -907,16 +972,18 @@ function kop_build_facility_doc_tree($folder_ids, $depth = 0) {
 
 /**
  * Top-level facility document tree: the direct files of the (optionally
- * name-merged) root folders, plus their nested subfolders.
+ * merged) root folders, plus their nested subfolders. Merging covers both
+ * same-name duplicates and curated legacy/current-name folder links
+ * (kop_get_equivalent_folder_ids).
  *
  * @param int  $folder_id        A folder the facility is matched to.
- * @param bool $merge_same_name  Merge duplicate folders sharing the name.
+ * @param bool $merge_same_name  Merge same-name and linked folders.
  * @return array array with keys 'files' (WP_Post[] filed directly on the roots)
  *               and 'subfolders' (node[] from kop_build_facility_doc_tree).
  */
 function kop_get_facility_doc_tree($folder_id, $merge_same_name = true) {
-    $roots = ($merge_same_name && function_exists('kop_get_same_name_folder_ids'))
-        ? kop_get_same_name_folder_ids($folder_id)
+    $roots = ($merge_same_name && function_exists('kop_get_equivalent_folder_ids'))
+        ? kop_get_equivalent_folder_ids($folder_id)
         : array((int) $folder_id);
     if (empty($roots)) {
         $roots = array((int) $folder_id);

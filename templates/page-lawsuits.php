@@ -182,10 +182,10 @@ try {
             <?php if ($source_urls || $doc_urls): ?>
             <div class="kop-card-links">
                 <?php foreach (array_slice($source_urls, 0, 2) as $url): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">&#128196; Source</a>
+                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Source &rarr;</a>
                 <?php endforeach; ?>
                 <?php foreach (array_slice($doc_urls, 0, 2) as $url): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">&#128196; Court doc</a>
+                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Court doc &rarr;</a>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>
@@ -194,13 +194,6 @@ try {
         <?php endif; ?>
     </div>
 </div>
-
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/public-records.css?v=<?php echo filemtime(get_stylesheet_directory() . '/css/public-records.css'); ?>">
-<style>
-.kop-card-parties { font-size: 0.86em; color: #555; display: flex; flex-direction: column; gap: 0.2em; }
-.kop-party-label  { font-weight: 600; margin-right: 0.3em; color: var(--kop-midnight-blue); }
-.kop-tag-facility { background: var(--kop-powder-blue); border-color: var(--kop-teal); }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
