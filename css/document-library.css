@@ -748,3 +748,52 @@ body.kop-doc-modal-open {
     }
 }
 
+/* ==========================================================
+   Doc tiles inside navy operator cards (program/location index)
+   `.operator-section * { color: #fff !important }` in
+   tti-program-index.css otherwise paints tile text white on the
+   tiles' white background, leaving only the preview image visible.
+   ========================================================== */
+
+.operator-section .doc-title,
+.operator-details .doc-title,
+.facility-document-row .doc-title {
+    color: var(--kop-text-primary) !important;
+}
+
+.operator-section .doc-meta,
+.operator-details .doc-meta,
+.facility-document-row .doc-meta {
+    color: var(--kop-text-secondary) !important;
+}
+
+.operator-section .doc-icon,
+.operator-details .doc-icon,
+.facility-document-row .doc-icon {
+    color: var(--kop-white) !important;
+}
+
+.operator-section .doc-icon-doc,
+.operator-section .doc-icon-docx,
+.operator-section .doc-icon-xls,
+.operator-section .doc-icon-xlsx,
+.operator-section .doc-icon-mp4,
+.operator-section .doc-icon-mov,
+.operator-section .doc-icon-avi,
+.operator-details .doc-icon-doc,
+.operator-details .doc-icon-docx,
+.operator-details .doc-icon-xls,
+.operator-details .doc-icon-xlsx,
+.operator-details .doc-icon-mp4,
+.operator-details .doc-icon-mov,
+.operator-details .doc-icon-avi,
+.facility-document-row .doc-icon-doc,
+.facility-document-row .doc-icon-docx,
+.facility-document-row .doc-icon-xls,
+.facility-document-row .doc-icon-xlsx,
+.facility-document-row .doc-icon-mp4,
+.facility-document-row .doc-icon-mov,
+.facility-document-row .doc-icon-avi {
+    color: var(--kop-midnight-blue) !important;
+}
+
