@@ -66,9 +66,26 @@ $kop_flagged = $wpdb->get_results(
 );
 $wpdb->suppress_errors($kop_suppress);
 
+$kop_volunteer_projects = $wpdb->get_results(
+    "SELECT title, type, signup_url, contact_email FROM volunteer_projects
+     WHERE publication_status = 'published' AND status = 'open'
+     ORDER BY title ASC LIMIT 4",
+    ARRAY_A
+);
+
 $kop_memorial = get_page_by_path('in-loving-memory');
 $kop_legislation_url = kop_home_template_page_url('templates/page-legislation.php', '/legislation/');
 $kop_lawsuits_url = kop_home_template_page_url('templates/page-lawsuits.php', '/lawsuits/');
+$kop_volunteers_url = kop_home_template_page_url('templates/page-volunteers.php', '/volunteer/');
+
+$kop_volunteer_types = array(
+    'research'   => 'Research',
+    'data_entry' => 'Data Entry',
+    'advocacy'   => 'Advocacy',
+    'tech'       => 'Tech',
+    'outreach'   => 'Outreach',
+    'other'      => 'Other',
+);
 
 // Featured inspections link to the state's tracker page when one exists.
 $kop_tracker_slugs = function_exists('kop_state_inspection_page_map')
@@ -242,6 +259,28 @@ $kop_report_states = array(
         live and receive care requires additional oversight. This directory helps communities monitor
         local programs and advocate for accountability. Click your home state for a list of
         facilities near you, or <a href="/international">click here for international programs.</a></p>
+    </section>
+
+    <section class="kop-home-volunteer">
+        <h2>Volunteer With Us</h2>
+        <?php if ($kop_volunteer_projects): ?>
+            <p>Open projects right now — all skill levels welcome:</p>
+            <ul class="kop-volunteer-list">
+                <?php foreach ($kop_volunteer_projects as $vp):
+                    $vp_url = !empty($vp['signup_url']) ? $vp['signup_url']
+                        : (!empty($vp['contact_email']) ? 'mailto:' . $vp['contact_email'] : $kop_volunteers_url);
+                    $vp_type = $kop_volunteer_types[$vp['type']] ?? '';
+                ?>
+                    <li>
+                        <a href="<?php echo esc_url($vp_url); ?>"<?php echo !empty($vp['signup_url']) ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($vp['title']); ?></a>
+                        <?php if ($vp_type): ?><span class="kop-volunteer-type"><?php echo esc_html($vp_type); ?></span><?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Research, data entry, advocacy, tech, and outreach — all skill levels welcome.</p>
+        <?php endif; ?>
+        <a class="kop-volunteer-more" href="<?php echo esc_url($kop_volunteers_url); ?>">See all volunteer opportunities &raquo;</a>
     </section>
 
     <section class="kop-home-help">
