@@ -66,25 +66,25 @@ $kop_flagged = $wpdb->get_results(
 );
 $wpdb->suppress_errors($kop_suppress);
 
-$kop_volunteer_projects = $wpdb->get_results(
-    "SELECT title, type, signup_url, contact_email FROM volunteer_projects
-     WHERE publication_status = 'published' AND status = 'open'
-     ORDER BY title ASC LIMIT 4",
-    ARRAY_A
-);
-
 $kop_memorial = get_page_by_path('in-loving-memory');
 $kop_legislation_url = kop_home_template_page_url('templates/page-legislation.php', '/legislation/');
 $kop_lawsuits_url = kop_home_template_page_url('templates/page-lawsuits.php', '/lawsuits/');
-$kop_volunteers_url = kop_home_template_page_url('templates/page-volunteers.php', '/volunteer/');
 
-$kop_volunteer_types = array(
-    'research'   => 'Research',
-    'data_entry' => 'Data Entry',
-    'advocacy'   => 'Advocacy',
-    'tech'       => 'Tech',
-    'outreach'   => 'Outreach',
-    'other'      => 'Other',
+// Ways to help: the contribution tools (each has a built-in tutorial),
+// mirroring the links curated on the /volunteer/ page.
+$kop_volunteer_links = array(
+    array('url' => '/tti-data-submission', 'label' => 'Data Submission Tool',
+          'desc' => 'Create or update TTI facility profiles.'),
+    array('url' => '/wiki-editor/', 'label' => 'Wiki Editor',
+          'desc' => 'Improve program wiki pages.'),
+    array('url' => '/anon-submit/', 'label' => 'Encrypted Upload',
+          'desc' => 'Share documents anonymously.'),
+    array('url' => '/news-processor/', 'label' => 'News Processor',
+          'desc' => 'Submit TTI news articles and summaries.'),
+    array('url' => '/submit-legislation', 'label' => 'Submit Legislation',
+          'desc' => 'Report bills related to the TTI.'),
+    array('url' => '/submit-lawsuit', 'label' => 'Submit a Lawsuit',
+          'desc' => 'Report lawsuits involving TTI programs or staff.'),
 );
 
 // Featured inspections link to the state's tracker page when one exists.
@@ -262,25 +262,17 @@ $kop_report_states = array(
     </section>
 
     <section class="kop-home-volunteer">
-        <h2>Volunteer With Us</h2>
-        <?php if ($kop_volunteer_projects): ?>
-            <p>Open projects right now — all skill levels welcome:</p>
-            <ul class="kop-volunteer-list">
-                <?php foreach ($kop_volunteer_projects as $vp):
-                    $vp_url = !empty($vp['signup_url']) ? $vp['signup_url']
-                        : (!empty($vp['contact_email']) ? 'mailto:' . $vp['contact_email'] : $kop_volunteers_url);
-                    $vp_type = $kop_volunteer_types[$vp['type']] ?? '';
-                ?>
-                    <li>
-                        <a href="<?php echo esc_url($vp_url); ?>"<?php echo !empty($vp['signup_url']) ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($vp['title']); ?></a>
-                        <?php if ($vp_type): ?><span class="kop-volunteer-type"><?php echo esc_html($vp_type); ?></span><?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php else: ?>
-            <p>Research, data entry, advocacy, tech, and outreach — all skill levels welcome.</p>
-        <?php endif; ?>
-        <a class="kop-volunteer-more" href="<?php echo esc_url($kop_volunteers_url); ?>">See all volunteer opportunities &raquo;</a>
+        <h2>Ways to Help Right Now</h2>
+        <p>Every tool below has a built-in tutorial — no experience needed.</p>
+        <div class="kop-volunteer-grid">
+            <?php foreach ($kop_volunteer_links as $vl): ?>
+                <a class="kop-volunteer-link" href="<?php echo esc_url($vl['url']); ?>">
+                    <span class="kop-volunteer-label"><?php echo esc_html($vl['label']); ?></span>
+                    <span class="kop-volunteer-desc"><?php echo esc_html($vl['desc']); ?></span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+        <a class="kop-volunteer-more" href="/volunteer/">More ways to volunteer &raquo;</a>
     </section>
 
     <section class="kop-home-help">
