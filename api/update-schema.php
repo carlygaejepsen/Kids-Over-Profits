@@ -81,6 +81,25 @@ try {
         echo "'story_arc_id' column already exists.\n";
     }
 
+    // Featured ("egregious") inspection reports for the home page block.
+    // Curated in api/manage-featured-inspections.php. Guarded: the inspection
+    // tables only exist once a scraper has pushed data.
+    $tbl = $pdo->query("SHOW TABLES LIKE 'inspection_reports'");
+    if ($tbl->rowCount() > 0) {
+        $check = $pdo->query("SHOW COLUMNS FROM inspection_reports LIKE 'featured'");
+        if ($check->rowCount() == 0) {
+            $pdo->exec("ALTER TABLE inspection_reports ADD COLUMN featured TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Show on the home page featured-inspections block'");
+            $pdo->exec("ALTER TABLE inspection_reports ADD COLUMN featured_note VARCHAR(500) DEFAULT NULL COMMENT 'One-line why-this-matters shown on the home page card'");
+            $pdo->exec("ALTER TABLE inspection_reports ADD KEY featured (featured)");
+            echo "Added 'featured'/'featured_note' to inspection_reports.\n";
+            echo "Feature reports in api/manage-featured-inspections.php (as an admin).\n";
+        } else {
+            echo "'featured' column already exists on inspection_reports.\n";
+        }
+    } else {
+        echo "inspection_reports table not present - skipped the featured-inspections migration.\n";
+    }
+
     echo "Schema update complete.\n";
 
 } catch (PDOException $e) {

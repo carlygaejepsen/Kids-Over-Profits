@@ -175,6 +175,177 @@
     margin: 0 auto;
 }
 
+/* In Loving Memory banner card */
+.kop-memorial-card {
+    display: block;
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--kop-midnight-blue, #000435);
+    color: #fff;
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    text-decoration: none;
+    transition: box-shadow 0.15s ease;
+}
+
+.kop-memorial-card:hover,
+.kop-memorial-card:focus {
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0, 4, 53, 0.35);
+}
+
+.kop-memorial-card h2 {
+    color: #fff;
+    margin: 0 0 0.5rem;
+}
+
+.kop-memorial-card p {
+    margin: 0 0 0.75rem;
+    color: #e8e8f2;
+    line-height: 1.55;
+}
+
+.kop-memorial-more {
+    font-weight: 700;
+    color: var(--kop-mint-green, #B6E3D4);
+}
+
+/* Legislation / lawsuits preview cards */
+.kop-home-previews {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+}
+
+.kop-preview-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.kop-preview-card h2 {
+    font-size: 1.15rem;
+    color: var(--kop-midnight-blue, #000435);
+    margin: 0 0 0.75rem;
+}
+
+.kop-preview-list {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+}
+
+.kop-preview-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #edf2f7;
+    line-height: 1.4;
+}
+
+.kop-preview-list li:last-child {
+    border-bottom: none;
+}
+
+.kop-preview-title {
+    display: block;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: #2d3748;
+}
+
+.kop-preview-meta {
+    display: block;
+    font-size: 0.78rem;
+    color: #718096;
+    margin-top: 2px;
+}
+
+.kop-preview-more {
+    margin-top: auto;
+    align-self: flex-start;
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.kop-preview-more:hover {
+    text-decoration: underline;
+}
+
+/* Featured ("demand attention") inspection reports */
+.kop-home-flagged {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+}
+
+.kop-home-flagged > h2 {
+    color: var(--kop-midnight-blue, #000435);
+    margin-bottom: 1rem;
+}
+
+.kop-flagged-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+}
+
+.kop-flagged-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+}
+
+.kop-flagged-card h3 {
+    font-size: 1.02rem;
+    margin: 0 0 0.25rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-flagged-state {
+    display: inline-block;
+    background: var(--kop-sand, #F2EEDF);
+    color: var(--kop-navy-blue, #000080);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 1px 8px;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.kop-flagged-date {
+    font-size: 0.78rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.kop-flagged-card p {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin: 0 0 0.6rem;
+    line-height: 1.5;
+}
+
+.kop-flagged-links a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+    margin-right: 14px;
+}
+
+.kop-flagged-links a:hover {
+    text-decoration: underline;
+}
+
 /* Tablet */
 @media (max-width: 1024px) {
     .kop-home {
@@ -214,6 +385,14 @@
     }
     .kop-home-reports-buttons {
         gap: 8px;
+    }
+    .kop-home-previews,
+    .kop-flagged-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .kop-memorial-card {
+        padding: 1.25rem 1.1rem;
     }
     .kop-home-report-btn {
         flex: 1 1 40%;

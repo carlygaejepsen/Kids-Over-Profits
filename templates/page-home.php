@@ -27,6 +27,53 @@ add_action('wp_enqueue_scripts', 'kop_enqueue_home_styles');
 
 get_header();
 
+/** Permalink of the page using $template, or home_url($fallback). */
+if (!function_exists('kop_home_template_page_url')) {
+    function kop_home_template_page_url($template, $fallback) {
+        $pages = get_pages(array(
+            'meta_key'   => '_wp_page_template',
+            'meta_value' => $template,
+            'number'     => 1,
+        ));
+        return !empty($pages) ? get_permalink($pages[0]->ID) : home_url($fallback);
+    }
+}
+
+// Preview data: latest legislation and lawsuits, plus the curated featured
+// inspection reports (api/manage-featured-inspections.php). All queries are
+// suppressed so a missing table just hides its block.
+global $wpdb;
+$kop_suppress = $wpdb->suppress_errors(true);
+$kop_bills = $wpdb->get_results(
+    "SELECT bill_title, jurisdiction, status, last_action_date FROM legislation
+     WHERE publication_status IN ('approved','published')
+     ORDER BY last_action_date DESC, introduced_date DESC, id DESC LIMIT 3",
+    ARRAY_A
+);
+$kop_suits = $wpdb->get_results(
+    "SELECT case_name, jurisdiction, status, filing_date FROM lawsuits
+     WHERE publication_status IN ('approved','published')
+     ORDER BY filing_date DESC, id DESC LIMIT 3",
+    ARRAY_A
+);
+$kop_flagged = $wpdb->get_results(
+    "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
+     FROM inspection_reports r
+     JOIN inspection_facilities f ON f.id = r.facility_id
+     WHERE r.featured = 1
+     ORDER BY r.report_date DESC, r.id DESC LIMIT 4",
+    ARRAY_A
+);
+$wpdb->suppress_errors($kop_suppress);
+
+$kop_memorial = get_page_by_path('in-loving-memory');
+$kop_legislation_url = kop_home_template_page_url('templates/page-legislation.php', '/legislation/');
+$kop_lawsuits_url = kop_home_template_page_url('templates/page-lawsuits.php', '/lawsuits/');
+
+// Featured inspections link to the state's tracker page when one exists.
+$kop_tracker_slugs = function_exists('kop_state_inspection_page_map')
+    ? array_values(kop_state_inspection_page_map()) : array();
+
 // State inspection trackers currently available (slug prefix => label).
 $kop_report_states = array(
     'or' => 'Oregon',
@@ -82,6 +129,93 @@ $kop_report_states = array(
         echo kop_ongoing_stories_shortcode(array());
     }
     ?>
+
+    <?php if ($kop_memorial): ?>
+    <section class="kop-home-memorial">
+        <a class="kop-memorial-card" href="<?php echo esc_url(get_permalink($kop_memorial->ID)); ?>">
+            <h2>In Loving Memory</h2>
+            <p>Remembering the children whose deaths in the Troubled Teen Industry were preventable.
+            Their stories are why this work exists.</p>
+            <span class="kop-memorial-more">Visit the memorial &raquo;</span>
+        </a>
+    </section>
+    <?php endif; ?>
+
+    <?php if ($kop_bills || $kop_suits): ?>
+    <section class="kop-home-previews">
+        <?php if ($kop_bills): ?>
+        <div class="kop-preview-card">
+            <h2>Legislation We're Tracking</h2>
+            <ul class="kop-preview-list">
+                <?php foreach ($kop_bills as $b):
+                    $meta = array_filter(array(
+                        $b['jurisdiction'],
+                        $b['status'] ? ucfirst(str_replace('_', ' ', $b['status'])) : '',
+                        $b['last_action_date'] ? date('M j, Y', strtotime($b['last_action_date'])) : '',
+                    ));
+                ?>
+                    <li>
+                        <span class="kop-preview-title"><?php echo esc_html($b['bill_title']); ?></span>
+                        <span class="kop-preview-meta"><?php echo esc_html(implode(' · ', $meta)); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <a class="kop-preview-more" href="<?php echo esc_url($kop_legislation_url); ?>">All legislation &raquo;</a>
+        </div>
+        <?php endif; ?>
+        <?php if ($kop_suits): ?>
+        <div class="kop-preview-card">
+            <h2>Lawsuit Tracker</h2>
+            <ul class="kop-preview-list">
+                <?php foreach ($kop_suits as $s):
+                    $meta = array_filter(array(
+                        $s['jurisdiction'],
+                        $s['status'] ? ucfirst(str_replace('_', ' ', $s['status'])) : '',
+                        $s['filing_date'] ? 'filed ' . date('M j, Y', strtotime($s['filing_date'])) : '',
+                    ));
+                ?>
+                    <li>
+                        <span class="kop-preview-title"><?php echo esc_html($s['case_name']); ?></span>
+                        <span class="kop-preview-meta"><?php echo esc_html(implode(' · ', $meta)); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <a class="kop-preview-more" href="<?php echo esc_url($kop_lawsuits_url); ?>">All lawsuits &raquo;</a>
+        </div>
+        <?php endif; ?>
+    </section>
+    <?php endif; ?>
+
+    <?php if ($kop_flagged): ?>
+    <section class="kop-home-flagged">
+        <h2>Inspection Reports That Demand Attention</h2>
+        <div class="kop-flagged-grid">
+            <?php foreach ($kop_flagged as $fr):
+                $tracker = strtolower($fr['state']) . '-reports';
+                $has_tracker = in_array($tracker, $kop_tracker_slugs, true);
+            ?>
+                <div class="kop-flagged-card">
+                    <h3><?php echo esc_html($fr['facility_name']); ?>
+                        <span class="kop-flagged-state"><?php echo esc_html($fr['state']); ?></span></h3>
+                    <?php if (!empty($fr['report_date'])): ?>
+                        <div class="kop-flagged-date">Inspected <?php echo esc_html($fr['report_date']); ?></div>
+                    <?php endif; ?>
+                    <?php if (!empty($fr['featured_note'])): ?>
+                        <p><?php echo esc_html($fr['featured_note']); ?></p>
+                    <?php endif; ?>
+                    <div class="kop-flagged-links">
+                        <?php if (!empty($fr['report_url'])): ?>
+                            <a href="<?php echo esc_url($fr['report_url']); ?>" target="_blank" rel="noopener noreferrer">View the report</a>
+                        <?php endif; ?>
+                        <?php if ($has_tracker): ?>
+                            <a href="/<?php echo esc_attr($tracker); ?>"><?php echo esc_html(strtoupper($fr['state'])); ?> tracker</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <section class="kop-home-reports">
         <h2>New Inspection Reports Available!</h2>
