@@ -40,8 +40,8 @@ get_header();
             <div class="filter-controls">
                 <label for="typeFilter">Type:</label>
                 <select id="typeFilter">
-                    <option value="wiki" selected>Wiki Submissions</option>
-                    <option value="news">News Submissions</option>
+                    <option value="wiki">Wiki Submissions</option>
+                    <option value="news" selected>News Submissions</option>
                     <option value="data">Data Form Submissions</option>
                     <option value="legislation">Legislation Submissions</option>
                     <option value="lawsuit">Lawsuit Submissions</option>

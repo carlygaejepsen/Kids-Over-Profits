@@ -63,6 +63,20 @@ const AI_TIMEOUT_MS        = 90000;
 // than this cutoff. Reddit items are NOT filtered (a freshly-shared old
 // article is still signal worth surfacing).
 const MAX_ARTICLE_AGE_DAYS = 30;
+// Wall-clock budgets. The GitHub Actions job is killed at 60 minutes; a full
+// 7-way shard is ~560 facilities and Google News 503-throttles runner IPs
+// partway through, stretching the RSS phase past the hour so the run was
+// cancelled before ANYTHING got submitted or state got saved. Cap the RSS
+// phase and the overall run so we always reach the submit + save-state phases
+// with whatever was collected.
+const RUN_TIME_BUDGET_MS = parseInt(process.env.RUN_TIME_BUDGET_MS || String(50 * 60 * 1000), 10);
+const GN_TIME_BUDGET_MS  = parseInt(process.env.GN_TIME_BUDGET_MS  || String(35 * 60 * 1000), 10);
+// Once Google News starts returning 503s it usually keeps 503ing that IP for
+// the rest of the run — after this many consecutive failures, try one
+// cool-down, then give up on Google News for the day instead of burning the
+// remaining budget on doomed requests.
+const GN_MAX_CONSECUTIVE_FAILURES = 12;
+const GN_COOLDOWN_MS = 120000;
 // An alias appearing in this many deduped facility entries is considered
 // "generic" (e.g., "Juvenile Detention Center"). Matches on generic aliases
 // require positive state-signal confirmation downstream, not just
@@ -635,16 +649,17 @@ async function fetchGoogleNewsForFacility(facility) {
             const t = Date.parse(item.pubDate);
             return !isFinite(t) || t >= cutoffMs;
         });
-        return fresh.slice(0, PER_FACILITY_CAP).map(item => ({
+        const items = fresh.slice(0, PER_FACILITY_CAP).map(item => ({
             ...item,
             origin: 'google-news',
             facilityQuery: facility.queryName,
             facilityState: facility.state,
             facilityCity: facility.city
         }));
+        return { items, failed: false };
     } catch (err) {
         warn(`  ! Google News failed for "${facility.queryName}": ${err.message}`);
-        return [];
+        return { items: [], failed: true };
     }
 }
 
@@ -1191,6 +1206,7 @@ async function main() {
     if (Number.isFinite(SUBMIT_LIMIT)) log(`  Submit limit: ${SUBMIT_LIMIT}`);
     if (MAX_FACILITIES) log(`  Max facilities: ${MAX_FACILITIES}`);
 
+    const runDeadline = Date.now() + RUN_TIME_BUDGET_MS;
     const state = loadState();
     const seen = new Set(state.seenUrls);
     const blacklist = buildBlacklistMatcher();
@@ -1221,10 +1237,29 @@ async function main() {
 
     // -- Google News per facility (with politeness delay) --
     log('\nQuerying Google News per facility...');
+    const gnDeadline = Math.min(Date.now() + GN_TIME_BUDGET_MS, runDeadline);
+    let gnConsecutiveFailures = 0;
+    let gnCooldownsLeft = 1;
     for (let i = 0; i < slice.length; i++) {
+        if (Date.now() >= gnDeadline) {
+            warn(`  ! Google News time budget exhausted at ${i}/${slice.length} facilities — continuing to filter/submit with partial results`);
+            break;
+        }
+        if (gnConsecutiveFailures >= GN_MAX_CONSECUTIVE_FAILURES) {
+            if (gnCooldownsLeft > 0) {
+                gnCooldownsLeft--;
+                gnConsecutiveFailures = 0;
+                warn(`  ! ${GN_MAX_CONSECUTIVE_FAILURES} consecutive Google News failures (rate-limited?) — cooling down ${GN_COOLDOWN_MS / 1000}s`);
+                await sleep(GN_COOLDOWN_MS);
+            } else {
+                warn(`  ! Google News still failing after cool-down — abandoning Google News at ${i}/${slice.length} facilities for this run`);
+                break;
+            }
+        }
         const fac = slice[i];
         await sleep(RSS_REQUEST_DELAY_MS);
-        const items = await fetchGoogleNewsForFacility(fac);
+        const { items, failed } = await fetchGoogleNewsForFacility(fac);
+        gnConsecutiveFailures = failed ? gnConsecutiveFailures + 1 : 0;
         if (items.length > 0) log(`  [${fac.queryName}${fac.state ? ' / ' + fac.state : ''}] ${items.length} items`);
         candidates.push(...items);
         if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${slice.length} (running total: ${candidates.length})`);
@@ -1295,6 +1330,13 @@ async function main() {
 
     for (const q of queue) {
         if (submitted >= SUBMIT_LIMIT) break;
+        if (Date.now() >= runDeadline) {
+            // Unprocessed candidates were never marked seen, so the next daily
+            // run picks them up. Breaking here (instead of being killed by the
+            // workflow timeout) is what lets state get saved below.
+            warn(`  ! run time budget exhausted with ${queue.length - submitted - submitErrors - postResolveRejected} candidates unprocessed — saving state and exiting`);
+            break;
+        }
 
         // Resolve if it's a Google News redirect (no-op otherwise)
         const originalLink = q.candidate.link;
