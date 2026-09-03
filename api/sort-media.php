@@ -107,6 +107,11 @@ foreach ($folders as $f) {
 }
 
 $custom_rules = kop_sm_resolve_rules($folders, $by_id);
+$neg_rules = kop_sm_resolve_negative_rules($folders);
+
+// Program alternate/past names (from facilities_master) point at that
+// program's folder too.
+$matchable = array_merge($matchable, kop_sm_alias_matchable($folders, $generic));
 
 /**
  * Custom filename → folder rules, checked BEFORE name matching. Keys are
@@ -120,6 +125,139 @@ function kop_sm_custom_rules() {
         // "Treatment Times" is The Ridge (Maine)'s publication.
         'treatment times' => ['the ridge maine', 'the ridge me'],
     ];
+}
+
+/**
+ * Negative rules: when the file text contains the key, folders whose
+ * normalized name contains any of the listed terms are EXCLUDED from
+ * suggestions for that file. NATSAP per-program profiles name both NATSAP
+ * and the program — blocking the NATSAP folder lets the program name win.
+ */
+function kop_sm_negative_rules() {
+    return [
+        'natsap profile' => ['natsap'],
+    ];
+}
+
+function kop_sm_resolve_negative_rules($folders) {
+    $resolved = [];
+    foreach (kop_sm_negative_rules() as $needle => $terms) {
+        $ids = [];
+        foreach ($folders as $f) {
+            $norm = kop_sm_norm($f->name);
+            if ($norm === '') {
+                continue;
+            }
+            foreach ((array)$terms as $t) {
+                if (strpos($norm, $t) !== false) {
+                    $ids[] = (int)$f->id;
+                    break;
+                }
+            }
+        }
+        if ($ids) {
+            $resolved[$needle] = $ids;
+        }
+    }
+    return $resolved;
+}
+
+/** Collect name-bearing values (current/alternate/past names) from program JSON. */
+function kop_sm_collect_names($node, array &$out, $depth = 0) {
+    if ($depth > 6 || !is_array($node)) {
+        return;
+    }
+    static $scalarKeys = ['name', 'currentname'];
+    static $listKeys = ['othernames', 'other_names', 'pastnames', 'past_names',
+                        'formernames', 'former_names', 'aliases', 'alternatenames'];
+    foreach ($node as $key => $value) {
+        $lkey = is_string($key) ? strtolower($key) : '';
+        if (in_array($lkey, $scalarKeys, true) && is_string($value) && trim($value) !== '') {
+            $out[] = trim($value);
+        } elseif (in_array($lkey, $listKeys, true) && is_array($value)) {
+            foreach ($value as $alias) {
+                if (is_string($alias) && trim($alias) !== '') {
+                    $out[] = trim($alias);
+                }
+            }
+        } elseif (is_array($value)) {
+            kop_sm_collect_names($value, $out, $depth + 1);
+        }
+    }
+}
+
+/**
+ * Alias matchables: every program's alternate/past names (facilities_master)
+ * mapped to that program's folder — so a file named after an old program
+ * name still suggests the right folder. An alias is only used when the
+ * program resolves to exactly ONE folder and the alias doesn't collide with
+ * a real folder name or another program's alias.
+ */
+function kop_sm_alias_matchable($folders, $generic) {
+    global $wpdb;
+
+    $by_norm = [];
+    foreach ($folders as $f) {
+        $n = kop_sm_norm($f->name);
+        if ($n !== '') {
+            $by_norm[$n][] = (int)$f->id;
+        }
+    }
+
+    $entries = [];
+    $rows = $wpdb->get_results('SELECT unique_name, json_data FROM facilities_master');
+    foreach ((array)$rows as $row) {
+        $names = [(string)$row->unique_name];
+        $decoded = json_decode($row->json_data ?: '', true);
+        if (is_array($decoded)) {
+            kop_sm_collect_names($decoded, $names);
+        }
+        $norms = array_values(array_unique(array_filter(array_map('kop_sm_norm', $names))));
+
+        // The program's folder: unique across all its known names.
+        $fid = null;
+        $folder_norms = [];
+        foreach ($norms as $n) {
+            if (!isset($by_norm[$n])) {
+                continue;
+            }
+            $folder_norms[] = $n;
+            if (count($by_norm[$n]) !== 1 || ($fid !== null && $fid !== $by_norm[$n][0])) {
+                $fid = -1; // ambiguous
+            } elseif ($fid === null) {
+                $fid = $by_norm[$n][0];
+            }
+        }
+        if ($fid === null || $fid === -1) {
+            continue;
+        }
+
+        foreach ($norms as $n) {
+            if (in_array($n, $folder_norms, true) || isset($by_norm[$n]) || strlen($n) < 4) {
+                continue;
+            }
+            $tokens = array_filter(explode(' ', $n), static function ($t) use ($generic) {
+                return strlen($t) >= 3 && !ctype_digit($t) && !in_array($t, $generic, true);
+            });
+            if (!$tokens) {
+                continue;
+            }
+            if (isset($entries[$n]) && $entries[$n]['id'] !== $fid) {
+                $entries[$n]['conflict'] = true; // two programs claim it
+                continue;
+            }
+            $entries[$n] = [
+                'id'     => $fid,
+                'norm'   => $n,
+                'tokens' => array_values($tokens),
+                'via'    => $n,
+            ];
+        }
+    }
+
+    return array_values(array_filter($entries, static function ($e) {
+        return empty($e['conflict']);
+    }));
 }
 
 /** Is the folder's ancestry broken (an orphaned ghost-tree member)? */
@@ -163,10 +301,20 @@ function kop_sm_resolve_rules($folders, $by_id) {
 }
 
 /** Suggest a folder for file text. Returns [folder_id|null, why]. */
-function kop_sm_suggest($fileText, $matchable, $rules = []) {
-    // Custom rules win outright.
-    foreach ($rules as $needle => $target) {
+function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = []) {
+    // Negative rules: folders excluded for THIS file.
+    $excluded = [];
+    foreach ($neg_rules as $needle => $ids) {
         if (strpos($fileText, $needle) !== false) {
+            foreach ($ids as $xid) {
+                $excluded[(int)$xid] = true;
+            }
+        }
+    }
+
+    // Custom rules win outright (unless their target is excluded).
+    foreach ($rules as $needle => $target) {
+        if (strpos($fileText, $needle) !== false && !isset($excluded[(int)$target[0]])) {
             return [$target[0], 'rule: “' . $needle . '” → ' . $target[1]];
         }
     }
@@ -174,6 +322,9 @@ function kop_sm_suggest($fileText, $matchable, $rules = []) {
     $bestScore = 0;
     $bestNames = [];
     foreach ($matchable as $m) {
+        if (isset($excluded[(int)$m['id']])) {
+            continue;
+        }
         $score = 0;
         if (strpos($fileText, $m['norm']) !== false) {
             $score = 1000 + strlen($m['norm']);
@@ -203,7 +354,11 @@ function kop_sm_suggest($fileText, $matchable, $rules = []) {
     if (count($bestNames[$best['norm']]) > 1) {
         return [null, 'ambiguous name'];
     }
-    return [$best['id'], $bestScore >= 1000 ? 'name match' : 'token match'];
+    $why = $bestScore >= 1000 ? 'name match' : 'token match';
+    if (!empty($best['via'])) {
+        $why .= ' via alt name “' . $best['via'] . '”';
+    }
+    return [$best['id'], $why];
 }
 
 // ---------------------------------------------------------------------------
@@ -387,7 +542,7 @@ foreach ($lib as $a) {
     }
 
     $fileText = kop_sm_norm($title . ' ' . $basename);
-    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules);
+    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules, $neg_rules);
 
     if ($mode === 'misfiled') {
         // Mis-filed = confident suggestion pointing somewhere the file is NOT
