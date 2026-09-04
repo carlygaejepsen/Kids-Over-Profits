@@ -220,8 +220,11 @@ if (!function_exists('kop_normalize_url')) {
     function kop_url_dedupe_config(string $type): ?array {
         switch ($type) {
             case 'news':
+                // 'rejected' is NOT ignored: an article we reviewed and turned
+                // down stays blocked so it can't be resubmitted. Only 'deleted'
+                // (cleanup of mistaken rows) frees a URL for resubmission.
                 return ['table' => 'news_submissions', 'urlColumns' => ['article_url'],
-                        'statusCol' => 'status', 'ignoreStatuses' => ['rejected', 'deleted'],
+                        'statusCol' => 'status', 'ignoreStatuses' => ['deleted'],
                         'titleCol' => 'article_title', 'keepFragment' => false];
             case 'legislation':
                 // A bill's official full-text URL is a genuinely unique per-bill
@@ -229,12 +232,15 @@ if (!function_exists('kop_normalize_url')) {
                 // excluded: LegiScan/OpenStates/session-tracker pages are shared across
                 // many bills and keying on them produced false-positive blocks. A
                 // full-text link isn't hash-routed, so fragments are stripped.
+                // No status is ignored: rejected entries block resubmission, and
+                // these tables have no soft-delete status (rows are hard-deleted,
+                // which frees the URL naturally).
                 return ['table' => 'legislation', 'urlColumns' => ['full_text_url'],
-                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'],
+                        'statusCol' => 'publication_status', 'ignoreStatuses' => [],
                         'titleCol' => 'bill_title', 'keepFragment' => false];
             case 'lawsuit':
                 return ['table' => 'lawsuits', 'urlColumns' => ['source_urls', 'document_urls'],
-                        'statusCol' => 'publication_status', 'ignoreStatuses' => ['rejected'],
+                        'statusCol' => 'publication_status', 'ignoreStatuses' => [],
                         'titleCol' => 'case_name', 'keepFragment' => true];
             default:
                 return null;

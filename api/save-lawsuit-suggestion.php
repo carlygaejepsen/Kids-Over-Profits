@@ -88,7 +88,7 @@ try {
     // Block duplicate cases by their source/document URLs, matched exactly and
     // PER FIELD (source_urls only against source_urls, document_urls only against
     // document_urls) so unrelated cases sharing a court/docket page don't collide.
-    // Re-submitting something previously rejected is still allowed.
+    // Rejected cases also block resubmission.
     kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'lawsuit', [
         'source_urls'   => $input['source_urls'] ?? [],
         'document_urls' => $input['document_urls'] ?? [],

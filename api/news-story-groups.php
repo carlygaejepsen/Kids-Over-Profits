@@ -197,7 +197,7 @@ if (!function_exists('kop_news_normalize_title')) {
         // (punctuation-insensitive) happens in PHP below.
         $sql = "SELECT id, article_title, alternate_title, publication_name, article_url, status
                 FROM news_submissions
-                WHERE status NOT IN ('rejected', 'deleted')
+                WHERE status <> 'deleted'
                   AND (LOWER(TRIM(publication_name)) = ? OR LOWER(article_title) = ? OR LOWER(alternate_title) = ?)
                 LIMIT 500";
         $stmt = $pdo->prepare($sql);

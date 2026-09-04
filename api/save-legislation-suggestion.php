@@ -92,8 +92,8 @@ try {
     // Block duplicate bills by their official full-text URL, which is unique per
     // bill. Matched exactly (see api/url-dedupe.php). official_url is intentionally
     // NOT a dedupe key — tracker/landing pages (LegiScan, OpenStates, session
-    // indexes) are shared across bills and would cause false positives. Re-submitting
-    // a previously-rejected bill is still allowed.
+    // indexes) are shared across bills and would cause false positives. Rejected
+    // bills also block resubmission.
     kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'legislation', [
         'full_text_url' => $input['full_text_url'] ?? '',
     ]));

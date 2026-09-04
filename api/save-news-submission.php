@@ -297,8 +297,8 @@ try {
     } else {
         // Block duplicate article submissions by URL (the strongest news
         // identity key), then by identical title on the same outlet (catches
-        // AMP/print/share-link URL variants of one page). Re-submitting
-        // something previously rejected/deleted is still allowed.
+        // AMP/print/share-link URL variants of one page). Rejected entries
+        // also block resubmission; only deleted rows free a URL again.
         $dupUrls = kop_collect_urls($articleUrl);
         if (!empty($dupUrls)) {
             kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'news', $dupUrls));
