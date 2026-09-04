@@ -14,6 +14,10 @@ deployment:
     # markdown_output/ dir is large and not otherwise needed in the theme).
     - /bin/mkdir -p $DEPLOYPATH/markdown_output
     - /bin/cp markdown_output/empty_files_updated.md $DEPLOYPATH/markdown_output/
+    # KOP Tools plugin lives outside the theme — deploy it to wp-content/plugins/.
+    - export PLUGINPATH=/home/kidsover/public_html/wp-content/plugins/kop-tools/
+    - /bin/mkdir -p $PLUGINPATH
+    - /bin/cp -R wp-plugins/kop-tools/. $PLUGINPATH
     - /bin/cp functions.php $DEPLOYPATH
     - /bin/cp search.php $DEPLOYPATH
     - /bin/cp style.css $DEPLOYPATH
