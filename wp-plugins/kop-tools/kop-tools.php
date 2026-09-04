@@ -102,6 +102,12 @@ function kop_tools_registry() {
                 'type'  => 'page',
             ),
             array(
+                'title' => 'Retitle From Content',
+                'desc'  => 'AI-title unclear attachments by reading the document text (PDF/DOCX/TXT): review, edit, and apply new titles. Files and URLs are untouched.',
+                'path'  => 'api/retitle-from-content.php',
+                'type'  => 'page',
+            ),
+            array(
                 'title' => 'Clean Up Wiki Submissions',
                 'desc'  => 'Purge rejected/deleted wiki submissions and collapse duplicates (dry-run first).',
                 'path'  => 'api/cleanup-wiki-submissions.php',
