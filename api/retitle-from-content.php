@@ -186,15 +186,79 @@ function kop_rtc_suggest_from_text($context_header, $doc_text) {
     return $result;
 }
 
+/** Groq keeps retiring model IDs, so vision is resolved, not hard-coded. */
+function kop_rtc_model_missing_error($error) {
+    foreach (['does not exist', 'decommissioned', 'has been deprecated', 'model_not_found', 'not found'] as $needle) {
+        if (stripos($error, $needle) !== false) return true;
+    }
+    return false;
+}
+
+/** Static candidates: env override, last known-good, then recent Groq vision IDs. */
+function kop_rtc_vision_model_candidates() {
+    $candidates = [];
+    $env = getenv('GROQ_VISION_MODEL');
+    if ($env) $candidates[] = $env;
+    $cached = get_transient('kop_rtc_vision_model');
+    if (is_string($cached) && $cached !== '') $candidates[] = $cached;
+    return array_values(array_unique(array_merge($candidates, [
+        'meta-llama/llama-4-maverick-17b-128e-instruct',
+        'meta-llama/llama-4-scout-17b-16e-instruct',
+        'qwen/qwen3-vl-32b-instruct',
+    ])));
+}
+
+/** Ask Groq which models this account can use and keep the vision-looking ones. */
+function kop_rtc_discover_vision_models() {
+    $key = kop_rtc_groq_key();
+    if ($key === '') return [];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://api.groq.com/openai/v1/models');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $key]);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+    $response = curl_exec($ch);
+    curl_close($ch);
+    $decoded = json_decode((string) $response, true);
+    $ids = [];
+    foreach (($decoded['data'] ?? []) as $m) {
+        $id = (string) ($m['id'] ?? '');
+        if ($id !== '' && preg_match('/(vl|vision|llama-4|maverick|scout|pixtral)/i', $id)) {
+            $ids[] = $id;
+        }
+    }
+    return $ids;
+}
+
 function kop_rtc_suggest_from_image($context_header, $jpeg_b64) {
-    $model = getenv('GROQ_VISION_MODEL') ?: 'meta-llama/llama-4-scout-17b-16e-instruct';
     $content = [
         ['type' => 'text', 'text' => $context_header . "\n\nAttached is an image of the document's first page (or the image attachment itself). Read it.\n\n" . kop_rtc_title_prompt('vision')],
         ['type' => 'image_url', 'image_url' => ['url' => 'data:image/jpeg;base64,' . $jpeg_b64]],
     ];
-    $result = kop_rtc_groq_chat($model, $content);
-    if ($result['ok'] && $result['basis'] === 'content') $result['basis'] = 'ocr';
-    return $result;
+
+    $tried = [];
+    $models = kop_rtc_vision_model_candidates();
+    // Two passes: known candidates, then whatever the account's live model
+    // list says looks vision-capable.
+    for ($pass = 0; $pass < 2; $pass++) {
+        foreach ($models as $model) {
+            if (in_array($model, $tried, true)) continue;
+            $tried[] = $model;
+            $result = kop_rtc_groq_chat($model, $content);
+            if ($result['ok']) {
+                set_transient('kop_rtc_vision_model', $model, WEEK_IN_SECONDS);
+                if ($result['basis'] === 'content') $result['basis'] = 'ocr';
+                return $result;
+            }
+            if (!kop_rtc_model_missing_error($result['error'])) {
+                return $result; // real failure (rate limit, bad key, network) — stop probing
+            }
+        }
+        if ($pass === 0) $models = kop_rtc_discover_vision_models();
+    }
+    return ['ok' => false, 'error' => 'No working Groq vision model (tried: ' . implode(', ', $tried)
+        . '). Set GROQ_VISION_MODEL in .env to a current vision model from console.groq.com/docs/models.'];
 }
 
 /** Downscale an image file with GD and return a base64 JPEG ('' on failure). */
