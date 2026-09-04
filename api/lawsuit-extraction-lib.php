@@ -53,11 +53,15 @@ function kop_lawsuit_chunk_text(string $doc_text, int $max_chunks = 10): array {
 
 /** Pick the Groq model for a chunk call. */
 function kop_lawsuit_pick_model(int $total_chunks): string {
-    // llama-3.3-70b-versatile went 404 for this account Sep 2026; GROQ_MODEL
-    // in .env overrides the single-chunk model for future retirements.
-    return ($total_chunks === 1)
-        ? (getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b')
-        : 'llama-3.1-8b-instant';
+    // Groq retires models out from under us (llama-3.3-70b-versatile went 404
+    // Sep 2026, llama-3.1-8b-instant days later), so hardcode only one default
+    // and let .env override: GROQ_MODEL for everything, GROQ_MODEL_CHUNK to use
+    // a cheaper model for multi-chunk documents.
+    $default = getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b';
+    if ($total_chunks > 1) {
+        return getenv('GROQ_MODEL_CHUNK') ?: $default;
+    }
+    return $default;
 }
 
 // =============================================================================
