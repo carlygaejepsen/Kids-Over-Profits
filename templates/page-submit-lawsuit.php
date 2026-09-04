@@ -25,7 +25,9 @@ $status_labels = [
     'unknown'     => 'Not sure',
 ];
 
-$endpoint = get_stylesheet_directory_uri() . '/api/save-lawsuit-suggestion.php';
+$endpoint         = get_stylesheet_directory_uri() . '/api/save-lawsuit-suggestion.php';
+$extract_endpoint = get_stylesheet_directory_uri() . '/api/extract-lawsuit-suggestion.php';
+$lookup_endpoint  = get_stylesheet_directory_uri() . '/api/fetch-lawsuit-details.php';
 
 // Resolve the public tracker page by template (falls back to the conventional slug).
 $tracker_url = function_exists('kop_find_template_page_url') ? kop_find_template_page_url('page-lawsuits.php') : '';
@@ -38,7 +40,26 @@ if (!$tracker_url) { $tracker_url = home_url('/lawsuits'); }
         <p>Know of a court case involving a Troubled Teen Industry facility, operator, or staff member? Share it here. Submissions are reviewed by our team before they appear on the public <a href="<?php echo esc_url($tracker_url); ?>">Lawsuits tracker</a>. Share only what you're comfortable with — a case name and a source link are enough to get started.</p>
     </div>
 
+    <div class="kop-autofill-box" id="kop-autofill-box">
+        <h2>Let us fill this in for you <span class="hint">(optional)</span></h2>
+        <p>Upload the complaint or another court filing (PDF, DOCX, or TXT — digital, not a scanned image) and we'll read it and fill in the form below. Or, for federal cases, enter the docket number and we'll look it up. Either way, review the filled-in fields before submitting.</p>
+        <div class="kop-autofill-actions">
+            <button type="button" class="kop-submit-btn" id="kop-autofill-upload-btn">Upload a case document</button>
+            <input type="file" id="kop-autofill-file" accept=".pdf,.doc,.docx,.txt" hidden>
+            <span class="kop-autofill-or">or</span>
+            <input type="text" id="kop-autofill-docket" placeholder="Federal docket no., e.g. 2:24-cv-00123" maxlength="255">
+            <button type="button" class="kop-submit-btn" id="kop-autofill-lookup-btn">Look up case</button>
+        </div>
+        <div id="kop-autofill-status" class="kop-submit-status" role="status" aria-live="polite"></div>
+    </div>
+
     <form id="kop-submit-lawsuit-form" class="kop-submit-form" novalidate data-kop-bug-feature="submit-lawsuit/form" data-kop-bug-label="Lawsuit Submission Form">
+        <!-- Extra extracted fields the public form doesn't show; carried through
+             to the submission so reviewers get the full extraction. -->
+        <input type="hidden" name="staff_mentioned">
+        <input type="hidden" name="organizations_mentioned">
+        <input type="hidden" name="tags">
+        <input type="hidden" name="document_urls">
         <div class="kop-form-grid">
             <label class="kop-field kop-field-wide">
                 <span class="kop-field-label">Case name or short description <span class="req">*</span></span>
@@ -157,6 +178,15 @@ if (!$tracker_url) { $tracker_url = home_url('/lawsuits'); }
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/public-records.css?v=<?php echo filemtime(get_stylesheet_directory() . '/css/public-records.css'); ?>">
 <style>
 .kop-submit-form { max-width: 880px; margin: 0 auto; }
+.kop-autofill-box { max-width: 880px; margin: 0 auto 1.75rem; padding: 1rem 1.25rem 1.25rem; border: 1px solid var(--kop-mint-green, #b6e3d4); border-radius: 8px; background: #f3fbf8; }
+.kop-autofill-box h2 { margin: 0 0 0.5rem; font-size: 1.15em; color: var(--kop-midnight-blue); }
+.kop-autofill-box h2 .hint { font-weight: 400; color: #666; font-size: 0.8em; }
+.kop-autofill-box p { margin: 0 0 0.85rem; }
+.kop-autofill-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.kop-autofill-actions input[type="text"] { flex: 1 1 220px; padding: 0.55rem 0.65rem; border: 1px solid #c8c8c8; border-radius: 6px; font: inherit; background: #fff; box-sizing: border-box; }
+.kop-autofill-actions input[type="text"]:focus { outline: 2px solid var(--kop-teal); border-color: var(--kop-teal); }
+.kop-autofill-or { color: #666; font-weight: 600; }
+#kop-autofill-status { display: block; margin-top: 0.6rem; min-height: 1.2em; }
 .kop-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 1.25rem; }
 .kop-field { display: flex; flex-direction: column; gap: 0.35rem; }
 .kop-field-wide { grid-column: 1 / -1; }
@@ -195,7 +225,159 @@ document.addEventListener('DOMContentLoaded', function () {
     var statusEl = document.getElementById('kop-submit-status');
     var thanks   = document.getElementById('kop-submit-thanks');
     var endpoint = <?php echo wp_json_encode($endpoint); ?>;
+    var extractEndpoint = <?php echo wp_json_encode($extract_endpoint); ?>;
+    var lookupEndpoint  = <?php echo wp_json_encode($lookup_endpoint); ?>;
     if (!form) return;
+
+    // ----- Autofill: document extraction + federal docket lookup -----------
+    var uploadBtn      = document.getElementById('kop-autofill-upload-btn');
+    var fileInput      = document.getElementById('kop-autofill-file');
+    var docketInput    = document.getElementById('kop-autofill-docket');
+    var lookupBtn      = document.getElementById('kop-autofill-lookup-btn');
+    var autofillStatus = document.getElementById('kop-autofill-status');
+
+    function setAutofillBusy(busy) {
+        if (uploadBtn) uploadBtn.disabled = busy;
+        if (lookupBtn) lookupBtn.disabled = busy;
+    }
+    function autofillMsg(msg, cls) {
+        autofillStatus.textContent = msg;
+        autofillStatus.className = 'kop-submit-status' + (cls ? ' ' + cls : '');
+    }
+
+    // Fill one field from an extracted value. Selects only accept known option
+    // values; arrays become one-per-line text. Empty extractions never wipe
+    // what the visitor already typed.
+    function setIfExtracted(name, value) {
+        var el = form.elements[name];
+        if (!el || value === undefined || value === null) return;
+        var v = Array.isArray(value)
+            ? value.map(function (x) { return String(x).trim(); }).filter(Boolean).join('\n')
+            : String(value).trim();
+        if (v === '') return;
+        if (el.tagName === 'SELECT') {
+            for (var i = 0; i < el.options.length; i++) {
+                if (el.options[i].value === v) { el.value = v; return; }
+            }
+            return;
+        }
+        el.value = v;
+    }
+
+    // URL lists merge additively so autofill never drops a link the visitor added.
+    function mergeLines(name, extra) {
+        var el = form.elements[name];
+        if (!el || !Array.isArray(extra) || !extra.length) return;
+        var existing = el.value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+        var cleaned  = extra.map(function (s) { return String(s).trim(); }).filter(Boolean);
+        el.value = Array.from(new Set(existing.concat(cleaned))).join('\n');
+    }
+
+    function populateForm(data) {
+        ['case_name', 'case_number', 'court', 'jurisdiction', 'filing_date', 'status',
+         'summary', 'outcome', 'settlement_amount',
+         'plaintiffs', 'defendants', 'facilities_mentioned', 'claims',
+         'staff_mentioned', 'organizations_mentioned', 'tags'
+        ].forEach(function (f) { setIfExtracted(f, data[f]); });
+        mergeLines('source_urls', data.source_urls);
+        mergeLines('document_urls', data.document_urls);
+    }
+
+    function autofillDone(msg) {
+        autofillMsg(msg, 'ok');
+        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (uploadBtn && fileInput && autofillStatus) {
+        uploadBtn.addEventListener('click', function () {
+            if (uploadBtn.disabled) return;
+            fileInput.value = '';  // re-selecting the same file must still fire `change`
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async function () {
+            var file = fileInput.files && fileInput.files[0];
+            if (!file) return;
+            if (file.size > 10 * 1024 * 1024) {
+                autofillMsg('That file is larger than 10 MB. Please upload the complaint itself rather than full exhibits.', 'error');
+                return;
+            }
+            setAutofillBusy(true);
+            try {
+                autofillMsg('Uploading "' + file.name + '"…');
+                var fd = new FormData();
+                fd.append('action', 'upload');
+                fd.append('complaint', file);
+                var upRes = await fetch(extractEndpoint, { method: 'POST', body: fd });
+                var up = await upRes.json();
+                if (!up.success) throw new Error(up.error || 'Upload failed.');
+
+                for (var i = 0; i < up.total_chunks; i++) {
+                    if (i > 0) {
+                        // Pace requests to stay inside the free AI tier's per-minute quota.
+                        for (var s = 65; s > 0; s--) {
+                            autofillMsg('Read part ' + i + ' of ' + up.total_chunks + '. Continuing in ' + s + 's (long documents are read in parts)…');
+                            await new Promise(function (r) { setTimeout(r, 1000); });
+                        }
+                    }
+                    autofillMsg('Reading part ' + (i + 1) + ' of ' + up.total_chunks + '…');
+                    var chunkRes = await fetch(extractEndpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'chunk', job_id: up.job_id, chunk_index: i })
+                    });
+                    var chunk = await chunkRes.json();
+                    if (!chunk.success) throw new Error(chunk.error || ('Part ' + (i + 1) + ' failed.'));
+                }
+
+                autofillMsg('Filling in the form…');
+                var finRes = await fetch(extractEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'finalize', job_id: up.job_id })
+                });
+                var fin = await finRes.json();
+                if (!fin.success) throw new Error(fin.error || 'Extraction failed.');
+
+                populateForm(fin.data || {});
+                autofillDone('Done. Please review the filled-in fields, fix anything that looks off, then submit.');
+            } catch (err) {
+                autofillMsg('Extraction failed: ' + err.message, 'error');
+            } finally {
+                setAutofillBusy(false);
+            }
+        });
+    }
+
+    if (lookupBtn && docketInput && autofillStatus) {
+        var runLookup = async function () {
+            var docket = docketInput.value.trim() || (form.elements.case_number ? form.elements.case_number.value.trim() : '');
+            if (!docket) {
+                autofillMsg('Enter a docket number first, e.g. 2:24-cv-00123. Federal cases only — for state cases, upload the complaint instead.', 'error');
+                return;
+            }
+            setAutofillBusy(true);
+            autofillMsg('Looking up docket ' + docket + '…');
+            try {
+                var params = new URLSearchParams({ case_number: docket, jurisdiction: 'Federal' });
+                var courtHint = form.elements.court ? form.elements.court.value.trim() : '';
+                if (courtHint) params.set('court', courtHint);
+                var res = await fetch(lookupEndpoint + '?' + params.toString());
+                var data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Lookup failed.');
+                populateForm(data.data || {});
+                autofillDone('Found it. Please review the filled-in fields, add anything missing (like a summary or the facilities involved), then submit.');
+            } catch (err) {
+                autofillMsg(err.message, 'error');
+            } finally {
+                setAutofillBusy(false);
+            }
+        };
+        lookupBtn.addEventListener('click', runLookup);
+        docketInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); runLookup(); }
+        });
+    }
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
