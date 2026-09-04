@@ -35,9 +35,10 @@ jobs:
           deploy_id=$(echo "$resp" | jq -r '.data.deploy_id')
           echo "Deployment ${deploy_id} queued"
 
-          # Poll until the deployment finishes (usually a few seconds).
-          for i in $(seq 1 18); do
-            sleep 10
+          # Poll until the deployment finishes. Usually seconds, but the shared
+          # host sometimes queues deploys for several minutes — allow 10.
+          for i in $(seq 1 40); do
+            sleep 15
             list=$(curl -sS \
               "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/retrieve?repository_root=${root}" \
               -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")

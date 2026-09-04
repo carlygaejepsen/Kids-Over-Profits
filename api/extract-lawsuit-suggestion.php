@@ -134,9 +134,21 @@ function kop_pub_action_upload(): void {
     }
 
     $doc_text = kop_extract_document_text($upload['file'], $upload['type']);
+
+    // Scanned PDFs have no text layer. The browser OCRs them with tesseract.js
+    // and re-uploads with the recognized text in client_text; prefer the real
+    // text layer when one exists.
+    if (trim($doc_text) === '' && isset($_POST['client_text'])) {
+        $doc_text = mb_substr((string)$_POST['client_text'], 0, 60000, 'UTF-8');
+    }
+
     if (trim($doc_text) === '') {
         @unlink($upload['file']);
-        echo json_encode(['success' => false, 'error' => 'Could not extract text from the document. Make sure it is a digital (not scanned) PDF.']);
+        echo json_encode([
+            'success'    => false,
+            'error'      => 'Could not extract text from the document.',
+            'error_code' => 'no_text',  // tells the browser to try OCR and re-upload
+        ]);
         exit;
     }
 

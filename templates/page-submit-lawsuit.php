@@ -42,7 +42,7 @@ if (!$tracker_url) { $tracker_url = home_url('/lawsuits'); }
 
     <div class="kop-autofill-box" id="kop-autofill-box">
         <h2>Let us fill this in for you <span class="hint">(optional)</span></h2>
-        <p>Upload the complaint or another court filing (PDF, DOCX, or TXT — digital, not a scanned image) and we'll read it and fill in the form below. Or, for federal cases, enter the docket number and we'll look it up. Either way, review the filled-in fields before submitting.</p>
+        <p>Upload the complaint or another court filing (PDF, DOCX, or TXT) and we'll read it and fill in the form below. Scanned PDFs work too — they're read with OCR right in your browser, which takes a little longer. Or, for federal cases, enter the docket number and we'll look it up. Either way, review the filled-in fields before submitting.</p>
         <div class="kop-autofill-actions">
             <button type="button" class="kop-submit-btn" id="kop-autofill-upload-btn">Upload a case document</button>
             <input type="file" id="kop-autofill-file" accept=".pdf,.doc,.docx,.txt" hidden>
@@ -295,6 +295,66 @@ document.addEventListener('DOMContentLoaded', function () {
             fileInput.click();
         });
 
+        // Load a script tag once, on demand (OCR libraries are only fetched
+        // when a scanned PDF actually needs them).
+        function loadScript(src) {
+            return new Promise(function (resolve, reject) {
+                var s = document.createElement('script');
+                s.src = src;
+                s.onload = resolve;
+                s.onerror = function () { reject(new Error('Could not load ' + src)); };
+                document.head.appendChild(s);
+            });
+        }
+
+        // OCR a scanned PDF in the browser: pdf.js renders each page to a
+        // canvas, tesseract.js reads the pixels. Returns the recognized text.
+        async function ocrPdf(file) {
+            autofillMsg('This looks like a scanned document. Loading OCR tools (one-time download)…');
+            if (!window.pdfjsLib) {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+            if (!window.Tesseract) {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js');
+            }
+
+            var buf = await file.arrayBuffer();
+            var pdf = await window.pdfjsLib.getDocument({ data: buf }).promise;
+            var maxPages = Math.min(pdf.numPages, 15);
+            var pageNote = pdf.numPages > maxPages ? ' (first ' + maxPages + ' of ' + pdf.numPages + ' pages)' : '';
+            var worker = await window.Tesseract.createWorker('eng');
+            var text = '';
+            try {
+                for (var p = 1; p <= maxPages; p++) {
+                    autofillMsg('Reading page ' + p + ' of ' + maxPages + ' with OCR' + pageNote + '…');
+                    var page = await pdf.getPage(p);
+                    var viewport = page.getViewport({ scale: 1.8 });
+                    var canvas = document.createElement('canvas');
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+                    await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+                    var res = await worker.recognize(canvas);
+                    text += res.data.text + '\n\n';
+                }
+            } finally {
+                await worker.terminate();
+            }
+            return text.trim();
+        }
+
+        // Start an extraction job; clientText carries browser-OCR results for
+        // scanned PDFs on the retry pass.
+        async function startExtractionJob(file, clientText) {
+            var fd = new FormData();
+            fd.append('action', 'upload');
+            fd.append('complaint', file);
+            if (clientText) fd.append('client_text', clientText);
+            var upRes = await fetch(extractEndpoint, { method: 'POST', body: fd });
+            return upRes.json();
+        }
+
         fileInput.addEventListener('change', async function () {
             var file = fileInput.files && fileInput.files[0];
             if (!file) return;
@@ -305,11 +365,18 @@ document.addEventListener('DOMContentLoaded', function () {
             setAutofillBusy(true);
             try {
                 autofillMsg('Uploading "' + file.name + '"…');
-                var fd = new FormData();
-                fd.append('action', 'upload');
-                fd.append('complaint', file);
-                var upRes = await fetch(extractEndpoint, { method: 'POST', body: fd });
-                var up = await upRes.json();
+                var up = await startExtractionJob(file, '');
+
+                // Scanned PDF (no text layer): OCR it here in the browser,
+                // then re-upload with the recognized text.
+                if (!up.success && up.error_code === 'no_text' && /\.pdf$/i.test(file.name)) {
+                    var ocrText = await ocrPdf(file);
+                    if (ocrText.length < 200) {
+                        throw new Error('OCR could not read enough text from this scan. Try a clearer copy, or fill in the form manually.');
+                    }
+                    autofillMsg('OCR done. Uploading the recognized text…');
+                    up = await startExtractionJob(file, ocrText);
+                }
                 if (!up.success) throw new Error(up.error || 'Upload failed.');
 
                 for (var i = 0; i < up.total_chunks; i++) {
