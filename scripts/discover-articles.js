@@ -343,6 +343,11 @@ function persistRejected(newEntries) {
 // Blacklist
 // ============================================================
 
+function isPdfUrl(url) {
+    try { return new URL(url).pathname.toLowerCase().endsWith('.pdf'); }
+    catch { return false; }
+}
+
 function buildBlacklistMatcher() {
     const bl = loadJson(BLACKLIST_FILE, {});
     const allDomains = []
@@ -928,6 +933,12 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     if (pathHit) {
         return { accept: false, reason: 'blacklist-path', meta: { pattern: pathHit, link: candidate.link } };
     }
+    // PDFs (court filings, uploaded documents) have no extractable HTML body —
+    // the AI stage fails on them every time, and AI-stage failures are retried
+    // on every run. Reject them up front.
+    if (isPdfUrl(candidate.link)) {
+        return { accept: false, reason: 'pdf-document', meta: { link: candidate.link } };
+    }
 
     // Facility match
     const match = matchFacility(text, facilityIndex);
@@ -1388,6 +1399,13 @@ async function main() {
                 seen.add(q.urlHash);
                 postResolveRejected++;
                 postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-path-post-resolve', pattern: pathHit });
+                continue;
+            }
+            if (isPdfUrl(resolvedLink)) {
+                seen.add(q.urlHash);
+                seen.add(hashUrl(resolvedLink));
+                postResolveRejected++;
+                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'pdf-post-resolve' });
                 continue;
             }
 
