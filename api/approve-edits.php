@@ -87,9 +87,15 @@ function kop_load_existing_master_data(PDO $pdo, $master_id, $tables) {
             continue;
         }
 
-        $stmt = $pdo->prepare("SELECT json_data FROM `{$table_name}` WHERE unique_name = ? LIMIT 1");
-        $stmt->execute([$master_id]);
-        $payload = $stmt->fetchColumn();
+        try {
+            $stmt = $pdo->prepare("SELECT json_data FROM `{$table_name}` WHERE unique_name = ? LIMIT 1");
+            $stmt->execute([$master_id]);
+            $payload = $stmt->fetchColumn();
+        } catch (PDOException $e) {
+            // Master tables are created lazily on first save (e.g. transporters_master),
+            // so a missing table just means no existing data there.
+            continue;
+        }
 
         if ($payload) {
             $decoded = json_decode($payload, true);
@@ -441,48 +447,63 @@ function kop_has_meaningful_referrer_payload($data) {
                     <?php foreach ($suggestions as $suggestion): ?>
                         <div class="suggestion item-suggestion" id="suggestion-<?php echo $suggestion['id']; ?>" data-id="<?php echo $suggestion['id']; ?>">
                             <?php
-                            $new_data = kop_extract_project_data(json_decode($suggestion['edited_json_data'], true));
                             $master_id = $suggestion['master_id'];
-                            $old_data = kop_load_existing_master_data($pdo, $master_id, $master_tables);
-
-                            $comparison_new_data = kop_is_location_project_name($master_id)
-                                ? kop_merge_location_submission_preview($old_data, $new_data)
-                                : $new_data;
-
-                            $diff = json_diff(
-                                kop_prune_null_values($old_data),
-                                kop_prune_null_values($comparison_new_data)
-                            );
-
-                            $operator_name = trim((string) ($comparison_new_data['operator']['name'] ?? ''));
-                            if (kop_is_location_project_name($master_id) && kop_is_synthetic_location_operator($comparison_new_data['operator'] ?? null, $master_id)) {
-                                $operator_name = '';
-                            }
+                            $render_error = '';
+                            $diff = [];
+                            $operator_name = '';
                             $facility_label = '';
                             $facility_value = '';
-                            $added_facilities = kop_collect_added_facilities($old_data, $comparison_new_data);
-                            $named_facilities = kop_collect_named_facilities($comparison_new_data);
-
-                            if (!empty($added_facilities)) {
-                                $facility_label = count($added_facilities) === 1 ? 'Facility Added' : 'Facilities Added';
-                                $facility_value = implode(', ', $added_facilities);
-                            } elseif (count($named_facilities) === 1) {
-                                $facility_label = 'Facility';
-                                $facility_value = $named_facilities[0];
-                            } elseif (count($named_facilities) > 1) {
-                                $facility_label = 'Facilities in Project';
-                                $facility_value = count($named_facilities) . ' total';
-                            }
-
-                            $referrer_agency = trim((string) ($comparison_new_data['referrerAgency']['name'] ?? ''));
+                            $referrer_agency = '';
                             $referrer_consultant = '';
-                            $show_referrer_summary = $operator_name === '' && $facility_value === '' && kop_has_meaningful_referrer_payload($comparison_new_data);
+                            $show_referrer_summary = false;
 
-                            if ($show_referrer_summary && !empty($comparison_new_data['referrerConsultants'][0])) {
-                                $referrer_consultant = kop_consultant_display_name($comparison_new_data['referrerConsultants'][0]);
+                            try {
+                                $new_data = kop_extract_project_data(json_decode($suggestion['edited_json_data'], true));
+                                $old_data = kop_load_existing_master_data($pdo, $master_id, $master_tables);
+
+                                $comparison_new_data = kop_is_location_project_name($master_id)
+                                    ? kop_merge_location_submission_preview($old_data, $new_data)
+                                    : $new_data;
+
+                                $diff = json_diff(
+                                    kop_prune_null_values($old_data),
+                                    kop_prune_null_values($comparison_new_data)
+                                );
+
+                                $operator_name = trim((string) ($comparison_new_data['operator']['name'] ?? ''));
+                                if (kop_is_location_project_name($master_id) && kop_is_synthetic_location_operator($comparison_new_data['operator'] ?? null, $master_id)) {
+                                    $operator_name = '';
+                                }
+                                $added_facilities = kop_collect_added_facilities($old_data, $comparison_new_data);
+                                $named_facilities = kop_collect_named_facilities($comparison_new_data);
+
+                                if (!empty($added_facilities)) {
+                                    $facility_label = count($added_facilities) === 1 ? 'Facility Added' : 'Facilities Added';
+                                    $facility_value = implode(', ', $added_facilities);
+                                } elseif (count($named_facilities) === 1) {
+                                    $facility_label = 'Facility';
+                                    $facility_value = $named_facilities[0];
+                                } elseif (count($named_facilities) > 1) {
+                                    $facility_label = 'Facilities in Project';
+                                    $facility_value = count($named_facilities) . ' total';
+                                }
+
+                                $referrer_agency = trim((string) ($comparison_new_data['referrerAgency']['name'] ?? ''));
+                                $show_referrer_summary = $operator_name === '' && $facility_value === '' && kop_has_meaningful_referrer_payload($comparison_new_data);
+
+                                if ($show_referrer_summary && !empty($comparison_new_data['referrerConsultants'][0])) {
+                                    $referrer_consultant = kop_consultant_display_name($comparison_new_data['referrerConsultants'][0]);
+                                }
+                            } catch (Throwable $e) {
+                                // A bad row must not take down the whole approval page;
+                                // show the error inline and keep the action buttons usable.
+                                $render_error = $e->getMessage();
                             }
                             ?>
                             <h3>Suggestion for <?php echo htmlspecialchars($suggestion['master_id']); ?></h3>
+                            <?php if ($render_error !== ''): ?>
+                                <p class="removed"><strong>Preview unavailable:</strong> <?php echo htmlspecialchars($render_error); ?></p>
+                            <?php endif; ?>
                             <?php if ($operator_name !== ''): ?>
                                 <p><strong>Operator:</strong> <?php echo htmlspecialchars($operator_name); ?></p>
                             <?php endif; ?>
@@ -495,7 +516,7 @@ function kop_has_meaningful_referrer_payload($data) {
                             <?php if ($show_referrer_summary && !empty($referrer_consultant)): ?>
                                 <p><strong>Referrer Consultant:</strong> <?php echo htmlspecialchars($referrer_consultant); ?></p>
                             <?php endif; ?>
-                            <p><strong>Reason:</strong> <?php echo htmlspecialchars($suggestion['reason']); ?></p>
+                            <p><strong>Reason:</strong> <?php echo htmlspecialchars((string) $suggestion['reason']); ?></p>
                             <div class="diff">
                                 <?php echo render_diff($diff); ?>
                             </div>
