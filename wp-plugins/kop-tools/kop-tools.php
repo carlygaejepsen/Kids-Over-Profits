@@ -103,7 +103,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title' => 'Retitle From Content',
-                'desc'  => 'AI-title unclear attachments by reading the document text (PDF/DOCX/TXT): review, edit, and apply new titles. Files and URLs are untouched.',
+                'desc'  => 'AI-title unclear attachments by reading the document (PDF/DOCX/TXT/images, vision OCR for scans): review, edit, and apply new titles. Files and URLs are untouched.',
                 'path'  => 'api/retitle-from-content.php',
                 'type'  => 'page',
             ),

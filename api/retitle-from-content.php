@@ -3,25 +3,35 @@
  * Retitle From Content — admin tool that renames unclear attachment titles
  * using the document's actual contents.
  *
- * Fix Slug Titles humanizes the filename; this tool goes further: it extracts
- * the text of the file (PDF, DOCX, TXT), sends it to the AI with the filename
- * and FileBird folder names as context, and proposes a real descriptive title
+ * Fix Slug Titles humanizes the filename; this tool goes further: it reads
+ * the file itself and asks the AI for a real descriptive title
  * ("Provo Canyon School — DHHS Inspection Report (June 2008)"). Every
  * suggestion lands in an editable field and nothing is written until Apply.
+ *
+ * How each type is read (shared hosting has no pdftotext or tesseract, so
+ * the heavy lifting happens in the browser or via a vision model):
+ *   PDF        browser extracts the text layer with pdf.js; if the PDF is a
+ *              scan with no text layer, the browser renders page 1 to a JPEG
+ *              and the server sends it to a Groq vision model (the OCR step)
+ *   Images     server downscales with GD and sends to the vision model
+ *   DOCX/TXT   server-side text extraction (lawsuit-extraction lib)
  *
  * Only post_title changes — the physical file, its URL, slug, and folders are
  * never touched (renaming files on disk would break every existing link).
  *
  * Three request modes:
- *   GET               preview page listing attachments with unclear titles
- *   POST action=suggest  AJAX, one attachment: extract text, ask Groq, return JSON
- *   POST do_apply     write the reviewed titles for ticked rows
+ *   GET                  preview page listing attachments with unclear titles
+ *   POST action=suggest  AJAX, one attachment: returns {ok, title, basis, note}
+ *                        optional client-supplied `text` / `page_image` (b64 JPEG)
+ *   POST do_apply        write the reviewed titles for ticked rows
  *
- * Admin-only. Loads WordPress via config.php. Uses GROQ_API_KEY from .env.
+ * Admin-only. Loads WordPress via config.php. Uses GROQ_API_KEY (or the
+ * legacy GROK_API_KEY spelling) from .env; GROQ_MODEL / GROQ_VISION_MODEL
+ * override the models.
  */
 
 require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/lawsuit-extraction-lib.php'; // kop_resolve_secret, kop_extract_document_text
+require_once __DIR__ . '/lawsuit-extraction-lib.php'; // kop_resolve_secret, kop_extract_document_text, kop_lawsuit_chunk_text
 
 if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
     http_response_code(403);
@@ -36,12 +46,16 @@ $SHOW = 200; // rows rendered per pass
 // Unclear-title detection
 // ---------------------------------------------------------------------------
 
-/** Mime types we can pull text out of (kop_extract_document_text). */
-function kop_rtc_extractable_mime($mime) {
+/** Mime types the tool can read (server text, client pdf.js, or vision). */
+function kop_rtc_supported_mime($mime) {
     return in_array($mime, [
         'application/pdf',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'text/plain',
+        'image/jpeg',
+        'image/png',
+        'image/webp',
+        'image/gif',
     ], true);
 }
 
@@ -75,43 +89,47 @@ function kop_rtc_unclear_where() {
 }
 
 // ---------------------------------------------------------------------------
-// Groq title generation
+// Groq title generation (text and vision)
 // ---------------------------------------------------------------------------
 
-function kop_rtc_title_prompt() {
+function kop_rtc_groq_key() {
+    // Production .env historically carries the GROK_API_KEY spelling — accept
+    // both, same as ai-providers.php and the lawsuit endpoints.
+    $k = kop_resolve_secret('GROQ_API_KEY');
+    return $k !== '' ? $k : kop_resolve_secret('GROK_API_KEY');
+}
+
+/** @param string $mode 'text' (basis content/filename) or 'vision' (basis ocr/filename) */
+function kop_rtc_title_prompt($mode) {
+    $basis = ($mode === 'vision')
+        ? '"ocr" (you read it from the page image) or "filename" (image unreadable, title built from filename/folder context)'
+        : '"content" (you read it from the document text) or "filename" (text unreadable/too thin, title built from filename/folder context)';
     return <<<PROMPT
-You write catalog titles for a Troubled Teen Industry accountability archive. From the document text and context above, produce ONE short descriptive title for this file.
+You write catalog titles for a Troubled Teen Industry accountability archive. From the document and context above, produce ONE short descriptive title for this file.
 
 Title rules:
 - Preferred shape: "Facility or Subject — Document Type (Month Year)". Examples: "Provo Canyon School — State Inspection Report (June 2008)", "Agape Boarding School — Civil Complaint (2022)", "NATSAP Membership Directory (2020)".
-- Include the facility/program/organization name whenever the document reveals one; the folder name is a strong hint but the document text wins if they disagree.
-- Say what the document IS (inspection report, license, complaint, incident report, news clipping, letter, brochure, court filing, survey...).
+- Include the facility/program/organization name whenever the document reveals one; the folder name is a strong hint but the document itself wins if they disagree.
+- Say what the document IS (inspection report, license, complaint, incident report, news clipping, letter, brochure, court filing, survey, photograph...).
 - Include a date only if the document states one.
 - Factual and neutral, never sensationalist. No graphic details. Maximum 90 characters. No quotes around the title.
-- If the text is unreadable or too thin to tell what the document is, build the best title you can from the filename and folder context and set basis to "filename".
 
 Return ONLY valid JSON, no prose, no markdown fences:
-{"title": "the title", "basis": "content" or "filename", "note": "at most one short sentence on what the document is"}
+{"title": "the title", "basis": {$basis}, "note": "at most one short sentence on what the document is"}
 PROMPT;
 }
 
-function kop_rtc_groq_suggest($context_header, $doc_text) {
-    $key = kop_resolve_secret('GROQ_API_KEY');
+/** Shared Groq chat call. $content is a string or a content-part array. */
+function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
+    $key = kop_rtc_groq_key();
     if ($key === '') {
-        return ['ok' => false, 'error' => 'GROQ_API_KEY is not configured in .env.'];
+        return ['ok' => false, 'error' => 'Groq API key not configured. Add GROQ_API_KEY to .env (GROK_API_KEY also accepted).'];
     }
-
-    $doc_text = kop_lawsuit_chunk_text($doc_text, 1)['chunks'][0] ?? '';
-    $model = getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b';
-
     $body = json_encode([
-        'model'    => $model,
-        'messages' => [[
-            'role'    => 'user',
-            'content' => $context_header . "\n\nDOCUMENT TEXT (may be truncated):\n" . $doc_text . "\n\n" . kop_rtc_title_prompt(),
-        ]],
+        'model'       => $model,
+        'messages'    => [['role' => 'user', 'content' => $content]],
         'temperature' => 0.2,
-        'max_tokens'  => 300,
+        'max_tokens'  => $max_tokens,
     ]);
     if ($body === false) {
         return ['ok' => false, 'error' => 'json_encode failed: ' . json_last_error_msg()];
@@ -149,13 +167,58 @@ function kop_rtc_groq_suggest($context_header, $doc_text) {
     if (!is_array($parsed) || trim((string) ($parsed['title'] ?? '')) === '') {
         return ['ok' => false, 'error' => 'Could not parse AI response. Preview: ' . substr($raw, 0, 160)];
     }
-
     return [
         'ok'    => true,
         'title' => mb_substr(trim(preg_replace('/\s+/', ' ', $parsed['title'])), 0, 140),
-        'basis' => ($parsed['basis'] ?? '') === 'filename' ? 'filename' : 'content',
+        'basis' => in_array($parsed['basis'] ?? '', ['content', 'ocr', 'filename'], true) ? $parsed['basis'] : 'content',
         'note'  => mb_substr(trim((string) ($parsed['note'] ?? '')), 0, 200),
     ];
+}
+
+function kop_rtc_suggest_from_text($context_header, $doc_text) {
+    $doc_text = kop_lawsuit_chunk_text($doc_text, 1)['chunks'][0] ?? '';
+    $model = getenv('GROQ_MODEL') ?: 'openai/gpt-oss-120b';
+    $result = kop_rtc_groq_chat(
+        $model,
+        $context_header . "\n\nDOCUMENT TEXT (may be truncated):\n" . $doc_text . "\n\n" . kop_rtc_title_prompt('text')
+    );
+    if ($result['ok'] && $result['basis'] === 'ocr') $result['basis'] = 'content';
+    return $result;
+}
+
+function kop_rtc_suggest_from_image($context_header, $jpeg_b64) {
+    $model = getenv('GROQ_VISION_MODEL') ?: 'meta-llama/llama-4-scout-17b-16e-instruct';
+    $content = [
+        ['type' => 'text', 'text' => $context_header . "\n\nAttached is an image of the document's first page (or the image attachment itself). Read it.\n\n" . kop_rtc_title_prompt('vision')],
+        ['type' => 'image_url', 'image_url' => ['url' => 'data:image/jpeg;base64,' . $jpeg_b64]],
+    ];
+    $result = kop_rtc_groq_chat($model, $content);
+    if ($result['ok'] && $result['basis'] === 'content') $result['basis'] = 'ocr';
+    return $result;
+}
+
+/** Downscale an image file with GD and return a base64 JPEG ('' on failure). */
+function kop_rtc_image_b64_from_file($path) {
+    if (!function_exists('imagecreatefromstring')) return '';
+    $raw = @file_get_contents($path);
+    if (!$raw) return '';
+    $img = @imagecreatefromstring($raw);
+    if (!$img) return '';
+    if (function_exists('imagepalettetotruecolor')) @imagepalettetotruecolor($img);
+    $w = imagesx($img);
+    $h = imagesy($img);
+    $max = 1568;
+    if (max($w, $h) > $max && function_exists('imagescale')) {
+        $scaled = ($w >= $h)
+            ? imagescale($img, $max)
+            : imagescale($img, (int) round($w * $max / $h), $max);
+        if ($scaled !== false) { imagedestroy($img); $img = $scaled; }
+    }
+    ob_start();
+    imagejpeg($img, null, 82);
+    $jpg = ob_get_clean();
+    imagedestroy($img);
+    return $jpg ? base64_encode($jpg) : '';
 }
 
 /** FileBird folder names for one attachment (regular folders + extra tags). */
@@ -195,30 +258,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
         echo json_encode(['ok' => false, 'error' => 'Not an attachment.']);
         exit;
     }
-    $mime = get_post_mime_type($att_id);
-    if (!kop_rtc_extractable_mime((string) $mime)) {
-        echo json_encode(['ok' => false, 'error' => 'No text extraction for ' . $mime . ' — edit the title by hand.']);
-        exit;
-    }
-    $path = get_attached_file($att_id);
-    if (!$path || !file_exists($path)) {
-        echo json_encode(['ok' => false, 'error' => 'File missing on disk (broken upload?).']);
+    $mime = (string) get_post_mime_type($att_id);
+    if (!kop_rtc_supported_mime($mime)) {
+        echo json_encode(['ok' => false, 'error' => 'Unsupported type ' . $mime . ' — edit the title by hand.']);
         exit;
     }
 
-    $text = kop_extract_document_text($path, (string) $mime);
-    $filename = wp_basename($path);
+    // Client-supplied material (browser pdf.js): extracted text and/or a
+    // rendered JPEG of page 1 when the PDF turned out to be a scan.
+    $client_text = trim(wp_unslash((string) ($_POST['text'] ?? '')));
+    $image_b64   = (string) ($_POST['page_image'] ?? '');
+    if ($image_b64 !== '') {
+        $image_b64 = preg_replace('/^data:image\/\w+;base64,/', '', $image_b64);
+        if (strlen($image_b64) > 8 * 1024 * 1024 || base64_decode($image_b64, true) === false) {
+            $image_b64 = '';
+        }
+    }
+
+    $path     = get_attached_file($att_id);
+    $has_file = $path && file_exists($path);
+    $filename = $path ? wp_basename($path) : basename((string) wp_get_attachment_url($att_id));
     $folders  = kop_rtc_folder_names($att_id);
     $context  = "CONTEXT:\nFilename: {$filename}\nCurrent title: " . get_post_field('post_title', $att_id, 'raw')
               . ($folders ? "\nFileBird folder(s): " . implode(', ', $folders) : '');
 
-    if (strlen(trim($text)) < 40) {
-        $context .= "\n(The file yielded no readable text — likely a scanned image PDF.)";
+    $text = $client_text;
+
+    // Server-side fallbacks when the browser sent nothing usable.
+    if (strlen($text) < 40 && $image_b64 === '') {
+        if (!$has_file) {
+            echo json_encode(['ok' => false, 'error' => 'File missing on disk (broken upload?).']);
+            exit;
+        }
+        if (strpos($mime, 'image/') === 0) {
+            $image_b64 = kop_rtc_image_b64_from_file($path);
+            if ($image_b64 === '') {
+                echo json_encode(['ok' => false, 'error' => 'Could not read image (GD unavailable or corrupt file).']);
+                exit;
+            }
+        } else {
+            $text = kop_extract_document_text($path, $mime);
+        }
     }
 
-    $result = kop_rtc_groq_suggest($context, $text);
-    if ($result['ok'] && strlen(trim($text)) < 40 && $result['basis'] === 'content') {
-        $result['basis'] = 'filename';
+    if (strlen(trim($text)) >= 40) {
+        $result = kop_rtc_suggest_from_text($context, $text);
+    } elseif ($image_b64 !== '') {
+        $context .= "\n(No text layer was extractable — this is likely a scan; read the page image.)";
+        $result = kop_rtc_suggest_from_image($context, $image_b64);
+    } else {
+        $result = ['ok' => false, 'error' => 'No readable text and no page image — for PDFs make sure the browser step ran (do not block cdnjs.cloudflare.com).'];
     }
     echo json_encode($result);
     exit;
@@ -289,12 +378,12 @@ foreach ($rows as $r) {
         continue; // PHP-side check is the authority; SQL is just the prefilter
     }
     $preview[] = [
-        'id'          => (int) $r->ID,
-        'title'       => $r->post_title,
-        'mime'        => $r->post_mime_type,
-        'url'         => wp_get_attachment_url($r->ID),
-        'extractable' => kop_rtc_extractable_mime($r->post_mime_type),
-        'folders'     => kop_rtc_folder_names((int) $r->ID),
+        'id'        => (int) $r->ID,
+        'title'     => $r->post_title,
+        'mime'      => $r->post_mime_type,
+        'url'       => wp_get_attachment_url($r->ID),
+        'supported' => kop_rtc_supported_mime($r->post_mime_type),
+        'folders'   => kop_rtc_folder_names((int) $r->ID),
     ];
 }
 $ajax_nonce = wp_create_nonce('kop_rtc');
@@ -323,7 +412,7 @@ td a { color: #000080; }
 .basis { font-size: 0.72rem; color: #555; }
 .folders { font-size: 0.72rem; color: #000080; }
 </style></head><body>
-<h1>Retitle From Content <small style="font-weight:400">&mdash; AI titles for unclear attachments, from the document text</small></h1>
+<h1>Retitle From Content <small style="font-weight:400">&mdash; AI titles for unclear attachments, from the document text (with OCR for scans)</small></h1>
 
 <?php if ($applied): ?>
     <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?> <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>">Reload for the next batch.</a></div>
@@ -335,8 +424,9 @@ td a { color: #000080; }
     Showing up to <?php echo (int) $SHOW; ?> per pass.
     Workflow: tick rows, click <em>Suggest titles</em> to read each document and draft a title,
     edit anything you like, then <em>Apply</em>. Only the title changes &mdash; the file, its URL,
-    and its folders stay exactly where they are. PDF, DOCX, and TXT get content extraction;
-    other types can still be retitled by hand.
+    and its folders stay exactly where they are.
+    PDFs are read in your browser (scans get vision OCR of page 1); images go to the vision
+    model; DOCX/TXT are read on the server. Anything else can still be retitled by hand.
 </div>
 
 <form method="get" style="margin-bottom:10px">
@@ -362,14 +452,15 @@ td a { color: #000080; }
 </div>
 <table><thead><tr><th></th><th style="width:32%">Current title</th><th style="width:40%">New title</th><th>File</th></tr></thead><tbody>
 <?php foreach ($preview as $p): ?>
-    <tr data-id="<?php echo $p['id']; ?>" data-extractable="<?php echo $p['extractable'] ? 1 : 0; ?>">
+    <tr data-id="<?php echo $p['id']; ?>" data-mime="<?php echo esc_attr($p['mime']); ?>"
+        data-supported="<?php echo $p['supported'] ? 1 : 0; ?>" data-url="<?php echo esc_url($p['url']); ?>">
         <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
         <td>
             <div class="old-title"><?php echo esc_html($p['title']); ?></div>
             <?php if ($p['folders']): ?><div class="folders"><?php echo esc_html(implode(' / ', $p['folders'])); ?></div><?php endif; ?>
         </td>
         <td>
-            <input type="text" class="new-title" name="row[<?php echo $p['id']; ?>][title]" value="" placeholder="<?php echo $p['extractable'] ? 'awaiting suggestion or type one' : 'no text extraction for this type - type a title'; ?>">
+            <input type="text" class="new-title" name="row[<?php echo $p['id']; ?>][title]" value="" placeholder="<?php echo $p['supported'] ? 'awaiting suggestion or type one' : 'no auto-read for this type - type a title'; ?>">
             <div class="basis"></div>
         </td>
         <td>
@@ -383,6 +474,7 @@ td a { color: #000080; }
 <script>
 (function () {
     var NONCE = <?php echo json_encode($ajax_nonce); ?>;
+    var PDFJS_VER = '3.11.174';
     var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
     function check(row) { return row.querySelector('input[type=checkbox]'); }
     function titleInput(row) { return row.querySelector('input.new-title'); }
@@ -425,64 +517,139 @@ td a { color: #000080; }
         return window.confirm('Write ' + ready + ' new attachment title(s)?');
     };
 
-    // Suggest titles: small worker pool over the ticked, extractable,
-    // still-empty rows. One POST per attachment so shared-hosting time
-    // limits never bite.
+    // ------------------------------------------------------------------
+    // Browser-side PDF reading: pdf.js extracts the text layer; if the
+    // PDF is a scan with no text layer, render page 1 to a JPEG for the
+    // server's vision-model OCR step.
+    // ------------------------------------------------------------------
+    var pdfjsReady = null;
+    function loadPdfJs() {
+        if (pdfjsReady) return pdfjsReady;
+        pdfjsReady = new Promise(function (resolve, reject) {
+            var s = document.createElement('script');
+            s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + PDFJS_VER + '/pdf.min.js';
+            s.onload = function () {
+                window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+                    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/' + PDFJS_VER + '/pdf.worker.min.js';
+                resolve(window.pdfjsLib);
+            };
+            s.onerror = function () { reject(new Error('pdf.js failed to load from cdnjs')); };
+            document.head.appendChild(s);
+        });
+        return pdfjsReady;
+    }
+
+    async function readPdfInBrowser(url) {
+        var pdfjs = await loadPdfJs();
+        var doc = await pdfjs.getDocument({ url: url }).promise;
+        try {
+            var text = '';
+            var pages = Math.min(doc.numPages, 5);
+            for (var i = 1; i <= pages; i++) {
+                var page = await doc.getPage(i);
+                var tc = await page.getTextContent();
+                text += tc.items.map(function (it) { return it.str; }).join(' ') + '\n';
+                if (text.length > 12000) break;
+            }
+            text = text.replace(/\s+/g, ' ').trim();
+            if (text.length >= 200) return { text: text };
+
+            // Scan (or near-empty text layer): render page 1 for OCR.
+            var page1 = await doc.getPage(1);
+            var vp = page1.getViewport({ scale: 1 });
+            var scale = Math.min(2.5, 1568 / Math.max(vp.width, vp.height));
+            var vp2 = page1.getViewport({ scale: scale });
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.ceil(vp2.width);
+            canvas.height = Math.ceil(vp2.height);
+            await page1.render({ canvasContext: canvas.getContext('2d'), viewport: vp2 }).promise;
+            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+            return { text: text, image: dataUrl.split(',')[1] };
+        } finally {
+            doc.destroy();
+        }
+    }
+
+    async function suggestOne(row, setStatus) {
+        var body = new URLSearchParams();
+        body.set('action', 'suggest');
+        body.set('id', row.dataset.id);
+        body.set('_wpnonce', NONCE);
+
+        if (row.dataset.mime === 'application/pdf') {
+            try {
+                setStatus('reading PDF');
+                var read = await readPdfInBrowser(row.dataset.url);
+                if (read.text && read.text.length >= 200) {
+                    body.set('text', read.text);
+                } else if (read.image) {
+                    setStatus('OCR');
+                    body.set('page_image', read.image);
+                    if (read.text) body.set('text', read.text);
+                }
+            } catch (e) {
+                // Server-side extraction is the fallback; carry on with a bare request.
+            }
+        }
+
+        var r;
+        try {
+            var res = await fetch(window.location.pathname, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            });
+            r = await res.json();
+        } catch (e) {
+            r = { ok: false, error: 'request failed' };
+        }
+
+        var basis = row.querySelector('.basis');
+        if (r.ok) {
+            titleInput(row).value = r.title;
+            basis.textContent = 'from ' + r.basis + (r.note ? ' - ' + r.note : '');
+            row.classList.remove('kop-err');
+            return true;
+        }
+        basis.textContent = r.error || 'failed';
+        row.classList.add('kop-err');
+        return false;
+    }
+
     var suggestBtn = document.getElementById('kop-suggest');
     var progress = document.getElementById('kop-progress');
     suggestBtn.addEventListener('click', function () {
         var queue = rows.filter(function (r) {
             var c = check(r), t = titleInput(r);
-            return c && c.checked && r.dataset.extractable === '1' && t && t.value.trim() === '';
+            return c && c.checked && r.dataset.supported === '1' && t && t.value.trim() === '';
         });
         if (!queue.length) {
-            alert('Tick some rows first (PDF/DOCX/TXT rows without a title yet).');
+            alert('Tick some rows first (supported rows without a title yet).');
             return;
         }
         suggestBtn.disabled = true;
         var total = queue.length, done = 0, failed = 0;
-        progress.textContent = 'Reading documents... 0/' + total;
+        function report(extra) {
+            progress.textContent = 'Suggesting... ' + done + '/' + total
+                + (failed ? ' (' + failed + ' failed)' : '') + (extra ? ' - ' + extra : '');
+        }
+        report();
 
-        function one(row) {
-            var body = new URLSearchParams();
-            body.set('action', 'suggest');
-            body.set('id', row.dataset.id);
-            body.set('_wpnonce', NONCE);
-            return fetch(window.location.pathname, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body.toString()
-            })
-            .then(function (res) { return res.json(); })
-            .catch(function () { return { ok: false, error: 'request failed' }; })
-            .then(function (r) {
-                var basis = row.querySelector('.basis');
-                if (r.ok) {
-                    titleInput(row).value = r.title;
-                    basis.textContent = 'from ' + r.basis + (r.note ? ' - ' + r.note : '');
-                    row.classList.remove('kop-err');
-                } else {
-                    failed++;
-                    basis.textContent = r.error || 'failed';
-                    row.classList.add('kop-err');
-                }
+        function worker() {
+            var row = queue.shift();
+            if (!row) return Promise.resolve();
+            return suggestOne(row, report).then(function (ok) {
+                if (!ok) failed++;
                 done++;
-                progress.textContent = 'Reading documents... ' + done + '/' + total + (failed ? ' (' + failed + ' failed)' : '');
+                report();
+                return worker();
             });
         }
-
-        var workers = [];
-        for (var w = 0; w < 3; w++) {
-            workers.push((function next() {
-                var row = queue.shift();
-                if (!row) return Promise.resolve();
-                return one(row).then(next);
-            })());
-        }
-        Promise.all(workers).then(function () {
+        Promise.all([worker(), worker(), worker()]).then(function () {
             suggestBtn.disabled = false;
-            progress.textContent = 'Done: ' + (done - failed) + ' suggested' + (failed ? ', ' + failed + ' failed (red rows)' : '') + '. Review, edit, then Apply.';
+            progress.textContent = 'Done: ' + (done - failed) + ' suggested'
+                + (failed ? ', ' + failed + ' failed (red rows)' : '') + '. Review, edit, then Apply.';
         });
     });
 })();
