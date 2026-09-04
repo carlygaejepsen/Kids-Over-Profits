@@ -319,6 +319,121 @@ function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
     unset($project);
 }
 
+/**
+ * Attach linked lawsuits to each project, mirroring
+ * kop_attach_linked_news_to_projects: one bulk query joins
+ * lawsuit_facility_links + lawsuits (published only), grouped by facility_id
+ * and stamped as linked_lawsuits[] on top-level projects and nested facility
+ * entries. Runs after the news attach, which usually has already stamped
+ * facility_id onto nested entries, but repeats the name-match fallback so
+ * lawsuits still attach when the news link table is absent.
+ */
+function kop_attach_linked_lawsuits_to_projects($db_connection, array &$projects) {
+    if (!($db_connection instanceof wpdb)) return;
+
+    $link_table = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'lawsuit_facility_links'));
+    if ($link_table !== 'lawsuit_facility_links') return;
+
+    $name_to_id = array();
+    $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
+    if (is_array($name_rows)) {
+        foreach ($name_rows as $r) {
+            $k = strtolower(trim((string)$r['unique_name']));
+            if ($k !== '' && !isset($name_to_id[$k])) {
+                $name_to_id[$k] = (int)$r['id'];
+            }
+        }
+    }
+
+    $facility_ids = array();
+    foreach ($projects as $key => &$project) {
+        if (!empty($project['id']) && (($project['source_table'] ?? '') === 'facilities_master')) {
+            $facility_ids[(int)$project['id']] = true;
+        }
+        if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
+            foreach ($project['data']['facilities'] as $i => $nested) {
+                if (!is_array($nested)) continue;
+                $fid = null;
+                if (!empty($nested['facility_id'])) {
+                    $fid = (int)$nested['facility_id'];
+                } else {
+                    $candidate_names = array();
+                    if (!empty($nested['identification']['name'])) $candidate_names[] = $nested['identification']['name'];
+                    if (!empty($nested['identification']['currentName'])) $candidate_names[] = $nested['identification']['currentName'];
+                    if (!empty($nested['name'])) $candidate_names[] = $nested['name'];
+                    foreach ($candidate_names as $cn) {
+                        $cn_key = strtolower(trim((string)$cn));
+                        if ($cn_key !== '' && isset($name_to_id[$cn_key])) {
+                            $fid = $name_to_id[$cn_key];
+                            $project['data']['facilities'][$i]['facility_id'] = $fid;
+                            break;
+                        }
+                    }
+                }
+                if ($fid !== null && $fid > 0) {
+                    $facility_ids[$fid] = true;
+                }
+            }
+        }
+    }
+    unset($project);
+
+    if (empty($facility_ids)) return;
+
+    $ids = array_keys($facility_ids);
+    $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+
+    $sql = "SELECT lf.facility_id, lf.link_type,
+                   l.id AS lawsuit_id, l.case_name, l.case_number, l.court,
+                   l.jurisdiction, l.filing_date, l.status, l.outcome,
+                   l.settlement_amount, l.summary
+            FROM lawsuit_facility_links lf
+            JOIN lawsuits l ON l.id = lf.lawsuit_id
+            WHERE lf.facility_id IN ($placeholders)
+              AND l.publication_status = 'published'
+            ORDER BY l.filing_date DESC, l.id DESC";
+
+    $rows = $db_connection->get_results($db_connection->prepare($sql, $ids), ARRAY_A);
+    if (!is_array($rows)) return;
+
+    $by_facility = array();
+    foreach ($rows as $r) {
+        $fid = (int)$r['facility_id'];
+        if (!isset($by_facility[$fid])) $by_facility[$fid] = array();
+        $by_facility[$fid][] = array(
+            'id'                => (int)$r['lawsuit_id'],
+            'case_name'         => $r['case_name'],
+            'case_number'       => $r['case_number'],
+            'court'             => $r['court'],
+            'jurisdiction'      => $r['jurisdiction'],
+            'filing_date'       => $r['filing_date'],
+            'status'            => $r['status'],
+            'outcome'           => $r['outcome'],
+            'settlement_amount' => $r['settlement_amount'],
+            'summary'           => $r['summary'],
+            'link_type'         => $r['link_type'],
+        );
+    }
+
+    foreach ($projects as &$project) {
+        if (!empty($project['id']) && (($project['source_table'] ?? '') === 'facilities_master')) {
+            $project['linked_lawsuits'] = isset($by_facility[(int)$project['id']])
+                ? $by_facility[(int)$project['id']]
+                : array();
+        }
+        if (isset($project['data']['facilities']) && is_array($project['data']['facilities'])) {
+            foreach ($project['data']['facilities'] as $i => $nested) {
+                if (!is_array($nested) || empty($nested['facility_id'])) continue;
+                $fid = (int)$nested['facility_id'];
+                if (isset($by_facility[$fid])) {
+                    $project['data']['facilities'][$i]['linked_lawsuits'] = $by_facility[$fid];
+                }
+            }
+        }
+    }
+    unset($project);
+}
+
 function kop_get_facilities_projects_from_database() {
     $connection = kop_get_facilities_database_connection();
 
@@ -510,6 +625,9 @@ function kop_get_facilities_projects_from_database() {
     // query joins news_facility_links + news_submissions, then we group by
     // facility_id and stamp linked_news[] onto each project.
     kop_attach_linked_news_to_projects($db_connection, $projects);
+
+    // Same pattern for lawsuits via lawsuit_facility_links -> linked_lawsuits[].
+    kop_attach_linked_lawsuits_to_projects($db_connection, $projects);
 
     if (empty($projects)) {
         return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));

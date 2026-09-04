@@ -340,6 +340,59 @@ function displayFacilities(facilitiesData, containerId) {
         `;
     };
 
+    // Linked lawsuits (attached as linked_lawsuits[] by the server — see
+    // kop_attach_linked_lawsuits_to_projects in inc/database.php). Returns the
+    // on-card strip and the expanded section; reuses the news strip/list CSS.
+    const renderLawsuitBits = (linkedLawsuits, sectionClass = 'facility-lawsuits-section') => {
+        const lawsuits = Array.isArray(linkedLawsuits) ? linkedLawsuits : [];
+        if (!lawsuits.length) return { strip: '', section: '' };
+
+        const statusLabels = {
+            filed: 'Filed', in_progress: 'In progress', settled: 'Settled',
+            dismissed: 'Dismissed', ruling: 'Ruling issued', appeal: 'On appeal',
+            closed: 'Closed', unknown: ''
+        };
+        const fmtDate = value => {
+            if (!value) return '';
+            const ts = Date.parse(value);
+            if (isNaN(ts)) return value;
+            return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+        };
+        const metaFor = l => {
+            const parts = [];
+            if (l.case_number) parts.push(escapeHtml(l.case_number));
+            if (l.court) parts.push(escapeHtml(l.court));
+            if (l.filing_date) parts.push('Filed ' + escapeHtml(fmtDate(l.filing_date)));
+            if (statusLabels[l.status]) parts.push(escapeHtml(statusLabels[l.status]));
+            if (l.settlement_amount) parts.push('Settlement: ' + escapeHtml(l.settlement_amount));
+            return parts;
+        };
+
+        const itemsHtml = lawsuits.map(l => {
+            const title = `<span class="facility-news-title">${escapeHtml(l.case_name || '(unnamed case)')}</span>`;
+            const meta = metaFor(l);
+            const summary = l.summary ? `<div class="facility-lawsuit-summary">${escapeHtml(l.summary)}</div>` : '';
+            return `<li class="facility-news-item facility-lawsuit-item">${title}${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}${summary}</li>`;
+        }).join('');
+        const section = renderDetailSection(
+            `Lawsuits (${lawsuits.length})`,
+            `<ul class="facility-news-list facility-lawsuit-list">${itemsHtml}</ul>`,
+            sectionClass
+        );
+
+        const latest = lawsuits[0];
+        const latestMeta = metaFor(latest).slice(0, 2);
+        const moreCount = lawsuits.length - 1;
+        const strip = `<div class="facility-latest-news facility-lawsuit-strip">
+                <span class="facility-latest-news-label">Lawsuit</span>
+                <span class="facility-latest-news-title">${escapeHtml(latest.case_name || '(unnamed case)')}</span>
+                ${latestMeta.length ? `<span class="facility-latest-news-meta">${latestMeta.join(' &middot; ')}</span>` : ''}
+                ${moreCount > 0 ? `<span class="facility-latest-news-more">+${moreCount} more below</span>` : ''}
+            </div>`;
+
+        return { strip, section };
+    };
+
     const renderInlineFieldNotes = (key, fieldNotes, usedKeys) => {
         // Try full key
         let notes = getNotesForKey(fieldNotes, key);
@@ -547,7 +600,8 @@ function displayFacilities(facilitiesData, containerId) {
                 // Explicit document-library folder ID (set via the wiki program
                 // picker). Preferred over fuzzy folder-name matching when present.
                 documentFolderId: projectData.documentFolderId || project.documentFolderId || null,
-                linked_news: Array.isArray(project.linked_news) ? project.linked_news : []
+                linked_news: Array.isArray(project.linked_news) ? project.linked_news : [],
+                linked_lawsuits: Array.isArray(project.linked_lawsuits) ? project.linked_lawsuits : []
             });
         });
     } else if (Array.isArray(facilitiesData)) {
@@ -1083,8 +1137,12 @@ function displayFacilities(facilitiesData, containerId) {
                 </div>`;
         }
 
+        // Operator-level linked lawsuits, mirroring the news treatment above.
+        const operatorLawsuitBits = renderLawsuitBits(operatorGroup.linked_lawsuits, 'operator-lawsuits-section');
+
         const operatorSectionsHtml = [
             operatorNewsSectionHtml,
+            operatorLawsuitBits.section,
             operatorFactsHtml,
             operatorInvestorsHtml,
             operatorOwnersHtml,
@@ -1106,6 +1164,7 @@ function displayFacilities(facilitiesData, containerId) {
                 '</summary>' +
                 '<div class="operator-content-scrollable">' +
                     operatorLatestNewsHtml +
+                    operatorLawsuitBits.strip +
                     operatorDetailsDiv +
                     '<div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="operator" data-kop-submit-name="' + escapeAttribute(operatorName) + '">Submit info about this operator</button></div>';
 
@@ -1492,6 +1551,8 @@ function displayFacilities(facilitiesData, containerId) {
 
                                                     'linked_news', // Rendered in the dedicated News section
 
+                                                    'linked_lawsuits', // Rendered in the dedicated Lawsuits section
+
                                                     'facility_id', // Internal identifier stamped on by the server
 
                                                     // Internal provenance recorded when a facility is aggregated
@@ -1772,6 +1833,9 @@ function displayFacilities(facilitiesData, containerId) {
                 );
             }
 
+            // Lawsuits section + on-card strip, mirroring the news treatment.
+            const facilityLawsuitBits = renderLawsuitBits(facility.linked_lawsuits);
+
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
 
@@ -1809,6 +1873,7 @@ function displayFacilities(facilitiesData, containerId) {
                 factsHtml,
                 notesHtml,
                 newsSectionHtml,
+                facilityLawsuitBits.section,
                 resourcesSectionHtml,
                 documentsSectionHtml,
                 additionalDetailsHtml,
@@ -1836,6 +1901,7 @@ function displayFacilities(facilitiesData, containerId) {
                         </p>` : ''}
                     </div>
                     ${latestNewsHtml}
+                    ${facilityLawsuitBits.strip}
                     ${facilityDetailsHtml}
                     <div class="kop-submit-info-row"><button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityDatasetNameRaw || '')}">Submit info</button></div>
                 </div>`;

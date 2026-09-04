@@ -653,6 +653,26 @@ details.operator-section[open] .facility-card {
     margin: 0 0 12px;
 }
 
+/* Lawsuit strip: same surface as the news strip, orange accent rule instead
+   of teal so the two read as different kinds of information at a glance. */
+.facility-lawsuit-strip {
+    border-left-color: #EF9034;       /* orange */
+}
+
+.facility-lawsuit-strip .facility-latest-news-label {
+    color: #8a4d0f !important;        /* dark orange */
+}
+
+.facility-lawsuit-strip .facility-latest-news-title {
+    text-decoration: none;            /* plain text, not a link */
+}
+
+.facility-lawsuit-summary {
+    font-size: 0.85em;
+    color: #333333;
+    margin-top: 3px;
+}
+
 .facility-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

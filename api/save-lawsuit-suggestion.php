@@ -124,9 +124,20 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array_values($fields));
 
+    $newId = (int)$pdo->lastInsertId();
+
+    // Link mentioned facilities to facilities_master ids right away so the
+    // reviewer sees the connections; the tiles only surface published rows.
+    try {
+        require_once __DIR__ . '/lawsuit-facility-links.php';
+        kop_sync_lawsuit_facility_links($pdo, $newId, $fields['facilities_mentioned'], 'public-submission');
+    } catch (Throwable $e) {
+        error_log('save-lawsuit-suggestion facility-link sync failed: ' . $e->getMessage());
+    }
+
     echo json_encode([
         'success' => true,
-        'id' => (int)$pdo->lastInsertId(),
+        'id' => $newId,
         'message' => 'Thank you. Your lawsuit submission has been received and will be reviewed before it appears on the tracker.',
     ]);
 } catch (PDOException $e) {

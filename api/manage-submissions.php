@@ -446,6 +446,39 @@ try {
             
             $affected = $stmt->rowCount();
 
+            // Lawsuits going live: link mentioned facilities to facilities_master
+            // ids, resolve a FileBird folder from the first linked facility when
+            // none was set, and file the case documents there (public uploads
+            // become media-library attachments at this point — not before, so
+            // unreviewed files never enter the library).
+            if ($type === 'lawsuit' && $status === 'published') {
+                require_once __DIR__ . '/lawsuit-facility-links.php';
+                foreach ($ids as $lid) {
+                    try {
+                        $rowStmt = $pdo->prepare("SELECT case_name, facilities_mentioned, document_urls, filebird_folder_id FROM lawsuits WHERE id = ?");
+                        $rowStmt->execute([(int)$lid]);
+                        $law = $rowStmt->fetch(PDO::FETCH_ASSOC);
+                        if (!$law) continue;
+
+                        $facilityIds = kop_sync_lawsuit_facility_links($pdo, (int)$lid, $law['facilities_mentioned'], $reviewedBy ?: 'approval');
+
+                        $folderId = (int)($law['filebird_folder_id'] ?? 0);
+                        if (!$folderId && !empty($facilityIds)) {
+                            $folderId = (int)kop_lawsuit_resolve_facility_folder($pdo, $facilityIds);
+                            if ($folderId) {
+                                $pdo->prepare("UPDATE lawsuits SET filebird_folder_id = ? WHERE id = ?")->execute([$folderId, (int)$lid]);
+                            }
+                        }
+                        if ($folderId) {
+                            $docs = json_decode((string)$law['document_urls'], true);
+                            kop_lawsuit_file_documents(is_array($docs) ? $docs : [], $folderId, (string)$law['case_name']);
+                        }
+                    } catch (Throwable $e) {
+                        error_log("manage-submissions lawsuit post-approval (id $lid) failed: " . $e->getMessage());
+                    }
+                }
+            }
+
             // NEW: If wiki submissions were approved/published, update wiki_master table
             if ($type === 'wiki' && ($status === 'approved' || $status === 'published')) {
                 foreach ($ids as $id) {
@@ -741,9 +774,18 @@ try {
             $set = [];
             $params = [];
             $newsMentions = null; // normalized facilities_mentioned, for post-update link sync
+            $lawsuitMentions = null; // ditto for lawsuit_facility_links
             foreach ($fields as $col => $val) {
                 if (!in_array($col, $editable['cols'], true)) {
                     continue; // not editable
+                }
+                if ($type === 'lawsuit' && $col === 'facilities_mentioned') {
+                    // Remember the edited list so lawsuit_facility_links can be
+                    // re-synced after the UPDATE (same treatment as news below).
+                    $lawsuitMentions = kop_normalize_list($val);
+                    $set[] = "`$col` = ?";
+                    $params[] = json_encode($lawsuitMentions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    continue;
                 }
                 if ($type === 'news' && $col === 'facilities_mentioned') {
                     // Stored as [{name, facility_id}] objects since the
@@ -822,6 +864,10 @@ try {
             // same sync save-news-submission.php runs on (re)submission.
             if ($newsMentions !== null) {
                 kop_sync_news_facility_links($pdo, (int)$id, $newsMentions);
+            }
+            if ($lawsuitMentions !== null) {
+                require_once __DIR__ . '/lawsuit-facility-links.php';
+                kop_sync_lawsuit_facility_links($pdo, (int)$id, $lawsuitMentions);
             }
 
             echo json_encode([

@@ -217,7 +217,7 @@ try {
         $sql = "UPDATE lawsuits SET " . implode(', ', $set) . " WHERE id = ?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        echo json_encode(['success' => true, 'id' => $id, 'updated' => true]);
+        $response = ['success' => true, 'id' => $id, 'updated' => true];
     } else {
         $fields['submitted_by'] = $submittedBy !== '' ? $submittedBy : (wp_get_current_user()->user_login ?? '');
         $fields['published_at'] = ($pubStatus === 'published') ? date('Y-m-d H:i:s') : null;
@@ -226,8 +226,41 @@ try {
         $sql = "INSERT INTO lawsuits (`" . implode('`,`', $cols) . "`) VALUES (" . implode(',', $placeholders) . ")";
         $stmt = $pdo->prepare($sql);
         $stmt->execute(array_values($fields));
-        echo json_encode(['success' => true, 'id' => (int)$pdo->lastInsertId(), 'created' => true]);
+        $id = (int)$pdo->lastInsertId();
+        $response = ['success' => true, 'id' => $id, 'created' => true];
     }
+
+    // Post-save: link mentioned facilities to facilities_master ids, resolve a
+    // FileBird folder from the first linked facility when none was chosen, and
+    // file the case documents there. Failures here never fail the save itself.
+    try {
+        require_once __DIR__ . '/lawsuit-facility-links.php';
+        $facilityIds = kop_sync_lawsuit_facility_links(
+            $pdo, $id, $fields['facilities_mentioned'],
+            function_exists('wp_get_current_user') ? (wp_get_current_user()->user_login ?? null) : null
+        );
+        $response['facility_ids'] = $facilityIds;
+
+        $folderId = $fields['filebird_folder_id'];
+        if (!$folderId && !empty($facilityIds)) {
+            $folderId = kop_lawsuit_resolve_facility_folder($pdo, $facilityIds);
+            if ($folderId) {
+                $pdo->prepare("UPDATE lawsuits SET filebird_folder_id = ? WHERE id = ?")->execute([$folderId, $id]);
+                $response['filebird_folder_id'] = $folderId;
+                $response['folder_auto_assigned'] = true;
+            }
+        }
+        if ($folderId) {
+            $response['documents_filed'] = kop_lawsuit_file_documents(
+                lawsuit_normalize_array($data['document_urls'] ?? []), (int)$folderId, $caseName
+            );
+        }
+    } catch (Throwable $e) {
+        error_log('save-lawsuit facility-link post-processing failed: ' . $e->getMessage());
+        $response['link_warning'] = 'Saved, but facility linking failed: ' . $e->getMessage();
+    }
+
+    echo json_encode($response);
 } catch (PDOException $e) {
     error_log("Lawsuit save error: " . $e->getMessage());
     http_response_code(500);

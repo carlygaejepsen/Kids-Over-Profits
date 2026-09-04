@@ -851,6 +851,56 @@ document.addEventListener('DOMContentLoaded', function() {
                     );
                 }
 
+                // Lawsuits: linked_lawsuits[] is attached the same way (see
+                // kop_attach_linked_lawsuits_to_projects in inc/database.php).
+                // On-card strip + expanded section, mirroring tti-program-index.js.
+                const linkedLawsuits = Array.isArray(facility.linked_lawsuits) ? facility.linked_lawsuits : [];
+                let lawsuitStripHtml = '';
+                let lawsuitSectionHtml = '';
+                if (linkedLawsuits.length > 0) {
+                    const lawsuitStatusLabels = {
+                        filed: 'Filed', in_progress: 'In progress', settled: 'Settled',
+                        dismissed: 'Dismissed', ruling: 'Ruling issued', appeal: 'On appeal',
+                        closed: 'Closed', unknown: ''
+                    };
+                    const formatLawsuitDate = value => {
+                        if (!value) return '';
+                        const ts = Date.parse(value);
+                        if (isNaN(ts)) return value;
+                        return new Date(ts).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                    };
+                    const lawsuitMetaFor = l => {
+                        const parts = [];
+                        if (l.case_number) parts.push(escapeHtml(l.case_number));
+                        if (l.court) parts.push(escapeHtml(l.court));
+                        if (l.filing_date) parts.push('Filed ' + escapeHtml(formatLawsuitDate(l.filing_date)));
+                        if (lawsuitStatusLabels[l.status]) parts.push(escapeHtml(lawsuitStatusLabels[l.status]));
+                        if (l.settlement_amount) parts.push('Settlement: ' + escapeHtml(l.settlement_amount));
+                        return parts;
+                    };
+                    const lawsuitItemsHtml = linkedLawsuits.map(l => {
+                        const title = `<span class="facility-news-title">${escapeHtml(l.case_name || '(unnamed case)')}</span>`;
+                        const meta = lawsuitMetaFor(l);
+                        const summary = l.summary ? `<div class="facility-lawsuit-summary">${escapeHtml(l.summary)}</div>` : '';
+                        return `<li class="facility-news-item facility-lawsuit-item">${title}${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}${summary}</li>`;
+                    }).join('');
+                    lawsuitSectionHtml = renderDetailSection(
+                        `Lawsuits (${linkedLawsuits.length})`,
+                        `<ul class="facility-news-list facility-lawsuit-list">${lawsuitItemsHtml}</ul>`,
+                        'facility-lawsuits-section'
+                    );
+
+                    const latestLawsuit = linkedLawsuits[0];
+                    const latestLawsuitMeta = lawsuitMetaFor(latestLawsuit).slice(0, 2);
+                    const moreLawsuits = linkedLawsuits.length - 1;
+                    lawsuitStripHtml = `<div class="facility-latest-news facility-lawsuit-strip">
+                            <span class="facility-latest-news-label">Lawsuit</span>
+                            <span class="facility-latest-news-title">${escapeHtml(latestLawsuit.case_name || '(unnamed case)')}</span>
+                            ${latestLawsuitMeta.length ? `<span class="facility-latest-news-meta">${latestLawsuitMeta.join(' &middot; ')}</span>` : ''}
+                            ${moreLawsuits > 0 ? `<span class="facility-latest-news-more">+${moreLawsuits} more below</span>` : ''}
+                        </div>`;
+                }
+
                 // Suppress keys already shown in the header / facts / notes
                 const suppressedFieldKeys = new Set([
                     'identification.name', 'identification.currentName',
@@ -920,7 +970,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!obj || typeof obj !== 'object' || depth > 3) return [];
                     const fields = [];
                     const skipFullKeys = [
-                        'resources', 'fieldNotes', 'linked_news', 'facility_id',
+                        'resources', 'fieldNotes', 'linked_news', 'linked_lawsuits', 'facility_id',
                         // Internal provenance metadata recorded when a facility is
                         // aggregated into a location project (see api/save-master.php).
                         // The operator is already shown in the header subtext.
@@ -1096,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span class="status-badge status-${statusClass}">${statusLabel}</span>
                             </p>` : ''}
                         </div>
+                        ${lawsuitStripHtml}
                         <div class="facility-details">
                             <details class="facility-expanded-info">
                                 <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
@@ -1103,6 +1154,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${factsHtml}
                                     ${notesHtml}
                                     ${newsSectionHtml}
+                                    ${lawsuitSectionHtml}
                                     ${resourcesSectionHtml}
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
