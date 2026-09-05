@@ -1,6 +1,233 @@
 {
-  "lastUpdated": "2026-09-04T11:49:24.335Z",
+  "lastUpdated": "2026-09-05T11:03:09.837Z",
   "entries": [
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.wlwt.com/article/matt-bevin-former-kentucky-governor-arrest/73610361",
+      "title": "Ex-Kentucky Gov. Matt Bevin Appears In Court In Cnntempt Case, Judge Imposes Jail Time",
+      "origin": "reddit-link",
+      "host": "wlwt.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "desc-kw:arrest",
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "wlwt.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.hydevoices.com/stories",
+      "title": "So Hyde has a page called Hyde Voices…….",
+      "origin": "reddit-link",
+      "host": "hydevoices.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "hydevoices.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://kidsoverprofits.org/wp-content/uploads/Fuller-v-Hyde-Case-Summary-September-2026.pdf",
+      "title": "Fuller v. Hyde School: Complaint and Hyde’s Answer, side by side",
+      "origin": "reddit-selftext",
+      "host": "kidsoverprofits.org",
+      "facilityQuery": null,
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "kidsoverprofits.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://kidsoverprofits.org/wp-content/uploads/Fuller-v-Hyde-Case-Summary-September-2026-Mobile.pdf",
+      "title": "Fuller v. Hyde School: Complaint and Hyde’s Answer, side by side",
+      "origin": "reddit-selftext",
+      "host": "kidsoverprofits.org",
+      "facilityQuery": null,
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "kidsoverprofits.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://kidsoverprofits.org/wp-content/uploads/09113748309-1.pdf",
+      "title": "Fuller v. Hyde School: Complaint and Hyde’s Answer, side by side",
+      "origin": "reddit-selftext",
+      "host": "kidsoverprofits.org",
+      "facilityQuery": null,
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "kidsoverprofits.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://kidsoverprofits.org/wp-content/uploads/09113755020.pdf",
+      "title": "Fuller v. Hyde School: Complaint and Hyde’s Answer, side by side",
+      "origin": "reddit-selftext",
+      "host": "kidsoverprofits.org",
+      "facilityQuery": null,
+      "reason": "blacklist-host",
+      "meta": {
+        "host": "kidsoverprofits.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.unsilenced.org/program-archive/",
+      "title": "PSA: programs dropped from Unsilenced’s archive",
+      "origin": "reddit-selftext",
+      "host": "unsilenced.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "unsilenced.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.zeffy.com/en-US/ticketing/when-adoption-breaks-down-what-happens-next",
+      "title": "Knoxville, TN — Free Community Event on Adoption, Abandonment & the Troubled Teen Industry",
+      "origin": "reddit-selftext",
+      "host": "zeffy.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 0,
+        "reasons": [],
+        "threshold": 3,
+        "host": "zeffy.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://entityregistry.utah.gov/s/search-entity-detail?id=0010b00002SxaVDAAZ",
+      "title": "Heritage School rtc",
+      "origin": "reddit-selftext",
+      "host": "entityregistry.utah.gov",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "desc-kw:lawsuit"
+        ],
+        "threshold": 3,
+        "host": "entityregistry.utah.gov"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.wsbtv.com/news/local/carroll-county/financial-pressure-causes-long-running-georgia-care-program-close/NYTJVROF45FQ3CX26B4LZIVY7E/?utm_term=Autofeed&amp;utm_medium=Social&amp;utm_source=Facebook&amp;fbclid=Iwb21leAT-IQRjbGNrBP4g9HBkb2YFZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMzUwNjg1NTMxNzI4AAEewROaSFdxIRGDxJXdmqLtiI6mN5Vs_NfX29i_5PXP5oQMcynbpCA2881dGaw_aem_GNBMhKBdmE-NRmLpVUCzmQ#Echobox=1787859341",
+      "title": "KidsPeace of GA Closing",
+      "origin": "reddit-link",
+      "host": "wsbtv.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "wsbtv.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.chipchick.com/2026/08/her-dad-hired-men-to-kidnap-her-and-bring-her-to-a-wilderness-therapy-program-just-to-keep-her-away-from-her-mom",
+      "title": "Her Dad Hired Men To Kidnap Her And Bring Her To A Wilderness Therapy Program Just To Keep Her Away From Her Mom",
+      "origin": "reddit-link",
+      "host": "chipchick.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "chipchick.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://www.themarshallproject.org/2026/08/26/troubled-teen-industry-resilience-healing?utm_source=reddit&amp;utm_medium=social&amp;utm_campaign=tmp-reddit",
+      "title": "The Girls Who Survived: Ohio’s residential treatment centers left them with trauma and questions. The friendships forged inside helped them heal and find answers.",
+      "origin": "reddit-link",
+      "host": "themarshallproject.org",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "themarshallproject.org"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://helenair.com/news/state-regional/article_c02a4d0f-31e6-5b1e-b9e3-9762ad7e9580.html",
+      "title": "New exhibition surfaces Indian boarding school records",
+      "origin": "reddit-link",
+      "host": "helenair.com",
+      "facilityQuery": null,
+      "reason": "low-score",
+      "meta": {
+        "score": 1,
+        "reasons": [
+          "reddit-link-post"
+        ],
+        "threshold": 3,
+        "host": "helenair.com"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://storage.courtlistener.com/recap/gov.uscourts.med.68497/gov.uscourts.med.68497.54.0.pdf",
+      "title": "Update: Hyde School has filed its Answer in Fuller v. Hyde School",
+      "origin": "reddit-selftext",
+      "host": "storage.courtlistener.com",
+      "facilityQuery": null,
+      "reason": "pdf-document",
+      "meta": {
+        "link": "https://storage.courtlistener.com/recap/gov.uscourts.med.68497/gov.uscourts.med.68497.54.0.pdf"
+      }
+    },
+    {
+      "ts": "2026-09-05T11:03:09.837Z",
+      "link": "https://news.google.com/rss/articles/CBMinAJBVV95cUxPazNsemh6cDMwdVcwbVpBZWFUNURTZXl2Q216b3RWSWFtbzk2bV9hQWlnaUpacnFTeVVtb1QwTnhJM0dndFdkSWpsdUE0SkZ1QkZ3d3VSOU8tcDE4NnNlQk9JUDZYMzBMVm9VQ1pwdTJmR2I1Z3NqbWk4Skgxb0xwM1dOWTBuYWszZFBiV2JKZVhkSl9oN3FHSUFTOF9MUXZqanh1VTlmUFZiM0pjMVc1UkVUT2xGbTRMZEc3bmVFSW91VTRlb21hY3Jfa05kWTBya1RPS0dCYlc0QWVFVnY4eGdvQk1NU2k5X25VX2xSem53aUY1X0hTalFGM0VtRHNmVDB2a1J5eGFsQk13NjFBalY1OVBpbzlHekRlZg?oc=5",
+      "title": "Embark Behavioral Health Expands Specialized OCD Treatment in Greenwood Village - Watauga Democrat",
+      "origin": "google-news",
+      "host": "wataugademocrat.com",
+      "facilityQuery": "Embark Behavioral Health",
+      "reason": "low-score",
+      "meta": {
+        "score": 2,
+        "reasons": [
+          "facility:Embark Behavioral Health"
+        ],
+        "threshold": 3,
+        "host": "wataugademocrat.com"
+      }
+    },
     {
       "ts": "2026-09-04T11:49:24.334Z",
       "link": "https://www.hydevoices.com/stories",
@@ -6845,255 +7072,6 @@
         "detectedStates": [
           "MI"
         ]
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.manilatimes.net/2026/05/18/tmt-newswire/globenewswire/federal-lawsuit-alleges-systematic-civil-rights-abuses-at-the-maine-youth-center/2346492",
-      "title": "Federal Lawsuit Alleges Systematic Civil Rights Abuses at the Maine Youth Center",
-      "origin": "reddit-link",
-      "host": "manilatimes.net",
-      "facilityQuery": null,
-      "reason": "blacklist-path",
-      "meta": {
-        "pattern": "/globenewswire/",
-        "link": "https://www.manilatimes.net/2026/05/18/tmt-newswire/globenewswire/federal-lawsuit-alleges-systematic-civil-rights-abuses-at-the-maine-youth-center/2346492"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.caloprograms.com/",
-      "title": "It's not just the bad eggs: A post about CALO",
-      "origin": "reddit-selftext",
-      "host": "caloprograms.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "caloprograms.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "http://cbsnews.com/residentialtreatment",
-      "title": "CALO GETS EXPOSED ON CBS!!",
-      "origin": "reddit-link",
-      "host": "cbsnews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "cbsnews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://sandhillssentinel.com/vp-vances-mother-speaks-at-satc-gala/",
-      "title": "Vice President Vance's mother speaks at SATC gala (Teen Challenge)",
-      "origin": "reddit-link",
-      "host": "sandhillssentinel.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "sandhillssentinel.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.mondaq.com/unitedstates/employee-rights-labour-relations/1787426/court-allows-bluecross-blueshield-erisa-suit-over-mental-health-parity-to-proceed",
-      "title": "Court Allows BlueCross BlueShield ERISA Suit Over Mental Health Parity To Proceed",
-      "origin": "reddit-link",
-      "host": "mondaq.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "mondaq.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.law360.com/washington/articles/2477870?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=section",
-      "title": "Moda Health Settles Wilderness Therapy Coverage Suit",
-      "origin": "reddit-link",
-      "host": "law360.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "law360.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.justjared.com/2026/05/14/king-charles-announces-plan-to-ban-conversion-therapy-in-england-wales/",
-      "title": "King Charles Announces Plan to Ban Conversion Therapy in England &amp; Wales",
-      "origin": "reddit-link",
-      "host": "justjared.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "justjared.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.nytimes.com/2026/05/15/magazine/rfk-jr-antidepressants-ssris-psychiatry.html?unlocked_article_code=1.ilA.FILg.ijbUzYJOkSuN&amp;smid=nytcore-ios-share",
-      "title": "The Strange Alliance Trying to Remake American Psychiatry (Gift Article)",
-      "origin": "reddit-link",
-      "host": "nytimes.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "nytimes.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://wamu.org/story/26/05/14/md-house-of-reformation-black-youth-graves/",
-      "title": "Maryland acknowledges a painful history as the state reckons with the graves of over 200 Black youth",
-      "origin": "reddit-link",
-      "host": "wamu.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "wamu.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.tennysoncenter.org/",
-      "title": "Tennyson Center is closing its youth residential center — again — after staff injuries, alleged SA of teen (Trigger Warning)",
-      "origin": "reddit-selftext",
-      "host": "tennysoncenter.org",
-      "facilityQuery": null,
-      "reason": "facility-own-website-inferred",
-      "meta": {
-        "host": "tennysoncenter.org",
-        "matchedAlias": "Tennyson Center",
-        "facility": "Tennyson Center for Children"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.change.org/See-trauma-not-misconduct",
-      "title": "Trauma informed training for welfare and juvenile professionals",
-      "origin": "reddit-selftext",
-      "host": "change.org",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:misconduct"
-        ],
-        "threshold": 3,
-        "host": "change.org"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.knoxfocus.com/archives/the-daily-focus/blue-ridge-yoga-zoo-knoxville-present-yoga-at-the-zoo-fundraiser-on-may-29/",
-      "title": "Blue Ridge Yoga -- does anyone know her from her WT days?",
-      "origin": "reddit-link",
-      "host": "knoxfocus.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "knoxfocus.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.courthousenews.com/businessman-asks-10th-circuit-to-revive-defamation-suit-over-netflix-troubled-teen-documentary/",
-      "title": "Businessman asks 10th Circuit to revive defamation suit over Netflix 'troubled teen' documentary",
-      "origin": "reddit-link",
-      "host": "courthousenews.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "courthousenews.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-link",
-      "host": "dispatch.com",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 2,
-        "reasons": [
-          "desc-kw:abuse",
-          "reddit-link-post"
-        ],
-        "threshold": 3,
-        "host": "dispatch.com"
-      }
-    },
-    {
-      "ts": "2026-05-20T15:51:41.491Z",
-      "link": "https://archive.is/2026.05.13-200845/https://www.dispatch.com/story/news/2026/05/13/ohio-youth-treatment-facilities-plagued-by-systemic-abuse-report-says/90057919007/",
-      "title": "Chokeholds and punches used in Ohio youth treatment homes, report finds (use link in post if you can’t get past the paywall)",
-      "origin": "reddit-selftext",
-      "host": "archive.is",
-      "facilityQuery": null,
-      "reason": "low-score",
-      "meta": {
-        "score": 1,
-        "reasons": [
-          "desc-kw:abuse"
-        ],
-        "threshold": 3,
-        "host": "archive.is"
       }
     }
   ]
