@@ -58,6 +58,17 @@ function kop_sm_norm($text) {
     return preg_replace('/\s+/', ' ', trim($t));
 }
 
+/**
+ * Case-insensitive search where dashes and underscores count as spaces on
+ * BOTH sides — so "blue ridge" finds "blue-ridge" and "blue_ridge" (and vice
+ * versa), matching how kop_sm_norm() treats file and folder names.
+ */
+function kop_sm_search_hit($haystack, $needle) {
+    $h = preg_replace('/\s+/', ' ', str_replace(['-', '_'], ' ', mb_strtolower((string)$haystack)));
+    $n = preg_replace('/\s+/', ' ', trim(str_replace(['-', '_'], ' ', mb_strtolower((string)$needle))));
+    return $n === '' || mb_strpos($h, $n) !== false;
+}
+
 /** Generic words that must not drive a folder match on their own. */
 function kop_sm_generic() {
     return ['the', 'a', 'an', 'of', 'and', 'for', 'at', 'in', 'inc', 'llc', 'co',
@@ -536,7 +547,7 @@ foreach ($lib as $a) {
         if ($folder_filter !== '' && $folder_filter !== 'uncat' && !in_array((int)$folder_filter, $all_in, true)) {
             continue;
         }
-        if ($q !== '' && mb_stripos($title . ' ' . $basename, $q) === false) {
+        if ($q !== '' && !kop_sm_search_hit($title . ' ' . $basename, $q)) {
             continue;
         }
     }
@@ -561,7 +572,7 @@ foreach ($lib as $a) {
                 continue;
             }
         }
-        if ($q !== '' && mb_stripos($title . ' ' . $basename, $q) === false) {
+        if ($q !== '' && !kop_sm_search_hit($title . ' ' . $basename, $q)) {
             continue;
         }
         $misfiled_total++;
@@ -861,9 +872,11 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
     var filter = document.getElementById('kop-filter');
     if (filter) {
         filter.addEventListener('input', function () {
-            var q = filter.value.toLowerCase().trim();
+            // Dashes/underscores count as spaces on both sides (same as the server search).
+            var sep = function (t) { return t.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' '); };
+            var q = sep(filter.value).trim();
             allRows.forEach(function (row) {
-                row.style.display = (!q || row.textContent.toLowerCase().indexOf(q) !== -1) ? '' : 'none';
+                row.style.display = (!q || sep(row.textContent).indexOf(q) !== -1) ? '' : 'none';
             });
         });
     }
