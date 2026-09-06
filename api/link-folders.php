@@ -24,6 +24,7 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/facility-aliases.php';
 
 if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
     http_response_code(403);
@@ -128,6 +129,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_lf_apply')
 // ---------------------------------------------------------------------------
 $links = $wpdb->get_results("SELECT folder_a, folder_b, note, created_at FROM {$links_tbl} ORDER BY created_at DESC");
 
+// Suggest pairs whose folder names are known names or aliases of one facility.
+$suggestions = [];
+$suggestion_keys = [];
+$linked_groups = [];
+$group_for = static function ($id) use (&$linked_groups, &$group_for) {
+    $id = (int)$id;
+    if (!isset($linked_groups[$id])) $linked_groups[$id] = $id;
+    if ($linked_groups[$id] !== $id) $linked_groups[$id] = $group_for($linked_groups[$id]);
+    return $linked_groups[$id];
+};
+$join_groups = static function ($a, $b) use (&$linked_groups, $group_for) {
+    $ga = $group_for($a);
+    $gb = $group_for($b);
+    if ($ga !== $gb) $linked_groups[$gb] = $ga;
+};
+foreach ($links as $link) $join_groups($link->folder_a, $link->folder_b);
+
+$folders_by_name = [];
+foreach ($folders as $folder) {
+    $key = kop_normalize_name_key((string)$folder->name);
+    if ($key !== '') $folders_by_name[$key][] = (int)$folder->id;
+}
+
+$known_name_scopes = static function (array $decoded, $unique_name) {
+    $scopes = [[(string)$unique_name]];
+    $scopes[0] = array_merge($scopes[0], kop_collect_self_names($decoded), kop_collect_match_aliases($decoded));
+    $nested = $decoded['data']['facilities'] ?? $decoded['facilities'] ?? [];
+    if (is_array($nested)) {
+        foreach ($nested as $facility) {
+            if (!is_array($facility)) continue;
+            $names = [];
+            $ident = $facility['identification'] ?? [];
+            if (!is_array($ident)) continue;
+            foreach (['name', 'currentName'] as $field) $names[] = (string)($ident[$field] ?? '');
+            foreach (['otherNames', 'pastNames', 'matchAliases'] as $field) {
+                if (is_array($ident[$field] ?? null)) $names = array_merge($names, $ident[$field]);
+            }
+            $scopes[] = $names;
+        }
+    }
+    return array_map(static function ($names) {
+        $out = [];
+        foreach ($names as $name) {
+            $name = trim((string)$name);
+            $key = kop_normalize_name_key($name);
+            if ($key !== '') $out[$key] = $name;
+        }
+        return $out;
+    }, $scopes);
+};
+
+$master_rows = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master");
+foreach ($master_rows as $row) {
+    $decoded = json_decode((string)$row->json_data, true);
+    if (!is_array($decoded)) continue;
+    foreach ($known_name_scopes($decoded, $row->unique_name) as $scope) {
+        $matched = [];
+        foreach ($scope as $key => $known_name) {
+            foreach ($folders_by_name[$key] ?? [] as $folder_id) $matched[$folder_id] = $known_name;
+        }
+        $matched_ids = array_keys($matched);
+        for ($i = 0; $i < count($matched_ids); $i++) {
+            for ($j = $i + 1; $j < count($matched_ids); $j++) {
+                $a = (int)$matched_ids[$i];
+                $b = (int)$matched_ids[$j];
+                if (kop_normalize_name_key((string)$by_id[$a]->name) === kop_normalize_name_key((string)$by_id[$b]->name)) continue;
+                if ($group_for($a) === $group_for($b)) continue;
+                $lo = min($a, $b);
+                $hi = max($a, $b);
+                $key = $lo . ':' . $hi;
+                if (isset($suggestion_keys[$key])) continue;
+                $suggestion_keys[$key] = true;
+                $suggestions[] = [
+                    'a' => $lo,
+                    'b' => $hi,
+                    'a_name' => $by_id[$lo]->name ?? ('folder #' . $lo),
+                    'b_name' => $by_id[$hi]->name ?? ('folder #' . $hi),
+                    'basis' => $row->unique_name,
+                    'matched_names' => [$matched[$a], $matched[$b]],
+                ];
+            }
+        }
+    }
+}
+usort($suggestions, static function ($left, $right) {
+    return strcasecmp($left['basis'], $right['basis']);
+});
+$suggestions = array_slice($suggestions, 0, 100);
+
 /** Total direct files across an equivalence group. */
 function kop_lf_group_count($ids, $fcounts) {
     $n = 0;
@@ -191,6 +281,24 @@ need a link. To manage which files are in which folder, use
             Link folders</button>
     </div>
 </form>
+
+<?php if ($suggestions): ?>
+<h2>Suggested links (<?php echo count($suggestions); ?>)</h2>
+<p class="help">These pairs match two known names or aliases for the same facility. Review each one before linking.</p>
+<table><thead><tr><th>Folders</th><th>Known as</th><th>Basis</th><th></th></tr></thead><tbody>
+<?php foreach ($suggestions as $suggestion): ?>
+    <tr>
+        <td><?php echo esc_html($suggestion['a_name']); ?> <span class="cnt">#<?php echo (int)$suggestion['a']; ?></span><br>
+            <?php echo esc_html($suggestion['b_name']); ?> <span class="cnt">#<?php echo (int)$suggestion['b']; ?></span></td>
+        <td class="group"><?php echo esc_html(implode(' / ', $suggestion['matched_names'])); ?></td>
+        <td><?php echo esc_html($suggestion['basis']); ?></td>
+        <td><button type="button" class="use-suggestion" data-a="<?php echo (int)$suggestion['a']; ?>"
+            data-b="<?php echo (int)$suggestion['b']; ?>" data-a-name="<?php echo esc_attr($suggestion['a_name']); ?>"
+            data-b-name="<?php echo esc_attr($suggestion['b_name']); ?>">Use</button></td>
+    </tr>
+<?php endforeach; ?>
+</tbody></table>
+<?php endif; ?>
 
 <h2>Existing links (<?php echo count($links); ?>)</h2>
 <?php if (!$links): ?>
@@ -261,6 +369,15 @@ need a link. To manage which files are in which folder, use
     }
     wirePicker('kop-lf-pick-a', 'kop-lf-a', 'kop-lf-name-a');
     wirePicker('kop-lf-pick-b', 'kop-lf-b', 'kop-lf-name-b');
+    document.querySelectorAll('.use-suggestion').forEach(function (button) {
+        button.addEventListener('click', function () {
+            document.getElementById('kop-lf-a').value = button.dataset.a;
+            document.getElementById('kop-lf-b').value = button.dataset.b;
+            document.getElementById('kop-lf-name-a').textContent = button.dataset.aName + ' (#' + button.dataset.a + ')';
+            document.getElementById('kop-lf-name-b').textContent = button.dataset.bName + ' (#' + button.dataset.b + ')';
+            document.getElementById('kop-lf-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+    });
 })();
 </script>
 </body></html>
