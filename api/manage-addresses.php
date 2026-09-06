@@ -294,21 +294,34 @@ function kop_ma_parse_address_string($raw_addr, $fallback_city = '', $fallback_s
 
 /**
  * Extract facility entries from a project row.
- * Handles operator projects with nested data.facilities[], standalone facilities,
- * and skips promoted identity stubs (__facility_ref).
+ *
+ * Row shapes in production (counts as of Sep 2026):
+ *   {__facility_ref, name, displayName, city, state, data: {facility: {...}}}
+ *       one row per facility, written by api/facility-promotion.php. These
+ *       are NOT stubs - they hold the facility's address and are the vast
+ *       majority of rows, so they must be scanned.
+ *   {operator, facilities: [...]} or {data: {operator, facilities: [...]}}
+ *       operator projects with nested campuses.
+ *   {address, locationDetails, ...}
+ *       bare facility payload.
  *
  * @param array|null $decoded
  * @param string $row_unique_name
- * @return array[] each: ['name' => string, 'facility' => array]
+ * @return array[] each: ['name' => string, 'facility' => array,
+ *                        'city' => row-level fallback city, 'state' => row-level fallback state]
  */
 function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
     if (!is_array($decoded)) {
         return [];
     }
 
-    // Skip promoted identity stubs
-    if (!empty($decoded['__facility_ref']) || !empty($decoded['data']['__facility_ref'])) {
-        return [];
+    // Promoted rows carry city/state on the wrapper; use them when the
+    // facility's own locationDetails are blank.
+    $fb_city = is_scalar($decoded['city'] ?? null) ? trim((string)$decoded['city']) : '';
+    $fb_state = is_scalar($decoded['state'] ?? null) ? trim((string)$decoded['state']) : '';
+    $default_name = is_scalar($decoded['displayName'] ?? null) ? trim((string)$decoded['displayName']) : '';
+    if ($default_name === '') {
+        $default_name = (string)$row_unique_name;
     }
 
     $d = isset($decoded['data']) && is_array($decoded['data']) ? $decoded['data'] : $decoded;
@@ -324,7 +337,7 @@ function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
     } elseif (isset($decoded['facilities']) && is_array($decoded['facilities'])) {
         $fac_list = $decoded['facilities'];
     } elseif (isset($d['facility']) && is_array($d['facility'])) {
-        $fac_list = $d['facility'];
+        $fac_list = [$d['facility']];
     } elseif (is_string($d['facilities'] ?? null)) {
         $parsed = json_decode($d['facilities'], true);
         if (is_array($parsed)) {
@@ -344,11 +357,13 @@ function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
                 $name = trim($f['name']);
             }
             if ($name === '') {
-                $name = (string)$row_unique_name;
+                $name = $default_name;
             }
             $results[] = [
                 'name'     => $name,
                 'facility' => $f,
+                'city'     => $fb_city,
+                'state'    => $fb_state,
             ];
         }
     } else {
@@ -361,11 +376,13 @@ function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
             $name = trim($d['name']);
         }
         if ($name === '') {
-            $name = (string)$row_unique_name;
+            $name = $default_name;
         }
         $results[] = [
             'name'     => $name,
             'facility' => $d,
+            'city'     => $fb_city,
+            'state'    => $fb_state,
         ];
     }
 
@@ -376,9 +393,11 @@ function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
  * Pull address entries out of one facility record array.
  * @param array $f Facility data dictionary
  * @param string $facility_name The resolved facility name
+ * @param string $fb_city Row-level city, used when the facility has none
+ * @param string $fb_state Row-level state, used when the facility has none
  * @return array[] each: [street, city, state, zip, country, role, from, to, facility]
  */
-function kop_ma_extract_entries($f, $facility_name) {
+function kop_ma_extract_entries($f, $facility_name, $fb_city = '', $fb_state = '') {
     if (!is_array($f)) {
         return [];
     }
@@ -443,6 +462,9 @@ function kop_ma_extract_entries($f, $facility_name) {
             if ($state === '') $state = trim($lm[2]);
         }
     }
+
+    if ($city === '') $city = trim((string)$fb_city);
+    if ($state === '') $state = trim((string)$fb_state);
 
     if ($street !== '') {
         $push($street, $city, $state, $zip, $country, 'current');
@@ -514,7 +536,7 @@ function kop_ma_scan() {
             $decoded = json_decode($row->json_data ?: '', true);
             $facilities = kop_ma_get_facilities_from_project($decoded, (string)$row->unique_name);
             foreach ($facilities as $item) {
-                foreach (kop_ma_extract_entries($item['facility'], $item['name']) as $e) {
+                foreach (kop_ma_extract_entries($item['facility'], $item['name'], $item['city'] ?? '', $item['state'] ?? '') as $e) {
                     $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
                     if ($key === '' || isset($dismissed_keys[$key])) {
                         continue;
