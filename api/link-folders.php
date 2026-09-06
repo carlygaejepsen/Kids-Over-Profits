@@ -189,6 +189,34 @@ $join_groups = static function ($a, $b) use (&$linked_groups, $group_for) {
 };
 foreach ($links as $link) $join_groups($link->folder_a, $link->folder_b);
 
+// Same-name folders (different parent trees) already merge in feeds via
+// kop_get_same_name_folder_ids(), so treat them as one group here too.
+// Otherwise linking "Alpha #10" to "Beta #30" leaves "Alpha #20" / "Beta #30"
+// unlinked and the same name pair reappears in the suggestion list.
+$same_name_ids = [];
+foreach ($folders as $folder) {
+    $same_key = strtolower(trim((string)$folder->name));
+    if ($same_key !== '') $same_name_ids[$same_key][] = (int)$folder->id;
+}
+foreach ($same_name_ids as $ids) {
+    for ($i = 1; $i < count($ids); $i++) $join_groups($ids[0], $ids[$i]);
+}
+
+// Dismissals are stored by ID pair, but a dismissal of one ID pair should
+// hide every same-name variant of that name pair as well.
+$dismissed_name_pairs = [];
+foreach ($dismissals as $dismissal) {
+    $da = (int)$dismissal->folder_a;
+    $db = (int)$dismissal->folder_b;
+    if (!isset($by_id[$da]) || !isset($by_id[$db])) continue;
+    $name_keys = [
+        kop_normalize_name_key((string)$by_id[$da]->name),
+        kop_normalize_name_key((string)$by_id[$db]->name),
+    ];
+    sort($name_keys, SORT_STRING);
+    $dismissed_name_pairs[implode(':', $name_keys)] = true;
+}
+
 $folders_by_name = [];
 foreach ($folders as $folder) {
     $key = kop_normalize_name_key((string)$folder->name);
@@ -252,6 +280,7 @@ foreach ($master_rows as $row) {
                 ];
                 sort($name_keys, SORT_STRING);
                 $key = implode(':', $name_keys);
+                if (isset($dismissed_name_pairs[$key])) continue;
                 if (isset($suggestion_keys[$key])) continue;
                 $suggestion_keys[$key] = true;
                 $suggestions[] = [
