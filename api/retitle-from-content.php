@@ -32,6 +32,7 @@
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/lawsuit-extraction-lib.php'; // kop_resolve_secret, kop_extract_document_text, kop_lawsuit_chunk_text
+require_once __DIR__ . '/facility-aliases.php';       // kop_collect_self_names, kop_collect_match_aliases
 
 if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
     http_response_code(403);
@@ -60,11 +61,17 @@ function kop_rtc_supported_mime($mime) {
 }
 
 /**
- * Title gives a human no idea what the document is: filename slugs from the
- * Google Drive restore, camera/scanner defaults, bare numbers, hash strings,
- * or near-empty strings.
+ * A title is "unclear" when you cannot tell from it which program the document
+ * belongs to. Two things make that true:
+ *   1. the title is noise (filename slug from the Google Drive restore, camera/
+ *      scanner default, bare number, hash) - kop_rtc_is_noise_title
+ *   2. the title reads fine but names no known program - kop_rtc_names_program
+ * Known programs = every facilities_master name and curated alias, plus every
+ * FileBird folder name (folders are named after programs). A title names a
+ * program when the normalized program name appears in it whole, or when every
+ * distinctive word of the program name appears in it.
  */
-function kop_rtc_is_unclear_title($title) {
+function kop_rtc_is_noise_title($title) {
     $t = trim((string) $title);
     if (mb_strlen($t) < 4) return true;
     // Sanitized-filename slug with the extension glued on (GDrive restore).
@@ -78,14 +85,209 @@ function kop_rtc_is_unclear_title($title) {
     return false;
 }
 
-/** SQL WHERE fragment mirroring kop_rtc_is_unclear_title; expects the posts table aliased as `p`. */
-function kop_rtc_unclear_where() {
-    return "(
-        CHAR_LENGTH(TRIM(p.post_title)) < 4
-        OR p.post_title REGEXP '-(pdf|jpg|jpeg|png|gif|webp|bmp|svg|doc|docx|xls|xlsx|ppt|pptx|txt|csv|mp3|mp4|mov|avi|zip)$'
-        OR p.post_title REGEXP '^(img|dsc|dscn|dcim|scan|image|photo|picture|screenshot|screen shot|document|doc|file|untitled|unnamed|download|attachment|new document|pdf)[ _-]*[0-9]*$'
-        OR p.post_title REGEXP '^[0-9[:space:]._()-]+$'
-    )";
+/** Lowercase, "&" to "and", letters/digits only, single-spaced. */
+function kop_rtc_norm($text) {
+    $t = mb_strtolower(html_entity_decode((string) $text, ENT_QUOTES));
+    $t = str_replace('&', ' and ', $t);
+    $t = str_replace(['-', '_', '.', '/'], ' ', $t);
+    $t = preg_replace('/[^a-z0-9\s]/u', ' ', $t);
+    return preg_replace('/\s+/', ' ', trim($t));
+}
+
+/** Words that never identify a program on their own. */
+function kop_rtc_generic_words() {
+    static $w = null;
+    if ($w === null) {
+        $w = array_flip(['the', 'a', 'an', 'of', 'and', 'for', 'at', 'in', 'on', 'by', 'inc', 'llc', 'co',
+            'lawsuits', 'lawsuit', 'handbooks', 'handbook', 'investigations', 'investigation',
+            'reports', 'report', 'records', 'record', 'photos', 'photo', 'docs', 'documents',
+            'document', 'corporate', 'staff', 'legislative', 'legislation', 'history',
+            'inspections', 'inspection', 'locations', 'location', 'programs', 'program',
+            'academy', 'academies', 'school', 'schools', 'ranch', 'center', 'centre', 'centers',
+            'camp', 'camps', 'residential', 'treatment', 'therapeutic', 'wilderness', 'behavioral',
+            'health', 'recovery', 'boarding', 'youth', 'teen', 'teens', 'boys', 'girls', 'kids',
+            'children', 'child', 'home', 'homes', 'house', 'group', 'international', 'new', 'old',
+            'misc', 'other', 'general', 'services', 'service', 'family', 'families', 'christian',
+            'north', 'south', 'east', 'west', 'county', 'state', 'department', 'dept', 'usa',
+            'united', 'states', 'america', 'american', 'national', 'institute', 'foundation',
+            'ministries', 'ministry', 'hospital', 'clinic', 'facility', 'facilities', 'unit',
+            'license', 'licensing', 'complaint', 'incident', 'news', 'article', 'letter', 'court',
+            'website', 'blog', 'juvenile', 'detention', 'justice', 'shelter', 'rtc', 'gro', 'ltd', 'corp',
+            'academic', 'education', 'educational', 'study', 'town', 'city', 'saint', 'san', 'santa',
+            // US states, countries, and other places that name a folder but not a program
+            'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut',
+            'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa',
+            'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan',
+            'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'hampshire',
+            'jersey', 'mexico', 'york', 'carolina', 'dakota', 'ohio', 'oklahoma', 'oregon',
+            'pennsylvania', 'rhode', 'tennessee', 'texas', 'utah', 'vermont', 'virginia',
+            'washington', 'wisconsin', 'wyoming', 'columbia', 'puerto', 'rico', 'canada',
+            'australia', 'argentina', 'jamaica', 'samoa', 'costa', 'rica', 'dominican', 'republic',
+            'england', 'britain', 'ireland', 'uk', 'europe', 'africa', 'asia']);
+    }
+    return $w;
+}
+
+/**
+ * Ordinary words that appear inside program names ("Canyon", "Lake", "Ridge",
+ * "Discovery") but are far too common to identify a program on their own.
+ * A name whose only distinctive word is one of these matches only in full.
+ */
+function kop_rtc_weak_words() {
+    static $w = null;
+    if ($w === null) {
+        $w = array_flip(['canyon', 'canyons', 'mountain', 'mountains', 'lake', 'lakes', 'ridge', 'valley',
+            'creek', 'river', 'spring', 'springs', 'hill', 'hills', 'pine', 'pines', 'oak', 'oaks',
+            'forest', 'park', 'view', 'point', 'harbor', 'bay', 'island', 'rock', 'star', 'sun',
+            'light', 'hope', 'life', 'path', 'way', 'bridge', 'crossroads', 'turning', 'summit',
+            'peak', 'meadow', 'meadows', 'grove', 'garden', 'gardens', 'wood', 'woods', 'field',
+            'fields', 'cross', 'heart', 'hearts', 'spirit', 'faith', 'grace', 'freedom', 'liberty',
+            'victory', 'journey', 'quest', 'vision', 'horizon', 'horizons', 'gateway', 'cornerstone',
+            'second', 'chance', 'first', 'step', 'steps', 'pathway', 'pathways', 'open', 'sky',
+            'prairie', 'desert', 'red', 'blue', 'green', 'white', 'black', 'gold', 'golden', 'silver',
+            'eagle', 'wolf', 'bear', 'lion', 'phoenix', 'discovery', 'compass', 'haven', 'focus',
+            'link', 'achievement', 'achieve', 'change', 'growth', 'success', 'promise', 'promising',
+            'fresh', 'start', 'beginnings', 'rising', 'bright', 'future', 'safe', 'harbour',
+            'anchor', 'shepherd', 'angel', 'angels', 'cedar', 'maple', 'willow', 'aspen', 'birch',
+            'elm', 'magnolia', 'sierra', 'alpine', 'mesa', 'ocean', 'coast', 'coastal', 'shore',
+            'north', 'south', 'east', 'west', 'central', 'lower', 'upper', 'grand', 'great',
+            'little', 'big', 'high', 'lone', 'twin', 'three', 'four', 'five', 'one', 'two',
+            'village', 'villages', 'community', 'communities', 'campus', 'lodge', 'manor',
+            'estate', 'estates', 'acres', 'farm', 'farms', 'trail', 'trails', 'sanctuary',
+            'refuge', 'retreat', 'mission', 'missions', 'alliance', 'network', 'partners',
+            'partnership', 'solutions', 'resources', 'options', 'choices', 'transitions',
+            'directions', 'connection', 'connections', 'insight', 'inspire', 'empower',
+            'excel', 'elevate', 'ascend', 'ascent', 'advance', 'evolve', 'thrive', 'restore',
+            'renew', 'redirect', 'reset', 'turnabout', 'turnaround', 'straight', 'right',
+            'true', 'real', 'pure', 'total', 'positive', 'higher', 'better', 'best', 'premier',
+            'quality', 'select', 'elite', 'royal', 'liberty', 'heritage', 'legacy', 'pioneer',
+            'frontier', 'outpost', 'base', 'station', 'harbor', 'porch', 'door', 'doors', 'window',
+            'roots', 'branches', 'seeds', 'bloom', 'blossom', 'nest', 'wings', 'flight', 'soar',
+            'reach', 'rise', 'shine', 'glow', 'spark', 'flame', 'fire', 'water', 'waters', 'rain',
+            'snow', 'storm', 'wind', 'earth', 'stone', 'stones', 'iron', 'steel', 'crystal',
+            'diamond', 'pearl', 'ruby', 'emerald', 'sapphire', 'jade', 'amber', 'ivy', 'rose',
+            'lily', 'daisy', 'lotus', 'olive', 'palm', 'redwood', 'sequoia', 'juniper', 'laurel',
+            'holly', 'heather', 'fern', 'moss', 'clover', 'sage', 'thistle', 'orchard', 'vineyard',
+            'ranch', 'ranches', 'trust', 'care', 'caring', 'healing', 'wellness', 'living',
+            'learning', 'leadership', 'leaders', 'character', 'honor', 'valor', 'courage', 'strength',
+            'unity', 'harmony', 'serenity', 'peace', 'joy', 'love', 'kindness', 'mercy', 'agape',
+            'cadet', 'cadets', 'corps', 'brigade', 'patrol', 'guard', 'guardian', 'guardians',
+            'shield', 'armor', 'fortress', 'castle', 'tower', 'towers', 'harbor', 'port', 'dock',
+            'grow', 'keys', 'key', 'main', 'plan', 'plans', 'project', 'projects', 'works', 'work',
+            // first names: "St. John's", "St. Charles", "Mary's Home"
+            'john', 'johns', 'charles', 'joseph', 'josephs', 'mary', 'marys', 'francis', 'anthony',
+            'paul', 'peter', 'james', 'michael', 'david', 'thomas', 'george', 'martin', 'vincent',
+            'patrick', 'luke', 'mark', 'matthew', 'andrew', 'elizabeth', 'anne', 'ann', 'catherine',
+            'agnes', 'teresa', 'therese', 'jude', 'joan', 'jose', 'juan', 'maria', 'jesus', 'christ']);
+    }
+    return $w;
+}
+
+/**
+ * Every known program name, normalized, with its distinctive tokens.
+ * Sources: facilities_master unique_name + curated aliases; FileBird folder
+ * names. Built once per request (a few thousand short strings).
+ *
+ * Each entry matches either in full (normalized name appears whole in the
+ * title) or by tokens: every distinctive word present. Token matching is only
+ * enabled when the name has two or more distinctive words, or one distinctive
+ * word that is not an ordinary English/place word ("Hyde", "CEDU", "Anasazi"
+ * yes; "Canyon", "Lake", "Discovery" no).
+ */
+function kop_rtc_program_names() {
+    static $names = null;
+    if ($names !== null) return $names;
+    // facilities_master json_data is several MB in total; keep the built list
+    // for 15 minutes so repeat page loads and every AJAX call skip the rebuild.
+    $cached = function_exists('get_transient') ? get_transient('kop_rtc_program_names') : false;
+    if (is_array($cached) && $cached) {
+        $names = $cached;
+        return $names;
+    }
+    global $wpdb;
+    $raw = [];
+
+    $fm = $wpdb->get_results("SELECT unique_name, json_data FROM facilities_master");
+    foreach ($fm ?: [] as $r) {
+        $raw[] = $r->unique_name;
+        $decoded = json_decode((string) $r->json_data, true);
+        foreach (kop_collect_self_names($decoded) as $n) $raw[] = $n;
+        foreach (kop_collect_match_aliases($decoded) as $n) $raw[] = $n;
+    }
+
+    $fbv = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $fbv)) === $fbv) {
+        foreach ($wpdb->get_col("SELECT name FROM {$fbv} WHERE type = 0") as $n) $raw[] = $n;
+    }
+
+    $generic = kop_rtc_generic_words();
+    $weak    = kop_rtc_weak_words();
+    $names = [];
+    $seen = [];
+    foreach ($raw as $n) {
+        $norm = kop_rtc_norm($n);
+        if ($norm === '' || strlen($norm) < 4 || isset($seen[$norm])) continue;
+        $words = explode(' ', $norm);
+        $tokens = array_values(array_filter($words, static function ($t) use ($generic) {
+            return strlen($t) >= 3 && !ctype_digit($t) && !isset($generic[$t]);
+        }));
+        // A lone generic/weak word ("Utah", "Website", "Discovery") is not a program name.
+        if (count($words) === 1 && (!$tokens || isset($weak[$words[0]]))) continue;
+        $seen[$norm] = true;
+        $by_tokens = count($tokens) >= 2
+            || (count($tokens) === 1 && strlen($tokens[0]) >= 4 && !isset($weak[$tokens[0]]));
+        $names[] = ['norm' => $norm, 'tokens' => $by_tokens ? $tokens : []];
+    }
+    if (function_exists('set_transient') && $names) set_transient('kop_rtc_program_names', $names, 15 * MINUTE_IN_SECONDS);
+    return $names;
+}
+
+/**
+ * Candidate lookup: name index keyed by the first word of the normalized name
+ * (a whole-name match needs that word present) and by the first distinctive
+ * token (a token match needs it present). A title then only has to be checked
+ * against names that share one of its words, instead of all of them.
+ */
+function kop_rtc_program_index() {
+    static $idx = null;
+    if ($idx !== null) return $idx;
+    $idx = [];
+    foreach (kop_rtc_program_names() as $i => $p) {
+        $first = strtok($p['norm'], ' ');
+        $idx[$first][] = $i;
+        if ($p['tokens'] && $p['tokens'][0] !== $first) $idx[$p['tokens'][0]][] = $i;
+    }
+    return $idx;
+}
+
+/** True when the title names a known program (whole name, or all its distinctive words). */
+function kop_rtc_names_program($title) {
+    $norm = kop_rtc_norm($title);
+    if ($norm === '') return false;
+    $t = ' ' . $norm . ' ';
+    $names = kop_rtc_program_names();
+    $idx = kop_rtc_program_index();
+    $checked = [];
+    foreach (array_unique(explode(' ', $norm)) as $w) {
+        if (!isset($idx[$w])) continue;
+        foreach ($idx[$w] as $i) {
+            if (isset($checked[$i])) continue;
+            $checked[$i] = true;
+            $p = $names[$i];
+            if (strpos($t, ' ' . $p['norm'] . ' ') !== false) return true;
+            if (!$p['tokens']) continue;
+            $all = true;
+            foreach ($p['tokens'] as $tok) {
+                if (strpos($t, ' ' . $tok . ' ') === false) { $all = false; break; }
+            }
+            if ($all) return true;
+        }
+    }
+    return false;
+}
+
+function kop_rtc_is_unclear_title($title) {
+    return kop_rtc_is_noise_title($title) || !kop_rtc_names_program($title);
 }
 
 // ---------------------------------------------------------------------------
@@ -512,29 +714,30 @@ $from = "{$wpdb->posts} AS p LEFT JOIN (
 ) AS pdf ON pdf.pdf_title = p.post_title";
 $image_pdf_where = "(p.post_mime_type NOT LIKE 'image/%' OR pdf.pdf_title IS NOT NULL)";
 
-$where = "p.post_type = 'attachment'";
-$where .= ' AND ' . $image_pdf_where;
-if ($scope === 'unclear') {
-    $where .= ' AND ' . kop_rtc_unclear_where();
-}
-$total_unclear = (int) $wpdb->get_var(
-    "SELECT COUNT(DISTINCT p.ID) FROM {$from} WHERE p.post_type = 'attachment' AND " . $image_pdf_where . ' AND ' . kop_rtc_unclear_where()
-);
-
+// "Unclear" depends on program-name matching, which SQL cannot express, so
+// every candidate row (a few thousand, three short columns) is pulled and
+// filtered in PHP; the first $SHOW unclear ones are rendered.
+$where = "p.post_type = 'attachment' AND " . $image_pdf_where;
 $sql = "SELECT p.ID, p.post_title, p.post_mime_type FROM {$from} WHERE {$where}";
 $params = [];
 if ($q !== '') {
     $sql .= ' AND p.post_title LIKE %s';
     $params[] = '%' . $wpdb->esc_like($q) . '%';
 }
-$sql .= ' ORDER BY p.post_title ASC LIMIT ' . (int) $SHOW;
+$sql .= ' ORDER BY p.post_title ASC';
 $rows = $params ? $wpdb->get_results($wpdb->prepare($sql, $params)) : $wpdb->get_results($sql);
 
-$preview = [];
+$total_unclear = 0;
+$listed = [];
 foreach ($rows as $r) {
-    if ($scope === 'unclear' && !kop_rtc_is_unclear_title($r->post_title)) {
-        continue; // PHP-side check is the authority; SQL is just the prefilter
-    }
+    $unclear = kop_rtc_is_unclear_title($r->post_title);
+    if ($unclear) $total_unclear++;
+    if ($scope === 'unclear' && !$unclear) continue;
+    if (count($listed) < $SHOW) $listed[] = $r;
+}
+
+$preview = [];
+foreach ($listed as $r) {
     $preview[] = [
         'id'        => (int) $r->ID,
         'title'     => $r->post_title,
@@ -581,8 +784,9 @@ td a { color: #000080; }
 <?php endif; ?>
 
 <div class="log">
-    <strong><?php echo $total_unclear; ?></strong> attachment(s) currently have unclear titles
-    (filename slugs, scanner defaults, bare numbers, hashes).
+    <strong><?php echo $total_unclear; ?></strong> attachment(s)<?php echo $q !== '' ? ' matching the filter' : ''; ?> have unclear titles:
+    the title does not say which program the document belongs to (no known facility name,
+    alias, or folder name in it), or it is a filename slug, scanner default, bare number, or hash.
     Showing up to <?php echo (int) $SHOW; ?> per pass.
     Workflow: tick rows, click <em>Suggest titles</em> to read each document and draft a title,
     edit anything you like, then <em>Apply</em>. Only the title changes &mdash; the file, its URL,
@@ -839,7 +1043,7 @@ td a { color: #000080; }
 })();
 </script>
 <?php else: ?>
-<p class="ok">No attachments match this view<?php echo $q !== '' ? ' (try clearing the filter)' : ($scope === 'unclear' ? ' - every title looks readable' : ''); ?>.</p>
+<p class="ok">No attachments match this view<?php echo $q !== '' ? ' (try clearing the filter)' : ($scope === 'unclear' ? ' - every title names a program' : ''); ?>.</p>
 <?php endif; ?>
 
 </body></html>
