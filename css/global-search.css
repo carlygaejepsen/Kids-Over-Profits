@@ -1,0 +1,243 @@
+/**
+ * KOP Global Search
+ * Floating trigger + full-screen overlay panel. Colors come from css/colors.css.
+ */
+
+/* Floating trigger, lower-left so it never collides with feature-scoped
+   bug-report links (which right-align inside their sections). The !important
+   flags defend against the theme's global button styling. */
+.kop-global-search__trigger,
+.kop-global-search__trigger:hover,
+.kop-global-search__trigger:focus,
+.kop-global-search__trigger:active {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 99980;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 16px;
+    background: var(--kop-midnight-blue, #000435) !important;
+    color: #fff !important;
+    border: 2px solid var(--kop-teal, #33A7B5) !important;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 4, 53, 0.35) !important;
+    font-size: 0.9rem !important;
+    font-weight: 600;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    line-height: 1 !important;
+    cursor: pointer;
+}
+
+.kop-global-search__trigger:hover,
+.kop-global-search__trigger:focus-visible {
+    background: var(--kop-teal, #33A7B5) !important;
+    outline: none;
+}
+
+.kop-global-search__trigger svg {
+    display: block;
+}
+
+/* Overlay + panel */
+.kop-global-search__overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99990;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 8vh 16px 16px;
+    background: rgba(0, 4, 53, 0.55);
+}
+
+.kop-global-search__overlay[hidden] {
+    display: none;
+}
+
+.kop-global-search__panel {
+    width: 100%;
+    max-width: 640px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--kop-sand, #F2EEDF);
+    border: 2px solid var(--kop-midnight-blue, #000435);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0, 4, 53, 0.35);
+    overflow: hidden;
+}
+
+.kop-global-search__input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--kop-midnight-blue, #000435);
+}
+
+.kop-global-search__input-icon {
+    display: inline-flex;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.kop-global-search__input,
+.kop-global-search__input:focus {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 12px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    box-shadow: none;
+}
+
+.kop-global-search__input:focus {
+    outline: 2px solid var(--kop-teal, #33A7B5);
+    outline-offset: 1px;
+}
+
+.kop-global-search__close {
+    flex-shrink: 0;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 1.7rem;
+    line-height: 1;
+    padding: 0 4px;
+    cursor: pointer;
+}
+
+.kop-global-search__status {
+    margin: 0;
+    padding: 14px 16px;
+    font-size: 0.92rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-global-search__status[hidden] {
+    display: none;
+}
+
+.kop-global-search__results {
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.kop-global-search__group-label {
+    margin: 10px 16px 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--kop-teal, #33A7B5);
+}
+
+.kop-global-search__result,
+.kop-global-search__result:hover,
+.kop-global-search__result:focus {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 16px;
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.kop-global-search__result:hover,
+.kop-global-search__result--active {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+.kop-global-search__result--active {
+    box-shadow: inset 3px 0 0 var(--kop-orange, #EF9034);
+}
+
+.kop-global-search__result-title {
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.kop-global-search__result-meta {
+    flex-shrink: 0;
+    max-width: 45%;
+    font-size: 0.8rem;
+    color: var(--kop-navy-blue, #000080);
+    opacity: 0.75;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.kop-global-search__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--kop-teal, #33A7B5);
+    background: var(--kop-white, #FFFFFF);
+}
+
+.kop-global-search__all-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-global-search__all-link[hidden] {
+    display: none;
+}
+
+.kop-global-search__hints {
+    font-size: 0.75rem;
+    color: var(--kop-navy-blue, #000080);
+    opacity: 0.6;
+    white-space: nowrap;
+}
+
+.kop-global-search--open {
+    overflow: hidden;
+}
+
+@media (max-width: 640px) {
+    .kop-global-search__trigger,
+    .kop-global-search__trigger:hover,
+    .kop-global-search__trigger:focus,
+    .kop-global-search__trigger:active {
+        padding: 10px 12px;
+    }
+
+    .kop-global-search__trigger-text {
+        display: none;
+    }
+
+    .kop-global-search__overlay {
+        padding: 0;
+        align-items: stretch;
+    }
+
+    .kop-global-search__panel {
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+    }
+
+    .kop-global-search__hints {
+        display: none;
+    }
+
+    .kop-global-search__result-meta {
+        display: none;
+    }
+}

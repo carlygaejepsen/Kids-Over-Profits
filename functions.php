@@ -39,3 +39,6 @@ require_once get_stylesheet_directory() . '/inc/widgets.php';
 
 // Ajax Search Lite live-dropdown integration (KOP database results)
 require_once get_stylesheet_directory() . '/inc/ajax-search-lite.php';
+
+// Global search bar REST endpoint (site-wide search widget backend)
+require_once get_stylesheet_directory() . '/inc/global-search.php';

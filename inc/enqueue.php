@@ -313,6 +313,22 @@ function kop_add_navigation_error_suppressor() {
 // add_action('wp_head', 'kop_add_navigation_error_suppressor', 0); // Priority 0 - very first thing
 
 /**
+ * Disable the Kadence sticky-header "shrink" option site-wide.
+ *
+ * Root cause of the repeated "Cannot read properties of null (reading
+ * 'getAttribute')" errors from Kadence's navigation.min.js: this site's
+ * desktop header has no main row, so the sticky element contains no
+ * .site-main-header-inner-wrap. Kadence's shrink code (initStickyHeader)
+ * calls e.querySelector('.site-main-header-inner-wrap').getAttribute(...)
+ * without a null check whenever data-shrink="true", so every scroll/resize
+ * event throws and the sticky header never engages (verified against
+ * Kadence 1.5.2, still unfixed upstream). Forcing the theme mod off renders
+ * data-shrink="false", which skips the broken code path entirely; the
+ * commented-out workarounds above only masked the symptom.
+ */
+add_filter('theme_mod_header_sticky_shrink', '__return_false');
+
+/**
  * Load facilities data for TTI program index page.
  * NOTE: This function is now disabled for pages using the page-tti-program-index.php template,
  * as they now use the full data form instead of the read-only display.
@@ -1809,6 +1825,53 @@ function kop_enqueue_bug_reporter() {
     );
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_bug_reporter');
+
+/**
+ * Global search bar: floating button + overlay, loaded site-wide on the front
+ * end. One box queries every database at once (master tables, wiki, news,
+ * inspections, documents, addresses, pages) via the kop/v1/global-search REST
+ * endpoint (inc/global-search.php). Opens with the button, "/" or Ctrl+K.
+ * Exclude a page via:
+ *   add_filter('kop_global_search_enabled', fn($on) => !is_page('slug') && $on);
+ */
+function kop_enqueue_global_search() {
+    if (is_embed() || !apply_filters('kop_global_search_enabled', true)) {
+        return;
+    }
+
+    $css_rel = '/css/global-search.css';
+    $css_path = get_stylesheet_directory() . $css_rel;
+    if (file_exists($css_path)) {
+        wp_enqueue_style(
+            'kop-global-search-style',
+            get_stylesheet_directory_uri() . $css_rel,
+            array('kop-colors'),
+            filemtime($css_path)
+        );
+    }
+
+    $js_rel = '/js/global-search.js';
+    $js_path = get_stylesheet_directory() . $js_rel;
+    wp_enqueue_script(
+        'kop-global-search-script',
+        get_stylesheet_directory_uri() . $js_rel,
+        array(),
+        file_exists($js_path) ? filemtime($js_path) : time(),
+        true
+    );
+    wp_localize_script(
+        'kop-global-search-script',
+        'KOP_GLOBAL_SEARCH',
+        array(
+            'endpoint' => esc_url_raw(rest_url('kop/v1/global-search')),
+            // Lets the endpoint recognize logged-in admins (adds the
+            // suggested-edits group); harmless for anonymous visitors.
+            'nonce'    => wp_create_nonce('wp_rest'),
+            'minChars' => 2,
+        )
+    );
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_global_search');
 
 /**
  * Enqueue the reusable FileBird folder browser (modal). Idempotent — safe to
