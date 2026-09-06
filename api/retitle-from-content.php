@@ -78,13 +78,13 @@ function kop_rtc_is_unclear_title($title) {
     return false;
 }
 
-/** SQL WHERE fragment mirroring kop_rtc_is_unclear_title, for the count/list. */
+/** SQL WHERE fragment mirroring kop_rtc_is_unclear_title; expects the posts table aliased as `p`. */
 function kop_rtc_unclear_where() {
     return "(
-        CHAR_LENGTH(TRIM(post_title)) < 4
-        OR post_title REGEXP '-(pdf|jpg|jpeg|png|gif|webp|bmp|svg|doc|docx|xls|xlsx|ppt|pptx|txt|csv|mp3|mp4|mov|avi|zip)$'
-        OR post_title REGEXP '^(img|dsc|dscn|dcim|scan|image|photo|picture|screenshot|screen shot|document|doc|file|untitled|unnamed|download|attachment|new document|pdf)[ _-]*[0-9]*$'
-        OR post_title REGEXP '^[0-9[:space:]._()-]+$'
+        CHAR_LENGTH(TRIM(p.post_title)) < 4
+        OR p.post_title REGEXP '-(pdf|jpg|jpeg|png|gif|webp|bmp|svg|doc|docx|xls|xlsx|ppt|pptx|txt|csv|mp3|mp4|mov|avi|zip)$'
+        OR p.post_title REGEXP '^(img|dsc|dscn|dcim|scan|image|photo|picture|screenshot|screen shot|document|doc|file|untitled|unnamed|download|attachment|new document|pdf)[ _-]*[0-9]*$'
+        OR p.post_title REGEXP '^[0-9[:space:]._()-]+$'
     )";
 }
 
@@ -353,14 +353,33 @@ function kop_rtc_file_pair_ids($att_id) {
     return ($has_pdf && $has_image) ? array_values(array_unique($ids)) : [(int) $att_id];
 }
 
+/**
+ * Every distinct PDF attachment title, loaded once and keyed for O(1) lookup.
+ * post_title has no index, so per-row "is there a PDF with this title" queries
+ * each scan the whole posts table; one SELECT DISTINCT is far cheaper.
+ * Keys are lower-cased and right-trimmed to approximate MySQL's
+ * case-insensitive, PAD SPACE collation.
+ */
+function kop_rtc_pdf_title_set() {
+    static $set = null;
+    if ($set === null) {
+        global $wpdb;
+        $set = [];
+        $titles = $wpdb->get_col(
+            "SELECT DISTINCT post_title FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf'"
+        );
+        foreach ($titles as $t) {
+            $set[mb_strtolower(rtrim((string) $t))] = true;
+        }
+    }
+    return $set;
+}
+
+/** Images are only auto-titled when a PDF already carries the exact same title. */
 function kop_rtc_has_same_title_pdf($att_id) {
     if (strpos((string) get_post_mime_type($att_id), 'image/') !== 0) return true;
-    global $wpdb;
-    $title = get_post_field('post_title', $att_id, 'raw');
-    return (bool) $wpdb->get_var($wpdb->prepare(
-        "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf' AND post_title = %s LIMIT 1",
-        $title
-    ));
+    $title = mb_strtolower(rtrim((string) get_post_field('post_title', $att_id, 'raw')));
+    return isset(kop_rtc_pdf_title_set()[$title]);
 }
 
 // ---------------------------------------------------------------------------
@@ -483,12 +502,15 @@ global $wpdb;
 
 $scope = (($_GET['scope'] ?? '') === 'all') ? 'all' : 'unclear';
 $q     = trim((string) ($_GET['q'] ?? ''));
-$image_pdf_where = "(p.post_mime_type NOT LIKE 'image/%' OR EXISTS (
-    SELECT 1 FROM {$wpdb->posts} AS pdf
-    WHERE pdf.post_type = 'attachment'
-      AND pdf.post_mime_type = 'application/pdf'
-    AND pdf.post_title = p.post_title
-))";
+// Images are listed only when a PDF shares their exact title. A correlated
+// EXISTS per row re-scanned the unindexed posts table for every image and the
+// page timed out; a derived table of distinct PDF titles is materialised once
+// (and auto-keyed by MySQL/MariaDB) so the join is a single pass.
+$from = "{$wpdb->posts} AS p LEFT JOIN (
+    SELECT DISTINCT post_title AS pdf_title FROM {$wpdb->posts}
+    WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf'
+) AS pdf ON pdf.pdf_title = p.post_title";
+$image_pdf_where = "(p.post_mime_type NOT LIKE 'image/%' OR pdf.pdf_title IS NOT NULL)";
 
 $where = "p.post_type = 'attachment'";
 $where .= ' AND ' . $image_pdf_where;
@@ -496,16 +518,16 @@ if ($scope === 'unclear') {
     $where .= ' AND ' . kop_rtc_unclear_where();
 }
 $total_unclear = (int) $wpdb->get_var(
-    "SELECT COUNT(*) FROM {$wpdb->posts} AS p WHERE p.post_type = 'attachment' AND " . $image_pdf_where . ' AND ' . kop_rtc_unclear_where()
+    "SELECT COUNT(DISTINCT p.ID) FROM {$from} WHERE p.post_type = 'attachment' AND " . $image_pdf_where . ' AND ' . kop_rtc_unclear_where()
 );
 
-$sql = "SELECT p.ID, p.post_title, p.post_mime_type FROM {$wpdb->posts} AS p WHERE {$where}";
+$sql = "SELECT p.ID, p.post_title, p.post_mime_type FROM {$from} WHERE {$where}";
 $params = [];
 if ($q !== '') {
-    $sql .= ' AND post_title LIKE %s';
+    $sql .= ' AND p.post_title LIKE %s';
     $params[] = '%' . $wpdb->esc_like($q) . '%';
 }
-$sql .= ' ORDER BY post_title ASC LIMIT ' . (int) $SHOW;
+$sql .= ' ORDER BY p.post_title ASC LIMIT ' . (int) $SHOW;
 $rows = $params ? $wpdb->get_results($wpdb->prepare($sql, $params)) : $wpdb->get_results($sql);
 
 $preview = [];
