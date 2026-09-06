@@ -46,6 +46,10 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
     exit;
 }
 
+if (!function_exists('kop_get_equivalent_folder_ids') && file_exists(__DIR__ . '/../inc/database.php')) {
+    require_once __DIR__ . '/../inc/database.php';
+}
+
 global $wpdb;
 $fbv = $wpdb->prefix . 'fbv';
 $addr_tbl = $wpdb->prefix . 'kop_addresses';
@@ -179,91 +183,346 @@ function kop_ma_norm_key($street, $city, $state, $zip) {
 }
 
 // ---------------------------------------------------------------------------
-// Extraction: every street address in facilities_master
+// Extraction: every street address in facilities_master & locations_master
 // ---------------------------------------------------------------------------
 
 /**
- * Pull address entries out of one facility's decoded json_data.
- * @return array[] each: [street, city, state, zip, country, role, from, to]
+ * Resolve table name with optional WordPress prefix.
  */
-function kop_ma_extract_entries($decoded) {
+function kop_ma_resolve_table_name($base) {
+    global $wpdb;
+    $candidates = [];
+    if (!empty($wpdb->prefix)) {
+        $candidates[] = $wpdb->prefix . $base;
+    }
+    $candidates[] = $base;
+    foreach ($candidates as $cand) {
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $cand)) === $cand) {
+            return $cand;
+        }
+    }
+    return $candidates[0];
+}
+
+/**
+ * Parse a free-form address string into street, city, state, zip.
+ * Respects fallback values from structured fields if already present.
+ */
+function kop_ma_parse_address_string($raw_addr, $fallback_city = '', $fallback_state = '', $fallback_zip = '') {
+    $street = trim((string)$raw_addr);
+    $city   = trim((string)$fallback_city);
+    $state  = trim((string)$fallback_state);
+    $zip    = trim((string)$fallback_zip);
+
+    // Strip trailing newlines, periods, commas, spaces
+    $street = trim($street, " \t\n\r\0\x0B.,");
+
+    if ($street === '') {
+        return ['street' => '', 'city' => $city, 'state' => $state, 'zip' => $zip];
+    }
+
+    // 1. Extract 5-digit zip (or ZIP+4) at the end: e.g. "83847" or "32083-2519"
+    if (preg_match('/\b(\d{5}(?:-\d{4})?)\.?\s*$/', $street, $zm)) {
+        if ($zip === '') {
+            $zip = $zm[1];
+        }
+        $street = trim(substr($street, 0, -strlen($zm[0])));
+        $street = rtrim($street, " \t\n\r\0\x0B,.");
+    }
+
+    // 2. Extract US state abbreviation or full name at the end
+    $us_states = 'AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY|PR|DC|Alabama|Alaska|Arizona|Arkansas|California|Colorado|Connecticut|Delaware|Florida|Georgia|Hawaii|Idaho|Illinois|Indiana|Iowa|Kansas|Kentucky|Louisiana|Maine|Maryland|Massachusetts|Michigan|Minnesota|Mississippi|Missouri|Montana|Nebraska|Nevada|New\s+Hampshire|New\s+Jersey|New\s+Mexico|New\s+York|North\s+Carolina|North\s+Dakota|Ohio|Oklahoma|Oregon|Pennsylvania|Rhode\s+Island|South\s+Carolina|South\s+Dakota|Tennessee|Texas|Utah|Vermont|Virginia|Washington|West\s+Virginia|Wisconsin|Wyoming';
+
+    if (preg_match('/(?:,\s*|\s+)(' . $us_states . ')\s*$/i', $street, $sm, PREG_OFFSET_CAPTURE)) {
+        if ($state === '') {
+            $state = $sm[1][0];
+        }
+        $street = trim(substr($street, 0, $sm[0][1]));
+        $street = rtrim($street, " \t\n\r\0\x0B,.");
+
+        // 3. Now the end of the remaining street string might be ", City":
+        if (preg_match('/,\s*([^,]+)$/', $street, $cm, PREG_OFFSET_CAPTURE)) {
+            if ($city === '') {
+                $city = trim($cm[1][0]);
+            }
+            $street = trim(substr($street, 0, $cm[0][1]));
+        }
+    } elseif ($state === '') {
+        // Fallback: 2-letter state preceded by comma e.g. ", XX"
+        if (preg_match('/,\s*([A-Za-z]{2})\s*$/', $street, $sm, PREG_OFFSET_CAPTURE)) {
+            $state = $sm[1][0];
+            $street = trim(substr($street, 0, $sm[0][1]));
+            $street = rtrim($street, " \t\n\r\0\x0B,.");
+            if (preg_match('/,\s*([^,]+)$/', $street, $cm, PREG_OFFSET_CAPTURE)) {
+                if ($city === '') {
+                    $city = trim($cm[1][0]);
+                }
+                $street = trim(substr($street, 0, $cm[0][1]));
+            }
+        }
+    }
+
+    return [
+        'street' => trim($street, " \t\n\r\0\x0B,."),
+        'city'   => trim($city, " \t\n\r\0\x0B,."),
+        'state'  => trim($state, " \t\n\r\0\x0B,."),
+        'zip'    => trim($zip, " \t\n\r\0\x0B,."),
+    ];
+}
+
+/**
+ * Extract facility entries from a project row.
+ * Handles operator projects with nested data.facilities[], standalone facilities,
+ * and skips promoted identity stubs (__facility_ref).
+ *
+ * @param array|null $decoded
+ * @param string $row_unique_name
+ * @return array[] each: ['name' => string, 'facility' => array]
+ */
+function kop_ma_get_facilities_from_project($decoded, $row_unique_name) {
     if (!is_array($decoded)) {
         return [];
     }
+
+    // Skip promoted identity stubs
+    if (!empty($decoded['__facility_ref']) || !empty($decoded['data']['__facility_ref'])) {
+        return [];
+    }
+
     $d = isset($decoded['data']) && is_array($decoded['data']) ? $decoded['data'] : $decoded;
-    $ld = isset($d['locationDetails']) && is_array($d['locationDetails']) ? $d['locationDetails'] : [];
+    if (isset($decoded['project']['data']) && is_array($decoded['project']['data'])) {
+        $d = $decoded['project']['data'];
+    } elseif (isset($decoded['project']) && is_array($decoded['project'])) {
+        $d = $decoded['project'];
+    }
+
+    $fac_list = [];
+    if (isset($d['facilities']) && is_array($d['facilities'])) {
+        $fac_list = $d['facilities'];
+    } elseif (isset($decoded['facilities']) && is_array($decoded['facilities'])) {
+        $fac_list = $decoded['facilities'];
+    } elseif (isset($d['facility']) && is_array($d['facility'])) {
+        $fac_list = $d['facility'];
+    } elseif (is_string($d['facilities'] ?? null)) {
+        $parsed = json_decode($d['facilities'], true);
+        if (is_array($parsed)) {
+            $fac_list = $parsed;
+        }
+    }
+
+    $results = [];
+    if (!empty($fac_list)) {
+        foreach ($fac_list as $f) {
+            if (!is_array($f)) continue;
+            $name = '';
+            if (isset($f['identification']) && is_array($f['identification'])) {
+                $name = trim((string)($f['identification']['name'] ?? ($f['identification']['currentName'] ?? '')));
+            }
+            if ($name === '' && isset($f['name']) && is_string($f['name'])) {
+                $name = trim($f['name']);
+            }
+            if ($name === '') {
+                $name = (string)$row_unique_name;
+            }
+            $results[] = [
+                'name'     => $name,
+                'facility' => $f,
+            ];
+        }
+    } else {
+        // Single facility / standalone record
+        $name = '';
+        if (isset($d['identification']) && is_array($d['identification'])) {
+            $name = trim((string)($d['identification']['name'] ?? ($d['identification']['currentName'] ?? '')));
+        }
+        if ($name === '' && isset($d['name']) && is_string($d['name'])) {
+            $name = trim($d['name']);
+        }
+        if ($name === '') {
+            $name = (string)$row_unique_name;
+        }
+        $results[] = [
+            'name'     => $name,
+            'facility' => $d,
+        ];
+    }
+
+    return $results;
+}
+
+/**
+ * Pull address entries out of one facility record array.
+ * @param array $f Facility data dictionary
+ * @param string $facility_name The resolved facility name
+ * @return array[] each: [street, city, state, zip, country, role, from, to, facility]
+ */
+function kop_ma_extract_entries($f, $facility_name) {
+    if (!is_array($f)) {
+        return [];
+    }
+
+    $ld = isset($f['locationDetails']) && is_array($f['locationDetails']) ? $f['locationDetails'] : [];
+    $parts = isset($f['addressParts']) && is_array($f['addressParts']) ? $f['addressParts'] : [];
 
     $entries = [];
-    $push = static function ($street, $city, $state, $zip, $country, $role, $from = '', $to = '') use (&$entries) {
+    $push = static function ($street, $city, $state, $zip, $country, $role, $from = '', $to = '') use (&$entries, $facility_name) {
         $street = trim((string)$street);
         if ($street === '') {
             return;
         }
         $entries[] = [
-            'street' => $street,
-            'city' => trim((string)$city),
-            'state' => trim((string)$state),
-            'zip' => trim((string)$zip),
-            'country' => trim((string)$country),
-            'role' => $role,
-            'from' => trim((string)$from),
-            'to' => trim((string)$to),
+            'street'   => $street,
+            'city'     => trim((string)$city),
+            'state'    => trim((string)$state),
+            'zip'      => trim((string)$zip),
+            'country'  => trim((string)$country),
+            'role'     => $role,
+            'from'     => trim((string)$from),
+            'to'       => trim((string)$to),
+            'facility' => $facility_name,
         ];
     };
 
-    $push(
-        $d['address'] ?? '',
-        $ld['city'] ?? '', $ld['state'] ?? '', $ld['zip'] ?? '', $ld['country'] ?? '',
-        'current'
-    );
-    foreach ((array)($ld['additionalLocations'] ?? []) as $loc) {
-        if (is_array($loc)) {
-            $push($loc['address'] ?? '', $loc['city'] ?? '', $loc['state'] ?? '', $loc['zip'] ?? '', '', 'additional');
+    // --- 1. Current / Primary address ---
+    $city = '';
+    $state = '';
+    $zip = '';
+    $country = '';
+    $street = '';
+
+    if (!empty($ld['city'])) $city = trim((string)$ld['city']);
+    if (!empty($ld['state'])) $state = trim((string)$ld['state']);
+    if (!empty($ld['zip'])) $zip = trim((string)$ld['zip']);
+    if (!empty($ld['country'])) $country = trim((string)$ld['country']);
+
+    if (!empty($parts['street'])) $street = trim((string)$parts['street']);
+    if ($city === '' && !empty($parts['city'])) $city = trim((string)$parts['city']);
+    if ($state === '' && !empty($parts['state'])) $state = trim((string)$parts['state']);
+    if ($zip === '' && !empty($parts['zip'])) $zip = trim((string)$parts['zip']);
+
+    $raw_addr = $f['address'] ?? ($ld['address'] ?? ($ld['street'] ?? ''));
+    if (is_array($raw_addr)) {
+        if ($street === '' && !empty($raw_addr['street'])) $street = trim((string)$raw_addr['street']);
+        if ($city === '' && !empty($raw_addr['city'])) $city = trim((string)$raw_addr['city']);
+        if ($state === '' && !empty($raw_addr['state'])) $state = trim((string)$raw_addr['state']);
+        if ($zip === '' && !empty($raw_addr['zip'])) $zip = trim((string)$raw_addr['zip']);
+        if ($country === '' && !empty($raw_addr['country'])) $country = trim((string)$raw_addr['country']);
+    } elseif (is_string($raw_addr) && trim($raw_addr) !== '') {
+        $parsed = kop_ma_parse_address_string($raw_addr, $city, $state, $zip);
+        if ($street === '') $street = $parsed['street'];
+        if ($city === '') $city = $parsed['city'];
+        if ($state === '') $state = $parsed['state'];
+        if ($zip === '') $zip = $parsed['zip'];
+    }
+
+    if (($city === '' || $state === '') && !empty($f['location']) && is_string($f['location'])) {
+        if (preg_match('/^\s*([^,]+?)\s*,\s*([A-Za-z .]{2,})\s*$/u', trim($f['location']), $lm)) {
+            if ($city === '') $city = trim($lm[1]);
+            if ($state === '') $state = trim($lm[2]);
         }
     }
+
+    if ($street !== '') {
+        $push($street, $city, $state, $zip, $country, 'current');
+    }
+
+    // --- 2. Additional Locations ---
+    foreach ((array)($ld['additionalLocations'] ?? []) as $loc) {
+        if (is_array($loc)) {
+            $a_street = $loc['address'] ?? ($loc['street'] ?? '');
+            $parsed = kop_ma_parse_address_string(
+                $a_street,
+                $loc['city'] ?? '',
+                $loc['state'] ?? '',
+                $loc['zip'] ?? ''
+            );
+            $push($parsed['street'] ?: $a_street, $parsed['city'], $parsed['state'], $parsed['zip'], '', 'additional');
+        } elseif (is_string($loc) && trim($loc) !== '') {
+            $parsed = kop_ma_parse_address_string($loc);
+            $push($parsed['street'], $parsed['city'], $parsed['state'], $parsed['zip'], '', 'additional');
+        }
+    }
+
+    // --- 3. Former Locations ---
     foreach ((array)($ld['formerLocations'] ?? []) as $loc) {
         if (is_array($loc)) {
+            $f_street = $loc['address'] ?? ($loc['street'] ?? '');
+            $parsed = kop_ma_parse_address_string(
+                $f_street,
+                $loc['city'] ?? '',
+                $loc['state'] ?? '',
+                $loc['zip'] ?? ''
+            );
             $push(
-                $loc['address'] ?? '', $loc['city'] ?? '', $loc['state'] ?? '', $loc['zip'] ?? '', '',
-                'former', $loc['fromYear'] ?? '', $loc['toYear'] ?? ''
+                $parsed['street'] ?: $f_street,
+                $parsed['city'],
+                $parsed['state'],
+                $parsed['zip'],
+                '',
+                'former',
+                $loc['fromYear'] ?? '',
+                $loc['toYear'] ?? ''
             );
         }
     }
+
     return $entries;
 }
 
 /**
- * Scan facilities_master and group every address entry by normalized key.
+ * Scan facilities_master and locations_master, group every address entry by normalized key.
  * @return array norm_key => ['display' => entry, 'members' => [facility-entry...]]
  */
 function kop_ma_scan() {
     global $wpdb;
 
     $groups = [];
-    $rows = $wpdb->get_results('SELECT unique_name, json_data FROM facilities_master');
-    foreach ((array)$rows as $row) {
-        $decoded = json_decode($row->json_data ?: '', true);
-        foreach (kop_ma_extract_entries($decoded) as $e) {
-            $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
-            if ($key === '') {
-                continue;
-            }
-            if (!isset($groups[$key])) {
-                $groups[$key] = ['display' => $e, 'members' => []];
-            } else {
-                // Prefer the most complete display entry for the group.
-                $cur = $groups[$key]['display'];
-                $score = static function ($x) {
-                    return strlen($x['street']) + ($x['city'] !== '' ? 20 : 0)
-                        + ($x['zip'] !== '' ? 20 : 0) + ($x['state'] !== '' ? 10 : 0);
-                };
-                if ($score($e) > $score($cur)) {
-                    $groups[$key]['display'] = $e;
-                }
-            }
-            $groups[$key]['members'][] = array_merge($e, ['facility' => (string)$row->unique_name]);
+    $tables = [];
+    foreach (['facilities_master', 'locations_master'] as $base) {
+        $tbl = kop_ma_resolve_table_name($base);
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tbl)) === $tbl) {
+            $tables[] = $tbl;
         }
     }
+
+    foreach ($tables as $tbl) {
+        $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$tbl}");
+        foreach ((array)$rows as $row) {
+            $decoded = json_decode($row->json_data ?: '', true);
+            $facilities = kop_ma_get_facilities_from_project($decoded, (string)$row->unique_name);
+            foreach ($facilities as $item) {
+                foreach (kop_ma_extract_entries($item['facility'], $item['name']) as $e) {
+                    $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
+                    if ($key === '') {
+                        continue;
+                    }
+                    if (!isset($groups[$key])) {
+                        $groups[$key] = ['display' => $e, 'members' => []];
+                    } else {
+                        // Prefer the most complete display entry for the group.
+                        $cur = $groups[$key]['display'];
+                        $score = static function ($x) {
+                            return strlen($x['street']) + ($x['city'] !== '' ? 20 : 0)
+                                + ($x['zip'] !== '' ? 20 : 0) + ($x['state'] !== '' ? 10 : 0);
+                        };
+                        if ($score($e) > $score($cur)) {
+                            $groups[$key]['display'] = $e;
+                        }
+                    }
+
+                    // Deduplicate identical stint across tables (same facility, role, from, to)
+                    $m_key = $e['facility'] . '|' . $e['role'] . '|' . $e['from'] . '|' . $e['to'];
+                    $groups[$key]['members'][$m_key] = $e;
+                }
+            }
+        }
+    }
+
+    // Convert members from keyed map to indexed array
+    foreach ($groups as $k => &$g) {
+        $g['members'] = array_values($g['members']);
+    }
+    unset($g);
 
     uasort($groups, static function ($a, $b) {
         $sa = kop_ma_norm_state($a['display']['state']);
@@ -316,7 +575,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         $wpdb->query("DELETE FROM {$fa_tbl}");
         $memberships = 0;
         foreach ($groups as $key => $g) {
-            $aid = $existing[$key];
+            $aid = $existing[$key] ?? 0;
+            if (!$aid) {
+                continue;
+            }
             foreach ($g['members'] as $m) {
                 $ins = $wpdb->query($wpdb->prepare(
                     "INSERT IGNORE INTO {$fa_tbl}
@@ -546,7 +808,7 @@ a { color: #000080; }
 .pathsm { font-size: 0.76rem; color: #555; }
 </style></head><body>
 <h1>Manage Addresses <small style="font-weight:400">&mdash; physical-campus identity for facilities</small></h1>
-<p class="help">Every street address in facilities_master (main, additional, and former locations)
+<p class="help">Every street address in facilities_master and locations_master (main, additional, and former locations)
 gets a stable <strong>address ID</strong>. Facilities that occupied the same campus under different
 names then link together by address instead of tribal knowledge. Address identity is separate from
 name aliases on purpose &mdash; a shared address only <em>suggests</em> that folders belong together;
