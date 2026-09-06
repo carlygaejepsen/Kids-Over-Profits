@@ -692,6 +692,24 @@ details.operator-section[open] .facility-card {
     margin-top: 3px;
 }
 
+/* Deaths-on-record strip: navy accent rule so it reads as a third kind of
+   information next to the teal news strip and the orange lawsuit strip. */
+.facility-memorial-strip {
+    border-left-color: #000080;       /* navy */
+}
+
+.facility-memorial-strip .facility-latest-news-label {
+    color: #000435 !important;        /* midnight */
+}
+
+.facility-memorial-strip .facility-latest-news-title {
+    text-decoration: none;            /* plain text, not a link */
+}
+
+.facility-memorial-item {
+    border-left: 3px solid #000080;
+}
+
 .facility-detail-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;

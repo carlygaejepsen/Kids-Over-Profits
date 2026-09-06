@@ -472,6 +472,20 @@
     font-weight: 600;
 }
 
+/* Per-facility lawsuit and memorial lists reuse the news item layout;
+   a coloured edge tells the three panels apart. */
+.facility-lawsuit-item {
+    border-left: 3px solid var(--kop-orange, #EF9034);
+}
+
+.facility-memorial-item {
+    border-left: 3px solid var(--kop-navy, #000080);
+}
+
+.facility-memorial-item .facility-news-title {
+    color: var(--kop-navy, #000080);
+}
+
 /* Expand toggles */
 .facility-card.is-expandable {
     cursor: default;

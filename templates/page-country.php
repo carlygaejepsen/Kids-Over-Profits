@@ -115,6 +115,7 @@ window.countryPageConfig = {
     ?>
 };
 </script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/country-page.js?v=<?php echo time(); ?>"></script>
 
 <?php get_footer(); ?>

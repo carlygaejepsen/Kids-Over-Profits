@@ -1,10 +1,18 @@
+/**
+ * Country hub page script.
+ *
+ * GENERATED from js/state-page.js: the country REST route returns the same
+ * facility/news/lawsuit/legislation shape as the state route, so the two pages
+ * share one renderer. Edit state-page.js, then regenerate this file with the
+ * substitution list in scripts/generate-country-page.py. Do not hand-edit.
+ */
 (function() {
     'use strict';
 
     const config = window.countryPageConfig;
-    // Compat shim: rendering helpers below read config.stateName / config.stateSlug
-    // (forked from state-page.js). Mirror the country fields so we don't have to
-    // touch every reference.
+    // Compat shim: this file is generated from state-page.js (see the header
+    // comment) and its helpers read config.stateName / config.stateSlug.
+    // Mirror the country fields so the shared code needs no changes.
     if (config) {
         if (!config.stateName && config.countryName) config.stateName = config.countryName;
         if (!config.stateSlug && config.countrySlug) config.stateSlug = config.countrySlug;
@@ -25,16 +33,6 @@
         return String(value).replace(/[&<>"']/g, ch => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
         })[ch]);
-    };
-
-    const renderRawFacilityData = facility => {
-        let json = '';
-        try {
-            json = JSON.stringify(facility, null, 2);
-        } catch (error) {
-            return '';
-        }
-        return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtml(json)}</pre></details>` : '';
     };
 
     const formatDate = value => {
@@ -161,6 +159,17 @@
         return hasJunkPlaceholderName(facility);
     };
 
+    // CCL batch rows carry source_url pointing at the CA transparency API,
+    // which returns raw JSON if opened in a browser. Rewrite those to the
+    // human-readable facility-detail page; leave any other URL untouched.
+    const toCaFacilityDetailUrl = (sourceUrl, facilityNumber) => {
+        const url = normalizeText(sourceUrl);
+        if (!/transparencyapi/i.test(url)) return url;
+        const num = normalizeText(facilityNumber).replace(/\D+/g, '')
+            || (url.match(/(\d{6,})/) || [])[1] || '';
+        return num ? `https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/${num}` : '';
+    };
+
     const normalizeCaliforniaDetailedReport = raw => {
         if (!raw || typeof raw !== 'object') return null;
 
@@ -184,7 +193,10 @@
             narrative: normalizeText(raw.narrative || categories.narrative || raw.raw_content),
             investigation_findings: normalizeText(raw.investigation_findings || categories.investigation_findings),
             deficiencies,
-            source_url: normalizeText(raw.source_url || categories.source_url || raw.report_url),
+            source_url: toCaFacilityDetailUrl(
+                raw.source_url || categories.source_url || raw.report_url,
+                raw.facility_number || categories.facility_number
+            ),
         };
     };
 
@@ -367,20 +379,36 @@
 
         target.inspections = mergeInspectionLists(target.inspections, source.inspections);
 
-        if (!normalizeText(target.address) && normalizeText(source.address)) {
-            target.address = source.address;
+        // Every other field: fill empty scalars, union lists, merge keyed maps,
+        // so no detail is lost when a loose record folds into a named one.
+        const skip = new Set(['inspection_count', 'violation_count', 'latest_inspection_date', 'inspections', 'name', 'in_master', 'in_inspections']);
+        Object.keys(source).forEach(key => {
+            if (skip.has(key)) return;
+            const sv = source[key];
+            const tv = target[key];
+            if (sv === null || sv === undefined || sv === '') return;
+            if (Array.isArray(sv)) {
+                if (!sv.length) return;
+                const merged = Array.isArray(tv) ? [...tv] : [];
+                sv.forEach(item => {
+                    const dup = (item && typeof item === 'object')
+                        ? merged.some(have => JSON.stringify(have) === JSON.stringify(item))
+                        : merged.some(have => normalizeText(have).toLowerCase() === normalizeText(item).toLowerCase());
+                    if (!dup) merged.push(item);
+                });
+                target[key] = merged;
+            } else if (typeof sv === 'object') {
+                if (!Object.keys(sv).length) return;
+                target[key] = (tv && typeof tv === 'object' && !Array.isArray(tv)) ? { ...sv, ...tv } : sv;
+            } else if (tv === null || tv === undefined || tv === '' || (key === 'status' && String(tv).toLowerCase() === 'unknown')) {
+                target[key] = sv;
+            }
+        });
+        if (Array.isArray(target.addresses) && normalizeText(target.address) && !target.addresses.includes(target.address)) {
+            target.addresses.unshift(target.address);
         }
-        if (!normalizeText(target.operator_name) && normalizeText(source.operator_name)) {
-            target.operator_name = source.operator_name;
-        }
-        if (!normalizeText(target.project_name) && normalizeText(source.project_name)) {
-            target.project_name = source.project_name;
-        }
-        if (!normalizeText(target.type) && normalizeText(source.type)) {
-            target.type = source.type;
-        }
-        if (!normalizeText(target.operating_period) && normalizeText(source.operating_period)) {
-            target.operating_period = source.operating_period;
+        if (!normalizeText(target.address) && Array.isArray(target.addresses) && target.addresses.length) {
+            target.address = target.addresses[0];
         }
     };
 
@@ -521,12 +549,16 @@
     };
 
     const folderContentCache = new Map();
-    const fetchFolderContent = async folderId => {
+    // mergeSameName=true asks the backend to also include any duplicate folders
+    // that share this folder's name (used for facility document views, where the
+    // same program is often filed under several organizational trees).
+    const fetchFolderContent = async (folderId, { mergeSameName = false } = {}) => {
         if (!folderId || !config.folderContentUrl) return [];
-        const cacheKey = String(folderId);
+        const cacheKey = `${folderId}|${mergeSameName ? 'name' : ''}`;
         if (folderContentCache.has(cacheKey)) return folderContentCache.get(cacheKey);
         try {
-            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}`, { credentials: 'same-origin' });
+            const mergeParam = mergeSameName ? '&merge=name' : '';
+            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}${mergeParam}`, { credentials: 'same-origin' });
             const data = await res.json();
             const files = Array.isArray(data) ? data : [];
             folderContentCache.set(cacheKey, files);
@@ -534,6 +566,28 @@
         } catch (err) {
             console.warn('Folder content load failed', err);
             return [];
+        }
+    };
+
+    // Facility documents fetched as a nested tree ({files, subfolders:[{name,
+    // files, subfolders}]}) so the subfolder structure is preserved in the UI.
+    const facilityTreeCache = new Map();
+    const fetchFacilityDocTree = async folderId => {
+        const empty = { files: [], subfolders: [] };
+        if (!folderId || !config.folderContentUrl) return empty;
+        const key = String(folderId);
+        if (facilityTreeCache.has(key)) return facilityTreeCache.get(key);
+        try {
+            const res = await fetch(`${config.folderContentUrl}?id=${encodeURIComponent(folderId)}&merge=name&format=tree`, { credentials: 'same-origin' });
+            const data = await res.json();
+            const tree = (data && typeof data === 'object' && !Array.isArray(data))
+                ? { files: Array.isArray(data.files) ? data.files : [], subfolders: Array.isArray(data.subfolders) ? data.subfolders : [] }
+                : { files: Array.isArray(data) ? data : [], subfolders: [] };
+            facilityTreeCache.set(key, tree);
+            return tree;
+        } catch (err) {
+            console.warn('Facility doc tree load failed', err);
+            return empty;
         }
     };
 
@@ -558,6 +612,41 @@
                     </a>
                 </li>`;
         }).join('')}</ul>`;
+    };
+
+    // Total file count for a subfolder node, including nested subfolders.
+    const countTreeFiles = node => {
+        let total = Array.isArray(node && node.files) ? node.files.length : 0;
+        if (Array.isArray(node && node.subfolders)) {
+            node.subfolders.forEach(sf => { total += countTreeFiles(sf); });
+        }
+        return total;
+    };
+
+    // Render a facility doc tree: the root's own files, then each subfolder as a
+    // collapsible <details> section so visitors can drill down, recursing into
+    // deeper subfolders.
+    const renderSubfolders = subs => {
+        if (!Array.isArray(subs) || subs.length === 0) return '';
+        return subs.map(sf => {
+            const name = escapeHtml(sf.name || 'Folder');
+            const files = Array.isArray(sf.files) ? sf.files : [];
+            const count = countTreeFiles(sf);
+            const inner = (files.length ? renderFileGrid(files) : '') + renderSubfolders(sf.subfolders);
+            return `<details class="state-doc-subfolder">
+                        <summary class="state-doc-subfolder-title">📁 ${name} <span class="state-doc-subfolder-count">(${count})</span></summary>
+                        <div class="state-doc-subfolder-content">${inner}</div>
+                    </details>`;
+        }).join('');
+    };
+
+    const renderDocTree = tree => {
+        const files = Array.isArray(tree && tree.files) ? tree.files : [];
+        const subs = Array.isArray(tree && tree.subfolders) ? tree.subfolders : [];
+        if (files.length === 0 && subs.length === 0) {
+            return '<p class="docs-empty">No documents in this folder.</p>';
+        }
+        return (files.length ? renderFileGrid(files) : '') + renderSubfolders(subs);
     };
 
     const wireDocToggles = container => {
@@ -789,6 +878,9 @@
                 cats.licensee ? `<strong>Licensee:</strong> ${escapeHtml(cats.licensee)}` : '',
                 `<strong>Type:</strong> ${typeStr}`,
                 `<strong>Date:</strong> ${escapeHtml(dateStr)}`,
+                cats.status ? `<strong>Status:</strong> ${escapeHtml(cats.status)}` : '',
+                cats.under_appeal ? `<strong>Under appeal:</strong> ${escapeHtml(cats.under_appeal)}` : '',
+                insp.inspected_by ? `<strong>Inspected by:</strong> ${escapeHtml(insp.inspected_by)} authority (out-of-state)` : '',
                 cats.visit_date ? `<strong>Visit:</strong> ${escapeHtml(cats.visit_date)}` : '',
                 cats.form_number ? `<strong>Form:</strong> ${escapeHtml(cats.form_number)}` : '',
                 cats.census ? `<strong>Census:</strong> ${escapeHtml(cats.census)}` : '',
@@ -957,11 +1049,15 @@
 
         const isClosed = ['closed', 'shut down', 'shutdown', 'defunct'].includes(status);
         const rangeMatch = period.match(/(\d{4})\s*[-–—]\s*(\d{4})/);
-        const startOnlyMatch = !rangeMatch ? period.match(/(\d{4})/) : null;
+        // End-only form from the API ("–2010"): a leading dash before a single
+        // year means we only know the closure year, not the start year.
+        const endOnlyMatch = !rangeMatch ? period.match(/^\s*[-–—]\s*(\d{4})/) : null;
+        const startOnlyMatch = (!rangeMatch && !endOnlyMatch) ? period.match(/(\d{4})/) : null;
 
         if (isClosed) {
             // Closed: show the date range (never "Est.").
             if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+            if (endOnlyMatch) return `–${endOnlyMatch[1]}`;
             if (startOnlyMatch) return `${startOnlyMatch[1]}–`;
             return period;
         }
@@ -969,8 +1065,217 @@
         // Open: "Est. YYYY". If somehow a range was captured for an open facility,
         // prefer the range so we don't lose info.
         if (rangeMatch) return `${rangeMatch[1]}–${rangeMatch[2]}`;
+        if (endOnlyMatch) return `–${endOnlyMatch[1]}`;
         if (startOnlyMatch) return `Est. ${startOnlyMatch[1]}`;
         return period;
+    };
+
+    // Render a single list item: strings pass through; objects pull out the
+    // common shape {name, role, employer, organization, url, label}.
+    const renderListEntry = item => {
+        if (item == null) return '';
+        if (typeof item === 'string' || typeof item === 'number') {
+            return escapeHtml(String(item));
+        }
+        if (typeof item !== 'object') return '';
+
+        const url = item.url || item.link || item.href || '';
+        const label = item.label || item.name || item.title || item.text || url;
+        const role = item.role || '';
+        const employer = item.employer || item.organization || '';
+
+        let core;
+        if (url) {
+            core = `<a href="${escapeHtml(String(url))}" target="_blank" rel="noopener">${escapeHtml(String(label || url))}</a>`;
+        } else {
+            core = escapeHtml(String(label || ''));
+        }
+        const extras = [];
+        if (role) extras.push(escapeHtml(String(role)));
+        if (employer) extras.push(escapeHtml(String(employer)));
+        return extras.length ? `${core} <span class="detail-sub">— ${extras.join(' · ')}</span>` : core;
+    };
+
+    // Render a detail sub-section if the array has at least one displayable item.
+    const renderListSection = (label, items) => {
+        if (!Array.isArray(items) || !items.length) return '';
+        const lis = items
+            .map(renderListEntry)
+            .filter(s => s && s.trim() !== '')
+            .map(s => `<li>${s}</li>`)
+            .join('');
+        if (!lis) return '';
+        return `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${lis}</ul></div>`;
+    };
+
+    const renderScalarRow = (label, value) => {
+        if (value === null || value === undefined) return '';
+        const text = String(value).trim();
+        if (!text) return '';
+        return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
+    };
+
+    const renderCompleteValue = (value, path, depth = 0) => {
+        if (value === null || value === undefined || value === '') return '';
+        const label = path || 'Value';
+        if (typeof value !== 'object') {
+            return renderScalarRow(label, value);
+        }
+        if (depth > 8) return renderScalarRow(label, '[nested data]');
+
+        if (Array.isArray(value)) {
+            const items = value.map((item, index) => renderCompleteValue(item, `${label} ${index + 1}`, depth + 1)).filter(Boolean);
+            return items.length ? `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul></div>` : '';
+        }
+
+        const rows = Object.entries(value)
+            .map(([key, child]) => renderCompleteValue(child, path ? `${path} → ${formatFieldLabel(key)}` : formatFieldLabel(key), depth + 1))
+            .filter(Boolean);
+        return rows.join('');
+    };
+
+    const renderCompleteSourceData = rawRecords => {
+        if (!Array.isArray(rawRecords) || !rawRecords.length) return '';
+        const records = rawRecords.map((record, index) => {
+            if (!record || typeof record !== 'object' || !record.data || typeof record.data !== 'object') return '';
+            const source = record.project_name ? ` (${record.project_name})` : '';
+            return `<div class="facility-source-record"><strong>Source record${rawRecords.length > 1 ? ` ${index + 1}` : ''}${escapeHtml(source)}:</strong>${renderCompleteValue(record.data, '', 0)}</div>`;
+        }).filter(Boolean);
+        if (!records.length) return '';
+        return `<div class="detail-row detail-complete-data"><strong>All source data</strong>${records.join('')}</div>`;
+    };
+
+    // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"
+    const humanizeFlagKey = key => String(key)
+        .replace(/^has(?=[A-Z0-9])/, '')
+        .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+        .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+        .trim()
+        .replace(/^./, c => c.toUpperCase());
+
+    // Checkbox-group sections (treatment types, philosophy, critical incidents)
+    // arrive as arrays of raw has* keys — render them as chips like resources.
+    const renderFlagChips = (label, keys, chipClass) => {
+        if (!Array.isArray(keys) || !keys.length) return '';
+        const chips = keys
+            .map(k => `<span class="${chipClass || 'resource-chip'}">${escapeHtml(humanizeFlagKey(k))}</span>`)
+            .join('');
+        return `<div class="detail-row detail-resources"><strong>${escapeHtml(label)}:</strong> ${chips}</div>`;
+    };
+
+    // "has*" resource flag -> human label
+    const RESOURCE_FLAG_LABELS = {
+        hasNews: 'News articles', hasPressReleases: 'Press releases',
+        hasInspections: 'Inspection reports', hasStateReports: 'State reports',
+        hasRegulatoryFilings: 'Regulatory filings', hasLawsuits: 'Lawsuits',
+        hasPoliceReports: 'Police reports', hasArticlesOfOrganization: 'Articles of organization',
+        hasPropertyRecords: 'Property records', hasPromotionalMaterials: 'Promotional materials',
+        hasEnrollmentDocuments: 'Enrollment documents', hasResearch: 'Academic research',
+        hasFinancial: 'Financial reports', hasStudent: 'Student / resident manual',
+        hasStaff: 'Staff manual', hasParent: 'Parent manual',
+        hasWebsite: 'Archived website', hasNATSAP: 'NATSAP profile',
+        hasSurvivorStories: 'Survivor stories', hasOther: 'Other documentation',
+        hasVideo: 'Video', hasAudio: 'Audio', hasSocialMedia: 'Social media',
+    };
+
+    // locationDetails.formerLocations: {state, city, address, zip, fromYear, toYear}
+    const renderFormerLocations = items => {
+        if (!Array.isArray(items) || !items.length) return '';
+        const lis = items.map(fl => {
+            if (!fl || typeof fl !== 'object') return '';
+            const stateZip = [fl.state, fl.zip].map(v => String(v || '').trim()).filter(Boolean).join(' ');
+            const place = [fl.address, fl.city, stateZip].map(v => String(v || '').trim()).filter(Boolean).join(', ');
+            const from = String(fl.fromYear || '').trim();
+            const to = String(fl.toYear || '').trim();
+            const years = (from && to) ? `${from}–${to}` : from ? `from ${from}` : to ? `until ${to}` : '';
+            if (!place && !years) return '';
+            return `<li>${escapeHtml(place || 'Location not recorded')}${years ? ` <span class="detail-sub">(${escapeHtml(years)})</span>` : ''}</li>`;
+        }).filter(Boolean);
+        if (!lis.length) return '';
+        return `<div class="detail-row detail-list"><strong>Former locations:</strong><ul>${lis.join('')}</ul></div>`;
+    };
+
+    const LAWSUIT_STATUS_LABELS = {
+        filed: 'Filed', in_progress: 'In progress', settled: 'Settled',
+        dismissed: 'Dismissed', ruling: 'Ruling issued', appeal: 'On appeal',
+        closed: 'Closed', unknown: ''
+    };
+
+    // Lawsuits attached to the tile by the server (linked_lawsuits[]): the
+    // lawsuit_facility_links join plus published cases naming this facility.
+    const renderFacilityLawsuitList = items => {
+        if (!Array.isArray(items) || !items.length) {
+            return '<p class="docs-empty">No lawsuits on record for this facility.</p>';
+        }
+        return `<ul class="facility-news-list facility-lawsuit-list">${items.map(l => {
+            const meta = [];
+            if (l.case_number) meta.push(escapeHtml(l.case_number));
+            if (l.court) meta.push(escapeHtml(l.court));
+            if (l.jurisdiction) meta.push(escapeHtml(l.jurisdiction));
+            if (l.filing_date) meta.push(`Filed ${escapeHtml(formatDate(l.filing_date))}`);
+            if (LAWSUIT_STATUS_LABELS[l.status]) meta.push(escapeHtml(LAWSUIT_STATUS_LABELS[l.status]));
+            if (l.settlement_amount) meta.push(`Settlement: ${escapeHtml(l.settlement_amount)}`);
+            const sources = (Array.isArray(l.source_urls) ? l.source_urls : []).filter(Boolean);
+            return `<li class="facility-news-item facility-lawsuit-item">
+                <span class="facility-news-title">${escapeHtml(l.case_name || '(unnamed case)')}</span>
+                ${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}
+                ${l.summary ? `<p class="facility-news-summary">${escapeHtml(l.summary)}</p>` : ''}
+                ${l.outcome ? `<p class="facility-news-summary"><strong>Outcome:</strong> ${escapeHtml(l.outcome)}</p>` : ''}
+                ${sources.length ? `<div class="facility-news-meta">${sources.map((u, i) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">Source${sources.length > 1 ? ` ${i + 1}` : ''}</a>`).join(' &middot; ')}</div>` : ''}
+            </li>`;
+        }).join('')}</ul>`;
+    };
+
+    // memorial_victims.date_precision says how much of the date is known.
+    const formatMemorialDate = (value, precision) => {
+        if (!value) return '';
+        const ts = Date.parse(value);
+        if (isNaN(ts)) return value;
+        const d = new Date(ts);
+        if (precision === 'year') return String(d.getUTCFullYear());
+        if (precision === 'unknown') return `around ${d.getUTCFullYear()}`;
+        if (precision === 'month') return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', timeZone: 'UTC' });
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    };
+
+    // Deaths recorded against this program in the memorial (memorials[]).
+    const renderFacilityMemorialList = items => {
+        if (!Array.isArray(items) || !items.length) {
+            return '<p class="docs-empty">No deaths on record for this facility.</p>';
+        }
+        return `<ul class="facility-news-list facility-memorial-list">${items.map(m => {
+            const meta = [];
+            if (m.age !== null && m.age !== undefined && m.age !== '') meta.push(`Age ${escapeHtml(String(m.age))}`);
+            const when = formatMemorialDate(m.date_of_death, m.date_precision);
+            if (when) meta.push(escapeHtml(when));
+            if (m.location) meta.push(escapeHtml(m.location));
+            const links = [];
+            if (m.source_url) links.push(`<a href="${escapeHtml(m.source_url)}" target="_blank" rel="noopener">${escapeHtml(m.source_name || 'Source')}</a>`);
+            if (m.kop_url) links.push(`<a href="${escapeHtml(m.kop_url)}">On Kids Over Profits</a>`);
+            return `<li class="facility-news-item facility-memorial-item">
+                <span class="facility-news-title">${escapeHtml(m.name || 'Name withheld')}</span>
+                ${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}
+                ${m.cause_of_death ? `<p class="facility-news-summary">${escapeHtml(m.cause_of_death)}</p>` : ''}
+                ${links.length ? `<div class="facility-news-meta">${links.join(' &middot; ')}</div>` : ''}
+            </li>`;
+        }).join('')}</ul>`;
+    };
+
+    // Union of the name-matched state news and the id-linked news the server
+    // attaches (news_facility_links), deduped by article id / URL, newest first.
+    const mergeNewsItems = (...lists) => {
+        const seen = new Set();
+        const out = [];
+        lists.forEach(list => {
+            (Array.isArray(list) ? list : []).forEach(n => {
+                if (!n) return;
+                const key = n.id ? `id:${n.id}` : (n.article_url ? `url:${String(n.article_url).toLowerCase()}` : '');
+                if (key && seen.has(key)) return;
+                if (key) seen.add(key);
+                out.push(n);
+            });
+        });
+        return out.sort((a, b) => (Date.parse(b.publication_date || '') || 0) - (Date.parse(a.publication_date || '') || 0));
     };
 
     const facilityCardHtml = facility => {
@@ -978,12 +1283,125 @@
 
         // Stats / metadata that go into the collapsible "Details" panel.
         const detailRows = [];
+
+        // Identification & names
+        if (facility.current_name && facility.current_name !== facility.name) {
+            detailRows.push(renderScalarRow('Current name', facility.current_name));
+        }
+        detailRows.push(renderListSection('Other names', facility.other_names));
+        detailRows.push(renderListSection('Past names', facility.past_names));
+
+        // Operator / ownership
         if (facility.operator_name) {
             detailRows.push(`<div class="detail-row"><strong>Operator:</strong> ${escapeHtml(facility.operator_name)}</div>`);
         }
+        detailRows.push(renderListSection('Other operators', facility.other_operators));
+        if (facility.current_owner) {
+            detailRows.push(renderScalarRow('Current owner', facility.current_owner));
+        }
+        detailRows.push(renderListSection('Current owners', facility.current_owners));
+        detailRows.push(renderListSection('Past owners', facility.past_owners));
+
+        // Facility details
         if (facility.type) {
             detailRows.push(`<div class="detail-row"><strong>Type:</strong> ${escapeHtml(facility.type)}</div>`);
         }
+        const ageMin = facility.age_min;
+        const ageMax = facility.age_max;
+        if (ageMin != null || ageMax != null) {
+            const ageText = (ageMin != null && ageMax != null) ? `${ageMin}–${ageMax}`
+                : (ageMin != null) ? `${ageMin}+` : `up to ${ageMax}`;
+            detailRows.push(renderScalarRow('Age range', ageText));
+        }
+        if (facility.gender) detailRows.push(renderScalarRow('Gender', facility.gender));
+        if (facility.country) detailRows.push(renderScalarRow('Country', facility.country));
+
+        // Licensing record (inspection_facilities): what the licensing authority
+        // lists for this program beyond its reports.
+        // Utah and Texas store the license number in program_name; a name that
+        // is all digits is labelled as the number it is.
+        const licensedName = String(facility.licensed_program_name || '').trim();
+        detailRows.push(renderScalarRow(/^[\d\s-]+$/.test(licensedName) ? 'License number' : 'Licensed program name', licensedName));
+        detailRows.push(renderScalarRow('Executive director (licensing record)', facility.executive_director));
+        detailRows.push(renderScalarRow('Phone', facility.phone));
+        detailRows.push(renderScalarRow('License expires', facility.license_expiration));
+        detailRows.push(renderScalarRow('Relicensing visit', facility.relicense_visit_date));
+        detailRows.push(renderScalarRow('License status', facility.licensing_action));
+        if (facility.inspected_by) {
+            detailRows.push(renderScalarRow('Inspected by', `${facility.inspected_by} licensing authority (out of state)`));
+        }
+
+        // Where it operated before moving (locationDetails.formerLocations).
+        detailRows.push(renderFormerLocations(facility.former_locations));
+
+        // Operating period notes (the headline yearLabel renders elsewhere)
+        detailRows.push(renderListSection('Operational notes', facility.operating_notes));
+
+        // Staff
+        detailRows.push(renderListSection('Administrator', facility.administrator));
+        detailRows.push(renderListSection('Notable staff', facility.notable_staff));
+        detailRows.push(renderListSection('Past TTI employment', facility.past_tti_jobs));
+
+        // Links & referrals
+        detailRows.push(renderListSection('Profile links', facility.profile_links));
+        detailRows.push(renderListSection('Known referrers', facility.known_referrers));
+
+        // Credentials
+        detailRows.push(renderListSection('Current accreditations', facility.accreditations_current));
+        detailRows.push(renderListSection('Past accreditations', facility.accreditations_past));
+        detailRows.push(renderListSection('Memberships', facility.memberships));
+        detailRows.push(renderListSection('Certifications', facility.certifications));
+        detailRows.push(renderListSection('Licensing', facility.licensing));
+
+        // Program characteristics (checkbox groups from the admin form)
+        detailRows.push(renderFlagChips('Treatment types', facility.treatment_types));
+        detailRows.push(renderFlagChips('Philosophy', facility.philosophy_flags));
+        detailRows.push(renderFlagChips('Critical incidents', facility.critical_incidents, 'resource-chip incident-chip'));
+
+        // Resources: turn the populated has* flags into chips, plus any details strings
+        if (Array.isArray(facility.resource_flags) && facility.resource_flags.length) {
+            const chips = facility.resource_flags
+                .map(f => RESOURCE_FLAG_LABELS[f] || f.replace(/^has/, ''))
+                .map(label => `<span class="resource-chip">${escapeHtml(label)}</span>`)
+                .join('');
+            detailRows.push(`<div class="detail-row detail-resources"><strong>Resources on file:</strong> ${chips}</div>`);
+        }
+        const rd = facility.resource_details || {};
+        if (rd.newsDetails)          detailRows.push(renderScalarRow('News details', rd.newsDetails));
+        if (rd.pressReleasesDetails) detailRows.push(renderScalarRow('Press release details', rd.pressReleasesDetails));
+        if (Array.isArray(rd.notes)) detailRows.push(renderListSection('Resource notes', rd.notes));
+        else if (rd.notes)           detailRows.push(renderScalarRow('Resource notes', rd.notes));
+        detailRows.push(renderListSection('Custom resources', rd.customResources));
+
+        // Facility-level notes
+        detailRows.push(renderListSection('Notes', facility.notes));
+
+        // Per-field research notes, keyed by dotted field path
+        // (e.g. "treatmentTypes.hasABA" -> "Treatment Types — ABA").
+        const fieldNotes = facility.field_notes;
+        if (fieldNotes && typeof fieldNotes === 'object' && !Array.isArray(fieldNotes)) {
+            const noteItems = [];
+            Object.keys(fieldNotes).forEach(key => {
+                // Auto-generated "field-<timestamp>" keys carry no readable label.
+                const label = /^field-\d/.test(String(key)) ? '' : String(key).split('.').map(humanizeFlagKey).join(' — ');
+                const vals = Array.isArray(fieldNotes[key]) ? fieldNotes[key] : [fieldNotes[key]];
+                vals.forEach(v => {
+                    const text = (v && typeof v === 'object') ? String(v.text || '').trim() : String(v == null ? '' : v).trim();
+                    if (text) noteItems.push(`<li>${label ? `<strong>${escapeHtml(label)}:</strong> ` : ''}${escapeHtml(text)}</li>`);
+                });
+            });
+            if (noteItems.length) {
+                detailRows.push(`<div class="detail-row detail-list"><strong>Field notes:</strong><ul>${noteItems.join('')}</ul></div>`);
+            }
+        }
+
+        // Keep the normalized fields above readable, but also expose every
+        // non-empty field from the original facility payload. This prevents
+        // newer or uncommon form fields from disappearing from state tiles.
+        const completeSourceData = renderCompleteSourceData(facility.raw_records);
+        if (completeSourceData) detailRows.push(completeSourceData);
+
+        // Inspection / violation summary chips (kept at the bottom of details)
         const statChips = [];
         if (facility.inspection_count > 0) {
             statChips.push(`<span class="stat">${facility.inspection_count} inspection${facility.inspection_count === 1 ? '' : 's'}</span>`);
@@ -994,39 +1412,54 @@
         if (facility.latest_inspection_date) {
             statChips.push(`<span class="stat">Latest inspection: ${escapeHtml(facility.latest_inspection_date)}</span>`);
         }
+        if (facility.record_updated_at) {
+            statChips.push(`<span class="stat">Record updated: ${escapeHtml(formatDate(String(facility.record_updated_at).slice(0, 10)))}</span>`);
+        }
         if (statChips.length) {
             detailRows.push(`<div class="detail-row detail-stats">${statChips.join('')}</div>`);
         }
 
+        // Drop empty strings (renderListSection / renderScalarRow return '' when no data).
+        const filteredDetailRows = detailRows.filter(Boolean);
+        detailRows.length = 0;
+        detailRows.push(...filteredDetailRows);
+
         const folderId = findFolderForFacility(displayName);
         const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
         const hasDetails = detailRows.length > 0;
-        const newsItems = findNewsForFacility(displayName);
+        const newsItems = mergeNewsItems(findNewsForFacility(displayName), facility.linked_news);
         const hasNews = newsItems.length > 0;
+        const lawsuitItems = Array.isArray(facility.linked_lawsuits) ? facility.linked_lawsuits : [];
+        const memorialItems = Array.isArray(facility.memorials) ? facility.memorials : [];
         const yearLabel = formatOperatingYears(facility);
 
         const toggleButtons = [];
-        if (hasDetails) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="details">ℹ️ Show details</button>`);
-        }
-        if (hasInspections) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="inspections">📋 Show inspections</button>`);
-        }
-        if (hasNews) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="news">📰 Show news (${newsItems.length})</button>`);
-        }
-        if (folderId) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}">📂 Show documents</button>`);
-        }
+        const toggleButton = (panel, count, extraAttrs = '') => {
+            const labels = PANEL_LABELS[panel];
+            const countAttr = count ? ` data-count="${count}"` : '';
+            return `<button type="button" class="facility-expand-btn" data-panel="${panel}"${countAttr}${extraAttrs}>${labels.show}${count ? ` (${count})` : ''}</button>`;
+        };
+        if (hasDetails) toggleButtons.push(toggleButton('details', 0));
+        if (hasInspections) toggleButtons.push(toggleButton('inspections', facility.inspections.length));
+        if (hasNews) toggleButtons.push(toggleButton('news', newsItems.length));
+        if (lawsuitItems.length) toggleButtons.push(toggleButton('lawsuits', lawsuitItems.length));
+        if (memorialItems.length) toggleButtons.push(toggleButton('memorials', memorialItems.length));
+        if (folderId) toggleButtons.push(toggleButton('docs', 0, ` data-folder-id="${escapeHtml(String(folderId))}"`));
 
         const firstLetter = (displayName.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
         const letterAttr = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
         return `
-            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}">
+            <li class="facility-card${(toggleButtons.length ? ' is-expandable' : '')}" data-letter="${letterAttr}" data-kop-bug-feature="country-page/facility-card" data-kop-bug-label="Facility: ${escapeHtml(displayName)}">
                 <div class="facility-card-header">
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
+                ${(facility.relocation && facility.relocation.other_state) ? `
+                    <div class="facility-card-relocation facility-card-relocation-${escapeHtml(String(facility.relocation.direction || 'to'))}">
+                        ${facility.relocation.direction === 'from'
+                            ? `↘ Relocated from ${escapeHtml(facility.relocation.other_state)}`
+                            : `↗ Relocated to ${escapeHtml(facility.relocation.other_state)}${facility.relocation.years ? ` (${escapeHtml(facility.relocation.years)})` : ''}`}
+                    </div>` : ''}
                 ${(() => {
                     const list = Array.isArray(facility.addresses) && facility.addresses.length
                         ? facility.addresses
@@ -1048,18 +1481,28 @@
                         ${facility.capacity ? `<span><strong>Capacity:</strong> ${escapeHtml(String(facility.capacity))}</span>` : ''}
                         ${facility.census   ? `<span><strong>Census:</strong> ${escapeHtml(String(facility.census))}</span>`     : ''}
                     </div>` : ''}
+                <div class="facility-card-actions">${toggleButtons.join('')}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">Submit info</button></div>
                 ${toggleButtons.length ? `
-                    <div class="facility-card-actions">${toggleButtons.join('')}</div>
                     <div class="facility-card-panels">
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
                         ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}
                         ${hasNews ? `<div class="facility-panel" data-panel="news" hidden>${renderFacilityNewsList(newsItems)}</div>` : ''}
+                        ${lawsuitItems.length ? `<div class="facility-panel" data-panel="lawsuits" hidden>${renderFacilityLawsuitList(lawsuitItems)}</div>` : ''}
+                        ${memorialItems.length ? `<div class="facility-panel" data-panel="memorials" hidden>${renderFacilityMemorialList(memorialItems)}</div>` : ''}
                         ${folderId ? `<div class="facility-panel" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}" hidden><p class="loading">Loading documents…</p></div>` : ''}
                     </div>
                 ` : ''}
-                ${renderRawFacilityData(facility)}
             </li>
         `;
+    };
+
+    const PANEL_LABELS = {
+        details:     { show: 'Show details',     hide: 'Hide details' },
+        inspections: { show: 'Show inspections', hide: 'Hide inspections' },
+        news:        { show: 'Show news',        hide: 'Hide news' },
+        lawsuits:    { show: 'Show lawsuits',    hide: 'Hide lawsuits' },
+        memorials:   { show: 'Deaths on record', hide: 'Hide deaths on record' },
+        docs:        { show: 'Show documents',   hide: 'Hide documents' },
     };
 
     const wireFacilityToggles = container => {
@@ -1071,28 +1514,23 @@
                 const panel = card.querySelector(`.facility-panel[data-panel="${panelKind}"]`);
                 if (!panel) return;
 
-                const labelMap = {
-                    details:     { show: 'ℹ️ Show details',     hide: 'ℹ️ Hide details' },
-                    inspections: { show: '📋 Show inspections', hide: '📋 Hide inspections' },
-                    docs:        { show: '📂 Show documents',   hide: '📂 Hide documents' },
-                    news:        { show: '📰 Show news',        hide: '📰 Hide news' },
-                };
-                const labels = labelMap[panelKind] || { show: 'Show', hide: 'Hide' };
+                const labels = PANEL_LABELS[panelKind] || { show: 'Show', hide: 'Hide' };
+                const count = btn.dataset.count ? ` (${btn.dataset.count})` : '';
 
                 if (panel.hidden) {
                     panel.hidden = false;
-                    btn.textContent = labels.hide;
+                    btn.textContent = labels.hide + count;
                 } else {
                     panel.hidden = true;
-                    btn.textContent = labels.show;
+                    btn.textContent = labels.show + count;
                     return;
                 }
 
                 if (panelKind === 'docs' && panel.dataset.loaded !== '1') {
                     const folderId = panel.dataset.folderId || btn.dataset.folderId;
                     btn.disabled = true;
-                    const files = await fetchFolderContent(folderId);
-                    panel.innerHTML = renderFileGrid(files);
+                    const tree = await fetchFacilityDocTree(folderId);
+                    panel.innerHTML = renderDocTree(tree);
                     panel.dataset.loaded = '1';
                     btn.disabled = false;
                 }
@@ -1214,8 +1652,8 @@
     // ---------- News ----------
     const submitNewsButton = () => {
         if (!config.newsSubmitUrl) return '';
-        const url = `${config.newsSubmitUrl}${config.newsSubmitUrl.includes('?') ? '&' : '?'}prefill_country=${encodeURIComponent(config.countryName)}`;
-        return `<a href="${escapeHtml(url)}" class="submit-news-btn">+ Submit news for ${escapeHtml(config.countryName)}</a>`;
+        const url = `${config.newsSubmitUrl}${config.newsSubmitUrl.includes('?') ? '&' : '?'}prefill_country=${encodeURIComponent(config.stateName)}`;
+        return `<a href="${escapeHtml(url)}" class="submit-news-btn">+ Submit news for ${escapeHtml(config.stateName)}</a>`;
     };
 
     const renderNews = () => {

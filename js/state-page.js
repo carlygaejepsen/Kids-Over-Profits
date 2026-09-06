@@ -1163,6 +1163,106 @@
         hasVideo: 'Video', hasAudio: 'Audio', hasSocialMedia: 'Social media',
     };
 
+    // locationDetails.formerLocations: {state, city, address, zip, fromYear, toYear}
+    const renderFormerLocations = items => {
+        if (!Array.isArray(items) || !items.length) return '';
+        const lis = items.map(fl => {
+            if (!fl || typeof fl !== 'object') return '';
+            const stateZip = [fl.state, fl.zip].map(v => String(v || '').trim()).filter(Boolean).join(' ');
+            const place = [fl.address, fl.city, stateZip].map(v => String(v || '').trim()).filter(Boolean).join(', ');
+            const from = String(fl.fromYear || '').trim();
+            const to = String(fl.toYear || '').trim();
+            const years = (from && to) ? `${from}–${to}` : from ? `from ${from}` : to ? `until ${to}` : '';
+            if (!place && !years) return '';
+            return `<li>${escapeHtml(place || 'Location not recorded')}${years ? ` <span class="detail-sub">(${escapeHtml(years)})</span>` : ''}</li>`;
+        }).filter(Boolean);
+        if (!lis.length) return '';
+        return `<div class="detail-row detail-list"><strong>Former locations:</strong><ul>${lis.join('')}</ul></div>`;
+    };
+
+    const LAWSUIT_STATUS_LABELS = {
+        filed: 'Filed', in_progress: 'In progress', settled: 'Settled',
+        dismissed: 'Dismissed', ruling: 'Ruling issued', appeal: 'On appeal',
+        closed: 'Closed', unknown: ''
+    };
+
+    // Lawsuits attached to the tile by the server (linked_lawsuits[]): the
+    // lawsuit_facility_links join plus published cases naming this facility.
+    const renderFacilityLawsuitList = items => {
+        if (!Array.isArray(items) || !items.length) {
+            return '<p class="docs-empty">No lawsuits on record for this facility.</p>';
+        }
+        return `<ul class="facility-news-list facility-lawsuit-list">${items.map(l => {
+            const meta = [];
+            if (l.case_number) meta.push(escapeHtml(l.case_number));
+            if (l.court) meta.push(escapeHtml(l.court));
+            if (l.jurisdiction) meta.push(escapeHtml(l.jurisdiction));
+            if (l.filing_date) meta.push(`Filed ${escapeHtml(formatDate(l.filing_date))}`);
+            if (LAWSUIT_STATUS_LABELS[l.status]) meta.push(escapeHtml(LAWSUIT_STATUS_LABELS[l.status]));
+            if (l.settlement_amount) meta.push(`Settlement: ${escapeHtml(l.settlement_amount)}`);
+            const sources = (Array.isArray(l.source_urls) ? l.source_urls : []).filter(Boolean);
+            return `<li class="facility-news-item facility-lawsuit-item">
+                <span class="facility-news-title">${escapeHtml(l.case_name || '(unnamed case)')}</span>
+                ${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}
+                ${l.summary ? `<p class="facility-news-summary">${escapeHtml(l.summary)}</p>` : ''}
+                ${l.outcome ? `<p class="facility-news-summary"><strong>Outcome:</strong> ${escapeHtml(l.outcome)}</p>` : ''}
+                ${sources.length ? `<div class="facility-news-meta">${sources.map((u, i) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">Source${sources.length > 1 ? ` ${i + 1}` : ''}</a>`).join(' &middot; ')}</div>` : ''}
+            </li>`;
+        }).join('')}</ul>`;
+    };
+
+    // memorial_victims.date_precision says how much of the date is known.
+    const formatMemorialDate = (value, precision) => {
+        if (!value) return '';
+        const ts = Date.parse(value);
+        if (isNaN(ts)) return value;
+        const d = new Date(ts);
+        if (precision === 'year') return String(d.getUTCFullYear());
+        if (precision === 'unknown') return `around ${d.getUTCFullYear()}`;
+        if (precision === 'month') return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', timeZone: 'UTC' });
+        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    };
+
+    // Deaths recorded against this program in the memorial (memorials[]).
+    const renderFacilityMemorialList = items => {
+        if (!Array.isArray(items) || !items.length) {
+            return '<p class="docs-empty">No deaths on record for this facility.</p>';
+        }
+        return `<ul class="facility-news-list facility-memorial-list">${items.map(m => {
+            const meta = [];
+            if (m.age !== null && m.age !== undefined && m.age !== '') meta.push(`Age ${escapeHtml(String(m.age))}`);
+            const when = formatMemorialDate(m.date_of_death, m.date_precision);
+            if (when) meta.push(escapeHtml(when));
+            if (m.location) meta.push(escapeHtml(m.location));
+            const links = [];
+            if (m.source_url) links.push(`<a href="${escapeHtml(m.source_url)}" target="_blank" rel="noopener">${escapeHtml(m.source_name || 'Source')}</a>`);
+            if (m.kop_url) links.push(`<a href="${escapeHtml(m.kop_url)}">On Kids Over Profits</a>`);
+            return `<li class="facility-news-item facility-memorial-item">
+                <span class="facility-news-title">${escapeHtml(m.name || 'Name withheld')}</span>
+                ${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}
+                ${m.cause_of_death ? `<p class="facility-news-summary">${escapeHtml(m.cause_of_death)}</p>` : ''}
+                ${links.length ? `<div class="facility-news-meta">${links.join(' &middot; ')}</div>` : ''}
+            </li>`;
+        }).join('')}</ul>`;
+    };
+
+    // Union of the name-matched state news and the id-linked news the server
+    // attaches (news_facility_links), deduped by article id / URL, newest first.
+    const mergeNewsItems = (...lists) => {
+        const seen = new Set();
+        const out = [];
+        lists.forEach(list => {
+            (Array.isArray(list) ? list : []).forEach(n => {
+                if (!n) return;
+                const key = n.id ? `id:${n.id}` : (n.article_url ? `url:${String(n.article_url).toLowerCase()}` : '');
+                if (key && seen.has(key)) return;
+                if (key) seen.add(key);
+                out.push(n);
+            });
+        });
+        return out.sort((a, b) => (Date.parse(b.publication_date || '') || 0) - (Date.parse(a.publication_date || '') || 0));
+    };
+
     const facilityCardHtml = facility => {
         const displayName = getFacilityDisplayName(facility);
 
@@ -1200,6 +1300,24 @@
         }
         if (facility.gender) detailRows.push(renderScalarRow('Gender', facility.gender));
         if (facility.country) detailRows.push(renderScalarRow('Country', facility.country));
+
+        // Licensing record (inspection_facilities): what the licensing authority
+        // lists for this program beyond its reports.
+        // Utah and Texas store the license number in program_name; a name that
+        // is all digits is labelled as the number it is.
+        const licensedName = String(facility.licensed_program_name || '').trim();
+        detailRows.push(renderScalarRow(/^[\d\s-]+$/.test(licensedName) ? 'License number' : 'Licensed program name', licensedName));
+        detailRows.push(renderScalarRow('Executive director (licensing record)', facility.executive_director));
+        detailRows.push(renderScalarRow('Phone', facility.phone));
+        detailRows.push(renderScalarRow('License expires', facility.license_expiration));
+        detailRows.push(renderScalarRow('Relicensing visit', facility.relicense_visit_date));
+        detailRows.push(renderScalarRow('License status', facility.licensing_action));
+        if (facility.inspected_by) {
+            detailRows.push(renderScalarRow('Inspected by', `${facility.inspected_by} licensing authority (out of state)`));
+        }
+
+        // Where it operated before moving (locationDetails.formerLocations).
+        detailRows.push(renderFormerLocations(facility.former_locations));
 
         // Operating period notes (the headline yearLabel renders elsewhere)
         detailRows.push(renderListSection('Operational notes', facility.operating_notes));
@@ -1279,6 +1397,9 @@
         if (facility.latest_inspection_date) {
             statChips.push(`<span class="stat">Latest inspection: ${escapeHtml(facility.latest_inspection_date)}</span>`);
         }
+        if (facility.record_updated_at) {
+            statChips.push(`<span class="stat">Record updated: ${escapeHtml(formatDate(String(facility.record_updated_at).slice(0, 10)))}</span>`);
+        }
         if (statChips.length) {
             detailRows.push(`<div class="detail-row detail-stats">${statChips.join('')}</div>`);
         }
@@ -1291,23 +1412,24 @@
         const folderId = findFolderForFacility(displayName);
         const hasInspections = Array.isArray(facility.inspections) && facility.inspections.length > 0;
         const hasDetails = detailRows.length > 0;
-        const newsItems = findNewsForFacility(displayName);
+        const newsItems = mergeNewsItems(findNewsForFacility(displayName), facility.linked_news);
         const hasNews = newsItems.length > 0;
+        const lawsuitItems = Array.isArray(facility.linked_lawsuits) ? facility.linked_lawsuits : [];
+        const memorialItems = Array.isArray(facility.memorials) ? facility.memorials : [];
         const yearLabel = formatOperatingYears(facility);
 
         const toggleButtons = [];
-        if (hasDetails) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="details">ℹ️ Show details</button>`);
-        }
-        if (hasInspections) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="inspections">📋 Show inspections</button>`);
-        }
-        if (hasNews) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="news">📰 Show news (${newsItems.length})</button>`);
-        }
-        if (folderId) {
-            toggleButtons.push(`<button type="button" class="facility-expand-btn" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}">📂 Show documents</button>`);
-        }
+        const toggleButton = (panel, count, extraAttrs = '') => {
+            const labels = PANEL_LABELS[panel];
+            const countAttr = count ? ` data-count="${count}"` : '';
+            return `<button type="button" class="facility-expand-btn" data-panel="${panel}"${countAttr}${extraAttrs}>${labels.show}${count ? ` (${count})` : ''}</button>`;
+        };
+        if (hasDetails) toggleButtons.push(toggleButton('details', 0));
+        if (hasInspections) toggleButtons.push(toggleButton('inspections', facility.inspections.length));
+        if (hasNews) toggleButtons.push(toggleButton('news', newsItems.length));
+        if (lawsuitItems.length) toggleButtons.push(toggleButton('lawsuits', lawsuitItems.length));
+        if (memorialItems.length) toggleButtons.push(toggleButton('memorials', memorialItems.length));
+        if (folderId) toggleButtons.push(toggleButton('docs', 0, ` data-folder-id="${escapeHtml(String(folderId))}"`));
 
         const firstLetter = (displayName.match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
         const letterAttr = /[A-Z]/.test(firstLetter) ? firstLetter : '#';
@@ -1350,11 +1472,22 @@
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}
                         ${hasInspections ? `<div class="facility-panel" data-panel="inspections" hidden>${renderInspectionRecords(facility.inspections)}</div>` : ''}
                         ${hasNews ? `<div class="facility-panel" data-panel="news" hidden>${renderFacilityNewsList(newsItems)}</div>` : ''}
+                        ${lawsuitItems.length ? `<div class="facility-panel" data-panel="lawsuits" hidden>${renderFacilityLawsuitList(lawsuitItems)}</div>` : ''}
+                        ${memorialItems.length ? `<div class="facility-panel" data-panel="memorials" hidden>${renderFacilityMemorialList(memorialItems)}</div>` : ''}
                         ${folderId ? `<div class="facility-panel" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}" hidden><p class="loading">Loading documents…</p></div>` : ''}
                     </div>
                 ` : ''}
             </li>
         `;
+    };
+
+    const PANEL_LABELS = {
+        details:     { show: 'Show details',     hide: 'Hide details' },
+        inspections: { show: 'Show inspections', hide: 'Hide inspections' },
+        news:        { show: 'Show news',        hide: 'Hide news' },
+        lawsuits:    { show: 'Show lawsuits',    hide: 'Hide lawsuits' },
+        memorials:   { show: 'Deaths on record', hide: 'Hide deaths on record' },
+        docs:        { show: 'Show documents',   hide: 'Hide documents' },
     };
 
     const wireFacilityToggles = container => {
@@ -1366,20 +1499,15 @@
                 const panel = card.querySelector(`.facility-panel[data-panel="${panelKind}"]`);
                 if (!panel) return;
 
-                const labelMap = {
-                    details:     { show: 'ℹ️ Show details',     hide: 'ℹ️ Hide details' },
-                    inspections: { show: '📋 Show inspections', hide: '📋 Hide inspections' },
-                    docs:        { show: '📂 Show documents',   hide: '📂 Hide documents' },
-                    news:        { show: '📰 Show news',        hide: '📰 Hide news' },
-                };
-                const labels = labelMap[panelKind] || { show: 'Show', hide: 'Hide' };
+                const labels = PANEL_LABELS[panelKind] || { show: 'Show', hide: 'Hide' };
+                const count = btn.dataset.count ? ` (${btn.dataset.count})` : '';
 
                 if (panel.hidden) {
                     panel.hidden = false;
-                    btn.textContent = labels.hide;
+                    btn.textContent = labels.hide + count;
                 } else {
                     panel.hidden = true;
-                    btn.textContent = labels.show;
+                    btn.textContent = labels.show + count;
                     return;
                 }
 

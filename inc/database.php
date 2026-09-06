@@ -434,6 +434,236 @@ function kop_attach_linked_lawsuits_to_projects($db_connection, array &$projects
     unset($project);
 }
 
+/**
+ * Name key used to match nested facility entries against other tables. Uses
+ * the state-directory normalizer when it is loaded (inc/rest-api.php), so the
+ * program index and the state tiles agree on which names are the same.
+ */
+function kop_project_facility_name_key($name) {
+    $name = trim((string)$name);
+    if ($name === '') return '';
+    $name = preg_replace('/\s*\([^)]*\)\s*$/u', '', $name);
+    if (function_exists('kop_normalize_facility_name')) return kop_normalize_facility_name($name);
+    $s = strtolower($name);
+    $s = preg_replace('/[^\w\s]/u', '', $s);
+    return trim(preg_replace('/\s+/', ' ', $s));
+}
+
+/**
+ * Does a record name key belong to a facility name key? Exact match, or the
+ * record name extends the facility name (both at least 12 chars). Mirrors
+ * kop_state_related_key_matches so "Discovery Ranch" records never land on
+ * the "Discovery Ranch South" card.
+ */
+function kop_project_related_key_matches($facility_key, $record_key) {
+    if (function_exists('kop_state_related_key_matches')) return kop_state_related_key_matches($facility_key, $record_key);
+    if ($facility_key === '' || $record_key === '') return false;
+    if ($facility_key === $record_key) return true;
+    if (mb_strlen($facility_key) < 12 || mb_strlen($record_key) < 12) return false;
+    return mb_strpos($record_key, $facility_key) === 0;
+}
+
+/**
+ * Walk every nested facility entry of every project and hand the callback
+ * its name keys (name, currentName, name) and a reference to the entry.
+ */
+function kop_project_each_nested_facility(array &$projects, callable $fn) {
+    foreach ($projects as &$project) {
+        if (!isset($project['data']['facilities']) || !is_array($project['data']['facilities'])) continue;
+        foreach ($project['data']['facilities'] as $i => $nested) {
+            if (!is_array($nested)) continue;
+            $names = array();
+            if (!empty($nested['identification']['name'])) $names[] = $nested['identification']['name'];
+            if (!empty($nested['identification']['currentName'])) $names[] = $nested['identification']['currentName'];
+            if (!empty($nested['name'])) $names[] = $nested['name'];
+            $keys = array();
+            foreach ($names as $n) {
+                $k = kop_project_facility_name_key($n);
+                if ($k !== '') $keys[$k] = true;
+            }
+            $fn($project['data']['facilities'][$i], array_keys($keys), $nested);
+        }
+    }
+    unset($project);
+}
+
+/**
+ * Attach published memorial_victims rows (deaths at the program) to each
+ * nested facility entry as memorials[], matched by normalized program name.
+ * A loose (prefix) match must also sit in the facility's state.
+ */
+function kop_attach_memorials_to_projects($db_connection, array &$projects) {
+    if (!($db_connection instanceof wpdb)) return;
+    $table = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'memorial_victims'));
+    if ($table !== 'memorial_victims') return;
+
+    $rows = $db_connection->get_results(
+        "SELECT id, name, age, program, date_of_death, date_precision, cause_of_death,
+                cause_category, location, source_name, source_url, kop_url
+         FROM memorial_victims
+         WHERE publication_status = 'published'
+         ORDER BY date_of_death DESC, id DESC",
+        ARRAY_A
+    );
+    if (!is_array($rows) || empty($rows)) return;
+
+    $by_key = array();
+    foreach ($rows as $r) {
+        $k = kop_project_facility_name_key($r['program'] ?? '');
+        if ($k === '') continue;
+        $by_key[$k][] = array(
+            'id'             => (int)$r['id'],
+            'name'           => $r['name'],
+            'age'            => ($r['age'] === null || $r['age'] === '') ? null : (int)$r['age'],
+            'program'        => $r['program'],
+            'date_of_death'  => $r['date_of_death'],
+            'date_precision' => $r['date_precision'],
+            'cause_of_death' => $r['cause_of_death'],
+            'cause_category' => $r['cause_category'],
+            'location'       => $r['location'],
+            'source_name'    => $r['source_name'],
+            'source_url'     => $r['source_url'],
+            'kop_url'        => $r['kop_url'],
+        );
+    }
+    if (empty($by_key)) return;
+
+    $canon = static function ($v) {
+        $v = trim((string)$v);
+        if ($v === '') return '';
+        if (function_exists('kop_state_canonical_name')) {
+            $c = kop_state_canonical_name($v);
+            if ($c !== '') return $c;
+        }
+        return $v;
+    };
+
+    kop_project_each_nested_facility($projects, static function (&$entry, $keys, $nested) use ($by_key, $canon) {
+        if (empty($keys)) return;
+        $facility_state = $canon($nested['locationDetails']['state'] ?? ($nested['address']['state'] ?? ''));
+        $seen = array();
+        $out = array();
+        foreach ($keys as $fkey) {
+            foreach ($by_key as $pkey => $entries) {
+                $exact = ($fkey === $pkey);
+                if (!$exact && !kop_project_related_key_matches($fkey, $pkey)) continue;
+                foreach ($entries as $e) {
+                    if (isset($seen[$e['id']])) continue;
+                    if (!$exact && $facility_state !== '') {
+                        $loc = $canon($e['location'] ?? '');
+                        if ($loc !== '' && strcasecmp($loc, $facility_state) !== 0) continue;
+                    }
+                    $seen[$e['id']] = true;
+                    $out[] = $e;
+                }
+            }
+        }
+        if ($out) {
+            usort($out, static function ($a, $b) { return strcmp((string)$b['date_of_death'], (string)$a['date_of_death']); });
+            $entry['memorials'] = $out;
+        }
+    });
+}
+
+/**
+ * Attach a per-facility inspection summary from inspection_facilities /
+ * inspection_reports as inspection_stats: report count, the licensing
+ * record (phone, executive director, license expiry, relicensing visit,
+ * license status / number) and a link to the state's report search page.
+ * Matched by normalized facility name; when the facility records a state,
+ * only that state's licensing rows are considered.
+ */
+function kop_attach_inspection_stats_to_projects($db_connection, array &$projects) {
+    if (!($db_connection instanceof wpdb)) return;
+    $t1 = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'inspection_facilities'));
+    $t2 = $db_connection->get_var($db_connection->prepare('SHOW TABLES LIKE %s', 'inspection_reports'));
+    if ($t1 !== 'inspection_facilities' || $t2 !== 'inspection_reports') return;
+
+    $rows = $db_connection->get_results(
+        "SELECT f.id, f.state, f.facility_name, f.full_address, f.phone, f.program_category, f.program_name,
+                f.executive_director, f.bed_capacity, f.license_exp_date, f.relicense_visit_date, f.action,
+                COUNT(r.id) AS report_count
+         FROM inspection_facilities f
+         LEFT JOIN inspection_reports r ON r.facility_id = f.id
+         GROUP BY f.id",
+        ARRAY_A
+    );
+    if (!is_array($rows) || empty($rows)) return;
+
+    $abbrev_to_name = function_exists('kop_state_abbrev_to_name') ? kop_state_abbrev_to_name() : array();
+    $page_map = function_exists('kop_state_inspection_page_map') ? kop_state_inspection_page_map() : array();
+
+    $by_key = array();
+    foreach ($rows as $r) {
+        $name = trim((string)($r['facility_name'] ?? ''));
+        if ($name === '') continue;
+        if (function_exists('kop_facility_name_looks_junky') && kop_facility_name_looks_junky($name)) continue;
+        $k = kop_project_facility_name_key($name);
+        if ($k === '') continue;
+        $abbrev = strtoupper(trim((string)($r['state'] ?? '')));
+        $state_name = $abbrev_to_name[$abbrev] ?? $abbrev;
+        $licensed = trim((string)($r['program_name'] ?? ''));
+        if (strcasecmp($licensed, $name) === 0) $licensed = '';
+        $by_key[$k][] = array(
+            'state'                 => $state_name,
+            'state_abbrev'          => $abbrev,
+            'facility_name'         => $name,
+            'address'               => trim((string)($r['full_address'] ?? '')),
+            'report_count'          => (int)($r['report_count'] ?? 0),
+            'program_category'      => trim((string)($r['program_category'] ?? '')),
+            'licensed_program_name' => $licensed,
+            'phone'                 => trim((string)($r['phone'] ?? '')),
+            'executive_director'    => trim((string)($r['executive_director'] ?? '')),
+            'bed_capacity'          => trim((string)($r['bed_capacity'] ?? '')),
+            'license_expiration'    => trim((string)($r['license_exp_date'] ?? '')),
+            'relicense_visit_date'  => trim((string)($r['relicense_visit_date'] ?? '')),
+            'licensing_action'      => trim((string)($r['action'] ?? '')),
+            'reports_url'           => isset($page_map[$state_name]) ? home_url('/' . $page_map[$state_name] . '/') : '',
+        );
+    }
+    if (empty($by_key)) return;
+
+    $canon = static function ($v) {
+        $v = trim((string)$v);
+        if ($v === '') return '';
+        if (function_exists('kop_state_canonical_name')) {
+            $c = kop_state_canonical_name($v);
+            if ($c !== '') return $c;
+        }
+        return $v;
+    };
+
+    kop_project_each_nested_facility($projects, static function (&$entry, $keys, $nested) use ($by_key, $canon) {
+        if (empty($keys)) return;
+        $facility_state = $canon($nested['locationDetails']['state'] ?? ($nested['address']['state'] ?? ''));
+        $matches = array();
+        foreach ($keys as $fkey) {
+            foreach ($by_key[$fkey] ?? array() as $m) {
+                if ($facility_state !== '' && $m['state'] !== '' && strcasecmp($m['state'], $facility_state) !== 0) continue;
+                $matches[] = $m;
+            }
+        }
+        if (!$matches) return;
+        // Fold the licensing rows into one summary: total reports, first
+        // non-empty value per licensing field, every distinct state page link.
+        $stats = array(
+            'report_count' => 0, 'states' => array(), 'reports_urls' => array(),
+            'licensed_program_name' => '', 'phone' => '', 'executive_director' => '', 'bed_capacity' => '',
+            'license_expiration' => '', 'relicense_visit_date' => '', 'licensing_action' => '', 'program_category' => '',
+            'licensing_rows' => count($matches),
+        );
+        foreach ($matches as $m) {
+            $stats['report_count'] += $m['report_count'];
+            if ($m['state'] !== '' && !in_array($m['state'], $stats['states'], true)) $stats['states'][] = $m['state'];
+            if ($m['reports_url'] !== '' && !in_array($m['reports_url'], $stats['reports_urls'], true)) $stats['reports_urls'][] = $m['reports_url'];
+            foreach (array('licensed_program_name','phone','executive_director','bed_capacity','license_expiration','relicense_visit_date','licensing_action','program_category') as $f) {
+                if ($stats[$f] === '' && $m[$f] !== '') $stats[$f] = $m[$f];
+            }
+        }
+        $entry['inspection_stats'] = $stats;
+    });
+}
+
 function kop_get_facilities_projects_from_database() {
     $connection = kop_get_facilities_database_connection();
 
@@ -628,6 +858,11 @@ function kop_get_facilities_projects_from_database() {
 
     // Same pattern for lawsuits via lawsuit_facility_links -> linked_lawsuits[].
     kop_attach_linked_lawsuits_to_projects($db_connection, $projects);
+
+    // Deaths on record (memorial_victims) and the licensing / inspection
+    // summary (inspection_facilities + inspection_reports), by facility name.
+    kop_attach_memorials_to_projects($db_connection, $projects);
+    kop_attach_inspection_stats_to_projects($db_connection, $projects);
 
     if (empty($projects)) {
         return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));
