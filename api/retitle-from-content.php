@@ -502,7 +502,9 @@ foreach ($rows as $r) {
     ];
 }
 $ajax_nonce = wp_create_nonce('kop_rtc');
-$groq_min_interval_ms = max(1000, (int) (getenv('KOP_RTC_GROQ_INTERVAL_MS') ?: 15000));
+// The free tier is token-limited; a 12,000-character document chunk can make
+// three requests inside one minute exceed the quota even when serialized.
+$groq_min_interval_ms = max(1000, (int) (getenv('KOP_RTC_GROQ_INTERVAL_MS') ?: 65000));
 ?><!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Retitle From Content</title>
 <style>
@@ -771,6 +773,7 @@ td a { color: #000080; }
         function processNext() {
             var row = queue.shift();
             if (!row) return Promise.resolve();
+            if (titleInput(row).value.trim() !== '') return processNext();
             return suggestOne(row, report).then(function (ok) {
                 if (!ok) failed++;
                 done++;
