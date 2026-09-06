@@ -241,7 +241,20 @@
         '.kop-si-status.ok{color:#166534;}',
         '.kop-si-submit{background:#000080;color:#fff;border:none;border-radius:6px;padding:8px 18px;font-size:0.92em;cursor:pointer;}',
         '.kop-si-submit:disabled{opacity:0.6;cursor:default;}',
-        '.kop-si-cancel{background:none;border:1px solid #d1d5db;border-radius:6px;padding:8px 14px;font-size:0.92em;cursor:pointer;color:#374151;}'
+        '.kop-si-cancel{background:none;border:1px solid #d1d5db;border-radius:6px;padding:8px 14px;font-size:0.92em;cursor:pointer;color:#374151;}',
+        // Touch / small screens. Hover can't reveal the pill's label, so show
+        // it always and give the pill a real tap target (same pattern as the
+        // bug-report flag). Inputs must be at least 16px or iOS Safari zooms
+        // the page on focus, which throws the fixed overlay off-screen and
+        // makes the field look dead. Top-align the modal so the first fields
+        // stay visible above the on-screen keyboard.
+        '@media (hover:none),(max-width:640px){',
+        '.kop-submit-info-btn{padding:7px 12px;min-height:32px;}',
+        '.kop-submit-info-btn__text{max-width:none;margin-left:6px;transition:none;}',
+        '.kop-si-overlay{align-items:flex-start;padding:12px;}',
+        '.kop-si-modal{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);}',
+        '.kop-si-field input,.kop-si-field textarea{font-size:16px;}',
+        '}'
     ].join('');
 
     function injectStyle() {
@@ -291,10 +304,12 @@
     }
 
     var overlay = null;
+    var prevBodyOverflow = '';
 
     function close() {
         if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
         overlay = null;
+        document.body.style.overflow = prevBodyOverflow;
         document.removeEventListener('keydown', onKey);
     }
 
@@ -337,6 +352,8 @@
                 '</div>' +
             '</div>';
         document.body.appendChild(overlay);
+        prevBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
         document.addEventListener('keydown', onKey);
 
         overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
