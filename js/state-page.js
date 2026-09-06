@@ -1100,6 +1100,22 @@
         return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
     };
 
+    // Raw source-record keys shown in "All source data":
+    // 'currentOperator' / 'location_details' / 'zip' -> 'Current Operator' / 'Location Details' / 'Zip'.
+    const formatFieldLabel = key => {
+        const text = String(key ?? '').trim();
+        if (!text) return 'Field';
+        return text
+            .replace(/[_.]+/g, ' ')
+            .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
+            .replace(/\s+/g, ' ')
+            .trim()
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    };
+
     const renderCompleteValue = (value, path, depth = 0) => {
         if (value === null || value === undefined || value === '') return '';
         const label = path || 'Value';
