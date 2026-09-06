@@ -92,6 +92,38 @@ $by_id = [];
 foreach ($folders as $f) {
     $by_id[(int)$f->id] = $f;
 }
+
+/**
+ * "Live" folders: hold at least one attachment that still exists (filed or
+ * tagged), or have subfolders. Deleted attachments can leave stale relation
+ * rows behind and the tree is full of empty same-name duplicates (import
+ * skeletons, per-state / parent-company copies that never got files) — none
+ * of those should make a name match ambiguous.
+ */
+function kop_sm_live_folders($folders, $fbv_rel, $tags_tbl) {
+    global $wpdb;
+    $live = [];
+    foreach ($folders as $f) {
+        if ((int)$f->parent !== 0) {
+            $live[(int)$f->parent] = true;
+        }
+    }
+    $ids = $wpdb->get_col(
+        "SELECT DISTINCT r.folder_id FROM {$fbv_rel} r
+         JOIN {$wpdb->posts} p ON p.ID = r.attachment_id
+         WHERE p.post_type = 'attachment' AND p.post_status <> 'trash'
+         UNION
+         SELECT DISTINCT t.folder_id FROM {$tags_tbl} t
+         JOIN {$wpdb->posts} p ON p.ID = t.attachment_id
+         WHERE p.post_type = 'attachment' AND p.post_status <> 'trash'"
+    );
+    foreach ((array)$ids as $fid) {
+        $live[(int)$fid] = true;
+    }
+    return $live;
+}
+$live = kop_sm_live_folders($folders, $fbv_rel, $tags_tbl);
+
 function kop_sm_path($fid, $by_id, $depth = 0) {
     if ($depth > 10 || !isset($by_id[(int)$fid])) {
         return '';
@@ -122,7 +154,7 @@ $neg_rules = kop_sm_resolve_negative_rules($folders);
 
 // Program alternate/past names (from facilities_master) point at that
 // program's folder too.
-$matchable = array_merge($matchable, kop_sm_alias_matchable($folders, $generic));
+$matchable = array_merge($matchable, kop_sm_alias_matchable($folders, $generic, $live));
 
 /**
  * Custom filename → folder rules, checked BEFORE name matching. Keys are
@@ -201,10 +233,11 @@ function kop_sm_collect_names($node, array &$out, $depth = 0) {
  * Alias matchables: every program's alternate/past names (facilities_master)
  * mapped to that program's folder — so a file named after an old program
  * name still suggests the right folder. An alias is only used when the
- * program resolves to exactly ONE folder and the alias doesn't collide with
- * a real folder name or another program's alias.
+ * program resolves to exactly ONE folder (empty same-name duplicates are
+ * ignored when a single copy holds files) and the alias doesn't collide
+ * with a real folder name or another program's alias.
  */
-function kop_sm_alias_matchable($folders, $generic) {
+function kop_sm_alias_matchable($folders, $generic, $live = []) {
     global $wpdb;
 
     $by_norm = [];
@@ -233,10 +266,16 @@ function kop_sm_alias_matchable($folders, $generic) {
                 continue;
             }
             $folder_norms[] = $n;
-            if (count($by_norm[$n]) !== 1 || ($fid !== null && $fid !== $by_norm[$n][0])) {
+            $cands = $by_norm[$n];
+            if (count($cands) > 1) {
+                $cands = array_values(array_filter($cands, static function ($id) use ($live) {
+                    return isset($live[(int)$id]);
+                }));
+            }
+            if (count($cands) !== 1 || ($fid !== null && $fid !== $cands[0])) {
                 $fid = -1; // ambiguous
             } elseif ($fid === null) {
-                $fid = $by_norm[$n][0];
+                $fid = $cands[0];
             }
         }
         if ($fid === null || $fid === -1) {
@@ -312,7 +351,7 @@ function kop_sm_resolve_rules($folders, $by_id) {
 }
 
 /** Suggest a folder for file text. Returns [folder_id|null, why]. */
-function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = []) {
+function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = [], $live = []) {
     // Negative rules: folders excluded for THIS file.
     $excluded = [];
     foreach ($neg_rules as $needle => $ids) {
@@ -362,12 +401,23 @@ function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = []) {
     if (!$best) {
         return [null, 'no name match'];
     }
-    if (count($bestNames[$best['norm']]) > 1) {
-        return [null, 'ambiguous name'];
-    }
     $why = $bestScore >= 1000 ? 'name match' : 'token match';
     if (!empty($best['via'])) {
         $why .= ' via alt name “' . $best['via'] . '”';
+    }
+    $ids = $bestNames[$best['norm']];
+    if (count($ids) > 1) {
+        // Same name in several places: the copies that hold files (or
+        // subfolders) are the real ones; empty shells don't count.
+        $liveIds = array_values(array_filter($ids, static function ($id) use ($live) {
+            return isset($live[(int)$id]);
+        }));
+        if (count($liveIds) !== 1) {
+            return [null, 'ambiguous: “' . $best['norm'] . '” exists in ' . count($ids)
+                . ' places (' . count($liveIds) . ' with files)'];
+        }
+        $skipped = count($ids) - 1;
+        return [$liveIds[0], $why . " ({$skipped} empty same-name folder" . ($skipped === 1 ? '' : 's') . ' skipped)'];
     }
     return [$best['id'], $why];
 }
@@ -518,7 +568,7 @@ $lib = $wpdb->get_results(
      LEFT JOIN {$tags_tbl} t ON t.attachment_id = p.ID
      LEFT JOIN {$wpdb->postmeta} pm ON pm.post_id = p.ID AND pm.meta_key = '_wp_attached_file'
      LEFT JOIN {$wpdb->postmeta} ok ON ok.post_id = p.ID AND ok.meta_key = '_kop_filing_ok'
-     WHERE p.post_type = 'attachment'
+     WHERE p.post_type = 'attachment' AND p.post_status <> 'trash'
      GROUP BY p.ID, p.post_title, p.post_mime_type, pm.meta_value, ok.meta_value
      ORDER BY p.ID DESC"
 );
@@ -553,7 +603,7 @@ foreach ($lib as $a) {
     }
 
     $fileText = kop_sm_norm($title . ' ' . $basename);
-    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules, $neg_rules);
+    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules, $neg_rules, $live);
 
     if ($mode === 'misfiled') {
         // Mis-filed = confident suggestion pointing somewhere the file is NOT
@@ -618,7 +668,7 @@ foreach ($wpdb->get_results("SELECT folder_id, COUNT(*) AS n FROM {$fbv_rel} GRO
 $uncat_count = (int)$wpdb->get_var(
     "SELECT COUNT(*) FROM {$wpdb->posts} p
      LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
-     WHERE p.post_type = 'attachment' AND r.attachment_id IS NULL"
+     WHERE p.post_type = 'attachment' AND p.post_status <> 'trash' AND r.attachment_id IS NULL"
 );
 
 // Auto-open the tree along the selected folder's ancestry.

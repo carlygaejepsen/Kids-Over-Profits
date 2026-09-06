@@ -63,6 +63,38 @@ $by_id = [];
 foreach ($folders as $f) {
     $by_id[(int)$f->id] = $f;
 }
+
+/**
+ * "Live" folders: hold at least one attachment that still exists, or have
+ * subfolders. Deleted attachments can leave stale relation rows behind and
+ * the tree is full of empty same-name duplicates (import skeletons,
+ * per-state / parent-company copies that never got files) — none of those
+ * should make a name match ambiguous.
+ */
+function kop_oum_live_folders($folders, $fbv_rel) {
+    global $wpdb;
+    $live = [];
+    foreach ($folders as $f) {
+        if ((int)$f->parent !== 0) {
+            $live[(int)$f->parent] = true;
+        }
+    }
+    $sql = "SELECT DISTINCT r.folder_id FROM {$fbv_rel} r
+            JOIN {$wpdb->posts} p ON p.ID = r.attachment_id
+            WHERE p.post_type = 'attachment' AND p.post_status <> 'trash'";
+    $tags_tbl = $wpdb->prefix . 'kop_media_folder_tags';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tags_tbl)) === $tags_tbl) {
+        $sql .= " UNION SELECT DISTINCT t.folder_id FROM {$tags_tbl} t
+            JOIN {$wpdb->posts} p ON p.ID = t.attachment_id
+            WHERE p.post_type = 'attachment' AND p.post_status <> 'trash'";
+    }
+    foreach ((array)$wpdb->get_col($sql) as $fid) {
+        $live[(int)$fid] = true;
+    }
+    return $live;
+}
+$live = kop_oum_live_folders($folders, $fbv_rel);
+
 function kop_oum_path($fid, $by_id, $depth = 0) {
     if ($depth > 10 || !isset($by_id[(int)$fid])) {
         return '';
@@ -93,9 +125,10 @@ foreach ($folders as $f) {
  * Suggest a folder for a file. Returns [folder_id, why] or [null, reason].
  * Primary: the folder's full normalized name appears in the file text
  * (longest name wins). Fallback: every distinctive token of the folder name
- * appears in the file text. Same-name folders in different places → ambiguous.
+ * appears in the file text. Same-name folders in different places → the one
+ * that actually holds files wins; ambiguous only when that doesn't settle it.
  */
-function kop_oum_suggest($fileText, $matchable) {
+function kop_oum_suggest($fileText, $matchable, $live = []) {
     $best = null;
     $bestScore = 0;
     $bestNames = [];
@@ -126,11 +159,22 @@ function kop_oum_suggest($fileText, $matchable) {
     if (!$best) {
         return [null, 'no name match'];
     }
-    // Ambiguous only when the SAME name matched from multiple folders.
-    if (count($bestNames[$best['norm']]) > 1) {
-        return [null, 'ambiguous: “' . $best['norm'] . '” exists in ' . count($bestNames[$best['norm']]) . ' places'];
+    $why = $bestScore >= 1000 ? 'name match' : 'token match';
+    $ids = $bestNames[$best['norm']];
+    if (count($ids) > 1) {
+        // Same name in several places: the copies that hold files (or
+        // subfolders) are the real ones; empty shells don't count.
+        $liveIds = array_values(array_filter($ids, static function ($id) use ($live) {
+            return isset($live[(int)$id]);
+        }));
+        if (count($liveIds) !== 1) {
+            return [null, 'ambiguous: “' . $best['norm'] . '” exists in ' . count($ids)
+                . ' places (' . count($liveIds) . ' with files)'];
+        }
+        $skipped = count($ids) - 1;
+        return [$liveIds[0], $why . " ({$skipped} empty same-name folder" . ($skipped === 1 ? '' : 's') . ' skipped)'];
     }
-    return [$best['id'], $bestScore >= 1000 ? 'name match' : 'token match'];
+    return [$best['id'], $why];
 }
 
 // ---------------------------------------------------------------------------
@@ -226,13 +270,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['kop_ajax'])) {
 $total_uncat = (int)$wpdb->get_var(
     "SELECT COUNT(*) FROM {$wpdb->posts} p
      LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
-     WHERE p.post_type = 'attachment' AND r.attachment_id IS NULL"
+     WHERE p.post_type = 'attachment' AND p.post_status <> 'trash' AND r.attachment_id IS NULL"
 );
 
 $attachments = $wpdb->get_results($wpdb->prepare(
     "SELECT p.ID, p.post_title, p.post_mime_type FROM {$wpdb->posts} p
      LEFT JOIN {$fbv_rel} r ON r.attachment_id = p.ID
-     WHERE p.post_type = 'attachment' AND r.attachment_id IS NULL
+     WHERE p.post_type = 'attachment' AND p.post_status <> 'trash' AND r.attachment_id IS NULL
      ORDER BY p.ID DESC
      LIMIT %d", $BATCH
 ));
@@ -243,7 +287,7 @@ foreach ($attachments as $a) {
     $file_meta = get_post_meta($a->ID, '_wp_attached_file', true);
     $basename = $file_meta ? basename($file_meta) : '';
     $fileText = kop_oum_norm($a->post_title . ' ' . $basename);
-    list($sug, $why) = kop_oum_suggest($fileText, $matchable);
+    list($sug, $why) = kop_oum_suggest($fileText, $matchable, $live);
     if ($sug !== null) {
         $suggested_count++;
     }
