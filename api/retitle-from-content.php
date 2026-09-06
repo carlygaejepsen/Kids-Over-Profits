@@ -318,6 +318,41 @@ function kop_rtc_folder_names($att_id) {
     return array_values(array_unique(array_filter(array_map('trim', $names))));
 }
 
+/** Return the shared filename stem for image/PDF pairing, or an empty string. */
+function kop_rtc_pair_key($att_id) {
+    $mime = (string) get_post_mime_type($att_id);
+    if ($mime !== 'application/pdf' && strpos($mime, 'image/') !== 0) return '';
+    $path = get_attached_file($att_id);
+    if (!$path) return '';
+    $stem = pathinfo(wp_basename($path), PATHINFO_FILENAME);
+    return $stem !== '' ? strtolower($stem) : '';
+}
+
+/** Find the PDF and image attachments that share one filename stem. */
+function kop_rtc_file_pair_ids($att_id) {
+    static $pairs = null;
+    $key = kop_rtc_pair_key($att_id);
+    if ($key === '') return [(int) $att_id];
+    if ($pairs === null) {
+        global $wpdb;
+        $pairs = [];
+        $ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND (post_mime_type = 'application/pdf' OR post_mime_type LIKE 'image/%')");
+        foreach ($ids as $id) {
+            $candidate_key = kop_rtc_pair_key((int) $id);
+            if ($candidate_key !== '') $pairs[$candidate_key][] = (int) $id;
+        }
+    }
+    $ids = $pairs[$key] ?? [(int) $att_id];
+    $has_pdf = false;
+    $has_image = false;
+    foreach ($ids as $id) {
+        $mime = (string) get_post_mime_type($id);
+        $has_pdf = $has_pdf || $mime === 'application/pdf';
+        $has_image = $has_image || strpos($mime, 'image/') === 0;
+    }
+    return ($has_pdf && $has_image) ? array_values(array_unique($ids)) : [(int) $att_id];
+}
+
 // ---------------------------------------------------------------------------
 // AJAX: suggest a title for one attachment
 // ---------------------------------------------------------------------------
@@ -400,6 +435,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     $requests = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
     $done = 0;
     $skipped = 0;
+    $updates = [];
     foreach ($requests as $att_id => $req) {
         if (empty($req['go'])) continue;
         $att_id = (int) $att_id;
@@ -409,6 +445,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             $skipped++;
             continue;
         }
+        foreach (kop_rtc_file_pair_ids($att_id) as $paired_id) {
+            $updates[$paired_id] = $new_title;
+        }
+    }
+    foreach ($updates as $att_id => $new_title) {
         if ($new_title === get_post_field('post_title', $att_id, 'raw')) {
             $skipped++;
             continue;
@@ -417,7 +458,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         if (is_wp_error($result)) $skipped++; else $done++;
     }
     $applied = true;
-    $apply_log[] = "Retitled {$done} attachment(s)." . ($skipped ? " Skipped {$skipped} (unticked, empty, unchanged, or update failed)." : '');
+    $apply_log[] = "Retitled {$done} attachment(s), including matching image/PDF pairs." . ($skipped ? " Skipped {$skipped} (unticked, empty, unchanged, or update failed)." : '');
 }
 
 // ---------------------------------------------------------------------------
@@ -461,6 +502,7 @@ foreach ($rows as $r) {
     ];
 }
 $ajax_nonce = wp_create_nonce('kop_rtc');
+$groq_min_interval_ms = max(1000, (int) (getenv('KOP_RTC_GROQ_INTERVAL_MS') ?: 15000));
 ?><!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>Retitle From Content</title>
 <style>
@@ -527,6 +569,7 @@ td a { color: #000080; }
 <table><thead><tr><th></th><th style="width:32%">Current title</th><th style="width:40%">New title</th><th>File</th></tr></thead><tbody>
 <?php foreach ($preview as $p): ?>
     <tr data-id="<?php echo $p['id']; ?>" data-mime="<?php echo esc_attr($p['mime']); ?>"
+        data-pair-key="<?php echo esc_attr(kop_rtc_pair_key($p['id'])); ?>"
         data-supported="<?php echo $p['supported'] ? 1 : 0; ?>" data-url="<?php echo esc_url($p['url']); ?>">
         <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
         <td>
@@ -549,9 +592,20 @@ td a { color: #000080; }
 (function () {
     var NONCE = <?php echo json_encode($ajax_nonce); ?>;
     var PDFJS_VER = '3.11.174';
+    var GROQ_MIN_INTERVAL_MS = <?php echo (int) $groq_min_interval_ms; ?>;
     var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
     function check(row) { return row.querySelector('input[type=checkbox]'); }
     function titleInput(row) { return row.querySelector('input.new-title'); }
+    function syncPair(row) {
+        var key = row.dataset.pairKey;
+        var title = titleInput(row);
+        if (!key || !title || !title.value.trim()) return;
+        rows.forEach(function (other) {
+            if (other !== row && other.dataset.pairKey === key) {
+                titleInput(other).value = title.value;
+            }
+        });
+    }
     function paint(row) { var c = check(row); if (c) row.classList.toggle('kop-ticked', c.checked); }
     function refresh() {
         var n = rows.filter(function (r) { var c = check(r); return c && c.checked; }).length;
@@ -682,6 +736,7 @@ td a { color: #000080; }
         var basis = row.querySelector('.basis');
         if (r.ok) {
             titleInput(row).value = r.title;
+            syncPair(row);
             basis.textContent = 'from ' + r.basis + (r.note ? ' - ' + r.note : '');
             row.classList.remove('kop-err');
             return true;
@@ -693,6 +748,9 @@ td a { color: #000080; }
 
     var suggestBtn = document.getElementById('kop-suggest');
     var progress = document.getElementById('kop-progress');
+    rows.forEach(function (row) {
+        titleInput(row).addEventListener('input', function () { syncPair(row); });
+    });
     suggestBtn.addEventListener('click', function () {
         var queue = rows.filter(function (r) {
             var c = check(r), t = titleInput(r);
@@ -710,17 +768,21 @@ td a { color: #000080; }
         }
         report();
 
-        function worker() {
+        function processNext() {
             var row = queue.shift();
             if (!row) return Promise.resolve();
             return suggestOne(row, report).then(function (ok) {
                 if (!ok) failed++;
                 done++;
                 report();
-                return worker();
+                if (!queue.length) return Promise.resolve();
+                report('waiting ' + Math.round(GROQ_MIN_INTERVAL_MS / 1000) + 's');
+                return new Promise(function (resolve) {
+                    setTimeout(function () { resolve(processNext()); }, GROQ_MIN_INTERVAL_MS);
+                });
             });
         }
-        Promise.all([worker(), worker(), worker()]).then(function () {
+        processNext().then(function () {
             suggestBtn.disabled = false;
             progress.textContent = 'Done: ' + (done - failed) + ' suggested'
                 + (failed ? ', ' + failed + ' failed (red rows)' : '') + '. Review, edit, then Apply.';

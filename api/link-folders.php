@@ -241,9 +241,18 @@ foreach ($master_rows as $row) {
                 if ($group_for($a) === $group_for($b)) continue;
                 $lo = min($a, $b);
                 $hi = max($a, $b);
-                $key = kop_lf_pair_key($lo, $hi);
+                // Multiple FileBird folders can represent the same name in
+                // different parent trees. Same-name folders already merge,
+                // so show one suggestion for the name pair, not every ID pair.
+                $id_key = kop_lf_pair_key($lo, $hi);
+                if (isset($dismissed_pairs[$id_key])) continue;
+                $name_keys = [
+                    kop_normalize_name_key((string)$by_id[$a]->name),
+                    kop_normalize_name_key((string)$by_id[$b]->name),
+                ];
+                sort($name_keys, SORT_STRING);
+                $key = implode(':', $name_keys);
                 if (isset($suggestion_keys[$key])) continue;
-                if (isset($dismissed_pairs[$key])) continue;
                 $suggestion_keys[$key] = true;
                 $suggestions[] = [
                     'a' => $lo,
