@@ -18,6 +18,10 @@
  *                                    admins keep editing addresses in the
  *                                    facility form as usual and re-run the
  *                                    scan here.
+ *   {prefix}kop_address_dismissals  — CURATED: normalized scan candidates
+ *                                    that are locations, regions, or other
+ *                                    non-address values and should stay out
+ *                                    of the scan and seed results.
  *
  * Views:
  *   (default)      Scan report — every street address found in
@@ -55,6 +59,7 @@ $fbv = $wpdb->prefix . 'fbv';
 $addr_tbl = $wpdb->prefix . 'kop_addresses';
 $fa_tbl = $wpdb->prefix . 'kop_facility_addresses';
 $links_tbl = $wpdb->prefix . 'kop_folder_links';
+$dismissals_tbl = $wpdb->prefix . 'kop_address_dismissals';
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -83,6 +88,13 @@ $wpdb->query("CREATE TABLE IF NOT EXISTS {$fa_tbl} (
     source_street VARCHAR(255) NOT NULL DEFAULT '',
     PRIMARY KEY (address_id, facility, role, from_year),
     KEY idx_facility (facility)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+$wpdb->query("CREATE TABLE IF NOT EXISTS {$dismissals_tbl} (
+    norm_key VARCHAR(191) NOT NULL,
+    label VARCHAR(255) NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (norm_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
 // Same shape api/link-folders.php creates — made here too so the shared view's
@@ -180,6 +192,16 @@ function kop_ma_norm_key($street, $city, $state, $zip) {
     $zip5 = kop_ma_zip5($zip);
     $locale = $zip5 !== '' ? $zip5 : kop_ma_norm_street($city);
     return mb_substr($street_n . '|' . $state_n . '|' . $locale, 0, 191);
+}
+
+/** Scan candidates explicitly marked as non-address values. */
+function kop_ma_dismissed_keys() {
+    global $wpdb, $dismissals_tbl;
+    $keys = [];
+    foreach ((array)$wpdb->get_col("SELECT norm_key FROM {$dismissals_tbl}") as $key) {
+        $keys[(string)$key] = true;
+    }
+    return $keys;
 }
 
 // ---------------------------------------------------------------------------
@@ -477,6 +499,7 @@ function kop_ma_scan() {
     global $wpdb;
 
     $groups = [];
+    $dismissed_keys = kop_ma_dismissed_keys();
     $tables = [];
     foreach (['facilities_master', 'locations_master'] as $base) {
         $tbl = kop_ma_resolve_table_name($base);
@@ -493,7 +516,7 @@ function kop_ma_scan() {
             foreach ($facilities as $item) {
                 foreach (kop_ma_extract_entries($item['facility'], $item['name']) as $e) {
                     $key = kop_ma_norm_key($e['street'], $e['city'], $e['state'], $e['zip']);
-                    if ($key === '') {
+                    if ($key === '' || isset($dismissed_keys[$key])) {
                         continue;
                     }
                     if (!isset($groups[$key])) {
@@ -539,6 +562,41 @@ function kop_ma_scan() {
 // ---------------------------------------------------------------------------
 $log = [];
 $log_ok = false;
+
+// Remove a scan candidate that is a city, state, country, or other location
+// label rather than a physical street address. This does not alter source
+// facility data; it only suppresses the normalized candidate from this tool.
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_dismiss_address'])
+    && check_admin_referer('kop_ma_apply')) {
+
+    $key = sanitize_text_field((string)($_POST['norm_key'] ?? ''));
+    $label = sanitize_text_field((string)($_POST['label'] ?? ''));
+    if ($key === '') {
+        $log[] = 'Could not dismiss the address candidate: missing normalized key.';
+    } else {
+        $ins = $wpdb->query($wpdb->prepare(
+            "INSERT IGNORE INTO {$dismissals_tbl} (norm_key, label) VALUES (%s, %s)",
+            $key, mb_substr($label, 0, 255)
+        ));
+        $log_ok = (bool)$ins;
+        $log[] = $ins
+            ? 'Dismissed "' . ($label !== '' ? $label : $key) . '" from the address scan.'
+            : 'That scan candidate is already dismissed.';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_restore_address_dismissal'])
+    && check_admin_referer('kop_ma_apply')) {
+
+    $key = sanitize_text_field((string)($_POST['norm_key'] ?? ''));
+    $deleted = $wpdb->delete($dismissals_tbl, ['norm_key' => $key], ['%s']);
+    $log_ok = (bool)$deleted;
+    $log[] = $deleted
+        ? 'Address candidate restored to the scan list.'
+        : 'That address dismissal no longer exists.';
+}
 
 // Seed / refresh: new curated address rows for unseen keys, then rebuild the
 // derived facility-address join from scratch.
@@ -637,6 +695,7 @@ $q = trim((string)($_GET['q'] ?? ''));
 
 $addr_count = (int)$wpdb->get_var("SELECT COUNT(*) FROM {$addr_tbl}");
 $membership_count = (int)$wpdb->get_var("SELECT COUNT(*) FROM {$fa_tbl}");
+$dismissals = $wpdb->get_results("SELECT norm_key, label, created_at FROM {$dismissals_tbl} ORDER BY created_at DESC");
 
 /** Folder-name normalization for facility -> folder resolution. */
 function kop_ma_name_norm($text) {
@@ -846,7 +905,8 @@ addresses in the facility form as usual.</p>
 <p class="help"><?php echo count($scan_groups); ?> distinct address(es) found in the facility data
 (grouped by normalized street + state + zip/city). Rows marked <span class="warn">new</span> get an
 ID on the next seed run. Near-duplicates that failed to group (typos, missing zips) appear as
-separate rows &mdash; fix the address in the facility form and re-scan.</p>
+separate rows &mdash; fix the address in the facility form and re-scan. Values that are cities,
+states, countries, or other non-address labels can be dismissed here.</p>
 
 <table><thead><tr><th>ID</th><th>Address</th><th>Facilities at this address</th></tr></thead><tbody>
 <?php foreach ($scan_groups as $key => $g):
@@ -859,7 +919,17 @@ separate rows &mdash; fix the address in the facility form and re-scan.</p>
 ?>
     <tr>
         <td><?php echo $aid !== null ? '<span class="aid">#' . $aid . '</span>' : '<span class="warn">new</span>'; ?></td>
-        <td><?php echo esc_html($addr_label); ?></td>
+        <td>
+            <?php echo esc_html($addr_label); ?>
+            <form method="post" style="margin-top:6px">
+                <?php wp_nonce_field('kop_ma_apply'); ?>
+                <input type="hidden" name="norm_key" value="<?php echo esc_attr($key); ?>">
+                <input type="hidden" name="label" value="<?php echo esc_attr($addr_label); ?>">
+                <button type="submit" name="do_dismiss_address" value="1" class="small"
+                    onclick="return window.confirm('Dismiss this scan candidate as not a physical address? It will be removed from the scan and seed results.');">
+                    Not an address</button>
+            </form>
+        </td>
         <td>
         <?php
             $facs = [];
@@ -875,6 +945,27 @@ separate rows &mdash; fix the address in the facility form and re-scan.</p>
     </tr>
 <?php endforeach; ?>
 </tbody></table>
+
+<h2>Dismissed non-address candidates (<?php echo count($dismissals); ?>)</h2>
+<?php if (!$dismissals): ?>
+<p class="warn">No dismissed candidates.</p>
+<?php else: ?>
+<table><thead><tr><th>Candidate</th><th>Dismissed</th><th></th></tr></thead><tbody>
+<?php foreach ($dismissals as $dismissal): ?>
+    <tr>
+        <td><?php echo esc_html($dismissal->label ?: $dismissal->norm_key); ?></td>
+        <td><?php echo esc_html($dismissal->created_at); ?></td>
+        <td>
+            <form method="post" style="margin:0">
+                <?php wp_nonce_field('kop_ma_apply'); ?>
+                <input type="hidden" name="norm_key" value="<?php echo esc_attr($dismissal->norm_key); ?>">
+                <button type="submit" name="do_restore_address_dismissal" value="1" class="small">Restore</button>
+            </form>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</tbody></table>
+<?php endif; ?>
 
 <?php else: ?>
 

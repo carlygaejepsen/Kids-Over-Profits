@@ -38,6 +38,7 @@ $fbv = $wpdb->prefix . 'fbv';
 $fbv_rel = $wpdb->prefix . 'fbv_attachment_folder';
 $tags_tbl = $wpdb->prefix . 'kop_media_folder_tags';
 $links_tbl = $wpdb->prefix . 'kop_folder_links';
+$dismissals_tbl = $wpdb->prefix . 'kop_folder_link_dismissals';
 
 header('Content-Type: text/html; charset=utf-8');
 
@@ -52,6 +53,17 @@ $wpdb->query("CREATE TABLE IF NOT EXISTS {$links_tbl} (
     folder_a BIGINT UNSIGNED NOT NULL,
     folder_b BIGINT UNSIGNED NOT NULL,
     note VARCHAR(255) NOT NULL DEFAULT '',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (folder_a, folder_b),
+    KEY idx_b (folder_b)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+
+// A dismissal means the pair is a known alternate-name match, but NOT a
+// rebrand or shared facility. It must stay separate from kop_folder_links so
+// it never affects document-feed equivalence.
+$wpdb->query("CREATE TABLE IF NOT EXISTS {$dismissals_tbl} (
+    folder_a BIGINT UNSIGNED NOT NULL,
+    folder_b BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (folder_a, folder_b),
     KEY idx_b (folder_b)
@@ -74,6 +86,10 @@ function kop_lf_path($fid, $by_id, $depth = 0) {
     $f = $by_id[(int)$fid];
     $prefix = ((int)$f->parent !== 0) ? kop_lf_path($f->parent, $by_id, $depth + 1) . ' / ' : '';
     return $prefix . $f->name;
+}
+
+function kop_lf_pair_key($a, $b) {
+    return min((int)$a, (int)$b) . ':' . max((int)$a, (int)$b);
 }
 
 // Direct file counts (FileBird filings + theme tags) per folder.
@@ -117,6 +133,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_lf_apply')
                 ? 'Linked "' . $by_id[$a]->name . '" and "' . $by_id[$b]->name . '" — both folders now show the merged contents in facility document feeds.'
                 : 'Those folders are already linked.';
         }
+    } elseif (isset($_POST['do_dismiss'])) {
+        if ($a <= 0 || $b <= 0 || !isset($by_id[$a]) || !isset($by_id[$b]) || $a === $b) {
+            $log[] = 'Pick two different existing folders first.';
+        } else {
+            $lo = min($a, $b);
+            $hi = max($a, $b);
+            $ins = $wpdb->query($wpdb->prepare(
+                "INSERT IGNORE INTO {$dismissals_tbl} (folder_a, folder_b) VALUES (%d, %d)",
+                $lo, $hi
+            ));
+            $log_ok = (bool)$ins;
+            $log[] = $ins
+                ? 'Marked "' . $by_id[$a]->name . '" and "' . $by_id[$b]->name . '" as alternate names. They will stay separate and leave the suggestion list.'
+                : 'That pair is already marked as an alternate-name match.';
+        }
+    } elseif (isset($_POST['do_restore_dismissal'])) {
+        $deleted = $wpdb->delete($dismissals_tbl, [
+            'folder_a' => min($a, $b),
+            'folder_b' => max($a, $b),
+        ], ['%d', '%d']);
+        $log_ok = (bool)$deleted;
+        $log[] = $deleted ? 'Alternate-name dismissal restored to the suggestion list.' : 'That dismissal no longer exists.';
     } elseif (isset($_POST['do_unlink'])) {
         $deleted = $wpdb->delete($links_tbl, ['folder_a' => min($a, $b), 'folder_b' => max($a, $b)], ['%d', '%d']);
         $log_ok = (bool)$deleted;
@@ -128,6 +166,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_lf_apply')
 // Current links
 // ---------------------------------------------------------------------------
 $links = $wpdb->get_results("SELECT folder_a, folder_b, note, created_at FROM {$links_tbl} ORDER BY created_at DESC");
+$dismissals = $wpdb->get_results("SELECT folder_a, folder_b, created_at FROM {$dismissals_tbl} ORDER BY created_at DESC");
+$dismissed_pairs = [];
+foreach ($dismissals as $dismissal) {
+    $dismissed_pairs[kop_lf_pair_key($dismissal->folder_a, $dismissal->folder_b)] = true;
+}
 
 // Suggest pairs whose folder names are known names or aliases of one facility.
 $suggestions = [];
@@ -198,8 +241,9 @@ foreach ($master_rows as $row) {
                 if ($group_for($a) === $group_for($b)) continue;
                 $lo = min($a, $b);
                 $hi = max($a, $b);
-                $key = $lo . ':' . $hi;
+                $key = kop_lf_pair_key($lo, $hi);
                 if (isset($suggestion_keys[$key])) continue;
+                if (isset($dismissed_pairs[$key])) continue;
                 $suggestion_keys[$key] = true;
                 $suggestions[] = [
                     'a' => $lo,
@@ -284,7 +328,7 @@ need a link. To manage which files are in which folder, use
 
 <?php if ($suggestions): ?>
 <h2>Suggested links (<?php echo count($suggestions); ?>)</h2>
-<p class="help">These pairs match two known names or aliases for the same facility. Review each one before linking.</p>
+<p class="help">These pairs match two known names or aliases for the same facility. Review each one before linking. If the names only happen to be related or are distinct programs, mark the pair as an alternate name to remove it without merging their document feeds.</p>
 <table><thead><tr><th>Folders</th><th>Known as</th><th>Basis</th><th></th></tr></thead><tbody>
 <?php foreach ($suggestions as $suggestion): ?>
     <tr>
@@ -294,7 +338,41 @@ need a link. To manage which files are in which folder, use
         <td><?php echo esc_html($suggestion['basis']); ?></td>
         <td><button type="button" class="use-suggestion" data-a="<?php echo (int)$suggestion['a']; ?>"
             data-b="<?php echo (int)$suggestion['b']; ?>" data-a-name="<?php echo esc_attr($suggestion['a_name']); ?>"
-            data-b-name="<?php echo esc_attr($suggestion['b_name']); ?>">Use</button></td>
+            data-b-name="<?php echo esc_attr($suggestion['b_name']); ?>">Use</button>
+            <form method="post" style="display:inline;margin:0 0 0 4px">
+                <?php wp_nonce_field('kop_lf_apply'); ?>
+                <input type="hidden" name="folder_a" value="<?php echo (int)$suggestion['a']; ?>">
+                <input type="hidden" name="folder_b" value="<?php echo (int)$suggestion['b']; ?>">
+                <button type="submit" name="do_dismiss" value="1" class="danger"
+                    onclick="return window.confirm('Mark these as alternate names, not a rebrand? They will stay separate and leave the suggestion list.');">
+                    Alternate name</button>
+            </form>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</tbody></table>
+<?php endif; ?>
+
+<h2>Dismissed alternate names (<?php echo count($dismissals); ?>)</h2>
+<?php if (!$dismissals): ?>
+<p class="warn">No alternate-name dismissals.</p>
+<?php else: ?>
+<table><thead><tr><th>Folders</th><th>Dismissed</th><th></th></tr></thead><tbody>
+<?php foreach ($dismissals as $dismissal):
+    $a = (int)$dismissal->folder_a;
+    $b = (int)$dismissal->folder_b;
+?>
+    <tr>
+        <td><?php echo esc_html(kop_lf_path($a, $by_id)); ?><br><?php echo esc_html(kop_lf_path($b, $by_id)); ?></td>
+        <td><?php echo esc_html($dismissal->created_at); ?></td>
+        <td>
+            <form method="post" style="margin:0">
+                <?php wp_nonce_field('kop_lf_apply'); ?>
+                <input type="hidden" name="folder_a" value="<?php echo $a; ?>">
+                <input type="hidden" name="folder_b" value="<?php echo $b; ?>">
+                <button type="submit" name="do_restore_dismissal" value="1" class="danger">Restore</button>
+            </form>
+        </td>
     </tr>
 <?php endforeach; ?>
 </tbody></table>

@@ -37,7 +37,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title' => 'Link Folders',
-                'desc'  => 'Mark two FileBird folders as the same facility under different names (rename/rebrand), so document feeds show the merged contents under both.',
+                'desc'  => 'Link FileBird folders for renames/rebrands, or mark suggested pairs as alternate names without merging their document feeds.',
                 'path'  => 'api/link-folders.php',
                 'type'  => 'page',
             ),
