@@ -1027,11 +1027,14 @@ function kop_normalize_project_payload($json) {
         } elseif (isset($data['facilities']['facilities']) && is_array($data['facilities']['facilities'])) {
             $data['facilities'] = $data['facilities']['facilities'];
         } elseif (isset($data['facility']) && is_array($data['facility'])) {
-            $data['facilities'] = $data['facility'];
+            // Promoted per-facility rows (__facility_ref) store ONE facility
+            // object here, not a list. Iterating a bare object would treat each
+            // sub-section (identification, sourceOperator, ...) as a facility.
+            $data['facilities'] = array_is_list($data['facility']) ? $data['facility'] : array($data['facility']);
         } elseif (isset($data['facility']) && is_string($data['facility'])) {
             $parsed_facilities = json_decode($data['facility'], true);
             if (is_array($parsed_facilities)) {
-                $data['facilities'] = $parsed_facilities;
+                $data['facilities'] = array_is_list($parsed_facilities) ? $parsed_facilities : array($parsed_facilities);
             }
         }
         return $data;
@@ -2604,17 +2607,39 @@ function kop_state_collect_programs($state_name) {
         // imported entry in the state aggregate, as the clone synced from its
         // operator project, and in the operator project itself. Each copy may
         // hold fields the others lack, so MERGE same-named entries instead of
-        // keeping only the first one seen. Same-named programs in clearly
-        // different cities stay separate rows.
-        if ($dedup_key !== '') {
-            if (!isset($seen_names[$dedup_key])) $seen_names[$dedup_key] = array();
-            foreach ($seen_names[$dedup_key] as $idx) {
-                if (kop_same_city($programs[$idx]['city'], $program['city'])) {
-                    kop_state_merge_program_fields($programs[$idx], $program);
-                    return;
+        // keeping only the first one seen. Matching is by name only (as the
+        // old first-wins dedup was): copies often disagree on the city by an
+        // adjacent town, and a second distinct address is kept as an extra
+        // campus address rather than becoming a second tile.
+        if ($dedup_key !== '' && isset($seen_names[$dedup_key])) {
+            $existing = &$programs[$seen_names[$dedup_key]];
+            // The address travels as a unit (street + city + zip) so a merge
+            // never pairs one copy's street with another copy's city.
+            $addr_keys = array('street', 'city', 'state', 'zip', 'raw_address');
+            $existing_has_street = ($existing['street'] !== '' || ($existing['city'] === '' && $existing['raw_address'] !== ''));
+            $incoming_has_street = ($program['street'] !== '' || ($program['city'] === '' && $program['raw_address'] !== ''));
+            if (!$existing_has_street && $incoming_has_street) {
+                foreach ($addr_keys as $ak) $existing[$ak] = $program[$ak];
+            } elseif ($existing_has_street && $incoming_has_street) {
+                $fmt = static function ($p) {
+                    return $p['street'] !== ''
+                        ? implode(', ', array_filter(array($p['street'], $p['city'], $p['state'], $p['zip'])))
+                        : $p['raw_address'];
+                };
+                $incoming_line = $fmt($program);
+                if (kop_normalize_address_for_match($incoming_line) !== kop_normalize_address_for_match($fmt($existing))) {
+                    $known = array_map('strtolower', $existing['additional_addresses']);
+                    if (!in_array(strtolower($incoming_line), $known, true)) {
+                        $existing['additional_addresses'][] = $incoming_line;
+                    }
                 }
             }
-            $seen_names[$dedup_key][] = count($programs);
+            kop_state_merge_program_fields($existing, $program);
+            unset($existing);
+            return;
+        }
+        if ($dedup_key !== '') {
+            $seen_names[$dedup_key] = count($programs);
         }
         $programs[] = $program;
     };
@@ -4100,6 +4125,7 @@ function kop_state_collect_facilities($state_name) {
         }
     }
 
+    $merged = array();
     foreach ($by_key as $facility) {
         // Final junk-name guard, applied regardless of source (master programs
         // aren't filtered upstream the way inspection rows are) — drops bare

@@ -364,23 +364,36 @@
 
         target.inspections = mergeInspectionLists(target.inspections, source.inspections);
 
-        if (!normalizeText(target.address) && normalizeText(source.address)) {
-            target.address = source.address;
+        // Every other field: fill empty scalars, union lists, merge keyed maps,
+        // so no detail is lost when a loose record folds into a named one.
+        const skip = new Set(['inspection_count', 'violation_count', 'latest_inspection_date', 'inspections', 'name', 'in_master', 'in_inspections']);
+        Object.keys(source).forEach(key => {
+            if (skip.has(key)) return;
+            const sv = source[key];
+            const tv = target[key];
+            if (sv === null || sv === undefined || sv === '') return;
+            if (Array.isArray(sv)) {
+                if (!sv.length) return;
+                const merged = Array.isArray(tv) ? [...tv] : [];
+                sv.forEach(item => {
+                    const dup = (item && typeof item === 'object')
+                        ? merged.some(have => JSON.stringify(have) === JSON.stringify(item))
+                        : merged.some(have => normalizeText(have).toLowerCase() === normalizeText(item).toLowerCase());
+                    if (!dup) merged.push(item);
+                });
+                target[key] = merged;
+            } else if (typeof sv === 'object') {
+                if (!Object.keys(sv).length) return;
+                target[key] = (tv && typeof tv === 'object' && !Array.isArray(tv)) ? { ...sv, ...tv } : sv;
+            } else if (tv === null || tv === undefined || tv === '' || (key === 'status' && String(tv).toLowerCase() === 'unknown')) {
+                target[key] = sv;
+            }
+        });
+        if (Array.isArray(target.addresses) && normalizeText(target.address) && !target.addresses.includes(target.address)) {
+            target.addresses.unshift(target.address);
         }
-        if (!normalizeText(target.operator_name) && normalizeText(source.operator_name)) {
-            target.operator_name = source.operator_name;
-        }
-        if (!normalizeText(target.project_name) && normalizeText(source.project_name)) {
-            target.project_name = source.project_name;
-        }
-        if (!normalizeText(target.type) && normalizeText(source.type)) {
-            target.type = source.type;
-        }
-        if (!normalizeText(target.operating_period) && normalizeText(source.operating_period)) {
-            target.operating_period = source.operating_period;
-        }
-        if (!target.relocation && source.relocation) {
-            target.relocation = source.relocation;
+        if (!normalizeText(target.address) && Array.isArray(target.addresses) && target.addresses.length) {
+            target.address = target.addresses[0];
         }
     };
 
