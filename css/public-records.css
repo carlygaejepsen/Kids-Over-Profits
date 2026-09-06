@@ -292,6 +292,72 @@
     color: var(--kop-white, #fff);
 }
 
+/* Facility tags that resolved to a facility record link to its profile. */
+a.kop-tag {
+    text-decoration: none;
+}
+
+a.kop-tag:focus-visible {
+    outline: 2px solid var(--kop-teal);
+    outline-offset: 2px;
+}
+
+.kop-tag-more {
+    font-size: 0.75rem;
+    color: #718096;
+    align-self: center;
+}
+
+/* ── News coverage of a case ─────────────────────────── */
+
+.kop-card-coverage {
+    font-size: 0.875rem;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.kop-coverage-list {
+    list-style: none;
+    margin: 0.3rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.kop-coverage-item a {
+    color: var(--kop-navy-blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-coverage-item a:hover {
+    color: var(--kop-teal);
+    text-decoration: underline;
+}
+
+.kop-coverage-meta {
+    display: block;
+    font-size: 0.78rem;
+    color: #718096;
+}
+
+.kop-coverage-more {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-top: 0.4rem;
+    color: var(--kop-teal);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.kop-coverage-more:hover {
+    color: var(--kop-navy-blue);
+    text-decoration: underline;
+}
+
 /* ── Summary (expandable) ────────────────────────────── */
 
 .kop-card-summary-toggle {
@@ -406,6 +472,63 @@
     color: var(--kop-navy-blue);
     font-size: 1.05rem;
     grid-column: 1 / -1;
+}
+
+/* ── In Loving Memory page ───────────────────────────── */
+
+.kop-memorial-page .kop-records-header p {
+    max-width: 720px;
+    margin: 0 auto 0.6rem;
+}
+
+.kop-memorial-page .kop-memorial-grieve {
+    color: var(--kop-midnight-blue);
+    font-weight: 600;
+    font-style: italic;
+}
+
+.kop-memorial-card {
+    border-top: 3px solid var(--kop-coral-pink);
+}
+
+.kop-memorial-name-unknown {
+    font-style: italic;
+    color: var(--kop-navy-blue);
+}
+
+.kop-badge-age {
+    background: var(--kop-sand);
+    color: var(--kop-midnight-blue);
+    border: 1px solid var(--kop-coral-pink);
+}
+
+.kop-memorial-date {
+    font-weight: 600;
+    color: var(--kop-midnight-blue);
+}
+
+.kop-memorial-cause {
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: #4a5568;
+}
+
+.kop-memorial-source-note {
+    font-size: 0.88rem;
+    color: #718096;
+    font-style: italic;
+}
+
+.kop-memorial-credit {
+    margin: 2.5rem 0 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #718096;
+}
+
+.kop-memorial-credit a {
+    color: var(--kop-teal);
+    font-weight: 600;
 }
 
 /* ── Responsive ──────────────────────────────────────── */

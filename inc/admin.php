@@ -394,6 +394,7 @@ function kop_tool_page_specs() {
         array('template' => 'page-wiki-editor.php',        'title' => 'Wiki Editor',         'slug' => 'wiki-editor',        'status' => 'publish'),
         array('template' => 'page-submit-legislation.php', 'title' => 'Submit Legislation',  'slug' => 'submit-legislation', 'status' => 'publish'),
         array('template' => 'page-submit-lawsuit.php',     'title' => 'Submit a Lawsuit',    'slug' => 'submit-lawsuit',     'status' => 'publish'),
+        array('template' => 'page-memorial.php',           'title' => 'In Loving Memory',    'slug' => 'in-loving-memory',   'status' => 'publish'),
     );
 }
 
@@ -444,7 +445,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * get the pages without needing to re-activate the theme.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '2';
+    $version = '3';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

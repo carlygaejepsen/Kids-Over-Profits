@@ -68,12 +68,13 @@ function kadence_child_enqueue_styles() {
         );
     }
 
-    // Public record pages: Lawsuits, Legislation, Volunteer, and the public
+    // Public record pages: Lawsuits, Legislation, Volunteer, In Loving Memory, and the public
     // submission forms for legislation/lawsuits.
     $record_templates = [
         'templates/page-lawsuits.php',
         'templates/page-legislation.php',
         'templates/page-volunteers.php',
+        'templates/page-memorial.php',
         'templates/page-submit-legislation.php',
         'templates/page-submit-lawsuit.php',
     ];
