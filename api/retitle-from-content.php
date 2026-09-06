@@ -483,13 +483,20 @@ global $wpdb;
 
 $scope = (($_GET['scope'] ?? '') === 'all') ? 'all' : 'unclear';
 $q     = trim((string) ($_GET['q'] ?? ''));
+$image_pdf_where = "(post_mime_type NOT LIKE 'image/%' OR EXISTS (
+    SELECT 1 FROM {$wpdb->posts} AS pdf
+    WHERE pdf.post_type = 'attachment'
+      AND pdf.post_mime_type = 'application/pdf'
+      AND pdf.post_title = {$wpdb->posts}.post_title
+))";
 
 $where = "post_type = 'attachment'";
+$where .= ' AND ' . $image_pdf_where;
 if ($scope === 'unclear') {
     $where .= ' AND ' . kop_rtc_unclear_where();
 }
 $total_unclear = (int) $wpdb->get_var(
-    "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'attachment' AND " . kop_rtc_unclear_where()
+    "SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'attachment' AND " . $image_pdf_where . ' AND ' . kop_rtc_unclear_where()
 );
 
 $sql = "SELECT ID, post_title, post_mime_type FROM {$wpdb->posts} WHERE {$where}";
