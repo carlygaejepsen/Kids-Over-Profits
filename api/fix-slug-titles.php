@@ -13,6 +13,9 @@
  * GET shows a preview (nothing is written). Ticked rows are applied via
  * POST. Only post_title changes — files, slugs, and folders are untouched.
  *
+ * Only PDFs and images are in scope; other attachment types (JSON exports,
+ * DOCX, ZIP, audio, video...) are neither listed nor renamed.
+ *
  * Admin-only. Loads WordPress via config.php.
  */
 
@@ -28,6 +31,11 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 header('Content-Type: text/html; charset=utf-8');
 
 $SHOW = 500; // rows rendered per pass
+
+/** Attachment types this tool may rename: PDFs and images only. */
+function kop_fst_in_scope_mime($mime) {
+    return $mime === 'application/pdf' || strpos($mime, 'image/') === 0;
+}
 
 /** Title looks like a sanitized filename with the extension glued on. */
 function kop_fst_is_slug_title($title) {
@@ -91,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             continue;
         }
         $att_id = (int) $att_id;
-        if ($att_id <= 0 || get_post_type($att_id) !== 'attachment') {
+        if ($att_id <= 0 || get_post_type($att_id) !== 'attachment' || !kop_fst_in_scope_mime((string) get_post_mime_type($att_id))) {
             $skipped++;
             continue;
         }
@@ -126,15 +134,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 // ---------------------------------------------------------------------------
 global $wpdb;
 
+// Same scope as retitle-from-content.php: PDFs and images only.
+$mime_where = "(post_mime_type = 'application/pdf' OR post_mime_type LIKE 'image/%')";
+
 $total_slug = (int) $wpdb->get_var(
     "SELECT COUNT(*) FROM {$wpdb->posts}
      WHERE post_type = 'attachment'
+       AND {$mime_where}
        AND post_title REGEXP '-(pdf|jpg|jpeg|png|gif|webp|bmp|svg|doc|docx|xls|xlsx|ppt|pptx|txt|csv|mp3|mp4|mov|avi|zip)$'"
 );
 
 $q = trim((string) ($_GET['q'] ?? ''));
 $sql = "SELECT ID, post_title, post_mime_type FROM {$wpdb->posts}
         WHERE post_type = 'attachment'
+          AND {$mime_where}
           AND post_title REGEXP '-(pdf|jpg|jpeg|png|gif|webp|bmp|svg|doc|docx|xls|xlsx|ppt|pptx|txt|csv|mp3|mp4|mov|avi|zip)$'";
 $params = [];
 if ($q !== '') {
@@ -190,6 +203,7 @@ td a { color: #000080; }
     <strong><?php echo $total_slug; ?></strong> attachment(s) currently have filename-slug titles
     (title ends in -pdf, -jpg, and so on).
     Showing up to <?php echo (int) $SHOW; ?> per pass &mdash; apply, then reload for the next batch.
+    Only PDFs and images are listed; other attachment types are out of scope.
     Nothing changes until you click Apply; only the title is rewritten (file, URL, and folders stay put).
 </div>
 

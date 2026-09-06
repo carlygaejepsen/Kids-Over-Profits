@@ -14,7 +14,8 @@
  *              scan with no text layer, the browser renders page 1 to a JPEG
  *              and the server sends it to a Groq vision model (the OCR step)
  *   Images     server downscales with GD and sends to the vision model
- *   DOCX/TXT   server-side text extraction (lawsuit-extraction lib)
+ * Only PDFs and images are in scope; other attachment types (DOCX, JSON, ZIP,
+ * audio, video...) never appear in the list and are refused by the suggester.
  *
  * Only post_title changes — the physical file, its URL, slug, and folders are
  * never touched (renaming files on disk would break every existing link).
@@ -47,12 +48,10 @@ $SHOW = 200; // rows rendered per pass
 // Unclear-title detection
 // ---------------------------------------------------------------------------
 
-/** Mime types the tool can read (server text, client pdf.js, or vision). */
+/** Mime types the tool handles: PDFs (client pdf.js or vision) and images (vision). */
 function kop_rtc_supported_mime($mime) {
     return in_array($mime, [
         'application/pdf',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'text/plain',
         'image/jpeg',
         'image/png',
         'image/webp',
@@ -641,6 +640,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
                 exit;
             }
         } else {
+            // PDF whose browser step sent nothing: try the server-side text layer.
             $text = kop_extract_document_text($path, $mime);
         }
     }
@@ -714,10 +714,14 @@ $from = "{$wpdb->posts} AS p LEFT JOIN (
 ) AS pdf ON pdf.pdf_title = p.post_title";
 $image_pdf_where = "(p.post_mime_type NOT LIKE 'image/%' OR pdf.pdf_title IS NOT NULL)";
 
+// Only PDFs and images are candidates; JSON exports, DOCX, ZIP, audio and video
+// attachments are out of scope for the media library retitling pass.
+$mime_where = "(p.post_mime_type = 'application/pdf' OR p.post_mime_type LIKE 'image/%')";
+
 // "Unclear" depends on program-name matching, which SQL cannot express, so
 // every candidate row (a few thousand, three short columns) is pulled and
 // filtered in PHP; the first $SHOW unclear ones are rendered.
-$where = "p.post_type = 'attachment' AND " . $image_pdf_where;
+$where = "p.post_type = 'attachment' AND " . $mime_where . " AND " . $image_pdf_where;
 $sql = "SELECT p.ID, p.post_title, p.post_mime_type FROM {$from} WHERE {$where}";
 $params = [];
 if ($q !== '') {
@@ -792,7 +796,7 @@ td a { color: #000080; }
     edit anything you like, then <em>Apply</em>. Only the title changes &mdash; the file, its URL,
     and its folders stay exactly where they are.
     PDFs are read in your browser (scans get vision OCR of page 1); images go to the vision
-    model; DOCX/TXT are read on the server. Anything else can still be retitled by hand.
+    model. Only PDFs and images are listed &mdash; other attachment types are out of scope.
 </div>
 
 <form method="get" style="margin-bottom:10px">
