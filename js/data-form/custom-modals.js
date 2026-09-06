@@ -630,36 +630,47 @@ class OrganizerModal {
             modal.classList.remove('active');
         }
 
+        // Show the requested facility using whichever navigation API this page provides.
+        const showFacility = (index) => {
+            if (typeof window.loadFacility === 'function') {
+                window.loadFacility(index);
+            } else if (typeof window.navigateToFacility === 'function') {
+                window.navigateToFacility(index);
+            } else if (window.currentFacilityIndex !== undefined) {
+                window.currentFacilityIndex = index;
+                if (typeof window.updateAllUI === 'function') {
+                    window.updateAllUI();
+                } else if (typeof window.renderFacilityToForm === 'function') {
+                    window.renderFacilityToForm();
+                }
+            }
+        };
+
+        // Poll until the project's facilities are actually loaded (up to ~5s)
+        // instead of a single fixed delay that loses the race on slow loads.
+        const navigateWhenReady = (index, attempts = 20) => {
+            const facilities = window.formData?.facilities;
+            if (Array.isArray(facilities) && facilities.length > index) {
+                showFacility(index);
+                return;
+            }
+            if (attempts > 0) {
+                setTimeout(() => navigateWhenReady(index, attempts - 1), 250);
+            } else {
+                console.error('goToFacility: project facilities never loaded');
+                this.announceStatus('Unable to open that facility. Please try manually.', 'error');
+            }
+        };
+
         // Use loadProjectAndSync if available (admin page)
         if (typeof window.loadProjectAndSync === 'function') {
             await window.loadProjectAndSync(projectName);
-
-            // Wait for project to load then navigate to facility
-            setTimeout(() => {
-                if (typeof window.loadFacility === 'function') {
-                    window.loadFacility(facilityIndex);
-                } else if (window.currentFacilityIndex !== undefined) {
-                    window.currentFacilityIndex = facilityIndex;
-                    if (typeof window.renderFacilityToForm === 'function') {
-                        window.renderFacilityToForm();
-                    }
-                }
-            }, 500);
+            navigateWhenReady(facilityIndex);
         }
         // Use loadProject if available (standard data form)
         else if (window.projectManager && typeof window.projectManager.loadProject === 'function') {
             window.projectManager.loadProject(projectName);
-
-            setTimeout(() => {
-                if (typeof window.loadFacility === 'function') {
-                    window.loadFacility(facilityIndex);
-                } else if (window.currentFacilityIndex !== undefined) {
-                    window.currentFacilityIndex = facilityIndex;
-                    if (typeof window.renderFacilityToForm === 'function') {
-                        window.renderFacilityToForm();
-                    }
-                }
-            }, 500);
+            navigateWhenReady(facilityIndex);
         }
         else {
             console.error('No project loading function available');
