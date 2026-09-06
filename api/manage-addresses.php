@@ -690,7 +690,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 // ---------------------------------------------------------------------------
 // Views
 // ---------------------------------------------------------------------------
-$view = ($_GET['view'] ?? '') === 'shared' ? 'shared' : 'scan';
+$view = ($_GET['view'] ?? $_POST['view'] ?? '') === 'shared' ? 'shared' : 'scan';
 $q = trim((string)($_GET['q'] ?? ''));
 
 $addr_count = (int)$wpdb->get_var("SELECT COUNT(*) FROM {$addr_tbl}");
@@ -752,6 +752,7 @@ if ($view === 'scan') {
     }
 } else {
     // Shared view: addresses hosting 2+ distinct facilities.
+    $dismissed_keys = kop_ma_dismissed_keys();
     $rows = $wpdb->get_results(
         "SELECT fa.address_id, fa.facility, fa.role, fa.from_year, fa.to_year,
                 a.street, a.city, a.state, a.zip
@@ -764,6 +765,10 @@ if ($view === 'scan') {
          ORDER BY a.state, a.street, fa.facility"
     );
     foreach ($rows as $r) {
+        $norm_key = kop_ma_norm_key($r->street, $r->city, $r->state, $r->zip);
+        if (isset($dismissed_keys[$norm_key])) {
+            continue;
+        }
         $aid = (int)$r->address_id;
         if (!isset($shared[$aid])) {
             $shared[$aid] = [
@@ -985,7 +990,18 @@ Run a seed first if this list looks stale.</p>
         . ($s['zip'] !== '' ? ' ' . $s['zip'] : '');
 ?>
     <tr>
-        <td><span class="aid">#<?php echo $aid; ?></span> <?php echo esc_html($addr_label); ?></td>
+        <td>
+            <span class="aid">#<?php echo $aid; ?></span> <?php echo esc_html($addr_label); ?>
+            <form method="post" style="margin-top:6px">
+                <?php wp_nonce_field('kop_ma_apply'); ?>
+                <input type="hidden" name="norm_key" value="<?php echo esc_attr(kop_ma_norm_key($s['street'], $s['city'], $s['state'], $s['zip'])); ?>">
+                <input type="hidden" name="label" value="<?php echo esc_attr($addr_label); ?>">
+                <input type="hidden" name="view" value="shared">
+                <button type="submit" name="do_dismiss_address" value="1" class="small"
+                    onclick="return window.confirm('Dismiss this as not a physical address? It will be removed from the address views and seed results.');">
+                    Not an address</button>
+            </form>
+        </td>
         <td>
         <?php
             $lines = [];
