@@ -18,6 +18,15 @@ by a memorized URL.
   the plugin adds discoverability, not authorization.
 - Extend or override the lists from other code via the `kop_tools_registry`
   and `kop_tools_admin_page_templates` filters.
+- The same registry feeds three places: the dashboard (admin.php?page=kop-tools),
+  the "KOP Tools" sidebar submenu (dashboard + one link per admin page), and
+  the "KOP Tools" admin bar dropdown on every wp-admin and front-end page
+  (admin pages, then every tool grouped by category). Add a tool to the
+  registry once and it appears everywhere.
+- When this plugin is active the child theme stops registering its own
+  "KOP Data Tools" menu and admin bar node and instead hangs its Bug Reports
+  screen under this menu; the old `admin.php?page=kop-data-tools` URL
+  redirects here.
 
 ## Install
 

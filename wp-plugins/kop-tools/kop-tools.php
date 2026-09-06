@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KOP Tools
  * Description: Central dashboard for the Kids Over Profits admin tools that live in the child theme's api/ directory (folder linking, address identity, news story grouping, media re-filing, and the one-off maintenance scripts). Adds a "KOP Tools" menu to wp-admin so nothing has to be reached by memorized URL.
- * Version: 1.0.0
+ * Version: 1.1.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -66,6 +66,20 @@ function kop_tools_registry() {
                 'desc'  => 'Re-cluster every news submission into cross-outlet story groups. Idempotent repair; day-to-day grouping already happens on save.',
                 'path'  => 'api/rebuild-news-story-groups.php',
                 'type'  => 'action',
+            ),
+        ),
+        'Submissions' => array(
+            array(
+                'title' => 'Approve Submissions',
+                'desc'  => 'Review public suggested edits (facilities, locations, referrers) and approve them into the master tables or reject them.',
+                'path'  => 'api/approve-edits.php',
+                'type'  => 'page',
+            ),
+            array(
+                'title' => 'Publish Approved Records',
+                'desc'  => 'Move legislation and lawsuit rows still sitting in "approved" to "published". Dry run on open; the update runs only from the button on that page.',
+                'path'  => 'api/publish-approved-records.php',
+                'type'  => 'page',
             ),
         ),
         'Facilities & site data' => array(
@@ -144,6 +158,62 @@ function kop_tools_admin_page_templates() {
     return apply_filters('kop_tools_admin_page_templates', $templates);
 }
 
+/**
+ * Resolve the admin page templates to the published/private pages that use
+ * them. Returns a list of arrays: title, label, template, url. Only pages that
+ * actually exist are returned, in the order of kop_tools_admin_page_templates().
+ * Cached per request because both the sidebar and the admin bar ask for it.
+ */
+function kop_tools_admin_pages() {
+    static $resolved = null;
+    if ($resolved !== null) {
+        return $resolved;
+    }
+    $templates = kop_tools_admin_page_templates();
+    $meta_values = array();
+    foreach (array_keys($templates) as $t) {
+        $meta_values[] = $t;
+        $meta_values[] = 'templates/' . $t;
+    }
+    $pages = get_posts(array(
+        'post_type'      => 'page',
+        'post_status'    => array('publish', 'private'),
+        'posts_per_page' => -1,
+        'meta_query'     => array(array(
+            'key'     => '_wp_page_template',
+            'value'   => $meta_values,
+            'compare' => 'IN',
+        )),
+        'orderby'        => 'title',
+        'order'          => 'ASC',
+    ));
+    $by_template = array();
+    foreach ($pages as $page) {
+        $tpl = basename((string) get_post_meta($page->ID, '_wp_page_template', true));
+        $by_template[$tpl][] = array(
+            'title'    => get_the_title($page),
+            'label'    => isset($templates[$tpl]) ? $templates[$tpl] : $tpl,
+            'template' => $tpl,
+            'url'      => get_permalink($page),
+        );
+    }
+    $resolved = array();
+    foreach (array_keys($templates) as $tpl) {
+        if (!empty($by_template[$tpl])) {
+            foreach ($by_template[$tpl] as $row) {
+                $resolved[] = $row;
+            }
+        }
+    }
+    return $resolved;
+}
+
+/**
+ * Sidebar menu: the dashboard, then one submenu link per admin page so the
+ * front-end tools are one click away. Full URLs as submenu slugs are treated
+ * by WordPress as external links. The theme adds its own screens (Bug
+ * Reports) under this same parent when the plugin is active.
+ */
 add_action('admin_menu', function () {
     add_menu_page(
         'KOP Tools',
@@ -152,9 +222,95 @@ add_action('admin_menu', function () {
         'kop-tools',
         'kop_tools_render_dashboard',
         'dashicons-admin-tools',
-        66
+        6
     );
+    add_submenu_page('kop-tools', 'All Tools', 'All Tools', 'manage_options', 'kop-tools', 'kop_tools_render_dashboard');
+    foreach (kop_tools_admin_pages() as $page) {
+        add_submenu_page('kop-tools', $page['title'], $page['title'], 'manage_options', $page['url'], '');
+    }
 });
+
+/**
+ * Admin bar dropdown (wp-admin and front end): every registered tool, grouped
+ * by category, plus the admin pages. Missing tool files are skipped. Action
+ * tools have no GET page, so they link to the dashboard where their Run
+ * button lives.
+ */
+add_action('admin_bar_menu', function ($wp_admin_bar) {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    $dashboard = admin_url('admin.php?page=kop-tools');
+    $theme_dir = trailingslashit(get_stylesheet_directory());
+    $theme_uri = trailingslashit(get_stylesheet_directory_uri());
+
+    $wp_admin_bar->add_node(array(
+        'id'    => 'kop-tools',
+        'title' => 'KOP Tools',
+        'href'  => $dashboard,
+    ));
+    $wp_admin_bar->add_node(array(
+        'parent' => 'kop-tools',
+        'id'     => 'kop-tools-dashboard',
+        'title'  => 'All Tools (dashboard)',
+        'href'   => $dashboard,
+    ));
+
+    $pages = kop_tools_admin_pages();
+    if ($pages) {
+        $wp_admin_bar->add_node(array(
+            'parent' => 'kop-tools',
+            'id'     => 'kop-tools-pages',
+            'title'  => 'Admin pages',
+            'href'   => $dashboard,
+        ));
+        foreach ($pages as $i => $page) {
+            $wp_admin_bar->add_node(array(
+                'parent' => 'kop-tools-pages',
+                'id'     => 'kop-tools-page-' . $i,
+                'title'  => $page['title'],
+                'href'   => $page['url'],
+            ));
+        }
+    }
+
+    foreach (kop_tools_registry() as $category => $tools) {
+        $cat_id = 'kop-tools-cat-' . sanitize_title($category);
+        $added_category = false;
+        foreach ($tools as $tool) {
+            if (!file_exists($theme_dir . $tool['path'])) {
+                continue;
+            }
+            if (!$added_category) {
+                $wp_admin_bar->add_node(array(
+                    'parent' => 'kop-tools',
+                    'id'     => $cat_id,
+                    'title'  => $category,
+                    'href'   => $dashboard,
+                ));
+                $added_category = true;
+            }
+            $is_action = ($tool['type'] === 'action');
+            $wp_admin_bar->add_node(array(
+                'parent' => $cat_id,
+                'id'     => 'kop-tools-' . sanitize_title($tool['title']),
+                'title'  => $tool['title'] . ($is_action ? ' (run from dashboard)' : ''),
+                'href'   => $is_action ? $dashboard : $theme_uri . $tool['path'],
+                'meta'   => $is_action ? array() : array('target' => '_blank', 'rel' => 'noopener'),
+            ));
+        }
+    }
+
+    // Theme-provided wp-admin screens that hang off this menu.
+    if (function_exists('kop_render_bug_reports_page')) {
+        $wp_admin_bar->add_node(array(
+            'parent' => 'kop-tools',
+            'id'     => 'kop-tools-bug-reports',
+            'title'  => 'Bug Reports',
+            'href'   => admin_url('admin.php?page=kop-bug-reports'),
+        ));
+    }
+}, 90);
 
 function kop_tools_render_dashboard() {
     if (!current_user_can('manage_options')) {
@@ -194,25 +350,8 @@ function kop_tools_render_dashboard() {
         echo '</tbody></table>';
     }
 
-    // Resolve admin page templates to actual published pages.
-    $templates = kop_tools_admin_page_templates();
-    $meta_values = array();
-    foreach (array_keys($templates) as $t) {
-        $meta_values[] = $t;
-        $meta_values[] = 'templates/' . $t;
-    }
-    $pages = get_posts(array(
-        'post_type'      => 'page',
-        'post_status'    => array('publish', 'private'),
-        'posts_per_page' => -1,
-        'meta_query'     => array(array(
-            'key'     => '_wp_page_template',
-            'value'   => $meta_values,
-            'compare' => 'IN',
-        )),
-        'orderby'        => 'title',
-        'order'          => 'ASC',
-    ));
+    // Admin page templates resolved to actual published pages.
+    $pages = kop_tools_admin_pages();
 
     echo '<h2>Admin pages</h2>';
     if (!$pages) {
@@ -220,17 +359,26 @@ function kop_tools_render_dashboard() {
     } else {
         echo '<table class="widefat striped" style="max-width:960px"><tbody>';
         foreach ($pages as $page) {
-            $tpl = basename((string) get_post_meta($page->ID, '_wp_page_template', true));
-            $label = isset($templates[$tpl]) ? $templates[$tpl] : $tpl;
             echo '<tr>';
-            echo '<td style="width:220px"><strong>' . esc_html(get_the_title($page)) . '</strong><br>'
-               . '<code style="font-size:11px">' . esc_html($tpl) . '</code></td>';
-            echo '<td>' . esc_html($label) . '</td>';
+            echo '<td style="width:220px"><strong>' . esc_html($page['title']) . '</strong><br>'
+               . '<code style="font-size:11px">' . esc_html($page['template']) . '</code></td>';
+            echo '<td>' . esc_html($page['label']) . '</td>';
             echo '<td style="width:130px;text-align:right"><a class="button" target="_blank" rel="noopener" href="'
-               . esc_url(get_permalink($page)) . '">Open</a></td>';
+               . esc_url($page['url']) . '">Open</a></td>';
             echo '</tr>';
         }
         echo '</tbody></table>';
+    }
+
+    // wp-admin screens the theme registers under this menu.
+    if (function_exists('kop_render_bug_reports_page')) {
+        echo '<h2>Other admin screens</h2>';
+        echo '<table class="widefat striped" style="max-width:960px"><tbody><tr>';
+        echo '<td style="width:220px"><strong>Bug Reports</strong></td>';
+        echo '<td>Triage reports sent from the on-site bug widget.</td>';
+        echo '<td style="width:130px;text-align:right"><a class="button" href="'
+           . esc_url(admin_url('admin.php?page=kop-bug-reports')) . '">Open</a></td>';
+        echo '</tr></tbody></table>';
     }
 
     // Output panel + runner for 'action' tools. Same-origin fetch carries the

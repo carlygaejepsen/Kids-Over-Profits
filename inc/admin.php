@@ -66,15 +66,42 @@ function kop_data_tool_pages() {
         'page-wiki-editor.php'        => 'Wiki Editor',
         'page-admin-data.php'         => 'Admin Data Form',
         'page-admin-submissions.php'  => 'Submissions Review',
+        'page-news-processor.php'     => 'News Processor',
+        'page-admin-lawsuits.php'     => 'Lawsuit Admin',
+        'page-admin-legislation.php'  => 'Legislation Admin',
+        'page-admin-volunteers.php'   => 'Volunteer Admin',
     );
+}
+
+/**
+ * The KOP Tools plugin (wp-plugins/kop-tools) owns the full tool registry:
+ * every api/ tool plus the admin pages. When it is active the theme hangs its
+ * own screens off the plugin's "KOP Tools" menu instead of registering a
+ * second, thinner "KOP Data Tools" menu and admin bar dropdown.
+ */
+function kop_tools_plugin_active() {
+    return function_exists('kop_tools_registry');
+}
+
+/**
+ * Parent menu slug for the theme's wp-admin screens (Bug Reports).
+ */
+function kop_tools_parent_slug() {
+    return kop_tools_plugin_active() ? 'kop-tools' : 'kop-data-tools';
 }
 
 /**
  * Add a "KOP Data Tools" group to the wp-admin sidebar with links straight to
  * the front-end tool pages. WordPress treats a full URL passed as the submenu
  * slug as an external link, so these jump directly to the pages.
+ *
+ * Fallback only: with the KOP Tools plugin active, the plugin's menu already
+ * lists these pages and everything else.
  */
 function kop_register_data_tools_menu() {
+    if (kop_tools_plugin_active()) {
+        return;
+    }
     add_menu_page(
         'KOP Data Tools',
         'KOP Data Tools',
@@ -105,7 +132,7 @@ add_action('admin_menu', 'kop_register_data_tools_menu');
  */
 function kop_register_bug_reports_menu() {
     add_submenu_page(
-        'kop-data-tools',
+        kop_tools_parent_slug(),
         'Bug Reports',
         'Bug Reports',
         'manage_options',
@@ -314,7 +341,7 @@ function kop_template_display_name($template) {
  * while browsing the site, not just from wp-admin. Only existing pages appear.
  */
 function kop_add_admin_bar_tool_links($wp_admin_bar) {
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can('manage_options') || kop_tools_plugin_active()) {
         return;
     }
     $wp_admin_bar->add_node(array(
@@ -336,6 +363,18 @@ function kop_add_admin_bar_tool_links($wp_admin_bar) {
     }
 }
 add_action('admin_bar_menu', 'kop_add_admin_bar_tool_links', 90);
+
+/**
+ * Old bookmarks to the theme's landing page keep working when the plugin has
+ * taken over the menu.
+ */
+function kop_redirect_legacy_tools_page() {
+    if (kop_tools_plugin_active() && isset($_GET['page']) && $_GET['page'] === 'kop-data-tools') {
+        wp_safe_redirect(admin_url('admin.php?page=kop-tools'));
+        exit;
+    }
+}
+add_action('admin_init', 'kop_redirect_legacy_tools_page');
 
 /**
  * Pages the theme will auto-create if they don't already exist. WordPress
