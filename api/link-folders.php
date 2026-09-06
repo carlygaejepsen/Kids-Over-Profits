@@ -115,23 +115,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_lf_apply')
 
     if (isset($_POST['do_link'])) {
         $note = sanitize_text_field((string)($_POST['note'] ?? ''));
-        if ($a <= 0 || $b <= 0 || !isset($by_id[$a]) || !isset($by_id[$b])) {
-            $log[] = 'Pick two existing folders first.';
-        } elseif ($a === $b) {
-            $log[] = 'A folder cannot be linked to itself.';
-        } elseif (strcasecmp(trim($by_id[$a]->name), trim($by_id[$b]->name)) === 0) {
-            $log[] = 'Those folders share the same name — feeds already merge them automatically, no link needed.';
+        // Any number of folders (folder_ids[]); the old two-field form still works.
+        $picked = array_map('intval', (array)($_POST['folder_ids'] ?? []));
+        if (!$picked && $a > 0 && $b > 0) $picked = [$a, $b];
+        $ids = [];
+        $missing = false;
+        foreach ($picked as $fid) {
+            if ($fid <= 0 || !isset($by_id[$fid])) { $missing = true; continue; }
+            $ids[$fid] = $fid;
+        }
+        $ids = array_values($ids);
+        if ($missing || count($ids) < 2) {
+            $log[] = 'Pick at least two different existing folders first.';
         } else {
-            $lo = min($a, $b);
-            $hi = max($a, $b);
-            $ins = $wpdb->query($wpdb->prepare(
-                "INSERT IGNORE INTO {$links_tbl} (folder_a, folder_b, note) VALUES (%d, %d, %s)",
-                $lo, $hi, $note
-            ));
-            $log_ok = (bool)$ins;
-            $log[] = $ins
-                ? 'Linked "' . $by_id[$a]->name . '" and "' . $by_id[$b]->name . '" — both folders now show the merged contents in facility document feeds.'
-                : 'Those folders are already linked.';
+            // Link every folder to the first one. Feeds expand links
+            // transitively, so a star merges the whole set, and unlinking one
+            // leaf later removes only that folder from the group.
+            $hub = $ids[0];
+            $created = 0;
+            $already = 0;
+            $same_name = [];
+            for ($i = 1; $i < count($ids); $i++) {
+                $other = $ids[$i];
+                if (strcasecmp(trim($by_id[$hub]->name), trim($by_id[$other]->name)) === 0) {
+                    $same_name[] = $by_id[$other]->name;
+                    continue;
+                }
+                $ins = $wpdb->query($wpdb->prepare(
+                    "INSERT IGNORE INTO {$links_tbl} (folder_a, folder_b, note) VALUES (%d, %d, %s)",
+                    min($hub, $other), max($hub, $other), $note
+                ));
+                if ($ins) $created++; else $already++;
+            }
+            $names = array_map(static function ($fid) use ($by_id) { return '"' . $by_id[$fid]->name . '"'; }, $ids);
+            $log_ok = $created > 0;
+            if ($created > 0) {
+                $log[] = 'Linked ' . count($ids) . ' folders as the same facility: ' . implode(', ', $names)
+                    . ' — all of them now show the merged contents in facility document feeds.'
+                    . ($already ? " ({$already} pair" . ($already === 1 ? ' was' : 's were') . ' already linked.)' : '');
+            } elseif ($already > 0) {
+                $log[] = 'Those folders are already linked.';
+            } else {
+                $log[] = 'Those folders share the same name — feeds already merge them automatically, no link needed.';
+            }
+            if ($same_name) {
+                $quoted = array_map(static function ($n) { return '"' . $n . '"'; }, $same_name);
+                $log[] = 'Skipped same-name folder' . (count($same_name) === 1 ? '' : 's') . ' ' . implode(', ', $quoted)
+                    . ': feeds already merge folders with identical names.';
+            }
         }
     } elseif (isset($_POST['do_dismiss'])) {
         if ($a <= 0 || $b <= 0 || !isset($by_id[$a]) || !isset($by_id[$b]) || $a === $b) {
@@ -326,16 +357,20 @@ button.danger { background: #7a1f1f; padding: 4px 9px; font-size: 0.78rem; }
 .addbox { background: #fff; border: 2px solid #33A7B5; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
 .addbox .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
 .addbox .picked { font-weight: 600; color: #000080; }
+.addbox .picked-list { list-style: none; margin: 0 0 8px; padding: 0; }
+.addbox .picked-list li { display: flex; gap: 10px; align-items: center; padding: 4px 0; font-weight: 600; color: #000080; }
+.addbox .picked-list li .cnt { font-weight: 400; }
 .addbox input[type=text] { padding: 6px 9px; border: 1px solid #000080; border-radius: 6px; width: 320px; }
 .group { color: #555; font-size: 0.78rem; }
 .cnt { color: #888; font-size: 0.78rem; }
 a { color: #000080; }
 </style></head><body>
 <h1>Link Folders <small style="font-weight:400">&mdash; legacy and current names for the same facility</small></h1>
-<p class="help">A link declares two folders to be the <strong>same facility</strong> under different
+<p class="help">A link declares two or more folders to be the <strong>same facility</strong> under different
 names (a rename, a rebrand, an operator change). Every facility document feed then shows the merged
-contents under both folders &mdash; filing a new document under either name makes it appear in both,
-with no per-file copying. Folders that share the exact same name are merged automatically and never
+contents under every linked folder &mdash; filing a new document under any of the names makes it appear in all,
+with no per-file copying. Links are stored as pairs and merged transitively, so linking three folders at
+once creates a single group. Folders that share the exact same name are merged automatically and never
 need a link. To manage which files are in which folder, use
 <a href="sort-media.php">Sort Media</a>.</p>
 
@@ -346,21 +381,14 @@ need a link. To manage which files are in which folder, use
 <h2>Add a link</h2>
 <form method="post" class="addbox" id="kop-lf-form">
     <?php wp_nonce_field('kop_lf_apply'); ?>
-    <input type="hidden" name="folder_a" id="kop-lf-a" value="">
-    <input type="hidden" name="folder_b" id="kop-lf-b" value="">
+    <ul class="picked-list" id="kop-lf-list"></ul>
     <div class="row">
-        <button type="button" class="pick" id="kop-lf-pick-a">Pick folder A</button>
-        <span class="picked" id="kop-lf-name-a">(none)</span>
-    </div>
-    <div class="row">
-        <button type="button" class="pick" id="kop-lf-pick-b">Pick folder B</button>
-        <span class="picked" id="kop-lf-name-b">(none)</span>
+        <button type="button" class="pick" id="kop-lf-add">Add folder</button>
+        <span class="picked" id="kop-lf-empty">(pick two or more folders)</span>
     </div>
     <div class="row">
         <input type="text" name="note" maxlength="255" placeholder="note, e.g. renamed 2014; same campus">
-        <button type="submit" name="do_link" value="1"
-            onclick="return window.confirm('Link these two folders as the same facility?\n\nFacility document feeds will show the merged contents under both names.');">
-            Link folders</button>
+        <button type="submit" name="do_link" value="1" id="kop-lf-submit">Link folders</button>
     </div>
 </form>
 
@@ -459,41 +487,80 @@ need a link. To manage which files are in which folder, use
 (function () {
     var foldersUrl = <?php echo wp_json_encode(rest_url('kop/v1/folders')); ?>;
 
-    function wirePicker(btnId, inputId, nameId) {
-        var btn = document.getElementById(btnId);
-        if (!btn) return;
-        btn.addEventListener('click', function () {
-            if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
-                alert('Folder browser failed to load.');
-                return;
-            }
-            var input = document.getElementById(inputId);
-            window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: input.value })
-                .then(function (res) {
-                    if (!res) return;
-                    var label = document.getElementById(nameId);
-                    if (res.id === null) {
-                        input.value = '';
-                        label.textContent = '(none)';
-                    } else {
-                        input.value = res.id;
-                        label.textContent = res.name + ' (#' + res.id + ')';
-                    }
-                })
-                .catch(function () { alert('Folder browser error.'); });
-        });
+    var list = document.getElementById('kop-lf-list');
+    var empty = document.getElementById('kop-lf-empty');
+    var form = document.getElementById('kop-lf-form');
+
+    function pickedIds() {
+        return Array.prototype.map.call(list.querySelectorAll('input[name="folder_ids[]"]'), function (i) { return i.value; });
     }
-    wirePicker('kop-lf-pick-a', 'kop-lf-a', 'kop-lf-name-a');
-    wirePicker('kop-lf-pick-b', 'kop-lf-b', 'kop-lf-name-b');
+    function refresh() {
+        empty.hidden = list.children.length > 0;
+    }
+    function addFolder(id, name) {
+        id = String(id);
+        if (pickedIds().indexOf(id) !== -1) return;
+        var li = document.createElement('li');
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'folder_ids[]';
+        input.value = id;
+        var label = document.createElement('span');
+        label.textContent = name + ' ';
+        var cnt = document.createElement('span');
+        cnt.className = 'cnt';
+        cnt.textContent = '#' + id;
+        label.appendChild(cnt);
+        var remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'danger';
+        remove.textContent = 'Remove';
+        remove.addEventListener('click', function () { li.remove(); refresh(); });
+        li.appendChild(input);
+        li.appendChild(label);
+        li.appendChild(remove);
+        list.appendChild(li);
+        refresh();
+    }
+    function clearFolders() {
+        list.innerHTML = '';
+        refresh();
+    }
+
+    document.getElementById('kop-lf-add').addEventListener('click', function () {
+        if (!window.KOPFolderBrowser || typeof window.KOPFolderBrowser.open !== 'function') {
+            alert('Folder browser failed to load.');
+            return;
+        }
+        window.KOPFolderBrowser.open({ foldersUrl: foldersUrl, currentId: '' })
+            .then(function (res) {
+                if (!res || res.id === null) return;
+                addFolder(res.id, res.name);
+            })
+            .catch(function () { alert('Folder browser error.'); });
+    });
+
+    form.addEventListener('submit', function (e) {
+        var n = pickedIds().length;
+        if (n < 2) {
+            e.preventDefault();
+            alert('Pick at least two folders first.');
+            return;
+        }
+        if (!window.confirm('Link these ' + n + ' folders as the same facility?\n\nFacility document feeds will show the merged contents under all of their names.')) {
+            e.preventDefault();
+        }
+    });
+
     document.querySelectorAll('.use-suggestion').forEach(function (button) {
         button.addEventListener('click', function () {
-            document.getElementById('kop-lf-a').value = button.dataset.a;
-            document.getElementById('kop-lf-b').value = button.dataset.b;
-            document.getElementById('kop-lf-name-a').textContent = button.dataset.aName + ' (#' + button.dataset.a + ')';
-            document.getElementById('kop-lf-name-b').textContent = button.dataset.bName + ' (#' + button.dataset.b + ')';
-            document.getElementById('kop-lf-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            clearFolders();
+            addFolder(button.dataset.a, button.dataset.aName);
+            addFolder(button.dataset.b, button.dataset.bName);
+            form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         });
     });
+    refresh();
 })();
 </script>
 </body></html>
