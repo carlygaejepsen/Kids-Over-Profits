@@ -353,6 +353,16 @@ function kop_rtc_file_pair_ids($att_id) {
     return ($has_pdf && $has_image) ? array_values(array_unique($ids)) : [(int) $att_id];
 }
 
+function kop_rtc_has_same_title_pdf($att_id) {
+    if (strpos((string) get_post_mime_type($att_id), 'image/') !== 0) return true;
+    global $wpdb;
+    $title = get_post_field('post_title', $att_id, 'raw');
+    return (bool) $wpdb->get_var($wpdb->prepare(
+        "SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf' AND post_title = %s LIMIT 1",
+        $title
+    ));
+}
+
 // ---------------------------------------------------------------------------
 // AJAX: suggest a title for one attachment
 // ---------------------------------------------------------------------------
@@ -370,6 +380,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
     $mime = (string) get_post_mime_type($att_id);
     if (!kop_rtc_supported_mime($mime)) {
         echo json_encode(['ok' => false, 'error' => 'Unsupported type ' . $mime . ' — edit the title by hand.']);
+        exit;
+    }
+    if (strpos($mime, 'image/') === 0 && !kop_rtc_has_same_title_pdf($att_id)) {
+        echo json_encode(['ok' => false, 'error' => 'Image skipped: no PDF has the exact same title.']);
         exit;
     }
 
@@ -498,6 +512,7 @@ foreach ($rows as $r) {
         'mime'      => $r->post_mime_type,
         'url'       => wp_get_attachment_url($r->ID),
         'supported' => kop_rtc_supported_mime($r->post_mime_type),
+        'auto'      => kop_rtc_has_same_title_pdf((int) $r->ID),
         'folders'   => kop_rtc_folder_names((int) $r->ID),
     ];
 }
@@ -572,6 +587,7 @@ td a { color: #000080; }
 <?php foreach ($preview as $p): ?>
     <tr data-id="<?php echo $p['id']; ?>" data-mime="<?php echo esc_attr($p['mime']); ?>"
         data-pair-key="<?php echo esc_attr(kop_rtc_pair_key($p['id'])); ?>"
+        data-auto="<?php echo $p['auto'] ? 1 : 0; ?>"
         data-supported="<?php echo $p['supported'] ? 1 : 0; ?>" data-url="<?php echo esc_url($p['url']); ?>">
         <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
         <td>
@@ -756,7 +772,7 @@ td a { color: #000080; }
     suggestBtn.addEventListener('click', function () {
         var queue = rows.filter(function (r) {
             var c = check(r), t = titleInput(r);
-            return c && c.checked && r.dataset.supported === '1' && t && t.value.trim() === '';
+            return c && c.checked && r.dataset.supported === '1' && r.dataset.auto === '1' && t && t.value.trim() === '';
         });
         if (!queue.length) {
             alert('Tick some rows first (supported rows without a title yet).');
