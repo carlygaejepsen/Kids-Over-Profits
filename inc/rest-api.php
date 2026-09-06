@@ -2212,6 +2212,39 @@ function kop_is_closed_program_marker($value) {
  * @param array $existing Program row built by kop_state_collect_programs (by reference).
  * @param array $incoming Program row for the same facility from another source.
  */
+function kop_state_list_item_signature($item) {
+    if (is_array($item)) {
+        $norm = array();
+        foreach ($item as $k => $v) {
+            $sig = kop_state_list_item_signature($v);
+            if ($sig !== '') $norm[strtolower((string)$k)] = $sig;
+        }
+        ksort($norm);
+        return $norm ? json_encode($norm) : '';
+    }
+    if ($item === null || $item === false) return '';
+    return strtolower(trim((string)$item));
+}
+
+/**
+ * Append $items to $list, skipping entries already present. Objects compare by
+ * a normalized signature (sorted keys, trimmed lowercase values, empties
+ * dropped) so the same person listed with keys in another order stays single.
+ */
+function kop_state_union_list(array &$list, array $items) {
+    $seen = array();
+    foreach ($list as $have) {
+        $sig = kop_state_list_item_signature($have);
+        if ($sig !== '') $seen[$sig] = true;
+    }
+    foreach ($items as $item) {
+        $sig = kop_state_list_item_signature($item);
+        if ($sig === '' || isset($seen[$sig])) continue;
+        $seen[$sig] = true;
+        $list[] = $item;
+    }
+}
+
 function kop_state_merge_program_fields(array &$existing, array $incoming) {
     $scalar_keys = array('operator_name','city','state','country','street','zip','raw_address','type',
                          'status','operating_period','capacity','census','gender','current_name','current_owner');
@@ -2237,17 +2270,7 @@ function kop_state_merge_program_fields(array &$existing, array $incoming) {
     foreach ($list_keys as $lk) {
         if (empty($incoming[$lk]) || !is_array($incoming[$lk])) continue;
         if (!isset($existing[$lk]) || !is_array($existing[$lk])) $existing[$lk] = array();
-        foreach ($incoming[$lk] as $item) {
-            if (is_scalar($item)) {
-                $dup = false;
-                foreach ($existing[$lk] as $have) {
-                    if (is_scalar($have) && strcasecmp(trim((string)$have), trim((string)$item)) === 0) { $dup = true; break; }
-                }
-                if (!$dup) $existing[$lk][] = $item;
-            } elseif (!in_array($item, $existing[$lk], true)) {
-                $existing[$lk][] = $item;
-            }
-        }
+        kop_state_union_list($existing[$lk], $incoming[$lk]);
     }
     foreach (array('resource_details', 'field_notes') as $mk) {
         if (empty($incoming[$mk]) || !is_array($incoming[$mk])) continue;
@@ -3870,13 +3893,7 @@ function kop_state_collect_facilities($state_name) {
                            'treatment_types','philosophy_flags','critical_incidents','notes') as $ak) {
                 if (empty($p[$ak]) || !is_array($p[$ak])) continue;
                 if (!isset($existing[$ak]) || !is_array($existing[$ak])) $existing[$ak] = array();
-                foreach ($p[$ak] as $item) {
-                    if (is_scalar($item)) {
-                        if (!in_array($item, $existing[$ak], true)) $existing[$ak][] = $item;
-                    } else {
-                        $existing[$ak][] = $item;
-                    }
-                }
+                kop_state_union_list($existing[$ak], $p[$ak]);
             }
             if (!empty($p['resource_details']) && is_array($p['resource_details'])) {
                 if (!isset($existing['resource_details']) || !is_array($existing['resource_details'])) {
