@@ -274,3 +274,54 @@
     font-size: 0.85rem;
     color: var(--kop-text-secondary, #000080);
 }
+/* Toolbar (count + sort) and pagination */
+.wiki-feed-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: -1.5rem 0 1rem;
+    font-size: 0.95rem;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.wiki-feed-sort a {
+    color: var(--kop-teal, #33A7B5);
+    text-decoration: underline;
+}
+
+.wiki-feed-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.25rem;
+    margin: 1rem 0 1.5rem;
+    font-weight: 600;
+}
+
+.wiki-feed-pager.pager-bottom {
+    margin-top: 2.5rem;
+}
+
+.wiki-feed-pager .pager-link {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    background: var(--kop-bg-secondary, #FFFFFF);
+    color: var(--kop-text-primary, #000435);
+    text-decoration: none;
+}
+
+.wiki-feed-pager a.pager-link:hover {
+    border-color: var(--kop-teal, #33A7B5);
+    color: var(--kop-teal, #33A7B5);
+}
+
+.wiki-feed-pager .pager-link.is-disabled {
+    opacity: 0.45;
+}
+
+.wiki-feed-pager .pager-status {
+    color: var(--kop-text-secondary, #000080);
+}

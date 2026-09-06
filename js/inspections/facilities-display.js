@@ -77,6 +77,15 @@ function displayFacilities(facilitiesData, containerId) {
         return text ? text.replace(/[&<>"']/g, char => htmlEscapeMap[char] || char) : '';
     };
     const escapeAttribute = value => escapeHtml(value);
+    const renderRawFacilityData = facility => {
+        let json = '';
+        try {
+            json = JSON.stringify(facility, null, 2);
+        } catch (error) {
+            return '';
+        }
+        return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtml(json)}</pre></details>` : '';
+    };
     const textCollator = new Intl.Collator(undefined, {
         numeric: true,
         sensitivity: 'base'
@@ -514,6 +523,7 @@ function displayFacilities(facilitiesData, containerId) {
                                 ${otherFacilityData}
                                 ${resourcesAvailable}
                                 ${renderFieldNotes(facility.fieldNotes)}
+                                ${renderRawFacilityData(facility)}
                             </div>
                         </details>
                     </div>

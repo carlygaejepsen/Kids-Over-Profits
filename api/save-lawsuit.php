@@ -189,6 +189,12 @@ try {
     ];
 
     $submittedBy = trim((string)($data['submitted_by'] ?? ''));
+    if ($submittedBy === '' && function_exists('wp_get_current_user')) {
+        $currentUser = wp_get_current_user();
+        if ($currentUser && !empty($currentUser->user_login)) {
+            $submittedBy = $currentUser->user_login;
+        }
+    }
 
     $id = isset($data['id']) ? (int)$data['id'] : 0;
 
@@ -219,7 +225,13 @@ try {
         $stmt->execute($params);
         $response = ['success' => true, 'id' => $id, 'updated' => true];
     } else {
-        $fields['submitted_by'] = $submittedBy !== '' ? $submittedBy : (wp_get_current_user()->user_login ?? '');
+        $fields['submitted_by'] = $submittedBy !== '' ? $submittedBy : '';
+        if ($fields['submitted_by'] === '' && function_exists('wp_get_current_user')) {
+            $currentUser = wp_get_current_user();
+            if ($currentUser && !empty($currentUser->user_login)) {
+                $fields['submitted_by'] = $currentUser->user_login;
+            }
+        }
         $fields['published_at'] = ($pubStatus === 'published') ? date('Y-m-d H:i:s') : null;
         $cols = array_keys($fields);
         $placeholders = array_fill(0, count($cols), '?');
@@ -240,6 +252,14 @@ try {
             function_exists('wp_get_current_user') ? (wp_get_current_user()->user_login ?? null) : null
         );
         $response['facility_ids'] = $facilityIds;
+
+        // Coverage: re-match news articles now that facilities, source URLs,
+        // plaintiffs and the docket number are current.
+        require_once __DIR__ . '/lawsuit-news-links.php';
+        $response['news_ids'] = kop_sync_lawsuit_news_links(
+            $pdo, $id,
+            function_exists('wp_get_current_user') ? (wp_get_current_user()->user_login ?? null) : null
+        );
 
         $folderId = $fields['filebird_folder_id'];
         if (!$folderId && !empty($facilityIds)) {

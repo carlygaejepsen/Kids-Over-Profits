@@ -87,6 +87,27 @@ Quick reference for all database tables and their columns.
 
 ---
 
+### lawsuit_facility_links
+**Columns:** `lawsuit_id`, `facility_id`, `link_type`, `created_by`, `created_at`
+
+**Purpose:** Structured join between lawsuits and facilities_master, synced from `lawsuits.facilities_mentioned` on every save/approval (`api/lawsuit-facility-links.php`; backfill with `api/backfill-lawsuit-facility-links.php`)
+**Primary Key:** (`lawsuit_id`, `facility_id`) - composite
+**Link Types:** `mentioned` (owned by the sync), `primary`, `related` (admin-created, survive re-syncs)
+**Notes:** The public lawsuit tracker uses these rows to turn facility tags into program-index links.
+
+---
+
+### lawsuit_news_links
+**Columns:** `lawsuit_id`, `news_id`, `link_type`, `match_reason`, `created_by`, `created_at`
+
+**Purpose:** News articles that cover a lawsuit, matched automatically on save/approval from either side (`api/lawsuit-news-links.php`; backfill with `api/backfill-lawsuit-news-links.php?dry_run=1`)
+**Primary Key:** (`lawsuit_id`, `news_id`) - composite
+**Link Types:** `auto` (owned by the sync), `manual` (survives re-syncs)
+**Match Reasons:** `source_url`, `case_number`, `case_name`, `plaintiff`, `filing_news`
+**Notes:** Only approved/published articles are ever linked or shown; a rejected article drops off the case card on its next review action.
+
+---
+
 ### saved_form_values
 **Columns:** `id`, `form_type`, `category`, `value`, `use_count`, `created_at`, `updated_at`
 

@@ -2201,6 +2201,66 @@ function kop_is_closed_program_marker($value) {
     return strpos(strtoupper($value), 'JUVENILE PROGRAM CLOSED') !== false;
 }
 
+/**
+ * Fold a second copy of the same program into $existing: empty scalars are
+ * filled from $incoming, list fields are unioned, keyed note maps are merged.
+ * A status of "Unknown" counts as empty so a real Open/Closed value wins.
+ *
+ * @param array $existing Program row built by kop_state_collect_programs (by reference).
+ * @param array $incoming Program row for the same facility from another source.
+ */
+function kop_state_merge_program_fields(array &$existing, array $incoming) {
+    $scalar_keys = array('operator_name','city','state','country','street','zip','raw_address','type',
+                         'status','operating_period','capacity','census','gender','current_name','current_owner');
+    foreach ($scalar_keys as $sk) {
+        $cur = isset($existing[$sk]) ? trim((string)$existing[$sk]) : '';
+        $new = isset($incoming[$sk]) ? trim((string)$incoming[$sk]) : '';
+        if ($new === '') continue;
+        if ($cur === '' || ($sk === 'status' && strcasecmp($cur, 'Unknown') === 0 && strcasecmp($new, 'Unknown') !== 0)) {
+            $existing[$sk] = $incoming[$sk];
+        }
+    }
+    foreach (array('age_min', 'age_max') as $ak) {
+        if (($existing[$ak] ?? null) === null && ($incoming[$ak] ?? null) !== null) $existing[$ak] = $incoming[$ak];
+    }
+    if (empty($existing['relocation']) && !empty($incoming['relocation'])) $existing['relocation'] = $incoming['relocation'];
+    if (($existing['project_name'] ?? '') === '' && ($incoming['project_name'] ?? '') !== '') $existing['project_name'] = $incoming['project_name'];
+
+    $list_keys = array('additional_addresses','former_locations','operating_notes','current_owners','past_owners',
+                       'other_names','past_names','known_referrers','other_operators','administrator','notable_staff',
+                       'past_tti_jobs','profile_links','accreditations_current','accreditations_past','memberships',
+                       'certifications','licensing','resource_flags','treatment_types','philosophy_flags',
+                       'critical_incidents','notes');
+    foreach ($list_keys as $lk) {
+        if (empty($incoming[$lk]) || !is_array($incoming[$lk])) continue;
+        if (!isset($existing[$lk]) || !is_array($existing[$lk])) $existing[$lk] = array();
+        foreach ($incoming[$lk] as $item) {
+            if (is_scalar($item)) {
+                $dup = false;
+                foreach ($existing[$lk] as $have) {
+                    if (is_scalar($have) && strcasecmp(trim((string)$have), trim((string)$item)) === 0) { $dup = true; break; }
+                }
+                if (!$dup) $existing[$lk][] = $item;
+            } elseif (!in_array($item, $existing[$lk], true)) {
+                $existing[$lk][] = $item;
+            }
+        }
+    }
+    foreach (array('resource_details', 'field_notes') as $mk) {
+        if (empty($incoming[$mk]) || !is_array($incoming[$mk])) continue;
+        if (!isset($existing[$mk]) || !is_array($existing[$mk])) $existing[$mk] = array();
+        $existing[$mk] = array_merge($existing[$mk], $incoming[$mk]);
+    }
+    if (!empty($incoming['raw_records']) && is_array($incoming['raw_records'])) {
+        if (!isset($existing['raw_records']) || !is_array($existing['raw_records'])) {
+            $existing['raw_records'] = array();
+        }
+        foreach ($incoming['raw_records'] as $record) {
+            if (is_array($record)) $existing['raw_records'][] = $record;
+        }
+    }
+}
+
 function kop_state_collect_programs($state_name) {
     global $wpdb;
 
@@ -2223,22 +2283,31 @@ function kop_state_collect_programs($state_name) {
 
         $facility_name = $identification['name'] ?? $identification['currentName'] ?? '';
         $dedup_key = kop_normalize_facility_name($facility_name);
-        if ($dedup_key !== '' && isset($seen_names[$dedup_key])) {
-            return;
-        }
-        if ($dedup_key !== '') {
-            $seen_names[$dedup_key] = true;
-        }
 
         $facility_state = trim((string)($address['state'] ?? ''));
         $locdet_state = trim((string)($location_details['state'] ?? ''));
         $parts_state = trim((string)($address_parts['state'] ?? ''));
 
+        // Older operator-project entries carry the place only as a free-form
+        // `location` string ("Syracuse, UT") and/or a one-line `address`.
+        $location_line = trim((string)($facility['location'] ?? ''));
+        $loc_line_city = '';
+        $loc_line_state = '';
+        if ($location_line !== '' && preg_match('/^\s*([^,]+?)\s*,\s*([A-Za-z .]{2,})\s*$/u', $location_line, $lm)) {
+            $loc_line_city = trim($lm[1]);
+            $loc_line_state = kop_state_canonical_name($lm[2]) ?: trim($lm[2]);
+        }
+        if ($loc_line_city === '' && $raw_address !== '') {
+            $loc_line_city = kop_city_from_address($raw_address);
+        }
+
         // Resolution order for each piece: legacy structured `address` array,
-        // then new `addressParts`, then `locationDetails`, then the state row's name.
+        // then new `addressParts`, then `locationDetails`, then the free-form
+        // `location` line, then the state row's name.
         $resolved_street = trim((string)($address['street'] ?? ($address_parts['street'] ?? '')));
         $resolved_city   = trim((string)($address['city']   ?? ($address_parts['city']   ?? ($location_details['city'] ?? ''))));
-        $resolved_state  = $facility_state ?: ($parts_state ?: ($locdet_state ?: $state_name));
+        if ($resolved_city === '') $resolved_city = $loc_line_city;
+        $resolved_state  = $facility_state ?: ($parts_state ?: ($locdet_state ?: ($loc_line_state ?: $state_name)));
         $resolved_zip    = trim((string)($address['zip']    ?? ($address_parts['zip']    ?? '')));
 
         // locationDetails.additionalLocations is the admin form's "Additional Locations"
@@ -2479,7 +2548,7 @@ function kop_state_collect_programs($state_name) {
             }
         }
 
-        $programs[] = array(
+        $program = array(
             'project_name'     => $project_name,
             'facility_name'    => $facility_name,
             'operator_name'    => $resolved_operator,
@@ -2525,7 +2594,29 @@ function kop_state_collect_programs($state_name) {
             'critical_incidents' => $collect_flags($facility['criticalIncidents'] ?? null),
             'field_notes'      => $field_notes,
             'notes'            => $as_array($facility['notes'] ?? null),
+            'raw_records'     => array(array(
+                'project_name' => $project_name,
+                'data'         => $facility,
+            )),
         );
+
+        // The same facility usually exists more than once: as a directly
+        // imported entry in the state aggregate, as the clone synced from its
+        // operator project, and in the operator project itself. Each copy may
+        // hold fields the others lack, so MERGE same-named entries instead of
+        // keeping only the first one seen. Same-named programs in clearly
+        // different cities stay separate rows.
+        if ($dedup_key !== '') {
+            if (!isset($seen_names[$dedup_key])) $seen_names[$dedup_key] = array();
+            foreach ($seen_names[$dedup_key] as $idx) {
+                if (kop_same_city($programs[$idx]['city'], $program['city'])) {
+                    kop_state_merge_program_fields($programs[$idx], $program);
+                    return;
+                }
+            }
+            $seen_names[$dedup_key][] = count($programs);
+        }
+        $programs[] = $program;
     };
 
     $programs = array();
@@ -3738,7 +3829,10 @@ function kop_state_collect_facilities($state_name) {
             // Scalar fields: keep the first non-empty value.
             foreach (array('operator_name','type','status','operating_period','capacity','census',
                            'country','gender','current_name','current_owner') as $sk) {
-                if (empty($existing[$sk]) && !empty($p[$sk])) $existing[$sk] = $p[$sk];
+                if (empty($p[$sk])) continue;
+                $is_unknown_status = ($sk === 'status' && strcasecmp((string)($existing[$sk] ?? ''), 'Unknown') === 0
+                                      && strcasecmp((string)$p[$sk], 'Unknown') !== 0);
+                if (empty($existing[$sk]) || $is_unknown_status) $existing[$sk] = $p[$sk];
             }
             if (($existing['age_min'] ?? null) === null && ($p['age_min'] ?? null) !== null) $existing['age_min'] = $p['age_min'];
             if (($existing['age_max'] ?? null) === null && ($p['age_max'] ?? null) !== null) $existing['age_max'] = $p['age_max'];
@@ -3856,6 +3950,7 @@ function kop_state_collect_facilities($state_name) {
                 'critical_incidents' => $p['critical_incidents'] ?? array(),
                 'field_notes'       => $p['field_notes'] ?? array(),
                 'notes'             => $p['notes'] ?? array(),
+                'raw_records'       => $p['raw_records'] ?? array(),
                 'inspections'       => array(),
                 'in_master'         => true,
                 'in_inspections'    => false,
@@ -3992,6 +4087,7 @@ function kop_state_collect_facilities($state_name) {
                 'critical_incidents' => array(),
                 'field_notes'       => array(),
                 'notes'             => array(),
+                'raw_records'       => array(),
                 'inspections'       => $insp['inspections'] ?? array(),
                 'in_master'         => false,
                 'in_inspections'    => true,

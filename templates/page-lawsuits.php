@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) { exit; }
 
 get_header();
 require_once get_stylesheet_directory() . '/api/config.php';
+require_once get_stylesheet_directory() . '/api/facility-aliases.php';  // kop_normalize_name_key, kop_collect_self_names
 
 $status_filter  = isset($_GET['status'])       ? sanitize_text_field($_GET['status'])       : '';
 $jurisdiction   = isset($_GET['jurisdiction']) ? sanitize_text_field($_GET['jurisdiction']) : '';
@@ -25,6 +26,18 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($params);
     $lawsuits = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if ($claim_filter !== '') {
+        $filtered = [];
+        foreach ($lawsuits as $case) {
+            $claims = json_decode((string)($case['claims'] ?? '[]'), true);
+            $claims = is_array($claims) ? $claims : [];
+            if (in_array($claim_filter, $claims, true)) {
+                $filtered[] = $case;
+            }
+        }
+        $lawsuits = $filtered;
+    }
 
     // Collect filter options from all published records for dropdowns
     $all_stmt = $pdo->prepare("SELECT jurisdiction, status, claims FROM lawsuits WHERE publication_status IN ('approved','published')");
@@ -48,6 +61,101 @@ try {
     $lawsuits = [];
     $jurisdictions = $statuses = $all_claims = [];
 }
+
+// Facilities each case is linked to (lawsuit_facility_links -> facilities_master)
+// and the news coverage of each case (lawsuit_news_links -> news_submissions).
+// Both tables are optional; a missing one just leaves the card without links.
+$facility_links = [];   // lawsuit_id => [ ['name' => unique_name, 'keys' => set of normalized names] ]
+$news_links     = [];   // lawsuit_id => [ article rows ]
+$lawsuit_ids    = array_map(static function ($r) { return (int)$r['id']; }, $lawsuits);
+if ($lawsuit_ids) {
+    $ph = implode(',', array_fill(0, count($lawsuit_ids), '?'));
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT lf.lawsuit_id, fm.unique_name, fm.json_data
+             FROM lawsuit_facility_links lf
+             JOIN facilities_master fm ON fm.id = lf.facility_id
+             WHERE lf.lawsuit_id IN ($ph)
+             ORDER BY lf.lawsuit_id, fm.unique_name"
+        );
+        $stmt->execute($lawsuit_ids);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $decoded = json_decode((string)$r['json_data'], true);
+            $keys = [kop_normalize_name_key((string)$r['unique_name']) => true];
+            foreach (array_merge(kop_collect_self_names($decoded), kop_collect_match_aliases($decoded)) as $alias) {
+                $k = kop_normalize_name_key($alias);
+                if ($k !== '') $keys[$k] = true;
+            }
+            $facility_links[(int)$r['lawsuit_id']][] = ['name' => $r['unique_name'], 'keys' => $keys];
+        }
+    } catch (PDOException $e) {
+        $facility_links = [];
+    }
+    try {
+        $stmt = $pdo->prepare(
+            "SELECT ln.lawsuit_id, n.id, n.article_title, n.alternate_title,
+                    n.publication_name, n.publication_date, n.article_url
+             FROM lawsuit_news_links ln
+             JOIN news_submissions n ON n.id = ln.news_id
+             WHERE ln.lawsuit_id IN ($ph)
+               AND n.status IN ('approved','published')
+               AND n.article_url IS NOT NULL AND n.article_url <> ''
+             ORDER BY n.publication_date DESC, n.id DESC"
+        );
+        $stmt->execute($lawsuit_ids);
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $news_links[(int)$r['lawsuit_id']][] = $r;
+        }
+    } catch (PDOException $e) {
+        $news_links = [];
+    }
+}
+
+// Facility "profile" = the program index filtered to that facility, which is
+// how the rest of the site deep-links a facility (global search, story arcs).
+$index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
+if (!$index_url) $index_url = home_url('/tti-program-index/');
+$facility_profile_url = static function (string $name) use ($index_url): string {
+    return add_query_arg('search', rawurlencode($name), $index_url);
+};
+
+/**
+ * Pair a case's mentioned facility names with its linked facilities_master rows.
+ * A mention links when one of its spellings (kop_facility_name_variants) matches
+ * the linked row's unique_name or an alias; a lone mention pairs with a lone
+ * link regardless.
+ * Linked rows nothing paired with are appended so every profile is reachable.
+ *
+ * @return array<int, array{label:string, url:?string}>
+ */
+$facility_tags_for = static function (array $mentions, array $linked) use ($facility_profile_url): array {
+    $tags = [];
+    $used = [];
+    foreach ($mentions as $mention) {
+        $match = null;
+        foreach (kop_facility_name_variants((string)$mention) as $variant) {
+            $key = kop_normalize_name_key($variant);
+            foreach ($linked as $i => $lf) {
+                if (!isset($used[$i]) && $key !== '' && isset($lf['keys'][$key])) { $match = $i; break 2; }
+            }
+        }
+        if ($match === null && count($mentions) === 1 && count($linked) === 1 && !isset($used[0])) {
+            $match = 0;
+        }
+        if ($match !== null) {
+            $used[$match] = true;
+            $tags[] = ['label' => $mention, 'url' => $facility_profile_url($linked[$match]['name'])];
+        } else {
+            $tags[] = ['label' => $mention, 'url' => null];
+        }
+    }
+    foreach ($linked as $i => $lf) {
+        if (!isset($used[$i])) {
+            $tags[] = ['label' => $lf['name'], 'url' => $facility_profile_url($lf['name'])];
+        }
+    }
+    return $tags;
+};
 ?>
 
 <div class="kop-records-page kop-lawsuits-page">
@@ -82,7 +190,7 @@ try {
         <select class="kop-filter-select" id="filter-claim" data-filter="claim">
             <option value="">All claim types</option>
             <?php foreach ($all_claims as $c => $_): ?>
-                <option value="<?php echo esc_attr($c); ?>">
+                <option value="<?php echo esc_attr($c); ?>" <?php selected($claim_filter, $c); ?>>
                     <?php echo esc_html(ucfirst(str_replace('_', ' ', $c))); ?>
                 </option>
             <?php endforeach; ?>
@@ -108,6 +216,9 @@ try {
             $status_slug  = $case['status'] ?: 'unknown';
             $status_label = ucfirst(str_replace('_', ' ', $status_slug));
             $claims_json  = htmlspecialchars(json_encode($claims), ENT_QUOTES);
+            $lawsuit_id   = (int)$case['id'];
+            $facility_tags = $facility_tags_for($facilities, $facility_links[$lawsuit_id] ?? []);
+            $coverage      = $news_links[$lawsuit_id] ?? [];
         ?>
         <div class="kop-record-card"
              data-status="<?php echo esc_attr($status_slug); ?>"
@@ -156,14 +267,19 @@ try {
             </div>
             <?php endif; ?>
 
-            <?php if ($claims || $facilities): ?>
+            <?php if ($claims || $facility_tags): ?>
             <div class="kop-card-tags">
                 <?php foreach (array_slice($claims, 0, 5) as $claim): ?>
                     <span class="kop-tag"><?php echo esc_html(ucfirst(str_replace('_', ' ', $claim))); ?></span>
                 <?php endforeach; ?>
-                <?php foreach (array_slice($facilities, 0, 3) as $fac): ?>
-                    <span class="kop-tag kop-tag-facility"><?php echo esc_html($fac); ?></span>
+                <?php foreach (array_slice($facility_tags, 0, 5) as $tag): ?>
+                    <?php if ($tag['url']): ?>
+                        <a class="kop-tag kop-tag-facility" href="<?php echo esc_url($tag['url']); ?>" title="View this facility in the program index"><?php echo esc_html($tag['label']); ?></a>
+                    <?php else: ?>
+                        <span class="kop-tag kop-tag-facility"><?php echo esc_html($tag['label']); ?></span>
+                    <?php endif; ?>
                 <?php endforeach; ?>
+                <?php if (count($facility_tags) > 5): ?><em class="kop-tag-more">+<?php echo count($facility_tags) - 5; ?> more</em><?php endif; ?>
             </div>
             <?php endif; ?>
 
@@ -175,6 +291,29 @@ try {
                 <?php echo nl2br(esc_html($case['summary'])); ?>
                 <?php if ($case['outcome']): ?>
                     <p><strong>Outcome:</strong> <?php echo esc_html($case['outcome']); ?></p>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($coverage): ?>
+            <div class="kop-card-coverage">
+                <span class="kop-party-label">News coverage:</span>
+                <ul class="kop-coverage-list">
+                    <?php foreach ($coverage as $i => $art):
+                        $art_title = $art['alternate_title'] ?: $art['article_title'];
+                        $art_meta  = array_filter([
+                            $art['publication_name'],
+                            $art['publication_date'] ? date('M j, Y', strtotime($art['publication_date'])) : '',
+                        ]);
+                    ?>
+                    <li class="kop-coverage-item"<?php echo $i >= 3 ? ' hidden data-coverage-extra' : ''; ?>>
+                        <a href="<?php echo esc_url($art['article_url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($art_title); ?></a>
+                        <?php if ($art_meta): ?><span class="kop-coverage-meta"><?php echo esc_html(implode(' - ', $art_meta)); ?></span><?php endif; ?>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?php if (count($coverage) > 3): ?>
+                    <button type="button" class="kop-coverage-more" aria-expanded="false">Show <?php echo count($coverage) - 3; ?> more article<?php echo count($coverage) - 3 === 1 ? '' : 's'; ?></button>
                 <?php endif; ?>
             </div>
             <?php endif; ?>
@@ -243,6 +382,17 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setAttribute('aria-expanded', open);
             this.querySelector('.toggle-arrow').textContent = open ? '▾' : '▸';
             this.childNodes[1].textContent = open ? ' Hide summary' : ' Show summary';
+        });
+    });
+
+    document.querySelectorAll('.kop-coverage-more').forEach(btn => {
+        const label = btn.textContent;
+        btn.addEventListener('click', function() {
+            const expand = this.getAttribute('aria-expanded') !== 'true';
+            this.closest('.kop-card-coverage').querySelectorAll('[data-coverage-extra]')
+                .forEach(li => { li.hidden = !expand; });
+            this.setAttribute('aria-expanded', expand);
+            this.textContent = expand ? 'Show fewer articles' : label;
         });
     });
 });

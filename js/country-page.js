@@ -27,6 +27,16 @@
         })[ch]);
     };
 
+    const renderRawFacilityData = facility => {
+        let json = '';
+        try {
+            json = JSON.stringify(facility, null, 2);
+        } catch (error) {
+            return '';
+        }
+        return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtml(json)}</pre></details>` : '';
+    };
+
     const formatDate = value => {
         if (!value) return '';
         const ts = Date.parse(value);
@@ -1047,6 +1057,7 @@
                         ${folderId ? `<div class="facility-panel" data-panel="docs" data-folder-id="${escapeHtml(String(folderId))}" hidden><p class="loading">Loading documents…</p></div>` : ''}
                     </div>
                 ` : ''}
+                ${renderRawFacilityData(facility)}
             </li>
         `;
     };

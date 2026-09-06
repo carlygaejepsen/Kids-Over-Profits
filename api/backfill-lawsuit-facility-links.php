@@ -59,7 +59,7 @@ try {
             foreach ($mentions as $m) {
                 $fid = !empty($m['facility_id'])
                     ? (int)$m['facility_id']
-                    : kop_resolve_name_to_facility((string)$m['name'], $aliasIndex);
+                    : kop_resolve_mention_to_facility((string)$m['name'], $aliasIndex);
                 if ($fid) { $linked++; } else { $misses[] = $m['name']; }
             }
             if ($linked > 0) { $report['lawsuits_linked']++; $report['links_total'] += $linked; }

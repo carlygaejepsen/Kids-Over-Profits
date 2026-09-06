@@ -197,6 +197,13 @@ if (!function_exists('kop_build_facility_alias_index')) {
                 if (kop_normalize_name_key($alias) === $ukey) continue; // already the unique_name
                 $addAlias($alias, $id);
             }
+
+            // "Trinity Teen Solutions, Inc." should also answer to "Trinity Teen
+            // Solutions" - mentions rarely carry the corporate suffix.
+            $bare = trim((string)preg_replace('/[\s,]+(inc|incorporated|llc|l\.l\.c|ltd|corp|corporation|co)\.?$/i', '', $uname));
+            if ($bare !== '' && kop_normalize_name_key($bare) !== $ukey) {
+                $addAlias($bare, $id);
+            }
             foreach (kop_collect_match_aliases($decoded) as $ma) {
                 $addCurated($ma, $id);
             }
@@ -275,6 +282,45 @@ if (!function_exists('kop_resolve_name_to_facility')) {
         $key = kop_normalize_name_key($name);
         if ($key === '' || isset($index['ambiguous'][$key])) return null;
         return $index['exact'][$key] ?? null;
+    }
+}
+
+if (!function_exists('kop_facility_name_variants')) {
+    /**
+     * Spellings of a mention to try when resolving it, in order: the name as
+     * given; the name with a trailing parenthetical dropped ("Hyde School
+     * (Bath, Maine)" -> "Hyde School"); and the parenthetical itself when it
+     * reads as a name rather than a place ("Maine Youth Center (Long Creek
+     * Youth Development Center)" -> "Long Creek Youth Development Center").
+     *
+     * @return string[] non-empty, de-duplicated
+     */
+    function kop_facility_name_variants(string $name): array {
+        $name = trim($name);
+        if ($name === '') return [];
+        $out = [$name];
+        if (preg_match('/^(.*?)\s*\(([^()]*)\)\s*$/', $name, $m)) {
+            $outer = trim($m[1]);
+            $inner = trim($m[2]);
+            if ($outer !== '') $out[] = $outer;
+            // Three or more words and no comma: a name, not "City, State".
+            if ($inner !== '' && strpos($inner, ',') === false && str_word_count($inner) >= 3) $out[] = $inner;
+        }
+        return array_values(array_unique($out));
+    }
+}
+
+if (!function_exists('kop_resolve_mention_to_facility')) {
+    /**
+     * Resolve a free-text mention (as written in facilities_mentioned) to a
+     * facility_id, trying each spelling from kop_facility_name_variants().
+     */
+    function kop_resolve_mention_to_facility(string $name, array $index): ?int {
+        foreach (kop_facility_name_variants($name) as $variant) {
+            $fid = kop_resolve_name_to_facility($variant, $index);
+            if ($fid !== null) return $fid;
+        }
+        return null;
     }
 }
 

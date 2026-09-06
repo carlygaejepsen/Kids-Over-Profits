@@ -63,7 +63,7 @@ if (!function_exists('kop_sync_lawsuit_facility_links')) {
                 $aliasIndex = kop_build_facility_alias_index($pdo);
             }
             foreach (array_keys($unresolvedNames) as $name) {
-                $fid = kop_resolve_name_to_facility((string)$name, $aliasIndex);
+                $fid = kop_resolve_mention_to_facility((string)$name, $aliasIndex);
                 if ($fid !== null) {
                     $desiredIds[$fid] = true;
                 }

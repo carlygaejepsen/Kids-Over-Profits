@@ -25,6 +25,16 @@ const escapeHtmlValue = value => {
     }[char] || char));
 };
 
+const renderRawFacilityData = facility => {
+    let json = '';
+    try {
+        json = JSON.stringify(facility, null, 2);
+    } catch (error) {
+        return '';
+    }
+    return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtmlValue(json)}</pre></details>` : '';
+};
+
 const toTitleCase = value => {
     if (value === null || value === undefined) return '';
     const text = typeof value === 'string' ? value : String(value);
@@ -1159,6 +1169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
                                     ${fieldNotesSectionHtml}
+                                    ${renderRawFacilityData(facility)}
                                     <div class="kop-submit-info-row">
                                         <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">Submit info about this facility</button>
                                     </div>

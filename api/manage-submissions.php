@@ -451,8 +451,22 @@ try {
             // none was set, and file the case documents there (public uploads
             // become media-library attachments at this point — not before, so
             // unreviewed files never enter the library).
+            // News changing state: an article that just went live may cover a
+            // tracked case, and a rejected one must drop off the case cards.
+            if ($type === 'news') {
+                require_once __DIR__ . '/lawsuit-news-links.php';
+                foreach ($ids as $nid) {
+                    try {
+                        kop_sync_news_lawsuit_links($pdo, (int)$nid, $reviewedBy ?: 'review');
+                    } catch (Throwable $e) {
+                        error_log("manage-submissions news lawsuit-link sync (id $nid) failed: " . $e->getMessage());
+                    }
+                }
+            }
+
             if ($type === 'lawsuit' && $status === 'published') {
                 require_once __DIR__ . '/lawsuit-facility-links.php';
+                require_once __DIR__ . '/lawsuit-news-links.php';
                 foreach ($ids as $lid) {
                     try {
                         $rowStmt = $pdo->prepare("SELECT case_name, facilities_mentioned, document_urls, filebird_folder_id FROM lawsuits WHERE id = ?");
@@ -461,6 +475,7 @@ try {
                         if (!$law) continue;
 
                         $facilityIds = kop_sync_lawsuit_facility_links($pdo, (int)$lid, $law['facilities_mentioned'], $reviewedBy ?: 'approval');
+                        kop_sync_lawsuit_news_links($pdo, (int)$lid, $reviewedBy ?: 'approval');
 
                         $folderId = (int)($law['filebird_folder_id'] ?? 0);
                         if (!$folderId && !empty($facilityIds)) {
@@ -868,6 +883,20 @@ try {
             if ($lawsuitMentions !== null) {
                 require_once __DIR__ . '/lawsuit-facility-links.php';
                 kop_sync_lawsuit_facility_links($pdo, (int)$id, $lawsuitMentions);
+            }
+            // Any edited field (source URLs, docket number, plaintiffs, title,
+            // summary) can change which articles cover which case.
+            if ($type === 'lawsuit' || $type === 'news') {
+                try {
+                    require_once __DIR__ . '/lawsuit-news-links.php';
+                    if ($type === 'lawsuit') {
+                        kop_sync_lawsuit_news_links($pdo, (int)$id);
+                    } else {
+                        kop_sync_news_lawsuit_links($pdo, (int)$id);
+                    }
+                } catch (Throwable $e) {
+                    error_log("manage-submissions $type lawsuit-news sync (id $id) failed: " . $e->getMessage());
+                }
             }
 
             echo json_encode([

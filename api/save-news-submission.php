@@ -27,6 +27,7 @@ require_once __DIR__ . '/facility-aliases.php';
 require_once __DIR__ . '/url-dedupe.php';
 require_once __DIR__ . '/news-story-groups.php';
 require_once __DIR__ . '/news-story-arcs.php';
+require_once __DIR__ . '/lawsuit-news-links.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
@@ -288,6 +289,7 @@ try {
         kop_sync_news_facility_links($pdo, (int)$submissionId, $facilities, $submittedBy ?: null);
         kop_news_assign_story_group($pdo, (int)$submissionId);
         kop_news_assign_story_arc($pdo, (int)$submissionId);
+        kop_sync_news_lawsuit_links($pdo, (int)$submissionId, $submittedBy ?: null);
 
         echo json_encode([
             'success' => true,
@@ -341,6 +343,7 @@ try {
         kop_sync_news_facility_links($pdo, $newId, $facilities, $submittedBy ?: null);
         kop_news_assign_story_group($pdo, $newId);
         kop_news_assign_story_arc($pdo, $newId);
+        kop_sync_news_lawsuit_links($pdo, $newId, $submittedBy ?: null);
 
         echo json_encode([
             'success' => true,

@@ -42,19 +42,40 @@ get_header();
     // Deep link from the site search results page: ?search= narrows the feed.
     $feed_search = isset($_GET['search']) ? sanitize_text_field(wp_unslash($_GET['search'])) : '';
 
+    // Sort + pagination. The table holds hundreds of approved entries; the old
+    // fixed LIMIT 50 silently hid everything but the newest fifty.
+    $per_page  = 50;
+    $feed_sort = (isset($_GET['sort']) && $_GET['sort'] === 'name') ? 'name' : 'newest';
+    $feed_page = isset($_GET['pg']) ? max(1, (int) $_GET['pg']) : 1;
+    $total_rows  = 0;
+    $total_pages = 1;
+
     try {
-        $sql = "SELECT * FROM wiki_submissions
-                WHERE status IN ($placeholders) ";
+        $where  = "WHERE status IN ($placeholders) ";
         $params = $status_filter;
 
         if ($feed_search !== '') {
-            $sql .= "AND (program_name LIKE ? OR organization LIKE ? OR city_state LIKE ? OR program_type LIKE ?) ";
+            $where .= "AND (program_name LIKE ? OR organization LIKE ? OR city_state LIKE ? OR program_type LIKE ?) ";
             $like = '%' . $feed_search . '%';
             array_push($params, $like, $like, $like, $like);
         }
 
-        $sql .= "ORDER BY created_at DESC
-                LIMIT 50";
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM wiki_submissions $where");
+        $countStmt->execute($params);
+        $total_rows  = (int) $countStmt->fetchColumn();
+        $total_pages = max(1, (int) ceil($total_rows / $per_page));
+        if ($feed_page > $total_pages) {
+            $feed_page = $total_pages;
+        }
+        $offset = ($feed_page - 1) * $per_page;
+
+        $order = $feed_sort === 'name'
+            ? "ORDER BY program_name ASC, created_at DESC"
+            : "ORDER BY created_at DESC, id DESC";
+
+        // LIMIT/OFFSET are ints we computed ourselves; PDO can't bind them as
+        // named params reliably, so interpolate.
+        $sql = "SELECT * FROM wiki_submissions $where $order LIMIT $per_page OFFSET $offset";
 
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
@@ -66,6 +87,24 @@ get_header();
         $error_message = 'The wiki feed is temporarily unavailable. Please try again later.';
         $submissions = [];
     }
+
+    // Build a link to this feed with one query arg changed (keeps search/sort/pg).
+    $feed_link = static function (array $overrides) {
+        $args = [
+            'search' => isset($_GET['search']) ? sanitize_text_field(wp_unslash($_GET['search'])) : '',
+            'sort'   => isset($_GET['sort']) ? sanitize_key($_GET['sort']) : '',
+            'pg'     => isset($_GET['pg']) ? (int) $_GET['pg'] : 0,
+        ];
+        $args = array_merge($args, $overrides);
+        $url = remove_query_arg(['search', 'sort', 'pg']);
+        foreach ($args as $k => $v) {
+            if ($v === '' || $v === 0 || $v === null || ($k === 'pg' && (int) $v <= 1) || ($k === 'sort' && $v === 'newest')) {
+                continue;
+            }
+            $url = add_query_arg($k, $v, $url);
+        }
+        return $url;
+    };
 
     if (isset($error_message)): ?>
         <div style="color: red; text-align: center; padding: 20px;">
@@ -82,6 +121,46 @@ get_header();
             <?php endif; ?>
         </div>
     <?php else: ?>
+        <?php
+        $first_shown = ($feed_page - 1) * $per_page + 1;
+        $last_shown  = min($total_rows, $feed_page * $per_page);
+        $render_pager = static function ($cls) use ($feed_page, $total_pages, $feed_link) {
+            if ($total_pages <= 1) return;
+            echo '<nav class="wiki-feed-pager ' . esc_attr($cls) . '" aria-label="Wiki feed pages">';
+            if ($feed_page > 1) {
+                echo '<a class="pager-link" href="' . esc_url($feed_link(['pg' => $feed_page - 1])) . '">&larr; Previous</a>';
+            } else {
+                echo '<span class="pager-link is-disabled">&larr; Previous</span>';
+            }
+            echo '<span class="pager-status">Page ' . (int) $feed_page . ' of ' . (int) $total_pages . '</span>';
+            if ($feed_page < $total_pages) {
+                echo '<a class="pager-link" href="' . esc_url($feed_link(['pg' => $feed_page + 1])) . '">Next &rarr;</a>';
+            } else {
+                echo '<span class="pager-link is-disabled">Next &rarr;</span>';
+            }
+            echo '</nav>';
+        };
+        ?>
+        <div class="wiki-feed-toolbar">
+            <span class="wiki-feed-count">
+                Showing <?php echo (int) $first_shown; ?>&ndash;<?php echo (int) $last_shown; ?> of <?php echo (int) $total_rows; ?> entries
+            </span>
+            <span class="wiki-feed-sort">
+                Sort:
+                <?php if ($feed_sort === 'newest'): ?>
+                    <strong>Newest</strong>
+                <?php else: ?>
+                    <a href="<?php echo esc_url($feed_link(['sort' => 'newest', 'pg' => 1])); ?>">Newest</a>
+                <?php endif; ?>
+                &middot;
+                <?php if ($feed_sort === 'name'): ?>
+                    <strong>A&ndash;Z</strong>
+                <?php else: ?>
+                    <a href="<?php echo esc_url($feed_link(['sort' => 'name', 'pg' => 1])); ?>">A&ndash;Z</a>
+                <?php endif; ?>
+            </span>
+        </div>
+        <?php $render_pager('pager-top'); ?>
         <div class="wiki-feed-grid" data-kop-bug-feature="wiki-feed/grid" data-kop-bug-label="Wiki Feed">
             <?php foreach ($submissions as $item): 
                 // Format Date
@@ -98,32 +177,33 @@ get_header();
                 $org = $item['organization'] ?: 'Independent / Unknown';
                 $years = $item['years_active'] ?: 'Unknown';
                 
-                // Markdown logic
-                $markdown = $item['generated_markdown'] ?? '';
-                $isOriginal = false;
+                // Markdown logic. Prefer the markdown that was actually uploaded
+                // (original_markdown): it is the verbatim wiki text. The generated
+                // column is a parse->regenerate round trip of it and is lossy
+                // (dropped staff entries, placeholder "not added yet" sections,
+                // duplicated headings). Fall back to generated only for entries
+                // authored in the form, which never had an original.
+                $decoded = [];
+                if (!empty($item['json_data'])) {
+                    $tmp = json_decode($item['json_data'], true);
+                    if (is_array($tmp)) $decoded = $tmp;
+                }
 
-                if (empty($markdown) && !empty($item['json_data'])) {
-                    $decoded = json_decode($item['json_data'], true);
-                    if (is_array($decoded)) {
-                        $markdown = $decoded['generatedMarkdown'] ?? $decoded['generated_markdown'] ?? '';
+                $markdown = trim((string) ($item['original_markdown'] ?? ''));
+                if ($markdown === '') {
+                    $markdown = trim((string) ($decoded['originalMarkdown'] ?? $decoded['original_markdown'] ?? ''));
+                }
+                $isOriginal = $markdown !== '';
+
+                if ($markdown === '') {
+                    $markdown = trim((string) ($item['generated_markdown'] ?? ''));
+                    if ($markdown === '') {
+                        $markdown = trim((string) ($decoded['generatedMarkdown'] ?? $decoded['generated_markdown'] ?? ''));
                     }
                 }
 
-                if (empty($markdown)) {
-                    $markdown = $item['original_markdown'] ?? '';
-                    if (!empty($markdown)) {
-                        $isOriginal = true;
-                    } elseif (!empty($item['json_data'])) {
-                        $decoded = json_decode($item['json_data'], true);
-                        if (is_array($decoded)) {
-                            $markdown = $decoded['originalMarkdown'] ?? $decoded['original_markdown'] ?? '';
-                            if (!empty($markdown)) $isOriginal = true;
-                        }
-                    }
-                }
-
-                $btnLabel = $isOriginal ? 'View Original Wiki Entry' : 'View Full Wiki Entry';
-                if (empty($markdown)) $btnLabel = 'No Entry Content Available';
+                $btnLabel = $isOriginal ? 'View Wiki Entry' : 'View Generated Wiki Entry';
+                if ($markdown === '') $btnLabel = 'No Entry Content Available';
             ?>
                 <article class="wiki-card">
                     <div class="wiki-card-header">
@@ -173,6 +253,7 @@ get_header();
                 </article>
             <?php endforeach; ?>
         </div>
+        <?php $render_pager('pager-bottom'); ?>
     <?php endif; ?>
 </div>
 
@@ -194,6 +275,11 @@ function toggleMarkdown(btn) {
             let decodedRaw = txt.value;
             // Ensure headers have spaces after # (Reddit/legacy might be lenient, marked is strict)
             decodedRaw = decodedRaw.replace(/(^|\n)(#{1,6})([^\s#])/g, '$1$2 $3');
+            // Reddit renders "** Name**" / "**Name **" as bold; CommonMark does not
+            // (no whitespace allowed just inside the delimiters). Most of the
+            // uploaded wiki pages use the spaced form, so tighten it.
+            decodedRaw = decodedRaw.replace(/\*\*[ \t]+([^*\n][^*\n]*?)[ \t]*\*\*/g, '**$1**');
+            decodedRaw = decodedRaw.replace(/\*\*([^*\n][^*\n]*?[^*\s])[ \t]+\*\*/g, '**$1**');
 
             try {
                 if (typeof marked !== 'undefined') {

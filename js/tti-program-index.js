@@ -24,6 +24,16 @@ const escapeHtmlValue = value => {
     }[char] || char));
 };
 
+const renderRawFacilityData = facility => {
+    let json = '';
+    try {
+        json = JSON.stringify(facility, null, 2);
+    } catch (error) {
+        return '';
+    }
+    return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtmlValue(json)}</pre></details>` : '';
+};
+
 const toTitleCase = value => {
     if (value === null || value === undefined) return '';
     const text = typeof value === 'string' ? value : String(value);
@@ -1877,7 +1887,8 @@ function displayFacilities(facilitiesData, containerId) {
                 resourcesSectionHtml,
                 documentsSectionHtml,
                 additionalDetailsHtml,
-                fieldNotesSectionHtml
+                fieldNotesSectionHtml,
+                renderRawFacilityData(facility)
             ].join('');
             const hasExtraContent = facilityExtraContent.trim() !== '';
 

@@ -1087,6 +1087,36 @@
         return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
     };
 
+    const renderCompleteValue = (value, path, depth = 0) => {
+        if (value === null || value === undefined || value === '') return '';
+        const label = path || 'Value';
+        if (typeof value !== 'object') {
+            return renderScalarRow(label, value);
+        }
+        if (depth > 8) return renderScalarRow(label, '[nested data]');
+
+        if (Array.isArray(value)) {
+            const items = value.map((item, index) => renderCompleteValue(item, `${label} ${index + 1}`, depth + 1)).filter(Boolean);
+            return items.length ? `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul></div>` : '';
+        }
+
+        const rows = Object.entries(value)
+            .map(([key, child]) => renderCompleteValue(child, path ? `${path} → ${formatFieldLabel(key)}` : formatFieldLabel(key), depth + 1))
+            .filter(Boolean);
+        return rows.join('');
+    };
+
+    const renderCompleteSourceData = rawRecords => {
+        if (!Array.isArray(rawRecords) || !rawRecords.length) return '';
+        const records = rawRecords.map((record, index) => {
+            if (!record || typeof record !== 'object' || !record.data || typeof record.data !== 'object') return '';
+            const source = record.project_name ? ` (${record.project_name})` : '';
+            return `<div class="facility-source-record"><strong>Source record${rawRecords.length > 1 ? ` ${index + 1}` : ''}${escapeHtml(source)}:</strong>${renderCompleteValue(record.data, '', 0)}</div>`;
+        }).filter(Boolean);
+        if (!records.length) return '';
+        return `<div class="detail-row detail-complete-data"><strong>All source data</strong>${records.join('')}</div>`;
+    };
+
     // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"
     const humanizeFlagKey = key => String(key)
         .replace(/^has(?=[A-Z0-9])/, '')
@@ -1218,6 +1248,12 @@
                 detailRows.push(`<div class="detail-row detail-list"><strong>Field notes:</strong><ul>${noteItems.join('')}</ul></div>`);
             }
         }
+
+        // Keep the normalized fields above readable, but also expose every
+        // non-empty field from the original facility payload. This prevents
+        // newer or uncommon form fields from disappearing from state tiles.
+        const completeSourceData = renderCompleteSourceData(facility.raw_records);
+        if (completeSourceData) detailRows.push(completeSourceData);
 
         // Inspection / violation summary chips (kept at the bottom of details)
         const statChips = [];
