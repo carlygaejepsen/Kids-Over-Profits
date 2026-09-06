@@ -125,12 +125,19 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
     if ($key === '') {
         return ['ok' => false, 'error' => 'Groq API key not configured. Add GROQ_API_KEY to .env (GROK_API_KEY also accepted).'];
     }
-    $body = json_encode([
+    $payload = [
         'model'       => $model,
         'messages'    => [['role' => 'user', 'content' => $content]],
         'temperature' => 0.2,
         'max_tokens'  => $max_tokens,
-    ]);
+    ];
+    // Qwen 3.x and MiniMax are thinking models: without this the reply is
+    // reasoning prose (or <think> tags) around the JSON and eats max_tokens.
+    if (preg_match('#^(qwen|minimaxai)/#i', $model)) {
+        $payload['reasoning_format'] = 'hidden';
+        $payload['reasoning_effort'] = 'none';
+    }
+    $body = json_encode($payload);
     if ($body === false) {
         return ['ok' => false, 'error' => 'json_encode failed: ' . json_last_error_msg()];
     }
@@ -161,6 +168,8 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
     }
 
     $raw = trim((string) ($decoded['choices'][0]['message']['content'] ?? ''));
+    $raw = preg_replace('/<think>.*?<\/think>/is', '', $raw);
+    $raw = trim($raw);
     $raw = preg_replace('/^```json\s*/i', '', $raw);
     $raw = preg_replace('/```\s*$/', '', $raw);
     $parsed = json_decode($raw, true);
@@ -202,9 +211,10 @@ function kop_rtc_vision_model_candidates() {
     $cached = get_transient('kop_rtc_vision_model');
     if (is_string($cached) && $cached !== '') $candidates[] = $cached;
     return array_values(array_unique(array_merge($candidates, [
-        'meta-llama/llama-4-maverick-17b-128e-instruct',
-        'meta-llama/llama-4-scout-17b-16e-instruct',
-        'qwen/qwen3-vl-32b-instruct',
+        // Groq decommissioned Llama 4 Maverick (Mar 2026) and Scout (Jul 2026);
+        // the Qwen 3.x 27B models are the current vision-capable IDs.
+        'qwen/qwen3.8-27b',
+        'qwen/qwen3.6-27b',
     ])));
 }
 
@@ -224,7 +234,7 @@ function kop_rtc_discover_vision_models() {
     $ids = [];
     foreach (($decoded['data'] ?? []) as $m) {
         $id = (string) ($m['id'] ?? '');
-        if ($id !== '' && preg_match('/(vl|vision|llama-4|maverick|scout|pixtral)/i', $id)) {
+        if ($id !== '' && preg_match('/(qwen3\.\d|-vl|vision|llama-4|maverick|scout|pixtral)/i', $id)) {
             $ids[] = $id;
         }
     }
