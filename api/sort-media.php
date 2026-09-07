@@ -155,6 +155,7 @@ $neg_rules = kop_sm_resolve_negative_rules($folders);
 // Program alternate/past names (from facilities_master) point at that
 // program's folder too.
 $matchable = array_merge($matchable, kop_sm_alias_matchable($folders, $generic, $live));
+$match_index = kop_sm_index($matchable);
 
 /**
  * Custom filename → folder rules, checked BEFORE name matching. Keys are
@@ -350,8 +351,56 @@ function kop_sm_resolve_rules($folders, $by_id) {
     return $resolved;
 }
 
-/** Suggest a folder for file text. Returns [folder_id|null, why]. */
-function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = [], $live = []) {
+/**
+ * Candidate index for kop_sm_suggest(). Every way an entry can match a file
+ * (its whole normalized name as a substring, or all its tokens as words)
+ * requires each of its tokens to be a substring of the file text — so the
+ * entry's longest token is a necessary condition. Index entries by that
+ * token; a file then only scores the entries whose key token occurs in it,
+ * instead of every folder in the library (5k files x 6k folders took ~23 s
+ * on the live site; this takes well under a second).
+ */
+function kop_sm_index($matchable) {
+    $by_key = [];
+    $lens = [];
+    foreach ($matchable as $i => $m) {
+        $key = '';
+        foreach ($m['tokens'] as $t) {
+            if (strlen($t) > strlen($key)) {
+                $key = $t;
+            }
+        }
+        $by_key[$key][] = $i;
+        $lens[strlen($key)] = true;
+    }
+    return ['by_key' => $by_key, 'lens' => array_keys($lens)];
+}
+
+/** Indices (ascending, original order) of entries whose key token is in the text. */
+function kop_sm_candidates($fileText, $index) {
+    $hits = [];
+    $L = strlen($fileText);
+    foreach ($index['lens'] as $len) {
+        for ($i = 0; $i + $len <= $L; $i++) {
+            $sub = substr($fileText, $i, $len);
+            if (isset($index['by_key'][$sub])) {
+                foreach ($index['by_key'][$sub] as $k) {
+                    $hits[$k] = true;
+                }
+            }
+        }
+    }
+    $out = array_keys($hits);
+    sort($out);
+    return $out;
+}
+
+/**
+ * Suggest a folder for file text. Returns [folder_id|null, why].
+ * $index (from kop_sm_index) narrows the scoring loop to plausible entries;
+ * the result is identical to scoring every entry, just much faster.
+ */
+function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = [], $live = [], $index = null) {
     // Negative rules: folders excluded for THIS file.
     $excluded = [];
     foreach ($neg_rules as $needle => $ids) {
@@ -371,7 +420,9 @@ function kop_sm_suggest($fileText, $matchable, $rules = [], $neg_rules = [], $li
     $best = null;
     $bestScore = 0;
     $bestNames = [];
-    foreach ($matchable as $m) {
+    $order = $index !== null ? kop_sm_candidates($fileText, $index) : array_keys($matchable);
+    foreach ($order as $mi) {
+        $m = $matchable[$mi];
         if (isset($excluded[(int)$m['id']])) {
             continue;
         }
@@ -548,6 +599,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     $apply_log[] = "Permanently deleted {$deleted} file(s)" . ($failed ? " — {$failed} failed" : '') . '.';
 }
 
+// Post/Redirect/Get: the rescan below is slow, so hand the result to a fresh
+// GET (a refresh or Back can't re-apply the same moves) and show it there.
+$flash_key = 'kop_sm_flash_' . get_current_user_id();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $apply_log) {
+    set_transient($flash_key, ['applied' => $applied, 'log' => $apply_log], 5 * MINUTE_IN_SECONDS);
+    wp_safe_redirect($_SERVER['REQUEST_URI'], 303);
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $flash = get_transient($flash_key);
+    if (is_array($flash)) {
+        delete_transient($flash_key);
+        $applied = !empty($flash['applied']);
+        $apply_log = (array)$flash['log'];
+    }
+}
+
 // ---------------------------------------------------------------------------
 // View: browse (by folder / search) or "likely mis-filed" scan
 // ---------------------------------------------------------------------------
@@ -603,7 +671,7 @@ foreach ($lib as $a) {
     }
 
     $fileText = kop_sm_norm($title . ' ' . $basename);
-    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules, $neg_rules, $live);
+    list($sug, $why) = kop_sm_suggest($fileText, $matchable, $custom_rules, $neg_rules, $live, $match_index);
 
     if ($mode === 'misfiled') {
         // Mis-filed = confident suggestion pointing somewhere the file is NOT
@@ -752,7 +820,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 <h1>Sort Media <small style="font-weight:400">— re-file documents that are in the wrong folder</small></h1>
 
 <?php if ($applied): ?>
-    <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?> <a href="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">Reload this view.</a></div>
+    <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?> This view has been rescanned.</div>
 <?php elseif ($apply_log): ?>
     <div class="log warn"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?></div>
 <?php endif; ?>
@@ -823,6 +891,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
+    <div class="bar" id="kop-working" hidden style="color:#000080;font-weight:600"></div>
 </div>
 <table><thead><tr><th></th><th>File</th><th>Currently in</th><th>Suggested</th><th>Move to</th></tr></thead><tbody>
 <?php foreach ($rows as $r):
@@ -892,6 +961,28 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
     }
     allRows.forEach(paintRow);
     refreshCount();
+
+    // The action buttons' confirm() runs first; the submit event only fires
+    // once it was accepted. Show progress and block re-clicks — a second
+    // click cancels the in-flight request and starts over.
+    var form = document.querySelector('form[method="post"]');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            var s = e.submitter;
+            var verb = s && s.name === 'do_delete' ? 'Deleting' : s && s.name === 'do_confirm' ? 'Marking' : s && s.name === 'do_tag' ? 'Adding' : 'Moving';
+            var n = allRows.filter(function (r) { var c = rowCheck(r); return c && c.checked; }).length;
+            var w = document.getElementById('kop-working');
+            if (w) {
+                w.textContent = verb + ' ' + n + ' file(s), then rescanning the library — this can take a while. Do not click again.';
+                w.hidden = false;
+            }
+            document.body.style.cursor = 'progress';
+            // Disable after the browser has read the submitter's name/value.
+            setTimeout(function () {
+                Array.prototype.forEach.call(form.querySelectorAll('button'), function (b) { b.disabled = true; });
+            }, 0);
+        });
+    }
 
     allRows.forEach(function (row) {
         row.addEventListener('click', function (e) {

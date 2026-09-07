@@ -11,18 +11,24 @@
  * Match signals, strongest first (the first one that fires is recorded as
  * match_reason so the backfill report explains every link):
  *
- *   source_url   the article's URL is one of the lawsuit's source_urls
- *   case_number  the docket number appears in the article text
- *   case_name    the case caption appears in the article text
- *   plaintiff    the article shares a linked facility with the lawsuit AND
- *                names a distinctive plaintiff (Doe placeholders are ignored)
- *   filing_news  the article shares a linked facility, is typed 'lawsuit', and
- *                ran inside the filing window (30 days before to 120 days
- *                after filing_date)
+ *   source_url     the article's URL is one of the lawsuit's source_urls
+ *   case_number    the docket number appears in the article text
+ *   case_name      the case caption appears in the article text
+ *   plaintiff      the article shares a facility with the lawsuit AND names a
+ *                  distinctive plaintiff (Doe placeholders are ignored)
+ *   caption_party  the article shares a facility, is typed 'lawsuit', and
+ *                  names the lead party from the caption ("Fuller v. Hyde
+ *                  School" -> "Fuller")
+ *   filing_news    the article shares a facility, is typed 'lawsuit', and ran
+ *                  within 120 days after filing_date
+ *   sole_case      the article shares a linked facility for which this is the
+ *                  only tracked lawsuit, and is typed 'lawsuit'
  *
- * "Shares a linked facility" means lawsuit_facility_links and
- * news_facility_links point at the same facilities_master id, so the facility
- * sync must run before this one on either side.
+ * "Shares a facility" means lawsuit_facility_links and news_facility_links
+ * point at the same facilities_master id (so run the facility syncs first),
+ * or, when neither side is linked, the facility name as written on the
+ * lawsuit appears in the article text. Nothing typed 'lawsuit' links when it
+ * was published more than 30 days before the filing date.
  *
  * Both directions are covered so the join stays current no matter which
  * record changes:
@@ -45,7 +51,7 @@ if (!function_exists('kop_lawsuit_news_links_ensure_table')) {
           `lawsuit_id` int(11) NOT NULL COMMENT 'FK -> lawsuits.id',
           `news_id` int(11) NOT NULL COMMENT 'FK -> news_submissions.id',
           `link_type` enum('auto','manual') NOT NULL DEFAULT 'auto' COMMENT 'auto rows are owned by the sync; manual rows survive it',
-          `match_reason` varchar(40) DEFAULT NULL COMMENT 'source_url | case_number | case_name | plaintiff | filing_news',
+          `match_reason` varchar(40) DEFAULT NULL COMMENT 'source_url | case_number | case_name | plaintiff | caption_party | filing_news | sole_case',
           `created_by` varchar(255) DEFAULT NULL,
           `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
           PRIMARY KEY (`lawsuit_id`,`news_id`),
@@ -91,10 +97,12 @@ if (!function_exists('kop_lawsuit_news_needles')) {
     /**
      * Precompute everything the matcher needs from one lawsuit row.
      *
-     * @param array $lawsuit     lawsuits row (JSON columns as stored strings or arrays)
-     * @param int[] $facilityIds facilities_master ids from lawsuit_facility_links
+     * @param array $lawsuit            lawsuits row (JSON columns as stored strings or arrays)
+     * @param int[] $facilityIds        facilities_master ids from lawsuit_facility_links
+     * @param array $facilityCaseCounts facility_id => number of lawsuits linked to it
+     *                                  (kop_lawsuit_facility_case_counts), for sole_case
      */
-    function kop_lawsuit_news_needles(array $lawsuit, array $facilityIds): array {
+    function kop_lawsuit_news_needles(array $lawsuit, array $facilityIds, array $facilityCaseCounts = []): array {
         $urls = [];
         foreach (kop_normalize_urls(kop_lawsuit_news_json_list($lawsuit['source_urls'] ?? '[]')) as $u) {
             $urls[$u] = true;
@@ -127,19 +135,69 @@ if (!function_exists('kop_lawsuit_news_needles')) {
             $plaintiffKeys[$key] = true;
         }
 
+        // Facility names as written, for the text fallback when neither side
+        // is linked: two or more words, at least one of them distinctive.
+        $stop = kop_news_stopwords();
+        $facilityTextKeys = [];
+        $facilityTokens = [];
+        foreach (kop_lawsuit_news_json_list($lawsuit['facilities_mentioned'] ?? '[]') as $mention) {
+            foreach (kop_facility_name_variants($mention) as $variant) {
+                $key = kop_lawsuit_news_text_key($variant);
+                $tokens = preg_split('/\s+/', trim($key), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                foreach ($tokens as $t) $facilityTokens[$t] = true;
+                if (count($tokens) < 2) continue;
+                foreach ($tokens as $t) {
+                    if (strlen($t) >= 4 && !ctype_digit($t) && !isset($stop[$t])) {
+                        $facilityTextKeys[$key] = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Lead-party surnames from the caption ("Fuller v. Hyde School" ->
+        // "fuller"). The plaintiffs field is often empty, but coverage of a
+        // case almost always names whoever brought it. Placeholders, generic
+        // words and the facility's own name never count.
+        $partyKeys = [];
+        $parts = preg_split('/\s+v(?:s\.?|\.|ersus)?\s+/i', (string)($lawsuit['case_name'] ?? ''), 2);
+        if (count($parts) === 2) {
+            static $partySkip = null;
+            if ($partySkip === null) {
+                $partySkip = array_flip(explode(' ',
+                    'doe does roe roes jane john anonymous estate minor minors unknown state states united ' .
+                    'commonwealth people county city town family families parents parent guardian guardians ' .
+                    'student students resident residents former next friend behalf individually department ' .
+                    'office board school district'));
+            }
+            foreach (preg_split('/\s+/', trim(kop_lawsuit_news_text_key($parts[0])), -1, PREG_SPLIT_NO_EMPTY) ?: [] as $t) {
+                if (strlen($t) < 4 || ctype_digit($t)) continue;
+                if (isset($partySkip[$t]) || isset($stop[$t]) || isset($facilityTokens[$t])) continue;
+                $partyKeys[' ' . $t . ' '] = true;
+            }
+        }
+
         $filingTs = null;
         if (!empty($lawsuit['filing_date']) && $lawsuit['filing_date'] !== '0000-00-00') {
             $ts = strtotime((string)$lawsuit['filing_date']);
             if ($ts) $filingTs = $ts;
         }
 
+        $soleFacilityIds = [];
+        foreach ($facilityIds as $fid) {
+            if (($facilityCaseCounts[(int)$fid] ?? 0) === 1) $soleFacilityIds[(int)$fid] = true;
+        }
+
         return [
-            'urls'            => $urls,
-            'case_number_key' => $caseNumberKey,
-            'case_name_key'   => $caseNameKey,
-            'plaintiff_keys'  => array_keys($plaintiffKeys),
-            'facility_ids'    => array_fill_keys(array_map('intval', $facilityIds), true),
-            'filing_ts'       => $filingTs,
+            'urls'               => $urls,
+            'case_number_key'    => $caseNumberKey,
+            'case_name_key'      => $caseNameKey,
+            'plaintiff_keys'     => array_keys($plaintiffKeys),
+            'party_keys'         => array_keys($partyKeys),
+            'facility_text_keys' => array_keys($facilityTextKeys),
+            'facility_ids'       => array_fill_keys(array_map('intval', $facilityIds), true),
+            'sole_facility_ids'  => $soleFacilityIds,
+            'filing_ts'          => $filingTs,
         ];
     }
 }
@@ -186,10 +244,16 @@ if (!function_exists('kop_lawsuit_news_match_reason')) {
             return 'case_name';
         }
 
-        $sharesFacility = false;
-        if (!empty($needles['facility_ids'])) {
-            foreach ($newsFacilityIds as $fid) {
-                if (isset($needles['facility_ids'][(int)$fid])) { $sharesFacility = true; break; }
+        $sharesFacility     = false;
+        $sharesSoleFacility = false;
+        foreach ($newsFacilityIds as $fid) {
+            $fid = (int)$fid;
+            if (isset($needles['facility_ids'][$fid]))      $sharesFacility = true;
+            if (isset($needles['sole_facility_ids'][$fid])) $sharesSoleFacility = true;
+        }
+        if (!$sharesFacility) {
+            foreach ($needles['facility_text_keys'] as $fk) {
+                if (strpos($hay, $fk) !== false) { $sharesFacility = true; break; }
             }
         }
         if (!$sharesFacility) return null;
@@ -198,15 +262,27 @@ if (!function_exists('kop_lawsuit_news_match_reason')) {
             if (strpos($hay, $pk) !== false) return 'plaintiff';
         }
 
-        if ($needles['filing_ts'] !== null
-            && (string)($news['article_type'] ?? '') === 'lawsuit'
-            && !empty($news['publication_date']) && $news['publication_date'] !== '0000-00-00') {
-            $pubTs = strtotime((string)$news['publication_date']);
-            if ($pubTs) {
-                $delta = $pubTs - $needles['filing_ts'];
-                if ($delta >= -30 * 86400 && $delta <= 120 * 86400) return 'filing_news';
-            }
+        // Everything below needs an article about litigation.
+        if ((string)($news['article_type'] ?? '') !== 'lawsuit') return null;
+
+        $pubTs = null;
+        if (!empty($news['publication_date']) && $news['publication_date'] !== '0000-00-00') {
+            $pubTs = strtotime((string)$news['publication_date']) ?: null;
         }
+        // Nothing published more than a month before the filing can cover it.
+        if ($needles['filing_ts'] !== null && $pubTs !== null && $pubTs < $needles['filing_ts'] - 30 * 86400) {
+            return null;
+        }
+
+        foreach ($needles['party_keys'] as $pk) {
+            if (strpos($hay, $pk) !== false) return 'caption_party';
+        }
+
+        if ($needles['filing_ts'] !== null && $pubTs !== null && $pubTs - $needles['filing_ts'] <= 120 * 86400) {
+            return 'filing_news';
+        }
+
+        if ($sharesSoleFacility) return 'sole_case';
 
         return null;
     }
@@ -258,6 +334,19 @@ if (!function_exists('kop_lawsuit_facility_map')) {
             // Table absent: no facility overlap available.
         }
         return $map;
+    }
+}
+
+if (!function_exists('kop_lawsuit_facility_case_counts')) {
+    /** facility_id => number of lawsuits linked to it, from kop_lawsuit_facility_map(). */
+    function kop_lawsuit_facility_case_counts(array $lawsuitFacilityMap): array {
+        $counts = [];
+        foreach ($lawsuitFacilityMap as $fids) {
+            foreach (array_unique(array_map('intval', $fids)) as $fid) {
+                $counts[$fid] = ($counts[$fid] ?? 0) + 1;
+            }
+        }
+        return $counts;
     }
 }
 
@@ -333,8 +422,8 @@ if (!function_exists('kop_lawsuit_news_matches_for_lawsuit')) {
      * news_id => reason for every live article that covers this lawsuit.
      * Pure lookup, no writes; the backfill dry run uses it directly.
      */
-    function kop_lawsuit_news_matches_for_lawsuit(PDO $pdo, array $lawsuit, array $facilityIds): array {
-        $needles = kop_lawsuit_news_needles($lawsuit, $facilityIds);
+    function kop_lawsuit_news_matches_for_lawsuit(PDO $pdo, array $lawsuit, array $facilityIds, array $facilityCaseCounts = []): array {
+        $needles = kop_lawsuit_news_needles($lawsuit, $facilityIds, $facilityCaseCounts);
         $live = kop_lawsuit_news_live_news($pdo);
         $out = [];
         foreach ($live['rows'] as $news) {
@@ -354,13 +443,15 @@ if (!function_exists('kop_sync_lawsuit_news_links')) {
      * @return int[] news ids now linked to this lawsuit (all link types)
      */
     function kop_sync_lawsuit_news_links(PDO $pdo, int $lawsuitId, ?string $createdBy = null): array {
-        $stmt = $pdo->prepare("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls FROM lawsuits WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls, facilities_mentioned FROM lawsuits WHERE id = ?");
         $stmt->execute([$lawsuitId]);
         $lawsuit = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$lawsuit) return [];
 
-        $facilityIds = kop_lawsuit_facility_map($pdo, [$lawsuitId])[$lawsuitId] ?? [];
-        $desired = kop_lawsuit_news_matches_for_lawsuit($pdo, $lawsuit, $facilityIds);
+        $facilityMap = kop_lawsuit_facility_map($pdo);
+        $desired = kop_lawsuit_news_matches_for_lawsuit(
+            $pdo, $lawsuit, $facilityMap[$lawsuitId] ?? [], kop_lawsuit_facility_case_counts($facilityMap)
+        );
         return kop_lawsuit_news_write_links($pdo, 'lawsuit_id', $lawsuitId, 'news_id', $desired, $createdBy);
     }
 }
@@ -391,14 +482,15 @@ if (!function_exists('kop_sync_news_lawsuit_links')) {
         $news['__haystack'] = kop_lawsuit_news_haystack($news);
         $newsFacilityIds = kop_lawsuit_news_facility_map($pdo, [$newsId])[$newsId] ?? [];
 
-        $lawsuits = $pdo->query("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls FROM lawsuits")
+        $lawsuits = $pdo->query("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls, facilities_mentioned FROM lawsuits")
                         ->fetchAll(PDO::FETCH_ASSOC);
         $lawsuitFacilities = kop_lawsuit_facility_map($pdo);
+        $caseCounts = kop_lawsuit_facility_case_counts($lawsuitFacilities);
 
         $desired = [];
         foreach ($lawsuits as $lawsuit) {
             $lid = (int)$lawsuit['id'];
-            $needles = kop_lawsuit_news_needles($lawsuit, $lawsuitFacilities[$lid] ?? []);
+            $needles = kop_lawsuit_news_needles($lawsuit, $lawsuitFacilities[$lid] ?? [], $caseCounts);
             $reason = kop_lawsuit_news_match_reason($needles, $news, $newsFacilityIds);
             if ($reason !== null) $desired[$lid] = $reason;
         }

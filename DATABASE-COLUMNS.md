@@ -103,7 +103,7 @@ Quick reference for all database tables and their columns.
 **Purpose:** News articles that cover a lawsuit, matched automatically on save/approval from either side (`api/lawsuit-news-links.php`; backfill with `api/backfill-lawsuit-news-links.php?dry_run=1`)
 **Primary Key:** (`lawsuit_id`, `news_id`) - composite
 **Link Types:** `auto` (owned by the sync), `manual` (survives re-syncs)
-**Match Reasons:** `source_url`, `case_number`, `case_name`, `plaintiff`, `filing_news`
+**Match Reasons:** `source_url`, `case_number`, `case_name`, `plaintiff`, `caption_party`, `filing_news`, `sole_case` (strongest first; see the header of `api/lawsuit-news-links.php`)
 **Notes:** Only approved/published articles are ever linked or shown; a rejected article drops off the case card on its next review action.
 
 ---

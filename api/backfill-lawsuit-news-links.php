@@ -40,9 +40,10 @@ require_once __DIR__ . '/lawsuit-news-links.php';
 $dry_run = !empty($_GET['dry_run']);
 
 try {
-    $rows = $pdo->query("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls, publication_status FROM lawsuits ORDER BY id")
+    $rows = $pdo->query("SELECT id, case_name, case_number, filing_date, plaintiffs, source_urls, facilities_mentioned, publication_status FROM lawsuits ORDER BY id")
                 ->fetchAll(PDO::FETCH_ASSOC);
     $facilityMap = kop_lawsuit_facility_map($pdo);
+    $caseCounts  = kop_lawsuit_facility_case_counts($facilityMap);
     $live = kop_lawsuit_news_live_news($pdo);
 
     $titles = [];
@@ -61,7 +62,7 @@ try {
 
     foreach ($rows as $law) {
         $lid = (int)$law['id'];
-        $desired = kop_lawsuit_news_matches_for_lawsuit($pdo, $law, $facilityMap[$lid] ?? []);
+        $desired = kop_lawsuit_news_matches_for_lawsuit($pdo, $law, $facilityMap[$lid] ?? [], $caseCounts);
 
         if (!$dry_run) {
             kop_lawsuit_news_write_links($pdo, 'lawsuit_id', $lid, 'news_id', $desired, 'backfill');
