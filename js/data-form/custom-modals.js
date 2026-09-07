@@ -476,9 +476,8 @@ class OrganizerModal {
         }
         params.append('limit', '20');
 
-        // Get REST URL exactly like data-search.js
-        const restUrl = window.kopData?.restUrl || '/wp-json/';
-        const searchUrl = `${restUrl}kop/v1/search?${params.toString()}`;
+        // REST root: KOP_DATA_FORM_CONFIG.restUrl already ends in kop/v1/.
+        const searchUrl = `${OrganizerModal.restRoot()}search?${params.toString()}`;
 
         // Fetch from database exactly like data-search.js
         fetch(searchUrl)
@@ -487,21 +486,37 @@ class OrganizerModal {
                 if (data.success && data.results) {
                     const results = [];
 
+                    // Keep the raw payloads so a result that only exists in the
+                    // database (a promoted single-facility row, never part of
+                    // the projects loaded into the form) can still be opened.
+                    this.searchProjects = {};
+
                     // Process results
                     data.results.forEach(result => {
                         const facilities = result.data?.facilities || [];
                         const projectOperator = result.data?.operator || null;
+                        this.searchProjects[result.name] = result;
 
                         facilities.forEach((facility, facilityIndex) => {
-                            const matches = window.extractDataPointsForSearch ?
+                            let matches = window.extractDataPointsForSearch ?
                                 window.extractDataPointsForSearch(facility, searchType, searchValue, projectOperator) :
                                 [searchValue];
+
+                            // A single-facility row matched on the server (possibly
+                            // on a field the client extractor does not know, such as
+                            // the row-level state). Keep it, showing the server's
+                            // snippet, rather than dropping a confirmed hit.
+                            if (matches.length === 0 && facilities.length === 1 && result.matchSnippet) {
+                                matches = [result.matchSnippet];
+                            }
 
                             if (matches.length > 0) {
                                 results.push({
                                     projectName: result.name,
+                                    projectLabel: result.label || result.name,
                                     facility: facility,
                                     facilityIndex: facilityIndex,
+                                    facilityName: facility?.identification?.name || facility?.identification?.currentName || '',
                                     matches: matches,
                                     operator: result.data?.operator?.name || facility?.identification?.operator
                                 });
@@ -572,25 +587,32 @@ class OrganizerModal {
             if (results.length === 0) {
                 modalMatches.innerHTML = '<p style="padding: 20px; text-align: center; color: #6b7280;">No matching facilities found.</p>';
             } else {
-                modalMatches.innerHTML = results.map(result => {
-                    const facilityName = result.facility.identification?.name || result.facility.identification?.currentName || 'Unnamed Facility';
-                    const location = result.facility.location || '';
+                const esc = (v) => modalSystem.escapeHtml(v);
+                modalMatches.innerHTML = results.map((result, resultIndex) => {
+                    const facilityName = result.facilityName || 'Unnamed Facility';
+                    const facilityLocation = result.facility.locationDetails || {};
+                    const location = result.facility.location
+                        || [facilityLocation.city, facilityLocation.state].filter(Boolean).join(', ');
+                    const operatorLine = result.operator && result.operator !== result.projectLabel ? result.operator : '';
                     return `
                         <div style="padding: 15px; border-bottom: 1px solid #e5e7eb; cursor: pointer; transition: background 0.2s;"
-                             onclick="window.organizerModal.goToFacility('${result.projectName.replace(/'/g, "\\'")}', ${result.facilityIndex})"
+                             data-result-index="${resultIndex}"
+                             onclick="window.organizerModal.openResult(${resultIndex})"
                              onmouseover="this.style.background='#f3f4f6'"
                              onmouseout="this.style.background='transparent'">
-                            <div style="font-weight: 600; color: #1f2937;">${facilityName}</div>
+                            <div style="font-weight: 600; color: #1f2937;">${esc(facilityName)}</div>
                             <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
-                                <span style="color: #33A7B5;">${result.projectName}</span>
-                                ${location ? ` • ${location}` : ''}
+                                <span style="color: #33A7B5;">${esc(result.projectLabel || result.projectName)}</span>
+                                ${operatorLine ? ` (${esc(operatorLine)})` : ''}
+                                ${location ? ` • ${esc(location)}` : ''}
                             </div>
                             <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">
-                                Matches: ${result.matches.join(', ')}
+                                Matches: ${esc(result.matches.join(', '))}
                             </div>
                         </div>
                     `;
                 }).join('');
+                this.lastResults = results;
             }
         }
     }
@@ -619,9 +641,30 @@ class OrganizerModal {
     }
 
     /**
+     * REST root for kop/v1 (always ends with a slash).
+     */
+    static restRoot() {
+        const cfg = window.KOP_DATA_FORM_CONFIG || window.KOP_FormConfig?.DATA_FORM_CONFIG || {};
+        const root = cfg.restUrl || cfg.api?.root || window.kopData?.restUrl || '/wp-json/kop/v1/';
+        return root.endsWith('/') ? root : `${root}/`;
+    }
+
+    /**
+     * Open the result at the given index of the last rendered result list.
+     */
+    openResult(resultIndex) {
+        const result = Array.isArray(this.lastResults) ? this.lastResults[resultIndex] : null;
+        if (!result) {
+            console.error('openResult: no result at index', resultIndex);
+            return;
+        }
+        return this.goToFacility(result.projectName, result.facilityIndex, result.facilityName);
+    }
+
+    /**
      * Navigate to a specific facility
      */
-    async goToFacility(projectName, facilityIndex) {
+    async goToFacility(projectName, facilityIndex, facilityName = '') {
         console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
 
         // Hide the modal first
@@ -646,31 +689,67 @@ class OrganizerModal {
             }
         };
 
+        // Loading a project sorts its facilities alphabetically, so the index
+        // from the search payload can point at a different campus. Prefer the
+        // facility's name and fall back to the index.
+        const resolveIndex = (facilities) => {
+            if (facilityName) {
+                const wanted = facilityName.trim().toLowerCase();
+                const byName = facilities.findIndex(f => {
+                    const n = f?.identification?.name || f?.identification?.currentName || '';
+                    return n.trim().toLowerCase() === wanted;
+                });
+                if (byName >= 0) return byName;
+            }
+            return facilityIndex;
+        };
+
         // Poll until the project's facilities are actually loaded (up to ~5s)
         // instead of a single fixed delay that loses the race on slow loads.
-        const navigateWhenReady = (index, attempts = 20) => {
+        const navigateWhenReady = (attempts = 20) => {
             const facilities = window.formData?.facilities;
-            if (Array.isArray(facilities) && facilities.length > index) {
-                showFacility(index);
-                return;
+            if (Array.isArray(facilities) && facilities.length > 0) {
+                const index = resolveIndex(facilities);
+                if (facilities.length > index) {
+                    showFacility(index);
+                    return;
+                }
             }
             if (attempts > 0) {
-                setTimeout(() => navigateWhenReady(index, attempts - 1), 250);
+                setTimeout(() => navigateWhenReady(attempts - 1), 250);
             } else {
                 console.error('goToFacility: project facilities never loaded');
                 this.announceStatus('Unable to open that facility. Please try manually.', 'error');
             }
         };
 
+        const knownProjects = window.projects || {};
+        const isLoadedProject = Boolean(knownProjects[projectName] || knownProjects[projectName.toUpperCase()]);
+        const searchProject = this.searchProjects ? this.searchProjects[projectName] : null;
+
+        // Database-only result (promoted single-facility row): the project
+        // loaders only know projects fetched at page load, so feed the search
+        // payload straight into the form.
+        if (!isLoadedProject && searchProject && window.KOP_UI_Render
+            && typeof window.KOP_UI_Render.loadDatabaseProject === 'function') {
+            window.KOP_UI_Render.loadDatabaseProject({
+                name: searchProject.name,
+                label: searchProject.label,
+                data: searchProject.data,
+                category: searchProject.category || 'companies',
+                source: 'database'
+            });
+            navigateWhenReady();
+        }
         // Use loadProjectAndSync if available (admin page)
-        if (typeof window.loadProjectAndSync === 'function') {
+        else if (typeof window.loadProjectAndSync === 'function') {
             await window.loadProjectAndSync(projectName);
-            navigateWhenReady(facilityIndex);
+            navigateWhenReady();
         }
         // Use loadProject if available (standard data form)
         else if (window.projectManager && typeof window.projectManager.loadProject === 'function') {
             window.projectManager.loadProject(projectName);
-            navigateWhenReady(facilityIndex);
+            navigateWhenReady();
         }
         else {
             console.error('No project loading function available');

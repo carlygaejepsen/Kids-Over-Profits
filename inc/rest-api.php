@@ -1671,19 +1671,29 @@ function kop_collect_operatingperiod_values($data, &$set) {
 function kop_search_database_rest_callback($request) {
     global $wpdb;
 
-    // Get search parameters
-    $keyword_query = $request->get_param('keyword');
-    $staff_query = $request->get_param('staff');
-    $location_query = $request->get_param('location');
-    $program_type_query = $request->get_param('programType');
-    $company_query = $request->get_param('company');
-    $referrer_query = $request->get_param('referrer');
-    $limit = $request->get_param('limit');
+    // Facility-side queries. The first one that matches a row decides the
+    // snippet (OR semantics, same as the original implementation).
+    $queries = array(
+        'keyword'     => (string) $request->get_param('keyword'),
+        'staff'       => (string) $request->get_param('staff'),
+        'location'    => (string) $request->get_param('location'),
+        'programType' => (string) $request->get_param('programType'),
+        'company'     => (string) $request->get_param('company'),
+    );
+    $referrer_query = (string) $request->get_param('referrer');
+    $limit = (int) $request->get_param('limit');
     $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
 
+    $has_facility_query = false;
+    foreach ($queries as $q) {
+        if ($q !== '') {
+            $has_facility_query = true;
+            break;
+        }
+    }
+
     // At least one search query must be provided
-    if (empty($keyword_query) && empty($staff_query) && empty($location_query)
-        && empty($program_type_query) && empty($company_query) && empty($referrer_query)) {
+    if (!$has_facility_query && $referrer_query === '') {
         return rest_ensure_response(array(
             'success' => true,
             'results' => array(),
@@ -1692,148 +1702,93 @@ function kop_search_database_rest_callback($request) {
     }
 
     $all_results = array();
-    $table_base = 'facilities_master';
 
-    // Check if table exists
-    $table_exists = $wpdb->get_var($wpdb->prepare(
-        "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
-        DB_NAME,
-        $table_base
-    ));
+    if ($has_facility_query) {
+        $table_base = 'facilities_master';
 
-    if (!$table_exists) {
-        return rest_ensure_response(array(
-            'success' => false,
-            'results' => array(),
-            'count' => 0,
-            'error' => 'Database table not found',
+        // Check if table exists
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $table_base
         ));
-    }
 
-    // Get all rows from the table
-    $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$table_base}", ARRAY_A);
-
-    if (!is_array($rows)) {
-        return rest_ensure_response(array(
-            'success' => true,
-            'results' => array(),
-            'count' => 0,
-        ));
-    }
-
-    foreach ($rows as $row) {
-        if (empty($row['json_data'])) {
-            continue;
+        if (!$table_exists) {
+            return rest_ensure_response(array(
+                'success' => false,
+                'results' => array(),
+                'count' => 0,
+                'error' => 'Database table not found',
+            ));
         }
 
-        $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
-
-        // Skip per-facility reference rows produced by
-        // api/promote-facilities-to-rows.php. The flag lives on the outer
-        // wrapper, which kop_normalize_project_payload strips, so we have to
-        // peek at the raw payload before normalizing.
-        $outer = json_decode($row['json_data'], true);
-        if (is_array($outer) && !empty($outer['__facility_ref'])) {
-            continue;
+        $rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$table_base}", ARRAY_A);
+        if (!is_array($rows)) {
+            $rows = array();
         }
 
-        // Decode JSON to search content
-        $data = kop_normalize_project_payload($row['json_data']);
-        if (!$data) {
-            continue;
-        }
+        // facilities_master holds two kinds of rows: operator/company projects
+        // with nested facilities[], and promoted per-facility rows
+        // (__facility_ref, written by api/facility-promotion.php) that hold the
+        // bulk of the facilities - most of them belong to no project at all.
+        // Search projects first, then the promoted rows, skipping any facility
+        // already surfaced inside a matched project so nested campuses are not
+        // listed twice.
+        $facility_row_indexes = array();
+        $seen_facilities = array();
 
-        $match_snippet = null;
-        $match_type = '';
-
-        // General keyword search - searches all content
-        if (!empty($keyword_query)) {
-            // Check unique_name first
-            if (stripos($unique_name, $keyword_query) !== false) {
-                $match_snippet = 'Name: ' . $unique_name;
-                $match_type = 'keyword';
-            } else {
-                // Search all data recursively
-                $match_snippet = kop_search_in_data($data, $keyword_query);
-                if ($match_snippet) {
-                    $match_type = 'keyword';
-                }
+        foreach ($rows as $index => $row) {
+            if (empty($row['json_data'])) {
+                continue;
             }
-        }
 
-        // Staff member search - searches staff-related fields
-        if (!empty($staff_query) && !$match_snippet) {
-            $match_snippet = kop_search_staff($data, $staff_query);
-            if ($match_snippet) {
-                $match_type = 'staff';
+            // Cheap pre-check; the flag is confirmed on decode in the second pass.
+            if (strpos($row['json_data'], '__facility_ref') !== false) {
+                $facility_row_indexes[] = $index;
+                continue;
             }
-        }
 
-        // Location search - searches location-related fields
-        if (!empty($location_query) && !$match_snippet) {
-            $match_snippet = kop_search_location($data, $location_query);
-            if ($match_snippet) {
-                $match_type = 'location';
-            }
-        }
-
-        // Program type search - searches program type fields
-        if (!empty($program_type_query) && !$match_snippet) {
-            $match_snippet = kop_search_program_type($data, $program_type_query);
-            if ($match_snippet) {
-                $match_type = 'programType';
-            }
-        }
-
-        // Company search - matches project, operator, and facility names
-        if (!empty($company_query) && !$match_snippet) {
-            if (stripos($unique_name, $company_query) !== false) {
-                $match_snippet = 'Name: ' . $unique_name;
-                $match_type = 'company';
-            } elseif (!empty($data['operator']['name']) && stripos($data['operator']['name'], $company_query) !== false) {
-                $match_snippet = 'Operator: ' . $data['operator']['name'];
-                $match_type = 'company';
-            } elseif (!empty($data['facilities']) && is_array($data['facilities'])) {
-                foreach ($data['facilities'] as $facility) {
-                    $facility_name = isset($facility['identification']['name']) ? $facility['identification']['name'] : '';
-                    if ($facility_name !== '' && stripos($facility_name, $company_query) !== false) {
-                        $match_snippet = 'Facility: ' . $facility_name;
-                        $match_type = 'company';
-                        break;
+            $result = kop_search_build_project_result($row, $queries);
+            if ($result) {
+                $facilities = isset($result['data']['facilities']) && is_array($result['data']['facilities'])
+                    ? $result['data']['facilities']
+                    : array();
+                foreach ($facilities as $facility) {
+                    $fname = kop_search_facility_name($facility);
+                    if ($fname !== '') {
+                        $seen_facilities[strtolower($fname)] = true;
                     }
                 }
+                $all_results[] = $result;
             }
         }
 
-        if ($match_snippet) {
-            // Extract summary info
-            $operator_name = '';
-            $facility_count = 0;
-
-            if (isset($data['operator']['name'])) {
-                $operator_name = $data['operator']['name'];
-            }
-            if (isset($data['facilities']) && is_array($data['facilities'])) {
-                $facility_count = count($data['facilities']);
+        foreach ($facility_row_indexes as $index) {
+            $row = $rows[$index];
+            $outer = json_decode($row['json_data'], true);
+            if (!is_array($outer)) {
+                continue;
             }
 
-            $all_results[] = array(
-                'name' => $unique_name,
-                'label' => $unique_name,
-                'category' => 'companies',
-                'operator' => $operator_name,
-                'facilityCount' => $facility_count,
-                'matchSnippet' => $match_snippet,
-                'matchType' => $match_type,
-                'source' => 'database',
-                'data' => $data,
-            );
+            if (empty($outer['__facility_ref'])) {
+                // The marker only appeared inside the content; treat as a project.
+                $result = kop_search_build_project_result($row, $queries);
+                if ($result) {
+                    $all_results[] = $result;
+                }
+                continue;
+            }
+
+            $result = kop_search_build_facility_result($row, $outer, $queries, $seen_facilities);
+            if ($result) {
+                $all_results[] = $result;
+            }
         }
     }
 
     // Referrer search - searches referrers_master rows (separate table from
     // facilities; the referrer search box on the data form targets these).
-    if (!empty($referrer_query)) {
+    if ($referrer_query !== '') {
         $referrers_table = 'referrers_master';
         $referrers_exists = $wpdb->get_var($wpdb->prepare(
             "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
@@ -1896,7 +1851,207 @@ function kop_search_database_rest_callback($request) {
     ));
 }
 
+/**
+ * Display name of a facility entry (identification.name, then currentName,
+ * then a bare name key).
+ */
+function kop_search_facility_name($facility) {
+    if (!is_array($facility)) {
+        return '';
+    }
+    $candidates = array(
+        isset($facility['identification']['name']) ? $facility['identification']['name'] : null,
+        isset($facility['identification']['currentName']) ? $facility['identification']['currentName'] : null,
+        isset($facility['name']) ? $facility['name'] : null,
+    );
+    foreach ($candidates as $c) {
+        if (is_string($c) && trim($c) !== '') {
+            return trim($c);
+        }
+    }
+    return '';
+}
 
+/**
+ * Run the facility-side queries against one normalized project payload.
+ *
+ * @param array $data    Normalized project data (operator + facilities[]).
+ * @param array $names   Names that count as the record's own name.
+ * @param array $queries keyword/staff/location/programType/company strings.
+ * @return array|null    array('snippet' => ..., 'type' => ...) or null.
+ */
+function kop_search_match_project($data, $names, $queries) {
+    $names = array_values(array_filter(array_unique($names), function ($n) {
+        return is_string($n) && $n !== '';
+    }));
+
+    if ($queries['keyword'] !== '') {
+        foreach ($names as $name) {
+            if (stripos($name, $queries['keyword']) !== false) {
+                return array('snippet' => 'Name: ' . $name, 'type' => 'keyword');
+            }
+        }
+        $snippet = kop_search_in_data($data, $queries['keyword']);
+        if ($snippet) {
+            return array('snippet' => $snippet, 'type' => 'keyword');
+        }
+    }
+
+    if ($queries['staff'] !== '') {
+        $snippet = kop_search_staff($data, $queries['staff']);
+        if ($snippet) {
+            return array('snippet' => $snippet, 'type' => 'staff');
+        }
+    }
+
+    if ($queries['location'] !== '') {
+        $snippet = kop_search_location($data, $queries['location']);
+        if ($snippet) {
+            return array('snippet' => $snippet, 'type' => 'location');
+        }
+    }
+
+    if ($queries['programType'] !== '') {
+        $snippet = kop_search_program_type($data, $queries['programType']);
+        if ($snippet) {
+            return array('snippet' => $snippet, 'type' => 'programType');
+        }
+    }
+
+    if ($queries['company'] !== '') {
+        $company = $queries['company'];
+        foreach ($names as $name) {
+            if (stripos($name, $company) !== false) {
+                return array('snippet' => 'Name: ' . $name, 'type' => 'company');
+            }
+        }
+        if (!empty($data['operator']['name']) && is_string($data['operator']['name'])
+            && stripos($data['operator']['name'], $company) !== false) {
+            return array('snippet' => 'Operator: ' . $data['operator']['name'], 'type' => 'company');
+        }
+        if (!empty($data['facilities']) && is_array($data['facilities'])) {
+            foreach ($data['facilities'] as $facility) {
+                $facility_name = kop_search_facility_name($facility);
+                if ($facility_name !== '' && stripos($facility_name, $company) !== false) {
+                    return array('snippet' => 'Facility: ' . $facility_name, 'type' => 'company');
+                }
+            }
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Build a search result for an operator/company project row, or null when
+ * the row does not match.
+ */
+function kop_search_build_project_result($row, $queries) {
+    $unique_name = isset($row['unique_name']) ? (string) $row['unique_name'] : '';
+    $data = kop_normalize_project_payload($row['json_data']);
+    if (!$data) {
+        return null;
+    }
+
+    $match = kop_search_match_project($data, array($unique_name), $queries);
+    if (!$match) {
+        return null;
+    }
+
+    $operator_name = '';
+    if (isset($data['operator']['name']) && is_string($data['operator']['name'])) {
+        $operator_name = $data['operator']['name'];
+    }
+    $facility_count = (isset($data['facilities']) && is_array($data['facilities'])) ? count($data['facilities']) : 0;
+
+    return array(
+        'name' => $unique_name,
+        'label' => $unique_name,
+        'category' => 'companies',
+        'operator' => $operator_name,
+        'facilityCount' => $facility_count,
+        'matchSnippet' => $match['snippet'],
+        'matchType' => $match['type'],
+        'source' => 'database',
+        'data' => $data,
+    );
+}
+
+/**
+ * Build a search result for a promoted per-facility (__facility_ref) row.
+ * Returns null when the row does not match or its facility was already
+ * surfaced inside a matched project.
+ */
+function kop_search_build_facility_result($row, $outer, $queries, $seen_facilities) {
+    $unique_name = isset($row['unique_name']) ? (string) $row['unique_name'] : '';
+    $display_name = isset($outer['displayName']) && is_string($outer['displayName']) ? trim($outer['displayName']) : '';
+
+    // Promoted rows have a fixed shape ({data: {facility: {...}}}); build the
+    // facilities[] list straight from the decoded wrapper instead of paying
+    // for a second json_decode in kop_normalize_project_payload. Fall back to
+    // the normalizer for anything unexpected (string payloads, lists).
+    $data = null;
+    $inner = isset($outer['data']) && is_array($outer['data']) ? $outer['data'] : null;
+    if ($inner && isset($inner['facility']) && is_array($inner['facility']) && !array_is_list($inner['facility'])) {
+        $data = $inner;
+        $data['facilities'] = array($inner['facility']);
+    } else {
+        $data = kop_normalize_project_payload($row['json_data']);
+    }
+    if (!$data || empty($data['facilities']) || !is_array($data['facilities'])) {
+        return null;
+    }
+    unset($data['facility']);
+
+    $facility = $data['facilities'][0];
+    $facility_name = kop_search_facility_name($facility);
+    if ($facility_name === '') {
+        $facility_name = $display_name !== '' ? $display_name : $unique_name;
+    }
+    if ($facility_name !== '' && isset($seen_facilities[strtolower($facility_name)])) {
+        return null;
+    }
+
+    // Row-level city/state are the fallback when the facility's own location
+    // fields are blank, so let the location search see them.
+    foreach (array('city', 'state') as $key) {
+        if (!empty($outer[$key]) && is_string($outer[$key]) && empty($data[$key])) {
+            $data[$key] = $outer[$key];
+        }
+    }
+
+    $operator_name = '';
+    if (is_array($facility)) {
+        if (!empty($facility['sourceOperator']['name']) && is_string($facility['sourceOperator']['name'])) {
+            $operator_name = $facility['sourceOperator']['name'];
+        } elseif (!empty($facility['sourceOperator']) && is_string($facility['sourceOperator'])) {
+            $operator_name = $facility['sourceOperator'];
+        } elseif (!empty($facility['identification']['operator']) && is_string($facility['identification']['operator'])) {
+            $operator_name = $facility['identification']['operator'];
+        }
+    }
+    if ($operator_name !== '' && empty($data['operator'])) {
+        $data['operator'] = array('name' => $operator_name);
+    }
+
+    $match = kop_search_match_project($data, array($unique_name, $display_name, $facility_name), $queries);
+    if (!$match) {
+        return null;
+    }
+
+    return array(
+        'name' => $unique_name,
+        'label' => $display_name !== '' ? $display_name : $unique_name,
+        'category' => 'companies',
+        'operator' => $operator_name,
+        'facilityCount' => 1,
+        'matchSnippet' => $match['snippet'],
+        'matchType' => $match['type'],
+        'source' => 'database',
+        'isFacility' => true,
+        'data' => $data,
+    );
+}
 
 /**
  * Search for a query string within project data.
@@ -1931,65 +2086,55 @@ function kop_search_in_data($data, $query) {
     return $search($data);
 }
 
-function kop_search_staff($data, $query) {
+/**
+ * Search only the strings that live under one of $keys, at any depth.
+ *
+ * Containers such as `facilities`, list indexes and `operator` are always
+ * descended into; a string only counts as a match once the path has passed
+ * through a scoped key (e.g. facilities.0.locationDetails.city). The old
+ * versions of these helpers only descended into scoped keys, so from the
+ * project root (operator, facilities) they never reached anything.
+ */
+function kop_search_scoped_fields($data, $query, $keys, $max_depth = 10) {
     if (!$data || !$query) return null;
     $q = strtolower($query);
-    $keys = array('staff', 'keyStaff', 'founders', 'executives', 'keyExecutives', 'ceo', 'director');
-    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
-        if ($depth > 4) return null;
-        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
+    $search = function($value, $depth, $in_scope) use ($q, $keys, $max_depth, &$search) {
+        if ($depth > $max_depth) return null;
+        if (is_string($value)) {
+            return ($in_scope && stripos($value, $q) !== false) ? substr($value, 0, 60) : null;
+        }
         if (is_array($value)) {
             foreach ($value as $k => $v) {
-                if (in_array($k, $keys, true) || is_int($k)) {
-                    $m = $search($v, $depth + 1);
-                    if ($m) return $m;
-                }
+                $scoped = $in_scope || (is_string($k) && in_array($k, $keys, true));
+                $m = $search($v, $depth + 1, $scoped);
+                if ($m) return $m;
             }
         }
         return null;
     };
-    return $search($data);
+    return $search($data, 0, false);
+}
+
+function kop_search_staff($data, $query) {
+    return kop_search_scoped_fields($data, $query, array(
+        'staff', 'keyStaff', 'founders', 'founder', 'executives', 'keyExecutives',
+        'ceo', 'director', 'directors', 'owners', 'owner', 'leadership', 'personnel',
+    ));
 }
 
 function kop_search_location($data, $query) {
-    if (!$data || !$query) return null;
-    $q = strtolower($query);
-    $keys = array('location', 'city', 'state', 'address', 'headquarters', 'hq_location',
-                  'locationCity', 'locationState', 'fullAddress', 'cityState');
-    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
-        if ($depth > 4) return null;
-        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
-        if (is_array($value)) {
-            foreach ($value as $k => $v) {
-                if (in_array($k, $keys, true)) {
-                    $m = $search($v, $depth + 1);
-                    if ($m) return $m;
-                }
-            }
-        }
-        return null;
-    };
-    return $search($data);
+    return kop_search_scoped_fields($data, $query, array(
+        'location', 'locationDetails', 'city', 'state', 'address', 'headquarters',
+        'hq_location', 'locationCity', 'locationState', 'fullAddress', 'cityState',
+        'county', 'country', 'zip', 'additionalLocations', 'formerLocations',
+    ));
 }
 
 function kop_search_program_type($data, $query) {
-    if (!$data || !$query) return null;
-    $q = strtolower($query);
-    $keys = array('type', 'programType', 'facilityType', 'program_type', 'facility_type', 'category');
-    $search = function($value, $depth = 0) use ($q, $keys, &$search) {
-        if ($depth > 4) return null;
-        if (is_string($value) && stripos($value, $q) !== false) return substr($value, 0, 60);
-        if (is_array($value)) {
-            foreach ($value as $k => $v) {
-                if (in_array($k, $keys, true)) {
-                    $m = $search($v, $depth + 1);
-                    if ($m) return $m;
-                }
-            }
-        }
-        return null;
-    };
-    return $search($data);
+    return kop_search_scoped_fields($data, $query, array(
+        'type', 'programType', 'programTypes', 'facilityType', 'facilityTypes',
+        'program_type', 'facility_type', 'category', 'programCategory',
+    ));
 }
 
 /**

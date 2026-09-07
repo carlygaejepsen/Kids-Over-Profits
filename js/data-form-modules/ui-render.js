@@ -1030,8 +1030,18 @@
             } else if (window.populateForm && typeof window.populateForm === 'function') {
                 window.populateForm(projectData.data);
             } else {
-                // Fallback: set the data directly
-                window.formData = projectData.data;
+                // Fallback: set the data directly. Normalize first so a
+                // single-facility database row (no operator, sparse fields)
+                // gets the same defaults a saved project would.
+                const normalize = window.KOP_DataNormalizer?.normalizeProjectData;
+                const deepClone = typeof window.deepClone === 'function'
+                    ? window.deepClone
+                    : (obj) => JSON.parse(JSON.stringify(obj));
+                window.formData = typeof normalize === 'function'
+                    ? normalize(deepClone(projectData.data))
+                    : projectData.data;
+                if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
+                if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 if (window.updateJSON && typeof window.updateJSON === 'function') {
                     window.updateJSON();
                 }

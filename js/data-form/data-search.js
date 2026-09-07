@@ -71,9 +71,10 @@ const KOP_Search = (function() {
         if (searchQueries.referrer) params.append('referrer', searchQueries.referrer);
         params.append('limit', '20');
 
-        // Get REST URL
-        const restUrl = window.kopData?.restUrl || '/wp-json/';
-        const searchUrl = `${restUrl}kop/v1/search?${params.toString()}`;
+        // REST root: KOP_DATA_FORM_CONFIG.restUrl already ends in kop/v1/.
+        const cfg = window.KOP_DATA_FORM_CONFIG || window.KOP_FormConfig?.DATA_FORM_CONFIG || {};
+        const restRoot = cfg.restUrl || cfg.api?.root || window.kopData?.restUrl || '/wp-json/kop/v1/';
+        const searchUrl = `${restRoot.endsWith('/') ? restRoot : `${restRoot}/`}search?${params.toString()}`;
 
         // Fetch from database
         fetch(searchUrl)
