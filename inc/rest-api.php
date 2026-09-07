@@ -2097,11 +2097,27 @@ function kop_search_in_data($data, $query) {
  */
 function kop_search_scoped_fields($data, $query, $keys, $max_depth = 10) {
     if (!$data || !$query) return null;
-    $q = strtolower($query);
-    $search = function($value, $depth, $in_scope) use ($q, $keys, $max_depth, &$search) {
+    $terms = is_array($query) ? $query : array($query);
+    $terms = array_values(array_filter(array_map('trim', $terms), 'strlen'));
+    if (!$terms) return null;
+
+    // Short terms (state abbreviations, "UT") must match a whole word so they
+    // do not hit "Beaumont" or "South"; longer terms keep substring matching.
+    $matches = function($value) use ($terms) {
+        foreach ($terms as $term) {
+            if (strlen($term) <= 3) {
+                if (preg_match('/(?<![A-Za-z])' . preg_quote($term, '/') . '(?![A-Za-z])/i', $value)) return true;
+            } elseif (stripos($value, $term) !== false) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    $search = function($value, $depth, $in_scope) use ($matches, $keys, $max_depth, &$search) {
         if ($depth > $max_depth) return null;
         if (is_string($value)) {
-            return ($in_scope && stripos($value, $q) !== false) ? substr($value, 0, 60) : null;
+            return ($in_scope && $matches($value)) ? substr($value, 0, 60) : null;
         }
         if (is_array($value)) {
             foreach ($value as $k => $v) {
@@ -2123,7 +2139,24 @@ function kop_search_staff($data, $query) {
 }
 
 function kop_search_location($data, $query) {
-    return kop_search_scoped_fields($data, $query, array(
+    // Rows store states both ways ("Utah" in addresses, "UT" in
+    // locationDetails.state), so search a state name and its abbreviation
+    // together.
+    $terms = array($query);
+    $q = trim((string) $query);
+    if ($q !== '' && function_exists('kop_state_abbrev_to_name')) {
+        $abbrev_to_name = kop_state_abbrev_to_name();
+        $upper = strtoupper($q);
+        if (isset($abbrev_to_name[$upper])) {
+            $terms[] = $abbrev_to_name[$upper];
+        } else {
+            $abbrev = array_search(strtolower($q), array_map('strtolower', $abbrev_to_name), true);
+            if ($abbrev !== false) {
+                $terms[] = $abbrev;
+            }
+        }
+    }
+    return kop_search_scoped_fields($data, $terms, array(
         'location', 'locationDetails', 'city', 'state', 'address', 'headquarters',
         'hq_location', 'locationCity', 'locationState', 'fullAddress', 'cityState',
         'county', 'country', 'zip', 'additionalLocations', 'formerLocations',
