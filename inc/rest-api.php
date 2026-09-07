@@ -2101,12 +2101,13 @@ function kop_search_scoped_fields($data, $query, $keys, $max_depth = 10) {
     $terms = array_values(array_filter(array_map('trim', $terms), 'strlen'));
     if (!$terms) return null;
 
-    // Short terms (state abbreviations, "UT") must match a whole word so they
-    // do not hit "Beaumont" or "South"; longer terms keep substring matching.
+    // Short terms (state abbreviations, "UT") must match a whole uppercase
+    // word so they do not hit "Beaumont", "South" or "Mt. Kisco"; longer terms
+    // keep case-insensitive substring matching.
     $matches = function($value) use ($terms) {
         foreach ($terms as $term) {
             if (strlen($term) <= 3) {
-                if (preg_match('/(?<![A-Za-z])' . preg_quote($term, '/') . '(?![A-Za-z])/i', $value)) return true;
+                if (preg_match('/(?<![A-Za-z])' . preg_quote(strtoupper($term), '/') . '(?![A-Za-z])/', $value)) return true;
             } elseif (stripos($value, $term) !== false) {
                 return true;
             }
