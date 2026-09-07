@@ -66,6 +66,31 @@ $kop_flagged = $wpdb->get_results(
 );
 $wpdb->suppress_errors($kop_suppress);
 
+// By the numbers: live counts from the inspection database and the facility
+// directory, cached for six hours so the home page doesn't re-run COUNT
+// queries on every visit. A failed or empty result hides the whole strip.
+$kop_numbers = get_transient('kop_home_numbers');
+if (!is_array($kop_numbers)) {
+    $kop_suppress = $wpdb->suppress_errors(true);
+    $kop_numbers = array(
+        'reports'    => (int) $wpdb->get_var("SELECT COUNT(*) FROM inspection_reports"),
+        'inspected'  => (int) $wpdb->get_var("SELECT COUNT(DISTINCT facility_id) FROM inspection_reports"),
+        'licensed'   => (int) $wpdb->get_var("SELECT COUNT(*) FROM inspection_facilities"),
+        'directory'  => 0,
+    );
+    if (function_exists('kop_get_facilities_database_connection') && function_exists('kop_discover_facilities_master_table')) {
+        $kop_master = kop_discover_facilities_master_table(kop_get_facilities_database_connection());
+        if ($kop_master) {
+            $kop_numbers['directory'] = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$kop_master}`");
+        }
+    }
+    $wpdb->suppress_errors($kop_suppress);
+    if ($kop_numbers['reports'] > 0 || $kop_numbers['directory'] > 0) {
+        set_transient('kop_home_numbers', $kop_numbers, 6 * HOUR_IN_SECONDS);
+    }
+}
+$kop_show_numbers = !empty($kop_numbers['reports']) && !empty($kop_numbers['directory']);
+
 $kop_memorial = get_page_by_path('in-loving-memory');
 $kop_legislation_url = kop_home_template_page_url('templates/page-legislation.php', '/legislation/');
 $kop_lawsuits_url = kop_home_template_page_url('templates/page-lawsuits.php', '/lawsuits/');
@@ -138,6 +163,26 @@ $kop_report_states = array(
         in pursuit of the ultimate goal of keeping all children safe from abuse.</strong>
         We are not affiliated with any political party, group, or candidate.</p>
     </section>
+
+    <?php if ($kop_show_numbers): ?>
+    <section class="kop-home-numbers" aria-label="By the numbers">
+        <div class="kop-number">
+            <span class="kop-number-value"><?php echo esc_html(number_format($kop_numbers['reports'])); ?></span>
+            <span class="kop-number-label">Inspection reports</span>
+        </div>
+        <div class="kop-number">
+            <span class="kop-number-value"><?php echo esc_html(number_format($kop_numbers['inspected'])); ?></span>
+            <span class="kop-number-label">Facilities with reports</span>
+            <?php if ($kop_numbers['licensed'] > $kop_numbers['inspected']): ?>
+                <span class="kop-number-note">of <?php echo esc_html(number_format($kop_numbers['licensed'])); ?> licensed facilities in our inspection data</span>
+            <?php endif; ?>
+        </div>
+        <div class="kop-number">
+            <span class="kop-number-value"><?php echo esc_html(number_format($kop_numbers['directory'])); ?></span>
+            <span class="kop-number-label">Facility records in the directory</span>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <?php
     // Ongoing Stories — the big developing stories (news story arcs).

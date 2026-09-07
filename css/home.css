@@ -114,6 +114,55 @@
     padding: 0.5rem 0;
 }
 
+/* By the numbers: a quiet three-figure strip under the mission statement */
+.kop-home-numbers {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    padding: 1.4rem 0;
+    border-top: 1px solid var(--kop-sand, #F2EEDF);
+    border-bottom: 1px solid var(--kop-sand, #F2EEDF);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem 2rem;
+    text-align: center;
+}
+
+.kop-number-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--kop-midnight-blue, #000435);
+    font-variant-numeric: tabular-nums;
+}
+
+.kop-number-label {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-number-note {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.78rem;
+    color: #6b6b6b;
+}
+
+@media (max-width: 640px) {
+    .kop-home-numbers {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    .kop-number-value {
+        font-size: 1.7rem;
+    }
+}
+
 /* Inspection reports box (matches the original navy callout) */
 .kop-home-reports {
     background-color: #00004d;
