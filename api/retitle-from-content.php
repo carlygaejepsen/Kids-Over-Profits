@@ -20,11 +20,21 @@
  * Only post_title changes — the physical file, its URL, slug, and folders are
  * never touched (renaming files on disk would break every existing link).
  *
- * Three request modes:
+ * Four request modes:
  *   GET                  preview page listing attachments with unclear titles
+ *                        (scope=excluded lists the excluded bucket instead)
  *   POST action=suggest  AJAX, one attachment: returns {ok, title, basis, note}
  *                        optional client-supplied `text` / `page_image` (b64 JPEG)
+ *                        on a permanent failure also {excluded: true, reason}
  *   POST do_apply        write the reviewed titles for ticked rows
+ *   POST do_restore      pull ticked rows back out of the excluded bucket
+ *
+ * Excluded bucket: when a file cannot be scanned for a reason that will not
+ * change on retry (missing from disk, corrupt image, PDF with no text layer and
+ * no renderable page), the attachment gets a _kop_rtc_excluded meta and drops
+ * out of the unclear/all lists so it stops reappearing every pass. Transient
+ * failures (Groq rate limit, pdf.js blocked by the browser, network) never
+ * exclude. The bucket is browsable via scope=excluded and rows can be restored.
  *
  * Admin-only. Loads WordPress via config.php. Uses GROQ_API_KEY (or the
  * legacy GROK_API_KEY spelling) from .env; GROQ_MODEL / GROQ_VISION_MODEL
@@ -43,6 +53,39 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 }
 
 $SHOW = 200; // rows rendered per pass
+
+// ---------------------------------------------------------------------------
+// Excluded bucket
+// ---------------------------------------------------------------------------
+
+/** Post meta key marking an attachment as unscannable; value is JSON {reason, time}. */
+define('KOP_RTC_EXCLUDED_META', '_kop_rtc_excluded');
+
+/** Record a permanent scan failure so the attachment leaves the working lists. */
+function kop_rtc_exclude($att_id, $reason) {
+    update_post_meta((int) $att_id, KOP_RTC_EXCLUDED_META, wp_json_encode([
+        'reason' => mb_substr(trim((string) $reason), 0, 200),
+        'time'   => current_time('mysql'),
+    ]));
+}
+
+/** Decode one attachment's exclusion record, or null when it is not excluded. */
+function kop_rtc_exclusion($att_id) {
+    $raw = get_post_meta((int) $att_id, KOP_RTC_EXCLUDED_META, true);
+    if ($raw === '' || $raw === false) return null;
+    $decoded = json_decode((string) $raw, true);
+    return [
+        'reason' => (string) ($decoded['reason'] ?? 'unscannable'),
+        'time'   => (string) ($decoded['time'] ?? ''),
+    ];
+}
+
+/** Emit a suggest failure that also parks the attachment in the excluded bucket. */
+function kop_rtc_fail_excluded($att_id, $reason) {
+    kop_rtc_exclude($att_id, $reason);
+    echo json_encode(['ok' => false, 'error' => $reason . ' Excluded from future passes.', 'excluded' => true, 'reason' => $reason]);
+    exit;
+}
 
 // ---------------------------------------------------------------------------
 // Unclear-title detection
@@ -611,6 +654,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
     // rendered JPEG of page 1 when the PDF turned out to be a scan.
     $client_text = trim(wp_unslash((string) ($_POST['text'] ?? '')));
     $image_b64   = (string) ($_POST['page_image'] ?? '');
+    // What the browser step reported: '' (ran fine), 'pdfjs-unavailable' (cdnjs
+    // blocked or offline - transient, never exclude), or 'pdf-error: ...' (pdf.js
+    // rejected the file itself - permanent).
+    $browser_note = trim((string) ($_POST['browser_note'] ?? ''));
+    $browser_step_missing = ($browser_note === 'pdfjs-unavailable');
     if ($image_b64 !== '') {
         $image_b64 = preg_replace('/^data:image\/\w+;base64,/', '', $image_b64);
         if (strlen($image_b64) > 8 * 1024 * 1024 || base64_decode($image_b64, true) === false) {
@@ -630,14 +678,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
     // Server-side fallbacks when the browser sent nothing usable.
     if (strlen($text) < 40 && $image_b64 === '') {
         if (!$has_file) {
-            echo json_encode(['ok' => false, 'error' => 'File missing on disk (broken upload?).']);
-            exit;
+            kop_rtc_fail_excluded($att_id, 'File missing on disk (broken upload?).');
         }
         if (strpos($mime, 'image/') === 0) {
             $image_b64 = kop_rtc_image_b64_from_file($path);
             if ($image_b64 === '') {
-                echo json_encode(['ok' => false, 'error' => 'Could not read image (GD unavailable or corrupt file).']);
-                exit;
+                if (!function_exists('imagecreatefromstring')) {
+                    // Server config problem, not a bad file - do not exclude.
+                    echo json_encode(['ok' => false, 'error' => 'Could not read image (GD unavailable on this server).']);
+                    exit;
+                }
+                kop_rtc_fail_excluded($att_id, 'Could not read image (corrupt or unsupported file).');
             }
         } else {
             // PDF whose browser step sent nothing: try the server-side text layer.
@@ -650,11 +701,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
     } elseif ($image_b64 !== '') {
         $context .= "\n(No text layer was extractable — this is likely a scan; read the page image.)";
         $result = kop_rtc_suggest_from_image($context, $image_b64);
+    } elseif ($browser_step_missing) {
+        $result = ['ok' => false, 'error' => 'No readable text and the browser PDF step did not run (pdf.js blocked? allow cdnjs.cloudflare.com) — retry later.'];
     } else {
-        $result = ['ok' => false, 'error' => 'No readable text and no page image — for PDFs make sure the browser step ran (do not block cdnjs.cloudflare.com).'];
+        // Browser ran pdf.js and got neither text nor a page image, and the
+        // server text layer is empty too: nothing will change on retry.
+        $why = $browser_note !== '' ? $browser_note : 'no text layer and page 1 could not be rendered';
+        kop_rtc_fail_excluded($att_id, 'Unscannable PDF (' . mb_substr($why, 0, 120) . ').');
     }
     echo json_encode($result);
     exit;
+}
+
+// ---------------------------------------------------------------------------
+// Restore rows from the excluded bucket
+// ---------------------------------------------------------------------------
+$restored = false;
+$restore_log = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['do_restore'])
+    && check_admin_referer('kop_rtc_restore')) {
+
+    $requests = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
+    $done = 0;
+    foreach ($requests as $att_id => $req) {
+        if (empty($req['go'])) continue;
+        $att_id = (int) $att_id;
+        if ($att_id <= 0 || get_post_type($att_id) !== 'attachment') continue;
+        if (delete_post_meta($att_id, KOP_RTC_EXCLUDED_META)) $done++;
+    }
+    $restored = true;
+    $restore_log[] = "Restored {$done} attachment(s) to the working lists.";
 }
 
 // ---------------------------------------------------------------------------
@@ -702,8 +780,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 header('Content-Type: text/html; charset=utf-8');
 global $wpdb;
 
-$scope = (($_GET['scope'] ?? '') === 'all') ? 'all' : 'unclear';
+$scope = in_array($_GET['scope'] ?? '', ['all', 'excluded'], true) ? $_GET['scope'] : 'unclear';
 $q     = trim((string) ($_GET['q'] ?? ''));
+// Attachments parked in the excluded bucket leave the working lists and only
+// show under scope=excluded. One LEFT JOIN on the meta key covers both.
+$excluded_meta = KOP_RTC_EXCLUDED_META;
+$excluded_where = ($scope === 'excluded') ? 'ex.meta_id IS NOT NULL' : 'ex.meta_id IS NULL';
 // Images are listed only when a PDF shares their exact title. A correlated
 // EXISTS per row re-scanned the unindexed posts table for every image and the
 // page timed out; a derived table of distinct PDF titles is materialised once
@@ -711,7 +793,8 @@ $q     = trim((string) ($_GET['q'] ?? ''));
 $from = "{$wpdb->posts} AS p LEFT JOIN (
     SELECT DISTINCT post_title AS pdf_title FROM {$wpdb->posts}
     WHERE post_type = 'attachment' AND post_mime_type = 'application/pdf'
-) AS pdf ON pdf.pdf_title = p.post_title";
+) AS pdf ON pdf.pdf_title = p.post_title
+LEFT JOIN {$wpdb->postmeta} AS ex ON ex.post_id = p.ID AND ex.meta_key = '{$excluded_meta}'";
 $image_pdf_where = "(p.post_mime_type NOT LIKE 'image/%' OR pdf.pdf_title IS NOT NULL)";
 
 // Only PDFs and images are candidates; JSON exports, DOCX, ZIP, audio and video
@@ -721,7 +804,10 @@ $mime_where = "(p.post_mime_type = 'application/pdf' OR p.post_mime_type LIKE 'i
 // "Unclear" depends on program-name matching, which SQL cannot express, so
 // every candidate row (a few thousand, three short columns) is pulled and
 // filtered in PHP; the first $SHOW unclear ones are rendered.
-$where = "p.post_type = 'attachment' AND " . $mime_where . " AND " . $image_pdf_where;
+// The excluded view shows everything in the bucket, image-pair rule or not, so
+// a parked image whose PDF twin was since retitled can still be found and restored.
+$where = "p.post_type = 'attachment' AND " . $mime_where . " AND " . $excluded_where
+       . ($scope === 'excluded' ? '' : " AND " . $image_pdf_where);
 $sql = "SELECT p.ID, p.post_title, p.post_mime_type FROM {$from} WHERE {$where}";
 $params = [];
 if ($q !== '') {
@@ -734,11 +820,16 @@ $rows = $params ? $wpdb->get_results($wpdb->prepare($sql, $params)) : $wpdb->get
 $total_unclear = 0;
 $listed = [];
 foreach ($rows as $r) {
-    $unclear = kop_rtc_is_unclear_title($r->post_title);
+    // The excluded bucket lists every parked file regardless of title quality.
+    $unclear = ($scope === 'excluded') || kop_rtc_is_unclear_title($r->post_title);
     if ($unclear) $total_unclear++;
     if ($scope === 'unclear' && !$unclear) continue;
     if (count($listed) < $SHOW) $listed[] = $r;
 }
+$total_excluded = (int) $wpdb->get_var($wpdb->prepare(
+    "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE meta_key = %s",
+    KOP_RTC_EXCLUDED_META
+));
 
 $preview = [];
 foreach ($listed as $r) {
@@ -750,6 +841,7 @@ foreach ($listed as $r) {
         'supported' => kop_rtc_supported_mime($r->post_mime_type),
         'auto'      => kop_rtc_has_same_title_pdf((int) $r->ID),
         'folders'   => kop_rtc_folder_names((int) $r->ID),
+        'excluded'  => ($scope === 'excluded') ? kop_rtc_exclusion((int) $r->ID) : null,
     ];
 }
 $ajax_nonce = wp_create_nonce('kop_rtc');
@@ -767,6 +859,9 @@ th { background: #000080; color: #fff; }
 tbody tr:hover { background: #FFF5CB; }
 tbody tr.kop-ticked { background: #B6E3D4; }
 tbody tr.kop-err { background: #FE808822; }
+tbody tr.kop-excluded { background: #e9e6da; color: #666; }
+tbody tr.kop-excluded .old-title { color: #666; text-decoration: line-through; }
+.reason { font-size: 0.78rem; color: #7a1f1f; }
 input[name$="[go]"] { transform: scale(1.4); margin: 3px; }
 .ok { color: #1b7e3c; } .warn { color: #b8860b; } .err { color: #a33; }
 button { background: #33A7B5; color: #fff; border: none; border-radius: 6px; padding: 7px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
@@ -786,7 +881,21 @@ td a { color: #000080; }
 <?php if ($applied): ?>
     <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $apply_log)); ?> <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>">Reload for the next batch.</a></div>
 <?php endif; ?>
+<?php if ($restored): ?>
+    <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $restore_log)); ?> <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>">Back to unclear titles.</a></div>
+<?php endif; ?>
 
+<?php $excluded_url = esc_url(add_query_arg(['scope' => 'excluded'], strtok($_SERVER['REQUEST_URI'], '?'))); ?>
+<?php if ($scope === 'excluded'): ?>
+<div class="log">
+    <strong><?php echo $total_unclear; ?></strong> attachment(s)<?php echo $q !== '' ? ' matching the filter' : ''; ?> are in the excluded bucket:
+    a Suggest pass found the file could not be scanned for a reason that will not change on retry
+    (missing from disk, corrupt image, PDF with no text layer and no renderable page).
+    They no longer appear in the unclear or all-attachments lists. Fix the file (re-upload, replace)
+    or give it a title by hand in the media library, then tick it here and <em>Restore</em> to put it back in play.
+    Showing up to <?php echo (int) $SHOW; ?> per pass.
+</div>
+<?php else: ?>
 <div class="log">
     <strong><?php echo $total_unclear; ?></strong> attachment(s)<?php echo $q !== '' ? ' matching the filter' : ''; ?> have unclear titles:
     the title does not say which program the document belongs to (no known facility name,
@@ -797,16 +906,93 @@ td a { color: #000080; }
     and its folders stay exactly where they are.
     PDFs are read in your browser (scans get vision OCR of page 1); images go to the vision
     model. Only PDFs and images are listed &mdash; other attachment types are out of scope.
+    Files that cannot be scanned at all are moved to the
+    <a href="<?php echo $excluded_url; ?>">excluded bucket</a> (<?php echo $total_excluded; ?> so far)
+    and stop appearing here; transient failures (rate limit, network) stay in the list for a retry.
 </div>
+<?php endif; ?>
 
 <form method="get" style="margin-bottom:10px">
     <input type="search" name="q" value="<?php echo esc_attr($q); ?>" placeholder="Filter by title..." style="width:260px">
     <label style="margin-left:8px"><input type="radio" name="scope" value="unclear" <?php checked($scope, 'unclear'); ?>> unclear titles only</label>
     <label><input type="radio" name="scope" value="all" <?php checked($scope, 'all'); ?>> all attachments</label>
+    <label><input type="radio" name="scope" value="excluded" <?php checked($scope, 'excluded'); ?>> excluded bucket (<?php echo $total_excluded; ?>)</label>
     <button type="submit" style="background:#000080">Filter</button>
 </form>
 
-<?php if ($preview): ?>
+<?php if ($preview && $scope === 'excluded'): ?>
+<form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
+<?php wp_nonce_field('kop_rtc_restore'); ?>
+<div class="kop-toolbar">
+    <div class="bar">
+        <span>Showing <?php echo count($preview); ?> excluded row(s) &middot; <span id="kop-count"></span></span>
+        <button type="button" id="kop-tick-all" style="background:#000080">Tick all</button>
+        <button type="button" id="kop-untick-all" style="background:#7a7a7a">Untick all</button>
+        <button type="submit" name="do_restore" value="1" style="background:#1b7e3c"
+            onclick="return window.kopConfirmRestore(this);">Restore ticked rows</button>
+    </div>
+</div>
+<table><thead><tr><th></th><th style="width:36%">Current title</th><th style="width:40%">Why excluded</th><th>File</th></tr></thead><tbody>
+<?php foreach ($preview as $p): ?>
+    <tr data-id="<?php echo $p['id']; ?>">
+        <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
+        <td>
+            <div class="old-title"><?php echo esc_html($p['title']); ?></div>
+            <?php if ($p['folders']): ?><div class="folders"><?php echo esc_html(implode(' / ', $p['folders'])); ?></div><?php endif; ?>
+        </td>
+        <td>
+            <div class="reason"><?php echo esc_html($p['excluded']['reason'] ?? 'unscannable'); ?></div>
+            <?php if (!empty($p['excluded']['time'])): ?><div class="basis">excluded <?php echo esc_html($p['excluded']['time']); ?></div><?php endif; ?>
+        </td>
+        <td>
+            <a href="<?php echo esc_url($p['url']); ?>" target="_blank" rel="noopener">view</a>
+            <a href="<?php echo esc_url(admin_url('post.php?post=' . $p['id'] . '&action=edit')); ?>" target="_blank" rel="noopener">edit</a>
+            <small><?php echo esc_html($p['mime']); ?> &middot; #<?php echo $p['id']; ?></small>
+        </td>
+    </tr>
+<?php endforeach; ?>
+</tbody></table>
+</form>
+<script>
+(function () {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('tbody tr'));
+    function check(row) { return row.querySelector('input[type=checkbox]'); }
+    function paint(row) { var c = check(row); if (c) row.classList.toggle('kop-ticked', c.checked); }
+    function refresh() {
+        var n = rows.filter(function (r) { var c = check(r); return c && c.checked; }).length;
+        document.getElementById('kop-count').textContent = n + ' ticked.';
+    }
+    rows.forEach(function (row) {
+        paint(row);
+        row.addEventListener('click', function (e) {
+            if (e.target.closest('a, button, input')) {
+                if (e.target === check(row)) { paint(row); refresh(); }
+                return;
+            }
+            var c = check(row);
+            if (!c) return;
+            c.checked = !c.checked;
+            paint(row);
+            refresh();
+        });
+    });
+    refresh();
+    document.getElementById('kop-tick-all').addEventListener('click', function () {
+        rows.forEach(function (r) { var c = check(r); if (c) { c.checked = true; paint(r); } });
+        refresh();
+    });
+    document.getElementById('kop-untick-all').addEventListener('click', function () {
+        rows.forEach(function (r) { var c = check(r); if (c) { c.checked = false; paint(r); } });
+        refresh();
+    });
+    window.kopConfirmRestore = function () {
+        var n = rows.filter(function (r) { var c = check(r); return c && c.checked; }).length;
+        if (!n) { alert('Tick the rows to restore first.'); return false; }
+        return window.confirm('Restore ' + n + ' attachment(s) to the working lists?');
+    };
+})();
+</script>
+<?php elseif ($preview): ?>
 <form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
 <?php wp_nonce_field('kop_rtc_apply'); ?>
 <div class="kop-toolbar">
@@ -971,7 +1157,16 @@ td a { color: #000080; }
                     if (read.text) body.set('text', read.text);
                 }
             } catch (e) {
-                // Server-side extraction is the fallback; carry on with a bare request.
+                // Server-side extraction is the fallback; carry on with a bare
+                // request, but tell the server WHY the browser step sent nothing.
+                // pdf.js failing to load is transient (blocked CDN) and must not
+                // exclude the file; pdf.js rejecting the file itself is permanent.
+                var msg = (e && e.message) ? e.message : String(e);
+                if (/failed to load from cdnjs/i.test(msg) || !window.pdfjsLib) {
+                    body.set('browser_note', 'pdfjs-unavailable');
+                } else {
+                    body.set('browser_note', 'pdf-error: ' + msg.slice(0, 120));
+                }
             }
         }
 
@@ -997,6 +1192,17 @@ td a { color: #000080; }
             return true;
         }
         basis.textContent = r.error || 'failed';
+        if (r.excluded) {
+            // Parked server-side: it will not be listed on the next load. Untick
+            // it so Apply cannot write an empty title, and mark it visibly.
+            var c = check(row);
+            if (c) { c.checked = false; c.disabled = true; }
+            titleInput(row).disabled = true;
+            row.classList.remove('kop-ticked', 'kop-err');
+            row.classList.add('kop-excluded');
+            refresh();
+            return 'excluded';
+        }
         row.classList.add('kop-err');
         return false;
     }
@@ -1016,10 +1222,12 @@ td a { color: #000080; }
             return;
         }
         suggestBtn.disabled = true;
-        var total = queue.length, done = 0, failed = 0;
+        var total = queue.length, done = 0, failed = 0, excluded = 0;
         function report(extra) {
             progress.textContent = 'Suggesting... ' + done + '/' + total
-                + (failed ? ' (' + failed + ' failed)' : '') + (extra ? ' - ' + extra : '');
+                + (failed ? ' (' + failed + ' failed)' : '')
+                + (excluded ? ' (' + excluded + ' excluded)' : '')
+                + (extra ? ' - ' + extra : '');
         }
         report();
 
@@ -1028,7 +1236,8 @@ td a { color: #000080; }
             if (!row) return Promise.resolve();
             if (titleInput(row).value.trim() !== '') return processNext();
             return suggestOne(row, report).then(function (ok) {
-                if (!ok) failed++;
+                if (ok === 'excluded') excluded++;
+                else if (!ok) failed++;
                 done++;
                 report();
                 if (!queue.length) return Promise.resolve();
@@ -1040,14 +1249,16 @@ td a { color: #000080; }
         }
         processNext().then(function () {
             suggestBtn.disabled = false;
-            progress.textContent = 'Done: ' + (done - failed) + ' suggested'
-                + (failed ? ', ' + failed + ' failed (red rows)' : '') + '. Review, edit, then Apply.';
+            progress.textContent = 'Done: ' + (done - failed - excluded) + ' suggested'
+                + (failed ? ', ' + failed + ' failed (red rows, retry later)' : '')
+                + (excluded ? ', ' + excluded + ' unscannable (gray rows, moved to the excluded bucket)' : '')
+                + '. Review, edit, then Apply.';
         });
     });
 })();
 </script>
 <?php else: ?>
-<p class="ok">No attachments match this view<?php echo $q !== '' ? ' (try clearing the filter)' : ($scope === 'unclear' ? ' - every title names a program' : ''); ?>.</p>
+<p class="ok">No attachments match this view<?php echo $q !== '' ? ' (try clearing the filter)' : ($scope === 'unclear' ? ' - every title names a program' : ($scope === 'excluded' ? ' - the excluded bucket is empty' : '')); ?>.</p>
 <?php endif; ?>
 
 </body></html>
