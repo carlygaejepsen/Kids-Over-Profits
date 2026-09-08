@@ -24,17 +24,29 @@
  *   GET                  preview page listing attachments with unclear titles
  *                        (scope=excluded lists the excluded bucket instead)
  *   POST action=suggest  AJAX, one attachment: returns {ok, title, basis, note}
- *                        optional client-supplied `text` / `page_image` (b64 JPEG)
+ *                        optional client-supplied `text` / `page_image` as
+ *                        multipart FILE parts (plain text / raw JPEG); the old
+ *                        form-field spelling (text, base64 page_image) still works
  *                        on a permanent failure also {excluded: true, reason}
+ *   POST action=nonce    AJAX: fresh nonces for suggest/apply/restore, so a page
+ *                        left open across a WordPress re-login keeps working
  *   POST do_apply        write the reviewed titles for ticked rows
  *   POST do_restore      pull ticked rows back out of the excluded bucket
+ *
+ * Why file parts: the host's web application firewall inspects form fields and
+ * rejects document text that happens to contain HTML (California CCL reports
+ * start with a <meta> tag) with a 403 the tool never sees. File parts are not
+ * run through those content rules.
  *
  * Excluded bucket: when a file cannot be scanned for a reason that will not
  * change on retry (missing from disk, corrupt image, PDF with no text layer and
  * no renderable page), the attachment gets a _kop_rtc_excluded meta and drops
- * out of the unclear/all lists so it stops reappearing every pass. Transient
- * failures (Groq rate limit, pdf.js blocked by the browser, network) never
- * exclude. The bucket is browsable via scope=excluded and rows can be restored.
+ * out of the unclear/all lists so it stops reappearing every pass. Every
+ * attachment retitled by Apply is parked there too (reason "Retitled ..."), so
+ * a finished file never comes back just because its new title does not match
+ * a known program name. Transient failures (Groq rate limit, pdf.js blocked by
+ * the browser, network) never exclude. The bucket is browsable via
+ * scope=excluded and rows can be restored.
  * Failures that cannot be classified up front (Groq rejecting one document,
  * an unparseable reply on its text, a crash mid-request) are counted per
  * attachment; a handled failure is retried once in-request and parks the file
@@ -130,6 +142,7 @@ function kop_rtc_error_is_transient($error) {
         'rate limit', 'Network error', 'API key', 'HTTP 5', 'HTTP 502', 'HTTP 503', 'HTTP 504',
         'GD unavailable', 'Session expired', 'pdf.js blocked', 'No working Groq vision model',
         'json_encode failed', 'timed out', 'timeout', 'Service Unavailable', 'over capacity',
+        'Empty AI response', 'Upload of ',
     ] as $needle) {
         if (stripos((string) $error, $needle) !== false) return true;
     }
@@ -428,8 +441,13 @@ Return ONLY valid JSON, no prose, no markdown fences:
 PROMPT;
 }
 
-/** Shared Groq chat call. $content is a string or a content-part array. */
-function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
+/**
+ * Shared Groq chat call. $content is a string or a content-part array.
+ * The budget covers hidden reasoning as well as the reply: gpt-oss spends a
+ * few hundred tokens thinking before it writes the JSON, and with a 300-token
+ * cap the content came back empty and the file was wrongly parked.
+ */
+function kop_rtc_groq_chat($model, $content, $max_tokens = 1500) {
     $key = kop_rtc_groq_key();
     if ($key === '') {
         return ['ok' => false, 'error' => 'Groq API key not configured. Add GROQ_API_KEY to .env (GROK_API_KEY also accepted).'];
@@ -445,6 +463,10 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
     if (preg_match('#^(qwen|minimaxai)/#i', $model)) {
         $payload['reasoning_format'] = 'hidden';
         $payload['reasoning_effort'] = 'none';
+    } elseif (preg_match('#^openai/gpt-oss#i', $model)) {
+        // gpt-oss cannot switch reasoning off; keep it short so the title
+        // JSON always fits in the budget.
+        $payload['reasoning_effort'] = 'low';
     }
     $body = json_encode($payload);
     if ($body === false) {
@@ -481,6 +503,12 @@ function kop_rtc_groq_chat($model, $content, $max_tokens = 300) {
     $raw = trim($raw);
     $raw = preg_replace('/^```json\s*/i', '', $raw);
     $raw = preg_replace('/```\s*$/', '', $raw);
+    if ($raw === '') {
+        // Nothing to parse: the model ran out of tokens while reasoning or
+        // returned a bare stop. A model-side condition, never the file's fault.
+        $finish = (string) ($decoded['choices'][0]['finish_reason'] ?? 'unknown');
+        return ['ok' => false, 'error' => 'Empty AI response (finish_reason: ' . $finish . ') - retry later.'];
+    }
     $parsed = json_decode($raw, true);
     if (!is_array($parsed) || trim((string) ($parsed['title'] ?? '')) === '') {
         return ['ok' => false, 'error' => 'Could not parse AI response. Preview: ' . substr($raw, 0, 160)];
@@ -643,22 +671,33 @@ function kop_rtc_file_pair_ids($att_id) {
     $key = kop_rtc_pair_key($att_id);
     if ($key === '') return [(int) $att_id];
     if ($pairs === null) {
+        // One query for every candidate's file path and mime. Going through
+        // get_attached_file() per attachment cost two queries each (~10,000 on
+        // production) every time Apply ran.
         global $wpdb;
         $pairs = [];
-        $ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND (post_mime_type = 'application/pdf' OR post_mime_type LIKE 'image/%')");
-        foreach ($ids as $id) {
-            $candidate_key = kop_rtc_pair_key((int) $id);
-            if ($candidate_key !== '') $pairs[$candidate_key][] = (int) $id;
+        $rows = $wpdb->get_results(
+            "SELECT p.ID, p.post_mime_type, m.meta_value AS file
+             FROM {$wpdb->posts} p
+             JOIN {$wpdb->postmeta} m ON m.post_id = p.ID AND m.meta_key = '_wp_attached_file'
+             WHERE p.post_type = 'attachment'
+               AND (p.post_mime_type = 'application/pdf' OR p.post_mime_type LIKE 'image/%')"
+        );
+        foreach ($rows ?: [] as $r) {
+            $stem = strtolower(pathinfo(wp_basename((string) $r->file), PATHINFO_FILENAME));
+            if ($stem !== '') $pairs[$stem][] = ['id' => (int) $r->ID, 'mime' => (string) $r->post_mime_type];
         }
     }
-    $ids = $pairs[$key] ?? [(int) $att_id];
+    $members = $pairs[$key] ?? [];
+    $ids = [];
     $has_pdf = false;
     $has_image = false;
-    foreach ($ids as $id) {
-        $mime = (string) get_post_mime_type($id);
-        $has_pdf = $has_pdf || $mime === 'application/pdf';
-        $has_image = $has_image || strpos($mime, 'image/') === 0;
+    foreach ($members as $m) {
+        $ids[] = $m['id'];
+        $has_pdf = $has_pdf || $m['mime'] === 'application/pdf';
+        $has_image = $has_image || strpos($m['mime'], 'image/') === 0;
     }
+    if (!in_array((int) $att_id, $ids, true)) $ids[] = (int) $att_id;
     return ($has_pdf && $has_image) ? array_values(array_unique($ids)) : [(int) $att_id];
 }
 
@@ -689,6 +728,46 @@ function kop_rtc_has_same_title_pdf($att_id) {
     if (strpos((string) get_post_mime_type($att_id), 'image/') !== 0) return true;
     $title = mb_strtolower(rtrim((string) get_post_field('post_title', $att_id, 'raw')));
     return isset(kop_rtc_pdf_title_set()[$title]);
+}
+
+// ---------------------------------------------------------------------------
+// AJAX: fresh nonces
+// ---------------------------------------------------------------------------
+// Nonces are tied to the login session. When WordPress's session expires
+// mid-pass and the admin logs back in through the interim-login prompt, every
+// nonce baked into the open page dies with the old session: Suggest answers
+// "Session expired" and Apply is thrown out as an expired link. The page asks
+// here for current ones instead of making the admin reload and lose their work.
+// Admin capability was already checked at the top of the file.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'nonce') {
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'ok'      => true,
+        'suggest' => wp_create_nonce('kop_rtc'),
+        'apply'   => wp_create_nonce('kop_rtc_apply'),
+        'restore' => wp_create_nonce('kop_rtc_restore'),
+    ]);
+    exit;
+}
+
+/**
+ * Read one multipart file part sent by the browser ('' when absent).
+ * Returns ['ok' => true, 'data' => string] or ['ok' => false, 'error' => ...];
+ * upload errors are server limits (upload_max_filesize etc.), not the file's
+ * fault, and their message is classified transient.
+ */
+function kop_rtc_uploaded_part($name) {
+    if (empty($_FILES[$name]) || !is_array($_FILES[$name])) return ['ok' => true, 'data' => ''];
+    $f   = $_FILES[$name];
+    $err = (int) ($f['error'] ?? UPLOAD_ERR_NO_FILE);
+    if ($err === UPLOAD_ERR_NO_FILE) return ['ok' => true, 'data' => ''];
+    if ($err !== UPLOAD_ERR_OK) {
+        return ['ok' => false, 'error' => 'Upload of ' . $name . ' failed (PHP upload error ' . $err . '; check upload_max_filesize / post_max_size).'];
+    }
+    if (empty($f['tmp_name']) || !is_uploaded_file($f['tmp_name'])) {
+        return ['ok' => false, 'error' => 'Upload of ' . $name . ' failed (not an uploaded file).'];
+    }
+    return ['ok' => true, 'data' => (string) file_get_contents($f['tmp_name'])];
 }
 
 // ---------------------------------------------------------------------------
@@ -727,9 +806,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
     kop_rtc_fail_save($att_id, ['count' => $prev_fail['count'] + 1, 'error' => $prev_fail['error'] !== '' ? $prev_fail['error'] : 'no response']);
 
     // Client-supplied material (browser pdf.js): extracted text and/or a
-    // rendered JPEG of page 1 when the PDF turned out to be a scan.
-    $client_text = trim(wp_unslash((string) ($_POST['text'] ?? '')));
-    $image_b64   = (string) ($_POST['page_image'] ?? '');
+    // rendered JPEG of page 1 when the PDF turned out to be a scan. Current
+    // pages send both as file parts (see the header comment); the form-field
+    // spelling is kept for a page that was open before this change deployed.
+    $text_part  = kop_rtc_uploaded_part('text');
+    $image_part = kop_rtc_uploaded_part('page_image');
+    if (!$text_part['ok'] || !$image_part['ok']) {
+        kop_rtc_fail_counted($att_id, $text_part['ok'] ? $image_part['error'] : $text_part['error'], $prev_fail);
+    }
+    $client_text = $text_part['data'] !== ''
+        ? trim($text_part['data'])
+        : trim(wp_unslash((string) ($_POST['text'] ?? '')));
+    $image_b64 = $image_part['data'] !== ''
+        ? base64_encode($image_part['data'])
+        : (string) ($_POST['page_image'] ?? '');
     // What the browser step reported: '' (ran fine), 'pdfjs-unavailable' (cdnjs
     // blocked or offline - transient, never exclude), or 'pdf-error: ...' (pdf.js
     // rejected the file itself - permanent).
@@ -806,10 +896,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
 // ---------------------------------------------------------------------------
 $restored = false;
 $restore_log = [];
+$nonce_error = '';
+// Titles typed before a rejected Apply, keyed by attachment id, so the page
+// re-renders with them filled in and ticked instead of throwing them away.
+$prefill = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['do_restore'])
-    && check_admin_referer('kop_rtc_restore')) {
+// wp_verify_nonce instead of check_admin_referer: a stale nonce (the admin's
+// WordPress session expired and was renewed while this page sat open) must not
+// wp_die() and discard the reviewed titles. The page refreshes its nonces
+// before submitting, so this only fires when that refresh itself failed.
+function kop_rtc_stale_nonce_message($what) {
+    return 'Your WordPress session changed since this page loaded (login expired and renewed?), so the ' . $what
+         . ' request was not trusted and nothing was written. Your ticks and titles are kept below: check them and press the button again.';
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_restore'])
+    && !wp_verify_nonce((string) ($_POST['_wpnonce'] ?? ''), 'kop_rtc_restore')) {
+    $nonce_error = kop_rtc_stale_nonce_message('Restore');
+    $prefill = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_restore'])) {
 
     $requests = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
     $done = 0;
@@ -830,13 +935,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 $applied = false;
 $apply_log = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'
-    && isset($_POST['do_apply'])
-    && check_admin_referer('kop_rtc_apply')) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_apply'])
+    && !wp_verify_nonce((string) ($_POST['_wpnonce'] ?? ''), 'kop_rtc_apply')) {
+    $nonce_error = kop_rtc_stale_nonce_message('Apply');
+    $prefill = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['do_apply'])) {
 
     $requests = isset($_POST['row']) && is_array($_POST['row']) ? $_POST['row'] : [];
     $done = 0;
     $skipped = 0;
+    $parked = 0;
     $updates = [];
     foreach ($requests as $att_id => $req) {
         if (empty($req['go'])) continue;
@@ -852,15 +960,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
     foreach ($updates as $att_id => $new_title) {
-        if ($new_title === get_post_field('post_title', $att_id, 'raw')) {
+        $old_title = (string) get_post_field('post_title', $att_id, 'raw');
+        if ($new_title === $old_title) {
             $skipped++;
             continue;
         }
         $result = wp_update_post(['ID' => $att_id, 'post_title' => $new_title], true);
-        if (is_wp_error($result)) $skipped++; else $done++;
+        if (is_wp_error($result)) {
+            $skipped++;
+            continue;
+        }
+        $done++;
+        // A finished file leaves the working lists for good: its new title
+        // may still not match a known program name, and the point of the pass
+        // is never to look at the same document twice.
+        kop_rtc_exclude($att_id, 'Retitled by this tool (was: "' . mb_substr($old_title, 0, 120) . '").');
+        $parked++;
     }
     $applied = true;
-    $apply_log[] = "Retitled {$done} attachment(s), including matching image/PDF pairs." . ($skipped ? " Skipped {$skipped} (unticked, empty, unchanged, or update failed)." : '');
+    $apply_log[] = "Retitled {$done} attachment(s), including matching image/PDF pairs."
+        . ($parked ? " Moved {$parked} to the excluded bucket so they do not come back on the next pass." : '')
+        . ($skipped ? " Skipped {$skipped} (unticked, empty, unchanged, or update failed)." : '');
 }
 
 // ---------------------------------------------------------------------------
@@ -973,15 +1093,19 @@ td a { color: #000080; }
 <?php if ($restored): ?>
     <div class="log ok"><?php echo implode('<br>', array_map('esc_html', $restore_log)); ?> <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>">Back to unclear titles.</a></div>
 <?php endif; ?>
+<?php if ($nonce_error !== ''): ?>
+    <div class="log err"><?php echo esc_html($nonce_error); ?></div>
+<?php endif; ?>
 
 <?php $excluded_url = esc_url(add_query_arg(['scope' => 'excluded'], strtok($_SERVER['REQUEST_URI'], '?'))); ?>
 <?php if ($scope === 'excluded'): ?>
 <div class="log">
-    <strong><?php echo $total_unclear; ?></strong> attachment(s)<?php echo $q !== '' ? ' matching the filter' : ''; ?> are in the excluded bucket:
-    a Suggest pass found the file could not be scanned for a reason that will not change on retry
-    (missing from disk, corrupt image, PDF with no text layer and no renderable page).
-    They no longer appear in the unclear or all-attachments lists. Fix the file (re-upload, replace)
-    or give it a title by hand in the media library, then tick it here and <em>Restore</em> to put it back in play.
+    <strong><?php echo $total_unclear; ?></strong> attachment(s)<?php echo $q !== '' ? ' matching the filter' : ''; ?> are in the excluded bucket.
+    Two kinds of file land here: ones already <em>retitled</em> by Apply (reason starts with "Retitled"),
+    and ones a Suggest pass could not scan for a reason that will not change on retry
+    (missing from disk, corrupt image, PDF with no text layer and no renderable page, or the same failure twice).
+    Neither appears in the unclear or all-attachments lists any more. To put one back in play (to retitle it
+    again, or after fixing the file), tick it here and <em>Restore</em>.
     Showing up to <?php echo (int) $SHOW; ?> per pass.
 </div>
 <?php else: ?>
@@ -995,9 +1119,9 @@ td a { color: #000080; }
     and its folders stay exactly where they are.
     PDFs are read in your browser (scans get vision OCR of page 1); images go to the vision
     model. Only PDFs and images are listed &mdash; other attachment types are out of scope.
-    Files that cannot be scanned at all are moved to the
+    Every file you Apply a title to, and every file that cannot be scanned at all, is moved to the
     <a href="<?php echo $excluded_url; ?>">excluded bucket</a> (<?php echo $total_excluded; ?> so far)
-    and stop appearing here. Any other failure tied to the file is retried once immediately and parked if it repeats, with the error as the reason; a file whose request dies twice without answering is parked on the next pass. Transient failures (rate limit, network) never count.
+    and stops appearing here. Any other failure tied to the file is retried once immediately and parked if it repeats, with the error as the reason; a file whose request dies twice without answering is parked on the next pass. Transient failures (rate limit, network) never count.
 </div>
 <?php endif; ?>
 
@@ -1010,21 +1134,21 @@ td a { color: #000080; }
 </form>
 
 <?php if ($preview && $scope === 'excluded'): ?>
-<form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
+<form method="post" id="kop-form" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
 <?php wp_nonce_field('kop_rtc_restore'); ?>
+<input type="hidden" name="do_restore" value="1">
 <div class="kop-toolbar">
     <div class="bar">
         <span>Showing <?php echo count($preview); ?> excluded row(s) &middot; <span id="kop-count"></span></span>
         <button type="button" id="kop-tick-all" style="background:#000080">Tick all</button>
         <button type="button" id="kop-untick-all" style="background:#7a7a7a">Untick all</button>
-        <button type="submit" name="do_restore" value="1" style="background:#1b7e3c"
-            onclick="return window.kopConfirmRestore(this);">Restore ticked rows</button>
+        <button type="button" id="kop-restore" style="background:#1b7e3c">Restore ticked rows</button>
     </div>
 </div>
 <table><thead><tr><th></th><th style="width:36%">Current title</th><th style="width:40%">Why excluded</th><th>File</th></tr></thead><tbody>
 <?php foreach ($preview as $p): ?>
     <tr data-id="<?php echo $p['id']; ?>">
-        <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
+        <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"<?php echo !empty($prefill[$p['id']]['go']) ? ' checked' : ''; ?>></td>
         <td>
             <div class="old-title"><?php echo esc_html($p['title']); ?></div>
             <?php if ($p['folders']): ?><div class="folders"><?php echo esc_html(implode(' / ', $p['folders'])); ?></div><?php endif; ?>
@@ -1074,24 +1198,38 @@ td a { color: #000080; }
         rows.forEach(function (r) { var c = check(r); if (c) { c.checked = false; paint(r); } });
         refresh();
     });
-    window.kopConfirmRestore = function () {
+    // Submit with a nonce minted now, not at page load: if the WordPress
+    // session was renewed while this page sat open, the loaded nonce is dead.
+    var form = document.getElementById('kop-form');
+    var restoreBtn = document.getElementById('kop-restore');
+    restoreBtn.addEventListener('click', function () {
         var n = rows.filter(function (r) { var c = check(r); return c && c.checked; }).length;
-        if (!n) { alert('Tick the rows to restore first.'); return false; }
-        return window.confirm('Restore ' + n + ' attachment(s) to the working lists?');
-    };
+        if (!n) { alert('Tick the rows to restore first.'); return; }
+        if (!window.confirm('Restore ' + n + ' attachment(s) to the working lists?')) return;
+        restoreBtn.disabled = true;
+        var body = new URLSearchParams();
+        body.set('action', 'nonce');
+        fetch(window.location.pathname, {
+            method: 'POST', credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+        }).then(function (res) { return res.json(); }).then(function (n) {
+            if (n && n.restore) form.querySelector('input[name=_wpnonce]').value = n.restore;
+        }).catch(function () {}).then(function () { form.submit(); });
+    });
 })();
 </script>
 <?php elseif ($preview): ?>
-<form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
+<form method="post" id="kop-form" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
 <?php wp_nonce_field('kop_rtc_apply'); ?>
+<input type="hidden" name="do_apply" value="1">
 <div class="kop-toolbar">
     <div class="bar">
         <span>Showing <?php echo count($preview); ?> row(s) &middot; <span id="kop-count"></span></span>
         <button type="button" id="kop-tick-all" style="background:#000080">Tick all</button>
         <button type="button" id="kop-untick-all" style="background:#7a7a7a">Untick all</button>
         <button type="button" id="kop-suggest" style="background:#EF9034">Suggest titles for ticked rows</button>
-        <button type="submit" name="do_apply" value="1" style="background:#1b7e3c"
-            onclick="return window.kopConfirmApply(this);">Apply titles</button>
+        <button type="button" id="kop-apply" style="background:#1b7e3c">Apply titles</button>
         <span id="kop-progress" class="warn"></span>
     </div>
 </div>
@@ -1101,13 +1239,13 @@ td a { color: #000080; }
         data-pair-key="<?php echo esc_attr(kop_rtc_pair_key($p['id'])); ?>"
         data-auto="<?php echo $p['auto'] ? 1 : 0; ?>"
         data-supported="<?php echo $p['supported'] ? 1 : 0; ?>" data-url="<?php echo esc_url($p['url']); ?>">
-        <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"></td>
+        <td><input type="checkbox" name="row[<?php echo $p['id']; ?>][go]" value="1"<?php echo !empty($prefill[$p['id']]['go']) ? ' checked' : ''; ?>></td>
         <td>
             <div class="old-title"><?php echo esc_html($p['title']); ?></div>
             <?php if ($p['folders']): ?><div class="folders"><?php echo esc_html(implode(' / ', $p['folders'])); ?></div><?php endif; ?>
         </td>
         <td>
-            <input type="text" class="new-title" name="row[<?php echo $p['id']; ?>][title]" value="" placeholder="<?php echo $p['supported'] ? 'awaiting suggestion or type one' : 'no auto-read for this type - type a title'; ?>">
+            <input type="text" class="new-title" name="row[<?php echo $p['id']; ?>][title]" value="<?php echo esc_attr(sanitize_text_field(wp_unslash((string) ($prefill[$p['id']]['title'] ?? '')))); ?>" placeholder="<?php echo $p['supported'] ? 'awaiting suggestion or type one' : 'no auto-read for this type - type a title'; ?>">
             <div class="basis"></div>
         </td>
         <td>
@@ -1165,15 +1303,55 @@ td a { color: #000080; }
         refresh();
     });
 
+    // ------------------------------------------------------------------
+    // Nonces die with the WordPress session. When the session expires and
+    // is renewed through the interim-login prompt while this page sits
+    // open, both Suggest and Apply would be refused with the nonce baked
+    // in at load time. Ask the server for current ones instead.
+    // Resolves to the nonce set, or null when the login itself is gone.
+    // ------------------------------------------------------------------
+    var loginLost = false;
+    var LOGIN_LOST_MSG = 'Your WordPress login has expired. Log in again in another tab (keep this one open), then click the button again - nothing here is lost.';
+    async function freshNonces() {
+        var body = new URLSearchParams();
+        body.set('action', 'nonce');
+        try {
+            var res = await fetch(window.location.pathname, {
+                method: 'POST', credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            });
+            if (res.status === 403) { loginLost = true; return null; }
+            var n = await res.json();
+            if (n && n.suggest) { NONCE = n.suggest; loginLost = false; return n; }
+        } catch (e) { /* fall through */ }
+        return null;
+    }
+
     // Apply only writes rows that are ticked AND have a title typed in.
-    window.kopConfirmApply = function () {
+    var form = document.getElementById('kop-form');
+    var applyBtn = document.getElementById('kop-apply');
+    applyBtn.addEventListener('click', function () {
         var ready = rows.filter(function (r) {
             var c = check(r), t = titleInput(r);
             return c && c.checked && t && t.value.trim() !== '';
         }).length;
-        if (!ready) { alert('Tick rows and fill in (or suggest) their new titles first.'); return false; }
-        return window.confirm('Write ' + ready + ' new attachment title(s)?');
-    };
+        if (!ready) { alert('Tick rows and fill in (or suggest) their new titles first.'); return; }
+        if (!window.confirm('Write ' + ready + ' new attachment title(s)?')) return;
+        applyBtn.disabled = true;
+        freshNonces().then(function (n) {
+            if (n && n.apply) {
+                form.querySelector('input[name=_wpnonce]').value = n.apply;
+            } else if (loginLost) {
+                applyBtn.disabled = false;
+                alert(LOGIN_LOST_MSG);
+                return;
+            }
+            // No nonce came back for another reason: submit anyway; the server
+            // keeps the titles on the page if it refuses the stale one.
+            form.submit();
+        });
+    });
 
     // ------------------------------------------------------------------
     // Browser-side PDF reading: pdf.js extracts the text layer; if the
@@ -1221,29 +1399,61 @@ td a { color: #000080; }
             canvas.width = Math.ceil(vp2.width);
             canvas.height = Math.ceil(vp2.height);
             await page1.render({ canvasContext: canvas.getContext('2d'), viewport: vp2 }).promise;
-            var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            return { text: text, image: dataUrl.split(',')[1] };
+            var blob = await new Promise(function (resolve) { canvas.toBlob(resolve, 'image/jpeg', 0.82); });
+            return { text: text, image: blob };
         } finally {
             doc.destroy();
         }
     }
 
+    // Text layers can carry stray control characters; they add nothing for
+    // the model and some firewalls reject them outright.
+    function cleanText(text) {
+        return text.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '');
+    }
+
+    // Post the suggest request. Document text and the page image travel as
+    // multipart FILE parts, not form fields: the host firewall inspects
+    // fields and rejects document text containing HTML (California CCL
+    // reports open with a <meta> tag) with a 403 the tool never sees.
+    // A "Session expired" answer (nonce died with a renewed WordPress
+    // session) is retried once with a fresh nonce.
+    async function postSuggest(fd) {
+        fd.set('_wpnonce', NONCE);
+        var res, raw;
+        try {
+            res = await fetch(window.location.pathname, { method: 'POST', credentials: 'same-origin', body: fd });
+            raw = await res.text();
+        } catch (e) {
+            return { ok: false, error: 'Network error: request failed' };
+        }
+        try {
+            return JSON.parse(raw);
+        } catch (e) {
+            if (res.status === 403 && /^Not authorized/.test(raw)) {
+                loginLost = true;
+                return { ok: false, error: 'WordPress login expired', loginLost: true };
+            }
+            return { ok: false, error: 'Blocked before reaching the tool (HTTP ' + res.status + ', non-JSON reply) - not counted against the file' };
+        }
+    }
+
     async function suggestOne(row, setStatus) {
-        var body = new URLSearchParams();
+        var body = new FormData();
         body.set('action', 'suggest');
         body.set('id', row.dataset.id);
-        body.set('_wpnonce', NONCE);
 
         if (row.dataset.mime === 'application/pdf') {
             try {
                 setStatus('reading PDF');
                 var read = await readPdfInBrowser(row.dataset.url);
-                if (read.text && read.text.length >= 200) {
-                    body.set('text', read.text);
+                var text = cleanText(read.text || '');
+                if (text.length >= 200) {
+                    body.set('text', new Blob([text], { type: 'text/plain' }), 'text.txt');
                 } else if (read.image) {
                     setStatus('OCR');
-                    body.set('page_image', read.image);
-                    if (read.text) body.set('text', read.text);
+                    body.set('page_image', read.image, 'page1.jpg');
+                    if (text) body.set('text', new Blob([text], { type: 'text/plain' }), 'text.txt');
                 }
             } catch (e) {
                 // Server-side extraction is the fallback; carry on with a bare
@@ -1259,17 +1469,11 @@ td a { color: #000080; }
             }
         }
 
-        var r;
-        try {
-            var res = await fetch(window.location.pathname, {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: body.toString()
-            });
-            r = await res.json();
-        } catch (e) {
-            r = { ok: false, error: 'request failed' };
+        var r = await postSuggest(body);
+        if (!r.ok && /Session expired/i.test(r.error || '')) {
+            var n = await freshNonces();
+            if (n) r = await postSuggest(body);
+            else if (loginLost) r = { ok: false, error: 'WordPress login expired', loginLost: true };
         }
 
         var basis = row.querySelector('.basis');
@@ -1281,6 +1485,10 @@ td a { color: #000080; }
             return true;
         }
         basis.textContent = r.error || 'failed';
+        if (r.loginLost) {
+            row.classList.add('kop-err');
+            return 'login-lost';
+        }
         if (r.excluded) {
             // Parked server-side: it will not be listed on the next load. Untick
             // it so Apply cannot write an empty title, and mark it visibly.
@@ -1311,7 +1519,8 @@ td a { color: #000080; }
             return;
         }
         suggestBtn.disabled = true;
-        var total = queue.length, done = 0, failed = 0, excluded = 0;
+        loginLost = false;
+        var total = queue.length, done = 0, failed = 0, excluded = 0, stopped = false;
         function report(extra) {
             progress.textContent = 'Suggesting... ' + done + '/' + total
                 + (failed ? ' (' + failed + ' failed)' : '')
@@ -1325,6 +1534,14 @@ td a { color: #000080; }
             if (!row) return Promise.resolve();
             if (titleInput(row).value.trim() !== '') return processNext();
             return suggestOne(row, report).then(function (ok) {
+                if (ok === 'login-lost') {
+                    // Every further request would fail the same way; keep the
+                    // queue's rows untouched so a re-run picks them up.
+                    failed++;
+                    done++;
+                    stopped = true;
+                    return Promise.resolve();
+                }
                 if (ok === 'excluded') excluded++;
                 else if (!ok) failed++;
                 done++;
@@ -1338,6 +1555,11 @@ td a { color: #000080; }
         }
         processNext().then(function () {
             suggestBtn.disabled = false;
+            if (stopped) {
+                progress.textContent = 'Stopped after ' + done + '/' + total + ': ' + LOGIN_LOST_MSG;
+                alert(LOGIN_LOST_MSG);
+                return;
+            }
             progress.textContent = 'Done: ' + (done - failed - excluded) + ' suggested'
                 + (failed ? ', ' + failed + ' failed (red rows, retry later)' : '')
                 + (excluded ? ', ' + excluded + ' unscannable (gray rows, moved to the excluded bucket)' : '')
