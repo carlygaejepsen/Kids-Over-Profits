@@ -154,8 +154,14 @@
     function attach(container, feature, label) {
         if (!container || !feature) return null;
         if (container.querySelector(':scope > .kop-bug-report-link, :scope > .kop-submit-info-row > .kop-bug-report-link')) return null; // already attached
-        var link = el('button', 'kop-bug-report-link');
-        link.type = 'button';
+        // An anchor styled with Kadence's own outline-button classes, not a
+        // <button>: several page stylesheets restyle every descendant
+        // <button> (navy background, white text), which swallowed the flag.
+        // Kadence's .button.button-style-outline gives a transparent
+        // background and palette-driven text/hover colors on any page.
+        var link = el('a', 'kop-bug-report-link button button-style-outline button-size-small');
+        link.href = '#';
+        link.setAttribute('role', 'button');
         // Icon-only; the text expands on hover/focus (CSS). The icon is an
         // inline SVG flag ("flag an issue") — it inherits currentColor, so it
         // follows the link's styling instead of platform emoji rendering.
@@ -166,7 +172,8 @@
             + '<span class="kop-bug-report-link__text">Report a problem</span>';
         link.setAttribute('aria-label', 'Report a problem with ' + (label || feature));
         link.title = 'Report a problem';
-        link.addEventListener('click', function () {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
             openModal({ feature: feature, featureLabel: label || feature });
         });
         // When the container ends with a "Submit info" row, the flag joins
@@ -340,10 +347,10 @@
         form.appendChild(status);
 
         var actions = el('div', 'kop-bug-reporter__actions');
-        var cancel = el('button', 'kop-bug-reporter__btn kop-bug-reporter__btn--ghost', 'Cancel');
+        var cancel = el('button', 'kop-bug-reporter__btn button button-style-outline', 'Cancel');
         cancel.type = 'button';
         cancel.addEventListener('click', closeModal);
-        var submit = el('button', 'kop-bug-reporter__btn kop-bug-reporter__btn--primary', 'Send report');
+        var submit = el('button', 'kop-bug-reporter__btn button', 'Send report');
         submit.type = 'submit';
         actions.appendChild(cancel);
         actions.appendChild(submit);

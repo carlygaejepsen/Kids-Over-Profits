@@ -5,14 +5,15 @@
 
 /* Small feature-scoped bug link, injected into containers tagged with
    data-kop-bug-feature (or via KOPBugReporter.attach). Icon-only at rest;
-   the "Report a bug" label slides out on hover/focus. The !important flags
-   defend against the theme's global button styling (white text, shadows,
-   uppercase), which otherwise wins on hover. */
-.kop-bug-report-link,
-.kop-bug-report-link:hover,
-.kop-bug-report-link:focus,
-.kop-bug-report-link:focus-visible,
-.kop-bug-report-link:active {
+   the "Report a problem" label slides out on hover/focus.
+
+   The link is an <a> carrying Kadence's own button classes
+   (.button.button-style-outline.button-size-small), so its colors come from
+   the Kadence palette (--global-palette-btn-out / -hover) and page CSS that
+   restyles every descendant <button> never touches it. The rules below only
+   adjust size and layout; .button.kop-bug-report-link matches Kadence's
+   .button.button-size-small specificity and wins by loading later. */
+.button.kop-bug-report-link {
     /* Sits in the lower-right corner of its feature section: the link is the
        container's last child, and flex display + auto left margin right-align
        it in block, flex, and grid parents alike. */
@@ -20,24 +21,17 @@
     width: fit-content;
     align-items: center;
     margin: 6px 0 0 auto;
-    padding: 3px 6px;
-    background: none;
-    border: none !important;
+    padding: 3px 7px;
+    border-width: 1px;
     border-radius: 999px;
-    box-shadow: none !important;
-    color: var(--kop-navy, #000080) !important;
-    font-size: 0.78rem !important;
+    font-size: 0.78rem;
     font-weight: 600;
-    line-height: 1 !important;
-    letter-spacing: normal !important;
-    text-transform: none !important;
-    text-decoration: none;
-    cursor: pointer;
-    opacity: 0.55;
+    line-height: 1;
+    opacity: 0.6;
 }
 
 /* Inside a "Submit info" row the flag sits inline, right of the button. */
-.kop-submit-info-row .kop-bug-report-link {
+.kop-submit-info-row .button.kop-bug-report-link {
     display: inline-flex;
     width: auto;
     margin: 0 0 0 8px;
@@ -64,10 +58,9 @@
     transition: max-width 0.2s ease, opacity 0.2s ease, margin-left 0.2s ease;
 }
 
-.kop-bug-report-link:hover,
-.kop-bug-report-link:focus-visible {
+.button.kop-bug-report-link:hover,
+.button.kop-bug-report-link:focus-visible {
     opacity: 1;
-    background: var(--kop-soft-pastel-yellow, #FFF5CB);
 }
 
 .kop-bug-report-link:hover .kop-bug-report-link__text,
@@ -79,18 +72,12 @@
 }
 
 /* Small screens / touch: hover can't reveal the label, so show it always
-   and give the button a comfortable tap size. */
+   and give the link a comfortable tap size. */
 @media (hover: none), (max-width: 640px) {
-    .kop-bug-report-link,
-    .kop-bug-report-link:hover,
-    .kop-bug-report-link:focus,
-    .kop-bug-report-link:focus-visible,
-    .kop-bug-report-link:active {
+    .button.kop-bug-report-link {
         padding: 7px 12px;
         min-height: 32px;
-        opacity: 0.75;
-        background: var(--kop-soft-pastel-yellow, #FFF5CB);
-        border: 1px solid var(--kop-teal, #33A7B5) !important;
+        opacity: 0.85;
     }
 
     .kop-bug-report-link__text {
@@ -289,29 +276,17 @@
     margin-top: 14px;
 }
 
-.kop-bug-reporter__btn {
+/* Modal actions use Kadence's button classes (Send = default button,
+   Cancel = .button-style-outline) so they match the rest of the site; only
+   size is adjusted here. */
+.kop-bug-reporter__btn.button {
     padding: 9px 18px;
-    border-radius: 6px;
     font-size: 0.95rem;
     font-weight: 600;
-    cursor: pointer;
-    border: 2px solid var(--kop-midnight-blue, #000435);
 }
 
-.kop-bug-reporter__btn--primary {
-    background: var(--kop-teal, #33A7B5);
-    color: #fff;
-    border-color: var(--kop-teal, #33A7B5);
-}
-
-.kop-bug-reporter__btn--primary:disabled {
-    opacity: 0.6;
+.kop-bug-reporter__btn.button:disabled {
     cursor: default;
-}
-
-.kop-bug-reporter__btn--ghost {
-    background: transparent;
-    color: var(--kop-midnight-blue, #000435);
 }
 
 .kop-bug-reporter--modal-open {
