@@ -364,10 +364,16 @@ function persist_rejected(array $newEntries): void {
 // ============================================================
 
 /** Returns ['hostBlocked' => callable, 'pathBlocked' => callable]. */
+function is_pdf_url(string $url): bool {
+    $path = parse_url($url, PHP_URL_PATH);
+    return is_string($path) && str_ends_with(strtolower($path), '.pdf');
+}
+
 function build_blacklist_matcher(): array {
     global $HARD_BLOCKED_HOSTS;
     $bl = load_json_file(BLACKLIST_FILE, []);
     $allDomains = array_merge(
+        is_array($bl['selfDomains'] ?? null) ? $bl['selfDomains'] : [],
         is_array($bl['spamDomains'] ?? null) ? $bl['spamDomains'] : [],
         is_array($bl['pressReleaseWires'] ?? null) ? $bl['pressReleaseWires'] : [],
         is_array($bl['industryPromoDomains'] ?? null) ? $bl['industryPromoDomains'] : []
@@ -900,6 +906,12 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
     if ($pathHit) {
         return ['accept' => false, 'reason' => 'blacklist-path', 'meta' => ['pattern' => $pathHit, 'link' => $candidate['link']]];
     }
+    // PDFs (court filings, uploaded documents) have no extractable HTML body:
+    // the AI stage fails on them every time, and AI-stage failures are retried
+    // on every run. Reject them up front.
+    if (is_pdf_url($candidate['link'])) {
+        return ['accept' => false, 'reason' => 'pdf-document', 'meta' => ['link' => $candidate['link']]];
+    }
 
     $match = match_facility($text, $facilityIndex);
     $cityMatched = false;
@@ -1316,6 +1328,13 @@ function main(): void {
                 $seen[$q['urlHash']] = true;
                 $postResolveRejected++;
                 $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'blacklist-path-post-resolve', 'pattern' => $pathHit];
+                continue;
+            }
+            if (is_pdf_url($resolvedLink)) {
+                $seen[$q['urlHash']] = true;
+                $seen[$newHash] = true;
+                $postResolveRejected++;
+                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'pdf-post-resolve'];
                 continue;
             }
 

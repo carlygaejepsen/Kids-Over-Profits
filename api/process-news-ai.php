@@ -73,9 +73,16 @@ try {
         }
     }
 
-    // Truncate content to ~20,000 characters to avoid token limits (approx 5k tokens)
+    // Truncate content to ~20,000 bytes to avoid token limits (approx 5k tokens).
+    // Cut on a UTF-8 character boundary: a byte-level substr() can split a
+    // multi-byte character, json_encode() then fails on the malformed string
+    // and curl posts an empty body, which Groq rejects with
+    // "failed to unmarshal JSON: unexpected end of JSON input".
     if (strlen($content) > 20000) {
-        $content = substr($content, 0, 20000) . "... [truncated]";
+        $content = mb_strcut($content, 0, 20000, 'UTF-8') . "... [truncated]";
+    }
+    if (!mb_check_encoding($content, 'UTF-8')) {
+        $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
     }
 
     // Process with selected AI provider

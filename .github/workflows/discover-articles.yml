@@ -1,6 +1,6 @@
 name: Article Discovery
 
-# Daily run that pulls candidate articles from Google News + Reddit for active
+# Manual run that pulls candidate articles from Google News + Reddit for active
 # TTI facilities, scores them, and submits surviving URLs through the AI
 # processor into the news_submissions review queue on kidsoverprofits.org.
 #
@@ -9,10 +9,10 @@ name: Article Discovery
 # history. The rejected log (scripts/discovery-rejected.json) IS committed
 # back so you can review it for filter-tuning.
 
+# The daily schedule moved to the NixiHost cPanel cron (scripts/discover-articles.php,
+# 01:30 Central): GitHub runner IPs get 503-throttled by Google News. This
+# workflow is kept for manual one-off runs only.
 on:
-  schedule:
-    # 06:30 UTC daily (≈ 1:30am Central / 11:30pm Pacific)
-    - cron: '30 6 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
