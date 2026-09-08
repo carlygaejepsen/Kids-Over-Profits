@@ -14,6 +14,23 @@ header('Pragma: no-cache');
 
 $response = ['success' => false, 'projects' => [], 'error' => 'Unknown error'];
 
+// Contact details stay in the admin form for research but are not published:
+// the public directory documents referral activity, it is not a listing service.
+$kop_public_referrer_strip_keys = ['phone', 'email', 'phoneNumber', 'emailAddress', 'fax'];
+function kop_strip_referrer_contact_fields($value, array $keys) {
+    if (!is_array($value)) {
+        return $value;
+    }
+    foreach ($value as $k => $v) {
+        if (is_string($k) && in_array($k, $keys, true)) {
+            unset($value[$k]);
+            continue;
+        }
+        $value[$k] = kop_strip_referrer_contact_fields($v, $keys);
+    }
+    return $value;
+}
+
 try {
     // 2. LOAD CONFIG SAFELY
     $configPath = __DIR__ . '/config.php';
@@ -63,7 +80,7 @@ try {
             $results[] = [
                 'id' => $row['id'],
                 'db_name' => $row['unique_name'],
-                'payload' => $decoded,
+                'payload' => kop_strip_referrer_contact_fields($decoded, $kop_public_referrer_strip_keys),
                 '_sourceTable' => 'referrers'
             ];
         }

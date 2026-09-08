@@ -109,10 +109,19 @@ document.addEventListener('DOMContentLoaded', function() {
         return {};
     }
 
+    // Outbound URLs render as a plain domain citation with nofollow so the
+    // directory documents the site without promoting it or passing it link
+    // authority.
+    function citationLink(url) {
+        let d = url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+        if (d.length > 50) d = d.slice(0, 47) + '…';
+        return `<a href="${esc(url)}" target="_blank" rel="nofollow noopener noreferrer">${esc(d)}</a>`;
+    }
+
     function renderField(label, value) {
         const val = clean(value);
         if (!val || val === 'null') return '';
-        if (val.startsWith('http')) return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value"><a href="${esc(val)}" target="_blank">Link</a></span></div>`;
+        if (/^https?:\/\//i.test(val)) return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${citationLink(val)}</span></div>`;
         return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
@@ -145,9 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!items.length) return '';
         const lis = items.map(u => {
             if (/^https?:\/\//i.test(u)) {
-                let d = u.replace(/^https?:\/\/(www\.)?/i, '');
-                if (d.length > 50) d = d.slice(0, 47) + '…';
-                return `<li class="data-list-item"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(d)}</a></li>`;
+                return `<li class="data-list-item">${citationLink(u)}</li>`;
             }
             return `<li class="data-list-item"><span class="job-role">${esc(u)}</span></li>`;
         }).join('');
@@ -260,12 +267,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         ${renderField('Address', agency.address)}
                         ${renderField('Founded', agency.founded)}
                         ${renderField('Status', agency.status)}
-                        ${renderField('Website', agency.website)}
-                        ${renderLinkList('Websites', agency.websites)}
                         ${renderArrayList('Affiliations', agency.affiliations)}
                         ${renderArrayList('Key Personnel', agency.keyPersonnel)}
                         ${renderNotes('Notes', agency.notes)}
                         ${renderFieldNotes(agency.fieldNotes)}
+                        ${renderField('Website', agency.website)}
+                        ${renderLinkList('Websites', agency.websites)}
                     </div>`;
             }
 
@@ -280,16 +287,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `
                     <div class="consultant-sub-card">
                         <div class="consultant-name-header">${esc(c.resolvedName)}</div>
-                        
-                        ${renderField('Role', cTitle)}
-                        ${renderField('Status', c.status)}
-                        ${renderField('Location', cLoc)}
-                        ${renderField('Phone', c.phone)}
-                        ${renderField('Email', c.email)}
-                        ${renderField('Website', c.website)}
-                        ${renderField('Credentials', c.credentials)}
-                        ${renderField('Education', c.education)}
-                        ${renderField('Lawsuits', c.lawsuits)}
+
+                        ${known.length && clean(known[0]) ? `
+                            <div class="list-section">
+                                <div class="section-label">Facility Referrals</div>
+                                <ul class="data-list">
+                                    ${known.filter(clean).map(r => `<li class="data-list-item"><span class="job-role">${esc(r)}</span></li>`).join('')}
+                                </ul>
+                            </div>` : ''}
 
                         ${pastJobs.length ? `
                             <div class="list-section">
@@ -300,14 +305,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                         if (!j) return '';
                                         return `<li class="data-list-item"><span class="job-role">${esc(j.role)}</span><span class="job-meta">at ${esc(j.employer || j.organization)}</span></li>`;
                                     }).join('')}
-                                </ul>
-                            </div>` : ''}
-
-                        ${known.length && clean(known[0]) ? `
-                            <div class="list-section">
-                                <div class="section-label">Facility Referrals</div>
-                                <ul class="data-list">
-                                    ${known.filter(clean).map(r => `<li class="data-list-item"><span class="job-role">${esc(r)}</span></li>`).join('')}
                                 </ul>
                             </div>` : ''}
 
@@ -327,9 +324,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </ul>
                             </div>` : ''}
 
-                        ${renderLinkList('Websites', c.websites)}
+                        ${renderField('Lawsuits', c.lawsuits)}
                         ${renderNotes('Notes', c.notes)}
                         ${renderFieldNotes(c.fieldNotes)}
+
+                        ${renderField('Role', cTitle)}
+                        ${renderField('Status', c.status)}
+                        ${renderField('Location', cLoc)}
+                        ${renderField('Credentials', c.credentials)}
+                        ${renderField('Education', c.education)}
+                        ${renderField('Website', c.website)}
+                        ${renderLinkList('Websites', c.websites)}
                     </div>`;
             });
 

@@ -20,6 +20,35 @@ get_header();
         <p style="font-size: 1.1em; color: #666;">Searchable database of Educational Consultants, Ed Cons, and Referral Agencies</p>
     </div>
 
+    <!-- What an educational consultant is, and why the title matters -->
+    <section class="referrer-intro" data-kop-bug-feature="referrer-index/intro" data-kop-bug-label="Consultant Directory Intro">
+        <h2>What is an educational consultant?</h2>
+        <p>
+            In the troubled teen industry, an "educational consultant" (often shortened to "ed con" or "IEC")
+            is a private advisor that parents pay to recommend where to send a struggling child. Despite the name,
+            most of the placements they arrange are not schools. They are wilderness programs, residential
+            treatment centers, therapeutic boarding schools, and similar facilities, many of which appear in our
+            <a href="<?php echo esc_url(home_url('/tti-program-index/')); ?>">facility directory</a>.
+        </p>
+        <h3>Why the title is a red flag</h3>
+        <p>
+            The word "educational" makes the service sound like academic advising. In practice, these consultants
+            are the industry's main referral pipeline. Many are former program staff, belong to industry trade
+            groups such as NATSAP or IECA, receive hosted tours and marketing from the programs they recommend,
+            or have financial and professional ties to specific facilities. Families are rarely told about those
+            ties before a placement. A recommendation from an educational consultant is not an independent
+            assessment and should not be treated as one.
+        </p>
+        <h3>What this directory records</h3>
+        <p>
+            This directory documents individuals and agencies with recorded referral activity into TTI programs:
+            which facilities they have referred families to, where they worked before, who they are affiliated
+            with, and any legal history we have found. A listing here is a record of that activity, not an
+            endorsement and not an advertisement. If you were placed through one of these consultants, or have
+            information to add or correct, use the submit button on any entry.
+        </p>
+    </section>
+
     <!-- Search & Filter Controls -->
     <div class="controls" data-kop-bug-feature="referrer-index/search" data-kop-bug-label="Consultant Search" style="margin-bottom: 30px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; border: 1px solid #eee;">
         <input
