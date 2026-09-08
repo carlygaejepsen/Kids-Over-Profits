@@ -689,13 +689,19 @@
             console.warn('Failed to load FileBird folders', err);
             state.folders = [];
         }
-        // Build name lookup
+        // Build name lookup. folderFilesByName sums the `files` count the
+        // endpoint reports (subtree, live attachments + tags) across every
+        // folder sharing a name, since the docs panel merges those anyway.
         state.folderByName = new Map();
+        state.folderFilesByName = new Map();
         state.folders.forEach(f => {
             if (!f || !f.name) return;
             const norm = normalizeFolderText(f.name);
             if (!state.folderByName.has(norm)) {
                 state.folderByName.set(norm, f.id);
+            }
+            if (typeof f.files === 'number') {
+                state.folderFilesByName.set(norm, (state.folderFilesByName.get(norm) || 0) + f.files);
             }
         });
         return state.folders;
@@ -706,23 +712,38 @@
         const norm = normalizeFolderText(facilityName);
         if (!norm) return null;
 
-        // 1. Exact normalized match
-        if (state.folderByName.has(norm)) return state.folderByName.get(norm);
+        const hasCounts = state.folderFilesByName && state.folderFilesByName.size > 0;
+        const filesFor = folderNorm => (hasCounts ? (state.folderFilesByName.get(folderNorm) || 0) : 1);
+
+        // 1. Exact normalized match. An exact-name folder that holds nothing
+        //    (typically an empty state-import skeleton such as "Maple Lake
+        //    Academy, LLC - Boys' Home") must not shadow a populated prefix
+        //    match ("Maple Lake Academy"), so it is only used straight away
+        //    when it has files; otherwise it is the fallback.
+        let exactId = null;
+        if (state.folderByName.has(norm)) {
+            exactId = state.folderByName.get(norm);
+            if (filesFor(norm) > 0) return exactId;
+        }
 
         // 2. Prefix match — covers "Newport Academy" folder vs "Newport Academy – Port Townsend"
         //    facility, or "Asheville Academy" folder vs "Asheville Academy For Girls" facility.
         //    Requires the shorter name to be at least 12 chars, so single shared words like
         //    "Trails" or "Academy" can't match facilities they don't actually belong to.
+        //    Prefers a candidate that actually holds files.
         const MIN_PREFIX_LEN = 12;
+        let emptyPrefixId = null;
         for (const [folderNorm, id] of state.folderByName.entries()) {
+            if (folderNorm === norm) continue;
             const shorter = norm.length < folderNorm.length ? norm : folderNorm;
             const longer  = norm.length < folderNorm.length ? folderNorm : norm;
             if (shorter.length >= MIN_PREFIX_LEN && longer.startsWith(shorter)) {
-                return id;
+                if (filesFor(folderNorm) > 0) return id;
+                if (emptyPrefixId === null) emptyPrefixId = id;
             }
         }
 
-        return null;
+        return exactId !== null ? exactId : emptyPrefixId;
     };
 
     const init = async () => {

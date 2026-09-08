@@ -223,6 +223,9 @@ function kop_register_facilities_rest_routes() {
                             if (function_exists('kop_filter_orphan_folders')) {
                                 $folders = kop_filter_orphan_folders($folders);
                             }
+                            if (function_exists('kop_attach_folder_file_counts')) {
+                                $folders = kop_attach_folder_file_counts($folders);
+                            }
 
                             return rest_ensure_response($folders);
                         }
@@ -231,6 +234,9 @@ function kop_register_facilities_rest_routes() {
                 
                 // Fallback to direct database query if API fails or no key
                 $folders = kop_get_filebird_folders();
+                if (function_exists('kop_attach_folder_file_counts')) {
+                    $folders = kop_attach_folder_file_counts($folders);
+                }
                 return rest_ensure_response($folders);
             },
             'permission_callback' => '__return_true',

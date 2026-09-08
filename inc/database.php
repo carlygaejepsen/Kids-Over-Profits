@@ -921,6 +921,75 @@ function kop_filter_orphan_folders($folders) {
 }
 
 /**
+ * Attach a `files` count (live attachments filed or tagged anywhere in the
+ * folder's subtree) to each folder in a flat list.
+ *
+ * The state/country pages use it to stop an empty folder that happens to
+ * carry a facility's exact licensing name (e.g. "Maple Lake Academy, LLC -
+ * Boys' Home", created by a state import) from shadowing the populated
+ * legacy folder ("Maple Lake Academy") a prefix match would have found.
+ *
+ * @param array $folders Rows with id / parent (arrays or objects).
+ * @return array Same rows, as arrays, each with an integer `files` key.
+ */
+function kop_attach_folder_file_counts($folders) {
+    global $wpdb;
+
+    $direct = array();
+    $rel = $wpdb->prefix . 'fbv_attachment_folder';
+    $tags = $wpdb->prefix . 'kop_media_folder_tags';
+    $has_tags = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tags)) === $tags);
+
+    $sql = "SELECT af.folder_id, COUNT(DISTINCT af.attachment_id) AS n
+            FROM $rel af INNER JOIN {$wpdb->posts} p ON p.ID = af.attachment_id
+            WHERE p.post_type = 'attachment' GROUP BY af.folder_id";
+    foreach ((array) $wpdb->get_results($sql) as $row) {
+        $direct[(int) $row->folder_id] = (int) $row->n;
+    }
+    if ($has_tags) {
+        $sql = "SELECT t.folder_id, COUNT(DISTINCT t.attachment_id) AS n
+                FROM $tags t INNER JOIN {$wpdb->posts} p ON p.ID = t.attachment_id
+                WHERE p.post_type = 'attachment' GROUP BY t.folder_id";
+        foreach ((array) $wpdb->get_results($sql) as $row) {
+            $direct[(int) $row->folder_id] = ($direct[(int) $row->folder_id] ?? 0) + (int) $row->n;
+        }
+    }
+
+    $rows = array();
+    $children = array();
+    foreach ((array) $folders as $f) {
+        $f = (array) $f;
+        if (!isset($f['id'])) {
+            continue;
+        }
+        $rows[] = $f;
+        $children[(int) ($f['parent'] ?? 0)][] = (int) $f['id'];
+    }
+
+    $subtree = array();
+    $count = function ($id, $depth = 0) use (&$count, &$subtree, $children, $direct) {
+        if (isset($subtree[$id])) {
+            return $subtree[$id];
+        }
+        $subtree[$id] = 0; // cycle guard
+        $n = $direct[$id] ?? 0;
+        if ($depth < 25 && !empty($children[$id])) {
+            foreach ($children[$id] as $child) {
+                $n += $count($child, $depth + 1);
+            }
+        }
+        return $subtree[$id] = $n;
+    };
+
+    foreach ($rows as &$f) {
+        $f['files'] = $count((int) $f['id']);
+    }
+    unset($f);
+
+    return $rows;
+}
+
+/**
  * Get FileBird folders for dropdown
  * @return array
  */
