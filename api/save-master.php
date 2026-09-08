@@ -1167,7 +1167,24 @@ if ($action === 'save') {
         if ($category === 'companies' || $category === 'referrers') {
             $locationUpdates = updateLocationProjectsFromSave($pdo, $projectName, $data, $category);
         }
-        
+
+        // Reverse link: any __facility_ref row (including the ones promoted a
+        // moment ago) whose state is known but which no location profile
+        // references yet gets appended to that state's profile. Keeps the
+        // location index and facilities_master in step without a manual
+        // backfill.
+        $refLinkStats = [];
+        if ($category !== 'wiki' && function_exists('kop_link_refs_to_locations')) {
+            try {
+                $refLinkStats = kop_link_refs_to_locations($pdo);
+                foreach ($refLinkStats['locations_updated'] ?? [] as $loc) {
+                    if (!in_array($loc, $locationUpdates, true)) $locationUpdates[] = $loc;
+                }
+            } catch (Throwable $e) {
+                error_log('Ref-to-location linking failed after saving "' . $projectName . '": ' . $e->getMessage());
+            }
+        }
+
         $message = "Project '$projectName' saved to {$tableName}";
         if (!empty($locationUpdates)) {
             $message .= ". Location projects updated: " . implode(', ', $locationUpdates);
@@ -1175,12 +1192,17 @@ if ($action === 'save') {
         if ($autoPromotedCount > 0) {
             $message .= ". Promoted $autoPromotedCount new facility row(s) to facilities_master.";
         }
+        $refLinked = (int)($refLinkStats['appended'] ?? 0) + (int)($refLinkStats['stamped'] ?? 0);
+        if ($refLinked > 0) {
+            $message .= ". Linked $refLinked facility row(s) into their state profiles.";
+        }
 
         echo json_encode([
             'success' => true,
             'message' => $message,
             'locationProjectsUpdated' => $locationUpdates,
-            'autoPromotedFacilities' => $autoPromotedCount
+            'autoPromotedFacilities' => $autoPromotedCount,
+            'refsLinkedToLocations' => $refLinked
         ]);
     } catch (PDOException $e) {
         echo json_encode([

@@ -18,6 +18,7 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/facility-promotion.php';
 
 $is_cli = php_sapi_name() === 'cli';
 $run_param = $_GET['run'] ?? null;
@@ -59,6 +60,33 @@ function backfill_facility_name(array $facility): string {
     return trim((string)($facility['name'] ?? ''));
 }
 
+/**
+ * Resolve the facilities_master id of a clone's parent operator project.
+ * Tries the sourceProject label first, then the operator names stamped on
+ * the clone (sourceOperator.name / identification.currentOperator), with any
+ * trailing "(UHS)"-style parenthetical stripped.
+ */
+function backfill_resolve_operator_id(array $map, array $facility): ?int {
+    $candidates = [
+        $facility['sourceProject'] ?? null,
+        $facility['sourceOperator']['name'] ?? null,
+        $facility['sourceOperator']['currentName'] ?? null,
+        $facility['identification']['currentOperator'] ?? null,
+    ];
+    foreach ((array)($facility['sourceOperator']['otherNames'] ?? []) as $other) {
+        $candidates[] = $other;
+    }
+    foreach ($candidates as $candidate) {
+        if (!is_string($candidate)) continue;
+        $raw = strtolower(trim($candidate));
+        if ($raw === '') continue;
+        if (isset($map[$raw])) return $map[$raw];
+        $bare = strtolower(trim(preg_replace('/\s*\([^)]*\)\s*$/', '', $candidate)));
+        if ($bare !== '' && isset($map[$bare])) return $map[$bare];
+    }
+    return null;
+}
+
 try {
     // Build name -> id map from facilities_master (case-insensitive).
     $map = [];
@@ -78,6 +106,8 @@ try {
         'facilities_stamped' => 0,
         'facilities_unmatched' => 0,
         'unmatched_names' => [],
+        'source_project_ids_stamped' => 0,
+        'unresolved_source_projects' => [],
     ];
 
     $updateStmt = $pdo->prepare("UPDATE locations_master SET json_data = ?, updated_at = NOW() WHERE id = ?");
@@ -92,35 +122,44 @@ try {
         $touched = false;
         foreach ($project['data']['facilities'] as $idx => $facility) {
             $stats['facilities_scanned']++;
-
-            if (!empty($facility['facility_id'])) {
-                continue; // already stamped
-            }
-
-            $name = backfill_facility_name(is_array($facility) ? $facility : []);
-            if ($name === '') {
-                $stats['facilities_unmatched']++;
+            if (!is_array($facility)) {
                 continue;
             }
 
-            $key = strtolower($name);
-            if (isset($map[$key])) {
-                $project['data']['facilities'][$idx]['facility_id'] = $map[$key];
-                $stats['facilities_stamped']++;
-                $touched = true;
-            } else {
-                $stats['facilities_unmatched']++;
-                if (count($stats['unmatched_names']) < 200) {
-                    $stats['unmatched_names'][] = $name;
+            if (empty($facility['facility_id'])) {
+                $name = backfill_facility_name($facility);
+                if ($name === '') {
+                    $stats['facilities_unmatched']++;
+                } else {
+                    $key = strtolower($name);
+                    if (isset($map[$key])) {
+                        $project['data']['facilities'][$idx]['facility_id'] = $map[$key];
+                        $stats['facilities_stamped']++;
+                        $touched = true;
+                    } else {
+                        $stats['facilities_unmatched']++;
+                        if (count($stats['unmatched_names']) < 200) {
+                            $stats['unmatched_names'][] = $name;
+                        }
+                    }
                 }
             }
 
-            // Also stamp sourceProjectId if the parent operator project is in facilities_master.
+            // Stamp sourceProjectId when the parent operator project is in
+            // facilities_master. Older clones carry a short label
+            // ("UHS", "Aspen") rather than the project's unique_name, so fall
+            // back to the operator names the clone was stamped with.
             if (empty($facility['sourceProjectId']) && !empty($facility['sourceProject'])) {
-                $opKey = strtolower(trim((string)$facility['sourceProject']));
-                if (isset($map[$opKey])) {
-                    $project['data']['facilities'][$idx]['sourceProjectId'] = $map[$opKey];
+                $opId = backfill_resolve_operator_id($map, $facility);
+                if ($opId !== null) {
+                    $project['data']['facilities'][$idx]['sourceProjectId'] = $opId;
+                    $stats['source_project_ids_stamped']++;
                     $touched = true;
+                } elseif (count($stats['unresolved_source_projects']) < 100) {
+                    $label = trim((string)$facility['sourceProject']);
+                    if (!in_array($label, $stats['unresolved_source_projects'], true)) {
+                        $stats['unresolved_source_projects'][] = $label;
+                    }
                 }
             }
         }
@@ -135,10 +174,15 @@ try {
 
     $stats['unmatched_names'] = array_values(array_unique($stats['unmatched_names']));
 
+    // Reverse direction: every __facility_ref row with a known state must be
+    // present in that state's location profile.
+    $reverse = kop_link_refs_to_locations($pdo, $dry_run);
+
     echo json_encode([
         'success' => true,
         'dry_run' => (bool)$dry_run,
         'stats'   => $stats,
+        'refs_to_locations' => $reverse,
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 } catch (PDOException $e) {
     http_response_code(500);

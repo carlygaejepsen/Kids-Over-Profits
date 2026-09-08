@@ -21,6 +21,70 @@ if (!function_exists('kop_promote_extract_name')) {
     }
 }
 
+if (!function_exists('kop_promote_state_abbreviations')) {
+    /** Two-letter US state code -> uppercase state name (the locations_master key). */
+    function kop_promote_state_abbreviations(): array {
+        return [
+            'AL' => 'ALABAMA', 'AK' => 'ALASKA', 'AZ' => 'ARIZONA', 'AR' => 'ARKANSAS',
+            'CA' => 'CALIFORNIA', 'CO' => 'COLORADO', 'CT' => 'CONNECTICUT', 'DE' => 'DELAWARE',
+            'FL' => 'FLORIDA', 'GA' => 'GEORGIA', 'HI' => 'HAWAII', 'ID' => 'IDAHO',
+            'IL' => 'ILLINOIS', 'IN' => 'INDIANA', 'IA' => 'IOWA', 'KS' => 'KANSAS',
+            'KY' => 'KENTUCKY', 'LA' => 'LOUISIANA', 'ME' => 'MAINE', 'MD' => 'MARYLAND',
+            'MA' => 'MASSACHUSETTS', 'MI' => 'MICHIGAN', 'MN' => 'MINNESOTA', 'MS' => 'MISSISSIPPI',
+            'MO' => 'MISSOURI', 'MT' => 'MONTANA', 'NE' => 'NEBRASKA', 'NV' => 'NEVADA',
+            'NH' => 'NEW HAMPSHIRE', 'NJ' => 'NEW JERSEY', 'NM' => 'NEW MEXICO', 'NY' => 'NEW YORK',
+            'NC' => 'NORTH CAROLINA', 'ND' => 'NORTH DAKOTA', 'OH' => 'OHIO', 'OK' => 'OKLAHOMA',
+            'OR' => 'OREGON', 'PA' => 'PENNSYLVANIA', 'RI' => 'RHODE ISLAND', 'SC' => 'SOUTH CAROLINA',
+            'SD' => 'SOUTH DAKOTA', 'TN' => 'TENNESSEE', 'TX' => 'TEXAS', 'UT' => 'UTAH',
+            'VT' => 'VERMONT', 'VA' => 'VIRGINIA', 'WA' => 'WASHINGTON', 'WV' => 'WEST VIRGINIA',
+            'WI' => 'WISCONSIN', 'WY' => 'WYOMING', 'DC' => 'DISTRICT OF COLUMBIA',
+        ];
+    }
+}
+
+if (!function_exists('kop_promote_state_bucket')) {
+    /**
+     * Canonical locations_master key ("ALABAMA") for a state value that may be
+     * an abbreviation, a full name in any case, or trailing zip noise. Null
+     * when the value is not a US state.
+     */
+    function kop_promote_state_bucket($state): ?string {
+        if (!is_string($state)) return null;
+        $s = strtoupper(trim(preg_replace('/[\s,]*\d{5}(?:-\d{4})?\s*$/', '', $state)));
+        $s = trim($s, " .,");
+        if ($s === '') return null;
+        $map = kop_promote_state_abbreviations();
+        if (isset($map[$s])) return $map[$s];
+        if (in_array($s, $map, true)) return $s;
+        return null;
+    }
+}
+
+if (!function_exists('kop_promote_split_address')) {
+    /**
+     * Split "street, city, ST 12345" (or "city, ST") into [city, state].
+     * Either part may be null when the string does not carry it.
+     */
+    function kop_promote_split_address(string $address): array {
+        $parts = array_values(array_filter(array_map('trim', explode(',', $address)), 'strlen'));
+        $n = count($parts);
+        if ($n === 0) return [null, null];
+        $last = $parts[$n - 1];
+        // Bare state ("MA", "Massachusetts") with no city.
+        if ($n === 1) {
+            return [null, kop_promote_state_bucket($last) !== null ? $last : null];
+        }
+        // Last segment: "ST 12345", "ST", "State Name".
+        if (preg_match('/^([A-Za-z .]+?)(?:\s+\d{5}(?:-\d{4})?)?$/', $last, $m)
+            && kop_promote_state_bucket($m[1]) !== null) {
+            return [$parts[$n - 2], trim($m[1])];
+        }
+        // Last segment is not a state (country, zip only): fall back to the
+        // old behaviour of first segment as city.
+        return [$parts[0], null];
+    }
+}
+
 if (!function_exists('kop_promote_extract_state')) {
     function kop_promote_extract_state(array $facility): ?string {
         $candidates = [];
@@ -30,6 +94,9 @@ if (!function_exists('kop_promote_extract_state')) {
         }
         if (!empty($facility['locationDetails']) && is_array($facility['locationDetails'])) {
             $candidates[] = $facility['locationDetails']['state'] ?? null;
+        }
+        if (!empty($facility['address']) && is_array($facility['address'])) {
+            $candidates[] = $facility['address']['state'] ?? null;
         }
         $candidates[] = $facility['state'] ?? null;
         $candidates[] = $facility['locationState'] ?? null;
@@ -42,9 +109,8 @@ if (!function_exists('kop_promote_extract_state')) {
         }
         foreach (['location', 'address', 'cityState', 'city_state'] as $k) {
             if (!empty($facility[$k]) && is_string($facility[$k])) {
-                if (preg_match('/,\s*([A-Za-z .]+?)\s*$/', trim($facility[$k]), $m)) {
-                    return trim($m[1]);
-                }
+                [, $state] = kop_promote_split_address($facility[$k]);
+                if ($state !== null) return $state;
             }
         }
         return null;
@@ -61,15 +127,18 @@ if (!function_exists('kop_promote_extract_city')) {
             $c = trim((string)($facility['locationDetails']['city'] ?? ''));
             if ($c !== '') return $c;
         }
+        if (!empty($facility['address']) && is_array($facility['address'])) {
+            $c = trim((string)($facility['address']['city'] ?? ''));
+            if ($c !== '') return $c;
+        }
         if (!empty($facility['city']) && is_string($facility['city'])) {
             $c = trim($facility['city']);
             if ($c !== '') return $c;
         }
         foreach (['location', 'address', 'cityState', 'city_state'] as $k) {
             if (!empty($facility[$k]) && is_string($facility[$k])) {
-                if (preg_match('/^\s*([^,]+),/', trim($facility[$k]), $m)) {
-                    return trim($m[1]);
-                }
+                [$city] = kop_promote_split_address($facility[$k]);
+                if ($city !== null && $city !== '') return $city;
             }
         }
         return null;
@@ -179,5 +248,171 @@ if (!function_exists('kop_ensure_facility_ids_in_data')) {
             if ($id !== null && !$hadId) $stamped++;
         }
         return $stamped;
+    }
+}
+
+if (!function_exists('kop_promote_name_key')) {
+    /** Loose name key for matching a ref against a location's nested entries. */
+    function kop_promote_name_key(string $name): string {
+        return preg_replace('/[^a-z0-9]+/', '', strtolower($name));
+    }
+}
+
+if (!function_exists('kop_link_refs_to_locations')) {
+    /**
+     * Reverse link: make sure every __facility_ref row whose state is known
+     * appears in that state's locations_master profile with its facility_id.
+     *
+     * Forward links (location entry -> facility_id) are stamped on every save
+     * by kop_ensure_facility_ids_in_data(). Refs can still be missing from the
+     * location side when they were created without a usable state, or by a
+     * path that never cloned them into a state bucket. This pass:
+     *   - stamps facility_id on a same-named location entry that lacks one,
+     *   - otherwise appends a clone of the ref's facility to the profile,
+     *   - creates the state profile row if the state has none yet.
+     *
+     * Cheap on the steady state: only refs absent from every profile are
+     * decoded in full. Called at the end of every master save and by
+     * api/backfill-location-facility-ids.php.
+     *
+     * @return array{refs_checked:int, already_linked:int, stamped:int, appended:int,
+     *               locations_updated:string[], no_state:string[]}
+     */
+    function kop_link_refs_to_locations(PDO $pdo, bool $dry = false): array {
+        $stats = [
+            'refs_checked'      => 0,
+            'already_linked'    => 0,
+            'stamped'           => 0,
+            'appended'          => 0,
+            'locations_updated' => [],
+            'no_state'          => [],
+        ];
+
+        // Every facility_id referenced from any location profile.
+        $linked = [];
+        $rows = $pdo->query(
+            "SELECT jt.fid FROM locations_master l,
+             JSON_TABLE(l.json_data, '$.data.facilities[*]' COLUMNS (fid INT PATH '$.facility_id')) jt
+             WHERE jt.fid IS NOT NULL"
+        )->fetchAll(PDO::FETCH_COLUMN);
+        foreach ($rows as $fid) $linked[(int)$fid] = true;
+
+        // Lightweight scan of the refs: id plus the fields a state can be read from.
+        $refs = $pdo->query(
+            "SELECT id, unique_name,
+                    JSON_UNQUOTE(JSON_EXTRACT(json_data, '$.state')) AS state,
+                    JSON_UNQUOTE(JSON_EXTRACT(json_data, '$.data.facility.location')) AS location,
+                    JSON_UNQUOTE(JSON_EXTRACT(json_data, '$.data.facility.address')) AS address,
+                    JSON_UNQUOTE(JSON_EXTRACT(json_data, '$.data.facility.locationDetails.state')) AS ld_state,
+                    JSON_UNQUOTE(JSON_EXTRACT(json_data, '$.data.facility.identification.state')) AS id_state
+             FROM facilities_master
+             WHERE JSON_EXTRACT(json_data, '$.__facility_ref') = true"
+        )->fetchAll(PDO::FETCH_ASSOC);
+
+        $pending = []; // bucket => [ref ids]
+        foreach ($refs as $ref) {
+            $stats['refs_checked']++;
+            $id = (int)$ref['id'];
+            if (isset($linked[$id])) {
+                $stats['already_linked']++;
+                continue;
+            }
+            $bucket = null;
+            foreach (['state', 'id_state', 'ld_state'] as $k) {
+                $v = $ref[$k];
+                if (is_string($v) && $v !== '' && $v !== 'null') {
+                    $bucket = kop_promote_state_bucket($v);
+                    if ($bucket !== null) break;
+                }
+            }
+            if ($bucket === null) {
+                foreach (['address', 'location'] as $k) {
+                    $v = $ref[$k];
+                    if (is_string($v) && $v !== '' && $v !== 'null') {
+                        [, $st] = kop_promote_split_address($v);
+                        $bucket = $st !== null ? kop_promote_state_bucket($st) : null;
+                        if ($bucket !== null) break;
+                    }
+                }
+            }
+            if ($bucket === null) {
+                $stats['no_state'][] = $ref['unique_name'];
+                continue;
+            }
+            $pending[$bucket][] = $id;
+        }
+
+        if (empty($pending)) return $stats;
+
+        $selectRef = $pdo->prepare("SELECT json_data FROM facilities_master WHERE id = ?");
+        $selectLoc = $pdo->prepare("SELECT json_data FROM locations_master WHERE unique_name = ?");
+        $upsertLoc = $pdo->prepare(
+            "INSERT INTO locations_master (unique_name, json_data, updated_at)
+             VALUES (:name, :json_insert, NOW())
+             ON DUPLICATE KEY UPDATE json_data = :json_update, updated_at = NOW()"
+        );
+
+        foreach ($pending as $bucket => $ids) {
+            $selectLoc->execute([$bucket]);
+            $existing = $selectLoc->fetchColumn();
+            $project = $existing ? json_decode($existing, true) : null;
+            if (!is_array($project)) {
+                $project = [
+                    'name'                 => $bucket,
+                    'data'                 => ['facilities' => [], 'referrerConsultants' => []],
+                    'category'             => 'locations',
+                    'currentFacilityIndex' => 0,
+                ];
+            }
+            if (empty($project['data']['facilities']) || !is_array($project['data']['facilities'])) {
+                $project['data']['facilities'] = [];
+            }
+
+            // Name index of entries that have no facility_id yet.
+            $unstamped = [];
+            foreach ($project['data']['facilities'] as $idx => $entry) {
+                if (!is_array($entry) || !empty($entry['facility_id'])) continue;
+                $key = kop_promote_name_key(kop_promote_extract_name($entry));
+                if ($key !== '' && !isset($unstamped[$key])) $unstamped[$key] = $idx;
+            }
+
+            $touched = false;
+            foreach ($ids as $id) {
+                $selectRef->execute([$id]);
+                $payload = json_decode((string)$selectRef->fetchColumn(), true);
+                $facility = $payload['data']['facility'] ?? null;
+                if (!is_array($facility)) continue;
+
+                $key = kop_promote_name_key(kop_promote_extract_name($facility));
+                if ($key !== '' && isset($unstamped[$key])) {
+                    $project['data']['facilities'][$unstamped[$key]]['facility_id'] = $id;
+                    unset($unstamped[$key]);
+                    $stats['stamped']++;
+                } else {
+                    $clone = $facility;
+                    $clone['facility_id'] = $id;
+                    $clone['sourceCategory'] = $clone['sourceCategory'] ?? 'companies';
+                    $clone['linkedFromRef'] = true;
+                    $project['data']['facilities'][] = $clone;
+                    $stats['appended']++;
+                }
+                $touched = true;
+            }
+
+            if ($touched) {
+                $project['timestamp'] = date('c');
+                if (!$dry) {
+                    $json = json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    $upsertLoc->execute([
+                        ':name'        => $bucket,
+                        ':json_insert' => $json,
+                        ':json_update' => $json,
+                    ]);
+                }
+                $stats['locations_updated'][] = $bucket;
+            }
+        }
+
+        return $stats;
     }
 }
