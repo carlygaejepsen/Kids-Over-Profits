@@ -336,3 +336,21 @@
     }
 }
 
+
+/* Status-updates opt-in under the email field */
+.kop-bug-reporter__notify {
+    margin: 8px 0 0;
+    font-size: 0.875rem;
+}
+
+.kop-bug-reporter__notify .kop-bug-reporter__checkbox-label:has(input:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.kop-bug-reporter__hint {
+    margin: 4px 0 0 24px;
+    font-size: 0.78rem;
+    color: var(--kop-navy, #000080);
+    opacity: 0.8;
+}

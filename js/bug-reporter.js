@@ -280,6 +280,32 @@
         form.appendChild(contactLabel);
         form.appendChild(contact);
 
+        // Opt-in to status updates. Only meaningful with an email, so it
+        // stays disabled until one is typed.
+        var notifyWrap = el('div', 'kop-bug-reporter__notify');
+        var notifyLabel = el('label', 'kop-bug-reporter__checkbox-label');
+        var notifyCheck = el('input');
+        notifyCheck.type = 'checkbox';
+        notifyCheck.id = 'kop-bug-notify';
+        notifyCheck.disabled = true;
+        notifyLabel.appendChild(notifyCheck);
+        notifyLabel.appendChild(document.createTextNode(' Email me when the status of this report changes (for example when it is being looked at or has been fixed)'));
+        notifyWrap.appendChild(notifyLabel);
+        var notifyHint = el('p', 'kop-bug-reporter__hint', 'Your email is only used for this report. Enter an address above to enable updates.');
+        notifyWrap.appendChild(notifyHint);
+        form.appendChild(notifyWrap);
+
+        function syncNotify() {
+            var hasEmail = contact.value.trim() !== '';
+            notifyCheck.disabled = !hasEmail;
+            if (!hasEmail) notifyCheck.checked = false;
+            notifyHint.textContent = hasEmail
+                ? 'Your email is only used for this report.'
+                : 'Your email is only used for this report. Enter an address above to enable updates.';
+        }
+        contact.addEventListener('input', syncNotify);
+        contact.addEventListener('change', syncNotify);
+
         // Honeypot — visually hidden; bots fill it, humans never see it.
         var hpWrap = el('div', 'kop-bug-reporter__hp');
         hpWrap.setAttribute('aria-hidden', 'true');
@@ -347,6 +373,8 @@
             description: desc,
             steps: steps,
             contact: contact,
+            notify: notifyCheck,
+            syncNotify: syncNotify,
             honeypot: hp,
             includeTech: techCheck,
             techPre: techPre,
@@ -407,6 +435,7 @@
         f.status.className = 'kop-bug-reporter__status';
         f.submit.disabled = false;
         f.submit.textContent = 'Send report';
+        f.syncNotify();
         refreshTechPreview();
 
         lastFocused = document.activeElement;
@@ -432,11 +461,24 @@
         f.featureChip.hidden = true;
     }
 
+    function isPlausibleEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
     function submitReport() {
         var f = modal._fields;
         var description = f.description.value.trim();
         var includeTech = f.includeTech.checked;
+        var contactValue = f.contact.value.trim();
+        var notifyUpdates = !!f.notify.checked && contactValue !== '';
         var snap = techSnapshot();
+
+        if (notifyUpdates && !isPlausibleEmail(contactValue)) {
+            f.status.className = 'kop-bug-reporter__status kop-bug-reporter__status--error';
+            f.status.textContent = 'Enter a valid email address to receive status updates, or untick the updates box.';
+            f.contact.focus();
+            return;
+        }
 
         var payload = {
             feature: currentFeature ? currentFeature.id : '',
@@ -444,7 +486,8 @@
             category: f.category.value,
             description: description,
             steps: f.steps.value.trim(),
-            contact: f.contact.value.trim(),
+            contact: contactValue,
+            notifyUpdates: notifyUpdates,
             website: f.honeypot.value,
             pageUrl: snap.url,
             pageTitle: document.title,
@@ -474,7 +517,9 @@
                 return data;
             });
         }).then(function () {
-            f.status.textContent = 'Thank you! Your report was sent.';
+            f.status.textContent = notifyUpdates
+                ? 'Thank you! Your report was sent. We will email ' + contactValue + ' when its status changes.'
+                : 'Thank you! Your report was sent.';
             f.status.className = 'kop-bug-reporter__status kop-bug-reporter__status--success';
             f.submit.textContent = 'Sent ✓';
             setTimeout(function () {
@@ -482,7 +527,7 @@
                 closeModal();
                 f.submit.disabled = false;
                 f.submit.textContent = 'Send report';
-            }, 1600);
+            }, notifyUpdates ? 3200 : 1600);
         }).catch(function (err) {
             f.submit.disabled = false;
             f.submit.textContent = 'Send report';

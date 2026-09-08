@@ -29,6 +29,7 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS bug_reports (
     description TEXT NOT NULL,
     steps TEXT NULL,
     contact VARCHAR(190) NULL,
+    notify_updates TINYINT(1) NOT NULL DEFAULT 0,
     page_url VARCHAR(500) NULL,
     page_title VARCHAR(255) NULL,
     user_agent VARCHAR(500) NULL,
@@ -115,9 +116,21 @@ try {
             kop_bug_json_exit(['success' => false, 'error' => 'Invalid id or status'], 400);
         }
         $note = mb_substr(trim((string)($input['adminNote'] ?? '')), 0, 5000);
+        $before = $pdo->prepare("SELECT * FROM bug_reports WHERE id = ?");
+        $before->execute([$id]);
+        $existing = $before->fetch();
+        if (!$existing) {
+            kop_bug_json_exit(['success' => false, 'error' => 'Report not found'], 404);
+        }
         $stmt = $pdo->prepare("UPDATE bug_reports SET status = ?, admin_note = COALESCE(NULLIF(?, ''), admin_note) WHERE id = ?");
         $stmt->execute([$newStatus, $note, $id]);
-        kop_bug_json_exit(['success' => true, 'id' => $id, 'status' => $newStatus]);
+
+        // Tell the reporter, if they asked for updates (inc/bug-report-notify.php).
+        $notified = false;
+        if (function_exists('kop_bug_report_notify_status_change')) {
+            $notified = kop_bug_report_notify_status_change($existing, $newStatus, (string)$existing['status'], $note);
+        }
+        kop_bug_json_exit(['success' => true, 'id' => $id, 'status' => $newStatus, 'reporterNotified' => $notified]);
     }
 
     // ---------- Public: submit a report ----------
@@ -154,6 +167,15 @@ try {
     $feature = mb_substr(trim((string)($input['feature'] ?? '')), 0, 120) ?: null;
     $featureLabel = mb_substr(trim((string)($input['featureLabel'] ?? '')), 0, 120);
 
+    // Contact email + opt-in to status-change emails. The address is free
+    // text unless the reporter opts in, in which case it must be a real email
+    // (that's the only thing we'd ever send to).
+    $contact = mb_substr(trim((string)($input['contact'] ?? '')), 0, 190);
+    $notifyUpdates = !empty($input['notifyUpdates']) ? 1 : 0;
+    if ($notifyUpdates && filter_var($contact, FILTER_VALIDATE_EMAIL) === false) {
+        kop_bug_json_exit(['success' => false, 'error' => 'Enter a valid email address to receive status updates, or untick the updates box.'], 400);
+    }
+
     $consoleErrors = null;
     if (isset($input['consoleErrors']) && is_array($input['consoleErrors'])) {
         // Cap at 20 entries / ~40KB so nobody can stuff megabytes in.
@@ -176,7 +198,8 @@ try {
         $category,
         mb_substr($description, 0, 10000),
         mb_substr(trim((string)($input['steps'] ?? '')), 0, 10000) ?: null,
-        mb_substr(trim((string)($input['contact'] ?? '')), 0, 190) ?: null,
+        $contact ?: null,
+        $notifyUpdates,
         mb_substr((string)($input['pageUrl'] ?? ''), 0, 500) ?: null,
         mb_substr((string)($input['pageTitle'] ?? ''), 0, 255) ?: null,
         mb_substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 500) ?: null,
@@ -186,24 +209,42 @@ try {
         $ipHash,
     ];
 
+    $insertSql = "INSERT INTO bug_reports
+        (feature, category, description, steps, contact, notify_updates, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     try {
-        $stmt = $pdo->prepare("INSERT INTO bug_reports
-            (feature, category, description, steps, contact, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare($insertSql);
         $stmt->execute($insertValues);
     } catch (PDOException $insEx) {
-        // A bug_reports table created before the feature column existed:
-        // don't lose the report — insert without it (the wp-admin triage page
-        // adds the column the next time it's opened).
-        if (strpos($insEx->getMessage(), 'feature') === false) {
+        $msg = $insEx->getMessage();
+        if (strpos($msg, 'notify_updates') !== false) {
+            // Table predates the updates opt-in. Add the column (one-time,
+            // idempotent) and retry so the opt-in isn't silently dropped.
+            try {
+                $pdo->exec('ALTER TABLE bug_reports ADD COLUMN notify_updates TINYINT(1) NOT NULL DEFAULT 0 AFTER contact');
+            } catch (PDOException $alterEx) {
+                error_log('Bug report: could not add notify_updates column: ' . $alterEx->getMessage());
+            }
+            $stmt = $pdo->prepare($insertSql);
+            $stmt->execute($insertValues);
+        } elseif (strpos($msg, 'feature') !== false) {
+            // A bug_reports table created before the feature column existed:
+            // don't lose the report — insert without it (the wp-admin triage
+            // page adds the column the next time it's opened).
+            $stmt = $pdo->prepare("INSERT INTO bug_reports
+                (category, description, steps, contact, notify_updates, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute(array_slice($insertValues, 1));
+        } else {
             throw $insEx;
         }
-        $stmt = $pdo->prepare("INSERT INTO bug_reports
-            (category, description, steps, contact, page_url, page_title, user_agent, viewport, console_errors, context_json, ip_hash)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute(array_slice($insertValues, 1));
     }
     $newId = (int)$pdo->lastInsertId();
+
+    // Receipt to the reporter when they opted in to updates — best effort.
+    if ($notifyUpdates && function_exists('kop_bug_report_send_receipt')) {
+        kop_bug_report_send_receipt($contact, $newId);
+    }
 
     // Email notification — best effort, never blocks the response.
     if (function_exists('wp_mail') && function_exists('get_option')) {
@@ -216,7 +257,7 @@ try {
                 . "Page: " . (string)($input['pageUrl'] ?? '(unknown)') . "\n\n"
                 . "Description:\n$description\n\n"
                 . (trim((string)($input['steps'] ?? '')) !== '' ? "Steps to reproduce:\n" . trim((string)$input['steps']) . "\n\n" : '')
-                . (trim((string)($input['contact'] ?? '')) !== '' ? "Contact: " . trim((string)$input['contact']) . "\n\n" : '')
+                . ($contact !== '' ? "Contact: " . $contact . ($notifyUpdates ? " (wants status updates by email)" : '') . "\n\n" : '')
                 . "Review it in wp-admin → KOP Data Tools → Bug Reports.";
             @wp_mail($adminEmail, $subject, $body);
         }
@@ -225,7 +266,10 @@ try {
     kop_bug_json_exit([
         'success' => true,
         'id' => $newId,
-        'message' => 'Thank you — your report was received.'
+        'message' => $notifyUpdates
+            ? 'Thank you — your report was received. We will email you when its status changes.'
+            : 'Thank you — your report was received.',
+        'notifyUpdates' => (bool)$notifyUpdates
     ]);
 
 } catch (PDOException $e) {

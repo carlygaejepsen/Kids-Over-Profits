@@ -157,13 +157,23 @@ function kop_render_bug_reports_page() {
         $id = (int) $_POST['kop_bug_id'];
         $new_status = sanitize_key($_POST['kop_bug_status']);
         if ($id > 0 && in_array($new_status, $statuses, true)) {
+            if (function_exists('kop_bug_ensure_notify_column')) {
+                kop_bug_ensure_notify_column();
+            }
+            $existing = $wpdb->get_row($wpdb->prepare('SELECT * FROM bug_reports WHERE id = %d', $id));
             $wpdb->query($wpdb->prepare(
                 'UPDATE bug_reports SET status = %s WHERE id = %d',
                 $new_status,
                 $id
             ));
+            $notified = false;
+            if ($existing && function_exists('kop_bug_report_notify_status_change')) {
+                $notified = kop_bug_report_notify_status_change($existing, $new_status, (string) $existing->status);
+            }
             echo '<div class="notice notice-success is-dismissible"><p>Report #' . esc_html($id)
-                . ' marked as ' . esc_html(str_replace('_', ' ', $new_status)) . '.</p></div>';
+                . ' marked as ' . esc_html(str_replace('_', ' ', $new_status)) . '.'
+                . ($notified ? ' The reporter was emailed about the change.' : '')
+                . '</p></div>';
         }
     }
 
@@ -186,6 +196,9 @@ function kop_render_bug_reports_page() {
     // here (admin context) so the public insert path never needs to run DDL.
     if (!$wpdb->get_var("SHOW COLUMNS FROM bug_reports LIKE 'feature'")) {
         $wpdb->query('ALTER TABLE bug_reports ADD COLUMN feature VARCHAR(120) NULL AFTER id');
+    }
+    if (function_exists('kop_bug_ensure_notify_column')) {
+        kop_bug_ensure_notify_column();
     }
 
     // Status filter tabs with counts.
@@ -254,7 +267,11 @@ function kop_render_bug_reports_page() {
                 . esc_html($r->page_url) . '</a></p>';
         }
         if (!empty($r->contact)) {
-            echo '<p style="margin:0 0 6px"><em>Contact:</em> ' . esc_html($r->contact) . '</p>';
+            echo '<p style="margin:0 0 6px"><em>Contact:</em> ' . esc_html($r->contact);
+            if (!empty($r->notify_updates)) {
+                echo ' <span style="display:inline-block;padding:1px 6px;border-radius:3px;background:#e6f4ea;color:#1b7e3c;font-size:11px;vertical-align:middle">wants status updates</span>';
+            }
+            echo '</p>';
         }
         if (!empty($tech) || !empty($r->user_agent)) {
             echo '<details><summary style="cursor:pointer">Technical details</summary><div style="font-size:12px;padding:6px 0">';
