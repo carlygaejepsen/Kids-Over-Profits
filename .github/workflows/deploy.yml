@@ -3,6 +3,11 @@ name: Deploy to cPanel
 # On every push to main: tell cPanel to pull from GitHub, then run the
 # .cpanel.yml deployment tasks (copies theme files into public_html).
 # Requires repo secrets: CPANEL_HOST, CPANEL_USER, CPANEL_TOKEN, CPANEL_REPO_ROOT.
+#
+# The shared host occasionally answers a UAPI call with an HTML error page
+# instead of JSON. Each call below retries a few times and, when it still
+# fails, prints the HTTP code and the raw body so the log shows what cPanel
+# actually said rather than a jq parse error.
 on:
   push:
     branches: [main]
@@ -19,36 +24,61 @@ jobs:
       - name: Pull latest commit on server
         run: |
           root=$(printf %s "${{ secrets.CPANEL_REPO_ROOT }}" | jq -sRr @uri)
-          resp=$(curl -sS --fail-with-body \
-            "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControl/update?repository_root=${root}&branch=main" \
-            -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
-          echo "$resp" | jq -e '.status == 1' > /dev/null || { echo "$resp" | jq . ; exit 1; }
-          echo "Server repo updated to: $(echo "$resp" | jq -r '.data.last_update.identifier // "unknown"')"
+          url="https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControl/update?repository_root=${root}&branch=main"
+          resp=""
+          for attempt in 1 2 3; do
+            out=$(curl -sS -w '\n%{http_code}' "$url" \
+              -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}") || true
+            code=${out##*$'\n'}
+            body=${out%$'\n'*}
+            if printf %s "$body" | jq -e '.status == 1' > /dev/null 2>&1; then
+              resp=$body
+              break
+            fi
+            echo "Attempt ${attempt}: HTTP ${code:-none}, not a successful cPanel JSON reply. Body:"
+            printf %s "$body" | head -c 800; echo
+            [ "$attempt" -lt 3 ] && sleep 20
+          done
+          [ -n "$resp" ] || { echo "VersionControl/update failed after 3 attempts"; exit 1; }
+          echo "Server repo updated to: $(printf %s "$resp" | jq -r '.data.last_update.identifier // "unknown"')"
 
       - name: Run .cpanel.yml deployment
         run: |
           root=$(printf %s "${{ secrets.CPANEL_REPO_ROOT }}" | jq -sRr @uri)
-          resp=$(curl -sS --fail-with-body \
-            "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/create?repository_root=${root}" \
-            -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
-          echo "$resp" | jq -e '.status == 1' > /dev/null || { echo "$resp" | jq . ; exit 1; }
-          deploy_id=$(echo "$resp" | jq -r '.data.deploy_id')
+          url="https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/create?repository_root=${root}"
+          resp=""
+          for attempt in 1 2 3; do
+            out=$(curl -sS -w '\n%{http_code}' "$url" \
+              -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}") || true
+            code=${out##*$'\n'}
+            body=${out%$'\n'*}
+            if printf %s "$body" | jq -e '.status == 1' > /dev/null 2>&1; then
+              resp=$body
+              break
+            fi
+            echo "Attempt ${attempt}: HTTP ${code:-none}, not a successful cPanel JSON reply. Body:"
+            printf %s "$body" | head -c 800; echo
+            [ "$attempt" -lt 3 ] && sleep 20
+          done
+          [ -n "$resp" ] || { echo "VersionControlDeployment/create failed after 3 attempts"; exit 1; }
+          deploy_id=$(printf %s "$resp" | jq -r '.data.deploy_id')
           echo "Deployment ${deploy_id} queued"
 
           # Poll until the deployment finishes. Usually seconds, but the shared
           # host sometimes queues deploys for several minutes — allow 10.
+          # A malformed poll response is skipped, not fatal.
           for i in $(seq 1 40); do
             sleep 15
             list=$(curl -sS \
               "https://${{ secrets.CPANEL_HOST }}:2083/execute/VersionControlDeployment/retrieve?repository_root=${root}" \
-              -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}")
-            row=$(echo "$list" | jq --argjson id "$deploy_id" '.data[]? | select(.deploy_id == $id)')
+              -H "Authorization: cpanel ${{ secrets.CPANEL_USER }}:${{ secrets.CPANEL_TOKEN }}") || true
+            row=$(printf %s "$list" | jq --argjson id "$deploy_id" '.data[]? | select(.deploy_id == $id)' 2>/dev/null || true)
             [ -z "$row" ] && continue
-            if echo "$row" | jq -e '.timestamps.succeeded // empty' > /dev/null; then
+            if printf %s "$row" | jq -e '.timestamps.succeeded // empty' > /dev/null; then
               echo "Deployment succeeded"; exit 0
             fi
-            if echo "$row" | jq -e '.timestamps.failed // empty' > /dev/null; then
-              echo "Deployment FAILED:"; echo "$row" | jq .; exit 1
+            if printf %s "$row" | jq -e '.timestamps.failed // empty' > /dev/null; then
+              echo "Deployment FAILED:"; printf %s "$row" | jq .; exit 1
             fi
           done
           echo "Timed out waiting for deployment result (it may still complete server-side)"
