@@ -7,7 +7,7 @@
 get_header();
 ?>
 
-<main id="primary" class="site-main kop-privacy">
+<div class="kop-privacy">
   <div class="kop-privacy__container">
 
     <h1>Terms of Service</h1>
@@ -80,6 +80,6 @@ get_header();
     </section>
 
   </div>
-</main>
+</div>
 
 <?php get_footer(); ?>

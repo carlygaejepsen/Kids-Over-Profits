@@ -40,6 +40,9 @@ require_once get_stylesheet_directory() . '/inc/features.php';
 // Homepage Sidebar Widgets
 require_once get_stylesheet_directory() . '/inc/widgets.php';
 
+// Kadence content wrapper + sidebar (donate / newsletter widgets) around templates/*.php
+require_once get_stylesheet_directory() . '/inc/template-layout.php';
+
 // Ajax Search Lite live-dropdown integration (KOP database results)
 require_once get_stylesheet_directory() . '/inc/ajax-search-lite.php';
 

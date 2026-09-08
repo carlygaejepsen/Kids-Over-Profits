@@ -8,9 +8,7 @@
 get_header();
 ?>
 
-<div id="content" class="site-content">
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+<div class="state-reports-content">
 			<?php
 			if ( have_posts() ) {
 				while ( have_posts() ) {
@@ -75,8 +73,6 @@ get_header();
 				}
 			}
 			?>
-		</main>
-	</div>
 </div>
 
 <?php
