@@ -35,6 +35,10 @@
  * out of the unclear/all lists so it stops reappearing every pass. Transient
  * failures (Groq rate limit, pdf.js blocked by the browser, network) never
  * exclude. The bucket is browsable via scope=excluded and rows can be restored.
+ * Failures that cannot be classified up front (Groq rejecting one document,
+ * an unparseable reply on its text, a crash mid-request) are counted per
+ * attachment in _kop_rtc_fail; the third consecutive non-transient failure
+ * parks the file with its last error as the reason.
  *
  * Admin-only. Loads WordPress via config.php. Uses GROQ_API_KEY (or the
  * legacy GROK_API_KEY spelling) from .env; GROQ_MODEL / GROQ_VISION_MODEL
@@ -63,6 +67,7 @@ define('KOP_RTC_EXCLUDED_META', '_kop_rtc_excluded');
 
 /** Record a permanent scan failure so the attachment leaves the working lists. */
 function kop_rtc_exclude($att_id, $reason) {
+    delete_post_meta((int) $att_id, '_kop_rtc_fail'); // repeat-failure counter, see below
     update_post_meta((int) $att_id, KOP_RTC_EXCLUDED_META, wp_json_encode([
         'reason' => mb_substr(trim((string) $reason), 0, 200),
         'time'   => current_time('mysql'),
@@ -84,6 +89,71 @@ function kop_rtc_exclusion($att_id) {
 function kop_rtc_fail_excluded($att_id, $reason) {
     kop_rtc_exclude($att_id, $reason);
     echo json_encode(['ok' => false, 'error' => $reason . ' Excluded from future passes.', 'excluded' => true, 'reason' => $reason]);
+    exit;
+}
+
+/**
+ * Repeat-failure tracking. Most failures cannot be classified as permanent
+ * up front (Groq rejecting one document's text, a junk text layer the model
+ * cannot parse, the server dying on a huge PDF), so each suggest attempt is
+ * counted in post meta and cleared on success. When the same attachment fails
+ * KOP_RTC_MAX_FAILS times in a row it is parked with its last error as the
+ * reason. Transient failures (rate limit, network, missing key, pdf.js
+ * blocked) do not count. The counter is bumped BEFORE the work starts so a
+ * request that crashes (500, timeout) still counts.
+ */
+define('KOP_RTC_FAIL_META', '_kop_rtc_fail');
+define('KOP_RTC_MAX_FAILS', 3);
+
+function kop_rtc_fail_record($att_id) {
+    $raw = get_post_meta((int) $att_id, KOP_RTC_FAIL_META, true);
+    $d = ($raw !== '' && $raw !== false) ? json_decode((string) $raw, true) : null;
+    return ['count' => (int) ($d['count'] ?? 0), 'error' => (string) ($d['error'] ?? '')];
+}
+
+function kop_rtc_fail_save($att_id, $rec) {
+    if ((int) $rec['count'] <= 0) {
+        delete_post_meta((int) $att_id, KOP_RTC_FAIL_META);
+        return;
+    }
+    update_post_meta((int) $att_id, KOP_RTC_FAIL_META, wp_json_encode([
+        'count' => (int) $rec['count'],
+        'error' => mb_substr((string) $rec['error'], 0, 200),
+        'time'  => current_time('mysql'),
+    ]));
+}
+
+/** Errors caused by the service or the session, not by the file. */
+function kop_rtc_error_is_transient($error) {
+    foreach ([
+        'rate limit', 'Network error', 'API key', 'HTTP 5', 'HTTP 502', 'HTTP 503', 'HTTP 504',
+        'GD unavailable', 'Session expired', 'pdf.js blocked', 'No working Groq vision model',
+        'json_encode failed', 'timed out', 'timeout', 'Service Unavailable', 'over capacity',
+    ] as $needle) {
+        if (stripos((string) $error, $needle) !== false) return true;
+    }
+    return false;
+}
+
+/**
+ * Emit a suggest failure: count it against the attachment when it is tied to
+ * the file, and park the attachment once the repeat limit is reached.
+ * $prev is the record as it stood before this attempt was counted.
+ */
+function kop_rtc_fail_counted($att_id, $error, $prev) {
+    $error = (string) $error;
+    if (kop_rtc_error_is_transient($error)) {
+        kop_rtc_fail_save($att_id, $prev); // this attempt does not count
+        echo json_encode(['ok' => false, 'error' => $error]);
+        exit;
+    }
+    $count = (int) $prev['count'] + 1;
+    if ($count >= KOP_RTC_MAX_FAILS) {
+        delete_post_meta((int) $att_id, KOP_RTC_FAIL_META);
+        kop_rtc_fail_excluded($att_id, 'Failed ' . $count . ' times (last: ' . mb_substr($error, 0, 120) . ').');
+    }
+    kop_rtc_fail_save($att_id, ['count' => $count, 'error' => $error]);
+    echo json_encode(['ok' => false, 'error' => $error . ' (attempt ' . $count . ' of ' . KOP_RTC_MAX_FAILS . ')', 'attempt' => $count]);
     exit;
 }
 
@@ -650,6 +720,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
         exit;
     }
 
+    // Count this attempt up front so a crash mid-request (500, timeout on a
+    // huge PDF) is still remembered; success or a transient error undoes it.
+    $prev_fail = kop_rtc_fail_record($att_id);
+    if ($prev_fail['count'] >= KOP_RTC_MAX_FAILS) {
+        // Only reachable when earlier attempts died without answering.
+        delete_post_meta($att_id, KOP_RTC_FAIL_META);
+        kop_rtc_fail_excluded($att_id, 'Failed ' . $prev_fail['count'] . ' times without a response (server crash or timeout'
+            . ($prev_fail['error'] !== '' ? '; last: ' . mb_substr($prev_fail['error'], 0, 100) : '') . ').');
+    }
+    kop_rtc_fail_save($att_id, ['count' => $prev_fail['count'] + 1, 'error' => $prev_fail['error'] !== '' ? $prev_fail['error'] : 'no response']);
+
     // Client-supplied material (browser pdf.js): extracted text and/or a
     // rendered JPEG of page 1 when the PDF turned out to be a scan.
     $client_text = trim(wp_unslash((string) ($_POST['text'] ?? '')));
@@ -685,8 +766,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
             if ($image_b64 === '') {
                 if (!function_exists('imagecreatefromstring')) {
                     // Server config problem, not a bad file - do not exclude.
-                    echo json_encode(['ok' => false, 'error' => 'Could not read image (GD unavailable on this server).']);
-                    exit;
+                    kop_rtc_fail_counted($att_id, 'Could not read image (GD unavailable on this server).', $prev_fail);
                 }
                 kop_rtc_fail_excluded($att_id, 'Could not read image (corrupt or unsupported file).');
             }
@@ -709,6 +789,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'sugge
         $why = $browser_note !== '' ? $browser_note : 'no text layer and page 1 could not be rendered';
         kop_rtc_fail_excluded($att_id, 'Unscannable PDF (' . mb_substr($why, 0, 120) . ').');
     }
+    if (empty($result['ok'])) {
+        kop_rtc_fail_counted($att_id, $result['error'] ?? 'failed', $prev_fail);
+    }
+    delete_post_meta($att_id, KOP_RTC_FAIL_META);
     echo json_encode($result);
     exit;
 }
@@ -730,6 +814,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         $att_id = (int) $att_id;
         if ($att_id <= 0 || get_post_type($att_id) !== 'attachment') continue;
         if (delete_post_meta($att_id, KOP_RTC_EXCLUDED_META)) $done++;
+        delete_post_meta($att_id, KOP_RTC_FAIL_META);
     }
     $restored = true;
     $restore_log[] = "Restored {$done} attachment(s) to the working lists.";
@@ -908,7 +993,7 @@ td a { color: #000080; }
     model. Only PDFs and images are listed &mdash; other attachment types are out of scope.
     Files that cannot be scanned at all are moved to the
     <a href="<?php echo $excluded_url; ?>">excluded bucket</a> (<?php echo $total_excluded; ?> so far)
-    and stop appearing here; transient failures (rate limit, network) stay in the list for a retry.
+    and stop appearing here. Any other failure tied to the file that repeats 3 times in a row is parked too, with its last error as the reason; transient failures (rate limit, network) never count.
 </div>
 <?php endif; ?>
 
