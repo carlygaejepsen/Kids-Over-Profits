@@ -25,16 +25,6 @@ const escapeHtmlValue = value => {
     }[char] || char));
 };
 
-const renderRawFacilityData = facility => {
-    let json = '';
-    try {
-        json = JSON.stringify(facility, null, 2);
-    } catch (error) {
-        return '';
-    }
-    return json ? `<details class="facility-raw-data"><summary>View complete source data</summary><pre>${escapeHtmlValue(json)}</pre></details>` : '';
-};
-
 const toTitleCase = value => {
     if (value === null || value === undefined) return '';
     const text = typeof value === 'string' ? value : String(value);
@@ -798,6 +788,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!isValueEmpty(genderValue)) factItems.push({ label: 'Gender', value: escapeHtml(toTitleCase(genderValue)), note: genderFactNotes.join('; ') });
                 if (!isValueEmpty(capacityValue)) factItems.push({ label: 'Capacity', value: escapeHtml(String(capacityValue)), note: capacityFactNotes.join('; ') });
 
+                // Licensing record and report count from inspection_facilities /
+                // inspection_reports (attached as inspection_stats by the server,
+                // see kop_attach_inspection_stats_to_projects in inc/database.php).
+                // Mirrors tti-program-index.js.
+                const inspectionStats = (facility.inspection_stats && typeof facility.inspection_stats === 'object') ? facility.inspection_stats : null;
+                if (inspectionStats) {
+                    const reportCount = Number(inspectionStats.report_count) || 0;
+                    const reportLinks = (Array.isArray(inspectionStats.reports_urls) ? inspectionStats.reports_urls : [])
+                        .map((u, i) => `<a href="${escapeAttribute(u)}">${escapeHtml((inspectionStats.states || [])[i] || 'State')} reports</a>`);
+                    const reportValue = `${reportCount} on file${reportLinks.length ? ` &middot; ${reportLinks.join(' &middot; ')}` : ''}`;
+                    factItems.push({ label: 'Inspection reports', value: reportValue, note: '' });
+                    if (isValueEmpty(capacityValue) && !isValueEmpty(inspectionStats.bed_capacity)) {
+                        factItems.push({ label: 'Licensed capacity', value: escapeHtml(String(inspectionStats.bed_capacity)), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.licensed_program_name)) {
+                        const lpn = String(inspectionStats.licensed_program_name).trim();
+                        factItems.push({ label: /^[\d\s-]+$/.test(lpn) ? 'License number' : 'Licensed program name', value: escapeHtml(lpn), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.executive_director)) {
+                        factItems.push({ label: 'Executive director (licensing record)', value: escapeHtml(inspectionStats.executive_director), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.phone)) {
+                        factItems.push({ label: 'Phone', value: escapeHtml(inspectionStats.phone), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.license_expiration)) {
+                        factItems.push({ label: 'License expires', value: escapeHtml(inspectionStats.license_expiration), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.relicense_visit_date)) {
+                        factItems.push({ label: 'Relicensing visit', value: escapeHtml(inspectionStats.relicense_visit_date), note: '' });
+                    }
+                    if (!isValueEmpty(inspectionStats.licensing_action)) {
+                        factItems.push({ label: 'License status', value: escapeHtml(inspectionStats.licensing_action), note: '' });
+                    }
+                }
+
                 const factsHtml = factItems.length
                     ? renderDetailSection(
                         'At a glance',
@@ -911,6 +936,57 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>`;
                 }
 
+                // Deaths on record (attached as memorials[] by the server, see
+                // kop_attach_memorials_to_projects in inc/database.php). Same
+                // strip + section treatment as lawsuits, mirroring tti-program-index.js.
+                const memorialItems = Array.isArray(facility.memorials) ? facility.memorials : [];
+                let memorialStripHtml = '';
+                let memorialSectionHtml = '';
+                if (memorialItems.length > 0) {
+                    const formatMemorialDate = (value, precision) => {
+                        if (!value) return '';
+                        const ts = Date.parse(value);
+                        if (isNaN(ts)) return value;
+                        const d = new Date(ts);
+                        if (precision === 'year') return String(d.getUTCFullYear());
+                        if (precision === 'unknown') return `around ${d.getUTCFullYear()}`;
+                        if (precision === 'month') return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', timeZone: 'UTC' });
+                        return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' });
+                    };
+                    const memorialMetaFor = m => {
+                        const parts = [];
+                        if (m.age !== null && m.age !== undefined && m.age !== '') parts.push(`Age ${escapeHtml(String(m.age))}`);
+                        const when = formatMemorialDate(m.date_of_death, m.date_precision);
+                        if (when) parts.push(escapeHtml(when));
+                        if (m.location) parts.push(escapeHtml(m.location));
+                        return parts;
+                    };
+                    const memorialItemsHtml = memorialItems.map(m => {
+                        const title = `<span class="facility-news-title">${escapeHtml(m.name || 'Name withheld')}</span>`;
+                        const meta = memorialMetaFor(m);
+                        const cause = m.cause_of_death ? `<div class="facility-lawsuit-summary">${escapeHtml(m.cause_of_death)}</div>` : '';
+                        const links = [];
+                        if (m.source_url) links.push(`<a href="${escapeAttribute(m.source_url)}" target="_blank" rel="noopener">${escapeHtml(m.source_name || 'Source')}</a>`);
+                        if (m.kop_url) links.push(`<a href="${escapeAttribute(m.kop_url)}">On Kids Over Profits</a>`);
+                        return `<li class="facility-news-item facility-memorial-item">${title}${meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : ''}${cause}${links.length ? `<div class="facility-news-meta">${links.join(' &middot; ')}</div>` : ''}</li>`;
+                    }).join('');
+                    memorialSectionHtml = renderDetailSection(
+                        `Deaths on record (${memorialItems.length})`,
+                        `<ul class="facility-news-list facility-memorial-list">${memorialItemsHtml}</ul>`,
+                        'facility-memorial-section'
+                    );
+
+                    const latestMemorial = memorialItems[0];
+                    const latestMemorialMeta = memorialMetaFor(latestMemorial).slice(0, 2);
+                    const moreMemorials = memorialItems.length - 1;
+                    memorialStripHtml = `<div class="facility-latest-news facility-memorial-strip">
+                            <span class="facility-latest-news-label">Death on record</span>
+                            <span class="facility-latest-news-title">${escapeHtml(latestMemorial.name || 'Name withheld')}</span>
+                            ${latestMemorialMeta.length ? `<span class="facility-latest-news-meta">${latestMemorialMeta.join(' &middot; ')}</span>` : ''}
+                            ${moreMemorials > 0 ? `<span class="facility-latest-news-more">+${moreMemorials} more below</span>` : ''}
+                        </div>`;
+                }
+
                 // Suppress keys already shown in the header / facts / notes
                 const suppressedFieldKeys = new Set([
                     'identification.name', 'identification.currentName',
@@ -981,6 +1057,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const fields = [];
                     const skipFullKeys = [
                         'resources', 'fieldNotes', 'linked_news', 'linked_lawsuits', 'facility_id',
+                        'memorials', // Rendered in the dedicated Deaths on record section
+                        'inspection_stats', // Rendered in At a glance
                         // Internal provenance metadata recorded when a facility is
                         // aggregated into a location project (see api/save-master.php).
                         // The operator is already shown in the header subtext.
@@ -1157,6 +1235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </p>` : ''}
                         </div>
                         ${lawsuitStripHtml}
+                        ${memorialStripHtml}
                         <div class="facility-details">
                             <details class="facility-expanded-info">
                                 <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
@@ -1165,11 +1244,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                     ${notesHtml}
                                     ${newsSectionHtml}
                                     ${lawsuitSectionHtml}
+                                    ${memorialSectionHtml}
                                     ${resourcesSectionHtml}
                                     ${documentsSectionHtml}
                                     ${additionalDetailsHtml}
                                     ${fieldNotesSectionHtml}
-                                    ${renderRawFacilityData(facility)}
                                     <div class="kop-submit-info-row">
                                         <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">Submit info about this facility</button>
                                     </div>

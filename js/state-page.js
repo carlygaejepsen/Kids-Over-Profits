@@ -1121,7 +1121,7 @@
         return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
     };
 
-    // Raw source-record keys shown in "All source data":
+    // Raw source-record keys shown in "Additional source fields":
     // 'currentOperator' / 'location_details' / 'zip' -> 'Current Operator' / 'Location Details' / 'Zip'.
     const formatFieldLabel = key => {
         const text = String(key ?? '').trim();
@@ -1156,15 +1156,62 @@
         return rows.join('');
     };
 
+    // Top-level facility keys the normalized detail rows above already render
+    // (or that are internal bookkeeping). Only keys outside this set are new or
+    // uncommon enough to be worth dumping raw.
+    const SOURCE_KEYS_ALREADY_SHOWN = new Set([
+        'identification', 'locationDetails', 'location', 'address', 'addressParts',
+        'operatingPeriod', 'staff', 'profileLinks', 'facilityDetails', 'accreditations',
+        'memberships', 'certifications', 'licensing', 'resources', 'notes', 'fieldNotes',
+        'treatmentTypes', 'philosophy', 'criticalIncidents', 'otherOperators',
+        'sourceOperator', 'matchAliases', 'facility_id', 'facilityId', 'name',
+        'displayName', 'city', 'state', '__facility_ref', 'id', 'timestamp',
+        // Provenance stamped on when a facility is aggregated into a location
+        // project (see api/save-master.php); the other tile renderers skip it too.
+        'sourceProject', 'source_project', 'sourceProjectId', 'source_project_id',
+        'sourceCategory', 'source_category', 'source_operator',
+    ]);
+
+    // Strip empties, false flags, and already-rendered keys from a raw record so
+    // the "Additional source fields" block only shows what the card is missing.
+    const pruneSourceValue = (value, depth = 0) => {
+        if (value === null || value === undefined || value === '' || value === false) return undefined;
+        if (typeof value !== 'object') return value;
+        if (depth > 8) return undefined;
+        if (Array.isArray(value)) {
+            const items = value.map(v => pruneSourceValue(v, depth + 1)).filter(v => v !== undefined);
+            return items.length ? items : undefined;
+        }
+        const out = {};
+        Object.entries(value).forEach(([key, child]) => {
+            if (depth === 0 && SOURCE_KEYS_ALREADY_SHOWN.has(key)) return;
+            const pruned = pruneSourceValue(child, depth + 1);
+            if (pruned !== undefined) out[key] = pruned;
+        });
+        return Object.keys(out).length ? out : undefined;
+    };
+
     const renderCompleteSourceData = rawRecords => {
         if (!Array.isArray(rawRecords) || !rawRecords.length) return '';
-        const records = rawRecords.map((record, index) => {
-            if (!record || typeof record !== 'object' || !record.data || typeof record.data !== 'object') return '';
-            const source = record.project_name ? ` (${record.project_name})` : '';
-            return `<div class="facility-source-record"><strong>Source record${rawRecords.length > 1 ? ` ${index + 1}` : ''}${escapeHtml(source)}:</strong>${renderCompleteValue(record.data, '', 0)}</div>`;
-        }).filter(Boolean);
+        const seen = new Set();
+        const records = [];
+        rawRecords.forEach(record => {
+            if (!record || typeof record !== 'object' || !record.data || typeof record.data !== 'object') return;
+            const pruned = pruneSourceValue(record.data, 0);
+            if (!pruned) return;
+            // The state aggregate and the operator project usually hold the same
+            // copy of a facility, so collapse identical leftovers.
+            const signature = JSON.stringify(pruned);
+            if (seen.has(signature)) return;
+            seen.add(signature);
+            records.push({ source: record.project_name || '', html: renderCompleteValue(pruned, '', 0) });
+        });
         if (!records.length) return '';
-        return `<div class="detail-row detail-complete-data"><strong>All source data</strong>${records.join('')}</div>`;
+        const showSource = records.length > 1;
+        const body = records.map(r => showSource
+            ? `<div class="facility-source-record"><strong>From ${escapeHtml(r.source || 'unnamed record')}:</strong>${r.html}</div>`
+            : r.html).join('');
+        return `<div class="detail-row detail-complete-data"><strong>Additional source fields</strong>${body}</div>`;
     };
 
     // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"

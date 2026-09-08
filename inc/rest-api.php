@@ -2490,6 +2490,25 @@ function kop_state_merge_program_fields(array &$existing, array $incoming) {
 }
 
 /**
+ * True when a project-level operator name is really the location the row is
+ * keyed by ("COLORADO" in locations_master.COLORADO) rather than an organization.
+ * Operator projects like CEDU or WWASPS also have operator.name === unique_name,
+ * so the name must additionally be a known state. Country aggregates are
+ * flagged by the collector via $meta['location_aggregate'] instead.
+ */
+function kop_state_is_location_aggregate_operator($operator_name, $project_name) {
+    $operator_name = trim((string)$operator_name);
+    $project_name = trim((string)$project_name);
+    if ($operator_name === '' || $project_name === '' || strcasecmp($operator_name, $project_name) !== 0) {
+        return false;
+    }
+    foreach (kop_state_abbrev_to_name() as $state_name) {
+        if (strcasecmp($operator_name, $state_name) === 0) return true;
+    }
+    return false;
+}
+
+/**
  * Build one directory program record from a facility object stored in
  * facilities_master / locations_master. Shared by the state and country
  * collectors so both directories expose the same fields.
@@ -2498,7 +2517,8 @@ function kop_state_merge_program_fields(array &$existing, array $incoming) {
  * @param array  $facility     The facility object.
  * @param array  $data         The normalized project payload (for operator name/type).
  * @param string $state_name   State being viewed ('' for country pages).
- * @param array  $meta         Optional: master_id, facility_count, updated_at, default_country.
+ * @param array  $meta         Optional: master_id, facility_count, updated_at, default_country,
+ *                             location_aggregate (true for locations_master rows).
  * @return array|null ['program' => [...], 'dedup_key' => string] or null when not a facility.
  */
 function kop_state_build_program_record($project_name, $facility, $data, $state_name, $meta = array()) {
@@ -2653,7 +2673,13 @@ function kop_state_build_program_record($project_name, $facility, $data, $state_
     $facility_operator = trim((string)($identification['currentOperator'] ?? ''));
     $project_operator_type = trim((string)($data['operator']['type'] ?? ''));
     $project_operator_name = trim((string)($data['operator']['name'] ?? ''));
-    $is_location_aggregate = strcasecmp($project_operator_type, 'Location Aggregate') === 0;
+    // Older locations_master rows (31 of 66 in production) never got the
+    // 'Location Aggregate' type stamped on their operator, so also treat the
+    // row as an aggregate when the collector says it came from locations_master
+    // or when the operator name is simply the state/country the row is keyed by.
+    $is_location_aggregate = strcasecmp($project_operator_type, 'Location Aggregate') === 0
+        || !empty($meta['location_aggregate'])
+        || kop_state_is_location_aggregate_operator($project_operator_name, $project_name);
     $resolved_operator = $facility_operator !== ''
         ? $facility_operator
         : ($is_location_aggregate ? '' : $project_operator_name);
@@ -2926,7 +2952,10 @@ function kop_state_collect_programs($state_name) {
         if ($loc_row && !empty($loc_row['json_data'])) {
             $loc_data = kop_normalize_project_payload($loc_row['json_data']);
             if (is_array($loc_data) && !empty($loc_data['facilities']) && is_array($loc_data['facilities'])) {
-                $loc_meta = array('updated_at' => (string)($loc_row['updated_at'] ?? ''));
+                $loc_meta = array(
+                    'updated_at'         => (string)($loc_row['updated_at'] ?? ''),
+                    'location_aggregate' => true,
+                );
                 foreach ($loc_data['facilities'] as $facility) {
                     $append_program($programs, $seen_names, $loc_row['unique_name'], $facility, $loc_data, $state_name, $loc_meta);
                 }

@@ -125,7 +125,10 @@ function kop_country_collect_programs($country_name) {
         if ($loc_row && !empty($loc_row['json_data'])) {
             $loc_data = kop_normalize_project_payload($loc_row['json_data']);
             if (is_array($loc_data) && !empty($loc_data['facilities']) && is_array($loc_data['facilities'])) {
-                $loc_meta = array('updated_at' => (string)($loc_row['updated_at'] ?? ''));
+                $loc_meta = array(
+                    'updated_at'         => (string)($loc_row['updated_at'] ?? ''),
+                    'location_aggregate' => true,
+                );
                 foreach ($loc_data['facilities'] as $facility) {
                     $append_program($programs, $seen_names, $loc_row['unique_name'], $facility, $loc_data, $country_name, $loc_meta);
                 }

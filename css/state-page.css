@@ -523,24 +523,6 @@
     overflow-wrap: anywhere;
 }
 
-.facility-raw-data {
-    margin-top: 0.6em;
-    padding-top: 0.6em;
-    border-top: 1px solid #d8dff0;
-}
-
-.facility-raw-data pre {
-    max-height: 32rem;
-    overflow: auto;
-    margin: 0.6em 0 0;
-    padding: 0.7em;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 4px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-    font: 0.78em/1.45 ui-monospace, SFMono-Regular, Consolas, monospace;
-}
 
 .facility-expand-btn {
     background: #f0f3fa;
