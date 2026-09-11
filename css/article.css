@@ -1,0 +1,152 @@
+/*
+ * Article template (templates/page-article.php).
+ *
+ * Reading layout for long-form pages: a measured column for running text,
+ * a contents box, and quiet header/footer meta. Column and table blocks are
+ * left at full content width.
+ */
+
+.kop-article-standfirst {
+    max-width: 60ch;
+    margin: 0.75rem auto 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 0.75rem 0 0;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-article-thumbnail {
+    margin: 0 0 1.5rem;
+}
+
+.kop-article-thumbnail img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+/* ---- Contents box ------------------------------------------------------ */
+
+.kop-article-toc {
+    margin: 0 0 2rem;
+    padding: 0.9rem 1.25rem 1rem;
+    background: var(--kop-sand, #f2eedf);
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+    font-size: 0.95rem;
+}
+
+.kop-article-toc summary {
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-article-toc summary:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: 2px;
+}
+
+.kop-article-toc ol {
+    margin: 0.75rem 0 0;
+    padding-left: 1.4rem;
+    columns: 1;
+}
+
+@media (min-width: 760px) {
+    .kop-article-toc ol {
+        columns: 2;
+        column-gap: 2rem;
+    }
+}
+
+.kop-article-toc li {
+    margin: 0 0 0.3rem;
+    break-inside: avoid;
+}
+
+.kop-article-toc li.kop-toc-l3 {
+    margin-left: 1rem;
+    font-size: 0.9em;
+}
+
+.kop-article-toc a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+}
+
+.kop-article-toc a:hover,
+.kop-article-toc a:focus-visible {
+    text-decoration: underline;
+}
+
+/* ---- Reading measure --------------------------------------------------- */
+
+.kop-article .entry-content > p,
+.kop-article .entry-content > ul,
+.kop-article .entry-content > ol,
+.kop-article .entry-content > blockquote,
+.kop-article .entry-content > h2,
+.kop-article .entry-content > h3,
+.kop-article .entry-content > h4 {
+    max-width: 72ch;
+}
+
+.kop-article .entry-content > p,
+.kop-article .entry-content > ul,
+.kop-article .entry-content > ol {
+    line-height: 1.7;
+}
+
+.kop-article .entry-content > p.has-text-align-center,
+.kop-article .entry-content > h2.has-text-align-center,
+.kop-article .entry-content > h3.has-text-align-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Bold-only marker paragraphs promoted to section markers */
+.kop-article .entry-content p.kop-article-marker {
+    margin-top: 2.25rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 1.1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-article .entry-content h2[id],
+.kop-article .entry-content h3[id],
+.kop-article .entry-content p.kop-article-marker {
+    scroll-margin-top: 6rem;
+}
+
+/* ---- Footer ------------------------------------------------------------ */
+
+.kop-article-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: 2.5rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 0.88rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-article-footer a {
+    color: var(--kop-teal, #33a7b5);
+}

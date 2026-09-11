@@ -522,6 +522,37 @@ function kop_template_assignments() {
         'law-policy'           => 'page-hub.php',
         'resources'            => 'page-hub.php',
 
+        // Long-form articles, timelines and case analyses (phase 6): reading layout only.
+        'advocacy-history'                                             => 'page-article.php',
+        'antiquity'                                                    => 'page-article.php',
+        'birth-of-the-tti'                                             => 'page-article.php',
+        'challenges-in-maine'                                          => 'page-article.php',
+        'child-welfare'                                                => 'page-article.php',
+        'common-survivor-experiences'                                  => 'page-article.php',
+        'corporatization'                                              => 'page-article.php',
+        'early-child-control'                                          => 'page-article.php',
+        'experimental-group-psychology'                                => 'page-article.php',
+        'fundamentalist'                                               => 'page-article.php',
+        'gao-2007-report'                                              => 'page-article.php',
+        'idd-timeline'                                                 => 'page-article.php',
+        'juvenile-justice-timeline'                                    => 'page-article.php',
+        'medieval-child-oblation-and-monastic-schools'                 => 'page-article.php',
+        'more-than-troubling'                                          => 'page-article.php',
+        'notes-quotes-summary'                                         => 'page-article.php',
+        'orphanages'                                                   => 'page-article.php',
+        'sicaa'                                                        => 'page-article.php',
+        'spiritual-abuse'                                              => 'page-article.php',
+        'survivor-resources-nature'                                    => 'page-article.php',
+        'the-kids-are-not-alright'                                     => 'page-article.php',
+        'tti-history-part-one'                                         => 'page-article.php',
+        'war-on-drugs'                                                 => 'page-article.php',
+        'warehouses-of-neglect'                                        => 'page-article.php',
+        'wilderness-therapy-timeline'                                  => 'page-article.php',
+        'doe-v-trails-motions'                                         => 'page-article.php',
+        'jane-june-doe-v-trails-carolina-et-al-summary'                => 'page-article.php',
+        'john-doe-v-trails-complaint-summary-defendant-information'    => 'page-article.php',
+        'news-2'                                                       => 'page-article.php',
+
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
         'canada'         => 'page-country.php',
@@ -686,7 +717,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '6';
+    $version = '7';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
