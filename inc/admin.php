@@ -924,6 +924,98 @@ function kop_apply_facility_seed_to_nested(PDO $pdo, array $target, array $field
     return $changed;
 }
 /**
+ * Lawsuit records assembled offline (seeds/lawsuits.json). Each case is
+ * inserted once, matched by case_name, as a published record with the
+ * facility links and news links the seed names. Existing cases are never
+ * modified, so edits made in the lawsuit admin persist.
+ */
+function kop_apply_lawsuit_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/lawsuits.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $spec = json_decode((string) file_get_contents($path), true);
+    if (!is_array($spec) || empty($spec['lawsuits']) || !is_array($spec['lawsuits'])) {
+        return $done;
+    }
+    $pdo = kop_seed_pdo();
+    if (!$pdo) {
+        return $done;
+    }
+    $submitted_by = (string) ($spec['submitted_by'] ?? 'seed');
+    $default_links = is_array($spec['facility_links'] ?? null) ? $spec['facility_links'] : array();
+    $json = static function ($v) {
+        return wp_json_encode(is_array($v) ? array_values($v) : array(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    };
+    try {
+        $exists = $pdo->prepare('SELECT id FROM lawsuits WHERE case_name = ? LIMIT 1');
+        $insert = $pdo->prepare(
+            'INSERT INTO lawsuits (case_name, case_number, court, jurisdiction, filing_date, status,
+                plaintiffs, defendants, facilities_mentioned, staff_mentioned, organizations_mentioned,
+                claims, outcome, settlement_amount, summary, source_urls, document_urls, tags,
+                filebird_folder_id, publication_status, submitted_by, published_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, \'published\', ?, NOW())'
+        );
+        $link_fac  = $pdo->prepare('INSERT IGNORE INTO lawsuit_facility_links (lawsuit_id, facility_id, link_type, created_by) VALUES (?, ?, ?, ?)');
+        $link_news = $pdo->prepare('INSERT IGNORE INTO lawsuit_news_links (lawsuit_id, news_id, link_type, match_reason, created_by) VALUES (?, ?, \'manual\', \'seed\', ?)');
+        $allowed_status = array('filed', 'in_progress', 'settled', 'dismissed', 'ruling', 'appeal', 'closed', 'unknown');
+        foreach ($spec['lawsuits'] as $case) {
+            if (empty($case['case_name'])) {
+                continue;
+            }
+            $exists->execute(array($case['case_name']));
+            if ($exists->fetchColumn()) {
+                continue;
+            }
+            $status = in_array($case['status'] ?? '', $allowed_status, true) ? $case['status'] : 'unknown';
+            $insert->execute(array(
+                (string) $case['case_name'],
+                (string) ($case['case_number'] ?? ''),
+                (string) ($case['court'] ?? ''),
+                (string) ($case['jurisdiction'] ?? ''),
+                !empty($case['filing_date']) ? $case['filing_date'] : null,
+                $status,
+                $json($case['plaintiffs'] ?? array()),
+                $json($case['defendants'] ?? array()),
+                $json($case['facilities_mentioned'] ?? array()),
+                $json($case['staff_mentioned'] ?? array()),
+                $json($case['organizations_mentioned'] ?? array()),
+                $json($case['claims'] ?? array()),
+                (string) ($case['outcome'] ?? ''),
+                (string) ($case['settlement_amount'] ?? ''),
+                (string) ($case['summary'] ?? ''),
+                $json($case['source_urls'] ?? array()),
+                $json($case['document_urls'] ?? array()),
+                $json($case['tags'] ?? array()),
+                !empty($case['filebird_folder_id']) ? (int) $case['filebird_folder_id'] : null,
+                $submitted_by,
+            ));
+            $lawsuit_id = (int) $pdo->lastInsertId();
+            if (!$lawsuit_id) {
+                continue;
+            }
+            $links = is_array($case['facility_links'] ?? null) ? $case['facility_links'] : $default_links;
+            foreach ($links as $link) {
+                if (empty($link['facility_id'])) {
+                    continue;
+                }
+                $type = in_array($link['link_type'] ?? '', array('mentioned', 'primary', 'related'), true) ? $link['link_type'] : 'mentioned';
+                $link_fac->execute(array($lawsuit_id, (int) $link['facility_id'], $type, $submitted_by));
+            }
+            foreach ((array) ($case['news_ids'] ?? array()) as $news_id) {
+                if ((int) $news_id > 0) {
+                    $link_news->execute(array($lawsuit_id, (int) $news_id, $submitted_by));
+                }
+            }
+            $done[] = $lawsuit_id;
+        }
+    } catch (Throwable $e) {
+        // Leave the table alone; the lawsuit admin can add cases by hand.
+    }
+    return $done;
+}
+/**
  * Apply kop_slug_renames(), kop_template_assignments(), then
  * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
@@ -933,6 +1025,7 @@ function kop_apply_template_assignments() {
     $summary['lawsuit_docs'] = kop_apply_lawsuit_document_fixes();
     $summary['seeded']       = kop_apply_seed_posts();
     $summary['facilities']   = kop_apply_facility_record_seeds();
+    $summary['lawsuits']     = kop_apply_lawsuit_seeds();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -981,7 +1074,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '12';
+    $version = '13';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
