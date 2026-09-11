@@ -482,8 +482,19 @@ add_action('admin_init', 'kop_maybe_ensure_tool_pages');
  */
 function kop_template_assignments() {
     return array(
-        // Facility Profile posts (phase 2). Hyde School is the pilot.
-        'hyde'           => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        // Facility Profile posts (phase 2). Hyde School was the pilot; the
+        // rest followed once its render diff against the stock layout passed.
+        'hyde'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'long-creek'                 => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'the-buckeye-ranch'          => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'asheville-academy'          => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'robert-land-academy'        => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'sweetser'                   => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'me-new-horizons'            => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'good-will-hinckley-roundel' => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'elan'                       => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'summit-achievement'         => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+        'pathway-family-center'      => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
 
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
@@ -558,7 +569,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '2';
+    $version = '3';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

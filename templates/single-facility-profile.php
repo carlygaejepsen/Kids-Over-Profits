@@ -329,12 +329,13 @@ while (have_posts()) :
             <h2>Lawsuits</h2>
             <ul class="kop-fp-list">
                 <?php foreach ($kop_fp_lawsuits as $case) :
-                    $year = !empty($case['filing_date']) ? substr((string) $case['filing_date'], 0, 4) : '';
-                    $bits = array_filter(array($year, $case['status'] ?? '', $case['court'] ?? ''), 'strlen');
+                    $year   = !empty($case['filing_date']) ? substr((string) $case['filing_date'], 0, 4) : '';
+                    $status = ucfirst(str_replace('_', ' ', (string) ($case['status'] ?? '')));
+                    $bits   = array_filter(array($year, $status, $case['court'] ?? ''), 'strlen');
                     ?>
                     <li>
                         <a href="<?php echo esc_url($kop_fp_lawsuits_url); ?>"><?php echo esc_html($case['case_name']); ?></a>
-                        <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(' &middot; ', $bits)); ?></span><?php endif; ?>
+                        <?php if ($bits) : ?><span class="meta"><?php echo esc_html(implode(" \u{00B7} ", $bits)); ?></span><?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
