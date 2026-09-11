@@ -38,11 +38,12 @@
         "Censorship of mail and use of polygraph examinations",
         "Anti-therapeutic and inhumane treatment"
       ],
-      "outcome": "Jury found for the school in 1980, but the district court entered a permanent injunction barring Provo Canyon School from opening, reading or censoring boys' mail, administering polygraphs, placing boys in isolation except to contain physical violence, and using physical force except to restrain a boy who is an immediate danger to himself or others. The Tenth Circuit upheld the injunction in 1982.",
+      "outcome": "Jury found for the school in 1980, but the district court entered a permanent injunction barring Provo Canyon School from opening, reading or censoring boys' mail, administering polygraphs, placing boys in isolation except to contain physical violence, and using physical force except to restrain a boy who is an immediate danger to himself or others. Affirmed as Milonas v. Williams, 691 F.2d 931 (10th Cir. 1982).",
       "settlement_amount": "",
       "summary": "Two teenagers sent to Provo Canyon School by their home states' juvenile justice systems escaped and brought a federal class action challenging the school's confinement, education and treatment methods. The case produced the 1980 injunction that still defines the limits on isolation, restraint, polygraphs and mail censorship at the school.",
       "source_urls": [
         "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+        "https://www.courtlistener.com/opinion/410235/milonas-v-williams/",
         "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
       ],
       "document_urls": [
@@ -60,9 +61,9 @@
       "filebird_folder_id": 50
     },
     {
-      "case_name": "Taylor v. Provo Canyon School and Charter Medical Corporation",
-      "case_number": "",
-      "court": "U.S. District Court for the District of Utah; Tenth Circuit Court of Appeals",
+      "case_name": "Taylor v. Charter Medical Corporation and Charter Provo School, Inc. d/b/a Provo Canyon School",
+      "case_number": "162 F.3d 827 (5th Cir. 1998)",
+      "court": "U.S. Court of Appeals for the Fifth Circuit",
       "jurisdiction": "Federal",
       "filing_date": null,
       "status": "ruling",
@@ -88,7 +89,7 @@
         "Breach of fiduciary duty",
         "Gross negligence"
       ],
-      "outcome": "One of the 1980s and 1990s suits in which Provo Canyon School was found liable; the Tenth Circuit opinion is on CourtListener.",
+      "outcome": "Fifth Circuit opinion issued December 9, 1998 (CourtListener). One of the 1980s and 1990s suits over confinement and treatment at the school.",
       "settlement_amount": "",
       "summary": "A former resident sued the school and its then-owner over his confinement and treatment. Part of a run of civil suits during the Charter years alleging abuse, false imprisonment, medical negligence and First Amendment violations.",
       "source_urls": [
@@ -390,6 +391,26 @@
       "set": {
         "source_urls": [
           "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+          "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
+        ]
+      }
+    },
+    {
+      "match_case_name": "Taylor v. Provo Canyon School and Charter Medical Corporation",
+      "set": {
+        "case_name": "Taylor v. Charter Medical Corporation and Charter Provo School, Inc. d/b/a Provo Canyon School",
+        "case_number": "162 F.3d 827 (5th Cir. 1998)",
+        "court": "U.S. Court of Appeals for the Fifth Circuit",
+        "outcome": "Fifth Circuit opinion issued December 9, 1998 (CourtListener). One of the 1980s and 1990s suits over confinement and treatment at the school."
+      }
+    },
+    {
+      "match_case_name": "Milonas and Rice v. Williams (Provo Canyon School)",
+      "set": {
+        "outcome": "Jury found for the school in 1980, but the district court entered a permanent injunction barring Provo Canyon School from opening, reading or censoring boys' mail, administering polygraphs, placing boys in isolation except to contain physical violence, and using physical force except to restrain a boy who is an immediate danger to himself or others. Affirmed as Milonas v. Williams, 691 F.2d 931 (10th Cir. 1982).",
+        "source_urls": [
+          "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+          "https://www.courtlistener.com/opinion/410235/milonas-v-williams/",
           "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
         ]
       }

@@ -3,10 +3,14 @@
   "slug": "discovery-ranch",
   "post_type": "post",
   "status": "draft",
-  "seed_version": 1,
+  "seed_version": 2,
   "content_file": "discovery-ranch.html",
   "excerpt": "An Ascent Companies residential treatment program for boys in Mapleton, Utah, opened in 2005, with a girls campus in Cedar City since 2013. Survivors describe a punitive merit system, censored family contact and peer sexual abuse that staff failed to prevent; 17-year-old Biruk Silvers died by suicide there in November 2024.",
-  "categories": ["facility-profile", "utah", "where-are-the-kids"],
+  "categories": [
+    "facility-profile",
+    "utah",
+    "where-are-the-kids"
+  ],
   "template": "single-facility-profile.php",
   "meta": {
     "facility_name": "Discovery Ranch",
@@ -27,7 +31,15 @@
     "trigger_warnings": "Trigger warnings: sexual abuse, physical restraint, seclusion, self-harm, suicide, animal death"
   },
   "meta_arrays": {
-    "treatments": ["Behavior Modification", "Level System", "Isolation", "Physical Restraint", "Mail and Phone Censorship", "Food Restriction", "Ranch Labor"]
+    "treatments": [
+      "Behavior Modification",
+      "Level System",
+      "Isolation",
+      "Physical Restraint",
+      "Mail and Phone Censorship",
+      "Food Restriction",
+      "Ranch Labor"
+    ]
   },
   "acf_field_keys": {
     "facility_name": "field_68505bd591ccb",
