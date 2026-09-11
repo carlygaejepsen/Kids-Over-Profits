@@ -31,6 +31,9 @@ require_once get_stylesheet_directory() . '/inc/country-rest-api.php';
 // Admin Menu & Page Rendering
 require_once get_stylesheet_directory() . '/inc/admin.php';
 
+// Slug-level 301 redirects for renamed or retired pages
+require_once get_stylesheet_directory() . '/inc/redirects.php';
+
 // Bug report status emails (shared by inc/admin.php and api/save-bug-report.php)
 require_once get_stylesheet_directory() . '/inc/bug-report-notify.php';
 

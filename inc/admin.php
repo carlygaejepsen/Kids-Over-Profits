@@ -470,3 +470,92 @@ function kop_maybe_ensure_tool_pages() {
     update_option('kop_tool_pages_ensured', $version);
 }
 add_action('admin_init', 'kop_maybe_ensure_tool_pages');
+/**
+ * Pages whose template is fixed by slug. Unlike kop_tool_page_specs(), several
+ * pages can share one template here (state and country hubs), so nothing is
+ * skipped because "a page already uses this template". Pages that do not exist
+ * are left alone; this list never creates pages.
+ *
+ * Slug => template file inside templates/.
+ */
+function kop_template_assignments() {
+    return array(
+        'wyoming'        => 'page-state.php',
+        'australia'      => 'page-country.php',
+        'canada'         => 'page-country.php',
+        'costa-rica'     => 'page-country.php',
+        'fiji'           => 'page-country.php',
+        'jamaica'        => 'page-country.php',
+        'mexico'         => 'page-country.php',
+        'samoa'          => 'page-country.php',
+        'united-kingdom' => 'page-country.php',
+    );
+}
+
+/**
+ * Slug renames applied before the assignments above. The country template
+ * derives the country name from the slug, so "uk" would resolve to "Uk" and
+ * match the wrong facilities. WordPress records the old slug and 301s it.
+ *
+ * Old slug => new slug. Only applied when the old page exists and no page
+ * already owns the new slug.
+ */
+function kop_slug_renames() {
+    return array(
+        'uk' => 'united-kingdom',
+    );
+}
+
+/**
+ * Apply kop_slug_renames() then kop_template_assignments(). Idempotent.
+ * Returns a summary array for the admin notice / manual runs.
+ */
+function kop_apply_template_assignments() {
+    $summary = array('renamed' => array(), 'assigned' => array(), 'missing' => array());
+
+    foreach (kop_slug_renames() as $old => $new) {
+        $page = get_page_by_path($old, OBJECT, 'page');
+        if (!$page || get_page_by_path($new, OBJECT, 'page')) {
+            continue;
+        }
+        $result = wp_update_post(array('ID' => $page->ID, 'post_name' => $new), true);
+        if (!is_wp_error($result)) {
+            // wp_update_post stores _wp_old_slug when the slug changes, so the
+            // old URL keeps working via wp_old_slug_redirect(). Record it
+            // explicitly too in case the post_name was already sanitized.
+            add_post_meta($page->ID, '_wp_old_slug', $old);
+            $summary['renamed'][] = $old . ' -> ' . $new;
+        }
+    }
+
+    foreach (kop_template_assignments() as $slug => $template) {
+        $page = get_page_by_path($slug, OBJECT, 'page');
+        if (!$page) {
+            $summary['missing'][] = $slug;
+            continue;
+        }
+        $template_value = 'templates/' . $template;
+        if (get_post_meta($page->ID, '_wp_page_template', true) === $template_value) {
+            continue;
+        }
+        update_post_meta($page->ID, '_wp_page_template', $template_value);
+        $summary['assigned'][] = $slug . ' => ' . $template;
+    }
+
+    return $summary;
+}
+
+/**
+ * Run the assignments once per version on any request, so a deploy takes
+ * effect without waiting for someone to open wp-admin. Bump the version when
+ * the lists above change.
+ */
+function kop_maybe_apply_template_assignments() {
+    $version = '1';
+    if (get_option('kop_template_assignments_applied') === $version) {
+        return;
+    }
+    kop_apply_template_assignments();
+    update_option('kop_template_assignments_applied', $version);
+}
+add_action('init', 'kop_maybe_apply_template_assignments', 20);
