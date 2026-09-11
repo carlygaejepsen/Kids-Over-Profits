@@ -509,6 +509,19 @@ function kop_template_assignments() {
         'document-library-natsap'              => 'page-document-folder.php',
         'document-library-newport-healthcare'  => 'page-document-folder.php',
 
+        // Navigation hub pages (phase 5): curated editor content plus live modules.
+        'history'              => 'page-hub.php',
+        'survivors'            => 'page-hub.php',
+        'researchreports'      => 'page-hub.php',
+        'families'             => 'page-hub.php',
+        'where-are-the-kids'   => 'page-hub.php',
+        'advocates'            => 'page-hub.php',
+        'journalists'          => 'page-hub.php',
+        'support'              => 'page-hub.php',
+        'volunteer'            => 'page-hub.php',
+        'law-policy'           => 'page-hub.php',
+        'resources'            => 'page-hub.php',
+
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
         'canada'         => 'page-country.php',
@@ -673,7 +686,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '5';
+    $version = '6';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

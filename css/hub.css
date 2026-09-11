@@ -1,0 +1,169 @@
+/*
+ * Hub Page template (templates/page-hub.php).
+ *
+ * The editor content renders inside Kadence's normal .entry-content, so only
+ * the header standfirst, the appended live modules and the footer are styled
+ * here.
+ */
+
+.kop-hub-standfirst {
+    max-width: 60ch;
+    margin: 0.75rem auto 0;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-hub-thumbnail {
+    margin: 0 0 1.5rem;
+}
+
+.kop-hub-thumbnail img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+/* ---- Modules ----------------------------------------------------------- */
+
+.kop-hub-modules {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 3px solid var(--kop-teal, #33a7b5);
+}
+
+.kop-hub-module {
+    margin: 0 0 2rem;
+}
+
+.kop-hub-h {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    margin: 0 0 0.75rem;
+    font-size: 1.15rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-hub-count {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+    background: var(--kop-sand, #f2eedf);
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+}
+
+/* Law & Policy: two columns of newest records */
+
+.kop-hub-law {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 760px) {
+    .kop-hub-law {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.kop-hub-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-hub-list li {
+    margin: 0;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+.kop-hub-list li:last-child {
+    border-bottom: 0;
+}
+
+.kop-hub-list a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-hub-list a:hover,
+.kop-hub-list a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-hub-meta {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.82rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-hub-more {
+    display: inline-block;
+    margin-top: 0.9rem;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--kop-teal, #33a7b5);
+    border-radius: 4px;
+    color: var(--kop-teal, #33a7b5);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-hub-more:hover,
+.kop-hub-more:focus-visible {
+    background: var(--kop-teal, #33a7b5);
+    color: var(--kop-white, #fff);
+}
+
+/* Where are the kids: state and country grid */
+
+.kop-hub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.35rem 1rem;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-hub-grid li {
+    margin: 0;
+    padding: 0.25rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+.kop-hub-grid a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+}
+
+.kop-hub-grid a:hover,
+.kop-hub-grid a:focus-visible {
+    text-decoration: underline;
+}
+
+/* ---- Footer ------------------------------------------------------------ */
+
+.kop-hub-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: 2.5rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 0.88rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-hub-footer a {
+    color: var(--kop-teal, #33a7b5);
+}
