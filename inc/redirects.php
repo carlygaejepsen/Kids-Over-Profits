@@ -22,6 +22,22 @@ function kop_redirect_map() {
         '405-2'         => '/',
         'test-scripts'  => '/',
         'admin-tools'   => '/wp-admin/admin.php?page=kop-tools',
+
+        // Single-file court document pages (phase 4). Each page held one
+        // file block and nothing else, so the page now resolves to the file
+        // itself; the lawsuit records carry the same URLs. The Trinity
+        // complaint PDF is missing from uploads, so that page lands on the
+        // lawsuits directory until the file is re-uploaded.
+        'richardson-complaint'                                                           => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Ryan-Faust_Elevations-Lawsuit-2024.pdf',
+        'trinity-teen-solutions-trinity-cross-ranch'                                     => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Class-Action-Approval-TTS-TCR.pdf',
+        'trinity-teen-trinity-cross-complaint'                                           => '/lawsuits/',
+        'doe-v-hyde-complaint'                                                           => 'https://kidsoverprofits.org/wp-content/uploads/2024/11/doe-v-hyde-woodstock-complaint.pdf',
+        'doe-v-hyde-complaint-amended'                                                   => 'https://kidsoverprofits.org/wp-content/uploads/2024/11/doe-v-hyde-woodstock-amended-complaint-2.pdf',
+        'shiver-v-southstone-complaint'                                                  => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Complaint.pdf',
+        'shiver-v-southstone-summons'                                                    => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Summons.pdf',
+        'shiver-v-southstone-motion-for-default-judgement'                               => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/SouthstoneDefaultMotion.pdf',
+        'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs'      => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Survivors-Guide-to-Legal-Action-Against-Troubled-Teen-Industry-Programs.pdf',
+        'overt-and-covert-conversion-therapy-practices-in-therapeutic-boarding-schools'  => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Overt-Covert-Conversion-Therapy.pdf',
     );
 }
 

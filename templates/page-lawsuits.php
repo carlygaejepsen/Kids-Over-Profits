@@ -323,8 +323,8 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
                 <?php foreach (array_slice($source_urls, 0, 2) as $url): ?>
                     <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Source &rarr;</a>
                 <?php endforeach; ?>
-                <?php foreach (array_slice($doc_urls, 0, 2) as $url): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Court doc &rarr;</a>
+                <?php foreach (array_values($doc_urls) as $doc_i => $url): ?>
+                    <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Court doc<?php echo count($doc_urls) > 1 ? ' ' . ($doc_i + 1) : ''; ?> &rarr;</a>
                 <?php endforeach; ?>
             </div>
             <?php endif; ?>

@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Facility Profile
- * Template Post Type: post
+ * Template Post Type: post, page
  * Description: Wide layout for Facility Profile posts. The editor content is
  * printed exactly as stored through the_content(); the template only adds a
  * facts rail built from the post's custom fields, the facilities_master
@@ -80,10 +80,27 @@ if (!function_exists('kop_fp_facility_node')) {
     }
 }
 
+if (!function_exists('kop_facility_profile_record_names')) {
+    /**
+     * Post/page slug => facilities_master unique_name, for profiles whose
+     * title is not spelled the way the database record is.
+     */
+    function kop_facility_profile_record_names() {
+        return apply_filters('kop_facility_profile_record_names', array(
+            'the-ridge-rtc-maine' => 'Ridge RTC Maine',
+        ));
+    }
+}
+
 $kop_fp_post_id = get_the_ID();
+$kop_fp_slug    = get_post_field('post_name', $kop_fp_post_id);
+$kop_fp_names   = kop_facility_profile_record_names();
 
 // ---- Custom fields (ACF stores plain meta, so no ACF dependency) ----------
 $kop_fp_name          = kop_fp_meta($kop_fp_post_id, 'facility_name') ?: get_the_title();
+if (isset($kop_fp_names[$kop_fp_slug])) {
+    $kop_fp_name = $kop_fp_names[$kop_fp_slug];
+}
 $kop_fp_addresses     = array_values(array_filter(array(
     kop_fp_meta($kop_fp_post_id, 'facility_address'),
     kop_fp_meta($kop_fp_post_id, 'facility_address_2'),
@@ -149,6 +166,9 @@ if ($kop_fp_founded === '' && !empty($kop_fp_facility['operatingPeriod']['startY
 }
 if ($kop_fp_closed === '' && !empty($kop_fp_facility['operatingPeriod']['endYear'])) {
     $kop_fp_closed = (string) $kop_fp_facility['operatingPeriod']['endYear'];
+}
+if ($kop_fp_previous_name === '' && !empty($kop_fp_facility['identification']['pastNames']) && is_array($kop_fp_facility['identification']['pastNames'])) {
+    $kop_fp_previous_name = implode(', ', array_filter(array_map('strval', $kop_fp_facility['identification']['pastNames'])));
 }
 if (!$kop_fp_addresses && !empty($kop_fp_facility['address'])) {
     $kop_fp_addresses = array((string) $kop_fp_facility['address']);

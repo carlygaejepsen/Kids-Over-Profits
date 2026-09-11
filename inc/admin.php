@@ -496,6 +496,19 @@ function kop_template_assignments() {
         'summit-achievement'         => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
         'pathway-family-center'      => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
 
+        // Hand-written facility pages (phase 4): same profile treatment, content untouched.
+        'elevations-rtc'             => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'havenwood-academy'          => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+        'the-ridge-rtc-maine'        => array('template' => 'single-facility-profile.php', 'post_type' => 'page'),
+
+        // Per-organization document libraries (phase 4). Three of these relied
+        // on the inactive CatFolders block and rendered nothing.
+        'document-library-discovery-ranch'     => 'page-document-folder.php',
+        'document-library-hidden-lake-academy' => 'page-document-folder.php',
+        'document-library-montana-academy'     => 'page-document-folder.php',
+        'document-library-natsap'              => 'page-document-folder.php',
+        'document-library-newport-healthcare'  => 'page-document-folder.php',
+
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
         'canada'         => 'page-country.php',
@@ -538,11 +551,80 @@ function kop_pages_to_trash() {
 }
 
 /**
+ * Lawsuit records whose document_urls still point at the retired single-file
+ * pages on the staging path. Replaced with the files themselves (or the live
+ * page, for the Richardson panel opinion, which is four images). Applied only
+ * while the stored value still contains "/staging/", so a later manual edit
+ * in the lawsuit admin is never overwritten.
+ *
+ * lawsuits.id => array of URLs.
+ */
+function kop_lawsuit_document_fixes() {
+    return array(
+        // Sherman v. Trinity Teen Solutions. The complaint PDF
+        // (gov.uscourts.wyd.56518.106.0) is missing from uploads; re-add it
+        // in the lawsuit admin once re-uploaded.
+        6  => array(
+            'https://kidsoverprofits.org/wp-content/uploads/2024/08/Class-Action-Approval-TTS-TCR.pdf',
+        ),
+        // Anonymous v. Hyde School at South Woodstock
+        7  => array(
+            'https://kidsoverprofits.org/wp-content/uploads/2024/11/doe-v-hyde-woodstock-complaint.pdf',
+            'https://kidsoverprofits.org/wp-content/uploads/2024/11/doe-v-hyde-woodstock-amended-complaint-2.pdf',
+        ),
+        // Richardson v. Elevations RTC
+        10 => array(
+            'https://kidsoverprofits.org/wp-content/uploads/2024/08/Ryan-Faust_Elevations-Lawsuit-2024.pdf',
+            'https://kidsoverprofits.org/richardson-v-elevations-rtc-prelitigation-panel-opinion/',
+        ),
+        // Shiver v. Southstone Behavioral Health and Acadia Healthcare
+        11 => array(
+            'https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Complaint.pdf',
+            'https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Summons.pdf',
+            'https://kidsoverprofits.org/wp-content/uploads/2024/08/SouthstoneDefaultMotion.pdf',
+        ),
+    );
+}
+
+function kop_apply_lawsuit_document_fixes() {
+    $fixed  = array();
+    $config = get_stylesheet_directory() . '/api/config.php';
+    if (!file_exists($config)) {
+        return $fixed;
+    }
+    require_once $config;
+    if (!isset($pdo) && isset($GLOBALS['pdo'])) {
+        $pdo = $GLOBALS['pdo']; // config.php was already loaded at global scope
+    }
+    if (!isset($pdo) || !($pdo instanceof PDO)) {
+        return $fixed;
+    }
+    try {
+        $read  = $pdo->prepare('SELECT document_urls FROM lawsuits WHERE id = ?');
+        $write = $pdo->prepare('UPDATE lawsuits SET document_urls = ? WHERE id = ?');
+        foreach (kop_lawsuit_document_fixes() as $id => $urls) {
+            $read->execute(array((int) $id));
+            $current = (string) $read->fetchColumn();
+            if ($current === '' || strpos($current, '/staging/') === false) {
+                continue;
+            }
+            $write->execute(array(wp_json_encode(array_values($urls)), (int) $id));
+            $fixed[] = (int) $id;
+        }
+    } catch (Throwable $e) {
+        // Leave the records alone; the lawsuit admin can fix them by hand.
+    }
+    return $fixed;
+}
+
+/**
  * Apply kop_slug_renames(), kop_template_assignments(), then
  * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
 function kop_apply_template_assignments() {
     $summary = array('renamed' => array(), 'assigned' => array(), 'missing' => array(), 'trashed' => array());
+
+    $summary['lawsuit_docs'] = kop_apply_lawsuit_document_fixes();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -591,7 +673,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '4';
+    $version = '5';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

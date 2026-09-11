@@ -1926,7 +1926,8 @@ function kop_enqueue_document_library_assets() {
         has_shortcode($post->post_content, 'filebird_folder') ||
         has_shortcode($post->post_content, 'kop_folder') ||
         has_shortcode($post->post_content, 'kop_document') ||
-        is_page('document-library')
+        is_page('document-library') ||
+        is_page_template('templates/page-document-folder.php')
     )) {
         
         $theme_uri = get_stylesheet_directory_uri();
