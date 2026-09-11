@@ -39,3 +39,9 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/page-tti-program-index.php
     - /bin/rm -f $DEPLOYPATH/page-wiki-editor.php
     - /bin/rm -f $DEPLOYPATH/page-wiki-feed.php
+    # Files deleted from the repo are not removed by the cp -R tasks above;
+    # list them here so production does not keep serving orphaned copies.
+    - /bin/rm -f $DEPLOYPATH/edcons-display.js
+    - /bin/rm -f $DEPLOYPATH/js/referrer-index.js
+    - /bin/rm -f $DEPLOYPATH/js/data-form/admin-data-page.js
+    - /bin/rm -f $DEPLOYPATH/templates/fetch-bill-details.php
