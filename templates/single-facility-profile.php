@@ -242,7 +242,7 @@ while (have_posts()) :
         <div class="entry-content single-content kop-fp-body">
             <?php if (has_post_thumbnail()) : ?>
                 <figure class="kop-fp-figure post-thumbnail">
-                    <?php the_post_thumbnail('large'); ?>
+                    <?php the_post_thumbnail('full'); ?>
                 </figure>
             <?php endif; ?>
 
@@ -363,6 +363,16 @@ while (have_posts()) :
         <a href="<?php echo esc_url(home_url('/tti-data-submission/')); ?>">Suggest a correction</a>
         <?php edit_post_link('Edit this profile', '<span class="kop-fp-edit">', '</span>'); ?>
     </footer>
+
+    <?php
+    // Pingbacks and reader comments stay with the post, as they did under the
+    // stock layout.
+    if (comments_open() || get_comments_number()) :
+        ?>
+        <div class="kop-fp-comments">
+            <?php comments_template(); ?>
+        </div>
+    <?php endif; ?>
 
 </article>
     <?php
