@@ -1,0 +1,54 @@
+{
+  "note": "Folder 4 = Discovery Ranch, folder 142 = Diamond Ranch Academy. Tags surface a document in an extra folder via kop_media_folder_tags; moves rewrite FileBird membership.",
+  "tags_add": [
+    {
+      "folder_id": 4,
+      "attachment_id": 1673,
+      "why": "Discovery Ranch admissions PDF was filed under Hidden Lake Academy (folder 3)"
+    }
+  ],
+  "moves": [
+    {
+      "attachment_id": 9723,
+      "from": 4,
+      "to": 142,
+      "why": "DRA Complaint: Diamond Ranch Academy"
+    },
+    {
+      "attachment_id": 9724,
+      "from": 4,
+      "to": 142,
+      "why": "DRA Admission Agreement: Diamond Ranch Academy"
+    },
+    {
+      "attachment_id": 9725,
+      "from": 4,
+      "to": 142,
+      "why": "DRA admissions packet 1-31-07: Diamond Ranch Academy"
+    },
+    {
+      "attachment_id": 9727,
+      "from": 4,
+      "to": 142,
+      "why": "HEAL DRA correspondence: Diamond Ranch Academy"
+    },
+    {
+      "attachment_id": 9729,
+      "from": 4,
+      "to": 142,
+      "why": "Taylor Goodridge DRA lawsuit complaint: Diamond Ranch Academy (copies already in folder 142)"
+    }
+  ],
+  "remove": [
+    {
+      "attachment_id": 6952,
+      "folder_id": 4,
+      "why": "JPEG thumbnail of the We Are NATSAP PDF, not a document"
+    },
+    {
+      "attachment_id": 6955,
+      "folder_id": 4,
+      "why": "JPEG thumbnail of the Yeomans complaint PDF, not a document"
+    }
+  ]
+}

@@ -699,6 +699,7 @@ function kop_apply_lawsuit_document_fixes() {
 function kop_seed_posts() {
     return array(
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
+        'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
     );
 }
 
@@ -727,8 +728,12 @@ function kop_apply_seed_posts() {
             // file carries a newer seed_version. Anything an editor touched
             // is left alone.
             $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
-            $untouched = $existing->post_status === 'draft'
-                && $existing->post_modified_gmt === $existing->post_date_gmt;
+            $seed_mod  = (string) get_post_meta($existing->ID, '_kop_seed_modified', true);
+            $untouched = $existing->post_status === 'draft' && (
+                $existing->post_modified_gmt === $existing->post_date_gmt
+                || ($seed_mod !== '' && $existing->post_modified_gmt === $seed_mod)
+                || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt'])
+            );
             if (!$untouched || $seed_version <= $applied) {
                 continue;
             }
@@ -760,6 +765,10 @@ function kop_apply_seed_posts() {
             }
         }
         update_post_meta($post_id, '_kop_seed_version', $seed_version);
+        $saved = get_post($post_id);
+        if ($saved) {
+            update_post_meta($post_id, '_kop_seed_modified', $saved->post_modified_gmt);
+        }
         if (!empty($spec['categories']) && is_array($spec['categories'])) {
             $term_ids = array();
             foreach ($spec['categories'] as $cat_slug) {
@@ -1010,8 +1019,100 @@ function kop_apply_lawsuit_seeds() {
             }
             $done[] = $lawsuit_id;
         }
+        // One-off corrections to cases this seed inserted earlier, matched by
+        // their old case_name; skipped once the name has changed.
+        foreach ((array) ($spec['updates'] ?? array()) as $upd) {
+            if (empty($upd['match_case_name']) || empty($upd['set']) || !is_array($upd['set'])) {
+                continue;
+            }
+            $exists->execute(array($upd['match_case_name']));
+            $target_id = (int) $exists->fetchColumn();
+            if (!$target_id) {
+                continue;
+            }
+            $allowed = array('case_name', 'case_number', 'court', 'jurisdiction', 'filing_date', 'status', 'plaintiffs', 'defendants',
+                'facilities_mentioned', 'staff_mentioned', 'organizations_mentioned', 'claims', 'outcome', 'settlement_amount', 'summary',
+                'source_urls', 'document_urls', 'tags', 'filebird_folder_id');
+            $sets = array();
+            $vals = array();
+            foreach ($upd['set'] as $col => $val) {
+                if (!in_array($col, $allowed, true)) {
+                    continue;
+                }
+                $sets[] = "`{$col}` = ?";
+                $vals[] = is_array($val) ? $json($val) : $val;
+            }
+            if ($sets) {
+                $vals[] = $target_id;
+                $pdo->prepare('UPDATE lawsuits SET ' . implode(', ', $sets) . ' WHERE id = ?')->execute($vals);
+                $done[] = 'updated:' . $target_id;
+            }
+        }
+        foreach ((array) ($spec['facility_links_add'] ?? array()) as $link) {
+            if (empty($link['lawsuit_id']) || empty($link['facility_id'])) {
+                continue;
+            }
+            $type = in_array($link['link_type'] ?? '', array('mentioned', 'primary', 'related'), true) ? $link['link_type'] : 'mentioned';
+            $pdo->prepare('INSERT INTO lawsuit_facility_links (lawsuit_id, facility_id, link_type, created_by) VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE link_type = VALUES(link_type)')->execute(array((int) $link['lawsuit_id'], (int) $link['facility_id'], $type, $submitted_by));
+        }
     } catch (Throwable $e) {
         // Leave the table alone; the lawsuit admin can add cases by hand.
+    }
+    return $done;
+}
+/**
+ * Document folder corrections (seeds/media-folder-fixes.json): tags_add rows
+ * go into the theme's extra-membership table so a document shows in a
+ * second folder; moves and removals rewrite FileBird's own membership table.
+ * Every operation is idempotent.
+ */
+function kop_apply_media_folder_fixes() {
+    global $wpdb;
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/media-folder-fixes.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $spec = json_decode((string) file_get_contents($path), true);
+    if (!is_array($spec)) {
+        return $done;
+    }
+    $tags = $wpdb->prefix . 'kop_media_folder_tags';
+    $fbv  = $wpdb->prefix . 'fbv_attachment_folder';
+    if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $fbv)) !== $fbv) {
+        return $done;
+    }
+    foreach ((array) ($spec['tags_add'] ?? array()) as $t) {
+        if (empty($t['folder_id']) || empty($t['attachment_id'])) {
+            continue;
+        }
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tags)) !== $tags) {
+            continue;
+        }
+        $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$tags} (folder_id, attachment_id) VALUES (%d, %d)", (int) $t['folder_id'], (int) $t['attachment_id']));
+        $done[] = 'tag:' . (int) $t['attachment_id'];
+    }
+    foreach ((array) ($spec['moves'] ?? array()) as $m) {
+        if (empty($m['attachment_id']) || empty($m['from']) || empty($m['to'])) {
+            continue;
+        }
+        $aid = (int) $m['attachment_id'];
+        if (!$wpdb->get_var($wpdb->prepare("SELECT 1 FROM {$fbv} WHERE attachment_id = %d AND folder_id = %d", $aid, (int) $m['from']))) {
+            continue; // already moved
+        }
+        $wpdb->query($wpdb->prepare("DELETE FROM {$fbv} WHERE attachment_id = %d AND folder_id = %d", $aid, (int) $m['from']));
+        $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$fbv} (folder_id, attachment_id) VALUES (%d, %d)", (int) $m['to'], $aid));
+        $done[] = 'move:' . $aid;
+    }
+    foreach ((array) ($spec['remove'] ?? array()) as $r) {
+        if (empty($r['attachment_id']) || empty($r['folder_id'])) {
+            continue;
+        }
+        $n = $wpdb->query($wpdb->prepare("DELETE FROM {$fbv} WHERE attachment_id = %d AND folder_id = %d", (int) $r['attachment_id'], (int) $r['folder_id']));
+        if ($n) {
+            $done[] = 'remove:' . (int) $r['attachment_id'];
+        }
     }
     return $done;
 }
@@ -1026,6 +1127,7 @@ function kop_apply_template_assignments() {
     $summary['seeded']       = kop_apply_seed_posts();
     $summary['facilities']   = kop_apply_facility_record_seeds();
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
+    $summary['media']        = kop_apply_media_folder_fixes();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -1074,7 +1176,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '13';
+    $version = '14';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

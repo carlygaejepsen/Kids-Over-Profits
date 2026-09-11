@@ -1,0 +1,59 @@
+{
+  "title": "Discovery Ranch",
+  "slug": "discovery-ranch",
+  "post_type": "post",
+  "status": "draft",
+  "seed_version": 1,
+  "content_file": "discovery-ranch.html",
+  "excerpt": "An Ascent Companies residential treatment program for boys in Mapleton, Utah, opened in 2005, with a girls campus in Cedar City since 2013. Survivors describe a punitive merit system, censored family contact and peer sexual abuse that staff failed to prevent; 17-year-old Biruk Silvers died by suicide there in November 2024.",
+  "categories": ["facility-profile", "utah", "where-are-the-kids"],
+  "template": "single-facility-profile.php",
+  "meta": {
+    "facility_name": "Discovery Ranch",
+    "facility_address": "1308 S 1600 W, Mapleton, UT 84664",
+    "facility_address_2": "4928 N 4500 W, Cedar City, UT 84721 (Discovery Ranch South, the girls campus, since 2013)",
+    "facility_address_3": "",
+    "facility_address_4": "",
+    "date_founded": "2005",
+    "date_closed": "",
+    "founders": "Ascent Companies (Steven Nadauld, owner); Brent Hall reported by survivors to have run the program",
+    "previous_name": "",
+    "parent_company": "Ascent Companies (Ascent OPCO, LLC), Enterprise, Utah",
+    "investors": "",
+    "external_profile": "https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch",
+    "staff_transfers": "Clint Dorny (executive director) began in admissions at Provo Canyon School; Dave Blackwell (therapist) and Brent Hall also came from Provo Canyon School",
+    "staff_transfers_2": "Leslie Glies (residential director) moved to RedCliff Ascent; Andrea Burgess led RedCliff Ascent before Discovery Ranch for Girls",
+    "staff_transfers_3": "Jack Hinman (clinical director, girls campus) went on to run Moonridge Academy and Kolob Canyon RTC; Tim Lowe came from Outback Therapeutic Expeditions",
+    "trigger_warnings": "Trigger warnings: sexual abuse, physical restraint, seclusion, self-harm, suicide, animal death"
+  },
+  "meta_arrays": {
+    "treatments": ["Behavior Modification", "Level System", "Isolation", "Physical Restraint", "Mail and Phone Censorship", "Food Restriction", "Ranch Labor"]
+  },
+  "acf_field_keys": {
+    "facility_name": "field_68505bd591ccb",
+    "facility_address": "field_68505bfb91ccc",
+    "facility_address_2": "field_6851be547a5ff",
+    "facility_address_3": "field_6851be527a5fe",
+    "facility_address_4": "field_6851be517a5fd",
+    "date_founded": "field_685069288a8d4",
+    "date_closed": "field_6851be997a601",
+    "founders": "field_68506978512e4",
+    "previous_name": "field_6851bf167a602",
+    "parent_company": "field_68506ba6512e8",
+    "investors": "field_68506987512e5",
+    "external_profile": "field_68505c3d91cce",
+    "staff_transfers": "field_68506b6a512e7",
+    "staff_transfers_2": "field_6851be457a5fb",
+    "staff_transfers_3": "field_6851be4d7a5fc",
+    "treatments": "field_6850699a512e6",
+    "trigger_warnings": "field_684dd017a0a72"
+  },
+  "sources_scanned": [
+    "facilities_master rows 10335 (Discovery Ranch), 10334 (Discovery Ranch South), 10387 (Ascent, Inc. - Discovery Ranch for Girls), 10333, 10426 and parent row 2 (Ascent)",
+    "news_submissions 111, 294, 295; posts 2301, 2315; investigatory-spotlight-natsap; in-loving-memory",
+    "lawsuits 4 (Silvers), 12 (Liparote), 13 (Yeomans); memorial_victims 5 (Biruk Silvers)",
+    "wiki_submissions 512 and 513 (r/troubledteens wiki, mirrored)",
+    "ut_reports data for licenses 93408 and 93244",
+    "FileBird folder 4 (57 documents)"
+  ]
+}

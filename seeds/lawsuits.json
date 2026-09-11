@@ -1,7 +1,10 @@
 {
   "submitted_by": "Dani (admin import via Claude)",
   "facility_links": [
-    { "facility_id": 10371, "link_type": "primary" }
+    {
+      "facility_id": 10371,
+      "link_type": "primary"
+    }
   ],
   "lawsuits": [
     {
@@ -11,10 +14,23 @@
       "jurisdiction": "Federal",
       "filing_date": "1979-01-01",
       "status": "ruling",
-      "plaintiffs": ["Timothy Milonas (Nevada)", "Kenneth Rice (Alaska)", "Class of boys placed at Provo Canyon School"],
-      "defendants": ["Provo Canyon School", "Jack Williams", "Robert H. Crist"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
-      "staff_mentioned": ["Jack Williams", "Robert H. Crist"],
+      "plaintiffs": [
+        "Timothy Milonas (Nevada)",
+        "Kenneth Rice (Alaska)",
+        "Class of boys placed at Provo Canyon School"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Jack Williams",
+        "Robert H. Crist"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
+      "staff_mentioned": [
+        "Jack Williams",
+        "Robert H. Crist"
+      ],
       "organizations_mentioned": [],
       "claims": [
         "Cruel and unusual punishment through isolation and physical force",
@@ -25,9 +41,22 @@
       "outcome": "Jury found for the school in 1980, but the district court entered a permanent injunction barring Provo Canyon School from opening, reading or censoring boys' mail, administering polygraphs, placing boys in isolation except to contain physical violence, and using physical force except to restrain a boy who is an immediate danger to himself or others. The Tenth Circuit upheld the injunction in 1982.",
       "settlement_amount": "",
       "summary": "Two teenagers sent to Provo Canyon School by their home states' juvenile justice systems escaped and brought a federal class action challenging the school's confinement, education and treatment methods. The case produced the 1980 injunction that still defines the limits on isolation, restraint, polygraphs and mail censorship at the school.",
-      "source_urls": ["http://www.edjj.org/MilonasW.html", "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"],
-      "document_urls": ["https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf", "https://kidsoverprofits.org/wp-content/uploads/milonasmemo.pdf"],
-      "tags": ["Utah", "injunction", "isolation", "restraint", "civil rights", "class action"],
+      "source_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+        "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
+      ],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/milonasmemo.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "injunction",
+        "isolation",
+        "restraint",
+        "civil rights",
+        "class action"
+      ],
       "filebird_folder_id": 50
     },
     {
@@ -37,18 +66,42 @@
       "jurisdiction": "Federal",
       "filing_date": null,
       "status": "ruling",
-      "plaintiffs": ["David Taylor"],
-      "defendants": ["Provo Canyon School", "Charter Medical Corporation"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
+      "plaintiffs": [
+        "David Taylor"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Charter Medical Corporation"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
       "staff_mentioned": [],
-      "organizations_mentioned": ["Charter Medical Corporation", "Charter Behavioral Health Systems"],
-      "claims": ["Fraud", "Medical negligence", "False imprisonment", "Breach of fiduciary duty", "Gross negligence"],
+      "organizations_mentioned": [
+        "Charter Medical Corporation",
+        "Charter Behavioral Health Systems"
+      ],
+      "claims": [
+        "Fraud",
+        "Medical negligence",
+        "False imprisonment",
+        "Breach of fiduciary duty",
+        "Gross negligence"
+      ],
       "outcome": "One of the 1980s and 1990s suits in which Provo Canyon School was found liable; the Tenth Circuit opinion is on CourtListener.",
       "settlement_amount": "",
       "summary": "A former resident sued the school and its then-owner over his confinement and treatment. Part of a run of civil suits during the Charter years alleging abuse, false imprisonment, medical negligence and First Amendment violations.",
-      "source_urls": ["https://www.courtlistener.com/opinion/759763/david-taylor-plaintiff-appellant-cross-appellee-v-charter-medical/", "http://www.heal-online.org/provocases.htm"],
+      "source_urls": [
+        "https://www.courtlistener.com/opinion/759763/david-taylor-plaintiff-appellant-cross-appellee-v-charter-medical/",
+        "http://www.heal-online.org/provocases.htm"
+      ],
       "document_urls": [],
-      "tags": ["Utah", "Charter", "false imprisonment", "medical negligence"],
+      "tags": [
+        "Utah",
+        "Charter",
+        "false imprisonment",
+        "medical negligence"
+      ],
       "filebird_folder_id": 50
     },
     {
@@ -58,39 +111,82 @@
       "jurisdiction": "Utah",
       "filing_date": "2009-12-01",
       "status": "unknown",
-      "plaintiffs": ["Provo Canyon School"],
-      "defendants": ["HEAL (Human Earth Animal Liberation)"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
+      "plaintiffs": [
+        "Provo Canyon School"
+      ],
+      "defendants": [
+        "HEAL (Human Earth Animal Liberation)"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
       "staff_mentioned": [],
-      "organizations_mentioned": ["HEAL", "NATSAP"],
-      "claims": ["Libel"],
+      "organizations_mentioned": [
+        "HEAL",
+        "NATSAP"
+      ],
+      "claims": [
+        "Libel"
+      ],
       "outcome": "",
       "settlement_amount": "",
       "summary": "The school sued the human rights group HEAL for libel over its published records of police calls and complaints about the program. HEAL describes the suit as a strategic lawsuit against public participation and disputes a later NATSAP bulletin's account of it.",
-      "source_urls": ["http://www.heal-online.org/healsuit.htm", "http://www.heal-online.org/PCSpolicecalls.pdf"],
+      "source_urls": [
+        "http://www.heal-online.org/healsuit.htm",
+        "http://www.heal-online.org/PCSpolicecalls.pdf"
+      ],
       "document_urls": [],
-      "tags": ["Utah", "SLAPP", "libel", "HEAL"],
+      "tags": [
+        "Utah",
+        "SLAPP",
+        "libel",
+        "HEAL"
+      ],
       "filebird_folder_id": null
     },
     {
-      "case_name": "Doe v. Provo Canyon School and Island View RTC",
+      "case_name": "Hinman v. Island View Academy et al.",
       "case_number": "1:14-cv-00015 (D. Utah)",
       "court": "U.S. District Court for the District of Utah",
       "jurisdiction": "Federal",
       "filing_date": "2014-01-01",
       "status": "unknown",
-      "plaintiffs": ["Former resident and family (identified as Doe)"],
-      "defendants": ["Provo Canyon School", "Island View RTC", "Wade Taylor"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)", "Island View RTC (Syracuse, Utah)"],
-      "staff_mentioned": ["Wade Taylor"],
-      "organizations_mentioned": ["Universal Health Services"],
-      "claims": ["Negligence", "Breach of fiduciary duty"],
-      "outcome": "",
+      "plaintiffs": [
+        "Hinman (former resident and family)"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Island View RTC",
+        "Wade Taylor"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)",
+        "Island View RTC (Syracuse, Utah)"
+      ],
+      "staff_mentioned": [
+        "Wade Taylor"
+      ],
+      "organizations_mentioned": [
+        "Universal Health Services"
+      ],
+      "claims": [
+        "Negligence",
+        "Breach of fiduciary duty"
+      ],
+      "outcome": "Ruling issued May 13, 2015 (published on govinfo).",
       "settlement_amount": "",
-      "summary": "Negligence and breach of fiduciary duty claims against Provo Canyon School and Island View RTC, naming Provo Canyon therapist Wade Taylor among the defendants. A 2015 ruling is published on govinfo.",
-      "source_urls": ["https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf"],
-      "document_urls": ["https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf"],
-      "tags": ["Utah", "negligence", "Island View"],
+      "summary": "Negligence and breach of fiduciary duty claims against Island View RTC and Provo Canyon School, naming Provo Canyon therapist Wade Taylor among the defendants. The court issued a ruling on May 13, 2015.",
+      "source_urls": [
+        "https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf"
+      ],
+      "document_urls": [
+        "https://www.govinfo.gov/content/pkg/USCOURTS-utd-1_14-cv-00015/pdf/USCOURTS-utd-1_14-cv-00015-0.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "negligence",
+        "Island View"
+      ],
       "filebird_folder_id": null
     },
     {
@@ -100,18 +196,40 @@
       "jurisdiction": "Utah",
       "filing_date": "2017-01-03",
       "status": "unknown",
-      "plaintiffs": ["Parents of a former resident (Chudnovsky)"],
-      "defendants": ["Provo Canyon School", "Universal Health Services"],
-      "facilities_mentioned": ["Provo Canyon School (Springville, Utah)"],
+      "plaintiffs": [
+        "Parents of a former resident (Chudnovsky)"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Universal Health Services"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Springville, Utah)"
+      ],
       "staff_mentioned": [],
-      "organizations_mentioned": ["Universal Health Services"],
-      "claims": ["Negligence", "Intentional infliction of emotional distress", "Denial of medical care", "Failure to protect a self-harming resident"],
+      "organizations_mentioned": [
+        "Universal Health Services"
+      ],
+      "claims": [
+        "Negligence",
+        "Intentional infliction of emotional distress",
+        "Denial of medical care",
+        "Failure to protect a self-harming resident"
+      ],
       "outcome": "",
       "settlement_amount": "",
       "summary": "Parents allege their daughter was denied medical care for nearly two weeks after breaking her thumb, and was given access to staples, pens and plastic cutlery despite the program knowing she struggled with compulsive self-harm.",
-      "source_urls": ["https://drive.google.com/file/d/1xzk94uO5rkBDOsfM-uoxd2eFUO9oONmQ/view"],
-      "document_urls": ["https://drive.google.com/file/d/1xzk94uO5rkBDOsfM-uoxd2eFUO9oONmQ/view"],
-      "tags": ["Utah", "medical neglect", "self-harm"],
+      "source_urls": [
+        "https://drive.google.com/file/d/1xzk94uO5rkBDOsfM-uoxd2eFUO9oONmQ/view"
+      ],
+      "document_urls": [
+        "https://drive.google.com/file/d/1xzk94uO5rkBDOsfM-uoxd2eFUO9oONmQ/view"
+      ],
+      "tags": [
+        "Utah",
+        "medical neglect",
+        "self-harm"
+      ],
       "filebird_folder_id": null
     },
     {
@@ -121,18 +239,46 @@
       "jurisdiction": "Federal",
       "filing_date": "2021-08-06",
       "status": "in_progress",
-      "plaintiffs": ["Aaron Ross"],
-      "defendants": ["Universal Health Services, Inc.", "Provo Canyon School"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
-      "staff_mentioned": ["Justin Uale"],
-      "organizations_mentioned": ["Universal Health Services"],
-      "claims": ["Sexual abuse by staff", "Chemical sedation and overmedication", "Extended isolation", "Physical restraint", "Food and sleep deprivation", "Strip searches", "Forced labor"],
+      "plaintiffs": [
+        "Aaron Ross"
+      ],
+      "defendants": [
+        "Universal Health Services, Inc.",
+        "Provo Canyon School"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
+      "staff_mentioned": [
+        "Justin Uale"
+      ],
+      "organizations_mentioned": [
+        "Universal Health Services"
+      ],
+      "claims": [
+        "Sexual abuse by staff",
+        "Chemical sedation and overmedication",
+        "Extended isolation",
+        "Physical restraint",
+        "Food and sleep deprivation",
+        "Strip searches",
+        "Forced labor"
+      ],
       "outcome": "",
       "settlement_amount": "",
       "summary": "A former resident who was 13 when placed at the school in 2001 alleges he was forced to perform oral sex on a staff member at least a dozen times under threat of punishment and starvation, was locked in solitary confinement for weeks at a time, was overmedicated with Seroquel, Depakote, Trileptal and Celexa, and went two years without being allowed outdoors.",
-      "source_urls": ["https://dockets.justia.com/docket/utah/utdce/2:2022cv00053/130104", "https://www.dailymail.co.uk/news/article-9877811/Utah-school-Paris-Hilton-claims-abused-sued-student-sex-torture.html"],
+      "source_urls": [
+        "https://dockets.justia.com/docket/utah/utdce/2:2022cv00053/130104",
+        "https://www.dailymail.co.uk/news/article-9877811/Utah-school-Paris-Hilton-claims-abused-sued-student-sex-torture.html"
+      ],
       "document_urls": [],
-      "tags": ["Utah", "sexual abuse", "isolation", "overmedication", "UHS"],
+      "tags": [
+        "Utah",
+        "sexual abuse",
+        "isolation",
+        "overmedication",
+        "UHS"
+      ],
       "filebird_folder_id": null
     },
     {
@@ -142,20 +288,46 @@
       "jurisdiction": "Utah",
       "filing_date": "2026-06-15",
       "status": "filed",
-      "plaintiffs": ["Mother of a teenage resident (name withheld in coverage)"],
-      "defendants": ["Provo Canyon School", "Universal Health Services"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
+      "plaintiffs": [
+        "Mother of a teenage resident (name withheld in coverage)"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Universal Health Services"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
       "staff_mentioned": [],
-      "organizations_mentioned": ["Universal Health Services"],
-      "claims": ["Medical neglect", "Negligence", "Failure to act on safety warnings"],
+      "organizations_mentioned": [
+        "Universal Health Services"
+      ],
+      "claims": [
+        "Medical neglect",
+        "Negligence",
+        "Failure to act on safety warnings"
+      ],
       "outcome": "",
       "settlement_amount": "",
       "summary": "A mother alleges staff ignored her son's warnings that he was not safe before he was attacked at the facility and suffered a jaw injury and brain bleed, and that medical care was delayed. Utah licensers sanctioned the school over the same incident in June 2026. Paris Hilton publicly supported the family and called for the school's closure.",
-      "source_urls": ["https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/", "https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/", "https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school"],
+      "source_urls": [
+        "https://www.sltrib.com/news/2026/06/15/provo-canyon-school-lawsuit-teen/",
+        "https://www.sltrib.com/news/2026/06/02/troubled-teen-industry-provo/",
+        "https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school"
+      ],
       "document_urls": [],
-      "tags": ["Utah", "medical neglect", "peer violence", "2026 closure"],
+      "tags": [
+        "Utah",
+        "medical neglect",
+        "peer violence",
+        "2026 closure"
+      ],
       "filebird_folder_id": null,
-      "news_ids": [207, 193, 206]
+      "news_ids": [
+        207,
+        193,
+        206
+      ]
     },
     {
       "case_name": "Second family v. Provo Canyon School (2026, medical malpractice)",
@@ -164,20 +336,80 @@
       "jurisdiction": "Utah",
       "filing_date": "2026-06-15",
       "status": "filed",
-      "plaintiffs": ["Family of a teenage resident (name withheld in coverage)"],
-      "defendants": ["Provo Canyon School", "Universal Health Services"],
-      "facilities_mentioned": ["Provo Canyon School (Provo, Utah)"],
+      "plaintiffs": [
+        "Family of a teenage resident (name withheld in coverage)"
+      ],
+      "defendants": [
+        "Provo Canyon School",
+        "Universal Health Services"
+      ],
+      "facilities_mentioned": [
+        "Provo Canyon School (Provo, Utah)"
+      ],
       "staff_mentioned": [],
-      "organizations_mentioned": ["Universal Health Services"],
-      "claims": ["Medical neglect", "Medical malpractice"],
+      "organizations_mentioned": [
+        "Universal Health Services"
+      ],
+      "claims": [
+        "Medical neglect",
+        "Medical malpractice"
+      ],
       "outcome": "",
       "settlement_amount": "",
       "summary": "The second of two family lawsuits filed in June 2026, alleging the school failed to provide adequate medical care to a teenager, resulting in serious injury and health complications.",
-      "source_urls": ["https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school"],
+      "source_urls": [
+        "https://kutv.com/news/local/paris-hilton-comes-to-utah-as-families-file-lawsuits-against-provo-canyon-school"
+      ],
       "document_urls": [],
-      "tags": ["Utah", "medical neglect", "2026 closure"],
+      "tags": [
+        "Utah",
+        "medical neglect",
+        "2026 closure"
+      ],
       "filebird_folder_id": null,
-      "news_ids": [206]
+      "news_ids": [
+        206
+      ]
+    }
+  ],
+  "updates": [
+    {
+      "match_case_name": "Doe v. Provo Canyon School and Island View RTC",
+      "set": {
+        "case_name": "Hinman v. Island View Academy et al.",
+        "case_number": "1:14-cv-00015 (D. Utah)",
+        "plaintiffs": [
+          "Hinman (former resident and family)"
+        ],
+        "outcome": "Ruling issued May 13, 2015 (published on govinfo).",
+        "summary": "Negligence and breach of fiduciary duty claims against Island View RTC and Provo Canyon School, naming Provo Canyon therapist Wade Taylor among the defendants. The court issued a ruling on May 13, 2015."
+      }
+    },
+    {
+      "match_case_name": "Milonas and Rice v. Williams (Provo Canyon School)",
+      "set": {
+        "source_urls": [
+          "https://kidsoverprofits.org/wp-content/uploads/milonas-et-al-v-provo-canyon-school-et-al.pdf",
+          "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
+        ]
+      }
+    }
+  ],
+  "facility_links_add": [
+    {
+      "lawsuit_id": 4,
+      "facility_id": 10335,
+      "link_type": "primary"
+    },
+    {
+      "lawsuit_id": 12,
+      "facility_id": 10335,
+      "link_type": "primary"
+    },
+    {
+      "lawsuit_id": 13,
+      "facility_id": 10335,
+      "link_type": "primary"
     }
   ]
 }

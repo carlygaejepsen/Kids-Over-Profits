@@ -340,5 +340,374 @@
         }
       }
     ]
+  },
+  {
+    "id": 10335,
+    "unique_name": "Discovery Ranch",
+    "version": 1,
+    "top": {
+      "city": "Mapleton",
+      "state": "UT",
+      "displayName": "Discovery Ranch"
+    },
+    "apply_to": [
+      {
+        "table": "facilities_master",
+        "id": 2,
+        "match": {
+          "facility_id": 10335
+        }
+      },
+      {
+        "table": "locations_master",
+        "id": 3,
+        "match": {
+          "facility_id": 10335
+        }
+      }
+    ],
+    "facility": {
+      "kopProfileVersion": 1,
+      "identification": {
+        "name": "Discovery Ranch",
+        "currentName": "",
+        "currentOperator": "Ascent Companies",
+        "currentOwner": "Ascent Companies (Ascent OPCO, LLC)",
+        "currentOwners": [
+          "Ascent Companies (Ascent OPCO, LLC)"
+        ],
+        "otherNames": [
+          "Discovery Ranch Academy",
+          "Discovery Ranch for Boys",
+          "Discovery Ranch - Mapleton"
+        ],
+        "pastNames": [],
+        "knownReferrers": [
+          "Pilcrow Advisors (named in Silvers v. Discovery Ranch Academy)"
+        ]
+      },
+      "locationDetails": {
+        "city": "Mapleton",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": [
+          "4928 N 4500 W, Cedar City, UT 84721 (Discovery Ranch South, girls campus since 2013; separate record)"
+        ]
+      },
+      "location": "Mapleton, UT",
+      "address": "1308 S 1600 W, Mapleton, UT 84664",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 2005,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2005-present",
+        "notes": [
+          "Opened August 21, 2005 as a co-educational program; the girls program moved to Cedar City in 2013 and Mapleton became boys only.",
+          "Placed on conditional status with admissions halted on November 28, 2024 after the death of a 17-year-old resident; the admission ban was later lifted by letter. Remains licensed."
+        ]
+      },
+      "staff": {
+        "administrator": [
+          {
+            "name": "Clinton (Clint) Dorny",
+            "role": "Executive Director"
+          },
+          {
+            "name": "Matt Child",
+            "role": "Clinical Director"
+          },
+          {
+            "name": "Steven Nadauld",
+            "role": "Owner, Ascent Companies (as identified by a parent)"
+          }
+        ],
+        "notableStaff": [
+          {
+            "name": "Brent Hall",
+            "role": "Reported to have run the program; co-founder and Executive Director of Discovery Academy; former NATSAP director"
+          },
+          {
+            "name": "Craig Smith",
+            "role": "Clinical Director (former)"
+          },
+          {
+            "name": "Dave Blackwell",
+            "role": "Therapist"
+          },
+          {
+            "name": "Leslie Glies",
+            "role": "Residential Director (former)"
+          },
+          {
+            "name": "Tim Lowe",
+            "role": "Therapist"
+          },
+          {
+            "name": "Ray Orbin",
+            "role": "Therapist; disciplined by Utah DOPL after a 2025 knife report, per a parent"
+          },
+          {
+            "name": "Dorothy Ah Quin",
+            "role": "Therapist; defendant in Liparote v. Discovery Ranch, Inc. (2026)"
+          }
+        ],
+        "pastTTIJobs": [
+          "Clint Dorny: admissions at Provo Canyon School",
+          "Dave Blackwell: Provo Canyon School",
+          "Brent Hall: Provo Canyon School; co-founded Discovery Academy (1989)",
+          "Leslie Glies: later Residential Director at RedCliff Ascent",
+          "Tim Lowe: Outback Therapeutic Expeditions; Discovery Ranch for Girls"
+        ]
+      },
+      "profileLinks": [
+        "https://kidsoverprofits.org/discovery-ranch/",
+        "https://kidsoverprofits.org/document-library-discovery-ranch/",
+        "https://www.reddit.com/r/troubledteens/wiki/index/discoveryranch",
+        "https://www.discoveryranch.net/",
+        "http://www.heal-online.org/discoran.htm"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": 60,
+        "currentCensus": null,
+        "ageRange": {
+          "min": 13,
+          "max": 18
+        },
+        "gender": "boys"
+      },
+      "accreditations": {
+        "current": [
+          "Northwest Association of Accredited Schools (NAAS)"
+        ],
+        "past": []
+      },
+      "memberships": [
+        "NATSAP (member since 2005)"
+      ],
+      "certifications": [],
+      "licensing": [
+        "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93408 (Discovery Ranch - Mapleton); conditional status November 28, 2024, later lifted"
+      ],
+      "investors": [],
+      "resources": {
+        "hasNews": true,
+        "newsDetails": "Salt Lake Tribune coverage of the November 2024 death, the conditional license and the 2025 lawsuit; AP investigation April 2026",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": true,
+        "hasStateReports": true,
+        "hasRegulatoryFilings": true,
+        "hasLawsuits": true,
+        "hasPoliceReports": true,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": true,
+        "hasEnrollmentDocuments": true,
+        "hasResearch": true,
+        "hasFinancial": true,
+        "hasStudent": true,
+        "hasStaff": true,
+        "hasVideo": true,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": true,
+        "hasNATSAP": true,
+        "hasOther": false,
+        "hasViolations": true,
+        "hasSettlements": false,
+        "customResources": [
+          "Document folder 4: NATSAP listings 2005-2024, Woodbury Reports 2009-2013, admissions packets, cost sheets, 2022 outcomes report, 2024 license re-application, inspections 2016 and 2018, 2013 police calls, 2019 sexual misconduct report, 2020 AWOL report, November 2024 conditional license notice, letter lifting admission ban, Yeomans and Liparote complaints",
+          "Utah Office of Licensing inspection records, licenses 93408 and 93244 (mirrored on /ut-reports/)"
+        ],
+        "notes": []
+      },
+      "treatmentTypes": {
+        "customTreatmentTypes": [
+          "Behavior modification",
+          "Level system (five levels, merit and demerit points)",
+          "Calf program (residents raise a calf)",
+          "Ranch labor",
+          "Seclusion",
+          "Physical restraint",
+          "Mail and phone monitoring"
+        ]
+      },
+      "philosophy": {
+        "customPhilosophy": [
+          "Strength in the Struggle (motto)",
+          "Tough love"
+        ]
+      },
+      "conditions": {
+        "customConditions": [
+          "Anxiety",
+          "Depression",
+          "Mood disorders",
+          "ADHD",
+          "Oppositional defiance",
+          "Substance abuse",
+          "Adoption and attachment issues",
+          "Learning disorders",
+          "Grief and loss"
+        ]
+      },
+      "criticalIncidents": {
+        "customIncidents": [
+          "January-February 2014: a resident repeatedly sexually assaulted by another resident; family sued in 2015 (Courthouse News)",
+          "August 18, 2017: Frederic Yeomans IV files suit alleging repeated sexual assault by another resident",
+          "September 2019: sexual misconduct report (document library)",
+          "July 1, 2020: runaway (AWOL) report (document library)",
+          "October-November 2023 and July 2024: late critical incident reports substantiated",
+          "November 5, 2024: Biruk Silvers, 17, dies by suicide; four violations substantiated November 6 (supervision, protection, suicide policy, reporting)",
+          "November 28, 2024: license placed on conditional status, admissions halted",
+          "May 17, 2025: Silvers family sues Discovery Ranch Academy, University of Utah and Pilcrow Advisors",
+          "May 28, 2026: Liparote v. Discovery Ranch, Inc. et al. filed in federal court alleging sexual assault, forced labor and trafficking violations"
+        ]
+      },
+      "notes": [
+        "Ascent Companies program; sister programs RedCliff Ascent, Discovery Academy, Discovery Connections and Oxbow Academy.",
+        "Tuition reported between $6,500 and $12,000 per month; average stay about ten months.",
+        "Utah Office of Licensing records mirrored on this site: 47 inspections and 9 substantiated findings at Mapleton, March 2023 to June 2026.",
+        "Profile assembled by Kids Over Profits on 2026-09-11 from site records; see the Facility Profile post for sources."
+      ],
+      "documentFolderId": 4
+    }
+  },
+  {
+    "id": 10334,
+    "unique_name": "Discovery Ranch South",
+    "version": 1,
+    "top": {
+      "city": "Cedar City",
+      "state": "UT",
+      "displayName": "Discovery Ranch South"
+    },
+    "apply_to": [
+      {
+        "table": "facilities_master",
+        "id": 2,
+        "match": {
+          "facility_id": 10334
+        }
+      },
+      {
+        "table": "locations_master",
+        "id": 3,
+        "match": {
+          "facility_id": 10334
+        }
+      }
+    ],
+    "facility": {
+      "kopProfileVersion": 1,
+      "identification": {
+        "name": "Discovery Ranch South",
+        "currentName": "",
+        "currentOperator": "Ascent Companies",
+        "currentOwner": "Ascent Companies (Ascent OPCO, LLC)",
+        "currentOwners": [
+          "Ascent Companies (Ascent OPCO, LLC)"
+        ],
+        "otherNames": [
+          "Discovery Ranch for Girls",
+          "Ascent, Inc. - Discovery Ranch for Girls"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Cedar City",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Cedar City, UT",
+      "address": "4928 N 4500 W, Cedar City, UT 84721",
+      "operatingPeriod": {
+        "startYear": 2013,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2013-present",
+        "notes": [
+          "Girls program of Discovery Ranch, moved from the Mapleton campus in 2013 and marketed as Discovery Ranch for Girls.",
+          "26 rule violations substantiated between December 2023 and June 2026, many repeat findings on critical incident reporting, supervision and staffing ratios."
+        ]
+      },
+      "staff": {
+        "administrator": [
+          {
+            "name": "Andrea Burgess",
+            "role": "Executive Director"
+          },
+          {
+            "name": "Jennifer Hedrick",
+            "role": "Clinical Director"
+          }
+        ],
+        "notableStaff": [
+          {
+            "name": "Jack Hinman",
+            "role": "Clinical Director (former)"
+          },
+          {
+            "name": "Tim Lowe",
+            "role": "Therapist"
+          },
+          {
+            "name": "Clint Firth",
+            "role": "Academic Director"
+          }
+        ],
+        "pastTTIJobs": [
+          "Andrea Burgess: Executive Director of RedCliff Ascent from 1996",
+          "Jennifer Hedrick: Clinical Director at Moonridge Academy and RedCliff Ascent",
+          "Jack Hinman: Clinical Director of Sunrise RTC; later Executive Director of Moonridge Academy and Kolob Canyon RTC",
+          "Clint Firth: teacher at Logan River Academy"
+        ]
+      },
+      "profileLinks": [
+        "https://kidsoverprofits.org/discovery-ranch/",
+        "https://www.reddit.com/r/troubledteens/wiki/index/discoveryranchgirls",
+        "https://discoveryranchforgirls.com/"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": 60,
+        "currentCensus": null,
+        "ageRange": {
+          "min": 13,
+          "max": 17
+        },
+        "gender": "girls"
+      },
+      "accreditations": {
+        "current": [
+          "Northwest Accreditation Commission (NWAC)"
+        ],
+        "past": []
+      },
+      "memberships": [
+        "NATSAP (since 2013)"
+      ],
+      "licensing": [
+        "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93244, capacity 60"
+      ],
+      "criticalIncidents": {
+        "customIncidents": [
+          "December 6, 2023: a client ingested non-edible objects on six occasions requiring emergency room visits; supervision finding",
+          "December 31, 2024: eight violations in one complaint investigation, including 5 staff to 22 clients, a client unsupervised about three hours, meals used as punishment, and two clients self-injuring with a sharp object from the staff office",
+          "February 12, 2025: a client with a history of sexual misconduct able to act sexually with a peer",
+          "March 20, 2025: two clients went missing and were marked present; not reported",
+          "June 9-10, 2026: late critical incident reporting cited twice as repeat noncompliance"
+        ]
+      },
+      "notes": [
+        "Two facilities_master rows exist for this campus (Discovery Ranch South and Ascent, Inc. - Discovery Ranch for Girls, 10387); this is the record with the license data."
+      ],
+      "documentFolderId": 4
+    }
   }
 ]
