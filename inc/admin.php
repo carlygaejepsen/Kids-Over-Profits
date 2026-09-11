@@ -662,6 +662,86 @@ function kop_apply_lawsuit_document_fixes() {
 }
 
 /**
+ * Seed posts: drafts assembled offline (seeds/<slug>.json + .html) that are
+ * created once so an editor can review and publish them in wp-admin. A seed
+ * is skipped when any post or page already owns its slug, so re-running is
+ * safe and a trashed or renamed draft is never recreated with the same slug
+ * while the original exists.
+ *
+ * JSON keys: title, slug, post_type, status, content_file, excerpt,
+ * categories (slugs), template (file in templates/), meta (key => string),
+ * meta_arrays (key => list), acf_field_keys (key => field_xxx so ACF shows
+ * the value in the editor).
+ */
+function kop_seed_posts() {
+    return array(
+        'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
+    );
+}
+
+function kop_apply_seed_posts() {
+    $created = array();
+    $dir = trailingslashit(get_stylesheet_directory()) . 'seeds/';
+    foreach (kop_seed_posts() as $file) {
+        $path = $dir . $file;
+        if (!file_exists($path)) {
+            continue;
+        }
+        $spec = json_decode((string) file_get_contents($path), true);
+        if (!is_array($spec) || empty($spec['slug']) || empty($spec['content_file'])) {
+            continue;
+        }
+        $post_type = !empty($spec['post_type']) ? $spec['post_type'] : 'post';
+        if (get_page_by_path($spec['slug'], OBJECT, array('post', 'page'))) {
+            continue;
+        }
+        $content_path = $dir . $spec['content_file'];
+        if (!file_exists($content_path)) {
+            continue;
+        }
+        $post_id = wp_insert_post(array(
+            'post_title'   => (string) ($spec['title'] ?? $spec['slug']),
+            'post_name'    => (string) $spec['slug'],
+            'post_type'    => $post_type,
+            'post_status'  => !empty($spec['status']) ? $spec['status'] : 'draft',
+            'post_content' => wp_slash((string) file_get_contents($content_path)),
+            'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? '')),
+        ), true);
+        if (!$post_id || is_wp_error($post_id)) {
+            continue;
+        }
+        if (!empty($spec['categories']) && is_array($spec['categories'])) {
+            $term_ids = array();
+            foreach ($spec['categories'] as $cat_slug) {
+                $term = get_term_by('slug', $cat_slug, 'category');
+                if ($term && !is_wp_error($term)) {
+                    $term_ids[] = (int) $term->term_id;
+                }
+            }
+            if ($term_ids) {
+                wp_set_post_categories($post_id, $term_ids);
+            }
+        }
+        if (!empty($spec['template'])) {
+            update_post_meta($post_id, '_wp_page_template', 'templates/' . $spec['template']);
+        }
+        $keys = !empty($spec['acf_field_keys']) && is_array($spec['acf_field_keys']) ? $spec['acf_field_keys'] : array();
+        foreach (array('meta', 'meta_arrays') as $bucket) {
+            if (empty($spec[$bucket]) || !is_array($spec[$bucket])) {
+                continue;
+            }
+            foreach ($spec[$bucket] as $key => $value) {
+                update_post_meta($post_id, $key, $value);
+                if (isset($keys[$key])) {
+                    update_post_meta($post_id, '_' . $key, $keys[$key]);
+                }
+            }
+        }
+        $created[] = $spec['slug'];
+    }
+    return $created;
+}
+/**
  * Apply kop_slug_renames(), kop_template_assignments(), then
  * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
@@ -669,6 +749,7 @@ function kop_apply_template_assignments() {
     $summary = array('renamed' => array(), 'assigned' => array(), 'missing' => array(), 'trashed' => array());
 
     $summary['lawsuit_docs'] = kop_apply_lawsuit_document_fixes();
+    $summary['seeded']       = kop_apply_seed_posts();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -717,7 +798,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '7';
+    $version = '8';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -1,0 +1,59 @@
+{
+  "title": "Provo Canyon School",
+  "slug": "provo-canyon-school",
+  "post_type": "post",
+  "status": "draft",
+  "content_file": "provo-canyon-school.html",
+  "excerpt": "A locked residential treatment program in Utah County founded in 1971 and owned by Universal Health Services since 2000. Utah revoked both campus licenses in July 2026 after decades of abuse allegations.",
+  "categories": ["facility-profile", "utah", "where-are-the-kids"],
+  "template": "single-facility-profile.php",
+  "meta": {
+    "facility_name": "Provo Canyon School",
+    "facility_address": "4501 N University Ave, Provo, UT 84604",
+    "facility_address_2": "763 N 1650 W, Springville, UT 84663 (girls campus, opened 2005)",
+    "facility_address_3": "1350 E 750 N, Orem, UT 84097 (former girls campus, now Provo Canyon Behavioral Hospital)",
+    "facility_address_4": "",
+    "date_founded": "1971",
+    "date_closed": "",
+    "founders": "Robert H. Crist and Jack Williams",
+    "previous_name": "",
+    "parent_company": "Universal Health Services (since August 2000); Charter Behavioral Health Systems (1986 to 2000)",
+    "investors": "",
+    "external_profile": "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/",
+    "staff_transfers": "Robert B. Lichfield, dorm parent from 1977, founded Cross Creek and WWASP",
+    "staff_transfers_2": "Robert Crist and Larry Carter left in 2000 to found Logan River Academy; Crist and Kreg Gillman founded Silverado Academy in 2006",
+    "staff_transfers_3": "Ron Tuinei and Barry Woodward each went on to lead Copper Hills Youth Center",
+    "trigger_warnings": "Trigger warnings: physical restraint, seclusion, forced medication, sexual abuse, suicide"
+  },
+  "meta_arrays": {
+    "treatments": ["Isolation", "Physical Restraint", "Chemical Sedation", "Behavior Modification", "Level System", "Mail and Phone Censorship"]
+  },
+  "acf_field_keys": {
+    "facility_name": "field_68505bd591ccb",
+    "facility_address": "field_68505bfb91ccc",
+    "facility_address_2": "field_6851be547a5ff",
+    "facility_address_3": "field_6851be527a5fe",
+    "facility_address_4": "field_6851be517a5fd",
+    "date_founded": "field_685069288a8d4",
+    "date_closed": "field_6851be997a601",
+    "founders": "field_68506978512e4",
+    "previous_name": "field_6851bf167a602",
+    "parent_company": "field_68506ba6512e8",
+    "investors": "field_68506987512e5",
+    "external_profile": "field_68505c3d91cce",
+    "staff_transfers": "field_68506b6a512e7",
+    "staff_transfers_2": "field_6851be457a5fb",
+    "staff_transfers_3": "field_6851be4d7a5fc",
+    "treatments": "field_6850699a512e6",
+    "trigger_warnings": "field_684dd017a0a72"
+  },
+  "sources_scanned": [
+    "facilities_master rows 10371, 10507, 10508, 10556, 10557 and parent row 25 (Universal Health Services)",
+    "news_submissions: 14 approved articles mentioning Provo Canyon School",
+    "posts 814, 820, 2319, 3111 and pages corporatization, advocacy-history, warehouses-of-neglect, three-springs-inc",
+    "wiki_submissions 657 (r/troubledteens wiki, mirrored)",
+    "inspection_facilities and js/data/ut_reports.json for licenses 93696 and 93697",
+    "FileBird folder 50 (31 documents)",
+    "lawsuits, legislation and memorial_victims tables (no rows)"
+  ]
+}
