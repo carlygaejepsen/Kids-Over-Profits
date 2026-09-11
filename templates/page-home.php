@@ -128,6 +128,10 @@ $kop_report_states = array(
     'wa' => 'Washington',
     'ut' => 'Utah',
     'az' => 'Arizona',
+    'fl' => 'Florida',
+    'ga' => 'Georgia',
+    'nc' => 'North Carolina',
+    'nv' => 'Nevada',
 );
 ?>
 
@@ -283,7 +287,8 @@ $kop_report_states = array(
         <h2>New Inspection Reports Available!</h2>
         <p>We created inspection trackers to make it easier for everyone to monitor violations in
         facilities for kids. Oregon, Minnesota, Arkansas, Connecticut, Montana, Texas, California,
-        Washington, Utah, and Arizona are available now. More trackers are coming soon!</p>
+        Washington, Utah, Arizona, Florida, Georgia, North Carolina, and Nevada are available now.
+        More trackers are coming soon!</p>
         <div class="kop-home-reports-buttons">
             <?php foreach ($kop_report_states as $abbr => $label): ?>
                 <a class="kop-home-report-btn" href="/<?php echo esc_attr($abbr); ?>-reports"><?php echo esc_html($label); ?></a>

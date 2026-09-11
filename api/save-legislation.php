@@ -4,6 +4,8 @@
  *
  * GET  ?id=N         -> single record
  * GET  ?jurisdiction=Utah&publication_status=published[&limit=...&offset=...]
+ *      &level=state|federal narrows to Federal rows or to non-Federal (state) rows;
+ *      there is no level column, so it is derived from jurisdiction = 'Federal'.
  * POST JSON body     -> create or update (when id is present)
  */
 
@@ -75,6 +77,10 @@ try {
 
         $jurisdiction = isset($_GET['jurisdiction']) ? trim($_GET['jurisdiction']) : '';
         $statusFilter = isset($_GET['publication_status']) ? trim($_GET['publication_status']) : '';
+        $levelFilter = isset($_GET['level']) ? strtolower(trim($_GET['level'])) : '';
+        if (!in_array($levelFilter, ['state', 'federal'], true)) {
+            $levelFilter = '';
+        }
         $limit = max(1, min(200, (int)($_GET['limit'] ?? 50)));
         $offset = max(0, (int)($_GET['offset'] ?? 0));
 
@@ -84,6 +90,16 @@ try {
         if ($jurisdiction !== '') {
             $where[] = 'jurisdiction = ?';
             $params[] = $jurisdiction;
+        }
+
+        // Level is not stored; the admin UI treats jurisdiction 'Federal' as the
+        // federal level and every other jurisdiction as state level.
+        if ($levelFilter === 'federal') {
+            $where[] = 'jurisdiction = ?';
+            $params[] = 'Federal';
+        } elseif ($levelFilter === 'state') {
+            $where[] = '(jurisdiction IS NULL OR jurisdiction <> ?)';
+            $params[] = 'Federal';
         }
 
         if ($statusFilter !== '') {

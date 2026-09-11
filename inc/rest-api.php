@@ -150,6 +150,12 @@ function kop_register_facilities_rest_routes() {
                     'default' => '',
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
+                'transporter' => array(
+                    'required' => false,
+                    'type' => 'string',
+                    'default' => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
                 'limit' => array(
                     'required' => false,
                     'type' => 'integer',
@@ -1687,6 +1693,7 @@ function kop_search_database_rest_callback($request) {
         'company'     => (string) $request->get_param('company'),
     );
     $referrer_query = (string) $request->get_param('referrer');
+    $transporter_query = (string) $request->get_param('transporter');
     $limit = (int) $request->get_param('limit');
     $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
 
@@ -1699,7 +1706,7 @@ function kop_search_database_rest_callback($request) {
     }
 
     // At least one search query must be provided
-    if (!$has_facility_query && $referrer_query === '') {
+    if (!$has_facility_query && $referrer_query === '' && $transporter_query === '') {
         return rest_ensure_response(array(
             'success' => true,
             'results' => array(),
@@ -1831,6 +1838,62 @@ function kop_search_database_rest_callback($request) {
                             'facilityCount' => 0,
                             'matchSnippet' => $match_snippet,
                             'matchType' => 'referrer',
+                            'source' => 'database',
+                            'data' => $data,
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    // Transporter search - searches transporters_master rows (the transporter
+    // search box on the data form targets these). Same shape as the referrer
+    // branch above; the table is created lazily on first save, so it may not exist.
+    if ($transporter_query !== '') {
+        $transporters_table = 'transporters_master';
+        $transporters_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $transporters_table
+        ));
+
+        if ($transporters_exists) {
+            $transporter_rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$transporters_table}", ARRAY_A);
+            if (is_array($transporter_rows)) {
+                foreach ($transporter_rows as $row) {
+                    if (empty($row['json_data'])) {
+                        continue;
+                    }
+                    $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
+                    $data = kop_normalize_project_payload($row['json_data']);
+                    if (!$data) {
+                        continue;
+                    }
+
+                    $match_snippet = null;
+                    if (stripos($unique_name, $transporter_query) !== false) {
+                        $match_snippet = 'Name: ' . $unique_name;
+                    } else {
+                        $match_snippet = kop_search_in_data($data, $transporter_query);
+                    }
+
+                    if ($match_snippet) {
+                        $company_name = '';
+                        foreach (array('transporterCompany', 'transporterAgency', 'transporterGroup') as $company_key) {
+                            if (!empty($data[$company_key]['name'])) {
+                                $company_name = (string) $data[$company_key]['name'];
+                                break;
+                            }
+                        }
+                        $all_results[] = array(
+                            'name' => $unique_name,
+                            'label' => $unique_name,
+                            'category' => 'transporters',
+                            'operator' => $company_name,
+                            'facilityCount' => 0,
+                            'matchSnippet' => $match_snippet,
+                            'matchType' => 'transporter',
                             'source' => 'database',
                             'data' => $data,
                         );

@@ -661,6 +661,8 @@ function loadFacilityData() {
         checkbox.checked = !!getNestedValue(facility, path);
     });
 
+    renderCustomCheckboxLists(facility);
+
     // Backfill empty Opened/Closed pickers from a legacy "Years of Operation"
     // string (e.g. "2016-2022") so old records adopt the picker-as-source model.
     // Staged into the inputs/formData only — persists when the user saves.
@@ -864,8 +866,28 @@ function handleFileUpload(event) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
+        importProjectsFromJsonText(e.target.result);
+    };
+    reader.readAsText(file);
+}
+
+/**
+ * Import one project (or a {projects: {...}} export) from raw JSON text.
+ * Shared by the file picker and the "Paste JSON" box.
+ * @param {string} text
+ * @returns {boolean} true when at least one project was imported
+ */
+function importProjectsFromJsonText(text) {
+    if (typeof text !== 'string' || !text.trim()) {
+        showUploadStatus('Nothing to import: paste or choose some JSON first.', 'error');
+        return false;
+    }
+    {
         try {
-            const data = JSON.parse(e.target.result);
+            const data = JSON.parse(text);
+            if (!data || typeof data !== 'object' || Array.isArray(data)) {
+                throw new Error('Expected a JSON object describing a project.');
+            }
             let importedProjects = {};
             
             if (data.projects) {
@@ -906,13 +928,143 @@ function handleFileUpload(event) {
             if (firstProject) {
                 loadProject(firstProject);
             }
-            
+
             showUploadStatus(`Imported ${Object.keys(importedProjects).length} project(s).`, 'success');
+            return true;
         } catch (error) {
             showUploadStatus(`Import failed: ${error.message}`, 'error');
+            return false;
         }
-    };
-    reader.readAsText(file);
+    }
+}
+
+/**
+ * Reset the form to a blank project WITHOUT prompting. Called by
+ * ui-render.js before loading a database project, and by the Clear Form
+ * button (which confirms first).
+ */
+function clearForm() {
+    window.formData = createNewProjectData();
+    window.currentFacilityIndex = 0;
+    if (typeof window.updateAllUI === 'function') window.updateAllUI();
+    updateJSON();
+}
+
+function clearFormWithConfirm() {
+    if (!confirm('Clear every field in this form? Unsaved changes will be lost.')) return;
+    clearForm();
+    autoSave();
+    showUploadStatus('Form cleared.', 'info');
+}
+
+// ============================================
+// CUSTOM CHECKBOX LISTS
+// (custom treatment types / philosophies / critical incidents)
+// Stored as arrays of strings on the facility, e.g. treatmentTypes.custom,
+// which is the shape data-report-generator.js already reads.
+// ============================================
+const CUSTOM_CHECKBOX_LISTS = [
+    { inputId: 'custom-treatment-input',  buttonId: 'add-custom-treatment-btn',  listId: 'custom-treatment-list',  path: 'treatmentTypes.custom',    label: 'treatment type' },
+    { inputId: 'custom-philosophy-input', buttonId: 'add-custom-philosophy-btn', listId: 'custom-philosophy-list', path: 'philosophy.custom',        label: 'philosophy' },
+    { inputId: 'custom-incident-input',   buttonId: 'add-custom-incident-btn',   listId: 'custom-incidents-list',  path: 'criticalIncidents.custom', label: 'incident type' }
+];
+
+function getCustomListValues(facility, path) {
+    const raw = getNestedValue(facility, path);
+    if (!Array.isArray(raw)) return [];
+    return raw.filter(v => typeof v === 'string' && v.trim()).map(v => v.trim());
+}
+
+function renderCustomCheckboxLists(facility) {
+    CUSTOM_CHECKBOX_LISTS.forEach(config => {
+        const list = document.getElementById(config.listId);
+        if (!list) return;
+        const values = facility ? getCustomListValues(facility, config.path) : [];
+        list.innerHTML = '';
+        values.forEach(value => {
+            const row = document.createElement('div');
+            row.className = 'checkbox-group custom-checkbox-item';
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = true;
+            checkbox.id = `${config.listId}-${values.indexOf(value)}`;
+            checkbox.title = `Uncheck to remove this ${config.label}`;
+            checkbox.addEventListener('change', () => {
+                if (!checkbox.checked) removeCustomListValue(config, value);
+            });
+
+            const label = document.createElement('label');
+            label.htmlFor = checkbox.id;
+            label.textContent = value;
+
+            row.appendChild(checkbox);
+            row.appendChild(label);
+            list.appendChild(row);
+        });
+    });
+}
+
+function currentFacilityForCustomLists() {
+    const facilities = window.formData && window.formData.facilities;
+    return Array.isArray(facilities) ? facilities[window.currentFacilityIndex || 0] : null;
+}
+
+function addCustomListValue(config) {
+    const input = document.getElementById(config.inputId);
+    const facility = currentFacilityForCustomLists();
+    if (!input || !facility) return;
+
+    const value = input.value.trim();
+    if (!value) {
+        showUploadStatus(`Enter a ${config.label} first.`, 'error');
+        return;
+    }
+
+    const values = getCustomListValues(facility, config.path);
+    if (values.some(v => v.toLowerCase() === value.toLowerCase())) {
+        showUploadStatus(`"${value}" is already listed.`, 'error');
+        return;
+    }
+
+    values.push(value);
+    setNestedValue(facility, config.path, values);
+    input.value = '';
+    renderCustomCheckboxLists(facility);
+    updateJSON();
+    autoSave();
+    showUploadStatus(`Added ${config.label} "${value}".`, 'success');
+}
+
+function removeCustomListValue(config, value) {
+    const facility = currentFacilityForCustomLists();
+    if (!facility) return;
+    const values = getCustomListValues(facility, config.path).filter(v => v !== value);
+    setNestedValue(facility, config.path, values);
+    renderCustomCheckboxLists(facility);
+    updateJSON();
+    autoSave();
+}
+
+function attachCustomListListeners() {
+    CUSTOM_CHECKBOX_LISTS.forEach(config => {
+        const button = document.getElementById(config.buttonId);
+        if (button && !button.dataset.listenerAttached) {
+            button.type = 'button';
+            button.addEventListener('click', () => addCustomListValue(config));
+            button.dataset.listenerAttached = 'true';
+        }
+        const input = document.getElementById(config.inputId);
+        if (input && !input.dataset.listenerAttached) {
+            input.addEventListener('keydown', event => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addCustomListValue(config);
+                }
+            });
+            input.dataset.listenerAttached = 'true';
+        }
+    });
 }
 
 // copyToClipboard, downloadJSON, and buildProjectExport functions now defined in utilities.js module
@@ -1660,6 +1812,34 @@ function attachButtonListeners() {
         generateReportBtnReferrer.dataset.listenerAttached = 'true';
     }
 
+    // Transporter project buttons (mirror the referrer trio above)
+    const newBtnTransporter = document.getElementById('new-project-btn-transporter');
+    if (newBtnTransporter && !newBtnTransporter.dataset.listenerAttached) {
+        newBtnTransporter.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
+        newBtnTransporter.dataset.listenerAttached = 'true';
+    }
+
+    const exportAllBtnTransporter = document.getElementById('export-all-btn-transporter');
+    if (exportAllBtnTransporter && !exportAllBtnTransporter.dataset.listenerAttached) {
+        exportAllBtnTransporter.onclick = () => {
+            exportProjectsToFile({ categories: ['transporters'], filename: 'projects-export-transporters.json' });
+        };
+        exportAllBtnTransporter.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtnTransporter = document.getElementById('generate-report-btn-transporter');
+    if (generateReportBtnTransporter && !generateReportBtnTransporter.dataset.listenerAttached) {
+        generateReportBtnTransporter.onclick = () => {
+            generateProjectsReport({ categories: ['transporters'], filename: 'projects-report-transporters.json' });
+        };
+        generateReportBtnTransporter.dataset.listenerAttached = 'true';
+    }
+
     const newReferrerBtn = document.getElementById('new-referrer-project-btn');
     if (newReferrerBtn && !newReferrerBtn.dataset.listenerAttached) {
         newReferrerBtn.onclick = () => {
@@ -1816,6 +1996,28 @@ function attachButtonListeners() {
         fileUpload.addEventListener('change', handleFileUpload, { passive: true });
         fileUpload.dataset.listenerAttached = 'true';
     }
+
+    const importJsonBtn = document.getElementById('import-json-btn');
+    if (importJsonBtn && !importJsonBtn.dataset.listenerAttached) {
+        importJsonBtn.type = 'button';
+        importJsonBtn.addEventListener('click', () => {
+            const pasteBox = document.getElementById('json-paste');
+            const text = pasteBox ? pasteBox.value : '';
+            if (importProjectsFromJsonText(text) && pasteBox) {
+                pasteBox.value = '';
+            }
+        });
+        importJsonBtn.dataset.listenerAttached = 'true';
+    }
+
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    if (clearAllBtn && !clearAllBtn.dataset.listenerAttached) {
+        clearAllBtn.type = 'button';
+        clearAllBtn.addEventListener('click', clearFormWithConfirm);
+        clearAllBtn.dataset.listenerAttached = 'true';
+    }
+
+    attachCustomListListeners();
 
     // Search input event listeners - Delegated to data-search.js module
     if (window.KOP_Search && typeof window.KOP_Search.attachSearchListeners === 'function') {
@@ -2095,6 +2297,8 @@ if (typeof window.initializeAutocompleteFields !== 'function') {
 }
 window.invalidateAggregatedData = invalidateAggregatedData;
 window.normalizeProjectData = normalizeProjectData;
+window.clearForm = clearForm;
+window.importProjectsFromJsonText = importProjectsFromJsonText;
 window.initializeSectionToggles = initializeSectionToggles;
 window.initializeMobileSectionControls = initializeMobileSectionControls;
 window.expandAllSections = expandAllSections;

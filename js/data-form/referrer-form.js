@@ -1126,8 +1126,8 @@ function attachReferrerFieldListeners() {
         }
     });
 
-    // Independent consultant toggle - handled by admin-data-page.js
-    // The handler in admin-data-page.js properly saves isIndependentConsultant and referrerType
+    // Independent consultant toggle - handled by data-form-modules/data-page.js
+    // The handler in data-page.js properly saves isIndependentConsultant and referrerType
     // to formData and triggers autosave, so we don't need a duplicate handler here.
 }
 

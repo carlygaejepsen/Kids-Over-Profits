@@ -41,9 +41,8 @@ get_header();
 
                 <select id="sortBy">
                     <option value="name">Sort A-Z</option>
-                    <option value="violations-only">Violations Only</option>
-                    <option value="violations-desc">Most Violations</option>
-                    <option value="recent-inspection">Recent Inspections</option>
+                    <option value="violations-only">Violations / Inspections Only</option>
+                    <option value="reports-desc">Most Inspection Reports</option>
                 </select>
 
                 <button id="clearSearch" onclick="clearSearch()">

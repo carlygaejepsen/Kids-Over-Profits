@@ -1,6 +1,30 @@
 // Facilities Database Display - Drop-in JavaScript
 // Usage: Include this file and call displayFacilities(jsonData, containerId)
 
+// Sort/filter metadata stamped on operator sections and facility cards for
+// the #sortBy dropdown (see handleSort and filterFacilities). See
+// facilityHasViolationsFlag for the violations signal; the report count is
+// inspection_stats.report_count (inspection_reports rows attached by
+// kop_attach_inspection_stats_to_projects in inc/database.php).
+function facilityHasViolationsFlag(facility) {
+    if (!facility) return false;
+    // Legacy resources.hasViolations flag (older exports), or any inspection
+    // report on file, or a licensing action recorded against the facility.
+    const resources = facility.resources || {};
+    if (resources.hasViolations === true) return true;
+    const stats = facility.inspection_stats;
+    if (stats && typeof stats === 'object') {
+        if ((Number(stats.report_count) || 0) > 0) return true;
+        if (String(stats.licensing_action || '').trim()) return true;
+    }
+    return false;
+}
+
+function facilityInspectionReportCount(facility) {
+    const stats = facility && facility.inspection_stats;
+    return (stats && typeof stats === 'object') ? (Number(stats.report_count) || 0) : 0;
+}
+
 function displayFacilities(facilitiesData, containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -369,7 +393,11 @@ function displayFacilities(facilitiesData, containerId) {
         // Always create the div, even if empty
         otherOperatorData = `<div class="operator-details">${otherOperatorData}</div>`;
 
-        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '">' +
+        // Aggregates read by handleSort / filterFacilities.
+        const operatorViolationFacilities = facilities.filter(facilityHasViolationsFlag).length;
+        const operatorReportCount = facilities.reduce((sum, f) => sum + facilityInspectionReportCount(f), 0);
+
+        html += '<details class="operator-section" data-operator="' + escapeAttribute(operatorName) + '" data-violation-facilities="' + operatorViolationFacilities + '" data-report-count="' + operatorReportCount + '">' +
                 '<summary class="operator-header">' +
                     operatorHeader +
                     locationYearsLine +
@@ -498,7 +526,7 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
 
-            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}">
+            html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}" data-has-violations="${facilityHasViolationsFlag(facility) ? '1' : '0'}" data-report-count="${facilityInspectionReportCount(facility)}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
                         ${facilityLocation ? `<p class="facility-location">${facilityLocation}</p>` : ''}
@@ -538,6 +566,10 @@ function filterFacilities() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
     const statusFilterSelect = document.getElementById('statusFilter');
     const statusFilter = statusFilterSelect ? statusFilterSelect.value : '';
+    // "Violations Only" in the sort dropdown is a filter: keep only facilities
+    // flagged resources.hasViolations (data-has-violations stamped at render).
+    const sortSelect = document.getElementById('sortBy');
+    const violationsOnly = !!sortSelect && sortSelect.value === 'violations-only';
 
     const operatorSections = document.querySelectorAll('.operator-section');
     
@@ -552,8 +584,9 @@ function filterFacilities() {
             
             const matchesSearch = operatorName.includes(searchTerm) || facilityName.includes(searchTerm);
             const matchesStatus = !statusFilter || facilityStatus === statusFilter;
-            
-            if (matchesSearch && matchesStatus) {
+            const matchesViolations = !violationsOnly || card.dataset.hasViolations === '1';
+
+            if (matchesSearch && matchesStatus && matchesViolations) {
                 card.style.display = 'block';
                 visibleFacilities++;
             } else {
@@ -582,7 +615,8 @@ function clearSearch() {
 
     if (searchInput) searchInput.value = '';
     if (statusFilter) statusFilter.value = '';
-    if (sortBy) sortBy.value = '';
+    // The select has no ''-valued option; reset to its first (default) option.
+    if (sortBy) sortBy.selectedIndex = 0;
     if (clearButton) clearButton.style.display = 'none';
     filterFacilities();
 }
@@ -643,38 +677,28 @@ function handleSort() {
 
     if (!container) return;
     
-    switch(sortValue) {
-        case 'name':
-            operatorSections.sort((a, b) => a.dataset.operator.localeCompare(b.dataset.operator));
+    const byName = (a, b) => (a.dataset.operator || '').localeCompare(b.dataset.operator || '');
+    const reportCount = (section) => Number(section.dataset.reportCount) || 0;
+
+    switch (sortValue) {
+        case 'reports-desc':
+            // Most inspection reports on file (data-report-count stamped at render), then A-Z.
+            operatorSections.sort((a, b) => (reportCount(b) - reportCount(a)) || byName(a, b));
             break;
         case 'violations-only':
-            // Filter to show only facilities with violations (you'll need to add violation data to your JSON)
-            operatorSections.forEach(section => {
-                const facilities = section.querySelectorAll('.facility-card');
-                let hasViolations = false;
-                facilities.forEach(facility => {
-                    // Check if facility has violations in the resources or add violation indicator
-                    const violationText = facility.textContent.toLowerCase();
-                    if (violationText.includes('violation') || violationText.includes('violations')) {
-                        hasViolations = true;
-                    }
-                });
-                section.style.display = hasViolations ? 'block' : 'none';
-            });
-            return;
-        case 'violations-desc':
-            // Sort by most violations (you'll need violation count in your data)
-            break;
-        case 'recent-inspection':
-            // Sort by recent inspection (you'll need inspection dates in your data)
-            break;
+        case 'name':
         default:
-            // Default A-Z sort
-            operatorSections.sort((a, b) => a.dataset.operator.localeCompare(b.dataset.operator));
+            operatorSections.sort(byName);
     }
-    
+
     // Re-append sorted sections
     operatorSections.forEach(section => container.appendChild(section));
+
+    // Visibility is owned by filterFacilities(), which reads the dropdown for
+    // the violations-only mode. Re-running it resets every section's display
+    // from the current search/status state, so leaving violations-only
+    // restores the sections and cards it hid.
+    filterFacilities();
 }
 
 function toggleAllFacilityDetails(button) {

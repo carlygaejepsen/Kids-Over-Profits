@@ -634,7 +634,7 @@
             const count = countTreeFiles(sf);
             const inner = (files.length ? renderFileGrid(files) : '') + renderSubfolders(sf.subfolders);
             return `<details class="state-doc-subfolder">
-                        <summary class="state-doc-subfolder-title">📁 ${name} <span class="state-doc-subfolder-count">(${count})</span></summary>
+                        <summary class="state-doc-subfolder-title">${name} <span class="state-doc-subfolder-count">(${count})</span></summary>
                         <div class="state-doc-subfolder-content">${inner}</div>
                     </details>`;
         }).join('');
@@ -657,7 +657,7 @@
                 if (!target) return;
                 if (target.dataset.loaded === '1') {
                     target.hidden = !target.hidden;
-                    btn.textContent = target.hidden ? '📂 Show documents' : '📂 Hide documents';
+                    btn.textContent = target.hidden ? 'Show documents' : 'Hide documents';
                     return;
                 }
                 btn.disabled = true;
@@ -666,7 +666,7 @@
                 target.innerHTML = renderFileGrid(files);
                 target.dataset.loaded = '1';
                 target.hidden = false;
-                btn.textContent = '📂 Hide documents';
+                btn.textContent = 'Hide documents';
                 btn.disabled = false;
             });
         });
@@ -1814,7 +1814,7 @@
                             </div>` : ''}
                         ${l.filebird_folder_id ? `
                             <div class="docs-block">
-                                <button type="button" class="docs-toggle" data-folder-id="${escapeHtml(String(l.filebird_folder_id))}" data-count="">📂 Show documents</button>
+                                <button type="button" class="docs-toggle" data-folder-id="${escapeHtml(String(l.filebird_folder_id))}" data-count="">Show documents</button>
                                 <div class="docs-target" hidden></div>
                             </div>` : ''}
                     </li>
@@ -1865,7 +1865,7 @@
                         </div>
                         ${b.filebird_folder_id ? `
                             <div class="docs-block">
-                                <button type="button" class="docs-toggle" data-folder-id="${escapeHtml(String(b.filebird_folder_id))}" data-count="">📂 Show documents</button>
+                                <button type="button" class="docs-toggle" data-folder-id="${escapeHtml(String(b.filebird_folder_id))}" data-count="">Show documents</button>
                                 <div class="docs-target" hidden></div>
                             </div>` : ''}
                     </li>

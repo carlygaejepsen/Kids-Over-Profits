@@ -18,7 +18,8 @@ const KOP_Search = (function() {
         return {
             company: document.getElementById('company-search-input')?.value || '',
             location: document.getElementById('location-search-input')?.value || '',
-            referrer: document.getElementById('referrer-search-input')?.value || ''
+            referrer: document.getElementById('referrer-search-input')?.value || '',
+            transporter: document.getElementById('transporter-search-input')?.value || ''
         };
     }
 
@@ -56,7 +57,7 @@ const KOP_Search = (function() {
      */
     function searchDatabase(searchQueries) {
         // Skip if all queries are empty
-        if (!searchQueries.company && !searchQueries.location && !searchQueries.referrer) {
+        if (!searchQueries.company && !searchQueries.location && !searchQueries.referrer && !searchQueries.transporter) {
             window.databaseProjects = {};
             if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
                 window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
@@ -69,6 +70,7 @@ const KOP_Search = (function() {
         if (searchQueries.company) params.append('company', searchQueries.company);
         if (searchQueries.location) params.append('location', searchQueries.location);
         if (searchQueries.referrer) params.append('referrer', searchQueries.referrer);
+        if (searchQueries.transporter) params.append('transporter', searchQueries.transporter);
         params.append('limit', '20');
 
         // REST root: KOP_DATA_FORM_CONFIG.restUrl already ends in kop/v1/.
@@ -132,6 +134,13 @@ const KOP_Search = (function() {
             referrerSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
             referrerSearchInput.dataset.listenerAttached = 'true';
         }
+
+        // Transporter search input
+        const transporterSearchInput = document.getElementById('transporter-search-input');
+        if (transporterSearchInput && !transporterSearchInput.dataset.listenerAttached) {
+            transporterSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
+            transporterSearchInput.dataset.listenerAttached = 'true';
+        }
     }
 
     /**
@@ -146,6 +155,9 @@ const KOP_Search = (function() {
 
         const referrerSearchInput = document.getElementById('referrer-search-input');
         if (referrerSearchInput) referrerSearchInput.value = '';
+
+        const transporterSearchInput = document.getElementById('transporter-search-input');
+        if (transporterSearchInput) transporterSearchInput.value = '';
 
         // Clear database search results
         window.databaseProjects = {};

@@ -95,6 +95,16 @@
         REST_DELETE_PROJECT: API_ENDPOINTS.REST_DELETE_PROJECT
     };
     
+    // PHP (inc/enqueue.php) localizes the REST root as `restUrl` / `api.root`
+    // (already ending in kop/v1/) and the wp_rest nonce as `nonce` / `api.nonce`.
+    // Build the REST fallback routes from whichever root is present so the
+    // fallback save/delete carries a real URL instead of the theme-relative guess.
+    const resolveRestRoute = (route) => {
+        const root = DATA_FORM_CONFIG.restUrl || DATA_FORM_CONFIG.api?.root || '';
+        if (typeof root !== 'string' || !root) return '';
+        return `${root.replace(/\/+$/, '')}/${route}`;
+    };
+
     const getAPIEndpoints = () => {
         const loaderEndpoints = window.KOP_FormLoader?.API_ENDPOINTS || {};
         const formMode = window.KOP_FormConfig ? window.KOP_FormConfig.FORM_MODE : 'master';
@@ -108,9 +118,9 @@
             SAVE_PROJECT: formMode === 'suggestions' ? saveSuggestion : saveMaster,
             LOAD_PROJECTS: loaderEndpoints.LOAD_PROJECTS || API_ENDPOINT_FALLBACKS.LOAD_PROJECTS,
             AUTOCOMPLETE: loaderEndpoints.AUTOCOMPLETE || loaderEndpoints.SUGGESTIONS || API_ENDPOINT_FALLBACKS.AUTOCOMPLETE,
-            REST_SAVE_PROJECT: DATA_FORM_CONFIG.restSaveUrl || API_ENDPOINT_FALLBACKS.REST_SAVE_PROJECT,
-            REST_DELETE_PROJECT: DATA_FORM_CONFIG.restDeleteUrl || API_ENDPOINT_FALLBACKS.REST_DELETE_PROJECT,
-            REST_NONCE: DATA_FORM_CONFIG.restNonce || ''
+            REST_SAVE_PROJECT: DATA_FORM_CONFIG.restSaveUrl || resolveRestRoute('projects/save') || API_ENDPOINT_FALLBACKS.REST_SAVE_PROJECT,
+            REST_DELETE_PROJECT: DATA_FORM_CONFIG.restDeleteUrl || resolveRestRoute('projects/delete') || API_ENDPOINT_FALLBACKS.REST_DELETE_PROJECT,
+            REST_NONCE: DATA_FORM_CONFIG.restNonce || DATA_FORM_CONFIG.nonce || DATA_FORM_CONFIG.api?.nonce || ''
         };
     };
 

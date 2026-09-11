@@ -88,10 +88,12 @@ try {
     // Block duplicate cases by their source/document URLs, matched exactly and
     // PER FIELD (source_urls only against source_urls, document_urls only against
     // document_urls) so unrelated cases sharing a court/docket page don't collide.
-    // Rejected cases also block resubmission.
+    // Rejected cases also block resubmission. The public form posts each list
+    // as one newline-joined textarea string, so split it into individual URLs
+    // first; otherwise the whole blob is checked as a single (never-matching) URL.
     kop_block_if_duplicate(kop_check_url_duplicates($pdo, 'lawsuit', [
-        'source_urls'   => $input['source_urls'] ?? [],
-        'document_urls' => $input['document_urls'] ?? [],
+        'source_urls'   => law_sugg_normalize_array($input['source_urls'] ?? []),
+        'document_urls' => law_sugg_normalize_array($input['document_urls'] ?? []),
     ]));
 
     $fields = [

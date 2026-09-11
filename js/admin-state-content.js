@@ -534,6 +534,7 @@
         const resetBtn = document.getElementById('legislationResetBtn');
         const newBtn = document.getElementById('newLegislationBtn');
         const reloadBtn = document.getElementById('reloadList');
+        const filterLevel = document.getElementById('filterLevel');
         const filterJurisdiction = document.getElementById('filterJurisdiction');
         const filterPubStatus = document.getElementById('filterPublicationStatus');
         const fetchBtn = document.getElementById('fetchLegislationBtn');
@@ -666,6 +667,7 @@
 
         const loadList = async () => {
             const params = new URLSearchParams();
+            if (filterLevel && filterLevel.value) params.set('level', filterLevel.value);
             if (filterJurisdiction.value) params.set('jurisdiction', filterJurisdiction.value);
             if (filterPubStatus.value) params.set('publication_status', filterPubStatus.value);
             params.set('limit', '100');
@@ -786,6 +788,7 @@
         resetBtn.addEventListener('click', resetForm);
         newBtn.addEventListener('click', resetForm);
         reloadBtn.addEventListener('click', loadList);
+        if (filterLevel) filterLevel.addEventListener('change', loadList);
         filterJurisdiction.addEventListener('change', loadList);
         filterPubStatus.addEventListener('change', loadList);
         populateFolderSelect('leg-filebird-folder');
