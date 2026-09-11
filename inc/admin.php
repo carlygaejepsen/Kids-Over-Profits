@@ -850,11 +850,78 @@ function kop_apply_facility_record_seeds() {
             $record['timestamp'] = gmdate('c');
             $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $entry['id']));
             $done[] = (int) $entry['id'];
+
+            // The same facility also lives as a nested entry inside parent
+            // records (an operator project in facilities_master, the state
+            // aggregate in locations_master). The state hub reads those first,
+            // so merge the same fields into every nested copy that matches.
+            foreach ((array) ($entry['apply_to'] ?? array()) as $target) {
+                kop_apply_facility_seed_to_nested($pdo, $target, $entry['facility'], $version);
+            }
         }
     } catch (Throwable $e) {
         // Leave the records alone; the data form can fill them by hand.
     }
     return $done;
+}
+/**
+ * Merge seed facility fields into the nested facility entries of one parent
+ * row. $target = array('table' => facilities_master|locations_master,
+ * 'id' => row id, 'match' => array('facility_id' => N) or array('name' => S)).
+ * The facilities array sits at ->facilities or ->data->facilities depending
+ * on the row's age. Every matching entry below $version is updated.
+ */
+function kop_apply_facility_seed_to_nested(PDO $pdo, array $target, array $fields, $version) {
+    $table = ($target['table'] ?? '') === 'locations_master' ? 'locations_master' : 'facilities_master';
+    $id    = (int) ($target['id'] ?? 0);
+    $match = is_array($target['match'] ?? null) ? $target['match'] : array();
+    if (!$id || !$match) {
+        return 0;
+    }
+    $read = $pdo->prepare("SELECT json_data FROM {$table} WHERE id = ?");
+    $read->execute(array($id));
+    $record = json_decode((string) $read->fetchColumn(), true);
+    if (!is_array($record)) {
+        return 0;
+    }
+    $nested = false;
+    if (isset($record['facilities']) && is_array($record['facilities'])) {
+        $list =& $record['facilities'];
+    } elseif (isset($record['data']['facilities']) && is_array($record['data']['facilities'])) {
+        $list =& $record['data']['facilities'];
+        $nested = true;
+    } else {
+        return 0;
+    }
+    $changed = 0;
+    foreach ($list as $i => $facility) {
+        if (!is_array($facility)) {
+            continue;
+        }
+        $hit = false;
+        if (isset($match['facility_id'])) {
+            $hit = (int) ($facility['facility_id'] ?? 0) === (int) $match['facility_id'];
+        } elseif (isset($match['name'])) {
+            $hit = trim((string) ($facility['identification']['name'] ?? '')) === trim((string) $match['name']);
+        }
+        if (!$hit || (int) ($facility['kopProfileVersion'] ?? 0) >= (int) $version) {
+            continue;
+        }
+        $merged = array_replace($facility, $fields);
+        $merged['kopProfileVersion'] = (int) $version;
+        if (isset($facility['facility_id'])) {
+            $merged['facility_id'] = $facility['facility_id']; // keep the link to the ref row
+        }
+        $list[$i] = $merged;
+        $changed++;
+    }
+    unset($list);
+    if ($changed) {
+        $record['timestamp'] = gmdate('c');
+        $write = $pdo->prepare("UPDATE {$table} SET json_data = ?, updated_at = NOW() WHERE id = ?");
+        $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id));
+    }
+    return $changed;
 }
 /**
  * Apply kop_slug_renames(), kop_template_assignments(), then
@@ -914,7 +981,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '11';
+    $version = '12';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -2,8 +2,12 @@
   {
     "id": 10371,
     "unique_name": "Provo Canyon School",
-    "version": 1,
-    "top": { "city": "Provo", "state": "UT", "displayName": "Provo Canyon School" },
+    "version": 2,
+    "top": {
+      "city": "Provo",
+      "state": "UT",
+      "displayName": "Provo Canyon School"
+    },
     "facility": {
       "kopProfileVersion": 1,
       "identification": {
@@ -11,8 +15,13 @@
         "currentName": "",
         "currentOperator": "Universal Health Services (UHS)",
         "currentOwner": "Universal Health Services (UHS)",
-        "currentOwners": ["Universal Health Services (UHS)"],
-        "otherNames": ["PCS", "UHS of Provo Canyon dba Provo Campus"],
+        "currentOwners": [
+          "Universal Health Services (UHS)"
+        ],
+        "otherNames": [
+          "PCS",
+          "UHS of Provo Canyon dba Provo Campus"
+        ],
         "pastNames": [],
         "knownReferrers": []
       },
@@ -45,26 +54,80 @@
       },
       "staff": {
         "administrator": [
-          { "name": "Adam McClain", "role": "Group Director and CEO" },
-          { "name": "Barry Woodward", "role": "CEO (appointed 2000)" },
-          { "name": "Kreg Gillman", "role": "CEO (2003-2006)" },
-          { "name": "Ron S. Tuinei", "role": "Program Director, then Executive Director (2016-2020)" }
+          {
+            "name": "Adam McClain",
+            "role": "Group Director and CEO"
+          },
+          {
+            "name": "Barry Woodward",
+            "role": "CEO (appointed 2000)"
+          },
+          {
+            "name": "Kreg Gillman",
+            "role": "CEO (2003-2006)"
+          },
+          {
+            "name": "Ron S. Tuinei",
+            "role": "Program Director, then Executive Director (2016-2020)"
+          }
         ],
         "notableStaff": [
-          { "name": "Robert H. Crist", "role": "Co-founder; Medical Director and psychiatrist" },
-          { "name": "Jack Williams", "role": "Co-founder (died 2009)" },
-          { "name": "Dennis Eugene Thorne", "role": "Co-owner (1978-1986)" },
-          { "name": "Robert B. Lichfield", "role": "Dorm parent from 1977; later founded WWASP" },
-          { "name": "Karr Farnsworth", "role": "Staff; later WWASP president" },
-          { "name": "Larry Carter", "role": "Therapist (13 years)" },
-          { "name": "Jennifer Morgan Smith", "role": "Therapist, Executive Clinical Director, Director of Admissions, Executive Director (from 1998)" },
-          { "name": "Wade Taylor", "role": "Therapist, boys program (from 2001); named in 2015 negligence suit" },
-          { "name": "Sam Hill", "role": "Program Director, girls program (1990-2012)" },
-          { "name": "Brent Esplin", "role": "Therapist and Admissions Director (2007-2012)" },
-          { "name": "Katie Jochum", "role": "Director of Business Development" },
-          { "name": "Marcie Remington", "role": "Therapist" },
-          { "name": "Megan L. Hamblin", "role": "Registered Nurse (1990s)" },
-          { "name": "Mulimauga Tuiloma", "role": "Staff; arrested September 2024 for striking a student, pleaded guilty July 2025" }
+          {
+            "name": "Robert H. Crist",
+            "role": "Co-founder; Medical Director and psychiatrist"
+          },
+          {
+            "name": "Jack Williams",
+            "role": "Co-founder (died 2009)"
+          },
+          {
+            "name": "Dennis Eugene Thorne",
+            "role": "Co-owner (1978-1986)"
+          },
+          {
+            "name": "Robert B. Lichfield",
+            "role": "Dorm parent from 1977; later founded WWASP"
+          },
+          {
+            "name": "Karr Farnsworth",
+            "role": "Staff; later WWASP president"
+          },
+          {
+            "name": "Larry Carter",
+            "role": "Therapist (13 years)"
+          },
+          {
+            "name": "Jennifer Morgan Smith",
+            "role": "Therapist, Executive Clinical Director, Director of Admissions, Executive Director (from 1998)"
+          },
+          {
+            "name": "Wade Taylor",
+            "role": "Therapist, boys program (from 2001); named in 2015 negligence suit"
+          },
+          {
+            "name": "Sam Hill",
+            "role": "Program Director, girls program (1990-2012)"
+          },
+          {
+            "name": "Brent Esplin",
+            "role": "Therapist and Admissions Director (2007-2012)"
+          },
+          {
+            "name": "Katie Jochum",
+            "role": "Director of Business Development"
+          },
+          {
+            "name": "Marcie Remington",
+            "role": "Therapist"
+          },
+          {
+            "name": "Megan L. Hamblin",
+            "role": "Registered Nurse (1990s)"
+          },
+          {
+            "name": "Mulimauga Tuiloma",
+            "role": "Staff; arrested September 2024 for striking a student, pleaded guilty July 2025"
+          }
         ],
         "pastTTIJobs": [
           "Robert B. Lichfield: founded Cross Creek and WWASP after leaving PCS",
@@ -92,14 +155,21 @@
         "type": "Residential Treatment Center (RTC)",
         "capacity": 106,
         "currentCensus": null,
-        "ageRange": { "min": 11, "max": 17 },
+        "ageRange": {
+          "min": 11,
+          "max": 17
+        },
         "gender": "boys (Provo campus; girls at the Springville campus)"
       },
       "accreditations": {
-        "current": ["Northwest Association of Accredited Schools (NAAS)"],
+        "current": [
+          "Northwest Association of Accredited Schools (NAAS)"
+        ],
         "past": []
       },
-      "memberships": ["NATSAP (member from 2005; no longer listed)"],
+      "memberships": [
+        "NATSAP (member from 2005; no longer listed)"
+      ],
       "certifications": [],
       "licensing": [
         "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93696, Provo campus, capacity 106, conditional status, revoked July 17, 2026 (under appeal)"
@@ -148,7 +218,12 @@
           "Mail and phone monitoring"
         ]
       },
-      "philosophy": { "customPhilosophy": ["Acuity Based Care (marketed)", "Tough love"] },
+      "philosophy": {
+        "customPhilosophy": [
+          "Acuity Based Care (marketed)",
+          "Tough love"
+        ]
+      },
       "conditions": {
         "customConditions": [
           "Substance abuse",
@@ -183,13 +258,33 @@
         "Profile assembled by Kids Over Profits on 2026-09-11 from site records; see the Facility Profile post for sources."
       ],
       "documentFolderId": 50
-    }
+    },
+    "apply_to": [
+      {
+        "table": "facilities_master",
+        "id": 25,
+        "match": {
+          "facility_id": 10371
+        }
+      },
+      {
+        "table": "locations_master",
+        "id": 3,
+        "match": {
+          "facility_id": 10371
+        }
+      }
+    ]
   },
   {
     "id": 10557,
     "unique_name": "UHS of Provo Canyon Springville Campus",
-    "version": 1,
-    "top": { "city": "Springville", "state": "UT", "displayName": "UHS of Provo Canyon Springville Campus" },
+    "version": 2,
+    "top": {
+      "city": "Springville",
+      "state": "UT",
+      "displayName": "UHS of Provo Canyon Springville Campus"
+    },
     "facility": {
       "kopProfileVersion": 1,
       "identification": {
@@ -197,8 +292,13 @@
         "currentName": "",
         "currentOperator": "Universal Health Services (UHS)",
         "currentOwner": "Universal Health Services (UHS)",
-        "currentOwners": ["Universal Health Services (UHS)"],
-        "otherNames": ["Provo Canyon School - Springville Campus", "Provo Canyon School girls campus"],
+        "currentOwners": [
+          "Universal Health Services (UHS)"
+        ],
+        "otherNames": [
+          "Provo Canyon School - Springville Campus",
+          "Provo Canyon School girls campus"
+        ],
         "pastNames": [],
         "knownReferrers": []
       },
@@ -217,14 +317,28 @@
         "type": "Residential Treatment Center (RTC)",
         "capacity": 120,
         "currentCensus": null,
-        "ageRange": { "min": 11, "max": 17 },
+        "ageRange": {
+          "min": 11,
+          "max": 17
+        },
         "gender": "girls"
       },
       "licensing": [
         "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93697, capacity 120, conditional status, revoked July 2026 (under appeal)"
       ],
-      "profileLinks": ["https://kidsoverprofits.org/provo-canyon-school/"],
+      "profileLinks": [
+        "https://kidsoverprofits.org/provo-canyon-school/"
+      ],
       "documentFolderId": 50
-    }
+    },
+    "apply_to": [
+      {
+        "table": "locations_master",
+        "id": 3,
+        "match": {
+          "facility_id": 10557
+        }
+      }
+    ]
   }
 ]
