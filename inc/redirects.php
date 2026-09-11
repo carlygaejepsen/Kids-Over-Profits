@@ -12,7 +12,16 @@ if (!defined('ABSPATH')) {
 
 function kop_redirect_map() {
     return array(
-        'uk' => '/united-kingdom/',
+        // Renamed (phase 1): the country template derives the name from the slug.
+        'uk'            => '/united-kingdom/',
+
+        // Retired shells (phase 3). Each was an empty container or hand-typed
+        // list that a template-driven page now covers.
+        'edcons'        => '/referrers-educational-consultants/',
+        'international' => '/location-index/?type=country',
+        '405-2'         => '/',
+        'test-scripts'  => '/',
+        'admin-tools'   => '/wp-admin/admin.php?page=kop-tools',
     );
 }
 

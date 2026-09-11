@@ -149,6 +149,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const containerId = 'locations-container';
     const searchInput = document.getElementById('searchInput');
     const typeFilter = document.getElementById('typeFilter');
+    // /location-index/?type=country (or state) opens the index pre-filtered;
+    // the retired /international/ page redirects here.
+    const initialType = new URLSearchParams(window.location.search).get('type');
+    if (typeFilter && (initialType === 'country' || initialType === 'state')) {
+        typeFilter.value = initialType;
+    }
     const sortBy = document.getElementById('sortBy');
     const clearSearchBtn = document.getElementById('clearSearch');
     const alphabetFilter = document.getElementById('alphabet-filter');

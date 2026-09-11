@@ -523,11 +523,33 @@ function kop_slug_renames() {
 }
 
 /**
- * Apply kop_slug_renames() then kop_template_assignments(). Idempotent.
- * Returns a summary array for the admin notice / manual runs.
+ * Pages to move to the trash: empty shells and test scaffolding that a
+ * template-driven page has replaced (inc/redirects.php carries their 301s).
+ * Trash, not delete, so anything here can be restored from wp-admin.
+ *
+ * Slug => post type.
+ */
+function kop_pages_to_trash() {
+    return array(
+        'test-scripts' => 'page', // inline copy of the facility report viewer
+        'admin-tools'  => 'page', // five buttons; the KOP Tools menu lists every tool
+        '405-2'        => 'page', // a heading reading "Kids Over Profits" and nothing else
+    );
+}
+
+/**
+ * Apply kop_slug_renames(), kop_template_assignments(), then
+ * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
 function kop_apply_template_assignments() {
-    $summary = array('renamed' => array(), 'assigned' => array(), 'missing' => array());
+    $summary = array('renamed' => array(), 'assigned' => array(), 'missing' => array(), 'trashed' => array());
+
+    foreach (kop_pages_to_trash() as $slug => $post_type) {
+        $page = get_page_by_path($slug, OBJECT, $post_type);
+        if ($page && $page->post_status !== 'trash' && wp_trash_post($page->ID)) {
+            $summary['trashed'][] = $slug;
+        }
+    }
 
     foreach (kop_slug_renames() as $old => $new) {
         $page = get_page_by_path($old, OBJECT, 'page');
@@ -569,7 +591,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '3';
+    $version = '4';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
