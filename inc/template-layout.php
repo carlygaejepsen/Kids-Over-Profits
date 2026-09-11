@@ -26,11 +26,24 @@ if (!defined('ABSPATH')) {
  * when the current request is a page using one of the child templates.
  */
 function kop_template_layout_current_template() {
-    if (!is_page()) {
+    // Pages and posts alike: a post can carry a "Template Post Type: post"
+    // template (templates/single-facility-profile.php) via the same meta.
+    if (!is_singular()) {
         return '';
     }
     $slug = (string) get_page_template_slug();
     return strpos($slug, 'templates/') === 0 ? $slug : '';
+}
+
+/**
+ * Child templates that render at Kadence's normal content width regardless
+ * of the per-post Layout setting (the facility profiles were authored under
+ * the "narrow" post layout, which would squeeze the two-column grid).
+ */
+function kop_template_layout_normal_width() {
+    return apply_filters('kop_template_layout_normal_width', array(
+        'templates/single-facility-profile.php',
+    ));
 }
 
 /**
@@ -46,6 +59,7 @@ function kop_template_layout_no_sidebar() {
         'templates/page-admin-submissions.php',
         'templates/page-admin-volunteers.php',
         'templates/page-news-processor.php',
+        'templates/single-facility-profile.php',
     ));
 }
 
@@ -59,6 +73,9 @@ function kop_template_layout_filter_sidebar($layout) {
     $template = kop_template_layout_current_template();
     if ($template && in_array($template, kop_template_layout_no_sidebar(), true)) {
         $layout['sidebar'] = 'disable';
+    }
+    if ($template && in_array($template, kop_template_layout_normal_width(), true)) {
+        $layout['layout'] = 'normal';
     }
     return $layout;
 }

@@ -1,0 +1,261 @@
+/*
+ * Facility Profile template (templates/single-facility-profile.php).
+ *
+ * Wide reading column with a facts rail beside it. The editor content inside
+ * .kop-fp-body is untouched block markup, so only spacing around it is set
+ * here; the plugin blocks (FileBird, Visual Link Preview) bring their own.
+ */
+
+.kop-facility-profile {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 3rem;
+    box-sizing: border-box;
+}
+
+/* ---- Header ------------------------------------------------------------ */
+
+.kop-fp-header {
+    padding: 0.5rem 0 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 3px solid var(--kop-teal, #33a7b5);
+}
+
+.kop-fp-eyebrow {
+    margin: 0 0 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-eyebrow a {
+    color: var(--kop-teal, #33a7b5);
+    text-decoration: none;
+}
+
+.kop-fp-eyebrow a:hover,
+.kop-fp-eyebrow a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-facility-profile .kop-fp-title {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    color: var(--kop-midnight-blue, #000435);
+    text-wrap: balance;
+}
+
+.kop-fp-formerly {
+    margin: 0.6rem 0 0;
+    font-style: italic;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-status {
+    display: inline-block;
+    margin-top: 0.9rem;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--kop-border-primary, #b9b29a);
+    border-radius: 999px;
+    background: var(--kop-sand, #f2eedf);
+    color: var(--kop-text-secondary, #4a4f6a);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.kop-fp-status--open {
+    background: var(--kop-soft-pastel-yellow, #fff5cb);
+    border-color: var(--kop-orange, #ef9034);
+    color: #7a4a08;
+}
+
+.kop-fp-status--closed {
+    background: var(--kop-sand, #f2eedf);
+    border-color: var(--kop-border-primary, #b9b29a);
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+/* ---- Two-column grid --------------------------------------------------- */
+
+.kop-fp-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: start;
+}
+
+@media (min-width: 960px) {
+    .kop-fp-grid {
+        grid-template-columns: minmax(0, 1fr) 300px;
+    }
+}
+
+.kop-fp-body {
+    min-width: 0;
+}
+
+.kop-fp-figure {
+    margin: 0 0 1.75rem;
+}
+
+.kop-fp-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+}
+
+/* The stored content uses column blocks and 16:9 iframe wrappers; make sure
+   nothing inside can force the page wider than its column. */
+.kop-fp-body .wp-block-columns,
+.kop-fp-body .wp-block-group,
+.kop-fp-body iframe {
+    max-width: 100%;
+}
+
+/* ---- Facts rail -------------------------------------------------------- */
+
+.kop-fp-rail {
+    box-sizing: border-box;
+    padding: 1.25rem 1.25rem 1.5rem;
+    background: var(--kop-sand, #f2eedf);
+    border-top: 4px solid var(--kop-midnight-blue, #000435);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+@media (min-width: 960px) {
+    .kop-fp-rail {
+        position: sticky;
+        top: 6rem;
+        max-height: calc(100vh - 7rem);
+        overflow-y: auto;
+    }
+}
+
+.kop-fp-rail h2 {
+    margin: 1.75rem 0 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-rail h2:first-child {
+    margin-top: 0;
+}
+
+.kop-fp-facts {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin: 0;
+}
+
+.kop-fp-facts > div {
+    margin: 0;
+}
+
+.kop-fp-facts dt {
+    margin: 0 0 0.1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-facts dd {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-facts dd + dd {
+    margin-top: 0.2rem;
+}
+
+.kop-fp-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.3rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-chips li {
+    margin: 0;
+    padding: 0.15rem 0.55rem;
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-mint-green, #b6e3d4);
+    border-radius: 4px;
+    font-size: 0.82rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-list li {
+    margin: 0;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+.kop-fp-list li:last-child {
+    border-bottom: 0;
+}
+
+.kop-fp-list a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-fp-list a:hover,
+.kop-fp-list a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-fp-list .meta {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+/* ---- Footer ------------------------------------------------------------ */
+
+.kop-fp-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 0.9rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-footer a {
+    color: var(--kop-teal, #33a7b5);
+}
+
+@media (max-width: 640px) {
+    .kop-facility-profile {
+        padding: 1rem 1rem 2rem;
+    }
+
+    .kop-fp-grid {
+        gap: 1.75rem;
+    }
+}

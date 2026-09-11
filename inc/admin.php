@@ -476,10 +476,15 @@ add_action('admin_init', 'kop_maybe_ensure_tool_pages');
  * skipped because "a page already uses this template". Pages that do not exist
  * are left alone; this list never creates pages.
  *
- * Slug => template file inside templates/.
+ * Slug => template file inside templates/ (a page), or
+ * slug => array('template' => file, 'post_type' => 'post') for a post that
+ * uses a "Template Post Type: post" template.
  */
 function kop_template_assignments() {
     return array(
+        // Facility Profile posts (phase 2). Hyde School is the pilot.
+        'hyde'           => array('template' => 'single-facility-profile.php', 'post_type' => 'post'),
+
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
         'canada'         => 'page-country.php',
@@ -528,8 +533,10 @@ function kop_apply_template_assignments() {
         }
     }
 
-    foreach (kop_template_assignments() as $slug => $template) {
-        $page = get_page_by_path($slug, OBJECT, 'page');
+    foreach (kop_template_assignments() as $slug => $spec) {
+        $template  = is_array($spec) ? $spec['template'] : $spec;
+        $post_type = (is_array($spec) && !empty($spec['post_type'])) ? $spec['post_type'] : 'page';
+        $page = get_page_by_path($slug, OBJECT, $post_type);
         if (!$page) {
             $summary['missing'][] = $slug;
             continue;
@@ -551,7 +558,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '1';
+    $version = '2';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
