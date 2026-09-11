@@ -630,17 +630,40 @@ function kop_lawsuit_document_fixes() {
     );
 }
 
-function kop_apply_lawsuit_document_fixes() {
-    $fixed  = array();
+/**
+ * PDO handle for the init-step data fixes. api/config.php defines $pdo in
+ * whatever scope includes it, so a require_once from a second function sees
+ * nothing. This helper includes the file (plain require; its function
+ * definitions are guarded) once per request, caches the handle, and publishes
+ * it as the global $pdo so templates that include config.php at global scope
+ * later in the same request still find a connection.
+ */
+function kop_seed_pdo() {
+    static $handle = false;
+    if ($handle !== false) {
+        return $handle;
+    }
+    $handle = null;
+    if (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
+        $handle = $GLOBALS['pdo'];
+        return $handle;
+    }
     $config = get_stylesheet_directory() . '/api/config.php';
     if (!file_exists($config)) {
-        return $fixed;
+        return $handle;
     }
-    require_once $config;
-    if (!isset($pdo) && isset($GLOBALS['pdo'])) {
-        $pdo = $GLOBALS['pdo']; // config.php was already loaded at global scope
+    require $config;
+    if (isset($pdo) && $pdo instanceof PDO) {
+        $handle         = $pdo;
+        $GLOBALS['pdo'] = $pdo;
     }
-    if (!isset($pdo) || !($pdo instanceof PDO)) {
+    return $handle;
+}
+
+function kop_apply_lawsuit_document_fixes() {
+    $fixed = array();
+    $pdo   = kop_seed_pdo();
+    if (!$pdo) {
         return $fixed;
     }
     try {
@@ -786,15 +809,8 @@ function kop_apply_facility_record_seeds() {
     if (!is_array($entries)) {
         return $done;
     }
-    $config = get_stylesheet_directory() . '/api/config.php';
-    if (!file_exists($config)) {
-        return $done;
-    }
-    require_once $config;
-    if (!isset($pdo) && isset($GLOBALS['pdo'])) {
-        $pdo = $GLOBALS['pdo'];
-    }
-    if (!isset($pdo) || !($pdo instanceof PDO)) {
+    $pdo = kop_seed_pdo();
+    if (!$pdo) {
         return $done;
     }
     try {
@@ -898,7 +914,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '10';
+    $version = '11';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
