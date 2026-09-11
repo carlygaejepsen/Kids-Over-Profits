@@ -3,7 +3,6 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/kidsover/public_html/wp-content/themes/child/
     - /bin/cp -R api $DEPLOYPATH
-    - /bin/cp -R inc $DEPLOYPATH
     - /bin/cp -R css $DEPLOYPATH
     - /bin/cp -R js $DEPLOYPATH
     - /bin/cp -R docs $DEPLOYPATH
@@ -19,6 +18,10 @@ deployment:
     - export PLUGINPATH=/home/kidsover/public_html/wp-content/plugins/kop-tools/
     - /bin/mkdir -p $PLUGINPATH
     - /bin/cp -R wp-plugins/kop-tools/. $PLUGINPATH
+    # inc/ carries the versioned init step (inc/admin.php). It is copied last so
+    # a request during the deploy never runs a new version before the files it
+    # expects (templates, seeds, css, js) are in place.
+    - /bin/cp -R inc $DEPLOYPATH
     - /bin/cp functions.php $DEPLOYPATH
     - /bin/cp search.php $DEPLOYPATH
     - /bin/cp style.css $DEPLOYPATH

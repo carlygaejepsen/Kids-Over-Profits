@@ -798,7 +798,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '8';
+    $version = '9';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
