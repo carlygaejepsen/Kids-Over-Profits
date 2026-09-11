@@ -4,8 +4,12 @@
   "post_type": "post",
   "status": "draft",
   "content_file": "provo-canyon-school.html",
-  "excerpt": "A locked residential treatment program in Utah County founded in 1971 and owned by Universal Health Services since 2000. Utah revoked both campus licenses in July 2026 after decades of abuse allegations.",
-  "categories": ["facility-profile", "utah", "where-are-the-kids"],
+  "excerpt": "A locked residential treatment program in Utah County founded in 1971 and owned by Universal Health Services since 2000. Utah revoked both campus licenses in July 2026 after decades of abuse allegations; operations are suspended while the school's appeal is pending.",
+  "categories": [
+    "facility-profile",
+    "utah",
+    "where-are-the-kids"
+  ],
   "template": "single-facility-profile.php",
   "meta": {
     "facility_name": "Provo Canyon School",
@@ -22,11 +26,18 @@
     "external_profile": "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/",
     "staff_transfers": "Robert B. Lichfield, dorm parent from 1977, founded Cross Creek and WWASP",
     "staff_transfers_2": "Robert Crist and Larry Carter left in 2000 to found Logan River Academy; Crist and Kreg Gillman founded Silverado Academy in 2006",
-    "staff_transfers_3": "Ron Tuinei and Barry Woodward each went on to lead Copper Hills Youth Center",
+    "staff_transfers_3": "Ron Tuinei and Barry Woodward each went on to lead Copper Hills Youth Center; Adam McClain came from Peninsula Village and Northwest Academy",
     "trigger_warnings": "Trigger warnings: physical restraint, seclusion, forced medication, sexual abuse, suicide"
   },
   "meta_arrays": {
-    "treatments": ["Isolation", "Physical Restraint", "Chemical Sedation", "Behavior Modification", "Level System", "Mail and Phone Censorship"]
+    "treatments": [
+      "Isolation",
+      "Physical Restraint",
+      "Chemical Sedation",
+      "Behavior Modification",
+      "Level System",
+      "Mail and Phone Censorship"
+    ]
   },
   "acf_field_keys": {
     "facility_name": "field_68505bd591ccb",
@@ -55,5 +66,6 @@
     "inspection_facilities and js/data/ut_reports.json for licenses 93696 and 93697",
     "FileBird folder 50 (31 documents)",
     "lawsuits, legislation and memorial_victims tables (no rows)"
-  ]
+  ],
+  "seed_version": 2
 }

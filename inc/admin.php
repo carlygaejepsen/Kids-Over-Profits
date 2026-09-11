@@ -691,25 +691,52 @@ function kop_apply_seed_posts() {
         if (!is_array($spec) || empty($spec['slug']) || empty($spec['content_file'])) {
             continue;
         }
-        $post_type = !empty($spec['post_type']) ? $spec['post_type'] : 'post';
-        if (get_page_by_path($spec['slug'], OBJECT, array('post', 'page'))) {
-            continue;
-        }
+        $post_type    = !empty($spec['post_type']) ? $spec['post_type'] : 'post';
+        $seed_version = (int) ($spec['seed_version'] ?? 1);
         $content_path = $dir . $spec['content_file'];
         if (!file_exists($content_path)) {
             continue;
         }
-        $post_id = wp_insert_post(array(
-            'post_title'   => (string) ($spec['title'] ?? $spec['slug']),
-            'post_name'    => (string) $spec['slug'],
-            'post_type'    => $post_type,
-            'post_status'  => !empty($spec['status']) ? $spec['status'] : 'draft',
-            'post_content' => wp_slash((string) file_get_contents($content_path)),
-            'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? '')),
-        ), true);
-        if (!$post_id || is_wp_error($post_id)) {
-            continue;
+        $existing = get_page_by_path($spec['slug'], OBJECT, array('post', 'page'));
+        if ($existing) {
+            // Refresh only a draft nobody has edited since the seed made it
+            // (post_modified still equals post_date) and only when the seed
+            // file carries a newer seed_version. Anything an editor touched
+            // is left alone.
+            $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
+            $untouched = $existing->post_status === 'draft'
+                && $existing->post_modified_gmt === $existing->post_date_gmt;
+            if (!$untouched || $seed_version <= $applied) {
+                continue;
+            }
+            $result = wp_update_post(array(
+                'ID'                => $existing->ID,
+                'post_title'        => (string) ($spec['title'] ?? $existing->post_title),
+                'post_content'      => wp_slash((string) file_get_contents($content_path)),
+                'post_excerpt'      => wp_slash((string) ($spec['excerpt'] ?? '')),
+                'post_date'         => $existing->post_date,
+                'post_date_gmt'     => $existing->post_date_gmt,
+                'post_modified'     => $existing->post_date,
+                'post_modified_gmt' => $existing->post_date_gmt,
+            ), true);
+            if (!$result || is_wp_error($result)) {
+                continue;
+            }
+            $post_id = $existing->ID;
+        } else {
+            $post_id = wp_insert_post(array(
+                'post_title'   => (string) ($spec['title'] ?? $spec['slug']),
+                'post_name'    => (string) $spec['slug'],
+                'post_type'    => $post_type,
+                'post_status'  => !empty($spec['status']) ? $spec['status'] : 'draft',
+                'post_content' => wp_slash((string) file_get_contents($content_path)),
+                'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? '')),
+            ), true);
+            if (!$post_id || is_wp_error($post_id)) {
+                continue;
+            }
         }
+        update_post_meta($post_id, '_kop_seed_version', $seed_version);
         if (!empty($spec['categories']) && is_array($spec['categories'])) {
             $term_ids = array();
             foreach ($spec['categories'] as $cat_slug) {
@@ -742,6 +769,78 @@ function kop_apply_seed_posts() {
     return $created;
 }
 /**
+ * facilities_master records filled in offline (seeds/facility-records.json).
+ * Each entry names a row by id and unique_name and carries the facility
+ * object fields to merge in. The merge replaces each listed top-level field
+ * of data.facility (identification, staff, ...) and leaves the rest of the
+ * row alone. Applied once per entry version, tracked by
+ * data.facility.kopProfileVersion, so later edits in the data form persist.
+ */
+function kop_apply_facility_record_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/facility-records.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    if (!is_array($entries)) {
+        return $done;
+    }
+    $config = get_stylesheet_directory() . '/api/config.php';
+    if (!file_exists($config)) {
+        return $done;
+    }
+    require_once $config;
+    if (!isset($pdo) && isset($GLOBALS['pdo'])) {
+        $pdo = $GLOBALS['pdo'];
+    }
+    if (!isset($pdo) || !($pdo instanceof PDO)) {
+        return $done;
+    }
+    try {
+        $read  = $pdo->prepare('SELECT unique_name, json_data FROM facilities_master WHERE id = ?');
+        $write = $pdo->prepare('UPDATE facilities_master SET json_data = ?, updated_at = NOW() WHERE id = ?');
+        foreach ($entries as $entry) {
+            if (empty($entry['id']) || empty($entry['facility']) || !is_array($entry['facility'])) {
+                continue;
+            }
+            $read->execute(array((int) $entry['id']));
+            $row = $read->fetch(PDO::FETCH_ASSOC);
+            if (!$row || (!empty($entry['unique_name']) && $row['unique_name'] !== $entry['unique_name'])) {
+                continue; // wrong row: never write into a record we did not mean
+            }
+            $record = json_decode((string) $row['json_data'], true);
+            if (!is_array($record)) {
+                continue;
+            }
+            $version = (int) ($entry['version'] ?? 1);
+            $is_ref  = !empty($record['__facility_ref']) || isset($record['data']['facility']);
+            $current = $is_ref ? ($record['data']['facility'] ?? array()) : ($record['facility'] ?? array());
+            if ((int) ($current['kopProfileVersion'] ?? 0) >= $version) {
+                continue;
+            }
+            $merged = array_replace(is_array($current) ? $current : array(), $entry['facility']);
+            $merged['kopProfileVersion'] = $version;
+            if ($is_ref) {
+                $record['data']['facility'] = $merged;
+            } else {
+                $record['facility'] = $merged;
+            }
+            if (!empty($entry['top']) && is_array($entry['top'])) {
+                foreach ($entry['top'] as $k => $v) {
+                    $record[$k] = $v;
+                }
+            }
+            $record['timestamp'] = gmdate('c');
+            $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $entry['id']));
+            $done[] = (int) $entry['id'];
+        }
+    } catch (Throwable $e) {
+        // Leave the records alone; the data form can fill them by hand.
+    }
+    return $done;
+}
+/**
  * Apply kop_slug_renames(), kop_template_assignments(), then
  * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
@@ -750,6 +849,7 @@ function kop_apply_template_assignments() {
 
     $summary['lawsuit_docs'] = kop_apply_lawsuit_document_fixes();
     $summary['seeded']       = kop_apply_seed_posts();
+    $summary['facilities']   = kop_apply_facility_record_seeds();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -798,7 +898,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '9';
+    $version = '10';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -1,0 +1,230 @@
+[
+  {
+    "id": 10371,
+    "unique_name": "Provo Canyon School",
+    "version": 1,
+    "top": { "city": "Provo", "state": "UT", "displayName": "Provo Canyon School" },
+    "facility": {
+      "kopProfileVersion": 1,
+      "identification": {
+        "name": "Provo Canyon School",
+        "currentName": "",
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "Universal Health Services (UHS)",
+        "currentOwners": ["Universal Health Services (UHS)"],
+        "otherNames": ["PCS", "UHS of Provo Canyon dba Provo Campus"],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Provo",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": [
+          "763 N 1650 W, Springville, UT 84663 (girls campus, opened 2005; separate record: UHS of Provo Canyon Springville Campus)",
+          "1350 E 750 N, Orem, UT 84097 (former girls campus; now Provo Canyon Behavioral Hospital)"
+        ]
+      },
+      "location": "Provo, UT",
+      "address": "4501 N University Ave, Provo, UT 84604",
+      "otherOperators": [],
+      "pastOperators": [
+        "Robert H. Crist and Jack Williams (founders; Dennis Eugene Thorne co-owner 1978-1986)",
+        "Charter Behavioral Health Systems (1986-2000)"
+      ],
+      "operatingPeriod": {
+        "startYear": 1971,
+        "endYear": null,
+        "status": "Suspended",
+        "yearsOfOperation": "1971-present",
+        "notes": [
+          "Operations suspended: the Utah Department of Health and Human Services revoked the Provo campus license (93696) on July 17, 2026 and ordered the campus to cease operations by August 16, 2026; the Springville campus license (93697) was revoked as well. The school appealed both orders on July 27, 2026 and the appeal is pending.",
+          "Shut down in 1974 over child abuse and neglect allegations; reopened the same year.",
+          "Provo campus placed on conditional status in 2012 after a runaway caused a fatal crash; Springville campus placed on conditional status in 2013 after a restraint injury; both licenses were conditional at revocation."
+        ]
+      },
+      "staff": {
+        "administrator": [
+          { "name": "Adam McClain", "role": "Group Director and CEO" },
+          { "name": "Barry Woodward", "role": "CEO (appointed 2000)" },
+          { "name": "Kreg Gillman", "role": "CEO (2003-2006)" },
+          { "name": "Ron S. Tuinei", "role": "Program Director, then Executive Director (2016-2020)" }
+        ],
+        "notableStaff": [
+          { "name": "Robert H. Crist", "role": "Co-founder; Medical Director and psychiatrist" },
+          { "name": "Jack Williams", "role": "Co-founder (died 2009)" },
+          { "name": "Dennis Eugene Thorne", "role": "Co-owner (1978-1986)" },
+          { "name": "Robert B. Lichfield", "role": "Dorm parent from 1977; later founded WWASP" },
+          { "name": "Karr Farnsworth", "role": "Staff; later WWASP president" },
+          { "name": "Larry Carter", "role": "Therapist (13 years)" },
+          { "name": "Jennifer Morgan Smith", "role": "Therapist, Executive Clinical Director, Director of Admissions, Executive Director (from 1998)" },
+          { "name": "Wade Taylor", "role": "Therapist, boys program (from 2001); named in 2015 negligence suit" },
+          { "name": "Sam Hill", "role": "Program Director, girls program (1990-2012)" },
+          { "name": "Brent Esplin", "role": "Therapist and Admissions Director (2007-2012)" },
+          { "name": "Katie Jochum", "role": "Director of Business Development" },
+          { "name": "Marcie Remington", "role": "Therapist" },
+          { "name": "Megan L. Hamblin", "role": "Registered Nurse (1990s)" },
+          { "name": "Mulimauga Tuiloma", "role": "Staff; arrested September 2024 for striking a student, pleaded guilty July 2025" }
+        ],
+        "pastTTIJobs": [
+          "Robert B. Lichfield: founded Cross Creek and WWASP after leaving PCS",
+          "Robert H. Crist and Larry Carter: founded Logan River Academy (2000)",
+          "Robert H. Crist and Kreg Gillman: founded Silverado Academy (2006; closed 2016)",
+          "Dennis Eugene Thorne, Robert H. Crist and Brent Hall: founded Discovery Academy (1989)",
+          "Jack Williams: founded Cinnamon Hills Youth Crisis Center",
+          "Barry Woodward and Ron S. Tuinei: later CEOs of Copper Hills Youth Center",
+          "Adam McClain: previously Clinical Director of Peninsula Village (2003-2008) and Executive Director of Northwest Academy (WWASP)",
+          "Kreg Gillman: previously Aspen Healthcare Services; later Clinical Director of Redcliff Ascent and CEO of UHS Salt Lake Behavioral Health",
+          "Jennifer Morgan Smith: Executive Director of Provo Canyon Behavioral Hospital",
+          "Brent Esplin: Red Rock Canyon School, Provo Canyon Behavioral Hospital, Telos RTC, Embark at Hobble Creek",
+          "Ron S. Tuinei: Heritage RTC, Slate Canyon Youth Center, Cottonwood Treatment Center, Oakley School",
+          "Katie Jochum: CEDU schools, Boulder Creek Academy, Embark Behavioral Health"
+        ]
+      },
+      "profileLinks": [
+        "https://kidsoverprofits.org/provo-canyon-school/",
+        "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/",
+        "https://provocanyon.com/",
+        "http://www.heal-online.org/pcsstaff.htm",
+        "https://en.wikipedia.org/wiki/Provo_Canyon_School"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": 106,
+        "currentCensus": null,
+        "ageRange": { "min": 11, "max": 17 },
+        "gender": "boys (Provo campus; girls at the Springville campus)"
+      },
+      "accreditations": {
+        "current": ["Northwest Association of Accredited Schools (NAAS)"],
+        "past": []
+      },
+      "memberships": ["NATSAP (member from 2005; no longer listed)"],
+      "certifications": [],
+      "licensing": [
+        "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93696, Provo campus, capacity 106, conditional status, revoked July 17, 2026 (under appeal)"
+      ],
+      "investors": [],
+      "resources": {
+        "hasNews": true,
+        "newsDetails": "14 approved articles in the Kids Over Profits news feed, 2020-2026, plus four news posts",
+        "hasPressReleases": true,
+        "pressReleasesDetails": "October 2020 media statement on ownership",
+        "hasInspections": true,
+        "hasStateReports": true,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": true,
+        "hasPoliceReports": true,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": true,
+        "hasEnrollmentDocuments": true,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": true,
+        "hasStaff": true,
+        "hasVideo": true,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": true,
+        "hasNATSAP": true,
+        "hasOther": false,
+        "hasViolations": true,
+        "hasSettlements": false,
+        "customResources": [
+          "Document folder 50: 1997 parent manual, Preparing for the Return Home, December 2017 admissions packet, 2011 NATSAP listing, Milonas ruling and memorandum, 2025 admissions page captures",
+          "HEAL police call log, January 2001 to December 2007",
+          "Utah Office of Licensing inspection records, licenses 93696 and 93697 (mirrored on /ut-reports/)"
+        ],
+        "notes": []
+      },
+      "treatmentTypes": {
+        "customTreatmentTypes": [
+          "Behavior modification",
+          "Level system (eight levels plus Investment)",
+          "Seclusion (Observation)",
+          "Physical restraint (Dial 9)",
+          "Chemical sedation",
+          "Mail and phone monitoring"
+        ]
+      },
+      "philosophy": { "customPhilosophy": ["Acuity Based Care (marketed)", "Tough love"] },
+      "conditions": {
+        "customConditions": [
+          "Substance abuse",
+          "ADHD",
+          "Anxiety and trauma disorders",
+          "Mood disorders",
+          "Oppositional defiant disorder",
+          "Personality disorders",
+          "Reactive attachment disorder"
+        ]
+      },
+      "criticalIncidents": {
+        "customIncidents": [
+          "1974: shut down over child abuse and neglect allegations; reopened the same year",
+          "1980: federal jury sides with the school in Milonas and Rice; judge issues permanent injunction against polygraphs, mail censorship, and isolation or force except for immediate danger",
+          "2004: parent complaint alleges a 15-year-old's nose was broken before a forced Haldol injection and children were held in Observation most of the day",
+          "2012: Provo campus placed on conditional status after a runaway stole a car and caused a fatal crash",
+          "2013: Springville campus placed on conditional status after a girl was injured in a restraint",
+          "2015-2020: 341 Office of Licensing investigations, 27 substantiated violations",
+          "September 2024: staff member arrested for striking a 15-year-old during a restraint; guilty plea July 2025",
+          "December 1, 2024: staff member struck a client during a restraint (substantiated, repeat noncompliance)",
+          "April 13, 2025: staff member injured a client's face during a restraint (substantiated)",
+          "June 2026: licensers sanction the school for delaying care to a teen with a jaw injury and brain bleed; two families sue",
+          "July 17, 2026: Provo campus license revoked; Springville license revoked; operations ordered to cease; appeal filed July 27"
+        ]
+      },
+      "notes": [
+        "Founded 1971 as an all-boys program by Robert H. Crist and Jack Williams; the girls program opened in Orem and moved to a new Springville campus in 2005. Elementary and transition programs have operated in Orem.",
+        "Considered a hub of the troubled teen industry: WWASP's founders and much of its staff came from PCS.",
+        "Tuition reported at more than $12,500 per month; average stay 8 to 12 months, often longer.",
+        "Utah Office of Licensing records mirrored on this site: Springville campus 64 inspections and 7 substantiated findings, December 2022 to August 2025; Provo campus 18 inspections in the same period.",
+        "Profile assembled by Kids Over Profits on 2026-09-11 from site records; see the Facility Profile post for sources."
+      ],
+      "documentFolderId": 50
+    }
+  },
+  {
+    "id": 10557,
+    "unique_name": "UHS of Provo Canyon Springville Campus",
+    "version": 1,
+    "top": { "city": "Springville", "state": "UT", "displayName": "UHS of Provo Canyon Springville Campus" },
+    "facility": {
+      "kopProfileVersion": 1,
+      "identification": {
+        "name": "UHS of Provo Canyon Springville Campus",
+        "currentName": "",
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "Universal Health Services (UHS)",
+        "currentOwners": ["Universal Health Services (UHS)"],
+        "otherNames": ["Provo Canyon School - Springville Campus", "Provo Canyon School girls campus"],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "operatingPeriod": {
+        "startYear": 2005,
+        "endYear": null,
+        "status": "Suspended",
+        "yearsOfOperation": "2005-present",
+        "notes": [
+          "Girls campus of Provo Canyon School, opened 2005 to replace the Orem girls campus.",
+          "Operations suspended: residential treatment license 93697 revoked by the Utah Department of Health and Human Services in July 2026; the school appealed on July 27, 2026 and the appeal is pending.",
+          "Placed on conditional status in 2013 after a restraint injury and again from 2024; 7 rule violations substantiated between April 2024 and April 2025, including staff striking, pushing and injuring residents during restraints."
+        ]
+      },
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": 120,
+        "currentCensus": null,
+        "ageRange": { "min": 11, "max": 17 },
+        "gender": "girls"
+      },
+      "licensing": [
+        "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93697, capacity 120, conditional status, revoked July 2026 (under appeal)"
+      ],
+      "profileLinks": ["https://kidsoverprofits.org/provo-canyon-school/"],
+      "documentFolderId": 50
+    }
+  }
+]
