@@ -940,16 +940,20 @@ function kop_attach_folder_file_counts($folders) {
     $tags = $wpdb->prefix . 'kop_media_folder_tags';
     $has_tags = ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $tags)) === $tags);
 
+    // Hidden PDF preview images do not count as documents.
+    $hidden = kop_get_hidden_preview_ids();
+    $not_hidden = $hidden ? ' AND p.ID NOT IN (' . implode(',', array_map('intval', $hidden)) . ')' : '';
+
     $sql = "SELECT af.folder_id, COUNT(DISTINCT af.attachment_id) AS n
             FROM $rel af INNER JOIN {$wpdb->posts} p ON p.ID = af.attachment_id
-            WHERE p.post_type = 'attachment' GROUP BY af.folder_id";
+            WHERE p.post_type = 'attachment'{$not_hidden} GROUP BY af.folder_id";
     foreach ((array) $wpdb->get_results($sql) as $row) {
         $direct[(int) $row->folder_id] = (int) $row->n;
     }
     if ($has_tags) {
         $sql = "SELECT t.folder_id, COUNT(DISTINCT t.attachment_id) AS n
                 FROM $tags t INNER JOIN {$wpdb->posts} p ON p.ID = t.attachment_id
-                WHERE p.post_type = 'attachment' GROUP BY t.folder_id";
+                WHERE p.post_type = 'attachment'{$not_hidden} GROUP BY t.folder_id";
         foreach ((array) $wpdb->get_results($sql) as $row) {
             $direct[(int) $row->folder_id] = ($direct[(int) $row->folder_id] ?? 0) + (int) $row->n;
         }
@@ -1233,6 +1237,92 @@ function kop_get_tagged_attachment_ids($folder_ids) {
 }
 
 /**
+ * Attachment IDs of PDF preview images that must not appear as documents.
+ *
+ * WordPress generates a first-page JPG for every PDF (<name>-pdf.jpg). The
+ * May–June 2026 media restore registered those files as media items of their
+ * own, so every library showed each PDF twice. Until api/dedupe-media.php has
+ * removed the records, hide any such image whose source document (same
+ * basename, .pdf/.doc/.docx) is still in the media library. Previews with no
+ * matching document are left visible: they are the only copy of that file.
+ *
+ * Cached per request and in a short transient; cleared whenever an
+ * attachment is added, edited, or deleted.
+ *
+ * @return int[]
+ */
+function kop_get_hidden_preview_ids() {
+    global $wpdb;
+    static $ids = null;
+    if ($ids !== null) {
+        return $ids;
+    }
+    $cached = get_transient('kop_hidden_preview_ids');
+    if (is_array($cached)) {
+        $ids = array_map('intval', $cached);
+        return $ids;
+    }
+
+    $pattern = '-(pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$';
+    $sidecars = $wpdb->get_results($wpdb->prepare(
+        "SELECT pm.post_id, pm.meta_value AS file
+         FROM {$wpdb->postmeta} pm
+         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+         WHERE pm.meta_key = '_wp_attached_file'
+           AND p.post_type = 'attachment'
+           AND p.post_mime_type LIKE 'image/%%'
+           AND pm.meta_value REGEXP %s",
+        $pattern
+    ));
+    $ids = array();
+    if ($sidecars) {
+        $docs = array();
+        $names = $wpdb->get_col(
+            "SELECT pm.meta_value FROM {$wpdb->postmeta} pm
+             INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+             WHERE pm.meta_key = '_wp_attached_file' AND p.post_type = 'attachment'
+               AND p.post_mime_type NOT LIKE 'image/%'"
+        );
+        foreach ((array) $names as $n) {
+            $docs[strtolower(basename((string) $n))] = true;
+        }
+        foreach ($sidecars as $row) {
+            $file = basename((string) $row->file);
+            if (!preg_match('/^(.*)-(pdf|docx?)(-[0-9]+)?(-scaled)?\.(jpe?g|png|webp)$/i', $file, $m)) {
+                continue;
+            }
+            $base = strtolower($m[1]);
+            $ext = strtolower($m[2]);
+            if (isset($docs[$base . '.' . $ext])
+                || (preg_match('/^(.*)-[0-9]+$/', $base, $b) && isset($docs[$b[1] . '.' . $ext]))) {
+                $ids[] = (int) $row->post_id;
+            }
+        }
+    }
+    set_transient('kop_hidden_preview_ids', $ids, 10 * MINUTE_IN_SECONDS);
+    return $ids;
+}
+
+/** Drop hidden preview images from a list of attachment IDs. */
+function kop_filter_hidden_preview_ids($attachment_ids) {
+    $hidden = kop_get_hidden_preview_ids();
+    if (empty($hidden)) {
+        return array_values((array) $attachment_ids);
+    }
+    $hidden = array_flip($hidden);
+    return array_values(array_filter(array_map('intval', (array) $attachment_ids), function ($id) use ($hidden) {
+        return !isset($hidden[$id]);
+    }));
+}
+
+function kop_clear_hidden_preview_cache() {
+    delete_transient('kop_hidden_preview_ids');
+}
+add_action('add_attachment', 'kop_clear_hidden_preview_cache');
+add_action('edit_attachment', 'kop_clear_hidden_preview_cache');
+add_action('delete_attachment', 'kop_clear_hidden_preview_cache');
+
+/**
  * Get attachments that live directly in any of the supplied folder IDs.
  *
  * Callers are expected to have already expanded subtrees (see
@@ -1273,6 +1363,9 @@ function kop_get_attachments_in_folder_ids($folder_ids) {
         array_map('intval', (array) $attachment_ids),
         kop_get_tagged_attachment_ids($folder_ids)
     )));
+
+    // Minus PDF preview images registered as media (see kop_get_hidden_preview_ids).
+    $attachment_ids = kop_filter_hidden_preview_ids($attachment_ids);
 
     if (empty($attachment_ids)) {
         return array();

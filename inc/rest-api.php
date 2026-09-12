@@ -366,6 +366,9 @@ function kop_register_facilities_rest_routes() {
 
                     if ($api_ok) {
                         $attachment_ids = array_values(array_unique($attachment_ids));
+                        if (function_exists('kop_filter_hidden_preview_ids')) {
+                            $attachment_ids = kop_filter_hidden_preview_ids($attachment_ids);
+                        }
 
                         // Get full attachment details
                         if (!empty($attachment_ids)) {
