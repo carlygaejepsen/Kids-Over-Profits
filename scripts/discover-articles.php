@@ -22,6 +22,7 @@
  *   php scripts/discover-articles.php --limit 5    # cap candidates submitted this run
  *   php scripts/discover-articles.php --max-facilities 3   # smoke test
  *   php scripts/discover-articles.php --no-topics  # skip the topic-query tier
+ *   php scripts/discover-articles.php --no-facilities  # topics + Reddit only (the midday cron run)
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
@@ -57,6 +58,9 @@ define('QUERIES_FILE',   __DIR__ . '/discovery-queries.json');
 $args = array_slice($argv, 1);
 define('DRY_RUN', in_array('--dry-run', $args, true));
 define('NO_TOPICS', in_array('--no-topics', $args, true));
+// The facility shard is picked by date, so a second run the same day would
+// re-query the same facilities. Extra daily runs pass this flag.
+define('NO_FACILITIES', in_array('--no-facilities', $args, true));
 $limitArg = array_search('--limit', $args, true);
 define('SUBMIT_LIMIT', $limitArg !== false ? (int)($args[$limitArg + 1] ?? 0) : PHP_INT_MAX);
 $maxFacArg = array_search('--max-facilities', $args, true);
@@ -1401,7 +1405,8 @@ function main(): void {
     kop_log('  Search terms: ' . count($queries['topicQueries']) . ' topic queries, ' .
         count($queries['facilityKeywords']) . ' facility keywords, ' .
         count($queries['genericQueryNames']) . ' generic names skipped' .
-        (NO_TOPICS ? ' (topics disabled by --no-topics)' : ''));
+        (NO_TOPICS ? ' (topics disabled by --no-topics)' : '') .
+        (NO_FACILITIES ? ' (per-facility queries disabled by --no-facilities)' : ''));
 
     // -- Fetch facility data live from API --
     kop_log("\nFetching facilities from API...");
@@ -1421,7 +1426,7 @@ function main(): void {
     foreach ($facilityIndex as $i => $fac) {
         if ($i % SHARD_COUNT === $shardIndex) $todaysShard[] = $fac;
     }
-    $slice = MAX_FACILITIES ? array_slice($todaysShard, 0, MAX_FACILITIES) : $todaysShard;
+    $slice = NO_FACILITIES ? [] : (MAX_FACILITIES ? array_slice($todaysShard, 0, MAX_FACILITIES) : $todaysShard);
     kop_log("  today = shard {$shardIndex}/" . SHARD_COUNT . ' → ' . count($slice) . ' facilities to query' .
         (MAX_FACILITIES ? ' (capped from ' . count($todaysShard) . ')' : ''));
 

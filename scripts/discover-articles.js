@@ -20,6 +20,7 @@
  *   node scripts/discover-articles.js --limit 5    # cap candidates submitted this run
  *   node scripts/discover-articles.js --max-facilities 3   # smoke test
  *   node scripts/discover-articles.js --no-topics  # skip the topic-query tier
+ *   node scripts/discover-articles.js --no-facilities  # topics + Reddit only (the midday cron run)
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
@@ -54,6 +55,9 @@ const QUERIES_FILE   = path.join(__dirname, 'discovery-queries.json');
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
 const NO_TOPICS = args.includes('--no-topics');
+// The facility shard is picked by date, so a second run the same day would
+// re-query the same facilities. Extra daily runs pass this flag.
+const NO_FACILITIES = args.includes('--no-facilities');
 const LIMIT_ARG = args.indexOf('--limit');
 const SUBMIT_LIMIT = LIMIT_ARG > -1 ? parseInt(args[LIMIT_ARG + 1], 10) : Infinity;
 const MAX_FAC_ARG = args.indexOf('--max-facilities');
@@ -1411,7 +1415,8 @@ async function main() {
     log(`  Search terms: ${queries.topicQueries.length} topic queries, ` +
         `${queries.facilityKeywords.length} facility keywords, ` +
         `${queries.genericQueryNames.size} generic names skipped` +
-        (NO_TOPICS ? ' (topics disabled by --no-topics)' : ''));
+        (NO_TOPICS ? ' (topics disabled by --no-topics)' : '') +
+        (NO_FACILITIES ? ' (per-facility queries disabled by --no-facilities)' : ''));
 
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
@@ -1425,7 +1430,7 @@ async function main() {
     const today = dayOfYearUTC();
     const shardIndex = today % SHARD_COUNT;
     const todaysShard = facilityIndex.filter((_, i) => i % SHARD_COUNT === shardIndex);
-    const slice = MAX_FACILITIES ? todaysShard.slice(0, MAX_FACILITIES) : todaysShard;
+    const slice = NO_FACILITIES ? [] : (MAX_FACILITIES ? todaysShard.slice(0, MAX_FACILITIES) : todaysShard);
     log(`  today = shard ${shardIndex}/${SHARD_COUNT} → ${slice.length} facilities to query` +
         (MAX_FACILITIES ? ` (capped from ${todaysShard.length})` : ''));
 
