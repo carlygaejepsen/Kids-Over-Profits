@@ -1,0 +1,411 @@
+/**
+ * State inspection report pages rendered by js/inspections/report-page.js.
+ *
+ * Everything is scoped under .kop-rp, which the engine adds to the page root
+ * at startup, so states still on a per-state script keep their old look from
+ * css/facility-reports.css until they migrate.
+ *
+ * Tones: is-flagged (violations cited), is-clean (inspected, nothing cited),
+ * is-repeat (a repeat violation), is-neutral. Orange and coral pink appear
+ * only as rails, borders and light tints -- never as full backgrounds -- per
+ * the palette rules in css/colors.css.
+ */
+
+.kop-rp {
+    --kop-rp-flagged: var(--kop-orange);
+    --kop-rp-flagged-tint: rgba(239, 144, 52, 0.14);
+    --kop-rp-clean: var(--kop-teal);
+    --kop-rp-clean-tint: rgba(182, 227, 212, 0.55);
+    --kop-rp-repeat: var(--kop-coral-pink);
+    --kop-rp-neutral-tint: var(--kop-sand);
+}
+
+/* ---- Alphabet filter: make the active letter visible ------------------- */
+
+.kop-rp #alphabet-filter a {
+    padding: 6px 12px;
+    color: var(--kop-navy-blue);
+    background: var(--kop-white);
+    border: 1px solid var(--kop-hairline);
+    border-radius: var(--kop-radius-sm);
+    font-weight: 700;
+}
+
+.kop-rp #alphabet-filter a:hover,
+.kop-rp #alphabet-filter a:focus-visible {
+    background: var(--kop-sand);
+    border-color: var(--kop-teal);
+}
+
+.kop-rp #alphabet-filter a.active {
+    color: var(--kop-white);
+    background: var(--kop-navy-blue);
+    border-color: var(--kop-navy-blue);
+}
+
+/* ---- Messages ------------------------------------------------------------ */
+
+.kop-rp .kop-rp-results {
+    margin: 0 0 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--kop-muted);
+}
+
+.kop-rp .kop-rp-empty {
+    padding: 24px 16px;
+    text-align: center;
+    color: var(--kop-muted);
+    background: var(--kop-sand);
+    border-radius: var(--kop-radius-md);
+}
+
+.kop-rp .kop-rp-note {
+    margin: 6px 0;
+    font-size: 0.88rem;
+    color: var(--kop-muted);
+}
+
+.kop-rp .kop-rp-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* ---- Facility card ------------------------------------------------------- */
+
+.kop-rp .kop-rp-facility {
+    margin: 0 0 10px;
+    background: var(--kop-white);
+    border: 1px solid var(--kop-hairline);
+    border-left: 4px solid var(--kop-hairline);
+    border-radius: var(--kop-radius-md);
+}
+
+.kop-rp .kop-rp-facility.is-flagged { border-left-color: var(--kop-rp-flagged); }
+.kop-rp .kop-rp-facility.is-clean   { border-left-color: var(--kop-rp-clean); }
+
+.kop-rp .kop-rp-facility-summary {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    align-items: start;
+    padding: 14px 16px;
+    list-style: none;
+    cursor: pointer;
+    border-radius: var(--kop-radius-md);
+}
+
+.kop-rp .kop-rp-facility-summary::-webkit-details-marker { display: none; }
+
+.kop-rp .kop-rp-facility-summary:hover {
+    background: rgba(242, 238, 223, 0.5);
+}
+
+.kop-rp .kop-rp-facility-summary:focus-visible,
+.kop-rp .kop-rp-report-summary:focus-visible,
+.kop-rp .kop-rp-section > summary:focus-visible {
+    outline: 2px solid var(--kop-focus-color);
+    outline-offset: 2px;
+}
+
+.kop-rp .kop-rp-facility-head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.kop-rp .kop-rp-facility-name {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--kop-midnight-blue);
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.kop-rp .kop-rp-facility-meta,
+.kop-rp .kop-rp-facility-address {
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--kop-muted);
+}
+
+/* Chevron; points down when closed, up when open. */
+.kop-rp .kop-rp-toggle {
+    width: 10px;
+    height: 10px;
+    margin: 6px 4px 0 0;
+    border: solid var(--kop-navy-blue);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    transition: transform 0.15s ease;
+}
+
+.kop-rp details[open] > .kop-rp-facility-summary .kop-rp-toggle {
+    transform: rotate(-135deg);
+    margin-top: 10px;
+}
+
+.kop-rp .kop-rp-stats {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* Stats, report badges and finding chips share one pill style. */
+.kop-rp .kop-rp-stat,
+.kop-rp .kop-rp-badge,
+.kop-rp .kop-rp-chip {
+    display: inline-block;
+    padding: 2px 9px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--kop-midnight-blue);
+    white-space: nowrap;
+    background: var(--kop-rp-neutral-tint);
+    border: 1px solid transparent;
+    border-radius: var(--kop-radius-pill);
+}
+
+.kop-rp .is-flagged.kop-rp-stat,
+.kop-rp .is-flagged.kop-rp-badge,
+.kop-rp .is-flagged.kop-rp-chip {
+    background: var(--kop-rp-flagged-tint);
+    border-color: var(--kop-rp-flagged);
+}
+
+.kop-rp .is-clean.kop-rp-stat,
+.kop-rp .is-clean.kop-rp-badge,
+.kop-rp .is-clean.kop-rp-chip {
+    background: var(--kop-rp-clean-tint);
+    border-color: var(--kop-mint-green);
+}
+
+.kop-rp .is-repeat.kop-rp-stat,
+.kop-rp .is-repeat.kop-rp-badge,
+.kop-rp .is-repeat.kop-rp-chip {
+    background: var(--kop-white);
+    border-color: var(--kop-rp-repeat);
+}
+
+/* ---- Report rows --------------------------------------------------------- */
+
+.kop-rp .kop-rp-reports {
+    padding: 4px 16px 14px;
+    border-top: 1px solid var(--kop-hairline);
+}
+
+.kop-rp .kop-rp-report {
+    margin: 8px 0 0;
+    border: 1px solid var(--kop-hairline);
+    border-left: 3px solid var(--kop-hairline);
+    border-radius: var(--kop-radius-sm);
+    background: var(--kop-white);
+}
+
+.kop-rp .kop-rp-report.is-flagged { border-left-color: var(--kop-rp-flagged); }
+.kop-rp .kop-rp-report.is-clean   { border-left-color: var(--kop-rp-clean); }
+
+/* Flex-wrap rather than fixed columns: in a narrow card the badges drop to
+   their own line instead of colliding with a long survey type, whatever the
+   viewport width is. */
+.kop-rp .kop-rp-report-summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 12px;
+    padding: 9px 12px;
+    list-style: none;
+    cursor: pointer;
+}
+
+.kop-rp .kop-rp-report-summary::-webkit-details-marker { display: none; }
+
+.kop-rp .kop-rp-report-summary:hover {
+    background: rgba(242, 238, 223, 0.5);
+}
+
+.kop-rp .kop-rp-report-date {
+    flex: 0 0 7.5em;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.kop-rp .kop-rp-report-type {
+    flex: 1 1 8em;
+    font-size: 0.9rem;
+    color: var(--kop-midnight-blue);
+    min-width: 0;
+}
+
+.kop-rp .kop-rp-badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.kop-rp .kop-rp-report-body {
+    padding: 4px 12px 12px;
+    border-top: 1px solid var(--kop-hairline);
+}
+
+.kop-rp .kop-rp-facts {
+    margin: 8px 0 10px;
+    font-size: 0.8rem;
+    color: var(--kop-muted);
+}
+
+.kop-rp .kop-rp-official {
+    font-weight: 700;
+    color: var(--kop-navy-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.kop-rp .kop-rp-official:hover,
+.kop-rp .kop-rp-official:focus-visible {
+    color: var(--kop-teal);
+}
+
+/* ---- Report body content ------------------------------------------------- */
+
+.kop-rp .kop-rp-prose p {
+    margin: 0 0 8px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--kop-midnight-blue);
+}
+
+.kop-rp .kop-rp-prose .kop-rp-label {
+    margin: 10px 0 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-muted);
+}
+
+.kop-rp .kop-rp-purpose p {
+    font-style: italic;
+    color: var(--kop-muted);
+}
+
+/* Beats `.facility-report-container h4` from css/facility-reports.css. */
+.kop-rp h4.kop-rp-subhead {
+    margin: 14px 0 6px;
+    padding: 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-muted);
+    border: 0;
+}
+
+.kop-rp .kop-rp-finding {
+    margin: 8px 0;
+    padding: 10px 12px;
+    background: var(--kop-white);
+    border: 1px solid var(--kop-hairline);
+    border-left: 3px solid var(--kop-rp-flagged);
+    border-radius: var(--kop-radius-sm);
+}
+
+.kop-rp .kop-rp-finding.is-repeat { border-left-color: var(--kop-rp-repeat); }
+
+.kop-rp .kop-rp-finding-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px 10px;
+    margin-bottom: 6px;
+}
+
+.kop-rp .kop-rp-finding-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--kop-midnight-blue);
+}
+
+.kop-rp .kop-rp-finding-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.kop-rp .kop-rp-cite {
+    padding: 1px 6px;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.74rem;
+    color: var(--kop-midnight-blue);
+    background: var(--kop-sand);
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.kop-rp .kop-rp-section {
+    margin: 6px 0 0;
+}
+
+.kop-rp .kop-rp-section > summary {
+    display: inline-block;
+    padding: 2px 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--kop-navy-blue);
+    cursor: pointer;
+    list-style: none;
+}
+
+.kop-rp .kop-rp-section > summary::-webkit-details-marker { display: none; }
+
+.kop-rp .kop-rp-section > summary::before {
+    content: "+ ";
+}
+
+.kop-rp .kop-rp-section[open] > summary::before {
+    content: "\2212  ";
+}
+
+.kop-rp .kop-rp-section-body {
+    margin-top: 4px;
+    padding-left: 10px;
+    border-left: 2px solid var(--kop-hairline);
+}
+
+.kop-rp .kop-rp-requirement p {
+    font-size: 0.85rem;
+    color: var(--kop-muted);
+}
+
+/* ---- Narrow screens ------------------------------------------------------ */
+
+@media (max-width: 600px) {
+    .kop-rp .kop-rp-facility-summary,
+    .kop-rp .kop-rp-reports {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .kop-rp .kop-rp-stat,
+    .kop-rp .kop-rp-badge,
+    .kop-rp .kop-rp-chip {
+        white-space: normal;
+    }
+}

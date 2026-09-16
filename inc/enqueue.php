@@ -563,6 +563,27 @@ function kop_enqueue_report_scripts() {
                     true
                 );
                 $script_deps[] = 'kop-report-page';
+
+                // Engine layout. Loads after facility-reports.css so its
+                // .kop-rp-scoped rules win; kop-components supplies the tokens.
+                $components_css = get_stylesheet_directory() . '/css/kop-components.css';
+                if (file_exists($components_css)) {
+                    wp_enqueue_style(
+                        'kop-components',
+                        get_stylesheet_directory_uri() . '/css/kop-components.css',
+                        array('kop-colors'),
+                        filemtime($components_css)
+                    );
+                }
+                $engine_css = get_stylesheet_directory() . '/css/report-page.css';
+                if (file_exists($engine_css)) {
+                    wp_enqueue_style(
+                        'kop-report-page-style',
+                        get_stylesheet_directory_uri() . '/css/report-page.css',
+                        array('kop-colors', 'kop-components', 'kop-facility-reports-style'),
+                        filemtime($engine_css)
+                    );
+                }
             }
 
             wp_enqueue_script(

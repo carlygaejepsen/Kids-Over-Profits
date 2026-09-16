@@ -3,42 +3,42 @@
  *
  * Each of the fifteen state viewers used to carry its own copy of the same
  * machinery: alphabet filter, search, sort, "new reports only", the
- * last-updated stamp and the facility list shell. This file owns all of that.
- * A state now supplies only what genuinely differs between states -- how its
- * data loads and normalizes, which reports count as flagged, and how a facility
- * header and a single report render -- through KOP.reportPage.mount(adapter).
- *
- * Markup is intentionally unchanged from the per-state files so
- * css/facility-reports.css applies as before. Consolidating first means the
- * visual redesign lands in one place instead of fifteen.
+ * last-updated stamp and the facility list. This file owns all of that plus
+ * the page's visual layout (css/report-page.css). A state supplies only what
+ * genuinely differs -- how its data loads and normalizes, which reports carry
+ * violations, and the content of a facility summary and a single report --
+ * through KOP.reportPage.mount(adapter).
  *
  * Classic script (no module loader on these pages); attaches to window.KOP.
  *
  * Adapter contract -- required:
- *   state          Display name, used in messages ("Georgia").
- *   load()         async -> { facilities: [...], scrapedTimestamp: '' }.
- *                  Facilities are already normalized by the adapter.
- *   facilityName(f)       Name used for grouping and name sorts.
- *   reportTime(report)    Report date as epoch ms; 0 when unknown.
- *   isFlagged(report)     True for a report with violations / an incident.
- *   renderSummary(f, ctx) Inner HTML of <summary class="facility-header">.
- *   renderReport(r, ctx)  HTML for one report.
+ *   state              Display name, used in messages ("Georgia").
+ *   load()             async -> { facilities: [...], scrapedTimestamp: '' }.
+ *                      Facilities are already normalized by the adapter.
+ *   facilityName(f)    Raw name, used for grouping, sorting and search.
+ *   reportTime(r)      Report date as epoch ms; 0 when unknown.
+ *   isFlagged(r)       True when the report records violations.
+ *   summary(f, ctx)    -> { meta: [text], address: text, stats: [{ text, tone }] }
+ *   report(r, ctx)     -> { date: text, type: text, tone, badges: [{ text, tone }],
+ *                           facts: [text], link: { href, text }, body: html }
+ *                      body must be built with ctx.ui helpers (they escape).
  *
  * Adapter contract -- optional:
- *   reportsKey       Property holding a facility's reports (default 'reports').
- *   searchText(f)    Haystack for the search box (default: facilityName).
- *   renderBody(f, ctx)  HTML between the summary and the report list.
- *   countFlagged(f)  Sort weight for "Most Violations First"
- *                    (default: number of flagged reports).
- *   emptyMessage     Shown when load() returns no facilities.
- *   flaggedFilter    'reports' (default): violation sorts keep only flagged
- *                    reports and drop facilities left with none.
- *                    'facilities': keep a facility's full report list and drop
- *                    facilities with no reports at all (Texas behaviour).
- *   defaultSort(a, b)  Comparator for the "Default Order" option; the default
- *                    leaves the letter grouping's A-Z order untouched.
+ *   reportsKey         Property holding a facility's reports (default 'reports').
+ *   searchText(f)      Haystack for the search box (default: facilityName).
+ *   countFlagged(f)    Sort weight for "Most Violations First"
+ *                      (default: number of flagged reports).
+ *   emptyMessage       Shown when load() returns no facilities.
+ *   flaggedFilter      'reports' (default): violation sorts keep only flagged
+ *                      reports and drop facilities left with none.
+ *                      'facilities': keep a facility's full report list and drop
+ *                      facilities with no reports at all (Texas behaviour).
+ *   defaultSort(a, b)  Comparator for the "Default Order" option.
  *
- * ctx passed to render hooks: { escapeHtml, countFlagged, reports }.
+ * Tones: 'flagged' (violations), 'clean' (inspected, none found), 'repeat'
+ * (a repeat violation), 'neutral'.
+ *
+ * ctx: { escapeHtml, countFlagged, reports, formatDate, ui }.
  */
 (function (global) {
     'use strict';
@@ -46,6 +46,7 @@
     var KOP = global.KOP = global.KOP || {};
 
     var NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+    var TONES = { flagged: 1, clean: 1, repeat: 1, neutral: 1 };
 
     function safeString(value) {
         return value === null || value === undefined ? '' : String(value).trim();
@@ -59,6 +60,117 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
     }
+
+    function toneClass(tone) {
+        return TONES[tone] ? ' is-' + tone : '';
+    }
+
+    function plural(count, one, many) {
+        return count + ' ' + (count === 1 ? one : (many || one + 's'));
+    }
+
+    /** epoch ms -> "Nov 25, 2025"; '' when unknown. */
+    function formatDate(ms) {
+        if (!(ms > 0)) return '';
+        return new Date(ms).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // Licensing databases publish names in capitals. Shouting a whole list of
+    // facility names is hard to scan, so all-caps names are title-cased for
+    // display only; search and sorting still use the name as published.
+    var KEEP_UPPER = /^(LLC|LLP|LP|PC|PLLC|PA|II|III|IV|VI|VII|VIII|IX|USA|US|YMCA|YWCA|DBA|NFP|CCI|CPA|DHS|RTC|PRTF|RHYP|MH|GA|NC|SC|ABA|DD|ID|HIV|AIDS)$/;
+    var LOWER_WORDS = /^(and|of|the|for|in|at|by|to|on|or|with|from)$/;
+
+    function displayName(name) {
+        var text = safeString(name);
+        var letters = text.replace(/[^A-Za-z]/g, '');
+        var upper = letters.replace(/[^A-Z]/g, '').length;
+        // Mostly capitals ("MCM, Inc. DBA CAMP DAVID VISION OF HOPE") still reads
+        // as shouting; names already in mixed case are left exactly as published.
+        if (!letters || upper / letters.length < 0.8) return text;
+        return text.split(/\s+/).map(function (token, index) {
+            if (/[a-z]/.test(token)) return token;   // "Inc." is already fine
+            return token.split('-').map(function (part) {
+                var letters = part.replace(/[^A-Za-z]/g, '');
+                if (!letters) return part;
+                if (KEEP_UPPER.test(letters)) return part;
+                if (/^\d+(ST|ND|RD|TH)$/.test(part)) return part.toLowerCase();
+                if (letters.length <= 4 && !/[AEIOUY]/.test(letters)) return part;   // "KBW", "CRS"
+                var lower = part.toLowerCase();
+                if (index > 0 && LOWER_WORDS.test(lower)) return lower;
+                // Capitalize the first letter; "O'BRIEN" -> "O'Brien", "SLADE'S" -> "Slade's".
+                return lower.replace(/[a-z]/, function (c) { return c.toUpperCase(); })
+                    .replace(/^([^a-z]*[a-z])'([a-z])(?=[a-z]{2})/i, function (m, a, b) { return a + "'" + b.toUpperCase(); });
+            }).join('-');
+        }).join(' ');
+    }
+
+    // ---- Building blocks for adapter-rendered report bodies ----------------
+
+    var ui = {
+        /**
+         * Paragraphs of source text. A form lead-in of one to three words
+         * ending in a colon ("Findings include:") reads as a label; longer
+         * colon lines are the inspector's own sentences and stay prose.
+         */
+        paragraphs: function (list, className) {
+            var items = (list || []).map(safeString).filter(Boolean);
+            if (!items.length) return '';
+            return '<div class="kop-rp-prose' + (className ? ' ' + className : '') + '">'
+                + items.map(function (text) {
+                    if (/:$/.test(text) && text.split(/\s+/).length <= 3) {
+                        return '<p class="kop-rp-label">' + escapeHtml(text.replace(/:$/, '')) + '</p>';
+                    }
+                    return '<p>' + escapeHtml(text) + '</p>';
+                }).join('')
+                + '</div>';
+        },
+
+        chips: function (chips) {
+            var list = (chips || []).filter(function (c) { return c && safeString(c.text); });
+            if (!list.length) return '';
+            return list.map(function (c) {
+                return '<span class="kop-rp-chip' + toneClass(c.tone) + '">' + escapeHtml(c.text) + '</span>';
+            }).join('');
+        },
+
+        /** A collapsible sub-section inside a report ("What the rule requires"). */
+        section: function (title, html, opts) {
+            if (!html) return '';
+            opts = opts || {};
+            return '<details class="kop-rp-section"' + (opts.open ? ' open' : '') + '>'
+                + '<summary>' + escapeHtml(title) + '</summary>'
+                + '<div class="kop-rp-section-body">' + html + '</div>'
+                + '</details>';
+        },
+
+        /**
+         * One cited violation.
+         * { title, citation, chips: [{text, tone}], evidence: [text],
+         *   requirement: [text], tone }
+         */
+        finding: function (f) {
+            var head = '<div class="kop-rp-finding-head">'
+                + '<span class="kop-rp-finding-title">' + escapeHtml(f.title || 'Cited rule') + '</span>'
+                + '<span class="kop-rp-finding-tags">'
+                + (f.citation ? '<code class="kop-rp-cite">' + escapeHtml(f.citation) + '</code>' : '')
+                + ui.chips(f.chips)
+                + '</span></div>';
+            return '<section class="kop-rp-finding' + toneClass(f.tone || 'flagged') + '">'
+                + head
+                + ui.paragraphs(f.evidence, 'kop-rp-evidence')
+                + ui.section('What the rule requires', ui.paragraphs(f.requirement, 'kop-rp-requirement'))
+                + '</section>';
+        },
+
+        note: function (text) {
+            return text ? '<p class="kop-rp-note">' + escapeHtml(text) + '</p>' : '';
+        },
+
+        heading: function (text) {
+            return text ? '<h4 class="kop-rp-subhead">' + escapeHtml(text) + '</h4>' : '';
+        }
+    };
 
     function mount(adapter) {
         if (!adapter || typeof adapter.load !== 'function') {
@@ -78,6 +190,10 @@
             console.error('ERROR: #report-container element not found on page');
             return;
         }
+
+        // Scopes css/report-page.css; pages still on a per-state script are untouched.
+        var pageRoot = doc.querySelector('.facility-report-container') || reportContainer.parentNode;
+        if (pageRoot && pageRoot.classList) pageRoot.classList.add('kop-rp');
 
         var alphabetFilter  = doc.getElementById('alphabet-filter');
         var searchInput     = doc.getElementById('searchInput');
@@ -111,7 +227,14 @@
             return reportsOf(f).filter(adapter.isFlagged).length;
         }
 
-        var ctx = { escapeHtml: escapeHtml, countFlagged: countFlagged, reports: reportsOf };
+        var ctx = {
+            escapeHtml: escapeHtml,
+            countFlagged: countFlagged,
+            reports: reportsOf,
+            formatDate: formatDate,
+            plural: plural,
+            ui: ui
+        };
 
         function isRecentReport(report) {
             if (!report) return false;
@@ -134,7 +257,7 @@
                 .then(function (result) {
                     var facilities = (result && result.facilities) || [];
                     if (!facilities.length) {
-                        reportContainer.innerHTML = '<p>' + escapeHtml(adapter.emptyMessage
+                        reportContainer.innerHTML = '<p class="kop-rp-empty">' + escapeHtml(adapter.emptyMessage
                             || ('No facilities found in the database for ' + adapter.state + '.')) + '</p>';
                         return;
                     }
@@ -148,7 +271,7 @@
                 })
                 .catch(function (error) {
                     console.error('Failed to load ' + adapter.state + ' report data:', error);
-                    reportContainer.innerHTML = '<p class="error">Error loading data: ' + error.message + '</p>';
+                    reportContainer.innerHTML = '<p class="error">Error loading data: ' + escapeHtml(error.message) + '</p>';
                 });
         }
 
@@ -188,7 +311,10 @@
 
         function setActiveLetter(letter) {
             doc.querySelectorAll('#alphabet-filter a').forEach(function (a) {
-                a.classList.toggle('active', a.dataset.letter === letter);
+                var active = a.dataset.letter === letter;
+                a.classList.toggle('active', active);
+                if (active) a.setAttribute('aria-current', 'true');
+                else a.removeAttribute('aria-current');
             });
         }
 
@@ -208,7 +334,7 @@
             if (term) {
                 isSearching = true;
                 if (clearButton) clearButton.style.display = 'inline-block';
-                doc.querySelectorAll('#alphabet-filter a').forEach(function (a) { a.classList.remove('active'); });
+                setActiveLetter(null);
                 var all = [].concat.apply([], Object.keys(allFacilitiesData).map(function (k) { return allFacilitiesData[k]; }));
                 var filtered = all.filter(function (f) {
                     return safeString(searchText(f)).toLowerCase().indexOf(term) !== -1;
@@ -270,35 +396,79 @@
             });
         }
 
+        function renderFacility(f) {
+            var reports = reportsOf(f);
+            var info = adapter.summary(f, ctx) || {};
+            var tone = !reports.length ? 'neutral' : (reports.some(adapter.isFlagged) ? 'flagged' : 'clean');
+            var meta = (info.meta || []).map(safeString).filter(Boolean);
+
+            var stats = (info.stats || []).filter(function (s) { return s && safeString(s.text); }).map(function (s) {
+                return '<span class="kop-rp-stat' + toneClass(s.tone) + '">' + escapeHtml(s.text) + '</span>';
+            }).join('');
+
+            return '<article class="kop-rp-facility' + toneClass(tone) + '">'
+                + '<details>'
+                + '<summary class="kop-rp-facility-summary">'
+                + '<span class="kop-rp-facility-head">'
+                + '<h3 class="kop-rp-facility-name">' + (escapeHtml(displayName(adapter.facilityName(f))) || 'Unnamed facility') + '</h3>'
+                + (meta.length ? '<span class="kop-rp-facility-meta">' + meta.map(escapeHtml).join(' &middot; ') + '</span>' : '')
+                + (info.address ? '<span class="kop-rp-facility-address">' + escapeHtml(info.address) + '</span>' : '')
+                + '</span>'
+                + '<span class="kop-rp-toggle" aria-hidden="true"></span>'
+                + (stats ? '<span class="kop-rp-stats">' + stats + '</span>' : '')
+                + '</summary>'
+                + '<div class="kop-rp-reports">'
+                + (reports.length
+                    ? reports.map(renderReport).join('')
+                    : '<p class="kop-rp-note">No reports on file.</p>')
+                + '</div>'
+                + '</details>'
+                + '</article>';
+        }
+
+        function renderReport(r) {
+            var view = adapter.report(r, ctx) || {};
+            var badges = (view.badges || []).filter(function (b) { return b && safeString(b.text); }).map(function (b) {
+                return '<span class="kop-rp-badge' + toneClass(b.tone) + '">' + escapeHtml(b.text) + '</span>';
+            }).join('');
+
+            var facts = (view.facts || []).map(safeString).filter(Boolean).map(escapeHtml);
+            if (view.link && safeString(view.link.href)) {
+                facts.push('<a class="kop-rp-official" href="' + escapeHtml(view.link.href) + '" target="_blank" rel="noopener">'
+                    + escapeHtml(view.link.text || 'Official report')
+                    + '<span class="kop-rp-sr"> (opens in a new tab)</span></a>');
+            }
+
+            return '<details class="kop-rp-report' + toneClass(view.tone) + '">'
+                + '<summary class="kop-rp-report-summary">'
+                + '<span class="kop-rp-report-date">' + (escapeHtml(view.date) || 'Date unknown') + '</span>'
+                + '<span class="kop-rp-report-type">' + (escapeHtml(view.type) || 'Report') + '</span>'
+                + (badges ? '<span class="kop-rp-badges">' + badges + '</span>' : '')
+                + '</summary>'
+                + '<div class="kop-rp-report-body">'
+                + (facts.length ? '<p class="kop-rp-facts">' + facts.join('<span aria-hidden="true"> &middot; </span>') + '</p>' : '')
+                + (view.body || '')
+                + '</div>'
+                + '</details>';
+        }
+
         function renderFilteredFacilities(facilities, context) {
             reportContainer.innerHTML = '';
             if (!facilities || !facilities.length) {
                 var msg = isSearching
-                    ? 'No facilities found matching your search.'
+                    ? 'No facilities match your search.'
                     : 'No facilities found for "' + context + '".';
-                reportContainer.innerHTML = '<p>' + msg + '</p>';
+                reportContainer.innerHTML = '<p class="kop-rp-empty">' + escapeHtml(msg) + '</p>';
                 return;
             }
 
+            var html = '';
             if (isSearching) {
-                var header = doc.createElement('div');
-                header.style.cssText = 'margin-bottom:20px;padding:10px;background:#e8f4f8;border-radius:4px;font-weight:bold;';
-                header.innerHTML = 'Found ' + facilities.length + ' facilities matching your search';
-                reportContainer.appendChild(header);
+                html += '<p class="kop-rp-results" role="status">'
+                    + escapeHtml(plural(facilities.length, 'facility', 'facilities')) + ' match your search</p>';
             }
-
-            facilities.forEach(function (f) {
-                var el = doc.createElement('div');
-                el.className = 'facility-box';
-                el.innerHTML = '<details>'
-                    + '<summary class="facility-header">' + adapter.renderSummary(f, ctx) + '</summary>'
-                    + (typeof adapter.renderBody === 'function' ? adapter.renderBody(f, ctx) : '')
-                    + '<div class="inspections-container">'
-                    + reportsOf(f).map(function (r) { return adapter.renderReport(r, ctx); }).join('')
-                    + '</div>'
-                    + '</details>';
-                reportContainer.appendChild(el);
-            });
+            html += facilities.map(renderFacility).join('');
+            reportContainer.innerHTML = html;
         }
 
         function renderLastUpdated() {
@@ -315,7 +485,7 @@
             var updateDate = isNaN(parsed.getTime())
                 ? scrapedTimestamp
                 : parsed.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            el.innerHTML = '<p>Last updated: ' + updateDate + '</p>';
+            el.innerHTML = '<p>Last updated: ' + escapeHtml(updateDate) + '</p>';
         }
 
         initializeReport();
@@ -325,6 +495,9 @@
         mount: mount,
         escapeHtml: escapeHtml,
         safeString: safeString,
+        displayName: displayName,
+        formatDate: formatDate,
+        ui: ui,
         NEW_REPORT_WINDOW_MS: NEW_REPORT_WINDOW_MS
     };
 }(window));
