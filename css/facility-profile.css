@@ -127,16 +127,13 @@
     border-top: 4px solid var(--kop-midnight-blue, #000435);
     font-size: 0.95rem;
     line-height: 1.45;
+    /* Long addresses, URLs and names wrap instead of widening the box. */
+    overflow-wrap: anywhere;
 }
 
-@media (min-width: 960px) {
-    .kop-fp-rail {
-        position: sticky;
-        top: 6rem;
-        max-height: calc(100vh - 7rem);
-        overflow-y: auto;
-    }
-}
+/* The rail is not sticky: a sticky rail has to be capped at the window height,
+   which gave tall fact lists their own cramped scroll box (with a sideways
+   scrollbar). It scrolls with the page at full height instead. */
 
 .kop-fp-rail h2 {
     margin: 1.75rem 0 0.6rem;
