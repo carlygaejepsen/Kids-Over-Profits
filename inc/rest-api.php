@@ -3756,8 +3756,13 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $type = '';
                     $pdf_url = '';
 
-                    if (isset($categories['finding_count']) && is_numeric($categories['finding_count'])) {
-                        $finding_count = (int)$categories['finding_count'];
+                    // Scrapers name the count differently: OR/FL finding_count,
+                    // UT "Findings Count", WA violation_count, FL deficiency_count.
+                    foreach (array('finding_count', 'Findings Count', 'violation_count', 'deficiency_count') as $count_key) {
+                        if (isset($categories[$count_key]) && is_numeric($categories[$count_key]) && (int)$categories[$count_key] > 0) {
+                            $finding_count = (int)$categories[$count_key];
+                            break;
+                        }
                     }
                     // Pass findings through as-is so the client can apply
                     // state-specific key extraction (OR uses {rule, excerpt},
@@ -3765,6 +3770,12 @@ function kop_state_collect_inspection_summaries($state_name) {
                     if (isset($categories['findings']) && is_array($categories['findings'])) {
                         if (!$finding_count) $finding_count = count($categories['findings']);
                         $findings = array_slice($categories['findings'], 0, 12);
+                    }
+                    // AZ, WA, FL and CA keep them under `deficiencies` instead.
+                    if (!$findings && isset($categories['deficiencies']) && is_array($categories['deficiencies'])) {
+                        $findings = kop_state_normalize_deficiencies($categories['deficiencies']);
+                        if (!$finding_count) $finding_count = count($findings);
+                        $findings = array_slice($findings, 0, 12);
                     }
                     // If still no count but corrective actions exist that aren't "none",
                     // treat as "has findings" so the inspection is visually flagged.
@@ -3778,6 +3789,7 @@ function kop_state_collect_inspection_summaries($state_name) {
                     $type = trim((string)($categories['report_type'] ?? ''));
                     if ($type === '') $type = trim((string)($categories['survey_type'] ?? ''));
                     if ($type === '') $type = trim((string)($categories['inspection_type'] ?? ''));
+                    if ($type === '') $type = trim((string)($categories['Inspection Type'] ?? ''));
                     $pdf_url = (string)($categories['pdf_url'] ?? '');
                     $stats_by_facility[$fid]['violations'] += $finding_count;
                     $update_latest($date_str);
@@ -4202,6 +4214,53 @@ function kop_state_collect_inspection_summaries($state_name) {
  * Merge programs (facilities_master) with inspection summaries.
  * Returns ['active' => [...], 'closed' => [...]] partitioned by operating status.
  */
+/**
+ * Deficiency lists as scraped by different states, in the finding shape the
+ * state page renders ({rule, excerpt} or AZ's {rule, evidence, findings}).
+ * Placeholder rows (FL writes "None" when there was no deficiency) are dropped.
+ *
+ * @param array $deficiencies AZ {rule, evidence, findings}; WA plain strings;
+ *                            FL {deficiency, requirement_description, ...};
+ *                            CA {title, description}.
+ * @return array
+ */
+function kop_state_normalize_deficiencies(array $deficiencies) {
+    $none = function ($v) {
+        $v = trim(is_scalar($v) ? (string)$v : '');
+        return $v === '' || preg_match('/^(none)+$/i', $v);
+    };
+    $out = array();
+    foreach ($deficiencies as $d) {
+        if (is_string($d)) {
+            if (!$none($d)) $out[] = array('rule' => '', 'excerpt' => trim($d));
+            continue;
+        }
+        if (!is_array($d)) continue;
+        if (isset($d['rule']) || isset($d['evidence']) || isset($d['findings'])) {
+            $out[] = $d;   // AZ shape, rendered as-is
+            continue;
+        }
+        $rule = '';
+        foreach (array('deficiency', 'title', 'section_cited', 'tag') as $k) {
+            // CA titles are sometimes just a stray symbol; a rule needs a letter or digit.
+            if (isset($d[$k]) && !$none($d[$k]) && preg_match('/[\p{L}\p{N}]/u', (string)$d[$k])) {
+                $rule = trim((string)$d[$k]);
+                break;
+            }
+        }
+        $excerpt = '';
+        foreach (array('requirement_description', 'description', 'narrative') as $k) {
+            if (isset($d[$k]) && !$none($d[$k])) {
+                $excerpt = trim((string)$d[$k]);
+                break;
+            }
+        }
+        if ($rule === '' && $excerpt === '') continue;
+        $out[] = array('rule' => $rule, 'excerpt' => $excerpt);
+    }
+    return $out;
+}
+
 function kop_state_collect_facilities($state_name) {
     $programs = kop_state_collect_programs($state_name);
     $inspections = kop_state_collect_inspection_summaries($state_name);
