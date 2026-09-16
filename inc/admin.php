@@ -933,6 +933,131 @@ function kop_apply_facility_seed_to_nested(PDO $pdo, array $target, array $field
     return $changed;
 }
 /**
+ * Alternate names for operator (company) projects (seeds/operator-aliases.json).
+ * Each entry names a facilities_master row by id and unique_name and lists
+ * names to add to operator.otherNames. Names already present (any case) are
+ * skipped, so the step is idempotent and never removes a name.
+ */
+function kop_apply_operator_alias_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/operator-aliases.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    $pdo     = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    try {
+        $read  = $pdo->prepare('SELECT unique_name, json_data FROM facilities_master WHERE id = ?');
+        $write = $pdo->prepare('UPDATE facilities_master SET json_data = ?, updated_at = NOW() WHERE id = ?');
+        foreach ($entries as $entry) {
+            if (empty($entry['id']) || empty($entry['unique_name']) || empty($entry['add_other_names'])) {
+                continue;
+            }
+            $read->execute(array((int) $entry['id']));
+            $row = $read->fetch(PDO::FETCH_ASSOC);
+            if (!$row || $row['unique_name'] !== $entry['unique_name']) {
+                continue;
+            }
+            $record = json_decode((string) $row['json_data'], true);
+            if (!is_array($record)) {
+                continue;
+            }
+            // Older rows keep the operator at the top level, newer ones under data.
+            if (isset($record['data']['operator']) && is_array($record['data']['operator'])) {
+                $operator =& $record['data']['operator'];
+            } elseif (isset($record['operator']) && is_array($record['operator'])) {
+                $operator =& $record['operator'];
+            } else {
+                continue;
+            }
+            $names = is_array($operator['otherNames'] ?? null) ? $operator['otherNames'] : array();
+            $have  = array_map('strtolower', array_map('strval', $names));
+            $have[] = strtolower((string) ($operator['name'] ?? ''));
+            $added = 0;
+            foreach ((array) $entry['add_other_names'] as $name) {
+                $name = trim((string) $name);
+                if ($name === '' || in_array(strtolower($name), $have, true)) {
+                    continue;
+                }
+                $names[] = $name;
+                $have[]  = strtolower($name);
+                $added++;
+            }
+            if ($added) {
+                $operator['otherNames'] = $names;
+                $record['timestamp']    = gmdate('c');
+                $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $entry['id']));
+                $done[] = (int) $entry['id'];
+            }
+            unset($operator);
+        }
+    } catch (Throwable $e) {
+        // Leave the records alone; the data form can add the names by hand.
+    }
+    return $done;
+}
+/**
+ * Facilities researched offline that are missing from the data
+ * (seeds/new-facilities.json). Each entry names a state profile in
+ * locations_master by id and unique_name and carries a full facility object.
+ * The facility is appended to that profile's data.facilities unless an entry
+ * with the same name is already there, and gets a __facility_ref row through
+ * the same promotion path the data form uses. Idempotent by name.
+ */
+function kop_apply_new_facility_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/new-facilities.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    $pdo     = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    require_once trailingslashit(get_stylesheet_directory()) . 'api/facility-promotion.php';
+    try {
+        $read  = $pdo->prepare('SELECT unique_name, json_data FROM locations_master WHERE id = ?');
+        $write = $pdo->prepare('UPDATE locations_master SET json_data = ?, updated_at = NOW() WHERE id = ?');
+        foreach ($entries as $entry) {
+            $facility = $entry['facility'] ?? null;
+            $name     = trim((string) ($facility['identification']['name'] ?? ''));
+            if (empty($entry['location_id']) || empty($entry['location_name']) || $name === '') {
+                continue;
+            }
+            $read->execute(array((int) $entry['location_id']));
+            $row = $read->fetch(PDO::FETCH_ASSOC);
+            if (!$row || $row['unique_name'] !== $entry['location_name']) {
+                continue;
+            }
+            $record = json_decode((string) $row['json_data'], true);
+            if (!is_array($record) || !isset($record['data']['facilities']) || !is_array($record['data']['facilities'])) {
+                continue;
+            }
+            $key = kop_promote_name_key($name);
+            foreach ($record['data']['facilities'] as $existing) {
+                if (is_array($existing) && kop_promote_name_key((string) ($existing['identification']['name'] ?? '')) === $key) {
+                    continue 2; // already added (by this seed or by hand)
+                }
+            }
+            $id = kop_promote_single_nested_facility($pdo, $facility);
+            if ($id === null) {
+                continue;
+            }
+            $record['data']['facilities'][] = $facility;
+            $record['timestamp'] = gmdate('c');
+            $write->execute(array(wp_json_encode($record, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int) $entry['location_id']));
+            $done[] = $id;
+        }
+    } catch (Throwable $e) {
+        // Leave the records alone; the data form can add the facilities by hand.
+    }
+    return $done;
+}
+/**
  * Lawsuit records assembled offline (seeds/lawsuits.json). Each case is
  * inserted once, matched by case_name, as a published record with the
  * facility links and news links the seed names. Existing cases are never
@@ -1126,6 +1251,8 @@ function kop_apply_template_assignments() {
     $summary['lawsuit_docs'] = kop_apply_lawsuit_document_fixes();
     $summary['seeded']       = kop_apply_seed_posts();
     $summary['facilities']   = kop_apply_facility_record_seeds();
+    $summary['operators']    = kop_apply_operator_alias_seeds();
+    $summary['new_facilities'] = kop_apply_new_facility_seeds();
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
 
@@ -1176,7 +1303,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '15';
+    $version = '16';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

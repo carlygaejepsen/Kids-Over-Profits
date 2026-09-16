@@ -1,0 +1,201 @@
+[
+  {
+    "location_id": 6,
+    "location_name": "NEW HAMPSHIRE",
+    "facility": {
+      "identification": {
+        "name": "Mountain Valley Treatment Center",
+        "currentName": "",
+        "currentOperator": "Mountain Valley Treatment Center",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Plainfield",
+        "state": "NH",
+        "country": "United States",
+        "additionalLocations": [
+          "2056 Mt. Moosilauke Highway, Pike, NH 03780 (original campus; the program ran both campuses from January 2018, the current contact page lists only Plainfield)"
+        ]
+      },
+      "location": "Plainfield, NH",
+      "address": "703 River Road, Plainfield, NH 03781",
+      "otherOperators": [],
+      "operatingPeriod": {
+        "startYear": 2011,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2011-present",
+        "notes": [
+          "Founded 2011 in Pike, NH; Plainfield campus (former Home Hill Inn) opened January 2018."
+        ]
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://mountainvalleytreatment.org",
+        "https://mountainvalleytreatment.org/programs/mountain-valley-treatment-center/",
+        "https://mountainvalleytreatment.org/mountain-valley-treatment-center-announces-plan-to-operate-on-two-campuses/"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": 13,
+          "max": 20
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": true,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "Residential treatment for anxiety and OCD, ages 13-20.",
+        "Added 2026-09-16 from the Google Alerts review (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "703 River Road",
+        "city": "Plainfield",
+        "state": "NH",
+        "zip": "03781"
+      }
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "River Point Behavioral Health",
+        "currentName": "",
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "Universal Health Services (UHS)",
+        "currentOwners": [
+          "Universal Health Services (UHS)"
+        ],
+        "otherNames": [
+          "Ten Broeck Hospital",
+          "Ten Broeck Jacksonville LLC"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Jacksonville",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Jacksonville, FL",
+      "address": "6300 Beach Blvd, Jacksonville, FL 32216",
+      "otherOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://riverpointbehavioral.com",
+        "https://riverpointbehavioral.com/treatments-services/child-adolescent-services/",
+        "https://jobs.uhsinc.com/river-point-behavioral-health"
+      ],
+      "facilityDetails": {
+        "type": "Psychiatric Hospital",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": 5,
+          "max": 17
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": true,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "UHS psychiatric hospital with inpatient units for children (5-10) and adolescents (11-17); also serves adults.",
+        "Added 2026-09-16 from the Google Alerts review (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "6300 Beach Blvd",
+        "city": "Jacksonville",
+        "state": "FL",
+        "zip": "32216"
+      }
+    }
+  }
+]

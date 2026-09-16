@@ -709,5 +709,37 @@
       ],
       "documentFolderId": 4
     }
+  },
+  {
+    "id": 12739,
+    "unique_name": "Yellowstone Girls and Boys Ranch",
+    "version": 1,
+    "top": {
+      "displayName": "Yellowstone Boys and Girls Ranch"
+    },
+    "facility": {
+      "identification": {
+        "name": "Yellowstone Boys and Girls Ranch",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Yellowstone Girls and Boys Ranch",
+          "YBGR"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      }
+    },
+    "apply_to": [
+      {
+        "table": "locations_master",
+        "id": 25,
+        "match": {
+          "facility_id": 12739
+        }
+      }
+    ]
   }
 ]
