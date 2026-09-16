@@ -1487,9 +1487,18 @@ function kop_build_facility_doc_tree($folder_ids, $depth = 0) {
 
 /**
  * Top-level facility document tree: the direct files of the (optionally
- * merged) root folders, plus their nested subfolders. Merging covers both
- * same-name duplicates and curated legacy/current-name folder links
- * (kop_get_equivalent_folder_ids).
+ * merged) root folders, plus their nested subfolders.
+ *
+ * Merging covers two kinds of equivalence, presented differently:
+ *   - Same-name duplicates of the requested folder (kop_get_same_name_folder_ids)
+ *     are unioned invisibly — they ARE this folder, just filed twice.
+ *   - Folders LINKED as the same facility under a different name
+ *     (kop_folder_links — a rename, a successor, or an address match from
+ *     api/manage-addresses.php) keep their identity: each linked name becomes
+ *     a synthetic "Merged from: <name>" subfolder holding that folder's files
+ *     and subtree, so readers can see where a document originally lived.
+ *     Those nodes carry 'merged_from' (the source folder name) and sort after
+ *     the folder's own subfolders.
  *
  * @param int  $folder_id        A folder the facility is matched to.
  * @param bool $merge_same_name  Merge same-name and linked folders.
@@ -1497,17 +1506,102 @@ function kop_build_facility_doc_tree($folder_ids, $depth = 0) {
  *               and 'subfolders' (node[] from kop_build_facility_doc_tree).
  */
 function kop_get_facility_doc_tree($folder_id, $merge_same_name = true) {
-    $roots = ($merge_same_name && function_exists('kop_get_equivalent_folder_ids'))
-        ? kop_get_equivalent_folder_ids($folder_id)
-        : array((int) $folder_id);
-    if (empty($roots)) {
-        $roots = array((int) $folder_id);
+    $folder_id = (int) $folder_id;
+    $home = ($merge_same_name && function_exists('kop_get_same_name_folder_ids'))
+        ? kop_get_same_name_folder_ids($folder_id)
+        : array($folder_id);
+    if (empty($home)) {
+        $home = array($folder_id);
+    }
+
+    $linked = array();
+    if ($merge_same_name && function_exists('kop_get_equivalent_folder_ids')) {
+        $linked = array_values(array_diff(kop_get_equivalent_folder_ids($folder_id), $home));
+    }
+
+    $files = kop_get_attachments_in_folder_ids($home); // files filed on the roots themselves
+    $subfolders = kop_build_facility_doc_tree(kop_get_child_folder_ids($home));
+
+    if (!empty($linked)) {
+        $seen = array();
+        foreach ($files as $post) {
+            $seen[(int) $post->ID] = true;
+        }
+        $merged = kop_build_merged_from_doc_nodes($linked, $seen);
+        $subfolders = array_merge($subfolders, $merged);
     }
 
     return array(
-        'files' => kop_get_attachments_in_folder_ids($roots), // files filed on the roots themselves
-        'subfolders' => kop_build_facility_doc_tree(kop_get_child_folder_ids($roots)),
+        'files' => $files,
+        'subfolders' => $subfolders,
     );
+}
+
+/**
+ * Build one "Merged from: <name>" node per distinct linked folder name. Each
+ * node holds the linked folder's direct files (minus any already shown at the
+ * top level, so a document tagged into both folders is not listed twice) and
+ * its nested subfolders. Linked folders sharing a name (their own same-name
+ * duplicates) collapse into one node, like kop_build_facility_doc_tree does.
+ *
+ * @param int[] $folder_ids Linked folder IDs (not the requested folder's own group).
+ * @param array $exclude    Attachment IDs already listed, keyed by ID.
+ * @return array node[] with the extra key 'merged_from' => source folder name.
+ */
+function kop_build_merged_from_doc_nodes($folder_ids, $exclude = array()) {
+    global $wpdb;
+    $folder_ids = array_values(array_unique(array_map('intval', (array) $folder_ids)));
+    if (empty($folder_ids)) {
+        return array();
+    }
+
+    $folder_table = $wpdb->prefix . 'fbv';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$folder_table'") != $folder_table) {
+        return array();
+    }
+
+    $placeholders = implode(',', array_fill(0, count($folder_ids), '%d'));
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT id, name FROM $folder_table WHERE type = 0 AND id IN ($placeholders)",
+            $folder_ids
+        )
+    );
+
+    $groups = array();
+    foreach ($rows as $row) {
+        $key = strtolower(trim($row->name));
+        if (!isset($groups[$key])) {
+            $groups[$key] = array('name' => trim($row->name), 'ids' => array());
+        }
+        $groups[$key]['ids'][] = (int) $row->id;
+    }
+
+    $nodes = array();
+    foreach ($groups as $group) {
+        $attachments = array();
+        foreach (kop_get_attachments_in_folder_ids($group['ids']) as $post) {
+            if (empty($exclude[(int) $post->ID])) {
+                $attachments[] = $post;
+            }
+        }
+        $children = kop_build_facility_doc_tree(kop_get_child_folder_ids($group['ids']), 1);
+        if (empty($attachments) && empty($children)) {
+            continue; // prune empty branches
+        }
+        $nodes[] = array(
+            'name' => 'Merged from: ' . $group['name'],
+            'merged_from' => $group['name'],
+            'attachments' => $attachments,
+            'children' => $children,
+        );
+    }
+
+    usort($nodes, function ($a, $b) {
+        return strcasecmp($a['name'], $b['name']);
+    });
+
+    return $nodes;
 }
 
 /**

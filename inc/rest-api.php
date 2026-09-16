@@ -297,6 +297,7 @@ function kop_register_facilities_rest_routes() {
                         return array_map(function ($node) use (&$nodes_to_json, $format_file) {
                             return array(
                                 'name' => $node['name'],
+                                'merged_from' => isset($node['merged_from']) ? $node['merged_from'] : null,
                                 'files' => array_map($format_file, $node['attachments']),
                                 'subfolders' => $nodes_to_json($node['children']),
                             );

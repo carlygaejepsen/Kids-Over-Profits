@@ -709,7 +709,10 @@ function kop_render_doc_subfolders($nodes, $layout = 'grid') {
                     : 0);
         $inner = kop_render_doc_file_list($node['attachments'], $layout)
                . kop_render_doc_subfolders($node['children'], $layout);
-        $html .= '<details class="doc-subfolder">'
+        $merged_from = !empty($node['merged_from']) ? $node['merged_from'] : '';
+        $html .= '<details class="doc-subfolder' . ($merged_from !== '' ? ' doc-subfolder-merged' : '') . '"'
+               . ($merged_from !== '' ? ' title="' . esc_attr('Documents filed under the linked folder "' . $merged_from . '"') . '"' : '')
+               . '>'
                . '<summary class="doc-subfolder-title"><span class="folder-icon"></span> '
                . esc_html($node['name'])
                . ' <span class="doc-subfolder-count">(' . (int) $count . ')</span></summary>'

@@ -633,7 +633,8 @@
             const files = Array.isArray(sf.files) ? sf.files : [];
             const count = countTreeFiles(sf);
             const inner = (files.length ? renderFileGrid(files) : '') + renderSubfolders(sf.subfolders);
-            return `<details class="state-doc-subfolder">
+            const mergedClass = sf.merged_from ? ' state-doc-subfolder-merged' : '';
+            return `<details class="state-doc-subfolder${mergedClass}">
                         <summary class="state-doc-subfolder-title">${name} <span class="state-doc-subfolder-count">(${count})</span></summary>
                         <div class="state-doc-subfolder-content">${inner}</div>
                     </details>`;

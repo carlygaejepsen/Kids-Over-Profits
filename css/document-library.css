@@ -396,6 +396,22 @@
     margin-bottom: 8px;
 }
 
+/* Contents pulled in from a LINKED folder (a renamed/successor program or an
+   address match) — shown as their own "Merged from: <name>" subfolder so the
+   original filing location stays visible. Orange edge marks them as imported. */
+.doc-subfolder-merged {
+    border-left-color: var(--kop-orange);
+}
+
+.doc-subfolder-merged > .doc-subfolder-title {
+    font-style: italic;
+    font-weight: 600;
+}
+
+.doc-subfolder-merged > .doc-subfolder-title::before {
+    color: var(--kop-orange);
+}
+
 /* Grid layout option */
 .doc-layout-grid {
     display: grid;

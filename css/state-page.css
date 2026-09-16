@@ -1109,6 +1109,22 @@
     color: #64748b;
 }
 
+/* Contents pulled in from a LINKED folder (a renamed/successor program or an
+   address match) — shown as their own "Merged from: <name>" subfolder so the
+   original filing location stays visible. Orange edge marks them as imported. */
+.state-doc-subfolder-merged {
+    border-left-color: #EF9034;
+}
+
+.state-doc-subfolder-merged > .state-doc-subfolder-title {
+    font-style: italic;
+    font-weight: 600;
+}
+
+.state-doc-subfolder-merged > .state-doc-subfolder-title::before {
+    color: #EF9034;
+}
+
 .state-doc-subfolder-content {
     margin-bottom: 0.4em;
 }
