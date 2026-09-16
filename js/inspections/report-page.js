@@ -25,6 +25,9 @@
  *                      link is the official source; links are any extras.
  *                      preview is a one-line gist shown on the closed row.
  *                      body must be built with ctx.ui helpers (they escape).
+ *                      body may be a function returning that html: it then
+ *                      runs the first time the report is opened, which keeps
+ *                      states with large document text fast to list.
  *
  * Adapter contract -- optional:
  *   reportsKey         Property holding a facility's reports (default 'reports').
@@ -232,6 +235,7 @@
         var searchText    = adapter.searchText || facilityName;
 
         var allFacilitiesData = {};
+        var lazyBodies        = [];
         var currentLetter     = null;
         var isSearching       = false;
         var scrapedTimestamp  = '';
@@ -465,7 +469,15 @@
                     + '<span class="kop-rp-sr"> (opens in a new tab)</span></a>');
             });
 
-            return '<details class="kop-rp-report' + toneClass(view.tone) + '">'
+            var bodyHtml = view.body || '';
+            var lazyAttr = '';
+            if (typeof view.body === 'function') {
+                lazyAttr = ' data-kop-rp-body="' + lazyBodies.length + '"';
+                lazyBodies.push(view.body);
+                bodyHtml = '';
+            }
+
+            return '<details class="kop-rp-report' + toneClass(view.tone) + '"' + lazyAttr + '>'
                 + '<summary class="kop-rp-report-summary">'
                 + '<span class="kop-rp-report-date">' + (escapeHtml(view.date) || 'Date unknown') + '</span>'
                 + '<span class="kop-rp-report-type">' + (escapeHtml(view.type) || 'Report') + '</span>'
@@ -474,13 +486,34 @@
                 + '</summary>'
                 + '<div class="kop-rp-report-body">'
                 + (facts.length ? '<p class="kop-rp-facts">' + facts.join('<span aria-hidden="true"> &middot; </span>') + '</p>' : '')
-                + (view.body || '')
+                + '<div class="kop-rp-report-content">' + bodyHtml + '</div>'
                 + '</div>'
                 + '</details>';
         }
 
+        function fillLazyBody(report) {
+            if (!report || !report.hasAttribute('data-kop-rp-body')) return;
+            var index = parseInt(report.getAttribute('data-kop-rp-body'), 10);
+            report.removeAttribute('data-kop-rp-body');
+            var build = lazyBodies[index];
+            lazyBodies[index] = null;
+            var slot = report.querySelector('.kop-rp-report-content');
+            if (build && slot) slot.innerHTML = build() || '';
+        }
+
+        // Build a lazy body just before a report opens (click on its summary),
+        // and on toggle for opens that do not come from a click.
+        reportContainer.addEventListener('click', function (e) {
+            var summary = e.target.closest && e.target.closest('.kop-rp-report-summary');
+            if (summary) fillLazyBody(summary.parentNode);
+        });
+        reportContainer.addEventListener('toggle', function (e) {
+            if (e.target.open && e.target.classList && e.target.classList.contains('kop-rp-report')) fillLazyBody(e.target);
+        }, true);
+
         function renderFilteredFacilities(facilities, context) {
             reportContainer.innerHTML = '';
+            lazyBodies = [];
             if (!facilities || !facilities.length) {
                 var sortBy = sortSelect ? sortSelect.value : '';
                 var violationSort = sortBy === 'violations-only' || sortBy === 'violations-desc';
@@ -496,7 +529,7 @@
             var html = '';
             if (isSearching) {
                 html += '<p class="kop-rp-results" role="status">'
-                    + escapeHtml(plural(facilities.length, 'facility', 'facilities')) + ' match your search</p>';
+                    + escapeHtml(plural(facilities.length, 'facility', 'facilities')) + (facilities.length === 1 ? ' matches' : ' match') + ' your search</p>';
             }
             html += facilities.map(renderFacility).join('');
             reportContainer.innerHTML = html;

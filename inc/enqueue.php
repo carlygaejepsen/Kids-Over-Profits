@@ -499,9 +499,13 @@ function kop_enqueue_report_scripts() {
         ),
         'nc-reports' => array(
             'script_handle' => 'nc-reports-script',
-            'script_path'   => '/js/inspections/nc_reports.js',
+            'script_path'   => '/js/inspections/states/nc.js',
             'data_object'   => 'ncReportsData',
             'json_glob'     => '',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/nc_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
         'nv-reports' => array(
             'script_handle' => 'nv-reports-script',
