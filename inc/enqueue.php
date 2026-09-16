@@ -477,9 +477,13 @@ function kop_enqueue_report_scripts() {
         ),
         'wa-reports' => array(
             'script_handle' => 'wa-reports-script',
-            'script_path'   => '/js/inspections/wa_reports.js',
+            'script_path'   => '/js/inspections/states/wa.js',
             'data_object'   => 'waReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/wa_reports.json',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/wa_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
         'ar-reports' => array(
             'script_handle' => 'ar-reports-script',
