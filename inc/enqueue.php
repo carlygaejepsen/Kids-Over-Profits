@@ -483,9 +483,13 @@ function kop_enqueue_report_scripts() {
         ),
         'ar-reports' => array(
             'script_handle' => 'ar-reports-script',
-            'script_path'   => '/js/inspections/ar_reports.js',
+            'script_path'   => '/js/inspections/states/ar.js',
             'data_object'   => 'arReportsData',
             'json_glob'     => get_stylesheet_directory() . '/js/data/ar_reports.json',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/ar_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
         'mn-reports' => array(
             'script_handle' => 'mn-reports-script',

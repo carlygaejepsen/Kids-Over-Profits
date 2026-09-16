@@ -20,7 +20,10 @@
  *   isFlagged(r)       True when the report records violations.
  *   summary(f, ctx)    -> { meta: [text], address: text, stats: [{ text, tone }] }
  *   report(r, ctx)     -> { date: text, type: text, tone, badges: [{ text, tone }],
- *                           facts: [text], link: { href, text }, body: html }
+ *                           facts: [text], link: { href, text },
+ *                           links: [{ href, text }], preview: text, body: html }
+ *                      link is the official source; links are any extras.
+ *                      preview is a one-line gist shown on the closed row.
  *                      body must be built with ctx.ui helpers (they escape).
  *
  * Adapter contract -- optional:
@@ -132,6 +135,25 @@
             return list.map(function (c) {
                 return '<span class="kop-rp-chip' + toneClass(c.tone) + '">' + escapeHtml(c.text) + '</span>';
             }).join('');
+        },
+
+        /** A row of chips under a report ("Self Harm", "Peer Violence"). */
+        chipRow: function (chips) {
+            var html = ui.chips(chips);
+            return html ? '<div class="kop-rp-chiprow">' + html + '</div>' : '';
+        },
+
+        /**
+         * Extracted document text that has no reliable structure to parse
+         * (letters, notices, forms). Blank-line runs collapse; line breaks stay,
+         * since forms put one field per line.
+         */
+        docText: function (text) {
+            var clean = safeString(text)
+                .replace(/\r/g, '')
+                .replace(/[ \t]+\n/g, '\n')
+                .replace(/\n{3,}/g, '\n\n');
+            return clean ? '<div class="kop-rp-doctext">' + escapeHtml(clean) + '</div>' : '';
         },
 
         /** A collapsible sub-section inside a report ("What the rule requires"). */
@@ -433,17 +455,19 @@
             }).join('');
 
             var facts = (view.facts || []).map(safeString).filter(Boolean).map(escapeHtml);
-            if (view.link && safeString(view.link.href)) {
-                facts.push('<a class="kop-rp-official" href="' + escapeHtml(view.link.href) + '" target="_blank" rel="noopener">'
-                    + escapeHtml(view.link.text || 'Official report')
+            [view.link].concat(view.links || []).forEach(function (link, index) {
+                if (!link || !safeString(link.href)) return;
+                facts.push('<a class="kop-rp-official' + (index ? ' is-secondary' : '') + '" href="' + escapeHtml(link.href) + '" target="_blank" rel="noopener">'
+                    + escapeHtml(link.text || 'Official report')
                     + '<span class="kop-rp-sr"> (opens in a new tab)</span></a>');
-            }
+            });
 
             return '<details class="kop-rp-report' + toneClass(view.tone) + '">'
                 + '<summary class="kop-rp-report-summary">'
                 + '<span class="kop-rp-report-date">' + (escapeHtml(view.date) || 'Date unknown') + '</span>'
                 + '<span class="kop-rp-report-type">' + (escapeHtml(view.type) || 'Report') + '</span>'
                 + (badges ? '<span class="kop-rp-badges">' + badges + '</span>' : '')
+                + (safeString(view.preview) ? '<span class="kop-rp-report-preview">' + escapeHtml(view.preview) + '</span>' : '')
                 + '</summary>'
                 + '<div class="kop-rp-report-body">'
                 + (facts.length ? '<p class="kop-rp-facts">' + facts.join('<span aria-hidden="true"> &middot; </span>') + '</p>' : '')

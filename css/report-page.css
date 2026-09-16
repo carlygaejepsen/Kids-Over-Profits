@@ -269,6 +269,22 @@
     margin-left: auto;
 }
 
+/* One-line gist on a closed report row; the full text is in the body. */
+.kop-rp .kop-rp-report-preview {
+    flex: 1 0 100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--kop-muted);
+}
+
+.kop-rp .kop-rp-report[open] .kop-rp-report-preview {
+    display: none;
+}
+
 .kop-rp .kop-rp-report-body {
     padding: 4px 12px 12px;
     border-top: 1px solid var(--kop-hairline);
@@ -290,6 +306,33 @@
 .kop-rp .kop-rp-official:hover,
 .kop-rp .kop-rp-official:focus-visible {
     color: var(--kop-teal);
+}
+
+/* A second source link (e.g. the publisher's page next to the document). */
+.kop-rp .kop-rp-official.is-secondary {
+    font-weight: 400;
+}
+
+.kop-rp .kop-rp-chiprow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin: 0 0 10px;
+}
+
+/* Extracted text with no reliable structure (notices, letters, forms):
+   keep its line breaks, at a quieter size than parsed findings. */
+.kop-rp .kop-rp-doctext {
+    max-height: 32em;
+    overflow: auto;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--kop-midnight-blue);
+    background: var(--kop-sand);
+    border-radius: var(--kop-radius-sm);
 }
 
 /* ---- Report body content ------------------------------------------------- */
