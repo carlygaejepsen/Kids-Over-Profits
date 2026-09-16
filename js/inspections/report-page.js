@@ -175,7 +175,7 @@
         /**
          * One cited violation.
          * { title, citation, chips: [{text, tone}], evidence: [text],
-         *   requirement: [text], tone }
+         *   requirement: [text], more: [{ title, paragraphs: [text] }], tone }
          */
         finding: function (f) {
             var head = '<div class="kop-rp-finding-head">'
@@ -188,6 +188,9 @@
                 + head
                 + ui.paragraphs(f.evidence, 'kop-rp-evidence')
                 + ui.section('What the rule requires', ui.paragraphs(f.requirement, 'kop-rp-requirement'))
+                + (f.more || []).map(function (m) {
+                    return m ? ui.section(m.title, ui.paragraphs(m.paragraphs, 'kop-rp-requirement')) : '';
+                }).join('')
                 + '</section>';
         },
 
