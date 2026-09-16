@@ -304,7 +304,7 @@
             return {
                 meta: [
                     facility.program_category || 'Georgia residential care',
-                    facility.program_name ? 'Facility ID ' + facility.program_name : ''
+                    facility.program_name ? 'Facility\u00a0ID\u00a0' + facility.program_name : ''
                 ],
                 address: facility.address,
                 stats: stats

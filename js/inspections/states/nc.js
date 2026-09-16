@@ -246,7 +246,7 @@
             return {
                 meta: [
                     CATEGORY_LABELS[facility.category] || facility.category,
-                    facility.license ? 'License ' + facility.license : '',
+                    facility.license ? 'License\u00a0' + facility.license : '',
                     facility.capacity ? 'Capacity ' + facility.capacity : ''
                 ],
                 address: facility.address,

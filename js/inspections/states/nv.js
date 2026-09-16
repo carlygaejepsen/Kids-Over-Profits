@@ -140,7 +140,7 @@
             return {
                 meta: [
                     facility.program_category || 'Nevada residential treatment',
-                    facility.license_number ? 'License ' + facility.license_number : '',
+                    facility.license_number ? 'License\u00a0' + facility.license_number : '',
                     facility.license_status && facility.license_exp_date
                         ? facility.license_status + ' license, expires ' + facility.license_exp_date
                         : ''

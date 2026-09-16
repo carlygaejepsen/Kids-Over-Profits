@@ -226,7 +226,7 @@
             return {
                 meta: [
                     licenseKind(facility.license),
-                    facility.license ? 'License ' + facility.license : '',
+                    facility.license ? 'License\u00a0' + facility.license : '',
                     facility.administrator ? 'Administrator ' + facility.administrator : ''
                 ],
                 address: facility.address,
