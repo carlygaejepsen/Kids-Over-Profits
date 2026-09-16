@@ -23,7 +23,9 @@ the zero-loss gate exist for this. Do not skip them.
 | 2 Rehearsal | Done. `scripts/rehearse-migration.php` passes the zero-loss gate. **Waiting for the owner to sign off** on `tmp/rehearsal/identity_splits.tsv`, `review.tsv`, and the new decisions in section 9. |
 | Live page fix | Code ready, not deployed. State and country pages now parse the free-text location instead of substring matching it (section 10.1). Offline against the production data this removes 63 wrong placements and adds 1 correct one. |
 | 3 Apply | Code ready, not deployed or run (section 7, phase 3 "As built"). `api/migrate-facility-model.php` (dry run, batched apply), `inc/facility-migration.php` (shared with the rehearsal), `inc/facility-v2-sync.php` (10-minute re-sync), `inc/facility-v2-readers.php` (`?model=v2`). End-to-end test against MySQL 8.0 loaded with the production copy: all 20 checks pass. |
-| 4-5 | Not started. |
+| 3 Applied | 2026-09-16 21:19 UTC on production: 4,679 facilities, 4,718 memberships, 45 operators, 15 operator links. Snapshot diff of all 67 pages (legacy vs `?model=v2`): 0 facilities lost, 26 operator-only facilities gained their own tile, inspection report totals unchanged. |
+| 4 Reader switches | Deployed 2026-09-16, all areas still on the old tables. Switch them one at a time at `api/migrate-facility-model.php?action=cutover` (phase 4 "As built"). |
+| 5 | Not started. |
 
 **Data changed after the baseline (2026-09-16, init step version 16):** the
 Google Alerts review shipped three seeds that change live facility data. Re-run
@@ -631,6 +633,34 @@ one at a time, re-running the snapshot diff after each:
    backfills can be deleted rather than ported; confirm with the owner.
 
 Flip the option to `v2` when every page passes the diff.
+
+As built (2026-09-16):
+
+- Every public reader has its own switch. The `kop_data_model_areas` option
+  lists the areas that read v2; `kop_data_model = v2` still switches
+  everything at once. Areas: `location_pages`, `program_index`
+  (`kop/v1/facilities` only; the admin form's `kop/v1/projects` stays on the
+  old tables), `facility_profiles`, `search` (search.php, the header quick
+  search, Ajax Search Lite) and `homepage_stats`.
+- `api/migrate-facility-model.php?action=cutover` lists the areas with preview
+  links and a Switch to new / Switch back button each. Switching clears the
+  homepage numbers cache and purges LiteSpeed.
+- `?model=v2` previews any page. A `rest_url` filter passes the flag on to the
+  data requests the page's scripts make.
+- Step 5 (the admin data form) and step 6 (the remaining one-off tools) are not
+  switched. The form keeps editing the old tables. `save-master.php` and
+  `approve-edits.php` now request a v2 sync right after each save (at most one
+  per minute), so switched pages show edits within about a minute. The save
+  paths move to `kop_facility_save` before phase 5 drops the old tables.
+
+Verified against production data before any switch:
+
+- Program index: the same 31 company groups with the same facilities. Linked
+  news pairs are 191 old vs 190 new; the one difference is article 111, which
+  moves from a fake facility entry carrying the Aspen Education Group row id
+  to the operator itself.
+- Quick search: individual facilities with city and status instead of
+  whole-state matches ("hope house" returns each Hope House separately).
 
 ### Phase 5: Remove the old model
 
