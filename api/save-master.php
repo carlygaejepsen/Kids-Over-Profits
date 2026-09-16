@@ -87,6 +87,12 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
     exit;
 }
 
+// v2 facility model: re-derive from the legacy tables right after this save
+// (inc/facility-v2-sync.php), so pages already switched to v2 show the edit.
+if (function_exists('kop_facility_v2_request_sync')) {
+    kop_facility_v2_request_sync();
+}
+
 // Prefer the WordPress table prefix when available, but fall back to unprefixed tables.
 $prefix = '';
 if (isset($table_prefix) && is_string($table_prefix)) {

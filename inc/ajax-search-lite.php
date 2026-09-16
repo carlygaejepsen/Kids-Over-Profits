@@ -69,6 +69,22 @@ function kop_asl_collect_database_matches($phrase) {
         array('table' => 'locations_master',     'label' => 'Location',           'template' => 'page-location-index.php',    'limit' => 2),
     );
 
+    if (function_exists('kop_v2_active') && kop_v2_active('search')) {
+        $v2 = kop_v2_search($phrase, 4, 2, 2);
+        $index_url = kop_asl_page_url_by_template('page-tti-program-index.php');
+        $labels = array('operator' => 'Company', 'facility' => 'Facility record', 'place' => 'Location');
+        foreach (array_merge($v2['operators'], $v2['facilities'], $v2['places']) as $r) {
+            $items[] = array(
+                'title' => $r['display'],
+                'link'  => $r['url'] !== '' ? $r['url'] : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : home_url('/?s=' . rawurlencode($phrase))),
+                'meta'  => $labels[$r['kind']] . ($r['location'] !== '' ? ' - ' . $r['location'] : ''),
+            );
+        }
+        $master_tables = array_values(array_filter($master_tables, function ($cfg) {
+            return in_array($cfg['table'], array('referrers_master', 'transporters_master'), true);
+        }));
+    }
+
     foreach ($master_tables as $cfg) {
         if (!$cfg['table'] || !kop_asl_table_exists($cfg['table'])) {
             continue;

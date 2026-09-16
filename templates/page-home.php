@@ -78,7 +78,9 @@ if (!is_array($kop_numbers)) {
         'licensed'   => (int) $wpdb->get_var("SELECT COUNT(*) FROM inspection_facilities"),
         'directory'  => 0,
     );
-    if (function_exists('kop_get_facilities_database_connection') && function_exists('kop_discover_facilities_master_table')) {
+    if (function_exists('kop_v2_active') && kop_v2_active('homepage_stats')) {
+        $kop_numbers['directory'] = kop_v2_facility_count();
+    } elseif (function_exists('kop_get_facilities_database_connection') && function_exists('kop_discover_facilities_master_table')) {
         $kop_master = kop_discover_facilities_master_table(kop_get_facilities_database_connection());
         if ($kop_master) {
             $kop_numbers['directory'] = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$kop_master}`");

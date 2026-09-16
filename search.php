@@ -196,9 +196,17 @@ global $wpdb;
     );
 
     $any_master_results = false;
+    $kop_v2_search = (function_exists('kop_v2_active') && kop_v2_active('search')) ? kop_v2_search($search_query, 20, 8, 5) : null;
     foreach ($master_sections as $i => $section) {
         $limit = ($i === 0) ? 20 : 10;
-        $master_sections[$i]['results'] = kop_search_master_table($section['table'], $search_query, $limit);
+        if ($kop_v2_search !== null && $i === 0) {
+            // v2: companies first, then individual facilities linked to their state page.
+            $master_sections[$i]['results'] = array_merge($kop_v2_search['operators'], $kop_v2_search['facilities']);
+        } elseif ($kop_v2_search !== null && $section['table'] === 'locations_master') {
+            $master_sections[$i]['results'] = $kop_v2_search['places'];
+        } else {
+            $master_sections[$i]['results'] = kop_search_master_table($section['table'], $search_query, $limit);
+        }
         $master_sections[$i]['url']     = kop_search_page_url_by_template($section['template']);
         if (!empty($master_sections[$i]['results'])) {
             $any_master_results = true;
@@ -212,8 +220,8 @@ global $wpdb;
             <h2 class="kop-search-section-title"><?php echo esc_html($section['title']); ?></h2>
             <ul class="kop-search-result-list">
                 <?php foreach ($section['results'] as $r):
-                    $result_url = '';
-                    if ($section['url']) {
+                    $result_url = !empty($r['url']) ? $r['url'] : '';
+                    if ($result_url === '' && $section['url']) {
                         $result_url = $section['linkable']
                             ? add_query_arg('search', rawurlencode($r['display']), $section['url'])
                             : $section['url'];
@@ -237,7 +245,7 @@ global $wpdb;
                         <?php if ($r['fac_count'] > 0): ?>
                             <span class="kop-result-badge"><?php echo (int) $r['fac_count']; ?> facilit<?php echo $r['fac_count'] === 1 ? 'y' : 'ies'; ?></span>
                         <?php endif; ?>
-                        <?php if ($r['snippet']): ?>
+                        <?php if (!empty($r['snippet'])): ?>
                             <p class="kop-result-summary">…<?php echo esc_html($r['snippet']); ?>…</p>
                         <?php endif; ?>
                     </div>

@@ -14,6 +14,7 @@
  *   ?action=dry_run&report=review        one report as TSV: review | splits | conflicts |
  *                                        memberships | operator_links | link_repoints
  *   ?action=run                          page with a button that applies the plan in batches
+ *   ?action=cutover                      page that switches public areas to the v2 tables one at a time
  *   POST action=apply&stage=&offset=&batch=&_wpnonce=   one batch (used by the run page)
  *
  * Re-running is safe: unchanged rows are skipped, memberships are replaced per
@@ -184,6 +185,115 @@ try {
                 $result['summary'] = kop_mfm_summary($plan);
             }
             kop_mfm_json(array('success' => true) + $result);
+        }
+
+        case 'set_area': {
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !wp_verify_nonce($_POST['_wpnonce'] ?? '', $nonce_action)) {
+                kop_mfm_json(array('success' => false, 'error' => 'POST with a valid nonce required (use ?action=cutover).'), 400);
+            }
+            $areas = kop_v2_areas();
+            $area = (string)($_POST['area'] ?? '');
+            $to = (string)($_POST['to'] ?? '');
+            if (!isset($areas[$area]) || !in_array($to, array('v1', 'v2'), true)) {
+                kop_mfm_json(array('success' => false, 'error' => 'Unknown area or target.'), 400);
+            }
+            if ($to === 'v2' && !kop_migration_state_get($pdo, $prefix, 'applied', false)) {
+                kop_mfm_json(array('success' => false, 'error' => 'Apply the migration first (?action=run).'), 409);
+            }
+            $on = array_values(array_intersect(array_keys($areas), (array)get_option('kop_data_model_areas', array())));
+            $on = $to === 'v2' ? array_values(array_unique(array_merge($on, array($area)))) : array_values(array_diff($on, array($area)));
+            update_option('kop_data_model_areas', $on, true);
+            // Cached copies of the old output would hide the switch.
+            delete_transient('kop_home_numbers');
+            do_action('litespeed_purge_all');
+            header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?') . '?action=cutover&switched=' . rawurlencode($area) . '&to=' . $to, true, 303);
+            exit;
+        }
+
+        case 'cutover': {
+            $nonce = wp_create_nonce($nonce_action);
+            $self = strtok($_SERVER['REQUEST_URI'], '?');
+            $on = (array)get_option('kop_data_model_areas', array());
+            $all_on = get_option('kop_data_model') === 'v2';
+            $applied = kop_migration_tables_exist($pdo, $prefix) && kop_migration_state_get($pdo, $prefix, 'applied', false);
+
+            $page_url = function ($template, $fallback) {
+                $pages = get_posts(array('post_type' => 'page', 'post_status' => 'publish', 'meta_key' => '_wp_page_template', 'meta_value' => $template, 'numberposts' => 1));
+                return $pages ? get_permalink($pages[0]) : home_url($fallback);
+            };
+            $utah = get_page_by_path('utah');
+            $profiles = get_posts(array('post_type' => 'any', 'post_status' => 'publish', 'meta_key' => '_wp_page_template', 'meta_value' => 'templates/single-facility-profile.php', 'numberposts' => 1));
+            $previews = array(
+                'location_pages'    => array(
+                    'Utah page' => $utah ? add_query_arg('model', 'v2', get_permalink($utah)) : '',
+                    'Utah data' => rest_url('kop/v1/state/utah') . '?model=v2',
+                ),
+                'program_index'     => array('Program index' => add_query_arg('model', 'v2', $page_url('templates/page-tti-program-index.php', '/tti-program-index/'))),
+                'facility_profiles' => $profiles ? array(get_the_title($profiles[0]) => add_query_arg('model', 'v2', get_permalink($profiles[0]))) : array(),
+                'search'            => array('Search "academy"' => add_query_arg(array('s' => 'academy', 'model' => 'v2'), home_url('/'))),
+                'homepage_stats'    => array('Homepage' => add_query_arg('model', 'v2', home_url('/'))),
+            );
+            header('Content-Type: text/html; charset=utf-8');
+            ?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Facility model: switch pages</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; color: #000435; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+  th, td { text-align: left; padding: .6rem .5rem; border-bottom: 1px solid #F2EEDF; vertical-align: top; }
+  .state { font-weight: 600; }
+  .new { color: #1d7a4f; }
+  .old { color: #6b6b6b; }
+  button { font: inherit; padding: .35rem .8rem; border: 0; border-radius: 4px; cursor: pointer; color: #fff; background: #000080; }
+  button.back { background: #6b6b6b; }
+  .note { background: #F2EEDF; padding: .75rem 1rem; border-radius: 6px; }
+  a { color: #000080; }
+</style>
+</head>
+<body>
+<h1>Facility model: switch pages to the new tables</h1>
+<?php if (!$applied): ?>
+  <p class="note">The migration has not been applied yet. Run it first: <a href="<?php echo esc_url($self . '?action=run'); ?>">Apply</a>.</p>
+<?php endif; ?>
+<?php if (!empty($_GET['switched'])): ?>
+  <p class="note">Switched <strong><?php echo esc_html(kop_v2_areas()[$_GET['switched']] ?? $_GET['switched']); ?></strong> to <?php echo $_GET['to'] === 'v2' ? 'the new tables' : 'the old tables'; ?>. The page cache was cleared.</p>
+<?php endif; ?>
+<p>Switch one area at a time. Open its preview first: a preview shows exactly what visitors will see after switching. Switching back is instant.</p>
+<?php if ($all_on): ?>
+  <p class="note">The <code>kop_data_model</code> option is set to <code>v2</code>, so every area reads the new tables regardless of the switches below.</p>
+<?php endif; ?>
+<table>
+  <tr><th>Area</th><th>Now reading</th><th>Preview</th><th></th></tr>
+  <?php foreach (kop_v2_areas() as $key => $label): $is_on = $all_on || in_array($key, $on, true); ?>
+  <tr>
+    <td><?php echo esc_html($label); ?></td>
+    <td class="state <?php echo $is_on ? 'new' : 'old'; ?>"><?php echo $is_on ? 'New tables' : 'Old tables'; ?></td>
+    <td>
+      <?php foreach ($previews[$key] as $text => $url): if (!$url) continue; ?>
+        <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener"><?php echo esc_html($text); ?></a><br>
+      <?php endforeach; ?>
+    </td>
+    <td>
+      <form method="post" action="<?php echo esc_url($self); ?>">
+        <input type="hidden" name="action" value="set_area">
+        <input type="hidden" name="area" value="<?php echo esc_attr($key); ?>">
+        <input type="hidden" name="to" value="<?php echo $is_on ? 'v1' : 'v2'; ?>">
+        <input type="hidden" name="_wpnonce" value="<?php echo esc_attr($nonce); ?>">
+        <button type="submit" class="<?php echo $is_on ? 'back' : ''; ?>" <?php disabled(!$applied && !$is_on); ?>><?php echo $is_on ? 'Switch back' : 'Switch to new'; ?></button>
+      </form>
+    </td>
+  </tr>
+  <?php endforeach; ?>
+</table>
+<p>The admin data form keeps editing the old tables. Edits reach the new tables within about a minute.
+<a href="<?php echo esc_url($self . '?action=status'); ?>">Status</a></p>
+</body>
+</html>
+            <?php
+            exit;
         }
 
         case 'run': {

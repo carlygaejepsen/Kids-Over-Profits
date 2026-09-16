@@ -161,6 +161,26 @@ class KOP_Recent_Facilities_Widget extends WP_Widget {
             echo $args['before_title'] . esc_html($title) . $args['after_title'];
         }
 
+        if (function_exists('kop_v2_active') && kop_v2_active('homepage_stats')) {
+            // v2: real facilities only, one row each.
+            $recent = kop_v2_recent_facilities($limit);
+            if (empty($recent)) {
+                echo '<p class="kop-widget-empty">No facility records found.</p>';
+            } else {
+                echo '<ul class="kop-recent-facilities-list">';
+                foreach ($recent as $item) {
+                    echo '<li class="kop-recent-facility-item"><span class="kop-recent-facility-name">' . esc_html($item['name']) . '</span>';
+                    if ($item['meta'] !== '') {
+                        echo ' <span class="kop-recent-facility-meta">' . esc_html($item['meta']) . '</span>';
+                    }
+                    echo '</li>';
+                }
+                echo '</ul>';
+            }
+            echo $args['after_widget'];
+            return;
+        }
+
         $facilities = $this->fetch_facilities($limit);
 
         if (empty($facilities)) {
@@ -282,7 +302,12 @@ class KOP_Stats_Widget extends WP_Widget {
         $connection = kop_get_facilities_database_connection();
         $table      = kop_discover_facilities_master_table($connection);
 
-        if ($table) {
+        if (function_exists('kop_v2_active') && kop_v2_active('homepage_stats')) {
+            $stats[] = array(
+                'value' => number_format(kop_v2_facility_count()),
+                'label' => 'Facilities Tracked',
+            );
+        } elseif ($table) {
             $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM `{$table}`");
             $stats[] = array(
                 'value' => number_format($count),

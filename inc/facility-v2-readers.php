@@ -1,36 +1,96 @@
 <?php
 /**
- * Readers for the v2 facility model (docs/DATA-MODEL-MIGRATION.md, phases 3-4).
+ * Readers for the v2 facility model (docs/DATA-MODEL-MIGRATION.md, phase 4).
  *
- * A state or country page is a join of facilities_v2 to
- * {prefix}kop_facility_locations on location_key. Records are built with the
- * same kop_state_build_program_record() the legacy collectors use, from the
- * legacy projection of each document, so the tile shape is unchanged.
+ * Each public reader switches to v2 on its own, so a problem in one area can
+ * be rolled back without touching the others:
  *
- * Used when a request asks for ?model=v2 (phase 3 step 4: snapshot the v2
- * model with scripts/snapshot-location-pages.js --model v2 and diff) or when
- * the kop_data_model option is 'v2' (phase 4 cutover).
+ *   location_pages     state and country hubs (kop/v1/state, kop/v1/country)
+ *   program_index      the public directory feed (kop/v1/facilities)
+ *   facility_profiles  templates/single-facility-profile.php
+ *   search             search.php, the header quick search, Ajax Search Lite
+ *   homepage_stats     "facilities tracked" counts and the recent-facilities widget
+ *
+ * An area reads v2 when it is listed in the kop_data_model_areas option, when
+ * kop_data_model is 'v2' (everything), or when the request carries ?model=v2
+ * (preview; used by scripts/snapshot-location-pages.js --model v2). Nothing
+ * reads v2 until the tables exist. Areas are switched from
+ * api/migrate-facility-model.php?action=cutover.
+ *
+ * The admin data form (kop/v1/projects, get-master-data.php, save-master.php)
+ * stays on the legacy tables: it edits them, and v2 is re-derived from them.
  */
 
-if (!function_exists('kop_v2_model_requested')) {
-    /** True when this request should read the v2 model and the v2 tables exist. */
-    function kop_v2_model_requested() {
-        static $answer = null;
-        if ($answer !== null) return $answer;
-
-        $wanted = (isset($_GET['model']) && $_GET['model'] === 'v2')
-            || (function_exists('get_option') && get_option('kop_data_model') === 'v2');
-        if (!$wanted) return $answer = false;
-
-        global $wpdb;
-        return $answer = ($wpdb->get_var("SHOW TABLES LIKE 'facilities_v2'") === 'facilities_v2');
+if (!function_exists('kop_v2_areas')) {
+    /** Area key => human label. */
+    function kop_v2_areas() {
+        return array(
+            'location_pages'    => 'State and country pages',
+            'program_index'     => 'Program index (directory)',
+            'facility_profiles' => 'Facility profile pages',
+            'search'            => 'Site search',
+            'homepage_stats'    => 'Homepage counts and recent facilities',
+        );
     }
 }
+
+if (!function_exists('kop_v2_tables_ready')) {
+    function kop_v2_tables_ready() {
+        static $ready = null;
+        if ($ready !== null) return $ready;
+        global $wpdb;
+        if (!isset($wpdb)) return $ready = false;
+        $ready = ($wpdb->get_var("SHOW TABLES LIKE 'facilities_v2'") === 'facilities_v2')
+            && ((int)$wpdb->get_var("SELECT COUNT(*) FROM facilities_v2") > 0);
+        return $ready;
+    }
+}
+
+if (!function_exists('kop_v2_active')) {
+    /** Should this area read the v2 model on this request? */
+    function kop_v2_active($area) {
+        $preview = isset($_GET['model']) && $_GET['model'] === 'v2';
+        $all = function_exists('get_option') && get_option('kop_data_model') === 'v2';
+        $areas = function_exists('get_option') ? (array)get_option('kop_data_model_areas', array()) : array();
+        if (!$preview && !$all && !in_array($area, $areas, true)) return false;
+        return kop_v2_tables_ready();
+    }
+}
+
+if (function_exists('add_filter')) {
+    // Preview: on a page opened with ?model=v2, the data requests its scripts
+    // make (state/country hubs, program index) carry ?model=v2 too, so the
+    // whole page previews the v2 model.
+    add_filter('rest_url', function ($url, $path) {
+        if (!isset($_GET['model']) || $_GET['model'] !== 'v2') return $url;
+        if (!preg_match('#^/?kop/v1/(state|country|facilities)\b#', (string)$path)) return $url;
+        return add_query_arg('model', 'v2', $url);
+    }, 10, 2);
+}
+
+if (!function_exists('kop_v2_model_requested')) {
+    /** Phase 3 name for the location pages switch. */
+    function kop_v2_model_requested() {
+        return kop_v2_active('location_pages');
+    }
+}
+
+if (!function_exists('kop_v2_decode')) {
+    /** A stored v2 document, or null. */
+    function kop_v2_decode($json) {
+        $doc = json_decode((string)$json, true);
+        return (is_array($doc) && isset($doc['location'], $doc['identification'])) ? $doc : null;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// location_pages
+// ---------------------------------------------------------------------------
 
 if (!function_exists('kop_v2_collect_programs')) {
     /**
      * Program records for one state or country page from the v2 tables.
-     * One record per facility id: no name-based merging (spec phase 4.1).
+     * One record per facility id: no name-based merging.
      *
      * @param string $page_name 'Utah' or 'Mexico'
      * @param string $kind      'state' or 'country'
@@ -38,8 +98,6 @@ if (!function_exists('kop_v2_collect_programs')) {
     function kop_v2_collect_programs($page_name, $kind) {
         global $wpdb;
         $locations = $wpdb->prefix . 'kop_facility_locations';
-        $operator_facilities = $wpdb->prefix . 'kop_operator_facilities';
-        $operators = $wpdb->prefix . 'kop_operators';
 
         $rows = $wpdb->get_results($wpdb->prepare(
             "SELECT f.id, f.unique_name, f.json_data, f.updated_at
@@ -50,40 +108,18 @@ if (!function_exists('kop_v2_collect_programs')) {
         ), ARRAY_A);
         if (!is_array($rows) || !$rows) return array();
 
-        // The operator each facility belongs to, for the tile's operator name.
-        $ids = array_map('intval', wp_list_pluck($rows, 'id'));
-        $operator_by_facility = array();
-        $op_rows = $wpdb->get_results(
-            "SELECT ofc.facility_id, o.json_data
-               FROM {$operator_facilities} ofc
-               JOIN {$operators} o ON o.id = ofc.operator_id
-              WHERE ofc.facility_id IN (" . implode(',', $ids) . ")
-              ORDER BY ofc.sort_order",
-            ARRAY_A
-        );
-        foreach ((array)$op_rows as $op) {
-            $fid = (int)$op['facility_id'];
-            if (isset($operator_by_facility[$fid])) continue;
-            $decoded = json_decode($op['json_data'], true);
-            if (is_array($decoded) && isset($decoded['operator']) && is_array($decoded['operator'])) {
-                $operator_by_facility[$fid] = $decoded['operator'];
-            }
-        }
+        $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck($rows, 'id')));
 
         $programs = array();
         foreach ($rows as $row) {
-            $doc = json_decode($row['json_data'], true);
-            if (!is_array($doc) || !isset($doc['location'])) continue;
+            $doc = kop_v2_decode($row['json_data']);
+            if ($doc === null) continue;
             $legacy = kop_facility_to_legacy($doc);
             $data = array('facilities' => array($legacy));
             $fid = (int)$row['id'];
-            if (isset($operator_by_facility[$fid])) $data['operator'] = $operator_by_facility[$fid];
+            if (isset($operators[$fid])) $data['operator'] = $operators[$fid]['operator'];
 
-            $meta = array(
-                'master_id'      => $fid,
-                'facility_count' => 1,
-                'updated_at'     => (string)$row['updated_at'],
-            );
+            $meta = array('master_id' => $fid, 'facility_count' => 1, 'updated_at' => (string)$row['updated_at']);
             if ($kind === 'country') {
                 $meta['default_country'] = $page_name;
                 $built = kop_state_build_program_record($row['unique_name'], $legacy, $data, '', $meta);
@@ -97,5 +133,278 @@ if (!function_exists('kop_v2_collect_programs')) {
             return strnatcasecmp($a['facility_name'] ?: $a['project_name'], $b['facility_name'] ?: $b['project_name']);
         });
         return $programs;
+    }
+}
+
+if (!function_exists('kop_v2_operators_for_facilities')) {
+    /**
+     * First operator of each facility: facility id => {id, name, operator}.
+     *
+     * @param int[] $ids
+     */
+    function kop_v2_operators_for_facilities(array $ids) {
+        global $wpdb;
+        $out = array();
+        $ids = array_values(array_filter(array_map('intval', $ids)));
+        if (!$ids) return $out;
+        $rows = $wpdb->get_results(
+            "SELECT ofc.facility_id, o.id, o.name, o.json_data
+               FROM {$wpdb->prefix}kop_operator_facilities ofc
+               JOIN {$wpdb->prefix}kop_operators o ON o.id = ofc.operator_id
+              WHERE ofc.facility_id IN (" . implode(',', $ids) . ")
+              ORDER BY ofc.sort_order, o.id",
+            ARRAY_A
+        );
+        foreach ((array)$rows as $r) {
+            $fid = (int)$r['facility_id'];
+            if (isset($out[$fid])) continue;
+            $decoded = json_decode($r['json_data'], true);
+            $out[$fid] = array(
+                'id'       => (int)$r['id'],
+                'name'     => (string)$r['name'],
+                'operator' => (is_array($decoded) && isset($decoded['operator']) && is_array($decoded['operator'])) ? $decoded['operator'] : array(),
+            );
+        }
+        return $out;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// program_index
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_get_facilities_projects')) {
+    /**
+     * The kop/v1/facilities payload built from v2, in the legacy shape the
+     * directory scripts read: {source, projects: {unique_name: project}}.
+     *
+     * - One project per operator (kop_operators), its facilities from
+     *   kop_operator_facilities, each the legacy projection with facility_id.
+     * - One project per location key (the state/country aggregates), from
+     *   kop_facility_locations.
+     * - Referrers and transporters are out of scope and still come from their
+     *   legacy tables.
+     * News, lawsuits, memorials and inspection stats are attached by the same
+     * functions as before; ids are unchanged by the migration.
+     */
+    function kop_v2_get_facilities_projects() {
+        global $wpdb;
+
+        $legacy = kop_get_facilities_projects_from_database(array('referrers_master', 'transporters_master'), false);
+        $projects = (is_array($legacy) && isset($legacy['projects'])) ? $legacy['projects'] : array();
+
+        // Every facility once, projected to the legacy nested shape.
+        $facilities = array();
+        foreach ((array)$wpdb->get_results("SELECT id, json_data FROM facilities_v2", ARRAY_A) as $row) {
+            $doc = kop_v2_decode($row['json_data']);
+            if ($doc === null) continue;
+            $facilities[(int)$row['id']] = kop_facility_to_legacy($doc);
+        }
+
+        $by_operator = array();
+        foreach ((array)$wpdb->get_results("SELECT operator_id, facility_id FROM {$wpdb->prefix}kop_operator_facilities ORDER BY operator_id, sort_order, facility_id", ARRAY_A) as $r) {
+            if (isset($facilities[(int)$r['facility_id']])) {
+                $by_operator[(int)$r['operator_id']][] = $facilities[(int)$r['facility_id']];
+            }
+        }
+
+        $wrapper_keys = array('name', 'category', 'timestamp', 'currentFacilityIndex', '__facility_ref');
+        foreach ((array)$wpdb->get_results("SELECT id, unique_name, name, json_data, document_folder_id, updated_at FROM {$wpdb->prefix}kop_operators ORDER BY id", ARRAY_A) as $op) {
+            $stored = json_decode($op['json_data'], true);
+            $blocks = (is_array($stored) && isset($stored['legacy_blocks']) && is_array($stored['legacy_blocks'])) ? $stored['legacy_blocks'] : array();
+            $data = array();
+            foreach ($blocks as $k => $v) {
+                if (!in_array($k, $wrapper_keys, true)) $data[$k] = $v;
+            }
+            $data['operator'] = (is_array($stored) && isset($stored['operator']) && is_array($stored['operator'])) ? $stored['operator'] : array();
+            if ($op['document_folder_id'] !== null) $data['documentFolderId'] = (int)$op['document_folder_id'];
+            $data['facilities'] = $by_operator[(int)$op['id']] ?? array();
+
+            $projects[$op['unique_name']] = array(
+                'id'                   => (int)$op['id'],
+                'source_table'         => 'facilities_master',
+                'name'                 => isset($blocks['name']) && is_string($blocks['name']) ? $blocks['name'] : $op['unique_name'],
+                'label'                => $op['unique_name'],
+                'data'                 => $data,
+                'category'             => isset($blocks['category']) && is_string($blocks['category']) ? $blocks['category'] : 'companies',
+                'timestamp'            => isset($blocks['timestamp']) && is_string($blocks['timestamp']) ? $blocks['timestamp'] : (string)$op['updated_at'],
+                'currentFacilityIndex' => isset($blocks['currentFacilityIndex']) ? (int)$blocks['currentFacilityIndex'] : 0,
+            );
+        }
+
+        $by_location = array();
+        foreach ((array)$wpdb->get_results("SELECT location_key, facility_id FROM {$wpdb->prefix}kop_facility_locations WHERE role <> 'unknown' ORDER BY location_key, facility_id", ARRAY_A) as $r) {
+            if (isset($facilities[(int)$r['facility_id']])) {
+                $by_location[$r['location_key']][(int)$r['facility_id']] = $facilities[(int)$r['facility_id']];
+            }
+        }
+        foreach ($by_location as $key => $list) {
+            $projects[$key] = array(
+                'id'                   => null,
+                'source_table'         => 'locations_master',
+                'name'                 => $key,
+                'label'                => $key,
+                'data'                 => array('facilities' => array_values($list)),
+                'category'             => 'locations',
+                'timestamp'            => current_time('mysql'),
+                'currentFacilityIndex' => 0,
+            );
+        }
+
+        kop_attach_linked_news_to_projects($wpdb, $projects);
+        kop_attach_linked_lawsuits_to_projects($wpdb, $projects);
+        kop_attach_memorials_to_projects($wpdb, $projects);
+        kop_attach_inspection_stats_to_projects($wpdb, $projects);
+
+        return array('source' => 'database-v2', 'projects' => $projects);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// facility_profiles
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_profile_record')) {
+    /**
+     * The record a facility profile page shows, by unique_name.
+     *
+     * @return array|null {id, facility (legacy projection)}
+     */
+    function kop_v2_profile_record(PDO $pdo, $unique_name) {
+        $stmt = $pdo->prepare('SELECT id, json_data FROM facilities_v2 WHERE unique_name = ? LIMIT 1');
+        $stmt->execute(array($unique_name));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$row) return null;
+        $doc = kop_v2_decode($row['json_data']);
+        if ($doc === null) return null;
+        return array('id' => (int)$row['id'], 'facility' => kop_facility_to_legacy($doc));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// search
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_place_page_url')) {
+    /** Permalink of the published state or country hub page for a place, or ''. */
+    function kop_v2_place_page_url($state_code, $country) {
+        static $cache = array();
+        $slug = '';
+        if ($state_code && function_exists('kop_state_slug') && function_exists('kop_state_canonical_name')) {
+            $slug = kop_state_slug(kop_state_canonical_name($state_code));
+        } elseif ($country && $country !== 'United States' && function_exists('kop_country_slug')) {
+            $slug = kop_country_slug($country);
+        }
+        if ($slug === '') return '';
+        if (!array_key_exists($slug, $cache)) {
+            $page = get_page_by_path($slug);
+            $cache[$slug] = ($page && $page->post_status === 'publish') ? get_permalink($page) : '';
+        }
+        return $cache[$slug];
+    }
+}
+
+if (!function_exists('kop_v2_search')) {
+    /**
+     * Operators, facilities and places matching a phrase, from v2.
+     * Each item: {kind, display, operator, location, fac_count, url}. `url` is
+     * the facility's state or country page when one exists, '' otherwise (the
+     * caller then links to the program index search).
+     */
+    function kop_v2_search($phrase, $facility_limit = 10, $operator_limit = 5, $place_limit = 3) {
+        global $wpdb;
+        $phrase = trim((string)$phrase);
+        $out = array('operators' => array(), 'facilities' => array(), 'places' => array());
+        if ($phrase === '') return $out;
+        $like = '%' . $wpdb->esc_like($phrase) . '%';
+        $key_like = '%' . $wpdb->esc_like(kop_facility_name_key($phrase)) . '%';
+
+        $ops = $wpdb->get_results($wpdb->prepare(
+            "SELECT o.id, o.name, o.json_data,
+                    (SELECT COUNT(*) FROM {$wpdb->prefix}kop_operator_facilities ofc WHERE ofc.operator_id = o.id) AS n
+               FROM {$wpdb->prefix}kop_operators o
+              WHERE o.name LIKE %s OR o.unique_name LIKE %s
+              ORDER BY n DESC, o.name
+              LIMIT %d",
+            $like, $like, $operator_limit
+        ), ARRAY_A);
+        foreach ((array)$ops as $o) {
+            $stored = json_decode($o['json_data'], true);
+            $op = (is_array($stored) && isset($stored['operator'])) ? $stored['operator'] : array();
+            $hq = isset($op['headquarters']) && is_string($op['headquarters']) ? $op['headquarters'] : '';
+            $out['operators'][] = array(
+                'kind' => 'operator', 'display' => $o['name'], 'operator' => $o['name'],
+                'location' => $hq, 'fac_count' => (int)$o['n'], 'url' => '',
+            );
+        }
+
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT id, name, state, city, country, status
+               FROM facilities_v2
+              WHERE name LIKE %s OR name_key LIKE %s OR unique_name LIKE %s
+              ORDER BY (name LIKE %s) DESC, name
+              LIMIT %d",
+            $like, $key_like, $like, $wpdb->esc_like($phrase) . '%', $facility_limit
+        ), ARRAY_A);
+        $operators = kop_v2_operators_for_facilities(array_map('intval', wp_list_pluck((array)$rows, 'id')));
+        foreach ((array)$rows as $r) {
+            $place = $r['state'] ? trim($r['city'] . ', ' . $r['state'], ', ') : trim($r['city'] . ', ' . $r['country'], ', ');
+            $op_name = isset($operators[(int)$r['id']]) ? $operators[(int)$r['id']]['name'] : '';
+            $out['facilities'][] = array(
+                'kind' => 'facility', 'display' => $r['name'], 'operator' => $op_name,
+                'location' => $place . ($r['status'] && $r['status'] !== 'Unknown' ? ' (' . $r['status'] . ')' : ''),
+                'fac_count' => 0, 'url' => kop_v2_place_page_url($r['state'], $r['country']),
+            );
+        }
+
+        $keys = $wpdb->get_col($wpdb->prepare(
+            "SELECT location_key FROM {$wpdb->prefix}kop_facility_locations
+              WHERE location_key LIKE %s AND location_key <> 'UNKNOWN'
+              GROUP BY location_key LIMIT %d",
+            $like, $place_limit
+        ));
+        foreach ((array)$keys as $key) {
+            $code = kop_facility_state_code($key);
+            $name = function_exists('kop_state_canonical_name') && $code ? kop_state_canonical_name($code) : ucwords(strtolower($key));
+            $count = (int)$wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(DISTINCT facility_id) FROM {$wpdb->prefix}kop_facility_locations WHERE location_key = %s", $key
+            ));
+            $out['places'][] = array(
+                'kind' => 'place', 'display' => $name, 'operator' => '', 'location' => '',
+                'fac_count' => $count, 'url' => kop_v2_place_page_url($code, $code ? null : $name),
+            );
+        }
+        return $out;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// homepage_stats
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_facility_count')) {
+    /** Distinct facilities (operators and duplicate copies are not facilities). */
+    function kop_v2_facility_count() {
+        global $wpdb;
+        return (int)$wpdb->get_var("SELECT COUNT(*) FROM facilities_v2");
+    }
+}
+
+if (!function_exists('kop_v2_recent_facilities')) {
+    /** Most recently updated facilities: list of {name, meta}. */
+    function kop_v2_recent_facilities($limit) {
+        global $wpdb;
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT name, city, state, country FROM facilities_v2 ORDER BY updated_at DESC, id DESC LIMIT %d",
+            $limit
+        ), ARRAY_A);
+        $out = array();
+        foreach ((array)$rows as $r) {
+            $out[] = array(
+                'name' => $r['name'],
+                'meta' => $r['state'] ? trim($r['city'] . ', ' . $r['state'], ', ') : trim($r['city'] . ', ' . $r['country'], ', '),
+            );
+        }
+        return $out;
     }
 }

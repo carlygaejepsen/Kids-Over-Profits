@@ -88,6 +88,31 @@ function kop_global_search_collect($phrase) {
         array('key' => 'locations',    'label' => 'Locations',             'table' => 'locations_master',    'template' => 'page-location-index.php',    'limit' => 4),
     );
 
+    $v2 = (function_exists('kop_v2_active') && kop_v2_active('search')) ? kop_v2_search($phrase, 6, 3, 4) : null;
+    if ($v2 !== null) {
+        $index_url = kop_asl_page_url_by_template('page-tti-program-index.php');
+        $to_item = function ($r) use ($index_url) {
+            $url = $r['url'] !== '' ? $r['url']
+                : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : add_query_arg('s', rawurlencode($r['display']), home_url('/')));
+            $meta = $r['kind'] === 'operator'
+                ? ($r['fac_count'] . ' facilit' . ($r['fac_count'] === 1 ? 'y' : 'ies'))
+                : ($r['kind'] === 'place' ? ($r['fac_count'] . ' facilities') : $r['location']);
+            return array('title' => $r['display'], 'url' => $url, 'meta' => $meta);
+        };
+        $items = array_map($to_item, array_merge($v2['operators'], $v2['facilities']));
+        if ($items) {
+            $groups[] = array('key' => 'facilities', 'label' => 'Facilities & programs', 'items' => array_slice($items, 0, 8));
+        }
+        $places = array_map($to_item, $v2['places']);
+        if ($places) {
+            $groups[] = array('key' => 'locations', 'label' => 'Locations', 'items' => $places);
+        }
+        // Referrers and transporters are not part of the facility model.
+        $master_tables = array_values(array_filter($master_tables, function ($cfg) {
+            return in_array($cfg['key'], array('referrers', 'transporters'), true);
+        }));
+    }
+
     foreach ($master_tables as $cfg) {
         if (!kop_asl_table_exists($cfg['table'])) {
             continue;

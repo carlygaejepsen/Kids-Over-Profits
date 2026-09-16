@@ -132,12 +132,21 @@ if (file_exists($kop_fp_config)) {
 }
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
-        $stmt = $pdo->prepare('SELECT id, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1');
-        $stmt->execute(array($kop_fp_name));
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            $kop_fp_record_id = (int) $row['id'];
-            $kop_fp_facility  = kop_fp_facility_node(json_decode((string) $row['json_data'], true));
+        if (function_exists('kop_v2_active') && kop_v2_active('facility_profiles')) {
+            // v2: one merged record per facility, projected to the shape below.
+            $v2_record = kop_v2_profile_record($pdo, $kop_fp_name);
+            if ($v2_record) {
+                $kop_fp_record_id = $v2_record['id'];
+                $kop_fp_facility  = $v2_record['facility'];
+            }
+        } else {
+            $stmt = $pdo->prepare('SELECT id, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1');
+            $stmt->execute(array($kop_fp_name));
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($row) {
+                $kop_fp_record_id = (int) $row['id'];
+                $kop_fp_facility  = kop_fp_facility_node(json_decode((string) $row['json_data'], true));
+            }
         }
         if ($kop_fp_record_id) {
             $stmt = $pdo->prepare(

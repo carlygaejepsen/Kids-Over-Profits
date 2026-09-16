@@ -29,6 +29,28 @@ add_action('init', function () {
 });
 
 add_action('kop_facility_v2_sync', 'kop_facility_v2_sync_run');
+add_action('kop_facility_v2_sync_soon', 'kop_facility_v2_sync_run');
+
+if (!function_exists('kop_facility_v2_request_sync')) {
+    /**
+     * Ask for a sync right after this request, instead of waiting for the
+     * 10-minute tick. Called by the legacy save endpoints. Scheduled from a
+     * shutdown function so it runs after the save has committed; at most one
+     * per minute (the minute is the event argument, so WP-cron dedupes it).
+     */
+    function kop_facility_v2_request_sync() {
+        static $registered = false;
+        if ($registered || !function_exists('wp_schedule_single_event')) return;
+        $registered = true;
+        register_shutdown_function(function () {
+            $minute = (int)floor(time() / 60);
+            if (!wp_next_scheduled('kop_facility_v2_sync_soon', array($minute))) {
+                wp_schedule_single_event(time(), 'kop_facility_v2_sync_soon', array($minute));
+            }
+            if (function_exists('spawn_cron')) spawn_cron();
+        });
+    }
+}
 
 if (!function_exists('kop_facility_v2_pdo')) {
     /** A PDO connection from the WordPress DB constants. */
@@ -48,7 +70,7 @@ if (!function_exists('kop_facility_v2_pdo')) {
 }
 
 if (!function_exists('kop_facility_v2_sync_run')) {
-    function kop_facility_v2_sync_run() {
+    function kop_facility_v2_sync_run($unused = null) {
         global $wpdb;
         require_once __DIR__ . '/facility-migration.php';
         try {

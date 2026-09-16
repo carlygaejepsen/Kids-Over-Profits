@@ -664,7 +664,11 @@ function kop_attach_inspection_stats_to_projects($db_connection, array &$project
     });
 }
 
-function kop_get_facilities_projects_from_database() {
+/**
+ * @param array|null $only_tables Limit to these master tables (base names); null = all.
+ * @param bool       $attach      Attach news, lawsuits, memorials and inspection stats.
+ */
+function kop_get_facilities_projects_from_database($only_tables = null, $attach = true) {
     $connection = kop_get_facilities_database_connection();
 
     if (is_wp_error($connection)) {
@@ -685,6 +689,9 @@ function kop_get_facilities_projects_from_database() {
         'transporters_master',
         'locations_master',
     );
+    if (is_array($only_tables)) {
+        $master_tables = array_values(array_intersect($master_tables, $only_tables));
+    }
 
     $projects = array();
 
@@ -854,17 +861,19 @@ function kop_get_facilities_projects_from_database() {
     // Attach linked news per project (only for facilities_master rows). One bulk
     // query joins news_facility_links + news_submissions, then we group by
     // facility_id and stamp linked_news[] onto each project.
-    kop_attach_linked_news_to_projects($db_connection, $projects);
+    if ($attach) {
+        kop_attach_linked_news_to_projects($db_connection, $projects);
 
-    // Same pattern for lawsuits via lawsuit_facility_links -> linked_lawsuits[].
-    kop_attach_linked_lawsuits_to_projects($db_connection, $projects);
+        // Same pattern for lawsuits via lawsuit_facility_links -> linked_lawsuits[].
+        kop_attach_linked_lawsuits_to_projects($db_connection, $projects);
 
-    // Deaths on record (memorial_victims) and the licensing / inspection
-    // summary (inspection_facilities + inspection_reports), by facility name.
-    kop_attach_memorials_to_projects($db_connection, $projects);
-    kop_attach_inspection_stats_to_projects($db_connection, $projects);
+        // Deaths on record (memorial_victims) and the licensing / inspection
+        // summary (inspection_facilities + inspection_reports), by facility name.
+        kop_attach_memorials_to_projects($db_connection, $projects);
+        kop_attach_inspection_stats_to_projects($db_connection, $projects);
+    }
 
-    if (empty($projects)) {
+    if (empty($projects) && !is_array($only_tables)) {
         return new WP_Error('kop_no_projects_found', __('No projects found in any master table.', 'kadence-child'));
     }
 

@@ -19,7 +19,11 @@ function kop_register_facilities_rest_routes() {
         array(
             'methods' => WP_REST_Server::READABLE,
             'callback' => function () {
-                $data = kop_get_facilities_projects_from_database();
+                // Public directory feed. The admin form loads kop/v1/projects,
+                // which stays on the legacy tables it edits.
+                $data = (function_exists('kop_v2_active') && kop_v2_active('program_index'))
+                    ? kop_v2_get_facilities_projects()
+                    : kop_get_facilities_projects_from_database();
 
                 if (is_wp_error($data)) {
                     return $data;
