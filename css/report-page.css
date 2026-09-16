@@ -11,6 +11,18 @@
  * the palette rules in css/colors.css.
  */
 
+/* facility-reports.css forces a generic `sans-serif` (Arial on Windows) on
+   the report container and its headings; use the theme's body font instead so
+   these pages match the rest of the site. Sizes below stay at or under the
+   theme's 17px body text. */
+.facility-report-container.kop-rp,
+.kop-rp h1,
+.kop-rp h2,
+.kop-rp h3,
+.kop-rp h4 {
+    font-family: var(--global-body-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
 .kop-rp {
     --kop-rp-flagged: var(--kop-orange);
     --kop-rp-flagged-tint: rgba(239, 144, 52, 0.14);
