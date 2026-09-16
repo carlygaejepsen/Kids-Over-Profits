@@ -234,7 +234,8 @@
         // Normalize facilities array
         if (Array.isArray(data.facilities)) {
             data.facilities = data.facilities.map(facility => {
-                const normalized = { ...facility };
+                // v2 documents are edited in the legacy shape; see facilityFromV2.
+                const normalized = isV2Facility(facility) ? facilityFromV2(facility) : { ...facility };
 
                 // Normalize identification
                 if (normalized.identification) {
@@ -805,8 +806,743 @@
         return data;
     }
 
+    // ============================================
+    // FACILITY DOCUMENT v2
+    // ============================================
+    // Port of inc/facility-store.php (docs/FACILITY-SCHEMA.md). The two must
+    // agree field for field; scripts/check-facility-normalizer-parity.js runs
+    // both over a database dump and diffs the output.
+    //
+    // The form keeps editing the legacy facility shape. v2 documents are
+    // converted to it on load (facilityFromV2) and back on save (facilityToV2)
+    // once the site runs the v2 data model (KOP_DATA_FORM_CONFIG.dataModel).
+
+    const V2_SCHEMA_VERSION = 2;
+
+    const V2_STATES = {
+        AL: 'ALABAMA', AK: 'ALASKA', AZ: 'ARIZONA', AR: 'ARKANSAS', CA: 'CALIFORNIA',
+        CO: 'COLORADO', CT: 'CONNECTICUT', DE: 'DELAWARE', DC: 'DISTRICT OF COLUMBIA',
+        FL: 'FLORIDA', GA: 'GEORGIA', HI: 'HAWAII', ID: 'IDAHO', IL: 'ILLINOIS', IN: 'INDIANA',
+        IA: 'IOWA', KS: 'KANSAS', KY: 'KENTUCKY', LA: 'LOUISIANA', ME: 'MAINE', MD: 'MARYLAND',
+        MA: 'MASSACHUSETTS', MI: 'MICHIGAN', MN: 'MINNESOTA', MS: 'MISSISSIPPI', MO: 'MISSOURI',
+        MT: 'MONTANA', NE: 'NEBRASKA', NV: 'NEVADA', NH: 'NEW HAMPSHIRE', NJ: 'NEW JERSEY',
+        NM: 'NEW MEXICO', NY: 'NEW YORK', NC: 'NORTH CAROLINA', ND: 'NORTH DAKOTA', OH: 'OHIO',
+        OK: 'OKLAHOMA', OR: 'OREGON', PA: 'PENNSYLVANIA', RI: 'RHODE ISLAND', SC: 'SOUTH CAROLINA',
+        SD: 'SOUTH DAKOTA', TN: 'TENNESSEE', TX: 'TEXAS', UT: 'UTAH', VT: 'VERMONT', VA: 'VIRGINIA',
+        WA: 'WASHINGTON', WV: 'WEST VIRGINIA', WI: 'WISCONSIN', WY: 'WYOMING',
+        PR: 'PUERTO RICO', VI: 'VIRGIN ISLANDS', GU: 'GUAM'
+    };
+    const V2_STATE_BY_NAME = Object.keys(V2_STATES).reduce((acc, code) => {
+        acc[V2_STATES[code]] = code;
+        return acc;
+    }, {});
+
+    const V2_COUNTRIES = {
+        'us': 'United States', 'usa': 'United States', 'u s': 'United States',
+        'u s a': 'United States', 'united states': 'United States',
+        'united states of america': 'United States', 'america': 'United States',
+        'uk': 'United Kingdom', 'u k': 'United Kingdom', 'england': 'United Kingdom',
+        'scotland': 'United Kingdom', 'wales': 'United Kingdom',
+        'northern ireland': 'United Kingdom', 'great britain': 'United Kingdom',
+        'jersey': 'United Kingdom', 'united kingdom': 'United Kingdom',
+        'jerusalem': 'Israel', 'israel': 'Israel',
+        'the netherlands': 'Netherlands', 'netherlands': 'Netherlands', 'holland': 'Netherlands',
+        'argentina': 'Argentina', 'australia': 'Australia', 'canada': 'Canada',
+        'costa rica': 'Costa Rica', 'czech republic': 'Czech Republic',
+        'czechia': 'Czech Republic', 'dominican republic': 'Dominican Republic',
+        'fiji': 'Fiji', 'italy': 'Italy', 'jamaica': 'Jamaica', 'mexico': 'Mexico',
+        'new zealand': 'New Zealand', 'samoa': 'Samoa', 'western samoa': 'Samoa',
+        'united arab emirates': 'United Arab Emirates', 'uae': 'United Arab Emirates',
+        'germany': 'Germany', 'ireland': 'Ireland', 'spain': 'Spain',
+        'portugal': 'Portugal', 'south africa': 'South Africa', 'kenya': 'Kenya',
+        'india': 'India', 'philippines': 'Philippines', 'thailand': 'Thailand',
+        'brazil': 'Brazil', 'peru': 'Peru', 'guatemala': 'Guatemala',
+        'honduras': 'Honduras', 'belize': 'Belize', 'panama': 'Panama',
+        'puerto rico': 'United States'
+    };
+
+    const V2_STATUSES = ['Open', 'Closed', 'Suspended', 'Transferred', 'Unknown'];
+
+    const isPlainObject = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+
+    function v2Str(value) {
+        if (typeof value === 'string') return value.trim();
+        if (typeof value === 'number' && Number.isFinite(value)) return String(value).trim();
+        if (typeof value === 'boolean') return value ? 'true' : 'false';
+        return '';
+    }
+
+    function v2List(value) {
+        if (value === null || value === undefined || value === '') return [];
+        if (!Array.isArray(value) && !isPlainObject(value)) return [v2Str(value)];
+        const items = Array.isArray(value) ? value : Object.values(value);
+        const out = [];
+        const seen = new Set();
+        items.forEach((item) => {
+            if (item === null || item === undefined) return;
+            if (typeof item === 'object') {
+                out.push(item);
+                return;
+            }
+            const s = v2Str(item);
+            if (s === '') return;
+            const key = s.toLowerCase();
+            if (seen.has(key)) return;
+            seen.add(key);
+            out.push(s);
+        });
+        return out;
+    }
+
+    function v2Map(value) {
+        if (Array.isArray(value)) return value.length ? { _legacy: value.slice() } : {};
+        if (!isPlainObject(value)) return {};
+        return Object.keys(value).length ? value : {};
+    }
+
+    function v2Int(value, rejected, label) {
+        if (value === null || value === undefined || value === '' || typeof value === 'object') return null;
+        if (typeof value === 'number') return Number.isFinite(value) ? Math.trunc(value) : null;
+        if (typeof value === 'boolean') return value ? 1 : null;
+        const s = String(value).trim();
+        if (s === '') return null;
+        if (/^-?\d+$/.test(s)) return parseInt(s, 10);
+        const note = () => { if (rejected && label) rejected.push(`${label}: ${s}`); };
+        const year = s.match(/\d{4}/);
+        if (year && parseInt(year[0], 10) > 1500 && parseInt(year[0], 10) < 2200) {
+            note();
+            return parseInt(year[0], 10);
+        }
+        const digits = s.match(/\d+/);
+        note();
+        return digits ? parseInt(digits[0], 10) : null;
+    }
+
+    function v2Bool(value) {
+        if (value === null || value === undefined || value === '') return null;
+        if (typeof value === 'boolean') return value;
+        const s = String(value).trim().toLowerCase();
+        if (['1', 'true', 'yes', 'y'].includes(s)) return true;
+        if (['0', 'false', 'no', 'n'].includes(s)) return false;
+        return null;
+    }
+
+    const NAME_LABELS = '(?:board\\s+chairperson|chairperson|administrator|executive\\s+director|director|owner|operator|date\\s+of\\s+site\\s+visit|site\\s+visit|visit\\s+date|inspection\\s+date|licensee|licensed\\s+capacity)';
+
+    /** Same rules as kop_facility_name_key() / kop_normalize_facility_name_rules(). */
+    function facilityNameKey(name) {
+        let s = String(name === null || name === undefined ? '' : name).trim().toLowerCase();
+        if (s === '') return '';
+
+        const colon = s.indexOf(':');
+        if (colon !== -1) {
+            const before = s.slice(0, colon).trim();
+            const after = s.slice(colon + 1).trim();
+            const afterIsDate = /^\d{1,4}[/\-.]\d{1,2}(?:[/\-.]\d{2,4})?\b/.test(after);
+            if (afterIsDate || new RegExp(NAME_LABELS + '$', 'iu').test(before)) {
+                s = before;
+            }
+        }
+
+        s = s.replace(new RegExp('\\s+' + NAME_LABELS + '.*$', 'iu'), '');
+        s = s.replace(/\s+d\s*\/?\s*b\s*\/?\s*a\s+/gu, ' ');
+        s = s.replace(/\s*[-–—]\s*/gu, ' ');
+        s = s.replace(/\s*&\s*/g, ' and ');
+        s = s.replace(/[^\p{L}\p{N}_\s]/gu, '');
+        s = s.replace(/\s+/gu, ' ');
+        s = s.trim();
+        s = s.replace(/^the\s+/u, '');
+        s = s.replace(/\s+(?:l\s*l\s*c|llc|inc|incorporated|ltd|limited|co|corp|corporation)$/u, '');
+        return s.trim();
+    }
+
+    function facilityCityKey(city) {
+        return String(city || '').trim().toLowerCase()
+            .replace(/[^\p{L}\p{N}_\s]/gu, '')
+            .replace(/\s+/gu, ' ')
+            .trim();
+    }
+
+    function facilityStateCode(value) {
+        if (typeof value !== 'string' && typeof value !== 'number') return null;
+        let s = String(value).trim().toUpperCase();
+        if (s === '') return null;
+        s = s.replace(/[\s,]*\d{5}(?:-\d{4})?\s*$/, '');
+        s = s.replace(/^[ \t.,]+|[ \t.,]+$/g, '');
+        if (s === '') return null;
+        if (V2_STATES[s]) return s;
+        if (V2_STATE_BY_NAME[s]) return V2_STATE_BY_NAME[s];
+        const collapsed = s.replace(/\./g, '').replace(/\s+/g, ' ');
+        if (V2_STATES[collapsed]) return collapsed;
+        if (V2_STATE_BY_NAME[collapsed]) return V2_STATE_BY_NAME[collapsed];
+        return null;
+    }
+
+    function countryKey(value) {
+        return value.toLowerCase().replace(/[^\p{L}\p{N}_\s]/gu, ' ').trim().replace(/\s+/gu, ' ');
+    }
+
+    function facilityCountryName(value) {
+        const s = v2Str(value);
+        if (s === '') return null;
+        const key = countryKey(s);
+        return Object.prototype.hasOwnProperty.call(V2_COUNTRIES, key) ? V2_COUNTRIES[key] : s;
+    }
+
+    function splitStreetCity(segment) {
+        const text = String(segment || '').trim();
+        const suffix = '(?:st|street|ave|avenue|rd|road|dr|drive|blvd|boulevard|ln|lane|way|hwy|highway|ct|court|pkwy|parkway|pl|place|cir|circle|trl|trail|loop|rte|route|pike|ter|terrace|sq|square)';
+        const m = text.match(new RegExp('^(.*\\b' + suffix + '\\.?)\\s+([A-Za-z][A-Za-z .\'-]*)$', 'i'));
+        if (m) {
+            const city = m[2].trim();
+            if (!/^(?:n|s|e|w|ne|nw|se|sw)\.?$/i.test(city)) {
+                return [m[1].trim(), city];
+            }
+        }
+        return [text, ''];
+    }
+
+    /** One-line address to {street, city, state, zip, country}. */
+    function parseFacilityAddress(raw) {
+        const out = { street: '', city: '', state: '', zip: '', country: '' };
+        const text = v2Str(raw);
+        if (text === '') return out;
+
+        let parts = text.split(',').map((p) => p.trim()).filter((p) => p.length > 0);
+        if (!parts.length) return out;
+
+        let last = parts[parts.length - 1];
+        if (parts.length > 1 && facilityStateCode(last) === null) {
+            const key = countryKey(last);
+            if (Object.prototype.hasOwnProperty.call(V2_COUNTRIES, key)) {
+                out.country = V2_COUNTRIES[key];
+                parts.pop();
+                if (!parts.length) return out;
+            }
+        }
+
+        last = parts[parts.length - 1];
+        let m = last.match(/^(\d{5}(?:-\d{4})?)$/);
+        if (m) {
+            out.zip = m[1];
+            parts.pop();
+            if (!parts.length) return out;
+            last = parts[parts.length - 1];
+        } else if ((m = last.match(/^(.*?)\s+(\d{5}(?:-\d{4})?)$/))) {
+            out.zip = m[2];
+            last = m[1].trim();
+            parts[parts.length - 1] = last;
+        }
+
+        const state = facilityStateCode(last);
+        if (state !== null) {
+            out.state = state;
+            if (out.country === '') out.country = 'United States';
+            parts.pop();
+            if (parts.length) {
+                out.city = parts.pop();
+                out.street = parts.join(', ');
+                if (out.street === '' && /^\d/.test(out.city)) {
+                    [out.street, out.city] = splitStreetCity(out.city);
+                }
+            }
+            return out;
+        }
+
+        if (parts.length === 1) {
+            if (/^\d/.test(parts[0])) {
+                out.street = parts[0];
+            } else {
+                out.city = parts[0];
+            }
+            return out;
+        }
+        out.city = parts.pop();
+        out.street = parts.join(', ');
+        return out;
+    }
+
+    /** Mirrors kop_facility_location_text_segments(). */
+    function locationTextSegments(text) {
+        const t = v2Str(text);
+        if (t === '') return [];
+        return t.split(/\s*[\/;|\n]\s*/u).map((p) => p.trim()).filter((p) => p.length > 0);
+    }
+
+    const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\/-]/g, '\\$&');
+
+    /**
+     * The places a free-text location names. Mirrors
+     * kop_facility_location_text_places(): "La Verne, CA" is California only,
+     * "Viera, FL / Rutland, MA" is Florida and Massachusetts.
+     */
+    function locationTextPlaces(text) {
+        const places = [];
+        locationTextSegments(text).forEach((segment) => {
+            const place = { raw: segment, city: '', state: null, country: null, country_raw: null };
+            const parsed = parseFacilityAddress(segment);
+
+            if (parsed.state !== '') {
+                places.push({ ...place, state: parsed.state, country: 'United States', city: parsed.city });
+                return;
+            }
+            if (parsed.country !== '') {
+                const pieces = segment.split(',').map((p) => p.trim());
+                places.push({ ...place, country: parsed.country, country_raw: pieces[pieces.length - 1], city: parsed.city });
+                return;
+            }
+            const codeMatch = segment.match(/(?:^|[\s,])([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?\s*$/);
+            if (codeMatch && facilityStateCode(codeMatch[1]) !== null) {
+                places.push({
+                    ...place,
+                    state: codeMatch[1],
+                    country: 'United States',
+                    city: segment.replace(/[\s,]*[A-Z]{2}(?:\s+\d{5}(?:-\d{4})?)?\s*$/, '').trim()
+                });
+                return;
+            }
+            const segmentKey = countryKey(segment);
+            if (Object.prototype.hasOwnProperty.call(V2_COUNTRIES, segmentKey)) {
+                places.push({ ...place, country: V2_COUNTRIES[segmentKey], country_raw: segment });
+                return;
+            }
+
+            let haystack = ` ${segmentKey} `;
+            const names = [];
+            Object.keys(V2_STATES).forEach((code) => names.push([V2_STATES[code].toLowerCase(), code, null]));
+            Object.keys(V2_COUNTRIES).forEach((alias) => {
+                if (alias.length >= 4 && V2_COUNTRIES[alias] !== 'United States') names.push([alias, null, V2_COUNTRIES[alias]]);
+            });
+            names.sort((a, b) => b[0].length - a[0].length);
+            names.forEach(([name, code, country]) => {
+                const pattern = new RegExp(`(?<!new |west |baja )(?<= )${escapeRegExp(name)}(?= )(?! city )`, 'u');
+                if (!pattern.test(haystack)) return;
+                haystack = haystack.replace(new RegExp(`(?<= )${escapeRegExp(name)}(?= )`, 'u'), '_'.repeat(name.length));
+                if (code !== null) {
+                    places.push({ ...place, state: code, country: 'United States' });
+                } else {
+                    places.push({ ...place, country, country_raw: name });
+                }
+            });
+        });
+        return places;
+    }
+
+    /** Mirrors kop_facility_location_key(). */
+    function facilityLocationKey(state, country) {
+        const code = facilityStateCode(state === null || state === undefined ? '' : state);
+        if (code !== null) return V2_STATES[code];
+        const name = facilityCountryName(country !== null && country !== undefined ? country : state);
+        if (name !== null && name !== '' && name !== 'United States') return name.toUpperCase();
+        return null;
+    }
+
+    function normalizeFacilityStatus(raw) {
+        const s = String(raw === null || raw === undefined ? '' : raw).trim();
+        if (s === '') return { status: 'Unknown', note: '' };
+        const direct = {
+            open: 'Open', closed: 'Closed', suspended: 'Suspended', transferred: 'Transferred',
+            unknown: 'Unknown', operating: 'Open', active: 'Open', defunct: 'Closed',
+            'shut down': 'Closed', shutdown: 'Closed'
+        };
+        const hit = direct[s.toLowerCase()];
+        if (hit) return { status: hit, note: '' };
+        return { status: 'Unknown', note: `migration: original status "${s}"` };
+    }
+
+    function phpIsoNow() {
+        return new Date().toISOString().replace(/\.\d{3}Z$/, '+00:00');
+    }
+
+    function blankFacilityV2() {
+        return {
+            schema_version: V2_SCHEMA_VERSION,
+            facility_id: null,
+            identification: {
+                name: '', nameKey: '', currentName: '', otherNames: [], pastNames: [],
+                currentOperator: '', currentOwners: [], otherOperators: [], pastOperators: [],
+                knownReferrers: [], investors: []
+            },
+            location: {
+                raw: '', text: '', street: '', city: '', state: null, zip: '', country: null,
+                additionalLocations: [], formerLocations: []
+            },
+            operatingPeriod: { startYear: null, endYear: null, status: 'Unknown', yearsOfOperation: '', notes: [] },
+            facilityDetails: {
+                type: '', capacity: null, currentCensus: null, ageRange: { min: null, max: null },
+                gender: '', isPrivatelyOwned: null
+            },
+            staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },
+            accreditations: { current: [], past: [] },
+            memberships: [], certifications: [], licensing: [], profileLinks: [],
+            resources: {}, treatmentTypes: {}, philosophy: {}, conditions: {}, criticalIncidents: {},
+            notes: [], fieldNotes: {},
+            documentFolderId: null,
+            provenance: {
+                sourceProject: '', sourceProjectId: null, sourceCategory: '', sourceOperator: null,
+                legacyIds: [], linkedFromRef: false, kopProfileVersion: null, migratedAt: '',
+                uniqueName: '', source: ''
+            },
+            legacy: {}
+        };
+    }
+
+    const V2_KNOWN_KEYS = new Set([
+        'identification', 'locationDetails', 'addressParts', 'address', 'location',
+        'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
+        'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
+        'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
+        'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
+        'isPrivatelyOwned', 'sourceProject', 'sourceProjectId', 'sourceCategory',
+        'sourceOperator', 'linkedFromRef', 'kopProfileVersion', 'facility_id',
+        'name', 'displayName', 'city', 'state', 'timestamp',
+        'schema_version', 'provenance', 'legacy', '__facility_ref', 'data'
+    ]);
+
+    function isV2Facility(facility) {
+        return isPlainObject(facility) && Number(facility.schema_version) >= V2_SCHEMA_VERSION && isPlainObject(facility.location);
+    }
+
+    /**
+     * Any facility shape to a v2 document. Mirrors kop_facility_normalize();
+     * `opts` takes facility_id, unique_name, location_key and source.
+     */
+    function facilityToV2(raw, opts) {
+        opts = opts || {};
+        let f = isPlainObject(raw) ? raw : {};
+        let wrapper = {};
+        if (f.__facility_ref && isPlainObject(f.data)) {
+            wrapper = {
+                unique_name: v2Str(f.name), displayName: v2Str(f.displayName),
+                city: v2Str(f.city), state: typeof f.state === 'string' ? f.state.trim() : ''
+            };
+            let inner = f.data;
+            if (isPlainObject(inner.data) && !inner.facility) inner = inner.data;
+            if (isPlainObject(inner.facility)) f = inner.facility;
+            else if (Array.isArray(inner.facilities) && isPlainObject(inner.facilities[0])) f = inner.facilities[0];
+            else f = {};
+        }
+
+        const doc = blankFacilityV2();
+        const isV2 = f.schema_version !== undefined && Number(f.schema_version) >= V2_SCHEMA_VERSION;
+        const rejected = [];
+
+        const ident = isPlainObject(f.identification) ? f.identification : {};
+        let name = v2Str(ident.name);
+        if (name === '') name = v2Str(ident.currentName);
+        if (name === '') name = v2Str(f.name);
+        if (name === '') name = v2Str(wrapper.displayName);
+        if (name === '') name = v2Str(wrapper.unique_name);
+
+        doc.identification.name = name;
+        doc.identification.nameKey = facilityNameKey(name);
+        doc.identification.currentName = v2Str(ident.currentName);
+        doc.identification.otherNames = v2List(ident.otherNames);
+        doc.identification.pastNames = v2List(v2List(ident.pastNames).concat(v2List(ident.previousNames)));
+        doc.identification.currentOperator = v2Str(ident.currentOperator);
+        const owners = v2List(ident.currentOwners);
+        const singleOwner = v2Str(ident.currentOwner);
+        if (singleOwner !== '') owners.push(singleOwner);
+        doc.identification.currentOwners = v2List(owners);
+        doc.identification.knownReferrers = v2List(ident.knownReferrers);
+        doc.identification.otherOperators = v2List(f.otherOperators !== undefined ? f.otherOperators : ident.otherOperators);
+        doc.identification.pastOperators = v2List(f.pastOperators !== undefined ? f.pastOperators : ident.pastOperators);
+        doc.identification.investors = v2List(f.investors !== undefined ? f.investors : ident.investors);
+
+        const details = isPlainObject(f.locationDetails) ? f.locationDetails : {};
+        const parts = isPlainObject(f.addressParts) ? f.addressParts : {};
+        const addrObj = isPlainObject(f.address) ? f.address : {};
+        let addrRaw = typeof f.address === 'string' ? f.address.trim() : '';
+        const v2Loc = isV2 && isPlainObject(f.location) ? f.location : {};
+        const hasV2Loc = Object.keys(v2Loc).length > 0;
+        const locText = typeof f.location === 'string' ? f.location.trim() : v2Str(v2Loc.text);
+
+        if (addrRaw === '' && hasV2Loc) addrRaw = v2Str(v2Loc.raw);
+        const textPlaces = locationTextPlaces(locText);
+        const textSegments = locationTextSegments(locText);
+        const parsed = parseFacilityAddress(addrRaw !== '' ? addrRaw : (textSegments[0] || ''));
+        if (addrRaw === '' && parsed.state === '' && parsed.country === '' && textPlaces.length) {
+            parsed.state = textPlaces[0].state || '';
+            parsed.country = textPlaces[0].country || '';
+            parsed.city = textPlaces[0].city;
+        }
+
+        const firstNonEmpty = (...values) => {
+            for (const v of values) {
+                if (v !== '') return v;
+            }
+            return '';
+        };
+
+        const street = firstNonEmpty(v2Str(addrObj.street), v2Str(parts.street), v2Str(v2Loc.street), parsed.street);
+        const city = firstNonEmpty(v2Str(addrObj.city), v2Str(parts.city), v2Str(details.city), v2Str(v2Loc.city), parsed.city, v2Str(wrapper.city));
+
+        let state = facilityStateCode(parsed.state);
+        if (state === null) state = facilityStateCode(addrObj.state !== undefined ? addrObj.state : '');
+        if (state === null) state = facilityStateCode(parts.state !== undefined ? parts.state : '');
+        if (state === null) state = facilityStateCode(details.state !== undefined ? details.state : '');
+        if (state === null && hasV2Loc) state = facilityStateCode(v2Loc.state !== undefined && v2Loc.state !== null ? v2Loc.state : '');
+        if (state === null) state = facilityStateCode(wrapper.state !== undefined ? wrapper.state : '');
+        if (state === null && opts.location_key) state = facilityStateCode(opts.location_key);
+
+        const zip = firstNonEmpty(v2Str(addrObj.zip), v2Str(parts.zip), v2Str(details.zip), v2Str(v2Loc.zip), parsed.zip);
+
+        let country = facilityCountryName(details.country);
+        if (country === null) country = facilityCountryName(addrObj.country);
+        if (country === null && hasV2Loc) country = facilityCountryName(v2Loc.country);
+        if (country === null && parsed.country !== '') country = parsed.country;
+        if (country === null && state !== null) country = 'United States';
+        if (country === null) {
+            const fromKey = facilityCountryName(opts.location_key);
+            if (fromKey !== null && facilityStateCode(opts.location_key || '') === null) country = fromKey;
+        }
+        if (country === null && wrapper.state && facilityStateCode(wrapper.state) === null) {
+            country = facilityCountryName(wrapper.state);
+        }
+
+        Object.assign(doc.location, { raw: addrRaw, text: locText, street, city, state, zip, country });
+
+        const additional = details.additionalLocations !== undefined ? details.additionalLocations : v2Loc.additionalLocations;
+        if (Array.isArray(additional)) {
+            additional.forEach((alt) => {
+                if (!isPlainObject(alt)) {
+                    const altRaw = v2Str(alt);
+                    if (altRaw === '') return;
+                    alt = { address: altRaw };
+                }
+                const altRaw = v2Str(alt.raw !== undefined ? alt.raw : alt.address);
+                const altParsed = parseFacilityAddress(altRaw);
+                const entry = {
+                    raw: altRaw,
+                    street: v2Str(alt.street) || altParsed.street,
+                    city: v2Str(alt.city) || altParsed.city,
+                    state: facilityStateCode(alt.state !== undefined && alt.state !== null ? alt.state : '') || facilityStateCode(altParsed.state),
+                    zip: v2Str(alt.zip) || altParsed.zip,
+                    country: null
+                };
+                const altCountry = facilityCountryName(alt.country);
+                entry.country = altCountry !== null ? altCountry
+                    : (altParsed.country !== '' ? altParsed.country : (entry.state !== null ? 'United States' : null));
+                if (entry.raw === '' && entry.street === '' && entry.city === '') return;
+                doc.location.additionalLocations.push(entry);
+            });
+        }
+
+        const listed = new Set([String(facilityLocationKey(state, country))]);
+        doc.location.additionalLocations.forEach((alt) => listed.add(String(facilityLocationKey(alt.state, alt.country))));
+        textPlaces.forEach((place) => {
+            const key = facilityLocationKey(place.state, place.country);
+            if (key === null || listed.has(key)) return;
+            listed.add(key);
+            const placeParsed = parseFacilityAddress(place.raw);
+            doc.location.additionalLocations.push({
+                raw: place.raw,
+                street: placeParsed.street,
+                city: placeParsed.city,
+                state: place.state,
+                zip: placeParsed.zip,
+                country: place.country
+            });
+        });
+
+        const former = details.formerLocations !== undefined ? details.formerLocations : v2Loc.formerLocations;
+        if (Array.isArray(former)) {
+            former.forEach((fl) => {
+                if (!isPlainObject(fl)) return;
+                const flRaw = v2Str(fl.raw !== undefined ? fl.raw : fl.address);
+                const flParsed = parseFacilityAddress(flRaw);
+                const entry = {
+                    raw: flRaw,
+                    city: v2Str(fl.city) || flParsed.city,
+                    state: facilityStateCode(fl.state !== undefined && fl.state !== null ? fl.state : '') || facilityStateCode(flParsed.state),
+                    country: facilityCountryName(fl.country),
+                    fromYear: v2Int(fl.fromYear),
+                    toYear: v2Int(fl.toYear)
+                };
+                if (entry.state === null && entry.country === null && entry.raw === '' && entry.city === '') return;
+                doc.location.formerLocations.push(entry);
+            });
+        }
+
+        const op = isPlainObject(f.operatingPeriod) ? f.operatingPeriod : {};
+        doc.operatingPeriod.startYear = v2Int(op.startYear, rejected, 'startYear');
+        doc.operatingPeriod.endYear = v2Int(op.endYear, rejected, 'endYear');
+        doc.operatingPeriod.yearsOfOperation = v2Str(op.yearsOfOperation);
+        doc.operatingPeriod.notes = v2List(op.notes);
+        const status = normalizeFacilityStatus(v2Str(op.status));
+        doc.operatingPeriod.status = status.status;
+        if (status.note !== '') doc.operatingPeriod.notes.push(status.note);
+
+        const fd = isPlainObject(f.facilityDetails) ? f.facilityDetails : {};
+        const age = isPlainObject(fd.ageRange) ? fd.ageRange : {};
+        doc.facilityDetails.type = v2Str(fd.type);
+        doc.facilityDetails.capacity = v2Int(fd.capacity, rejected, 'capacity');
+        doc.facilityDetails.currentCensus = v2Int(fd.currentCensus, rejected, 'currentCensus');
+        doc.facilityDetails.ageRange.min = v2Int(age.min, rejected, 'ageRange.min');
+        doc.facilityDetails.ageRange.max = v2Int(age.max, rejected, 'ageRange.max');
+        doc.facilityDetails.gender = v2Str(fd.gender);
+        doc.facilityDetails.isPrivatelyOwned = v2Bool(f.isPrivatelyOwned !== undefined ? f.isPrivatelyOwned : fd.isPrivatelyOwned);
+
+        const staff = isPlainObject(f.staff) ? f.staff : {};
+        doc.staff.administrator = v2List(staff.administrator);
+        doc.staff.notableStaff = v2List(staff.notableStaff);
+        doc.staff.pastTTIJobs = v2List(staff.pastTTIJobs);
+
+        const acc = isPlainObject(f.accreditations) ? f.accreditations : {};
+        doc.accreditations.current = v2List(acc.current);
+        doc.accreditations.past = v2List(acc.past);
+
+        doc.memberships = v2List(f.memberships);
+        doc.certifications = v2List(f.certifications);
+        doc.licensing = v2List(f.licensing);
+        doc.profileLinks = v2List(f.profileLinks);
+        doc.notes = v2List(f.notes);
+
+        const resources = { ...v2Map(f.resources) };
+        if (resources.notes !== undefined) resources.notes = v2List(resources.notes);
+        if (resources.customResources !== undefined) resources.customResources = v2List(resources.customResources);
+        doc.resources = resources;
+
+        doc.treatmentTypes = v2Map(f.treatmentTypes);
+        doc.philosophy = v2Map(f.philosophy);
+        doc.conditions = v2Map(f.conditions);
+        doc.criticalIncidents = v2Map(f.criticalIncidents);
+        doc.fieldNotes = v2Map(f.fieldNotes);
+        doc.documentFolderId = v2Int(f.documentFolderId);
+
+        const prov = isV2 && isPlainObject(f.provenance) ? f.provenance : {};
+        const pick = (legacyValue, v2Value) => (legacyValue !== undefined && legacyValue !== null ? legacyValue : v2Value);
+        doc.provenance.sourceProject = v2Str(pick(f.sourceProject, prov.sourceProject));
+        doc.provenance.sourceProjectId = v2Int(pick(f.sourceProjectId, prov.sourceProjectId));
+        doc.provenance.sourceCategory = v2Str(pick(f.sourceCategory, prov.sourceCategory));
+        const sourceOperator = pick(f.sourceOperator, prov.sourceOperator);
+        doc.provenance.sourceOperator = (sourceOperator !== null && typeof sourceOperator === 'object') ? sourceOperator : null;
+        doc.provenance.linkedFromRef = Boolean(pick(f.linkedFromRef, prov.linkedFromRef));
+        doc.provenance.kopProfileVersion = v2Int(pick(f.kopProfileVersion, prov.kopProfileVersion));
+        doc.provenance.legacyIds = Array.from(new Set(
+            v2List(prov.legacyIds).filter((v) => typeof v !== 'object' && v !== '' && !isNaN(Number(v))).map((v) => parseInt(v, 10))
+        ));
+        doc.provenance.migratedAt = v2Str(prov.migratedAt) || phpIsoNow();
+        if (opts.source) doc.provenance.source = v2Str(opts.source);
+
+        doc.facility_id = v2Int(opts.facility_id !== undefined && opts.facility_id !== null ? opts.facility_id : f.facility_id);
+        if (opts.unique_name) {
+            doc.provenance.uniqueName = v2Str(opts.unique_name);
+        } else if (wrapper.unique_name) {
+            doc.provenance.uniqueName = wrapper.unique_name;
+        }
+
+        Object.keys(f).forEach((key) => {
+            if (V2_KNOWN_KEYS.has(key)) return;
+            doc.legacy[key] = f[key];
+        });
+        if (isV2 && isPlainObject(f.legacy)) {
+            doc.legacy = { ...f.legacy, ...doc.legacy };
+        }
+
+        rejected.forEach((note) => doc.operatingPeriod.notes.push(`migration: unparsed ${note}`));
+        doc.operatingPeriod.notes = v2List(doc.operatingPeriod.notes);
+
+        return doc;
+    }
+
+    /**
+     * v2 document to the legacy facility shape the form edits. Mirrors
+     * kop_facility_to_legacy() in inc/facility-store.php.
+     */
+    function facilityFromV2(doc) {
+        const loc = doc.location || {};
+        const ident = doc.identification || {};
+        const stateCode = loc.state && V2_STATES[loc.state] ? loc.state : '';
+        const legacy = {
+            identification: {
+                name: ident.name || '',
+                currentName: ident.currentName || '',
+                otherNames: ident.otherNames || [],
+                pastNames: ident.pastNames || [],
+                currentOperator: ident.currentOperator || '',
+                currentOwner: (ident.currentOwners && ident.currentOwners[0]) || '',
+                currentOwners: ident.currentOwners || [],
+                knownReferrers: ident.knownReferrers || []
+            },
+            otherOperators: ident.otherOperators || [],
+            pastOperators: ident.pastOperators || [],
+            investors: ident.investors || [],
+            address: loc.raw || '',
+            addressParts: { street: loc.street || '', city: loc.city || '', state: stateCode, zip: loc.zip || '' },
+            location: loc.text || '',
+            locationDetails: {
+                city: loc.city || '',
+                state: stateCode,
+                country: loc.country || '',
+                zip: loc.zip || '',
+                additionalLocations: (loc.additionalLocations || []).map((alt) => ({
+                    address: alt.raw || '', city: alt.city || '', state: alt.state || '', zip: alt.zip || '', country: alt.country || ''
+                })),
+                formerLocations: (loc.formerLocations || []).map((fl) => ({
+                    state: fl.state || '', city: fl.city || '', address: fl.raw || '', zip: '',
+                    fromYear: fl.fromYear === null || fl.fromYear === undefined ? '' : String(fl.fromYear),
+                    toYear: fl.toYear === null || fl.toYear === undefined ? '' : String(fl.toYear)
+                }))
+            },
+            operatingPeriod: { ...(doc.operatingPeriod || {}) },
+            facilityDetails: {
+                type: (doc.facilityDetails || {}).type || '',
+                capacity: (doc.facilityDetails || {}).capacity ?? null,
+                currentCensus: (doc.facilityDetails || {}).currentCensus ?? null,
+                ageRange: (doc.facilityDetails || {}).ageRange || { min: null, max: null },
+                gender: (doc.facilityDetails || {}).gender || ''
+            },
+            staff: doc.staff || { administrator: [], notableStaff: [], pastTTIJobs: [] },
+            accreditations: doc.accreditations || { current: [], past: [] },
+            memberships: doc.memberships || [],
+            certifications: doc.certifications || [],
+            licensing: doc.licensing || [],
+            profileLinks: doc.profileLinks || [],
+            resources: doc.resources || {},
+            treatmentTypes: doc.treatmentTypes || {},
+            philosophy: doc.philosophy || {},
+            conditions: doc.conditions || {},
+            criticalIncidents: doc.criticalIncidents || {},
+            notes: doc.notes || [],
+            fieldNotes: doc.fieldNotes || {}
+        };
+        delete legacy.operatingPeriod.schema_version;
+
+        if (doc.facility_id !== null && doc.facility_id !== undefined) legacy.facility_id = doc.facility_id;
+        if (doc.documentFolderId !== null && doc.documentFolderId !== undefined) legacy.documentFolderId = doc.documentFolderId;
+        const privatelyOwned = (doc.facilityDetails || {}).isPrivatelyOwned;
+        if (privatelyOwned !== null && privatelyOwned !== undefined) legacy.isPrivatelyOwned = privatelyOwned;
+        const prov = doc.provenance || {};
+        if (prov.sourceProject) legacy.sourceProject = prov.sourceProject;
+        if (prov.sourceCategory) legacy.sourceCategory = prov.sourceCategory;
+        if (prov.sourceOperator) legacy.sourceOperator = prov.sourceOperator;
+        Object.keys(doc.legacy || {}).forEach((key) => {
+            if (!(key in legacy)) legacy[key] = doc.legacy[key];
+        });
+        return legacy;
+    }
+
+    /** True when the page runs the v2 data model (set by PHP from phase 3). */
+    function isV2DataModel() {
+        const config = window.KOP_DATA_FORM_CONFIG || {};
+        return config.dataModel === 'v2';
+    }
+
     // Expose the public API
     window.KOP_DataNormalizer = {
         normalizeProjectData: normalizeProjectData,
+        facilityToV2: facilityToV2,
+        facilityFromV2: facilityFromV2,
+        isV2Facility: isV2Facility,
+        isV2DataModel: isV2DataModel,
+        facilityNameKey: facilityNameKey,
+        facilityCityKey: facilityCityKey,
+        facilityStateCode: facilityStateCode,
+        facilityCountryName: facilityCountryName,
+        locationTextPlaces: locationTextPlaces,
+        parseFacilityAddress: parseFacilityAddress,
+        normalizeFacilityStatus: normalizeFacilityStatus,
+        V2_STATUSES: V2_STATUSES
     };
 })();

@@ -409,6 +409,15 @@
                 timestamp: projectData.timestamp,
                 action: action
             };
+
+            // v2 data model (docs/DATA-MODEL-MIGRATION.md phase 3): send the
+            // canonical facility documents alongside the legacy payload so
+            // save-master.php can write them through kop_facility_save().
+            const normalizer = window.KOP_DataNormalizer;
+            if (normalizer && typeof normalizer.isV2DataModel === 'function' && normalizer.isV2DataModel()
+                && Array.isArray(projectData.data?.facilities)) {
+                payload.facilitiesV2 = projectData.data.facilities.map(f => normalizer.facilityToV2(f));
+            }
             
             let response;
             let usedRestApi = false;

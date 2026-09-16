@@ -2950,6 +2950,11 @@ function kop_state_build_program_record($project_name, $facility, $data, $state_
 function kop_state_collect_programs($state_name) {
     global $wpdb;
 
+    // v2 data model (?model=v2 or the kop_data_model option): one join, no copies.
+    if (function_exists('kop_v2_model_requested') && kop_v2_model_requested()) {
+        return kop_v2_collect_programs($state_name, 'state');
+    }
+
     $abbrev_map = array_flip(kop_state_abbrev_to_name());
     $abbrev = isset($abbrev_map[$state_name]) ? $abbrev_map[$state_name] : '';
     $state_lower = strtolower($state_name);
@@ -3053,21 +3058,21 @@ function kop_state_collect_programs($state_name) {
                 $location_details = isset($facility['locationDetails']) && is_array($facility['locationDetails']) ? $facility['locationDetails'] : array();
                 $locdet_state_lower = strtolower(trim((string)($location_details['state'] ?? '')));
 
-                $location_string = strtolower((string)($facility['location'] ?? ''));
+                $location_text = (string)($facility['location'] ?? '');
 
                 // Match priority:
                 //   1. address.state or locationDetails.state equals the state name or 2-letter abbrev
-                //   2. location field contains the FULL state name (not the abbrev — "or" would
-                //      match "California" / "Florida" as a substring)
-                //   3. location field contains the abbrev wrapped in word boundaries (", OR ", " OR$")
+                //   2. the free-text location names this state as a place ("Provo, UT",
+                //      "Viera, FL / Rutland, MA", "Southern Utah"). Parsed by
+                //      kop_facility_location_text_places(), not substring matched:
+                //      "La Verne, CA" is not Louisiana, "Mt. Pleasant" is not Montana,
+                //      "Kansas City, MO" is not Kansas.
                 $matched = false;
                 if ($state_lower !== '' && ($facility_state_lower === $state_lower || $locdet_state_lower === $state_lower)) {
                     $matched = true;
                 } elseif ($abbrev_lower !== '' && ($facility_state_lower === $abbrev_lower || $locdet_state_lower === $abbrev_lower)) {
                     $matched = true;
-                } elseif ($state_lower !== '' && strpos($location_string, $state_lower) !== false) {
-                    $matched = true;
-                } elseif ($abbrev_lower !== '' && preg_match('/\b' . preg_quote($abbrev_lower, '/') . '\b/', $location_string)) {
+                } elseif ($abbrev !== '' && trim($location_text) !== '' && kop_facility_location_text_names_state($location_text, $abbrev)) {
                     $matched = true;
                 }
 

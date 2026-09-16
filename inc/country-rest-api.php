@@ -66,6 +66,11 @@ function kop_country_slug_to_name($slug) {
 function kop_country_collect_programs($country_name) {
     global $wpdb;
 
+    // v2 data model (?model=v2 or the kop_data_model option): one join, no copies.
+    if (function_exists('kop_v2_model_requested') && kop_v2_model_requested()) {
+        return kop_v2_collect_programs($country_name, 'country');
+    }
+
     $country_lower = strtolower($country_name);
 
     // Same record shape and same-name merge as the state directory, so the
@@ -160,12 +165,15 @@ function kop_country_collect_programs($country_name) {
                 $addr_country_lower = strtolower(trim((string)($address['country'] ?? '')));
                 $parts_country_lower = strtolower(trim((string)($address_parts['country'] ?? '')));
                 $locdet_country_lower = strtolower(trim((string)($location_details['country'] ?? '')));
-                $location_string = strtolower((string)($facility['location'] ?? ''));
+                $location_text = (string)($facility['location'] ?? '');
 
+                // The free-text location must name the country as a place
+                // (kop_facility_location_text_places): "Mexico, MO" is Missouri,
+                // and "New Jersey" is not the Jersey page.
                 $matched = false;
                 if ($country_lower !== '' && in_array($country_lower, array($addr_country_lower, $parts_country_lower, $locdet_country_lower), true)) {
                     $matched = true;
-                } elseif ($country_lower !== '' && strpos($location_string, $country_lower) !== false) {
+                } elseif ($country_lower !== '' && trim($location_text) !== '' && kop_facility_location_text_names_country($location_text, $country_name)) {
                     $matched = true;
                 }
                 if (!$matched) continue;

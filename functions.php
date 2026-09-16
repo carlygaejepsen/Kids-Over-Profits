@@ -24,6 +24,12 @@ require_once get_stylesheet_directory() . '/inc/enqueue.php';
 // Database Connection & Data Retrieval
 require_once get_stylesheet_directory() . '/inc/database.php';
 
+// Canonical facility store: normalizer, validator, location text parser
+// (pure functions; see docs/FACILITY-SCHEMA.md)
+require_once get_stylesheet_directory() . '/inc/facility-store.php';
+require_once get_stylesheet_directory() . '/inc/facility-v2-readers.php';
+require_once get_stylesheet_directory() . '/inc/facility-v2-sync.php';
+
 // REST API Registration & Callbacks
 require_once get_stylesheet_directory() . '/inc/rest-api.php';
 require_once get_stylesheet_directory() . '/inc/country-rest-api.php';
