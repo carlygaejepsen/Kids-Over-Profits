@@ -49,9 +49,11 @@ tmpclaude-*
 scripts/.mn-browser-profile/
 scripts/mn_progress.json
 
-# Article discovery — local seen-URL cache (persisted via GH Actions cache in CI)
+# Article discovery — runtime state written by the nightly cron on the server
+# (seen-URL cache + rejected log). Never tracked: a committed copy would be
+# overwritten by every deploy (.cpanel.yml copies scripts/ wholesale).
 scripts/.discovery-state.json
-scripts/.discovery-rejected.log
+scripts/.discovery-rejected.json
 
 # PHP-generated error logs (PHP drops these wherever it runs from; if one
 # lands in the cPanel-side checkout it blocks deploy with a dirty working
@@ -60,3 +62,9 @@ error_log
 **/error_log
 __pycache__/
 **/__pycache__/
+
+# Facility data model migration (docs/DATA-MODEL-MIGRATION.md) - page baselines
+# and rehearsal output are regenerated from production data; never commit them.
+tmp/baseline-*.json
+tmp/after-*.json
+tmp/rehearsal/

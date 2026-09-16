@@ -5,9 +5,9 @@ name: Article Discovery
 # processor into the news_submissions review queue on kidsoverprofits.org.
 #
 # The seen-URL cache (scripts/.discovery-state.json) is persisted via the
-# actions/cache action so dedup survives across runs without polluting git
-# history. The rejected log (scripts/discovery-rejected.json) IS committed
-# back so you can review it for filter-tuning.
+# actions/cache action so dedup survives across runs. The rejected log
+# (scripts/.discovery-rejected.json) is gitignored runtime state; the copy that
+# matters for filter tuning is the one the nightly cron writes on the server.
 
 # The daily schedule moved to the NixiHost cPanel cron (scripts/discover-articles.php,
 # 01:30 Central): GitHub runner IPs get 503-throttled by Google News. This
@@ -25,7 +25,7 @@ on:
         default: ''
 
 permissions:
-  contents: write   # required to commit back the rejected log + state
+  contents: read
 
 concurrency:
   group: discover-articles
@@ -65,16 +65,3 @@ jobs:
           if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
           if [ -n "${{ inputs.max_facilities }}" ]; then ARGS="$ARGS --max-facilities ${{ inputs.max_facilities }}"; fi
           node scripts/discover-articles.js $ARGS
-
-      - name: Commit rejected log (if changed)
-        if: inputs.dry_run != true
-        run: |
-          git config user.name  "kop-discovery-bot"
-          git config user.email "noreply@kidsoverprofits.org"
-          if ! git diff --quiet scripts/discovery-rejected.json 2>/dev/null; then
-            git add scripts/discovery-rejected.json
-            git commit -m "chore(discovery): update rejected log [skip ci]"
-            git push
-          else
-            echo "No changes to discovery-rejected.json"
-          fi

@@ -1,0 +1,369 @@
+{
+  "_comment": "Search terms for the article discovery job (discover-articles.js / .php). Both scripts read this file fresh on every run, so edit it freely without touching code. Google News search syntax: quoted phrases, OR groups in parentheses, when:7d for recency.",
+  "_facilityKeywordsComment": "OR-group appended to every per-facility Google News query: \"<facility name>\" \"<state>\" (kw OR kw ...). Keep to short stems; Google News caps query length.",
+  "facilityKeywords": [
+    "abuse",
+    "lawsuit",
+    "arrested",
+    "indicted",
+    "investigation",
+    "closure",
+    "raid",
+    "allegations",
+    "survivor",
+    "death",
+    "died",
+    "restraint",
+    "escape",
+    "license",
+    "settlement",
+    "trafficking"
+  ],
+  "_facilityRecencyComment": "Google News when: filter for per-facility queries. Relevance sorting otherwise surfaces years-old coverage. Empty string disables.",
+  "facilityRecency": "when:30d",
+  "_topicQueriesComment": "Topic-level queries run before the per-facility loop (they replace the old Google Alerts). boost is added to the candidate score ONLY when one of the match phrases appears in the headline or blurb (Google News relevance matching is loose: without this, 'troubled teen industry' returned artist profiles and obituaries). Threshold is 3; a strong title keyword adds 3, a weak one 2, a facility match 2. boost 3 = accept on the phrase alone; boost 2 = phrase plus a keyword or facility; boost 1 = phrase plus a strong or weak title keyword (not a description keyword alone). Match phrases are plain substrings with no word boundaries, so keep them specific (\"juvenile detention\", not \"juvenile\"). when: overrides topicRecency.",
+  "topicRecency": "when:7d",
+  "maxItemsPerTopic": 25,
+  "_maxTopicSubmissionsComment": "Cap on topic-query candidates submitted per run (0 = no cap). Protects the Groq rate limit on the first nights, when the seen-URL cache has not caught up with the 7-day topic window. Candidates over the cap are left unmarked and picked up on a later run if still in the feed.",
+  "maxTopicSubmissionsPerRun": 20,
+  "topicQueries": [
+    {
+      "label": "troubled-teen-industry",
+      "q": "\"troubled teen industry\"",
+      "boost": 3,
+      "match": [
+        "troubled teen",
+        "troubled-teen"
+      ]
+    },
+    {
+      "label": "troubled-teen-program",
+      "q": "\"troubled teen\" (program OR facility OR school OR camp OR ranch OR treatment OR transport OR bill OR legislation)",
+      "boost": 3,
+      "match": [
+        "troubled teen",
+        "troubled-teen"
+      ]
+    },
+    {
+      "label": "wilderness-therapy",
+      "q": "\"wilderness therapy\" OR \"wilderness program\" OR \"wilderness camp\" OR \"wilderness rehab\"",
+      "boost": 3,
+      "match": [
+        "wilderness therapy",
+        "wilderness program",
+        "wilderness camp",
+        "wilderness rehab",
+        "wilderness treatment"
+      ]
+    },
+    {
+      "label": "therapeutic-boarding-school",
+      "q": "\"therapeutic boarding school\" OR \"therapeutic school\" OR \"emotional growth school\"",
+      "boost": 3,
+      "match": [
+        "therapeutic boarding",
+        "therapeutic school",
+        "emotional growth"
+      ]
+    },
+    {
+      "label": "teen-treatment-center",
+      "q": "(\"teen treatment\" OR \"adolescent treatment\" OR \"youth treatment\") (center OR facility OR program)",
+      "boost": 3,
+      "match": [
+        "teen treatment",
+        "adolescent treatment",
+        "youth treatment",
+        "treatment center for teen",
+        "treatment facility for teen"
+      ]
+    },
+    {
+      "label": "institutional-child-abuse",
+      "q": "\"Stop Institutional Child Abuse\" OR \"institutional child abuse\" OR \"institutional abuse\" youth",
+      "boost": 3,
+      "match": [
+        "institutional child abuse",
+        "institutional abuse"
+      ]
+    },
+    {
+      "label": "paris-hilton-advocacy",
+      "q": "\"Paris Hilton\" (teen OR facility OR bill OR abuse OR lawsuit OR survivors)",
+      "boost": 2,
+      "match": [
+        "paris hilton"
+      ]
+    },
+    {
+      "label": "conversion-therapy",
+      "q": "\"conversion therapy\" (ban OR bill OR lawsuit OR ruling OR minors)",
+      "boost": 2,
+      "match": [
+        "conversion therapy"
+      ]
+    },
+    {
+      "label": "residential-treatment-youth",
+      "q": "\"residential treatment\" (teen OR teens OR youth OR adolescent OR children OR kids) (abuse OR death OR died OR lawsuit OR license OR investigation OR neglect OR restraint OR report)",
+      "boost": 2,
+      "match": [
+        "residential treatment",
+        "residential facility",
+        "residential program"
+      ]
+    },
+    {
+      "label": "youth-detention",
+      "q": "(\"youth detention\" OR \"juvenile detention\" OR \"juvenile hall\" OR \"youth center\" OR \"youth services center\") (abuse OR death OR died OR lawsuit OR report OR investigation OR escape OR riot OR sexual OR conditions)",
+      "boost": 2,
+      "match": [
+        "youth detention",
+        "juvenile detention",
+        "juvenile hall",
+        "youth center",
+        "youth services center",
+        "juvenile facility",
+        "juvenile center"
+      ]
+    },
+    {
+      "label": "juvenile-staff-charged",
+      "q": "(juvenile OR youth) (facility OR center OR detention OR \"group home\") (staff OR employee OR counselor OR officer OR worker) (charged OR arrested OR indicted OR pleads OR sentenced OR accused)",
+      "boost": 2,
+      "match": [
+        "juvenile detention",
+        "juvenile facility",
+        "juvenile center",
+        "juvenile hall",
+        "juvenile justice center",
+        "juvenile correctional",
+        "youth facility",
+        "youth center",
+        "youth detention",
+        "detention center",
+        "group home"
+      ]
+    },
+    {
+      "label": "boarding-school-abuse",
+      "q": "\"boarding school\" (abuse OR lawsuit OR sued OR arrested OR charged OR \"forced labor\" OR trafficking OR survivors)",
+      "boost": 2,
+      "match": [
+        "boarding school"
+      ]
+    },
+    {
+      "label": "group-home-youth",
+      "q": "\"group home\" (teen OR teens OR youth OR foster) (abuse OR death OR died OR lawsuit OR neglect OR arrested OR charged OR license)",
+      "boost": 2,
+      "match": [
+        "group home"
+      ]
+    },
+    {
+      "label": "boot-camp-youth",
+      "q": "\"boot camp\" (teen OR teens OR youth OR juvenile) (abuse OR death OR died OR lawsuit OR closed OR investigation)",
+      "boost": 2,
+      "match": [
+        "boot camp"
+      ]
+    },
+    {
+      "label": "youth-challenge-academy",
+      "q": "\"Youth Challenge Academy\" OR \"Youth ChalleNGe\" OR \"ChalleNGe Academy\"",
+      "boost": 2,
+      "match": [
+        "challenge academy",
+        "youth challenge"
+      ]
+    },
+    {
+      "label": "behavioral-health-adolescent",
+      "q": "\"behavioral health\" (adolescent OR teen OR youth OR children) (abuse OR lawsuit OR license OR death OR investigation OR restraint OR layoffs OR violations)",
+      "boost": 1,
+      "match": [
+        "behavioral health",
+        "behavioral hospital",
+        "psychiatric hospital",
+        "psychiatric facility",
+        "psychiatric residential"
+      ]
+    },
+    {
+      "label": "teen-transport",
+      "q": "(\"youth transport\" OR \"teen transport\" OR \"secure transport\" OR \"transport company\") (teen OR teens OR troubled OR restraints OR handcuffs)",
+      "boost": 2,
+      "match": [
+        "youth transport",
+        "teen transport",
+        "secure transport",
+        "adolescent transport",
+        "transport company"
+      ]
+    },
+    {
+      "label": "faith-based-youth-home",
+      "q": "(Christian OR \"faith-based\" OR religious) (\"boarding school\" OR \"youth home\" OR \"girls home\" OR \"boys home\" OR \"youth ranch\" OR \"children's home\") (abuse OR lawsuit OR sued OR arrested OR unlicensed OR trafficking)",
+      "boost": 2,
+      "match": [
+        "boarding school",
+        "youth home",
+        "girls home",
+        "boys home",
+        "youth ranch",
+        "children's home",
+        "christian home",
+        "christian school",
+        "faith-based"
+      ]
+    },
+    {
+      "label": "reform-school",
+      "q": "\"reform school\" (abuse OR survivors OR deaths OR graves OR lawsuit)",
+      "boost": 2,
+      "match": [
+        "reform school"
+      ]
+    },
+    {
+      "label": "tti-corporate-operators",
+      "q": "(\"Acadia Healthcare\" OR \"Universal Health Services\" OR \"Sequel Youth\" OR \"Vivant Behavioral\" OR \"Embark Behavioral\" OR \"Newport Healthcare\" OR \"Family Help & Wellness\") (youth OR adolescent OR teen OR children OR patients) (lawsuit OR investigation OR abuse OR settlement OR death OR license OR closing)",
+      "boost": 2,
+      "match": [
+        "acadia healthcare",
+        "universal health services",
+        "sequel youth",
+        "vivant behavioral",
+        "embark behavioral",
+        "newport healthcare",
+        "newport academy",
+        "family help & wellness",
+        "family help and wellness"
+      ]
+    },
+    {
+      "label": "foster-care-facility",
+      "q": "(\"foster care\" OR \"child welfare\" OR \"state custody\") (facility OR facilities OR \"treatment center\" OR contractor) (abuse OR death OR died OR lawsuit OR licensing OR complaints OR neglect)",
+      "boost": 1,
+      "match": [
+        "foster care",
+        "foster child",
+        "foster youth",
+        "child welfare",
+        "state custody"
+      ]
+    },
+    {
+      "label": "international-youth-detention",
+      "q": "(\"youth detention\" OR \"youth justice\" OR \"youth offenders\" OR \"residential school\") (Australia OR Queensland OR Canada OR Ontario OR \"New Zealand\" OR Britain OR Scotland) (abuse OR lawsuit OR \"class action\" OR death OR lockdown)",
+      "boost": 1,
+      "match": [
+        "youth detention",
+        "youth justice",
+        "youth offender",
+        "residential school"
+      ]
+    },
+    {
+      "_comment": "The queries below fold in the old Google Alerts terms (410 digests, Aug 2025 - Sep 2026) that the per-facility loop cannot reach: closed facilities and defunct operators are excluded from it, generic names (Teen Challenge) are skipped, and some alert names are missing from or worded differently in the facility data.",
+      "label": "closed-programs-recent-litigation",
+      "q": "(\"Trails Carolina\" OR \"Asheville Academy\" OR \"Solstice East\" OR \"Magnolia Mill School\" OR \"Spring Ridge Academy\" OR \"Maple Lake Academy\") (abuse OR lawsuit OR sued OR settlement OR death OR closed OR license OR investigation OR survivors OR \"forced labor\")",
+      "boost": 2,
+      "match": [
+        "trails carolina",
+        "asheville academy",
+        "solstice east",
+        "magnolia mill",
+        "spring ridge academy",
+        "maple lake academy"
+      ]
+    },
+    {
+      "label": "closed-programs-noisy-names",
+      "_comment": "Closed facilities whose alerts were 100% namesake noise (elementary schools, unrelated ranches). boost 1 = needs the phrase plus a strong keyword.",
+      "q": "(\"Anchor Academy\" OR \"Reclamation Ranch\" OR \"The Meadows Ranch\") (abuse OR lawsuit OR sued OR \"troubled teen\" OR \"residential treatment\" OR survivors)",
+      "boost": 1,
+      "match": [
+        "anchor academy",
+        "reclamation ranch",
+        "the meadows ranch"
+      ]
+    },
+    {
+      "label": "historical-tti-programs",
+      "q": "(Synanon OR CEDU OR WWASP OR WWASPS OR \"World Wide Association of Specialty Programs\" OR \"Straight Inc\" OR \"Straight, Incorporated\" OR \"Wilderness Quest\") (abuse OR survivors OR cult OR documentary OR lawsuit OR \"troubled teen\" OR history OR former)",
+      "boost": 2,
+      "match": [
+        "synanon",
+        "cedu",
+        "wwasp",
+        "world wide association of specialty",
+        "straight inc",
+        "straight, incorporated",
+        "wilderness quest"
+      ]
+    },
+    {
+      "label": "teen-challenge",
+      "q": "\"Teen Challenge\" (abuse OR lawsuit OR sued OR \"forced labor\" OR unpaid OR labor OR trafficking OR investigation OR \"attorney general\" OR closed OR license OR survivors OR girls OR academy OR ranch)",
+      "boost": 2,
+      "match": [
+        "teen challenge"
+      ]
+    },
+    {
+      "label": "unindexed-facility-names",
+      "q": "(\"Yellowstone Boys and Girls Ranch\" OR \"J Bar J Youth\" OR \"Mountain Valley Treatment Center\" OR \"Devereux Foundation\" OR \"Devereux Advanced\" OR \"Altior Healthcare\" OR \"Altior Behavioral\" OR \"Evolve Treatment Centers\" OR \"Evoke Therapy\" OR \"River Point Behavioral\" OR \"Brighter Heights\" OR \"E-Nini-Hassee\") (abuse OR lawsuit OR death OR arrested OR charged OR investigation OR license OR missing OR runaway OR closure OR breach)",
+      "boost": 2,
+      "match": [
+        "yellowstone boys and girls ranch",
+        "j bar j",
+        "mountain valley treatment",
+        "altior",
+        "evolve treatment",
+        "evoke therapy",
+        "river point behavioral",
+        "brighter heights",
+        "e-nini-hassee",
+        "e nini hassee",
+        "devereux foundation",
+        "devereux advanced"
+      ]
+    },
+    {
+      "label": "tti-key-people",
+      "q": "(\"Ken Huey\" OR \"Jared Balmer\" OR \"Jeannie Courtney\" OR \"Brandon Courtney\" OR \"Suzanne Courtney\") (abuse OR lawsuit OR academy OR \"treatment center\" OR \"troubled teen\" OR \"Spring Ridge\" OR Calo OR program OR founder)",
+      "boost": 2,
+      "match": [
+        "ken huey",
+        "jared balmer",
+        "jeannie courtney",
+        "brandon courtney",
+        "suzanne courtney"
+      ]
+    }
+  ],
+  "_genericQueryNamesComment": "Facility names too generic to search on their own. Google News is skipped for these (they still match by alias in Reddit/topic candidates). Add names that keep showing up as facilityQuery in the rejected log with low-score results. Compared case-insensitively after stripping punctuation. Aliases shared by 3+ facilities are skipped automatically.",
+  "genericQueryNames": [
+    "The Children's Home",
+    "Juvenile Detention Center",
+    "Juvenile Detention Facility",
+    "Youth Detention Center",
+    "Youth Center",
+    "The Ark",
+    "The Oaks",
+    "The Meridian",
+    "New Haven",
+    "Mountain Haven",
+    "Ridge House",
+    "Sanctuary of Hope",
+    "STEP2",
+    "BOCES",
+    "The Bridge",
+    "The Village",
+    "Summit View",
+    "Our Home Inc."
+  ]
+}

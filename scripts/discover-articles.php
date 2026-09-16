@@ -4,10 +4,14 @@
  *
  * Written for the NixiHost cPanel cron, where no Node runtime exists. Behavior
  * mirrors the JS original 1:1 (same flags, same state files, same scoring):
- * pulls candidate articles from Google News RSS (per active facility) and
- * r/troubledteens (new posts), pre-filters them with a state-aware scoring
- * pass, then feeds surviving URLs through the AI processor into the
- * news_submissions review queue.
+ * pulls candidate articles from Google News RSS (topic queries, then one
+ * query per active facility) and r/troubledteens (new posts), pre-filters
+ * them with a state-aware scoring pass, then feeds surviving URLs through the
+ * AI processor into the news_submissions review queue.
+ *
+ * Search terms live in scripts/discovery-queries.json (topic queries, the
+ * per-facility keyword OR-group, generic facility names to skip). Edit that
+ * file to tune what gets searched; no code change needed.
  *
  * Facility data comes live from the WP REST API — NOT from any local JSON
  * snapshot, since the JSON snapshots are out of date.
@@ -17,12 +21,19 @@
  *   php scripts/discover-articles.php --dry-run    # discover + score, skip submission
  *   php scripts/discover-articles.php --limit 5    # cap candidates submitted this run
  *   php scripts/discover-articles.php --max-facilities 3   # smoke test
+ *   php scripts/discover-articles.php --no-topics  # skip the topic-query tier
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
  *   AI_PROVIDER            (default: groq)
  *   SHARD_COUNT            (default: 7 — facilities split into N daily shards)
+ *   RSS_REQUEST_DELAY_MS   (default: 1500 — pause between Google News requests)
+ *   AI_REQUEST_DELAY_MS    (default: 6000 — pause between AI submissions)
+ *   RUN_TIME_BUDGET_MS / GN_TIME_BUDGET_MS  (default: 50 min / 35 min)
  *   REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET  (optional OAuth path)
+ *
+ * Cron note: call /opt/cpanel/ea-php82/root/usr/bin/php explicitly. Bare
+ * `php` under cPanel cron is the php-cgi wrapper and the CLI guard exits.
  */
 
 declare(strict_types=1);
@@ -37,11 +48,15 @@ set_time_limit(0);
 // ============================================================
 
 define('STATE_FILE',     __DIR__ . '/.discovery-state.json');
-define('REJECTED_FILE',  __DIR__ . '/discovery-rejected.json');
+// Dot-prefixed + gitignored: the rejected log is runtime state written by the
+// server. A tracked copy would be overwritten by every deploy.
+define('REJECTED_FILE',  __DIR__ . '/.discovery-rejected.json');
 define('BLACKLIST_FILE', __DIR__ . '/discovery-blacklist.json');
+define('QUERIES_FILE',   __DIR__ . '/discovery-queries.json');
 
 $args = array_slice($argv, 1);
 define('DRY_RUN', in_array('--dry-run', $args, true));
+define('NO_TOPICS', in_array('--no-topics', $args, true));
 $limitArg = array_search('--limit', $args, true);
 define('SUBMIT_LIMIT', $limitArg !== false ? (int)($args[$limitArg + 1] ?? 0) : PHP_INT_MAX);
 $maxFacArg = array_search('--max-facilities', $args, true);
@@ -56,13 +71,30 @@ define('AI_PROVIDER', getenv('AI_PROVIDER') ?: 'groq');
 define('SHARD_COUNT', (int)(getenv('SHARD_COUNT') ?: 7));
 
 define('SCORE_THRESHOLD', 3);
-define('RSS_REQUEST_DELAY_MS', 1500);
-define('AI_REQUEST_DELAY_MS', 4000);
+// Both delays are env-tunable: the cron runs from a permanent IP whose
+// standing with Google News and Groq matters more than a throwaway CI runner's.
+define('RSS_REQUEST_DELAY_MS', (int)(getenv('RSS_REQUEST_DELAY_MS') ?: 1500));
+define('AI_REQUEST_DELAY_MS', (int)(getenv('AI_REQUEST_DELAY_MS') ?: 6000));
+// Groq free-tier rate limits are per-minute; one 30s wait was often not enough.
+define('AI_RATE_LIMIT_RETRIES', 2);
+define('AI_RATE_LIMIT_WAIT_MS', 45000);
+define('AI_RATE_LIMIT_STOP_AFTER', 3);   // consecutive rate-limited candidates before the submit phase stops
 define('MAX_SEEN_URLS', 50000);
+define('MAX_REJECTED_ENTRIES', 2000);   // rejected log cap (deduped by link)
 define('PER_FACILITY_CAP', 15);
 define('REQUEST_TIMEOUT_MS', 30000);
 define('AI_TIMEOUT_MS', 90000);
 define('MAX_ARTICLE_AGE_DAYS', 30);
+// Wall-clock budgets (same as the JS). Cap the Google News phase and the
+// overall run so the filter/submit/save-state phases always run with whatever
+// was collected, instead of the job being killed mid-fetch.
+define('RUN_TIME_BUDGET_MS', (int)(getenv('RUN_TIME_BUDGET_MS') ?: 50 * 60 * 1000));
+define('GN_TIME_BUDGET_MS', (int)(getenv('GN_TIME_BUDGET_MS') ?: 35 * 60 * 1000));
+// Once Google News starts returning 503s it usually keeps 503ing that IP for
+// the rest of the run: after this many consecutive failures, try one
+// cool-down, then give up on Google News for the day.
+define('GN_MAX_CONSECUTIVE_FAILURES', 12);
+define('GN_COOLDOWN_MS', 120000);
 define('GENERIC_ALIAS_MIN_FACILITIES', 3);
 define('USER_AGENT', 'kids-over-profits-discovery/1.0 (+https://kidsoverprofits.org)');
 define('BROWSER_USER_AGENT', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36');
@@ -78,7 +110,24 @@ $ABUSE_KEYWORDS = [
     'allegation', 'allegations', 'alleged', 'misconduct', 'death', 'died', 'killed',
     'restraint', 'seclusion', 'neglect', 'assault', 'molest', 'molestation',
     'survivor', 'whistleblower', 'class action', 'settlement', 'fined',
-    'license revoked', 'license suspended', 'shuttered', 'felony', 'felonies'
+    'license revoked', 'license suspended', 'shuttered', 'felony', 'felonies',
+    // Added 2026-09 from hand-submitted headlines the old list missed.
+    'trafficking', 'forced labor', 'torture', 'hellhole', 'wrongful death',
+    'sexual', 'kidnap', 'revoked', 'escaped', 'escape attempt', 'riot',
+    'strip search', 'solitary', 'suicide', 'overdose', 'shut it down'
+];
+
+// Weaker signals: real TTI news uses these, but so does routine coverage
+// ("licensed therapist", "complaints about traffic"). A title hit scores +2
+// instead of +3, so it needs a facility match, topic boost, or reddit share to
+// clear the threshold on its own.
+$WEAK_ABUSE_KEYWORDS = [
+    'license', 'licensing', 'cited', 'citation', 'complaint', 'complaints',
+    'violation', 'violations', 'escape', 'runaway', 'ran away', 'missing teen',
+    'closing', 'winding down', 'layoffs', 'laid off', 'probe', 'suspended',
+    'isolation', 'lockdown', 'hospitalized', 'mistreatment', 'maltreatment',
+    'trauma', 'traumatized', 'unlicensed', 'report finds', 'testif',
+    'hearing', 'legislation', 'bill would', 'bill to', 'banned', 'ban on', 'regulat'
 ];
 
 $STATE_NAMES = [
@@ -308,6 +357,17 @@ function hash_url(string $url): string {
     return substr(hash('sha256', normalize_url($url)), 0, 16);
 }
 
+/**
+ * Key for collapsing syndicated copies of one story within a run. Google News
+ * titles end in " - Publisher"; a wire story shows up under a dozen outlets.
+ * Returns '' for short titles so generic headlines are not merged.
+ */
+function headline_key(string $title): string {
+    $stripped = preg_replace('/\s+[-|\x{2013}\x{2014}]\s+[^-|\x{2013}\x{2014}]{2,60}$/u', '', $title);
+    $key = normalize_name($stripped ?? $title);
+    return mb_strlen($key) >= 25 ? $key : '';
+}
+
 function host_of(string $url): string {
     $h = parse_url($url, PHP_URL_HOST);
     if (!is_string($h) || $h === '') return '';
@@ -353,9 +413,25 @@ function save_state(array $state): void {
 
 function persist_rejected(array $newEntries): void {
     $existing = load_json_file(REJECTED_FILE, ['entries' => []]);
+    $existingEntries = is_array($existing['entries'] ?? null) ? $existing['entries'] : [];
     $ts = gmdate('Y-m-d\TH:i:s\Z');
-    $stamped = array_map(static fn($r) => array_merge(['ts' => $ts], $r), $newEntries);
-    $merged = array_slice(array_merge($stamped, $existing['entries'] ?? []), 0, 500);
+    // Rejected candidates are never marked "seen" (so a keyword-list change can
+    // rescue them later), which means the same article is re-rejected on every
+    // run it stays in the feed. Log each link once so the file stays useful
+    // for filter tuning instead of filling up with repeats.
+    $known = [];
+    foreach ($existingEntries as $e) {
+        if (!empty($e['link'])) $known[$e['link']] = true;
+    }
+    $fresh = [];
+    foreach ($newEntries as $r) {
+        $link = $r['link'] ?? '';
+        if ($link !== '' && isset($known[$link])) continue;
+        if ($link !== '') $known[$link] = true;
+        $fresh[] = array_merge(['ts' => $ts], $r);
+    }
+    if (!$fresh) return;
+    $merged = array_slice(array_merge($fresh, $existingEntries), 0, MAX_REJECTED_ENTRIES);
     save_json_file(REJECTED_FILE, ['lastUpdated' => $ts, 'entries' => $merged]);
 }
 
@@ -420,6 +496,70 @@ function build_blacklist_matcher(): array {
     };
 
     return ['hostBlocked' => $hostBlocked, 'pathBlocked' => $pathBlocked];
+}
+
+// ============================================================
+// Search-term config (discovery-queries.json)
+// ============================================================
+
+const DEFAULT_FACILITY_KEYWORDS = [
+    'abuse', 'lawsuit', 'arrested', 'indicted', 'investigation',
+    'closure', 'raid', 'allegations', 'survivor'
+];
+
+/**
+ * Load the editable search-term config. Every field has a fallback so a
+ * missing or half-edited file degrades to the pre-2026-09 behavior (facility
+ * queries only) instead of aborting the run.
+ */
+function load_discovery_queries(): array {
+    $raw = load_json_file(QUERIES_FILE, []);
+    if (!is_array($raw)) $raw = [];
+    $strList = static function ($v): array {
+        if (!is_array($v)) return [];
+        $out = [];
+        foreach ($v as $s) {
+            $s = trim((string)($s ?? ''));
+            if ($s !== '') $out[] = $s;
+        }
+        return $out;
+    };
+
+    $facilityKeywords = $strList($raw['facilityKeywords'] ?? null);
+    $topicQueries = [];
+    foreach ((is_array($raw['topicQueries'] ?? null) ? $raw['topicQueries'] : []) as $i => $t) {
+        if (!is_array($t) || !is_string($t['q'] ?? null) || trim($t['q']) === '') continue;
+        $topicQueries[] = [
+            'label' => trim((string)($t['label'] ?? ('topic-' . ($i + 1)))),
+            'q' => trim($t['q']),
+            'boost' => is_numeric($t['boost'] ?? null) ? (int)$t['boost'] : 2,
+            // Phrases (lower-cased) that must appear in the headline/blurb for
+            // the boost to apply. Google News relevance matching is loose.
+            'match' => array_map('mb_strtolower', $strList($t['match'] ?? null)),
+            'when' => is_string($t['when'] ?? null) ? trim($t['when']) : null
+        ];
+    }
+
+    $generic = [];
+    foreach ($strList($raw['genericQueryNames'] ?? null) as $n) {
+        $k = normalize_name($n);
+        if ($k !== '') $generic[$k] = true;
+    }
+
+    $maxPerTopic = is_numeric($raw['maxItemsPerTopic'] ?? null) && (int)$raw['maxItemsPerTopic'] > 0
+        ? (int)$raw['maxItemsPerTopic'] : 25;
+    $maxTopicSubmissions = is_numeric($raw['maxTopicSubmissionsPerRun'] ?? null) && (int)$raw['maxTopicSubmissionsPerRun'] >= 0
+        ? (int)$raw['maxTopicSubmissionsPerRun'] : 20;
+
+    return [
+        'facilityKeywords' => $facilityKeywords ?: DEFAULT_FACILITY_KEYWORDS,
+        'facilityRecency' => is_string($raw['facilityRecency'] ?? null) ? trim($raw['facilityRecency']) : '',
+        'topicRecency' => is_string($raw['topicRecency'] ?? null) ? trim($raw['topicRecency']) : '',
+        'maxItemsPerTopic' => $maxPerTopic,
+        'maxTopicSubmissionsPerRun' => $maxTopicSubmissions,
+        'topicQueries' => $topicQueries,
+        'genericQueryNames' => $generic
+    ];
 }
 
 // ============================================================
@@ -640,39 +780,86 @@ function parse_rss_items(string $xml): array {
     return $items;
 }
 
-function google_news_url(array $facility): string {
-    global $STATE_NAMES;
-    $nameToken = '"' . $facility['queryName'] . '"';
-    $stateToken = ($facility['state'] !== '' && isset($STATE_NAMES[$facility['state']]))
-        ? '"' . $STATE_NAMES[$facility['state']] . '"' : '';
-    $query = implode(' ', array_filter([
-        $nameToken, $stateToken,
-        '(abuse OR lawsuit OR arrested OR indicted OR investigation OR closure OR raid OR allegations OR survivor)'
-    ], static fn($t) => $t !== ''));
+function google_news_search_url(string $query): string {
     return 'https://news.google.com/rss/search?' . http_build_query([
         'q' => $query, 'hl' => 'en-US', 'gl' => 'US', 'ceid' => 'US:en'
     ]);
 }
 
-function fetch_google_news_for_facility(array $facility): array {
+/** "<facility>" "<State>" (kw OR kw ...) when:30d */
+function facility_news_query(array $facility, array $queries): string {
+    global $STATE_NAMES;
+    $nameToken = '"' . $facility['queryName'] . '"';
+    $stateToken = ($facility['state'] !== '' && isset($STATE_NAMES[$facility['state']]))
+        ? '"' . $STATE_NAMES[$facility['state']] . '"' : '';
+    $kwToken = '(' . implode(' OR ', $queries['facilityKeywords']) . ')';
+    return implode(' ', array_filter(
+        [$nameToken, $stateToken, $kwToken, $queries['facilityRecency']],
+        static fn($t) => $t !== ''
+    ));
+}
+
+/** Topic query text plus its recency window (per-query override, else global). */
+function topic_news_query(array $topic, array $queries): string {
+    $when = $topic['when'] !== null ? $topic['when'] : $queries['topicRecency'];
+    return implode(' ', array_filter([$topic['q'], $when], static fn($t) => $t !== ''));
+}
+
+/**
+ * Fetch one Google News RSS search and drop items older than the age cutoff.
+ * Returns ['items' => [...], 'failed' => bool] so the caller can drive the
+ * throttling breaker.
+ */
+function fetch_google_news_items(string $query, int $cap, string $label): array {
     try {
-        $xml = fetch_text(google_news_url($facility));
+        $xml = fetch_text(google_news_search_url($query));
         $cutoff = time() - MAX_ARTICLE_AGE_DAYS * 86400;
         $fresh = array_values(array_filter(parse_rss_items($xml), static function ($item) use ($cutoff) {
             if ($item['pubDate'] === '') return true;   // keep if unparseable
             $t = strtotime($item['pubDate']);
             return $t === false || $t >= $cutoff;
         }));
-        return array_map(static fn($item) => array_merge($item, [
-            'origin' => 'google-news',
-            'facilityQuery' => $facility['queryName'],
-            'facilityState' => $facility['state'],
-            'facilityCity' => $facility['city']
-        ]), array_slice($fresh, 0, PER_FACILITY_CAP));
+        return ['items' => array_slice($fresh, 0, $cap), 'failed' => false];
     } catch (Throwable $err) {
-        kop_warn("  ! Google News failed for \"{$facility['queryName']}\": {$err->getMessage()}");
-        return [];
+        kop_warn("  ! Google News failed for \"{$label}\": {$err->getMessage()}");
+        return ['items' => [], 'failed' => true];
     }
+}
+
+function fetch_google_news_for_facility(array $facility, array $queries): array {
+    $r = fetch_google_news_items(facility_news_query($facility, $queries), PER_FACILITY_CAP, $facility['queryName']);
+    $r['items'] = array_map(static fn($item) => array_merge($item, [
+        'origin' => 'google-news',
+        'facilityQuery' => $facility['queryName'],
+        'facilityState' => $facility['state'],
+        'facilityCity' => $facility['city']
+    ]), $r['items']);
+    return $r;
+}
+
+function fetch_google_news_for_topic(array $topic, array $queries): array {
+    $r = fetch_google_news_items(topic_news_query($topic, $queries), $queries['maxItemsPerTopic'], 'topic:' . $topic['label']);
+    $r['items'] = array_map(static fn($item) => array_merge($item, [
+        'origin' => 'google-news-topic',
+        'topicQuery' => $topic['label'],
+        'topicBoost' => $topic['boost'],
+        'topicMatch' => $topic['match']
+    ]), $r['items']);
+    return $r;
+}
+
+/**
+ * Should Google News be queried for this facility at all? Names like "The
+ * Children's Home" or "Juvenile Detention Center" return nothing but noise
+ * and burn a throttled request. The facility still participates in alias
+ * matching against Reddit and topic candidates.
+ */
+function is_generic_query_name(array $facility, array $queries, array $genericAliases): bool {
+    $norm = normalize_name($facility['queryName']);
+    if ($norm === '') return true;
+    if (isset($queries['genericQueryNames'][$norm])) return true;
+    if (isset($genericAliases[$norm])) return true;
+    return false;
 }
 
 // Reddit hard-blocks unauthenticated .json API requests, but the Atom feeds
@@ -886,7 +1073,7 @@ function extract_state_signals(string $text): array {
  * rejection reasons as the JS version.
  */
 function evaluate_candidate(array $candidate, array $facilityIndex, array $blacklist, array $facilityOwnHosts, array $genericAliases): array {
-    global $ABUSE_KEYWORDS;
+    global $ABUSE_KEYWORDS, $WEAK_ABUSE_KEYWORDS;
     $text = $candidate['title'] . ' ' . $candidate['description'];
     $reasons = [];
     $score = 0;
@@ -974,29 +1161,62 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         }
     }
 
-    // Abuse keyword scoring (title weighted higher than description)
+    // Abuse keyword scoring (title weighted higher than description; strong
+    // keywords outrank weak ones)
+    $firstHit = static function (array $list, string $hay): ?string {
+        foreach ($list as $k) {
+            if (str_contains($hay, $k)) return $k;
+        }
+        return null;
+    };
     $titleLower = mb_strtolower($candidate['title']);
-    $titleHit = null;
-    foreach ($ABUSE_KEYWORDS as $k) {
-        if (str_contains($titleLower, $k)) { $titleHit = $k; break; }
-    }
+    $descLower = mb_strtolower($candidate['description']);
+    $titleHit = $firstHit($ABUSE_KEYWORDS, $titleLower);
+    $weakTitleHit = $titleHit !== null ? null : $firstHit($WEAK_ABUSE_KEYWORDS, $titleLower);
     if ($titleHit !== null) {
         $score += 3;
         $reasons[] = 'title-kw:' . $titleHit;
+    } elseif ($weakTitleHit !== null) {
+        $score += 2;
+        $reasons[] = 'title-kw-weak:' . $weakTitleHit;
     } else {
-        $descLower = mb_strtolower($candidate['description']);
-        foreach ($ABUSE_KEYWORDS as $k) {
-            if (str_contains($descLower, $k)) {
-                $score += 1;
-                $reasons[] = 'desc-kw:' . $k;
-                break;
-            }
+        $descHit = $firstHit($ABUSE_KEYWORDS, $descLower) ?? $firstHit($WEAK_ABUSE_KEYWORDS, $descLower);
+        if ($descHit !== null) {
+            $score += 1;
+            $reasons[] = 'desc-kw:' . $descHit;
         }
     }
 
     if ($candidate['origin'] === 'reddit-link') {
         $score += 1;
         $reasons[] = 'reddit-link-post';
+    }
+
+    // Topic-query boost: the query itself carried the topical constraint
+    // ("troubled teen industry", "wilderness therapy"), so the article is on
+    // topic even when no facility in the database is named.
+    // The boost only applies when the topic's own phrase actually appears in
+    // the headline/blurb: Google News relevance matching is loose enough to
+    // return obituaries and theater reviews for "troubled teen industry".
+    if ($candidate['origin'] === 'google-news-topic' && (int)($candidate['topicBoost'] ?? 0) > 0) {
+        $phrases = is_array($candidate['topicMatch'] ?? null) ? $candidate['topicMatch'] : [];
+        // No phrases (a hand-edit typo in the queries file) means no boost,
+        // not an unconditional one.
+        $phraseHit = $phrases ? $firstHit($phrases, mb_strtolower($text)) : null;
+        if ($phraseHit !== null) {
+            $score += (int)$candidate['topicBoost'];
+            $reasons[] = 'topic:' . ($candidate['topicQuery'] ?? '');
+        } elseif ($match === null) {
+            // Off-topic result of a broad query, and no facility named: a bare
+            // keyword ("lawsuit", "survivor") is not enough to accept it.
+            return [
+                'accept' => false,
+                'reason' => 'topic-unmatched',
+                'meta' => ['topic' => $candidate['topicQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
+            ];
+        } else {
+            $reasons[] = 'topic-unmatched:' . ($candidate['topicQuery'] ?? '');
+        }
     }
 
     if ($score >= SCORE_THRESHOLD) {
@@ -1122,6 +1342,7 @@ function submit_candidate(array $candidate, array $evalResult, array $options = 
         'reasons=' . implode(',', $evalResult['reasons']),
         $evalResult['match'] !== null ? 'match=' . json_encode($evalResult['match'], JSON_UNESCAPED_SLASHES) : '',
         !empty($candidate['facilityQuery']) ? 'query=' . $candidate['facilityQuery'] : '',
+        !empty($candidate['topicQuery']) ? 'topic=' . $candidate['topicQuery'] : '',
         !empty($candidate['redditPermalink']) ? 'reddit=' . $candidate['redditPermalink'] : ''
     ], static fn($s) => $s !== ''));
 
@@ -1172,9 +1393,15 @@ function main(): void {
     if (SUBMIT_LIMIT !== PHP_INT_MAX) kop_log('  Submit limit: ' . SUBMIT_LIMIT);
     if (MAX_FACILITIES) kop_log('  Max facilities: ' . MAX_FACILITIES);
 
+    $runDeadline = microtime(true) + RUN_TIME_BUDGET_MS / 1000;
     $state = load_state();
     $seen = array_fill_keys($state['seenUrls'], true);
     $blacklist = build_blacklist_matcher();
+    $queries = load_discovery_queries();
+    kop_log('  Search terms: ' . count($queries['topicQueries']) . ' topic queries, ' .
+        count($queries['facilityKeywords']) . ' facility keywords, ' .
+        count($queries['genericQueryNames']) . ' generic names skipped' .
+        (NO_TOPICS ? ' (topics disabled by --no-topics)' : ''));
 
     // -- Fetch facility data live from API --
     kop_log("\nFetching facilities from API...");
@@ -1206,16 +1433,73 @@ function main(): void {
     kop_log('  ' . count($redditItems) . ' reddit items');
     array_push($candidates, ...($redditItems ?: []));
 
-    // -- Google News per facility (with politeness delay) --
-    kop_log("\nQuerying Google News per facility...");
-    foreach ($slice as $i => $fac) {
-        sleep_ms(RSS_REQUEST_DELAY_MS);
-        $items = fetch_google_news_for_facility($fac);
-        if (count($items) > 0) {
-            kop_log("  [{$fac['queryName']}" . ($fac['state'] !== '' ? ' / ' . $fac['state'] : '') . '] ' . count($items) . ' items');
+    // -- Google News: shared throttling breaker for the topic + facility tiers --
+    // Once Google News starts 503ing this IP it usually keeps doing so for the
+    // rest of the run: after N consecutive failures take one cool-down, then
+    // abandon Google News for the day rather than burn the budget on doomed
+    // requests. The counter is shared so topic failures count toward it.
+    $gnDeadline = min(microtime(true) + GN_TIME_BUDGET_MS / 1000, $runDeadline);
+    $gn = ['consecutiveFailures' => 0, 'cooldownsLeft' => 1, 'abandoned' => false];
+    $gnGate = static function (string $where) use (&$gn, $gnDeadline): bool {
+        if ($gn['abandoned']) return false;
+        if (microtime(true) >= $gnDeadline) {
+            kop_warn("  ! Google News time budget exhausted at {$where} — continuing to filter/submit with partial results");
+            $gn['abandoned'] = true;
+            return false;
         }
-        array_push($candidates, ...($items ?: []));
-        if (($i + 1) % 25 === 0) kop_log('  ...' . ($i + 1) . '/' . count($slice) . ' (running total: ' . count($candidates) . ')');
+        if ($gn['consecutiveFailures'] >= GN_MAX_CONSECUTIVE_FAILURES) {
+            if ($gn['cooldownsLeft'] > 0) {
+                $gn['cooldownsLeft']--;
+                $gn['consecutiveFailures'] = 0;
+                kop_warn('  ! ' . GN_MAX_CONSECUTIVE_FAILURES . ' consecutive Google News failures (rate-limited?) — cooling down ' . (GN_COOLDOWN_MS / 1000) . 's');
+                sleep_ms(GN_COOLDOWN_MS);
+            } else {
+                kop_warn("  ! Google News still failing after cool-down — abandoning Google News at {$where} for this run");
+                $gn['abandoned'] = true;
+                return false;
+            }
+        }
+        return true;
+    };
+
+    // -- Google News topic tier (runs first: these replace the old Google
+    //    Alerts and are the only Google News path that can surface a facility
+    //    not yet in the database, so they get the un-throttled requests) --
+    $topics = NO_TOPICS ? [] : $queries['topicQueries'];
+    $topicCandidates = 0;
+    if ($topics) {
+        kop_log("\nQuerying Google News topic queries (" . count($topics) . ')...');
+        foreach ($topics as $i => $topic) {
+            if (!$gnGate("topic {$i}/" . count($topics))) break;
+            sleep_ms(RSS_REQUEST_DELAY_MS);
+            $r = fetch_google_news_for_topic($topic, $queries);
+            $gn['consecutiveFailures'] = $r['failed'] ? $gn['consecutiveFailures'] + 1 : 0;
+            if (count($r['items']) > 0) kop_log("  [topic:{$topic['label']}] " . count($r['items']) . ' items');
+            array_push($candidates, ...($r['items'] ?: []));
+            $topicCandidates += count($r['items']);
+        }
+        kop_log("  {$topicCandidates} topic items");
+    }
+
+    // -- Google News per facility (with politeness delay) --
+    $querySlice = array_values(array_filter(
+        $slice,
+        static fn($f) => !is_generic_query_name($f, $queries, $genericAliases)
+    ));
+    $skippedGeneric = count($slice) - count($querySlice);
+    kop_log("\nQuerying Google News per facility (" . count($querySlice) . " facilities, {$skippedGeneric} generic names skipped)...");
+    $facilitiesQueried = 0;
+    foreach ($querySlice as $i => $fac) {
+        if (!$gnGate("{$i}/" . count($querySlice) . ' facilities')) break;
+        sleep_ms(RSS_REQUEST_DELAY_MS);
+        $r = fetch_google_news_for_facility($fac, $queries);
+        $facilitiesQueried++;
+        $gn['consecutiveFailures'] = $r['failed'] ? $gn['consecutiveFailures'] + 1 : 0;
+        if (count($r['items']) > 0) {
+            kop_log("  [{$fac['queryName']}" . ($fac['state'] !== '' ? ' / ' . $fac['state'] : '') . '] ' . count($r['items']) . ' items');
+        }
+        array_push($candidates, ...($r['items'] ?: []));
+        if (($i + 1) % 25 === 0) kop_log('  ...' . ($i + 1) . '/' . count($querySlice) . ' (running total: ' . count($candidates) . ')');
     }
 
     kop_log("\nTotal raw candidates: " . count($candidates));
@@ -1225,15 +1509,25 @@ function main(): void {
     $queue = [];
     $rejected = [];
     $dedupeSeen = [];
+    $dedupeHeadlines = [];
+    $duplicateHeadlines = 0;
 
     foreach ($candidates as $c) {
         if (empty($c['link']) || !str_starts_with($c['link'], 'http')) continue;
         $h = hash_url($c['link']);
         if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
         $dedupeSeen[$h] = true;
+        // Collapse syndicated copies (same wire headline, different outlet).
+        // Google News origins only: every link pulled from one Reddit post
+        // carries that post's title. Only an accepted copy claims the key, so
+        // a rejected first copy (wire host, state mismatch) does not hide a
+        // good one from another outlet.
+        $hk = in_array($c['origin'], ['google-news', 'google-news-topic'], true) ? headline_key($c['title']) : '';
+        if ($hk !== '' && isset($dedupeHeadlines[$hk])) { $duplicateHeadlines++; continue; }
 
         $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases);
         if ($result['accept']) {
+            if ($hk !== '') $dedupeHeadlines[$hk] = true;
             $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h];
         } else {
             $state['stats']['rejected'] += 1;
@@ -1243,12 +1537,29 @@ function main(): void {
                 'origin' => $c['origin'],
                 'host' => host_of($c['sourceUrl'] !== '' ? $c['sourceUrl'] : $c['link']),
                 'facilityQuery' => $c['facilityQuery'] ?? null,
+                'topicQuery' => $c['topicQuery'] ?? null,
                 'reason' => $result['reason'],
                 'meta' => $result['meta'] ?? null
             ];
         }
     }
     kop_log('After filter: ' . count($queue) . ' accepted, ' . count($rejected) . ' rejected (threshold ' . SCORE_THRESHOLD . ')');
+    $byOrigin = [];
+    foreach ($queue as $q) {
+        $o = $q['candidate']['origin'];
+        $byOrigin[$o] = ($byOrigin[$o] ?? 0) + 1;
+    }
+    $parts = [];
+    foreach ($byOrigin as $k => $v) $parts[] = "{$k}={$v}";
+    kop_log('  accepted by origin: ' . ($parts ? implode(', ', $parts) : 'none'));
+    if ($duplicateHeadlines) kop_log("  syndicated duplicates collapsed: {$duplicateHeadlines}");
+
+    // Facility and Reddit candidates go ahead of topic candidates, so a
+    // stalled topic tier (rate limits, extraction failures) cannot starve them.
+    $queue = array_merge(
+        array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] !== 'google-news-topic')),
+        array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] === 'google-news-topic'))
+    );
 
     // -- Persist rejected log right away (useful even if submit phase aborts) --
     if ($rejected) persist_rejected($rejected);
@@ -1278,10 +1589,29 @@ function main(): void {
     $submitted = 0;
     $submitErrors = 0;
     $postResolveRejected = 0;
+    $topicSubmitted = 0;
+    $topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
+    $topicDeferred = 0;
+    $consecutiveRateLimited = 0;
+    $topicCap = $queries['maxTopicSubmissionsPerRun'];
     $postResolveLog = [];
 
     foreach ($queue as $q) {
         if ($submitted >= SUBMIT_LIMIT) break;
+        // Per-run cap on topic-query submissions (Groq rate limit). Deferred
+        // candidates stay unmarked, so a later run picks them up if they are
+        // still in the feed.
+        if ($q['candidate']['origin'] === 'google-news-topic' && $topicCap > 0 && $topicAttempted >= $topicCap) {
+            $topicDeferred++;
+            continue;
+        }
+        if (microtime(true) >= $runDeadline) {
+            // Unprocessed candidates were never marked seen, so the next daily
+            // run picks them up. Breaking here is what lets state get saved.
+            $left = count($queue) - $submitted - $submitErrors - $postResolveRejected;
+            kop_warn("  ! run time budget exhausted with {$left} candidates unprocessed — saving state and exiting");
+            break;
+        }
 
         $originalLink = $q['candidate']['link'];
         $resolvedLink = resolve_google_news_url($originalLink);
@@ -1346,20 +1676,24 @@ function main(): void {
         // every run.
         $seen[$q['urlHash']] = true;
 
+        if ($q['candidate']['origin'] === 'google-news-topic') $topicAttempted++;
         sleep_ms(AI_REQUEST_DELAY_MS);
         $r = submit_candidate($q['candidate'], $q['evalResult']);
 
-        // Provider rate limits are transient — wait one cool-down and retry
-        // once within the run.
-        if (!$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? '')) {
-            kop_log('    rate-limited; retrying once after cool-down…');
-            sleep_ms(30000);
+        // Provider rate limits are transient — wait a cool-down and retry a
+        // couple of times within the run before giving the URL back to
+        // tomorrow's run.
+        for ($attempt = 1; $attempt <= AI_RATE_LIMIT_RETRIES &&
+             !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? ''); $attempt++) {
+            kop_log("    rate-limited; retry {$attempt}/" . AI_RATE_LIMIT_RETRIES . ' after ' . (AI_RATE_LIMIT_WAIT_MS / 1000) . 's cool-down…');
+            sleep_ms(AI_RATE_LIMIT_WAIT_MS);
             $r = submit_candidate($q['candidate'], $q['evalResult']);
         }
 
         if ($r['ok']) {
             $submitted++;
             $state['stats']['submitted'] += 1;
+            if ($q['candidate']['origin'] === 'google-news-topic') $topicSubmitted++;
         } else {
             $submitErrors++;
             // AI-stage failure says nothing bad about the URL (rate limit,
@@ -1368,6 +1702,16 @@ function main(): void {
             if ($r['stage'] === 'ai') {
                 unset($seen[$q['urlHash']], $seen[hash_url($q['candidate']['link'])]);
             }
+        }
+
+        // Still rate-limited after the in-run retries: the provider quota is
+        // spent for the night. Stop instead of burning the time budget; the
+        // un-marked candidates come back tomorrow.
+        $rateLimited = !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? '');
+        $consecutiveRateLimited = $rateLimited ? $consecutiveRateLimited + 1 : 0;
+        if ($consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
+            kop_warn('  ! AI provider still rate-limited after ' . AI_RATE_LIMIT_STOP_AFTER . ' candidates in a row — saving state and exiting');
+            break;
         }
     }
 
@@ -1381,11 +1725,13 @@ function main(): void {
     save_state($state);
 
     kop_log("\n--- Done ---");
-    kop_log('  facilities queried:  ' . count($slice));
+    kop_log("  facilities queried:  {$facilitiesQueried}/" . count($querySlice) . " ({$skippedGeneric} generic skipped, shard " . count($slice) . ')');
+    kop_log("  topic items:         {$topicCandidates}");
     kop_log('  candidates found:    ' . count($candidates));
     kop_log('  accepted by filter:  ' . count($queue));
-    kop_log('  submitted (ok):      ' . $submitted);
+    kop_log('  submitted (ok):      ' . $submitted . ($topicSubmitted ? " ({$topicSubmitted} from topic queries)" : ''));
     kop_log('  submitted (errors):  ' . $submitErrors);
+    if ($topicDeferred) kop_log("  topic deferred (cap): {$topicDeferred}");
     kop_log('  rejected (pre-fetch):  ' . count($rejected));
     kop_log('  rejected (post-resolve): ' . $postResolveRejected);
     kop_log('  cumulative stats:    ' . json_encode($state['stats'], JSON_UNESCAPED_SLASHES));

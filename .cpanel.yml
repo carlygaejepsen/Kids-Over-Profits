@@ -8,7 +8,13 @@ deployment:
     - /bin/cp -R docs $DEPLOYPATH
     - /bin/cp -R templates $DEPLOYPATH
     - /bin/cp -R seeds $DEPLOYPATH
+    # The discovery cron's rejected log used to be tracked as
+    # scripts/discovery-rejected.json; it now lives at the gitignored
+    # scripts/.discovery-rejected.json. Carry the live server copy over once,
+    # then drop the stale tracked file so it stops shadowing the new one.
+    - if [ -f $DEPLOYPATH/scripts/discovery-rejected.json ] && [ ! -f $DEPLOYPATH/scripts/.discovery-rejected.json ]; then /bin/mv $DEPLOYPATH/scripts/discovery-rejected.json $DEPLOYPATH/scripts/.discovery-rejected.json; fi
     - /bin/cp -R scripts $DEPLOYPATH
+    - /bin/rm -f $DEPLOYPATH/scripts/discovery-rejected.json
     # wiki-stubs.php reads markdown_output/empty_files_updated.md server-side to
     # know which wiki pages are still stubs. Ship that one file (the full
     # markdown_output/ dir is large and not otherwise needed in the theme).

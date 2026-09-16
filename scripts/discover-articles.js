@@ -2,10 +2,14 @@
 /**
  * Article Discovery
  *
- * Pulls candidate articles from Google News RSS (per active facility) and
- * r/troubledteens (new posts), pre-filters them with a state-aware scoring
- * pass, then feeds surviving URLs through the existing AI processor into
- * the news_submissions review queue.
+ * Pulls candidate articles from Google News RSS (topic queries, then one
+ * query per active facility) and r/troubledteens (new posts), pre-filters
+ * them with a state-aware scoring pass, then feeds surviving URLs through
+ * the existing AI processor into the news_submissions review queue.
+ *
+ * Search terms live in scripts/discovery-queries.json (topic queries, the
+ * per-facility keyword OR-group, generic facility names to skip). Edit that
+ * file to tune what gets searched; no code change needed.
  *
  * Facility data comes live from the WP REST API — NOT from any local JSON
  * snapshot, since the JSON snapshots are out of date.
@@ -15,11 +19,18 @@
  *   node scripts/discover-articles.js --dry-run    # discover + score, skip submission
  *   node scripts/discover-articles.js --limit 5    # cap candidates submitted this run
  *   node scripts/discover-articles.js --max-facilities 3   # smoke test
+ *   node scripts/discover-articles.js --no-topics  # skip the topic-query tier
  *
  * Environment:
  *   NEWS_API_BASE          (default: https://kidsoverprofits.org)
  *   AI_PROVIDER            (default: groq)
  *   SHARD_COUNT            (default: 7 — facilities split into N daily shards)
+ *   RSS_REQUEST_DELAY_MS   (default: 1500 — pause between Google News requests)
+ *   AI_REQUEST_DELAY_MS    (default: 6000 — pause between AI submissions)
+ *   RUN_TIME_BUDGET_MS / GN_TIME_BUDGET_MS  (default: 50 min / 35 min)
+ *
+ * The PHP port (discover-articles.php) mirrors this file 1:1 and is what the
+ * NixiHost cron runs nightly. Keep the two in sync.
  */
 
 'use strict';
@@ -33,11 +44,16 @@ const crypto = require('crypto');
 // ============================================================
 
 const STATE_FILE     = path.join(__dirname, '.discovery-state.json');
-const REJECTED_FILE  = path.join(__dirname, 'discovery-rejected.json');
+// Dot-prefixed + gitignored: the rejected log is runtime state written by the
+// server. It used to be committed back from CI; now that the cron owns the
+// run, a tracked copy would be overwritten by every deploy.
+const REJECTED_FILE  = path.join(__dirname, '.discovery-rejected.json');
 const BLACKLIST_FILE = path.join(__dirname, 'discovery-blacklist.json');
+const QUERIES_FILE   = path.join(__dirname, 'discovery-queries.json');
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
+const NO_TOPICS = args.includes('--no-topics');
 const LIMIT_ARG = args.indexOf('--limit');
 const SUBMIT_LIMIT = LIMIT_ARG > -1 ? parseInt(args[LIMIT_ARG + 1], 10) : Infinity;
 const MAX_FAC_ARG = args.indexOf('--max-facilities');
@@ -52,9 +68,16 @@ const AI_PROVIDER = process.env.AI_PROVIDER || 'groq';
 const SHARD_COUNT = parseInt(process.env.SHARD_COUNT || '7', 10);
 
 const SCORE_THRESHOLD     = 3;
-const RSS_REQUEST_DELAY_MS = 1500;
-const AI_REQUEST_DELAY_MS  = 4000;
+// Both delays are env-tunable: the cron runs from a permanent IP whose
+// standing with Google News and Groq matters more than a throwaway CI runner's.
+const RSS_REQUEST_DELAY_MS = parseInt(process.env.RSS_REQUEST_DELAY_MS || '1500', 10);
+const AI_REQUEST_DELAY_MS  = parseInt(process.env.AI_REQUEST_DELAY_MS  || '6000', 10);
+// Groq free-tier rate limits are per-minute; one 30s wait was often not enough.
+const AI_RATE_LIMIT_RETRIES   = 2;
+const AI_RATE_LIMIT_STOP_AFTER = 3;    // consecutive rate-limited candidates before the submit phase stops
+const AI_RATE_LIMIT_WAIT_MS   = 45000;
 const MAX_SEEN_URLS        = 50000;
+const MAX_REJECTED_ENTRIES = 2000;  // rejected log cap (deduped by link)
 const PER_FACILITY_CAP     = 15;    // RSS items considered per facility
 const REQUEST_TIMEOUT_MS   = 30000;
 const AI_TIMEOUT_MS        = 90000;
@@ -100,7 +123,24 @@ const ABUSE_KEYWORDS = [
     'allegation', 'allegations', 'alleged', 'misconduct', 'death', 'died', 'killed',
     'restraint', 'seclusion', 'neglect', 'assault', 'molest', 'molestation',
     'survivor', 'whistleblower', 'class action', 'settlement', 'fined',
-    'license revoked', 'license suspended', 'shuttered', 'felony', 'felonies'
+    'license revoked', 'license suspended', 'shuttered', 'felony', 'felonies',
+    // Added 2026-09 from hand-submitted headlines the old list missed.
+    'trafficking', 'forced labor', 'torture', 'hellhole', 'wrongful death',
+    'sexual', 'kidnap', 'revoked', 'escaped', 'escape attempt', 'riot',
+    'strip search', 'solitary', 'suicide', 'overdose', 'shut it down'
+];
+
+// Weaker signals: real TTI news uses these, but so does routine coverage
+// ("licensed therapist", "complaints about traffic"). A title hit scores +2
+// instead of +3, so it needs a facility match, topic boost, or reddit share to
+// clear the threshold on its own.
+const WEAK_ABUSE_KEYWORDS = [
+    'license', 'licensing', 'cited', 'citation', 'complaint', 'complaints',
+    'violation', 'violations', 'escape', 'runaway', 'ran away', 'missing teen',
+    'closing', 'winding down', 'layoffs', 'laid off', 'probe', 'suspended',
+    'isolation', 'lockdown', 'hospitalized', 'mistreatment', 'maltreatment',
+    'trauma', 'traumatized', 'unlicensed', 'report finds', 'testif',
+    'hearing', 'legislation', 'bill would', 'bill to', 'banned', 'ban on', 'regulat'
 ];
 
 // Used to build Google News queries and to extract state signals downstream
@@ -288,6 +328,17 @@ function hashUrl(url) {
     return crypto.createHash('sha256').update(normalizeUrl(url)).digest('hex').slice(0, 16);
 }
 
+/**
+ * Key for collapsing syndicated copies of one story within a run. Google News
+ * titles end in " - Publisher"; a wire story shows up under a dozen outlets.
+ * Returns '' for short titles so generic headlines are not merged.
+ */
+function headlineKey(title) {
+    const stripped = String(title || '').replace(/\s+[-|–—]\s+[^-|–—]{2,60}$/, '');
+    const key = normalizeName(stripped);
+    return key.length >= 25 ? key : '';
+}
+
 function hostOf(url) {
     try { return new URL(url).host.replace(/^www\./, '').toLowerCase(); }
     catch { return ''; }
@@ -332,10 +383,20 @@ function saveState(state) {
 
 function persistRejected(newEntries) {
     const existing = loadJson(REJECTED_FILE, { entries: [] });
-    const merged = newEntries
-        .map(r => ({ ts: new Date().toISOString(), ...r }))
-        .concat(existing.entries || [])
-        .slice(0, 500);   // keep only most recent 500
+    const existingEntries = existing.entries || [];
+    // Rejected candidates are never marked "seen" (so a keyword-list change can
+    // rescue them later), which means the same article is re-rejected on every
+    // run it stays in the feed. Log each link once so the file stays useful
+    // for filter tuning instead of filling up with repeats.
+    const known = new Set(existingEntries.map(e => e.link));
+    const fresh = [];
+    for (const r of newEntries) {
+        if (r.link && known.has(r.link)) continue;
+        if (r.link) known.add(r.link);
+        fresh.push({ ts: new Date().toISOString(), ...r });
+    }
+    if (!fresh.length) return;
+    const merged = fresh.concat(existingEntries).slice(0, MAX_REJECTED_ENTRIES);
     saveJson(REJECTED_FILE, { lastUpdated: new Date().toISOString(), entries: merged });
 }
 
@@ -397,6 +458,50 @@ function buildBlacklistMatcher() {
     }
 
     return { hostBlocked, pathBlocked };
+}
+
+// ============================================================
+// Search-term config (discovery-queries.json)
+// ============================================================
+
+const DEFAULT_FACILITY_KEYWORDS = [
+    'abuse', 'lawsuit', 'arrested', 'indicted', 'investigation',
+    'closure', 'raid', 'allegations', 'survivor'
+];
+
+/**
+ * Load the editable search-term config. Every field has a fallback so a
+ * missing or half-edited file degrades to the pre-2026-09 behavior (facility
+ * queries only) instead of aborting the run.
+ */
+function loadDiscoveryQueries() {
+    const raw = loadJson(QUERIES_FILE, {}) || {};
+    const strList = v => (Array.isArray(v) ? v : []).map(s => String(s || '').trim()).filter(Boolean);
+
+    const facilityKeywords = strList(raw.facilityKeywords);
+    const topicQueries = (Array.isArray(raw.topicQueries) ? raw.topicQueries : [])
+        .filter(t => t && typeof t.q === 'string' && t.q.trim())
+        .map((t, i) => ({
+            label: String(t.label || `topic-${i + 1}`).trim(),
+            q: t.q.trim(),
+            boost: Number.isFinite(Number(t.boost)) ? Number(t.boost) : 2,
+            // Phrases (lower-cased) that must appear in the headline/blurb for
+            // the boost to apply. Google News relevance matching is loose.
+            match: strList(t.match).map(s => s.toLowerCase()),
+            when: typeof t.when === 'string' ? t.when.trim() : null
+        }));
+
+    return {
+        facilityKeywords: facilityKeywords.length ? facilityKeywords : DEFAULT_FACILITY_KEYWORDS,
+        facilityRecency: typeof raw.facilityRecency === 'string' ? raw.facilityRecency.trim() : '',
+        topicRecency: typeof raw.topicRecency === 'string' ? raw.topicRecency.trim() : '',
+        maxItemsPerTopic: Number.isFinite(Number(raw.maxItemsPerTopic)) && Number(raw.maxItemsPerTopic) > 0
+            ? Number(raw.maxItemsPerTopic) : 25,
+        maxTopicSubmissionsPerRun: Number.isFinite(Number(raw.maxTopicSubmissionsPerRun)) && Number(raw.maxTopicSubmissionsPerRun) >= 0
+            ? Number(raw.maxTopicSubmissionsPerRun) : 20,
+        topicQueries,
+        genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean))
+    };
 }
 
 // ============================================================
@@ -636,37 +741,81 @@ function parseRssItems(xml) {
     return items;
 }
 
-function googleNewsUrl(facility) {
-    const nameToken = `"${facility.queryName}"`;
-    const stateToken = (facility.state && STATE_NAMES[facility.state]) ? `"${STATE_NAMES[facility.state]}"` : '';
-    const query = [nameToken, stateToken,
-        '(abuse OR lawsuit OR arrested OR indicted OR investigation OR closure OR raid OR allegations OR survivor)'
-    ].filter(Boolean).join(' ');
+function googleNewsSearchUrl(query) {
     const params = new URLSearchParams({ q: query, hl: 'en-US', gl: 'US', ceid: 'US:en' });
     return `https://news.google.com/rss/search?${params.toString()}`;
 }
 
-async function fetchGoogleNewsForFacility(facility) {
+/** "<facility>" "<State>" (kw OR kw ...) when:30d */
+function facilityNewsQuery(facility, queries) {
+    const nameToken = `"${facility.queryName}"`;
+    const stateToken = (facility.state && STATE_NAMES[facility.state]) ? `"${STATE_NAMES[facility.state]}"` : '';
+    const kwToken = `(${queries.facilityKeywords.join(' OR ')})`;
+    return [nameToken, stateToken, kwToken, queries.facilityRecency].filter(Boolean).join(' ');
+}
+
+/** Topic query text plus its recency window (per-query override, else global). */
+function topicNewsQuery(topic, queries) {
+    const when = topic.when !== null ? topic.when : queries.topicRecency;
+    return [topic.q, when].filter(Boolean).join(' ');
+}
+
+/**
+ * Fetch one Google News RSS search and drop items older than the age cutoff.
+ * Returns { items, failed } so the caller can drive the throttling breaker.
+ */
+async function fetchGoogleNewsItems(query, cap, label) {
     try {
-        const xml = await fetchText(googleNewsUrl(facility));
+        const xml = await fetchText(googleNewsSearchUrl(query));
         const cutoffMs = Date.now() - MAX_ARTICLE_AGE_DAYS * 86400000;
         const fresh = parseRssItems(xml).filter(item => {
             if (!item.pubDate) return true;     // keep if unparseable — better than dropping
             const t = Date.parse(item.pubDate);
             return !isFinite(t) || t >= cutoffMs;
         });
-        const items = fresh.slice(0, PER_FACILITY_CAP).map(item => ({
-            ...item,
-            origin: 'google-news',
-            facilityQuery: facility.queryName,
-            facilityState: facility.state,
-            facilityCity: facility.city
-        }));
-        return { items, failed: false };
+        return { items: fresh.slice(0, cap), failed: false };
     } catch (err) {
-        warn(`  ! Google News failed for "${facility.queryName}": ${err.message}`);
+        warn(`  ! Google News failed for "${label}": ${err.message}`);
         return { items: [], failed: true };
     }
+}
+
+async function fetchGoogleNewsForFacility(facility, queries) {
+    const r = await fetchGoogleNewsItems(facilityNewsQuery(facility, queries), PER_FACILITY_CAP, facility.queryName);
+    r.items = r.items.map(item => ({
+        ...item,
+        origin: 'google-news',
+        facilityQuery: facility.queryName,
+        facilityState: facility.state,
+        facilityCity: facility.city
+    }));
+    return r;
+}
+
+async function fetchGoogleNewsForTopic(topic, queries) {
+    const r = await fetchGoogleNewsItems(topicNewsQuery(topic, queries), queries.maxItemsPerTopic, `topic:${topic.label}`);
+    r.items = r.items.map(item => ({
+        ...item,
+        origin: 'google-news-topic',
+        topicQuery: topic.label,
+        topicBoost: topic.boost,
+        topicMatch: topic.match
+    }));
+    return r;
+}
+
+/**
+ * Should Google News be queried for this facility at all? Names like "The
+ * Children's Home" or "Juvenile Detention Center" return nothing but noise
+ * and burn a throttled request. The facility still participates in alias
+ * matching against Reddit and topic candidates.
+ */
+function isGenericQueryName(facility, queries, genericAliases) {
+    const norm = normalizeName(facility.queryName);
+    if (!norm) return true;
+    if (queries.genericQueryNames.has(norm)) return true;
+    if (genericAliases && genericAliases.has(norm)) return true;
+    return false;
 }
 
 // Reddit hard-blocks unauthenticated .json API requests (403 since ~mid-2026),
@@ -1009,14 +1158,21 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         }
     }
 
-    // Abuse keyword scoring (title weighted higher than description)
+    // Abuse keyword scoring (title weighted higher than description; strong
+    // keywords outrank weak ones)
     const titleLower = candidate.title.toLowerCase();
+    const descLower = candidate.description.toLowerCase();
     const titleHit = ABUSE_KEYWORDS.find(k => titleLower.includes(k));
+    const weakTitleHit = titleHit ? null : WEAK_ABUSE_KEYWORDS.find(k => titleLower.includes(k));
     if (titleHit) {
         score += 3;
         reasons.push(`title-kw:${titleHit}`);
+    } else if (weakTitleHit) {
+        score += 2;
+        reasons.push(`title-kw-weak:${weakTitleHit}`);
     } else {
-        const descHit = ABUSE_KEYWORDS.find(k => candidate.description.toLowerCase().includes(k));
+        const descHit = ABUSE_KEYWORDS.find(k => descLower.includes(k)) ||
+                        WEAK_ABUSE_KEYWORDS.find(k => descLower.includes(k));
         if (descHit) {
             score += 1;
             reasons.push(`desc-kw:${descHit}`);
@@ -1027,6 +1183,34 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     if (candidate.origin === 'reddit-link') {
         score += 1;
         reasons.push('reddit-link-post');
+    }
+
+    // Topic-query boost: the query itself carried the topical constraint
+    // ("troubled teen industry", "wilderness therapy"), so the article is on
+    // topic even when no facility in the database is named.
+    // The boost only applies when the topic's own phrase actually appears in
+    // the headline/blurb: Google News relevance matching is loose enough to
+    // return obituaries and theater reviews for "troubled teen industry".
+    if (candidate.origin === 'google-news-topic' && candidate.topicBoost > 0) {
+        const phrases = Array.isArray(candidate.topicMatch) ? candidate.topicMatch : [];
+        const textLower = text.toLowerCase();
+        // No phrases (a hand-edit typo in the queries file) means no boost,
+        // not an unconditional one.
+        const phraseHit = phrases.length ? phrases.find(p => textLower.includes(p)) : null;
+        if (phraseHit) {
+            score += candidate.topicBoost;
+            reasons.push(`topic:${candidate.topicQuery}`);
+        } else if (!match) {
+            // Off-topic result of a broad query, and no facility named: a bare
+            // keyword ("lawsuit", "survivor") is not enough to accept it.
+            return {
+                accept: false,
+                reason: 'topic-unmatched',
+                meta: { topic: candidate.topicQuery, score, reasons, host: candHost }
+            };
+        } else {
+            reasons.push(`topic-unmatched:${candidate.topicQuery}`);
+        }
     }
 
     if (score >= SCORE_THRESHOLD) {
@@ -1172,6 +1356,7 @@ async function submitCandidate(candidate, evalResult, options = {}) {
         `reasons=${evalResult.reasons.join(',')}`,
         evalResult.match ? `match=${JSON.stringify(evalResult.match)}` : '',
         candidate.facilityQuery ? `query=${candidate.facilityQuery}` : '',
+        candidate.topicQuery ? `topic=${candidate.topicQuery}` : '',
         candidate.redditPermalink ? `reddit=${candidate.redditPermalink}` : ''
     ].filter(Boolean).join(' | ');
 
@@ -1222,6 +1407,11 @@ async function main() {
     const state = loadState();
     const seen = new Set(state.seenUrls);
     const blacklist = buildBlacklistMatcher();
+    const queries = loadDiscoveryQueries();
+    log(`  Search terms: ${queries.topicQueries.length} topic queries, ` +
+        `${queries.facilityKeywords.length} facility keywords, ` +
+        `${queries.genericQueryNames.size} generic names skipped` +
+        (NO_TOPICS ? ' (topics disabled by --no-topics)' : ''));
 
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
@@ -1247,34 +1437,70 @@ async function main() {
     log(`  ${redditItems.length} reddit items`);
     candidates.push(...redditItems);
 
-    // -- Google News per facility (with politeness delay) --
-    log('\nQuerying Google News per facility...');
+    // -- Google News: shared throttling breaker for the topic + facility tiers --
+    // Once Google News starts 503ing this IP it usually keeps doing so for the
+    // rest of the run: after N consecutive failures take one cool-down, then
+    // abandon Google News for the day rather than burn the budget on doomed
+    // requests. The counter is shared so topic failures count toward it.
     const gnDeadline = Math.min(Date.now() + GN_TIME_BUDGET_MS, runDeadline);
-    let gnConsecutiveFailures = 0;
-    let gnCooldownsLeft = 1;
-    for (let i = 0; i < slice.length; i++) {
+    const gn = { consecutiveFailures: 0, cooldownsLeft: 1, abandoned: false };
+    async function gnGate(where) {
+        if (gn.abandoned) return false;
         if (Date.now() >= gnDeadline) {
-            warn(`  ! Google News time budget exhausted at ${i}/${slice.length} facilities — continuing to filter/submit with partial results`);
-            break;
+            warn(`  ! Google News time budget exhausted at ${where} — continuing to filter/submit with partial results`);
+            gn.abandoned = true;
+            return false;
         }
-        if (gnConsecutiveFailures >= GN_MAX_CONSECUTIVE_FAILURES) {
-            if (gnCooldownsLeft > 0) {
-                gnCooldownsLeft--;
-                gnConsecutiveFailures = 0;
+        if (gn.consecutiveFailures >= GN_MAX_CONSECUTIVE_FAILURES) {
+            if (gn.cooldownsLeft > 0) {
+                gn.cooldownsLeft--;
+                gn.consecutiveFailures = 0;
                 warn(`  ! ${GN_MAX_CONSECUTIVE_FAILURES} consecutive Google News failures (rate-limited?) — cooling down ${GN_COOLDOWN_MS / 1000}s`);
                 await sleep(GN_COOLDOWN_MS);
             } else {
-                warn(`  ! Google News still failing after cool-down — abandoning Google News at ${i}/${slice.length} facilities for this run`);
-                break;
+                warn(`  ! Google News still failing after cool-down — abandoning Google News at ${where} for this run`);
+                gn.abandoned = true;
+                return false;
             }
         }
-        const fac = slice[i];
+        return true;
+    }
+
+    // -- Google News topic tier (runs first: these replace the old Google
+    //    Alerts and are the only Google News path that can surface a facility
+    //    not yet in the database, so they get the un-throttled requests) --
+    const topics = NO_TOPICS ? [] : queries.topicQueries;
+    let topicCandidates = 0;
+    if (topics.length) {
+        log(`\nQuerying Google News topic queries (${topics.length})...`);
+        for (let i = 0; i < topics.length; i++) {
+            if (!(await gnGate(`topic ${i}/${topics.length}`))) break;
+            const topic = topics[i];
+            await sleep(RSS_REQUEST_DELAY_MS);
+            const { items, failed } = await fetchGoogleNewsForTopic(topic, queries);
+            gn.consecutiveFailures = failed ? gn.consecutiveFailures + 1 : 0;
+            if (items.length > 0) log(`  [topic:${topic.label}] ${items.length} items`);
+            candidates.push(...items);
+            topicCandidates += items.length;
+        }
+        log(`  ${topicCandidates} topic items`);
+    }
+
+    // -- Google News per facility (with politeness delay) --
+    const querySlice = slice.filter(f => !isGenericQueryName(f, queries, genericAliases));
+    const skippedGeneric = slice.length - querySlice.length;
+    log(`\nQuerying Google News per facility (${querySlice.length} facilities, ${skippedGeneric} generic names skipped)...`);
+    let facilitiesQueried = 0;
+    for (let i = 0; i < querySlice.length; i++) {
+        if (!(await gnGate(`${i}/${querySlice.length} facilities`))) break;
+        const fac = querySlice[i];
         await sleep(RSS_REQUEST_DELAY_MS);
-        const { items, failed } = await fetchGoogleNewsForFacility(fac);
-        gnConsecutiveFailures = failed ? gnConsecutiveFailures + 1 : 0;
+        const { items, failed } = await fetchGoogleNewsForFacility(fac, queries);
+        facilitiesQueried++;
+        gn.consecutiveFailures = failed ? gn.consecutiveFailures + 1 : 0;
         if (items.length > 0) log(`  [${fac.queryName}${fac.state ? ' / ' + fac.state : ''}] ${items.length} items`);
         candidates.push(...items);
-        if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${slice.length} (running total: ${candidates.length})`);
+        if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${querySlice.length} (running total: ${candidates.length})`);
     }
 
     log(`\nTotal raw candidates: ${candidates.length}`);
@@ -1284,15 +1510,25 @@ async function main() {
     const queue = [];
     const rejected = [];
     const dedupeSeen = new Set();
+    const dedupeHeadlines = new Set();
+    let duplicateHeadlines = 0;
 
     for (const c of candidates) {
         if (!c.link || !c.link.startsWith('http')) continue;
         const h = hashUrl(c.link);
         if (seen.has(h) || dedupeSeen.has(h)) continue;
         dedupeSeen.add(h);
+        // Collapse syndicated copies (same wire headline, different outlet).
+        // Google News origins only: every link pulled from one Reddit post
+        // carries that post's title. Only an accepted copy claims the key, so
+        // a rejected first copy (wire host, state mismatch) does not hide a
+        // good one from another outlet.
+        const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic') ? headlineKey(c.title) : '';
+        if (hk && dedupeHeadlines.has(hk)) { duplicateHeadlines++; continue; }
 
         const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases);
         if (result.accept) {
+            if (hk) dedupeHeadlines.add(hk);
             queue.push({ candidate: c, evalResult: result, urlHash: h });
         } else {
             state.stats.rejected += 1;
@@ -1302,12 +1538,22 @@ async function main() {
                 origin: c.origin,
                 host: hostOf(c.sourceUrl || c.link),
                 facilityQuery: c.facilityQuery || null,
+                topicQuery: c.topicQuery || null,
                 reason: result.reason,
                 meta: result.meta || null
             });
         }
     }
     log(`After filter: ${queue.length} accepted, ${rejected.length} rejected (threshold ${SCORE_THRESHOLD})`);
+    const byOrigin = {};
+    for (const q of queue) byOrigin[q.candidate.origin] = (byOrigin[q.candidate.origin] || 0) + 1;
+    log(`  accepted by origin: ${Object.entries(byOrigin).map(([k, v]) => `${k}=${v}`).join(', ') || 'none'}`);
+    if (duplicateHeadlines) log(`  syndicated duplicates collapsed: ${duplicateHeadlines}`);
+
+    // Facility and Reddit candidates go ahead of topic candidates, so a
+    // stalled topic tier (rate limits, extraction failures) cannot starve them.
+    // Array.prototype.sort is stable, so order within each tier is kept.
+    queue.sort((a, b) => (a.candidate.origin === 'google-news-topic') - (b.candidate.origin === 'google-news-topic'));
 
     // -- Persist rejected log right away (useful even if submit phase aborts) --
     if (rejected.length) persistRejected(rejected);
@@ -1338,10 +1584,21 @@ async function main() {
     //      on the canonical URL (Google News hid the real URL from earlier checks)
     //   3. AI process → submit
     let submitted = 0, submitErrors = 0, postResolveRejected = 0;
+    let topicSubmitted = 0, topicDeferred = 0;
+    let topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
+    let consecutiveRateLimited = 0;
+    const topicCap = queries.maxTopicSubmissionsPerRun;
     const postResolveLog = [];
 
     for (const q of queue) {
         if (submitted >= SUBMIT_LIMIT) break;
+        // Per-run cap on topic-query submissions (Groq rate limit). Deferred
+        // candidates stay unmarked, so a later run picks them up if they are
+        // still in the feed.
+        if (q.candidate.origin === 'google-news-topic' && topicCap > 0 && topicAttempted >= topicCap) {
+            topicDeferred++;
+            continue;
+        }
         if (Date.now() >= runDeadline) {
             // Unprocessed candidates were never marked seen, so the next daily
             // run picks them up. Breaking here (instead of being killed by the
@@ -1419,20 +1676,24 @@ async function main() {
         // so a flaky URL isn't retried every run.
         seen.add(q.urlHash);
 
+        if (q.candidate.origin === 'google-news-topic') topicAttempted++;
         await sleep(AI_REQUEST_DELAY_MS);
         let r = await submitCandidate(q.candidate, q.evalResult);
 
-        // Provider rate limits are transient — wait one cool-down and retry
-        // once within the run.
-        if (!r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || '')) {
-            log('    rate-limited; retrying once after cool-down…');
-            await sleep(30000);
+        // Provider rate limits are transient — wait a cool-down and retry a
+        // couple of times within the run before giving the URL back to
+        // tomorrow's run.
+        for (let attempt = 1; attempt <= AI_RATE_LIMIT_RETRIES &&
+             !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || ''); attempt++) {
+            log(`    rate-limited; retry ${attempt}/${AI_RATE_LIMIT_RETRIES} after ${AI_RATE_LIMIT_WAIT_MS / 1000}s cool-down…`);
+            await sleep(AI_RATE_LIMIT_WAIT_MS);
             r = await submitCandidate(q.candidate, q.evalResult);
         }
 
         if (r.ok) {
             submitted++;
             state.stats.submitted += 1;
+            if (q.candidate.origin === 'google-news-topic') topicSubmitted++;
         } else {
             submitErrors++;
             // A failure at the AI stage says nothing bad about the URL itself
@@ -1443,6 +1704,16 @@ async function main() {
                 seen.delete(q.urlHash);
                 seen.delete(hashUrl(q.candidate.link));
             }
+        }
+
+        // Still rate-limited after the in-run retries: the provider quota is
+        // spent for the night. Stop instead of burning the time budget; the
+        // un-marked candidates come back tomorrow.
+        const rateLimited = !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || '');
+        consecutiveRateLimited = rateLimited ? consecutiveRateLimited + 1 : 0;
+        if (consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
+            warn(`  ! AI provider still rate-limited after ${AI_RATE_LIMIT_STOP_AFTER} candidates in a row — saving state and exiting`);
+            break;
         }
     }
 
@@ -1456,11 +1727,13 @@ async function main() {
     saveState(state);
 
     log(`\n--- Done ---`);
-    log(`  facilities queried:  ${slice.length}`);
+    log(`  facilities queried:  ${facilitiesQueried}/${querySlice.length} (${skippedGeneric} generic skipped, shard ${slice.length})`);
+    log(`  topic items:         ${topicCandidates}`);
     log(`  candidates found:    ${candidates.length}`);
     log(`  accepted by filter:  ${queue.length}`);
-    log(`  submitted (ok):      ${submitted}`);
+    log(`  submitted (ok):      ${submitted}` + (topicSubmitted ? ` (${topicSubmitted} from topic queries)` : ''));
     log(`  submitted (errors):  ${submitErrors}`);
+    if (topicDeferred) log(`  topic deferred (cap): ${topicDeferred}`);
     log(`  rejected (pre-fetch):  ${rejected.length}`);
     log(`  rejected (post-resolve): ${postResolveRejected}`);
     log(`  cumulative stats:    ${JSON.stringify(state.stats)}`);
@@ -1505,6 +1778,7 @@ module.exports = {
     articleHostOf,
     // Core building blocks
     buildBlacklistMatcher,
+    loadDiscoveryQueries,
     buildFacilityIndex,
     fetchRedditCandidates,
     evaluateCandidate,
