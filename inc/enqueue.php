@@ -519,9 +519,13 @@ function kop_enqueue_report_scripts() {
         ),
         'ga-reports' => array(
             'script_handle' => 'ga-reports-script',
-            'script_path'   => '/js/inspections/ga_reports.js',
+            'script_path'   => '/js/inspections/states/ga.js',
             'data_object'   => 'gaReportsData',
             'json_glob'     => '',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/ga_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
     );
 
@@ -542,10 +546,29 @@ function kop_enqueue_report_scripts() {
                 );
             }
 
+            $script_deps = array('jquery');
+
+            // States migrated to the shared report engine load it first; their
+            // script_path is a small adapter that calls KOP.reportPage.mount().
+            if (!empty($config['report_page'])) {
+                $engine_path = get_stylesheet_directory() . '/js/inspections/report-page.js';
+                if (!file_exists($engine_path)) {
+                    continue;
+                }
+                wp_enqueue_script(
+                    'kop-report-page',
+                    get_stylesheet_directory_uri() . '/js/inspections/report-page.js',
+                    array(),
+                    filemtime($engine_path),
+                    true
+                );
+                $script_deps[] = 'kop-report-page';
+            }
+
             wp_enqueue_script(
                 $config['script_handle'],
                 get_stylesheet_directory_uri() . $config['script_path'],
-                array('jquery'), // Assuming jQuery dependency
+                $script_deps,
                 filemtime($script_full_path),
                 true
             );
