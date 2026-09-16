@@ -37,6 +37,9 @@
  *                      'facilities': keep a facility's full report list and drop
  *                      facilities with no reports at all (Texas behaviour).
  *   defaultSort(a, b)  Comparator for the "Default Order" option.
+ *   violationsNote     For states whose data carries no findings: shown instead
+ *                      of an empty list when a violations sort is chosen, so
+ *                      "no results" is not mistaken for "no violations".
  *
  * Tones: 'flagged' (violations), 'clean' (inspected, none found), 'repeat'
  * (a repeat violation), 'neutral'.
@@ -479,9 +482,13 @@
         function renderFilteredFacilities(facilities, context) {
             reportContainer.innerHTML = '';
             if (!facilities || !facilities.length) {
-                var msg = isSearching
-                    ? 'No facilities match your search.'
-                    : 'No facilities found for "' + context + '".';
+                var sortBy = sortSelect ? sortSelect.value : '';
+                var violationSort = sortBy === 'violations-only' || sortBy === 'violations-desc';
+                var msg = (violationSort && adapter.violationsNote)
+                    ? adapter.violationsNote
+                    : isSearching
+                        ? 'No facilities match your search.'
+                        : 'No facilities found for "' + context + '".';
                 reportContainer.innerHTML = '<p class="kop-rp-empty">' + escapeHtml(msg) + '</p>';
                 return;
             }

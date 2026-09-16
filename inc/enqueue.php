@@ -505,9 +505,13 @@ function kop_enqueue_report_scripts() {
         ),
         'nv-reports' => array(
             'script_handle' => 'nv-reports-script',
-            'script_path'   => '/js/inspections/nv_reports.js',
+            'script_path'   => '/js/inspections/states/nv.js',
             'data_object'   => 'nvReportsData',
             'json_glob'     => '',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/nv_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
         'or-reports' => array(
             'script_handle' => 'or-reports-script',
