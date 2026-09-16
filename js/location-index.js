@@ -4,6 +4,15 @@
 
 (function() {
 
+// js/shared/facility-resources.js, enqueued as a dependency. The no-op
+// fallback keeps the index rendering if that script fails to load. Resolved
+// lazily so load order within the footer cannot leave this stale.
+const resourceUi = {
+    renderChecklist: (facility, opts) => (window.KOP && window.KOP.resources)
+        ? window.KOP.resources.renderChecklist(facility, opts)
+        : ''
+};
+
 const getRestBase = () => {
     const configured = (window.locationIndexConfig && typeof window.locationIndexConfig.restUrl === 'string')
         ? window.locationIndexConfig.restUrl.trim()
@@ -1154,62 +1163,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? renderDetailSection('More details', `<div class="facility-detail-grid">${otherFacilityData}</div>`, 'facility-additional-section')
                     : '';
 
-                // Resources chips
+                // Materials on file, from the shared catalog in
+                // js/shared/facility-resources.js. Only materials we hold render;
+                // the newsDetails / pressReleasesDetails text comes through as
+                // inline detail, and the free-text notes box keeps its own row.
                 let resourcesSectionHtml = '';
                 if (facility.resources) {
-                    const resources = [];
-                    const resourceMap = {
-                        'hasNews': 'News', 'hasPressReleases': 'Press Releases', 'hasInspections': 'Inspections',
-                        'hasStateReports': 'State Reports', 'hasRegulatoryFilings': 'Regulatory Filings', 'hasLawsuits': 'Lawsuits',
-                        'hasPoliceReports': 'Police Reports', 'hasArticlesOfOrganization': 'Articles of Organization',
-                        'hasPropertyRecords': 'Property Records', 'hasPromotionalMaterials': 'Promotional Materials',
-                        'hasEnrollmentDocuments': 'Enrollment Documents', 'hasStudent': 'Student Records',
-                        'hasStaff': 'Staff Records', 'hasParent': 'Parent Records', 'hasSurvivorStories': 'Survivor Stories',
-                        'hasSettlements': 'Settlements', 'hasViolations': 'Violations', 'hasResearch': 'Research',
-                        'hasFinancial': 'Financial', 'hasNATSAP': 'NATSAP Profile', 'hasWebsite': 'Website Screenshots', 'hasOther': 'Other'
-                    };
-                    Object.keys(resourceMap).forEach(key => { if (facility.resources[key] === true) resources.push(resourceMap[key]); });
-                    // Catch-all for flags the map doesn't know (hasVideo, hasAudio,
-                    // hasSocialMedia, future additions): humanize the key itself.
-                    Object.keys(facility.resources).forEach(key => {
-                        if (facility.resources[key] !== true || resourceMap[key]) return;
-                        if (key.indexOf('has') !== 0) return;
-                        const label = key.replace(/^has/, '')
-                            .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
-                            .replace(/([A-Z]+)([A-Z][a-z])/g, '$1 $2')
-                            .trim();
-                        if (label) resources.push(label);
-                    });
-                    if (facility.resources.customResources && facility.resources.customResources.length > 0) {
-                        resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
-                    }
-                    // Details textareas and the resource-notes box from the form —
-                    // rendered alongside the chips so nothing entered in the
-                    // Resources section is saved invisibly.
-                    const resourceExtraRows = [];
-                    [['newsDetails', 'News details'], ['pressReleasesDetails', 'Press release details']].forEach(([key, label]) => {
-                        const text = cleanText(facility.resources[key] || '');
-                        if (text && !isValueEmpty(text)) {
-                            resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(label)}</span><span class="field-value">${escapeHtml(text)}</span></div>`);
-                        }
-                    });
+                    const holdingsHtml = resourceUi.renderChecklist(facility, { heading: '', showDetail: true });
+
                     const resourceNotes = (Array.isArray(facility.resources.notes) ? facility.resources.notes : (facility.resources.notes ? [facility.resources.notes] : []))
                         .map(note => typeof note === 'string' ? cleanText(note) : (note && note.text ? cleanText(note.text) : ''))
                         .filter(note => note && !isValueEmpty(note));
-                    if (resourceNotes.length > 0) {
-                        resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div>`);
-                    }
+                    const notesHtml = resourceNotes.length > 0
+                        ? `<div class="facility-detail-grid"><div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div></div>`
+                        : '';
 
-                    if (resources.length > 0 || resourceExtraRows.length > 0) {
-                        const chipsHtml = resources.length > 0
-                            ? `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`
-                            : '';
-                        const extrasHtml = resourceExtraRows.length > 0
-                            ? `<div class="facility-detail-grid">${resourceExtraRows.join('')}</div>`
-                            : '';
+                    if (holdingsHtml || notesHtml) {
                         resourcesSectionHtml = renderDetailSection(
-                            'Resources',
-                            chipsHtml + extrasHtml,
+                            'Materials on file',
+                            holdingsHtml + notesHtml,
                             'facility-resources-section'
                         );
                     }

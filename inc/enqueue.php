@@ -334,6 +334,40 @@ add_filter('theme_mod_header_sticky_shrink', '__return_false');
  * NOTE: This function is now disabled for pages using the page-tti-program-index.php template,
  * as they now use the full data form instead of the read-only display.
  */
+/**
+ * Shared facility UI: the single resources catalog (js/shared/facility-resources.js)
+ * and the component stylesheet it renders into. Every surface that shows
+ * "materials on file" pulls from here instead of keeping its own key -> label
+ * map, which is what let the three copies drift apart.
+ *
+ * Safe to call more than once per request; wp_enqueue_* dedupes by handle.
+ */
+function kop_enqueue_shared_facility_ui() {
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+
+    $components_css = $theme_dir . '/css/kop-components.css';
+    if (file_exists($components_css)) {
+        wp_enqueue_style(
+            'kop-components',
+            $theme_uri . '/css/kop-components.css',
+            array('kop-colors'),
+            filemtime($components_css)
+        );
+    }
+
+    $resources_js = $theme_dir . '/js/shared/facility-resources.js';
+    if (file_exists($resources_js)) {
+        wp_enqueue_script(
+            'kop-facility-resources',
+            $theme_uri . '/js/shared/facility-resources.js',
+            array(),
+            filemtime($resources_js),
+            true
+        );
+    }
+}
+
 function load_facilities_data() {
     // Skip if using the page template (which uses the full data form)
     if (is_page_template('page-tti-program-index.php') || is_page_template('templates/page-tti-program-index.php')) {
@@ -366,10 +400,12 @@ function load_facilities_data() {
         );
     }
 
+    kop_enqueue_shared_facility_ui();
+
     wp_enqueue_script(
         'facilities-display',
         get_stylesheet_directory_uri() . '/js/inspections/facilities-display.js',
-        array(),
+        array('kop-facility-resources'),
         $script_version,
         true
 );
@@ -1007,6 +1043,7 @@ function enqueue_data_form_script() {
     
 
                 $report_generator_path = get_stylesheet_directory() . $report_generator_relative;
+                kop_enqueue_shared_facility_ui();
 
     
 
@@ -1022,7 +1059,7 @@ function enqueue_data_form_script() {
 
     
 
-                    array('jquery', 'kop-report-config'),
+                    array('jquery', 'kop-report-config', 'kop-facility-resources'),
 
     
 
@@ -1555,10 +1592,12 @@ function enqueue_tti_processor_scripts() {
     );
 
     // Unified display script (shows all database fields) - standalone, no dependencies
+    kop_enqueue_shared_facility_ui();
+
     wp_enqueue_script(
         'tti-program-index-script',
         $theme_uri . '/js/tti-program-index.js',
-        array('jquery', 'kop-facility-merge'),
+        array('jquery', 'kop-facility-merge', 'kop-facility-resources'),
         file_exists($theme_dir . '/js/tti-program-index.js') ? filemtime($theme_dir . '/js/tti-program-index.js') : time(),
         true
     );

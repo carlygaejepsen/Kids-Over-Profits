@@ -14,6 +14,7 @@ get_header();
 
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/tti-program-index.css">
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/document-library.css">
+<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/kop-components.css?v=<?php echo time(); ?>">
 
 <div class="tti-program-index-wrapper">
     <div class="facility-report-container">
@@ -84,6 +85,7 @@ window.locationIndexConfig = {
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/document-library.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/facility-merge.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
+<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/shared/facility-resources.js?v=<?php echo time(); ?>"></script>
 <script src="<?php echo get_stylesheet_directory_uri(); ?>/js/location-index.js?v=<?php echo time(); ?>"></script>
 
 <?php

@@ -1231,6 +1231,13 @@
     };
 
     // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"
+    // js/shared/facility-resources.js, loaded just before this file by the
+    // page template. No-op fallback so a load failure cannot blank the list.
+    const resourceUi = (window.KOP && window.KOP.resources) || {
+        renderSummary: () => '',
+        renderChecklist: () => ''
+    };
+
     const humanizeFlagKey = key => String(key)
         .replace(/^has(?=[A-Z0-9])/, '')
         .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
@@ -1248,20 +1255,6 @@
         return `<div class="detail-row detail-resources"><strong>${escapeHtml(label)}:</strong> ${chips}</div>`;
     };
 
-    // "has*" resource flag -> human label
-    const RESOURCE_FLAG_LABELS = {
-        hasNews: 'News articles', hasPressReleases: 'Press releases',
-        hasInspections: 'Inspection reports', hasStateReports: 'State reports',
-        hasRegulatoryFilings: 'Regulatory filings', hasLawsuits: 'Lawsuits',
-        hasPoliceReports: 'Police reports', hasArticlesOfOrganization: 'Articles of organization',
-        hasPropertyRecords: 'Property records', hasPromotionalMaterials: 'Promotional materials',
-        hasEnrollmentDocuments: 'Enrollment documents', hasResearch: 'Academic research',
-        hasFinancial: 'Financial reports', hasStudent: 'Student / resident manual',
-        hasStaff: 'Staff manual', hasParent: 'Parent manual',
-        hasWebsite: 'Archived website', hasNATSAP: 'NATSAP profile',
-        hasSurvivorStories: 'Survivor stories', hasOther: 'Other documentation',
-        hasVideo: 'Video', hasAudio: 'Audio', hasSocialMedia: 'Social media',
-    };
 
     // locationDetails.formerLocations: {state, city, address, zip, fromYear, toYear}
     const renderFormerLocations = items => {
@@ -1443,13 +1436,12 @@
         detailRows.push(renderFlagChips('Philosophy', facility.philosophy_flags));
         detailRows.push(renderFlagChips('Critical incidents', facility.critical_incidents, 'resource-chip incident-chip'));
 
-        // Resources: turn the populated has* flags into chips, plus any details strings
-        if (Array.isArray(facility.resource_flags) && facility.resource_flags.length) {
-            const chips = facility.resource_flags
-                .map(f => RESOURCE_FLAG_LABELS[f] || f.replace(/^has/, ''))
-                .map(label => `<span class="resource-chip">${escapeHtml(label)}</span>`)
-                .join('');
-            detailRows.push(`<div class="detail-row detail-resources"><strong>Resources on file:</strong> ${chips}</div>`);
+        // Materials on file, grouped, from the shared catalog in
+        // js/shared/facility-resources.js. Reads facility.resource_flags /
+        // resource_details directly; renders nothing when we hold nothing.
+        const holdingsHtml = resourceUi.renderChecklist(facility, { showDetail: false, linkPanels: true });
+        if (holdingsHtml) {
+            detailRows.push(`<div class="detail-row detail-resources">${holdingsHtml}</div>`);
         }
         const rd = facility.resource_details || {};
         if (rd.newsDetails)          detailRows.push(renderScalarRow('News details', rd.newsDetails));
@@ -1619,6 +1611,27 @@
                     panel.dataset.loaded = '1';
                     btn.disabled = false;
                 }
+            });
+        });
+
+        // "Materials on file" rows that map to a panel (inspections, news,
+        // lawsuits) jump to it. Defer to the real toggle button so the doc
+        // lazy-load and the show/hide label stay in one place; an already-open
+        // panel is only scrolled to, never toggled shut.
+        container.querySelectorAll('.kop-holding-btn[data-panel]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.facility-card');
+                if (!card) return;
+                const panelKind = btn.dataset.panel;
+                const panel = card.querySelector(`.facility-panel[data-panel="${panelKind}"]`);
+                if (!panel) return;
+
+                if (panel.hidden) {
+                    const toggle = card.querySelector(`.facility-expand-btn[data-panel="${panelKind}"]`);
+                    if (toggle) toggle.click();
+                    else panel.hidden = false;
+                }
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             });
         });
     };

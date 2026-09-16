@@ -34,6 +34,14 @@ function displayFacilities(facilitiesData, containerId) {
     
     const toArray = value => Array.isArray(value) ? value : [];
 
+    // js/shared/facility-resources.js, enqueued as a dependency. The no-op
+    // fallback keeps cards rendering if that script ever fails to load rather
+    // than throwing partway through and blanking the whole list.
+    const resourceUi = (window.KOP && window.KOP.resources) || {
+        renderSummary: () => '',
+        renderChecklist: () => ''
+    };
+
     /**
      * Safely extracts a displayable string from any value
      * Handles objects, arrays, strings, numbers - prevents "[object Object]" display
@@ -487,41 +495,13 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             });
 
-            // Build resources available section
-            let resourcesAvailable = '';
-            if (facility.resources) {
-                const resources = [];
-                const resourceMap = {
-                    'hasNews': 'News',
-                    'hasPressReleases': 'Press Releases', 
-                    'hasInspections': 'Inspections',
-                    'hasStateReports': 'State Reports',
-                    'hasRegulatoryFilings': 'Regulatory Filings',
-                    'hasLawsuits': 'Lawsuits',
-                    'hasSettlements': 'Settlements',
-                    'hasViolations': 'Violations',
-                    'hasResearch': 'Research',
-                    'hasFinancial': 'Financial',
-                    'hasNATSAP': 'NATSAP Profile',
-                    'hasWebsite': 'Website Screenshots',
-                    'hasOther': 'Other'
-                };
-                
-                Object.keys(resourceMap).forEach(key => {
-                    if (facility.resources[key] === true) {
-                        resources.push(resourceMap[key]);
-                    }
-                });
-                
-                if (facility.resources.customResources && facility.resources.customResources.length > 0) {
-                    resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(Boolean));
-                }
-
-                if (resources.length > 0) {
-                    const safeResources = resources.map(item => escapeHtml(item)).join(', ');
-                    resourcesAvailable = safeResources ? '<p><strong>Resources Available:</strong> ' + safeResources + '</p>' : '';
-                }
-            }
+            // Materials on file. The local resourceMap this replaced knew only 13
+            // of the form's 21 flags, so police reports, property records,
+            // enrollment documents, the three manuals, articles of organization
+            // and survivor stories were saved by curators and never shown here.
+            // Both calls return '' when the facility holds nothing.
+            const holdingsSummary = resourceUi.renderSummary(facility);
+            const holdingsChecklist = resourceUi.renderChecklist(facility);
 
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
@@ -534,13 +514,14 @@ function displayFacilities(facilitiesData, containerId) {
                         <p class="facility-status">
                             <span class="status-badge status-${statusClass}">${statusLabel}</span>
                         </p>
+                        ${holdingsSummary}
                     </div>
                     <div class="facility-details">
                         <details class="facility-expanded-info">
                             <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
                             <div class="facility-extra-content">
                                 ${otherFacilityData}
-                                ${resourcesAvailable}
+                                ${holdingsChecklist}
                                 ${renderFieldNotes(facility.fieldNotes)}
                             </div>
                         </details>

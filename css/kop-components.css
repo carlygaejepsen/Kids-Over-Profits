@@ -1,0 +1,280 @@
+/**
+ * Kids Over Profits - shared UI components
+ *
+ * Palette tokens only (css/colors.css). Anything added here has to work on the
+ * facility cards, the program index and the state hubs without per-page
+ * overrides -- that is the whole point of the file.
+ *
+ * Bright accents (chartreuse, coral pink, bubblegum pink) stay on borders and
+ * highlights, never backgrounds, per the project palette rules.
+ */
+
+:root {
+    /* Semantic tokens the base palette does not define yet. */
+    --kop-muted: #5a5f7a;
+    --kop-surface-raised: var(--kop-white);
+    --kop-surface-sunken: var(--kop-sand);
+    --kop-hairline: #d8d3c2;
+
+    --kop-space-xs: 4px;
+    --kop-space-sm: 8px;
+    --kop-space-md: 12px;
+    --kop-space-lg: 20px;
+
+    --kop-radius-sm: 4px;
+    --kop-radius-md: 8px;
+    --kop-radius-pill: 999px;
+}
+
+/* ---------------------------------------------------------------------------
+   Materials on file
+   Only materials we hold are rendered -- there is deliberately no "missing" or
+   unchecked state. See js/shared/facility-resources.js.
+   --------------------------------------------------------------------------- */
+
+.kop-holdings {
+    margin: var(--kop-space-md) 0;
+}
+
+.kop-holdings-heading {
+    margin: 0 0 var(--kop-space-sm);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--kop-text-primary);
+}
+
+.kop-holdings-count {
+    display: inline-block;
+    margin-bottom: var(--kop-space-sm);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-muted);
+}
+
+.kop-holdings-chips,
+.kop-holdings-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--kop-space-sm);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-holding,
+.kop-holdings-group,
+.kop-holdings-list {
+    min-width: 0;
+}
+
+.kop-holdings-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: var(--kop-space-xs) var(--kop-space-md);
+}
+
+/* The row itself. In the compact strip it reads as a chip; in the full
+   checklist the grid above turns the same markup into aligned rows. */
+.kop-holding {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--kop-space-sm);
+    margin: 0;
+    padding: 0;
+    font-size: 0.85rem;
+    line-height: 1.35;
+    color: var(--kop-text-primary);
+}
+
+.kop-holdings--compact .kop-holding {
+    align-items: center;
+    padding: var(--kop-space-xs) 10px;
+    background: var(--kop-surface-raised);
+    border: 1px solid var(--kop-border-primary);
+    border-radius: var(--kop-radius-pill);
+}
+
+/* Full checklist: every row is flat and shares one left edge, linked or not,
+   so the grid reads as a list instead of a patchwork of boxes. */
+.kop-holdings--full .kop-holding {
+    flex-wrap: wrap;
+    padding: 5px 6px;
+    border-radius: var(--kop-radius-sm);
+}
+
+/* Rows carrying prose (a detail line or a free-text custom entry) span the
+   whole grid instead of squeezing into one 230px column. */
+.kop-holdings--full .kop-holding--wide {
+    grid-column: 1 / -1;
+}
+
+/* CSS-drawn checkmark: no icon font, no SVG request. Decorative -- the list is
+   already labelled, so the markup marks this aria-hidden. The top margin pins
+   it to the first line of a label that wraps. */
+.kop-holding-check {
+    position: relative;
+    flex: 0 0 auto;
+    width: 14px;
+    height: 14px;
+    margin-top: 2px;
+    background: var(--kop-teal);
+    border: 1px solid var(--kop-navy-blue);
+    border-radius: 3px;
+}
+
+.kop-holdings--compact .kop-holding-check {
+    margin-top: 0;
+}
+
+.kop-holding-check::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 4px;
+    width: 3px;
+    height: 7px;
+    border: solid var(--kop-white);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* Zero basis + min-width 0 keeps a long label beside its checkbox and
+   wrapping in place, rather than dropping onto its own line beneath it. */
+.kop-holding-label {
+    flex: 1 1 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Keep the count and "View" beside the label rather than flung to the far
+   edge of a full-width row. */
+.kop-holdings--compact .kop-holding-label,
+.kop-holding-btn .kop-holding-label {
+    flex: 0 1 auto;
+}
+
+/* Chips shrink and wrap their text on narrow screens instead of overflowing. */
+.kop-holdings--compact .kop-holding,
+.kop-holdings--compact .kop-holding-btn {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.kop-holding-count {
+    flex: 0 0 auto;
+    min-width: 20px;
+    padding: 1px 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--kop-white);
+    background: var(--kop-navy-blue);
+    border-radius: var(--kop-radius-pill);
+}
+
+.kop-holding-detail {
+    box-sizing: border-box;
+    flex: 1 0 100%;
+    margin: 2px 0 0;
+    padding-left: 22px;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--kop-muted);
+}
+
+/* Materials that can open a panel (inspections, news, lawsuits). The button
+   carries the row padding, so the <li> must drop its own -- matched at the
+   same specificity as the full-list row rule, or linked rows sit indented. */
+.kop-holding--linked,
+.kop-holdings--full .kop-holding--linked {
+    padding: 0;
+}
+
+.kop-holding-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--kop-space-sm);
+    width: 100%;
+    margin: 0;
+    padding: 5px 6px;
+    font: inherit;
+    line-height: inherit;
+    color: inherit;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-radius: var(--kop-radius-sm);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.kop-holdings--compact .kop-holding--linked {
+    padding: 0;
+}
+
+.kop-holdings--compact .kop-holding-btn {
+    align-items: center;
+    padding: var(--kop-space-xs) 10px;
+    border-radius: var(--kop-radius-pill);
+}
+
+.kop-holding-btn:hover,
+.kop-holding-btn:focus-visible {
+    background: var(--kop-bg-accent);
+}
+
+.kop-holding-btn:focus-visible {
+    outline: 2px solid var(--kop-focus-color);
+    outline-offset: 1px;
+}
+
+/* "View" affordance on linked rows; the chip form is compact enough without it. */
+.kop-holding-go {
+    flex: 0 0 auto;
+    align-self: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--kop-teal);
+}
+
+.kop-holdings--compact .kop-holding-go {
+    display: none;
+}
+
+.kop-holding-btn:hover .kop-holding-go,
+.kop-holding-btn:focus-visible .kop-holding-go {
+    color: var(--kop-navy-blue);
+    text-decoration: underline;
+}
+
+.kop-holdings-more {
+    display: flex;
+    align-items: center;
+    padding: var(--kop-space-xs) 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--kop-muted);
+}
+
+.kop-holdings-group + .kop-holdings-group {
+    margin-top: var(--kop-space-md);
+}
+
+.kop-holdings-group-label {
+    margin: 0 0 var(--kop-space-xs);
+    padding-bottom: 2px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-muted);
+    border-bottom: 1px solid var(--kop-hairline);
+}
+
+@media (max-width: 600px) {
+    .kop-holdings-list {
+        grid-template-columns: 1fr;
+    }
+}

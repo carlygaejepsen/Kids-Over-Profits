@@ -571,41 +571,12 @@ function generateFacilityAccreditations(facility) {
 function generateFacilityResources(facility) {
     if (!facility.resources) return '';
 
-    const resources = [];
-    const resourceMap = {
-        'hasNews': 'News',
-        'hasPressReleases': 'Press Releases',
-        'hasInspections': 'Inspections',
-        'hasStateReports': 'State Reports',
-        'hasRegulatoryFilings': 'Regulatory Filings',
-        'hasLawsuits': 'Lawsuits',
-        'hasSettlements': 'Settlements',
-        'hasViolations': 'Violations',
-        'hasResearch': 'Research',
-        'hasFinancial': 'Financial',
-        'hasNATSAP': 'NATSAP Profile',
-        'hasWebsite': 'Website Screenshots',
-        'hasPoliceReports': 'Police Reports',
-        'hasArticlesOfOrganization': 'Articles of Organization',
-        'hasPropertyRecords': 'Property Records',
-        'hasPromotionalMaterials': 'Promotional Materials',
-        'hasEnrollmentDocuments': 'Enrollment Documents',
-        'hasStudent': 'Student Records',
-        'hasStaff': 'Staff Records',
-        'hasParent': 'Parent Records',
-        'hasSurvivorStories': 'Survivor Stories',
-        'hasOther': 'Other'
-    };
-
-    Object.keys(resourceMap).forEach(key => {
-        if (facility.resources[key] === true) {
-            resources.push(resourceMap[key]);
-        }
-    });
-
-    if (facility.resources.customResources && facility.resources.customResources.length > 0) {
-        resources.push(...facility.resources.customResources.filter(r => typeof r === 'string' && r.trim()));
-    }
+    // Labels, order and the custom/unknown-key handling come from the shared
+    // catalog (js/shared/facility-resources.js) so this report cannot drift
+    // from the public cards again. The report keeps its own plain list markup.
+    const resources = (window.KOP && window.KOP.resources)
+        ? window.KOP.resources.held(facility).map(item => item.label)
+        : [];
 
     if (resources.length === 0 && (!facility.resources.notes || facility.resources.notes.length === 0)) {
         return '';

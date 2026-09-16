@@ -101,6 +101,13 @@ function displayFacilities(facilitiesData, containerId) {
         return;
     }
 
+    // js/shared/facility-resources.js, enqueued as a dependency. The no-op
+    // fallback keeps the index rendering if that script fails to load.
+    const resourceUi = (window.KOP && window.KOP.resources) || {
+        renderSummary: () => '',
+        renderChecklist: () => ''
+    };
+
     // --- Helper Functions ---
 
     const toArray = value => Array.isArray(value) ? value : [];
@@ -1814,72 +1821,27 @@ function displayFacilities(facilitiesData, containerId) {
                 facilityHeaderRaw
             ));
 
-            // Build resources available section
+            // Materials on file, from the shared catalog in
+            // js/shared/facility-resources.js. Only materials we hold render --
+            // the newsDetails / pressReleasesDetails textareas come through as
+            // inline detail under their own item, and the free-text resource
+            // notes box keeps its own row so nothing typed into the Resources
+            // section is saved invisibly.
             let resourcesSectionHtml = '';
             if (facility.resources) {
-                const resources = [];
-                const resourceMap = {
-                    'hasNews': 'News',
-                    'hasPressReleases': 'Press Releases',      
-                    'hasInspections': 'Inspections',
-                    'hasStateReports': 'State Reports',        
-                    'hasRegulatoryFilings': 'Regulatory Filings',
-                    'hasLawsuits': 'Lawsuits',
-                    'hasPoliceReports': 'Police Reports',
-                    'hasArticlesOfOrganization': 'Articles of Organization',
-                    'hasPropertyRecords': 'Property Records',
-                    'hasPromotionalMaterials': 'Promotional Materials',
-                    'hasEnrollmentDocuments': 'Enrollment Documents',
-                    'hasStudent': 'Student Records',
-                    'hasStaff': 'Staff Records',
-                    'hasParent': 'Parent Records',
-                    'hasSurvivorStories': 'Survivor Stories',
-                    'hasSettlements': 'Settlements',
-                    'hasViolations': 'Violations',
-                    'hasResearch': 'Research',
-                    'hasFinancial': 'Financial',
-                    'hasNATSAP': 'NATSAP Profile',
-                    'hasWebsite': 'Website Screenshots',       
-                    'hasOther': 'Other'
-                };
+                const holdingsHtml = resourceUi.renderChecklist(facility, { heading: '', showDetail: true });
 
-                Object.keys(resourceMap).forEach(key => {      
-                    if (facility.resources[key] === true) {    
-                        resources.push(resourceMap[key]);      
-                    }
-                });
-
-                if (facility.resources.customResources && facility.resources.customResources.length > 0) {
-                    resources.push(...facility.resources.customResources.map(item => cleanText(item)).filter(item => !isValueEmpty(item)));
-                }
-
-                // Details textareas and the resource-notes box from the form —
-                // rendered alongside the chips so nothing entered in the
-                // Resources section is saved invisibly.
-                const resourceExtraRows = [];
-                [['newsDetails', 'News details'], ['pressReleasesDetails', 'Press release details']].forEach(([key, label]) => {
-                    const text = cleanText(facility.resources[key] || '');
-                    if (text && !isValueEmpty(text)) {
-                        resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">${escapeHtml(label)}</span><span class="field-value">${escapeHtml(text)}</span></div>`);
-                    }
-                });
                 const resourceNotes = (Array.isArray(facility.resources.notes) ? facility.resources.notes : (facility.resources.notes ? [facility.resources.notes] : []))
                     .map(note => typeof note === 'string' ? cleanText(note) : (note && note.text ? cleanText(note.text) : ''))
                     .filter(note => note && !isValueEmpty(note));
-                if (resourceNotes.length > 0) {
-                    resourceExtraRows.push(`<div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div>`);
-                }
+                const notesHtml = resourceNotes.length > 0
+                    ? `<div class="facility-detail-grid"><div class="field-row full-width-grid"><span class="field-label">Resource notes</span><span class="field-value">${resourceNotes.map(note => escapeHtml(note)).join('<br>')}</span></div></div>`
+                    : '';
 
-                if (resources.length > 0 || resourceExtraRows.length > 0) {
-                    const chipsHtml = resources.length > 0
-                        ? `<div class="resource-chip-list">${resources.map(item => `<span class="resource-chip">${escapeHtml(item)}</span>`).join('')}</div>`
-                        : '';
-                    const extrasHtml = resourceExtraRows.length > 0
-                        ? `<div class="facility-detail-grid">${resourceExtraRows.join('')}</div>`
-                        : '';
+                if (holdingsHtml || notesHtml) {
                     resourcesSectionHtml = renderDetailSection(
-                        'Resources',
-                        chipsHtml + extrasHtml,
+                        'Materials on file',
+                        holdingsHtml + notesHtml,
                         'facility-resources-section'
                     );
                 }
