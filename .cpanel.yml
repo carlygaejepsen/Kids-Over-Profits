@@ -68,3 +68,7 @@ deployment:
     # Dead Kadence nav-guard workaround removed 2026-09-17 (root cause fixed by
     # the theme_mod_header_sticky_shrink filter in inc/enqueue.php).
     - /bin/rm -f $DEPLOYPATH/js/data-form/kadence-nav-guard.js
+    # /favicon.ico is answered by LiteSpeed before WordPress (its own 404 page),
+    # so WordPress core's Site Icon redirect never runs. Ship a physical file
+    # built from the Site Icon (attachment 3455) to the web root.
+    - /bin/cp favicon.ico /home/kidsover/public_html/favicon.ico
