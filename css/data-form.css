@@ -69,6 +69,8 @@ body {
 
 .section-toggle {
     color: #FFFFFF;
+    background: #000435;
+    border-color: #000435;
 }
 
 .content-box,
@@ -1218,15 +1220,163 @@ select:focus {
     color: #000435;
 }
 
+/* Expand/collapse control. The markup still carries a legacy glyph, which
+   font-size: 0 hides; the label and chevron are drawn here so every section
+   bar reads the same way and says what clicking it does. */
 .section-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    font-size: 0;
+    line-height: 1;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #000435;
     color: #FFFFFF;
-    font-size: 20px;
-    transition: transform 0.3s ease;
+    border: 1px solid #000435;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.section-toggle::before {
+    content: 'Expand';
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.section-toggle::after {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.section-header:hover .section-toggle,
+.section-toggle:focus-visible {
+    background: #000080;
+    border-color: #000080;
+    color: #FFFFFF;
+    outline: none;
 }
 
 .section.expanded .section-toggle {
-    transform: rotate(180deg);
+    background: #FFFFFF;
+    color: #000435;
+    border-color: #000435;
+}
+
+.section.expanded .section-header:hover .section-toggle {
+    background: #FFF5CB;
+    color: #000435;
+    border-color: #000435;
+}
+
+.section.expanded .section-toggle::before {
+    content: 'Collapse';
+}
+
+.section.expanded .section-toggle::after {
+    transform: translateY(2px) rotate(-135deg);
+}
+
+/* Step guidance for the submission page */
+.kop-steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 25px;
+    padding: 0;
+    list-style: none;
+    counter-reset: kop-step;
+}
+
+.kop-steps li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #FFFFFF;
+    border: 1px solid #33A7B5;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #000435;
+}
+
+.kop-steps li::before {
+    counter-increment: kop-step;
+    content: counter(kop-step);
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #000080;
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kop-steps strong {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+.kop-steps span {
+    display: block;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #334155;
+}
+
+.kop-step-kicker {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #000080;
+}
+
+.kop-step-kicker::before {
+    content: attr(data-step);
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #000080;
+    color: #FFFFFF;
+    font-size: 12px;
+    letter-spacing: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.kop-step-kicker small {
+    flex-basis: 100%;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #334155;
+    padding-left: 34px;
+}
+
+@media (max-width: 768px) {
+    .kop-steps {
+        grid-template-columns: 1fr;
+    }
 }
 
 .section-content {
@@ -2634,9 +2784,10 @@ input[type="url"].array-input {
     }
 
     .section-toggle {
-        font-size: 18px;
+        font-size: 0;
         margin-left: 8px;
         flex-shrink: 0;
+        padding: 5px 10px;
     }
 
     .section-content {
@@ -3041,7 +3192,7 @@ input[type="url"].array-input {
     }
 
     .section-toggle {
-        font-size: 16px;
+        font-size: 0;
     }
 
     .toc-title {

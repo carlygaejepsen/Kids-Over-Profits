@@ -17,6 +17,29 @@ get_header();
             ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
         </div>
         
+        <ol class="kop-steps" aria-label="How to submit">
+            <li>
+                <div>
+                    <strong>Choose what you are adding</strong>
+                    <span>Pick a tab below, then load a saved project or start with a blank one.</span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <strong>Fill in the details</strong>
+                    <span>Each bar is a section. Click it, or its Expand button, to open it. Fill in only what you know.</span>
+                </div>
+            </li>
+            <li>
+                <div>
+                    <strong>Submit for review</strong>
+                    <span>Use the Submit for Review button at the bottom. Save Draft Locally keeps your work in this browser.</span>
+                </div>
+            </li>
+        </ol>
+
+        <div class="kop-step-kicker" data-step="1">Choose what you are adding</div>
+
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation" data-kop-bug-feature="data-form/project-picker" data-kop-bug-label="Project Picker &amp; Categories">
             <div class="category-tabs">
@@ -652,6 +675,7 @@ get_header();
         </div>
 
         <div id="facility-main-wrapper" data-kop-bug-feature="data-form/facility-editor" data-kop-bug-label="Facility Editor"><!-- Start of main wrapper -->
+            <div class="kop-step-kicker" data-step="2">Fill in the details<small>Each bar below is a section. Click it or press Expand to open it. You only need to fill in what you know.</small></div>
             <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>
@@ -1592,6 +1616,7 @@ get_header();
         </div>
         
         <!-- Submission Section -->
+        <div class="kop-step-kicker" data-step="3" data-section-views="companies,locations,referrers,transporters">Submit for review</div>
         <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters" data-kop-bug-feature="data-form/submit" data-kop-bug-label="Submit Suggestions" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
