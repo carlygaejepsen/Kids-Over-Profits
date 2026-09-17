@@ -14,6 +14,10 @@ function kop_redirect_map() {
     return array(
         // Renamed (phase 1): the country template derives the name from the slug.
         'uk'            => '/united-kingdom/',
+        // The facility data files the country under "Czech Republic", and the
+        // country template derives the name from the slug, so the page lives
+        // at /czech-republic/. The International map linked /czechia/.
+        'czechia'       => '/czech-republic/',
 
         // Retired shells (phase 3). Each was an empty container or hand-typed
         // list that a template-driven page now covers.

@@ -1,0 +1,9 @@
+{
+  "title": "Czech Republic",
+  "slug": "czech-republic",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "country-page.html",
+  "template": "page-country.php",
+  "seed_version": 1
+}

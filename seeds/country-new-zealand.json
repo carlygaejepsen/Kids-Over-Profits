@@ -1,0 +1,9 @@
+{
+  "title": "New Zealand",
+  "slug": "new-zealand",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "country-page.html",
+  "template": "page-country.php",
+  "seed_version": 1
+}

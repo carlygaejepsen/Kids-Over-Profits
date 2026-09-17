@@ -562,6 +562,11 @@ function kop_template_assignments() {
         'mexico'         => 'page-country.php',
         'samoa'          => 'page-country.php',
         'united-kingdom' => 'page-country.php',
+        'czech-republic'     => 'page-country.php',
+        'dominican-republic' => 'page-country.php',
+        'italy'              => 'page-country.php',
+        'new-zealand'        => 'page-country.php',
+        'netherlands'        => 'page-country.php',
     );
 }
 
@@ -701,6 +706,13 @@ function kop_seed_posts() {
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
         'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
         'nc-reports.json',           // /nc-reports/ page for the NC adapter, 2026-09-16
+        // Country hubs the International map links to but that had no page
+        // (2026-09-17). Slugs match the country names the facility data uses.
+        'country-czech-republic.json',              
+        'country-dominican-republic.json',          
+        'country-italy.json',                       
+        'country-new-zealand.json',                 
+        'country-netherlands.json',                 
     );
 }
 
@@ -1366,7 +1378,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '17';
+    $version = '18';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
