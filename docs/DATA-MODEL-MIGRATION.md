@@ -708,12 +708,28 @@ is; the server translates between its project shape and v2.
   refuse to run, and 13 maintenance tools that write the old tables exit with
   a 409 (`kop_v2_exit_if_legacy_frozen`). Switching back is possible but
   discards v2 edits made since, and the page says how many.
+- Every reader was ported on 2026-09-17 and follows the same switch: the data
+  form's search, autocomplete and pickers, the suggestion review diff, the
+  state page's inspection placement and related-records name map, the program
+  index's news and lawsuit attachers, the facility alias index behind news and
+  lawsuit matching, the news feed and the lawsuits page.
+  `kop_v2_legacy_shaped_rows()` ($wpdb) and `kop_v2_pdo_master_rows()` (PDO)
+  serve them the operator projects and facilities in the legacy row shapes, so
+  their matching logic is unchanged; `kop_v2_pdo_names_by_id()` resolves the
+  ids the link tables hold.
 - The switch stays disabled while `kop_v2_write_switch_blockers()` is not
-  empty. Remaining (2026-09-16): Data Manager actions; facility picker writes;
-  wiki approval merge and wiki document-folder link; form search,
-  autocomplete and pickers; suggestion review diff; state page inspection
-  placement and related-records name map; news feed, lawsuits page and the
-  news/lawsuit linkers. Remove an entry when its code is ported.
+  empty. Remaining (2026-09-17): the Data Manager's actions, the facility
+  picker's writes, and the wiki approval field merge with the wiki
+  document-folder link. Remove an entry when its code is ported.
+- Reader differences measured against the production copy
+  (`scripts/test-facility-v2-readers.php`, WordPress stubbed, both models run
+  and diffed): no search result, autocomplete value, resolved name or link is
+  lost. Deliberate: "Adults Only" is not a status (Unknown, original in the
+  notes); 9 facilities in Mexico lose the US state the old map invented for
+  them; 5 of 3,670 inspection rows stop being relocated by a name shared
+  across states ("Hope House") and stay with the authority that inspected
+  them; and a facility is no longer hidden from search when its operator
+  project matches the same term.
 - Test: `scripts/test-facility-v2-writer.php` against a throwaway MySQL 8
   loaded with a production copy: 64 checks pass (round trip of all 116
   projects writes nothing, edits, new facilities without duplicates, removal
