@@ -50,6 +50,17 @@ function kop_apply_redirect_map() {
     if ($path === '') {
         return;
     }
+    // No physical favicon.ico exists, so every browser request for it was a
+    // WordPress 404 (about 14 a day in the access log). Send it to the Site
+    // Icon set in the customizer; the <link rel=icon> tags already use it.
+    if ($path === 'favicon.ico') {
+        if (function_exists('has_site_icon') && has_site_icon()) {
+            wp_safe_redirect(get_site_icon_url(32), 302);
+            exit;
+        }
+        return;
+    }
+
     $map = kop_redirect_map();
     if (!isset($map[$path])) {
         return;
