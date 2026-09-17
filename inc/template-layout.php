@@ -67,6 +67,8 @@ function kop_template_layout_no_sidebar() {
         'templates/page-news-processor.php',
         'templates/single-facility-profile.php',
         'templates/facility-page.php',
+        // Not an admin tool, but the map wants every pixel of width it can get.
+        'templates/page-network-map.php',
     ));
 }
 

@@ -1960,6 +1960,33 @@ function kop_enqueue_template_assets() {
         }
     };
 
+    if (kop_page_uses_template('page-network-map.php')) {
+        $style('kop-network-map', '/css/network-map.css');
+
+        // The same force bundle the layout build uses. It ships to the browser
+        // because a focused neighbourhood re-settles live; the 900-node map
+        // itself is precomputed and never simulated here.
+        $script('kop-d3-force', '/js/vendor/d3-force.bundle.min.js');
+
+        // Each module depends on every module before it, so load order is the
+        // list order and no module has to guard against a missing neighbour.
+        // Files that do not exist yet are skipped, which is what lets the page
+        // shell ship before the modules do.
+        $deps = array('kop-d3-force');
+        foreach (array('store', 'canvas', 'viewport', 'focus', 'search', 'filters', 'drawer', 'url-state', 'app') as $module) {
+            $handle = 'kop-network-' . $module;
+            $script($handle, '/js/network-map/' . $module . '.js', $deps);
+            if (wp_script_is($handle, 'enqueued')) {
+                $deps[] = $handle;
+            }
+        }
+
+        if (wp_script_is('kop-network-app', 'enqueued') && function_exists('kop_network_map_config')) {
+            wp_localize_script('kop-network-app', 'KOP_NETWORK_CONFIG', kop_network_map_config());
+        }
+        return;
+    }
+
     $is_state   = kop_page_uses_template('page-state.php');
     $is_country = kop_page_uses_template('page-country.php');
     if ($is_state || $is_country) {

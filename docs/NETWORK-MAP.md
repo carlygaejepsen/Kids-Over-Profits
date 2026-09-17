@@ -13,7 +13,7 @@ in detail. Phases 3 and 4 are outlined at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, filters, search, drawer, URL state, mobile | In progress, step 1 of 7 done |
+| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 1 of 8 done |
 | 3 | Analysis tools: Focus, Path, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import | Outlined |
 
@@ -68,14 +68,20 @@ licence header, like `marked.min.js` and `purify.min.js` already in `js/`.
 Pan, zoom and pinch are written by hand, about a hundred lines, because
 d3-zoom drags in five more packages.
 
-**Layout is precomputed, not simulated in the browser.** A Node script runs
-d3-force once, seeded from the Miro coordinates, and writes positions to a
-file. The page paints settled on first load, works under reduced motion
-with nothing to disable, and filtering hides nodes without moving the
-rest. d3-force v3 uses its own seeded random source, so the output is
-reproducible. The script loads the UMD files in a small `vm` context that
-exposes a fake global, which sidesteps their `require` calls for packages
-that are not installed.
+**The full map's layout is precomputed, not simulated in the browser.** A
+Node script runs d3-force once, seeded from the Miro coordinates, and
+writes positions to a file. The page paints settled on first load, works
+under reduced motion with nothing to disable, and filtering hides nodes
+without moving the rest. d3-force v3 uses its own seeded random source, so
+the output is reproducible. The script loads the UMD files in a small `vm`
+context that exposes a fake global, which sidesteps their `require` calls
+for packages that are not installed.
+
+The focus view is the exception, and it is why the vendor bundle ships to
+the browser as well as being used at build time. A focused neighbourhood is
+at most about thirty nodes, so re-settling it to fill the viewport costs a
+few milliseconds even on a phone. Nine hundred nodes never move; thirty
+do.
 
 **Plain scripts, not ES modules.** Every existing page script is an IIFE
 loaded with `wp_enqueue_script` in dependency order, and there is no
@@ -87,7 +93,37 @@ The toolbar, filter rail, drawer and legend exist before any script runs,
 which keeps them crawlable, styleable, and usable by screen readers. Only
 the canvas and the lists inside the drawer are filled by script.
 
-### Deliverables
+**The map has two states: the whole map, and a focused chain.** This is the
+core of the page, and it replaces the "select a node and dim the rest"
+sketch this document originally carried.
+
+Hover previews, click commits. Hovering a node lights it and everything it
+connects to, drops the rest to about fifteen percent, and pulls the
+neighbours in toward it so the cluster visibly gathers. Clicking commits:
+the rest of the map goes away entirely, the node and its neighbours
+re-settle to fill the viewport, and the node is pushed onto a chain.
+
+The hover gather is a fraction of the way along each neighbour's existing
+line to the hovered node, about a third, with a floor so nothing collides.
+Pulling along the existing direction rather than snapping onto a ring means
+a neighbour stays roughly where the eye last saw it, so the map does not
+scramble under the pointer. It is a per-frame display offset, never a
+change to the stored positions: leaving the node eases everything back, and
+the precomputed layout is untouched. Under `prefers-reduced-motion` the
+gather is skipped entirely and hover is dimming alone, which loses nothing
+factual.
+
+Clicking a neighbour from there extends the chain rather than replacing it,
+so the view becomes "Lichfield, then Cross Creek, then whoever ran it" —
+the trail the researcher actually walked. Everything on the chain stays on
+screen with its own neighbours; the chain is the query. A breadcrumb in the
+toolbar names each step, clicking a crumb truncates back to it, and Escape
+or a Whole map button returns to the precomputed view.
+
+Isolating on hover alone was considered and rejected: crossing a dense
+region would rebuild the view once per node passed, and touch has no hover
+at all, so the tap path would have needed its own design regardless. Hover
+is a preview precisely because it is reversible.
 
 | Path | Purpose |
 |---|---|
@@ -106,6 +142,7 @@ the canvas and the lists inside the drawer are filled by script.
 | `js/network-map/viewport.js` | Pan, wheel zoom, pinch, node drag, quadtree hit testing |
 | `js/network-map/search.js` | Typeahead over names and aliases, ARIA listbox |
 | `js/network-map/filters.js` | Binds the rail controls to store state |
+| `js/network-map/focus.js` | The chain: hover preview, click to commit, breadcrumb truncation, and the live re-settle of a focused neighbourhood |
 | `js/network-map/drawer.js` | Selected node panel and connection list |
 | `js/network-map/url-state.js` | Encodes selection, filters and viewport into the hash, restores on load |
 | `js/network-map/app.js` | Bootstrap and event wiring |
@@ -215,8 +252,9 @@ Edges: corporate solid and thicker, family dashed, unknown dotted grey,
 survivor coral, cross-region orange when that toggle is on.
 
 Labels: nodes above a degree threshold always, the rest fade in past a zoom
-level, selected and neighbours always. Selection dims everything else to
-twenty percent.
+level, hovered, chained and neighbouring nodes always. Hover drops
+everything off the neighbourhood to about fifteen percent; a committed
+focus removes it from the scene entirely rather than dimming it.
 
 Chain hulls come last in this step and can slip to Phase 3 without loss.
 
@@ -241,10 +279,13 @@ The drawer shows name, kind badge, status pill, NATSAP badge, chain and
 board region, a profile link when the config has one, a directory search
 link otherwise, then connections grouped by category with the role phrased
 from the stored direction: "therapist at", "acquired", "became". Each
-connection row is a button that hops selection.
+connection row is a button that extends the chain by that node, the same
+as clicking it on the canvas, which is what makes the chain reachable
+without a pointer.
 
-The hash carries selected id, colour mode, every filter, and the viewport
-transform. It is written with `replaceState` on a short debounce. The Share
+The hash carries the whole chain in order, colour mode, every filter, and
+the viewport transform, so a shared link reproduces the trail rather than
+just its last node. It is written with `replaceState` on a short debounce. The Share
 button copies the URL.
 
 #### 7. Mobile and accessibility
@@ -280,10 +321,11 @@ Each step leaves the branch deployable.
 2. Template, seed, assignment, layout list, enqueue block, empty
    stylesheet. The page renders its intro and an empty stage.
 3. Store, canvas, viewport. The map draws and pans.
-4. Filters, legend, colour modes.
-5. Search, drawer, URL state.
-6. Mobile breakpoints, keyboard, reduced motion, module tests.
-7. Chain hulls, if they fit.
+4. Hover preview and gather, click to focus, the chain and its breadcrumb.
+5. Filters, legend, colour modes.
+6. Search, drawer, URL state.
+7. Mobile breakpoints, keyboard, reduced motion, module tests.
+8. Chain hulls, if they fit.
 
 Deploy notes: `inc/` deploys last, and the new `js/vendor` and
 `js/network-map` directories need confirming in the first deploy since the
@@ -291,7 +333,8 @@ cPanel job has been flaky about new paths.
 
 ### Open decisions
 
-- **Slug.** Assumed `/network/`. `/connections/` reads better to a visitor.
+- ~~**Slug.**~~ Settled: `/network-map/`, matching the page title and this
+  document.
 - **The two "Asst." frames.** They are Miro overflow, not real groups. The
   plan shows them in the region filter labelled as board frames, which is
   honest, but they could be hidden from the filter entirely.
@@ -300,9 +343,13 @@ cPanel job has been flaky about new paths.
 
 ## Phase 3: analysis tools (outline)
 
-- **Focus**: ego network at one or two hops, everything else dimmed.
-- **Path**: pick a second node, highlight the shortest chain of people and
-  ownership between them.
+Focus and Path were the headline items here. Focus became the core Phase 2
+interaction instead, and the chain covers most of what Path was for, so
+what is left is:
+
+- **Shortest path between two named nodes**: the chain walks the graph a
+  hop at a time, which answers "how is A connected to B" only if you
+  already suspect the route. Pick both ends, let the graph find it.
 - **List view**: an accessible, sortable table of the same filtered nodes
   and edges, with CSV export. This is the screen-reader path.
 - **Suggest a correction**: reuses `submit-info.js` to write to

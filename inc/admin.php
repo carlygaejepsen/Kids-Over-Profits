@@ -567,6 +567,8 @@ function kop_template_assignments() {
         'italy'              => 'page-country.php',
         'new-zealand'        => 'page-country.php',
         'netherlands'        => 'page-country.php',
+
+        'network-map'        => 'page-network-map.php',
     );
 }
 
@@ -713,6 +715,7 @@ function kop_seed_posts() {
         'country-italy.json',                       
         'country-new-zealand.json',                 
         'country-netherlands.json',                 
+        'network-map.json',                         // /network-map/ page for the network map, 2026-09-17
     );
 }
 
@@ -1378,7 +1381,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '18';
+    $version = '19';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

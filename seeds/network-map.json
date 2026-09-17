@@ -1,0 +1,9 @@
+{
+  "title": "Network Map",
+  "slug": "network-map",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "network-map.html",
+  "template": "page-network-map.php",
+  "seed_version": 1
+}
