@@ -94,12 +94,12 @@
     border-color: #dddddd;
 }
 
-/* Facility card text colors - WHITE backgrounds get BLACK text */
-.tti-program-index-wrapper .facility-card,
-.tti-program-index-wrapper .facility-card *,
-.tti-program-index-wrapper .facility-card p,
-.tti-program-index-wrapper .facility-card span,
-.tti-program-index-wrapper .facility-card div {
+/* Facility card text colors - WHITE backgrounds get BLACK text.
+   Set on the card only so descendants inherit it; a `*` blanket here
+   would also paint navy pills (holding counts, the Submit info label)
+   black on navy. Descendants that need a forced color carry their own
+   rules below. */
+.tti-program-index-wrapper .facility-card {
     color: #000000 !important;
 }
 
@@ -393,12 +393,11 @@ details[open] > summary.operator-header::after {
     box-shadow: 0 3px 8px rgba(51, 167, 181, 0.25);
 }
 
-/* Ensure ALL text within operator sections is white */
-.operator-section *,
-.operator-section p,
-.operator-section span,
-.operator-section div,
-.operator-section strong {
+/* Ensure ALL text within operator sections is white, except inside the
+   facility cards (white background, black text, own pill colors).
+   :where() keeps specificity at (0,1,0) so the counter-patches in
+   document-library.css and the .operator-details rules still win. */
+.operator-section :where(*:not(.facility-card, .facility-card *)) {
     color: #ffffff !important;
 }
 

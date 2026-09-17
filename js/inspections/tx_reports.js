@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function initializeReport() {
         try {
-            console.log('Starting to initialize Texas report...');
 
             // Check for container before proceeding
             if (!reportContainer) {
@@ -81,20 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Fetch from database API, fall back to legacy JSON
             const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
             const url = urls[0] || '/wp-content/themes/child/api/inspections-read.php?state=TX';
-            console.log('URL to fetch:', url);
 
             const reportsResponse = await fetch(url);
             if (!reportsResponse.ok) {
                 throw new Error('Failed to load reports: ' + reportsResponse.status);
             }
             const reportsData = await reportsResponse.json();
-            console.log('Loaded reports data:', reportsData);
             scrapedTimestamp = reportsData.scraped_timestamp || reportsResponse.headers.get('Last-Modified') || '';
             renderLastUpdated();
 
             // Convert Texas data structure to facility array
             facilitiesArray = convertTexasDataToFacilities(reportsData);
-            console.log('Converted to', facilitiesArray.length, 'facilities');
 
             if (facilitiesArray.length === 0) {
                 reportContainer.innerHTML = '<p>No facilities found in the data.</p>';
@@ -103,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Group facilities by first letter
             allFacilitiesData = groupFacilitiesByLetter(facilitiesArray);
-            console.log('Grouped facilities by letter:', Object.keys(allFacilitiesData));
 
             // Render alphabet filter and show first letter
             renderAlphabetFilter();

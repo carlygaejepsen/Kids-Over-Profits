@@ -761,22 +761,10 @@ function kop_enqueue_autocomplete_dependencies() {
  * Load data form script
  */
 function enqueue_data_form_script() {
-    // DEBUG: Always output to browser (not dependent on WP_DEBUG)
-    add_action('wp_footer', function() {
-        echo '<script>console.log("🔍 DEBUG: enqueue_data_form_script() was CALLED");</script>';
-    }, 1);
-
     // Only run on singular pages (posts, pages), not on archive pages.
     if (!is_singular()) {
-        add_action('wp_footer', function() {
-            echo '<script>console.error("❌ DEBUG: FAILED is_singular() check");</script>';
-        }, 1);
         return;
     }
-
-    add_action('wp_footer', function() {
-        echo '<script>console.log("✅ DEBUG: Passed is_singular() check");</script>';
-    }, 1);
 
     // Check for data form templates (multiple possible paths WordPress might store)
     // Also check by slug for pages that may not have template meta set correctly
@@ -794,43 +782,11 @@ function enqueue_data_form_script() {
         || is_page('tti-admin-data');
     $is_data_form_page = $is_data_template || $is_admin_template;
 
-    // DEBUG: Output template info (not dependent on WP_DEBUG)
-    add_action('wp_footer', function() use ($is_data_template, $is_admin_template, $is_data_form_page) {
-        $current_template = get_page_template_slug();
-        $page_slug = get_post_field('post_name', get_post());
-        echo '<script>';
-        echo 'console.log("📄 Template: ' . esc_js($current_template) . '");';
-        echo 'console.log("📝 Page slug: ' . esc_js($page_slug) . '");';
-        echo 'console.log("🔍 is_data_template: ' . ($is_data_template ? 'TRUE' : 'FALSE') . '");';
-        echo 'console.log("🔍 is_admin_template: ' . ($is_admin_template ? 'TRUE' : 'FALSE') . '");';
-        echo 'console.log("🔍 is_data_form_page: ' . ($is_data_form_page ? 'TRUE' : 'FALSE') . '");';
-        echo '</script>';
-    }, 1);
-
     if (!$is_data_form_page) {
-        add_action('wp_footer', function() {
-            echo '<script>console.log("ℹ️ INFO: Data Form script skipped (Template check correctly identified this is not a data form page).");</script>';
-        }, 1);
         return;
     }
 
     kop_enqueue_autocomplete_dependencies();
-
-    add_action('wp_footer', function() {
-        echo '<script>console.log("✅ DEBUG: Template check PASSED - proceeding to enqueue scripts");</script>';
-    }, 1);
-
-    // DEBUG: Log that we're enqueueing scripts
-    if (WP_DEBUG) {
-        error_log('enqueue_data_form_script: IS enqueueing scripts for data form');
-        error_log('Template check - is_data_template: ' . ($is_data_template ? 'true' : 'false'));
-        error_log('Template check - is_admin_template: ' . ($is_admin_template ? 'true' : 'false'));
-
-        // Add diagnostic script to browser console
-        add_action('wp_footer', function() {
-            echo '<script>console.log("DEBUG: enqueue_data_form_script() was called and scripts should be enqueued");</script>';
-        }, 1);
-    }
 
     // Ensure the data-form stylesheet is queued before header output.
     $data_form_css = get_stylesheet_directory() . '/css/data-form.css';

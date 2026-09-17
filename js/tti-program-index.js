@@ -1712,7 +1712,6 @@ function displayFacilities(facilitiesData, containerId) {
 
                     // Skip empty values (would show "None" or be blank)
                     if (isValueEmpty(value)) {
-                        if (window.kopDebugFields) console.log('[KOP] Suppressed field:', fullKey, '=', JSON.stringify(value));
                         return;
                     }
 
@@ -2618,7 +2617,6 @@ function toggleAllFacilityDetails(button) {
 
 // Add this to the end of your facilities-display.js file      
 document.addEventListener('DOMContentLoaded', function() {     
-    console.log('Facilities script loaded');
 
     const facilitiesContainer = document.getElementById('facilities-container');
     if (!facilitiesContainer) {
@@ -2660,7 +2658,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (const candidateUrl of datasetCandidates) {        
             try {
-                console.log('Facilities script: attempting to load data from', candidateUrl);
                 const response = await fetch(candidateUrl, { credentials: 'same-origin' });
 
                 if (!response.ok) {
@@ -2669,7 +2666,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const data = await decodeResponseAsJson(response);
                 const facilityCount = data && data.projects ? Object.keys(data.projects).length : '?';
-                console.log('[KOP] Data source:', candidateUrl, '| projects:', facilityCount);
 
                 // NEW: Load FileBird folders for document matching
                 try {
@@ -2677,7 +2673,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const foldersResponse = await fetch(`${restBase}folders`);
                     if (foldersResponse.ok) {
                         window.filebirdFolders = await foldersResponse.json();
-                        console.log('Facilities script: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
                     }
                 } catch (e) {
                     console.warn('Facilities script: failed to load FileBird folders', e);

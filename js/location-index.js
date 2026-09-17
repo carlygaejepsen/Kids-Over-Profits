@@ -505,7 +505,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (foldersResponse.ok) {
                 window.filebirdFolders = await foldersResponse.json();
                 window.filebirdFolderMap = null;
-                console.log('Location index: loaded ' + (window.filebirdFolders ? window.filebirdFolders.length : 0) + ' folders.');
             }
         } catch (error) {
             console.warn('Location index: failed to load FileBird folders', error);

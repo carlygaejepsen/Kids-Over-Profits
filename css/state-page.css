@@ -1149,7 +1149,9 @@
     min-width: 200px;
 }
 
-.submit-news-btn {
+/* Qualified with the wrapper and element so it outranks Kadence's
+   .entry-content a color (country pages share the .state-page wrapper). */
+.state-page a.submit-news-btn {
     display: inline-block;
     background: #00004d;
     color: #fff;
@@ -1161,7 +1163,7 @@
     white-space: nowrap;
 }
 
-.submit-news-btn:hover {
+.state-page a.submit-news-btn:hover {
     background: #1a1a66;
     color: #fff;
 }

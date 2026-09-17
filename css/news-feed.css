@@ -485,7 +485,7 @@
 }
 
 .pagination-btn:hover {
-    background: var(--kop-navy);
+    background: var(--kop-navy-blue);
     color: var(--kop-white);
 }
 
@@ -750,7 +750,9 @@ a.coverage-link:hover {
     font-size: 0.95rem;
 }
 
-.ongoing-stories-cta-btn {
+/* Qualified with the wrapper and element so it outranks Kadence's
+   .entry-content a color. */
+.ongoing-stories-cta a.ongoing-stories-cta-btn {
     display: inline-block;
     background-color: var(--kop-navy-blue, #000080);
     color: #fff;
@@ -762,8 +764,8 @@ a.coverage-link:hover {
     transition: background-color 0.15s ease;
 }
 
-.ongoing-stories-cta-btn:hover,
-.ongoing-stories-cta-btn:focus {
+.ongoing-stories-cta a.ongoing-stories-cta-btn:hover,
+.ongoing-stories-cta a.ongoing-stories-cta-btn:focus {
     background-color: var(--kop-teal, #33A7B5);
     color: #fff;
     text-decoration: none;

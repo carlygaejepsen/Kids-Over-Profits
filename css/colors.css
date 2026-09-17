@@ -12,6 +12,9 @@
     --kop-teal: #33A7B5;
     --kop-navy-blue: #000080;
     --kop-midnight-blue: #000435;
+    /* Short aliases: several stylesheets reference these names. */
+    --kop-navy: var(--kop-navy-blue);
+    --kop-midnight: var(--kop-midnight-blue);
     --kop-orange: #EF9034;
     --kop-white: #FFFFFF;
     --kop-chartreuse: #B2E102;
