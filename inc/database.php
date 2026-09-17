@@ -1479,9 +1479,10 @@ function kop_collapse_duplicate_tree_nodes($nodes, &$seen) {
  *   2  journalism, research, and survivor accounts
  *   3  the program's own operating materials (handbooks, manuals, forms) and
  *      anything unclassified
- *   4  marketing and industry listings (NATSAP profiles, websites, brochures)
+ *   4  marketing and industry listings (NATSAP profiles, websites, brochures,
+ *      program newsletters such as Ironwood Maine's Treatment Times)
  *   5  industry trade newsletters and reference captures (Woodbury Reports,
- *      Treatment Times, LinkedIn pages, job listings)
+ *      LinkedIn pages, job listings)
  * Rules are checked in the order listed; the first match wins, so a Woodbury
  * extract that mentions a lawsuit still ranks as a newsletter.
  *
@@ -1491,9 +1492,9 @@ function kop_collapse_duplicate_tree_nodes($nodes, &$seen) {
  */
 function kop_document_importance_tier($title, $file = '') {
     static $rules = array(
-        array(5, '/woodbury|struggling ?teens|treatment ?times|linkedin|job (listing|application|posting)|\bjobs?\b|reddit|fornits|google search/'),
+        array(5, '/woodbury|struggling ?teens|linkedin|job (listing|application|posting)|\bjobs?\b|reddit|fornits|google search/'),
         array(1, '/lawsuit|complaint|court|\bfiling|settlement|criminal|indict|convict|sentenc|verdict|plaintiff|defendant|\bvs?\.? |uscourts|deposition|testimony|affidavit|subpoena|motion to|police|sheriff|arrest|inspection|licens|citation|violation|deficienc|corrective action|investigat|\bcdss\b|\bdhhs\b|\bdcfs\b|\bocfs\b|public records|records act|\bfoia\b|\baudit|\bprea\b|revoc|revoked|license suspen|incident report|awol|whistleblow|coroner|autopsy|death|hearing|legislat|senate|congress|\bgao\b|attorney general|articles? of (organization|amendment|incorporation|dissol)|reinstatement|annual report|tax filing|form 990/'),
-        array(4, '/natsap|profile|directory|website|advertis|\bads?\b|marketing|promo|brochure|newsletter|conference|seminar|announces|press release|testimonial|\baward|screencapture|\bblog/'),
+        array(4, '/natsap|profile|directory|website|advertis|\bads?\b|marketing|promo|brochure|newsletter|treatment ?times|conference|seminar|announces|press release|testimonial|\baward|screencapture|\bblog/'),
         array(2, '/\bnews\b|article|\btimes\b|tribune|\bpost\b|herald|gazette|journal|magazine|\bcbs\b|\bnbc\b|\babc\b|\bcnn\b|\bnpr\b|associated press|deseret|medium\.com|interview with|an interview|documentary|podcast|survivor|\babuse|expos|obituar|typepad|timeline|study|thesis|dissertation|research|oversight|closure|closing/'),
         array(3, '/handbook|manual|guide|glossary|polic|admission|enrollment|parent|student|resident|contract|agreement|rules|levels?\b|curriculum|course|clothing|packet|application|\bform\b|checklist|evaluation|dictionary|workbook|training/'),
     );
