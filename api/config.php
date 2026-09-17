@@ -124,19 +124,25 @@ if (!defined('SKIP_DB_CONNECTION') || !SKIP_DB_CONNECTION) {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        // If we are being included by a script that expects JSON, return JSON error
-        // Check if headers have been sent
-        if (!headers_sent()) {
-            http_response_code(500);
-            header('Content-Type: application/json');
-        }
+        error_log("DB Connection Failed: " . $e->getMessage());
 
-        error_log("DB Connection Failed: " . $e->getMessage());    
-        echo json_encode([
-            'error' => 'Database connection failed',
-            'details' => 'Please check server error logs for details'
-        ]);
-        exit;
+        // A page template that included this file mid-render (after
+        // get_header()) must not be cut off with a JSON body. Leave $pdo null
+        // and let the template catch the resulting Throwable and show its own
+        // notice. API scripts still get the JSON error and stop here.
+        if (function_exists('did_action') && did_action('get_header')) {
+            $pdo = null;
+        } else {
+            if (!headers_sent()) {
+                http_response_code(500);
+                header('Content-Type: application/json');
+            }
+            echo json_encode([
+                'error' => 'Database connection failed',
+                'details' => 'Please check server error logs for details'
+            ]);
+            exit;
+        }
     }
 }
 

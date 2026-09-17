@@ -65,3 +65,6 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/api/test-get.php
     - /bin/rm -f $DEPLOYPATH/api/debug-recent-projects.php
     - /bin/rm -f $DEPLOYPATH/api/validate-json.php
+    # Dead Kadence nav-guard workaround removed 2026-09-17 (root cause fixed by
+    # the theme_mod_header_sticky_shrink filter in inc/enqueue.php).
+    - /bin/rm -f $DEPLOYPATH/js/data-form/kadence-nav-guard.js

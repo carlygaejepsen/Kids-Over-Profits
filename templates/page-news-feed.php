@@ -179,8 +179,12 @@ try {
         $show_ongoing = false;
     }
 
-} catch (PDOException $e) {
-    $error_message = "Error fetching news: " . $e->getMessage();
+} catch (Throwable $e) {
+    // PDOException for query failures; Error when api/config.php left $pdo
+    // null because the connection itself failed. Log the detail, show a
+    // generic message (the raw text leaked schema names to visitors).
+    error_log('News feed error: ' . $e->getMessage());
+    $error_message = 'The news feed is temporarily unavailable. Please try again later.';
     $submissions = [];
     $total_pages = 1;
     $archive_months = [];
@@ -522,8 +526,8 @@ try {
                             }
                         }
                     }
-                } catch (PDOException $e) {
-                    // Fail silently if tables don't exist or error occurs
+                } catch (Throwable $e) {
+                    // Fail silently if tables don't exist, the DB is down, or a query errors
                 }
 
                 // Normalize facilities

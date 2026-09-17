@@ -11,7 +11,6 @@ kop_require_page_capability('edit_posts');
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/admin-state-content.css?v=<?php echo time(); ?>">
 
 <div class="admin-state-content-wrapper">
     <header class="admin-state-content-header">

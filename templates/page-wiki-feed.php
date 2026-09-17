@@ -81,8 +81,10 @@ get_header();
         $stmt->execute($params);
         $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    } catch (PDOException $e) {
-        // Raw DB errors leak schema details to public visitors — log instead.
+    } catch (Throwable $e) {
+        // Raw DB errors leak schema details to public visitors, so log instead.
+        // Throwable also covers the Error thrown when api/config.php left $pdo
+        // null because the connection itself failed.
         error_log('Wiki feed error: ' . $e->getMessage());
         $error_message = 'The wiki feed is temporarily unavailable. Please try again later.';
         $submissions = [];

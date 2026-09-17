@@ -12,7 +12,6 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/referrer-index.css?v=<?php echo time(); ?>">
 
 <div class="referrer-directory-container">
     <div class="directory-header" style="margin-bottom: 2em; text-align: center;">
@@ -88,8 +87,6 @@ window.referrerConfig = {
 };
 </script>
 
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/referrer-index-v2.js?v=<?php echo time(); ?>"></script>
 
 <?php
 get_footer();

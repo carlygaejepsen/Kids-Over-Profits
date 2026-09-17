@@ -56,7 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 renderAlphabet();
                 filterAndRender();
+            } else {
+                container.innerHTML = '<div style="text-align:center;padding:50px;color:#666;">No referrer records yet.</div>';
             }
+        })
+        .catch(err => {
+            container.innerHTML = '<div style="text-align:center;padding:50px;color:#a33;">Could not load referrer directory.</div>';
+            console.error('Referrer directory load error:', err);
         });
 
     function renderAlphabet() {

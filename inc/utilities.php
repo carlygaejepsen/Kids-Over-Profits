@@ -223,3 +223,18 @@ function kop_require_page_capability($capability = 'manage_options') {
         array('response' => 403)
     );
 }
+
+/**
+ * Notice for the record pages (lawsuits, legislation, memorial, volunteers)
+ * when the database connection is down. api/config.php leaves $pdo null in
+ * that case (see its catch block); the template sets $kop_db_error and calls
+ * this under its page title.
+ */
+function kop_db_unavailable_notice($show = true) {
+    if (!$show) {
+        return;
+    }
+    echo '<div class="kop-db-notice" role="alert" style="margin:0.75em 0 0;padding:0.75em 1em;border:1px solid #f3c7c3;background:#fff5f4;border-radius:8px;color:#000435;">'
+        . esc_html('Records are temporarily unavailable while the database is offline. Please try again shortly.')
+        . '</div>';
+}

@@ -46,7 +46,11 @@ try {
     ksort($statuses);
     ksort($positions);
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
+    // PDOException for query failures; Error when api/config.php left $pdo
+    // null because the connection itself failed.
+    error_log('Legislation page: ' . $e->getMessage());
+    $kop_db_error = true;
     $bills = [];
     $jurisdictions = $statuses = $positions = [];
 }
@@ -67,6 +71,7 @@ $status_labels = [
 <div class="kop-records-page kop-legislation-page">
     <div class="kop-records-header">
         <h1>Legislation Tracker</h1>
+        <?php kop_db_unavailable_notice(!empty($kop_db_error)); ?>
         <p>Bills and laws affecting Troubled Teen Industry facilities, tracked across all 50 states and Congress.</p>
         <p class="kop-records-cta">
             Know of a bill we're missing?

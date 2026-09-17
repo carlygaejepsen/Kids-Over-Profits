@@ -181,139 +181,6 @@ function kop_enqueue_admin_data_manager() {
 add_action('wp_enqueue_scripts', 'kop_enqueue_admin_data_manager');
 
 /**
- * Enqueue the Kadence navigation guard script on headerless pages.
- * This intercepts DOM queries for navigation elements and suppresses errors.
- */
-function kop_enqueue_kadence_nav_guard() {
-    if (!kop_is_headerless_layout()) {
-        return;
-    }
-    
-    wp_enqueue_script(
-        'kop-kadence-nav-guard',
-        get_stylesheet_directory_uri() . '/js/data-form/kadence-nav-guard.js',
-        array(), // No dependencies - load as early as possible
-        '1.0.0',
-        false // Load in header, not footer
-    );
-}
-// add_action('wp_enqueue_scripts', 'kop_enqueue_kadence_nav_guard', 1); // Priority 1 - load very early
-
-/**
- * Remove Kadence navigation scripts when the page intentionally renders without a header.
- */
-function kop_maybe_disable_kadence_navigation() {
-    if (!kop_is_headerless_layout()) {
-        return;
-    }
-
-    // List of Kadence navigation-related script handles to remove
-    // Includes various possible handle names used by Kadence theme
-    $nav_scripts = array(
-        'kadence-navigation',
-        'kadence-navigation-init',
-        'kadence-navigation-mobile',
-        'kadence-header',
-        'kadence-sticky-header',
-        'kadence-nav',
-        'kadence-menu',
-        'navigation', // Generic handle that might be used
-    );
-
-    foreach ($nav_scripts as $script_handle) {
-        wp_dequeue_script($script_handle);
-        wp_deregister_script($script_handle);
-    }
-
-    // Access global scripts registry
-    global $wp_scripts;
-
-    if (!($wp_scripts instanceof WP_Scripts)) {
-        $wp_scripts = wp_scripts();
-    }
-
-    // Clear any inline scripts or extra data attached to navigation scripts
-    if ($wp_scripts instanceof WP_Scripts) {
-        foreach ($nav_scripts as $script_handle) {
-            if (isset($wp_scripts->registered[$script_handle])) {
-                $wp_scripts->registered[$script_handle]->extra = array();
-                $wp_scripts->registered[$script_handle]->deps = array();
-            }
-        }
-    }
-}
-
-// add_action('wp_enqueue_scripts', 'kop_maybe_disable_kadence_navigation', 200);
-// add_action('wp_print_scripts', 'kop_maybe_disable_kadence_navigation', 200);
-// add_action('wp_print_footer_scripts', 'kop_maybe_disable_kadence_navigation', 200);
-
-/**
- * Add inline script to block navigation on headerless pages as early as possible.
- */
-function kop_add_early_navigation_blocker() {
-    if (!kop_is_headerless_layout()) {
-        return;
-    }
-
-    ?>
-    <script>
-    (function(){
-        // window.KADENCE_NAV_DISABLED = true;
-        // window.kadenceConfig = window.kadenceConfig || {};
-        // window.kadenceConfig.breakPoints = {desktop: 99999};
-    })();
-    </script>
-    <?php
-}
-// add_action('wp_head', 'kop_add_early_navigation_blocker', 1);
-
-/**
- * Add global error suppressor for Kadence navigation.min.js errors.
- * This runs on ALL pages to catch getAttribute errors from missing nav elements.
- * Does NOT hide the header - just suppresses console errors.
- */
-function kop_add_navigation_error_suppressor() {
-    ?>
-    <script>
-    (function(){
-        // Suppress navigation.min.js getAttribute errors globally
-        window.addEventListener('error', function(e) {
-            if (e.filename && e.filename.includes('navigation') && 
-                e.message && e.message.includes('getAttribute')) {
-                e.preventDefault();
-                e.stopPropagation();
-                return true;
-            }
-        }, true);
-        
-        // Patch querySelector to return safe objects for nav elements
-        var origQuerySelector = Document.prototype.querySelector;
-        Document.prototype.querySelector = function(selector) {
-            var result = origQuerySelector.call(this, selector);
-            // If looking for nav-related elements and nothing found, return a safe stub
-            if (!result && typeof selector === 'string' && 
-                (selector.includes('navigation') || selector.includes('nav-toggle') || 
-                 selector.includes('mobile-toggle') || selector.includes('drawer'))) {
-                return {
-                    getAttribute: function() { return null; },
-                    setAttribute: function() {},
-                    addEventListener: function() {},
-                    removeEventListener: function() {},
-                    classList: { add: function(){}, remove: function(){}, toggle: function(){}, contains: function(){ return false; } },
-                    style: {},
-                    querySelectorAll: function() { return []; },
-                    querySelector: function() { return null; }
-                };
-            }
-            return result;
-        };
-    })();
-    </script>
-    <?php
-}
-// add_action('wp_head', 'kop_add_navigation_error_suppressor', 0); // Priority 0 - very first thing
-
-/**
  * Disable the Kadence sticky-header "shrink" option site-wide.
  *
  * Root cause of the repeated "Cannot read properties of null (reading
@@ -1650,8 +1517,7 @@ function enqueue_tti_processor_scripts() {
     $rest_endpoint = esc_url_raw(rest_url('kop/v1/facilities'));
     $api_endpoint = $theme_uri . '/api/get-master-data.php';
 
-    $static_json = $theme_uri . '/js/data/facilities_master.json';
-    $json_sources = array($rest_endpoint, $api_endpoint, $static_json);
+    $json_sources = array($rest_endpoint, $api_endpoint);
 
     // Localize facilitiesConfig for the script
     wp_localize_script(
@@ -2051,3 +1917,95 @@ function kop_enqueue_document_library_assets() {
     }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_document_library_assets');
+
+/**
+ * True when the current singular page uses one of the given child templates
+ * (WordPress may store the slug with or without the templates/ prefix).
+ */
+function kop_page_uses_template($names) {
+    foreach ((array) $names as $name) {
+        if (is_page_template($name) || is_page_template('templates/' . $name)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Assets for the templates that used to print raw <link>/<script> tags with
+ * ?v=time(). That defeated browser and LiteSpeed caching on every request
+ * and, for the stylesheets, caused a flash of unstyled content because the
+ * tag sat in the body. Styles now load in the head with a filemtime version
+ * and scripts in the footer, which still runs after the inline window.*Config
+ * objects the templates print in the body.
+ */
+function kop_enqueue_template_assets() {
+    if (!is_singular()) {
+        return;
+    }
+
+    $theme_dir = get_stylesheet_directory();
+    $theme_uri = get_stylesheet_directory_uri();
+
+    $style = static function ($handle, $rel, $deps = array('kop-colors')) use ($theme_dir, $theme_uri) {
+        $path = $theme_dir . $rel;
+        if (file_exists($path)) {
+            wp_enqueue_style($handle, $theme_uri . $rel, $deps, filemtime($path));
+        }
+    };
+    $script = static function ($handle, $rel, $deps = array()) use ($theme_dir, $theme_uri) {
+        $path = $theme_dir . $rel;
+        if (file_exists($path)) {
+            wp_enqueue_script($handle, $theme_uri . $rel, $deps, filemtime($path), true);
+        }
+    };
+
+    $is_state   = kop_page_uses_template('page-state.php');
+    $is_country = kop_page_uses_template('page-country.php');
+    if ($is_state || $is_country) {
+        kop_enqueue_shared_facility_ui(); // kop-components css + kop-facility-resources js
+        $style('kop-state-page', '/css/state-page.css', array('kop-colors', 'kop-components'));
+        $script('kop-submit-info', '/js/submit-info.js');
+        if ($is_state) {
+            $script('kop-state-page', '/js/state-page.js', array('kop-submit-info', 'kop-facility-resources'));
+        } else {
+            $script('kop-country-page', '/js/country-page.js', array('kop-submit-info', 'kop-facility-resources'));
+        }
+        return;
+    }
+
+    if (kop_page_uses_template('page-location-index.php')) {
+        $style('tti-program-index-styles', '/css/tti-program-index.css', array('kadence-parent-style', 'kop-colors'));
+        $style('kop-document-library-style', '/css/document-library.css', array('kop-colors', 'tti-program-index-styles'));
+        kop_enqueue_shared_facility_ui();
+        $script('kop-document-library-script', '/js/document-library.js', array('jquery'));
+        $script('kop-facility-merge', '/js/facility-merge.js');
+        $script('kop-submit-info', '/js/submit-info.js');
+        $script('kop-location-index', '/js/location-index.js',
+            array('kop-document-library-script', 'kop-facility-merge', 'kop-submit-info', 'kop-facility-resources'));
+        return;
+    }
+
+    if (kop_page_uses_template('page-referrer-index.php')) {
+        $style('kop-referrer-index', '/css/referrer-index.css');
+        $script('kop-submit-info', '/js/submit-info.js');
+        $script('kop-referrer-index', '/js/referrer-index-v2.js', array('kop-submit-info'));
+        return;
+    }
+
+    if (kop_page_uses_template('page-transporter-index.php')) {
+        $style('kop-transporter-index', '/css/transporter-index.css');
+        $script('kop-submit-info', '/js/submit-info.js');
+        $script('kop-transporter-index', '/js/transporter-index-v2.js', array('kop-submit-info'));
+        return;
+    }
+
+    if (kop_page_uses_template(array('page-admin-lawsuits.php', 'page-admin-legislation.php', 'page-admin-volunteers.php'))) {
+        $style('kop-admin-state-content', '/css/admin-state-content.css');
+        if (!kop_page_uses_template('page-admin-volunteers.php')) {
+            // The volunteers screen carries its own inline script.
+            $script('kop-admin-state-content', '/js/admin-state-content.js');
+        }
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_template_assets');

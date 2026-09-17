@@ -57,7 +57,11 @@ try {
     ksort($statuses);
     ksort($all_claims);
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
+    // PDOException for query failures; Error when api/config.php left $pdo
+    // null because the connection itself failed.
+    error_log('Lawsuits page: ' . $e->getMessage());
+    $kop_db_error = true;
     $lawsuits = [];
     $jurisdictions = $statuses = $all_claims = [];
 }
@@ -88,7 +92,7 @@ if ($lawsuit_ids) {
             }
             $facility_links[(int)$r['lawsuit_id']][] = ['name' => $r['unique_name'], 'keys' => $keys];
         }
-    } catch (PDOException $e) {
+    } catch (Throwable $e) {
         $facility_links = [];
     }
     try {
@@ -106,7 +110,7 @@ if ($lawsuit_ids) {
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
             $news_links[(int)$r['lawsuit_id']][] = $r;
         }
-    } catch (PDOException $e) {
+    } catch (Throwable $e) {
         $news_links = [];
     }
 }
@@ -161,6 +165,7 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
 <div class="kop-records-page kop-lawsuits-page">
     <div class="kop-records-header">
         <h1>Lawsuits &amp; Legal Cases</h1>
+        <?php kop_db_unavailable_notice(!empty($kop_db_error)); ?>
         <p>Court cases involving Troubled Teen Industry facilities, operators, and staff.</p>
         <p class="kop-records-cta">
             Know of a case we're missing?

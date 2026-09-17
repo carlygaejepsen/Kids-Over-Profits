@@ -28,8 +28,6 @@ $state_slug = kop_state_slug($state_name);
 $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/kop-components.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/state-page.css?v=<?php echo time(); ?>">
 
 <div class="state-page" data-state-slug="<?php echo esc_attr($state_slug); ?>" data-state-name="<?php echo esc_attr($state_name); ?>">
     <header class="state-page-header">
@@ -117,8 +115,5 @@ window.statePageConfig = {
     ?>
 };
 </script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/shared/facility-resources.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/state-page.js?v=<?php echo time(); ?>"></script>
 
 <?php get_footer(); ?>

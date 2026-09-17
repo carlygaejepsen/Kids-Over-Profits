@@ -41,7 +41,11 @@ try {
         $status_counts[$r['status']] = (int) $r['cnt'];
     }
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
+    // PDOException for query failures; Error when api/config.php left $pdo
+    // null because the connection itself failed.
+    error_log('Volunteers page: ' . $e->getMessage());
+    $kop_db_error = true;
     $projects = [];
     $status_counts = [];
 }
@@ -50,6 +54,7 @@ try {
 <div class="kop-records-page kop-volunteers-page">
     <div class="kop-records-header">
         <h1>Volunteer Opportunities</h1>
+        <?php kop_db_unavailable_notice(!empty($kop_db_error)); ?>
         <p>Help us track and expose the Troubled Teen Industry. All skill levels welcome.</p>
     </div>
 

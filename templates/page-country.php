@@ -27,8 +27,6 @@ $country_slug = kop_country_slug($country_name);
 $rest_url = esc_url_raw(rest_url('kop/v1/country/' . $country_slug));
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/kop-components.css?v=<?php echo time(); ?>">
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/state-page.css?v=<?php echo time(); ?>">
 
 <div class="state-page country-page" data-country-slug="<?php echo esc_attr($country_slug); ?>" data-country-name="<?php echo esc_attr($country_name); ?>">
     <header class="state-page-header">
@@ -116,8 +114,5 @@ window.countryPageConfig = {
     ?>
 };
 </script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/shared/facility-resources.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/country-page.js?v=<?php echo time(); ?>"></script>
 
 <?php get_footer(); ?>

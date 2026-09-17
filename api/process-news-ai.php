@@ -501,14 +501,13 @@ function processWithGroq($apiKey, $content, $url = '', $customInstructions = '')
     $prompt = buildPrompt($content, $url, $customInstructions);
 
     // Model fallback chain: Groq retires/gates models per account over time
-    // (llama-3.3-70b-versatile started 404ing for this account in Sep 2026),
-    // so a dead model must not kill the pipeline. Set GROQ_MODEL in .env to
-    // pin/override; otherwise each model is tried until one isn't rejected.
+    // (the llama-3.x IDs went 404 for this account in Sep 2026 and were
+    // dropped here so every article no longer burns a dead call first), so a
+    // dead or rate-limited model must not kill the pipeline. Set GROQ_MODEL in
+    // .env to pin/override; otherwise each model is tried until one answers.
     $models = array_values(array_unique(array_filter([
         getenv('GROQ_MODEL') ?: null,
-        'llama-3.3-70b-versatile',
         'openai/gpt-oss-120b',
-        'llama-3.1-8b-instant',
         'openai/gpt-oss-20b',
     ])));
 
@@ -560,7 +559,11 @@ function processWithGroq($apiKey, $content, $url = '', $customInstructions = '')
             if ($httpCode === 401) {
                 throw new Exception("Groq API key is invalid or expired. Please check your GROQ_API_KEY in .env file. Get a new key at: https://console.groq.com/keys");
             } elseif ($httpCode === 429) {
-                throw new Exception("Groq rate limit exceeded. Please wait a moment and try again.");
+                // Token-per-minute limits are per model, so the next model in
+                // the chain usually still has headroom.
+                error_log("[Groq] model '$model' rate limited (HTTP 429): $errorMsg - trying next");
+                $lastError = new Exception("Groq rate limit exceeded. Please wait a moment and try again.");
+                continue;
             }
 
             throw new Exception("Groq API error (HTTP $httpCode): $errorMsg");

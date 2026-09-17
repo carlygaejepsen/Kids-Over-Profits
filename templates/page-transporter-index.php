@@ -12,7 +12,6 @@ if (!defined('ABSPATH')) {
 get_header();
 ?>
 
-<link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/css/transporter-index.css?v=<?php echo time(); ?>">
 
 <div class="transporter-directory-container">
     <div class="directory-header" style="margin-bottom: 2em; text-align: center;">
@@ -59,8 +58,6 @@ window.transporterConfig = {
 };
 </script>
 
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/submit-info.js?v=<?php echo time(); ?>"></script>
-<script src="<?php echo get_stylesheet_directory_uri(); ?>/js/transporter-index-v2.js?v=<?php echo time(); ?>"></script>
 
 <?php
 get_footer();

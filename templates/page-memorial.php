@@ -39,7 +39,11 @@ try {
     );
     $stmt->execute();
     $victims = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
+} catch (Throwable $e) {
+    // PDOException for query failures; Error when api/config.php left $pdo
+    // null because the connection itself failed.
+    error_log('Memorial page: ' . $e->getMessage());
+    $kop_db_error = true;
     $victims = [];
 }
 
@@ -77,6 +81,7 @@ function kop_memorial_date($date, $precision) {
 <div class="kop-records-page kop-memorial-page">
     <div class="kop-records-header">
         <h1>In Loving Memory</h1>
+        <?php kop_db_unavailable_notice(!empty($kop_db_error)); ?>
         <p>One of the worst things about surviving the Troubled Teen Industry is the knowledge that not all of us survive.</p>
         <p>In the last 50 years alone, there have been over 200 reported preventable deaths of young people, aged 18 and below, in reform homes, treatment facilities, and juvenile detention centers.</p>
         <p class="kop-memorial-grieve">We grieve them today and every day.</p>
