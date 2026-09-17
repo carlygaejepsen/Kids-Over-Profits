@@ -68,3 +68,10 @@ __pycache__/
 tmp/baseline-*.json
 tmp/after-*.json
 tmp/rehearsal/
+
+# Local SQLite copy of prod (scripts/sync-prod-sqlite.py)
+tmp/*.sql
+tmp/*.sql.part
+*.sqlite
+*.sqlite.building
+*.sqlite-journal
