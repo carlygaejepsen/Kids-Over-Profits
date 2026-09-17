@@ -1,10 +1,6 @@
 // California Reports JavaScript - Last deployed: 2025-01-15
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('=== CA REPORTS DEBUG START ===');
-    console.log('Script loaded successfully');
     const themeData = window.caReportsData || window.myThemeData;
-    console.log('typeof themeData:', typeof themeData);
-    console.log('CA theme data:', themeData);
 
     /**
      * Safely extracts a displayable string from any value
@@ -393,7 +389,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function initializeReport() {
         try {
-            console.log('Starting to initialize report...');
 
             // Check if configuration data exists
             if (!themeData) {
@@ -404,8 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // It now gets the ARRAY of URLs from the configuration object
             const urls = Array.isArray(themeData.jsonFileUrls) ? themeData.jsonFileUrls : [];
-            console.log('URLs to fetch:', urls);
-            console.log('Number of URLs:', urls ? urls.length : 0);
 
             if (!urls || urls.length === 0) {
                 console.error('ERROR: No URLs found in caReportsData.jsonFileUrls');
@@ -438,18 +431,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Normalize mixed payloads (legacy flat rows and API facility/reports rows).
             const rawReports = normalizeRawReports(allJsonData.flat());
-            console.log(`Loaded ${rawReports.length} raw reports`);
             
             // The rest of the logic remains the same
             const aggregatedFacilities = aggregateReportsIntoFacilities(rawReports);
-            console.log(`Aggregated into ${aggregatedFacilities.length} facilities`);
 
             const mergedFacilities = mergeFacilitiesByName(aggregatedFacilities);
-            console.log(`After name-merge: ${mergedFacilities.length} facilities`);
 
             allFacilitiesData = groupFacilitiesFromArray(mergedFacilities);
-            console.log('Processed facilities data:', allFacilitiesData);
-            console.log('Available letters:', Object.keys(allFacilitiesData));
             
             renderAlphabetFilter();
             const firstLetter = Object.keys(allFacilitiesData).sort()[0];
@@ -649,11 +637,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
         const sortBy = sortSelect ? sortSelect.value : '';
         
-        console.log('filterAndSort called:', { searchTerm, sortBy, isSearching });
         
         // Safety check
         if (!allFacilitiesData || Object.keys(allFacilitiesData).length === 0) {
-            console.log('No facilities data available yet');
             return;
         }
         
@@ -673,7 +659,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 allFacilities = allFacilities.concat(letterGroup);
             });
             
-            console.log(`Searching ${allFacilities.length} facilities for: "${searchTerm}"`);
             
             // Filter across all facilities
             const filteredFacilities = allFacilities.filter(facility => {
@@ -688,7 +673,6 @@ document.addEventListener('DOMContentLoaded', () => {
                        facilityNumber.includes(searchTerm);
             });
             
-            console.log(`Found ${filteredFacilities.length} matching facilities`);
             
             // Sort the filtered results
             const sortedFacilities = sortFacilities(filteredFacilities, sortBy);
@@ -739,7 +723,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!sortBy) return processedFacilities;
 
-        console.log(`Sorting ${processedFacilities.length} facilities by: ${sortBy}`);
 
         // Filter inspections to show only those with violations
         if (sortBy === 'violations-only' || sortBy === 'violations-desc') {
@@ -757,7 +740,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return null;
             }).filter(facility => facility !== null);
             
-            console.log(`Filtered to ${processedFacilities.length} facilities with violation inspections`);
         }
         
         return processedFacilities.sort((a, b) => {

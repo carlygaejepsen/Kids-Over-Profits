@@ -48,11 +48,43 @@ try {
     $repStmt->execute($facilityIds);
     $reportRows = $repStmt->fetchAll();
 
-    // Group reports by facility_id
+    // Group reports by facility_id, dropping re-listings of one document.
+    // State listings publish the same PDF more than once (NC under two upload
+    // dates, FL DJJ under two download ids, OR under two SharePoint ids: 51,
+    // 5 and 7 rows on 2026-09-17), and each copy arrives as its own row. A
+    // row whose date, summary, extracted text and categories match a row
+    // already kept for the facility is the same document, once the keys that
+    // only name the copy (its URL or file id) are set aside. Keys that name a
+    // distinct official record (inspection_number, event_id, a case number)
+    // still count, so two records that happen to share text both stay, and
+    // rows with no text are never merged.
+    $copyOnlyKeys = [
+        'id' => 1, 'report_id' => 1, 'document_id' => 1, 'pdf_url' => 1,
+        'report_url' => 1, 'source_url' => 1, 'sod_url' => 1, 'doc_page_url' => 1,
+        'sharepoint_unique_id' => 1, 'file_name' => 1, 'filename' => 1,
+    ];
     $reportsByFacility = [];
+    $seenReports = [];
     foreach ($reportRows as $row) {
+        $text = (string) $row['raw_content'];
+        if (trim($text) !== '') {
+            $categories = json_decode((string) $row['categories_json'], true);
+            $categories = is_array($categories) ? array_diff_key($categories, $copyOnlyKeys) : [];
+            ksort($categories);
+            $fingerprint = $row['facility_id'] . "\0" . md5(
+                (string) $row['report_date'] . "\0"
+                . (string) $row['summary'] . "\0"
+                . json_encode($categories) . "\0"
+                . $text
+            );
+            if (isset($seenReports[$fingerprint])) {
+                continue;
+            }
+            $seenReports[$fingerprint] = true;
+        }
         $reportsByFacility[$row['facility_id']][] = $row;
     }
+    unset($seenReports);
 
     // Build the output in the same shape the frontend expects
     $facilities = [];

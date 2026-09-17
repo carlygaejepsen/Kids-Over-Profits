@@ -258,9 +258,17 @@
             if (!urls.length) return Promise.reject(new Error('Montana data file is not configured'));
             return fetch(urls[0]).then(function (resp) {
                 if (!resp.ok) throw new Error('Failed to fetch data: ' + resp.status);
-                var modified = resp.headers && resp.headers.get ? resp.headers.get('Last-Modified') : '';
                 return resp.json().then(function (raw) {
-                    return { facilities: group(Array.isArray(raw) ? raw : []), scrapedTimestamp: modified || '' };
+                    var facilities = group(Array.isArray(raw) ? raw : []);
+                    // The file carries no scrape timestamp, and its Last-Modified
+                    // header is reset by every deploy, so "Last updated" is the
+                    // newest survey date: the date the data is current through.
+                    var newest = facilities.reduce(function (max, f) {
+                        return f.reports.reduce(function (m, r) {
+                            return r.header.date && r.header.date.getTime() > m ? r.header.date.getTime() : m;
+                        }, max);
+                    }, 0);
+                    return { facilities: facilities, scrapedTimestamp: newest ? new Date(newest).toISOString() : '' };
                 });
             });
         },

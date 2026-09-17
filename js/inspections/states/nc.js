@@ -296,6 +296,12 @@
                             }).join('');
                         }
                         html += ui.note('This report is a scan, so the inspector’s findings are in the full text below and in the official report.');
+                    } else if (!report.raw_content.trim()) {
+                        // 38 documents (mostly plans of correction) have a page
+                        // count but no extracted text; an empty body reads as a bug.
+                        html += ui.note((report.is_statement ? 'The text of this report' : 'The text of this plan of correction')
+                            + ' was not extracted from the scan. The official report'
+                            + (report.pages ? ' (' + ctx.plural(report.pages, 'page') + ')' : '') + ' has the details.');
                     } else if (!report.opening && report.is_statement && !report.clean) {
                         html += ui.note('The result of this survey could not be read from the scan. The official report has the details.');
                     }
