@@ -1185,6 +1185,12 @@ RESPONSIVE
 
 .kop-doc-modal__dialog {
     width: min(960px, 95vw);
+    /* A definite height, not just a max: the viewer is sized with
+       flex:1/min-height:0 in css/document-library.css, which loads after
+       this file on the index pages. Against a max-height-only parent that
+       pair resolves to zero and the PDF renders invisible. Both copies of
+       this modal must give the dialog a real height. */
+    height: min(90vh, 860px);
     max-height: 90vh;
     background: #ffffff;
     border-radius: 12px;
@@ -1201,6 +1207,7 @@ RESPONSIVE
     gap: 10px;
     padding: 12px 16px;
     border-bottom: 1px solid #e5e5e5;
+    flex-shrink: 0;
     background: #F2EEDF;
 }
 
@@ -1271,6 +1278,7 @@ RESPONSIVE
     gap: 10px;
     padding: 12px 16px;
     border-top: 1px solid #e5e5e5;
+    flex-shrink: 0;
     background: #ffffff;
 }
 
