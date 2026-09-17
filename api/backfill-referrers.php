@@ -21,6 +21,8 @@ header('Content-Type: application/json');
 set_time_limit(300);
 
 require_once __DIR__ . '/config.php';
+require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+kop_v2_exit_if_legacy_frozen($pdo ?? null, 'backfill-referrers.php');
 
 if (!function_exists('current_user_can')) {
     $kop_wp = __DIR__;

@@ -717,10 +717,19 @@ is; the server translates between its project shape and v2.
   serve them the operator projects and facilities in the legacy row shapes, so
   their matching logic is unchanged; `kop_v2_pdo_names_by_id()` resolves the
   ids the link tables hold.
-- The switch stays disabled while `kop_v2_write_switch_blockers()` is not
-  empty. Remaining (2026-09-17): the Data Manager's actions, the facility
-  picker's writes, and the wiki approval field merge with the wiki
-  document-folder link. Remove an entry when its code is ported.
+- Every writer was ported on 2026-09-17 and `kop_v2_write_switch_blockers()`
+  is empty, so the switch can be turned on. The Data Manager edits v2 through
+  one lookup and one save (`kop_dm_find_record()` / `kop_dm_save_project()`,
+  backed by `kop_v2_pdo_master_rows()` and `kop_v2_save_legacy_row()`), its
+  rename and delete call the v2 equivalents, and a facility it moves between
+  operators moves its join row. The facility picker creates a stub as an
+  operator row, checks names against v2 and stores document folders through
+  `kop_v2_set_document_folder()`; the wiki approval merge reads and writes the
+  same row shape. Facility promotion (`kop_promote_single_nested_facility()`)
+  is legacy-only now: in v2 every facility already has an id.
+- Before switching: every public area on v2 (the page refuses otherwise), a
+  fresh `api/backup-data-tables.php` snapshot, and a quiet moment - the switch
+  runs a final sync and moves the news and lawsuit links on split facilities.
 - Reader differences measured against the production copy
   (`scripts/test-facility-v2-readers.php`, WordPress stubbed, both models run
   and diffed): no search result, autocomplete value, resolved name or link is

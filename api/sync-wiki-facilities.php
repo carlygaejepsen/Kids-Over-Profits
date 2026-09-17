@@ -97,16 +97,24 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
     $programName = trim($wiki['program_name'] ?? '');
     $linkName    = trim($wiki['facility_unique_name'] ?? '');
 
-    // 1. Resolve the target facilities_master row — prefer the explicit link.
+    // 1. Resolve the target row — prefer the explicit link. Once admin saves
+    // write the v2 tables, the row comes from there and is saved back there.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    $v2_writes = kop_v2_writes_active($pdo, $v2_prefix);
     $row = null;
     $matchedBy = '';
     if ($linkName !== '') {
-        $stmt = $pdo->prepare(
-            "SELECT id, unique_name, json_data FROM facilities_master
-             WHERE LOWER(unique_name) = LOWER(:u) LIMIT 1"
-        );
-        $stmt->execute([':u' => $linkName]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        if ($v2_writes) {
+            $row = kop_v2_pdo_master_row_by_name($pdo, $v2_prefix, $linkName);
+        } else {
+            $stmt = $pdo->prepare(
+                "SELECT id, unique_name, json_data FROM facilities_master
+                 WHERE LOWER(unique_name) = LOWER(:u) LIMIT 1"
+            );
+            $stmt->execute([':u' => $linkName]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
         if (!$row) {
             // A link is set but points nowhere — don't silently name-match to a
             // different record; surface it instead.
@@ -118,12 +126,16 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
         if (!$orgName || !$programName) {
             return ['merged' => false, 'reason' => 'no facility link, and missing organization/program_name to match by name'];
         }
-        $stmt = $pdo->prepare(
-            "SELECT id, unique_name, json_data FROM facilities_master
-             WHERE LOWER(unique_name) = LOWER(:org) LIMIT 1"
-        );
-        $stmt->execute([':org' => $orgName]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        if ($v2_writes) {
+            $row = kop_v2_pdo_master_row_by_name($pdo, $v2_prefix, $orgName);
+        } else {
+            $stmt = $pdo->prepare(
+                "SELECT id, unique_name, json_data FROM facilities_master
+                 WHERE LOWER(unique_name) = LOWER(:org) LIMIT 1"
+            );
+            $stmt->execute([':org' => $orgName]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        }
         if (!$row) {
             return ['merged' => false, 'reason' => "no facilities_master row for organization '$orgName' (and no link)"];
         }
@@ -241,6 +253,11 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
 
     if (!$changed) {
         return ['merged' => false, 'reason' => "matched '{$row['unique_name']}' by $matchedBy; no blank fields to fill"];
+    }
+
+    if ($v2_writes) {
+        kop_v2_save_legacy_row($pdo, $v2_prefix, (string)$row['unique_name'], $project);
+        return ['merged' => true, 'reason' => "blank fields filled (matched by $matchedBy)"];
     }
 
     $updateStmt = $pdo->prepare(

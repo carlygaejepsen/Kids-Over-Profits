@@ -313,6 +313,14 @@ try {
         && $documentFolderIdRaw !== null && $documentFolderIdRaw !== ''
         && (int)$documentFolderIdRaw > 0) {
         try {
+            // Once admin saves write the v2 tables, the folder is stored there:
+            // on the operator row, or on the facility's own document.
+            require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+            $facV2Prefix = kop_v2_detect_prefix($pdo);
+            if (kop_v2_writes_active($pdo, $facV2Prefix)) {
+                kop_v2_set_document_folder($pdo, $facV2Prefix, $facilityUniqueNameForDb, $documentFolderIdRaw);
+                $facJson = false;   // nothing further to do below
+            } else {
             $facStmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
             $facStmt->execute([$facilityUniqueNameForDb]);
             $facJson = $facStmt->fetchColumn();
@@ -340,7 +348,8 @@ try {
                     kop_facility_v2_request_sync();
                 }
             }
-        } catch (PDOException $docEx) {
+            }
+        } catch (Throwable $docEx) {
             // Non-fatal: the wiki submission still saves even if the doc-folder
             // write fails. Surface in logs only.
             error_log('Wiki submission doc-folder link failed: ' . $docEx->getMessage());

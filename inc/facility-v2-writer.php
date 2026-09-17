@@ -48,11 +48,7 @@ if (!function_exists('kop_v2_write_switch_blockers')) {
      * is ported.
      */
     function kop_v2_write_switch_blockers() {
-        return array(
-            'Data Manager actions (api/data-manager.php) edit the old tables',
-            'Facility picker document folder and new-stub writes (api/facility-picker.php)',
-            'Wiki approval field merge and wiki document folder link (api/sync-wiki-facilities.php, api/save-wiki-submission.php)',
-        );
+        return array();
     }
 }
 
@@ -748,6 +744,34 @@ if (!function_exists('kop_v2_save_form_project')) {
     }
 }
 
+if (!function_exists('kop_v2_save_legacy_row')) {
+    /**
+     * Save a row in the legacy shape back to the v2 tables, for the tools that
+     * read a facilities_master row, edit part of it and write the whole row
+     * back (the wiki merge, the Data Manager).
+     *
+     * An operator project saves as a project; a per-facility row saves as that
+     * one facility.
+     *
+     * @param array $project the decoded row, as kop_v2_pdo_master_rows() serves it
+     * @return array the save summary
+     */
+    function kop_v2_save_legacy_row(PDO $pdo, $prefix, $unique_name, array $project, array $meta = array()) {
+        if (!empty($project['__facility_ref'])) {
+            $facility = isset($project['data']['facility']) && is_array($project['data']['facility'])
+                ? $project['data']['facility']
+                : array();
+            if (!$facility) throw new RuntimeException('No facility data in "' . $unique_name . '"');
+            return kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $facility) {
+                return kop_v2_save_facility_entries($pdo, $prefix, array($facility), array());
+            });
+        }
+        $data = isset($project['data']) && is_array($project['data']) ? $project['data'] : $project;
+        $category = (isset($project['category']) && $project['category'] === 'locations') ? 'locations' : 'companies';
+        return kop_v2_save_form_project($pdo, $prefix, $unique_name, $data, $category, $meta);
+    }
+}
+
 if (!function_exists('kop_v2_rename_operator')) {
     /**
      * Rename an operator project. Facilities that name it as their source
@@ -880,6 +904,61 @@ if (!function_exists('kop_v2_add_operator_other_names')) {
                     ->execute(array(json_encode($json, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int)$id));
             }
             return $added;
+        });
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Document folders and name checks (the facility picker, the wiki editor)
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_name_taken')) {
+    /** Is this unique_name already an operator project or a facility? */
+    function kop_v2_name_taken(PDO $pdo, $prefix, $unique_name) {
+        $t = kop_migration_tables($prefix);
+        foreach (array($t['facilities'], $t['operators']) as $table) {
+            $stmt = $pdo->prepare("SELECT 1 FROM `{$table}` WHERE LOWER(unique_name) = LOWER(?) LIMIT 1");
+            $stmt->execute(array((string)$unique_name));
+            if ($stmt->fetchColumn()) return true;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('kop_v2_set_document_folder')) {
+    /**
+     * Point a program at its FileBird document folder: the operator row's
+     * column, or the facility document's documentFolderId.
+     *
+     * @param mixed $folder_id_raw a positive id, or null/0/'' to clear it
+     * @return int|null the stored folder id
+     * @throws RuntimeException when no program of that name exists
+     */
+    function kop_v2_set_document_folder(PDO $pdo, $prefix, $unique_name, $folder_id_raw) {
+        $t = kop_migration_tables($prefix);
+        $folder_id = ($folder_id_raw !== null && $folder_id_raw !== '' && (int)$folder_id_raw > 0) ? (int)$folder_id_raw : null;
+
+        return kop_v2_with_write_lock($pdo, function () use ($pdo, $prefix, $t, $unique_name, $folder_id) {
+            $stmt = $pdo->prepare("SELECT id FROM `{$t['operators']}` WHERE unique_name = ? LIMIT 1");
+            $stmt->execute(array((string)$unique_name));
+            $operator_id = $stmt->fetchColumn();
+            if ($operator_id !== false) {
+                $pdo->prepare("UPDATE `{$t['operators']}` SET document_folder_id = ? WHERE id = ?")
+                    ->execute(array($folder_id, (int)$operator_id));
+                return $folder_id;
+            }
+
+            $stmt = $pdo->prepare("SELECT id FROM `{$t['facilities']}` WHERE unique_name = ? LIMIT 1");
+            $stmt->execute(array((string)$unique_name));
+            $facility_id = $stmt->fetchColumn();
+            if ($facility_id === false) {
+                throw new RuntimeException("Program '{$unique_name}' not found");
+            }
+            $stored = kop_facility_load((int)$facility_id, array('pdo' => $pdo, 'prefix' => $prefix));
+            $doc = $stored['doc'];
+            $doc['documentFolderId'] = $folder_id;
+            kop_facility_save($doc, array('pdo' => $pdo, 'prefix' => $prefix, 'skip_memberships' => true));
+            return $folder_id;
         });
     }
 }

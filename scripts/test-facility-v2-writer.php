@@ -288,6 +288,48 @@ foreach ($new_seeds as $entry) {
 check('seeds: re-running the new-facility seeds creates nothing', state_of($pdo)['memberships'] === $before_new['memberships']
     && (int)scalar($pdo, "SELECT COUNT(*) FROM `{$t['facilities']}`") === (int)explode(':', $before_new['facilities'])[0]);
 
+// --- 8c. The row shape the Data Manager, picker and wiki merge edit ------------------
+$master_rows = kop_v2_pdo_master_rows($pdo, $prefix);
+$expected_rows = (int)scalar($pdo, "SELECT COUNT(*) FROM `{$t['facilities']}`") + (int)scalar($pdo, "SELECT COUNT(*) FROM `{$t['operators']}`");
+check('rows: one legacy-shaped row per facility and operator', count($master_rows) === $expected_rows, count($master_rows) . ' of ' . $expected_rows);
+$by_name = array();
+foreach ($master_rows as $row) $by_name[$row['unique_name']] = $row;
+$op_row = kop_v2_pdo_master_row_by_name($pdo, $prefix, $op_name . ' Renamed');
+$fac_row = kop_v2_pdo_master_row_by_name($pdo, $prefix, 'Writer Test Ranch');
+check('rows: an operator project and a facility are both found by name',
+    $op_row && $fac_row && strpos($fac_row['json_data'], '__facility_ref') !== false && strpos($op_row['json_data'], '__facility_ref') === false);
+
+$before = state_of($pdo);
+kop_v2_save_legacy_row($pdo, $prefix, $op_row['unique_name'], json_decode($op_row['json_data'], true));
+kop_v2_save_legacy_row($pdo, $prefix, $fac_row['unique_name'], json_decode($fac_row['json_data'], true));
+check('rows: saving them back unchanged writes nothing', state_of($pdo) === $before);
+
+$edited_row = json_decode($fac_row['json_data'], true);
+$edited_row['data']['facility']['identification']['name'] = 'Writer Test Ranch Renamed';
+kop_v2_save_legacy_row($pdo, $prefix, $fac_row['unique_name'], $edited_row);
+check('rows: editing a facility row updates that facility',
+    kop_facility_load($new_id, array('pdo' => $pdo, 'prefix' => $prefix))['doc']['identification']['name'] === 'Writer Test Ranch Renamed');
+$edited_row['data']['facility']['identification']['name'] = 'Writer Test Ranch';
+kop_v2_save_legacy_row($pdo, $prefix, $fac_row['unique_name'], $edited_row);
+
+// --- 8d. Document folders and name checks (picker, wiki editor) ----------------------
+check('folders: set on an operator project', kop_v2_set_document_folder($pdo, $prefix, $op_row['unique_name'], 4242) === 4242
+    && (int)scalar($pdo, "SELECT document_folder_id FROM `{$t['operators']}` WHERE unique_name = ?", array($op_row['unique_name'])) === 4242);
+check('folders: set on a facility', kop_v2_set_document_folder($pdo, $prefix, 'Writer Test Ranch', 777) === 777
+    && kop_facility_load($new_id, array('pdo' => $pdo, 'prefix' => $prefix))['doc']['documentFolderId'] === 777);
+check('folders: cleared again', kop_v2_set_document_folder($pdo, $prefix, 'Writer Test Ranch', null) === null
+    && kop_facility_load($new_id, array('pdo' => $pdo, 'prefix' => $prefix))['doc']['documentFolderId'] === null);
+$missing = false;
+try {
+    kop_v2_set_document_folder($pdo, $prefix, 'No Such Program Anywhere', 5);
+} catch (RuntimeException $e) {
+    $missing = true;
+}
+check('folders: an unknown program is reported', $missing);
+check('names: taken and free names are told apart',
+    kop_v2_name_taken($pdo, $prefix, 'Writer Test Ranch') && kop_v2_name_taken($pdo, $prefix, $op_row['unique_name'])
+    && !kop_v2_name_taken($pdo, $prefix, 'Nothing Called This 12345'));
+
 // --- 9. All or nothing ---------------------------------------------------------------
 $before = state_of($pdo);
 try {

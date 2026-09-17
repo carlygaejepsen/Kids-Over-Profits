@@ -43,14 +43,23 @@ function kop_picker_unique_name(PDO $pdo, string $name): string {
         $base = 'Untitled Program';
     }
 
-    $check = $pdo->prepare("SELECT 1 FROM facilities_master WHERE LOWER(unique_name) = LOWER(?) LIMIT 1");
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    $v2_writes = kop_v2_writes_active($pdo, $v2_prefix);
+    $check = $v2_writes ? null : $pdo->prepare("SELECT 1 FROM facilities_master WHERE LOWER(unique_name) = LOWER(?) LIMIT 1");
 
     $candidate = $base;
     $n = 1;
     while (true) {
-        $check->execute([$candidate]);
-        if (!$check->fetchColumn()) {
-            return $candidate;
+        if ($v2_writes) {
+            if (!kop_v2_name_taken($pdo, $v2_prefix, $candidate)) {
+                return $candidate;
+            }
+        } else {
+            $check->execute([$candidate]);
+            if (!$check->fetchColumn()) {
+                return $candidate;
+            }
         }
         $n++;
         $candidate = $base . ' (' . $n . ')';
@@ -179,18 +188,42 @@ function kop_picker_find_duplicates(PDO $pdo, string $name): array {
     $rows = [];
     // json_data LIKE catches records whose CURRENT index name is entirely
     // different but that list the proposed name as a former/alternate name.
-    $stmt = $pdo->prepare(
-        "SELECT id, unique_name, json_data FROM facilities_master
-         WHERE JSON_SEARCH(json_data,'one','__facility_ref') IS NULL
-           AND (unique_name LIKE :t1 OR json_data LIKE :t2) LIMIT 25"
-    );
-    foreach ($terms as $term) {
-        $stmt->execute([':t1' => '%' . $term . '%', ':t2' => '%' . $term . '%']);
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $rows[$row['unique_name']] = $row;
+    // Only project rows are probed, never the per-facility rows.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    if (kop_v2_writes_active($pdo, $v2_prefix)) {
+        $projects = array_filter(kop_v2_pdo_master_rows($pdo, $v2_prefix), static function ($row) {
+            return strpos($row['json_data'], '"__facility_ref"') === false;
+        });
+        foreach ($terms as $term) {
+            $hits = 0;
+            foreach ($projects as $row) {
+                if (mb_stripos($row['unique_name'], $term) === false && mb_stripos($row['json_data'], $term) === false) {
+                    continue;
+                }
+                $rows[$row['unique_name']] = $row;
+                if (++$hits >= 25) {
+                    break;
+                }
+            }
+            if (count($rows) >= 80) {
+                break;
+            }
         }
-        if (count($rows) >= 80) {
-            break;
+    } else {
+        $stmt = $pdo->prepare(
+            "SELECT id, unique_name, json_data FROM facilities_master
+             WHERE JSON_SEARCH(json_data,'one','__facility_ref') IS NULL
+               AND (unique_name LIKE :t1 OR json_data LIKE :t2) LIMIT 25"
+        );
+        foreach ($terms as $term) {
+            $stmt->execute([':t1' => '%' . $term . '%', ':t2' => '%' . $term . '%']);
+            foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                $rows[$row['unique_name']] = $row;
+            }
+            if (count($rows) >= 80) {
+                break;
+            }
         }
     }
 
@@ -302,6 +335,14 @@ function kop_picker_find_duplicates(PDO $pdo, string $name): array {
  * Returns the normalized folder id (int) or null when cleared.
  */
 function kop_picker_set_doc_folder(PDO $pdo, string $uniqueName, $folderIdRaw) {
+    // facilities_master is frozen once admin saves write the v2 tables: the
+    // folder is stored on the operator row or on the facility document.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    if (kop_v2_writes_active($pdo, $v2_prefix)) {
+        return kop_v2_set_document_folder($pdo, $v2_prefix, $uniqueName, $folderIdRaw);
+    }
+
     $stmt = $pdo->prepare("SELECT json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
     $stmt->execute([$uniqueName]);
     $jsonText = $stmt->fetchColumn();
@@ -531,6 +572,30 @@ try {
         if ($folderIdRaw !== null && $folderIdRaw !== '' && (int)$folderIdRaw > 0) {
             $project['documentFolderId'] = (int)$folderIdRaw;
             $project['data']['documentFolderId'] = (int)$folderIdRaw;
+        }
+
+        // A stub is an operator project: in v2 that is a row of kop_operators,
+        // with the stub markers kept alongside its other project keys.
+        require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+        $v2_prefix = kop_v2_detect_prefix($pdo);
+        if (kop_v2_writes_active($pdo, $v2_prefix)) {
+            $data = $project['data'];
+            foreach (['_stub', '_source', '_created_by', 'documentFolderId'] as $marker) {
+                if (isset($project[$marker])) {
+                    $data[$marker] = $project[$marker];
+                }
+            }
+            $result = kop_v2_save_form_project($pdo, $v2_prefix, $uniqueName, $data, 'companies', [
+                'timestamp' => gmdate('c'),
+            ]);
+            echo json_encode([
+                'success'            => true,
+                'created'            => true,
+                'unique_name'        => $uniqueName,
+                'id'                 => (int)$result['operator_id'],
+                'document_folder_id' => $project['documentFolderId'] ?? null,
+            ]);
+            exit;
         }
 
         $ins = $pdo->prepare(
