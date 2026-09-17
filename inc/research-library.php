@@ -331,6 +331,42 @@ function kop_research_is_legislation($title, $file) {
     return (bool) apply_filters('kop_research_is_legislation', $is_bill, $title, $file);
 }
 
+/**
+ * Documents filed in these folders that do not belong in this library.
+ *
+ * Each entry is a lowercase fragment matched against the document's title and
+ * its filename. SCARPTA's papers sit in the Government folder but are not
+ * research or a government report, so they are kept out here rather than
+ * refiled, which would change what the folder pages show.
+ *
+ * Filter 'kop_research_excluded_patterns' to add or drop a fragment.
+ *
+ * @return string[]
+ */
+function kop_research_excluded_patterns() {
+    return apply_filters('kop_research_excluded_patterns', array(
+        'scarpta',
+    ));
+}
+
+/**
+ * Is this document on the keep-out list above?
+ *
+ * @param string $title
+ * @param string $file Attached file path or basename.
+ * @return bool
+ */
+function kop_research_is_excluded($title, $file) {
+    $haystack = strtolower($title . ' ' . basename((string) $file));
+    foreach (kop_research_excluded_patterns() as $needle) {
+        $needle = strtolower((string) $needle);
+        if ($needle !== '' && strpos($haystack, $needle) !== false) {
+            return true;
+        }
+    }
+    return false;
+}
+
 /** Last plausible publication year in a string, or 0. */
 function kop_research_year_from($text) {
     if (is_string($text) && preg_match_all('/\b(19[3-9]\d|20[0-4]\d)\b/', $text, $m)) {
@@ -387,7 +423,8 @@ function kop_research_library_items() {
 
             $file = (string) get_post_meta($attachment->ID, '_wp_attached_file', true);
 
-            if (kop_research_is_legislation($attachment->post_title, $file)) {
+            if (kop_research_is_legislation($attachment->post_title, $file)
+                || kop_research_is_excluded($attachment->post_title, $file)) {
                 continue;
             }
             $base = strtolower(pathinfo(basename($file !== '' ? $file : (string) $attachment->post_title), PATHINFO_FILENAME));
