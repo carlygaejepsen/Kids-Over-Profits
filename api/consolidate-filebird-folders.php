@@ -23,6 +23,8 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/facility-v2-writer.php';
+kop_v2_exit_if_legacy_frozen($pdo ?? null, 'consolidate-filebird-folders.php');
 
 if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
     http_response_code(403);

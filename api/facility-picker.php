@@ -387,6 +387,11 @@ try {
         exit;
     }
 
+    // POST actions edit facilities_master; re-derive v2 after the request.
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
+    }
+
     $kop_is_admin = function_exists('current_user_can') && current_user_can('manage_options');
 
     $input = json_decode(file_get_contents('php://input'), true);

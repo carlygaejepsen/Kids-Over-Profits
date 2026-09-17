@@ -8,7 +8,9 @@
  * directly, so re-deriving is always correct: every 10 minutes WP-cron checks a
  * fingerprint of the legacy tables and, when it changed, rebuilds the plan and
  * applies it (unchanged rows are skipped). Nothing happens until the migration
- * has been applied once from api/migrate-facility-model.php.
+ * has been applied once from api/migrate-facility-model.php, and nothing
+ * happens again once the write switch sends admin saves to v2
+ * (inc/facility-v2-writer.php): kop_migration_sync() refuses from then on.
  */
 
 if (!defined('ABSPATH')) {

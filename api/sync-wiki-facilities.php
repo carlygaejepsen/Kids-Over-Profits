@@ -250,6 +250,9 @@ function kop_merge_wiki_into_facility(PDO $pdo, array $wiki): array {
         ':json' => json_encode($project, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
         ':id'   => $row['id'],
     ]);
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
+    }
 
     return ['merged' => true, 'reason' => "blank fields filled (matched by $matchedBy)"];
 }

@@ -410,15 +410,6 @@
                 action: action
             };
 
-            // v2 data model (docs/DATA-MODEL-MIGRATION.md phase 3): send the
-            // canonical facility documents alongside the legacy payload so
-            // save-master.php can write them through kop_facility_save().
-            const normalizer = window.KOP_DataNormalizer;
-            if (normalizer && typeof normalizer.isV2DataModel === 'function' && normalizer.isV2DataModel()
-                && Array.isArray(projectData.data?.facilities)) {
-                payload.facilitiesV2 = projectData.data.facilities.map(f => normalizer.facilityToV2(f));
-            }
-            
             let response;
             let usedRestApi = false;
             try {
@@ -454,6 +445,23 @@
 
             const result = await response.json();
             if (!result.success) throw new Error(result.error || result.message || 'Unknown server error');
+
+            // Saves to the v2 facility tables return the id of each facility
+            // (index in data.facilities => id). Stamp them so the next save
+            // updates the same facilities instead of matching by name again.
+            if (result.facilityIds && typeof result.facilityIds === 'object') {
+                const targets = [projectData.data?.facilities];
+                if (window.currentProjectName === projectName || !window.currentProjectName) {
+                    targets.push(window.formData?.facilities);
+                }
+                Object.entries(result.facilityIds).forEach(([index, id]) => {
+                    targets.forEach(list => {
+                        if (Array.isArray(list) && list[index] && typeof list[index] === 'object') {
+                            list[index].facility_id = id;
+                        }
+                    });
+                });
+            }
 
             window.projects[projectName] = projectData;
             if(typeof window.invalidateAggregatedData === 'function') window.invalidateAggregatedData();

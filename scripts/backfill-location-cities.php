@@ -641,6 +641,8 @@ try {
     if ($options['help']) { backfill_print_usage(); exit(0); }
 
     require_once dirname(__DIR__) . '/api/config.php';
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    kop_v2_exit_if_legacy_frozen($pdo ?? null, 'backfill-location-cities.php');
 
     if (!isset($pdo) || !($pdo instanceof PDO)) {
         throw new RuntimeException('Database connection (\$pdo) not available from api/config.php');

@@ -160,16 +160,22 @@ try {
         $processTable($prefix . 'transporters_master', 'transporters');
     }
 
-    // 3. Process Facilities
-    $processTable('facilities_master', 'facilities');
-    if (!empty($prefix)) {
-        $processTable($prefix . 'facilities_master', 'facilities');
-    }
-
-    // 4. Process Locations
-    $processTable('locations_master', 'locations');
-    if (!empty($prefix)) {
-        $processTable($prefix . 'locations_master', 'locations');
+    // 3-4. Operator projects and location profiles. Once admin saves write the
+    // v2 tables (inc/facility-v2-writer.php), they are built from there.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    if ($pdo instanceof PDO && kop_v2_writes_active($pdo, $prefix)) {
+        foreach (kop_v2_form_projects($pdo, $prefix) as $key => $project) {
+            $projects[$key] = $project;
+        }
+    } else {
+        $processTable('facilities_master', 'facilities');
+        if (!empty($prefix)) {
+            $processTable($prefix . 'facilities_master', 'facilities');
+        }
+        $processTable('locations_master', 'locations');
+        if (!empty($prefix)) {
+            $processTable($prefix . 'locations_master', 'locations');
+        }
     }
 
     // 5. Process Wiki Master

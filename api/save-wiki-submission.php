@@ -336,6 +336,9 @@ try {
                     json_encode($facProject, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                     $facilityUniqueNameForDb
                 ]);
+                if (function_exists('kop_facility_v2_request_sync')) {
+                    kop_facility_v2_request_sync();
+                }
             }
         } catch (PDOException $docEx) {
             // Non-fatal: the wiki submission still saves even if the doc-folder

@@ -655,6 +655,21 @@ function kop_register_facilities_rest_routes() {
 add_action('rest_api_init', 'kop_register_facilities_rest_routes');
 
 /**
+ * A PDO handle when admin saves write the v2 facility tables, else null.
+ */
+function kop_rest_v2_writes_pdo() {
+    global $wpdb;
+    if (!function_exists('kop_facility_v2_pdo')) return null;
+    require_once __DIR__ . '/facility-v2-writer.php';
+    try {
+        $pdo = kop_facility_v2_pdo();
+        return kop_v2_writes_active($pdo, $wpdb->prefix) ? $pdo : null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+/**
  * REST API callback for saving projects.
  *
  * @param WP_REST_Request $request The request object.
@@ -716,6 +731,27 @@ function kop_save_project_rest_callback($request) {
         return new WP_Error('missing_data', 'Project data is required', array('status' => 400));
     }
 
+    // v2 facility model: operator projects and location profiles save to the
+    // v2 tables once the write switch is on (inc/facility-v2-writer.php).
+    if (in_array($category, array('company', 'companies', 'locations', 'location'), true) && is_array($data)
+        && ($v2_pdo = kop_rest_v2_writes_pdo())) {
+        $is_location = in_array($category, array('locations', 'location'), true);
+        try {
+            $result = kop_v2_save_form_project($v2_pdo, $wpdb->prefix, $project_name, $data, $is_location ? 'locations' : 'companies', array(
+                'timestamp' => isset($params['timestamp']) ? (string)$params['timestamp'] : gmdate('c'),
+                'currentFacilityIndex' => isset($params['currentFacilityIndex']) ? (int)$params['currentFacilityIndex'] : 0,
+            ));
+        } catch (RuntimeException $e) {
+            return new WP_Error('invalid_facility', $e->getMessage(), array('status' => 422));
+        }
+        return rest_ensure_response(array(
+            'success' => true,
+            'message' => kop_v2_save_summary($project_name, $result),
+            'projectName' => $project_name,
+            'facilityIds' => (object)$result['ids'],
+        ));
+    }
+
     // Determine which table to use based on category
     $table_map = array(
         'company' => 'facilities_master',
@@ -771,6 +807,10 @@ function kop_save_project_rest_callback($request) {
         return new WP_Error('db_error', 'Database error: ' . $wpdb->last_error, array('status' => 500));
     }
 
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
+    }
+
     return rest_ensure_response(array(
         'success' => true,
         'message' => $existing ? 'Project updated successfully' : 'Project created successfully',
@@ -795,6 +835,14 @@ function kop_delete_project_rest_callback($request) {
 
     if (empty($project_name)) {
         return new WP_Error('missing_project_name', 'Project name is required', array('status' => 400));
+    }
+
+    if (in_array($category, array('company', 'companies', 'locations', 'location'), true) && ($v2_pdo = kop_rest_v2_writes_pdo())) {
+        $result = kop_v2_delete_form_project($v2_pdo, $wpdb->prefix, $project_name, in_array($category, array('locations', 'location'), true));
+        if (!$result['deleted']) {
+            return new WP_Error('not_deleted', $result['error'] ?? 'Project not found', array('status' => 404));
+        }
+        return rest_ensure_response(array('success' => true, 'message' => 'Project deleted successfully', 'projectName' => $project_name));
     }
 
     // Determine which table to use based on category
@@ -824,6 +872,10 @@ function kop_delete_project_rest_callback($request) {
 
     if ($result === 0) {
         return new WP_Error('not_found', 'Project not found', array('status' => 404));
+    }
+
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
     }
 
     return rest_ensure_response(array(

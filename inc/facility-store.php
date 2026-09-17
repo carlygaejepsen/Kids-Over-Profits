@@ -1315,7 +1315,10 @@ if (!function_exists('kop_facility_table')) {
 
         switch ($base) {
             case 'facilities':
-                return 'facilities_master';
+                // The v2 documents. Phase 5 renames the table to facilities_master.
+                return 'facilities_v2';
+            case 'identity':
+                return $prefix . 'kop_facility_identity';
             case 'locations':
                 return 'locations_master';
             case 'facility_locations':
@@ -1380,8 +1383,9 @@ if (!function_exists('kop_facility_db_insert_id')) {
 
 if (!function_exists('kop_facility_has_generated_columns')) {
     /**
-     * True once phase 3 has added the generated columns to facilities_master.
-     * Cached per request; identity lookups fall back to JSON paths until then.
+     * True when the facilities table has the generated columns (facilities_v2
+     * always does). Cached per request; identity lookups fall back to JSON
+     * paths otherwise.
      */
     function kop_facility_has_generated_columns(array $opts = array()) {
         static $cache = null;
@@ -1470,18 +1474,112 @@ if (!function_exists('kop_facility_resolve_identity')) {
     }
 }
 
+if (!function_exists('kop_facility_canonical')) {
+    /**
+     * Order-independent comparison form of a document. MySQL's JSON column
+     * reorders object keys and reads {} back as [], so a stored document never
+     * string-matches the one that was written.
+     */
+    function kop_facility_canonical($value) {
+        if (!is_array($value)) return $value;
+        if ($value === array()) return array();
+        $is_list = array_keys($value) === range(0, count($value) - 1);
+        if (!$is_list) ksort($value, SORT_STRING);
+        foreach ($value as $k => $v) $value[$k] = kop_facility_canonical($v);
+        return $value;
+    }
+}
+
+if (!function_exists('kop_facility_same_document')) {
+    function kop_facility_same_document($a, $b) {
+        return is_array($a) && is_array($b)
+            && json_encode(kop_facility_canonical($a)) === json_encode(kop_facility_canonical($b));
+    }
+}
+
+if (!function_exists('kop_facility_load')) {
+    /**
+     * A stored v2 document by id, or null.
+     *
+     * @return array|null {id, unique_name, doc}
+     */
+    function kop_facility_load($facility_id, array $opts = array()) {
+        $rows = kop_facility_db_rows(
+            "SELECT id, unique_name, json_data FROM " . kop_facility_table('facilities', $opts) . " WHERE id = ?",
+            array((int)$facility_id),
+            $opts
+        );
+        if (!$rows) return null;
+        $doc = json_decode((string)$rows[0]['json_data'], true);
+        if (!is_array($doc)) return null;
+        return array('id' => (int)$rows[0]['id'], 'unique_name' => (string)$rows[0]['unique_name'], 'doc' => $doc);
+    }
+}
+
+if (!function_exists('kop_facility_allocate_id')) {
+    /**
+     * Next free facility id. New facilities are numbered from 100000 up (the
+     * range the migration uses for split-off facilities), above every legacy
+     * id, and each allocation is recorded in kop_facility_identity so an id is
+     * never handed out twice.
+     */
+    function kop_facility_allocate_id($unique_name, array $opts = array()) {
+        $facilities = kop_facility_table('facilities', $opts);
+        $identity = kop_facility_table('identity', $opts);
+        $max = 99999;
+        foreach (array("SELECT MAX(id) AS m FROM {$facilities}", "SELECT MAX(facility_id) AS m FROM {$identity}") as $sql) {
+            $rows = kop_facility_db_rows($sql, array(), $opts);
+            if ($rows && $rows[0]['m'] !== null) $max = max($max, (int)$rows[0]['m']);
+        }
+        $id = $max + 1;
+        kop_facility_db_exec(
+            "INSERT INTO {$identity} (identity_key, facility_id, unique_name) VALUES (?, ?, ?)",
+            array('save:' . $id, $id, $unique_name),
+            $opts
+        );
+        return $id;
+    }
+}
+
+if (!function_exists('kop_facility_allocate_unique_name')) {
+    /**
+     * A unique_name nobody has: "Name", then "Name (ST)", "Name (City, ST)",
+     * "Name #2" and up.
+     */
+    function kop_facility_allocate_unique_name(array $doc, array $opts = array()) {
+        $table = kop_facility_table('facilities', $opts);
+        $name = mb_substr($doc['identification']['name'], 0, 230);
+        $place = $doc['location']['state'] !== null ? $doc['location']['state'] : (string)$doc['location']['country'];
+        $candidates = array($name);
+        if ($place !== '') {
+            $candidates[] = $name . ' (' . $place . ')';
+            if ($doc['location']['city'] !== '') $candidates[] = $name . ' (' . $doc['location']['city'] . ', ' . $place . ')';
+        }
+        for ($n = 2; $n < 100; $n++) $candidates[] = $name . ' #' . $n;
+        foreach ($candidates as $candidate) {
+            $taken = kop_facility_db_rows("SELECT id FROM {$table} WHERE unique_name = ? LIMIT 1", array($candidate), $opts);
+            if (!$taken) return $candidate;
+        }
+        return $name . ' #' . uniqid();
+    }
+}
+
 if (!function_exists('kop_facility_save')) {
     /**
      * Validate and write one facility, then rebuild its derived rows.
      *
-     * @param array $doc  a v2 document (run kop_facility_normalize first).
-     * @param array $opts pdo, unique_name, allow_warnings (default true),
-     *                    skip_memberships, operator_links (list of
-     *                    {operator_id, relationship, sort_order}).
-     * @return int facilities_master.id
+     * The document's facility_id picks the row. Without one, the identity
+     * resolver looks for the same facility (name + place) before a new row is
+     * created. An unchanged document is not rewritten.
+     *
+     * @param array $doc    a v2 document (run kop_facility_normalize first).
+     * @param array $opts   pdo, prefix, unique_name (new rows only), force
+     *                      (write despite validation errors), skip_memberships.
+     * @param string|null $status set to 'created', 'updated' or 'unchanged'.
+     * @return int facility id
      * @throws RuntimeException when the document has error-severity violations.
      */
-    function kop_facility_save(array $doc, array $opts = array()) {
+    function kop_facility_save(array $doc, array $opts = array(), &$status = null) {
         $violations = kop_facility_validate($doc);
         $errors = array_values(array_filter($violations, function ($v) {
             return $v['severity'] === 'error';
@@ -1496,62 +1594,55 @@ if (!function_exists('kop_facility_save')) {
 
         $table = kop_facility_table('facilities', $opts);
         $id = $doc['facility_id'] !== null ? (int)$doc['facility_id'] : 0;
+        $existing = $id > 0 ? kop_facility_load($id, $opts) : null;
 
-        $unique_name = '';
-        if (!empty($opts['unique_name'])) {
-            $unique_name = (string)$opts['unique_name'];
-        } elseif (!empty($doc['provenance']['uniqueName'])) {
-            $unique_name = (string)$doc['provenance']['uniqueName'];
-        }
-
-        if ($id === 0) {
-            $id = (int)kop_facility_resolve_identity(
+        if ($existing === null) {
+            $resolved = (int)kop_facility_resolve_identity(
                 $doc['identification']['name'],
                 $doc['location']['state'],
                 $doc['location']['city'],
                 $opts
             );
-        }
-
-        if ($unique_name === '') {
-            $unique_name = $doc['identification']['name'];
-            if ($doc['location']['state'] !== null) {
-                $unique_name .= ' (' . $doc['location']['state'] . ')';
+            if ($resolved > 0) {
+                $existing = kop_facility_load($resolved, $opts);
             }
         }
 
-        $doc['facility_id'] = $id ?: null;
-        $json = kop_facility_json_encode($doc);
-
-        if ($id > 0) {
-            kop_facility_db_exec(
-                "UPDATE {$table} SET json_data = ?, updated_at = NOW() WHERE id = ?",
-                array($json, $id),
-                $opts
-            );
-        } else {
-            kop_facility_db_exec(
-                "INSERT INTO {$table} (unique_name, json_data, created_at, updated_at) VALUES (?, ?, NOW(), NOW())",
-                array($unique_name, $json),
-                $opts
-            );
-            $id = kop_facility_db_insert_id($opts);
-            // The id is mirrored into the document, so write it back once known.
+        if ($existing !== null) {
+            $id = $existing['id'];
             $doc['facility_id'] = $id;
+            $doc['identification']['nameKey'] = kop_facility_name_key($doc['identification']['name']);
+            if (kop_facility_same_document($existing['doc'], $doc)) {
+                $status = 'unchanged';
+                return $id;
+            }
             kop_facility_db_exec(
                 "UPDATE {$table} SET json_data = ? WHERE id = ?",
                 array(kop_facility_json_encode($doc), $id),
                 $opts
             );
+            $status = 'updated';
+            if (empty($opts['skip_memberships'])
+                && !kop_facility_same_document($existing['doc']['location'] ?? null, $doc['location'])) {
+                kop_facility_rebuild_memberships($id, $doc, $opts);
+            }
+            return $id;
         }
 
+        $unique_name = !empty($opts['unique_name']) ? (string)$opts['unique_name'] : kop_facility_allocate_unique_name($doc, $opts);
+        $id = kop_facility_allocate_id($unique_name, $opts);
+        $doc['facility_id'] = $id;
+        $doc['identification']['nameKey'] = kop_facility_name_key($doc['identification']['name']);
+        $doc['provenance']['uniqueName'] = $unique_name;
+        kop_facility_db_exec(
+            "INSERT INTO {$table} (id, unique_name, json_data) VALUES (?, ?, ?)",
+            array($id, $unique_name, kop_facility_json_encode($doc)),
+            $opts
+        );
+        $status = 'created';
         if (empty($opts['skip_memberships'])) {
             kop_facility_rebuild_memberships($id, $doc, $opts);
         }
-        if (!empty($opts['operator_links'])) {
-            kop_facility_rebuild_operator_links($id, $opts['operator_links'], $opts);
-        }
-
         return $id;
     }
 }
@@ -1559,38 +1650,72 @@ if (!function_exists('kop_facility_save')) {
 if (!function_exists('kop_facility_rebuild_memberships')) {
     /**
      * Replace this facility's rows in kop_facility_locations with the ones its
-     * document implies. Memberships the migration flagged for review
-     * (source = legacy_membership) are preserved: they record a page the
-     * facility appears on today that the document alone cannot justify, and
-     * dropping one would break the zero-loss guarantee.
+     * document implies. Called when the location block changes.
+     *
+     * Kept regardless: rows the migration added from legacy evidence
+     * (source = legacy_membership) and hand-placed rows (manual), because they
+     * record a page the facility appears on that the document alone cannot
+     * justify. The Unknown row goes as soon as the facility has a real place.
+     * A place the free-text location names becomes an additional membership,
+     * as in the migration.
      */
     function kop_facility_rebuild_memberships($facility_id, array $doc, array $opts = array()) {
         $facility_id = (int)$facility_id;
         if ($facility_id <= 0) return 0;
         $table = kop_facility_table('facility_locations', $opts);
 
+        $rows = array();
+        foreach (kop_facility_derive_memberships($doc) as $m) {
+            $rows[$m['location_key'] . '|' . $m['role']] = $m;
+        }
+        $places = array();
+        foreach ($rows as $m) $places[$m['location_key']] = true;
+        foreach (kop_facility_location_text_places($doc['location']['text'] ?? '') as $place) {
+            $key = kop_facility_location_key($place['state'], $place['country']);
+            if ($key === null || isset($places[$key])) continue;
+            $rows[$key . '|additional'] = array(
+                'location_key' => $key, 'role' => 'additional', 'source' => 'additional_location',
+                'needs_review' => 0, 'review_reason' => '',
+            );
+            $places[$key] = true;
+        }
+        $has_place = false;
+        foreach ($rows as $m) {
+            if ($m['location_key'] !== 'UNKNOWN') $has_place = true;
+        }
+        if ($has_place) unset($rows['UNKNOWN|unknown']);
+
         kop_facility_db_exec(
-            "DELETE FROM {$table} WHERE facility_id = ? AND source <> 'legacy_membership' AND source <> 'manual'",
+            "DELETE FROM {$table} WHERE facility_id = ? AND source NOT IN ('legacy_membership', 'manual')",
             array($facility_id),
             $opts
         );
+        if ($has_place) {
+            kop_facility_db_exec(
+                "DELETE FROM {$table} WHERE facility_id = ? AND location_key = 'UNKNOWN'",
+                array($facility_id),
+                $opts
+            );
+        } else {
+            $kept = kop_facility_db_rows("SELECT location_key FROM {$table} WHERE facility_id = ?", array($facility_id), $opts);
+            if ($kept) unset($rows['UNKNOWN|unknown']);   // a kept page is a place
+        }
 
-        $rows = kop_facility_derive_memberships($doc);
         $written = 0;
         foreach ($rows as $row) {
             kop_facility_db_exec(
                 "INSERT INTO {$table} (facility_id, location_key, role, source, needs_review, review_reason)
                  VALUES (?, ?, ?, ?, ?, ?)
-                 ON DUPLICATE KEY UPDATE source = VALUES(source),
-                                         needs_review = VALUES(needs_review),
-                                         review_reason = VALUES(review_reason)",
+                 ON DUPLICATE KEY UPDATE source = IF(source IN ('legacy_membership', 'manual'), source, VALUES(source)),
+                                         needs_review = IF(source IN ('legacy_membership', 'manual'), needs_review, VALUES(needs_review)),
+                                         review_reason = IF(source IN ('legacy_membership', 'manual'), review_reason, VALUES(review_reason))",
                 array(
                     $facility_id,
                     $row['location_key'],
                     $row['role'],
                     $row['source'],
                     (int)$row['needs_review'],
-                    $row['review_reason'],
+                    $row['review_reason'] !== '' ? $row['review_reason'] : null,
                 ),
                 $opts
             );

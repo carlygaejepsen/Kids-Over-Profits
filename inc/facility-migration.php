@@ -1310,6 +1310,14 @@ if (!function_exists('kop_migration_state_set')) {
     }
 }
 
+if (!function_exists('kop_migration_writes_to_v2')) {
+    /** True once the write switch sends admin saves to the v2 tables (inc/facility-v2-writer.php). */
+    function kop_migration_writes_to_v2(PDO $pdo, $prefix) {
+        $state = kop_migration_state_get($pdo, $prefix, 'writes');
+        return is_array($state) && ($state['mode'] ?? '') === 'v2';
+    }
+}
+
 if (!function_exists('kop_migration_fingerprint')) {
     /** Cheap change detector for the legacy tables. */
     function kop_migration_fingerprint(PDO $pdo) {
@@ -1559,6 +1567,11 @@ if (!function_exists('kop_migration_sync')) {
         if ($locked !== 1) return array('skipped' => true, 'reason' => 'another sync is running');
         try {
             kop_migration_create_tables($pdo, $prefix);
+            // After the write switch the v2 tables are the source of truth;
+            // re-deriving from the frozen legacy tables would undo every edit.
+            if (kop_migration_writes_to_v2($pdo, $prefix)) {
+                return array('skipped' => true, 'reason' => 'admin saves write the v2 tables');
+            }
             if (!$force) {
                 $last = kop_migration_state_get($pdo, $prefix, 'last_sync');
                 if (is_array($last) && ($last['fingerprint'] ?? '') === kop_migration_fingerprint($pdo)) {

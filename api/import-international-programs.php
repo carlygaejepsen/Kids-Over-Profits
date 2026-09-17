@@ -27,6 +27,8 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/facility-v2-writer.php';
+kop_v2_exit_if_legacy_frozen($pdo ?? null, 'import-international-programs.php');
 require_once __DIR__ . '/facility-promotion.php';
 
 $is_cli  = php_sapi_name() === 'cli';

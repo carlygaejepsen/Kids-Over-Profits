@@ -258,6 +258,86 @@ if (!$projectName && $action !== 'rebuild-locations') {
     exit;
 }
 
+// v2 facility model (docs/DATA-MODEL-MIGRATION.md phase 4 step 5): once the
+// write switch is on, operator projects and location profiles are saved to the
+// v2 tables through inc/facility-v2-writer.php and the legacy facility tables
+// stay frozen. Referrer, transporter and wiki projects are unaffected.
+require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+$kop_v2_prefix = (isset($GLOBALS['wpdb']->prefix) && $GLOBALS['wpdb']->prefix !== '') ? $GLOBALS['wpdb']->prefix : $prefix;
+if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
+    $kop_v2_facility_project = in_array($category, ['companies', 'company', 'locations'], true);
+    try {
+        if (in_array($action, ['rebuild-locations', 'cleanup-locations', 'merge-location-duplicates'], true)) {
+            http_response_code(409);
+            echo json_encode(['success' => false, 'error' => "'$action' rebuilds the old location tables, which are frozen now that saves go to the new facility tables."]);
+            exit;
+        }
+        if ($action === 'save' && $kop_v2_facility_project) {
+            if (!is_array($data)) {
+                echo json_encode(['success' => false, 'error' => 'No data provided to save']);
+                exit;
+            }
+            $result = kop_v2_save_form_project($pdo, $kop_v2_prefix, $projectName, $data, $category === 'locations' ? 'locations' : 'companies', [
+                'timestamp' => $timestamp,
+                'currentFacilityIndex' => $currentFacilityIndex,
+            ]);
+            echo json_encode([
+                'success' => true,
+                'message' => kop_v2_save_summary($projectName, $result),
+                // index in data.facilities => facility id, so the form can stamp new facilities
+                'facilityIds' => (object)$result['ids'],
+                'result' => $result,
+            ]);
+            exit;
+        }
+        if ($action === 'rename') {
+            if (!$projectName || !$newProjectName) {
+                echo json_encode(['success' => false, 'error' => 'Old and new project names are required for rename.']);
+                exit;
+            }
+            $result = kop_v2_rename_operator($pdo, $kop_v2_prefix, $projectName, $newProjectName);
+            echo json_encode($result['renamed']
+                ? ['success' => true, 'message' => "Project '$projectName' renamed to '$newProjectName'.", 'facilitiesUpdated' => $result['facilities_updated']]
+                : ['success' => false, 'error' => $result['error']]);
+            exit;
+        }
+        if ($action === 'delete') {
+            $is_location = in_array(strtoupper($projectName), array_merge($US_STATE_NAMES, $COUNTRY_NAMES), true);
+            $result = kop_v2_delete_form_project($pdo, $kop_v2_prefix, $projectName, $is_location);
+            $deleted = $result['deleted'];
+            $message = $deleted ? "Project '$projectName' deleted" : '';
+            if ($deleted && !empty($result['facilities_kept'])) {
+                $message .= ". Its {$result['facilities_kept']} facilities are kept and stay on their state pages";
+            }
+            if (!$is_location && !$deleted) {
+                // Not an operator: a referrer or transporter project of that name.
+                foreach (['referrers_master', 'transporters_master'] as $table) {
+                    try {
+                        $stmt = $pdo->prepare("DELETE FROM `$table` WHERE unique_name = :projectName");
+                        $stmt->execute([':projectName' => $projectName]);
+                        if ($stmt->rowCount() > 0) {
+                            $deleted = true;
+                            $message = "Project '$projectName' deleted from $table";
+                        }
+                    } catch (PDOException $e) {
+                        // transporters_master may not exist yet.
+                    }
+                }
+            }
+            echo json_encode($deleted
+                ? ['success' => true, 'message' => $message, 'wasLocationProject' => $is_location]
+                : ['success' => false, 'error' => $result['error'] ?? 'Project not found in any database table']);
+            exit;
+        }
+    } catch (Throwable $e) {
+        // Validation problems come back as a normal response so the form shows
+        // the message instead of a truncated HTTP error.
+        if (!($e instanceof RuntimeException)) http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Failed to save: ' . $e->getMessage()]);
+        exit;
+    }
+}
+
 if ($action === 'rename') {
     if (!$projectName || !$newProjectName) {
         echo json_encode(['success' => false, 'error' => 'Old and new project names are required for rename.']);

@@ -297,6 +297,8 @@ try {
     }
 
     require_once dirname(__DIR__) . '/api/config.php';
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    kop_v2_exit_if_legacy_frozen($pdo ?? null, 'import-location-projects.php');
 
     $prefix = '';
     if (isset($table_prefix) && is_string($table_prefix)) {

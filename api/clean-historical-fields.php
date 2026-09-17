@@ -57,6 +57,8 @@ echo "<h1>🧹 Clean Historical Identification Fields</h1>";
 
 try {
     require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/../inc/facility-v2-writer.php';
+    kop_v2_exit_if_legacy_frozen($pdo ?? null, 'clean-historical-fields.php');
     echo "<p class='keep'>✓ Config loaded</p>";
 } catch (Exception $e) {
     echo "<p class='warn'>Config error: " . htmlspecialchars($e->getMessage()) . "</p></body></html>";

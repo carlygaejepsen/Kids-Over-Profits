@@ -26,13 +26,6 @@ if (!function_exists('current_user_can') || !(current_user_can('edit_posts') || 
 // Include configuration
 require_once __DIR__ . '/config.php';
 
-// v2 facility model: re-derive from the legacy tables right after this save
-// (inc/facility-v2-sync.php), so pages already switched to v2 show the edit.
-if (function_exists('kop_facility_v2_request_sync')) {
-    kop_facility_v2_request_sync();
-}
-
-
 // Fetch submissions from suggested_edits table
 if (!$pdo) {
     die("Could not connect to the database (pdo is null).");

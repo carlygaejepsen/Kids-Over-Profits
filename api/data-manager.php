@@ -551,6 +551,11 @@ try {
         exit;
     }
 
+    // Every POST action edits the legacy tables; re-derive v2 after the request.
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();
+    }
+
     $input = json_decode(file_get_contents('php://input'), true);
     if (!is_array($input)) {
         http_response_code(400);

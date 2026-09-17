@@ -414,6 +414,32 @@ if (!function_exists('kop_apply_suggested_edit')) {
                 return ['success' => false, 'projectName' => null, 'error' => 'Approved suggestion is missing a usable project name', 'httpCode' => 400];
             }
 
+            // v2 facility model: once admin saves write the v2 tables
+            // (inc/facility-v2-writer.php), operator and location suggestions
+            // go there too. A suggestion lists only what it changes, so it is
+            // saved as a partial: nothing unlisted is removed.
+            if ($category === 'companies' || $category === 'locations') {
+                require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+                $v2_prefix = $wp_prefix !== '' ? $wp_prefix : (isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : '');
+                if (kop_v2_writes_active($pdo, $v2_prefix)) {
+                    $v2_name = $resolved_master_id;
+                    $raw_name = trim((string) $master_id);
+                    if ($category === 'companies' && $raw_name !== '' && $raw_name !== $v2_name) {
+                        // The sanitized name drops punctuation; prefer the exact operator name.
+                        $op_tables = kop_migration_tables($v2_prefix);
+                        $op_check = $pdo->prepare("SELECT COUNT(*) FROM `{$op_tables['operators']}` WHERE unique_name = ?");
+                        $op_check->execute([$raw_name]);
+                        if ((int) $op_check->fetchColumn() > 0) {
+                            $v2_name = $raw_name;
+                        }
+                    }
+                    kop_v2_save_form_project($pdo, $v2_prefix, $v2_name, $project_data, $category, ['partial' => true, 'timestamp' => date('c')]);
+                    kop_mark_suggested_edit_status($pdo, $suggested_edits_table, $id, 'approved');
+                    $pdo->commit();
+                    return ['success' => true, 'projectName' => $v2_name, 'error' => null, 'httpCode' => 200];
+                }
+            }
+
             $checkStmt = $pdo->prepare("SELECT id, json_data FROM `{$tableName}` WHERE unique_name = ? LIMIT 1");
             $checkStmt->execute([$resolved_master_id]);
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
@@ -444,6 +470,9 @@ if (!function_exists('kop_apply_suggested_edit')) {
             kop_mark_suggested_edit_status($pdo, $suggested_edits_table, $id, 'approved');
 
             $pdo->commit();
+            if (function_exists('kop_facility_v2_request_sync')) {
+                kop_facility_v2_request_sync();
+            }
             return ['success' => true, 'projectName' => $resolved_master_id, 'error' => null, 'httpCode' => 200];
         } catch (Exception $e) {
             if ($pdo->inTransaction()) {

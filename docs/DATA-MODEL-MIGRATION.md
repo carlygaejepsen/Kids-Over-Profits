@@ -24,7 +24,8 @@ the zero-loss gate exist for this. Do not skip them.
 | Live page fix | Code ready, not deployed. State and country pages now parse the free-text location instead of substring matching it (section 10.1). Offline against the production data this removes 63 wrong placements and adds 1 correct one. |
 | 3 Apply | Code ready, not deployed or run (section 7, phase 3 "As built"). `api/migrate-facility-model.php` (dry run, batched apply), `inc/facility-migration.php` (shared with the rehearsal), `inc/facility-v2-sync.php` (10-minute re-sync), `inc/facility-v2-readers.php` (`?model=v2`). End-to-end test against MySQL 8.0 loaded with the production copy: all 20 checks pass. |
 | 3 Applied | 2026-09-16 21:19 UTC on production: 4,679 facilities, 4,718 memberships, 45 operators, 15 operator links. Snapshot diff of all 67 pages (legacy vs `?model=v2`): 0 facilities lost, 26 operator-only facilities gained their own tile, inspection report totals unchanged. |
-| 4 Reader switches | Deployed 2026-09-16, all areas still on the old tables. Switch them one at a time at `api/migrate-facility-model.php?action=cutover` (phase 4 "As built"). |
+| 4 Reader switches | Deployed 2026-09-16. All five public areas read v2 on production (checked 2026-09-16 23:00 UTC: `kop_data_model_areas` lists all five). |
+| 4 Write path | Built and tested offline 2026-09-16, not deployed (phase 4 "Write path, as built"). The admin form, approvals, REST fallback and seeds save to v2 once the write switch is on. The switch page stays locked until the remaining blockers are ported. |
 | 5 | Not started. |
 
 **Data changed after the baseline (2026-09-16, init step version 16):** the
@@ -662,11 +663,69 @@ Verified against production data before any switch:
 - Quick search: individual facilities with city and status instead of
   whole-state matches ("hope house" returns each Hope House separately).
 
+Write path, as built (2026-09-16). The owner chose to keep the data form as it
+is; the server translates between its project shape and v2.
+
+- `inc/facility-v2-writer.php`. Load: `kop_v2_form_projects()` returns the
+  operator projects and state/country profiles in the shape
+  `get-master-data.php` always returned, each facility carrying its
+  `facility_id`. Save: `kop_v2_save_form_project()` splits a project into one
+  `kop_facility_save()` per facility plus the operator row and its join rows
+  (operator projects) or the location memberships (profiles), in one
+  transaction under a MySQL named lock.
+- Round trip: all 4,677 rehearsal documents survive v2 -> form shape -> v2
+  unchanged, so opening and saving a project never rewrites facilities.
+- `kop_facility_save()` now writes `facilities_v2`, skips unchanged documents,
+  gives new facilities ids from 100000 up (recorded in `kop_facility_identity`)
+  and a free unique_name, and rebuilds memberships only when the location
+  block changed. Rows from legacy evidence (`legacy_membership`) and manual
+  placements are always kept.
+- Operator project save: facilities in form order; a facility dropped from the
+  list leaves the operator but is kept. New operators get ids from 500000 so
+  they never collide with a facility id (news and lawsuit links are still
+  attached by row id).
+- Profile save: a listed facility that is not on that page gets a `manual`
+  membership. A facility taken off the list loses its `manual` or
+  `legacy_membership` row; one whose own address puts it there stays, and the
+  save message names it. Referrer consultants, field notes and the other
+  state-level keys have no v2 home, so they stay in `locations_master`; the
+  save writes those keys (only when they changed) and leaves the row's frozen
+  facilities array alone. Phase 5 therefore keeps `locations_master` for
+  state-level data instead of dropping it.
+- Suggestion approvals (`kop_apply_suggested_edit`) save as a partial: only the
+  facilities the suggestion lists are written, nothing is unlinked or taken off
+  a page, and a missing operator block keeps the stored one.
+- Wired behind the switch: `api/get-master-data.php`, `api/save-master.php`
+  (save, rename, delete; the rebuild/cleanup/merge location actions refuse),
+  `api/lib-suggested-edits.php`, the `kop/v1/projects/save` and `/delete` REST
+  fallbacks, and the three facility seed appliers in `inc/admin.php`. The form
+  stamps the facility ids a save returns (`js/data-form-modules/api.js`).
+- The switch: `api/migrate-facility-model.php?action=writes`, state key
+  `writes` in `kop_migration_state`. Turning it on runs one last legacy -> v2
+  sync, moves the news/lawsuit links on split facilities
+  (`link_repoints`, 4 on production) and records a fingerprint of
+  `facilities_master`. From then on `kop_migration_sync` and the batched apply
+  refuse to run, and 13 maintenance tools that write the old tables exit with
+  a 409 (`kop_v2_exit_if_legacy_frozen`). Switching back is possible but
+  discards v2 edits made since, and the page says how many.
+- The switch stays disabled while `kop_v2_write_switch_blockers()` is not
+  empty. Remaining (2026-09-16): Data Manager actions; facility picker writes;
+  wiki approval merge and wiki document-folder link; form search,
+  autocomplete and pickers; suggestion review diff; state page inspection
+  placement and related-records name map; news feed, lawsuits page and the
+  news/lawsuit linkers. Remove an entry when its code is ported.
+- Test: `scripts/test-facility-v2-writer.php` against a throwaway MySQL 8
+  loaded with a production copy: 64 checks pass (round trip of all 116
+  projects writes nothing, edits, new facilities without duplicates, removal
+  from operators and pages, partial approvals, seeds, rename, delete,
+  rollback, sync refusal, link repoints, switch back).
+
 ### Phase 5: Remove the old model
 
 After a bake period agreed with the owner:
 
-1. Drop `locations_master`. Delete the operator rows from facilities_master
+1. Strip the facility arrays from `locations_master` (the table keeps state-level
+   referrer data, see "Write path, as built"). Delete the operator rows from facilities_master
    (they live in `kop_operators` now). Add the unique index from 5.1.
 2. Delete `kop_unwrap_project_payload`, the legacy branches of
    `kop_normalize_project_payload`, `kop_link_refs_to_locations`,

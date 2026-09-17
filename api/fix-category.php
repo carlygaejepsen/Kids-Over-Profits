@@ -29,6 +29,8 @@ if (!function_exists('current_user_can') || !(current_user_can('manage_options')
 }
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/facility-v2-writer.php';
+kop_v2_exit_if_legacy_frozen($pdo ?? null, 'fix-category.php');
 
 $projectName = isset($_GET['project']) ? $_GET['project'] : null;
 $newCategory = isset($_GET['category']) ? $_GET['category'] : 'companies';

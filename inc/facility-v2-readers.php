@@ -17,8 +17,9 @@
  * reads v2 until the tables exist. Areas are switched from
  * api/migrate-facility-model.php?action=cutover.
  *
- * The admin data form (kop/v1/projects, get-master-data.php, save-master.php)
- * stays on the legacy tables: it edits them, and v2 is re-derived from them.
+ * The admin data form (get-master-data.php, save-master.php) edits the legacy
+ * tables, and v2 is re-derived from them, until the write switch sends its
+ * saves to v2 (inc/facility-v2-writer.php).
  */
 
 if (!function_exists('kop_v2_areas')) {

@@ -802,6 +802,16 @@ function kop_apply_seed_posts() {
     return $created;
 }
 /**
+ * The table prefix when admin saves write the v2 facility tables
+ * (inc/facility-v2-writer.php), else null. The facility seeds below write
+ * there instead of the frozen legacy tables.
+ */
+function kop_seed_v2_prefix(PDO $pdo) {
+    global $wpdb;
+    require_once trailingslashit(get_stylesheet_directory()) . 'inc/facility-v2-writer.php';
+    return kop_v2_writes_active($pdo, $wpdb->prefix) ? $wpdb->prefix : null;
+}
+/**
  * facilities_master records filled in offline (seeds/facility-records.json).
  * Each entry names a row by id and unique_name and carries the facility
  * object fields to merge in. The merge replaces each listed top-level field
@@ -821,6 +831,19 @@ function kop_apply_facility_record_seeds() {
     }
     $pdo = kop_seed_pdo();
     if (!$pdo) {
+        return $done;
+    }
+    $v2_prefix = kop_seed_v2_prefix($pdo);
+    if ($v2_prefix !== null) {
+        foreach ($entries as $entry) {
+            try {
+                if (kop_v2_apply_facility_record_seed($pdo, $v2_prefix, (array) $entry)) {
+                    $done[] = (int) $entry['id'];
+                }
+            } catch (Throwable $e) {
+                // Leave the record alone; the data form can fill it by hand.
+            }
+        }
         return $done;
     }
     try {
@@ -950,6 +973,22 @@ function kop_apply_operator_alias_seeds() {
     if (!is_array($entries) || !$pdo) {
         return $done;
     }
+    $v2_prefix = kop_seed_v2_prefix($pdo);
+    if ($v2_prefix !== null) {
+        foreach ($entries as $entry) {
+            if (empty($entry['id']) || empty($entry['unique_name']) || empty($entry['add_other_names'])) {
+                continue;
+            }
+            try {
+                if (kop_v2_add_operator_other_names($pdo, $v2_prefix, (int) $entry['id'], (string) $entry['unique_name'], (array) $entry['add_other_names'])) {
+                    $done[] = (int) $entry['id'];
+                }
+            } catch (Throwable $e) {
+                // Leave the operator alone; the data form can add the names by hand.
+            }
+        }
+        return $done;
+    }
     try {
         $read  = $pdo->prepare('SELECT unique_name, json_data FROM facilities_master WHERE id = ?');
         $write = $pdo->prepare('UPDATE facilities_master SET json_data = ?, updated_at = NOW() WHERE id = ?');
@@ -1017,6 +1056,26 @@ function kop_apply_new_facility_seeds() {
     $entries = json_decode((string) file_get_contents($path), true);
     $pdo     = kop_seed_pdo();
     if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    $v2_prefix = kop_seed_v2_prefix($pdo);
+    if ($v2_prefix !== null) {
+        // The facility is saved once and placed on the named profile; a facility
+        // already there (same name and place) is matched, not duplicated.
+        foreach ($entries as $entry) {
+            $facility = $entry['facility'] ?? null;
+            if (empty($entry['location_name']) || !is_array($facility) || trim((string) ($facility['identification']['name'] ?? '')) === '') {
+                continue;
+            }
+            try {
+                $result = kop_v2_save_form_project($pdo, $v2_prefix, (string) $entry['location_name'], array('facilities' => array($facility)), 'locations', array('partial' => true));
+                if ($result['created'] || $result['placed']) {
+                    $done[] = (int) reset($result['ids']);
+                }
+            } catch (Throwable $e) {
+                // Leave it out; the data form can add the facility by hand.
+            }
+        }
         return $done;
     }
     require_once trailingslashit(get_stylesheet_directory()) . 'api/facility-promotion.php';
@@ -1254,6 +1313,9 @@ function kop_apply_template_assignments() {
     $summary['facilities']   = kop_apply_facility_record_seeds();
     $summary['operators']    = kop_apply_operator_alias_seeds();
     $summary['new_facilities'] = kop_apply_new_facility_seeds();
+    if (function_exists('kop_facility_v2_request_sync')) {
+        kop_facility_v2_request_sync();   // before the write switch the seeds above edit the legacy tables
+    }
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
 

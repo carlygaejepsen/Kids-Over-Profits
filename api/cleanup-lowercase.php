@@ -43,6 +43,8 @@ echo "<h1>🧹 Cleanup Lowercase Location Projects</h1>";
 // Try to load config
 try {
     require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/../inc/facility-v2-writer.php';
+    kop_v2_exit_if_legacy_frozen($pdo ?? null, 'cleanup-lowercase.php');
     echo "<p class='keep'>✓ Config loaded successfully</p>";
 } catch (Exception $e) {
     echo "<p class='delete'>Config error: " . htmlspecialchars($e->getMessage()) . "</p>";

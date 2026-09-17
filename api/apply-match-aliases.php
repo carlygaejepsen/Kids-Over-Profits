@@ -30,6 +30,8 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/facility-v2-writer.php';
+kop_v2_exit_if_legacy_frozen($pdo ?? null, 'apply-match-aliases.php');
 
 $is_cli   = php_sapi_name() === 'cli';
 $dry_run  = $is_cli ? in_array('dry', $argv ?? [], true) : !empty($_GET['dry']);
