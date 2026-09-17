@@ -60,6 +60,59 @@ if (!function_exists('kop_fp_host_label')) {
     }
 }
 
+if (!function_exists('kop_fp_staff_connections')) {
+    /**
+     * Staff connections, one per line and grouped by direction.
+     *
+     * The staff_transfers fields hold sentences with several connections
+     * separated by semicolons ("Clint Dorny (executive director) began in
+     * admissions at Provo Canyon School; Tim Lowe came from Outback ...").
+     * Each connection becomes a list of {text, bold} segments, the people's
+     * names bold, and is filed under:
+     *   went  - left for, founded, went on to run another program
+     *   came  - came from, began at, led another program before this one
+     *   other - anything the wording does not settle
+     *
+     * @param string[] $texts
+     * @return array {came: [], went: [], other: []}
+     */
+    function kop_fp_staff_connections(array $texts) {
+        $groups = array('came' => array(), 'went' => array(), 'other' => array());
+        foreach ($texts as $text) {
+            foreach (preg_split('/\s*;\s*/u', (string) $text) as $item) {
+                $item = trim($item, " \t\n\r\0\x0B.");
+                if ($item === '') {
+                    continue;
+                }
+                $went = '/\b(?:went on|moved (?:on )?to|left\b|founded|to found|to lead|to run|later (?:ran|led|joined|opened|founded|worked)|now (?:runs|leads|works)|transferred to|opened)\b/iu';
+                $came = '/\b(?:came from|came over from|began\b.*\bat\b|started\b.*\bat\b|before\b|previously|formerly (?:at|of|with)|transferred from|joined from|arrived from)\b/iu';
+                $group = preg_match($went, $item) ? 'went' : (preg_match($came, $item) ? 'came' : 'other');
+
+                // Segments to print, names bold: "Robert B. Lichfield",
+                // "Crist and Kreg Gillman", and a second person after a role
+                // ("Dave Blackwell (therapist) and Brent Hall also came ...").
+                $word = '[A-Z][\p{L}\'\x{2019}.-]*';
+                $person = '(?:' . $word . '\s+)*' . $word;
+                $segments = array();
+                if (preg_match('/^(' . $person . '(?:\s+and\s+' . $person . ')?)(?=[\s,(]|$)(.*)$/su', $item, $m)) {
+                    $segments[] = array('text' => trim($m[1]), 'bold' => true);
+                    $rest = $m[2];
+                    if (preg_match('/^(\s*\([^)]*\)\s+and\s+)(' . $person . ')(?=\s)(.*)$/su', $rest, $m2)) {
+                        $segments[] = array('text' => $m2[1], 'bold' => false);
+                        $segments[] = array('text' => $m2[2], 'bold' => true);
+                        $rest = $m2[3];
+                    }
+                    $segments[] = array('text' => $rest, 'bold' => false);
+                } else {
+                    $segments[] = array('text' => $item, 'bold' => false);
+                }
+                $groups[$group][] = $segments;
+            }
+        }
+        return $groups;
+    }
+}
+
 if (!function_exists('kop_fp_facility_node')) {
     /**
      * facilities_master rows come in two shapes: {facility: ...} and the
@@ -233,8 +286,9 @@ if (!$kop_fp_lawsuits_url) {
 }
 
 $kop_fp_has_facts = $kop_fp_addresses || $kop_fp_founded || $kop_fp_closed || $kop_fp_founders
-    || $kop_fp_parent || $kop_fp_investors || $kop_fp_treatments || $kop_fp_transfers
+    || $kop_fp_parent || $kop_fp_investors || $kop_fp_treatments
     || $kop_fp_type || $kop_fp_gender || $kop_fp_ages;
+$kop_fp_staff = kop_fp_staff_connections($kop_fp_transfers);
 
 get_header();
 
@@ -343,15 +397,27 @@ while (have_posts()) :
                         </dd>
                     </div>
                 <?php endif; ?>
-                <?php if ($kop_fp_transfers) : ?>
-                    <div>
-                        <dt>Staff connections</dt>
-                        <?php foreach ($kop_fp_transfers as $t) : ?>
-                            <dd><?php echo esc_html($t); ?></dd>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
             </dl>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_transfers) : ?>
+            <h2>Staff connections</h2>
+            <?php
+            $kop_fp_staff_labels = array('came' => 'Came from', 'went' => 'Went on to', 'other' => 'Other connections');
+            foreach ($kop_fp_staff_labels as $group_key => $group_label) :
+                if (empty($kop_fp_staff[$group_key])) continue;
+                ?>
+                <h3 class="kop-fp-subhead"><?php echo esc_html($group_label); ?></h3>
+                <ul class="kop-fp-people">
+                    <?php foreach ($kop_fp_staff[$group_key] as $segments) : ?>
+                        <li><?php
+                            foreach ($segments as $seg) {
+                                echo $seg['bold'] ? '<strong>' . esc_html($seg['text']) . '</strong>' : esc_html($seg['text']);
+                            }
+                        ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endforeach; ?>
             <?php endif; ?>
 
             <?php if ($kop_fp_lawsuits) : ?>

@@ -230,6 +230,43 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+/* ---- Staff connections ------------------------------------------------- */
+
+.kop-fp-subhead {
+    margin: 1rem 0 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-rail h2 + .kop-fp-subhead {
+    margin-top: 0;
+}
+
+.kop-fp-people {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-people li {
+    margin: 0 0 0.5rem;
+    padding-left: 0.7rem;
+    border-left: 3px solid var(--kop-teal, #33a7b5);
+    color: var(--kop-midnight-blue, #000435);
+    line-height: 1.4;
+}
+
+.kop-fp-people li:last-child {
+    margin-bottom: 0;
+}
+
+.kop-fp-people strong {
+    font-weight: 700;
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 
 .kop-fp-footer {
