@@ -630,10 +630,11 @@ get_header();
         <div class="fixed-toolbar minimized" id="fixed-toolbar">
             <div class="toolbar-header">
                 <div class="toolbar-title">
-                    <strong>📋 Facility Editor</strong>
+                    <strong>Facility tools</strong>
                     <span id="toolbar-project-name" style="color: #6b7280; font-weight: normal; margin-left: 10px;"></span>
+                    <span class="toolbar-hint" id="toolbar-hint">Add, switch, search, or clone facilities</span>
                 </div>
-                <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Expand toolbar">▼</button>
+                <button type="button" class="toolbar-toggle" id="toolbar-toggle-btn" title="Show facility tools">Show tools</button>
             </div>
             <div class="toolbar-content" id="toolbar-content" data-kop-bug-feature="data-form/toolbar" data-kop-bug-label="Facility Toolbar">
                 <div class="toolbar-section">
@@ -665,11 +666,11 @@ get_header();
 
         <!-- Facility Loader Panel -->
         <div class="facility-loader-panel">
-            <h2 id="quick-loader-heading">🏢 Jump to Facility</h2>
+            <h2 id="quick-loader-heading">Jump to Facility</h2>
             <div class="form-group">
                 <label id="quick-loader-label">All Facilities in Current Project</label>
                 <div id="quick-facilities-list" class="quick-facilities-list">
-                    <div class="quick-facilities-empty">No facilities yet...</div>
+                    <div class="quick-facilities-empty">No project loaded. Load a saved project above, or start filling in the sections below. Facilities appear here once they have a name.</div>
                 </div>
             </div>
         </div>

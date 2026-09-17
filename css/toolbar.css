@@ -54,15 +54,27 @@ body:not(.admin-bar) .fixed-toolbar {
     pointer-events: none; /* Don't block clicks */
 }
 
+.fixed-toolbar .toolbar-hint {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.fixed-toolbar:not(.minimized) .toolbar-hint {
+    display: none;
+}
+
 .fixed-toolbar .toolbar-toggle {
     background: #FFFFFF;
     border: 2px solid #000435;
     color: #000435;
-    width: 30px;
+    width: auto;
     height: 30px;
+    padding: 0 12px;
+    white-space: nowrap;
     border-radius: 6px;
     cursor: pointer !important;
-    font-size: 18px;
+    font-size: 13px;
     font-weight: bold;
     transition: all 0.2s ease;
     display: flex;
@@ -282,14 +294,16 @@ body:not(.admin-bar) .fixed-toolbar {
         font-size: 11px;
     }
 
-    .fixed-toolbar .toolbar-title #toolbar-project-name {
+    .fixed-toolbar .toolbar-title #toolbar-project-name,
+    .fixed-toolbar .toolbar-hint {
         display: none;
     }
 
     .fixed-toolbar .toolbar-toggle {
-        width: 28px;
+        width: auto;
         height: 28px;
-        font-size: 14px;
+        padding: 0 10px;
+        font-size: 12px;
     }
 
     .fixed-toolbar .toolbar-content {

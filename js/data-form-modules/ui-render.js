@@ -320,12 +320,24 @@
 
             list.innerHTML = '';
             
-            if (!window.formData || !window.formData.facilities || window.formData.facilities.length === 0) {
-                list.innerHTML = '<div class="quick-facilities-empty">No facilities yet...</div>';
+            const facilities = (window.formData && Array.isArray(window.formData.facilities)) ? window.formData.facilities : [];
+            const hasNamedFacility = facilities.some(fac => {
+                const ident = (fac && fac.identification) || {};
+                return String(ident.name || '').trim() || String(ident.currentName || '').trim();
+            });
+
+            // With no project loaded, the only entry is the blank placeholder
+            // facility, so listing it as "Facility #1" misleads first-time
+            // visitors. Explain the state until something is named.
+            if (facilities.length === 0 || (!window.currentProjectName && !hasNamedFacility)) {
+                const message = window.currentProjectName
+                    ? 'No facilities in this project yet. Use Add Entry in the toolbar to create one.'
+                    : 'No project loaded. Load a saved project above, or start filling in the sections below. Facilities appear here once they have a name.';
+                list.innerHTML = '<div class="quick-facilities-empty">' + message + '</div>';
                 return;
             }
 
-            window.formData.facilities.forEach((fac, index) => {
+            facilities.forEach((fac, index) => {
                 const item = document.createElement('div');
                 item.className = 'facility-quick-item';
                 if (window.currentFacilityIndex === index) item.classList.add('active');

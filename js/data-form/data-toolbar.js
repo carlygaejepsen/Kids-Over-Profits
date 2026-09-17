@@ -59,8 +59,8 @@
             toolbarContent.setAttribute('aria-hidden', isMinimized ? 'true' : 'false');
         }
         if (toolbarToggle) {
-            toolbarToggle.textContent = isMinimized ? '▼' : '−';
-            toolbarToggle.title = isMinimized ? 'Expand toolbar' : 'Minimize toolbar';
+            toolbarToggle.textContent = isMinimized ? 'Show tools' : 'Hide tools';
+            toolbarToggle.title = isMinimized ? 'Show facility tools' : 'Hide facility tools';
             toolbarToggle.setAttribute('aria-expanded', isMinimized ? 'false' : 'true');
         }
     };
