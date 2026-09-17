@@ -1618,7 +1618,55 @@ function kop_get_attachments_in_folder_ids($folder_ids) {
         'order' => 'ASC'
     );
 
-    return kop_sort_documents_by_importance(get_posts($args));
+    return kop_filter_available_attachments(kop_sort_documents_by_importance(get_posts($args)));
+}
+
+/**
+ * Resolve each attachment to the copy of its file that actually exists, and
+ * drop the ones whose file is gone everywhere.
+ *
+ * Records whose file never made it to production would otherwise render a
+ * broken preview over a download that 404s. Where a same-named copy exists it
+ * is served instead (kop_resolve_live_attachment); where nothing exists the
+ * document is hidden from visitors but kept for users who can edit pages, so
+ * the gap is visible to the people who can fix it rather than to the public.
+ *
+ * Runs after get_posts() so the post meta cache is already primed and the
+ * file check costs a stat rather than a query.
+ *
+ * @param WP_Post[] $attachments
+ * @return WP_Post[]
+ */
+function kop_filter_available_attachments($attachments) {
+    if (empty($attachments) || !function_exists('kop_resolve_live_attachment')) {
+        return $attachments;
+    }
+
+    $can_edit = current_user_can('edit_pages');
+    $out      = array();
+
+    foreach ($attachments as $attachment) {
+        $source_id = kop_resolve_live_attachment($attachment->ID);
+
+        if ($source_id === (int) $attachment->ID) {
+            $out[] = $attachment;
+            continue;
+        }
+
+        if ($source_id) {
+            // Same document, a record whose file is really there.
+            $attachment->kop_live_source_id = $source_id;
+            $out[] = $attachment;
+            continue;
+        }
+
+        if ($can_edit) {
+            $attachment->kop_file_missing = true;
+            $out[] = $attachment;
+        }
+    }
+
+    return $out;
 }
 
 /**

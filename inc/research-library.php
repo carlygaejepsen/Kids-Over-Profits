@@ -367,44 +367,6 @@ function kop_research_is_excluded($title, $file) {
     return false;
 }
 
-/**
- * Another attachment holding the same file, for a record whose own file is gone.
- *
- * A batch of attachment records created on 2025-09-30 points at the uploads
- * root ("Overt-Covert-Conversion-Therapy.pdf") while the real upload sits in a
- * dated folder ("2024/08/Overt-Covert-Conversion-Therapy.pdf") under its own,
- * older record. 66 root-level records across the library have no file on disk.
- * Where a good copy of the same filename exists, use it rather than render a
- * broken image and a dead link.
- *
- * @param string $file Attached file path of the broken record.
- * @return int Attachment ID of a copy whose file is present, or 0.
- */
-function kop_research_find_live_copy($file) {
-    global $wpdb;
-
-    $base = basename((string) $file);
-    if ($base === '') {
-        return 0;
-    }
-
-    $candidates = $wpdb->get_col($wpdb->prepare(
-        "SELECT pm.post_id FROM {$wpdb->postmeta} pm
-         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
-         WHERE pm.meta_key = '_wp_attached_file' AND p.post_type = 'attachment'
-           AND pm.meta_value LIKE %s
-         LIMIT 10",
-        '%' . $wpdb->esc_like($base)
-    ));
-
-    foreach ((array) $candidates as $id) {
-        $path = get_attached_file((int) $id);
-        if ($path && file_exists($path)) {
-            return (int) $id;
-        }
-    }
-    return 0;
-}
 
 /** Last plausible publication year in a string, or 0. */
 function kop_research_year_from($text) {
@@ -514,19 +476,15 @@ function kop_research_library_items() {
             }
 
             // A record whose file is gone: serve the copy that still exists,
-            // and if there is none, mark the card so it is not shown as if it
-            // were a working download.
-            $source_id = $attachment->ID;
-            $path      = get_attached_file($attachment->ID);
-            $missing   = !($path && file_exists($path));
+            // and if there is none, mark the card so it is not offered as a
+            // working download. kop_resolve_live_attachment() is the same
+            // resolution the document libraries use, cached per request.
+            $source_id = kop_resolve_live_attachment($attachment->ID);
+            $missing   = ($source_id === 0);
             if ($missing) {
-                $live_id = kop_research_find_live_copy($file);
-                if ($live_id) {
-                    $source_id = $live_id;
-                    $path      = get_attached_file($live_id);
-                    $missing   = false;
-                }
+                $source_id = (int) $attachment->ID;
             }
+            $path = $missing ? '' : get_attached_file($source_id);
 
             $cover = function_exists('kop_get_attachment_preview_url')
                 ? kop_get_attachment_preview_url($source_id, 'large')
