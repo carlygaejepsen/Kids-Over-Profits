@@ -390,6 +390,9 @@ function kop_register_facilities_rest_routes() {
                             );
 
                             $attachments = get_posts($args);
+                            if (function_exists('kop_sort_documents_by_importance')) {
+                                $attachments = kop_sort_documents_by_importance($attachments);
+                            }
 
                             $formatted = array_map(function($post) {
                                 return array(
