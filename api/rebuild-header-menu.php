@@ -46,6 +46,7 @@ const KOP_HEADER_MENU_PREVIOUS_OPTION = 'kop_header_menu_previous_locations';
 // Child entries are [slug, label]; a null label keeps the page title.
 $kop_menu_plan = [
     ['page' => 'kids-over-profits', 'label' => 'Home'],
+    ['page' => 'tti-news-feed', 'label' => 'News Feed'],
     // Learn More = background and context; Monitor = what the industry is doing now.
     ['section' => 'Learn More', 'children' => [
         ['history', null],
@@ -56,7 +57,6 @@ $kop_menu_plan = [
         ['journalists', null],
     ]],
     ['section' => 'Monitor', 'children' => [
-        ['tti-news-feed', 'News Feed'],
         ['where-are-the-kids', null],
         ['tti-program-index', null],
         ['referrers-educational-consultants', 'Referrers & Educational Consultants'],
