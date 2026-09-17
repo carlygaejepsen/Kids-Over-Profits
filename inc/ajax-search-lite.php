@@ -76,7 +76,7 @@ function kop_asl_collect_database_matches($phrase) {
         foreach (array_merge($v2['operators'], $v2['facilities'], $v2['places']) as $r) {
             $items[] = array(
                 'title' => $r['display'],
-                'link'  => $r['url'] !== '' ? $r['url'] : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : home_url('/?s=' . rawurlencode($phrase))),
+                'link'  => !empty($r['profile_url']) ? $r['profile_url'] : ($r['url'] !== '' ? $r['url'] : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : home_url('/?s=' . rawurlencode($phrase)))),
                 'meta'  => $labels[$r['kind']] . ($r['location'] !== '' ? ' - ' . $r['location'] : ''),
             );
         }

@@ -26,6 +26,11 @@ if (!defined('ABSPATH')) {
  * when the current request is a page using one of the child templates.
  */
 function kop_template_layout_current_template() {
+    // The generated facility pages (inc/facility-pages.php) are not posts;
+    // they are rendered from the database at /facility/<slug>/.
+    if (function_exists('kop_facility_pages_is_page') && kop_facility_pages_is_page()) {
+        return 'templates/facility-page.php';
+    }
     // Pages and posts alike: a post can carry a "Template Post Type: post"
     // template (templates/single-facility-profile.php) via the same meta.
     if (!is_singular()) {
@@ -43,6 +48,7 @@ function kop_template_layout_current_template() {
 function kop_template_layout_normal_width() {
     return apply_filters('kop_template_layout_normal_width', array(
         'templates/single-facility-profile.php',
+        'templates/facility-page.php',
     ));
 }
 
@@ -60,6 +66,7 @@ function kop_template_layout_no_sidebar() {
         'templates/page-admin-volunteers.php',
         'templates/page-news-processor.php',
         'templates/single-facility-profile.php',
+        'templates/facility-page.php',
     ));
 }
 

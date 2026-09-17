@@ -1693,6 +1693,8 @@ function displayFacilities(facilitiesData, containerId) {
 
                                                     'facility_id', // Internal identifier stamped on by the server
 
+                                                    'profile_url', // Link to the generated facility page, rendered in the summary
+
                                                     // Internal provenance recorded when a facility is aggregated
                                                     // into a location project (see api/save-master.php). The
                                                     // operator already shows in the header subtext.
@@ -2002,6 +2004,7 @@ function displayFacilities(facilitiesData, containerId) {
                         ${hasStatus ? `<p class="facility-status">
                             <span class="status-badge status-${statusClass}">${statusLabel}</span>
                         </p>` : ''}
+                        ${facility.profile_url ? `<p class="facility-profile-link"><a href="${escapeAttribute(facility.profile_url)}">Full profile</a></p>` : ''}
                     </div>
                     ${latestNewsHtml}
                     ${facilityLawsuitBits.strip}

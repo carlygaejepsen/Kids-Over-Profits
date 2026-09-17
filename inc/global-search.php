@@ -92,8 +92,11 @@ function kop_global_search_collect($phrase) {
     if ($v2 !== null) {
         $index_url = kop_asl_page_url_by_template('page-tti-program-index.php');
         $to_item = function ($r) use ($index_url) {
-            $url = $r['url'] !== '' ? $r['url']
-                : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : add_query_arg('s', rawurlencode($r['display']), home_url('/')));
+            // A facility with a page of its own links there; otherwise its
+            // state hub, then the program index filtered to the name.
+            $url = !empty($r['profile_url']) ? $r['profile_url']
+                : ($r['url'] !== '' ? $r['url']
+                : ($index_url ? add_query_arg('search', rawurlencode($r['display']), $index_url) : add_query_arg('s', rawurlencode($r['display']), home_url('/'))));
             $meta = $r['kind'] === 'operator'
                 ? ($r['fac_count'] . ' facilit' . ($r['fac_count'] === 1 ? 'y' : 'ies'))
                 : ($r['kind'] === 'place' ? ($r['fac_count'] . ' facilities') : $r['location']);

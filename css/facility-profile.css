@@ -320,3 +320,265 @@
     scroll-margin-top: 6rem;
     font-size: 0.92em;
 }
+
+/* ---- Generated facility pages (templates/facility-page.php) -------------
+   The same header, grid and rail as the editorial profiles, plus the
+   sections a database-built page needs: summary line, jump links, record
+   lists, inspection reports and the licensing facts strip. */
+
+.kop-fp-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-top: 0.9rem;
+}
+
+.kop-fp-badges .kop-fp-status {
+    margin-top: 0;
+}
+
+.kop-fp-place {
+    font-size: 0.95rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-status--suspended {
+    background: var(--kop-sand, #f2eedf);
+    border-color: var(--kop-coral-pink, #fe8088);
+    color: #8a1f2b;
+}
+
+.kop-fp-status--transferred {
+    background: var(--kop-sand, #f2eedf);
+    border-color: var(--kop-teal, #33a7b5);
+    color: #1f5f66;
+}
+
+.kop-fp-summary {
+    margin: 0 0 1.25rem;
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0 0 2rem;
+}
+
+.kop-fp-jump a {
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--kop-border-primary, #b9b29a);
+    border-radius: 999px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy-blue, #000080);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-fp-jump a:hover,
+.kop-fp-jump a:focus-visible {
+    background: var(--kop-sand, #f2eedf);
+    border-color: var(--kop-teal, #33a7b5);
+}
+
+.kop-fp-section {
+    margin: 0 0 2.25rem;
+    scroll-margin-top: 6rem;
+}
+
+.kop-fp-generated-body .kop-fp-section h2 {
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--kop-mint-green, #b6e3d4);
+    font-size: 1.35rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-generated-body .kop-fp-subhead {
+    margin-top: 1.1rem;
+}
+
+.kop-fp-inline-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem 1.25rem;
+    margin: 0 0 1rem;
+}
+
+.kop-fp-inline-facts > div {
+    margin: 0;
+}
+
+.kop-fp-inline-facts dt {
+    margin: 0 0 0.1rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-inline-facts dd {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-count {
+    margin: 0.5rem 0 0.75rem;
+    font-size: 0.9rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-count a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+}
+
+.kop-fp-reports {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-reports li {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+    gap: 0.35rem 0.9rem;
+    align-items: baseline;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 0.93rem;
+    line-height: 1.4;
+}
+
+.kop-fp-reports li:last-child {
+    border-bottom: 0;
+}
+
+.kop-fp-report-date {
+    font-weight: 600;
+    color: var(--kop-midnight-blue, #000435);
+    white-space: nowrap;
+}
+
+.kop-fp-report-summary {
+    overflow-wrap: anywhere;
+}
+
+.kop-fp-report-link {
+    font-weight: 600;
+    color: var(--kop-teal, #33a7b5);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.kop-fp-report-link:hover,
+.kop-fp-report-link:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-fp-records {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-fp-records li {
+    margin: 0;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+    line-height: 1.45;
+}
+
+.kop-fp-records li:last-child {
+    border-bottom: 0;
+}
+
+.kop-fp-records a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-fp-records a:hover,
+.kop-fp-records a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-fp-records .meta {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-records .meta a {
+    font-weight: 500;
+}
+
+.kop-fp-record-summary {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: var(--kop-text-primary, #1a1a2e);
+}
+
+.kop-fp-notes {
+    margin: 0;
+    padding-left: 1.1rem;
+}
+
+.kop-fp-notes li {
+    margin: 0 0 0.4rem;
+    line-height: 1.45;
+}
+
+.kop-fp-detail {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-fp-generated-body .kop-fp-chips li {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.88rem;
+}
+
+.kop-fp-generated-body .kop-fp-people li {
+    margin-bottom: 0.45rem;
+}
+
+.kop-fp-rail-text {
+    margin: 0 0 0.6rem;
+    font-size: 0.88rem;
+}
+
+.kop-fp-rail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+    margin: 0;
+}
+
+.kop-fp-rail-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--kop-navy-blue, #000080);
+}
+
+/* The folder shortcode prints its own title; the section heading covers it. */
+.kop-fp-documents .doc-folder-title-single {
+    display: none;
+}
+
+@media (max-width: 640px) {
+    .kop-fp-reports li {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+    }
+}

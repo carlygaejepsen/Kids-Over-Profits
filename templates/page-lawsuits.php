@@ -96,6 +96,7 @@ if ($lawsuit_ids) {
                 if (!$row) continue;
                 $rows[] = [
                     'lawsuit_id' => $link['lawsuit_id'],
+                    'facility_id' => (int)$link['facility_id'],
                     'unique_name' => $row['unique_name'],
                     'json_data' => $row['json_data'],
                 ];
@@ -107,7 +108,7 @@ if ($lawsuit_ids) {
             });
         } else {
             $stmt = $pdo->prepare(
-                "SELECT lf.lawsuit_id, fm.unique_name, fm.json_data
+                "SELECT lf.lawsuit_id, lf.facility_id, fm.unique_name, fm.json_data
                  FROM lawsuit_facility_links lf
                  JOIN facilities_master fm ON fm.id = lf.facility_id
                  WHERE lf.lawsuit_id IN ($ph)
@@ -123,7 +124,7 @@ if ($lawsuit_ids) {
                 $k = kop_normalize_name_key($alias);
                 if ($k !== '') $keys[$k] = true;
             }
-            $facility_links[(int)$r['lawsuit_id']][] = ['name' => $r['unique_name'], 'keys' => $keys];
+            $facility_links[(int)$r['lawsuit_id']][] = ['name' => $r['unique_name'], 'keys' => $keys, 'id' => (int)$r['facility_id']];
         }
     } catch (Throwable $e) {
         $facility_links = [];
@@ -148,11 +149,16 @@ if ($lawsuit_ids) {
     }
 }
 
-// Facility "profile" = the program index filtered to that facility, which is
-// how the rest of the site deep-links a facility (global search, story arcs).
+// Facility "profile" = the generated facility page when the record has one
+// (inc/facility-pages.php), otherwise the program index filtered to that
+// facility, which is how the rest of the site deep-links a facility.
 $index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
 if (!$index_url) $index_url = home_url('/tti-program-index/');
-$facility_profile_url = static function (string $name) use ($index_url): string {
+$facility_profile_url = static function (string $name, int $facility_id = 0) use ($index_url): string {
+    if ($facility_id > 0 && function_exists('kop_facility_page_url')) {
+        $page_url = kop_facility_page_url($facility_id);
+        if ($page_url !== '') return $page_url;
+    }
     return add_query_arg('search', rawurlencode($name), $index_url);
 };
 
@@ -181,14 +187,14 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
         }
         if ($match !== null) {
             $used[$match] = true;
-            $tags[] = ['label' => $mention, 'url' => $facility_profile_url($linked[$match]['name'])];
+            $tags[] = ['label' => $mention, 'url' => $facility_profile_url($linked[$match]['name'], (int)($linked[$match]['id'] ?? 0))];
         } else {
             $tags[] = ['label' => $mention, 'url' => null];
         }
     }
     foreach ($linked as $i => $lf) {
         if (!isset($used[$i])) {
-            $tags[] = ['label' => $lf['name'], 'url' => $facility_profile_url($lf['name'])];
+            $tags[] = ['label' => $lf['name'], 'url' => $facility_profile_url($lf['name'], (int)($lf['id'] ?? 0))];
         }
     }
     return $tags;

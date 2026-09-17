@@ -1167,3 +1167,25 @@
     background: #1a1a66;
     color: #fff;
 }
+
+/* Link from a facility card to its generated profile page (/facility/<slug>/) */
+.facility-card-profile {
+    display: inline-block;
+    background: #00004d;
+    color: #ffffff !important;
+    border: 1px solid #00004d;
+    border-radius: 4px;
+    padding: 0.32em 0.65em;
+    font-size: 0.78em;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+}
+
+.facility-card-profile:hover,
+.facility-card-profile:focus-visible {
+    background: #33a7b5;
+    border-color: #33a7b5;
+    color: #ffffff !important;
+    text-decoration: none;
+}

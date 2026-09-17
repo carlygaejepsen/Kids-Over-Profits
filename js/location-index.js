@@ -1070,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!obj || typeof obj !== 'object' || depth > 3) return [];
                     const fields = [];
                     const skipFullKeys = [
-                        'resources', 'fieldNotes', 'linked_news', 'linked_lawsuits', 'facility_id',
+                        'resources', 'fieldNotes', 'linked_news', 'linked_lawsuits', 'facility_id', 'profile_url',
                         'memorials', // Rendered in the dedicated Deaths on record section
                         'inspection_stats', // Rendered in At a glance
                         // Internal provenance metadata recorded when a facility is
@@ -1210,6 +1210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${hasStatus ? `<p class="facility-status">
                                 <span class="status-badge status-${statusClass}">${statusLabel}</span>
                             </p>` : ''}
+                            ${facility.profile_url ? `<p class="facility-profile-link"><a href="${escapeAttribute(facility.profile_url)}">Full profile</a></p>` : ''}
                         </div>
                         ${lawsuitStripHtml}
                         ${memorialStripHtml}

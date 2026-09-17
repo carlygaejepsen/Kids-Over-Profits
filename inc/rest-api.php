@@ -4643,6 +4643,9 @@ function kop_state_merge_programs_and_inspections(array $programs, array $inspec
                 }
                 $existing['field_notes'] = array_merge($existing['field_notes'], $p['field_notes']);
             }
+            if (empty($existing['profile_url']) && !empty($p['profile_url'])) {
+                $existing['profile_url'] = $p['profile_url'];
+            }
 
             $incoming_address = (!$has_real_structured && !empty($p['raw_address']))
                 ? $p['raw_address']
@@ -4698,6 +4701,7 @@ function kop_state_merge_programs_and_inspections(array $programs, array $inspec
                 'relocation'        => $p['relocation'] ?? null,
                 'former_locations'  => $p['former_locations'] ?? array(),
                 'facility_ids'      => $p['facility_ids'] ?? array(),
+                'profile_url'       => $p['profile_url'] ?? '',
                 'record_updated_at' => $p['record_updated_at'] ?? '',
                 'inspection_count'  => 0,
                 'violation_count'   => 0,
@@ -4849,6 +4853,7 @@ function kop_state_merge_programs_and_inspections(array $programs, array $inspec
                 'relocation'        => null,
                 'former_locations'  => array(),
                 'facility_ids'      => array(),
+                'profile_url'       => '',
                 'record_updated_at' => '',
                 'inspection_count'  => $insp['inspection_count'],
                 'violation_count'   => $insp['violation_count'],

@@ -40,6 +40,9 @@ require_once get_stylesheet_directory() . '/inc/admin.php';
 // Slug-level 301 redirects for renamed or retired pages
 require_once get_stylesheet_directory() . '/inc/redirects.php';
 
+// Generated facility pages (/facility/<slug>/) rendered from facilities_v2
+require_once get_stylesheet_directory() . '/inc/facility-pages.php';
+
 // Bug report status emails (shared by inc/admin.php and api/save-bug-report.php)
 require_once get_stylesheet_directory() . '/inc/bug-report-notify.php';
 

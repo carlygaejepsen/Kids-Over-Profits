@@ -1180,7 +1180,7 @@
         'operatingPeriod', 'staff', 'profileLinks', 'facilityDetails', 'accreditations',
         'memberships', 'certifications', 'licensing', 'resources', 'notes', 'fieldNotes',
         'treatmentTypes', 'philosophy', 'criticalIncidents', 'otherOperators',
-        'sourceOperator', 'matchAliases', 'facility_id', 'facilityId', 'name',
+        'sourceOperator', 'matchAliases', 'facility_id', 'facilityId', 'profile_url', 'name',
         'displayName', 'city', 'state', '__facility_ref', 'id', 'timestamp',
         // Provenance stamped on when a facility is aggregated into a location
         // project (see api/save-master.php); the other tile renderers skip it too.
@@ -1558,7 +1558,7 @@
                         ${facility.capacity ? `<span><strong>Capacity:</strong> ${escapeHtml(String(facility.capacity))}</span>` : ''}
                         ${facility.census   ? `<span><strong>Census:</strong> ${escapeHtml(String(facility.census))}</span>`     : ''}
                     </div>` : ''}
-                <div class="facility-card-actions">${toggleButtons.join('')}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">Submit info</button></div>
+                <div class="facility-card-actions">${toggleButtons.join('')}${facility.profile_url ? `<a class="facility-card-profile" href="${escapeHtml(facility.profile_url)}">Full profile</a>` : ''}<button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeHtml(displayName)}">Submit info</button></div>
                 ${toggleButtons.length ? `
                     <div class="facility-card-panels">
                         ${hasDetails ? `<div class="facility-panel" data-panel="details" hidden>${detailRows.join('')}</div>` : ''}

@@ -308,7 +308,12 @@ if (!function_exists('kop_v2_collect_programs')) {
             } else {
                 $built = kop_state_build_program_record($row['unique_name'], $legacy, $data, $page_name, $meta);
             }
-            if ($built !== null) $programs[] = $built['program'];
+            if ($built !== null) {
+                $program = $built['program'];
+                // The generated facility page, when the record has one (inc/facility-pages.php).
+                $program['profile_url'] = function_exists('kop_facility_page_url') ? kop_facility_page_url($fid) : '';
+                $programs[] = $program;
+            }
         }
 
         usort($programs, static function ($a, $b) {
@@ -377,10 +382,16 @@ if (!function_exists('kop_v2_get_facilities_projects')) {
 
         // Every facility once, projected to the legacy nested shape.
         $facilities = array();
+        $has_pages = function_exists('kop_facility_page_url');
         foreach ((array)$wpdb->get_results("SELECT id, json_data FROM facilities_v2", ARRAY_A) as $row) {
             $doc = kop_v2_decode($row['json_data']);
             if ($doc === null) continue;
             $facilities[(int)$row['id']] = kop_facility_to_legacy($doc);
+            if ($has_pages) {
+                // Link to the generated facility page for the directory cards.
+                $page_url = kop_facility_page_url((int)$row['id']);
+                if ($page_url !== '') $facilities[(int)$row['id']]['profile_url'] = $page_url;
+            }
         }
 
         $by_operator = array();
@@ -536,6 +547,7 @@ if (!function_exists('kop_v2_search')) {
                 'kind' => 'facility', 'display' => $r['name'], 'operator' => $op_name,
                 'location' => $place . ($r['status'] && $r['status'] !== 'Unknown' ? ' (' . $r['status'] . ')' : ''),
                 'fac_count' => 0, 'url' => kop_v2_place_page_url($r['state'], $r['country']),
+                'profile_url' => function_exists('kop_facility_page_url') ? kop_facility_page_url((int)$r['id']) : '',
             );
         }
 
