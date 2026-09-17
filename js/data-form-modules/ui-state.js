@@ -45,7 +45,8 @@ window.KOP_UI_State = {
 
         // Define default and referrer-specific labels
         const labels = {
-            toolbarTitle: { default: '🔧 Toolbar', referrer: '🔧 Toolbar' },
+            toolbarTitle: { default: 'Facility tools', referrer: 'Referrer tools' },
+            toolbarHint: { default: 'Add, switch, search, or clone facilities', referrer: 'Add, switch, search, or clone entries' },
             operatorSectionTitle: { default: 'Parent Company Information', referrer: 'Group/Agency Information' },
             operatorNameLabel: { default: 'Parent Company Name', referrer: 'Group/Agency Name' },
             currentOperatorLabel: { default: 'Current Parent Company', referrer: 'Current Agency' },
@@ -108,6 +109,7 @@ window.KOP_UI_State = {
 
         // Update Toolbar
         setLabelForQuery('.toolbar-title strong', labels.toolbarTitle[mode]);
+        setLabel('toolbar-hint', labels.toolbarHint[mode]);
         setLabel('toolbar-current-item-label', `${labels.currentFacilityLabel[mode]}:`);
         setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
         setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
