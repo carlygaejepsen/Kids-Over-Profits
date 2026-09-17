@@ -1,7 +1,7 @@
 <?php
 /**
  * Rebuild the site header navigation around task-based categories
- * (Learn More / Investigate / Get Support / Get Involved) instead of the old
+ * (Learn More / Monitor / Get Support / Get Involved) instead of the old
  * audience menus (For Concerned Citizens, For Journalists, ...).
  *
  * Builds a separate nav menu and assigns it to the primary + mobile header
@@ -46,20 +46,23 @@ const KOP_HEADER_MENU_PREVIOUS_OPTION = 'kop_header_menu_previous_locations';
 // Child entries are [slug, label]; a null label keeps the page title.
 $kop_menu_plan = [
     ['page' => 'kids-over-profits', 'label' => 'Home'],
-    ['page' => 'tti-news-feed', 'label' => 'News Feed'],
+    // Learn More = background and context; Monitor = what the industry is doing now.
     ['section' => 'Learn More', 'children' => [
         ['history', null],
-        ['where-are-the-kids', null],
         ['researchreports', null],
         ['law-policy', 'Law & Policy'],
+        ['document-archive', null],
         ['in-loving-memory', 'In Loving Memory'],
+        ['journalists', null],
     ]],
-    ['section' => 'Investigate', 'children' => [
+    ['section' => 'Monitor', 'children' => [
+        ['tti-news-feed', 'News Feed'],
+        ['where-are-the-kids', null],
         ['tti-program-index', null],
         ['referrers-educational-consultants', 'Referrers & Educational Consultants'],
         ['location-index', null],
-        ['document-archive', null],
-        ['journalists', null],
+        ['lawsuits', null],
+        ['legislative-efforts', null],
     ]],
     ['section' => 'Get Support', 'children' => [
         ['survivors', null],
