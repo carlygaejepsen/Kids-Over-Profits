@@ -450,6 +450,8 @@ function kop_research_library_items() {
 
             $items[] = array(
                 'key'           => 'att:' . $attachment->ID,
+                'is_file'       => true,
+                'mime'          => (string) $attachment->post_mime_type,
                 'title'         => $title,
                 'description'   => trim((string) $attachment->post_content),
                 'byline'        => $byline,
@@ -474,6 +476,8 @@ function kop_research_library_items() {
 
         $items[] = array(
             'key'           => 'ext:' . $entry['id'],
+            'is_file'       => false,
+            'mime'          => '',
             'title'         => isset($edit['title']) ? $edit['title'] : $entry['title'],
             'description'   => isset($edit['description']) ? $edit['description'] : '',
             'byline'        => isset($entry['byline']) ? $entry['byline'] : '',
@@ -522,9 +526,26 @@ function kop_hub_module_research() {
                 $primary  = $item['summary_url'] !== '' ? $item['summary_url'] : $item['file_url'];
                 $off_site = ($item['summary_url'] === '');
                 $meta     = array_filter(array($item['kind'], $item['year'] ? (string) $item['year'] : ''), 'strlen');
+
+                // The Easy FancyBox plugin grabs every a[href*=".pdf"] on the
+                // page and drops it into a small blank iframe. Opt these links
+                // out with its documented .nofancybox class and hand them to the
+                // theme's own document modal (js/document-library.js) instead,
+                // which previews a PDF full size with Open and Download buttons.
+                $doc_attrs = '';
+                if ($item['is_file']) {
+                    $doc_attrs = ' data-title="' . esc_attr($item['title']) . '"'
+                        . ' data-mime="' . esc_attr($item['mime']) . '"'
+                        . ' data-thumb="' . esc_url($item['cover']) . '"';
+                }
+                // Only a link that actually points at the file opens the modal.
+                $primary_doc = $item['is_file'] && $off_site;
+                $cls = function ($base, $is_doc) {
+                    return trim($base . ($is_doc ? ' kop-rl-doc nofancybox' : ''));
+                };
                 ?>
                 <li class="kop-rl-card" data-key="<?php echo esc_attr($item['key']); ?>" data-cover-id="<?php echo (int) $item['cover_id']; ?>">
-                    <a class="kop-rl-cover" href="<?php echo esc_url($primary); ?>"<?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?> tabindex="-1" aria-hidden="true">
+                    <a class="<?php echo esc_attr($cls('kop-rl-cover', $primary_doc)); ?>" href="<?php echo esc_url($primary); ?>"<?php echo $primary_doc ? $doc_attrs : ''; ?><?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?> tabindex="-1" aria-hidden="true">
                         <?php if ($item['cover']) : ?>
                             <img src="<?php echo esc_url($item['cover']); ?>" alt="" loading="lazy">
                         <?php else : ?>
@@ -542,7 +563,7 @@ function kop_hub_module_research() {
                             <span class="kop-rl-kind"><?php echo esc_html(implode(' / ', $meta)); ?></span>
                         <?php endif; ?>
                         <h3 class="kop-rl-title">
-                            <a href="<?php echo esc_url($primary); ?>"<?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($item['title']); ?></a>
+                            <a<?php echo $primary_doc ? ' class="kop-rl-doc nofancybox"' : ''; ?> href="<?php echo esc_url($primary); ?>"<?php echo $primary_doc ? $doc_attrs : ''; ?><?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($item['title']); ?></a>
                         </h3>
                         <?php if ($item['byline'] !== '') : ?>
                             <p class="kop-rl-byline"><?php echo esc_html($item['byline']); ?></p>
@@ -552,7 +573,7 @@ function kop_hub_module_research() {
                             <?php if ($item['summary_url'] !== '') : ?>
                                 <a class="kop-rl-summary" href="<?php echo esc_url($item['summary_url']); ?>"><?php echo esc_html($item['summary_label']); ?></a>
                             <?php endif; ?>
-                            <a class="kop-rl-file" href="<?php echo esc_url($item['file_url']); ?>" target="_blank" rel="noopener"><?php
+                            <a class="<?php echo esc_attr($cls('kop-rl-file', $item['is_file'])); ?>" href="<?php echo esc_url($item['file_url']); ?>"<?php echo $doc_attrs; ?> target="_blank" rel="noopener"><?php
                                 echo esc_html($item['file_label'] . ($item['file_size'] !== '' ? ' / ' . $item['file_size'] : ''));
                             ?></a>
                         </p>
@@ -616,6 +637,39 @@ function kop_research_render_editor_dialog() {
     </dialog>
     <?php
 }
+
+/**
+ * The document preview modal used by the library pages, so a card's PDF opens
+ * in the same full-size viewer instead of the Easy FancyBox plugin's blank
+ * iframe. Public — every visitor gets it.
+ */
+function kop_research_enqueue_doc_modal() {
+    if (!is_page(KOP_RESEARCH_SLUG)) {
+        return;
+    }
+
+    $dir = get_stylesheet_directory();
+    $uri = get_stylesheet_directory_uri();
+
+    if (file_exists($dir . '/css/document-library.css')) {
+        wp_enqueue_style(
+            'kop-document-library-style',
+            $uri . '/css/document-library.css',
+            array('kop-colors'),
+            filemtime($dir . '/css/document-library.css')
+        );
+    }
+    if (file_exists($dir . '/js/document-library.js')) {
+        wp_enqueue_script(
+            'kop-document-library-script',
+            $uri . '/js/document-library.js',
+            array('jquery'),
+            filemtime($dir . '/js/document-library.js'),
+            true
+        );
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_research_enqueue_doc_modal');
 
 /**
  * Editor assets, only on this page and only for users who can edit it.

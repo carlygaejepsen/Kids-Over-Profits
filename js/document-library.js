@@ -146,7 +146,7 @@
 
         document.addEventListener('click', event => {
             const link = event.target && event.target.closest
-                ? event.target.closest('.kop-document-library .doc-link, .kop-document-folder .doc-link, .kop-document-single .doc-link')
+                ? event.target.closest('.kop-document-library .doc-link, .kop-document-folder .doc-link, .kop-document-single .doc-link, .kop-research-library .kop-rl-doc')
                 : null;
             if (!link) return;
             if (link.dataset && link.dataset.kopNoModal === 'true') return;
