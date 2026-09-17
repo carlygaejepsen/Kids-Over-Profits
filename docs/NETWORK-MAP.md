@@ -13,7 +13,7 @@ in detail. Phases 3 and 4 are outlined at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 4 of 8 done |
+| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 5 of 8 done |
 | 3 | Analysis tools: Focus, Path, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import | Outlined |
 
@@ -258,6 +258,27 @@ endpoints are visible and its category is checked.
 The cross-region toggle hides in-region edges. This is the staff-migration
 view, and it uses `crossesRegion` because the chain column is sparse.
 
+**Rail bound in step 5.** Nothing in `filters.js` decides what a filter
+means; the store owns that, and the rail is its switches. The vocabulary
+runs the same way: the legend reads its wording back off the checkboxes the
+template rendered, so PHP stays the only place that decides how `parent`
+reads to a visitor, and adding a kind to the board export needs no change in
+any JavaScript file.
+
+Checkboxes apply at once. The connections slider does not: its output
+follows the thumb on every input event, but the filter waits about 140 ms
+for a pause. A focused trail re-settles whenever the view changes, and
+restarting that force run sixty times a second makes the map boil under the
+thumb. Debouncing also means one recomputation per drag rather than one per
+value crossed.
+
+The Filters button that turns the rail into a sheet was pulled forward from
+step 7. Below the breakpoint the rail is `position: fixed` across the bottom
+of the stage, so without something to open and close it the narrow layout
+ships with the rail permanently covering the map it filters. Widening the
+window past the breakpoint reopens it, so a rail closed on a phone is not
+still closed on a desktop.
+
 Filtering recomputes the visible set once and hands the renderer flat
 arrays. No per-frame filtering.
 
@@ -327,6 +348,13 @@ everything off the neighbourhood to about fifteen percent; a committed
 focus removes it from the scene entirely rather than dimming it.
 
 Chain hulls come last in this step and can slip to Phase 3 without loss.
+
+The legend is built by `filters.js`, not here. It is the rail's other half:
+it says what the marks mean and it lists only what the rail has left in
+view. Its swatches are painted by the renderer's own node painter, exported
+for the purpose, so a swatch cannot drift from the thing it describes - the
+kind shapes, the hollow closed node, the faded unrecorded one and the
+chartreuse NATSAP ring are all one code path now.
 
 **Built.** The renderer takes an `emphasis` object carrying the lit node and
 edge sets, the dim alpha and the gather offsets, and focus.js fills it in;
@@ -458,11 +486,19 @@ Three layers:
    and that extending, truncating and clearing the trail all land where they
    should. Search ranking and URL state join it when those modules land.
 
-   Frames are queued against a virtual clock rather than run inline. A
-   synchronous `requestAnimationFrame` breaks the code under test in two
-   ways that say nothing about a browser: a draw scheduled inside its own
-   callback leaves the "already scheduled" guard permanently set, and an
-   animation reading `performance.now()` sees a clock that never moves.
+   Frames and timers are queued against a virtual clock rather than run
+   inline. A synchronous `requestAnimationFrame` breaks the code under test
+   in two ways that say nothing about a browser: a draw scheduled inside its
+   own callback leaves the "already scheduled" guard permanently set, and an
+   animation reading `performance.now()` sees a clock that never moves. The
+   timer queue is what lets the slider's debounce be tested at all.
+
+   Step 5 added a DOM stub: enough element to bind a filter rail to, with
+   the handful of selectors `filters.js` actually uses and nothing else. The
+   rail is built from the same meta block PHP reads, so the names, values
+   and label wording match what ships. It is not a DOM implementation, and a
+   module reaching for something that is not there throws, which is the
+   point — the stub should fail loudly rather than quietly pretend.
 
    The assertions were checked by mutation rather than trusted: breaking the
    endpoint check in the store, the label thresholds, the click slop and the
@@ -488,7 +524,7 @@ Each step leaves the branch deployable.
    is testable; `app.js` renders the breadcrumb from the chain it reports.
 5. Filters, legend, colour modes. The slider's output reads "any" at zero
    and the number above it; the template prints that initial state, so the
-   wiring has to keep it.
+   wiring has to keep it. **Done.**
 6. Search, drawer, URL state.
 7. Mobile breakpoints, keyboard, reduced motion, module tests.
 8. Chain hulls, if they fit.

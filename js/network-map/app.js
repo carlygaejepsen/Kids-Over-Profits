@@ -59,6 +59,7 @@
             }
         });
 
+        var filters = null;
         focus = window.KOPNetworkFocus.create({
             store: store,
             renderer: renderer,
@@ -66,6 +67,9 @@
             announce: announce,
             onChange: function () {
                 renderChain(app);
+                /* A trail narrows what is on screen, and the legend lists
+                 * only what is on screen. */
+                if (filters) filters.renderLegend();
             }
         });
 
@@ -97,11 +101,25 @@
         };
         window.KOPNetworkMap = app;
 
+        if (window.KOPNetworkFilters) {
+            filters = window.KOPNetworkFilters.create({
+                store: store,
+                renderer: renderer,
+                announce: announce,
+                onChange: app.refresh,
+                scene: function () { return focus.scene(); },
+                redraw: viewport.scheduleDraw
+            });
+            app.filters = filters;
+        }
+
         store.load(CONFIG).then(function () {
             renderer.useChainIndex(store.chainIndex);
             renderer.resize();
             app.refresh();
             viewport.fit();
+
+            if (filters) filters.start();
 
             if (loading) loading.hidden = true;
             shell.setAttribute('data-state', 'ready');
@@ -195,13 +213,8 @@
             });
         }
 
-        var colour = byId('kop-network-colour-mode');
-        if (colour) {
-            colour.addEventListener('change', function () {
-                app.renderer.setColourMode(colour.value);
-                app.viewport.scheduleDraw();
-            });
-        }
+        /* The colour-mode select is bound in filters.js, which owns the
+         * legend that has to change with it. */
 
         var whole = byId('kop-network-whole-map');
         if (whole) {

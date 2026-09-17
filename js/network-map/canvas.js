@@ -149,6 +149,85 @@
         ctx.closePath();
     }
 
+    /**
+     * How firmly a node's outline has to work. Navy needs almost none; pale
+     * spring yellow sits close enough to the sand background to need a firm
+     * one. Trade groups are the exception: a chartreuse outline on sand is
+     * how that kind is drawn at all.
+     */
+    function outlineFor(kind, fill, byKind) {
+        if (byKind && KIND_OUTLINE[kind]) return KIND_OUTLINE[kind];
+        return INK + (luminance(fill) > 0.62 ? '0.72)' : '0.45)');
+    }
+
+    /**
+     * One node, at one place, at one size. The map and the legend both come
+     * through here, so a swatch cannot drift from the thing it describes.
+     *
+     * spec is mutated and reused by the draw loop rather than allocated per
+     * node, so it must not be held on to.
+     */
+    function paintNode(ctx, spec, x, y, r, alpha) {
+        ctx.beginPath();
+        traceShape(ctx, spec.kind, x, y, r);
+
+        if (spec.status === 'closed') {
+            /* Hollow: closed or rebranded. */
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = SURFACE;
+            ctx.fill();
+            ctx.strokeStyle = spec.fill === SURFACE
+                ? (KIND_OUTLINE[spec.kind] || INK + '0.6)')
+                : spec.fill;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        } else {
+            /* Open solid; status unrecorded the same shape at 55%, so "we do
+             * not know" reads as faded rather than as closed. */
+            ctx.globalAlpha = alpha * (spec.status === 'unknown' ? 0.55 : 1);
+            ctx.fillStyle = spec.fill;
+            ctx.fill();
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = spec.outline;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        /* NATSAP membership: a thin chartreuse ring outside the shape, so it
+         * reads on a filled and a hollow node alike. */
+        if (spec.natsap) {
+            ctx.beginPath();
+            ctx.arc(x, y, r + 2.5, 0, Math.PI * 2);
+            ctx.strokeStyle = '#B2E102';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+
+        ctx.globalAlpha = 1;
+    }
+
+    /**
+     * Paint one legend swatch into its own small canvas. Same shapes, same
+     * status marks, same NATSAP ring as the map itself.
+     */
+    function swatch(element, spec) {
+        if (!element || !element.getContext) return;
+        var dpr = Math.min(root.devicePixelRatio || 1, 2);
+        var size = 18;
+        element.width = Math.round(size * dpr);
+        element.height = Math.round(size * dpr);
+        var ctx = element.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, size, size);
+        paintNode(ctx, {
+            kind: spec.kind || 'person',
+            status: spec.status || 'open',
+            natsap: !!spec.natsap,
+            fill: spec.fill,
+            outline: spec.outline || outlineFor(spec.kind, spec.fill, spec.byKind)
+        }, size / 2, size / 2, 6, 1);
+    }
+
     function create(canvas) {
         var ctx = canvas.getContext('2d');
 
@@ -176,6 +255,9 @@
         var buckets = [];
         var chainIndex = null;
         var frameStamp = 0;
+        /* Reused by the draw loop so a frame does not allocate one spec per
+         * node; paintNode never holds on to it. */
+        var scratch = { kind: '', status: '', natsap: false, fill: '', outline: '' };
 
         /** The store's chain-to-index map, so colour mode two can be resolved. */
         renderer.useChainIndex = function (index) {
@@ -265,12 +347,6 @@
             return KIND_COLOURS[node.kind] || KIND_COLOURS.other;
         };
 
-        function outlineFor(node, fill) {
-            if (renderer.colourMode === 'kind' && KIND_OUTLINE[node.kind]) return KIND_OUTLINE[node.kind];
-            /* Half the chain palette is pale, and pale on sand is barely a
-             * shape; a dark node outlined as firmly would just look smudged. */
-            return INK + (luminance(fill) > 0.62 ? '0.72)' : '0.45)');
-        }
 
         /* ------------------------------------------------------- painting -- */
 
@@ -373,42 +449,13 @@
                  * also off the neighbourhood ends up fainter than either rule
                  * would make it alone, which is the right reading of both. */
                 var lit = !near || !!near[node.id];
-                var alpha = lit ? 1 : dim;
 
-                ctx.beginPath();
-                traceShape(ctx, node.kind, x, y, r);
-
-                if (node.status === 'closed') {
-                    /* Hollow: closed or rebranded. */
-                    ctx.globalAlpha = alpha;
-                    ctx.fillStyle = SURFACE;
-                    ctx.fill();
-                    ctx.strokeStyle = fill === SURFACE ? (KIND_OUTLINE[node.kind] || INK + '0.6)') : fill;
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                } else {
-                    /* Open solid; status unrecorded the same shape at 55%, so
-                     * "we do not know" reads as faded rather than as closed. */
-                    ctx.globalAlpha = alpha * (node.status === 'unknown' ? 0.55 : 1);
-                    ctx.fillStyle = fill;
-                    ctx.fill();
-                    ctx.globalAlpha = alpha;
-                    ctx.strokeStyle = outlineFor(node, fill);
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-
-                /* NATSAP membership: a thin chartreuse ring outside the
-                 * shape, so it reads on a filled and a hollow node alike. */
-                if (node.natsap) {
-                    ctx.beginPath();
-                    ctx.arc(x, y, r + 2.5, 0, Math.PI * 2);
-                    ctx.strokeStyle = '#B2E102';
-                    ctx.lineWidth = 1.5;
-                    ctx.stroke();
-                }
-
-                ctx.globalAlpha = 1;
+                scratch.kind = node.kind;
+                scratch.status = node.status;
+                scratch.natsap = node.natsap;
+                scratch.fill = fill;
+                scratch.outline = outlineFor(node.kind, fill, renderer.colourMode === 'kind');
+                paintNode(ctx, scratch, x, y, r, lit ? 1 : dim);
 
                 if (hovered) {
                     ctx.beginPath();
@@ -462,6 +509,8 @@
     }
 
     root.KOPNetworkCanvas = {
+        swatch: swatch,
+        outlineFor: outlineFor,
         create: create,
         KIND_COLOURS: KIND_COLOURS,
         KIND_OUTLINE: KIND_OUTLINE,

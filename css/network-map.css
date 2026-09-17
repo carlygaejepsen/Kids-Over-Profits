@@ -368,6 +368,11 @@
 	right: 0.65rem;
 	bottom: 0.65rem;
 	max-width: 220px;
+	/* The stage is the map's, not the legend's: a view with every kind
+	 * showing runs to a dozen rows, and it scrolls rather than growing up
+	 * the screen. */
+	max-height: 55%;
+	overflow-y: auto;
 	padding: 0.5rem 0.65rem;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
@@ -378,6 +383,48 @@
 
 .kop-network__legend:empty {
 	display: none;
+}
+
+.kop-network__legend-heading {
+	margin: 0.5rem 0 0.25rem;
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.6;
+}
+
+.kop-network__legend-heading:first-child {
+	margin-top: 0;
+}
+
+.kop-network__legend-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kop-network__legend-row {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+	margin: 0;
+	padding: 0.05rem 0;
+}
+
+/* Painted by the renderer's own node painter, so it matches the map. */
+.kop-network__legend-mark {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+}
+
+.kop-network__legend-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 /* Announces selection to screen readers without taking up space. */

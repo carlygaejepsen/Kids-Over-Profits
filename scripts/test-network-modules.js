@@ -85,21 +85,38 @@ function buildSandbox() {
     let clock = 0;
     let rafId = 0;
     let queue = [];
-    const motion = { reduced: false };
+    let timerId = 0;
+    let timers = [];
+    /* Media state the tests drive: prefers-reduced-motion and the narrow
+     * breakpoint where the filter rail becomes a sheet over the map. */
+    const motion = { reduced: false, narrow: false };
+    const mediaListeners = [];
 
     const sandbox = {
         console, Math, Date, JSON, Object, Array, Number, String, Boolean, Error,
         Float64Array, Promise, isNaN, isFinite, parseFloat, parseInt, Infinity, NaN,
-        setTimeout, clearTimeout, setInterval, clearInterval,
+        setInterval, clearInterval,
         devicePixelRatio: 2,
         performance: { now: () => clock },
         requestAnimationFrame: (fn) => { queue.push({ id: ++rafId, fn }); return rafId; },
         cancelAnimationFrame: (id) => { queue = queue.filter((entry) => entry.id !== id); },
+        /* The slider defers its filter until the thumb pauses, so the timer
+         * queue is driven by the test rather than by the wall clock. */
+        setTimeout: (fn, ms) => { timers.push({ id: ++timerId, fn, at: clock + (ms || 0) }); return timerId; },
+        clearTimeout: (id) => { timers = timers.filter((entry) => entry.id !== id); },
         matchMedia: (query) => ({
             media: query,
-            matches: motion.reduced && /prefers-reduced-motion/.test(query),
-            addListener() {}, removeListener() {},
-            addEventListener() {}, removeEventListener() {}
+            /* A getter, not a snapshot: the modules hold the list and read
+             * matches later, as they do in a browser. */
+            get matches() {
+                if (/prefers-reduced-motion/.test(query)) return motion.reduced;
+                if (/max-width/.test(query)) return motion.narrow;
+                return false;
+            },
+            addListener(fn) { mediaListeners.push(fn); },
+            removeListener() {},
+            addEventListener(type, fn) { mediaListeners.push(fn); },
+            removeEventListener() {}
         })
     };
     sandbox.self = sandbox;
@@ -112,7 +129,8 @@ function buildSandbox() {
         path.join('js', 'network-map', 'store.js'),
         path.join('js', 'network-map', 'canvas.js'),
         path.join('js', 'network-map', 'viewport.js'),
-        path.join('js', 'network-map', 'focus.js')
+        path.join('js', 'network-map', 'focus.js'),
+        path.join('js', 'network-map', 'filters.js')
     ];
     files.forEach(function (rel) {
         vm.runInContext(fs.readFileSync(path.join(ROOT, rel), 'utf8'), sandbox, { filename: rel });
@@ -123,6 +141,148 @@ function buildSandbox() {
         const fn = listeners.get(type);
         if (!fn) throw new Error('no listener registered for ' + type);
         fn(Object.assign({ pointerId, clientX: x, clientY: y, preventDefault() {} }, extra));
+    }
+
+    /* ---------------------------------------------------------- the DOM -- */
+
+    /* Enough of an element to bind a filter rail to. Not a DOM
+     * implementation: it supports the handful of selectors and properties
+     * filters.js actually uses, and nothing else. If a module reaches for
+     * something that is not here it throws, which is the point. */
+    const allElements = [];
+    function el(tag, props) {
+        const node = {
+            tagName: tag.toUpperCase(),
+            children: [],
+            attrs: Object.create(null),
+            listeners: Object.create(null),
+            className: '',
+            value: '',
+            checked: false,
+            hidden: false,
+            disabled: false,
+            width: 0,
+            height: 0,
+            parentNode: null,
+            _text: '',
+            appendChild(child) { child.parentNode = node; node.children.push(child); return child; },
+            setAttribute(name, value) { node.attrs[name] = String(value); },
+            getAttribute(name) { return node.attrs[name] === undefined ? null : node.attrs[name]; },
+            addEventListener(type, fn) { (node.listeners[type] = node.listeners[type] || []).push(fn); },
+            removeEventListener() {},
+            dispatch(type) {
+                (node.listeners[type] || []).forEach((fn) => fn({ target: node, preventDefault() {} }));
+            },
+            getContext: () => ctx,
+            focus() { node.focused = true; },
+            querySelector(sel) { return node.querySelectorAll(sel)[0] || null; },
+            querySelectorAll(sel) {
+                const parts = sel.split(',').map((s) => s.trim());
+                const out = [];
+                const walk = (current) => {
+                    current.children.forEach((child) => {
+                        if (parts.some((part) => matches(child, part))) out.push(child);
+                        walk(child);
+                    });
+                };
+                walk(node);
+                return out;
+            }
+        };
+        Object.defineProperty(node, 'textContent', {
+            get() {
+                if (node.children.length) return node.children.map((c) => c.textContent).join('');
+                return node._text;
+            },
+            set(value) { node.children.length = 0; node._text = String(value); }
+        });
+        Object.assign(node, props || {});
+        allElements.push(node);
+        return node;
+    }
+
+    /** tag, .class, tag[name="value"] - all that the modules ask for. */
+    function matches(node, selector) {
+        const attr = /^([a-z]*)\[([a-z-]+)="([^"]*)"\]$/i.exec(selector);
+        if (attr) {
+            if (attr[1] && node.tagName !== attr[1].toUpperCase()) return false;
+            return node.getAttribute(attr[2]) === attr[3];
+        }
+        if (selector.charAt(0) === '.') return node.className.split(/\s+/).indexOf(selector.slice(1)) !== -1;
+        return node.tagName === selector.toUpperCase();
+    }
+
+    const root = el('div');
+    const document_ = {
+        getElementById(id) {
+            return allElements.find((node) => node.getAttribute('id') === id) || null;
+        },
+        createElement: (tag) => el(tag),
+        querySelector(sel) { return root.querySelector(sel); },
+        querySelectorAll(sel) { return root.querySelectorAll(sel); }
+    };
+
+    /**
+     * The rail the template renders, built from the same meta block PHP
+     * reads, so the names, values and label wording match what ships.
+     */
+    function buildRail(meta, labelFor) {
+        const group = (name, values) => values.forEach((value) => {
+            const label = el('label', { className: 'kop-network__check' });
+            const input = el('input', { checked: true, value: String(value) });
+            input.setAttribute('name', name);
+            input.setAttribute('type', 'checkbox');
+            label.appendChild(input);
+            const span = el('span');
+            span.textContent = labelFor(name, value);
+            label.appendChild(span);
+            rail.appendChild(label);
+        });
+
+        const rail = el('aside', { className: 'kop-network__rail' });
+        rail.setAttribute('id', 'kop-network-rail');
+        root.appendChild(rail);
+
+        group('kop-network-kind', meta.kinds);
+        group('kop-network-category', meta.categories);
+        group('kop-network-status', ['open', 'closed', 'unknown']);
+        group('kop-network-chain', [''].concat(meta.chains));
+        group('kop-network-region', meta.regions);
+
+        const add = (tag, id, props) => {
+            const node = el(tag, props);
+            node.setAttribute('id', id);
+            rail.appendChild(node);
+            return node;
+        };
+        add('input', 'kop-network-natsap-only', { checked: false });
+        add('input', 'kop-network-cross-region', { checked: false });
+        add('input', 'kop-network-degree', { value: '0' });
+        add('output', 'kop-network-degree-out');
+        add('button', 'kop-network-reset-filters');
+
+        const regionsToggle = el('button', { className: 'kop-network__legend-toggle' });
+        regionsToggle.setAttribute('aria-expanded', 'false');
+        regionsToggle.setAttribute('aria-controls', 'kop-network-regions');
+        rail.appendChild(regionsToggle);
+        const regionsPanel = el('div', { hidden: true });
+        regionsPanel.setAttribute('id', 'kop-network-regions');
+        rail.appendChild(regionsPanel);
+
+        const legend = el('div');
+        legend.setAttribute('id', 'kop-network-legend');
+        root.appendChild(legend);
+
+        const colour = el('select', { value: 'kind' });
+        colour.setAttribute('id', 'kop-network-colour-mode');
+        root.appendChild(colour);
+
+        const railToggle = el('button');
+        railToggle.setAttribute('id', 'kop-network-filters-toggle');
+        railToggle.setAttribute('aria-expanded', 'false');
+        root.appendChild(railToggle);
+
+        return { rail, railToggle, regionsToggle, regionsPanel, legend, colour };
     }
 
     /** Run queued frames until nothing is scheduled, as a browser would. */
@@ -139,8 +299,21 @@ function buildSandbox() {
         return frames;
     }
 
+    /** Fire every timer that is due, as the browser would once idle. */
+    function runTimers() {
+        let fired = 0;
+        while (timers.length && fired < 100) {
+            const due = timers.slice().sort((a, b) => a.at - b.at);
+            timers = [];
+            clock = Math.max(clock, due[due.length - 1].at);
+            due.forEach((entry) => { entry.fn(); fired++; });
+        }
+        return fired;
+    }
+
     return {
-        sandbox, canvas, ops, fire, motion, flushFrames,
+        sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
+        document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
         resetOps: () => Object.keys(ops).forEach((k) => { ops[k] = 0; })
     };
@@ -156,7 +329,10 @@ function run() {
      * slider's floor of zero is what keeps them on the map. */
     const unconnected = graph.nodes.filter((n) => n.degree === 0).length;
 
-    const { sandbox, canvas, ops, fire, motion, flushFrames, resetOps } = buildSandbox();
+    const {
+        sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
+        document: doc, buildRail, mediaListeners, resetOps
+    } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
 
@@ -638,6 +814,199 @@ function run() {
 
     store.resetFilters();
     focus.destroy();
+
+    /* ---------------------------------------------------------- filters -- */
+
+    /* The wording PHP puts in the rail, which the legend reads back rather
+     * than keeping a second copy of. */
+    const KIND_WORDS = {
+        person: 'People', facility: 'Facilities', parent: 'Parent companies',
+        association: 'Trade groups', government: 'Government bodies',
+        church: 'Churches', other: 'Other'
+    };
+    const shell = buildRail(graph.meta, (name, value) => {
+        if (name === 'kop-network-kind') return KIND_WORDS[value] || value;
+        if (name === 'kop-network-chain') return value || 'No recorded owner';
+        return String(value);
+    });
+
+    store.resetFilters();
+    let applied = 0;
+    const rail = sandbox.KOPNetworkFilters.create({
+        store,
+        renderer,
+        document: doc,
+        announce: () => {},
+        onChange: () => {
+            applied++;
+            const next = focus.scene();
+            renderer.setScene(next);
+            viewport.setScene(next);
+        },
+        scene: () => focus.scene(),
+        redraw: () => {}
+    });
+    rail.start();
+
+    const kindBox = (kind) => doc.querySelectorAll('input[name="kop-network-kind"]')
+        .find((input) => input.value === kind);
+
+    /* --- checkboxes reach the store --- */
+
+    const peopleBox = kindBox('person');
+    peopleBox.checked = false;
+    peopleBox.dispatch('change');
+    check(!store.filters.kinds.person && applied === 1,
+        'unchecking a kind did not reach the store');
+    check(store.visible().nodes.every((n) => n.kind !== 'person'),
+        'the view still holds people after the kind was unchecked');
+    peopleBox.checked = true;
+    peopleBox.dispatch('change');
+    check(store.filters.kinds.person === true, 're-checking a kind did not restore it');
+
+    const closedBox = doc.querySelectorAll('input[name="kop-network-status"]')
+        .find((input) => input.value === 'closed');
+    closedBox.checked = false;
+    closedBox.dispatch('change');
+    check(!store.filters.statuses.closed && store.visible().nodes.every((n) => n.status !== 'closed'),
+        'the status checkbox did not filter by status');
+    closedBox.checked = true;
+    closedBox.dispatch('change');
+
+    const natsapBox = doc.getElementById('kop-network-natsap-only');
+    natsapBox.checked = true;
+    natsapBox.dispatch('change');
+    check(store.filters.natsapOnly === true && store.visible().nodes.every((n) => n.natsap),
+        'the NATSAP toggle did not reach the store');
+    natsapBox.checked = false;
+    natsapBox.dispatch('change');
+
+    const crossBox = doc.getElementById('kop-network-cross-region');
+    crossBox.checked = true;
+    crossBox.dispatch('change');
+    check(store.filters.crossRegionOnly === true, 'the cross-group toggle did not reach the store');
+    check(renderer.crossRegionMode === true,
+        'the cross-group toggle did not tell the renderer to draw those edges as the subject');
+    crossBox.checked = false;
+    crossBox.dispatch('change');
+    check(renderer.crossRegionMode === false, 'the renderer stayed in the cross-group style');
+
+    /* --- the slider waits for the thumb to stop --- */
+
+    const slider = doc.getElementById('kop-network-degree');
+    const sliderOut = doc.getElementById('kop-network-degree-out');
+    check(sliderOut.textContent === 'any', 'the slider reads "' + sliderOut.textContent + '" at zero, not "any"');
+
+    const beforeSlider = store.filters.minDegree;
+    slider.value = '4';
+    slider.dispatch('input');
+    check(sliderOut.textContent === '4', 'the slider output did not follow the thumb');
+    check(store.filters.minDegree === beforeSlider,
+        'the slider applied its filter mid-drag instead of waiting for a pause');
+    runTimers();
+    check(store.filters.minDegree === 4, 'the slider never applied its filter after the pause');
+
+    /* Dragging across several values must not queue several applications. */
+    const appliedBefore = applied;
+    ['5', '6', '7'].forEach((value) => { slider.value = value; slider.dispatch('input'); });
+    runTimers();
+    check(applied === appliedBefore + 1,
+        'a slider drag applied ' + (applied - appliedBefore) + ' times, expected once');
+    check(store.filters.minDegree === 7, 'the slider settled on the wrong value');
+
+    /* --- reset puts the rail and the store back together --- */
+
+    doc.getElementById('kop-network-reset-filters').dispatch('click');
+    check(store.filters.minDegree === 0 && store.visible().nodes.length === graph.nodes.length,
+        'Reset filters did not restore the whole map');
+    check(slider.value === '0' && sliderOut.textContent === 'any',
+        'Reset filters left the slider showing its old value');
+    check(doc.querySelectorAll('input[name="kop-network-kind"]').every((i) => i.checked),
+        'Reset filters left a kind unchecked in the rail');
+    check(renderer.crossRegionMode === false, 'Reset filters left the cross-group edge styling on');
+
+    /* --- the legend --- */
+
+    const legendLabels = () => shell.legend.querySelectorAll('span')
+        .filter((s) => s.className === 'kop-network__legend-label')
+        .map((s) => s.textContent);
+    const legendMarks = () => shell.legend.querySelectorAll('canvas');
+
+    let labels = legendLabels();
+    check(labels.indexOf('Facilities') !== -1,
+        'the legend does not use the rail wording; it shows ' + JSON.stringify(labels.slice(0, 3)));
+    check(labels.indexOf('Closed or rebranded') !== -1 && labels.indexOf('NATSAP member') !== -1,
+        'the legend does not say what the non-colour marks mean');
+    check(legendMarks().length === labels.length,
+        'the legend has ' + legendMarks().length + ' swatches for ' + labels.length + ' rows',
+        'legend: ' + labels.length + ' rows in kind mode');
+    check(legendMarks().every((c) => c.width > 0),
+        'a legend swatch was never painted');
+
+    /* It lists what is in view, not what exists. */
+    const churchBox = kindBox('church');
+    churchBox.checked = false;
+    churchBox.dispatch('change');
+    check(legendLabels().indexOf('Churches') === -1,
+        'the legend still lists a kind the rail has filtered out');
+    churchBox.checked = true;
+    churchBox.dispatch('change');
+    check(legendLabels().indexOf('Churches') !== -1, 'the legend did not come back with the kind');
+
+    /* Colour mode switches what the legend is about. */
+    shell.colour.value = 'chain';
+    shell.colour.dispatch('change');
+    labels = legendLabels();
+    check(renderer.colourMode === 'chain', 'the colour-mode select did not reach the renderer');
+    check(labels.indexOf('UHS') !== -1 && labels.indexOf('No recorded owner') !== -1,
+        'the chain legend does not list the chains in view',
+        'legend: ' + labels.length + ' rows in chain mode');
+    check(labels.indexOf('Facilities') === -1, 'the chain legend still lists the kinds');
+    shell.colour.value = 'kind';
+    shell.colour.dispatch('change');
+
+    /* A trail narrows the view, so it narrows the legend too. */
+    const wholeMapRows = legendLabels().length;
+    focus.select(hub);
+    flushFrames();
+    rail.renderLegend();
+    const focusedRows = legendLabels();
+    check(focusedRows.length < wholeMapRows,
+        'the legend kept all ' + wholeMapRows + ' rows inside a focused trail');
+    const kindsInFocus = new Set(focus.scene().nodes.map((n) => KIND_WORDS[n.kind]));
+    check(focusedRows.filter((l) => Object.values(KIND_WORDS).indexOf(l) !== -1).length === kindsInFocus.size,
+        'the focused legend lists kinds that are not in the focused view',
+        'legend: ' + wholeMapRows + ' rows on the whole map, ' + focusedRows.length + ' in a trail');
+    focus.clear();
+    flushFrames();
+
+    /* --- the rail's own controls --- */
+
+    shell.regionsToggle.dispatch('click');
+    check(shell.regionsToggle.getAttribute('aria-expanded') === 'true' && shell.regionsPanel.hidden === false,
+        'the board-grouping section did not open');
+    shell.regionsToggle.dispatch('click');
+    check(shell.regionsToggle.getAttribute('aria-expanded') === 'false' && shell.regionsPanel.hidden === true,
+        'the board-grouping section did not close again');
+
+    /* Below the breakpoint the rail is a sheet over the map, so it has to
+     * start closed or it covers the thing it filters. */
+    motion.narrow = true;
+    rail.syncRail();
+    check(shell.rail.hidden === true, 'the rail covers the map on a narrow screen');
+    shell.railToggle.dispatch('click');
+    check(shell.rail.hidden === false && shell.railToggle.getAttribute('aria-expanded') === 'true',
+        'the Filters button did not open the rail');
+    shell.railToggle.dispatch('click');
+    check(shell.rail.hidden === true && shell.railToggle.getAttribute('aria-expanded') === 'false',
+        'the Filters button did not close the rail');
+
+    shell.railToggle.dispatch('click');
+    motion.narrow = false;
+    mediaListeners.forEach((fn) => fn({ matches: false }));
+    check(shell.rail.hidden === false, 'widening the window left the rail shut');
+
+    store.resetFilters();
 }
 
 try {
