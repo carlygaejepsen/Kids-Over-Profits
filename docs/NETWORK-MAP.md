@@ -13,7 +13,7 @@ in detail. Phases 3 and 4 are outlined at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 1 of 8 done |
+| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 3 of 8 done |
 | 3 | Analysis tools: Focus, Path, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import | Outlined |
 
@@ -228,6 +228,30 @@ view, and it uses `crossesRegion` because the chain column is sparse.
 Filtering recomputes the visible set once and hands the renderer flat
 arrays. No per-frame filtering.
 
+**Built.** Degree is counted once, over the candidate edges, and nodes below
+the slider are dropped in a single pass rather than cascading. A cascade is
+the obvious reading of "degree within the visible edge set", and it is
+wrong: dropping a node lowers its neighbours' degrees, so a second round
+drops more, and at a minimum of three the map empties itself two or three
+rounds after the slider moved. One pass is predictable and is what a
+visitor means by the control.
+
+The store also owns two things the plan did not name. Status arrives as free
+text — `open`, `closed or rebranded`, or empty for 357 of the 907 nodes — and
+`statusBucket()` is the single place that maps it onto the rail's three
+checkboxes. And `keepVisible` holds one node on screen whatever the slider
+says, so selecting a result from search cannot select something the map then
+hides.
+
+The visible set is cached against a revision counter rather than recomputed
+on read, so the filters can be set in a batch and the work still happens
+once, when someone asks for the result.
+
+One consequence worth knowing: the slider's floor is one connection, so the
+three isolated nodes are never in the default view. That is the honest
+default — they have nothing to show on a map of connections — but it does
+mean the map draws 904 of 907.
+
 #### 4. Renderer
 
 Shape by kind:
@@ -258,6 +282,34 @@ focus removes it from the scene entirely rather than dimming it.
 
 Chain hulls come last in this step and can slip to Phase 3 without loss.
 
+**Built**, apart from the hover dimming, which belongs with the focus chain
+in the next step. The renderer takes an `emphasis` object and uses the
+hovered id from it today; step 4 fills in the rest of that object rather
+than reopening the draw loop.
+
+World coordinates are projected by hand instead of transforming the context.
+Two things would otherwise fight the zoom: stroke widths and font sizes both
+have to stay constant on screen while the map goes from 0.1 to 6, and
+dividing every one of them by `k` is more code than projecting a point.
+Projecting per node also gives step 4's hover gather a natural place to add
+a display offset without touching the stored positions.
+
+Edges are bucketed by style once per scene, so a frame is five `beginPath`
+calls rather than thirteen hundred style changes, and both ends of a line
+off the same side of the viewport skip it entirely.
+
+Two details the sketch left open. Status unrecorded is drawn solid at 55
+percent, so "nobody has recorded one" reads as faded rather than as closed —
+it is a third of the map and it should not look like a claim. And outline
+strength follows the fill's luminance rather than being fixed: half the
+chain palette is pale enough to vanish against the sand background without a
+firm edge, while navy outlined as firmly just looks smudged.
+
+Chain colours are indexed by position in `meta.chains`, the build's sorted
+list, so a chain keeps its colour however the view is filtered. Ten chains
+exist; the palette runs to twelve so a board export can add two before
+anyone has to think about it.
+
 #### 5. Viewport
 
 Pointer events throughout. One pointer drags the stage, two pointers pinch,
@@ -268,6 +320,26 @@ A quadtree over current positions answers hover and click, rebuilt only
 after a drag ends. Every input schedules a single `requestAnimationFrame`
 draw, so a burst of wheel events costs one paint. Zoom range roughly 0.1 to
 6. A Reset view button restores the framed extent.
+
+**Built.** The quadtree search radius is the largest radius in the scene
+plus the slop, not the slop alone. `quadtree.find` returns the nearest
+*centre*, so a search bounded by the slop alone misses a sixteen-unit hub
+the moment the map is zoomed in far enough for the slop to be worth about a
+world unit — a click well inside a big node would find nothing. The shape
+test that follows is a circle of the node's own radius, which is close
+enough for a diamond or a hexagon and much cheaper than the real outline.
+
+The slop itself is eight CSS pixels, converted into world units per zoom
+level, so a small node stays tappable on a phone however far out the map
+is. Movement under four pixels between pointer down and up is a click, not a
+drag: fingers wobble, mice do not.
+
+Wheel deltas are normalised out of `deltaMode`, because Firefox reports
+lines where Chrome reports pixels and an unnormalised tick there is a
+fortieth of the one here. A pinch pans by its midpoint's travel and then
+zooms about where the midpoint now is, so a two-finger drag that also
+spreads does both; lifting one finger starts a fresh pan rather than
+inheriting the pinch's midpoint.
 
 #### 6. Search, drawer, URL state
 
@@ -307,6 +379,26 @@ Three layers:
 
 1. The layout test and the module tests run in plain Node after every
    build.
+
+   `scripts/test-network-modules.js` runs the browser modules against the
+   real `graph.json` and `layout.json` without a browser. There is no jsdom
+   in this repo and no reason to add one: the three modules touch a small,
+   known slice of the DOM — a canvas element, its 2D context, pointer and
+   wheel listeners, `requestAnimationFrame` — so the test stubs that slice
+   and evaluates them in a `vm` context against it. The stub context records
+   call counts instead of rasterising, which is enough to tell "drew 904
+   nodes" from "drew nothing", and `requestAnimationFrame` runs
+   synchronously so a scheduled draw has happened by the next assertion.
+
+   It covers the filter arithmetic, that a frame paints, that a click lands
+   on the node under the cursor at both ends of the zoom range, that zooming
+   holds the point under the pointer, and the pan, drag, pinch and wheel
+   gestures. Search ranking and URL state join it when those modules land.
+
+   The assertions were checked by mutation rather than trusted: breaking the
+   endpoint check in the store, the label thresholds, the click slop and the
+   quadtree's size-aware search radius each makes it fail, and the last of
+   those is the reason the close-zoom probe exists at all.
 2. A manual browser list: desktop Chrome, Firefox and Safari; iOS Safari
    for pinch; Android Chrome; one pass at 375 px width; a Lighthouse
    accessibility run.
@@ -319,8 +411,9 @@ Each step leaves the branch deployable.
 
 1. Vendor bundle, layout script, layout.json, layout test. **Done.**
 2. Template, seed, assignment, layout list, enqueue block, empty
-   stylesheet. The page renders its intro and an empty stage.
-3. Store, canvas, viewport. The map draws and pans.
+   stylesheet. The page renders its intro and an empty stage. **Done.**
+3. Store, canvas, viewport. The map draws and pans. **Done**, with
+   `app.js` as the bootstrap that wires them and the module tests alongside.
 4. Hover preview and gather, click to focus, the chain and its breadcrumb.
 5. Filters, legend, colour modes.
 6. Search, drawer, URL state.
