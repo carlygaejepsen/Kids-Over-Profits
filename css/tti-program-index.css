@@ -768,11 +768,19 @@ details.operator-section[open] .facility-card {
     display: block; /* Allow internal grid to flow */
 }
 
-.field-row.full-width-grid .field-value {
+/* Only rows of .list-item chips get the internal grid; plain text in a
+   full-width row must flow across the whole card, not one 200px cell. */
+.field-row.full-width-grid .field-value:has(> .list-item) {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Masonry-like grid for items */
     gap: 10px;
     margin-top: 5px;
+}
+
+/* One block per sentence-length entry (notes, past jobs) */
+.field-prose-item {
+    display: block;
+    margin-top: 4px;
 }
 
 .list-item {

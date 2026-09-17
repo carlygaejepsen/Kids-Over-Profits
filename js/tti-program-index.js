@@ -181,6 +181,11 @@ function displayFacilities(facilitiesData, containerId) {
     };
 
     const escapeAttribute = value => escapeHtml(value);
+
+    // True when a field's string entries are sentences rather than short
+    // labels; those rows span both detail-grid columns.
+    const isProseList = items => items.some(item =>
+        typeof item === 'string' && !/^https?:\/\//.test(item) && item.length > 80);
     const textCollator = new Intl.Collator(undefined, {
         numeric: true,
         sensitivity: 'base'
@@ -1105,6 +1110,7 @@ function displayFacilities(facilitiesData, containerId) {
             if (isValueEmpty(field.value)) return;
 
             let renderedValue = '';
+            let isProse = false;
 
             if (field.isList) {
                 const items = Array.isArray(field.value) ? field.value : [field.value];
@@ -1120,20 +1126,25 @@ function displayFacilities(facilitiesData, containerId) {
                         if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
                         return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
                     }).filter(Boolean).join('<br>');
+                } else if (isProseList(validItems)) {
+                    isProse = true;
+                    renderedValue = validItems.map(item => `<span class="field-prose-item">${renderItemOp(item)}</span>`).join('');
                 } else {
                     renderedValue = validItems.map(item => renderItemOp(item)).filter(Boolean).join(', ');
                 }
             } else {
                 renderedValue = escapeHtml(field.value);
+                isProse = isProseList([field.value]);
             }
 
             if (!renderedValue || isValueEmpty(renderedValue)) return;
 
+            const operatorRowClass = isProse ? 'field-row full-width-grid' : 'field-row';
             if (field.label) {
-                otherOperatorData += `<div class="field-row"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
+                otherOperatorData += `<div class="${operatorRowClass}"><span class="field-label">${escapeHtml(field.label)}</span><span class="field-value">${renderedValue}</span></div>`;
                 otherOperatorData += renderInlineFieldNotes(field.key, operatorFieldNotes, usedOperatorNoteKeys);  
             } else {
-                otherOperatorData += `<div class="field-row"><span class="field-value">${renderedValue}</span></div>`;   
+                otherOperatorData += `<div class="${operatorRowClass}"><span class="field-value">${renderedValue}</span></div>`;
             }
         });
 
@@ -1772,6 +1783,13 @@ function displayFacilities(facilitiesData, containerId) {
                         // Use renderItemFac which handles objects properly
                         renderedValue = validItems.map(item => renderItemFac(item)).filter(Boolean).join(', ');
 
+                        // Sentence-length entries (notes, past jobs) read as
+                        // prose: one block per entry, spanning the full card.
+                        if (isProseList(validItems)) {
+                            isMultiColumn = true;
+                            renderedValue = validItems.map(item => `<span class="field-prose-item">${renderItemFac(item)}</span>`).join('');
+                        }
+
                         // If it's a list of objects rendered as strings, separate them clearly for grid
                          if (isMultiColumn && typeof validItems[0] === 'object') {
                              renderedValue = validItems.map(item => `<div class="list-item">${renderItemFac(item)}</div>`).join('');
@@ -1779,6 +1797,7 @@ function displayFacilities(facilitiesData, containerId) {
                     }
                 } else {
                     renderedValue = escapeHtml(field.value);
+                    if (isProseList([field.value])) isMultiColumn = true;
                 }
 
                 if (!renderedValue || isValueEmpty(renderedValue)) return;
