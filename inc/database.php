@@ -215,12 +215,16 @@ function kop_attach_linked_news_to_projects($db_connection, array &$projects) {
     // row, including __facility_ref identity rows that were skipped earlier.
     // Promoted rows are what most nested facility entries match against.
     $name_to_id = array();
-    $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
-    if (is_array($name_rows)) {
-        foreach ($name_rows as $r) {
-            $k = strtolower(trim((string)$r['unique_name']));
-            if ($k !== '' && !isset($name_to_id[$k])) {
-                $name_to_id[$k] = (int)$r['id'];
+    if (function_exists('kop_v2_writes_on') && kop_v2_writes_on()) {
+        $name_to_id = kop_v2_name_id_map();
+    } else {
+        $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
+        if (is_array($name_rows)) {
+            foreach ($name_rows as $r) {
+                $k = strtolower(trim((string)$r['unique_name']));
+                if ($k !== '' && !isset($name_to_id[$k])) {
+                    $name_to_id[$k] = (int)$r['id'];
+                }
             }
         }
     }
@@ -335,12 +339,16 @@ function kop_attach_linked_lawsuits_to_projects($db_connection, array &$projects
     if ($link_table !== 'lawsuit_facility_links') return;
 
     $name_to_id = array();
-    $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
-    if (is_array($name_rows)) {
-        foreach ($name_rows as $r) {
-            $k = strtolower(trim((string)$r['unique_name']));
-            if ($k !== '' && !isset($name_to_id[$k])) {
-                $name_to_id[$k] = (int)$r['id'];
+    if (function_exists('kop_v2_writes_on') && kop_v2_writes_on()) {
+        $name_to_id = kop_v2_name_id_map();
+    } else {
+        $name_rows = $db_connection->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
+        if (is_array($name_rows)) {
+            foreach ($name_rows as $r) {
+                $k = strtolower(trim((string)$r['unique_name']));
+                if ($k !== '' && !isset($name_to_id[$k])) {
+                    $name_to_id[$k] = (int)$r['id'];
+                }
             }
         }
     }

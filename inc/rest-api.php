@@ -990,8 +990,20 @@ function kop_autocomplete_rest_callback($request) {
             continue;
         }
 
-        // Get JSON data from the table
-        $rows = $wpdb->get_results("SELECT json_data AS payload FROM {$table_name}", ARRAY_A);
+        // Get JSON data from the table. facilities_master is frozen once admin
+        // saves write the v2 tables, and locations_master then keeps only
+        // state-level referrer data, so both come from the v2 rows.
+        if (kop_v2_writes_on() && ($table_name === 'facilities_master' || $table_name === 'locations_master')) {
+            if ($table_name === 'locations_master' && in_array('facilities_master', $master_tables, true)) {
+                continue;   // the v2 rows already cover every facility
+            }
+            $rows = array();
+            foreach (kop_v2_legacy_shaped_rows() as $v2_row) {
+                $rows[] = array('payload' => $v2_row['payload']);
+            }
+        } else {
+            $rows = $wpdb->get_results("SELECT json_data AS payload FROM {$table_name}", ARRAY_A);
+        }
 
         if (!is_array($rows)) {
             continue;
@@ -1079,7 +1091,8 @@ function kop_normalize_project_payload($json) {
         return null;
     }
 
-    $decoded = json_decode($json, true);
+    // v2 rows (inc/facility-v2-readers.php) arrive already decoded.
+    $decoded = is_array($json) ? $json : json_decode($json, true);
     if (!is_array($decoded)) {
         return null;
     }
@@ -1806,6 +1819,15 @@ function kop_search_database_rest_callback($request) {
             $rows = array();
         }
 
+        // Once admin saves write the v2 tables, facilities_master is frozen:
+        // search the v2 rows instead, in the same two shapes.
+        if (kop_v2_writes_on()) {
+            $rows = array();
+            foreach (kop_v2_legacy_shaped_rows() as $v2_row) {
+                $rows[] = array('unique_name' => $v2_row['unique_name'], 'json_data' => $v2_row['payload']);
+            }
+        }
+
         // facilities_master holds two kinds of rows: operator/company projects
         // with nested facilities[], and promoted per-facility rows
         // (__facility_ref, written by api/facility-promotion.php) that hold the
@@ -1822,7 +1844,9 @@ function kop_search_database_rest_callback($request) {
             }
 
             // Cheap pre-check; the flag is confirmed on decode in the second pass.
-            if (strpos($row['json_data'], '__facility_ref') !== false) {
+            if (is_array($row['json_data'])
+                ? !empty($row['json_data']['__facility_ref'])
+                : strpos($row['json_data'], '__facility_ref') !== false) {
                 $facility_row_indexes[] = $index;
                 continue;
             }
@@ -1844,7 +1868,7 @@ function kop_search_database_rest_callback($request) {
 
         foreach ($facility_row_indexes as $index) {
             $row = $rows[$index];
-            $outer = json_decode($row['json_data'], true);
+            $outer = is_array($row['json_data']) ? $row['json_data'] : json_decode($row['json_data'], true);
             if (!is_array($outer)) {
                 continue;
             }
@@ -1858,7 +1882,11 @@ function kop_search_database_rest_callback($request) {
                 continue;
             }
 
-            $result = kop_search_build_facility_result($row, $outer, $queries, $seen_facilities);
+            // The nested-campus dedup exists because a project row repeated the
+            // facilities it contained. In v2 the operator project shows the
+            // same facility documents, so suppressing them here would hide the
+            // facility itself whenever its operator matched too.
+            $result = kop_search_build_facility_result($row, $outer, $queries, kop_v2_writes_on() ? array() : $seen_facilities);
             if ($result) {
                 $all_results[] = $result;
             }
@@ -3540,6 +3568,10 @@ function kop_master_facility_state_map() {
         return '';
     };
 
+    if (kop_v2_writes_on()) {
+        return $map = kop_v2_facility_state_map();
+    }
+
     $sets = array();  // name_key => [ABBR => true]
     $rows = $wpdb->get_results("SELECT json_data FROM facilities_master", ARRAY_A);
     foreach ((array)$rows as $row) {
@@ -4919,6 +4951,9 @@ function kop_state_master_name_id_map() {
     static $map = null;
     if ($map !== null) return $map;
     global $wpdb;
+    if (kop_v2_writes_on()) {
+        return $map = kop_v2_name_id_map();
+    }
     $map = array();
     $rows = $wpdb->get_results("SELECT id, unique_name FROM facilities_master", ARRAY_A);
     foreach ((array)$rows as $r) {

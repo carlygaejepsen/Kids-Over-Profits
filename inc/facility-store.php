@@ -594,6 +594,14 @@ if (!function_exists('kop_facility_unwrap')) {
             if (isset($inner['data']) && is_array($inner['data']) && !isset($inner['facility'])) {
                 $inner = $inner['data'];
             }
+            // Keys that sit beside the facility, not in it: curated
+            // matchAliases (api/apply-match-aliases.php) live there and are
+            // authoritative for news and inspection matching, so they travel
+            // with the facility instead of being dropped with the wrapper.
+            foreach ($inner as $key => $value) {
+                if ($key === 'facility' || $key === 'facilities' || $key === 'data') continue;
+                $wrapper['row_extras'][$key] = $value;
+            }
             if (isset($inner['facility']) && is_array($inner['facility'])) {
                 return array('facility' => $inner['facility'], 'wrapper' => $wrapper);
             }
@@ -904,6 +912,11 @@ if (!function_exists('kop_facility_normalize')) {
         }
         if ($is_v2 && isset($f['legacy']) && is_array($f['legacy'])) {
             $doc['legacy'] = array_merge($f['legacy'], $doc['legacy']);
+        }
+        foreach ((array)($wrapper['row_extras'] ?? array()) as $key => $value) {
+            if (!array_key_exists($key, $doc['legacy']) && !in_array($key, $known, true)) {
+                $doc['legacy'][$key] = $value;
+            }
         }
 
         // Values that could not be typed are never silently dropped.

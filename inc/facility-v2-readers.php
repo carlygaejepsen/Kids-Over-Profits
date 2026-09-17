@@ -76,6 +76,182 @@ if (!function_exists('kop_v2_model_requested')) {
     }
 }
 
+if (!function_exists('kop_v2_writes_on')) {
+    /**
+     * True once admin saves write the v2 tables (the write switch in
+     * inc/facility-v2-writer.php). From then on facilities_master is frozen,
+     * so the readers that still scan it for names, ids and values - the data
+     * form's search and autocomplete, the pickers, the news and lawsuit
+     * linkers, the state page's inspection placement - read v2 instead.
+     *
+     * This is the $wpdb-side check; code with a PDO handle calls
+     * kop_v2_writes_active().
+     */
+    function kop_v2_writes_on() {
+        static $on = null;
+        if ($on !== null) return $on;
+        global $wpdb;
+        if (!isset($wpdb)) return $on = false;
+        $table = $wpdb->prefix . 'kop_migration_state';
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) return $on = false;
+        $value = $wpdb->get_var($wpdb->prepare("SELECT state_value FROM {$table} WHERE state_key = %s", 'writes'));
+        $state = json_decode((string)$value, true);
+        return $on = (is_array($state) && ($state['mode'] ?? '') === 'v2');
+    }
+}
+
+if (!function_exists('kop_v2_legacy_shaped_rows')) {
+    /**
+     * Every operator project and every facility as the row shape the legacy
+     * scanners expect, with `payload` already decoded:
+     *
+     *   operator  {name, category, data: {operator, facilities[]}}
+     *   facility  {__facility_ref, name, displayName, city, state, data: {facility}}
+     *
+     * Built once per request. This is what lets the search, autocomplete and
+     * value collectors keep their matching logic unchanged after the switch.
+     *
+     * @return array list of {unique_name, payload}
+     */
+    function kop_v2_legacy_shaped_rows() {
+        static $rows = null;
+        if ($rows !== null) return $rows;
+        global $wpdb;
+        $rows = array();
+        if (!kop_v2_tables_ready()) return $rows;
+
+        $facilities = array();
+        foreach ((array)$wpdb->get_results("SELECT id, unique_name, json_data FROM facilities_v2 ORDER BY id", ARRAY_A) as $row) {
+            $doc = kop_v2_decode($row['json_data']);
+            if ($doc === null) continue;
+            $facilities[(int)$row['id']] = array('unique_name' => (string)$row['unique_name'], 'doc' => $doc);
+        }
+
+        $by_operator = array();
+        foreach ((array)$wpdb->get_results("SELECT operator_id, facility_id FROM {$wpdb->prefix}kop_operator_facilities ORDER BY operator_id, sort_order, facility_id", ARRAY_A) as $r) {
+            $fid = (int)$r['facility_id'];
+            if (isset($facilities[$fid])) $by_operator[(int)$r['operator_id']][] = kop_facility_to_legacy($facilities[$fid]['doc']);
+        }
+        foreach ((array)$wpdb->get_results("SELECT id, unique_name, name, json_data FROM {$wpdb->prefix}kop_operators ORDER BY id", ARRAY_A) as $op) {
+            $stored = json_decode((string)$op['json_data'], true);
+            $blocks = (is_array($stored) && isset($stored['legacy_blocks']) && is_array($stored['legacy_blocks'])) ? $stored['legacy_blocks'] : array();
+            $data = array();
+            foreach ($blocks as $k => $v) {
+                if (!in_array($k, array('name', 'category', 'timestamp', 'currentFacilityIndex', '__facility_ref'), true)) $data[$k] = $v;
+            }
+            $data['operator'] = (is_array($stored) && isset($stored['operator']) && is_array($stored['operator'])) ? $stored['operator'] : array();
+            $data['facilities'] = $by_operator[(int)$op['id']] ?? array();
+            $rows[] = array(
+                'unique_name' => (string)$op['unique_name'],
+                'payload' => array('name' => (string)$op['unique_name'], 'category' => 'companies', 'data' => $data),
+            );
+        }
+
+        // The legacy rows carried the state as its full name ("UTAH"), and a
+        // search for a state name matched on it; the document stores the code.
+        $state_names = kop_state_abbrev_to_name();
+        foreach ($facilities as $entry) {
+            $doc = $entry['doc'];
+            $code = (string)($doc['location']['state'] ?? '');
+            $place = $code !== '' && isset($state_names[$code])
+                ? mb_strtoupper($state_names[$code])
+                : mb_strtoupper((string)($doc['location']['country'] ?? ''));
+            $rows[] = array(
+                'unique_name' => $entry['unique_name'],
+                'payload' => array(
+                    '__facility_ref' => true,
+                    'name' => $entry['unique_name'],
+                    'displayName' => (string)$doc['identification']['name'],
+                    'city' => (string)$doc['location']['city'],
+                    'state' => $place,
+                    'data' => array('facility' => kop_facility_to_legacy($doc)),
+                ),
+            );
+        }
+
+        return $rows;
+    }
+}
+
+if (!function_exists('kop_v2_name_id_map')) {
+    /**
+     * Facility and operator names to row ids, for the tables that link by id
+     * (news_facility_links, lawsuit_facility_links). Keyed by the lowercase
+     * name and by kop_normalize_facility_name(), like the legacy map built
+     * from facilities_master.unique_name, and additionally by each facility's
+     * own name so a renamed facility still resolves.
+     *
+     * @return array<string,int>
+     */
+    function kop_v2_name_id_map() {
+        static $map = null;
+        if ($map !== null) return $map;
+        global $wpdb;
+        $map = array();
+        if (!kop_v2_tables_ready()) return $map;
+
+        $add = function ($name, $id, $normalized) use (&$map) {
+            $name = trim((string)$name);
+            if ($name === '' || $id <= 0) return;
+            $key = $normalized ? kop_normalize_facility_name($name) : strtolower($name);
+            if ($key !== '' && !isset($map[$key])) $map[$key] = $id;
+        };
+
+        // The legacy map took whichever row the name index happened to return
+        // first, so its tie-breaks were incidental. The rule here is stated:
+        // an exact name beats a normalized one ("Three Points Center" is the
+        // facility of that name, not "Three Points Center, LLC"), a row name
+        // beats a display name, and a facility beats an operator of the same
+        // name. Within a pass the lowest id wins.
+        $by_id = function ($a, $b) { return (int)$a['id'] <=> (int)$b['id']; };
+        $facilities = (array)$wpdb->get_results("SELECT id, unique_name, name FROM facilities_v2 ORDER BY id", ARRAY_A);
+        $operators = (array)$wpdb->get_results("SELECT id, unique_name, name FROM {$wpdb->prefix}kop_operators ORDER BY id", ARRAY_A);
+        usort($facilities, $by_id);
+        usort($operators, $by_id);
+        foreach (array('unique_name', 'name') as $field) {
+            foreach (array(false, true) as $normalized) {
+                foreach (array($facilities, $operators) as $set) {
+                    foreach ($set as $row) {
+                        $add($row[$field], (int)$row['id'], $normalized);
+                    }
+                }
+            }
+        }
+        return $map;
+    }
+}
+
+if (!function_exists('kop_v2_facility_state_map')) {
+    /**
+     * Normalized facility name => the state codes facilities of that name are
+     * in. Replaces the scan of every nested facility in facilities_master that
+     * decides which state page an inspection row belongs on.
+     *
+     * Only each facility's own state counts, as in the legacy map: a former or
+     * additional location is not where the facility is inspected, and counting
+     * it would make the name ambiguous and stop the row being placed at all.
+     *
+     * @return array<string,string[]>
+     */
+    function kop_v2_facility_state_map() {
+        static $map = null;
+        if ($map !== null) return $map;
+        global $wpdb;
+        $map = array();
+        if (!kop_v2_tables_ready()) return $map;
+
+        $sets = array();
+        $rows = $wpdb->get_results("SELECT name, state FROM facilities_v2 WHERE state IS NOT NULL AND state <> ''", ARRAY_A);
+        foreach ((array)$rows as $row) {
+            $key = kop_normalize_facility_name($row['name'] ?? '');
+            if ($key === '') continue;
+            $sets[$key][strtoupper($row['state'])] = true;
+        }
+        foreach ($sets as $key => $set) $map[$key] = array_keys($set);
+        return $map;
+    }
+}
+
 if (!function_exists('kop_v2_decode')) {
     /** A stored v2 document, or null. */
     function kop_v2_decode($json) {
