@@ -815,3 +815,23 @@ body.kop-doc-modal-open {
     color: var(--kop-midnight-blue) !important;
 }
 
+/* A document whose file is missing from the server. Only users who can edit
+   pages see these tiles (see kop_filter_available_attachments), so the note
+   is a prompt to restore the file, not a message to visitors. */
+
+.doc-link-missing {
+    display: block;
+    cursor: default;
+    opacity: 0.75;
+}
+
+.doc-item-missing {
+    outline: 1px dashed var(--kop-coral-pink, #fe8088);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.doc-meta-missing {
+    color: var(--kop-coral-pink, #fe8088) !important;
+    font-weight: 600;
+}

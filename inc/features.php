@@ -632,14 +632,22 @@ add_shortcode('kop_document_library', 'kop_filebird_library_shortcode'); // Alia
  * (subfolder) document renderers so the markup stays identical.
  */
 function kop_render_doc_file_li($attachment, $layout = 'grid') {
-    $file_url = wp_get_attachment_url($attachment->ID);
-    $file_type = wp_check_filetype($file_url);
+    // kop_filter_available_attachments() marks records whose own file is gone:
+    // kop_live_source_id points at a copy that exists, kop_file_missing means
+    // there is none and only an editor is seeing this tile.
+    $source_id = !empty($attachment->kop_live_source_id)
+        ? (int) $attachment->kop_live_source_id
+        : (int) $attachment->ID;
+    $missing = !empty($attachment->kop_file_missing);
+
+    $file_url = $missing ? '' : wp_get_attachment_url($source_id);
+    $file_type = wp_check_filetype($missing ? (string) get_post_meta($attachment->ID, '_wp_attached_file', true) : $file_url);
     $file_ext = strtoupper($file_type['ext']);
-    $file_path = get_attached_file($attachment->ID);
+    $file_path = $missing ? '' : get_attached_file($source_id);
     $file_size = ($file_path && file_exists($file_path)) ? size_format(filesize($file_path)) : '';
-    $preview_url = function_exists('kop_get_attachment_preview_url')
-        ? kop_get_attachment_preview_url($attachment->ID, 'large')
-        : wp_get_attachment_image_url($attachment->ID, 'medium');
+    $preview_url = $missing ? '' : (function_exists('kop_get_attachment_preview_url')
+        ? kop_get_attachment_preview_url($source_id, 'large')
+        : wp_get_attachment_image_url($source_id, 'medium'));
     $has_preview = !empty($preview_url);
     $preview_class = ($file_type['ext'] === 'pdf') ? 'pdf-preview' : '';
     $display_title = function_exists('kop_title_case')
@@ -647,6 +655,25 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
         : $attachment->post_title;
 
     ob_start();
+
+    if ($missing) {
+        // Nothing to link to. Shown only to users who can edit, so the record
+        // can be found and its file restored.
+        ?>
+        <li class="doc-item doc-item-missing" data-title="<?php echo esc_attr($display_title); ?>">
+            <span class="doc-link doc-link-missing">
+                <div class="doc-thumbnail">
+                    <span class="doc-icon doc-icon-<?php echo esc_attr($file_type['ext']); ?>"><?php echo esc_html($file_ext); ?></span>
+                </div>
+                <div class="doc-info">
+                    <span class="doc-title"><?php echo esc_html($display_title); ?></span>
+                    <span class="doc-meta doc-meta-missing">File missing from the server</span>
+                </div>
+            </span>
+        </li>
+        <?php
+        return ob_get_clean();
+    }
     ?>
     <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
         <a href="<?php echo esc_url($file_url); ?>"

@@ -82,6 +82,88 @@ function kop_is_tti_program_index_context() {
  * @param string $size
  * @return string
  */
+/**
+ * Does this attachment's file actually exist on the server?
+ *
+ * 66 of the 2,036 attachment records pointing at the uploads root have no file
+ * on disk: rows that survived the staging-to-production move while the bytes
+ * did not. Those render as a broken image over a dead download link.
+ *
+ * @param int $attachment_id
+ * @return bool True when the file is missing.
+ */
+function kop_attachment_file_missing($attachment_id) {
+    $path = get_attached_file((int) $attachment_id);
+    return !($path && file_exists($path));
+}
+
+/**
+ * Another attachment holding the same file, for a record whose own file is gone.
+ *
+ * Some documents exist twice: the real upload under a dated folder, plus a
+ * later record pointing at a root path that never held a file (for example
+ * 2024/08/Overt-Covert-Conversion-Therapy.pdf and the empty root-level twin
+ * created on 2025-09-30). Serve the copy that is really there.
+ *
+ * @param string $file Attached file path of the broken record.
+ * @return int Attachment ID of a copy whose file is present, or 0.
+ */
+function kop_find_live_attachment_copy($file) {
+    global $wpdb;
+
+    $base = basename((string) $file);
+    if ($base === '') {
+        return 0;
+    }
+
+    $candidates = $wpdb->get_col($wpdb->prepare(
+        "SELECT pm.post_id FROM {$wpdb->postmeta} pm
+         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+         WHERE pm.meta_key = '_wp_attached_file' AND p.post_type = 'attachment'
+           AND pm.meta_value LIKE %s
+         LIMIT 10",
+        '%' . $wpdb->esc_like($base)
+    ));
+
+    foreach ((array) $candidates as $id) {
+        if (!kop_attachment_file_missing((int) $id)) {
+            return (int) $id;
+        }
+    }
+    return 0;
+}
+
+/**
+ * The attachment whose file should actually be served for this record.
+ *
+ * Returns the record itself when its file is present, a same-named copy that
+ * does exist when it is not, and 0 when the file is gone everywhere. Cached
+ * per request: a folder listing asks about the same IDs repeatedly.
+ *
+ * @param int $attachment_id
+ * @return int
+ */
+function kop_resolve_live_attachment($attachment_id) {
+    static $cache = array();
+
+    $attachment_id = (int) $attachment_id;
+    if (!$attachment_id) {
+        return 0;
+    }
+    if (isset($cache[$attachment_id])) {
+        return $cache[$attachment_id];
+    }
+
+    if (!kop_attachment_file_missing($attachment_id)) {
+        $cache[$attachment_id] = $attachment_id;
+    } else {
+        $file = (string) get_post_meta($attachment_id, '_wp_attached_file', true);
+        $cache[$attachment_id] = kop_find_live_attachment_copy($file);
+    }
+
+    return $cache[$attachment_id];
+}
+
 function kop_get_attachment_preview_url($attachment_id, $size = 'medium') {
     $attachment_id = absint($attachment_id);
     if (!$attachment_id) {
