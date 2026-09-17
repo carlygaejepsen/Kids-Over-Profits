@@ -13,9 +13,10 @@
  * Everything else is listed as skipped so it can be fixed by hand.
  *
  * GET shows a preview (nothing is written). Ticked rows are applied via
- * POST. Only post_content changes. Postmeta rows that still contain the
- * staging host are reported at the bottom for manual follow-up; they are
- * not edited here because meta values may be serialized.
+ * POST. post_content changes for posts, pages, attachments, the block
+ * navigation menu, Pagelayer templates and download records (revisions are
+ * left alone). Postmeta rows are rewritten through get/update_post_meta so
+ * serialized values stay intact.
  *
  * Admin-only. Loads WordPress via config.php.
  */
@@ -41,6 +42,13 @@ $URL_PATTERN = '~https?://(?:www\.)?kidsoverprofits\.org/staging/([^"\'\s<>)]*)~
  */
 function kop_fsl_live_target($rest) {
     $rest = ltrim((string) $rest, '/');
+    // The staging copy lived one folder deeper for a while
+    // (/staging/kids-over-profits/<path>); drop that segment.
+    if (strpos($rest, 'kids-over-profits/') === 0) {
+        $rest = substr($rest, strlen('kids-over-profits/'));
+    } elseif ($rest === 'kids-over-profits') {
+        $rest = '';
+    }
     $path = (string) wp_parse_url('https://kidsoverprofits.org/' . $rest, PHP_URL_PATH);
     $path = ltrim($path, '/');
 
@@ -49,6 +57,12 @@ function kop_fsl_live_target($rest) {
     }
     if (strpos($path, 'wp-content/uploads/') === 0) {
         return home_url('/' . $rest);
+    }
+    // Theme assets: only when the file still exists on disk.
+    $theme_prefix = 'wp-content/themes/child/';
+    if (strpos($path, $theme_prefix) === 0) {
+        $file = get_stylesheet_directory() . '/' . substr($path, strlen($theme_prefix));
+        return file_exists($file) ? home_url('/' . $rest) : null;
     }
     $candidate = home_url('/' . $rest);
     $post_id = url_to_postid($candidate);
@@ -89,6 +103,55 @@ function kop_fsl_rewrite($content, array $plan) {
     return $content;
 }
 
+/** Collect every string inside a (possibly nested) meta value. */
+function kop_fsl_flatten($value, array &$out) {
+    if (is_string($value)) {
+        $out[] = $value;
+    } elseif (is_array($value)) {
+        foreach ($value as $v) {
+            kop_fsl_flatten($v, $out);
+        }
+    } elseif (is_object($value)) {
+        foreach (get_object_vars($value) as $v) {
+            kop_fsl_flatten($v, $out);
+        }
+    }
+}
+
+/** Rewrite every string inside a (possibly nested) meta value. */
+function kop_fsl_rewrite_deep($value, array $plan) {
+    if (is_string($value)) {
+        return kop_fsl_rewrite($value, $plan);
+    }
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            $value[$k] = kop_fsl_rewrite_deep($v, $plan);
+        }
+        return $value;
+    }
+    if (is_object($value)) {
+        foreach (get_object_vars($value) as $k => $v) {
+            $value->$k = kop_fsl_rewrite_deep($v, $plan);
+        }
+        return $value;
+    }
+    return $value;
+}
+
+/** Plan for one postmeta key: all values, all nested strings. */
+function kop_fsl_meta_plan($post_id, $meta_key) {
+    $strings = array();
+    foreach ((array) get_post_meta($post_id, $meta_key) as $value) {
+        kop_fsl_flatten($value, $strings);
+    }
+    return kop_fsl_plan(implode(chr(10), $strings));
+}
+
+/** Post types whose content this tool may edit (revisions are history). */
+function kop_fsl_post_types() {
+    return array('post', 'page', 'attachment', 'wp_navigation', 'pagelayer-template', 'dlm_download');
+}
+
 // ---------------------------------------------------------------------------
 // Apply
 // ---------------------------------------------------------------------------
@@ -109,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         }
         $post_id = (int) $post_id;
         $post = $post_id > 0 ? get_post($post_id) : null;
-        if (!$post || !in_array($post->post_type, array('post', 'page'), true)) {
+        if (!$post || !in_array($post->post_type, kop_fsl_post_types(), true) || $post->post_status === 'trash') {
             $skipped++;
             continue;
         }
@@ -136,13 +199,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
             }
         }
     }
-    if ($done > 0) {
+    // Postmeta rows: WordPress handles (un)serialization in get/update_post_meta.
+    $meta_requests = isset($_POST['meta']) && is_array($_POST['meta']) ? $_POST['meta'] : array();
+    $meta_done = 0;
+    $meta_skipped = 0;
+    foreach ($meta_requests as $key => $req) {
+        if (empty($req['go'])) {
+            continue;
+        }
+        $parts = explode('|', (string) $key, 2);
+        $mpost = (int) $parts[0];
+        $mkey = isset($parts[1]) ? sanitize_text_field(wp_unslash($parts[1])) : '';
+        if ($mpost <= 0 || $mkey === '' || !get_post($mpost)) {
+            $meta_skipped++;
+            continue;
+        }
+        $plan = kop_fsl_meta_plan($mpost, $mkey);
+        $changed = false;
+        foreach ((array) get_post_meta($mpost, $mkey) as $old_value) {
+            $new_value = kop_fsl_rewrite_deep($old_value, $plan);
+            if ($new_value === $old_value) {
+                continue;
+            }
+            if (update_post_meta($mpost, $mkey, $new_value, $old_value) !== false) {
+                $changed = true;
+            }
+        }
+        if ($changed) {
+            $meta_done++;
+        } else {
+            $meta_skipped++;
+        }
+    }
+
+    if ($done > 0 || $meta_done > 0) {
         do_action('litespeed_purge_all');
     }
     $applied = true;
-    $apply_log[] = "Updated {$done} post(s), {$links} distinct link(s)."
-        . ($skipped ? " Skipped {$skipped} (already fixed, edited since preview, or update failed)." : '')
-        . ($done ? ' LiteSpeed cache purged.' : '');
+    $apply_log[] = "Updated {$done} post(s), {$links} distinct link(s); {$meta_done} postmeta row(s)."
+        . (($skipped || $meta_skipped) ? " Skipped {$skipped} post(s) and {$meta_skipped} meta row(s) (already fixed, target missing, edited since preview, or update failed)." : '')
+        . (($done || $meta_done) ? ' LiteSpeed cache purged.' : '');
 }
 
 // ---------------------------------------------------------------------------
@@ -151,11 +247,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 global $wpdb;
 
 $like = '%' . $wpdb->esc_like($STAGING_NEEDLE) . '%';
+$types_sql = implode(',', array_map(static function ($t) use ($wpdb) { return $wpdb->prepare('%s', $t); }, kop_fsl_post_types()));
 $rows = $wpdb->get_results($wpdb->prepare(
     "SELECT ID, post_title, post_type, post_status, post_content
        FROM {$wpdb->posts}
-      WHERE post_type IN ('post', 'page')
-        AND post_status IN ('publish', 'private', 'draft', 'pending', 'future')
+      WHERE post_type IN ({$types_sql})
+        AND post_status <> 'trash'
         AND post_content LIKE %s
       ORDER BY post_type, post_title",
     $like
@@ -188,13 +285,29 @@ foreach ($rows as $r) {
 }
 
 $meta_rows = $wpdb->get_results($wpdb->prepare(
-    "SELECT post_id, meta_key
+    "SELECT DISTINCT post_id, meta_key
        FROM {$wpdb->postmeta}
       WHERE meta_value LIKE %s
       ORDER BY post_id
       LIMIT 200",
     $like
 ));
+$meta_preview = array();
+foreach ($meta_rows as $m) {
+    $plan = kop_fsl_meta_plan((int) $m->post_id, $m->meta_key);
+    $ok = 0;
+    foreach ($plan as $target) {
+        if ($target !== null) {
+            $ok++;
+        }
+    }
+    $meta_preview[] = array(
+        'post_id' => (int) $m->post_id,
+        'key' => $m->meta_key,
+        'plan' => $plan,
+        'ok' => $ok,
+    );
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -226,16 +339,15 @@ $meta_rows = $wpdb->get_results($wpdb->prepare(
     <div class="log"><?php echo esc_html($line); ?></div>
 <?php endforeach; ?>
 
+<form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
+<?php wp_nonce_field('kop_fsl_apply'); ?>
 <?php if (!$preview): ?>
-    <div class="note">No post or page content contains staging links.</div>
+    <div class="note">No post content contains staging links (revisions are ignored).</div>
 <?php else: ?>
     <div class="note">
-        <?php echo count($preview); ?> post(s)/page(s) with staging links;
+        <?php echo count($preview); ?> post(s) with staging links;
         <?php echo (int) $total_ok; ?> of <?php echo (int) $total_urls; ?> distinct link(s) can be rewritten.
     </div>
-
-    <form method="post" action="<?php echo esc_url($_SERVER['REQUEST_URI']); ?>">
-    <?php wp_nonce_field('kop_fsl_apply'); ?>
     <table>
         <thead>
             <tr><th></th><th>Post</th><th>Links</th></tr>
@@ -259,7 +371,7 @@ $meta_rows = $wpdb->get_results($wpdb->prepare(
                             <?php if ($target !== null): ?>
                                 <span class="good">-&gt; <?php echo esc_html($target); ?></span>
                             <?php else: ?>
-                                <span class="bad">(skipped: no published page or upload at that path)</span>
+                                <span class="bad">(skipped: no published page, upload, or theme file at that path)</span>
                             <?php endif; ?>
                         </div>
                     <?php endforeach; ?>
@@ -268,28 +380,51 @@ $meta_rows = $wpdb->get_results($wpdb->prepare(
         <?php endforeach; ?>
         </tbody>
     </table>
-    <p>
-        <button type="submit" name="do_apply" value="1" <?php echo $total_ok ? '' : 'disabled'; ?>>Apply ticked rows</button>
-    </p>
-    </form>
 <?php endif; ?>
 
-<h2>Postmeta rows still containing the staging host</h2>
-<?php if (!$meta_rows): ?>
+<h2>Postmeta rows containing the staging host</h2>
+<?php if (!$meta_preview): ?>
     <p>None.</p>
 <?php else: ?>
-    <p>Not edited by this tool (values may be serialized). Fix in the post editor or the relevant plugin screen.</p>
+    <p>Serialized values go through get_post_meta / update_post_meta, so nested strings are rewritten safely.</p>
     <table>
-        <thead><tr><th>Post</th><th>Meta key</th></tr></thead>
+        <thead><tr><th></th><th>Post</th><th>Meta key</th><th>Links</th></tr></thead>
         <tbody>
-        <?php foreach ($meta_rows as $m): ?>
-            <tr>
-                <td><a href="<?php echo esc_url(get_edit_post_link($m->post_id, 'raw')); ?>" target="_blank">#<?php echo (int) $m->post_id; ?> <?php echo esc_html(get_the_title($m->post_id)); ?></a></td>
-                <td class="url"><?php echo esc_html($m->meta_key); ?></td>
+        <?php foreach ($meta_preview as $mp): ?>
+            <tr class="<?php echo $mp['ok'] ? '' : 'skip'; ?>">
+                <td>
+                    <?php if ($mp['ok']): ?>
+                        <input type="checkbox" name="meta[<?php echo esc_attr($mp['post_id'] . '|' . $mp['key']); ?>][go]" value="1" checked>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <a href="<?php echo esc_url(get_edit_post_link($mp['post_id'], 'raw')); ?>" target="_blank">#<?php echo (int) $mp['post_id']; ?> <?php echo esc_html(get_the_title($mp['post_id'])); ?></a><br>
+                    <small><?php echo esc_html((string) get_post_type($mp['post_id'])); ?></small>
+                </td>
+                <td class="url"><?php echo esc_html($mp['key']); ?></td>
+                <td>
+                    <?php foreach ($mp['plan'] as $url => $target): ?>
+                        <div class="url">
+                            <?php echo esc_html($url); ?>
+                            <?php if ($target !== null): ?>
+                                <span class="good">-&gt; <?php echo esc_html($target); ?></span>
+                            <?php else: ?>
+                                <span class="bad">(skipped: no published page, upload, or theme file at that path)</span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </td>
             </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
 <?php endif; ?>
+
+<?php if ($preview || $meta_preview): ?>
+    <p>
+        <button type="submit" name="do_apply" value="1">Apply ticked rows</button>
+    </p>
+<?php endif; ?>
+</form>
 </body>
 </html>
