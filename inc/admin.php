@@ -700,6 +700,7 @@ function kop_seed_posts() {
     return array(
         'provo-canyon-school.json', // Facility Profile draft assembled 2026-09-11
         'discovery-ranch.json',      // Facility Profile draft assembled 2026-09-11
+        'nc-reports.json',           // /nc-reports/ page for the NC adapter, 2026-09-16
     );
 }
 
@@ -1303,7 +1304,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '16';
+    $version = '17';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -1,0 +1,9 @@
+{
+  "title": "North Carolina Inspection Reports",
+  "slug": "nc-reports",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "nc-reports.html",
+  "template": "page-state-reports.php",
+  "seed_version": 1
+}
