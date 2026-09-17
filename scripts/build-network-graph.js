@@ -744,7 +744,8 @@ function build() {
 
     const graph = {
         meta: {
-            generatedAt: new Date().toISOString(),
+            /* deliberately no timestamp: it would make every rebuild a diff.
+             * sourceHash identifies the inputs, and the QA report is dated. */
             sourceHash: sourceHash,
             facilitySource: facilities ? facilities.source : 'none',
             counts: counts,
@@ -783,7 +784,7 @@ function writeQaReport(graph) {
     const lines = [];
     lines.push('# Network graph QA report');
     lines.push('');
-    lines.push('Generated ' + graph.meta.generatedAt + ' from source ' + graph.meta.sourceHash + '.');
+    lines.push('Generated ' + new Date().toISOString() + ' from source ' + graph.meta.sourceHash + '.');
     lines.push('Facility source: ' + graph.meta.facilitySource + '.');
     lines.push('');
     lines.push('Work the sections in order. Every fix belongs in');
