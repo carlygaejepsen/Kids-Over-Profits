@@ -537,9 +537,13 @@ function kop_enqueue_report_scripts() {
         ),
         'fl-reports' => array(
             'script_handle' => 'fl-reports-script',
-            'script_path'   => '/js/inspections/fl_reports.js',
+            'script_path'   => '/js/inspections/states/fl.js',
             'data_object'   => 'flReportsData',
             'json_glob'     => '',
+            // Adapter for the shared js/inspections/report-page.js engine.
+            // Rollback: point script_path back at /js/inspections/fl_reports.js
+            // and drop this flag.
+            'report_page'   => true,
         ),
         'ga-reports' => array(
             'script_handle' => 'ga-reports-script',

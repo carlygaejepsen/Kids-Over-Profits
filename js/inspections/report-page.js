@@ -40,6 +40,9 @@
  *                      'facilities': keep a facility's full report list and drop
  *                      facilities with no reports at all (Texas behaviour).
  *   defaultSort(a, b)  Comparator for the "Default Order" option.
+ *   filters            Extra dropdowns added to the page controls:
+ *                      [{ id, label, options: [{ value, label }], test(f, value) }].
+ *                      The first option is the "all" choice and filters nothing.
  *   violationsNote     For states whose data carries no findings: shown instead
  *                      of an empty list when a violations sort is chosen, so
  *                      "no results" is not mistaken for "no violations".
@@ -239,6 +242,7 @@
 
         var allFacilitiesData = {};
         var lazyBodies        = [];
+        var filterValues      = {};
         var currentLetter     = null;
         var isSearching       = false;
         var scrapedTimestamp  = '';
@@ -277,6 +281,38 @@
         function mostRecentTime(f) {
             var times = reportsOf(f).map(adapter.reportTime).filter(function (t) { return t > 0; });
             return times.length ? Math.max.apply(null, times) : 0;
+        }
+
+        // Adapter-defined dropdowns (e.g. Florida's agency filter).
+        (adapter.filters || []).forEach(function (filter) {
+            var controls = doc.querySelector('.controls');
+            if (!controls || !filter.options || !filter.options.length) return;
+            var wrap = doc.createElement('label');
+            wrap.className = 'kop-rp-filter';
+            var select = doc.createElement('select');
+            select.id = 'kop-rp-filter-' + filter.id;
+            filter.options.forEach(function (opt) {
+                var option = doc.createElement('option');
+                option.value = opt.value;
+                option.textContent = opt.label;
+                select.appendChild(option);
+            });
+            wrap.appendChild(doc.createTextNode(filter.label + ' '));
+            wrap.appendChild(select);
+            controls.appendChild(wrap);
+            filterValues[filter.id] = filter.options[0].value;
+            select.addEventListener('change', function () {
+                filterValues[filter.id] = select.value;
+                filterAndSort();
+            });
+        });
+
+        function passesFilters(f) {
+            return (adapter.filters || []).every(function (filter) {
+                var value = filterValues[filter.id];
+                if (value === undefined || value === filter.options[0].value) return true;
+                return filter.test(f, value);
+            });
         }
 
         if (searchInput)     searchInput.addEventListener('input', filterAndSort);
@@ -387,7 +423,7 @@
         };
 
         function sortFacilities(facilities, sortBy) {
-            var processed = facilities.slice();
+            var processed = facilities.filter(passesFilters);
 
             if (newOnlyCheckbox && newOnlyCheckbox.checked) {
                 processed = processed.map(function (f) {

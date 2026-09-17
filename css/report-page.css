@@ -55,6 +55,17 @@
     border-color: var(--kop-navy-blue);
 }
 
+/* Adapter-defined filter dropdowns sit with the other controls. */
+.kop-rp .kop-rp-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 6px 0 0;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue);
+}
+
 /* ---- Messages ------------------------------------------------------------ */
 
 .kop-rp .kop-rp-results {
