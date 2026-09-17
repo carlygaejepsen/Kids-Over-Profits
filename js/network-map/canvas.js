@@ -158,7 +158,14 @@
             transform: { k: 1, x: 0, y: 0 },
             colourMode: 'kind',
             crossRegionMode: false,
-            /* Set by focus.js from step 4 on. hoverId is all step 3 uses. */
+            /* Set by focus.js.
+             *   hoverId    the node under the pointer, ringed and labelled
+             *   near       id set that stays lit; everything else drops to dim
+             *   nearEdges  edge id set that stays lit
+             *   dim        alpha for everything outside near, 0.15 by default
+             *   offsets    id to [dx, dy] world-space display offset: the
+             *              hover gather, which never touches stored positions
+             */
             emphasis: { hoverId: null },
             width: 0,
             height: 0,
@@ -173,6 +180,18 @@
         /** The store's chain-to-index map, so colour mode two can be resolved. */
         renderer.useChainIndex = function (index) {
             chainIndex = index;
+        };
+
+        /**
+         * Where a node currently lives, in world coordinates. The whole map
+         * answers with the node itself, since the settled layout is what is
+         * on screen; a focused neighbourhood answers with its own re-settled
+         * position, which is why this is a function and not a field. The
+         * returned object is the live one, so a drag can write to it.
+         */
+        var positionOf = function (node) { return node; };
+        renderer.setPositionSource = function (fn) {
+            positionOf = fn || function (node) { return node; };
         };
 
         renderer.setScene = function (next) {
@@ -268,6 +287,10 @@
 
             var emphasis = renderer.emphasis || {};
             var hoverId = emphasis.hoverId || null;
+            var near = emphasis.near || null;
+            var nearEdges = emphasis.nearEdges || null;
+            var offsets = emphasis.offsets || null;
+            var dim = emphasis.dim === undefined ? 0.15 : emphasis.dim;
             var i, node;
 
             /* Screen positions once per frame, reused by edges, nodes and
@@ -282,34 +305,59 @@
                 node = scene.nodes[i];
                 node._i = i;
                 node._frame = frameStamp;
-                sx[i] = node.x * k + t.x;
-                sy[i] = node.y * k + t.y;
+                var p = positionOf(node);
+                var off = offsets ? offsets[node.id] : null;
+                sx[i] = (off ? p.x + off[0] : p.x) * k + t.x;
+                sy[i] = (off ? p.y + off[1] : p.y) * k + t.y;
             }
 
-            /* --- edges --- */
+            /* --- edges ---
+             *
+             * Each style bucket is stroked once at full alpha and once dimmed,
+             * rather than per edge, so hover costs one extra path per style
+             * instead of thirteen hundred alpha changes. With no emphasis set
+             * the dim pass is skipped and this is the step 3 single pass. */
             var pad = 64;
             for (var b = 0; b < buckets.length; b++) {
                 var style = buckets[b].style;
+                var list = buckets[b].edges;
                 ctx.strokeStyle = style.colour;
                 ctx.lineWidth = style.width;
-                if (style.dash) ctx.setLineDash(style.dash);
-                else ctx.setLineDash([]);
-                ctx.beginPath();
-                var list = buckets[b].edges;
-                for (i = 0; i < list.length; i++) {
-                    if (list[i].source._frame !== frameStamp || list[i].target._frame !== frameStamp) continue;
-                    var a = list[i].source._i;
-                    var c = list[i].target._i;
-                    var ax = sx[a], ay = sy[a], cx = sx[c], cy = sy[c];
-                    /* Both ends off the same side means the line cannot cross
-                     * the viewport, which is most of them on a zoomed view. */
-                    if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
-                    if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
-                    ctx.moveTo(ax, ay);
-                    ctx.lineTo(cx, cy);
+                ctx.setLineDash(style.dash || []);
+
+                for (var pass = 0; pass < 2; pass++) {
+                    var lit = pass === 0;
+                    if (!lit && !near) break;
+                    ctx.globalAlpha = lit ? 1 : dim;
+                    ctx.beginPath();
+                    var drew = false;
+                    for (i = 0; i < list.length; i++) {
+                        var edge = list[i];
+                        if (edge.source._frame !== frameStamp || edge.target._frame !== frameStamp) continue;
+                        if (near) {
+                            /* An edge is lit when it is one of the hovered
+                             * node's own connections, not merely when both its
+                             * ends happen to be lit: a line between two
+                             * neighbours is not what was hovered. */
+                            var isLit = nearEdges ? !!nearEdges[edge.id]
+                                : (!!near[edge.sourceId] && !!near[edge.targetId]);
+                            if (isLit !== lit) continue;
+                        }
+                        var a = edge.source._i;
+                        var c = edge.target._i;
+                        var ax = sx[a], ay = sy[a], cx = sx[c], cy = sy[c];
+                        /* Both ends off the same side means the line cannot
+                         * cross the viewport, which is most of them zoomed in. */
+                        if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
+                        if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
+                        ctx.moveTo(ax, ay);
+                        ctx.lineTo(cx, cy);
+                        drew = true;
+                    }
+                    if (drew) ctx.stroke();
                 }
-                ctx.stroke();
             }
+            ctx.globalAlpha = 1;
             ctx.setLineDash([]);
 
             /* --- nodes --- */
@@ -321,12 +369,18 @@
 
                 var fill = renderer.colourFor(node);
                 var hovered = node.id === hoverId;
+                /* Dimming is a multiplier, so a status-unrecorded node that is
+                 * also off the neighbourhood ends up fainter than either rule
+                 * would make it alone, which is the right reading of both. */
+                var lit = !near || !!near[node.id];
+                var alpha = lit ? 1 : dim;
 
                 ctx.beginPath();
                 traceShape(ctx, node.kind, x, y, r);
 
                 if (node.status === 'closed') {
                     /* Hollow: closed or rebranded. */
+                    ctx.globalAlpha = alpha;
                     ctx.fillStyle = SURFACE;
                     ctx.fill();
                     ctx.strokeStyle = fill === SURFACE ? (KIND_OUTLINE[node.kind] || INK + '0.6)') : fill;
@@ -335,10 +389,10 @@
                 } else {
                     /* Open solid; status unrecorded the same shape at 55%, so
                      * "we do not know" reads as faded rather than as closed. */
-                    ctx.globalAlpha = node.status === 'unknown' ? 0.55 : 1;
+                    ctx.globalAlpha = alpha * (node.status === 'unknown' ? 0.55 : 1);
                     ctx.fillStyle = fill;
                     ctx.fill();
-                    ctx.globalAlpha = 1;
+                    ctx.globalAlpha = alpha;
                     ctx.strokeStyle = outlineFor(node, fill);
                     ctx.lineWidth = 1;
                     ctx.stroke();
@@ -353,6 +407,8 @@
                     ctx.lineWidth = 1.5;
                     ctx.stroke();
                 }
+
+                ctx.globalAlpha = 1;
 
                 if (hovered) {
                     ctx.beginPath();
@@ -369,7 +425,15 @@
             ctx.lineJoin = 'round';
             for (i = 0; i < scene.nodes.length; i++) {
                 node = scene.nodes[i];
-                if (!labelVisible(node, k, hoverId)) continue;
+                /* With a neighbourhood lit, its names are the whole point and
+                 * everything else is background: labelling the dimmed nodes
+                 * too would bury the answer in the thing it was picked out
+                 * of. */
+                if (near) {
+                    if (!near[node.id]) continue;
+                } else if (!labelVisible(node, k, hoverId)) {
+                    continue;
+                }
                 var lx = sx[i];
                 var ly = sy[i] + Math.max(1.5, node.r * k) + 3;
                 if (lx < -120 || lx > w + 120 || ly < -20 || ly > h + 20) continue;

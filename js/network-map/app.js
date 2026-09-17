@@ -2,15 +2,17 @@
  * Network map: bootstrap.
  *
  * Finds the shell the template printed, loads the data, and wires the store,
- * the renderer and the viewport together. The shell renders before any of
- * this runs, so if the data never arrives the page still has something to
- * say: the loading line becomes a link to the facility directory rather
- * than an empty stage.
+ * the renderer, the viewport and the focus chain together. The shell renders
+ * before any of this runs, so if the data never arrives the page still has
+ * something to say: the loading line becomes a link to the facility
+ * directory rather than an empty stage.
  *
- * Step 3 of the build wires the map itself: it draws, pans, zooms and
- * reports what is under the pointer. The chain, filters, search, drawer and
- * URL state arrive in the steps after this one and will hang off the same
- * objects.
+ * Everything that touches the page's own HTML lives here. focus.js owns the
+ * chain but never reads the document, which keeps it testable; this module
+ * renders the breadcrumb from the chain it reports.
+ *
+ * Filters, search, the drawer and URL state arrive in the steps after this
+ * one and will hang off the same objects.
  */
 (function () {
     'use strict';
@@ -30,25 +32,40 @@
         var status = byId('kop-network-status');
         var stage = byId('kop-network-stage');
 
-        if (!canvas || !window.KOPNetworkStore || !window.KOPNetworkCanvas || !window.KOPNetworkViewport) {
+        if (!canvas || !window.KOPNetworkStore || !window.KOPNetworkCanvas ||
+            !window.KOPNetworkViewport || !window.KOPNetworkFocus) {
             fail(shell, loading, 'The map could not start.');
             return;
         }
 
+        var announce = function (text) {
+            if (status) status.textContent = text;
+        };
+
         var store = window.KOPNetworkStore.create();
         var renderer = window.KOPNetworkCanvas.create(canvas);
+
+        /* focus is created after the viewport but referenced by its
+         * callbacks, which only fire once the pointer moves. */
+        var focus = null;
         var viewport = window.KOPNetworkViewport.create({
             canvas: canvas,
             renderer: renderer,
             onHover: function (node) {
-                renderer.setEmphasis({ hoverId: node ? node.id : null });
+                if (focus) focus.hover(node);
             },
             onSelect: function (node) {
-                /* Step 4 pushes this onto the chain. Until then, selecting a
-                 * node says its name, which is what the live region is for
-                 * and what makes the canvas answer a screen reader at all. */
-                announce(status, node.name + ', ' + node.kind + ', ' +
-                    (store.visible().degrees[node.id] || 0) + ' connections shown.');
+                if (focus) focus.select(node);
+            }
+        });
+
+        focus = window.KOPNetworkFocus.create({
+            store: store,
+            renderer: renderer,
+            viewport: viewport,
+            announce: announce,
+            onChange: function () {
+                renderChain(app);
             }
         });
 
@@ -56,14 +73,23 @@
             store: store,
             renderer: renderer,
             viewport: viewport,
+            focus: focus,
             elements: {
-                shell: shell, canvas: canvas, stage: stage, status: status
+                shell: shell, canvas: canvas, stage: stage, status: status,
+                chain: byId('kop-network-chain'),
+                chainList: byId('kop-network-chain-list')
             },
             config: CONFIG,
-            /* Recompute the visible subgraph and hand it to both consumers.
-             * Filters, search and the chain all end up calling this. */
+            announce: announce,
+            /**
+             * Recompute what is on screen and hand it to both consumers.
+             * Filters and search end up here too. The chain gets first
+             * refusal, because a filter change can move the ground under a
+             * focused view and it re-settles itself when it does.
+             */
             refresh: function () {
-                var scene = store.visible();
+                if (focus.isFocused() && focus.refresh()) return;
+                var scene = focus.scene();
                 renderer.setScene(scene);
                 viewport.setScene(scene);
                 viewport.scheduleDraw();
@@ -81,7 +107,7 @@
             shell.setAttribute('data-state', 'ready');
 
             var visible = store.visible();
-            announce(status, 'Map loaded: ' + visible.nodes.length + ' names and ' +
+            announce('Map loaded: ' + visible.nodes.length + ' names and ' +
                 visible.edges.length + ' connections.');
 
             if (store.unplaced.length) {
@@ -96,7 +122,9 @@
         });
 
         wireControls(app);
+        wireKeyboard(app);
         wireResize(app);
+        renderChain(app);
     }
 
     /* The map is the only thing that fails here; the intro above it stands on
@@ -113,25 +141,90 @@
         loading.appendChild(link);
     }
 
-    function announce(status, text) {
-        if (status) status.textContent = text;
+    /**
+     * The trail, oldest first. Every crumb but the last truncates back to
+     * itself; the last is where you are, so it is not a button anywhere. The
+     * nav is hidden entirely on the whole map, where there is no trail to
+     * name.
+     */
+    function renderChain(app) {
+        var nav = app.elements.chain;
+        var list = app.elements.chainList;
+        if (!nav || !list) return;
+
+        var chain = app.focus.chain();
+        nav.hidden = chain.length === 0;
+        list.textContent = '';
+        if (!chain.length) return;
+
+        chain.forEach(function (id, index) {
+            var node = app.store.node(id);
+            var name = node ? node.name : id;
+            var item = document.createElement('li');
+
+            if (index === chain.length - 1) {
+                /* Where you already are: text, not a control. A disabled
+                 * button would drop out of the tab order and be skipped by
+                 * most screen readers, which is the opposite of what the
+                 * last crumb is for. */
+                var current = document.createElement('span');
+                current.className = 'kop-network__chain-current';
+                current.setAttribute('aria-current', 'step');
+                current.textContent = name;
+                item.appendChild(current);
+            } else {
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.textContent = name;
+                button.setAttribute('aria-label', 'Go back to ' + name);
+                button.addEventListener('click', function () {
+                    app.focus.truncateTo(index);
+                });
+                item.appendChild(button);
+            }
+
+            list.appendChild(item);
+        });
     }
 
     function wireControls(app) {
-        var reset = document.getElementById('kop-network-reset-view');
+        var reset = byId('kop-network-reset-view');
         if (reset) {
             reset.addEventListener('click', function () {
                 app.viewport.fit();
             });
         }
 
-        var colour = document.getElementById('kop-network-colour-mode');
+        var colour = byId('kop-network-colour-mode');
         if (colour) {
             colour.addEventListener('change', function () {
                 app.renderer.setColourMode(colour.value);
                 app.viewport.scheduleDraw();
             });
         }
+
+        var whole = byId('kop-network-whole-map');
+        if (whole) {
+            whole.addEventListener('click', function () {
+                app.focus.clear();
+                app.elements.canvas.focus();
+            });
+        }
+    }
+
+    /**
+     * Escape returns to the whole map from any depth, the same as the Whole
+     * map button. Stepping back one crumb at a time is what the breadcrumb is
+     * for. It is bound to the canvas rather than the document so it cannot
+     * steal Escape from the search box or a dialog elsewhere on the page.
+     */
+    function wireKeyboard(app) {
+        app.elements.canvas.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape' && event.key !== 'Esc') return;
+            if (!app.focus.chain().length) return;
+            event.preventDefault();
+            app.focus.clear();
+        });
     }
 
     /**

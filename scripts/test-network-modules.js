@@ -75,15 +75,32 @@ function buildSandbox() {
         hasPointerCapture: () => false
     };
 
+    /* A frame queue on a virtual clock rather than a synchronous
+     * requestAnimationFrame. Running callbacks inline would break the code
+     * under test in two ways that say nothing about the browser: a draw
+     * scheduled inside its own callback would leave the "already scheduled"
+     * guard permanently set, and an animation reading performance.now()
+     * would see a clock that never moves and either never finish or divide
+     * by a frozen span. flushFrames() drains it the way a browser would. */
+    let clock = 0;
+    let rafId = 0;
+    let queue = [];
+    const motion = { reduced: false };
+
     const sandbox = {
         console, Math, Date, JSON, Object, Array, Number, String, Boolean, Error,
-        Float64Array, Promise, isNaN, parseFloat, parseInt, Infinity, NaN,
-        setTimeout, clearTimeout, setInterval, clearInterval, performance,
+        Float64Array, Promise, isNaN, isFinite, parseFloat, parseInt, Infinity, NaN,
+        setTimeout, clearTimeout, setInterval, clearInterval,
         devicePixelRatio: 2,
-        /* Synchronous, so a scheduled draw has happened by the time the
-         * assertion after it runs. */
-        requestAnimationFrame: (fn) => { fn(); return 1; },
-        cancelAnimationFrame() {}
+        performance: { now: () => clock },
+        requestAnimationFrame: (fn) => { queue.push({ id: ++rafId, fn }); return rafId; },
+        cancelAnimationFrame: (id) => { queue = queue.filter((entry) => entry.id !== id); },
+        matchMedia: (query) => ({
+            media: query,
+            matches: motion.reduced && /prefers-reduced-motion/.test(query),
+            addListener() {}, removeListener() {},
+            addEventListener() {}, removeEventListener() {}
+        })
     };
     sandbox.self = sandbox;
     sandbox.window = sandbox;
@@ -94,7 +111,8 @@ function buildSandbox() {
         path.join('js', 'vendor', 'd3-force.bundle.min.js'),
         path.join('js', 'network-map', 'store.js'),
         path.join('js', 'network-map', 'canvas.js'),
-        path.join('js', 'network-map', 'viewport.js')
+        path.join('js', 'network-map', 'viewport.js'),
+        path.join('js', 'network-map', 'focus.js')
     ];
     files.forEach(function (rel) {
         vm.runInContext(fs.readFileSync(path.join(ROOT, rel), 'utf8'), sandbox, { filename: rel });
@@ -107,7 +125,25 @@ function buildSandbox() {
         fn(Object.assign({ pointerId, clientX: x, clientY: y, preventDefault() {} }, extra));
     }
 
-    return { sandbox, canvas, ops, fire, resetOps: () => Object.keys(ops).forEach((k) => { ops[k] = 0; }) };
+    /** Run queued frames until nothing is scheduled, as a browser would. */
+    function flushFrames(limit) {
+        const max = limit || 600;
+        let frames = 0;
+        while (queue.length && frames < max) {
+            clock += 16.7;
+            const batch = queue;
+            queue = [];
+            batch.forEach((entry) => entry.fn(clock));
+            frames++;
+        }
+        return frames;
+    }
+
+    return {
+        sandbox, canvas, ops, fire, motion, flushFrames,
+        pending: () => queue.length,
+        resetOps: () => Object.keys(ops).forEach((k) => { ops[k] = 0; })
+    };
 }
 
 /* ------------------------------------------------------------------ run -- */
@@ -120,7 +156,7 @@ function run() {
      * slider's floor of zero is what keeps them on the map. */
     const unconnected = graph.nodes.filter((n) => n.degree === 0).length;
 
-    const { sandbox, canvas, ops, fire, resetOps } = buildSandbox();
+    const { sandbox, canvas, ops, fire, motion, flushFrames, resetOps } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
 
@@ -228,11 +264,22 @@ function run() {
 
     let hovered = null;
     let selected = null;
+    /* focus.js is created further down, once the viewport has been tested on
+     * its own; from then on the pointer drives the chain, as it does on the
+     * page. */
+    const focusRef = { current: null };
     const viewport = sandbox.KOPNetworkViewport.create({
         canvas,
         renderer,
-        onHover: (node) => { hovered = node; renderer.setEmphasis({ hoverId: node ? node.id : null }); },
-        onSelect: (node) => { selected = node; }
+        onHover: (node) => {
+            hovered = node;
+            if (focusRef.current) focusRef.current.hover(node);
+            else renderer.setEmphasis({ hoverId: node ? node.id : null });
+        },
+        onSelect: (node) => {
+            selected = node;
+            if (focusRef.current) focusRef.current.select(node);
+        }
     });
 
     const scene = store.visible();
@@ -398,6 +445,199 @@ function run() {
     renderer.draw();
     viewport.fit();
     check(empty.nodes.length === 0, 'the emptiest filter still showed ' + empty.nodes.length + ' nodes');
+
+    /* ------------------------------------------------------------ focus -- */
+
+    store.resetFilters();
+    const whole = store.visible();
+    renderer.setScene(whole);
+    viewport.setScene(whole);
+    viewport.fit();
+
+    let announced = '';
+    let changes = 0;
+    const focus = sandbox.KOPNetworkFocus.create({
+        store,
+        renderer,
+        viewport,
+        announce: (text) => { announced = text; },
+        onChange: () => { changes++; }
+    });
+    /* From here the pointer drives the chain, as it does on the page. */
+    focusRef.current = focus;
+
+    /* --- hover previews --- */
+
+    const mapX = hub.x;
+    const mapY = hub.y;
+    const neighbours = store.neighbours(hub.id, true);
+    focus.hover(hub);
+
+    const lit = renderer.emphasis.near;
+    check(!!lit && lit[hub.id] === true, 'hovering did not light the hovered node');
+    check(Object.keys(lit).length === neighbours.length + 1,
+        'hover lit ' + Object.keys(lit).length + ' nodes, expected ' + (neighbours.length + 1),
+        'hover lights ' + hub.name + ' and its ' + neighbours.length + ' connections');
+    check(Object.keys(renderer.emphasis.nearEdges).length === neighbours.length,
+        'hover lit the wrong number of connections');
+    check(renderer.emphasis.dim > 0 && renderer.emphasis.dim < 0.3,
+        'hover did not drop the rest of the map to a dim alpha');
+
+    /* --- the gather --- */
+
+    flushFrames();
+    const gathered = focus.offsets();
+    check(!!gathered, 'the gather produced no offsets');
+    check(!gathered[hub.id], 'the hovered node moved; only its neighbours should');
+
+    let pulledIn = 0;
+    let tooClose = 0;
+    neighbours.forEach((link) => {
+        const off = gathered[link.other.id];
+        if (!off) return;
+        const was = Math.hypot(link.other.x - hub.x, link.other.y - hub.y);
+        const now = Math.hypot(link.other.x + off[0] - hub.x, link.other.y + off[1] - hub.y);
+        if (now < was) pulledIn++;
+        if (now < hub.r + link.other.r) tooClose++;
+    });
+    check(pulledIn > 0, 'the gather moved nothing toward the hovered node',
+        'the gather pulls in ' + pulledIn + ' of ' + neighbours.length + ' neighbours');
+    check(tooClose === 0, tooClose + ' neighbours were gathered inside the node they gathered to');
+
+    /* The gather is display-only: the settled layout must be untouched. */
+    check(hub.x === mapX && hub.y === mapY, 'the gather moved a stored position');
+
+    /* And the pointer has to be able to reach a node where it is drawn. */
+    const moved = neighbours.map((l) => l.other).find((n) => gathered[n.id]);
+    const movedOffset = gathered[moved.id];
+    const movedScreen = {
+        x: (moved.x + movedOffset[0]) * t.k + t.x,
+        y: (moved.y + movedOffset[1]) * t.k + t.y
+    };
+    check(viewport.nodeAt(movedScreen.x, movedScreen.y) === moved,
+        'a gathered node could not be clicked where it was drawn');
+    const staleScreen = { x: moved.x * t.k + t.x, y: moved.y * t.k + t.y };
+    check(viewport.nodeAt(staleScreen.x, staleScreen.y) !== moved,
+        'a gathered node was still clickable at the position it had left');
+
+    /* --- leaving eases back --- */
+
+    focus.hover(null);
+    flushFrames();
+    check(focus.offsets() === null, 'the gather did not let go when the pointer left');
+    check(renderer.emphasis.near === null, 'the dimming outlasted the hover');
+
+    /* --- reduced motion is dimming alone --- */
+
+    motion.reduced = true;
+    focus.hover(hub);
+    flushFrames();
+    check(focus.offsets() === null, 'the gather ran under prefers-reduced-motion');
+    check(!!renderer.emphasis.near && renderer.emphasis.near[hub.id],
+        'reduced motion lost the hover lighting as well as the movement');
+    focus.hover(null);
+    motion.reduced = false;
+    flushFrames();
+
+    /* --- clicking commits --- */
+
+    focus.select(hub);
+    flushFrames();
+    check(focus.chain().length === 1 && focus.chain()[0] === hub.id,
+        'selecting a node did not start the trail');
+    check(announced.indexOf(hub.name) === 0, 'the commit was not announced by name');
+
+    const focused = focus.scene();
+    check(focused.nodes.length === neighbours.length + 1,
+        'the focused view holds ' + focused.nodes.length + ' nodes, expected ' + (neighbours.length + 1),
+        'focus on ' + hub.name + ': ' + focused.nodes.length + ' nodes, ' + focused.edges.length + ' edges');
+    check(focused.nodes.length < whole.nodes.length, 'committing did not narrow the map');
+    check(focused.edges.every((e) => focused.nodeIds[e.sourceId] && focused.nodeIds[e.targetId]),
+        'the focused view kept an edge running off it');
+
+    /* The re-settle writes its own coordinates and leaves the map's alone. */
+    const settledPos = focus.positionOf(hub);
+    check(settledPos !== hub, 'the focused view is reading the map positions, not its own');
+    check(focused.nodes.every((n) => {
+        const p = focus.positionOf(n);
+        return isFinite(p.x) && isFinite(p.y);
+    }), 'the re-settle produced a non-finite position');
+    check(hub.x === mapX && hub.y === mapY, 'the re-settle moved a stored position');
+
+    let overlapping = 0;
+    for (let a = 0; a < focused.nodes.length; a++) {
+        for (let b = a + 1; b < focused.nodes.length; b++) {
+            const pa = focus.positionOf(focused.nodes[a]);
+            const pb = focus.positionOf(focused.nodes[b]);
+            if (Math.hypot(pa.x - pb.x, pa.y - pb.y) < focused.nodes[a].r + focused.nodes[b].r) overlapping++;
+        }
+    }
+    check(overlapping === 0, overlapping + ' pairs overlap in the re-settled neighbourhood');
+
+    /* The view should have framed what it settled. */
+    const offStage = focused.nodes.filter((n) => {
+        const p = focus.positionOf(n);
+        const sxp = p.x * t.k + t.x;
+        const syp = p.y * t.k + t.y;
+        return sxp < -1 || sxp > WIDTH + 1 || syp < -1 || syp > HEIGHT + 1;
+    }).length;
+    check(offStage === 0, 'the focused view left ' + offStage + ' of its own nodes off the stage');
+
+    /* --- dragging inside a focus --- */
+
+    const dragTarget = focused.nodes.find((n) => n !== hub);
+    const dragBeforeX = dragTarget.x;
+    const focusPos = focus.positionOf(dragTarget);
+    const focusBeforeX = focusPos.x;
+    let dragScreen = { x: focusPos.x * t.k + t.x, y: focusPos.y * t.k + t.y };
+    fire('pointerdown', 1, dragScreen.x, dragScreen.y);
+    fire('pointermove', 1, dragScreen.x + 40, dragScreen.y);
+    fire('pointerup', 1, dragScreen.x + 40, dragScreen.y);
+    check(Math.abs(focus.positionOf(dragTarget).x - (focusBeforeX + 40 / t.k)) < 1e-6,
+        'dragging inside a focus did not move the node in the focused view');
+    check(dragTarget.x === dragBeforeX,
+        'dragging inside a focus wrote through to the stored layout');
+
+    /* --- the trail extends, truncates and clears --- */
+
+    const next = focused.nodes.find((n) => n !== hub && store.neighbours(n.id, true).length > 2);
+    focus.select(next);
+    flushFrames();
+    check(focus.chain().length === 2, 'clicking a neighbour replaced the trail instead of extending it');
+    const twoDeep = focus.scene();
+    check(twoDeep.nodeIds[hub.id] && twoDeep.nodeIds[next.id],
+        'the second step dropped the first off the screen');
+    check(twoDeep.nodes.length >= focused.nodes.length,
+        'extending the trail shrank the view',
+        'two steps deep: ' + twoDeep.nodes.length + ' nodes, ' + twoDeep.edges.length + ' edges');
+
+    focus.truncateTo(0);
+    flushFrames();
+    check(focus.chain().length === 1 && focus.chain()[0] === hub.id,
+        'truncating to the first crumb did not go back to it');
+
+    focus.clear();
+    flushFrames();
+    check(focus.chain().length === 0, 'clearing did not leave the trail empty');
+    check(focus.positionOf(hub) === hub, 'clearing did not hand the map back its own positions');
+    check(hub.x === mapX && hub.y === mapY, 'the whole map came back in the wrong place');
+    check(focus.scene().nodes.length === whole.nodes.length,
+        'clearing did not restore the whole map');
+    check(changes > 0, 'the chain never reported a change for the breadcrumb to render');
+
+    /* --- the filters can move under a focused trail --- */
+
+    focus.select(hub);
+    flushFrames();
+    store.toggleIn('kinds', hub.kind, false);
+    const stillFocused = focus.refresh();
+    flushFrames();
+    check(stillFocused === false && focus.chain().length === 0,
+        'filtering away the node the trail stands on left the view describing a graph that is gone');
+    check(focus.positionOf(hub) === hub, 'falling back to the whole map kept the focused coordinates');
+
+    store.resetFilters();
+    focus.destroy();
 }
 
 try {

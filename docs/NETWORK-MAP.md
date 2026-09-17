@@ -13,7 +13,7 @@ in detail. Phases 3 and 4 are outlined at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 3 of 8 done |
+| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 4 of 8 done |
 | 3 | Analysis tools: Focus, Path, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import | Outlined |
 
@@ -124,6 +124,38 @@ Isolating on hover alone was considered and rejected: crossing a dense
 region would rebuild the view once per node passed, and touch has no hover
 at all, so the tap path would have needed its own design regardless. Hover
 is a preview precisely because it is reversible.
+
+**Built.** Three things about it are worth recording.
+
+The gather has to move the *hit testing* as well as the drawing. Treating it
+as a pure display offset, as this plan originally described it, produces a
+bug the plan could not see: the pointer leaves the hovered node toward a
+neighbour that has gathered inward, the hit test still holds that
+neighbour's real position, so nothing is under the pointer, the hover
+clears, the gather eases out and the neighbour slides back to where it
+started. The node appears to run away from the pointer reaching for it. The
+quadtree still indexes settled positions — rebuilding it sixty times a
+second would be wasteful — and the few dozen gathered nodes are checked by
+hand before it, which is cheap because they are exactly the lit set.
+
+The gather is also clamped, not just scaled. A third of the way along a
+short line can be further than the two radii allow, so the travel is capped
+at the distance that leaves the node's own radius plus the neighbour's plus
+a small clearance. Without it, the neighbours of a big hub end up inside it.
+
+The re-settle runs once, synchronously, and is then animated to, rather than
+left running as a live simulation. Knowing the destination before anything
+moves is what lets the viewport tween to its new frame on the same clock;
+a live simulation would have the view chasing a wobble. A focused
+neighbourhood is a few dozen nodes, so 220 ticks cost about a millisecond.
+The focused view keeps its own coordinates in a separate map, which is why
+leaving one puts the board back exactly as it was, and why dragging a node
+inside a focus does not disturb the settled layout underneath.
+
+Escape returns to the whole map from any depth, as this plan specified.
+Stepping back one crumb at a time is what the breadcrumb is for. A deep
+trail is therefore one keystroke from gone, with no undo — see the open
+decisions.
 
 | Path | Purpose |
 |---|---|
@@ -296,10 +328,21 @@ focus removes it from the scene entirely rather than dimming it.
 
 Chain hulls come last in this step and can slip to Phase 3 without loss.
 
-**Built**, apart from the hover dimming, which belongs with the focus chain
-in the next step. The renderer takes an `emphasis` object and uses the
-hovered id from it today; step 4 fills in the rest of that object rather
-than reopening the draw loop.
+**Built.** The renderer takes an `emphasis` object carrying the lit node and
+edge sets, the dim alpha and the gather offsets, and focus.js fills it in;
+step 4 added the dimming without reopening the draw loop, as intended.
+
+Dimming does not break the edge batching. Each style bucket is stroked twice
+— once lit, once dimmed — so hover costs one extra path per style rather
+than thirteen hundred alpha changes, and with no emphasis set the second
+pass is skipped and this is the step 3 single pass unchanged.
+
+An edge is lit when it is one of the hovered node's own connections, not
+merely when both its ends happen to be lit. A line between two neighbours is
+not what was hovered, and lighting it would say the hovered node had a
+connection it does not have. With a neighbourhood lit, only its names are
+labelled: labelling the dimmed nodes too would bury the answer in the thing
+it was picked out of.
 
 World coordinates are projected by hand instead of transforming the context.
 Two things would otherwise fight the zoom: stroke widths and font sizes both
@@ -406,8 +449,20 @@ Three layers:
 
    It covers the filter arithmetic, that a frame paints, that a click lands
    on the node under the cursor at both ends of the zoom range, that zooming
-   holds the point under the pointer, and the pan, drag, pinch and wheel
-   gestures. Search ranking and URL state join it when those modules land.
+   holds the point under the pointer, the pan, drag, pinch and wheel
+   gestures, and the whole of the focus chain: what hover lights, that the
+   gather pulls neighbours in without pulling them inside, that a gathered
+   node is clickable where it is drawn and not where it was, that reduced
+   motion keeps the lighting and drops the movement, that committing narrows
+   the view and re-settles it without overlaps or moving a stored position,
+   and that extending, truncating and clearing the trail all land where they
+   should. Search ranking and URL state join it when those modules land.
+
+   Frames are queued against a virtual clock rather than run inline. A
+   synchronous `requestAnimationFrame` breaks the code under test in two
+   ways that say nothing about a browser: a draw scheduled inside its own
+   callback leaves the "already scheduled" guard permanently set, and an
+   animation reading `performance.now()` sees a clock that never moves.
 
    The assertions were checked by mutation rather than trusted: breaking the
    endpoint check in the store, the label thresholds, the click slop and the
@@ -429,6 +484,8 @@ Each step leaves the branch deployable.
 3. Store, canvas, viewport. The map draws and pans. **Done**, with
    `app.js` as the bootstrap that wires them and the module tests alongside.
 4. Hover preview and gather, click to focus, the chain and its breadcrumb.
+   **Done.** `focus.js` owns the chain and never reads the document, so it
+   is testable; `app.js` renders the breadcrumb from the chain it reports.
 5. Filters, legend, colour modes. The slider's output reads "any" at zero
    and the number above it; the template prints that initial state, so the
    wiring has to keep it.
@@ -449,6 +506,12 @@ cPanel job has been flaky about new paths.
   honest, but they could be hidden from the filter entirely.
 - **Hulls in Phase 2 or Phase 3.** They are the one visual that costs real
   time, and the map reads fine without them.
+- **Escape on a deep trail.** It returns to the whole map from any depth, as
+  planned, so six steps of research are one keystroke from gone and there is
+  no undo. Stepping back one crumb would be safer and is one line; it would
+  also mean Escape no longer matches the Whole map button beside it. Worth
+  deciding once someone has walked a long chain and found out which is more
+  annoying.
 
 ## Phase 3: analysis tools (outline)
 

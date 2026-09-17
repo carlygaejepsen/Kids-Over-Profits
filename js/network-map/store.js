@@ -268,6 +268,11 @@
          */
         store.visible = function () {
             if (cache && cacheRevision === revision) return cache;
+            /* Callable before the data lands, so the page can render its
+             * shell and its empty stage without a guard at every call site. */
+            if (!store.ready || !store.filters) {
+                return { nodes: [], edges: [], nodeIds: Object.create(null), degrees: Object.create(null) };
+            }
 
             var f = store.filters;
             var eligible = [];

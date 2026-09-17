@@ -197,7 +197,9 @@
 }
 
 .kop-network__chain-home,
-.kop-network__chain-list button {
+.kop-network__chain-list button,
+.kop-network__chain-current {
+	display: inline-block;
 	padding: 0.3rem 0.6rem;
 	border: 1px solid transparent;
 	border-radius: 999px;
@@ -213,8 +215,9 @@
 	border-color: var(--kop-teal, #33A7B5);
 }
 
-/* The last crumb is where you are, so it is not a link anywhere. */
-.kop-network__chain-list li:last-child button {
+/* The last crumb is where you are, so it is text carrying aria-current
+ * rather than a control that would go nowhere. */
+.kop-network__chain-current {
 	background: var(--kop-navy, #000080);
 	color: #fff;
 	cursor: default;

@@ -42,6 +42,18 @@
         var onSelect = options.onSelect || function () {};
         var onChange = options.onChange || function () {};
 
+        /* Where a node currently is, and where it currently *appears*. The
+         * base position is the live object, so a drag writes straight to it:
+         * on the whole map that is the node and dragging pins it, in a
+         * focused neighbourhood it is that view's own coordinates and the
+         * settled layout is left alone.
+         *
+         * Offsets are the hover gather, which is display-only. They have to
+         * be honoured here and not just in the renderer, or a gathered
+         * neighbour would run away from the pointer that reached for it. */
+        var positionOf = options.positionOf || function (node) { return node; };
+        var offsetsOf = options.offsets || function () { return null; };
+
         var scene = { nodes: [], edges: [] };
         var tree = null;
         /* The largest radius in the scene bounds the quadtree search, so a
@@ -61,6 +73,16 @@
         var frame = 0;
 
         var viewport = { transform: transform };
+
+        /* focus.js is built after the viewport and owns both of these, so
+         * they can be handed over once rather than passed at construction. */
+        viewport.setPositionSource = function (fn) {
+            positionOf = fn || function (node) { return node; };
+            rebuildTree();
+        };
+        viewport.setOffsetSource = function (fn) {
+            offsetsOf = fn || function () { return null; };
+        };
 
         /* ------------------------------------------------------ geometry -- */
 
@@ -92,32 +114,66 @@
             if (hoverId && !nodeById(hoverId)) setHover(null);
         };
 
+        /* The tree indexes base positions, so a running gather does not
+         * invalidate it sixty times a second. The handful of nodes the
+         * gather has moved are checked separately, in nodeAt. */
         function rebuildTree() {
             if (!root.d3 || !root.d3.quadtree) { tree = null; return; }
             tree = root.d3.quadtree()
-                .x(function (d) { return d.x; })
-                .y(function (d) { return d.y; })
+                .x(function (d) { return positionOf(d).x; })
+                .y(function (d) { return positionOf(d).y; })
                 .addAll(scene.nodes);
         }
         viewport.rebuildTree = rebuildTree;
 
+        function hits(node, wx, wy, slop, offsets) {
+            var p = positionOf(node);
+            var off = offsets ? offsets[node.id] : null;
+            var dx = (off ? p.x + off[0] : p.x) - wx;
+            var dy = (off ? p.y + off[1] : p.y) - wy;
+            var reach = node.r + slop;
+            return (dx * dx + dy * dy) <= reach * reach;
+        }
+
         /**
-         * The node under a canvas-local point, or null. The quadtree finds the
-         * nearest within a generous world-space radius; the shape test that
-         * follows is a circle of the node's own radius plus the slop, which is
-         * close enough for a diamond or a hexagon and much cheaper than the
-         * real thing.
+         * The node under a canvas-local point, or null. The shape test is a
+         * circle of the node's own radius plus the slop, which is close
+         * enough for a diamond or a hexagon and much cheaper than the real
+         * outline.
+         *
+         * Gathered nodes are checked first and by hand. There are at most a
+         * few dozen of them, and they are the ones whose drawn position the
+         * tree does not know about, so a node the pointer is visibly over is
+         * found even mid-gather.
          */
         function nodeAt(px, py) {
-            if (!tree || !scene.nodes.length) return null;
+            if (!scene.nodes.length) return null;
             var world = toWorld(px, py);
             var slop = HIT_SLOP / transform.k;
+            var offsets = offsetsOf();
+
+            if (offsets) {
+                var best = null;
+                var bestDistance = Infinity;
+                for (var i = 0; i < scene.nodes.length; i++) {
+                    var node = scene.nodes[i];
+                    if (!offsets[node.id]) continue;
+                    if (!hits(node, world.x, world.y, slop, offsets)) continue;
+                    var p = positionOf(node);
+                    var d = Math.hypot(p.x + offsets[node.id][0] - world.x,
+                        p.y + offsets[node.id][1] - world.y);
+                    if (d < bestDistance) { bestDistance = d; best = node; }
+                }
+                if (best) return best;
+            }
+
+            if (!tree) return null;
             var found = tree.find(world.x, world.y, maxRadius + slop);
             if (!found) return null;
-            var dx = found.x - world.x;
-            var dy = found.y - world.y;
-            var reach = found.r + slop;
-            return (dx * dx + dy * dy) <= reach * reach ? found : null;
+            /* Already ruled out above, and its tree position is not where it
+             * is drawn, so it must not win on the stale one. */
+            if (offsets && offsets[found.id]) return null;
+            return hits(found, world.x, world.y, slop, null) ? found : null;
         }
         viewport.nodeAt = nodeAt;
 
@@ -176,41 +232,56 @@
         };
 
         /**
-         * Frame a set of nodes, or the whole scene. Used for Reset view and,
-         * from step 4, for settling on a focused neighbourhood.
+         * The transform that would frame these points, without applying it.
+         * Points are plain {x, y, r} in world coordinates, so a focused
+         * neighbourhood can work out where it is going before it starts
+         * moving and tween the view and the nodes together.
          */
-        viewport.fit = function (nodes, padding) {
-            var list = nodes && nodes.length ? nodes : scene.nodes;
-            if (!list.length || !renderer.width) return;
+        viewport.frameOf = function (points, padding) {
+            if (!points || !points.length || !renderer.width) return null;
             var pad = padding === undefined ? 48 : padding;
 
             var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-            for (var i = 0; i < list.length; i++) {
-                var n = list[i];
-                if (n.x - n.r < minX) minX = n.x - n.r;
-                if (n.y - n.r < minY) minY = n.y - n.r;
-                if (n.x + n.r > maxX) maxX = n.x + n.r;
-                if (n.y + n.r > maxY) maxY = n.y + n.r;
+            for (var i = 0; i < points.length; i++) {
+                var p = points[i];
+                var r = p.r || 0;
+                if (p.x - r < minX) minX = p.x - r;
+                if (p.y - r < minY) minY = p.y - r;
+                if (p.x + r > maxX) maxX = p.x + r;
+                if (p.y + r > maxY) maxY = p.y + r;
             }
-            var bw = Math.max(1, maxX - minX);
-            var bh = Math.max(1, maxY - minY);
             var k = clamp(Math.min(
-                (renderer.width - pad * 2) / bw,
-                (renderer.height - pad * 2) / bh
+                (renderer.width - pad * 2) / Math.max(1, maxX - minX),
+                (renderer.height - pad * 2) / Math.max(1, maxY - minY)
             ), MIN_ZOOM, MAX_ZOOM);
 
-            transform.k = k;
-            transform.x = renderer.width / 2 - ((minX + maxX) / 2) * k;
-            transform.y = renderer.height / 2 - ((minY + maxY) / 2) * k;
-            scheduleDraw();
-            onChange();
+            return {
+                k: k,
+                x: renderer.width / 2 - ((minX + maxX) / 2) * k,
+                y: renderer.height / 2 - ((minY + maxY) / 2) * k
+            };
+        };
+
+        /** Frame a set of nodes, or the whole scene, at their drawn positions. */
+        viewport.fit = function (nodes, padding) {
+            var list = nodes && nodes.length ? nodes : scene.nodes;
+            if (!list.length) return;
+            var offsets = offsetsOf();
+            var points = list.map(function (node) {
+                var p = positionOf(node);
+                var off = offsets ? offsets[node.id] : null;
+                return { x: off ? p.x + off[0] : p.x, y: off ? p.y + off[1] : p.y, r: node.r };
+            });
+            var framed = viewport.frameOf(points, padding);
+            if (framed) viewport.setTransform(framed.k, framed.x, framed.y);
         };
 
         /** Put a node in the middle without changing the zoom. */
         viewport.centreOn = function (node) {
             if (!node) return;
-            transform.x = renderer.width / 2 - node.x * transform.k;
-            transform.y = renderer.height / 2 - node.y * transform.k;
+            var p = positionOf(node);
+            transform.x = renderer.width / 2 - p.x * transform.k;
+            transform.y = renderer.height / 2 - p.y * transform.k;
             scheduleDraw();
             onChange();
         };
@@ -220,6 +291,7 @@
             transform.x = x;
             transform.y = y;
             scheduleDraw();
+            onChange();
         };
 
         /* ------------------------------------------------------ pointers -- */
@@ -294,8 +366,13 @@
             }
 
             if (mode === 'drag' && dragNode) {
-                dragNode.x += dx / transform.k;
-                dragNode.y += dy / transform.k;
+                /* Writes through to whichever coordinates are on screen: the
+                 * node's own on the whole map, where this also pins it for
+                 * the session, or the focused view's, where the settled
+                 * layout underneath is left alone. */
+                var live = positionOf(dragNode);
+                live.x += dx / transform.k;
+                live.y += dy / transform.k;
                 dragNode.pinned = true;
                 scheduleDraw();
                 return;
