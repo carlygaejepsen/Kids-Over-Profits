@@ -60,3 +60,6 @@ require_once get_stylesheet_directory() . '/inc/ajax-search-lite.php';
 
 // Global search bar REST endpoint (site-wide search widget backend)
 require_once get_stylesheet_directory() . '/inc/global-search.php';
+
+// Research & Reports card library (Academia + Government FileBird folders)
+require_once get_stylesheet_directory() . '/inc/research-library.php';
