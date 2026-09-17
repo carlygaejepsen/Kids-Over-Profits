@@ -218,9 +218,10 @@ template joins the no-sidebar list so it runs full width.
 #### 3. Store and visible subgraph
 
 A node is visible when it passes the kind, status, NATSAP, chain and region
-filters, and either its degree within the visible edge set meets the
-minimum-connections slider or it is the selected node. An edge is visible
-when both endpoints are visible and its category is checked.
+filters and it has at least one connection left in the visible edge set —
+or the minimum-connections slider is at zero and it has no connections in
+the data at all, or it is the selected node. An edge is visible when both
+endpoints are visible and its category is checked.
 
 The cross-region toggle hides in-region edges. This is the staff-migration
 view, and it uses `crossesRegion` because the chain column is sparse.
@@ -247,10 +248,23 @@ The visible set is cached against a revision counter rather than recomputed
 on read, so the filters can be set in a batch and the work still happens
 once, when someone asks for the result.
 
-One consequence worth knowing: the slider's floor is one connection, so the
-three isolated nodes are never in the default view. That is the honest
-default — they have nothing to show on a map of connections — but it does
-mean the map draws 904 of 907.
+The minimum-connections slider starts at zero, and zero reads as "any". A
+floor of one would have hidden every name with no recorded connection, and
+the three the board carries are not obscure ones: Judge Rotenberg
+Educational Center, the Independent Educational Consultants Association and
+Accelerated Christian Education. Nobody has documented a connection for them
+yet. That is a gap in the research, not a reason for the map to leave them
+out, and the standfirst already says as much about absent connections.
+
+What zero does not do is resurrect a node whose connections the filters have
+just taken away. A node earns its place by having a visible connection, so
+the working floor is never below one; the slider's zero position adds back
+only the nodes with no connections in the data at all. The distinction is
+what keeps the cross-group view usable — without it, "who moved between
+board groups" would answer with 451 names and 456 unrelated dots. Unchecking
+every connection type is the same rule seen from the other end: the map
+comes down to the three names that have nothing, which is an honest answer
+to the question asked.
 
 #### 4. Renderer
 
@@ -415,7 +429,9 @@ Each step leaves the branch deployable.
 3. Store, canvas, viewport. The map draws and pans. **Done**, with
    `app.js` as the bootstrap that wires them and the module tests alongside.
 4. Hover preview and gather, click to focus, the chain and its breadcrumb.
-5. Filters, legend, colour modes.
+5. Filters, legend, colour modes. The slider's output reads "any" at zero
+   and the number above it; the template prints that initial state, so the
+   wiring has to keep it.
 6. Search, drawer, URL state.
 7. Mobile breakpoints, keyboard, reduced motion, module tests.
 8. Chain hulls, if they fit.

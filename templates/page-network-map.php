@@ -246,8 +246,16 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						<fieldset class="kop-network__group">
 							<legend>Refine</legend>
 							<label class="kop-network__range">
-								<span>Minimum connections: <output id="kop-network-degree-out">1</output></span>
-								<input type="range" id="kop-network-degree" min="1" max="10" step="1" value="1">
+								<?php
+								// Starts at zero, and zero reads as "any". A floor of one
+								// would hide every unconnected name by default, and the
+								// board records three: Judge Rotenberg Educational Center,
+								// IECA and Accelerated Christian Education. Nobody has
+								// documented a connection for them yet, which is not a
+								// reason for the map to leave them out.
+								?>
+								<span>Minimum connections: <output id="kop-network-degree-out">any</output></span>
+								<input type="range" id="kop-network-degree" min="0" max="10" step="1" value="0">
 							</label>
 							<label class="kop-network__check">
 								<input type="checkbox" id="kop-network-cross-region">

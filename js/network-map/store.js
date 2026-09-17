@@ -203,7 +203,14 @@
                 /* '' is the "no recorded owner" checkbox: 708 of 907 nodes. */
                 chains: toSet((meta.chains || []).concat([''])),
                 regions: toSet(meta.regions || []),
-                minDegree: 1,
+                /* Zero, not one. A floor of one connection would hide every
+                 * unconnected name by default, and the three the board
+                 * records are not obscure: Judge Rotenberg Educational
+                 * Center, IECA and Accelerated Christian Education. Nobody
+                 * has documented a connection for them yet, which is a gap
+                 * in the research, not a reason to leave them off the map.
+                 * The rail renders the slider at 0 to match. */
+                minDegree: 0,
                 crossRegionOnly: false,
                 /* Kept visible whatever the slider says, so selecting a node
                  * from search cannot select something the map then hides. */
@@ -291,15 +298,29 @@
                 degrees[edge.targetId] = (degrees[edge.targetId] || 0) + 1;
             }
 
+            /* A node earns its place by having a visible connection, so the
+             * working floor is never below one however low the slider goes.
+             * What the slider's zero adds is the names that have no recorded
+             * connection at all: three of them today, and not obscure ones.
+             *
+             * The distinction that matters is between a node the data has
+             * nothing for and a node whose connections were just filtered
+             * away. Only the first belongs on the map at zero. Without it,
+             * turning on the cross-group view would answer "which people
+             * moved between board groups" with 451 names and 456 unrelated
+             * dots. */
             var min = f.minDegree || 0;
+            var floor = min > 1 ? min : 1;
+            var keepUnconnected = min < 1;
             var keep = f.keepVisible;
             var nodes = [];
             var nodeIds = Object.create(null);
             for (i = 0; i < eligible.length; i++) {
-                var id = eligible[i].id;
-                if ((degrees[id] || 0) >= min || id === keep) {
-                    nodes.push(eligible[i]);
-                    nodeIds[id] = true;
+                var node2 = eligible[i];
+                var seen = degrees[node2.id] || 0;
+                if (seen >= floor || (keepUnconnected && node2.degree === 0) || node2.id === keep) {
+                    nodes.push(node2);
+                    nodeIds[node2.id] = true;
                 }
             }
 

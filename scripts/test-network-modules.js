@@ -116,6 +116,10 @@ function run() {
     const graph = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'graph.json'), 'utf8'));
     const layout = JSON.parse(fs.readFileSync(path.join(DATA_DIR, 'layout.json'), 'utf8'));
 
+    /* Names the data has no connection for at all: three today, and the
+     * slider's floor of zero is what keeps them on the map. */
+    const unconnected = graph.nodes.filter((n) => n.degree === 0).length;
+
     const { sandbox, canvas, ops, fire, resetOps } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -134,20 +138,28 @@ function run() {
         'status bucketing does not match the three filter checkboxes');
 
     const all = store.visible();
-    const isolated = graph.nodes.filter((n) => n.isolated).length;
-    /* The slider starts at one connection, so the isolated nodes are out of
-     * the default view by design. */
-    check(all.nodes.length === graph.nodes.length - isolated,
-        'default view shows ' + all.nodes.length + ', expected ' + (graph.nodes.length - isolated),
+    /* The default view is the whole map. The slider's floor is zero
+     * connections, so the unconnected names - Judge Rotenberg, IECA,
+     * Accelerated Christian Education - are on it like everything else. */
+    check(all.nodes.length === graph.nodes.length,
+        'default view shows ' + all.nodes.length + ' of ' + graph.nodes.length + ' nodes',
         'default view: ' + all.nodes.length + ' nodes, ' + all.edges.length + ' edges');
     check(all.edges.length === graph.edges.length,
         'default view lost edges: ' + all.edges.length + '/' + graph.edges.length);
+    graph.nodes.filter((n) => n.isolated).forEach((n) => {
+        check(all.nodeIds[n.id] === true, 'the default view hides the unconnected node ' + n.id);
+    });
 
     /* Every visible edge must have both ends visible, at every setting. */
     function endpointsPresent(view) {
         return view.edges.every((e) => view.nodeIds[e.sourceId] && view.nodeIds[e.targetId]);
     }
     check(endpointsPresent(all), 'default view has an edge with a hidden endpoint');
+
+    /* One step off the floor drops the unconnected names and nothing else. */
+    store.setFilter('minDegree', 1);
+    check(store.visible().nodes.length === graph.nodes.length - unconnected,
+        'stepping the slider to one should drop exactly the unconnected names');
 
     store.setFilter('minDegree', 6);
     const narrow = store.visible();
@@ -164,6 +176,13 @@ function run() {
     check(crossing.edges.every((e) => e.crossesRegion),
         'the cross-group view kept an edge that stays inside one board frame',
         'cross-group only: ' + crossing.nodes.length + ' nodes, ' + crossing.edges.length + ' edges');
+    /* The answer to "who moved between board groups" is the people who did,
+     * plus the three names the data has no connections for at all - not
+     * every node whose connections this view happened to filter out. */
+    const strandedByView = crossing.nodes.filter((n) => !crossing.degrees[n.id] && n.degree > 0);
+    check(strandedByView.length === 0,
+        'the cross-group view kept ' + strandedByView.length +
+        ' nodes whose connections it had just filtered away');
 
     store.resetFilters();
     store.setFilter('natsapOnly', true);
@@ -175,14 +194,18 @@ function run() {
     check(noPeople.nodes.every((n) => n.kind !== 'person'), 'a person survived the kind filter');
     check(endpointsPresent(noPeople), 'kind-filtered view has an edge with a hidden endpoint');
 
-    /* Unchecking every category should leave nodes but no edges, and then the
-     * slider's floor of one should empty the map rather than showing a field
-     * of unconnected dots. */
+    /* Unchecking every connection type leaves only the names the data has no
+     * connections for; everything else has been filtered down to nothing and
+     * goes with its lines. Raising the slider clears those last three too. */
     store.resetFilters();
     Object.keys(store.filters.categories).forEach((c) => { delete store.filters.categories[c]; });
     store.touch();
-    check(store.visible().edges.length === 0 && store.visible().nodes.length === 0,
-        'unchecking every connection type did not empty the view');
+    check(store.visible().edges.length === 0 && store.visible().nodes.length === unconnected,
+        'unchecking every connection type left ' + store.visible().nodes.length +
+        ' nodes, expected the ' + unconnected + ' with no recorded connections');
+    store.setFilter('minDegree', 1);
+    check(store.visible().nodes.length === 0,
+        'with no connection types and a minimum of one, the map should be empty');
 
     store.resetFilters();
     const hub = store.node('provo-canyon-school');
