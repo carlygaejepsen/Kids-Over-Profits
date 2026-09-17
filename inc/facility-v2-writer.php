@@ -52,10 +52,6 @@ if (!function_exists('kop_v2_write_switch_blockers')) {
             'Data Manager actions (api/data-manager.php) edit the old tables',
             'Facility picker document folder and new-stub writes (api/facility-picker.php)',
             'Wiki approval field merge and wiki document folder link (api/sync-wiki-facilities.php, api/save-wiki-submission.php)',
-            'Form search, autocomplete and pickers read the old tables (kop/v1/search, kop/v1/autocomplete, api/get-autocomplete.php, api/facility-search.php, api/facility-picker.php)',
-            'Suggestion review diff reads the old tables (api/approve-edits.php)',
-            'State pages: inspection placement and related-records name map (kop_master_facility_state_map, kop_state_master_name_id_map)',
-            'News feed, lawsuits page and the news/lawsuit linkers read facility names from the old tables',
         );
     }
 }
@@ -212,6 +208,121 @@ if (!function_exists('kop_v2_edits_since_switch')) {
             $stmt->execute(array($since));
             return (int)$stmt->fetchColumn();
         }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Legacy-shaped reads for the endpoints that scan or join facilities_master
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_v2_pdo_master_rows')) {
+    /**
+     * What `SELECT id, unique_name, json_data FROM facilities_master` returned:
+     * one row per operator project and one per facility, json_data encoded in
+     * the legacy shapes. Lets the endpoints that scan that table keep their
+     * parsing after the write switch freezes it.
+     *
+     * Operator rows keep their legacy id, so links made by row id still
+     * resolve. Built once per request.
+     *
+     * @return array list of {id, unique_name, json_data}
+     */
+    function kop_v2_pdo_master_rows(PDO $pdo, $prefix) {
+        static $cache = array();
+        if (isset($cache[$prefix])) return $cache[$prefix];
+        $t = kop_migration_tables($prefix);
+        $rows = array();
+
+        $facilities = array();
+        $stmt = $pdo->query("SELECT id, unique_name, json_data FROM `{$t['facilities']}` ORDER BY id");
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $doc = json_decode((string)$row['json_data'], true);
+            if (!is_array($doc) || !isset($doc['identification'], $doc['location'])) continue;
+            $facilities[(int)$row['id']] = array('unique_name' => (string)$row['unique_name'], 'doc' => $doc);
+        }
+
+        $by_operator = array();
+        foreach ($pdo->query("SELECT operator_id, facility_id FROM `{$t['operator_facilities']}` ORDER BY operator_id, sort_order, facility_id")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $fid = (int)$r['facility_id'];
+            if (isset($facilities[$fid])) $by_operator[(int)$r['operator_id']][] = kop_facility_to_legacy($facilities[$fid]['doc']);
+        }
+        foreach ($pdo->query("SELECT id, unique_name, name, json_data, document_folder_id, updated_at FROM `{$t['operators']}` ORDER BY id")->fetchAll(PDO::FETCH_ASSOC) as $op) {
+            $project = kop_v2_operator_project($op, $by_operator[(int)$op['id']] ?? array());
+            $rows[] = array(
+                'id' => (int)$op['id'],
+                'unique_name' => (string)$op['unique_name'],
+                'json_data' => json_encode(array(
+                    'name' => $project['name'],
+                    'category' => $project['category'],
+                    'currentFacilityIndex' => $project['currentFacilityIndex'],
+                    'timestamp' => $project['timestamp'],
+                    'data' => $project['data'],
+                ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            );
+        }
+
+        foreach ($facilities as $id => $entry) {
+            $doc = $entry['doc'];
+            $facility = kop_facility_to_legacy($doc);
+            $data = array('facility' => $facility);
+            // Curated matchAliases sat beside the facility on a legacy row, and
+            // that is where the name resolvers look for them.
+            if (!empty($facility['matchAliases'])) $data['matchAliases'] = $facility['matchAliases'];
+            $rows[] = array(
+                'id' => $id,
+                'unique_name' => $entry['unique_name'],
+                'json_data' => json_encode(array(
+                    '__facility_ref' => true,
+                    'name' => $entry['unique_name'],
+                    'displayName' => (string)$doc['identification']['name'],
+                    'city' => (string)$doc['location']['city'],
+                    'state' => (string)($doc['location']['state'] ?? ''),
+                    'data' => $data,
+                ), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            );
+        }
+
+        return $cache[$prefix] = $rows;
+    }
+}
+
+if (!function_exists('kop_v2_pdo_master_row_by_name')) {
+    /**
+     * One legacy-shaped row by unique_name, for the lookups that fetched a
+     * facilities_master row that way.
+     *
+     * @return array|null {id, unique_name, json_data}
+     */
+    function kop_v2_pdo_master_row_by_name(PDO $pdo, $prefix, $unique_name) {
+        $unique_name = trim((string)$unique_name);
+        if ($unique_name === '') return null;
+        foreach (kop_v2_pdo_master_rows($pdo, $prefix) as $row) {
+            if (strcasecmp($row['unique_name'], $unique_name) === 0) return $row;
+        }
+        return null;
+    }
+}
+
+if (!function_exists('kop_v2_pdo_names_by_id')) {
+    /**
+     * Row id => unique_name, for the link tables that join facilities_master
+     * to show what a news item or lawsuit is about. Operator ids resolve too:
+     * an article can be about an operator rather than one facility.
+     *
+     * @param int[] $ids empty for every row
+     * @return array<int,string>
+     */
+    function kop_v2_pdo_names_by_id(PDO $pdo, $prefix, array $ids = array()) {
+        $t = kop_migration_tables($prefix);
+        $ids = array_values(array_unique(array_filter(array_map('intval', $ids))));
+        $where = $ids ? ' WHERE id IN (' . implode(',', $ids) . ')' : '';
+        $out = array();
+        foreach (array($t['facilities'], $t['operators']) as $table) {
+            foreach ($pdo->query("SELECT id, unique_name FROM `{$table}`{$where}")->fetchAll(PDO::FETCH_ASSOC) as $row) {
+                $out[(int)$row['id']] = (string)$row['unique_name'];
+            }
+        }
+        return $out;
     }
 }
 

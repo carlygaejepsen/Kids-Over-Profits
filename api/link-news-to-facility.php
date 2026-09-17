@@ -65,6 +65,34 @@ try {
         }
 
         if ($news_id > 0) {
+            // facilities_master is frozen once admin saves write the v2 tables,
+            // so the names come from there (operators included: an article can
+            // be about the company rather than one facility).
+            require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+            $v2_prefix = kop_v2_detect_prefix($pdo);
+            if (kop_v2_writes_active($pdo, $v2_prefix)) {
+                $stmt = $pdo->prepare(
+                    "SELECT facility_id, link_type, created_at AS linked_at
+                     FROM news_facility_links WHERE news_id = ?"
+                );
+                $stmt->execute([$news_id]);
+                $links = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                $names = kop_v2_pdo_names_by_id($pdo, $v2_prefix, array_column($links, 'facility_id'));
+                $data = [];
+                foreach ($links as $link) {
+                    $id = (int)$link['facility_id'];
+                    if (!isset($names[$id])) continue;
+                    $data[] = [
+                        'id' => $id,
+                        'unique_name' => $names[$id],
+                        'link_type' => $link['link_type'],
+                        'linked_at' => $link['linked_at'],
+                    ];
+                }
+                usort($data, static function ($a, $b) { return strcasecmp($a['unique_name'], $b['unique_name']); });
+                echo json_encode(['success' => true, 'data' => $data]);
+                exit;
+            }
             $sql = "SELECT f.id, f.unique_name, l.link_type, l.created_at AS linked_at
                     FROM news_facility_links l
                     JOIN facilities_master f ON f.id = l.facility_id
@@ -125,9 +153,17 @@ try {
         exit;
     }
 
-    $check = $pdo->prepare("SELECT 1 FROM facilities_master WHERE id = ?");
-    $check->execute([$facility_id]);
-    if (!$check->fetchColumn()) {
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    $facility_exists = kop_v2_writes_active($pdo, $v2_prefix)
+        ? (bool)kop_v2_pdo_names_by_id($pdo, $v2_prefix, [$facility_id])
+        : null;
+    if ($facility_exists === null) {
+        $check = $pdo->prepare("SELECT 1 FROM facilities_master WHERE id = ?");
+        $check->execute([$facility_id]);
+        $facility_exists = (bool)$check->fetchColumn();
+    }
+    if (!$facility_exists) {
         http_response_code(404);
         echo json_encode(['success' => false, 'error' => 'facility_id not found']);
         exit;

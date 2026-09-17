@@ -183,6 +183,23 @@ if (empty($args['mode'])) {
     echo '     (' . count($repointed) . " names resolve to a different row"
         . ($repointed ? ': ' . implode(', ', array_slice($repointed, 0, 4)) : '') . ")\n";
 
+    echo "\n-- News and lawsuit linking --\n";
+    $lost_aliases = array();
+    foreach ($old['alias_exact'] as $key => $id) {
+        if (!isset($new['alias_exact'][$key]) && !in_array($key, $new['alias_ambiguous'], true)) $lost_aliases[] = $key;
+    }
+    $check('every name the alias index resolved is still resolved', count($lost_aliases) === 0,
+        count($old['alias_exact']) . ' old, ' . count($new['alias_exact']) . ' new'
+        . ($lost_aliases ? '; lost: ' . implode(' | ', array_slice($lost_aliases, 0, 6)) : ''));
+
+    $missing_links = array();
+    foreach ($old['linked_names'] as $id => $name) {
+        if (!isset($new['linked_names'][$id])) $missing_links[] = "$id ($name)";
+    }
+    $check('every linked news and lawsuit id still resolves to a name', count($missing_links) === 0,
+        count($old['linked_names']) . ' linked ids'
+        . ($missing_links ? '; missing: ' . implode(', ', array_slice($missing_links, 0, 6)) : ''));
+
     echo "\n-- Program index links --\n";
     foreach (array('news', 'lawsuits') as $kind) {
         $lost = array_values(array_diff($old['links'][$kind], $new['links'][$kind]));
@@ -425,6 +442,29 @@ $out['non_us_names'] = array();
 foreach ((array)$pdo->query("SELECT name FROM facilities_v2 WHERE state IS NULL OR state = ''")->fetchAll(PDO::FETCH_COLUMN) as $name) {
     $key = kop_normalize_facility_name((string)$name);
     if ($key !== '') $out['non_us_names'][$key] = true;
+}
+
+// -- name resolution for news and lawsuit linking ----------------------------
+require_once dirname(__DIR__) . '/api/facility-aliases.php';
+$index = kop_build_facility_alias_index($pdo);
+$out['alias_exact'] = $index['exact'];
+$out['alias_names'] = $index['names'];
+$out['alias_ambiguous'] = array_keys($index['ambiguous']);
+
+// The ids the link tables actually hold must still resolve to a name.
+$linked_ids = array_map('intval', array_merge(
+    (array)$pdo->query("SELECT DISTINCT facility_id FROM news_facility_links")->fetchAll(PDO::FETCH_COLUMN),
+    (array)$pdo->query("SELECT DISTINCT facility_id FROM lawsuit_facility_links")->fetchAll(PDO::FETCH_COLUMN)
+));
+$out['linked_names'] = array();
+if ($mode === 'v2') {
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $out['linked_names'] = kop_v2_pdo_names_by_id($pdo, $prefix, $linked_ids);
+} else {
+    $in = implode(',', array_map('intval', $linked_ids));
+    foreach ((array)$pdo->query("SELECT id, unique_name FROM facilities_master WHERE id IN ($in)")->fetchAll(PDO::FETCH_ASSOC) as $row) {
+        $out['linked_names'][(int)$row['id']] = (string)$row['unique_name'];
+    }
 }
 
 // -- program index attachers -------------------------------------------------

@@ -485,10 +485,17 @@ try {
 
                 // Fetch from Master Database and Wiki Submissions
                 try {
-                    // 1. Facilities Master
-                    $stmtMaster = $pdo->prepare("SELECT json_data FROM facilities_master");
-                    $stmtMaster->execute();
-                    while ($row = $stmtMaster->fetch(PDO::FETCH_ASSOC)) {
+                    // 1. Facilities Master (the v2 tables once saves write them)
+                    require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';
+                    $v2_prefix = kop_v2_detect_prefix($pdo);
+                    if (kop_v2_writes_active($pdo, $v2_prefix)) {
+                        $masterRows = new ArrayIterator(kop_v2_pdo_master_rows($pdo, $v2_prefix));
+                    } else {
+                        $stmtMaster = $pdo->prepare("SELECT json_data FROM facilities_master");
+                        $stmtMaster->execute();
+                        $masterRows = new ArrayIterator($stmtMaster->fetchAll(PDO::FETCH_ASSOC));
+                    }
+                    foreach ($masterRows as $row) {
                         $data = json_decode($row['json_data'], true);
                         if (!$data) continue;
 

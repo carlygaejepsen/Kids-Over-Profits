@@ -697,13 +697,32 @@ try {
         }
     }
 
-    // Then query from data-form tables
-    $sources = [
-        "SELECT json_data AS payload FROM facilities_master",
-        "SELECT json_data AS payload FROM referrers_master",
-        "SELECT json_data AS payload FROM locations_master",
-        "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
-    ];
+    // Then query from data-form tables. facilities_master and the facility
+    // arrays in locations_master are frozen once admin saves write the v2
+    // tables, so those values come from the v2 rows instead.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    $v2_writes = kop_v2_writes_active($pdo, $v2_prefix);
+    $sources = $v2_writes
+        ? [
+            "SELECT json_data AS payload FROM referrers_master",
+            "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
+        ]
+        : [
+            "SELECT json_data AS payload FROM facilities_master",
+            "SELECT json_data AS payload FROM referrers_master",
+            "SELECT json_data AS payload FROM locations_master",
+            "SELECT edited_json_data AS payload FROM suggested_edits WHERE edited_json_data IS NOT NULL AND edited_json_data <> ''"
+        ];
+
+    if ($v2_writes) {
+        foreach (kop_v2_pdo_master_rows($pdo, $v2_prefix) as $row) {
+            $data = normalize_project_payload($row['json_data']);
+            if ($data) {
+                collect_values_for_category($category, $data, $valueSet);
+            }
+        }
+    }
 
     foreach ($sources as $sql) {
         $stmt = $pdo->query($sql);

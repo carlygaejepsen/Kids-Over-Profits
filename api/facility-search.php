@@ -72,25 +72,54 @@ try {
     // hits on actual name fields, so we need slack in the pool.
     $pool = min(150, $limit * 5);
     $like = '%' . $q . '%';
-    $stmt = $pdo->prepare(
-        "SELECT id, unique_name, json_data
-         FROM facilities_master
-         WHERE unique_name LIKE :like1 OR json_data LIKE :like2
-         ORDER BY
-           CASE WHEN unique_name LIKE :starts THEN 0
-                WHEN unique_name LIKE :like3 THEN 1
-                ELSE 2 END,
-           CHAR_LENGTH(unique_name) ASC,
-           unique_name ASC
-         LIMIT :lim"
-    );
-    $stmt->bindValue(':like1', $like);
-    $stmt->bindValue(':like2', $like);
-    $stmt->bindValue(':starts', $q . '%');
-    $stmt->bindValue(':like3', $like);
-    $stmt->bindValue(':lim', $pool, PDO::PARAM_INT);
-    $stmt->execute();
-    $rows = $stmt->fetchAll();
+
+    // facilities_master is frozen once admin saves write the v2 tables: the
+    // same rows come from there, filtered and ordered the same way.
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    if (kop_v2_writes_active($pdo, $v2_prefix)) {
+        $rows = [];
+        foreach (kop_v2_pdo_master_rows($pdo, $v2_prefix) as $row) {
+            if (mb_stripos($row['unique_name'], $q) === false && mb_stripos($row['json_data'], $q) === false) {
+                continue;
+            }
+            $rows[] = $row;
+        }
+        usort($rows, static function ($a, $b) use ($q) {
+            $rank = static function ($name) use ($q) {
+                if (mb_stripos($name, $q) === 0) return 0;
+                return mb_stripos($name, $q) !== false ? 1 : 2;
+            };
+            $ra = $rank($a['unique_name']);
+            $rb = $rank($b['unique_name']);
+            if ($ra !== $rb) return $ra - $rb;
+            $la = mb_strlen($a['unique_name']);
+            $lb = mb_strlen($b['unique_name']);
+            if ($la !== $lb) return $la - $lb;
+            return strcmp($a['unique_name'], $b['unique_name']);
+        });
+        $rows = array_slice($rows, 0, $pool);
+    } else {
+        $stmt = $pdo->prepare(
+            "SELECT id, unique_name, json_data
+             FROM facilities_master
+             WHERE unique_name LIKE :like1 OR json_data LIKE :like2
+             ORDER BY
+               CASE WHEN unique_name LIKE :starts THEN 0
+                    WHEN unique_name LIKE :like3 THEN 1
+                    ELSE 2 END,
+               CHAR_LENGTH(unique_name) ASC,
+               unique_name ASC
+             LIMIT :lim"
+        );
+        $stmt->bindValue(':like1', $like);
+        $stmt->bindValue(':like2', $like);
+        $stmt->bindValue(':starts', $q . '%');
+        $stmt->bindValue(':like3', $like);
+        $stmt->bindValue(':lim', $pool, PDO::PARAM_INT);
+        $stmt->execute();
+        $rows = $stmt->fetchAll();
+    }
 
     // Keep unique_name hits as-is; keep json-only hits ONLY when the query
     // matches one of the record's known names (current/alternate/past) —

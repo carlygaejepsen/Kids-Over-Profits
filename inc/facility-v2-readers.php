@@ -156,6 +156,11 @@ if (!function_exists('kop_v2_legacy_shaped_rows')) {
             $place = $code !== '' && isset($state_names[$code])
                 ? mb_strtoupper($state_names[$code])
                 : mb_strtoupper((string)($doc['location']['country'] ?? ''));
+            $facility = kop_facility_to_legacy($doc);
+            $data = array('facility' => $facility);
+            // Curated matchAliases sat beside the facility on a legacy row, and
+            // that is where the name resolvers look for them.
+            if (!empty($facility['matchAliases'])) $data['matchAliases'] = $facility['matchAliases'];
             $rows[] = array(
                 'unique_name' => $entry['unique_name'],
                 'payload' => array(
@@ -164,7 +169,7 @@ if (!function_exists('kop_v2_legacy_shaped_rows')) {
                     'displayName' => (string)$doc['identification']['name'],
                     'city' => (string)$doc['location']['city'],
                     'state' => $place,
-                    'data' => array('facility' => kop_facility_to_legacy($doc)),
+                    'data' => $data,
                 ),
             );
         }

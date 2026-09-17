@@ -108,10 +108,21 @@ if (!function_exists('kop_lawsuit_resolve_facility_folder')) {
         global $wpdb;
         if (empty($facilityIds) || !isset($wpdb) || !is_object($wpdb)) return null;
 
-        $placeholders = implode(',', array_fill(0, count($facilityIds), '?'));
-        $stmt = $pdo->prepare("SELECT id, unique_name FROM facilities_master WHERE id IN ($placeholders) ORDER BY FIELD(id, $placeholders)");
-        $stmt->execute(array_merge(array_map('intval', $facilityIds), array_map('intval', $facilityIds)));
-        $facilities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+        $v2_prefix = kop_v2_detect_prefix($pdo);
+        if (kop_v2_writes_active($pdo, $v2_prefix)) {
+            $names = kop_v2_pdo_names_by_id($pdo, $v2_prefix, $facilityIds);
+            $facilities = [];
+            foreach ($facilityIds as $fid) {
+                $fid = (int)$fid;
+                if (isset($names[$fid])) $facilities[] = ['id' => $fid, 'unique_name' => $names[$fid]];
+            }
+        } else {
+            $placeholders = implode(',', array_fill(0, count($facilityIds), '?'));
+            $stmt = $pdo->prepare("SELECT id, unique_name FROM facilities_master WHERE id IN ($placeholders) ORDER BY FIELD(id, $placeholders)");
+            $stmt->execute(array_merge(array_map('intval', $facilityIds), array_map('intval', $facilityIds)));
+            $facilities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
         if (empty($facilities)) return null;
 
         static $folderIndex = null;

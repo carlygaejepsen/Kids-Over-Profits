@@ -92,6 +92,31 @@ function kop_is_location_project_name($name) {
 function kop_load_existing_master_data(PDO $pdo, $master_id, $tables) {
     $preferred_order = [];
 
+    // Operator projects and state profiles live in the v2 tables once admin
+    // saves write them, so the "current data" side of the diff comes from
+    // there (inc/facility-v2-writer.php).
+    require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+    $v2_prefix = kop_v2_detect_prefix($pdo);
+    if (kop_v2_writes_active($pdo, $v2_prefix)) {
+        if (kop_is_location_project_name($master_id)) {
+            $projects = kop_v2_form_projects($pdo, $v2_prefix);
+            $profile = $projects['locations_' . mb_strtoupper(trim((string)$master_id))] ?? null;
+            if ($profile) {
+                return $profile['data'];
+            }
+        } else {
+            $row = kop_v2_pdo_master_row_by_name($pdo, $v2_prefix, $master_id);
+            if ($row) {
+                $decoded = json_decode((string)$row['json_data'], true);
+                if (is_array($decoded)) {
+                    return kop_extract_project_data($decoded);
+                }
+            }
+        }
+        // Not a facility project: fall through to the referrer and
+        // transporter tables below.
+    }
+
     if (kop_is_location_project_name($master_id)) {
         $preferred_order[] = $tables['locations'];
         $preferred_order[] = $tables['facilities'];

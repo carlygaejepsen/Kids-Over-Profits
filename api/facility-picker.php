@@ -354,9 +354,15 @@ try {
             echo json_encode(['success' => false, 'error' => 'unique_name is required']);
             exit;
         }
-        $stmt = $pdo->prepare("SELECT id, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
-        $stmt->execute([$uniqueName]);
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        require_once dirname(__DIR__) . '/inc/facility-v2-writer.php';
+        $v2_prefix = kop_v2_detect_prefix($pdo);
+        if (kop_v2_writes_active($pdo, $v2_prefix)) {
+            $row = kop_v2_pdo_master_row_by_name($pdo, $v2_prefix, $uniqueName);
+        } else {
+            $stmt = $pdo->prepare("SELECT id, json_data FROM facilities_master WHERE unique_name = ? LIMIT 1");
+            $stmt->execute([$uniqueName]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
         if (!$row) {
             http_response_code(404);
             echo json_encode(['success' => false, 'error' => 'Program not found']);
