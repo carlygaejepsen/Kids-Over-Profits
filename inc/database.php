@@ -1324,6 +1324,153 @@ function kop_filter_hidden_preview_ids($attachment_ids) {
     }));
 }
 
+/**
+ * Content signature for each attachment: the Media Deduper hash (mdd_hash =
+ * md5 of the file) when the file exists on disk, otherwise the attached file
+ * path. Two attachments with the same signature are the same document —
+ * byte-identical copies from the 2026 restore, or two records pointing at
+ * one file. Missing files (mdd_size 0) all hash to the empty-file md5, so
+ * those fall back to the path.
+ *
+ * @param int[] $attachment_ids
+ * @return array id => signature key
+ */
+function kop_get_attachment_signatures($attachment_ids) {
+    global $wpdb;
+    static $cache = array();
+
+    $ids = array_values(array_unique(array_map('intval', (array) $attachment_ids)));
+    $missing = array_values(array_filter($ids, function ($id) use ($cache) {
+        return $id > 0 && !isset($cache[$id]);
+    }));
+
+    foreach (array_chunk($missing, 500) as $chunk) {
+        $placeholders = implode(',', array_fill(0, count($chunk), '%d'));
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT post_id, meta_key, meta_value FROM {$wpdb->postmeta}
+             WHERE meta_key IN ('mdd_hash', 'mdd_size', '_wp_attached_file')
+               AND post_id IN ($placeholders)",
+            $chunk
+        ));
+        $meta = array();
+        foreach ((array) $rows as $row) {
+            $meta[(int) $row->post_id][$row->meta_key] = (string) $row->meta_value;
+        }
+        foreach ($chunk as $id) {
+            $m = $meta[$id] ?? array();
+            $hash = strtolower(trim($m['mdd_hash'] ?? ''));
+            $size = (int) ($m['mdd_size'] ?? 0);
+            $path = strtolower(trim($m['_wp_attached_file'] ?? ''));
+            if ($hash !== '' && $size > 0) {
+                $cache[$id] = 'h:' . $hash . ':' . $size;
+            } elseif ($path !== '') {
+                $cache[$id] = 'f:' . $path;
+            } else {
+                $cache[$id] = 'id:' . $id;
+            }
+        }
+    }
+
+    $out = array();
+    foreach ($ids as $id) {
+        if (isset($cache[$id])) {
+            $out[$id] = $cache[$id];
+        }
+    }
+    return $out;
+}
+
+/**
+ * Collapse attachment IDs that are copies of the same document (see
+ * kop_get_attachment_signatures) to one ID per document, so a library never
+ * lists the same file twice. Display-only: nothing is deleted — cleanup
+ * stays with api/dedupe-media.php. The copy shown is the lowest ID (the
+ * original upload; restored copies are newer and some of their root-level
+ * paths 404). Input order is preserved.
+ *
+ * @param int[] $attachment_ids
+ * @param array $seen Signature keys already shown elsewhere on the page
+ *                    (key => shown ID); updated in place when passed. The
+ *                    same ID may repeat (a document tagged into two
+ *                    folders); only a different copy is dropped.
+ * @return int[]
+ */
+function kop_collapse_duplicate_attachment_ids($attachment_ids, &$seen = null) {
+    $ids = array_values(array_unique(array_map('intval', (array) $attachment_ids)));
+    if (count($ids) < 2 && $seen === null) {
+        return $ids;
+    }
+    $sigs = kop_get_attachment_signatures($ids);
+
+    $best = array(); // key => id
+    foreach ($ids as $id) {
+        if (!isset($sigs[$id])) {
+            continue;
+        }
+        $key = $sigs[$id];
+        if (!isset($best[$key]) || $id < $best[$key]) {
+            $best[$key] = $id;
+        }
+    }
+
+    $out = array();
+    foreach ($ids as $id) {
+        if (!isset($sigs[$id])) {
+            $out[] = $id;
+            continue;
+        }
+        $key = $sigs[$id];
+        if ($best[$key] !== $id || ($seen !== null && isset($seen[$key]) && $seen[$key] !== $id)) {
+            continue;
+        }
+        $out[] = $id;
+    }
+    if ($seen !== null) {
+        foreach ($out as $id) {
+            if (isset($sigs[$id]) && !isset($seen[$sigs[$id]])) {
+                $seen[$sigs[$id]] = $id;
+            }
+        }
+    }
+    return $out;
+}
+
+/**
+ * Drop documents from a facility doc tree that were already listed higher up
+ * (top-level files first, then subfolders depth-first in display order), so
+ * a copy filed in both a facility folder and its subfolder shows once.
+ *
+ * @param WP_Post[] $posts
+ * @param array     $seen  Signature keys already shown; updated in place.
+ * @return WP_Post[]
+ */
+function kop_collapse_duplicate_posts($posts, &$seen) {
+    $by_id = array();
+    foreach ((array) $posts as $post) {
+        $by_id[(int) $post->ID] = $post;
+    }
+    $keep = kop_collapse_duplicate_attachment_ids(array_keys($by_id), $seen);
+    $out = array();
+    foreach ($keep as $id) {
+        $out[] = $by_id[$id];
+    }
+    return $out;
+}
+
+/** Recursive helper for kop_collapse_duplicate_posts over tree nodes. */
+function kop_collapse_duplicate_tree_nodes($nodes, &$seen) {
+    $out = array();
+    foreach ((array) $nodes as $node) {
+        $node['attachments'] = kop_collapse_duplicate_posts($node['attachments'], $seen);
+        $node['children'] = kop_collapse_duplicate_tree_nodes($node['children'], $seen);
+        if (empty($node['attachments']) && empty($node['children'])) {
+            continue;
+        }
+        $out[] = $node;
+    }
+    return $out;
+}
+
 function kop_clear_hidden_preview_cache() {
     delete_transient('kop_hidden_preview_ids');
 }
@@ -1375,6 +1522,9 @@ function kop_get_attachments_in_folder_ids($folder_ids) {
 
     // Minus PDF preview images registered as media (see kop_get_hidden_preview_ids).
     $attachment_ids = kop_filter_hidden_preview_ids($attachment_ids);
+
+    // Minus extra copies of the same document (see kop_collapse_duplicate_attachment_ids).
+    $attachment_ids = kop_collapse_duplicate_attachment_ids($attachment_ids);
 
     if (empty($attachment_ids)) {
         return array();
@@ -1539,6 +1689,12 @@ function kop_get_facility_doc_tree($folder_id, $merge_same_name = true) {
         $merged = kop_build_merged_from_doc_nodes($linked, $seen);
         $subfolders = array_merge($subfolders, $merged);
     }
+
+    // A different copy of a document already listed earlier in the tree
+    // (display order) is dropped; deliberate multi-folder tags still repeat.
+    $seen = array();
+    $files = kop_collapse_duplicate_posts($files, $seen);
+    $subfolders = kop_collapse_duplicate_tree_nodes($subfolders, $seen);
 
     return array(
         'files' => $files,
