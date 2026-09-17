@@ -18,10 +18,13 @@
  * The old viewer read the empty deficiencies array and showed "No violations
  * noted" on all 88 records, including the enforcement actions.
  *
- * Misattached documents: some case numbers carry another case's PDF and text
- * (twelve Pearl Youth Residence cases from 2021-2024 all hold case
- * 2023-11257's document). A record whose own case number is not in the text,
- * while another record with the same document is, shows only its case number.
+ * Misattached documents: DOH's listing links some case numbers to another
+ * case's PDF (twelve Pearl Youth Residence cases from 2021-2024 all point at
+ * case 2023-11257's document). wa_scraper.py now stores those cases without
+ * the document and sets categories.document_owner_case; rows scraped before
+ * that still carry the borrowed text, so a record whose own case number is not
+ * in the text, while another record with the same document is, is treated the
+ * same way. Either way the record shows only its case number.
  */
 (function () {
     'use strict';
@@ -106,7 +109,9 @@
             rows:         rows,
             outcome:      outcome,
             outcome_text: category === 'enforcement' ? '' : outcomeSentence(text),
-            misattached:  false
+            // Set by wa_scraper.py when DOH links this case to another case's PDF.
+            misattached:  !!safeString(cats.document_owner_case),
+            owner_case:   safeString(cats.document_owner_case)
         };
     }
 
@@ -261,8 +266,9 @@
                 preview: report.outcome_text,
                 body: function () {
                     if (report.misattached) {
-                        return ui.note('The Department of Health document for this case is not in our records. The file attached to it belonged to case '
-                            + report.owner_case + ', so it is shown under that case instead.');
+                        return ui.note('The Department of Health listing links this case to the document for case '
+                            + report.owner_case + ', which does not mention this case. That document is shown under case '
+                            + report.owner_case + '.');
                     }
                     var html = '';
                     if (report.outcome_text) html += ui.paragraphs([report.outcome_text]);
