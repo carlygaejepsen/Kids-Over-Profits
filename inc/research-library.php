@@ -367,6 +367,45 @@ function kop_research_is_excluded($title, $file) {
     return false;
 }
 
+/**
+ * Another attachment holding the same file, for a record whose own file is gone.
+ *
+ * A batch of attachment records created on 2025-09-30 points at the uploads
+ * root ("Overt-Covert-Conversion-Therapy.pdf") while the real upload sits in a
+ * dated folder ("2024/08/Overt-Covert-Conversion-Therapy.pdf") under its own,
+ * older record. 66 root-level records across the library have no file on disk.
+ * Where a good copy of the same filename exists, use it rather than render a
+ * broken image and a dead link.
+ *
+ * @param string $file Attached file path of the broken record.
+ * @return int Attachment ID of a copy whose file is present, or 0.
+ */
+function kop_research_find_live_copy($file) {
+    global $wpdb;
+
+    $base = basename((string) $file);
+    if ($base === '') {
+        return 0;
+    }
+
+    $candidates = $wpdb->get_col($wpdb->prepare(
+        "SELECT pm.post_id FROM {$wpdb->postmeta} pm
+         INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+         WHERE pm.meta_key = '_wp_attached_file' AND p.post_type = 'attachment'
+           AND pm.meta_value LIKE %s
+         LIMIT 10",
+        '%' . $wpdb->esc_like($base)
+    ));
+
+    foreach ((array) $candidates as $id) {
+        $path = get_attached_file((int) $id);
+        if ($path && file_exists($path)) {
+            return (int) $id;
+        }
+    }
+    return 0;
+}
+
 /** Last plausible publication year in a string, or 0. */
 function kop_research_year_from($text) {
     if (is_string($text) && preg_match_all('/\b(19[3-9]\d|20[0-4]\d)\b/', $text, $m)) {
@@ -474,20 +513,42 @@ function kop_research_library_items() {
                 $year = kop_research_year_from($base);
             }
 
+            // A record whose file is gone: serve the copy that still exists,
+            // and if there is none, mark the card so it is not shown as if it
+            // were a working download.
+            $source_id = $attachment->ID;
+            $path      = get_attached_file($attachment->ID);
+            $missing   = !($path && file_exists($path));
+            if ($missing) {
+                $live_id = kop_research_find_live_copy($file);
+                if ($live_id) {
+                    $source_id = $live_id;
+                    $path      = get_attached_file($live_id);
+                    $missing   = false;
+                }
+            }
+
             $cover = function_exists('kop_get_attachment_preview_url')
-                ? kop_get_attachment_preview_url($attachment->ID, 'large')
-                : wp_get_attachment_image_url($attachment->ID, 'large');
+                ? kop_get_attachment_preview_url($source_id, 'large')
+                : wp_get_attachment_image_url($source_id, 'large');
             if (!$cover && !empty($attachment->kop_sidecar_preview)) {
                 $cover = wp_get_attachment_image_url((int) $attachment->kop_sidecar_preview, 'large');
             }
 
-            $file_url = wp_get_attachment_url($attachment->ID);
-            $path     = get_attached_file($attachment->ID);
+            $file_url = wp_get_attachment_url($source_id);
             $type     = wp_check_filetype((string) $file_url);
+
+            // Nothing to link to and no summary page: the card would be dead.
+            // Editors still see it, flagged, so the file can be restored.
+            $has_summary = isset($override['summary']);
+            if ($missing && !$has_summary && !current_user_can(KOP_RESEARCH_CAP)) {
+                continue;
+            }
 
             $items[] = array(
                 'key'           => 'att:' . $attachment->ID,
-                'is_file'       => true,
+                'is_file'       => !$missing,
+                'missing'       => $missing,
                 'mime'          => (string) $attachment->post_mime_type,
                 'title'         => $title,
                 'description'   => trim((string) $attachment->post_content),
@@ -496,9 +557,10 @@ function kop_research_library_items() {
                 'kind'          => $kind,
                 'file_url'      => $file_url,
                 'file_label'    => $type['ext'] ? strtoupper($type['ext']) : 'File',
-                'file_size'     => ($path && file_exists($path)) ? size_format(filesize($path)) : '',
+                'file_size'     => (!$missing && $path && file_exists($path)) ? size_format(filesize($path)) : '',
                 'cover'         => $cover,
                 'cover_id'      => (int) get_post_meta($attachment->ID, 'kop_cover_image_id', true),
+                'source_id'     => $source_id,
                 'summary_url'   => isset($override['summary']) ? kop_research_summary_url($override['summary']) : '',
                 'summary_label' => isset($override['summary_label']) ? $override['summary_label'] : 'Notes, quotes and key points',
             );
@@ -514,6 +576,8 @@ function kop_research_library_items() {
         $items[] = array(
             'key'           => 'ext:' . $entry['id'],
             'is_file'       => false,
+            'missing'       => false,
+            'source_id'     => 0,
             'mime'          => '',
             'title'         => isset($edit['title']) ? $edit['title'] : $entry['title'],
             'description'   => isset($edit['description']) ? $edit['description'] : '',
@@ -561,6 +625,14 @@ function kop_hub_module_research() {
             <?php
             foreach ($items as $item) :
                 $primary  = $item['summary_url'] !== '' ? $item['summary_url'] : $item['file_url'];
+                if (!empty($item['missing'])) {
+                    // Its generated previews are gone with it, so an <img> here
+                    // would just be a broken-image icon.
+                    $item['cover'] = '';
+                    if ($item['summary_url'] === '') {
+                        $primary = '';   // editors-only card, nothing to link to
+                    }
+                }
                 $off_site = ($item['summary_url'] === '');
                 $meta     = array_filter(array($item['kind'], $item['year'] ? (string) $item['year'] : ''), 'strlen');
 
@@ -582,13 +654,21 @@ function kop_hub_module_research() {
                 };
                 ?>
                 <li class="kop-rl-card" data-key="<?php echo esc_attr($item['key']); ?>" data-cover-id="<?php echo (int) $item['cover_id']; ?>">
-                    <a class="<?php echo esc_attr($cls('kop-rl-cover', $primary_doc)); ?>" href="<?php echo esc_url($primary); ?>"<?php echo $primary_doc ? $doc_attrs : ''; ?><?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?> tabindex="-1" aria-hidden="true">
+                    <?php // With nothing to link to, the cover is a plain box. ?>
+                    <<?php echo $primary === '' ? 'span' : 'a'; ?> class="<?php echo esc_attr($cls('kop-rl-cover', $primary_doc)); ?>"<?php
+                        if ($primary !== '') {
+                            echo ' href="' . esc_url($primary) . '"';
+                            echo $primary_doc ? $doc_attrs : '';
+                            echo $off_site ? ' target="_blank" rel="noopener"' : '';
+                            echo ' tabindex="-1" aria-hidden="true"';
+                        }
+                    ?>>
                         <?php if ($item['cover']) : ?>
                             <img src="<?php echo esc_url($item['cover']); ?>" alt="" loading="lazy">
                         <?php else : ?>
                             <span class="kop-rl-noc"><?php echo esc_html($item['file_label']); ?></span>
                         <?php endif; ?>
-                    </a>
+                    </<?php echo $primary === '' ? 'span' : 'a'; ?>>
                     <?php if ($can_edit) : ?>
                         <button type="button" class="kop-rl-edit" data-key="<?php echo esc_attr($item['key']); ?>">
                             <span aria-hidden="true">&#9998;</span>
@@ -599,21 +679,32 @@ function kop_hub_module_research() {
                         <?php if ($meta) : ?>
                             <span class="kop-rl-kind"><?php echo esc_html(implode(' / ', $meta)); ?></span>
                         <?php endif; ?>
+                        <?php if (!empty($item['missing'])) : ?>
+                            <span class="kop-rl-missing" title="The media record exists but its file is not on the server. Re-upload it, then edit this card's photo.">File missing</span>
+                        <?php endif; ?>
                         <h3 class="kop-rl-title">
-                            <a<?php echo $primary_doc ? ' class="kop-rl-doc nofancybox"' : ''; ?> href="<?php echo esc_url($primary); ?>"<?php echo $primary_doc ? $doc_attrs : ''; ?><?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($item['title']); ?></a>
+                            <?php if ($primary === '') : ?>
+                                <?php echo esc_html($item['title']); ?>
+                            <?php else : ?>
+                                <a<?php echo $primary_doc ? ' class="kop-rl-doc nofancybox"' : ''; ?> href="<?php echo esc_url($primary); ?>"<?php echo $primary_doc ? $doc_attrs : ''; ?><?php echo $off_site ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html($item['title']); ?></a>
+                            <?php endif; ?>
                         </h3>
                         <?php if ($item['byline'] !== '') : ?>
                             <p class="kop-rl-byline"><?php echo esc_html($item['byline']); ?></p>
                         <?php endif; ?>
                         <p class="kop-rl-desc"<?php echo $item['description'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['description']); ?></p>
+                        <?php if ($item['summary_url'] !== '' || empty($item['missing'])) : ?>
                         <p class="kop-rl-links">
                             <?php if ($item['summary_url'] !== '') : ?>
                                 <a class="kop-rl-summary" href="<?php echo esc_url($item['summary_url']); ?>"><?php echo esc_html($item['summary_label']); ?></a>
                             <?php endif; ?>
-                            <a class="<?php echo esc_attr($cls('kop-rl-file', $item['is_file'])); ?>" href="<?php echo esc_url($item['file_url']); ?>"<?php echo $doc_attrs; ?> target="_blank" rel="noopener"><?php
-                                echo esc_html($item['file_label'] . ($item['file_size'] !== '' ? ' / ' . $item['file_size'] : ''));
-                            ?></a>
+                            <?php if (empty($item['missing'])) : ?>
+                                <a class="<?php echo esc_attr($cls('kop-rl-file', $item['is_file'])); ?>" href="<?php echo esc_url($item['file_url']); ?>"<?php echo $doc_attrs; ?> target="_blank" rel="noopener"><?php
+                                    echo esc_html($item['file_label'] . ($item['file_size'] !== '' ? ' / ' . $item['file_size'] : ''));
+                                ?></a>
+                            <?php endif; ?>
                         </p>
+                        <?php endif; ?>
                     </div>
                 </li>
             <?php endforeach; ?>

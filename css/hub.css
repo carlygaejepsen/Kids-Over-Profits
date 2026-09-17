@@ -295,6 +295,20 @@
 
 /* Research & Reports: in-place editor (editors only) */
 
+.kop-rl-missing {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.05rem 0.45rem;
+    border-radius: 999px;
+    background: var(--kop-coral-pink, #fe8088);
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: help;
+}
+
 .kop-rl-edit-toggle {
     padding: 0.2rem 0.7rem;
     border: 1px solid var(--kop-teal, #33a7b5);
