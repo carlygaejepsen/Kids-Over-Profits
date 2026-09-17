@@ -110,3 +110,52 @@ function kop_template_layout_close() {
     echo '</div><!-- .content-container -->' . "\n";
     echo '</div><!-- #primary -->' . "\n";
 }
+
+/**
+ * Internal tool templates that must never be indexed: admin screens and the
+ * logged-in editors. Filter 'kop_template_layout_noindex' to change.
+ */
+function kop_template_layout_noindex() {
+    return apply_filters('kop_template_layout_noindex', array(
+        'templates/page-admin-data.php',
+        'templates/page-admin-data-manager.php',
+        'templates/page-admin-lawsuits.php',
+        'templates/page-admin-legislation.php',
+        'templates/page-admin-submissions.php',
+        'templates/page-admin-volunteers.php',
+        'templates/page-news-processor.php',
+        'templates/page-wiki-editor.php',
+    ));
+}
+
+function kop_template_layout_is_noindex() {
+    if (!is_singular()) {
+        return false;
+    }
+    if (in_array(kop_template_layout_current_template(), kop_template_layout_noindex(), true)) {
+        return true;
+    }
+    // Tool pages built without a child template.
+    return is_page(array('tti-wiki-entry-generator', 'wiki-editor', 'news-processor'));
+}
+
+// Core robots output (used when Yoast is not handling the tag).
+add_filter('wp_robots', 'kop_template_layout_wp_robots', 20);
+function kop_template_layout_wp_robots($robots) {
+    if (!kop_template_layout_is_noindex()) {
+        return $robots;
+    }
+    unset($robots['max-image-preview']);
+    $robots['noindex'] = true;
+    $robots['nofollow'] = true;
+    return $robots;
+}
+
+// Yoast SEO replaces the core tag with its own; it reads this filter.
+add_filter('wpseo_robots', 'kop_template_layout_wpseo_robots', 20);
+function kop_template_layout_wpseo_robots($robots) {
+    if (!kop_template_layout_is_noindex()) {
+        return $robots;
+    }
+    return 'noindex, nofollow';
+}

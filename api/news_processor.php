@@ -259,7 +259,8 @@ window.KOP_NewsProcessor_Settings = {
     submissionUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/save-news-submission.php',
     savedValuesUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/saved-values.php',
     duplicateCheckUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/check-duplicate-url.php',
-    facilitySearchUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/facility-search.php'
+    facilitySearchUrl: '<?php echo get_stylesheet_directory_uri(); ?>/api/facility-search.php',
+    nonce: '<?php echo esc_js(wp_create_nonce('news_processor_nonce')); ?>'
 };
 
 // Configure autocomplete API endpoint for news processor

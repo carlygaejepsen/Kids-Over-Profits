@@ -918,11 +918,14 @@
                 ? window.KOP_NewsProcessor_Settings.savedValuesUrl 
                 : '/wp-content/themes/child/api/saved-values.php';
 
+            const headers = { 'Content-Type': 'application/json' };
+            if (window.KOP_NewsProcessor_Settings && window.KOP_NewsProcessor_Settings.nonce) {
+                headers['X-KOP-Nonce'] = window.KOP_NewsProcessor_Settings.nonce;
+            }
+
             await fetch(endpoint, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                 body: JSON.stringify({
                     form: 'news',
                     category: fieldName,

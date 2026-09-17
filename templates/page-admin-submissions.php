@@ -5,9 +5,7 @@
  * Admin interface for reviewing, approving, and managing wiki, news, and data form submissions
  */
 
-if (!current_user_can('manage_options')) {
-    wp_die('Access denied');
-}
+kop_require_page_capability('manage_options');
 
 get_header();
 ?>

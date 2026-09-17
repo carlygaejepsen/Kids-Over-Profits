@@ -5,6 +5,10 @@
  * This file contains the form markup. It is loaded by page-admin-data.php.
  */
 
+// Writes are gated again in api/save-master.php; this keeps the form itself
+// (and its localized config) off the public site.
+kop_require_page_capability('manage_options');
+
 get_header();
 ?>
 

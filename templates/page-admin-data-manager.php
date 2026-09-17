@@ -12,9 +12,7 @@
  * link-wiki-facility.php, facility-search.php). Admin-only.
  */
 
-if (!current_user_can('manage_options')) {
-    wp_die('You do not have permission to access this page.', 'Access Denied', array('response' => 403));
-}
+kop_require_page_capability('manage_options');
 
 get_header();
 ?>

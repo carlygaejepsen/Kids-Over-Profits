@@ -13,6 +13,13 @@ require_once __DIR__ . '/config.php';
 
 header('Content-Type: application/json');
 
+// Schema changes are admin-only (CLI allowed). A query param is not security.
+if (php_sapi_name() !== 'cli' && (!function_exists('current_user_can') || !current_user_can('manage_options'))) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
+
 $is_cli = php_sapi_name() === 'cli';
 
 if (!$is_cli && ($_GET['init'] ?? null) !== '1') {

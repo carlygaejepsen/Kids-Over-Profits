@@ -146,7 +146,7 @@ function kop_render_bug_reports_page() {
     global $wpdb;
 
     if (!current_user_can('manage_options')) {
-        wp_die('Not authorized');
+        wp_die('Not authorized', 'Access Denied', array('response' => 403));
     }
 
     $statuses = array('new', 'in_progress', 'resolved', 'dismissed');

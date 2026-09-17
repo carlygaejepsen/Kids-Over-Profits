@@ -6,9 +6,7 @@
  */
 
 if (!defined('ABSPATH')) { exit; }
-if (!is_user_logged_in() || !current_user_can('edit_posts')) {
-    wp_die('Access denied. Contributor privileges or higher required.');
-}
+kop_require_page_capability('edit_posts');
 
 get_header();
 ?>

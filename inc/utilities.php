@@ -197,3 +197,29 @@ function kop_title_case($text) {
 
     return $output;
 }
+
+/**
+ * Gate a front-end page template behind a capability.
+ *
+ * Logged-out visitors are sent to the login screen (and back afterwards)
+ * instead of a bare wp_die(), which answers with HTTP 500 and shows up as
+ * a server error in the logs every time a crawler hits an admin tool page.
+ * Logged-in users without the capability get a proper 403.
+ *
+ * Call before get_header() so the redirect can still send headers.
+ */
+function kop_require_page_capability($capability = 'manage_options') {
+    if (current_user_can($capability)) {
+        return;
+    }
+    if (!is_user_logged_in()) {
+        $target = get_permalink();
+        wp_safe_redirect(wp_login_url($target ? $target : home_url('/')));
+        exit;
+    }
+    wp_die(
+        'You do not have permission to access this page.',
+        'Access Denied',
+        array('response' => 403)
+    );
+}

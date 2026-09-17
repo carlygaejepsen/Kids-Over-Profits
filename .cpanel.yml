@@ -56,3 +56,12 @@ deployment:
     - /bin/rm -f $DEPLOYPATH/js/referrer-index.js
     - /bin/rm -f $DEPLOYPATH/js/data-form/admin-data-page.js
     - /bin/rm -f $DEPLOYPATH/templates/fetch-bill-details.php
+    # Debug and test endpoints removed 2026-09-17 (no auth, exposed server
+    # paths and data, one purged the LiteSpeed cache on request).
+    - /bin/rm -f $DEPLOYPATH/delete-git.php
+    - /bin/rm -f $DEPLOYPATH/api/clear-cache.php
+    - /bin/rm -f $DEPLOYPATH/api/debug-master-data.php
+    - /bin/rm -f $DEPLOYPATH/api/test-connection.php
+    - /bin/rm -f $DEPLOYPATH/api/test-get.php
+    - /bin/rm -f $DEPLOYPATH/api/debug-recent-projects.php
+    - /bin/rm -f $DEPLOYPATH/api/validate-json.php

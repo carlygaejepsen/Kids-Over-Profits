@@ -11,9 +11,7 @@
  */
 
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, GET, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('X-Content-Type-Options: nosniff');
 
 // Handle preflight
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -22,6 +20,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/config.php';
+
+// config.php boots WordPress, so capability and nonce checks are available.
+// Reads are public. Writes need the news-processor page nonce (sent by
+// js/news-processor.js as X-KOP-Nonce) or an administrator; deletes are
+// admin-only.
+$kop_is_admin = function_exists('current_user_can') && current_user_can('manage_options');
+$kop_nonce_ok = function_exists('wp_verify_nonce')
+    && wp_verify_nonce((string) ($_SERVER['HTTP_X_KOP_NONCE'] ?? ''), 'news_processor_nonce');
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$kop_is_admin && !$kop_nonce_ok) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE' && !$kop_is_admin) {
+    http_response_code(403);
+    echo json_encode(['success' => false, 'error' => 'Not authorized']);
+    exit;
+}
 
 try {
     switch ($_SERVER['REQUEST_METHOD']) {
@@ -90,19 +107,26 @@ try {
             }
             
             $formType = $data['form'] ?? $data['form_type'] ?? '';
-            $category = $data['category'] ?? '';
-            $value = $data['value'] ?? '';
-            
+            $category = trim((string) ($data['category'] ?? ''));
+            $value = trim((string) ($data['value'] ?? ''));
+
             // Validate
             if (!in_array($formType, ['wiki', 'news'])) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Invalid form type']);
                 exit;
             }
-            
-            if (empty($category) || empty($value)) {
+
+            if ($category === '' || $value === '') {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Category and value are required']);
+                exit;
+            }
+
+            // Column widths: category varchar(100), value varchar(255).
+            if (mb_strlen($category) > 100 || mb_strlen($value) > 255) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'error' => 'Category or value too long']);
                 exit;
             }
             
@@ -165,15 +189,13 @@ try {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'Database error occurred',
-        'details' => $e->getMessage()
+        'error' => 'Database error occurred'
     ]);
 } catch (Exception $e) {
     error_log("Saved values error: " . $e->getMessage());
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'error' => 'An error occurred',
-        'details' => $e->getMessage()
+        'error' => 'An error occurred'
     ]);
 }

@@ -1,6 +1,10 @@
-# CORS headers for API
+# CORS: only the read-only public data endpoints may be fetched from other
+# origins. Admin and write endpoints stay same-origin (they are protected by
+# WordPress capability and nonce checks, which wildcard CORS would weaken).
 <IfModule mod_headers.c>
-  Header set Access-Control-Allow-Origin "*"
-  Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
-  Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+  <FilesMatch "^(get-master-data|get-all-data|get-referrers-only|get-transporters-only|get-autocomplete|facility-search|inspections-read|check-duplicate-url|fetch-wiki-page)\.php$">
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+  </FilesMatch>
 </IfModule>
