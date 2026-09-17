@@ -64,6 +64,16 @@ function kop_fsl_live_target($rest) {
         $file = get_stylesheet_directory() . '/' . substr($path, strlen($theme_prefix));
         return file_exists($file) ? home_url('/' . $rest) : null;
     }
+    // Retired or renamed slugs: follow the theme's 301 table (inc/redirects.php)
+    // so the content links straight to the destination instead of bouncing.
+    if (function_exists('kop_redirect_map')) {
+        $map = kop_redirect_map();
+        $slug = trim($path, '/');
+        if (isset($map[$slug])) {
+            $dest = $map[$slug];
+            return strpos($dest, 'http') === 0 ? $dest : home_url($dest);
+        }
+    }
     $candidate = home_url('/' . $rest);
     $post_id = url_to_postid($candidate);
     if ($post_id > 0 && get_post_status($post_id) === 'publish') {
