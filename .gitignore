@@ -68,6 +68,10 @@ __pycache__/
 tmp/baseline-*.json
 tmp/after-*.json
 tmp/rehearsal/
+# Per-state legacy-vs-v2 page snapshots from the same harness; add other
+# state names here as they are captured.
+tmp/*-v2.json
+tmp/utah.json
 
 # Local SQLite copy of prod (scripts/sync-prod-sqlite.py)
 tmp/*.sql
