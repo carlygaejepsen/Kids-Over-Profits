@@ -878,7 +878,11 @@
                 : 'No findings';
 
             const sourceLinks = [];
-            if (insp.pdf_url) sourceLinks.push(`<a href="${escapeHtml(insp.pdf_url)}" target="_blank" rel="noopener">PDF</a>`);
+            const pdfUrls = Array.isArray(insp.pdf_urls) && insp.pdf_urls.length ? insp.pdf_urls : (insp.pdf_url ? [insp.pdf_url] : []);
+            pdfUrls.forEach((url, i) => {
+                const label = pdfUrls.length > 1 ? `PDF ${i + 1}` : 'PDF';
+                sourceLinks.push(`<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${label}</a>`);
+            });
             if (insp.report_url) sourceLinks.push(`<a href="${escapeHtml(insp.report_url)}" target="_blank" rel="noopener">Source page</a>`);
 
             const detailsRows = [

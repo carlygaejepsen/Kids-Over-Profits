@@ -3860,6 +3860,31 @@ function kop_state_collect_inspection_summaries($state_name) {
                 }
             }
 
+            // Utah's scraper posts only the date, type and finding count; the
+            // cited rules and checklist PDFs live in the ut_reports*.json
+            // datasets (the same files /ut-reports/ reads). Match them back on
+            // Utah facility ID (stored as program_name) or name, plus date.
+            if ($state_name === 'Utah') {
+                $ut_details = kop_state_ut_inspection_details();
+                foreach ($facility_rows as $f) {
+                    $fid = (int)$f['id'];
+                    if (empty($inspections_by_facility[$fid])) continue;
+                    foreach ($inspections_by_facility[$fid] as &$_rec) {
+                        $detail = kop_state_ut_match_detail($ut_details, $f, $_rec);
+                        if (!$detail) continue;
+                        if (empty($_rec['findings']) && $detail['findings']) {
+                            $_rec['findings'] = array_slice($detail['findings'], 0, 12);
+                            $_rec['finding_count'] = max((int)$_rec['finding_count'], count($detail['findings']));
+                        }
+                        if ($_rec['pdf_url'] === '' && $detail['pdf_urls']) {
+                            $_rec['pdf_url'] = $detail['pdf_urls'][0];
+                            if (count($detail['pdf_urls']) > 1) $_rec['pdf_urls'] = $detail['pdf_urls'];
+                        }
+                    }
+                    unset($_rec);
+                }
+            }
+
             $summaries = array();
             foreach ($facility_rows as $f) {
                 $fname = trim((string)$f['facility_name']);
@@ -3877,6 +3902,8 @@ function kop_state_collect_inspection_summaries($state_name) {
                 }
                 $licensed_name = trim((string)($f['program_name'] ?? ''));
                 if (strcasecmp($licensed_name, $fname) === 0) $licensed_name = '';
+                // UT stores its numeric state facility ID here, not a program name.
+                if (ctype_digit($licensed_name)) $licensed_name = '';
                 $summaries[] = array(
                     'facility_name'          => $fname,
                     'inspection_address'     => trim((string)($f['full_address'] ?? '')),
@@ -4262,6 +4289,141 @@ function kop_state_normalize_deficiencies(array $deficiencies) {
         $out[] = array('rule' => $rule, 'excerpt' => $excerpt);
     }
     return $out;
+}
+
+/**
+ * Index of Utah inspection details from the ut_reports*.json datasets:
+ * findings ({rule, excerpt, evidence}) and checklist PDF links, keyed by
+ * Utah facility ID and by normalized facility name, then by Y-m-d date.
+ * PDFs link to the copy hosted in js/data/ut_checklists/ when it exists,
+ * otherwise to the state's checklist download.
+ *
+ * @return array {by_id: [id => [date => entry[]]], by_name: [...]}
+ */
+function kop_state_ut_inspection_details() {
+    static $index = null;
+    if ($index !== null) return $index;
+    $index = array('by_id' => array(), 'by_name' => array());
+
+    $dir = get_stylesheet_directory() . '/js/data/ut_checklists';
+    $uri = get_stylesheet_directory_uri() . '/js/data/ut_checklists';
+    $files = glob($dir . '/ut_reports*.json') ?: array();
+
+    foreach ($files as $file) {
+        $data = json_decode((string)file_get_contents($file), true);
+        if (!is_array($data)) continue;
+        foreach ($data as $facility) {
+            if (!is_array($facility) || empty($facility['inspections']) || !is_array($facility['inspections'])) continue;
+            $ut_id = trim((string)($facility['facility_id'] ?? ''));
+            $name_key = kop_normalize_facility_name((string)($facility['name'] ?? ''));
+
+            foreach ($facility['inspections'] as $insp) {
+                if (!is_array($insp)) continue;
+                $ts = strtotime((string)($insp['inspection_date'] ?? ''));
+                if (!$ts) continue;
+                $date = date('Y-m-d', $ts);
+                $types = $insp['inspection_types'] ?? '';
+                if (is_array($types)) $types = implode(', ', $types);
+
+                $findings = array();
+                foreach ((array)($insp['findings'] ?? array()) as $fi) {
+                    if (!is_array($fi)) continue;
+                    $finding = array(
+                        'rule'    => trim((string)($fi['rule_number'] ?? '')),
+                        'excerpt' => trim((string)($fi['rule_description'] ?? '')),
+                    );
+                    $text = trim((string)($fi['finding_text'] ?? ''));
+                    if ($finding['excerpt'] === '') {
+                        $finding['excerpt'] = $text;
+                    } elseif ($text !== '') {
+                        $finding['evidence'] = $text;
+                    }
+                    if ($finding['rule'] !== '' || $finding['excerpt'] !== '') $findings[] = $finding;
+                }
+
+                $pdf_urls = array();
+                foreach ((array)($insp['checklists'] ?? array()) as $cl) {
+                    if (!is_array($cl)) continue;
+                    $base = basename(str_replace('\\', '/', (string)($cl['pdf_file'] ?? '')));
+                    if ($base !== '' && file_exists($dir . '/' . $base)) {
+                        $pdf_urls[] = $uri . '/' . rawurlencode($base);
+                    } elseif (!empty($cl['pdf_url'])) {
+                        $pdf_urls[] = (string)$cl['pdf_url'];
+                    } elseif (!empty($cl['checklist_id'])) {
+                        $pdf_urls[] = 'https://cclapi.dlbc.utah.gov/api/public/checklist/' . (int)$cl['checklist_id'] . '?dl=1';
+                    }
+                }
+                if (!$findings && !$pdf_urls) continue;
+
+                $entry = array(
+                    'type_key' => strtolower(preg_replace('/\s+/', ' ', trim((string)$types))),
+                    'findings' => $findings,
+                    'pdf_urls' => array_values(array_unique($pdf_urls)),
+                );
+                foreach (array('by_id' => $ut_id, 'by_name' => $name_key) as $bucket => $key) {
+                    if ($key === '') continue;
+                    $list = &$index[$bucket][$key][$date];
+                    if (!is_array($list)) $list = array();
+                    // The datasets overlap; fold repeat copies of one inspection together.
+                    $merged = false;
+                    foreach ($list as &$existing) {
+                        if ($existing['type_key'] !== $entry['type_key']) continue;
+                        if (count($entry['findings']) > count($existing['findings'])) $existing['findings'] = $entry['findings'];
+                        $existing['pdf_urls'] = kop_state_ut_merge_pdf_urls($existing['pdf_urls'], $entry['pdf_urls']);
+                        $merged = true;
+                        break;
+                    }
+                    unset($existing);
+                    if (!$merged) $list[] = $entry;
+                    unset($list);
+                }
+            }
+        }
+    }
+    return $index;
+}
+
+/**
+ * Union two PDF link lists, dropping a state-download link when the hosted
+ * copy of the same checklist is already listed.
+ */
+function kop_state_ut_merge_pdf_urls(array $a, array $b) {
+    $by_checklist = array();
+    foreach (array_merge($a, $b) as $url) {
+        $key = preg_match('/checklist(?:_|\/)(\d+)/', $url, $m) ? $m[1] : $url;
+        $hosted = strpos($url, 'cclapi.dlbc.utah.gov') === false;
+        if (!isset($by_checklist[$key]) || ($hosted && strpos($by_checklist[$key], 'cclapi.dlbc.utah.gov') !== false)) {
+            $by_checklist[$key] = $url;
+        }
+    }
+    return array_values($by_checklist);
+}
+
+/**
+ * The Utah dataset entry for one DB inspection record, or null. Matches on
+ * facility ID then name, and on date; when a facility had more than one
+ * inspection that day, the inspection type must match too.
+ */
+function kop_state_ut_match_detail(array $index, array $facility_row, array $record) {
+    $ts = strtotime((string)($record['date'] ?? ''));
+    if (!$ts) return null;
+    $date = date('Y-m-d', $ts);
+
+    $ut_id = trim((string)($facility_row['program_name'] ?? ''));
+    $name_key = kop_normalize_facility_name((string)($facility_row['facility_name'] ?? ''));
+    $candidates = array();
+    if ($ut_id !== '' && isset($index['by_id'][$ut_id][$date])) {
+        $candidates = $index['by_id'][$ut_id][$date];
+    } elseif ($name_key !== '' && isset($index['by_name'][$name_key][$date])) {
+        $candidates = $index['by_name'][$name_key][$date];
+    }
+    if (!$candidates) return null;
+
+    $type_key = strtolower(preg_replace('/\s+/', ' ', trim((string)($record['type'] ?? ''))));
+    foreach ($candidates as $c) {
+        if ($type_key !== '' && $c['type_key'] === $type_key) return $c;
+    }
+    return count($candidates) === 1 ? $candidates[0] : null;
 }
 
 function kop_state_collect_facilities($state_name) {
