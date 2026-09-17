@@ -88,6 +88,11 @@
             const activeTab = document.querySelector('.category-tab.active');
             const rawCategory = activeTab ? activeTab.dataset.category : 'companies';
             applyViewLayout(rawCategory === 'states' ? 'locations' : rawCategory);
+            // applyViewLayout resets the operator section's inline display, so
+            // re-apply the private-ownership visibility for the new view.
+            if (typeof window.updatePrivateOwnershipSliderAppearance === 'function') {
+                window.updatePrivateOwnershipSliderAppearance();
+            }
         };
 
         const tabsContainer = document.querySelector('.category-tabs');
@@ -537,41 +542,49 @@
                 return false;
             }
 
-            const privateToggle = document.getElementById('private-ownership-toggle');
-            if (privateToggle && privateToggle.checked) {
-                console.log('🔒 Private facility mode detected - clearing operator data before submission');
+            const submissionTab = document.querySelector('.category-tab.active');
+            const submissionCategory = submissionTab ? submissionTab.dataset.category : 'companies';
+            const isLocationSubmission = submissionCategory === 'locations' || submissionCategory === 'states';
 
-                if (dataToSubmit.operator) {
-                    dataToSubmit.operator = {
-                        name: '',
-                        currentName: '',
-                        pastNames: [],
-                        otherNames: [],
-                        foundingDate: '',
-                        keyPersonnel: [],
-                        headquarters: '',
-                        website: ''
-                    };
-                }
+            if (isLocationSubmission && Array.isArray(dataToSubmit.facilities)) {
+                // Facilities default to privately owned. Clear operator data only on
+                // facilities that resolve private, and clear the project-level
+                // operator only when no facility in the project belongs to a chain.
+                const emptyOperator = () => ({
+                    name: '',
+                    currentName: '',
+                    pastNames: [],
+                    otherNames: [],
+                    foundingDate: '',
+                    keyPersonnel: [],
+                    headquarters: '',
+                    website: ''
+                });
+                const resolvePrivate = typeof window.resolvePrivateOwnership === 'function'
+                    ? window.resolvePrivateOwnership
+                    : (facility) => facility && facility.isPrivatelyOwned === true;
 
-                if (Array.isArray(dataToSubmit.facilities)) {
-                    dataToSubmit.facilities.forEach(facility => {
-                        if (facility && facility.operator) {
-                            facility.operator = {
-                                name: '',
-                                currentName: '',
-                                pastNames: [],
-                                otherNames: [],
-                                foundingDate: '',
-                                keyPersonnel: [],
-                                headquarters: '',
-                                website: ''
-                            };
+                let clearedCount = 0;
+                let anyChainFacility = false;
+                dataToSubmit.facilities.forEach(facility => {
+                    if (!facility) return;
+                    if (resolvePrivate(facility)) {
+                        if (facility.operator) {
+                            facility.operator = emptyOperator();
+                            clearedCount++;
                         }
-                    });
+                    } else {
+                        anyChainFacility = true;
+                    }
+                });
+
+                if (!anyChainFacility && dataToSubmit.operator) {
+                    dataToSubmit.operator = emptyOperator();
                 }
 
-                console.log('🧹 Operator data cleared for private facility submission');
+                if (clearedCount > 0 || !anyChainFacility) {
+                    console.log(`Operator data cleared for ${clearedCount} privately owned facilit${clearedCount === 1 ? 'y' : 'ies'} before submission`);
+                }
             }
 
             const projectNameInput = document.getElementById('project-name');
@@ -1045,16 +1058,41 @@
         const operatorSection = document.getElementById('operator-section');
         const ownershipModal = document.getElementById('ownership-modal');
 
+        function facilityHasOperatorData(facility) {
+            if (!facility) return false;
+            const operatorName = facility.operator && facility.operator.name;
+            const sourceOperatorName = facility.sourceOperator && facility.sourceOperator.name;
+            const currentOperator = facility.identification && facility.identification.currentOperator;
+            return [operatorName, sourceOperatorName, currentOperator].some(value => value && String(value).trim());
+        }
+
+        // Facilities default to privately owned. An explicit boolean on the record
+        // wins; otherwise a facility that already carries operator data is treated
+        // as part of a chain so nothing gets hidden or cleared unexpectedly.
+        function resolvePrivateOwnership(facility) {
+            if (facility && typeof facility.isPrivatelyOwned === 'boolean') {
+                return facility.isPrivatelyOwned;
+            }
+            return !facilityHasOperatorData(facility);
+        }
+
+        function isLocationsViewActive() {
+            const activeTab = document.querySelector('.category-tab.active');
+            const category = activeTab ? activeTab.dataset.category : 'companies';
+            return category === 'locations' || category === 'states';
+        }
+
         function updatePrivateOwnershipSliderAppearance() {
             if (!privateOwnershipToggle) return;
 
-            // Restore toggle state from facility data
+            // Restore toggle state from facility data (defaulting to private)
             const currentFacility = window.formData?.facilities?.[window.currentFacilityIndex];
-            if (currentFacility && typeof currentFacility.isPrivatelyOwned === 'boolean') {
-                privateOwnershipToggle.checked = currentFacility.isPrivatelyOwned;
-            }
+            privateOwnershipToggle.checked = resolvePrivateOwnership(currentFacility);
 
             const isPrivate = !!privateOwnershipToggle.checked;
+            // Ownership only shapes the form in the locations view; company
+            // projects always show the parent company section.
+            const hideOperator = isPrivate && isLocationsViewActive();
 
             if (privateOwnershipStatus) {
                 privateOwnershipStatus.textContent = isPrivate ? 'Privately owned' : 'Part of a chain/corporate';
@@ -1065,8 +1103,8 @@
                 privateOwnershipBadge.classList.toggle('not-private', !isPrivate);
             }
 
-            if (operatorSection) operatorSection.style.display = isPrivate ? 'none' : 'block';
-            applyPrivateOwnershipFormState(isPrivate);
+            if (operatorSection) operatorSection.style.display = hideOperator ? 'none' : 'block';
+            applyPrivateOwnershipFormState(hideOperator);
         }
 
         function clearOperatorFields() {
@@ -1198,6 +1236,7 @@
         }
 
 window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppearance;
+window.resolvePrivateOwnership = resolvePrivateOwnership;
 
         function showSuggestionStatus(message, type) {
             // Show in the inline status div (backward compatibility)
@@ -2287,8 +2326,8 @@ window.updatePrivateOwnershipSliderAppearance = updatePrivateOwnershipSliderAppe
                     organizeMatches.innerHTML = ''; // Clear previous results
                     results.forEach(result => {
                         const facilityName = result.facility.identification?.name || 'Unnamed Facility';
-                        // Check for privately owned facilities - use isPrivatelyOwned flag
-                        const isPrivate = result.facility.isPrivatelyOwned === true;
+                        // Facilities default to privately owned unless flagged otherwise
+                        const isPrivate = result.facility.isPrivatelyOwned !== false;
                         const operator = result.operator || result.facility.identification?.currentOperator || (isPrivate ? 'Privately Owned' : 'Unknown Operator');
                         const location = result.facility.location || 'Unknown Location';
                         

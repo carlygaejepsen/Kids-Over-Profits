@@ -710,13 +710,13 @@ get_header();
             <div style="display: flex; align-items: center; gap: 15px; font-weight: 600; color: #1f2937; flex-wrap: wrap;">
                 <span>Ownership Type:</span>
                 <div style="display: flex; align-items: center; gap: 12px;">
-                    <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Not set</span>
-                    <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Set ownership</button>
+                    <span id="private-ownership-status" style="font-weight: 700; color: #0f172a;">Privately owned</span>
+                    <button type="button" id="private-ownership-edit-btn" class="kop-btn" style="padding: 6px 10px; font-size: 13px;">Change ownership</button>
                     <input type="checkbox" id="private-ownership-toggle" style="display: none;">
                 </div>
             </div>
             <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
-                Set this first for location projects. It switches the fields below between parent company and owner information.
+                Facilities start as privately owned, so the parent company section stays hidden. Choose "No" if this facility belongs to a chain and the parent company fields will appear.
             </p>
         </div>
 
