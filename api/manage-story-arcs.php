@@ -290,7 +290,7 @@ Duplicate copies of one article are cleaned up in <a href="manage-duplicate-arti
         <textarea name="match_terms" placeholder="hyde school&#10;fuller v. hyde"></textarea>
         <label>Facility button (optional): name + profile URL</label>
         <input type="text" name="facility_label" placeholder="Hyde School" style="max-width:280px">
-        <input type="text" name="facility_url" placeholder="/hyde (blank = program index search)" style="max-width:280px">
+        <input type="text" name="facility_url" placeholder="/hyde (blank = the facility's profile page, else program index search)" style="max-width:280px">
         <label>Display order (lower = higher on the page)</label>
         <input type="number" name="display_order" value="0" style="max-width:90px">
         <br>

@@ -297,6 +297,16 @@ $hyde = array();
 foreach ($index['ids'] as $id => $e) if (stripos($e['name'], 'Hyde School') === 0 || stripos($e['name'], 'Beloved Ones') === 0) $hyde[] = "$id {$e['slug']}";
 echo '  same-name examples: ' . implode(' | ', $hyde) . "\n";
 
+// Name lookup used by the story-arc "Learn more about X" buttons
+// (kop_news_arc_facility_link in inc/features.php).
+echo "\n-- Name lookup --\n";
+foreach (array('Hyde School', 'Provo Canyon School', 'hyde school', 'Provo Canyon School, Inc.') as $probe) {
+    $url = kop_facility_page_url_for_name($probe);
+    echo "  $probe => " . ($url === '' ? '(none)' : $url) . "\n";
+    $check("name lookup resolves '$probe'", $url !== '' && strpos($url, 'search=') === false, $url);
+}
+$check('name lookup ignores unknown names', kop_facility_page_url_for_name('No Such Place Academy 9000') === '');
+
 // ---------------------------------------------------------------------------
 // Routing
 // ---------------------------------------------------------------------------

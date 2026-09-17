@@ -1124,6 +1124,33 @@ if (!function_exists('kop_facility_page_url')) {
     }
 }
 
+if (!function_exists('kop_facility_page_url_for_name')) {
+    /**
+     * Profile URL for a facility named in free text (a story arc's facility
+     * label, a mention in an article), or '' when no record of that name has
+     * a page. Only records in the page index are considered, so an operator
+     * of the same name can never be mistaken for the facility. An exact
+     * (case-insensitive) name match wins over the normalized spelling; within
+     * a pass the lowest id wins, as in kop_v2_name_id_map().
+     */
+    function kop_facility_page_url_for_name($name) {
+        $name = trim((string) $name);
+        if ($name === '') return '';
+        $index = kop_facility_pages_index();
+        if (empty($index['ids'])) return '';
+        $exact = function_exists('mb_strtolower') ? mb_strtolower($name) : strtolower($name);
+        $loose = kop_facility_pages_name_key($name);
+        $loose_hit = 0;
+        foreach ($index['ids'] as $id => $entry) {
+            $entry_name = (string) $entry['name'];
+            $entry_exact = function_exists('mb_strtolower') ? mb_strtolower($entry_name) : strtolower($entry_name);
+            if ($entry_exact === $exact) return kop_facility_page_url((int) $id);
+            if ($loose_hit === 0 && $loose !== '' && kop_facility_pages_name_key($entry_name) === $loose) $loose_hit = (int) $id;
+        }
+        return $loose_hit > 0 ? kop_facility_page_url($loose_hit) : '';
+    }
+}
+
 if (!function_exists('kop_facility_pages_thin_target')) {
     /** Where a record without a page of its own sends the visitor. */
     function kop_facility_pages_thin_target($facility_id) {

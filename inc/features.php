@@ -915,8 +915,10 @@ add_shortcode('kop_document', 'kop_document_shortcode');
 /**
  * Facility learn-more link for a story arc row, or null when the arc has no
  * facility_label. A custom facility_url (a dedicated profile page like /hyde)
- * wins; without one the button goes to the program index filtered to the
- * facility name, which shows everything facilities_master has on it.
+ * wins; without one the button goes to the facility's profile page
+ * (editorial post or generated /facility/<slug>/, inc/facility-pages.php)
+ * when a record of that name has one, and otherwise to the program index
+ * filtered to the facility name.
  */
 function kop_news_arc_facility_link(array $arc): ?array {
     $label = trim((string) ($arc['facility_label'] ?? ''));
@@ -924,6 +926,9 @@ function kop_news_arc_facility_link(array $arc): ?array {
         return null;
     }
     $url = trim((string) ($arc['facility_url'] ?? ''));
+    if ($url === '' && function_exists('kop_facility_page_url_for_name')) {
+        $url = (string) kop_facility_page_url_for_name($label);
+    }
     if ($url === '') {
         $url = '/tti-program-index/?search=' . rawurlencode($label);
     }
