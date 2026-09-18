@@ -1,0 +1,575 @@
+/*
+ * Network map
+ *
+ * Layout for the map shell: intro, toolbar, chain breadcrumb, filter rail,
+ * canvas stage and drawer. Colours come from css/colors.css.
+ *
+ * Above 900px the rail and drawer are columns either side of the stage.
+ * Below it the rail becomes a sheet behind the Filters button and the drawer
+ * takes the screen, so the canvas always has the full width.
+ */
+
+.kop-network {
+	--kop-net-gap: 1rem;
+	--kop-net-rail: 250px;
+	--kop-net-drawer: 330px;
+	--kop-net-radius: 8px;
+	--kop-net-border: #d8d2bd;
+	--kop-net-surface: var(--kop-sand, #F2EEDF);
+	--kop-net-ink: var(--kop-midnight-blue, #000435);
+
+	max-width: 1600px;
+	margin: 0 auto;
+	padding: 0 16px 3rem;
+	color: var(--kop-net-ink);
+}
+
+/* ---------------------------------------------------------------- intro -- */
+
+/* The map is the page. The standfirst has to be read before the map means
+ * anything, so none of it is hidden, but it is set to take a third of the
+ * room it used to: centred 60ch of body copy pushed the canvas off the
+ * bottom of the window on anything but a tall desktop. */
+.kop-network__intro {
+	max-width: 78ch;
+	margin: 0 0 1rem;
+}
+
+.kop-network__title {
+	margin: 0 0 0.4rem;
+	font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem);
+	line-height: 1.15;
+}
+
+.kop-network__standfirst p {
+	margin: 0 0 0.5rem;
+	font-size: 0.95rem;
+	line-height: 1.5;
+}
+
+/* The caveat about what a connection does and does not claim. Present in
+ * full and never collapsed, but set as the secondary voice it is. */
+.kop-network__standfirst p:last-child {
+	font-size: 0.875rem;
+	opacity: 0.82;
+}
+
+.kop-network__tally {
+	display: block;
+	margin-top: 0.4rem;
+	font-size: 0.9em;
+	opacity: 0.75;
+}
+
+.kop-network__editorial {
+	margin-top: 1.25rem;
+}
+
+.kop-network__noscript,
+.kop-network__unavailable {
+	max-width: 60ch;
+	margin: 0 auto 2rem;
+	padding: 1rem 1.15rem;
+	border-left: 4px solid var(--kop-teal, #33A7B5);
+	border-radius: 0 var(--kop-net-radius) var(--kop-net-radius) 0;
+	background: var(--kop-soft-yellow, #FFF5CB);
+	line-height: 1.6;
+}
+
+.kop-network__unavailable code {
+	display: inline-block;
+	padding: 0.1em 0.35em;
+	background: rgba(0, 4, 53, 0.08);
+	border-radius: 3px;
+	font-size: 0.9em;
+}
+
+/* -------------------------------------------------------------- toolbar -- */
+
+.kop-network__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 0.75rem;
+}
+
+.kop-network__search {
+	position: relative;
+	flex: 1 1 260px;
+	min-width: 0;
+}
+
+.kop-network__search-input {
+	width: 100%;
+	padding: 0.55rem 0.8rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	font-size: 1rem;
+}
+
+.kop-network__search-input:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 1px;
+}
+
+.kop-network__search-results {
+	position: absolute;
+	z-index: 20;
+	top: calc(100% + 4px);
+	left: 0;
+	right: 0;
+	max-height: 320px;
+	margin: 0;
+	padding: 0.25rem;
+	overflow-y: auto;
+	list-style: none;
+	background: #fff;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	box-shadow: 0 8px 24px rgba(0, 4, 53, 0.14);
+}
+
+.kop-network__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.kop-network__colour {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+	font-size: 0.9rem;
+}
+
+.kop-network__select,
+.kop-network__button {
+	padding: 0.5rem 0.75rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	color: inherit;
+	font: inherit;
+	font-size: 0.9rem;
+	cursor: pointer;
+}
+
+.kop-network__button:hover {
+	border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-network__button--quiet {
+	width: 100%;
+	margin-top: 0.5rem;
+	background: transparent;
+}
+
+/* Focus / Expand: a two-way switch styled as one control. */
+.kop-network__mode {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	overflow: hidden;
+}
+
+.kop-network__mode-option {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.9rem;
+	cursor: pointer;
+}
+
+.kop-network__mode-option + .kop-network__mode-option {
+	border-left: 1px solid var(--kop-net-border);
+}
+
+/* The radio stays in the tab order and is announced; the label is the
+ * thing that looks pressed. */
+.kop-network__mode-option input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+}
+
+.kop-network__mode-option:has(input:checked) {
+	background: var(--kop-navy, #000080);
+	color: #fff;
+}
+
+.kop-network__mode-option:has(input:focus-visible) {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: -2px;
+}
+
+/* The rail starts closed at every width and this is the way in. The map
+ * opens on a handful of organisations and grows by clicking, so the filters
+ * are a second-order tool, and the 250px they took as a permanent column is
+ * width the labels need. */
+#kop-network-filters-toggle {
+	display: inline-block;
+}
+
+/* ------------------------------------------------------ chain breadcrumb -- */
+
+.kop-network__chain {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	align-items: center;
+	margin-bottom: 0.75rem;
+	padding: 0.5rem 0.65rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: var(--kop-net-surface);
+}
+
+.kop-network__chain-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kop-network__chain-list li {
+	display: flex;
+	gap: 0.3rem;
+	align-items: center;
+	margin: 0;
+}
+
+/* The separator is decorative; the list order carries the meaning. */
+.kop-network__chain-list li + li::before {
+	content: "\203A";
+	opacity: 0.5;
+}
+
+.kop-network__chain-home,
+.kop-network__chain-list button,
+.kop-network__chain-current {
+	display: inline-block;
+	padding: 0.3rem 0.6rem;
+	border: 1px solid transparent;
+	border-radius: 999px;
+	background: #fff;
+	color: inherit;
+	font: inherit;
+	font-size: 0.85rem;
+	cursor: pointer;
+}
+
+.kop-network__chain-list button:hover,
+.kop-network__chain-home:hover {
+	border-color: var(--kop-teal, #33A7B5);
+}
+
+/* The last crumb is where you are, so it is text carrying aria-current
+ * rather than a control that would go nowhere. */
+.kop-network__chain-current {
+	background: var(--kop-navy, #000080);
+	color: #fff;
+	cursor: default;
+}
+
+/* ----------------------------------------------------------------- body -- */
+
+.kop-network__body {
+	display: grid;
+	grid-template-columns: var(--kop-net-rail) minmax(0, 1fr);
+	gap: var(--kop-net-gap);
+	align-items: start;
+}
+
+.kop-network__body:has(.kop-network__drawer:not([hidden])) {
+	grid-template-columns: var(--kop-net-rail) minmax(0, 1fr) var(--kop-net-drawer);
+}
+
+/* ----------------------------------------------------------------- rail -- */
+
+.kop-network__rail {
+	position: sticky;
+	top: 1rem;
+	max-height: calc(100vh - 2rem);
+	overflow-y: auto;
+	padding: 0.85rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: var(--kop-net-surface);
+}
+
+.kop-network__group {
+	margin: 0 0 1.1rem;
+	padding: 0;
+	border: 0;
+}
+
+.kop-network__group:last-child {
+	margin-bottom: 0;
+}
+
+.kop-network__group legend {
+	margin-bottom: 0.4rem;
+	padding: 0;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.7;
+}
+
+.kop-network__check {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	padding: 0.22rem 0;
+	font-size: 0.88rem;
+	line-height: 1.3;
+	cursor: pointer;
+}
+
+.kop-network__check span:first-of-type {
+	flex: 1 1 auto;
+}
+
+.kop-network__count {
+	flex: 0 0 auto;
+	font-size: 0.78rem;
+	font-variant-numeric: tabular-nums;
+	opacity: 0.55;
+}
+
+.kop-network__range {
+	display: block;
+	font-size: 0.88rem;
+}
+
+.kop-network__range input {
+	width: 100%;
+	margin-top: 0.35rem;
+}
+
+.kop-network__note {
+	margin: 0 0 0.5rem;
+	font-size: 0.78rem;
+	line-height: 1.45;
+	opacity: 0.7;
+}
+
+.kop-network__legend-toggle {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.kop-network__legend-toggle::after {
+	content: " \25BE";
+}
+
+.kop-network__legend-toggle[aria-expanded="true"]::after {
+	content: " \25B4";
+}
+
+/* ---------------------------------------------------------------- stage -- */
+
+.kop-network__stage {
+	position: relative;
+	min-height: 420px;
+	height: calc(100vh - 6rem);
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: var(--kop-net-surface);
+	overflow: hidden;
+}
+
+.kop-network__canvas {
+	display: block;
+	width: 100%;
+	height: 100%;
+	/* The pointer handlers own panning, so the browser must not also scroll. */
+	touch-action: none;
+}
+
+.kop-network__canvas:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: -2px;
+}
+
+.kop-network__loading {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin: 0;
+	transform: translate(-50%, -50%);
+	font-size: 0.95rem;
+	opacity: 0.7;
+}
+
+.kop-network__legend:empty {
+	display: none;
+}
+
+.kop-network__legend-heading {
+	margin: 0.6rem 0 0.25rem;
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.6;
+}
+
+.kop-network__legend-heading:first-child {
+	margin-top: 0;
+}
+
+.kop-network__legend-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kop-network__legend-row {
+	display: flex;
+	gap: 0.4rem;
+	align-items: center;
+	margin: 0;
+	padding: 0.05rem 0;
+	font-size: 0.8rem;
+	line-height: 1.4;
+}
+
+/* Painted by the renderer's own node painter, so it matches the map. */
+.kop-network__legend-mark {
+	flex: 0 0 auto;
+	width: 18px;
+	height: 18px;
+}
+
+.kop-network__legend-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Announces selection to screen readers without taking up space. */
+.kop-network__status {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+
+/* --------------------------------------------------------------- drawer -- */
+
+.kop-network__drawer {
+	position: sticky;
+	top: 1rem;
+	max-height: calc(100vh - 2rem);
+	overflow-y: auto;
+	padding: 1rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+}
+
+.kop-network__drawer-close {
+	float: right;
+	width: 32px;
+	height: 32px;
+	border: 0;
+	border-radius: 50%;
+	background: transparent;
+	color: inherit;
+	font-size: 1.3rem;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.kop-network__drawer-close:hover {
+	background: rgba(0, 4, 53, 0.07);
+}
+
+/* ------------------------------------------------------------- narrow -- */
+
+@media (max-width: 900px) {
+	.kop-network__body {
+		display: block;
+	}
+
+	#kop-network-filters-toggle {
+		display: inline-block;
+	}
+
+	/* The rail becomes a sheet over the map, opened by the Filters button. */
+	.kop-network__rail {
+		position: fixed;
+		z-index: 30;
+		inset: auto 0 0 0;
+		max-height: 70vh;
+		border-radius: var(--kop-net-radius) var(--kop-net-radius) 0 0;
+		box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
+	}
+
+	.kop-network__rail[hidden] {
+		display: none;
+	}
+
+	.kop-network__stage {
+		height: 65vh;
+	}
+
+	.kop-network__drawer {
+		position: fixed;
+		z-index: 40;
+		inset: 0;
+		max-height: none;
+		border: 0;
+		border-radius: 0;
+	}
+}
+
+/* With the rail closed the stage takes the whole row. */
+.kop-network__body:has(.kop-network__rail[hidden]) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {
+	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.kop-network * {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+	}
+}
+
+/* A line swatch needs more room than a node swatch. */
+.kop-network__legend-mark--line {
+	width: 26px;
+}

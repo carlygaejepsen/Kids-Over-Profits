@@ -1,0 +1,12 @@
+{
+  "title": "Wilderness Therapy Timeline",
+  "slug": "wilderness-therapy-timeline",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/wilderness-therapy-timeline.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-11 18:40:32",
+  "excerpt": "Summer camps, Outward Bound, the BYU survival course, and the deaths that followed wilderness therapy from the Challenger Foundation to Trails Carolina."
+}

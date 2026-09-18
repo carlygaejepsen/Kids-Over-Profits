@@ -1,0 +1,12 @@
+{
+  "title": "Experimental Group Psychology",
+  "slug": "experimental-group-psychology",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/experimental-group-psychology.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-13 18:23:56",
+  "excerpt": "The Oxford Group, guided group interaction, encounter groups, Synanon and its offshoots, and the large-group awareness trainings that WWASP repackaged as seminars."
+}

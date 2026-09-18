@@ -1,0 +1,12 @@
+{
+  "title": "Corporatization of Residential Treatment",
+  "slug": "corporatization",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/corporatization.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-16 05:51:02",
+  "excerpt": "How nonprofits scaled like businesses, for-profit chains took over, and private equity turned residential treatment into an asset class."
+}

@@ -1,0 +1,102 @@
+{
+  "_readme": [
+    "Hand-curated corrections applied by scripts/build-network-graph.js.",
+    "Never edit tti_nodes.csv or tti_edges.csv to fix something; correct it here",
+    "so the next board export does not undo the work.",
+    "",
+    "merges        - one entity drawn in several Miro frames. Two different",
+    "                entities that share a name (Gateway Academy) do NOT belong",
+    "                here; the build keeps them apart automatically.",
+    "aliases       - other names an entity is known by, used for search and for",
+    "                matching against the facility records.",
+    "kinds         - person | facility | parent | association | government |",
+    "                church | other. Wins over every rule.",
+    "relationships - raw relationship string -> category and roles.",
+    "facilities    - board name -> facilities_v2 id, or null to accept no match.",
+    "acquirers     - edge id -> the name of the party that did the acquiring.",
+    "headline      - the organisations the map opens on, in order. Chosen for",
+    "                influence and prevalence, which is an editorial judgement",
+    "                and not something a degree count can work out: Synanon has",
+    "                six recorded connections and belongs here; plenty of nodes",
+    "                with thirty do not. Names must match a node exactly.",
+    "",
+    "Run `node scripts/build-network-graph.js` after any edit and work through",
+    "tmp/network-qa.md."
+  ],
+  "merges": [
+    {
+      "canonical": "David Freedman",
+      "note": "one person, drawn in both the FHW and Wilderness frames",
+      "rows": [
+        {
+          "name": "David Freedman",
+          "network": "FHW"
+        },
+        {
+          "name": "David Freedman",
+          "network": "Wilderness"
+        }
+      ]
+    }
+  ],
+  "aliases": {},
+  "kinds": {
+    "Erica Thiessen- House": "person",
+    "Accelerated Christian Education": "other",
+    "Education Consultant": "other",
+    "ROP Nevada": "facility",
+    "The International Center for the Study of Psychiatry and Psychology": "association",
+    "Outdoor Behavioral Healthcare Research Center": "association",
+    "Oxford Group": "association",
+    "Alcoholics Anonymous": "association",
+    "All Addicts Anonymous": "association",
+    "Drug-Free America Foundation": "association",
+    "Social Learning Environments": "parent",
+    "Challenger Foundation": "parent",
+    "Leadership Dynamics": "parent",
+    "Mind Dynamics": "parent",
+    "Holiday Magic": "parent",
+    "Youth Opportunity Foundation": "parent",
+    "Bill and Melinda Gates Foundation": "other",
+    "Law Enforcement Assistance Administration": "government"
+  },
+  "relationships": {
+    "recruited deputies as transporters": {
+      "category": "other",
+      "roles": [
+        "recruited deputies as transporters"
+      ]
+    },
+    "photo displayed on campus": {
+      "category": "other",
+      "roles": [
+        "photo displayed on campus"
+      ]
+    },
+    "prepared tax guides for WWASP websites": {
+      "category": "other",
+      "roles": [
+        "prepared tax guides"
+      ]
+    }
+  },
+  "facilities": {},
+  "acquirers": {
+    "e0241": "Universal Health Services",
+    "e0363": "Universal Health Services",
+    "e0540": "Provo Canyon School",
+    "e0669": "CERTS",
+    "e0762": "Family Help & Wellness",
+    "e1188": "The Brown Schools",
+    "e1236": "Universal Health Services",
+    "e1237": "Universal Health Services"
+  },
+  "headline": [
+    "WWASPS",
+    "Synanon",
+    "Teen Challenge",
+    "CEDU Family of Services",
+    "Sequel Youth and Family Services",
+    "Universal Health Services"
+  ]
+}

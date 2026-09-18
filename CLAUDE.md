@@ -28,7 +28,21 @@ node scripts/aggregate-all-programs.js
 # Other data pipeline scripts
 node scripts/rebuild-search-index.js
 node scripts/extract-reddit-wiki-links.js
+
+# After editing the network map CSVs or network-overrides.json
+node scripts/build-network-graph.js
+node scripts/test-network-graph.js
 ```
+
+### Network map data
+
+`js/data/network/` holds the Miro board export (`tti_nodes.csv`, `tti_edges.csv`)
+and the generated `graph.json` that the network map reads. Corrections go in
+`network-overrides.json`, never in the CSVs, so the next board export does not
+undo them. Each build rewrites `tmp/network-qa.md` (gitignored) listing every
+row the rules had to guess at. Facility links are resolved against
+`facilities_v2` in `tmp/prod.sqlite` when that mirror is present, and fall back
+to the program aggregate otherwise.
 
 ## Architecture
 

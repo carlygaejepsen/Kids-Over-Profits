@@ -1,0 +1,4552 @@
+{
+  "meta": {
+    "sourceHash": "6c769881b11a",
+    "ticks": 300,
+    "nodes": 907,
+    "simulated": 904,
+    "isolated": 3,
+    "extent": {
+      "minX": -1528.7,
+      "minY": -1429.6,
+      "maxX": 1462.1,
+      "maxY": 1159.5
+    }
+  },
+  "positions": {
+    "wwasps": {
+      "x": -175.9,
+      "y": -938.4,
+      "r": 9.4
+    },
+    "natsap": {
+      "x": 191.2,
+      "y": 25.5,
+      "r": 8.8
+    },
+    "aspen-education-group": {
+      "x": 542,
+      "y": 170,
+      "r": 12.1
+    },
+    "sequel-youth-and-family-services": {
+      "x": -740.8,
+      "y": -120.4,
+      "r": 13.8
+    },
+    "universal-health-services": {
+      "x": -444.5,
+      "y": -4.1,
+      "r": 12.6
+    },
+    "island-view-rtc": {
+      "x": 679.4,
+      "y": -279.4,
+      "r": 8.8
+    },
+    "outback-therapeutic-expeditions": {
+      "x": 279.2,
+      "y": 220.7,
+      "r": 10.2
+    },
+    "suws-of-the-carolinas": {
+      "x": 516.5,
+      "y": 376.6,
+      "r": 9.2
+    },
+    "family-help-wellness": {
+      "x": 450.7,
+      "y": -330.5,
+      "r": 13.1
+    },
+    "embark-behavioral-health": {
+      "x": 952.4,
+      "y": 196.9,
+      "r": 15.7
+    },
+    "provo-canyon-school": {
+      "x": -203.4,
+      "y": -82.8,
+      "r": 12.7
+    },
+    "evolve-treatment-centers": {
+      "x": 476.2,
+      "y": 969.2,
+      "r": 12.2
+    },
+    "shortridge-academy": {
+      "x": 258.3,
+      "y": -150.7,
+      "r": 8.7
+    },
+    "cedu-high-school": {
+      "x": -136.7,
+      "y": 29.4,
+      "r": 8.7
+    },
+    "mount-bachelor-academy": {
+      "x": 113.3,
+      "y": 200.2,
+      "r": 9.2
+    },
+    "solstice-rtc": {
+      "x": 491.7,
+      "y": -501,
+      "r": 9.2
+    },
+    "wingate-wilderness-therapy": {
+      "x": 237.3,
+      "y": -19.3,
+      "r": 9.7
+    },
+    "academy-at-swift-river": {
+      "x": 469.8,
+      "y": -0.1,
+      "r": 9.2
+    },
+    "cedu-family-of-services": {
+      "x": -291.4,
+      "y": -111.5,
+      "r": 13.2
+    },
+    "rocky-mountain-academy": {
+      "x": -79.8,
+      "y": -90.2,
+      "r": 9
+    },
+    "truecore-behavioral-solutions": {
+      "x": -827.3,
+      "y": -590.9,
+      "r": 12.3
+    },
+    "agape-boarding-school": {
+      "x": -708.9,
+      "y": -1127.8,
+      "r": 9.2
+    },
+    "boulder-creek-academy": {
+      "x": -230.4,
+      "y": -52.9,
+      "r": 9.3
+    },
+    "northwest-academy": {
+      "x": -266.7,
+      "y": -39.4,
+      "r": 8.7
+    },
+    "sagewalk-wilderness": {
+      "x": -111.7,
+      "y": 197.3,
+      "r": 9.2
+    },
+    "teen-challenge": {
+      "x": -1207.6,
+      "y": -897.9,
+      "r": 13.2
+    },
+    "youth-opportunity-investments": {
+      "x": -1215.7,
+      "y": -132.4,
+      "r": 12.5
+    },
+    "copper-canyon-academy": {
+      "x": 308.4,
+      "y": -46.1,
+      "r": 9.6
+    },
+    "cross-creek-programs": {
+      "x": -101.1,
+      "y": -825.8,
+      "r": 9.3
+    },
+    "spring-ridge-academy": {
+      "x": -262.7,
+      "y": 231.5,
+      "r": 9.2
+    },
+    "vivant-behavioral-healthcare": {
+      "x": -776.8,
+      "y": -300,
+      "r": 14.2
+    },
+    "acadia-healthcare": {
+      "x": 619,
+      "y": 454.4,
+      "r": 14.2
+    },
+    "new-haven-rtc": {
+      "x": 902.4,
+      "y": 292.5,
+      "r": 9.2
+    },
+    "straight-inc": {
+      "x": -1219.9,
+      "y": -472.2,
+      "r": 8.7
+    },
+    "three-springs-inc": {
+      "x": -784.8,
+      "y": 266.6,
+      "r": 12.3
+    },
+    "ascent-wilderness-therapy": {
+      "x": -381.4,
+      "y": 87.1,
+      "r": 9.3
+    },
+    "second-nature-wilderness-family-therapy": {
+      "x": 148.9,
+      "y": 498.8,
+      "r": 11.1
+    },
+    "trails-carolina": {
+      "x": 357.7,
+      "y": -121.6,
+      "r": 9.1
+    },
+    "aspen-achievement-academy": {
+      "x": 431.7,
+      "y": 323.5,
+      "r": 9.9
+    },
+    "aspen-ranch": {
+      "x": 352.2,
+      "y": 335.3,
+      "r": 9.2
+    },
+    "certs": {
+      "x": -265.2,
+      "y": 259.3,
+      "r": 8.7
+    },
+    "daniels-academy": {
+      "x": -179.4,
+      "y": 529.6,
+      "r": 8.7
+    },
+    "david-lepere": {
+      "x": -52.8,
+      "y": 256.1,
+      "r": 5.9
+    },
+    "first-light-wilderness-therapy": {
+      "x": 1091.8,
+      "y": 344.9,
+      "r": 9.2
+    },
+    "hidden-lake-academy": {
+      "x": 213.3,
+      "y": 73.8,
+      "r": 9.2
+    },
+    "innerchange": {
+      "x": 924.5,
+      "y": 171.3,
+      "r": 8.3
+    },
+    "ironwood-maine": {
+      "x": 522.1,
+      "y": -118.5,
+      "r": 9.2
+    },
+    "jade-robinson": {
+      "x": -37.3,
+      "y": -1070.7,
+      "r": 8.7
+    },
+    "kreg-gillman": {
+      "x": 174.8,
+      "y": -1,
+      "r": 6.8
+    },
+    "lester-roloff": {
+      "x": -558,
+      "y": -1224,
+      "r": 8.2
+    },
+    "mark-wardle": {
+      "x": 137,
+      "y": -108.3,
+      "r": 6.2
+    },
+    "rite-of-passage-inc": {
+      "x": -710.5,
+      "y": -100.9,
+      "r": 12.3
+    },
+    "sunrise-rtc": {
+      "x": 778.2,
+      "y": 62.6,
+      "r": 9.2
+    },
+    "the-oakley-school": {
+      "x": 522.4,
+      "y": -37.1,
+      "r": 9.2
+    },
+    "tim-brace": {
+      "x": 148.5,
+      "y": 78.5,
+      "r": 5.4
+    },
+    "agape-boys-ranch": {
+      "x": -752.6,
+      "y": -1247.4,
+      "r": 8.7
+    },
+    "ascent-companies": {
+      "x": 721.2,
+      "y": 284.2,
+      "r": 12.5
+    },
+    "aspen-institute-for-behavioral-assessment": {
+      "x": 693.5,
+      "y": -86,
+      "r": 10.8
+    },
+    "aspiro-wilderness-adventure-therapy": {
+      "x": 11,
+      "y": 311.8,
+      "r": 10.3
+    },
+    "bryan-tomes": {
+      "x": 626,
+      "y": -3.4,
+      "r": 5.8
+    },
+    "circle-of-hope-girls-ranch": {
+      "x": -695.9,
+      "y": -1242.5,
+      "r": 9.4
+    },
+    "craig-rogers": {
+      "x": -211.1,
+      "y": -204.2,
+      "r": 4.2
+    },
+    "dace-goulding": {
+      "x": -41.4,
+      "y": -1095.3,
+      "r": 6.3
+    },
+    "don-vardell": {
+      "x": 612.1,
+      "y": -130.4,
+      "r": 6.7
+    },
+    "elevations-rtc": {
+      "x": 581.9,
+      "y": -330.2,
+      "r": 8.7
+    },
+    "gordon-l-day": {
+      "x": 106.9,
+      "y": 370.5,
+      "r": 6
+    },
+    "innercept": {
+      "x": -182.3,
+      "y": -271.7,
+      "r": 9.2
+    },
+    "jeff-scott": {
+      "x": 170,
+      "y": 382.4,
+      "r": 6.6
+    },
+    "ken-huey": {
+      "x": -27.1,
+      "y": 274.6,
+      "r": 8.7
+    },
+    "red-mountain-colorado": {
+      "x": 332.4,
+      "y": -275.3,
+      "r": 9.4
+    },
+    "roots-transition": {
+      "x": 425.2,
+      "y": -496.1,
+      "r": 8.7
+    },
+    "steve-cartisano": {
+      "x": 113.5,
+      "y": -1072.4,
+      "r": 4.4
+    },
+    "stone-mountain-school": {
+      "x": 583.4,
+      "y": 265.4,
+      "r": 9.9
+    },
+    "synanon": {
+      "x": -732.8,
+      "y": -366.9,
+      "r": 15.9
+    },
+    "theresa-wardle": {
+      "x": 21.4,
+      "y": -41.6,
+      "r": 6.2
+    },
+    "tracy-schrunk": {
+      "x": 38.2,
+      "y": 111.9,
+      "r": 4.7
+    },
+    "turn-about-ranch": {
+      "x": 619.3,
+      "y": 135.4,
+      "r": 9.2
+    },
+    "adam-ahquin": {
+      "x": -18.8,
+      "y": -1193.9,
+      "r": 5.7
+    },
+    "beth-ragland": {
+      "x": -607.2,
+      "y": 342.2,
+      "r": 5
+    },
+    "bethel-boys-academy": {
+      "x": -268.3,
+      "y": -1052.7,
+      "r": 8.7
+    },
+    "betty-argiros": {
+      "x": -1472.1,
+      "y": -394.6,
+      "r": 6.2
+    },
+    "cat-jennings": {
+      "x": 708.8,
+      "y": 98.8,
+      "r": 9.2
+    },
+    "challenger-foundation": {
+      "x": 224.1,
+      "y": -1100.2,
+      "r": 9.9
+    },
+    "david-gilcrease": {
+      "x": -315.2,
+      "y": -634.6,
+      "r": 5.7
+    },
+    "discovery-academy": {
+      "x": 466.4,
+      "y": 123,
+      "r": 9.2
+    },
+    "fulshear-ranch-academy": {
+      "x": 669.4,
+      "y": 31.6,
+      "r": 9.2
+    },
+    "horizon-academy": {
+      "x": -69.5,
+      "y": -955.1,
+      "r": 8.7
+    },
+    "jared-balmer": {
+      "x": 603.5,
+      "y": -229.2,
+      "r": 8.7
+    },
+    "jessa-hobson": {
+      "x": 510.2,
+      "y": -176.9,
+      "r": 6.4
+    },
+    "john-l-singleton": {
+      "x": 382.9,
+      "y": 163.4,
+      "r": 10.2
+    },
+    "josh-white": {
+      "x": 386.4,
+      "y": -176,
+      "r": 6.2
+    },
+    "ken-betts": {
+      "x": -200.1,
+      "y": 404.1,
+      "r": 6
+    },
+    "ken-kay": {
+      "x": -243.7,
+      "y": -911.6,
+      "r": 6.3
+    },
+    "kids-centers-of-america": {
+      "x": -942.2,
+      "y": -369,
+      "r": 8.7
+    },
+    "kris-archer": {
+      "x": 232.7,
+      "y": -345.1,
+      "r": 5.6
+    },
+    "leigh-uhlenkott": {
+      "x": 435.3,
+      "y": 134.7,
+      "r": 6.4
+    },
+    "logan-river-academy": {
+      "x": -97.7,
+      "y": 13.5,
+      "r": 8.7
+    },
+    "morava-academy": {
+      "x": -155.2,
+      "y": -1125.8,
+      "r": 9
+    },
+    "narvin-lichfield": {
+      "x": -239.1,
+      "y": -1129.2,
+      "r": 6.3
+    },
+    "new-leaf-academy-of-north-carolina": {
+      "x": 668,
+      "y": 153.4,
+      "r": 9.5
+    },
+    "northstar-center": {
+      "x": 339,
+      "y": 276.9,
+      "r": 9.2
+    },
+    "phillip-dr-phil-mcgraw": {
+      "x": 433.6,
+      "y": 529.1,
+      "r": 13.1
+    },
+    "rae-ann-knopf": {
+      "x": 19.8,
+      "y": -204.8,
+      "r": 8.7
+    },
+    "red-mountain-sedona": {
+      "x": 363.7,
+      "y": -396,
+      "r": 9.2
+    },
+    "second-nature-blue-ridge": {
+      "x": 176.7,
+      "y": 509.3,
+      "r": 8.7
+    },
+    "second-nature-cascades": {
+      "x": -193.4,
+      "y": 477.4,
+      "r": 8.7
+    },
+    "second-nature-uintas": {
+      "x": 99.5,
+      "y": 543.3,
+      "r": 8.7
+    },
+    "silverado-boys-ranch": {
+      "x": -3.4,
+      "y": -189.3,
+      "r": 9.2
+    },
+    "solstice-east": {
+      "x": 486,
+      "y": -415.1,
+      "r": 9.2
+    },
+    "spring-creek-lodge-academy": {
+      "x": 6,
+      "y": -1199.2,
+      "r": 9.6
+    },
+    "steve-sawyer": {
+      "x": 1168.5,
+      "y": 246,
+      "r": 5.4
+    },
+    "suws-idaho": {
+      "x": 388.7,
+      "y": 198.4,
+      "r": 9.2
+    },
+    "tammy-prince-behrman": {
+      "x": 228.3,
+      "y": -376.8,
+      "r": 6.4
+    },
+    "the-brown-schools": {
+      "x": -247,
+      "y": -138.6,
+      "r": 13.2
+    },
+    "tony-argiros": {
+      "x": -1522.5,
+      "y": -396.5,
+      "r": 6.2
+    },
+    "west-ridge-academy": {
+      "x": -277,
+      "y": 507.6,
+      "r": 8.7
+    },
+    "whetstone-academy": {
+      "x": 339.8,
+      "y": 307.1,
+      "r": 9.2
+    },
+    "xela-goodman": {
+      "x": 927.9,
+      "y": 299.7,
+      "r": 6.1
+    },
+    "academy-at-canyon-creek": {
+      "x": -403.8,
+      "y": 56.4,
+      "r": 9.3
+    },
+    "academy-at-dundee-ranch": {
+      "x": -161,
+      "y": -1067.4,
+      "r": 9.6
+    },
+    "adam-shapiro": {
+      "x": -831.5,
+      "y": -238.4,
+      "r": 5
+    },
+    "adirondack-leadership-expeditions": {
+      "x": 670.5,
+      "y": 123.4,
+      "r": 10.6
+    },
+    "altior-healthcare": {
+      "x": 269,
+      "y": -208.3,
+      "r": 11.9
+    },
+    "ashcreek-ranch-academy": {
+      "x": -86.3,
+      "y": -348.2,
+      "r": 9.5
+    },
+    "aspiro-group": {
+      "x": -133,
+      "y": 533.2,
+      "r": 8.7
+    },
+    "bernie-zimmerman": {
+      "x": -597.8,
+      "y": 532.1,
+      "r": 7
+    },
+    "betsy-warren": {
+      "x": 356.1,
+      "y": -37.2,
+      "r": 5.8
+    },
+    "blue-ridge-therapeutic-wilderness": {
+      "x": 151.9,
+      "y": 582.3,
+      "r": 9.2
+    },
+    "boyd-hooper": {
+      "x": 801.2,
+      "y": -84.8,
+      "r": 5.8
+    },
+    "brad-m-reedy": {
+      "x": 173.7,
+      "y": 593,
+      "r": 5.1
+    },
+    "bruce-wilson": {
+      "x": -89.9,
+      "y": -151.2,
+      "r": 6
+    },
+    "bryan-delaney": {
+      "x": 249.2,
+      "y": 282.4,
+      "r": 6.4
+    },
+    "calo-programs": {
+      "x": 713.2,
+      "y": 248.4,
+      "r": 9.2
+    },
+    "carlbrook-school": {
+      "x": -9.8,
+      "y": 49.1,
+      "r": 8.7
+    },
+    "casa-by-the-sea": {
+      "x": -102.9,
+      "y": -1052.5,
+      "r": 9
+    },
+    "cherokee-creek-boys-school": {
+      "x": -35.7,
+      "y": 436.3,
+      "r": 9.7
+    },
+    "cherry-gulch": {
+      "x": -675.6,
+      "y": 644.1,
+      "r": 8.7
+    },
+    "cheryl-kehl": {
+      "x": 237.6,
+      "y": 313.9,
+      "r": 5.9
+    },
+    "cindy-fogel": {
+      "x": -230.8,
+      "y": 422.8,
+      "r": 6.6
+    },
+    "craig-lamont": {
+      "x": 846.3,
+      "y": 396.8,
+      "r": 6.4
+    },
+    "craig-rodabough": {
+      "x": -165,
+      "y": 168.6,
+      "r": 5.6
+    },
+    "cross-creek-manor-for-girls": {
+      "x": -45.5,
+      "y": -968.9,
+      "r": 9
+    },
+    "daytop-village": {
+      "x": -552.2,
+      "y": -406.4,
+      "r": 7.9
+    },
+    "diamond-ranch-academy": {
+      "x": 376.3,
+      "y": -631.9,
+      "r": 9.5
+    },
+    "dustin-tibbitts": {
+      "x": 737.3,
+      "y": 152.3,
+      "r": 5.1
+    },
+    "eckerd-youth-alternatives": {
+      "x": 240.3,
+      "y": -472.1,
+      "r": 9.2
+    },
+    "falcon-ridge-ranch": {
+      "x": -633.3,
+      "y": -142.4,
+      "r": 9
+    },
+    "george-ross": {
+      "x": -1270.8,
+      "y": -587,
+      "r": 6.2
+    },
+    "george-ullrich": {
+      "x": -248.5,
+      "y": -176.8,
+      "r": 6.3
+    },
+    "herman-fountain": {
+      "x": -363.5,
+      "y": -1214.3,
+      "r": 6.7
+    },
+    "holiday-magic": {
+      "x": -997.7,
+      "y": -600.2,
+      "r": 7.9
+    },
+    "j-ralph-atkin": {
+      "x": -95,
+      "y": -1080.3,
+      "r": 9
+    },
+    "j-huffine": {
+      "x": -295.3,
+      "y": 244.6,
+      "r": 4.7
+    },
+    "jamie-palmer": {
+      "x": 159.3,
+      "y": -448.4,
+      "r": 5.4
+    },
+    "jason-scott-calder": {
+      "x": 357.7,
+      "y": 397.4,
+      "r": 6.6
+    },
+    "jeannie-courtney": {
+      "x": -352.2,
+      "y": 31.1,
+      "r": 5.9
+    },
+    "jeremy-nunelley": {
+      "x": 97.2,
+      "y": 439.6,
+      "r": 6.4
+    },
+    "jodi-escalante": {
+      "x": 85.9,
+      "y": 412.8,
+      "r": 5.9
+    },
+    "julio-sandoval": {
+      "x": -814.1,
+      "y": -1166.2,
+      "r": 5.5
+    },
+    "kendra-meiklejohn": {
+      "x": 835.6,
+      "y": 60.7,
+      "r": 6.5
+    },
+    "kevin-richey": {
+      "x": -254.5,
+      "y": -1229.1,
+      "r": 6.3
+    },
+    "kids-of-bergen-county": {
+      "x": -1068.8,
+      "y": -366.7,
+      "r": 9.8
+    },
+    "kirk-simon": {
+      "x": 693.5,
+      "y": -348.2,
+      "r": 7.1
+    },
+    "lake-house-academy": {
+      "x": 886.8,
+      "y": 113.2,
+      "r": 9.2
+    },
+    "leadership-dynamics": {
+      "x": -946.3,
+      "y": -512.6,
+      "r": 7.9
+    },
+    "leah-madamba": {
+      "x": 740.6,
+      "y": 315.2,
+      "r": 5.9
+    },
+    "linda-houghton": {
+      "x": -51.5,
+      "y": 111.3,
+      "r": 5.6
+    },
+    "lone-star-expeditions": {
+      "x": 361.1,
+      "y": 431.8,
+      "r": 9.8
+    },
+    "malynda-scott": {
+      "x": 657.5,
+      "y": -474.3,
+      "r": 6.2
+    },
+    "maureen-white": {
+      "x": 414.8,
+      "y": -225.5,
+      "r": 5.8
+    },
+    "michael-bednarz": {
+      "x": 125.9,
+      "y": 359.5,
+      "r": 5.9
+    },
+    "michael-charnley": {
+      "x": 395,
+      "y": -209.8,
+      "r": 6.2
+    },
+    "mind-dynamics": {
+      "x": -999,
+      "y": -568.5,
+      "r": 7.9
+    },
+    "mountain-park-baptist-boarding-academy": {
+      "x": -511.2,
+      "y": -1095.4,
+      "r": 10.4
+    },
+    "northwest-association-international-school-visitation-team": {
+      "x": 31.4,
+      "y": -996,
+      "r": 14.1
+    },
+    "peninsula-village": {
+      "x": 399.7,
+      "y": 389.9,
+      "r": 10.8
+    },
+    "piney-ridge-center": {
+      "x": 626.9,
+      "y": 539.2,
+      "r": 9.2
+    },
+    "rebekah-home-for-girls": {
+      "x": -457.8,
+      "y": -1288.7,
+      "r": 9.2
+    },
+    "redcliff-ascent": {
+      "x": 526,
+      "y": 75.7,
+      "r": 9.2
+    },
+    "rick-jackson": {
+      "x": 747.8,
+      "y": -459.7,
+      "r": 6.2
+    },
+    "robert-b-lichfield": {
+      "x": -172.5,
+      "y": -1102.4,
+      "r": 10.1
+    },
+    "robert-crist": {
+      "x": 82.5,
+      "y": -77.1,
+      "r": 8.9
+    },
+    "rudy-bentz": {
+      "x": 212.7,
+      "y": -56.1,
+      "r": 4.9
+    },
+    "second-nature": {
+      "x": -4.5,
+      "y": 534.5,
+      "r": 9.5
+    },
+    "sharon-sperry-clegg": {
+      "x": 162.4,
+      "y": 197.6,
+      "r": 6.6
+    },
+    "stacey-rosenberg": {
+      "x": 553.3,
+      "y": -453.7,
+      "r": 6.1
+    },
+    "stillwater-academy": {
+      "x": -180,
+      "y": 603.1,
+      "r": 9.2
+    },
+    "the-seed": {
+      "x": -1004,
+      "y": -438.3,
+      "r": 8.7
+    },
+    "three-points-center": {
+      "x": 113.6,
+      "y": -856.1,
+      "r": 9.3
+    },
+    "tranquility-bay": {
+      "x": -168.2,
+      "y": -1005.3,
+      "r": 8.7
+    },
+    "vantage-point": {
+      "x": -48.3,
+      "y": 544.8,
+      "r": 8.7
+    },
+    "victory-christian-academy": {
+      "x": -420.3,
+      "y": -1357.2,
+      "r": 9.2
+    },
+    "w-kimball-delamare": {
+      "x": 194.3,
+      "y": -186.9,
+      "r": 6.8
+    },
+    "westwood-boys-ranch": {
+      "x": -762.9,
+      "y": 128,
+      "r": 8.7
+    },
+    "willow-huffine": {
+      "x": -231.8,
+      "y": 300.8,
+      "r": 4.7
+    },
+    "brother-bryan-clemensen": {
+      "x": -727.9,
+      "y": -1314.8,
+      "r": 6.7
+    },
+    "brother-jim-clemenson": {
+      "x": -747.9,
+      "y": -1341.2,
+      "r": 6.7
+    },
+    "academy-at-cedar-mountain": {
+      "x": -221.8,
+      "y": 355.4,
+      "r": 8.7
+    },
+    "academy-at-sisters": {
+      "x": 273,
+      "y": 71.4,
+      "r": 9.2
+    },
+    "adam-mclain": {
+      "x": -116.3,
+      "y": 117.9,
+      "r": 6.6
+    },
+    "adele-logan": {
+      "x": 202.6,
+      "y": -14.1,
+      "r": 5.9
+    },
+    "alabama-clinical-schools": {
+      "x": -453.8,
+      "y": -122.8,
+      "r": 9
+    },
+    "alachua-academy": {
+      "x": -771.2,
+      "y": -247.5,
+      "r": 8.1
+    },
+    "alcoholics-anonymous": {
+      "x": -1187.3,
+      "y": -492,
+      "r": 13.1
+    },
+    "alex-bitz": {
+      "x": -35.9,
+      "y": 208.9,
+      "r": 5.9
+    },
+    "alpine-academy": {
+      "x": 222.5,
+      "y": -500.2,
+      "r": 8.7
+    },
+    "alternative-youth-adventures": {
+      "x": 742.4,
+      "y": 87.7,
+      "r": 9.2
+    },
+    "amir-rafiei": {
+      "x": 402.5,
+      "y": 246.5,
+      "r": 6.4
+    },
+    "asheville-academy-for-girls": {
+      "x": 574.5,
+      "y": -178,
+      "r": 10.3
+    },
+    "aspen-youth-alternatives": {
+      "x": 686.3,
+      "y": 175.2,
+      "r": 9
+    },
+    "aspen-youth-services": {
+      "x": 351.3,
+      "y": 126.3,
+      "r": 9.2
+    },
+    "audrey-everson": {
+      "x": 344.6,
+      "y": 53.8,
+      "r": 6.2
+    },
+    "barry-woodward": {
+      "x": -195.9,
+      "y": -361.9,
+      "r": 7
+    },
+    "bell-academy": {
+      "x": -128.5,
+      "y": -1041.9,
+      "r": 8.7
+    },
+    "belle-shook": {
+      "x": -150.4,
+      "y": -15.6,
+      "r": 6.2
+    },
+    "ben-forrester": {
+      "x": -693.2,
+      "y": -1316.7,
+      "r": 6.7
+    },
+    "bernie-farrow": {
+      "x": 208.3,
+      "y": 275.6,
+      "r": 5.3
+    },
+    "bethel-academy-for-girls": {
+      "x": -215.3,
+      "y": -1015.9,
+      "r": 9.2
+    },
+    "bethesda-home-for-girls": {
+      "x": -524.7,
+      "y": -1152.5,
+      "r": 9.2
+    },
+    "betty-sembler": {
+      "x": -1118,
+      "y": -479.6,
+      "r": 6
+    },
+    "bill-lane": {
+      "x": -437.3,
+      "y": -173.3,
+      "r": 5.7
+    },
+    "boyd-householder": {
+      "x": -641.1,
+      "y": -1261.9,
+      "r": 7.3
+    },
+    "brad-matheson": {
+      "x": 299.3,
+      "y": 137.3,
+      "r": 4.7
+    },
+    "brandon-courtney": {
+      "x": -403.5,
+      "y": 223.5,
+      "r": 5.8
+    },
+    "brandon-park": {
+      "x": 364.6,
+      "y": -75.1,
+      "r": 5.8
+    },
+    "brent-charles-hall": {
+      "x": 63.5,
+      "y": -1092.2,
+      "r": 8.7
+    },
+    "brian-pace": {
+      "x": 418.5,
+      "y": 16.1,
+      "r": 6.1
+    },
+    "brian-rossiter": {
+      "x": -288.1,
+      "y": 265.3,
+      "r": 5
+    },
+    "brianna-roselles": {
+      "x": 558.2,
+      "y": -486.7,
+      "r": 4.2
+    },
+    "bromley-brook-school": {
+      "x": 216.4,
+      "y": 45.5,
+      "r": 9.2
+    },
+    "carolina-springs-academy": {
+      "x": -191,
+      "y": -1054.9,
+      "r": 9.7
+    },
+    "cascade-school": {
+      "x": 128.8,
+      "y": -32.3,
+      "r": 8.7
+    },
+    "cedar-county-sheriffs-department": {
+      "x": -817.8,
+      "y": -1080,
+      "r": 14.6
+    },
+    "cedu-middle-school": {
+      "x": -248.9,
+      "y": 41.1,
+      "r": 8.7
+    },
+    "christopher-carlin": {
+      "x": 645.6,
+      "y": -72.5,
+      "r": 6.8
+    },
+    "chrysalis-therapeutic-boarding-school": {
+      "x": 994.9,
+      "y": 122.7,
+      "r": 10.9
+    },
+    "clarinda-academy": {
+      "x": -869.2,
+      "y": -122.7,
+      "r": 8.1
+    },
+    "columbus-youth-academy": {
+      "x": -791.4,
+      "y": -373.6,
+      "r": 9
+    },
+    "coyote-karrick": {
+      "x": -8.5,
+      "y": -122.7,
+      "r": 4.7
+    },
+    "crc-health-group": {
+      "x": 988.4,
+      "y": 322.7,
+      "r": 16
+    },
+    "dale-erdmann": {
+      "x": 766.4,
+      "y": -186,
+      "r": 5.8
+    },
+    "dan-tadlock": {
+      "x": -489.4,
+      "y": -39.9,
+      "r": 5.7
+    },
+    "darren-prince": {
+      "x": 248.5,
+      "y": -271.1,
+      "r": 6.4
+    },
+    "darrington-academy": {
+      "x": -92.9,
+      "y": -1026.6,
+      "r": 8.7
+    },
+    "david-allred": {
+      "x": -401.7,
+      "y": -123.9,
+      "r": 5.4
+    },
+    "david-bosley": {
+      "x": -727.8,
+      "y": -994.3,
+      "r": 6.7
+    },
+    "david-freedman": {
+      "x": 351.4,
+      "y": -15.5,
+      "r": 6.3
+    },
+    "dean-vause": {
+      "x": -1188.4,
+      "y": -353.2,
+      "r": 6
+    },
+    "dennis-crowell": {
+      "x": 207.3,
+      "y": 391.1,
+      "r": 4.6
+    },
+    "deschutes-wilderness-therapy": {
+      "x": 1063,
+      "y": 219.4,
+      "r": 10.9
+    },
+    "discovery-ranch": {
+      "x": 718.8,
+      "y": 459.6,
+      "r": 9.2
+    },
+    "doug-kim-brown": {
+      "x": 7.8,
+      "y": -90.2,
+      "r": 5.8
+    },
+    "dusky-goulding": {
+      "x": -26.9,
+      "y": -1138.4,
+      "r": 6.3
+    },
+    "duval-academy": {
+      "x": -745.3,
+      "y": -251.5,
+      "r": 8.1
+    },
+    "eagle-point-christian-academy": {
+      "x": -242.1,
+      "y": -1008.2,
+      "r": 8.7
+    },
+    "east-ridge-recovery-center": {
+      "x": -1488.3,
+      "y": -489.4,
+      "r": 10.7
+    },
+    "elan-school": {
+      "x": -174.9,
+      "y": -55.7,
+      "r": 9.2
+    },
+    "eliza-hitz": {
+      "x": 607.5,
+      "y": -463.4,
+      "r": 6.2
+    },
+    "elk-river-treatment-program": {
+      "x": -1053.1,
+      "y": 483.3,
+      "r": 9.6
+    },
+    "emily-lamb": {
+      "x": 434.7,
+      "y": -570.8,
+      "r": 5.8
+    },
+    "erica-thiessen-house": {
+      "x": 454.7,
+      "y": 251.6,
+      "r": 6.3
+    },
+    "evoke-therapy-programs": {
+      "x": 1.3,
+      "y": 807.8,
+      "r": 8.7
+    },
+    "excel-academy": {
+      "x": 575,
+      "y": 126.1,
+      "r": 9.2
+    },
+    "family-foundation-school": {
+      "x": -1495.7,
+      "y": -324.9,
+      "r": 10.2
+    },
+    "florida-gov-jeb-bush": {
+      "x": -1145.4,
+      "y": -621.1,
+      "r": 8.7
+    },
+    "george-w-bush": {
+      "x": -1129.6,
+      "y": -683.2,
+      "r": 8.7
+    },
+    "glenda-glen-roach": {
+      "x": -185.2,
+      "y": -1242.7,
+      "r": 6.3
+    },
+    "havenwood-academy": {
+      "x": -577.8,
+      "y": 806.3,
+      "r": 9
+    },
+    "heritage-schools-heritage-rtc": {
+      "x": -321,
+      "y": -492.4,
+      "r": 10.3
+    },
+    "hope-group": {
+      "x": -353.1,
+      "y": 593.7,
+      "r": 8.7
+    },
+    "integrity-house": {
+      "x": -502.2,
+      "y": 760.6,
+      "r": 8.7
+    },
+    "intermountain-hospital": {
+      "x": -563.3,
+      "y": 244.5,
+      "r": 10.6
+    },
+    "james-meyer": {
+      "x": 397.5,
+      "y": -6.1,
+      "r": 6.1
+    },
+    "jan-moss": {
+      "x": -104.2,
+      "y": 158,
+      "r": 5
+    },
+    "janet-lippold": {
+      "x": -887.4,
+      "y": 185.8,
+      "r": 6.3
+    },
+    "janine-riehl-lepere": {
+      "x": 16.8,
+      "y": 341.2,
+      "r": 5.8
+    },
+    "jason-mckeown": {
+      "x": 513.3,
+      "y": 113.5,
+      "r": 5.8
+    },
+    "jay-ripley": {
+      "x": -809.3,
+      "y": -231.9,
+      "r": 8.1
+    },
+    "jeff-simpson": {
+      "x": 162.7,
+      "y": -579,
+      "r": 5.4
+    },
+    "jeremy-poore": {
+      "x": 631.2,
+      "y": 407.1,
+      "r": 6.4
+    },
+    "joe-procopia": {
+      "x": 824.7,
+      "y": 466.7,
+      "r": 6.4
+    },
+    "john-cohen": {
+      "x": 60.3,
+      "y": 119.2,
+      "r": 6.1
+    },
+    "john-hanley-sr": {
+      "x": -853.4,
+      "y": -602,
+      "r": 6.1
+    },
+    "jordan-larsen": {
+      "x": -593,
+      "y": -88,
+      "r": 6.5
+    },
+    "julia-andrick": {
+      "x": -44.7,
+      "y": -89.7,
+      "r": 5.4
+    },
+    "kami-black": {
+      "x": 269,
+      "y": -560.2,
+      "r": 5.7
+    },
+    "kathy-maam-clemenson": {
+      "x": -780.9,
+      "y": -1317.5,
+      "r": 6.7
+    },
+    "katie-rienstra": {
+      "x": -635.5,
+      "y": 530.8,
+      "r": 6.3
+    },
+    "kids-helping-kids": {
+      "x": -1228.6,
+      "y": -587.1,
+      "r": 8.7
+    },
+    "kids-of-greater-salt-lake": {
+      "x": -484.9,
+      "y": -311,
+      "r": 9.8
+    },
+    "kids-of-the-canadian-west": {
+      "x": -1082.9,
+      "y": -340.7,
+      "r": 9.6
+    },
+    "l-jay-mitchell": {
+      "x": 74.6,
+      "y": 465.2,
+      "r": 5.4
+    },
+    "lava-heights-academy": {
+      "x": -661.7,
+      "y": -107.5,
+      "r": 8.8
+    },
+    "lee-caldwell": {
+      "x": -312.5,
+      "y": 593.7,
+      "r": 5.5
+    },
+    "lee-wardle": {
+      "x": 135.5,
+      "y": -225.5,
+      "r": 6.2
+    },
+    "leonard-len-buccellato": {
+      "x": 100.3,
+      "y": -30.9,
+      "r": 6.7
+    },
+    "life-line-inc": {
+      "x": -458,
+      "y": -358.3,
+      "r": 9.2
+    },
+    "lifeline-for-youth": {
+      "x": -126.7,
+      "y": -506.3,
+      "r": 8.7
+    },
+    "linda-cathcart": {
+      "x": 56.4,
+      "y": 198.1,
+      "r": 6.1
+    },
+    "mark-mcgregor": {
+      "x": 1031.7,
+      "y": 376.7,
+      "r": 6.9
+    },
+    "mark-moses": {
+      "x": -994.8,
+      "y": -40.2,
+      "r": 6.1
+    },
+    "masters-ranch-christian-academy": {
+      "x": -784,
+      "y": -1021.7,
+      "r": 10
+    },
+    "matthew-lovell": {
+      "x": 123,
+      "y": 48.8,
+      "r": 4.9
+    },
+    "mel-sembler": {
+      "x": -1125.2,
+      "y": -447.2,
+      "r": 6
+    },
+    "melvin-cates": {
+      "x": 594.4,
+      "y": 360.8,
+      "r": 6.2
+    },
+    "mike-bulloch": {
+      "x": 655.1,
+      "y": -141.5,
+      "r": 5.4
+    },
+    "mike-ervin": {
+      "x": 498.6,
+      "y": 313.1,
+      "r": 6.1
+    },
+    "mike-strader": {
+      "x": 96,
+      "y": 38.2,
+      "r": 5.8
+    },
+    "milller-newton": {
+      "x": -1112.3,
+      "y": -421.6,
+      "r": 6
+    },
+    "mingus-mountain-academy": {
+      "x": -624.6,
+      "y": -204.9,
+      "r": 9.8
+    },
+    "new-beginnings-girls-academy": {
+      "x": -404.9,
+      "y": -1279.6,
+      "r": 10.3
+    },
+    "new-hope-academy": {
+      "x": -35.4,
+      "y": -1009.8,
+      "r": 9.9
+    },
+    "newport-academy": {
+      "x": 885.7,
+      "y": 572,
+      "r": 9.2
+    },
+    "oliver-cooperman": {
+      "x": 252.1,
+      "y": -533.1,
+      "r": 6.1
+    },
+    "open-sky-wilderness-program": {
+      "x": 249.3,
+      "y": 187.4,
+      "r": 9.3
+    },
+    "patrick-logan": {
+      "x": 188.2,
+      "y": 304.2,
+      "r": 6
+    },
+    "phoenix-outdoor": {
+      "x": 569.9,
+      "y": 311.5,
+      "r": 7.5
+    },
+    "pinnacle-behavioral-health-inc": {
+      "x": -992.8,
+      "y": 512.2,
+      "r": 8.7
+    },
+    "psychiatric-solutions-inc": {
+      "x": -550.9,
+      "y": -49.1,
+      "r": 11.2
+    },
+    "rancho-valmora": {
+      "x": 598.8,
+      "y": -783.9,
+      "r": 8.7
+    },
+    "randy-oakley": {
+      "x": -262.5,
+      "y": 595.2,
+      "r": 6.6
+    },
+    "red-river-academy": {
+      "x": 32.1,
+      "y": -1163.9,
+      "r": 8.7
+    },
+    "rev-bobby-ray-papa-wills": {
+      "x": -463.1,
+      "y": -1159.1,
+      "r": 7.1
+    },
+    "rivendell-psychiatric-hospital": {
+      "x": 180.1,
+      "y": -356.4,
+      "r": 8.7
+    },
+    "safe-inc": {
+      "x": -1107.9,
+      "y": -533.8,
+      "r": 8.7
+    },
+    "salesi-nale-misinale-fakahua": {
+      "x": -438.2,
+      "y": -269.4,
+      "r": 6.7
+    },
+    "san-marcos-treatment-center": {
+      "x": -170.5,
+      "y": -84.4,
+      "r": 9.8
+    },
+    "schrom-boys-home-hawks-landing": {
+      "x": -936.1,
+      "y": -94.2,
+      "r": 10
+    },
+    "second-nature-entrada-cascades": {
+      "x": -35.8,
+      "y": 586.7,
+      "r": 9.6
+    },
+    "second-nature-uintas-blue-ridge": {
+      "x": 96.9,
+      "y": 596.3,
+      "r": 10
+    },
+    "sedona-sky-academy": {
+      "x": 338.6,
+      "y": -171.5,
+      "r": 9.2
+    },
+    "sequel-tsi-courtland": {
+      "x": -846,
+      "y": -26.1,
+      "r": 8.1
+    },
+    "sequel-tsi-owens-cross-roads": {
+      "x": -877.8,
+      "y": 44.9,
+      "r": 9.6
+    },
+    "sharon-bitz": {
+      "x": -13.4,
+      "y": 197,
+      "r": 5.6
+    },
+    "sheri-gallagher": {
+      "x": 308.4,
+      "y": 47.3,
+      "r": 7.2
+    },
+    "social-learning-environments": {
+      "x": 553.4,
+      "y": -844.7,
+      "r": 10.7
+    },
+    "steve-houghton": {
+      "x": -52.9,
+      "y": 146.7,
+      "r": 5.6
+    },
+    "steven-roach": {
+      "x": -143.8,
+      "y": -1244.6,
+      "r": 6.5
+    },
+    "straight-inc-michigan": {
+      "x": -1298.2,
+      "y": -438.3,
+      "r": 8.7
+    },
+    "straight-inc-orlando": {
+      "x": -1234.3,
+      "y": -430.5,
+      "r": 8.7
+    },
+    "tai-komanec": {
+      "x": -360.9,
+      "y": -97.3,
+      "r": 5.3
+    },
+    "talisman-camps": {
+      "x": 595.6,
+      "y": 235.3,
+      "r": 9.2
+    },
+    "teen-help-llc": {
+      "x": -225,
+      "y": -1041.3,
+      "r": 7.9
+    },
+    "tom-bratter": {
+      "x": -504.4,
+      "y": -602,
+      "r": 8.4
+    },
+    "triple-divide-lodge": {
+      "x": 1299.9,
+      "y": 220.4,
+      "r": 8.7
+    },
+    "uinta-academy": {
+      "x": 346.8,
+      "y": -482.5,
+      "r": 8.7
+    },
+    "utah-youth-village": {
+      "x": 227.5,
+      "y": -535.7,
+      "r": 8.7
+    },
+    "viewpoint-center": {
+      "x": 577.2,
+      "y": -238.5,
+      "r": 9.2
+    },
+    "wayne-halfway-house": {
+      "x": -743.2,
+      "y": -313.4,
+      "r": 12
+    },
+    "wayne-lippold": {
+      "x": -891.4,
+      "y": 146,
+      "r": 6.3
+    },
+    "waypoint-academy": {
+      "x": 495.5,
+      "y": -126.6,
+      "r": 8.7
+    },
+    "westwood-program": {
+      "x": -810.4,
+      "y": 155.2,
+      "r": 8.7
+    },
+    "wilderness-quest": {
+      "x": -151.2,
+      "y": 229.4,
+      "r": 9.2
+    },
+    "william-penn-patrick": {
+      "x": -1060,
+      "y": -577.9,
+      "r": 4.4
+    },
+    "woodward-academy": {
+      "x": -1044.5,
+      "y": -137.9,
+      "r": 9.1
+    },
+    "youth-center-at-beloit": {
+      "x": -1104.8,
+      "y": -247.1,
+      "r": 8.5
+    },
+    "youth-intervention-transport": {
+      "x": 393.8,
+      "y": 813,
+      "r": 11.8
+    },
+    "youth-services-international": {
+      "x": -899.9,
+      "y": -290.6,
+      "r": 12.9
+    },
+    "zion-hills-academy": {
+      "x": -512.4,
+      "y": 733.7,
+      "r": 9
+    },
+    "acadia-village": {
+      "x": 490.8,
+      "y": 457.2,
+      "r": 10.8
+    },
+    "adam-rainer": {
+      "x": 111.8,
+      "y": -165.8,
+      "r": 4.2
+    },
+    "agape-baptist-academy": {
+      "x": -735.1,
+      "y": -1185,
+      "r": 9.2
+    },
+    "alberta-adolescent-recovery-centre": {
+      "x": -1149.9,
+      "y": -306,
+      "r": 10.5
+    },
+    "alexander-macdonald": {
+      "x": -223.6,
+      "y": 35.8,
+      "r": 7.2
+    },
+    "all-addicts-anonymous": {
+      "x": -1440.9,
+      "y": -514.1,
+      "r": 11.4
+    },
+    "alldredge-academy": {
+      "x": 54,
+      "y": 642.3,
+      "r": 9.2
+    },
+    "anasazi-foundation": {
+      "x": 651.2,
+      "y": 480.8,
+      "r": 9
+    },
+    "anchor-home-for-boys": {
+      "x": -560.3,
+      "y": -1154.6,
+      "r": 9.2
+    },
+    "anderson-academy": {
+      "x": -1162.5,
+      "y": -877.4,
+      "r": 8.7
+    },
+    "andrew-coe": {
+      "x": 295.7,
+      "y": 7.1,
+      "r": 5.4
+    },
+    "anthony-geraci": {
+      "x": 1382.9,
+      "y": 236.3,
+      "r": 6.1
+    },
+    "appalachian-wilderness-camp": {
+      "x": -198.9,
+      "y": -664.9,
+      "r": 9.9
+    },
+    "auldern-academy": {
+      "x": -714.3,
+      "y": 84.7,
+      "r": 8.7
+    },
+    "ballard-sheppard": {
+      "x": -272.9,
+      "y": -314.8,
+      "r": 6.8
+    },
+    "becky-simpson": {
+      "x": 117.8,
+      "y": -623.5,
+      "r": 5.4
+    },
+    "ben-pearson": {
+      "x": 319.3,
+      "y": 573.3,
+      "r": 6.6
+    },
+    "berean-baptist-church": {
+      "x": -645.9,
+      "y": -1374.6,
+      "r": 9
+    },
+    "bernalillo-academy": {
+      "x": -319.1,
+      "y": 34.5,
+      "r": 8.1
+    },
+    "bethel-baptist-childrens-home": {
+      "x": -320,
+      "y": -1115.4,
+      "r": 10.5
+    },
+    "bill-henry": {
+      "x": 238.1,
+      "y": -1030.7,
+      "r": 6.8
+    },
+    "bill-hoffman": {
+      "x": -30.5,
+      "y": 170.8,
+      "r": 5.9
+    },
+    "bill-lane-and-associates": {
+      "x": -357.3,
+      "y": -164,
+      "r": 7.9
+    },
+    "bill-wilson": {
+      "x": -1302.5,
+      "y": -530.4,
+      "r": 6.2
+    },
+    "birdseye-rtc": {
+      "x": -648.2,
+      "y": 473.5,
+      "r": 8.7
+    },
+    "blaine-fisher": {
+      "x": 46.4,
+      "y": 76.5,
+      "r": 4.2
+    },
+    "blue-hills-academy": {
+      "x": 148.7,
+      "y": 272.1,
+      "r": 9.2
+    },
+    "bluefire-wilderness-therapy": {
+      "x": 468.3,
+      "y": -234,
+      "r": 9.2
+    },
+    "bobbi-trott-christensen": {
+      "x": 110.6,
+      "y": -52.4,
+      "r": 7.1
+    },
+    "boys-town": {
+      "x": 33.8,
+      "y": -615,
+      "r": 9.2
+    },
+    "brandi-elliot": {
+      "x": -372.3,
+      "y": -20.4,
+      "r": 5.2
+    },
+    "brandon-burr": {
+      "x": 305.6,
+      "y": 511.2,
+      "r": 5.8
+    },
+    "brandon-olson": {
+      "x": 1237.6,
+      "y": 336.2,
+      "r": 6.1
+    },
+    "brent-facer": {
+      "x": -253.8,
+      "y": -957.2,
+      "r": 6.3
+    },
+    "brent-jackson": {
+      "x": -622.2,
+      "y": -1085.8,
+      "r": 6.7
+    },
+    "brian-murdock": {
+      "x": -342.3,
+      "y": 348.1,
+      "r": 6
+    },
+    "brian-ray": {
+      "x": 324.2,
+      "y": -11.1,
+      "r": 6.2
+    },
+    "bridges-boys-academy": {
+      "x": -11.3,
+      "y": 247.8,
+      "r": 9.2
+    },
+    "brighter-path-courtland": {
+      "x": -842.6,
+      "y": -179.9,
+      "r": 8.1
+    },
+    "brighter-path-owens-cross-roads": {
+      "x": -993.9,
+      "y": 102.6,
+      "r": 9.8
+    },
+    "brightway-adolescent-hospital": {
+      "x": -270.2,
+      "y": -1014.1,
+      "r": 10
+    },
+    "cameron-pullan": {
+      "x": 54.9,
+      "y": -1283.1,
+      "r": 5.7
+    },
+    "camp-elliott": {
+      "x": 679.3,
+      "y": 238.7,
+      "r": 9.2
+    },
+    "cantrill-nielsen": {
+      "x": 989.6,
+      "y": 54.9,
+      "r": 6.4
+    },
+    "canyon-state-academy": {
+      "x": -822.9,
+      "y": -47.7,
+      "r": 8.4
+    },
+    "casa-grande-academy": {
+      "x": -780.6,
+      "y": -223.1,
+      "r": 8.1
+    },
+    "catherine-freer-wilderness-therapy": {
+      "x": -180.2,
+      "y": 63,
+      "r": 10.2
+    },
+    "cedar-crest-hospital-rtc": {
+      "x": 441.8,
+      "y": 358.9,
+      "r": 11.7
+    },
+    "cedars-academy": {
+      "x": 162.1,
+      "y": -145.9,
+      "r": 9.2
+    },
+    "chaffin-pullan": {
+      "x": 82,
+      "y": -1254.6,
+      "r": 6.3
+    },
+    "challenger-hawaii": {
+      "x": 182.3,
+      "y": -1100.4,
+      "r": 9.9
+    },
+    "challenger-utah": {
+      "x": 185.2,
+      "y": -1130,
+      "r": 9.9
+    },
+    "charles-chuck-dederich": {
+      "x": -962.3,
+      "y": -436.6,
+      "r": 6.2
+    },
+    "chris-laviola": {
+      "x": -340,
+      "y": -346.4,
+      "r": 4.8
+    },
+    "chris-tarver": {
+      "x": 99.4,
+      "y": 124.8,
+      "r": 6.3
+    },
+    "christopher-allison": {
+      "x": -741.4,
+      "y": -1294.2,
+      "r": 6.7
+    },
+    "chrysalis-academy": {
+      "x": 1028.3,
+      "y": 147.6,
+      "r": 9.2
+    },
+    "clayton-ahquin": {
+      "x": -53.7,
+      "y": -1147.8,
+      "r": 5.7
+    },
+    "clearview-horizon": {
+      "x": 521.1,
+      "y": -365.8,
+      "r": 8.7
+    },
+    "cliff-stockton": {
+      "x": 626.4,
+      "y": 351.3,
+      "r": 5.9
+    },
+    "coady-schueler": {
+      "x": 419.2,
+      "y": 65.1,
+      "r": 6.1
+    },
+    "compass-rose-academy": {
+      "x": -61,
+      "y": 422.3,
+      "r": 9.2
+    },
+    "copper-hills-youth-center": {
+      "x": -104,
+      "y": -393.4,
+      "r": 9.3
+    },
+    "cottonwood-treatment-center": {
+      "x": -225.8,
+      "y": -186.8,
+      "r": 8.5
+    },
+    "crater-lake-school": {
+      "x": 172,
+      "y": -50.1,
+      "r": 8.7
+    },
+    "dan-peart": {
+      "x": -99.6,
+      "y": -1182.3,
+      "r": 6.3
+    },
+    "daniel-fishburn": {
+      "x": 449.6,
+      "y": 558.8,
+      "r": 6.6
+    },
+    "david-hans": {
+      "x": 138.3,
+      "y": -56.6,
+      "r": 5.2
+    },
+    "david-smock": {
+      "x": -676.6,
+      "y": -1025.5,
+      "r": 6.7
+    },
+    "david-yeats": {
+      "x": -205.6,
+      "y": -153.8,
+      "r": 4.7
+    },
+    "dean-bonnano": {
+      "x": -310.3,
+      "y": 84,
+      "r": 5.3
+    },
+    "deanna-atkinson-valente": {
+      "x": 196.7,
+      "y": -96.2,
+      "r": 6
+    },
+    "denise-westman": {
+      "x": -94.3,
+      "y": -177.7,
+      "r": 6
+    },
+    "devereux-foundation": {
+      "x": 737.1,
+      "y": 481.4,
+      "r": 9.2
+    },
+    "devin-glissmeyer": {
+      "x": 293.4,
+      "y": 423.6,
+      "r": 6.8
+    },
+    "diane-lamont": {
+      "x": 911,
+      "y": 379.3,
+      "r": 6.4
+    },
+    "discover-seven-stars": {
+      "x": 281.7,
+      "y": -55.6,
+      "r": 8.7
+    },
+    "discovery-ranch-for-girls": {
+      "x": 790.5,
+      "y": 384.2,
+      "r": 9.2
+    },
+    "distant-drums-beginnings": {
+      "x": 54.6,
+      "y": -195.5,
+      "r": 9.2
+    },
+    "drug-free-america-foundation": {
+      "x": -1202.4,
+      "y": -539.2,
+      "r": 9.1
+    },
+    "e-ma-laku": {
+      "x": 0.8,
+      "y": -563.4,
+      "r": 7.6
+    },
+    "eckerd-academy-of-the-blue-ridge": {
+      "x": 109.9,
+      "y": -524.4,
+      "r": 9.9
+    },
+    "eilean-mackenzie": {
+      "x": 420.4,
+      "y": -103.6,
+      "r": 6.3
+    },
+    "embark-at-hobble-creek": {
+      "x": 756.8,
+      "y": 213.5,
+      "r": 9.2
+    },
+    "emmanuel-mike-argiros": {
+      "x": -1498.8,
+      "y": -358.7,
+      "r": 6.6
+    },
+    "equinox-rtc": {
+      "x": 436.4,
+      "y": -410.4,
+      "r": 8.7
+    },
+    "eugene-thorn": {
+      "x": 62.9,
+      "y": -2,
+      "r": 4.8
+    },
+    "eugenia-collins": {
+      "x": -55,
+      "y": -992.4,
+      "r": 6.3
+    },
+    "evangeline-christian-academy": {
+      "x": -1150,
+      "y": -999.1,
+      "r": 9.4
+    },
+    "forest-ridge-youth-services": {
+      "x": -858.7,
+      "y": -82.6,
+      "r": 9.9
+    },
+    "fred-peipman": {
+      "x": 98.8,
+      "y": 337.5,
+      "r": 4.7
+    },
+    "gay-jackson": {
+      "x": 740.3,
+      "y": -402,
+      "r": 6.7
+    },
+    "genesis-by-the-sea": {
+      "x": -394.8,
+      "y": -1429.6,
+      "r": 9.2
+    },
+    "gordon-newell": {
+      "x": -403.6,
+      "y": 5,
+      "r": 4.4
+    },
+    "governor-george-w-bush-of-texas": {
+      "x": -1156.4,
+      "y": -789.5,
+      "r": 11.6
+    },
+    "graham-shannonhouse": {
+      "x": 368.9,
+      "y": 60.3,
+      "r": 7.2
+    },
+    "greenbrier-academy": {
+      "x": -260.8,
+      "y": 467.5,
+      "r": 9.2
+    },
+    "greg-andrick": {
+      "x": 15.6,
+      "y": 51,
+      "r": 5
+    },
+    "greg-lindsay": {
+      "x": 258.1,
+      "y": -37,
+      "r": 5.8
+    },
+    "gulf-coast-academy": {
+      "x": -266.7,
+      "y": -1082.3,
+      "r": 8.7
+    },
+    "guy-andersen": {
+      "x": 649.7,
+      "y": -440.7,
+      "r": 5.7
+    },
+    "guy-leguyonne": {
+      "x": 17.7,
+      "y": 143.8,
+      "r": 6.4
+    },
+    "hawks-landing-therapeutic-home-for-boys": {
+      "x": -686.3,
+      "y": -72,
+      "r": 10.2
+    },
+    "helen-gowanny": {
+      "x": -1379,
+      "y": -435.4,
+      "r": 5.5
+    },
+    "high-frontier": {
+      "x": 586.8,
+      "y": -894,
+      "r": 8.7
+    },
+    "high-impact": {
+      "x": -145.4,
+      "y": -1020.4,
+      "r": 8.7
+    },
+    "hill-crest-behavioral-health": {
+      "x": -543.3,
+      "y": 8.8,
+      "r": 9.9
+    },
+    "hollie-archibald": {
+      "x": 439.4,
+      "y": -646.4,
+      "r": 5.7
+    },
+    "huntsman-mental-health-institute": {
+      "x": 185.4,
+      "y": 748.9,
+      "r": 9.2
+    },
+    "hyde-school": {
+      "x": -320.8,
+      "y": 363.1,
+      "r": 9.2
+    },
+    "hyrum-taylor": {
+      "x": -567.4,
+      "y": 849.1,
+      "r": 5.3
+    },
+    "jacqueline-danforth": {
+      "x": -17.4,
+      "y": -210.4,
+      "r": 6
+    },
+    "jake-roberts": {
+      "x": 246.7,
+      "y": -777.7,
+      "r": 5
+    },
+    "jameson-norton": {
+      "x": 804.7,
+      "y": 567.4,
+      "r": 6.4
+    },
+    "jami-sturges-ullrich": {
+      "x": -282.1,
+      "y": -239.7,
+      "r": 6.2
+    },
+    "jamie-caldwell": {
+      "x": -311.7,
+      "y": 548.6,
+      "r": 6
+    },
+    "jamison-monroe-jr": {
+      "x": 931.8,
+      "y": 638.5,
+      "r": 6.4
+    },
+    "jane-stewart": {
+      "x": 216.3,
+      "y": 309.6,
+      "r": 5.8
+    },
+    "jason-dalton": {
+      "x": -97.7,
+      "y": 274.8,
+      "r": 4.1
+    },
+    "jason-derkson": {
+      "x": -738.5,
+      "y": -1065.6,
+      "r": 6.7
+    },
+    "jay-kay": {
+      "x": -261.7,
+      "y": -978.5,
+      "r": 6.3
+    },
+    "jeff-holloway": {
+      "x": 1201.9,
+      "y": 388,
+      "r": 6.1
+    },
+    "jeffrey-ables": {
+      "x": -657.1,
+      "y": -1305.3,
+      "r": 6.7
+    },
+    "jen-murphy": {
+      "x": 301.8,
+      "y": 368.1,
+      "r": 6.2
+    },
+    "jeniveve-rollins": {
+      "x": 186,
+      "y": -150.1,
+      "r": 5
+    },
+    "jerry-spanos": {
+      "x": -282.9,
+      "y": -295.6,
+      "r": 4.7
+    },
+    "jessica-jewell": {
+      "x": 8.1,
+      "y": 709,
+      "r": 5.3
+    },
+    "jill-bentz": {
+      "x": 339.5,
+      "y": -97.2,
+      "r": 4.9
+    },
+    "jim-dredge": {
+      "x": 618.8,
+      "y": 251.9,
+      "r": 5.1
+    },
+    "jim-graves": {
+      "x": -540.4,
+      "y": 441.4,
+      "r": 5.5
+    },
+    "joe-atkin": {
+      "x": -121.1,
+      "y": -1149.2,
+      "r": 6.3
+    },
+    "joe-f-akins": {
+      "x": -288.8,
+      "y": -884.9,
+      "r": 5.8
+    },
+    "joe-ricci": {
+      "x": -375.7,
+      "y": -246.9,
+      "r": 4.3
+    },
+    "john-brother-fountain": {
+      "x": -330.7,
+      "y": -1149.8,
+      "r": 6.7
+    },
+    "john-l-santa": {
+      "x": 66.8,
+      "y": 43.1,
+      "r": 4.6
+    },
+    "john-mercer": {
+      "x": 127.7,
+      "y": -82,
+      "r": 5.4
+    },
+    "john-sarchio": {
+      "x": -351.2,
+      "y": -64.6,
+      "r": 5.3
+    },
+    "jonathan-daniel-birnkrant": {
+      "x": 442.2,
+      "y": 650.3,
+      "r": 8.2
+    },
+    "jonathan-gurney": {
+      "x": -239.8,
+      "y": 78.2,
+      "r": 5.7
+    },
+    "justin-hoover": {
+      "x": 687.9,
+      "y": 539.1,
+      "r": 6.1
+    },
+    "kaizen-academy": {
+      "x": -473.1,
+      "y": 377.4,
+      "r": 8.7
+    },
+    "karen-lee": {
+      "x": -1089.6,
+      "y": 548.5,
+      "r": 5
+    },
+    "karr-farnsworth": {
+      "x": -171.6,
+      "y": -862.9,
+      "r": 9.3
+    },
+    "kathy-mcgregor": {
+      "x": 973.7,
+      "y": 369.2,
+      "r": 6.4
+    },
+    "kathy-rex": {
+      "x": 417.1,
+      "y": 38,
+      "r": 5.8
+    },
+    "katie-soli": {
+      "x": 208,
+      "y": -729,
+      "r": 4.1
+    },
+    "kelly-hollis": {
+      "x": -795.7,
+      "y": 132.5,
+      "r": 4.5
+    },
+    "kera-miller": {
+      "x": 315.3,
+      "y": -382,
+      "r": 5.4
+    },
+    "keystone-education-and-youth-services": {
+      "x": -494.1,
+      "y": -71.7,
+      "r": 11.2
+    },
+    "kids-helping-kids-of-hebron-ky": {
+      "x": -1213.4,
+      "y": -635.6,
+      "r": 9.1
+    },
+    "kids-of-southern-california": {
+      "x": -1050.1,
+      "y": -398.8,
+      "r": 9
+    },
+    "kim-lira": {
+      "x": 639.3,
+      "y": 833.4,
+      "r": 7.1
+    },
+    "king-george-school": {
+      "x": -33.9,
+      "y": -19.4,
+      "r": 8.7
+    },
+    "kirk-voss": {
+      "x": 1114.9,
+      "y": 261.3,
+      "r": 6.4
+    },
+    "kolob-canyon-rtc": {
+      "x": -322.9,
+      "y": 261.8,
+      "r": 8.7
+    },
+    "krista-zimmerman": {
+      "x": -584.5,
+      "y": 658.1,
+      "r": 6.9
+    },
+    "la-europa-academy": {
+      "x": -58.3,
+      "y": 353.3,
+      "r": 8.7
+    },
+    "lakshmi-kaza": {
+      "x": -277,
+      "y": -218.1,
+      "r": 6.1
+    },
+    "lance-horsehair-jaggar": {
+      "x": 261.4,
+      "y": -1031.6,
+      "r": 6.5
+    },
+    "larry-blakey": {
+      "x": -526.5,
+      "y": 155.5,
+      "r": 5.7
+    },
+    "larry-katz": {
+      "x": -265.3,
+      "y": -63.3,
+      "r": 5.3
+    },
+    "larry-solie": {
+      "x": 38,
+      "y": 180.7,
+      "r": 9.2
+    },
+    "laurel-hills-behavioral-health": {
+      "x": -555.1,
+      "y": -18.4,
+      "r": 9.8
+    },
+    "laurel-oaks-behavioral-health-center": {
+      "x": -587.3,
+      "y": 50.5,
+      "r": 10.6
+    },
+    "legacy-academy-adventures": {
+      "x": -628.5,
+      "y": -1014.4,
+      "r": 10.1
+    },
+    "liahona-academy": {
+      "x": -118.3,
+      "y": -1016.5,
+      "r": 8.7
+    },
+    "lifespring-seminars": {
+      "x": -613.4,
+      "y": -625.5,
+      "r": 7.9
+    },
+    "lighthouse-christian-academy": {
+      "x": -888.6,
+      "y": -1218,
+      "r": 9.2
+    },
+    "lila-bjorklund": {
+      "x": 188.5,
+      "y": -583.6,
+      "r": 6.4
+    },
+    "linda-zimmerman": {
+      "x": 569.7,
+      "y": -638.2,
+      "r": 6.4
+    },
+    "liz-mcghee": {
+      "x": 670.9,
+      "y": -856.3,
+      "r": 4.6
+    },
+    "loretta-parrish": {
+      "x": -1174.8,
+      "y": -518.7,
+      "r": 6.4
+    },
+    "lorin-broadbent": {
+      "x": 601.1,
+      "y": -182.9,
+      "r": 6.8
+    },
+    "luke-hatch": {
+      "x": 566.6,
+      "y": 9,
+      "r": 6.2
+    },
+    "majestic-ranch-academy": {
+      "x": -112.9,
+      "y": -970.6,
+      "r": 9.4
+    },
+    "mansfield-juvenile-treatment-center": {
+      "x": -992.6,
+      "y": -114.8,
+      "r": 10.1
+    },
+    "maple-hall-academy": {
+      "x": 401.2,
+      "y": 292.8,
+      "r": 10.2
+    },
+    "marguerite-sallee": {
+      "x": -347.4,
+      "y": -233.5,
+      "r": 6.1
+    },
+    "marion-youth-academy": {
+      "x": -754.7,
+      "y": -227.1,
+      "r": 8.1
+    },
+    "mars-home-for-youth": {
+      "x": 644.4,
+      "y": 1016.2,
+      "r": 9.2
+    },
+    "mary-pauer": {
+      "x": -31.3,
+      "y": -69.1,
+      "r": 6.1
+    },
+    "masters-ranch-junior-high": {
+      "x": -730.1,
+      "y": -1040.3,
+      "r": 10
+    },
+    "matthew-hendry": {
+      "x": 582.3,
+      "y": 24.3,
+      "r": 5.6
+    },
+    "meg-paul": {
+      "x": 301.8,
+      "y": -326.9,
+      "r": 4.8
+    },
+    "melodie-rose": {
+      "x": 492.9,
+      "y": 273.9,
+      "r": 5.8
+    },
+    "meridell-achievement-center": {
+      "x": -602.8,
+      "y": 77.2,
+      "r": 10.3
+    },
+    "michael-allgood": {
+      "x": 171.3,
+      "y": -97.1,
+      "r": 7.1
+    },
+    "michael-scaletta": {
+      "x": -1165.7,
+      "y": -473.3,
+      "r": 5.5
+    },
+    "michelle-mccoy": {
+      "x": 827.9,
+      "y": 91.6,
+      "r": 5.7
+    },
+    "mik-oyler": {
+      "x": 295.9,
+      "y": -308.7,
+      "r": 4.4
+    },
+    "mike-palmer": {
+      "x": -458.4,
+      "y": -1421.2,
+      "r": 6.7
+    },
+    "monarch-school": {
+      "x": -309.8,
+      "y": -262.7,
+      "r": 9.2
+    },
+    "montana-academy": {
+      "x": 112.4,
+      "y": -8.6,
+      "r": 8.7
+    },
+    "montfort-hall": {
+      "x": 349.8,
+      "y": 736,
+      "r": 9.2
+    },
+    "mycala-cherry": {
+      "x": 366.2,
+      "y": 579.4,
+      "r": 6.6
+    },
+    "nathan-day": {
+      "x": -534.6,
+      "y": -997.4,
+      "r": 6.3
+    },
+    "national-association-of-therapeutic-wilderness-camping": {
+      "x": 776,
+      "y": 239.7,
+      "r": 13.3
+    },
+    "new-focus-academy": {
+      "x": 429.3,
+      "y": -263.4,
+      "r": 8.7
+    },
+    "new-horizons-for-young-women": {
+      "x": 157.3,
+      "y": -204.1,
+      "r": 9.7
+    },
+    "new-leaf-academy-of-oregon": {
+      "x": 419.9,
+      "y": 227.6,
+      "r": 9.2
+    },
+    "new-vision-wilderness": {
+      "x": 914.2,
+      "y": 259.8,
+      "r": 9.2
+    },
+    "nick-pakidko": {
+      "x": -161.3,
+      "y": -176.5,
+      "r": 5.5
+    },
+    "nicole-prescott": {
+      "x": 1229,
+      "y": 363.3,
+      "r": 6.1
+    },
+    "norm-thibault": {
+      "x": 12.9,
+      "y": -851,
+      "r": 5.7
+    },
+    "north-star-expeditions": {
+      "x": 226.4,
+      "y": -948.5,
+      "r": 8.9
+    },
+    "oasis-ascent": {
+      "x": 634.4,
+      "y": 217.8,
+      "r": 8.7
+    },
+    "obsidian-trails-outdoor-schools": {
+      "x": -246.3,
+      "y": 624.8,
+      "r": 10
+    },
+    "olympus-view-hospital-rtc": {
+      "x": -206.1,
+      "y": -557.1,
+      "r": 9.7
+    },
+    "on-track-wilderness-program": {
+      "x": -294.1,
+      "y": 7,
+      "r": 9.2
+    },
+    "orval-hagerman": {
+      "x": 40.1,
+      "y": -1080.7,
+      "r": 7.4
+    },
+    "outdoor-behavioral-healthcare-industry-council": {
+      "x": 165.7,
+      "y": 108.2,
+      "r": 12.9
+    },
+    "pacific-coast-academy": {
+      "x": 27,
+      "y": -1042.2,
+      "r": 9.9
+    },
+    "paradise-cove": {
+      "x": -225.4,
+      "y": -967.8,
+      "r": 8.7
+    },
+    "passages-to-recovery": {
+      "x": 658.8,
+      "y": 59.6,
+      "r": 9.2
+    },
+    "pathway-family-cener": {
+      "x": -1335,
+      "y": -389.8,
+      "r": 8.7
+    },
+    "patrick-hawkins": {
+      "x": 1389.3,
+      "y": 193,
+      "r": 5.4
+    },
+    "patti-palmer": {
+      "x": -344.5,
+      "y": -1393.9,
+      "r": 6.7
+    },
+    "paula-riggs": {
+      "x": 367.9,
+      "y": -200.4,
+      "r": 4.5
+    },
+    "penny-baker": {
+      "x": -932.5,
+      "y": 370.7,
+      "r": 5
+    },
+    "peter-rowe": {
+      "x": -273.2,
+      "y": 132.5,
+      "r": 6
+    },
+    "provo-canyon-school-springville-campus": {
+      "x": -343.3,
+      "y": -16.1,
+      "r": 9.7
+    },
+    "r-scott-jones": {
+      "x": 62.4,
+      "y": 436.4,
+      "r": 5.8
+    },
+    "rachel-steinberg": {
+      "x": -290.5,
+      "y": -277.5,
+      "r": 5
+    },
+    "ramsay-youth-services": {
+      "x": -622.2,
+      "y": -54.7,
+      "r": 9.8
+    },
+    "randy-soderquist": {
+      "x": -23.5,
+      "y": -358.1,
+      "r": 7.1
+    },
+    "red-rock-academy": {
+      "x": -136.1,
+      "y": -994.3,
+      "r": 9
+    },
+    "red-rock-canyon-school": {
+      "x": -284.6,
+      "y": -79.2,
+      "r": 9.7
+    },
+    "remuda-ranch-programs": {
+      "x": 142.6,
+      "y": -786.4,
+      "r": 8.7
+    },
+    "rita-argiros": {
+      "x": -1497.4,
+      "y": -432.7,
+      "r": 6.2
+    },
+    "rivendell-of-arkansas": {
+      "x": -54.2,
+      "y": -339,
+      "r": 8.7
+    },
+    "rivendell-of-utah": {
+      "x": 38.9,
+      "y": -407.4,
+      "r": 8.7
+    },
+    "riverside-baptist-church": {
+      "x": -579.7,
+      "y": -1350.2,
+      "r": 9.3
+    },
+    "rob-cooley": {
+      "x": -72.5,
+      "y": 109,
+      "r": 5.5
+    },
+    "robert-graves": {
+      "x": -798.7,
+      "y": -1178.1,
+      "r": 4
+    },
+    "robert-w-lichfield": {
+      "x": -198,
+      "y": -1149.6,
+      "r": 6.3
+    },
+    "ronald-d-hunter": {
+      "x": -1307.4,
+      "y": -159.1,
+      "r": 6.7
+    },
+    "rop-nevada": {
+      "x": -501.2,
+      "y": -149.2,
+      "r": 8.7
+    },
+    "rosemary-tippett": {
+      "x": -294.9,
+      "y": 151.2,
+      "r": 6.5
+    },
+    "sam-wallace": {
+      "x": 674.9,
+      "y": 661.4,
+      "r": 7.1
+    },
+    "sandhill-child-development-center": {
+      "x": 499.8,
+      "y": -466.7,
+      "r": 10.6
+    },
+    "santiam-crossing": {
+      "x": -82.4,
+      "y": -25.3,
+      "r": 9.2
+    },
+    "sarah-persha-koalkin": {
+      "x": -34.3,
+      "y": 37.5,
+      "r": 5.9
+    },
+    "schrom-boys-home": {
+      "x": -833.9,
+      "y": -96.7,
+      "r": 8.7
+    },
+    "scott-fitzwater": {
+      "x": 117,
+      "y": 258.2,
+      "r": 5.8
+    },
+    "scott-spaw": {
+      "x": 470.4,
+      "y": 334.5,
+      "r": 5.9
+    },
+    "sean-haggerty": {
+      "x": -284.5,
+      "y": 666.5,
+      "r": 6
+    },
+    "sequel-tsi-paint-rock-valley": {
+      "x": -964.3,
+      "y": 311.5,
+      "r": 9.1
+    },
+    "shawn-ziluck": {
+      "x": 139.9,
+      "y": 375.1,
+      "r": 5.1
+    },
+    "shayne-gallagher": {
+      "x": 257.1,
+      "y": 94.2,
+      "r": 7.2
+    },
+    "shephali-sharma": {
+      "x": 78.2,
+      "y": 140.2,
+      "r": 6.4
+    },
+    "siuta-sonny-faaootoa": {
+      "x": 363.5,
+      "y": 951.6,
+      "r": 6.6
+    },
+    "skyline-journey": {
+      "x": 50.9,
+      "y": -167.2,
+      "r": 9.2
+    },
+    "sonja-fullwood": {
+      "x": 237.3,
+      "y": 150.3,
+      "r": 6.4
+    },
+    "southeast-alabama-youth-leadership-academy": {
+      "x": -940.3,
+      "y": 177.9,
+      "r": 11.3
+    },
+    "southwood-psychiatric-hospital": {
+      "x": 629.6,
+      "y": 598.6,
+      "r": 12.7
+    },
+    "spark-academy": {
+      "x": -343.6,
+      "y": -454.9,
+      "r": 8.7
+    },
+    "st-pauls-preparatory-academy": {
+      "x": -390.9,
+      "y": 341,
+      "r": 9.7
+    },
+    "stephanie-householder": {
+      "x": -632.9,
+      "y": -1215.8,
+      "r": 7.9
+    },
+    "steve-debois": {
+      "x": 412.1,
+      "y": 270.3,
+      "r": 4.8
+    },
+    "steven-blankenship": {
+      "x": -423.6,
+      "y": -1185.8,
+      "r": 6.7
+    },
+    "steven-pope": {
+      "x": 621.6,
+      "y": -432.1,
+      "r": 4.7
+    },
+    "straight-inc-cincinnati": {
+      "x": -1241.9,
+      "y": -528.4,
+      "r": 8.7
+    },
+    "straight-southern-california": {
+      "x": -1159.7,
+      "y": -431.6,
+      "r": 9.2
+    },
+    "summer-hornbeck": {
+      "x": 1229.4,
+      "y": 395.6,
+      "r": 6.1
+    },
+    "summit-achievement": {
+      "x": 327.6,
+      "y": -444.2,
+      "r": 9.7
+    },
+    "summit-preparatory-school": {
+      "x": 192,
+      "y": 486,
+      "r": 9.2
+    },
+    "sunhawk-academy": {
+      "x": 437,
+      "y": 83.2,
+      "r": 9.2
+    },
+    "sunrise-beach": {
+      "x": -161.2,
+      "y": -1306.6,
+      "r": 9
+    },
+    "susan-hardy": {
+      "x": 687.8,
+      "y": 214.6,
+      "r": 6.4
+    },
+    "suzie-barth-courtney": {
+      "x": -384.2,
+      "y": 293.1,
+      "r": 6.5
+    },
+    "talisman-programs": {
+      "x": 634.4,
+      "y": 276.7,
+      "r": 9.2
+    },
+    "talisman-school": {
+      "x": 662.2,
+      "y": 215.9,
+      "r": 9.2
+    },
+    "tampa-behavioral-health": {
+      "x": 698.5,
+      "y": 500.9,
+      "r": 11.7
+    },
+    "tasir-el-souessi": {
+      "x": 397.5,
+      "y": -292.7,
+      "r": 6.2
+    },
+    "teen-challenge-of-acadiana-inc": {
+      "x": -1174,
+      "y": -958.4,
+      "r": 9.4
+    },
+    "teen-mentor": {
+      "x": -185,
+      "y": -1027.1,
+      "r": 8.7
+    },
+    "telos-academy": {
+      "x": 392.7,
+      "y": 441.9,
+      "r": 9.2
+    },
+    "telos-rtc": {
+      "x": 657.4,
+      "y": 427.9,
+      "r": 8.7
+    },
+    "teresa-shinedling": {
+      "x": 625.8,
+      "y": -50,
+      "r": 7
+    },
+    "the-meadows-ranch": {
+      "x": 177.7,
+      "y": -707,
+      "r": 8.7
+    },
+    "the-pinnacle-schools": {
+      "x": -840.1,
+      "y": 451.9,
+      "r": 8.7
+    },
+    "the-wardle-home": {
+      "x": 16.1,
+      "y": -123.6,
+      "r": 10
+    },
+    "thomas-ring": {
+      "x": 454.4,
+      "y": 168,
+      "r": 6.1
+    },
+    "three-springs-courtland": {
+      "x": -850.5,
+      "y": 151.8,
+      "r": 8.1
+    },
+    "three-springs-duck-river": {
+      "x": -889.4,
+      "y": 279.6,
+      "r": 8.1
+    },
+    "three-springs-new-beginning": {
+      "x": -861.4,
+      "y": 185,
+      "r": 9.7
+    },
+    "three-springs-paint-rock-valley": {
+      "x": -888.7,
+      "y": 307.9,
+      "r": 10.2
+    },
+    "tim-mcmahon": {
+      "x": -118.4,
+      "y": -601.3,
+      "r": 6.2
+    },
+    "tom-courtney": {
+      "x": -273.1,
+      "y": 154.1,
+      "r": 5.5
+    },
+    "tom-powers": {
+      "x": -1327.8,
+      "y": -509,
+      "r": 6.2
+    },
+    "tonna-lawrenson": {
+      "x": -1010.4,
+      "y": -235.1,
+      "r": 5.9
+    },
+    "trails-momentum": {
+      "x": 514.3,
+      "y": -416.3,
+      "r": 9
+    },
+    "trilby-hoover": {
+      "x": -503.5,
+      "y": 90.7,
+      "r": 5.6
+    },
+    "trina-packard": {
+      "x": 942,
+      "y": -118.6,
+      "r": 6.2
+    },
+    "turnabout-academy": {
+      "x": -244,
+      "y": 665.3,
+      "r": 9.2
+    },
+    "utah-girls-village": {
+      "x": 241.5,
+      "y": -612,
+      "r": 8.7
+    },
+    "virginia-scott-prowse": {
+      "x": 338.7,
+      "y": -533.1,
+      "r": 5.7
+    },
+    "vista-magna-rtc": {
+      "x": -138.4,
+      "y": 264.7,
+      "r": 9.2
+    },
+    "w-dean-belnap": {
+      "x": 707,
+      "y": -148.1,
+      "r": 5.9
+    },
+    "walkabout-therapeutic-expeditions": {
+      "x": 432.3,
+      "y": 201.7,
+      "r": 9.5
+    },
+    "wayne-stinson": {
+      "x": 620.4,
+      "y": -27.8,
+      "r": 5.8
+    },
+    "william-marshall": {
+      "x": -626.7,
+      "y": -1286.9,
+      "r": 6.7
+    },
+    "youth-care-of-utah": {
+      "x": 735.3,
+      "y": 48,
+      "r": 9.2
+    },
+    "youth-foundation-success-academy": {
+      "x": 18.9,
+      "y": -912.7,
+      "r": 10.6
+    },
+    "youth-opportunity-foundation": {
+      "x": -1245.7,
+      "y": -185.8,
+      "r": 14
+    },
+    "a-better-way-youth-academy": {
+      "x": -278.6,
+      "y": -960.1,
+      "r": 8.7
+    },
+    "abm-ministries": {
+      "x": -855.3,
+      "y": -1251.1,
+      "r": 11.9
+    },
+    "abundant-life-academy": {
+      "x": -139.2,
+      "y": -273.6,
+      "r": 8.7
+    },
+    "academy-at-ivy-ridge": {
+      "x": -189.8,
+      "y": -983.7,
+      "r": 8.7
+    },
+    "academy-of-eastern-arizona": {
+      "x": -621.7,
+      "y": 906,
+      "r": 9.2
+    },
+    "academy-of-new-horizons": {
+      "x": -125.5,
+      "y": -18,
+      "r": 8.8
+    },
+    "agape-baptist-church": {
+      "x": -746.8,
+      "y": -1097.4,
+      "r": 10.3
+    },
+    "agoura-hills-rtc": {
+      "x": 535.6,
+      "y": 998.2,
+      "r": 9.2
+    },
+    "alldredge-wilderness-journey": {
+      "x": 46.7,
+      "y": 717.3,
+      "r": 9.2
+    },
+    "allynwood-academy": {
+      "x": -1491.2,
+      "y": -277.3,
+      "r": 8.7
+    },
+    "anchor-academy": {
+      "x": -585.4,
+      "y": -1115.7,
+      "r": 9.2
+    },
+    "anderson-creek-school": {
+      "x": -342.8,
+      "y": -120.1,
+      "r": 8.7
+    },
+    "anneewakee-school": {
+      "x": 44.5,
+      "y": -131.7,
+      "r": 9.5
+    },
+    "arden-oaks-rtc": {
+      "x": 431.7,
+      "y": 979.5,
+      "r": 9.2
+    },
+    "arivaca-boys-ranch": {
+      "x": 1061.5,
+      "y": 303.5,
+      "r": 8.7
+    },
+    "arizona-boys-ranch": {
+      "x": -891.8,
+      "y": -20,
+      "r": 8.1
+    },
+    "arkansas-juvenile-assessment-and-treatment-center": {
+      "x": -773.4,
+      "y": -68.9,
+      "r": 10.7
+    },
+    "ashby-academy": {
+      "x": 761.5,
+      "y": -107.3,
+      "r": 8.7
+    },
+    "ashcreek-academy": {
+      "x": -159.7,
+      "y": -384.1,
+      "r": 8.7
+    },
+    "aura-rtc": {
+      "x": 480.9,
+      "y": 1049.3,
+      "r": 9.2
+    },
+    "avalon-hills-residential-eating-disorder-program": {
+      "x": 507,
+      "y": -747.2,
+      "r": 10.8
+    },
+    "bain-capital": {
+      "x": 1050.7,
+      "y": 350,
+      "r": 15.9
+    },
+    "beloit-juvenile-correctional-facility": {
+      "x": -1094.8,
+      "y": -203,
+      "r": 10.1
+    },
+    "bible-baptist-temple": {
+      "x": -556.2,
+      "y": -1392.3,
+      "r": 9.3
+    },
+    "bill-and-melinda-gates-foundation": {
+      "x": 112.5,
+      "y": -313.8,
+      "r": 11.2
+    },
+    "birdseye-boys-ranch": {
+      "x": -719.7,
+      "y": 514,
+      "r": 8.7
+    },
+    "bledsoe-youth-academy": {
+      "x": -1286.2,
+      "y": -138.5,
+      "r": 8.7
+    },
+    "boise-girls-academy": {
+      "x": -1252.9,
+      "y": -876.8,
+      "r": 8.7
+    },
+    "bootcamps-for-teens": {
+      "x": -280.1,
+      "y": -1195.1,
+      "r": 7.9
+    },
+    "bravo": {
+      "x": 557.2,
+      "y": 392.7,
+      "r": 7.5
+    },
+    "broward-youth-treatment-center": {
+      "x": -1267.7,
+      "y": -160.1,
+      "r": 9.8
+    },
+    "browning-distance-learning-academy": {
+      "x": -309.2,
+      "y": -954.1,
+      "r": 11.1
+    },
+    "brush-creek-academy": {
+      "x": -1197.5,
+      "y": -943.1,
+      "r": 8.7
+    },
+    "brush-ranch-school": {
+      "x": 178.2,
+      "y": 406.3,
+      "r": 8.7
+    },
+    "bryan-lepinske": {
+      "x": 1218.2,
+      "y": -159.9,
+      "r": 6
+    },
+    "calabasas-rtc": {
+      "x": 507.1,
+      "y": 998.7,
+      "r": 9.2
+    },
+    "calo-preteens": {
+      "x": 801.3,
+      "y": 270,
+      "r": 9.2
+    },
+    "calo-teens": {
+      "x": 808.4,
+      "y": 242.4,
+      "r": 9.2
+    },
+    "camp-sayla": {
+      "x": -1002.6,
+      "y": 196.7,
+      "r": 9.3
+    },
+    "catalyst-rtc": {
+      "x": 914.7,
+      "y": 437.7,
+      "r": 8.7
+    },
+    "cedar-ridge-academy": {
+      "x": -386.3,
+      "y": 727.1,
+      "r": 8.7
+    },
+    "chilanko-lodge": {
+      "x": 149.9,
+      "y": -1138.4,
+      "r": 8.7
+    },
+    "chris-h-mcroberts": {
+      "x": -723.8,
+      "y": 709.1,
+      "r": 6.6
+    },
+    "christian-life-boarding-academy": {
+      "x": -456.8,
+      "y": -1230.3,
+      "r": 9.4
+    },
+    "cinnamon-hills-youth-crisis-center": {
+      "x": -419.7,
+      "y": -383.1,
+      "r": 10
+    },
+    "clearview-girls-academy": {
+      "x": 576.3,
+      "y": -421.9,
+      "r": 9.4
+    },
+    "cole-ranch-rtc": {
+      "x": 436.6,
+      "y": 1028.5,
+      "r": 9.2
+    },
+    "columbus-girls-academy": {
+      "x": -1247,
+      "y": -931.2,
+      "r": 9.5
+    },
+    "come-back-youth-services": {
+      "x": -82.3,
+      "y": -1104.9,
+      "r": 8.7
+    },
+    "community-psychiatric-centers": {
+      "x": -225,
+      "y": -616.1,
+      "r": 9.7
+    },
+    "covenant-health": {
+      "x": 451.8,
+      "y": 435.4,
+      "r": 10.1
+    },
+    "cramer-creek-school": {
+      "x": 484.1,
+      "y": -811.8,
+      "r": 8.7
+    },
+    "crestview-youth-academy": {
+      "x": -1250.8,
+      "y": -107,
+      "r": 8.7
+    },
+    "cross-creek-academy": {
+      "x": -121.4,
+      "y": -873.3,
+      "r": 9.3
+    },
+    "cross-creek-center-for-boys": {
+      "x": -93.6,
+      "y": -878.6,
+      "r": 9
+    },
+    "crossroads-turning-points-recovery-center": {
+      "x": -436.9,
+      "y": 134,
+      "r": 10.6
+    },
+    "danville-rtc": {
+      "x": 524.3,
+      "y": 972.1,
+      "r": 9.2
+    },
+    "deep-creek-youth-academy": {
+      "x": -1212.2,
+      "y": -83.5,
+      "r": 9.3
+    },
+    "developmental-trauma-training-institute": {
+      "x": 1253.8,
+      "y": 254.3,
+      "r": 8.7
+    },
+    "dove-song-rtc": {
+      "x": 420,
+      "y": 1005.4,
+      "r": 9.2
+    },
+    "dragonfly-transitions": {
+      "x": 1331.3,
+      "y": 430.7,
+      "r": 8.7
+    },
+    "eagle-cove-academy": {
+      "x": 977.9,
+      "y": 159.9,
+      "r": 9.2
+    },
+    "eagle-ranch-academy": {
+      "x": 1125.2,
+      "y": 41.9,
+      "r": 8.7
+    },
+    "eckerd-connects": {
+      "x": 186.9,
+      "y": -505.1,
+      "r": 9.2
+    },
+    "education-consultant": {
+      "x": 575.8,
+      "y": 475.4,
+      "r": 8.5
+    },
+    "elements-wilderness-program": {
+      "x": 490.9,
+      "y": -290.7,
+      "r": 8.7
+    },
+    "embark-at-flathead-valley": {
+      "x": 1063.2,
+      "y": 160.9,
+      "r": 9.1
+    },
+    "embark-at-the-forge": {
+      "x": 1065.9,
+      "y": 189.1,
+      "r": 9.2
+    },
+    "equine-journeys-adolescent-rtc": {
+      "x": 269.7,
+      "y": 604.8,
+      "r": 10.3
+    },
+    "eva-carlston-academy": {
+      "x": 775.3,
+      "y": -577.7,
+      "r": 9.2
+    },
+    "evangelhouse-christian-academy": {
+      "x": -1117.7,
+      "y": -966.2,
+      "r": 10.2
+    },
+    "everglades-youth-academy": {
+      "x": -1259.4,
+      "y": -132.9,
+      "r": 8.7
+    },
+    "evoke-cascades": {
+      "x": -57.6,
+      "y": 857.1,
+      "r": 8.7
+    },
+    "evoke-entrada": {
+      "x": -35.3,
+      "y": 873.1,
+      "r": 8.7
+    },
+    "focal-point-academy": {
+      "x": 909.1,
+      "y": -135.7,
+      "r": 8.7
+    },
+    "fort-myers-academy": {
+      "x": -800.7,
+      "y": -641,
+      "r": 8.1
+    },
+    "four-circles-recovery-center": {
+      "x": 959,
+      "y": 19.1,
+      "r": 9.9
+    },
+    "fulshear-treatment-to-transition": {
+      "x": 754.1,
+      "y": 25.4,
+      "r": 9.2
+    },
+    "g4s-youth-services-llc": {
+      "x": -871.5,
+      "y": -649,
+      "r": 8.1
+    },
+    "gateway-academy-rite-of-passage": {
+      "x": -705.5,
+      "y": -8.6,
+      "r": 8.7
+    },
+    "gateway-academy-teen-challenge": {
+      "x": -1158.8,
+      "y": -904.5,
+      "r": 8.7
+    },
+    "georgia-department-of-human-resources": {
+      "x": -182,
+      "y": -720.5,
+      "r": 13.5
+    },
+    "georgia-military-school": {
+      "x": -1079.5,
+      "y": -166.2,
+      "r": 8.1
+    },
+    "glen-mills-school": {
+      "x": -837.8,
+      "y": -327.5,
+      "r": 8.1
+    },
+    "glen-willow-academy": {
+      "x": 717.8,
+      "y": -13.5,
+      "r": 8.7
+    },
+    "grace-christian-home-for-girls": {
+      "x": -374.6,
+      "y": -863.6,
+      "r": 10.7
+    },
+    "gray-wolf-ranch": {
+      "x": 915.2,
+      "y": 731.8,
+      "r": 9.2
+    },
+    "greenwood-associates-inc": {
+      "x": -680.1,
+      "y": 580.8,
+      "r": 10
+    },
+    "gulf-coast-treatment-center": {
+      "x": -494.5,
+      "y": -14.6,
+      "r": 8.7
+    },
+    "havenwood-north": {
+      "x": -563.1,
+      "y": 770.7,
+      "r": 9
+    },
+    "havenwood-south": {
+      "x": -627.9,
+      "y": 838.6,
+      "r": 9
+    },
+    "heritage-homestead": {
+      "x": -338.1,
+      "y": -557,
+      "r": 8.7
+    },
+    "highlands-youth-academy": {
+      "x": -785.5,
+      "y": -619.6,
+      "r": 8.1
+    },
+    "hillsborough-girls-academy": {
+      "x": -854.2,
+      "y": -546.6,
+      "r": 9.3
+    },
+    "j-bar-j-youth-services": {
+      "x": 342,
+      "y": 80.3,
+      "r": 8.7
+    },
+    "jacksonville-youth-academy": {
+      "x": -853.1,
+      "y": -628,
+      "r": 9.8
+    },
+    "joesph-gauld": {
+      "x": -346.2,
+      "y": 461.9,
+      "r": 6
+    },
+    "john-schrom": {
+      "x": -1013.9,
+      "y": -81.4,
+      "r": 6.5
+    },
+    "joint-commission": {
+      "x": 700.8,
+      "y": 764.2,
+      "r": 14.1
+    },
+    "josiah-whites": {
+      "x": -61.2,
+      "y": 504.9,
+      "r": 9.2
+    },
+    "journey-home": {
+      "x": 455.8,
+      "y": -388.4,
+      "r": 9.2
+    },
+    "julie-schrom": {
+      "x": -1005.8,
+      "y": -60,
+      "r": 6.5
+    },
+    "kansas-city-girls-academy": {
+      "x": -1258,
+      "y": -904.5,
+      "r": 9.4
+    },
+    "kansas-industrial-school-for-girls": {
+      "x": -1066.8,
+      "y": -274.1,
+      "r": 10.4
+    },
+    "kentucky-river-academy": {
+      "x": 116,
+      "y": -1152.3,
+      "r": 8.7
+    },
+    "khk-a-pathway-family-center": {
+      "x": -1182.8,
+      "y": -597.5,
+      "r": 9.6
+    },
+    "kids-of-north-new-jersey": {
+      "x": -1123.5,
+      "y": -357.6,
+      "r": 9.4
+    },
+    "kissimmee-youth-academy": {
+      "x": -1277.6,
+      "y": -112.5,
+      "r": 8.7
+    },
+    "koinonia-foster-homes": {
+      "x": -157.2,
+      "y": -294.1,
+      "r": 8.7
+    },
+    "kokua-recovery": {
+      "x": -105.2,
+      "y": 354,
+      "r": 8.7
+    },
+    "kw-legacy-ranch": {
+      "x": 541.2,
+      "y": -80.3,
+      "r": 8.7
+    },
+    "lad-lake": {
+      "x": 1285.3,
+      "y": 243.9,
+      "r": 8.7
+    },
+    "lafayette-rtc": {
+      "x": 448.3,
+      "y": 1002.6,
+      "r": 9.2
+    },
+    "lake-academy": {
+      "x": -879.1,
+      "y": -617.7,
+      "r": 8.1
+    },
+    "lakeland-girls-academy": {
+      "x": -1172.7,
+      "y": -929.3,
+      "r": 9.8
+    },
+    "lakeside-academy-of-kansas": {
+      "x": -804.7,
+      "y": -115.7,
+      "r": 9.8
+    },
+    "law-enforcement-assistance-administration": {
+      "x": -1059.1,
+      "y": -453.2,
+      "r": 13.4
+    },
+    "les-peters-academy": {
+      "x": -818,
+      "y": -660.7,
+      "r": 8.1
+    },
+    "leslie-rosenberg": {
+      "x": 597.2,
+      "y": -520.6,
+      "r": 6.3
+    },
+    "life": {
+      "x": -1294.1,
+      "y": -656,
+      "r": 8.7
+    },
+    "lighthouse-for-boys": {
+      "x": -608.8,
+      "y": -1176.3,
+      "r": 9.2
+    },
+    "lighthouse-of-northwest-florida": {
+      "x": -376.1,
+      "y": -1373,
+      "r": 9.2
+    },
+    "luna": {
+      "x": 575.9,
+      "y": 376.2,
+      "r": 7.5
+    },
+    "magnolia-mill-school": {
+      "x": 529.1,
+      "y": -460.9,
+      "r": 9.2
+    },
+    "marvelous-grace-girls-academy": {
+      "x": -446.4,
+      "y": -1116.7,
+      "r": 10.3
+    },
+    "masters-ranch-girls-academy": {
+      "x": -813.6,
+      "y": -985.5,
+      "r": 10
+    },
+    "maximum-life-skills-academy": {
+      "x": 13,
+      "y": -1268.2,
+      "r": 9
+    },
+    "meadowlark-academy": {
+      "x": -279,
+      "y": -1303.4,
+      "r": 9.3
+    },
+    "meyer-education-and-family-services": {
+      "x": 496.3,
+      "y": -13.8,
+      "r": 10.6
+    },
+    "mhy-family-services": {
+      "x": 637.3,
+      "y": 1080.3,
+      "r": 9.2
+    },
+    "midwest-academy": {
+      "x": -222.4,
+      "y": -940.7,
+      "r": 8.7
+    },
+    "mission-mountain-school": {
+      "x": 85.6,
+      "y": -195.4,
+      "r": 9
+    },
+    "momentum": {
+      "x": 535.1,
+      "y": -488.5,
+      "r": 9
+    },
+    "monuments-rtc": {
+      "x": 396.2,
+      "y": 110.5,
+      "r": 9.2
+    },
+    "moonridge-academy": {
+      "x": -345.8,
+      "y": 302.1,
+      "r": 8.7
+    },
+    "mount-helix-rtc": {
+      "x": 521.8,
+      "y": 1023.1,
+      "r": 9.2
+    },
+    "mount-pleasant-academy": {
+      "x": -797.4,
+      "y": -87.3,
+      "r": 9.5
+    },
+    "mountain-springs-preparatory-academy": {
+      "x": -308.3,
+      "y": 397.6,
+      "r": 11
+    },
+    "mountain-valley-treatment-center": {
+      "x": 572.9,
+      "y": -209.5,
+      "r": 10.1
+    },
+    "national-association-of-therapeutic-wilderness-camps": {
+      "x": 849.1,
+      "y": 185.5,
+      "r": 13.3
+    },
+    "new-hope-boys-home": {
+      "x": -1233.1,
+      "y": -857.9,
+      "r": 8.7
+    },
+    "new-lifehouse-academy": {
+      "x": -1224.9,
+      "y": -949.9,
+      "r": 9.5
+    },
+    "new-summit-academy": {
+      "x": 1059.5,
+      "y": 276.3,
+      "r": 8.7
+    },
+    "next-step-youth-transport-services": {
+      "x": 376.3,
+      "y": 878.6,
+      "r": 11.8
+    },
+    "norris-academy": {
+      "x": -769.7,
+      "y": -357.2,
+      "r": 8.1
+    },
+    "northwest-association-of-schools-and-of-colleges-and-universities": {
+      "x": 63.8,
+      "y": -950.4,
+      "r": 14.1
+    },
+    "northwoods-boarding-school": {
+      "x": -291.5,
+      "y": -181.8,
+      "r": 9.2
+    },
+    "novitas-academy": {
+      "x": -702.5,
+      "y": 598.7,
+      "r": 8.7
+    },
+    "oak-creek-ranch-school": {
+      "x": -539.5,
+      "y": 564.1,
+      "r": 9.2
+    },
+    "oak-grove-academy": {
+      "x": -804.8,
+      "y": -350,
+      "r": 8.1
+    },
+    "oasis-academy": {
+      "x": 1143.8,
+      "y": 409.3,
+      "r": 8.7
+    },
+    "obsidian-schools": {
+      "x": -250.9,
+      "y": 702.1,
+      "r": 8.2
+    },
+    "ojai-rtc": {
+      "x": 465,
+      "y": 1025.7,
+      "r": 9.2
+    },
+    "okaloosa-youth-academy": {
+      "x": -521.4,
+      "y": -19.8,
+      "r": 8.7
+    },
+    "old-west-academy": {
+      "x": -69.3,
+      "y": -1013,
+      "r": 8.7
+    },
+    "olympus-academy": {
+      "x": 70.8,
+      "y": -1143.1,
+      "r": 9
+    },
+    "orlando-intensive-youth-academy": {
+      "x": -845,
+      "y": -656,
+      "r": 9.3
+    },
+    "outdoor-behavioral-healthcare-research-center": {
+      "x": 629.7,
+      "y": -258.8,
+      "r": 13.3
+    },
+    "oxbow-academy": {
+      "x": 798.3,
+      "y": 315.5,
+      "r": 9.2
+    },
+    "oxford-group": {
+      "x": -1379.9,
+      "y": -560.2,
+      "r": 10.7
+    },
+    "pacific-quest": {
+      "x": -23.1,
+      "y": 462.3,
+      "r": 9.2
+    },
+    "palm-lane-baptist-boarding-academy": {
+      "x": -540.5,
+      "y": -1056.9,
+      "r": 10.4
+    },
+    "paradigm-treatment-center-coeur-dalene-id": {
+      "x": -246.6,
+      "y": -309.1,
+      "r": 10.1
+    },
+    "paradigm-treatment-centers": {
+      "x": 337.4,
+      "y": -222.2,
+      "r": 9.2
+    },
+    "pathway-of-madison-county": {
+      "x": -1054.9,
+      "y": 135.7,
+      "r": 9.8
+    },
+    "peoples-baptist-church": {
+      "x": -512.1,
+      "y": -1281.7,
+      "r": 10.4
+    },
+    "pillars-of-hope": {
+      "x": -128.9,
+      "y": -1117.2,
+      "r": 8.7
+    },
+    "pine-ridge-academy": {
+      "x": 975.8,
+      "y": -224,
+      "r": 8.8
+    },
+    "pine-view-christian-academy": {
+      "x": -235.1,
+      "y": -1071.1,
+      "r": 9.1
+    },
+    "polk-halfway-house": {
+      "x": -826.3,
+      "y": -635.9,
+      "r": 8.1
+    },
+    "ponca-pines-academy": {
+      "x": 450.9,
+      "y": -58,
+      "r": 8.7
+    },
+    "positive-impact-rtc": {
+      "x": -120.3,
+      "y": -253.8,
+      "r": 8.7
+    },
+    "possibilities-unlimited": {
+      "x": -1250.4,
+      "y": -657.9,
+      "r": 9.3
+    },
+    "president-george-w-bush-of-the-united-states-of-america": {
+      "x": -1067.8,
+      "y": -753.9,
+      "r": 12.5
+    },
+    "re-creation-retreat": {
+      "x": -39.2,
+      "y": -450.5,
+      "r": 10.6
+    },
+    "red-hawk-academy-for-girls": {
+      "x": 335.4,
+      "y": 1037.6,
+      "r": 10.1
+    },
+    "remuda-ranch-programs-for-anorexia-and-bulimia": {
+      "x": 109.7,
+      "y": -827.2,
+      "r": 9.8
+    },
+    "resource-realizations": {
+      "x": -363.6,
+      "y": -729.5,
+      "r": 9.7
+    },
+    "ridge-creek-school": {
+      "x": 1276.6,
+      "y": 423.9,
+      "r": 8.7
+    },
+    "ridgeview-group-home": {
+      "x": 594.9,
+      "y": 578.9,
+      "r": 9.2
+    },
+    "ridgeview-institute": {
+      "x": 508.4,
+      "y": -662.2,
+      "r": 8.7
+    },
+    "river-point-behavioral-health": {
+      "x": 409.4,
+      "y": -414.6,
+      "r": 8.7
+    },
+    "roloff-evangelistic-enterprises": {
+      "x": -546.9,
+      "y": -1295.8,
+      "r": 12.6
+    },
+    "rosewood-youth-academy": {
+      "x": -1269,
+      "y": -86.6,
+      "r": 8.7
+    },
+    "samaritan-daytop-village": {
+      "x": -552.4,
+      "y": -458.5,
+      "r": 7.9
+    },
+    "san-cristobal-ranch-academy": {
+      "x": 1448.7,
+      "y": 214.1,
+      "r": 10
+    },
+    "san-juan-wilderness-therapy": {
+      "x": 1344.6,
+      "y": 322.5,
+      "r": 8.7
+    },
+    "saving-teens": {
+      "x": 673,
+      "y": 322.6,
+      "r": 10.9
+    },
+    "seasons": {
+      "x": 579.2,
+      "y": 404.3,
+      "r": 7.5
+    },
+    "second-chances-in-southern-utah": {
+      "x": 27.7,
+      "y": -1297.2,
+      "r": 9.7
+    },
+    "second-nature-entrada": {
+      "x": -57.9,
+      "y": 657.5,
+      "r": 8.7
+    },
+    "seneca-ranch": {
+      "x": -198,
+      "y": -1115.9,
+      "r": 8.7
+    },
+    "sequoia-smith": {
+      "x": 300.2,
+      "y": 79.3,
+      "r": 5.8
+    },
+    "shadow-mountain-academy": {
+      "x": -617.6,
+      "y": 51.1,
+      "r": 9.7
+    },
+    "solstice-west": {
+      "x": 522.4,
+      "y": -554.6,
+      "r": 9.2
+    },
+    "south-florida-youth-academy": {
+      "x": -825.1,
+      "y": -541.6,
+      "r": 9.1
+    },
+    "st-augustine-youth-academy": {
+      "x": -1241.2,
+      "y": -80,
+      "r": 10
+    },
+    "star-guides-wilderness-therapy": {
+      "x": 569.7,
+      "y": 47.1,
+      "r": 10.4
+    },
+    "stone-of-help-group-homes": {
+      "x": -666.8,
+      "y": -1054.8,
+      "r": 9.5
+    },
+    "sundance-canyon-academy": {
+      "x": 918.7,
+      "y": -110.1,
+      "r": 8.7
+    },
+    "suws-adolescent-and-youth-programs": {
+      "x": 556.8,
+      "y": 420.1,
+      "r": 9.9
+    },
+    "tampa-residential-facility": {
+      "x": -875.6,
+      "y": -568.5,
+      "r": 9.3
+    },
+    "teen-discovery": {
+      "x": -140.8,
+      "y": -967.1,
+      "r": 8.7
+    },
+    "tennessee-department-of-human-services": {
+      "x": -407.6,
+      "y": -301.5,
+      "r": 12.6
+    },
+    "tere-snodgrass": {
+      "x": -871.2,
+      "y": 337.6,
+      "r": 9.2
+    },
+    "thanks-to-calvary": {
+      "x": -590.8,
+      "y": -953.9,
+      "r": 8.7
+    },
+    "the-goodale-school": {
+      "x": 307.2,
+      "y": 793.5,
+      "r": 9.2
+    },
+    "the-international-center-for-the-study-of-psychiatry-and-psychology": {
+      "x": -470.2,
+      "y": -678.3,
+      "r": 10.2
+    },
+    "the-john-dewey-academy": {
+      "x": -501.6,
+      "y": -686.7,
+      "r": 8.7
+    },
+    "the-ridge-maine": {
+      "x": 588.7,
+      "y": -141.5,
+      "r": 9.2
+    },
+    "three-rivers-montana": {
+      "x": 929.8,
+      "y": -7.7,
+      "r": 8.7
+    },
+    "three-springs-blue-ridge": {
+      "x": -842,
+      "y": 291.8,
+      "r": 9.2
+    },
+    "three-strands-wilderness": {
+      "x": 1462.1,
+      "y": 172.3,
+      "r": 8.7
+    },
+    "threepeaks-ascent-rtc": {
+      "x": -93.8,
+      "y": 606.8,
+      "r": 8.7
+    },
+    "timberlawn-behavioral-health-system": {
+      "x": -512.8,
+      "y": 8.2,
+      "r": 10.6
+    },
+    "timberline-knolls-rtc": {
+      "x": 1332.1,
+      "y": 377.8,
+      "r": 8.7
+    },
+    "tipton-academy": {
+      "x": -247.4,
+      "y": -1307.7,
+      "r": 8.7
+    },
+    "treasure-coast-boys-academy": {
+      "x": -1194.6,
+      "y": -847.2,
+      "r": 8.7
+    },
+    "trinity-hunt-partners": {
+      "x": 486,
+      "y": -384.6,
+      "r": 11.2
+    },
+    "true-north-wilderness-program": {
+      "x": 649.2,
+      "y": -231.8,
+      "r": 10
+    },
+    "turnbridge": {
+      "x": 498.6,
+      "y": -77.3,
+      "r": 8.7
+    },
+    "turning-winds-academic-institute": {
+      "x": -472.8,
+      "y": 60.1,
+      "r": 10.5
+    },
+    "uhs-of-kootenai-river": {
+      "x": -455.5,
+      "y": -89.1,
+      "r": 8.7
+    },
+    "us-youth-services": {
+      "x": 61,
+      "y": -1197.9,
+      "r": 8.7
+    },
+    "utah-boys-ranch": {
+      "x": -337.8,
+      "y": 556.9,
+      "r": 8.7
+    },
+    "valley-view-school": {
+      "x": 757.4,
+      "y": -134.3,
+      "r": 8.7
+    },
+    "vanalden-rtc": {
+      "x": 509.4,
+      "y": 1048.7,
+      "r": 9.2
+    },
+    "vermont-state-board-of-education": {
+      "x": 147.8,
+      "y": -269.2,
+      "r": 11.4
+    },
+    "village-behavioral-health-treatment-center": {
+      "x": 543.3,
+      "y": 494.4,
+      "r": 13.2
+    },
+    "visionquest": {
+      "x": -639.6,
+      "y": 211.6,
+      "r": 9.2
+    },
+    "vista-treatment-centers": {
+      "x": -205.3,
+      "y": 327.3,
+      "r": 9.2
+    },
+    "waco-center-for-youth": {
+      "x": -335.6,
+      "y": -322.6,
+      "r": 9.2
+    },
+    "walnut-creek-rtc": {
+      "x": 493.4,
+      "y": 1023.7,
+      "r": 9.2
+    },
+    "western-youth": {
+      "x": -920.1,
+      "y": -334.7,
+      "r": 8.1
+    },
+    "whitmore-academy": {
+      "x": 66.4,
+      "y": 358.6,
+      "r": 8.7
+    },
+    "willow-creek-school": {
+      "x": 1197,
+      "y": -252.2,
+      "r": 9.2
+    },
+    "willow-springs-center": {
+      "x": -495.3,
+      "y": 33.4,
+      "r": 10.1
+    },
+    "wimauma-academy": {
+      "x": -701.5,
+      "y": -350.2,
+      "r": 9.5
+    },
+    "wings-of-faith-girls-academy": {
+      "x": -757.7,
+      "y": -1129.9,
+      "r": 9.2
+    },
+    "woodland-hills-rtc": {
+      "x": 452.6,
+      "y": 1052.1,
+      "r": 9.2
+    },
+    "accelerated-christian-education": {
+      "x": -1528.7,
+      "y": 1159.5,
+      "r": 11.1
+    },
+    "independent-educational-consultants-association": {
+      "x": -1482.7,
+      "y": 1159.5,
+      "r": 13.5
+    },
+    "judge-rotenberg-educational-center": {
+      "x": -1436.7,
+      "y": 1159.5,
+      "r": 10.1
+    }
+  }
+}

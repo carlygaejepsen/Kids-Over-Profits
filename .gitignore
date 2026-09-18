@@ -79,3 +79,11 @@ tmp/*.sql.part
 *.sqlite
 *.sqlite.building
 *.sqlite-journal
+
+# Network map QA report (scripts/build-network-graph.js); regenerated on every
+# build from the committed CSVs, so it is review output, not source.
+tmp/network-qa.md
+
+# History page dumps used by scripts/history/normalize.py
+scripts/history/raw/
+scripts/history/*.outline.txt

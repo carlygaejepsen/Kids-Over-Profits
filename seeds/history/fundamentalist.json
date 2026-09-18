@@ -1,0 +1,12 @@
+{
+  "title": "Fundamentalist Christian Homes",
+  "slug": "fundamentalist",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/fundamentalist.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-11 18:37:52",
+  "excerpt": "From the Great Awakenings to Lester Roloff, Bethel Baptist, and the religious exemptions that still shield church-run facilities from licensing."
+}

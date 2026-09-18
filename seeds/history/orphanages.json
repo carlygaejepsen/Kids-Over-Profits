@@ -1,0 +1,12 @@
+{
+  "title": "Orphan Care Through the Ages",
+  "slug": "orphanages",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/orphanages.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-14 18:35:17",
+  "excerpt": "From Roman alimenta to the last orphan train: how poverty became a reason to institutionalize children, and how orphanages gave way to residential treatment."
+}

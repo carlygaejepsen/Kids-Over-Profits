@@ -567,6 +567,8 @@ function kop_template_assignments() {
         'italy'              => 'page-country.php',
         'new-zealand'        => 'page-country.php',
         'netherlands'        => 'page-country.php',
+
+        'network-map'        => 'page-network-map.php',
     );
 }
 
@@ -699,7 +701,11 @@ function kop_apply_lawsuit_document_fixes() {
  * JSON keys: title, slug, post_type, status, content_file, excerpt,
  * categories (slugs), template (file in templates/), meta (key => string),
  * meta_arrays (key => list), acf_field_keys (key => field_xxx so ACF shows
- * the value in the editor).
+ * the value in the editor), seed_version (bump to refresh again).
+ *
+ * allow_published (bool) + last_seed_modified_gmt: refresh a published page
+ * too, but only while its post_modified_gmt still equals the stamp the seed
+ * was assembled against, so a wp-admin edit made since is never overwritten.
  *
  * overwrite_existing (bool): replace the content of a post that already
  * exists, published or not, once per seed_version. Used for makeovers of
@@ -718,6 +724,26 @@ function kop_seed_posts() {
         'country-new-zealand.json',                 
         'country-netherlands.json',                 
         'hyde.json',                                // Hyde School profile makeover (overwrite_existing), 2026-09-17
+        'network-map.json',                         // /network-map/ page for the network map, 2026-09-17
+        // History section reformatted 2026-09-17: hub, two index pages, ten
+        // timelines, and the prose overview. Published pages; each seed
+        // carries the post_modified_gmt it was assembled against and is
+        // skipped if the page was edited since (allow_published).
+        'history/history.json',
+        'history/early-child-control.json',
+        'history/birth-of-the-tti.json',
+        'history/antiquity.json',
+        'history/medieval-child-oblation-and-monastic-schools.json',
+        'history/orphanages.json',
+        'history/idd-timeline.json',
+        'history/juvenile-justice-timeline.json',
+        'history/fundamentalist.json',
+        'history/wilderness-therapy-timeline.json',
+        'history/experimental-group-psychology.json',
+        'history/war-on-drugs.json',
+        'history/corporatization.json',
+        'history/advocacy-history.json',
+        'history/tti-history-part-one.json',
     );
 }
 
@@ -759,11 +785,15 @@ function kop_apply_seed_posts() {
             $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
             $seed_mod  = (string) get_post_meta($existing->ID, '_kop_seed_modified', true);
             $overwrite = !empty($spec['overwrite_existing']);
-            $untouched = $existing->post_status === 'draft' && (
-                $existing->post_modified_gmt === $existing->post_date_gmt
+            $stamp_ok  = $existing->post_modified_gmt === $existing->post_date_gmt
                 || ($seed_mod !== '' && $existing->post_modified_gmt === $seed_mod)
-                || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt'])
-            );
+                || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt']);
+            // A published page is refreshed when the seed says allow_published
+            // and the page still carries the modified stamp the seed was
+            // assembled against, so an edit made in wp-admin after the seed
+            // was written is never overwritten. overwrite_existing skips the
+            // stamp check entirely.
+            $untouched = $stamp_ok && ($existing->post_status === 'draft' || !empty($spec['allow_published']));
             if ($seed_version <= $applied || (!$untouched && !$overwrite)) {
                 continue;
             }
@@ -773,8 +803,8 @@ function kop_apply_seed_posts() {
                 'post_content' => wp_slash((string) file_get_contents($content_path)),
                 'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? $existing->post_excerpt)),
             );
-            if ($overwrite) {
-                // Keep the pre-makeover content in the revision history.
+            if ($overwrite || $existing->post_status !== 'draft') {
+                // Keep the previous content in the revision history.
                 wp_save_post_revision($existing->ID);
             } else {
                 // Keep post_modified equal to post_date so the draft still
