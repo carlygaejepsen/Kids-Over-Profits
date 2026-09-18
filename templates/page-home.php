@@ -56,14 +56,23 @@ $kop_suits = $wpdb->get_results(
      ORDER BY filing_date DESC, id DESC LIMIT 3",
     ARRAY_A
 );
-$kop_flagged = $wpdb->get_results(
+// The featured columns are added by api/manage-featured-inspections.php, and
+// this database does not have them yet, so ask whether they exist before
+// querying: without the check this runs a query that can only fail on every
+// home page load, hidden by suppress_errors. Same check as the inspection hub.
+$kop_has_featured = get_transient('kop_inspection_featured_column');
+if ($kop_has_featured === false) {
+    $kop_has_featured = $wpdb->get_var("SHOW COLUMNS FROM inspection_reports LIKE 'featured'") ? 'yes' : 'no';
+    set_transient('kop_inspection_featured_column', $kop_has_featured, DAY_IN_SECONDS);
+}
+$kop_flagged = $kop_has_featured === 'yes' ? $wpdb->get_results(
     "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
      FROM inspection_reports r
      JOIN inspection_facilities f ON f.id = r.facility_id
      WHERE r.featured = 1
      ORDER BY r.report_date DESC, r.id DESC LIMIT 4",
     ARRAY_A
-);
+) : array();
 $wpdb->suppress_errors($kop_suppress);
 
 // By the numbers: live counts from the inspection database and the facility
