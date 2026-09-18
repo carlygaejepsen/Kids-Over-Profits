@@ -759,5 +759,3598 @@
         "knownReferrers": []
       }
     }
+  },
+  {
+    "id": 9608,
+    "unique_name": "Gulf Coast Trades Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "143 Forest Service Road 233",
+        "city": "New Waverly",
+        "state": "TX",
+        "zip": "77358"
+      }
+    }
+  },
+  {
+    "id": 9614,
+    "unique_name": "Norris Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "101 First Quality Dr",
+        "city": "Andersonville",
+        "state": "TN",
+        "zip": "37705"
+      }
+    }
+  },
+  {
+    "id": 9660,
+    "unique_name": "Union Juvenile Residential Facility",
+    "version": 1,
+    "note": "Still operating as Redwood Youth Academy (FL DJJ monitoring report FY2025-26); endYear 2019 was the end of the old name (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2009,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2006-2009",
+        "notes": [
+          "Operating as Redwood Youth Academy (Wayne Halfway House, DJJ contract)."
+        ]
+      }
+    }
+  },
+  {
+    "id": 9711,
+    "unique_name": "Idaho Youth Ranch Residential Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5465 W Irving St",
+        "city": "Boise",
+        "state": "ID",
+        "zip": "83706"
+      }
+    }
+  },
+  {
+    "id": 10020,
+    "unique_name": "Los Prietos Boys Camp",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3900 Paradise Rd.",
+        "city": "Santa Barbara",
+        "state": "CA",
+        "zip": "93105"
+      }
+    }
+  },
+  {
+    "id": 10025,
+    "unique_name": "Margaret J. Kemp Girls Camp",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "400 Paul Scannell Dr",
+        "city": "San Mateo",
+        "state": "CA",
+        "zip": "94402"
+      }
+    }
+  },
+  {
+    "id": 10164,
+    "unique_name": "Promesa – Niles House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7120 North Marks Ave",
+        "city": "Fresno",
+        "state": "CA",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 10278,
+    "unique_name": "Tulare County Juvenile Detention Facility",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "11200 Ave 368",
+        "city": "Visalia",
+        "state": "CA",
+        "zip": "93291"
+      }
+    }
+  },
+  {
+    "id": 10325,
+    "unique_name": "Zoe Home for Youth",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "8144 Escondido Canyon Rd Building A & B",
+        "city": "Acton",
+        "state": "CA",
+        "zip": "93510"
+      }
+    }
+  },
+  {
+    "id": 10492,
+    "unique_name": "Northstar Youth Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "900 Columbia Ln",
+        "city": "Provo",
+        "state": "UT",
+        "zip": "84604"
+      }
+    }
+  },
+  {
+    "id": 10608,
+    "unique_name": "Lone Star Expeditions",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Fake address: 1728 Forest Road 5101",
+        "city": "Groveton",
+        "state": "TX",
+        "zip": "75845"
+      }
+    }
+  },
+  {
+    "id": 10631,
+    "unique_name": "ACH Child and Family Services",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3001 Grayson St",
+        "city": "Fort Worth",
+        "state": "TX",
+        "zip": "76119"
+      }
+    }
+  },
+  {
+    "id": 10645,
+    "unique_name": "Autistic Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "15911 Nacogdoches Rd Bldg 2",
+        "city": "San Antonio",
+        "state": "TX",
+        "zip": "78247"
+      }
+    }
+  },
+  {
+    "id": 10653,
+    "unique_name": "BCFS Health and Human Services – Basic Care",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7404 W Us Highway 90",
+        "city": "San Antonio",
+        "state": "TX",
+        "zip": "78227"
+      }
+    }
+  },
+  {
+    "id": 10660,
+    "unique_name": "Bluebonnet Youth Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "4652 US Highway 77A S",
+        "city": "Yoakum",
+        "state": "TX",
+        "zip": "77995"
+      }
+    }
+  },
+  {
+    "id": 10662,
+    "unique_name": "Boles Children’s Home Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7065 Love Ln",
+        "city": "Quinlan",
+        "state": "TX",
+        "zip": "75474"
+      }
+    }
+  },
+  {
+    "id": 10683,
+    "unique_name": "Champion Oak Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "482 County Road 080",
+        "city": "Jasper",
+        "state": "TX",
+        "zip": "75951"
+      }
+    }
+  },
+  {
+    "id": 10695,
+    "unique_name": "CHSI Norma Linda Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "30788 State Highway 100",
+        "city": "Los Fresnos",
+        "state": "TX",
+        "zip": "78566"
+      }
+    }
+  },
+  {
+    "id": 10696,
+    "unique_name": "CHSI Stanford House Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "33918 Stanford Rd",
+        "city": "Los Fresnos",
+        "state": "TX",
+        "zip": "78566"
+      }
+    }
+  },
+  {
+    "id": 10825,
+    "unique_name": "Medina Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "21300 Highway 16 N",
+        "city": "Medina",
+        "state": "TX",
+        "zip": "78055"
+      }
+    }
+  },
+  {
+    "id": 10853,
+    "unique_name": "Open Arms Open Hearts Foundation, LLC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "252 County Road 4111",
+        "city": "Dayton",
+        "state": "TX",
+        "zip": "77535"
+      }
+    }
+  },
+  {
+    "id": 10860,
+    "unique_name": "Prairie Harbor RTC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7146 Highway 60",
+        "city": "Wallis",
+        "state": "TX",
+        "zip": "77485"
+      }
+    }
+  },
+  {
+    "id": 10911,
+    "unique_name": "Southwest Key Programs – Casa Antigua",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "502 E Expressway 83",
+        "city": "San Benito",
+        "state": "TX",
+        "zip": "78586"
+      }
+    }
+  },
+  {
+    "id": 10920,
+    "unique_name": "Southwest Key Programs – Casa Rio Grande",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "401 E Business Hwy 77",
+        "city": "San Benito",
+        "state": "TX",
+        "zip": "78586"
+      }
+    }
+  },
+  {
+    "id": 10966,
+    "unique_name": "Thompson’s Residential Treatment Center- Farmersville",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "634 County Rd 698",
+        "city": "Farmersville",
+        "state": "TX",
+        "zip": "75442"
+      }
+    }
+  },
+  {
+    "id": 10994,
+    "unique_name": "Willow Bend Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2902 Highway 31 E",
+        "city": "Tyler",
+        "state": "TX",
+        "zip": "75702"
+      }
+    }
+  },
+  {
+    "id": 10998,
+    "unique_name": "Youth and Family Enrichment Centers Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "14023 Hwy 155 S",
+        "city": "Tyler",
+        "state": "TX",
+        "zip": "75703"
+      }
+    }
+  },
+  {
+    "id": 11076,
+    "unique_name": "The Doorway at Granite Pathways",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "60 Rogers St. #210",
+        "city": "Manchester",
+        "state": "NH",
+        "zip": "03103"
+      }
+    }
+  },
+  {
+    "id": 11087,
+    "unique_name": "Devereux Florida RTC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6147 Christian Way",
+        "city": "Orlando",
+        "state": "FL",
+        "zip": "32808"
+      }
+    }
+  },
+  {
+    "id": 11097,
+    "unique_name": "Sequel TSI Kissimmee",
+    "version": 1,
+    "note": "pastNames: \"Three Springs\" + \"Inc.\" were one name split on its comma (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "Sequel TSI Kissimmee",
+        "currentName": "",
+        "otherNames": [
+          "Three Springs of Osceola"
+        ],
+        "pastNames": [
+          "Three Springs, Inc."
+        ],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11162,
+    "unique_name": "Devereux Florida SIPP",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6147 Christian Way",
+        "city": "Orlando",
+        "state": "FL",
+        "zip": "32808"
+      }
+    }
+  },
+  {
+    "id": 11204,
+    "unique_name": "Palm Lane Baptist Boarding Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3193 SW Beard Street",
+        "city": "Arcadia",
+        "state": "FL",
+        "zip": "34266"
+      }
+    }
+  },
+  {
+    "id": 11245,
+    "unique_name": "Hermitage Hall",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1220 8th Ave",
+        "city": "South Nashville",
+        "state": "TN",
+        "zip": "37203"
+      }
+    }
+  },
+  {
+    "id": 11246,
+    "unique_name": "McDowell Center for Children",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "711 Highway 51 Bypass South",
+        "city": "Dyersburg",
+        "state": "TN",
+        "zip": "38024"
+      }
+    }
+  },
+  {
+    "id": 11247,
+    "unique_name": "Mountain Youth Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "332 Hospital Rd",
+        "city": "Mountain City",
+        "state": "TN",
+        "zip": "37683"
+      }
+    }
+  },
+  {
+    "id": 11260,
+    "unique_name": "Acadia Village",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2431 Jones Bend Rd",
+        "city": "Louisville",
+        "state": "TN",
+        "zip": "37777"
+      }
+    }
+  },
+  {
+    "id": 11263,
+    "unique_name": "Advent Home Learning Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "900 County Road 950",
+        "city": "Calhoun",
+        "state": "TN",
+        "zip": "37309"
+      }
+    }
+  },
+  {
+    "id": 11264,
+    "unique_name": "ARCH Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1062 Highway 70",
+        "city": "Kingston Springs",
+        "state": "TN",
+        "zip": "37082"
+      }
+    }
+  },
+  {
+    "id": 11268,
+    "unique_name": "Bill’s Place",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7428 Memphis-Arlington Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38135"
+      }
+    }
+  },
+  {
+    "id": 11278,
+    "unique_name": "Center for Success and Independence – Roane Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "503 Cardiff Valley Rd",
+        "city": "Rockwood",
+        "state": "TN",
+        "zip": "37854"
+      }
+    }
+  },
+  {
+    "id": 11279,
+    "unique_name": "Chad Youth Enhancement Center – Oak Plains Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1751 Oak Plains Rd",
+        "city": "Ashland City",
+        "state": "TN",
+        "zip": "37015"
+      }
+    }
+  },
+  {
+    "id": 11280,
+    "unique_name": "Compass Intervention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7900 Lowrance Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38125"
+      }
+    }
+  },
+  {
+    "id": 11281,
+    "unique_name": "Comprehensive Community Services, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6145 Temple Star Rd",
+        "city": "Kingsport",
+        "state": "TN",
+        "zip": "37660"
+      }
+    }
+  },
+  {
+    "id": 11284,
+    "unique_name": "CSI – Bledsoe Youth Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "220 South Hickory Ave",
+        "city": "Gallatin",
+        "state": "TN",
+        "zip": "37066"
+      }
+    }
+  },
+  {
+    "id": 11289,
+    "unique_name": "Eden of Youth Town",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "55 Luray Rd",
+        "city": "Beech Bluff",
+        "state": "TN",
+        "zip": "38313"
+      }
+    }
+  },
+  {
+    "id": 11291,
+    "unique_name": "Fairhaven Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "890 North Houston Levee Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38018"
+      }
+    }
+  },
+  {
+    "id": 11298,
+    "unique_name": "Hope Hall",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3700B Youth Town Rd",
+        "city": "Pinson",
+        "state": "TN",
+        "zip": "38366"
+      }
+    }
+  },
+  {
+    "id": 11300,
+    "unique_name": "Janie’s House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7400 Memphis Arlington Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38135"
+      }
+    }
+  },
+  {
+    "id": 11303,
+    "unique_name": "Lakeside Behavioral Health System",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2911 Brunswick Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38133"
+      }
+    }
+  },
+  {
+    "id": 11308,
+    "unique_name": "Memphis Recovery Centers",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1170 Vance Ave",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38104"
+      }
+    }
+  },
+  {
+    "id": 11310,
+    "unique_name": "Miller Hall",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3645 Youth Town Rd",
+        "city": "Pinson",
+        "state": "TN",
+        "zip": "38366"
+      }
+    }
+  },
+  {
+    "id": 11315,
+    "unique_name": "Parkridge Valley Hospital",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2200 Morris Hill Rd",
+        "city": "Chattanooga",
+        "state": "TN",
+        "zip": "37421"
+      }
+    }
+  },
+  {
+    "id": 11321,
+    "unique_name": "Rose Center for Girls",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7386 Memphis-Arlington Rd",
+        "city": "Bartlett",
+        "state": "TN",
+        "zip": "38135"
+      }
+    }
+  },
+  {
+    "id": 11322,
+    "unique_name": "Rotary Hall",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3700-A Youth Town Rd",
+        "city": "Pinson",
+        "state": "TN",
+        "zip": "38366"
+      }
+    }
+  },
+  {
+    "id": 11324,
+    "unique_name": "Scholze Adolescent Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "911 Pineville Rd",
+        "city": "Chattanooga",
+        "state": "TN",
+        "zip": "37405"
+      }
+    }
+  },
+  {
+    "id": 11340,
+    "unique_name": "The Florence Crittenton Agency",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1531 Dick Lonas Rd",
+        "city": "Knoxville",
+        "state": "TN",
+        "zip": "37909"
+      }
+    }
+  },
+  {
+    "id": 11341,
+    "unique_name": "The Forge School",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5842 Highway 30",
+        "city": "Benton",
+        "state": "TN",
+        "zip": "37307"
+      }
+    }
+  },
+  {
+    "id": 11342,
+    "unique_name": "The Gateway Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3845 Holston College Rd",
+        "city": "Louisville",
+        "state": "TN",
+        "zip": "37777"
+      }
+    }
+  },
+  {
+    "id": 11343,
+    "unique_name": "The King’s Daughters’ School Center for Autism",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "900 Trotwood Ave",
+        "city": "Columbia",
+        "state": "TN",
+        "zip": "38401"
+      }
+    }
+  },
+  {
+    "id": 11348,
+    "unique_name": "Woolfolk Hall",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3643 Youth Town Rd",
+        "city": "Pinson",
+        "state": "TN",
+        "zip": "38366"
+      }
+    }
+  },
+  {
+    "id": 11350,
+    "unique_name": "Youth Villages – Bartlett Cottages",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7414 Memphis Arlington Rd",
+        "city": "Memphis",
+        "state": "TN",
+        "zip": "38135"
+      }
+    }
+  },
+  {
+    "id": 11352,
+    "unique_name": "Youth Villages – Dogwood Cottages",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2921 Bekemeyer Dr",
+        "city": "Arlington",
+        "state": "TN",
+        "zip": "38002"
+      }
+    }
+  },
+  {
+    "id": 11406,
+    "unique_name": "Home Court Advantage Inc VI",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3891 Hwy 83",
+        "city": "Bolivar",
+        "state": "MO",
+        "zip": "65613"
+      }
+    }
+  },
+  {
+    "id": 11417,
+    "unique_name": "Making a Difference Treatment, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "844 Hwy 32",
+        "city": "Bolivar",
+        "state": "MO",
+        "zip": "65613"
+      }
+    }
+  },
+  {
+    "id": 11472,
+    "unique_name": "Arbor House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2401 East 2nd St",
+        "city": "North Little Rock",
+        "state": "AR",
+        "zip": "72116"
+      }
+    }
+  },
+  {
+    "id": 11476,
+    "unique_name": "Arkansas Juvenile Assessment and Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1501 Woody Dr",
+        "city": "Alexander",
+        "state": "AR",
+        "zip": "72002"
+      }
+    }
+  },
+  {
+    "id": 11477,
+    "unique_name": "Arkansas Sheriff Youth RANCHs Inc. – Bethesda",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "100 St. Vincent Pl",
+        "city": "Batesville",
+        "state": "AR",
+        "zip": "72801"
+      }
+    }
+  },
+  {
+    "id": 11480,
+    "unique_name": "Capstone Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "120 Meghan Ln",
+        "city": "Judsonia",
+        "state": "AR",
+        "zip": "72081"
+      }
+    }
+  },
+  {
+    "id": 11482,
+    "unique_name": "Centers for Youth and Families, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5800 W. 10th St Ste. 101",
+        "city": "Little Rock",
+        "state": "AR",
+        "zip": "72204"
+      }
+    }
+  },
+  {
+    "id": 11484,
+    "unique_name": "Compact Family Services",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2325 Malvern Ave",
+        "city": "Hot Springs",
+        "state": "AR",
+        "zip": "71902"
+      }
+    }
+  },
+  {
+    "id": 11490,
+    "unique_name": "Dana’s House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "303 West Cross St",
+        "city": "De Witt",
+        "state": "AR",
+        "zip": "72042"
+      }
+    }
+  },
+  {
+    "id": 11491,
+    "unique_name": "Delta Family Health and Fitness Center for Children",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "815 St. Louis St",
+        "city": "Hamburg",
+        "state": "AR",
+        "zip": "71646"
+      }
+    }
+  },
+  {
+    "id": 11493,
+    "unique_name": "East Arkansas Youth Services",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "104 Cypress St",
+        "city": "Marion",
+        "state": "AR",
+        "zip": "72364"
+      }
+    }
+  },
+  {
+    "id": 11494,
+    "unique_name": "Elizabeth Mitchell Centers",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6501 W 12th St",
+        "city": "Little Rock",
+        "state": "AR",
+        "zip": "72004"
+      }
+    }
+  },
+  {
+    "id": 11496,
+    "unique_name": "Florence Crittenton Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3600 West 11th St",
+        "city": "Little Rock",
+        "state": "AR",
+        "zip": "72204"
+      }
+    }
+  },
+  {
+    "id": 11497,
+    "unique_name": "Fort Smith Children’s Emergency Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3015 S 14th St",
+        "city": "Fort Smith",
+        "state": "AR",
+        "zip": "72091"
+      }
+    }
+  },
+  {
+    "id": 11500,
+    "unique_name": "Girl’s Shelter of Fort Smith",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2600 Raleigh St",
+        "city": "Fort Smith",
+        "state": "AR",
+        "zip": "72901"
+      }
+    }
+  },
+  {
+    "id": 11502,
+    "unique_name": "H.A.V.E.N.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3240 Stermer Rd",
+        "city": "Conway",
+        "state": "AR",
+        "zip": "72034"
+      }
+    }
+  },
+  {
+    "id": 11503,
+    "unique_name": "Harrisburg Juvenile Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1800 Pine Grove Ln",
+        "city": "Harrisburg",
+        "state": "AR",
+        "zip": "72432"
+      }
+    }
+  },
+  {
+    "id": 11504,
+    "unique_name": "Henry Hank Wilkins IV House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2501 S Cherry St",
+        "city": "Pine Bluff",
+        "state": "AR",
+        "zip": "71603"
+      }
+    }
+  },
+  {
+    "id": 11506,
+    "unique_name": "Immerse Arkansas",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5300 Asher Ave",
+        "city": "Little Rock",
+        "state": "AR",
+        "zip": "72204"
+      }
+    }
+  },
+  {
+    "id": 11508,
+    "unique_name": "Joanna Magale Manor",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "211 N. Pecan St",
+        "city": "Magnolia",
+        "state": "AR",
+        "zip": "71753"
+      }
+    }
+  },
+  {
+    "id": 11509,
+    "unique_name": "Joseph Pfeifer Kiwanis Camp",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5512 Ferndale Cut Off Rd",
+        "city": "Little Rock",
+        "state": "AR",
+        "zip": "72211"
+      }
+    }
+  },
+  {
+    "id": 11513,
+    "unique_name": "Lords Ranch Behavioral Health Care Systems",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1033 Old Burr Rd",
+        "city": "Warm Springs",
+        "state": "AR",
+        "zip": "72428"
+      }
+    }
+  },
+  {
+    "id": 11514,
+    "unique_name": "Maggie House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1005 Second St",
+        "city": "Charleston",
+        "state": "AR",
+        "zip": "72933"
+      }
+    }
+  },
+  {
+    "id": 11515,
+    "unique_name": "Millcreek of Arkansas",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1810 Industrial Dr",
+        "city": "Fordyce",
+        "state": "AR",
+        "zip": "71742"
+      }
+    }
+  },
+  {
+    "id": 11516,
+    "unique_name": "Millcreek of Arkansas PRTF",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1811 Industrial Dr",
+        "city": "Fordyce",
+        "state": "AR",
+        "zip": "71742"
+      }
+    }
+  },
+  {
+    "id": 11517,
+    "unique_name": "NeuroRestorative – Timber Ridge",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "15000 Timber Ridge Ln",
+        "city": "Benton",
+        "state": "AR",
+        "zip": "72019"
+      }
+    }
+  },
+  {
+    "id": 11518,
+    "unique_name": "New Life Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "50 4th Ave",
+        "city": "Oil Trough",
+        "state": "AR",
+        "zip": "72564"
+      }
+    }
+  },
+  {
+    "id": 11519,
+    "unique_name": "Northwest Arkansas Children’s Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "14100 Vaughn Rd",
+        "city": "Bentonville",
+        "state": "AR",
+        "zip": "72712"
+      }
+    }
+  },
+  {
+    "id": 11521,
+    "unique_name": "Ophelia Polk Moore Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "471 PC 251 Rd",
+        "city": "Lexa",
+        "state": "AR",
+        "zip": "72355"
+      }
+    }
+  },
+  {
+    "id": 11522,
+    "unique_name": "Ouachita Children’s Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "339 Charter Oak St",
+        "city": "Hot Springs",
+        "state": "AR",
+        "zip": "71902"
+      }
+    }
+  },
+  {
+    "id": 11523,
+    "unique_name": "Perimeter Behavioral of Forrest City",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "603 Kittle Rd",
+        "city": "Forrest City",
+        "state": "AR",
+        "zip": "72335"
+      }
+    }
+  },
+  {
+    "id": 11524,
+    "unique_name": "Perimeter Behavioral of West Memphis",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "600 North 7th St",
+        "city": "West Memphis",
+        "state": "AR",
+        "zip": "72301"
+      }
+    }
+  },
+  {
+    "id": 11525,
+    "unique_name": "Perimeter of the Ozarks",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2466 S 48th St",
+        "city": "Springdale",
+        "state": "AR",
+        "zip": "72764"
+      }
+    }
+  },
+  {
+    "id": 11526,
+    "unique_name": "Piney Ridge Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2805 E Zion Rd",
+        "city": "Fayetteville",
+        "state": "AR",
+        "zip": "72703"
+      }
+    }
+  },
+  {
+    "id": 11529,
+    "unique_name": "Quapaw House Adolescent Residential Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "276 Linden St",
+        "city": "Hot Springs",
+        "state": "AR",
+        "zip": "71913"
+      }
+    }
+  },
+  {
+    "id": 11530,
+    "unique_name": "Ridge View Program",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2805 E Zion Rd",
+        "city": "Fayetteville",
+        "state": "AR",
+        "zip": "72703"
+      }
+    }
+  },
+  {
+    "id": 11534,
+    "unique_name": "Second Chance Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "201 Destined to Win Rd",
+        "city": "Paron",
+        "state": "AR",
+        "zip": "72122"
+      }
+    }
+  },
+  {
+    "id": 11535,
+    "unique_name": "Soaring Wings Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "230 Sawmill Rd",
+        "city": "Vilonia",
+        "state": "AR",
+        "zip": "72173"
+      }
+    }
+  },
+  {
+    "id": 11537,
+    "unique_name": "Southern Christian Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "100 W. Harding St",
+        "city": "Morrilton",
+        "state": "AR",
+        "zip": "72110"
+      }
+    }
+  },
+  {
+    "id": 11539,
+    "unique_name": "Texarkana Baptist Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5401 E. 9th St",
+        "city": "Texarkana",
+        "state": "AR",
+        "zip": "71854"
+      }
+    }
+  },
+  {
+    "id": 11540,
+    "unique_name": "The Boy’s Shelter",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5904 S Zero St",
+        "city": "Fort Smith",
+        "state": "AR",
+        "zip": "72903"
+      }
+    }
+  },
+  {
+    "id": 11544,
+    "unique_name": "Trinity Behavioral Health",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1033 Old Burr Rd",
+        "city": "Warm Springs",
+        "state": "AR",
+        "zip": "72428"
+      }
+    }
+  },
+  {
+    "id": 11545,
+    "unique_name": "United Methodist Children’s Home Dacus RTC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "211 Church St",
+        "city": "Bono",
+        "state": "AR",
+        "zip": "72143"
+      }
+    }
+  },
+  {
+    "id": 11546,
+    "unique_name": "United Methodist Children’s Home John Magale Manor",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "200 North Pecan St",
+        "city": "Magnolia",
+        "state": "AR",
+        "zip": "71753"
+      }
+    }
+  },
+  {
+    "id": 11548,
+    "unique_name": "United Methodist Children’s Homes Fayetteville Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1745 North Rupple Rd",
+        "city": "Fayetteville",
+        "state": "AR",
+        "zip": "72704"
+      }
+    }
+  },
+  {
+    "id": 11549,
+    "unique_name": "United Methodist Children’s Homes Mulberry Boy’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6868 Youth Ranch Rd",
+        "city": "Mulberry",
+        "state": "AR",
+        "zip": "72947"
+      }
+    }
+  },
+  {
+    "id": 11551,
+    "unique_name": "United Methodist Children’s Homes Springdale Girl’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "19243 Blue Springs Rd",
+        "city": "Fayetteville",
+        "state": "AR",
+        "zip": "72703"
+      }
+    }
+  },
+  {
+    "id": 11553,
+    "unique_name": "Vera Lloyd Presbyterian Home and Family Services, Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "746 Old Warren Rd",
+        "city": "Monticello",
+        "state": "AR",
+        "zip": "71655"
+      }
+    }
+  },
+  {
+    "id": 11555,
+    "unique_name": "Watersprings Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7707 Sanderson Ln",
+        "city": "Texarkana",
+        "state": "AR",
+        "zip": "71854"
+      }
+    }
+  },
+  {
+    "id": 11558,
+    "unique_name": "Winfred Polk Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1342 Heber Springs Rd",
+        "city": "Heber Springs",
+        "state": "AR",
+        "zip": "72543"
+      }
+    }
+  },
+  {
+    "id": 11584,
+    "unique_name": "Adelphoi Judge Charles E. Marker House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "105 Marcia Street",
+        "city": "Latrobe",
+        "state": "PA",
+        "zip": "15650"
+      }
+    }
+  },
+  {
+    "id": 11629,
+    "unique_name": "​North East Secure Treatment Unit",
+    "version": 1,
+    "note": "name began with a zero-width space (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "North East Secure Treatment Unit",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11638,
+    "unique_name": "​South Mountain Secure Treatment Unit",
+    "version": 1,
+    "note": "name began with a zero-width space (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "South Mountain Secure Treatment Unit",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11659,
+    "unique_name": "Magnolia Mill School",
+    "version": 1,
+    "note": "Closed May 31, 2025 after two resident suicides (Asheville Watchdog); was Open with endYear 2025 (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2024,
+        "endYear": 2025,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": []
+      }
+    }
+  },
+  {
+    "id": 11924,
+    "unique_name": "SUWS of the Carolinas",
+    "version": 1,
+    "note": "Closed May 15, 2023 (Fox Carolina, 2023-04-25); was Open with endYear 2023 (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2000,
+        "endYear": 2023,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": []
+      }
+    }
+  },
+  {
+    "id": 12088,
+    "unique_name": "Outreach House I",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "16-14 Weirfield St",
+        "city": "Queens",
+        "state": "NY",
+        "zip": "11385"
+      }
+    }
+  },
+  {
+    "id": 12104,
+    "unique_name": "SLS Residential, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2505 Carmel Ave Suite 210",
+        "city": "Brewster",
+        "state": "NY",
+        "zip": "10509"
+      }
+    }
+  },
+  {
+    "id": 12161,
+    "unique_name": "Sedona Sky Academy",
+    "version": 1,
+    "note": "pastNames: stray \"(\" after Copper Canyon Academy; Temporarily closed in 2025 (Wikipedia: Sedona Sky Academy); was Open with endYear 2025 (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "Sedona Sky Academy",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Copper Canyon Academy"
+        ],
+        "currentOperator": "New Legal Name: Emoticare",
+        "currentOwner": "New Legal Name: Emoticare",
+        "currentOwners": [
+          "New Legal Name: Emoticare"
+        ],
+        "knownReferrers": []
+      },
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": null,
+        "status": "Suspended",
+        "yearsOfOperation": "",
+        "notes": [
+          "Temporarily closed in 2025."
+        ]
+      }
+    }
+  },
+  {
+    "id": 12164,
+    "unique_name": "Sequel TSI Sierra Vista",
+    "version": 1,
+    "note": "pastNames: \"Three Springs\" + \"Inc.\" were one name split on its comma (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "Sequel TSI Sierra Vista",
+        "currentName": "",
+        "otherNames": [
+          "Three Springs Sierra Vista Schools"
+        ],
+        "pastNames": [
+          "Three Springs, Inc."
+        ],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12223,
+    "unique_name": "FACTS Behavioral Health",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3319 E Dry Creek Rd",
+        "city": "Phoenix",
+        "state": "AZ",
+        "zip": "85044"
+      }
+    }
+  },
+  {
+    "id": 12381,
+    "unique_name": "Madrona Recovery",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7000 SW Varns St",
+        "city": "Tigard",
+        "state": "OR",
+        "zip": "97223"
+      }
+    }
+  },
+  {
+    "id": 12387,
+    "unique_name": "Multnomah A&E Program",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1401 NE 68th Pl",
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97213"
+      }
+    }
+  },
+  {
+    "id": 12458,
+    "unique_name": "Nevada PRTF Services for Children – Oasis",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6171 W Charleston Blvd Bldg 14",
+        "city": "Las Vegas",
+        "state": "NV",
+        "zip": "89416"
+      }
+    }
+  },
+  {
+    "id": 12460,
+    "unique_name": "New Benchmark",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1472 South Highway 373",
+        "city": "Amargosa",
+        "state": "NV",
+        "zip": "89020"
+      }
+    }
+  },
+  {
+    "id": 12475,
+    "unique_name": "Vitality Carson City",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "900 E Long Street Suite 201",
+        "city": "Carson City",
+        "state": "NV",
+        "zip": "89706"
+      }
+    }
+  },
+  {
+    "id": 12542,
+    "unique_name": "Kenneth B. Walker Residential Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3575 Macon Rd. Suite 20",
+        "city": "Columbus",
+        "state": "GA",
+        "zip": "31907"
+      }
+    }
+  },
+  {
+    "id": 12623,
+    "unique_name": "Royal Gorge Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "615 Pike Ave",
+        "city": "Cañon City",
+        "state": "CO",
+        "zip": "81212"
+      }
+    }
+  },
+  {
+    "id": 12647,
+    "unique_name": "Kidz Ark",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "17282 County Road 32",
+        "city": "Sterling",
+        "state": "CO",
+        "zip": "80751"
+      }
+    }
+  },
+  {
+    "id": 12828,
+    "unique_name": "Childhelp USA",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "23164 Dragoon Rd",
+        "city": "Lignum",
+        "state": "VA",
+        "zip": "22726"
+      }
+    }
+  },
+  {
+    "id": 12980,
+    "unique_name": "Twin Rivers Community Facility",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "605 McMurray St",
+        "city": "Richland",
+        "state": "WA",
+        "zip": "99354"
+      }
+    }
+  },
+  {
+    "id": 13034,
+    "unique_name": "Minnesota Girls Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "63 County Rd 2",
+        "city": "Bricelyn",
+        "state": "MN",
+        "zip": "56014"
+      }
+    }
+  },
+  {
+    "id": 13089,
+    "unique_name": "Pathway Family Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "23100 Providence Drive Suite 300",
+        "city": "Southfield",
+        "state": "MI",
+        "zip": "48075"
+      }
+    }
+  },
+  {
+    "id": 13090,
+    "unique_name": "Starr Albion Prep",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "13660 26 Mile Rd",
+        "city": "Albion",
+        "state": "MI",
+        "zip": "49224"
+      }
+    }
+  },
+  {
+    "id": 13222,
+    "unique_name": "Wolverine Human Services Residential Campus",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "101 Enterprise Dr",
+        "city": "Vassar",
+        "state": "MI",
+        "zip": "48768"
+      }
+    }
+  },
+  {
+    "id": 13263,
+    "unique_name": "Necco Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "115 Private Road 977",
+        "city": "Pedro",
+        "state": "OH",
+        "zip": "45659"
+      }
+    }
+  },
+  {
+    "id": 13414,
+    "unique_name": "Big Horn Basin Adolescent Programs",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "967 Us Hwy 20",
+        "city": "Basin",
+        "state": "WY",
+        "zip": "82410"
+      }
+    }
+  },
+  {
+    "id": 13422,
+    "unique_name": "Heart Mountain New Beginnings",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "909 Road 22 H",
+        "city": "Powell",
+        "state": "WY",
+        "zip": "82435"
+      }
+    }
+  },
+  {
+    "id": 13435,
+    "unique_name": "Triangle Cross Boys Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "428 Rd. 1AF",
+        "city": "Powell",
+        "state": "WY",
+        "zip": "82435"
+      }
+    }
+  },
+  {
+    "id": 13436,
+    "unique_name": "Trinity Teen Solutions, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "89 Rd 8 RA",
+        "city": "Powell",
+        "state": "WY",
+        "zip": "82435"
+      }
+    }
+  },
+  {
+    "id": 13439,
+    "unique_name": "Wyoming Boys’ School",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1550 Hwy 20 South",
+        "city": "Worland",
+        "state": "WY",
+        "zip": "82401"
+      }
+    }
+  },
+  {
+    "id": 13441,
+    "unique_name": "Y.E.S. House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "905 N. Gurley Avenue, Building A",
+        "city": "Gillette",
+        "state": "WY",
+        "zip": "82717"
+      }
+    }
+  },
+  {
+    "id": 13547,
+    "unique_name": "Bison Creek Treatment Services",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "17364 West State Highway 9",
+        "city": "Norman",
+        "state": "OK",
+        "zip": "73072"
+      }
+    }
+  },
+  {
+    "id": 13551,
+    "unique_name": "Canadian County Children’s Justice Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7905 E. Highway 66",
+        "city": "El Reno",
+        "state": "OK",
+        "zip": "73036"
+      }
+    }
+  },
+  {
+    "id": 13555,
+    "unique_name": "Communityworks ITS",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2801 Venture Blvd Bldg B",
+        "city": "Norman",
+        "state": "OK",
+        "zip": "73071"
+      }
+    }
+  },
+  {
+    "id": 13557,
+    "unique_name": "Cookson Hills Christian Ministries",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "60416 Highway 10",
+        "city": "Kansas",
+        "state": "OK",
+        "zip": "74347"
+      }
+    }
+  },
+  {
+    "id": 13577,
+    "unique_name": "Mustang Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1150 East Highway 152",
+        "city": "Mustang",
+        "state": "OK",
+        "zip": "73064"
+      }
+    }
+  },
+  {
+    "id": 13599,
+    "unique_name": "Southern Plains Treatment Services – West",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1150 E. Hwy 152, Building B",
+        "city": "Mustang",
+        "state": "OK",
+        "zip": "73064"
+      }
+    }
+  },
+  {
+    "id": 13613,
+    "unique_name": "White Horse Ranch, LLC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "40803 South County Road 213",
+        "city": "Mooreland",
+        "state": "OK",
+        "zip": "73852"
+      }
+    }
+  },
+  {
+    "id": 13621,
+    "unique_name": "Alabama Baptist Children’s Homes – Dothan",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "368 County Line Rd",
+        "city": "Dothan",
+        "state": "AL",
+        "zip": "36305"
+      }
+    }
+  },
+  {
+    "id": 13623,
+    "unique_name": "Alabama Baptist Children’s Homes Mobile",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6512 Grelot Rd",
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36691"
+      }
+    }
+  },
+  {
+    "id": 13634,
+    "unique_name": "Boyd School, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "20856 Eastern Valley Rd",
+        "city": "Green Pond",
+        "state": "AL",
+        "zip": "35074"
+      }
+    }
+  },
+  {
+    "id": 13635,
+    "unique_name": "Boys & Girls Ranches of AL",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Baldwin: 21870 Co. Rd. 32",
+        "city": "Summerdale",
+        "state": "AL",
+        "zip": "36580"
+      }
+    }
+  },
+  {
+    "id": 13636,
+    "unique_name": "Brantwood Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1309 Upper Wetumpka Rd",
+        "city": "Montgomery",
+        "state": "AL",
+        "zip": "36107"
+      }
+    }
+  },
+  {
+    "id": 13643,
+    "unique_name": "Childhaven, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1816 Childhaven Rd",
+        "city": "Cullman",
+        "state": "AL",
+        "zip": "35055"
+      }
+    }
+  },
+  {
+    "id": 13644,
+    "unique_name": "Children’s Services Inc. – The Parris Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "30 Alan Dr",
+        "city": "Anniston",
+        "state": "AL",
+        "zip": "36202"
+      }
+    }
+  },
+  {
+    "id": 13645,
+    "unique_name": "Children’s Village",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2001 18th St. SW",
+        "city": "Birmingham",
+        "state": "AL",
+        "zip": "35211"
+      }
+    }
+  },
+  {
+    "id": 13646,
+    "unique_name": "Chrysalis, A Home for Girls",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "545 Judge Logue Rd",
+        "city": "Newton",
+        "state": "AL",
+        "zip": "36352"
+      }
+    }
+  },
+  {
+    "id": 13652,
+    "unique_name": "Family Garden-Males",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "640 Mobb Hill Rd",
+        "city": "Union Grove",
+        "state": "AL",
+        "zip": "35175"
+      }
+    }
+  },
+  {
+    "id": 13658,
+    "unique_name": "Haddie’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1451 Andrews Rd",
+        "city": "Opelika",
+        "state": "AL",
+        "zip": "36801"
+      }
+    }
+  },
+  {
+    "id": 13664,
+    "unique_name": "Kids to Love Foundation",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "4533 Elkwood Section Rd",
+        "city": "Ardmore",
+        "state": "AL",
+        "zip": "35739"
+      }
+    }
+  },
+  {
+    "id": 13666,
+    "unique_name": "King’s Home – Hayden",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1695 Old Hayden Rd",
+        "city": "Warrior",
+        "state": "AL",
+        "zip": "35108"
+      }
+    }
+  },
+  {
+    "id": 13667,
+    "unique_name": "King’s Home – Westover – Males",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "62 Alabama Youth Dr",
+        "city": "Westover",
+        "state": "AL",
+        "zip": "35185"
+      }
+    }
+  },
+  {
+    "id": 13677,
+    "unique_name": "North Alabama Christian Children’s Home, Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5501 Co. Rd. 73",
+        "city": "Florence",
+        "state": "AL",
+        "zip": "35630"
+      }
+    }
+  },
+  {
+    "id": 13679,
+    "unique_name": "Pathway, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "39 Private Road 1201",
+        "city": "New Brockton",
+        "state": "AL",
+        "zip": "36360"
+      }
+    }
+  },
+  {
+    "id": 13681,
+    "unique_name": "Presbyterian Home for Children",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "905 Ashland Hwy",
+        "city": "Talladega",
+        "state": "AL",
+        "zip": "35160"
+      }
+    }
+  },
+  {
+    "id": 13686,
+    "unique_name": "SafetyNet Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "80 Mel Bailey Dr",
+        "city": "Minter",
+        "state": "AL",
+        "zip": "36761"
+      }
+    }
+  },
+  {
+    "id": 13687,
+    "unique_name": "SafetyNet Crossings",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5888 Cherry Hill Rd",
+        "city": "Montgomery",
+        "state": "AL",
+        "zip": "36116"
+      }
+    }
+  },
+  {
+    "id": 13693,
+    "unique_name": "Southeast Alabama Diversion Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2850 Horace Shepard Rd",
+        "city": "Dothan",
+        "state": "AL",
+        "zip": "36303"
+      }
+    }
+  },
+  {
+    "id": 13697,
+    "unique_name": "St. Mary’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "4350 Moffett Rd",
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36618"
+      }
+    }
+  },
+  {
+    "id": 13699,
+    "unique_name": "TEARS, Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "204 East Oak St",
+        "city": "Tuskegee",
+        "state": "AL",
+        "zip": "36803"
+      }
+    }
+  },
+  {
+    "id": 13700,
+    "unique_name": "Tennessee Valley Juvenile Detention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2216 Missouri St",
+        "city": "Tuscumbia",
+        "state": "AL",
+        "zip": "35674"
+      }
+    }
+  },
+  {
+    "id": 13701,
+    "unique_name": "The Bridge, Inc. Mitchell",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3232 Lay Springs Rd",
+        "city": "Gadsden",
+        "state": "AL",
+        "zip": "35901"
+      }
+    }
+  },
+  {
+    "id": 13702,
+    "unique_name": "The Bridge, Inc. Northwood",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3232 Lay Springs Rd",
+        "city": "Gadsden",
+        "state": "AL",
+        "zip": "35901"
+      }
+    }
+  },
+  {
+    "id": 13703,
+    "unique_name": "The Bridge, Inc. STEPS Program",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3401 Newman Rd",
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36695"
+      }
+    }
+  },
+  {
+    "id": 13704,
+    "unique_name": "The Bridge, Inc. Westwood",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3401 Newman Rd",
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36695"
+      }
+    }
+  },
+  {
+    "id": 13705,
+    "unique_name": "The Bridge, Inc., GEMS",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3401 Newman Rd",
+        "city": "Mobile",
+        "state": "AL",
+        "zip": "36695"
+      }
+    }
+  },
+  {
+    "id": 13706,
+    "unique_name": "The Learning Tree",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2009 Roberson St",
+        "city": "Jacksonville",
+        "state": "AL",
+        "zip": "36272"
+      }
+    }
+  },
+  {
+    "id": 13748,
+    "unique_name": "Acadiana Treatment Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "156 Choctaw Rd",
+        "city": "Sunset",
+        "state": "LA",
+        "zip": "70584"
+      }
+    }
+  },
+  {
+    "id": 13749,
+    "unique_name": "AMIKids Acadiana, Inc",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "611 Celestine LaTortue Rd",
+        "city": "Branch",
+        "state": "LA",
+        "zip": "70516"
+      }
+    }
+  },
+  {
+    "id": 13752,
+    "unique_name": "Boys and Girls Villages Foundation",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7378 Highway 90 East",
+        "city": "Lake Charles",
+        "state": "LA",
+        "zip": "70615"
+      }
+    }
+  },
+  {
+    "id": 13753,
+    "unique_name": "Boys Town Louisiana – Bienville Family Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3308 Bienville St",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70119"
+      }
+    }
+  },
+  {
+    "id": 13754,
+    "unique_name": "Boys Town Louisiana – City Park Family Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "313 City Park Ave",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70119"
+      }
+    }
+  },
+  {
+    "id": 13755,
+    "unique_name": "Boys Town Louisiana – Magazine Family Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6020 Magazine St",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70118"
+      }
+    }
+  },
+  {
+    "id": 13758,
+    "unique_name": "Calcasieu Parish Office of Juvenile Justice Services",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3615 East Prien Lake Rd",
+        "city": "Lake Charles",
+        "state": "LA",
+        "zip": "70615"
+      }
+    }
+  },
+  {
+    "id": 13761,
+    "unique_name": "Christian Acres Youth Center Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "200 Bailey St",
+        "city": "Tallulah",
+        "state": "LA",
+        "zip": "71282"
+      }
+    }
+  },
+  {
+    "id": 13765,
+    "unique_name": "Florida Parishes Juvenile Detention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "28528 Highway 190",
+        "city": "Covington",
+        "state": "LA",
+        "zip": "70433"
+      }
+    }
+  },
+  {
+    "id": 13767,
+    "unique_name": "Green Oaks Juvenile Detention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "4820 South Grand St",
+        "city": "Monroe",
+        "state": "LA",
+        "zip": "71202"
+      }
+    }
+  },
+  {
+    "id": 13768,
+    "unique_name": "Harbour House RTC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2400 Merganser St, Bldg. A",
+        "city": "Lake Charles",
+        "state": "LA",
+        "zip": "70615"
+      }
+    }
+  },
+  {
+    "id": 13769,
+    "unique_name": "Harmony Center, Inc. – A.B. Horn Group Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1306 Main St",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zip": "70802"
+      }
+    }
+  },
+  {
+    "id": 13770,
+    "unique_name": "Harmony Center, Inc. – Harmony III Group Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1246 Laurel St",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zip": "70802"
+      }
+    }
+  },
+  {
+    "id": 13771,
+    "unique_name": "Heritage Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "20090 Tucker Rd",
+        "city": "Zachary",
+        "state": "LA",
+        "zip": "70791"
+      }
+    }
+  },
+  {
+    "id": 13773,
+    "unique_name": "Jesse Dotey Youth Development Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "250 North Second St",
+        "city": "Ponchatoula",
+        "state": "LA",
+        "zip": "70454"
+      }
+    }
+  },
+  {
+    "id": 13774,
+    "unique_name": "Johnny Robinson’s Boys Home Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3209 South Grand St",
+        "city": "Monroe",
+        "state": "LA",
+        "zip": "71202"
+      }
+    }
+  },
+  {
+    "id": 13776,
+    "unique_name": "Juvenile Justice Intervention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1100 Milton St",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70122"
+      }
+    }
+  },
+  {
+    "id": 13778,
+    "unique_name": "Lafourche Parish Juvenile Justice Facility",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2525 Veterans Blvd",
+        "city": "Thibodaux",
+        "state": "LA",
+        "zip": "70301"
+      }
+    }
+  },
+  {
+    "id": 13779,
+    "unique_name": "Lifted By Love Residential Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "7705 Park Ave",
+        "city": "Houma",
+        "state": "LA",
+        "zip": "70364"
+      }
+    }
+  },
+  {
+    "id": 13780,
+    "unique_name": "Lighthouse Child Residential Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "150 Lighthouse Ln",
+        "city": "Reeves",
+        "state": "LA",
+        "zip": "70658"
+      }
+    }
+  },
+  {
+    "id": 13781,
+    "unique_name": "Lighthouse Ranch for Boys",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "51453 Hwy 443",
+        "city": "Loranger",
+        "state": "LA",
+        "zip": "70446"
+      }
+    }
+  },
+  {
+    "id": 13782,
+    "unique_name": "Louis Children’s Crisis Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3511 Bayou Black Dr",
+        "city": "Houma",
+        "state": "LA",
+        "zip": "70360"
+      }
+    }
+  },
+  {
+    "id": 13785,
+    "unique_name": "Louisiana Methodist Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "904 Deville Lane",
+        "city": "Ruston",
+        "state": "LA",
+        "zip": "71270"
+      }
+    }
+  },
+  {
+    "id": 13786,
+    "unique_name": "MacDonell United Methodist Children’s Services, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "8326 Main St",
+        "city": "Houma",
+        "state": "LA",
+        "zip": "70363"
+      }
+    }
+  },
+  {
+    "id": 13788,
+    "unique_name": "Methodist Children’s Home of Southeast Louisiana",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "49242 Highway 445",
+        "city": "Loranger",
+        "state": "LA",
+        "zip": "70446"
+      }
+    }
+  },
+  {
+    "id": 13789,
+    "unique_name": "Methodist Children’s Home of Southwest Louisiana",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3029 North Beglis Parkway",
+        "city": "Sulphur",
+        "state": "LA",
+        "zip": "70663"
+      }
+    }
+  },
+  {
+    "id": 13793,
+    "unique_name": "New Way of Southwest Louisiana",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2683 Vidrine Rd",
+        "city": "Ville Platte",
+        "state": "LA",
+        "zip": "70586"
+      }
+    }
+  },
+  {
+    "id": 13794,
+    "unique_name": "Raintree House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1219 Eighth St",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70115"
+      }
+    }
+  },
+  {
+    "id": 13796,
+    "unique_name": "Renaissance",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6177 Bayou Rapides Rd",
+        "city": "Alexandria",
+        "state": "LA",
+        "zip": "71303"
+      }
+    }
+  },
+  {
+    "id": 13797,
+    "unique_name": "Renaissance Home for Youth",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6177 Bayou Rapides Rd",
+        "city": "Alexandria",
+        "state": "LA",
+        "zip": "71303"
+      }
+    }
+  },
+  {
+    "id": 13799,
+    "unique_name": "Rutherford Houses",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "636 Herndon St",
+        "city": "Shreveport",
+        "state": "LA",
+        "zip": "71101"
+      }
+    }
+  },
+  {
+    "id": 13800,
+    "unique_name": "St. Bernard Parish Juvenile Detention Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1900 Paris Rd",
+        "city": "Chalmette",
+        "state": "LA",
+        "zip": "70043"
+      }
+    }
+  },
+  {
+    "id": 13803,
+    "unique_name": "Terrebonne Parish Juvenile Justice Complex",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "180 Government St",
+        "city": "Gray",
+        "state": "LA",
+        "zip": "70359"
+      }
+    }
+  },
+  {
+    "id": 13804,
+    "unique_name": "The Agape House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "508 Morris St",
+        "city": "Franklin",
+        "state": "LA",
+        "zip": "70538"
+      }
+    }
+  },
+  {
+    "id": 13805,
+    "unique_name": "The Bridge Center for Hope",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3455 Florida Blvd Suite 400",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zip": "70806"
+      }
+    }
+  },
+  {
+    "id": 13806,
+    "unique_name": "The Louis Children’s Crisis Center – Midland",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "107 Midland Dr",
+        "city": "Houma",
+        "state": "LA",
+        "zip": "70360"
+      }
+    }
+  },
+  {
+    "id": 13807,
+    "unique_name": "The Maples Hammond",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "17010 Old Covington Hwy",
+        "city": "Hammond",
+        "state": "LA",
+        "zip": "70403"
+      }
+    }
+  },
+  {
+    "id": 13808,
+    "unique_name": "The Maples LLC",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "15555 George O’Neal Rd",
+        "city": "Baton Rouge",
+        "state": "LA",
+        "zip": "70817"
+      }
+    }
+  },
+  {
+    "id": 13809,
+    "unique_name": "Waldo Burton Boys’ Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3320 South Carrollton Ave",
+        "city": "New Orleans",
+        "state": "LA",
+        "zip": "70118"
+      }
+    }
+  },
+  {
+    "id": 13810,
+    "unique_name": "Ware Youth Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "3565 Highway 71",
+        "city": "Coushatta",
+        "state": "LA",
+        "zip": "71019"
+      }
+    }
+  },
+  {
+    "id": 13815,
+    "unique_name": "All God’s Children",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "122 Danville Road, Loop 1",
+        "city": "Nicholasville",
+        "state": "KY",
+        "zip": "40340"
+      }
+    }
+  },
+  {
+    "id": 13829,
+    "unique_name": "Children’s Home of Northern Kentucky",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "200 Home Road, Devou Park",
+        "city": "Covington",
+        "state": "KY",
+        "zip": "41011"
+      }
+    }
+  },
+  {
+    "id": 13830,
+    "unique_name": "Combs Residential Service, Inc.",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "11455 N. Highway 1247",
+        "city": "Eubank",
+        "state": "KY",
+        "zip": "42544"
+      }
+    }
+  },
+  {
+    "id": 13834,
+    "unique_name": "Dessie Scott Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5274 Highway 15",
+        "city": "Pine Ridge",
+        "state": "KY",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 13866,
+    "unique_name": "New Pathways for Children – EBH",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "5132 ST RT 945",
+        "city": "Hickory",
+        "state": "KY",
+        "zip": "42069"
+      }
+    }
+  },
+  {
+    "id": 13903,
+    "unique_name": "Kenai Peninsula Community Care Center Dimmick Retreat & Hardy House",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "320 South Spruce Street",
+        "city": "Kenai",
+        "state": "AK",
+        "zip": "99611"
+      }
+    }
+  },
+  {
+    "id": 14104,
+    "unique_name": "Alberta Adolescent Recovery Centre",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "303 Forge Rd SE",
+        "city": "Calgary",
+        "state": "",
+        "zip": "T2H 0S9"
+      }
+    }
+  },
+  {
+    "id": 14106,
+    "unique_name": "Robert Land Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "6727 S Chippewa Rd",
+        "city": "Wellandport",
+        "state": "",
+        "zip": "L0R 2J0"
+      }
+    }
+  },
+  {
+    "id": 14107,
+    "unique_name": "Rocklyn Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "Meaford",
+        "state": "",
+        "zip": "N4L 0A7"
+      }
+    }
+  },
+  {
+    "id": 14108,
+    "unique_name": "Venture Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "101-1865 Dilworth Drive, Suite 338",
+        "city": "Kelowna",
+        "state": "",
+        "zip": "V1Y 9T1"
+      }
+    }
+  },
+  {
+    "id": 14109,
+    "unique_name": "Academy at Dundee Ranch",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "Orotina",
+        "state": "",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 14114,
+    "unique_name": "Morava Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "K Jelenci",
+        "city": "Brno-Bystrc",
+        "state": "",
+        "zip": "635 00"
+      }
+    }
+  },
+  {
+    "id": 14115,
+    "unique_name": "Caribbean Mountain Academy",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Pinar Quemado",
+        "city": "Jarabacoa",
+        "state": "",
+        "zip": "41000"
+      }
+    }
+  },
+  {
+    "id": 14117,
+    "unique_name": "Beer Yaakov-Ness Ziona Mental Health Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1 Yitzhak Rabin Boulevard",
+        "city": "Beer Yaakov",
+        "state": "",
+        "zip": "7032102"
+      }
+    }
+  },
+  {
+    "id": 14118,
+    "unique_name": "Ben Yakir Youth Village",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1 Beit Hazon",
+        "city": "Kfar Haroeh",
+        "state": "",
+        "zip": "3895500"
+      }
+    }
+  },
+  {
+    "id": 14121,
+    "unique_name": "Genesis Israel",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Agripas 88 Suite 21",
+        "city": "Jerusalem",
+        "state": "",
+        "zip": "9451309"
+      }
+    }
+  },
+  {
+    "id": 14123,
+    "unique_name": "Jerusalem Hills Chezzi Cohen Children’s Home",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "1 Mitzpe St.",
+        "city": "Kiryat Yearim",
+        "state": "",
+        "zip": "9083800"
+      }
+    }
+  },
+  {
+    "id": 14124,
+    "unique_name": "Jerusalem Hills Treatment & Training Center",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "47 HaHaluts St.",
+        "city": "Jerusalem",
+        "state": "",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 14127,
+    "unique_name": "Neve Midbar Bedouin Youth Village",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "D.N. Halutza",
+        "city": "Nitzana",
+        "state": "",
+        "zip": "8490100"
+      }
+    }
+  },
+  {
+    "id": 14146,
+    "unique_name": "Campbell Park",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Special School Road",
+        "city": "Otekaieke",
+        "state": "",
+        "zip": "9494"
+      }
+    }
+  },
+  {
+    "id": 14150,
+    "unique_name": "The Wave Clinic",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Level 54, Almas Tower, JLT",
+        "city": "Dubai",
+        "state": "",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 14152,
+    "unique_name": "Cambian Whinfell School",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "110 Windermere Rd",
+        "city": "Kendal",
+        "state": "",
+        "zip": "LA9 5EZ"
+      }
+    }
+  },
+  {
+    "id": 14154,
+    "unique_name": "Yes We Can Youth Clinics",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "Bestseweg 34",
+        "city": "Oirschot",
+        "state": "",
+        "zip": "5688 NP"
+      }
+    }
+  },
+  {
+    "id": 14157,
+    "unique_name": "Lighthouse for Boys",
+    "version": 1,
+    "note": "Roloff home on the Intracoastal Canal about 40 miles from Corpus Christi (Newspapers.com clipping) (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "",
+        "state": "TX",
+        "zip": ""
+      },
+      "location": "Near Corpus Christi, TX"
+    }
+  },
+  {
+    "id": 100015,
+    "unique_name": "Camp E-Toh-Anee",
+    "version": 1,
+    "note": "state NH was in the raw address the parser missed (\"Stewartstown NH 03576\") (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "35 Eckerd Way",
+        "city": "Stewartstown",
+        "state": "NH",
+        "zip": "03576"
+      },
+      "location": "Stewartstown, NH"
+    }
+  },
+  {
+    "id": 100017,
+    "unique_name": "Canyon View Park",
+    "version": 1,
+    "note": "WWASPS program in Trout Creek, MT (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "Trout Creek",
+        "state": "MT",
+        "zip": ""
+      },
+      "location": "Trout Creek, MT"
+    }
+  },
+  {
+    "id": 100024,
+    "unique_name": "Chad Youth Enhancement Center #2",
+    "version": 1,
+    "note": "otherNames repeated the facility name (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "Chad Youth Enhancement Center",
+        "currentName": "Oak Plains Academy",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 100050,
+    "unique_name": "New Beginnings Maternity Home",
+    "version": 1,
+    "note": "WWASPS-affiliated maternity home in Utah (Wikipedia list of WWASP-affiliated programs) (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "",
+        "state": "UT",
+        "zip": ""
+      },
+      "location": "Utah"
+    }
+  },
+  {
+    "id": 100070,
+    "unique_name": "Pine View Christian Academy",
+    "version": 1,
+    "note": "WWASPS program in Mississippi (Wikipedia list of WWASP-affiliated programs) (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "",
+        "state": "MS",
+        "zip": ""
+      },
+      "location": "Mississippi"
+    }
+  },
+  {
+    "id": 100080,
+    "unique_name": "Talisman Academy",
+    "version": 1,
+    "note": "Converted from New Leaf Academy, Hendersonville NC, 2010 (StrugglingTeens) (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "2075 North Rugby Road",
+        "city": "Hendersonville",
+        "state": "NC",
+        "zip": "28790"
+      },
+      "address": "2075 North Rugby Road, Hendersonville, NC 28790",
+      "location": "Hendersonville, NC"
+    }
+  },
+  {
+    "id": 100083,
+    "unique_name": "Teen Challenge Girls",
+    "version": 1,
+    "note": "record gave Las Vegas with no state; Teen Challenge runs Nevada centers (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "",
+        "city": "Las Vegas",
+        "state": "NV",
+        "zip": ""
+      },
+      "location": "Las Vegas, NV"
+    }
+  },
+  {
+    "id": 100101,
+    "unique_name": "Dallas County Juvenile Detention Center (AL)",
+    "version": 1,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "addressParts": {
+        "street": "800 Selfield Rd",
+        "city": "Selma",
+        "state": "AL",
+        "zip": "36703"
+      }
+    }
+  },
+  {
+    "id": 100123,
+    "unique_name": "Pathway Family Center (OH)",
+    "version": 1,
+    "note": "pastNames: \"Straight – Midwest\" + \"Inc.\" were one name split on its comma (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "identification": {
+        "name": "Pathway Family Center",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Straight – Midwest, Inc.",
+          "Kids Helping Kids of Cincinnati"
+        ],
+        "currentOperator": "Pathway Family Center",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
   }
 ]

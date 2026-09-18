@@ -455,6 +455,36 @@ against a prod snapshot taken that day (4,670 `facilities_v2` records):
   Largest: California 600, Texas 402, North Carolina 308, Utah 242,
   Arizona 175. Filling it is research, not code.
 
+Data-shape fixes found by the same scan (2026-09-18), applied through
+`seeds/facility-records.json` (init step version 24; every entry was checked
+offline to change only the fields it names):
+
+- 235 records had a malformed `city` from the old import, which showed on
+  the cards ("101 First Quality Dr, , Andersonville, TN"): a leading comma,
+  a highway or county-road number, a suite, or a foreign postcode in the city.
+  Each was re-split from its raw address; the number goes back to the street
+  and postcodes to `zip`.
+- Names: "Three Springs, Inc." and "Straight – Midwest, Inc." had been split
+  on the comma into a separate "Inc." former name (Sequel TSI Kissimmee,
+  Sequel TSI Sierra Vista, Pathway Family Center); "Copper Canyon Academy(";
+  two names starting with a zero-width space; Chad Youth Enhancement Center
+  listing its own name.
+- Open with an end year, settled from public sources: SUWS of the Carolinas
+  (closed May 2023) and Magnolia Mill School (closed May 2025) are Closed;
+  Sedona Sky Academy is Suspended (temporary closure in 2025); Union Juvenile
+  Residential Facility keeps Open and loses the end year (it runs as Redwood
+  Youth Academy). New Beginnings Girls Academy is unchanged: no source for
+  its closure.
+- Filed under UNKNOWN, so on no state page: Camp E-Toh-Anee (NH), Lighthouse
+  for Boys (TX), Canyon View Park (MT), Talisman Academy (NC), Pine View
+  Christian Academy (MS), New Beginnings Maternity Home (UT) and Teen
+  Challenge Girls (NV) now have a state. Six were copies of a located record
+  and are merged with `api/merge-facility-duplicates.php` (pairs
+  10196:9618, 10865:14155, 13931:14156, 100023:100024, 100046:100047,
+  100072:100073). Still unplaced: New Directions Home for Boys (Three
+  Springs), and "Aspen Education Group #2" (100001), an operator filed as a
+  facility.
+
 Run the check again after data work:
 
 ```
