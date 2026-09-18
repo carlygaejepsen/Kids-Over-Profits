@@ -4352,5 +4352,23 @@
         "knownReferrers": []
       }
     }
+  },
+  {
+    "id": 13650,
+    "unique_name": "Elk River Treatment Program",
+    "version": 1,
+    "note": "The merge of duplicate #13718 carried its truncated name \"Elk River Treatment Program (CLOSED\" into otherNames (2026-09-18).",
+    "facility": {
+      "identification": {
+        "name": "Elk River Treatment Program",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
   }
 ]
