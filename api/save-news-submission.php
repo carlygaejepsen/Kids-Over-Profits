@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/news-mentions.php';
+require_once __DIR__ . '/news-tags.php';
 require_once __DIR__ . '/facility-aliases.php';
 require_once __DIR__ . '/url-dedupe.php';
 require_once __DIR__ . '/news-story-groups.php';
@@ -153,6 +154,9 @@ try {
     if (is_string($tags)) {
         $tags = array_filter(array_map('trim', explode("\n", $tags)));
     }
+    // One spelling per idea: "youth detention" and "Juvenile Detention" both
+    // store as "Juvenile Justice" (see api/news-tags.php).
+    $tags = kop_news_tags_normalize($tags);
 
     // Handle arrays - could be string (newline-separated), array of strings,
     // or array of {name, facility_id} objects. Normalize to the object shape.

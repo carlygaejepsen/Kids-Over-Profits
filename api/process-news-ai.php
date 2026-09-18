@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Load config.php which handles .env and wp-config loading
 define('SKIP_DB_CONNECTION', true);
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/news-tags.php';
 
 // Enable detailed error logging (set to false in production if too verbose)
 define('AI_DEBUG_LOGGING', true);
@@ -770,7 +771,7 @@ function buildPrompt($content, $url = '', $customInstructions = '') {
     $prompt .= "  \"publicationDate\": \"YYYY-MM-DD format\",\n";
     $prompt .= "  \"publicationName\": \"publication name\",\n";
     $prompt .= "  \"location\": \"City, State (or Country) where the main events took place\",\n";
-    $prompt .= "  \"tags\": [\"list of 3-5 keywords/themes e.g. 'Wilderness Therapy', 'Transport', 'Abuse', 'Lawsuit'\"],\n";
+    $prompt .= "  \"tags\": [\"3-5 themes. Use these exact labels where one fits: " . implode(', ', kop_news_tag_prompt_vocabulary()) . ". Add a new label only for a theme none of these covers. Do not use generic tags like Abuse, Lawsuit, Youth, or Residential Treatment\"],\n";
     $prompt .= "  \"facilities\": [\"list of facilities/companies mentioned\"],\n";
     $prompt .= "  \"staff\": [\"list of staff/owners mentioned\"],\n";
     $prompt .= "  \"survivors\": [\"list of survivors and victims mentioned (use initials or pseudonyms if provided)\"],\n";

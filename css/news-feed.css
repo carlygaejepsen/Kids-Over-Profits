@@ -3,7 +3,7 @@
 .news-feed-container {
     max-width: 900px;
     margin: 1.5rem auto 3rem;
-    padding: 2rem 2.5rem 2.5rem;
+    padding: 1.5rem 2.5rem 2.5rem;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
@@ -20,18 +20,20 @@
 
 .news-feed-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
 }
 
 .news-feed-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
+    line-height: 1.2;
     color: #1a202c;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.35rem;
 }
 
 .news-feed-header p {
     color: #4a5568;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    margin: 0;
 }
 
 /* Grid Layout */
@@ -286,14 +288,29 @@
 .news-filters {
     background: var(--kop-white);
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--kop-mint-green);
 }
 
 .filter-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+/* "Filter by Type:" sits on the same line as its buttons. */
+.news-filters .filter-group:not(.collapsible-filter) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+}
+
+.news-filters .filter-group:not(.collapsible-filter) .filter-label {
+    margin-bottom: 0;
+}
+#tag-filters {
+    margin-top: 0.5rem;
 }
 
 .filter-group:last-of-type {
@@ -304,7 +321,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.5rem;
 }
 
 .filter-toggle-btn {
@@ -351,7 +367,8 @@
 }
 
 .filter-btn {
-    padding: 0.4rem 0.8rem;
+    padding: 0.3rem 0.7rem;
+    line-height: 1.3;
     border: 1px solid var(--kop-mint-green);
     background: var(--kop-sand);
     border-radius: 6px;
@@ -436,7 +453,21 @@
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
+}
+
+/* Inside the filter panel: a left-aligned row like "Filter by Type". */
+.news-filters .news-archive-picker {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin: 0 0 0.75rem;
+}
+
+.news-archive-picker form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
 }
 
 .news-archive-picker label {
@@ -445,8 +476,12 @@
     font-size: 0.95rem;
 }
 
+.news-filters .news-archive-picker label {
+    font-size: 0.9rem;
+}
+
 .news-archive-picker select {
-    padding: 0.4rem 0.75rem;
+    padding: 0.3rem 0.75rem;
     border: 2px solid var(--kop-teal);
     border-radius: 6px;
     font-size: 0.95rem;
@@ -502,7 +537,7 @@
     }
 
     .news-feed-header h1 {
-        font-size: 2rem;
+        font-size: 1.6rem;
     }
 
     .news-filters {
@@ -557,26 +592,26 @@ a.coverage-link:hover {
 .ongoing-stories {
     background: var(--kop-sand, #F2EEDF);
     border-radius: 12px;
-    padding: 1.5rem 2rem 2rem;
-    margin-bottom: 3rem;
+    padding: 1rem 1.25rem 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 .ongoing-stories-title {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: #000435;
-    margin: 0 0 0.25rem;
+    margin: 0 0 0.15rem;
 }
 
 .ongoing-stories-sub {
     color: #4a5568;
-    font-size: 0.95rem;
-    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+    margin: 0 0 0.75rem;
 }
 
 .ongoing-stories-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
 }
 
 .ongoing-card {
@@ -610,6 +645,10 @@ a.coverage-link:hover {
     margin-bottom: 0.5rem;
 }
 
+.ongoing-card-meta .ongoing-card-viewall {
+    font-size: 0.8rem;
+}
+
 .ongoing-card-desc {
     font-size: 0.9rem;
     color: #4a5568;
@@ -619,7 +658,7 @@ a.coverage-link:hover {
 
 .ongoing-card-latest {
     list-style: none;
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.6rem;
     padding: 0;
     border-top: 1px solid #edf2f7;
 }
@@ -648,9 +687,16 @@ a.coverage-link:hover {
     color: #a0aec0;
 }
 
-.ongoing-card-viewall {
+/* "Full story" and the facility button share one row at the card's foot. */
+.ongoing-card-actions {
     margin-top: auto;
-    align-self: flex-start;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1rem;
+}
+
+.ongoing-card-viewall {
     color: #000080;
     font-weight: 700;
     font-size: 0.9rem;
@@ -665,7 +711,6 @@ a.coverage-link:hover {
 .ongoing-card-facility-btn {
     display: inline-block;
     align-self: flex-start;
-    margin-top: 0.6rem;
     background-color: var(--kop-teal, #33A7B5);
     color: #fff;
     font-weight: 700;
@@ -773,18 +818,16 @@ a.coverage-link:hover {
 
 /* Tablet: two columns of story cards fit comfortably */
 @media (max-width: 1024px) {
-    .ongoing-stories {
-        padding: 1.25rem 1.5rem 1.75rem;
-    }
     .ongoing-stories-grid {
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     }
 }
 
 /* Phones: single column, full-width CTA, tighter padding */
 @media (max-width: 640px) {
     .ongoing-stories {
-        padding: 1rem 1.1rem 1.25rem;
+        padding: 0.85rem 0.9rem 1rem;
+        margin-bottom: 1.25rem;
     }
     .ongoing-stories-grid {
         grid-template-columns: 1fr;

@@ -157,7 +157,9 @@ try {
                 $ongoing_arcs[] = $a;
             }
         }
-        // Latest developments per featured arc (front page only).
+        // Latest development per featured arc (front page only). One headline
+        // keeps the section short so the feed starts near the top of the
+        // screen; "Full story" lists the rest.
         $show_ongoing = !$current_arc && $story_slug === '' && !$archive_month && $current_page === 1;
         if ($ongoing_arcs && $show_ongoing) {
             $dev_stmt = $pdo->prepare(
@@ -165,7 +167,7 @@ try {
                  FROM news_submissions
                  WHERE story_arc_id = ? AND status IN ('approved', 'published')
                  ORDER BY publication_date DESC, id DESC
-                 LIMIT 3"
+                 LIMIT 1"
             );
             foreach ($ongoing_arcs as &$oa) {
                 $dev_stmt->execute([(int) $oa['id']]);
@@ -212,7 +214,11 @@ try {
             <p>Latest updates, investigations, and reports monitored by our team.</p>
         <?php endif; ?>
 
-        <?php if (!empty($archive_months) && !$current_arc): ?>
+        <?php
+        // The month picker renders inside the filter panel with the other
+        // filters; it stays here only when there is no panel (empty feed).
+        ob_start();
+        if (!empty($archive_months) && !$current_arc): ?>
         <div class="news-archive-picker">
             <form method="get" action="">
                 <label for="archive-select">Browse by month:</label>
@@ -230,7 +236,12 @@ try {
                 <a href="<?php echo esc_url(strtok($_SERVER['REQUEST_URI'], '?')); ?>" class="archive-clear-link">Clear filter</a>
             <?php endif; ?>
         </div>
-        <?php endif; ?>
+        <?php endif;
+        $archive_picker_html = ob_get_clean();
+        if (empty($submissions)) {
+            echo $archive_picker_html;
+        }
+        ?>
     </div>
 
     <?php if (isset($error_message)): ?>
@@ -253,6 +264,7 @@ try {
                         <div class="ongoing-card-meta">
                             <?php echo (int) $oa['article_count']; ?> article<?php echo (int) $oa['article_count'] === 1 ? '' : 's'; ?>
                             <?php if ($latest_label): ?> · updated <?php echo esc_html($latest_label); ?><?php endif; ?>
+                            · <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
                         </div>
                         <?php if (!empty($oa['description'])): ?>
                             <p class="ongoing-card-desc"><?php echo esc_html($oa['description']); ?></p>
@@ -274,9 +286,10 @@ try {
                                 <?php endforeach; ?>
                             </ul>
                         <?php endif; ?>
-                        <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
                         <?php $facility = function_exists('kop_news_arc_facility_link') ? kop_news_arc_facility_link($oa) : null; if ($facility): ?>
-                            <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
+                            <div class="ongoing-card-actions">
+                                <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
+                            </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -290,117 +303,8 @@ try {
         </div>
     <?php else: ?>
         <?php
-        // Function to normalize tags to title case
-        function normalizeTagCase($tag) {
-            // Specific word overrides (lowercase => desired)
-            $wordOverrides = [
-                'wwasp' => 'WWASP',
-                'maclaren' => 'MacLaren',
-            ];
-
-            // Convert to title case but preserve all-caps acronyms
-            $words = explode(' ', $tag);
-            $normalized = [];
-            foreach ($words as $word) {
-                $lowerWord = strtolower($word);
-                if (isset($wordOverrides[$lowerWord])) {
-                    $normalized[] = $wordOverrides[$lowerWord];
-                    continue;
-                }
-
-                // Keep all-caps acronyms as-is (e.g., "TTI", "PTSD", "USA")
-                if (strlen($word) <= 4 && strtoupper($word) === $word) {
-                    $normalized[] = $word;
-                } else {
-                    $normalized[] = ucwords($lowerWord);
-                }
-            }
-            return implode(' ', $normalized);
-        }
-
-        // Tag Mappings - Normalizing synonyms to canonical tags
-        $tagMappings = [
-            'juvenile detention' => 'Juvenile Justice',
-            'youth detention' => 'Juvenile Justice',
-            'juvenile hall' => 'Juvenile Justice',
-            'detention center' => 'Juvenile Justice',
-            'youth prison' => 'Juvenile Justice',
-            'juvenile jail' => 'Juvenile Justice',
-            // Escapes
-            'escape' => 'Escape',
-            'escapes' => 'Escape',
-            'escaped' => 'Escape',
-            'runaway' => 'Escape',
-            'runaways' => 'Escape',
-            'absconded' => 'Escape',
-            'elopement' => 'Escape',
-            // Riots
-            'riot' => 'Riot',
-            'riots' => 'Riot',
-            'uprising' => 'Riot',
-            'uprisings' => 'Riot',
-            'disturbance' => 'Riot',
-            'disturbances' => 'Riot',
-            'melee' => 'Riot',
-        ];
-
-        // Tags to exclude - generic terms that apply to almost every TTI article
-        $excludedTags = [
-            // Generic abuse terms (specific types belong in content warnings)
-            'abuse', 'child abuse', 'teen abuse', 'youth abuse',
-            'physical abuse', 'sexual abuse', 'emotional abuse', 'psychological abuse',
-            'verbal abuse', 'mental abuse', 'spiritual abuse', 'medical abuse',
-            'neglect', 'medical neglect', 'educational neglect',
-            'restraint', 'seclusion', 'isolation',
-            'assault', 'sexual assault', 'physical assault',
-            'trauma', 'ptsd', 'mistreatment',
-            // Generic TTI/facility terms
-            'boarding school', 'boarding schools',
-            'troubled teen', 'troubled teens', 'troubled teen industry', 'tti', 'troubled-teen industry',
-            'residential treatment', 'residential treatment center', 'rtc',
-            'therapeutic boarding school', 'treatment center', 'treatment facility',
-            'behavioral health', 'mental health', 'mental health treatment',
-            'reform', 'reform school', 'boot camp',
-            'facility', 'program', 'institution',
-            'baltimore city facilities', 'city facilities',
-            // Generic people terms
-            'adolescent', 'adolescents', 'teenager', 'teenagers', 'teen', 'teens',
-            'youth', 'children', 'child', 'minor', 'minors', 'juvenile', 'juveniles',
-            'survivor', 'survivors', 'victim', 'victims', 'student', 'students',
-            // Generic news/legal terms
-            'abuse allegations', 'allegations', 'misconduct',
-            'investigation', 'report', 'news', 'article', 'lawsuit', 'lawsuit filed',
-            'accountability', 'justice', 'legal', 'crime', 'criminal',
-            // Generic Location/Policy terms
-            'usa', 'united states', 'america', 'national',
-            'child welfare', 'system',
-            'policy', 'regulation', 'bill', 'law',
-            'safety', 'health', 'protection', 'security',
-            // Specific topics better suited for content warnings
-            'psychotropic medication', 'unsanitary conditions'
-        ];
-
-        // Helper to process a tag: map, check exclusion, normalize
-        function processTag($tag, $excludedTags, $tagMappings) {
-            $tagTrimmed = trim($tag);
-            $tagLower = strtolower($tagTrimmed);
-            
-            if (empty($tagLower)) return null;
-
-            // Apply mappings
-            if (isset($tagMappings[$tagLower])) {
-                $tagTrimmed = $tagMappings[$tagLower];
-                $tagLower = strtolower($tagTrimmed); // Update lower for exclude check
-            }
-
-            // Check exclusions
-            if (in_array($tagLower, $excludedTags)) {
-                return null;
-            }
-
-            // Normalize Case
-            return normalizeTagCase($tagTrimmed);
-        }
+        // Synonyms, casing and the generic-tag exclusions live in api/news-tags.php.
+        require_once get_stylesheet_directory() . '/api/news-tags.php';
 
         // Collect all unique tags for the filter (including auto-generated tags)
         $allTags = [];
@@ -423,12 +327,10 @@ try {
             $itemFacilities = kop_facility_mention_names($item['facilities_mentioned'] ?? '[]');
             $itemTags = array_merge($itemTags, $itemFacilities);
 
-            // Filter out excluded tags and normalize to title case
-            foreach (array_unique($itemTags) as $tag) {
-                $normalizedTag = processTag($tag, $excludedTags, $tagMappings);
-                if ($normalizedTag) {
-                    $allTags[$normalizedTag] = ($allTags[$normalizedTag] ?? 0) + 1;
-                }
+            // Canonicalize, drop generic tags, and count each tag once per article.
+            $itemDisplayTags = array_unique(array_filter(array_map('kop_news_tag_display', $itemTags)));
+            foreach ($itemDisplayTags as $normalizedTag) {
+                $allTags[$normalizedTag] = ($allTags[$normalizedTag] ?? 0) + 1;
             }
 
             if (!empty($item['article_type'])) {
@@ -440,6 +342,7 @@ try {
         ?>
 
         <div class="news-filters" data-kop-bug-feature="news-feed/filters" data-kop-bug-label="News Filters">
+            <?php echo $archive_picker_html; ?>
             <div class="filter-group">
                 <label class="filter-label">Filter by Type:</label>
                 <div class="filter-buttons" id="type-filters">
@@ -472,6 +375,8 @@ try {
 
                 // US states list for matching
                 $usStates = ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'];
+                $usStates[] = 'District of Columbia';
+                $countryTags = kop_news_tag_countries();
 
                 // Get all facilities from all submissions for comparison
                 $allFacilities = [];
@@ -539,18 +444,18 @@ try {
 
                 // Normalize facilities
                 $allFacilities = array_map(function($f) { 
-                    return normalizeTagCase(trim($f));
+                    return kop_news_tag_canonical($f);
                 }, $allFacilities);
                 $allFacilities = array_unique($allFacilities);
 
                 // Normalize parent orgs
                 $parentOrgs = array_map(function($o) { 
-                    return normalizeTagCase(trim($o));
+                    return kop_news_tag_canonical($o);
                 }, $parentOrgs);
                 $parentOrgs = array_unique($parentOrgs);
 
                 foreach ($allTags as $tag => $count) {
-                    if (in_array($tag, $usStates)) {
+                    if (in_array($tag, $usStates) || in_array($tag, $countryTags)) {
                         $stateTags[$tag] = $count;
                     } elseif (in_array($tag, $parentOrgs) || in_array($tag, $forcedOrgs)) {
                         $orgTags[$tag] = $count;
@@ -684,13 +589,11 @@ try {
                     $autoTags[] = $facility;
                 }
 
-                // Merge auto-tags with manual tags, remove duplicates
-                $tags = array_unique(array_merge($tags, $autoTags));
-
-                // Filter out excluded tags and normalize to title case
-                $tags = array_filter(array_map(function($tag) use ($excludedTags, $tagMappings) {
-                    return processTag($tag, $excludedTags, $tagMappings);
-                }, $tags));
+                // Merge auto-tags with manual tags, canonicalize synonyms, drop
+                // generic tags, then dedupe (synonyms collapse to one label).
+                $tags = array_values(array_unique(array_filter(
+                    array_map('kop_news_tag_display', array_merge($tags, $autoTags))
+                )));
                 
                 // Format Date
                 $pubDate = $item['publication_date'] ? date('M j, Y', strtotime($item['publication_date'])) : 'Unknown Date';

@@ -1078,10 +1078,12 @@ function kop_ongoing_stories_shortcode($atts) {
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
-                    <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
-                    <?php $facility = kop_news_arc_facility_link($arc); if ($facility): ?>
-                        <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
-                    <?php endif; ?>
+                    <div class="ongoing-card-actions">
+                        <a class="ongoing-card-viewall" href="<?php echo esc_url($arc_url); ?>">Full story &raquo;</a>
+                        <?php $facility = kop_news_arc_facility_link($arc); if ($facility): ?>
+                            <a class="ongoing-card-facility-btn" href="<?php echo esc_url($facility['url']); ?>">Learn more about <?php echo esc_html($facility['label']); ?></a>
+                        <?php endif; ?>
+                    </div>
                 </div>
             <?php endforeach; ?>
         </div>

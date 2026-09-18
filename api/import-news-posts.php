@@ -32,6 +32,7 @@
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/news-tags.php';
 
 $is_cli  = php_sapi_name() === 'cli';
 $dry_run = $is_cli ? in_array('dry', $argv ?? [], true) : !empty($_GET['dry']);
@@ -200,7 +201,7 @@ try {
         if ($location === '') {
             foreach ($cats as $c) { if (in_array($c, $COUNTRIES, true)) { $location = $c; break; } }
         }
-        $tags = array_values(array_diff($cats, $STRUCTURAL_CATS));
+        $tags = kop_news_tags_normalize(array_values(array_diff($cats, $STRUCTURAL_CATS)));
 
         $publication = kop_pub_from_url($parsed['url'], $PUB_MAP);
         $articleType = kop_infer_article_type($title . ' ' . $parsed['summary']);
