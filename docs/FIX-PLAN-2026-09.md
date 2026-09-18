@@ -26,7 +26,7 @@ Last updated 2026-09-18.
 | 9 | Newsletter sign-up top padding | Done |
 | 10 | Email notifications for new submissions | Done |
 | 11 | Facility websites: Wayback and/or donotlink everywhere | Open: three page types still link live |
-| 12 | State pages: alternate names missing | Open: the feed and the data, not the rendering |
+| 12 | State pages: alternate names missing | Done in code; filling the 4,345 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Open: design below |
 
@@ -425,7 +425,45 @@ given. Checked 2026-09-18:
   lists. Some match a `facilities_v2` record that has names, so the feed
   should merge those in when the match is certain.
 
-Plan:
+Outcome (2026-09-18), measured with `scripts/test-state-feed-names.php`
+against a prod snapshot taken that day (4,670 `facilities_v2` records):
+
+- The feed was not losing names on production. Since the location pages
+  read v2, every one of the 326 records with an alternate name reaches its
+  tile on all 51 state pages and every country page. The "34 against 29" count
+  above counted `currentName` values that only repeat the facility's name:
+  89 of the 111 do, and only 22 facilities have a real "now known as" name.
+  The same double counting explains 435: the true figure is 325 before the
+  2026-09-18 merges, 326 now.
+- The visible gap was `currentName`. The card face now shows "Now known as"
+  above "Also known as" and "Formerly" (`js/state-page.js`,
+  `js/country-page.js`), and the Details panel no longer repeats it. 22 cards
+  gain the line, the Three Springs and Brown Schools rebrands among them.
+- The feeds (`kop_state_attach_v2_names()` in `inc/rest-api.php`, shared by
+  the state and country routes) now merge `otherNames`, `pastNames` and
+  `currentName` from `facilities_v2` into every tile that resolves to a v2
+  record: by id, or by name when one record on the page has that name in the
+  same city. Names listed only in `provenance.sourceOperator.otherNames` are
+  stripped from the tile. On v2 this changes nothing today; on the legacy
+  fallback it recovers 5 of 24 records, and the other 19 are records created
+  after the legacy tables were frozen, which that path cannot show.
+- No inspection-only tile matched a v2 record by name with certainty, so
+  none gained names that way.
+- Coverage gap: 4,345 of 4,670 records carry no alternate name at all.
+  [alternate-names-gap-2026-09-18.csv](alternate-names-gap-2026-09-18.csv)
+  lists them with city, state, status and facility page (1,562 have a page).
+  Largest: California 600, Texas 402, North Carolina 308, Utah 242,
+  Arizona 175. Filling it is research, not code.
+
+Run the check again after data work:
+
+```
+php.exe -n -d extension_dir=<php>/ext -d extension=mbstring -d extension=pdo_sqlite -d memory_limit=6144M \
+    scripts/test-state-feed-names.php --db=tmp/prod.sqlite [--legacy] [--gap=<file.csv>]
+```
+
+Original plan:
+
 
 1. In the state and country feeds (`inc/rest-api.php`), take `otherNames`,
    `pastNames` and `currentName` from `facilities_v2` for every row that

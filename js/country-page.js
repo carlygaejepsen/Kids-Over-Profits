@@ -1383,13 +1383,18 @@
         return out;
     };
 
-    // "Also known as" / "Formerly" under the name. A visitor searching a name
-    // the programme has since dropped has to see it without opening Details.
+    // "Now known as" / "Also known as" / "Formerly" under the name. A visitor
+    // searching a name the programme has since dropped, or the one it trades
+    // under now, has to see it without opening Details.
     const renderAltNameLines = (facility, displayName) => {
-        const seen = new Set([String(displayName || '').trim().toLowerCase()]);
+        const seen = new Set([displayName, facility.name].map(n => String(n || '').trim().toLowerCase()));
+        const now = collectAltNames(facility, ['current_name', 'currentName'], seen);
         const also = collectAltNames(facility, ['other_names', 'otherNames', 'aliases'], seen);
         const formerly = collectAltNames(facility, ['past_names', 'pastNames', 'former_names', 'formerNames'], seen);
         const lines = [];
+        if (now.length) {
+            lines.push(`<div class="facility-card-aka"><strong>Now known as:</strong> ${escapeHtml(now.join(', '))}</div>`);
+        }
         if (also.length) {
             lines.push(`<div class="facility-card-aka"><strong>Also known as:</strong> ${escapeHtml(also.join(', '))}</div>`);
         }
@@ -1405,11 +1410,7 @@
         // Stats / metadata that go into the collapsible "Details" panel.
         const detailRows = [];
 
-        // Identification & names
-        if (facility.current_name && facility.current_name !== facility.name) {
-            detailRows.push(renderScalarRow('Current name', facility.current_name));
-        }
-        // Other and past names are drawn on the card face, not in here.
+        // Current, other and past names are drawn on the card face, not in here.
 
         // Operator / ownership
         if (facility.operator_name) {

@@ -4956,6 +4956,7 @@ function kop_state_merge_programs_and_inspections(array $programs, array $inspec
         return strnatcasecmp($a['name'], $b['name']);
     });
 
+    kop_state_attach_v2_names($merged, $state_name);
     kop_state_attach_related_records($merged, $state_name);
 
     $is_closed = static function ($status) {
@@ -4978,6 +4979,161 @@ function kop_state_merge_programs_and_inspections(array $programs, array $inspec
         'closed' => $closed,
         'total'  => count($merged),
     );
+}
+
+/**
+ * Give every tile the alternate names facilities_v2 holds for it: otherNames,
+ * pastNames and currentName, merged with whatever the tile already carries.
+ * The tile's own copies (the state aggregate, an operator project, or no
+ * record at all for an inspection-only row) can lag the facility database, and
+ * the card shows only what the feed passes.
+ *
+ * A tile resolves to v2 records by id first: its facility_ids and the
+ * facility_id of each raw record (v2 ids are the __facility_ref ids, so this
+ * holds on the legacy path too). A tile with no id falls back to its name, and
+ * only when that is certain: one v2 record on this page with the same
+ * normalized name, in the same city where both are known.
+ *
+ * provenance.sourceOperator.otherNames are the operator's names, not the
+ * facility's, and are stripped from the tile's lists.
+ *
+ * @param array  $facilities Merged tile records (by reference).
+ * @param string $page_name  State or country page name ('Utah', 'Mexico').
+ */
+function kop_state_attach_v2_names(array &$facilities, $page_name) {
+    global $wpdb;
+    if (empty($facilities) || !function_exists('kop_v2_tables_ready') || !kop_v2_tables_ready()) return;
+
+    $decode_names = static function ($json) {
+        $doc = json_decode((string)$json, true);
+        if (!is_array($doc)) return null;
+        $ident = isset($doc['identification']) && is_array($doc['identification']) ? $doc['identification'] : array();
+        $operator = $doc['provenance']['sourceOperator'] ?? null;
+        return array(
+            'name'           => trim((string)($ident['name'] ?? '')),
+            'city'           => trim((string)($doc['location']['city'] ?? '')),
+            'current_name'   => trim((string)($ident['currentName'] ?? '')),
+            'other_names'    => is_array($ident['otherNames'] ?? null) ? $ident['otherNames'] : array(),
+            'past_names'     => is_array($ident['pastNames'] ?? null) ? $ident['pastNames'] : array(),
+            'operator_names' => is_array($operator) && is_array($operator['otherNames'] ?? null) ? $operator['otherNames'] : array(),
+        );
+    };
+
+    // The page's own v2 records, for the name fallback.
+    $records = array();
+    $by_name = array();
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT f.id, f.json_data FROM facilities_v2 f
+          WHERE f.id IN (SELECT l.facility_id FROM {$wpdb->prefix}kop_facility_locations l WHERE l.location_key = %s)",
+        mb_strtoupper((string)$page_name)
+    ), ARRAY_A);
+    foreach ((array)$rows as $row) {
+        $rec = $decode_names($row['json_data']);
+        if ($rec === null) continue;
+        $records[(int)$row['id']] = $rec;
+        $key = kop_normalize_facility_name($rec['name']);
+        if ($key !== '') $by_name[$key][] = (int)$row['id'];
+    }
+
+    // Ids each tile carries, and any of them not on this page (a relocated
+    // facility, or a copy filed under another place).
+    $tile_ids = array();
+    $missing = array();
+    foreach ($facilities as $idx => $f) {
+        $ids = array();
+        foreach ((array)($f['facility_ids'] ?? array()) as $fid) {
+            if ((int)$fid > 0) $ids[(int)$fid] = true;
+        }
+        foreach ((array)($f['raw_records'] ?? array()) as $raw) {
+            $fid = is_array($raw) ? (int)($raw['data']['facility_id'] ?? 0) : 0;
+            if ($fid > 0) $ids[$fid] = true;
+        }
+        $tile_ids[$idx] = array_keys($ids);
+        foreach ($tile_ids[$idx] as $fid) {
+            if (!isset($records[$fid])) $missing[$fid] = true;
+        }
+    }
+    if ($missing) {
+        $rows = $wpdb->get_results(
+            'SELECT id, json_data FROM facilities_v2 WHERE id IN (' . implode(',', array_map('intval', array_keys($missing))) . ')',
+            ARRAY_A
+        );
+        foreach ((array)$rows as $row) {
+            $rec = $decode_names($row['json_data']);
+            if ($rec !== null) $records[(int)$row['id']] = $rec;
+        }
+    }
+
+    $name_list = static function ($items) {
+        $out = array();
+        foreach ((array)$items as $item) {
+            $n = is_array($item) ? ($item['name'] ?? '') : $item;
+            if (is_scalar($n) && trim((string)$n) !== '') $out[] = trim((string)$n);
+        }
+        return $out;
+    };
+
+    foreach ($facilities as $idx => &$f) {
+        $matched = array();
+        foreach ($tile_ids[$idx] as $fid) {
+            if (isset($records[$fid])) $matched[] = $fid;
+        }
+        if (!$matched) {
+            $candidates = $by_name[kop_normalize_facility_name($f['name'] ?? '')] ?? array();
+            $city = trim((string)($f['city'] ?? ''));
+            if ($city === '') $city = kop_city_from_address($f['address'] ?? '');
+            if (count($candidates) === 1) {
+                if (kop_same_city($records[$candidates[0]]['city'], $city)) $matched = $candidates;
+            } elseif ($candidates && $city !== '') {
+                $same = array_values(array_filter($candidates, static function ($fid) use ($records, $city) {
+                    return $records[$fid]['city'] !== '' && kop_same_city($records[$fid]['city'], $city);
+                }));
+                if (count($same) === 1) $matched = $same;
+            }
+            if ($matched) {
+                $f['facility_ids'] = array_values(array_unique(array_merge(
+                    array_map('intval', (array)($f['facility_ids'] ?? array())), $matched
+                )));
+            }
+        }
+
+        $operator_names = array();
+        foreach ((array)($f['raw_records'] ?? array()) as $raw) {
+            $op = is_array($raw) ? ($raw['data']['sourceOperator'] ?? null) : null;
+            if (is_array($op)) {
+                foreach ($name_list($op['otherNames'] ?? array()) as $n) $operator_names[mb_strtolower($n)] = true;
+            }
+        }
+        $own_names = array();
+        foreach ($matched as $fid) {
+            $rec = $records[$fid];
+            foreach ($name_list($rec['operator_names']) as $n) $operator_names[mb_strtolower($n)] = true;
+            foreach ($name_list(array_merge($rec['other_names'], $rec['past_names'], array($rec['current_name']))) as $n) {
+                $own_names[mb_strtolower($n)] = true;
+            }
+            foreach (array('other_names', 'past_names') as $key) {
+                if (!isset($f[$key]) || !is_array($f[$key])) $f[$key] = array();
+                kop_state_union_list($f[$key], $name_list($rec[$key]));
+            }
+            if (trim((string)($f['current_name'] ?? '')) === '' && $rec['current_name'] !== ''
+                && strcasecmp($rec['current_name'], (string)($f['name'] ?? '')) !== 0) {
+                $f['current_name'] = $rec['current_name'];
+            }
+        }
+
+        // A name the facility's own record also lists stays.
+        $operator_names = array_diff_key($operator_names, $own_names);
+        if ($operator_names) {
+            foreach (array('other_names', 'past_names') as $key) {
+                $f[$key] = array_values(array_filter((array)($f[$key] ?? array()), static function ($item) use ($operator_names) {
+                    $n = is_array($item) ? ($item['name'] ?? '') : $item;
+                    return !is_scalar($n) || !isset($operator_names[mb_strtolower(trim((string)$n))]);
+                }));
+            }
+            if (isset($operator_names[mb_strtolower(trim((string)($f['current_name'] ?? '')))])) $f['current_name'] = '';
+        }
+    }
+    unset($f);
 }
 
 /**
