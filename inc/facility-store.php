@@ -314,6 +314,9 @@ if (!function_exists('kop_facility_parse_address')) {
     function kop_facility_parse_address($raw) {
         $out = array('street' => '', 'city' => '', 'state' => '', 'zip' => '', 'country' => '');
         $raw = kop_facility_str($raw);
+        // A trailing bracketed note ("..., UT 84721 (girls campus; separate
+        // record)") is not part of the address.
+        $raw = trim(preg_replace('/\s*\([^()]*\)\s*$/u', '', $raw));
         if ($raw === '') return $out;
 
         $parts = array_values(array_filter(array_map('trim', explode(',', $raw)), 'strlen'));
@@ -346,6 +349,13 @@ if (!function_exists('kop_facility_parse_address')) {
         }
 
         $state = kop_facility_state_code($last);
+        // "10503 Metric Dr Dallas TX 75243": no comma before the state. Only
+        // read when a zip follows, so a street ending "Rd NE" is not Nebraska.
+        if ($state === null && $out['zip'] !== '' && preg_match('/^(.*\S)\s+([A-Z]{2})\.?$/', $last, $gm)
+            && kop_facility_state_code($gm[2]) !== null) {
+            $state = kop_facility_state_code($gm[2]);
+            array_splice($parts, count($parts) - 1, 1, array(trim($gm[1]), $gm[2]));
+        }
         if ($state !== null) {
             $out['state'] = $state;
             if ($out['country'] === '') $out['country'] = 'United States';
@@ -646,6 +656,9 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['identification']['name'] = $name;
         $doc['identification']['nameKey'] = kop_facility_name_key($name);
         $doc['identification']['currentName'] = kop_facility_str($ident['currentName'] ?? '');
+        // currentName is the name a facility trades under now; one that only
+        // repeats the name says nothing.
+        if (mb_strtolower($doc['identification']['currentName']) === mb_strtolower($name)) $doc['identification']['currentName'] = '';
         $doc['identification']['otherNames'] = kop_facility_list($ident['otherNames'] ?? array());
 
         // previousNames (52 rows) is the same thing as pastNames.
@@ -759,7 +772,8 @@ if (!function_exists('kop_facility_normalize')) {
                 $alt_parsed = kop_facility_parse_address($alt_raw);
                 $entry = array(
                     'raw'    => $alt_raw,
-                    'street' => kop_facility_str($alt['street'] ?? '') ?: $alt_parsed['street'],
+                    // The form never writes this street; re-derive it from raw when there is one.
+                    'street' => $alt_raw !== '' ? $alt_parsed['street'] : kop_facility_str($alt['street'] ?? ''),
                     'city'   => kop_facility_str($alt['city'] ?? '') ?: $alt_parsed['city'],
                     'state'  => kop_facility_state_code($alt['state'] ?? '') ?: kop_facility_state_code($alt_parsed['state']),
                     'zip'    => kop_facility_str($alt['zip'] ?? '') ?: $alt_parsed['zip'],
@@ -825,24 +839,34 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['operatingPeriod']['status'] = $status;
         if ($status_note !== '') $doc['operatingPeriod']['notes'][] = $status_note;
 
+        // Years only the free text holds fill the integer fields. The text
+        // often covers one operator's tenure, not the facility's life, so an
+        // end year is taken only for a closed facility whose start agrees.
+        [$text_start, $text_end] = kop_facility_years_from_text($doc['operatingPeriod']['yearsOfOperation']);
+        if ($doc['operatingPeriod']['startYear'] === null && $text_start !== null) $doc['operatingPeriod']['startYear'] = $text_start;
+        if ($doc['operatingPeriod']['endYear'] === null && $text_end !== null && $status === 'Closed'
+            && $doc['operatingPeriod']['startYear'] === $text_start) {
+            $doc['operatingPeriod']['endYear'] = $text_end;
+        }
+
         // --- facility details ------------------------------------------------
         $fd = isset($f['facilityDetails']) && is_array($f['facilityDetails']) ? $f['facilityDetails'] : array();
         $age = isset($fd['ageRange']) && is_array($fd['ageRange']) ? $fd['ageRange'] : array();
-        $doc['facilityDetails']['type'] = kop_facility_str($fd['type'] ?? '');
+        $doc['facilityDetails']['type'] = kop_facility_type($fd['type'] ?? '');
         $doc['facilityDetails']['capacity'] = kop_facility_int($fd['capacity'] ?? null, $legacy_notes, 'capacity');
         $doc['facilityDetails']['currentCensus'] = kop_facility_int($fd['currentCensus'] ?? null, $legacy_notes, 'currentCensus');
         $doc['facilityDetails']['ageRange']['min'] = kop_facility_int($age['min'] ?? null, $legacy_notes, 'ageRange.min');
         $doc['facilityDetails']['ageRange']['max'] = kop_facility_int($age['max'] ?? null, $legacy_notes, 'ageRange.max');
-        $doc['facilityDetails']['gender'] = kop_facility_str($fd['gender'] ?? '');
+        $doc['facilityDetails']['gender'] = kop_facility_gender($fd['gender'] ?? '', $gender_note);
         $doc['facilityDetails']['isPrivatelyOwned'] = kop_facility_bool(
             $f['isPrivatelyOwned'] ?? ($fd['isPrivatelyOwned'] ?? null)
         );
 
         // --- staff, lists, open maps -----------------------------------------
         $staff = isset($f['staff']) && is_array($f['staff']) ? $f['staff'] : array();
-        $doc['staff']['administrator'] = kop_facility_list($staff['administrator'] ?? array());
-        $doc['staff']['notableStaff']  = kop_facility_list($staff['notableStaff'] ?? array());
-        $doc['staff']['pastTTIJobs']   = kop_facility_list($staff['pastTTIJobs'] ?? array());
+        $doc['staff']['administrator'] = kop_facility_person_list($staff['administrator'] ?? array());
+        $doc['staff']['notableStaff']  = kop_facility_person_list($staff['notableStaff'] ?? array());
+        $doc['staff']['pastTTIJobs']   = kop_facility_job_list($staff['pastTTIJobs'] ?? array());
 
         $acc = isset($f['accreditations']) && is_array($f['accreditations']) ? $f['accreditations'] : array();
         $doc['accreditations']['current'] = kop_facility_list($acc['current'] ?? array());
@@ -851,13 +875,11 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['memberships']    = kop_facility_list($f['memberships'] ?? array());
         $doc['certifications'] = kop_facility_list($f['certifications'] ?? array());
         $doc['licensing']      = kop_facility_list($f['licensing'] ?? array());
-        $doc['profileLinks']   = kop_facility_list($f['profileLinks'] ?? array());
+        $doc['profileLinks']   = kop_facility_link_list($f['profileLinks'] ?? array());
         $doc['notes']          = kop_facility_list($f['notes'] ?? array());
+        if ($gender_note !== '') $doc['notes'] = kop_facility_list(array_merge($doc['notes'], array($gender_note)));
 
-        $resources = kop_facility_map($f['resources'] ?? array());
-        if (isset($resources['notes'])) $resources['notes'] = kop_facility_list($resources['notes']);
-        if (isset($resources['customResources'])) $resources['customResources'] = kop_facility_list($resources['customResources']);
-        $doc['resources'] = $resources;
+        $doc['resources'] = kop_facility_resources($f['resources'] ?? array());
 
         // Open-ended checklists: the admin form invents keys at runtime, so
         // they pass through as maps rather than being enumerated here.
@@ -875,7 +897,7 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['provenance']['sourceProjectId'] = kop_facility_int($f['sourceProjectId'] ?? ($prov['sourceProjectId'] ?? null));
         $doc['provenance']['sourceCategory'] = kop_facility_str($f['sourceCategory'] ?? ($prov['sourceCategory'] ?? ''));
         $source_operator = $f['sourceOperator'] ?? ($prov['sourceOperator'] ?? null);
-        $doc['provenance']['sourceOperator'] = is_array($source_operator) ? $source_operator : null;
+        $doc['provenance']['sourceOperator'] = kop_facility_operator_block($source_operator);
         $doc['provenance']['linkedFromRef'] = (bool)($f['linkedFromRef'] ?? ($prov['linkedFromRef'] ?? false));
         $doc['provenance']['kopProfileVersion'] = kop_facility_int($f['kopProfileVersion'] ?? ($prov['kopProfileVersion'] ?? null));
         $doc['provenance']['legacyIds'] = array_values(array_unique(array_map(
@@ -926,6 +948,218 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['operatingPeriod']['notes'] = kop_facility_list($doc['operatingPeriod']['notes']);
 
         return $doc;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Field standards (docs/FACILITY-SCHEMA.md, "Standard shapes")
+// ---------------------------------------------------------------------------
+
+if (!function_exists('kop_facility_person_list')) {
+    /**
+     * Staff and operator people: every entry {name, role, pastJobs}. A bare
+     * string is a name; an entry with nothing in it is dropped.
+     */
+    function kop_facility_person_list($value) {
+        $out = array();
+        foreach (kop_facility_list($value) as $item) {
+            if (is_array($item)) {
+                $jobs = $item['pastJobs'] ?? '';
+                $entry = array(
+                    'name'     => kop_facility_str($item['name'] ?? ($item['label'] ?? '')),
+                    'role'     => kop_facility_str($item['role'] ?? ($item['title'] ?? '')),
+                    'pastJobs' => is_array($jobs) ? implode('; ', kop_facility_list($jobs)) : kop_facility_str($jobs),
+                );
+            } else {
+                $entry = array('name' => kop_facility_str($item), 'role' => '', 'pastJobs' => '');
+            }
+            if ($entry['name'] === '' && $entry['role'] === '' && $entry['pastJobs'] === '') continue;
+            $out[] = $entry;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_job_list')) {
+    /**
+     * staff.pastTTIJobs: every entry {role, organization, employer}, the shape
+     * the admin form writes (employer mirrors organization). A bare string is
+     * the organization.
+     */
+    function kop_facility_job_list($value) {
+        $out = array();
+        foreach (kop_facility_list($value) as $item) {
+            if (is_array($item)) {
+                $org = kop_facility_str($item['organization'] ?? '');
+                if ($org === '') $org = kop_facility_str($item['employer'] ?? '');
+                if ($org === '') $org = kop_facility_str($item['name'] ?? '');
+                $role = kop_facility_str($item['role'] ?? '');
+            } else {
+                $org = kop_facility_str($item);
+                $role = '';
+            }
+            if ($org === '' && $role === '') continue;
+            $out[] = array('role' => $role, 'organization' => $org, 'employer' => $org);
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_link_list')) {
+    /** profileLinks and operator websites: plain URL strings. */
+    function kop_facility_link_list($value) {
+        $urls = array();
+        foreach (kop_facility_list($value) as $item) {
+            $urls[] = is_array($item)
+                ? kop_facility_str($item['url'] ?? ($item['href'] ?? ($item['link'] ?? '')))
+                : $item;
+        }
+        return kop_facility_list($urls);
+    }
+}
+
+if (!function_exists('kop_facility_resource_keys')) {
+    /** Every key of the resources checklist, with its empty value. */
+    function kop_facility_resource_keys() {
+        return array(
+            'hasNews' => false, 'newsDetails' => '', 'hasPressReleases' => false, 'pressReleasesDetails' => '',
+            'hasInspections' => false, 'hasStateReports' => false, 'hasRegulatoryFilings' => false,
+            'hasViolations' => false, 'hasSettlements' => false, 'hasLawsuits' => false,
+            'hasPoliceReports' => false, 'hasArticlesOfOrganization' => false, 'hasPropertyRecords' => false,
+            'hasPromotionalMaterials' => false, 'hasEnrollmentDocuments' => false, 'hasResearch' => false,
+            'hasFinancial' => false, 'hasStudent' => false, 'studentDetails' => '', 'hasStaff' => false,
+            'hasParent' => false, 'hasWebsite' => false, 'hasSocialMedia' => false, 'hasAudio' => false,
+            'hasVideo' => false, 'hasNATSAP' => false, 'hasSurvivorStories' => false, 'hasOther' => false,
+            'customResources' => array(), 'notes' => array(),
+        );
+    }
+}
+
+if (!function_exists('kop_facility_resources')) {
+    /**
+     * The resources checklist with every standard key present: hasX booleans,
+     * xDetails strings, customResources[] and notes[]. Keys the form adds
+     * later are kept and typed by the same naming rule.
+     */
+    function kop_facility_resources($value) {
+        $in = kop_facility_map($value);
+        $out = array();
+        foreach (kop_facility_resource_keys() + $in as $key => $default) {
+            $v = array_key_exists($key, $in) ? $in[$key] : $default;
+            if (in_array($key, array('customResources', 'notes', '_legacy'), true)) {
+                $out[$key] = kop_facility_list($v);
+            } elseif (strpos($key, 'has') === 0) {
+                $out[$key] = (bool)kop_facility_bool($v);
+            } elseif (substr($key, -7) === 'Details') {
+                $out[$key] = kop_facility_str($v);
+            } else {
+                $out[$key] = $v;
+            }
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_gender')) {
+    /**
+     * Gender served: Male, Female, Co-ed or ''. The first gender word decides
+     * ("boys (Provo campus; girls at ...)" is Male). A value that says more
+     * than the canonical word is returned through $note so the caller keeps it.
+     */
+    function kop_facility_gender($raw, &$note = '') {
+        $note = '';
+        $s = kop_facility_str($raw);
+        if ($s === '') return '';
+        $plain = array(
+            'male' => 'Male', 'males' => 'Male', 'boy' => 'Male', 'boys' => 'Male', 'men' => 'Male',
+            'female' => 'Female', 'females' => 'Female', 'girl' => 'Female', 'girls' => 'Female', 'women' => 'Female',
+            'co-ed' => 'Co-ed', 'coed' => 'Co-ed', 'co ed' => 'Co-ed', 'all' => 'Co-ed', 'both' => 'Co-ed', 'mixed' => 'Co-ed',
+        );
+        $key = mb_strtolower($s);
+        if (isset($plain[$key])) return $plain[$key];
+        $out = '';
+        if (preg_match('/\b(co-?ed|co ed|all genders|both|mixed|female|females|girls?|women|male|males|boys?|men)\b/i', $s, $m)) {
+            $out = $plain[mb_strtolower($m[1])] ?? (preg_match('/^co/i', $m[1]) || in_array(mb_strtolower($m[1]), array('all genders', 'both', 'mixed'), true) ? 'Co-ed' : '');
+        }
+        $note = 'Gender as recorded: ' . $s;
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_type')) {
+    /** Facility type: known synonyms to one spelling, anything else as entered. */
+    function kop_facility_type($raw) {
+        $s = kop_facility_str($raw);
+        $map = array(
+            'rtc' => 'Residential Treatment Center',
+            'residential treatment center (rtc)' => 'Residential Treatment Center',
+            'residential treatment facility' => 'Residential Treatment Center',
+            'prtf' => 'Psychiatric Residential Treatment Facility',
+            'psychiatric residential treatment facility (prtf)' => 'Psychiatric Residential Treatment Facility',
+            'wilderness' => 'Wilderness Therapy',
+            'wilderness therapy program' => 'Wilderness Therapy',
+            'wilderness program' => 'Wilderness Therapy',
+            'juvenile justice residential treatment center' => 'Juvenile Justice RTC',
+            'therapeutic residential school' => 'Therapeutic Boarding School',
+            'tbs' => 'Therapeutic Boarding School',
+        );
+        $key = mb_strtolower(preg_replace('/\s+/u', ' ', $s));
+        return $map[$key] ?? $s;
+    }
+}
+
+if (!function_exists('kop_facility_operator_block')) {
+    /**
+     * provenance.sourceOperator: the operator block a copy was synced with,
+     * in one shape. Unknown keys are kept.
+     */
+    function kop_facility_operator_block($value) {
+        if (!is_array($value) || $value === array()) return null;
+        $notes = $value['notes'] ?? array();
+        $staff = isset($value['keyStaff']) && is_array($value['keyStaff']) ? $value['keyStaff'] : array();
+        $out = array(
+            'name'              => kop_facility_str($value['name'] ?? ''),
+            'currentName'       => kop_facility_str($value['currentName'] ?? ''),
+            'otherNames'        => kop_facility_list($value['otherNames'] ?? array()),
+            'founded'           => kop_facility_str($value['founded'] ?? ''),
+            'headquarters'      => kop_facility_str($value['headquarters'] ?? ''),
+            'headquartersCity'  => kop_facility_str($value['headquartersCity'] ?? ''),
+            'headquartersState' => kop_facility_str($value['headquartersState'] ?? ''),
+            'location'          => kop_facility_str($value['location'] ?? ''),
+            'locationCity'      => kop_facility_str($value['locationCity'] ?? ''),
+            'locationState'     => kop_facility_str($value['locationState'] ?? ''),
+            'operatingPeriod'   => kop_facility_str($value['operatingPeriod'] ?? ''),
+            'status'            => kop_facility_str($value['status'] ?? ''),
+            'websites'          => kop_facility_link_list($value['websites'] ?? array()),
+            'parentCompanies'   => kop_facility_list($value['parentCompanies'] ?? array()),
+            'owners'            => kop_facility_list($value['owners'] ?? array()),
+            'investors'         => kop_facility_list($value['investors'] ?? array()),
+            'keyStaff'          => array(
+                'ceo'           => kop_facility_str($staff['ceo'] ?? ''),
+                'founders'      => kop_facility_person_list($staff['founders'] ?? array()),
+                'keyExecutives' => kop_facility_person_list($staff['keyExecutives'] ?? array()),
+            ),
+            'notes'             => kop_facility_list($notes),
+            'fieldNotes'        => kop_facility_list($value['fieldNotes'] ?? array()),
+        );
+        foreach ($staff as $k => $v) {
+            if (!array_key_exists($k, $out['keyStaff'])) $out['keyStaff'][$k] = $v;
+        }
+        foreach ($value as $k => $v) {
+            if (!array_key_exists($k, $out)) $out[$k] = $v;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_years_from_text')) {
+    /** [start, end] from a yearsOfOperation string such as "1994-2005" or "2014-Present". */
+    function kop_facility_years_from_text($text) {
+        $s = kop_facility_str($text);
+        if (!preg_match('/^(\d{4})(?:\s*[-\x{2013}\x{2014}]\s*(\d{4}|present|current|now)?)?$/iu', $s, $m)) return array(null, null);
+        $start = (int)$m[1];
+        $end = (isset($m[2]) && ctype_digit($m[2])) ? (int)$m[2] : null;
+        return array($start, $end);
     }
 }
 

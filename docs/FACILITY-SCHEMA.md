@@ -38,7 +38,7 @@ after the data model migration (`docs/DATA-MODEL-MIGRATION.md`).
 |---|---|---|
 | `name` | string, required | Display name. Legacy fallback order: `identification.name`, `identification.currentName`, `name`, wrapper `displayName`. |
 | `nameKey` | string, required | `kop_facility_name_key(name)`. Stored as a generated column and used for identity. |
-| `currentName` | string | |
+| `currentName` | string | The name the facility trades under now. Empty when it would only repeat `name`. |
 | `otherNames` | string[] | |
 | `pastNames` | string[] | Legacy `previousNames` is merged in. |
 | `currentOperator` | string | |
@@ -119,7 +119,7 @@ written, and the validator flags it as a warning.
 | `startYear` | int or null | |
 | `endYear` | int or null | |
 | `status` | enum | `Open`, `Closed`, `Suspended`, `Transferred`, `Unknown`. |
-| `yearsOfOperation` | string | Free text, as entered. |
+| `yearsOfOperation` | string | Free text, as entered. Fills `startYear` when that is empty, and `endYear` only for a Closed facility whose start year agrees (the text often covers one operator's tenure). |
 | `notes` | string[] | Also receives migration notes (see rules 3 and 4). |
 
 Status mapping: letter case is ignored. A blank status becomes `Unknown`.
@@ -131,21 +131,22 @@ a `migration: original status "..."` note.
 
 | Field | Type |
 |---|---|
-| `type` | string |
+| `type` | string: known synonyms become one spelling (see Standard shapes), others kept as entered |
 | `capacity` | int or null |
 | `currentCensus` | int or null |
 | `ageRange` | `{min: int or null, max: int or null}` |
-| `gender` | string (free text, kept as entered) |
+| `gender` | `Male`, `Female`, `Co-ed` or empty |
 | `isPrivatelyOwned` | bool or null (was top-level) |
 
 ### Other sections
 
 | Field | Type | Notes |
 |---|---|---|
-| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | Entries may be objects (`{role, name}`, `{role, organization, employer}`). |
+| `staff` | `{administrator[], notableStaff[], pastTTIJobs[]}` | `administrator` and `notableStaff` entries are `{name, role, pastJobs}`; `pastTTIJobs` entries are `{role, organization, employer}`. |
 | `accreditations` | `{current[], past[]}` | |
-| `memberships`, `certifications`, `licensing`, `profileLinks`, `notes` | arrays | |
-| `resources` | map | `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Open-ended: the form adds keys. |
+| `memberships`, `certifications`, `licensing`, `notes` | string[] | |
+| `profileLinks` | string[] | URLs. |
+| `resources` | map | Every standard key is present (see Standard shapes): `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Keys the form adds later are typed by the same naming rule. |
 | `treatmentTypes`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. A legacy array becomes `{"_legacy": [...]}`. |
 | `fieldNotes` | map | A legacy array becomes `{"_legacy": [...]}`. |
 | `documentFolderId` | int or null | FileBird folder. |
@@ -158,7 +159,7 @@ a `migration: original status "..."` note.
 | `provenance.sourceProject` | string | Legacy `sourceProject`. |
 | `provenance.sourceProjectId` | int or null | Legacy `sourceProjectId`. |
 | `provenance.sourceCategory` | string | Legacy `sourceCategory`. |
-| `provenance.sourceOperator` | object or null | Legacy `sourceOperator` block, kept as is. |
+| `provenance.sourceOperator` | object or null | The operator block the copy was synced with, in a fixed shape (see Standard shapes). |
 | `provenance.legacyIds` | int[] | Ids this facility used to share. Set when the identity split gave it a new id, or when old copies carried a project row's id. |
 | `provenance.linkedFromRef` | bool | Legacy `linkedFromRef`. |
 | `provenance.kopProfileVersion` | int or null | |
@@ -166,6 +167,52 @@ a `migration: original status "..."` note.
 | `provenance.uniqueName` | string | The row's `unique_name` at migration time. |
 | `provenance.source` | string | Which copy the document was built from (rehearsal and debugging). |
 | `legacy` | map | Keys the normalizer does not know. Empty for every row in the 2026-09-16 dump. |
+
+## Standard shapes
+
+`kop_facility_normalize` (and its JS twin) writes every field in one shape, so
+every save leaves the document standard. `api/standardize-facilities.php`
+re-saved every document on 2026-09-18.
+
+- **People** (`staff.administrator`, `staff.notableStaff`, operator
+  `keyStaff.founders` and `keyStaff.keyExecutives`): `{name, role, pastJobs}`.
+  A bare string is a name. Entries with nothing in them are dropped.
+- **Past TTI jobs**: `{role, organization, employer}`, `employer` mirroring
+  `organization` as the admin form writes it. A bare string is the
+  organization.
+- **Links** (`profileLinks`, operator `websites`): URL strings. An object
+  gives its `url`.
+- **Resources**: `hasNews`, `newsDetails`, `hasPressReleases`,
+  `pressReleasesDetails`, `hasInspections`, `hasStateReports`,
+  `hasRegulatoryFilings`, `hasViolations`, `hasSettlements`, `hasLawsuits`,
+  `hasPoliceReports`, `hasArticlesOfOrganization`, `hasPropertyRecords`,
+  `hasPromotionalMaterials`, `hasEnrollmentDocuments`, `hasResearch`,
+  `hasFinancial`, `hasStudent`, `studentDetails`, `hasStaff`, `hasParent`,
+  `hasWebsite`, `hasSocialMedia`, `hasAudio`, `hasVideo`, `hasNATSAP`,
+  `hasSurvivorStories`, `hasOther`, `customResources`, `notes`, in every
+  document.
+- **Gender**: `Male`, `Female` or `Co-ed`. Male/boys/men, female/girls/women
+  and coed/co-ed/all/both/mixed map directly. A longer value takes its first
+  gender word, and the original is kept in `notes` as `Gender as recorded:
+  ...`.
+- **Type**: `RTC`, `Residential Treatment Center (RTC)` and `Residential
+  Treatment Facility` are `Residential Treatment Center`; `PRTF` and
+  `Psychiatric Residential Treatment Facility (PRTF)` are `Psychiatric
+  Residential Treatment Facility`; `Wilderness`, `Wilderness Program` and
+  `Wilderness Therapy Program` are `Wilderness Therapy`; `Juvenile Justice
+  Residential Treatment Center` is `Juvenile Justice RTC`; `Therapeutic
+  Residential School` and `TBS` are `Therapeutic Boarding School`. Other
+  values are kept as entered.
+- **Operator block** (`provenance.sourceOperator`): `name`, `currentName`,
+  `otherNames[]`, `founded`, `headquarters`, `headquartersCity`,
+  `headquartersState`, `location`, `locationCity`, `locationState`,
+  `operatingPeriod`, `status`, `websites[]`, `parentCompanies[]`, `owners[]`,
+  `investors[]`, `keyStaff {ceo, founders[], keyExecutives[]}`, `notes[]`,
+  `fieldNotes[]`. Unknown keys are kept.
+- **Additional locations**: the street is re-derived from `raw` whenever
+  there is one (the form never writes it). The address parser drops a
+  trailing bracketed note and reads `City ST 12345` without a comma before
+  the state; a two-letter code is taken this way only when a zip follows.
 
 ## Validation (`kop_facility_validate`)
 
@@ -304,3 +351,9 @@ node scripts/check-facility-normalizer-parity.js copies.jsonl
 As of 2026-09-16, all 10,199 copies match exactly, and the round trip
 v2 -> legacy -> v2 is lossless in both languages. Run the check after any
 change to either normalizer.
+
+Since the legacy tables were frozen, the copies file is built from
+`facilities_v2` itself: each stored document, and its legacy projection
+(`kop_facility_to_legacy`, what the form sends), each with the PHP result.
+On 2026-09-18 all 9,326 inputs matched, the round trip was lossless, and a
+second normalize of every document changed nothing.

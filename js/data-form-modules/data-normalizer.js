@@ -1005,7 +1005,8 @@
     /** One-line address to {street, city, state, zip, country}. */
     function parseFacilityAddress(raw) {
         const out = { street: '', city: '', state: '', zip: '', country: '' };
-        const text = v2Str(raw);
+        // A trailing bracketed note is not part of the address.
+        const text = v2Str(raw).replace(/\s*\([^()]*\)\s*$/u, '').trim();
         if (text === '') return out;
 
         let parts = text.split(',').map((p) => p.trim()).filter((p) => p.length > 0);
@@ -1034,7 +1035,14 @@
             parts[parts.length - 1] = last;
         }
 
-        const state = facilityStateCode(last);
+        let state = facilityStateCode(last);
+        // "10503 Metric Dr Dallas TX 75243": no comma before the state. Only
+        // read when a zip follows, so a street ending "Rd NE" is not Nebraska.
+        const gm = (state === null && out.zip !== '') ? last.match(/^(.*\S)\s+([A-Z]{2})\.?$/) : null;
+        if (gm && facilityStateCode(gm[2]) !== null) {
+            state = facilityStateCode(gm[2]);
+            parts.splice(parts.length - 1, 1, gm[1].trim(), gm[2]);
+        }
         if (state !== null) {
             out.state = state;
             if (out.country === '') out.country = 'United States';
@@ -1207,6 +1215,179 @@
      * Any facility shape to a v2 document. Mirrors kop_facility_normalize();
      * `opts` takes facility_id, unique_name, location_key and source.
      */
+    // ---- Field standards (docs/FACILITY-SCHEMA.md, "Standard shapes") ----
+
+    /** Mirrors kop_facility_person_list(). */
+    function v2PersonList(value) {
+        const out = [];
+        v2List(value).forEach((item) => {
+            let entry;
+            if (item !== null && typeof item === 'object') {
+                const jobs = item.pastJobs !== undefined ? item.pastJobs : '';
+                entry = {
+                    name: v2Str(item.name !== undefined && item.name !== null ? item.name : item.label),
+                    role: v2Str(item.role !== undefined && item.role !== null ? item.role : item.title),
+                    pastJobs: Array.isArray(jobs) || isPlainObject(jobs) ? v2List(jobs).join('; ') : v2Str(jobs)
+                };
+            } else {
+                entry = { name: v2Str(item), role: '', pastJobs: '' };
+            }
+            if (entry.name === '' && entry.role === '' && entry.pastJobs === '') return;
+            out.push(entry);
+        });
+        return out;
+    }
+
+    /** Mirrors kop_facility_job_list(). */
+    function v2JobList(value) {
+        const out = [];
+        v2List(value).forEach((item) => {
+            let org;
+            let role;
+            if (item !== null && typeof item === 'object') {
+                org = v2Str(item.organization);
+                if (org === '') org = v2Str(item.employer);
+                if (org === '') org = v2Str(item.name);
+                role = v2Str(item.role);
+            } else {
+                org = v2Str(item);
+                role = '';
+            }
+            if (org === '' && role === '') return;
+            out.push({ role, organization: org, employer: org });
+        });
+        return out;
+    }
+
+    /** Mirrors kop_facility_link_list(). */
+    function v2LinkList(value) {
+        return v2List(v2List(value).map((item) => {
+            if (item !== null && typeof item === 'object') {
+                return v2Str(item.url !== undefined && item.url !== null ? item.url
+                    : (item.href !== undefined && item.href !== null ? item.href : item.link));
+            }
+            return item;
+        }));
+    }
+
+    const V2_RESOURCE_KEYS = {
+        hasNews: false, newsDetails: '', hasPressReleases: false, pressReleasesDetails: '',
+        hasInspections: false, hasStateReports: false, hasRegulatoryFilings: false,
+        hasViolations: false, hasSettlements: false, hasLawsuits: false,
+        hasPoliceReports: false, hasArticlesOfOrganization: false, hasPropertyRecords: false,
+        hasPromotionalMaterials: false, hasEnrollmentDocuments: false, hasResearch: false,
+        hasFinancial: false, hasStudent: false, studentDetails: '', hasStaff: false,
+        hasParent: false, hasWebsite: false, hasSocialMedia: false, hasAudio: false,
+        hasVideo: false, hasNATSAP: false, hasSurvivorStories: false, hasOther: false,
+        customResources: [], notes: []
+    };
+
+    /** Mirrors kop_facility_resources(). */
+    function v2Resources(value) {
+        const input = v2Map(value);
+        const keys = Object.keys(V2_RESOURCE_KEYS);
+        Object.keys(input).forEach((k) => { if (!keys.includes(k)) keys.push(k); });
+        const out = {};
+        keys.forEach((key) => {
+            const v = Object.prototype.hasOwnProperty.call(input, key) ? input[key] : V2_RESOURCE_KEYS[key];
+            if (key === 'customResources' || key === 'notes' || key === '_legacy') {
+                out[key] = v2List(v);
+            } else if (key.indexOf('has') === 0) {
+                out[key] = Boolean(v2Bool(v));
+            } else if (key.slice(-7) === 'Details') {
+                out[key] = v2Str(v);
+            } else {
+                out[key] = v;
+            }
+        });
+        return out;
+    }
+
+    const V2_GENDER_WORDS = {
+        male: 'Male', males: 'Male', boy: 'Male', boys: 'Male', men: 'Male',
+        female: 'Female', females: 'Female', girl: 'Female', girls: 'Female', women: 'Female',
+        'co-ed': 'Co-ed', coed: 'Co-ed', 'co ed': 'Co-ed', all: 'Co-ed', both: 'Co-ed', mixed: 'Co-ed'
+    };
+
+    /** Mirrors kop_facility_gender(): {gender, note}. */
+    function v2Gender(raw) {
+        const s = v2Str(raw);
+        if (s === '') return { gender: '', note: '' };
+        const key = s.toLowerCase();
+        if (Object.prototype.hasOwnProperty.call(V2_GENDER_WORDS, key)) return { gender: V2_GENDER_WORDS[key], note: '' };
+        let gender = '';
+        const m = s.match(/\b(co-?ed|co ed|all genders|both|mixed|female|females|girls?|women|male|males|boys?|men)\b/i);
+        if (m) {
+            const word = m[1].toLowerCase();
+            gender = Object.prototype.hasOwnProperty.call(V2_GENDER_WORDS, word) ? V2_GENDER_WORDS[word]
+                : ((/^co/i.test(m[1]) || ['all genders', 'both', 'mixed'].includes(word)) ? 'Co-ed' : '');
+        }
+        return { gender, note: 'Gender as recorded: ' + s };
+    }
+
+    const V2_TYPE_SYNONYMS = {
+        'rtc': 'Residential Treatment Center',
+        'residential treatment center (rtc)': 'Residential Treatment Center',
+        'residential treatment facility': 'Residential Treatment Center',
+        'prtf': 'Psychiatric Residential Treatment Facility',
+        'psychiatric residential treatment facility (prtf)': 'Psychiatric Residential Treatment Facility',
+        'wilderness': 'Wilderness Therapy',
+        'wilderness therapy program': 'Wilderness Therapy',
+        'wilderness program': 'Wilderness Therapy',
+        'juvenile justice residential treatment center': 'Juvenile Justice RTC',
+        'therapeutic residential school': 'Therapeutic Boarding School',
+        'tbs': 'Therapeutic Boarding School'
+    };
+
+    /** Mirrors kop_facility_type(). */
+    function v2Type(raw) {
+        const s = v2Str(raw);
+        const key = s.replace(/\s+/gu, ' ').toLowerCase();
+        return Object.prototype.hasOwnProperty.call(V2_TYPE_SYNONYMS, key) ? V2_TYPE_SYNONYMS[key] : s;
+    }
+
+    /** Mirrors kop_facility_operator_block(). */
+    function v2OperatorBlock(value) {
+        if (value === null || typeof value !== 'object' || Array.isArray(value) || !Object.keys(value).length) return null;
+        const staff = isPlainObject(value.keyStaff) ? value.keyStaff : {};
+        const get = (k) => (value[k] !== undefined ? value[k] : '');
+        const out = {
+            name: v2Str(get('name')),
+            currentName: v2Str(get('currentName')),
+            otherNames: v2List(value.otherNames),
+            founded: v2Str(get('founded')),
+            headquarters: v2Str(get('headquarters')),
+            headquartersCity: v2Str(get('headquartersCity')),
+            headquartersState: v2Str(get('headquartersState')),
+            location: v2Str(get('location')),
+            locationCity: v2Str(get('locationCity')),
+            locationState: v2Str(get('locationState')),
+            operatingPeriod: v2Str(get('operatingPeriod')),
+            status: v2Str(get('status')),
+            websites: v2LinkList(value.websites),
+            parentCompanies: v2List(value.parentCompanies),
+            owners: v2List(value.owners),
+            investors: v2List(value.investors),
+            keyStaff: {
+                ceo: v2Str(staff.ceo !== undefined ? staff.ceo : ''),
+                founders: v2PersonList(staff.founders),
+                keyExecutives: v2PersonList(staff.keyExecutives)
+            },
+            notes: v2List(value.notes),
+            fieldNotes: v2List(value.fieldNotes)
+        };
+        Object.keys(staff).forEach((k) => { if (!(k in out.keyStaff)) out.keyStaff[k] = staff[k]; });
+        Object.keys(value).forEach((k) => { if (!(k in out)) out[k] = value[k]; });
+        return out;
+    }
+
+    /** Mirrors kop_facility_years_from_text(): [start, end]. */
+    function v2YearsFromText(text) {
+        const m = v2Str(text).match(/^(\d{4})(?:\s*[-–—]\s*(\d{4}|present|current|now)?)?$/iu);
+        if (!m) return [null, null];
+        return [parseInt(m[1], 10), (m[2] && /^\d+$/.test(m[2])) ? parseInt(m[2], 10) : null];
+    }
+
     function facilityToV2(raw, opts) {
         opts = opts || {};
         let f = isPlainObject(raw) ? raw : {};
@@ -1237,6 +1418,8 @@
         doc.identification.name = name;
         doc.identification.nameKey = facilityNameKey(name);
         doc.identification.currentName = v2Str(ident.currentName);
+        // currentName that only repeats the name says nothing.
+        if (doc.identification.currentName.toLowerCase() === name.toLowerCase()) doc.identification.currentName = '';
         doc.identification.otherNames = v2List(ident.otherNames);
         doc.identification.pastNames = v2List(v2List(ident.pastNames).concat(v2List(ident.previousNames)));
         doc.identification.currentOperator = v2Str(ident.currentOperator);
@@ -1314,7 +1497,8 @@
                 const altParsed = parseFacilityAddress(altRaw);
                 const entry = {
                     raw: altRaw,
-                    street: v2Str(alt.street) || altParsed.street,
+                    // Mirrors the PHP: re-derived from raw when there is one.
+                    street: altRaw !== '' ? altParsed.street : v2Str(alt.street),
                     city: v2Str(alt.city) || altParsed.city,
                     state: facilityStateCode(alt.state !== undefined && alt.state !== null ? alt.state : '') || facilityStateCode(altParsed.state),
                     zip: v2Str(alt.zip) || altParsed.zip,
@@ -1373,20 +1557,29 @@
         doc.operatingPeriod.status = status.status;
         if (status.note !== '') doc.operatingPeriod.notes.push(status.note);
 
+        // Mirrors the PHP: an end year only for a closed facility whose start agrees.
+        const [textStart, textEnd] = v2YearsFromText(doc.operatingPeriod.yearsOfOperation);
+        if (doc.operatingPeriod.startYear === null && textStart !== null) doc.operatingPeriod.startYear = textStart;
+        if (doc.operatingPeriod.endYear === null && textEnd !== null && status.status === 'Closed'
+            && doc.operatingPeriod.startYear === textStart) {
+            doc.operatingPeriod.endYear = textEnd;
+        }
+
         const fd = isPlainObject(f.facilityDetails) ? f.facilityDetails : {};
         const age = isPlainObject(fd.ageRange) ? fd.ageRange : {};
-        doc.facilityDetails.type = v2Str(fd.type);
+        doc.facilityDetails.type = v2Type(fd.type);
         doc.facilityDetails.capacity = v2Int(fd.capacity, rejected, 'capacity');
         doc.facilityDetails.currentCensus = v2Int(fd.currentCensus, rejected, 'currentCensus');
         doc.facilityDetails.ageRange.min = v2Int(age.min, rejected, 'ageRange.min');
         doc.facilityDetails.ageRange.max = v2Int(age.max, rejected, 'ageRange.max');
-        doc.facilityDetails.gender = v2Str(fd.gender);
+        const gender = v2Gender(fd.gender);
+        doc.facilityDetails.gender = gender.gender;
         doc.facilityDetails.isPrivatelyOwned = v2Bool(f.isPrivatelyOwned !== undefined ? f.isPrivatelyOwned : fd.isPrivatelyOwned);
 
         const staff = isPlainObject(f.staff) ? f.staff : {};
-        doc.staff.administrator = v2List(staff.administrator);
-        doc.staff.notableStaff = v2List(staff.notableStaff);
-        doc.staff.pastTTIJobs = v2List(staff.pastTTIJobs);
+        doc.staff.administrator = v2PersonList(staff.administrator);
+        doc.staff.notableStaff = v2PersonList(staff.notableStaff);
+        doc.staff.pastTTIJobs = v2JobList(staff.pastTTIJobs);
 
         const acc = isPlainObject(f.accreditations) ? f.accreditations : {};
         doc.accreditations.current = v2List(acc.current);
@@ -1395,13 +1588,11 @@
         doc.memberships = v2List(f.memberships);
         doc.certifications = v2List(f.certifications);
         doc.licensing = v2List(f.licensing);
-        doc.profileLinks = v2List(f.profileLinks);
+        doc.profileLinks = v2LinkList(f.profileLinks);
         doc.notes = v2List(f.notes);
+        if (gender.note !== '') doc.notes = v2List(doc.notes.concat([gender.note]));
 
-        const resources = { ...v2Map(f.resources) };
-        if (resources.notes !== undefined) resources.notes = v2List(resources.notes);
-        if (resources.customResources !== undefined) resources.customResources = v2List(resources.customResources);
-        doc.resources = resources;
+        doc.resources = v2Resources(f.resources);
 
         doc.treatmentTypes = v2Map(f.treatmentTypes);
         doc.philosophy = v2Map(f.philosophy);
@@ -1416,7 +1607,7 @@
         doc.provenance.sourceProjectId = v2Int(pick(f.sourceProjectId, prov.sourceProjectId));
         doc.provenance.sourceCategory = v2Str(pick(f.sourceCategory, prov.sourceCategory));
         const sourceOperator = pick(f.sourceOperator, prov.sourceOperator);
-        doc.provenance.sourceOperator = (sourceOperator !== null && typeof sourceOperator === 'object') ? sourceOperator : null;
+        doc.provenance.sourceOperator = v2OperatorBlock(sourceOperator);
         doc.provenance.linkedFromRef = Boolean(pick(f.linkedFromRef, prov.linkedFromRef));
         doc.provenance.kopProfileVersion = v2Int(pick(f.kopProfileVersion, prov.kopProfileVersion));
         doc.provenance.legacyIds = Array.from(new Set(
