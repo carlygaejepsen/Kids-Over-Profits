@@ -41,12 +41,14 @@
      * a person at a programme with no role recorded, which is staff in all
      * but name. Family stays on: operators married into and handed down
      * each other's programmes, and that is ownership by another route.
+     * So does membership: Dederich in AA, Bill Lane in Synanon - the
+     * lineage from one programme's founder to the next.
      * Board seats (mostly industry associations), referrals, survivors and
      * "other" are a checkbox away on the rail; on
      * by default they brought in names with no bearing on the question -
      * Alcoholics Anonymous in Synanon's view through a board seat, and Bill
      * Lane's companies through a connection nobody recorded a type for. */
-    var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family'];
+    var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership'];
 
     function toSet(list) {
         var set = Object.create(null);
@@ -213,7 +215,7 @@
 
         /**
          * Everything on except the connection types outside staff,
-         * ownership and family, slider at zero. The rail's checkboxes are set from this
+         * ownership, family and membership, slider at zero. The rail's checkboxes are set from this
          * when the map starts, and the markup matches it so the first paint
          * does too.
          */

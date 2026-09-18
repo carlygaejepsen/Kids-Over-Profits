@@ -45,7 +45,7 @@ const ISOLATED_REGION = 'Disconnected';
 
 const CATEGORIES = [
     'corporate', 'family', 'survivor', 'referral', 'board',
-    'leadership', 'clinical', 'admissions', 'staff', 'other', 'unknown'
+    'leadership', 'clinical', 'admissions', 'staff', 'membership', 'other', 'unknown'
 ];
 const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'church', 'other'];
 
@@ -212,13 +212,19 @@ const ROLE_RULES = [
     ['admissions', /\b(admission|marketing|enrollment|outreach|business development|recruit|customer relations|intake)/i],
     ['staff', /\b(field|guide|instructor|teacher|academic|education|training|mentor|coach|residential|house parent|dean|supervis|manager|intern(?!ational)|staff|employee|coordinator|operations|risk|human resources|deputy|officer|facilitator|workshop|consultant|research|science|aftercare|campus culture|admin|phase ii|team lead|team director|special projects|special services|photo displayed|prepared tax guides)/i],
     ['leadership', /\b(founder|cofounder|co-founder|ceo|coo|president|executive|director|owner|head of school|headmaster|principal|superintendent|pastor|leader|partner|commissioner|vice-president|management)/i],
-    ['other', /\b(trained|member|advisor|advisory)/i]
+    /* Somebody who belonged to the movement or organisation rather than
+     * running or working at it: Chuck Dederich in AA before he founded
+     * Synanon, Bill Lane in Synanon before he founded CEDU. That lineage is
+     * what the map exists to trace, so it is its own type rather than
+     * "other" or a board seat. */
+    ['membership', /\bmember\b/i],
+    ['other', /\b(trained|advisor|advisory)/i]
 ];
 
 /* Across the roles on one edge, the bigger fact wins. */
 const CATEGORY_PRECEDENCE = [
     'corporate', 'family', 'survivor', 'referral', 'board',
-    'leadership', 'clinical', 'admissions', 'staff', 'other', 'unknown'
+    'leadership', 'clinical', 'admissions', 'staff', 'membership', 'other', 'unknown'
 ];
 
 function categoriseRole(role) {
@@ -228,10 +234,7 @@ function categoriseRole(role) {
     return null;
 }
 
-/**
- * One category per edge. A bare "member" only counts as a board tie when the
- * other end is an association, which is where the word actually means it.
- */
+/** One category per edge. */
 function categoriseEdge(raw, roles, sourceNode, targetNode, overrides) {
     if (Object.prototype.hasOwnProperty.call(overrides.relationships, raw)) {
         const o = overrides.relationships[raw];
@@ -261,9 +264,6 @@ function categoriseEdge(raw, roles, sourceNode, targetNode, overrides) {
 
     /* Ownership language between two organisations is a corporate fact. */
     if (bothOrgs && category === 'leadership' && /\bowner\b|\bco-owner\b/i.test(joined)) category = 'corporate';
-    /* Membership of a trade association is a board-style affiliation. */
-    if (category === 'other' && /\bmember\b/i.test(joined)
-        && (sourceNode.kind === 'association' || targetNode.kind === 'association')) category = 'board';
 
     return { category: category, roles: roles, matched: true };
 }

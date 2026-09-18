@@ -95,7 +95,7 @@
     var LINK_DISTANCE = {
         corporate: 70, family: 70, board: 95, leadership: 95,
         clinical: 130, admissions: 125, referral: 125,
-        staff: 130, survivor: 125, other: 125, unknown: 125
+        staff: 130, membership: 110, survivor: 125, other: 125, unknown: 125
     };
     var DEFAULT_DISTANCE = 125;
     var SETTLE_TICKS = 220;
@@ -1188,7 +1188,7 @@
             var spreadTo = Math.max(packedW, shown);
 
             var shiftY = (stacked.length - 1) * rowH / 2;
-            stacked.forEach(function (row, index) {
+            var placeRow = function (row, index) {
                 var width = row.reduce(function (t, p) { return t + needOf(p); }, 0);
                 /* Spread as space-around: every name gets an equal share of
                  * the spare room, half each side, so a lone name stays
@@ -1201,7 +1201,51 @@
                     p.y = index * rowH - shiftY;
                     x += need;
                 });
+            };
+            stacked.forEach(placeRow);
+
+            /* Line each row up under what it connects to. Rows were filled
+             * in ring order, which says which row a name belongs in but not
+             * where along it: Alcoholics Anonymous, reached through Chuck
+             * Dederich, sat at the far end of its row from him, so the line
+             * AA - Dederich - Synanon read as a zigzag across the map. Working
+             * outwards from the centre row, each row is re-sorted by the
+             * average position of its connections in the rows already
+             * settled, and a name with none there keeps its place. The
+             * centre row keeps the order it was built in. */
+            var neighboursOf = Object.create(null);
+            links.forEach(function (link) {
+                var a = link.source && link.source.id !== undefined ? link.source.id : link.source;
+                var b = link.target && link.target.id !== undefined ? link.target.id : link.target;
+                (neighboursOf[a] = neighboursOf[a] || []).push(b);
+                (neighboursOf[b] = neighboursOf[b] || []).push(a);
             });
+            var byIdHere = Object.create(null);
+            points.forEach(function (p) { byIdHere[p.id] = p; });
+            var centreIndex = stacked.findIndex(function (row) {
+                return row.some(function (p) { return isRoot[p.id]; });
+            });
+            if (centreIndex < 0) centreIndex = Math.floor(stacked.length / 2);
+            var settled = Object.create(null);
+            stacked[centreIndex].forEach(function (p) { settled[p.id] = true; });
+            for (var reach = 1; reach < stacked.length; reach++) {
+                [centreIndex - reach, centreIndex + reach].forEach(function (index) {
+                    var row = stacked[index];
+                    if (!row) return;
+                    var want = Object.create(null);
+                    row.forEach(function (p) {
+                        var xs = (neighboursOf[p.id] || []).filter(function (id) {
+                            return settled[id] && byIdHere[id];
+                        }).map(function (id) { return byIdHere[id].x; });
+                        want[p.id] = xs.length
+                            ? xs.reduce(function (t, x) { return t + x; }, 0) / xs.length
+                            : p.x;
+                    });
+                    row.sort(function (a, b) { return want[a.id] - want[b.id]; });
+                    placeRow(row, index);
+                    row.forEach(function (p) { settled[p.id] = true; });
+                });
+            }
             rowWidth = Math.max(rowWidth, spreadTo);
 
             var widestRow = stacked.reduce(function (t, row) { return Math.max(t, row.length); }, 1);

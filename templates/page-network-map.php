@@ -228,7 +228,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 							<legend>Connections</legend>
 							<?php foreach ($kop_net_cats as $cat) : ?>
 								<label class="kop-network__check">
-									<input type="checkbox" name="kop-network-category" value="<?php echo esc_attr($cat); ?>"<?php echo in_array($cat, array('corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family'), true) ? ' checked' : ''; ?>>
+									<input type="checkbox" name="kop-network-category" value="<?php echo esc_attr($cat); ?>"<?php echo in_array($cat, array('corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership'), true) ? ' checked' : ''; ?>>
 									<span><?php echo esc_html(kop_network_map_label($cat, 'category')); ?></span>
 									<?php if (!empty($kop_net_counts['edge_' . $cat])) : ?>
 										<span class="kop-network__count"><?php echo esc_html(number_format_i18n((int) $kop_net_counts['edge_' . $cat])); ?></span>

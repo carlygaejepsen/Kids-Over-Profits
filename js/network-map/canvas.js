@@ -85,6 +85,7 @@
         unknown:    { colour: 'rgba(0, 4, 53, 0.34)', width: 1, dash: [1, 3], label: 'Unrecorded' },
         admissions: { colour: 'rgba(0, 4, 53, 0.44)', width: 1.15, dash: [5, 2], label: 'Admissions' },
         staff:      { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other staff' },
+        membership: { colour: 'rgba(0, 4, 53, 0.5)', width: 1.3, dash: [8, 3], label: 'Member' },
         /* "Other" would read as the node kind of the same name in the key. */
         _default:   { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other connection' }
     };

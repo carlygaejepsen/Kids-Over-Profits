@@ -248,6 +248,7 @@ if (!function_exists('kop_network_map_label')) {
             'clinical'   => 'Clinical staff',
             'admissions' => 'Admissions',
             'staff'      => 'Other staff',
+            'membership' => 'Member',
             'other'      => 'Other connection',
             'unknown'    => 'Unrecorded',
         );

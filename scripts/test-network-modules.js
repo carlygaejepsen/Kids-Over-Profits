@@ -411,16 +411,16 @@ function run() {
         sandbox.KOPNetworkStore.statusBucket('rebranded') === 'rebranded',
         'status bucketing does not match the three filter checkboxes');
 
-    /* The default connections are ownership, staff and family. Board seats,
+    /* The default connections are ownership, staff, family and membership. Board seats,
      * referrals, survivors and "other" are a checkbox away: on by default
      * they put Alcoholics Anonymous and Bill Lane's companies in Synanon's
      * view. A name whose only connections are those drops off until they
      * are turned on. */
     const defaultCats = store.filters.categories;
-    check(['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family']
+    check(['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership']
         .every((c) => defaultCats[c]) &&
         ['board', 'referral', 'survivor', 'other'].every((c) => !defaultCats[c]),
-        'the default connection types are not ownership, staff and family: ' + Object.keys(defaultCats).join(', '));
+        'the default connection types are not ownership, staff, family and membership: ' + Object.keys(defaultCats).join(', '));
     const defaultView = store.visible();
     check(defaultView.edges.every((e) => defaultCats[e.category]),
         'the default view drew a connection type that is off by default');
@@ -1223,9 +1223,9 @@ function run() {
         'opening a node put something on the map that nobody asked for');
     check(focused.nodes.length < whole.nodes.length, 'opening a node showed the whole graph');
 
-    /* A company's view is its own connections and the people's programmes,
-     * nothing further out. Synanon's view used to bring sixteen names: the
-     * owner rule ran for companies and in both directions, pulling in
+    /* A company's view is its own connections and where its people turn
+     * up, nothing further out. Synanon's view used to bring sixteen names:
+     * the owner rule ran for companies and in both directions, pulling in
      * CEDU's owners and Leadership Dynamics' holdings, and Universal Health
      * Services rode in on the chain as an opening organisation. */
     const synanon = store.node('synanon');
@@ -1235,9 +1235,26 @@ function run() {
         focus.select(synanon);
         flushFrames();
         const synView = focus.scene();
-        ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics', 'alcoholics-anonymous', 'bill-lane-and-associates'].forEach((id) => {
+        ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics'].forEach((id) => {
             check(!synView.nodeIds[id], "Synanon's view brought in " + id + ', which it does not connect to');
         });
+        /* Membership is lineage and reads as a line: AA above Dederich
+         * above Synanon, with AA the name in its row nearest Dederich. */
+        const aa = store.node('alcoholics-anonymous');
+        const chuck = store.node('charles-chuck-dederich');
+        check(synView.nodeIds[aa.id] && synView.nodeIds[chuck.id],
+            "Synanon's view left out Dederich's membership of AA");
+        if (synView.nodeIds[aa.id] && synView.nodeIds[chuck.id]) {
+            const pa = focus.positionOf(aa), pc = focus.positionOf(chuck), ps = focus.positionOf(synanon);
+            check(pa.y < pc.y && pc.y < ps.y,
+                'AA, Dederich and Synanon are not drawn top to bottom',
+                'AA above Dederich above Synanon');
+            const rowmates = synView.nodes.filter((n) => Math.abs(focus.positionOf(n).y - pa.y) < 1);
+            const nearest = rowmates.sort((a, b) =>
+                Math.abs(focus.positionOf(a).x - pc.x) - Math.abs(focus.positionOf(b).x - pc.x))[0];
+            check(nearest.id === aa.id,
+                'AA is not lined up over Dederich: ' + nearest.name + ' is nearer him in that row');
+        }
         focus.clear();
         flushFrames();
         focus.select(hub);

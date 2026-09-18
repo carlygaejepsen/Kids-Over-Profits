@@ -24,12 +24,13 @@
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 9,
-   "edge_board": 37,
+   "edge_board": 31,
    "edge_leadership": 557,
    "edge_clinical": 302,
    "edge_admissions": 90,
    "edge_staff": 251,
-   "edge_other": 10,
+   "edge_membership": 11,
+   "edge_other": 5,
    "edge_unknown": 208
   },
   "categories": [
@@ -42,6 +43,7 @@
    "clinical",
    "admissions",
    "staff",
+   "membership",
    "other",
    "unknown"
   ],
@@ -1679,7 +1681,7 @@
     "board": 2,
     "family": 1,
     "staff": 1,
-    "other": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -2647,7 +2649,7 @@
    "degree": 8,
    "degreeByCategory": {
     "corporate": 4,
-    "other": 1,
+    "membership": 1,
     "leadership": 1,
     "unknown": 2
    },
@@ -2934,7 +2936,7 @@
    "importance": 14198,
    "degree": 7,
    "degreeByCategory": {
-    "board": 1,
+    "membership": 1,
     "leadership": 4,
     "family": 1,
     "unknown": 1
@@ -4110,9 +4112,8 @@
    "degree": 6,
    "degreeByCategory": {
     "unknown": 1,
-    "board": 1,
+    "membership": 3,
     "staff": 1,
-    "other": 2,
     "leadership": 1
    },
    "facilityId": null,
@@ -4776,7 +4777,7 @@
    "importance": 13622,
    "degree": 5,
    "degreeByCategory": {
-    "other": 1,
+    "membership": 1,
     "family": 3,
     "leadership": 1
    },
@@ -5919,7 +5920,7 @@
    "importance": 13622,
    "degree": 5,
    "degreeByCategory": {
-    "other": 1,
+    "membership": 1,
     "family": 3,
     "leadership": 1
    },
@@ -8035,7 +8036,7 @@
    "importance": 93355,
    "degree": 4,
    "degreeByCategory": {
-    "board": 3,
+    "membership": 3,
     "corporate": 1
    },
    "facilityId": null,
@@ -8362,7 +8363,7 @@
    "degree": 4,
    "degreeByCategory": {
     "staff": 2,
-    "board": 1,
+    "membership": 1,
     "leadership": 1
    },
    "facilityId": null,
@@ -9007,7 +9008,7 @@
    "importance": 73561,
    "degree": 3,
    "degreeByCategory": {
-    "board": 1,
+    "membership": 1,
     "unknown": 1,
     "leadership": 1
    },
@@ -9434,7 +9435,7 @@
    "importance": 12087,
    "degree": 3,
    "degreeByCategory": {
-    "other": 1,
+    "membership": 1,
     "unknown": 1,
     "leadership": 1
    },
@@ -10674,7 +10675,7 @@
    "degree": 3,
    "degreeByCategory": {
     "corporate": 1,
-    "other": 2
+    "membership": 2
    },
    "facilityId": null,
    "uniqueName": null,
@@ -13413,7 +13414,7 @@
    "degree": 3,
    "degreeByCategory": {
     "unknown": 2,
-    "other": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -15945,7 +15946,7 @@
    "importance": 13622,
    "degree": 2,
    "degreeByCategory": {
-    "board": 1,
+    "membership": 1,
     "leadership": 1
    },
    "facilityId": null,
@@ -16715,7 +16716,7 @@
    "importance": 13622,
    "degree": 2,
    "degreeByCategory": {
-    "board": 1,
+    "membership": 1,
     "leadership": 1
    },
    "facilityId": null,
@@ -17876,7 +17877,7 @@
    "importance": 14198,
    "degree": 2,
    "degreeByCategory": {
-    "board": 1,
+    "membership": 1,
     "staff": 1
    },
    "facilityId": null,
@@ -22036,7 +22037,7 @@
    "degree": 2,
    "degreeByCategory": {
     "unknown": 1,
-    "board": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -27959,7 +27960,7 @@
    "importance": 40882,
    "degree": 1,
    "degreeByCategory": {
-    "board": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -31156,7 +31157,7 @@
    "id": "e0123",
    "source": "dace-goulding",
    "target": "northwest-association-international-school-visitation-team",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -33779,7 +33780,7 @@
    "id": "e0326",
    "source": "eugenia-collins",
    "target": "northwest-association-international-school-visitation-team",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -33972,7 +33973,7 @@
    "id": "e0342",
    "source": "bill-wilson",
    "target": "oxford-group",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -35197,7 +35198,7 @@
    "id": "e0436",
    "source": "sharon-sperry-clegg",
    "target": "outdoor-behavioral-healthcare-industry-council",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -35618,7 +35619,7 @@
    "id": "e0470",
    "source": "bill-lane",
    "target": "synanon",
-   "category": "other",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -36820,7 +36821,7 @@
    "id": "e0563",
    "source": "charles-chuck-dederich",
    "target": "alcoholics-anonymous",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -37618,7 +37619,7 @@
    "id": "e0625",
    "source": "betty-argiros",
    "target": "east-ridge-recovery-center",
-   "category": "other",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -42633,7 +42634,7 @@
    "id": "e1013",
    "source": "orval-hagerman",
    "target": "northwest-association-international-school-visitation-team",
-   "category": "board",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -45199,7 +45200,7 @@
    "id": "e1213",
    "source": "tony-argiros",
    "target": "east-ridge-recovery-center",
-   "category": "other",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -50458,7 +50459,7 @@
    "id": "l0207",
    "source": "david-lepere",
    "target": "outdoor-behavioral-healthcare-industry-council",
-   "category": "other",
+   "category": "membership",
    "roles": [
     "member"
    ],
@@ -52082,7 +52083,7 @@
    "id": "l0328",
    "source": "pat-lockwood",
    "target": "outdoor-behavioral-healthcare-industry-council",
-   "category": "other",
+   "category": "membership",
    "roles": [
     "founding member"
    ],

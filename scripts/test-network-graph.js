@@ -28,7 +28,7 @@ const MIN_FACILITY_MATCHES = 300;
 const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'church', 'other'];
 const CATEGORIES = [
     'corporate', 'family', 'survivor', 'referral', 'board',
-    'leadership', 'clinical', 'admissions', 'staff', 'other', 'unknown'
+    'leadership', 'clinical', 'admissions', 'staff', 'membership', 'other', 'unknown'
 ];
 const DIRECTIONS = ['none', 'acquirer', 'renamed'];
 /* The build splits the board's "closed or rebranded" in two (2b.5). */
