@@ -1,0 +1,38 @@
+{
+  "title": "Hyde School",
+  "slug": "hyde",
+  "post_type": "post",
+  "status": "publish",
+  "overwrite_existing": true,
+  "seed_version": 1,
+  "content_file": "hyde.html",
+  "excerpt": "A co-ed boarding school in Bath, Maine, founded in 1966 by Joseph Gauld and run by the Gauld family since. Survivors describe forced labor, peer surveillance, public confession and unlicensed therapy; a 2025 federal class action alleges labor trafficking and abuse.",
+  "categories": [
+    "facility-profile",
+    "maine",
+    "where-are-the-kids"
+  ],
+  "template": "single-facility-profile.php",
+  "meta": {
+    "facility_name": "Hyde School",
+    "facility_address": "616 High St, Bath, ME 04530",
+    "facility_address_2": "150 Rte 169, Woodstock, CT 06281 (Hyde-Woodstock campus, 1996 to 2007)",
+    "date_founded": "1966",
+    "founders": "Joseph \"Joe\" Gauld",
+    "external_profile": "https://linktr.ee/hydesurvivors"
+  },
+  "acf_field_keys": {
+    "facility_name": "field_68505bd591ccb",
+    "facility_address": "field_68505bfb91ccc",
+    "facility_address_2": "field_6851be547a5ff",
+    "date_founded": "field_685069288a8d4",
+    "founders": "field_68506978512e4",
+    "external_profile": "field_68505c3d91cce"
+  },
+  "sources_scanned": [
+    "post 2365 (the published Hyde School profile as of 2026-09-17): every paragraph, list, embed, link card and the FileBird folder 19 block carried over; sections re-ordered and headed to match seeds/provo-canyon-school.html",
+    "lawsuits 2 (Fuller v. Hyde School, 2:25-cv-00354) and 7 (Anonymous v. Hyde School at South Woodstock, WWM-CV21-5012142-S) for the docket numbers",
+    "posts 2962 and 1095 and pages maine, connecticut, lawsuits, tti-program-index for the Related links"
+  ],
+  "notes": "overwrite_existing replaces the published post content once per seed_version; WordPress keeps the previous content as a revision."
+}
