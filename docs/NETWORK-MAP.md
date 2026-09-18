@@ -155,11 +155,16 @@ thirty-six node neighbourhood it used 32% of the stage, with seventeen nodes
 in one quadrant and two in another, and only twenty of the thirty-six names
 could be drawn without overlapping.
 
-So the simulation is kept only for the order it produces - what is near
-what, what is above what - and the nodes are then snapped onto a regular
-grid. Rows come off the settled layout top to bottom and each row is sorted
-left to right, which preserves the arrangement the forces found while giving
-every node a cell of its own. Cells are sized from the labels outwards, not
+So the simulation is kept only as a tie-breaker, and the grid is filled from
+the middle outwards: cells nearest the centre of the board first, nodes in
+rings outwards from whatever was opened. The opened node lands in the middle
+and the things it connects to ring it, which is the shape the relationship
+actually has. Ordering the grid by the settled position instead left the hub
+against one edge with everything it owns stacked down the far side of the
+board and nothing on the other three - measured, the opened node sat 80% of
+the way to the edge. Within a ring the settled layout still decides the
+order, by angle about the centre, so things that sit near each other in the
+force layout stay near each other here. Cells are sized from the labels outwards, not
 the nodes outwards: a name can only collide with its neighbour if the cell
 is narrower than the name. The same neighbourhood now uses 65% of the stage,
 nine nodes to a quadrant, and every one of the thirty-six is named.

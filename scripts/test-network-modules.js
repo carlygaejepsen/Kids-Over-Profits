@@ -802,6 +802,38 @@ function run() {
         'the layout is lopsided: ' + quads.join('/') + ' nodes per quadrant',
         'nodes per quadrant: ' + quads.join('/'));
 
+    /* What was opened sits in the middle, with what it connects to around
+     * it. Sorting the grid by the settled position instead left the hub
+     * against one edge with everything it owns stacked down the far side. */
+    const hubPos = focus.positionOf(store.node('wwasps'));
+    const spanX = Math.max(...gx) - Math.min(...gx);
+    const spanY = Math.max(...gy) - Math.min(...gy);
+    const offX = Math.abs(hubPos.x - midX) / Math.max(1, spanX / 2);
+    const offY = Math.abs(hubPos.y - midY) / Math.max(1, spanY / 2);
+    check(offX < 0.34 && offY < 0.34,
+        'the opened node sits ' + Math.round(Math.max(offX, offY) * 100) +
+        '% of the way to the edge instead of in the middle',
+        'the opened node sits ' + Math.round(Math.max(offX, offY) * 100) + '% off centre');
+
+    /* Its own connections should be the nearest things to it, not scattered
+     * to one side of the board. */
+    const hubNeighbours = store.neighbours('wwasps', true)
+        .map((l) => l.other.id)
+        .filter((id) => hubScene.nodeIds[id]);
+    const ring = hubNeighbours.map((id) => {
+        const p = focus.positionOf(store.node(id));
+        return { id, angle: Math.atan2(p.y - hubPos.y, p.x - hubPos.x) };
+    });
+    const sides = [0, 0, 0, 0];
+    ring.forEach((r) => {
+        const q = Math.floor(((r.angle + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 2));
+        sides[q]++;
+    });
+    check(sides.filter((c) => c > 0).length >= 3,
+        'the opened node has its connections on only ' +
+        sides.filter((c) => c > 0).length + ' side(s) of it: ' + sides.join('/'),
+        'connections sit on ' + sides.filter((c) => c > 0).length + ' sides of the opened node');
+
     focus.clear();
     flushFrames();
 

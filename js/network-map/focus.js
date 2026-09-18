@@ -512,10 +512,16 @@
                 return point;
             });
 
+            /* The simulation consumes these and so does the grid, which
+             * walks them outwards from whatever was opened. d3.forceLink
+             * rewrites source and target into node references as a side
+             * effect, so the grid reads the ids back off the endpoints
+             * rather than trusting the fields it passed in. */
+            var links = scene.edges.map(function (edge) {
+                return { source: edge.sourceId, target: edge.targetId, category: edge.category };
+            });
+
             if (d3 && d3.forceSimulation && points.length > 1) {
-                var links = scene.edges.map(function (edge) {
-                    return { source: edge.sourceId, target: edge.targetId, category: edge.category };
-                });
                 var sim = d3.forceSimulation(points)
                     .force('link', d3.forceLink(links)
                         .id(function (d) { return d.id; })
@@ -536,7 +542,7 @@
                 sim.stop();
             }
 
-            var overhang = gridLayout(points, gridPadding);
+            var overhang = gridLayout(points, gridPadding, chain.slice(), links);
 
             var positions = Object.create(null);
             points.forEach(function (point) {
@@ -578,7 +584,68 @@
          * follows lands at a zoom of about one and a cell on the grid is a
          * cell on the screen.
          */
-        function gridLayout(points, padding) {
+        /**
+         * The nodes in rings outwards from the ones that were opened: the
+         * roots first, then everything one connection away, then two, and
+         * anything the edges do not reach last.
+         */
+        function ringOrder(points, roots, links) {
+            var byId = Object.create(null);
+            points.forEach(function (p) { byId[p.id] = p; });
+
+            var adjacent = Object.create(null);
+            points.forEach(function (p) { adjacent[p.id] = []; });
+            links.forEach(function (link) {
+                /* forceLink swapped the ids for node objects on its way
+                 * past. */
+                var a = link.source && link.source.id !== undefined ? link.source.id : link.source;
+                var b = link.target && link.target.id !== undefined ? link.target.id : link.target;
+                if (!adjacent[a] || !adjacent[b]) return;
+                adjacent[a].push(b);
+                adjacent[b].push(a);
+            });
+
+            var cx = points.reduce(function (t, p) { return t + p.x; }, 0) / points.length;
+            var cy = points.reduce(function (t, p) { return t + p.y; }, 0) / points.length;
+            var byAngle = function (a, b) {
+                return Math.atan2(a.y - cy, a.x - cx) - Math.atan2(b.y - cy, b.x - cx);
+            };
+
+            var seen = Object.create(null);
+            var order = [];
+            var ring = roots.filter(function (id) { return byId[id] && !seen[id]; })
+                .map(function (id) { seen[id] = true; return byId[id]; });
+
+            /* Nothing was opened, so start from the best connected thing on
+             * screen and let the rest fall out around it. */
+            if (!ring.length && points.length) {
+                var best = points.slice().sort(function (a, b) {
+                    return (adjacent[b.id].length - adjacent[a.id].length);
+                })[0];
+                seen[best.id] = true;
+                ring = [best];
+            }
+
+            while (ring.length) {
+                ring.sort(byAngle);
+                order = order.concat(ring);
+                var next = [];
+                ring.forEach(function (node) {
+                    adjacent[node.id].forEach(function (id) {
+                        if (seen[id] || !byId[id]) return;
+                        seen[id] = true;
+                        next.push(byId[id]);
+                    });
+                });
+                ring = next;
+            }
+
+            /* Anything the connections never reached. */
+            points.forEach(function (p) { if (!seen[p.id]) order.push(p); });
+            return order;
+        }
+
+        function gridLayout(points, padding, roots, links) {
             var n = points.length;
             if (!n || !renderer.width) return 0;
 
@@ -603,23 +670,46 @@
             var cellW = boardW / cols;
             var cellH = boardH / rows;
 
-            /* Rows off the settled layout, top to bottom; each row left to
-             * right. The forces decided who sits near whom; the grid only
-             * decides where that lands. */
-            var order = points.slice().sort(function (a, b) { return a.y - b.y; });
-            var placed = 0;
+            /* Cells, nearest the middle of the board first. */
+            var cells = [];
+            var midCol = (cols - 1) / 2;
+            var midRow = (rows - 1) / 2;
             for (var row = 0; row < rows; row++) {
-                var band = order.slice(placed, placed + cols);
-                if (!band.length) break;
-                band.sort(function (a, b) { return a.x - b.x; });
-                /* A short last row is centred rather than left-aligned, so
-                 * the block does not end on a ragged edge. */
-                var indent = (cols - band.length) * cellW / 2;
-                for (var col = 0; col < band.length; col++) {
-                    band[col].x = -boardW / 2 + indent + (col + 0.5) * cellW;
-                    band[col].y = -boardH / 2 + (row + 0.5) * cellH;
+                for (var col = 0; col < cols; col++) {
+                    var ox = (col - midCol) * cellW;
+                    var oy = (row - midRow) * cellH;
+                    cells.push({
+                        x: ox,
+                        y: oy,
+                        /* Measured in cells rather than pixels so a wide grid
+                         * does not rank a cell one column over as further
+                         * away than one three rows down. */
+                        d: Math.hypot(col - midCol, row - midRow),
+                        angle: Math.atan2(row - midRow, col - midCol)
+                    });
                 }
-                placed += band.length;
+            }
+            cells.sort(function (a, b) {
+                if (a.d !== b.d) return a.d - b.d;
+                return a.angle - b.angle;
+            });
+
+            /* Nodes, in rings outwards from what was opened.
+             *
+             * Sorting by the settled position instead puts the hub wherever
+             * the forces happened to leave it - against one edge, with
+             * everything it owns stacked down the far side of the board and
+             * nothing on the other three. Walking out from the opened node
+             * puts it in the middle and rings its connections around it,
+             * which is the shape the relationship actually has.
+             *
+             * Within a ring the settled layout still decides the order, by
+             * angle about the centre, so things that sit near each other in
+             * the force layout stay near each other here. */
+            var order = ringOrder(points, roots, links);
+            for (var i = 0; i < order.length && i < cells.length; i++) {
+                order[i].x = cells[i].x;
+                order[i].y = cells[i].y;
             }
 
             /* A name wider than its cell hangs over the edges of it. That is
