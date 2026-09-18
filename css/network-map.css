@@ -1,24 +1,26 @@
 /*
  * Network map
  *
- * Layout for the map shell: intro, toolbar, chain breadcrumb, filter rail,
- * canvas stage and drawer. Colours come from css/colors.css.
+ * Layout for the map shell: intro, toolbar, trail, canvas stage, the key
+ * folded into the stage's corner, and the drawer. Colours come from
+ * css/colors.css.
  *
- * Above 900px the rail and drawer are columns either side of the stage.
- * Below it the rail becomes a sheet behind the Filters button and the drawer
- * takes the screen, so the canvas always has the full width.
+ * The app below the intro is sized to the window: toolbar and trail take one
+ * row each and the stage takes the rest, so scrolling the map to the top of
+ * the screen shows all of it. Above 900px the drawer is a column beside the
+ * stage; below it, a sheet over the lower half.
  */
 
 .kop-network {
-	--kop-net-gap: 1rem;
-	--kop-net-rail: 250px;
+	--kop-net-gap: 0.75rem;
 	--kop-net-drawer: 330px;
+	--kop-net-control: 2.25rem;
 	--kop-net-radius: 8px;
 	--kop-net-border: #d8d2bd;
 	--kop-net-surface: var(--kop-sand, #F2EEDF);
 	--kop-net-ink: var(--kop-midnight-blue, #000435);
 
-	max-width: 1600px;
+	max-width: 2200px;
 	margin: 0 auto;
 	padding: 0 16px 3rem;
 	color: var(--kop-net-ink);
@@ -84,30 +86,47 @@
 	font-size: 0.9em;
 }
 
+/* ------------------------------------------------------------------ app -- */
+
+/* Toolbar, trail and stage stacked in one window-high column. svh rather
+ * than vh so a phone's address bar cannot push the bottom of the stage off
+ * the screen; the vh line is for browsers without it. */
+.kop-network__app {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	height: calc(100vh - 1rem);
+	height: calc(100svh - 1rem);
+	min-height: 520px;
+	scroll-margin-top: 0.5rem;
+}
+
 /* -------------------------------------------------------------- toolbar -- */
 
+/* One row on a desktop: search takes the slack, the controls sit right. */
 .kop-network__toolbar {
 	display: flex;
+	flex: 0 0 auto;
 	flex-wrap: wrap;
-	gap: 0.75rem;
+	gap: 0.5rem 0.75rem;
 	align-items: center;
-	justify-content: space-between;
-	margin-bottom: 0.75rem;
 }
 
 .kop-network__search {
 	position: relative;
-	flex: 1 1 260px;
+	flex: 1 1 240px;
 	min-width: 0;
+	max-width: 520px;
 }
 
 .kop-network__search-input {
 	width: 100%;
-	padding: 0.55rem 0.8rem;
+	height: var(--kop-net-control);
+	padding: 0 0.75rem;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
 	background: #fff;
-	font-size: 1rem;
+	font-size: 0.95rem;
 }
 
 .kop-network__search-input:focus-visible {
@@ -177,24 +196,33 @@
 	flex-wrap: wrap;
 	gap: 0.5rem;
 	align-items: center;
+	margin-left: auto;
 }
 
 .kop-network__colour {
 	display: flex;
-	gap: 0.4rem;
+	gap: 0.35rem;
 	align-items: center;
-	font-size: 0.9rem;
+	font-size: 0.8rem;
+	white-space: nowrap;
+}
+
+/* The label is the quiet half of the pair; the select carries the value. */
+.kop-network__colour > span {
+	opacity: 0.75;
 }
 
 .kop-network__select,
 .kop-network__button {
-	padding: 0.5rem 0.75rem;
+	height: var(--kop-net-control);
+	padding: 0 0.7rem;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
 	background: #fff;
 	color: inherit;
 	font: inherit;
-	font-size: 0.9rem;
+	font-size: 0.85rem;
+	white-space: nowrap;
 	cursor: pointer;
 }
 
@@ -211,6 +239,7 @@
 /* Focus / Expand: a two-way switch styled as one control. */
 .kop-network__mode {
 	display: inline-flex;
+	height: var(--kop-net-control);
 	margin: 0;
 	padding: 0;
 	border: 1px solid var(--kop-net-border);
@@ -223,8 +252,8 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	padding: 0.5rem 0.75rem;
-	font-size: 0.9rem;
+	padding: 0 0.75rem;
+	font-size: 0.85rem;
 	cursor: pointer;
 }
 
@@ -252,39 +281,57 @@
 	outline-offset: -2px;
 }
 
-/* The rail holds only the key, starts closed at every width, and this
- * button (labelled Key) is the way in. The 250px it would take as a
- * permanent column is width the labels need. */
-#kop-network-filters-toggle {
-	display: inline-block;
-}
-
 /* ------------------------------------------------------ chain breadcrumb -- */
 
+/* One row, always. The strip keeps its height with or without a trail so
+ * the stage below never changes size on a click, and a long trail scrolls
+ * sideways (app.js keeps the newest step in view) instead of wrapping. */
 .kop-network__chain {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 0.4rem;
+	flex: 0 0 auto;
+	gap: 0.5rem;
 	align-items: center;
-	margin-bottom: 0.75rem;
-	padding: 0.5rem 0.65rem;
+	min-width: 0;
+	height: var(--kop-net-control);
+	padding: 0 0.3rem 0 0.65rem;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
 	background: var(--kop-net-surface);
 }
 
+.kop-network__chain-label {
+	flex: 0 0 auto;
+	font-size: 0.7rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.6;
+}
+
 .kop-network__chain-list {
 	display: flex;
-	flex-wrap: wrap;
+	flex: 1 1 auto;
+	flex-wrap: nowrap;
 	gap: 0.3rem;
 	align-items: center;
+	min-width: 0;
 	margin: 0;
 	padding: 0;
 	list-style: none;
+	overflow-x: auto;
+	overflow-y: hidden;
+	scrollbar-width: thin;
+}
+
+.kop-network__chain-list[hidden],
+.kop-network__chain-empty[hidden],
+.kop-network__chain-home[hidden] {
+	display: none;
 }
 
 .kop-network__chain-list li {
 	display: flex;
+	flex: 0 0 auto;
 	gap: 0.3rem;
 	align-items: center;
 	margin: 0;
@@ -296,23 +343,56 @@
 	opacity: 0.5;
 }
 
-.kop-network__chain-home,
 .kop-network__chain-list button,
 .kop-network__chain-current {
 	display: inline-block;
-	padding: 0.3rem 0.6rem;
+	max-width: 24ch;
+	overflow: hidden;
+	padding: 0.15rem 0.55rem;
 	border: 1px solid transparent;
 	border-radius: 999px;
 	background: #fff;
 	color: inherit;
 	font: inherit;
-	font-size: 0.85rem;
+	font-size: 0.8rem;
+	line-height: 1.4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+}
+
+/* Start over sits at the far end, out of the way of the crumbs. */
+.kop-network__chain-home {
+	flex: 0 0 auto;
+	order: 1;
+	margin-left: auto;
+	padding: 0.15rem 0.6rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: 999px;
+	background: #fff;
+	color: inherit;
+	font: inherit;
+	font-size: 0.8rem;
+	line-height: 1.4;
+	white-space: nowrap;
 	cursor: pointer;
 }
 
 .kop-network__chain-list button:hover,
 .kop-network__chain-home:hover {
 	border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-network__chain-empty {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	overflow: hidden;
+	font-size: 0.8rem;
+	font-style: italic;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	opacity: 0.7;
 }
 
 /* The last crumb is where you are, so it is text carrying aria-current
@@ -327,26 +407,79 @@
 
 .kop-network__body {
 	display: grid;
-	grid-template-columns: var(--kop-net-rail) minmax(0, 1fr);
+	flex: 1 1 auto;
+	grid-template-columns: minmax(0, 1fr);
 	gap: var(--kop-net-gap);
-	align-items: start;
+	min-height: 0;
 }
 
 .kop-network__body:has(.kop-network__drawer:not([hidden])) {
-	grid-template-columns: var(--kop-net-rail) minmax(0, 1fr) var(--kop-net-drawer);
+	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
 }
 
-/* ----------------------------------------------------------------- rail -- */
+/* ------------------------------------------------------------------ key -- */
+
+/* Folded into the stage's top-left corner: a button when closed, a panel
+ * under it when open. Over the map rather than beside it, so opening it does
+ * not resize the stage and re-lay the map out; capped in size so that even
+ * open on a phone it leaves most of the map in view. */
+.kop-network__key {
+	position: absolute;
+	z-index: 5;
+	top: 0.5rem;
+	left: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0.35rem;
+	max-width: min(260px, calc(100% - 1rem));
+	max-height: calc(100% - 1rem);
+}
+
+.kop-network__key-toggle {
+	flex: 0 0 auto;
+	padding: 0.25rem 0.7rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	color: inherit;
+	font: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 4, 53, 0.1);
+}
+
+.kop-network__key-toggle::after {
+	content: " \25BE";
+}
+
+.kop-network__key-toggle[aria-expanded="true"]::after {
+	content: " \25B4";
+}
+
+.kop-network__key-toggle:hover {
+	border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-network__key-toggle:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 1px;
+}
 
 .kop-network__rail {
-	position: sticky;
-	top: 1rem;
-	max-height: calc(100vh - 2rem);
+	min-height: 0;
+	width: 100%;
 	overflow-y: auto;
-	padding: 0.85rem;
+	padding: 0.65rem 0.75rem;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
-	background: var(--kop-net-surface);
+	background: rgba(255, 255, 255, 0.95);
+	box-shadow: 0 6px 20px rgba(0, 4, 53, 0.16);
+}
+
+.kop-network__rail[hidden] {
+	display: none;
 }
 
 .kop-network__group {
@@ -432,8 +565,8 @@
 
 .kop-network__stage {
 	position: relative;
-	min-height: 420px;
-	height: calc(100vh - 6rem);
+	min-height: 360px;
+	height: 100%;
 	border: 1px solid var(--kop-net-border);
 	border-radius: var(--kop-net-radius);
 	background: var(--kop-net-surface);
@@ -525,10 +658,9 @@
 
 /* --------------------------------------------------------------- drawer -- */
 
+/* The same height as the stage beside it, scrolling on its own. */
 .kop-network__drawer {
-	position: sticky;
-	top: 1rem;
-	max-height: calc(100vh - 2rem);
+	min-height: 0;
 	overflow-y: auto;
 	padding: 1rem;
 	border: 1px solid var(--kop-net-border);
@@ -639,30 +771,51 @@
 /* ------------------------------------------------------------- narrow -- */
 
 @media (max-width: 900px) {
-	.kop-network__body {
-		display: block;
+	.kop-network__app {
+		min-height: 480px;
 	}
 
-	#kop-network-filters-toggle {
-		display: inline-block;
+	.kop-network__body,
+	.kop-network__body:has(.kop-network__drawer:not([hidden])) {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
-	/* The rail becomes a sheet over the map, opened by the Key button. */
-	.kop-network__rail {
-		position: fixed;
-		z-index: 30;
-		inset: auto 0 0 0;
-		max-height: 70vh;
-		border-radius: var(--kop-net-radius) var(--kop-net-radius) 0 0;
-		box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
+	.kop-network__search {
+		flex-basis: 100%;
+		max-width: none;
 	}
 
-	.kop-network__rail[hidden] {
+	.kop-network__actions {
+		gap: 0.4rem;
+		margin-left: 0;
+	}
+
+	/* The selects' captions go quiet on a phone so the controls fit in two
+	 * rows. The caption stays in the accessible name. */
+	.kop-network__colour > span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	.kop-network__select,
+	.kop-network__button,
+	.kop-network__mode-option {
+		padding: 0 0.55rem;
+		font-size: 0.8rem;
+	}
+
+	/* The trail's label is the first thing to go when room is short. */
+	.kop-network__chain-label {
 		display: none;
 	}
 
-	.kop-network__stage {
-		height: 65vh;
+	.kop-network__key {
+		max-width: min(220px, calc(100% - 1rem));
+		max-height: 60%;
 	}
 
 	/* A sheet over the lower half, not the whole screen: the map has to
@@ -671,25 +824,10 @@
 		position: fixed;
 		z-index: 40;
 		inset: auto 0 0 0;
-		top: auto;
 		max-height: 50vh;
 		border-radius: var(--kop-net-radius) var(--kop-net-radius) 0 0;
 		box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
 	}
-}
-
-/* With the rail closed the stage takes the whole row. */
-.kop-network__body:has(.kop-network__rail[hidden]) {
-	grid-template-columns: minmax(0, 1fr);
-}
-
-/* Rail closed, drawer open: the stage and the drawer share the row. */
-.kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {
-	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
-}
-
-.kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {
-	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
 }
 
 @media (prefers-reduced-motion: reduce) {

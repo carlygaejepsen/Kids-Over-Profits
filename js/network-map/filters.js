@@ -21,8 +21,8 @@
     'use strict';
 
     var SLIDER_PAUSE_MS = 140;
-    /* Matches the breakpoint in css/network-map.css, where the rail stops
-     * being a column and becomes a sheet over the map. */
+    /* Matches the breakpoint in css/network-map.css, where the key panel
+     * narrows to fit a phone's stage. */
     var NARROW = '(max-width: 900px)';
 
     var STATUS_LABELS = {
@@ -376,12 +376,10 @@
         }
 
         /**
-         * The rail starts closed at every width and the Filters button is
-         * the way in. The map opens on a handful of organisations and grows
-         * by clicking, so the filters are a second-order tool, and as a
-         * permanent column they took width the labels need. Below the
-         * breakpoint it opens as a sheet over the map; above it, as a column
-         * beside it.
+         * The rail is the key now: a panel folded into a corner of the stage,
+         * closed at every width, with the Key button as the way in. It opens
+         * over the map rather than beside it, so the stage keeps its size and
+         * nothing re-lays out when it opens or closes.
          */
         var narrow = root.matchMedia ? root.matchMedia(NARROW) : null;
         var railOpen = false;
@@ -405,10 +403,20 @@
             });
         }
 
+        /* Escape folds the key away and hands focus back to its button. */
+        if (rail && railToggle) {
+            rail.addEventListener('keydown', function (event) {
+                if (!railOpen || (event.key !== 'Escape' && event.key !== 'Esc')) return;
+                railOpen = false;
+                syncRail();
+                railToggle.focus();
+            });
+        }
+
         if (narrow) {
             var onBreakpoint = function () {
-                /* Crossing the breakpoint changes a sheet into a column or
-                 * back; close it so it re-opens in the right form. */
+                /* Crossing the breakpoint resizes the panel against a new
+                 * stage; close it rather than leave it covering the map. */
                 railOpen = false;
                 syncRail();
             };

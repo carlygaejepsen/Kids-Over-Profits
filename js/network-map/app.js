@@ -94,7 +94,9 @@
             elements: {
                 shell: shell, canvas: canvas, stage: stage, status: status,
                 chain: byId('kop-network-chain'),
-                chainList: byId('kop-network-chain-list')
+                chainList: byId('kop-network-chain-list'),
+                chainEmpty: byId('kop-network-chain-empty'),
+                chainHome: byId('kop-network-whole-map')
             },
             config: CONFIG,
             announce: announce,
@@ -227,9 +229,11 @@
 
     /**
      * The trail, oldest first. Every crumb but the last truncates back to
-     * itself; the last is where you are, so it is not a button anywhere. The
-     * nav is hidden entirely on the whole map, where there is no trail to
-     * name.
+     * itself; the last is where you are, so it is not a button anywhere.
+     *
+     * The strip itself never hides: it is one row that keeps its height
+     * whether or not there is a trail, so the first click does not shrink
+     * the stage. With no trail it carries a line saying what a click does.
      */
     function renderChain(app) {
         var nav = app.elements.chain;
@@ -237,8 +241,10 @@
         if (!nav || !list) return;
 
         var chain = app.focus.chain();
-        nav.hidden = chain.length === 0;
         list.textContent = '';
+        list.hidden = chain.length === 0;
+        if (app.elements.chainEmpty) app.elements.chainEmpty.hidden = chain.length > 0;
+        if (app.elements.chainHome) app.elements.chainHome.hidden = chain.length === 0;
         if (!chain.length) return;
 
         chain.forEach(function (id, index) {
@@ -269,6 +275,10 @@
 
             list.appendChild(item);
         });
+
+        /* A long trail scrolls sideways rather than wrapping onto a second
+         * row. Keep the newest step, the one you are on, in view. */
+        list.scrollLeft = list.scrollWidth;
     }
 
     /* The mode radios follow the chain: search can switch to expand when it

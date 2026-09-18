@@ -184,10 +184,6 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</label>
 					</fieldset>
 
-					<button type="button" class="kop-network__button" id="kop-network-filters-toggle"
-						aria-expanded="false" aria-controls="kop-network-rail">
-						Key
-					</button>
 					<button type="button" class="kop-network__button" id="kop-network-reset-view">
 						Reset view
 					</button>
@@ -197,44 +193,25 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 				</div>
 			</div>
 
-			<?php /* The chain of nodes the visitor has clicked through, newest last. */ ?>
-			<nav class="kop-network__chain" id="kop-network-chain" aria-label="Your trail" hidden>
-				<button type="button" class="kop-network__chain-home" id="kop-network-whole-map">
+			<?php
+			// The chain of nodes the visitor has clicked through, newest last.
+			// Always one row and always present: a strip that appeared on the
+			// first click would shrink the stage and re-lay the map out under
+			// the visitor's pointer. Before the first click it says what a
+			// click does instead.
+			?>
+			<nav class="kop-network__chain" id="kop-network-chain" aria-label="Your trail">
+				<span class="kop-network__chain-label" aria-hidden="true">Trail</span>
+				<button type="button" class="kop-network__chain-home" id="kop-network-whole-map" hidden>
 					Start over
 				</button>
 				<ol class="kop-network__chain-list" id="kop-network-chain-list"></ol>
+				<p class="kop-network__chain-empty" id="kop-network-chain-empty">
+					Click a name to start a trail. Each click adds a step here.
+				</p>
 			</nav>
 
 			<div class="kop-network__body">
-
-				<aside class="kop-network__rail" id="kop-network-rail" aria-label="Key">
-
-					<div class="kop-network__rail-inner">
-
-						<?php
-						// The rail holds only the key now. The filter checkboxes
-						// (kinds, connection types, status, owner, board grouping,
-						// minimum connections) took a column of the page and were
-						// not what anyone used the map for; the map runs on the
-						// store's defaults. filters.js still drives the key and
-						// finds no checkboxes to wire.
-						//
-						// The key lives here rather than floating over the stage:
-						// on a narrow window an overlay covered a third of the map
-						// and the labels underneath it.
-						?>
-						<?php
-						$kop_net_kind_labels = array();
-						foreach ($kop_net_kinds as $kind) {
-							$kop_net_kind_labels[$kind] = kop_network_map_label($kind, 'kind');
-						}
-						?>
-						<div class="kop-network__group kop-network__legend" id="kop-network-legend"
-							role="group" aria-label="Legend"
-							data-kind-labels="<?php echo esc_attr(wp_json_encode($kop_net_kind_labels)); ?>"></div>
-
-					</div>
-				</aside>
 
 				<div class="kop-network__stage" id="kop-network-stage">
 					<canvas
@@ -247,6 +224,29 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					<p class="kop-network__loading" id="kop-network-loading">Loading the map...</p>
 
 					<div class="kop-network__status" id="kop-network-status" role="status" aria-live="polite"></div>
+
+					<?php
+					// The key folds into a corner of the stage rather than
+					// taking a column beside it. Opening or closing it leaves
+					// the stage the same size, so the map is not re-laid out
+					// underneath it, and closed it costs one small button.
+					// filters.js fills the legend with only what is on screen.
+					$kop_net_kind_labels = array();
+					foreach ($kop_net_kinds as $kind) {
+						$kop_net_kind_labels[$kind] = kop_network_map_label($kind, 'kind');
+					}
+					?>
+					<div class="kop-network__key">
+						<button type="button" class="kop-network__key-toggle" id="kop-network-filters-toggle"
+							aria-expanded="false" aria-controls="kop-network-rail">
+							Key
+						</button>
+						<div class="kop-network__rail" id="kop-network-rail" role="region" aria-label="Key" hidden>
+							<div class="kop-network__group kop-network__legend" id="kop-network-legend"
+								role="group" aria-label="Legend"
+								data-kind-labels="<?php echo esc_attr(wp_json_encode($kop_net_kind_labels)); ?>"></div>
+						</div>
+					</div>
 				</div>
 
 				<aside class="kop-network__drawer" id="kop-network-drawer" aria-label="Selected name" hidden>
