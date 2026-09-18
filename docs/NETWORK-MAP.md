@@ -881,6 +881,35 @@ all their places; and a node may be left off the stage only when framing
 everything would drop names, which the test now checks against the
 renderer.
 
+### Step 5, second half (2026-09-18): staff movement (2b.11)
+
+`scripts/extract-staff-movement.js` reads the ACF Staff Movement block
+(`staff_transfers`, `_2`, `_3`) from the published profiles in the mirror
+and from `seeds/*.json`, sorts each sentence into came-from or went-on-to
+with the profile template's own tests, and drafts one row per person per
+move. The reviewed result is `js/data/network/staff-movement.csv`
+(person, from, to, role, year, source); the build reads the CSV, never the
+sentences, and the script will not overwrite it without `--force` (it
+writes `tmp/staff-movement.draft.csv` instead).
+
+Today: 12 sentences on three profiles and the Provo Canyon School seed, 28
+reviewed rows. The review fixed five parser mistakes (an organisation with
+"and" in its name split in two, "led X before Y" read backwards, a campus
+not named, a surname on its own, a start year taken for a move year) and
+matched four places the board spells differently (WWASP, Cross Creek,
+Greenbrier Academy for Girls, OceanQuest under VisionQuest).
+
+The build adds 17 staff edges with `provenance: "staff-movement"`. A person
+who is a board node is connected to both places; otherwise - most are not,
+and the board stays the roster - the two places are joined by a staff edge
+that names who moved, which is what puts a second programme beside the
+first. The drawer prints that sentence under the connection. Five rows name
+a place not on the board (Silverado Academy is left there on purpose: it
+may or may not be Silverado Boys Ranch) and are listed in the QA report.
+
+Longer term, as the plan says, these belong in `staff.pastTTIJobs` on the
+v2 record so the profile and the map read one source.
+
 ### Already covered by 5b
 
 - **Every visible node labelled.** The degree threshold is gone and every

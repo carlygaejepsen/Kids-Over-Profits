@@ -4,12 +4,13 @@
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 907,
-   "edges": 1346,
+   "edges": 1363,
    "facilityMatches": 326,
    "withYears": 203,
    "withDeaths": 27,
    "rebranded": 80,
    "profileEdges": 40,
+   "staffMovementEdges": 17,
    "kind_person": 335,
    "kind_facility": 474,
    "kind_parent": 65,
@@ -25,7 +26,7 @@
    "edge_leadership": 384,
    "edge_clinical": 172,
    "edge_admissions": 45,
-   "edge_staff": 104,
+   "edge_staff": 121,
    "edge_other": 8,
    "edge_unknown": 95
   },
@@ -185,6 +186,35 @@
    }
   },
   {
+   "id": "provo-canyon-school",
+   "name": "Provo Canyon School",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "UHS",
+   "regions": [
+    "UHS"
+   ],
+   "natsap": true,
+   "importance": 67343,
+   "degree": 22,
+   "degreeByCategory": {
+    "leadership": 7,
+    "clinical": 3,
+    "corporate": 4,
+    "staff": 8
+   },
+   "facilityId": 10371,
+   "uniqueName": "Provo Canyon School",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -654.2,
+    "y": -3.11
+   },
+   "years": "from 1971"
+  },
+  {
    "id": "family-help-wellness",
    "name": "Family Help & Wellness",
    "aliases": [],
@@ -237,6 +267,36 @@
    }
   },
   {
+   "id": "outback-therapeutic-expeditions",
+   "name": "Outback Therapeutic Expeditions",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "Aspen",
+   "regions": [
+    "Aspen"
+   ],
+   "natsap": true,
+   "importance": 35972,
+   "degree": 19,
+   "degreeByCategory": {
+    "corporate": 6,
+    "clinical": 4,
+    "staff": 6,
+    "admissions": 2,
+    "leadership": 1
+   },
+   "facilityId": 10350,
+   "uniqueName": "Outback Therapeutic Expeditions",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 292.74,
+    "y": 67.99
+   },
+   "years": "2001-2023"
+  },
+  {
    "id": "sequel-youth-and-family-services",
    "name": "Sequel Youth and Family Services",
    "aliases": [],
@@ -263,34 +323,35 @@
    }
   },
   {
-   "id": "outback-therapeutic-expeditions",
-   "name": "Outback Therapeutic Expeditions",
+   "id": "suws-of-the-carolinas",
+   "name": "SUWS of the Carolinas",
    "aliases": [],
-   "kind": "facility",
+   "kind": "parent",
    "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
    ],
    "natsap": true,
-   "importance": 35972,
+   "importance": 28749,
    "degree": 18,
    "degreeByCategory": {
-    "corporate": 6,
-    "clinical": 4,
-    "staff": 5,
-    "admissions": 2,
-    "leadership": 1
+    "referral": 1,
+    "leadership": 4,
+    "clinical": 3,
+    "corporate": 7,
+    "staff": 2,
+    "admissions": 1
    },
-   "facilityId": 10350,
-   "uniqueName": "Outback Therapeutic Expeditions",
+   "facilityId": 11924,
+   "uniqueName": "SUWS of the Carolinas",
    "dates": "",
    "isolated": false,
    "board": {
-    "x": 292.74,
-    "y": 67.99
+    "x": 454.63,
+    "y": 198.27
    },
-   "years": "2001-2023"
+   "years": "2000-2023"
   },
   {
    "id": "island-view-rtc",
@@ -321,66 +382,6 @@
     "y": -284.14
    },
    "years": "1994-2014"
-  },
-  {
-   "id": "provo-canyon-school",
-   "name": "Provo Canyon School",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "UHS",
-   "regions": [
-    "UHS"
-   ],
-   "natsap": true,
-   "importance": 67343,
-   "degree": 17,
-   "degreeByCategory": {
-    "leadership": 7,
-    "clinical": 3,
-    "corporate": 4,
-    "staff": 3
-   },
-   "facilityId": 10371,
-   "uniqueName": "Provo Canyon School",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -654.2,
-    "y": -3.11
-   },
-   "years": "from 1971"
-  },
-  {
-   "id": "suws-of-the-carolinas",
-   "name": "SUWS of the Carolinas",
-   "aliases": [],
-   "kind": "parent",
-   "status": "closed",
-   "chain": "Aspen",
-   "regions": [
-    "Aspen"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 17,
-   "degreeByCategory": {
-    "referral": 1,
-    "leadership": 4,
-    "clinical": 3,
-    "corporate": 7,
-    "staff": 1,
-    "admissions": 1
-   },
-   "facilityId": 11924,
-   "uniqueName": "SUWS of the Carolinas",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 454.63,
-    "y": 198.27
-   },
-   "years": "2000-2023"
   },
   {
    "id": "embark-behavioral-health",
@@ -583,6 +584,36 @@
    "years": "from 1960"
   },
   {
+   "id": "northwest-academy",
+   "name": "Northwest Academy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "Brown Schools/CEDU",
+   "regions": [
+    "Brown Schools/CEDU"
+   ],
+   "natsap": true,
+   "importance": 25020,
+   "degree": 13,
+   "degreeByCategory": {
+    "leadership": 3,
+    "staff": 4,
+    "clinical": 2,
+    "admissions": 2,
+    "corporate": 2
+   },
+   "facilityId": 9691,
+   "uniqueName": "Northwest Academy",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -389.01,
+    "y": -239.39
+   },
+   "years": "1994-2019"
+  },
+  {
    "id": "solstice-rtc",
    "name": "Solstice RTC",
    "aliases": [],
@@ -698,36 +729,6 @@
     "x": -345.23,
     "y": -258
    }
-  },
-  {
-   "id": "northwest-academy",
-   "name": "Northwest Academy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "Brown Schools/CEDU",
-   "regions": [
-    "Brown Schools/CEDU"
-   ],
-   "natsap": true,
-   "importance": 25020,
-   "degree": 12,
-   "degreeByCategory": {
-    "leadership": 3,
-    "staff": 3,
-    "clinical": 2,
-    "admissions": 2,
-    "corporate": 2
-   },
-   "facilityId": 9691,
-   "uniqueName": "Northwest Academy",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -389.01,
-    "y": -239.39
-   },
-   "years": "1994-2019"
   },
   {
    "id": "rocky-mountain-academy",
@@ -877,6 +878,36 @@
    "years": "1993-2022"
   },
   {
+   "id": "cross-creek-programs",
+   "name": "Cross Creek Programs",
+   "aliases": [],
+   "kind": "parent",
+   "status": "closed",
+   "chain": "WWASPS",
+   "regions": [
+    "WWASPS"
+   ],
+   "natsap": false,
+   "importance": 29108,
+   "degree": 11,
+   "degreeByCategory": {
+    "admissions": 1,
+    "corporate": 5,
+    "leadership": 3,
+    "clinical": 1,
+    "staff": 1
+   },
+   "facilityId": 10420,
+   "uniqueName": "Cross Creek Programs",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -186.05,
+    "y": -662.57
+   },
+   "years": "1987-2011"
+  },
+  {
    "id": "youth-opportunity-investments",
    "name": "Youth Opportunity Investments",
    "aliases": [],
@@ -932,35 +963,6 @@
     "y": -72.86
    },
    "years": "1998-2014"
-  },
-  {
-   "id": "cross-creek-programs",
-   "name": "Cross Creek Programs",
-   "aliases": [],
-   "kind": "parent",
-   "status": "closed",
-   "chain": "WWASPS",
-   "regions": [
-    "WWASPS"
-   ],
-   "natsap": false,
-   "importance": 29108,
-   "degree": 10,
-   "degreeByCategory": {
-    "admissions": 1,
-    "corporate": 5,
-    "leadership": 3,
-    "clinical": 1
-   },
-   "facilityId": 10420,
-   "uniqueName": "Cross Creek Programs",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -186.05,
-    "y": -662.57
-   },
-   "years": "1987-2011"
   },
   {
    "id": "spring-ridge-academy",
@@ -1185,6 +1187,35 @@
     "x": -203.87,
     "y": 503.85
    }
+  },
+  {
+   "id": "stone-mountain-school",
+   "name": "Stone Mountain School",
+   "aliases": [],
+   "kind": "facility",
+   "status": "rebranded",
+   "chain": "",
+   "regions": [
+    "Aspen"
+   ],
+   "natsap": true,
+   "importance": 33881,
+   "degree": 8,
+   "degreeByCategory": {
+    "staff": 4,
+    "clinical": 1,
+    "corporate": 2,
+    "leadership": 1
+   },
+   "facilityId": 11653,
+   "uniqueName": "Stone Mountain School",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 437.49,
+    "y": 261
+   },
+   "years": "1990-2013"
   },
   {
    "id": "trails-carolina",
@@ -1579,35 +1610,6 @@
    }
   },
   {
-   "id": "stone-mountain-school",
-   "name": "Stone Mountain School",
-   "aliases": [],
-   "kind": "facility",
-   "status": "rebranded",
-   "chain": "",
-   "regions": [
-    "Aspen"
-   ],
-   "natsap": true,
-   "importance": 33881,
-   "degree": 7,
-   "degreeByCategory": {
-    "staff": 3,
-    "clinical": 1,
-    "corporate": 2,
-    "leadership": 1
-   },
-   "facilityId": 11653,
-   "uniqueName": "Stone Mountain School",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 437.49,
-    "y": 261
-   },
-   "years": "1990-2013"
-  },
-  {
    "id": "sunrise-rtc",
    "name": "Sunrise RTC",
    "aliases": [],
@@ -1941,6 +1943,35 @@
    }
   },
   {
+   "id": "discovery-ranch",
+   "name": "Discovery Ranch",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 6,
+   "degreeByCategory": {
+    "unknown": 1,
+    "corporate": 2,
+    "staff": 3
+   },
+   "facilityId": 10335,
+   "uniqueName": "Discovery Ranch",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 861.92,
+    "y": 271.13
+   },
+   "years": "from 2005",
+   "deaths": 1
+  },
+  {
    "id": "don-vardell",
    "name": "Don Vardell",
    "aliases": [],
@@ -2100,6 +2131,35 @@
    }
   },
   {
+   "id": "logan-river-academy",
+   "name": "Logan River Academy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "FHW"
+   ],
+   "natsap": true,
+   "importance": 25020,
+   "degree": 6,
+   "degreeByCategory": {
+    "clinical": 2,
+    "unknown": 2,
+    "leadership": 1,
+    "staff": 1
+   },
+   "facilityId": 10471,
+   "uniqueName": "Logan River Academy",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 209.64,
+    "y": -464.93
+   },
+   "years": "from 2000"
+  },
+  {
    "id": "red-mountain-colorado",
    "name": "Red Mountain Colorado",
    "aliases": [],
@@ -2155,6 +2215,62 @@
    "years": "from 2015"
   },
   {
+   "id": "redcliff-ascent",
+   "name": "RedCliff Ascent",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 6,
+   "degreeByCategory": {
+    "clinical": 1,
+    "unknown": 1,
+    "staff": 3,
+    "corporate": 1
+   },
+   "facilityId": 10338,
+   "uniqueName": "RedCliff Ascent",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 848.74,
+    "y": 133.5
+   },
+   "years": "from 1993"
+  },
+  {
+   "id": "robert-b-lichfield",
+   "name": "Robert B. Lichfield",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "WWASPS"
+   ],
+   "natsap": false,
+   "importance": 35725,
+   "degree": 6,
+   "degreeByCategory": {
+    "family": 3,
+    "leadership": 1,
+    "staff": 2
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -217.05,
+    "y": -727.34
+   }
+  },
+  {
    "id": "roots-transition",
    "name": "ROOTs Transition",
    "aliases": [],
@@ -2207,6 +2323,33 @@
    "board": {
     "x": -125.81,
     "y": -645.38
+   }
+  },
+  {
+   "id": "summit-achievement",
+   "name": "Summit Achievement",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "FHW"
+   ],
+   "natsap": true,
+   "importance": 32042,
+   "degree": 6,
+   "degreeByCategory": {
+    "clinical": 1,
+    "leadership": 1,
+    "staff": 4
+   },
+   "facilityId": 11030,
+   "uniqueName": "Summit Achievement",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 201.44,
+    "y": -511.37
    }
   },
   {
@@ -2587,6 +2730,32 @@
    "years": "1989-2022"
   },
   {
+   "id": "discovery-ranch-for-girls",
+   "name": "Discovery Ranch for Girls",
+   "aliases": [],
+   "kind": "facility",
+   "status": "rebranded",
+   "chain": "",
+   "regions": [
+    "Embark"
+   ],
+   "natsap": false,
+   "importance": 28749,
+   "degree": 5,
+   "degreeByCategory": {
+    "corporate": 2,
+    "staff": 3
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 834.6,
+    "y": 197.93
+   }
+  },
+  {
    "id": "fulshear-ranch-academy",
    "name": "Fulshear Ranch Academy",
    "aliases": [],
@@ -2880,34 +3049,6 @@
    }
   },
   {
-   "id": "logan-river-academy",
-   "name": "Logan River Academy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "FHW"
-   ],
-   "natsap": true,
-   "importance": 25020,
-   "degree": 5,
-   "degreeByCategory": {
-    "clinical": 2,
-    "unknown": 2,
-    "leadership": 1
-   },
-   "facilityId": 10471,
-   "uniqueName": "Logan River Academy",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 209.64,
-    "y": -464.93
-   },
-   "years": "from 2000"
-  },
-  {
    "id": "lone-star-expeditions",
    "name": "Lone Star Expeditions",
    "aliases": [],
@@ -3048,6 +3189,33 @@
    "years": "1991-2011"
   },
   {
+   "id": "peninsula-village",
+   "name": "Peninsula Village",
+   "aliases": [],
+   "kind": "facility",
+   "status": "rebranded",
+   "chain": "Aspen",
+   "regions": [
+    "Aspen"
+   ],
+   "natsap": true,
+   "importance": 42497,
+   "degree": 5,
+   "degreeByCategory": {
+    "corporate": 3,
+    "clinical": 1,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 464.53,
+    "y": 303.6
+   }
+  },
+  {
    "id": "phillip-dr-phil-mcgraw",
    "name": "Phillip \"Dr Phil\" McGraw",
    "aliases": [],
@@ -3096,33 +3264,6 @@
    "board": {
     "x": 489.7,
     "y": -544.97
-   }
-  },
-  {
-   "id": "robert-b-lichfield",
-   "name": "Robert B. Lichfield",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "WWASPS"
-   ],
-   "natsap": false,
-   "importance": 35725,
-   "degree": 5,
-   "degreeByCategory": {
-    "family": 3,
-    "leadership": 1,
-    "staff": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -217.05,
-    "y": -727.34
    }
   },
   {
@@ -4370,6 +4511,32 @@
    "years": "from 2003"
   },
   {
+   "id": "fulshear-treatment-to-transition",
+   "name": "Fulshear Treatment to Transition",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "Embark",
+   "regions": [
+    "Altior"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 4,
+   "degreeByCategory": {
+    "corporate": 2,
+    "staff": 2
+   },
+   "facilityId": 10612,
+   "uniqueName": "Fulshear Treatment to Transition",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 686.56,
+    "y": -38.97
+   }
+  },
+  {
    "id": "george-ross",
    "name": "George Ross",
    "aliases": [],
@@ -5092,32 +5259,6 @@
    }
   },
   {
-   "id": "peninsula-village",
-   "name": "Peninsula Village",
-   "aliases": [],
-   "kind": "facility",
-   "status": "rebranded",
-   "chain": "Aspen",
-   "regions": [
-    "Aspen"
-   ],
-   "natsap": true,
-   "importance": 42497,
-   "degree": 4,
-   "degreeByCategory": {
-    "corporate": 3,
-    "clinical": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 464.53,
-    "y": 303.6
-   }
-  },
-  {
    "id": "piney-ridge-center",
    "name": "Piney Ridge Center",
    "aliases": [],
@@ -5170,35 +5311,6 @@
     "x": -301.5,
     "y": -744.03
    }
-  },
-  {
-   "id": "redcliff-ascent",
-   "name": "RedCliff Ascent",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "Embark"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 4,
-   "degreeByCategory": {
-    "clinical": 1,
-    "unknown": 1,
-    "staff": 1,
-    "corporate": 1
-   },
-   "facilityId": 10338,
-   "uniqueName": "RedCliff Ascent",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 848.74,
-    "y": 133.5
-   },
-   "years": "from 1993"
   },
   {
    "id": "rick-jackson",
@@ -6820,6 +6932,33 @@
    }
   },
   {
+   "id": "copper-hills-youth-center",
+   "name": "Copper Hills Youth Center",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "UHS",
+   "regions": [
+    "Eckerd"
+   ],
+   "natsap": true,
+   "importance": 29293,
+   "degree": 3,
+   "degreeByCategory": {
+    "leadership": 1,
+    "corporate": 1,
+    "staff": 1
+   },
+   "facilityId": 10370,
+   "uniqueName": "Copper Hills Youth Center",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -127.56,
+    "y": -363.5
+   }
+  },
+  {
    "id": "coyote-karrick",
    "name": "Coyote Karrick",
    "aliases": [],
@@ -7135,34 +7274,6 @@
    "years": "2012-2024"
   },
   {
-   "id": "discovery-ranch",
-   "name": "Discovery Ranch",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "Embark"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 3,
-   "degreeByCategory": {
-    "unknown": 1,
-    "corporate": 2
-   },
-   "facilityId": 10335,
-   "uniqueName": "Discovery Ranch",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 861.92,
-    "y": 271.13
-   },
-   "years": "from 2005",
-   "deaths": 1
-  },
-  {
    "id": "doug-kim-brown",
    "name": "Doug Kim Brown",
    "aliases": [],
@@ -7289,6 +7400,33 @@
    "board": {
     "x": -237.75,
     "y": -291.49
+   }
+  },
+  {
+   "id": "eilean-mackenzie",
+   "name": "Eilean Mackenzie",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Eckerd"
+   ],
+   "natsap": false,
+   "importance": 13879,
+   "degree": 3,
+   "degreeByCategory": {
+    "unknown": 1,
+    "clinical": 1,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -230.63,
+    "y": -281.65
    }
   },
   {
@@ -7604,6 +7742,33 @@
    "board": {
     "x": -244.65,
     "y": -779.9
+   }
+  },
+  {
+   "id": "greenbrier-academy",
+   "name": "Greenbrier Academy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "Evolve"
+   ],
+   "natsap": true,
+   "importance": 28749,
+   "degree": 3,
+   "degreeByCategory": {
+    "admissions": 1,
+    "leadership": 1,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 213.26,
+    "y": 640.91
    }
   },
   {
@@ -8256,6 +8421,34 @@
    "years": "1990-1991"
   },
   {
+   "id": "kolob-canyon-rtc",
+   "name": "Kolob Canyon RTC",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "CERTS"
+   ],
+   "natsap": true,
+   "importance": 25020,
+   "degree": 3,
+   "degreeByCategory": {
+    "corporate": 1,
+    "leadership": 1,
+    "staff": 1
+   },
+   "facilityId": 10342,
+   "uniqueName": "Kolob Canyon RTC",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -749.41,
+    "y": 288.83
+   },
+   "years": "from 2002"
+  },
+  {
    "id": "l-jay-mitchell",
    "name": "L. Jay Mitchell",
    "aliases": [],
@@ -8833,6 +9026,33 @@
    "board": {
     "x": -147.87,
     "y": -648.26
+   }
+  },
+  {
+   "id": "new-horizons-for-young-women",
+   "name": "New Horizons for Young Women",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "Brown Schools/CEDU"
+   ],
+   "natsap": true,
+   "importance": 32200,
+   "degree": 3,
+   "degreeByCategory": {
+    "clinical": 1,
+    "leadership": 1,
+    "staff": 1
+   },
+   "facilityId": 11024,
+   "uniqueName": "New Horizons for Young Women",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -290.36,
+    "y": -281.65
    }
   },
   {
@@ -11515,32 +11735,6 @@
    }
   },
   {
-   "id": "copper-hills-youth-center",
-   "name": "Copper Hills Youth Center",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "UHS",
-   "regions": [
-    "Eckerd"
-   ],
-   "natsap": true,
-   "importance": 29293,
-   "degree": 2,
-   "degreeByCategory": {
-    "leadership": 1,
-    "corporate": 1
-   },
-   "facilityId": 10370,
-   "uniqueName": "Copper Hills Youth Center",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -127.56,
-    "y": -363.5
-   }
-  },
-  {
    "id": "cottonwood-treatment-center",
    "name": "Cottonwood Treatment Center",
    "aliases": [],
@@ -11904,31 +12098,6 @@
    "years": "from 2015"
   },
   {
-   "id": "discovery-ranch-for-girls",
-   "name": "Discovery Ranch for Girls",
-   "aliases": [],
-   "kind": "facility",
-   "status": "rebranded",
-   "chain": "",
-   "regions": [
-    "Embark"
-   ],
-   "natsap": false,
-   "importance": 28749,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 834.6,
-    "y": 197.93
-   }
-  },
-  {
    "id": "distant-drums-beginnings",
    "name": "Distant Drums Beginnings",
    "aliases": [],
@@ -12030,32 +12199,6 @@
     "y": -295.06
    },
    "years": "from 1968"
-  },
-  {
-   "id": "eilean-mackenzie",
-   "name": "Eilean Mackenzie",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Eckerd"
-   ],
-   "natsap": false,
-   "importance": 13879,
-   "degree": 2,
-   "degreeByCategory": {
-    "unknown": 1,
-    "clinical": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -230.63,
-    "y": -281.65
-   }
   },
   {
    "id": "embark-at-hobble-creek",
@@ -12265,31 +12408,6 @@
    }
   },
   {
-   "id": "fulshear-treatment-to-transition",
-   "name": "Fulshear Treatment to Transition",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "Embark",
-   "regions": [
-    "Altior"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 2
-   },
-   "facilityId": 10612,
-   "uniqueName": "Fulshear Treatment to Transition",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 686.56,
-    "y": -38.97
-   }
-  },
-  {
    "id": "gay-jackson",
    "name": "Gay Jackson",
    "aliases": [],
@@ -12415,32 +12533,6 @@
    "board": {
     "x": 73.37,
     "y": 381.72
-   }
-  },
-  {
-   "id": "greenbrier-academy",
-   "name": "Greenbrier Academy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "Evolve"
-   ],
-   "natsap": true,
-   "importance": 28749,
-   "degree": 2,
-   "degreeByCategory": {
-    "admissions": 1,
-    "leadership": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 213.26,
-    "y": 640.91
    }
   },
   {
@@ -13955,33 +14047,6 @@
    }
   },
   {
-   "id": "kolob-canyon-rtc",
-   "name": "Kolob Canyon RTC",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "CERTS"
-   ],
-   "natsap": true,
-   "importance": 25020,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 1,
-    "leadership": 1
-   },
-   "facilityId": 10342,
-   "uniqueName": "Kolob Canyon RTC",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -749.41,
-    "y": 288.83
-   },
-   "years": "from 2002"
-  },
-  {
    "id": "krista-zimmerman",
    "name": "Krista Zimmerman",
    "aliases": [],
@@ -14985,6 +15050,33 @@
    }
   },
   {
+   "id": "moonridge-academy",
+   "name": "Moonridge Academy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "CERTS"
+   ],
+   "natsap": true,
+   "importance": 25020,
+   "degree": 2,
+   "degreeByCategory": {
+    "corporate": 1,
+    "staff": 1
+   },
+   "facilityId": 10343,
+   "uniqueName": "Moonridge Academy",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -749.41,
+    "y": 279.73
+   },
+   "years": "from 2003"
+  },
+  {
    "id": "mycala-cherry",
    "name": "Mycala Cherry",
    "aliases": [],
@@ -15088,32 +15180,6 @@
     "y": -472.11
    },
    "years": "from 2018"
-  },
-  {
-   "id": "new-horizons-for-young-women",
-   "name": "New Horizons for Young Women",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "Brown Schools/CEDU"
-   ],
-   "natsap": true,
-   "importance": 32200,
-   "degree": 2,
-   "degreeByCategory": {
-    "clinical": 1,
-    "leadership": 1
-   },
-   "facilityId": 11024,
-   "uniqueName": "New Horizons for Young Women",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -290.36,
-    "y": -281.65
-   }
   },
   {
    "id": "new-leaf-academy-of-oregon",
@@ -16920,32 +16986,6 @@
    }
   },
   {
-   "id": "summit-achievement",
-   "name": "Summit Achievement",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "FHW"
-   ],
-   "natsap": true,
-   "importance": 32042,
-   "degree": 2,
-   "degreeByCategory": {
-    "clinical": 1,
-    "leadership": 1
-   },
-   "facilityId": 11030,
-   "uniqueName": "Summit Achievement",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 201.44,
-    "y": -511.37
-   }
-  },
-  {
    "id": "summit-preparatory-school",
    "name": "Summit Preparatory School",
    "aliases": [],
@@ -17842,6 +17882,32 @@
    "board": {
     "x": -418.54,
     "y": -170.27
+   }
+  },
+  {
+   "id": "visionquest",
+   "name": "VisionQuest",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "UHS"
+   ],
+   "natsap": false,
+   "importance": 28749,
+   "degree": 2,
+   "degreeByCategory": {
+    "unknown": 1,
+    "staff": 1
+   },
+   "facilityId": 10309,
+   "uniqueName": "VisionQuest",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -621,
+    "y": 34.28
    }
   },
   {
@@ -21224,32 +21290,6 @@
    }
   },
   {
-   "id": "moonridge-academy",
-   "name": "Moonridge Academy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "CERTS"
-   ],
-   "natsap": true,
-   "importance": 25020,
-   "degree": 1,
-   "degreeByCategory": {
-    "corporate": 1
-   },
-   "facilityId": 10343,
-   "uniqueName": "Moonridge Academy",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -749.41,
-    "y": 279.73
-   },
-   "years": "from 2003"
-  },
-  {
    "id": "mount-helix-rtc",
    "name": "Mount Helix RTC",
    "aliases": [],
@@ -23391,31 +23431,6 @@
    "board": {
     "x": 693.52,
     "y": -297.43
-   }
-  },
-  {
-   "id": "visionquest",
-   "name": "VisionQuest",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "UHS"
-   ],
-   "natsap": false,
-   "importance": 28749,
-   "degree": 1,
-   "degreeByCategory": {
-    "unknown": 1
-   },
-   "facilityId": 10309,
-   "uniqueName": "VisionQuest",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -621,
-    "y": 34.28
    }
   },
   {
@@ -41179,6 +41194,244 @@
    "crossesChain": true,
    "crossesRegion": true,
    "provenance": "profile"
+  },
+  {
+   "id": "s0001",
+   "source": "eilean-mackenzie",
+   "target": "fulshear-treatment-to-transition",
+   "category": "staff",
+   "roles": [
+    "staff"
+   ],
+   "raw": "Eilean MacKenzie (Clinical Director) moved to Fulshear Treatment to Transition",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0002",
+   "source": "new-horizons-for-young-women",
+   "target": "greenbrier-academy",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Audrey Peavey (Admissions Director) moved from New Horizons for Young Women to Greenbrier Academy",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0003",
+   "source": "visionquest",
+   "target": "summit-achievement",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Adam Tsapis (cofounder and former admissions director, previously at OceanQuest) moved from VisionQuest to Summit Achievement; Chris Mays (cofounder and former executive director, previously at OceanQuest) moved from VisionQuest to Summit Achievement",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0004",
+   "source": "suws-of-the-carolinas",
+   "target": "summit-achievement",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Shannon H. Palentchar (admissions director) moved from SUWS of the Carolinas to Summit Achievement",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0005",
+   "source": "stone-mountain-school",
+   "target": "summit-achievement",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Shannon H. Palentchar (admissions director) moved from Stone Mountain School to Summit Achievement",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0006",
+   "source": "fulshear-treatment-to-transition",
+   "target": "summit-achievement",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Shannon H. Palentchar (admissions director) moved from Fulshear Treatment to Transition to Summit Achievement",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0007",
+   "source": "provo-canyon-school",
+   "target": "discovery-ranch",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Clint Dorny (executive director) moved from Provo Canyon School to Discovery Ranch; Dave Blackwell (therapist) moved from Provo Canyon School to Discovery Ranch; Brent Hall moved from Provo Canyon School to Discovery Ranch",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0008",
+   "source": "discovery-ranch",
+   "target": "redcliff-ascent",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Leslie Glies (residential director) moved from Discovery Ranch to RedCliff Ascent",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0009",
+   "source": "redcliff-ascent",
+   "target": "discovery-ranch-for-girls",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Andrea Burgess moved from RedCliff Ascent to Discovery Ranch for Girls",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0010",
+   "source": "discovery-ranch-for-girls",
+   "target": "moonridge-academy",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Jack Hinman (clinical director, girls campus) moved from Discovery Ranch for Girls to Moonridge Academy",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0011",
+   "source": "discovery-ranch-for-girls",
+   "target": "kolob-canyon-rtc",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Jack Hinman (clinical director, girls campus) moved from Discovery Ranch for Girls to Kolob Canyon RTC",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0012",
+   "source": "outback-therapeutic-expeditions",
+   "target": "discovery-ranch",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Tim Lowe moved from Outback Therapeutic Expeditions to Discovery Ranch",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0013",
+   "source": "robert-b-lichfield",
+   "target": "cross-creek-programs",
+   "category": "staff",
+   "roles": [
+    "staff"
+   ],
+   "raw": "Robert B. Lichfield (dorm parent from 1977) moved to Cross Creek Programs",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0014",
+   "source": "provo-canyon-school",
+   "target": "logan-river-academy",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Larry Carter moved from Provo Canyon School to Logan River Academy in 2000",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0015",
+   "source": "provo-canyon-school",
+   "target": "copper-hills-youth-center",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Ron Tuinei moved from Provo Canyon School to Copper Hills Youth Center",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0016",
+   "source": "peninsula-village",
+   "target": "provo-canyon-school",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Adam McClain moved from Peninsula Village to Provo Canyon School",
+   "direction": "none",
+   "crossesChain": true,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
+  },
+  {
+   "id": "s0017",
+   "source": "northwest-academy",
+   "target": "provo-canyon-school",
+   "category": "staff",
+   "roles": [
+    "staff moved"
+   ],
+   "raw": "Adam McClain moved from Northwest Academy to Provo Canyon School",
+   "direction": "none",
+   "crossesChain": true,
+   "crossesRegion": true,
+   "provenance": "staff-movement"
   }
  ]
 }

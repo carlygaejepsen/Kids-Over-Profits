@@ -58,7 +58,7 @@
                 : null;
             var label = (style && style.label) || 'Other connection';
             if (!byLabel[label]) { byLabel[label] = []; order.push(label); }
-            byLabel[label].push({ node: link.other, provenance: link.edge.provenance || '' });
+            byLabel[label].push({ node: link.other, provenance: link.edge.provenance || '', raw: link.edge.raw || '' });
         });
         order.sort(function (a, b) {
             return byLabel[b].length - byLabel[a].length || a.localeCompare(b);
@@ -70,7 +70,14 @@
             return {
                 label: label,
                 nodes: others.map(function (o) { return o.node; }),
-                fromProfile: others.map(function (o) { return o.provenance === 'profile'; })
+                /* Where a connection came from, when it is not the research
+                 * board's own: the profile, or the staff moves (whose raw
+                 * text says who moved where, which is the whole point). */
+                sources: others.map(function (o) {
+                    if (o.provenance === 'profile') return 'from the profile';
+                    if (o.provenance === 'staff-movement') return o.raw;
+                    return '';
+                })
             };
         });
     }
@@ -147,11 +154,11 @@
                     var button = el('button', 'kop-network__drawer-link', other.name);
                     button.type = 'button';
                     button.setAttribute('data-id', other.id);
-                    if (group.fromProfile[index]) {
+                    if (group.sources[index]) {
                         /* Say where a connection came from when it is not the
                          * research board's own. */
                         item.appendChild(button);
-                        item.appendChild(el('span', 'kop-network__drawer-source', 'from the profile'));
+                        item.appendChild(el('span', 'kop-network__drawer-source', group.sources[index]));
                         button.addEventListener('click', function () { focus.select(other); });
                         list.appendChild(item);
                         return;

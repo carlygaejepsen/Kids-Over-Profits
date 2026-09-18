@@ -30,6 +30,8 @@ const NODES_CSV = path.join(DATA_DIR, 'tti_nodes.csv');
 const EDGES_CSV = path.join(DATA_DIR, 'tti_edges.csv');
 const OVERRIDES_FILE = path.join(DATA_DIR, 'network-overrides.json');
 const OUTPUT_FILE = path.join(DATA_DIR, 'graph.json');
+/* Reviewed rows from scripts/extract-staff-movement.js (2b.11). */
+const STAFF_MOVEMENT_CSV = path.join(DATA_DIR, 'staff-movement.csv');
 const QA_FILE = path.join(ROOT, 'tmp', 'network-qa.md');
 const SQLITE_FILE = path.join(ROOT, 'tmp', 'prod.sqlite');
 const PROGRAMS_FILE = path.join(ROOT, 'js', 'data', 'reddit-wiki', 'programs-array.json');
@@ -50,7 +52,7 @@ const qa = {
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
     droppedRows: [], chainInferred: [], missingHeadline: [],
     rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
-    profileEdges: [], profileNames: []
+    profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -771,6 +773,88 @@ function addProfileEdges(nodes, edges, facilities) {
     return n;
 }
 
+/**
+ * 2b.11. Staff movement, from the reviewed js/data/network/staff-movement.csv
+ * (person, from, to, role, year, source). The fact worth having is that
+ * somebody worked at both places. Where the person is a board node, they
+ * are connected to each place; where they are not - most are not, and the
+ * board stays the roster - the two places are connected by a staff edge
+ * that names them, which is what puts a second programme on screen beside
+ * the first. A place that does not resolve to exactly one node is reported
+ * and the row skipped. Edges carry provenance "staff-movement".
+ */
+function addStaffMovement(nodes, edges) {
+    if (!fs.existsSync(STAFF_MOVEMENT_CSV)) return 0;
+    const rows = parseCsv(fs.readFileSync(STAFF_MOVEMENT_CSV, 'utf8'));
+    const byKey = new Map();
+    nodes.forEach(function (node) {
+        [node.name].concat(node.aliases || []).forEach(function (name) {
+            const key = nameKey(name);
+            if (!key) return;
+            if (!byKey.has(key)) byKey.set(key, new Set());
+            byKey.get(key).add(node);
+        });
+    });
+    const resolve = function (name) {
+        const hits = byKey.get(nameKey(name));
+        return hits && hits.size === 1 ? Array.from(hits)[0] : null;
+    };
+    const pairs = new Map();
+    edges.forEach(function (e) { pairs.set([e.source, e.target].sort().join('|'), e); });
+
+    let n = 0;
+    const push = function (a, b, role, raw) {
+        const key = [a.id, b.id].sort().join('|');
+        const existing = pairs.get(key);
+        if (existing) {
+            /* Already connected: note the move on the line that is there
+             * rather than drawing a second one. */
+            if (existing.provenance === 'staff-movement' && existing.raw.indexOf(raw) === -1) {
+                existing.raw += '; ' + raw;
+            }
+            return;
+        }
+        n++;
+        const edge = {
+            id: 's' + String(n).padStart(4, '0'),
+            source: a.id,
+            target: b.id,
+            category: 'staff',
+            roles: [role],
+            raw: raw,
+            direction: 'none',
+            crossesChain: false,
+            crossesRegion: a.regions[0] !== b.regions[0],
+            provenance: 'staff-movement'
+        };
+        edges.push(edge);
+        pairs.set(key, edge);
+    };
+
+    rows.forEach(function (row) {
+        const person = String(row.person || '').trim();
+        const from = resolve(row.from);
+        const to = resolve(row.to);
+        if (!person || !from || !to) {
+            qa.staffUnresolved.push(person + ': ' + row.from + (from ? '' : ' (not on the board)') +
+                ' -> ' + row.to + (to ? '' : ' (not on the board)'));
+            return;
+        }
+        if (from.id === to.id) return;
+        const when = row.year ? ' in ' + row.year : '';
+        const who = person + (row.role ? ' (' + row.role + ')' : '');
+        const personNode = resolve(person);
+        if (personNode && personNode.kind === 'person') {
+            push(personNode, from, 'staff', who + ' worked at ' + from.name);
+            push(personNode, to, 'staff', who + ' moved to ' + to.name + when);
+        } else {
+            push(from, to, 'staff moved', who + ' moved from ' + from.name + ' to ' + to.name + when);
+        }
+        qa.staffMoves.push(who + ': ' + from.name + ' -> ' + to.name + when);
+    });
+    return n;
+}
+
 /* ------------------------------------------------------------------ *
  * Layout
  * ------------------------------------------------------------------ */
@@ -1065,7 +1149,7 @@ function build() {
     deriveDeaths(nodes, facilities, overrides);
 
     /* --- 7c. connections the facility profiles record ------------- */
-    const added = addProfileEdges(nodes, edges, facilities);
+    const added = addProfileEdges(nodes, edges, facilities) + addStaffMovement(nodes, edges);
     if (added) {
         /* The profile edges change who connects to whom, so the counts are
          * taken again from scratch rather than patched. */
@@ -1089,7 +1173,8 @@ function build() {
         withYears: nodes.filter(function (n) { return n.years; }).length,
         withDeaths: nodes.filter(function (n) { return n.deaths; }).length,
         rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length,
-        profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length
+        profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length,
+        staffMovementEdges: edges.filter(function (e) { return e.provenance === 'staff-movement'; }).length
     };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
@@ -1223,6 +1308,12 @@ function writeQaReport(graph) {
     section(lines, 'Profile names that are another board node', qa.profileNames, function (item) { return item; },
         'Not added. Either a rebrand the board is missing (draw it on the board) or a sister ' +
         'programme listed as a name by mistake (fix the profile).');
+
+    section(lines, 'Staff moves drawn from staff-movement.csv', qa.staffMoves, function (item) { return item; },
+        'Reviewed rows that resolved. Correct a row in the CSV, not here.');
+
+    section(lines, 'Staff moves with a place not on the board', qa.staffUnresolved, function (item) { return item; },
+        'Skipped. Add an alias under `aliases` if the place is on the board under another name.');
 
     section(lines, 'Merged nodes', qa.mergedNodes, function (item) { return item; }, '');
     section(lines, 'Duplicate edges dropped', qa.duplicateEdges, function (item) { return item; }, '');

@@ -115,6 +115,12 @@ function run() {
         check(CATEGORIES.indexOf(edge.category) !== -1, 'edge ' + edge.id + ' has category "' + edge.category + '"');
         check(DIRECTIONS.indexOf(edge.direction) !== -1, 'edge ' + edge.id + ' has direction "' + edge.direction + '"');
         check(Array.isArray(edge.roles), 'edge ' + edge.id + ' has no roles array');
+        /* The board's own edges carry no provenance; the build's additions
+         * say where they came from (2b.12, 2b.11). */
+        check(edge.provenance === undefined || edge.provenance === 'profile' || edge.provenance === 'staff-movement',
+            'edge ' + edge.id + ' has provenance "' + edge.provenance + '"');
+        check(edge.provenance !== 'staff-movement' || /moved|worked at/.test(edge.raw || ''),
+            'staff-movement edge ' + edge.id + ' does not say who moved');
     });
 
     /* a person is never the target of a person-to-organisation edge */
