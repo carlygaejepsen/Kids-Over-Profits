@@ -36,6 +36,18 @@
         return 'unknown';
     }
 
+    /* The connections the map shows until the visitor asks for more:
+     * ownership and the people who worked somewhere. "unknown" is almost all
+     * a person at a programme with no role recorded, which is staff in all
+     * but name. Family stays on: operators married into and handed down
+     * each other's programmes, and that is ownership by another route.
+     * Board seats (mostly industry associations), referrals, survivors and
+     * "other" are a checkbox away on the rail; on
+     * by default they brought in names with no bearing on the question -
+     * Alcoholics Anonymous in Synanon's view through a board seat, and Bill
+     * Lane's companies through a connection nobody recorded a type for. */
+    var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family'];
+
     function toSet(list) {
         var set = Object.create(null);
         (list || []).forEach(function (v) { set[v] = true; });
@@ -200,15 +212,19 @@
         /* ------------------------------------------------------- filters -- */
 
         /**
-         * Everything on, slider at one. The rail renders its checkboxes
-         * checked, so this has to agree with the markup or the first
-         * interaction would appear to change nothing.
+         * Everything on except the connection types outside staff,
+         * ownership and family, slider at zero. The rail's checkboxes are set from this
+         * when the map starts, and the markup matches it so the first paint
+         * does too.
          */
         store.defaultFilters = function () {
             var meta = store.meta || {};
+            var categories = (meta.categories || []).filter(function (c) {
+                return DEFAULT_CATEGORIES.indexOf(c) !== -1;
+            });
             return {
                 kinds: toSet(meta.kinds || []),
-                categories: toSet(meta.categories || []),
+                categories: toSet(categories.length ? categories : (meta.categories || [])),
                 statuses: toSet(['open', 'closed', 'rebranded', 'unknown']),
                 natsapOnly: false,
                 /* '' is the "no recorded owner" checkbox: 708 of 907 nodes. */

@@ -411,12 +411,29 @@ function run() {
         sandbox.KOPNetworkStore.statusBucket('rebranded') === 'rebranded',
         'status bucketing does not match the three filter checkboxes');
 
+    /* The default connections are ownership, staff and family. Board seats,
+     * referrals, survivors and "other" are a checkbox away: on by default
+     * they put Alcoholics Anonymous and Bill Lane's companies in Synanon's
+     * view. A name whose only connections are those drops off until they
+     * are turned on. */
+    const defaultCats = store.filters.categories;
+    check(['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family']
+        .every((c) => defaultCats[c]) &&
+        ['board', 'referral', 'survivor', 'other'].every((c) => !defaultCats[c]),
+        'the default connection types are not ownership, staff and family: ' + Object.keys(defaultCats).join(', '));
+    const defaultView = store.visible();
+    check(defaultView.edges.every((e) => defaultCats[e.category]),
+        'the default view drew a connection type that is off by default');
+
+    /* With every connection type on, the view is the whole map. The
+     * slider's floor is zero connections, so the unconnected names - Judge
+     * Rotenberg, IECA, Accelerated Christian Education - are on it like
+     * everything else. */
+    graph.meta.categories.forEach((c) => { store.filters.categories[c] = true; });
+    store.touch();
     const all = store.visible();
-    /* The default view is the whole map. The slider's floor is zero
-     * connections, so the unconnected names - Judge Rotenberg, IECA,
-     * Accelerated Christian Education - are on it like everything else. */
     check(all.nodes.length === graph.nodes.length,
-        'default view shows ' + all.nodes.length + ' of ' + graph.nodes.length + ' nodes',
+        'with every connection type on, the map shows ' + all.nodes.length + ' of ' + graph.nodes.length + ' nodes',
         'default view: ' + all.nodes.length + ' nodes, ' + all.edges.length + ' edges');
     check(all.edges.length === graph.edges.length,
         'default view lost edges: ' + all.edges.length + '/' + graph.edges.length);
@@ -1211,7 +1228,7 @@ function run() {
         focus.select(synanon);
         flushFrames();
         const synView = focus.scene();
-        ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics'].forEach((id) => {
+        ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics', 'alcoholics-anonymous', 'bill-lane-and-associates'].forEach((id) => {
             check(!synView.nodeIds[id], "Synanon's view brought in " + id + ', which it does not connect to');
         });
         focus.clear();
@@ -1497,8 +1514,8 @@ function run() {
     /* --- reset puts the rail and the store back together --- */
 
     doc.getElementById('kop-network-reset-filters').dispatch('click');
-    check(store.filters.minDegree === 0 && store.visible().nodes.length === graph.nodes.length,
-        'Reset filters did not restore the whole map');
+    check(store.filters.minDegree === 0 && store.visible().nodes.length === defaultView.nodes.length,
+        'Reset filters did not restore the default map');
     check(slider.value === '0' && sliderOut.textContent === 'any',
         'Reset filters left the slider showing its old value');
     check(doc.querySelectorAll('input[name="kop-network-kind"]').every((i) => i.checked),
