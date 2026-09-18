@@ -60,9 +60,12 @@
      * radius is clamped on the way to the screen so a small view cannot blow
      * its shapes up into blobs.
      */
-    /* A label's width, in world units. Names are drawn centred under their
-     * node at about 11.5px, a little over six pixels a character. */
-    var LABEL_CHAR_WIDTH = 6.4;
+    /* A label's width, in world units. Names are drawn inside their bubble
+     * at 12px, a little under seven pixels a character. */
+    var LABEL_CHAR_WIDTH = 6.7;
+    /* A name sits inside a bubble, so it takes its padding and the gap
+     * the renderer keeps between bubbles on top of its own width. */
+    var BUBBLE_EXTRA = 30;
     var LABEL_HALF_PER_CHAR = LABEL_CHAR_WIDTH / 2;
     /* Clear space between one column's names and the next. */
     var COLUMN_GUTTER = 26;
@@ -102,7 +105,7 @@
      * neatly and leaves the labels on top of each other.
      */
     function spaceFor(node) {
-        var label = String(node.name || '').length * LABEL_HALF_PER_CHAR;
+        var label = String(node.name || '').length * LABEL_HALF_PER_CHAR + BUBBLE_EXTRA / 2;
         return Math.max(node.r + 8, label);
     }
 
@@ -863,7 +866,7 @@
                      * and the grid agree about how much room this name
                      * takes. */
                     space: spaceFor(node),
-                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH),
+                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH + BUBBLE_EXTRA),
                     tier: tierOf(node),
                     years: !!node.years
                 };
@@ -1977,7 +1980,7 @@
 
         /** What one name takes across, in the units the packer measured it in. */
         function labelWidth(node) {
-            return Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH);
+            return Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH + BUBBLE_EXTRA);
         }
 
         /* --------------------------------------------- filters moved under us -- */

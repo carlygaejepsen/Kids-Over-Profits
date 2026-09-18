@@ -545,15 +545,19 @@ to the question asked.
 
 #### 4. Renderer
 
-Shape by kind:
+Every node is a bubble with its name inside it, sized to the name, and the
+years under the name where the data has them: a pill for a person, a
+rounded box for every organisation. Kind is carried by colour (and by the
+name), not by shape - the diamonds, hexagons and triangles the first
+version drew were a second code nobody read. The text is navy or white,
+whichever reads on the fill. A node that cannot hold its name clear of its
+neighbours (only when zoomed well out past the legible floor) falls back to
+a dot: a circle for a person, a rounded square for anything else.
 
-| Kind | Shape |
-|---|---|
-| person | circle |
-| facility | rounded square |
-| parent | diamond |
-| association | hexagon |
-| government, church | triangle |
+Lines run into the centre of each end with the bubble painted over them, so
+a line always meets what it connects to, and a dot in the line's colour
+marks where it lands on the rim. A directed line (became, acquired) gets
+an arrowhead at that point instead.
 
 Colour mode one, the default, by kind: teal, navy, orange, chartreuse
 outline on sand, grey. Colour mode two by chain: twelve hues from the
@@ -561,7 +565,7 @@ tokens plus grey for the rest, with a legend that lists only the chains
 present in the current view.
 
 Open nodes solid, closed hollow with a two-pixel stroke, NATSAP a thin
-chartreuse ring. Radius on a log scale of importance, clamped.
+chartreuse ring. Bubble size comes from the name, not from importance.
 
 Edges: corporate solid and thicker, family dashed, unknown dotted grey,
 survivor coral, cross-region orange when that toggle is on.
@@ -655,7 +659,7 @@ plus the slop, not the slop alone. `quadtree.find` returns the nearest
 the moment the map is zoomed in far enough for the slop to be worth about a
 world unit — a click well inside a big node would find nothing. The shape
 test that follows is a circle of the node's own radius, which is close
-enough for a diamond or a hexagon and much cheaper than the real outline.
+enough for a dot. A bubble is hit by its box (`renderer.labelHits`).
 
 The slop itself is eight CSS pixels, converted into world units per zoom
 level, so a small node stays tappable on a phone however far out the map

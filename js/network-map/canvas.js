@@ -105,8 +105,8 @@
      * both fit, the better-connected one wins and the other is dropped
      * rather than smeared over it.
      */
-    var LABEL_SIZE = 11.5;
-    var LABEL_SIZE_HOVER = 13;
+    var LABEL_SIZE = 12;
+    var LABEL_SIZE_HOVER = 13.5;
     var LABEL_LINE = 13;
     /* Offsets for the lines of successive hubs in one gutter, in steps of
      * five pixels: the middle, then either side of it. */
@@ -117,16 +117,19 @@
 
     /* Bucket size for the collision grid, in screen pixels. */
     var LABEL_CELL = 48;
-    /* Breathing room around each label's box. Boxes that merely touch still
-     * read as one another's neighbours, so the gap is part of the rule. */
-    var LABEL_PAD_X = 5;
 
-    /* Where a label may sit, in the order it is tried. Below the node first,
-     * because that is where a reader looks for it and where the row packer
-     * leaves room; the other three are what a name falls back to rather than
-     * being dropped. */
-    var LABEL_PLACEMENTS = ['below', 'above', 'right', 'left'];
-    var LABEL_PAD_Y = 3;
+    /* Bubbles. A name sits inside its node with this much room around it,
+     * and two bubbles keep at least BUBBLE_GAP apart on every side. */
+    var BUBBLE_PAD_X = 9;
+    var BUBBLE_PAD_Y = 5;
+    var BUBBLE_GAP = 4;
+    /* A node that cannot hold its name is drawn as a dot this size, in
+     * screen pixels: big enough to read as a person or a place, small
+     * enough not to crowd what does have room. */
+    var DOT_MIN = 4.5;
+    var DOT_MAX = 9;
+    /* The dot where a line lands on a bubble. */
+    var PORT_R = 3;
     /* The years of operation, a smaller second line under a name. */
     var YEARS_SIZE = 9.5;
     var YEARS_LINE = 11;
@@ -377,57 +380,108 @@
         ctx.fill();
     }
 
-    /* Node outlines: shape traced at the origin, caller has translated. */
+    /* Node outlines for a node too crowded to hold its name: a circle for a
+     * person, a rounded square for everything else. Kinds are told apart by
+     * colour, and in a bubble by the name inside it; the diamonds, hexagons
+     * and triangles this used to draw were a second code nobody read. */
     function traceShape(ctx, kind, x, y, r) {
-        var i, a;
-        switch (kind) {
-            case 'facility': {
-                /* Rounded square, area roughly matched to a circle of r. */
-                var s = r * 1.78;
-                var half = s / 2;
-                var rad = Math.min(r * 0.32, half);
-                ctx.moveTo(x - half + rad, y - half);
-                ctx.lineTo(x + half - rad, y - half);
-                ctx.quadraticCurveTo(x + half, y - half, x + half, y - half + rad);
-                ctx.lineTo(x + half, y + half - rad);
-                ctx.quadraticCurveTo(x + half, y + half, x + half - rad, y + half);
-                ctx.lineTo(x - half + rad, y + half);
-                ctx.quadraticCurveTo(x - half, y + half, x - half, y + half - rad);
-                ctx.lineTo(x - half, y - half + rad);
-                ctx.quadraticCurveTo(x - half, y - half, x - half + rad, y - half);
-                break;
-            }
-            case 'parent': {
-                var d = r * 1.3;
-                ctx.moveTo(x, y - d);
-                ctx.lineTo(x + d, y);
-                ctx.lineTo(x, y + d);
-                ctx.lineTo(x - d, y);
-                break;
-            }
-            case 'association': {
-                var h = r * 1.16;
-                for (i = 0; i < 6; i++) {
-                    a = (Math.PI / 3) * i - Math.PI / 2;
-                    ctx[i ? 'lineTo' : 'moveTo'](x + h * Math.cos(a), y + h * Math.sin(a));
-                }
-                break;
-            }
-            case 'government':
-            case 'church': {
-                var t = r * 1.42;
-                for (i = 0; i < 3; i++) {
-                    a = (2 * Math.PI / 3) * i - Math.PI / 2;
-                    ctx[i ? 'lineTo' : 'moveTo'](x + t * Math.cos(a), y + t * Math.sin(a));
-                }
-                break;
-            }
-            default:
-                ctx.moveTo(x + r, y);
-                ctx.arc(x, y, r, 0, Math.PI * 2);
-                return;
+        if (kind === 'person') {
+            ctx.moveTo(x + r, y);
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            return;
         }
-        ctx.closePath();
+        var half = r * 0.89;
+        pathRounded(ctx, x - half, y - half, half * 2, half * 2, Math.min(r * 0.34, half));
+    }
+
+    /* A rounded rectangle path. arcTo keeps it to the calls every canvas has. */
+    function pathRounded(c, x, y, width, height, radius) {
+        radius = Math.max(0, Math.min(radius, width / 2, height / 2));
+        c.moveTo(x + radius, y);
+        c.lineTo(x + width - radius, y);
+        c.arcTo(x + width, y, x + width, y + radius, radius);
+        c.lineTo(x + width, y + height - radius);
+        c.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+        c.lineTo(x + radius, y + height);
+        c.arcTo(x, y + height, x, y + height - radius, radius);
+        c.lineTo(x, y + radius);
+        c.arcTo(x, y, x + radius, y, radius);
+        c.closePath();
+    }
+
+    /* A bubble's outline, grown by `inflate` on every side: a pill for a
+     * person, a softly rounded box for an organisation. */
+    function traceBubble(ctx, kind, box, inflate) {
+        var x0 = box[0] - inflate, y0 = box[1] - inflate;
+        var width = box[2] - box[0] + inflate * 2;
+        var height = box[3] - box[1] + inflate * 2;
+        pathRounded(ctx, x0, y0, width, height, kind === 'person' ? height / 2 : 7 + inflate);
+    }
+
+    /* Mix a hex colour toward the stage colour; share is how much of the
+     * colour is kept. */
+    function blendHex(hex, share) {
+        var m = /^#([0-9a-f]{6})$/i.exec(hex);
+        if (!m) return hex;
+        var a = parseInt(m[1], 16), b = parseInt(SURFACE.slice(1), 16);
+        var out = 0;
+        for (var shift = 16; shift >= 0; shift -= 8) {
+            out = out * 256 + Math.round(((a >> shift) & 255) * share + ((b >> shift) & 255) * (1 - share));
+        }
+        return '#' + ('000000' + out.toString(16)).slice(-6);
+    }
+
+    /* Navy or white, whichever reads on the bubble as it is painted. */
+    function inkOn(spec) {
+        if (spec.status === 'closed' || spec.status === 'rebranded') return '#000435';
+        var fill = spec.status === 'unknown' ? blendHex(spec.fill, 0.55) : spec.fill;
+        return luminance(fill) > 0.45 ? '#000435' : '#FFFFFF';
+    }
+
+    /* A line's colour at full strength. Staff lines are drawn translucent so
+     * a busy view stays calm, but the point where one lands has to show. */
+    function solid(colour) {
+        var m = /^rgba\(([^,]+),([^,]+),([^,]+),[^)]+\)$/.exec(String(colour).replace(/\s+/g, ''));
+        return m ? 'rgb(' + m[1] + ',' + m[2] + ',' + m[3] + ')' : colour;
+    }
+
+    /* The dot where a line lands on a bubble. */
+    function drawPort(ctx, x, y, colour) {
+        ctx.beginPath();
+        ctx.arc(x, y, PORT_R, 0, Math.PI * 2);
+        ctx.fillStyle = solid(colour);
+        ctx.fill();
+        ctx.strokeStyle = SURFACE;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+    }
+
+    /**
+     * Where a route crosses the rim of one of its ends. The route starts at
+     * the centre of its source and finishes at the centre of its target, so
+     * walking in from the right end, the first point outside the box marks
+     * the leg that crosses it. `from` is that outside point, which is the
+     * direction an arrowhead arrives from. Null when the whole route sits
+     * inside the box.
+     */
+    function rimPoint(pts, box, fromEnd) {
+        var n = pts.length;
+        for (var s = 1; s < n; s++) {
+            var p = fromEnd ? pts[n - s] : pts[s - 1];
+            var q = fromEnd ? pts[n - s - 1] : pts[s];
+            if (q[0] >= box[0] && q[0] <= box[2] && q[1] >= box[1] && q[1] <= box[3]) continue;
+            var t = 1;
+            var dx = q[0] - p[0], dy = q[1] - p[1];
+            if (q[0] > box[2] && dx) t = Math.min(t, (box[2] - p[0]) / dx);
+            if (q[0] < box[0] && dx) t = Math.min(t, (box[0] - p[0]) / dx);
+            if (q[1] > box[3] && dy) t = Math.min(t, (box[3] - p[1]) / dy);
+            if (q[1] < box[1] && dy) t = Math.min(t, (box[1] - p[1]) / dy);
+            t = Math.max(0, t);
+            var hit = [p[0] + dx * t, p[1] + dy * t];
+            hit.from = q;
+            return hit;
+        }
+        return null;
     }
 
     /**
@@ -441,17 +495,9 @@
         return INK + (luminance(fill) > 0.62 ? '0.72)' : '0.45)');
     }
 
-    /**
-     * One node, at one place, at one size. The map and the legend both come
-     * through here, so a swatch cannot drift from the thing it describes.
-     *
-     * spec is mutated and reused by the draw loop rather than allocated per
-     * node, so it must not be held on to.
-     */
-    function paintNode(ctx, spec, x, y, r, alpha) {
-        ctx.beginPath();
-        traceShape(ctx, spec.kind, x, y, r);
-
+    /* Fill and outline for one node, whatever its outline is. The path must
+     * already be traced. */
+    function fillOutline(ctx, spec, alpha) {
         if (spec.status === 'closed' || spec.status === 'rebranded') {
             /* Hollow: no longer operating under this name. Closed is a solid
              * outline; rebranded is dashed, because the place carried on
@@ -463,12 +509,19 @@
                 ? (KIND_OUTLINE[spec.kind] || INK + '0.6)')
                 : spec.fill;
             ctx.lineWidth = 2;
-            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash([3, 2]);
+            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash([4, 3]);
             ctx.stroke();
             if (ctx.setLineDash) ctx.setLineDash([]);
         } else {
-            /* Open solid; status unrecorded the same shape at 55%, so "we do
-             * not know" reads as faded rather than as closed. */
+            /* Open solid; status unrecorded the same fill at 55%, so "we do
+             * not know" reads as faded rather than as closed. The stage is
+             * painted under it first so a line running to its centre does
+             * not show through. */
+            if (spec.status === 'unknown') {
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = SURFACE;
+                ctx.fill();
+            }
             ctx.globalAlpha = alpha * (spec.status === 'unknown' ? 0.55 : 1);
             ctx.fillStyle = spec.fill;
             ctx.fill();
@@ -477,6 +530,20 @@
             ctx.lineWidth = spec.outlineWidth || 1;
             ctx.stroke();
         }
+    }
+
+    /**
+     * One node as a dot, at one place, at one size. The legend comes
+     * through here too, so a swatch cannot drift from the thing it
+     * describes.
+     *
+     * spec is mutated and reused by the draw loop rather than allocated per
+     * node, so it must not be held on to.
+     */
+    function paintNode(ctx, spec, x, y, r, alpha) {
+        ctx.beginPath();
+        traceShape(ctx, spec.kind, x, y, r);
+        fillOutline(ctx, spec, alpha);
 
         /* Deaths recorded in the memorial: a firm red ring outside the shape.
          * A warning mark, so a true red rather than the coral accent, and
@@ -499,6 +566,29 @@
             ctx.stroke();
         }
 
+        ctx.globalAlpha = 1;
+    }
+
+    /** The same, as a bubble around a box on screen. */
+    function paintBubble(ctx, spec, box, alpha) {
+        ctx.beginPath();
+        traceBubble(ctx, spec.kind, box, 0);
+        fillOutline(ctx, spec, alpha);
+
+        if (spec.deaths) {
+            ctx.beginPath();
+            traceBubble(ctx, spec.kind, box, spec.natsap ? 5 : 3);
+            ctx.strokeStyle = DEATH_RED;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        if (spec.natsap) {
+            ctx.beginPath();
+            traceBubble(ctx, spec.kind, box, 2.5);
+            ctx.strokeStyle = '#B2E102';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
         ctx.globalAlpha = 1;
     }
 
@@ -722,17 +812,33 @@
             grow = next || Object.create(null);
         };
 
-        /** A node's shape radius on screen at zoom k. A node is a mark on a
-         * map, not a shape to get lost in: below two and a half pixels it
-         * stops reading as a shape, above twenty-two it starts being a
-         * picture of a diamond. A grown node scales both limits with it. */
-        function shapeR(node, k) {
+        /** A node's dot radius on screen at zoom k, for a node drawn
+         * without its bubble. A grown node scales with it. */
+        function dotR(node, k) {
             var g = grow[node.id] || 1;
-            return Math.min(22 * g, Math.max(2.5, node.r * k) * g);
+            return Math.min(DOT_MAX, Math.max(DOT_MIN, node.r * k)) * g;
         }
-        /** How far below its centre a node's label hangs. */
-        function labelR(node, k) {
-            return Math.max(1.5, node.r * k) * (grow[node.id] || 1);
+
+        /**
+         * The box a node's bubble takes on screen, centred on (cx, cy): the
+         * name, the years under it where there are any, and the padding
+         * round both. A person's pill is a little wider, because its round
+         * ends take room the name cannot use.
+         */
+        function bubbleBox(node, cx, cy, scale) {
+            var nameW = textWidth(ctx, node, null, LABEL_SIZE) * (node.degree >= 8 ? 1.08 : 1);
+            var yearsW = 0;
+            if (node.years) {
+                if (node._yearsW === undefined) {
+                    ctx.font = YEARS_SIZE + 'px ' + FONT;
+                    node._yearsW = ctx.measureText(node.years).width;
+                }
+                yearsW = node._yearsW;
+            }
+            var hh = ((LABEL_LINE + (node.years ? YEARS_LINE : 0)) / 2 + BUBBLE_PAD_Y) * scale;
+            var hw = (Math.max(nameW, yearsW) / 2 + BUBBLE_PAD_X) * scale;
+            if (node.kind === 'person') hw = Math.max(hh, hw + hh * 0.35);
+            return [cx - hw, cy - hh, cx + hw, cy + hh];
         }
 
         renderer.setEmphasis = function (next) {
@@ -855,6 +961,65 @@
 
             var edgeFade = edgeFadeFor(k);
 
+            /* --- bubbles ---
+             *
+             * Every node is drawn as a bubble with its name inside it, sized
+             * to the name: a pill for a person, a rounded box for an
+             * organisation. A name hung under a small shape made the shape
+             * the smallest thing on the map and left the reader matching
+             * names to marks; inside the bubble there is nothing to match.
+             *
+             * Bubbles are placed before anything is routed, most connected
+             * first, into the same collision grid the captions use later. One
+             * that cannot sit clear of the others is drawn as a plain dot
+             * instead of on top of them - which the layout's zoom rule
+             * (dropsAt) makes sure does not happen at the zoom it chooses.
+             */
+            var labelGrid = Object.create(null); /* not "grid": a var here hoists over draw() and would shadow the layout grid the router reads */
+            var bubbles = new Array(scene.nodes.length);
+            var order = [];
+            for (i = 0; i < scene.nodes.length; i++) {
+                bubbles[i] = null;
+                if (sx[i] < -300 || sx[i] > w + 300 || sy[i] < -60 || sy[i] > h + 60) continue;
+                order.push(i);
+            }
+            order.sort(function (a, b) {
+                var ha = scene.nodes[a].id === hoverId, hb = scene.nodes[b].id === hoverId;
+                if (ha !== hb) return ha ? -1 : 1;
+                /* With a neighbourhood lit, its bubbles claim their room
+                 * before the dimmed background does. */
+                if (near) {
+                    var la = !!near[scene.nodes[a].id], lb = !!near[scene.nodes[b].id];
+                    if (la !== lb) return la ? -1 : 1;
+                }
+                return scene.nodes[b].degree - scene.nodes[a].degree;
+            });
+            var drawn = [];
+            for (var oi = 0; oi < order.length; oi++) {
+                i = order[oi];
+                node = scene.nodes[i];
+                var scale = (grow[node.id] || 1) * (node.id === hoverId ? LABEL_SIZE_HOVER / LABEL_SIZE : 1);
+                var box = bubbleBox(node, sx[i], sy[i], scale);
+                var room = [box[0] - BUBBLE_GAP, box[1] - BUBBLE_GAP, box[2] + BUBBLE_GAP, box[3] + BUBBLE_GAP];
+                if (!fitsInGrid(labelGrid, room)) continue;
+                occupyGrid(labelGrid, room);
+                bubbles[i] = { node: node, box: box, scale: scale };
+                drawn.push(bubbles[i]);
+            }
+            /* Published for hit testing: the whole bubble is the node. */
+            renderer.labelHits = drawn;
+
+            /* The box a node takes on screen: its bubble, or its dot. */
+            var extent = new Array(scene.nodes.length);
+            for (i = 0; i < scene.nodes.length; i++) {
+                if (bubbles[i]) {
+                    extent[i] = bubbles[i].box;
+                } else {
+                    var dr = dotR(scene.nodes[i], k);
+                    extent[i] = [sx[i] - dr, sy[i] - dr, sx[i] + dr, sy[i] + dr];
+                }
+            }
+
             /* Snap a horizontal run onto the gutter between two rows. Left
              * at the arithmetic midpoint it lands on a row centre whenever
              * the two nodes are an even number of rows apart, and a trace
@@ -866,38 +1031,30 @@
                 var rowsTop = grid.y0 * k + t.y;
                 var rowsStep = grid.cellH * k;
 
-                /* What a vertical leg must not cross: every node's shape,
-                 * with its clearance, and the label under it. In screen
-                 * space, one box per node, indexed like the scene. */
-                ctx.font = LABEL_SIZE + 'px ' + FONT;
+                /* What a leg must not cross: every node's bubble, with its
+                 * clearance. In screen space, one box per node, indexed like
+                 * the scene. */
+                var tallestHalf = 0;
                 for (i = 0; i < scene.nodes.length; i++) {
-                    node = scene.nodes[i];
-                    var rr = shapeR(node, k) + TRACE_CLEARANCE;
-                    var half = Math.max(rr, textWidth(ctx, node, null, LABEL_SIZE) / 2 + LABEL_PAD_X);
-                    blockers.push([sx[i] - half, sy[i] - rr, sx[i] + half, sy[i] + rr + LABEL_LINE + LABEL_PAD_Y]);
+                    var ex = extent[i];
+                    blockers.push([ex[0] - TRACE_CLEARANCE, ex[1] - TRACE_CLEARANCE,
+                        ex[2] + TRACE_CLEARANCE, ex[3] + TRACE_CLEARANCE]);
+                    tallestHalf = Math.max(tallestHalf, (ex[3] - ex[1]) / 2);
                 }
 
-                /* The clear band between two rows is not centred on the
-                 * line between them: labels hang below their nodes, so the
-                 * band runs from the bottom of one row's labels to the top of
-                 * the next row's shapes. A channel at the geometric midpoint
-                 * ran straight through the names in the row above. */
-                var maxRk = scene.nodes.reduce(function (t2, n2) {
-                    return Math.max(t2, shapeR(n2, k));
-                }, 0);
-                var labelZone = LABEL_LINE + LABEL_PAD_Y;
-                var bandPx = rowsStep - 2 * (maxRk + TRACE_CLEARANCE) - labelZone;
-                var bandShift = labelZone / 2;
+                /* The clear band between two rows: bubbles are centred on
+                 * their row, so the band is centred between rows too. */
+                var bandPx = rowsStep - 2 * (tallestHalf + TRACE_CLEARANCE);
                 /* Parallel runs are spread apart only as far as the band
                  * allows; a spread wider than the band puts a run back onto
-                 * the labels it was moved off. */
+                 * the bubbles it was moved off. */
                 var jitterScale = Math.max(0, Math.min(1, (bandPx / 2 - 2) / 10));
 
                 geo = {
                     rowStep: rowsStep,
                     jitterScale: jitterScale,
                     channelAt: function (screenY) {
-                        return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep + bandShift;
+                        return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep;
                     },
                     /* Whether a straight leg from p to q crosses nobody's
                      * box but its two ends'. */
@@ -967,7 +1124,11 @@
              * Each style bucket is stroked once at full alpha and once dimmed,
              * rather than per edge, so hover costs one extra path per style
              * instead of thirteen hundred alpha changes. With no emphasis set
-             * the dim pass is skipped and this is the step 3 single pass. */
+             * the dim pass is skipped and this is the step 3 single pass.
+             *
+             * Lines run to the centre of each end and the bubble is painted
+             * over them, so a line always meets its bubble: there is no gap
+             * between the end of a line and the thing it connects to. */
             var pad = 64;
             for (var b = 0; b < buckets.length; b++) {
                 var style = buckets[b].style;
@@ -1012,6 +1173,8 @@
                         var route = routeEdge(ax, ay, cx, cy, lane * 5 * (geo ? geo.jitterScale : 1), geo, a, c, trunk);
                         strokeRoute(ctx, route.pts);
                         route.edge = edge;
+                        route.style = style;
+                        route.lit = lit;
                         routes.push(route);
                         drew = true;
                     }
@@ -1019,72 +1182,24 @@
                 }
             }
             ctx.setLineDash([]);
-
-            /* --- direction ---
-             *
-             * "Became" and "acquired" are the two statements on this map
-             * that are wrong if you read them backwards, so they get a head
-             * at the target end. Everything else is undirected and has
-             * none, which is the honest signal that the record does not say
-             * who came first. */
-            renderer.routes = routes;
-            for (i = 0; i < routes.length; i++) {
-                var directed = routes[i].edge;
-                var style2 = styleFor(directed, renderer.crossRegionMode, lineColour);
-                if (!style2.arrow) continue;
-                var pts = routes[i].pts;
-                var tip = pts[pts.length - 1];
-                var from = pts[pts.length - 2];
-                ctx.fillStyle = style2.colour;
-                ctx.globalAlpha = near ? (nearEdges && nearEdges[directed.id] ? 1 : dim * edgeFade) : edgeFade;
-                /* The head follows the final leg of the route, which is how
-                 * the trace actually arrives, not the straight line between
-                 * the two nodes. */
-                drawArrow(ctx, from[0], from[1], tip[0], tip[1],
-                    shapeR(directed.target, k) + 2,
-                    Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
-            }
             ctx.globalAlpha = 1;
-
-            /* --- node clearances ---
-             *
-             * A hole punched in the traces around every node, before any node
-             * is drawn. A trace that runs past a name would otherwise meet
-             * its edge and appear to stop there, which reads as a connection
-             * that the data does not have; with a clear ring around the
-             * shape the line visibly goes in one side and out the other, and
-             * a line that really does end here ends a little short of the
-             * node instead of touching it. Boards have done this forever.
-             */
-            ctx.fillStyle = SURFACE;
-            for (i = 0; i < scene.nodes.length; i++) {
-                node = scene.nodes[i];
-                var clearR = shapeR(node, k) + TRACE_CLEARANCE;
-                if (sx[i] + clearR < 0 || sx[i] - clearR > w) continue;
-                if (sy[i] + clearR < 0 || sy[i] - clearR > h) continue;
-                ctx.beginPath();
-                ctx.arc(sx[i], sy[i], clearR, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            renderer.routes = routes;
 
             /* --- nodes --- */
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
             for (i = 0; i < scene.nodes.length; i++) {
                 node = scene.nodes[i];
-                /* A node is a mark on a map, not a shape to get lost in.
-                 * Below about two and a half pixels it stops reading as a
-                 * shape at all; above twenty-two it stops being a mark and
-                 * starts being a picture of a diamond, which is what the
-                 * opening view of six organisations would otherwise draw. */
-                var r = shapeR(node, k);
-                var x = sx[i], y = sy[i];
-                if (x + r < 0 || x - r > w || y + r < 0 || y - r > h) continue;
+                var ext = extent[i];
+                if (ext[2] < 0 || ext[0] > w || ext[3] < 0 || ext[1] > h) continue;
 
                 var fill = renderer.colourFor(node);
                 var hovered = node.id === hoverId;
                 /* Dimming is a multiplier, so a status-unrecorded node that is
                  * also off the neighbourhood ends up fainter than either rule
                  * would make it alone, which is the right reading of both. */
-                var lit = !near || !!near[node.id];
+                var nodeLit = !near || !!near[node.id];
+                var alpha = nodeLit ? 1 : dim;
 
                 scratch.kind = node.kind;
                 scratch.status = node.status;
@@ -1100,16 +1215,75 @@
                     scratch.outline = board.chainColours[node.chain];
                     scratch.outlineWidth = 2;
                 }
-                paintNode(ctx, scratch, x, y, r, lit ? 1 : dim);
 
+                var bubble = bubbles[i];
+                if (!bubble) {
+                    var r = dotR(node, k);
+                    paintNode(ctx, scratch, sx[i], sy[i], r, alpha);
+                    if (hovered) {
+                        ctx.beginPath();
+                        ctx.arc(sx[i], sy[i], r + 5, 0, Math.PI * 2);
+                        ctx.strokeStyle = '#000435';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                    continue;
+                }
+
+                var bb3 = bubble.box;
+                paintBubble(ctx, scratch, bb3, alpha);
                 if (hovered) {
                     ctx.beginPath();
-                    ctx.arc(x, y, r + 5, 0, Math.PI * 2);
+                    traceBubble(ctx, node.kind, bb3, 5);
                     ctx.strokeStyle = '#000435';
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
+
+                /* The name, and under it the years where the data has them,
+                 * in whichever of navy or white reads on the fill. */
+                var ink = inkOn(scratch);
+                var size = LABEL_SIZE * bubble.scale;
+                var nameY = (bb3[1] + bb3[3]) / 2 - (node.years ? YEARS_LINE * bubble.scale / 2 : 0);
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = ink;
+                ctx.font = (node.degree >= 8 ? '600 ' : '') + size + 'px ' + FONT;
+                ctx.fillText(node.name, sx[i], nameY + 0.5);
+                if (node.years) {
+                    ctx.globalAlpha = alpha * 0.8;
+                    ctx.font = (YEARS_SIZE * bubble.scale) + 'px ' + FONT;
+                    ctx.fillText(node.years, sx[i], nameY + (LABEL_LINE / 2 + YEARS_LINE / 2) * bubble.scale);
+                }
+                ctx.globalAlpha = 1;
             }
+
+            /* --- where each line meets its ends ---
+             *
+             * A dot in the line's own colour on the rim of the bubble, at
+             * both ends, so every connection visibly lands on something even
+             * where two lines arrive side by side. A directed line gets its
+             * arrowhead at the far end instead: "became" and "acquired" are
+             * the two statements on this map that are wrong if you read them
+             * backwards. */
+            for (i = 0; i < routes.length; i++) {
+                var rt = routes[i];
+                var redge = rt.edge;
+                var rstyle = styleFor(redge, renderer.crossRegionMode, lineColour);
+                ctx.globalAlpha = near ? (rt.lit ? 1 : dim * edgeFade) : edgeFade;
+                ctx.fillStyle = rstyle.colour;
+                var pts = rt.pts;
+                var start = rimPoint(pts, extent[redge.source._i], false);
+                var end = rimPoint(pts, extent[redge.target._i], true);
+                if (start) drawPort(ctx, start[0], start[1], rstyle.colour);
+                if (rstyle.arrow && end) {
+                    var before = end.from;
+                    drawArrow(ctx, before[0], before[1], end[0], end[1], 0,
+                        Math.max(6, Math.min(11, 7 * Math.sqrt(k))));
+                } else if (end) {
+                    drawPort(ctx, end[0], end[1], rstyle.colour);
+                }
+            }
+            ctx.globalAlpha = 1;
 
             /* --- connections off screen ---
              *
@@ -1131,9 +1305,9 @@
                     var extra = hiddenCounts[node.id];
                     if (!extra) continue;
                     if (near && !near[node.id]) continue;
-                    var br = shapeR(node, k);
-                    var bx = sx[i] + br * 0.75;
-                    var by = sy[i] - br * 0.75;
+                    var eb = extent[i];
+                    var bx = bubbles[i] ? eb[2] - 4 : sx[i] + (eb[2] - sx[i]) * 0.75;
+                    var by = bubbles[i] ? eb[1] : sy[i] - (sy[i] - eb[1]) * 0.75;
                     if (bx < -20 || bx > w + 20 || by < -20 || by > h + 20) continue;
                     var text = '+' + extra;
                     var bw = Math.max(BADGE_SIZE + 4, ctx.measureText(text).width + 6);
@@ -1142,120 +1316,17 @@
                     roundedRect(ctx, bx - bw / 2, by - bh / 2, bw, bh, bh / 2);
                     ctx.fillStyle = '#000435';
                     ctx.fill();
+                    ctx.strokeStyle = SURFACE;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
                     ctx.fillStyle = '#FFFFFF';
                     ctx.fillText(text, bx, by + 0.5);
                     badges++;
                 }
-                ctx.textBaseline = 'top';
             }
             renderer.badgesDrawn = badges;
-
-            /* --- labels ---
-             *
-             * Two passes, not one per label. Each label strokes a halo in the
-             * surface colour before filling its text, and drawing them one at
-             * a time means the next label's halo paints over the last one's
-             * text: in a gathered neighbourhood, where names land close
-             * together, labels visibly disappear. Every halo is laid down
-             * first, then every glyph on top.
-             *
-             * Which labels, and in what order, is decided before either pass.
-             */
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
-            ctx.lineJoin = 'round';
-
-            var candidates = [];
-            for (i = 0; i < scene.nodes.length; i++) {
-                node = scene.nodes[i];
-                var isHover = node.id === hoverId;
-                /* With a neighbourhood lit, its names are the whole point and
-                 * everything else is background: labelling the dimmed nodes
-                 * too would bury the answer in the thing it was picked out
-                 * of. */
-                if (near && !near[node.id]) continue;
-                var lx = sx[i];
-                var ly = sy[i] + labelR(node, k) + 3;
-                if (lx < -140 || lx > w + 140 || ly < -20 || ly > h + 20) continue;
-                candidates.push({
-                    node: node, x: lx, y: ly, hover: isHover,
-                    cx: sx[i], cy: sy[i], rr: labelR(node, k)
-                });
-            }
-
-            /* Most connected first, so when two labels cannot both fit it is
-             * the smaller name that goes. The hovered node outranks
-             * everything. */
-            candidates.sort(function (a, b) {
-                if (a.hover !== b.hover) return a.hover ? -1 : 1;
-                return b.node.degree - a.node.degree;
-            });
-
-            var labelGrid = Object.create(null); /* not "grid": a var here hoists over draw() and would shadow the layout grid the router reads */
-            var drawn = [];
-            for (i = 0; i < candidates.length; i++) {
-                var entry = candidates[i];
-                var size = entry.hover ? LABEL_SIZE_HOVER : LABEL_SIZE;
-                var bold = entry.node.degree >= 8;
-                entry.font = (bold ? '600 ' : '') + size + 'px ' + FONT;
-
-                var half = textWidth(ctx, entry.node, entry.font, size) / 2;
-
-                /* Two names on top of each other are worse than one name: the
-                 * pair is unreadable and neither can be trusted to belong to
-                 * the node under it. But a dropped name is a node the reader
-                 * cannot identify at all, so before giving one up the label
-                 * is tried in the three other places it can sit and still
-                 * plainly belong to its node: above it, then to the right,
-                 * then to the left. Only a name with nowhere to go is
-                 * dropped, and the packer's job is to make sure that does not
-                 * happen. */
-                var placed = null;
-                for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
-                    var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
-                    if (!spot || !fitsInGrid(labelGrid, spot.box)) continue;
-                    placed = spot;
-                    break;
-                }
-                if (!placed) continue;
-                occupyGrid(labelGrid, placed.box);
-                entry.x = placed.x;
-                entry.y = placed.y;
-                entry.align = placed.align;
-                entry.box = placed.box;
-                drawn.push(entry);
-            }
-            /* Published for hit testing: a name is part of its node, so a
-             * click on the text should land on the thing it names. Only the
-             * labels actually drawn count - a dropped label is not on screen
-             * to be clicked. */
-            renderer.labelHits = drawn;
-
-            ctx.strokeStyle = 'rgba(242, 238, 223, 0.92)';
-            ctx.lineWidth = 3;
-            for (i = 0; i < drawn.length; i++) {
-                ctx.font = drawn[i].font;
-                ctx.textAlign = drawn[i].align;
-                ctx.strokeText(drawn[i].node.name, drawn[i].x, drawn[i].y);
-            }
-            ctx.fillStyle = '#000435';
-            for (i = 0; i < drawn.length; i++) {
-                ctx.font = drawn[i].font;
-                ctx.textAlign = drawn[i].align;
-                ctx.fillText(drawn[i].node.name, drawn[i].x, drawn[i].y);
-            }
-
-            /* Years of operation, where the data has them: a smaller second
-             * line in a lighter ink, so the name stays what is read first.
-             * Its room was counted in the label's box above. */
-            ctx.font = YEARS_SIZE + 'px ' + FONT;
-            ctx.fillStyle = 'rgba(0, 4, 53, 0.66)';
-            for (i = 0; i < drawn.length; i++) {
-                if (!drawn[i].node.years) continue;
-                ctx.textAlign = drawn[i].align;
-                ctx.fillText(drawn[i].node.years, drawn[i].x, drawn[i].y + LABEL_LINE);
-            }
-            ctx.textAlign = 'center';
 
             /* --- what each line says ---
              *
@@ -1351,56 +1422,9 @@
         }
 
         /**
-         * One candidate placement: where the text is drawn, how it is
-         * aligned, and the box it would occupy. `half` is half the measured
-         * width, so a centred label is `half` either side and a left or right
-         * aligned one is the full width on one side.
-         */
-        function placeLabel(entry, half, where) {
-            var x = entry.cx;
-            var y = entry.y;
-            var align = 'center';
-
-            if (where === 'above') {
-                y = entry.cy - entry.rr - 3 - LABEL_LINE - (entry.node.years ? YEARS_LINE : 0);
-            } else if (where === 'right') {
-                x = entry.cx + entry.rr + 4;
-                y = entry.cy - LABEL_LINE / 2;
-                align = 'left';
-            } else if (where === 'left') {
-                x = entry.cx - entry.rr - 4;
-                y = entry.cy - LABEL_LINE / 2;
-                align = 'right';
-            }
-
-            /* A name under a node on the stage stays on the stage. When a
-             * click frames only its own connections, a node further out can
-             * sit near the edge, and its name centred under it ran off the
-             * canvas; slide it inwards instead, and give up a placement
-             * beside the node that would run off. */
-            var w = renderer.width;
-            var onStage = entry.cx >= 0 && entry.cx <= w;
-            if (onStage && align === 'center' && half * 2 + LABEL_PAD_X * 2 < w) {
-                x = Math.min(w - half - LABEL_PAD_X, Math.max(half + LABEL_PAD_X, x));
-            }
-            var left = align === 'center' ? x - half : (align === 'left' ? x : x - half * 2);
-            var right = align === 'center' ? x + half : (align === 'left' ? x + half * 2 : x);
-            if (onStage && align !== 'center' && (left < 0 || right > w)) return null;
-            return {
-                x: x,
-                y: y,
-                align: align,
-                /* A name with years under it is a line taller. */
-                box: [left - LABEL_PAD_X, y - LABEL_PAD_Y, right + LABEL_PAD_X,
-                    y + LABEL_LINE + (entry.node.years ? YEARS_LINE : 0) + LABEL_PAD_Y]
-            };
-        }
-
-        /**
          * How many names would be dropped if these nodes were drawn at this
-         * transform: the label pass run dry, with the same candidates, the
-         * same order, the same four placements and the same collision grid,
-         * and no hover. Nodes whose label would be off the stage do not
+         * transform: the bubble pass run dry, with the same order and the
+         * same collision grid, and no hover. Nodes off the stage do not
          * count, since panning is how those are read. focus.js uses it to
          * choose a zoom by measuring rather than by estimate, so the rule
          * "never drop a name" is checked against the renderer that has to
@@ -1415,47 +1439,39 @@
                 var p = positionOf(node);
                 var cx = p.x * k + tx;
                 var cy = p.y * k + ty;
-                var rr = labelR(node, k);
-                var ly = cy + rr + 3;
-                if (cx < -140 || cx > w + 140 || ly < -20 || ly > h + 20) continue;
-                entries.push({ node: node, x: cx, y: ly, cx: cx, cy: cy, rr: rr });
+                if (cx < -300 || cx > w + 300 || cy < -60 || cy > h + 60) continue;
+                entries.push({ node: node, cx: cx, cy: cy });
             }
             entries.sort(function (a, b) { return b.node.degree - a.node.degree; });
             var grid = Object.create(null);
             var dropped = 0;
             for (var j = 0; j < entries.length; j++) {
                 var entry = entries[j];
-                var half = textWidth(ctx, entry.node, null, LABEL_SIZE) / 2;
-                var placed = null;
-                for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
-                    var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
-                    if (!spot || !fitsInGrid(grid, spot.box)) continue;
-                    placed = spot;
-                    break;
-                }
-                if (!placed) {
+                /* Drawn grown, measured grown: what was clicked is bigger. */
+                var box = bubbleBox(entry.node, entry.cx, entry.cy, grow[entry.node.id] || 1);
+                var room = [box[0] - BUBBLE_GAP, box[1] - BUBBLE_GAP, box[2] + BUBBLE_GAP, box[3] + BUBBLE_GAP];
+                if (!fitsInGrid(grid, room)) {
                     /* Only a name that would have been on the stage counts. */
                     if (entry.cx >= 0 && entry.cx <= w && entry.cy >= 0 && entry.cy <= h) dropped++;
                     continue;
                 }
-                occupyGrid(grid, placed.box);
+                occupyGrid(grid, room);
             }
             return dropped;
         };
 
         /**
-         * The on-screen box a node's label takes when drawn below it: width
-         * and height in pixels, padding included. focus.js uses it to work
-         * out the lowest zoom at which neighbouring labels still clear each
-         * other, so the two cannot disagree about what a name needs.
+         * The on-screen box a node's bubble takes, with the gap it keeps
+         * from its neighbours: width and height in pixels. focus.js uses it
+         * to work out the lowest zoom at which neighbouring bubbles still
+         * clear each other, so the two cannot disagree about what a name
+         * needs.
          */
         renderer.labelBox = function (node) {
-            var width = textWidth(ctx, node, null, LABEL_SIZE);
-            /* Heavier names are drawn semibold, which runs a little wider. */
-            if (node.degree >= 8) width *= 1.08;
+            var box = bubbleBox(node, 0, 0, 1);
             return {
-                width: width + LABEL_PAD_X * 2,
-                height: LABEL_LINE + (node.years ? YEARS_LINE : 0) + LABEL_PAD_Y * 2
+                width: box[2] - box[0] + BUBBLE_GAP * 2,
+                height: box[3] - box[1] + BUBBLE_GAP * 2
             };
         };
 
@@ -1478,7 +1494,7 @@
          * space included. focus.js holds the zoom above the point where two
          * rows come closer than this, because a name that cannot clear the
          * row below it is a name the renderer has to drop. */
-        LABEL_PITCH: LABEL_LINE + LABEL_PAD_Y * 2 + 2,
+        LABEL_PITCH: LABEL_LINE + BUBBLE_PAD_Y * 2 + BUBBLE_GAP * 2,
         /* And how much more a name with a years line needs. */
         YEARS_LINE: YEARS_LINE,
         styleFor: styleFor,

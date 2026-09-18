@@ -151,7 +151,7 @@
         /**
          * The node under a canvas-local point, or null. The shape test is a
          * circle of the node's own radius plus the slop, which is close
-         * enough for a diamond or a hexagon and much cheaper than the real
+         * enough for a dot and much cheaper than the real
          * outline.
          *
          * Gathered nodes are checked first and by hand. There are at most a

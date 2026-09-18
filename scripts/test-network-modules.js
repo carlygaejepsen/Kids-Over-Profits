@@ -96,9 +96,9 @@ function buildSandbox() {
             /* What a line says is written in italic on the line; it is not a
              * name either. */
             if (String(ctx.font || '').indexOf('italic') === 0) { captionCalls.push(t); return; }
-            /* The years line under a name is drawn at its own smaller size;
-             * it belongs to the name above it and is not a label of its own. */
-            if (String(ctx.font || '').indexOf('9.5px') === 0) { yearsCalls.push(t); return; }
+            /* The years line under a name belongs to the name above it and is
+             * not a label of its own. */
+            if (/^(from |until )?\d{4}(\s*[-–]\s*\d{4})?$/.test(String(t))) { yearsCalls.push(t); return; }
             labelCalls.push('text:' + t);
             /* textAlign matters: a label that could not fit below its node is
              * drawn beside it, left or right aligned, and its box is then on
@@ -1226,20 +1226,21 @@ function run() {
      * this assertion is about the order within one of them. */
     resetOps();
     renderer.draw();
-    const halos = labelCalls.filter((c) => c.startsWith('halo:'));
     const texts = labelCalls.filter((c) => c.startsWith('text:'));
-    /* Each label strokes a halo in the surface colour before filling its
-     * text. Drawn one at a time, the next halo paints over the last label,
-     * and in a gathered neighbourhood - where names land close together -
-     * labels visibly disappear. Every halo has to be laid down first. */
-    const lastHalo = labelCalls.map((c) => c.startsWith('halo:')).lastIndexOf(true);
-    const firstText = labelCalls.findIndex((c) => c.startsWith('text:'));
-    check(halos.length === texts.length && halos.length > 0,
-        'hover drew ' + halos.length + ' halos for ' + texts.length + ' labels');
-    check(lastHalo < firstText,
-        'a label halo was drawn after a label, so it erases the name before it');
-    check(texts.length > 1 && texts.length <= store.neighbours(hub.id, true).length + 1,
-        'a gathered neighbourhood drew ' + texts.length + ' names');
+    /* Names sit inside their bubbles, so there is no halo to order. What
+     * matters while hovering is that the lit neighbourhood keeps its names:
+     * its bubbles claim their room before the dimmed background does. */
+    const litOnStage = neighbours.map((l) => l.other).filter((n) => {
+        const p = at(n);
+        const off = (focus.offsets() || {})[n.id] || [0, 0];
+        const x = (p.x + off[0]) * viewport.transform.k + viewport.transform.x;
+        const y = (p.y + off[1]) * viewport.transform.k + viewport.transform.y;
+        return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
+    });
+    const litUnnamed = litOnStage.filter((n) => texts.indexOf('text:' + n.name) === -1);
+    check(texts.length > 1 && litUnnamed.length <= Math.floor(litOnStage.length / 10),
+        'a gathered neighbourhood lost ' + litUnnamed.length + ' of ' + litOnStage.length + ' names: ' +
+        litUnnamed.slice(0, 3).map((n) => n.name).join(', '));
     check(texts.indexOf('text:' + hub.name) !== -1 || texts[0] === 'text:' + hub.name,
         'the hovered node itself went unlabelled');
 
@@ -1292,7 +1293,13 @@ function run() {
     check(viewport.nodeAt(movedScreen.x, movedScreen.y) === moved,
         'a gathered node could not be clicked where it was drawn');
     const staleScreen = { x: at(moved).x * t.k + t.x, y: at(moved).y * t.k + t.y };
-    check(viewport.nodeAt(staleScreen.x, staleScreen.y) !== moved,
+    /* A bubble is wider than the step a gather takes, so the spot a node
+     * left is often still inside its own bubble, and clickable because it
+     * is drawn there. Only a spot the bubble has left must stop answering. */
+    const movedHit = (renderer.labelHits || []).find((e) => e.node === moved);
+    const stillCovered = movedHit && staleScreen.x >= movedHit.box[0] && staleScreen.x <= movedHit.box[2] &&
+        staleScreen.y >= movedHit.box[1] && staleScreen.y <= movedHit.box[3];
+    check(stillCovered || viewport.nodeAt(staleScreen.x, staleScreen.y) !== moved,
         'a gathered node was still clickable at the position it had left');
 
     /* --- leaving eases back --- */
