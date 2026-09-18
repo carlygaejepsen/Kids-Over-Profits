@@ -1345,6 +1345,49 @@
         return out.sort((a, b) => (Date.parse(b.publication_date || '') || 0) - (Date.parse(a.publication_date || '') || 0));
     };
 
+    // Alternate names, for the card face. Records spell these several ways
+    // (the program index reads otherNames/aliases/formerNames too) and an
+    // entry may be a bare string or an object, so accept every shape and skip
+    // anything that just repeats a name already on the card.
+    const collectAltNames = (facility, keys, seen) => {
+        const out = [];
+        keys.forEach(key => {
+            const raw = facility[key];
+            const items = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+            items.forEach(item => {
+                let text = '';
+                if (typeof item === 'string' || typeof item === 'number') {
+                    text = String(item);
+                } else if (item && typeof item === 'object') {
+                    text = String(item.name || item.label || item.value || item.text || item.title || '');
+                }
+                text = text.trim();
+                if (!text) return;
+                const dedupeKey = text.toLowerCase();
+                if (seen.has(dedupeKey)) return;
+                seen.add(dedupeKey);
+                out.push(text);
+            });
+        });
+        return out;
+    };
+
+    // "Also known as" / "Formerly" under the name. A visitor searching a name
+    // the programme has since dropped has to see it without opening Details.
+    const renderAltNameLines = (facility, displayName) => {
+        const seen = new Set([String(displayName || '').trim().toLowerCase()]);
+        const also = collectAltNames(facility, ['other_names', 'otherNames', 'aliases'], seen);
+        const formerly = collectAltNames(facility, ['past_names', 'pastNames', 'former_names', 'formerNames'], seen);
+        const lines = [];
+        if (also.length) {
+            lines.push(`<div class="facility-card-aka"><strong>Also known as:</strong> ${escapeHtml(also.join(', '))}</div>`);
+        }
+        if (formerly.length) {
+            lines.push(`<div class="facility-card-aka"><strong>Formerly:</strong> ${escapeHtml(formerly.join(', '))}</div>`);
+        }
+        return lines.length ? `<div class="facility-card-akas">${lines.join('')}</div>` : '';
+    };
+
     const facilityCardHtml = facility => {
         const displayName = getFacilityDisplayName(facility);
 
@@ -1355,8 +1398,7 @@
         if (facility.current_name && facility.current_name !== facility.name) {
             detailRows.push(renderScalarRow('Current name', facility.current_name));
         }
-        detailRows.push(renderListSection('Other names', facility.other_names));
-        detailRows.push(renderListSection('Past names', facility.past_names));
+        // Other and past names are drawn on the card face, not in here.
 
         // Operator / ownership
         if (facility.operator_name) {
@@ -1520,6 +1562,7 @@
                     <h3 class="facility-card-name">${escapeHtml(displayName)}</h3>
                     ${facility.status ? `<span class="status-pill status-${escapeHtml(String(facility.status).toLowerCase())}">${escapeHtml(facility.status)}</span>` : ''}
                 </div>
+                ${renderAltNameLines(facility, displayName)}
                 ${(facility.relocation && facility.relocation.other_state) ? `
                     <div class="facility-card-relocation facility-card-relocation-${escapeHtml(String(facility.relocation.direction || 'to'))}">
                         ${facility.relocation.direction === 'from'

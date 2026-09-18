@@ -267,6 +267,20 @@
     line-height: 1.3;
 }
 
+/* Alternate names sit on the card face: someone searching a name the
+   programme has dropped has to find it without opening Details. */
+.facility-card-akas {
+    margin-bottom: 0.3em;
+    font-size: 0.82em;
+    color: #4b5563;
+    line-height: 1.35;
+}
+
+.facility-card-aka strong {
+    color: #00004d;
+    font-weight: 600;
+}
+
 .facility-card-address {
     color: #4b5563;
     font-size: 0.85em;
