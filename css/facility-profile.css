@@ -757,13 +757,15 @@
 /* A columns block squeezed in beside the floated rail (the header facts)
    stacks instead of splitting a few hundred pixels two ways. Blocks below
    the rail have the full column and keep their columns. */
-@container (max-width: 600px) {
-    /* core pins .wp-block-columns to nowrap above 781px of viewport, so the
-       wrap has to be re-enabled for the basis below to take effect. */
-    .kop-fp-body > .wp-block-columns {
-        flex-wrap: wrap !important;
-    }
+/* Core pins .wp-block-columns to nowrap above 781px of viewport. Wrapping
+   is re-enabled here (harmless while the columns fit) so the basis below can
+   take effect. It cannot live in the @container rule: a container query
+   styles a container's descendants, never the container itself. */
+.kop-fp-body > .wp-block-columns {
+    flex-wrap: wrap !important;
+}
 
+@container (max-width: 600px) {
     .kop-fp-body > .wp-block-columns > .wp-block-column {
         flex-basis: 100% !important;
     }
