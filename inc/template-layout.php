@@ -55,6 +55,8 @@ function kop_template_layout_normal_width() {
 /**
  * Child templates that render full width with no sidebar (admin tools with
  * wide forms and tables). Filter 'kop_template_layout_no_sidebar' to change.
+ * The facility profiles are not here: they keep the site's standard sidebar
+ * layout and content width, with the facts rail floated inside the column.
  */
 function kop_template_layout_no_sidebar() {
     return apply_filters('kop_template_layout_no_sidebar', array(
@@ -65,8 +67,6 @@ function kop_template_layout_no_sidebar() {
         'templates/page-admin-submissions.php',
         'templates/page-admin-volunteers.php',
         'templates/page-news-processor.php',
-        'templates/single-facility-profile.php',
-        'templates/facility-page.php',
         // Not an admin tool, but the map wants every pixel of width it can get.
         'templates/page-network-map.php',
     ));

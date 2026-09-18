@@ -6,8 +6,9 @@
  * here; the plugin blocks (FileBird, Visual Link Preview) bring their own.
  */
 
+/* The profile fills the standard content column (Kadence's sidebar layout,
+   the same width as every other post); nothing here widens it. */
 .kop-facility-profile {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 1.5rem 1.25rem 3rem;
     box-sizing: border-box;
@@ -80,23 +81,42 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
-/* ---- Two-column grid --------------------------------------------------- */
+/* ---- Body with a floated facts rail ------------------------------------
+   The rail floats right at the top of the article and the text wraps
+   beneath it once it ends, so a short rail beside a long profile leaves no
+   empty column. Boxes that must not slide under the float (headings with
+   their rule, the figure, column blocks) are formatting contexts of their
+   own; flex and grid blocks already are. */
 
 .kop-fp-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 2.5rem;
-    align-items: start;
-}
-
-@media (min-width: 960px) {
-    .kop-fp-grid {
-        grid-template-columns: minmax(0, 1fr) 300px;
-    }
+    display: flow-root;
 }
 
 .kop-fp-body {
     min-width: 0;
+}
+
+@media (min-width: 960px) {
+    .kop-fp-rail {
+        float: right;
+        width: 260px;
+        margin: 0 0 1.5rem 1.75rem;
+    }
+}
+
+@media (max-width: 959px) {
+    .kop-fp-rail {
+        margin-top: 2.5rem;
+    }
+}
+
+.kop-fp-body > h2,
+.kop-fp-generated-body .kop-fp-section h2,
+.kop-fp-figure,
+.kop-fp-body > .wp-block-group,
+.kop-fp-body > ul,
+.kop-fp-body > ol {
+    display: flow-root;
 }
 
 .kop-fp-figure {
@@ -136,9 +156,8 @@
     overflow-wrap: anywhere;
 }
 
-/* The rail is not sticky: a sticky rail has to be capped at the window height,
-   which gave tall fact lists their own cramped scroll box (with a sideways
-   scrollbar). It scrolls with the page at full height instead. */
+/* The rail is a float, not a sticky column: text wraps beneath it and a
+   tall fact list never gets its own cramped scroll box. */
 
 .kop-fp-rail h2 {
     margin: 1.75rem 0 0.6rem;
@@ -294,9 +313,6 @@
         padding: 1rem 1rem 2rem;
     }
 
-    .kop-fp-grid {
-        gap: 1.75rem;
-    }
 }
 
 .kop-fp-comments {
@@ -730,8 +746,9 @@
 }
 
 /* In a narrow column (three-up card grids, phones) the thumbnail sits above
-   the text instead. The column blocks are the containers being measured. */
-.kop-fp-body,
+   the text instead. The column blocks are the containers being measured;
+   the body itself is not one, since size containment would stop it wrapping
+   under the floated rail. */
 .kop-fp-body .wp-block-column {
     container-type: inline-size;
 }
@@ -744,15 +761,5 @@
 
     .kop-fp-body .vlp-layout-spotlight .vlp-block-4 img {
         height: 110px;
-    }
-}
-
-/* The facts rail follows the reader when it fits in the window, so the
-   right column is not empty for the length of a long profile.
-   js/facility-profile.js adds the class after measuring. */
-@media (min-width: 960px) {
-    .kop-fp-rail.is-sticky {
-        position: sticky;
-        top: var(--kop-fp-sticky-top, 1.25rem);
     }
 }

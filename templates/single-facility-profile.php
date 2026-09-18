@@ -24,16 +24,6 @@ if (file_exists($kop_fp_css_path)) {
         filemtime($kop_fp_css_path)
     );
 }
-$kop_fp_js_path = get_stylesheet_directory() . '/js/facility-profile.js';
-if (file_exists($kop_fp_js_path)) {
-    wp_enqueue_script(
-        'kop-facility-profile',
-        get_stylesheet_directory_uri() . '/js/facility-profile.js',
-        array(),
-        filemtime($kop_fp_js_path),
-        true
-    );
-}
 
 if (!function_exists('kop_fp_meta')) {
     /** Trimmed string meta, or the raw value when it is an array. */
@@ -284,11 +274,10 @@ if ($kop_fp_state_name !== '' && function_exists('kop_state_slug')) {
 }
 
 // ---- Site links ----------------------------------------------------------------
-$kop_fp_index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
-if (!$kop_fp_index_url) {
-    $kop_fp_index_url = home_url('/tti-program-index/');
-}
-$kop_fp_record_url = $kop_fp_record_id ? add_query_arg('search', rawurlencode($kop_fp_name), $kop_fp_index_url) : '';
+// The database record link opens the state hub filtered to this facility.
+// Never the program index: that page lists operators and chains, not
+// individual facilities.
+$kop_fp_record_url = ($kop_fp_record_id && $kop_fp_state_url) ? add_query_arg('search', rawurlencode($kop_fp_name), $kop_fp_state_url) : '';
 
 $kop_fp_lawsuits_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-lawsuits.php') : '';
 if (!$kop_fp_lawsuits_url) {
@@ -331,23 +320,6 @@ while (have_posts()) :
     </header>
 
     <div class="kop-fp-grid">
-
-        <div class="entry-content single-content kop-fp-body">
-            <?php if (has_post_thumbnail()) : ?>
-                <?php // Not .post-thumbnail: Kadence pads that class to an aspect ratio and collapses the image. ?>
-                <figure class="kop-fp-figure">
-                    <?php the_post_thumbnail('full'); ?>
-                </figure>
-            <?php endif; ?>
-
-            <?php
-            the_content();
-            wp_link_pages(array(
-                'before' => '<div class="page-links">',
-                'after'  => '</div>',
-            ));
-            ?>
-        </div>
 
         <aside class="kop-fp-rail" aria-label="Facility facts">
 
@@ -451,7 +423,7 @@ while (have_posts()) :
             <h2>Also see</h2>
             <ul class="kop-fp-list">
                 <?php if ($kop_fp_record_url) : ?>
-                    <li><a href="<?php echo esc_url($kop_fp_record_url); ?>">Database record</a><span class="meta">TTI Program Index</span></li>
+                    <li><a href="<?php echo esc_url($kop_fp_record_url); ?>">Database record</a><span class="meta"><?php echo esc_html($kop_fp_state_name); ?> facility list</span></li>
                 <?php endif; ?>
                 <?php if ($kop_fp_state_url) : ?>
                     <li><a href="<?php echo esc_url($kop_fp_state_url); ?>"><?php echo esc_html($kop_fp_state_name); ?> hub</a><span class="meta">Every facility, lawsuit, and bill in the state</span></li>
@@ -463,6 +435,24 @@ while (have_posts()) :
             <?php endif; ?>
 
         </aside>
+
+        <div class="entry-content single-content kop-fp-body">
+            <?php if (has_post_thumbnail()) : ?>
+                <?php // Not .post-thumbnail: Kadence pads that class to an aspect ratio and collapses the image. ?>
+                <figure class="kop-fp-figure">
+                    <?php the_post_thumbnail('full'); ?>
+                </figure>
+            <?php endif; ?>
+
+            <?php
+            the_content();
+            wp_link_pages(array(
+                'before' => '<div class="page-links">',
+                'after'  => '</div>',
+            ));
+            ?>
+        </div>
+
     </div>
 
     <footer class="kop-fp-footer">

@@ -1734,6 +1734,15 @@
             applyFilter(currentLetter, search.value);
         });
 
+        // A ?search=<name> link (profile rails, thin-record redirects) opens
+        // the list already filtered to that facility.
+        const deepLink = new URLSearchParams(window.location.search).get('search');
+        if (deepLink) {
+            search.value = deepLink;
+            applyFilter(currentLetter, deepLink);
+            container.scrollIntoView({ block: 'start' });
+        }
+
         alphabetNav.addEventListener('click', e => {
             const link = e.target.closest('a[data-letter]');
             if (!link) return;
