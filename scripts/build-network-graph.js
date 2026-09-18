@@ -116,7 +116,7 @@ function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
         return {
             merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
-            statuses: {}, years: {}, deaths: {}, views: {}, edges: []
+            statuses: {}, years: {}, deaths: {}, views: {}, edges: [], nodes: []
         };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
@@ -137,6 +137,9 @@ function loadOverrides() {
         /* [{from, to, relationship, source}]: lines the board is missing,
          * fed to the build as if they were export rows. */
         edges: raw.edges || [],
+        /* [{name, kind, aliases, network, near, dates, status, source}]: organisations
+         * and people the board is missing, fed in as export rows. */
+        nodes: raw.nodes || [],
         /* The board's own colours: chain -> line colour, frame -> chain whose
          * colour its lines carry, and the NATSAP membership colour. A board
          * export has no colours in it, so they are kept here. */
@@ -679,10 +682,11 @@ function deriveDeaths(nodes, facilities, overrides) {
  * nodes and the map has no line between the pair. Each carries provenance
  * "profile", so the map can say where it came from.
  *
- * A facility's other and past names are deliberately not turned into edges.
- * A name that resolves to another node would assert a rebrand, and some of
- * those are sister programmes rather than one place renamed; they are listed
- * in the QA report for a person to decide.
+ * A facility's other or past name that is another node is drawn as a
+ * rebrand, the old name to the new as the board draws them. These were held
+ * back for review as possibly sister programmes; the owner confirmed them as
+ * rebrands on 2026-09-18. They stay listed in the QA report, so a wrong one
+ * can be fixed in the profile.
  */
 function profileResolver(nodes, overrides) {
     /* Keys under five letters are too easily somebody else's initials,
@@ -731,9 +735,10 @@ function readProfileClaims(nodes, overrides) {
     nodes.forEach(function (node) { if (node.facilityId) byFacility.set(node.facilityId, node); });
     /* person: the name is someone who worked there, so addPeople may make a
      * node for them. */
-    const claim = function (name, node, category, role, source, person) {
+    const claim = function (name, node, category, role, source, person, listedAs) {
         if (!name || !node) return;
-        claims.push({ name: name, node: node, category: category, role: role, source: source, person: !!person });
+        claims.push({ name: name, node: node, category: category, role: role, source: source, person: !!person,
+            listedAs: listedAs || '' });
     };
 
     try {
@@ -752,11 +757,13 @@ function readProfileClaims(nodes, overrides) {
             profileTexts(ident.knownReferrers).forEach(function (name) { claim(name, node, 'referral', 'referrer', 'facility profile'); });
             profileTexts(staff.administrator).forEach(function (name) { claim(name, node, 'leadership', 'administrator', 'facility profile', true); });
             profileTexts(staff.notableStaff).forEach(function (name) { claim(name, node, 'staff', 'staff', 'facility profile', true); });
-            profileTexts(ident.pastNames).concat(profileTexts(ident.otherNames)).forEach(function (name) {
-                const other = resolve(name);
-                if (other && other.id !== node.id) {
+            [['past', ident.pastNames], ['other', ident.otherNames]].forEach(function (list) {
+                profileTexts(list[1]).forEach(function (name) {
+                    const other = resolve(name);
+                    if (!other || other.id === node.id) return;
                     qa.profileNames.push(node.name + ' lists "' + name + '", which is the board node ' + other.name);
-                }
+                    claim(name, node, 'corporate', 'rebrand', 'facility profile', false, list[0]);
+                });
             });
         });
 
@@ -804,6 +811,10 @@ function addProfileEdges(nodes, edges, claims, overrides) {
         if (pairs.has(key)) return;
         pairs.add(key);
         n++;
+        if (c.role === 'rebrand') {
+            addProfileRebrand(edges, from, to, c, n);
+            return;
+        }
         /* People first on a person-to-organisation edge, as the board does. */
         const flip = from.kind !== 'person' && to.kind === 'person';
         const a = flip ? to : from;
@@ -823,6 +834,54 @@ function addProfileEdges(nodes, edges, claims, overrides) {
         qa.profileEdges.push(a.name + ' -> ' + b.name + ': ' + c.role + ' (' + c.source + ')');
     });
     return n;
+}
+
+/* First year a node operated, from its years ("1971-2004", "from 1998"). */
+function startYear(node) {
+    const m = /\b(1[89]\d\d|20\d\d)\b/.exec(String(node.years || ''));
+    return m ? Number(m[1]) : null;
+}
+
+/**
+ * A profile's other or past name that is another node: the place renamed.
+ * Old name first, as the board draws a rebrand. The years decide which came
+ * first where both ends have them; otherwise a past name is the older one,
+ * and an "other" name - which can be the later name as easily as the
+ * earlier - is older if it is the one that closed. A company's name listed
+ * against a place is its operator, not a former name of the place, so that
+ * pair is drawn as a past operator instead.
+ */
+function addProfileRebrand(edges, named, profiled, c, n) {
+    const company = function (node) { return node.kind === 'parent'; };
+    if (company(named) !== company(profiled)) {
+        const owner = company(named) ? named : profiled;
+        const place = owner === named ? profiled : named;
+        edges.push({
+            id: 'p' + String(n).padStart(4, '0'), source: owner.id, target: place.id,
+            category: 'corporate', roles: ['past operator'], raw: 'past operator (facility profile, listed as a name)',
+            direction: 'none', crossesChain: false, crossesRegion: owner.regions[0] !== place.regions[0],
+            provenance: 'profile'
+        });
+        qa.profileEdges.push(owner.name + ' -> ' + place.name + ': past operator (a company name listed as a name)');
+        return;
+    }
+    const closed = function (node) { return /closed|rebrand/i.test(node.rawStatus || node.status || ''); };
+    const a = startYear(named);
+    const b = startYear(profiled);
+    let namedIsOld;
+    if (a !== null && b !== null && a !== b) namedIsOld = a < b;
+    else if (c.listedAs === 'past') namedIsOld = true;
+    else if (closed(named) !== closed(profiled)) namedIsOld = closed(named);
+    else namedIsOld = true;
+    const from = namedIsOld ? named : profiled;
+    const to = namedIsOld ? profiled : named;
+    edges.push({
+        id: 'p' + String(n).padStart(4, '0'), source: from.id, target: to.id,
+        category: 'corporate', roles: ['rebrand'], raw: 'rebrand (facility profile)',
+        direction: 'renamed', crossesChain: false, crossesRegion: from.regions[0] !== to.regions[0],
+        provenance: 'profile'
+    });
+    qa.profileEdges.push(from.name + ' -> ' + to.name + ': rebrand (facility profile)');
 }
 
 /**
@@ -1185,6 +1244,35 @@ function rescaleBoard(nodes) {
  * ------------------------------------------------------------------ */
 
 /**
+ * Nodes the board does not have, from overrides.nodes, appended to the
+ * export rows. Each is placed on the board beside `near`, an existing node,
+ * so the layout starts it among the things it belongs with. A kind given
+ * here is written into overrides.kinds, which wins over every rule.
+ */
+function addOverrideNodeRows(nodeRows, overrides) {
+    const at = new Map(nodeRows.map(function (row) { return [row.name, row]; }));
+    overrides.nodes.forEach(function (node, i) {
+        if (at.has(node.name)) {
+            qa.missingViewNames.push('nodes: ' + node.name + ' is already on the board; drop it from the overrides');
+            return;
+        }
+        const near = at.get(node.near);
+        if (!near) qa.missingViewNames.push('nodes: ' + node.name + ' is placed near "' + node.near + '", which is not on the board');
+        if (node.kind) overrides.kinds[node.name] = node.kind;
+        if (node.aliases) overrides.aliases[node.name] = (overrides.aliases[node.name] || []).concat(node.aliases);
+        const row = {
+            name: node.name, dates: node.dates || '', status: node.status || 'unmarked',
+            network: node.network || (near ? near.network : ''), chain: node.chain || '',
+            natsap_member: 'False', importance: '0', connections: '0',
+            board_x: String((near ? Number(near.board_x) : 0) + 60 * (i % 4 + 1)),
+            board_y: String((near ? Number(near.board_y) : 0) + 60 * (Math.floor(i / 4) + 1))
+        };
+        nodeRows.push(row);
+        at.set(row.name, row);
+    });
+}
+
+/**
  * Lines the board does not draw, from overrides.edges, appended to the export
  * rows so they are categorised, directed and captioned exactly like the
  * board's own. Each end is found by name; its frame comes from the node row,
@@ -1204,6 +1292,11 @@ function addOverrideEdgeRows(edgeRows, nodeRows, overrides) {
                 ' (each end must name exactly one node on the board)');
             return;
         }
+        /* A category given here settles what the wording alone would not
+         * ("operated 1993-1999" names no role the rules know). */
+        if (edge.category && edge.relationship) {
+            overrides.relationships[edge.relationship] = { category: edge.category, roles: [edge.relationship] };
+        }
         edgeRows.push({
             from: edge.from, from_network: from[0],
             to: edge.to, to_network: to[0],
@@ -1217,6 +1310,7 @@ function build() {
     const overrides = loadOverrides();
     const nodeRows = parseCsv(fs.readFileSync(NODES_CSV, 'utf8'));
     const edgeRows = parseCsv(fs.readFileSync(EDGES_CSV, 'utf8'));
+    addOverrideNodeRows(nodeRows, overrides);
     addOverrideEdgeRows(edgeRows, nodeRows, overrides);
     const sourceHash = crypto.createHash('sha1')
         .update(fs.readFileSync(NODES_CSV)).update(fs.readFileSync(EDGES_CSV))
@@ -1481,7 +1575,6 @@ function build() {
 
     /* --- 7b. years, rebrands, deaths ------------------------------ */
     deriveYears(nodes, facilities, overrides);
-    deriveRebrands(nodes, edges, nodeById, overrides);
     deriveDeaths(nodes, facilities, overrides);
 
     /* --- 7c. connections the facility profiles record ------------- */
@@ -1501,6 +1594,8 @@ function build() {
             target.degreeByCategory[edge.category] = (target.degreeByCategory[edge.category] || 0) + 1;
         });
     }
+    /* After the profile edges, which carry rebrands of their own. */
+    deriveRebrands(nodes, edges, nodeById, overrides);
 
     /* --- 8. layout and output ------------------------------------ */
     rescaleBoard(nodes);
@@ -1834,9 +1929,9 @@ function writeQaReport(graph) {
         'Both ends were already on the board and the board had no line between them. ' +
         'A wrong one means the profile record is wrong: fix it there.');
 
-    section(lines, 'Profile names that are another board node', qa.profileNames, function (item) { return item; },
-        'Not added. Either a rebrand the board is missing (draw it on the board) or a sister ' +
-        'programme listed as a name by mistake (fix the profile).');
+    section(lines, 'Profile names drawn as rebrands', qa.profileNames, function (item) { return item; },
+        'Drawn as rebrands, old name to new (confirmed by the owner 2026-09-18). A pair already ' +
+        'connected keeps its board line. A sister programme listed as a name by mistake: fix the profile.');
 
     section(lines, 'Staff moves drawn from staff-movement.csv', qa.staffMoves, function (item) { return item; },
         'Reviewed rows that resolved. Correct a row in the CSV, not here.');

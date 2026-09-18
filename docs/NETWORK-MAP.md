@@ -1043,7 +1043,30 @@ no drawn line to the rest.
 | juvenile-justice | Rite of Passage, Youth Opportunity Investments, Youth Services International, Sequel, G4S Youth Services, VisionQuest, Glen Mills, Ramsay Youth Services, Keystone Education and Youth Services, Eckerd Youth Alternatives | 29 |
 | fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 8 (+ Governor Bush) |
 
-Correctional Services Corporation is not on the board yet.
+**Additions the board is missing (2026-09-18).** `network-overrides.json`
+now takes `nodes` (organisations and people, placed beside a named board
+node, with kind, aliases, dates and status) and `edges` (worded like the
+board's own labels, with an optional `category` and a `source`). Both are
+fed to the build as export rows, so a new board export cannot wipe them.
+First use: Correctional Services Corporation, from the owner's research
+sheet "Sequel/TSI/YSI/Vivant" (Google Drive, operators and staff tabs). CSC
+acquired Youth Services International in 1999; James F. Slattery was CSC's
+chairman and CEO and YSI's president; Forest Ridge, Palm Beach Youth Academy
+(formerly Pahokee Youth Development Center) and Polk Youth Development
+Center passed from CSC to YSI to Sequel, and Rite of Passage runs Palm Beach
+now. CSC is in the juvenile-justice view. The sheet lists about forty more
+CSC and YSI facilities that are not on the board.
+
+**Profile past names drawn as rebrands (2026-09-18).** The 51 profile
+names that are another board node were held back in case some were sister
+programmes; the owner confirmed them as rebrands. Pairs the board already
+connects keep the board's line, which leaves eleven new rebrand lines. The
+years decide which name came first where both ends have them; otherwise a
+past name is the older one, and an "other" name is older if it is the one
+that closed. A company's name listed against a place (Three Springs Inc. on
+Pathway of Madison County, Teen Challenge of Acadiana on Evangelhouse) is
+drawn as a past operator, not a rebrand. Ridge Creek School to Hidden Lake
+Academy follows the profile and may be backwards (neither end has years).
 
 ### Already covered by 5b
 

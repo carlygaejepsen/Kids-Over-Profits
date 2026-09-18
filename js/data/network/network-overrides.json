@@ -31,6 +31,9 @@
     "regionChains  - board frame -> chain whose colour its lines carry, where",
     "                the frame is not itself a chain (Wilderness is Aspen's).",
     "membershipColour - the board's colour for NATSAP membership lines.",
+    "nodes         - organisations and people the board is missing: {\"name\",",
+    "                \"kind\", \"aliases\", \"network\" (frame), \"near\" (a board node",
+    "                to start beside), \"dates\", \"status\", \"source\"}.",
     "edges         - lines the board is missing: {\"from\", \"to\", \"relationship\",",
     "                \"source\"}. Worded like the board's own labels; source is",
     "                the citation, for reviewers.",
@@ -132,6 +135,54 @@
   "statuses": {},
   "years": {},
   "deaths": {},
+  "nodes": [
+    {
+      "name": "Correctional Services Corporation",
+      "kind": "parent",
+      "aliases": [
+        "CSC",
+        "Esmor Correctional Services"
+      ],
+      "network": "YSI",
+      "near": "Youth Services International",
+      "dates": "1989-2005",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "James F. Slattery",
+      "kind": "person",
+      "aliases": [
+        "James Slattery"
+      ],
+      "network": "YSI",
+      "near": "Youth Services International",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab; staff tab: CSC Chairman and CEO, YSI President"
+    },
+    {
+      "name": "Palm Beach Youth Academy",
+      "kind": "facility",
+      "aliases": [
+        "Pahokee Youth Development Center",
+        "Sago Palm Academy"
+      ],
+      "network": "Rite of Passage",
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/palm-beach-youth-academy"
+    },
+    {
+      "name": "Polk Youth Development Center",
+      "kind": "facility",
+      "aliases": [
+        "Polk City Youth Training Center"
+      ],
+      "network": "YSI",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "https://web.archive.org/web/20020822155138/http://www.youthservices.com/Programs/Facility_Type/Program_Offerings/Cypress/Polk/polk.html"
+    }
+  ],
   "edges": [
     {
       "from": "Governor George W. Bush of Texas",
@@ -144,9 +195,90 @@
       "to": "Rebekah Home for Girls",
       "relationship": "endorsed (1997 accreditation)",
       "source": "https://www.austinchronicle.com/news/2000-12-15/79818/"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Correctional Services Corporation",
+      "relationship": "acquired by CSC (1999)",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "James F. Slattery",
+      "to": "Correctional Services Corporation",
+      "relationship": "chairman and CEO",
+      "category": "leadership",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "James F. Slattery",
+      "to": "Youth Services International",
+      "relationship": "president",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Forest Ridge Youth Services",
+      "relationship": "operated 1993-1999",
+      "category": "corporate",
+      "source": "https://web.archive.org/web/19970209105016/http://www.youthservices.com/fr.htm"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Forest Ridge Youth Services",
+      "relationship": "operated 1999-2014",
+      "category": "corporate",
+      "source": "https://web.archive.org/web/19970209105016/http://www.youthservices.com/fr.htm"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Palm Beach Youth Academy",
+      "relationship": "operated 1997-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Palm Beach Youth Academy",
+      "relationship": "operated 2003-2005",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Palm Beach Youth Academy",
+      "relationship": "operated 2005-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Palm Beach Youth Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "https://www.djj.state.fl.us/programs-facilities/residential-facilities/palm-beach-youth-academy"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Polk Youth Development Center",
+      "relationship": "operated (1995)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Polk Youth Development Center",
+      "relationship": "operated (1999)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Polk Youth Development Center",
+      "relationship": "operated (2017)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
     }
-  ],
-  "views": {
+  ],  "views": {
     "historical": {
       "label": "Historical",
       "names": [
@@ -196,7 +328,8 @@
       "Glen Mills School",
       "Ramsay Youth Services",
       "Keystone Education and Youth Services",
-      "Eckerd Youth Alternatives"
+      "Eckerd Youth Alternatives",
+      "Correctional Services Corporation"
     ]
   },
   "fundamentalist": {
