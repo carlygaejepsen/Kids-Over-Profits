@@ -2,17 +2,16 @@ id,name,city,state,country,status,facility_page
 9605,"Canyon State Academy","Queen Creek",AZ,"United States",Open,https://kidsoverprofits.org/facility/canyon-state-academy-az/
 9606,"Daytona Juvenile Residential Facility","Daytona Beach",FL,"United States",Transferred,https://kidsoverprofits.org/facility/daytona-juvenile-residential-facility-fl/
 9607,"Falcon Ridge Ranch",Virgin,UT,"United States",Open,https://kidsoverprofits.org/facility/falcon-ridge-ranch-ut/
-9608,"Gulf Coast Trades Center","233 New Waverly",TX,"United States",Open,https://kidsoverprofits.org/facility/gulf-coast-trades-center-tx/
+9608,"Gulf Coast Trades Center","New Waverly",TX,"United States",Open,https://kidsoverprofits.org/facility/gulf-coast-trades-center-tx/
 9609,"JoAnn Bridges Academy",Greenville,FL,"United States",Open,https://kidsoverprofits.org/facility/joann-bridges-academy-fl/
 9610,"Lake Granbury Youth Services",Granbury,TX,"United States",Open,https://kidsoverprofits.org/facility/lake-granbury-youth-services-tx/
 9611,"Lava Heights Academy",Toquerville,UT,"United States",Open,https://kidsoverprofits.org/facility/lava-heights-academy-ut/
 9612,"Monarch Academy for Girls",Denison,TX,"United States",Open,https://kidsoverprofits.org/facility/monarch-academy-for-girls-tx/
 9613,"Mt. Lassen Treatment Center","San Andreas",CA,"United States",Open,https://kidsoverprofits.org/facility/mt-lassen-treatment-center-ca/
-9614,"Norris Academy",", Andersonville",TN,"United States",Open,https://kidsoverprofits.org/facility/norris-academy-tn/
+9614,"Norris Academy",Andersonville,TN,"United States",Open,https://kidsoverprofits.org/facility/norris-academy-tn/
 9615,"Oak Grove Academy",Jasper,FL,"United States",Open,https://kidsoverprofits.org/facility/oak-grove-academy-fl/
 9616,"Palm Beach Youth Academy","West Palm Beach",FL,"United States",Open,https://kidsoverprofits.org/facility/palm-beach-youth-academy-fl/
 9617,"Pearl Haven",O’ahu,HI,"United States",Open,https://kidsoverprofits.org/facility/pearl-haven-hi/
-9618,"Sierra Ridge Treatment Center",,,,Open,https://kidsoverprofits.org/facility/sierra-ridge-treatment-center/
 9619,"Sierra Sage Treatment Center",Minden,NV,"United States",Open,https://kidsoverprofits.org/facility/sierra-sage-treatment-center-nv/
 9620,"Silver State Academy",Yerington,NV,"United States",Closed,https://kidsoverprofits.org/facility/silver-state-academy-nv/
 9621,"The Oaks",Brownwood,TX,"United States",Unknown,https://kidsoverprofits.org/facility/the-oaks-tx/
@@ -79,7 +78,7 @@ id,name,city,state,country,status,facility_page
 9708,Homelines,"Moyie Springs",ID,"United States",Closed,https://kidsoverprofits.org/facility/homelines-id/
 9709,"Hope House",Marsing,ID,"United States",Open,
 9710,"Idaho Youth Ranch – Hays House",Boise,ID,"United States",Open,
-9711,"Idaho Youth Ranch Residential Center",", Boise",ID,"United States",Open,
+9711,"Idaho Youth Ranch Residential Center",Boise,ID,"United States",Open,
 9712,"Jackson House","Idaho Falls",ID,"United States",Open,
 9713,"JCC – Lewiston",Lewiston,ID,"United States",Open,
 9714,"JCC – Nampa",Nampa,ID,"United States",Open,
@@ -378,12 +377,12 @@ id,name,city,state,country,status,facility_page
 10017,"Lightfully Encinitas Teen RTC",Encinitas,CA,"United States",Open,
 10018,"Lighthouse Mentoring Center",Pittsburg,CA,"United States",Open,
 10019,"Los Padrinos Juvenile Hall SYTF",Downey,CA,"United States",Open,https://kidsoverprofits.org/facility/los-padrinos-juvenile-hall-sytf-ca/
-10020,"Los Prietos Boys Camp","CA 93105.",CA,"United States",Closed,
+10020,"Los Prietos Boys Camp","Santa Barbara",CA,"United States",Closed,
 10021,"Madera Correctional Academy",Madera,CA,"United States",Open,
 10022,"Manuc,h Inc. – Aspen House",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/manuc-h-inc-aspen-house-ca/
 10023,"Manuch, Inc. – Inspiration Peak",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/manuch-inc-inspiration-peak-ca/
 10024,"Manuch, Inc. – Riverpine",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/manuch-inc-riverpine-ca/
-10025,"Margaret J. Kemp Girls Camp",", San Mateo",CA,"United States",Open,
+10025,"Margaret J. Kemp Girls Camp","San Mateo",CA,"United States",Open,
 10026,"Marin County Juvenile Hall","San Rafael",CA,"United States",Open,
 10027,"Mariposa Special Purpose Juvenile Hall",Mariposa,CA,"United States",Open,
 10028,"Mary’s Shelter STRTP","Santa Ana",CA,"United States",Open,
@@ -517,7 +516,7 @@ id,name,city,state,country,status,facility_page
 10161,"Promesa – Madera House",Madera,CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-madera-house-ca/
 10162,"Promesa – Millbrook House",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-millbrook-house-ca/
 10163,"Promesa – Minarets House",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-minarets-house-ca/
-10164,"Promesa – Niles House",", Fresno, CA",CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-niles-house-ca/
+10164,"Promesa – Niles House",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-niles-house-ca/
 10165,"Promesa – Spruce House",Fresno,CA,"United States",Open,https://kidsoverprofits.org/facility/promesa-spruce-house-ca/
 10166,"Promesa – Van Ness",Fresno,CA,"United States",Open,
 10167,"Quality Family Services – Belmont House",Fresno,CA,"United States",Open,
@@ -548,7 +547,6 @@ id,name,city,state,country,status,facility_page
 10193,"ROP ATCS Baker House","Costa Mesa",CA,"United States",Open,https://kidsoverprofits.org/facility/rop-atcs-baker-house-ca/
 10194,"ROP ATCS Joann House","Costa Mesa",CA,"United States",Open,https://kidsoverprofits.org/facility/rop-atcs-joann-house-ca/
 10195,"ROP ATCS Johnson House","Costa Mesa",CA,"United States",Open,https://kidsoverprofits.org/facility/rop-atcs-johnson-house-ca/
-10196,"ROP ATCS Sierra Ridge Treatment Center","San Andreas",CA,"United States",Closed,https://kidsoverprofits.org/facility/rop-atcs-sierra-ridge-treatment-center-ca/
 10197,"ROP Emancipation Home",Torrance,CA,"United States",Open,https://kidsoverprofits.org/facility/rop-emancipation-home-ca/
 10198,"ROP Harbor City Home","San Pedro",CA,"United States",Open,https://kidsoverprofits.org/facility/rop-harbor-city-home-ca/
 10199,"ROP Livingston House",Placentia,CA,"United States",Open,https://kidsoverprofits.org/facility/rop-livingston-house-ca/
@@ -627,7 +625,7 @@ id,name,city,state,country,status,facility_page
 10275,"Trinity – Apple Valley","Apple Valley",CA,"United States",Open,https://kidsoverprofits.org/facility/trinity-apple-valley-ca/
 10276,"Trinity – El Monte","El Monte",CA,"United States",Open,https://kidsoverprofits.org/facility/trinity-el-monte-ca/
 10277,"Trinity – Yucaipa",Yucaipa,CA,"United States",Open,https://kidsoverprofits.org/facility/trinity-yucaipa-ca/
-10278,"Tulare County Juvenile Detention Facility","368 Visalia",CA,"United States",Open,
+10278,"Tulare County Juvenile Detention Facility",Visalia,CA,"United States",Open,
 10279,"Tuolumne County Motherlode Regional Juvenile Detention Facility",Sonora,CA,"United States",Open,
 10280,"Tuolumne Inn",Turlock,CA,"United States",Open,https://kidsoverprofits.org/facility/tuolumne-inn-ca/
 10281,"Turning Point – Journey On",Ukiah,CA,"United States",Open,https://kidsoverprofits.org/facility/turning-point-journey-on-ca/
@@ -672,7 +670,7 @@ id,name,city,state,country,status,facility_page
 10322,"Youth Quest Inc.",Bakersfield,CA,"United States",Open,
 10323,"Youth Quest Inc. for Girls",Bakersfield,CA,"United States",Open,https://kidsoverprofits.org/facility/youth-quest-inc-for-girls-ca/
 10324,"Yuba County Juvenile Hall",Marysville,CA,"United States",Open,
-10325,"Zoe Home for Youth",", Building A & B Acton",CA,"United States",Open,https://kidsoverprofits.org/facility/zoe-home-for-youth-ca/
+10325,"Zoe Home for Youth",Acton,CA,"United States",Open,https://kidsoverprofits.org/facility/zoe-home-for-youth-ca/
 10326,"Ettie Lee Homes - Diamond L. Ranch",,CA,"United States",Open,https://kidsoverprofits.org/facility/ettie-lee-homes-diamond-l-ranch-ca/
 10327,"Open Line - The Oaks",Redding,CA,"United States",Open,https://kidsoverprofits.org/facility/open-line-the-oaks-ca/
 10328,"Open Line - Woodcliff",Redding,CA,"United States",Open,https://kidsoverprofits.org/facility/open-line-woodcliff-ca/
@@ -820,7 +818,7 @@ id,name,city,state,country,status,facility_page
 10489,"Newport Academy",Oakley,UT,"United States",Open,
 10490,"North Star Center, LLC – North Star Treatment Center","La Verkin",UT,"United States",Open,
 10491,"Northstar Expeditions",Escalante,UT,"United States",Closed,https://kidsoverprofits.org/facility/northstar-expeditions-ut/
-10492,"Northstar Youth Academy",", Provo",UT,"United States",Closed,
+10492,"Northstar Youth Academy",Provo,UT,"United States",Closed,
 10493,"Novo Ranch",Roosevelt,UT,"United States",Open,
 10494,"Oasis Academy",Orem,UT,"United States",Closed,
 10495,"Odyssey House of Utah","Salt Lake City",UT,"United States",Open,
@@ -926,7 +924,7 @@ id,name,city,state,country,status,facility_page
 10605,"Letot Center",Dallas,TX,"United States",Open,https://kidsoverprofits.org/facility/letot-center-tx/
 10606,"Cedar Crest Hospital & RTC",Belton,TX,"United States",Open,https://kidsoverprofits.org/facility/cedar-crest-hospital-rtc-tx/
 10607,"Excel Academy",Conroe,TX,"United States",Closed,https://kidsoverprofits.org/facility/excel-academy-tx/
-10608,"Lone Star Expeditions","5101 Groveton",TX,"United States",Closed,https://kidsoverprofits.org/facility/lone-star-expeditions-tx/
+10608,"Lone Star Expeditions",Groveton,TX,"United States",Closed,https://kidsoverprofits.org/facility/lone-star-expeditions-tx/
 10609,"Wellspring Texas","San Marcos",TX,"United States",Closed,https://kidsoverprofits.org/facility/wellspring-texas-tx/
 10610,"Devereux Advanced Behavioral Health Texas","League City",TX,"United States",Unknown,https://kidsoverprofits.org/facility/devereux-advanced-behavioral-health-texas-tx/
 10611,"Devereux Texas Autism Intensive Residential Program for Adolescents","League City",TX,"United States",Unknown,https://kidsoverprofits.org/facility/devereux-texas-autism-intensive-residential-program-for-adolescents-tx/
@@ -946,7 +944,7 @@ id,name,city,state,country,status,facility_page
 10628,"A.B.E. Residential Services",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/a-b-e-residential-services-tx/
 10629,"Abilene State School",Abilene,TX,"United States",Open,
 10630,"Abundance of Joy Home Shelter",Houston,TX,"United States",Closed,https://kidsoverprofits.org/facility/abundance-of-joy-home-shelter-tx/
-10631,"ACH Child and Family Services",", Fort Worth",TX,"United States",Open,https://kidsoverprofits.org/facility/ach-child-and-family-services-tx/
+10631,"ACH Child and Family Services","Fort Worth",TX,"United States",Open,https://kidsoverprofits.org/facility/ach-child-and-family-services-tx/
 10632,"ACH Child and Family Services Robert and Jane Ferguson RTC","Fort Worth",TX,"United States",Open,
 10633,"All Church Home for Children","Fort Worth",TX,"United States",Open,
 10634,"AMIkids Rio Grande Valley","Los Fresnos",TX,"United States",Open,https://kidsoverprofits.org/facility/amikids-rio-grande-valley-tx/
@@ -959,7 +957,7 @@ id,name,city,state,country,status,facility_page
 10641,"Atascosa County Juvenile Justice Center",Jourdanton,TX,"United States",Open,
 10642,"Athletes for Change","Glenn Heights",TX,"United States",Open,https://kidsoverprofits.org/facility/athletes-for-change-tx/
 10643,"Austin Children’s Shelter",Austin,TX,"United States",Open,
-10645,"Autistic Treatment Center","Bldg 2 San Antonio",TX,"United States",Open,https://kidsoverprofits.org/facility/autistic-treatment-center-tx/
+10645,"Autistic Treatment Center","San Antonio",TX,"United States",Open,https://kidsoverprofits.org/facility/autistic-treatment-center-tx/
 10646,"Avalon Center GRO",Eddy,TX,"United States",Open,
 10647,"Ayres House","San Antonio",TX,"United States",Open,
 10648,"Azleway Boys Ranch",Tyler,TX,"United States",Open,https://kidsoverprofits.org/facility/azleway-boys-ranch-tx/
@@ -967,16 +965,16 @@ id,name,city,state,country,status,facility_page
 10650,"Azleway, Inc.",Tyler,TX,"United States",Open,
 10651,"Baptist Children’s Home Ministry","San Antonio",TX,"United States",Open,
 10652,"Bayes Achievement Center",Huntsville,TX,"United States",Open,https://kidsoverprofits.org/facility/bayes-achievement-center-tx/
-10653,"BCFS Health and Human Services – Basic Care","90 San Antonio",TX,"United States",Open,
+10653,"BCFS Health and Human Services – Basic Care","San Antonio",TX,"United States",Open,
 10654,"Behavior Living",McKinney,TX,"United States",Open,
 10655,"Bell County Juvenile Services Center",Killeen,TX,"United States",Open,
 10656,"Ben Richey’s Boys Ranch",Abilene,TX,"United States",Open,https://kidsoverprofits.org/facility/ben-richey-s-boys-ranch-tx/
 10657,"Bexar County Juvenile Detention Center","San Antonio",TX,"United States",Open,
 10658,"Big Springs Ranch for Children",Leakey,TX,"United States",Open,
 10659,"Bill Logue Juvenile Justice Center",Waco,TX,"United States",Open,
-10660,"Bluebonnet Youth Ranch","77A S Yoakum",TX,"United States",Open,
+10660,"Bluebonnet Youth Ranch",Yoakum,TX,"United States",Open,
 10661,"Bokenkamp Children’s Shelter","Corpus Christi",TX,"United States",Open,
-10662,"Boles Children’s Home Inc",", Quinlan",TX,"United States",Open,https://kidsoverprofits.org/facility/boles-children-s-home-inc-tx/
+10662,"Boles Children’s Home Inc",Quinlan,TX,"United States",Open,https://kidsoverprofits.org/facility/boles-children-s-home-inc-tx/
 10663,"Boys & Girls Country of Houston",Hockley,TX,"United States",Open,https://kidsoverprofits.org/facility/boys-girls-country-of-houston-tx/
 10664,"Boys Haven of America",Beaumont,TX,"United States",Open,https://kidsoverprofits.org/facility/boys-haven-of-america-tx/
 10665,"Boysville Texas GRO",Converse,TX,"United States",Open,
@@ -997,7 +995,7 @@ id,name,city,state,country,status,facility_page
 10680,"Center for Discovery – Plano Campus",Plano,TX,"United States",Open,
 10681,"Center for Success and Independence",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-tx/
 10682,"Central Texas Children’s Home","Unit a Buda",TX,"United States",Open,https://kidsoverprofits.org/facility/central-texas-children-s-home-tx/
-10683,"Champion Oak Ranch","080 Jasper",TX,"United States",Open,
+10683,"Champion Oak Ranch",Jasper,TX,"United States",Open,
 10684,"Children’s Health Eating Disorders",Plano,TX,"United States",Open,
 10685,"Children’s Hope Residential Services Inc – Lubbock",Lubbock,TX,"United States",Open,
 10686,"Children’s Hope Residential Services Inc – Washington",Levelland,TX,"United States",Open,
@@ -1009,8 +1007,8 @@ id,name,city,state,country,status,facility_page
 10692,"CHS Loma Alta Shelter",Brownsville,TX,"United States",Open,
 10693,"CHS Trail House Program","El Paso",TX,"United States",Open,
 10694,"CHSI Los Fresnos Shelter","Los Fresnos",TX,"United States",Open,
-10695,"CHSI Norma Linda Shelter","100 Los Fresnos",TX,"United States",Open,
-10696,"CHSI Stanford House Shelter",", Los Fresnos",TX,"United States",Open,
+10695,"CHSI Norma Linda Shelter","Los Fresnos",TX,"United States",Open,
+10696,"CHSI Stanford House Shelter","Los Fresnos",TX,"United States",Open,
 10697,"Clearfork Academy Boys Campus – Fort Worth","Fort Worth",TX,"United States",Open,
 10698,"Clearfork Academy Girls Campus – Cleburne",Cleburne,TX,"United States",Open,
 10700,"Coke County Juvenile Justice Center",Bronte,TX,"United States",Closed,
@@ -1135,7 +1133,7 @@ id,name,city,state,country,status,facility_page
 10822,"Lynn W. Ross Juvenile Detention","Fort Worth",TX,"United States",Open,
 10823,"McLennan County State Juvenile Correctional Facility & RTC",Mart,TX,"United States",Open,
 10824,"Meadowland RTC / Roy Maas",Boerne,TX,"United States",Open,
-10825,"Medina Children’s Home","16 N Medina",TX,"United States",Open,https://kidsoverprofits.org/facility/medina-children-s-home-tx/
+10825,"Medina Children’s Home",Medina,TX,"United States",Open,https://kidsoverprofits.org/facility/medina-children-s-home-tx/
 10826,"Menninger Center",Houston,TX,"United States",Open,
 10827,"Methodist Children’s Home – Boys Ranch RTC",Waco,TX,"United States",Open,
 10828,"Methodist Children’s Home – Waco RTC",Waco,TX,"United States",Open,
@@ -1163,19 +1161,18 @@ id,name,city,state,country,status,facility_page
 10850,"Nothing Just Happens",Dallas,TX,"United States",Open,https://kidsoverprofits.org/facility/nothing-just-happens-tx/
 10851,"Nueces County Juvenile Justice Center","Corpus Christi",TX,"United States",Open,
 10852,"Odyssey Harbor Inc",Keene,TX,"United States",Open,https://kidsoverprofits.org/facility/odyssey-harbor-inc-tx/
-10853,"Open Arms Open Hearts Foundation, LLC","4111 Dayton",TX,"United States",Open,https://kidsoverprofits.org/facility/open-arms-open-hearts-foundation-llc-tx/
+10853,"Open Arms Open Hearts Foundation, LLC",Dayton,TX,"United States",Open,https://kidsoverprofits.org/facility/open-arms-open-hearts-foundation-llc-tx/
 10854,"Paloma Place","Corpus Christi",TX,"United States",Open,https://kidsoverprofits.org/facility/paloma-place-tx/
 10855,"Paradigm Treatment Center – Austin",Austin,TX,"United States",Open,
 10856,"PaRC Discovery Behavioral Health – Houston Campus",Houston,TX,"United States",Open,
 10857,"Pathways 3H Youth Ranch","Mountain Home",TX,"United States",Open,https://kidsoverprofits.org/facility/pathways-3h-youth-ranch-tx/
 10858,"Pegasus School",Lockhart,TX,"United States",Open,
 10859,"Positive Steps Inc",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/positive-steps-inc-tx/
-10860,"Prairie Harbor RTC","60 Wallis",TX,"United States",Open,
+10860,"Prairie Harbor RTC",Wallis,TX,"United States",Open,
 10861,"Presbyterian Children’s Home",Austin,TX,"United States",Open,
 10862,"Prestige Care Services",Alvin,TX,"United States",Open,
 10863,"Promise Rose Residential Care Home, Inc.",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/promise-rose-residential-care-home-inc-tx/
 10864,"R.J. Holmgreen Juvenile Justice Center",Bryan,TX,"United States",Open,
-10865,"Rebekah Home for Girls","Corpus Christi",TX,"United States",Closed,https://kidsoverprofits.org/facility/rebekah-home-for-girls-tx/
 10866,Redicare,Richmond,TX,"United States",Open,https://kidsoverprofits.org/facility/redicare-tx/
 10867,"Reeves County Juvenile Detention Center",Pecos,TX,"United States",Open,
 10868,"Rejo Helping Hands Inc",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/rejo-helping-hands-inc-tx/
@@ -1219,7 +1216,7 @@ id,name,city,state,country,status,facility_page
 10908,"South Texas Adolescent Rehabilitation & Education – STARE",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/south-texas-adolescent-rehabilitation-education-stare-tx/
 10909,"South Texas Children’s Home",Pettus,TX,"United States",Open,
 10910,"Southwest Key Program Inc",Houston,TX,"United States",Open,
-10911,"Southwest Key Programs – Casa Antigua","83 San Benito",TX,"United States",Open,
+10911,"Southwest Key Programs – Casa Antigua","San Benito",TX,"United States",Open,
 10912,"Southwest Key Programs – Casa Blanca","San Antonio",TX,"United States",Open,
 10913,"Southwest Key Programs – Casa El Presidente",Brownsville,TX,"United States",Open,
 10914,"Southwest Key Programs – Casa Franklin","El Paso",TX,"United States",Open,
@@ -1228,7 +1225,7 @@ id,name,city,state,country,status,facility_page
 10917,"Southwest Key Programs – Casa Oasis",McAllen,TX,"United States",Open,
 10918,"Southwest Key Programs – Casa Padre",Brownsville,TX,"United States",Open,
 10919,"Southwest Key Programs – Casa Quetzal",Houston,TX,"United States",Open,
-10920,"Southwest Key Programs – Casa Rio Grande","77 San Benito",TX,"United States",Open,
+10920,"Southwest Key Programs – Casa Rio Grande","San Benito",TX,"United States",Open,
 10921,"Southwest Key Programs – Casa Sueno",Weslaco,TX,"United States",Open,
 10922,"Southwest Key Programs – Casa Sunzal",Houston,TX,"United States",Open,
 10923,"Southwest Key Programs – Casita Del Valle",Clint,TX,"United States",Open,
@@ -1272,7 +1269,7 @@ id,name,city,state,country,status,facility_page
 10963,"The Settlement Club Home GRO",Austin,TX,"United States",Open,https://kidsoverprofits.org/facility/the-settlement-club-home-gro-tx/
 10964,"The Zilker Center",Austin,TX,"United States",Open,
 10965,"Thompson’s Residential Treatment Center",Greenville,TX,"United States",Open,https://kidsoverprofits.org/facility/thompson-s-residential-treatment-center-tx/
-10966,"Thompson’s Residential Treatment Center- Farmersville","698 Farmersville",TX,"United States",Open,
+10966,"Thompson’s Residential Treatment Center- Farmersville",Farmersville,TX,"United States",Open,
 10968,"Today’s Harbor for Children","Morgans Point",TX,"United States",Open,
 10969,"Tom Green County Juvenile Detention Center","San Angelo",TX,"United States",Open,
 10970,"Travis County Juvenile Detention/Gardner-Betts Juvenile Justice Center",Austin,TX,"United States",Open,
@@ -1299,11 +1296,11 @@ id,name,city,state,country,status,facility_page
 10991,"Williamson County Juvenile Detention Center",Angleton,TX,"United States",Open,
 10992,"Willoughby House","Fort Worth",TX,"United States",Open,
 10993,"Willoughby Juvenile Services",Marshall,TX,"United States",Open,
-10994,"Willow Bend Center","31 E Tyler",TX,"United States",Open,
+10994,"Willow Bend Center",Tyler,TX,"United States",Open,
 10995,"Wilton Place RTC",Dallas,TX,"United States",Open,
 10996,"Woodside Trails Therapeutic Camp",Bastrop,TX,"United States",Closed,
 10997,"Yellow Canyon Academy",Amarillo,TX,"United States",Open,
-10998,"Youth and Family Enrichment Centers Inc","155 S Tyler",TX,"United States",Open,
+10998,"Youth and Family Enrichment Centers Inc",Tyler,TX,"United States",Open,
 10999,"Youth Center of the High Plains",Amarillo,TX,"United States",Open,
 11000,"Youth Reach",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/youth-reach-tx/
 11001,"Behavior Training Research",,TX,"United States",Closed,https://kidsoverprofits.org/facility/behavior-training-research-tx/
@@ -1374,7 +1371,7 @@ id,name,city,state,country,status,facility_page
 11072,"Rolfe and Rumford Home",Concord,NH,"United States",Open,
 11074,"St. Charles Children’s Home",Rochester,NH,"United States",Open,
 11075,"The Chase Home for Children",Portsmouth,NH,"United States",Open,
-11076,"The Doorway at Granite Pathways","#210 Manchester",NH,"United States",Open,
+11076,"The Doorway at Granite Pathways",Manchester,NH,"United States",Open,
 11077,"The Orion Group",Newport,NH,"United States",Open,
 11078,"Tobey School",Concord,NH,"United States",Open,
 11079,"Webster House",Manchester,NH,"United States",Open,
@@ -1385,7 +1382,7 @@ id,name,city,state,country,status,facility_page
 11084,"Devereux Florida Child and Adolescent Psychiatric Specialty Hospital",Orlando,FL,"United States",Unknown,https://kidsoverprofits.org/facility/devereux-florida-child-and-adolescent-psychiatric-specialty-hospital-fl/
 11085,"Devereux Florida I/DD Group Homes","Orange County",FL,"United States",Open,https://kidsoverprofits.org/facility/devereux-florida-i-dd-group-homes-fl/
 11086,"Devereux Florida Residential Group Care",Orlando,FL,"United States",Open,https://kidsoverprofits.org/facility/devereux-florida-residential-group-care-fl/
-11087,"Devereux Florida RTC",", Orlando",FL,"United States",Open,https://kidsoverprofits.org/facility/devereux-florida-rtc-fl/
+11087,"Devereux Florida RTC",Orlando,FL,"United States",Open,https://kidsoverprofits.org/facility/devereux-florida-rtc-fl/
 11088,"Devereux Florida Specialized Therapeutic Group Home",Titusville,FL,"United States",Unknown,https://kidsoverprofits.org/facility/devereux-florida-specialized-therapeutic-group-home-fl/
 11089,"Eckerd Comprehensive Youth Treatment Program",Raiford,FL,"United States",Closed,https://kidsoverprofits.org/facility/eckerd-comprehensive-youth-treatment-program-fl/
 11090,"Eckerd Re-Entry Program","North Palm Beach",FL,"United States",Unknown,https://kidsoverprofits.org/facility/eckerd-re-entry-program-fl/
@@ -1447,7 +1444,7 @@ id,name,city,state,country,status,facility_page
 11157,"Cypress Creek Treatment Center",Lecanto,FL,"United States",Open,https://kidsoverprofits.org/facility/cypress-creek-treatment-center-fl/
 11160,"Devereux Florida I/DD Program",Viera,FL,"United States",Open,
 11161,"Devereux Florida IRTC",Viera,FL,"United States",Open,
-11162,"Devereux Florida SIPP",", Orlando",FL,"United States",Open,
+11162,"Devereux Florida SIPP",Orlando,FL,"United States",Open,
 11163,"Devereux Florida Specialized Therapeutic Group Homes",Titusville,FL,"United States",Open,https://kidsoverprofits.org/facility/devereux-florida-specialized-therapeutic-group-homes-fl/
 11164,"DOVE Academy",Graceville,FL,"United States",Open,https://kidsoverprofits.org/facility/dove-academy-fl/
 11166,"Eckerd Intensive Halfway House",Okeechobee,FL,"United States",Closed,https://kidsoverprofits.org/facility/eckerd-intensive-halfway-house-fl/
@@ -1481,7 +1478,7 @@ id,name,city,state,country,status,facility_page
 11200,"NIA Residential Treatment Center for Children and Adolescents","Port Saint Lucie",FL,"United States",Open,
 11202,"Our Father’s House",Milton,FL,"United States",Closed,
 11203,"Palm Beach Juvenile Detention Center","West Palm Beach",FL,"United States",Open,
-11204,"Palm Lane Baptist Boarding Academy",", Arcadia",FL,"United States",Closed,
+11204,"Palm Lane Baptist Boarding Academy",Arcadia,FL,"United States",Closed,
 11205,"Palmetto Youth Academy",Palmetto,FL,"United States",Closed,https://kidsoverprofits.org/facility/palmetto-youth-academy-fl/
 11206,"Personal Enrichment Through Mental Health Services","Pinellas Park",FL,"United States",Open,
 11207,"Polk County Juvenile Boot Camp",Bartow,FL,"United States",Open,
@@ -1516,9 +1513,9 @@ id,name,city,state,country,status,facility_page
 11239,"Sawmill Academy for Girls",,FL,"United States",Closed,
 11241,"Embark at The Forge",Benton,TN,"United States",Open,https://kidsoverprofits.org/facility/embark-at-the-forge-tn/
 11243,"Cedar Grove RTC",Murfreesboro,TN,"United States",Open,https://kidsoverprofits.org/facility/cedar-grove-rtc-tn/
-11245,"Hermitage Hall",", South Nashville",TN,"United States",Open,https://kidsoverprofits.org/facility/hermitage-hall-tn/
-11246,"McDowell Center for Children","51 Bypass South Dyersburg",TN,"United States",Open,https://kidsoverprofits.org/facility/mcdowell-center-for-children-tn/
-11247,"Mountain Youth Academy",", Mountain City",TN,"United States",Open,https://kidsoverprofits.org/facility/mountain-youth-academy-tn/
+11245,"Hermitage Hall","South Nashville",TN,"United States",Open,https://kidsoverprofits.org/facility/hermitage-hall-tn/
+11246,"McDowell Center for Children",Dyersburg,TN,"United States",Open,https://kidsoverprofits.org/facility/mcdowell-center-for-children-tn/
+11247,"Mountain Youth Academy","Mountain City",TN,"United States",Open,https://kidsoverprofits.org/facility/mountain-youth-academy-tn/
 11248,"Natchez Trace Youth Academy",Waverly,TN,"United States",Open,https://kidsoverprofits.org/facility/natchez-trace-youth-academy-tn/
 11249,"Oak Plains Academy","Ashland City",TN,"United States",Unknown,https://kidsoverprofits.org/facility/oak-plains-academy-tn/
 11250,"Bledsoe Youth Academy",Gallatin,TN,"United States",Unknown,https://kidsoverprofits.org/facility/bledsoe-youth-academy-tn/
@@ -1533,12 +1530,12 @@ id,name,city,state,country,status,facility_page
 11259,"ABM Family Preparatory",Westmoreland,TN,"United States",Closed,https://kidsoverprofits.org/facility/abm-family-preparatory-tn/
 11261,"Achievement Valley Ranch",Westmoreland,TN,"United States",Closed,
 11262,"Adolescent Male Insight – Chattanooga",Chattanooga,TN,"United States",Open,
-11263,"Advent Home Learning Center","950 Calhoun",TN,"United States",Open,
-11264,"ARCH Academy","70 Kingston Springs",TN,"United States",Open,https://kidsoverprofits.org/facility/arch-academy-tn/
+11263,"Advent Home Learning Center",Calhoun,TN,"United States",Open,
+11264,"ARCH Academy","Kingston Springs",TN,"United States",Open,https://kidsoverprofits.org/facility/arch-academy-tn/
 11265,"Bachman Academy",McDonald,TN,"United States",Closed,
 11266,"Bedford County Juvenile Detention",Shelbyville,TN,"United States",Open,
 11267,"Bethel Bible Village Children’s Home",Hixson,TN,"United States",Open,
-11268,"Bill’s Place",", Memphis",TN,"United States",Open,https://kidsoverprofits.org/facility/bill-s-place-tn/
+11268,"Bill’s Place",Memphis,TN,"United States",Open,https://kidsoverprofits.org/facility/bill-s-place-tn/
 11269,"Blount County Juvenile Detention Center",Maryville,TN,"United States",Open,
 11270,"Bradley County Juvenile Detention Center",Huntsville,TN,"United States",Open,
 11271,"Brentwood Academy",Brentwood,TN,"United States",Open,
@@ -1547,52 +1544,52 @@ id,name,city,state,country,status,facility_page
 11275,"Center for Success and Independence – Cleveland Academy","W. Cleveland",TN,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-cleveland-academy-tn/
 11276,"Center for Success and Independence – Elizabethton Academy",Elizabethton,TN,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-elizabethton-academy-tn/
 11277,"Center for Success and Independence – Memphis Youth Academy",Bartlett,TN,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-memphis-youth-academy-tn/
-11278,"Center for Success and Independence – Roane Academy",", Rockwood",TN,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-roane-academy-tn/
-11279,"Chad Youth Enhancement Center – Oak Plains Academy",", Ashland City",TN,"United States",Open,https://kidsoverprofits.org/facility/chad-youth-enhancement-center-oak-plains-academy-tn/
-11280,"Compass Intervention Center",", Memphis",TN,"United States",Open,
-11281,"Comprehensive Community Services, Inc.",", Kingsport",TN,"United States",Open,
+11278,"Center for Success and Independence – Roane Academy",Rockwood,TN,"United States",Open,https://kidsoverprofits.org/facility/center-for-success-and-independence-roane-academy-tn/
+11279,"Chad Youth Enhancement Center – Oak Plains Academy","Ashland City",TN,"United States",Open,https://kidsoverprofits.org/facility/chad-youth-enhancement-center-oak-plains-academy-tn/
+11280,"Compass Intervention Center",Memphis,TN,"United States",Open,
+11281,"Comprehensive Community Services, Inc.",Kingsport,TN,"United States",Open,
 11282,"Covenant Home",Buchanan,TN,"United States",Open,
 11283,"Crossville Mission Bible Training Center",Crossville,TN,"United States",Open,
-11284,"CSI – Bledsoe Youth Academy",", Gallatin",TN,"United States",Open,https://kidsoverprofits.org/facility/csi-bledsoe-youth-academy-tn/
+11284,"CSI – Bledsoe Youth Academy",Gallatin,TN,"United States",Open,https://kidsoverprofits.org/facility/csi-bledsoe-youth-academy-tn/
 11285,"CSI – Rosewood Youth Academy",Nashville,TN,"United States",Open,
 11286,"Cumberland Heights Youth Program – ARCH Academy","Pike Nashville",TN,"United States",Open,
 11287,"Davidson County Juvenile Detention Center",Nashville,TN,"United States",Open,
 11288,"East Tennessee Christian Home",Elizabethton,TN,"United States",Open,
-11289,"Eden of Youth Town",", Beech Bluff",TN,"United States",Open,
+11289,"Eden of Youth Town","Beech Bluff",TN,"United States",Open,
 11290,"Edge Academy",Memphis,TN,"United States",Open,
-11291,"Fairhaven Treatment Center",", Memphis",TN,"United States",Open,
+11291,"Fairhaven Treatment Center",Memphis,TN,"United States",Open,
 11292,"Freedom Mountain Academy","Mountain City",TN,"United States",Open,https://kidsoverprofits.org/facility/freedom-mountain-academy-tn/
 11293,"Freewill Baptist Family Ministry",Greenville,TN,"United States",Open,
 11295,"Good Shepherd Children’s Home",Murfreesboro,TN,"United States",Open,
 11296,"Grace Oasis",Nashville,TN,"United States",Open,https://kidsoverprofits.org/facility/grace-oasis-tn/
 11297,"Happy Hills Youth Ranch","Ashland City",TN,"United States",Open,
-11298,"Hope Hall",", Pinson",TN,"United States",Open,
+11298,"Hope Hall",Pinson,TN,"United States",Open,
 11299,"Jackson Academy",Dickson,TN,"United States",Closed,
-11300,"Janie’s House",", Memphis",TN,"United States",Open,
+11300,"Janie’s House",Memphis,TN,"United States",Open,
 11301,"Kids 1st of Tennessee",Murfreesboro,TN,"United States",Open,
 11302,Lakebrook,Knoxville,TN,"United States",Open,
-11303,"Lakeside Behavioral Health System",", Memphis",TN,"United States",Open,
+11303,"Lakeside Behavioral Health System",Memphis,TN,"United States",Open,
 11304,"Lebanon Academy, A Center for Success and Independence",Lebanon,TN,"United States",Open,
 11305,"Love in Action International – Refuge",Memphis,TN,"United States",Open,
 11306,"Madison County Detention Center",Jackson,TN,"United States",Open,
 11307,"Magnolia Academy",Lewisburg,TN,"United States",Closed,
-11308,"Memphis Recovery Centers",", Memphis",TN,"United States",Open,https://kidsoverprofits.org/facility/memphis-recovery-centers-tn/
+11308,"Memphis Recovery Centers",Memphis,TN,"United States",Open,https://kidsoverprofits.org/facility/memphis-recovery-centers-tn/
 11309,"Middle Tennessee Juvenile Detention",Columbia,TN,"United States",Open,
-11310,"Miller Hall",", Pinson",TN,"United States",Open,
+11310,"Miller Hall",Pinson,TN,"United States",Open,
 11311,"Mount Juliet Academy, A Center for Success and Independence","Mt. Juliet",TN,"United States",Open,
 11312,"Mountain View Academy",Dandridge,TN,"United States",Open,https://kidsoverprofits.org/facility/mountain-view-academy-tn/
 11313,"New Life Lodge",Burns,TN,"United States",Open,
 11314,"Parents Hope Ministries – Hope Academy",Adams,TN,"United States",Open,
-11315,"Parkridge Valley Hospital",", Chattanooga",TN,"United States",Open,
+11315,"Parkridge Valley Hospital",Chattanooga,TN,"United States",Open,
 11316,"Perimeter Behavioral of Jackson",Jackson,TN,"United States",Open,
 11317,"PURE Academy",Memphis,TN,"United States",Open,
 11318,"Putnam County Juvenile Detention",Cookeville,TN,"United States",Open,
 11319,"Rhea County Juvenile Detention",Dayton,TN,"United States",Open,
 11320,"Richard L. Bean Juvenile Detention Center",Knoxville,TN,"United States",Open,
-11321,"Rose Center for Girls",", Bartlett",TN,"United States",Open,https://kidsoverprofits.org/facility/rose-center-for-girls-tn/
-11322,"Rotary Hall",", Pinson",TN,"United States",Open,
+11321,"Rose Center for Girls",Bartlett,TN,"United States",Open,https://kidsoverprofits.org/facility/rose-center-for-girls-tn/
+11322,"Rotary Hall",Pinson,TN,"United States",Open,
 11323,"Rutherford County Juvenile Detention Center",Murfreesboro,TN,"United States",Open,
-11324,"Scholze Adolescent Center",", Chattanooga",TN,"United States",Open,
+11324,"Scholze Adolescent Center",Chattanooga,TN,"United States",Open,
 11325,"Scott County Juvenile Center",Huntsville,TN,"United States",Open,
 11326,"Second Chance Ministry",Collierville,TN,"United States",Open,
 11327,"Sevier County Juvenile Facility",Sevierville,TN,"United States",Open,
@@ -1607,19 +1604,19 @@ id,name,city,state,country,status,facility_page
 11337,"Tennessee Valley Juvenile Detention",Tuscumbia,AL,"United States",Open,
 11338,"The Academy for Young Men",Nashville,TN,"United States",Open,
 11339,"The Academy for Young Women",Nashville,TN,"United States",Open,
-11340,"The Florence Crittenton Agency",", Knoxville",TN,"United States",Open,
-11341,"The Forge School","30, Benton",TN,"United States",Open,
-11342,"The Gateway Center",", Louisville",TN,"United States",Open,
-11343,"The King’s Daughters’ School Center for Autism",", Columbia",TN,"United States",Open,
+11340,"The Florence Crittenton Agency",Knoxville,TN,"United States",Open,
+11341,"The Forge School",Benton,TN,"United States",Open,
+11342,"The Gateway Center",Louisville,TN,"United States",Open,
+11343,"The King’s Daughters’ School Center for Autism",Columbia,TN,"United States",Open,
 11344,"Upper East Tennessee Juvenile Detention Center","Johnson City",TN,"United States",Open,
 11345,"Wears Valley Ranch",Sevierville,TN,"United States",Open,
 11346,"Wilder Youth Development Center",Somerville,TN,"United States",Open,
 11347,"Williamson County Juvenile Detention",Franklin,TN,"United States",Open,
-11348,"Woolfolk Hall",", Pinson",TN,"United States",Open,
+11348,"Woolfolk Hall",Pinson,TN,"United States",Open,
 11349,"Youth Villages – Bartlett Campus",Memphis,TN,"United States",Open,
-11350,"Youth Villages – Bartlett Cottages",", Memphis",TN,"United States",Open,https://kidsoverprofits.org/facility/youth-villages-bartlett-cottages-tn/
+11350,"Youth Villages – Bartlett Cottages",Memphis,TN,"United States",Open,https://kidsoverprofits.org/facility/youth-villages-bartlett-cottages-tn/
 11351,"Youth Villages – Dogwood Campus",Arlington,TN,"United States",Open,
-11352,"Youth Villages – Dogwood Cottages",", Arlington",TN,"United States",Open,https://kidsoverprofits.org/facility/youth-villages-dogwood-cottages-tn/
+11352,"Youth Villages – Dogwood Cottages",Arlington,TN,"United States",Open,https://kidsoverprofits.org/facility/youth-villages-dogwood-cottages-tn/
 11353,"Adolescent Recovery of Cumberland Heights / DBA ARCH Academy",,TN,"United States",Open,
 11354,"Lakeland Behavioral Health System Residential Treatment Program",Springfield,MO,"United States",Open,https://kidsoverprofits.org/facility/lakeland-behavioral-health-system-residential-treatment-program-mo/
 11355,"CALO Programs","Lake Ozark",MO,"United States",Open,https://kidsoverprofits.org/facility/calo-programs-mo/
@@ -1669,7 +1666,7 @@ id,name,city,state,country,status,facility_page
 11403,"Home Court Advantage Inc II & III",Bolivar,MO,"United States",Open,
 11404,"Home Court Advantage Inc IV",Bolivar,MO,"United States",Open,
 11405,"Home Court Advantage Inc V",Bolivar,MO,"United States",Open,
-11406,"Home Court Advantage Inc VI","83 Bolivar",MO,"United States",Open,
+11406,"Home Court Advantage Inc VI",Bolivar,MO,"United States",Open,
 11407,"Hope Ranch of Missouri",Sullivan,MO,"United States",Open,
 11408,"House of Compassion",Grandview,MO,"United States",Open,
 11409,"Kanakuk Kamps",Branson,MO,"United States",Open,https://kidsoverprofits.org/facility/kanakuk-kamps-mo/
@@ -1679,7 +1676,7 @@ id,name,city,state,country,status,facility_page
 11414,"Legacy Academy Adventures","Jericho Springs",MO,"United States",Closed,https://kidsoverprofits.org/facility/legacy-academy-adventures-mo/
 11415,"Living Water Refuge",Hartville,MO,"United States",Open,
 11416,"LUC Ranch",Lampe,MO,"United States",Open,https://kidsoverprofits.org/facility/luc-ranch-mo/
-11417,"Making a Difference Treatment, Inc.","32 Bolivar",MO,"United States",Open,
+11417,"Making a Difference Treatment, Inc.",Bolivar,MO,"United States",Open,
 11418,"Master’s Ranch Christian Academy",Couch,MO,"United States",Open,https://kidsoverprofits.org/facility/master-s-ranch-christian-academy-mo/
 11419,"Master’s Ranch Girls Academy",Thayer,MO,"United States",Closed,https://kidsoverprofits.org/facility/master-s-ranch-girls-academy-mo/
 11420,"Master’s Ranch Junior High",Myrtle,MO,"United States",Open,
@@ -1730,89 +1727,89 @@ id,name,city,state,country,status,facility_page
 11469,"Pinnacle Pointe Hospital Sub-Acute Inpatient Treatment","Little Rock",AR,"United States",Unknown,https://kidsoverprofits.org/facility/pinnacle-pointe-hospital-sub-acute-inpatient-treatment-ar/
 11470,"Mansfield Juvenile Treatment Center",Mansfield,AR,"United States",Unknown,https://kidsoverprofits.org/facility/mansfield-juvenile-treatment-center-ar/
 11471,"Alexander Youth Services Center",Alexander,AR,"United States",Open,
-11472,"Arbor House",", North Little Rock",AR,"United States",Open,
+11472,"Arbor House","North Little Rock",AR,"United States",Open,
 11473,"Arkansas Baptist Home for Children Monticello Campus",Monticello,AR,"United States",Open,
 11474,"Arkansas Baptist Ranch",Harrison,AR,"United States",Open,
 11475,"Arkansas County Juvenile Center",DeWitt,AR,"United States",Open,
-11476,"Arkansas Juvenile Assessment and Treatment Center",", Alexander",AR,"United States",Open,
-11477,"Arkansas Sheriff Youth RANCHs Inc. – Bethesda",", Batesville",AR,"United States",Open,
+11476,"Arkansas Juvenile Assessment and Treatment Center",Alexander,AR,"United States",Open,
+11477,"Arkansas Sheriff Youth RANCHs Inc. – Bethesda",Batesville,AR,"United States",Open,
 11478,"Basic Life Principles Training Center","Little Rock",AR,"United States",Open,
 11479,"Benton County Juvenile Detention",Bentonville,AR,"United States",Open,
-11480,"Capstone Treatment Center",", Judsonia",AR,"United States",Open,https://kidsoverprofits.org/facility/capstone-treatment-center-ar/
+11480,"Capstone Treatment Center",Judsonia,AR,"United States",Open,https://kidsoverprofits.org/facility/capstone-treatment-center-ar/
 11481,"Cartwright House","Little Rock",AR,"United States",Open,
-11482,"Centers for Youth and Families, Inc.",",, Ste. 101 Little Rock",AR,"United States",Open,
+11482,"Centers for Youth and Families, Inc.","Little Rock",AR,"United States",Open,
 11483,"Children’s Homes, Inc.",Paragould,AR,"United States",Open,
-11484,"Compact Family Services",", Hot Springs",AR,"United States",Open,
+11484,"Compact Family Services","Hot Springs",AR,"United States",Open,
 11485,"Consolidated Youth Services",Jonesboro,AR,"United States",Open,
 11486,"Craighead County Detention Center",Jonesboro,AR,"United States",Open,
 11487,"Crestview House","Little Rock",AR,"United States",Open,
 11488,"Crittenden County Juvenile Detention Center","West Memphis",AR,"United States",Open,
 11489,"Curt, Cliff & Opal Young Children’s Home","Fort Smith",AR,"United States",Open,
-11490,"Dana’s House",", De Witt",AR,"United States",Open,
-11491,"Delta Family Health and Fitness Center for Children",", Hamburg",AR,"United States",Open,
+11490,"Dana’s House","De Witt",AR,"United States",Open,
+11491,"Delta Family Health and Fitness Center for Children",Hamburg,AR,"United States",Open,
 11492,"Dermott Juvenile Treatment Facility",Dermott,AR,"United States",Open,
-11493,"East Arkansas Youth Services",", Marion",AR,"United States",Open,
-11494,"Elizabeth Mitchell Centers",", Little Rock",AR,"United States",Open,
+11493,"East Arkansas Youth Services",Marion,AR,"United States",Open,
+11494,"Elizabeth Mitchell Centers","Little Rock",AR,"United States",Open,
 11495,"Faulkner County Juvenile Detention Center",Conway,AR,"United States",Open,
-11496,"Florence Crittenton Home",", Little Rock",AR,"United States",Open,
-11497,"Fort Smith Children’s Emergency Shelter",", Fort Smith",AR,"United States",Open,
+11496,"Florence Crittenton Home","Little Rock",AR,"United States",Open,
+11497,"Fort Smith Children’s Emergency Shelter","Fort Smith",AR,"United States",Open,
 11498,"Fostering Change Residential Community Reintegration","Fort Smith",AR,"United States",Open,
 11499,"Garland County Juvenile Detention","Hot Springs",AR,"United States",Open,
-11500,"Girl’s Shelter of Fort Smith",", Fort Smith",AR,"United States",Open,
+11500,"Girl’s Shelter of Fort Smith","Fort Smith",AR,"United States",Open,
 11501,"Glenhaven Youth Ranch",Plainview,AR,"United States",Open,
-11502,H.A.V.E.N.,", Conway",AR,"United States",Open,
-11503,"Harrisburg Juvenile Treatment Center",", Harrisburg",AR,"United States",Open,
-11504,"Henry Hank Wilkins IV House",", Pine Bluff",AR,"United States",Open,
+11502,H.A.V.E.N.,Conway,AR,"United States",Open,
+11503,"Harrisburg Juvenile Treatment Center",Harrisburg,AR,"United States",Open,
+11504,"Henry Hank Wilkins IV House","Pine Bluff",AR,"United States",Open,
 11505,"Hillcrest Children’s Home",Hotsprings,AR,"United States",Open,
-11506,"Immerse Arkansas",", Little Rock",AR,"United States",Open,
+11506,"Immerse Arkansas","Little Rock",AR,"United States",Open,
 11507,"Jack Jones Juvenile Detention Center","Pine Bluff",AR,"United States",Open,
-11508,"Joanna Magale Manor",", Magnolia",AR,"United States",Open,
-11509,"Joseph Pfeifer Kiwanis Camp",", Little Rock",AR,"United States",Open,
+11508,"Joanna Magale Manor",Magnolia,AR,"United States",Open,
+11509,"Joseph Pfeifer Kiwanis Camp","Little Rock",AR,"United States",Open,
 11510,"Lantz Lurry Juvenile Detention Center",Texarkana,AR,"United States",Open,
 11511,"Lewisville Juvenile Treatment Center",Lewisville,AR,"United States",Open,
 11512,"Little Creek Behavioral Health",Conway,AR,"United States",Open,https://kidsoverprofits.org/facility/little-creek-behavioral-health-ar/
-11513,"Lords Ranch Behavioral Health Care Systems",", Warm Springs",AR,"United States",Open,
-11514,"Maggie House",", Charleston",AR,"United States",Open,
-11515,"Millcreek of Arkansas",", Fordyce",AR,"United States",Open,
-11516,"Millcreek of Arkansas PRTF",", Fordyce",AR,"United States",Open,
-11517,"NeuroRestorative – Timber Ridge",", Benton",AR,"United States",Open,
-11518,"New Life Children’s Home",", Oil Trough",AR,"United States",Open,
-11519,"Northwest Arkansas Children’s Shelter",", Bentonville",AR,"United States",Open,
+11513,"Lords Ranch Behavioral Health Care Systems","Warm Springs",AR,"United States",Open,
+11514,"Maggie House",Charleston,AR,"United States",Open,
+11515,"Millcreek of Arkansas",Fordyce,AR,"United States",Open,
+11516,"Millcreek of Arkansas PRTF",Fordyce,AR,"United States",Open,
+11517,"NeuroRestorative – Timber Ridge",Benton,AR,"United States",Open,
+11518,"New Life Children’s Home","Oil Trough",AR,"United States",Open,
+11519,"Northwest Arkansas Children’s Shelter",Bentonville,AR,"United States",Open,
 11520,"Open Arms Shelter",Lonoke,AR,"United States",Open,
-11521,"Ophelia Polk Moore Home",", Lexa",AR,"United States",Open,
-11522,"Ouachita Children’s Shelter",", Hot Springs",AR,"United States",Open,
-11526,"Piney Ridge Treatment Center",", Fayetteville",AR,"United States",Open,https://kidsoverprofits.org/facility/piney-ridge-treatment-center-ar/
+11521,"Ophelia Polk Moore Home",Lexa,AR,"United States",Open,
+11522,"Ouachita Children’s Shelter","Hot Springs",AR,"United States",Open,
+11526,"Piney Ridge Treatment Center",Fayetteville,AR,"United States",Open,https://kidsoverprofits.org/facility/piney-ridge-treatment-center-ar/
 11527,"Pinnacle Pointe Sub-Acute Inpatient Treatment","Little Rock",AR,"United States",Open,
 11528,"Pulaski County Juvenile Detention","Little Rock",AR,"United States",Open,
-11529,"Quapaw House Adolescent Residential Treatment Center",", Hot Springs",AR,"United States",Open,
-11530,"Ridge View Program",", Fayetteville",AR,"United States",Open,
+11529,"Quapaw House Adolescent Residential Treatment Center","Hot Springs",AR,"United States",Open,
+11530,"Ridge View Program",Fayetteville,AR,"United States",Open,
 11531,"Rivendell of Arkansas",Benton,AR,"United States",Open,https://kidsoverprofits.org/facility/rivendell-of-arkansas-ar/
 11532,"Searcy Children’s Home, Inc.",Searcy,AR,"United States",Open,
 11533,"Sebastian County Juvenile Detention Center","Fort Smith",AR,"United States",Open,
-11534,"Second Chance Ranch",", Paron",AR,"United States",Open,
-11535,"Soaring Wings Ranch",", Vilonia",AR,"United States",Open,
+11534,"Second Chance Ranch",Paron,AR,"United States",Open,
+11535,"Soaring Wings Ranch",Vilonia,AR,"United States",Open,
 11536,"Southeast Arkansas Residential Treatment Facility",Monticello,AR,"United States",Open,
-11537,"Southern Christian Home",", Morrilton",AR,"United States",Open,
-11539,"Texarkana Baptist Children’s Home",", Texarkana",AR,"United States",Open,
-11540,"The Boy’s Shelter",", Fort Smith",AR,"United States",Open,
+11537,"Southern Christian Home",Morrilton,AR,"United States",Open,
+11539,"Texarkana Baptist Children’s Home",Texarkana,AR,"United States",Open,
+11540,"The Boy’s Shelter","Fort Smith",AR,"United States",Open,
 11541,"The Centers for Youth and Families – Monticello","Walnut Ridge",AR,"United States",Open,https://kidsoverprofits.org/facility/the-centers-for-youth-and-families-monticello-ar/
 11542,"The Lord’s Ranch","Warm Springs",AR,"United States",Open,
 11543,"Timothy Hill Children’s Ranch",Searcy,AR,"United States",Open,
-11544,"Trinity Behavioral Health",", Warm Springs",AR,"United States",Open,
-11545,"United Methodist Children’s Home Dacus RTC",", Bono",AR,"United States",Open,
-11546,"United Methodist Children’s Home John Magale Manor",", Magnolia",AR,"United States",Open,
+11544,"Trinity Behavioral Health","Warm Springs",AR,"United States",Open,
+11545,"United Methodist Children’s Home Dacus RTC",Bono,AR,"United States",Open,
+11546,"United Methodist Children’s Home John Magale Manor",Magnolia,AR,"United States",Open,
 11547,"United Methodist Children’s Home Little Rock Campus","Little Rock",AR,"United States",Open,
-11548,"United Methodist Children’s Homes Fayetteville Home",", Fayetteville",AR,"United States",Open,
-11549,"United Methodist Children’s Homes Mulberry Boy’s Home",", Mulberry",AR,"United States",Open,
+11548,"United Methodist Children’s Homes Fayetteville Home",Fayetteville,AR,"United States",Open,
+11549,"United Methodist Children’s Homes Mulberry Boy’s Home",Mulberry,AR,"United States",Open,
 11550,"United Methodist Children’s Homes Searcy Home",Searcy,AR,"United States",Open,
-11551,"United Methodist Children’s Homes Springdale Girl’s Home",", Fayetteville",AR,"United States",Open,
+11551,"United Methodist Children’s Homes Springdale Girl’s Home",Fayetteville,AR,"United States",Open,
 11552,"Vantage Point Behavioral Health RTP",Fayetteville,AR,"United States",Open,
-11553,"Vera Lloyd Presbyterian Home and Family Services, Inc",", Monticello",AR,"United States",Open,
+11553,"Vera Lloyd Presbyterian Home and Family Services, Inc",Monticello,AR,"United States",Open,
 11554,"Washington County Juvenile Detention Center",Fayetteville,AR,"United States",Open,
-11555,"Watersprings Ranch",", Texarkana",AR,"United States",Open,
+11555,"Watersprings Ranch",Texarkana,AR,"United States",Open,
 11556,"White River Juvenile Detention Center",Batesville,AR,"United States",Open,
 11557,"Wilson & Field Homes","Little Rock",AR,"United States",Open,
-11558,"Winfred Polk Home",", Heber Springs",AR,"United States",Open,
+11558,"Winfred Polk Home","Heber Springs",AR,"United States",Open,
 11559,"Yell County Juvenile Detention Center",Danville,AR,"United States",Open,
 11560,"Youth Home, Inc.","Little Rock",AR,"United States",Open,https://kidsoverprofits.org/facility/youth-home-inc-ar/
 11561,"Southwood Psychiatric Hospital Residential Treatment Program",Pittsburgh,PA,"United States",Open,https://kidsoverprofits.org/facility/southwood-psychiatric-hospital-residential-treatment-program-pa/
@@ -1834,7 +1831,7 @@ id,name,city,state,country,status,facility_page
 11581,"Adelphoi Benet Home",Latrobe,PA,"United States",Open,
 11582,"Adelphoi Colony Home",Bradenville,PA,"United States",Open,
 11583,"Adelphoi Greystone House",Boswell,PA,"United States",Open,
-11584,"Adelphoi Judge Charles E. Marker House","PA 15650.",PA,"United States",Open,
+11584,"Adelphoi Judge Charles E. Marker House",Latrobe,PA,"United States",Open,
 11585,"Adelphoi La Sa Quik","Cogan Station",PA,"United States",Open,
 11586,"Adelphoi Loyalhanna House",Latrobe,PA,"United States",Open,https://kidsoverprofits.org/facility/adelphoi-loyalhanna-house-pa/
 11587,"Adelphoi Manor",Ebensburg,PA,"United States",Open,
@@ -1878,7 +1875,7 @@ id,name,city,state,country,status,facility_page
 11626,"Melmark Pennsylvania RTF",Berwyn,PA,"United States",Open,
 11627,"New Outlook Academy",Pittsburgh,PA,"United States",Open,
 11628,"North Central Secure Treatment Unit",Danville,PA,"United States",Open,
-11629,"​North East Secure Treatment Unit",Pittston,PA,"United States",Open,
+11629,"North East Secure Treatment Unit",Pittston,PA,"United States",Open,
 11630,"Northwestern Academy",Excelsior,PA,"United States",Closed,
 11631,"Outside In Voyagers Program",Bolivar,PA,"United States",Open,
 11632,"PA Child Care",Pittston,PA,"United States",Closed,
@@ -1887,7 +1884,7 @@ id,name,city,state,country,status,facility_page
 11635,"Pressley Ridge Home Places",Pittsburgh,PA,"United States",Open,
 11636,"Pressley Ridge School",Ohiopyle,PA,"United States",Closed,
 11637,"Sarah Reed Children’s Center Residential Treatment",Erie,PA,"United States",Open,
-11638,"​South Mountain Secure Treatment Unit","South Mountain",PA,"United States",Open,
+11638,"South Mountain Secure Treatment Unit","South Mountain",PA,"United States",Open,
 11639,"Summit Quest Academy",Ephrata,PA,"United States",Closed,https://kidsoverprofits.org/facility/summit-quest-academy-pa/
 11641,"The Bradley Center PRTF",Pittsburgh,PA,"United States",Open,
 11642,"The Bridge Philadelphia",Philadelphia,PA,"United States",Open,
@@ -2153,7 +2150,7 @@ id,name,city,state,country,status,facility_page
 11921,"Successful Visions, LLC","High Point",NC,"United States",Open,
 11922,Summerhill,Fayetteville,NC,"United States",Open,https://kidsoverprofits.org/facility/summerhill-nc/
 11923,"Sunlight Behavior Center",Fayetteville,NC,"United States",Open,https://kidsoverprofits.org/facility/sunlight-behavior-center-nc/
-11924,"SUWS of the Carolinas","Old Fort",NC,"United States",Open,https://kidsoverprofits.org/facility/suws-of-the-carolinas-nc/
+11924,"SUWS of the Carolinas","Old Fort",NC,"United States",Closed,https://kidsoverprofits.org/facility/suws-of-the-carolinas-nc/
 11925,"Tapestry Adolescent Residential Program",Fletcher,NC,"United States",Open,
 11926,"Taylor Made Home",Charlotte,NC,"United States",Open,
 11927,"Terry’s Safe Haven",Raleigh,NC,"United States",Open,
@@ -2309,7 +2306,7 @@ id,name,city,state,country,status,facility_page
 12085,"Northern Rivers Schenectady Residence",Schenectady,NY,"United States",Open,
 12086,OLV,Lackawanna,NY,"United States",Open,
 12087,"Oswald D. Heck Developmental Center",Schenectady,NY,"United States",Closed,
-12088,"Outreach House I",", Queens",NY,"United States",Open,
+12088,"Outreach House I",Queens,NY,"United States",Open,
 12089,"Outreach House II",Brentwood,NY,"United States",Open,
 12090,"Parsons RTF",Albany,NY,"United States",Open,
 12091,"Pathways, Inc. Conable House Community Residence",Bath,NY,"United States",Open,
@@ -2322,7 +2319,7 @@ id,name,city,state,country,status,facility_page
 12101,"SCO Madonna Heights RTF","Dix Hills",NY,"United States",Open,
 12102,"SCO Otillie RTF",Briarwood,NY,"United States",Open,
 12103,"SCO Our Place Community Residence","Queens Village",NY,"United States",Open,
-12104,"SLS Residential, Inc.",", Suite 210 Brewster",NY,"United States",Closed,
+12104,"SLS Residential, Inc.",Brewster,NY,"United States",Closed,
 12105,"Snell Farm Children’s Center",Bath,NY,"United States",Open,
 12106,"St. Christopher’s Dobbs Ferry Campus","Dobbs Ferry",NY,"United States",Open,
 12107,"St. Christopher’s Jennie Clarkson Campus","North Castle",NY,"United States",Open,
@@ -2434,7 +2431,7 @@ id,name,city,state,country,status,facility_page
 12220,"Empowered Care Homes LLC",Gilbert,AZ,"United States",Closed,
 12221,"Empowerment Family Care, Inc.",Phoenix,AZ,"United States",Closed,
 12222,"Estrella Vista Ranch",Dragoon,AZ,"United States",Closed,
-12223,"FACTS Behavioral Health",", Phoenix",AZ,"United States",Closed,
+12223,"FACTS Behavioral Health",Phoenix,AZ,"United States",Closed,
 12224,"Family Solutions Foundation",Taylor,AZ,"United States",Closed,
 12225,"Fay’s House 1, 2, 3",Phoenix,AZ,"United States",Closed,
 12226,"First Step Behavioral Health",Phoenix,AZ,"United States",Open,
@@ -2585,13 +2582,13 @@ id,name,city,state,country,status,facility_page
 12378,"Lincoln County Juvenile Department",Newport,OR,"United States",Open,
 12379,"Looking Glass Community Services – Residential Services",Eugene,OR,"United States",Open,
 12380,"MacLaren Youth Correctional Facility",Woodburn,OR,"United States",Open,https://kidsoverprofits.org/facility/maclaren-youth-correctional-facility-or/
-12381,"Madrona Recovery",", Tigard",OR,"United States",Open,https://kidsoverprofits.org/facility/madrona-recovery-or/
+12381,"Madrona Recovery",Tigard,OR,"United States",Open,https://kidsoverprofits.org/facility/madrona-recovery-or/
 12382,"Marion County Juvenile Detention",Salem,OR,"United States",Open,
 12383,"Monte Nido Clementine West Linn","West Linn",OR,"United States",Open,
 12384,"Morrison Child & Family Services",Portland,OR,"United States",Open,https://kidsoverprofits.org/facility/morrison-child-family-services-or/
 12385,"Morrison Child & Family Services – Counterpoint",Portland,OR,"United States",Open,
 12386,"Morrison Child & Family Services – SAGE Residential Program",Portland,OR,"United States",Open,
-12387,"Multnomah A&E Program",", Portland",OR,"United States",Open,
+12387,"Multnomah A&E Program",Portland,OR,"United States",Open,
 12388,"NARA Youth Residential Treatment Center",Gresham,OR,"United States",Closed,
 12389,"New Avenues for Youth – Robinswood","Lake Oswego",OR,"United States",Open,
 12390,"New Vision Programs of Oregon",Milwaukie,OR,"United States",Closed,
@@ -2655,7 +2652,7 @@ id,name,city,state,country,status,facility_page
 12456,"Nevada Homes for Youth","Las Vegas",NV,"United States",Open,
 12457,"Nevada Homes for Youth Substance Abuse Program","Las Vegas",NV,"United States",Open,
 12459,"Nevada Youth Training Center",Elko,NV,"United States",Open,https://kidsoverprofits.org/facility/nevada-youth-training-center-nv/
-12460,"New Benchmark","373 Amargosa",NV,"United States",Open,
+12460,"New Benchmark",Amargosa,NV,"United States",Open,
 12461,"New Frontier Treatment Center",Fallon,NV,"United States",Open,
 12462,"Northern Nevada PRTF Services for Children – Enterprise",Reno,NV,"United States",Open,
 12463,"Reno Behavioral Healthcare Hospital, LLC",Reno,NV,"United States",Open,https://kidsoverprofits.org/facility/reno-behavioral-healthcare-hospital-llc-nv/
@@ -2670,7 +2667,7 @@ id,name,city,state,country,status,facility_page
 12472,"The Fearless Kind","Las Vegas",NV,"United States",Open,
 12473,"The Nestled Recovery Center","Las Vegas",NV,"United States",Open,
 12474,"The Ridge House Vance Johnson Recovery Center","Las Vegas",NV,"United States",Open,
-12475,"Vitality Carson City","Suite 201 Carson City",NV,"United States",Open,
+12475,"Vitality Carson City","Carson City",NV,"United States",Open,
 12476,"Vitality Center",Elko,NV,"United States",Open,
 12477,"Vogue Recovery Center","Las Vegas",NV,"United States",Open,
 12478,"Westcare Inc – Harris Springs Ranch","Las Vegas",NV,"United States",Open,
@@ -2732,7 +2729,7 @@ id,name,city,state,country,status,facility_page
 12538,"Goshen Valley Boys Ranch",Waleska,GA,"United States",Open,https://kidsoverprofits.org/facility/goshen-valley-boys-ranch-ga/
 12540,"Hillside Atlanta – Conant School",Atlanta,GA,"United States",Open,
 12541,"Joy House",Jasper,GA,"United States",Open,
-12542,"Kenneth B. Walker Residential Home","Suite 20 Columbus",GA,"United States",Closed,
+12542,"Kenneth B. Walker Residential Home",Columbus,GA,"United States",Closed,
 12543,"KidsPeace Georgia Bowdon Campus",Bowdon,GA,"United States",Open,
 12544,"Macon YDC",Macon,GA,"United States",Open,
 12545,"Milledgeville YDC",Milledgeville,GA,"United States",Open,
@@ -2811,7 +2808,7 @@ id,name,city,state,country,status,facility_page
 12620,"White Rock Academy",Esbon,KS,"United States",Closed,
 12621,"Devereux Cleo Wallace Center",Westminster,CO,"United States",Closed,https://kidsoverprofits.org/facility/devereux-cleo-wallace-center-co/
 12622,"Red Mountain Colorado",Greeley,CO,"United States",Closed,https://kidsoverprofits.org/facility/red-mountain-colorado-co/
-12623,"Royal Gorge Academy",", Cañon City",CO,"United States",Closed,https://kidsoverprofits.org/facility/royal-gorge-academy-co/
+12623,"Royal Gorge Academy","Cañon City",CO,"United States",Closed,https://kidsoverprofits.org/facility/royal-gorge-academy-co/
 12624,"Adolescent and Family Institute of Colorado","Wheat Ridge",CO,"United States",Closed,
 12625,"Aspire Youth Services Center",Golden,CO,"United States",Open,
 12627,"Betty K. Marler Youth Services Center",Denver,CO,"United States",Open,
@@ -2833,7 +2830,7 @@ id,name,city,state,country,status,facility_page
 12643,"Golden Peak Youth Services Center",Golden,CO,"United States",Open,
 12644,"Grand Mesa Youth Services Center","Grand Junction",CO,"United States",Open,https://kidsoverprofits.org/facility/grand-mesa-youth-services-center-co/
 12645,"Griffith Centers for Children",Lakewood,CO,"United States",Open,
-12647,"Kidz Ark","32. Sterling",CO,"United States",Open,https://kidsoverprofits.org/facility/kidz-ark-co/
+12647,"Kidz Ark",Sterling,CO,"United States",Open,https://kidsoverprofits.org/facility/kidz-ark-co/
 12648,"Lookout Mountain Youth Services",Golden,CO,"United States",Open,
 12649,"Marvin W. Foote Youth Services Center",Centennial,CO,"United States",Open,https://kidsoverprofits.org/facility/marvin-w-foote-youth-services-center-co/
 12650,"Morrison Home",Morrison,CO,"United States",Open,https://kidsoverprofits.org/facility/morrison-home-co/
@@ -2996,7 +2993,7 @@ id,name,city,state,country,status,facility_page
 12824,"Chaplin Youth Center Group Home",Fredericksburg,VA,"United States",Open,
 12826,"Chesterfield Juvenile Detention Center",Chesterfield,VA,"United States",Open,
 12827,"Child & Family Healing Center at UMFS",Richmond,VA,"United States",Open,
-12828,"Childhelp USA",", Lignum",VA,"United States",Open,
+12828,"Childhelp USA",Lignum,VA,"United States",Open,
 12829,"Courage House – Youth for Tomorrow",Bristow,VA,"United States",Open,
 12830,"Crater Juvenile Detention Center",Disputanta,VA,"United States",Open,
 12831,"Elk Hill Farm, Inc.",Charlottesville,VA,"United States",Open,
@@ -3141,7 +3138,7 @@ id,name,city,state,country,status,facility_page
 12977,"The Martin Center",Bellingham,WA,"United States",Closed,
 12978,"Thurston County Juvenile Detention",Turnwater,WA,"United States",Open,
 12979,"Touchstone Community Facility",Olympia,WA,"United States",Open,
-12980,"Twin Rivers Community Facility",", Richland",WA,"United States",Open,
+12980,"Twin Rivers Community Facility",Richland,WA,"United States",Open,
 12981,"Two Rivers Landing",Yakima,WA,"United States",Open,https://kidsoverprofits.org/facility/two-rivers-landing-wa/
 12983,"Walla Walla/Columbia County Juvenile Detention","Walla Walla",WA,"United States",Open,
 12984,"Whatcom County Juvenile Detention",Bellingham,WA,"United States",Open,
@@ -3194,7 +3191,7 @@ id,name,city,state,country,status,facility_page
 13031,"Mapletree Group Home",Maplewood,MN,"United States",Closed,
 13032,"Mesabi Academy",Buhl,MN,"United States",Closed,
 13033,"Minnesota Correctional Facility – Red Wing","Red Wing",MN,"United States",Open,
-13034,"Minnesota Girls Academy","2, Bricelyn",MN,"United States",Open,https://kidsoverprofits.org/facility/minnesota-girls-academy-mn/
+13034,"Minnesota Girls Academy",Bricelyn,MN,"United States",Open,https://kidsoverprofits.org/facility/minnesota-girls-academy-mn/
 13035,"Minnesota Home School for Girls","Sauk Centre",MN,"United States",Closed,
 13036,"Naima House",Minneapolis,MN,"United States",Open,https://kidsoverprofits.org/facility/naima-house-mn/
 13037,"Nexus-East Bethel Family Healing","East Bethel",MN,"United States",Open,https://kidsoverprofits.org/facility/nexus-east-bethel-family-healing-mn/
@@ -3246,7 +3243,7 @@ id,name,city,state,country,status,facility_page
 13085,Wings,Litchfield,MN,"United States",Open,https://kidsoverprofits.org/facility/wings-mn/
 13087,RADIUS,Omaha,NE,"United States",Open,
 13088,"Stand Fast In Freedom",Omaha,NE,"United States",Open,
-13089,"Pathway Family Center",", Suite 300, Southfield",MI,"United States",Closed,https://kidsoverprofits.org/pathway-family-center/
+13089,"Pathway Family Center",Southfield,MI,"United States",Closed,https://kidsoverprofits.org/pathway-family-center/
 13091,"Havenwyck Hospital Residential Impulse Disorder Program","Auburn Hills",MI,"United States",Open,https://kidsoverprofits.org/facility/havenwyck-hospital-residential-impulse-disorder-program-mi/
 13092,"A Place For Kids","Farmington Hills",MI,"United States",Open,
 13093,"Alpha House","Ann Arbor",MI,"United States",Open,https://kidsoverprofits.org/facility/alpha-house-mi/
@@ -3375,7 +3372,7 @@ id,name,city,state,country,status,facility_page
 13219,"Wellspring Lutheran Services Gaylord",Gaylord,MI,"United States",Open,
 13220,"Wellspring Lutheran Services Kentwood",Kentwood,MI,"United States",Open,
 13221,"Wolverine Center",Detroit,MI,"United States",Open,
-13222,"Wolverine Human Services Residential Campus",", Vassar",MI,"United States",Open,
+13222,"Wolverine Human Services Residential Campus",Vassar,MI,"United States",Open,
 13223,"Wolverine Secure Treatment Center",Saginaw,MI,"United States",Open,
 13224,"Youth Home Allegan County",Allegan,MI,"United States",Open,
 13225,"Zonta House",Flint,MI,"United States",Open,https://kidsoverprofits.org/facility/zonta-house-mi/
@@ -3549,7 +3546,7 @@ id,name,city,state,country,status,facility_page
 13411,"Heart of America Teen Challenge",Etna,WY,"United States",Closed,https://kidsoverprofits.org/facility/heart-of-america-teen-challenge-wy/
 13412,"Wyoming Behavioral Institute Pathways Residential Trauma-Informed Care",Casper,WY,"United States",Unknown,https://kidsoverprofits.org/facility/wyoming-behavioral-institute-pathways-residential-trauma-informed-care-wy/
 13413,"Adams Canyon Crisis",Jackson,WY,"United States",Open,
-13414,"Big Horn Basin Adolescent Programs","20 Basin",WY,"United States",Open,
+13414,"Big Horn Basin Adolescent Programs",Basin,WY,"United States",Open,
 13415,BOCES,Wilson,WY,"United States",Open,
 13416,"Carbon County Youth Crisis Center",Rawlins,WY,"United States",Open,
 13417,"Cathedral Home for Youth",Laramie,WY,"United States",Open,
@@ -3557,7 +3554,7 @@ id,name,city,state,country,status,facility_page
 13419,"Fremont County Group Homes – Boys – Riverton",Riverton,WY,"United States",Open,
 13420,"Fremont County Group Homes – Girls – Lander",Lander,WY,"United States",Open,
 13421,"Green River Youth Home","Rock Springs",WY,"United States",Closed,
-13422,"Heart Mountain New Beginnings","22 H Powell",WY,"United States",Closed,https://kidsoverprofits.org/facility/heart-mountain-new-beginnings-wy/
+13422,"Heart Mountain New Beginnings",Powell,WY,"United States",Closed,https://kidsoverprofits.org/facility/heart-mountain-new-beginnings-wy/
 13423,"Laramie Youth Crisis Center",Laramie,WY,"United States",Open,
 13424,"Machaseh Children’s Ranch",Shoshoni,WY,"United States",Open,
 13425,"Milestone Youth Home",Sheridan,WY,"United States",Open,
@@ -3569,12 +3566,12 @@ id,name,city,state,country,status,facility_page
 13432,"Rock Springs Youth Home","Rock Springs",WY,"United States",Open,
 13433,"Rocky Mountain Frontier",Powell,WY,"United States",Open,
 13434,"St. Joseph’s Children’s Home",Torrington,WY,"United States",Open,
-13436,"Trinity Teen Solutions, Inc.","8 RA, Powell",WY,"United States",Open,https://kidsoverprofits.org/facility/trinity-teen-solutions-inc-wy/
+13436,"Trinity Teen Solutions, Inc.",Powell,WY,"United States",Open,https://kidsoverprofits.org/facility/trinity-teen-solutions-inc-wy/
 13437,"Van Vleck House",Jackson,WY,"United States",Open,
 13438,"Wyoming Behavioral Institute Pathways Residential",Casper,WY,"United States",Open,
-13439,"Wyoming Boys’ School","20 South Worland",WY,"United States",Open,https://kidsoverprofits.org/facility/wyoming-boys-school-wy/
+13439,"Wyoming Boys’ School",Worland,WY,"United States",Open,https://kidsoverprofits.org/facility/wyoming-boys-school-wy/
 13440,"Wyoming Girls’ School",Sheridan,WY,"United States",Open,https://kidsoverprofits.org/facility/wyoming-girls-school-wy/
-13441,"Y.E.S. House",", Building a Gillette",WY,"United States",Open,
+13441,"Y.E.S. House",Gillette,WY,"United States",Open,
 13442,"YCC and Hemry Home",Casper,WY,"United States",Open,
 13443,"Youth Alternatives Home Assoc.",Evanston,WY,"United States",Open,
 13444,"Youth Home Inc. – Green River","Green River",WY,"United States",Open,
@@ -3674,17 +3671,17 @@ id,name,city,state,country,status,facility_page
 13544,"Baptist Home for Girls",Madill,OK,"United States",Open,
 13545,"Bear Lodge","Sand Springs",OK,"United States",Open,
 13546,"Believe in Me Kiamichi Youth Services",Idabel,OK,"United States",Open,
-13547,"Bison Creek Treatment Services","9 Norman",OK,"United States",Open,
+13547,"Bison Creek Treatment Services",Norman,OK,"United States",Open,
 13548,"Boys Ranch Town Edmond",Edmond,OK,"United States",Open,
 13549,"Calm Center",Tulsa,OK,"United States",Open,
 13550,"Calvary Boys Ranch",Eufala,OK,"United States",Closed,
-13551,"Canadian County Children’s Justice Center","66 El Reno",OK,"United States",Open,
+13551,"Canadian County Children’s Justice Center","El Reno",OK,"United States",Open,
 13552,"Cedar Ridge Residential Treatment Facility","Oklahoma City",OK,"United States",Open,
 13553,"Central Oklahoma Juvenile Center",Tecumseh,OK,"United States",Open,https://kidsoverprofits.org/facility/central-oklahoma-juvenile-center-ok/
 13554,"Children’s Recovery Center of Oklahoma",Norman,OK,"United States",Open,
-13555,"Communityworks ITS",", Bldg B Norman",OK,"United States",Open,
+13555,"Communityworks ITS",Norman,OK,"United States",Open,
 13556,"Conversion – Kiamichi Youth Services",Idabel,OK,"United States",Open,
-13557,"Cookson Hills Christian Ministries","10 Kansas",OK,"United States",Open,
+13557,"Cookson Hills Christian Ministries",Kansas,OK,"United States",Open,
 13558,Cornerstone,Norman,OK,"United States",Open,
 13559,"Dreamcatcher Kiamichi Youth Services",Idabel,OK,"United States",Open,
 13560,"Eagle Lodge","Sand Springs",OK,"United States",Open,
@@ -3704,7 +3701,7 @@ id,name,city,state,country,status,facility_page
 13574,"Lighthouse Substance Abuse",Norman,OK,"United States",Open,
 13575,"Moccasin Bend Ranch",Miami,OK,"United States",Open,
 13576,"Murrow Indian Children’s Home",Muskogee,OK,"United States",Open,
-13577,"Mustang Treatment Center","152 Mustang",OK,"United States",Open,
+13577,"Mustang Treatment Center",Mustang,OK,"United States",Open,
 13578,"Oaks Indian Mission",Oaks,OK,"United States",Open,
 13579,"OFCS Cedar Canyon",Weatherford,OK,"United States",Open,
 13580,"Parker Pointe",Lawton,OK,"United States",Open,
@@ -3725,7 +3722,7 @@ id,name,city,state,country,status,facility_page
 13596,"Side of Hope Kiamichi Youth Services",Idabel,OK,"United States",Open,
 13597,"Southern Plains Treatment Services",Norman,OK,"United States",Open,
 13598,"Southern Plains Treatment Services -Tulsa",Tulsa,OK,"United States",Open,
-13599,"Southern Plains Treatment Services – West","152, Building B Mustang",OK,"United States",Open,
+13599,"Southern Plains Treatment Services – West",Mustang,OK,"United States",Open,
 13600,"Southwest Behavioral Health",Lawton,OK,"United States",Open,
 13601,"Speck Homes Inc, Program I","Oklahoma City",OK,"United States",Open,
 13602,"Speck Homes Inc, Program II","Oklahoma City",OK,"United States",Open,
@@ -3739,7 +3736,7 @@ id,name,city,state,country,status,facility_page
 13610,"Tulsa Boys Home","Sand Springs",OK,"United States",Open,https://kidsoverprofits.org/facility/tulsa-boys-home-ok/
 13611,"Welch Skills Center",Welch,OK,"United States",Open,
 13612,"Westview Boys Home",Hollis,OK,"United States",Open,
-13613,"White Horse Ranch, LLC","213 Mooreland",OK,"United States",Open,
+13613,"White Horse Ranch, LLC",Mooreland,OK,"United States",Open,
 13614,"Willow Crest Hospital",Miami,OK,"United States",Open,
 13615,"Willow Springs Boys Ranch",Chandler,OK,"United States",Open,
 13616,"Wolf Lodge","Sand Springs",OK,"United States",Open,
@@ -3747,9 +3744,9 @@ id,name,city,state,country,status,facility_page
 13618,"Pearl of Grace Ranch",,OK,"United States",Open,
 13619,RISE,,OK,"United States",Open,
 13620,"Alabama Baptist Children’s Homes – Calhoun",Oxford,AL,"United States",Open,
-13621,"Alabama Baptist Children’s Homes – Dothan",", Dothan",AL,"United States",Open,
+13621,"Alabama Baptist Children’s Homes – Dothan",Dothan,AL,"United States",Open,
 13622,"Alabama Baptist Children’s Homes – Morgan",Decatur,AL,"United States",Open,
-13623,"Alabama Baptist Children’s Homes Mobile",", Mobile",AL,"United States",Open,
+13623,"Alabama Baptist Children’s Homes Mobile",Mobile,AL,"United States",Open,
 13624,"Alabama Clinical Schools",Birmingham,AL,"United States",Open,https://kidsoverprofits.org/facility/alabama-clinical-schools-al/
 13625,"Alabama Department of Youth Services – Autauga Campus",Pratville,AL,"United States",Open,
 13626,"Alabama Department of Youth Services – Mt. Meigs",Montgomery,AL,"United States",Open,
@@ -3760,36 +3757,35 @@ id,name,city,state,country,status,facility_page
 13631,"Beacon Children’s Hospital",Luverne,AL,"United States",Open,
 13632,"Beacon House/Concerned Citizens for Our Youth",Jasper,AL,"United States",Open,
 13633,"Blessed Hope Boys Academy",Seminole,AL,"United States",Open,
-13634,"Boyd School, Inc.",", Green Pond",AL,"United States",Open,
-13636,"Brantwood Children’s Home",", Montgomery",AL,"United States",Open,
+13634,"Boyd School, Inc.","Green Pond",AL,"United States",Open,
+13636,"Brantwood Children’s Home",Montgomery,AL,"United States",Open,
 13637,"Brewer Porch Children’s Center",Tuscaloosa,AL,"United States",Open,
 13638,"Brewer Porch-STTEP Program",Tuscaloosa,AL,"United States",Open,
 13642,"Burts Place Home for Boys",Gadsden,AL,"United States",Open,
-13643,"Childhaven, Inc.",", Cullman",AL,"United States",Open,
-13644,"Children’s Services Inc. – The Parris Home",", Anniston",AL,"United States",Open,
-13645,"Children’s Village",", Birmingham",AL,"United States",Open,https://kidsoverprofits.org/facility/children-s-village-al/
-13646,"Chrysalis, A Home for Girls",", Newton",AL,"United States",Open,
+13643,"Childhaven, Inc.",Cullman,AL,"United States",Open,
+13644,"Children’s Services Inc. – The Parris Home",Anniston,AL,"United States",Open,
+13645,"Children’s Village",Birmingham,AL,"United States",Open,https://kidsoverprofits.org/facility/children-s-village-al/
+13646,"Chrysalis, A Home for Girls",Newton,AL,"United States",Open,
 13647,"Columbus Girls Academy",Seale,AL,"United States",Open,https://kidsoverprofits.org/facility/columbus-girls-academy-al/
 13648,"Coosa Valley Regional Juvenile Detention Center",Anniston,AL,"United States",Open,
 13649,"Eagle Rock Boys Ranch","B Gadsden",AL,"United States",Open,
-13650,"Elk River Treatment Program",Huntsville,AL,"United States",Closed,https://kidsoverprofits.org/facility/elk-river-treatment-program-al/
 13651,"Enrestoration Inc",Gadsden,AL,"United States",Open,
-13652,"Family Garden-Males",", Union Grove",AL,"United States",Open,
+13652,"Family Garden-Males","Union Grove",AL,"United States",Open,
 13653,"Freewill Baptist Home",Elridge,AL,"United States",Open,
 13654,"Glenwood – Daniel Houses & Drummond",Birmingham,AL,"United States",Open,
 13655,"Glenwood – McDonough House",Birmingham,AL,"United States",Open,
 13656,"Glenwood – Reynolds House",Birmingham,AL,"United States",Open,
 13657,"Grace House Ministries",Fairfield,AL,"United States",Open,
-13658,"Haddie’s Home",", Opelika",AL,"United States",Open,
+13658,"Haddie’s Home",Opelika,AL,"United States",Open,
 13659,"Harris Home for Children",Huntsville,AL,"United States",Open,
 13660,"Higdon Hill Group Home",Birmingham,AL,"United States",Open,
 13661,"Hill Crest RTC",Birmingham,AL,"United States",Open,https://kidsoverprofits.org/facility/hill-crest-rtc-al/
 13662,"James T. Strickland Youth Center",Mobile,AL,"United States",Open,
 13663,"Jemison Group Home",Jemison,AL,"United States",Closed,
-13664,"Kids to Love Foundation",", Ardmore",AL,"United States",Open,
+13664,"Kids to Love Foundation",Ardmore,AL,"United States",Open,
 13665,"Kids to Love Foundation – Davidson Farms",Madison,AL,"United States",Open,
-13666,"King’s Home – Hayden",", Warrior",AL,"United States",Open,
-13667,"King’s Home – Westover – Males",", Westover",AL,"United States",Open,
+13666,"King’s Home – Hayden",Warrior,AL,"United States",Open,
+13667,"King’s Home – Westover – Males",Westover,AL,"United States",Open,
 13668,"King’s Ranch and Hannah Homes – Holy Innocents Campus",Chelsea,AL,"United States",Open,
 13669,"King’s Ranch and Hannah Homes – Wilsonville Campus",Chelsea,AL,"United States",Open,
 13670,"Laurel Oaks Behavioral Health Center",Dothan,AL,"United States",Open,https://kidsoverprofits.org/facility/laurel-oaks-behavioral-health-center-al/
@@ -3799,34 +3795,34 @@ id,name,city,state,country,status,facility_page
 13674,"Moriah Christian Children’s Home",Dutton,AL,"United States",Open,
 13675,"Mountain View Hospital Summit Crest Lodge",Gasden,AL,"United States",Open,https://kidsoverprofits.org/facility/mountain-view-hospital-summit-crest-lodge-al/
 13676,"Neaves-Davis Center for Children",Huntsville,AL,"United States",Open,
-13677,"North Alabama Christian Children’s Home, Inc","73 Florence",AL,"United States",Open,
-13679,"Pathway, Inc.","1201, New Brockton",AL,"United States",Open,https://kidsoverprofits.org/facility/pathway-inc-al/
+13677,"North Alabama Christian Children’s Home, Inc",Florence,AL,"United States",Open,
+13679,"Pathway, Inc.","New Brockton",AL,"United States",Open,https://kidsoverprofits.org/facility/pathway-inc-al/
 13680,"Pearls of Promise Girls Academy","Rock Stand",AL,"United States",Closed,
-13681,"Presbyterian Home for Children",", Talladega",AL,"United States",Open,
+13681,"Presbyterian Home for Children",Talladega,AL,"United States",Open,
 13682,"Rachel Academy for Girls",Empire,AL,"United States",Closed,
 13683,"Reclamation Ranch",Empire,AL,"United States",Closed,
 13684,"Restoration Youth Academy",Prichard,AL,"United States",Open,
 13685,"Ross-Bell Jefferson County Youth Detention Center",Birmingham,AL,"United States",Open,
-13686,"SafetyNet Academy",", Minter",AL,"United States",Open,
-13687,"SafetyNet Crossings",", Montgomery",AL,"United States",Open,
+13686,"SafetyNet Academy",Minter,AL,"United States",Open,
+13687,"SafetyNet Crossings",Montgomery,AL,"United States",Open,
 13688,"SafetyNet Villa",Montgomery,AL,"United States",Open,
 13689,"Saving Youth Foundation",Mobile,AL,"United States",Open,
 13690,"Sequel TSI Paint Rock Valley",Trenton,AL,"United States",Closed,https://kidsoverprofits.org/facility/sequel-tsi-paint-rock-valley-al/
 13691,"Shelby County Regional Juvenile Detention Facility",Columbiana,AL,"United States",Open,
 13692,"Solid Rock Ministries",Mobile,AL,"United States",Open,
-13693,"Southeast Alabama Diversion Center",", Dothan",AL,"United States",Open,
+13693,"Southeast Alabama Diversion Center",Dothan,AL,"United States",Open,
 13694,"Southeast Alabama Youth Leadership Academy",Abbeville,AL,"United States",Open,https://kidsoverprofits.org/facility/southeast-alabama-youth-leadership-academy-al/
 13695,"Southern Oaks Center",Pelham,AL,"United States",Open,
-13697,"St. Mary’s Home",", Mobile",AL,"United States",Open,
+13697,"St. Mary’s Home",Mobile,AL,"United States",Open,
 13698,"Team Achievers Discipline Academy",Montgomery,AL,"United States",Closed,
-13699,"TEARS, Inc",", Tuskegee",AL,"United States",Open,
-13700,"Tennessee Valley Juvenile Detention Center",", Tuscumbia",AL,"United States",Open,https://kidsoverprofits.org/facility/tennessee-valley-juvenile-detention-center-al/
-13701,"The Bridge, Inc. Mitchell",", Gasden",AL,"United States",Open,
-13702,"The Bridge, Inc. Northwood",", Gasden",AL,"United States",Open,
-13703,"The Bridge, Inc. STEPS Program",", Mobile",AL,"United States",Open,
-13704,"The Bridge, Inc. Westwood",", Mobile",AL,"United States",Open,
-13705,"The Bridge, Inc., GEMS",", Mobile",AL,"United States",Open,
-13706,"The Learning Tree",", Jacksonville",AL,"United States",Open,https://kidsoverprofits.org/facility/the-learning-tree-al/
+13699,"TEARS, Inc",Tuskegee,AL,"United States",Open,
+13700,"Tennessee Valley Juvenile Detention Center",Tuscumbia,AL,"United States",Open,https://kidsoverprofits.org/facility/tennessee-valley-juvenile-detention-center-al/
+13701,"The Bridge, Inc. Mitchell",Gadsden,AL,"United States",Open,
+13702,"The Bridge, Inc. Northwood",Gadsden,AL,"United States",Open,
+13703,"The Bridge, Inc. STEPS Program",Mobile,AL,"United States",Open,
+13704,"The Bridge, Inc. Westwood",Mobile,AL,"United States",Open,
+13705,"The Bridge, Inc., GEMS",Mobile,AL,"United States",Open,
+13706,"The Learning Tree",Jacksonville,AL,"United States",Open,https://kidsoverprofits.org/facility/the-learning-tree-al/
 13707,"The Pinnacle Schools",Huntsville,AL,"United States",Closed,https://kidsoverprofits.org/facility/the-pinnacle-schools-al/
 13708,"The START Program",Fayette,AL,"United States",Open,
 13709,"Three Springs New Direction",Huntsville,AL,"United States",Closed,
@@ -3838,7 +3834,6 @@ id,name,city,state,country,status,facility_page
 13715,"United Methodist Children’s Home – Wiregrass",Dothan,AL,"United States",Open,
 13716,"Westwood Residential Treatment Center",Mobile,AL,"United States",Open,
 13717,"Wiregrass Children’s Home",Slocomb,AL,"United States",Open,
-13718,"Elk River Treatment Program (CLOSED",Huntsville,AL,"United States",Closed,https://kidsoverprofits.org/facility/elk-river-treatment-program-closed-al/
 13719,"Southeastern Psychiatric Management dba Mountain View Hospital Summit Crest Lodge",Gasden,AL,"United States",Open,
 13720,"Restoration Ranch",,AL,"United States",Open,
 13721,"Alfred D. Noyes Children’s Center",Rockville,MD,"United States",Open,
@@ -3863,72 +3858,72 @@ id,name,city,state,country,status,facility_page
 13744,"Evangeline Christian Academy","St. Martinville",LA,"United States",Unknown,https://kidsoverprofits.org/facility/evangeline-christian-academy-la/
 13745,"Teen Challenge of Acadiana","St. Martinville",LA,"United States",Unknown,https://kidsoverprofits.org/facility/teen-challenge-of-acadiana-la/
 13747,"Acadiana Center for Youth",Bunkie,LA,"United States",Open,https://kidsoverprofits.org/facility/acadiana-center-for-youth-la/
-13748,"Acadiana Treatment Center",", Sunset",LA,"United States",Open,
-13749,"AMIKids Acadiana, Inc",", Branch",LA,"United States",Open,
+13748,"Acadiana Treatment Center",Sunset,LA,"United States",Open,
+13749,"AMIKids Acadiana, Inc",Branch,LA,"United States",Open,
 13750,"Behrman Treatment Family Home",Gretna,LA,"United States",Open,
 13751,"Bossier Parish Juvenile Center","Bossier City",LA,"United States",Open,
-13752,"Boys and Girls Villages Foundation","90 East Lake Charles",LA,"United States",Open,
-13753,"Boys Town Louisiana – Bienville Family Home",", New Orleans",LA,"United States",Open,
-13754,"Boys Town Louisiana – City Park Family Home",", New Orleans",LA,"United States",Open,
-13755,"Boys Town Louisiana – Magazine Family Home",", New Orleans",LA,"United States",Open,
+13752,"Boys and Girls Villages Foundation","Lake Charles",LA,"United States",Open,
+13753,"Boys Town Louisiana – Bienville Family Home","New Orleans",LA,"United States",Open,
+13754,"Boys Town Louisiana – City Park Family Home","New Orleans",LA,"United States",Open,
+13755,"Boys Town Louisiana – Magazine Family Home","New Orleans",LA,"United States",Open,
 13756,"Bridge City Center for Youth","Bridge City",LA,"United States",Open,
 13757,"Caddo Parish Juvenile Detention Center",Shreveport,LA,"United States",Open,
-13758,"Calcasieu Parish Office of Juvenile Justice Services",", Lake Charles",LA,"United States",Open,
+13758,"Calcasieu Parish Office of Juvenile Justice Services","Lake Charles",LA,"United States",Open,
 13759,"Cane River Children’s Services, Inc.",Natchitoches,LA,"United States",Open,
 13760,"Central LA Juvenile Justice",Alexandria,LA,"United States",Open,https://kidsoverprofits.org/facility/central-la-juvenile-justice-la/
 13762,"Christopher Youth Center",Monroe,LA,"United States",Open,
 13763,"Crossroads Youth Ranch",Roseland,LA,"United States",Closed,
 13764,"East Baton Rouge Parish Juvenile Detention Center","Baton Rouge",LA,"United States",Open,
-13765,"Florida Parishes Juvenile Detention Center","190 Covington",LA,"United States",Open,
+13765,"Florida Parishes Juvenile Detention Center",Covington,LA,"United States",Open,
 13766,"Grace Christian Home and Academy",Shreveport,LA,"United States",Open,https://kidsoverprofits.org/facility/grace-christian-home-and-academy-la/
-13767,"Green Oaks Juvenile Detention Center",", Monroe",LA,"United States",Open,
-13768,"Harbour House RTC",",, Bldg. A. Lake Charles",LA,"United States",Open,
-13769,"Harmony Center, Inc. – A.B. Horn Group Home",", Baton Rouge",LA,"United States",Open,
-13770,"Harmony Center, Inc. – Harmony III Group Home",", Baton Rouge",LA,"United States",Open,
-13771,"Heritage Ranch",", Zachary",LA,"United States",Open,
+13767,"Green Oaks Juvenile Detention Center",Monroe,LA,"United States",Open,
+13768,"Harbour House RTC","Lake Charles",LA,"United States",Open,
+13769,"Harmony Center, Inc. – A.B. Horn Group Home","Baton Rouge",LA,"United States",Open,
+13770,"Harmony Center, Inc. – Harmony III Group Home","Baton Rouge",LA,"United States",Open,
+13771,"Heritage Ranch",Zachary,LA,"United States",Open,
 13772,"Hope Youth Ranch",Minden,LA,"United States",Open,
-13773,"Jesse Dotey Youth Development Center",", Ponchatoula",LA,"United States",Open,
-13774,"Johnny Robinson’s Boys Home Inc.",", Monroe",LA,"United States",Open,https://kidsoverprofits.org/facility/johnny-robinson-s-boys-home-inc-la/
+13773,"Jesse Dotey Youth Development Center",Ponchatoula,LA,"United States",Open,
+13774,"Johnny Robinson’s Boys Home Inc.",Monroe,LA,"United States",Open,https://kidsoverprofits.org/facility/johnny-robinson-s-boys-home-inc-la/
 13775,"Joy Home for Boys",Greenwood,LA,"United States",Open,
-13776,"Juvenile Justice Intervention Center",", New Orleans",LA,"United States",Open,
+13776,"Juvenile Justice Intervention Center","New Orleans",LA,"United States",Open,
 13777,"Lafayette Juvenile Detention Home",Lafayette,LA,"United States",Open,
-13778,"Lafourche Parish Juvenile Justice Facility",", Thibodaux",LA,"United States",Open,
-13779,"Lifted By Love Residential Home",", Houma",LA,"United States",Open,
-13780,"Lighthouse Child Residential Center",", Reeves",LA,"United States",Open,
-13781,"Lighthouse Ranch for Boys","443 Loranger",LA,"United States",Open,
-13782,"Louis Children’s Crisis Center",", Houma",LA,"United States",Open,
+13778,"Lafourche Parish Juvenile Justice Facility",Thibodaux,LA,"United States",Open,
+13779,"Lifted By Love Residential Home",Houma,LA,"United States",Open,
+13780,"Lighthouse Child Residential Center",Reeves,LA,"United States",Open,
+13781,"Lighthouse Ranch for Boys",Loranger,LA,"United States",Open,
+13782,"Louis Children’s Crisis Center",Houma,LA,"United States",Open,
 13783,"Louis Jetson Center for Youth",Baker,LA,"United States",Closed,
 13784,"Louisiana Baptist Children’s Home",Monroe,LA,"United States",Open,
-13785,"Louisiana Methodist Children’s Home",", Ruston",LA,"United States",Open,
-13786,"MacDonell United Methodist Children’s Services, Inc.",", Houma",LA,"United States",Open,
+13785,"Louisiana Methodist Children’s Home",Ruston,LA,"United States",Open,
+13786,"MacDonell United Methodist Children’s Services, Inc.",Houma,LA,"United States",Open,
 13787,"Metanoia Manor",Zachary,LA,"United States",Open,
-13788,"Methodist Children’s Home of Southeast Louisiana","445, Loranger",LA,"United States",Open,
-13789,"Methodist Children’s Home of Southwest Louisiana",", Sulphur",LA,"United States",Open,
+13788,"Methodist Children’s Home of Southeast Louisiana",Loranger,LA,"United States",Open,
+13789,"Methodist Children’s Home of Southwest Louisiana",Sulphur,LA,"United States",Open,
 13790,"Methodist Home of New Orleans","New Orleans",LA,"United States",Open,
 13791,"New Bethany Home for Girls",Arcadia,LA,"United States",Closed,
 13792,"New Orleans Youth Study Center","New Orleans",LA,"United States",Open,
-13793,"New Way of Southwest Louisiana",", Ville Platte",LA,"United States",Open,
-13794,"Raintree House",", New Orleans",LA,"United States",Open,
-13796,Renaissance,", Alexandria",LA,"United States",Open,https://kidsoverprofits.org/facility/renaissance-la/
-13797,"Renaissance Home for Youth",", Alexandria",LA,"United States",Open,
+13793,"New Way of Southwest Louisiana","Ville Platte",LA,"United States",Open,
+13794,"Raintree House","New Orleans",LA,"United States",Open,
+13796,Renaissance,Alexandria,LA,"United States",Open,https://kidsoverprofits.org/facility/renaissance-la/
+13797,"Renaissance Home for Youth",Alexandria,LA,"United States",Open,
 13798,"Rivarde Juvenile Detention Facility",Harvey,LA,"United States",Open,
-13799,"Rutherford Houses",", Shreveport",LA,"United States",Open,https://kidsoverprofits.org/facility/rutherford-houses-la/
-13800,"St. Bernard Parish Juvenile Detention Center",", Chalmette",LA,"United States",Open,
+13799,"Rutherford Houses",Shreveport,LA,"United States",Open,https://kidsoverprofits.org/facility/rutherford-houses-la/
+13800,"St. Bernard Parish Juvenile Detention Center",Chalmette,LA,"United States",Open,
 13801,"Swanson Center for Youth – Columbia",Columbia,LA,"United States",Open,
 13802,"Swanson Center for Youth – Monroe",Monroe,LA,"United States",Open,
-13803,"Terrebonne Parish Juvenile Justice Complex",", Gray",LA,"United States",Open,
-13804,"The Agape House",", Franklin",LA,"United States",Open,https://kidsoverprofits.org/facility/the-agape-house-la/
-13805,"The Bridge Center for Hope","Suite 400, Baton Rouge",LA,"United States",Open,
-13806,"The Louis Children’s Crisis Center – Midland",", Houma",LA,"United States",Open,
-13807,"The Maples Hammond",", Hammond",LA,"United States",Open,
-13808,"The Maples LLC",", Baton Rouge",LA,"United States",Open,
-13809,"Waldo Burton Boys’ Home",", New Orleans",LA,"United States",Open,
-13810,"Ware Youth Center","71 Coushatta",LA,"United States",Open,
+13803,"Terrebonne Parish Juvenile Justice Complex",Gray,LA,"United States",Open,
+13804,"The Agape House",Franklin,LA,"United States",Open,https://kidsoverprofits.org/facility/the-agape-house-la/
+13805,"The Bridge Center for Hope","Baton Rouge",LA,"United States",Open,
+13806,"The Louis Children’s Crisis Center – Midland",Houma,LA,"United States",Open,
+13807,"The Maples Hammond",Hammond,LA,"United States",Open,
+13808,"The Maples LLC","Baton Rouge",LA,"United States",Open,
+13809,"Waldo Burton Boys’ Home","New Orleans",LA,"United States",Open,
+13810,"Ware Youth Center",Coushatta,LA,"United States",Open,
 13811,"Community Receiving Home, Inc. d/b/a Renaissance",,LA,"United States",Open,
 13812,"Restoration Crisis Center Therapeutic Home",,LA,"United States",Open,
 13813,"Heartland Boys Academy",Nebo,KY,"United States",Open,https://kidsoverprofits.org/facility/heartland-boys-academy-ky/
 13814,"Adair Regional Juvenile Detention Center & Youth Development Center",Columbia,KY,"United States",Open,
-13815,"All God’s Children","1 Nicholasville",KY,"United States",Open,
+13815,"All God’s Children",Nicholasville,KY,"United States",Open,
 13816,"Appalachian Children’s Home",Barbourville,KY,"United States",Open,
 13817,"Arbor Youth Services, Inc.",Lexington,KY,"United States",Open,
 13818,"Ashland Group Home",Ashland,KY,"United States",Open,
@@ -3942,12 +3937,12 @@ id,name,city,state,country,status,facility_page
 13826,"Burnside Group Home",Burnside,KY,"United States",Open,
 13827,"Campbell Lodge Boys Home","Highland Heights",KY,"United States",Closed,
 13828,"Children’s Assessment & Transitional Service Center",Louisville,KY,"United States",Open,
-13829,"Children’s Home of Northern Kentucky",", Devou Park Covington",KY,"United States",Open,
-13830,"Combs Residential Service, Inc.","1247 Eubank",KY,"United States",Open,
+13829,"Children’s Home of Northern Kentucky",Covington,KY,"United States",Open,
+13830,"Combs Residential Service, Inc.",Eubank,KY,"United States",Open,
 13831,"Corner of Hope Recovery Center",Louisville,KY,"United States",Open,
 13832,"Crossroads Treatment Center",Elizabethtown,KY,"United States",Open,
 13833,"Cumberland Adventure Program",Bronston,KY,"United States",Open,
-13834,"Dessie Scott Children’s Home","15 Pine Ridge",KY,"United States",Open,
+13834,"Dessie Scott Children’s Home","Pine Ridge",KY,"United States",Open,
 13835,"Diocesan Catholic Children’s Home","Ft. Mitchell",KY,"United States",Open,
 13836,"Father Maloney’s Boys’ Haven",Louisville,KY,"United States",Open,
 13837,"Fayette Regional Juvenile Detention Center",Lexington,KY,"United States",Open,
@@ -3979,7 +3974,7 @@ id,name,city,state,country,status,facility_page
 13863,"Morehead Youth Development Center",Morehead,KY,"United States",Open,
 13864,"Mountain Haven",Morehead,KY,"United States",Open,
 13865,"New Pathways for Children",Melber,KY,"United States",Open,
-13866,"New Pathways for Children – EBH","RT 945 Hickory",KY,"United States",Open,
+13866,"New Pathways for Children – EBH",Hickory,KY,"United States",Open,
 13867,"Northern Kentucky Youth Development Center",Crittenden,KY,"United States",Open,
 13868,"Oneida Baptist Institute",Oneida,KY,"United States",Open,https://kidsoverprofits.org/facility/oneida-baptist-institute-ky/
 13869,"Option To Success, Inc.",Louisville,KY,"United States",Open,
@@ -4013,7 +4008,7 @@ id,name,city,state,country,status,facility_page
 13900,"Fairbanks Youth Facility",Fairbanks,AK,"United States",Open,
 13901,"Hanson House",Sitka,AK,"United States",Open,
 13902,"Johnson Youth Center",Juneau,AK,"United States",Open,
-13903,"Kenai Peninsula Community Care Center Dimmick Retreat & Hardy House",", Kenai​",AK,"United States",Open,
+13903,"Kenai Peninsula Community Care Center Dimmick Retreat & Hardy House",Kenai,AK,"United States",Open,
 13904,"Kenai Peninsula Youth Facility",Kenai,AK,"United States",Open,
 13905,"Mat-Su Youth Facility",Palmer,AK,"United States",Open,
 13906,"McCann Center",Bethel,AK,"United States",Open,
@@ -4037,7 +4032,6 @@ id,name,city,state,country,status,facility_page
 13926,"Bethel Girls Academy",Petal,MS,"United States",Closed,https://kidsoverprofits.org/facility/bethel-girls-academy-ms/
 13928,"Adams County Juvenile Detention Center",Natchez,MS,"United States",Open,
 13929,"Alcorn County Juvenile Detention Center",Corinth,MS,"United States",Open,
-13931,"Bethesda Home for Girls","Forrest County",MS,"United States",Closed,https://kidsoverprofits.org/facility/bethesda-home-for-girls-ms/
 13932,"Capital City Alternative School",Jackson,MS,"United States",Open,
 13933,"Christian Life Boarding Academy",Hattiesburg,MS,"United States",Closed,https://kidsoverprofits.org/facility/christian-life-boarding-academy-ms/
 13934,"Columbia Training School",Columbia,MS,"United States",Closed,
@@ -4187,25 +4181,25 @@ id,name,city,state,country,status,facility_page
 14102,"Programa Ibicuy – Villa Paranacito","Entre Ríos",,Argentina,Unknown,
 14103,"Royal Alexandra Hospital","New South Wales",,Australia,Unknown,
 14105,"Missanabie Woods Academy",Ontario,,Canada,Closed,
-14106,"Robert Land Academy","ON L0R 2J0",,Canada,Closed,https://kidsoverprofits.org/robert-land-academy/
-14107,"Rocklyn Academy","ON N4L 0A7",,Canada,Closed,
-14108,"Venture Academy","Canada V1Y 9T1",,Canada,Unknown,https://kidsoverprofits.org/facility/venture-academy-canada/
-14109,"Academy at Dundee Ranch","Costa Rica 9°54’12.6″N 84°37’09.0″W",,"Costa Rica",Closed,https://kidsoverprofits.org/facility/academy-at-dundee-ranch-costa-rica/
+14106,"Robert Land Academy",Wellandport,,Canada,Closed,https://kidsoverprofits.org/robert-land-academy/
+14107,"Rocklyn Academy",Meaford,,Canada,Closed,
+14108,"Venture Academy",Kelowna,,Canada,Unknown,https://kidsoverprofits.org/facility/venture-academy-canada/
+14109,"Academy at Dundee Ranch",Orotina,,"Costa Rica",Closed,https://kidsoverprofits.org/facility/academy-at-dundee-ranch-costa-rica/
 14112,"Pure Life Adventure Therapy Program",Tinamaste,,"Costa Rica",Unknown,
 14113,"Teen Mentor School",Tarcoles,,"Costa Rica",Closed,https://kidsoverprofits.org/facility/teen-mentor-school-costa-rica/
-14114,"Morava Academy","635 00 Brno-Bystrc",,"Czech Republic",Closed,https://kidsoverprofits.org/facility/morava-academy-czech-republic/
+14114,"Morava Academy",Brno-Bystrc,,"Czech Republic",Closed,https://kidsoverprofits.org/facility/morava-academy-czech-republic/
 14116,"The Academy","Coral Island",,Fiji,Closed,
-14117,"Beer Yaakov-Ness Ziona Mental Health Center",7032102,,Israel,Unknown,
-14118,"Ben Yakir Youth Village","Israel 3895500",,Israel,Unknown,https://kidsoverprofits.org/facility/ben-yakir-youth-village-israel/
+14117,"Beer Yaakov-Ness Ziona Mental Health Center","Beer Yaakov",,Israel,Unknown,
+14118,"Ben Yakir Youth Village","Kfar Haroeh",,Israel,Unknown,https://kidsoverprofits.org/facility/ben-yakir-youth-village-israel/
 14119,"Darckenu Israel",Israel,,Israel,Unknown,https://kidsoverprofits.org/facility/darckenu-israel-israel/
 14120,"Free Spirit Experience","Kibbutz Hazore’a",,Israel,Unknown,
-14121,"Genesis Israel","Israel 9451309 (Mailing Address)",,Israel,Unknown,https://kidsoverprofits.org/facility/genesis-israel-israel/
+14121,"Genesis Israel",Jerusalem,,Israel,Unknown,https://kidsoverprofits.org/facility/genesis-israel-israel/
 14122,"Hadassah Neurim Youth Village",Netanya,,Israel,Unknown,
-14123,"Jerusalem Hills Chezzi Cohen Children’s Home","Israel 9083800",,Israel,Unknown,https://kidsoverprofits.org/facility/jerusalem-hills-chezzi-cohen-children-s-home-israel/
-14124,"Jerusalem Hills Treatment & Training Center","47 HaHaluts St.",,Israel,Unknown,
+14123,"Jerusalem Hills Chezzi Cohen Children’s Home","Kiryat Yearim",,Israel,Unknown,https://kidsoverprofits.org/facility/jerusalem-hills-chezzi-cohen-children-s-home-israel/
+14124,"Jerusalem Hills Treatment & Training Center",Jerusalem,,Israel,Unknown,
 14125,"Kiryat Ye’arim Youth Village",Israel,,Israel,Unknown,https://kidsoverprofits.org/facility/kiryat-ye-arim-youth-village-israel/
 14126,"Mimidbar Matanah",Israel,,Israel,Unknown,https://kidsoverprofits.org/facility/mimidbar-matanah-israel/
-14127,"Neve Midbar Bedouin Youth Village","Israel 8490100",,Israel,Unknown,https://kidsoverprofits.org/facility/neve-midbar-bedouin-youth-village-israel/
+14127,"Neve Midbar Bedouin Youth Village",Nitzana,,Israel,Unknown,https://kidsoverprofits.org/facility/neve-midbar-bedouin-youth-village-israel/
 14128,"Ramat Hadassah Szold Youth Village","Kiryat Tivon",,Israel,Unknown,
 14129,"Amity School",Tuscany,,Italy,Closed,https://kidsoverprofits.org/facility/amity-school-italy/
 14130,"Atlantis Leadership Academy","Treasure Beach",,Jamaica,Closed,https://kidsoverprofits.org/facility/atlantis-leadership-academy-jamaica/
@@ -4222,18 +4216,16 @@ id,name,city,state,country,status,facility_page
 14141,"Pacific Life Program",México,,Mexico,Unknown,
 14142,"Positive Impact",México,,Mexico,Closed,
 14145,"Twilight Recovery Center",Tijuana,,Mexico,Unknown,
-14146,"Campbell Park","Otekaieke 9494",,"New Zealand",Closed,
+14146,"Campbell Park",Otekaieke,,"New Zealand",Closed,
 14147,"Coral Reef Academy",Vaitele,,Samoa,Unknown,https://kidsoverprofits.org/facility/coral-reef-academy-samoa/
 14148,"Pacific Coast Academy",Apia,,Samoa,Closed,
 14149,"Paradise Cove",Aufaga,,Samoa,Closed,https://kidsoverprofits.org/facility/paradise-cove-samoa/
-14150,"The Wave Clinic","WC2H 9JQ",,"United Arab Emirates",Unknown,https://kidsoverprofits.org/facility/the-wave-clinic-united-arab-emirates/
+14150,"The Wave Clinic",Dubai,,"United Arab Emirates",Unknown,https://kidsoverprofits.org/facility/the-wave-clinic-united-arab-emirates/
 14151,"Banham Marshalls College/The Old Rectory",Banham,,"United Kingdom",Closed,
-14152,"Cambian Whinfell School","Kendal LA9 5EZ",,"United Kingdom",Unknown,
+14152,"Cambian Whinfell School",Kendal,,"United Kingdom",Unknown,
 14153,"The Balance Clinic",Switzerland,,Switzerland,Unknown,https://kidsoverprofits.org/facility/the-balance-clinic-switzerland/
-14154,"Yes We Can Youth Clinics","5688 NP Oirschot",,Netherlands,Unknown,https://kidsoverprofits.org/facility/yes-we-can-youth-clinics-netherlands/
-14155,"Rebekah Home",,,,Closed,https://kidsoverprofits.org/facility/rebekah-home/
-14156,"Bethesda Home",,,,Closed,https://kidsoverprofits.org/facility/bethesda-home/
-14157,"Lighthouse for Boys",,,,Closed,https://kidsoverprofits.org/facility/lighthouse-for-boys/
+14154,"Yes We Can Youth Clinics",Oirschot,,Netherlands,Unknown,https://kidsoverprofits.org/facility/yes-we-can-youth-clinics-netherlands/
+14157,"Lighthouse for Boys","Near Corpus Christi",TX,"United States",Closed,https://kidsoverprofits.org/facility/lighthouse-for-boys-tx/
 14158,"Elaine Gordon Treatment Center",Hollywood,FL,"United States",Closed,https://kidsoverprofits.org/facility/elaine-gordon-treatment-center-fl/
 14159,"West Oaks Hospital",Houston,TX,"United States",Open,https://kidsoverprofits.org/facility/west-oaks-hospital-tx/
 14163,"Mountain Valley Treatment Center",Plainfield,NH,"United States",Open,https://kidsoverprofits.org/facility/mountain-valley-treatment-center-nh/
@@ -4244,15 +4236,14 @@ id,name,city,state,country,status,facility_page
 100010,"The Brown Schools of Idaho",Gooding,ID,"United States",Closed,https://kidsoverprofits.org/facility/the-brown-schools-of-idaho-id/
 100011,"The Brown Schools of Montana","Deer Lodge",MT,"United States",Closed,https://kidsoverprofits.org/facility/the-brown-schools-of-montana-mt/
 100012,"The Brown Schools of San Juan",Santurce,PR,"United States",Closed,https://kidsoverprofits.org/facility/the-brown-schools-of-san-juan-pr/
-100015,"Camp E-Toh-Anee","Stewartstown NH",,,Closed,https://kidsoverprofits.org/facility/camp-e-toh-anee/
+100015,"Camp E-Toh-Anee",Stewartstown,NH,"United States",Closed,https://kidsoverprofits.org/facility/camp-e-toh-anee-nh/
 100016,"Camp E-Wen-Akee","Fair Haven",VT,"United States",Closed,https://kidsoverprofits.org/facility/camp-e-wen-akee-vt/
-100017,"Canyon View Park",,,,Unknown,https://kidsoverprofits.org/facility/canyon-view-park/
+100017,"Canyon View Park","Trout Creek",MT,"United States",Unknown,https://kidsoverprofits.org/facility/canyon-view-park-mt/
 100018,"Center for Positive Changes",Oceanside,CA,"United States",Open,https://kidsoverprofits.org/facility/center-for-positive-changes-ca-oceanside/
 100019,"Center for Positive Changes",Orangevale,CA,"United States",Open,https://kidsoverprofits.org/facility/center-for-positive-changes-ca-orangevale/
 100020,"Center for Positive Changes","San Diego",CA,"United States",Open,https://kidsoverprofits.org/facility/center-for-positive-changes-ca-san-diego/
 100021,"Center for Positive Changes","Spring Valley",CA,"United States",Open,https://kidsoverprofits.org/facility/center-for-positive-changes-ca-spring-valley/
 100022,"Center for Positive Changes","West Sacramento",CA,"United States",Open,https://kidsoverprofits.org/facility/center-for-positive-changes-ca-west-sacramento/
-100023,"Chad Youth Enhancement Center","Ashland City",TN,"United States",Unknown,https://kidsoverprofits.org/facility/chad-youth-enhancement-center-tn/
 100025,"Coral Island Academy",,,Fiji,Closed,https://kidsoverprofits.org/facility/coral-island-academy-fiji/
 100026,"Dimondale Adolescent Care Facility",Carson,CA,"United States",Open,https://kidsoverprofits.org/facility/dimondale-adolescent-care-facility-ca-carson/
 100027,"Dimondale Adolescent Care Facility",Gardena,CA,"United States",Open,https://kidsoverprofits.org/facility/dimondale-adolescent-care-facility-ca-gardena/
@@ -4270,10 +4261,9 @@ id,name,city,state,country,status,facility_page
 100044,"Hill Country Place",Austin,TX,"United States",Closed,https://kidsoverprofits.org/facility/hill-country-place-tx/
 100045,"Hill Crest Behavioral Health",Birmingham,AL,"United States",Unknown,https://kidsoverprofits.org/facility/hill-crest-behavioral-health-al/
 100046,"Key Assets Group Homes",Lexington,KY,"United States",Open,https://kidsoverprofits.org/facility/key-assets-group-homes-ky/
-100047,"Key Assets Group Homes",,,,Open,https://kidsoverprofits.org/facility/key-assets-group-homes/
 100048,"KIDS of the Canadian West",AB,,Canada,Unknown,https://kidsoverprofits.org/facility/kids-of-the-canadian-west-canada/
 100049,"Laurel Oaks Behavioral Health Center RTC",Dothan,AL,"United States",Unknown,https://kidsoverprofits.org/facility/laurel-oaks-behavioral-health-center-rtc-al/
-100050,"New Beginnings Maternity Home",,,,Unknown,https://kidsoverprofits.org/facility/new-beginnings-maternity-home/
+100050,"New Beginnings Maternity Home",,UT,"United States",Unknown,https://kidsoverprofits.org/facility/new-beginnings-maternity-home-ut/
 100051,"New Hope Of Arizona, Inc",Avondale,AZ,"United States",Open,https://kidsoverprofits.org/facility/new-hope-of-arizona-inc-az-avondale/
 100052,"New Hope Of Arizona, Inc",Buckeye,AZ,"United States",Open,https://kidsoverprofits.org/facility/new-hope-of-arizona-inc-az-buckeye/
 100053,"New Hope Of Arizona, Inc","Laveen Village",AZ,"United States",Open,https://kidsoverprofits.org/facility/new-hope-of-arizona-inc-az-laveen-village/
@@ -4293,18 +4283,17 @@ id,name,city,state,country,status,facility_page
 100067,"Pacific Autism Center for Education","Matranga House – San Jose",CA,"United States",Open,https://kidsoverprofits.org/facility/pacific-autism-center-for-education-ca-matranga-house-san-jose/
 100068,"Pacific Autism Center for Education","Meadows House – Sunnyvale",CA,"United States",Open,https://kidsoverprofits.org/facility/pacific-autism-center-for-education-ca-meadows-house-sunnyvale/
 100069,"Pacific Autism Center for Education","Miracle House – Cupertino",CA,"United States",Open,https://kidsoverprofits.org/facility/pacific-autism-center-for-education-ca-miracle-house-cupertino/
-100070,"Pine View Christian Academy",,,,Unknown,https://kidsoverprofits.org/facility/pine-view-christian-academy/
+100070,"Pine View Christian Academy",,MS,"United States",Unknown,https://kidsoverprofits.org/facility/pine-view-christian-academy-ms/
 100071,"Redwood Youth Academy",Raiford,FL,"United States",Open,https://kidsoverprofits.org/facility/redwood-youth-academy-fl/
 100072,"Ridge House",Reno,NV,"United States",Open,https://kidsoverprofits.org/facility/ridge-house-nv/
-100073,"Ridge House",,,,Open,https://kidsoverprofits.org/facility/ridge-house/
 100074,"Seguin Community Living Center",Seguin,TX,"United States",Closed,https://kidsoverprofits.org/facility/seguin-community-living-center-tx/
 100075,"Sequel TSI Courtland",Courtland,AL,"United States",Unknown,https://kidsoverprofits.org/facility/sequel-tsi-courtland-al/
 100077,"Sequel TSI Montgomery",Montgomery,AL,"United States",Unknown,https://kidsoverprofits.org/facility/sequel-tsi-montgomery-al/
 100078,"Sequel TSI of Tuskegee",Tuskegee,AL,"United States",Unknown,https://kidsoverprofits.org/facility/sequel-tsi-of-tuskegee-al/
-100080,"Talisman Academy",,,,Closed,https://kidsoverprofits.org/facility/talisman-academy/
+100080,"Talisman Academy",Hendersonville,NC,"United States",Closed,https://kidsoverprofits.org/facility/talisman-academy-nc/
 100081,"Tampa Bay Girls Academy - Moderate",Tampa,FL,"United States",Open,https://kidsoverprofits.org/facility/tampa-bay-girls-academy-moderate-fl/
 100082,"Tampa Bay Girls Academy - Secure",Tampa,FL,"United States",Open,https://kidsoverprofits.org/facility/tampa-bay-girls-academy-secure-fl/
-100083,"Teen Challenge Girls","Las Vegas",,,Unknown,https://kidsoverprofits.org/facility/teen-challenge-girls/
+100083,"Teen Challenge Girls","Las Vegas",NV,"United States",Unknown,https://kidsoverprofits.org/facility/teen-challenge-girls-nv/
 100086,"Wellspring DC",Washington,DC,"United States",Closed,https://kidsoverprofits.org/facility/wellspring-dc-dc/
 100087,"Wellspring UK",Devon,,"United Kingdom",Closed,https://kidsoverprofits.org/facility/wellspring-uk-united-kingdom/
 100089,"Abundant Life Academy",Milford,VA,"United States",Closed,https://kidsoverprofits.org/facility/abundant-life-academy-va/
@@ -4316,7 +4305,7 @@ id,name,city,state,country,status,facility_page
 100098,"Lakeside Academy",Kalamazoo,MI,"United States",Closed,https://kidsoverprofits.org/facility/lakeside-academy-mi/
 100099,"Lakeside Academy",Buffalo,MN,"United States",Open,https://kidsoverprofits.org/facility/lakeside-academy-mn/
 100100,"Mountain Homes Youth Ranch",Dinosaur,CO,"United States",Closed,https://kidsoverprofits.org/facility/mountain-homes-youth-ranch-co/
-100101,"Dallas County Juvenile Detention Center",", Selma",AL,"United States",Open,
+100101,"Dallas County Juvenile Detention Center",Selma,AL,"United States",Open,
 100102,"Excel Academy",Kansas,OK,"United States",Open,https://kidsoverprofits.org/facility/excel-academy-ok/
 100104,"New Hope Youth Center","Mt. Pleasant",MI,"United States",Open,
 100105,"St. Jude’s Ranch for Children","Boulder City",NV,"United States",Open,https://kidsoverprofits.org/facility/st-jude-s-ranch-for-children-nv/

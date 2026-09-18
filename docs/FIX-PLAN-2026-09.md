@@ -26,7 +26,7 @@ Last updated 2026-09-18.
 | 9 | Newsletter sign-up top padding | Done |
 | 10 | Email notifications for new submissions | Done |
 | 11 | Facility websites: Wayback and/or donotlink everywhere | Open: three page types still link live |
-| 12 | State pages: alternate names missing | Done in code; filling the 4,345 records with no alternate name is research |
+| 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Open: design below |
 
@@ -449,10 +449,11 @@ against a prod snapshot taken that day (4,670 `facilities_v2` records):
   after the legacy tables were frozen, which that path cannot show.
 - No inspection-only tile matched a v2 record by name with certainty, so
   none gained names that way.
-- Coverage gap: 4,345 of 4,670 records carry no alternate name at all.
+- Coverage gap: 4,334 of 4,663 records carry no alternate name at all
+  (after the data-shape fixes and merges below; 331 now carry one).
   [alternate-names-gap-2026-09-18.csv](alternate-names-gap-2026-09-18.csv)
-  lists them with city, state, status and facility page (1,562 have a page).
-  Largest: California 600, Texas 402, North Carolina 308, Utah 242,
+  lists them with city, state, status and facility page (1,551 have a page).
+  Largest: California 599, Texas 402, North Carolina 309, Utah 243,
   Arizona 175. Filling it is research, not code.
 
 Data-shape fixes found by the same scan (2026-09-18), applied through
