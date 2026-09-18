@@ -224,7 +224,7 @@ const ROLE_RULES = [
      * what the map exists to trace, so it is its own type rather than
      * "other" or a board seat. */
     ['membership', /\bmember\b/i],
-    ['other', /\b(trained|advisor|advisory)/i]
+    ['other', /\b(trained|advisor|advisory|participant)/i]
 ];
 
 /* Across the roles on one edge, the bigger fact wins. */

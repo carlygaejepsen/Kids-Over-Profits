@@ -4,14 +4,14 @@
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 1098,
-   "edges": 1967,
+   "edges": 1968,
    "facilityMatches": 329,
    "withYears": 204,
    "withDeaths": 27,
    "rebranded": 80,
    "profileEdges": 58,
    "staffMovementEdges": 28,
-   "staffListEdges": 575,
+   "staffListEdges": 576,
    "addedPeople": 191,
    "kind_person": 523,
    "kind_facility": 477,
@@ -30,7 +30,7 @@
    "edge_admissions": 90,
    "edge_staff": 251,
    "edge_membership": 11,
-   "edge_other": 5,
+   "edge_other": 6,
    "edge_unknown": 208
   },
   "categories": [
@@ -2022,6 +2022,35 @@
    "deaths": 1
   },
   {
+   "id": "synanon",
+   "name": "Synanon",
+   "aliases": [],
+   "kind": "parent",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "Synanon"
+   ],
+   "natsap": false,
+   "importance": 146947,
+   "degree": 9,
+   "degreeByCategory": {
+    "corporate": 4,
+    "membership": 1,
+    "leadership": 1,
+    "unknown": 2,
+    "other": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -852.87,
+    "y": -408.98
+   }
+  },
+  {
    "id": "anasazi-foundation",
    "name": "ANASAZI Foundation",
    "aliases": [],
@@ -2702,34 +2731,6 @@
     "y": 261
    },
    "years": "1990-2013"
-  },
-  {
-   "id": "synanon",
-   "name": "Synanon",
-   "aliases": [],
-   "kind": "parent",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 146947,
-   "degree": 8,
-   "degreeByCategory": {
-    "corporate": 4,
-    "membership": 1,
-    "leadership": 1,
-    "unknown": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -852.87,
-    "y": -408.98
-   }
   },
   {
    "id": "turn-about-ranch",
@@ -21324,6 +21325,36 @@
    }
   },
   {
+   "id": "mel-wasserman",
+   "name": "Mel Wasserman",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Brown Schools/CEDU"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 2,
+   "degreeByCategory": {
+    "leadership": 1,
+    "other": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -599.05,
+    "y": -333.49
+   },
+   "addedFrom": [
+    "profiles",
+    "staff list"
+   ]
+  },
+  {
    "id": "melodie-rose",
    "name": "Melodie Rose",
    "aliases": [],
@@ -27507,34 +27538,6 @@
     "x": -270.39,
     "y": -775.71
    }
-  },
-  {
-   "id": "mel-wasserman",
-   "name": "Mel Wasserman",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Brown Schools/CEDU"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 1,
-   "degreeByCategory": {
-    "leadership": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -345.23,
-    "y": -258
-   },
-   "addedFrom": [
-    "profiles"
-   ]
   },
   {
    "id": "meyer-education-and-family-services",
@@ -55559,6 +55562,20 @@
     "admissions director"
    ],
    "raw": "Reid Treadaway (admissions director) at Boulder Creek Academy (staff list)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "staff-list"
+  },
+  {
+   "id": "l0576",
+   "source": "mel-wasserman",
+   "target": "synanon",
+   "category": "other",
+   "roles": [
+    "participant"
+   ],
+   "raw": "Mel Wasserman (participant) at Synanon (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true,
