@@ -284,11 +284,10 @@ if ($kop_fp_state_name !== '' && function_exists('kop_state_slug')) {
 }
 
 // ---- Site links ----------------------------------------------------------------
-$kop_fp_index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
-if (!$kop_fp_index_url) {
-    $kop_fp_index_url = home_url('/tti-program-index/');
-}
-$kop_fp_record_url = $kop_fp_record_id ? add_query_arg('search', rawurlencode($kop_fp_name), $kop_fp_index_url) : '';
+// The database record link opens the state hub filtered to this facility.
+// Never the program index: that page lists operators and chains, not
+// individual facilities.
+$kop_fp_record_url = ($kop_fp_record_id && $kop_fp_state_url) ? add_query_arg('search', rawurlencode($kop_fp_name), $kop_fp_state_url) : '';
 
 $kop_fp_lawsuits_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-lawsuits.php') : '';
 if (!$kop_fp_lawsuits_url) {
@@ -451,7 +450,7 @@ while (have_posts()) :
             <h2>Also see</h2>
             <ul class="kop-fp-list">
                 <?php if ($kop_fp_record_url) : ?>
-                    <li><a href="<?php echo esc_url($kop_fp_record_url); ?>">Database record</a><span class="meta">TTI Program Index</span></li>
+                    <li><a href="<?php echo esc_url($kop_fp_record_url); ?>">Database record</a><span class="meta"><?php echo esc_html($kop_fp_state_name); ?> facility list</span></li>
                 <?php endif; ?>
                 <?php if ($kop_fp_state_url) : ?>
                     <li><a href="<?php echo esc_url($kop_fp_state_url); ?>"><?php echo esc_html($kop_fp_state_name); ?> hub</a><span class="meta">Every facility, lawsuit, and bill in the state</span></li>
