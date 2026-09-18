@@ -27,7 +27,8 @@
 
     var STATUS_LABELS = {
         open: 'Open',
-        closed: 'Closed or rebranded',
+        closed: 'Closed',
+        rebranded: 'Rebranded (carried on under another name)',
         unknown: 'Status unrecorded'
     };
 
@@ -266,6 +267,7 @@
             [
                 { label: STATUS_LABELS.open, status: 'open' },
                 { label: STATUS_LABELS.closed, status: 'closed' },
+                { label: STATUS_LABELS.rebranded, status: 'rebranded' },
                 { label: STATUS_LABELS.unknown, status: 'unknown' },
                 { label: 'NATSAP member', status: 'open', natsap: true }
             ].forEach(function (entry) {
@@ -279,6 +281,19 @@
                     byKind: false
                 });
             });
+            /* The memorial ring, only when something on screen carries it. */
+            if (scene.nodes.some(function (node) { return node.deaths > 0; })) {
+                var ring = row('Deaths recorded in the memorial');
+                keyList.appendChild(ring.item);
+                root.KOPNetworkCanvas.swatch(ring.mark, {
+                    kind: 'facility',
+                    status: 'open',
+                    deaths: true,
+                    fill: byChain ? root.KOPNetworkCanvas.CHAIN_NONE : root.KOPNetworkCanvas.KIND_COLOURS.facility,
+                    byKind: false
+                });
+            }
+
             /* The "+N" pill, only when something on screen carries one. */
             if (scene.hidden && Object.keys(scene.hidden).length) {
                 var pill = row('Connections not on the map yet. Click the name to bring them in.');

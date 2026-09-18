@@ -819,6 +819,40 @@ are open with the files involved.
   trail that hits the legibility floor is centred on the newest click
   anyway. Test added.
 
+### Step 4 closed (2026-09-18): rebranded, years, deaths
+
+All three are derived in `scripts/build-network-graph.js` from the prod
+mirror and carried on the node; each has a map in `network-overrides.json`
+(`statuses`, `years`, `deaths`) and a section in `tmp/network-qa.md`.
+
+- **2b.5 Rebranded.** The board draws rebrand edges inconsistently
+  (Lifeline for Youth, still open, points at the closed Life-Line Inc), so
+  status decides first: the closed end of a rebrand is the dropped name.
+  Where both ends are closed the edge is read as drawn and the pair is
+  listed for review (40 today). The remaining closed nodes read "closed".
+  80 rebranded, 228 closed. The rail has a fourth checkbox; rebranded is
+  drawn hollow with a dashed outline, closed hollow with a solid one; the
+  legend has both.
+- **2b.6 Years.** From the linked facility's `start_year`/`end_year`, then
+  its `operatingPeriod`, then the free-text `yearsOfOperation`; for
+  companies, `wpdl_kop_operators.operatingPeriod`; then the board's own
+  dates column. Never on a person (their board dates are terms of office).
+  203 nodes carry years; 295 facilities without are listed. Drawn as a
+  smaller second line under the name, counted in the label box, the row
+  packer's row height and the legibility floor.
+- **2b.7 Deaths.** Published `memorial_victims` rows matched by program
+  name against node names, aliases and the linked facility's name; a
+  program naming two nodes, or none, is listed rather than guessed. 27
+  nodes carry 36 of the 230 deaths; most of the other 161 programs are not
+  on the board at all. Drawn as a firm red ring outside the shape (outside
+  the NATSAP ring when both apply), with a legend row whenever one is on
+  screen; the drawer states the count and links the memorial.
+
+`scripts/test-network-graph.js` now checks the four statuses, the years
+format, that no person carries years, that death counts are positive
+integers, and that the closed end of a rebrand paired with an open name is
+never left plain "closed".
+
 ### Already covered by 5b
 
 - **Every visible node labelled.** The degree threshold is gone and every

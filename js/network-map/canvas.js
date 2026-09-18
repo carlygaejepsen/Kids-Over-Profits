@@ -119,6 +119,13 @@
      * being dropped. */
     var LABEL_PLACEMENTS = ['below', 'above', 'right', 'left'];
     var LABEL_PAD_Y = 3;
+    /* The years of operation, a smaller second line under a name. */
+    var YEARS_SIZE = 9.5;
+    var YEARS_LINE = 11;
+
+    /* The memorial ring. Not the coral accent: this is a warning. */
+    var DEATH_RED = '#B00020';
+
     /* The "+N" pill on a node with connections off screen. */
     var BADGE_SIZE = 9;
 
@@ -358,8 +365,10 @@
         ctx.beginPath();
         traceShape(ctx, spec.kind, x, y, r);
 
-        if (spec.status === 'closed') {
-            /* Hollow: closed or rebranded. */
+        if (spec.status === 'closed' || spec.status === 'rebranded') {
+            /* Hollow: no longer operating under this name. Closed is a solid
+             * outline; rebranded is dashed, because the place carried on
+             * under another name and the dash says "continues elsewhere". */
             ctx.globalAlpha = alpha;
             ctx.fillStyle = SURFACE;
             ctx.fill();
@@ -367,7 +376,9 @@
                 ? (KIND_OUTLINE[spec.kind] || INK + '0.6)')
                 : spec.fill;
             ctx.lineWidth = 2;
+            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash([3, 2]);
             ctx.stroke();
+            if (ctx.setLineDash) ctx.setLineDash([]);
         } else {
             /* Open solid; status unrecorded the same shape at 55%, so "we do
              * not know" reads as faded rather than as closed. */
@@ -377,6 +388,17 @@
             ctx.globalAlpha = alpha;
             ctx.strokeStyle = spec.outline;
             ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        /* Deaths recorded in the memorial: a firm red ring outside the shape.
+         * A warning mark, so a true red rather than the coral accent, and
+         * outside the NATSAP ring so a node can carry both. */
+        if (spec.deaths) {
+            ctx.beginPath();
+            ctx.arc(x, y, r + (spec.natsap ? 5 : 3), 0, Math.PI * 2);
+            ctx.strokeStyle = DEATH_RED;
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
 
@@ -410,6 +432,7 @@
             kind: spec.kind || 'person',
             status: spec.status || 'open',
             natsap: !!spec.natsap,
+            deaths: !!spec.deaths,
             fill: spec.fill,
             outline: spec.outline || outlineFor(spec.kind, spec.fill, spec.byKind)
         }, size / 2, size / 2, 6, 1);
@@ -514,7 +537,7 @@
         var grid = null;
         /* Reused by the draw loop so a frame does not allocate one spec per
          * node; paintNode never holds on to it. */
-        var scratch = { kind: '', status: '', natsap: false, fill: '', outline: '' };
+        var scratch = { kind: '', status: '', natsap: false, deaths: 0, fill: '', outline: '' };
 
         /** The store's chain-to-index map, so colour mode two can be resolved. */
         renderer.useChainIndex = function (index) {
@@ -854,6 +877,7 @@
                 scratch.kind = node.kind;
                 scratch.status = node.status;
                 scratch.natsap = node.natsap;
+                scratch.deaths = node.deaths;
                 scratch.fill = fill;
                 scratch.outline = outlineFor(node.kind, fill, renderer.colourMode === 'kind');
                 paintNode(ctx, scratch, x, y, r, lit ? 1 : dim);
@@ -1000,6 +1024,17 @@
                 ctx.textAlign = drawn[i].align;
                 ctx.fillText(drawn[i].node.name, drawn[i].x, drawn[i].y);
             }
+
+            /* Years of operation, where the data has them: a smaller second
+             * line in a lighter ink, so the name stays what is read first.
+             * Its room was counted in the label's box above. */
+            ctx.font = YEARS_SIZE + 'px ' + FONT;
+            ctx.fillStyle = 'rgba(0, 4, 53, 0.66)';
+            for (i = 0; i < drawn.length; i++) {
+                if (!drawn[i].node.years) continue;
+                ctx.textAlign = drawn[i].align;
+                ctx.fillText(drawn[i].node.years, drawn[i].x, drawn[i].y + LABEL_LINE);
+            }
             ctx.textAlign = 'center';
         };
 
@@ -1029,7 +1064,7 @@
             var align = 'center';
 
             if (where === 'above') {
-                y = entry.cy - entry.rr - 3 - LABEL_LINE;
+                y = entry.cy - entry.rr - 3 - LABEL_LINE - (entry.node.years ? YEARS_LINE : 0);
             } else if (where === 'right') {
                 x = entry.cx + entry.rr + 4;
                 y = entry.cy - LABEL_LINE / 2;
@@ -1046,7 +1081,9 @@
                 x: x,
                 y: y,
                 align: align,
-                box: [left - LABEL_PAD_X, y - LABEL_PAD_Y, right + LABEL_PAD_X, y + LABEL_LINE + LABEL_PAD_Y]
+                /* A name with years under it is a line taller. */
+                box: [left - LABEL_PAD_X, y - LABEL_PAD_Y, right + LABEL_PAD_X,
+                    y + LABEL_LINE + (entry.node.years ? YEARS_LINE : 0) + LABEL_PAD_Y]
             };
         }
 
@@ -1070,6 +1107,8 @@
          * rows come closer than this, because a name that cannot clear the
          * row below it is a name the renderer has to drop. */
         LABEL_PITCH: LABEL_LINE + LABEL_PAD_Y * 2 + 2,
+        /* And how much more a name with a years line needs. */
+        YEARS_LINE: YEARS_LINE,
         styleFor: styleFor,
         edgeSwatch: edgeSwatch,
         edgeFadeFor: edgeFadeFor,

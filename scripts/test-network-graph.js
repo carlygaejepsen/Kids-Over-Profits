@@ -31,6 +31,10 @@ const CATEGORIES = [
     'leadership', 'clinical', 'admissions', 'staff', 'other', 'unknown'
 ];
 const DIRECTIONS = ['none', 'acquirer', 'renamed'];
+/* The build splits the board's "closed or rebranded" in two (2b.5). */
+const STATUSES = ['', 'open', 'closed', 'rebranded'];
+/* "1971-2004", "from 1998", "until 2004" or a single year (2b.6). */
+const YEARS_RE = /^(?:(?:1[89]|20)\d\d(?:-(?:1[89]|20)\d\d)?|(?:from|until) (?:1[89]|20)\d\d)$/;
 const DROPPED_REGIONS = ['Key'];
 
 const failures = [];
@@ -70,7 +74,36 @@ function run() {
             'node ' + node.id + ' has no usable board position');
         check(node.rawStatus === undefined && node.kindWeak === undefined,
             'node ' + node.id + ' still carries a build-only field');
+        check(STATUSES.indexOf(node.status) !== -1, 'node ' + node.id + ' has status "' + node.status + '"');
+        check(node.years === undefined || YEARS_RE.test(node.years),
+            'node ' + node.id + ' has years "' + node.years + '"');
+        check(node.years === undefined || node.kind !== 'person',
+            'person ' + node.id + ' carries years of operation');
+        check(node.deaths === undefined || (Number.isInteger(node.deaths) && node.deaths > 0),
+            'node ' + node.id + ' has death count "' + node.deaths + '"');
     });
+
+    /* Where one end of a rebrand is still open, the other end is the name
+     * that was dropped, so it reads "rebranded", never plain "closed". The
+     * statuses override is the one sanctioned exception. */
+    let overridden = {};
+    try {
+        overridden = JSON.parse(fs.readFileSync(path.join(ROOT, 'js', 'data', 'network', 'network-overrides.json'), 'utf8')).statuses || {};
+    } catch (err) { overridden = {}; }
+    edges.forEach(function (edge) {
+        if (edge.direction !== 'renamed') return;
+        const a = byId.get(edge.source);
+        const b = byId.get(edge.target);
+        if (!a || !b) return;
+        [[a, b], [b, a]].forEach(function (pair) {
+            if (pair[0].status !== 'open' || overridden[pair[1].name]) return;
+            check(pair[1].status !== 'closed',
+                'rebrand ' + edge.id + ': ' + pair[1].name + ' is "closed" though ' + pair[0].name + ' carried on');
+        });
+    });
+    notes.push(nodes.filter(function (n) { return n.status === 'rebranded'; }).length + ' rebranded, ' +
+        nodes.filter(function (n) { return n.years; }).length + ' with years, ' +
+        nodes.filter(function (n) { return n.deaths; }).length + ' with deaths');
 
     const edgeIds = new Set();
     edges.forEach(function (edge) {

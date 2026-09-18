@@ -6,6 +6,9 @@
    "nodes": 907,
    "edges": 1306,
    "facilityMatches": 326,
+   "withYears": 203,
+   "withDeaths": 27,
+   "rebranded": 80,
    "kind_person": 335,
    "kind_facility": 474,
    "kind_parent": 65,
@@ -100,7 +103,7 @@
    "name": "WWASPS",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -177,7 +180,8 @@
    "board": {
     "x": 529.36,
     "y": 292.79
-   }
+   },
+   "years": "from 1997"
   },
   {
    "id": "sequel-youth-and-family-services",
@@ -236,7 +240,7 @@
    "name": "Island View RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -258,14 +262,15 @@
    "board": {
     "x": 912.94,
     "y": -284.14
-   }
+   },
+   "years": "1994-2014"
   },
   {
    "id": "outback-therapeutic-expeditions",
    "name": "Outback Therapeutic Expeditions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -287,14 +292,15 @@
    "board": {
     "x": 292.74,
     "y": 67.99
-   }
+   },
+   "years": "2001-2023"
   },
   {
    "id": "suws-of-the-carolinas",
    "name": "SUWS of the Carolinas",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -317,7 +323,8 @@
    "board": {
     "x": 454.63,
     "y": 198.27
-   }
+   },
+   "years": "2000-2023"
   },
   {
    "id": "family-help-wellness",
@@ -342,7 +349,8 @@
    "board": {
     "x": 278.54,
     "y": -493.44
-   }
+   },
+   "years": "from 2008"
   },
   {
    "id": "embark-behavioral-health",
@@ -370,7 +378,8 @@
    "board": {
     "x": 927.03,
     "y": 69.86
-   }
+   },
+   "years": "from 2018"
   },
   {
    "id": "provo-canyon-school",
@@ -398,7 +407,8 @@
    "board": {
     "x": -654.2,
     "y": -3.11
-   }
+   },
+   "years": "from 1971"
   },
   {
    "id": "evolve-treatment-centers",
@@ -431,7 +441,7 @@
    "name": "Shortridge Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Altior",
    "regions": [
     "Altior"
@@ -461,7 +471,7 @@
    "name": "CEDU High School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -482,14 +492,15 @@
    "board": {
     "x": -339.01,
     "y": -222.65
-   }
+   },
+   "years": "1967-2005"
   },
   {
    "id": "mount-bachelor-academy",
    "name": "Mount Bachelor Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -510,7 +521,9 @@
    "board": {
     "x": 334.14,
     "y": 151.83
-   }
+   },
+   "years": "1998-2009",
+   "deaths": 1
   },
   {
    "id": "solstice-rtc",
@@ -547,7 +560,7 @@
    "name": "WinGate Wilderness Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -569,14 +582,15 @@
    "board": {
     "x": 288.04,
     "y": -400.72
-   }
+   },
+   "years": "2008-2023"
   },
   {
    "id": "academy-at-swift-river",
    "name": "Academy at Swift River",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -598,14 +612,15 @@
    "board": {
     "x": 882.06,
     "y": -246.86
-   }
+   },
+   "years": "1997-2013"
   },
   {
    "id": "cedu-family-of-services",
    "name": "CEDU Family of Services",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -632,7 +647,7 @@
    "name": "Rocky Mountain Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -655,7 +670,9 @@
    "board": {
     "x": -330.3,
     "y": -242.67
-   }
+   },
+   "years": "1982-2005",
+   "deaths": 1
   },
   {
    "id": "truecore-behavioral-solutions",
@@ -680,14 +697,15 @@
    "board": {
     "x": -569.75,
     "y": -509.73
-   }
+   },
+   "years": "from 2001"
   },
   {
    "id": "agape-boarding-school",
    "name": "Agape Boarding School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -716,7 +734,7 @@
    "name": "Boulder Creek Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -738,14 +756,15 @@
    "board": {
     "x": -401.69,
     "y": -248.33
-   }
+   },
+   "years": "1993-2022"
   },
   {
    "id": "northwest-academy",
    "name": "Northwest Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -767,14 +786,15 @@
    "board": {
     "x": -389.01,
     "y": -239.39
-   }
+   },
+   "years": "1994-2019"
   },
   {
    "id": "sagewalk-wilderness",
    "name": "SageWalk Wilderness",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -795,7 +815,8 @@
    "board": {
     "x": -402.42,
     "y": -153.35
-   }
+   },
+   "years": "1997-2009"
   },
   {
    "id": "teen-challenge",
@@ -821,7 +842,8 @@
    "board": {
     "x": -763.27,
     "y": -571.95
-   }
+   },
+   "years": "from 1960"
   },
   {
    "id": "youth-opportunity-investments",
@@ -847,14 +869,15 @@
    "board": {
     "x": -836.12,
     "y": -288.21
-   }
+   },
+   "years": "from 2009"
   },
   {
    "id": "copper-canyon-academy",
    "name": "Copper Canyon Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Altior"
@@ -876,14 +899,15 @@
    "board": {
     "x": 460.52,
     "y": -72.86
-   }
+   },
+   "years": "1998-2014"
   },
   {
    "id": "cross-creek-programs",
    "name": "Cross Creek Programs",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -904,14 +928,15 @@
    "board": {
     "x": -186.05,
     "y": -662.57
-   }
+   },
+   "years": "1987-2011"
   },
   {
    "id": "spring-ridge-academy",
    "name": "Spring Ridge Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -933,7 +958,8 @@
    "board": {
     "x": -476.98,
     "y": 316.83
-   }
+   },
+   "years": "1996-2023"
   },
   {
    "id": "vivant-behavioral-healthcare",
@@ -986,7 +1012,8 @@
    "board": {
     "x": 801.5,
     "y": 291.78
-   }
+   },
+   "years": "from 2005"
   },
   {
    "id": "new-haven-rtc",
@@ -1013,14 +1040,15 @@
    "board": {
     "x": 828.09,
     "y": 97.24
-   }
+   },
+   "years": "from 1995"
   },
   {
    "id": "straight-inc",
    "name": "Straight Inc.",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -1040,14 +1068,15 @@
    "board": {
     "x": -754.78,
     "y": -384.38
-   }
+   },
+   "years": "1976-1993"
   },
   {
    "id": "three-springs-inc",
    "name": "Three Springs Inc.",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -1068,14 +1097,16 @@
    "board": {
     "x": -694.82,
     "y": 50.63
-   }
+   },
+   "years": "1985-2009",
+   "deaths": 1
   },
   {
    "id": "ascent-wilderness-therapy",
    "name": "Ascent Wilderness Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "UHS"
@@ -1095,7 +1126,8 @@
    "board": {
     "x": -590.9,
     "y": -15.78
-   }
+   },
+   "years": "1992-2005"
   },
   {
    "id": "second-nature-wilderness-family-therapy",
@@ -1129,7 +1161,7 @@
    "name": "Trails Carolina",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -1151,14 +1183,16 @@
    "board": {
     "x": 266.55,
     "y": -434.1
-   }
+   },
+   "years": "2008-2024",
+   "deaths": 2
   },
   {
    "id": "aspen-achievement-academy",
    "name": "Aspen Achievement Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -1179,14 +1213,16 @@
    "board": {
     "x": 475.56,
     "y": 138.08
-   }
+   },
+   "years": "1989-2011",
+   "deaths": 1
   },
   {
    "id": "aspen-ranch",
    "name": "Aspen Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Asst. (south)"
@@ -1206,7 +1242,8 @@
    "board": {
     "x": 159.18,
     "y": 397.84
-   }
+   },
+   "years": "1995-2011"
   },
   {
    "id": "certs",
@@ -1240,7 +1277,7 @@
    "name": "Daniels Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -1263,7 +1300,8 @@
    "board": {
     "x": -230.06,
     "y": 431.55
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "david-lepere",
@@ -1319,14 +1357,15 @@
    "board": {
     "x": 939.93,
     "y": 172.3
-   }
+   },
+   "years": "from 2020"
   },
   {
    "id": "hidden-lake-academy",
    "name": "Hidden Lake Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -1374,14 +1413,15 @@
    "board": {
     "x": 805.58,
     "y": 59.57
-   }
+   },
+   "years": "from 2006"
   },
   {
    "id": "ironwood-maine",
    "name": "Ironwood Maine",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Altior",
    "regions": [
     "Altior"
@@ -1532,7 +1572,8 @@
    "board": {
     "x": -690.63,
     "y": -73.31
-   }
+   },
+   "years": "from 1984"
   },
   {
    "id": "sunrise-rtc",
@@ -1559,14 +1600,15 @@
    "board": {
     "x": 984.5,
     "y": 97.01
-   }
+   },
+   "years": "from 2000"
   },
   {
    "id": "the-oakley-school",
    "name": "The Oakley School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -1587,7 +1629,8 @@
    "board": {
     "x": 425.5,
     "y": 42.93
-   }
+   },
+   "years": "1998-2007"
   },
   {
    "id": "tim-brace",
@@ -1620,7 +1663,7 @@
    "name": "Agape Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -1666,14 +1709,15 @@
    "board": {
     "x": 848.74,
     "y": 160.37
-   }
+   },
+   "years": "from 1993"
   },
   {
    "id": "aspen-institute-for-behavioral-assessment",
    "name": "Aspen Institute for Behavioral Assessment",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -1693,14 +1737,15 @@
    "board": {
     "x": 879.23,
     "y": -304.96
-   }
+   },
+   "years": "2007-2014"
   },
   {
    "id": "aspiro-wilderness-adventure-therapy",
    "name": "Aspiro Wilderness Adventure Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -1722,7 +1767,8 @@
    "board": {
     "x": -315.53,
     "y": 21.33
-   }
+   },
+   "years": "2005-2023"
   },
   {
    "id": "bryan-tomes",
@@ -1755,7 +1801,7 @@
    "name": "Circle of Hope Girls' Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -1774,7 +1820,8 @@
    "board": {
     "x": -401.18,
     "y": -731.81
-   }
+   },
+   "years": "2006-2020"
   },
   {
    "id": "craig-rogers",
@@ -1881,7 +1928,8 @@
    "board": {
     "x": 376.74,
     "y": -511.65
-   }
+   },
+   "years": "from 1998"
   },
   {
    "id": "gordon-l-day",
@@ -1914,7 +1962,7 @@
    "name": "Innercept",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Altior",
    "regions": [
     "YSI"
@@ -1934,7 +1982,8 @@
    "board": {
     "x": -617.55,
     "y": -259.87
-   }
+   },
+   "years": "from 2004"
   },
   {
    "id": "jeff-scott",
@@ -1993,7 +2042,7 @@
    "name": "Red Mountain Colorado",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -2012,7 +2061,8 @@
    "board": {
     "x": 246.18,
     "y": -532.92
-   }
+   },
+   "years": "2019-2023"
   },
   {
    "id": "roots-transition",
@@ -2041,7 +2091,8 @@
    "board": {
     "x": 285.1,
     "y": -532.02
-   }
+   },
+   "years": "from 2021"
   },
   {
    "id": "steve-cartisano",
@@ -2073,7 +2124,7 @@
    "name": "Stone Mountain School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Aspen"
@@ -2094,14 +2145,15 @@
    "board": {
     "x": 437.49,
     "y": 261
-   }
+   },
+   "years": "1990-2013"
   },
   {
    "id": "synanon",
    "name": "Synanon",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -2204,7 +2256,8 @@
    "board": {
     "x": 884.6,
     "y": -329.05
-   }
+   },
+   "years": "from 1989"
   },
   {
    "id": "adam-ahquin",
@@ -2265,7 +2318,7 @@
    "name": "Bethel Boys Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -2343,7 +2396,7 @@
    "name": "Challenger Foundation",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -2362,7 +2415,8 @@
    "board": {
     "x": -99.16,
     "y": -646.74
-   }
+   },
+   "years": "1988-1990"
   },
   {
    "id": "david-gilcrease",
@@ -2397,7 +2451,7 @@
    "name": "Discovery Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Embark"
@@ -2417,14 +2471,15 @@
    "board": {
     "x": 818.81,
     "y": 226.21
-   }
+   },
+   "years": "1989-2022"
   },
   {
    "id": "fulshear-ranch-academy",
    "name": "Fulshear Ranch Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Embark",
    "regions": [
     "Altior"
@@ -2452,7 +2507,7 @@
    "name": "Horizon Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -2639,7 +2694,7 @@
    "name": "KIDS Centers of America",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -2658,7 +2713,8 @@
    "board": {
     "x": -726.1,
     "y": -342.35
-   }
+   },
+   "years": "1984-1998"
   },
   {
    "id": "kris-archer",
@@ -2736,14 +2792,15 @@
    "board": {
     "x": 209.64,
     "y": -464.93
-   }
+   },
+   "years": "from 2000"
   },
   {
    "id": "morava-academy",
    "name": "Morava Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -2763,7 +2820,8 @@
    "board": {
     "x": -188.54,
     "y": -772.6
-   }
+   },
+   "years": "1998"
   },
   {
    "id": "narvin-lichfield",
@@ -2798,7 +2856,7 @@
    "name": "New Leaf Academy of North Carolina",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -2819,14 +2877,15 @@
    "board": {
     "x": 429.97,
     "y": 106.4
-   }
+   },
+   "years": "2005-2010"
   },
   {
    "id": "northstar-center",
    "name": "NorthStar Center",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -2846,7 +2905,8 @@
    "board": {
     "x": 311.46,
     "y": 172.98
-   }
+   },
+   "years": "1991-2011"
   },
   {
    "id": "phillip-dr-phil-mcgraw",
@@ -2924,14 +2984,15 @@
    "board": {
     "x": 246.13,
     "y": -510.63
-   }
+   },
+   "years": "from 2015"
   },
   {
    "id": "second-nature-blue-ridge",
    "name": "Second Nature Blue Ridge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -2958,7 +3019,7 @@
    "name": "Second Nature Cascades",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -2986,7 +3047,7 @@
    "name": "Second Nature Uintas",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -3014,7 +3075,7 @@
    "name": "Silverado Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -3041,7 +3102,7 @@
    "name": "Solstice East",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -3068,7 +3129,7 @@
    "name": "Spring Creek Lodge Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -3087,7 +3148,8 @@
    "board": {
     "x": -70.26,
     "y": -755.4
-   }
+   },
+   "years": "1979-2009"
   },
   {
    "id": "steve-sawyer",
@@ -3121,7 +3183,7 @@
    "name": "SUWS Idaho",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -3140,7 +3202,9 @@
    "board": {
     "x": 425.5,
     "y": 78.4
-   }
+   },
+   "years": "1981-2013",
+   "deaths": 1
   },
   {
    "id": "tammy-prince-behrman",
@@ -3174,7 +3238,7 @@
    "name": "The Brown Schools",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -3193,7 +3257,8 @@
    "board": {
     "x": -361.75,
     "y": -302.24
-   }
+   },
+   "years": "1940-2009"
   },
   {
    "id": "tony-argiros",
@@ -3248,7 +3313,9 @@
    "board": {
     "x": -441.68,
     "y": 368.54
-   }
+   },
+   "years": "from 2005",
+   "deaths": 1
   },
   {
    "id": "whetstone-academy",
@@ -3274,7 +3341,8 @@
    "board": {
     "x": 386.36,
     "y": 302.41
-   }
+   },
+   "years": "from 2011"
   },
   {
    "id": "xela-goodman",
@@ -3306,7 +3374,7 @@
    "name": "Academy at Canyon Creek",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "UHS",
    "regions": [
     "UHS"
@@ -3332,7 +3400,7 @@
    "name": "Academy at Dundee Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -3351,7 +3419,8 @@
    "board": {
     "x": -156.41,
     "y": -751.22
-   }
+   },
+   "years": "2000-2003"
   },
   {
    "id": "adam-shapiro",
@@ -3383,7 +3452,7 @@
    "name": "Adirondack Leadership Expeditions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -3404,7 +3473,8 @@
    "board": {
     "x": 472.79,
     "y": 62.17
-   }
+   },
+   "years": "2003-2013"
   },
   {
    "id": "altior-healthcare",
@@ -3429,14 +3499,15 @@
    "board": {
     "x": 557.81,
     "y": -95.83
-   }
+   },
+   "years": "from 2021"
   },
   {
    "id": "ashcreek-ranch-academy",
    "name": "Ashcreek Ranch Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "YSI"
@@ -3456,7 +3527,8 @@
    "board": {
     "x": -610.76,
     "y": -289.46
-   }
+   },
+   "years": "2012-2021"
   },
   {
    "id": "aspiro-group",
@@ -3695,14 +3767,15 @@
    "board": {
     "x": 882.57,
     "y": 97.24
-   }
+   },
+   "years": "from 2007"
   },
   {
    "id": "carlbrook-school",
    "name": "Carlbrook School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -3721,14 +3794,15 @@
    "board": {
     "x": -563.02,
     "y": -118.34
-   }
+   },
+   "years": "2002-2015"
   },
   {
    "id": "casa-by-the-sea",
    "name": "Casa by the Sea",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -3747,7 +3821,8 @@
    "board": {
     "x": -153.47,
     "y": -690.97
-   }
+   },
+   "years": "1998-2004"
   },
   {
    "id": "cherokee-creek-boys-school",
@@ -3800,7 +3875,8 @@
    "board": {
     "x": -420.64,
     "y": 372.78
-   }
+   },
+   "years": "from 2005"
   },
   {
    "id": "cheryl-kehl",
@@ -3914,7 +3990,7 @@
    "name": "Cross Creek Manor for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -3941,7 +4017,7 @@
    "name": "Daytop Village",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Brown Schools/CEDU"
@@ -3968,7 +4044,7 @@
    "name": "Diamond Ranch Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -3987,7 +4063,9 @@
    "board": {
     "x": -209.75,
     "y": -265.87
-   }
+   },
+   "years": "1999-2023",
+   "deaths": 3
   },
   {
    "id": "dustin-tibbitts",
@@ -4020,7 +4098,7 @@
    "name": "Eckerd Youth Alternatives",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -4040,7 +4118,8 @@
    "board": {
     "x": -167.1,
     "y": -277.86
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "falcon-ridge-ranch",
@@ -4067,7 +4146,8 @@
    "board": {
     "x": -707.89,
     "y": -57.42
-   }
+   },
+   "years": "from 2003"
   },
   {
    "id": "george-ross",
@@ -4156,7 +4236,7 @@
    "name": "Holiday Magic",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -4449,7 +4529,7 @@
    "name": "KIDS of Bergen County",
    "aliases": [],
    "kind": "government",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -4469,7 +4549,8 @@
    "board": {
     "x": -744.26,
     "y": -336.46
-   }
+   },
+   "years": "1984-1998"
   },
   {
    "id": "kirk-simon",
@@ -4521,14 +4602,15 @@
    "board": {
     "x": 872.44,
     "y": 44.29
-   }
+   },
+   "years": "from 2010"
   },
   {
    "id": "leadership-dynamics",
    "name": "Leadership Dynamics",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -4607,7 +4689,7 @@
    "name": "Lone Star Expeditions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -4625,7 +4707,8 @@
    "board": {
     "x": -258.06,
     "y": 529.81
-   }
+   },
+   "years": "2002-2009"
   },
   {
    "id": "malynda-scott",
@@ -4738,7 +4821,7 @@
    "name": "Mind Dynamics",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -4765,7 +4848,7 @@
    "name": "Mountain Park Baptist Boarding Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -4785,7 +4868,8 @@
    "board": {
     "x": -325.21,
     "y": -693.18
-   }
+   },
+   "years": "1987-2004"
   },
   {
    "id": "northwest-association-international-school-visitation-team",
@@ -4818,7 +4902,7 @@
    "name": "Peninsula Village",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -4871,7 +4955,7 @@
    "name": "Rebekah Home for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -4919,7 +5003,8 @@
    "board": {
     "x": 848.74,
     "y": 133.5
-   }
+   },
+   "years": "from 1993"
   },
   {
    "id": "rick-jackson",
@@ -5138,7 +5223,7 @@
    "name": "The Seed",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -5191,7 +5276,7 @@
    "name": "Tranquility Bay",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -5212,14 +5297,15 @@
    "board": {
     "x": -236.85,
     "y": -711.05
-   }
+   },
+   "years": "1997-2009"
   },
   {
    "id": "vantage-point",
    "name": "Vantage Point",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -5246,7 +5332,7 @@
    "name": "Victory Christian Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -5265,7 +5351,8 @@
    "board": {
     "x": -312.59,
     "y": -762.81
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "w-kimball-delamare",
@@ -5297,7 +5384,7 @@
    "name": "Westwood Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "UHS",
    "regions": [
     "UHS"
@@ -5401,7 +5488,7 @@
    "name": "Academy at Cedar Mountain",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "CERTS"
@@ -5447,7 +5534,8 @@
    "board": {
     "x": 496.72,
     "y": -53.57
-   }
+   },
+   "years": "from 1994"
   },
   {
    "id": "adam-mclain",
@@ -5525,7 +5613,8 @@
    "board": {
     "x": -588.41,
     "y": -126.6
-   }
+   },
+   "years": "from 1997"
   },
   {
    "id": "alachua-academy",
@@ -5550,7 +5639,8 @@
    "board": {
     "x": -510.97,
     "y": -503.17
-   }
+   },
+   "years": "2016-2022"
   },
   {
    "id": "alcoholics-anonymous",
@@ -5631,14 +5721,15 @@
    "board": {
     "x": 37.62,
     "y": -317.17
-   }
+   },
+   "years": "from 2001"
   },
   {
    "id": "alternative-youth-adventures",
    "name": "Alternative Youth Adventures",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -5657,7 +5748,8 @@
    "board": {
     "x": 859.94,
     "y": -278.37
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "amir-rafiei",
@@ -5710,14 +5802,16 @@
    "board": {
     "x": 291.94,
     "y": -466.12
-   }
+   },
+   "years": "2012-2025",
+   "deaths": 2
   },
   {
    "id": "aspen-youth-alternatives",
    "name": "Aspen Youth Alternatives",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -5743,7 +5837,7 @@
    "name": "Aspen Youth Services",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -5821,7 +5915,7 @@
    "name": "Bell Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -5925,7 +6019,7 @@
    "name": "Bethel Academy for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -5950,7 +6044,7 @@
    "name": "Bethesda Home for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -5969,7 +6063,8 @@
    "board": {
     "x": -325.21,
     "y": -711.39
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "betty-sembler",
@@ -6237,7 +6332,7 @@
    "name": "Bromley Brook School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -6256,14 +6351,15 @@
    "board": {
     "x": 342.74,
     "y": 100.12
-   }
+   },
+   "years": "2004-2011"
   },
   {
    "id": "carolina-springs-academy",
    "name": "Carolina Springs Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -6282,14 +6378,15 @@
    "board": {
     "x": -165.52,
     "y": -795.9
-   }
+   },
+   "years": "1998-2009"
   },
   {
    "id": "cascade-school",
    "name": "Cascade School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -6309,7 +6406,8 @@
    "board": {
     "x": -88.92,
     "y": -332.56
-   }
+   },
+   "years": "1984-2003"
   },
   {
    "id": "cedar-county-sheriffs-department",
@@ -6342,7 +6440,7 @@
    "name": "CEDU Middle School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -6362,7 +6460,8 @@
    "board": {
     "x": -373.18,
     "y": -211.79
-   }
+   },
+   "years": "1992-2005"
   },
   {
    "id": "christopher-carlin",
@@ -6415,14 +6514,15 @@
    "board": {
     "x": 806.6,
     "y": 16.86
-   }
+   },
+   "years": "from 1998"
   },
   {
    "id": "clarinda-academy",
    "name": "Clarinda Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -6442,7 +6542,8 @@
    "board": {
     "x": -757.33,
     "y": -88.47
-   }
+   },
+   "years": "1999-2021"
   },
   {
    "id": "columbus-youth-academy",
@@ -6603,7 +6704,7 @@
    "name": "Darrington Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -6622,7 +6723,8 @@
    "board": {
     "x": -151.04,
     "y": -728.08
-   }
+   },
+   "years": "2004-2009"
   },
   {
    "id": "david-allred",
@@ -6760,7 +6862,7 @@
    "name": "Deschutes Wilderness Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Embark",
    "regions": [
     "Embark"
@@ -6780,7 +6882,8 @@
    "board": {
     "x": 967.53,
     "y": 20.99
-   }
+   },
+   "years": "2012-2024"
   },
   {
    "id": "discovery-ranch",
@@ -6806,7 +6909,9 @@
    "board": {
     "x": 861.92,
     "y": 271.13
-   }
+   },
+   "years": "from 2005",
+   "deaths": 1
   },
   {
    "id": "doug-kim-brown",
@@ -6883,14 +6988,15 @@
    "board": {
     "x": -488.74,
     "y": -514.03
-   }
+   },
+   "years": "2016-2022"
   },
   {
    "id": "eagle-point-christian-academy",
    "name": "Eagle Point Christian Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -6908,14 +7014,15 @@
    "board": {
     "x": -251.05,
     "y": -711.05
-   }
+   },
+   "years": "1978-2005"
   },
   {
    "id": "east-ridge-recovery-center",
    "name": "East Ridge Recovery Center",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -6941,7 +7048,7 @@
    "name": "Elan School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -6960,7 +7067,8 @@
    "board": {
     "x": -335.73,
     "y": -44.41
-   }
+   },
+   "deaths": 3
   },
   {
    "id": "eliza-hitz",
@@ -7012,7 +7120,8 @@
    "board": {
     "x": -831.49,
     "y": 253.25
-   }
+   },
+   "years": "2006-2024"
   },
   {
    "id": "emily-lamb",
@@ -7096,7 +7205,7 @@
    "name": "Excel Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -7122,7 +7231,7 @@
    "name": "Family Foundation School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -7141,7 +7250,9 @@
    "board": {
     "x": -892.07,
     "y": -332.56
-   }
+   },
+   "years": "1984-2013",
+   "deaths": 1
   },
   {
    "id": "florida-gov-jeb-bush",
@@ -7245,7 +7356,8 @@
    "board": {
     "x": -476.35,
     "y": 432.01
-   }
+   },
+   "years": "from 2014"
   },
   {
    "id": "heritage-schools-heritage-rtc",
@@ -7304,7 +7416,7 @@
    "name": "Integrity House",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -7323,7 +7435,8 @@
    "board": {
     "x": -459.89,
     "y": 432.01
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "intermountain-hospital",
@@ -7769,7 +7882,7 @@
    "name": "Kids Helping Kids",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -7794,7 +7907,7 @@
    "name": "KIDS of Greater Salt Lake",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -7813,14 +7926,15 @@
    "board": {
     "x": -796.53,
     "y": -316.16
-   }
+   },
+   "years": "1988-1990"
   },
   {
    "id": "kids-of-the-canadian-west",
    "name": "KIDS of the Canadian West",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -7839,7 +7953,8 @@
    "board": {
     "x": -768.07,
     "y": -326.79
-   }
+   },
+   "years": "1990-1991"
   },
   {
    "id": "l-jay-mitchell",
@@ -7890,7 +8005,8 @@
    "board": {
     "x": -726.04,
     "y": -72.01
-   }
+   },
+   "years": "from 2012"
   },
   {
    "id": "lee-caldwell",
@@ -7975,7 +8091,7 @@
    "name": "Life-Line Inc",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -8021,7 +8137,8 @@
    "board": {
     "x": -837.54,
     "y": -638.48
-   }
+   },
+   "years": "1990-2024"
   },
   {
    "id": "linda-cathcart",
@@ -8127,7 +8244,8 @@
    "board": {
     "x": -426.8,
     "y": -661.95
-   }
+   },
+   "years": "from 2007"
   },
   {
    "id": "matthew-lovell",
@@ -8335,14 +8453,15 @@
    "board": {
     "x": -453.22,
     "y": -535.98
-   }
+   },
+   "years": "from 1985"
   },
   {
    "id": "new-beginnings-girls-academy",
    "name": "New Beginnings Girls' Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -8362,14 +8481,15 @@
    "board": {
     "x": -301.5,
     "y": -722.14
-   }
+   },
+   "years": "2001-2015"
   },
   {
    "id": "new-hope-academy",
    "name": "New Hope Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -8445,7 +8565,7 @@
    "name": "Open Sky Wilderness Program",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -8498,7 +8618,7 @@
    "name": "Phoenix Outdoor",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -8551,7 +8671,7 @@
    "name": "Psychiatric Solutions Inc",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "UHS",
    "regions": [
     "YSI"
@@ -8576,7 +8696,7 @@
    "name": "Rancho Valmora",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "FHW"
@@ -8629,7 +8749,7 @@
    "name": "Red River Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -8648,7 +8768,8 @@
    "board": {
     "x": -94.18,
     "y": -695.78
-   }
+   },
+   "years": "2006-2015"
   },
   {
    "id": "rev-bobby-ray-papa-wills",
@@ -8680,7 +8801,7 @@
    "name": "Rivendell Psychiatric Hospital",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -8706,7 +8827,7 @@
    "name": "SAFE Inc",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -8777,14 +8898,15 @@
    "board": {
     "x": -437.89,
     "y": -278.88
-   }
+   },
+   "years": "from 1940"
   },
   {
    "id": "schrom-boys-home-hawks-landing",
    "name": "Schrom Boy's Home @ Hawk's Landing",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "YSI"
@@ -8810,7 +8932,7 @@
    "name": "Second Nature Entrada & Cascades",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -8835,7 +8957,7 @@
    "name": "Second Nature Uintas & Blue Ridge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -8879,14 +9001,15 @@
    "board": {
     "x": 490.89,
     "y": -78.46
-   }
+   },
+   "years": "1998-2025"
   },
   {
    "id": "sequel-tsi-courtland",
    "name": "Sequel TSI Courtland",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -8911,7 +9034,7 @@
    "name": "Sequel TSI Owens Cross Roads",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -8990,7 +9113,7 @@
    "name": "Social Learning Environments",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "FHW"
@@ -9068,7 +9191,7 @@
    "name": "Straight Inc Michigan",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -9094,7 +9217,7 @@
    "name": "Straight Inc Orlando",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -9114,7 +9237,8 @@
    "board": {
     "x": -703.42,
     "y": -357.9
-   }
+   },
+   "years": "1985-1992"
   },
   {
    "id": "tai-komanec",
@@ -9166,14 +9290,15 @@
    "board": {
     "x": 130.5,
     "y": 508.77
-   }
+   },
+   "years": "from 1980"
   },
   {
    "id": "teen-help-llc",
    "name": "Teen Help LLC",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -9227,7 +9352,7 @@
    "name": "Triple Divide Lodge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -9246,7 +9371,8 @@
    "board": {
     "x": 891.67,
     "y": 133.16
-   }
+   },
+   "years": "2021-2024"
   },
   {
    "id": "uinta-academy",
@@ -9273,7 +9399,8 @@
    "board": {
     "x": -201.44,
     "y": -303.71
-   }
+   },
+   "years": "from 2003"
   },
   {
    "id": "utah-youth-village",
@@ -9299,7 +9426,8 @@
    "board": {
     "x": 17.03,
     "y": -317.17
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "viewpoint-center",
@@ -9325,7 +9453,8 @@
    "board": {
     "x": 856.88,
     "y": -300.66
-   }
+   },
+   "years": "from 2014"
   },
   {
    "id": "wayne-halfway-house",
@@ -9350,7 +9479,8 @@
    "board": {
     "x": -506,
     "y": -299.52
-   }
+   },
+   "years": "from 1992"
   },
   {
    "id": "wayne-lippold",
@@ -9455,7 +9585,8 @@
    "board": {
     "x": -407.57,
     "y": -264.57
-   }
+   },
+   "years": "1988-2013"
   },
   {
    "id": "william-penn-patrick",
@@ -9507,14 +9638,15 @@
    "board": {
     "x": -535.02,
     "y": -277.12
-   }
+   },
+   "years": "from 1995"
   },
   {
    "id": "youth-center-at-beloit",
    "name": "Youth Center at Beloit",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "YSI"
@@ -9540,7 +9672,7 @@
    "name": "Youth Intervention Transport",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Evolve"
@@ -9567,7 +9699,7 @@
    "name": "Youth Services International",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "YSI"
@@ -9587,14 +9719,15 @@
    "board": {
     "x": -527.66,
     "y": -301.11
-   }
+   },
+   "years": "1992-2017"
   },
   {
    "id": "zion-hills-academy",
    "name": "Zion HIlls Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -9619,7 +9752,7 @@
    "name": "Acadia Village",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -9670,7 +9803,7 @@
    "name": "Agape Baptist Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -9688,14 +9821,15 @@
    "board": {
     "x": -416,
     "y": -718.63
-   }
+   },
+   "years": "1990-2003"
   },
   {
    "id": "alberta-adolescent-recovery-centre",
    "name": "Alberta Adolescent Recovery Centre",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -9714,7 +9848,8 @@
    "board": {
     "x": -771.98,
     "y": -309.08
-   }
+   },
+   "years": "from 1991"
   },
   {
    "id": "alexander-macdonald",
@@ -9773,7 +9908,7 @@
    "name": "Alldredge Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -9792,7 +9927,8 @@
    "board": {
     "x": 20.59,
     "y": 457.52
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "anasazi-foundation",
@@ -9825,7 +9961,7 @@
    "name": "Anchor Home for Boys",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -9851,7 +9987,7 @@
    "name": "Anderson Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Teen Challenge",
    "regions": [
     "Teen Challenge"
@@ -9927,7 +10063,7 @@
    "name": "Appalachian Wilderness Camp",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -9946,14 +10082,15 @@
    "board": {
     "x": -191.14,
     "y": -315.76
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "auldern-academy",
    "name": "Auldern Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -9972,7 +10109,8 @@
    "board": {
     "x": -622.75,
     "y": 47.63
-   }
+   },
+   "years": "2001-2021"
   },
   {
    "id": "ballard-sheppard",
@@ -10082,7 +10220,7 @@
    "name": "Bernalillo Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -10101,14 +10239,15 @@
    "board": {
     "x": -557.53,
     "y": -70.54
-   }
+   },
+   "years": "2009-2021"
   },
   {
    "id": "bethel-baptist-childrens-home",
    "name": "Bethel Baptist Children's Home",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -10237,7 +10376,7 @@
    "name": "Birdseye RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "CERTS"
@@ -10288,7 +10427,7 @@
    "name": "Blue Hills Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -10332,7 +10471,8 @@
    "board": {
     "x": 376.46,
     "y": -487.27
-   }
+   },
+   "years": "from 2013"
   },
   {
    "id": "bobbi-trott-christensen",
@@ -10569,7 +10709,7 @@
    "name": "Bridges Boys Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Wilderness"
@@ -10588,7 +10728,8 @@
    "board": {
     "x": 810.39,
     "y": -255.52
-   }
+   },
+   "years": "1997-2017"
   },
   {
    "id": "brighter-path-courtland",
@@ -10620,7 +10761,7 @@
    "name": "Brighter Path Owens Cross Roads",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -10645,7 +10786,7 @@
    "name": "Brightway Adolescent Hospital",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -10664,7 +10805,8 @@
    "board": {
     "x": -205.34,
     "y": -679.21
-   }
+   },
+   "years": "1993-1998"
   },
   {
    "id": "cameron-pullan",
@@ -10697,7 +10839,7 @@
    "name": "Camp Elliott",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspen"
@@ -10766,7 +10908,8 @@
    "board": {
     "x": -728.14,
     "y": -89.32
-   }
+   },
+   "years": "from 2000"
   },
   {
    "id": "casa-grande-academy",
@@ -10791,14 +10934,15 @@
    "board": {
     "x": -526.36,
     "y": -516.07
-   }
+   },
+   "years": "from 2020"
   },
   {
    "id": "catherine-freer-wilderness-therapy",
    "name": "Catherine Freer Wilderness Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -10850,7 +10994,7 @@
    "name": "Cedars Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -10868,7 +11012,8 @@
    "board": {
     "x": -369.27,
     "y": 17.37
-   }
+   },
+   "years": "1989-2009"
   },
   {
    "id": "chaffin-pullan",
@@ -10901,7 +11046,7 @@
    "name": "Challenger Hawaii",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -10927,7 +11072,7 @@
    "name": "Challenger Utah",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -11056,7 +11201,7 @@
    "name": "Chrysalis Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Embark"
@@ -11107,7 +11252,7 @@
    "name": "Clearview Horizon",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "FHW"
@@ -11185,7 +11330,7 @@
    "name": "Compass Rose Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -11237,7 +11382,7 @@
    "name": "Cottonwood Treatment Center",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "UHS",
    "regions": [
     "Asst. (north)"
@@ -11263,7 +11408,7 @@
    "name": "Crater Lake School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -11282,7 +11427,8 @@
    "board": {
     "x": -78.4,
     "y": -318.31
-   }
+   },
+   "years": "1997-2004"
   },
   {
    "id": "dan-peart",
@@ -11591,14 +11737,15 @@
    "board": {
     "x": -185.6,
     "y": -290.87
-   }
+   },
+   "years": "from 2015"
   },
   {
    "id": "discovery-ranch-for-girls",
    "name": "Discovery Ranch for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Embark"
@@ -11623,7 +11770,7 @@
    "name": "Distant Drums Beginnings",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -11674,7 +11821,7 @@
    "name": "E-ma-laku",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -11700,7 +11847,7 @@
    "name": "Eckerd Academy of the Blue Ridge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -11802,7 +11949,7 @@
    "name": "Equinox RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -11821,7 +11968,8 @@
    "board": {
     "x": 289.4,
     "y": -480.88
-   }
+   },
+   "years": "2016-2023"
   },
   {
    "id": "eugene-thorn",
@@ -11879,7 +12027,7 @@
    "name": "Evangeline Christian Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Teen Challenge",
    "regions": [
     "Teen Challenge"
@@ -11923,7 +12071,8 @@
    "board": {
     "x": -731.13,
     "y": -117.6
-   }
+   },
+   "years": "1983-2021"
   },
   {
    "id": "fred-peipman",
@@ -11982,7 +12131,7 @@
    "name": "Genesis by the Sea",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -12084,7 +12233,7 @@
    "name": "Greenbrier Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Evolve"
@@ -12162,7 +12311,7 @@
    "name": "Gulf Coast Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -12256,7 +12405,8 @@
    "board": {
     "x": -560.81,
     "y": -247.71
-   }
+   },
+   "years": "from 2006"
   },
   {
    "id": "helen-gowanny",
@@ -12288,7 +12438,7 @@
    "name": "High Frontier",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "FHW"
@@ -12314,7 +12464,7 @@
    "name": "High Impact",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -13416,7 +13566,7 @@
    "name": "Keystone Education and Youth Services",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "UHS",
    "regions": [
     "YSI"
@@ -13441,7 +13591,7 @@
    "name": "Kids Helping Kids of Hebron, KY",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -13467,7 +13617,7 @@
    "name": "KIDS of Southern California",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -13485,7 +13635,8 @@
    "board": {
     "x": -756.25,
     "y": -349.87
-   }
+   },
+   "years": "1988-1989"
   },
   {
    "id": "kim-lira",
@@ -13518,7 +13669,7 @@
    "name": "King George School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -13588,7 +13739,8 @@
    "board": {
     "x": -749.41,
     "y": 288.83
-   }
+   },
+   "years": "from 2002"
   },
   {
    "id": "krista-zimmerman",
@@ -13640,7 +13792,8 @@
    "board": {
     "x": -749.41,
     "y": 265.36
-   }
+   },
+   "years": "from 2005"
   },
   {
    "id": "lakshmi-kaza",
@@ -13774,7 +13927,7 @@
    "name": "Laurel Hills Behavioral Health",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "UHS",
    "regions": [
     "UHS"
@@ -13825,7 +13978,7 @@
    "name": "Legacy Academy Adventures",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -13844,7 +13997,8 @@
    "board": {
     "x": -368.99,
     "y": -689.9
-   }
+   },
+   "years": "2020-2022"
   },
   {
    "id": "liahona-academy",
@@ -13870,14 +14024,15 @@
    "board": {
     "x": -132.31,
     "y": -769.66
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "lifespring-seminars",
    "name": "LifeSpring Seminars",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -13903,7 +14058,7 @@
    "name": "Lighthouse Christian Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -14082,7 +14237,7 @@
    "name": "Majestic Ranch Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -14132,7 +14287,7 @@
    "name": "Maple Hall Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Aspen"
@@ -14151,7 +14306,8 @@
    "board": {
     "x": 417.81,
     "y": 302.41
-   }
+   },
+   "years": "2021-2024"
   },
   {
    "id": "marguerite-sallee",
@@ -14183,7 +14339,7 @@
    "name": "Marion Youth Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Vivant",
    "regions": [
     "Vivant"
@@ -14201,14 +14357,15 @@
    "board": {
     "x": -549.27,
     "y": -549.27
-   }
+   },
+   "years": "from 2007"
   },
   {
    "id": "mars-home-for-youth",
    "name": "Mars Home for Youth",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Evolve"
@@ -14378,7 +14535,8 @@
    "board": {
     "x": -604.99,
     "y": -39.77
-   }
+   },
+   "years": "from 1961"
   },
   {
    "id": "michael-allgood",
@@ -14512,7 +14670,7 @@
    "name": "Monarch School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -14531,14 +14689,15 @@
    "board": {
     "x": -696.4,
     "y": -121.11
-   }
+   },
+   "years": "2000-2017"
   },
   {
    "id": "montana-academy",
    "name": "Montana Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -14557,14 +14716,15 @@
    "board": {
     "x": -262.25,
     "y": -295.17
-   }
+   },
+   "years": "1997-2021"
   },
   {
    "id": "montfort-hall",
    "name": "Montfort Hall",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -14642,7 +14802,7 @@
    "name": "National Association of Therapeutic Wilderness Camping",
    "aliases": [],
    "kind": "association",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Wilderness"
@@ -14687,14 +14847,15 @@
    "board": {
     "x": 266.66,
     "y": -472.11
-   }
+   },
+   "years": "from 2018"
   },
   {
    "id": "new-horizons-for-young-women",
    "name": "New Horizons for Young Women",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Brown Schools/CEDU"
@@ -14720,7 +14881,7 @@
    "name": "New Leaf Academy of Oregon",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -14738,14 +14899,15 @@
    "board": {
     "x": 298.51,
     "y": 224.8
-   }
+   },
+   "years": "1997-2011"
   },
   {
    "id": "new-vision-wilderness",
    "name": "New Vision Wilderness",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Embark",
    "regions": [
     "Embark"
@@ -14849,7 +15011,7 @@
    "name": "North Star Expeditions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -14892,14 +15054,15 @@
    "board": {
     "x": 851.11,
     "y": 242.67
-   }
+   },
+   "years": "from 2021"
   },
   {
    "id": "obsidian-trails-outdoor-schools",
    "name": "Obsidian Trails Outdoor Schools",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -14951,7 +15114,7 @@
    "name": "On Track Wilderness Program",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Brown Schools/CEDU",
    "regions": [
     "Brown Schools/CEDU"
@@ -15029,7 +15192,7 @@
    "name": "Pacific Coast Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -15055,7 +15218,7 @@
    "name": "Paradise Cove",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -15073,14 +15236,15 @@
    "board": {
     "x": -230.4,
     "y": -681.19
-   }
+   },
+   "years": "1994-2000"
   },
   {
    "id": "passages-to-recovery",
    "name": "Passages to Recovery",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -15099,7 +15263,8 @@
    "board": {
     "x": 926.18,
     "y": -265.47
-   }
+   },
+   "years": "2000-2011"
   },
   {
    "id": "pathway-family-cener",
@@ -15387,7 +15552,7 @@
    "name": "Red Rock Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -15412,7 +15577,7 @@
    "name": "Red Rock Canyon School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -15431,14 +15596,16 @@
    "board": {
     "x": -95.03,
     "y": -287.65
-   }
+   },
+   "years": "2016-2019",
+   "deaths": 3
   },
   {
    "id": "remuda-ranch-programs",
    "name": "Remuda Ranch Programs",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -15514,7 +15681,7 @@
    "name": "Rivendell of Utah",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -15763,14 +15930,15 @@
    "board": {
     "x": 291.27,
     "y": -444.85
-   }
+   },
+   "years": "from 2004"
   },
   {
    "id": "santiam-crossing",
    "name": "Santiam Crossing",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -15822,7 +15990,7 @@
    "name": "Schrom Boys' Home",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "YSI"
@@ -15922,7 +16090,7 @@
    "name": "Sequel TSI Paint Rock Valley",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -15940,7 +16108,8 @@
    "board": {
     "x": -759.14,
     "y": 23.93
-   }
+   },
+   "years": "2009-2011"
   },
   {
    "id": "shawn-ziluck",
@@ -16050,7 +16219,7 @@
    "name": "Skyline Journey",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -16068,7 +16237,9 @@
    "board": {
     "x": -356.77,
     "y": -83.38
-   }
+   },
+   "years": "2001-2003",
+   "deaths": 1
   },
   {
    "id": "sonja-fullwood",
@@ -16146,7 +16317,8 @@
    "board": {
     "x": 372.38,
     "y": 275.54
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "spark-academy",
@@ -16179,7 +16351,7 @@
    "name": "St Paul's Preparatory Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -16309,7 +16481,7 @@
    "name": "Straight Inc Cincinnati",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -16327,14 +16499,15 @@
    "board": {
     "x": -712.47,
     "y": -396.93
-   }
+   },
+   "years": "1982-1987"
   },
   {
    "id": "straight-southern-california",
    "name": "STRAIGHT Southern California",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -16428,14 +16601,15 @@
    "board": {
     "x": -256.99,
     "y": 514.59
-   }
+   },
+   "years": "2002-2020"
   },
   {
    "id": "sunhawk-academy",
    "name": "SunHawk Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Wilderness"
@@ -16454,14 +16628,15 @@
    "board": {
     "x": 882.23,
     "y": -208.9
-   }
+   },
+   "years": "1996-2011"
   },
   {
    "id": "sunrise-beach",
    "name": "Sunrise Beach",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -16479,7 +16654,8 @@
    "board": {
     "x": -235.38,
     "y": -789.17
-   }
+   },
+   "years": "1995"
   },
   {
    "id": "susan-hardy",
@@ -16562,7 +16738,7 @@
    "name": "Talisman School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -16639,7 +16815,7 @@
    "name": "Teen Challenge of Acadiana Inc",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Teen Challenge",
    "regions": [
     "Teen Challenge"
@@ -16664,7 +16840,7 @@
    "name": "Teen Mentor",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -16709,14 +16885,15 @@
    "board": {
     "x": 470.13,
     "y": 85.36
-   }
+   },
+   "years": "from 2004"
   },
   {
    "id": "telos-rtc",
    "name": "Telos RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspen"
@@ -16787,14 +16964,15 @@
    "board": {
     "x": -156.69,
     "y": -609.23
-   }
+   },
+   "years": "1990-2024"
   },
   {
    "id": "the-pinnacle-schools",
    "name": "The Pinnacle Schools",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "CERTS"
@@ -16813,7 +16991,8 @@
    "board": {
     "x": -813.33,
     "y": 254.33
-   }
+   },
+   "years": "2005-2016"
   },
   {
    "id": "the-wardle-home",
@@ -16871,7 +17050,7 @@
    "name": "Three Springs Courtland",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -16896,7 +17075,7 @@
    "name": "Three Springs Duck River",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -16921,7 +17100,7 @@
    "name": "Three Springs New Beginning",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -16946,7 +17125,7 @@
    "name": "Three Springs Paint Rock Valley",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -16964,7 +17143,8 @@
    "board": {
     "x": -759.14,
     "y": 44.86
-   }
+   },
+   "years": "1985-2011"
   },
   {
    "id": "tim-mcmahon",
@@ -17072,7 +17252,7 @@
    "name": "Trails Momentum",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "FHW",
    "regions": [
     "FHW"
@@ -17148,7 +17328,7 @@
    "name": "Turnabout Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -17174,7 +17354,7 @@
    "name": "Utah Girls' Village",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -17226,7 +17406,7 @@
    "name": "Vista Magna RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -17245,7 +17425,8 @@
    "board": {
     "x": -500.34,
     "y": 303.77
-   }
+   },
+   "years": "1997-2022"
   },
   {
    "id": "w-dean-belnap",
@@ -17278,7 +17459,7 @@
    "name": "Walkabout Therapeutic Expeditions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -17374,14 +17555,15 @@
    "board": {
     "x": 795.85,
     "y": -283.57
-   }
+   },
+   "years": "from 1989"
   },
   {
    "id": "youth-foundation-success-academy",
    "name": "Youth Foundation Success Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -17399,7 +17581,8 @@
    "board": {
     "x": -111.27,
     "y": -583.49
-   }
+   },
+   "years": "2011-2014"
   },
   {
    "id": "youth-opportunity-foundation",
@@ -17432,7 +17615,7 @@
    "name": "A Better Way Youth Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -17482,7 +17665,7 @@
    "name": "Abundant Life Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "FHW"
@@ -17507,7 +17690,7 @@
    "name": "Academy at Ivy Ridge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -17525,14 +17708,15 @@
    "board": {
     "x": -188.09,
     "y": -711.05
-   }
+   },
+   "years": "2001-2009"
   },
   {
    "id": "academy-of-eastern-arizona",
    "name": "Academy of Eastern Arizona",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -17557,7 +17741,7 @@
    "name": "Academy of New Horizons",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "UHS"
@@ -17632,7 +17816,7 @@
    "name": "Alldredge Wilderness Journey",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -17657,7 +17841,7 @@
    "name": "Allynwood Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -17675,7 +17859,8 @@
    "board": {
     "x": -892.07,
     "y": -309.03
-   }
+   },
+   "years": "2013-2015"
   },
   {
    "id": "anchor-academy",
@@ -17707,7 +17892,7 @@
    "name": "Anderson Creek School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Brown Schools/CEDU"
@@ -17732,7 +17917,7 @@
    "name": "Anneewakee School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -17775,7 +17960,8 @@
    "board": {
     "x": 306.71,
     "y": 675.02
-   }
+   },
+   "years": "from 2020"
   },
   {
    "id": "arivaca-boys-ranch",
@@ -17800,14 +17986,15 @@
    "board": {
     "x": 1000,
     "y": 84.96
-   }
+   },
+   "years": "2007-2022"
   },
   {
    "id": "arizona-boys-ranch",
    "name": "Arizona Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -17825,7 +18012,8 @@
    "board": {
     "x": -699.4,
     "y": -104.99
-   }
+   },
+   "deaths": 2
   },
   {
    "id": "arkansas-juvenile-assessment-and-treatment-center",
@@ -17857,7 +18045,7 @@
    "name": "Ashby Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -17982,7 +18170,7 @@
    "name": "Beloit Juvenile Correctional Facility",
    "aliases": [],
    "kind": "government",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "YSI"
@@ -18007,7 +18195,7 @@
    "name": "Bible Baptist Temple",
    "aliases": [],
    "kind": "church",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Roloff"
@@ -18057,7 +18245,7 @@
    "name": "Birdseye Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "CERTS"
@@ -18125,14 +18313,15 @@
    "board": {
     "x": -779.05,
     "y": -586.44
-   }
+   },
+   "years": "from 2013"
   },
   {
    "id": "bootcamps-for-teens",
    "name": "Bootcamps for Teens",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -18157,7 +18346,7 @@
    "name": "BRAVO",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -18207,7 +18396,7 @@
    "name": "Browning Distance Learning Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -18250,14 +18439,15 @@
    "board": {
     "x": -748.33,
     "y": -622.69
-   }
+   },
+   "years": "from 2015"
   },
   {
    "id": "brush-ranch-school",
    "name": "Brush Ranch School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -18332,7 +18522,7 @@
    "name": "CALO Preteens",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Embark",
    "regions": [
     "Embark"
@@ -18357,7 +18547,7 @@
    "name": "CALO Teens",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "Embark",
    "regions": [
     "Embark"
@@ -18432,7 +18622,7 @@
    "name": "Cedar Ridge Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -18450,14 +18640,15 @@
    "board": {
     "x": -426.91,
     "y": 310.78
-   }
+   },
+   "years": "1996-2020"
   },
   {
    "id": "chilanko-lodge",
    "name": "Chilanko Lodge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -18507,7 +18698,7 @@
    "name": "Christian Life Boarding Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -18525,7 +18716,8 @@
    "board": {
     "x": -314.01,
     "y": -731.13
-   }
+   },
+   "years": "1986-1987"
   },
   {
    "id": "cinnamon-hills-youth-crisis-center",
@@ -18575,7 +18767,8 @@
    "board": {
     "x": 339.91,
     "y": -414.53
-   }
+   },
+   "years": "from 1996"
   },
   {
    "id": "cole-ranch-rtc",
@@ -18632,7 +18825,7 @@
    "name": "Come Back Youth Services",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -18707,7 +18900,7 @@
    "name": "Cramer Creek School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -18757,7 +18950,7 @@
    "name": "Cross Creek Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -18782,7 +18975,7 @@
    "name": "Cross Creek Center for Boys",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -18825,7 +19018,8 @@
    "board": {
     "x": -560.02,
     "y": -38.58
-   }
+   },
+   "years": "from 1979"
   },
   {
    "id": "danville-rtc",
@@ -18932,7 +19126,7 @@
    "name": "Dragonfly Transitions",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -18957,7 +19151,7 @@
    "name": "Eagle Cove Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspen"
@@ -19025,7 +19219,8 @@
    "board": {
     "x": -167.1,
     "y": -295.06
-   }
+   },
+   "years": "from 1968"
   },
   {
    "id": "education-consultant",
@@ -19232,7 +19427,7 @@
    "name": "Evoke Cascades",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -19250,7 +19445,8 @@
    "board": {
     "x": -272.03,
     "y": 593.45
-   }
+   },
+   "years": "2015-2021"
   },
   {
    "id": "evoke-entrada",
@@ -19282,7 +19478,7 @@
    "name": "Focal Point Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -19300,7 +19496,8 @@
    "board": {
     "x": 661.67,
     "y": -79.19
-   }
+   },
+   "years": "2006-2009"
   },
   {
    "id": "fort-myers-academy",
@@ -19332,7 +19529,7 @@
    "name": "Four Circles Recovery Center",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Wilderness"
@@ -19382,7 +19579,7 @@
    "name": "G4s Youth Services LLC",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Vivant"
@@ -19482,7 +19679,7 @@
    "name": "Georgia Military School",
    "aliases": [],
    "kind": "government",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "YSI"
@@ -19507,7 +19704,7 @@
    "name": "Glen Mills School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Vivant"
@@ -19532,7 +19729,7 @@
    "name": "Glen Willow Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspen"
@@ -19557,7 +19754,7 @@
    "name": "Grace Christian Home for Girls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Vivant"
@@ -19582,7 +19779,7 @@
    "name": "Gray Wolf Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspen"
@@ -19675,7 +19872,8 @@
    "board": {
     "x": -494.4,
     "y": 416.73
-   }
+   },
+   "years": "from 2021"
   },
   {
    "id": "havenwood-south",
@@ -19732,7 +19930,7 @@
    "name": "Highlands Youth Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Vivant"
@@ -20007,7 +20205,7 @@
    "name": "Kansas Industrial School for GIrls",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "YSI"
@@ -20057,7 +20255,7 @@
    "name": "KHK a Pathway Family Center",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Synanon"
@@ -20082,7 +20280,7 @@
    "name": "KIDS of North New Jersey",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -20200,7 +20398,8 @@
    "board": {
     "x": -23.02,
     "y": -276.73
-   }
+   },
+   "years": "from 2012"
   },
   {
    "id": "lad-lake",
@@ -20257,7 +20456,7 @@
    "name": "Lake Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Vivant"
@@ -20275,14 +20474,15 @@
    "board": {
     "x": -578.97,
     "y": -482.63
-   }
+   },
+   "deaths": 1
   },
   {
    "id": "lakeland-girls-academy",
    "name": "Lakeland Girls Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Teen Challenge",
    "regions": [
     "Teen Challenge"
@@ -20300,14 +20500,15 @@
    "board": {
     "x": -747.99,
     "y": -609.74
-   }
+   },
+   "years": "1958-2022"
   },
   {
    "id": "lakeside-academy-of-kansas",
    "name": "Lakeside Academy of Kansas",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -20325,14 +20526,15 @@
    "board": {
     "x": -721.35,
     "y": -42.48
-   }
+   },
+   "years": "2008-2020"
   },
   {
    "id": "law-enforcement-assistance-administration",
    "name": "Law Enforcement Assistance Administration",
    "aliases": [],
    "kind": "government",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -20407,7 +20609,7 @@
    "name": "LIFE",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -20432,7 +20634,7 @@
    "name": "Lighthouse for Boys",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -20457,7 +20659,7 @@
    "name": "Lighthouse of Northwest Florida",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -20482,7 +20684,7 @@
    "name": "LUNA",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -20525,14 +20727,15 @@
    "board": {
     "x": 338.22,
     "y": -516.57
-   }
+   },
+   "years": "2024-2025"
   },
   {
    "id": "marvelous-grace-girls-academy",
    "name": "Marvelous Grace Girls Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -20550,14 +20753,15 @@
    "board": {
     "x": -300.32,
     "y": -685.43
-   }
+   },
+   "years": "2008-2022"
   },
   {
    "id": "masters-ranch-girls-academy",
    "name": "Master's Ranch Girls' Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -20575,14 +20779,15 @@
    "board": {
     "x": -449.54,
     "y": -661.95
-   }
+   },
+   "years": "2020-2022"
   },
   {
    "id": "maximum-life-skills-academy",
    "name": "Maximum Life Skills Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -20607,7 +20812,7 @@
    "name": "Meadowlark Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -20682,7 +20887,7 @@
    "name": "MidWest Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -20700,14 +20905,15 @@
    "board": {
     "x": -223.5,
     "y": -711.05
-   }
+   },
+   "years": "2003-2016"
   },
   {
    "id": "mission-mountain-school",
    "name": "Mission Mountain School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Eckerd"
@@ -20725,7 +20931,8 @@
    "board": {
     "x": -127.56,
     "y": -289.29
-   }
+   },
+   "years": "1990-2008"
   },
   {
    "id": "momentum",
@@ -20757,7 +20964,7 @@
    "name": "Monuments RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -20800,7 +21007,8 @@
    "board": {
     "x": -749.41,
     "y": 279.73
-   }
+   },
+   "years": "from 2003"
   },
   {
    "id": "mount-helix-rtc",
@@ -20832,7 +21040,7 @@
    "name": "Mount Pleasant Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -20850,7 +21058,8 @@
    "board": {
     "x": -698.44,
     "y": -17.54
-   }
+   },
+   "years": "2011-2019"
   },
   {
    "id": "mountain-springs-preparatory-academy",
@@ -20875,7 +21084,8 @@
    "board": {
     "x": -733.74,
     "y": 239.68
-   }
+   },
+   "years": "from 2004"
   },
   {
    "id": "mountain-valley-treatment-center",
@@ -20900,7 +21110,8 @@
    "board": {
     "x": -76.48,
     "y": -294.09
-   }
+   },
+   "years": "from 2011"
   },
   {
    "id": "national-association-of-therapeutic-wilderness-camps",
@@ -21125,14 +21336,15 @@
    "board": {
     "x": -420.64,
     "y": 387.6
-   }
+   },
+   "years": "2014-2022"
   },
   {
    "id": "oak-creek-ranch-school",
    "name": "Oak Creek Ranch School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -21150,7 +21362,8 @@
    "board": {
     "x": -241.94,
     "y": 379
-   }
+   },
+   "years": "1972-2017"
   },
   {
    "id": "oak-grove-academy",
@@ -21207,7 +21420,7 @@
    "name": "Obsidian Schools",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Aspiro"
@@ -21250,7 +21463,8 @@
    "board": {
     "x": 306.71,
     "y": 745.56
-   }
+   },
+   "years": "from 2014"
   },
   {
    "id": "okaloosa-youth-academy",
@@ -21282,7 +21496,7 @@
    "name": "Old West Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -21300,14 +21514,15 @@
    "board": {
     "x": -70.77,
     "y": -710.83
-   }
+   },
+   "years": "1986-2007"
   },
   {
    "id": "olympus-academy",
    "name": "Olympus Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -21400,14 +21615,15 @@
    "board": {
     "x": 834.6,
     "y": 211.96
-   }
+   },
+   "years": "from 2006"
   },
   {
    "id": "oxford-group",
    "name": "Oxford Group",
    "aliases": [],
    "kind": "association",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Unframed"
@@ -21457,7 +21673,7 @@
    "name": "Palm Lane Baptist Boarding Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -21525,14 +21741,15 @@
    "board": {
     "x": 579.59,
     "y": -83.38
-   }
+   },
+   "years": "from 2011"
   },
   {
    "id": "pathway-of-madison-county",
    "name": "Pathway of Madison County",
    "aliases": [],
    "kind": "government",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -21582,7 +21799,7 @@
    "name": "Pillars of Hope",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -21600,7 +21817,8 @@
    "board": {
     "x": -131.8,
     "y": -751.22
-   }
+   },
+   "years": "2004-2012"
   },
   {
    "id": "pine-ridge-academy",
@@ -21625,14 +21843,15 @@
    "board": {
     "x": 532.13,
     "y": -514.48
-   }
+   },
+   "years": "from 2009"
   },
   {
    "id": "pine-view-christian-academy",
    "name": "Pine View Christian Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -21682,7 +21901,7 @@
    "name": "Ponca Pines Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -21707,7 +21926,7 @@
    "name": "Positive Impact RTC",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "FHW"
@@ -21732,7 +21951,7 @@
    "name": "Possibilities Unlimited",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Synanon"
@@ -21750,7 +21969,8 @@
    "board": {
     "x": -708,
     "y": -425.67
-   }
+   },
+   "years": "1983-1991"
   },
   {
    "id": "president-george-w-bush-of-the-united-states-of-america",
@@ -21800,7 +22020,8 @@
    "board": {
     "x": -114.55,
     "y": -432.23
-   }
+   },
+   "years": "from 2008"
   },
   {
    "id": "red-hawk-academy-for-girls",
@@ -21832,7 +22053,7 @@
    "name": "Remuda Ranch Programs for Anorexia and Bulimia",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -21857,7 +22078,7 @@
    "name": "Resource Realizations",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -21882,7 +22103,7 @@
    "name": "Ridge Creek School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -22057,7 +22278,7 @@
    "name": "San Cristobal Ranch Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -22075,14 +22296,15 @@
    "board": {
     "x": 867.69,
     "y": 133.5
-   }
+   },
+   "years": "2001-2020"
   },
   {
    "id": "san-juan-wilderness-therapy",
    "name": "San Juan Wilderness Therapy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -22132,7 +22354,7 @@
    "name": "SEASONS",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -22157,7 +22379,7 @@
    "name": "Second Chances in Southern Utah",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -22175,14 +22397,15 @@
    "board": {
     "x": -78.63,
     "y": -792.28
-   }
+   },
+   "years": "2014-2022"
   },
   {
    "id": "second-nature-entrada",
    "name": "Second Nature Entrada",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspiro",
    "regions": [
     "Aspiro"
@@ -22207,7 +22430,7 @@
    "name": "Seneca Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -22225,7 +22448,8 @@
    "board": {
     "x": -165.52,
     "y": -779.44
-   }
+   },
+   "years": "1998-2009"
   },
   {
    "id": "sequoia-smith",
@@ -22257,7 +22481,7 @@
    "name": "Shadow Mountain Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Asst. (north)"
@@ -22300,7 +22524,8 @@
    "board": {
     "x": 312.14,
     "y": -515.9
-   }
+   },
+   "years": "from 2008"
   },
   {
    "id": "south-florida-youth-academy",
@@ -22432,7 +22657,7 @@
    "name": "SUWS Adolescent and Youth Programs",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "Aspen",
    "regions": [
     "Aspen"
@@ -22482,7 +22707,7 @@
    "name": "Teen Discovery",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -22557,7 +22782,7 @@
    "name": "Thanks to Calvary",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -22582,7 +22807,7 @@
    "name": "The Goodale School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "Asst. (south)"
@@ -22675,14 +22900,15 @@
    "board": {
     "x": 539.6,
     "y": -157.48
-   }
+   },
+   "years": "from 2024"
   },
   {
    "id": "three-rivers-montana",
    "name": "Three Rivers Montana",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -22707,7 +22933,7 @@
    "name": "Three Springs Blue Ridge",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Rite of Passage"
@@ -22732,7 +22958,7 @@
    "name": "Three Strands Wilderness",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Embark"
@@ -22775,14 +23001,15 @@
    "board": {
     "x": -277.46,
     "y": 406.55
-   }
+   },
+   "years": "from 2023"
   },
   {
    "id": "timberlawn-behavioral-health-system",
    "name": "Timberlawn Behavioral Health System",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "UHS",
    "regions": [
     "UHS"
@@ -22832,7 +23059,7 @@
    "name": "Tipton Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "WWASPS"
@@ -22975,7 +23202,8 @@
    "board": {
     "x": -369.16,
     "y": -90.62
-   }
+   },
+   "years": "from 2002"
   },
   {
    "id": "uhs-of-kootenai-river",
@@ -23007,7 +23235,7 @@
    "name": "US Youth Services",
    "aliases": [],
    "kind": "parent",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "WWASPS",
    "regions": [
     "WWASPS"
@@ -23025,14 +23253,15 @@
    "board": {
     "x": -69.63,
     "y": -695.78
-   }
+   },
+   "years": "2015-2018"
   },
   {
    "id": "utah-boys-ranch",
    "name": "Utah Boys Ranch",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "rebranded",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -23075,7 +23304,8 @@
    "board": {
     "x": 482.63,
     "y": -88.08
-   }
+   },
+   "years": "from 1970"
   },
   {
    "id": "vanalden-rtc",
@@ -23182,7 +23412,7 @@
    "name": "Vista Treatment Centers",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "HOPE Group"
@@ -23257,7 +23487,7 @@
    "name": "Western Youth",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "YSI"
@@ -23282,7 +23512,7 @@
    "name": "Whitmore Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Unframed"
@@ -23307,7 +23537,7 @@
    "name": "Willow Creek School",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Altior"
@@ -23350,7 +23580,8 @@
    "board": {
     "x": -551.7,
     "y": -106.8
-   }
+   },
+   "years": "from 1988"
   },
   {
    "id": "wimauma-academy",
@@ -23382,7 +23613,7 @@
    "name": "Wings of Faith Girls Academy",
    "aliases": [],
    "kind": "facility",
-   "status": "closed or rebranded",
+   "status": "closed",
    "chain": "",
    "regions": [
     "Roloff"
@@ -23400,7 +23631,8 @@
    "board": {
     "x": -441.85,
     "y": -696.18
-   }
+   },
+   "years": "1994-2022"
   },
   {
    "id": "woodland-hills-rtc",
@@ -23425,7 +23657,8 @@
    "board": {
     "x": 306.71,
     "y": 762.81
-   }
+   },
+   "years": "from 2014"
   },
   {
    "id": "accelerated-christian-education",

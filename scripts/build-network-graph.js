@@ -48,7 +48,8 @@ const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'chu
 const qa = {
     kindGuesses: [], ambiguousAcquirers: [], unmatchedFacilities: [], multiMatchFacilities: [],
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
-    droppedRows: [], chainInferred: [], missingHeadline: []
+    droppedRows: [], chainInferred: [], missingHeadline: [],
+    rebrandGuesses: [], noYears: [], unmatchedDeaths: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -103,14 +104,24 @@ function truthy(value) {
 
 function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
-        return { merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [] };
+        return {
+            merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
+            statuses: {}, years: {}, deaths: {}
+        };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
     return {
         merges: raw.merges || [], aliases: raw.aliases || {}, kinds: raw.kinds || {},
         headline: raw.headline || [],
         relationships: raw.relationships || {}, facilities: raw.facilities || {},
-        acquirers: raw.acquirers || {}
+        acquirers: raw.acquirers || {},
+        /* name -> "open" | "closed" | "rebranded", where the board's single
+         * "closed or rebranded" and the rebrand rule below get it wrong. */
+        statuses: raw.statuses || {},
+        /* name -> "1971-2004", for a node no record dates. */
+        years: raw.years || {},
+        /* name -> count, for memorial rows the matcher cannot place. */
+        deaths: raw.deaths || {}
     };
 }
 
@@ -280,6 +291,87 @@ function keyVariants(name) {
     return Array.from(out).filter(Boolean);
 }
 
+/* ------------------------------------------------------------------ *
+ * Years, rebrands and deaths (the fix list of 2026-09-17, 2b.5 to 2b.7)
+ * ------------------------------------------------------------------ */
+
+/** "1971-2004", "from 1971", "until 2004", or '' from two years. */
+function formatYears(start, end) {
+    const a = Number(start) || 0;
+    const b = Number(end) || 0;
+    if (a && b) return a === b ? String(a) : a + '-' + b;
+    if (a) return 'from ' + a;
+    if (b) return 'until ' + b;
+    return '';
+}
+
+/** Pull "1971" and "2004" out of free text such as "1971 - 2004" or "1998-present". */
+function yearsFromText(text) {
+    const m = /\b(1[89]\d\d|20\d\d)\s*(?:-|–|to)\s*(1[89]\d\d|20\d\d|present|current|now)\b/i.exec(String(text || ''));
+    if (m) return formatYears(m[1], /^\d/.test(m[2]) ? m[2] : 0);
+    const single = /\b(?:since|from|opened|founded|est\.?|established)\s+(1[89]\d\d|20\d\d)\b/i.exec(String(text || ''));
+    return single ? formatYears(single[1], 0) : '';
+}
+
+/**
+ * A facility's years: the columns first, then the record's own
+ * operatingPeriod, then the free-text yearsOfOperation.
+ */
+function yearsFromFacility(row) {
+    const fromColumns = formatYears(row.start_year, row.end_year);
+    if (fromColumns) return fromColumns;
+    let doc = null;
+    try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { doc = null; }
+    const facility = doc && (doc.facility || doc);
+    const period = facility && facility.operatingPeriod;
+    if (!period || typeof period !== 'object') return '';
+    return formatYears(period.startYear, period.endYear) || yearsFromText(period.yearsOfOperation);
+}
+
+/** Operator name key -> years, from wpdl_kop_operators, for company nodes. */
+function loadOperatorYears() {
+    const out = new Map();
+    if (!fs.existsSync(SQLITE_FILE)) return out;
+    try {
+        const { DatabaseSync } = require('node:sqlite');
+        const db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
+        const rows = db.prepare('SELECT name, json_data FROM wpdl_kop_operators').all();
+        db.close();
+        rows.forEach(function (row) {
+            let doc = null;
+            try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { doc = null; }
+            const op = doc && (doc.operator || doc);
+            const period = op && op.operatingPeriod;
+            const years = typeof period === 'string'
+                ? yearsFromText(period)
+                : (period && typeof period === 'object'
+                    ? (formatYears(period.startYear, period.endYear) || yearsFromText(period.yearsOfOperation))
+                    : '');
+            if (years) out.set(nameKey(row.name), years);
+        });
+    } catch (err) {
+        console.warn('  ! could not read operators: ' + err.message);
+    }
+    return out;
+}
+
+/** Published memorial rows as [{program, n}], one per program name. */
+function loadMemorialPrograms() {
+    if (!fs.existsSync(SQLITE_FILE)) return null;
+    try {
+        const { DatabaseSync } = require('node:sqlite');
+        const db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
+        const rows = db.prepare(
+            "SELECT program, COUNT(*) AS n FROM memorial_victims WHERE publication_status = 'published' GROUP BY program"
+        ).all();
+        db.close();
+        return rows.filter(function (r) { return r.program; });
+    } catch (err) {
+        console.warn('  ! could not read memorial_victims: ' + err.message);
+        return null;
+    }
+}
+
 /**
  * Build name_key -> [{id, uniqueName, name}] from the local prod mirror, or
  * fall back to the committed program aggregate when the mirror is absent.
@@ -290,15 +382,18 @@ function loadFacilityIndex() {
         try {
             const { DatabaseSync } = require('node:sqlite');
             const db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
-            const rows = db.prepare('SELECT id, unique_name, name, name_key, state, status FROM facilities_v2').all();
+            const rows = db.prepare('SELECT id, unique_name, name, name_key, state, status, start_year, end_year, json_data FROM facilities_v2').all();
             db.close();
             const index = new Map();
             const loose = new Map();
+            const byId = new Map();
             rows.forEach(function (row) {
                 const record = {
                     id: row.id, uniqueName: row.unique_name, name: row.name,
-                    state: row.state || '', status: row.status || ''
+                    state: row.state || '', status: row.status || '',
+                    years: yearsFromFacility(row)
                 };
+                byId.set(row.id, record);
                 /* the stored name_key normalises differently from ours, so
                  * register both or "SUWS of the Carolinas" misses itself */
                 [row.name_key, nameKey(row.name)].forEach(function (key) {
@@ -311,7 +406,7 @@ function loadFacilityIndex() {
                     loose.get(variant).push(record);
                 });
             });
-            return { source: 'facilities_v2', index: index, loose: loose, count: rows.length };
+            return { source: 'facilities_v2', index: index, loose: loose, byId: byId, count: rows.length };
         } catch (err) {
             console.warn('  ! could not read ' + path.basename(SQLITE_FILE) + ': ' + err.message);
         }
@@ -435,6 +530,122 @@ function resolveDirection(edge, source, target, overrides) {
         return { direction: 'none', flip: true, ambiguous: false };
     }
     return { direction: 'none', flip: false, ambiguous: false };
+}
+
+/**
+ * 2b.6. Years of operation where anything records them: an override, the
+ * matched facility record, the operator record for a company, then the
+ * board's own dates column. People are left alone; their board dates are
+ * terms of office, not years of operation.
+ */
+function deriveYears(nodes, facilities, overrides) {
+    const operators = loadOperatorYears();
+    nodes.forEach(function (node) {
+        if (node.kind === 'person') return;
+        let years = '';
+        if (Object.prototype.hasOwnProperty.call(overrides.years, node.name)) {
+            years = String(overrides.years[node.name] || '');
+        }
+        if (!years && node.facilityId && facilities && facilities.byId) {
+            const record = facilities.byId.get(node.facilityId);
+            if (record && record.years) years = record.years;
+        }
+        if (!years) {
+            const names = [node.name].concat(node.aliases || []);
+            for (let i = 0; i < names.length && !years; i++) {
+                years = operators.get(nameKey(names[i])) || '';
+            }
+        }
+        if (!years && node.dates) years = yearsFromText(node.dates) || '';
+        if (years) {
+            node.years = years;
+        } else if (node.kind === 'facility') {
+            qa.noYears.push(node.name + ' [' + node.regions[0] + ']');
+        }
+    });
+}
+
+/**
+ * 2b.5. The board has one status for "closed or rebranded". A rebrand edge
+ * says which of its two ends is the old name, but the board does not draw
+ * them consistently (Lifeline for Youth, still open, points at the closed
+ * Life-Line Inc), so status decides first: the closed end of a rebrand is
+ * the name that was dropped. Where both ends are closed the edge is read as
+ * the board draws it, source became target, and the pair goes to the QA
+ * report. Every other closed node is plain "closed". An override wins.
+ */
+function deriveRebrands(nodes, edges, nodeById, overrides) {
+    const isClosed = function (node) { return /closed|rebrand/i.test(node.status || ''); };
+    const rebranded = new Set();
+    edges.forEach(function (edge) {
+        if (edge.direction !== 'renamed') return;
+        const source = nodeById.get(edge.source);
+        const target = nodeById.get(edge.target);
+        const a = isClosed(source);
+        const b = isClosed(target);
+        if (a && !b) rebranded.add(source.id);
+        else if (b && !a) rebranded.add(target.id);
+        else if (a && b) {
+            rebranded.add(source.id);
+            qa.rebrandGuesses.push(source.name + ' -> ' + target.name + ' (both closed; read as drawn)');
+        }
+    });
+    nodes.forEach(function (node) {
+        if (Object.prototype.hasOwnProperty.call(overrides.statuses, node.name)) {
+            node.status = String(overrides.statuses[node.name]);
+            return;
+        }
+        if (!isClosed(node)) return;
+        node.status = rebranded.has(node.id) ? 'rebranded' : 'closed';
+    });
+}
+
+/**
+ * 2b.7. Deaths in the memorial, per node. memorial_victims names a program in
+ * free text with no facility id, so each program is matched against every
+ * node's name and aliases and the name of the facility record the node is
+ * linked to. A program that names two nodes, or none, is reported instead of
+ * guessed. An override sets the count outright.
+ */
+function deriveDeaths(nodes, facilities, overrides) {
+    const programs = loadMemorialPrograms();
+    if (!programs) return;
+    const byKey = new Map();
+    const add = function (key, node) {
+        if (!key || key.length < 5) return;
+        if (!byKey.has(key)) byKey.set(key, new Set());
+        byKey.get(key).add(node);
+    };
+    nodes.forEach(function (node) {
+        if (node.kind === 'person') return;
+        [node.name].concat(node.aliases || []).forEach(function (name) { add(nameKey(name), node); });
+        if (node.facilityId && facilities && facilities.byId) {
+            const record = facilities.byId.get(node.facilityId);
+            if (record) add(nameKey(record.name), node);
+        }
+    });
+    const counts = new Map();
+    programs.forEach(function (row) {
+        const hits = byKey.get(nameKey(row.program));
+        if (!hits || hits.size === 0) {
+            qa.unmatchedDeaths.push(row.program + ' (' + row.n + ')');
+            return;
+        }
+        if (hits.size > 1) {
+            qa.unmatchedDeaths.push(row.program + ' (' + row.n + ', names ' +
+                Array.from(hits).map(function (n) { return n.name; }).join(' / ') + ')');
+            return;
+        }
+        const node = Array.from(hits)[0];
+        counts.set(node.id, (counts.get(node.id) || 0) + Number(row.n || 0));
+    });
+    nodes.forEach(function (node) {
+        let n = counts.get(node.id) || 0;
+        if (Object.prototype.hasOwnProperty.call(overrides.deaths, node.name)) {
+            n = Number(overrides.deaths[node.name]) || 0;
+        }
+        if (n > 0) node.deaths = n;
+    });
 }
 
 /* ------------------------------------------------------------------ *
@@ -725,12 +936,22 @@ function build() {
         }
     });
 
+    /* --- 7b. years, rebrands, deaths ------------------------------ */
+    deriveYears(nodes, facilities, overrides);
+    deriveRebrands(nodes, edges, nodeById, overrides);
+    deriveDeaths(nodes, facilities, overrides);
+
     /* --- 8. layout and output ------------------------------------ */
     rescaleBoard(nodes);
     nodes.forEach(function (node) { delete node.rawStatus; delete node.kindWeak; });
     nodes.sort(function (a, b) { return b.degree - a.degree || a.name.localeCompare(b.name); });
 
-    const counts = { nodes: nodes.length, edges: edges.length, facilityMatches: matched };
+    const counts = {
+        nodes: nodes.length, edges: edges.length, facilityMatches: matched,
+        withYears: nodes.filter(function (n) { return n.years; }).length,
+        withDeaths: nodes.filter(function (n) { return n.deaths; }).length,
+        rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length
+    };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
     });
@@ -845,6 +1066,15 @@ function writeQaReport(graph) {
 
     section(lines, 'Rebrands, in the direction the board drew them', qa.rebrands, function (item) { return item; },
         'Read as "became". The build trusts the CSV here, so a backwards row stays backwards.');
+
+    section(lines, 'Rebrands where both ends were closed', qa.rebrandGuesses, function (item) { return item; },
+        'The source was taken to be the old name. Correct a wrong one under `statuses`.');
+
+    section(lines, 'Memorial programs not placed on a node', qa.unmatchedDeaths, function (item) { return item; },
+        'Unmatched or matching two nodes. Add the count under `deaths` against the right node name.');
+
+    section(lines, 'Facilities with no years of operation', qa.noYears, function (item) { return item; },
+        'Nothing records when these ran. Add `"NAME": "1971-2004"` under `years` where it is known.');
 
     section(lines, 'Merged nodes', qa.mergedNodes, function (item) { return item; }, '');
     section(lines, 'Duplicate edges dropped', qa.duplicateEdges, function (item) { return item; }, '');

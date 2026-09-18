@@ -21,7 +21,7 @@
         trade: 'Trade group', church: 'Church', government: 'Government body'
     };
     var STATUS_WORDS = {
-        open: 'Operating', closed: 'Closed or rebranded', rebranded: 'Rebranded',
+        open: 'Operating', closed: 'Closed', rebranded: 'Rebranded',
         unknown: 'Status not recorded'
     };
 

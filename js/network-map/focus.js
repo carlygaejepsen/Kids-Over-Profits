@@ -659,7 +659,8 @@
                      * takes. */
                     space: spaceFor(node),
                     label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH),
-                    tier: tierOf(node)
+                    tier: tierOf(node),
+                    years: !!node.years
                 };
                 byId[node.id] = point;
                 return point;
@@ -1015,7 +1016,11 @@
             };
 
             var rowGutter = ROW_GUTTER;
-            var labelRoom = LABEL_ROOM;
+            /* A name with years under it is a line taller; give every row
+             * that room when any name on the board has them, so the rows
+             * stay even. */
+            var yearsLine = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.YEARS_LINE) || 11;
+            var labelRoom = LABEL_ROOM + (points.some(function (p) { return p.years; }) ? yearsLine : 0);
             var rowH = tallest * 2 + labelRoom + rowGutter;
 
             /* Full width first, since a block wider than the stage is the one
@@ -1188,6 +1193,9 @@
             /* The renderer owns what a label needs; asking it rather than
              * guessing keeps the two from drifting apart. */
             var pitchNeed = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.LABEL_PITCH) || LABEL_ROOM;
+            if (scene.nodes.some(function (node) { return node.years; })) {
+                pitchNeed += (root.KOPNetworkCanvas && root.KOPNetworkCanvas.YEARS_LINE) || 11;
+            }
             var floor = 0;
 
             /* Down the page: the closest two rows come to each other has to

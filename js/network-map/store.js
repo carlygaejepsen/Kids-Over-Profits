@@ -22,13 +22,16 @@
 (function (root) {
     'use strict';
 
-    /* The three statuses the filter rail offers. The board records status as
-     * free text with an empty string for "nobody has recorded one", so this
-     * is the only place that decides which bucket a row falls in. */
+    /* The four statuses the filter rail offers. The build now splits the
+     * board's single "closed or rebranded" into "closed" and "rebranded"
+     * (scripts/build-network-graph.js, deriveRebrands); an older graph.json
+     * still carrying the combined string reads as closed. Empty means nobody
+     * has recorded one. This is the only place that decides the bucket. */
     function statusBucket(raw) {
         var s = String(raw == null ? '' : raw).trim().toLowerCase();
         if (s === '') return 'unknown';
         if (s.indexOf('open') === 0) return 'open';
+        if (s === 'rebranded') return 'rebranded';
         if (s.indexOf('closed') === 0 || s.indexOf('rebrand') !== -1) return 'closed';
         return 'unknown';
     }
@@ -121,6 +124,10 @@
                     facilityId: raw.facilityId || null,
                     uniqueName: raw.uniqueName || null,
                     dates: raw.dates || '',
+                    /* "1971-2004", "from 1998"; '' where nothing records it. */
+                    years: raw.years || '',
+                    /* Deaths the memorial records for this name. */
+                    deaths: raw.deaths || 0,
                     isolated: !!raw.isolated,
                     /* Settled position. Mutable: dragging a node moves it and
                      * pins it for the session. x0/y0 is the way back. */
@@ -198,7 +205,7 @@
             return {
                 kinds: toSet(meta.kinds || []),
                 categories: toSet(meta.categories || []),
-                statuses: toSet(['open', 'closed', 'unknown']),
+                statuses: toSet(['open', 'closed', 'rebranded', 'unknown']),
                 natsapOnly: false,
                 /* '' is the "no recorded owner" checkbox: 708 of 907 nodes. */
                 chains: toSet((meta.chains || []).concat([''])),

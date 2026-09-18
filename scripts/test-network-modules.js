@@ -80,6 +80,7 @@ function buildSandbox() {
     const labelCalls = [];
     const labelBoxes = [];
     const badgeCalls = [];
+    const yearsCalls = [];
 
     const ctx = {
         setTransform() {}, clearRect() {}, save() {}, restore() {},
@@ -91,6 +92,9 @@ function buildSandbox() {
             ops.fillText++;
             /* The "+N" off-screen pill is text too, but it is not a name. */
             if (/^\+\d+$/.test(String(t))) { badgeCalls.push(t); return; }
+            /* The years line under a name is drawn at its own smaller size;
+             * it belongs to the name above it and is not a label of its own. */
+            if (String(ctx.font || '').indexOf('9.5px') === 0) { yearsCalls.push(t); return; }
             labelCalls.push('text:' + t);
             /* textAlign matters: a label that could not fit below its node is
              * drawn beside it, left or right aligned, and its box is then on
@@ -361,7 +365,7 @@ function buildSandbox() {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
         document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
-        labelCalls, labelBoxes, badgeCalls,
+        labelCalls, labelBoxes, badgeCalls, yearsCalls,
         /* The stage the map believes it has, so the same modules can be run
          * at a phone width without a second sandbox. */
         setStage: (width, height) => { stage.width = width; stage.height = height; },
@@ -370,6 +374,7 @@ function buildSandbox() {
             labelCalls.length = 0;
             labelBoxes.length = 0;
             badgeCalls.length = 0;
+            yearsCalls.length = 0;
         }
     };
 }
@@ -386,7 +391,7 @@ function run() {
 
     const {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
-        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, resetOps, setStage
+        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, yearsCalls, resetOps, setStage
     } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -401,7 +406,9 @@ function run() {
 
     check(sandbox.KOPNetworkStore.statusBucket('') === 'unknown' &&
         sandbox.KOPNetworkStore.statusBucket('Open') === 'open' &&
-        sandbox.KOPNetworkStore.statusBucket('closed or rebranded') === 'closed',
+        sandbox.KOPNetworkStore.statusBucket('closed or rebranded') === 'closed' &&
+        sandbox.KOPNetworkStore.statusBucket('closed') === 'closed' &&
+        sandbox.KOPNetworkStore.statusBucket('rebranded') === 'rebranded',
         'status bucketing does not match the three filter checkboxes');
 
     const all = store.visible();
@@ -1463,7 +1470,7 @@ function run() {
     let labels = legendLabels();
     check(labels.indexOf('Facilities') !== -1,
         'the legend does not use the rail wording; it shows ' + JSON.stringify(labels.slice(0, 3)));
-    check(labels.indexOf('Closed or rebranded') !== -1 && labels.indexOf('NATSAP member') !== -1,
+    check(labels.indexOf('Closed') !== -1 && labels.indexOf('Rebranded (carried on under another name)') !== -1 && labels.indexOf('NATSAP member') !== -1,
         'the legend does not say what the non-colour marks mean');
     check(legendMarks().length === labels.length,
         'the legend has ' + legendMarks().length + ' swatches for ' + labels.length + ' rows',
@@ -1796,6 +1803,41 @@ function run() {
     check(Math.abs(cellAfter.x - cellBefore.x) < 1 && Math.abs(cellAfter.y - cellBefore.y) < 1,
         'Reset view left a dragged node where it was dropped',
         'Reset view puts a dragged node back in its cell');
+    focus.clear();
+    flushFrames();
+
+    /* 2b.5 to 2b.7: the fields the build now supplies reach the map. */
+    const rebrandedNodes = store.nodes.filter((n) => n.status === 'rebranded');
+    check(rebrandedNodes.length > 0, 'no node is rebranded, so the build did not derive the status');
+    check(store.nodes.every((n) => ['open', 'closed', 'rebranded', 'unknown'].indexOf(n.status) !== -1),
+        'a node has a status outside the four the rail offers');
+    store.toggleIn('statuses', 'rebranded', false);
+    check(store.visible().nodes.every((n) => n.status !== 'rebranded'), 'unchecking Rebranded left a rebranded node');
+    check(store.visible().nodes.some((n) => n.status === 'closed'), 'unchecking Rebranded also hid the closed ones');
+    store.resetFilters();
+
+    const withYears = store.nodes.filter((n) => n.years);
+    const withDeaths = store.nodes.filter((n) => n.deaths > 0);
+    check(withYears.length > 100, 'only ' + withYears.length + ' nodes carry years', withYears.length + ' nodes carry years');
+    check(withDeaths.length > 0, 'no node carries a death count', withDeaths.length + ' nodes carry a memorial death count');
+
+    /* A dated node draws its years under its name, and a node with deaths
+     * draws the red ring. */
+    const dated = withYears.find((n) => n.kind === 'facility') || withYears[0];
+    focus.clear();
+    flushFrames();
+    focus.select(dated);
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    check(yearsCalls.indexOf(dated.years) !== -1,
+        dated.name + ' is on the board without its years (' + dated.years + ')',
+        dated.name + ' shows ' + dated.years + ' under its name');
+    const datedLabels = labelCalls.filter((c) => c.startsWith('text:'));
+    check(datedLabels.length === focus.scene().nodes.length,
+        'with years drawn, ' + datedLabels.length + ' of ' + focus.scene().nodes.length + ' names were drawn');
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap with years lines: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
     focus.clear();
     flushFrames();
 

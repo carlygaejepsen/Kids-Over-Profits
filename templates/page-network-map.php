@@ -211,7 +211,11 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 							</label>
 							<label class="kop-network__check">
 								<input type="checkbox" name="kop-network-status" value="closed" checked>
-								<span>Closed or rebranded</span>
+								<span>Closed</span>
+							</label>
+							<label class="kop-network__check">
+								<input type="checkbox" name="kop-network-status" value="rebranded" checked>
+								<span>Rebranded</span>
 							</label>
 							<label class="kop-network__check">
 								<input type="checkbox" name="kop-network-status" value="unknown" checked>
