@@ -27,7 +27,7 @@ Last updated 2026-09-18.
 | 10 | Email notifications for new submissions | Done |
 | 11 | Facility websites: Wayback and/or donotlink everywhere | Open: three page types still link live |
 | 12 | State pages: alternate names missing | Open: the feed and the data, not the rendering |
-| 13 | Featured inspections not displaying | Fix shipped; confirm on the site |
+| 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Open: design below |
 
 ## Waiting on the owner
@@ -62,9 +62,10 @@ session can do it. The tools that change data show a dry run first; add
    of proposed crisis lines, reporting routes and family resources that
    visitors cannot see. Check every number, then move the ones to publish
    into `kop_resources_groups()` in `inc/resources-list.php`.
-7. **Starter views for the map (1).** The lists of names for each "Start
-   from" view (historical, today's big players, religious, or others) go in
-   `js/data/network/network-overrides.json` under `views`.
+7. **Starter views for the map (1).** Done 2026-09-18: four views are in
+   `js/data/network/network-overrides.json` (Historical, Today's top
+   players, Wilderness, Fundamentalist). Edit that file to change or add
+   one.
 
 ## Working in this repository
 
@@ -93,8 +94,9 @@ reopen a view; reset view and click zoom; rebranded drawn apart from closed,
 years of operation, deaths; connections from facility profiles; staff
 movement from the profiles, reviewed, as edges; the owner's staff list;
 people the board leaves out; ownership, staff, family and membership
-connections shown by default; starter views (the mechanism); a draft Network
-Map page behind a password.
+connections shown by default; starter views, with four lists (Historical,
+Today's top players, Wilderness, Fundamentalist); a draft Network Map page
+behind a password.
 
 Still open:
 
@@ -104,7 +106,6 @@ Still open:
 - **2b.9 Toolbar and trail compaction.** The trail as one row of chips, the
   legend as a collapsible overlay, the toolbar in one row, the stage at full
   height.
-- **2b.10 Starter view lists.** Waiting on the owner (item 7 above).
 - **Paths between two nodes.** Phase 3 in `docs/NETWORK-MAP.md`.
 
 ---
@@ -453,9 +454,10 @@ stood until 05:23 on 2026-09-19 whatever the database said.
 
 Fix, shipped 2026-09-18: both templates use a renamed cache key
 (`kop_inspection_featured_column_v2`), so the stale entry is ignored and the
-column is checked again on the next page load. To confirm: the home page and
-[/inspection-reports/](https://kidsoverprofits.org/inspection-reports/) show
-the two Provo Canyon cards.
+column is checked again on the next page load. Confirmed on 2026-09-18: the
+[home page](https://kidsoverprofits.org/) and
+[/inspection-reports/](https://kidsoverprofits.org/inspection-reports/) both
+show the two Provo Canyon cards.
 
 Also worth doing: neither featured report has a `featured_note`, so the cards
 show the facility, state and date but no reason. Add a one-line note to each
