@@ -778,6 +778,16 @@ function run() {
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
+    /* A name wider than its cell hangs over the edges of it, which is fine
+     * in the middle of the board and not fine in the outermost column. */
+    const clipped = labelBoxes.filter((b) => {
+        const half = (String(b.t).length * 6) / 2;
+        return b.x - half < 0 || b.x + half > renderer.width;
+    });
+    check(clipped.length === 0,
+        clipped.length + ' names run off the edge of the canvas: ' +
+        clipped.slice(0, 2).map((b) => b.t).join(', '));
+
     /* Every node in its own cell, spread over the stage rather than knotted
      * into one corner of it. */
     const gp = hubScene.nodes.map((n) => focus.positionOf(n));
@@ -912,15 +922,51 @@ function run() {
 
     const focused = focus.scene();
     const seedIds = store.seedIds();
+    /* Once something is open, anything with no line to it is dropped: the
+     * organisations the map opened with are leftovers unless they turn out
+     * to connect to what was asked for. */
+    const linked = new Set();
+    focused.edges.forEach((e) => { linked.add(e.sourceId); linked.add(e.targetId); });
+    check(focused.nodes.every((n) => linked.has(n.id) || n.id === hub.id),
+        'an opened view kept a node with nothing connecting it to anything');
+    check(Object.keys(seedIds).some((id) => !focused.nodeIds[id]),
+        'opening a node left every one of the opening organisations on screen, connected or not');
     /* Opening a node puts it and everyone it touches on the map, on top of
-     * the organisations the map opened with. */
+     * the organisations the map opened with - and then opens out any person
+     * among them, because a name with one line back to whatever revealed it
+     * hides the thing worth knowing about them. */
     const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)).concat(Object.keys(seedIds)));
+    [...expected].forEach((id) => {
+        const node = store.node(id);
+        if (node && node.kind === 'person') {
+            store.neighbours(id, true).forEach((l) => expected.add(l.other.id));
+        }
+    });
+    /* ...minus whatever that left stranded. */
+    [...expected].forEach((id) => {
+        if (id !== hub.id && !linked.has(id)) expected.delete(id);
+    });
     check(focused.nodes.length === expected.size,
         'opening ' + hub.name + ' showed ' + focused.nodes.length + ' nodes, expected ' + expected.size,
         'opening ' + hub.name + ': ' + focused.nodes.length + ' nodes, ' + focused.edges.length + ' edges');
     check(focused.nodes.every((n) => expected.has(n.id)),
         'opening a node put something on the map that nobody asked for');
     check(focused.nodes.length < whole.nodes.length, 'opening a node showed the whole graph');
+
+    /* A person with one line back to whatever revealed them hides the thing
+     * worth knowing: which programmes they turn up at. Whenever a name
+     * surfaces, everywhere it connects to surfaces with it. */
+    const surfaced = focused.nodes.filter((n) => n.kind === 'person' && store.neighbours(n.id, true).length > 1);
+    check(surfaced.length > 0, 'no person surfaced when opening ' + hub.name + ', so the rule is untested');
+    let hiddenPlaces = 0;
+    surfaced.forEach((person) => {
+        store.neighbours(person.id, true).forEach((link) => {
+            if (!focused.nodeIds[link.other.id]) hiddenPlaces++;
+        });
+    });
+    check(hiddenPlaces === 0,
+        hiddenPlaces + ' places a surfaced person connects to were left off the map',
+        surfaced.length + ' people surfaced, all their programmes with them');
     check(focused.edges.every((e) => focused.nodeIds[e.sourceId] && focused.nodeIds[e.targetId]),
         'the focused view kept an edge running off it');
 

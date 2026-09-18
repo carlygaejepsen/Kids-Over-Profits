@@ -164,6 +164,27 @@ the nodes outwards: a name can only collide with its neighbour if the cell
 is narrower than the name. The same neighbourhood now uses 65% of the stage,
 nine nodes to a quadrant, and every one of the thirty-six is named.
 
+**A person never appears alone.** The fact worth having about someone on
+this map is which programmes they turn up at - the therapist who appears at
+four schools in a row, the director whose next job is the company that
+bought the last one - and a name sitting with a single line back to whatever
+revealed it hides exactly that. So when a person surfaces, everywhere they
+connect to surfaces with them. It opens out by one step and stops: a person
+reached through another person's expansion does not expand in turn. People
+are the cheap case to do this for, median degree two and most of them seven
+or under, but a rule that walked outwards without a stop would not stay
+cheap.
+
+**Opening something hides whatever it does not reach.** Once a node is
+open, the map is about that node. The organisations it opened with have no
+bearing on the question being asked unless they turn out to connect to it,
+and left on screen they are names taking up cells in the grid with no line
+to anything, which the reader has to work out for themselves are leftovers
+rather than part of the answer. What was clicked always stays, even where
+the filters have taken away everything it connected to. The opening view
+itself is exempt: six organisations with two connections between them would
+come down to two.
+
 Connections are routed as right-angled traces rather than straight
 diagonals, which is what makes the result readable at that density: diagonals
 between grid cells cross at every angle and read as a scribble over the

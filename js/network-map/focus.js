@@ -166,6 +166,28 @@
                     ids[link.other.id] = true;
                 });
             });
+
+            /* A person on their own says nothing. The fact worth having about
+             * someone on this map is which programmes they turn up at - the
+             * therapist who appears at four schools in a row, the director
+             * whose next job is the company that bought the last one - and a
+             * name sitting alone with a single line back to whatever revealed
+             * it hides exactly that. So when a person surfaces, everywhere
+             * they connect to surfaces with them.
+             *
+             * Object.keys takes a snapshot, so this opens people out by one
+             * step and stops: a person reached through another person's
+             * expansion does not expand in turn. People are the cheap case to
+             * do this for - median degree two, most seven - but a rule that
+             * walked outwards without a stop would not stay cheap. */
+            Object.keys(ids).forEach(function (id) {
+                var node = store.node(id);
+                if (!node || node.kind !== 'person') return;
+                store.neighbours(id, true).forEach(function (link) {
+                    ids[link.other.id] = true;
+                });
+            });
+
             return ids;
         }
 
@@ -182,6 +204,36 @@
             var edges = visible.edges.filter(function (edge) {
                 return ids[edge.sourceId] && ids[edge.targetId];
             });
+
+            /* Once something has been opened, the map is about that. The
+             * organisations it opened with have no bearing on the question
+             * being asked unless they turn out to connect to it, and left on
+             * screen they are just names taking up cells in the grid with no
+             * line to anything - the reader has to work out for themselves
+             * that they are leftovers rather than part of the answer.
+             *
+             * The opening view itself is exempt: six organisations with two
+             * connections between them would come down to two.
+             */
+            if (chain.length) {
+                var connected = Object.create(null);
+                edges.forEach(function (edge) {
+                    connected[edge.sourceId] = true;
+                    connected[edge.targetId] = true;
+                });
+                /* What was clicked always stays, even where the filters have
+                 * taken away everything it connected to. */
+                chain.forEach(function (id) { connected[id] = true; });
+
+                var kept = Object.create(null);
+                nodes = nodes.filter(function (node) {
+                    if (!connected[node.id]) return false;
+                    kept[node.id] = true;
+                    return true;
+                });
+                ids = kept;
+            }
+
             return { nodes: nodes, edges: edges, nodeIds: ids, degrees: visible.degrees };
         };
 
@@ -387,7 +439,8 @@
             viewport.setScene(scene);
             if (!scene.nodes.length) return;
             if (!renderer.width) return; /* no stage yet; the resize observer calls back */
-            applyLayout(scene, settleLayout(scene, 90).positions, 90);
+            var opening = settleLayout(scene, 90);
+            applyLayout(scene, opening.positions, 90 + opening.overhang);
         }
         focus.start = showOpeningView;
 
@@ -419,7 +472,8 @@
                 return;
             }
 
-            applyLayout(scene, settleLayout(scene, 70).positions, 70);
+            var settled = settleLayout(scene, 70);
+            applyLayout(scene, settled.positions, 70 + settled.overhang);
 
             renderer.setEmphasis({ hoverId: null });
             renderer.setScene(scene);
@@ -482,7 +536,7 @@
                 sim.stop();
             }
 
-            gridLayout(points, gridPadding);
+            var overhang = gridLayout(points, gridPadding);
 
             var positions = Object.create(null);
             points.forEach(function (point) {
@@ -495,7 +549,7 @@
                 point.x = positions[point.id].x;
                 point.y = positions[point.id].y;
             });
-            return { positions: positions, points: points, byId: byId };
+            return { positions: positions, points: points, byId: byId, overhang: overhang };
         }
 
         /**
@@ -526,7 +580,7 @@
          */
         function gridLayout(points, padding) {
             var n = points.length;
-            if (!n || !renderer.width) return;
+            if (!n || !renderer.width) return 0;
 
             var boardW = Math.max(120, renderer.width - padding * 2);
             var boardH = Math.max(120, renderer.height - padding * 2);
@@ -536,7 +590,7 @@
              * and the few longer names are allowed to run into their
              * neighbours' margins. */
             var widths = points.map(function (p) { return p.label; }).sort(function (a, b) { return a - b; });
-            var wide = widths[Math.min(widths.length - 1, Math.floor(widths.length * 0.75))];
+            var wide = widths[Math.min(widths.length - 1, Math.floor(widths.length * 0.88))];
             var cellNeeds = wide + COLUMN_GUTTER;
 
             /* Enough columns to look like the stage, but never so many that a
@@ -567,6 +621,14 @@
                 }
                 placed += band.length;
             }
+
+            /* A name wider than its cell hangs over the edges of it. That is
+             * fine in the middle of the board, where the neighbouring cell
+             * has room to spare, and not fine in the outermost column, where
+             * it hangs over the edge of the canvas and gets cut in half.
+             * Report the overhang so the frame can allow for it. */
+            var widest = widths[widths.length - 1];
+            return Math.max(0, (widest - cellW) / 2);
         }
 
         function stopSettle() {
