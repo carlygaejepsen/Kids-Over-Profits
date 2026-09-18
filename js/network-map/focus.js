@@ -66,7 +66,7 @@
     /* Clear space between one row's names and the next. Tight, because
      * rows are what a tall map spends its height on and every row that does
      * not fit is a name that does not appear. */
-    var ROW_GUTTER = 12;
+    var ROW_GUTTER = 16;
 
     /* What a cell costs when it sits closer to the middle of the board than
      * the node that revealed it. Large enough to be a rule rather than a
@@ -1002,7 +1002,9 @@
              * renderer starts dropping names. Gutters give way first, and
              * only after that does the stage's height set a limit. */
             if (stacked.length * rowH > boardH) {
-                rowGutter = 4;
+                /* Not below the point where the gutter still holds a clear
+                 * channel for the traces at a zoom of one. */
+                rowGutter = 10;
                 labelRoom = 15;
                 rowH = tallest * 2 + labelRoom + rowGutter;
             }

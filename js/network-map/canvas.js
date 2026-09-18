@@ -166,59 +166,88 @@
     var TRACE_CLEARANCE = 4;
 
     /**
-     * Route one connection as a right-angled trace, the way a track runs on
-     * a board: out of the node along one axis, one turn, and into the target
-     * along the other.
+     * Route one connection the way a track runs on a board: out of the node
+     * into the gutter beside its row, along the gutter, up or down a clear
+     * column, along the gutter beside the target's row, and in.
      *
      * Straight diagonals between grid cells cross each other at every angle
-     * and read as a scribble over the nodes. Right angles run in the gutters
-     * between rows and columns, so a line is followable by eye from one end
-     * to the other even where a dozen of them share the same channel.
+     * and read as a scribble. Right angles are followable, but a right angle
+     * drawn naively is not enough either: a vertical leg at the node's own x
+     * runs through every cell in that column between the two rows, and on a
+     * map where a line means a recorded relationship that draws relationships
+     * nobody recorded - the opening view had Synanon's line to CEDU running
+     * straight through WWASPS. So the long legs run only in gutters, and the
+     * one vertical channel is checked against every node between the rows
+     * and moved sideways until it is clear.
      *
-     * The turn is offset per edge so that two connections between the same
-     * pair of rows do not lie exactly on top of each other. Returns the
-     * direction of the final segment, for the arrowhead to follow.
+     * Two nodes in the same row route through the gutter below them, which
+     * passes behind both labels; labels are drawn last with a halo, so the
+     * text stays legible over the line.
+     *
+     * Returns the points of the route and the direction of its final leg,
+     * which is always vertical and is what the arrowhead follows.
      */
-    function traceEdge(ctx, ax, ay, bx, by, jitter, channel) {
-        var dx = bx - ax;
-        var dy = by - ay;
+    function routeEdge(ax, ay, bx, by, jitter, geo, skipA, skipB) {
+        if (!geo || !geo.rowStep) {
+            var dx = bx - ax;
+            var dy = by - ay;
+            return { pts: [[ax, ay], [bx, by]], dir: Math.abs(dy) >= Math.abs(dx) ? [0, dy < 0 ? -1 : 1] : [dx < 0 ? -1 : 1, 0] };
+        }
+        var step = geo.rowStep;
+        var sameRow = Math.abs(by - ay) < step / 2;
+        var down = sameRow || by > ay;
+        var exitY = geo.channelAt(ay + (down ? step / 2 : -step / 2)) + jitter;
+        var enterY = sameRow ? exitY : geo.channelAt(by + (down ? -step / 2 : step / 2)) + jitter;
+
+        var pts;
+        if (Math.abs(exitY - enterY) < 1) {
+            pts = [[ax, ay], [ax, exitY], [bx, exitY], [bx, by]];
+        } else {
+            /* Arrive straight into the target if that column is clear
+             * between the two gutters, otherwise the nearest column that is. */
+            var xv = geo.clearX(bx, exitY, enterY, skipA, skipB);
+            pts = [[ax, ay], [ax, exitY], [xv, exitY], [xv, enterY], [bx, enterY], [bx, by]];
+        }
+        return { pts: tidy(pts), dir: [0, by > pts[pts.length - 2][1] ? 1 : -1] };
+    }
+
+    /* Drop zero-length legs and merge collinear ones. */
+    function tidy(pts) {
+        var out = [pts[0]];
+        for (var i = 1; i < pts.length; i++) {
+            var p = pts[i];
+            var q = out[out.length - 1];
+            if (Math.abs(p[0] - q[0]) < 0.5 && Math.abs(p[1] - q[1]) < 0.5) continue;
+            if (out.length >= 2) {
+                var o = out[out.length - 2];
+                var collinear = (Math.abs(o[0] - q[0]) < 0.5 && Math.abs(q[0] - p[0]) < 0.5) ||
+                    (Math.abs(o[1] - q[1]) < 0.5 && Math.abs(q[1] - p[1]) < 0.5);
+                if (collinear) { out[out.length - 1] = p; continue; }
+            }
+            out.push(p);
+        }
+        return out;
+    }
+
+    /** Append a route to the current path, rounding every corner. */
+    function strokeRoute(ctx, pts) {
         var r = TRACE_RADIUS;
-
-        /* Near enough to a straight run that a corner would be a wobble. */
-        if (Math.abs(dx) < 1 || Math.abs(dy) < 1) {
-            ctx.moveTo(ax, ay);
-            ctx.lineTo(bx, by);
-            return Math.abs(dx) < 1 ? [0, dy < 0 ? -1 : 1] : [dx < 0 ? -1 : 1, 0];
+        ctx.moveTo(pts[0][0], pts[0][1]);
+        for (var i = 1; i < pts.length - 1; i++) {
+            var p = pts[i - 1], v = pts[i], n = pts[i + 1];
+            var lenIn = Math.hypot(v[0] - p[0], v[1] - p[1]);
+            var lenOut = Math.hypot(n[0] - v[0], n[1] - v[1]);
+            var rIn = Math.min(r, lenIn / 2);
+            var rOut = Math.min(r, lenOut / 2);
+            var inX = v[0] + (p[0] - v[0]) / (lenIn || 1) * rIn;
+            var inY = v[1] + (p[1] - v[1]) / (lenIn || 1) * rIn;
+            var outX = v[0] + (n[0] - v[0]) / (lenOut || 1) * rOut;
+            var outY = v[1] + (n[1] - v[1]) / (lenOut || 1) * rOut;
+            ctx.lineTo(inX, inY);
+            ctx.quadraticCurveTo(v[0], v[1], outX, outY);
         }
-
-        /* Turn on the long axis, so the trace commits to its direction
-         * before it turns rather than jinking immediately out of the node. */
-        var vertical = Math.abs(dy) >= Math.abs(dx);
-        ctx.moveTo(ax, ay);
-
-        if (vertical) {
-            var midY = channel(ay + dy / 2 + jitter);
-            var cy1 = midY - Math.sign(dy) * Math.min(r, Math.abs(midY - ay));
-            var cy2 = midY + Math.sign(dy) * Math.min(r, Math.abs(by - midY));
-            var cx = ax + Math.sign(dx) * Math.min(r, Math.abs(dx) / 2);
-            ctx.lineTo(ax, cy1);
-            ctx.quadraticCurveTo(ax, midY, cx, midY);
-            ctx.lineTo(bx - Math.sign(dx) * Math.min(r, Math.abs(dx) / 2), midY);
-            ctx.quadraticCurveTo(bx, midY, bx, cy2);
-            ctx.lineTo(bx, by);
-            return [0, dy < 0 ? -1 : 1];
-        }
-
-        var midX = ax + dx / 2 + jitter;
-        var cx1 = midX - Math.sign(dx) * Math.min(r, Math.abs(midX - ax));
-        var cx2 = midX + Math.sign(dx) * Math.min(r, Math.abs(bx - midX));
-        var cy = ay + Math.sign(dy) * Math.min(r, Math.abs(dy) / 2);
-        ctx.lineTo(cx1, ay);
-        ctx.quadraticCurveTo(midX, ay, midX, cy);
-        ctx.lineTo(midX, by - Math.sign(dy) * Math.min(r, Math.abs(dy) / 2));
-        ctx.quadraticCurveTo(midX, by, cx2, by);
-        ctx.lineTo(bx, by);
-        return [dx < 0 ? -1 : 1, 0];
+        var last = pts[pts.length - 1];
+        ctx.lineTo(last[0], last[1]);
     }
 
     /**
@@ -618,14 +647,81 @@
              * the two nodes are an even number of rows apart, and a trace
              * then runs straight through the names in that row - which reads
              * as a connection to them. */
-            var channelAt = function (worldY) { return worldY; };
+            var geo = null;
+            var blockers = [];
             if (grid && grid.cellH) {
                 var rowsTop = grid.y0 * k + t.y;
                 var rowsStep = grid.cellH * k;
-                channelAt = function (screenY) {
-                    return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep;
+
+                /* What a vertical leg must not cross: every node's shape,
+                 * with its clearance, and the label under it. In screen
+                 * space, one box per node, indexed like the scene. */
+                ctx.font = LABEL_SIZE + 'px ' + FONT;
+                for (i = 0; i < scene.nodes.length; i++) {
+                    node = scene.nodes[i];
+                    var rr = Math.min(22, Math.max(2.5, node.r * k)) + TRACE_CLEARANCE;
+                    var half = Math.max(rr, textWidth(ctx, node, null, LABEL_SIZE) / 2 + LABEL_PAD_X);
+                    blockers.push([sx[i] - half, sy[i] - rr, sx[i] + half, sy[i] + rr + LABEL_LINE + LABEL_PAD_Y]);
+                }
+
+                /* The clear band between two rows is not centred on the
+                 * line between them: labels hang below their nodes, so the
+                 * band runs from the bottom of one row's labels to the top of
+                 * the next row's shapes. A channel at the geometric midpoint
+                 * ran straight through the names in the row above. */
+                var maxRk = scene.nodes.reduce(function (t2, n2) {
+                    return Math.max(t2, Math.min(22, Math.max(2.5, n2.r * k)));
+                }, 0);
+                var labelZone = LABEL_LINE + LABEL_PAD_Y;
+                var bandPx = rowsStep - 2 * (maxRk + TRACE_CLEARANCE) - labelZone;
+                var bandShift = labelZone / 2;
+                /* Parallel runs are spread apart only as far as the band
+                 * allows; a spread wider than the band puts a run back onto
+                 * the labels it was moved off. */
+                var jitterScale = Math.max(0, Math.min(1, (bandPx / 2 - 2) / 10));
+
+                geo = {
+                    rowStep: rowsStep,
+                    jitterScale: jitterScale,
+                    channelAt: function (screenY) {
+                        return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep + bandShift;
+                    },
+                    /* The nearest x to the one asked for at which a vertical
+                     * leg between the two gutters crosses nobody's cell but
+                     * the two ends'. Candidates are the requested x and the
+                     * outer edges of every box that leg would hit, nearest
+                     * first; the first that is clear wins. */
+                    clearX: function (x, y0, y1, skipA, skipB) {
+                        var lo = Math.min(y0, y1) + 1;
+                        var hi = Math.max(y0, y1) - 1;
+                        var inWay = [];
+                        for (var j = 0; j < blockers.length; j++) {
+                            if (j === skipA || j === skipB) continue;
+                            var bb = blockers[j];
+                            if (bb[3] > lo && bb[1] < hi) inWay.push(bb);
+                        }
+                        var free = function (cx) {
+                            for (var j2 = 0; j2 < inWay.length; j2++) {
+                                if (cx > inWay[j2][0] && cx < inWay[j2][2]) return false;
+                            }
+                            return true;
+                        };
+                        if (free(x)) return x;
+                        var candidates = [];
+                        inWay.forEach(function (bb) {
+                            candidates.push(bb[0] - 2);
+                            candidates.push(bb[2] + 2);
+                        });
+                        candidates.sort(function (p, q) { return Math.abs(p - x) - Math.abs(q - x); });
+                        for (var c = 0; c < candidates.length; c++) {
+                            if (free(candidates[c])) return candidates[c];
+                        }
+                        return x;
+                    }
                 };
             }
+            renderer.blockers = blockers;
+            var routes = [];
 
             /* --- edges ---
              *
@@ -669,8 +765,11 @@
                          * cross the viewport, which is most of them zoomed in. */
                         if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
                         if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
-                        /* Spread the turns of edges sharing a channel. */
-                        traceEdge(ctx, ax, ay, cx, cy, ((i % 5) - 2) * 6, channelAt);
+                        /* Spread the runs of edges sharing a gutter. */
+                        var route = routeEdge(ax, ay, cx, cy, ((i % 5) - 2) * 5 * (geo ? geo.jitterScale : 1), geo, a, c);
+                        strokeRoute(ctx, route.pts);
+                        route.edge = edge;
+                        routes.push(route);
                         drew = true;
                     }
                     if (drew) ctx.stroke();
@@ -685,29 +784,22 @@
              * at the target end. Everything else is undirected and has
              * none, which is the honest signal that the record does not say
              * who came first. */
-            for (b = 0; b < buckets.length; b++) {
-                if (!buckets[b].style.arrow) continue;
-                ctx.fillStyle = buckets[b].style.colour;
-                var arrows = buckets[b].edges;
-                for (i = 0; i < arrows.length; i++) {
-                    var directed = arrows[i];
-                    if (directed.source._frame !== frameStamp || directed.target._frame !== frameStamp) continue;
-                    var si = directed.source._i;
-                    var ti = directed.target._i;
-                    if (sx[ti] < -pad || sx[ti] > w + pad || sy[ti] < -pad || sy[ti] > h + pad) continue;
-                    ctx.globalAlpha = near ? (nearEdges && nearEdges[directed.id] ? 1 : dim * edgeFade) : edgeFade;
-                    /* The trace arrives along one axis, so the head has to
-                     * point that way rather than back along the straight
-                     * line between the two nodes. */
-                    var adx = sx[ti] - sx[si];
-                    var ady = sy[ti] - sy[si];
-                    var alongY = Math.abs(ady) >= Math.abs(adx);
-                    var fromX = alongY ? sx[ti] : sx[ti] - Math.sign(adx || 1) * 20;
-                    var fromY = alongY ? sy[ti] - Math.sign(ady || 1) * 20 : sy[ti];
-                    drawArrow(ctx, fromX, fromY, sx[ti], sy[ti],
-                        Math.max(2.5, Math.min(22, directed.target.r * k)) + 2,
-                        Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
-                }
+            renderer.routes = routes;
+            for (i = 0; i < routes.length; i++) {
+                var directed = routes[i].edge;
+                var style2 = styleFor(directed, renderer.crossRegionMode);
+                if (!style2.arrow) continue;
+                var pts = routes[i].pts;
+                var tip = pts[pts.length - 1];
+                var from = pts[pts.length - 2];
+                ctx.fillStyle = style2.colour;
+                ctx.globalAlpha = near ? (nearEdges && nearEdges[directed.id] ? 1 : dim * edgeFade) : edgeFade;
+                /* The head follows the final leg of the route, which is how
+                 * the trace actually arrives, not the straight line between
+                 * the two nodes. */
+                drawArrow(ctx, from[0], from[1], tip[0], tip[1],
+                    Math.max(2.5, Math.min(22, directed.target.r * k)) + 2,
+                    Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
             }
             ctx.globalAlpha = 1;
 
@@ -805,7 +897,7 @@
                 return b.node.degree - a.node.degree;
             });
 
-            var grid = Object.create(null);
+            var labelGrid = Object.create(null); /* not "grid": a var here hoists over draw() and would shadow the layout grid the router reads */
             var drawn = [];
             for (i = 0; i < candidates.length; i++) {
                 var entry = candidates[i];
@@ -827,8 +919,8 @@
                  * a lit neighbourhood as much as anywhere else - the way to
                  * read every name in a cluster is to click it, which
                  * re-settles the neighbourhood with room for all of them. */
-                if (!fitsInGrid(grid, box)) continue;
-                occupyGrid(grid, box);
+                if (!fitsInGrid(labelGrid, box)) continue;
+                occupyGrid(labelGrid, box);
                 entry.box = box;
                 drawn.push(entry);
             }

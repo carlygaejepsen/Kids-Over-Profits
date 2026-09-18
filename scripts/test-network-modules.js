@@ -827,6 +827,34 @@ function run() {
         clipped.length + ' names run off the edge of the canvas: ' +
         clipped.slice(0, 2).map((b) => b.t).join(', '));
 
+    /* A trace never crosses a node it does not connect. Routes are
+     * published by the renderer with their points; every straight leg is
+     * checked against every other node's box - shape, clearance and label -
+     * because a line through a name reads as a relationship with it. */
+    let crossings = 0;
+    let legs = 0;
+    const routes = renderer.routes || [];
+    const boxes = renderer.blockers || [];
+    routes.forEach((route) => {
+        const a = route.edge.source._i;
+        const b = route.edge.target._i;
+        for (let i = 1; i < route.pts.length; i++) {
+            const p = route.pts[i - 1];
+            const q = route.pts[i];
+            legs++;
+            const x0 = Math.min(p[0], q[0]) + 0.5, x1 = Math.max(p[0], q[0]) - 0.5;
+            const y0 = Math.min(p[1], q[1]) + 0.5, y1 = Math.max(p[1], q[1]) - 0.5;
+            boxes.forEach((box, j) => {
+                if (j === a || j === b) return;
+                if (x1 > box[0] && x0 < box[2] && y1 > box[1] && y0 < box[3]) crossings++;
+            });
+        }
+    });
+    check(routes.length > 10 && legs > routes.length, 'too few routes to test the router');
+    check(crossings === 0,
+        crossings + ' route legs cross a node they do not connect',
+        routes.length + ' routes, ' + legs + ' legs, none through a node they do not connect');
+
     /* Every node in its own cell, spread over the stage rather than knotted
      * into one corner of it. */
     const gp = hubScene.nodes.map((n) => focus.positionOf(n));

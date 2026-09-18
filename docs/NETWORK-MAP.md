@@ -231,17 +231,33 @@ as landing on the node it names. Only drawn labels count, so a dropped label
 is not clickable, and the boxes never overlap, so the first hit is the only
 hit.
 
-**A trace must never look like a connection.** The routing drew a line from
-one node to another straight across the cells in between, and on a board
-where a line means a recorded relationship that is not a cosmetic problem:
-the map showed CEDU joined to Teen Challenge, which share no edge and not
-even a neighbour. Two things fix it. Horizontal runs snap onto the gutter
-between two rows, where at the arithmetic midpoint they landed on a row
-centre whenever the two nodes were an even number of rows apart and ran
-straight through the names in it. And every node has a clear ring punched
-through the traces around it before any node is drawn, so a line passing a
-name visibly goes in one side and out the other, and a line that really does
-end there stops a little short of the node rather than touching it.
+**A trace must never look like a connection.** On a board where a line
+means a recorded relationship, a line drawn across a node it does not
+connect is not a cosmetic problem: the map showed CEDU joined to Teen
+Challenge, which share no edge and not even a neighbour, and the opening view
+ran Synanon's line to CEDU straight through WWASPS. A right angle drawn
+naively is not enough - a vertical leg at the node's own x runs through
+every cell in that column between the two rows. So traces are routed the way
+a track runs on a board: out of the node into the gutter beside its row,
+along the gutter, up or down one vertical channel, along the gutter beside
+the target's row, and in. The long legs only ever run in gutters, and the
+one vertical channel is checked against every node between the two rows -
+shape, clearance and label - and moved sideways until it is clear. Two nodes
+in the same row route through the gutter below them, behind both labels;
+labels are drawn last with a halo so the text stays legible over the line.
+Every node also has a clear ring punched through the traces around it before
+any node is drawn, so a line passing a name visibly goes in one side and out
+the other, and a line that really does end there stops a little short of the
+node rather than touching it.
+
+The renderer publishes every route it drew, and the test checks each leg
+against the box of every node the route does not connect. That test is what
+caught the router not running at all: the label-collision pass declared a
+`var grid` inside `draw()`, which hoists over the whole function and shadowed
+the layout grid the router reads, so every trace had silently fallen back to
+a straight line - including the gutter snapping this paragraph used to claim
+was fixing things. A rename fixed it; the lesson is that a claim about what
+the page draws needs a measurement of what the page draws.
 
 Connections are routed as right-angled traces rather than straight
 diagonals, which is what makes the result readable at that density: diagonals
