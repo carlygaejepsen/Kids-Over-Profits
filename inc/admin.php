@@ -700,6 +700,10 @@ function kop_apply_lawsuit_document_fixes() {
  * categories (slugs), template (file in templates/), meta (key => string),
  * meta_arrays (key => list), acf_field_keys (key => field_xxx so ACF shows
  * the value in the editor).
+ *
+ * overwrite_existing (bool): replace the content of a post that already
+ * exists, published or not, once per seed_version. Used for makeovers of
+ * hand-written pages; WordPress keeps the previous content as a revision.
  */
 function kop_seed_posts() {
     return array(
@@ -713,6 +717,7 @@ function kop_seed_posts() {
         'country-italy.json',                       
         'country-new-zealand.json',                 
         'country-netherlands.json',                 
+        'hyde.json',                                // Hyde School profile makeover (overwrite_existing), 2026-09-17
     );
 }
 
@@ -739,27 +744,38 @@ function kop_apply_seed_posts() {
             // Refresh only a draft nobody has edited since the seed made it
             // (post_modified still equals post_date) and only when the seed
             // file carries a newer seed_version. Anything an editor touched
-            // is left alone.
+            // is left alone, unless the seed says overwrite_existing: then
+            // the content is replaced once per seed_version and the old
+            // content survives as a post revision.
             $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
             $seed_mod  = (string) get_post_meta($existing->ID, '_kop_seed_modified', true);
+            $overwrite = !empty($spec['overwrite_existing']);
             $untouched = $existing->post_status === 'draft' && (
                 $existing->post_modified_gmt === $existing->post_date_gmt
                 || ($seed_mod !== '' && $existing->post_modified_gmt === $seed_mod)
                 || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt'])
             );
-            if (!$untouched || $seed_version <= $applied) {
+            if ($seed_version <= $applied || (!$untouched && !$overwrite)) {
                 continue;
             }
-            $result = wp_update_post(array(
-                'ID'                => $existing->ID,
-                'post_title'        => (string) ($spec['title'] ?? $existing->post_title),
-                'post_content'      => wp_slash((string) file_get_contents($content_path)),
-                'post_excerpt'      => wp_slash((string) ($spec['excerpt'] ?? '')),
-                'post_date'         => $existing->post_date,
-                'post_date_gmt'     => $existing->post_date_gmt,
-                'post_modified'     => $existing->post_date,
-                'post_modified_gmt' => $existing->post_date_gmt,
-            ), true);
+            $update = array(
+                'ID'           => $existing->ID,
+                'post_title'   => (string) ($spec['title'] ?? $existing->post_title),
+                'post_content' => wp_slash((string) file_get_contents($content_path)),
+                'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? $existing->post_excerpt)),
+            );
+            if ($overwrite) {
+                // Keep the pre-makeover content in the revision history.
+                wp_save_post_revision($existing->ID);
+            } else {
+                // Keep post_modified equal to post_date so the draft still
+                // counts as untouched for the next seed_version.
+                $update['post_date']         = $existing->post_date;
+                $update['post_date_gmt']     = $existing->post_date_gmt;
+                $update['post_modified']     = $existing->post_date;
+                $update['post_modified_gmt'] = $existing->post_date_gmt;
+            }
+            $result = wp_update_post($update, true);
             if (!$result || is_wp_error($result)) {
                 continue;
             }
@@ -1378,7 +1394,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '18';
+    $version = '19';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
