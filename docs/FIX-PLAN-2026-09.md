@@ -219,6 +219,38 @@ top padding. One rule, no template change.
 
 ## 10. Email notifications for new submissions
 
+Done 2026-09-18. `inc/submission-notify.php` holds
+`kop_notify_admins($type, $title, $admin_url, $fields)`, built on the
+bug-report mailer, with recipients in the `kop_submission_notify_emails`
+option (default `admin_email`) and a `kop_submission_notify_recipients`
+filter. Every submitted value is stripped of tags, collapsed to one line
+and truncated to 300 characters, so a form cannot relay markup or a wall
+of text through the mail. The review link is resolved per type: the
+wp-admin approval screen for suggested edits, the front-end template
+pages for the rest, falling back to the tools menu.
+
+Calls added at: `api/save-suggestion.php` (suggested_edits),
+`api/save-wiki-submission.php` (new rows only, and not when an admin is
+the author), `api/save-news-submission.php`,
+`api/save-lawsuit-suggestion.php`, `api/save-legislation-suggestion.php`
+and `inc/features.php` (the anonymous portal's TODO; the mail carries
+only the submission id, file type and size, never the filename, the
+notes or an address).
+
+Two findings changed the plan. Volunteer sign-ups have no insert to hook:
+`templates/page-volunteers.php` sends people to an external form or a
+`mailto:`, and the one insert into `volunteer_projects` is an admin
+creating a project. And news cannot be digested by call site, because the
+nightly discovery run posts to the same public endpoint a person uses; the
+endpoint tells them apart by `submitted_by` and files bot finds under a
+separate `news_auto` type. `KOP_SUBMISSION_DIGEST_TYPES` (default
+`news_auto`) decides what is queued for the 7am daily digest; wp-cron is
+enabled on prod, so the event fires on ordinary traffic.
+
+Tested with `php scripts/test-submission-notify.php`, an offline harness
+over WP stubs that captures every `wp_mail()` call: 31 checks, no mail and
+no database.
+
 Only bug reports send mail (`api/save-bug-report.php`,
 `inc/bug-report-notify.php`). Suggested edits, wiki, news, anonymous
 documents (`inc/features.php` has a TODO for it), lawsuit and legislation
@@ -238,8 +270,8 @@ sandbox.
 ## Suggested overall order
 
 1. Quick, self-contained fixes: 3C tutorial button, 8 redirect target,
-   9 newsletter padding, 7B preview helper.
-2. 10 notifications (small, high value).
+   9 newsletter padding, 7B preview helper. All done 2026-09-18.
+2. 10 notifications (small, high value). Done 2026-09-18.
 3. Network map items in the order under "Phase 2b" in
    `docs/NETWORK-MAP.md`.
 4. 7A state-page names, 6 archived links.

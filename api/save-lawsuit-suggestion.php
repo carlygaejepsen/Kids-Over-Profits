@@ -137,6 +137,17 @@ try {
         error_log('save-lawsuit-suggestion facility-link sync failed: ' . $e->getMessage());
     }
 
+    // Tell the admins there is a pending row (inc/submission-notify.php).
+    if (function_exists('kop_notify_admins')) {
+        kop_notify_admins('lawsuit', $caseName, '', [
+            'Case number'  => $fields['case_number'] ?? '',
+            'Court'        => $fields['court'] ?? '',
+            'Facilities'   => $fields['facilities_mentioned'] ?? '',
+            'Submitted by' => $submittedBy,
+            'Reference'    => '#' . $newId,
+        ]);
+    }
+
     echo json_encode([
         'success' => true,
         'id' => $newId,

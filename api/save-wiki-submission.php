@@ -436,7 +436,20 @@ try {
         ]);
         
         $newId = $pdo->lastInsertId();
-        
+
+        // Tell the admins (inc/submission-notify.php). Best effort, and only
+        // for public submissions: an admin working in the wiki editor does not
+        // need to be mailed about their own draft.
+        if (!$kop_is_admin && function_exists('kop_notify_admins')) {
+            kop_notify_admins('wiki', $programName, '', [
+                'Location'     => $cityState,
+                'Organization' => $organization,
+                'Submitted by' => $submittedBy,
+                'Notes'        => $submissionNotes,
+                'Reference'    => '#' . (int)$newId,
+            ]);
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission saved successfully',

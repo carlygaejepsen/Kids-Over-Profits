@@ -279,10 +279,20 @@ class AnonymousDocPortal {
                 file_put_contents($this->upload_dir . $notes_filename, $notes);
             }
             
-            // 7. Log Submission (Internal Notification)
-            // Ideally, send an email to admin or log to a private DB table
-            // For now, we just return success
-            
+            // 7. Internal notification (inc/submission-notify.php).
+            // The portal is anonymous, so the mail carries the submission id,
+            // the file type and the size and nothing else: not the original
+            // filename, not the notes, not an address. Whoever reviews it
+            // opens the file on the server.
+            if (function_exists('kop_notify_admins')) {
+                $ext = strtolower((string) pathinfo($file['name'], PATHINFO_EXTENSION));
+                kop_notify_admins('document', 'Anonymous document ' . $submission_id, admin_url('admin.php?page=anonymous-docs'), array(
+                    'File type' => $ext !== '' ? $ext : 'unknown',
+                    'Size'      => size_format((int) $file['size']),
+                    'Notes'     => empty($_POST['doc_notes']) ? 'none' : 'included (read on the server)',
+                ));
+            }
+
             wp_send_json_success(array('message' => 'File uploaded successfully.'));
         } else {
             wp_send_json_error(array('message' => 'Failed to store file.'));

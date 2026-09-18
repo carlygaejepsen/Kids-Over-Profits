@@ -345,6 +345,22 @@ try {
         kop_news_assign_story_arc($pdo, $newId);
         kop_sync_news_lawsuit_links($pdo, $newId, $submittedBy ?: null);
 
+        // Tell the admins (inc/submission-notify.php). The nightly discovery
+        // run posts here too, dozens of rows at a time, so its articles go to
+        // the daily digest while a person's submission mails at once. Both
+        // arrive through this one endpoint, so submitted_by is what tells them
+        // apart (scripts/discover-articles.php submit_candidate()).
+        if (function_exists('kop_notify_admins')) {
+            $isDiscovery = stripos((string)$submittedBy, 'auto-discovery') !== false
+                || stripos((string)$submissionNotes, 'auto-discovery') !== false;
+            kop_notify_admins($isDiscovery ? 'news_auto' : 'news', $articleTitle, '', [
+                'Publication'  => $publicationName,
+                'URL'          => $articleUrl,
+                'Submitted by' => $submittedBy,
+                'Reference'    => '#' . $newId,
+            ]);
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission saved successfully',

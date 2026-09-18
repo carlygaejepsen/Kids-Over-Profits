@@ -46,6 +46,9 @@ require_once get_stylesheet_directory() . '/inc/facility-pages.php';
 // Bug report status emails (shared by inc/admin.php and api/save-bug-report.php)
 require_once get_stylesheet_directory() . '/inc/bug-report-notify.php';
 
+// Admin notifications for public submissions (suggested edits, wiki, news, ...)
+require_once get_stylesheet_directory() . '/inc/submission-notify.php';
+
 // Features & Classes (Anonymous Portal, etc.)
 require_once get_stylesheet_directory() . '/inc/features.php';
 

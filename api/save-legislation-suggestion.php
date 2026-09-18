@@ -128,9 +128,21 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute(array_values($fields));
 
+    $newId = (int)$pdo->lastInsertId();
+
+    // Tell the admins there is a pending row (inc/submission-notify.php).
+    if (function_exists('kop_notify_admins')) {
+        kop_notify_admins('legislation', $billTitle, '', [
+            'Bill number'  => $fields['bill_number'] ?? '',
+            'Jurisdiction' => $fields['jurisdiction'] ?? '',
+            'Submitted by' => $submittedBy,
+            'Reference'    => '#' . $newId,
+        ]);
+    }
+
     echo json_encode([
         'success' => true,
-        'id' => (int)$pdo->lastInsertId(),
+        'id' => $newId,
         'message' => 'Thank you. Your legislation submission has been received and will be reviewed before it appears on the tracker.',
     ]);
 } catch (PDOException $e) {

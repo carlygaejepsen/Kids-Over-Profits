@@ -389,7 +389,17 @@ try {
     ]);
     
     $suggestion_id = $pdo->lastInsertId();
-    
+
+    // Tell the admins there is something to approve (inc/submission-notify.php).
+    // Best effort: the row is saved either way, so a mail failure is not an error.
+    if (function_exists('kop_notify_admins')) {
+        kop_notify_admins('suggested_edit', $master_id, '', [
+            'Reason'    => $reason,
+            'Record'    => $master_id,
+            'Reference' => '#' . $suggestion_id,
+        ]);
+    }
+
     echo json_encode([
         'success' => true, 
         'message' => 'Suggestion submitted successfully',
