@@ -67,6 +67,9 @@
      * rows are what a tall map spends its height on and every row that does
      * not fit is a name that does not appear. */
     var ROW_GUTTER = 16;
+    /* The most spare width a name is given when a row is spread to fill
+     * the stage, in world units. */
+    var SPREAD_MAX = 220;
 
     /* What a cell costs when it sits closer to the middle of the board than
      * the node that revealed it. Large enough to be a rule rather than a
@@ -1015,19 +1018,68 @@
                 return rows;
             };
 
+            /* Which of the click's own connections can sit beside it in the
+             * centre row. Staff and outside bodies have no place in the
+             * chain of command, so the hierarchy says nothing about whether
+             * they go above or below; put below, they took a row each under
+             * the programmes and left the centre row a single name across an
+             * empty stage. Fellow leaders go beside a person for the same
+             * reason. Companies and programmes keep their bands. */
+            var clickedPerson = (bands.centre || []).some(function (p) {
+                return p.tier === TIER_COMMAND || p.tier === TIER_STAFF;
+            });
+            var flanks = function (p) {
+                if (isRoot[p.id] || ringFor(p) !== 1) return false;
+                if (p.tier === TIER_STAFF || p.tier === TIER_OTHER) return true;
+                return clickedPerson && p.tier === TIER_COMMAND;
+            };
+
+            /* The centre row: what was clicked in the middle and as many
+             * flanking connections either side as the width holds, each
+             * going to whichever side is lighter and, where both are even,
+             * the side it was settled on. What does not fit stays in its
+             * band. */
+            var centreRow = function (width, taken) {
+                var middle = bands.centre || [];
+                var used = middle.reduce(function (t, p) { return t + needOf(p); }, 0);
+                if (!middle.length || used > width) return packBand(middle, width);
+                var pivot = middle.reduce(function (t, p) { return t + placedX[p.id]; }, 0) / middle.length;
+                var left = [];
+                var right = [];
+                var leftW = 0;
+                var rightW = 0;
+                [TIER_COMMAND, TIER_STAFF, TIER_OTHER].forEach(function (band) {
+                    (bands[String(band)] || []).forEach(function (p) {
+                        if (!flanks(p)) return;
+                        var need = needOf(p);
+                        if (used + need > width) return;
+                        var goLeft = leftW === rightW ? placedX[p.id] < pivot : leftW < rightW;
+                        if (goLeft) { left.push(p); leftW += need; } else { right.push(p); rightW += need; }
+                        used += need;
+                        taken[p.id] = true;
+                    });
+                });
+                var byX = function (a, b) { return placedX[a.id] - placedX[b.id]; };
+                return [left.sort(byX).concat(middle, right.sort(byX))];
+            };
+
             var stackRows = function (width) {
+                var taken = Object.create(null);
+                var centre = centreRow(width, taken);
+                var rest = function (band) {
+                    return (bands[String(band)] || []).filter(function (p) { return !taken[p.id]; });
+                };
                 var above = [];
                 [TIER_COMMAND, TIER_COMPANY].forEach(function (band) {
                     var breakOn = band === TIER_COMPANY
                         ? function (p) { return height[p.id]; }
                         : null;
-                    packBand(bands[String(band)] || [], width, breakOn).forEach(function (r) { above.push(r); });
+                    packBand(rest(band), width, breakOn).forEach(function (r) { above.push(r); });
                 });
                 var below = [];
                 [TIER_PROGRAMME, TIER_STAFF, TIER_OTHER].forEach(function (band) {
-                    packBand(bands[String(band)] || [], width).forEach(function (r) { below.push(r); });
+                    packBand(rest(band), width).forEach(function (r) { below.push(r); });
                 });
-                var centre = packBand(bands.centre || [], width);
                 return above.slice().reverse().concat(centre, below);
             };
 
@@ -1096,17 +1148,41 @@
                 rowH = tallest * 2 + labelRoom + rowGutter;
             }
 
+            /* Use the width the stage has. A block of short rows is framed
+             * by its height, and at that zoom the stage shows more width than
+             * the rows fill - Rae Ann Knopf's view came out as six rows of
+             * one to three names in a strip down the middle, sand either
+             * side. Spread each row across the width the frame will show
+             * anyway, so the zoom does not change and the names get the room.
+             * Only ever wider than packed, so the clearance between names
+             * never drops below the gutter, and never more than SPREAD_MAX
+             * extra per name, so two names in a row do not end up a stage
+             * apart with a trace strung between them. */
+            var blockH = stacked.length * rowH;
+            var packedW = stacked.reduce(function (t, row) {
+                return Math.max(t, row.reduce(function (w, p) { return w + needOf(p); }, 0));
+            }, 0);
+            /* A block taller than the stage is looked at around a zoom of
+             * one, which shows the stage's own width. */
+            var shown = blockH <= boardH ? blockH * board / boardH : board;
+            var spreadTo = Math.max(packedW, shown);
+
             var shiftY = (stacked.length - 1) * rowH / 2;
             stacked.forEach(function (row, index) {
                 var width = row.reduce(function (t, p) { return t + needOf(p); }, 0);
-                var x = -width / 2;
+                /* Spread as space-around: every name gets an equal share of
+                 * the spare room, half each side, so a lone name stays
+                 * centred and the outer names do not sit on the frame. */
+                var extra = Math.min(SPREAD_MAX, Math.max(0, (spreadTo - width) / row.length));
+                var x = -(width + extra * row.length) / 2;
                 row.forEach(function (p) {
-                    var need = needOf(p);
+                    var need = needOf(p) + extra;
                     p.x = x + need / 2;
                     p.y = index * rowH - shiftY;
                     x += need;
                 });
             });
+            rowWidth = Math.max(rowWidth, spreadTo);
 
             var widestRow = stacked.reduce(function (t, row) { return Math.max(t, row.length); }, 1);
             grid = {
