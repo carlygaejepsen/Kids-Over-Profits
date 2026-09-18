@@ -486,6 +486,29 @@ offline to change only the fields it names):
   Springs), and "Aspen Education Group #2" (100001), an operator filed as a
   facility.
 
+A second pass over the other fields (same day, init step version 26):
+
+- "Additional source fields" on the cards printed two bookkeeping keys:
+  `documentFolderId` ("Document Folder Id: 272", 28 cards) and
+  `mergedFacilities` (15 cards, written by the duplicate merges). Both are
+  now in `SOURCE_KEYS_ALREADY_SHOWN` in `js/state-page.js` and
+  `js/country-page.js`.
+- Years: the card preferred the free-text `yearsOfOperation` over
+  `startYear`/`endYear`, the facility pages the reverse, so 17 facilities
+  showed different years in the two places. The feed now uses the pair when
+  both years are set (as the facility pages do) and the text otherwise. The
+  records whose text and years disagree still need checking against sources:
+  New Dominion School of Virginia, Withlacoochee JRF, CEDU Middle School,
+  Elevations RTC, Marion Youth Academy, Bartow Youth Training Center,
+  Lexington Academy, Auldern Academy, Three Springs of Englishton Park,
+  Three Springs Paint Rock Valley, Three Springs School of Madison, Oakley
+  School, New Leaf Academy of Oregon.
+- Gender spelled eleven ways; 81 records now read Male, Female or Co-ed
+  ("All" counted as Co-ed). Three descriptive values were left as written.
+- Zero-width spaces in 14 addresses (12 Kentucky state facilities) removed.
+- 41 records carried blank staff entries (`{"name": "", "role": ""}`); the
+  cards already skipped them, and they are now removed.
+
 Run the check again after data work:
 
 ```

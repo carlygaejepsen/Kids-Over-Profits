@@ -2885,13 +2885,16 @@ function kop_state_build_program_record($project_name, $facility, $data, $state_
     $facility_census = $facility_details['currentCensus'] ?? '';
     $facility_census = ($facility_census === null) ? '' : trim((string)$facility_census);
 
-    // Operating period: prefer yearsOfOperation, fall back to startYear/endYear
-    // pair so admin-form date pickers surface as "1994–2010" / "Est. 1994".
+    // Operating period: a startYear/endYear pair wins, as on the facility
+    // pages (inc/facility-pages.php), so a stale yearsOfOperation string cannot
+    // contradict them. Otherwise prefer yearsOfOperation, which may carry the
+    // year the structured fields lack, then whichever single year there is.
     $operating = isset($facility['operatingPeriod']) && is_array($facility['operatingPeriod']) ? $facility['operatingPeriod'] : array();
     $operating_years = trim((string)($operating['yearsOfOperation'] ?? ''));
+    $start_year = trim((string)($operating['startYear'] ?? ''));
+    $end_year = trim((string)($operating['endYear'] ?? ''));
+    if ($start_year !== '' && $end_year !== '') $operating_years = '';
     if ($operating_years === '') {
-        $start_year = trim((string)($operating['startYear'] ?? ''));
-        $end_year = trim((string)($operating['endYear'] ?? ''));
         // NOTE: concatenation, not "$start_year–$end_year". The en-dash bytes
         // (0xE2 0x80 0x93) fall in PHP's 0x80–0xFF range allowed in variable
         // names, so inside a double-quoted string "$start_year–" parses as one

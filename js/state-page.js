@@ -1175,6 +1175,9 @@
         // project (see api/save-master.php); the other tile renderers skip it too.
         'sourceProject', 'source_project', 'sourceProjectId', 'source_project_id',
         'sourceCategory', 'source_category', 'source_operator',
+        // Database bookkeeping: the facility's FileBird folder and the copies
+        // merged into it (api/merge-facility-duplicates.php).
+        'documentFolderId', 'mergedFacilities',
     ]);
 
     // Strip empties, false flags, and already-rendered keys from a raw record so

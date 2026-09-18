@@ -279,7 +279,7 @@
   {
     "id": 10557,
     "unique_name": "UHS of Provo Canyon Springville Campus",
-    "version": 2,
+    "version": 3,
     "top": {
       "city": "Springville",
       "state": "UT",
@@ -318,10 +318,10 @@
         "capacity": 120,
         "currentCensus": null,
         "ageRange": {
-          "min": 11,
-          "max": 17
+          "max": 17,
+          "min": 11
         },
-        "gender": "girls"
+        "gender": "Female"
       },
       "licensing": [
         "Utah Department of Health and Human Services, Office of Licensing: residential treatment license 93697, capacity 120, conditional status, revoked July 2026 (under appeal)"
@@ -339,12 +339,13 @@
           "facility_id": 10557
         }
       }
-    ]
+    ],
+    "note": "; then gender \"girls\" -> \"Female\" (data-shape fixes, 2026-09-18)"
   },
   {
     "id": 10335,
     "unique_name": "Discovery Ranch",
-    "version": 1,
+    "version": 2,
     "top": {
       "city": "Mapleton",
       "state": "UT",
@@ -473,10 +474,10 @@
         "capacity": 60,
         "currentCensus": null,
         "ageRange": {
-          "min": 13,
-          "max": 18
+          "max": 18,
+          "min": 13
         },
-        "gender": "boys"
+        "gender": "Male"
       },
       "accreditations": {
         "current": [
@@ -574,12 +575,13 @@
         "Profile assembled by Kids Over Profits on 2026-09-11 from site records; see the Facility Profile post for sources."
       ],
       "documentFolderId": 4
-    }
+    },
+    "note": "; then gender \"boys\" -> \"Male\" (data-shape fixes, 2026-09-18)"
   },
   {
     "id": 10334,
     "unique_name": "Discovery Ranch South",
-    "version": 1,
+    "version": 2,
     "top": {
       "city": "Cedar City",
       "state": "UT",
@@ -678,10 +680,10 @@
         "capacity": 60,
         "currentCensus": null,
         "ageRange": {
-          "min": 13,
-          "max": 17
+          "max": 17,
+          "min": 13
         },
-        "gender": "girls"
+        "gender": "Female"
       },
       "accreditations": {
         "current": [
@@ -708,7 +710,8 @@
         "Two facilities_master rows exist for this campus (Discovery Ranch South and Ascent, Inc. - Discovery Ranch for Girls, 10387); this is the record with the license data."
       ],
       "documentFolderId": 4
-    }
+    },
+    "note": "; then gender \"girls\" -> \"Female\" (data-shape fixes, 2026-09-18)"
   },
   {
     "id": 12739,
@@ -791,8 +794,8 @@
   {
     "id": 9660,
     "unique_name": "Union Juvenile Residential Facility",
-    "version": 1,
-    "note": "Still operating as Redwood Youth Academy (FL DJJ monitoring report FY2025-26); endYear 2019 was the end of the old name (data-shape fixes, 2026-09-18)",
+    "version": 2,
+    "note": "Still operating as Redwood Youth Academy (FL DJJ monitoring report FY2025-26); endYear 2019 was the end of the old name (data-shape fixes, 2026-09-18); then gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
     "facility": {
       "operatingPeriod": {
         "startYear": 2009,
@@ -802,6 +805,16 @@
         "notes": [
           "Operating as Redwood Youth Academy (Wayne Halfway House, DJJ contract)."
         ]
+      },
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 24,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 19,
+          "min": 12
+        },
+        "gender": "Male"
       }
     }
   },
@@ -3945,15 +3958,16 @@
   {
     "id": 13903,
     "unique_name": "Kenai Peninsula Community Care Center Dimmick Retreat & Hardy House",
-    "version": 1,
-    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18)",
+    "version": 2,
+    "note": "city/street re-split from the raw address (data-shape fixes, 2026-09-18); then zero-width space removed from the address (data-shape fixes, 2026-09-18)",
     "facility": {
       "addressParts": {
         "street": "320 South Spruce Street",
         "city": "Kenai",
         "state": "AK",
         "zip": "99611"
-      }
+      },
+      "address": "320 South Spruce Street, Kenai AK 99611"
     }
   },
   {
@@ -4260,8 +4274,8 @@
   {
     "id": 100050,
     "unique_name": "New Beginnings Maternity Home",
-    "version": 1,
-    "note": "WWASPS-affiliated maternity home in Utah (Wikipedia list of WWASP-affiliated programs) (data-shape fixes, 2026-09-18)",
+    "version": 2,
+    "note": "WWASPS-affiliated maternity home in Utah (Wikipedia list of WWASP-affiliated programs) (data-shape fixes, 2026-09-18); then gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
     "facility": {
       "addressParts": {
         "street": "",
@@ -4269,7 +4283,17 @@
         "state": "UT",
         "zip": ""
       },
-      "location": "Utah"
+      "location": "Utah",
+      "facilityDetails": {
+        "type": "Maternity Home",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Female"
+      }
     }
   },
   {
@@ -4368,6 +4392,2221 @@
         "currentOwner": "",
         "currentOwners": [],
         "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9605,
+    "unique_name": "Canyon State Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9620,
+    "unique_name": "Silver State Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9626,
+    "unique_name": "Straight – Cincinnati",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [
+          {
+            "name": "William Glick",
+            "role": "Associate Director"
+          },
+          {
+            "name": "Winifred Boyd",
+            "role": "senior program counselor"
+          },
+          {
+            "name": "Jerry Delaney",
+            "role": "Senior Program Counselor"
+          },
+          {
+            "name": "Peggy Rulli",
+            "role": "Executive Staff Trainee"
+          },
+          {
+            "name": "Charlie Broussard",
+            "role": "Executive Trainee"
+          },
+          {
+            "name": "Janet Cassiere",
+            "role": "Executive Trainee"
+          },
+          {
+            "name": "Christine Miloser",
+            "role": "Executive Trainee"
+          },
+          {
+            "name": "Michael Dennisuk",
+            "role": "Executive Trainee"
+          },
+          {
+            "name": "Greg Corbin",
+            "role": "Junior Staff"
+          },
+          {
+            "name": "Richard Heyman",
+            "role": "Medical Director"
+          },
+          {
+            "name": "Gil Stevens",
+            "role": "Associate Director Administrative Services"
+          },
+          {
+            "name": "Barbara Pinson",
+            "role": "Trainee"
+          },
+          {
+            "name": "Nikki Upson",
+            "role": "Trainee"
+          },
+          {
+            "name": "Carol Dell'Alba",
+            "role": "Trainee/ Program Counselor"
+          },
+          {
+            "name": "Elaine Koucky",
+            "role": "Host Home Counselor Trainee"
+          },
+          {
+            "name": "Elaine Beeler",
+            "role": "Host Home Counselor"
+          },
+          {
+            "name": "Cathy Vaught",
+            "role": "Nurse Supervisor"
+          }
+        ],
+        "administrator": [
+          {
+            "name": "Betty Rushing",
+            "role": ""
+          },
+          {
+            "name": "Gerald \"Jerry\" Rushing",
+            "role": ""
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9637,
+    "unique_name": "Auldern Academy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9638,
+    "unique_name": "Jemison Boys Home",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Group Home",
+        "capacity": 19,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9639,
+    "unique_name": "L.E.A.P.S. Program at Duck River",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness Therapy",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9641,
+    "unique_name": "New Directions Home for Boys",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Transitional Living Program",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 19,
+          "min": 15
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9642,
+    "unique_name": "New Dominion School of Maryland",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness Therapy",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 11
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9643,
+    "unique_name": "New Dominion School of Virginia",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness Therapy",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 11
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9646,
+    "unique_name": "Three Springs of Blue Ridge",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9647,
+    "unique_name": "Three Springs of Courtland",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 46,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9649,
+    "unique_name": "Three Springs of Englishton Park",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 19,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9650,
+    "unique_name": "Three Springs of Marion",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 42,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9651,
+    "unique_name": "Three Springs of Mountain Home",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 60,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 10
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9653,
+    "unique_name": "Three Springs of Osceola",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 50,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9654,
+    "unique_name": "Three Springs of St. Johns",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 50,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 15,
+          "min": 10
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9655,
+    "unique_name": "Three Springs Paint Rock Valley",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9656,
+    "unique_name": "Three Springs School of Madison",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9657,
+    "unique_name": "Three Springs School of Tuskegee",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9659,
+    "unique_name": "Turning Point - Girls",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Transitional Living Program",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 9661,
+    "unique_name": "Wayne County Girls Program",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 14
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 9663,
+    "unique_name": "McIntosh Youth Development Center",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": 168,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 9664,
+    "unique_name": "Glenhaven Academy",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "",
+        "capacity": 36,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9665,
+    "unique_name": "Berkshire Meadows School",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "",
+        "capacity": 35,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": 6
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9666,
+    "unique_name": "Butler Center",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Hiram Rivera",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9667,
+    "unique_name": "Centerpoint",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Richard Burke",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9668,
+    "unique_name": "Cohannet Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9669,
+    "unique_name": "Chesterfield Group Home",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Paige Salvato",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9670,
+    "unique_name": "River's Edge Group Home",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Paige Salvato",
+            "role": "Assistant Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9671,
+    "unique_name": "GRIP Program",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Valerie Krpata",
+            "role": "Assistant Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9672,
+    "unique_name": "Journey Home",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Justin Lubecki",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9673,
+    "unique_name": "Lindencroft",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Abigail Thompson",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9674,
+    "unique_name": "Little Heroes Group Home",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Group Home",
+        "capacity": 12,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 12,
+          "min": 5
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Kayla Stanzione",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9675,
+    "unique_name": "Littleton Academy",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Residential School",
+        "capacity": 16,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 12,
+          "min": 6
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Janae Sernoffsky",
+            "role": "Assistant Program Director"
+          },
+          {
+            "name": "Zachary Kerr",
+            "role": "Clinical Director"
+          },
+          {
+            "name": "Britny Pastuszak",
+            "role": "Director of Educational Operations"
+          },
+          {
+            "name": "Shoshana Green",
+            "role": "Director of Education Services"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9676,
+    "unique_name": "Meadowridge Academy",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Residential School",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Erin Lunn",
+            "role": "Program Director"
+          },
+          {
+            "name": "Margaret Maiato",
+            "role": "Director of Education Services"
+          },
+          {
+            "name": "Eryn Maschek",
+            "role": "Clinical Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9677,
+    "unique_name": "Merrimack Center",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Intensive Residential Treatment Program",
+        "capacity": 15,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Kafui Agboh",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9678,
+    "unique_name": "Pelham Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Eileen Johnson",
+            "role": "Program Director"
+          },
+          {
+            "name": "Amy Bove",
+            "role": "Director of Education Services"
+          },
+          {
+            "name": "Kat DeSousa",
+            "role": "Clinical Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9679,
+    "unique_name": "Rediscovery House",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Ashley Mazuroski",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9680,
+    "unique_name": "Susan Wayne Center of Excellence",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 33,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 20,
+          "min": 11
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Ryan Gagne",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9681,
+    "unique_name": "Swansea Wood School",
+    "version": 1,
+    "note": "gender \"All\" -> \"Co-ed\"; blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Residential School",
+        "capacity": 36,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 22,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      },
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Michael Zucarelli",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9682,
+    "unique_name": "Walden Street School",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": [
+          {
+            "name": "Ashlyn Kapetanakis",
+            "role": "Program Director"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "id": 9683,
+    "unique_name": "Ascent Wilderness Therapy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness Therapy",
+        "capacity": 52,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9689,
+    "unique_name": "Boulder Creek Academy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": 60,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9691,
+    "unique_name": "Northwest Academy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": 65,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 16
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9727,
+    "unique_name": "Rocky Mountain Academy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": 120,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 14
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9739,
+    "unique_name": "CEDU Middle School",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": 52,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 14,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9740,
+    "unique_name": "CEDU High School",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Therapeutic Boarding School",
+        "capacity": 70,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 14
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 9782,
+    "unique_name": "180 Degree Recon",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 9799,
+    "unique_name": "Ascend – Canyons",
+    "version": 1,
+    "note": "gender \"Girls\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "RTC",
+        "capacity": 6,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 10189,
+    "unique_name": "River View Christian Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10333,
+    "unique_name": "Discovery Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10361,
+    "unique_name": "Viewpoint Center",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10372,
+    "unique_name": "Cross Creek Center",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 10373,
+    "unique_name": "Cross Creek Manor",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 10374,
+    "unique_name": "Linden House",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Maternity Home",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 10376,
+    "unique_name": "Gateway Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10377,
+    "unique_name": "Second Nature Wilderness Program",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [
+          {
+            "name": "Steve DuBois",
+            "role": "Therapist"
+          }
+        ],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10400,
+    "unique_name": "Brightway Adolescent Hospital",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Psychiatric Hospital",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 10603,
+    "unique_name": "OnTrack Wilderness Program",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Wilderness Therapy",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 13
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 10621,
+    "unique_name": "2nd Chance Treatment Center",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 10656,
+    "unique_name": "Ben Richey’s Boys Ranch",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 11082,
+    "unique_name": "The Brown Schools at High Point",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 26,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 11091,
+    "unique_name": "Alachua Academy",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 28,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 12
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 11092,
+    "unique_name": "Charles Britt Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 28,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11094,
+    "unique_name": "Duval Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Residential Treatment Center",
+        "capacity": 28,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11095,
+    "unique_name": "Marion Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 42,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11106,
+    "unique_name": "Jacksonville Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 24,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11110,
+    "unique_name": "Orange Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 40,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11124,
+    "unique_name": "Broward Youth Treatment Center",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 40,
+        "currentCensus": 0,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11126,
+    "unique_name": "Crestview Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice High-Risk",
+        "capacity": 32,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 20,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11127,
+    "unique_name": "Deep Creek Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 36,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 19,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11128,
+    "unique_name": "Everglades Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Maximum-Risk",
+        "capacity": 64,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11129,
+    "unique_name": "Kissimmee Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Maximum-Risk",
+        "capacity": 63,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11131,
+    "unique_name": "Bartow Youth Training Center",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 24,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 16,
+          "min": 10
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11144,
+    "unique_name": "Britt Technical Youth Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 24,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 16
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 11237,
+    "unique_name": "Wimauma Academy",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 32,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 11656,
+    "unique_name": "Asheville Academy for Girls",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 11657,
+    "unique_name": "Equinox RTC",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 11977,
+    "unique_name": "Academy at Swift River",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 12000,
+    "unique_name": "Doctor Franklin Perkins School",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 12023,
+    "unique_name": "Academy at Ivy Ridge",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 12162,
+    "unique_name": "Casa Grande Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": 32,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 12322,
+    "unique_name": "Mount Bachelor Academy",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 12327,
+    "unique_name": "Northwest Behavioral Healthcare Services",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 12391,
+    "unique_name": "Next Door, Inc. – Klahre House",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "965 Tucker Rd., Hood River, OR 97031",
+      "addressParts": {
+        "street": "965 Tucker Rd.",
+        "city": "Hood River",
+        "state": "OR",
+        "zip": "97031"
+      }
+    }
+  },
+  {
+    "id": 12686,
+    "unique_name": "Triple Divide Lodge",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 12729,
+    "unique_name": "Spring Creek Lodge Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Specialty Boarding School",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 12743,
+    "unique_name": "Bernalillo Academy",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center (RTC)",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 5
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 12761,
+    "unique_name": "Capital Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Psychiatric Residential Treatment Facility (PRTF)",
+        "capacity": 60,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 13285,
+    "unique_name": "Lexington Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 19,
+          "min": 12
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 13620,
+    "unique_name": "Alabama Baptist Children’s Homes – Calhoun",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 13639,
+    "unique_name": "Brighter Path Courtland",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
+      }
+    }
+  },
+  {
+    "id": 13821,
+    "unique_name": "Boyd Regional Juvenile Detention Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "2420 Roberts Dr, Ashland, Kentucky 41002",
+      "addressParts": {
+        "street": "2420 Roberts Dr",
+        "city": "Ashland",
+        "state": "KY",
+        "zip": "41002"
+      }
+    }
+  },
+  {
+    "id": 13822,
+    "unique_name": "Breathitt Regional Juvenile Detention Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "2725 Highway 30 West, Jackson, Kentucky 41339",
+      "addressParts": {
+        "street": "2725 Highway 30 West",
+        "city": "Jackson",
+        "state": "KY",
+        "zip": "41339"
+      }
+    }
+  },
+  {
+    "id": 13839,
+    "unique_name": "Frankfort Group Home",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "2790 Bridgeport-Benson Road, Frankfort, Kentucky 40601",
+      "addressParts": {
+        "street": "2790 Bridgeport-Benson Road",
+        "city": "Frankfort",
+        "state": "KY",
+        "zip": "40601"
+      }
+    }
+  },
+  {
+    "id": 13840,
+    "unique_name": "Frenchburg Group Home",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "158 Shermill Lane, Denniston, Kentucky 40316",
+      "addressParts": {
+        "street": "158 Shermill Lane",
+        "city": "Denniston",
+        "state": "KY",
+        "zip": "40316"
+      }
+    }
+  },
+  {
+    "id": 13846,
+    "unique_name": "Hopkinsville Group Home",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "2625 Madisonville Road, Hopkinsville, Kentucky 42240",
+      "addressParts": {
+        "street": "2625 Madisonville Road",
+        "city": "Hopkinsville",
+        "state": "KY",
+        "zip": "42240"
+      }
+    }
+  },
+  {
+    "id": 13852,
+    "unique_name": "Lake Cumberland Youth Development Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "9000 Highway 1546, Monticello, Kentucky 42633",
+      "addressParts": {
+        "street": "9000 Highway 1546",
+        "city": "Monticello",
+        "state": "KY",
+        "zip": "42633"
+      }
+    }
+  },
+  {
+    "id": 13854,
+    "unique_name": "London Group Home",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "125 Hickory Road, London, Kentucky 40741",
+      "addressParts": {
+        "street": "125 Hickory Road",
+        "city": "London",
+        "state": "KY",
+        "zip": "40741"
+      }
+    }
+  },
+  {
+    "id": 13859,
+    "unique_name": "Mayfield Youth Development Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "3179 State Route 45 South, Mayfield, Kentucky 42066",
+      "addressParts": {
+        "street": "3179 State Route 45 South",
+        "city": "Mayfield",
+        "state": "KY",
+        "zip": "42066"
+      }
+    }
+  },
+  {
+    "id": 13860,
+    "unique_name": "McCracken Regional Juvenile Detention Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "500 County Park Rd, Paducah, Kentucky 42001",
+      "addressParts": {
+        "street": "500 County Park Rd",
+        "city": "Paducah",
+        "state": "KY",
+        "zip": "42001"
+      }
+    }
+  },
+  {
+    "id": 13861,
+    "unique_name": "Middlesboro Group Home",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "100 Bowling Lane, Middlesboro, Kentucky 40695",
+      "addressParts": {
+        "street": "100 Bowling Lane",
+        "city": "Middlesboro",
+        "state": "KY",
+        "zip": "40695"
+      }
+    }
+  },
+  {
+    "id": 13867,
+    "unique_name": "Northern Kentucky Youth Development Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "15600 Turner Road, Crittenden, Kentucky 41030",
+      "addressParts": {
+        "street": "15600 Turner Road",
+        "city": "Crittenden",
+        "state": "KY",
+        "zip": "41030"
+      }
+    }
+  },
+  {
+    "id": 13890,
+    "unique_name": "Campbell Regional Juvenile Detention Center",
+    "version": 1,
+    "note": "zero-width space removed from the address (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "address": "",
+      "addressParts": {
+        "street": "590 Columbia Street, Newport, Kentucky 41071",
+        "city": "",
+        "state": "KY",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "id": 13926,
+    "unique_name": "Bethel Girls Academy",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Fundamentalist Religious Home",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 13927,
+    "unique_name": "Eagle Point Christian Academy",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 14135,
+    "unique_name": "Casa by the Sea",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 14159,
+    "unique_name": "West Oaks Hospital",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Psychiatric Hospital",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 100002,
+    "unique_name": "Bayamon Treatment Center (PR)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 144,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100006,
+    "unique_name": "The Brown Schools at Cedar Springs (CO)",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 12
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 100007,
+    "unique_name": "The Brown Schools at San Marcos (TX)",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 100010,
+    "unique_name": "The Brown Schools of Idaho (ID)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": 50,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100011,
+    "unique_name": "The Brown Schools of Montana (MT)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice RTC",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100014,
+    "unique_name": "Camp E-How-Kee (FL)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "PRTF",
+        "capacity": 72,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 17,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100044,
+    "unique_name": "Hill Country Place (TX)",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 18,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 100071,
+    "unique_name": "Redwood Youth Academy (FL)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Moderate-Risk",
+        "capacity": 24,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 14
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100074,
+    "unique_name": "Seguin Community Living Center (TX)",
+    "version": 1,
+    "note": "gender \"coed\" -> \"Co-ed\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "max": null,
+          "min": null
+        },
+        "gender": "Co-ed"
+      }
+    }
+  },
+  {
+    "id": 100081,
+    "unique_name": "Tampa Bay Girls Academy - Moderate (FL)",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "",
+        "capacity": 25,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 12
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 100082,
+    "unique_name": "Tampa Bay Girls Academy - Secure (FL)",
+    "version": 1,
+    "note": "gender \"female\" -> \"Female\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Maximum-Risk",
+        "capacity": 37,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 21,
+          "min": 12
+        },
+        "gender": "Female"
+      }
+    }
+  },
+  {
+    "id": 100085,
+    "unique_name": "Victor Cullen Academy (MD)",
+    "version": 1,
+    "note": "gender \"male\" -> \"Male\" (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "facilityDetails": {
+        "type": "Juvenile Justice Residential Treatment Center",
+        "capacity": 225,
+        "currentCensus": null,
+        "ageRange": {
+          "max": 18,
+          "min": 13
+        },
+        "gender": "Male"
+      }
+    }
+  },
+  {
+    "id": 100128,
+    "unique_name": "Embark Behavioral Health RTC (Klamath Falls, OR)",
+    "version": 1,
+    "note": "blank staff entries removed (data-shape fixes, 2026-09-18)",
+    "facility": {
+      "staff": {
+        "pastTTIJobs": [],
+        "notableStaff": [],
+        "administrator": []
       }
     }
   }
