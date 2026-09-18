@@ -199,8 +199,16 @@
      * passes behind both labels; labels are drawn last with a halo, so the
      * text stays legible over the line.
      *
+     * The gutter is the fallback, not the rule. Every connection was sent
+     * down into it, including two names side by side with nothing between
+     * them, which drew a line down, along and back up where one straight
+     * line would do. So the shortest shape that crosses nobody wins: a
+     * straight line along a row or down a column, then a single right
+     * angle (out of the side of one node and into the top or bottom of
+     * the other, or the other way round), and only then the gutter.
+     *
      * Returns the points of the route and the direction of its final leg,
-     * which is always vertical and is what the arrowhead follows.
+     * which is what the arrowhead follows.
      */
     function routeEdge(ax, ay, bx, by, jitter, geo, skipA, skipB) {
         if (!geo || !geo.rowStep) {
@@ -210,6 +218,21 @@
         }
         var step = geo.rowStep;
         var sameRow = Math.abs(by - ay) < step / 2;
+        var direct = function (pts) {
+            for (var i = 1; i < pts.length; i++) {
+                if (!geo.clearSeg(pts[i - 1], pts[i], skipA, skipB)) return null;
+            }
+            var from = pts[pts.length - 2];
+            var to = pts[pts.length - 1];
+            return { pts: tidy(pts), dir: to[1] !== from[1] ? [0, to[1] > from[1] ? 1 : -1] : [to[0] > from[0] ? 1 : -1, 0] };
+        };
+        var straight = sameRow ? direct([[ax, ay], [bx, ay]])
+            : (Math.abs(bx - ax) < 1 ? direct([[ax, ay], [ax, by]]) : null);
+        if (straight) return straight;
+        if (!sameRow) {
+            var bend = direct([[ax, ay], [bx, ay], [bx, by]]) || direct([[ax, ay], [ax, by], [bx, by]]);
+            if (bend) return bend;
+        }
         var down = sameRow || by > ay;
         var exitY = geo.channelAt(ay + (down ? step / 2 : -step / 2)) + jitter;
         var enterY = sameRow ? exitY : geo.channelAt(by + (down ? -step / 2 : step / 2)) + jitter;
@@ -716,6 +739,18 @@
                     jitterScale: jitterScale,
                     channelAt: function (screenY) {
                         return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep + bandShift;
+                    },
+                    /* Whether a straight leg from p to q crosses nobody's
+                     * box but its two ends'. */
+                    clearSeg: function (p, q, skipA, skipB) {
+                        var x0 = Math.min(p[0], q[0]) + 0.5, x1 = Math.max(p[0], q[0]) - 0.5;
+                        var y0 = Math.min(p[1], q[1]) + 0.5, y1 = Math.max(p[1], q[1]) - 0.5;
+                        for (var j = 0; j < blockers.length; j++) {
+                            if (j === skipA || j === skipB) continue;
+                            var bb = blockers[j];
+                            if (x1 > bb[0] && x0 < bb[2] && y1 > bb[1] && y0 < bb[3]) return false;
+                        }
+                        return true;
                     },
                     /* The nearest x to the one asked for at which a vertical
                      * leg between the two gutters crosses nobody's cell but

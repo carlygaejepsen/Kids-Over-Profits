@@ -243,6 +243,13 @@
              * this map exists to answer, so a programme on screen without the
              * company behind it is the one gap worth closing automatically.
              *
+             * Programmes only, and owners only: the edge has to run from a
+             * company into the programme. Run for every name on screen and in
+             * either direction, it pulled in whatever a company owned and
+             * whoever owned it - opening Synanon brought CEDU's owners and
+             * Leadership Dynamics' holdings, four companies nobody asked
+             * about.
+             *
              * One step only: the company that owned this place, not the
              * company that owned that company and so on - Provo Canyon School
              * walks up through ten organisations if you let it, which answers
@@ -250,17 +257,26 @@
              * only, never their other holdings: a company's remaining
              * programmes are its business with them, not this facility's. */
             Object.keys(asked).forEach(function (id) {
+                var node = store.node(id);
+                if (!node || node.kind !== 'facility') return;
                 store.neighbours(id, true).forEach(function (link) {
                     if (link.other.kind !== 'parent') return;
                     if (link.edge.category !== 'corporate') return;
+                    if (link.outgoing || link.edge.direction === 'renamed') return;
                     asked[link.other.id] = true;
                 });
             });
 
+            /* The organisations the map opens on belong to the opening view
+             * only. Kept once something is opened, any of them a few edges
+             * away rode in on the chain - Universal Health Services in
+             * Synanon's view, through CEDU's owner. */
             var ids = Object.create(null);
-            store.seeds().forEach(function (node) {
-                if (live[node.id]) ids[node.id] = true;
-            });
+            if (!chain.length) {
+                store.seeds().forEach(function (node) {
+                    if (live[node.id]) ids[node.id] = true;
+                });
+            }
             Object.keys(asked).forEach(function (id) {
                 if (live[id]) ids[id] = true;
             });

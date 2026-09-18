@@ -1168,21 +1168,24 @@ function run() {
         'an opened view kept a node with nothing connecting it to anything');
     check(Object.keys(seedIds).some((id) => !focused.nodeIds[id]),
         'opening a node left every one of the opening organisations on screen, connected or not');
-    /* Opening a node puts it and everyone it touches on the map, on top of
-     * the organisations the map opened with - and then opens out any person
-     * among them, because a name with one line back to whatever revealed it
-     * hides the thing worth knowing about them. */
-    const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)).concat(Object.keys(seedIds)));
+    /* Opening a node puts it and everyone it touches on the map - not the
+     * organisations the map opened with, which belong to the opening view -
+     * and then opens out any person among them, because a name with one
+     * line back to whatever revealed it hides the thing worth knowing about
+     * them. */
+    const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)));
     [...expected].forEach((id) => {
         const node = store.node(id);
         if (node && node.kind === 'person') {
             store.neighbours(id, true).forEach((l) => expected.add(l.other.id));
         }
     });
-    /* ...and whoever owned any of it, one step up. */
+    /* ...and whoever owned any programme in it, one step up. */
     [...expected].forEach((id) => {
+        if (store.node(id).kind !== 'facility') return;
         store.neighbours(id, true).forEach((l) => {
-            if (l.other.kind === 'parent' && l.edge.category === 'corporate') expected.add(l.other.id);
+            if (l.other.kind === 'parent' && l.edge.category === 'corporate' &&
+                !l.outgoing && l.edge.direction !== 'renamed') expected.add(l.other.id);
         });
     });
     /* ...minus whatever that left stranded. */
@@ -1195,6 +1198,27 @@ function run() {
     check(focused.nodes.every((n) => expected.has(n.id)),
         'opening a node put something on the map that nobody asked for');
     check(focused.nodes.length < whole.nodes.length, 'opening a node showed the whole graph');
+
+    /* A company's view is its own connections and the people's programmes,
+     * nothing further out. Synanon's view used to bring sixteen names: the
+     * owner rule ran for companies and in both directions, pulling in
+     * CEDU's owners and Leadership Dynamics' holdings, and Universal Health
+     * Services rode in on the chain as an opening organisation. */
+    const synanon = store.node('synanon');
+    if (synanon) {
+        focus.clear();
+        flushFrames();
+        focus.select(synanon);
+        flushFrames();
+        const synView = focus.scene();
+        ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics'].forEach((id) => {
+            check(!synView.nodeIds[id], "Synanon's view brought in " + id + ', which it does not connect to');
+        });
+        focus.clear();
+        flushFrames();
+        focus.select(hub);
+        flushFrames();
+    }
 
     /* A person with one line back to whatever revealed them hides the thing
      * worth knowing: which programmes they turn up at. Whenever a name
