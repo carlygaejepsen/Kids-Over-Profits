@@ -48,6 +48,10 @@ const CATEGORIES = [
     'leadership', 'clinical', 'admissions', 'staff', 'membership', 'other', 'unknown'
 ];
 const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'church', 'other'];
+/* The connection types the map shows before anyone touches a filter. A
+ * starter view is joined up along these only: a route through a referral
+ * line would put its people on screen with the line itself switched off. */
+const SHOWN_CATEGORIES = require('../js/network-map/store.js').DEFAULT_CATEGORIES;
 
 const qa = {
     kindGuesses: [], ambiguousAcquirers: [], unmatchedFacilities: [], multiMatchFacilities: [],
@@ -1520,6 +1524,15 @@ function build() {
         });
         if (ids.length) views.push({ key: key, label: String(view.label || key), ids: ids });
     });
+    /* The default opening keeps to its curated list; the named views are
+     * joined up (see connectView). */
+    views.forEach(function (view) {
+        if (view.key === 'default') return;
+        const joined = connectView(view.ids, nodes, edges, view.key);
+        view.named = view.ids.length;
+        view.ids = joined.ids;
+        if (joined.show.length) view.show = joined.show;
+    });
 
     const chains = Array.from(new Set(nodes.map(function (n) { return n.chain; }).filter(Boolean))).sort();
     const regions = Array.from(new Set(nodes.reduce(function (all, n) {
@@ -1564,6 +1577,160 @@ function build() {
     }).join(', ') + ')');
     console.log('Wrote ' + path.relative(ROOT, QA_FILE) + ' with ' + qaTotal() + ' items to review.');
     return graph;
+}
+
+/**
+ * A starter view is the names the curator listed plus everything that
+ * connects them, so nothing in it sits on screen unexplained. The map draws
+ * only the view's nodes and the lines between them, so a connection has to
+ * be named here or it is not shown.
+ *
+ * 1. Join: while the view falls into separate groups, take the smallest and
+ *    add every node on every shortest route to the nearest other group. No
+ *    length limit: Devereux reaches CEDU in four steps, Roloff reaches Teen
+ *    Challenge in far more, and both are the board's record. Routes never
+ *    pass through a trade association, which would join everything to
+ *    everything in two steps. They run along the connection types shown by
+ *    default where they can; where the only route needs a hidden type
+ *    (Teen Challenge's one line out is a governor's endorsement, filed as a
+ *    referral), that type goes in the view's `show` and the map turns it on
+ *    when the view opens.
+ * 2. Bridge: add every node with a direct line to two of the named ones -
+ *    the staff and members who moved between them, which the shortest
+ *    route skips whenever the organisations are also linked directly.
+ *
+ * A name no route reaches is reported in the QA file. Returns {ids, show}:
+ * ids named first, then what joins them; show, the hidden connection types
+ * the routes depend on.
+ */
+function connectView(namedIds, nodes, edges, key) {
+    const kindOf = new Map(nodes.map(function (n) { return [n.id, n.kind]; }));
+    const shownAdjacent = new Map();
+    const anyAdjacent = new Map();
+    const between = new Map(); /* "a|b" -> categories of the lines joining them */
+    function link(map, a, b) {
+        if (!map.has(a)) map.set(a, new Set());
+        map.get(a).add(b);
+    }
+    edges.forEach(function (e) {
+        link(anyAdjacent, e.source, e.target);
+        link(anyAdjacent, e.target, e.source);
+        if (SHOWN_CATEGORIES.indexOf(e.category) !== -1) {
+            link(shownAdjacent, e.source, e.target);
+            link(shownAdjacent, e.target, e.source);
+        }
+        link(between, e.source + '|' + e.target, e.category);
+        link(between, e.target + '|' + e.source, e.category);
+    });
+    function around(adjacent, id) {
+        return Array.from(adjacent.get(id) || []).sort();
+    }
+
+    const inView = new Set(namedIds);
+    const order = namedIds.slice();
+    const show = new Set();
+
+    /* Whether the map will draw a line between two nodes in this view. */
+    function drawn(a, b) {
+        return Array.from(between.get(a + '|' + b) || []).some(function (c) {
+            return SHOWN_CATEGORIES.indexOf(c) !== -1 || show.has(c);
+        });
+    }
+
+    function groups() {
+        const seen = new Set();
+        const out = [];
+        order.forEach(function (start) {
+            if (seen.has(start)) return;
+            const group = [start];
+            seen.add(start);
+            for (let i = 0; i < group.length; i++) {
+                around(anyAdjacent, group[i]).forEach(function (other) {
+                    if (!inView.has(other) || seen.has(other) || !drawn(group[i], other)) return;
+                    seen.add(other);
+                    group.push(other);
+                });
+            }
+            out.push(group);
+        });
+        return out;
+    }
+
+    /* Breadth-first out of one group until the first ring that touches the
+     * rest of the view, remembering every shortest way into each node. */
+    function route(from, adjacent) {
+        const depth = new Map();
+        const before = new Map();
+        from.forEach(function (id) { depth.set(id, 0); });
+        let frontier = Array.from(from);
+        const found = [];
+        while (frontier.length && !found.length) {
+            const next = [];
+            frontier.forEach(function (u) {
+                around(adjacent, u).forEach(function (v) {
+                    if (from.has(v)) return;
+                    if (!depth.has(v)) {
+                        depth.set(v, depth.get(u) + 1);
+                        before.set(v, [u]);
+                        if (inView.has(v)) found.push(v);
+                        else if (kindOf.get(v) !== 'association') next.push(v);
+                    } else if (depth.get(v) === depth.get(u) + 1) {
+                        before.get(v).push(u);
+                    }
+                });
+            });
+            frontier = next;
+        }
+        return { found: found, before: before };
+    }
+
+    function keep(from, walk) {
+        const stack = walk.found.slice();
+        const walked = new Set();
+        while (stack.length) {
+            const v = stack.pop();
+            if (walked.has(v)) continue;
+            walked.add(v);
+            (walk.before.get(v) || []).forEach(function (u) {
+                /* A step no shown line covers is a type the view must turn on. */
+                const kinds = Array.from(between.get(u + '|' + v) || []);
+                if (!kinds.some(function (c) { return SHOWN_CATEGORIES.indexOf(c) !== -1; })) {
+                    kinds.forEach(function (c) { show.add(c); });
+                }
+                if (from.has(u)) return;
+                if (!inView.has(u)) { inView.add(u); order.push(u); }
+                stack.push(u);
+            });
+        }
+    }
+
+    const unreachable = new Set();
+    for (;;) {
+        /* A group with no route out is set aside; routes are symmetric, so
+         * nothing else can reach it either. */
+        const open = groups().filter(function (g) { return !unreachable.has(g[0]); });
+        if (open.length < 2) break;
+        open.sort(function (a, b) { return a.length - b.length; });
+        const from = new Set(open[0]);
+        let walk = route(from, shownAdjacent);
+        if (!walk.found.length) walk = route(from, anyAdjacent);
+        if (!walk.found.length) {
+            open[0].forEach(function (id) { unreachable.add(id); });
+            continue;
+        }
+        keep(from, walk);
+    }
+    unreachable.forEach(function (id) {
+        qa.missingViewNames.push(key + ': ' + id + ' has no route to the rest of the view');
+    });
+
+    const named = new Set(namedIds);
+    nodes.forEach(function (n) {
+        if (inView.has(n.id) || n.kind === 'association') return;
+        const touches = around(shownAdjacent, n.id).filter(function (id) { return named.has(id); }).length;
+        if (touches >= 2) { inView.add(n.id); order.push(n.id); }
+    });
+    return { ids: order, show: Array.from(show).sort() };
 }
 
 function qaTotal() {

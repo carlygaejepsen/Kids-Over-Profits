@@ -174,6 +174,7 @@
                     onView: function (key) {
                         if (key === store.view) return false;
                         store.setView(key);
+                        if (filters) filters.syncFromStore();
                         var select = byId('kop-network-view');
                         if (select) select.value = store.view;
                         return true;
@@ -314,6 +315,7 @@
         if (viewSelect) {
             viewSelect.addEventListener('change', function () {
                 app.store.setView(viewSelect.value);
+                if (app.filters) app.filters.syncFromStore();
                 app.focus.restore([], app.focus.mode());
                 app.announce('Starting from: ' + viewSelect.options[viewSelect.selectedIndex].text + '.');
             });

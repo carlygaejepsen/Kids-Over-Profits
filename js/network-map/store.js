@@ -423,9 +423,18 @@
 
         /** Switch the opening organisations; false for a view that does not exist. */
         store.setView = function (key) {
-            var found = store.views().some(function (v) { return v.key === key; });
-            store.view = found ? key : 'default';
-            return found;
+            var view = store.views().filter(function (v) { return v.key === key; })[0];
+            store.view = view ? key : 'default';
+            /* A view joined up through a connection type the map hides by
+             * default (Teen Challenge's only line out is a referral) turns
+             * that type on, or its route would be on screen without its
+             * lines. */
+            if (view && view.show && store.filters) {
+                view.show.forEach(function (category) {
+                    store.toggleIn('categories', category, true);
+                });
+            }
+            return !!view;
         };
 
         store.seeds = function () {
@@ -462,7 +471,7 @@
         return store;
     }
 
-    var api = { create: create, statusBucket: statusBucket };
+    var api = { create: create, statusBucket: statusBucket, DEFAULT_CATEGORIES: DEFAULT_CATEGORIES };
 
     if (typeof module === 'object' && module.exports) module.exports = api;
     else root.KOPNetworkStore = api;

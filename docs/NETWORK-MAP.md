@@ -984,21 +984,36 @@ opens on the chosen view (`store.setView`, `store.seeds`), the toolbar gets
 a "Start from" select - printed only when there is more than the default -
 and the hash carries `view=key`, so a link can open on it.
 
-**Lists added (2026-09-18).** Four views beside the default, each the
-organisations the owner named plus the people who connect them on the board:
+**Lists added (2026-09-18).** Each view names its organisations (plus a
+few people to keep); the build joins them up (`connectView` in the build
+script), because the opening view draws only its own nodes and the lines
+between them, so an unnamed connection is an invisible one:
 
-- `historical`: Synanon, The Brown Schools, Devereux Foundation, CEDU Family
-  of Services, Straight Inc.; with John Stallone, Morty Molin and Bill Lane
-  (Synanon to CEDU), Rae Ann Knopf (Brown Schools to CEDU), and The Seed with
-  Mel and Betty Sembler (Synanon to Straight). Devereux has no connection to
-  the others on the board shorter than four steps, so it stands alone.
-- `todays-top-players`: Universal Health Services, Acadia Healthcare, Newport
-  Academy; with Joe Procopia and Jameson Norton (Newport to Acadia).
-- `wilderness`: Eckerd Youth Alternatives, Second Nature, Aspen Education
-  Group, ANASAZI Foundation; with Ben Pearson (Second Nature to ANASAZI).
-- `fundamentalist`: Lester Roloff, Roloff Evangelistic Enterprises and the
-  homes the board has him leading (Rebekah, Anchor, Lighthouse, Bethesda),
-  and Teen Challenge. No person on the board connects the two.
+1. Join: while the view is in separate pieces, the smallest piece gets every
+   node on every shortest route to the nearest other piece. No length limit
+   (a first cut capped routes at four steps and left Devereux floating; its
+   route to CEDU runs through Scott Boice, New Haven RTC and Reid
+   Treadaway). Routes never pass through a trade association. They use the
+   connection types shown by default where possible; a route that needs a
+   hidden type records it in the view's `show`, and `store.setView` turns
+   it on (fundamentalist: Teen Challenge's only line out is George W. Bush's
+   endorsement, a referral).
+2. Bridge: anything with a direct line to two named items is added (Stallone
+   and Molin between Synanon and CEDU, which the direct Synanon-CEDU line
+   would otherwise make the route skip).
+
+`test-network-modules.js` opens every view and fails if any node on it has
+no drawn line to the rest.
+
+| View | Named | On screen |
+|---|---|---|
+| historical | Synanon, The Brown Schools, Devereux Foundation, CEDU Family of Services, Straight Inc. (+ Stallone, Molin, Lane, Knopf, The Seed, the Semblers) | 19 |
+| todays-top-players | Universal Health Services, Acadia Healthcare, Newport Academy (+ Procopia, Norton) | 29 |
+| wilderness | Eckerd Youth Alternatives, Second Nature, Aspen Education Group, ANASAZI Foundation (+ Ben Pearson) | 33 |
+| juvenile-justice | Rite of Passage, Youth Opportunity Investments, Youth Services International, Sequel, G4S Youth Services, VisionQuest, Glen Mills, Ramsay Youth Services, Keystone Education and Youth Services, Eckerd Youth Alternatives | 29 |
+| fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 41 |
+
+Correctional Services Corporation is not on the board yet.
 
 ### Already covered by 5b
 

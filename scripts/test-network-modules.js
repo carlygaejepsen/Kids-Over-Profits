@@ -840,6 +840,38 @@ function run() {
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap in the opening view: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
+    /* Every starter view opens as one connected picture: each name on it
+     * has a drawn line to the rest, under the filters the view opens with.
+     * The build joins them (connectView); this checks the map honours it,
+     * including a view that has to turn a hidden connection type on. */
+    store.views().filter((v) => v.key !== 'default').forEach((view) => {
+        store.resetFilters();
+        store.setView(view.key);
+        focus.restore([], 'focus');
+        const scene = focus.scene();
+        check(scene.nodes.length === view.ids.length,
+            'the ' + view.key + ' view draws ' + scene.nodes.length + ' of its ' + view.ids.length + ' nodes');
+        const around = {};
+        scene.edges.forEach((e) => {
+            (around[e.sourceId] = around[e.sourceId] || []).push(e.targetId);
+            (around[e.targetId] = around[e.targetId] || []).push(e.sourceId);
+        });
+        const reached = new Set([view.ids[0]]);
+        const queue = [view.ids[0]];
+        while (queue.length) {
+            (around[queue.shift()] || []).forEach((id) => {
+                if (!reached.has(id)) { reached.add(id); queue.push(id); }
+            });
+        }
+        const loose = scene.nodes.filter((n) => !reached.has(n.id)).map((n) => n.name);
+        check(loose.length === 0,
+            'the ' + view.key + ' view has names with no drawn line to the rest: ' + loose.slice(0, 5).join(', '),
+            'the ' + view.key + ' view is one connected picture of ' + scene.nodes.length + ' nodes');
+    });
+    store.resetFilters();
+    store.setView('default');
+    focus.restore([], 'focus');
+
     /* A shallow view takes a block nearer the shape of the stage, so the
      * fit can zoom in and fill it, rather than one long row with the rest
      * of the stage empty above and below. */

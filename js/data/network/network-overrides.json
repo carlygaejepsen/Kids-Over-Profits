@@ -35,6 +35,9 @@
     "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
     "                Keys are lowercase with hyphens; \"default\" is the headline.",
     "                The select only appears once there is at least one view.",
+    "                List the organisations (and any person to keep); the build",
+    "                adds every shortest route joining them and anyone linked",
+    "                directly to two of them, so nothing on the view floats free.",
     "",
     "Run `node scripts/build-network-graph.js` after any edit and work through",
     "tmp/network-qa.md."
@@ -162,7 +165,22 @@
         "Ben Pearson"
       ]
     },
-    "fundamentalist": {
+    "juvenile-justice": {
+    "label": "Juvenile justice",
+    "names": [
+      "Rite of Passage, Inc",
+      "Youth Opportunity Investments",
+      "Youth Services International",
+      "Sequel Youth and Family Services",
+      "G4s Youth Services LLC",
+      "VisionQuest",
+      "Glen Mills School",
+      "Ramsay Youth Services",
+      "Keystone Education and Youth Services",
+      "Eckerd Youth Alternatives"
+    ]
+  },
+  "fundamentalist": {
       "label": "Fundamentalist",
       "names": [
         "Lester Roloff",
