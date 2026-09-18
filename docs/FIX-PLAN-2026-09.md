@@ -99,6 +99,25 @@ inline bottom-right position wins, and give the two a consistent z-index.
 
 ## 4. Monitor menu: link to inspection reports
 
+Done 2026-09-18. `templates/page-inspection-reports.php` at
+`/inspection-reports/`: the state grid, live report and facility counts, the
+curated featured reports and a note for visitors whose state is missing.
+The page's own editor content, if any, prints above the grid, so the
+introduction can be rewritten in wp-admin without touching the template.
+
+The state list was hard-coded in `templates/page-home.php` and kept a second
+time as prose naming all fourteen states. Both now come from
+`kop_report_state_links()` and `kop_report_state_sentence()` in
+`inc/utilities.php`, which derive from `kop_state_inspection_page_map()` in
+`inc/rest-api.php`, the map the REST layer already uses. A new state is added
+in one place. The home page grid is alphabetical as a result, and gained an
+"All inspection reports" link to the hub.
+
+Seeded through `kop_tool_page_specs()` with the version bumped to 4, and
+added to the Monitor list in `api/rebuild-header-menu.php`. The menu script
+still has to be re-run on prod as admin with `?apply=1`; until then the page
+exists and is linked from the home page but is not in the header.
+
 "Monitor" is a header menu section built by `api/rebuild-header-menu.php`
 (Where Are The Kids, TTI Program Index, Referrers, Location Index,
 Lawsuits, Legislative Efforts). There is no inspections hub page; each
@@ -296,4 +315,4 @@ sandbox.
 4. 7A state-page names, 6 archived links.
 5. 2A and 2B research page.
 6. 3A and 3B form copy (needs writing time).
-7. 4 inspections hub, 5 resources module (need content decisions).
+7. 4 inspections hub (done 2026-09-18), 5 resources module (needs content decisions).

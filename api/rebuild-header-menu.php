@@ -58,6 +58,7 @@ $kop_menu_plan = [
     ]],
     ['section' => 'Monitor', 'children' => [
         ['where-are-the-kids', null],
+        ['inspection-reports', 'Inspection Reports'],
         ['tti-program-index', null],
         ['referrers-educational-consultants', 'Referrers & Educational Consultants'],
         ['location-index', null],

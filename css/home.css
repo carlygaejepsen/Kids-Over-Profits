@@ -207,6 +207,22 @@
     color: var(--kop-navy-blue, #000080);
 }
 
+/* Report count on the inspection hub's buttons (the home page omits it). */
+.kop-report-btn-count {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.25);
+    font-size: 0.85em;
+    font-variant-numeric: tabular-nums;
+}
+
+.kop-home-report-btn:hover .kop-report-btn-count {
+    background-color: var(--kop-sand, #F2EEDF);
+    color: var(--kop-navy-blue, #000080);
+}
+
 /* Map + directory text */
 .kop-home-map p {
     max-width: 860px;

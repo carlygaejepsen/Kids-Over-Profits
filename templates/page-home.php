@@ -118,23 +118,10 @@ $kop_volunteer_links = array(
 $kop_tracker_slugs = function_exists('kop_state_inspection_page_map')
     ? array_values(kop_state_inspection_page_map()) : array();
 
-// State inspection trackers currently available (slug prefix => label).
-$kop_report_states = array(
-    'or' => 'Oregon',
-    'mn' => 'Minnesota',
-    'ar' => 'Arkansas',
-    'ct' => 'Connecticut',
-    'mt' => 'Montana',
-    'tx' => 'Texas',
-    'ca' => 'California',
-    'wa' => 'Washington',
-    'ut' => 'Utah',
-    'az' => 'Arizona',
-    'fl' => 'Florida',
-    'ga' => 'Georgia',
-    'nc' => 'North Carolina',
-    'nv' => 'Nevada',
-);
+// State inspection trackers currently available (tracker slug => state name),
+// from the one list in inc/utilities.php that the hub page reads too.
+$kop_report_states = function_exists('kop_report_state_links') ? kop_report_state_links() : array();
+$kop_reports_hub_url = kop_home_template_page_url('templates/page-inspection-reports.php', '/inspection-reports/');
 ?>
 
 <div class="kop-home">
@@ -288,14 +275,14 @@ $kop_report_states = array(
     <section class="kop-home-reports">
         <h2>New Inspection Reports Available!</h2>
         <p>We created inspection trackers to make it easier for everyone to monitor violations in
-        facilities for kids. Oregon, Minnesota, Arkansas, Connecticut, Montana, Texas, California,
-        Washington, Utah, Arizona, Florida, Georgia, North Carolina, and Nevada are available now.
+        facilities for kids. <?php echo esc_html(kop_report_state_sentence()); ?> are available now.
         More trackers are coming soon!</p>
         <div class="kop-home-reports-buttons">
-            <?php foreach ($kop_report_states as $abbr => $label): ?>
-                <a class="kop-home-report-btn" href="/<?php echo esc_attr($abbr); ?>-reports"><?php echo esc_html($label); ?></a>
+            <?php foreach ($kop_report_states as $slug => $label): ?>
+                <a class="kop-home-report-btn" href="/<?php echo esc_attr($slug); ?>"><?php echo esc_html($label); ?></a>
             <?php endforeach; ?>
         </div>
+        <a class="kop-volunteer-more" href="<?php echo esc_url($kop_reports_hub_url); ?>">All inspection reports &raquo;</a>
     </section>
 
     <section class="kop-home-map">

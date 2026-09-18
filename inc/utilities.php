@@ -320,3 +320,49 @@ function kop_db_unavailable_notice($show = true) {
         . esc_html('Records are temporarily unavailable while the database is offline. Please try again shortly.')
         . '</div>';
 }
+
+/**
+ * The state inspection trackers, as tracker slug => state name, alphabetical.
+ *
+ * Derived from kop_state_inspection_page_map() in inc/rest-api.php, which is
+ * what the REST layer uses to link a state to its tracker, so a new state is
+ * added in one place and appears on the home page, the inspection hub and the
+ * state pages together. The fallback list is only reached if this file is
+ * loaded without the REST layer.
+ *
+ * @return array<string,string>
+ */
+function kop_report_state_links() {
+    $map = function_exists('kop_state_inspection_page_map')
+        ? kop_state_inspection_page_map()
+        : array(
+            'Arkansas' => 'ar-reports', 'Arizona' => 'az-reports', 'California' => 'ca-reports',
+            'Connecticut' => 'ct-reports', 'Florida' => 'fl-reports', 'Georgia' => 'ga-reports',
+            'Minnesota' => 'mn-reports', 'Montana' => 'mt-reports', 'Nevada' => 'nv-reports',
+            'North Carolina' => 'nc-reports', 'Oregon' => 'or-reports', 'Texas' => 'tx-reports',
+            'Utah' => 'ut-reports', 'Washington' => 'wa-reports',
+        );
+
+    $links = array();
+    foreach ($map as $state => $slug) {
+        $links[(string) $slug] = (string) $state;
+    }
+    asort($links, SORT_NATURAL | SORT_FLAG_CASE);
+    return $links;
+}
+
+/**
+ * "Oregon, Minnesota and Texas" — the tracker states as a readable sentence
+ * fragment, so page copy does not carry a hand-maintained list of them.
+ */
+function kop_report_state_sentence() {
+    $names = array_values(kop_report_state_links());
+    if (!$names) {
+        return '';
+    }
+    if (count($names) === 1) {
+        return $names[0];
+    }
+    $last = array_pop($names);
+    return implode(', ', $names) . ' and ' . $last;
+}
