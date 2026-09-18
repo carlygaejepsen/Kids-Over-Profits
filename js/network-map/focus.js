@@ -1867,6 +1867,10 @@
              * percent of zoom, and each is one dry run of the label pass. */
             var lowestClean = function (lo, hi, centre) {
                 if (clean(centredAt(lo, centre))) return lo;
+                /* The top of the range is not always clean either, and a
+                 * search that assumed it was handed back a zoom that dropped
+                 * names on a phone. Step in until it is. */
+                for (var up = 0; up < 6 && !clean(centredAt(hi, centre)); up++) hi *= 1.25;
                 for (var step = 0; step < 9; step++) {
                     var m = (lo + hi) / 2;
                     if (clean(centredAt(m, centre))) hi = m; else lo = m;
@@ -1897,7 +1901,10 @@
                     var hx = hp.x * chosen.k + chosen.x;
                     var hy = hp.y * chosen.k + chosen.y;
                     if (hx < 0 || hx > renderer.width || hy < 0 || hy > renderer.height) {
-                        chosen = centredAt(chosen.k, hp);
+                        /* Moved, the view has to be checked again: the
+                         * zoom that was clean around the old centre dropped
+                         * two names around this one on a phone. */
+                        chosen = centredAt(lowestClean(chosen.k, Math.max(top, chosen.k), hp), hp);
                     }
                 }
             }

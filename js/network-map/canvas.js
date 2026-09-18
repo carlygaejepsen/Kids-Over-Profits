@@ -1213,7 +1213,7 @@
                 var placed = null;
                 for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
                     var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
-                    if (!fitsInGrid(labelGrid, spot.box)) continue;
+                    if (!spot || !fitsInGrid(labelGrid, spot.box)) continue;
                     placed = spot;
                     break;
                 }
@@ -1373,8 +1373,19 @@
                 align = 'right';
             }
 
+            /* A name under a node on the stage stays on the stage. When a
+             * click frames only its own connections, a node further out can
+             * sit near the edge, and its name centred under it ran off the
+             * canvas; slide it inwards instead, and give up a placement
+             * beside the node that would run off. */
+            var w = renderer.width;
+            var onStage = entry.cx >= 0 && entry.cx <= w;
+            if (onStage && align === 'center' && half * 2 + LABEL_PAD_X * 2 < w) {
+                x = Math.min(w - half - LABEL_PAD_X, Math.max(half + LABEL_PAD_X, x));
+            }
             var left = align === 'center' ? x - half : (align === 'left' ? x : x - half * 2);
             var right = align === 'center' ? x + half : (align === 'left' ? x + half * 2 : x);
+            if (onStage && align !== 'center' && (left < 0 || right > w)) return null;
             return {
                 x: x,
                 y: y,
@@ -1418,7 +1429,7 @@
                 var placed = null;
                 for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
                     var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
-                    if (!fitsInGrid(grid, spot.box)) continue;
+                    if (!spot || !fitsInGrid(grid, spot.box)) continue;
                     placed = spot;
                     break;
                 }
