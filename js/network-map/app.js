@@ -159,6 +159,7 @@
 
         store.load(CONFIG).then(function () {
             renderer.useChainIndex(store.chainIndex);
+            renderer.useBoardColours(store.meta);
             renderer.resize();
             focus.start();
 

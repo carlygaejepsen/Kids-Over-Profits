@@ -129,7 +129,13 @@ function loadOverrides() {
         /* name -> count, for memorial rows the matcher cannot place. */
         deaths: raw.deaths || {},
         /* key -> {label, names}: the other ways the map can open (2b.10). */
-        views: raw.views || {}
+        views: raw.views || {},
+        /* The board's own colours: chain -> line colour, frame -> chain whose
+         * colour its lines carry, and the NATSAP membership colour. A board
+         * export has no colours in it, so they are kept here. */
+        chainColours: raw.chainColours || {},
+        regionChains: raw.regionChains || {},
+        membershipColour: raw.membershipColour || ''
     };
 }
 
@@ -1536,7 +1542,11 @@ function build() {
              * here rather than left for the browser to trip over. */
             headline: headline,
             /* [{key, label, ids}], "default" first: the headline. */
-            views: views
+            views: views,
+            /* The colours the board draws each company's connections in. */
+            chainColours: overrides.chainColours,
+            regionChains: overrides.regionChains,
+            membershipColour: overrides.membershipColour
         },
         nodes: nodes,
         edges: edges

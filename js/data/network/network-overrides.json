@@ -26,6 +26,11 @@
     "                organisation no facility or operator record dates.",
     "deaths        - board name -> number of memorial deaths, for memorial rows",
     "                the build could not place on a node.",
+    "chainColours  - chain -> the line colour the board draws that company's",
+    "                connections in, read off the Miro frames (2026-09-18).",
+    "regionChains  - board frame -> chain whose colour its lines carry, where",
+    "                the frame is not itself a chain (Wilderness is Aspen's).",
+    "membershipColour - the board's colour for NATSAP membership lines.",
     "views         - other lists the map can open on, offered as \"Start from\":",
     "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
     "                Keys are lowercase with hyphens; \"default\" is the headline.",
@@ -119,5 +124,21 @@
   "statuses": {},
   "years": {},
   "deaths": {},
-  "views": {}
+  "views": {},
+  "chainColours": {
+    "WWASPS": "#F24726",
+    "Altior": "#0685B9",
+    "Vivant": "#B10505",
+    "FHW": "#652CB3",
+    "Aspiro": "#736E26",
+    "Aspen": "#DA0063",
+    "UHS": "#0CA789",
+    "Embark": "#930666",
+    "Teen Challenge": "#F901D7",
+    "Brown Schools/CEDU": "#468609"
+  },
+  "regionChains": {
+    "Wilderness": "Aspen"
+  },
+  "membershipColour": "#0B2BF0"
 }

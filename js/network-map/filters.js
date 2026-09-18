@@ -339,7 +339,9 @@
             legend.appendChild(edgeList);
         };
 
+        /* The board's colour for the chain, so the key matches the map. */
         function chainColour(chain) {
+            if (renderer.chainColour) return renderer.chainColour(chain);
             var index = store.chainColourIndex(chain);
             if (index < 0) return root.KOPNetworkCanvas.CHAIN_NONE;
             var palette = root.KOPNetworkCanvas.CHAIN_COLOURS;

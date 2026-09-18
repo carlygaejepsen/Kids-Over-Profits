@@ -198,11 +198,31 @@
 
     /* Which way a connection runs is the first thing about it, so it is the
      * first thing checked. */
-    function styleFor(edge, crossRegion) {
+    /* The categories that keep their own colour whatever company they sit
+     * in: a rebrand or a takeover has to read as one, and so does a family
+     * tie or a survivor's account. The rest are drawn in the colour the
+     * board gives the company, with their own width and dash, so the key
+     * still tells the kinds of connection apart. */
+    var OWN_COLOUR = { rebrand: true, acquired: true, family: true, survivor: true };
+    var companyStyles = Object.create(null);
+
+    /* colourOf(edge) is the board colour the line should carry, or ''. */
+    function styleFor(edge, crossRegion, colourOf) {
         if (crossRegion) return CROSS_STYLE;
         if (edge.direction === 'renamed') return EDGE_STYLES.rebrand;
         if (edge.direction === 'acquirer') return EDGE_STYLES.acquired;
-        return EDGE_STYLES[edge.category] || EDGE_STYLES._default;
+        var base = EDGE_STYLES[edge.category] || EDGE_STYLES._default;
+        if (OWN_COLOUR[edge.category] || !colourOf) return base;
+        var colour = colourOf(edge);
+        if (!colour) return base;
+        var key = (edge.category || '_default') + '|' + colour;
+        if (!companyStyles[key]) {
+            companyStyles[key] = {
+                colour: colour, width: Math.max(1.4, base.width), dash: base.dash,
+                arrow: base.arrow, label: base.label
+            };
+        }
+        return companyStyles[key];
     }
 
     function styleKey(style) {
@@ -446,7 +466,7 @@
             ctx.fill();
             ctx.globalAlpha = alpha;
             ctx.strokeStyle = spec.outline;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = spec.outlineWidth || 1;
             ctx.stroke();
         }
 
@@ -603,6 +623,54 @@
             chainIndex = index;
         };
 
+        /* The board's colours (meta.chainColours and friends). A chain the
+         * board gave no colour falls back to the palette. */
+        var board = { chainColours: {}, regionChains: {}, membershipColour: '' };
+        renderer.useBoardColours = function (meta) {
+            board = {
+                chainColours: (meta && meta.chainColours) || {},
+                regionChains: (meta && meta.regionChains) || {},
+                membershipColour: (meta && meta.membershipColour) || ''
+            };
+            rebuildBuckets();
+        };
+
+        renderer.chainColour = function (chain) {
+            if (!chain) return CHAIN_NONE;
+            if (board.chainColours[chain]) return board.chainColours[chain];
+            var i = chainIndex ? chainIndex[chain] : undefined;
+            return i === undefined ? CHAIN_NONE : CHAIN_COLOURS[i % CHAIN_COLOURS.length];
+        };
+
+        /* The company a node's lines are drawn for: its recorded owner, or
+         * failing that the board frame it sits in, which is how the board
+         * itself decided a line's colour. People carry none of their own. */
+        function companyOf(node) {
+            if (!node || node.kind === 'person') return '';
+            if (node.chain && board.chainColours[node.chain]) return node.chain;
+            var region = node.regions && node.regions[0];
+            if (!region) return '';
+            if (board.chainColours[region]) return region;
+            return board.regionChains[region] || '';
+        }
+
+        /* A line between one company's places and people is that company's
+         * colour; a line between two companies is neither's, so it stays the
+         * plain ink of its kind. */
+        function lineColour(edge) {
+            if (edge.category === 'membership') return board.membershipColour;
+            var a = companyOf(edge.source);
+            var b = companyOf(edge.target);
+            if (a && b && a !== b) return '';
+            var chain = a || b;
+            return chain ? board.chainColours[chain] : '';
+        }
+
+        /* How a line is drawn, for the key and the tests. */
+        renderer.styleOf = function (edge) {
+            return styleFor(edge, renderer.crossRegionMode, lineColour);
+        };
+
         /**
          * Where a node currently lives, in world coordinates. The whole map
          * answers with the node itself, since the settled layout is what is
@@ -644,7 +712,7 @@
             buckets = [];
             for (var i = 0; i < scene.edges.length; i++) {
                 var edge = scene.edges[i];
-                var style = styleFor(edge, renderer.crossRegionMode);
+                var style = styleFor(edge, renderer.crossRegionMode, lineColour);
                 var key = styleKey(style);
                 var bucket = byKey[key];
                 if (!bucket) {
@@ -681,12 +749,7 @@
         /* -------------------------------------------------------- colours -- */
 
         renderer.colourFor = function (node) {
-            if (renderer.colourMode === 'chain') {
-                if (!node.chain || !chainIndex) return CHAIN_NONE;
-                var i = chainIndex[node.chain];
-                if (i === undefined) return CHAIN_NONE;
-                return CHAIN_COLOURS[i % CHAIN_COLOURS.length];
-            }
+            if (renderer.colourMode === 'chain') return renderer.chainColour(node.chain);
             return KIND_COLOURS[node.kind] || KIND_COLOURS.other;
         };
 
@@ -889,7 +952,7 @@
             renderer.routes = routes;
             for (i = 0; i < routes.length; i++) {
                 var directed = routes[i].edge;
-                var style2 = styleFor(directed, renderer.crossRegionMode);
+                var style2 = styleFor(directed, renderer.crossRegionMode, lineColour);
                 if (!style2.arrow) continue;
                 var pts = routes[i].pts;
                 var tip = pts[pts.length - 1];
@@ -951,6 +1014,14 @@
                 scratch.deaths = node.deaths;
                 scratch.fill = fill;
                 scratch.outline = outlineFor(node.kind, fill, renderer.colourMode === 'kind');
+                scratch.outlineWidth = 1;
+                /* A company's own places and the company itself carry its
+                 * colour on their border, as on the board. */
+                if (renderer.colourMode === 'kind' && node.chain && board.chainColours[node.chain] &&
+                    node.kind !== 'person') {
+                    scratch.outline = board.chainColours[node.chain];
+                    scratch.outlineWidth = 2;
+                }
                 paintNode(ctx, scratch, x, y, r, lit ? 1 : dim);
 
                 if (hovered) {

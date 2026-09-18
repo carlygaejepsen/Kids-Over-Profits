@@ -955,6 +955,25 @@ the board drew it from; a tap on a drawn name selects that name unless the
 pointer is on a shape itself; and the tests allow staff beside the click
 in the centre row, as 0592dd5 intended.
 
+### Lines carry their words and the board's colours (2026-09-18)
+
+Each line is captioned with its relationship as the board wrote it, in
+small italic on its longest straight run, after the names and in their
+collision grid so a name always wins. Lines the board left unlabelled stay
+bare, and the whole map is not captioned.
+
+The board draws each company's connections in the company's colour; the
+export carries no colours, so they were read off the Miro frames and kept
+in `network-overrides.json` (`chainColours`, `regionChains`,
+`membershipColour`). A line takes the colour of the company whose places
+it joins: a node's recorded chain, or failing that its board frame
+(Wilderness counts as Aspen). A line between two companies stays the plain
+ink of its kind. Rebrand, acquisition, family and survivor lines keep their
+own colours, every kind keeps its dash, membership lines are the board's
+NATSAP blue, and a company's own nodes carry its colour on their border.
+Frames the board left black (Synanon, Roloff, Rite of Passage, CERTS,
+Eckerd, Evolve, HOPE, YOI, YSI) stay black.
+
 ### Step 7 mechanism (2026-09-18): starter views (2b.10)
 
 `network-overrides.json` takes `views`: `{"key": {"label": "...",

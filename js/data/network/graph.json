@@ -115,7 +115,23 @@
      "universal-health-services"
     ]
    }
-  ]
+  ],
+  "chainColours": {
+   "WWASPS": "#F24726",
+   "Altior": "#0685B9",
+   "Vivant": "#B10505",
+   "FHW": "#652CB3",
+   "Aspiro": "#736E26",
+   "Aspen": "#DA0063",
+   "UHS": "#0CA789",
+   "Embark": "#930666",
+   "Teen Challenge": "#F901D7",
+   "Brown Schools/CEDU": "#468609"
+  },
+  "regionChains": {
+   "Wilderness": "Aspen"
+  },
+  "membershipColour": "#0B2BF0"
  },
  "nodes": [
   {

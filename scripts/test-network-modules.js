@@ -519,6 +519,7 @@ function run() {
 
     const renderer = sandbox.KOPNetworkCanvas.create(canvas);
     renderer.useChainIndex(store.chainIndex);
+    renderer.useBoardColours(graph.meta);
     check(renderer.resize() === true && canvas.width === WIDTH * 2 && canvas.height === HEIGHT * 2,
         'resize did not scale the backing store to the device pixel ratio');
 
@@ -613,8 +614,11 @@ function run() {
     check(ops.fill > fillsBefore, 'nothing was filled on a frame holding a directed edge');
 
     renderer.setColourMode('chain');
-    check(renderer.colourFor(hub) === sandbox.KOPNetworkCanvas.CHAIN_COLOURS[store.chainIndex[hub.chain]],
-        'chain colouring did not follow the build order for ' + hub.chain);
+    /* A chain the board coloured takes the board's colour; the palette is
+     * only for a chain the board left black. */
+    check(renderer.colourFor(hub) === (graph.meta.chainColours[hub.chain] ||
+        sandbox.KOPNetworkCanvas.CHAIN_COLOURS[store.chainIndex[hub.chain]]),
+        'chain colouring did not use the board colour for ' + hub.chain);
     const ownerless = store.nodes.find((n) => !n.chain);
     check(renderer.colourFor(ownerless) === sandbox.KOPNetworkCanvas.CHAIN_NONE,
         'a node with no recorded owner was given a chain colour');
@@ -871,6 +875,34 @@ function run() {
         'a ' + hubScene.nodes.length + '-node neighbourhood fits every name');
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+
+    /* The board draws a company's connections in the company's colour, and
+     * the map does too; the kinds of connection keep their own dashes. */
+    const orange = graph.meta.chainColours.WWASPS;
+    /* A line to another company's place (Provo Canyon School is UHS's) is
+     * neither company's, and stays the plain ink of its kind. */
+    const otherCompany = (n) => n.kind !== 'person' &&
+        ((n.chain && n.chain !== 'WWASPS') || (!n.chain && graph.meta.chainColours[(n.regions || [])[0]] &&
+            n.regions[0] !== 'WWASPS'));
+    const wwaspsLines = hubScene.edges.filter((e) =>
+        (e.sourceId === 'wwasps' || e.targetId === 'wwasps') && !['family', 'survivor'].includes(e.category) &&
+        e.direction === 'none' && e.category !== 'membership' &&
+        !otherCompany(e.sourceId === 'wwasps' ? e.target : e.source));
+    const crossLine = hubScene.edges.find((e) => (e.sourceId === 'wwasps' || e.targetId === 'wwasps') &&
+        e.direction === 'none' && otherCompany(e.sourceId === 'wwasps' ? e.target : e.source));
+    check(!crossLine || renderer.styleOf(crossLine).colour !== orange,
+        'a line from WWASPS to another company is drawn in WWASPS colour');
+    const inColour = wwaspsLines.filter((e) => renderer.styleOf(e).colour === orange);
+    check(wwaspsLines.length > 0 && inColour.length === wwaspsLines.length,
+        inColour.length + ' of ' + wwaspsLines.length + ' WWASPS lines are drawn in the board colour ' + orange,
+        'all ' + wwaspsLines.length + ' WWASPS lines drawn in its board colour');
+    const dashed = hubScene.edges.find((e) => e.category === 'admissions' || e.category === 'board');
+    if (dashed) {
+        check(!!renderer.styleOf(dashed).dash, 'a company-coloured ' + dashed.category + ' line lost its dash');
+    }
+    const member = store.edges.find((e) => e.category === 'membership');
+    check(!member || renderer.styleOf(member).colour === graph.meta.membershipColour,
+        'membership lines are not in the board NATSAP colour');
 
     /* The lines say what they are, and never over a name. */
     const captions = renderer.edgeCaptions || [];
