@@ -785,6 +785,14 @@ a.kop-res-name:focus-visible {
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+/* Extra links under an entry, such as the Survivors Unrestrained meeting links. */
+.kop-res-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    font-size: 0.85rem;
+}
+
 .kop-res-archived {
     align-self: flex-start;
     padding: 0.02rem 0.4rem;

@@ -25,6 +25,8 @@
  *   page     - a slug on this site, resolved at render time instead of a URL,
  *              so an internal link cannot rot
  *   archived - true when the live site is gone and the link is a snapshot
+ *   links    - extra links as label => URL, printed under the note (meeting
+ *              links, a sign-up form); the main url stays the entry's name
  */
 
 if (!defined('ABSPATH')) {
@@ -67,9 +69,17 @@ function kop_resources_groups() {
             'intro'   => 'Places survivors talk to each other. All of them are run by survivors.',
             'entries' => array(
                 array(
-                    'name' => 'Survivors Unrestrained',
-                    'url'  => 'https://survivorsunrestrained.org/',
-                    'note' => 'Peer support and community organising.',
+                    'name'    => 'Survivors Unrestrained',
+                    'url'     => 'https://survivorsunrestrained.org/',
+                    'contact' => 'Support groups on Zoom, Tuesdays and Thursdays at 7 PM Eastern',
+                    'note'    => 'Peer support run by survivors, for survivors. Non-survivors are asked not to attend.',
+                    // Same meetings the For Survivors page lists. The links there
+                    // go through Facebook's click tracker; these are the plain
+                    // Zoom addresses underneath.
+                    'links'   => array(
+                        'Tuesday Zoom link'  => 'https://zoom.us/j/91523602861?pwd=AHbDTaTFhnqdnRkdpi70mDTbrKMG0T.1',
+                        'Thursday Zoom link' => 'https://zoom.us/j/95881522258?pwd=AxWkZL5HfkQqOxJtmbcmhVxbVNUEAX.1',
+                    ),
                 ),
                 array(
                     'name' => 'The TTI Survivor Community',
@@ -373,6 +383,13 @@ function kop_resources_render_group($group) {
                     <?php endif; ?>
                     <?php if (!empty($entry['note'])) : ?>
                         <span class="kop-res-note"><?php echo esc_html($entry['note']); ?></span>
+                    <?php endif; ?>
+                    <?php if (!empty($entry['links']) && is_array($entry['links'])) : ?>
+                        <span class="kop-res-links">
+                            <?php foreach ($entry['links'] as $link_label => $link_url) : ?>
+                                <a href="<?php echo esc_url($link_url); ?>" target="_blank" rel="noopener"><?php echo esc_html($link_label); ?></a>
+                            <?php endforeach; ?>
+                        </span>
                     <?php endif; ?>
                 </li>
             <?php endforeach; ?>
