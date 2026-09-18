@@ -108,6 +108,10 @@
     var LABEL_SIZE = 11.5;
     var LABEL_SIZE_HOVER = 13;
     var LABEL_LINE = 13;
+    /* Offsets for the lines of successive hubs in one gutter, in steps of
+     * five pixels: the middle, then either side of it. */
+    var LANES = [0, 1, -1, 2, -2];
+
     /* Bucket size for the collision grid, in screen pixels. */
     var LABEL_CELL = 48;
     /* Breathing room around each label's box. Boxes that merely touch still
@@ -609,6 +613,8 @@
 
         var scene = { nodes: [], edges: [] };
         var buckets = [];
+        /* Edge id to its offset in a shared gutter; see rebuildBuckets. */
+        var laneOf = Object.create(null);
         var chainIndex = null;
         var frameStamp = 0;
         /* Cell geometry of the current layout, so traces can run along the
@@ -724,6 +730,32 @@
             /* Thin and faint first, so an ownership line is never hidden
              * under an unrecorded one. */
             buckets.sort(function (a, b) { return a.style.width - b.style.width; });
+
+            /* Which offset each line runs at in a shared gutter. Lines are
+             * grouped by the busier of their two ends - the company, not
+             * each of the twenty-four programmes it owned - and a group
+             * shares one offset, so its runs lie on top of each other and
+             * read as one trunk with a branch off to each end, the way the
+             * owner's board draws them. Given an offset each, WWASPS's
+             * ownership lines were twenty-four parallel strands across the
+             * map. Within a style, each hub gets the next offset along, so
+             * two hubs' trunks sit side by side rather than merging into one
+             * that would join things nothing joins. */
+            var count = Object.create(null);
+            scene.edges.forEach(function (e) {
+                count[e.sourceId] = (count[e.sourceId] || 0) + 1;
+                count[e.targetId] = (count[e.targetId] || 0) + 1;
+            });
+            laneOf = Object.create(null);
+            buckets.forEach(function (bucket) {
+                var lanes = Object.create(null);
+                var next = 0;
+                bucket.edges.forEach(function (e) {
+                    var hub = (count[e.targetId] || 0) > (count[e.sourceId] || 0) ? e.targetId : e.sourceId;
+                    if (lanes[hub] === undefined) lanes[hub] = next++;
+                    laneOf[e.id] = lanes[hub];
+                });
+            });
         }
 
         /* --------------------------------------------------------- sizing -- */
@@ -930,8 +962,10 @@
                          * cross the viewport, which is most of them zoomed in. */
                         if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
                         if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
-                        /* Spread the runs of edges sharing a gutter. */
-                        var route = routeEdge(ax, ay, cx, cy, ((i % 5) - 2) * 5 * (geo ? geo.jitterScale : 1), geo, a, c);
+                        /* Spread the runs of edges sharing a gutter: one
+                         * offset per hub, the middle first. */
+                        var lane = LANES[(laneOf[edge.id] || 0) % LANES.length];
+                        var route = routeEdge(ax, ay, cx, cy, lane * 5 * (geo ? geo.jitterScale : 1), geo, a, c);
                         strokeRoute(ctx, route.pts);
                         route.edge = edge;
                         routes.push(route);

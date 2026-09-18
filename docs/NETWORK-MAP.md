@@ -160,45 +160,67 @@ mostly blank canvas. Measured on a thirty-six node neighbourhood it used 32%
 of the stage, with seventeen nodes in one quadrant and two in another, and
 only twenty of the thirty-six names could be drawn without overlapping.
 
-The clicked node sits in the centre row. Above it are the people who ran
-things and, above them, the companies; below it the programmes and, beneath
-them, everyone else who worked there. Ownership and command are what this
-map is for, so they sit above the places they acted on. "The people who ran
-things" is read off the connections rather than the job title - anyone with
-a leadership, board or ownership edge was running something, 230 of the 335
-people on the board.
+**Clusters, not bands (2026-09-18).** The first board layout stacked the
+whole view in bands: every company in the top rows, the people who ran
+things under them, every programme below, everyone else at the bottom. It
+used the stage, but it put a person a stage away from the programmes they
+worked at and ran lines from one edge of the map to the other. In Provo
+Canyon School's view the median line was five rows long. The owner's Miro
+board does the opposite: each family of names sits together as its own
+small tree, and the trees fill the space between them.
 
-Within each band, distance from the centre row is distance from what was
-clicked: first-degree connections take the rows nearest the centre,
-second-degree the rows beyond, so a trace runs away from the middle rather
-than doubling back across it, and within a row a node is ordered by where
-its parent sits. The company band is the exception: there, distance from the
-centre is distance *up the ownership chain*, read off corporate edges
-between two companies with the source owning the target. A company that owns
-another on screen is always in a row above it, whatever ring either was
-revealed in - ring order alone drew a subsidiary above the company that owns
-it - and a change in ownership height starts a new row, so an owner is never
-drawn level with what it owns. These are not competing arrangements;
-hierarchy is the axis and distance from the click is how far along it a node
-goes.
+The layout (`boardLayout` in `focus.js`) now works the same way:
+
+- *Levels.* Organisations are levelled first, from what joins them to each
+  other: a company above what it owns, a programme above what it was
+  renamed to, and lineage through a person (a body someone belonged to
+  above what they founded, two levels apart so the person fits between:
+  AA, Dederich, Synanon). People are hung off their organisations
+  afterwards, a level above what they ran and a level below where they
+  worked. People do not push organisations apart; when they did, a staffer
+  at one programme who ran another put the second a level under the first,
+  and a cluster of twenty-four names came out ten rows deep.
+- *Clusters.* Greedy modularity (Louvain's first stage, then once more on
+  its clusters), in a fixed order so a view always splits the same way,
+  with a size cap. Ownership links count three times, so owners stay in
+  the cluster of what they own. Names with one connection follow the name
+  they hang off. What was clicked keeps its own owners and holdings in its
+  cluster. A view of twenty names or fewer is not split at all.
+- *Each cluster as a tree.* Levels are worked out again inside the
+  cluster, so a chain passing through other clusters leaves no empty rows.
+  Barycentre sweeps order each level to cut crossings, a level wider than
+  the cluster's share of the stage wraps under itself (a hub's staff become
+  a small grid under it), and each name slides along its row towards what
+  it connects to, inside a frame a tenth wider than the widest row.
+- *Packing.* The cluster holding the click goes down first; each next one
+  is the unplaced cluster with most links to what is down. It goes where
+  its lines are shortest and the board stays nearest the stage's shape, and
+  it is fitted row by row rather than as a rectangle, so it can sit beside
+  another tree's short top rows. Breaking an ownership or rename between
+  clusters costs 3000 (about a stage of line); breaking a person's level
+  costs 400. At 4000 for both, nearly every slot broke something and every
+  cluster lined up in one board-width strip.
+- Everything stays on one lattice of rows, which is what the router's
+  gutters need.
+
+Measured at a 1200 x 860 stage on fourteen views against the band layout:
+the mean line is shorter in every view over 25 names, by 12-35% in seven of
+the eight (Provo Canyon School 454 world units against 531, Universal
+Health Services 357 against 442, today's top players 263 against 405) and
+by 1% in WWASPS, whose 24 programmes wrap into a grid under it (407 against
+411). Every ownership and rename reads top to
+bottom in all fourteen (the band layout broke one or more in seven: UHS 24
+of 30), and Provo's 95 names still all fit on the stage.
+
+Lines from one hub share one offset in a gutter (`laneOf` in `canvas.js`),
+so a company's lines to its programmes merge into a trunk with a branch to
+each, as the board draws them, instead of twenty-four parallel strands. Two
+hubs of the same style get neighbouring offsets, so their trunks never merge
+into one that would join things nothing joins.
 
 Rows are packed by the width each name actually needs, not cut into columns
-of a fixed width: a fixed column has to be as wide as the longest name or it
-drops it, and as narrow as the stage allows or it runs out of columns, and
-with one thirty-four character programme among forty short ones there is no
-width that is both. A band's rings share one run of rows rather than each
-starting its own, because with five bands and three rings that fragmentation
-alone doubled the row count and pushed the block off the bottom of the
-stage. Rows pack at the full width of the stage first, since a block wider
-than the stage is the one thing that costs names. A shallow view - the six
-opening organisations, or one person - is then repacked to a block nearer
-the shape of the stage so the fit can zoom in and fill it; the width is
-chosen by packing at each candidate and measuring, because names are
-indivisible and a width worked out from area alone landed just under two
-names and stood the six organisations in a single column. Zooming in only
-ever makes a cell wider than its name. Gutters tighten before the fit is
-ever allowed to scale a block down. Opening Provo Canyon School is 53 nodes
-in ten rows with 53 labels.
+of a fixed width, and gutters tighten before the fit is ever allowed to
+scale the board down.
 
 **What is on the board.** The map opens on the curated organisations. Once
 something is clicked, the board holds that node and everything it touches,

@@ -1006,76 +1006,67 @@ function run() {
         crossings + ' route legs cross a node they do not connect',
         routes.length + ' routes, ' + legs + ' legs, none through a node they do not connect');
 
-    /* Every node in its own cell, spread over the stage rather than knotted
-     * into one corner of it. */
-    const gp = hubScene.nodes.map((n) => focus.positionOf(n));
-    const gx = gp.map((p) => p.x);
-    const gy = gp.map((p) => p.y);
-    const midX = (Math.max(...gx) + Math.min(...gx)) / 2;
-    const midY = (Math.max(...gy) + Math.min(...gy)) / 2;
-    const quads = [0, 0, 0, 0];
-    gp.forEach((p) => { quads[(p.x > midX ? 1 : 0) + (p.y > midY ? 2 : 0)]++; });
-    const worst = Math.max(...quads) / Math.max(1, Math.min(...quads));
-    check(worst <= 2.5,
-        'the layout is lopsided: ' + quads.join('/') + ' nodes per quadrant',
-        'nodes per quadrant: ' + quads.join('/'));
+    /* The board fills the stage: a block near the stage's own shape, not
+     * a strip across it or a column down it, and not knotted into one
+     * corner. */
+    const tf = viewport.transform;
+    const sxs = hubScene.nodes.map((n) => focus.positionOf(n).x * tf.k + tf.x);
+    const sys = hubScene.nodes.map((n) => focus.positionOf(n).y * tf.k + tf.y);
+    const spanW = (Math.max(...sxs) - Math.min(...sxs)) / renderer.width;
+    const spanH = (Math.max(...sys) - Math.min(...sys)) / renderer.height;
+    check(spanW >= 0.5 && spanH >= 0.5,
+        'the WWASPS view uses ' + Math.round(spanW * 100) + '% of the stage across and ' +
+        Math.round(spanH * 100) + '% down',
+        'the WWASPS view spans ' + Math.round(spanW * 100) + '% of the stage across and ' +
+        Math.round(spanH * 100) + '% down');
 
-    /* The map is a hierarchy around the clicked node's row. Above it, the
-     * people who ran things and, above them, the companies; below it, the
-     * programmes and then everyone else. Roots sit in the centre whatever
-     * they are. Within a band, rings run outwards from the centre row. */
+    /* The map reads downwards the way the owner's board does: a company
+     * above what it owns and a programme above what it was renamed to,
+     * whichever cluster each end landed in. */
     const bandOf = (n) => {
         if (n.kind === 'parent' || n.kind === 'association') return 0;
-        if (n.kind === 'person') {
-            const by = n.degreeByCategory || {};
-            return ((by.leadership || 0) + (by.board || 0) + (by.corporate || 0)) > 0 ? 1 : 3;
-        }
-        if (n.kind === 'facility') return 2;
-        return 4;
+        if (n.kind === 'person') return 1;
+        return 2;
     };
-    const hubNeighbours = store.neighbours('wwasps', true)
-        .map((l) => l.other.id)
-        .filter((id) => hubScene.nodeIds[id]);
-    const rootY = focus.positionOf(store.node('wwasps')).y;
     const yOf = (n) => focus.positionOf(n).y;
-    const others = hubScene.nodes.filter((n) => n.id !== 'wwasps');
-    const band = (b) => others.filter((n) => bandOf(n) === b).map(yOf);
-    const companies = band(0);
-    const command = band(1);
-    const programmes = band(2);
-    /* Staff one step from the click sit beside it in the centre row
-     * (0592dd5); the rest of the staff go beneath the programmes. */
-    const staff = others.filter((n) => bandOf(n) === 3 &&
-        !(hubNeighbours.indexOf(n.id) !== -1 && Math.abs(yOf(n) - rootY) < 1)).map(yOf);
-    check(companies.length && command.length && programmes.length,
-        'too few bands on screen to test the hierarchy');
-    check(Math.max(...companies) < Math.min(...command),
-        'a company is drawn below a member of corporate staff');
-    check(Math.max(...command) < rootY, 'corporate staff are not above the clicked node');
-    check(Math.min(...programmes) > rootY, 'a programme is drawn above the clicked node');
-    if (staff.length) {
-        check(Math.min(...staff) > Math.max(...programmes),
-            'other staff are drawn among the programmes rather than beneath them');
-    }
-    check(Math.min(...companies) === Math.min(...others.map(yOf)),
-        'the companies are not at the top of the map');
+    const ownershipOrder = (scene) => {
+        const out = { pairs: 0, wrong: [] };
+        scene.edges.forEach((e) => {
+            if (e.category !== 'corporate' || bandOf(e.source) === 1 || bandOf(e.target) === 1) return;
+            let upper = null;
+            if (e.direction === 'renamed' || bandOf(e.source) === bandOf(e.target)) {
+                if (e.direction === 'renamed' || bandOf(e.source) === 0) upper = e.source;
+            } else {
+                upper = bandOf(e.source) === 0 ? e.source : e.target;
+            }
+            if (!upper) return;
+            const lower = upper === e.source ? e.target : e.source;
+            out.pairs++;
+            if (yOf(upper) >= yOf(lower)) out.wrong.push(upper.name + ' over ' + lower.name);
+        });
+        return out;
+    };
+    const wwOrder = ownershipOrder(hubScene);
+    check(wwOrder.pairs > 10 && wwOrder.wrong.length === 0,
+        wwOrder.wrong.length + ' of ' + wwOrder.pairs + ' ownerships in the WWASPS view are drawn upside down: ' +
+        wwOrder.wrong.slice(0, 3).join(', '),
+        'all ' + wwOrder.pairs + ' ownerships and renames in the WWASPS view read top to bottom');
+    const wwasps = store.node('wwasps');
+    const ownedBelow = hubScene.edges.filter((e) => e.sourceId === 'wwasps' && e.category === 'corporate' &&
+        e.target.kind === 'facility');
+    check(ownedBelow.length > 10 && ownedBelow.every((e) => yOf(e.target) > yOf(wwasps)),
+        'a programme WWASPS owned is drawn level with it or above it');
 
-    /* Rings outward: a node revealed by a parent in the same band is never
-     * nearer the centre row than that parent. Companies are ordered by
-     * ownership instead, which is checked separately below. */
-    const parentsOf = (n) => store.neighbours(n.id, true).map((l) => l.other)
-        .filter((o) => hubScene.nodeIds[o.id] && o.id !== 'wwasps' && bandOf(o) === bandOf(n));
-    let wrappedBack = 0;
-    others.forEach((n) => {
-        if (bandOf(n) === 0) return;
-        const inward = parentsOf(n).filter((o) => hubNeighbours.indexOf(o.id) !== -1);
-        if (!inward.length || hubNeighbours.indexOf(n.id) !== -1) return;
-        const dist = Math.abs(yOf(n) - rootY);
-        if (inward.some((o) => dist < Math.abs(yOf(o) - rootY) - 1)) wrappedBack++;
-    });
-    check(wrappedBack === 0,
-        wrappedBack + ' second-degree nodes sit nearer the centre row than the node that revealed them',
-        'rings run outwards from the centre row in every band');
+    /* A person hangs beside the places they were at, not a stage away: a
+     * person who ran something is a row above it, one who worked there a
+     * row below, unless their places disagree. */
+    const hung = hubScene.edges.filter((e) => (e.source.kind === 'person') !== (e.target.kind === 'person') &&
+        ['leadership', 'staff', 'clinical', 'admissions'].indexOf(e.category) !== -1);
+    const rowStep = focus.grid().cellH;
+    const close = hung.filter((e) => Math.abs(yOf(e.source) - yOf(e.target)) <= rowStep * 2 + 1);
+    check(hung.length > 0 && close.length / hung.length >= 0.5,
+        'only ' + close.length + ' of ' + hung.length + ' people in the WWASPS view are within two rows of their places',
+        close.length + ' of ' + hung.length + ' people-to-place lines in the WWASPS view span two rows or fewer');
 
     /* Inside the company band, a company that owns another on screen sits
      * above it. Read off corporate edges between two companies, source
@@ -1101,6 +1092,25 @@ function run() {
     check(ownedAbove === 0,
         ownedAbove + ' of ' + ownershipPairs + ' companies are drawn below a company they own',
         'every company sits above the companies it owns (' + ownershipPairs + ' pairs)');
+    const provoOrder = ownershipOrder(ownView);
+    check(provoOrder.wrong.length === 0,
+        provoOrder.wrong.length + ' of ' + provoOrder.pairs + ' ownerships in the ' + hub.name +
+        ' view are drawn upside down: ' + provoOrder.wrong.slice(0, 3).join(', '));
+
+    /* Clusters keep lines short. Every company along the top and every
+     * programme along the bottom, the layout this replaced, put the median
+     * line in this view five rows long and fewer than a third of them
+     * within two rows; kept in clusters, what belongs together is drawn
+     * together. */
+    const spans = ownView.edges.map((e) =>
+        Math.round(Math.abs(yOf(e.source) - yOf(e.target)) / focus.grid().cellH)).sort((a, b) => a - b);
+    const medianSpan = spans[Math.floor(spans.length / 2)];
+    const shortShare = spans.filter((d) => d <= 2).length / spans.length;
+    check(medianSpan <= 3 && shortShare >= 0.4,
+        'lines in the ' + hub.name + ' view are long: median ' + medianSpan + ' rows, ' +
+        Math.round(shortShare * 100) + '% within two rows',
+        'lines in the ' + hub.name + ' view: median ' + medianSpan + ' rows, ' +
+        Math.round(shortShare * 100) + '% within two rows');
     focus.clear();
     flushFrames();
     focus.select(store.node('wwasps'));
