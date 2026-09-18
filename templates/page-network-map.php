@@ -186,7 +186,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 
 					<button type="button" class="kop-network__button" id="kop-network-filters-toggle"
 						aria-expanded="false" aria-controls="kop-network-rail">
-						Filters
+						Key
 					</button>
 					<button type="button" class="kop-network__button" id="kop-network-reset-view">
 						Reset view
@@ -207,130 +207,31 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 
 			<div class="kop-network__body">
 
-				<aside class="kop-network__rail" id="kop-network-rail" aria-label="Filters">
+				<aside class="kop-network__rail" id="kop-network-rail" aria-label="Key">
 
 					<div class="kop-network__rail-inner">
 
-						<fieldset class="kop-network__group">
-							<legend>Show</legend>
-							<?php foreach ($kop_net_kinds as $kind) : ?>
-								<label class="kop-network__check">
-									<input type="checkbox" name="kop-network-kind" value="<?php echo esc_attr($kind); ?>" checked>
-									<span><?php echo esc_html(kop_network_map_label($kind, 'kind')); ?></span>
-									<?php if (!empty($kop_net_counts['kind_' . $kind])) : ?>
-										<span class="kop-network__count"><?php echo esc_html(number_format_i18n((int) $kop_net_counts['kind_' . $kind])); ?></span>
-									<?php endif; ?>
-								</label>
-							<?php endforeach; ?>
-						</fieldset>
-
-						<fieldset class="kop-network__group">
-							<legend>Connections</legend>
-							<?php foreach ($kop_net_cats as $cat) : ?>
-								<label class="kop-network__check">
-									<input type="checkbox" name="kop-network-category" value="<?php echo esc_attr($cat); ?>"<?php echo in_array($cat, array('corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership'), true) ? ' checked' : ''; ?>>
-									<span><?php echo esc_html(kop_network_map_label($cat, 'category')); ?></span>
-									<?php if (!empty($kop_net_counts['edge_' . $cat])) : ?>
-										<span class="kop-network__count"><?php echo esc_html(number_format_i18n((int) $kop_net_counts['edge_' . $cat])); ?></span>
-									<?php endif; ?>
-								</label>
-							<?php endforeach; ?>
-						</fieldset>
-
-						<fieldset class="kop-network__group">
-							<legend>Status</legend>
-							<label class="kop-network__check">
-								<input type="checkbox" name="kop-network-status" value="open" checked>
-								<span>Open</span>
-							</label>
-							<label class="kop-network__check">
-								<input type="checkbox" name="kop-network-status" value="closed" checked>
-								<span>Closed</span>
-							</label>
-							<label class="kop-network__check">
-								<input type="checkbox" name="kop-network-status" value="rebranded" checked>
-								<span>Rebranded</span>
-							</label>
-							<label class="kop-network__check">
-								<input type="checkbox" name="kop-network-status" value="unknown" checked>
-								<span>Status unrecorded</span>
-							</label>
-							<label class="kop-network__check">
-								<input type="checkbox" id="kop-network-natsap-only">
-								<span>NATSAP members only</span>
-							</label>
-						</fieldset>
-
-						<?php if ($kop_net_chains) : ?>
-							<fieldset class="kop-network__group">
-								<legend>Owner</legend>
-								<label class="kop-network__check">
-									<input type="checkbox" name="kop-network-chain" value="" checked>
-									<span>No recorded owner</span>
-								</label>
-								<?php foreach ($kop_net_chains as $chain) : ?>
-									<label class="kop-network__check">
-										<input type="checkbox" name="kop-network-chain" value="<?php echo esc_attr($chain); ?>" checked>
-										<span><?php echo esc_html($chain); ?></span>
-									</label>
-								<?php endforeach; ?>
-							</fieldset>
-						<?php endif; ?>
-
-						<?php if ($kop_net_regions) : ?>
-							<fieldset class="kop-network__group kop-network__group--collapsed">
-								<legend>
-									<button type="button" class="kop-network__legend-toggle"
-										aria-expanded="false" aria-controls="kop-network-regions">
-										Board grouping
-									</button>
-								</legend>
-								<div id="kop-network-regions" hidden>
-									<p class="kop-network__note">
-										How the research board is laid out, not a statement of
-										ownership. The two "Asst." frames are overflow space.
-									</p>
-									<?php foreach ($kop_net_regions as $region) : ?>
-										<label class="kop-network__check">
-											<input type="checkbox" name="kop-network-region" value="<?php echo esc_attr($region); ?>" checked>
-											<span><?php echo esc_html($region); ?></span>
-										</label>
-									<?php endforeach; ?>
-								</div>
-							</fieldset>
-						<?php endif; ?>
-
-						<fieldset class="kop-network__group">
-							<legend>Refine</legend>
-							<label class="kop-network__range">
-								<?php
-								// Starts at zero, and zero reads as "any". A floor of one
-								// would hide every unconnected name by default, and the
-								// board records three: Judge Rotenberg Educational Center,
-								// IECA and Accelerated Christian Education. Nobody has
-								// documented a connection for them yet, which is not a
-								// reason for the map to leave them out.
-								?>
-								<span>Minimum connections: <output id="kop-network-degree-out">any</output></span>
-								<input type="range" id="kop-network-degree" min="0" max="10" step="1" value="0">
-							</label>
-							<label class="kop-network__check">
-								<input type="checkbox" id="kop-network-cross-region">
-								<span>Only connections that cross board groups</span>
-							</label>
-							<button type="button" class="kop-network__button kop-network__button--quiet" id="kop-network-reset-filters">
-								Reset filters
-							</button>
-						</fieldset>
-
 						<?php
-						// The legend lives in the rail, not floating over the stage.
-						// On a narrow window an overlay covered a third of the map
-						// and the labels underneath it, which is the opposite of a
-						// key's job.
+						// The rail holds only the key now. The filter checkboxes
+						// (kinds, connection types, status, owner, board grouping,
+						// minimum connections) took a column of the page and were
+						// not what anyone used the map for; the map runs on the
+						// store's defaults. filters.js still drives the key and
+						// finds no checkboxes to wire.
+						//
+						// The key lives here rather than floating over the stage:
+						// on a narrow window an overlay covered a third of the map
+						// and the labels underneath it.
+						?>
+						<?php
+						$kop_net_kind_labels = array();
+						foreach ($kop_net_kinds as $kind) {
+							$kop_net_kind_labels[$kind] = kop_network_map_label($kind, 'kind');
+						}
 						?>
 						<div class="kop-network__group kop-network__legend" id="kop-network-legend"
-							role="group" aria-label="Legend"></div>
+							role="group" aria-label="Legend"
+							data-kind-labels="<?php echo esc_attr(wp_json_encode($kop_net_kind_labels)); ?>"></div>
 
 					</div>
 				</aside>

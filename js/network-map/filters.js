@@ -88,6 +88,14 @@
         var regionsToggle = document_.querySelector('.kop-network__legend-toggle');
 
         kindLabels = labelsFrom('kop-network-kind');
+        /* The page no longer renders the kind checkboxes, so the wording
+         * comes from the legend element instead, still printed by PHP. */
+        if (!Object.keys(kindLabels).length && legend && legend.getAttribute('data-kind-labels')) {
+            try {
+                var printed = JSON.parse(legend.getAttribute('data-kind-labels'));
+                Object.keys(printed).forEach(function (k) { kindLabels[k] = printed[k]; });
+            } catch (e) { /* raw kind names are a fallback, not a failure */ }
+        }
 
         /* ----------------------------------------------------- rail state -- */
 

@@ -252,10 +252,9 @@
 	outline-offset: -2px;
 }
 
-/* The rail starts closed at every width and this is the way in. The map
- * opens on a handful of organisations and grows by clicking, so the filters
- * are a second-order tool, and the 250px they took as a permanent column is
- * width the labels need. */
+/* The rail holds only the key, starts closed at every width, and this
+ * button (labelled Key) is the way in. The 250px it would take as a
+ * permanent column is width the labels need. */
 #kop-network-filters-toggle {
 	display: inline-block;
 }
@@ -648,7 +647,7 @@
 		display: inline-block;
 	}
 
-	/* The rail becomes a sheet over the map, opened by the Filters button. */
+	/* The rail becomes a sheet over the map, opened by the Key button. */
 	.kop-network__rail {
 		position: fixed;
 		z-index: 30;
