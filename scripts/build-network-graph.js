@@ -50,7 +50,7 @@ const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'chu
 const qa = {
     kindGuesses: [], ambiguousAcquirers: [], unmatchedFacilities: [], multiMatchFacilities: [],
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
-    droppedRows: [], chainInferred: [], missingHeadline: [],
+    droppedRows: [], chainInferred: [], missingHeadline: [], missingViewNames: [],
     rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
     profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: []
 };
@@ -109,7 +109,7 @@ function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
         return {
             merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
-            statuses: {}, years: {}, deaths: {}
+            statuses: {}, years: {}, deaths: {}, views: {}
         };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
@@ -124,7 +124,9 @@ function loadOverrides() {
         /* name -> "1971-2004", for a node no record dates. */
         years: raw.years || {},
         /* name -> count, for memorial rows the matcher cannot place. */
-        deaths: raw.deaths || {}
+        deaths: raw.deaths || {},
+        /* key -> {label, names}: the other ways the map can open (2b.10). */
+        views: raw.views || {}
     };
 }
 
@@ -1198,6 +1200,25 @@ function build() {
         }
     });
 
+    /* The views the map can open on, headline first as "default". Resolved
+     * to ids here for the same reason as the headline; a view that resolves
+     * to nothing is left out rather than offered empty. */
+    const views = [{ key: 'default', label: 'The largest networks', ids: headline }];
+    Object.keys(overrides.views).forEach(function (key) {
+        if (key === 'default' || !/^[a-z0-9-]+$/.test(key)) {
+            qa.missingViewNames.push('view key "' + key + '" is reserved or not lowercase-with-hyphens');
+            return;
+        }
+        const view = overrides.views[key] || {};
+        const ids = [];
+        (view.names || []).forEach(function (name) {
+            const node = byName.get(String(name).toLowerCase());
+            if (node) ids.push(node.id);
+            else qa.missingViewNames.push(key + ': ' + String(name));
+        });
+        if (ids.length) views.push({ key: key, label: String(view.label || key), ids: ids });
+    });
+
     const chains = Array.from(new Set(nodes.map(function (n) { return n.chain; }).filter(Boolean))).sort();
     const regions = Array.from(new Set(nodes.reduce(function (all, n) {
         return all.concat(n.regions);
@@ -1217,7 +1238,9 @@ function build() {
             /* The organisations the map opens on, as node ids, in the order
              * the curator listed them. Names that match nothing are dropped
              * here rather than left for the browser to trip over. */
-            headline: headline
+            headline: headline,
+            /* [{key, label, ids}], "default" first: the headline. */
+            views: views
         },
         nodes: nodes,
         edges: edges
@@ -1314,6 +1337,9 @@ function writeQaReport(graph) {
 
     section(lines, 'Staff moves with a place not on the board', qa.staffUnresolved, function (item) { return item; },
         'Skipped. Add an alias under `aliases` if the place is on the board under another name.');
+
+    section(lines, 'Starter-view names not found on the board', qa.missingViewNames, function (item) { return item; },
+        'Fix the spelling under `views` in network-overrides.json, or drop the name.');
 
     section(lines, 'Merged nodes', qa.mergedNodes, function (item) { return item; }, '');
     section(lines, 'Duplicate edges dropped', qa.duplicateEdges, function (item) { return item; }, '');

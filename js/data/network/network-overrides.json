@@ -26,6 +26,10 @@
     "                organisation no facility or operator record dates.",
     "deaths        - board name -> number of memorial deaths, for memorial rows",
     "                the build could not place on a node.",
+    "views         - other lists the map can open on, offered as \"Start from\":",
+    "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
+    "                Keys are lowercase with hyphens; \"default\" is the headline.",
+    "                The select only appears once there is at least one view.",
     "",
     "Run `node scripts/build-network-graph.js` after any edit and work through",
     "tmp/network-qa.md."
@@ -108,5 +112,6 @@
   ],
   "statuses": {},
   "years": {},
-  "deaths": {}
+  "deaths": {},
+  "views": {}
 }

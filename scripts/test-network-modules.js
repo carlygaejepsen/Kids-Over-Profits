@@ -1873,6 +1873,26 @@ function run() {
     focus.clear();
     flushFrames();
 
+    /* 2b.10 Starter views: the map can open on another curated list, and
+     * a link carries the choice. */
+    check(store.views()[0].key === 'default', 'the first view is not the default headline');
+    const savedMeta = store.meta.views;
+    store.meta.views = [store.views()[0], { key: 'probe', label: 'Probe', ids: ['provo-canyon-school', 'wwasps'] }];
+    check(store.setView('probe') === true && store.view === 'probe', 'switching to a starter view failed');
+    focus.restore([], 'focus');
+    flushFrames();
+    const probeOpen = focus.scene().nodes.map((n) => n.id).sort().join(',');
+    check(probeOpen === 'provo-canyon-school,wwasps',
+        'the probe view opened on ' + probeOpen, 'a starter view opens on its own organisations');
+    check(store.setView('nonsense') === false && store.view === 'default', 'an unknown view was not refused');
+    check(Url.format([], 'focus', 'probe') === '#view=probe', 'a starter view does not reach the hash');
+    check(Url.parse('#view=probe').view === 'probe' && Url.parse('#view=Bad View').view === null,
+        'the view in a hash does not parse, or a bad key was accepted');
+    store.meta.views = savedMeta;
+    store.setView('default');
+    focus.restore([], 'focus');
+    flushFrames();
+
     /* The Brown Schools and CEDU used to be drawn on top of each other: two
      * wide-labelled companies the force settle packed 52 units apart. The
      * band layout gives each a cell, and ownership order puts the acquirer

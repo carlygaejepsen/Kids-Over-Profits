@@ -167,7 +167,16 @@
              * before it has been read. */
             if (window.KOPNetworkUrlState) {
                 app.urlState = window.KOPNetworkUrlState.create({
-                    focus: focus, window: window
+                    focus: focus, window: window,
+                    view: function () { return store.view; },
+                    /* A link naming a starter view opens on it. */
+                    onView: function (key) {
+                        if (key === store.view) return false;
+                        store.setView(key);
+                        var select = byId('kop-network-view');
+                        if (select) select.value = store.view;
+                        return true;
+                    }
                 });
                 if (app.urlState) app.urlState.read();
             }
@@ -297,6 +306,17 @@
                     : 'Focus: each click shows only that name\'s connections.');
             });
         });
+
+        /* Where the map opens: swap the opening organisations and start
+         * over on them. */
+        var viewSelect = byId('kop-network-view');
+        if (viewSelect) {
+            viewSelect.addEventListener('change', function () {
+                app.store.setView(viewSelect.value);
+                app.focus.restore([], app.focus.mode());
+                app.announce('Starting from: ' + viewSelect.options[viewSelect.selectedIndex].text + '.');
+            });
+        }
 
         var whole = byId('kop-network-whole-map');
         if (whole) {

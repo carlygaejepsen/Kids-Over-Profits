@@ -27,6 +27,7 @@ $kop_net_cats    = !empty($kop_net_meta['categories']) ? $kop_net_meta['categori
 $kop_net_chains  = !empty($kop_net_meta['chains']) ? $kop_net_meta['chains'] : array();
 $kop_net_regions = !empty($kop_net_meta['regions']) ? $kop_net_meta['regions'] : array();
 $kop_net_counts  = !empty($kop_net_meta['counts']) ? $kop_net_meta['counts'] : array();
+$kop_net_views   = !empty($kop_net_meta['views']) ? $kop_net_meta['views'] : array();
 $kop_net_ready   = !empty($kop_net_kinds);
 
 // The location index lists every facility; the program index only operators and chains.
@@ -124,6 +125,22 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 				</div>
 
 				<div class="kop-network__actions">
+					<?php
+					// Where the map opens (2b.10). Only printed when the board
+					// offers more than the default; the lists are curated under
+					// "views" in js/data/network/network-overrides.json.
+					if (count($kop_net_views) > 1) :
+					?>
+						<label class="kop-network__colour">
+							<span>Start from</span>
+							<select id="kop-network-view" class="kop-network__select">
+								<?php foreach ($kop_net_views as $kop_net_view) : ?>
+									<option value="<?php echo esc_attr($kop_net_view['key']); ?>"<?php selected($kop_net_view['key'], 'default'); ?>><?php echo esc_html($kop_net_view['label']); ?></option>
+								<?php endforeach; ?>
+							</select>
+						</label>
+					<?php endif; ?>
+
 					<label class="kop-network__colour">
 						<span>Colour by</span>
 						<select id="kop-network-colour-mode" class="kop-network__select">

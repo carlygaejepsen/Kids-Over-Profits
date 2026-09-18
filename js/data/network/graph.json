@@ -97,6 +97,20 @@
    "cedu-family-of-services",
    "sequel-youth-and-family-services",
    "universal-health-services"
+  ],
+  "views": [
+   {
+    "key": "default",
+    "label": "The largest networks",
+    "ids": [
+     "wwasps",
+     "synanon",
+     "teen-challenge",
+     "cedu-family-of-services",
+     "sequel-youth-and-family-services",
+     "universal-health-services"
+    ]
+   }
   ]
  },
  "nodes": [

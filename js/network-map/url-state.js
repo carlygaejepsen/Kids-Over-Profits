@@ -16,9 +16,9 @@
 (function (root) {
     'use strict';
 
-    /** {ids: [...], mode: 'focus'|'expand'|null} from a hash string. */
+    /** {ids: [...], mode: 'focus'|'expand'|null, view: key|null} from a hash string. */
     function parse(hash) {
-        var out = { ids: [], mode: null };
+        var out = { ids: [], mode: null, view: null };
         var text = String(hash || '').replace(/^#/, '');
         if (!text) return out;
         text.split('&').forEach(function (pair) {
@@ -35,19 +35,24 @@
                 out.ids = value.split(',').map(function (id) { return id.trim(); }).filter(Boolean);
             } else if (key === 'mode' && (value === 'focus' || value === 'expand')) {
                 out.mode = value;
+            } else if (key === 'view' && /^[a-z0-9-]+$/.test(value)) {
+                out.view = value;
             }
         });
         return out;
     }
 
-    /** The hash for a trail, or '' for the opening view. */
-    function format(ids, mode) {
-        if (!ids || !ids.length) return '';
-        var parts = ['open=' + ids.map(encodeURIComponent).join(',')];
-        /* Focus is the default, so it is left out and a plain link stays
-         * short. */
-        if (mode === 'expand') parts.push('mode=expand');
-        return '#' + parts.join('&');
+    /** The hash for a trail and a starter view, or '' for the plain opening view. */
+    function format(ids, mode, view) {
+        var parts = [];
+        if (ids && ids.length) {
+            parts.push('open=' + ids.map(encodeURIComponent).join(','));
+            /* Focus is the default, so it is left out and a plain link stays
+             * short. */
+            if (mode === 'expand') parts.push('mode=expand');
+        }
+        if (view && view !== 'default') parts.push('view=' + encodeURIComponent(view));
+        return parts.length ? '#' + parts.join('&') : '';
     }
 
     function create(options) {
@@ -60,7 +65,7 @@
 
         /** Mirror the trail into the address bar. */
         function write() {
-            var hash = format(focus.chain(), focus.mode());
+            var hash = format(focus.chain(), focus.mode(), options.view ? options.view() : null);
             if ((location_.hash || '') === hash) return;
             writing = true;
             var base = String(location_.href || '').split('#')[0];
@@ -75,7 +80,8 @@
         /** Open whatever the address bar describes. */
         function read() {
             var state = parse(location_.hash);
-            if (!state.ids.length && !focus.chain().length) return;
+            var viewChanged = options.onView ? options.onView(state.view || 'default') : false;
+            if (!state.ids.length && !focus.chain().length && !viewChanged) return;
             focus.restore(state.ids, state.mode);
         }
 

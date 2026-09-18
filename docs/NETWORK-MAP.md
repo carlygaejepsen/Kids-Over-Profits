@@ -910,6 +910,20 @@ may or may not be Silverado Boys Ranch) and are listed in the QA report.
 Longer term, as the plan says, these belong in `staff.pastTTIJobs` on the
 v2 record so the profile and the map read one source.
 
+### Step 7 mechanism (2026-09-18): starter views (2b.10)
+
+`network-overrides.json` takes `views`: `{"key": {"label": "...",
+"names": [...]}}`. The build resolves each to ids under `meta.views`, with
+the headline first as `default`; a name that matches nothing is listed in
+the QA report and a view that resolves to nothing is dropped. The store
+opens on the chosen view (`store.setView`, `store.seeds`), the toolbar gets
+a "Start from" select - printed only when there is more than the default -
+and the hash carries `view=key`, so a link can open on it.
+
+**Waiting on the owner:** the lists themselves (historical, today's big
+players, religious, or whatever else). Nothing is invented here; until a
+list is added the map behaves exactly as before.
+
 ### Already covered by 5b
 
 - **Every visible node labelled.** The degree threshold is gone and every

@@ -393,8 +393,26 @@
          * missing, so a board export without one still opens on something
          * sensible rather than on nothing.
          */
+        /* Which of the build's starter views the map opens on (2b.10).
+         * "default" is the curated headline. */
+        store.view = 'default';
+
+        /** The views the build offers, [{key, label, ids}], default first. */
+        store.views = function () {
+            var views = (store.meta && store.meta.views) || [];
+            return views.length ? views : [{ key: 'default', label: 'The largest networks', ids: (store.meta && store.meta.headline) || [] }];
+        };
+
+        /** Switch the opening organisations; false for a view that does not exist. */
+        store.setView = function (key) {
+            var found = store.views().some(function (v) { return v.key === key; });
+            store.view = found ? key : 'default';
+            return found;
+        };
+
         store.seeds = function () {
-            var ids = (store.meta && store.meta.headline) || [];
+            var current = store.views().filter(function (v) { return v.key === store.view; })[0];
+            var ids = current ? current.ids : ((store.meta && store.meta.headline) || []);
             var out = [];
             var seen = Object.create(null);
             ids.forEach(function (id) {

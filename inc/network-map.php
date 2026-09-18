@@ -92,6 +92,7 @@ if (!function_exists('kop_network_map_meta')) {
             'chains'     => array(),
             'regions'    => array(),
             'counts'     => array(),
+            'views'      => array(),
             'sourceHash' => '',
         );
 
@@ -118,6 +119,10 @@ if (!function_exists('kop_network_map_meta')) {
             'chains'     => isset($meta['chains']) ? (array) $meta['chains'] : array(),
             'regions'    => isset($meta['regions']) ? (array) $meta['regions'] : array(),
             'counts'     => isset($meta['counts']) ? (array) $meta['counts'] : array(),
+            // Starter views, key and label only: the ids stay in graph.json.
+            'views'      => array_map(static function ($view) {
+                return array('key' => (string) ($view['key'] ?? ''), 'label' => (string) ($view['label'] ?? ''));
+            }, isset($meta['views']) ? (array) $meta['views'] : array()),
             'sourceHash' => isset($meta['sourceHash']) ? (string) $meta['sourceHash'] : '',
         );
 
