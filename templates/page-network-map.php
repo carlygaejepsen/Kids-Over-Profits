@@ -21,6 +21,23 @@ if (have_posts()) {
     the_post();
 }
 
+// A password-protected page (how the map is shared with beta testers) gets
+// WordPress's own password form and nothing else. This template prints its
+// own markup instead of the_content(), so without this check the protection
+// would never be asked for.
+if (post_password_required()) {
+    ?>
+    <div class="kop-network kop-network--locked">
+        <header class="kop-network__intro">
+            <h1 class="kop-network__title"><?php the_title(); ?></h1>
+        </header>
+        <?php echo get_the_password_form(); // Core markup, escaped by core. ?>
+    </div>
+    <?php
+    get_footer();
+    return;
+}
+
 $kop_net_meta    = function_exists('kop_network_map_meta') ? kop_network_map_meta() : array();
 $kop_net_kinds   = !empty($kop_net_meta['kinds']) ? $kop_net_meta['kinds'] : array();
 $kop_net_cats    = !empty($kop_net_meta['categories']) ? $kop_net_meta['categories'] : array();

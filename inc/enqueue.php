@@ -1966,7 +1966,8 @@ function kop_enqueue_template_assets() {
         }
     };
 
-    if (kop_page_uses_template('page-network-map.php')) {
+    if (kop_page_uses_template('page-network-map.php')
+        && !(is_singular() && post_password_required(get_queried_object_id()))) {
         $style('kop-network-map', '/css/network-map.css');
 
         // The same force bundle the layout build uses. It ships to the browser

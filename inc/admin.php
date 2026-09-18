@@ -413,6 +413,10 @@ function kop_tool_page_specs() {
         array('template' => 'page-submit-lawsuit.php',     'title' => 'Submit a Lawsuit',    'slug' => 'submit-lawsuit',     'status' => 'publish'),
         array('template' => 'page-memorial.php',           'title' => 'In Loving Memory',    'slug' => 'in-loving-memory',   'status' => 'publish'),
         array('template' => 'page-inspection-reports.php', 'title' => 'Inspection Reports',  'slug' => 'inspection-reports', 'status' => 'publish'),
+        // Created as a draft so it is never public by accident. To share it
+        // with beta testers: Edit page, Visibility > Password protected,
+        // Publish, and send them the link and the password.
+        array('template' => 'page-network-map.php',        'title' => 'Network Map',         'slug' => 'network-map',        'status' => 'draft'),
     );
 }
 
@@ -468,7 +472,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '4';
+    $version = '5';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
