@@ -802,68 +802,38 @@ function run() {
         'the layout is lopsided: ' + quads.join('/') + ' nodes per quadrant',
         'nodes per quadrant: ' + quads.join('/'));
 
-    /* What was opened sits in the middle, with what it connects to around
-     * it. Sorting the grid by the settled position instead left the hub
-     * against one edge with everything it owns stacked down the far side. */
-    const hubPos = focus.positionOf(store.node('wwasps'));
-    const spanX = Math.max(...gx) - Math.min(...gx);
-    const spanY = Math.max(...gy) - Math.min(...gy);
-    const offX = Math.abs(hubPos.x - midX) / Math.max(1, spanX / 2);
-    const offY = Math.abs(hubPos.y - midY) / Math.max(1, spanY / 2);
-    check(offX < 0.34 && offY < 0.34,
-        'the opened node sits ' + Math.round(Math.max(offX, offY) * 100) +
-        '% of the way to the edge instead of in the middle',
-        'the opened node sits ' + Math.round(Math.max(offX, offY) * 100) + '% off centre');
-
-    /* Its own connections should be the nearest things to it, not scattered
-     * to one side of the board. */
-    const hubNeighbours = store.neighbours('wwasps', true)
-        .map((l) => l.other.id)
-        .filter((id) => hubScene.nodeIds[id]);
-    const ring = hubNeighbours.map((id) => {
-        const p = focus.positionOf(store.node(id));
-        return { id, angle: Math.atan2(p.y - hubPos.y, p.x - hubPos.x) };
-    });
-    const sides = [0, 0, 0, 0];
-    ring.forEach((r) => {
-        const q = Math.floor(((r.angle + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 2));
-        sides[q]++;
-    });
-    /* Second-degree connections branch outwards rather than wrapping back
-     * across the middle. For every node two steps out, the node that
-     * revealed it should sit between it and the centre - not on the far side
-     * of the board with its trace crossing everything to get there. */
-    /* The grid is built centred on the origin, so that is the middle to
-     * measure from - not the bounding box of the nodes, which shifts when
-     * the outermost ring is only partly filled. */
-    const centre = { x: 0, y: 0 };
-    const distTo = (id) => {
-        const p = focus.positionOf(store.node(id));
-        return Math.hypot(p.x - centre.x, p.y - centre.y);
+    /* The map reads top to bottom as a hierarchy: the companies, then the
+     * people who ran them, then the programmes, then everyone else who
+     * worked there. Ownership and command are what this map is for, so they
+     * sit above the places they acted on. */
+    const bandOf = (n) => {
+        if (n.kind === 'parent' || n.kind === 'association') return 0;
+        if (n.kind === 'person') {
+            const by = n.degreeByCategory || {};
+            return ((by.leadership || 0) + (by.board || 0) + (by.corporate || 0)) > 0 ? 1 : 3;
+        }
+        if (n.kind === 'facility') return 2;
+        return 4;
     };
-    const firstRing = new Set(hubNeighbours);
-    let outward = 0;
-    let inward = 0;
+    const lowest = new Map();
+    const highest = new Map();
     hubScene.nodes.forEach((n) => {
-        if (n.id === 'wwasps' || firstRing.has(n.id)) return;
-        /* Whichever first-ring node it hangs off. */
-        const parents = store.neighbours(n.id, true)
-            .map((l) => l.other.id)
-            .filter((id) => firstRing.has(id));
-        if (!parents.length) return;
-        const nearestParent = parents.reduce((a, b) => (distTo(a) <= distTo(b) ? a : b));
-        if (distTo(n.id) >= distTo(nearestParent) - 1) outward++;
-        else inward++;
+        const band = bandOf(n);
+        const y = focus.positionOf(n).y;
+        if (!lowest.has(band) || y < lowest.get(band)) lowest.set(band, y);
+        if (!highest.has(band) || y > highest.get(band)) highest.set(band, y);
     });
-    check(outward + inward > 3, 'too few second-degree nodes to tell which way they branch');
-    /* Not zero: when the outermost ring of the grid has no room left, a
-     * node has to go somewhere, and the rule is a heavy preference rather
-     * than a law. A handful is the crowded edge of the board; a third of
-     * them would be the rule not working. */
-    check(inward <= 1,
-        inward + ' of ' + (inward + outward) +
-        ' second-degree nodes sit closer to the middle than the node that revealed them',
-        (outward) + ' of ' + (inward + outward) + ' second-degree nodes branch outwards');
+    const bands = [...lowest.keys()].sort((a, b) => a - b);
+    check(bands.length >= 3, 'too few bands on screen to tell whether they stack in order');
+    let outOfOrder = 0;
+    for (let i = 0; i + 1 < bands.length; i++) {
+        if (highest.get(bands[i]) >= lowest.get(bands[i + 1])) outOfOrder++;
+    }
+    check(outOfOrder === 0,
+        outOfOrder + ' bands overlap the one below them instead of stacking',
+        'bands stack in order: ' + bands.map((b) => ['companies', 'command', 'programmes', 'staff', 'other'][b]).join(' then '));
+    check(bands[0] === 0 && lowest.get(0) === Math.min(...hubScene.nodes.map((n) => focus.positionOf(n).y)),
+        'the companies are not at the top of the map');
 
     /* Whoever owned a programme is never left off: ownership is the question
      * this map exists to answer. */
@@ -925,40 +895,6 @@ function run() {
 
     focus.clear();
     flushFrames();
-    focus.select(store.node('wwasps'));
-    flushFrames();
-
-    /* Rows are staggered like brickwork, so a node sits diagonally between
-     * its neighbours above and below rather than directly under one. */
-    const rowsAt = new Map();
-    hubScene.nodes.forEach((n) => {
-        const p = focus.positionOf(n);
-        const key = Math.round(p.y);
-        if (!rowsAt.has(key)) rowsAt.set(key, []);
-        rowsAt.get(key).push(p.x);
-    });
-    const rowKeys = [...rowsAt.keys()].sort((a, b) => a - b);
-    check(rowKeys.length >= 3, 'the grid has too few rows to tell whether it staggers');
-    let staggered = 0;
-    for (let r = 0; r + 1 < rowKeys.length; r++) {
-        const a = rowsAt.get(rowKeys[r]).slice().sort((x, y) => x - y);
-        const b = rowsAt.get(rowKeys[r + 1]).slice().sort((x, y) => x - y);
-        /* No node in one row shares a column with one in the next. */
-        if (!a.some((x) => b.some((y) => Math.abs(x - y) < 1))) staggered++;
-    }
-    check(staggered === rowKeys.length - 1,
-        'only ' + staggered + ' of ' + (rowKeys.length - 1) + ' row pairs are offset from each other',
-        'all ' + rowKeys.length + ' rows sit offset from their neighbours');
-
-    check(sides.filter((c) => c > 0).length >= 3,
-        'the opened node has its connections on only ' +
-        sides.filter((c) => c > 0).length + ' side(s) of it: ' + sides.join('/'),
-        'connections sit on ' + sides.filter((c) => c > 0).length + ' sides of the opened node');
-
-    focus.clear();
-    flushFrames();
-
-
 
     /* --- hover previews --- */
 

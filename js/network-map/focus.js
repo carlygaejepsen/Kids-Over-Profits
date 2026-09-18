@@ -56,6 +56,18 @@
     var LABEL_HALF_PER_CHAR = LABEL_CHAR_WIDTH / 2;
     /* Clear space between one column's names and the next. */
     var COLUMN_GUTTER = 26;
+    /* The bands, top to bottom. */
+    var TIER_COMPANY = 0;
+    var TIER_COMMAND = 1;
+    var TIER_PROGRAMME = 2;
+    var TIER_STAFF = 3;
+    var TIER_OTHER = 4;
+
+    /* Clear space between one row's names and the next. Tight, because
+     * rows are what a tall map spends its height on and every row that does
+     * not fit is a name that does not appear. */
+    var ROW_GUTTER = 12;
+
     /* What a cell costs when it sits closer to the middle of the board than
      * the node that revealed it. Large enough to be a rule rather than a
      * preference, finite so that a crowded board still places everything. */
@@ -545,7 +557,8 @@
                      * and the grid agree about how much room this name
                      * takes. */
                     space: spaceFor(node),
-                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH)
+                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH),
+                    tier: tierOf(node)
                 };
                 byId[node.id] = point;
                 return point;
@@ -689,6 +702,37 @@
             return order;
         }
 
+        /**
+         * Which band of the map a node belongs in, top to bottom.
+         *
+         * The companies first, then the people who ran them, then the
+         * programmes, then everyone else who worked there, then the bodies
+         * around the edges of the industry. Ownership and command are what
+         * this map is for, so they sit above the places they acted on.
+         *
+         * "Corporate staff" is read off the connections rather than the
+         * person: somebody with a leadership, board or ownership edge was
+         * running something, whatever their title. Of the 335 people on the
+         * board, 230 have one.
+         */
+        /** How many tiers this scene actually uses. */
+        function tierCount(points) {
+            var used = Object.create(null);
+            points.forEach(function (p) { used[p.tier] = true; });
+            return Math.max(1, Object.keys(used).length);
+        }
+
+        function tierOf(node) {
+            if (node.kind === 'parent' || node.kind === 'association') return TIER_COMPANY;
+            if (node.kind === 'person') {
+                var by = node.degreeByCategory || {};
+                var runs = (by.leadership || 0) + (by.board || 0) + (by.corporate || 0);
+                return runs > 0 ? TIER_COMMAND : TIER_STAFF;
+            }
+            if (node.kind === 'facility') return TIER_PROGRAMME;
+            return TIER_OTHER;
+        }
+
         /* Short rows carry one fewer node and sit half a cell across, which
          * is what makes the stagger. */
         function isShortRow(row) {
@@ -701,135 +745,100 @@
             return full * cols + short * Math.max(1, cols - 1);
         }
 
+        /**
+         * Lay the nodes out in tiers, top to bottom, in as many rows as each
+         * tier needs.
+         *
+         * The board has a hierarchy and the map should read like one: the
+         * companies first, then the people who ran them, then the programmes
+         * themselves, then everyone else who worked there. Arranging by
+         * distance from whatever was clicked put a parent company below a
+         * facility it owned whenever the facility was clicked first, which is
+         * the wrong way up for the question this map answers.
+         *
+         * Rows are sized by their contents rather than by the stage - a cell
+         * is one label wide and one name tall - and the block that results is
+         * scaled to the stage afterwards by the fit. That is what puts every
+         * label on screen: cells are built from the labels outwards, so more
+         * nodes means more rows rather than tighter cells, and six nodes
+         * spread over a stage meant for forty is a fit problem rather than a
+         * layout one.
+         */
         function gridLayout(points, padding, roots, links) {
             var n = points.length;
             grid = null;
             if (!n || !renderer.width) return 0;
 
-            var boardW = Math.max(120, renderer.width - padding * 2);
-            var boardH = Math.max(120, renderer.height - padding * 2);
+            /* Rows are packed by the width each name actually needs rather
+             * than cut into columns of a fixed width. A fixed column has to
+             * be as wide as the longest name in the scene or it drops it, and
+             * as narrow as the stage allows or it runs out of columns - with
+             * one thirty-four character programme among forty short ones
+             * there is no width that is both. Packing by width gives every
+             * name exactly the room it takes and lets a row hold as many as
+             * it can. */
+            var board = Math.max(200, renderer.width - padding * 2);
+            var tallest = points.reduce(function (t, p) { return Math.max(t, p.r); }, 0);
+            var rowH = tallest * 2 + LABEL_ROOM + ROW_GUTTER;
 
-            /* The widest name would give one very long label a veto over the
-             * whole grid, so the column width is set by the upper quartile
-             * and the few longer names are allowed to run into their
-             * neighbours' margins. */
-            var widths = points.map(function (p) { return p.label; }).sort(function (a, b) { return a - b; });
-            var wide = widths[Math.min(widths.length - 1, Math.floor(widths.length * 0.88))];
-            var cellNeeds = wide + COLUMN_GUTTER;
-
-            /* Enough columns to look like the stage, but never so many that a
-             * name cannot fit in one. */
-            var byShape = Math.max(1, Math.round(Math.sqrt(n * (boardW / boardH))));
-            var byLabel = Math.max(1, Math.floor(boardW / cellNeeds));
-            var cols = Math.max(1, Math.min(byShape, byLabel, n));
-
-            /* Rows are staggered like brickwork: a full row of `cols`, then a
-             * short row of one fewer offset by half a cell, and so on. Every
-             * node ends up diagonally between its neighbours above and below
-             * rather than directly under one, which is what stops a column of
-             * names reading as a list and gives each label clear air on both
-             * sides of the row above it. */
-            var rows = 1;
-            while (capacity(rows, cols) < n) rows++;
-
-            var cellW = boardW / cols;
-            var cellH = boardH / rows;
-
-            /* Published for the renderer, which routes its traces along the
-             * gutters between these cells rather than across them. */
-            grid = {
-                x0: -boardW / 2, y0: -boardH / 2,
-                cellW: cellW, cellH: cellH, cols: cols, rows: rows
-            };
-
-            /* Cells, nearest the middle of the board first. */
-            var cells = [];
-            var midRow = (rows - 1) / 2;
-            for (var row = 0; row < rows; row++) {
-                var short = isShortRow(row);
-                var inRow = short ? cols - 1 : cols;
-                var midCol = (inRow - 1) / 2;
-                for (var col = 0; col < inRow; col++) {
-                    cells.push({
-                        x: (col - midCol) * cellW,
-                        y: (row - midRow) * cellH,
-                        /* Measured in cells rather than pixels so a wide grid
-                         * does not rank a cell one column over as further
-                         * away than one three rows down. */
-                        d: Math.hypot(col - midCol, row - midRow),
-                        angle: Math.atan2(row - midRow, col - midCol)
-                    });
-                }
-            }
-            cells.sort(function (a, b) {
-                if (a.d !== b.d) return a.d - b.d;
-                return a.angle - b.angle;
+            /* Tiers, in the order they are stacked. */
+            var tiers = [[], [], [], [], []];
+            var order = ringOrder(points, roots, links);
+            order.forEach(function (entry) {
+                tiers[entry.node.tier].push(entry.node);
             });
 
-            /* Nodes, in rings outwards from what was opened.
-             *
-             * Sorting by the settled position instead puts the hub wherever
-             * the forces happened to leave it - against one edge, with
-             * everything it owns stacked down the far side of the board and
-             * nothing on the other three. Walking out from the opened node
-             * puts it in the middle and rings its connections around it,
-             * which is the shape the relationship actually has.
-             *
-             * Within a ring the settled layout still decides the order, by
-             * angle about the centre, so things that sit near each other in
-             * the force layout stay near each other here. */
-            /* Each node takes the free cell nearest whatever revealed it,
-             * and pays a heavy price for one closer to the middle than its
-             * parent.
-             *
-             * Filling the cells in ring order alone put a second-degree node
-             * wherever the next shell happened to have room - often on the
-             * far side of the board from the node it hangs off - so its trace
-             * wrapped back across the middle, over everything else, to reach
-             * a parent it should have been sitting beside. Branching outwards
-             * is not decoration: a line that travels away from the centre is
-             * one the eye can follow, and a line that doubles back is one it
-             * has to untangle.
-             */
-            var order = ringOrder(points, roots, links);
-            var taken = [];
-            var cellOf = Object.create(null);
+            /* How wide a row is allowed to run. Wide enough for the longest
+             * name whatever happens, so nothing is unplaceable, and
+             * otherwise the shape that comes nearest to filling the stage
+             * once the rows are stacked. */
+            var widest = points.reduce(function (t, p) { return Math.max(t, p.label + COLUMN_GUTTER); }, 0);
+            var total = points.reduce(function (t, p) { return t + p.label + COLUMN_GUTTER; }, 0);
+            var aspect = renderer.width / Math.max(1, renderer.height);
+            var ideal = Math.sqrt(total * rowH * aspect);
+            var rowWidth = Math.max(widest, Math.min(board, ideal));
 
-            for (var i = 0; i < order.length; i++) {
-                var entry = order[i];
-                var parentCell = entry.parent ? cellOf[entry.parent] : null;
-                var best = -1;
-                var bestCost = Infinity;
-
-                for (var c = 0; c < cells.length; c++) {
-                    if (taken[c]) continue;
-                    var cell = cells[c];
-                    var cost;
-                    if (!parentCell) {
-                        /* Nothing revealed this one, so it belongs as near the
-                         * middle as there is room for. */
-                        cost = cell.d;
-                    } else {
-                        cost = Math.hypot(cell.x - parentCell.x, cell.y - parentCell.y);
-                        if (cell.d < parentCell.d - 0.01) cost += INWARD_PENALTY;
+            var rows = [];
+            tiers.forEach(function (tier) {
+                var row = [];
+                var used = 0;
+                tier.forEach(function (point) {
+                    var need = point.label + COLUMN_GUTTER;
+                    if (row.length && used + need > rowWidth) {
+                        rows.push(row);
+                        row = [];
+                        used = 0;
                     }
-                    if (cost < bestCost) { bestCost = cost; best = c; }
-                }
+                    row.push(point);
+                    used += need;
+                });
+                /* Each tier starts a fresh row, so a band of the map is
+                 * always a whole number of rows and never shares one with the
+                 * band below. */
+                if (row.length) rows.push(row);
+            });
 
-                if (best < 0) break;
-                taken[best] = true;
-                cellOf[entry.node.id] = cells[best];
-                entry.node.x = cells[best].x;
-                entry.node.y = cells[best].y;
-            }
+            var shiftY = (rows.length - 1) * rowH / 2;
+            rows.forEach(function (row, index) {
+                var width = row.reduce(function (t, p) { return t + p.label + COLUMN_GUTTER; }, 0);
+                var x = -width / 2;
+                row.forEach(function (point) {
+                    var need = point.label + COLUMN_GUTTER;
+                    point.x = x + need / 2;
+                    point.y = index * rowH - shiftY;
+                    x += need;
+                });
+            });
 
-            /* A name wider than its cell hangs over the edges of it. That is
-             * fine in the middle of the board, where the neighbouring cell
-             * has room to spare, and not fine in the outermost column, where
-             * it hangs over the edge of the canvas and gets cut in half.
-             * Report the overhang so the frame can allow for it. */
-            var widest = widths[widths.length - 1];
-            return Math.max(0, (widest - cellW) / 2);
+            grid = {
+                x0: -rowWidth / 2, y0: -shiftY - rowH / 2,
+                cellW: rowWidth / Math.max(1, rows[0] ? rows[0].length : 1),
+                cellH: rowH, cols: rows[0] ? rows[0].length : 1, rows: rows.length
+            };
+
+            /* Every name now has exactly its own width, so nothing hangs
+             * over anything. */
+            return 0;
         }
 
         function stopSettle() {

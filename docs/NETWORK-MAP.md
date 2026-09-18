@@ -147,79 +147,35 @@ is a preview precisely because it is reversible.
 **Built.** Several things about it are worth recording, including two that
 cost an afternoon each.
 
-**The layout is a grid, not a force settle.** A force layout arranges by
-relationship, which is the right input and the wrong output: it packs the
-well-connected into a knot and leaves the corners of the stage empty, so
-names collide in the middle of a mostly blank canvas. Measured on a
-thirty-six node neighbourhood it used 32% of the stage, with seventeen nodes
-in one quadrant and two in another, and only twenty of the thirty-six names
-could be drawn without overlapping.
+**The layout is a stack of bands, not a force settle.** A force layout
+arranges by relationship, which is the right input and the wrong output: it
+packs the well-connected into a knot and leaves the corners of the stage
+empty, so names collide in the middle of a mostly blank canvas. Measured on
+a thirty-six node neighbourhood it used 32% of the stage, with seventeen
+nodes in one quadrant and two in another, and only twenty of the thirty-six
+names could be drawn without overlapping.
 
-So the simulation is kept only as a tie-breaker, and the grid is filled from
-the middle outwards: cells nearest the centre of the board first, nodes in
-rings outwards from whatever was opened. The opened node lands in the middle
-and the things it connects to ring it, which is the shape the relationship
-actually has. Ordering the grid by the settled position instead left the hub
-against one edge with everything it owns stacked down the far side of the
-board and nothing on the other three - measured, the opened node sat 80% of
-the way to the edge. Within a ring the settled layout still decides the
-order, by angle about the centre, so things that sit near each other in the
-force layout stay near each other here. Cells are sized from the labels outwards, not
-the nodes outwards: a name can only collide with its neighbour if the cell
-is narrower than the name. The same neighbourhood now uses 65% of the stage,
-nine nodes to a quadrant, and every one of the thirty-six is named.
+The map now reads top to bottom as a hierarchy: the companies, then the
+people who ran them, then the programmes, then everyone else who worked
+there, then the bodies around the edges of the industry. Ownership and
+command are what this map is for, so they sit above the places they acted
+on. "The people who ran them" is read off the connections rather than the
+job title - anyone with a leadership, board or ownership edge was running
+something, which is 230 of the 335 people on the board.
 
-**A person never appears alone.** The fact worth having about someone on
-this map is which programmes they turn up at - the therapist who appears at
-four schools in a row, the director whose next job is the company that
-bought the last one - and a name sitting with a single line back to whatever
-revealed it hides exactly that. So when a person surfaces, everywhere they
-connect to surfaces with them. It opens out by one step and stops: a person
-reached through another person's expansion does not expand in turn. People
-are the cheap case to do this for, median degree two and most of them seven
-or under, but a rule that walked outwards without a stop would not stay
-cheap.
+Rows are packed by the width each name actually needs, not cut into columns
+of a fixed width. A fixed column has to be as wide as the longest name in
+the scene or it drops it, and as narrow as the stage allows or it runs out
+of columns; with one thirty-four character programme among forty short ones
+there is no width that is both, and the map lost a name either way. Packing
+by width gives every name exactly the room it takes and lets a row hold as
+many as it can: forty-five names, forty-five labels, eleven rows.
 
-**Whoever owned it is never left off, and brings only itself.** Ownership
-is the question this map exists to answer, so a programme on screen without
-the company behind it is the one gap worth closing automatically. One step
-only - the company that owned this place, not the company that owned that
-company and so on, which walks Provo Canyon School up through ten
-organisations and buries the question that was asked. And owners only, never
-their other holdings: two facilities owned by the same company are not each
-other's business, and the only thing that puts a second one on screen beside
-the first is somebody who worked at both.
-
-The rule applies to what was asked for, not to the organisations the map
-opened with. Letting the background expand too turned a click on Casa Grande
-Academy into nineteen parent companies and one facility.
-
-**Second-degree connections branch outwards.** Each node takes the free cell
-nearest whatever revealed it, so a node two steps out sits beside its parent
-rather than wherever the next ring happened to have room - which was often
-the far side of the board, with its trace wrapping back across the middle
-over everything else. Filling cells in ring order alone left 17% of
-second-degree nodes closer to the centre than the node they hang off; taking
-the nearest free cell to the parent leaves none. There is also a heavy cost
-on any cell closer to the middle than the parent, which measures as
-redundant today and is kept because the rule should be stated rather than
-left to emerge from the cell ordering.
-
-**Opening something hides whatever it does not reach.** Once a node is
-open, the map is about that node. The organisations it opened with have no
-bearing on the question being asked unless they turn out to connect to it,
-and left on screen they are names taking up cells in the grid with no line
-to anything, which the reader has to work out for themselves are leftovers
-rather than part of the answer. What was clicked always stays, even where
-the filters have taken away everything it connected to. The opening view
-itself is exempt: six organisations with two connections between them would
-come down to two.
-
-Rows are staggered like brickwork - a full row, then a short row of one
-fewer offset by half a cell - so a node sits diagonally between its
-neighbours above and below rather than directly under one. That is what
-stops a column of names reading as a list and gives each label clear air on
-both sides of the row above it.
+Rows are sized by their contents rather than by the stage - a row is one
+name tall - and the block that results is scaled to the stage by the fit
+afterwards. Anything that has to be scaled *down* takes its cells below one
+label wide and starts dropping names, so the number of rows is chosen to
+keep the block inside the stage at full size.
 
 **A trace must never look like a connection.** The routing drew a line from
 one node to another straight across the cells in between, and on a board
