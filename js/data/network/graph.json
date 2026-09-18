@@ -4,7 +4,7 @@
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 1177,
-   "edges": 2204,
+   "edges": 2206,
    "facilityMatches": 329,
    "withYears": 204,
    "withDeaths": 27,
@@ -23,7 +23,7 @@
    "edge_corporate": 450,
    "edge_family": 47,
    "edge_survivor": 6,
-   "edge_referral": 9,
+   "edge_referral": 11,
    "edge_board": 32,
    "edge_leadership": 626,
    "edge_clinical": 378,
@@ -265,40 +265,7 @@
      "lighthouse-for-boys",
      "bethesda-home-for-girls",
      "teen-challenge",
-     "herman-fountain",
-     "bethel-boys-academy",
-     "wwasps",
-     "provo-canyon-school",
-     "david-gilcrease",
-     "cross-creek-programs",
-     "casa-by-the-sea",
-     "academy-at-ivy-ridge",
-     "glenn-bender",
-     "academy-at-swift-river",
-     "michael-charnley",
-     "rudy-bentz",
-     "life",
-     "george-ross",
-     "straight-inc",
-     "loretta-parrish",
-     "safe-inc",
-     "florida-gov-jeb-bush",
-     "george-w-bush",
      "governor-george-w-bush-of-texas",
-     "don-vardell",
-     "excel-academy",
-     "shortridge-academy",
-     "tammy-prince-behrman",
-     "spring-ridge-academy",
-     "guinevere-hilton",
-     "jeannie-courtney",
-     "mike-naylor",
-     "universal-health-services",
-     "cedu-family-of-services",
-     "synanon",
-     "the-seed",
-     "betty-sembler",
-     "mel-sembler",
      "rev-bobby-ray-papa-wills",
      "rev-wiley-cameron",
      "betty-wills",
@@ -3191,6 +3158,34 @@
    "years": "2000-2011"
   },
   {
+   "id": "rebekah-home-for-girls",
+   "name": "Rebekah Home for Girls",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "Roloff"
+   ],
+   "natsap": false,
+   "importance": 28749,
+   "degree": 8,
+   "degreeByCategory": {
+    "staff": 3,
+    "leadership": 2,
+    "corporate": 2,
+    "referral": 1
+   },
+   "facilityId": 10865,
+   "uniqueName": "Rebekah Home for Girls",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -301.5,
+    "y": -744.03
+   }
+  },
+  {
    "id": "second-nature-blue-ridge",
    "name": "Second Nature Blue Ridge",
    "aliases": [],
@@ -3830,33 +3825,6 @@
     "y": 106.4
    },
    "years": "2005-2010"
-  },
-  {
-   "id": "rebekah-home-for-girls",
-   "name": "Rebekah Home for Girls",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "Roloff"
-   ],
-   "natsap": false,
-   "importance": 28749,
-   "degree": 7,
-   "degreeByCategory": {
-    "staff": 3,
-    "leadership": 2,
-    "corporate": 2
-   },
-   "facilityId": 10865,
-   "uniqueName": "Rebekah Home for Girls",
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -301.5,
-    "y": -744.03
-   }
   },
   {
    "id": "red-mountain-colorado",
@@ -8250,6 +8218,34 @@
    ]
   },
   {
+   "id": "governor-george-w-bush-of-texas",
+   "name": "Governor George W. Bush of Texas",
+   "aliases": [
+    "Governor Texas"
+   ],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Synanon"
+   ],
+   "natsap": false,
+   "importance": 50766,
+   "degree": 4,
+   "degreeByCategory": {
+    "referral": 3,
+    "unknown": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "1995-2000",
+   "isolated": false,
+   "board": {
+    "x": -658.78,
+    "y": -429.52
+   }
+  },
+  {
    "id": "greenbrier-academy",
    "name": "Greenbrier Academy",
    "aliases": [],
@@ -9716,6 +9712,33 @@
    "board": {
     "x": 499.09,
     "y": -484.1
+   }
+  },
+  {
+   "id": "roloff-evangelistic-enterprises",
+   "name": "Roloff Evangelistic Enterprises",
+   "aliases": [],
+   "kind": "church",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "Roloff"
+   ],
+   "natsap": false,
+   "importance": 66019,
+   "degree": 4,
+   "degreeByCategory": {
+    "leadership": 2,
+    "referral": 1,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -343.48,
+    "y": -762.36
    }
   },
   {
@@ -15701,32 +15724,6 @@
    ]
   },
   {
-   "id": "roloff-evangelistic-enterprises",
-   "name": "Roloff Evangelistic Enterprises",
-   "aliases": [],
-   "kind": "church",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "Roloff"
-   ],
-   "natsap": false,
-   "importance": 66019,
-   "degree": 3,
-   "degreeByCategory": {
-    "leadership": 2,
-    "staff": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -343.48,
-    "y": -762.36
-   }
-  },
-  {
    "id": "ron-may",
    "name": "Ron May",
    "aliases": [],
@@ -20418,34 +20415,6 @@
    "board": {
     "x": -391.28,
     "y": -109.18
-   }
-  },
-  {
-   "id": "governor-george-w-bush-of-texas",
-   "name": "Governor George W. Bush of Texas",
-   "aliases": [
-    "Governor Texas"
-   ],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 50766,
-   "degree": 2,
-   "degreeByCategory": {
-    "referral": 1,
-    "unknown": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "1995-2000",
-   "isolated": false,
-   "board": {
-    "x": -658.78,
-    "y": -429.52
    }
   },
   {
@@ -49036,6 +49005,32 @@
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false
+  },
+  {
+   "id": "e1311",
+   "source": "governor-george-w-bush-of-texas",
+   "target": "roloff-evangelistic-enterprises",
+   "category": "referral",
+   "roles": [
+    "endorsed (1997 accreditation)"
+   ],
+   "raw": "endorsed (1997 accreditation)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true
+  },
+  {
+   "id": "e1312",
+   "source": "governor-george-w-bush-of-texas",
+   "target": "rebekah-home-for-girls",
+   "category": "referral",
+   "roles": [
+    "endorsed (1997 accreditation)"
+   ],
+   "raw": "endorsed (1997 accreditation)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true
   },
   {
    "id": "p0001",

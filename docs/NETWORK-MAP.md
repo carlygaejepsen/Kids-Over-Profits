@@ -998,6 +998,14 @@ between them, so an unnamed connection is an invisible one:
    hidden type records it in the view's `show`, and `store.setView` turns
    it on (fundamentalist: Teen Challenge's only line out is George W. Bush's
    endorsement, a referral).
+
+   The board had no Roloff-Bush line, so the only route from Roloff to Teen
+   Challenge ran 17 steps through WWASPS, CEDU, Synanon, Straight and SAFE.
+   `overrides.edges` now adds lines the board is missing, worded like the
+   board's own labels and cited: Governor Bush "endorsed" Roloff Evangelistic
+   Enterprises and the Rebekah Home (he signed the 1997 alternative
+   accreditation law, lobbied for by Roloff's attorney David Gibbs, that the
+   Roloff homes returned to Texas under). The view is now eight nodes.
 2. Bridge: anything with a direct line to two named items is added (Stallone
    and Molin between Synanon and CEDU, which the direct Synanon-CEDU line
    would otherwise make the route skip).
@@ -1011,7 +1019,7 @@ no drawn line to the rest.
 | todays-top-players | Universal Health Services, Acadia Healthcare, Newport Academy (+ Procopia, Norton) | 29 |
 | wilderness | Eckerd Youth Alternatives, Second Nature, Aspen Education Group, ANASAZI Foundation (+ Ben Pearson) | 33 |
 | juvenile-justice | Rite of Passage, Youth Opportunity Investments, Youth Services International, Sequel, G4S Youth Services, VisionQuest, Glen Mills, Ramsay Youth Services, Keystone Education and Youth Services, Eckerd Youth Alternatives | 29 |
-| fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 41 |
+| fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 8 (+ Governor Bush) |
 
 Correctional Services Corporation is not on the board yet.
 

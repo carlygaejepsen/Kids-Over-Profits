@@ -31,6 +31,9 @@
     "regionChains  - board frame -> chain whose colour its lines carry, where",
     "                the frame is not itself a chain (Wilderness is Aspen's).",
     "membershipColour - the board's colour for NATSAP membership lines.",
+    "edges         - lines the board is missing: {\"from\", \"to\", \"relationship\",",
+    "                \"source\"}. Worded like the board's own labels; source is",
+    "                the citation, for reviewers.",
     "views         - other lists the map can open on, offered as \"Start from\":",
     "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
     "                Keys are lowercase with hyphens; \"default\" is the headline.",
@@ -129,6 +132,20 @@
   "statuses": {},
   "years": {},
   "deaths": {},
+  "edges": [
+    {
+      "from": "Governor George W. Bush of Texas",
+      "to": "Roloff Evangelistic Enterprises",
+      "relationship": "endorsed (1997 accreditation)",
+      "source": "https://www.texasobserver.org/437-dateline-texas-taking-deregulation-on-faith/"
+    },
+    {
+      "from": "Governor George W. Bush of Texas",
+      "to": "Rebekah Home for Girls",
+      "relationship": "endorsed (1997 accreditation)",
+      "source": "https://www.austinchronicle.com/news/2000-12-15/79818/"
+    }
+  ],
   "views": {
     "historical": {
       "label": "Historical",

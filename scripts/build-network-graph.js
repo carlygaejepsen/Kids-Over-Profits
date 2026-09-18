@@ -116,7 +116,7 @@ function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
         return {
             merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
-            statuses: {}, years: {}, deaths: {}, views: {}
+            statuses: {}, years: {}, deaths: {}, views: {}, edges: []
         };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
@@ -134,6 +134,9 @@ function loadOverrides() {
         deaths: raw.deaths || {},
         /* key -> {label, names}: the other ways the map can open (2b.10). */
         views: raw.views || {},
+        /* [{from, to, relationship, source}]: lines the board is missing,
+         * fed to the build as if they were export rows. */
+        edges: raw.edges || [],
         /* The board's own colours: chain -> line colour, frame -> chain whose
          * colour its lines carry, and the NATSAP membership colour. A board
          * export has no colours in it, so they are kept here. */
@@ -1181,10 +1184,40 @@ function rescaleBoard(nodes) {
  * Build
  * ------------------------------------------------------------------ */
 
+/**
+ * Lines the board does not draw, from overrides.edges, appended to the export
+ * rows so they are categorised, directed and captioned exactly like the
+ * board's own. Each end is found by name; its frame comes from the node row,
+ * and a name drawn in more than one frame, or on none, is reported.
+ */
+function addOverrideEdgeRows(edgeRows, nodeRows, overrides) {
+    const frames = new Map();
+    nodeRows.forEach(function (row) {
+        if (!frames.has(row.name)) frames.set(row.name, []);
+        frames.get(row.name).push(row.network);
+    });
+    overrides.edges.forEach(function (edge) {
+        const from = frames.get(edge.from) || [];
+        const to = frames.get(edge.to) || [];
+        if (from.length !== 1 || to.length !== 1) {
+            qa.missingViewNames.push('edges: ' + edge.from + ' -> ' + edge.to +
+                ' (each end must name exactly one node on the board)');
+            return;
+        }
+        edgeRows.push({
+            from: edge.from, from_network: from[0],
+            to: edge.to, to_network: to[0],
+            relationship: edge.relationship || '', type: 'people',
+            crosses_network: from[0] !== to[0] ? 'True' : 'False'
+        });
+    });
+}
+
 function build() {
     const overrides = loadOverrides();
     const nodeRows = parseCsv(fs.readFileSync(NODES_CSV, 'utf8'));
     const edgeRows = parseCsv(fs.readFileSync(EDGES_CSV, 'utf8'));
+    addOverrideEdgeRows(edgeRows, nodeRows, overrides);
     const sourceHash = crypto.createHash('sha1')
         .update(fs.readFileSync(NODES_CSV)).update(fs.readFileSync(EDGES_CSV))
         .digest('hex').slice(0, 12);
