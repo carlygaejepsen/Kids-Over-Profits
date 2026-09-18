@@ -185,9 +185,10 @@ if (!function_exists('kop_network_map_config')) {
      * link to. Localised as KOP_NETWORK_CONFIG.
      */
     function kop_network_map_config() {
+        // The location index, not the program index: it lists every facility.
         $directory = function_exists('kop_facility_pages_page_url_by_template')
-            ? kop_facility_pages_page_url_by_template('page-tti-program-index.php', '/tti-program-index/')
-            : home_url('/tti-program-index/');
+            ? kop_facility_pages_page_url_by_template('page-location-index.php', '/location-index/')
+            : home_url('/location-index/');
 
         return array(
             'graphUrl'     => kop_network_map_url('graph.json'),

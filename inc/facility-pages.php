@@ -1158,10 +1158,9 @@ if (!function_exists('kop_facility_pages_thin_target')) {
         $row = $wpdb->get_row($wpdb->prepare('SELECT name, state, country FROM facilities_v2 WHERE id = %d', (int) $facility_id), ARRAY_A);
         if (!$row) return '';
         $hub = function_exists('kop_v2_place_page_url') ? kop_v2_place_page_url($row['state'] ?: null, $row['country'] ?: null) : '';
-        if ($hub === '') {
-            $hub = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
-            if ($hub === '') $hub = home_url('/tti-program-index/');
-        }
+        // No hub for the place: the location index lists every facility, the
+        // program index only operators and chains.
+        if ($hub === '') return kop_facility_pages_location_search_url($row['name']);
         return add_query_arg('search', rawurlencode((string) $row['name']), $hub);
     }
 }
@@ -1214,8 +1213,17 @@ if (!function_exists('kop_facility_pages_date_label')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_location_search_url')) {
+    /** The location index filtered to a facility name. Every facility is listed there. */
+    function kop_facility_pages_location_search_url($name) {
+        $index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-location-index.php') : '';
+        if ($index_url === '') $index_url = home_url('/location-index/');
+        return add_query_arg('search', rawurlencode((string) $name), $index_url);
+    }
+}
+
 if (!function_exists('kop_facility_pages_index_search_url')) {
-    /** The program index filtered to a name. */
+    /** The program index filtered to a name. Operators and chains only; never a facility. */
     function kop_facility_pages_index_search_url($name) {
         $index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
         if ($index_url === '') $index_url = home_url('/tti-program-index/');
@@ -1549,7 +1557,7 @@ if (!function_exists('kop_facility_page_data')) {
             'documents'     => $documents,
             'updated_at'    => $updated,
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',
-            'index_url'     => kop_facility_pages_index_search_url($name),
+            'index_url'     => kop_facility_pages_location_search_url($name),
             'lawsuits_url'  => kop_facility_pages_page_url_by_template('page-lawsuits.php', '/lawsuits/'),
             'memorial_url'  => kop_facility_pages_page_url_by_template('page-memorial.php', '/memorial/'),
             'news_url'      => kop_facility_pages_page_url_by_template('page-news-feed.php', '/news/'),

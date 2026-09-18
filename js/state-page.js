@@ -586,7 +586,7 @@
             const mime = String(file.mime_type || '');
             const isImage = mime.startsWith('image/');
             const ext = (file.url || '').split('.').pop().split('?')[0].split('#')[0].toUpperCase().slice(0, 4) || 'FILE';
-            const thumb = file.thumb_url || (isImage ? file.url : '');
+            const thumb = file.thumb_url || file.thumbnail_url || (isImage ? file.url : '');
             return `
                 <li class="state-doc-item">
                     <a href="${url}" target="_blank" rel="noopener">

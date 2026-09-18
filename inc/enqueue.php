@@ -31,6 +31,12 @@ function kadence_child_enqueue_styles() {
         );
     }
 
+    // Primary sidebar tweaks (newsletter embed spacing)
+    $sidebar_css = get_stylesheet_directory() . '/css/sidebar.css';
+    if (is_active_sidebar('sidebar-primary') && file_exists($sidebar_css)) {
+        wp_enqueue_style('kop-sidebar', get_stylesheet_directory_uri() . '/css/sidebar.css', array('kadence-parent-style'), filemtime($sidebar_css));
+    }
+
     // Homepage widget styles (loaded whenever the homepage sidebar has active widgets)
     if (is_active_sidebar('kop-homepage-sidebar')) {
         $hp_css = get_stylesheet_directory() . '/css/homepage.css';

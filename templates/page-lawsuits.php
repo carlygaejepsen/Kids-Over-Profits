@@ -150,10 +150,10 @@ if ($lawsuit_ids) {
 }
 
 // Facility "profile" = the generated facility page when the record has one
-// (inc/facility-pages.php), otherwise the program index filtered to that
-// facility, which is how the rest of the site deep-links a facility.
-$index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-tti-program-index.php') : '';
-if (!$index_url) $index_url = home_url('/tti-program-index/');
+// (inc/facility-pages.php), otherwise the location index filtered to that
+// facility. Never the program index: it lists operators and chains only.
+$index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-location-index.php') : '';
+if (!$index_url) $index_url = home_url('/location-index/');
 $facility_profile_url = static function (string $name, int $facility_id = 0) use ($index_url): string {
     if ($facility_id > 0 && function_exists('kop_facility_page_url')) {
         $page_url = kop_facility_page_url($facility_id);

@@ -101,7 +101,7 @@ body.tutorial-active .tutorial-card {
         height: 45px;
         font-size: 20px;
         bottom: 15px;
-        left: 15px;
+        right: 15px;
     }
 }
 
@@ -189,11 +189,13 @@ body.tutorial-active .tutorial-card {
     background-color: #2a8c96;
 }
 
-/* Tutorial Toggle Button (Fixed) */
+/* Tutorial Toggle Button (Fixed). Lower-right: the site-wide search pill
+   (css/global-search.css) owns the lower-left corner. Never set `left` here;
+   with both set, CSS drops `right` and the two buttons stack. */
 .tutorial-toggle-btn {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     background-color: rgba(51, 167, 181, 0.8);
     color: #33A7B5;
     width: 42px;

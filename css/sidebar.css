@@ -1,0 +1,8 @@
+/* Kadence primary sidebar (widgets are placed in the Customizer, not in the repo). */
+
+/* The MailerLite newsletter embed is the first widget and renders flush
+   against the top of the sidebar; give it room. The form markup is injected
+   by MailerLite's script, so the rule sits on the embed wrapper. */
+.primary-sidebar .ml-embedded {
+    padding-top: 1.5rem;
+}

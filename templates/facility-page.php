@@ -130,7 +130,7 @@ get_header();
 
             <h2>Also see</h2>
             <ul class="kop-fp-list">
-                <li><a href="<?php echo esc_url($page['index_url']); ?>">Database record</a><span class="meta">TTI Program Index</span></li>
+                <li><a href="<?php echo esc_url($page['index_url']); ?>">Database record</a><span class="meta">Location Index</span></li>
                 <?php if ($page['hub_url'] !== '') : ?>
                     <li><a href="<?php echo esc_url($page['hub_url']); ?>"><?php echo esc_html($page['hub_name']); ?> hub</a><span class="meta">Every facility, lawsuit, and bill in <?php echo esc_html($page['hub_name']); ?></span></li>
                 <?php endif; ?>

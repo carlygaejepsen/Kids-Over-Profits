@@ -160,9 +160,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const typeFilter = document.getElementById('typeFilter');
     // /location-index/?type=country (or state) opens the index pre-filtered;
     // the retired /international/ page redirects here.
-    const initialType = new URLSearchParams(window.location.search).get('type');
+    const initialParams = new URLSearchParams(window.location.search);
+    const initialType = initialParams.get('type');
     if (typeFilter && (initialType === 'country' || initialType === 'state')) {
         typeFilter.value = initialType;
+    }
+    // /location-index/?search=<name> opens filtered to that facility; thin
+    // /facility/<slug>/ records and the network map land here.
+    const initialSearch = (initialParams.get('search') || '').trim();
+    if (searchInput && initialSearch) {
+        searchInput.value = initialSearch;
     }
     const sortBy = document.getElementById('sortBy');
     const clearSearchBtn = document.getElementById('clearSearch');
@@ -635,7 +642,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         filteredLocations.forEach(loc => {
             const details = document.createElement('details');
-            details.className = 'operator-section'; 
+            details.className = 'operator-section';
+            // A search that narrows to a few places shows its facilities without a second click.
+            if (searchInput.value.trim() && filteredLocations.length <= 3) details.open = true;
 
             // -- Location Header --
             let headerHtml = `
