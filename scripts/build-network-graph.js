@@ -55,7 +55,7 @@ const qa = {
     droppedRows: [], chainInferred: [], missingHeadline: [], missingViewNames: [],
     rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
     profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: [],
-    staffListEdges: [], staffListUnresolved: []
+    staffListEdges: [], staffListUnresolved: [], addedPeople: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -659,55 +659,133 @@ function deriveDeaths(nodes, facilities, overrides) {
 /**
  * 2b.12. Connections the facility and operator profiles record that the
  * board does not: who owns or operates a facility, the company behind an
- * operator, the people who ran it, the consultants who referred to it. Added
- * only where both ends are already on the board - the board stays the
- * roster, so nothing here creates a node - and only where the board has no
- * line between the pair already. Each carries provenance "profile", so the
- * map can say where it came from.
+ * operator, the people who ran it, the consultants who referred to it.
+ * Read in two steps. readProfileClaims() collects every name a profile puts
+ * against a node, so addPeople() can see who the profiles name before any
+ * edge is drawn; addProfileEdges() then draws a claim where both ends are
+ * nodes and the map has no line between the pair. Each carries provenance
+ * "profile", so the map can say where it came from.
  *
  * A facility's other and past names are deliberately not turned into edges.
  * A name that resolves to another node would assert a rebrand, and some of
  * those are sister programmes rather than one place renamed; they are listed
  * in the QA report for a person to decide.
  */
-function addProfileEdges(nodes, edges, facilities) {
-    if (!fs.existsSync(SQLITE_FILE)) return 0;
+function profileResolver(nodes, overrides) {
+    /* Keys under five letters are too easily somebody else's initials,
+     * except an alias written into the overrides on purpose ("CEDU"). */
+    const chosen = new Set();
+    Object.keys(overrides.aliases || {}).forEach(function (name) {
+        (overrides.aliases[name] || []).forEach(function (alias) { chosen.add(nameKey(alias)); });
+    });
+    const byKey = new Map();
+    nodes.forEach(function (node) {
+        [node.name].concat(node.aliases || []).forEach(function (name) {
+            const key = nameKey(name);
+            if (!key || (key.length < 5 && !chosen.has(key))) return;
+            if (!byKey.has(key)) byKey.set(key, new Set());
+            byKey.get(key).add(node);
+        });
+    });
+    /* One node or nothing: a name two nodes share is not guessed at. */
+    return function (name) {
+        const hits = byKey.get(nameKey(name));
+        return hits && hits.size === 1 ? Array.from(hits)[0] : null;
+    };
+}
+
+/* Names out of a profile field: plain strings, or {name, role} rows. */
+function profileTexts(value) {
+    return (Array.isArray(value) ? value : (value ? [value] : [])).map(function (item) {
+        if (typeof item === 'string') return item;
+        return (item && (item.name || item.value || item.label)) || '';
+    }).map(function (s) { return String(s).trim(); }).filter(Boolean);
+}
+
+function readProfileClaims(nodes, overrides) {
+    const claims = [];
+    if (!fs.existsSync(SQLITE_FILE)) return claims;
     let db;
     try {
         const { DatabaseSync } = require('node:sqlite');
         db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
     } catch (err) {
         console.warn('  ! could not open the mirror for profile edges: ' + err.message);
-        return 0;
+        return claims;
     }
-
-    const byKey = new Map();
-    nodes.forEach(function (node) {
-        [node.name].concat(node.aliases || []).forEach(function (name) {
-            const key = nameKey(name);
-            if (!key || key.length < 5) return;
-            if (!byKey.has(key)) byKey.set(key, new Set());
-            byKey.get(key).add(node);
-        });
-    });
-    /* One node or nothing: a name two nodes share is not guessed at. */
-    const resolve = function (name) {
-        const hits = byKey.get(nameKey(name));
-        return hits && hits.size === 1 ? Array.from(hits)[0] : null;
-    };
+    const resolve = profileResolver(nodes, overrides);
     const byFacility = new Map();
     nodes.forEach(function (node) { if (node.facilityId) byFacility.set(node.facilityId, node); });
-
-    const pairs = new Set(edges.map(function (e) { return [e.source, e.target].sort().join('|'); }));
-    const texts = function (value) {
-        return (Array.isArray(value) ? value : (value ? [value] : [])).map(function (item) {
-            if (typeof item === 'string') return item;
-            return (item && (item.name || item.value || item.label)) || '';
-        }).filter(Boolean);
+    /* person: the name is someone who worked there, so addPeople may make a
+     * node for them. */
+    const claim = function (name, node, category, role, source, person) {
+        if (!name || !node) return;
+        claims.push({ name: name, node: node, category: category, role: role, source: source, person: !!person });
     };
 
+    try {
+        db.prepare('SELECT id, json_data FROM facilities_v2').all().forEach(function (row) {
+            const node = byFacility.get(row.id);
+            if (!node) return;
+            let doc = null;
+            try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { return; }
+            const facility = (doc && (doc.facility || doc)) || {};
+            const ident = facility.identification || {};
+            const staff = facility.staff || {};
+            profileTexts(ident.currentOwners).forEach(function (name) { claim(name, node, 'corporate', 'owner', 'facility profile'); });
+            profileTexts(ident.pastOperators).forEach(function (name) { claim(name, node, 'corporate', 'past operator', 'facility profile'); });
+            profileTexts(ident.otherOperators).forEach(function (name) { claim(name, node, 'corporate', 'operator', 'facility profile'); });
+            profileTexts(ident.investors).forEach(function (name) { claim(name, node, 'corporate', 'investor', 'facility profile'); });
+            profileTexts(ident.knownReferrers).forEach(function (name) { claim(name, node, 'referral', 'referrer', 'facility profile'); });
+            profileTexts(staff.administrator).forEach(function (name) { claim(name, node, 'leadership', 'administrator', 'facility profile', true); });
+            profileTexts(staff.notableStaff).forEach(function (name) { claim(name, node, 'staff', 'staff', 'facility profile', true); });
+            profileTexts(ident.pastNames).concat(profileTexts(ident.otherNames)).forEach(function (name) {
+                const other = resolve(name);
+                if (other && other.id !== node.id) {
+                    qa.profileNames.push(node.name + ' lists "' + name + '", which is the board node ' + other.name);
+                }
+            });
+        });
+
+        const operators = new Map(db.prepare('SELECT id, name, json_data FROM wpdl_kop_operators').all()
+            .map(function (r) { return [r.id, r]; }));
+        db.prepare('SELECT operator_id, facility_id FROM wpdl_kop_operator_facilities').all().forEach(function (r) {
+            const op = operators.get(r.operator_id);
+            claim(op && op.name, byFacility.get(r.facility_id), 'corporate', 'operator', 'operator profile');
+        });
+        operators.forEach(function (op) {
+            let doc = null;
+            try { doc = JSON.parse(op.json_data || 'null'); } catch (err) { return; }
+            const record = (doc && (doc.operator || doc)) || {};
+            const keyStaff = record.keyStaff || {};
+            const opNode = resolve(op.name);
+            profileTexts(record.parentCompanies).forEach(function (name) { claim(name, opNode, 'corporate', 'parent company', 'operator profile'); });
+            /* Founders sit under keyStaff on the operator record; older
+             * records carried them at the top level. */
+            profileTexts(record.founders).concat(profileTexts(keyStaff.founders)).forEach(function (name) {
+                claim(name, opNode, 'leadership', 'founder', 'operator profile', true);
+            });
+            profileTexts(keyStaff.ceo).forEach(function (name) { claim(name, opNode, 'leadership', 'CEO', 'operator profile', true); });
+            (Array.isArray(keyStaff.keyExecutives) ? keyStaff.keyExecutives : []).forEach(function (row) {
+                const name = String((row && row.name) || '').trim();
+                claim(name, opNode, 'leadership', String((row && row.role) || '').trim() || 'executive', 'operator profile', true);
+            });
+        });
+    } catch (err) {
+        console.warn('  ! could not read profile relationships: ' + err.message);
+    }
+    db.close();
+    return claims;
+}
+
+function addProfileEdges(nodes, edges, claims, overrides) {
+    const resolve = profileResolver(nodes, overrides);
+    const pairs = new Set(edges.map(function (e) { return [e.source, e.target].sort().join('|'); }));
+
     let n = 0;
-    const add = function (from, to, category, role, source) {
+    claims.forEach(function (c) {
+        const from = resolve(c.name);
+        const to = c.node;
         if (!from || !to || from.id === to.id) return;
         const key = [from.id, to.id].sort().join('|');
         if (pairs.has(key)) return;
@@ -721,61 +799,158 @@ function addProfileEdges(nodes, edges, facilities) {
             id: 'p' + String(n).padStart(4, '0'),
             source: a.id,
             target: b.id,
-            category: category,
-            roles: [role],
-            raw: role + ' (' + source + ')',
+            category: c.category,
+            roles: [c.role],
+            raw: c.role + ' (' + c.source + ')',
             direction: 'none',
             crossesChain: false,
             crossesRegion: a.regions[0] !== b.regions[0],
             provenance: 'profile'
         });
-        qa.profileEdges.push(a.name + ' -> ' + b.name + ': ' + role + ' (' + source + ')');
+        qa.profileEdges.push(a.name + ' -> ' + b.name + ': ' + c.role + ' (' + c.source + ')');
+    });
+    return n;
+}
+
+/**
+ * People the board does not have, added as nodes (2026-09-18). The board
+ * was the roster, which left out people every other source names - the
+ * founders of CEDU among them. A person becomes a node when the staff list,
+ * staff-movement.csv or a profile ties them to two or more nodes, or names
+ * them founder, owner, CEO or president of one: those are the people a
+ * connection runs through. Someone named at a single place in some other
+ * role stays off, which keeps one facility's staff roster from swamping the
+ * map. The edges themselves are drawn afterwards by the profile, staff-move
+ * and staff-list steps, exactly as for a person the board already had.
+ * Each added node carries addedFrom, which the QA report lists.
+ */
+const PERSON_NOT = /\b(academy|school|inc|llc|group|services|center|centre|program|programs|ranch|foundation|church|hospital|association|council|healthcare|company|institute|home|homes|committee|board|staff|unknown|various|several)\b/i;
+const LEADS = /\b(founder|cofounder|co-founder|owner|co-owner|ceo|president)\b/i;
+
+function cleanPersonName(raw) {
+    const name = String(raw || '')
+        .replace(/[“”"][^“”"]*[“”"]/g, ' ')
+        .replace(/\([^)]*\)|\[[^\]]*\]/g, ' ')
+        .split(/,| - | – /)[0]
+        .replace(/\s+/g, ' ')
+        .trim();
+    const words = name.split(' ');
+    if (words.length < 2 || words.length > 5 || name.length > 40) return '';
+    if (/\d|@|\//.test(name) || PERSON_NOT.test(name)) return '';
+    return name;
+}
+
+/* The board writes some people with a nickname or a middle name
+ * (Glenda "Glen" Roach, Sarah Persha Koalkin); every other source leaves
+ * them out. Each board person is also known without them, unless that
+ * shorter name is already somebody else's. */
+function addPersonShortNames(nodes) {
+    const taken = new Map();
+    nodes.forEach(function (n) {
+        [n.name].concat(n.aliases || []).forEach(function (name) {
+            const k = nameKey(name);
+            taken.set(k, (taken.get(k) || 0) + 1);
+        });
+    });
+    nodes.forEach(function (n) {
+        if (n.kind !== 'person') return;
+        const plain = n.name.replace(/[\u201c\u201d"][^\u201c\u201d"]*[\u201c\u201d"]/g, ' ')
+            .replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim();
+        const words = plain.split(' ');
+        const short = [plain];
+        if (words.length > 2 && !/^(jr|sr|ii|iii)\.?$/i.test(words[words.length - 1])) {
+            short.push(words[0] + ' ' + words[words.length - 1]);
+        }
+        short.forEach(function (name) {
+            const k = nameKey(name);
+            if (!k || taken.has(k) || k.split(' ').length < 2) return;
+            taken.set(k, 1);
+            n.aliases.push(name);
+        });
+    });
+}
+
+function addPeople(nodes, nodeById, claims, overrides) {
+    addPersonShortNames(nodes);
+    const resolve = profileResolver(nodes, overrides);
+    const people = new Map();
+    const note = function (rawName, place, role, from) {
+        if (!place || place.kind === 'person') return;
+        const name = cleanPersonName(rawName);
+        const key = nameKey(name);
+        if (!key || resolve(name)) return;
+        if (!people.has(key)) people.set(key, { name: name, places: new Map(), leads: false, from: new Set() });
+        const p = people.get(key);
+        p.places.set(place.id, place);
+        if (LEADS.test(role || '')) p.leads = true;
+        p.from.add(from);
     };
 
-    try {
-        const rows = db.prepare('SELECT id, json_data FROM facilities_v2').all();
-        rows.forEach(function (row) {
-            const node = byFacility.get(row.id);
-            if (!node) return;
-            let doc = null;
-            try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { return; }
-            const facility = (doc && (doc.facility || doc)) || {};
-            const ident = facility.identification || {};
-            const staff = facility.staff || {};
-            texts(ident.currentOwners).forEach(function (name) { add(resolve(name), node, 'corporate', 'owner', 'facility profile'); });
-            texts(ident.pastOperators).forEach(function (name) { add(resolve(name), node, 'corporate', 'past operator', 'facility profile'); });
-            texts(ident.otherOperators).forEach(function (name) { add(resolve(name), node, 'corporate', 'operator', 'facility profile'); });
-            texts(ident.investors).forEach(function (name) { add(resolve(name), node, 'corporate', 'investor', 'facility profile'); });
-            texts(ident.knownReferrers).forEach(function (name) { add(resolve(name), node, 'referral', 'referrer', 'facility profile'); });
-            texts(staff.administrator).forEach(function (name) { add(resolve(name), node, 'leadership', 'administrator', 'facility profile'); });
-            texts(staff.notableStaff).forEach(function (name) { add(resolve(name), node, 'staff', 'staff', 'facility profile'); });
-            texts(ident.pastNames).concat(texts(ident.otherNames)).forEach(function (name) {
-                const other = resolve(name);
-                if (other && other.id !== node.id) {
-                    qa.profileNames.push(node.name + ' lists "' + name + '", which is the board node ' + other.name);
-                }
-            });
+    claims.forEach(function (c) { if (c.person) note(c.name, c.node, c.role, 'profiles'); });
+    if (fs.existsSync(STAFF_MOVEMENT_CSV)) {
+        /* A move is only drawn when both ends are nodes, so only then does
+         * it count towards a person's places. */
+        parseCsv(fs.readFileSync(STAFF_MOVEMENT_CSV, 'utf8')).forEach(function (row) {
+            const from = resolve(row.from), to = resolve(row.to);
+            if (!from || !to) return;
+            note(row.person, from, row.role, 'staff moves');
+            note(row.person, to, row.role, 'staff moves');
         });
-
-        const operators = new Map(db.prepare('SELECT id, name, json_data FROM wpdl_kop_operators').all()
-            .map(function (r) { return [r.id, r]; }));
-        db.prepare('SELECT operator_id, facility_id FROM wpdl_kop_operator_facilities').all().forEach(function (r) {
-            const op = operators.get(r.operator_id);
-            add(op && resolve(op.name), byFacility.get(r.facility_id), 'corporate', 'operator', 'operator profile');
-        });
-        operators.forEach(function (op) {
-            let doc = null;
-            try { doc = JSON.parse(op.json_data || 'null'); } catch (err) { return; }
-            const record = (doc && (doc.operator || doc)) || {};
-            const opNode = resolve(op.name);
-            texts(record.parentCompanies).forEach(function (name) { add(resolve(name), opNode, 'corporate', 'parent company', 'operator profile'); });
-            texts(record.founders).forEach(function (name) { add(resolve(name), opNode, 'leadership', 'founder', 'operator profile'); });
-        });
-    } catch (err) {
-        console.warn('  ! could not read profile relationships: ' + err.message);
     }
-    db.close();
-    return n;
+    if (fs.existsSync(STAFF_LIST_CSV)) {
+        parseCsv(fs.readFileSync(STAFF_LIST_CSV, 'utf8')).forEach(function (row) {
+            note(row.person, resolve(row.place), row.role, 'staff list');
+        });
+    }
+
+    const ids = new Set(nodes.map(function (n) { return n.id; }));
+    /* Same surname and first initial as a board person: probably the same
+     * person spelled differently, so the QA report asks. */
+    const lookalike = new Map();
+    const shape = function (name) {
+        const parts = nameKey(name).split(' ');
+        return parts[parts.length - 1] + ' ' + parts[0].charAt(0);
+    };
+    nodes.forEach(function (n) { if (n.kind === 'person') lookalike.set(shape(n.name), n.name); });
+
+    let added = 0;
+    Array.from(people.values()).sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (p) {
+        const places = Array.from(p.places.values());
+        if (places.length < 2 && !p.leads) return;
+        let id = slugify(p.name), n = 2;
+        while (ids.has(id)) { id = slugify(p.name) + '-' + n; n++; }
+        ids.add(id);
+        const node = {
+            id: id,
+            name: p.name,
+            aliases: [],
+            kind: 'person',
+            status: '',
+            chain: '',
+            regions: [places[0].regions[0]],
+            natsap: false,
+            importance: 0,
+            degree: 0,
+            degreeByCategory: {},
+            facilityId: null,
+            uniqueName: null,
+            dates: '',
+            isolated: false,
+            /* Beside the places they worked: the mean of their positions. */
+            board: {
+                x: places.reduce(function (s, pl) { return s + pl.board.x; }, 0) / places.length,
+                y: places.reduce(function (s, pl) { return s + pl.board.y; }, 0) / places.length
+            },
+            addedFrom: Array.from(p.from).sort()
+        };
+        nodes.push(node);
+        nodeById.set(id, node);
+        added++;
+        const near = lookalike.get(shape(p.name));
+        qa.addedPeople.push(p.name + ' (' + places.map(function (pl) { return pl.name; }).join(', ') + '; from ' +
+            node.addedFrom.join(', ') + ')' + (near ? ' - check: the board has ' + near : ''));
+    });
+    return added;
 }
 
 /**
@@ -1267,9 +1442,11 @@ function build() {
     deriveDeaths(nodes, facilities, overrides);
 
     /* --- 7c. connections the facility profiles record ------------- */
-    const added = addProfileEdges(nodes, edges, facilities) + addStaffMovement(nodes, edges) +
+    const claims = readProfileClaims(nodes, overrides);
+    const people = addPeople(nodes, nodeById, claims, overrides);
+    const added = addProfileEdges(nodes, edges, claims, overrides) + addStaffMovement(nodes, edges) +
         addStaffList(nodes, edges);
-    if (added) {
+    if (added || people) {
         /* The profile edges change who connects to whom, so the counts are
          * taken again from scratch rather than patched. */
         nodes.forEach(function (node) { node.degree = 0; node.degreeByCategory = {}; });
@@ -1294,7 +1471,8 @@ function build() {
         rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length,
         profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length,
         staffMovementEdges: edges.filter(function (e) { return e.provenance === 'staff-movement'; }).length,
-        staffListEdges: edges.filter(function (e) { return e.provenance === 'staff-list'; }).length
+        staffListEdges: edges.filter(function (e) { return e.provenance === 'staff-list'; }).length,
+        addedPeople: nodes.filter(function (n) { return n.addedFrom; }).length
     };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
@@ -1455,6 +1633,11 @@ function writeQaReport(graph) {
 
     section(lines, 'Staff moves with a place not on the board', qa.staffUnresolved, function (item) { return item; },
         'Skipped. Add an alias under `aliases` if the place is on the board under another name.');
+
+    section(lines, 'People added who are not on the board', qa.addedPeople, function (item) { return item; },
+        'Named at two or more places, or as founder, owner, CEO or president of one. A "check" means ' +
+        'the board has someone with the same surname and initial: if it is the same person, add the ' +
+        'spelling under `aliases` against the board name.');
 
     section(lines, 'Connections added from the staff list', qa.staffListEdges, function (item) { return item; },
         'Drawn from staff-list.csv where the map had no line between the two. ' + staffListAlreadyShown +

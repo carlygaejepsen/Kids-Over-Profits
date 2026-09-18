@@ -180,15 +180,22 @@
                 if (best) return best;
             }
 
+            var found = null;
             if (tree) {
-                var found = tree.find(world.x, world.y, maxRadius + slop);
+                found = tree.find(world.x, world.y, maxRadius + slop);
                 /* A gathered node was ruled out above, and its tree position
                  * is not where it is drawn, so it must not win on the stale
                  * one. */
-                if (found && !(offsets && offsets[found.id]) &&
-                    hits(found, world.x, world.y, slop, null)) return found;
+                if (found && offsets && offsets[found.id]) found = null;
+                if (found && hits(found, world.x, world.y, 0, null)) return found;
             }
-            return nodeUnderLabel(px, py);
+            /* On the shape itself the shape wins; in the margin around it, a
+             * name drawn there wins, because the visitor is pointing at the
+             * text they can read, not at a dot a few pixels away. */
+            var named = nodeUnderLabel(px, py);
+            if (named) return named;
+            if (found && hits(found, world.x, world.y, slop, null)) return found;
+            return null;
         }
 
         /**

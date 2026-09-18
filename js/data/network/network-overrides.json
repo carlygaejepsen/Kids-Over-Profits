@@ -50,7 +50,10 @@
       ]
     }
   ],
-  "aliases": {},
+  "aliases": {
+    "CEDU Family of Services": ["CEDU"],
+    "Cantrill Nielsen": ["Cantril Nielsen"]
+  },
   "kinds": {
     "Embark at Flathead Valley": "facility",
     "Embark at Hobble Creek": "facility",

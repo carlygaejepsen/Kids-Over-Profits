@@ -796,7 +796,11 @@ function run() {
     ['WWASPS', 'Synanon', 'Teen Challenge'].forEach((name) => {
         check(seeds.some((n) => n.name === name), 'the map does not open on ' + name);
     });
-    check(seeds.some((n) => n.degree < 8),
+    /* Curated, not ranked: at least one of them is not among that many
+     * best-connected nodes. */
+    const ranked = store.visible().nodes.map((n) => n.degree).sort((a, b) => b - a);
+    const cutoff = ranked[Math.min(seeds.length, ranked.length) - 1];
+    check(seeds.some((n) => n.degree < cutoff),
         'the opening view is just the best-connected nodes, not a curated list');
 
     const opening = focus.scene();
@@ -940,7 +944,10 @@ function run() {
     const companies = band(0);
     const command = band(1);
     const programmes = band(2);
-    const staff = band(3);
+    /* Staff one step from the click sit beside it in the centre row
+     * (0592dd5); the rest of the staff go beneath the programmes. */
+    const staff = others.filter((n) => bandOf(n) === 3 &&
+        !(hubNeighbours.indexOf(n.id) !== -1 && Math.abs(yOf(n) - rootY) < 1)).map(yOf);
     check(companies.length && command.length && programmes.length,
         'too few bands on screen to test the hierarchy');
     check(Math.max(...companies) < Math.min(...command),
@@ -1202,7 +1209,7 @@ function run() {
         if (store.node(id).kind !== 'facility') return;
         store.neighbours(id, true).forEach((l) => {
             if (l.other.kind === 'parent' && l.edge.category === 'corporate' &&
-                !l.outgoing && l.edge.direction !== 'renamed') expected.add(l.other.id);
+                (!l.outgoing || l.edge.direction === 'none') && l.edge.direction !== 'renamed') expected.add(l.other.id);
         });
     });
     /* ...minus whatever that left stranded. */

@@ -930,6 +930,31 @@ list)"). Survivor ties never join two places. Today: 341 edges with
 both listed in the QA report. The three "Embark at ..." campuses were
 classed as people on the board and are corrected under `kinds`.
 
+### People the board does not have (2026-09-18)
+
+The board was the roster, so anyone missing from it could not appear: Mel
+and Brigitte Wasserman, named as CEDU's founders on the operator record,
+were dropped. The build now adds a person node (`addPeople`) when the staff
+list, `staff-movement.csv` or a profile ties them to two or more nodes, or
+names them founder, owner, CEO or president of one. Someone named at one
+place in another role stays off, which keeps single-facility rosters
+(Straight - Cincinnati's board) from swamping the map. Added nodes carry
+`addedFrom` and sit at the mean board position of their places; the QA
+report lists each, with a "check" where the board has someone with the
+same surname and initial.
+
+Board people are also matched without a quoted nickname or middle names
+(Glenda "Glen" Roach, Sarah Persha Koalkin), unless the shorter name is
+somebody else's. Operator founders, CEO and key executives are read from
+`keyStaff`, where the records keep them; the operator "CEDU" resolves
+through an alias. Today: 191 people added, 1098 nodes, 1967 edges.
+
+The added connections exposed three map rules, fixed alongside: an
+undirected facility-to-company line now counts as ownership whichever end
+the board drew it from; a tap on a drawn name selects that name unless the
+pointer is on a shape itself; and the tests allow staff beside the click
+in the centre row, as 0592dd5 intended.
+
 ### Step 7 mechanism (2026-09-18): starter views (2b.10)
 
 `network-overrides.json` takes `views`: `{"key": {"label": "...",

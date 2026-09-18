@@ -202,6 +202,8 @@ function buildMatcher(nodes) {
         keys.get(key).add(node);
     };
     nodes.forEach(function (node) {
+        /* People the build added from this list are not places. */
+        if (node.addedFrom) return;
         [node.name].concat(node.aliases || []).forEach(function (name) {
             const key = nameKey(name);
             add(key, node);

@@ -262,7 +262,11 @@
                 store.neighbours(id, true).forEach(function (link) {
                     if (link.other.kind !== 'parent') return;
                     if (link.edge.category !== 'corporate') return;
-                    if (link.outgoing || link.edge.direction === 'renamed') return;
+                    if (link.edge.direction === 'renamed') return;
+                    /* A line with no direction is the board's shorthand for
+                     * "part of this group", drawn from whichever end the
+                     * author started at (Daniels Academy to Aspiro Group). */
+                    if (link.outgoing && link.edge.direction !== 'none') return;
                     asked[link.other.id] = true;
                 });
             });
