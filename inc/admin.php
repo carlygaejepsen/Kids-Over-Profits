@@ -724,6 +724,15 @@ function kop_seed_posts() {
 function kop_apply_seed_posts() {
     $created = array();
     $dir = trailingslashit(get_stylesheet_directory()) . 'seeds/';
+    // This runs on init for whoever made the request, usually nobody logged
+    // in, and WordPress then passes post content through kses, which strips
+    // iframes (video embeds) and other markup an editor with unfiltered_html
+    // could save. The seed files are trusted theme files, so save them the
+    // way an administrator would.
+    $kses_active = (bool) has_filter('content_save_pre', 'wp_filter_post_kses');
+    if ($kses_active) {
+        kses_remove_filters();
+    }
     foreach (kop_seed_posts() as $file) {
         $path = $dir . $file;
         if (!file_exists($path)) {
@@ -826,6 +835,9 @@ function kop_apply_seed_posts() {
             }
         }
         $created[] = $spec['slug'];
+    }
+    if ($kses_active) {
+        kses_init_filters();
     }
     return $created;
 }
@@ -1394,7 +1406,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '19';
+    $version = '20';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
