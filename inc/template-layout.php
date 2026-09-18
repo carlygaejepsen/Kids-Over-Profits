@@ -86,8 +86,9 @@ function kop_template_layout_filter_sidebar($layout) {
         $layout['sidebar'] = 'disable';
     }
     if ($template && in_array($template, kop_template_layout_normal_width(), true)) {
-        // Mirror Kadence's own "default" branch for posts.
-        $default = function_exists('kadence') ? (string) kadence()->option('post_layout') : '';
+        // Mirror Kadence's own "default" branch for posts. The theme's
+        // accessor is namespaced (Kadence\kadence()), not a global function.
+        $default = function_exists('Kadence\kadence') ? (string) \Kadence\kadence()->option('post_layout') : '';
         if ($default === 'left' || $default === 'right') {
             $layout['layout']  = $default;
             $layout['side']    = $default;
