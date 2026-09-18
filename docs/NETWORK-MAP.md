@@ -808,6 +808,17 @@ are open with the files involved.
   and on hashchange, through `focus.restore`. A name the board no longer has
   is skipped. `inc/network-map.php` now also hands the page `memorialUrl`.
 
+### Step 3 closed (2026-09-18): reset view and click zoom
+
+- **2b.3** Reset view calls `focus.reframe()`, which lays the current board
+  out again and frames it, so a dragged node goes back into its cell. The
+  "Whole map" crumb is now "Start over". Test added.
+- **2b.4** In Expand mode, after the layout, the newest click and its own
+  connections are framed when that zooms in rather than out; the rest of
+  the board is a pan away. Focus mode already centred the click. A large
+  trail that hits the legibility floor is centred on the newest click
+  anyway. Test added.
+
 ### Already covered by 5b
 
 - **Every visible node labelled.** The degree threshold is gone and every

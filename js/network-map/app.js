@@ -273,8 +273,11 @@
     function wireControls(app) {
         var reset = byId('kop-network-reset-view');
         if (reset) {
+            /* Re-lay out what is on screen and frame it, the same path a
+             * click takes. fit() alone framed the nodes where they had been
+             * dragged to and left the layout as it was. */
             reset.addEventListener('click', function () {
-                app.viewport.fit();
+                app.focus.reframe();
             });
         }
 
@@ -305,8 +308,8 @@
     }
 
     /**
-     * Escape returns to the whole map from any depth, the same as the Whole
-     * map button. Stepping back one crumb at a time is what the breadcrumb is
+     * Escape returns to the whole map from any depth, the same as the Start
+     * over button. Stepping back one crumb at a time is what the breadcrumb is
      * for. It is bound to the canvas rather than the document so it cannot
      * steal Escape from the search box or a dialog elsewhere on the page.
      */

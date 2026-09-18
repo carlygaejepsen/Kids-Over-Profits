@@ -1751,6 +1751,54 @@ function run() {
     focus.clear();
     flushFrames();
 
+    /* 2b.4 In expand mode the newest click is framed with its own
+     * connections, not lost in a corner of everything opened so far. */
+    focus.clear();
+    flushFrames();
+    focus.setMode('expand');
+    focus.select(hub);
+    flushFrames();
+    const wholeK = viewport.transform.k;
+    const second = focus.scene().nodes.find((n) => n.id !== hub.id && store.neighbours(n.id, true).length > 3);
+    focus.select(second);
+    flushFrames();
+    const tx = viewport.transform;
+    const onStageNow = (n) => {
+        const p = focus.positionOf(n);
+        const x = p.x * tx.k + tx.x;
+        const y = p.y * tx.k + tx.y;
+        return x >= -1 && x <= WIDTH + 1 && y >= -1 && y <= HEIGHT + 1;
+    };
+    const ownOff = [second].concat(store.neighbours(second.id, true).map((l) => l.other))
+        .filter((n) => focus.scene().nodeIds[n.id] && !onStageNow(n));
+    check(ownOff.length === 0,
+        'in expand mode ' + ownOff.length + ' connections of the latest click are off the stage',
+        'expand mode frames ' + second.name + ' and its connections at zoom ' + tx.k.toFixed(2));
+    check(tx.k >= Math.min(wholeK, 1) * 0.5, 'expand mode zoomed right out on the second click');
+
+    /* 2b.3 Reset view lays the board out again, so a dragged node goes
+     * back into its cell. */
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    const cellBefore = Object.assign({}, focus.positionOf(hub));
+    const dt = viewport.transform;
+    const at0 = { x: cellBefore.x * dt.k + dt.x, y: cellBefore.y * dt.k + dt.y };
+    fire('pointerdown', 1, at0.x, at0.y);
+    fire('pointermove', 1, at0.x + 60, at0.y + 30);
+    fire('pointerup', 1, at0.x + 60, at0.y + 30);
+    check(Math.abs(focus.positionOf(hub).x - cellBefore.x) > 1, 'the drag did not move the node, so reset is untested');
+    focus.reframe();
+    flushFrames();
+    const cellAfter = focus.positionOf(hub);
+    check(Math.abs(cellAfter.x - cellBefore.x) < 1 && Math.abs(cellAfter.y - cellBefore.y) < 1,
+        'Reset view left a dragged node where it was dropped',
+        'Reset view puts a dragged node back in its cell');
+    focus.clear();
+    flushFrames();
+
     /* The Brown Schools and CEDU used to be drawn on top of each other: two
      * wide-labelled companies the force settle packed 52 units apart. The
      * band layout gives each a cell, and ownership order puts the acquirer

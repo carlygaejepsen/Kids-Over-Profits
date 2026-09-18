@@ -1151,6 +1151,26 @@
                 viewport.setTransform(floor, frame.x, frame.y);
                 var head = chain.length ? store.node(chain[chain.length - 1]) : null;
                 viewport.centreOn(head || scene.nodes[0]);
+            } else if (mode === 'expand' && chain.length > 1 && frame) {
+                /* Expand keeps every earlier click on the board, so framing
+                 * all of it leaves the newest - the one the visitor is
+                 * looking for - small in a corner. Frame what was just
+                 * clicked and its own connections instead, unless that would
+                 * zoom out, and leave the rest of the board a pan away. */
+                var headId = chain[chain.length - 1];
+                var ownIds = Object.create(null);
+                ownIds[headId] = true;
+                store.neighbours(headId, true).forEach(function (link) { ownIds[link.other.id] = true; });
+                var own = scene.nodes.filter(function (node) { return ownIds[node.id]; }).map(function (node) {
+                    var p = next[node.id] || positionOf(node);
+                    return { x: p.x, y: p.y, r: node.r };
+                });
+                var near = viewport.frameOf(own, padding);
+                if (near && near.k >= frame.k) {
+                    viewport.setTransform(near.k, near.x, near.y);
+                } else {
+                    viewport.fit(scene.nodes, padding);
+                }
             } else {
                 viewport.fit(scene.nodes, padding);
             }

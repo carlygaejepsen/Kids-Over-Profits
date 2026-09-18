@@ -166,7 +166,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 			<?php /* The chain of nodes the visitor has clicked through, newest last. */ ?>
 			<nav class="kop-network__chain" id="kop-network-chain" aria-label="Your trail" hidden>
 				<button type="button" class="kop-network__chain-home" id="kop-network-whole-map">
-					Whole map
+					Start over
 				</button>
 				<ol class="kop-network__chain-list" id="kop-network-chain-list"></ol>
 			</nav>
