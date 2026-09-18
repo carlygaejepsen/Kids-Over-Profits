@@ -121,7 +121,14 @@ $kop_tracker_slugs = function_exists('kop_state_inspection_page_map')
 // State inspection trackers currently available (tracker slug => state name),
 // from the one list in inc/utilities.php that the hub page reads too.
 $kop_report_states = function_exists('kop_report_state_links') ? kop_report_state_links() : array();
-$kop_reports_hub_url = kop_home_template_page_url('templates/page-inspection-reports.php', '/inspection-reports/');
+// Linked only when the hub page actually exists, so a site that has not run
+// the page seeding yet never shows a link into a 404.
+$kop_reports_hub_pages = get_pages(array(
+    'meta_key'   => '_wp_page_template',
+    'meta_value' => 'templates/page-inspection-reports.php',
+    'number'     => 1,
+));
+$kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_reports_hub_pages[0]->ID) : '';
 ?>
 
 <div class="kop-home">
@@ -282,7 +289,9 @@ $kop_reports_hub_url = kop_home_template_page_url('templates/page-inspection-rep
                 <a class="kop-home-report-btn" href="/<?php echo esc_attr($slug); ?>"><?php echo esc_html($label); ?></a>
             <?php endforeach; ?>
         </div>
-        <a class="kop-volunteer-more" href="<?php echo esc_url($kop_reports_hub_url); ?>">All inspection reports &raquo;</a>
+        <?php if ($kop_reports_hub_url !== ''): ?>
+            <a class="kop-volunteer-more" href="<?php echo esc_url($kop_reports_hub_url); ?>">All inspection reports &raquo;</a>
+        <?php endif; ?>
     </section>
 
     <section class="kop-home-map">

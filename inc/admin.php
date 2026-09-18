@@ -459,8 +459,13 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
 
 /**
  * The theme is already active, so after_switch_theme won't fire again. Run the
- * ensure step once (version-flagged) on the next admin load so existing sites
- * get the pages without needing to re-activate the theme.
+ * ensure step once (version-flagged) so existing sites get the pages without
+ * needing to re-activate the theme.
+ *
+ * On init as well as admin_init: a page in this list can be linked from the
+ * front end (the home page links the inspection hub), and waiting for someone
+ * to open wp-admin would leave that link pointing at a 404. Both hooks are
+ * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
     $version = '4';
@@ -471,6 +476,7 @@ function kop_maybe_ensure_tool_pages() {
     update_option('kop_tool_pages_ensured', $version);
 }
 add_action('admin_init', 'kop_maybe_ensure_tool_pages');
+add_action('init', 'kop_maybe_ensure_tool_pages', 20);
 /**
  * Pages whose template is fixed by slug. Unlike kop_tool_page_specs(), several
  * pages can share one template here (state and country hubs), so nothing is
