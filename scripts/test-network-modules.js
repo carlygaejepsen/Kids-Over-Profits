@@ -762,6 +762,39 @@ function run() {
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap in the opening view: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
+    /* The grid exists so that every name fits: a force layout packs the
+     * well-connected into a knot and leaves the corners empty, so names
+     * collide in the middle of a mostly blank stage. Opening a hub is the
+     * case that used to fail. */
+    focus.select(store.node('wwasps'));
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const hubScene = focus.scene();
+    const hubLabels = labelCalls.filter((c) => c.startsWith('text:'));
+    check(hubLabels.length === hubScene.nodes.length,
+        'the grid named ' + hubLabels.length + ' of ' + hubScene.nodes.length + ' nodes',
+        'a ' + hubScene.nodes.length + '-node neighbourhood fits every name');
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+
+    /* Every node in its own cell, spread over the stage rather than knotted
+     * into one corner of it. */
+    const gp = hubScene.nodes.map((n) => focus.positionOf(n));
+    const gx = gp.map((p) => p.x);
+    const gy = gp.map((p) => p.y);
+    const midX = (Math.max(...gx) + Math.min(...gx)) / 2;
+    const midY = (Math.max(...gy) + Math.min(...gy)) / 2;
+    const quads = [0, 0, 0, 0];
+    gp.forEach((p) => { quads[(p.x > midX ? 1 : 0) + (p.y > midY ? 2 : 0)]++; });
+    const worst = Math.max(...quads) / Math.max(1, Math.min(...quads));
+    check(worst <= 2.5,
+        'the layout is lopsided: ' + quads.join('/') + ' nodes per quadrant',
+        'nodes per quadrant: ' + quads.join('/'));
+
+    focus.clear();
+    flushFrames();
+
 
 
     /* --- hover previews --- */

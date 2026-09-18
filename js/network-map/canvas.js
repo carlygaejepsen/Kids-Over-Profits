@@ -159,6 +159,65 @@
             '|' + (style.arrow ? 'a' : '');
     }
 
+    /* Corner radius on an orthogonal run, in screen pixels. */
+    var TRACE_RADIUS = 7;
+
+    /**
+     * Route one connection as a right-angled trace, the way a track runs on
+     * a board: out of the node along one axis, one turn, and into the target
+     * along the other.
+     *
+     * Straight diagonals between grid cells cross each other at every angle
+     * and read as a scribble over the nodes. Right angles run in the gutters
+     * between rows and columns, so a line is followable by eye from one end
+     * to the other even where a dozen of them share the same channel.
+     *
+     * The turn is offset per edge so that two connections between the same
+     * pair of rows do not lie exactly on top of each other. Returns the
+     * direction of the final segment, for the arrowhead to follow.
+     */
+    function traceEdge(ctx, ax, ay, bx, by, jitter) {
+        var dx = bx - ax;
+        var dy = by - ay;
+        var r = TRACE_RADIUS;
+
+        /* Near enough to a straight run that a corner would be a wobble. */
+        if (Math.abs(dx) < 1 || Math.abs(dy) < 1) {
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            return Math.abs(dx) < 1 ? [0, dy < 0 ? -1 : 1] : [dx < 0 ? -1 : 1, 0];
+        }
+
+        /* Turn on the long axis, so the trace commits to its direction
+         * before it turns rather than jinking immediately out of the node. */
+        var vertical = Math.abs(dy) >= Math.abs(dx);
+        ctx.moveTo(ax, ay);
+
+        if (vertical) {
+            var midY = ay + dy / 2 + jitter;
+            var cy1 = midY - Math.sign(dy) * Math.min(r, Math.abs(midY - ay));
+            var cy2 = midY + Math.sign(dy) * Math.min(r, Math.abs(by - midY));
+            var cx = ax + Math.sign(dx) * Math.min(r, Math.abs(dx) / 2);
+            ctx.lineTo(ax, cy1);
+            ctx.quadraticCurveTo(ax, midY, cx, midY);
+            ctx.lineTo(bx - Math.sign(dx) * Math.min(r, Math.abs(dx) / 2), midY);
+            ctx.quadraticCurveTo(bx, midY, bx, cy2);
+            ctx.lineTo(bx, by);
+            return [0, dy < 0 ? -1 : 1];
+        }
+
+        var midX = ax + dx / 2 + jitter;
+        var cx1 = midX - Math.sign(dx) * Math.min(r, Math.abs(midX - ax));
+        var cx2 = midX + Math.sign(dx) * Math.min(r, Math.abs(bx - midX));
+        var cy = ay + Math.sign(dy) * Math.min(r, Math.abs(dy) / 2);
+        ctx.lineTo(cx1, ay);
+        ctx.quadraticCurveTo(midX, ay, midX, cy);
+        ctx.lineTo(midX, by - Math.sign(dy) * Math.min(r, Math.abs(dy) / 2));
+        ctx.quadraticCurveTo(midX, by, cx2, by);
+        ctx.lineTo(bx, by);
+        return [dx < 0 ? -1 : 1, 0];
+    }
+
     /**
      * A head at the target end, set back so it sits against the node rather
      * than under it. Drawn per edge rather than batched, which is affordable
@@ -584,8 +643,8 @@
                          * cross the viewport, which is most of them zoomed in. */
                         if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
                         if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
-                        ctx.moveTo(ax, ay);
-                        ctx.lineTo(cx, cy);
+                        /* Spread the turns of edges sharing a channel. */
+                        traceEdge(ctx, ax, ay, cx, cy, ((i % 5) - 2) * 6);
                         drew = true;
                     }
                     if (drew) ctx.stroke();
@@ -611,8 +670,16 @@
                     var ti = directed.target._i;
                     if (sx[ti] < -pad || sx[ti] > w + pad || sy[ti] < -pad || sy[ti] > h + pad) continue;
                     ctx.globalAlpha = near ? (nearEdges && nearEdges[directed.id] ? 1 : dim * edgeFade) : edgeFade;
-                    drawArrow(ctx, sx[si], sy[si], sx[ti], sy[ti],
-                        Math.max(2.5, directed.target.r * k) + 1.5,
+                    /* The trace arrives along one axis, so the head has to
+                     * point that way rather than back along the straight
+                     * line between the two nodes. */
+                    var adx = sx[ti] - sx[si];
+                    var ady = sy[ti] - sy[si];
+                    var alongY = Math.abs(ady) >= Math.abs(adx);
+                    var fromX = alongY ? sx[ti] : sx[ti] - Math.sign(adx || 1) * 20;
+                    var fromY = alongY ? sy[ti] - Math.sign(ady || 1) * 20 : sy[ti];
+                    drawArrow(ctx, fromX, fromY, sx[ti], sy[ti],
+                        Math.max(2.5, Math.min(22, directed.target.r * k)) + 2,
                         Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
                 }
             }

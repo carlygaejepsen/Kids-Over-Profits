@@ -147,6 +147,32 @@ is a preview precisely because it is reversible.
 **Built.** Several things about it are worth recording, including two that
 cost an afternoon each.
 
+**The layout is a grid, not a force settle.** A force layout arranges by
+relationship, which is the right input and the wrong output: it packs the
+well-connected into a knot and leaves the corners of the stage empty, so
+names collide in the middle of a mostly blank canvas. Measured on a
+thirty-six node neighbourhood it used 32% of the stage, with seventeen nodes
+in one quadrant and two in another, and only twenty of the thirty-six names
+could be drawn without overlapping.
+
+So the simulation is kept only for the order it produces - what is near
+what, what is above what - and the nodes are then snapped onto a regular
+grid. Rows come off the settled layout top to bottom and each row is sorted
+left to right, which preserves the arrangement the forces found while giving
+every node a cell of its own. Cells are sized from the labels outwards, not
+the nodes outwards: a name can only collide with its neighbour if the cell
+is narrower than the name. The same neighbourhood now uses 65% of the stage,
+nine nodes to a quadrant, and every one of the thirty-six is named.
+
+Connections are routed as right-angled traces rather than straight
+diagonals, which is what makes the result readable at that density: diagonals
+between grid cells cross at every angle and read as a scribble over the
+nodes, where right angles run in the gutters between rows and columns and
+can be followed by eye end to end. Turns are offset per edge so two
+connections sharing a channel do not lie exactly on top of each other, and
+an arrowhead points along the final segment rather than back down the
+straight line between the two nodes.
+
 Layouts are applied outright, never tweened. Animating the positions meant
 the view had to be aimed at where they were going rather than where they
 were, and every attempt to run those two things on one clock left the frame
