@@ -32,6 +32,8 @@ const OVERRIDES_FILE = path.join(DATA_DIR, 'network-overrides.json');
 const OUTPUT_FILE = path.join(DATA_DIR, 'graph.json');
 /* Reviewed rows from scripts/extract-staff-movement.js (2b.11). */
 const STAFF_MOVEMENT_CSV = path.join(DATA_DIR, 'staff-movement.csv');
+/* The owner's staff list, parsed by scripts/parse-staff-list.js. A backup. */
+const STAFF_LIST_CSV = path.join(DATA_DIR, 'staff-list.csv');
 const QA_FILE = path.join(ROOT, 'tmp', 'network-qa.md');
 const SQLITE_FILE = path.join(ROOT, 'tmp', 'prod.sqlite');
 const PROGRAMS_FILE = path.join(ROOT, 'js', 'data', 'reddit-wiki', 'programs-array.json');
@@ -52,7 +54,8 @@ const qa = {
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
     droppedRows: [], chainInferred: [], missingHeadline: [], missingViewNames: [],
     rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
-    profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: []
+    profileEdges: [], profileNames: [], staffMoves: [], staffUnresolved: [],
+    staffListEdges: [], staffListUnresolved: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -857,6 +860,119 @@ function addStaffMovement(nodes, edges) {
     return n;
 }
 
+/**
+ * The owner's staff list, a backup source read after staff-movement.csv:
+ * js/data/network/staff-list.csv (person, place, role, source), drafted by
+ * scripts/parse-staff-list.js from staff-list.txt. It says where someone
+ * worked, not in what order, so nothing here claims a move. A person who is
+ * a board node is connected to each place. Otherwise the person's first
+ * place in the list (usually the programme the list was compiled under) is
+ * connected to each of the others by a staff edge that names them. Only
+ * pairs the map has no line between are drawn; everything else is counted.
+ * Survivor and family ties never join two places. Edges carry provenance
+ * "staff-list".
+ */
+/* Staff-list pairs the map already had a line for (a count, not a QA list). */
+let staffListAlreadyShown = 0;
+
+function addStaffList(nodes, edges) {
+    if (!fs.existsSync(STAFF_LIST_CSV)) return 0;
+    const rows = parseCsv(fs.readFileSync(STAFF_LIST_CSV, 'utf8'));
+    const byKey = new Map();
+    nodes.forEach(function (node) {
+        [node.name].concat(node.aliases || []).forEach(function (name) {
+            const key = nameKey(name);
+            if (!key) return;
+            if (!byKey.has(key)) byKey.set(key, new Set());
+            byKey.get(key).add(node);
+        });
+    });
+    const resolve = function (name) {
+        const hits = byKey.get(nameKey(name));
+        return hits && hits.size === 1 ? Array.from(hits)[0] : null;
+    };
+    const pairs = new Map();
+    edges.forEach(function (e) { pairs.set([e.source, e.target].sort().join('|'), e); });
+
+    let n = 0;
+    const push = function (a, b, category, role, raw) {
+        const key = [a.id, b.id].sort().join('|');
+        const existing = pairs.get(key);
+        if (existing) {
+            if (existing.provenance === 'staff-list' && existing.raw.indexOf(raw) === -1) {
+                existing.raw += '; ' + raw;
+            } else {
+                staffListAlreadyShown++;
+            }
+            return;
+        }
+        n++;
+        const edge = {
+            id: 'l' + String(n).padStart(4, '0'),
+            source: a.id,
+            target: b.id,
+            category: category,
+            roles: role ? [role] : [],
+            raw: raw,
+            direction: 'none',
+            crossesChain: false,
+            crossesRegion: a.regions[0] !== b.regions[0],
+            provenance: 'staff-list'
+        };
+        edges.push(edge);
+        pairs.set(key, edge);
+        qa.staffListEdges.push(raw);
+    };
+
+    const people = new Map();
+    rows.forEach(function (row) {
+        const person = String(row.person || '').trim();
+        if (!person) return;
+        if (!people.has(person)) people.set(person, []);
+        people.get(person).push(row);
+    });
+
+    people.forEach(function (list, person) {
+        const personNode = resolve(person);
+        const places = [];
+        list.forEach(function (row) {
+            const place = resolve(row.place);
+            if (!place) {
+                qa.staffListUnresolved.push(person + ': ' + row.place + (row.role ? ' (' + row.role + ')' : ''));
+                return;
+            }
+            if (personNode && place.id === personNode.id) return;
+            if (places.some(function (p) { return p.node.id === place.id; })) return;
+            places.push({ node: place, role: String(row.role || '').trim() });
+        });
+
+        if (personNode) {
+            places.forEach(function (p) {
+                const category = categoriseRole(p.role) || (p.role ? 'staff' : 'unknown');
+                const what = p.role ? ' (' + p.role + ')' : '';
+                /* People first on person-to-organisation edges. */
+                const a = personNode.kind === 'person' ? personNode : p.node;
+                const b = a === personNode ? p.node : personNode;
+                push(a, b, personNode.kind === 'person' ? category : 'corporate', p.role,
+                    person + what + ' at ' + p.node.name + ' (staff list)');
+            });
+            return;
+        }
+        const worked = places.filter(function (p) {
+            const c = categoriseRole(p.role);
+            return c !== 'survivor' && c !== 'family';
+        });
+        if (worked.length < 2) return;
+        const hub = worked[0];
+        const at = function (p) { return p.node.name + (p.role ? ' (' + p.role + ')' : ''); };
+        worked.slice(1).forEach(function (p) {
+            push(hub.node, p.node, 'staff', 'worked at both',
+                person + ' worked at both ' + at(hub) + ' and ' + at(p) + ' (staff list)');
+        });
+    });
+    return n;
+}
+
 /* ------------------------------------------------------------------ *
  * Layout
  * ------------------------------------------------------------------ */
@@ -1151,7 +1267,8 @@ function build() {
     deriveDeaths(nodes, facilities, overrides);
 
     /* --- 7c. connections the facility profiles record ------------- */
-    const added = addProfileEdges(nodes, edges, facilities) + addStaffMovement(nodes, edges);
+    const added = addProfileEdges(nodes, edges, facilities) + addStaffMovement(nodes, edges) +
+        addStaffList(nodes, edges);
     if (added) {
         /* The profile edges change who connects to whom, so the counts are
          * taken again from scratch rather than patched. */
@@ -1176,7 +1293,8 @@ function build() {
         withDeaths: nodes.filter(function (n) { return n.deaths; }).length,
         rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length,
         profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length,
-        staffMovementEdges: edges.filter(function (e) { return e.provenance === 'staff-movement'; }).length
+        staffMovementEdges: edges.filter(function (e) { return e.provenance === 'staff-movement'; }).length,
+        staffListEdges: edges.filter(function (e) { return e.provenance === 'staff-list'; }).length
     };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
@@ -1337,6 +1455,15 @@ function writeQaReport(graph) {
 
     section(lines, 'Staff moves with a place not on the board', qa.staffUnresolved, function (item) { return item; },
         'Skipped. Add an alias under `aliases` if the place is on the board under another name.');
+
+    section(lines, 'Connections added from the staff list', qa.staffListEdges, function (item) { return item; },
+        'Drawn from staff-list.csv where the map had no line between the two. ' + staffListAlreadyShown +
+        ' more pairs were already connected and were left alone. Correct a row in staff-list.txt and rerun ' +
+        'scripts/parse-staff-list.js.');
+
+    section(lines, 'Staff list places not on the board', qa.staffListUnresolved, function (item) { return item; },
+        'Skipped. Add a spelling to SHORT_FORMS in scripts/parse-staff-list.js if the place is on the board, ' +
+        'or draw it on the board if it belongs there.');
 
     section(lines, 'Starter-view names not found on the board', qa.missingViewNames, function (item) { return item; },
         'Fix the spelling under `views` in network-overrides.json, or drop the name.');

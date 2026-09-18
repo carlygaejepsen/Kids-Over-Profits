@@ -117,10 +117,13 @@ function run() {
         check(Array.isArray(edge.roles), 'edge ' + edge.id + ' has no roles array');
         /* The board's own edges carry no provenance; the build's additions
          * say where they came from (2b.12, 2b.11). */
-        check(edge.provenance === undefined || edge.provenance === 'profile' || edge.provenance === 'staff-movement',
+        check(edge.provenance === undefined || edge.provenance === 'profile' || edge.provenance === 'staff-movement' ||
+            edge.provenance === 'staff-list',
             'edge ' + edge.id + ' has provenance "' + edge.provenance + '"');
         check(edge.provenance !== 'staff-movement' || /moved|worked at/.test(edge.raw || ''),
             'staff-movement edge ' + edge.id + ' does not say who moved');
+        check(edge.provenance !== 'staff-list' || /\(staff list\)$/.test(edge.raw || ''),
+            'staff-list edge ' + edge.id + ' does not say where it came from');
     });
 
     /* a person is never the target of a person-to-organisation edge */

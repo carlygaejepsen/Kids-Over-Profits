@@ -52,6 +52,9 @@
   ],
   "aliases": {},
   "kinds": {
+    "Embark at Flathead Valley": "facility",
+    "Embark at Hobble Creek": "facility",
+    "Embark at The Forge": "facility",
     "Erica Thiessen- House": "person",
     "Accelerated Christian Education": "other",
     "Education Consultant": "other",

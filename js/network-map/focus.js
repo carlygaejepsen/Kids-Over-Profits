@@ -583,6 +583,8 @@
          * empty sand.
          */
         function showOpeningView() {
+            /* Back to the start: the next click settles from what is on screen. */
+            seedKey = null;
             var scene = focus.scene();
             renderer.setScene(scene);
             viewport.setScene(scene);
@@ -608,6 +610,13 @@
             else showOpeningView();
         };
 
+        /* Where the settle for the current trail started from. Laying the
+         * same trail out again (Reset view, a resize, a filter) starts from
+         * the same place, so a dragged node goes back to its cell instead of
+         * seeding a different arrangement from where it was dropped. */
+        var seedKey = null;
+        var seed = null;
+
         function enterFocus() {
             stopSettle();
             dropGather();
@@ -621,7 +630,16 @@
                 return;
             }
 
-            var settled = settleLayout(scene, 70);
+            var key = mode + ':' + chain.join(',');
+            if (key !== seedKey) {
+                seedKey = key;
+                seed = Object.create(null);
+                scene.nodes.forEach(function (node) {
+                    var p = positionOf(node);
+                    seed[node.id] = { x: p.x, y: p.y };
+                });
+            }
+            var settled = settleLayout(scene, 70, seed);
             applyLayout(scene, settled.positions, 70 + settled.overhang);
 
             renderer.setEmphasis({ hoverId: null });
@@ -641,14 +659,15 @@
         /**
          * Run the force settle once, synchronously, and return where every
          * node in the focused scene should end up. Seeded from where each
-         * node currently appears, so the animation that follows is a
-         * rearrangement of what is on screen rather than a cut.
+         * node currently appears (or from `from`, where given), so the
+         * animation that follows is a rearrangement of what is on screen
+         * rather than a cut.
          */
-        function settleLayout(scene, gridPadding) {
+        function settleLayout(scene, gridPadding, from) {
             var d3 = root.d3;
             var byId = Object.create(null);
             var points = scene.nodes.map(function (node) {
-                var p = positionOf(node);
+                var p = (from && from[node.id]) || positionOf(node);
                 var point = {
                     id: node.id, r: node.r, x: p.x, y: p.y,
                     /* Carried onto the simulation node so the collision force

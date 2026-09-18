@@ -71,11 +71,11 @@
                 label: label,
                 nodes: others.map(function (o) { return o.node; }),
                 /* Where a connection came from, when it is not the research
-                 * board's own: the profile, or the staff moves (whose raw
+                 * board's own: the profile, or the staff moves and staff list (whose raw
                  * text says who moved where, which is the whole point). */
                 sources: others.map(function (o) {
                     if (o.provenance === 'profile') return 'from the profile';
-                    if (o.provenance === 'staff-movement') return o.raw;
+                    if (o.provenance === 'staff-movement' || o.provenance === 'staff-list') return o.raw;
                     return '';
                 })
             };

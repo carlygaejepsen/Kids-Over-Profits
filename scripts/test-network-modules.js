@@ -1797,11 +1797,25 @@ function run() {
         const y = p.y * tx.k + tx.y;
         return x >= -1 && x <= WIDTH + 1 && y >= -1 && y <= HEIGHT + 1;
     };
-    const ownOff = [second].concat(store.neighbours(second.id, true).map((l) => l.other))
-        .filter((n) => focus.scene().nodeIds[n.id] && !onStageNow(n));
-    check(ownOff.length === 0,
-        'in expand mode ' + ownOff.length + ' connections of the latest click are off the stage',
-        'expand mode frames ' + second.name + ' and its connections at zoom ' + tx.k.toFixed(2));
+    const ownNodes = [second].concat(store.neighbours(second.id, true).map((l) => l.other))
+        .filter((n) => focus.scene().nodeIds[n.id]);
+    const ownOff = ownNodes.filter((n) => !onStageNow(n));
+    /* The same licence as the focus view: connections may be left a pan
+     * away only when framing all of them would cost names, and the click
+     * itself stays on the stage. */
+    let ownDrop = 0;
+    if (ownOff.length) {
+        const ownPts = ownNodes.map((n) => { const p = focus.positionOf(n); return { x: p.x, y: p.y, r: n.r }; });
+        const ownFrame = viewport.frameOf(ownPts, 70);
+        ownDrop = renderer.dropsAt(focus.scene().nodes, (n) => focus.positionOf(n), ownFrame.k, ownFrame.x, ownFrame.y);
+    }
+    check(ownOff.length === 0 || (ownDrop > 0 && onStageNow(second)),
+        'in expand mode ' + ownOff.length + ' connections of the latest click are off the stage' +
+            (onStageNow(second) ? ' though framing them drops no names' : ', the click among them'),
+        ownOff.length
+            ? 'expand mode keeps ' + second.name + ' on the stage; framing its ' + ownNodes.length +
+                ' would drop ' + ownDrop + ' names, so ' + ownOff.length + ' are a pan away'
+            : 'expand mode frames ' + second.name + ' and its connections at zoom ' + tx.k.toFixed(2));
     check(tx.k >= Math.min(wholeK, 1) * 0.5, 'expand mode zoomed right out on the second click');
 
     /* 2b.3 Reset view lays the board out again, so a dragged node goes

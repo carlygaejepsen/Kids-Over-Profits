@@ -910,6 +910,26 @@ may or may not be Silverado Boys Ranch) and are listed in the QA report.
 Longer term, as the plan says, these belong in `staff.pastTTIJobs` on the
 v2 record so the profile and the map read one source.
 
+### Staff list backup (2026-09-18)
+
+The owner's staff list ("Name (role place, role place, ...)", about 400
+people) is kept verbatim in `js/data/network/staff-list.txt`.
+`node scripts/parse-staff-list.js` turns it into `staff-list.csv` (person,
+place, role, source), finding each place by board node name, alias, or a
+spelling in its `SHORT_FORMS` table; `--report` prints entries that name no
+board node. Family ties and places marked not TTI are left out.
+
+The build reads the CSV after `staff-movement.csv` and only fills gaps: a
+pair the map already has a line between is left alone (594 today). The list
+says where someone worked, not in what order, so nothing claims a move. A
+person who is a board node is connected to each place; otherwise the
+person's first-listed place is joined to each of the others by a staff edge
+whose text names them ("X worked at both A (role) and B (role) (staff
+list)"). Survivor ties never join two places. Today: 341 edges with
+`provenance: "staff-list"`, and 56 entries whose place is not on the board,
+both listed in the QA report. The three "Embark at ..." campuses were
+classed as people on the board and are corrected under `kinds`.
+
 ### Step 7 mechanism (2026-09-18): starter views (2b.10)
 
 `network-overrides.json` takes `views`: `{"key": {"label": "...",
