@@ -632,7 +632,25 @@ function run() {
     check(viewport.nodeAt(point.x, point.y) === hub, 'hit testing missed a node at its own centre');
     check(viewport.nodeAt(point.x + 3, point.y + 3) === hub,
         'hit slop did not keep a small node tappable at a wide zoom');
-    check(viewport.nodeAt(2, 2) === null, 'hit testing found a node in empty space');
+    /* Empty space is found, not assumed: at the whole map a corner can hold
+     * a node or a name. Scan in from the top left for the first point where
+     * nothing is drawn, then check hit testing agrees it is empty. */
+    const emptySpot = () => {
+        for (let y = 2; y < renderer.height; y += 7) {
+            for (let x = 2; x < renderer.width; x += 7) {
+                if (viewport.nodeAt(x, y) !== null) continue;
+                const clear = scene.nodes.every((n) => {
+                    const p = screenOf(n);
+                    return Math.hypot(p.x - x, p.y - y) > 24;
+                });
+                if (clear) return { x, y };
+            }
+        }
+        return null;
+    };
+    const blank = emptySpot();
+    check(!!blank, 'no empty point anywhere on the whole map to test against');
+    check(!blank || viewport.nodeAt(blank.x, blank.y) === null, 'hit testing found a node in empty space');
 
     /* Zoomed in, the slop is worth about a world unit, so the search radius
      * has to account for the node's own size or a click well inside a big hub
@@ -676,9 +694,10 @@ function run() {
 
     const panX = t.x;
     const panY = t.y;
-    fire('pointerdown', 1, 5, 5);
-    fire('pointermove', 1, 45, 25);
-    fire('pointerup', 1, 45, 25);
+    const panFrom = emptySpot() || { x: 5, y: 5 };
+    fire('pointerdown', 1, panFrom.x, panFrom.y);
+    fire('pointermove', 1, panFrom.x + 40, panFrom.y + 20);
+    fire('pointerup', 1, panFrom.x + 40, panFrom.y + 20);
     check(Math.abs(t.x - (panX + 40)) < 1e-6 && Math.abs(t.y - (panY + 20)) < 1e-6,
         'a drag on empty space did not pan by the pointer travel');
     check(selected === null, 'a pan was treated as a click');

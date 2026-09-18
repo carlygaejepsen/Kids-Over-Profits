@@ -138,7 +138,28 @@ const SHORT_FORMS = {
     'academy of eastern az': 'Academy of Eastern Arizona',
     'la europa': 'La Europa Academy',
     'cascade': 'Cascade School',
-    'north tampa behavioral health': 'Tampa Behavioral Health'
+    'north tampa behavioral health': 'Tampa Behavioral Health',
+    'red mountain co': 'Red Mountain Colorado',
+    'roots transitions': 'ROOTs Transition',
+    'solstice': 'Solstice RTC',
+    'sandhill center': 'Sandhill Child Development Center',
+    'copper canyon': 'Copper Canyon Academy',
+    'new visions wilderness': 'New Vision Wilderness',
+    'vista adolescent treatment centers': 'Vista Treatment Centers',
+    'uita academy': 'Uinta Academy',
+    'equinox': 'Equinox RTC',
+    'vista rtc': 'Vista Treatment Centers',
+    'vista residential treatment centers': 'Vista Treatment Centers',
+    'suws carolinas': 'SUWS of the Carolinas',
+    'agape': 'Agape Boarding School',
+    'circle of hope': "Circle of Hope Girls' Ranch",
+    'asheville academy': 'Asheville Academy for Girls',
+    'roloff ministries': 'Roloff Evangelistic Enterprises',
+    'roloff evangelical enterprises': 'Roloff Evangelistic Enterprises',
+    'new beginnings girls home': "New Beginnings Girls' Academy",
+    'cartisano': 'Steve Cartisano',
+    'cedar county sheriffs dept': "Cedar County Sheriff's Department",
+    'jim clemenson': '"Brother Jim" Clemenson'
 };
 
 /* Trailing words that may be missing from the list's spelling of a place. */
