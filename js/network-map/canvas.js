@@ -124,6 +124,41 @@
     var YEARS_SIZE = 9.5;
     var YEARS_LINE = 11;
 
+    /* What each line says, written on the line. Smaller and lighter than a
+     * name, and italic, so a relationship never reads as another node. Not
+     * drawn on a view with more lines than this: at the whole map two
+     * thousand captions would bury everything they were meant to explain. */
+    var EDGE_LABEL_SIZE = 9.5;
+    var EDGE_LABEL_MAX = 400;
+    var EDGE_LABEL_CHARS = 32;
+
+    /**
+     * The words to write on a line: the relationship as the board wrote it
+     * ("cofounder/CEO", "rebrand"). A line the build added between two
+     * places because somebody worked at both says who, since that person
+     * is the connection. Nothing for a line the board left unlabelled: the
+     * build files those as "affiliated", which is its reading, not the
+     * board's words.
+     */
+    function edgeLabelText(edge) {
+        var roles = edge.roles || [];
+        var raw = String(edge.raw || '');
+        var text = '';
+        if ((edge.provenance === 'staff-list' || edge.provenance === 'staff-movement') &&
+            (roles[0] === 'worked at both' || roles[0] === 'staff moved')) {
+            text = raw.split('; ').map(function (part) {
+                return part.split(/ \(| worked at | moved from /)[0];
+            }).filter(Boolean).join(', ');
+        } else if (edge.provenance) {
+            text = roles.join(' / ');
+        } else {
+            text = raw;
+        }
+        text = text.replace(/\s+/g, ' ').trim();
+        if (text.length > EDGE_LABEL_CHARS) text = text.slice(0, EDGE_LABEL_CHARS - 1).trim() + '\u2026';
+        return text;
+    }
+
     /* The memorial ring. Not the coral accent: this is a warning. */
     var DEATH_RED = '#B00020';
 
@@ -1072,6 +1107,84 @@
                 ctx.fillText(drawn[i].node.years, drawn[i].x, drawn[i].y + LABEL_LINE);
             }
             ctx.textAlign = 'center';
+
+            /* --- what each line says ---
+             *
+             * After the names, into the same collision grid, so a name always
+             * wins: a caption that cannot sit clear of every name and shape
+             * is left off rather than drawn over one. Each goes on the
+             * longest straight run of its line, a horizontal run first, since
+             * that is where the words read along the line they belong to.
+             * With a neighbourhood lit, only its own lines are captioned. */
+            var captions = [];
+            if (renderer.edgeLabels !== false && routes.length <= EDGE_LABEL_MAX) {
+                ctx.font = 'italic ' + EDGE_LABEL_SIZE + 'px ' + FONT;
+                for (i = 0; i < routes.length; i++) {
+                    var captioned = routes[i].edge;
+                    if (near && !(nearEdges ? nearEdges[captioned.id]
+                        : (near[captioned.sourceId] && near[captioned.targetId]))) continue;
+                    var words = edgeLabelText(captioned);
+                    if (!words) continue;
+                    var tw = ctx.measureText(words).width;
+                    var legs = [];
+                    var rp = routes[i].pts;
+                    for (var li = 1; li < rp.length; li++) {
+                        var lx0 = rp[li - 1][0], ly0 = rp[li - 1][1], lx1 = rp[li][0], ly1 = rp[li][1];
+                        legs.push({
+                            len: Math.hypot(lx1 - lx0, ly1 - ly0),
+                            flat: Math.abs(ly1 - ly0) < 0.5,
+                            x0: lx0, y0: ly0, x1: lx1, y1: ly1
+                        });
+                    }
+                    legs.sort(function (p1, p2) {
+                        return (p2.flat ? 1 : 0) - (p1.flat ? 1 : 0) || p2.len - p1.len;
+                    });
+                    /* The middle of a run first, then further along it either
+                     * way: a name or another caption often sits on the
+                     * middle of a busy run and nowhere else. */
+                    var spots = [];
+                    legs.forEach(function (leg2) {
+                        if (leg2.len < (leg2.flat ? tw + 16 : EDGE_LABEL_SIZE * 3)) return;
+                        [0.5, 0.35, 0.65, 0.2, 0.8].forEach(function (f) {
+                            var sxp = leg2.x0 + (leg2.x1 - leg2.x0) * f;
+                            var syp = leg2.y0 + (leg2.y1 - leg2.y0) * f;
+                            /* The whole caption stays on its own run. */
+                            if (leg2.flat && Math.min(Math.abs(sxp - leg2.x0), Math.abs(sxp - leg2.x1)) < tw / 2 + 6) return;
+                            spots.push({ x: sxp, y: syp });
+                        });
+                    });
+                    for (var lj = 0; lj < spots.length; lj++) {
+                        var leg = spots[lj];
+                        var cbox = [leg.x - tw / 2 - 3, leg.y - EDGE_LABEL_SIZE / 2 - 2,
+                            leg.x + tw / 2 + 3, leg.y + EDGE_LABEL_SIZE / 2 + 2];
+                        if (cbox[0] < 0 || cbox[2] > w || cbox[1] < 0 || cbox[3] > h) continue;
+                        if (!fitsInGrid(labelGrid, cbox)) continue;
+                        var onShape = false;
+                        for (var bi = 0; bi < blockers.length && !onShape; bi++) {
+                            var bb2 = blockers[bi];
+                            onShape = cbox[0] < bb2[2] && cbox[2] > bb2[0] && cbox[1] < bb2[3] && cbox[3] > bb2[1];
+                        }
+                        if (onShape) continue;
+                        occupyGrid(labelGrid, cbox);
+                        captions.push({ text: words, x: leg.x, y: leg.y, box: cbox, edge: captioned });
+                        break;
+                    }
+                }
+                ctx.textBaseline = 'middle';
+                for (i = 0; i < captions.length; i++) {
+                    var cb = captions[i].box;
+                    ctx.globalAlpha = 0.92;
+                    ctx.fillStyle = SURFACE;
+                    ctx.beginPath();
+                    roundedRect(ctx, cb[0], cb[1], cb[2] - cb[0], cb[3] - cb[1], 3);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    ctx.fillStyle = 'rgba(0, 4, 53, 0.78)';
+                    ctx.fillText(captions[i].text, captions[i].x, captions[i].y + 0.5);
+                }
+                ctx.textBaseline = 'top';
+            }
+            renderer.edgeCaptions = captions;
         };
 
         /* A pill path. arcTo keeps it to the calls every canvas has. */

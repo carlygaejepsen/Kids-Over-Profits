@@ -80,6 +80,7 @@ function buildSandbox() {
     const labelCalls = [];
     const labelBoxes = [];
     const badgeCalls = [];
+    const captionCalls = [];
     const yearsCalls = [];
 
     const ctx = {
@@ -92,6 +93,9 @@ function buildSandbox() {
             ops.fillText++;
             /* The "+N" off-screen pill is text too, but it is not a name. */
             if (/^\+\d+$/.test(String(t))) { badgeCalls.push(t); return; }
+            /* What a line says is written in italic on the line; it is not a
+             * name either. */
+            if (String(ctx.font || '').indexOf('italic') === 0) { captionCalls.push(t); return; }
             /* The years line under a name is drawn at its own smaller size;
              * it belongs to the name above it and is not a label of its own. */
             if (String(ctx.font || '').indexOf('9.5px') === 0) { yearsCalls.push(t); return; }
@@ -365,7 +369,7 @@ function buildSandbox() {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
         document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
-        labelCalls, labelBoxes, badgeCalls, yearsCalls,
+        labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls,
         /* The stage the map believes it has, so the same modules can be run
          * at a phone width without a second sandbox. */
         setStage: (width, height) => { stage.width = width; stage.height = height; },
@@ -374,6 +378,7 @@ function buildSandbox() {
             labelCalls.length = 0;
             labelBoxes.length = 0;
             badgeCalls.length = 0;
+            captionCalls.length = 0;
             yearsCalls.length = 0;
         }
     };
@@ -391,7 +396,7 @@ function run() {
 
     const {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
-        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, yearsCalls, resetOps, setStage
+        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls, resetOps, setStage
     } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -866,6 +871,17 @@ function run() {
         'a ' + hubScene.nodes.length + '-node neighbourhood fits every name');
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+
+    /* The lines say what they are, and never over a name. */
+    const captions = renderer.edgeCaptions || [];
+    check(captions.length > 0 && captionCalls.length === captions.length,
+        'the WWASPS view wrote ' + captions.length + ' captions on its lines',
+        captions.length + ' of ' + hubScene.edges.length + ' lines in the WWASPS view are captioned');
+    const overName = captions.filter((c) => (renderer.labelHits || []).some((l) => l.box &&
+        c.box[0] < l.box[2] && c.box[2] > l.box[0] && c.box[1] < l.box[3] && c.box[3] > l.box[1]));
+    check(overName.length === 0, 'a caption is written over a name: ' + (overName[0] && overName[0].text));
+    check(captions.every((c) => c.box[0] >= 0 && c.box[2] <= renderer.width && c.box[1] >= 0 && c.box[3] <= renderer.height),
+        'a caption runs off the canvas');
 
     /* A name wider than its cell hangs over the edges of it, which is fine
      * in the middle of the board and not fine in the outermost column. */
