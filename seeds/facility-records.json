@@ -741,5 +741,23 @@
         }
       }
     ]
+  },
+  {
+    "id": 13718,
+    "unique_name": "Elk River Treatment Program (CLOSED",
+    "version": 1,
+    "note": "currentName held a truncated copy of the name ending in '(CLOSED' and showed as 'Now known as' on the Alabama card. Duplicate of 13650 (same Huntsville facility); merge with api/merge-facility-duplicates.php?run=1&pairs=13650:13718.",
+    "facility": {
+      "identification": {
+        "name": "Elk River Treatment Program (CLOSED",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
   }
 ]
