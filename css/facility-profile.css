@@ -6,8 +6,9 @@
  * here; the plugin blocks (FileBird, Visual Link Preview) bring their own.
  */
 
+/* The profile fills the standard content column (Kadence's sidebar layout,
+   the same width as every other post); nothing here widens it. */
 .kop-facility-profile {
-    max-width: 1200px;
     margin: 0 auto;
     padding: 1.5rem 1.25rem 3rem;
     box-sizing: border-box;
@@ -98,8 +99,8 @@
 @media (min-width: 960px) {
     .kop-fp-rail {
         float: right;
-        width: 300px;
-        margin: 0 0 1.5rem 2.5rem;
+        width: 260px;
+        margin: 0 0 1.5rem 1.75rem;
     }
 }
 
