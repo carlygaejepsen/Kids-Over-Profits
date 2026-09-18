@@ -207,10 +207,6 @@ if (!function_exists('kop_facility_pages_enqueue')) {
         if (file_exists($doc_css) && !empty($GLOBALS['kop_facility_page']['documents']['html'])) {
             wp_enqueue_style('kop-document-library-style', $theme_uri . '/css/document-library.css', array('kop-colors'), filemtime($doc_css));
         }
-        $rail_js = $theme_dir . '/js/facility-profile.js';
-        if (file_exists($rail_js)) {
-            wp_enqueue_script('kop-facility-profile', $theme_uri . '/js/facility-profile.js', array(), filemtime($rail_js), true);
-        }
         $js = $theme_dir . '/js/submit-info.js';
         if (file_exists($js)) {
             wp_enqueue_script('kop-submit-info', $theme_uri . '/js/submit-info.js', array(), filemtime($js), true);

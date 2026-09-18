@@ -95,6 +95,58 @@ get_header();
 
     <div class="kop-fp-grid">
 
+        <aside class="kop-fp-rail" aria-label="Facility facts">
+            <h2>At a glance</h2>
+            <dl class="kop-fp-facts">
+                <?php if ($page['addresses']) : ?>
+                    <div>
+                        <dt><?php echo count($page['addresses']) > 1 ? 'Addresses' : 'Address'; ?></dt>
+                        <?php foreach ($page['addresses'] as $addr) : ?>
+                            <dd><?php echo esc_html($addr); ?></dd>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($page['former_locations']) : ?>
+                    <div>
+                        <dt>Former locations</dt>
+                        <?php foreach ($page['former_locations'] as $fl) : ?>
+                            <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <?php foreach ($page['facts'] as $fact) : ?>
+                    <div>
+                        <dt><?php echo esc_html($fact['label']); ?></dt>
+                        <?php if (is_array($fact['value'])) : ?>
+                            <?php foreach ($fact['value'] as $v) : ?><dd><?php echo esc_html($v); ?></dd><?php endforeach; ?>
+                        <?php elseif ($fact['label'] === 'Operator' && $page['operator']['url'] !== '') : ?>
+                            <dd><a href="<?php echo esc_url($page['operator']['url']); ?>"><?php echo esc_html($fact['value']); ?></a></dd>
+                        <?php else : ?>
+                            <dd><?php echo esc_html($fact['value']); ?></dd>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </dl>
+
+            <h2>Also see</h2>
+            <ul class="kop-fp-list">
+                <li><a href="<?php echo esc_url($page['index_url']); ?>">Database record</a><span class="meta">TTI Program Index</span></li>
+                <?php if ($page['hub_url'] !== '') : ?>
+                    <li><a href="<?php echo esc_url($page['hub_url']); ?>"><?php echo esc_html($page['hub_name']); ?> hub</a><span class="meta">Every facility, lawsuit, and bill in <?php echo esc_html($page['hub_name']); ?></span></li>
+                <?php endif; ?>
+                <?php if ($kop_fp_has_inspections && $page['inspections']['page_url'] !== '') : ?>
+                    <li><a href="<?php echo esc_url($page['inspections']['page_url']); ?>">State inspection reports</a><span class="meta">Searchable archive</span></li>
+                <?php endif; ?>
+            </ul>
+
+            <h2>Know something we do not?</h2>
+            <p class="kop-fp-rail-text">Corrections, documents and first-hand accounts go into the review queue and are checked before they are published.</p>
+            <p class="kop-fp-rail-actions">
+                <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="<?php echo esc_attr($page['name']); ?>">Submit info</button>
+                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>">Full submission form</a>
+            </p>
+        </aside>
+
         <div class="kop-fp-body kop-fp-generated-body">
 
             <p class="kop-fp-summary"><?php echo esc_html($page['summary']); ?></p>
@@ -347,57 +399,6 @@ get_header();
 
         </div>
 
-        <aside class="kop-fp-rail" aria-label="Facility facts">
-            <h2>At a glance</h2>
-            <dl class="kop-fp-facts">
-                <?php if ($page['addresses']) : ?>
-                    <div>
-                        <dt><?php echo count($page['addresses']) > 1 ? 'Addresses' : 'Address'; ?></dt>
-                        <?php foreach ($page['addresses'] as $addr) : ?>
-                            <dd><?php echo esc_html($addr); ?></dd>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-                <?php if ($page['former_locations']) : ?>
-                    <div>
-                        <dt>Former locations</dt>
-                        <?php foreach ($page['former_locations'] as $fl) : ?>
-                            <dd><?php echo esc_html($fl['line'] . ($fl['years'] !== '' ? ' (' . $fl['years'] . ')' : '')); ?></dd>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-                <?php foreach ($page['facts'] as $fact) : ?>
-                    <div>
-                        <dt><?php echo esc_html($fact['label']); ?></dt>
-                        <?php if (is_array($fact['value'])) : ?>
-                            <?php foreach ($fact['value'] as $v) : ?><dd><?php echo esc_html($v); ?></dd><?php endforeach; ?>
-                        <?php elseif ($fact['label'] === 'Operator' && $page['operator']['url'] !== '') : ?>
-                            <dd><a href="<?php echo esc_url($page['operator']['url']); ?>"><?php echo esc_html($fact['value']); ?></a></dd>
-                        <?php else : ?>
-                            <dd><?php echo esc_html($fact['value']); ?></dd>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </dl>
-
-            <h2>Also see</h2>
-            <ul class="kop-fp-list">
-                <li><a href="<?php echo esc_url($page['index_url']); ?>">Database record</a><span class="meta">TTI Program Index</span></li>
-                <?php if ($page['hub_url'] !== '') : ?>
-                    <li><a href="<?php echo esc_url($page['hub_url']); ?>"><?php echo esc_html($page['hub_name']); ?> hub</a><span class="meta">Every facility, lawsuit, and bill in <?php echo esc_html($page['hub_name']); ?></span></li>
-                <?php endif; ?>
-                <?php if ($kop_fp_has_inspections && $page['inspections']['page_url'] !== '') : ?>
-                    <li><a href="<?php echo esc_url($page['inspections']['page_url']); ?>">State inspection reports</a><span class="meta">Searchable archive</span></li>
-                <?php endif; ?>
-            </ul>
-
-            <h2>Know something we do not?</h2>
-            <p class="kop-fp-rail-text">Corrections, documents and first-hand accounts go into the review queue and are checked before they are published.</p>
-            <p class="kop-fp-rail-actions">
-                <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="<?php echo esc_attr($page['name']); ?>">Submit info</button>
-                <a class="kop-fp-rail-link" href="<?php echo esc_url($page['submit_url']); ?>">Full submission form</a>
-            </p>
-        </aside>
     </div>
 
     <footer class="kop-fp-footer">
