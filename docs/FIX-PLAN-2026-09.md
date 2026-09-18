@@ -1,8 +1,9 @@
 # Fix plan, September 2026
 
-The fix list raised on 2026-09-17, and what became of each item. Every code
-item is done and live on kidsoverprofits.org. What remains is the network
-map's last items and a set of one-off actions only the site owner can run.
+The fix list raised on 2026-09-17 and what became of each item, then four
+issues the owner raised on 2026-09-18 (items 11 to 14). Everything from the
+first list is live on kidsoverprofits.org except the network map's last
+steps; the second list is open.
 
 Last updated 2026-09-18.
 
@@ -18,12 +19,16 @@ Last updated 2026-09-18.
 | 3C | Tutorial button over the search button | Done |
 | 4 | Monitor menu: inspection reports hub | Done; menu entry waiting on the owner |
 | 5 | Resources page | Done; new entries waiting on the owner |
-| 6 | Archived links for facility websites | Done; one surface left for a decision |
-| 7A | State pages: alternate names | Done |
+| 6 | Archived links for facility websites | Done for facility pages and hub cards; the rest is item 11 |
+| 7A | State pages: alternate names | Rendering done; missing names are item 12 |
 | 7B | State pages: PDF previews | Done; regeneration waiting on the owner |
 | 8 | Facility links must not land on the program index | Done |
 | 9 | Newsletter sign-up top padding | Done |
 | 10 | Email notifications for new submissions | Done |
+| 11 | Facility websites: Wayback and/or donotlink everywhere | Open: three page types still link live |
+| 12 | State pages: alternate names missing | Open: the feed and the data, not the rendering |
+| 13 | Featured inspections not displaying | Fix shipped; confirm on the site |
+| 14 | Parser that flags the worst inspection findings | Open: design below |
 
 ## Waiting on the owner
 
@@ -43,8 +48,8 @@ session can do it. The tools that change data show a dry run first; add
    first (it has no dry run; on production it only adds the `featured` and
    `featured_note` columns), then feature reports in
    [manage-featured-inspections.php](https://kidsoverprofits.org/wp-content/themes/child/api/manage-featured-inspections.php).
-   The "Reports that demand attention" block then appears on the home page
-   and the inspection hub within ten minutes.
+   Done by the owner on 2026-09-18 (two reports featured); see item 13 for
+   why they did not appear at first. Each still needs a `featured_note`.
 4. **Research facility tags (2B).**
    [propose-research-facility-tags.php](https://kidsoverprofits.org/wp-content/themes/child/api/propose-research-facility-tags.php)
    writes `kop-research-tag-proposals.json` to the uploads directory. Prune
@@ -349,3 +354,169 @@ digest.
 
 Tests: `scripts/test-submission-notify.php`, offline against WP stubs, no
 mail sent.
+
+---
+
+# Raised 2026-09-18
+
+## 11. Facility websites: Wayback and/or donotlink everywhere
+
+Item 6 covers the generated facility pages and the state and country hub
+cards, but a program's own website still reaches a visitor as a live link
+in three places. Checked on the live site, 2026-09-18:
+
+- **Generated facility pages** (`templates/facility-page.php`). The primary
+  link is the Wayback copy, but item 6 added a secondary "live site" link
+  beside it (for example Discovery Ranch South links
+  `discoveryranchforgirls.com` directly). It carries
+  `rel="nofollow noreferrer noopener"`, so it passes no search ranking, but
+  it is still a click through to the program.
+- **TTI program index** (`js/tti-program-index.js`, around lines 976 and
+  1280): operator websites and facility `profileLinks`, both live.
+- **State inspection trackers**, the facility panel on each `/xx-reports/`
+  page (`js/inspections/facilities-display.js`, lines 346 and 425):
+  operator websites and the field labelled "Archived Website", both live
+  whatever the URL is.
+
+The 14 hand-written profiles (`single-facility-profile.php`) link no program
+site; their outbound links are news, survivor and archive pages. The
+referrer and transporter indexes link consultants' and transport companies'
+own sites live too; whether those fall under this rule is a decision.
+
+Plan:
+
+1. Decide the rule for the live link: drop it everywhere (Wayback only), or
+   keep a secondary link routed through donotlink.io, which strips the
+   referrer and passes no ranking. Wayback stays the primary link either
+   way, because it preserves what the program said at the time.
+2. Apply the rule once, server side. `kop/v1/facilities` and the operator
+   feed already pass through PHP, so rewrite `profileLinks` and operator
+   `websites` there with `kop_facility_pages_archive_link()` and its exempt
+   list, rather than copying the host rule into three scripts. The location
+   index, the program index and the discovery scripts all read this feed,
+   so check first that the discovery scripts do not depend on the live URL
+   (they may match on the domain).
+3. Remove or reroute the secondary "live site" link on facility pages to
+   match the rule.
+4. Test with a harness over the feed asserting that no non-exempt host
+   leaves it unarchived, and keep the crawl used for the check above as a
+   script that lists outbound hosts on a sample of each page type.
+
+## 12. State pages: alternate names missing
+
+Item 7A's rendering works: on `/utah/`, all 29 facilities whose data carries
+an alternate name show it on the card. The problem is what the page is
+given. Checked 2026-09-18:
+
+- The state feed (`kop/v1/state/<state>`) passes fewer names than the
+  facility database holds: 29 Utah facilities have names in the feed against
+  34 in `facilities_v2`, and 14 in Texas against 26. The hub reads the state
+  aggregate first (one of the three copies of each facility's data), so a
+  name added to `facilities_v2` but not to that copy never reaches the card.
+- Coverage is thin at the source: 435 of 4,679 `facilities_v2` records carry
+  any alternate name (`identification.pastNames` 175,
+  `identification.otherNames` 159, `identification.currentName` 111).
+- A rebranded facility's `currentName` ("now known as") is not on the card
+  face; it is only in the collapsed details panel.
+- `provenance.sourceOperator.otherNames` (34 records) holds the operator's
+  names, not the facility's, and must stay off the facility card.
+- Inspection-only rows (from `inspection_facilities`) arrive with empty name
+  lists. Some match a `facilities_v2` record that has names, so the feed
+  should merge those in when the match is certain.
+
+Plan:
+
+1. In the state and country feeds (`inc/rest-api.php`), take `otherNames`,
+   `pastNames` and `currentName` from `facilities_v2` for every row that
+   resolves to a v2 id, merged with whatever the aggregate carries.
+2. Show "Now known as" on the card face beside "Also known as" and
+   "Formerly" (`js/state-page.js`, `js/country-page.js`).
+3. Report the coverage gap separately, listing the facilities that have no
+   alternate names, so the owner can see the scale of the data work.
+   Filling it is research rather than code: rebrands and former names come
+   from news, filings and survivor accounts.
+4. Test with the offline REST harness against prod dumps: for each state,
+   the facilities with names in v2 are the facilities with names in the
+   feed.
+
+## 13. Featured inspections not displaying
+
+Two reports are marked featured in production, both for UHS of Provo
+Canyon (the Provo and Springville campuses, reports of 19 and 2 June 2026),
+and neither showed.
+
+Cause: before `api/update-schema.php` ran, the home page and the inspection
+hub cached "the featured column does not exist" for a full day, at 05:23 on
+2026-09-18. The later change that caches a missing column for ten minutes
+only applied to entries saved after it, so the day-long "no" would have
+stood until 05:23 on 2026-09-19 whatever the database said.
+
+Fix, shipped 2026-09-18: both templates use a renamed cache key
+(`kop_inspection_featured_column_v2`), so the stale entry is ignored and the
+column is checked again on the next page load. To confirm: the home page and
+[/inspection-reports/](https://kidsoverprofits.org/inspection-reports/) show
+the two Provo Canyon cards.
+
+Also worth doing: neither featured report has a `featured_note`, so the cards
+show the facility, state and date but no reason. Add a one-line note to each
+in the featured tool.
+
+## 14. Parser that flags the worst inspection findings
+
+A pass over the inspection reports that finds the most serious findings,
+pulls each one out with its quote and source, and queues it for review
+before anything is highlighted on the site.
+
+What the data holds (production mirror, 57,089 reports in 13 states): no
+report is stored in a common structure (`is_structured` is 0 everywhere).
+Every report has `categories_json`, but each state's shape is different, and
+the full text is in `raw_content`. Some states already carry a severity
+signal:
+
+- **Texas** (11,559 reports): a `Standard Risk Level` on every citation
+  (High 2,143; Medium High 4,209; Medium 3,786; Medium Low 996; Low 425),
+  with the standard violated and a deficiency narrative.
+- **California** (30,412): complaint investigations with `allegations`
+  (7,335 reports) and `investigation_findings`, where a substantiated
+  finding can be told apart from an unsubstantiated one.
+- **Utah** (2,942): a `Findings Count` (365 reports with findings).
+  **Washington** (88): a `violation_count` (38 with violations).
+- The other states need the text. A rough keyword pass over `raw_content`
+  finds a death mentioned in 1,393 reports, sexual abuse or assault in
+  1,438, hospitalisation in 1,155 and restraint with injury in 268. These
+  are counts of mentions, not of incidents: a report can say "no deaths".
+
+Plan:
+
+1. **Extract** each state's findings into one shape: report id, facility,
+   date, the finding's own text quoted verbatim, the standard cited, and
+   any severity or substantiation the state recorded. One adapter per state
+   shape, starting with Texas and California, which have the structure.
+2. **Score** each finding. Use the state's own signal first (Texas High,
+   California Substantiated), then look in the text for categories of harm:
+   death, sexual abuse, restraint or seclusion causing injury, physical
+   abuse by staff, medical neglect, hospitalisation, a child missing or run
+   away, and police involvement. Exclude negations ("no injuries were
+   found") and boilerplate sections (census, staffing counts), so the scorer
+   matches on a finding's text, never on the whole report.
+3. **Store** results in a new table (`inspection_highlights`: report id,
+   facility id, category, score, excerpt, the state's severity label, a
+   status of pending, approved or rejected, and who reviewed it), so a
+   re-run adds new candidates without undoing a person's decision.
+4. **Review before anything is published.** An admin screen lists pending
+   highlights, worst first, each with its excerpt and a link to the source
+   report; approving one publishes it. Nothing the parser guessed reaches
+   the site unreviewed: a highlight names a facility and describes harm, so
+   a person has to confirm the reading, and every published excerpt is the
+   state's own words with a link to the report.
+5. **Surface** approved highlights on the facility page (a "What inspectors
+   found" block), the state tracker pages, the inspection hub, and the home
+   page's featured block. That block can read approved highlights instead of
+   the hand-set `featured` flag, or both.
+6. **Run it** in the nightly pipeline after the scrapers, so new reports are
+   scored as they arrive. Develop against the offline mirror from
+   `scripts/sync-prod-sqlite.py`.
+
+Open decisions: the scoring weights and the harm categories (a starter set
+is above), whether a finding the facility corrected on the spot ranks lower,
+and whether the page shows the Texas risk level or the site's own score.

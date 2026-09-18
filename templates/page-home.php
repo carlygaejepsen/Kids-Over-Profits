@@ -60,12 +60,14 @@ $kop_suits = $wpdb->get_results(
 // api/manage-featured-inspections.php); until that has run they do not
 // exist, so ask whether they do before querying: without the check this runs a query that can only fail on every
 // home page load, hidden by suppress_errors. Same check as the inspection hub.
-$kop_has_featured = get_transient('kop_inspection_featured_column');
+$kop_has_featured = get_transient('kop_inspection_featured_column_v2');
 if ($kop_has_featured === false) {
     $kop_has_featured = $wpdb->get_var("SHOW COLUMNS FROM inspection_reports LIKE 'featured'") ? 'yes' : 'no';
     // A missing column is remembered briefly, so running api/update-schema.php
-    // shows the block within minutes instead of a day later.
-    set_transient('kop_inspection_featured_column', $kop_has_featured, $kop_has_featured === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
+    // shows the block within minutes instead of a day later. The key carries a
+    // version because a "no" cached for a full day under the old name would
+    // otherwise outlive the migration.
+    set_transient('kop_inspection_featured_column_v2', $kop_has_featured, $kop_has_featured === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
 }
 $kop_flagged = $kop_has_featured === 'yes' ? $wpdb->get_results(
     "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
