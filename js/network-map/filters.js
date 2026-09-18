@@ -279,6 +279,25 @@
                     byKind: false
                 });
             });
+            /* The "+N" pill, only when something on screen carries one. */
+            if (scene.hidden && Object.keys(scene.hidden).length) {
+                var pill = row('Connections not on the map yet. Click the name to bring them in.');
+                keyList.appendChild(pill.item);
+                var pc = pill.mark.getContext && pill.mark.getContext('2d');
+                if (pc) {
+                    pc.fillStyle = '#000435';
+                    pc.beginPath();
+                    pc.arc(6, 9, 5, Math.PI / 2, Math.PI * 1.5);
+                    pc.arc(12, 9, 5, Math.PI * 1.5, Math.PI / 2);
+                    pc.closePath();
+                    pc.fill();
+                    pc.fillStyle = '#FFFFFF';
+                    pc.font = '600 8px sans-serif';
+                    pc.textAlign = 'center';
+                    pc.textBaseline = 'middle';
+                    pc.fillText('+', 9, 9.5);
+                }
+            }
             legend.appendChild(keyList);
 
             /* The connections. A line on this map says what kind of

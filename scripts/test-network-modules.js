@@ -46,8 +46,10 @@ const notes = [];
 function collidingLabels(boxes) {
     const LINE = 13;
     const rects = boxes.map((b) => {
-        const half = (String(b.t).length * 6) / 2;
-        return { t: b.t, x0: b.x - half, x1: b.x + half, y0: b.y, y1: b.y + LINE };
+        const width = String(b.t).length * 6;
+        const align = b.align || 'center';
+        const x0 = align === 'center' ? b.x - width / 2 : (align === 'left' ? b.x : b.x - width);
+        return { t: b.t, x0, x1: x0 + width, y0: b.y, y1: b.y + LINE };
     });
     const clashes = [];
     for (let i = 0; i < rects.length; i++) {
@@ -77,25 +79,38 @@ function buildSandbox() {
      * placed positions, so overlap can be. */
     const labelCalls = [];
     const labelBoxes = [];
+    const badgeCalls = [];
 
     const ctx = {
         setTransform() {}, clearRect() {}, save() {}, restore() {},
         beginPath: bump('beginPath'), closePath() {},
         moveTo: bump('moveTo'), lineTo: bump('lineTo'), arc: bump('arc'),
-        quadraticCurveTo() {}, setLineDash() {},
+        quadraticCurveTo() {}, arcTo() {}, setLineDash() {},
         fill: bump('fill'), stroke: bump('stroke'),
-        fillText: (t, x, y) => { ops.fillText++; labelCalls.push('text:' + t); labelBoxes.push({ t, x, y }); },
+        fillText: (t, x, y) => {
+            ops.fillText++;
+            /* The "+N" off-screen pill is text too, but it is not a name. */
+            if (/^\+\d+$/.test(String(t))) { badgeCalls.push(t); return; }
+            labelCalls.push('text:' + t);
+            /* textAlign matters: a label that could not fit below its node is
+             * drawn beside it, left or right aligned, and its box is then on
+             * one side of x rather than straddling it. */
+            labelBoxes.push({ t, x, y, align: ctx.textAlign || 'center' });
+        },
         strokeText: (t) => { ops.strokeText++; labelCalls.push('halo:' + t); },
         measureText: (t) => ({ width: String(t).length * 6 })
     };
 
     const listeners = new Map();
+    /* The stage the map believes it has. Mutable so the same modules can be
+     * driven at a phone width without building a second sandbox. */
+    const stage = { width: WIDTH, height: HEIGHT };
     const canvas = {
         style: {},
         width: 0,
         height: 0,
         getContext: () => ctx,
-        getBoundingClientRect: () => ({ left: 0, top: 0, width: WIDTH, height: HEIGHT }),
+        getBoundingClientRect: () => ({ left: 0, top: 0, width: stage.width, height: stage.height }),
         addEventListener: (type, fn) => listeners.set(type, fn),
         removeEventListener: (type) => listeners.delete(type),
         setPointerCapture() {},
@@ -343,11 +358,15 @@ function buildSandbox() {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
         document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
-        labelCalls, labelBoxes,
+        labelCalls, labelBoxes, badgeCalls,
+        /* The stage the map believes it has, so the same modules can be run
+         * at a phone width without a second sandbox. */
+        setStage: (width, height) => { stage.width = width; stage.height = height; },
         resetOps: () => {
             Object.keys(ops).forEach((k) => { ops[k] = 0; });
             labelCalls.length = 0;
             labelBoxes.length = 0;
+            badgeCalls.length = 0;
         }
     };
 }
@@ -364,7 +383,7 @@ function run() {
 
     const {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
-        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, resetOps
+        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, resetOps, setStage
     } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -820,8 +839,10 @@ function run() {
     /* A name wider than its cell hangs over the edges of it, which is fine
      * in the middle of the board and not fine in the outermost column. */
     const clipped = labelBoxes.filter((b) => {
-        const half = (String(b.t).length * 6) / 2;
-        return b.x - half < 0 || b.x + half > renderer.width;
+        const width = String(b.t).length * 6;
+        const align = b.align || 'center';
+        const x0 = align === 'center' ? b.x - width / 2 : (align === 'left' ? b.x : b.x - width);
+        return x0 < 0 || x0 + width > renderer.width;
     });
     check(clipped.length === 0,
         clipped.length + ' names run off the edge of the canvas: ' +
@@ -1511,6 +1532,152 @@ function run() {
     check(shell.rail.hidden === true, 'crossing the breakpoint left a sheet open as a column');
 
     store.resetFilters();
+
+    /* ------------------------------------------- the fix list of 2026-09-17 -- */
+
+    /* 2b.1. David Gilcrease was reported as showing two connections out of
+     * five. The two are exactly the edges that cross a board group, which is
+     * what the cross-group toggle leaves visible, so the toggle was the
+     * suspect. Two things have to hold: opening the person who reveals him
+     * brings all five, and Reset filters puts the toggle back. */
+    focus.clear();
+    flushFrames();
+    const courtney = store.node('jeannie-courtney');
+    const gilcrease = store.node('david-gilcrease');
+    check(!!courtney && !!gilcrease, 'the Gilcrease probe nodes are missing from the graph');
+    const gilcreaseEdges = store.neighbours(gilcrease.id, true);
+    check(gilcreaseEdges.length === 5,
+        'David Gilcrease has ' + gilcreaseEdges.length + ' connections in the data, the report was about five',
+        'David Gilcrease: ' + gilcreaseEdges.length + ' connections in graph.json');
+    focus.select(courtney);
+    flushFrames();
+    const courtneyScene = focus.scene();
+    check(courtneyScene.nodeIds[gilcrease.id],
+        'opening Jeannie Courtney did not surface David Gilcrease at all');
+    const missingLinks = gilcreaseEdges.filter((l) => !courtneyScene.nodeIds[l.other.id]);
+    check(missingLinks.length === 0,
+        'opening Jeannie Courtney showed ' + (gilcreaseEdges.length - missingLinks.length) +
+        ' of the five Gilcrease connections, missing ' +
+        missingLinks.map((l) => l.other.name).join(', '),
+        'a surfaced person brings all ' + gilcreaseEdges.length + ' of their connections');
+
+    store.setFilter('crossRegionOnly', true);
+    store.resetFilters();
+    check(store.filters.crossRegionOnly === false,
+        'Reset filters left the cross-group toggle on, which is what hid three of the five');
+
+    /* A node with connections that are not on screen says so, rather than
+     * dragging them in: an owner still brings only itself, and the count is
+     * how the reader knows there is more behind it. */
+    const hidden = courtneyScene.hidden || {};
+    let wrongCount = 0;
+    courtneyScene.nodes.forEach((n) => {
+        const off = store.neighbours(n.id, true)
+            .filter((l) => !courtneyScene.nodeIds[l.other.id]).length;
+        if ((hidden[n.id] || 0) !== off) wrongCount++;
+    });
+    check(wrongCount === 0, wrongCount + ' nodes report the wrong number of connections off screen');
+    const marked = Object.keys(hidden).length;
+    check(marked > 0,
+        'nothing on screen reports a connection off screen, so the mark is untested',
+        marked + ' of ' + courtneyScene.nodes.length + ' nodes carry a hidden-connection count');
+    check(!hidden[courtney.id],
+        'the node that was clicked reports hidden connections, but its own are all on screen');
+    renderer.setScene(courtneyScene);
+    resetOps();
+    renderer.draw();
+    check(badgeCalls.length === marked,
+        'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + marked + ' marked nodes',
+        'each of the ' + marked + ' marked nodes carries a +N pill');
+    check(badgeCalls.every((t) => /^\+[1-9]\d*$/.test(t)), 'an off-screen pill reads something other than +N');
+
+    /* The Brown Schools and CEDU used to be drawn on top of each other: two
+     * wide-labelled companies the force settle packed 52 units apart. The
+     * band layout gives each a cell, and ownership order puts the acquirer
+     * in the row above what it bought (e1188). */
+    focus.clear();
+    flushFrames();
+    const brown = store.node('the-brown-schools');
+    const cedu = store.node('cedu-family-of-services');
+    check(!!brown && !!cedu, 'the Brown Schools / CEDU probe nodes are missing');
+    focus.select(cedu);
+    flushFrames();
+    const bcScene = focus.scene();
+    check(bcScene.nodeIds[brown.id], 'opening CEDU did not bring The Brown Schools, which acquired it');
+    const pb = focus.positionOf(brown);
+    const pc = focus.positionOf(cedu);
+    check(pb.y < pc.y,
+        'The Brown Schools is not in a row above CEDU, which it acquired',
+        'The Brown Schools sits a row above CEDU (' + Math.round(pc.y - pb.y) + ' units)');
+    check(Math.hypot(pb.x - pc.x, pb.y - pc.y) > brown.r + cedu.r + 20,
+        'The Brown Schools and CEDU are drawn on top of each other');
+    resetOps();
+    renderer.draw();
+    const bcLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    check(bcLabels.indexOf(brown.name) !== -1 && bcLabels.indexOf(cedu.name) !== -1,
+        'one of The Brown Schools and CEDU lost its name');
+
+    /* Every name is drawn at a phone width too: the rule is that a node is
+     * never on screen unnamed, and 375 px is where the packer is under the
+     * most pressure. */
+    focus.clear();
+    flushFrames();
+    setStage(375, 640);
+    renderer.resize();
+    focus.reframe();
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const phoneScene = focus.scene();
+    const phoneLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    check(phoneLabels.length === phoneScene.nodes.length,
+        'at 375 px the opening view named ' + phoneLabels.length + ' of ' + phoneScene.nodes.length,
+        'the opening view names all ' + phoneLabels.length + ' organisations at 375 px');
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap at 375 px: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+
+    focus.select(store.node('wwasps'));
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const phoneHub = focus.scene();
+
+    /* A 43-node neighbourhood cannot fit on a phone at a size anybody can
+     * read, and names are drawn at a fixed size whatever the zoom, so framing
+     * the whole block would squeeze the rows together until names had to be
+     * dropped. The map holds the zoom where the rows still clear each other
+     * and lets the reader pan instead: what is off the stage is off the
+     * stage, but everything on it is named. */
+    const phoneT = viewport.transform;
+    const onStage = phoneHub.nodes.filter((n) => {
+        const p = focus.positionOf(n);
+        const sxp = p.x * phoneT.k + phoneT.x;
+        const syp = p.y * phoneT.k + phoneT.y;
+        return sxp >= 0 && sxp <= 375 && syp >= 0 && syp <= 640;
+    });
+    const phoneHubLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    check(onStage.length > 0, 'nothing is on the stage at 375 px');
+    onStage.forEach((n) => {
+        check(phoneHubLabels.indexOf(n.name) !== -1,
+            'at 375 px ' + n.name + ' is on the stage without its name');
+    });
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap at 375 px on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null),
+        'at 375 px ' + onStage.length + ' of ' + phoneHub.nodes.length + ' nodes are on the stage, all named');
+
+    /* And the zoom is one somebody can read, not the 0.28 that framing the
+     * whole block produced. */
+    check(phoneT.k >= 0.33,
+        'the phone view zoomed out to ' + phoneT.k.toFixed(2) + ', where names cannot clear each other');
+
+    /* What was clicked is what the stage is centred on. */
+    check(onStage.some((n) => n.id === 'wwasps'),
+        'the node that was clicked is not on the stage at 375 px');
+
+    setStage(WIDTH, HEIGHT);
+    renderer.resize();
+    focus.clear();
+    flushFrames();
 }
 
 try {

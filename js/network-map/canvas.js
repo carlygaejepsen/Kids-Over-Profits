@@ -112,7 +112,15 @@
     /* Breathing room around each label's box. Boxes that merely touch still
      * read as one another's neighbours, so the gap is part of the rule. */
     var LABEL_PAD_X = 5;
+
+    /* Where a label may sit, in the order it is tried. Below the node first,
+     * because that is where a reader looks for it and where the row packer
+     * leaves room; the other three are what a name falls back to rather than
+     * being dropped. */
+    var LABEL_PLACEMENTS = ['below', 'above', 'right', 'left'];
     var LABEL_PAD_Y = 3;
+    /* The "+N" pill on a node with connections off screen. */
+    var BADGE_SIZE = 9;
 
     /* Edges still pull back a little at a wide view, but only a little.
      * They used to fade hard, which was the right answer when the map drew
@@ -859,6 +867,45 @@
                 }
             }
 
+            /* --- connections off screen ---
+             *
+             * An owner brings only itself, so a node can sit on the board
+             * with connections that are not on it. Rather than hide that,
+             * each such node carries a small "+N" pill at its upper right:
+             * there is more behind this name, and clicking it brings it. Only
+             * on lit nodes, since a dimmed one is background while something
+             * else is being read.
+             */
+            var hiddenCounts = scene.hidden || null;
+            var badges = 0;
+            if (hiddenCounts) {
+                ctx.font = '600 ' + BADGE_SIZE + 'px ' + FONT;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                for (i = 0; i < scene.nodes.length; i++) {
+                    node = scene.nodes[i];
+                    var extra = hiddenCounts[node.id];
+                    if (!extra) continue;
+                    if (near && !near[node.id]) continue;
+                    var br = Math.min(22, Math.max(2.5, node.r * k));
+                    var bx = sx[i] + br * 0.75;
+                    var by = sy[i] - br * 0.75;
+                    if (bx < -20 || bx > w + 20 || by < -20 || by > h + 20) continue;
+                    var text = '+' + extra;
+                    var bw = Math.max(BADGE_SIZE + 4, ctx.measureText(text).width + 6);
+                    var bh = BADGE_SIZE + 4;
+                    ctx.beginPath();
+                    roundedRect(ctx, bx - bw / 2, by - bh / 2, bw, bh, bh / 2);
+                    ctx.fillStyle = '#000435';
+                    ctx.fill();
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText(text, bx, by + 0.5);
+                    badges++;
+                }
+                ctx.textBaseline = 'top';
+            }
+            renderer.badgesDrawn = badges;
+
             /* --- labels ---
              *
              * Two passes, not one per label. Each label strokes a halo in the
@@ -886,7 +933,10 @@
                 var lx = sx[i];
                 var ly = sy[i] + Math.max(1.5, node.r * k) + 3;
                 if (lx < -140 || lx > w + 140 || ly < -20 || ly > h + 20) continue;
-                candidates.push({ node: node, x: lx, y: ly, hover: isHover });
+                candidates.push({
+                    node: node, x: lx, y: ly, hover: isHover,
+                    cx: sx[i], cy: sy[i], rr: Math.max(1.5, node.r * k)
+                });
             }
 
             /* Most connected first, so when two labels cannot both fit it is
@@ -906,22 +956,29 @@
                 entry.font = (bold ? '600 ' : '') + size + 'px ' + FONT;
 
                 var half = textWidth(ctx, entry.node, entry.font, size) / 2;
-                var box = [
-                    entry.x - half - LABEL_PAD_X,
-                    entry.y - LABEL_PAD_Y,
-                    entry.x + half + LABEL_PAD_X,
-                    entry.y + LABEL_LINE + LABEL_PAD_Y
-                ];
 
                 /* Two names on top of each other are worse than one name: the
                  * pair is unreadable and neither can be trusted to belong to
-                 * the node under it. A label that cannot fit is dropped, in
-                 * a lit neighbourhood as much as anywhere else - the way to
-                 * read every name in a cluster is to click it, which
-                 * re-settles the neighbourhood with room for all of them. */
-                if (!fitsInGrid(labelGrid, box)) continue;
-                occupyGrid(labelGrid, box);
-                entry.box = box;
+                 * the node under it. But a dropped name is a node the reader
+                 * cannot identify at all, so before giving one up the label
+                 * is tried in the three other places it can sit and still
+                 * plainly belong to its node: above it, then to the right,
+                 * then to the left. Only a name with nowhere to go is
+                 * dropped, and the packer's job is to make sure that does not
+                 * happen. */
+                var placed = null;
+                for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
+                    var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
+                    if (!fitsInGrid(labelGrid, spot.box)) continue;
+                    placed = spot;
+                    break;
+                }
+                if (!placed) continue;
+                occupyGrid(labelGrid, placed.box);
+                entry.x = placed.x;
+                entry.y = placed.y;
+                entry.align = placed.align;
+                entry.box = placed.box;
                 drawn.push(entry);
             }
             /* Published for hit testing: a name is part of its node, so a
@@ -934,14 +991,64 @@
             ctx.lineWidth = 3;
             for (i = 0; i < drawn.length; i++) {
                 ctx.font = drawn[i].font;
+                ctx.textAlign = drawn[i].align;
                 ctx.strokeText(drawn[i].node.name, drawn[i].x, drawn[i].y);
             }
             ctx.fillStyle = '#000435';
             for (i = 0; i < drawn.length; i++) {
                 ctx.font = drawn[i].font;
+                ctx.textAlign = drawn[i].align;
                 ctx.fillText(drawn[i].node.name, drawn[i].x, drawn[i].y);
             }
+            ctx.textAlign = 'center';
         };
+
+        /* A pill path. arcTo keeps it to the calls every canvas has. */
+        function roundedRect(c, x, y, width, height, radius) {
+            c.moveTo(x + radius, y);
+            c.lineTo(x + width - radius, y);
+            c.arcTo(x + width, y, x + width, y + radius, radius);
+            c.lineTo(x + width, y + height - radius);
+            c.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+            c.lineTo(x + radius, y + height);
+            c.arcTo(x, y + height, x, y + height - radius, radius);
+            c.lineTo(x, y + radius);
+            c.arcTo(x, y, x + radius, y, radius);
+            c.closePath();
+        }
+
+        /**
+         * One candidate placement: where the text is drawn, how it is
+         * aligned, and the box it would occupy. `half` is half the measured
+         * width, so a centred label is `half` either side and a left or right
+         * aligned one is the full width on one side.
+         */
+        function placeLabel(entry, half, where) {
+            var x = entry.cx;
+            var y = entry.y;
+            var align = 'center';
+
+            if (where === 'above') {
+                y = entry.cy - entry.rr - 3 - LABEL_LINE;
+            } else if (where === 'right') {
+                x = entry.cx + entry.rr + 4;
+                y = entry.cy - LABEL_LINE / 2;
+                align = 'left';
+            } else if (where === 'left') {
+                x = entry.cx - entry.rr - 4;
+                y = entry.cy - LABEL_LINE / 2;
+                align = 'right';
+            }
+
+            var left = align === 'center' ? x - half : (align === 'left' ? x : x - half * 2);
+            var right = align === 'center' ? x + half : (align === 'left' ? x + half * 2 : x);
+            return {
+                x: x,
+                y: y,
+                align: align,
+                box: [left - LABEL_PAD_X, y - LABEL_PAD_Y, right + LABEL_PAD_X, y + LABEL_LINE + LABEL_PAD_Y]
+            };
+        }
 
         /* Measuring text is not free and a name never changes, so each node
          * carries its width at the base size and the other size is scaled
@@ -958,6 +1065,11 @@
     }
 
     root.KOPNetworkCanvas = {
+        /* How much vertical room one label needs on screen, box and breathing
+         * space included. focus.js holds the zoom above the point where two
+         * rows come closer than this, because a name that cannot clear the
+         * row below it is a name the renderer has to drop. */
+        LABEL_PITCH: LABEL_LINE + LABEL_PAD_Y * 2 + 2,
         styleFor: styleFor,
         edgeSwatch: edgeSwatch,
         edgeFadeFor: edgeFadeFor,

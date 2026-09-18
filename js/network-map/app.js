@@ -95,6 +95,14 @@
              */
             refresh: function () {
                 if (focus.isFocused() && focus.refresh()) return;
+                /* The opening view is laid out too, not just redrawn: a
+                 * filter that hides one of its organisations would otherwise
+                 * leave that organisation's cell standing empty in the
+                 * block. reframe() re-packs what is left for the stage. */
+                if (store.ready) {
+                    focus.reframe();
+                    return;
+                }
                 var scene = focus.scene();
                 renderer.setScene(scene);
                 viewport.setScene(scene);

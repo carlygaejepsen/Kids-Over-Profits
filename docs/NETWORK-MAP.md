@@ -759,6 +759,32 @@ Items from the site-wide fix list that concern the map, checked against
 the branch on 2026-09-18. "Done" means a commit already covers it; the rest
 are open with the files involved.
 
+### Step 1 closed (2026-09-18)
+
+- **Labels never dropped.** A label that collides below its node is tried
+  above it, then right, then left, before it is given up. The real defect
+  was the phone: a big neighbourhood framed whole at 375 px zoomed out to
+  0.28, where rows sat closer on screen than a name is tall. `applyLayout`
+  now works out the lowest zoom at which rows and neighbours still clear
+  each other (`legibleZoom`, using `KOPNetworkCanvas.LABEL_PITCH`) and, when
+  the whole-block frame would go well below it, holds the zoom there,
+  centres on what was clicked and leaves the rest to panning. A desktop view
+  close to the floor is still framed whole. Tested at 375 px: every node on
+  the stage is named, none collide.
+- **Opening view re-lays out on a filter change.** `app.refresh` calls
+  `focus.reframe()` on the opening view too, so a hidden organisation no
+  longer leaves its cell empty.
+- **Brown Schools / CEDU.** Test added: opening CEDU brings The Brown
+  Schools a row above it, apart, both named. Closed.
+- **2b.1 Gilcrease.** Opening Jeannie Courtney brings all five of his
+  connections, and Reset filters clears the cross-group toggle. Test added.
+  Closed.
+- **Off-screen connections (the decision).** The built rule stays: an owner
+  brings only itself. `focus.scene()` now reports `hidden`, the number of
+  each node's live connections that are not on screen, and the renderer
+  draws it as a "+N" pill at the node's upper right; the legend explains the
+  pill whenever one is showing. Test added.
+
 ### Already covered by 5b
 
 - **Every visible node labelled.** The degree threshold is gone and every

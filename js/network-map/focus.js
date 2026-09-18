@@ -74,6 +74,9 @@
     var INWARD_PENALTY = 100000;
     /* Height of the label that hangs under a node. */
     var LABEL_ROOM = 18;
+    /* How far below the estimated legible zoom a whole-block frame may go
+     * before the view is held at the floor instead; see applyLayout(). */
+    var LEGIBLE_MARGIN = 0.75;
 
     /**
      * How much room a node needs to itself: enough for its own shape, and
@@ -317,7 +320,28 @@
                 ids = reach;
             }
 
-            return { nodes: nodes, edges: edges, nodeIds: ids, degrees: visible.degrees };
+            /* What is on screen is not everything a node touches, and an
+             * owner deliberately brings only itself, so a node can sit there
+             * with connections the reader cannot see. Rather than dragging
+             * them in - which is what turns opening one company into a
+             * screenful of its other holdings - each node reports how many
+             * connections it has off screen, and the renderer marks it with
+             * the count. The reader can see there is more behind a name, and
+             * clicking it is what brings it.
+             */
+            var hidden = Object.create(null);
+            nodes.forEach(function (node) {
+                var off = 0;
+                store.neighbours(node.id, true).forEach(function (link) {
+                    if (!ids[link.other.id]) off++;
+                });
+                if (off) hidden[node.id] = off;
+            });
+
+            return {
+                nodes: nodes, edges: edges, nodeIds: ids,
+                degrees: visible.degrees, hidden: hidden
+            };
         };
 
         /** Has the visitor opened anything, or is this still the opening view? */
@@ -1059,9 +1083,88 @@
             });
             layout = next;
             renderer.setGrid(grid);
-            viewport.fit(scene.nodes, padding);
+
+            /* Names are drawn at a fixed size whatever the zoom, so framing a
+             * block that does not fit means zooming out until the rows are
+             * closer together on screen than a name is tall - and then the
+             * renderer has to drop names, which is the one thing it must not
+             * do. On a stage too small for the whole block, hold the zoom at
+             * the point where the rows still clear each other, put what was
+             * clicked in the middle, and let the reader pan to the rest. A
+             * stage that can hold the block is framed as before.
+             */
+            var floor = legibleZoom(scene, next);
+            var points = scene.nodes.map(function (node) {
+                var p = next[node.id] || positionOf(node);
+                return { x: p.x, y: p.y, r: node.r };
+            });
+            var frame = viewport.frameOf(points, padding);
+            /* The floor is a cautious estimate: it budgets every name at
+             * its packed width and ignores the renderer's fallback
+             * placements, and measured against the real renderer a desktop
+             * view still names everything a little below it. So a frame close
+             * to the floor is kept whole, and only one well below it - a
+             * phone, a long expand trail - is held at the floor itself. */
+            if (frame && floor && frame.k < floor * LEGIBLE_MARGIN) {
+                viewport.setTransform(floor, frame.x, frame.y);
+                var head = chain.length ? store.node(chain[chain.length - 1]) : null;
+                viewport.centreOn(head || scene.nodes[0]);
+            } else {
+                viewport.fit(scene.nodes, padding);
+            }
             viewport.rebuildTree();
             viewport.scheduleDraw();
+        }
+
+        /**
+         * The lowest zoom at which the rows of this layout still leave room
+         * for the names between them, or 0 when there is only one row. The
+         * pitch is measured off the placed positions rather than the packer's
+         * intentions, so it is the spacing actually on screen.
+         */
+        function legibleZoom(scene, positions) {
+            /* The renderer owns what a label needs; asking it rather than
+             * guessing keeps the two from drifting apart. */
+            var pitchNeed = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.LABEL_PITCH) || LABEL_ROOM;
+            var floor = 0;
+
+            /* Down the page: the closest two rows come to each other has to
+             * stay at least one label tall on screen. */
+            var rows = Object.create(null);
+            scene.nodes.forEach(function (node) {
+                var p = positions[node.id];
+                if (!p) return;
+                var y = Math.round(p.y);
+                (rows[y] = rows[y] || []).push({ node: node, x: p.x });
+            });
+            var keys = Object.keys(rows).map(Number).sort(function (a, b) { return a - b; });
+            for (var i = 1; i < keys.length; i++) {
+                var gap = keys[i] - keys[i - 1];
+                if (gap > 0) floor = Math.max(floor, pitchNeed / gap);
+            }
+
+            /* Across the row: two names side by side have to stay apart too.
+             * Zooming out moves the nodes together while the names stay the
+             * size they were, so this is the binding constraint on a narrow
+             * stage, not the row pitch.
+             */
+            keys.forEach(function (key) {
+                var row = rows[key].slice().sort(function (a, b) { return a.x - b.x; });
+                for (var j = 1; j < row.length; j++) {
+                    var dx = row[j].x - row[j - 1].x;
+                    if (dx <= 0) continue;
+                    var need = (labelWidth(row[j - 1].node) + labelWidth(row[j].node)) / 2 + LABEL_CHAR_WIDTH;
+                    floor = Math.max(floor, need / dx);
+                }
+            });
+
+            /* Never above 1: a block that fits is framed, not blown up. */
+            return Math.min(1, floor);
+        }
+
+        /** What one name takes across, in the units the packer measured it in. */
+        function labelWidth(node) {
+            return Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH);
         }
 
         /* --------------------------------------------- filters moved under us -- */
