@@ -41,9 +41,11 @@ function kop_template_layout_current_template() {
 }
 
 /**
- * Child templates that render at Kadence's normal content width regardless
- * of the per-post Layout setting (the facility profiles were authored under
- * the "narrow" post layout, which would squeeze the two-column grid).
+ * Child templates that render with the site's default post layout (sidebar
+ * side and content width) regardless of the per-post Layout setting. The
+ * facility profiles were authored under the "narrow" post layout, which
+ * drops the sidebar and squeezes the column; they should look like every
+ * other post.
  */
 function kop_template_layout_normal_width() {
     return apply_filters('kop_template_layout_normal_width', array(
@@ -84,7 +86,16 @@ function kop_template_layout_filter_sidebar($layout) {
         $layout['sidebar'] = 'disable';
     }
     if ($template && in_array($template, kop_template_layout_normal_width(), true)) {
-        $layout['layout'] = 'normal';
+        // Mirror Kadence's own "default" branch for posts.
+        $default = function_exists('kadence') ? (string) kadence()->option('post_layout') : '';
+        if ($default === 'left' || $default === 'right') {
+            $layout['layout']  = $default;
+            $layout['side']    = $default;
+            $layout['sidebar'] = 'enable';
+        } else {
+            $layout['layout']  = in_array($default, array('narrow', 'fullwidth'), true) ? $default : 'normal';
+            $layout['sidebar'] = 'disable';
+        }
     }
     return $layout;
 }
