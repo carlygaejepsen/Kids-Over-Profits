@@ -174,17 +174,41 @@ and re-run the script with `?apply=1` on prod.
 
 ## 5. Resources page
 
-`/resources/` is a WordPress page whose content is edited in the editor;
-`page-hub.php` prints it and has no module for that slug, so nothing in
-the repo lists the resources.
+Done, with the new entries left for the owner to confirm.
 
-Plan: give the slug a hub module like `law-policy` has, driven by a list
-in `inc/resources-list.php` grouped by need (crisis lines, survivor
-support, legal help, reporting abuse, families, advocacy organisations,
-research) and rendered as one card style. Port the current page content
-from the prod database into the list first, then add the new entries.
-The new entries need the user's picks; the plan can propose a starter
-set for review.
+`inc/resources-list.php` holds the list and the hub module for the
+`resources` slug. `kop_resources_groups()` is the published list, ported
+from the page as it stood in September 2026 and regrouped by what somebody
+arrives needing: taking legal action, survivor support, advocacy
+organisations, research and reading, art and film, survivors of individual
+programs, petitions. Two things were repaired on the way: the Survivor's
+Guide link pointed at a `/staging/` URL and is now resolved from its slug
+(an `'page' => slug` entry resolves at render time, so an internal link
+cannot rot), and SCIAD, down since November 2024, links to its snapshot and
+is labelled as one. `kop_resources_strip_legacy_lists()` drops the
+hand-built groups from the page's own content at priority 8, the same way
+the research library drops its legacy grid, so nothing prints twice and
+nothing is deleted in the editor.
+
+`kop_resources_proposed()` holds the three needs the page has never
+covered -- a crisis line, how to report abuse, and where a family in the
+middle of a placement can turn -- and renders **only for a user who can
+edit the page**, inside a dashed block that says it is not published.
+Nothing unverified reaches a visitor, and the owner accepts an entry by
+moving it into `kop_resources_groups()`. The starter set is national US
+services (988, Crisis Text Line, Trevor, Trans Lifeline, Runaway Safeline,
+RAINN; Childhelp, the federal directory of state reporting numbers, the
+state licensing agency via the new inspections hub, the NDRN member P&A
+agencies, and this project's own submission form; the location index, the
+families hub and Unsilenced for parents). Every number needs checking
+before it is published, and there is no international list yet: both are
+decisions for the owner.
+
+Covered by `scripts/test-resources-list.php`: every entry has a name and
+something to click or call, no duplicate URLs, an internal link to a page
+this install does not have is dropped rather than printed dead, the
+proposed block never renders for a visitor, and the legacy-content filter
+keeps everything that is not a link group.
 
 ---
 

@@ -706,3 +706,110 @@
     opacity: 0.6;
     cursor: default;
 }
+
+/* ---------------------------------------------------------------------------
+   /resources/ (inc/resources-list.php)
+   --------------------------------------------------------------------------- */
+
+.kop-res-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.kop-res-group {
+    padding: 0.9rem 1rem 1rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-left: 3px solid var(--kop-teal, #33a7b5);
+    border-radius: 6px;
+    background: #fff;
+}
+
+.kop-res-h {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-res-intro {
+    margin: 0.3rem 0 0;
+    font-size: 0.83rem;
+    line-height: 1.45;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-res-list {
+    margin: 0.7rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-res-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
+    font-size: 0.85rem;
+}
+
+.kop-res-item:first-child {
+    border-top: 0;
+    padding-top: 0.2rem;
+}
+
+.kop-res-name {
+    font-weight: 600;
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+    line-height: 1.35;
+}
+
+a.kop-res-name:hover,
+a.kop-res-name:focus-visible {
+    text-decoration: underline;
+}
+
+/* A number somebody may have to read out loud or dial in a hurry. */
+.kop-res-contact {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-res-note {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-res-archived {
+    align-self: flex-start;
+    padding: 0.02rem 0.4rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-radius: 999px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+/* The proposed block, which only an editor is served. */
+.kop-res-review {
+    margin-top: 1.6rem;
+    padding: 1rem;
+    border: 2px dashed var(--kop-orange, #ef9034);
+    border-radius: 6px;
+    background: var(--kop-soft-pastel-yellow, #fff5cb);
+}
+
+.kop-res-review .kop-res-group {
+    background: #fff;
+}
+
+.kop-res-review code {
+    font-size: 0.85em;
+}

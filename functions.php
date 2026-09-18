@@ -67,5 +67,8 @@ require_once get_stylesheet_directory() . '/inc/global-search.php';
 // Research & Reports card library (Academia + Government FileBird folders)
 require_once get_stylesheet_directory() . '/inc/research-library.php';
 
+// The /resources/ list (crisis lines, survivor support, advocacy, reading)
+require_once get_stylesheet_directory() . '/inc/resources-list.php';
+
 // Network map data access (graph metadata + facility profile URLs)
 require_once get_stylesheet_directory() . '/inc/network-map.php';
