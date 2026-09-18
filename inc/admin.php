@@ -701,10 +701,15 @@ function kop_apply_lawsuit_document_fixes() {
  * JSON keys: title, slug, post_type, status, content_file, excerpt,
  * categories (slugs), template (file in templates/), meta (key => string),
  * meta_arrays (key => list), acf_field_keys (key => field_xxx so ACF shows
- * the value in the editor), seed_version (bump to refresh an untouched
- * draft), allow_published + last_seed_modified_gmt (refresh a published
- * page too, but only while its post_modified_gmt still equals the stamp
- * the seed was assembled against).
+ * the value in the editor), seed_version (bump to refresh again).
+ *
+ * allow_published (bool) + last_seed_modified_gmt: refresh a published page
+ * too, but only while its post_modified_gmt still equals the stamp the seed
+ * was assembled against, so a wp-admin edit made since is never overwritten.
+ *
+ * overwrite_existing (bool): replace the content of a post that already
+ * exists, published or not, once per seed_version. Used for makeovers of
+ * hand-written pages; WordPress keeps the previous content as a revision.
  */
 function kop_seed_posts() {
     return array(
@@ -718,6 +723,7 @@ function kop_seed_posts() {
         'country-italy.json',                       
         'country-new-zealand.json',                 
         'country-netherlands.json',                 
+        'hyde.json',                                // Hyde School profile makeover (overwrite_existing), 2026-09-17
         'network-map.json',                         // /network-map/ page for the network map, 2026-09-17
         // History section reformatted 2026-09-17: hub, two index pages, ten
         // timelines, and the prose overview. Published pages; each seed
@@ -744,6 +750,15 @@ function kop_seed_posts() {
 function kop_apply_seed_posts() {
     $created = array();
     $dir = trailingslashit(get_stylesheet_directory()) . 'seeds/';
+    // This runs on init for whoever made the request, usually nobody logged
+    // in, and WordPress then passes post content through kses, which strips
+    // iframes (video embeds) and other markup an editor with unfiltered_html
+    // could save. The seed files are trusted theme files, so save them the
+    // way an administrator would.
+    $kses_active = (bool) has_filter('content_save_pre', 'wp_filter_post_kses');
+    if ($kses_active) {
+        kses_remove_filters();
+    }
     foreach (kop_seed_posts() as $file) {
         $path = $dir . $file;
         if (!file_exists($path)) {
@@ -764,30 +779,38 @@ function kop_apply_seed_posts() {
             // Refresh only a draft nobody has edited since the seed made it
             // (post_modified still equals post_date) and only when the seed
             // file carries a newer seed_version. Anything an editor touched
-            // is left alone.
+            // is left alone, unless the seed says overwrite_existing: then
+            // the content is replaced once per seed_version and the old
+            // content survives as a post revision.
             $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
             $seed_mod  = (string) get_post_meta($existing->ID, '_kop_seed_modified', true);
+            $overwrite = !empty($spec['overwrite_existing']);
             $stamp_ok  = $existing->post_modified_gmt === $existing->post_date_gmt
                 || ($seed_mod !== '' && $existing->post_modified_gmt === $seed_mod)
                 || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt']);
-            // A published page is refreshed only when the seed says so
-            // (allow_published) and the page still carries the modified stamp
-            // the seed was assembled against, so an edit made in wp-admin
-            // after the seed was written is never overwritten.
+            // A published page is refreshed when the seed says allow_published
+            // and the page still carries the modified stamp the seed was
+            // assembled against, so an edit made in wp-admin after the seed
+            // was written is never overwritten. overwrite_existing skips the
+            // stamp check entirely.
             $untouched = $stamp_ok && ($existing->post_status === 'draft' || !empty($spec['allow_published']));
-            if (!$untouched || $seed_version <= $applied) {
+            if ($seed_version <= $applied || (!$untouched && !$overwrite)) {
                 continue;
             }
             $update = array(
-                'ID'            => $existing->ID,
-                'post_title'    => (string) ($spec['title'] ?? $existing->post_title),
-                'post_content'  => wp_slash((string) file_get_contents($content_path)),
-                'post_excerpt'  => wp_slash((string) ($spec['excerpt'] ?? '')),
-                'post_date'     => $existing->post_date,
-                'post_date_gmt' => $existing->post_date_gmt,
+                'ID'           => $existing->ID,
+                'post_title'   => (string) ($spec['title'] ?? $existing->post_title),
+                'post_content' => wp_slash((string) file_get_contents($content_path)),
+                'post_excerpt' => wp_slash((string) ($spec['excerpt'] ?? $existing->post_excerpt)),
             );
-            if ($existing->post_status === 'draft') {
-                // Keep a draft looking untouched so a later seed_version can refresh it again.
+            if ($overwrite || $existing->post_status !== 'draft') {
+                // Keep the previous content in the revision history.
+                wp_save_post_revision($existing->ID);
+            } else {
+                // Keep post_modified equal to post_date so the draft still
+                // counts as untouched for the next seed_version.
+                $update['post_date']         = $existing->post_date;
+                $update['post_date_gmt']     = $existing->post_date_gmt;
                 $update['post_modified']     = $existing->post_date;
                 $update['post_modified_gmt'] = $existing->post_date_gmt;
             }
@@ -842,6 +865,9 @@ function kop_apply_seed_posts() {
             }
         }
         $created[] = $spec['slug'];
+    }
+    if ($kses_active) {
+        kses_init_filters();
     }
     return $created;
 }
@@ -1410,7 +1436,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '20';
+    $version = '22';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
