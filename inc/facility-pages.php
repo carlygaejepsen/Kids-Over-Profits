@@ -1213,6 +1213,70 @@ if (!function_exists('kop_facility_pages_date_label')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_archive_exempt_host')) {
+    /**
+     * True for a host that must keep its live link: the archives themselves,
+     * this site, the places survivors and researchers gather, and public
+     * records. Every other host in a facility's links is taken to belong to
+     * the program or its operator. Add a host here when a link turns out to
+     * belong to somebody other than the industry.
+     */
+    function kop_facility_pages_archive_exempt_host($host) {
+        $host = strtolower(preg_replace('/^www\./', '', (string) $host));
+        if ($host === '') return true;
+
+        $exempt = array(
+            'archive.org', 'archive.today', 'archive.ph', 'archive.is',
+            'kidsoverprofits.org',
+            'reddit.com', 'redd.it', 'wikipedia.org', 'wikimedia.org',
+            'heal-online.org', 'linktr.ee',
+            'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
+            'youtube.com', 'youtu.be', 'linkedin.com',
+        );
+        foreach ($exempt as $domain) {
+            if ($host === $domain || substr($host, -(strlen($domain) + 1)) === '.' . $domain) {
+                return true;
+            }
+        }
+
+        // Public records: the federal and military domains, and the state,
+        // county and school portals that publish licensing and inspections.
+        if (preg_match('/\.(gov|mil)$/', $host)) return true;
+        if (preg_match('/\.(state|co|ci|k12)\.[a-z]{2}\.us$/', $host)) return true;
+
+        return false;
+    }
+}
+
+if (!function_exists('kop_facility_pages_archive_link')) {
+    /**
+     * A program's own website, rewritten to an archived snapshot. Sending a
+     * reader to the live marketing page hands the program the traffic, and
+     * that page changes or disappears, while the snapshot keeps what it said.
+     * Wayback resolves /web/<url> to its newest snapshot (and offers to take
+     * one when it holds none).
+     *
+     * Returns url, label and live_url; live_url is '' when the link was left
+     * alone, which is also when url and label come back unchanged.
+     */
+    function kop_facility_pages_archive_link($url, $label = '') {
+        $url   = trim((string) $url);
+        $label = trim((string) $label);
+        $out   = array('url' => $url, 'label' => $label, 'live_url' => '');
+
+        if ($url === '' || !preg_match('#^https?://#i', $url)) return $out;
+        $host = wp_parse_url($url, PHP_URL_HOST);
+        if (kop_facility_pages_archive_exempt_host($host)) return $out;
+
+        $name = $label !== '' ? $label : preg_replace('/^www\./', '', strtolower((string) $host));
+        return array(
+            'url'      => 'https://web.archive.org/web/' . $url,
+            'label'    => $name . ' (archived copy)',
+            'live_url' => $url,
+        );
+    }
+}
+
 if (!function_exists('kop_facility_pages_location_search_url')) {
     /** The location index filtered to a facility name. Every facility is listed there. */
     function kop_facility_pages_location_search_url($name) {
@@ -1491,7 +1555,9 @@ if (!function_exists('kop_facility_page_data')) {
                 $label = $host ? preg_replace('/^www\./', '', $host) : $url;
                 if (stripos($url, 'web.archive.org') !== false) $label = 'Archived website (Wayback Machine)';
             }
-            $profile_links[] = array('url' => $url, 'label' => $label);
+            // The program's own site is shown as a snapshot, with the live
+            // page offered second (kop_facility_pages_archive_link).
+            $profile_links[] = kop_facility_pages_archive_link($url, $label);
         }
         $resources = kop_facility_pages_resources_held($doc['resources'] ?? null);
 

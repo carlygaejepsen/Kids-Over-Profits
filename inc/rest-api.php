@@ -2588,6 +2588,42 @@ function kop_state_union_list(array &$list, array $items) {
 }
 
 /**
+ * Hub cards show a program's own website as an archived snapshot, the same
+ * rule the facility pages apply (kop_facility_pages_archive_link). Links that
+ * belong to somebody else -- the archives, this site, Reddit, survivor sites,
+ * public records -- pass through untouched, as does every entry when the
+ * facility-pages module is not loaded.
+ */
+function kop_state_archive_profile_links($items) {
+    if (!is_array($items) || !function_exists('kop_facility_pages_archive_link')) {
+        return is_array($items) ? $items : array();
+    }
+    $out = array();
+    foreach ($items as $item) {
+        $url = '';
+        $label = '';
+        if (is_string($item)) {
+            $url = trim($item);
+        } elseif (is_array($item)) {
+            foreach (array('url', 'href', 'link') as $k) {
+                if (!empty($item[$k]) && is_string($item[$k])) { $url = trim($item[$k]); break; }
+            }
+            foreach (array('displayText', 'label', 'title', 'name') as $k) {
+                if (!empty($item[$k]) && is_string($item[$k])) { $label = trim($item[$k]); break; }
+            }
+        }
+        $archived = $url !== '' ? kop_facility_pages_archive_link($url, $label) : array('live_url' => '');
+        if ($archived['live_url'] === '') {
+            $out[] = $item;
+            continue;
+        }
+        // The card has no room for a second link, so only the snapshot shows.
+        $out[] = array('url' => $archived['url'], 'label' => $archived['label']);
+    }
+    return $out;
+}
+
+/**
  * Return whichever of two date/time strings is later (empty loses).
  */
 function kop_state_newer_timestamp($a, $b) {
@@ -3015,7 +3051,7 @@ function kop_state_build_program_record($project_name, $facility, $data, $state_
         'administrator'    => $as_array($facility['staff']['administrator'] ?? null),
         'notable_staff'    => $as_array($facility['staff']['notableStaff'] ?? null),
         'past_tti_jobs'    => $as_array($facility['staff']['pastTTIJobs'] ?? null),
-        'profile_links'    => $as_array($facility['profileLinks'] ?? null),
+        'profile_links'    => kop_state_archive_profile_links($as_array($facility['profileLinks'] ?? null)),
         'accreditations_current' => $as_array($facility['accreditations']['current'] ?? null),
         'accreditations_past'    => $as_array($facility['accreditations']['past'] ?? null),
         'memberships'      => $as_array($facility['memberships'] ?? null),

@@ -388,9 +388,25 @@ get_header();
                 <?php endif; ?>
                 <?php if ($page['profile_links']) : ?>
                     <h3 class="kop-fp-subhead">External links</h3>
+                    <?php
+                    // A program's own site is linked as an archived snapshot
+                    // (inc/facility-pages.php); say so once rather than on every row.
+                    $kop_fp_has_archived = false;
+                    foreach ($page['profile_links'] as $l) {
+                        if (!empty($l['live_url'])) { $kop_fp_has_archived = true; break; }
+                    }
+                    ?>
+                    <?php if ($kop_fp_has_archived) : ?>
+                        <p class="kop-fp-count">A program's own website is linked as an archived snapshot, so the page reads as it did when it was captured.</p>
+                    <?php endif; ?>
                     <ul class="kop-fp-records">
                         <?php foreach ($page['profile_links'] as $l) : ?>
-                            <li><a href="<?php echo esc_url($l['url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($l['label']); ?></a></li>
+                            <li>
+                                <a href="<?php echo esc_url($l['url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($l['label']); ?></a>
+                                <?php if (!empty($l['live_url'])) : ?>
+                                    <span class="meta"><a href="<?php echo esc_url($l['live_url']); ?>" target="_blank" rel="nofollow noreferrer noopener">live site</a></span>
+                                <?php endif; ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 <?php endif; ?>

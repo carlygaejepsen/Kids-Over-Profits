@@ -131,32 +131,51 @@ set for review.
 
 ## 6. Facility profiles: archived links for facility websites
 
-`inc/facility-pages.php` (link builder around line 1466) emits facility
-websites from `profileLinks` as direct outbound links, and
-`templates/single-facility-profile.php` does the same for its external
-profile. Nothing uses donotlink.
+Done. `kop_facility_pages_archive_link()` in `inc/facility-pages.php`
+rewrites a program's own website to `https://web.archive.org/web/<url>`,
+which Wayback resolves to its newest snapshot, labels it
+"<host> (archived copy)" (a curated `displayText` keeps its own wording),
+and hands back the original as `live_url`, which
+`templates/facility-page.php` offers as a small "live site" link with
+`rel="nofollow noreferrer noopener"` under a one-line note about why the
+first link is a snapshot. `kop_state_archive_profile_links()` in
+`inc/rest-api.php` applies the same rule to the state and country hub
+cards, which have no room for the second link and show the snapshot only.
 
-Plan: in the link builder, rewrite any facility-owned URL to
-`https://web.archive.org/web/<url>` (Wayback picks the latest snapshot),
-labelled "Website (archived copy)", with an optional secondary "live
-site" link carrying `rel="nofollow noreferrer noopener"`. Skip
-kidsoverprofits, reddit and archive.org hosts. Apply the same helper in
-the editorial template and in the state-page card. Wayback over donotlink
-because it preserves evidence and needs no third-party service.
+`kop_facility_pages_archive_exempt_host()` holds the hosts that keep their
+live link and is the place to add a case: the archives themselves, this
+site, Reddit, Wikipedia, survivor and advocacy sites (heal-online,
+linktr.ee), the social networks, and public records (`.gov`, `.mil`,
+`.state|co|ci|k12.xx.us`). Everything else in `profileLinks` is taken to
+belong to the program or its operator. Of the 147 links in the current
+data, 84 are already Wayback URLs and about 20 are program sites.
+
+`templates/single-facility-profile.php` was left alone on purpose: its
+`external_profile` is the survivor community link ("Survivor community",
+usually a linktr.ee), which has to stay live.
+
+Still on a live link: the facility panel on the `/xx-reports/` pages
+(`js/inspections/facilities-display.js`, field labelled "Archived
+Website"), because it reads `profileLinks` straight from the shared
+`kop/v1/facilities` feed, which the location index, the program index and
+the article-discovery scripts also read. Rewriting it there means either
+duplicating the host rule in JavaScript or changing that feed for every
+consumer; it needs a decision first.
 
 ---
 
 ## 7. State pages
 
-**7A. Alternate names not showing.**
-`js/state-page.js` renders other and past names only inside the
-collapsed "Show details" panel, and only from `other_names` and
-`past_names`. Inspection-only rows are emitted with empty arrays
-(`inc/rest-api.php` around line 4877), and `renderListEntry` drops
-entries shaped `{value: ...}`. Fix: show "Also known as" and "Formerly"
-on the card face under the name; accept the key variants the program
-index already reads (`otherNames`, `aliases`, `formerNames`); handle the
-`{value}` shape. Same change in `js/country-page.js`.
+**7A. Alternate names not showing.** Done. The card face now carries
+"Also known as" and "Formerly" under the facility name in
+`js/state-page.js` and `js/country-page.js`, and the two rows are gone
+from the "Show details" panel. The collector takes `other_names` /
+`otherNames` / `aliases` and `past_names` / `pastNames` / `formerNames`,
+a list or a bare string, and entries that are objects (`{value}`,
+`{name}`, `{label}`), and drops repeats of a name already on the card.
+316 facilities in the current data carry one of those lists. The
+inspection-only rows still come through with empty arrays, which is
+right: those records have no names beyond the licensed one.
 
 **7B. PDF previews not rendering.**
 Done 2026-09-18, with a different cause than first written below. Checked
