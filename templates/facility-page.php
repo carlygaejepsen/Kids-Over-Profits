@@ -40,7 +40,8 @@ $kop_fp_has_news = !empty($page['news']);
 $kop_fp_has_lawsuits = !empty($page['lawsuits']);
 $kop_fp_has_memorials = !empty($page['memorials']);
 $kop_fp_has_inspections = !empty($page['inspections']);
-$kop_fp_has_docs = !empty($page['documents']['html']);
+$kop_fp_has_research = !empty($page['research']);
+$kop_fp_has_docs = !empty($page['documents']['html']) || $kop_fp_has_research;
 $kop_fp_has_wiki = !empty($page['wiki']);
 $kop_fp_has_siblings = !empty($page['siblings']);
 $kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']);
@@ -315,7 +316,28 @@ get_header();
             <?php if ($kop_fp_has_docs) : ?>
             <section class="kop-fp-section kop-fp-documents" id="documents">
                 <h2>Documents</h2>
-                <?php echo $page['documents']['html']; // Shortcode output, escaped by the shortcode. ?>
+                <?php if (!empty($page['documents']['html'])) : ?>
+                    <?php echo $page['documents']['html']; // Shortcode output, escaped by the shortcode. ?>
+                <?php endif; ?>
+                <?php if ($kop_fp_has_research) : ?>
+                    <h3 class="kop-fp-subhead">Research that mentions this program</h3>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($page['research'] as $kop_fp_doc) : ?>
+                            <li>
+                                <a href="<?php echo esc_url($kop_fp_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_doc['title']); ?></a>
+                                <?php
+                                $kop_fp_doc_meta = array_filter(array($kop_fp_doc['byline'], $kop_fp_doc['why']), 'strlen');
+                                if ($kop_fp_doc_meta) :
+                                ?>
+                                    <span class="meta"><?php echo esc_html(implode(' - ', $kop_fp_doc_meta)); ?></span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <?php if (!empty($page['research'][0]['library'])) : ?>
+                        <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">The whole research library</a></p>
+                    <?php endif; ?>
+                <?php endif; ?>
             </section>
             <?php endif; ?>
 

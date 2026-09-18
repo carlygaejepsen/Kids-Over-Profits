@@ -1564,6 +1564,7 @@ if (!function_exists('kop_facility_page_data')) {
         // ---- Linked records ----------------------------------------------------
         $name_keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $news = kop_facility_pages_news($facility_id);
+        $research = kop_facility_pages_research($facility_id);
         $lawsuits = kop_facility_pages_lawsuits($facility_id, $name_keys);
         $memorials = kop_facility_pages_memorials($name_keys, $state_name);
         $wiki = kop_facility_pages_wiki($name, $unique_name, $current_name);
@@ -1621,6 +1622,7 @@ if (!function_exists('kop_facility_page_data')) {
             'wiki'          => $wiki,
             'inspections'   => $inspections,
             'documents'     => $documents,
+            'research'      => $research,
             'updated_at'    => $updated,
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',
             'index_url'     => kop_facility_pages_location_search_url($name),
@@ -1633,6 +1635,56 @@ if (!function_exists('kop_facility_page_data')) {
             'seo_description' => $seo_description,
             'doc'           => $doc,
         );
+    }
+}
+
+if (!function_exists('kop_facility_pages_research')) {
+    /**
+     * Research & Reports documents tagged with this facility, newest first.
+     * An editor sets the tag on the card at /researchreports/, which stores one
+     * kop_research_facilities meta row per facility (inc/research-library.php),
+     * so this is a plain meta query.
+     */
+    function kop_facility_pages_research($facility_id) {
+        $facility_id = (int) $facility_id;
+        if ($facility_id <= 0 || !defined('KOP_RESEARCH_FACILITY_META')) {
+            return array();
+        }
+
+        $attachments = get_posts(array(
+            'post_type'        => 'attachment',
+            'post_status'      => 'inherit',
+            'posts_per_page'   => 20,
+            'orderby'          => 'date',
+            'order'            => 'DESC',
+            'suppress_filters' => false,
+            'meta_query'       => array(
+                array(
+                    'key'   => KOP_RESEARCH_FACILITY_META,
+                    'value' => $facility_id,
+                ),
+            ),
+        ));
+
+        $library_url = kop_facility_pages_page_url_by_template('page-hub.php', '/researchreports/');
+        if (defined('KOP_RESEARCH_SLUG')) {
+            $page = get_page_by_path(KOP_RESEARCH_SLUG);
+            if ($page) $library_url = (string) get_permalink($page);
+        }
+
+        $out = array();
+        foreach ((array) $attachments as $attachment) {
+            $url = (string) wp_get_attachment_url($attachment->ID);
+            $why = trim((string) get_post_meta($attachment->ID, 'kop_research_relevance_note', true));
+            $out[] = array(
+                'title'   => (string) $attachment->post_title,
+                'url'     => $url !== '' ? $url : $library_url,
+                'byline'  => trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt)),
+                'why'     => $why,
+                'library' => $library_url,
+            );
+        }
+        return $out;
     }
 }
 

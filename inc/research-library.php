@@ -78,6 +78,81 @@ function kop_research_clean_tier($value) {
 }
 
 /**
+ * Facilities a document is about, as facilities_v2 ids. Stored one meta row
+ * per facility so a facility page can find its research with a meta query
+ * (kop_facility_pages_research in inc/facility-pages.php) instead of
+ * unserialising every document's list.
+ */
+if (!defined('KOP_RESEARCH_FACILITY_META')) {
+    define('KOP_RESEARCH_FACILITY_META', 'kop_research_facilities');
+}
+
+/**
+ * The ids a document is tagged with. Attachment meta for a real document, the
+ * external overrides option for the entries that have no file.
+ */
+function kop_research_facility_ids($key) {
+    if (strpos($key, 'att:') === 0) {
+        $ids = get_post_meta((int) substr($key, 4), KOP_RESEARCH_FACILITY_META, false);
+        return array_values(array_unique(array_map('intval', is_array($ids) ? $ids : array())));
+    }
+    if (strpos($key, 'ext:') === 0) {
+        $edits = kop_research_external_edits();
+        $id    = substr($key, 4);
+        $list  = isset($edits[$id]['facilities']) && is_array($edits[$id]['facilities']) ? $edits[$id]['facilities'] : array();
+        return array_values(array_unique(array_map('intval', $list)));
+    }
+    return array();
+}
+
+/**
+ * Turn facility ids into what a chip needs: name, where it is, and the page to
+ * link to. Ids with no row in facilities_v2 are dropped, so a deleted facility
+ * stops showing rather than linking nowhere. One query per render, cached.
+ */
+function kop_research_facility_chips($ids) {
+    static $cache = array();
+
+    $ids = array_values(array_unique(array_filter(array_map('intval', (array) $ids))));
+    if (!$ids) {
+        return array();
+    }
+
+    $missing = array_diff($ids, array_keys($cache));
+    if ($missing) {
+        global $wpdb;
+        $in   = implode(',', array_map('intval', $missing));
+        $rows = $wpdb->get_results("SELECT id, name, city, state, country FROM facilities_v2 WHERE id IN ($in)", ARRAY_A);
+        foreach ((array) $rows as $row) {
+            $id    = (int) $row['id'];
+            $place = trim(trim((string) $row['city'] . ', ' . (string) ($row['state'] !== '' ? $row['state'] : $row['country'])), ', ');
+            $url   = function_exists('kop_facility_page_url') ? kop_facility_page_url($id) : '';
+            if ($url === '' && function_exists('kop_facility_pages_location_search_url')) {
+                // No page of its own: the location index lists every facility.
+                $url = kop_facility_pages_location_search_url($row['name']);
+            }
+            $cache[$id] = array('id' => $id, 'name' => (string) $row['name'], 'place' => $place, 'url' => $url);
+        }
+        foreach ($missing as $id) {
+            if (!isset($cache[$id])) {
+                $cache[$id] = null;   // no such facility; remembered so we ask once
+            }
+        }
+    }
+
+    $out = array();
+    foreach ($ids as $id) {
+        if (!empty($cache[$id])) {
+            $out[] = $cache[$id];
+        }
+    }
+    usort($out, function ($a, $b) {
+        return strcasecmp($a['name'], $b['name']);
+    });
+    return $out;
+}
+
+/**
  * FileBird folders feeding the library: folder id => kind label shown on the
  * card badge. Filter 'kop_research_library_folders' to add a folder.
  */
@@ -568,6 +643,7 @@ function kop_research_library_items() {
                 'summary_label' => isset($override['summary_label']) ? $override['summary_label'] : 'Notes, quotes and key points',
                 'relevance'      => $tier,
                 'relevance_note' => $why,
+                'facilities'     => kop_research_facility_chips(kop_research_facility_ids('att:' . $attachment->ID)),
             );
         }
     }
@@ -598,6 +674,7 @@ function kop_research_library_items() {
             'summary_label' => isset($entry['summary_label']) ? $entry['summary_label'] : 'Notes, quotes and key points',
             'relevance'      => kop_research_clean_tier(isset($edit['relevance']) ? $edit['relevance'] : (isset($entry['relevance']) ? $entry['relevance'] : 0)),
             'relevance_note' => trim((string) (isset($edit['relevance_note']) ? $edit['relevance_note'] : (isset($entry['relevance_note']) ? $entry['relevance_note'] : ''))),
+            'facilities'     => kop_research_facility_chips(kop_research_facility_ids('ext:' . $entry['id'])),
         );
     }
 
@@ -735,6 +812,16 @@ function kop_hub_module_research() {
                             <p class="kop-rl-byline"><?php echo esc_html($item['byline']); ?></p>
                         <?php endif; ?>
                         <p class="kop-rl-why"<?php echo $item['relevance_note'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['relevance_note']); ?></p>
+                        <?php // Programs this document is about; the facility page carries the same link back. ?>
+                        <p class="kop-rl-facilities"<?php echo $item['facilities'] ? '' : ' hidden'; ?>>
+                            <span class="kop-rl-facilities-label">Programs named:</span>
+                            <?php foreach ($item['facilities'] as $kop_rl_fac) : ?>
+                                <a class="kop-rl-chip" href="<?php echo esc_url($kop_rl_fac['url']); ?>"
+                                   data-id="<?php echo (int) $kop_rl_fac['id']; ?>"<?php
+                                    echo $kop_rl_fac['place'] !== '' ? ' title="' . esc_attr($kop_rl_fac['place']) . '"' : '';
+                                ?>><?php echo esc_html($kop_rl_fac['name']); ?></a>
+                            <?php endforeach; ?>
+                        </p>
                         <p class="kop-rl-desc"<?php echo $item['description'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['description']); ?></p>
                         <?php if ($item['summary_url'] !== '' || empty($item['missing'])) : ?>
                         <p class="kop-rl-links">
@@ -804,6 +891,17 @@ function kop_research_render_editor_dialog() {
                 <input type="text" name="relevance_note" class="kop-rl-input-why" maxlength="200"
                        placeholder="One line, shown under the byline.">
             </label>
+
+            <div class="kop-rl-field">
+                <span>Programs this document is about</span>
+                <div class="kop-rl-tags" role="list"></div>
+                <div class="kop-rl-tag-search">
+                    <input type="search" class="kop-rl-tag-query" placeholder="Search facilities by name" autocomplete="off"
+                           aria-label="Search facilities to tag" aria-describedby="kop-rl-tag-help">
+                    <ul class="kop-rl-tag-results" hidden></ul>
+                </div>
+                <p class="kop-rl-tag-help" id="kop-rl-tag-help">Tagging a program makes this document show on its profile page.</p>
+            </div>
 
             <div class="kop-rl-field">
                 <span>Photo</span>
@@ -892,6 +990,7 @@ function kop_research_enqueue_editor() {
     );
     wp_localize_script('kop-research-library-editor', 'KOP_RESEARCH_EDITOR', array(
         'endpoint' => esc_url_raw(rest_url('kop/v1/research-entry')),
+        'search'   => esc_url_raw(rest_url('kop/v1/research-facilities')),
         'nonce'    => wp_create_nonce('wp_rest'),
     ));
 }
@@ -901,7 +1000,7 @@ add_action('wp_enqueue_scripts', 'kop_research_enqueue_editor');
  * POST kop/v1/research-entry
  *
  * Body: key ("att:<id>" or "ext:<slug>"), title, description, cover_id,
- * relevance (0 to 3) and relevance_note.
+ * relevance (0 to 3), relevance_note and facilities (facilities_v2 ids).
  * cover_id 0 clears the override so the card falls back to the document's own
  * generated first page.
  */
@@ -952,13 +1051,78 @@ function kop_research_register_rest() {
                     'default'           => '',
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
+                'facilities' => array(
+                    'required' => false,
+                    'type'     => 'array',
+                    'default'  => array(),
+                    'items'    => array('type' => 'integer'),
+                ),
             ),
         )
     );
 }
 add_action('rest_api_init', 'kop_research_register_rest');
 
-/** Save one card's title, description and photo. */
+/** Whichever of the given ids are real facilities_v2 rows, as ints. */
+function kop_research_valid_facility_ids($ids) {
+    global $wpdb;
+
+    $ids = array_values(array_unique(array_filter(array_map('intval', (array) $ids))));
+    if (!$ids) {
+        return array();
+    }
+    $in = implode(',', $ids);
+    return array_map('intval', (array) $wpdb->get_col("SELECT id FROM facilities_v2 WHERE id IN ($in)"));
+}
+
+/**
+ * GET kop/v1/research-facilities?q=<name>
+ *
+ * The facility picker in the editor dialog. Editors only, name matches only,
+ * and at most twelve rows: it exists to find an id, not to browse.
+ */
+function kop_research_register_facility_search() {
+    register_rest_route(
+        'kop/v1',
+        '/research-facilities',
+        array(
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => 'kop_research_search_facilities',
+            'permission_callback' => function () {
+                return current_user_can(KOP_RESEARCH_CAP);
+            },
+            'args' => array(
+                'q' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        )
+    );
+}
+add_action('rest_api_init', 'kop_research_register_facility_search');
+
+/** Name search over facilities_v2 for the picker. */
+function kop_research_search_facilities($request) {
+    global $wpdb;
+
+    $phrase = trim((string) $request->get_param('q'));
+    if (strlen($phrase) < 2) {
+        return rest_ensure_response(array('results' => array()));
+    }
+
+    $like = '%' . $wpdb->esc_like($phrase) . '%';
+    $ids  = $wpdb->get_col($wpdb->prepare(
+        "SELECT id FROM facilities_v2 WHERE name LIKE %s ORDER BY (name LIKE %s) DESC, name LIMIT 12",
+        $like,
+        $wpdb->esc_like($phrase) . '%'
+    ));
+
+    return rest_ensure_response(array('results' => kop_research_facility_chips($ids)));
+}
+
+/** Save one card's title, description, photo, relevance and facility tags. */
 function kop_research_save_entry($request) {
     $key         = (string) $request->get_param('key');
     $title       = trim((string) $request->get_param('title'));
@@ -966,6 +1130,10 @@ function kop_research_save_entry($request) {
     $cover_id    = (int) $request->get_param('cover_id');
     $relevance   = kop_research_clean_tier($request->get_param('relevance'));
     $why         = trim((string) $request->get_param('relevance_note'));
+
+    // Only ids that are really in facilities_v2 are stored, so a stale chip
+    // from an open tab cannot put a dead link on the card.
+    $facilities = kop_research_valid_facility_ids($request->get_param('facilities'));
 
     if ($title === '') {
         return new WP_Error('kop_research_title', 'A title is required.', array('status' => 400));
@@ -1005,6 +1173,11 @@ function kop_research_save_entry($request) {
         } else {
             delete_post_meta($id, KOP_RESEARCH_RELEVANCE_NOTE_META);
         }
+        // One row per facility: rewritten whole, so removing a chip removes it.
+        delete_post_meta($id, KOP_RESEARCH_FACILITY_META);
+        foreach ($facilities as $facility_id) {
+            add_post_meta($id, KOP_RESEARCH_FACILITY_META, $facility_id);
+        }
         // Marks the attachment's own fields as authoritative from now on.
         update_post_meta($id, KOP_RESEARCH_EDITED_META, current_time('mysql'));
 
@@ -1026,6 +1199,7 @@ function kop_research_save_entry($request) {
             'cover_id'       => $cover_id,
             'relevance'      => $relevance,
             'relevance_note' => $why,
+            'facilities'     => $facilities,
         );
         update_option(KOP_RESEARCH_EXTERNAL_OPTION, $edits, false);
 
@@ -1051,6 +1225,7 @@ function kop_research_save_entry($request) {
         'relevance'      => $relevance,
         'relevance_label' => $relevance ? $tiers[$relevance] : '',
         'relevance_note' => $why,
+        'facilities'     => kop_research_facility_chips($facilities),
     ));
 }
 

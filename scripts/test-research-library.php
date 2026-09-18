@@ -9,10 +9,11 @@
  *   php scripts/test-research-library.php
  *
  * Checks the tier helpers, the "most relevant" order (including that an
- * unrated library keeps the order the page had before tiers existed), and the
- * markup the sort control and the editor dialog depend on. Nothing is written
- * and nothing touches a database. The browser half of the sort lives in
- * scripts/test-research-sort.js.
+ * unrated library keeps the order the page had before tiers existed), the
+ * facility tags (stored ids, chips, the picker's search and the id validator,
+ * against a stub $wpdb) and the markup the sort control, the chips and the
+ * editor dialog depend on. Nothing is written and nothing touches a database.
+ * The browser half of the sort lives in scripts/test-research-sort.js.
  */
 
 if (PHP_SAPI !== 'cli') {
@@ -22,6 +23,7 @@ if (PHP_SAPI !== 'cli') {
 // --- WordPress stubs --------------------------------------------------------
 
 define('ABSPATH', dirname(__DIR__) . '/');
+define('ARRAY_A', 'ARRAY_A');
 
 $GLOBALS['kop_test_meta'] = array(
     501 => array(
@@ -33,6 +35,73 @@ $GLOBALS['kop_test_meta'] = array(
         '_wp_attached_file' => '2019/05/some-old-study.pdf',
     ),
 );
+
+// Facility tags: one meta row per facility, and 404 is not a real facility.
+$GLOBALS['kop_test_meta'][501]['kop_research_facilities'] = array(10371, 9779, 404);
+
+/**
+ * Just enough $wpdb for the facility lookups: the three facilities_v2 columns
+ * the chips need, and no other table.
+ */
+class KOP_Test_Wpdb {
+    public $prefix = 'wpdl_';
+    public $rows = array(
+        10371 => array('id' => 10371, 'name' => 'Provo Canyon School', 'city' => 'Provo', 'state' => 'UT', 'country' => 'United States'),
+        9779  => array('id' => 9779,  'name' => '2nd Home, Inc',       'city' => 'Fresno', 'state' => 'CA', 'country' => 'United States'),
+        8000  => array('id' => 8000,  'name' => 'Overseas Academy',    'city' => 'Montego Bay', 'state' => '', 'country' => 'Jamaica'),
+    );
+    public function esc_like($text) { return addcslashes((string) $text, '_%\\'); }
+    public function prepare($query, ...$args) {
+        foreach ($args as $arg) {
+            $replacement = is_int($arg) ? (string) (int) $arg : "'" . str_replace("'", "''", (string) $arg) . "'";
+            $query = preg_replace('/%[ds]/', $replacement, $query, 1);
+        }
+        return $query;
+    }
+    private function ids_from($query) {
+        if (preg_match('/IN \(([0-9,\s]*)\)/', $query, $m)) {
+            return array_filter(array_map('intval', explode(',', $m[1])));
+        }
+        if (preg_match("/name LIKE '%([^%']*)%'/", $query, $m)) {
+            $needle = strtolower($m[1]);
+            $hits = array();
+            foreach ($this->rows as $id => $row) {
+                if ($needle !== '' && strpos(strtolower($row['name']), $needle) !== false) $hits[] = $id;
+            }
+            return $hits;
+        }
+        return array();
+    }
+    public function get_col($query) {
+        return array_values(array_filter($this->ids_from($query), function ($id) { return isset($this->rows[$id]); }));
+    }
+    public function get_results($query, $format = null) {
+        $out = array();
+        foreach ($this->ids_from($query) as $id) {
+            if (isset($this->rows[$id])) $out[] = $this->rows[$id];
+        }
+        return $out;
+    }
+}
+$GLOBALS['wpdb'] = new KOP_Test_Wpdb();
+
+function kop_facility_page_url($id) {
+    return (int) $id === 10371 ? 'https://example.test/facility/provo-canyon-school-ut/' : '';
+}
+function kop_facility_pages_location_search_url($name) {
+    return 'https://example.test/location-index/?search=' . rawurlencode((string) $name);
+}
+function rest_ensure_response($data) { return $data; }
+function register_rest_route() {}
+function wp_create_nonce($action) { return 'nonce'; }
+class WP_REST_Server { const READABLE = 'GET'; const CREATABLE = 'POST'; }
+
+/** The one request object the picker's callback needs. */
+class KOP_Test_Request {
+    private $params;
+    public function __construct($params) { $this->params = $params; }
+    public function get_param($key) { return isset($this->params[$key]) ? $this->params[$key] : null; }
+}
 
 function apply_filters($tag, $value) { return $value; }
 function add_filter() {}
@@ -48,7 +117,14 @@ function wp_list_pluck($list, $field) {
     return array_map(function ($row) use ($field) { return $row[$field]; }, $list);
 }
 function get_post_meta($id, $key, $single = false) {
-    return isset($GLOBALS['kop_test_meta'][$id][$key]) ? $GLOBALS['kop_test_meta'][$id][$key] : '';
+    $value = isset($GLOBALS['kop_test_meta'][$id][$key]) ? $GLOBALS['kop_test_meta'][$id][$key] : null;
+    if ($single) {
+        return is_array($value) ? reset($value) : ($value === null ? '' : $value);
+    }
+    if ($value === null) {
+        return array();
+    }
+    return is_array($value) ? $value : array($value);
 }
 function kop_get_folder_attachments($folder_id) {
     if ((int) $folder_id !== 27) {
@@ -155,6 +231,25 @@ $plain = array($item('B', 2024, 0), $item('A', 2024, 0), $item('C', 2025, 0), $i
 usort($plain, 'kop_research_compare_by_relevance');
 check('an unrated library keeps the old order', array_column($plain, 'title'), array('C', 'A', 'B', 'D'));
 
+echo "\n-- Facility tags --\n";
+check('stored ids come back', kop_research_facility_ids('att:501'), array(10371, 9779, 404));
+check('an untagged document has none', kop_research_facility_ids('att:502'), array());
+check('a key that is neither shape is empty', kop_research_facility_ids('nope'), array());
+check('only real facilities pass the validator', kop_research_valid_facility_ids(array(10371, 404, 9779)), array(10371, 9779));
+check('the validator drops junk', kop_research_valid_facility_ids(array('x', 0, null)), array());
+
+$chips = kop_research_facility_chips(kop_research_facility_ids('att:501'));
+check('a chip per real facility, by name', array_column($chips, 'name'), array('2nd Home, Inc', 'Provo Canyon School'));
+check('a facility with a page links to it', $chips[1]['url'], 'https://example.test/facility/provo-canyon-school-ut/');
+check('one without falls back to the location index', $chips[0]['url'], 'https://example.test/location-index/?search=2nd%20Home%2C%20Inc');
+check('the place rides along', $chips[1]['place'], 'Provo, UT');
+$abroad = kop_research_facility_chips(array(8000));
+check('no state, so the country', $abroad[0]['place'], 'Montego Bay, Jamaica');
+
+$found = kop_research_search_facilities(new KOP_Test_Request(array('q' => 'Provo')));
+check('the picker finds a facility', array_column($found['results'], 'id'), array(10371));
+check('a one-letter query is not a search', kop_research_search_facilities(new KOP_Test_Request(array('q' => 'P'))), array('results' => array()));
+
 echo "\n-- Items and markup --\n";
 $library = kop_research_library_items();
 check('every item carries a tier and a line', array_reduce($library, function ($carry, $row) {
@@ -182,6 +277,13 @@ contains('the dialog has the tier select', $html, 'class="kop-rl-input-relevance
 contains('the dialog lists the tiers', $html, 'Tier 1 - Start here');
 contains('the dialog has the line field', $html, 'class="kop-rl-input-why"');
 lacks('an unrated card shows no badge', $html, 'kop-rl-tier kop-rl-tier-0');
+contains('the card lists the programs it names', $html, 'class="kop-rl-facilities-label">Programs named:</span>');
+contains('each program is a chip linking to its page', $html, 'class="kop-rl-chip" href="https://example.test/facility/provo-canyon-school-ut/"');
+contains('the chip carries its id for the editor', $html, 'data-id="10371"');
+contains('an untagged card hides the line', $html, 'class="kop-rl-facilities" hidden>');
+lacks('a facility that no longer exists is not linked', $html, 'data-id="404"');
+contains('the dialog has the tag box', $html, 'class="kop-rl-tags"');
+contains('the dialog has the facility search', $html, 'class="kop-rl-tag-query"');
 
 echo $failures ? "\n$failures FAILURES\n" : "\nresearch library: PASS\n";
 exit($failures ? 1 : 0);

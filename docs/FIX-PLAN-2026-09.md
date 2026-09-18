@@ -65,20 +65,42 @@ that an unrated library keeps the old order) and
 `scripts/test-research-sort.js` (the browser half, asserting the JavaScript
 order matches the PHP one).
 
-**2B. Tag facilities mentioned.**
-New attachment meta `kop_research_facilities` (list of `facilities_v2`
-ids). Auto-suggest by running `kop_build_facility_alias_index()` from
-`api/facility-aliases.php` over title, description and extracted PDF
-text (the news pipeline already extracts text); the editor dialog shows
-the suggestions as removable chips plus a search box to add more. Cards
-show the chips as links to `/facility/<slug>/`. The facility page's
-documents section gains a "Research that mentions this program" list
-read from the same meta. A one-off script proposes tags for the current
-library and writes them to a review file before anything is saved.
+**2B. Tag facilities mentioned.** Done. A document carries the
+`facilities_v2` ids it is about as `kop_research_facilities`, one meta row
+per facility, so a facility page finds its research with a meta query
+(`kop_facility_pages_research()`) instead of unpacking every document's
+list. The entries with no file keep their ids in the external overrides
+option. Cards show the programs as chips linking to `/facility/<slug>/`,
+falling back to the location index for a facility with no page of its own;
+an id with no row in `facilities_v2` is dropped rather than linked
+nowhere. The facility page's Documents section gained "Research that
+mentions this program", with each document's byline and relevance line and
+a link to the whole library.
 
-Files: `inc/research-library.php` (items, dialog, REST save),
-`js/research-library-editor.js`, `css/hub.css`,
-`inc/facility-pages.php` (reader).
+The editor dialog gained the picker: the stored tags as removable chips,
+read straight off the card, plus a search box on
+`GET kop/v1/research-facilities` (editors only, name matches, twelve rows).
+`kop/v1/research-entry` takes a `facilities` array and stores only the ids
+that are really in `facilities_v2`.
+
+`api/propose-research-facility-tags.php` proposes tags for the library it
+already holds: every facility name found in a document's title,
+description, byline or extracted PDF text (`kop_extract_pdf_text()` from
+the lawsuit extractor). It saves nothing on a proposal run, writing
+`kop-research-tag-proposals.json` in the uploads directory for a human to
+prune; `?apply=1` then saves exactly what that file holds, merged with any
+tags an editor set by hand. Matching is timid on purpose: two words and ten
+characters minimum, a list of phrases that name a kind of program rather
+than one program ("boys ranch", "the academy", "residential treatment
+center"), a name two facilities share is dropped, and where one name sits
+inside another ("Discovery Ranch" inside "Discovery Ranch for Girls") only
+the longer one counts. Measured against the production mirror: 4,648 names
+indexed, and 40 KB of industry prose proposes nothing.
+
+Covered by `scripts/test-research-library.php` (the ids, the chips, the
+picker and the card markup) and `scripts/test-research-tag-proposals.php`
+(the index and the matcher, synthetic and then against the mirror when one
+is present).
 
 ---
 

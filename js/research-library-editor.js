@@ -29,9 +29,15 @@
     var message = dialog.querySelector('.kop-rl-form-msg');
     var saveButton = dialog.querySelector('.kop-rl-save');
 
+    var tagBox = dialog.querySelector('.kop-rl-tags');
+    var tagQuery = dialog.querySelector('.kop-rl-tag-query');
+    var tagResults = dialog.querySelector('.kop-rl-tag-results');
+
     var current = null;      // the card being edited
     var coverId = 0;         // chosen attachment id, 0 = fall back to the PDF
     var mediaFrame = null;
+    var tags = [];           // [{id, name, place}] for the card being edited
+    var searchTimer = null;
 
     /** Fall back to alert() where <dialog> is not supported. */
     function openDialog() {
@@ -56,6 +62,97 @@
         message.classList.toggle('is-error', !!isError);
     }
 
+    /** Draw the chips for whatever is in `tags`, each with a remove button. */
+    function drawTags() {
+        tagBox.innerHTML = '';
+        if (!tags.length) {
+            var none = document.createElement('p');
+            none.className = 'kop-rl-tags-empty';
+            none.textContent = 'No program tagged yet.';
+            tagBox.appendChild(none);
+            return;
+        }
+        tags.forEach(function (tag) {
+            var chip = document.createElement('span');
+            chip.className = 'kop-rl-tag';
+            chip.setAttribute('role', 'listitem');
+
+            var label = document.createElement('span');
+            label.textContent = tag.name + (tag.place ? ' (' + tag.place + ')' : '');
+            chip.appendChild(label);
+
+            var remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'kop-rl-tag-remove';
+            remove.setAttribute('data-id', tag.id);
+            remove.innerHTML = '<span aria-hidden="true">&times;</span>';
+            var sr = document.createElement('span');
+            sr.className = 'screen-reader-text';
+            sr.textContent = 'Remove ' + tag.name;
+            remove.appendChild(sr);
+            chip.appendChild(remove);
+
+            tagBox.appendChild(chip);
+        });
+    }
+
+    function addTag(tag) {
+        var id = parseInt(tag.id, 10) || 0;
+        if (!id || tags.some(function (t) { return t.id === id; })) {
+            return;
+        }
+        tags.push({ id: id, name: tag.name, place: tag.place || '' });
+        drawTags();
+    }
+
+    function removeTag(id) {
+        tags = tags.filter(function (tag) { return tag.id !== id; });
+        drawTags();
+    }
+
+    function clearResults() {
+        tagResults.innerHTML = '';
+        tagResults.setAttribute('hidden', 'hidden');
+    }
+
+    function searchFacilities() {
+        var phrase = tagQuery.value.trim();
+        if (phrase.length < 2 || !config.search) {
+            clearResults();
+            return;
+        }
+        fetch(config.search + '?q=' + encodeURIComponent(phrase), {
+            credentials: 'same-origin',
+            headers: { 'X-WP-Nonce': config.nonce }
+        }).then(function (response) {
+            return response.ok ? response.json() : { results: [] };
+        }).then(function (body) {
+            var results = (body && body.results) || [];
+            tagResults.innerHTML = '';
+            if (!results.length) {
+                var empty = document.createElement('li');
+                empty.className = 'kop-rl-tag-none';
+                empty.textContent = 'No facility of that name.';
+                tagResults.appendChild(empty);
+            }
+            results.forEach(function (row) {
+                var li = document.createElement('li');
+                var button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'kop-rl-tag-add';
+                button.setAttribute('data-id', row.id);
+                button.setAttribute('data-name', row.name);
+                button.setAttribute('data-place', row.place || '');
+                button.textContent = row.name + (row.place ? ' - ' + row.place : '');
+                li.appendChild(button);
+                tagResults.appendChild(li);
+            });
+            tagResults.removeAttribute('hidden');
+        }).catch(function () {
+            clearResults();
+        });
+    }
+
     function cardFields(card) {
         return {
             titleLink: card.querySelector('.kop-rl-title a'),
@@ -65,7 +162,8 @@
             tier: card.querySelector('.kop-rl-tier'),
             body: card.querySelector('.kop-rl-body'),
             image: card.querySelector('.kop-rl-cover img'),
-            cover: card.querySelector('.kop-rl-cover')
+            cover: card.querySelector('.kop-rl-cover'),
+            facilities: card.querySelector('.kop-rl-facilities')
         };
     }
 
@@ -80,6 +178,23 @@
         descInput.value = fields.desc ? fields.desc.textContent.trim() : '';
         tierInput.value = card.getAttribute('data-relevance') || '0';
         whyInput.value = fields.why ? fields.why.textContent.trim() : '';
+
+        // The chips on the card are the stored tags; read them back out of it
+        // so the dialog needs no extra request.
+        tags = [];
+        if (fields.facilities) {
+            Array.prototype.forEach.call(fields.facilities.querySelectorAll('.kop-rl-chip'), function (chip) {
+                tags.push({
+                    id: parseInt(chip.getAttribute('data-id'), 10) || 0,
+                    name: chip.textContent.trim(),
+                    place: chip.getAttribute('title') || ''
+                });
+            });
+        }
+        tags = tags.filter(function (tag) { return tag.id > 0; });
+        drawTags();
+        tagQuery.value = '';
+        clearResults();
         preview.src = fields.image ? fields.image.getAttribute('src') : '';
         preview.style.visibility = preview.src ? 'visible' : 'hidden';
 
@@ -147,7 +262,8 @@
                 description: descInput.value.trim(),
                 cover_id: coverId,
                 relevance: parseInt(tierInput.value, 10) || 0,
-                relevance_note: whyInput.value.trim()
+                relevance_note: whyInput.value.trim(),
+                facilities: tags.map(function (tag) { return tag.id; })
             })
         }).then(function (response) {
             return response.json().then(function (body) {
@@ -191,6 +307,31 @@
                 fields.why.removeAttribute('hidden');
             } else {
                 fields.why.setAttribute('hidden', 'hidden');
+            }
+        }
+
+        if (fields.facilities) {
+            var chips = body.facilities || [];
+            var label = fields.facilities.querySelector('.kop-rl-facilities-label');
+            fields.facilities.innerHTML = '';
+            if (label) {
+                fields.facilities.appendChild(label);
+            }
+            chips.forEach(function (row) {
+                var link = document.createElement('a');
+                link.className = 'kop-rl-chip';
+                link.setAttribute('href', row.url || '#');
+                link.setAttribute('data-id', row.id);
+                if (row.place) {
+                    link.setAttribute('title', row.place);
+                }
+                link.textContent = row.name;
+                fields.facilities.appendChild(link);
+            });
+            if (chips.length) {
+                fields.facilities.removeAttribute('hidden');
+            } else {
+                fields.facilities.setAttribute('hidden', 'hidden');
             }
         }
 
@@ -251,6 +392,46 @@
     dialog.querySelector('.kop-rl-form').addEventListener('submit', function (event) {
         event.preventDefault();
         save();
+    });
+
+    tagBox.addEventListener('click', function (event) {
+        var remove = event.target.closest('.kop-rl-tag-remove');
+        if (!remove) {
+            return;
+        }
+        event.preventDefault();
+        removeTag(parseInt(remove.getAttribute('data-id'), 10) || 0);
+    });
+
+    tagResults.addEventListener('click', function (event) {
+        var add = event.target.closest('.kop-rl-tag-add');
+        if (!add) {
+            return;
+        }
+        event.preventDefault();
+        addTag({
+            id: add.getAttribute('data-id'),
+            name: add.getAttribute('data-name'),
+            place: add.getAttribute('data-place')
+        });
+        tagQuery.value = '';
+        clearResults();
+        tagQuery.focus();
+    });
+
+    // Typing settles before asking the server.
+    tagQuery.addEventListener('input', function () {
+        window.clearTimeout(searchTimer);
+        searchTimer = window.setTimeout(searchFacilities, 250);
+    });
+
+    // Enter in the search box must not submit the dialog's form.
+    tagQuery.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            window.clearTimeout(searchTimer);
+            searchFacilities();
+        }
     });
 
     dialog.querySelector('.kop-rl-photo-pick').addEventListener('click', pickPhoto);
