@@ -66,12 +66,14 @@ foreach ($kop_ir_counts as $count) {
 
 // The same curated set the home page shows
 // (api/manage-featured-inspections.php). The featured columns are added by
-// that tool, so check before asking for them: the block is simply absent on a
+// api/update-schema.php, so check before asking for them: the block is simply absent on a
 // database where nothing has been featured yet.
 $kop_ir_has_featured = get_transient('kop_inspection_featured_column');
 if ($kop_ir_has_featured === false) {
     $kop_ir_has_featured = $wpdb->get_var("SHOW COLUMNS FROM inspection_reports LIKE 'featured'") ? 'yes' : 'no';
-    set_transient('kop_inspection_featured_column', $kop_ir_has_featured, DAY_IN_SECONDS);
+    // A missing column is remembered briefly, so running api/update-schema.php
+    // shows the block within minutes instead of a day later.
+    set_transient('kop_inspection_featured_column', $kop_ir_has_featured, $kop_ir_has_featured === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
 }
 $kop_ir_flagged = $kop_ir_has_featured === 'yes' ? $wpdb->get_results(
     "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
