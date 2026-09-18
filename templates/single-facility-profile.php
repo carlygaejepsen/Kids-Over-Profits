@@ -24,6 +24,16 @@ if (file_exists($kop_fp_css_path)) {
         filemtime($kop_fp_css_path)
     );
 }
+$kop_fp_js_path = get_stylesheet_directory() . '/js/facility-profile.js';
+if (file_exists($kop_fp_js_path)) {
+    wp_enqueue_script(
+        'kop-facility-profile',
+        get_stylesheet_directory_uri() . '/js/facility-profile.js',
+        array(),
+        filemtime($kop_fp_js_path),
+        true
+    );
+}
 
 if (!function_exists('kop_fp_meta')) {
     /** Trimmed string meta, or the raw value when it is an array. */
@@ -324,7 +334,8 @@ while (have_posts()) :
 
         <div class="entry-content single-content kop-fp-body">
             <?php if (has_post_thumbnail()) : ?>
-                <figure class="kop-fp-figure post-thumbnail">
+                <?php // Not .post-thumbnail: Kadence pads that class to an aspect ratio and collapses the image. ?>
+                <figure class="kop-fp-figure">
                     <?php the_post_thumbnail('full'); ?>
                 </figure>
             <?php endif; ?>
