@@ -70,6 +70,9 @@
     /* A view this small is laid out as one tree rather than split into
      * clusters. */
     var SMALL_VIEW = 20;
+    /* How many names a view can reach before the people in it stop
+     * bringing every other place they worked. See visibleIds. */
+    var PERSON_REACH_BUDGET = 30;
     /* What it costs, when fitting clusters together, to draw something
      * level with or above a thing the records put it under. For a person,
      * about one long line: people join clusters, so nearly every place a
@@ -234,13 +237,30 @@
              * step and stops: a person reached through another person's
              * expansion does not expand in turn. People are the cheap case to
              * do this for - median degree two, most seven - but a rule that
-             * walked outwards without a stop would not stay cheap. */
+             * walked outwards without a stop would not stay cheap.
+             *
+             * Cheap per person is not cheap per view, though. A programme
+             * with a staff list brings every other place each of them worked,
+             * and each of those brings its owner: Second Nature's nine
+             * clinicians came to sixty-two names, Provo Canyon School's to
+             * ninety-five. So past PERSON_REACH_BUDGET the places a single
+             * person brings stay behind the count on their node, and only a
+             * place two of them share comes along - that is the pattern the
+             * rule exists to show, and one click on the person shows the
+             * rest. */
+            var reached = Object.create(null);
             Object.keys(asked).forEach(function (id) {
                 var node = store.node(id);
                 if (!node || node.kind !== 'person') return;
                 store.neighbours(id, true).forEach(function (link) {
-                    asked[link.other.id] = true;
+                    if (asked[link.other.id]) return;
+                    reached[link.other.id] = (reached[link.other.id] || 0) + 1;
                 });
+            });
+            var reachedIds = Object.keys(reached);
+            var roomy = Object.keys(asked).length + reachedIds.length <= PERSON_REACH_BUDGET;
+            reachedIds.forEach(function (id) {
+                if (roomy || reached[id] > 1) asked[id] = true;
             });
 
             /* Whoever owned it is never left off. Ownership is the question

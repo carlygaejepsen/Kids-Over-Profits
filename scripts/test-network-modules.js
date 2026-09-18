@@ -1305,14 +1305,19 @@ function run() {
      * organisations the map opened with, which belong to the opening view -
      * and then opens out any person among them, because a name with one
      * line back to whatever revealed it hides the thing worth knowing about
-     * them. */
+     * them. Past thirty names, only the places two of those people share. */
     const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)));
+    const reachedBy = new Map();
     [...expected].forEach((id) => {
         const node = store.node(id);
         if (node && node.kind === 'person') {
-            store.neighbours(id, true).forEach((l) => expected.add(l.other.id));
+            store.neighbours(id, true).forEach((l) => {
+                if (!expected.has(l.other.id)) reachedBy.set(l.other.id, (reachedBy.get(l.other.id) || 0) + 1);
+            });
         }
     });
+    const roomy = expected.size + reachedBy.size <= 30;
+    reachedBy.forEach((count, id) => { if (roomy || count > 1) expected.add(id); });
     /* ...and whoever owned any programme in it, one step up. */
     [...expected].forEach((id) => {
         if (store.node(id).kind !== 'facility') return;
@@ -1372,7 +1377,8 @@ function run() {
 
     /* A person with one line back to whatever revealed them hides the thing
      * worth knowing: which programmes they turn up at. Whenever a name
-     * surfaces, everywhere it connects to surfaces with it. */
+     * surfaces, everywhere it connects to surfaces with it - within the
+     * budget. */
     /* The people this applies to are the ones one step from what was
      * clicked. A person who arrives through another person's expansion does
      * not expand in turn (focus.js, visibleIds), or one well-connected name
@@ -1381,15 +1387,27 @@ function run() {
     const surfaced = focused.nodes.filter((n) => n.kind === 'person' && direct1.has(n.id) &&
         store.neighbours(n.id, true).length > 1);
     check(surfaced.length > 0, 'no person surfaced when opening ' + hub.name + ', so the rule is untested');
-    let hiddenPlaces = 0;
+    /* Past the budget a place only one of them worked stays behind the
+     * count on their node; a place two of them share always comes. */
+    const sharedBy = new Map();
     surfaced.forEach((person) => {
         store.neighbours(person.id, true).forEach((link) => {
-            if (!focused.nodeIds[link.other.id]) hiddenPlaces++;
+            sharedBy.set(link.other.id, (sharedBy.get(link.other.id) || 0) + 1);
         });
     });
-    check(hiddenPlaces === 0,
-        hiddenPlaces + ' places a surfaced person connects to were left off the map',
-        surfaced.length + ' people surfaced, all their programmes with them');
+    let lostShared = 0, uncounted = 0, heldBack = 0;
+    surfaced.forEach((person) => {
+        store.neighbours(person.id, true).forEach((link) => {
+            if (focused.nodeIds[link.other.id]) return;
+            heldBack++;
+            if (!roomy && sharedBy.get(link.other.id) > 1) lostShared++;
+            if (!focused.hidden[person.id]) uncounted++;
+        });
+    });
+    check(roomy ? heldBack === 0 : lostShared === 0,
+        (roomy ? heldBack : lostShared) + ' places a surfaced person connects to were left off the map',
+        surfaced.length + ' people surfaced; ' + heldBack + ' places only one of them worked held back');
+    check(uncounted === 0, uncounted + ' held-back places are not counted on the person who leads to them');
     check(focused.edges.every((e) => focused.nodeIds[e.sourceId] && focused.nodeIds[e.targetId]),
         'the focused view kept an edge running off it');
 

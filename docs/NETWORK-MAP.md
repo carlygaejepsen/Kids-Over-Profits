@@ -229,7 +229,11 @@ and then three rules run:
 - *A person never appears alone.* The fact worth having about someone on
   this map is which programmes they turn up at, so when a person surfaces
   everywhere they connect to surfaces with them. One step and stop: a person
-  reached through another person's expansion does not expand in turn.
+  reached through another person's expansion does not expand in turn. When
+  that would take the view past 30 names (`PERSON_REACH_BUDGET` in
+  `focus.js`), only places two of the people share come along; the rest
+  wait behind the +N count on each person. This took Second Nature's
+  opening view from 62 names to about 33.
 - *Whoever owned it is never left off, and brings only itself.* One step up
   the ownership chain, not the whole of it - Provo Canyon School walks up
   through ten organisations if you let it. Owners only, never their other
