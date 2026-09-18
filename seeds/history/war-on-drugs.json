@@ -1,0 +1,12 @@
+{
+  "title": "Temperance and the War on Drugs",
+  "slug": "war-on-drugs",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/war-on-drugs.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-13 18:37:16",
+  "excerpt": "Temperance societies, Alcoholics Anonymous, the federal narcotic farms, Nixon’s drug war, and the Just Say No era that sent teenagers to Straight, Inc."
+}

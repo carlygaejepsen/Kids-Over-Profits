@@ -150,3 +150,37 @@
 .kop-article-footer a {
     color: var(--kop-teal, #33a7b5);
 }
+
+/* ---- Timelines (History section) ------------------------------------- */
+/* Entries are "<strong>date</strong> – event" with detail in a nested list. */
+
+.kop-article .entry-content > ul > li {
+    margin-bottom: 0.9rem;
+}
+
+.kop-article .entry-content > ul > li > strong:first-child {
+    color: var(--kop-navy-blue, #000080);
+    white-space: nowrap;
+}
+
+.kop-article .entry-content ul ul {
+    margin-top: 0.35rem;
+    margin-bottom: 0;
+}
+
+.kop-article .entry-content ul ul li {
+    margin-bottom: 0.3rem;
+    font-size: 0.97em;
+}
+
+.kop-article .entry-content > h2 + ul,
+.kop-article .entry-content > h3 + ul {
+    margin-top: 0.5rem;
+}
+
+.kop-article .entry-content .wp-block-quote {
+    max-width: 72ch;
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+    background: var(--kop-sand, #f2eedf);
+    padding: 0.75rem 1.25rem;
+}

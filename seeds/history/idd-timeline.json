@@ -1,0 +1,12 @@
+{
+  "title": "Developmental Disabilities and Eugenics",
+  "slug": "idd-timeline",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/idd-timeline.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-11 18:06:37",
+  "excerpt": "Phrenology, IQ testing, forced sterilization, and the institutions built for children labelled feebleminded, through to aversive behaviorism."
+}

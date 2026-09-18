@@ -1,0 +1,12 @@
+{
+  "title": "Survivors and Families Fight Back",
+  "slug": "advocacy-history",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/advocacy-history.html",
+  "template": "page-article.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-10 22:30:24",
+  "excerpt": "Fifty years of survivors and their families testifying, suing, organizing, and publishing, from the Rebekah Home hearings in 1973 to Breaking Code Silence."
+}

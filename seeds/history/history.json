@@ -1,0 +1,11 @@
+{
+  "title": "History",
+  "slug": "history",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "history/history.html",
+  "template": "page-hub.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2025-06-16 05:31:05"
+}

@@ -701,7 +701,10 @@ function kop_apply_lawsuit_document_fixes() {
  * JSON keys: title, slug, post_type, status, content_file, excerpt,
  * categories (slugs), template (file in templates/), meta (key => string),
  * meta_arrays (key => list), acf_field_keys (key => field_xxx so ACF shows
- * the value in the editor).
+ * the value in the editor), seed_version (bump to refresh an untouched
+ * draft), allow_published + last_seed_modified_gmt (refresh a published
+ * page too, but only while its post_modified_gmt still equals the stamp
+ * the seed was assembled against).
  */
 function kop_seed_posts() {
     return array(
@@ -716,6 +719,25 @@ function kop_seed_posts() {
         'country-new-zealand.json',                 
         'country-netherlands.json',                 
         'network-map.json',                         // /network-map/ page for the network map, 2026-09-17
+        // History section reformatted 2026-09-17: hub, two index pages, ten
+        // timelines, and the prose overview. Published pages; each seed
+        // carries the post_modified_gmt it was assembled against and is
+        // skipped if the page was edited since (allow_published).
+        'history/history.json',
+        'history/early-child-control.json',
+        'history/birth-of-the-tti.json',
+        'history/antiquity.json',
+        'history/medieval-child-oblation-and-monastic-schools.json',
+        'history/orphanages.json',
+        'history/idd-timeline.json',
+        'history/juvenile-justice-timeline.json',
+        'history/fundamentalist.json',
+        'history/wilderness-therapy-timeline.json',
+        'history/experimental-group-psychology.json',
+        'history/war-on-drugs.json',
+        'history/corporatization.json',
+        'history/advocacy-history.json',
+        'history/tti-history-part-one.json',
     );
 }
 
@@ -745,24 +767,31 @@ function kop_apply_seed_posts() {
             // is left alone.
             $applied   = (int) get_post_meta($existing->ID, '_kop_seed_version', true);
             $seed_mod  = (string) get_post_meta($existing->ID, '_kop_seed_modified', true);
-            $untouched = $existing->post_status === 'draft' && (
-                $existing->post_modified_gmt === $existing->post_date_gmt
+            $stamp_ok  = $existing->post_modified_gmt === $existing->post_date_gmt
                 || ($seed_mod !== '' && $existing->post_modified_gmt === $seed_mod)
-                || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt'])
-            );
+                || (!empty($spec['last_seed_modified_gmt']) && $existing->post_modified_gmt === $spec['last_seed_modified_gmt']);
+            // A published page is refreshed only when the seed says so
+            // (allow_published) and the page still carries the modified stamp
+            // the seed was assembled against, so an edit made in wp-admin
+            // after the seed was written is never overwritten.
+            $untouched = $stamp_ok && ($existing->post_status === 'draft' || !empty($spec['allow_published']));
             if (!$untouched || $seed_version <= $applied) {
                 continue;
             }
-            $result = wp_update_post(array(
-                'ID'                => $existing->ID,
-                'post_title'        => (string) ($spec['title'] ?? $existing->post_title),
-                'post_content'      => wp_slash((string) file_get_contents($content_path)),
-                'post_excerpt'      => wp_slash((string) ($spec['excerpt'] ?? '')),
-                'post_date'         => $existing->post_date,
-                'post_date_gmt'     => $existing->post_date_gmt,
-                'post_modified'     => $existing->post_date,
-                'post_modified_gmt' => $existing->post_date_gmt,
-            ), true);
+            $update = array(
+                'ID'            => $existing->ID,
+                'post_title'    => (string) ($spec['title'] ?? $existing->post_title),
+                'post_content'  => wp_slash((string) file_get_contents($content_path)),
+                'post_excerpt'  => wp_slash((string) ($spec['excerpt'] ?? '')),
+                'post_date'     => $existing->post_date,
+                'post_date_gmt' => $existing->post_date_gmt,
+            );
+            if ($existing->post_status === 'draft') {
+                // Keep a draft looking untouched so a later seed_version can refresh it again.
+                $update['post_modified']     = $existing->post_date;
+                $update['post_modified_gmt'] = $existing->post_date_gmt;
+            }
+            $result = wp_update_post($update, true);
             if (!$result || is_wp_error($result)) {
                 continue;
             }
@@ -1381,7 +1410,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '19';
+    $version = '20';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
