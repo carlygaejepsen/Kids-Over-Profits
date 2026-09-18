@@ -4,7 +4,7 @@
   "post_type": "post",
   "status": "publish",
   "overwrite_existing": true,
-  "seed_version": 2,
+  "seed_version": 3,
   "content_file": "hyde.html",
   "excerpt": "A co-ed boarding school in Bath, Maine, founded in 1966 by Joseph Gauld and run by the Gauld family since. Survivors describe forced labor, peer surveillance, public confession and unlicensed therapy; a 2025 federal class action alleges labor trafficking and abuse.",
   "categories": [
