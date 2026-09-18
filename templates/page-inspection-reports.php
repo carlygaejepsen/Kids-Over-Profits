@@ -33,8 +33,9 @@ $kop_ir_states = function_exists('kop_report_state_links') ? kop_report_state_li
 global $wpdb;
 $kop_ir_suppress = $wpdb->suppress_errors(true);
 
-// Reports per state, so each button can say how much is behind it. Keyed by
-// the state name as the inspection tables spell it.
+// Reports per state, so each button can say how much is behind it.
+// inspection_facilities.state holds the two-letter code (varchar(10)), which
+// is also the tracker slug's prefix, so the counts key on that.
 $kop_ir_counts = get_transient('kop_inspection_hub_counts');
 if (!is_array($kop_ir_counts)) {
     $kop_ir_counts = array();
@@ -63,15 +64,23 @@ foreach ($kop_ir_counts as $count) {
     $kop_ir_total_facilities += $count['facilities'];
 }
 
-// The same curated set the home page shows (api/manage-featured-inspections.php).
-$kop_ir_flagged = $wpdb->get_results(
+// The same curated set the home page shows
+// (api/manage-featured-inspections.php). The featured columns are added by
+// that tool, so check before asking for them: the block is simply absent on a
+// database where nothing has been featured yet.
+$kop_ir_has_featured = get_transient('kop_inspection_featured_column');
+if ($kop_ir_has_featured === false) {
+    $kop_ir_has_featured = $wpdb->get_var("SHOW COLUMNS FROM inspection_reports LIKE 'featured'") ? 'yes' : 'no';
+    set_transient('kop_inspection_featured_column', $kop_ir_has_featured, DAY_IN_SECONDS);
+}
+$kop_ir_flagged = $kop_ir_has_featured === 'yes' ? $wpdb->get_results(
     "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
      FROM inspection_reports r
      JOIN inspection_facilities f ON f.id = r.facility_id
      WHERE r.featured = 1
      ORDER BY r.report_date DESC, r.id DESC LIMIT 6",
     ARRAY_A
-);
+) : array();
 $wpdb->suppress_errors($kop_ir_suppress);
 
 $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
@@ -121,7 +130,7 @@ $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
         states are added as their records are obtained.</p>
         <div class="kop-home-reports-buttons">
             <?php foreach ($kop_ir_states as $slug => $label) :
-                $key = strtolower($label);
+                $key = strtolower(substr($slug, 0, 2));
                 $count = isset($kop_ir_counts[$key]) ? $kop_ir_counts[$key]['reports'] : 0;
             ?>
                 <a class="kop-home-report-btn" href="/<?php echo esc_attr($slug); ?>">
