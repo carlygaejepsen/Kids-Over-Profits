@@ -111,6 +111,9 @@
     /* Offsets for the lines of successive hubs in one gutter, in steps of
      * five pixels: the middle, then either side of it. */
     var LANES = [0, 1, -1, 2, -2];
+    /* How much further, in pixels, a line will go to join a trunk its hub's
+     * other lines already run down rather than take a channel of its own. */
+    var TRUNK_PULL = 90;
 
     /* Bucket size for the collision grid, in screen pixels. */
     var LABEL_CELL = 48;
@@ -270,7 +273,7 @@
      * Returns the points of the route and the direction of its final leg,
      * which is what the arrowhead follows.
      */
-    function routeEdge(ax, ay, bx, by, jitter, geo, skipA, skipB) {
+    function routeEdge(ax, ay, bx, by, jitter, geo, skipA, skipB, trunk) {
         if (!geo || !geo.rowStep) {
             var dx = bx - ax;
             var dy = by - ay;
@@ -303,7 +306,8 @@
         } else {
             /* Arrive straight into the target if that column is clear
              * between the two gutters, otherwise the nearest column that is. */
-            var xv = geo.clearX(bx, exitY, enterY, skipA, skipB);
+            var xv = geo.clearX(bx, exitY, enterY, skipA, skipB, trunk);
+            if (trunk) trunk.push(xv);
             pts = [[ax, ay], [ax, exitY], [xv, exitY], [xv, enterY], [bx, enterY], [bx, by]];
         }
         return { pts: tidy(pts), dir: [0, by > pts[pts.length - 2][1] ? 1 : -1] };
@@ -615,6 +619,8 @@
         var buckets = [];
         /* Edge id to its offset in a shared gutter; see rebuildBuckets. */
         var laneOf = Object.create(null);
+        /* Edge id to the hub and style it shares vertical channels with. */
+        var trunkOf = Object.create(null);
         var chainIndex = null;
         var frameStamp = 0;
         /* Cell geometry of the current layout, so traces can run along the
@@ -709,6 +715,26 @@
             grid = next || null;
         };
 
+        /* Node id to a size multiplier: the name that was just clicked is
+         * drawn bigger than the rest, and swells into it. */
+        var grow = Object.create(null);
+        renderer.setGrow = function (next) {
+            grow = next || Object.create(null);
+        };
+
+        /** A node's shape radius on screen at zoom k. A node is a mark on a
+         * map, not a shape to get lost in: below two and a half pixels it
+         * stops reading as a shape, above twenty-two it starts being a
+         * picture of a diamond. A grown node scales both limits with it. */
+        function shapeR(node, k) {
+            var g = grow[node.id] || 1;
+            return Math.min(22 * g, Math.max(2.5, node.r * k) * g);
+        }
+        /** How far below its centre a node's label hangs. */
+        function labelR(node, k) {
+            return Math.max(1.5, node.r * k) * (grow[node.id] || 1);
+        }
+
         renderer.setEmphasis = function (next) {
             renderer.emphasis = next || { hoverId: null };
         };
@@ -747,13 +773,15 @@
                 count[e.targetId] = (count[e.targetId] || 0) + 1;
             });
             laneOf = Object.create(null);
-            buckets.forEach(function (bucket) {
+            trunkOf = Object.create(null);
+            buckets.forEach(function (bucket, bi) {
                 var lanes = Object.create(null);
                 var next = 0;
                 bucket.edges.forEach(function (e) {
                     var hub = (count[e.targetId] || 0) > (count[e.sourceId] || 0) ? e.targetId : e.sourceId;
                     if (lanes[hub] === undefined) lanes[hub] = next++;
                     laneOf[e.id] = lanes[hub];
+                    trunkOf[e.id] = bi + ':' + hub;
                 });
             });
         }
@@ -844,7 +872,7 @@
                 ctx.font = LABEL_SIZE + 'px ' + FONT;
                 for (i = 0; i < scene.nodes.length; i++) {
                     node = scene.nodes[i];
-                    var rr = Math.min(22, Math.max(2.5, node.r * k)) + TRACE_CLEARANCE;
+                    var rr = shapeR(node, k) + TRACE_CLEARANCE;
                     var half = Math.max(rr, textWidth(ctx, node, null, LABEL_SIZE) / 2 + LABEL_PAD_X);
                     blockers.push([sx[i] - half, sy[i] - rr, sx[i] + half, sy[i] + rr + LABEL_LINE + LABEL_PAD_Y]);
                 }
@@ -855,7 +883,7 @@
                  * the next row's shapes. A channel at the geometric midpoint
                  * ran straight through the names in the row above. */
                 var maxRk = scene.nodes.reduce(function (t2, n2) {
-                    return Math.max(t2, Math.min(22, Math.max(2.5, n2.r * k)));
+                    return Math.max(t2, shapeR(n2, k));
                 }, 0);
                 var labelZone = LABEL_LINE + LABEL_PAD_Y;
                 var bandPx = rowsStep - 2 * (maxRk + TRACE_CLEARANCE) - labelZone;
@@ -887,8 +915,13 @@
                      * leg between the two gutters crosses nobody's cell but
                      * the two ends'. Candidates are the requested x and the
                      * outer edges of every box that leg would hit, nearest
-                     * first; the first that is clear wins. */
-                    clearX: function (x, y0, y1, skipA, skipB) {
+                     * first; the first that is clear wins.
+                     *
+                     * A channel the same hub's lines already run down wins
+                     * over one a little nearer, so a company's lines to a
+                     * grid of programmes share a few trunks rather than each
+                     * taking a vertical of its own. */
+                    clearX: function (x, y0, y1, skipA, skipB, trunk) {
                         var lo = Math.min(y0, y1) + 1;
                         var hi = Math.max(y0, y1) - 1;
                         var inWay = [];
@@ -903,22 +936,31 @@
                             }
                             return true;
                         };
-                        if (free(x)) return x;
-                        var candidates = [];
-                        inWay.forEach(function (bb) {
-                            candidates.push(bb[0] - 2);
-                            candidates.push(bb[2] + 2);
+                        var shared = null;
+                        (trunk || []).forEach(function (tx) {
+                            if (!free(tx)) return;
+                            if (shared === null || Math.abs(tx - x) < Math.abs(shared - x)) shared = tx;
                         });
-                        candidates.sort(function (p, q) { return Math.abs(p - x) - Math.abs(q - x); });
-                        for (var c = 0; c < candidates.length; c++) {
-                            if (free(candidates[c])) return candidates[c];
+                        var best = x;
+                        if (!free(x)) {
+                            best = null;
+                            var cands = [];
+                            inWay.forEach(function (bb) { cands.push(bb[0] - 2); cands.push(bb[2] + 2); });
+                            cands.sort(function (p, q) { return Math.abs(p - x) - Math.abs(q - x); });
+                            for (var c2 = 0; c2 < cands.length && best === null; c2++) {
+                                if (free(cands[c2])) best = cands[c2];
+                            }
+                            if (best === null) best = x;
                         }
-                        return x;
+                        if (shared !== null && Math.abs(shared - x) <= Math.abs(best - x) + TRUNK_PULL) return shared;
+                        return best;
                     }
                 };
             }
             renderer.blockers = blockers;
             var routes = [];
+            /* Vertical channels each hub's lines have taken so far, by trunk. */
+            var trunks = Object.create(null);
 
             /* --- edges ---
              *
@@ -965,7 +1007,9 @@
                         /* Spread the runs of edges sharing a gutter: one
                          * offset per hub, the middle first. */
                         var lane = LANES[(laneOf[edge.id] || 0) % LANES.length];
-                        var route = routeEdge(ax, ay, cx, cy, lane * 5 * (geo ? geo.jitterScale : 1), geo, a, c);
+                        var trunkKey = trunkOf[edge.id];
+                        var trunk = trunkKey ? (trunks[trunkKey] = trunks[trunkKey] || []) : null;
+                        var route = routeEdge(ax, ay, cx, cy, lane * 5 * (geo ? geo.jitterScale : 1), geo, a, c, trunk);
                         strokeRoute(ctx, route.pts);
                         route.edge = edge;
                         routes.push(route);
@@ -997,7 +1041,7 @@
                  * the trace actually arrives, not the straight line between
                  * the two nodes. */
                 drawArrow(ctx, from[0], from[1], tip[0], tip[1],
-                    Math.max(2.5, Math.min(22, directed.target.r * k)) + 2,
+                    shapeR(directed.target, k) + 2,
                     Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
             }
             ctx.globalAlpha = 1;
@@ -1015,7 +1059,7 @@
             ctx.fillStyle = SURFACE;
             for (i = 0; i < scene.nodes.length; i++) {
                 node = scene.nodes[i];
-                var clearR = Math.min(22, Math.max(2.5, node.r * k)) + TRACE_CLEARANCE;
+                var clearR = shapeR(node, k) + TRACE_CLEARANCE;
                 if (sx[i] + clearR < 0 || sx[i] - clearR > w) continue;
                 if (sy[i] + clearR < 0 || sy[i] - clearR > h) continue;
                 ctx.beginPath();
@@ -1031,7 +1075,7 @@
                  * shape at all; above twenty-two it stops being a mark and
                  * starts being a picture of a diamond, which is what the
                  * opening view of six organisations would otherwise draw. */
-                var r = Math.min(22, Math.max(2.5, node.r * k));
+                var r = shapeR(node, k);
                 var x = sx[i], y = sy[i];
                 if (x + r < 0 || x - r > w || y + r < 0 || y - r > h) continue;
 
@@ -1087,7 +1131,7 @@
                     var extra = hiddenCounts[node.id];
                     if (!extra) continue;
                     if (near && !near[node.id]) continue;
-                    var br = Math.min(22, Math.max(2.5, node.r * k));
+                    var br = shapeR(node, k);
                     var bx = sx[i] + br * 0.75;
                     var by = sy[i] - br * 0.75;
                     if (bx < -20 || bx > w + 20 || by < -20 || by > h + 20) continue;
@@ -1131,11 +1175,11 @@
                  * of. */
                 if (near && !near[node.id]) continue;
                 var lx = sx[i];
-                var ly = sy[i] + Math.max(1.5, node.r * k) + 3;
+                var ly = sy[i] + labelR(node, k) + 3;
                 if (lx < -140 || lx > w + 140 || ly < -20 || ly > h + 20) continue;
                 candidates.push({
                     node: node, x: lx, y: ly, hover: isHover,
-                    cx: sx[i], cy: sy[i], rr: Math.max(1.5, node.r * k)
+                    cx: sx[i], cy: sy[i], rr: labelR(node, k)
                 });
             }
 
@@ -1360,7 +1404,7 @@
                 var p = positionOf(node);
                 var cx = p.x * k + tx;
                 var cy = p.y * k + ty;
-                var rr = Math.max(1.5, node.r * k);
+                var rr = labelR(node, k);
                 var ly = cy + rr + 3;
                 if (cx < -140 || cx > w + 140 || ly < -20 || ly > h + 20) continue;
                 entries.push({ node: node, x: cx, y: ly, cx: cx, cy: cy, rr: rr });

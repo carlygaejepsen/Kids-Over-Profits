@@ -222,6 +222,38 @@ Rows are packed by the width each name actually needs, not cut into columns
 of a fixed width, and gutters tighten before the fit is ever allowed to
 scale the board down.
 
+**A click is a yoyo (2026-09-18).** The owner asked for a click to zoom in,
+make the name bigger and draw its connections closer. So:
+
+- Everything the click connects to directly joins its cluster, so its
+  connections are drawn right around it. In Provo Canyon School's view
+  the furthest of its 35 went from 13.5 rows away (seven of them off the
+  stage) to 6.7, all on the stage. The cost is people who also worked
+  elsewhere: they sit by the click and further from their other places
+  (Provo: 27 of 95 person lines within two rows, from 59).
+- The view frames the click and its own connections whenever that is at
+  least 10% closer than the whole board and drops no name; the rest is a
+  pan away. This relaxes the earlier rule that a node is only off the stage
+  when framing everything would drop names.
+- The click is drawn 1.6 times its size (`renderer.setGrow`), and rows are
+  sized for the grown node: sized for the others, its label hung into the
+  gutter below and two traces ran through it.
+- The motion (`startYoyo` in `focus.js`, 800 ms): every name starts from
+  the spot on the screen where it was, or, new to the screen, further out
+  along its line to the click, and springs to its place on a damped spring
+  that overshoots about a tenth, so the connections are reeled in past
+  their marks and settle. The click swells on the same spring. It is display
+  offsets only; the layout and the frame are applied outright first. A
+  camera tween between the two frames was tried and dropped: the layouts
+  share no coordinates, so mid-flight it showed a magnified patch of the
+  wrong part of the board. The drawer opening on a click resizes the stage
+  mid-flight; the reframe carries the motion on from where the names are
+  rather than cutting to the end. Hover is ignored while it runs, and
+  reduced motion skips it.
+- A hub's lines to a grid of programmes share vertical channels
+  (`TRUNK_PULL`): a line takes a channel its hub's other lines already run
+  down if that is no more than 90 px further than its own nearest clear one.
+
 **What is on the board.** The map opens on the curated organisations. Once
 something is clicked, the board holds that node and everything it touches,
 and then three rules run:

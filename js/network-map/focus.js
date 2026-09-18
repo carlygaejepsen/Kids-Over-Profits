@@ -38,6 +38,16 @@
 
     var GATHER_IN_MS = 170;
     var GATHER_OUT_MS = 130;
+    /* What was clicked is drawn this much bigger than the rest, and swells
+     * into it with a bounce while its connections are reeled in around it:
+     * a yoyo coming back to the hand. */
+    var HEAD_GROW = 1.6;
+    var YOYO_MS = 800;
+    /* The view zooms in on a click and its own connections when that frame
+     * is at least this much closer than the whole board, and never closer
+     * than this: six names framed alone would be blown up into blobs. */
+    var CLOSER = 1.1;
+    var NEAR_MAX_ZOOM = 2.4;
     /* How much room a node needs to itself while the simulation arranges
      * things: enough for its own shape, and enough for its name, which is
      * drawn centred underneath and is almost always the wider of the two.
@@ -394,6 +404,9 @@
         /* --------------------------------------------------------- hover -- */
 
         focus.hover = function (node) {
+            /* The yoyo owns the offsets while it runs; a pointer passing
+             * over a name mid-flight would yank it somewhere else. */
+            if (yoyo) return;
             var id = node ? node.id : null;
             if (id === hoverId) return;
             hoverId = id;
@@ -534,6 +547,117 @@
             });
         }
 
+        /* ---------------------------------------------------------- yoyo -- */
+
+        /* A click, animated. The clicked name swells to its size with a
+         * bounce, and its connections are reeled in along their lines,
+         * overshooting a little towards it before they settle: a yoyo coming
+         * back to the hand. Names already on screen travel from the spot on
+         * the screen where they were; names new to the screen come in from
+         * further out along the line to the click.
+         *
+         * The layout and the frame are worked out first and applied
+         * outright, as always, and the motion is display offsets alone, so
+         * the frame cannot disagree with what is drawn - which is why
+         * layouts themselves are never tweened. The camera does not travel:
+         * the old layout and the new one share no coordinates, and a camera
+         * gliding between the two frames showed a magnified patch of the
+         * wrong part of the board on the way. */
+        var yoyo = null;
+        var yoyoFrame = 0;
+        /* Set by a click, so a reload, a resize or a filter lays out without
+         * the show. */
+        var animateNext = false;
+        /* Ids on screen in the view being left, for the yoyo to start from. */
+        var drawn = null;
+
+        /** Where every drawn node appears right now, and the camera. */
+        function snapshot() {
+            if (!drawn) return null;
+            var at = Object.create(null);
+            Object.keys(drawn).forEach(function (id) {
+                var node = store.node(id);
+                if (!node) return;
+                var p = positionOf(node);
+                var off = offsets ? offsets[id] : null;
+                at[id] = { x: off ? p.x + off[0] : p.x, y: off ? p.y + off[1] : p.y };
+            });
+            var t = viewport.transform;
+            return { at: at, k: t.k, x: t.x, y: t.y };
+        }
+
+        /* Out fast, past the mark and back: a damped spring, about a tenth
+         * over at its furthest. */
+        function spring(t) {
+            return t >= 1 ? 1 : 1 - Math.exp(-5.5 * t) * Math.cos(2.5 * Math.PI * t);
+        }
+
+        function growFor(node) {
+            if (!node) return null;
+            var g = Object.create(null);
+            g[node.id] = HEAD_GROW;
+            return g;
+        }
+
+        function stopYoyo() {
+            if (yoyoFrame) { root.cancelAnimationFrame(yoyoFrame); yoyoFrame = 0; }
+            if (yoyo) {
+                yoyo = null;
+                offsets = null;
+            }
+        }
+
+        function startYoyo(scene, before, head) {
+            if (!before || !head) return;
+            var end = viewport.transform;
+            /* Where a name was on screen, in the new view's coordinates. */
+            var was = function (p) {
+                return {
+                    x: (p.x * before.k + before.x - end.x) / end.k,
+                    y: (p.y * before.k + before.y - end.y) / end.k
+                };
+            };
+            var headNow = positionOf(head);
+            var headWas = before.at[head.id] ? was(before.at[head.id]) : headNow;
+            var from = Object.create(null);
+            scene.nodes.forEach(function (node) {
+                var p = positionOf(node);
+                var start = before.at[node.id] ? was(before.at[node.id]) : {
+                    x: headWas.x + (p.x - headNow.x) * 1.8,
+                    y: headWas.y + (p.y - headNow.y) * 1.8
+                };
+                from[node.id] = [start.x - p.x, start.y - p.y];
+            });
+            yoyo = { head: head.id };
+            var began = root.performance ? root.performance.now() : Date.now();
+
+            var step = function (now) {
+                if (!yoyo) return;
+                var t = Math.max(0, Math.min(1, (now - began) / YOYO_MS));
+                var s = spring(t);
+                var next = Object.create(null);
+                Object.keys(from).forEach(function (id) {
+                    next[id] = [from[id][0] * (1 - s), from[id][1] * (1 - s)];
+                });
+                offsets = t < 1 ? next : null;
+                var g = Object.create(null);
+                g[head.id] = 1 + (HEAD_GROW - 1) * s;
+                renderer.setGrow(g);
+                applyEmphasis();
+                viewport.scheduleDraw();
+                if (t < 1) {
+                    yoyoFrame = root.requestAnimationFrame(step);
+                    return;
+                }
+                yoyoFrame = 0;
+                yoyo = null;
+                viewport.rebuildTree();
+            };
+            /* The first frame now, so the end state never flashes up before
+             * the motion starts. */
+            step(began);
+        }
+
         /* --------------------------------------------------------- chain -- */
 
         focus.select = function (node) {
@@ -543,6 +667,7 @@
              * board; clicking it again adds nothing. */
             if (mode === 'expand' && chain.indexOf(node.id) !== -1) return;
             chain.push(node.id);
+            animateNext = true;
             enterFocus();
         };
 
@@ -592,6 +717,7 @@
             if (index < 0 || index >= chain.length) return;
             if (index === chain.length - 1) return;
             chain = chain.slice(0, index + 1);
+            animateNext = true;
             enterFocus();
         };
 
@@ -632,9 +758,12 @@
         function showOpeningView() {
             /* Back to the start: the next click settles from what is on screen. */
             seedKey = null;
+            stopYoyo();
+            renderer.setGrow(null);
             var scene = focus.scene();
             renderer.setScene(scene);
             viewport.setScene(scene);
+            drawn = scene.nodeIds;
             if (!scene.nodes.length) return;
             if (!renderer.width) return; /* no stage yet; the resize observer calls back */
             var opening = settleLayout(scene, 90);
@@ -653,6 +782,10 @@
          */
         focus.reframe = function () {
             if (!store.ready) return;
+            /* A click opens the drawer, which narrows the stage and lands
+             * here mid-yoyo. Carry on from wherever the names are rather
+             * than cutting to the end. */
+            if (yoyo) animateNext = true;
             if (chain.length) enterFocus();
             else showOpeningView();
         };
@@ -665,6 +798,10 @@
         var seed = null;
 
         function enterFocus() {
+            var animate = animateNext && !prefersReducedMotion();
+            animateNext = false;
+            var before = animate ? snapshot() : null;
+            stopYoyo();
             stopSettle();
             dropGather();
             hoverId = null;
@@ -686,14 +823,19 @@
                     seed[node.id] = { x: p.x, y: p.y };
                 });
             }
+            var head = store.node(chain[chain.length - 1]);
+            /* Grown before the frame is chosen, so the zoom is measured
+             * against the size it will be drawn at. */
+            renderer.setGrow(growFor(head));
             var settled = settleLayout(scene, 70, seed);
             applyLayout(scene, settled.positions, 70 + settled.overhang);
 
             renderer.setEmphasis({ hoverId: null });
             renderer.setScene(scene);
             viewport.setScene(scene);
+            drawn = scene.nodeIds;
+            if (before) startYoyo(scene, before, head);
 
-            var head = store.node(chain[chain.length - 1]);
             announce(head
                 ? (head.name + ' and ' + (scene.nodes.length - 1) + ' connected names. ' +
                     'Step ' + chain.length + ' of your trail.')
@@ -1516,7 +1658,15 @@
             var board = Math.max(200, renderer.width - padding * 2);
             var boardH = Math.max(200, renderer.height - padding * 2);
             var aspect = board / boardH;
-            var tallest = points.reduce(function (t, p) { return Math.max(t, p.r); }, 0);
+            /* What was clicked is drawn grown, and its rows share one
+             * lattice with everything else, so every row leaves room for it:
+             * sized for the others alone, its label hung down into the
+             * gutter below and the traces running along it cut through. */
+            var isHead = Object.create(null);
+            roots.forEach(function (id) { isHead[id] = true; });
+            var tallest = points.reduce(function (t, p) {
+                return Math.max(t, p.r * (isHead[p.id] ? HEAD_GROW : 1));
+            }, 0);
             var needOf = function (p) { return p.label + COLUMN_GUTTER; };
 
             var byId = Object.create(null);
@@ -1547,18 +1697,17 @@
 
             var isRoot = Object.create(null);
             roots.forEach(function (id) { isRoot[id] = true; });
-            /* What was clicked keeps its own owners and holdings in its own
-             * cluster, where the tree puts an owner above what it owns
-             * without fail. Opening CEDU put The Brown Schools, which bought
-             * it, in a neighbouring cluster level with a school CEDU owned,
-             * and no place for that cluster could honour both. */
+            /* What was clicked keeps everything it connects to in its own
+             * cluster: its connections drawn close around it, which is what
+             * a click is asking to see, and its owners and holdings in the
+             * one place the tree puts an owner above what it owns without
+             * fail. Opening CEDU put The Brown Schools, which bought it, in a
+             * neighbouring cluster level with a school CEDU owned, and no
+             * place for that cluster could honour both. */
             roots.forEach(function (id) {
                 if (!byId[id] || cluster[id] === undefined) return;
                 adjacent[id].forEach(function (other) {
-                    var kind = byId[other].tier;
-                    if (owns[id + '>' + other] && kind !== TIER_COMMAND && kind !== TIER_STAFF) {
-                        cluster[other] = cluster[id];
-                    }
+                    cluster[other] = cluster[id];
                 });
             });
             var groups = Object.create(null);
@@ -1690,7 +1839,7 @@
                     var p = next[node.id] || positionOf(node);
                     return { x: p.x, y: p.y, r: node.r };
                 });
-                near = viewport.frameOf(own, padding);
+                near = viewport.frameOf(own, padding, NEAR_MAX_ZOOM);
             }
 
             /* Names are drawn at a fixed size whatever the zoom, so framing a
@@ -1725,8 +1874,13 @@
                 return hi;
             };
 
+            /* A click zooms in on what was clicked and its own connections,
+             * whenever that is a real step closer than the whole board and
+             * drops no name. The rest of the board is a pan away. */
             var chosen = null;
-            if (frame && clean(frame)) {
+            if (near && frame && near.k > frame.k * CLOSER && clean(near)) {
+                chosen = near;
+            } else if (frame && clean(frame)) {
                 chosen = null;   /* the whole block fits as it is */
             } else if (frame) {
                 var top = Math.max(floor || frame.k, frame.k);
@@ -1840,6 +1994,7 @@
 
         focus.destroy = function () {
             stopSettle();
+            stopYoyo();
             if (gatherFrame) root.cancelAnimationFrame(gatherFrame);
         };
 

@@ -1057,16 +1057,46 @@ function run() {
     check(ownedBelow.length > 10 && ownedBelow.every((e) => yOf(e.target) > yOf(wwasps)),
         'a programme WWASPS owned is drawn level with it or above it');
 
-    /* A person hangs beside the places they were at, not a stage away: a
-     * person who ran something is a row above it, one who worked there a
-     * row below, unless their places disagree. */
-    const hung = hubScene.edges.filter((e) => (e.source.kind === 'person') !== (e.target.kind === 'person') &&
-        ['leadership', 'staff', 'clinical', 'admissions'].indexOf(e.category) !== -1);
+    /* A click draws its own connections in close around it: every one of
+     * them on the stage, none more than a few rows off. Clustered without
+     * that, the furthest of Provo Canyon School's connections sat thirteen
+     * rows away and seven were a pan off the stage. */
+    const wwOwn = store.neighbours('wwasps', true).map((l) => l.other).filter((n) => hubScene.nodeIds[n.id]);
+    const wwP = focus.positionOf(wwasps);
     const rowStep = focus.grid().cellH;
-    const close = hung.filter((e) => Math.abs(yOf(e.source) - yOf(e.target)) <= rowStep * 2 + 1);
-    check(hung.length > 0 && close.length / hung.length >= 0.5,
-        'only ' + close.length + ' of ' + hung.length + ' people in the WWASPS view are within two rows of their places',
-        close.length + ' of ' + hung.length + ' people-to-place lines in the WWASPS view span two rows or fewer');
+    const wwFar = Math.max(...wwOwn.map((n) =>
+        Math.hypot(focus.positionOf(n).x - wwP.x, focus.positionOf(n).y - wwP.y) / rowStep));
+    const wwOff = wwOwn.filter((n) => {
+        const p = focus.positionOf(n);
+        const x = p.x * tf.k + tf.x;
+        const y = p.y * tf.k + tf.y;
+        return x < 0 || x > renderer.width || y < 0 || y > renderer.height;
+    });
+    check(wwOwn.length > 10 && wwOff.length === 0 && wwFar <= 10,
+        wwOff.length + " of WWASPS's " + wwOwn.length + ' connections are off the stage, the furthest ' +
+        wwFar.toFixed(1) + ' rows away',
+        'all ' + wwOwn.length + " of WWASPS's connections on the stage, the furthest " + wwFar.toFixed(1) + ' rows away');
+
+    /* A click is a yoyo: the clicked name swells and its connections are
+     * reeled in from where they were, overshoot and settle. In motion
+     * straight after the click, still once it has run, and never at all
+     * under reduced motion. */
+    focus.clear();
+    flushFrames();
+    focus.select(wwasps);
+    const reeling = focus.offsets();
+    check(!!reeling && Object.keys(reeling).length > 10,
+        'a click does not reel its connections in: nothing is in motion after it',
+        'a click sets ' + Object.keys(reeling || {}).length + ' names in motion');
+    flushFrames();
+    check(!focus.offsets(), 'the yoyo never settles: names are still offset once it has run');
+    motion.reduced = true;
+    focus.clear();
+    flushFrames();
+    focus.select(wwasps);
+    check(!focus.offsets(), 'under reduced motion a click still sets names moving');
+    motion.reduced = false;
+    flushFrames();
 
     /* Inside the company band, a company that owns another on screen sits
      * above it. Read off corporate edges between two companies, source
@@ -1809,9 +1839,18 @@ function run() {
     renderer.setScene(courtneyScene);
     resetOps();
     renderer.draw();
-    check(badgeCalls.length === marked,
-        'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + marked + ' marked nodes',
-        'each of the ' + marked + ' marked nodes carries a +N pill');
+    /* A click zooms in on its own connections, so a marked node further out
+     * can be a pan away; every marked node on the stage carries its pill. */
+    const bt = viewport.transform;
+    const markedOnStage = Object.keys(hidden).filter((id) => {
+        const p = focus.positionOf(store.node(id));
+        const x = p.x * bt.k + bt.x;
+        const y = p.y * bt.k + bt.y;
+        return x >= 0 && x <= renderer.width && y >= 0 && y <= renderer.height;
+    }).length;
+    check(markedOnStage > 0 && badgeCalls.length === markedOnStage,
+        'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + markedOnStage + ' marked nodes on the stage',
+        'each of the ' + markedOnStage + ' marked nodes on the stage carries a +N pill');
     check(badgeCalls.every((t) => /^\+[1-9]\d*$/.test(t)), 'an off-screen pill reads something other than +N');
 
     /* 2b.2 Search. Ranking first, with no document: a name that starts
