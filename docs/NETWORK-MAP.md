@@ -984,9 +984,21 @@ opens on the chosen view (`store.setView`, `store.seeds`), the toolbar gets
 a "Start from" select - printed only when there is more than the default -
 and the hash carries `view=key`, so a link can open on it.
 
-**Waiting on the owner:** the lists themselves (historical, today's big
-players, religious, or whatever else). Nothing is invented here; until a
-list is added the map behaves exactly as before.
+**Lists added (2026-09-18).** Four views beside the default, each the
+organisations the owner named plus the people who connect them on the board:
+
+- `historical`: Synanon, The Brown Schools, Devereux Foundation, CEDU Family
+  of Services, Straight Inc.; with John Stallone, Morty Molin and Bill Lane
+  (Synanon to CEDU), Rae Ann Knopf (Brown Schools to CEDU), and The Seed with
+  Mel and Betty Sembler (Synanon to Straight). Devereux has no connection to
+  the others on the board shorter than four steps, so it stands alone.
+- `todays-top-players`: Universal Health Services, Acadia Healthcare, Newport
+  Academy; with Joe Procopia and Jameson Norton (Newport to Acadia).
+- `wilderness`: Eckerd Youth Alternatives, Second Nature, Aspen Education
+  Group, ANASAZI Foundation; with Ben Pearson (Second Nature to ANASAZI).
+- `fundamentalist`: Lester Roloff, Roloff Evangelistic Enterprises and the
+  homes the board has him leading (Rebekah, Anchor, Lighthouse, Bethesda),
+  and Teen Challenge. No person on the board connects the two.
 
 ### Already covered by 5b
 
@@ -1167,7 +1179,7 @@ board stays the roster) unless an override lists them. Edges carry
 4. 2b.5, 2b.6, 2b.7: build-script fields plus their marks, one commit each.
 5. 2b.12 profile connections, then 2b.11 staff movement.
 6. 2b.9 compaction and the remaining circuit-board polish.
-7. 2b.10 starter views, once the lists exist.
+7. 2b.10 starter views (done 2026-09-18).
 8. Paths (Phase 3).
 
 ## Phase 3: analysis tools (outline)

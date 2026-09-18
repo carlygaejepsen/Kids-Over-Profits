@@ -114,6 +114,59 @@
      "sequel-youth-and-family-services",
      "universal-health-services"
     ]
+   },
+   {
+    "key": "historical",
+    "label": "Historical",
+    "ids": [
+     "synanon",
+     "the-brown-schools",
+     "devereux-foundation",
+     "cedu-family-of-services",
+     "straight-inc",
+     "john-stallone",
+     "morty-molin",
+     "bill-lane",
+     "rae-ann-knopf",
+     "the-seed",
+     "mel-sembler",
+     "betty-sembler"
+    ]
+   },
+   {
+    "key": "todays-top-players",
+    "label": "Today's top players",
+    "ids": [
+     "universal-health-services",
+     "acadia-healthcare",
+     "newport-academy",
+     "joe-procopia",
+     "jameson-norton"
+    ]
+   },
+   {
+    "key": "wilderness",
+    "label": "Wilderness",
+    "ids": [
+     "eckerd-youth-alternatives",
+     "second-nature",
+     "aspen-education-group",
+     "anasazi-foundation",
+     "ben-pearson"
+    ]
+   },
+   {
+    "key": "fundamentalist",
+    "label": "Fundamentalist",
+    "ids": [
+     "lester-roloff",
+     "roloff-evangelistic-enterprises",
+     "rebekah-home-for-girls",
+     "anchor-home-for-boys",
+     "lighthouse-for-boys",
+     "bethesda-home-for-girls",
+     "teen-challenge"
+    ]
    }
   ],
   "chainColours": {

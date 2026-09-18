@@ -124,7 +124,57 @@
   "statuses": {},
   "years": {},
   "deaths": {},
-  "views": {},
+  "views": {
+    "historical": {
+      "label": "Historical",
+      "names": [
+        "Synanon",
+        "The Brown Schools",
+        "Devereux Foundation",
+        "CEDU Family of Services",
+        "Straight Inc.",
+        "John stallone",
+        "Morty Molin",
+        "Bill Lane",
+        "Rae Ann Knopf",
+        "The Seed",
+        "Mel Sembler",
+        "Betty Sembler"
+      ]
+    },
+    "todays-top-players": {
+      "label": "Today's top players",
+      "names": [
+        "Universal Health Services",
+        "Acadia Healthcare",
+        "Newport Academy",
+        "Joe Procopia",
+        "Jameson Norton"
+      ]
+    },
+    "wilderness": {
+      "label": "Wilderness",
+      "names": [
+        "Eckerd Youth Alternatives",
+        "Second Nature",
+        "Aspen Education Group",
+        "ANASAZI Foundation",
+        "Ben Pearson"
+      ]
+    },
+    "fundamentalist": {
+      "label": "Fundamentalist",
+      "names": [
+        "Lester Roloff",
+        "Roloff Evangelistic Enterprises",
+        "Rebekah Home for Girls",
+        "Anchor Home for Boys",
+        "Lighthouse for Boys",
+        "Bethesda Home for Girls",
+        "Teen Challenge"
+      ]
+    }
+  },
   "chainColours": {
     "WWASPS": "#F24726",
     "Altior": "#0685B9",
