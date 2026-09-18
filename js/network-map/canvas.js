@@ -161,6 +161,9 @@
 
     /* Corner radius on an orthogonal run, in screen pixels. */
     var TRACE_RADIUS = 7;
+    /* Clear ring left around a node, so a trace passing it is visibly
+     * passing rather than arriving. */
+    var TRACE_CLEARANCE = 4;
 
     /**
      * Route one connection as a right-angled trace, the way a track runs on
@@ -176,7 +179,7 @@
      * pair of rows do not lie exactly on top of each other. Returns the
      * direction of the final segment, for the arrowhead to follow.
      */
-    function traceEdge(ctx, ax, ay, bx, by, jitter) {
+    function traceEdge(ctx, ax, ay, bx, by, jitter, channel) {
         var dx = bx - ax;
         var dy = by - ay;
         var r = TRACE_RADIUS;
@@ -194,7 +197,7 @@
         ctx.moveTo(ax, ay);
 
         if (vertical) {
-            var midY = ay + dy / 2 + jitter;
+            var midY = channel(ay + dy / 2 + jitter);
             var cy1 = midY - Math.sign(dy) * Math.min(r, Math.abs(midY - ay));
             var cy2 = midY + Math.sign(dy) * Math.min(r, Math.abs(by - midY));
             var cx = ax + Math.sign(dx) * Math.min(r, Math.abs(dx) / 2);
@@ -467,6 +470,9 @@
         var buckets = [];
         var chainIndex = null;
         var frameStamp = 0;
+        /* Cell geometry of the current layout, so traces can run along the
+         * gutters between rows instead of across the names in them. */
+        var grid = null;
         /* Reused by the draw loop so a frame does not allocate one spec per
          * node; paintNode never holds on to it. */
         var scratch = { kind: '', status: '', natsap: false, fill: '', outline: '' };
@@ -502,6 +508,10 @@
         renderer.setCrossRegionMode = function (on) {
             renderer.crossRegionMode = !!on;
             rebuildBuckets();
+        };
+
+        renderer.setGrid = function (next) {
+            grid = next || null;
         };
 
         renderer.setEmphasis = function (next) {
@@ -601,6 +611,20 @@
 
             var edgeFade = edgeFadeFor(k);
 
+            /* Snap a horizontal run onto the gutter between two rows. Left
+             * at the arithmetic midpoint it lands on a row centre whenever
+             * the two nodes are an even number of rows apart, and a trace
+             * then runs straight through the names in that row - which reads
+             * as a connection to them. */
+            var channelAt = function (worldY) { return worldY; };
+            if (grid && grid.cellH) {
+                var rowsTop = grid.y0 * k + t.y;
+                var rowsStep = grid.cellH * k;
+                channelAt = function (screenY) {
+                    return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep;
+                };
+            }
+
             /* --- edges ---
              *
              * Each style bucket is stroked once at full alpha and once dimmed,
@@ -644,7 +668,7 @@
                         if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
                         if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
                         /* Spread the turns of edges sharing a channel. */
-                        traceEdge(ctx, ax, ay, cx, cy, ((i % 5) - 2) * 6);
+                        traceEdge(ctx, ax, ay, cx, cy, ((i % 5) - 2) * 6, channelAt);
                         drew = true;
                     }
                     if (drew) ctx.stroke();
@@ -684,6 +708,27 @@
                 }
             }
             ctx.globalAlpha = 1;
+
+            /* --- node clearances ---
+             *
+             * A hole punched in the traces around every node, before any node
+             * is drawn. A trace that runs past a name would otherwise meet
+             * its edge and appear to stop there, which reads as a connection
+             * that the data does not have; with a clear ring around the
+             * shape the line visibly goes in one side and out the other, and
+             * a line that really does end here ends a little short of the
+             * node instead of touching it. Boards have done this forever.
+             */
+            ctx.fillStyle = SURFACE;
+            for (i = 0; i < scene.nodes.length; i++) {
+                node = scene.nodes[i];
+                var clearR = Math.min(22, Math.max(2.5, node.r * k)) + TRACE_CLEARANCE;
+                if (sx[i] + clearR < 0 || sx[i] - clearR > w) continue;
+                if (sy[i] + clearR < 0 || sy[i] - clearR > h) continue;
+                ctx.beginPath();
+                ctx.arc(sx[i], sy[i], clearR, 0, Math.PI * 2);
+                ctx.fill();
+            }
 
             /* --- nodes --- */
             for (i = 0; i < scene.nodes.length; i++) {

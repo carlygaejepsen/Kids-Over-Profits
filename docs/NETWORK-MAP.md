@@ -190,6 +190,24 @@ the filters have taken away everything it connected to. The opening view
 itself is exempt: six organisations with two connections between them would
 come down to two.
 
+Rows are staggered like brickwork - a full row, then a short row of one
+fewer offset by half a cell - so a node sits diagonally between its
+neighbours above and below rather than directly under one. That is what
+stops a column of names reading as a list and gives each label clear air on
+both sides of the row above it.
+
+**A trace must never look like a connection.** The routing drew a line from
+one node to another straight across the cells in between, and on a board
+where a line means a recorded relationship that is not a cosmetic problem:
+the map showed CEDU joined to Teen Challenge, which share no edge and not
+even a neighbour. Two things fix it. Horizontal runs snap onto the gutter
+between two rows, where at the arithmetic midpoint they landed on a row
+centre whenever the two nodes were an even number of rows apart and ran
+straight through the names in it. And every node has a clear ring punched
+through the traces around it before any node is drawn, so a line passing a
+name visibly goes in one side and out the other, and a line that really does
+end there stops a little short of the node rather than touching it.
+
 Connections are routed as right-angled traces rather than straight
 diagonals, which is what makes the result readable at that density: diagonals
 between grid cells cross at every angle and read as a scribble over the

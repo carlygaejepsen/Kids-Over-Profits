@@ -108,7 +108,12 @@
         var settleFrame = 0;
         var hoverId = null;
 
+        /* The cell geometry of the current layout, or null before one has
+         * been laid out. */
+        var grid = null;
+
         var focus = { };
+        focus.grid = function () { return grid; };
 
         /* ----------------------------------------------------- positions -- */
 
@@ -645,8 +650,21 @@
             return order;
         }
 
+        /* Short rows carry one fewer node and sit half a cell across, which
+         * is what makes the stagger. */
+        function isShortRow(row) {
+            return row % 2 === 1;
+        }
+
+        function capacity(rows, cols) {
+            var full = Math.ceil(rows / 2);
+            var short = rows - full;
+            return full * cols + short * Math.max(1, cols - 1);
+        }
+
         function gridLayout(points, padding, roots, links) {
             var n = points.length;
+            grid = null;
             if (!n || !renderer.width) return 0;
 
             var boardW = Math.max(120, renderer.width - padding * 2);
@@ -665,22 +683,37 @@
             var byShape = Math.max(1, Math.round(Math.sqrt(n * (boardW / boardH))));
             var byLabel = Math.max(1, Math.floor(boardW / cellNeeds));
             var cols = Math.max(1, Math.min(byShape, byLabel, n));
-            var rows = Math.ceil(n / cols);
+
+            /* Rows are staggered like brickwork: a full row of `cols`, then a
+             * short row of one fewer offset by half a cell, and so on. Every
+             * node ends up diagonally between its neighbours above and below
+             * rather than directly under one, which is what stops a column of
+             * names reading as a list and gives each label clear air on both
+             * sides of the row above it. */
+            var rows = 1;
+            while (capacity(rows, cols) < n) rows++;
 
             var cellW = boardW / cols;
             var cellH = boardH / rows;
 
+            /* Published for the renderer, which routes its traces along the
+             * gutters between these cells rather than across them. */
+            grid = {
+                x0: -boardW / 2, y0: -boardH / 2,
+                cellW: cellW, cellH: cellH, cols: cols, rows: rows
+            };
+
             /* Cells, nearest the middle of the board first. */
             var cells = [];
-            var midCol = (cols - 1) / 2;
             var midRow = (rows - 1) / 2;
             for (var row = 0; row < rows; row++) {
-                for (var col = 0; col < cols; col++) {
-                    var ox = (col - midCol) * cellW;
-                    var oy = (row - midRow) * cellH;
+                var short = isShortRow(row);
+                var inRow = short ? cols - 1 : cols;
+                var midCol = (inRow - 1) / 2;
+                for (var col = 0; col < inRow; col++) {
                     cells.push({
-                        x: ox,
-                        y: oy,
+                        x: (col - midCol) * cellW,
+                        y: (row - midRow) * cellH,
                         /* Measured in cells rather than pixels so a wide grid
                          * does not rank a cell one column over as further
                          * away than one three rows down. */
@@ -747,6 +780,7 @@
                 if (target) next[node.id] = { x: target.x, y: target.y };
             });
             layout = next;
+            renderer.setGrid(grid);
             viewport.fit(scene.nodes, padding);
             viewport.rebuildTree();
             viewport.scheduleDraw();

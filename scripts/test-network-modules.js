@@ -829,6 +829,28 @@ function run() {
         const q = Math.floor(((r.angle + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 2));
         sides[q]++;
     });
+    /* Rows are staggered like brickwork, so a node sits diagonally between
+     * its neighbours above and below rather than directly under one. */
+    const rowsAt = new Map();
+    hubScene.nodes.forEach((n) => {
+        const p = focus.positionOf(n);
+        const key = Math.round(p.y);
+        if (!rowsAt.has(key)) rowsAt.set(key, []);
+        rowsAt.get(key).push(p.x);
+    });
+    const rowKeys = [...rowsAt.keys()].sort((a, b) => a - b);
+    check(rowKeys.length >= 3, 'the grid has too few rows to tell whether it staggers');
+    let staggered = 0;
+    for (let r = 0; r + 1 < rowKeys.length; r++) {
+        const a = rowsAt.get(rowKeys[r]).slice().sort((x, y) => x - y);
+        const b = rowsAt.get(rowKeys[r + 1]).slice().sort((x, y) => x - y);
+        /* No node in one row shares a column with one in the next. */
+        if (!a.some((x) => b.some((y) => Math.abs(x - y) < 1))) staggered++;
+    }
+    check(staggered === rowKeys.length - 1,
+        'only ' + staggered + ' of ' + (rowKeys.length - 1) + ' row pairs are offset from each other',
+        'all ' + rowKeys.length + ' rows sit offset from their neighbours');
+
     check(sides.filter((c) => c > 0).length >= 3,
         'the opened node has its connections on only ' +
         sides.filter((c) => c > 0).length + ' side(s) of it: ' + sides.join('/'),
