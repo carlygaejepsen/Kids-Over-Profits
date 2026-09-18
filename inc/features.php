@@ -944,8 +944,8 @@ add_shortcode('kop_document', 'kop_document_shortcode');
  * facility_label. A custom facility_url (a dedicated profile page like /hyde)
  * wins; without one the button goes to the facility's profile page
  * (editorial post or generated /facility/<slug>/, inc/facility-pages.php)
- * when a record of that name has one, and otherwise to the program index
- * filtered to the facility name.
+ * when a record of that name has one, and otherwise to the location index
+ * filtered to the facility name (the program index lists operators only).
  */
 function kop_news_arc_facility_link(array $arc): ?array {
     $label = trim((string) ($arc['facility_label'] ?? ''));
@@ -957,7 +957,7 @@ function kop_news_arc_facility_link(array $arc): ?array {
         $url = (string) kop_facility_page_url_for_name($label);
     }
     if ($url === '') {
-        $url = '/tti-program-index/?search=' . rawurlencode($label);
+        $url = '/location-index/?search=' . rawurlencode($label);
     }
     return ['label' => $label, 'url' => $url];
 }
