@@ -168,9 +168,56 @@
 	background: transparent;
 }
 
-/* Only shown once the rail collapses into a sheet. */
+/* Focus / Expand: a two-way switch styled as one control. */
+.kop-network__mode {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	overflow: hidden;
+}
+
+.kop-network__mode-option {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	padding: 0.5rem 0.75rem;
+	font-size: 0.9rem;
+	cursor: pointer;
+}
+
+.kop-network__mode-option + .kop-network__mode-option {
+	border-left: 1px solid var(--kop-net-border);
+}
+
+/* The radio stays in the tab order and is announced; the label is the
+ * thing that looks pressed. */
+.kop-network__mode-option input {
+	position: absolute;
+	opacity: 0;
+	width: 1px;
+	height: 1px;
+	margin: 0;
+}
+
+.kop-network__mode-option:has(input:checked) {
+	background: var(--kop-navy, #000080);
+	color: #fff;
+}
+
+.kop-network__mode-option:has(input:focus-visible) {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: -2px;
+}
+
+/* The rail starts closed at every width and this is the way in. The map
+ * opens on a handful of organisations and grows by clicking, so the filters
+ * are a second-order tool, and the 250px they took as a permanent column is
+ * width the labels need. */
 #kop-network-filters-toggle {
-	display: none;
+	display: inline-block;
 }
 
 /* ------------------------------------------------------ chain breadcrumb -- */
@@ -506,11 +553,13 @@
 	}
 }
 
-/* Grid gap and a fixed drawer column make no sense without the grid. */
-@media (min-width: 901px) {
-	.kop-network__rail[hidden] {
-		display: block;
-	}
+/* With the rail closed the stage takes the whole row. */
+.kop-network__body:has(.kop-network__rail[hidden]) {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {
+	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
 }
 
 @media (prefers-reduced-motion: reduce) {

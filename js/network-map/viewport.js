@@ -180,13 +180,34 @@
                 if (best) return best;
             }
 
-            if (!tree) return null;
-            var found = tree.find(world.x, world.y, maxRadius + slop);
-            if (!found) return null;
-            /* Already ruled out above, and its tree position is not where it
-             * is drawn, so it must not win on the stale one. */
-            if (offsets && offsets[found.id]) return null;
-            return hits(found, world.x, world.y, slop, null) ? found : null;
+            if (tree) {
+                var found = tree.find(world.x, world.y, maxRadius + slop);
+                /* A gathered node was ruled out above, and its tree position
+                 * is not where it is drawn, so it must not win on the stale
+                 * one. */
+                if (found && !(offsets && offsets[found.id]) &&
+                    hits(found, world.x, world.y, slop, null)) return found;
+            }
+            return nodeUnderLabel(px, py);
+        }
+
+        /**
+         * The node whose drawn name sits under this canvas point. A name is
+         * part of its node, and on a board where the shapes are a dozen
+         * pixels across the name is most of what there is to click. The
+         * renderer publishes the boxes of the labels it actually drew, in
+         * screen space, so a dropped label is not clickable and the boxes
+         * never overlap - the first hit is the only hit.
+         */
+        function nodeUnderLabel(px, py) {
+            var labels = renderer.labelHits;
+            if (!labels) return null;
+            for (var i = 0; i < labels.length; i++) {
+                var b = labels[i].box;
+                if (!b) continue;
+                if (px >= b[0] && px <= b[2] && py >= b[1] && py <= b[3]) return labels[i].node;
+            }
+            return null;
         }
         viewport.nodeAt = nodeAt;
 

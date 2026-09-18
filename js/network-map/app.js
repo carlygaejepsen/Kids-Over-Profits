@@ -219,6 +219,20 @@
         /* The colour-mode select is bound in filters.js, which owns the
          * legend that has to change with it. */
 
+        /* Focus or expand: what a click does. Switching re-lays the current
+         * trail out under the new rule rather than waiting for the next
+         * click, so the change is visible at once. */
+        var modes = document.querySelectorAll('input[name="kop-network-mode"]');
+        Array.prototype.forEach.call(modes, function (input) {
+            input.addEventListener('change', function () {
+                if (!input.checked) return;
+                app.focus.setMode(input.value);
+                app.announce(input.value === 'expand'
+                    ? 'Expand: each click adds to the board.'
+                    : 'Focus: each click shows only that name\'s connections.');
+            });
+        });
+
         var whole = byId('kop-network-whole-map');
         if (whole) {
             whole.addEventListener('click', function () {

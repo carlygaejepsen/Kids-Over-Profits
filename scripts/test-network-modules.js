@@ -633,6 +633,25 @@ function run() {
     fire('pointerup', 1, point.x, point.y);
     check(selected === hub, 'a tap on a node did not select it');
 
+    /* A name is part of its node: a tap on the text selects the thing it
+     * names. The renderer publishes the boxes it drew, so this uses the box
+     * of a label that is actually on screen. */
+    renderer.draw();
+    const named = (renderer.labelHits || []).find((entry) => entry.node.id === 'wwasps');
+    check(!!named, 'WWASPS has no drawn label to tap');
+    if (named) {
+        const bx = (named.box[0] + named.box[2]) / 2;
+        const by = (named.box[1] + named.box[3]) / 2;
+        selected = null;
+        fire('pointerdown', 1, bx, by);
+        fire('pointerup', 1, bx, by);
+        check(selected === named.node, 'a tap on a name did not select its node');
+        /* And the text is hoverable, so the cursor tells you it is. */
+        fire('pointermove', 9, bx, by);
+        check(hovered === named.node, 'hovering a name did not light its node');
+        fire('pointermove', 9, 2, 2);
+    }
+
     /* Dragging moves and pins that node and nothing else, and the hit index
      * has to follow it or the node becomes unclickable where it now sits. */
     const neighbourX = store.node('universal-health-services').x;
@@ -762,6 +781,26 @@ function run() {
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap in the opening view: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
+    /* A shallow view takes a block nearer the shape of the stage, so the
+     * fit can zoom in and fill it, rather than one long row with the rest
+     * of the stage empty above and below. */
+    const openingRows = new Set(focus.scene().nodes.map((n) => Math.round(focus.positionOf(n).y))).size;
+    /* Six names wrap to two rows at this stage width on their own; the
+     * shallow rule is what takes them to a block near the shape of the
+     * stage, which is several. */
+    check(openingRows >= 3,
+        'the opening view is ' + openingRows + ' row(s) of ' + focus.scene().nodes.length + ' across an empty stage',
+        'the opening view fills ' + openingRows + ' rows');
+    /* And not a single column either: a block, not a line in either
+     * direction. */
+    const perRow = new Map();
+    focus.scene().nodes.forEach((n) => {
+        const key = Math.round(focus.positionOf(n).y);
+        perRow.set(key, (perRow.get(key) || 0) + 1);
+    });
+    check(Math.max(...perRow.values()) >= 2,
+        'the opening view is a single column, one name per row');
+
     /* The grid exists so that every name fits: a force layout packs the
      * well-connected into a knot and leaves the corners empty, so names
      * collide in the middle of a mostly blank stage. Opening a hub is the
@@ -802,10 +841,10 @@ function run() {
         'the layout is lopsided: ' + quads.join('/') + ' nodes per quadrant',
         'nodes per quadrant: ' + quads.join('/'));
 
-    /* The map reads top to bottom as a hierarchy: the companies, then the
-     * people who ran them, then the programmes, then everyone else who
-     * worked there. Ownership and command are what this map is for, so they
-     * sit above the places they acted on. */
+    /* The map is a hierarchy around the clicked node's row. Above it, the
+     * people who ran things and, above them, the companies; below it, the
+     * programmes and then everyone else. Roots sit in the centre whatever
+     * they are. Within a band, rings run outwards from the centre row. */
     const bandOf = (n) => {
         if (n.kind === 'parent' || n.kind === 'association') return 0;
         if (n.kind === 'person') {
@@ -815,25 +854,75 @@ function run() {
         if (n.kind === 'facility') return 2;
         return 4;
     };
-    const lowest = new Map();
-    const highest = new Map();
-    hubScene.nodes.forEach((n) => {
-        const band = bandOf(n);
-        const y = focus.positionOf(n).y;
-        if (!lowest.has(band) || y < lowest.get(band)) lowest.set(band, y);
-        if (!highest.has(band) || y > highest.get(band)) highest.set(band, y);
-    });
-    const bands = [...lowest.keys()].sort((a, b) => a - b);
-    check(bands.length >= 3, 'too few bands on screen to tell whether they stack in order');
-    let outOfOrder = 0;
-    for (let i = 0; i + 1 < bands.length; i++) {
-        if (highest.get(bands[i]) >= lowest.get(bands[i + 1])) outOfOrder++;
+    const hubNeighbours = store.neighbours('wwasps', true)
+        .map((l) => l.other.id)
+        .filter((id) => hubScene.nodeIds[id]);
+    const rootY = focus.positionOf(store.node('wwasps')).y;
+    const yOf = (n) => focus.positionOf(n).y;
+    const others = hubScene.nodes.filter((n) => n.id !== 'wwasps');
+    const band = (b) => others.filter((n) => bandOf(n) === b).map(yOf);
+    const companies = band(0);
+    const command = band(1);
+    const programmes = band(2);
+    const staff = band(3);
+    check(companies.length && command.length && programmes.length,
+        'too few bands on screen to test the hierarchy');
+    check(Math.max(...companies) < Math.min(...command),
+        'a company is drawn below a member of corporate staff');
+    check(Math.max(...command) < rootY, 'corporate staff are not above the clicked node');
+    check(Math.min(...programmes) > rootY, 'a programme is drawn above the clicked node');
+    if (staff.length) {
+        check(Math.min(...staff) > Math.max(...programmes),
+            'other staff are drawn among the programmes rather than beneath them');
     }
-    check(outOfOrder === 0,
-        outOfOrder + ' bands overlap the one below them instead of stacking',
-        'bands stack in order: ' + bands.map((b) => ['companies', 'command', 'programmes', 'staff', 'other'][b]).join(' then '));
-    check(bands[0] === 0 && lowest.get(0) === Math.min(...hubScene.nodes.map((n) => focus.positionOf(n).y)),
+    check(Math.min(...companies) === Math.min(...others.map(yOf)),
         'the companies are not at the top of the map');
+
+    /* Rings outward: a node revealed by a parent in the same band is never
+     * nearer the centre row than that parent. Companies are ordered by
+     * ownership instead, which is checked separately below. */
+    const parentsOf = (n) => store.neighbours(n.id, true).map((l) => l.other)
+        .filter((o) => hubScene.nodeIds[o.id] && o.id !== 'wwasps' && bandOf(o) === bandOf(n));
+    let wrappedBack = 0;
+    others.forEach((n) => {
+        if (bandOf(n) === 0) return;
+        const inward = parentsOf(n).filter((o) => hubNeighbours.indexOf(o.id) !== -1);
+        if (!inward.length || hubNeighbours.indexOf(n.id) !== -1) return;
+        const dist = Math.abs(yOf(n) - rootY);
+        if (inward.some((o) => dist < Math.abs(yOf(o) - rootY) - 1)) wrappedBack++;
+    });
+    check(wrappedBack === 0,
+        wrappedBack + ' second-degree nodes sit nearer the centre row than the node that revealed them',
+        'rings run outwards from the centre row in every band');
+
+    /* Inside the company band, a company that owns another on screen sits
+     * above it. Read off corporate edges between two companies, source
+     * owning target as the board records them; rebrands are not ownership.
+     * Checked on a facility's view, where the ownership chain runs several
+     * companies deep. */
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    const ownView = focus.scene();
+    const companiesHere = new Set(ownView.nodes
+        .filter((n) => n.id !== hub.id && bandOf(n) === 0).map((n) => n.id));
+    let ownedAbove = 0;
+    let ownershipPairs = 0;
+    ownView.edges.forEach((e) => {
+        if (e.category !== 'corporate' || e.direction === 'renamed') return;
+        if (!companiesHere.has(e.sourceId) || !companiesHere.has(e.targetId)) return;
+        ownershipPairs++;
+        if (yOf(store.node(e.sourceId)) >= yOf(store.node(e.targetId))) ownedAbove++;
+    });
+    check(ownershipPairs > 0, 'no ownership between two companies is on screen, so the rule is untested');
+    check(ownedAbove === 0,
+        ownedAbove + ' of ' + ownershipPairs + ' companies are drawn below a company they own',
+        'every company sits above the companies it owns (' + ownershipPairs + ' pairs)');
+    focus.clear();
+    flushFrames();
+    focus.select(store.node('wwasps'));
+    flushFrames();
 
     /* Whoever owned a programme is never left off: ownership is the question
      * this map exists to answer. */
@@ -1113,13 +1202,61 @@ function run() {
     const next = focused.nodes.find((n) => n !== hub && store.neighbours(n.id, true).length > 2);
     focus.select(next);
     flushFrames();
-    check(focus.chain().length === 2, 'clicking a neighbour replaced the trail instead of extending it');
+    check(focus.chain().length === 2, 'clicking a neighbour did not add a step to the trail');
+    /* The trail is a history, not a union: the view is now the neighbour's
+     * own connections, and the first step stays only because it is one. */
     const twoDeep = focus.scene();
-    check(twoDeep.nodeIds[hub.id] && twoDeep.nodeIds[next.id],
-        'the second step dropped the first off the screen');
-    check(twoDeep.nodes.length >= focused.nodes.length,
-        'extending the trail shrank the view',
-        'two steps deep: ' + twoDeep.nodes.length + ' nodes, ' + twoDeep.edges.length + ' edges');
+    check(twoDeep.nodeIds[next.id], 'the view is not centred on what was just clicked');
+    const nextNeighbours = store.neighbours(next.id, true).map((l) => l.other.id);
+    check(nextNeighbours.every((id) => twoDeep.nodeIds[id]),
+        'clicking a node did not show all of its own connections',
+        'two steps deep: ' + twoDeep.nodes.length + ' nodes around ' + next.name);
+    /* Whatever else is on screen got there by the view's own rules - a
+     * person opening out, an owner coming along - and so has a line to
+     * something. Nothing is left over from the previous view unattached. */
+    const attached = new Set();
+    twoDeep.edges.forEach((e) => { attached.add(e.sourceId); attached.add(e.targetId); });
+    const stranded = twoDeep.nodes.filter((n) => n.id !== next.id && !attached.has(n.id));
+    check(stranded.length === 0,
+        stranded.length + ' nodes carried over from the previous view with no line to anything');
+
+    /* Stronger than "has a line to something": everything on screen is
+     * reachable from what was clicked. Two of the opening organisations
+     * share an edge and used to survive on it, unconnected to the view. */
+    const reachable = new Set([next.id]);
+    const adjacency = new Map();
+    twoDeep.edges.forEach((e) => {
+        if (!adjacency.has(e.sourceId)) adjacency.set(e.sourceId, []);
+        if (!adjacency.has(e.targetId)) adjacency.set(e.targetId, []);
+        adjacency.get(e.sourceId).push(e.targetId);
+        adjacency.get(e.targetId).push(e.sourceId);
+    });
+    const pending2 = [next.id];
+    while (pending2.length) {
+        const at = pending2.shift();
+        (adjacency.get(at) || []).forEach((o) => { if (!reachable.has(o)) { reachable.add(o); pending2.push(o); } });
+    }
+    const island = twoDeep.nodes.filter((n) => !reachable.has(n.id));
+    check(island.length === 0,
+        island.length + ' nodes on screen are not reachableable from what was clicked: ' +
+        island.slice(0, 3).map((n) => n.name).join(', '));
+
+    /* Expand mode: the trail is a union, and each click adds a
+     * neighbourhood to the board instead of replacing it. */
+    focus.setMode('expand');
+    flushFrames();
+    check(focus.mode() === 'expand', 'the mode did not switch');
+    const union = focus.scene();
+    const hubOwn = store.neighbours(hub.id, true).map((l) => l.other.id);
+    check(hubOwn.every((id) => union.nodeIds[id]) && nextNeighbours.every((id) => union.nodeIds[id]),
+        'expand mode does not show both neighbourhoods at once',
+        'expand mode: ' + union.nodes.length + ' nodes for two clicks');
+    check(union.nodes.length >= twoDeep.nodes.length,
+        'expand mode showed fewer nodes than focus mode did for the same trail');
+    focus.setMode('focus');
+    flushFrames();
+    check(focus.scene().nodes.length === twoDeep.nodes.length,
+        'switching back to focus did not restore the focused view');
 
     focus.truncateTo(0);
     flushFrames();
@@ -1324,8 +1461,12 @@ function run() {
     check(shell.regionsToggle.getAttribute('aria-expanded') === 'false' && shell.regionsPanel.hidden === true,
         'the board-grouping section did not close again');
 
-    /* Below the breakpoint the rail is a sheet over the map, so it has to
-     * start closed or it covers the thing it filters. */
+    /* The rail starts closed at every width: as a permanent column it took
+     * width the labels need, and the filters are a second-order tool on a
+     * map that grows by clicking. */
+    motion.narrow = false;
+    rail.syncRail();
+    check(shell.rail.hidden === true, 'the rail is open by default on a wide screen');
     motion.narrow = true;
     rail.syncRail();
     check(shell.rail.hidden === true, 'the rail covers the map on a narrow screen');
@@ -1339,7 +1480,7 @@ function run() {
     shell.railToggle.dispatch('click');
     motion.narrow = false;
     mediaListeners.forEach((fn) => fn({ matches: false }));
-    check(shell.rail.hidden === false, 'widening the window left the rail shut');
+    check(shell.rail.hidden === true, 'crossing the breakpoint left a sheet open as a column');
 
     store.resetFilters();
 }

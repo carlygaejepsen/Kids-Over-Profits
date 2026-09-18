@@ -463,7 +463,9 @@
             emphasis: { hoverId: null },
             width: 0,
             height: 0,
-            dpr: 1
+            dpr: 1,
+            /* Screen boxes of the labels drawn last frame, with their nodes. */
+            labelHits: []
         };
 
         var scene = { nodes: [], edges: [] };
@@ -827,8 +829,14 @@
                  * re-settles the neighbourhood with room for all of them. */
                 if (!fitsInGrid(grid, box)) continue;
                 occupyGrid(grid, box);
+                entry.box = box;
                 drawn.push(entry);
             }
+            /* Published for hit testing: a name is part of its node, so a
+             * click on the text should land on the thing it names. Only the
+             * labels actually drawn count - a dropped label is not on screen
+             * to be clicked. */
+            renderer.labelHits = drawn;
 
             ctx.strokeStyle = 'rgba(242, 238, 223, 0.92)';
             ctx.lineWidth = 3;

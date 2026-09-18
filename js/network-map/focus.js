@@ -172,6 +172,28 @@
          * glance is a handful of networks rather than nine hundred dots, and
          * every name after that arrived because someone went looking for it.
          */
+        /**
+         * What the view is centred on. In focus mode, the last thing clicked:
+         * the trail is a history, and clicking a person in a company's view
+         * gives you that person's connections rather than laying them over
+         * the company's. In expand mode, everything clicked: the trail is a
+         * union, and each click adds a neighbourhood to the board. The
+         * crumbs are the way back in either.
+         */
+        var mode = 'focus';
+        function currentRoots() {
+            if (!chain.length) return [];
+            return mode === 'expand' ? chain.slice() : [chain[chain.length - 1]];
+        }
+        focus.mode = function () { return mode; };
+        focus.setMode = function (next) {
+            next = next === 'expand' ? 'expand' : 'focus';
+            if (next === mode) return;
+            mode = next;
+            if (chain.length) enterFocus();
+            onChange();
+        };
+
         function visibleIds() {
             var live = store.visible().nodeIds;
 
@@ -180,7 +202,7 @@
              * are added at the end, because the rules below are about the
              * question being asked and not about the background. */
             var asked = Object.create(null);
-            chain.forEach(function (id) {
+            currentRoots().forEach(function (id) {
                 if (!live[id]) return;
                 asked[id] = true;
                 store.neighbours(id, true).forEach(function (link) {
@@ -267,22 +289,32 @@
              * connections between them would come down to two.
              */
             if (chain.length) {
-                var connected = Object.create(null);
+                /* Reachable from what was clicked, along the edges on screen.
+                 * "Has a line to something" was not enough: two of the
+                 * opening organisations share an edge with each other and
+                 * sailed through on it, sitting in a person's view with no
+                 * connection to the person. What was clicked always stays,
+                 * even where the filters have taken away everything around
+                 * it. */
+                var adjacent = Object.create(null);
                 edges.forEach(function (edge) {
-                    connected[edge.sourceId] = true;
-                    connected[edge.targetId] = true;
+                    (adjacent[edge.sourceId] = adjacent[edge.sourceId] || []).push(edge.targetId);
+                    (adjacent[edge.targetId] = adjacent[edge.targetId] || []).push(edge.sourceId);
                 });
-                /* What was clicked always stays, even where the filters have
-                 * taken away everything it connected to. */
-                chain.forEach(function (id) { connected[id] = true; });
-
-                var kept = Object.create(null);
-                nodes = nodes.filter(function (node) {
-                    if (!connected[node.id]) return false;
-                    kept[node.id] = true;
-                    return true;
+                var reach = Object.create(null);
+                var queue = [];
+                currentRoots().forEach(function (id) {
+                    if (ids[id]) { reach[id] = true; queue.push(id); }
                 });
-                ids = kept;
+                while (queue.length) {
+                    var at = queue.shift();
+                    (adjacent[at] || []).forEach(function (other) {
+                        if (!reach[other]) { reach[other] = true; queue.push(other); }
+                    });
+                }
+                nodes = nodes.filter(function (node) { return reach[node.id]; });
+                edges = edges.filter(function (edge) { return reach[edge.sourceId] && reach[edge.targetId]; });
+                ids = reach;
             }
 
             return { nodes: nodes, edges: edges, nodeIds: ids, degrees: visible.degrees };
@@ -439,6 +471,9 @@
         focus.select = function (node) {
             if (!node) return;
             if (chain.length && chain[chain.length - 1] === node.id) return;
+            /* In expand mode a node already on the trail is already on the
+             * board; clicking it again adds nothing. */
+            if (mode === 'expand' && chain.indexOf(node.id) !== -1) return;
             chain.push(node.id);
             enterFocus();
         };
@@ -570,7 +605,10 @@
              * effect, so the grid reads the ids back off the endpoints
              * rather than trusting the fields it passed in. */
             var links = scene.edges.map(function (edge) {
-                return { source: edge.sourceId, target: edge.targetId, category: edge.category };
+                return {
+                    source: edge.sourceId, target: edge.targetId,
+                    category: edge.category, direction: edge.direction
+                };
             });
 
             if (d3 && d3.forceSimulation && points.length > 1) {
@@ -594,7 +632,7 @@
                 sim.stop();
             }
 
-            var overhang = gridLayout(points, gridPadding, chain.slice(), links);
+            var overhang = gridLayout(points, gridPadding, currentRoots(), links);
 
             var positions = Object.create(null);
             points.forEach(function (point) {
@@ -733,111 +771,262 @@
             return TIER_OTHER;
         }
 
-        /* Short rows carry one fewer node and sit half a cell across, which
-         * is what makes the stagger. */
-        function isShortRow(row) {
-            return row % 2 === 1;
-        }
+        /**
+         * How far each company sits above the bottom of the ownership chain
+         * on screen: zero for one that owns nothing else here, one more than
+         * the tallest thing it owns otherwise. Ownership is read off
+         * corporate edges between two companies, source owning target, as
+         * the board records them; a rebrand is a continuation, not
+         * ownership, and is skipped. Cycles - the board has a couple - stop
+         * the walk rather than looping it.
+         */
+        function ownershipHeight(points, links) {
+            var isCompany = Object.create(null);
+            points.forEach(function (p) { if (p.tier === TIER_COMPANY) isCompany[p.id] = true; });
 
-        function capacity(rows, cols) {
-            var full = Math.ceil(rows / 2);
-            var short = rows - full;
-            return full * cols + short * Math.max(1, cols - 1);
+            var owns = Object.create(null);
+            links.forEach(function (link) {
+                if (link.category !== 'corporate' || link.direction === 'renamed') return;
+                var a = link.source && link.source.id !== undefined ? link.source.id : link.source;
+                var b = link.target && link.target.id !== undefined ? link.target.id : link.target;
+                if (!isCompany[a] || !isCompany[b] || a === b) return;
+                (owns[a] = owns[a] || []).push(b);
+            });
+
+            var height = Object.create(null);
+            var walking = Object.create(null);
+            var measure = function (id) {
+                if (height[id] !== undefined) return height[id];
+                if (walking[id]) return 0;
+                walking[id] = true;
+                var best = -1;
+                (owns[id] || []).forEach(function (other) {
+                    best = Math.max(best, measure(other));
+                });
+                walking[id] = false;
+                height[id] = best + 1;
+                return height[id];
+            };
+            Object.keys(isCompany).forEach(measure);
+            return height;
         }
 
         /**
-         * Lay the nodes out in tiers, top to bottom, in as many rows as each
-         * tier needs.
+         * Lay the nodes out as a board: rows of cells, the clicked node in
+         * the middle, and two things deciding where everything else goes.
          *
-         * The board has a hierarchy and the map should read like one: the
-         * companies first, then the people who ran them, then the programmes
-         * themselves, then everyone else who worked there. Arranging by
-         * distance from whatever was clicked put a parent company below a
-         * facility it owned whenever the facility was clicked first, which is
-         * the wrong way up for the question this map answers.
+         * Vertically the map is a hierarchy. Above the centre row sit the
+         * people who ran things and, above them, the companies; below it sit
+         * the programmes and, beneath them, everyone else who worked there.
+         * Ownership and command are what this map is for, so they sit above
+         * the places they acted on, and a company is never drawn below
+         * something it owns.
          *
-         * Rows are sized by their contents rather than by the stage - a cell
-         * is one label wide and one name tall - and the block that results is
-         * scaled to the stage afterwards by the fit. That is what puts every
-         * label on screen: cells are built from the labels outwards, so more
-         * nodes means more rows rather than tighter cells, and six nodes
-         * spread over a stage meant for forty is a fit problem rather than a
-         * layout one.
+         * Within each of those bands, distance from the centre row is
+         * distance from what was clicked. First-degree connections take the
+         * rows nearest the centre; second-degree ones the rows beyond them,
+         * so an owner's owner is above the owner and a trace runs away from
+         * the middle rather than doubling back across it. Within a row,
+         * nodes are ordered by where their parent sits, so a child lands
+         * near the column that revealed it.
+         *
+         * These are not competing arrangements. Hierarchy is the vertical
+         * axis; distance from the click is how far along it a node goes.
+         *
+         * Rows are packed by the width each name actually needs, not cut
+         * into fixed columns, so every name gets exactly its own room and a
+         * row holds as many as the stage is wide enough for. A band's rings
+         * are packed one after another into the same run of rows rather than
+         * each ring starting a row of its own: with five bands and three
+         * rings that fragmentation alone doubled the row count and pushed
+         * the block off the bottom of the stage, and a block that has to be
+         * scaled down takes its cells below one label wide and drops names.
+         * Ring order still never runs backwards within a band.
          */
         function gridLayout(points, padding, roots, links) {
             var n = points.length;
             grid = null;
             if (!n || !renderer.width) return 0;
 
-            /* Rows are packed by the width each name actually needs rather
-             * than cut into columns of a fixed width. A fixed column has to
-             * be as wide as the longest name in the scene or it drops it, and
-             * as narrow as the stage allows or it runs out of columns - with
-             * one thirty-four character programme among forty short ones
-             * there is no width that is both. Packing by width gives every
-             * name exactly the room it takes and lets a row hold as many as
-             * it can. */
             var board = Math.max(200, renderer.width - padding * 2);
+            var boardH = Math.max(200, renderer.height - padding * 2);
             var tallest = points.reduce(function (t, p) { return Math.max(t, p.r); }, 0);
-            var rowH = tallest * 2 + LABEL_ROOM + ROW_GUTTER;
+            var needOf = function (p) { return p.label + COLUMN_GUTTER; };
 
-            /* Tiers, in the order they are stacked. */
-            var tiers = [[], [], [], [], []];
+            /* Who revealed whom, and how many steps out each node is. */
             var order = ringOrder(points, roots, links);
+            var parentOf = Object.create(null);
+            var ringOf = Object.create(null);
+            var isRoot = Object.create(null);
+            roots.forEach(function (id) { isRoot[id] = true; });
             order.forEach(function (entry) {
-                tiers[entry.node.tier].push(entry.node);
+                parentOf[entry.node.id] = entry.parent;
+                ringOf[entry.node.id] = entry.parent ? (ringOf[entry.parent] || 0) + 1 : 0;
+            });
+            var ringFor = function (p) { return isRoot[p.id] ? 0 : Math.max(1, ringOf[p.id] || 1); };
+            var bandFor = function (p) { return isRoot[p.id] ? 'centre' : String(p.tier); };
+
+            /* First pass, in ring order across every band, fixes a left to
+             * right order so that a child can be placed by its parent's
+             * position. Only the order survives into the second pass. */
+            var placedX = Object.create(null);
+            var anchorX = function (p) {
+                var parent = parentOf[p.id];
+                if (parent && placedX[parent] !== undefined) return placedX[parent];
+                return p.x;
+            };
+            var byRing = points.slice().sort(function (a, b) { return ringFor(a) - ringFor(b); });
+            byRing.forEach(function (p) { placedX[p.id] = anchorX(p); });
+
+            /* Group by band, each band's nodes sorted inner ring first and
+             * then by where their parent sits. */
+            var bands = Object.create(null);
+            points.forEach(function (p) {
+                var key = bandFor(p);
+                (bands[key] = bands[key] || []).push(p);
+            });
+            /* Inside the company band, distance from the centre is distance
+             * up the ownership chain: a company that owns another on screen
+             * sits in a row above it, whatever ring either was revealed in.
+             * Clicking a facility reveals its owner at ring one and that
+             * owner's subsidiary at ring two, and ring order alone would have
+             * drawn the subsidiary above the company that owns it. */
+            var height = ownershipHeight(points, links);
+            Object.keys(bands).forEach(function (key) {
+                var company = key === String(TIER_COMPANY);
+                bands[key].sort(function (a, b) {
+                    if (company) {
+                        var h = height[a.id] - height[b.id];
+                        if (h !== 0) return h;
+                    }
+                    var r = ringFor(a) - ringFor(b);
+                    if (r !== 0) return r;
+                    var d = placedX[a.id] - placedX[b.id];
+                    return d !== 0 ? d : a.x - b.x;
+                });
             });
 
-            /* How wide a row is allowed to run. Wide enough for the longest
-             * name whatever happens, so nothing is unplaceable, and
-             * otherwise the shape that comes nearest to filling the stage
-             * once the rows are stacked. */
-            var widest = points.reduce(function (t, p) { return Math.max(t, p.label + COLUMN_GUTTER); }, 0);
-            var total = points.reduce(function (t, p) { return t + p.label + COLUMN_GUTTER; }, 0);
-            var aspect = renderer.width / Math.max(1, renderer.height);
-            var ideal = Math.sqrt(total * rowH * aspect);
-            var rowWidth = Math.max(widest, Math.min(board, ideal));
-
-            var rows = [];
-            tiers.forEach(function (tier) {
+            var packBand = function (nodes, width, breakOn) {
+                var rows = [];
                 var row = [];
                 var used = 0;
-                tier.forEach(function (point) {
-                    var need = point.label + COLUMN_GUTTER;
-                    if (row.length && used + need > rowWidth) {
+                var last;
+                nodes.forEach(function (p) {
+                    var need = needOf(p);
+                    /* Where a band is ordered by something that has to be
+                     * read off the rows - ownership, for companies - a change
+                     * in it starts a new row, so an owner is never drawn
+                     * level with what it owns. */
+                    var key = breakOn ? breakOn(p) : undefined;
+                    var turn = breakOn && row.length && key !== last;
+                    last = key;
+                    if (row.length && (turn || used + need > width)) {
                         rows.push(row);
                         row = [];
                         used = 0;
                     }
-                    row.push(point);
+                    row.push(p);
                     used += need;
                 });
-                /* Each tier starts a fresh row, so a band of the map is
-                 * always a whole number of rows and never shares one with the
-                 * band below. */
                 if (row.length) rows.push(row);
-            });
+                return rows;
+            };
 
-            var shiftY = (rows.length - 1) * rowH / 2;
-            rows.forEach(function (row, index) {
-                var width = row.reduce(function (t, p) { return t + p.label + COLUMN_GUTTER; }, 0);
+            var stackRows = function (width) {
+                var above = [];
+                [TIER_COMMAND, TIER_COMPANY].forEach(function (band) {
+                    var breakOn = band === TIER_COMPANY
+                        ? function (p) { return height[p.id]; }
+                        : null;
+                    packBand(bands[String(band)] || [], width, breakOn).forEach(function (r) { above.push(r); });
+                });
+                var below = [];
+                [TIER_PROGRAMME, TIER_STAFF, TIER_OTHER].forEach(function (band) {
+                    packBand(bands[String(band)] || [], width).forEach(function (r) { below.push(r); });
+                });
+                var centre = packBand(bands.centre || [], width);
+                return above.slice().reverse().concat(centre, below);
+            };
+
+            var rowGutter = ROW_GUTTER;
+            var labelRoom = LABEL_ROOM;
+            var rowH = tallest * 2 + labelRoom + rowGutter;
+
+            /* Full width first, since a block wider than the stage is the one
+             * thing that costs names. */
+            var rowWidth = board;
+            var stacked = stackRows(rowWidth);
+
+            /* A shallow view - six organisations, or one person - packed at
+             * full width is a single long row with the rest of the stage
+             * empty above and below it. Give it a block nearer the shape of
+             * the stage instead, so the fit can zoom in and fill. Zooming in
+             * only ever makes a cell wider than its name, so nothing is lost
+             * by it. */
+            if (stacked.length * rowH < boardH * 0.55) {
+                var total = points.reduce(function (t, p) { return t + needOf(p); }, 0);
+                var widest = points.reduce(function (t, p) { return Math.max(t, needOf(p)); }, 0);
+                var aspect = renderer.width / Math.max(1, renderer.height);
+
+                /* Names are indivisible, so a width worked out from area
+                 * alone can land just under two names and leave every row
+                 * holding one - six organisations in a single column. Try
+                 * each width that would give r rows if names packed
+                 * perfectly, pack for real at that width, and keep whichever
+                 * block comes out nearest the shape of the stage. */
+                var bestWidth = rowWidth;
+                var bestStack = stacked;
+                var bestScore = Infinity;
+                var tried = Object.create(null);
+                for (var r = 1; r <= n; r++) {
+                    var width = Math.max(widest, Math.min(board, Math.ceil(total / r)));
+                    if (tried[width]) continue;
+                    tried[width] = true;
+                    var stack = stackRows(width);
+                    var used = stack.reduce(function (t, row) {
+                        return Math.max(t, row.reduce(function (w, p) { return w + needOf(p); }, 0));
+                    }, 1);
+                    var score = Math.abs(Math.log((used / (stack.length * rowH)) / aspect));
+                    if (score < bestScore) {
+                        bestScore = score;
+                        bestWidth = width;
+                        bestStack = stack;
+                    }
+                }
+                rowWidth = bestWidth;
+                stacked = bestStack;
+            }
+
+            /* Tighten before ever letting the fit scale the block down: a
+             * block scaled down takes its cells below one label wide and the
+             * renderer starts dropping names. Gutters give way first, and
+             * only after that does the stage's height set a limit. */
+            if (stacked.length * rowH > boardH) {
+                rowGutter = 4;
+                labelRoom = 15;
+                rowH = tallest * 2 + labelRoom + rowGutter;
+            }
+
+            var shiftY = (stacked.length - 1) * rowH / 2;
+            stacked.forEach(function (row, index) {
+                var width = row.reduce(function (t, p) { return t + needOf(p); }, 0);
                 var x = -width / 2;
-                row.forEach(function (point) {
-                    var need = point.label + COLUMN_GUTTER;
-                    point.x = x + need / 2;
-                    point.y = index * rowH - shiftY;
+                row.forEach(function (p) {
+                    var need = needOf(p);
+                    p.x = x + need / 2;
+                    p.y = index * rowH - shiftY;
                     x += need;
                 });
             });
 
+            var widestRow = stacked.reduce(function (t, row) { return Math.max(t, row.length); }, 1);
             grid = {
                 x0: -rowWidth / 2, y0: -shiftY - rowH / 2,
-                cellW: rowWidth / Math.max(1, rows[0] ? rows[0].length : 1),
-                cellH: rowH, cols: rows[0] ? rows[0].length : 1, rows: rows.length
+                cellW: rowWidth / widestRow, cellH: rowH,
+                cols: widestRow, rows: stacked.length
             };
 
-            /* Every name now has exactly its own width, so nothing hangs
-             * over anything. */
+            /* Every name has exactly its own width, so nothing hangs over. */
             return 0;
         }
 

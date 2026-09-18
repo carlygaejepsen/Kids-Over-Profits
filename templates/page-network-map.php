@@ -131,6 +131,24 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</select>
 					</label>
 
+					<?php
+					// What a click does. Focus shows the clicked node's own
+					// connections and nothing else; Expand adds them to whatever
+					// is already on the board. Radios rather than a checkbox so
+					// both states have a name.
+					?>
+					<fieldset class="kop-network__mode">
+						<legend class="screen-reader-text">What a click does</legend>
+						<label class="kop-network__mode-option">
+							<input type="radio" name="kop-network-mode" value="focus" checked>
+							<span>Focus</span>
+						</label>
+						<label class="kop-network__mode-option">
+							<input type="radio" name="kop-network-mode" value="expand">
+							<span>Expand</span>
+						</label>
+					</fieldset>
+
 					<button type="button" class="kop-network__button" id="kop-network-filters-toggle"
 						aria-expanded="false" aria-controls="kop-network-rail">
 						Filters

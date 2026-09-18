@@ -332,20 +332,21 @@
         }
 
         /**
-         * Below the breakpoint the rail is a sheet over the map, so it has to
-         * start closed or it covers the thing it filters. Above it the rail is
-         * a column and is always there. Pulled forward from step 7 because
-         * without it the narrow layout ships unusable.
+         * The rail starts closed at every width and the Filters button is
+         * the way in. The map opens on a handful of organisations and grows
+         * by clicking, so the filters are a second-order tool, and as a
+         * permanent column they took width the labels need. Below the
+         * breakpoint it opens as a sheet over the map; above it, as a column
+         * beside it.
          */
         var narrow = root.matchMedia ? root.matchMedia(NARROW) : null;
         var railOpen = false;
 
         function syncRail() {
             if (!rail) return;
-            var isNarrow = narrow ? narrow.matches : false;
-            rail.hidden = isNarrow && !railOpen;
+            rail.hidden = !railOpen;
             if (railToggle) {
-                railToggle.setAttribute('aria-expanded', (isNarrow && railOpen) ? 'true' : 'false');
+                railToggle.setAttribute('aria-expanded', railOpen ? 'true' : 'false');
             }
         }
 
@@ -362,7 +363,8 @@
 
         if (narrow) {
             var onBreakpoint = function () {
-                /* Widening the window should not leave the rail shut. */
+                /* Crossing the breakpoint changes a sheet into a column or
+                 * back; close it so it re-opens in the right form. */
                 railOpen = false;
                 syncRail();
             };

@@ -132,12 +132,14 @@ the precomputed layout is untouched. Under `prefers-reduced-motion` the
 gather is skipped entirely and hover is dimming alone, which loses nothing
 factual.
 
-Clicking a neighbour extends the chain rather than replacing it,
-so the view becomes "Lichfield, then Cross Creek, then whoever ran it" —
-the trail the researcher actually walked. Everything on the chain stays on
-screen with its own neighbours; the chain is the query. A breadcrumb in the
-toolbar names each step, clicking a crumb truncates back to it, and Escape
-or a Whole map button returns to the precomputed view.
+What a click does is a switch in the toolbar. In **Focus**, the default,
+the view is the last thing clicked: click a person in a company's view and
+you get that person's connections, not that person's connections laid over
+the company's, and the trail is a history. In **Expand** the trail is a
+union and each click adds a neighbourhood to the board, which is the "then
+Cross Creek, then whoever ran it" reading this plan originally described. A
+breadcrumb names each step in either mode, clicking a crumb truncates back
+to it, and Escape or the Whole map button returns to the opening view.
 
 Isolating on hover alone was considered and rejected: crossing a dense
 region would rebuild the view once per node passed, and touch has no hover
@@ -147,35 +149,87 @@ is a preview precisely because it is reversible.
 **Built.** Several things about it are worth recording, including two that
 cost an afternoon each.
 
-**The layout is a stack of bands, not a force settle.** A force layout
-arranges by relationship, which is the right input and the wrong output: it
-packs the well-connected into a knot and leaves the corners of the stage
-empty, so names collide in the middle of a mostly blank canvas. Measured on
-a thirty-six node neighbourhood it used 32% of the stage, with seventeen
-nodes in one quadrant and two in another, and only twenty of the thirty-six
-names could be drawn without overlapping.
+**The layout is a board: a hierarchy vertically, distance from the click
+along it.** A force layout arranges by relationship, which is the right
+input and the wrong output: it packs the well-connected into a knot and
+leaves the corners of the stage empty, so names collide in the middle of a
+mostly blank canvas. Measured on a thirty-six node neighbourhood it used 32%
+of the stage, with seventeen nodes in one quadrant and two in another, and
+only twenty of the thirty-six names could be drawn without overlapping.
 
-The map now reads top to bottom as a hierarchy: the companies, then the
-people who ran them, then the programmes, then everyone else who worked
-there, then the bodies around the edges of the industry. Ownership and
-command are what this map is for, so they sit above the places they acted
-on. "The people who ran them" is read off the connections rather than the
-job title - anyone with a leadership, board or ownership edge was running
-something, which is 230 of the 335 people on the board.
+The clicked node sits in the centre row. Above it are the people who ran
+things and, above them, the companies; below it the programmes and, beneath
+them, everyone else who worked there. Ownership and command are what this
+map is for, so they sit above the places they acted on. "The people who ran
+things" is read off the connections rather than the job title - anyone with
+a leadership, board or ownership edge was running something, 230 of the 335
+people on the board.
+
+Within each band, distance from the centre row is distance from what was
+clicked: first-degree connections take the rows nearest the centre,
+second-degree the rows beyond, so a trace runs away from the middle rather
+than doubling back across it, and within a row a node is ordered by where
+its parent sits. The company band is the exception: there, distance from the
+centre is distance *up the ownership chain*, read off corporate edges
+between two companies with the source owning the target. A company that owns
+another on screen is always in a row above it, whatever ring either was
+revealed in - ring order alone drew a subsidiary above the company that owns
+it - and a change in ownership height starts a new row, so an owner is never
+drawn level with what it owns. These are not competing arrangements;
+hierarchy is the axis and distance from the click is how far along it a node
+goes.
 
 Rows are packed by the width each name actually needs, not cut into columns
-of a fixed width. A fixed column has to be as wide as the longest name in
-the scene or it drops it, and as narrow as the stage allows or it runs out
-of columns; with one thirty-four character programme among forty short ones
-there is no width that is both, and the map lost a name either way. Packing
-by width gives every name exactly the room it takes and lets a row hold as
-many as it can: forty-five names, forty-five labels, eleven rows.
+of a fixed width: a fixed column has to be as wide as the longest name or it
+drops it, and as narrow as the stage allows or it runs out of columns, and
+with one thirty-four character programme among forty short ones there is no
+width that is both. A band's rings share one run of rows rather than each
+starting its own, because with five bands and three rings that fragmentation
+alone doubled the row count and pushed the block off the bottom of the
+stage. Rows pack at the full width of the stage first, since a block wider
+than the stage is the one thing that costs names. A shallow view - the six
+opening organisations, or one person - is then repacked to a block nearer
+the shape of the stage so the fit can zoom in and fill it; the width is
+chosen by packing at each candidate and measuring, because names are
+indivisible and a width worked out from area alone landed just under two
+names and stood the six organisations in a single column. Zooming in only
+ever makes a cell wider than its name. Gutters tighten before the fit is
+ever allowed to scale a block down. Opening Provo Canyon School is 53 nodes
+in ten rows with 53 labels.
 
-Rows are sized by their contents rather than by the stage - a row is one
-name tall - and the block that results is scaled to the stage by the fit
-afterwards. Anything that has to be scaled *down* takes its cells below one
-label wide and starts dropping names, so the number of rows is chosen to
-keep the block inside the stage at full size.
+**What is on the board.** The map opens on the curated organisations. Once
+something is clicked, the board holds that node and everything it touches,
+and then three rules run:
+
+- *A person never appears alone.* The fact worth having about someone on
+  this map is which programmes they turn up at, so when a person surfaces
+  everywhere they connect to surfaces with them. One step and stop: a person
+  reached through another person's expansion does not expand in turn.
+- *Whoever owned it is never left off, and brings only itself.* One step up
+  the ownership chain, not the whole of it - Provo Canyon School walks up
+  through ten organisations if you let it. Owners only, never their other
+  holdings: two facilities owned by the same company are not each other's
+  business, and only somebody who worked at both puts a second programme on
+  screen beside the first. The rule applies to what was asked for, not to
+  the opening organisations; letting the background expand turned a click on
+  Casa Grande Academy into nineteen parent companies.
+- *Everything on screen is reachable from what was clicked*, along the edges
+  on screen. "Has a line to something" was not enough: two of the opening
+  organisations share an edge with each other and sailed through on it,
+  sitting in a person's view with no connection to the person. What was
+  clicked always stays. The opening view is exempt, since six organisations
+  with two connections between them would come down to two.
+
+**The filter rail starts closed.** As a permanent 250px column it took width
+the labels need, and on a map that opens on six organisations and grows by
+clicking the filters are a second-order tool. The Filters button is the way
+in at every width.
+
+**A name is part of its node.** The renderer publishes the screen boxes of
+the labels it actually drew, and the viewport treats a click or hover on one
+as landing on the node it names. Only drawn labels count, so a dropped label
+is not clickable, and the boxes never overlap, so the first hit is the only
+hit.
 
 **A trace must never look like a connection.** The routing drew a line from
 one node to another straight across the cells in between, and on a board
