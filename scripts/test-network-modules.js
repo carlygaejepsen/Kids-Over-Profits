@@ -829,6 +829,105 @@ function run() {
         const q = Math.floor(((r.angle + Math.PI * 2) % (Math.PI * 2)) / (Math.PI / 2));
         sides[q]++;
     });
+    /* Second-degree connections branch outwards rather than wrapping back
+     * across the middle. For every node two steps out, the node that
+     * revealed it should sit between it and the centre - not on the far side
+     * of the board with its trace crossing everything to get there. */
+    /* The grid is built centred on the origin, so that is the middle to
+     * measure from - not the bounding box of the nodes, which shifts when
+     * the outermost ring is only partly filled. */
+    const centre = { x: 0, y: 0 };
+    const distTo = (id) => {
+        const p = focus.positionOf(store.node(id));
+        return Math.hypot(p.x - centre.x, p.y - centre.y);
+    };
+    const firstRing = new Set(hubNeighbours);
+    let outward = 0;
+    let inward = 0;
+    hubScene.nodes.forEach((n) => {
+        if (n.id === 'wwasps' || firstRing.has(n.id)) return;
+        /* Whichever first-ring node it hangs off. */
+        const parents = store.neighbours(n.id, true)
+            .map((l) => l.other.id)
+            .filter((id) => firstRing.has(id));
+        if (!parents.length) return;
+        const nearestParent = parents.reduce((a, b) => (distTo(a) <= distTo(b) ? a : b));
+        if (distTo(n.id) >= distTo(nearestParent) - 1) outward++;
+        else inward++;
+    });
+    check(outward + inward > 3, 'too few second-degree nodes to tell which way they branch');
+    /* Not zero: when the outermost ring of the grid has no room left, a
+     * node has to go somewhere, and the rule is a heavy preference rather
+     * than a law. A handful is the crowded edge of the board; a third of
+     * them would be the rule not working. */
+    check(inward <= 1,
+        inward + ' of ' + (inward + outward) +
+        ' second-degree nodes sit closer to the middle than the node that revealed them',
+        (outward) + ' of ' + (inward + outward) + ' second-degree nodes branch outwards');
+
+    /* Whoever owned a programme is never left off: ownership is the question
+     * this map exists to answer. */
+    focus.clear();
+    flushFrames();
+    const facility = store.node('casa-grande-academy');
+    focus.select(facility);
+    flushFrames();
+    const owned = focus.scene();
+    const owners = store.neighbours(facility.id, true)
+        .filter((l) => l.other.kind === 'parent' && l.edge.category === 'corporate');
+    check(owners.length > 0, 'the probe facility has no recorded owner, so the rule is untested');
+    owners.forEach((l) => {
+        check(owned.nodeIds[l.other.id], 'opening a facility left out its owner ' + l.other.name);
+    });
+
+    /* The owner of what was clicked is a neighbour of it and would be on
+     * screen anyway, so the rule is only really doing work for the
+     * programmes that arrived on somebody's coat-tails. Those are the ones
+     * to check. */
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    const viaStaff = focus.scene();
+    const direct = new Set(store.neighbours(hub.id, true).map((l) => l.other.id));
+    const arrived = viaStaff.nodes.filter((n) =>
+        n.kind === 'facility' && !direct.has(n.id) && n.id !== hub.id);
+    check(arrived.length > 2, 'too few programmes arrived indirectly to test the ownership rule');
+    let unowned = 0;
+    arrived.forEach((n) => {
+        const owns = store.neighbours(n.id, true)
+            .filter((l) => l.other.kind === 'parent' && l.edge.category === 'corporate');
+        if (owns.length && !owns.some((l) => viaStaff.nodeIds[l.other.id])) unowned++;
+    });
+    check(unowned === 0,
+        unowned + ' programmes are on screen with a recorded owner that is not',
+        'all ' + arrived.length + ' programmes that arrived indirectly show who owned them');
+
+    /* But an owner brings only itself. Two facilities owned by the same
+     * company are not each other's business; somebody who worked at both
+     * is, and that is the only thing that puts a second one on screen. */
+    let sisters = 0;
+    owners.forEach((l) => {
+        store.neighbours(l.other.id, true).forEach((sib) => {
+            if (sib.other.id === facility.id) return;
+            if (sib.other.kind !== 'facility') return;
+            if (!owned.nodeIds[sib.other.id]) return;
+            /* Allowed only if a person on screen worked at both. */
+            const shared = store.neighbours(sib.other.id, true).some((s) =>
+                s.other.kind === 'person' && owned.nodeIds[s.other.id] &&
+                store.neighbours(s.other.id, true).some((t) => t.other.id === facility.id));
+            if (!shared) sisters++;
+        });
+    });
+    check(sisters === 0,
+        sisters + ' sister facilities came along with the owner, without a shared member of staff',
+        'opening a facility brings its owner and no sister facilities');
+
+    focus.clear();
+    flushFrames();
+    focus.select(store.node('wwasps'));
+    flushFrames();
+
     /* Rows are staggered like brickwork, so a node sits diagonally between
      * its neighbours above and below rather than directly under one. */
     const rowsAt = new Map();
@@ -995,6 +1094,12 @@ function run() {
         if (node && node.kind === 'person') {
             store.neighbours(id, true).forEach((l) => expected.add(l.other.id));
         }
+    });
+    /* ...and whoever owned any of it, one step up. */
+    [...expected].forEach((id) => {
+        store.neighbours(id, true).forEach((l) => {
+            if (l.other.kind === 'parent' && l.edge.category === 'corporate') expected.add(l.other.id);
+        });
     });
     /* ...minus whatever that left stranded. */
     [...expected].forEach((id) => {

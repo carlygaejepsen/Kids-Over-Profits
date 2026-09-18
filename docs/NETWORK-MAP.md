@@ -180,6 +180,31 @@ are the cheap case to do this for, median degree two and most of them seven
 or under, but a rule that walked outwards without a stop would not stay
 cheap.
 
+**Whoever owned it is never left off, and brings only itself.** Ownership
+is the question this map exists to answer, so a programme on screen without
+the company behind it is the one gap worth closing automatically. One step
+only - the company that owned this place, not the company that owned that
+company and so on, which walks Provo Canyon School up through ten
+organisations and buries the question that was asked. And owners only, never
+their other holdings: two facilities owned by the same company are not each
+other's business, and the only thing that puts a second one on screen beside
+the first is somebody who worked at both.
+
+The rule applies to what was asked for, not to the organisations the map
+opened with. Letting the background expand too turned a click on Casa Grande
+Academy into nineteen parent companies and one facility.
+
+**Second-degree connections branch outwards.** Each node takes the free cell
+nearest whatever revealed it, so a node two steps out sits beside its parent
+rather than wherever the next ring happened to have room - which was often
+the far side of the board, with its trace wrapping back across the middle
+over everything else. Filling cells in ring order alone left 17% of
+second-degree nodes closer to the centre than the node they hang off; taking
+the nearest free cell to the parent leaves none. There is also a heavy cost
+on any cell closer to the middle than the parent, which measures as
+redundant today and is kept because the rule should be stated rather than
+left to emerge from the cell ordering.
+
 **Opening something hides whatever it does not reach.** Once a node is
 open, the map is about that node. The organisations it opened with have no
 bearing on the question being asked unless they turn out to connect to it,

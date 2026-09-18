@@ -56,6 +56,10 @@
     var LABEL_HALF_PER_CHAR = LABEL_CHAR_WIDTH / 2;
     /* Clear space between one column's names and the next. */
     var COLUMN_GUTTER = 26;
+    /* What a cell costs when it sits closer to the middle of the board than
+     * the node that revealed it. Large enough to be a rule rather than a
+     * preference, finite so that a crowded board still places everything. */
+    var INWARD_PENALTY = 100000;
     /* Height of the label that hangs under a node. */
     var LABEL_ROOM = 18;
 
@@ -157,18 +161,18 @@
          * every name after that arrived because someone went looking for it.
          */
         function visibleIds() {
-            var ids = Object.create(null);
             var live = store.visible().nodeIds;
 
-            store.seeds().forEach(function (node) {
-                if (live[node.id]) ids[node.id] = true;
-            });
-
+            /* What the visitor actually asked for: everything opened, and
+             * everyone those touch. The organisations the map opened with
+             * are added at the end, because the rules below are about the
+             * question being asked and not about the background. */
+            var asked = Object.create(null);
             chain.forEach(function (id) {
                 if (!live[id]) return;
-                ids[id] = true;
+                asked[id] = true;
                 store.neighbours(id, true).forEach(function (link) {
-                    ids[link.other.id] = true;
+                    asked[link.other.id] = true;
                 });
             });
 
@@ -180,19 +184,49 @@
              * it hides exactly that. So when a person surfaces, everywhere
              * they connect to surfaces with them.
              *
+             * This is also the only thing that puts a second programme on
+             * screen beside the first. Two facilities owned by the same
+             * company are not each other's business; somebody who worked at
+             * both is.
+             *
              * Object.keys takes a snapshot, so this opens people out by one
              * step and stops: a person reached through another person's
              * expansion does not expand in turn. People are the cheap case to
              * do this for - median degree two, most seven - but a rule that
              * walked outwards without a stop would not stay cheap. */
-            Object.keys(ids).forEach(function (id) {
+            Object.keys(asked).forEach(function (id) {
                 var node = store.node(id);
                 if (!node || node.kind !== 'person') return;
                 store.neighbours(id, true).forEach(function (link) {
-                    ids[link.other.id] = true;
+                    asked[link.other.id] = true;
                 });
             });
 
+            /* Whoever owned it is never left off. Ownership is the question
+             * this map exists to answer, so a programme on screen without the
+             * company behind it is the one gap worth closing automatically.
+             *
+             * One step only: the company that owned this place, not the
+             * company that owned that company and so on - Provo Canyon School
+             * walks up through ten organisations if you let it, which answers
+             * a question nobody asked and buries the one they did. And owners
+             * only, never their other holdings: a company's remaining
+             * programmes are its business with them, not this facility's. */
+            Object.keys(asked).forEach(function (id) {
+                store.neighbours(id, true).forEach(function (link) {
+                    if (link.other.kind !== 'parent') return;
+                    if (link.edge.category !== 'corporate') return;
+                    asked[link.other.id] = true;
+                });
+            });
+
+            var ids = Object.create(null);
+            store.seeds().forEach(function (node) {
+                if (live[node.id]) ids[node.id] = true;
+            });
+            Object.keys(asked).forEach(function (id) {
+                if (live[id]) ids[id] = true;
+            });
             return ids;
         }
 
@@ -619,7 +653,7 @@
             var seen = Object.create(null);
             var order = [];
             var ring = roots.filter(function (id) { return byId[id] && !seen[id]; })
-                .map(function (id) { seen[id] = true; return byId[id]; });
+                .map(function (id) { seen[id] = true; return { node: byId[id], parent: null }; });
 
             /* Nothing was opened, so start from the best connected thing on
              * screen and let the rest fall out around it. */
@@ -628,25 +662,30 @@
                     return (adjacent[b.id].length - adjacent[a.id].length);
                 })[0];
                 seen[best.id] = true;
-                ring = [best];
+                ring = [{ node: best, parent: null }];
             }
 
             while (ring.length) {
-                ring.sort(byAngle);
+                ring.sort(function (a, b) { return byAngle(a.node, b.node); });
                 order = order.concat(ring);
                 var next = [];
-                ring.forEach(function (node) {
-                    adjacent[node.id].forEach(function (id) {
+                ring.forEach(function (entry) {
+                    adjacent[entry.node.id].forEach(function (id) {
                         if (seen[id] || !byId[id]) return;
                         seen[id] = true;
-                        next.push(byId[id]);
+                        /* Remembered so the node can be placed outwards from
+                         * whatever revealed it rather than anywhere in the
+                         * next ring. */
+                        next.push({ node: byId[id], parent: entry.node.id });
                     });
                 });
                 ring = next;
             }
 
             /* Anything the connections never reached. */
-            points.forEach(function (p) { if (!seen[p.id]) order.push(p); });
+            points.forEach(function (p) {
+                if (!seen[p.id]) order.push({ node: p, parent: null });
+            });
             return order;
         }
 
@@ -739,10 +778,49 @@
              * Within a ring the settled layout still decides the order, by
              * angle about the centre, so things that sit near each other in
              * the force layout stay near each other here. */
+            /* Each node takes the free cell nearest whatever revealed it,
+             * and pays a heavy price for one closer to the middle than its
+             * parent.
+             *
+             * Filling the cells in ring order alone put a second-degree node
+             * wherever the next shell happened to have room - often on the
+             * far side of the board from the node it hangs off - so its trace
+             * wrapped back across the middle, over everything else, to reach
+             * a parent it should have been sitting beside. Branching outwards
+             * is not decoration: a line that travels away from the centre is
+             * one the eye can follow, and a line that doubles back is one it
+             * has to untangle.
+             */
             var order = ringOrder(points, roots, links);
-            for (var i = 0; i < order.length && i < cells.length; i++) {
-                order[i].x = cells[i].x;
-                order[i].y = cells[i].y;
+            var taken = [];
+            var cellOf = Object.create(null);
+
+            for (var i = 0; i < order.length; i++) {
+                var entry = order[i];
+                var parentCell = entry.parent ? cellOf[entry.parent] : null;
+                var best = -1;
+                var bestCost = Infinity;
+
+                for (var c = 0; c < cells.length; c++) {
+                    if (taken[c]) continue;
+                    var cell = cells[c];
+                    var cost;
+                    if (!parentCell) {
+                        /* Nothing revealed this one, so it belongs as near the
+                         * middle as there is room for. */
+                        cost = cell.d;
+                    } else {
+                        cost = Math.hypot(cell.x - parentCell.x, cell.y - parentCell.y);
+                        if (cell.d < parentCell.d - 0.01) cost += INWARD_PENALTY;
+                    }
+                    if (cost < bestCost) { bestCost = cost; best = c; }
+                }
+
+                if (best < 0) break;
+                taken[best] = true;
+                cellOf[entry.node.id] = cells[best];
+                entry.node.x = cells[best].x;
+                entry.node.y = cells[best].y;
             }
 
             /* A name wider than its cell hangs over the edges of it. That is
