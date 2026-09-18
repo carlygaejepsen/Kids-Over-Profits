@@ -6,16 +6,19 @@ them, and the trade groups that accredited them. Built from the project's
 Miro board export.
 
 This document is the working plan. Phase 1 is done. Phase 2 is planned below
-in detail. Phases 3 and 4 are outlined at the end.
+in detail. The fix list raised on 2026-09-17 is reconciled against what has
+been built in its own section before Phase 3. Phases 3 and 4 are outlined
+at the end.
 
 ## Status
 
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, hover and focus chain, filters, search, drawer, URL state, mobile | In progress, step 5 of 8 done |
-| 3 | Analysis tools: Focus, Path, list view with CSV export, corrections | Outlined |
-| 4 | Integration: facility page embed, admin CSV re-import | Outlined |
+| 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 5 done plus the board layout and traces (2026-09-18); step 6 (search, drawer, URL state) not started |
+| 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Open, itemised below |
+| 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Outlined |
+| 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
 ## Phase 1 recap
 
@@ -707,9 +710,16 @@ Each step leaves the branch deployable.
 5. Filters, legend, colour modes. The slider's output reads "any" at zero
    and the number above it; the template prints that initial state, so the
    wiring has to keep it. **Done.**
-6. Search, drawer, URL state.
+   - 5b. The opening view, the board layout (bands, packed rows, routed
+     traces, every name drawn), the three rules for what is on the board,
+     Focus/Expand, labels as hit targets, the rail closed by default.
+     **Done**, commits 52b0ab6 through 89a9940.
+6. Search, drawer, URL state. **Not started**: the search box in the
+   template is inert and nothing on the page links to a facility profile
+   yet, though the config already carries the URL map.
 7. Mobile breakpoints, keyboard, reduced motion, module tests.
-8. Chain hulls, if they fit.
+8. Chain hulls, if they fit. Probably superseded by the band layout, which
+   already groups by kind.
 
 Deploy notes: `inc/` deploys last, and the new `js/vendor` and
 `js/network-map` directories need confirming in the first deploy since the
@@ -724,22 +734,228 @@ cPanel job has been flaky about new paths.
   honest, but they could be hidden from the filter entirely.
 - **Hulls in Phase 2 or Phase 3.** They are the one visual that costs real
   time, and the map reads fine without them.
-- **Escape on a deep trail.** It returns to the whole map from any depth, as
-  planned, so six steps of research are one keystroke from gone and there is
-  no undo. Stepping back one crumb would be safer and is one line; it would
-  also mean Escape no longer matches the Whole map button beside it. Worth
-  deciding once someone has walked a long chain and found out which is more
-  annoying.
+- **Escape on a deep trail.** It returns to the opening view from any
+  depth, as planned, so six steps of research are one keystroke from gone
+  and there is no undo. Stepping back one crumb would be safer and is one
+  line; it would also mean Escape no longer matches the Whole map button
+  beside it. Worth deciding once someone has walked a long chain and found
+  out which is more annoying.
+- **"No off-screen neighbours" against "an owner brings only itself".**
+  The fix list asks that a node on screen never has connections off
+  screen: everything it touches is pulled into the frame. The board rules
+  built in 5b deliberately stop short of that in one place: a company
+  brought on as an owner does not bring its other holdings, because two
+  facilities under the same owner are not each other's business. People
+  already open out fully, which is what the David Gilcrease report was
+  about (see 2b.1). The remaining gap is facilities and companies at the
+  edge of the board, whose unopened connections are not drawn. Either the
+  sisters rule goes, and a click on a UHS facility brings every UHS
+  programme, or the edge nodes get an unopened-connections mark. The list
+  says the former; decide with a UHS view on screen.
+
+## Phase 2b: the fix list of 2026-09-17
+
+Items from the site-wide fix list that concern the map, checked against
+the branch on 2026-09-18. "Done" means a commit already covers it; the rest
+are open with the files involved.
+
+### Already covered by 5b
+
+- **Every visible node labelled.** The degree threshold is gone and every
+  name is drawn; the band layout packs rows by label width so names fit.
+  What remains: a label can still be dropped where two collide at a small
+  stage size. The rule the list asks for is *never*, so the fallback should
+  be a second placement (above, right, left) rather than a drop, and the
+  fit should widen the block instead of letting a name go. Verify at 375 px.
+- **Use all the visible space.** Rows pack at the stage width and shallow
+  views are repacked to the stage's shape. Verify one case the list named:
+  unchecking a kind or a status on the *opening* view. `app.refresh` only
+  re-lays out when a chain exists, so hidden nodes may leave gaps there.
+- **Circuit-board look.** The grid, gutters, routed traces, clear rings and
+  halos are in. Left for a style pass: a faint dot grid on the surface,
+  pad-style rings on nodes, junction dots where a trace meets a pad.
+- **Focus and Expand modes.** Built as a toolbar switch. Focus shows the
+  last thing clicked; Expand accumulates.
+- **Brown Schools and CEDU on top of each other.** Caused by the force
+  settle packing two wide-labelled hubs 52 units apart. The band layout
+  gives each a cell of its own, and ownership ordering puts The Brown
+  Schools in a row above CEDU (e1188, acquirer). Confirm on screen and
+  close.
+- **Toggles taking too much space.** The rail now starts closed at every
+  width. The trail and toolbar are still open (2b.9).
+
+### 2b.1 David Gilcrease shows two connections, not five
+
+The data is right: `graph.json` carries e0204 (Jeannie Courtney, family),
+e0264 (LifeSpring, staff), e0718 (Cross Creek, leadership), e0733 (WWASPS,
+staff) and e0734 (Resource Realizations, unknown). The two that showed are
+exactly the two `crosses_network=True` edges, which is also exactly what
+the "Only connections that cross board groups" toggle leaves visible.
+
+Since the report, 52b0ab6 opens every person out by one step, so Gilcrease
+surfacing anywhere now brings all five. Two checks before closing:
+reproduce on the deployed build with the cross-group toggle off, and add a
+module test that opens Jeannie Courtney and asserts all five Gilcrease
+edges are in the scene. If it still shows two, the toggle is the cause
+and `resetFilters` needs to clear it.
+
+The wider rule the list states, that nothing on screen has connections off
+screen, is the open decision above. Files: `js/network-map/focus.js`
+(`visibleIds`), `store.js`, `scripts/test-network-modules.js`.
+
+### 2b.2 Search
+
+Step 6, unbuilt. `search.js`: prefix, then word-start, then substring over
+name and aliases; eight results in the ARIA listbox the template already
+prints. On select: if the node is not on the board, push it onto the chain
+(`focus.select`) so it arrives with its connections; then frame the match
+at a zoom no lower than the current one. Enter with several matches opens
+them all and fits them together. Ranking test in the module tests.
+
+### 2b.3 Reset view
+
+`app.js` still binds it to `viewport.fit()` with no arguments, which frames
+whatever the viewport holds at its drawn positions and does nothing about
+the layout. Replace with `focus.reframe()`: re-lay out the current scene
+under the current mode and take the frame from the placed nodes, the same
+path a click takes. Rename the "Whole map" crumb to "Start over": there is
+no whole map any more.
+
+### 2b.4 Clicking a node zooms to it
+
+The band layout puts the clicked node in the centre row and the fit frames
+the block, so in Focus mode this is already true. In Expand mode a long
+trail leaves the last click small. After the layout, frame the head node
+and its own connections unless that would zoom out, and let the rest of
+the board be reachable by pan.
+
+### 2b.5 Rebranded and closed drawn differently
+
+Source status is one string, "closed or rebranded". Derive it in the build:
+a node with an outgoing rebrand edge (`REBRAND_RE`, source became target)
+is `rebranded`; the rest stay `closed`. Add a `statuses` map to
+`network-overrides.json` for corrections. `statusBucket` in `store.js`
+gains `rebranded`; the rail gets a fourth checkbox; the renderer draws
+rebranded hollow with a dashed outline and closed hollow solid; legend row
+added. `identification.pastNames` on the 326 linked facilities can confirm
+rebrands the board does not record.
+
+### 2b.6 Years of operation on every node where known
+
+Only two board rows have dates. `facilities_v2` has `start_year` for 357
+and `end_year` for 218 of 4,679 rows plus `operatingPeriod.yearsOfOperation`
+as text; `wpdl_kop_operators` has `operatingPeriod` for 45 operators. In
+`build-network-graph.js`, for matched nodes take years from the facility
+(columns first, then the text) or the operator, and emit
+`years: "1971-2004"`. The renderer draws a smaller second line under the
+name, and the row packer counts it in the cell height. The QA report lists
+nodes with no years.
+
+### 2b.7 Facilities with reported deaths outlined in red
+
+`memorial_victims` has 230 published rows across 188 program names, keyed
+by free-text `program` with no facility id. Build step: match `program`
+against node names and aliases (and facility names via the facility link),
+count per node, emit `deaths: N`. Unmatched programs go to the QA report;
+`network-overrides.json` gets a `deaths` map for the rest. Renderer: a
+firm red outline (not coral pink, this is a warning mark), a legend row,
+and the drawer shows the count with a link to `/in-loving-memory/`.
+
+### 2b.8 Node links to facility profiles
+
+`KOP_NETWORK_CONFIG.facilityUrls` already maps 326 facility ids to profile
+URLs and nothing reads it. Build `drawer.js` (step 6): name, kind, status,
+years, deaths, profile link or a location-index search otherwise,
+connections grouped by category with each row a button that extends the
+chain. Also a link glyph beside the label of any node with a profile,
+opening it in a new tab; Ctrl-click on the node does the same. The
+directory fallback should be `/location-index/`, not the program index,
+since most facilities are only in the former.
+
+### 2b.9 Toolbar and trail compaction
+
+- The trail becomes a single row of chips along the stage's top edge,
+  middle-truncated past six steps, Start over at the left.
+- The legend moves to a collapsible corner overlay on the stage, closed by
+  default with a one-line summary strip.
+- Toolbar in one row: search, Path, Start from, Focus/Expand, Reset view,
+  Copy link. Colour mode moves into the filter sheet.
+- Stage height becomes `calc(100vh - header)`.
+
+### 2b.10 Starter views
+
+`network-overrides.json` gains `views`: named lists of node names
+(`historical`, `todays-big-players`, `religious`; today's `headline`
+becomes `default`). The build resolves them under `meta.views`. A "Start
+from" select swaps `store.seeds()`; the hash carries the choice. The lists
+themselves need curating by hand.
+
+### 2b.11 Staff movement
+
+There is no standalone document. What exists is the ACF "Staff Movement"
+block (`staff_transfers`, `_2`, `_3`) on the legacy editorial profile
+posts, parsed into came-from / went-on-to sentences by
+`kop_fp_staff_connections()` in `templates/single-facility-profile.php`,
+and seeded for two records (`seeds/provo-canyon-school.json`,
+`seeds/discovery-ranch.json`). Prod holds the block on the other editorial
+posts.
+
+1. A script reads every `staff_transfers*` value from `tmp/prod.sqlite`
+   (postmeta) and the seeds, runs the existing sentence classifier, and
+   writes `js/data/network/staff-movement.csv` (person, from, to, role,
+   year, source post) for review.
+2. `build-network-graph.js` merges the CSV as extra edges with
+   `provenance: "staff-movement"`, resolving names against nodes and
+   aliases; unresolved names go to the QA report.
+3. Longer term, the same sentences migrate into `staff.pastTTIJobs` on the
+   v2 record so the profile and the map read one source.
+
+### 2b.12 Connections from facility profiles
+
+Two structured sources in `tmp/prod.sqlite`:
+
+- `wpdl_kop_operator_facilities` (642 rows: operator, facility,
+  current/past) and `wpdl_kop_operators` (45 operators with founders,
+  parentCompanies, operatingPeriod);
+- `facilities_v2.json_data`: `identification.currentOwners`,
+  `pastOperators`, `otherOperators`, `investors`, `knownReferrers`,
+  `pastNames`; `staff.administrator`, `notableStaff`, `pastTTIJobs`;
+  `provenance.sourceOperator.parentCompanies`.
+
+Build step: for every node with a facility link, and for every operator
+whose name matches a node, add corporate, leadership and referral edges
+where the other end resolves to an existing node or alias. Unresolved
+names go to the QA report. New nodes are not created automatically (the
+board stays the roster) unless an override lists them. Edges carry
+`provenance: "profile"` so the drawer can say where a connection came from.
+
+### Order
+
+1. Close the verifications under "already covered" (labels never dropped,
+   opening-view re-layout, Brown/CEDU) and 2b.1.
+2. 2b.2 search, 2b.8 drawer, then URL state, which finishes step 6.
+3. 2b.3 reset view and 2b.4 click zoom, both on the reframe path.
+4. 2b.5, 2b.6, 2b.7: build-script fields plus their marks, one commit each.
+5. 2b.12 profile connections, then 2b.11 staff movement.
+6. 2b.9 compaction and the remaining circuit-board polish.
+7. 2b.10 starter views, once the lists exist.
+8. Paths (Phase 3).
 
 ## Phase 3: analysis tools (outline)
 
 Focus and Path were the headline items here. Focus became the core Phase 2
-interaction instead, and the chain covers most of what Path was for, so
+interaction instead, and the chain covers some of what Path was for, so
 what is left is:
 
-- **Shortest path between two named nodes**: the chain walks the graph a
-  hop at a time, which answers "how is A connected to B" only if you
-  already suspect the route. Pick both ends, let the graph find it.
+- **Shortest path and all paths between two named nodes**: the chain
+  walks the graph a hop at a time, which answers "how is A connected to B"
+  only if you already suspect the route. `store.paths(fromId, toId,
+  {max})` in the DOM-free store: BFS for the shortest, bounded DFS (six
+  hops, fifty results) for all simple paths, over the filtered edge set.
+  UI: a Path button opens two search boxes; the result sets the chain to
+  the path nodes in Focus mode and a list under the breadcrumb offers every
+  found path. Test against the real graph (Gilcrease to Synanon is a good
+  fixture).
 - **List view**: an accessible, sortable table of the same filtered nodes
   and edges, with CSV export. This is the screen-reader path.
 - **Suggest a correction**: reuses `submit-info.js` to write to
@@ -753,5 +969,6 @@ what is left is:
   "See full map" link.
 - Admin CSV re-import through an `api/` endpoint so researchers update the
   board without a git commit.
-- A timeline mode once the dates column is populated. Today only two rows
-  have dates.
+- A timeline mode once years are populated. Today only two board rows have
+  dates; 2b.6 fills in several hundred from the facility and operator
+  records, which is enough to start.
