@@ -23,6 +23,8 @@
 
     var titleInput = dialog.querySelector('.kop-rl-input-title');
     var descInput = dialog.querySelector('.kop-rl-input-desc');
+    var tierInput = dialog.querySelector('.kop-rl-input-relevance');
+    var whyInput = dialog.querySelector('.kop-rl-input-why');
     var preview = dialog.querySelector('.kop-rl-photo-preview');
     var message = dialog.querySelector('.kop-rl-form-msg');
     var saveButton = dialog.querySelector('.kop-rl-save');
@@ -57,7 +59,11 @@
     function cardFields(card) {
         return {
             titleLink: card.querySelector('.kop-rl-title a'),
+            title: card.querySelector('.kop-rl-title'),
             desc: card.querySelector('.kop-rl-desc'),
+            why: card.querySelector('.kop-rl-why'),
+            tier: card.querySelector('.kop-rl-tier'),
+            body: card.querySelector('.kop-rl-body'),
             image: card.querySelector('.kop-rl-cover img'),
             cover: card.querySelector('.kop-rl-cover')
         };
@@ -68,8 +74,12 @@
         coverId = parseInt(card.getAttribute('data-cover-id'), 10) || 0;
 
         var fields = cardFields(card);
-        titleInput.value = fields.titleLink ? fields.titleLink.textContent.trim() : '';
+        // A card with nothing to link to prints its title as plain text.
+        var titleNode = fields.titleLink || fields.title;
+        titleInput.value = titleNode ? titleNode.textContent.trim() : '';
         descInput.value = fields.desc ? fields.desc.textContent.trim() : '';
+        tierInput.value = card.getAttribute('data-relevance') || '0';
+        whyInput.value = fields.why ? fields.why.textContent.trim() : '';
         preview.src = fields.image ? fields.image.getAttribute('src') : '';
         preview.style.visibility = preview.src ? 'visible' : 'hidden';
 
@@ -135,7 +145,9 @@
                 key: current.getAttribute('data-key'),
                 title: title,
                 description: descInput.value.trim(),
-                cover_id: coverId
+                cover_id: coverId,
+                relevance: parseInt(tierInput.value, 10) || 0,
+                relevance_note: whyInput.value.trim()
             })
         }).then(function (response) {
             return response.json().then(function (body) {
@@ -158,6 +170,8 @@
 
         if (fields.titleLink) {
             fields.titleLink.textContent = body.title;
+        } else if (fields.title) {
+            fields.title.textContent = body.title;
         }
         if (fields.desc) {
             fields.desc.textContent = body.description || '';
@@ -168,6 +182,32 @@
             }
         }
         card.setAttribute('data-cover-id', body.cover_id || 0);
+        card.setAttribute('data-relevance', body.relevance || 0);
+        card.setAttribute('data-title', body.title);
+
+        if (fields.why) {
+            fields.why.textContent = body.relevance_note || '';
+            if (body.relevance_note) {
+                fields.why.removeAttribute('hidden');
+            } else {
+                fields.why.setAttribute('hidden', 'hidden');
+            }
+        }
+
+        // The tier badge may need creating: an unrated card has none.
+        if (fields.tier && !body.relevance) {
+            fields.tier.remove();
+        } else if (body.relevance) {
+            var badge = fields.tier;
+            if (!badge && fields.body) {
+                badge = document.createElement('span');
+                fields.body.insertBefore(badge, fields.body.firstChild);
+            }
+            if (badge) {
+                badge.className = 'kop-rl-tier kop-rl-tier-' + body.relevance;
+                badge.textContent = body.relevance_label || '';
+            }
+        }
 
         if (body.cover) {
             if (fields.image) {

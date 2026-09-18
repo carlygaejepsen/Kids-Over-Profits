@@ -46,6 +46,38 @@ if (!defined('KOP_RESEARCH_EXTERNAL_OPTION')) {
 }
 
 /**
+ * How much a document matters to somebody arriving with no background, as a
+ * tier, plus one line saying why. Both are editorial: nothing infers them.
+ * Attachment meta; the entries with no attachment keep theirs in the external
+ * overrides option alongside their title.
+ */
+if (!defined('KOP_RESEARCH_RELEVANCE_META')) {
+    define('KOP_RESEARCH_RELEVANCE_META', 'kop_research_relevance');
+}
+if (!defined('KOP_RESEARCH_RELEVANCE_NOTE_META')) {
+    define('KOP_RESEARCH_RELEVANCE_NOTE_META', 'kop_research_relevance_note');
+}
+
+/**
+ * Tier => badge text. Tier 1 is the highest; an unrated document is 0 and
+ * sorts after every rated one. Filter to rename a tier, not to add one: the
+ * editor dialog and the sort control are built from this list.
+ */
+function kop_research_relevance_tiers() {
+    return apply_filters('kop_research_relevance_tiers', array(
+        1 => 'Start here',
+        2 => 'Important',
+        3 => 'Background',
+    ));
+}
+
+/** A tier that exists, or 0. */
+function kop_research_clean_tier($value) {
+    $tier = (int) $value;
+    return isset(kop_research_relevance_tiers()[$tier]) ? $tier : 0;
+}
+
+/**
  * FileBird folders feeding the library: folder id => kind label shown on the
  * card badge. Filter 'kop_research_library_folders' to add a folder.
  */
@@ -66,6 +98,9 @@ function kop_research_library_folders() {
  *   year          - sorts the card and prints in the meta line
  *   summary       - page ID or URL on this site holding notes and key points
  *   summary_label - link text for that page
+ *   relevance     - tier 1 to 3 (kop_research_relevance_tiers), 0 or absent
+ *                   means unrated; drives the default sort
+ *   relevance_note - one line on why it matters, printed under the byline
  *
  * The first block is the eleven cards from the page's original grid.
  */
@@ -498,6 +533,16 @@ function kop_research_library_items() {
 
             // Nothing to link to and no summary page: the card would be dead.
             // Editors still see it, flagged, so the file can be restored.
+            // Relevance: what an editor set on the document wins over the seed.
+            $tier = kop_research_clean_tier(get_post_meta($attachment->ID, KOP_RESEARCH_RELEVANCE_META, true));
+            if (!$tier && isset($override['relevance'])) {
+                $tier = kop_research_clean_tier($override['relevance']);
+            }
+            $why = trim((string) get_post_meta($attachment->ID, KOP_RESEARCH_RELEVANCE_NOTE_META, true));
+            if ($why === '' && isset($override['relevance_note'])) {
+                $why = trim((string) $override['relevance_note']);
+            }
+
             $has_summary = isset($override['summary']);
             if ($missing && !$has_summary && !current_user_can(KOP_RESEARCH_CAP)) {
                 continue;
@@ -521,6 +566,8 @@ function kop_research_library_items() {
                 'source_id'     => $source_id,
                 'summary_url'   => isset($override['summary']) ? kop_research_summary_url($override['summary']) : '',
                 'summary_label' => isset($override['summary_label']) ? $override['summary_label'] : 'Notes, quotes and key points',
+                'relevance'      => $tier,
+                'relevance_note' => $why,
             );
         }
     }
@@ -549,17 +596,33 @@ function kop_research_library_items() {
             'cover_id'      => $cover_id,
             'summary_url'   => isset($entry['summary']) ? kop_research_summary_url($entry['summary']) : '',
             'summary_label' => isset($entry['summary_label']) ? $entry['summary_label'] : 'Notes, quotes and key points',
+            'relevance'      => kop_research_clean_tier(isset($edit['relevance']) ? $edit['relevance'] : (isset($entry['relevance']) ? $entry['relevance'] : 0)),
+            'relevance_note' => trim((string) (isset($edit['relevance_note']) ? $edit['relevance_note'] : (isset($entry['relevance_note']) ? $entry['relevance_note'] : ''))),
         );
     }
 
-    usort($items, function ($a, $b) {
-        if ($a['year'] !== $b['year']) {
-            return $b['year'] - $a['year'];   // newest first, undated last
-        }
-        return strcasecmp($a['title'], $b['title']);
-    });
+    // Most relevant first: rated documents by tier, then newest, then by title.
+    // Unrated sorts last, so before anything is rated this is the old order.
+    usort($items, 'kop_research_compare_by_relevance');
 
     return $items;
+}
+
+/**
+ * Sort order "Most relevant": tier 1 to 3, unrated last, then newest first
+ * with undated last, then by title. The same three keys the sort control on
+ * the page reorders by, so JavaScript and PHP agree.
+ */
+function kop_research_compare_by_relevance($a, $b) {
+    $ta = $a['relevance'] ? $a['relevance'] : PHP_INT_MAX;
+    $tb = $b['relevance'] ? $b['relevance'] : PHP_INT_MAX;
+    if ($ta !== $tb) {
+        return $ta < $tb ? -1 : 1;
+    }
+    if ($a['year'] !== $b['year']) {
+        return $b['year'] - $a['year'];
+    }
+    return strcasecmp($a['title'], $b['title']);
 }
 
 /**
@@ -571,6 +634,7 @@ function kop_hub_module_research() {
         return;
     }
     $can_edit = current_user_can(KOP_RESEARCH_CAP);
+    $kop_rl_tiers = kop_research_relevance_tiers();
     ?>
     <section class="kop-hub-module kop-research-library<?php echo $can_edit ? ' kop-rl-editable' : ''; ?>" aria-label="Research and reports library">
         <h2 class="kop-hub-h">Reports, studies and records
@@ -579,6 +643,19 @@ function kop_hub_module_research() {
                 <button type="button" class="kop-rl-edit-toggle" aria-pressed="false">Edit entries</button>
             <?php endif; ?>
         </h2>
+        <?php
+        // js/research-library.js reorders the cards from their data attributes
+        // and unhides this. Without JavaScript the grid keeps the PHP order
+        // (most relevant first) and no dead control shows.
+        ?>
+        <div class="kop-rl-sort" hidden>
+            <label for="kop-rl-sort-by">Sort by</label>
+            <select id="kop-rl-sort-by" class="kop-rl-sort-by">
+                <option value="relevance">Most relevant</option>
+                <option value="year">Newest</option>
+                <option value="title">A to Z</option>
+            </select>
+        </div>
         <ul class="kop-rl-grid">
             <?php
             foreach ($items as $item) :
@@ -611,7 +688,9 @@ function kop_hub_module_research() {
                     return trim($base . ($is_doc ? ' kop-rl-doc nofancybox' : ''));
                 };
                 ?>
-                <li class="kop-rl-card" data-key="<?php echo esc_attr($item['key']); ?>" data-cover-id="<?php echo (int) $item['cover_id']; ?>">
+                <li class="kop-rl-card" data-key="<?php echo esc_attr($item['key']); ?>" data-cover-id="<?php echo (int) $item['cover_id']; ?>"
+                    data-relevance="<?php echo (int) $item['relevance']; ?>" data-year="<?php echo (int) $item['year']; ?>"
+                    data-title="<?php echo esc_attr($item['title']); ?>">
                     <?php // With nothing to link to, the cover is a plain box. ?>
                     <<?php echo $primary === '' ? 'span' : 'a'; ?> class="<?php echo esc_attr($cls('kop-rl-cover', $primary_doc)); ?>"<?php
                         if ($primary !== '') {
@@ -634,6 +713,11 @@ function kop_hub_module_research() {
                         </button>
                     <?php endif; ?>
                     <div class="kop-rl-body">
+                        <?php if ($item['relevance']) : ?>
+                            <span class="kop-rl-tier kop-rl-tier-<?php echo (int) $item['relevance']; ?>"><?php
+                                echo esc_html($kop_rl_tiers[$item['relevance']]);
+                            ?></span>
+                        <?php endif; ?>
                         <?php if ($meta) : ?>
                             <span class="kop-rl-kind"><?php echo esc_html(implode(' / ', $meta)); ?></span>
                         <?php endif; ?>
@@ -650,6 +734,7 @@ function kop_hub_module_research() {
                         <?php if ($item['byline'] !== '') : ?>
                             <p class="kop-rl-byline"><?php echo esc_html($item['byline']); ?></p>
                         <?php endif; ?>
+                        <p class="kop-rl-why"<?php echo $item['relevance_note'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['relevance_note']); ?></p>
                         <p class="kop-rl-desc"<?php echo $item['description'] === '' ? ' hidden' : ''; ?>><?php echo esc_html($item['description']); ?></p>
                         <?php if ($item['summary_url'] !== '' || empty($item['missing'])) : ?>
                         <p class="kop-rl-links">
@@ -700,6 +785,24 @@ function kop_research_render_editor_dialog() {
                 <span>Description</span>
                 <textarea name="description" class="kop-rl-input-desc" rows="4" maxlength="2000"
                           placeholder="A sentence or two about what this document says. Plain text."></textarea>
+            </label>
+
+            <label class="kop-rl-field">
+                <span>Relevance</span>
+                <select name="relevance" class="kop-rl-input-relevance">
+                    <option value="0">Unrated</option>
+                    <?php foreach (kop_research_relevance_tiers() as $kop_rl_tier => $kop_rl_label) : ?>
+                        <option value="<?php echo (int) $kop_rl_tier; ?>"><?php
+                            printf('Tier %d - %s', (int) $kop_rl_tier, esc_html($kop_rl_label));
+                        ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+
+            <label class="kop-rl-field">
+                <span>Why it matters</span>
+                <input type="text" name="relevance_note" class="kop-rl-input-why" maxlength="200"
+                       placeholder="One line, shown under the byline.">
             </label>
 
             <div class="kop-rl-field">
@@ -754,6 +857,16 @@ function kop_research_enqueue_doc_modal() {
             true
         );
     }
+    // The sort control, for everyone: it only reorders what is already here.
+    if (file_exists($dir . '/js/research-library.js')) {
+        wp_enqueue_script(
+            'kop-research-library',
+            $uri . '/js/research-library.js',
+            array(),
+            filemtime($dir . '/js/research-library.js'),
+            true
+        );
+    }
 }
 add_action('wp_enqueue_scripts', 'kop_research_enqueue_doc_modal');
 
@@ -787,7 +900,8 @@ add_action('wp_enqueue_scripts', 'kop_research_enqueue_editor');
 /**
  * POST kop/v1/research-entry
  *
- * Body: key ("att:<id>" or "ext:<slug>"), title, description, cover_id.
+ * Body: key ("att:<id>" or "ext:<slug>"), title, description, cover_id,
+ * relevance (0 to 3) and relevance_note.
  * cover_id 0 clears the override so the card falls back to the document's own
  * generated first page.
  */
@@ -826,6 +940,18 @@ function kop_research_register_rest() {
                     'default'           => 0,
                     'sanitize_callback' => 'absint',
                 ),
+                'relevance' => array(
+                    'required'          => false,
+                    'type'              => 'integer',
+                    'default'           => 0,
+                    'sanitize_callback' => 'absint',
+                ),
+                'relevance_note' => array(
+                    'required'          => false,
+                    'type'              => 'string',
+                    'default'           => '',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
             ),
         )
     );
@@ -838,6 +964,8 @@ function kop_research_save_entry($request) {
     $title       = trim((string) $request->get_param('title'));
     $description = trim((string) $request->get_param('description'));
     $cover_id    = (int) $request->get_param('cover_id');
+    $relevance   = kop_research_clean_tier($request->get_param('relevance'));
+    $why         = trim((string) $request->get_param('relevance_note'));
 
     if ($title === '') {
         return new WP_Error('kop_research_title', 'A title is required.', array('status' => 400));
@@ -865,6 +993,18 @@ function kop_research_save_entry($request) {
         } else {
             delete_post_meta($id, 'kop_cover_image_id');
         }
+        // Unrated and an empty line delete the meta, so the seed map (if it
+        // carries one for this document) comes back.
+        if ($relevance) {
+            update_post_meta($id, KOP_RESEARCH_RELEVANCE_META, $relevance);
+        } else {
+            delete_post_meta($id, KOP_RESEARCH_RELEVANCE_META);
+        }
+        if ($why !== '') {
+            update_post_meta($id, KOP_RESEARCH_RELEVANCE_NOTE_META, $why);
+        } else {
+            delete_post_meta($id, KOP_RESEARCH_RELEVANCE_NOTE_META);
+        }
         // Marks the attachment's own fields as authoritative from now on.
         update_post_meta($id, KOP_RESEARCH_EDITED_META, current_time('mysql'));
 
@@ -881,9 +1021,11 @@ function kop_research_save_entry($request) {
 
         $edits      = kop_research_external_edits();
         $edits[$id] = array(
-            'title'       => $title,
-            'description' => $description,
-            'cover_id'    => $cover_id,
+            'title'          => $title,
+            'description'    => $description,
+            'cover_id'       => $cover_id,
+            'relevance'      => $relevance,
+            'relevance_note' => $why,
         );
         update_option(KOP_RESEARCH_EXTERNAL_OPTION, $edits, false);
 
@@ -897,13 +1039,18 @@ function kop_research_save_entry($request) {
     // the next render rebuilds against what was just saved.
     delete_transient('kop_hidden_preview_ids');
 
+    $tiers = kop_research_relevance_tiers();
+
     return rest_ensure_response(array(
-        'ok'          => true,
-        'key'         => $key,
-        'title'       => $title,
-        'description' => $description,
-        'cover_id'    => $cover_id,
-        'cover'       => $cover ? $cover : '',
+        'ok'             => true,
+        'key'            => $key,
+        'title'          => $title,
+        'description'    => $description,
+        'cover_id'       => $cover_id,
+        'cover'          => $cover ? $cover : '',
+        'relevance'      => $relevance,
+        'relevance_label' => $relevance ? $tiers[$relevance] : '',
+        'relevance_note' => $why,
     ));
 }
 

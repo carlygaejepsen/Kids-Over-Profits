@@ -40,12 +40,30 @@ and 25 (Government). Cards carry title, byline, year, kind, cover and
 optional summary link. There is no relevance field and no sort other than
 year then title, and nothing links a document to a facility.
 
-**2A. Relevance.**
-Add `relevance` to the per-document override map and to the editor
-dialog, stored as attachment meta `kop_research_relevance`: a 1 to 3 tier
-plus a one-line "why it matters" shown under the byline. Sort control on
-the page: Most relevant / Newest / A to Z. Tier drives the sort; the line
-is editorial.
+**2A. Relevance.** Done. A document carries a tier (1 "Start here",
+2 "Important", 3 "Background", from `kop_research_relevance_tiers()`) and a
+one-line "why it matters", both editorial and both optional: attachment
+meta `kop_research_relevance` and `kop_research_relevance_note`, or the
+`relevance` / `relevance_note` keys of the seed override map, or the
+external overrides option for the four entries with no file. The card face
+shows the tier as a pill above the kind line and the line under the byline;
+the editor dialog gained a tier select and a one-line field, and
+`kop/v1/research-entry` takes both (unrated or an empty line deletes the
+meta, so a seed value comes back).
+
+The page's default order is now "most relevant": tier, then newest, then
+title, with unrated last, which means the grid reads exactly as it did
+before anything is rated. The sort control offers Most relevant / Newest /
+A to Z; `js/research-library.js` reorders the cards in place from the three
+data attributes each one carries and unhides the control, so a visitor
+without JavaScript sees the PHP order and no dead select.
+
+Nothing is seeded with a tier: which documents matter most is the site
+owner's call, and the UI is there to make it. Covered by
+`scripts/test-research-library.php` (25 checks against WP stubs, including
+that an unrated library keeps the old order) and
+`scripts/test-research-sort.js` (the browser half, asserting the JavaScript
+order matches the PHP one).
 
 **2B. Tag facilities mentioned.**
 New attachment meta `kop_research_facilities` (list of `facilities_v2`

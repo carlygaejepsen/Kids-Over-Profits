@@ -293,6 +293,66 @@
     display: none;
 }
 
+/* Research & Reports: relevance tier and the sort control */
+
+.kop-rl-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.83rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-rl-sort[hidden] {
+    display: none;
+}
+
+.kop-rl-sort select {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.83rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-radius: 4px;
+    background: #fff;
+    color: var(--kop-text-primary, #23263a);
+}
+
+/* The tier sits above the kind line, a border rather than a fill so the
+   brightest accents stay out of the card's background. */
+.kop-rl-tier {
+    align-self: flex-start;
+    margin-bottom: 0.25rem;
+    padding: 0.05rem 0.4rem;
+    border: 1px solid var(--kop-teal, #33a7b5);
+    border-radius: 999px;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-rl-tier-1 {
+    border-color: var(--kop-orange, #ef9034);
+}
+
+.kop-rl-tier-3 {
+    border-color: var(--kop-border-secondary, #d9d3c0);
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-rl-why {
+    margin: 0.3rem 0 0;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    font-style: italic;
+    color: var(--kop-text-primary, #23263a);
+}
+
+.kop-rl-why[hidden] {
+    display: none;
+}
+
 /* Research & Reports: in-place editor (editors only) */
 
 .kop-rl-missing {
@@ -429,6 +489,7 @@
 }
 
 .kop-rl-field input[type="text"],
+.kop-rl-field select,
 .kop-rl-field textarea {
     width: 100%;
     padding: 0.45rem 0.6rem;
