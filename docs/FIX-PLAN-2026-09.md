@@ -107,6 +107,15 @@ is present).
 ## 3. Submission form (`templates/data-form-public.php`)
 
 **3A. Inner collapsed panels are vague.**
+
+Done 2026-09-18. The 25 lines live in `inc/form-help.php`, not in the
+markup: the public form collapses these panels and the admin form lays the
+same ones out flat, so one list is what keeps the two from drifting. The
+line sits between the panel header and its content, which is what makes it
+readable while the panel is still closed. Styles in `css/data-form.css`
+(`.sub-section-help`, and `.section-help` for the admin form's flat
+headings). Nine of the panels exist in the admin form and reuse the same
+wording.
 Sub-sections carry a heading only. Add a one-line help paragraph under
 each `.sub-section-header` (about 25 panels, listed in the agent survey:
 Headquarters, Key Staff, Facility Ownership, Other Names, Known
@@ -119,6 +128,23 @@ in and one example. Mirror the same lines in `data-form-admin.php`.
 Style in `css/data-form.css` near the `.sub-section-*` rules.
 
 **3B. Tooltips for more fields.**
+
+Done 2026-09-18, and the file was in worse shape than the list recorded.
+`js/field-tooltips.js` now covers the materials-on-file checkboxes,
+treatment types, philosophies, critical incidents, and the address,
+operating date and licensing fields: 95 keys, up from 54. The priority was
+jargon a submitter cannot be expected to know, so LGAT, Positive Peer
+Culture, Therapeutic Community, hotseat groups, rebirthing, attachment
+therapy and Law of Attraction now say what they are.
+
+`scripts/test-form-help.js` reads the templates and asserts against them.
+Writing it turned up three faults beyond the duplicate `operator-notes`
+the list already knew about: five tooltips were defined twice, so a
+duplicate key won or lost by position; five more (`capacity`,
+`current-census`, `min-age`, `max-age`, `gender`) were keyed to field ids
+that exist in neither form and had therefore never rendered. Those fields'
+labels carry no `for=`, so they are reached by label text now, as the rest
+of that panel already was.
 `js/field-tooltips.js` covers the operator, consultant, referrer and a
 few facility fields. Extend `FIELD_TOOLTIPS` and `addTooltipToLabel` to
 the location fields, operating dates, accreditation and licensing lists,
@@ -378,5 +404,5 @@ sandbox.
    `docs/NETWORK-MAP.md`.
 4. 7A state-page names, 6 archived links.
 5. 2A and 2B research page.
-6. 3A and 3B form copy (needs writing time).
+6. 3A and 3B form copy. Done 2026-09-18.
 7. 4 inspections hub (done 2026-09-18), 5 resources module (needs content decisions).
