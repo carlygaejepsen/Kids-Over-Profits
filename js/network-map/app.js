@@ -54,7 +54,16 @@
             onHover: function (node) {
                 if (focus) focus.hover(node);
             },
-            onSelect: function (node) {
+            onSelect: function (node, event) {
+                /* Ctrl- or Cmd-click opens the name's profile in a new tab
+                 * instead of the map's own view of it, the way a link would. */
+                if (event && (event.ctrlKey || event.metaKey) && window.KOPNetworkDrawer) {
+                    var profile = window.KOPNetworkDrawer.profileFor(node, CONFIG);
+                    if (profile) {
+                        window.open(profile.url, '_blank', 'noopener');
+                        return;
+                    }
+                }
                 if (focus) focus.select(node);
             },
         });
@@ -68,6 +77,9 @@
             announce: announce,
             onChange: function () {
                 renderChain(app);
+                syncMode(app);
+                if (app.drawer) app.drawer.update();
+                if (app.urlState) app.urlState.write();
                 /* A trail narrows what is on screen, and the legend lists
                  * only what is on screen. */
                 if (filters) filters.renderLegend();
@@ -123,10 +135,42 @@
             app.filters = filters;
         }
 
+        if (window.KOPNetworkDrawer) {
+            app.drawer = window.KOPNetworkDrawer.create({
+                store: store,
+                focus: focus,
+                config: CONFIG,
+                drawer: byId('kop-network-drawer'),
+                body: byId('kop-network-drawer-body'),
+                close: byId('kop-network-drawer-close')
+            });
+        }
+
+        if (window.KOPNetworkSearch) {
+            app.search = window.KOPNetworkSearch.create({
+                store: store,
+                focus: focus,
+                input: byId('kop-network-search'),
+                list: byId('kop-network-search-results'),
+                announce: announce,
+                onPick: function () { canvas.focus(); }
+            });
+        }
+
         store.load(CONFIG).then(function () {
             renderer.useChainIndex(store.chainIndex);
             renderer.resize();
             focus.start();
+
+            /* A shared link or a reload: open the trail the address names.
+             * Created only now, so the first write cannot wipe the hash
+             * before it has been read. */
+            if (window.KOPNetworkUrlState) {
+                app.urlState = window.KOPNetworkUrlState.create({
+                    focus: focus, window: window
+                });
+                if (app.urlState) app.urlState.read();
+            }
 
             if (filters) filters.start();
 
@@ -213,6 +257,16 @@
             }
 
             list.appendChild(item);
+        });
+    }
+
+    /* The mode radios follow the chain: search can switch to expand when it
+     * opens several names at once, and the toggle has to say so. */
+    function syncMode(app) {
+        var current = app.focus.mode();
+        var modes = document.querySelectorAll('input[name="kop-network-mode"]');
+        Array.prototype.forEach.call(modes, function (input) {
+            input.checked = input.value === current;
         });
     }
 

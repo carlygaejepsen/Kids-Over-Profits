@@ -194,6 +194,10 @@ if (!function_exists('kop_network_map_config')) {
             'graphUrl'     => kop_network_map_url('graph.json'),
             'layoutUrl'    => kop_network_map_url('layout.json'),
             'directoryUrl' => $directory,
+            // The memorial, linked from the drawer beside a death count.
+            'memorialUrl'  => function_exists('kop_facility_pages_page_url_by_template')
+                ? kop_facility_pages_page_url_by_template('page-memorial.php', '/memorial/')
+                : home_url('/memorial/'),
             // Facility id => profile URL. Ids absent from this map have no
             // page, so the drawer sends those to a directory search instead.
             'facilityUrls' => (object) kop_network_map_facility_urls(),

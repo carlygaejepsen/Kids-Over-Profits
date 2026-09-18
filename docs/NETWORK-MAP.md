@@ -15,7 +15,7 @@ at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 5 done plus the board layout and traces (2026-09-18); step 6 (search, drawer, URL state) not started |
+| 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 6 done (2026-09-18) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Open, itemised below |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
@@ -784,6 +784,29 @@ are open with the files involved.
   each node's live connections that are not on screen, and the renderer
   draws it as a "+N" pill at the node's upper right; the legend explains the
   pill whenever one is showing. Test added.
+
+### Step 2 closed (2026-09-18): search, drawer, URL state
+
+- **2b.2 Search** (`js/network-map/search.js`). Ranks every name on the map,
+  on screen or not: prefix, then alias prefix, then a later word, then
+  inside a word, ties to the better connected; eight results in the
+  template's listbox, with arrow keys, Enter and Escape. Picking a name runs
+  `focus.select`, so it arrives with its connections. Enter on the typed
+  text opens every match together through `focus.openAll`, which switches to
+  Expand and says so; the mode radios follow.
+- **2b.8 Drawer** (`js/network-map/drawer.js`). Follows the head of the
+  trail: kind, status, years and deaths when the build supplies them,
+  aliases, the facility profile (or a location-index search for a facility
+  with no page; nothing for a person), and every connection grouped by kind,
+  each a button that follows it. Close keeps it shut until the next name.
+  Ctrl- or Cmd-click on a node opens its profile in a new tab. On a phone the
+  drawer is a sheet over the lower half, not the whole screen. The link glyph
+  beside a label was left out: the drawer and Ctrl-click already reach the
+  profile, and a glyph on every linked label crowded the rows.
+- **URL state** (`js/network-map/url-state.js`). `#open=id,id&mode=expand`,
+  written with replaceState on every change and read once the data loads
+  and on hashchange, through `focus.restore`. A name the board no longer has
+  is skipped. `inc/network-map.php` now also hands the page `memorialUrl`.
 
 ### Already covered by 5b
 

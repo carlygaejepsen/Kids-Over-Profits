@@ -502,6 +502,48 @@
             enterFocus();
         };
 
+        /**
+         * Several names at once, side by side: what Enter in the search box
+         * does with more than one match. Focus mode shows one root at a time,
+         * so this switches to expand, where the trail is a union - and says
+         * so, because the toggle the visitor set has just changed under them.
+         */
+        focus.openAll = function (nodes) {
+            var ids = (nodes || []).filter(Boolean).map(function (n) { return n.id; });
+            if (!ids.length) return;
+            if (ids.length === 1) { focus.select(nodes[0]); return; }
+            mode = 'expand';
+            ids.forEach(function (id) {
+                if (chain.indexOf(id) === -1) chain.push(id);
+            });
+            enterFocus();
+            announce(ids.length + ' names opened together. The map is now in Expand mode.');
+        };
+
+        /**
+         * Put a whole trail back at once: a shared link, or the page reloaded.
+         * Unknown ids are dropped (a board export can rename a node), and an
+         * empty result is the opening view. Nothing is announced beyond what
+         * entering the view announces.
+         */
+        focus.restore = function (ids, nextMode) {
+            if (nextMode === 'expand' || nextMode === 'focus') mode = nextMode;
+            var live = store.visible().nodeIds;
+            var seen = Object.create(null);
+            chain = (ids || []).filter(function (id) {
+                if (seen[id] || !store.node(id) || !live[id]) return false;
+                seen[id] = true;
+                return true;
+            });
+            if (!chain.length) {
+                layout = null;
+                showOpeningView();
+                onChange();
+                return;
+            }
+            enterFocus();
+        };
+
         focus.truncateTo = function (index) {
             if (index < 0 || index >= chain.length) return;
             if (index === chain.length - 1) return;

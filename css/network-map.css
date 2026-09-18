@@ -132,6 +132,46 @@
 	box-shadow: 0 8px 24px rgba(0, 4, 53, 0.14);
 }
 
+/* [hidden] has to win over the display the list would otherwise take. */
+.kop-network__search-results[hidden] {
+	display: none;
+}
+
+.kop-network__search-option {
+	display: flex;
+	flex-direction: column;
+	gap: 0.05rem;
+	padding: 0.4rem 0.55rem;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.kop-network__search-option:hover,
+.kop-network__search-option[aria-selected="true"] {
+	background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-network__search-option[aria-selected="true"] {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: -2px;
+}
+
+.kop-network__search-name {
+	font-weight: 600;
+	color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-network__search-meta {
+	font-size: 0.8rem;
+	color: #4a4f6a;
+}
+
+.kop-network__search-none {
+	padding: 0.45rem 0.55rem;
+	font-style: italic;
+	color: #4a4f6a;
+}
+
 .kop-network__actions {
 	display: flex;
 	flex-wrap: wrap;
@@ -514,6 +554,82 @@
 	background: rgba(0, 4, 53, 0.07);
 }
 
+.kop-network__drawer[hidden] {
+	display: none;
+}
+
+.kop-network__drawer-title {
+	margin: 0 2.2rem 0.25rem 0;
+	font-size: 1.15rem;
+	line-height: 1.3;
+	color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-network__drawer-meta,
+.kop-network__drawer-aliases {
+	margin: 0 0 0.4rem;
+	font-size: 0.85rem;
+	color: #4a4f6a;
+}
+
+/* A warning mark, not decoration: a firm red, never the coral accent. */
+.kop-network__drawer-deaths {
+	margin: 0 0 0.6rem;
+	padding: 0.35rem 0.55rem;
+	border-left: 3px solid #B00020;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #6d0014;
+}
+
+.kop-network__drawer-profile {
+	display: inline-block;
+	margin: 0.2rem 0 0.8rem;
+	font-weight: 600;
+	color: var(--kop-navy-blue, #000080);
+}
+
+.kop-network__drawer-group {
+	margin: 0.9rem 0 0.3rem;
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: #4a4f6a;
+}
+
+.kop-network__drawer-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kop-network__drawer-link {
+	display: block;
+	width: 100%;
+	padding: 0.3rem 0.4rem;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	text-align: left;
+	font: inherit;
+	font-size: 0.88rem;
+	color: var(--kop-navy-blue, #000080);
+	cursor: pointer;
+}
+
+.kop-network__drawer-link:hover,
+.kop-network__drawer-link:focus-visible {
+	background: var(--kop-sand, #F2EEDF);
+	text-decoration: underline;
+}
+
+.kop-network__drawer-empty {
+	font-size: 0.85rem;
+	font-style: italic;
+	color: #4a4f6a;
+}
+
 /* ------------------------------------------------------------- narrow -- */
 
 @media (max-width: 900px) {
@@ -543,19 +659,27 @@
 		height: 65vh;
 	}
 
+	/* A sheet over the lower half, not the whole screen: the map has to
+	 * stay visible behind what it is describing. */
 	.kop-network__drawer {
 		position: fixed;
 		z-index: 40;
-		inset: 0;
-		max-height: none;
-		border: 0;
-		border-radius: 0;
+		inset: auto 0 0 0;
+		top: auto;
+		max-height: 50vh;
+		border-radius: var(--kop-net-radius) var(--kop-net-radius) 0 0;
+		box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
 	}
 }
 
 /* With the rail closed the stage takes the whole row. */
 .kop-network__body:has(.kop-network__rail[hidden]) {
 	grid-template-columns: minmax(0, 1fr);
+}
+
+/* Rail closed, drawer open: the stage and the drawer share the row. */
+.kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {
+	grid-template-columns: minmax(0, 1fr) var(--kop-net-drawer);
 }
 
 .kop-network__body:has(.kop-network__rail[hidden]):has(.kop-network__drawer:not([hidden])) {

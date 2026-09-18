@@ -18,8 +18,8 @@
  * Usage: node scripts/test-network-modules.js
  * Run it after editing anything in js/network-map/.
  *
- * Covers store, canvas and viewport. Search ranking and URL state join it
- * when those modules land.
+ * Covers store, canvas, viewport, focus, filters, search (ranking and
+ * opening), the drawer and URL state.
  */
 
 const fs = require('fs');
@@ -173,6 +173,9 @@ function buildSandbox() {
         path.join('js', 'network-map', 'canvas.js'),
         path.join('js', 'network-map', 'viewport.js'),
         path.join('js', 'network-map', 'focus.js'),
+        path.join('js', 'network-map', 'search.js'),
+        path.join('js', 'network-map', 'drawer.js'),
+        path.join('js', 'network-map', 'url-state.js'),
         path.join('js', 'network-map', 'filters.js')
     ];
     files.forEach(function (rel) {
@@ -1590,6 +1593,163 @@ function run() {
         'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + marked + ' marked nodes',
         'each of the ' + marked + ' marked nodes carries a +N pill');
     check(badgeCalls.every((t) => /^\+[1-9]\d*$/.test(t)), 'an off-screen pill reads something other than +N');
+
+    /* 2b.2 Search. Ranking first, with no document: a name that starts
+     * with what was typed beats one where a later word does, which beats a
+     * match inside a word; the name beats an alias at the same level. */
+    const Search = sandbox.KOPNetworkSearch;
+    check(!!Search, 'search.js did not load');
+    const top = (q) => Search.rank(store.nodes, q).map((h) => h.node.id);
+    check(top('provo canyon')[0] === 'provo-canyon-school',
+        'searching "provo canyon" does not put Provo Canyon School first: ' + top('provo canyon').slice(0, 3).join(', '));
+    check(top('PROVO   Canyon!')[0] === 'provo-canyon-school', 'case and punctuation change the search result');
+    check(Search.rank(store.nodes, 'a').length <= Search.LIMIT, 'search returned more than the listbox shows');
+    check(Search.rank(store.nodes, '   ').length === 0, 'an empty search returned results');
+    check(Search.rank(store.nodes, 'zzqqxx').length === 0, 'nonsense matched a name');
+    const levels = Search.rank(store.nodes, 'academy').map((h) => h.level);
+    check(levels.every((l, i) => i === 0 || l >= levels[i - 1]), 'search results are not ordered by match level');
+    /* A word start beats a match in the middle of a word. */
+    const synth = [
+        { id: 'mid', name: 'Hillcrest', aliases: [], degree: 50 },
+        { id: 'word', name: 'Blue Crest Ranch', aliases: [], degree: 1 },
+        { id: 'pre', name: 'Crest Academy', aliases: [], degree: 1 },
+        { id: 'alias', name: 'Somewhere Else', aliases: ['Crest Hall'], degree: 99 }
+    ];
+    check(Search.rank(synth, 'crest').map((h) => h.node.id).join(',') === 'pre,alias,word,mid',
+        'ranking order is ' + Search.rank(synth, 'crest').map((h) => h.node.id).join(',') +
+        ', expected prefix, alias prefix, word start, inside a word',
+        'search ranks prefix, then alias prefix, then word start, then inside a word');
+    check(Search.rank(synth, 'crest hall')[0].via === 'Crest Hall', 'an alias match does not say which alias');
+
+    /* Picking a result that is not on the board puts it there with its
+     * connections, the way a click would. */
+    focus.clear();
+    flushFrames();
+    const target = store.node('provo-canyon-school');
+    check(!focus.scene().nodeIds[target.id], 'the search target is already on the opening view, so the test proves nothing');
+    const picked = Search.rank(store.nodes, 'provo canyon school')[0].node;
+    focus.select(picked);
+    flushFrames();
+    const afterPick = focus.scene();
+    check(afterPick.nodeIds[target.id] &&
+        store.neighbours(target.id, true).every((l) => afterPick.nodeIds[l.other.id]),
+        'a searched name did not arrive with its connections');
+
+    /* Enter on the typed text opens every match together, in expand mode. */
+    focus.clear();
+    flushFrames();
+    focus.setMode('focus');
+    const many = Search.rank(store.nodes, 'aspen').map((h) => h.node);
+    check(many.length > 1, 'fewer than two names match "aspen", so opening several is untested');
+    focus.openAll(many);
+    flushFrames();
+    const together = focus.scene();
+    check(focus.mode() === 'expand', 'opening several names did not switch to expand mode');
+    check(many.every((n) => together.nodeIds[n.id]),
+        'opening several matches left some of them off the board',
+        'Enter opens all ' + many.length + ' "aspen" matches together');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+
+    /* 2b.8 The drawer: whatever was opened last, its profile, and every
+     * connection as a button that follows it. */
+    const Drawer = sandbox.KOPNetworkDrawer;
+    check(!!Drawer, 'drawer.js did not load');
+    const drawerConfig = {
+        directoryUrl: 'https://example.test/location-index/',
+        facilityUrls: {},
+        memorialUrl: 'https://example.test/memorial/'
+    };
+    const linkedFacility = store.nodes.find((n) => n.kind === 'facility' && n.facilityId);
+    const unlinkedFacility = store.nodes.find((n) => n.kind === 'facility' && !n.facilityId);
+    const aPerson = store.nodes.find((n) => n.kind === 'person');
+    check(!!linkedFacility && !!unlinkedFacility, 'no facility with and without a record to test the profile link');
+    drawerConfig.facilityUrls[linkedFacility.facilityId] = 'https://example.test/facility/probe/';
+    const own = Drawer.profileFor(linkedFacility, drawerConfig);
+    check(own && own.url === 'https://example.test/facility/probe/' && own.own,
+        'a facility with a page does not link to it');
+    const searchLink = Drawer.profileFor(unlinkedFacility, drawerConfig);
+    check(searchLink && searchLink.url.indexOf('https://example.test/location-index/?search=') === 0 && !searchLink.own,
+        'a facility with no page does not fall back to a location-index search');
+    check(searchLink.url.indexOf('tti-program-index') === -1, 'the drawer sends a facility to the program index');
+    check(Drawer.profileFor(aPerson, drawerConfig) === null, 'a person got a profile link to a search that finds nothing');
+
+    const drawerEl = doc.createElement('aside');
+    drawerEl.hidden = true;
+    const drawerBody = doc.createElement('div');
+    const drawerClose = doc.createElement('button');
+    const drawer = Drawer.create({
+        store, focus, config: drawerConfig, document: doc,
+        drawer: drawerEl, body: drawerBody, close: drawerClose
+    });
+    focus.clear();
+    flushFrames();
+    drawer.update();
+    check(drawerEl.hidden === true, 'the drawer is open with nothing selected');
+    focus.select(hub);
+    flushFrames();
+    drawer.update();
+    check(drawerEl.hidden === false && drawer.shownId() === hub.id, 'the drawer did not open on the selected name');
+    const drawerButtons = drawerBody.querySelectorAll('.kop-network__drawer-link');
+    check(drawerButtons.length === store.neighbours(hub.id, true).length,
+        'the drawer lists ' + drawerButtons.length + ' connections for ' + hub.name +
+        ', which has ' + store.neighbours(hub.id, true).length,
+        'the drawer lists all ' + drawerButtons.length + ' connections of ' + hub.name);
+    const follow = drawerButtons[0];
+    follow.dispatch('click');
+    flushFrames();
+    drawer.update();
+    check(focus.chain()[focus.chain().length - 1] === follow.getAttribute('data-id'),
+        'a connection button in the drawer did not follow the connection');
+    check(drawer.shownId() === follow.getAttribute('data-id'), 'the drawer did not move to the name it followed');
+    drawerClose.dispatch('click');
+    check(drawerEl.hidden === true, 'the close button did not close the drawer');
+    drawer.update();
+    check(drawerEl.hidden === true, 'the drawer reopened on the same name after being closed');
+    focus.clear();
+    flushFrames();
+
+    /* URL state: the trail and the mode round-trip through the hash, and a
+     * link someone was sent opens what it names. */
+    const Url = sandbox.KOPNetworkUrlState;
+    check(!!Url, 'url-state.js did not load');
+    check(Url.format([], 'focus') === '', 'the opening view writes a hash');
+    check(Url.format(['a', 'b c'], 'focus') === '#open=a,b%20c', 'a focus trail formats as ' + Url.format(['a', 'b c'], 'focus'));
+    const round = Url.parse(Url.format(['provo-canyon-school', 'wwasps'], 'expand'));
+    check(round.ids.join(',') === 'provo-canyon-school,wwasps' && round.mode === 'expand',
+        'the hash does not round-trip: ' + JSON.stringify(round));
+    check(Url.parse('#open=%E0%A4%A').ids.length === 0, 'a mangled hash threw or opened something');
+    check(Url.parse('#mode=sideways').mode === null, 'an unknown mode was accepted');
+
+    const fakeLocation = { href: 'https://example.test/network-map/', hash: '' };
+    const fakeHistory = {
+        replaceState(state, title, url) {
+            fakeLocation.href = url;
+            fakeLocation.hash = url.indexOf('#') === -1 ? '' : url.slice(url.indexOf('#'));
+        }
+    };
+    const url = Url.create({ focus, location: fakeLocation, history: fakeHistory });
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    url.write();
+    check(fakeLocation.hash === '#open=' + hub.id, 'opening a name did not write it to the hash: ' + fakeLocation.hash);
+    focus.clear();
+    flushFrames();
+    url.write();
+    check(fakeLocation.hash === '', 'the opening view left a trail in the hash');
+
+    fakeLocation.hash = '#open=wwasps,not-a-real-node,' + hub.id + '&mode=expand';
+    url.read();
+    flushFrames();
+    check(focus.chain().join(',') === 'wwasps,' + hub.id && focus.mode() === 'expand',
+        'a shared link did not open what it named: ' + focus.chain().join(',') + ' in ' + focus.mode(),
+        'a shared link reopens its trail and skips a name the board no longer has');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
 
     /* The Brown Schools and CEDU used to be drawn on top of each other: two
      * wide-labelled companies the force settle packed 52 units apart. The
