@@ -823,6 +823,7 @@ get_header();
                 </div>
 
                 <h3 style="margin: 20px 0 10px 0; color: #1f2937; font-size: 15px;">Headquarters</h3>
+                <?php kop_form_panel_help('headquarters', 'section-help'); ?>
                 <div class="form-row-3">
                     <div class="form-group">
                         <label for="operator-headquarters-city">City</label>
@@ -865,6 +866,7 @@ get_header();
                 </div>
                 
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Key Staff</h3>
+                <?php kop_form_panel_help('key-staff', 'section-help'); ?>
                 
                 <div class="form-group">
                     <label for="operator-ceo">CEO/President</label>
@@ -1030,6 +1032,7 @@ get_header();
                 </div>
                 
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Facility Operating Dates</h3>
+                <?php kop_form_panel_help('operating-dates', 'section-help'); ?>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Facility Opened (Year)</label>
@@ -1271,6 +1274,7 @@ get_header();
             </div>
             <div class="section-content">
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Treatment Types</h3>
+                <?php kop_form_panel_help('standard-treatment-types', 'section-help'); ?>
 
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasABA" data-note-scope="facility" data-note-key="treatmentTypes.hasABA" id="has-aba">
@@ -1354,6 +1358,7 @@ get_header();
                 </div>
 
                 <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Treatment Types</h3>
+                <?php kop_form_panel_help('custom-treatment-types', 'section-help'); ?>
                 <div class="form-group">
                     <label>Add Custom Treatment Type</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -1375,6 +1380,7 @@ get_header();
             </div>
             <div class="section-content">
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Philosophies</h3>
+                <?php kop_form_panel_help('standard-philosophies', 'section-help'); ?>
 
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPositivePeerCulture" data-note-scope="facility" data-note-key="philosophy.hasPositivePeerCulture" id="has-ppc">
@@ -1418,6 +1424,7 @@ get_header();
                 </div>
 
                 <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Philosophies</h3>
+                <?php kop_form_panel_help('custom-philosophies', 'section-help'); ?>
                 <div class="form-group">
                     <label>Add Custom Philosophy</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -1439,6 +1446,7 @@ get_header();
             </div>
             <div class="section-content">
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Incident Types</h3>
+                <?php kop_form_panel_help('standard-incident-types', 'section-help'); ?>
 
                 <div class="checkbox-group">
                     <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasDeaths" data-note-scope="facility" data-note-key="criticalIncidents.hasDeaths" id="has-deaths">
@@ -1458,6 +1466,7 @@ get_header();
                 </div>
 
                 <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 15px;">Custom Critical Incidents</h3>
+                <?php kop_form_panel_help('custom-incidents', 'section-help'); ?>
                 <div class="form-group">
                     <label>Add Custom Critical Incident</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 15px;">

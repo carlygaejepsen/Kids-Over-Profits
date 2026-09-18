@@ -1432,6 +1432,28 @@ select:focus {
     transform: rotate(180deg);
 }
 
+/* One-line help under a panel header (inc/form-help.php). Outside
+   .sub-section-content on purpose: it has to read while the panel is still
+   collapsed, which is the whole point of it. */
+.sub-section-help {
+    margin: 0;
+    padding: 8px 15px;
+    background: #F2EEDF;
+    border-bottom: 1px solid #B6E3D4;
+    color: #3d3d3d;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+/* The admin form lays these panels out flat, so the same line sits under a
+   plain heading there. */
+.section-help {
+    margin: 0 0 12px 0;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
 .sub-section-content {
     padding: 15px;
     display: none;

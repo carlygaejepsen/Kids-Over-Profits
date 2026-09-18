@@ -786,6 +786,7 @@ get_header();
                         <h3 class="sub-section-title">🏢 Headquarters</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('headquarters'); ?>
                     <div class="sub-section-content">
                         <div class="form-row-3">
                             <div class="form-group">
@@ -835,6 +836,7 @@ get_header();
                         <h3 class="sub-section-title">👥 Key Staff</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('key-staff'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label for="operator-ceo">CEO/President</label>
@@ -895,6 +897,7 @@ get_header();
                         <h3 class="sub-section-title">👤 Facility Ownership</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('facility-ownership'); ?>
                     <div class="sub-section-content">
                         <!-- Current Operator (shown for corporate ownership) -->
                         <div class="form-group" id="current-operator-group">
@@ -920,6 +923,7 @@ get_header();
                         <h3 class="sub-section-title">🏷️ Other Names</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('other-names'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Other Names</label>
@@ -933,6 +937,7 @@ get_header();
                         <h3 class="sub-section-title">👥 Known Referrers</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('known-referrers'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Known Referrers (Education Consultants / School Districts)</label>
@@ -946,6 +951,7 @@ get_header();
                         <h3 class="sub-section-title">🌐 Website Links</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('website-links'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Websites</label>
@@ -968,6 +974,7 @@ get_header();
                         <h3 class="sub-section-title">🌍 International Program</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('international-program'); ?>
                     <div class="sub-section-content">
                         <!-- International Program Toggle -->
                         <div id="international-toggle-section" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px;">
@@ -996,6 +1003,7 @@ get_header();
                         <h3 class="sub-section-title">📍 Address Details</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('address-details'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Address</label>
@@ -1045,6 +1053,7 @@ get_header();
                         <h3 class="sub-section-title">🏢 Other Parent Companies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('other-parent-companies'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Other Parent Companies</label>
@@ -1058,6 +1067,7 @@ get_header();
                         <h3 class="sub-section-title">📅 Facility Operating Dates</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('operating-dates'); ?>
                     <div class="sub-section-content">
                         <div class="form-row">
                             <div class="form-group">
@@ -1098,6 +1108,7 @@ get_header();
                         <h3 class="sub-section-title">👥 Key Staff Positions</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('key-staff-positions'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Administrator</label>
@@ -1164,6 +1175,7 @@ get_header();
                         <h3 class="sub-section-title">✅ Current Accreditations</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('current-accreditations'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Current Accreditations</label>
@@ -1177,6 +1189,7 @@ get_header();
                         <h3 class="sub-section-title">📜 Past Accreditations & Memberships</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('past-accreditations'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Past Accreditations</label>
@@ -1194,6 +1207,7 @@ get_header();
                         <h3 class="sub-section-title">🆔 Licensing & Certifications</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('licensing'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Certifications</label>
@@ -1222,6 +1236,7 @@ get_header();
                         <h4 class="sub-section-title">📰 News & Media</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('news-media'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="resources.hasNews" data-note-scope="facility" data-note-key="resources.hasNews" id="has-news">
@@ -1245,6 +1260,7 @@ get_header();
                         <h4 class="sub-section-title">📋 Official Documentation</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('official-documentation'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="resources.hasInspections" data-note-scope="facility" data-note-key="resources.hasInspections" id="has-inspections">
@@ -1266,6 +1282,7 @@ get_header();
                         <h4 class="sub-section-title">⚖️ Legal & Compliance</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('legal-compliance'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="resources.hasLawsuits" data-note-scope="facility" data-note-key="resources.hasLawsuits" id="has-lawsuits">
@@ -1283,6 +1300,7 @@ get_header();
                         <h4 class="sub-section-title">🏢 Business & Property</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('business-property'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="resources.hasArticlesOfOrganization" data-note-scope="facility" data-note-key="resources.hasArticlesOfOrganization" id="has-articles">
@@ -1308,6 +1326,7 @@ get_header();
                         <h4 class="sub-section-title">📚 Other Standard Resources</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('other-resources'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="resources.hasResearch" data-note-scope="facility" data-note-key="resources.hasResearch" id="has-research">
@@ -1367,6 +1386,7 @@ get_header();
                         <h3 class="sub-section-title">🏥 Standard Treatment Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('standard-treatment-types'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="treatmentTypes.hasABA" data-note-scope="facility" data-note-key="treatmentTypes.hasABA" id="has-aba">
@@ -1456,6 +1476,7 @@ get_header();
                         <h3 class="sub-section-title">🧪 Custom Treatment Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('custom-treatment-types'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Add Custom Treatment Type</label>
@@ -1484,6 +1505,7 @@ get_header();
                         <h3 class="sub-section-title">📜 Standard Philosophies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('standard-philosophies'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="philosophy.hasPositivePeerCulture" data-note-scope="facility" data-note-key="philosophy.hasPositivePeerCulture" id="has-ppc">
@@ -1533,6 +1555,7 @@ get_header();
                         <h3 class="sub-section-title">🖋️ Custom Philosophies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('custom-philosophies'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Add Custom Philosophy</label>
@@ -1561,6 +1584,7 @@ get_header();
                         <h3 class="sub-section-title">🚨 Standard Incident Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('standard-incident-types'); ?>
                     <div class="sub-section-content">
                         <div class="checkbox-group">
                             <input type="checkbox" class="facility-checkbox" data-field="criticalIncidents.hasDeaths" data-note-scope="facility" data-note-key="criticalIncidents.hasDeaths" id="has-deaths">
@@ -1586,6 +1610,7 @@ get_header();
                         <h3 class="sub-section-title">🛠️ Custom Critical Incidents</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
+                    <?php kop_form_panel_help('custom-incidents'); ?>
                     <div class="sub-section-content">
                         <div class="form-group">
                             <label>Add Custom Critical Incident</label>

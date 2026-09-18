@@ -28,22 +28,8 @@ const FIELD_TOOLTIPS = {
     // Location Fields
     'international-program-toggle': 'Toggle ON if this program is located outside the United States.',
 
-    // Operating Details
-    'operator-notes': 'General notes about operations, significant events, ownership changes, etc.',
 
-    // Facility Details
-    'capacity': 'Maximum number of residents/students the facility can hold.',
-    'current-census': 'Current number of residents/students (if known).',
-    'min-age': 'Minimum age of residents accepted (e.g., 12).',
-    'max-age': 'Maximum age of residents accepted (e.g., 18).',
-    'gender': 'Gender served: Male, Female, Co-ed, etc.',
 
-    // Resources
-    'has-news': 'Check if you have news articles about this facility.',
-    'has-press': 'Check if you have official press releases.',
-    'has-inspections': 'Check if you have state inspection reports.',
-    'has-lawsuits': 'Check if there are lawsuits filed against the facility.',
-    'has-survivor-stories': 'Check if there are survivor testimonies or stories available.',
 
     // Consultant/Referrer Fields
     'consultant-firstname': 'First name of the education consultant or referrer.',
@@ -65,6 +51,69 @@ const FIELD_TOOLTIPS = {
     'company-search-input': 'Search your saved projects by company name, program type, or any keyword.',
     'location-search-input': 'Search your saved location projects by state, country, or keyword.',
     'referrer-search-input': 'Search your saved referrer projects by consultant or agency name.',
+
+    // --- Materials on file -------------------------------------------------
+    // What each box means, so a submitter ticks it only when they have the
+    // document and knows what to upload.
+    'has-news': 'News articles about this program, from any outlet. Add the web address under Website Links or attach the article.',
+    'has-press': 'Statements the program or its owner put out themselves: press releases, responses to coverage, closure announcements.',
+    'has-inspections': 'Inspection reports written by the agency that licenses the program.',
+    'has-state-reports': 'Other state records: investigation findings, corrective action plans, complaint files.',
+    'has-police-reports': 'Police reports, incident reports or 911 call logs involving the program.',
+    'has-lawsuits': 'Civil or criminal cases involving the program, its owner or its staff. A case name and court is enough.',
+    'has-regulatory': 'Filings with a regulator: licence applications, renewals, sanctions, revocations.',
+    'has-financial': 'Financial records: tax filings, audits, funding contracts, bankruptcy paperwork.',
+    'has-property': 'Deeds, leases or land records showing who owns the site.',
+    'has-articles': 'The company\'s incorporation paperwork, showing who formed it and when.',
+    'has-research': 'Academic studies or published research about this program or its methods.',
+    'has-promotional': 'Brochures, adverts and marketing the program used to recruit families.',
+    'has-enrollment': 'Enrollment paperwork: contracts, consent forms, fee schedules parents signed.',
+    'has-parent': 'The handbook given to parents, which often sets out the rules on contact and visits.',
+    'has-student': 'The handbook given to the children, usually the clearest record of the daily rules.',
+    'has-staff': 'The staff manual or training materials, which describe how staff were told to handle children.',
+    'has-website': 'An archived copy of the program\'s own website, from the Wayback Machine or similar.',
+    'has-survivor-stories': 'First-hand accounts from people who were held there. Attach or link what you have.',
+    'has-other': 'Anything relevant that does not fit the other boxes.',
+
+    // --- Treatment types ----------------------------------------------------
+    'has-wilderness-therapy': 'Treatment delivered on extended trips outdoors, often with children carrying their own gear and earning privileges.',
+    'has-equine-therapy': 'Therapy involving horses, usually described as building trust or responsibility.',
+    'has-emdr-treatment': 'Eye Movement Desensitization and Reprocessing, a trauma therapy using guided eye movements.',
+    'has-exposure': 'Deliberately exposing someone to what frightens them. Legitimate for phobias; harmful when used to force compliance.',
+    'has-hypnosis': 'Hypnosis or guided trance used as part of treatment.',
+    'has-ketamine': 'Ketamine given as a treatment.',
+    'has-psychoanalysis': 'Long-form talking therapy in the Freudian tradition.',
+    'has-attachment': 'Attachment therapy: holding, restraint or forced eye contact said to rebuild a bond with a caregiver. Linked to deaths.',
+    'has-rebirthing': 'Re-enacting birth, often by wrapping or confining a child. Banned in several states after a child suffocated.',
+    'has-primal-scream': 'Encouraging screaming or reliving early pain as a release.',
+    'has-repressed-memory': 'Trying to recover memories believed to be buried. Discredited, and known to produce false memories.',
+    'has-conversion': 'Any attempt to change a young person\'s sexual orientation or gender identity. Also called reparative therapy or SOGICE.',
+    'has-work-therapy': 'Unpaid labour presented as treatment, such as farm or construction work.',
+    'has-unlicensed': 'Therapy delivered by someone with no clinical licence.',
+    'has-tapping': 'Tapping on the body to relieve distress, also called Thought Field Therapy or EFT.',
+
+    // --- Philosophies --------------------------------------------------------
+    'has-behavior-mod': 'A system of rewards and punishments used to control behaviour, usually through levels or points.',
+    'has-aba': 'Applied Behavior Analysis, a structured reward and consequence method most often used with autistic children.',
+    'has-lgat': 'Large Group Awareness Training: long, intense group seminars that break people down emotionally. The root of much TTI practice.',
+    'has-hpm': 'The Human Potential Movement, the 1960s self-actualisation current that LGAT and many TTI programs grew out of.',
+    'has-feedback-hotseat': 'Group sessions where one person is confronted by the rest, sometimes called the Game or attack therapy.',
+    'has-ppc': 'Positive Peer Culture: peers are made responsible for correcting each other, which in practice licenses peer punishment.',
+    'has-tc': 'Therapeutic Community: the group itself is the treatment, with status earned by conforming.',
+    'has-reality-therapy': 'An approach holding that behaviour is always a choice, so consequences are deserved.',
+    'has-12-steps': 'The twelve-step model borrowed from Alcoholics Anonymous, applied to children.',
+    'has-scientology': 'Methods drawn from Scientology, such as Narconon or purification routines.',
+    'has-baptist': 'Run on fundamentalist Baptist doctrine, often unlicensed and church-affiliated.',
+    'has-pentecostal': 'Run on Pentecostal doctrine, which may include deliverance or spiritual warfare practices.',
+    'has-loa': 'Law of Attraction teaching: that thoughts cause outcomes, so a child\'s suffering is their own doing.',
+    'has-wilderness-road': 'The Wilderness Road program model.',
+    'has-psychoanalytic': 'Framed in psychoanalytic theory rather than delivered as formal psychoanalysis.',
+
+    // --- Critical incidents ---------------------------------------------------
+    'has-deaths': 'Any death of a child or staff member connected to the program, including after a transfer or escape.',
+    'has-hospitalizations': 'Children taken to hospital: injuries, restraint harm, overdoses, self-harm, malnutrition.',
+    'has-riots': 'Mass disturbances, uprisings or group escapes.',
+    'has-staff-arrests': 'Staff arrested or charged, whether or not it ended in conviction.',
 
     // Profit Status
     'profit-status-badge': 'Click to toggle between For-Profit and Non-Profit status for this organization.'
@@ -230,6 +279,22 @@ function initializeFieldTooltips() {
     addTooltipToLabel('Professional Affiliations', 'Organizations the consultant belongs to (e.g., IECA, HECA).');
     addTooltipToLabel('Facilities Referred To', 'Names of TTI facilities this consultant has referred students to.');
     addTooltipToLabel('School Districts Worked With', 'School districts that have hired this consultant.');
+    addTooltipToLabel('Address', 'Street address where children live. A rural program may only have a road and county, which is still worth recording.');
+    addTooltipToLabel('City', 'Town or city the program is in, or the nearest one if it is rural.');
+    addTooltipToLabel('State', 'Use the two-letter code, for example UT.');
+    addTooltipToLabel('Country', 'Only needed if the program is outside the United States.');
+    addTooltipToLabel('ZIP', 'Postal code, if you have it.');
+    addTooltipToLabel('Facility Opened (Year)', 'Year the program began taking children. An approximate year is better than nothing.');
+    addTooltipToLabel('Facility Closed (Year)', 'Year it stopped taking children. Leave blank if it is still open, and note a rebrand under Other Names.');
+    addTooltipToLabel('Current Status', 'Open, closed, or reopened under a new name.');
+    addTooltipToLabel('Operational Notes', 'Anything about how the program ran: ownership changes, closures and reopenings, moves between sites.');
+    addTooltipToLabel('Program Type', 'What kind of program it is: residential treatment centre, therapeutic boarding school, wilderness program, boot camp.');
+    addTooltipToLabel('Min Age', 'Youngest age the program accepts, for example 12.');
+    addTooltipToLabel('Max Age', 'Oldest age the program accepts, for example 18.');
+    addTooltipToLabel('Gender', 'Who the program takes: boys, girls, or co-ed.');
+    addTooltipToLabel('Capacity', 'How many children it is licensed to hold.');
+    addTooltipToLabel('Current Census', 'How many children are there now, if known.');
+    addTooltipToLabel('Certifications', 'Specialist certifications the program claims, separate from its licence.');
     addTooltipToLabel('Key Personnel', 'Important people associated with this agency.');
 
     console.log('Field tooltips initialized');
