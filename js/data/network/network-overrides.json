@@ -14,37 +14,43 @@
     "relationships - raw relationship string -> category and roles.",
     "facilities    - board name -> facilities_v2 id, or null to accept no match.",
     "acquirers     - edge id -> the name of the party that did the acquiring.",
+    "headline      - the organisations the map opens on, in order. Chosen for",
+    "                influence and prevalence, which is an editorial judgement",
+    "                and not something a degree count can work out: Synanon has",
+    "                six recorded connections and belongs here; plenty of nodes",
+    "                with thirty do not. Names must match a node exactly.",
     "",
     "Run `node scripts/build-network-graph.js` after any edit and work through",
     "tmp/network-qa.md."
   ],
-
   "merges": [
     {
       "canonical": "David Freedman",
       "note": "one person, drawn in both the FHW and Wilderness frames",
       "rows": [
-        { "name": "David Freedman", "network": "FHW" },
-        { "name": "David Freedman", "network": "Wilderness" }
+        {
+          "name": "David Freedman",
+          "network": "FHW"
+        },
+        {
+          "name": "David Freedman",
+          "network": "Wilderness"
+        }
       ]
     }
   ],
-
   "aliases": {},
-
   "kinds": {
     "Erica Thiessen- House": "person",
     "Accelerated Christian Education": "other",
     "Education Consultant": "other",
     "ROP Nevada": "facility",
-
     "The International Center for the Study of Psychiatry and Psychology": "association",
     "Outdoor Behavioral Healthcare Research Center": "association",
     "Oxford Group": "association",
     "Alcoholics Anonymous": "association",
     "All Addicts Anonymous": "association",
     "Drug-Free America Foundation": "association",
-
     "Social Learning Environments": "parent",
     "Challenger Foundation": "parent",
     "Leadership Dynamics": "parent",
@@ -54,24 +60,27 @@
     "Bill and Melinda Gates Foundation": "other",
     "Law Enforcement Assistance Administration": "government"
   },
-
   "relationships": {
     "recruited deputies as transporters": {
       "category": "other",
-      "roles": ["recruited deputies as transporters"]
+      "roles": [
+        "recruited deputies as transporters"
+      ]
     },
     "photo displayed on campus": {
       "category": "other",
-      "roles": ["photo displayed on campus"]
+      "roles": [
+        "photo displayed on campus"
+      ]
     },
     "prepared tax guides for WWASP websites": {
       "category": "other",
-      "roles": ["prepared tax guides"]
+      "roles": [
+        "prepared tax guides"
+      ]
     }
   },
-
   "facilities": {},
-
   "acquirers": {
     "e0241": "Universal Health Services",
     "e0363": "Universal Health Services",
@@ -81,5 +90,13 @@
     "e1188": "The Brown Schools",
     "e1236": "Universal Health Services",
     "e1237": "Universal Health Services"
-  }
+  },
+  "headline": [
+    "WWASPS",
+    "Synanon",
+    "Teen Challenge",
+    "CEDU Family of Services",
+    "Sequel Youth and Family Services",
+    "Universal Health Services"
+  ]
 }

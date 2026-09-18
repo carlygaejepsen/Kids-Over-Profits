@@ -266,6 +266,15 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 							</button>
 						</fieldset>
 
+						<?php
+						// The legend lives in the rail, not floating over the stage.
+						// On a narrow window an overlay covered a third of the map
+						// and the labels underneath it, which is the opposite of a
+						// key's job.
+						?>
+						<div class="kop-network__group kop-network__legend" id="kop-network-legend"
+							role="group" aria-label="Legend"></div>
+
 					</div>
 				</aside>
 
@@ -278,8 +287,6 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						aria-label="Network map. Use arrow keys to move between names, Enter to follow one, Escape to go back."></canvas>
 
 					<p class="kop-network__loading" id="kop-network-loading">Loading the map...</p>
-
-					<div class="kop-network__legend" id="kop-network-legend" aria-label="Legend"></div>
 
 					<div class="kop-network__status" id="kop-network-status" role="status" aria-live="polite"></div>
 				</div>

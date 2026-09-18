@@ -37,6 +37,29 @@ const HEIGHT = 700;
 const failures = [];
 const notes = [];
 
+/**
+ * Pairs of drawn labels whose boxes touch. Widths are measured the way the
+ * stub context measures them, which is what the renderer placed them with.
+ * Two names on top of each other are worse than one name: the pair is
+ * unreadable and neither can be trusted to belong to the node under it.
+ */
+function collidingLabels(boxes) {
+    const LINE = 13;
+    const rects = boxes.map((b) => {
+        const half = (String(b.t).length * 6) / 2;
+        return { t: b.t, x0: b.x - half, x1: b.x + half, y0: b.y, y1: b.y + LINE };
+    });
+    const clashes = [];
+    for (let i = 0; i < rects.length; i++) {
+        for (let j = i + 1; j < rects.length; j++) {
+            const a = rects[i];
+            const b = rects[j];
+            if (a.x0 < b.x1 && a.x1 > b.x0 && a.y0 < b.y1 && a.y1 > b.y0) clashes.push([a.t, b.t]);
+        }
+    }
+    return clashes;
+}
+
 function check(condition, message, note) {
     if (!condition) failures.push(message);
     else if (note) notes.push(note);
@@ -50,6 +73,10 @@ function buildSandbox() {
         beginPath: 0, arc: 0, moveTo: 0, lineTo: 0
     };
     const bump = (name) => () => { ops[name]++; };
+    /* Label draws in order, so the two-pass halo can be checked, and their
+     * placed positions, so overlap can be. */
+    const labelCalls = [];
+    const labelBoxes = [];
 
     const ctx = {
         setTransform() {}, clearRect() {}, save() {}, restore() {},
@@ -57,7 +84,8 @@ function buildSandbox() {
         moveTo: bump('moveTo'), lineTo: bump('lineTo'), arc: bump('arc'),
         quadraticCurveTo() {}, setLineDash() {},
         fill: bump('fill'), stroke: bump('stroke'),
-        fillText: bump('fillText'), strokeText: bump('strokeText'),
+        fillText: (t, x, y) => { ops.fillText++; labelCalls.push('text:' + t); labelBoxes.push({ t, x, y }); },
+        strokeText: (t) => { ops.strokeText++; labelCalls.push('halo:' + t); },
         measureText: (t) => ({ width: String(t).length * 6 })
     };
 
@@ -315,7 +343,12 @@ function buildSandbox() {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
         document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
-        resetOps: () => Object.keys(ops).forEach((k) => { ops[k] = 0; })
+        labelCalls, labelBoxes,
+        resetOps: () => {
+            Object.keys(ops).forEach((k) => { ops[k] = 0; });
+            labelCalls.length = 0;
+            labelBoxes.length = 0;
+        }
     };
 }
 
@@ -331,7 +364,7 @@ function run() {
 
     const {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
-        document: doc, buildRail, mediaListeners, resetOps
+        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, resetOps
     } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -481,12 +514,52 @@ function run() {
         'a frame filled ' + ops.fill + ' shapes for ' + scene.nodes.length + ' nodes');
     check(ops.moveTo >= scene.edges.length,
         'a frame started ' + ops.moveTo + ' line segments for ' + scene.edges.length + ' edges');
-    /* Hubs are labelled at every zoom, the rest fade in; a wide view that
-     * labels everything is unreadable and one that labels nothing is
-     * useless. */
-    check(ops.fillText > 10 && ops.fillText < scene.nodes.length / 4,
-        'a wide view drew ' + ops.fillText + ' labels',
-        'wide view labels ' + ops.fillText + ' of ' + scene.nodes.length + ' nodes');
+    /* Labels are limited by collision, not by a degree threshold: where two
+     * names cannot both fit, the better-connected one wins. */
+    const drawnNames = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    check(drawnNames.length > 5 && drawnNames.length <= scene.nodes.length,
+        'a dense scene drew ' + drawnNames.length + ' labels for ' + scene.nodes.length + ' nodes',
+        'a 907-node scene fits ' + drawnNames.length + ' names without overlap');
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+    check(drawnNames.indexOf('WWASPS') !== -1,
+        'the best-connected node lost its label to a smaller one');
+
+    /* Edges pull back at a wide view, but only a little: a relationship
+     * nobody can see is not context, it is a missing fact. */
+    const wideFade = sandbox.KOPNetworkCanvas.edgeFadeFor(0.25);
+    check(wideFade >= 0.6 && wideFade < 1 && sandbox.KOPNetworkCanvas.edgeFadeFor(1.5) === 1,
+        'edges are drawn at ' + wideFade + ' of full strength at a wide view');
+
+    /* Direction outranks category: "became" and "acquired" are the two
+     * statements here that are wrong read backwards, so they are the two
+     * that carry an arrow. */
+    const rebrand = store.edges.find((e) => e.direction === 'renamed');
+    const bought = store.edges.find((e) => e.direction === 'acquirer');
+    const plain = store.edges.find((e) => e.direction === 'none' && e.category === 'corporate');
+    const family = store.edges.find((e) => e.category === 'family');
+    check(!!rebrand && !!bought && !!plain && !!family, 'the graph lost one of the edge kinds under test');
+    const styleOf = (e) => sandbox.KOPNetworkCanvas.styleFor(e, false);
+    check(styleOf(rebrand).arrow === true, 'a rebrand is drawn without a direction');
+    check(styleOf(bought).arrow === true, 'an acquisition is drawn without a direction');
+    check(!styleOf(plain).arrow && !styleOf(family).arrow,
+        'an undirected connection was given an arrow it cannot justify');
+    check(styleOf(rebrand).colour !== styleOf(bought).colour,
+        'a rebrand and an acquisition are drawn the same');
+    check(styleOf(rebrand).colour !== styleOf(plain).colour,
+        'a rebrand is drawn the same as plain ownership');
+    /* Married, divorced, siblings: the only edges joining two people. */
+    check(styleOf(family).colour !== styleOf(plain).colour &&
+        styleOf(family).colour !== sandbox.KOPNetworkCanvas.EDGE_STYLES._default.colour,
+        'relationships between people are drawn like everything else');
+
+    /* Arrows are painted, not just configured. */
+    resetOps();
+    viewport.setTransform(1.2, renderer.width / 2, renderer.height / 2);
+    viewport.centreOn(rebrand.target);
+    const fillsBefore = ops.fill;
+    renderer.draw();
+    check(ops.fill > fillsBefore, 'nothing was filled on a frame holding a directed edge');
 
     renderer.setColourMode('chain');
     check(renderer.colourFor(hub) === sandbox.KOPNetworkCanvas.CHAIN_COLOURS[store.chainIndex[hub.chain]],
@@ -642,12 +715,93 @@ function run() {
     /* From here the pointer drives the chain, as it does on the page. */
     focusRef.current = focus;
 
+    /* --- the opening view --- */
+
+    /* The map opens on a handful of the networks that shaped the industry
+     * and nothing else. Which ones is curated in network-overrides.json,
+     * because influence and prevalence are an editorial judgement that no
+     * count reproduces: Synanon has six recorded connections and belongs at
+     * the top; plenty of nodes with thirty do not. */
+    const seeds = store.seeds();
+    check(seeds.length > 0 && seeds.length <= 12,
+        'the map opens on ' + seeds.length + ' organisations',
+        'opens on: ' + seeds.map((n) => n.name).join(', '));
+    check(graph.meta.headline && graph.meta.headline.length === seeds.length,
+        'the opening view is not coming from the curated list');
+    ['WWASPS', 'Synanon', 'Teen Challenge'].forEach((name) => {
+        check(seeds.some((n) => n.name === name), 'the map does not open on ' + name);
+    });
+    check(seeds.some((n) => n.degree < 8),
+        'the opening view is just the best-connected nodes, not a curated list');
+
+    const opening = focus.scene();
+    check(opening.nodes.length === seeds.length,
+        'the opening view draws ' + opening.nodes.length + ' nodes, expected ' + seeds.length);
+    /* The promise: a name nobody asked for is not on the map at all. */
+    const famous = store.node('provo-canyon-school');
+    check(!opening.nodeIds[famous.id],
+        'a node nobody has opened or searched for is on the opening map');
+    check(opening.nodes.every((n) => store.seedIds()[n.id]),
+        'the opening view holds something that is not one of the organisations it opens on');
+
+    /* Everything on the map is named: what is on screen is there because
+     * somebody asked for it, and an unnamed dot is no use to them. */
+    focus.start();
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const openingLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    const openingNames = focus.scene().nodes.map((n) => n.name);
+    check(openingLabels.length === openingNames.length,
+        'the opening view drew ' + openingLabels.length + ' labels for ' +
+        openingNames.length + ' organisations',
+        'opening view names all ' + openingLabels.length + ' of its organisations');
+    openingNames.forEach((name) => {
+        check(openingLabels.indexOf(name) !== -1, 'the opening view left ' + name + ' unnamed');
+    });
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap in the opening view: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+
+
+
     /* --- hover previews --- */
 
     const mapX = hub.x;
     const mapY = hub.y;
     const neighbours = store.neighbours(hub.id, true);
+
+    /* Hovering only means anything for a node that is on the map, so open
+     * it first. Positions inside an opened view are its own, not the
+     * board's, so everything below reads them through positionOf. */
+    focus.select(hub);
+    flushFrames();
+    const at = (node) => focus.positionOf(node);
+
     focus.hover(hub);
+    flushFrames();
+    /* Reset after the gather has settled: flushing runs its own frames, and
+     * this assertion is about the order within one of them. */
+    resetOps();
+    renderer.draw();
+    const halos = labelCalls.filter((c) => c.startsWith('halo:'));
+    const texts = labelCalls.filter((c) => c.startsWith('text:'));
+    /* Each label strokes a halo in the surface colour before filling its
+     * text. Drawn one at a time, the next halo paints over the last label,
+     * and in a gathered neighbourhood - where names land close together -
+     * labels visibly disappear. Every halo has to be laid down first. */
+    const lastHalo = labelCalls.map((c) => c.startsWith('halo:')).lastIndexOf(true);
+    const firstText = labelCalls.findIndex((c) => c.startsWith('text:'));
+    check(halos.length === texts.length && halos.length > 0,
+        'hover drew ' + halos.length + ' halos for ' + texts.length + ' labels');
+    check(lastHalo < firstText,
+        'a label halo was drawn after a label, so it erases the name before it');
+    check(texts.length > 1 && texts.length <= store.neighbours(hub.id, true).length + 1,
+        'a gathered neighbourhood drew ' + texts.length + ' names');
+    check(texts.indexOf('text:' + hub.name) !== -1 || texts[0] === 'text:' + hub.name,
+        'the hovered node itself went unlabelled');
+
+    check(collidingLabels(labelBoxes).length === 0,
+        'labels overlap while hovering: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
     const lit = renderer.emphasis.near;
     check(!!lit && lit[hub.id] === true, 'hovering did not light the hovered node');
@@ -671,8 +825,10 @@ function run() {
     neighbours.forEach((link) => {
         const off = gathered[link.other.id];
         if (!off) return;
-        const was = Math.hypot(link.other.x - hub.x, link.other.y - hub.y);
-        const now = Math.hypot(link.other.x + off[0] - hub.x, link.other.y + off[1] - hub.y);
+        const p = at(link.other);
+        const c = at(hub);
+        const was = Math.hypot(p.x - c.x, p.y - c.y);
+        const now = Math.hypot(p.x + off[0] - c.x, p.y + off[1] - c.y);
         if (now < was) pulledIn++;
         if (now < hub.r + link.other.r) tooClose++;
     });
@@ -687,12 +843,12 @@ function run() {
     const moved = neighbours.map((l) => l.other).find((n) => gathered[n.id]);
     const movedOffset = gathered[moved.id];
     const movedScreen = {
-        x: (moved.x + movedOffset[0]) * t.k + t.x,
-        y: (moved.y + movedOffset[1]) * t.k + t.y
+        x: (at(moved).x + movedOffset[0]) * t.k + t.x,
+        y: (at(moved).y + movedOffset[1]) * t.k + t.y
     };
     check(viewport.nodeAt(movedScreen.x, movedScreen.y) === moved,
         'a gathered node could not be clicked where it was drawn');
-    const staleScreen = { x: moved.x * t.k + t.x, y: moved.y * t.k + t.y };
+    const staleScreen = { x: at(moved).x * t.k + t.x, y: at(moved).y * t.k + t.y };
     check(viewport.nodeAt(staleScreen.x, staleScreen.y) !== moved,
         'a gathered node was still clickable at the position it had left');
 
@@ -717,17 +873,21 @@ function run() {
 
     /* --- clicking commits --- */
 
-    focus.select(hub);
-    flushFrames();
     check(focus.chain().length === 1 && focus.chain()[0] === hub.id,
         'selecting a node did not start the trail');
     check(announced.indexOf(hub.name) === 0, 'the commit was not announced by name');
 
     const focused = focus.scene();
-    check(focused.nodes.length === neighbours.length + 1,
-        'the focused view holds ' + focused.nodes.length + ' nodes, expected ' + (neighbours.length + 1),
-        'focus on ' + hub.name + ': ' + focused.nodes.length + ' nodes, ' + focused.edges.length + ' edges');
-    check(focused.nodes.length < whole.nodes.length, 'committing did not narrow the map');
+    const seedIds = store.seedIds();
+    /* Opening a node puts it and everyone it touches on the map, on top of
+     * the organisations the map opened with. */
+    const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)).concat(Object.keys(seedIds)));
+    check(focused.nodes.length === expected.size,
+        'opening ' + hub.name + ' showed ' + focused.nodes.length + ' nodes, expected ' + expected.size,
+        'opening ' + hub.name + ': ' + focused.nodes.length + ' nodes, ' + focused.edges.length + ' edges');
+    check(focused.nodes.every((n) => expected.has(n.id)),
+        'opening a node put something on the map that nobody asked for');
+    check(focused.nodes.length < whole.nodes.length, 'opening a node showed the whole graph');
     check(focused.edges.every((e) => focused.nodeIds[e.sourceId] && focused.nodeIds[e.targetId]),
         'the focused view kept an edge running off it');
 
@@ -795,10 +955,11 @@ function run() {
     focus.clear();
     flushFrames();
     check(focus.chain().length === 0, 'clearing did not leave the trail empty');
-    check(focus.positionOf(hub) === hub, 'clearing did not hand the map back its own positions');
-    check(hub.x === mapX && hub.y === mapY, 'the whole map came back in the wrong place');
-    check(focus.scene().nodes.length === whole.nodes.length,
-        'clearing did not restore the whole map');
+    check(hub.x === mapX && hub.y === mapY, 'the stored layout was disturbed');
+    const reopened = focus.scene();
+    check(reopened.nodes.length === store.seeds().length,
+        'clearing left ' + reopened.nodes.length + ' nodes, expected the ' +
+        store.seeds().length + ' the map opens on');
     check(changes > 0, 'the chain never reported a change for the breadcrumb to render');
 
     /* --- the filters can move under a focused trail --- */
@@ -831,6 +992,10 @@ function run() {
     });
 
     store.resetFilters();
+    /* The opening view is all parent companies, so open one first or the
+     * legend has a single kind to talk about. */
+    focus.select(hub);
+    flushFrames();
     let applied = 0;
     const rail = sandbox.KOPNetworkFilters.create({
         store,
@@ -944,14 +1109,11 @@ function run() {
         'a legend swatch was never painted');
 
     /* It lists what is in view, not what exists. */
-    const churchBox = kindBox('church');
-    churchBox.checked = false;
-    churchBox.dispatch('change');
     check(legendLabels().indexOf('Churches') === -1,
-        'the legend still lists a kind the rail has filtered out');
-    churchBox.checked = true;
-    churchBox.dispatch('change');
-    check(legendLabels().indexOf('Churches') !== -1, 'the legend did not come back with the kind');
+        'the legend lists a kind that is nowhere on screen');
+    const peopleShowing = focus.scene().nodes.some((n) => n.kind === 'person');
+    check(peopleShowing === (legendLabels().indexOf('People') !== -1),
+        'the legend and the map disagree about whether any people are showing');
 
     /* Colour mode switches what the legend is about. */
     shell.colour.value = 'chain';
@@ -965,20 +1127,19 @@ function run() {
     shell.colour.value = 'kind';
     shell.colour.dispatch('change');
 
-    /* A trail narrows the view, so it narrows the legend too. */
-    const wholeMapRows = legendLabels().length;
-    focus.select(hub);
-    flushFrames();
-    rail.renderLegend();
-    const focusedRows = legendLabels();
-    check(focusedRows.length < wholeMapRows,
-        'the legend kept all ' + wholeMapRows + ' rows inside a focused trail');
-    const kindsInFocus = new Set(focus.scene().nodes.map((n) => KIND_WORDS[n.kind]));
-    check(focusedRows.filter((l) => Object.values(KIND_WORDS).indexOf(l) !== -1).length === kindsInFocus.size,
-        'the focused legend lists kinds that are not in the focused view',
-        'legend: ' + wholeMapRows + ' rows on the whole map, ' + focusedRows.length + ' in a trail');
+    /* The legend describes exactly the kinds on screen, no more. */
+    const openedRows = legendLabels();
+    const kindsShowing = new Set(focus.scene().nodes.map((n) => KIND_WORDS[n.kind]));
+    check(openedRows.filter((l) => Object.values(KIND_WORDS).indexOf(l) !== -1).length === kindsShowing.size,
+        'the legend lists kinds that are not on screen',
+        'legend: ' + openedRows.length + ' rows with ' + kindsShowing.size + ' kinds showing');
+
+    /* Going back to the opening view narrows it again. */
     focus.clear();
     flushFrames();
+    rail.renderLegend();
+    check(legendLabels().length < openedRows.length,
+        'the legend did not narrow when the map went back to its opening view');
 
     /* --- the rail's own controls --- */
 

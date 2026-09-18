@@ -50,27 +50,85 @@
     ];
     var CHAIN_NONE = '#A8A294';
 
-    /* Edge styling by category. width is in screen pixels and dash patterns
-     * are scaled the same way, so a dashed line looks dashed at every zoom. */
+    /* Edge styling.
+     *
+     * The board records three things about a connection that the eye should
+     * be able to read without opening anything: what kind of relationship it
+     * was, which way it ran, and whether it joined two people.
+     *
+     * Direction outranks category, because "became" and "acquired" are the
+     * two statements on this map that are wrong if you read them backwards.
+     * Both carry an arrowhead and their own colour: a rebrand is one
+     * programme continuing under another name, an acquisition is one company
+     * taking another, and a visitor should not have to work out which from a
+     * grey line. Every other connection is undirected and has no arrow,
+     * which is itself the honest signal that the record does not say who
+     * came first.
+     */
     var EDGE_STYLES = {
-        corporate:  { colour: INK + '0.55)', width: 1.7, dash: null },
-        family:     { colour: INK + '0.5)',  width: 1.3, dash: [5, 3] },
-        survivor:   { colour: '#FE8088',     width: 1.6, dash: null },
-        unknown:    { colour: INK + '0.28)', width: 1.0, dash: [1, 3] },
-        _default:   { colour: INK + '0.34)', width: 1.1, dash: null }
+        /* X became Y. Teal, because it is a continuation rather than a
+         * transaction, and the same teal the map uses for people is not in
+         * play between two organisations. */
+        rebrand:    { colour: '#1E7F8C', width: 2.2, dash: null, arrow: true, label: 'Became' },
+        /* X acquired Y. */
+        acquired:   { colour: '#C96A12', width: 2.2, dash: null, arrow: true, label: 'Acquired' },
+        corporate:  { colour: 'rgba(0, 4, 53, 0.72)', width: 1.8, dash: null, label: 'Ownership' },
+        /* Married, divorced, siblings: the only edges on the map that join
+         * two people to each other rather than a person to a programme, and
+         * the ones a reader is most likely to be looking for. */
+        family:     { colour: '#D6455A', width: 2, dash: [6, 3], label: 'Family' },
+        survivor:   { colour: '#B5359B', width: 1.8, dash: null, label: 'Survivor account' },
+        board:      { colour: 'rgba(0, 4, 53, 0.55)', width: 1.4, dash: [2, 2], label: 'Board member' },
+        leadership: { colour: 'rgba(0, 4, 53, 0.52)', width: 1.4, dash: null, label: 'Leadership' },
+        clinical:   { colour: 'rgba(0, 64, 96, 0.46)', width: 1.2, dash: null, label: 'Clinical staff' },
+        referral:   { colour: 'rgba(120, 70, 0, 0.5)', width: 1.3, dash: [4, 3], label: 'Referral' },
+        unknown:    { colour: 'rgba(0, 4, 53, 0.34)', width: 1, dash: [1, 3], label: 'Unrecorded' },
+        admissions: { colour: 'rgba(0, 4, 53, 0.44)', width: 1.15, dash: [5, 2], label: 'Admissions' },
+        staff:      { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other staff' },
+        /* "Other" would read as the node kind of the same name in the key. */
+        _default:   { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other connection' }
     };
-    /* The staff-migration view: when the cross-group filter is on, the edges
-     * that survive it are the point of the screen, so they are drawn in
-     * orange whatever their category. */
+
     var CROSS_STYLE = { colour: '#EF9034', width: 1.8, dash: null };
 
-    /* Labels. Hubs are named at every zoom; everything else fades in as the
-     * map is zoomed into, so a wide view is readable and a close one is
-     * informative. */
-    var LABEL_ALWAYS_DEGREE = 8;
-    var LABEL_ZOOM_MEDIUM = 1.15;
-    var LABEL_ZOOM_ALL = 2.2;
-    var LABEL_MEDIUM_DEGREE = 3;
+    /* Labels. Everything on the map is named.
+     *
+     * That used to be reckless, when the map drew all nine hundred nodes and
+     * a degree threshold was the only thing keeping the names readable. It
+     * is now the only honest rule: what is on screen is a handful of
+     * organisations the map opened with plus whatever the visitor has opened
+     * since, so every one of them is there because somebody asked for it,
+     * and an unnamed dot is no use to the person who asked.
+     *
+     * Collision is what limits the count instead. Where two names cannot
+     * both fit, the better-connected one wins and the other is dropped
+     * rather than smeared over it.
+     */
+    var LABEL_SIZE = 11.5;
+    var LABEL_SIZE_HOVER = 13;
+    var LABEL_LINE = 13;
+    /* Bucket size for the collision grid, in screen pixels. */
+    var LABEL_CELL = 48;
+    /* Breathing room around each label's box. Boxes that merely touch still
+     * read as one another's neighbours, so the gap is part of the rule. */
+    var LABEL_PAD_X = 5;
+    var LABEL_PAD_Y = 3;
+
+    /* Edges still pull back a little at a wide view, but only a little.
+     * They used to fade hard, which was the right answer when the map drew
+     * all thirteen hundred of them at once; now that the level of detail
+     * keeps the count down, a faint line is just a relationship nobody can
+     * see, and the relationships are the point of the map. */
+    var EDGE_FADE_MIN = 0.72;
+    var EDGE_FADE_FROM = 0.2;
+    var EDGE_FADE_TO = 1;
+
+    function edgeFadeFor(k) {
+        if (k >= EDGE_FADE_TO) return 1;
+        var t = (k - EDGE_FADE_FROM) / (EDGE_FADE_TO - EDGE_FADE_FROM);
+        if (t < 0) t = 0;
+        return EDGE_FADE_MIN + (1 - EDGE_FADE_MIN) * t;
+    }
 
     /* Relative luminance of a hex colour, memoised. Used to decide how hard
      * a node's outline has to work: navy needs almost none, pale spring
@@ -87,13 +145,43 @@
         return (luminanceCache[hex] = value);
     }
 
+    /* Which way a connection runs is the first thing about it, so it is the
+     * first thing checked. */
     function styleFor(edge, crossRegion) {
         if (crossRegion) return CROSS_STYLE;
+        if (edge.direction === 'renamed') return EDGE_STYLES.rebrand;
+        if (edge.direction === 'acquirer') return EDGE_STYLES.acquired;
         return EDGE_STYLES[edge.category] || EDGE_STYLES._default;
     }
 
     function styleKey(style) {
-        return style.colour + '|' + style.width + '|' + (style.dash ? style.dash.join(',') : '');
+        return style.colour + '|' + style.width + '|' + (style.dash ? style.dash.join(',') : '') +
+            '|' + (style.arrow ? 'a' : '');
+    }
+
+    /**
+     * A head at the target end, set back so it sits against the node rather
+     * than under it. Drawn per edge rather than batched, which is affordable
+     * because only the hundred-odd directed edges have one.
+     */
+    function drawArrow(ctx, ax, ay, bx, by, backoff, size) {
+        var dx = bx - ax;
+        var dy = by - ay;
+        var len = Math.hypot(dx, dy);
+        if (!len) return;
+        var ux = dx / len;
+        var uy = dy / len;
+        var tipX = bx - ux * backoff;
+        var tipY = by - uy * backoff;
+        var baseX = tipX - ux * size;
+        var baseY = tipY - uy * size;
+        var wing = size * 0.5;
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(baseX - uy * wing, baseY + ux * wing);
+        ctx.lineTo(baseX + uy * wing, baseY - ux * wing);
+        ctx.closePath();
+        ctx.fill();
     }
 
     /* Node outlines: shape traced at the origin, caller has translated. */
@@ -226,6 +314,71 @@
             fill: spec.fill,
             outline: spec.outline || outlineFor(spec.kind, spec.fill, spec.byKind)
         }, size / 2, size / 2, 6, 1);
+    }
+
+    /* A uniform grid over the placed label boxes. Labels cluster, so a
+     * straight pairwise check would be quadratic in the worst view; this
+     * only ever compares against boxes in the same neighbourhood. */
+    function gridCells(box, visit) {
+        var x0 = Math.floor(box[0] / LABEL_CELL);
+        var x1 = Math.floor(box[2] / LABEL_CELL);
+        var y0 = Math.floor(box[1] / LABEL_CELL);
+        var y1 = Math.floor(box[3] / LABEL_CELL);
+        for (var cx = x0; cx <= x1; cx++) {
+            for (var cy = y0; cy <= y1; cy++) {
+                if (visit(cx + ',' + cy)) return true;
+            }
+        }
+        return false;
+    }
+
+    function fitsInGrid(grid, box) {
+        return !gridCells(box, function (key) {
+            var bucket = grid[key];
+            if (!bucket) return false;
+            for (var i = 0; i < bucket.length; i++) {
+                var other = bucket[i];
+                if (box[0] < other[2] && box[2] > other[0] &&
+                    box[1] < other[3] && box[3] > other[1]) return true;
+            }
+            return false;
+        });
+    }
+
+    function occupyGrid(grid, box) {
+        gridCells(box, function (key) {
+            (grid[key] = grid[key] || []).push(box);
+            return false;
+        });
+    }
+
+    /**
+     * A short length of line in a legend row, drawn with the same style the
+     * map uses, arrowhead and all. A key that guesses at its own colours is
+     * worse than none.
+     */
+    function edgeSwatch(element, style) {
+        if (!element || !element.getContext) return;
+        var dpr = Math.min(root.devicePixelRatio || 1, 2);
+        var w = 26;
+        var h = 18;
+        element.width = Math.round(w * dpr);
+        element.height = Math.round(h * dpr);
+        var ctx = element.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.strokeStyle = style.colour;
+        ctx.lineWidth = style.width;
+        ctx.setLineDash(style.dash || []);
+        ctx.beginPath();
+        ctx.moveTo(1, h / 2);
+        ctx.lineTo(style.arrow ? w - 8 : w - 1, h / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        if (style.arrow) {
+            ctx.fillStyle = style.colour;
+            drawArrow(ctx, 1, h / 2, w - 1, h / 2, 0, 8);
+        }
     }
 
     function create(canvas) {
@@ -387,6 +540,8 @@
                 sy[i] = (off ? p.y + off[1] : p.y) * k + t.y;
             }
 
+            var edgeFade = edgeFadeFor(k);
+
             /* --- edges ---
              *
              * Each style bucket is stroked once at full alpha and once dimmed,
@@ -404,7 +559,10 @@
                 for (var pass = 0; pass < 2; pass++) {
                     var lit = pass === 0;
                     if (!lit && !near) break;
-                    ctx.globalAlpha = lit ? 1 : dim;
+                    /* A hovered node's own connections stay at full strength
+                     * however far out the map is: they are the answer to the
+                     * question the pointer just asked. */
+                    ctx.globalAlpha = near ? (lit ? 1 : dim * edgeFade) : edgeFade;
                     ctx.beginPath();
                     var drew = false;
                     for (i = 0; i < list.length; i++) {
@@ -433,13 +591,42 @@
                     if (drew) ctx.stroke();
                 }
             }
-            ctx.globalAlpha = 1;
             ctx.setLineDash([]);
+
+            /* --- direction ---
+             *
+             * "Became" and "acquired" are the two statements on this map
+             * that are wrong if you read them backwards, so they get a head
+             * at the target end. Everything else is undirected and has
+             * none, which is the honest signal that the record does not say
+             * who came first. */
+            for (b = 0; b < buckets.length; b++) {
+                if (!buckets[b].style.arrow) continue;
+                ctx.fillStyle = buckets[b].style.colour;
+                var arrows = buckets[b].edges;
+                for (i = 0; i < arrows.length; i++) {
+                    var directed = arrows[i];
+                    if (directed.source._frame !== frameStamp || directed.target._frame !== frameStamp) continue;
+                    var si = directed.source._i;
+                    var ti = directed.target._i;
+                    if (sx[ti] < -pad || sx[ti] > w + pad || sy[ti] < -pad || sy[ti] > h + pad) continue;
+                    ctx.globalAlpha = near ? (nearEdges && nearEdges[directed.id] ? 1 : dim * edgeFade) : edgeFade;
+                    drawArrow(ctx, sx[si], sy[si], sx[ti], sy[ti],
+                        Math.max(2.5, directed.target.r * k) + 1.5,
+                        Math.max(5, Math.min(11, 7 * Math.sqrt(k))));
+                }
+            }
+            ctx.globalAlpha = 1;
 
             /* --- nodes --- */
             for (i = 0; i < scene.nodes.length; i++) {
                 node = scene.nodes[i];
-                var r = Math.max(1.5, node.r * k);
+                /* A node is a mark on a map, not a shape to get lost in.
+                 * Below about two and a half pixels it stops reading as a
+                 * shape at all; above twenty-two it stops being a mark and
+                 * starts being a picture of a diamond, which is what the
+                 * opening view of six organisations would otherwise draw. */
+                var r = Math.min(22, Math.max(2.5, node.r * k));
                 var x = sx[i], y = sy[i];
                 if (x + r < 0 || x - r > w || y + r < 0 || y - r > h) continue;
 
@@ -466,49 +653,102 @@
                 }
             }
 
-            /* --- labels --- */
+            /* --- labels ---
+             *
+             * Two passes, not one per label. Each label strokes a halo in the
+             * surface colour before filling its text, and drawing them one at
+             * a time means the next label's halo paints over the last one's
+             * text: in a gathered neighbourhood, where names land close
+             * together, labels visibly disappear. Every halo is laid down
+             * first, then every glyph on top.
+             *
+             * Which labels, and in what order, is decided before either pass.
+             */
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
             ctx.lineJoin = 'round';
+
+            var candidates = [];
             for (i = 0; i < scene.nodes.length; i++) {
                 node = scene.nodes[i];
+                var isHover = node.id === hoverId;
                 /* With a neighbourhood lit, its names are the whole point and
                  * everything else is background: labelling the dimmed nodes
                  * too would bury the answer in the thing it was picked out
                  * of. */
-                if (near) {
-                    if (!near[node.id]) continue;
-                } else if (!labelVisible(node, k, hoverId)) {
-                    continue;
-                }
+                if (near && !near[node.id]) continue;
                 var lx = sx[i];
                 var ly = sy[i] + Math.max(1.5, node.r * k) + 3;
-                if (lx < -120 || lx > w + 120 || ly < -20 || ly > h + 20) continue;
+                if (lx < -140 || lx > w + 140 || ly < -20 || ly > h + 20) continue;
+                candidates.push({ node: node, x: lx, y: ly, hover: isHover });
+            }
 
-                var size = node.id === hoverId ? 13 : 11.5;
-                ctx.font = (node.degree >= LABEL_ALWAYS_DEGREE ? '600 ' : '') + size + 'px ' + FONT;
-                /* A halo in the surface colour rather than white, so the text
-                 * sits on the map instead of on a white smudge. */
-                ctx.strokeStyle = 'rgba(242, 238, 223, 0.9)';
-                ctx.lineWidth = 3;
-                ctx.strokeText(node.name, lx, ly);
-                ctx.fillStyle = '#000435';
-                ctx.fillText(node.name, lx, ly);
+            /* Most connected first, so when two labels cannot both fit it is
+             * the smaller name that goes. The hovered node outranks
+             * everything. */
+            candidates.sort(function (a, b) {
+                if (a.hover !== b.hover) return a.hover ? -1 : 1;
+                return b.node.degree - a.node.degree;
+            });
+
+            var grid = Object.create(null);
+            var drawn = [];
+            for (i = 0; i < candidates.length; i++) {
+                var entry = candidates[i];
+                var size = entry.hover ? LABEL_SIZE_HOVER : LABEL_SIZE;
+                var bold = entry.node.degree >= 8;
+                entry.font = (bold ? '600 ' : '') + size + 'px ' + FONT;
+
+                var half = textWidth(ctx, entry.node, entry.font, size) / 2;
+                var box = [
+                    entry.x - half - LABEL_PAD_X,
+                    entry.y - LABEL_PAD_Y,
+                    entry.x + half + LABEL_PAD_X,
+                    entry.y + LABEL_LINE + LABEL_PAD_Y
+                ];
+
+                /* Two names on top of each other are worse than one name: the
+                 * pair is unreadable and neither can be trusted to belong to
+                 * the node under it. A label that cannot fit is dropped, in
+                 * a lit neighbourhood as much as anywhere else - the way to
+                 * read every name in a cluster is to click it, which
+                 * re-settles the neighbourhood with room for all of them. */
+                if (!fitsInGrid(grid, box)) continue;
+                occupyGrid(grid, box);
+                drawn.push(entry);
+            }
+
+            ctx.strokeStyle = 'rgba(242, 238, 223, 0.92)';
+            ctx.lineWidth = 3;
+            for (i = 0; i < drawn.length; i++) {
+                ctx.font = drawn[i].font;
+                ctx.strokeText(drawn[i].node.name, drawn[i].x, drawn[i].y);
+            }
+            ctx.fillStyle = '#000435';
+            for (i = 0; i < drawn.length; i++) {
+                ctx.font = drawn[i].font;
+                ctx.fillText(drawn[i].node.name, drawn[i].x, drawn[i].y);
             }
         };
 
-        function labelVisible(node, k, hoverId) {
-            if (node.id === hoverId) return true;
-            if (node.degree >= LABEL_ALWAYS_DEGREE) return true;
-            if (k >= LABEL_ZOOM_ALL) return true;
-            if (k >= LABEL_ZOOM_MEDIUM && node.degree >= LABEL_MEDIUM_DEGREE) return true;
-            return false;
+        /* Measuring text is not free and a name never changes, so each node
+         * carries its width at the base size and the other size is scaled
+         * from it. */
+        function textWidth(ctx2, node, font, size) {
+            if (node._labelW === undefined) {
+                ctx2.font = LABEL_SIZE + 'px ' + FONT;
+                node._labelW = ctx2.measureText(node.name).width;
+            }
+            return node._labelW * (size / LABEL_SIZE);
         }
 
         return renderer;
     }
 
     root.KOPNetworkCanvas = {
+        styleFor: styleFor,
+        edgeSwatch: edgeSwatch,
+        edgeFadeFor: edgeFadeFor,
         swatch: swatch,
         outlineFor: outlineFor,
         create: create,

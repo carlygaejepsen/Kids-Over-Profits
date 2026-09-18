@@ -363,6 +363,48 @@
             });
         };
 
+        /**
+         * The organisations the map opens on, as nodes.
+         *
+         * Nine hundred names at once is a hairball whatever the layout does
+         * with them, so the map starts with a handful of the networks that
+         * shaped the industry and everything else stays off screen until it
+         * is asked for - by clicking something already on the map, or by
+         * searching for it by name.
+         *
+         * Which ones is a curated list in network-overrides.json, resolved
+         * to ids by the build. It has to be: influence and prevalence are an
+         * editorial judgement that no count reproduces. Synanon has six
+         * recorded connections and belongs at the top; plenty of nodes with
+         * thirty do not.
+         *
+         * Falls back to the best-connected organisations when the list is
+         * missing, so a board export without one still opens on something
+         * sensible rather than on nothing.
+         */
+        store.seeds = function () {
+            var ids = (store.meta && store.meta.headline) || [];
+            var out = [];
+            var seen = Object.create(null);
+            ids.forEach(function (id) {
+                var node = store.nodeById[id];
+                if (node && !seen[id]) { seen[id] = true; out.push(node); }
+            });
+            if (out.length) return out;
+
+            return store.nodes.filter(function (n) {
+                return n.kind === 'parent' || n.kind === 'association';
+            }).sort(function (a, b) {
+                return b.degree - a.degree;
+            }).slice(0, 8);
+        };
+
+        store.seedIds = function () {
+            var set = Object.create(null);
+            store.seeds().forEach(function (node) { set[node.id] = true; });
+            return set;
+        };
+
         /** Position in meta.chains, or -1 for "no recorded owner". */
         store.chainColourIndex = function (chain) {
             if (!chain) return -1;

@@ -93,9 +93,28 @@ The toolbar, filter rail, drawer and legend exist before any script runs,
 which keeps them crawlable, styleable, and usable by screen readers. Only
 the canvas and the lists inside the drawer are filled by script.
 
-**The map has two states: the whole map, and a focused chain.** This is the
-core of the page, and it replaces the "select a node and dim the rest"
-sketch this document originally carried.
+**The map opens on a handful of organisations and grows from there.** This
+replaces both the "select a node and dim the rest" sketch this document
+originally carried and the whole-map-plus-chain model that replaced it.
+
+Nine hundred names on screen at once is a hairball whatever the layout does
+with them. Every attempt to fix that by arranging them better failed the
+same way: 902 of the 907 sit in one connected component that already fills
+97% of the frame, and the best force retune measured only moved the spacing
+from "clumpier than random" to "about as even as random". The hairball was
+never a layout problem. It was the number.
+
+So the map opens on six organisations and nothing else. Everything else is
+absent - not faint, not small, not drawn - until it is asked for, by
+clicking something already on screen or by searching for it by name. Every
+name after the first six arrived because someone went looking for it.
+
+Which six is curated in `network-overrides.json`, resolved to ids by the
+build, and it has to be curated: influence and prevalence are an editorial
+judgement that no count reproduces. Synanon has six recorded connections
+and belongs at the top; plenty of nodes with thirty do not. The map falls
+back to the best-connected organisations when the list is missing, so a
+board export without one still opens on something sensible.
 
 Hover previews, click commits. Hovering a node lights it and everything it
 connects to, drops the rest to about fifteen percent, and pulls the
@@ -113,7 +132,7 @@ the precomputed layout is untouched. Under `prefers-reduced-motion` the
 gather is skipped entirely and hover is dimming alone, which loses nothing
 factual.
 
-Clicking a neighbour from there extends the chain rather than replacing it,
+Clicking a neighbour extends the chain rather than replacing it,
 so the view becomes "Lichfield, then Cross Creek, then whoever ran it" —
 the trail the researcher actually walked. Everything on the chain stays on
 screen with its own neighbours; the chain is the query. A breadcrumb in the
@@ -125,7 +144,30 @@ region would rebuild the view once per node passed, and touch has no hover
 at all, so the tap path would have needed its own design regardless. Hover
 is a preview precisely because it is reversible.
 
-**Built.** Three things about it are worth recording.
+**Built.** Several things about it are worth recording, including two that
+cost an afternoon each.
+
+Layouts are applied outright, never tweened. Animating the positions meant
+the view had to be aimed at where they were going rather than where they
+were, and every attempt to run those two things on one clock left the frame
+belonging to whichever finished last: an opened neighbourhood would settle
+correctly and then be looked at through the previous view's zoom, with most
+of it off the edges. The frame is now taken from the nodes after they are in
+place, so it is measured against what is actually drawn and cannot disagree
+with it.
+
+Nothing rescales a settled layout to the stage. An earlier attempt to do
+that had a floor to stop shrinking pushing shapes into each other, and the
+floor was being read as a target: one close pair anywhere in a thirty-node
+neighbourhood dragged the whole layout outwards to half again the height of
+the stage. Fitting is the viewport's job and it does it by choosing a zoom;
+node radius is clamped on the way to the screen so a six-node view cannot
+blow its shapes up into blobs.
+
+A settled view reserves room for labels, not just shapes: the collision
+radius during the settle is the wider of the node and half its name. Packing
+on radius alone arranges the shapes neatly and leaves the names on top of
+each other.
 
 The gather has to move the *hit testing* as well as the drawing. Treating it
 as a pure display offset, as this plan originally described it, produces a
@@ -359,6 +401,25 @@ chartreuse NATSAP ring are all one code path now.
 **Built.** The renderer takes an `emphasis` object carrying the lit node and
 edge sets, the dim alpha and the gather offsets, and focus.js fills it in;
 step 4 added the dimming without reopening the draw loop, as intended.
+
+Everything on the map is named. That was reckless when the map drew all nine
+hundred nodes and a degree threshold was the only thing keeping the names
+readable; it is the only honest rule now that what is on screen is there
+because somebody asked for it. Collision limits the count instead: where two
+names cannot both fit, the better-connected one wins and the other is
+dropped rather than smeared over it. Labels are drawn in two passes, every
+halo first and then every glyph, because drawing them one at a time means
+the next label's halo paints over the last one's text - in a gathered
+neighbourhood, where names land close together, labels visibly disappeared.
+
+Direction outranks category in the edge styling, because "became" and
+"acquired" are the two statements on this map that are wrong if you read
+them backwards. Both carry an arrowhead and their own colour. Everything
+else is undirected and has none, which is the honest signal that the record
+does not say who came first. The fifty edges joining two people to each
+other - married, divorced, siblings - are drawn in red and dashed rather
+than as anonymous grey, and the legend names every connection type in view
+with a real line swatch.
 
 Dimming does not break the edge batching. Each style bucket is stroked twice
 — once lit, once dimmed — so hover costs one extra path per style rather

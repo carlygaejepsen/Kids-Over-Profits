@@ -176,12 +176,14 @@
 
         /* -------------------------------------------------------- legend -- */
 
-        function row(label, count) {
+        function row(label, count, wide) {
             var item = document_.createElement('li');
             item.className = 'kop-network__legend-row';
             var mark = document_.createElement('canvas');
-            mark.className = 'kop-network__legend-mark';
-            mark.width = 18;
+            mark.className = wide
+                ? 'kop-network__legend-mark kop-network__legend-mark--line'
+                : 'kop-network__legend-mark';
+            mark.width = wide ? 26 : 18;
             mark.height = 18;
             mark.setAttribute('aria-hidden', 'true');
             var text = document_.createElement('span');
@@ -220,10 +222,10 @@
             list.className = 'kop-network__legend-list';
 
             var counts = Object.create(null);
-            var order = [];
+            var kindOrder = [];
             scene.nodes.forEach(function (node) {
                 var key = byChain ? (node.chain || '') : node.kind;
-                if (counts[key] === undefined) { counts[key] = 0; order.push(key); }
+                if (counts[key] === undefined) { counts[key] = 0; kindOrder.push(key); }
                 counts[key]++;
             });
 
@@ -231,17 +233,17 @@
              * as the rail; most-common-first for kinds, which has no order of
              * its own to honour. */
             if (byChain) {
-                order.sort(function (a, b) {
+                kindOrder.sort(function (a, b) {
                     if (a === '') return 1;
                     if (b === '') return -1;
                     return store.chainColourIndex(a) - store.chainColourIndex(b);
                 });
             } else {
-                order.sort(function (a, b) { return counts[b] - counts[a]; });
+                kindOrder.sort(function (a, b) { return counts[b] - counts[a]; });
             }
 
             legend.appendChild(section(byChain ? 'Who owns it' : 'What it is'));
-            order.forEach(function (key) {
+            kindOrder.forEach(function (key) {
                 var label = byChain
                     ? (key || 'No recorded owner')
                     : (kindLabels[key] || key);
@@ -278,6 +280,29 @@
                 });
             });
             legend.appendChild(keyList);
+
+            /* The connections. A line on this map says what kind of
+             * relationship was recorded and, for the two that would be wrong
+             * read backwards, which way it ran - so the key names them. Only
+             * the kinds actually on screen are listed. */
+            var seen = Object.create(null);
+            var order = [];
+            scene.edges.forEach(function (edge) {
+                var style = root.KOPNetworkCanvas.styleFor(edge, renderer.crossRegionMode);
+                var label = style.label || 'Other';
+                if (!seen[label]) { seen[label] = style; order.push(label); }
+            });
+            if (!order.length) return;
+
+            var edgeList = document_.createElement('ul');
+            edgeList.className = 'kop-network__legend-list';
+            legend.appendChild(section('Connections shown'));
+            order.forEach(function (label) {
+                var built = row(label, undefined, true);
+                edgeList.appendChild(built.item);
+                root.KOPNetworkCanvas.edgeSwatch(built.mark, seen[label]);
+            });
+            legend.appendChild(edgeList);
         };
 
         function chainColour(chain) {

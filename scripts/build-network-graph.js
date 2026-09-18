@@ -48,7 +48,7 @@ const KINDS = ['person', 'facility', 'parent', 'association', 'government', 'chu
 const qa = {
     kindGuesses: [], ambiguousAcquirers: [], unmatchedFacilities: [], multiMatchFacilities: [],
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
-    droppedRows: [], chainInferred: []
+    droppedRows: [], chainInferred: [], missingHeadline: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -103,11 +103,12 @@ function truthy(value) {
 
 function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
-        return { merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {} };
+        return { merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [] };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
     return {
         merges: raw.merges || [], aliases: raw.aliases || {}, kinds: raw.kinds || {},
+        headline: raw.headline || [],
         relationships: raw.relationships || {}, facilities: raw.facilities || {},
         acquirers: raw.acquirers || {}
     };
@@ -737,6 +738,21 @@ function build() {
         counts['edge_' + category] = edges.filter(function (e) { return e.category === category; }).length;
     });
 
+    /* The curated opening view. Resolved from names to ids here so the
+     * browser never has to match strings, and so a name that no longer
+     * exists on the board is caught by the build and reported rather than
+     * quietly leaving the map one organisation short. */
+    const byName = new Map(nodes.map(function (n) { return [n.name.toLowerCase(), n]; }));
+    const headline = [];
+    (overrides.headline || []).forEach(function (name) {
+        const node = byName.get(String(name).toLowerCase());
+        if (node) {
+            headline.push(node.id);
+        } else {
+            qa.missingHeadline.push(String(name));
+        }
+    });
+
     const chains = Array.from(new Set(nodes.map(function (n) { return n.chain; }).filter(Boolean))).sort();
     const regions = Array.from(new Set(nodes.reduce(function (all, n) {
         return all.concat(n.regions);
@@ -752,7 +768,11 @@ function build() {
             categories: CATEGORIES,
             kinds: KINDS,
             chains: chains,
-            regions: regions
+            regions: regions,
+            /* The organisations the map opens on, as node ids, in the order
+             * the curator listed them. Names that match nothing are dropped
+             * here rather than left for the browser to trip over. */
+            headline: headline
         },
         nodes: nodes,
         edges: edges
@@ -831,6 +851,10 @@ function writeQaReport(graph) {
     section(lines, 'Isolated nodes', qa.isolatedNodes, function (item) { return item; },
         'These have no edges and will not appear in the map unless it shows orphans.');
     section(lines, 'Rows dropped', qa.droppedRows, function (item) { return item; }, '');
+    section(lines, 'Headline organisations not found on the board', qa.missingHeadline,
+        function (item) { return item; },
+        'The map opens on these. A name here matched no node, so the opening view is ' +
+        'one organisation short: fix the spelling in network-overrides.json, or drop it.');
 
     fs.mkdirSync(path.dirname(QA_FILE), { recursive: true });
     fs.writeFileSync(QA_FILE, lines.join('\n') + '\n', 'utf8');

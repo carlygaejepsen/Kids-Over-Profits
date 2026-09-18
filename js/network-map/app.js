@@ -56,10 +56,11 @@
             },
             onSelect: function (node) {
                 if (focus) focus.select(node);
-            }
+            },
         });
 
         var filters = null;
+
         focus = window.KOPNetworkFocus.create({
             store: store,
             renderer: renderer,
@@ -87,9 +88,10 @@
             announce: announce,
             /**
              * Recompute what is on screen and hand it to both consumers.
-             * Filters and search end up here too. The chain gets first
-             * refusal, because a filter change can move the ground under a
-             * focused view and it re-settles itself when it does.
+             * The filters end up here. What is on screen is the opening
+             * organisations plus whatever has been opened, so a filter
+             * change can move the ground under an opened node; the chain
+             * gets first refusal and re-settles itself when it does.
              */
             refresh: function () {
                 if (focus.isFocused() && focus.refresh()) return;
@@ -116,17 +118,18 @@
         store.load(CONFIG).then(function () {
             renderer.useChainIndex(store.chainIndex);
             renderer.resize();
-            app.refresh();
-            viewport.fit();
+            focus.start();
 
             if (filters) filters.start();
 
             if (loading) loading.hidden = true;
             shell.setAttribute('data-state', 'ready');
 
-            var visible = store.visible();
-            announce('Map loaded: ' + visible.nodes.length + ' names and ' +
-                visible.edges.length + ' connections.');
+            var shown = focus.scene();
+            var all = store.visible();
+            announce('Map loaded. Showing ' + shown.nodes.length +
+                ' organisations out of ' + all.nodes.length +
+                ' names. Click one to see who it connects to, or search for a name.');
 
             if (store.unplaced.length) {
                 /* Only reachable when graph.json and layout.json came from
@@ -246,11 +249,23 @@
      * element where we can and fall back to the window event.
      */
     function wireResize(app) {
-        var redraw = function () { app.viewport.resize(); };
+        var pending = 0;
+        var onResize = function () {
+            app.viewport.resize();
+            /* What is on screen is laid out for the stage it was laid out
+             * for, so a new stage needs a new arrangement. Debounced, because
+             * dragging a window edge fires this continuously and re-settling
+             * on every pixel would boil the map. */
+            if (pending) window.clearTimeout(pending);
+            pending = window.setTimeout(function () {
+                pending = 0;
+                app.focus.reframe();
+            }, 180);
+        };
         if (window.ResizeObserver && app.elements.stage) {
-            new ResizeObserver(redraw).observe(app.elements.stage);
+            new ResizeObserver(onResize).observe(app.elements.stage);
         } else {
-            window.addEventListener('resize', redraw);
+            window.addEventListener('resize', onResize);
         }
     }
 

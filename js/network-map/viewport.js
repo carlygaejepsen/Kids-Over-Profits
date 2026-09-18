@@ -21,13 +21,23 @@
 
     var MIN_ZOOM = 0.1;
     var MAX_ZOOM = 6;
-    /* How far from a node's edge still counts as hitting it. In CSS pixels,
-     * so a small node stays tappable on a phone however far out the map is
-     * zoomed. */
-    var HIT_SLOP = 8;
+    /* How far from a node's edge still counts as hitting it, in CSS pixels.
+     * Kept small: at a wide view the nodes are a couple of pixels across and
+     * nine apart, so a generous slop means the pointer is always over
+     * something and never over the thing you meant - you cannot tell what
+     * you are about to hover before you hover it. Touch gets its own, larger
+     * allowance, because a fingertip really is that wide. */
+    var HIT_SLOP = 3;
+    var HIT_SLOP_TOUCH = 9;
     /* Movement under this many pixels between down and up is a click, not a
      * drag. Fingers wobble; mice do not. */
     var CLICK_SLOP = 4;
+    /* Zoom per wheel notch. The map spans 0.1 to 6, and at the old gain it
+     * took roughly thirty notches to cross that - far too much work to get
+     * from the whole board down to a readable cluster. */
+    var WHEEL_GAIN = 0.004;
+    /* Double click or double tap steps in about the pointer. */
+    var DOUBLE_STEP = 2;
 
     function clamp(v, lo, hi) {
         return v < lo ? lo : (v > hi ? hi : v);
@@ -71,6 +81,9 @@
         var pinch = null;
         var hoverId = null;
         var frame = 0;
+        /* Set by the last pointer down: a finger needs more room than a
+         * mouse, and the same map has to serve both. */
+        var coarse = false;
 
         var viewport = { transform: transform };
 
@@ -149,7 +162,7 @@
         function nodeAt(px, py) {
             if (!scene.nodes.length) return null;
             var world = toWorld(px, py);
-            var slop = HIT_SLOP / transform.k;
+            var slop = (coarse ? HIT_SLOP_TOUCH : HIT_SLOP) / transform.k;
             var offsets = offsetsOf();
 
             if (offsets) {
@@ -237,9 +250,13 @@
          * neighbourhood can work out where it is going before it starts
          * moving and tween the view and the nodes together.
          */
-        viewport.frameOf = function (points, padding) {
+        viewport.frameOf = function (points, padding, maxZoom) {
             if (!points || !points.length || !renderer.width) return null;
             var pad = padding === undefined ? 48 : padding;
+            /* Framing six organisations would otherwise zoom to the ceiling
+             * and blow them up into blobs. A view has a sensible closest
+             * distance as well as a widest one. */
+            var ceiling = maxZoom === undefined ? MAX_ZOOM : Math.min(MAX_ZOOM, maxZoom);
 
             var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
             for (var i = 0; i < points.length; i++) {
@@ -253,7 +270,7 @@
             var k = clamp(Math.min(
                 (renderer.width - pad * 2) / Math.max(1, maxX - minX),
                 (renderer.height - pad * 2) / Math.max(1, maxY - minY)
-            ), MIN_ZOOM, MAX_ZOOM);
+            ), MIN_ZOOM, ceiling);
 
             return {
                 k: k,
@@ -263,7 +280,7 @@
         };
 
         /** Frame a set of nodes, or the whole scene, at their drawn positions. */
-        viewport.fit = function (nodes, padding) {
+        viewport.fit = function (nodes, padding, maxZoom) {
             var list = nodes && nodes.length ? nodes : scene.nodes;
             if (!list.length) return;
             var offsets = offsetsOf();
@@ -272,7 +289,7 @@
                 var off = offsets ? offsets[node.id] : null;
                 return { x: off ? p.x + off[0] : p.x, y: off ? p.y + off[1] : p.y, r: node.r };
             });
-            var framed = viewport.frameOf(points, padding);
+            var framed = viewport.frameOf(points, padding, maxZoom);
             if (framed) viewport.setTransform(framed.k, framed.x, framed.y);
         };
 
@@ -315,6 +332,7 @@
 
         function onPointerDown(event) {
             var point = localPoint(event);
+            coarse = event.pointerType === 'touch' || event.pointerType === 'pen';
             if (!pointers[event.pointerId]) pointerCount++;
             pointers[event.pointerId] = point;
 
@@ -431,7 +449,7 @@
             /* deltaMode 1 is lines, 2 is pages; normalise both to pixels so a
              * Firefox wheel tick is not forty times a Chrome one. */
             var delta = event.deltaY * (event.deltaMode === 1 ? 16 : (event.deltaMode === 2 ? 400 : 1));
-            zoomAbout(transform.k * Math.exp(-delta * 0.0015), point.x, point.y);
+            zoomAbout(transform.k * Math.exp(-delta * WHEEL_GAIN), point.x, point.y);
         }
 
         canvas.addEventListener('pointerdown', onPointerDown);
@@ -439,7 +457,16 @@
         canvas.addEventListener('pointerup', onPointerUp);
         canvas.addEventListener('pointercancel', onPointerUp);
         canvas.addEventListener('pointerleave', onPointerLeave);
+        function onDoubleClick(event) {
+            event.preventDefault();
+            var point = localPoint(event);
+            /* Shift is the usual "and back out again" on a map. */
+            var factor = event.shiftKey ? 1 / DOUBLE_STEP : DOUBLE_STEP;
+            zoomAbout(transform.k * factor, point.x, point.y);
+        }
+
         canvas.addEventListener('wheel', onWheel, { passive: false });
+        canvas.addEventListener('dblclick', onDoubleClick);
         canvas.style.cursor = 'grab';
 
         viewport.destroy = function () {
@@ -449,6 +476,7 @@
             canvas.removeEventListener('pointercancel', onPointerUp);
             canvas.removeEventListener('pointerleave', onPointerLeave);
             canvas.removeEventListener('wheel', onWheel);
+            canvas.removeEventListener('dblclick', onDoubleClick);
             if (frame) root.cancelAnimationFrame(frame);
         };
 
