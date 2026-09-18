@@ -189,7 +189,7 @@ function kop_resources_groups() {
         ),
         array(
             'heading' => 'Survivors of individual programs',
-            'intro'   => 'Accounts kept by the survivors of one program. Useful if you are researching that program, or looking for the people who were there with you.',
+            'intro'   => 'Group accounts kept by the survivors of one program. Useful if you are researching that program, or looking for the people who were there with you.',
             'entries' => array(
                 array('name' => 'Elevations RTC Survivors', 'url' => 'https://www.instagram.com/elevationsrtc/', 'note' => 'Instagram.'),
                 array('name' => 'Spring Ridge Academy Survivors', 'url' => 'https://www.instagram.com/breakingcodesilencesra/', 'note' => 'Instagram.'),
@@ -198,15 +198,32 @@ function kop_resources_groups() {
                 array('name' => 'Montana Academy Survivors', 'url' => 'https://www.instagram.com/montana.academy.survivors', 'note' => 'Instagram.'),
                 array('name' => 'Cedar Ridge and Makana Leadership Academy Survivors', 'url' => 'https://www.instagram.com/makanacedarridgesurvivors/', 'note' => 'Instagram.'),
                 array('name' => 'Catalyst RTC Survivors', 'url' => 'https://www.instagram.com/catalystrtc', 'note' => 'Instagram.'),
-                array('name' => 'Re-Creation Retreat Past Peers', 'url' => 'https://www.instagram.com/pastpeers', 'note' => 'Instagram, and also on Facebook.'),
-                array('name' => 'Re-Creation Retreat Past Peers on Facebook', 'url' => 'https://www.facebook.com/profile.php?id=61568768994728', 'note' => 'Facebook.'),
-                array('name' => 'Positive Peer Cult', 'url' => 'https://www.facebook.com/people/Positivepeercult/61582626375371/', 'note' => 'Facebook.'),
+                array(
+                    'name'  => 'Re-Creation Retreat Past Peers',
+                    'url'   => 'https://www.instagram.com/pastpeers',
+                    'note'  => 'Instagram.',
+                    'links' => array('Also on Facebook' => 'https://www.facebook.com/profile.php?id=61568768994728'),
+                ),
+                array(
+                    'name'  => 'Positive Peer Cult',
+                    'url'   => 'https://www.facebook.com/people/Positivepeercult/61582626375371/',
+                    'note'  => 'Facebook. Survivors of programs run on Positive Peer Culture, rather than of one program.',
+                    'links' => array('Also on TikTok' => 'https://www.tiktok.com/@positivepeercult_'),
+                ),
+            ),
+        ),
+        // Individual people, not groups: kept apart from the program accounts
+        // above, as the original page kept its TikTok list apart from its
+        // Instagram one.
+        array(
+            'heading' => 'Survivors telling their own stories',
+            'intro'   => 'Individual survivors who post about what happened to them.',
+            'entries' => array(
                 array('name' => '@uwunisom', 'url' => 'https://www.tiktok.com/@uwunisom', 'note' => 'TikTok.'),
                 array('name' => '@whatkyrakept', 'url' => 'https://www.tiktok.com/@whatkyrakept', 'note' => 'TikTok.'),
                 array('name' => '@trailseasoning', 'url' => 'https://www.tiktok.com/@trailseasoning', 'note' => 'TikTok.'),
                 array('name' => '@this.is.me.surviving2', 'url' => 'https://www.tiktok.com/@this.is.me.surviving2', 'note' => 'TikTok.'),
                 array('name' => '@exposterchild', 'url' => 'https://www.tiktok.com/@exposterchild', 'note' => 'TikTok.'),
-                array('name' => '@positivepeercult_', 'url' => 'https://www.tiktok.com/@positivepeercult_', 'note' => 'TikTok.'),
             ),
         ),
         array(
