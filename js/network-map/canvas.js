@@ -1087,6 +1087,69 @@
             };
         }
 
+        /**
+         * How many names would be dropped if these nodes were drawn at this
+         * transform: the label pass run dry, with the same candidates, the
+         * same order, the same four placements and the same collision grid,
+         * and no hover. Nodes whose label would be off the stage do not
+         * count, since panning is how those are read. focus.js uses it to
+         * choose a zoom by measuring rather than by estimate, so the rule
+         * "never drop a name" is checked against the renderer that has to
+         * keep it.
+         */
+        renderer.dropsAt = function (nodes, positionOf, k, tx, ty) {
+            var w = renderer.width;
+            var h = renderer.height;
+            var entries = [];
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                var p = positionOf(node);
+                var cx = p.x * k + tx;
+                var cy = p.y * k + ty;
+                var rr = Math.max(1.5, node.r * k);
+                var ly = cy + rr + 3;
+                if (cx < -140 || cx > w + 140 || ly < -20 || ly > h + 20) continue;
+                entries.push({ node: node, x: cx, y: ly, cx: cx, cy: cy, rr: rr });
+            }
+            entries.sort(function (a, b) { return b.node.degree - a.node.degree; });
+            var grid = Object.create(null);
+            var dropped = 0;
+            for (var j = 0; j < entries.length; j++) {
+                var entry = entries[j];
+                var half = textWidth(ctx, entry.node, null, LABEL_SIZE) / 2;
+                var placed = null;
+                for (var pi = 0; pi < LABEL_PLACEMENTS.length; pi++) {
+                    var spot = placeLabel(entry, half, LABEL_PLACEMENTS[pi]);
+                    if (!fitsInGrid(grid, spot.box)) continue;
+                    placed = spot;
+                    break;
+                }
+                if (!placed) {
+                    /* Only a name that would have been on the stage counts. */
+                    if (entry.cx >= 0 && entry.cx <= w && entry.cy >= 0 && entry.cy <= h) dropped++;
+                    continue;
+                }
+                occupyGrid(grid, placed.box);
+            }
+            return dropped;
+        };
+
+        /**
+         * The on-screen box a node's label takes when drawn below it: width
+         * and height in pixels, padding included. focus.js uses it to work
+         * out the lowest zoom at which neighbouring labels still clear each
+         * other, so the two cannot disagree about what a name needs.
+         */
+        renderer.labelBox = function (node) {
+            var width = textWidth(ctx, node, null, LABEL_SIZE);
+            /* Heavier names are drawn semibold, which runs a little wider. */
+            if (node.degree >= 8) width *= 1.08;
+            return {
+                width: width + LABEL_PAD_X * 2,
+                height: LABEL_LINE + (node.years ? YEARS_LINE : 0) + LABEL_PAD_Y * 2
+            };
+        };
+
         /* Measuring text is not free and a name never changes, so each node
          * carries its width at the base size and the other size is scaled
          * from it. */

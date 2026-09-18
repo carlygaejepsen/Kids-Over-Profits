@@ -74,9 +74,6 @@
     var INWARD_PENALTY = 100000;
     /* Height of the label that hangs under a node. */
     var LABEL_ROOM = 18;
-    /* How far below the estimated legible zoom a whole-block frame may go
-     * before the view is held at the floor instead; see applyLayout(). */
-    var LEGIBLE_MARGIN = 0.75;
 
     /**
      * How much room a node needs to itself: enough for its own shape, and
@@ -1146,36 +1143,85 @@
                 return { x: p.x, y: p.y, r: node.r };
             });
             var frame = viewport.frameOf(points, padding);
-            /* The floor is a cautious estimate: it budgets every name at
-             * its packed width and ignores the renderer's fallback
-             * placements, and measured against the real renderer a desktop
-             * view still names everything a little below it. So a frame close
-             * to the floor is kept whole, and only one well below it - a
-             * phone, a long expand trail - is held at the floor itself. */
-            if (frame && floor && frame.k < floor * LEGIBLE_MARGIN) {
-                viewport.setTransform(floor, frame.x, frame.y);
-                var head = chain.length ? store.node(chain[chain.length - 1]) : null;
-                viewport.centreOn(head || scene.nodes[0]);
-            } else if (mode === 'expand' && chain.length > 1 && frame) {
-                /* Expand keeps every earlier click on the board, so framing
-                 * all of it leaves the newest - the one the visitor is
-                 * looking for - small in a corner. Frame what was just
-                 * clicked and its own connections instead, unless that would
-                 * zoom out, and leave the rest of the board a pan away. */
-                var headId = chain[chain.length - 1];
+            /* What was just clicked and its own connections: the part of
+             * the board the visitor is looking at. */
+            var head = chain.length ? store.node(chain[chain.length - 1]) : null;
+            var near = null;
+            if (head) {
                 var ownIds = Object.create(null);
-                ownIds[headId] = true;
-                store.neighbours(headId, true).forEach(function (link) { ownIds[link.other.id] = true; });
+                ownIds[head.id] = true;
+                store.neighbours(head.id, true).forEach(function (link) { ownIds[link.other.id] = true; });
                 var own = scene.nodes.filter(function (node) { return ownIds[node.id]; }).map(function (node) {
                     var p = next[node.id] || positionOf(node);
                     return { x: p.x, y: p.y, r: node.r };
                 });
-                var near = viewport.frameOf(own, padding);
-                if (near && near.k >= frame.k) {
-                    viewport.setTransform(near.k, near.x, near.y);
-                } else {
-                    viewport.fit(scene.nodes, padding);
+                near = viewport.frameOf(own, padding);
+            }
+
+            /* Names are drawn at a fixed size whatever the zoom, so framing a
+             * block too big for the stage zooms out until names collide and
+             * the renderer has to drop some - the one thing it must not do.
+             * The renderer is asked, at each candidate zoom, how many names
+             * it would drop (dropsAt), and the view takes the lowest zoom at
+             * which the answer is none: the whole block when that fits,
+             * otherwise the click and its own connections, otherwise the
+             * click alone at the middle with the rest a pan away. The floor
+             * from legibleZoom bounds the search from above: at the floor the
+             * rows and neighbours clear each other by construction. */
+            var at = function (node) { return next[node.id] || positionOf(node); };
+            var mid = function (f) {
+                return { x: (renderer.width / 2 - f.x) / f.k, y: (renderer.height / 2 - f.y) / f.k };
+            };
+            var centredAt = function (k, centre) {
+                return { k: k, x: renderer.width / 2 - centre.x * k, y: renderer.height / 2 - centre.y * k };
+            };
+            var clean = function (t) {
+                return !renderer.dropsAt || renderer.dropsAt(scene.nodes, at, t.k, t.x, t.y) === 0;
+            };
+            /* The lowest zoom in [lo, hi] at which nothing on the stage is
+             * dropped, around a fixed centre. Nine halvings is well under a
+             * percent of zoom, and each is one dry run of the label pass. */
+            var lowestClean = function (lo, hi, centre) {
+                if (clean(centredAt(lo, centre))) return lo;
+                for (var step = 0; step < 9; step++) {
+                    var m = (lo + hi) / 2;
+                    if (clean(centredAt(m, centre))) hi = m; else lo = m;
                 }
+                return hi;
+            };
+
+            var chosen = null;
+            if (frame && clean(frame)) {
+                chosen = null;   /* the whole block fits as it is */
+            } else if (frame) {
+                var top = Math.max(floor || frame.k, frame.k);
+                if (mode === 'expand' && chain.length > 1 && near) {
+                    chosen = centredAt(lowestClean(Math.max(near.k, frame.k), Math.max(top, near.k), mid(near)), mid(near));
+                } else if (near && near.k >= frame.k) {
+                    chosen = centredAt(lowestClean(frame.k, Math.max(top, near.k), mid(near)), mid(near));
+                } else {
+                    chosen = centredAt(lowestClean(frame.k, top, mid(frame)), mid(frame));
+                }
+                if (head && chosen) {
+                    /* Whatever else had to go off the stage, the click stays on it. */
+                    var hp = at(head);
+                    var hx = hp.x * chosen.k + chosen.x;
+                    var hy = hp.y * chosen.k + chosen.y;
+                    if (hx < 0 || hx > renderer.width || hy < 0 || hy > renderer.height) {
+                        chosen = centredAt(chosen.k, hp);
+                    }
+                }
+            }
+
+            if (chosen) {
+                viewport.setTransform(chosen.k, chosen.x, chosen.y);
+            } else if (mode === 'expand' && chain.length > 1 && frame && near && near.k >= frame.k) {
+                /* Expand keeps every earlier click on the board, so framing
+                 * all of it leaves the newest - the one the visitor is
+                 * looking for - small in a corner. Frame what was just
+                 * clicked and its own connections instead, and leave the rest
+                 * of the board a pan away. */
+                viewport.setTransform(near.k, near.x, near.y);
             } else {
                 viewport.fit(scene.nodes, padding);
             }
@@ -1190,41 +1236,42 @@
          * intentions, so it is the spacing actually on screen.
          */
         function legibleZoom(scene, positions) {
-            /* The renderer owns what a label needs; asking it rather than
-             * guessing keeps the two from drifting apart. */
-            var pitchNeed = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.LABEL_PITCH) || LABEL_ROOM;
-            if (scene.nodes.some(function (node) { return node.years; })) {
-                pitchNeed += (root.KOPNetworkCanvas && root.KOPNetworkCanvas.YEARS_LINE) || 11;
-            }
+            /* The renderer measures the names; asking it rather than
+             * estimating keeps the two from drifting apart. */
+            var boxOf = renderer.labelBox
+                ? function (node) { return renderer.labelBox(node); }
+                : function (node) {
+                    return { width: labelWidth(node) + 10, height: LABEL_ROOM + (node.years ? 11 : 0) };
+                };
             var floor = 0;
 
-            /* Down the page: the closest two rows come to each other has to
-             * stay at least one label tall on screen. */
             var rows = Object.create(null);
             scene.nodes.forEach(function (node) {
                 var p = positions[node.id];
                 if (!p) return;
                 var y = Math.round(p.y);
-                (rows[y] = rows[y] || []).push({ node: node, x: p.x });
+                (rows[y] = rows[y] || []).push({ node: node, x: p.x, box: boxOf(node) });
             });
             var keys = Object.keys(rows).map(Number).sort(function (a, b) { return a - b; });
+
+            /* Down the page: a row's labels hang below its nodes, so the gap
+             * to the next row has to hold the tallest label in the row. */
             for (var i = 1; i < keys.length; i++) {
                 var gap = keys[i] - keys[i - 1];
-                if (gap > 0) floor = Math.max(floor, pitchNeed / gap);
+                if (gap <= 0) continue;
+                var tallest = rows[keys[i - 1]].reduce(function (t, e) { return Math.max(t, e.box.height); }, 0);
+                floor = Math.max(floor, tallest / gap);
             }
 
-            /* Across the row: two names side by side have to stay apart too.
-             * Zooming out moves the nodes together while the names stay the
-             * size they were, so this is the binding constraint on a narrow
-             * stage, not the row pitch.
-             */
+            /* Across a row: zooming out moves nodes together while names keep
+             * their size, so two neighbours need half of each name between
+             * them. On a narrow stage this is what binds. */
             keys.forEach(function (key) {
                 var row = rows[key].slice().sort(function (a, b) { return a.x - b.x; });
                 for (var j = 1; j < row.length; j++) {
                     var dx = row[j].x - row[j - 1].x;
                     if (dx <= 0) continue;
-                    var need = (labelWidth(row[j - 1].node) + labelWidth(row[j].node)) / 2 + LABEL_CHAR_WIDTH;
-                    floor = Math.max(floor, need / dx);
+                    floor = Math.max(floor, (row[j - 1].box.width + row[j].box.width) / 2 / dx);
                 }
             });
 

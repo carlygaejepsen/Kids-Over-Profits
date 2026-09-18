@@ -624,6 +624,13 @@
 	text-decoration: underline;
 }
 
+.kop-network__drawer-source {
+	display: block;
+	padding: 0 0.4rem 0.25rem;
+	font-size: 0.72rem;
+	color: #4a4f6a;
+}
+
 .kop-network__drawer-empty {
 	font-size: 0.85rem;
 	font-style: italic;

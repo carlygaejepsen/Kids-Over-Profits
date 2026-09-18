@@ -158,7 +158,11 @@
                     raw: raw.raw || '',
                     direction: raw.direction || 'none',
                     crossesChain: !!raw.crossesChain,
-                    crossesRegion: !!raw.crossesRegion
+                    crossesRegion: !!raw.crossesRegion,
+                    /* "profile" for a connection the facility or operator
+                     * profile records and the board does not; '' for the
+                     * board's own. */
+                    provenance: raw.provenance || ''
                 };
                 store.edges.push(edge);
                 store.edgeById[edge.id] = edge;

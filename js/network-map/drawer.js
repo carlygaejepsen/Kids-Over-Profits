@@ -58,16 +58,20 @@
                 : null;
             var label = (style && style.label) || 'Other connection';
             if (!byLabel[label]) { byLabel[label] = []; order.push(label); }
-            byLabel[label].push(link.other);
+            byLabel[label].push({ node: link.other, provenance: link.edge.provenance || '' });
         });
         order.sort(function (a, b) {
             return byLabel[b].length - byLabel[a].length || a.localeCompare(b);
         });
         return order.map(function (label) {
             var others = byLabel[label].slice().sort(function (a, b) {
-                return String(a.name).localeCompare(String(b.name));
+                return String(a.node.name).localeCompare(String(b.node.name));
             });
-            return { label: label, nodes: others };
+            return {
+                label: label,
+                nodes: others.map(function (o) { return o.node; }),
+                fromProfile: others.map(function (o) { return o.provenance === 'profile'; })
+            };
         });
     }
 
@@ -138,11 +142,20 @@
                 body.appendChild(el('h3', 'kop-network__drawer-group',
                     group.label + ' (' + group.nodes.length + ')'));
                 var list = el('ul', 'kop-network__drawer-list');
-                group.nodes.forEach(function (other) {
+                group.nodes.forEach(function (other, index) {
                     var item = el('li');
                     var button = el('button', 'kop-network__drawer-link', other.name);
                     button.type = 'button';
                     button.setAttribute('data-id', other.id);
+                    if (group.fromProfile[index]) {
+                        /* Say where a connection came from when it is not the
+                         * research board's own. */
+                        item.appendChild(button);
+                        item.appendChild(el('span', 'kop-network__drawer-source', 'from the profile'));
+                        button.addEventListener('click', function () { focus.select(other); });
+                        list.appendChild(item);
+                        return;
+                    }
                     button.addEventListener('click', function () {
                         focus.select(other);
                     });

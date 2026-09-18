@@ -49,7 +49,8 @@ const qa = {
     kindGuesses: [], ambiguousAcquirers: [], unmatchedFacilities: [], multiMatchFacilities: [],
     weakRelationships: [], weakKinds: [], looseMatches: [], rebrands: [], isolatedNodes: [], mergedNodes: [], duplicateEdges: [],
     droppedRows: [], chainInferred: [], missingHeadline: [],
-    rebrandGuesses: [], noYears: [], unmatchedDeaths: []
+    rebrandGuesses: [], noYears: [], unmatchedDeaths: [],
+    profileEdges: [], profileNames: []
 };
 
 /* ------------------------------------------------------------------ *
@@ -648,6 +649,128 @@ function deriveDeaths(nodes, facilities, overrides) {
     });
 }
 
+/**
+ * 2b.12. Connections the facility and operator profiles record that the
+ * board does not: who owns or operates a facility, the company behind an
+ * operator, the people who ran it, the consultants who referred to it. Added
+ * only where both ends are already on the board - the board stays the
+ * roster, so nothing here creates a node - and only where the board has no
+ * line between the pair already. Each carries provenance "profile", so the
+ * map can say where it came from.
+ *
+ * A facility's other and past names are deliberately not turned into edges.
+ * A name that resolves to another node would assert a rebrand, and some of
+ * those are sister programmes rather than one place renamed; they are listed
+ * in the QA report for a person to decide.
+ */
+function addProfileEdges(nodes, edges, facilities) {
+    if (!fs.existsSync(SQLITE_FILE)) return 0;
+    let db;
+    try {
+        const { DatabaseSync } = require('node:sqlite');
+        db = new DatabaseSync(SQLITE_FILE, { readOnly: true });
+    } catch (err) {
+        console.warn('  ! could not open the mirror for profile edges: ' + err.message);
+        return 0;
+    }
+
+    const byKey = new Map();
+    nodes.forEach(function (node) {
+        [node.name].concat(node.aliases || []).forEach(function (name) {
+            const key = nameKey(name);
+            if (!key || key.length < 5) return;
+            if (!byKey.has(key)) byKey.set(key, new Set());
+            byKey.get(key).add(node);
+        });
+    });
+    /* One node or nothing: a name two nodes share is not guessed at. */
+    const resolve = function (name) {
+        const hits = byKey.get(nameKey(name));
+        return hits && hits.size === 1 ? Array.from(hits)[0] : null;
+    };
+    const byFacility = new Map();
+    nodes.forEach(function (node) { if (node.facilityId) byFacility.set(node.facilityId, node); });
+
+    const pairs = new Set(edges.map(function (e) { return [e.source, e.target].sort().join('|'); }));
+    const texts = function (value) {
+        return (Array.isArray(value) ? value : (value ? [value] : [])).map(function (item) {
+            if (typeof item === 'string') return item;
+            return (item && (item.name || item.value || item.label)) || '';
+        }).filter(Boolean);
+    };
+
+    let n = 0;
+    const add = function (from, to, category, role, source) {
+        if (!from || !to || from.id === to.id) return;
+        const key = [from.id, to.id].sort().join('|');
+        if (pairs.has(key)) return;
+        pairs.add(key);
+        n++;
+        /* People first on a person-to-organisation edge, as the board does. */
+        const flip = from.kind !== 'person' && to.kind === 'person';
+        const a = flip ? to : from;
+        const b = flip ? from : to;
+        edges.push({
+            id: 'p' + String(n).padStart(4, '0'),
+            source: a.id,
+            target: b.id,
+            category: category,
+            roles: [role],
+            raw: role + ' (' + source + ')',
+            direction: 'none',
+            crossesChain: false,
+            crossesRegion: a.regions[0] !== b.regions[0],
+            provenance: 'profile'
+        });
+        qa.profileEdges.push(a.name + ' -> ' + b.name + ': ' + role + ' (' + source + ')');
+    };
+
+    try {
+        const rows = db.prepare('SELECT id, json_data FROM facilities_v2').all();
+        rows.forEach(function (row) {
+            const node = byFacility.get(row.id);
+            if (!node) return;
+            let doc = null;
+            try { doc = JSON.parse(row.json_data || 'null'); } catch (err) { return; }
+            const facility = (doc && (doc.facility || doc)) || {};
+            const ident = facility.identification || {};
+            const staff = facility.staff || {};
+            texts(ident.currentOwners).forEach(function (name) { add(resolve(name), node, 'corporate', 'owner', 'facility profile'); });
+            texts(ident.pastOperators).forEach(function (name) { add(resolve(name), node, 'corporate', 'past operator', 'facility profile'); });
+            texts(ident.otherOperators).forEach(function (name) { add(resolve(name), node, 'corporate', 'operator', 'facility profile'); });
+            texts(ident.investors).forEach(function (name) { add(resolve(name), node, 'corporate', 'investor', 'facility profile'); });
+            texts(ident.knownReferrers).forEach(function (name) { add(resolve(name), node, 'referral', 'referrer', 'facility profile'); });
+            texts(staff.administrator).forEach(function (name) { add(resolve(name), node, 'leadership', 'administrator', 'facility profile'); });
+            texts(staff.notableStaff).forEach(function (name) { add(resolve(name), node, 'staff', 'staff', 'facility profile'); });
+            texts(ident.pastNames).concat(texts(ident.otherNames)).forEach(function (name) {
+                const other = resolve(name);
+                if (other && other.id !== node.id) {
+                    qa.profileNames.push(node.name + ' lists "' + name + '", which is the board node ' + other.name);
+                }
+            });
+        });
+
+        const operators = new Map(db.prepare('SELECT id, name, json_data FROM wpdl_kop_operators').all()
+            .map(function (r) { return [r.id, r]; }));
+        db.prepare('SELECT operator_id, facility_id FROM wpdl_kop_operator_facilities').all().forEach(function (r) {
+            const op = operators.get(r.operator_id);
+            add(op && resolve(op.name), byFacility.get(r.facility_id), 'corporate', 'operator', 'operator profile');
+        });
+        operators.forEach(function (op) {
+            let doc = null;
+            try { doc = JSON.parse(op.json_data || 'null'); } catch (err) { return; }
+            const record = (doc && (doc.operator || doc)) || {};
+            const opNode = resolve(op.name);
+            texts(record.parentCompanies).forEach(function (name) { add(resolve(name), opNode, 'corporate', 'parent company', 'operator profile'); });
+            texts(record.founders).forEach(function (name) { add(resolve(name), opNode, 'leadership', 'founder', 'operator profile'); });
+        });
+    } catch (err) {
+        console.warn('  ! could not read profile relationships: ' + err.message);
+    }
+    db.close();
+    return n;
+}
+
 /* ------------------------------------------------------------------ *
  * Layout
  * ------------------------------------------------------------------ */
@@ -941,6 +1064,21 @@ function build() {
     deriveRebrands(nodes, edges, nodeById, overrides);
     deriveDeaths(nodes, facilities, overrides);
 
+    /* --- 7c. connections the facility profiles record ------------- */
+    const added = addProfileEdges(nodes, edges, facilities);
+    if (added) {
+        /* The profile edges change who connects to whom, so the counts are
+         * taken again from scratch rather than patched. */
+        nodes.forEach(function (node) { node.degree = 0; node.degreeByCategory = {}; });
+        edges.forEach(function (edge) {
+            const source = nodeById.get(edge.source), target = nodeById.get(edge.target);
+            edge.crossesChain = Boolean(source.chain && target.chain && source.chain !== target.chain);
+            source.degree++; target.degree++;
+            source.degreeByCategory[edge.category] = (source.degreeByCategory[edge.category] || 0) + 1;
+            target.degreeByCategory[edge.category] = (target.degreeByCategory[edge.category] || 0) + 1;
+        });
+    }
+
     /* --- 8. layout and output ------------------------------------ */
     rescaleBoard(nodes);
     nodes.forEach(function (node) { delete node.rawStatus; delete node.kindWeak; });
@@ -950,7 +1088,8 @@ function build() {
         nodes: nodes.length, edges: edges.length, facilityMatches: matched,
         withYears: nodes.filter(function (n) { return n.years; }).length,
         withDeaths: nodes.filter(function (n) { return n.deaths; }).length,
-        rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length
+        rebranded: nodes.filter(function (n) { return n.status === 'rebranded'; }).length,
+        profileEdges: edges.filter(function (e) { return e.provenance === 'profile'; }).length
     };
     KINDS.forEach(function (kind) {
         counts['kind_' + kind] = nodes.filter(function (n) { return n.kind === kind; }).length;
@@ -1075,6 +1214,15 @@ function writeQaReport(graph) {
 
     section(lines, 'Facilities with no years of operation', qa.noYears, function (item) { return item; },
         'Nothing records when these ran. Add `"NAME": "1971-2004"` under `years` where it is known.');
+
+    section(lines, 'Connections added from the facility and operator profiles', qa.profileEdges,
+        function (item) { return item; },
+        'Both ends were already on the board and the board had no line between them. ' +
+        'A wrong one means the profile record is wrong: fix it there.');
+
+    section(lines, 'Profile names that are another board node', qa.profileNames, function (item) { return item; },
+        'Not added. Either a rebrand the board is missing (draw it on the board) or a sister ' +
+        'programme listed as a name by mistake (fix the profile).');
 
     section(lines, 'Merged nodes', qa.mergedNodes, function (item) { return item; }, '');
     section(lines, 'Duplicate edges dropped', qa.duplicateEdges, function (item) { return item; }, '');

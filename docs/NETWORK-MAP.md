@@ -765,12 +765,17 @@ are open with the files involved.
   above it, then right, then left, before it is given up. The real defect
   was the phone: a big neighbourhood framed whole at 375 px zoomed out to
   0.28, where rows sat closer on screen than a name is tall. `applyLayout`
-  now works out the lowest zoom at which rows and neighbours still clear
-  each other (`legibleZoom`, using `KOPNetworkCanvas.LABEL_PITCH`) and, when
-  the whole-block frame would go well below it, holds the zoom there,
-  centres on what was clicked and leaves the rest to panning. A desktop view
-  close to the floor is still framed whole. Tested at 375 px: every node on
-  the stage is named, none collide.
+  no longer guesses: it asks the renderer (`renderer.dropsAt`, a dry run of
+  the label pass with the same order, placements and collision grid) how
+  many on-stage names a candidate zoom would drop, and takes the lowest
+  zoom where the answer is none - the whole block when that works, else the
+  click and its own connections, else the click in the middle, with the
+  rest a pan away. `legibleZoom` (exact, from `renderer.labelBox`) bounds
+  the search from above. A first version used an estimated floor with a
+  25% margin; it dropped names once the years line made the estimate
+  tight, which is why it measures now. Tested at 375 px and on the desktop
+  stage: every node on the stage is named, none collide, and a node is only
+  ever left off the stage when framing everything would really drop names.
 - **Opening view re-lays out on a filter change.** `app.refresh` calls
   `focus.reframe()` on the opening view too, so a hidden organisation no
   longer leaves its cell empty.
@@ -852,6 +857,29 @@ mirror and carried on the node; each has a map in `network-overrides.json`
 format, that no person carries years, that death counts are positive
 integers, and that the closed end of a rebrand paired with an open name is
 never left plain "closed".
+
+### Step 5, first half (2026-09-18): connections from the profiles (2b.12)
+
+The build adds 40 edges from structured profile data, only where both ends
+are already board nodes (the board stays the roster) and the board has no
+line between them: facility `currentOwners`, `pastOperators`,
+`otherOperators`, `investors` (corporate), `knownReferrers` (referral),
+`staff.administrator` (leadership) and `notableStaff` (staff);
+`wpdl_kop_operator_facilities` (corporate) and operator `parentCompanies`
+and `founders`. Each carries `provenance: "profile"`, the drawer marks it
+"from the profile", and every one is listed in the QA report. A name must
+resolve to exactly one node. Facility `pastNames` and `otherNames` that
+resolve to another node are not turned into edges - they would assert a
+rebrand, and some are sister programmes (Asheville Academy for Girls and
+Stone Mountain School) - so the 50 of them are listed for a person to
+decide.
+
+The richer data exposed two test assumptions, both corrected: a person
+reached through another person's expansion does not open out in turn (the
+scene rule), so only people one step from the click are held to bringing
+all their places; and a node may be left off the stage only when framing
+everything would drop names, which the test now checks against the
+renderer.
 
 ### Already covered by 5b
 

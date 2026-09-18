@@ -1199,7 +1199,13 @@ function run() {
     /* A person with one line back to whatever revealed them hides the thing
      * worth knowing: which programmes they turn up at. Whenever a name
      * surfaces, everywhere it connects to surfaces with it. */
-    const surfaced = focused.nodes.filter((n) => n.kind === 'person' && store.neighbours(n.id, true).length > 1);
+    /* The people this applies to are the ones one step from what was
+     * clicked. A person who arrives through another person's expansion does
+     * not expand in turn (focus.js, visibleIds), or one well-connected name
+     * would pull in the whole board. */
+    const direct1 = new Set(store.neighbours(hub.id, true).map((l) => l.other.id));
+    const surfaced = focused.nodes.filter((n) => n.kind === 'person' && direct1.has(n.id) &&
+        store.neighbours(n.id, true).length > 1);
     check(surfaced.length > 0, 'no person surfaced when opening ' + hub.name + ', so the rule is untested');
     let hiddenPlaces = 0;
     surfaced.forEach((person) => {
@@ -1232,14 +1238,29 @@ function run() {
     }
     check(overlapping === 0, overlapping + ' pairs overlap in the re-settled neighbourhood');
 
-    /* The view should have framed what it settled. */
+    /* The view frames what it settled - unless framing all of it would have
+     * cost names, in which case it zooms in and leaves the rest a pan away.
+     * That is the only licence to leave a node off the stage, so it is
+     * checked against the renderer: the whole-block frame must really drop
+     * names, and the clicked node must still be on the stage. */
     const offStage = focused.nodes.filter((n) => {
         const p = focus.positionOf(n);
         const sxp = p.x * t.k + t.x;
         const syp = p.y * t.k + t.y;
         return sxp < -1 || sxp > WIDTH + 1 || syp < -1 || syp > HEIGHT + 1;
     }).length;
-    check(offStage === 0, 'the focused view left ' + offStage + ' of its own nodes off the stage');
+    if (offStage > 0) {
+        const pts = focused.nodes.map((n) => { const p = focus.positionOf(n); return { x: p.x, y: p.y, r: n.r }; });
+        const whole = viewport.frameOf(pts, 70);
+        const wouldDrop = renderer.dropsAt(focused.nodes, (n) => focus.positionOf(n), whole.k, whole.x, whole.y);
+        check(wouldDrop > 0,
+            'the focused view left ' + offStage + ' of its own nodes off the stage though framing all of it drops no names');
+        const hp = focus.positionOf(hub);
+        check(hp.x * t.k + t.x >= 0 && hp.x * t.k + t.x <= WIDTH && hp.y * t.k + t.y >= 0 && hp.y * t.k + t.y <= HEIGHT,
+            'the clicked node is off the stage');
+        notes.push('framing all ' + focused.nodes.length + ' would drop ' + wouldDrop +
+            ' names, so ' + offStage + ' are left a pan away');
+    }
 
     /* --- dragging inside a focus --- */
 
@@ -1833,9 +1854,20 @@ function run() {
     check(yearsCalls.indexOf(dated.years) !== -1,
         dated.name + ' is on the board without its years (' + dated.years + ')',
         dated.name + ' shows ' + dated.years + ' under its name');
-    const datedLabels = labelCalls.filter((c) => c.startsWith('text:'));
-    check(datedLabels.length === focus.scene().nodes.length,
-        'with years drawn, ' + datedLabels.length + ' of ' + focus.scene().nodes.length + ' names were drawn');
+    /* Every name on the stage is drawn with its years line; what the
+     * legibility floor leaves off the stage is a pan away. */
+    const datedLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    const dt4 = viewport.transform;
+    const datedOnStage = focus.scene().nodes.filter((n) => {
+        const p = focus.positionOf(n);
+        const x = p.x * dt4.k + dt4.x;
+        const y = p.y * dt4.k + dt4.y;
+        return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
+    });
+    const unnamed = datedOnStage.filter((n) => datedLabels.indexOf(n.name) === -1);
+    check(unnamed.length === 0,
+        'with years drawn, ' + unnamed.length + ' of ' + datedOnStage.length + ' names on the stage were dropped: ' +
+        unnamed.slice(0, 3).map((n) => n.name).join(', '));
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap with years lines: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
     focus.clear();
