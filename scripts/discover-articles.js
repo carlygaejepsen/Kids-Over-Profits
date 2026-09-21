@@ -90,6 +90,14 @@ const AI_TIMEOUT_MS        = 90000;
 // than this cutoff. Reddit items are NOT filtered (a freshly-shared old
 // article is still signal worth surfacing).
 const MAX_ARTICLE_AGE_DAYS = 30;
+// Headlines already submitted are remembered this long, so a story syndicated
+// under new URLs night after night (one mistrial story went in 7 times) is
+// submitted once.
+const SEEN_HEADLINE_DAYS = 60;
+// Google News link resolution comes back 429 in bursts. After this many
+// failures in a row, the remaining Google News candidates are left for the
+// next run instead of being thrown away.
+const GN_RESOLVE_FAIL_STOP_AFTER = 3;
 // Wall-clock budgets. The GitHub Actions job is killed at 60 minutes; a full
 // 7-way shard is ~560 facilities and Google News 503-throttles runner IPs
 // partway through, stretching the RSS phase past the hour so the run was
@@ -338,7 +346,14 @@ function hashUrl(url) {
  * Returns '' for short titles so generic headlines are not merged.
  */
 function headlineKey(title) {
-    const stripped = String(title || '').replace(/\s+[-|–—]\s+[^-|–—]{2,60}$/, '');
+    // Strip up to two trailing publisher segments ("... - ABC News - Breaking
+    // News"); a segment may hold a bare hyphen ("News-Press NOW").
+    let stripped = String(title || '');
+    for (let i = 0; i < 2; i++) {
+        const next = stripped.replace(/\s+[-|–—]\s+(?:(?!\s[-|–—]\s).){2,60}$/u, '');
+        if (next === stripped || normalizeName(next).length < 25) break;
+        stripped = next;
+    }
     const key = normalizeName(stripped);
     return key.length >= 25 ? key : '';
 }
@@ -372,16 +387,23 @@ function loadState() {
     const s = loadJson(STATE_FILE, null);
     if (s) {
         if (!Array.isArray(s.seenUrls)) s.seenUrls = [];
+        if (!s.seenHeadlines || typeof s.seenHeadlines !== 'object' || Array.isArray(s.seenHeadlines)) s.seenHeadlines = {};
         if (!s.stats) s.stats = { discovered: 0, submitted: 0, rejected: 0 };
         return s;
     }
-    return { version: 2, lastRun: null, seenUrls: [], stats: { discovered: 0, submitted: 0, rejected: 0 } };
+    return { version: 2, lastRun: null, seenUrls: [], seenHeadlines: {}, stats: { discovered: 0, submitted: 0, rejected: 0 } };
 }
 
 function saveState(state) {
     if (state.seenUrls.length > MAX_SEEN_URLS) {
         state.seenUrls = state.seenUrls.slice(-MAX_SEEN_URLS);
     }
+    const cutoff = new Date(Date.now() - SEEN_HEADLINE_DAYS * 86400000).toISOString().slice(0, 10);
+    const headlines = state.seenHeadlines && typeof state.seenHeadlines === 'object' && !Array.isArray(state.seenHeadlines)
+        ? state.seenHeadlines : {};
+    state.seenHeadlines = Object.fromEntries(
+        Object.entries(headlines).filter(([, d]) => typeof d === 'string' && d >= cutoff)
+    );
     saveJson(STATE_FILE, state);
 }
 
@@ -419,7 +441,8 @@ function buildBlacklistMatcher() {
         .concat(Array.isArray(bl.selfDomains) ? bl.selfDomains : [])
         .concat(Array.isArray(bl.spamDomains) ? bl.spamDomains : [])
         .concat(Array.isArray(bl.pressReleaseWires) ? bl.pressReleaseWires : [])
-        .concat(Array.isArray(bl.industryPromoDomains) ? bl.industryPromoDomains : []);
+        .concat(Array.isArray(bl.industryPromoDomains) ? bl.industryPromoDomains : [])
+        .concat(Array.isArray(bl.nonArticleDomains) ? bl.nonArticleDomains : []);
     const allowOverrides = new Set(
         (Array.isArray(bl.allowlistOverrides) ? bl.allowlistOverrides : [])
             .map(d => String(d).toLowerCase().trim())
@@ -495,6 +518,8 @@ function loadDiscoveryQueries() {
             when: typeof t.when === 'string' ? t.when.trim() : null
         }));
 
+    const redditBoost = raw.redditBoost && typeof raw.redditBoost === 'object' ? raw.redditBoost : {};
+
     return {
         facilityKeywords: facilityKeywords.length ? facilityKeywords : DEFAULT_FACILITY_KEYWORDS,
         facilityRecency: typeof raw.facilityRecency === 'string' ? raw.facilityRecency.trim() : '',
@@ -504,7 +529,10 @@ function loadDiscoveryQueries() {
         maxTopicSubmissionsPerRun: Number.isFinite(Number(raw.maxTopicSubmissionsPerRun)) && Number(raw.maxTopicSubmissionsPerRun) >= 0
             ? Number(raw.maxTopicSubmissionsPerRun) : 20,
         topicQueries,
-        genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean))
+        genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean)),
+        ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean)),
+        redditLinkBoost: Number.isFinite(Number(redditBoost.link)) ? Number(redditBoost.link) : 3,
+        redditSelftextBoost: Number.isFinite(Number(redditBoost.selftext)) ? Number(redditBoost.selftext) : 1
     };
 }
 
@@ -553,8 +581,12 @@ function parseLocation(loc) {
  *   - bucket:    'facility' or 'operator'
  *   - state:     '' for operators (cross-state) and for unknown locations
  */
-function buildFacilityIndex(apiResponse) {
+function buildFacilityIndex(apiResponse, ignoreAliases = new Set()) {
     const projects = (apiResponse && apiResponse.projects) || {};
+    // Names that are never a facility in a headline: bad records ("Kansas",
+    // "Behavioral Health") from ignoreAliases, plus every bare state name.
+    const ignore = new Set(ignoreAliases);
+    for (const full of Object.values(STATE_NAMES)) ignore.add(normalizeName(full));
     const byKey = new Map();
     const ownHosts = new Set();
 
@@ -569,6 +601,8 @@ function buildFacilityIndex(apiResponse) {
 
     function addEntry(entry) {
         if (!entry.queryName || entry.queryName.length < 4) return;
+        if (ignore.has(normalizeName(entry.queryName))) return;
+        entry.aliases = entry.aliases.filter(a => !ignore.has(normalizeName(a)));
         const key = normalizeName(entry.queryName) + '|' + (entry.state || '');
         const existing = byKey.get(key);
         if (existing) {
@@ -856,6 +890,17 @@ async function fetchRedditOAuthListing() {
 }
 
 /** Original .json-listing candidate extraction, now fed by the OAuth API. */
+/**
+ * Undo reddit's markdown escaping in selftext links: an escaped link renders
+ * as href="URL%5C%5D(URL)", and underscores come through as %5C_.
+ */
+function cleanRedditUrl(u) {
+    return String(u)
+        .replace(/&amp;/g, '&')
+        .replace(/(?:%5C)*(?:%5D|\])\(.*$/i, '')
+        .replace(/(?:%5C)+/gi, '');
+}
+
 function candidatesFromListing(json) {
     const posts = (json.data && json.data.children) || [];
     const out = [];
@@ -885,7 +930,7 @@ function candidatesFromListing(json) {
             const urls = post.selftext.match(/https?:\/\/[^\s()<>"'\[\]*_`]+/g) || [];
             const dedup = new Set();
             for (const raw of urls) {
-                const u = raw.replace(/[.,;:!?*_`)\]]+$/, '');
+                const u = cleanRedditUrl(raw.replace(/[.,;:!?*_`)\]]+$/, ''));
                 const h = hostOf(u);
                 if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) continue;
                 dedup.add(u);
@@ -953,7 +998,8 @@ async function fetchRedditCandidates() {
             const bodyText = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 
             const dedup = new Set();
-            const pushCandidate = (u, origin) => {
+            const pushCandidate = (rawUrl, origin) => {
+                const u = cleanRedditUrl(rawUrl);
                 const h = hostOf(u);
                 if (!h || HARD_BLOCKED_HOSTS.has(h) || dedup.has(u)) return;
                 dedup.add(u);
@@ -1057,7 +1103,14 @@ function countAbuseKeywords(text) {
  *   reject (no score) if blacklist hit or HARD_BLOCKED host
  *   reject (no score) if facility match but state CONTRADICTS facility's state
  */
-function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts, genericAliases) {
+function isHomepageUrl(url) {
+    try {
+        const u = new URL(url);
+        return (u.pathname === '' || u.pathname === '/') && !u.search;
+    } catch { return false; }
+}
+
+function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts, genericAliases, opts = {}) {
     const text = `${candidate.title} ${candidate.description}`;
     const reasons = [];
     let score = 0;
@@ -1092,9 +1145,14 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     if (isPdfUrl(candidate.link)) {
         return { accept: false, reason: 'pdf-document', meta: { link: candidate.link } };
     }
+    // A bare homepage (a program's own site, a law firm, a resource list) is
+    // not an article.
+    if (isHomepageUrl(candidate.link)) {
+        return { accept: false, reason: 'homepage-url', meta: { link: candidate.link } };
+    }
 
     // Facility match
-    const match = matchFacility(text, facilityIndex);
+    let match = matchFacility(text, facilityIndex);
     let cityMatched = false;
 
     if (match) {
@@ -1131,33 +1189,33 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         // State-match validation (skip for operators and entries without a known state)
         if (!cityMatched && fac.state && fac.bucket !== 'operator') {
             const signals = extractStateSignals(text);
+            const conflictMeta = {
+                matchedAlias: match.matchedAlias,
+                facility: fac.queryName,
+                expectedState: fac.state,
+                detectedStates: Array.from(signals)
+            };
+            let conflict = null;
             if (signals.size > 0 && !signals.has(fac.state)) {
-                return {
-                    accept: false,
-                    reason: 'state-mismatch',
-                    meta: {
-                        matchedAlias: match.matchedAlias,
-                        facility: fac.queryName,
-                        expectedState: fac.state,
-                        detectedStates: Array.from(signals)
-                    }
-                };
+                conflict = 'state-mismatch';
+            } else if (genericAliases && genericAliases.has(normalizeName(match.matchedAlias)) && !signals.has(fac.state)) {
+                // Generic alias (shared by N+ facilities) requires POSITIVE state
+                // confirmation, not just absence of mismatch. Without it, names
+                // like "Juvenile Detention Center" would match unrelated facilities
+                // in articles that don't happen to mention any state.
+                conflict = 'generic-alias-unconfirmed';
             }
-            // Generic alias (shared by N+ facilities) requires POSITIVE state
-            // confirmation, not just absence of mismatch. Without it, names
-            // like "Juvenile Detention Center" would match unrelated facilities
-            // in articles that don't happen to mention any state.
-            if (genericAliases && genericAliases.has(normalizeName(match.matchedAlias)) && !signals.has(fac.state)) {
-                return {
-                    accept: false,
-                    reason: 'generic-alias-unconfirmed',
-                    meta: {
-                        matchedAlias: match.matchedAlias,
-                        facility: fac.queryName,
-                        expectedState: fac.state,
-                        detectedStates: Array.from(signals)
-                    }
-                };
+            if (conflict) {
+                if (!candidate.origin.startsWith('reddit')) {
+                    return { accept: false, reason: conflict, meta: conflictMeta };
+                }
+                // A member-posted article is on topic either way; the name
+                // just belongs to some other program ("Teen Challenge" in
+                // Indiana vs our Nevada record). Score it without the match.
+                match = null;
+                score = 0;
+                reasons.length = 0;
+                reasons.push(`facility-dropped:${conflict}`);
             }
         }
     }
@@ -1183,10 +1241,31 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         }
     }
 
-    // Reddit link-post boost
-    if (candidate.origin === 'reddit-link') {
-        score += 1;
+    // A per-facility Google News query only proves the article mentions the
+    // search words somewhere. When no facility is named in the headline or
+    // blurb, the hit is almost always an unrelated local crime story that
+    // happened to share a keyword ("Teenage suspect charged in hit-and-run"
+    // for Linn County Juvenile Detention).
+    if (candidate.origin === 'google-news' && !match) {
+        return {
+            accept: false,
+            reason: 'facility-unmatched',
+            meta: { query: candidate.facilityQuery || '', score, reasons, host: candHost }
+        };
+    }
+
+    // Articles people post to r/troubledteens are already on topic: the
+    // subreddit is the filter, so a link post clears the threshold on its own
+    // (redditBoost.link). Links inside a text post are looser (resource
+    // lists, pop-culture asides) and still need a keyword or facility.
+    const redditLinkBoost = Number.isFinite(opts.redditLinkBoost) ? opts.redditLinkBoost : 3;
+    const redditSelftextBoost = Number.isFinite(opts.redditSelftextBoost) ? opts.redditSelftextBoost : 1;
+    if (candidate.origin === 'reddit-link' && redditLinkBoost > 0) {
+        score += redditLinkBoost;
         reasons.push('reddit-link-post');
+    } else if (candidate.origin === 'reddit-selftext' && redditSelftextBoost > 0) {
+        score += redditSelftextBoost;
+        reasons.push('reddit-selftext-link');
     }
 
     // Topic-query boost: the query itself carried the topical constraint
@@ -1421,7 +1500,7 @@ async function main() {
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
     const facJson = await fetchJson(FACILITIES_URL, { timeoutMs: 60000 });
-    const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson);
+    const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson, queries.ignoreAliases);
     log(`  built facility index: ${facilityIndex.length} unique active entries`);
     log(`  facility-owned hosts: ${facilityOwnHosts.size} (skipped as candidates)`);
     log(`  generic aliases:      ${genericAliases.size} (require positive state-signal match)`);
@@ -1517,6 +1596,8 @@ async function main() {
     const dedupeSeen = new Set();
     const dedupeHeadlines = new Set();
     let duplicateHeadlines = 0;
+    let previouslySubmitted = 0;
+    const evalOpts = { redditLinkBoost: queries.redditLinkBoost, redditSelftextBoost: queries.redditSelftextBoost };
 
     for (const c of candidates) {
         if (!c.link || !c.link.startsWith('http')) continue;
@@ -1528,13 +1609,16 @@ async function main() {
         // carries that post's title. Only an accepted copy claims the key, so
         // a rejected first copy (wire host, state mismatch) does not hide a
         // good one from another outlet.
-        const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic') ? headlineKey(c.title) : '';
+        // A reddit link post carries one link, so its title is the headline too.
+        const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic' || c.origin === 'reddit-link') ? headlineKey(c.title) : '';
         if (hk && dedupeHeadlines.has(hk)) { duplicateHeadlines++; continue; }
+        // Same story already submitted on an earlier night under another URL.
+        if (hk && state.seenHeadlines[hk]) { previouslySubmitted++; continue; }
 
-        const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases);
+        const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases, evalOpts);
         if (result.accept) {
             if (hk) dedupeHeadlines.add(hk);
-            queue.push({ candidate: c, evalResult: result, urlHash: h });
+            queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });
         } else {
             state.stats.rejected += 1;
             rejected.push({
@@ -1554,6 +1638,7 @@ async function main() {
     for (const q of queue) byOrigin[q.candidate.origin] = (byOrigin[q.candidate.origin] || 0) + 1;
     log(`  accepted by origin: ${Object.entries(byOrigin).map(([k, v]) => `${k}=${v}`).join(', ') || 'none'}`);
     if (duplicateHeadlines) log(`  syndicated duplicates collapsed: ${duplicateHeadlines}`);
+    if (previouslySubmitted) log(`  headlines already submitted on an earlier run: ${previouslySubmitted}`);
 
     // Facility and Reddit candidates go ahead of topic candidates, so a
     // stalled topic tier (rate limits, extraction failures) cannot starve them.
@@ -1592,6 +1677,7 @@ async function main() {
     let topicSubmitted = 0, topicDeferred = 0;
     let topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
     let consecutiveRateLimited = 0;
+    let gnResolveFailStreak = 0, gnResolveDeferred = 0;
     const topicCap = queries.maxTopicSubmissionsPerRun;
     const postResolveLog = [];
 
@@ -1614,22 +1700,24 @@ async function main() {
 
         // Resolve if it's a Google News redirect (no-op otherwise)
         const originalLink = q.candidate.link;
-        const resolvedLink = await resolveGoogleNewsUrl(originalLink);
-
-        // Hard reject if we couldn't resolve a Google News URL. Submitting
-        // these produces empty AI extractions (the GN consent page has no
-        // article body), so we'd rather lose the candidate than pollute the
-        // review queue with untitled garbage rows.
-        if (resolvedLink.startsWith('https://news.google.com/')) {
-            seen.add(q.urlHash);
-            postResolveRejected++;
-            postResolveLog.push({
-                link: originalLink,
-                reason: 'gn-resolution-failed',
-                facilityQuery: q.candidate.facilityQuery || null
-            });
+        const isGnLink = originalLink.startsWith('https://news.google.com/');
+        // Google is rate-limiting the resolver: stop asking for this run.
+        if (isGnLink && gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
+            gnResolveDeferred++;
             continue;
         }
+        const resolvedLink = await resolveGoogleNewsUrl(originalLink);
+
+        // Never submit an unresolved GN URL: the AI stage gets the consent
+        // page, which has no article body. The failure is almost always a
+        // 429 burst, so the candidate stays unmarked and the next run
+        // retries it instead of losing it for good.
+        if (resolvedLink.startsWith('https://news.google.com/')) {
+            gnResolveFailStreak++;
+            gnResolveDeferred++;
+            continue;
+        }
+        if (isGnLink) gnResolveFailStreak = 0;
 
         if (resolvedLink !== originalLink) {
             // Re-dedup against the canonical URL — same article may appear under
@@ -1698,6 +1786,7 @@ async function main() {
         if (r.ok) {
             submitted++;
             state.stats.submitted += 1;
+            if (q.headlineKey) state.seenHeadlines[q.headlineKey] = new Date().toISOString().slice(0, 10);
             if (q.candidate.origin === 'google-news-topic') topicSubmitted++;
         } else {
             submitErrors++;
@@ -1741,6 +1830,7 @@ async function main() {
     if (topicDeferred) log(`  topic deferred (cap): ${topicDeferred}`);
     log(`  rejected (pre-fetch):  ${rejected.length}`);
     log(`  rejected (post-resolve): ${postResolveRejected}`);
+    if (gnResolveDeferred) log(`  deferred (GN link unresolved, retried next run): ${gnResolveDeferred}`);
     log(`  cumulative stats:    ${JSON.stringify(state.stats)}`);
 
     if (submitErrors > 0 && submitted === 0) process.exitCode = 1;

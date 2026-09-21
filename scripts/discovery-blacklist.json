@@ -47,6 +47,21 @@
     "issuewire.com"
   ],
   "industryPromoDomains": [],
+  "nonArticleDomains": [
+    "c.org",
+    "change.org",
+    "dropbox.com",
+    "*.dropbox.com",
+    "netflix.com",
+    "podcasts.apple.com",
+    "open.spotify.com",
+    "*.bandcamp.com",
+    "linktr.ee",
+    "amazon.com",
+    "docs.google.com",
+    "drive.google.com"
+  ],
+  "_nonArticleDomainsComment": "Links members post to r/troubledteens that are not articles the AI stage can read: petitions, file shares, streaming and podcast pages, stores.",
   "_industryPromoComment": "Add TTI-industry-friendly outlets here to reject them. Currently empty; populate as you spot patterns in the rejected log.",
   "urlPathPatterns": [
     "/globenewswire/",

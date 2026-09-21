@@ -89,6 +89,14 @@ define('PER_FACILITY_CAP', 15);
 define('REQUEST_TIMEOUT_MS', 30000);
 define('AI_TIMEOUT_MS', 90000);
 define('MAX_ARTICLE_AGE_DAYS', 30);
+// Headlines already submitted are remembered this long, so a story syndicated
+// under new URLs night after night (one mistrial story went in 7 times) is
+// submitted once.
+define('SEEN_HEADLINE_DAYS', 60);
+// Google News link resolution comes back 429 in bursts. After this many
+// failures in a row, the remaining Google News candidates are left for the
+// next run instead of being thrown away.
+define('GN_RESOLVE_FAIL_STOP_AFTER', 3);
 // Wall-clock budgets (same as the JS). Cap the Google News phase and the
 // overall run so the filter/submit/save-state phases always run with whatever
 // was collected, instead of the job being killed mid-fetch.
@@ -367,8 +375,15 @@ function hash_url(string $url): string {
  * Returns '' for short titles so generic headlines are not merged.
  */
 function headline_key(string $title): string {
-    $stripped = preg_replace('/\s+[-|\x{2013}\x{2014}]\s+[^-|\x{2013}\x{2014}]{2,60}$/u', '', $title);
-    $key = normalize_name($stripped ?? $title);
+    // Strip up to two trailing publisher segments ("... - ABC News - Breaking
+    // News"); a segment may hold a bare hyphen ("News-Press NOW").
+    $stripped = $title;
+    for ($i = 0; $i < 2; $i++) {
+        $next = preg_replace('/\s+[-|\x{2013}\x{2014}]\s+(?:(?!\s[-|\x{2013}\x{2014}]\s).){2,60}$/u', '', $stripped);
+        if ($next === null || $next === $stripped || mb_strlen(normalize_name($next)) < 25) break;
+        $stripped = $next;
+    }
+    $key = normalize_name($stripped);
     return mb_strlen($key) >= 25 ? $key : '';
 }
 
@@ -400,18 +415,24 @@ function load_state(): array {
     $s = load_json_file(STATE_FILE, null);
     if (is_array($s)) {
         if (!isset($s['seenUrls']) || !is_array($s['seenUrls'])) $s['seenUrls'] = [];
+        if (!isset($s['seenHeadlines']) || !is_array($s['seenHeadlines'])) $s['seenHeadlines'] = [];
         if (!isset($s['stats']) || !is_array($s['stats'])) {
             $s['stats'] = ['discovered' => 0, 'submitted' => 0, 'rejected' => 0];
         }
         return $s;
     }
-    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
+    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
 }
 
 function save_state(array $state): void {
     if (count($state['seenUrls']) > MAX_SEEN_URLS) {
         $state['seenUrls'] = array_slice($state['seenUrls'], -MAX_SEEN_URLS);
     }
+    $cutoff = gmdate('Y-m-d', time() - SEEN_HEADLINE_DAYS * 86400);
+    $state['seenHeadlines'] = array_filter(
+        is_array($state['seenHeadlines'] ?? null) ? $state['seenHeadlines'] : [],
+        static fn($d) => is_string($d) && $d >= $cutoff
+    );
     save_json_file(STATE_FILE, $state);
 }
 
@@ -456,7 +477,8 @@ function build_blacklist_matcher(): array {
         is_array($bl['selfDomains'] ?? null) ? $bl['selfDomains'] : [],
         is_array($bl['spamDomains'] ?? null) ? $bl['spamDomains'] : [],
         is_array($bl['pressReleaseWires'] ?? null) ? $bl['pressReleaseWires'] : [],
-        is_array($bl['industryPromoDomains'] ?? null) ? $bl['industryPromoDomains'] : []
+        is_array($bl['industryPromoDomains'] ?? null) ? $bl['industryPromoDomains'] : [],
+        is_array($bl['nonArticleDomains'] ?? null) ? $bl['nonArticleDomains'] : []
     );
     $allowOverrides = array_map(
         static fn($d) => strtolower(trim((string)$d)),
@@ -550,6 +572,13 @@ function load_discovery_queries(): array {
         if ($k !== '') $generic[$k] = true;
     }
 
+    $ignoreAliases = [];
+    foreach ($strList($raw['ignoreAliases'] ?? null) as $n) {
+        $k = normalize_name($n);
+        if ($k !== '') $ignoreAliases[$k] = true;
+    }
+    $redditBoost = is_array($raw['redditBoost'] ?? null) ? $raw['redditBoost'] : [];
+
     $maxPerTopic = is_numeric($raw['maxItemsPerTopic'] ?? null) && (int)$raw['maxItemsPerTopic'] > 0
         ? (int)$raw['maxItemsPerTopic'] : 25;
     $maxTopicSubmissions = is_numeric($raw['maxTopicSubmissionsPerRun'] ?? null) && (int)$raw['maxTopicSubmissionsPerRun'] >= 0
@@ -562,7 +591,10 @@ function load_discovery_queries(): array {
         'maxItemsPerTopic' => $maxPerTopic,
         'maxTopicSubmissionsPerRun' => $maxTopicSubmissions,
         'topicQueries' => $topicQueries,
-        'genericQueryNames' => $generic
+        'genericQueryNames' => $generic,
+        'ignoreAliases' => $ignoreAliases,
+        'redditLinkBoost' => is_numeric($redditBoost['link'] ?? null) ? (int)$redditBoost['link'] : 3,
+        'redditSelftextBoost' => is_numeric($redditBoost['selftext'] ?? null) ? (int)$redditBoost['selftext'] : 1
     ];
 }
 
@@ -598,8 +630,13 @@ function parse_location($loc): array {
  * facility-owned host set, and the generic-alias set. Mirrors the JS shape:
  * ['facilities' => [...], 'ownHosts' => [host => true], 'genericAliases' => [norm => true]]
  */
-function build_facility_index(array $apiResponse): array {
-    global $EXCLUDED_FACILITY_STATUSES, $EXCLUDED_OPERATOR_STATUSES;
+function build_facility_index(array $apiResponse, array $ignoreAliases = []): array {
+    global $EXCLUDED_FACILITY_STATUSES, $EXCLUDED_OPERATOR_STATUSES, $STATE_NAMES;
+
+    // Names that are never a facility in a headline: bad records ("Kansas",
+    // "Behavioral Health") from ignoreAliases, plus every bare state name.
+    $ignore = $ignoreAliases;
+    foreach ($STATE_NAMES as $full) $ignore[normalize_name($full)] = true;
 
     $projects = $apiResponse['projects'] ?? [];
     $byKey = [];
@@ -614,8 +651,13 @@ function build_facility_index(array $apiResponse): array {
         }
     };
 
-    $addEntry = static function (array $entry) use (&$byKey) {
+    $addEntry = static function (array $entry) use (&$byKey, $ignore) {
         if ($entry['queryName'] === '' || mb_strlen($entry['queryName']) < 4) return;
+        if (isset($ignore[normalize_name($entry['queryName'])])) return;
+        $entry['aliases'] = array_values(array_filter(
+            $entry['aliases'],
+            static fn($a) => !isset($ignore[normalize_name($a)])
+        ));
         $key = normalize_name($entry['queryName']) . '|' . ($entry['state'] ?? '');
         if (isset($byKey[$key])) {
             $existing = &$byKey[$key];
@@ -873,6 +915,16 @@ define('REDDIT_FEED_URL', 'https://www.reddit.com/r/troubledteens/new.rss?limit=
 define('REDDIT_CLIENT_ID', getenv('REDDIT_CLIENT_ID') ?: '');
 define('REDDIT_CLIENT_SECRET', getenv('REDDIT_CLIENT_SECRET') ?: '');
 
+/**
+ * Undo reddit's markdown escaping in selftext links: an escaped link renders
+ * as href="URL%5C%5D(URL)", and underscores come through as %5C_.
+ */
+function clean_reddit_url(string $u): string {
+    $u = str_replace('&amp;', '&', $u);
+    $u = preg_replace('/(?:%5C)*(?:%5D|\])\(.*$/i', '', $u);
+    return preg_replace('/(?:%5C)+/i', '', $u);
+}
+
 function fetch_reddit_oauth_listing(): array {
     $tokenRes = http_request('https://www.reddit.com/api/v1/access_token', [
         'method' => 'POST',
@@ -927,7 +979,7 @@ function candidates_from_listing(array $json): array {
             preg_match_all('/https?:\/\/[^\s()<>"\'\[\]*_`]+/', (string)$post['selftext'], $m);
             $dedup = [];
             foreach ($m[0] as $raw) {
-                $u = preg_replace('/[.,;:!?*_`)\]]+$/', '', $raw);
+                $u = clean_reddit_url(preg_replace('/[.,;:!?*_`)\]]+$/', '', $raw));
                 $h = host_of($u);
                 if ($h === '' || in_array($h, $HARD_BLOCKED_HOSTS, true) || isset($dedup[$u])) continue;
                 $dedup[$u] = true;
@@ -995,6 +1047,7 @@ function fetch_reddit_candidates(): array {
 
             $dedup = [];
             $pushCandidate = function (string $u, string $origin) use (&$out, &$dedup, $title, $created, $bodyText, $permalink, $HARD_BLOCKED_HOSTS) {
+                $u = clean_reddit_url($u);
                 $h = host_of($u);
                 if ($h === '' || in_array($h, $HARD_BLOCKED_HOSTS, true) || isset($dedup[$u])) return;
                 $dedup[$u] = true;
@@ -1076,7 +1129,13 @@ function extract_state_signals(string $text): array {
  * Decide whether a candidate clears the filter. Same additive scoring and
  * rejection reasons as the JS version.
  */
-function evaluate_candidate(array $candidate, array $facilityIndex, array $blacklist, array $facilityOwnHosts, array $genericAliases): array {
+function is_homepage_url(string $url): bool {
+    $path = parse_url($url, PHP_URL_PATH);
+    $query = parse_url($url, PHP_URL_QUERY);
+    return ($path === null || $path === false || $path === '' || $path === '/') && ($query === null || $query === false || $query === '');
+}
+
+function evaluate_candidate(array $candidate, array $facilityIndex, array $blacklist, array $facilityOwnHosts, array $genericAliases, array $opts = []): array {
     global $ABUSE_KEYWORDS, $WEAK_ABUSE_KEYWORDS;
     $text = $candidate['title'] . ' ' . $candidate['description'];
     $reasons = [];
@@ -1102,6 +1161,11 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
     // on every run. Reject them up front.
     if (is_pdf_url($candidate['link'])) {
         return ['accept' => false, 'reason' => 'pdf-document', 'meta' => ['link' => $candidate['link']]];
+    }
+    // A bare homepage (a program's own site, a law firm, a resource list) is
+    // not an article.
+    if (is_homepage_url($candidate['link'])) {
+        return ['accept' => false, 'reason' => 'homepage-url', 'meta' => ['link' => $candidate['link']]];
     }
 
     $match = match_facility($text, $facilityIndex);
@@ -1138,29 +1202,28 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
 
         if (!$cityMatched && $fac['state'] !== '' && $fac['bucket'] !== 'operator') {
             $signals = extract_state_signals($text);
+            $conflictMeta = [
+                'matchedAlias' => $match['matchedAlias'],
+                'facility' => $fac['queryName'],
+                'expectedState' => $fac['state'],
+                'detectedStates' => array_keys($signals)
+            ];
+            $conflict = null;
             if (count($signals) > 0 && !isset($signals[$fac['state']])) {
-                return [
-                    'accept' => false,
-                    'reason' => 'state-mismatch',
-                    'meta' => [
-                        'matchedAlias' => $match['matchedAlias'],
-                        'facility' => $fac['queryName'],
-                        'expectedState' => $fac['state'],
-                        'detectedStates' => array_keys($signals)
-                    ]
-                ];
+                $conflict = 'state-mismatch';
+            } elseif ($genericAliases && isset($genericAliases[normalize_name($match['matchedAlias'])]) && !isset($signals[$fac['state']])) {
+                $conflict = 'generic-alias-unconfirmed';
             }
-            if ($genericAliases && isset($genericAliases[normalize_name($match['matchedAlias'])]) && !isset($signals[$fac['state']])) {
-                return [
-                    'accept' => false,
-                    'reason' => 'generic-alias-unconfirmed',
-                    'meta' => [
-                        'matchedAlias' => $match['matchedAlias'],
-                        'facility' => $fac['queryName'],
-                        'expectedState' => $fac['state'],
-                        'detectedStates' => array_keys($signals)
-                    ]
-                ];
+            if ($conflict !== null) {
+                if (!str_starts_with($candidate['origin'], 'reddit')) {
+                    return ['accept' => false, 'reason' => $conflict, 'meta' => $conflictMeta];
+                }
+                // A member-posted article is on topic either way; the name
+                // just belongs to some other program ("Teen Challenge" in
+                // Indiana vs our Nevada record). Score it without the match.
+                $match = null;
+                $score = 0;
+                $reasons = ["facility-dropped:{$conflict}"];
             }
         }
     }
@@ -1191,9 +1254,31 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         }
     }
 
-    if ($candidate['origin'] === 'reddit-link') {
-        $score += 1;
+    // A per-facility Google News query only proves the article mentions the
+    // search words somewhere. When no facility is named in the headline or
+    // blurb, the hit is almost always an unrelated local crime story that
+    // happened to share a keyword ("Teenage suspect charged in hit-and-run"
+    // for Linn County Juvenile Detention).
+    if ($candidate['origin'] === 'google-news' && $match === null) {
+        return [
+            'accept' => false,
+            'reason' => 'facility-unmatched',
+            'meta' => ['query' => $candidate['facilityQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
+        ];
+    }
+
+    // Articles people post to r/troubledteens are already on topic: the
+    // subreddit is the filter, so a link post clears the threshold on its own
+    // (redditBoost.link). Links inside a text post are looser (resource
+    // lists, pop-culture asides) and still need a keyword or facility.
+    $redditLinkBoost = (int)($opts['redditLinkBoost'] ?? 3);
+    $redditSelftextBoost = (int)($opts['redditSelftextBoost'] ?? 1);
+    if ($candidate['origin'] === 'reddit-link' && $redditLinkBoost > 0) {
+        $score += $redditLinkBoost;
         $reasons[] = 'reddit-link-post';
+    } elseif ($candidate['origin'] === 'reddit-selftext' && $redditSelftextBoost > 0) {
+        $score += $redditSelftextBoost;
+        $reasons[] = 'reddit-selftext-link';
     }
 
     // Topic-query boost: the query itself carried the topical constraint
@@ -1411,7 +1496,7 @@ function main(): void {
     // -- Fetch facility data live from API --
     kop_log("\nFetching facilities from API...");
     $facJson = fetch_json(FACILITIES_URL, ['timeoutMs' => 60000]);
-    $index = build_facility_index($facJson);
+    $index = build_facility_index($facJson, $queries['ignoreAliases']);
     $facilityIndex = $index['facilities'];
     $facilityOwnHosts = $index['ownHosts'];
     $genericAliases = $index['genericAliases'];
@@ -1516,6 +1601,8 @@ function main(): void {
     $dedupeSeen = [];
     $dedupeHeadlines = [];
     $duplicateHeadlines = 0;
+    $previouslySubmitted = 0;
+    $evalOpts = ['redditLinkBoost' => $queries['redditLinkBoost'], 'redditSelftextBoost' => $queries['redditSelftextBoost']];
 
     foreach ($candidates as $c) {
         if (empty($c['link']) || !str_starts_with($c['link'], 'http')) continue;
@@ -1527,13 +1614,16 @@ function main(): void {
         // carries that post's title. Only an accepted copy claims the key, so
         // a rejected first copy (wire host, state mismatch) does not hide a
         // good one from another outlet.
-        $hk = in_array($c['origin'], ['google-news', 'google-news-topic'], true) ? headline_key($c['title']) : '';
+        // A reddit link post carries one link, so its title is the headline too.
+        $hk = in_array($c['origin'], ['google-news', 'google-news-topic', 'reddit-link'], true) ? headline_key($c['title']) : '';
         if ($hk !== '' && isset($dedupeHeadlines[$hk])) { $duplicateHeadlines++; continue; }
+        // Same story already submitted on an earlier night under another URL.
+        if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
 
-        $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases);
+        $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts);
         if ($result['accept']) {
             if ($hk !== '') $dedupeHeadlines[$hk] = true;
-            $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h];
+            $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
         } else {
             $state['stats']['rejected'] += 1;
             $rejected[] = [
@@ -1558,6 +1648,7 @@ function main(): void {
     foreach ($byOrigin as $k => $v) $parts[] = "{$k}={$v}";
     kop_log('  accepted by origin: ' . ($parts ? implode(', ', $parts) : 'none'));
     if ($duplicateHeadlines) kop_log("  syndicated duplicates collapsed: {$duplicateHeadlines}");
+    if ($previouslySubmitted) kop_log("  headlines already submitted on an earlier run: {$previouslySubmitted}");
 
     // Facility and Reddit candidates go ahead of topic candidates, so a
     // stalled topic tier (rate limits, extraction failures) cannot starve them.
@@ -1598,6 +1689,8 @@ function main(): void {
     $topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
     $topicDeferred = 0;
     $consecutiveRateLimited = 0;
+    $gnResolveFailStreak = 0;
+    $gnResolveDeferred = 0;
     $topicCap = $queries['maxTopicSubmissionsPerRun'];
     $postResolveLog = [];
 
@@ -1619,20 +1712,24 @@ function main(): void {
         }
 
         $originalLink = $q['candidate']['link'];
-        $resolvedLink = resolve_google_news_url($originalLink);
-
-        // Hard reject unresolved GN URLs — submitting them produces empty AI
-        // extractions (the consent page has no article body).
-        if (str_starts_with($resolvedLink, 'https://news.google.com/')) {
-            $seen[$q['urlHash']] = true;
-            $postResolveRejected++;
-            $postResolveLog[] = [
-                'link' => $originalLink,
-                'reason' => 'gn-resolution-failed',
-                'facilityQuery' => $q['candidate']['facilityQuery'] ?? null
-            ];
+        $isGnLink = str_starts_with($originalLink, 'https://news.google.com/');
+        // Google is rate-limiting the resolver: stop asking for this run.
+        if ($isGnLink && $gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
+            $gnResolveDeferred++;
             continue;
         }
+        $resolvedLink = resolve_google_news_url($originalLink);
+
+        // Never submit an unresolved GN URL: the AI stage gets the consent
+        // page, which has no article body. The failure is almost always a
+        // 429 burst, so the candidate stays unmarked and the next run
+        // retries it instead of losing it for good.
+        if (str_starts_with($resolvedLink, 'https://news.google.com/')) {
+            $gnResolveFailStreak++;
+            $gnResolveDeferred++;
+            continue;
+        }
+        if ($isGnLink) $gnResolveFailStreak = 0;
 
         if ($resolvedLink !== $originalLink) {
             // Re-dedup against the canonical URL — same article may appear
@@ -1698,6 +1795,7 @@ function main(): void {
         if ($r['ok']) {
             $submitted++;
             $state['stats']['submitted'] += 1;
+            if ($q['headlineKey'] !== '') $state['seenHeadlines'][$q['headlineKey']] = gmdate('Y-m-d');
             if ($q['candidate']['origin'] === 'google-news-topic') $topicSubmitted++;
         } else {
             $submitErrors++;
@@ -1739,6 +1837,7 @@ function main(): void {
     if ($topicDeferred) kop_log("  topic deferred (cap): {$topicDeferred}");
     kop_log('  rejected (pre-fetch):  ' . count($rejected));
     kop_log('  rejected (post-resolve): ' . $postResolveRejected);
+    if ($gnResolveDeferred) kop_log("  deferred (GN link unresolved, retried next run): {$gnResolveDeferred}");
     kop_log('  cumulative stats:    ' . json_encode($state['stats'], JSON_UNESCAPED_SLASHES));
 
     if ($submitErrors > 0 && $submitted === 0) {
