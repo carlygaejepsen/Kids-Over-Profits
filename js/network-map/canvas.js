@@ -123,6 +123,17 @@
     var BUBBLE_PAD_X = 9;
     var BUBBLE_PAD_Y = 5;
     var BUBBLE_GAP = 4;
+    /* A bubble's border carries the colour coding - its company's colour, or
+     * its kind's on a closed place - so it is drawn heavy enough to read from
+     * across the board, and the rings outside it step out to clear it. A dot
+     * is too small for that weight and keeps the light strokes. */
+    var BORDER_PLAIN = 1.5;
+    var BORDER_CODED = 4;
+    var BORDER_HOLLOW = 3.5;
+    var RING_NATSAP = 4.5;
+    var RING_DEATHS = 5.5;
+    var RING_DEATHS_OVER_NATSAP = 8.5;
+    var RING_HOVER = 8;
     /* A node that cannot hold its name is drawn as a dot this size, in
      * screen pixels: big enough to read as a person or a place, small
      * enough not to crowd what does have room. */
@@ -497,7 +508,7 @@
 
     /* Fill and outline for one node, whatever its outline is. The path must
      * already be traced. */
-    function fillOutline(ctx, spec, alpha) {
+    function fillOutline(ctx, spec, alpha, heavy) {
         if (spec.status === 'closed' || spec.status === 'rebranded') {
             /* Hollow: no longer operating under this name. Closed is a solid
              * outline; rebranded is dashed, because the place carried on
@@ -508,8 +519,8 @@
             ctx.strokeStyle = spec.fill === SURFACE
                 ? (KIND_OUTLINE[spec.kind] || INK + '0.6)')
                 : spec.fill;
-            ctx.lineWidth = 2;
-            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash([4, 3]);
+            ctx.lineWidth = heavy ? BORDER_HOLLOW : 2;
+            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash(heavy ? [7, 4] : [4, 3]);
             ctx.stroke();
             if (ctx.setLineDash) ctx.setLineDash([]);
         } else {
@@ -527,7 +538,9 @@
             ctx.fill();
             ctx.globalAlpha = alpha;
             ctx.strokeStyle = spec.outline;
-            ctx.lineWidth = spec.outlineWidth || 1;
+            ctx.lineWidth = heavy
+                ? (spec.coded ? BORDER_CODED : BORDER_PLAIN)
+                : (spec.coded ? 2 : 1);
             ctx.stroke();
         }
     }
@@ -573,20 +586,20 @@
     function paintBubble(ctx, spec, box, alpha) {
         ctx.beginPath();
         traceBubble(ctx, spec.kind, box, 0);
-        fillOutline(ctx, spec, alpha);
+        fillOutline(ctx, spec, alpha, true);
 
         if (spec.deaths) {
             ctx.beginPath();
-            traceBubble(ctx, spec.kind, box, spec.natsap ? 5 : 3);
+            traceBubble(ctx, spec.kind, box, spec.natsap ? RING_DEATHS_OVER_NATSAP : RING_DEATHS);
             ctx.strokeStyle = DEATH_RED;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.stroke();
         }
         if (spec.natsap) {
             ctx.beginPath();
-            traceBubble(ctx, spec.kind, box, 2.5);
+            traceBubble(ctx, spec.kind, box, RING_NATSAP);
             ctx.strokeStyle = '#B2E102';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 2;
             ctx.stroke();
         }
         ctx.globalAlpha = 1;
@@ -1207,13 +1220,13 @@
                 scratch.deaths = node.deaths;
                 scratch.fill = fill;
                 scratch.outline = outlineFor(node.kind, fill, renderer.colourMode === 'kind');
-                scratch.outlineWidth = 1;
+                scratch.coded = false;
                 /* A company's own places and the company itself carry its
                  * colour on their border, as on the board. */
                 if (renderer.colourMode === 'kind' && node.chain && board.chainColours[node.chain] &&
                     node.kind !== 'person') {
                     scratch.outline = board.chainColours[node.chain];
-                    scratch.outlineWidth = 2;
+                    scratch.coded = true;
                 }
 
                 var bubble = bubbles[i];
@@ -1234,7 +1247,7 @@
                 paintBubble(ctx, scratch, bb3, alpha);
                 if (hovered) {
                     ctx.beginPath();
-                    traceBubble(ctx, node.kind, bb3, 5);
+                    traceBubble(ctx, node.kind, bb3, RING_HOVER);
                     ctx.strokeStyle = '#000435';
                     ctx.lineWidth = 2;
                     ctx.stroke();

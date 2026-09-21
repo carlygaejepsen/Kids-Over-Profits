@@ -42,6 +42,12 @@
      * into it with a bounce while its connections are reeled in around it:
      * a yoyo coming back to the hand. */
     var HEAD_GROW = 1.6;
+    /* The opening view is a handful of organisations on a stage built for a
+     * hundred names. Drawn at the working size they are specks in a field of
+     * sand; drawn grown they are what they are, the ways in. Only as far as
+     * the stage has the width for: on a phone they stay the working size. */
+    var OPENING_GROW = 1.7;
+    var OPENING_GROW_WIDTH = 1000;
     var YOYO_MS = 800;
     /* The view zooms in on a click and its own connections when that frame
      * is at least this much closer than the whole board, and never closer
@@ -598,6 +604,11 @@
             return t >= 1 ? 1 : 1 - Math.exp(-5.5 * t) * Math.cos(2.5 * Math.PI * t);
         }
 
+        /* What every name in the view is grown by: one, except on the
+         * opening view. The layout reads it so the room it leaves for a name
+         * is the room the name is drawn in. */
+        var baseGrow = 1;
+
         function growFor(node) {
             if (!node) return null;
             var g = Object.create(null);
@@ -765,15 +776,24 @@
             /* Back to the start: the next click settles from what is on screen. */
             seedKey = null;
             stopYoyo();
-            renderer.setGrow(null);
             var scene = focus.scene();
+            baseGrow = Math.max(1, Math.min(OPENING_GROW, (renderer.width || 0) / OPENING_GROW_WIDTH));
+            var grown = Object.create(null);
+            scene.nodes.forEach(function (node) { grown[node.id] = baseGrow; });
+            renderer.setGrow(grown);
             renderer.setScene(scene);
             viewport.setScene(scene);
             drawn = scene.nodeIds;
             if (!scene.nodes.length) return;
             if (!renderer.width) return; /* no stage yet; the resize observer calls back */
-            var opening = settleLayout(scene, 90);
-            applyLayout(scene, opening.positions, 90 + opening.overhang);
+            /* The frame is fitted to where names are centred, so the padding
+             * has to hold half of the widest one as it is drawn here. */
+            var padding = baseGrow === 1 ? 90 : scene.nodes.reduce(function (t, node) {
+                var w = renderer.labelBox ? renderer.labelBox(node).width : 0;
+                return Math.max(t, w * baseGrow / 2 + 24);
+            }, 90);
+            var opening = settleLayout(scene, padding);
+            applyLayout(scene, opening.positions, padding + opening.overhang);
         }
         focus.start = showOpeningView;
 
@@ -822,16 +842,24 @@
 
             var key = mode + ':' + chain.join(',');
             if (key !== seedKey) {
+                /* The first click off a grown opening view settles from the
+                 * map's own positions. That arrangement is sized to the
+                 * window, so seeding from it made what a click on Sequel
+                 * looked like depend on how wide the window was when the
+                 * page opened, and at 1920px pushed fourteen of its names
+                 * off the stage. */
+                var fromOpening = seedKey === null && baseGrow > 1;
                 seedKey = key;
                 seed = Object.create(null);
                 scene.nodes.forEach(function (node) {
-                    var p = positionOf(node);
+                    var p = fromOpening ? node : positionOf(node);
                     seed[node.id] = { x: p.x, y: p.y };
                 });
             }
             var head = store.node(chain[chain.length - 1]);
             /* Grown before the frame is chosen, so the zoom is measured
              * against the size it will be drawn at. */
+            baseGrow = 1;
             renderer.setGrow(growFor(head));
             var settled = settleLayout(scene, 70, seed);
             applyLayout(scene, settled.positions, 70 + settled.overhang);
@@ -869,7 +897,7 @@
                      * and the grid agree about how much room this name
                      * takes. */
                     space: spaceFor(node),
-                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH + BUBBLE_EXTRA),
+                    label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH + BUBBLE_EXTRA) * baseGrow,
                     tier: tierOf(node),
                     years: !!node.years,
                     node: node
@@ -1644,6 +1672,56 @@
         }
 
         /**
+         * The opening view's clusters side by side across the whole board,
+         * with the room left over shared out evenly between and around them.
+         *
+         * The packer fits clusters together as tightly as their lines allow,
+         * which is right for a view of eighty names and wrong for a handful
+         * of organisations with nothing between them: it leaves them bunched
+         * at one end of a stage that is otherwise empty sand. Only where the
+         * clusters have no lines to each other and all fit in one row;
+         * anything else keeps the packer's arrangement. Returns the new
+         * bounds, or null where it does not apply.
+         */
+        function abreast(blocks, links, board) {
+            if (blocks.length < 2) return null;
+            var blockOf = Object.create(null);
+            blocks.forEach(function (block, bi) {
+                block.members.forEach(function (p) { blockOf[p.id] = bi; });
+            });
+            var joined = links.some(function (link) {
+                var ends = endsOf(link);
+                return blockOf[ends[0]] !== undefined && blockOf[ends[1]] !== undefined &&
+                    blockOf[ends[0]] !== blockOf[ends[1]];
+            });
+            if (joined) return null;
+
+            var spans = blocks.map(function (block) {
+                var lo = Infinity;
+                var hi = -Infinity;
+                block.outline.forEach(function (span) {
+                    lo = Math.min(lo, span[0]);
+                    hi = Math.max(hi, span[1]);
+                });
+                return [lo, hi];
+            });
+            var taken = spans.reduce(function (t, span) { return t + span[1] - span[0]; }, 0);
+            if (taken + COLUMN_GUTTER * 2 * blocks.length > board) return null;
+
+            /* A whole share of the spare width between neighbours, half a
+             * share outside the first and the last. */
+            var gap = (board - taken) / blocks.length;
+            var tallest = blocks.reduce(function (t, block) { return Math.max(t, block.rows); }, 1);
+            var at = -board / 2 + gap / 2;
+            blocks.forEach(function (block, bi) {
+                block.x = at - spans[bi][0];
+                block.y = Math.floor((tallest - block.rows) / 2);
+                at += spans[bi][1] - spans[bi][0] + gap;
+            });
+            return { x0: -board / 2 + gap / 2, x1: board / 2 - gap / 2, y0: 0, y1: tallest };
+        }
+
+        /**
          * Lay the view out as a board: clusters of names that belong
          * together, each drawn as a small tree with ownership and command
          * reading downwards, fitted together to fill the stage.
@@ -1672,7 +1750,7 @@
             var isHead = Object.create(null);
             roots.forEach(function (id) { isHead[id] = true; });
             var tallest = points.reduce(function (t, p) {
-                return Math.max(t, p.r * (isHead[p.id] ? HEAD_GROW : 1));
+                return Math.max(t, p.r * (isHead[p.id] ? HEAD_GROW : baseGrow));
             }, 0);
             var needOf = function (p) { return p.label + COLUMN_GUTTER; };
 
@@ -1756,6 +1834,34 @@
             });
 
             var bounds = packBlocks(blocks, links, levels.down, rowH, aspect);
+
+            /* The opening view goes side by side where that fits, with each
+             * unconnected organisation a cluster of its own so that it gets
+             * its share of the width; wrapped into one block of loose names
+             * they sat in a knot. Where it does not fit, the members get
+             * back the places the packer's block gave them. */
+            if (!roots.length) {
+                var apart = [];
+                var packed = [];
+                blocks.forEach(function (block, bi) {
+                    if (keys[bi] !== '(loose)') { apart.push(block); return; }
+                    block.members.forEach(function (p) {
+                        packed.push([p, p.bx, p.brow]);
+                        var alone = Object.create(null);
+                        alone[p.id] = 0;
+                        apart.push(layoutBlock([p], alone, adjacent, needOf, board, aspect, rowH));
+                    });
+                });
+                /* Across the stage itself, not the board inside its padding:
+                 * a cluster's extent already holds its names edge to edge. */
+                var side = abreast(apart, links, renderer.width - 48);
+                if (side) {
+                    blocks = apart;
+                    bounds = side;
+                } else {
+                    packed.forEach(function (was) { was[0].bx = was[1]; was[0].brow = was[2]; });
+                }
+            }
             var rows = bounds.y1 - bounds.y0;
 
             /* Tighten before ever letting the fit scale the board down: a
@@ -1785,7 +1891,7 @@
              * own estimate of a name leaves out the pill a person is drawn in. */
             var widthOf = function (p) {
                 var w = p.node && renderer.labelBox ? renderer.labelBox(p.node).width : p.label + STAND_BETWEEN_AIR * 2;
-                return w * (isHead[p.id] ? HEAD_GROW : 1);
+                return w * (isHead[p.id] ? HEAD_GROW : baseGrow);
             };
             var whole = viewport.frameOf(points, padding);
             standBetween(points, adjacent, byId, whole && whole.k > 0 ? Math.min(1, whole.k) : 1, widthOf);

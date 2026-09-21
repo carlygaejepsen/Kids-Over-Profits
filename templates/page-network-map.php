@@ -58,28 +58,22 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 	<header class="kop-network__intro">
 		<h1 class="kop-network__title"><?php the_title(); ?></h1>
 
-		<div class="kop-network__standfirst">
-			<p>
-				Every line on this map is a connection someone recorded: a person who
-				worked at a programme, a company that bought another, a founder whose
-				next venture opened under a different name. Hover a name to see who it
-				touches, click to follow the trail from one to the next.
+		<?php
+		// Two sentences and no more: what the lines are, and what they are not.
+		// How to use the map is said where it is used, in the trail strip.
+		?>
+		<p class="kop-network__standfirst">
+			Connections on record between programmes, the people who ran them and
+			the companies behind them. A line means a relationship was documented,
+			not an allegation of wrongdoing.
+		</p>
+
+		<?php if ($kop_net_ready && !empty($kop_net_counts['nodes'])) : ?>
+			<p class="kop-network__tally">
+				<?php echo esc_html(number_format_i18n((int) $kop_net_counts['nodes'])); ?> names,
+				<?php echo esc_html(number_format_i18n((int) $kop_net_counts['edges'])); ?> connections
 			</p>
-			<p>
-				This is research data, curated by the project from public records,
-				survivor accounts and reporting. A connection here says that a
-				relationship was recorded, and nothing more. It is not an allegation
-				of wrongdoing against anyone named, and the absence of a connection
-				means only that no one has documented one yet.
-				<?php if ($kop_net_ready && !empty($kop_net_counts['nodes'])) : ?>
-					<span class="kop-network__tally">
-						Currently <?php echo esc_html(number_format_i18n((int) $kop_net_counts['nodes'])); ?>
-						names and <?php echo esc_html(number_format_i18n((int) $kop_net_counts['edges'])); ?>
-						connections.
-					</span>
-				<?php endif; ?>
-			</p>
-		</div>
+		<?php endif; ?>
 
 		<?php
 		// Anything an editor adds to the page body renders above the map.
@@ -189,6 +183,11 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					</button>
 					<button type="button" class="kop-network__button" id="kop-network-share">
 						Copy link
+					</button>
+					<?php // The map and its controls over the whole screen; app.js owns the label. ?>
+					<button type="button" class="kop-network__button kop-network__button--full" id="kop-network-fullscreen"
+						aria-pressed="false">
+						Full screen
 					</button>
 				</div>
 			</div>

@@ -488,7 +488,8 @@ letting the map draw nodes in the wrong places.
 
 #### 2. Page and plumbing
 
-The template prints an H1 and a two-paragraph standfirst explaining what
+The template prints an H1 and a two-sentence standfirst (two paragraphs
+until the design pass of 2026-09-21) explaining what
 the map shows and its limits: board data curated by the project,
 relationships as recorded, not a claim of wrongdoing. Then the shell:
 toolbar, rail, canvas stage, drawer, legend.
@@ -1385,6 +1386,41 @@ board stays the roster) unless an override lists them. Edges carry
 6. 2b.9 compaction and the remaining circuit-board polish.
 7. 2b.10 starter views (done 2026-09-18).
 8. Paths (Phase 3).
+
+### Design pass (2026-09-21): borders, width, intro, full screen
+
+The owner's four complaints, and what answers each:
+
+- *Borders too thin to read the colour coding.* A bubble's border is where
+  a company's colour (or, on a closed place, its kind's) is carried, so it is
+  now 4px for a company-coloured border, 3.5px hollow and 1.5px plain, up
+  from 2 / 2 / 1 (`BORDER_*` in canvas.js). The NATSAP, memorial and hover
+  rings step out to clear it (`RING_*`). Dots and legend swatches keep the
+  light strokes; a 4px border on a 6px dot is a blob. Padding inside the
+  bubble is unchanged, because widening it pushed the 80-name Sequel view
+  off a 1920px stage.
+- *Horizontal space.* The focused views already fill the stage; the opening
+  view did not. Six organisations at the working size were specks at the
+  two ends of an empty stage. Two changes in focus.js, both only when there
+  is no trail: names are drawn grown (`OPENING_GROW`, 1.7 at 1700px of stage
+  and wider, scaling down to 1 at 1000px, so a phone is unchanged), with the
+  layout told through `baseGrow` so it leaves the room they are drawn in;
+  and `abreast()` lays the clusters side by side across the whole stage with
+  the spare width shared evenly, each unconnected organisation its own
+  cluster. Where they do not fit in one row (a phone, a big starter view) or
+  the clusters have lines between them, the packer's arrangement stands.
+  The first click off a grown opening view seeds its settle from the map's
+  own positions, not the opening arrangement: seeded from the stretched
+  arrangement, Sequel's 99 names came out with fourteen off a 1920px stage
+  (one, seeded from the map; two before this pass).
+- *Wordy intro.* The two-paragraph standfirst is now two sentences - what a
+  line is, and that it is not an allegation - set in one band with the title
+  and the tally. How to use the map is said once, in the trail strip.
+- *Full screen.* A toolbar button puts `.kop-network__app` (toolbar, trail,
+  stage, drawer) over the whole screen with the Fullscreen API. Where the
+  browser has none or refuses (iPhone Safari), the app is pinned over the
+  window with `kop-network__app--full` instead, and Escape leaves it. The
+  stage resizes either way and the resize observer re-lays the view out.
 
 ## Phase 3: analysis tools (outline)
 

@@ -291,6 +291,64 @@
         });
     }
 
+    /**
+     * The map over the whole screen: toolbar, trail, stage and drawer, with
+     * the page around them gone. The browser's own full screen where it has
+     * one; where it does not (an iPhone), the app is pinned over the window
+     * instead, which is the same thing less the address bar. Either way the
+     * stage changes size, and the resize observer re-lays the view out.
+     */
+    function wireFullscreen(app) {
+        var button = byId('kop-network-fullscreen');
+        var shell = app.elements.shell || byId('kop-network-app');
+        if (!button || !shell) return;
+
+        var PINNED = 'kop-network__app--full';
+        var request = shell.requestFullscreen || shell.webkitRequestFullscreen;
+        var exit = document.exitFullscreen || document.webkitExitFullscreen;
+        var native = function () {
+            return (document.fullscreenElement || document.webkitFullscreenElement) === shell;
+        };
+        var isFull = function () {
+            return native() || shell.classList.contains(PINNED);
+        };
+        var sync = function () {
+            var full = isFull();
+            button.setAttribute('aria-pressed', full ? 'true' : 'false');
+            button.textContent = full ? 'Exit full screen' : 'Full screen';
+        };
+        var pin = function (on) {
+            shell.classList.toggle(PINNED, on);
+            /* The page behind a pinned map must not scroll under it. */
+            document.documentElement.classList.toggle('kop-network-pinned', on);
+            sync();
+        };
+
+        button.addEventListener('click', function () {
+            if (native()) {
+                exit.call(document);
+            } else if (shell.classList.contains(PINNED)) {
+                pin(false);
+            } else if (request) {
+                var asked = request.call(shell);
+                /* Refused (an embedded frame, a browser policy): pin instead. */
+                if (asked && asked.catch) asked.catch(function () { pin(true); });
+            } else {
+                pin(true);
+            }
+            if (app.elements.canvas) app.elements.canvas.focus();
+        });
+        document.addEventListener('fullscreenchange', sync);
+        document.addEventListener('webkitfullscreenchange', sync);
+        /* The browser gives Escape to its own full screen; the pinned map
+         * has to take it itself, ahead of the handler that starts over. */
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape' || !shell.classList.contains(PINNED)) return;
+            pin(false);
+            event.stopImmediatePropagation();
+        }, true);
+    }
+
     function wireControls(app) {
         var reset = byId('kop-network-reset-view');
         if (reset) {
@@ -301,6 +359,8 @@
                 app.focus.reframe();
             });
         }
+
+        wireFullscreen(app);
 
         /* The colour-mode select is bound in filters.js, which owns the
          * legend that has to change with it. */
