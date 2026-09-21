@@ -50,19 +50,27 @@
         return String(name == null ? '' : name).toLowerCase().replace(/[^a-z0-9]+/g, '');
     }
 
-    /** The approved finding a report's text belongs to, or null. Pure. */
-    function find(findings, facilityName, text) {
+    /**
+     * The approved finding a report's text belongs to, or null. Pure. A
+     * facility can hold one citation twice with the same opening (Texas
+     * lists a few that way), so a finding already claimed by another report
+     * (ids in `taken`) yields to an unclaimed one that also matches.
+     */
+    function find(findings, facilityName, text, taken) {
         var hay = squash(text);
         var key = nameKey(facilityName);
         if (!hay) return null;
+        var fallback = null;
         for (var i = 0; i < findings.length; i++) {
             var f = findings[i];
             if (!f || !f.needle || f.needle.length < SHORTEST_NEEDLE) continue;
             // The cheap test first: most findings belong to another facility.
             if (f.needle.length < UNIQUE_NEEDLE && nameKey(f.facility) !== key) continue;
-            if (hay.indexOf(f.needle) !== -1) return f;
+            if (hay.indexOf(f.needle) === -1) continue;
+            if (!taken || !taken[f.id]) return f;
+            if (!fallback) fallback = f;
         }
-        return null;
+        return fallback;
     }
 
     KOP.severeFlags = { find: find, squash: squash, nameKey: nameKey };
@@ -101,10 +109,12 @@
         });
     }
 
-    function markReport(report, facilityName, candidates) {
-        var found = find(candidates, facilityName, report.textContent);
+    function markReport(report, facilityName, candidates, taken) {
+        var found = find(candidates, facilityName, report.textContent, taken);
         report.setAttribute('data-kop-severe', found ? 'yes' : 'no');
-        if (!found || report.querySelector('.kop-severe-flag')) return !!found;
+        if (!found) return false;
+        taken[found.id] = true;
+        if (report.querySelector('.kop-severe-flag')) return true;
 
         var summary = report.querySelector(SELECTORS.reportSummary);
         if (summary) summary.appendChild(el('span', 'kop-severe-flag', 'Severe finding'));
@@ -130,8 +140,9 @@
         var count = 0;
         if (candidates.length) {
             var reports = facility.querySelectorAll(SELECTORS.report);
+            var taken = {};
             for (var i = 0; i < reports.length; i++) {
-                if (markReport(reports[i], name, candidates)) count++;
+                if (markReport(reports[i], name, candidates, taken)) count++;
             }
         }
         facility.setAttribute('data-kop-severe-count', String(count));

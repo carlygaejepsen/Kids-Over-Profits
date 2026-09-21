@@ -54,6 +54,15 @@ check('a needle too short to mean anything never matches',
     find(findings, 'Example Ranch', 'this text contains tooshort in it') === null);
 check('an empty report is not flagged', find(findings, 'HMIH CEDAR CREST, LLC', '') === null);
 check('no findings, no flags', find([], 'HMIH CEDAR CREST, LLC', shortText) === null);
+// Texas lists a few citations twice (one copy with a note appended); the
+// excerpt is the matching sentence, so both findings carry the same opening.
+const twins = [
+    { id: 7, facility: 'Example Ranch', needle: needle(longText) },
+    { id: 8, facility: 'Example Ranch', needle: needle(longText) },
+];
+check('two findings with one opening: the first report takes the first', (find(twins, 'Example Ranch', longText, {}) || {}).id === 7);
+check('and the second report takes the one still unclaimed', (find(twins, 'Example Ranch', longText, { 7: true }) || {}).id === 8);
+check('a claimed finding is still better than none', (find(twins, 'Example Ranch', longText, { 7: true, 8: true }) || {}).id === 7);
 
 if (failures.length) {
     console.error(failures.map(f => 'FAIL  ' + f).join('\n'));
