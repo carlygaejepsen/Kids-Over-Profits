@@ -222,6 +222,27 @@ Rows are packed by the width each name actually needs, not cut into columns
 of a fixed width, and gutters tighten before the fit is ever allowed to
 scale the board down.
 
+**A staff member stands between the places they join (2026-09-20).** The
+owner asked that the person who connects two places be visible on the
+connection rather than hanging off the row below with a line running down to
+them and back up - which reads as two connections rather than one thing
+joining both. So after the rows are packed, `standBetween` (focus.js) moves
+any person whose connections are all places on one row onto that row, into a
+gap between two of them.
+
+Only into room that is already there, or room a row can make without
+growing past the board's own edges: the view is framed on those edges, so a
+row that spreads within them costs nothing, and one that spreads past them
+costs every name on the board some of its zoom. Laying the whole board out
+with those people in the org rows instead (the obvious version) widened the
+rows enough to push four companies off the stage in Second Nature's view.
+Where there is no room, the person stays where they were. Across the ten
+busiest views, 8 of 26 such people now stand between their places; Provo
+Canyon School's median line came down from 3 rows to 2.
+
+Ownership and renames are untouched: they run between organisations, and no
+person stands in the middle of one.
+
 **A click is a yoyo (2026-09-18).** The owner asked for a click to zoom in,
 make the name bigger and draw its connections closer. So:
 

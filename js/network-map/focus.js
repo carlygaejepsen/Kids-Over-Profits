@@ -67,6 +67,9 @@
      * the renderer keeps between bubbles on top of its own width. */
     var BUBBLE_EXTRA = 30;
     var LABEL_HALF_PER_CHAR = LABEL_CHAR_WIDTH / 2;
+    /* Air either side of a name that stands between two places, in the
+     * gap those two already leave. */
+    var STAND_BETWEEN_AIR = 8;
     /* Clear space between one column's names and the next. */
     var COLUMN_GUTTER = 26;
     /* The bands, top to bottom. */
@@ -1777,6 +1780,8 @@
                 });
             });
 
+            standBetween(points, adjacent, byId, needOf);
+
             grid = {
                 x0: -width * spread / 2, y0: (bounds.y0 - midRow) * rowH - rowH / 2,
                 cellW: width * spread, cellH: rowH,
@@ -1785,6 +1790,136 @@
 
             /* Every name has exactly its own width, so nothing hangs over. */
             return 0;
+        }
+
+        /**
+         * Move the people who join two places on one row onto that row,
+         * between them.
+         *
+         * The staff member is the connection: the therapist who turns up at
+         * four schools, the director whose next job is the company that
+         * bought the last one. Hung off the row below, their two lines run
+         * down to a name and back up again, which reads as two connections
+         * to two different things rather than one thing joining both, and on
+         * a wide row the trip is halfway across the board. Standing between
+         * the two places, the line goes straight through them.
+         *
+         * Only into room that is already there. Widening rows to make space
+         * came out of the zoom - the Second Nature view pushed four
+         * companies off the stage to pay for it - so a person moves only
+         * where the gap between two of their places already holds them, and
+         * stays where they were when it does not. Nothing else moves.
+         *
+         * Ownership and renames are untouched: they run between
+         * organisations, and no person stands in the middle of one.
+         */
+        function standBetween(points, adjacent, byId, needOf) {
+            var isPerson = function (p) { return p && (p.tier === TIER_COMMAND || p.tier === TIER_STAFF); };
+
+            /* Who is on each row, left to right. Rows are the lattice the
+             * whole board sits on, so a row is just a y. */
+            var rows = Object.create(null);
+            points.forEach(function (p) {
+                (rows[p.y] = rows[p.y] || []).push(p);
+            });
+            Object.keys(rows).forEach(function (y) {
+                rows[y].sort(function (a, b) { return a.x - b.x; });
+            });
+
+            /* Left and right edges of a row, names included. */
+            var extentOf = function (list) {
+                var lo = Infinity;
+                var hi = -Infinity;
+                list.forEach(function (q) {
+                    lo = Math.min(lo, q.x - q.label / 2);
+                    hi = Math.max(hi, q.x + q.label / 2);
+                });
+                return [lo, hi];
+            };
+            /* The edges of the board itself, which nothing may pass: the
+             * view is framed on these, so a row that grew past them would
+             * cost the whole board its zoom. */
+            var boardBox = Object.keys(rows).reduce(function (box, y) {
+                var edges = extentOf(rows[y]);
+                return [Math.min(box[0], edges[0]), Math.max(box[1], edges[1])];
+            }, [Infinity, -Infinity]);
+
+            var movers = points.filter(function (p) {
+                if (!isPerson(p)) return false;
+                var near = adjacent[p.id] || [];
+                if (near.length < 2) return false;
+                /* Everything they touch is a place, and every one of those
+                 * places is on one row that is not theirs. */
+                var row = null;
+                for (var i = 0; i < near.length; i++) {
+                    var other = byId[near[i]];
+                    if (!other || isPerson(other)) return false;
+                    if (row === null) row = other.y;
+                    else if (other.y !== row) return false;
+                }
+                return row !== null && row !== p.y;
+            });
+            /* Widest first: the name that needs the most room gets first
+             * refusal on the gaps, rather than being the one left out
+             * because a shorter name took the only space it fitted. */
+            movers.sort(function (a, b) { return needOf(b) - needOf(a); });
+
+            movers.forEach(function (p) {
+                var places = (adjacent[p.id] || []).map(function (id) { return byId[id]; })
+                    .sort(function (a, b) { return a.x - b.x; });
+                var row = rows[places[0].y] || [];
+                /* The bubble and a little air, not the full column the
+                 * packer gives a name of its own: this is a name squeezing
+                 * into a gap that is already there, and the gutter either
+                 * side of it belongs to the places it stands between. */
+                var want = p.label + STAND_BETWEEN_AIR * 2;
+                var best = null;
+                /* Any gap on that row that lies between the two places,
+                 * not only the space immediately between them: on a busy
+                 * row there is usually somebody else along the way, and
+                 * standing in the next gap over still reads as standing
+                 * between the two. The gap nearest where they already are
+                 * wins, so a name moves as little as the row allows. */
+                var span = [places[0].x, places[places.length - 1].x];
+                var widest = null;
+                for (var i = 1; i < row.length; i++) {
+                    var from = row[i - 1].x + row[i - 1].label / 2;
+                    var to = row[i].x - row[i].label / 2;
+                    var at = (from + to) / 2;
+                    if (at <= span[0] || at >= span[1]) continue;
+                    if (to - from >= want) {
+                        if (best === null || Math.abs(at - p.x) < Math.abs(best - p.x)) best = at;
+                    } else if (!widest || to - from > widest.gap) {
+                        widest = { gap: to - from, index: i, from: from, to: to };
+                    }
+                }
+
+                /* Nowhere on that row with room as it stands. A row may still
+                 * be pushed apart to make room, as long as it stays inside
+                 * the board's own edges: the view is framed on those, so a
+                 * row that grows within them costs the reader nothing, and
+                 * one that grows past them costs every name on the board
+                 * some of its zoom. */
+                if (best === null && widest) {
+                    var edges = extentOf(row);
+                    var need = want - widest.gap;
+                    if (edges[0] - need / 2 >= boardBox[0] && edges[1] + need / 2 <= boardBox[1]) {
+                        row.forEach(function (other, j) {
+                            other.x += j < widest.index ? -need / 2 : need / 2;
+                        });
+                        /* The two sides move apart by the same step, so the
+                         * middle of the gap is where it always was. */
+                        best = (widest.from + widest.to) / 2;
+                    }
+                }
+                if (best === null) return;
+                var wasRow = rows[p.y];
+                if (wasRow) rows[p.y] = wasRow.filter(function (other) { return other !== p; });
+                p.x = best;
+                p.y = places[0].y;
+                row.push(p);
+                row.sort(function (a, b) { return a.x - b.x; });
+            });
         }
 
         function stopSettle() {
