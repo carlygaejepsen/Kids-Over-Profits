@@ -86,6 +86,11 @@
         admissions: { colour: 'rgba(0, 4, 53, 0.44)', width: 1.15, dash: [5, 2], label: 'Admissions' },
         staff:      { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other staff' },
         membership: { colour: 'rgba(0, 4, 53, 0.5)', width: 1.3, dash: [8, 3], label: 'Member' },
+        /* Two places joined by somebody who worked at both. The person is
+         * not a name on the board; they are this line, and hovering it says
+         * who. Dash-dot, so it reads as a different kind of statement from a
+         * line the record draws between the two places themselves. */
+        people:     { colour: 'rgba(0, 4, 53, 0.6)', width: 1.6, dash: [9, 3, 2, 3], label: 'Shared people' },
         /* "Other" would read as the node kind of the same name in the key. */
         _default:   { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other connection' }
     };
@@ -154,6 +159,36 @@
     var EDGE_LABEL_CHARS = 32;
 
     /**
+     * Whether a line between two places stands for the people who worked at
+     * both: one the map folded a person into (focus.js, foldConnectors), or
+     * one the build drew from the staff list or the staff moves, where the
+     * person was never a node to begin with.
+     */
+    function isPeopleLine(edge) {
+        if (edge.category === 'people') return true;
+        var roles = edge.roles || [];
+        return (edge.provenance === 'staff-list' || edge.provenance === 'staff-movement') &&
+            (roles[0] === 'worked at both' || roles[0] === 'staff moved');
+    }
+
+    /**
+     * The names a line stands for: the people folded into it, then the ones
+     * the staff list names in its text ("X worked at both A and B; Y ...").
+     */
+    function peopleOn(edge) {
+        var names = (edge.via || []).map(function (v) { return v.person.name; });
+        var roles = edge.roles || [];
+        if ((edge.provenance === 'staff-list' || edge.provenance === 'staff-movement') &&
+            (roles[0] === 'worked at both' || roles[0] === 'staff moved')) {
+            String(edge.raw || '').split('; ').forEach(function (part) {
+                var name = part.split(/ \(| worked at | moved from /)[0].trim();
+                if (name && names.indexOf(name) === -1) names.push(name);
+            });
+        }
+        return names;
+    }
+
+    /**
      * The words to write on a line: the relationship as the board wrote it
      * ("cofounder/CEO", "rebrand"). A line the build added between two
      * places because somebody worked at both says who, since that person
@@ -165,11 +200,11 @@
         var roles = edge.roles || [];
         var raw = String(edge.raw || '');
         var text = '';
-        if ((edge.provenance === 'staff-list' || edge.provenance === 'staff-movement') &&
-            (roles[0] === 'worked at both' || roles[0] === 'staff moved')) {
-            text = raw.split('; ').map(function (part) {
-                return part.split(/ \(| worked at | moved from /)[0];
-            }).filter(Boolean).join(', ');
+        if (isPeopleLine(edge)) {
+            /* Who is a hover away; the line itself only says when it stands
+             * for more than one of them. */
+            var count = peopleOn(edge).length;
+            text = count > 1 ? count + ' people' : '';
         } else if (edge.provenance) {
             text = roles.join(' / ');
         } else {
@@ -232,11 +267,12 @@
         if (crossRegion) return CROSS_STYLE;
         if (edge.direction === 'renamed') return EDGE_STYLES.rebrand;
         if (edge.direction === 'acquirer') return EDGE_STYLES.acquired;
-        var base = EDGE_STYLES[edge.category] || EDGE_STYLES._default;
+        var base = isPeopleLine(edge) ? EDGE_STYLES.people
+            : (EDGE_STYLES[edge.category] || EDGE_STYLES._default);
         if (OWN_COLOUR[edge.category] || !colourOf) return base;
         var colour = colourOf(edge);
         if (!colour) return base;
-        var key = (edge.category || '_default') + '|' + colour;
+        var key = base.label + '|' + colour;
         if (!companyStyles[key]) {
             companyStyles[key] = {
                 colour: colour, width: Math.max(1.4, base.width), dash: base.dash,
@@ -709,6 +745,7 @@
              *   dim        alpha for everything outside near, 0.15 by default
              *   offsets    id to [dx, dy] world-space display offset: the
              *              hover gather, which never touches stored positions
+             *   hoverEdges edge id set under the pointer, drawn heavier
              */
             emphasis: { hoverId: null },
             width: 0,
@@ -1198,6 +1235,32 @@
             ctx.globalAlpha = 1;
             renderer.routes = routes;
 
+            /* --- the line under the pointer ---
+             *
+             * Stroked again, heavier, over a band of the stage colour, so it
+             * lifts off whatever it runs alongside. Nothing else changes:
+             * the pointer crosses a dozen lines on its way anywhere, and a
+             * map that dimmed for each one would never stop flickering. */
+            var hoverEdges = emphasis.hoverEdges || null;
+            if (hoverEdges) {
+                for (i = 0; i < routes.length; i++) {
+                    if (!hoverEdges[routes[i].edge.id]) continue;
+                    var hs = routes[i].style;
+                    ctx.beginPath();
+                    strokeRoute(ctx, routes[i].pts);
+                    ctx.strokeStyle = SURFACE;
+                    ctx.lineWidth = hs.width + 6;
+                    ctx.stroke();
+                    ctx.beginPath();
+                    strokeRoute(ctx, routes[i].pts);
+                    ctx.strokeStyle = solid(hs.colour);
+                    ctx.lineWidth = hs.width + 1.6;
+                    ctx.setLineDash(hs.dash || []);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+            }
+
             /* --- nodes --- */
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -1474,6 +1537,54 @@
         };
 
         /**
+         * The line under a canvas point, or null: the nearest route drawn
+         * last frame that passes within `slop` pixels. Routes are measured
+         * as the straight legs they were planned as; the rounding on a
+         * corner is a few pixels and well inside any slop a pointer needs.
+         * With a neighbourhood lit, a dimmed line is not there to be hit.
+         *
+         * A company's lines share a trunk down the gutter, by design, so
+         * on the trunk the pointer is on several at once. The one whose far
+         * end is nearest the pointer wins: moving along a trunk walks
+         * through the places it serves in the order they branch off, and
+         * the heavier stroke on the hovered line shows which one it is.
+         */
+        renderer.edgeAt = function (px, py, slop) {
+            var list = renderer.routes || [];
+            var hits = [];
+            var nearest = Infinity;
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].lit === false) continue;
+                var pts = list[i].pts;
+                var d = Infinity;
+                for (var j = 1; j < pts.length; j++) {
+                    var ax = pts[j - 1][0], ay = pts[j - 1][1];
+                    var dx = pts[j][0] - ax, dy = pts[j][1] - ay;
+                    var len2 = dx * dx + dy * dy;
+                    var t = len2 ? ((px - ax) * dx + (py - ay) * dy) / len2 : 0;
+                    t = t < 0 ? 0 : (t > 1 ? 1 : t);
+                    d = Math.min(d, Math.hypot(px - (ax + dx * t), py - (ay + dy * t)));
+                }
+                if (d > slop) continue;
+                var first = pts[0], last = pts[pts.length - 1];
+                hits.push({
+                    edge: list[i].edge, d: d,
+                    end: Math.min(Math.hypot(px - first[0], py - first[1]), Math.hypot(px - last[0], py - last[1]))
+                });
+                if (d < nearest) nearest = d;
+            }
+            var best = null;
+            for (var h = 0; h < hits.length; h++) {
+                /* Lines a pixel or two apart are the same line to a pointer. */
+                if (hits[h].d > nearest + 2) continue;
+                /* Later routes are drawn over earlier ones, so a tie goes
+                 * to the one on top. */
+                if (!best || hits[h].end <= best.end) best = hits[h];
+            }
+            return best ? best.edge : null;
+        };
+
+        /**
          * The on-screen box a node's bubble takes, with the gap it keeps
          * from its neighbours: width and height in pixels. focus.js uses it
          * to work out the lowest zoom at which neighbouring bubbles still
@@ -1511,6 +1622,8 @@
         /* And how much more a name with a years line needs. */
         YEARS_LINE: YEARS_LINE,
         styleFor: styleFor,
+        isPeopleLine: isPeopleLine,
+        peopleOn: peopleOn,
         edgeSwatch: edgeSwatch,
         edgeFadeFor: edgeFadeFor,
         swatch: swatch,

@@ -62,6 +62,30 @@ function collidingLabels(boxes) {
     return clashes;
 }
 
+/**
+ * What a name is joined to on screen: { others, lines }, read off the scene
+ * rather than the store. A person who only joins two places is drawn as the
+ * line between them (focus.js, foldConnectors), so a programme's connections
+ * on screen are not its edges in the data: its staff are lines, and the
+ * places they lead to are its neighbours.
+ */
+function joinedOnScreen(scene, id) {
+    const others = new Map();
+    const lines = [];
+    scene.edges.forEach((e) => {
+        if (e.sourceId !== id && e.targetId !== id) return;
+        lines.push(e);
+        const other = e.sourceId === id ? e.target : e.source;
+        others.set(other.id, other);
+    });
+    return { others: [...others.values()], lines };
+}
+
+/** On the map, as a name or as a line between two of them. */
+function onMap(scene, id) {
+    return !!(scene.nodeIds[id] || (scene.folded && scene.folded[id]));
+}
+
 function check(condition, message, note) {
     if (!condition) failures.push(message);
     else if (note) notes.push(note);
@@ -181,6 +205,7 @@ function buildSandbox() {
         path.join('js', 'network-map', 'canvas.js'),
         path.join('js', 'network-map', 'viewport.js'),
         path.join('js', 'network-map', 'focus.js'),
+        path.join('js', 'network-map', 'connection.js'),
         path.join('js', 'network-map', 'search.js'),
         path.join('js', 'network-map', 'drawer.js'),
         path.join('js', 'network-map', 'url-state.js'),
@@ -211,6 +236,7 @@ function buildSandbox() {
             attrs: Object.create(null),
             listeners: Object.create(null),
             className: '',
+            style: {},
             value: '',
             checked: false,
             hidden: false,
@@ -416,16 +442,15 @@ function run() {
         sandbox.KOPNetworkStore.statusBucket('rebranded') === 'rebranded',
         'status bucketing does not match the three filter checkboxes');
 
-    /* The default connections are ownership, staff, family and membership. Board seats,
-     * referrals, survivors and "other" are a checkbox away: on by default
-     * they put Alcoholics Anonymous and Bill Lane's companies in Synanon's
-     * view. A name whose only connections are those drops off until they
-     * are turned on. */
+    /* Every connection type is on until the visitor turns one off. Board
+     * seats, referrals, survivors and "other" used to start hidden, and
+     * every one of those lines joins a person to a programme or a company:
+     * the map is about relationships, so it does not open with any hidden. */
     const defaultCats = store.filters.categories;
-    check(['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership']
-        .every((c) => defaultCats[c]) &&
-        ['board', 'referral', 'survivor', 'other'].every((c) => !defaultCats[c]),
-        'the default connection types are not ownership, staff, family and membership: ' + Object.keys(defaultCats).join(', '));
+    check(graph.meta.categories.every((c) => defaultCats[c]),
+        'a connection type is hidden by default: ' +
+        graph.meta.categories.filter((c) => !defaultCats[c]).join(', '),
+        'all ' + graph.meta.categories.length + ' connection types are on by default');
     const defaultView = store.visible();
     check(defaultView.edges.every((e) => defaultCats[e.category]),
         'the default view drew a connection type that is off by default');
@@ -525,6 +550,7 @@ function run() {
 
     let hovered = null;
     let selected = null;
+    const lineEvents = { hovered: null, selected: null, selections: 0, popup: null };
     /* focus.js is created further down, once the viewport has been tested on
      * its own; from then on the pointer drives the chain, as it does on the
      * page. */
@@ -540,6 +566,17 @@ function run() {
         onSelect: (node) => {
             selected = node;
             if (focusRef.current) focusRef.current.select(node);
+        },
+        /* What the pointer last said about a line; the popup is wired on
+         * further down, where the lines are tested. */
+        onHoverEdge: (edge, point) => {
+            lineEvents.hovered = edge;
+            if (lineEvents.popup) lineEvents.popup.hover(edge, point);
+        },
+        onSelectEdge: (edge, point) => {
+            lineEvents.selected = edge;
+            lineEvents.selections++;
+            if (lineEvents.popup) lineEvents.popup.pin(edge, point);
         }
     });
 
@@ -868,15 +905,35 @@ function run() {
         store.setView(view.key);
         focus.restore([], 'focus');
         const scene = focus.scene();
-        check(scene.nodes.length === view.ids.length,
-            'the ' + view.key + ' view draws ' + scene.nodes.length + ' of its ' + view.ids.length + ' nodes');
+        /* A person in the view who does nothing there but join its places
+         * is drawn as the line between them, not as a name. */
+        const asLines = view.ids.filter((id) => scene.folded[id]).length;
+        const leftOut = view.ids.filter((id) => !onMap(scene, id));
+        check(leftOut.length === 0,
+            'the ' + view.key + ' view left out ' + leftOut.length + ' of its ' + view.ids.length + ' nodes: ' +
+            leftOut.slice(0, 3).join(', '));
+        /* The people in a view bring their places like anyone, so a view can
+         * hold more than its list - but nothing else: whatever is extra is
+         * a programme or company one of its people connects to. */
+        const viewPeople = view.ids.filter((id) => store.node(id) && store.node(id).kind === 'person');
+        const theirPlaces = new Set();
+        viewPeople.forEach((id) => store.neighbours(id, true).forEach((l) => theirPlaces.add(l.other.id)));
+        const uninvited = scene.nodes.filter((n) => view.ids.indexOf(n.id) === -1 && !theirPlaces.has(n.id));
+        check(uninvited.length === 0,
+            'the ' + view.key + ' view drew ' + uninvited.length + ' names that are neither on its list nor a place of its people: ' +
+            uninvited.slice(0, 3).map((n) => n.name).join(', '));
+        const homeless = viewPeople.filter((id) =>
+            store.neighbours(id, true).some((l) => l.other.kind !== 'person' && !onMap(scene, l.other.id)));
+        check(homeless.length === 0,
+            'the ' + view.key + ' view shows ' + homeless.length + ' people without all of their places');
         const around = {};
         scene.edges.forEach((e) => {
             (around[e.sourceId] = around[e.sourceId] || []).push(e.targetId);
             (around[e.targetId] = around[e.targetId] || []).push(e.sourceId);
         });
-        const reached = new Set([view.ids[0]]);
-        const queue = [view.ids[0]];
+        const first = view.ids.filter((id) => scene.nodeIds[id])[0];
+        const reached = new Set([first]);
+        const queue = [first];
         while (queue.length) {
             (around[queue.shift()] || []).forEach((id) => {
                 if (!reached.has(id)) { reached.add(id); queue.push(id); }
@@ -885,7 +942,8 @@ function run() {
         const loose = scene.nodes.filter((n) => !reached.has(n.id)).map((n) => n.name);
         check(loose.length === 0,
             'the ' + view.key + ' view has names with no drawn line to the rest: ' + loose.slice(0, 5).join(', '),
-            'the ' + view.key + ' view is one connected picture of ' + scene.nodes.length + ' nodes');
+            'the ' + view.key + ' view is one connected picture of ' + scene.nodes.length + ' names' +
+            (asLines ? ', ' + asLines + ' people folded into lines' : ''));
     });
     store.resetFilters();
     store.setView('default');
@@ -920,10 +978,21 @@ function run() {
     resetOps();
     renderer.draw();
     const hubScene = focus.scene();
-    const hubLabels = labelCalls.filter((c) => c.startsWith('text:'));
-    check(hubLabels.length === hubScene.nodes.length,
-        'the grid named ' + hubLabels.length + ' of ' + hubScene.nodes.length + ' nodes',
-        'a ' + hubScene.nodes.length + '-node neighbourhood fits every name');
+    const hubLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    /* Every programme a view's people lead to is on the board now, so a
+     * hub's view can be bigger than the stage; what does not fit is a pan
+     * away. The promise is about what is on the stage: none of it unnamed. */
+    const hubOnStage = hubScene.nodes.filter((n) => {
+        const p = focus.positionOf(n);
+        const x = p.x * viewport.transform.k + viewport.transform.x;
+        const y = p.y * viewport.transform.k + viewport.transform.y;
+        return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
+    });
+    const hubUnnamed = hubOnStage.filter((n) => hubLabels.indexOf(n.name) === -1);
+    check(hubOnStage.length >= hubScene.nodes.length / 2 && hubUnnamed.length === 0,
+        'the grid left ' + hubUnnamed.length + ' of the ' + hubOnStage.length + ' names on the stage unnamed (' +
+        hubScene.nodes.length + ' in the view): ' + hubUnnamed.slice(0, 3).map((n) => n.name).join(', '),
+        'a ' + hubScene.nodes.length + '-node neighbourhood names all ' + hubOnStage.length + ' on the stage');
     check(collidingLabels(labelBoxes).length === 0,
         'labels overlap on the grid: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
 
@@ -968,15 +1037,47 @@ function run() {
 
     /* A name wider than its cell hangs over the edges of it, which is fine
      * in the middle of the board and not fine in the outermost column. */
-    const clipped = labelBoxes.filter((b) => {
+    const clippedNames = () => labelBoxes.filter((b) => {
         const width = String(b.t).length * 6;
         const align = b.align || 'center';
         const x0 = align === 'center' ? b.x - width / 2 : (align === 'left' ? b.x : b.x - width);
         return x0 < 0 || x0 + width > renderer.width;
     });
-    check(clipped.length === 0,
-        clipped.length + ' names run off the edge of the canvas: ' +
-        clipped.slice(0, 2).map((b) => b.t).join(', '));
+    /* That is a promise about a board the stage holds. With every place its
+     * people lead to on it, this hub's board is wider than the stage and the
+     * edge of the stage falls mid-board, where a name half in view is how a
+     * reader knows to pan. So it is checked here only when the board fits,
+     * and always on a view that does. */
+    if (hubOnStage.length === hubScene.nodes.length) {
+        check(clippedNames().length === 0,
+            clippedNames().length + ' names run off the edge of the canvas: ' +
+            clippedNames().slice(0, 2).map((b) => b.t).join(', '));
+    }
+    const smallHub = store.node('academy-at-ivy-ridge');
+    focus.clear();
+    flushFrames();
+    focus.select(smallHub);
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const smallScene = focus.scene();
+    const smallFits = smallScene.nodes.every((n) => {
+        const p = focus.positionOf(n);
+        const x = p.x * viewport.transform.k + viewport.transform.x;
+        const y = p.y * viewport.transform.k + viewport.transform.y;
+        return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
+    });
+    check(smallFits, 'the ' + smallHub.name + ' view does not fit the stage, so the outermost column is untested');
+    check(clippedNames().length === 0,
+        clippedNames().length + ' names run off the edge of the canvas: ' +
+        clippedNames().slice(0, 2).map((b) => b.t).join(', '),
+        'no name in the ' + smallScene.nodes.length + '-name ' + smallHub.name + ' view runs off the canvas');
+    focus.clear();
+    flushFrames();
+    focus.select(store.node('wwasps'));
+    flushFrames();
+    resetOps();
+    renderer.draw();
 
     /* A trace never crosses a node it does not connect. Routes are
      * published by the renderer with their points; every straight leg is
@@ -1230,7 +1331,8 @@ function run() {
     /* Names sit inside their bubbles, so there is no halo to order. What
      * matters while hovering is that the lit neighbourhood keeps its names:
      * its bubbles claim their room before the dimmed background does. */
-    const litOnStage = neighbours.map((l) => l.other).filter((n) => {
+    const hoverJoined = joinedOnScreen(focus.scene(), hub.id);
+    const litOnStage = hoverJoined.others.filter((n) => {
         const p = at(n);
         const off = (focus.offsets() || {})[n.id] || [0, 0];
         const x = (p.x + off[0]) * viewport.transform.k + viewport.transform.x;
@@ -1249,42 +1351,63 @@ function run() {
 
     const lit = renderer.emphasis.near;
     check(!!lit && lit[hub.id] === true, 'hovering did not light the hovered node');
-    check(Object.keys(lit).length === neighbours.length + 1,
-        'hover lit ' + Object.keys(lit).length + ' nodes, expected ' + (neighbours.length + 1),
-        'hover lights ' + hub.name + ' and its ' + neighbours.length + ' connections');
-    check(Object.keys(renderer.emphasis.nearEdges).length === neighbours.length,
+    check(Object.keys(lit).length === hoverJoined.others.length + 1,
+        'hover lit ' + Object.keys(lit).length + ' nodes, expected ' + (hoverJoined.others.length + 1),
+        'hover lights ' + hub.name + ' and the ' + hoverJoined.others.length + ' names it has a line to');
+    check(Object.keys(renderer.emphasis.nearEdges).length === hoverJoined.lines.length,
         'hover lit the wrong number of connections');
     check(renderer.emphasis.dim > 0 && renderer.emphasis.dim < 0.3,
         'hover did not drop the rest of the map to a dim alpha');
 
     /* --- the gather --- */
 
+    /* A crowd does not gather. With every programme its staff lead to on
+     * the board, this hub has more lines than there is room to pull in, and
+     * hover is lighting alone: gathered, its names landed on each other. */
+    flushFrames();
+    check(hoverJoined.others.length <= 36 || focus.offsets() === null,
+        'a hub with ' + hoverJoined.others.length + ' lines still gathered them in',
+        hub.name + ' has ' + hoverJoined.others.length + ' lines; hovering it lights them and moves nothing');
+
+    /* So the gather is checked on the busiest name in the view that does:
+     * a handful of lines, which is the case it exists for. */
+    const gatherScene = focus.scene();
+    const gatherer = gatherScene.nodes
+        .filter((n) => n.id !== hub.id)
+        .map((n) => ({ node: n, joined: joinedOnScreen(gatherScene, n.id).others }))
+        .filter((e) => e.joined.length >= 3 && e.joined.length <= 36)
+        .sort((a, b) => b.joined.length - a.joined.length)[0];
+    check(!!gatherer, 'nothing in the ' + hub.name + ' view has a handful of lines, so the gather is untested');
+    focus.hover(null);
+    flushFrames();
+    focus.hover(gatherer.node);
     flushFrames();
     const gathered = focus.offsets();
     check(!!gathered, 'the gather produced no offsets');
-    check(!gathered[hub.id], 'the hovered node moved; only its neighbours should');
+    check(!gathered[gatherer.node.id], 'the hovered node moved; only its neighbours should');
 
     let pulledIn = 0;
     let tooClose = 0;
-    neighbours.forEach((link) => {
-        const off = gathered[link.other.id];
+    gatherer.joined.forEach((other) => {
+        const off = gathered[other.id];
         if (!off) return;
-        const p = at(link.other);
-        const c = at(hub);
+        const p = at(other);
+        const c = at(gatherer.node);
         const was = Math.hypot(p.x - c.x, p.y - c.y);
         const now = Math.hypot(p.x + off[0] - c.x, p.y + off[1] - c.y);
         if (now < was) pulledIn++;
-        if (now < hub.r + link.other.r) tooClose++;
+        if (now < gatherer.node.r + other.r) tooClose++;
     });
     check(pulledIn > 0, 'the gather moved nothing toward the hovered node',
-        'the gather pulls in ' + pulledIn + ' of ' + neighbours.length + ' neighbours');
+        'the gather pulls in ' + pulledIn + ' of the ' + gatherer.joined.length + ' names ' +
+        gatherer.node.name + ' has a line to');
     check(tooClose === 0, tooClose + ' neighbours were gathered inside the node they gathered to');
 
     /* The gather is display-only: the settled layout must be untouched. */
     check(hub.x === mapX && hub.y === mapY, 'the gather moved a stored position');
 
     /* And the pointer has to be able to reach a node where it is drawn. */
-    const moved = neighbours.map((l) => l.other).find((n) => gathered[n.id]);
+    const moved = gatherer.joined.find((n) => gathered[n.id]);
     const movedOffset = gathered[moved.id];
     const movedScreen = {
         x: (at(moved).x + movedOffset[0]) * t.k + t.x,
@@ -1312,10 +1435,10 @@ function run() {
     /* --- reduced motion is dimming alone --- */
 
     motion.reduced = true;
-    focus.hover(hub);
+    focus.hover(gatherer.node);
     flushFrames();
     check(focus.offsets() === null, 'the gather ran under prefers-reduced-motion');
-    check(!!renderer.emphasis.near && renderer.emphasis.near[hub.id],
+    check(!!renderer.emphasis.near && renderer.emphasis.near[gatherer.node.id],
         'reduced motion lost the hover lighting as well as the movement');
     focus.hover(null);
     motion.reduced = false;
@@ -1342,19 +1465,25 @@ function run() {
      * organisations the map opened with, which belong to the opening view -
      * and then opens out any person among them, because a name with one
      * line back to whatever revealed it hides the thing worth knowing about
-     * them. Past thirty names, only the places two of those people share. */
+     * them. Every place, however many that comes to: the person is drawn as
+     * the line to it, so a place held back would be a connection with
+     * nothing on screen to say it exists. */
     const expected = new Set([hub.id].concat(neighbours.map((l) => l.other.id)));
-    const reachedBy = new Map();
     [...expected].forEach((id) => {
         const node = store.node(id);
         if (node && node.kind === 'person') {
-            store.neighbours(id, true).forEach((l) => {
-                if (!expected.has(l.other.id)) reachedBy.set(l.other.id, (reachedBy.get(l.other.id) || 0) + 1);
-            });
+            store.neighbours(id, true).forEach((l) => expected.add(l.other.id));
         }
     });
-    const roomy = expected.size + reachedBy.size <= 30;
-    reachedBy.forEach((count, id) => { if (roomy || count > 1) expected.add(id); });
+    /* ...and nobody is on the map without their places, whoever brought
+     * them: a person who arrived as somebody's brother brings the
+     * programmes he ran, though not the people he knows in turn. */
+    [...expected].forEach((id) => {
+        const node = store.node(id);
+        if (node && node.kind === 'person') {
+            store.neighbours(id, true).forEach((l) => { if (l.other.kind !== 'person') expected.add(l.other.id); });
+        }
+    });
     /* ...and whoever owned any programme in it, one step up. */
     [...expected].forEach((id) => {
         if (store.node(id).kind !== 'facility') return;
@@ -1363,15 +1492,43 @@ function run() {
                 (!l.outgoing || l.edge.direction === 'none') && l.edge.direction !== 'renamed') expected.add(l.other.id);
         });
     });
-    /* ...minus whatever that left stranded. */
+    /* ...minus whatever that left stranded, and with the people who only
+     * join places counted as the lines they are drawn as. */
     [...expected].forEach((id) => {
-        if (id !== hub.id && !linked.has(id)) expected.delete(id);
+        if (id !== hub.id && !linked.has(id) && !focused.folded[id]) expected.delete(id);
     });
-    check(focused.nodes.length === expected.size,
-        'opening ' + hub.name + ' showed ' + focused.nodes.length + ' nodes, expected ' + expected.size,
-        'opening ' + hub.name + ': ' + focused.nodes.length + ' nodes, ' + focused.edges.length + ' edges');
+    const asLines = [...expected].filter((id) => focused.folded[id]);
+    check(focused.nodes.length + asLines.length === expected.size,
+        'opening ' + hub.name + ' showed ' + focused.nodes.length + ' names and ' + asLines.length +
+        ' people as lines, expected ' + expected.size + ' between them',
+        'opening ' + hub.name + ': ' + focused.nodes.length + ' names, ' + asLines.length +
+        ' people folded into lines, ' + focused.edges.length + ' lines');
     check(focused.nodes.every((n) => expected.has(n.id)),
         'opening a node put something on the map that nobody asked for');
+
+    /* The fold itself. Nobody drawn as a line is also drawn as a name; every
+     * one of them is on some line, with the role they held at each end; and
+     * nobody left as a name had two places they could have joined. */
+    const carried = new Set();
+    focused.edges.forEach((e) => (e.via || []).forEach((v) => {
+        carried.add(v.person.id);
+        check((v.at[e.sourceId] || []).length > 0 && (v.at[e.targetId] || []).length > 0,
+            v.person.name + ' is on the line between ' + e.source.name + ' and ' + e.target.name +
+            ' without a recorded connection to both');
+    }));
+    check(asLines.length > 0 && asLines.every((id) => !focused.nodeIds[id] && carried.has(id)),
+        'a folded person is missing from the lines, or is still drawn as a name',
+        'all ' + asLines.length + ' folded people are carried on a line');
+    const unfolded = focused.nodes.filter((n) => {
+        if (n.kind !== 'person' || n.id === hub.id) return false;
+        const joined = joinedOnScreen(focused, n.id).others;
+        return joined.length >= 2 && joined.every((o) => o.kind !== 'person');
+    });
+    check(unfolded.length === 0,
+        unfolded.length + ' people who only join places are still drawn as names: ' +
+        unfolded.slice(0, 3).map((n) => n.name).join(', '));
+    check(store.edges.every((e) => !e.via),
+        'folding wrote its passengers onto the edges the store holds');
     check(focused.nodes.length < whole.nodes.length, 'opening a node showed the whole graph');
 
     /* A company's view is its own connections and where its people turn
@@ -1389,22 +1546,31 @@ function run() {
         ['universal-health-services', 'the-brown-schools', 'holiday-magic', 'mind-dynamics'].forEach((id) => {
             check(!synView.nodeIds[id], "Synanon's view brought in " + id + ', which it does not connect to');
         });
-        /* Membership is lineage and reads as a line: AA above Dederich
-         * above Synanon, with AA the name in its row nearest Dederich. */
+        /* Membership is lineage and reads as a line: Dederich belonged to
+         * AA and founded Synanon, so AA sits above Synanon and the line
+         * between them is Dederich - who is on it, not beside it. */
         const aa = store.node('alcoholics-anonymous');
         const chuck = store.node('charles-chuck-dederich');
-        check(synView.nodeIds[aa.id] && synView.nodeIds[chuck.id],
+        const lineage = synView.edges.filter((e) =>
+            (e.sourceId === aa.id && e.targetId === synanon.id) ||
+            (e.sourceId === synanon.id && e.targetId === aa.id))[0];
+        check(synView.nodeIds[aa.id] && !!lineage &&
+            (lineage.via || []).some((v) => v.person.id === chuck.id),
             "Synanon's view left out Dederich's membership of AA");
-        if (synView.nodeIds[aa.id] && synView.nodeIds[chuck.id]) {
-            const pa = focus.positionOf(aa), pc = focus.positionOf(chuck), ps = focus.positionOf(synanon);
-            check(pa.y < pc.y && pc.y < ps.y,
-                'AA, Dederich and Synanon are not drawn top to bottom',
-                'AA above Dederich above Synanon');
-            const rowmates = synView.nodes.filter((n) => Math.abs(focus.positionOf(n).y - pa.y) < 1);
-            const nearest = rowmates.sort((a, b) =>
-                Math.abs(focus.positionOf(a).x - pc.x) - Math.abs(focus.positionOf(b).x - pc.x))[0];
-            check(nearest.id === aa.id,
-                'AA is not lined up over Dederich: ' + nearest.name + ' is nearer him in that row');
+        check(!synView.nodeIds[chuck.id] && synView.folded[chuck.id],
+            'Dederich is still drawn as a name between AA and Synanon');
+        if (synView.nodeIds[aa.id] && lineage) {
+            const pa = focus.positionOf(aa), ps = focus.positionOf(synanon);
+            check(pa.y < ps.y,
+                'AA and Synanon are not drawn top to bottom',
+                'AA above Synanon, joined by a line that is Dederich');
+            const said = sandbox.KOPNetworkConnection.describe([lineage], (e) => renderer.styleOf(e), sandbox.KOPNetworkCanvas);
+            const dederich = said && said.items.filter((item) => item.kind === 'person' && item.node === chuck)[0];
+            check(!!dederich && dederich.places.length === 2 &&
+                dederich.places.every((place) => place.name === aa.name || place.name === synanon.name),
+                'the line between AA and Synanon does not say it is Dederich',
+                'hovering it says: ' + (dederich ? dederich.name + ' - ' +
+                    dederich.places.map((place) => place.name + ': ' + (place.role || 'role not recorded')).join(', ') : ''));
         }
         focus.clear();
         flushFrames();
@@ -1414,37 +1580,45 @@ function run() {
 
     /* A person with one line back to whatever revealed them hides the thing
      * worth knowing: which programmes they turn up at. Whenever a name
-     * surfaces, everywhere it connects to surfaces with it - within the
-     * budget. */
+     * surfaces, everywhere it connects to surfaces with it - always, since
+     * the person is drawn as the line to it and there is nothing else on
+     * screen to say the place exists. */
     /* The people this applies to are the ones one step from what was
      * clicked. A person who arrives through another person's expansion does
      * not expand in turn (focus.js, visibleIds), or one well-connected name
      * would pull in the whole board. */
     const direct1 = new Set(store.neighbours(hub.id, true).map((l) => l.other.id));
-    const surfaced = focused.nodes.filter((n) => n.kind === 'person' && direct1.has(n.id) &&
-        store.neighbours(n.id, true).length > 1);
+    const surfaced = store.neighbours(hub.id, true).map((l) => l.other)
+        .filter((n, i, all) => all.indexOf(n) === i)
+        .filter((n) => n.kind === 'person' && onMap(focused, n.id) &&
+            store.neighbours(n.id, true).length > 1);
     check(surfaced.length > 0, 'no person surfaced when opening ' + hub.name + ', so the rule is untested');
-    /* Past the budget a place only one of them worked stays behind the
-     * count on their node; a place two of them share always comes. */
-    const sharedBy = new Map();
+    let heldBack = 0, unjoined = 0;
     surfaced.forEach((person) => {
         store.neighbours(person.id, true).forEach((link) => {
-            sharedBy.set(link.other.id, (sharedBy.get(link.other.id) || 0) + 1);
+            if (!onMap(focused, link.other.id)) { heldBack++; return; }
+            /* And where the person is a line, it is a line from what was
+             * clicked to that place. */
+            if (!focused.folded[person.id] || link.other.id === hub.id) return;
+            const joined = focused.edges.some((e) => (e.via || []).some((v) => v.person === person) &&
+                ((e.sourceId === hub.id && e.targetId === link.other.id) ||
+                 (e.targetId === hub.id && e.sourceId === link.other.id)));
+            if (!joined) unjoined++;
         });
     });
-    let lostShared = 0, uncounted = 0, heldBack = 0;
-    surfaced.forEach((person) => {
-        store.neighbours(person.id, true).forEach((link) => {
-            if (focused.nodeIds[link.other.id]) return;
-            heldBack++;
-            if (!roomy && sharedBy.get(link.other.id) > 1) lostShared++;
-            if (!focused.hidden[person.id]) uncounted++;
-        });
+    check(heldBack === 0,
+        heldBack + ' places a surfaced person connects to were left off the map',
+        surfaced.length + ' people surfaced, and every place they lead to with them');
+    check(unjoined === 0,
+        unjoined + ' places a folded person leads to have no line to ' + hub.name + ' carrying them');
+    /* Nobody drawn as a line is counted as missing on the places they join. */
+    const miscounted = focused.nodes.filter((n) => {
+        const off = store.neighbours(n.id, true).filter((l) => !onMap(focused, l.other.id)).length;
+        return (focused.hidden[n.id] || 0) !== off;
     });
-    check(roomy ? heldBack === 0 : lostShared === 0,
-        (roomy ? heldBack : lostShared) + ' places a surfaced person connects to were left off the map',
-        surfaced.length + ' people surfaced; ' + heldBack + ' places only one of them worked held back');
-    check(uncounted === 0, uncounted + ' held-back places are not counted on the person who leads to them');
+    check(miscounted.length === 0,
+        miscounted.length + ' names carry a +N that counts a person drawn as a line: ' +
+        miscounted.slice(0, 3).map((n) => n.name).join(', '));
     check(focused.edges.every((e) => focused.nodeIds[e.sourceId] && focused.nodeIds[e.targetId]),
         'the focused view kept an edge running off it');
 
@@ -1517,7 +1691,8 @@ function run() {
     const twoDeep = focus.scene();
     check(twoDeep.nodeIds[next.id], 'the view is not centred on what was just clicked');
     const nextNeighbours = store.neighbours(next.id, true).map((l) => l.other.id);
-    check(nextNeighbours.every((id) => twoDeep.nodeIds[id]),
+    /* As a name, or as the line a person who only joins places is drawn as. */
+    check(nextNeighbours.every((id) => onMap(twoDeep, id)),
         'clicking a node did not show all of its own connections',
         'two steps deep: ' + twoDeep.nodes.length + ' nodes around ' + next.name);
     /* Whatever else is on screen got there by the view's own rules - a
@@ -1557,7 +1732,7 @@ function run() {
     check(focus.mode() === 'expand', 'the mode did not switch');
     const union = focus.scene();
     const hubOwn = store.neighbours(hub.id, true).map((l) => l.other.id);
-    check(hubOwn.every((id) => union.nodeIds[id]) && nextNeighbours.every((id) => union.nodeIds[id]),
+    check(hubOwn.every((id) => onMap(union, id)) && nextNeighbours.every((id) => onMap(union, id)),
         'expand mode does not show both neighbourhoods at once',
         'expand mode: ' + union.nodes.length + ' nodes for two clicks');
     check(union.nodes.length >= twoDeep.nodes.length,
@@ -1860,6 +2035,225 @@ function run() {
         'each of the ' + markedOnStage + ' marked nodes on the stage carries a +N pill');
     check(badgeCalls.every((t) => /^\+[1-9]\d*$/.test(t)), 'an off-screen pill reads something other than +N');
 
+    /* 2b.11 Lines. Two places that shared a member of staff are joined by one
+     * line and the person is on it, not beside it: hover the line and a
+     * popup says who; click it and the popup stays, with the person a
+     * button. Everything else a line records reads the same way. */
+    focus.clear();
+    flushFrames();
+    const lineHub = store.node('second-nature');
+    focus.select(lineHub);
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const lineScene = focus.scene();
+    /* A spot along a line that is on no name and where the pointer is on
+     * that line. Lines out of one node leave along a shared run, and a
+     * pointer on the run is on only one of them, so a line answers where it
+     * runs alone - which for some is off the stage. */
+    const spotOn = (line) => {
+        const samePairAs = (e) => !!e && ((e.sourceId === line.sourceId && e.targetId === line.targetId) ||
+            (e.sourceId === line.targetId && e.targetId === line.sourceId));
+        /* By id: the scene is worked out afresh each time it is asked for, so
+         * a folded line is a new object every time and only its id holds. */
+        const route = (renderer.routes || []).find((r) => r.edge.id === line.id);
+        if (!route) return null;
+        for (let i = 1; i < route.pts.length; i++) {
+            for (let f = 0.1; f < 1; f += 0.1) {
+                const x = route.pts[i - 1][0] + (route.pts[i][0] - route.pts[i - 1][0]) * f;
+                const y = route.pts[i - 1][1] + (route.pts[i][1] - route.pts[i - 1][1]) * f;
+                if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) continue;
+                if (viewport.nodeAt(x, y)) continue;
+                if (samePairAs(viewport.edgeAt(x, y))) return { x, y };
+            }
+        }
+        return null;
+    };
+    const hubLines = lineScene.edges.filter((e) => e.provenance === 'fold' &&
+        (e.sourceId === lineHub.id || e.targetId === lineHub.id));
+    const peopleLine = hubLines.find((e) => !!spotOn(e)) || hubLines[0];
+    check(!!peopleLine, 'opening ' + lineHub.name + ' folded nobody into a line, so the lines are untested');
+    if (peopleLine) {
+        const Connection = sandbox.KOPNetworkConnection;
+        const carriedHere = peopleLine.via.map((v) => v.person);
+
+        /* Drawn as its own kind of line, and named in the key as one. A line
+         * the build drew from the staff list says the same thing, so it is
+         * drawn the same way. */
+        const peopleStyle = renderer.styleOf(peopleLine);
+        check(peopleStyle.label === 'Shared people' && !!peopleStyle.dash,
+            'a line that stands for a person is drawn like ' + peopleStyle.label);
+        const listLine = store.edges.find((e) => e.provenance === 'staff-list' && e.roles[0] === 'worked at both');
+        check(!listLine || sandbox.KOPNetworkCanvas.styleFor(listLine, false).label === 'Shared people',
+            'a staff-list line between two places is not drawn as shared people');
+        check(!listLine || sandbox.KOPNetworkCanvas.peopleOn(listLine).length > 0,
+            'a staff-list line does not give up the names in its text');
+
+        /* Who is a hover away: no folded name is written on the board. */
+        const foldedNames = Object.keys(lineScene.folded).map((id) => store.node(id).name);
+        const written = captionCalls.filter((c) => foldedNames.some((name) => String(c).indexOf(name) !== -1));
+        check(written.length === 0, 'a folded person is written along their line: ' + written[0]);
+        check(labelCalls.every((c) => foldedNames.indexOf(c.slice(5)) === -1),
+            'a folded person is still drawn as a name');
+
+        /* The line can be pointed at: somewhere along it is a spot that is
+         * on no name, and the pointer there is on this line. */
+        const samePair = (e) => !!e && ((e.sourceId === peopleLine.sourceId && e.targetId === peopleLine.targetId) ||
+            (e.sourceId === peopleLine.targetId && e.targetId === peopleLine.sourceId));
+        const spot = spotOn(peopleLine);
+        check(!!spot, 'no spot along the line between ' + peopleLine.source.name + ' and ' +
+            peopleLine.target.name + ' answers to the pointer');
+
+        const popupStage = doc.createElement('div');
+        let lineAnnounced = '';
+        const popup = Connection.create({
+            stage: popupStage, focus, renderer, document: doc,
+            announce: (text) => { lineAnnounced = text; }
+        });
+        lineEvents.popup = popup;
+        check(!!popup && popup.element.hidden === true, 'the popup is on screen before anything is hovered');
+
+        if (spot && popup) {
+            const buttonsIn = (node) => node.querySelectorAll('button');
+
+            /* Hover: the popup names the person and both places, the line is
+             * drawn heavier, and nothing in it takes a click. */
+            fire('pointermove', 1, spot.x, spot.y);
+            check(samePair(lineEvents.hovered), 'moving onto a line did not report it');
+            check(popup.element.hidden === false, 'hovering a line did not bring up the popup');
+            const hoverText = popup.element.textContent;
+            check(carriedHere.every((person) => hoverText.indexOf(person.name) !== -1),
+                'the popup does not name ' + carriedHere.map((person) => person.name).join(', '),
+                'hovering the line from ' + lineHub.name + ' to ' +
+                (peopleLine.sourceId === lineHub.id ? peopleLine.target.name : peopleLine.source.name) +
+                ' names ' + carriedHere.map((person) => person.name).join(', '));
+            check(hoverText.indexOf(peopleLine.source.name) !== -1 && hoverText.indexOf(peopleLine.target.name) !== -1,
+                'the popup does not say which two places the line joins');
+            check(buttonsIn(popup.element).length === 0 && popup.element.getAttribute('data-pinned') === 'false',
+                'a hovered popup offers buttons the pointer cannot reach');
+            check(!!renderer.emphasis.hoverEdges && renderer.emphasis.hoverEdges[peopleLine.id] === true,
+                'the hovered line is not marked for the renderer');
+            check(!renderer.emphasis.near, 'hovering a line dimmed the rest of the map');
+            const marked = renderer.emphasis;
+            resetOps();
+            renderer.setEmphasis({ hoverId: null });
+            renderer.draw();
+            const strokesPlain = ops.stroke;
+            resetOps();
+            renderer.setEmphasis(marked);
+            renderer.draw();
+            check(ops.stroke === strokesPlain + 2, 'the hovered line is not stroked again over the rest');
+
+            /* Over a name, the name wins and the popup goes. */
+            const lp = focus.positionOf(lineHub);
+            fire('pointermove', 1, lp.x * viewport.transform.k + viewport.transform.x,
+                lp.y * viewport.transform.k + viewport.transform.y);
+            check(lineEvents.hovered === null && popup.element.hidden === true,
+                'the popup stayed up with the pointer on a name');
+            check(!renderer.emphasis.hoverEdges, 'the line stayed marked after the pointer left it');
+            focus.hover(null);
+            flushFrames();
+            renderer.draw();
+
+            /* Click: pinned, announced, and the person is a button that opens
+             * them - as a name, since what is clicked never folds. */
+            fire('pointerdown', 1, spot.x, spot.y);
+            fire('pointerup', 1, spot.x, spot.y);
+            check(samePair(lineEvents.selected) && popup.pinned(), 'clicking a line did not pin its popup');
+            check(carriedHere.every((person) => lineAnnounced.indexOf(person.name) !== -1),
+                'a pinned popup was not announced: ' + lineAnnounced);
+            fire('pointermove', 1, 2, 2);
+            check(popup.element.hidden === false, 'a pinned popup left with the pointer');
+            const openers = buttonsIn(popup.element);
+            check(openers.length === carriedHere.length,
+                'a pinned popup has ' + openers.length + ' buttons for ' + carriedHere.length + ' people');
+            if (openers.length) {
+                openers[0].dispatch('click');
+                flushFrames();
+                const opened = focus.chain()[focus.chain().length - 1];
+                check(opened === carriedHere[0].id, 'the button in the popup did not open ' + carriedHere[0].name);
+                check(popup.element.hidden === true && !popup.pinned(), 'the popup outlived the view it described');
+                const personView = focus.scene();
+                check(personView.nodeIds[carriedHere[0].id] && !personView.folded[carriedHere[0].id],
+                    carriedHere[0].name + ' was clicked and is still drawn as a line',
+                    carriedHere[0].name + ', opened from the line, is a name with ' +
+                    joinedOnScreen(personView, carriedHere[0].id).others.length + ' places round them');
+            }
+
+            /* A click on nothing puts a pinned popup away. */
+            focus.clear();
+            flushFrames();
+            focus.select(lineHub);
+            flushFrames();
+            renderer.draw();
+            popup.pin(focus.scene().edges.find(samePair), spot);
+            check(popup.pinned(), 'the popup could not be pinned again');
+            const before = lineEvents.selections;
+            let empty = null;
+            for (let x = 3; x < WIDTH && !empty; x += 7) {
+                if (!viewport.nodeAt(x, 3) && !viewport.edgeAt(x, 3)) empty = { x, y: 3 };
+            }
+            if (empty) {
+                fire('pointerdown', 1, empty.x, empty.y);
+                fire('pointerup', 1, empty.x, empty.y);
+                check(lineEvents.selections === before + 1 && lineEvents.selected === null && !popup.pinned(),
+                    'a click on empty stage left the popup pinned');
+            }
+        }
+
+        /* What the record says of two names directly reads the same way. */
+        const owned = lineScene.edges.find((e) => e.category === 'corporate' && e.direction === 'none' && !e.via);
+        if (owned) {
+            const saidOwned = Connection.describe([owned], (e) => renderer.styleOf(e), sandbox.KOPNetworkCanvas);
+            check(!!saidOwned && saidOwned.items.length === 1 && saidOwned.items[0].kind === 'record' &&
+                saidOwned.items[0].label === 'Ownership',
+                'an ownership line does not say it is one',
+                'an ownership line says: ' + saidOwned.text);
+        }
+        const became = store.edges.find((e) => e.direction === 'renamed');
+        const saidBecame = Connection.describe([became], (e) => renderer.styleOf(e), sandbox.KOPNetworkCanvas);
+        check(saidBecame.items[0].text === became.source.name + ' became ' + became.target.name,
+            'a rename line does not say which became which');
+        lineEvents.popup = null;
+    }
+
+    /* 2b.12 The rule the map stands on: it is about relationships, so a
+     * person on it is never there without every programme and company they
+     * connect to - as a name or as a line, whoever brought them, whatever
+     * kind of connection it is. Checked from every name on the board, not
+     * from a sample: the gap this closes was in 68 views out of 1,258, the
+     * ones where a person arrived second-hand as somebody's relative. */
+    store.resetFilters();
+    const hiddenTypes = store.edges.filter((e) => !store.filters.categories[e.category]);
+    check(hiddenTypes.length === 0,
+        hiddenTypes.length + ' connections are hidden by the filters the map opens with');
+    const wasReduced = motion.reduced;
+    motion.reduced = true;
+    let viewsChecked = 0;
+    const homelessIn = [];
+    store.nodes.forEach((rootNode) => {
+        if (!rootNode.degree) return;
+        focus.restore([rootNode.id], 'focus');
+        const view = focus.scene();
+        if (!view.nodes.length) return;
+        viewsChecked++;
+        const people = view.nodes.filter((n) => n.kind === 'person').map((n) => n.id)
+            .concat(Object.keys(view.folded));
+        people.forEach((id) => {
+            store.neighbours(id, false).forEach((l) => {
+                if (l.other.kind === 'person' || onMap(view, l.other.id)) return;
+                homelessIn.push(rootNode.name + ': ' + store.node(id).name + ' without ' + l.other.name);
+            });
+        });
+    });
+    motion.reduced = wasReduced;
+    check(viewsChecked > 1000 && homelessIn.length === 0,
+        homelessIn.length + ' times a person is on the map without a place they connect to, e.g. ' +
+        homelessIn.slice(0, 3).join('; '),
+        'in all ' + viewsChecked + ' views, every person on the map has every programme and company they connect to');
+    focus.restore([], 'focus');
+    flushFrames();
+
     /* 2b.2 Search. Ranking first, with no document: a name that starts
      * with what was typed beats one where a later word does, which beats a
      * match inside a word; the name beats an alias at the same level. */
@@ -1898,7 +2292,7 @@ function run() {
     flushFrames();
     const afterPick = focus.scene();
     check(afterPick.nodeIds[target.id] &&
-        store.neighbours(target.id, true).every((l) => afterPick.nodeIds[l.other.id]),
+        store.neighbours(target.id, true).every((l) => onMap(afterPick, l.other.id)),
         'a searched name did not arrive with its connections');
 
     /* Enter on the typed text opens every match together, in expand mode. */

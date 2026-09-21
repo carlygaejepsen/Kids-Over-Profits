@@ -29,6 +29,10 @@
      * allowance, because a fingertip really is that wide. */
     var HIT_SLOP = 3;
     var HIT_SLOP_TOUCH = 9;
+    /* And how far from a line still counts as on it. A line is a pixel or
+     * two wide, so without some reach it cannot be pointed at at all. */
+    var LINE_SLOP = 5;
+    var LINE_SLOP_TOUCH = 12;
     /* Movement under this many pixels between down and up is a click, not a
      * drag. Fingers wobble; mice do not. */
     var CLICK_SLOP = 4;
@@ -51,6 +55,10 @@
         var onHover = options.onHover || function () {};
         var onSelect = options.onSelect || function () {};
         var onChange = options.onChange || function () {};
+        /* A line under the pointer, and a line clicked. Both are called
+         * with null when the pointer has moved off, or clicked on nothing. */
+        var onHoverEdge = options.onHoverEdge || function () {};
+        var onSelectEdge = options.onSelectEdge || function () {};
 
         /* Where a node currently is, and where it currently *appears*. The
          * base position is the live object, so a drag writes straight to it:
@@ -80,6 +88,7 @@
         var moved = 0;
         var pinch = null;
         var hoverId = null;
+        var hoverEdge = null;
         var frame = 0;
         /* Set by the last pointer down: a finger needs more room than a
          * mouse, and the same map has to serve both. */
@@ -218,6 +227,17 @@
         }
         viewport.nodeAt = nodeAt;
 
+        /**
+         * The line under a canvas point, or null. Only asked once nodeAt has
+         * come back empty: a line runs to the middle of both its ends, and
+         * over a name the name wins.
+         */
+        function edgeAt(px, py) {
+            if (!renderer.edgeAt) return null;
+            return renderer.edgeAt(px, py, coarse ? LINE_SLOP_TOUCH : LINE_SLOP);
+        }
+        viewport.edgeAt = edgeAt;
+
         /* ------------------------------------------------------ painting -- */
 
         /** One paint per frame however many inputs arrived. */
@@ -252,6 +272,18 @@
         }
 
         viewport.hovered = function () { return hoverId; };
+
+        /* The pointer keeps moving along a line it is already on, and the
+         * popup follows it, so this reports every move and not only the
+         * change of line. */
+        function setHoverEdge(edge, point) {
+            var changed = (hoverEdge && hoverEdge.id) !== (edge && edge.id);
+            if (!changed && !edge) return;
+            hoverEdge = edge;
+            if (!hoverId) canvas.style.cursor = edge ? 'pointer' : 'grab';
+            onHoverEdge(edge, point || null);
+            if (changed) scheduleDraw();
+        }
 
         /* ------------------------------------------------------- zooming -- */
 
@@ -371,6 +403,8 @@
 
             canvas.setPointerCapture(event.pointerId);
             moved = 0;
+            /* Whatever happens next moves the lines out from under it. */
+            setHoverEdge(null);
             dragNode = nodeAt(point.x, point.y);
             mode = dragNode ? 'drag' : 'pan';
             canvas.style.cursor = dragNode ? 'grabbing' : 'grabbing';
@@ -385,6 +419,7 @@
                 if (!mode) {
                     var over = nodeAt(point.x, point.y);
                     setHover(over ? over.id : null);
+                    setHoverEdge(over ? null : edgeAt(point.x, point.y), point);
                 }
                 return;
             }
@@ -460,7 +495,14 @@
 
             if (moved <= CLICK_SLOP) {
                 var hit = target || nodeAt(point.x, point.y);
-                if (hit) onSelect(hit, event);
+                if (hit) {
+                    onSelectEdge(null, null, event);
+                    onSelect(hit, event);
+                } else {
+                    /* A line, or nothing at all - which is how a pinned
+                     * popup is put away. */
+                    onSelectEdge(edgeAt(point.x, point.y), point, event);
+                }
             } else if (wasDrag) {
                 /* Positions moved, so the index over them is stale. */
                 rebuildTree();
@@ -468,7 +510,10 @@
         }
 
         function onPointerLeave() {
-            if (!mode) setHover(null);
+            if (!mode) {
+                setHover(null);
+                setHoverEdge(null);
+            }
         }
 
         function onWheel(event) {

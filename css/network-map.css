@@ -678,6 +678,83 @@ html.kop-network-pinned {
 }
 
 /* Announces selection to screen readers without taking up space. */
+/* What a line says. Beside the pointer while a line is hovered, and out of
+ * the pointer's way: it must not swallow the move that would dismiss it.
+ * Pinned by a click, it takes clicks itself, since the people in it become
+ * buttons. */
+.kop-network__popup {
+	position: absolute;
+	z-index: 6;
+	max-width: min(300px, calc(100% - 8px));
+	padding: 0.5rem 0.65rem;
+	border: 1px solid var(--kop-net-border);
+	border-left: 3px solid var(--kop-teal, #33A7B5);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	box-shadow: 0 6px 20px rgba(0, 4, 53, 0.18);
+	color: var(--kop-midnight-blue, #000435);
+	font-size: 0.8rem;
+	line-height: 1.35;
+	pointer-events: none;
+}
+
+.kop-network__popup[data-pinned="true"] {
+	pointer-events: auto;
+	border-left-color: var(--kop-orange, #EF9034);
+}
+
+.kop-network__popup-title {
+	margin: 0 0 0.3rem;
+	font-size: 0.72rem;
+	font-weight: 600;
+	color: #4a4f6a;
+}
+
+.kop-network__popup-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.kop-network__popup-item + .kop-network__popup-item {
+	margin-top: 0.4rem;
+	padding-top: 0.4rem;
+	border-top: 1px solid var(--kop-net-border);
+}
+
+.kop-network__popup-person,
+.kop-network__popup-label {
+	display: block;
+	font-weight: 600;
+	font-size: 0.86rem;
+}
+
+button.kop-network__popup-person {
+	padding: 0;
+	border: 0;
+	background: none;
+	font-family: inherit;
+	color: var(--kop-navy-blue, #000080);
+	text-align: left;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.kop-network__popup-text,
+.kop-network__popup-source {
+	display: block;
+}
+
+.kop-network__popup-source,
+.kop-network__popup-hint {
+	font-size: 0.72rem;
+	color: #4a4f6a;
+}
+
+.kop-network__popup-hint {
+	margin: 0.4rem 0 0;
+}
+
 .kop-network__status {
 	position: absolute;
 	width: 1px;

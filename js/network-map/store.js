@@ -36,19 +36,16 @@
         return 'unknown';
     }
 
-    /* The connections the map shows until the visitor asks for more:
-     * ownership and the people who worked somewhere. "unknown" is almost all
-     * a person at a programme with no role recorded, which is staff in all
-     * but name. Family stays on: operators married into and handed down
-     * each other's programmes, and that is ownership by another route.
-     * So does membership: Dederich in AA, Bill Lane in Synanon - the
-     * lineage from one programme's founder to the next.
-     * Board seats (mostly industry associations), referrals, survivors and
-     * "other" are a checkbox away on the rail; on
-     * by default they brought in names with no bearing on the question -
-     * Alcoholics Anonymous in Synanon's view through a board seat, and Bill
-     * Lane's companies through a connection nobody recorded a type for. */
-    var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown', 'family', 'membership'];
+    /* The connections the map shows until the visitor turns one off: all of
+     * them. The map is about relationships, so none is hidden to start with.
+     * Board seats, referrals, survivors and "other" used to be a checkbox
+     * away, to keep a view down to ownership and staff - but every one of
+     * those 55 lines joins a person to a programme or a company, which is
+     * exactly what the map exists to show, and a person drawn without one of
+     * their places reads as someone who was never there. The rail still has
+     * a checkbox for each. */
+    var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown',
+        'family', 'membership', 'board', 'referral', 'survivor', 'other'];
 
     function toSet(list) {
         var set = Object.create(null);
@@ -214,8 +211,7 @@
         /* ------------------------------------------------------- filters -- */
 
         /**
-         * Everything on except the connection types outside staff,
-         * ownership, family and membership, slider at zero. The rail's checkboxes are set from this
+         * Everything on, slider at zero. The rail's checkboxes are set from this
          * when the map starts, and the markup matches it so the first paint
          * does too.
          */

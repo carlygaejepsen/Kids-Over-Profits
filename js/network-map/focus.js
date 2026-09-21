@@ -13,6 +13,11 @@
  * it" - the trail the researcher actually walked. Everything on the chain
  * stays on screen with its own neighbours; the chain is the query.
  *
+ * What is on screen is places and the lines between them. A person who does
+ * nothing in a view but join two places is folded into the line that joins
+ * them (foldConnectors), and the line says who when it is pointed at
+ * (connection.js); only the person who was clicked is drawn as a name.
+ *
  * Two things never change here: the stored layout and the store's filters.
  * The gather is a display offset, and the focused view has its own set of
  * coordinates, so leaving a focus puts the map back exactly as it was.
@@ -35,6 +40,13 @@
     /* Never closer than this, in world units, on top of the two radii, so a
      * gather cannot stack neighbours on the node they are gathering to. */
     var GATHER_CLEARANCE = 6;
+    /* Past this many connections nothing gathers and hover is lighting
+     * alone. A view packs its names as close as they will go, so pulling a
+     * few of them in finds room and pulling in fifty does not: with every
+     * programme its staff lead to on the board, Provo Canyon School has
+     * fifty-two lines, and gathered, twenty-two of those names landed on
+     * top of each other and were dropped. */
+    var GATHER_MAX = 36;
 
     var GATHER_IN_MS = 170;
     var GATHER_OUT_MS = 130;
@@ -92,9 +104,6 @@
     /* A view this small is laid out as one tree rather than split into
      * clusters. */
     var SMALL_VIEW = 20;
-    /* How many names a view can reach before the people in it stop
-     * bringing every other place they worked. See visibleIds. */
-    var PERSON_REACH_BUDGET = 30;
     /* What it costs, when fitting clusters together, to draw something
      * level with or above a thing the records put it under. For a person,
      * about one long line: people join clusters, so nearly every place a
@@ -183,12 +192,28 @@
 
         /* --------------------------------------------------- neighbourhood -- */
 
-        /** The hovered node plus everyone it connects to, within the filters. */
+        /* The scene on screen, as last handed to the renderer. Hover and the
+         * frame read a name's connections off this rather than off the
+         * store: a line that stands for a person (see foldConnectors) is a
+         * connection on screen that the store has no edge for. */
+        var current = null;
+
+        /** The lines on screen that end at this node: [{ edge, other }]. */
+        function linksOnScreen(id) {
+            var out = [];
+            ((current && current.edges) || []).forEach(function (edge) {
+                if (edge.sourceId === id) out.push({ edge: edge, other: edge.target });
+                else if (edge.targetId === id) out.push({ edge: edge, other: edge.source });
+            });
+            return out;
+        }
+
+        /** The hovered node plus everyone it has a line to on screen. */
         function neighbourhoodOf(id) {
             var near = Object.create(null);
             var nearEdges = Object.create(null);
             near[id] = true;
-            store.neighbours(id, true).forEach(function (link) {
+            linksOnScreen(id).forEach(function (link) {
                 near[link.other.id] = true;
                 nearEdges[link.edge.id] = true;
             });
@@ -261,29 +286,30 @@
              * do this for - median degree two, most seven - but a rule that
              * walked outwards without a stop would not stay cheap.
              *
-             * Cheap per person is not cheap per view, though. A programme
-             * with a staff list brings every other place each of them worked,
-             * and each of those brings its owner: Second Nature's nine
-             * clinicians came to sixty-two names, Provo Canyon School's to
-             * ninety-five. So past PERSON_REACH_BUDGET the places a single
-             * person brings stay behind the count on their node, and only a
-             * place two of them share comes along - that is the pattern the
-             * rule exists to show, and one click on the person shows the
-             * rest. */
-            var reached = Object.create(null);
+             * Always, whatever the view comes to. There used to be a budget
+             * here: past thirty names, a place only one person led to waited
+             * behind the count on that person. But the person is no longer
+             * a name on the board - they are the line between the two
+             * places (foldConnectors) - so a place held back would be a
+             * connection with nothing on screen to say it exists. */
             Object.keys(asked).forEach(function (id) {
                 var node = store.node(id);
                 if (!node || node.kind !== 'person') return;
                 store.neighbours(id, true).forEach(function (link) {
-                    if (asked[link.other.id]) return;
-                    reached[link.other.id] = (reached[link.other.id] || 0) + 1;
+                    asked[link.other.id] = true;
                 });
             });
-            var reachedIds = Object.keys(reached);
-            var roomy = Object.keys(asked).length + reachedIds.length <= PERSON_REACH_BUDGET;
-            reachedIds.forEach(function (id) {
-                if (roomy || reached[id] > 1) asked[id] = true;
-            });
+
+            /* And nobody is on the map without their places. The step above
+             * can bring a person in second-hand - Narvin Lichfield arrives in
+             * Provo Canyon School's view as somebody's brother - and the
+             * one-step stop then left them standing there with every
+             * programme they ran behind a +N: a person with a relationship
+             * the map was not showing, in 68 views. The stop is for people
+             * bringing people, which is what runs away. A person's
+             * programmes and companies always come, whoever brought the
+             * person; what those places bring in turn is a click away. */
+            withTheirPlaces(asked);
 
             /* Whoever owned it is never left off. Ownership is the question
              * this map exists to answer, so a programme on screen without the
@@ -323,14 +349,32 @@
              * Synanon's view, through CEDU's owner. */
             var ids = Object.create(null);
             if (!chain.length) {
+                var opening = Object.create(null);
                 store.seeds().forEach(function (node) {
-                    if (live[node.id]) ids[node.id] = true;
+                    if (live[node.id]) opening[node.id] = true;
+                });
+                /* The people a starter view names are there to join its
+                 * organisations, and they bring their places like anyone. */
+                withTheirPlaces(opening);
+                Object.keys(opening).forEach(function (id) {
+                    if (live[id]) ids[id] = true;
                 });
             }
             Object.keys(asked).forEach(function (id) {
                 if (live[id]) ids[id] = true;
             });
             return ids;
+        }
+
+        /** Add every programme and company the people in this set connect to. */
+        function withTheirPlaces(set) {
+            Object.keys(set).forEach(function (id) {
+                var node = store.node(id);
+                if (!node || node.kind !== 'person') return;
+                store.neighbours(id, true).forEach(function (link) {
+                    if (link.other.kind !== 'person') set[link.other.id] = true;
+                });
+            });
         }
 
         /**
@@ -386,6 +430,12 @@
                 ids = reach;
             }
 
+            var fold = foldConnectors(nodes, edges);
+            nodes = fold.nodes;
+            edges = fold.edges;
+            var shown = Object.create(null);
+            nodes.forEach(function (node) { shown[node.id] = true; });
+
             /* What is on screen is not everything a node touches, and an
              * owner deliberately brings only itself, so a node can sit there
              * with connections the reader cannot see. Rather than dragging
@@ -393,22 +443,168 @@
              * screenful of its other holdings - each node reports how many
              * connections it has off screen, and the renderer marks it with
              * the count. The reader can see there is more behind a name, and
-             * clicking it is what brings it.
+             * clicking it is what brings it. A person folded into a line is
+             * on screen as that line, so they are not counted as missing.
              */
             var hidden = Object.create(null);
             nodes.forEach(function (node) {
                 var off = 0;
                 store.neighbours(node.id, true).forEach(function (link) {
-                    if (!ids[link.other.id]) off++;
+                    if (!shown[link.other.id] && !fold.folded[link.other.id]) off++;
                 });
                 if (off) hidden[node.id] = off;
             });
 
             return {
-                nodes: nodes, edges: edges, nodeIds: ids,
-                degrees: visible.degrees, hidden: hidden
+                nodes: nodes, edges: edges, nodeIds: shown,
+                degrees: visible.degrees, hidden: hidden, folded: fold.folded
             };
         };
+
+        /**
+         * Fold the people who join two places into the line between them.
+         *
+         * Two programmes that share a therapist are connected, and the
+         * connection is what belongs on the board: one line from one place
+         * to the other, with the person a hover away on it. Drawn as a name
+         * of their own the person was a third thing to read, with two lines
+         * where the record is one fact, and a view of a programme with a
+         * staff list was mostly staff.
+         *
+         * A person folds when every line they have on screen runs to an
+         * organisation and there are two or more of those. What was clicked
+         * never folds - open a person and they are the subject, drawn with
+         * their places round them - and neither does anyone with a line to
+         * another person, since a marriage has no place to fold into.
+         * Someone with a single place on screen stays a name beside it.
+         *
+         * Somebody at three places is not three pairs' worth of lines. Their
+         * places are joined through whichever of them was clicked, or failing
+         * that the busiest, which says the same thing in two lines instead
+         * of three and keeps a staff list from drawing a web. Several people
+         * joining the same two places share the one line, and where the
+         * record already has a line between the two (one owns the other, or
+         * the staff list joined them) the people ride on that instead of
+         * doubling it.
+         *
+         * The store is never touched: a folded line is a new object, and a
+         * recorded edge that takes passengers is copied first.
+         */
+        function foldConnectors(nodes, edges) {
+            var rootIds = Object.create(null);
+            currentRoots().forEach(function (id) { rootIds[id] = true; });
+
+            var linksOf = Object.create(null);
+            edges.forEach(function (edge) {
+                (linksOf[edge.sourceId] = linksOf[edge.sourceId] || []).push({ edge: edge, other: edge.target });
+                (linksOf[edge.targetId] = linksOf[edge.targetId] || []).push({ edge: edge, other: edge.source });
+            });
+
+            var folded = Object.create(null);
+            var joins = Object.create(null);
+            var joinOrder = [];
+            nodes.forEach(function (node) {
+                if (node.kind !== 'person' || rootIds[node.id]) return;
+                var links = linksOf[node.id] || [];
+                var at = Object.create(null);
+                var places = [];
+                for (var i = 0; i < links.length; i++) {
+                    var other = links[i].other;
+                    if (other.kind === 'person') return;
+                    if (!at[other.id]) { at[other.id] = []; places.push(other); }
+                    at[other.id].push(links[i].edge);
+                }
+                if (places.length < 2) return;
+                folded[node.id] = true;
+
+                var anchors = places.filter(function (place) { return rootIds[place.id]; });
+                if (!anchors.length) {
+                    anchors = [places.slice().sort(function (a, b) {
+                        return (linksOf[b.id] || []).length - (linksOf[a.id] || []).length ||
+                            (a.id < b.id ? -1 : 1);
+                    })[0]];
+                }
+                anchors.forEach(function (anchor) {
+                    places.forEach(function (place) {
+                        if (place === anchor) return;
+                        var key = anchor.id < place.id ? anchor.id + '|' + place.id : place.id + '|' + anchor.id;
+                        if (!joins[key]) {
+                            joins[key] = { source: anchor, target: place, via: [] };
+                            joinOrder.push(key);
+                        }
+                        var join = joins[key];
+                        if (join.via.some(function (v) { return v.person === node; })) return;
+                        join.via.push({ person: node, at: at });
+                    });
+                });
+            });
+            if (!joinOrder.length) return { nodes: nodes, edges: edges, folded: folded };
+
+            var kept = [];
+            var recorded = Object.create(null);
+            edges.forEach(function (edge) {
+                if (folded[edge.sourceId] || folded[edge.targetId]) return;
+                var key = edge.sourceId < edge.targetId
+                    ? edge.sourceId + '|' + edge.targetId : edge.targetId + '|' + edge.sourceId;
+                if (recorded[key] === undefined) recorded[key] = kept.length;
+                kept.push(edge);
+            });
+            joinOrder.forEach(function (key) {
+                var join = joins[key];
+                if (recorded[key] !== undefined) {
+                    var original = kept[recorded[key]];
+                    var copy = {};
+                    Object.keys(original).forEach(function (field) { copy[field] = original[field]; });
+                    copy.via = join.via;
+                    kept[recorded[key]] = copy;
+                    return;
+                }
+                kept.push({
+                    id: 'via:' + key,
+                    source: join.source, target: join.target,
+                    sourceId: join.source.id, targetId: join.target.id,
+                    category: 'people', roles: [], raw: '', direction: 'none',
+                    crossesChain: false,
+                    crossesRegion: join.via.some(function (v) {
+                        return Object.keys(v.at).some(function (placeId) {
+                            return v.at[placeId].some(function (e) { return e.crossesRegion; });
+                        });
+                    }),
+                    provenance: 'fold',
+                    via: join.via,
+                    above: lineageOf(join)
+                });
+            });
+
+            return {
+                nodes: nodes.filter(function (node) { return !folded[node.id]; }),
+                edges: kept,
+                folded: folded
+            };
+        }
+
+        /**
+         * Which end of a folded line sits above the other, as [upper, lower]
+         * ids, or null. A body someone belonged to goes above what they went
+         * on to found - AA over Synanon, through Dederich - which the layout
+         * used to read off the person standing between the two.
+         */
+        function lineageOf(join) {
+            var ends = [join.source.id, join.target.id];
+            for (var i = 0; i < join.via.length; i++) {
+                var at = join.via[i].at;
+                for (var e = 0; e < 2; e++) {
+                    var body = ends[e];
+                    var made = ends[1 - e];
+                    var member = (at[body] || []).some(function (edge) { return edge.category === 'membership'; });
+                    var founder = (at[made] || []).some(function (edge) {
+                        return (edge.roles || []).some(function (role) { return /found/i.test(role); });
+                    });
+                    if (member && founder) return [body, made];
+                }
+            }
+            return null;
+        }
 
         /** Has the visitor opened anything, or is this still the opening view? */
         focus.isFocused = function () { return chain.length > 0; };
@@ -430,17 +626,19 @@
             }
 
             var hood = neighbourhoodOf(id);
+            var crowd = Object.keys(hood.near).length - 1 > GATHER_MAX;
             gather = {
                 id: id,
                 near: hood.near,
                 nearEdges: hood.nearEdges,
-                targets: gatherTargets(id, hood.near),
+                targets: crowd ? null : gatherTargets(id, hood.near),
                 progress: gather && gather.progress ? gather.progress : 0,
                 direction: 1
             };
-            /* Under reduced motion the gather is skipped entirely and hover
-             * is dimming alone, which loses nothing factual. */
-            if (prefersReducedMotion()) {
+            /* Under reduced motion, or with too many to move, the gather is
+             * skipped entirely and hover is dimming alone, which loses
+             * nothing factual. */
+            if (crowd || prefersReducedMotion()) {
                 gather.progress = 0;
                 gather.targets = null;
                 offsets = null;
@@ -543,9 +741,50 @@
             runGather();
         }
 
+        /* ----------------------------------------------------- line hover -- */
+
+        /* Ids of the lines under the pointer, or null. */
+        var hoverEdgeIds = null;
+
+        /** Every line on screen between these two names, either way round. */
+        focus.linesBetween = function (a, b) {
+            return ((current && current.edges) || []).filter(function (edge) {
+                return (edge.sourceId === a && edge.targetId === b) ||
+                    (edge.sourceId === b && edge.targetId === a);
+            });
+        };
+
+        /**
+         * The pointer is on a line, or has left it. Two names can have more
+         * than one line between them - one owns the other and they shared a
+         * director - and those are drawn along the same route, so pointing
+         * at one is pointing at all of them.
+         *
+         * Returns false when the line is not there to be pointed at: while
+         * a click is still reeling its names in, every line is on its way
+         * somewhere else, and a popup pinned to one would be left behind.
+         */
+        focus.hoverEdge = function (edge) {
+            if (edge && yoyo) return false;
+            /* Called on every move along a line; only a change repaints. */
+            if (edge && hoverEdgeIds && hoverEdgeIds[edge.id]) return true;
+            var next = null;
+            if (edge) {
+                next = Object.create(null);
+                next[edge.id] = true;
+                focus.linesBetween(edge.sourceId, edge.targetId).forEach(function (e) { next[e.id] = true; });
+            }
+            if (!next && !hoverEdgeIds) return true;
+            hoverEdgeIds = next;
+            applyEmphasis();
+            viewport.scheduleDraw();
+            return true;
+        };
+
         function applyEmphasis() {
             renderer.setEmphasis({
                 hoverId: hoverId,
+                hoverEdges: hoverEdgeIds,
                 /* Hover always lights what the node touches and drops the
                  * rest back. This used to be suppressed once something had
                  * been opened, on the reasoning that the neighbourhood was
@@ -752,6 +991,7 @@
             chain = [];
             layout = null;
             hoverId = null;
+            hoverEdgeIds = null;
             stopSettle();
             dropGather();
             /* The position source is the same function throughout; it reads
@@ -781,6 +1021,7 @@
             var grown = Object.create(null);
             scene.nodes.forEach(function (node) { grown[node.id] = baseGrow; });
             renderer.setGrow(grown);
+            current = scene;
             renderer.setScene(scene);
             viewport.setScene(scene);
             drawn = scene.nodeIds;
@@ -831,6 +1072,7 @@
             stopSettle();
             dropGather();
             hoverId = null;
+            hoverEdgeIds = null;
 
             var scene = focus.scene();
             if (!scene.nodes.length) {
@@ -839,6 +1081,7 @@
                 resetToWholeMap();
                 return;
             }
+            current = scene;
 
             var key = mode + ':' + chain.join(',');
             if (key !== seedKey) {
@@ -914,7 +1157,9 @@
             var links = scene.edges.map(function (edge) {
                 return {
                     source: edge.sourceId, target: edge.targetId,
-                    category: edge.category, direction: edge.direction, roles: edge.roles
+                    category: edge.category, direction: edge.direction, roles: edge.roles,
+                    /* A folded line's lineage, [upper, lower]; see lineageOf. */
+                    above: edge.above || null
                 };
             });
 
@@ -1005,6 +1250,7 @@
             var a = byId[ends[0]];
             var b = byId[ends[1]];
             if (!a || !b || a === b) return null;
+            if (link.above && byId[link.above[0]] && byId[link.above[1]]) return link.above;
             if (link.category === 'corporate' && link.direction === 'renamed') return [a.id, b.id];
 
             var company = function (p) { return p.tier === TIER_COMPANY; };
@@ -1779,6 +2025,15 @@
                 owns[ends[0] + '>' + ends[1]] = owns[ends[1] + '>' + ends[0]] = true;
             });
             var cluster = clustersOf(points, adjacent, owns);
+            /* Places joined to the click only through somebody who worked at
+             * both. They are connections, but not the click's own household:
+             * see below. */
+            var throughPeople = Object.create(null);
+            links.forEach(function (link) {
+                if (link.category !== 'people') return;
+                var ends = endsOf(link);
+                throughPeople[ends[0] + '>' + ends[1]] = throughPeople[ends[1] + '>' + ends[0]] = true;
+            });
 
             var isRoot = Object.create(null);
             roots.forEach(function (id) { isRoot[id] = true; });
@@ -1788,10 +2043,18 @@
              * one place the tree puts an owner above what it owns without
              * fail. Opening CEDU put The Brown Schools, which bought it, in a
              * neighbouring cluster level with a school CEDU owned, and no
-             * place for that cluster could honour both. */
+             * place for that cluster could honour both.
+             *
+             * Not the places joined to it only through a folded person.
+             * Provo Canyon School has fifty of those, and pulled into its
+             * cluster each one left its own owner behind in another: The
+             * Brown Schools came out level with San Marcos Treatment Center,
+             * which it owned. They cluster with whatever else they belong
+             * to, as they did when the person stood between the two. */
             roots.forEach(function (id) {
                 if (!byId[id] || cluster[id] === undefined) return;
                 adjacent[id].forEach(function (other) {
+                    if (throughPeople[id + '>' + other]) return;
                     cluster[other] = cluster[id];
                 });
             });
@@ -2092,9 +2355,14 @@
             var head = chain.length ? store.node(chain[chain.length - 1]) : null;
             var near = null;
             if (head) {
+                /* Read off the lines on screen, so a place joined to the
+                 * click through a folded person counts as its own. */
                 var ownIds = Object.create(null);
                 ownIds[head.id] = true;
-                store.neighbours(head.id, true).forEach(function (link) { ownIds[link.other.id] = true; });
+                scene.edges.forEach(function (edge) {
+                    if (edge.sourceId === head.id) ownIds[edge.targetId] = true;
+                    else if (edge.targetId === head.id) ownIds[edge.sourceId] = true;
+                });
                 var own = scene.nodes.filter(function (node) { return ownIds[node.id]; }).map(function (node) {
                     var p = next[node.id] || positionOf(node);
                     return { x: p.x, y: p.y, r: node.r };

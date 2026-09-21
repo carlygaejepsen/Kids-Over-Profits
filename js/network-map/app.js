@@ -48,11 +48,23 @@
         /* focus is created after the viewport but referenced by its
          * callbacks, which only fire once the pointer moves. */
         var focus = null;
+        /* The popup that says what a line records; built once focus exists. */
+        var popup = null;
         var viewport = window.KOPNetworkViewport.create({
             canvas: canvas,
             renderer: renderer,
             onHover: function (node) {
                 if (focus) focus.hover(node);
+            },
+            onHoverEdge: function (edge, point) {
+                if (popup) popup.hover(edge, point);
+            },
+            onSelectEdge: function (edge, point) {
+                if (popup) popup.pin(edge, point);
+            },
+            /* A pan or a zoom moves the line out from under its popup. */
+            onChange: function () {
+                if (popup) popup.hide();
             },
             onSelect: function (node, event) {
                 /* Ctrl- or Cmd-click opens the name's profile in a new tab
@@ -76,6 +88,8 @@
             viewport: viewport,
             announce: announce,
             onChange: function () {
+                /* The line the popup describes may not be in the new view. */
+                if (popup) popup.hide();
                 renderChain(app);
                 syncMode(app);
                 if (app.drawer) app.drawer.update();
@@ -124,6 +138,16 @@
             }
         };
         window.KOPNetworkMap = app;
+
+        if (window.KOPNetworkConnection && stage) {
+            popup = window.KOPNetworkConnection.create({
+                stage: stage,
+                focus: focus,
+                renderer: renderer,
+                announce: announce
+            });
+            app.popup = popup;
+        }
 
         if (window.KOPNetworkFilters) {
             filters = window.KOPNetworkFilters.create({
@@ -407,8 +431,24 @@
      * steal Escape from the search box or a dialog elsewhere on the page.
      */
     function wireKeyboard(app) {
+        /* A pinned popup holds buttons, so Escape has to work from inside it
+         * too, and hands the keyboard back to the map. */
+        if (app.popup) {
+            app.popup.element.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape' && event.key !== 'Esc') return;
+                event.preventDefault();
+                app.popup.hide();
+                app.elements.canvas.focus();
+            });
+        }
         app.elements.canvas.addEventListener('keydown', function (event) {
             if (event.key !== 'Escape' && event.key !== 'Esc') return;
+            /* The popup first: Escape closes the nearest thing. */
+            if (app.popup && app.popup.pinned()) {
+                event.preventDefault();
+                app.popup.hide();
+                return;
+            }
             if (!app.focus.chain().length) return;
             event.preventDefault();
             app.focus.clear();

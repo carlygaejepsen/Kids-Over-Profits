@@ -256,6 +256,104 @@ rest had been standing where they would collide.
 Ownership and renames are untouched: they run between organisations, and no
 person stands in the middle of one.
 
+**The person who joins two places is the line between them (2026-09-21).**
+The owner changed their mind about the paragraph above. Connected
+programmes are what belong on the board, always; the person who connects
+them should not be a third name to read but something the line gives up
+when it is hovered. So `foldConnectors` (focus.js) runs on every scene:
+
+- A person folds when every line they have on screen runs to an
+  organisation and there are two or more of those. They leave the scene,
+  and their places are joined by one line carrying them (`edge.via`, each
+  entry the person and the edges they had to each place).
+- What was clicked never folds: open a person and they are the subject, a
+  name with their places round them. Nor does anyone with a line to another
+  person (a marriage has no place to fold into), nor someone with only one
+  place on screen.
+- Somebody at three places is two lines, not three: their places are joined
+  through whichever of them was clicked, or failing that the busiest. Several
+  people joining the same two places share one line. Where the record already
+  has a line between the two (one owns the other, the staff list joined
+  them), the people ride on a copy of that line instead of doubling it. The
+  store's own edges are never written to.
+- A folded line is its own kind, "Shared people" (dash-dot), and so is a
+  line the build drew from the staff list or the staff moves, which says the
+  same thing. Neither writes a name on the board; a line that stands for
+  more than one person says "3 people".
+- Lineage survives the fold: Dederich belonged to AA and founded Synanon, so
+  the line that is Dederich carries `above: [AA, Synanon]` and the layout
+  still draws AA over Synanon.
+
+With the person gone there is nothing on screen to hang a held-back place
+on, so the 30-name budget (`PERSON_REACH_BUDGET`) is gone too: every place a
+surfaced person leads to comes with them. Views are bigger for it - Provo
+Canyon School goes from 53 names to 67 (28 people folded into 50 lines),
+Second Nature from 33 to 43 - and what does not fit the stage is a pan away,
+as it already was for the big chains. Two things kept that readable. Places
+joined to the click only through a folded person are not pulled into the
+click's own cluster: Provo has fifty, and pulled in, each left its owner
+behind in another cluster (The Brown Schools came out level with San Marcos
+Treatment Center, which it owned). And a name with more than 36 lines no
+longer gathers on hover, only lights: fifty-two names pulled a third of the
+way in landed on each other and twenty-two were dropped.
+
+Owners are unchanged: a programme's owner comes along and brings only
+itself, with its other holdings behind the +N. A folded person is on screen
+as their line, so they are not counted in anybody's +N.
+
+**A person is never on the map without their places (2026-09-21).** The
+owner's rule, stated flatly: the map is about relationships, so if a person
+connects to a programme or a company, it shows. Two things still broke it
+after the fold, and both are closed:
+
+- *People who arrived second-hand.* The one-step stop meant a person brought
+  in by another person (Narvin Lichfield, in Provo Canyon School's view as
+  somebody's brother) stood there with every programme he ran behind a +N:
+  197 missing connections across 68 of the 1,258 views. The stop is for
+  people bringing people, which is what runs away. `withTheirPlaces`
+  (focus.js) now adds every programme and company of every person in the
+  view, whoever brought them, and the same for the people a starter view
+  names. What those places bring in turn is still a click away.
+- *Connection types hidden by default.* Board seats, referrals, survivors
+  and "other" started unchecked. All 55 of those lines join a person to a
+  programme or company and none joins anything else, so the default hid
+  exactly what the map is for. Every type is on by default now
+  (`DEFAULT_CATEGORIES` in store.js); the rail keeps a checkbox for each.
+
+`scripts/test-network-modules.js` checks the rule from every name on the
+board, not a sample: in each of the 1,258 views, every person drawn as a
+name or a line has every programme and company they connect to. Starter
+views grow with it (today's top players from 29 to 60), by places of their
+own people and nothing else, which the test also holds them to.
+
+The counts in this section were taken on the graph as it stood before the
+sheet's staff tab was built in. With it the board has 1,342 views, and Provo
+Canyon School opens on 76 names with 28 people folded into lines.
+
+`standBetween` is still there for the one case left to it: a person kept
+as a name because they were clicked earlier in Expand mode.
+
+**A line says what it records when it is pointed at (2026-09-21).** The
+renderer publishes the routes it drew; `renderer.edgeAt` finds the one under
+the pointer (5 px of reach, 12 for a finger), and the viewport asks it only
+after `nodeAt` has come back empty, so over a name the name wins. A
+company's lines share a trunk by design, so on a trunk the pointer is on
+several at once: the one whose far end is nearest wins, and the hovered line
+is stroked again, heavier, so it is plain which one the popup is about.
+Nothing dims - the pointer crosses a dozen lines on its way anywhere.
+
+`connection.js` owns the popup. `describe()` is DOM-free and turns the lines
+between two names into items: a person with their role at each end, or what
+the record says of the two directly ("Ownership: operated 1993-1999", "X
+became Y"). Hovering shows it beside the pointer with pointer events off, so
+it cannot swallow the move that dismisses it. Clicking the line pins it,
+announces it in the live region, and makes each person a button that opens
+them; that is also the only way in on a touch screen. A click on nothing,
+Escape, a pan or zoom, or the view changing puts it away, and lines are not
+pointable while a click is still reeling its names in. The drawer still
+lists every connection as text, folded people included, so nobody is
+reachable only by hovering.
+
 **A click is a yoyo (2026-09-18).** The owner asked for a click to zoom in,
 make the name bigger and draw its connections closer. So:
 
@@ -299,7 +397,9 @@ and then three rules run:
   that would take the view past 30 names (`PERSON_REACH_BUDGET` in
   `focus.js`), only places two of the people share come along; the rest
   wait behind the +N count on each person. This took Second Nature's
-  opening view from 62 names to about 33.
+  opening view from 62 names to about 33. *Superseded 2026-09-21: the
+  budget is gone and the person is drawn as the line between their places;
+  see "The person who joins two places is the line between them".*
 - *Whoever owned it is never left off, and brings only itself.* One step up
   the ownership chain, not the whole of it - Provo Canyon School walks up
   through ten organisations if you let it. Owners only, never their other
@@ -433,6 +533,7 @@ decisions.
 | `js/network-map/search.js` | Typeahead over names and aliases, ARIA listbox |
 | `js/network-map/filters.js` | Binds the rail controls to store state |
 | `js/network-map/focus.js` | The chain: hover preview, click to commit, breadcrumb truncation, and the live re-settle of a focused neighbourhood |
+| `js/network-map/connection.js` | What a line says: the DOM-free description of the lines between two names, and the hover/pinned popup that shows it |
 | `js/network-map/drawer.js` | Selected node panel and connection list |
 | `js/network-map/url-state.js` | Encodes selection, filters and viewport into the hash, restores on load |
 | `js/network-map/app.js` | Bootstrap and event wiring |
@@ -1057,7 +1158,9 @@ in the centre row, as 0592dd5 intended.
 Each line is captioned with its relationship as the board wrote it, in
 small italic on its longest straight run, after the names and in their
 collision grid so a name always wins. Lines the board left unlabelled stay
-bare, and the whole map is not captioned.
+bare, and the whole map is not captioned. Since 2026-09-21 a line that stands for
+people carries no names: who is a hover away, and the line says only "3
+people" when it is more than one.
 
 The board draws each company's connections in the company's colour; the
 export carries no colours, so they were read off the Miro frames and kept
