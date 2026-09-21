@@ -5,8 +5,9 @@
  * api/scan-inspection-highlights.php queues the serious findings it reads out
  * of the inspection reports; this is where a person confirms the reading.
  * Each candidate names a facility and describes harm, so nothing is shown on
- * the site until it is approved here. Worst first; the excerpt is the state's
- * own words, and the full report opens underneath it.
+ * the site until it is approved here. The most recent severe findings lead,
+ * since those are what the site shows once approved; the excerpt is the
+ * state's own words, and the full report opens underneath it.
  *
  * Admin-only. Loads WordPress via config.php.
  */
@@ -81,6 +82,11 @@ $state = strtoupper(preg_replace('/[^A-Za-z]/', '', (string) ($_GET['state'] ?? 
 $category = isset($categories[$_GET['category'] ?? '']) ? $_GET['category'] : '';
 $min = max(0, min(100, (int) ($_GET['min'] ?? 0)));
 $q = trim((string) ($_GET['q'] ?? ''));
+// Recent severe findings lead by default: they are the ones the site shows.
+$sort = ($_GET['sort'] ?? '') === 'worst' ? 'worst' : 'recent';
+$order = $sort === 'worst'
+    ? 'h.score DESC, h.finding_date DESC, h.id DESC'
+    : '(h.score >= ' . (int) kop_ih_severe_score() . ') DESC, (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC';
 $page = max(1, (int) ($_GET['paged'] ?? 1));
 $per_page = 40;
 
@@ -89,6 +95,8 @@ $total = 0;
 $counts = array();
 $error = '';
 try {
+    // Creates the tables when missing and brings an older table up to date.
+    kop_ih_ensure_tables($pdo);
     foreach ($pdo->query('SELECT status, COUNT(*) AS n FROM inspection_highlights GROUP BY status') as $r) $counts[$r['status']] = (int) $r['n'];
 
     $where = array('h.status = ?');
@@ -107,21 +115,13 @@ try {
         FROM inspection_highlights h
         JOIN inspection_facilities f ON f.id = h.facility_id
         JOIN inspection_reports r ON r.id = h.report_id
-        WHERE $sql_where ORDER BY h.score DESC, h.id DESC LIMIT " . (int) $per_page . ' OFFSET ' . (int) (($page - 1) * $per_page));
+        WHERE $sql_where ORDER BY $order LIMIT " . (int) $per_page . ' OFFSET ' . (int) (($page - 1) * $per_page));
     $stmt->execute($params);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $error = 'The highlights table is not there yet. Run scan-inspection-highlights.php?apply=1 first. (' . $e->getMessage() . ')';
+    $error = 'Could not read the highlights: ' . $e->getMessage();
 }
 
-/** A page a person can open for the report: the scraped link, or California's facility page. */
-$kop_source_url = static function (array $row) {
-    if (trim((string) $row['report_url']) !== '') return trim((string) $row['report_url']);
-    if ($row['state'] === 'CA' && preg_match('/^(\d{6,})-/', (string) $row['source_report_id'], $m)) {
-        return 'https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/' . $m[1];
-    }
-    return '';
-};
 $kop_link = static function (array $change) {
     $args = array_merge($_GET, $change);
     unset($args['report']);
@@ -149,6 +149,7 @@ button.plain { background: #fff; color: #000080; border: 1px solid #000080; }
 .score { font-size: 1.25rem; font-weight: 800; }
 .pill { display: inline-block; border: 2px solid #FE8088; border-radius: 999px; padding: 1px 9px; font-size: 0.78rem; font-weight: 700; }
 .pill.state { border-color: #33A7B5; }
+.pill.severe { border-color: #c0392b; color: #c0392b; }
 blockquote { margin: 10px 0; padding: 8px 14px; background: #FFF5CB; border-left: 4px solid #EF9034; line-height: 1.5; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
 .actions input { flex: 1 1 260px; max-width: 420px; }
@@ -156,7 +157,7 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
 .pager a { margin-right: 10px; }
 </style></head><body>
 <h1>Review inspection highlights</h1>
-<p class="muted">Candidates read out of the inspection reports by the parser. Nothing here is on the site until it is approved. The excerpt is the state's own wording; open the full report before approving, because the parser cannot tell who did what to whom.</p>
+<p class="muted">Candidates read out of the inspection reports by the parser. Nothing here is on the site until it is approved. Approved findings scoring <?php echo (int) kop_ih_severe_score(); ?> or more appear on the home page and the inspection reports hub, most recent first. The excerpt is the state's own wording; open the full report before approving, because the parser cannot tell who did what to whom.</p>
 
 <?php if ($error): ?><div class="error"><?php echo esc_html($error); ?></div><?php endif; ?>
 
@@ -175,20 +176,27 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
     <select name="category"><option value="">All categories</option>
         <?php foreach ($categories as $key => $cat): ?><option value="<?php echo esc_attr($key); ?>"<?php echo $key === $category ? ' selected' : ''; ?>><?php echo esc_html($cat['label']); ?></option><?php endforeach; ?>
     </select>
+    <select name="sort">
+        <option value="recent"<?php echo $sort === 'recent' ? ' selected' : ''; ?>>Most recent severe first</option>
+        <option value="worst"<?php echo $sort === 'worst' ? ' selected' : ''; ?>>Worst first</option>
+    </select>
     <label>Score at least <input type="number" name="min" min="0" max="100" step="5" value="<?php echo (int) $min; ?>" style="width:70px"></label>
     <button type="submit">Filter</button>
     <span class="muted"><?php echo (int) $total; ?> shown by these filters</span>
 </form>
 
 <?php foreach ($rows as $row):
-    $source = $kop_source_url($row);
+    $source = kop_ih_source_url($row);
+    $when = $row['finding_date'] ? date_i18n('F j, Y', strtotime($row['finding_date'] . ' 12:00:00')) : $row['report_date'];
+    $severe = (int) $row['score'] >= kop_ih_severe_score();
     $band = $row['score'] >= 90 ? 's90' : ($row['score'] >= 70 ? 's70' : '');
 ?>
 <div class="card <?php echo $band; ?>" data-id="<?php echo (int) $row['id']; ?>" data-report="<?php echo (int) $row['report_id']; ?>">
     <div class="head">
         <span class="score"><?php echo (int) $row['score']; ?></span>
         <strong><?php echo esc_html($row['facility_name']); ?></strong>
-        <span class="muted"><?php echo esc_html($row['state']); ?> &middot; <?php echo esc_html($row['report_date']); ?></span>
+        <span class="muted"><?php echo esc_html($row['state']); ?> &middot; <?php echo esc_html($when); ?></span>
+        <?php if ($severe): ?><span class="pill severe">Severe: shown on the site once approved</span><?php endif; ?>
         <?php if ($row['state_label']): ?><span class="pill state"><?php echo esc_html($row['state_label']); ?></span><?php endif; ?>
         <?php foreach (explode(',', $row['categories']) as $key): if (isset($categories[$key])): ?><span class="pill"><?php echo esc_html($categories[$key]['label']); ?></span><?php endif; endforeach; ?>
         <?php if ($row['corrected_on_site']): ?><span class="muted">corrected at the inspection</span><?php endif; ?>

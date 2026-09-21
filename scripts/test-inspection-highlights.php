@@ -148,6 +148,52 @@ $mem->exec("UPDATE inspection_highlights SET status = 'pending'");
 $fifth = kop_ih_store($mem, 'TX', $tx, array());
 check($fifth['dropped'] === 1, 'store: a pending row the rules no longer produce is removed');
 
+// Dates: the reports table holds them as text, in several forms.
+$date_cases = array(
+    '10/02/2023' => '2023-10-02', '3/23/25' => '2025-03-23', 'April 25, 2025' => '2025-04-25',
+    '9/13/2023 - 9/14/2023' => '2023-09-13', '2024-07-01 00:00:00' => '2024-07-01', 'Sept. 3, 2021' => '2021-09-03',
+    '' => null, 'unknown' => null, '13/45/2023' => null, '01/01/1900' => null, '01/01/2999' => null,
+);
+foreach ($date_cases as $text => $want) {
+    check(kop_ih_parse_date($text) === $want, 'date: "' . $text . '" expected ' . var_export($want, true) . ' got ' . var_export(kop_ih_parse_date($text), true));
+}
+kop_ih_store($mem, 'TX', $tx, $cands);
+check($mem->query('SELECT finding_date FROM inspection_highlights WHERE report_id = 1')->fetchColumn() === null, 'store: a report with no date leaves finding_date empty');
+$tx_dated = array('id' => 21, 'facility_id' => 5, 'report_date' => '10/02/2023') + $tx;
+kop_ih_store($mem, 'TX', $tx_dated, kop_ih_candidates('TX', $tx_dated));
+check($mem->query('SELECT finding_date FROM inspection_highlights WHERE report_id = 21')->fetchColumn() === '2023-10-02', 'store: the report date is saved in a form that sorts');
+
+// What the site shows: approved and severe only, most recent first.
+$site = new PDO('sqlite::memory:');
+$site->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+kop_ih_ensure_tables($site);
+$site->exec('CREATE TABLE inspection_facilities (id INTEGER PRIMARY KEY, state TEXT, facility_name TEXT)');
+$site->exec('CREATE TABLE inspection_reports (id INTEGER PRIMARY KEY, facility_id INTEGER, report_id TEXT, report_date TEXT, report_url TEXT)');
+$site->exec("INSERT INTO inspection_facilities VALUES (1, 'TX', 'Example Ranch')");
+$site_rows = array(
+    // id, report date, narrative, risk level, status
+    array(11, '01/15/2020', 'A child in care died after being restrained by two staff.', 'High', 'approved'),
+    array(12, '06/01/2026', 'Staff punched a resident in the face during an argument.', 'High', 'approved'),
+    array(13, 'March 3, 2025', 'Staff engaged in a sexual relationship with a 16-year-old resident.', 'High', 'approved'),
+    array(14, '08/01/2026', 'Staff slapped a resident during an argument.', 'High', 'pending'),
+    array(15, '07/01/2026', 'The child absconded from the facility overnight.', 'High', 'approved'),
+    array(16, 'unknown', 'A child in care died in a vehicle accident while staff drove.', 'High', 'approved'),
+);
+foreach ($site_rows as $sr) {
+    $site->prepare('INSERT INTO inspection_reports VALUES (?, 1, ?, ?, ?)')->execute(array($sr[0], 'r' . $sr[0], $sr[1], ''));
+    $report = array('id' => $sr[0], 'facility_id' => 1, 'report_date' => $sr[1],
+        'categories_json' => json_encode(array('Standard Risk Level' => $sr[3], 'Deficiency Narrative' => $sr[2])));
+    kop_ih_store($site, 'TX', $report, kop_ih_candidates('TX', $report));
+    $site->prepare('UPDATE inspection_highlights SET status = ? WHERE report_id = ?')->execute(array($sr[4], $sr[0]));
+}
+$shown = $site->query(kop_ih_recent_severe_sql(10))->fetchAll(PDO::FETCH_ASSOC);
+$order = array_map(static function ($r) { return (int) $r['report_id']; }, $shown);
+check($order === array(12, 13, 11, 16), 'site: approved severe findings, most recent first, undated last; got [' . implode(',', $order) . ']');
+check(!in_array(14, $order, true), 'site: a pending finding is never shown, however recent');
+check(!in_array(15, $order, true), 'site: an approved finding below the severe score is not highlighted');
+check(count($site->query(kop_ih_recent_severe_sql(2))->fetchAll()) === 2, 'site: the limit holds');
+check(kop_ih_card_excerpt(str_repeat('word ', 100), 50) === 'word word word word word word word word word word [...]', 'site: a long excerpt is cut at a word and the cut is marked');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------

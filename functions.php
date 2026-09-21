@@ -43,6 +43,10 @@ require_once get_stylesheet_directory() . '/inc/redirects.php';
 // Generated facility pages (/facility/<slug>/) rendered from facilities_v2
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
 
+// Inspection highlights: the reviewed severe findings the home page and the
+// inspection reports hub show, most recent first
+require_once get_stylesheet_directory() . '/inc/inspection-highlights.php';
+
 // Bug report status emails (shared by inc/admin.php and api/save-bug-report.php)
 require_once get_stylesheet_directory() . '/inc/bug-report-notify.php';
 

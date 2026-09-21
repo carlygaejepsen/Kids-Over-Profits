@@ -87,6 +87,11 @@ $kop_ir_flagged = $kop_ir_has_featured === 'yes' ? $wpdb->get_results(
 ) : array();
 $wpdb->suppress_errors($kop_ir_suppress);
 
+// After the hand-picked reports: the severe findings the parser found and an
+// admin approved (api/review-inspection-highlights.php), most recent first.
+$kop_ir_highlights = function_exists('kop_ih_site_highlights')
+    ? kop_ih_site_highlights(max(3, 9 - count((array) $kop_ir_flagged))) : array();
+
 $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
     ? array_values(kop_state_inspection_page_map()) : array();
 ?>
@@ -147,7 +152,7 @@ $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
         </div>
     </section>
 
-    <?php if ($kop_ir_flagged) : ?>
+    <?php if ($kop_ir_flagged || $kop_ir_highlights) : ?>
     <section class="kop-home-flagged">
         <h2>Reports that demand attention</h2>
         <div class="kop-flagged-grid">
@@ -174,6 +179,7 @@ $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
                     </div>
                 </div>
             <?php endforeach; ?>
+            <?php if ($kop_ir_highlights) kop_ih_render_cards($kop_ir_highlights, $kop_ir_tracker_slugs); ?>
         </div>
     </section>
     <?php endif; ?>

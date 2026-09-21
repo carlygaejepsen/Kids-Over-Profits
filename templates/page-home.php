@@ -79,6 +79,11 @@ $kop_flagged = $kop_has_featured === 'yes' ? $wpdb->get_results(
 ) : array();
 $wpdb->suppress_errors($kop_suppress);
 
+// After the hand-picked reports: the severe findings the parser found and an
+// admin approved (api/review-inspection-highlights.php), most recent first.
+$kop_highlights = function_exists('kop_ih_site_highlights')
+    ? kop_ih_site_highlights(max(2, 6 - count((array) $kop_flagged))) : array();
+
 // By the numbers: live counts from the inspection database and the facility
 // directory, cached for six hours so the home page doesn't re-run COUNT
 // queries on every visit. A failed or empty result hides the whole strip.
@@ -261,7 +266,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     </section>
     <?php endif; ?>
 
-    <?php if ($kop_flagged): ?>
+    <?php if ($kop_flagged || $kop_highlights): ?>
     <section class="kop-home-flagged">
         <h2>Inspection Reports That Demand Attention</h2>
         <div class="kop-flagged-grid">
@@ -288,6 +293,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
                     </div>
                 </div>
             <?php endforeach; ?>
+            <?php if ($kop_highlights) kop_ih_render_cards($kop_highlights, $kop_tracker_slugs); ?>
         </div>
     </section>
     <?php endif; ?>

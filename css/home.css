@@ -399,6 +399,23 @@
     line-height: 1.5;
 }
 
+/* A reviewed finding quoted from the state's own report (inc/inspection-highlights.php) */
+.kop-flagged-quote {
+    margin: 0 0 0.5rem;
+    padding: 0.1rem 0 0.1rem 0.75rem;
+    border-left: 3px solid var(--kop-orange, #EF9034);
+    font-size: 0.9rem;
+    font-style: normal;
+    color: var(--kop-midnight-blue, #000435);
+    line-height: 1.5;
+}
+
+.kop-flagged-source {
+    font-size: 0.78rem;
+    color: #4a5568;
+    margin: 0 0 0.6rem;
+}
+
 .kop-flagged-links a {
     color: var(--kop-navy-blue, #000080);
     font-weight: 700;

@@ -5,7 +5,7 @@ issues the owner raised on 2026-09-18 (items 11 to 14). Everything from the
 first list is live on kidsoverprofits.org except the network map's last
 steps; the second list is open.
 
-Last updated 2026-09-18.
+Last updated 2026-09-21.
 
 ## Status
 
@@ -28,7 +28,7 @@ Last updated 2026-09-18.
 | 11 | Facility websites: Wayback and/or donotlink everywhere | Done: Wayback first, live site only through /go/ |
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
-| 14 | Parser that flags the worst inspection findings | Steps 1 to 4 built for Texas and California; first scan waiting on the owner; other states, the site blocks and the nightly run still open |
+| 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
 
 ## Waiting on the owner
 
@@ -62,17 +62,19 @@ session can do it. The tools that change data show a dry run first; add
    of proposed crisis lines, reporting routes and family resources that
    visitors cannot see. Check every number, then move the ones to publish
    into `kop_resources_groups()` in `inc/resources-list.php`.
+7. **Starter views for the map (1).** Done 2026-09-18: four views are in
+   `js/data/network/network-overrides.json` (Historical, Today's top
+   players, Wilderness, Fundamentalist). Edit that file to change or add
+   one.
 8. **Inspection highlights (14).** Open
    [scan-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/scan-inspection-highlights.php)
    for the dry run, then `?apply=1` repeatedly until it reports 0 remaining
    (about 14 loads). It only adds two new tables. Then review the queue in
    [review-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php).
-   Approving changes nothing on the site yet; the blocks that show approved
-   highlights are the next step.
-7. **Starter views for the map (1).** Done 2026-09-18: four views are in
-   `js/data/network/network-overrides.json` (Historical, Today's top
-   players, Wilderness, Fundamentalist). Edit that file to change or add
-   one.
+   The first batch was saved on 2026-09-21 (3,000 reports, 250 candidates);
+   about 13 more loads finish it. An approved finding scoring 70 or more
+   appears on the home page and the inspection reports hub, most recent
+   first, so the review screen opens on the most recent severe candidates.
 
 ## Working in this repository
 
@@ -657,11 +659,34 @@ nothing can be until a person approves it.
   slice for reading). The store was also run twice against a throwaway
   MySQL 8: a second pass adds nothing and reviewed rows survive.
 
+**The most recent severe reports are the ones highlighted** (owner,
+2026-09-21). A finding scoring 70 or more (`kop_ih_severe_score()`) is
+severe. Once approved it appears in the "demand attention" grid on the home
+page (up to 6 cards with the hand-featured reports, which keep the front) and
+on the inspection reports hub (up to 9), ordered by report date, newest first,
+the worse finding leading on one day and undated findings last
+(`kop_ih_recent_severe_sql()`, `kop_ih_site_highlights()`,
+`kop_ih_render_cards()`). The card quotes the state's words, cut at 320
+characters with the cut marked, names the category and the state's own label,
+and links the state source and the tracker. The review note is never printed.
+The review screen sorts the same way by default (severe first, newest first),
+with "Worst first" as the other order, and marks each severe candidate.
+
+Report dates are text in the reports table ("10/02/2023", "April 25, 2025",
+"9/13/2023 - 9/14/2023", "3/23/25"), which cannot be sorted: the hand-featured
+query's `ORDER BY report_date` is a string sort and puts December 2019 above
+February 2026. Each highlight therefore carries `finding_date`, a real date
+parsed by `kop_ih_parse_date()`. Production's table was created before the
+column existed; `kop_ih_ensure_tables()` adds it and fills it, touching no
+other field, the next time the scan or the review screen runs. Checked
+against a throwaway MySQL 8 holding a table in the first shape.
+
 Still to do: adapters for the other eleven states (Arizona, Connecticut,
 Washington and Florida carry structured deficiencies; North Carolina,
 Georgia, Arkansas, Minnesota and Oregon need the report text; Utah and
-Nevada carry only counts and grades); the blocks on the site (step 5); the
-cron line (step 6).
+Nevada carry only counts and grades); a "What inspectors found" block on
+the facility pages and the state trackers (the rest of step 5); the cron
+line (step 6).
 
 What the data holds (production mirror, 57,089 reports in 13 states): no
 report is stored in a common structure (`is_structured` is 0 everywhere).

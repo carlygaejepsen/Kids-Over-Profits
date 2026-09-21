@@ -33,6 +33,37 @@ if (!function_exists('kop_ih_scanner_version')) {
         return 30;
     }
 
+    /** A finding at or above this is severe: the ones the site highlights, most recent first. */
+    function kop_ih_severe_score() {
+        return 70;
+    }
+
+    /**
+     * The states write dates as text in several ways ("10/02/2023",
+     * "April 25, 2025", "9/13/2023 - 9/14/2023", "3/23/25"). Returns Y-m-d for
+     * the first date in the text, or null. A date more than a year ahead or
+     * before 1990 is a scraping fault and is not trusted.
+     */
+    function kop_ih_parse_date($text) {
+        $text = trim((string) $text);
+        $y = $m = $d = 0;
+        if (preg_match('/\b(\d{4})-(\d{1,2})-(\d{1,2})\b/', $text, $p)) {
+            list(, $y, $m, $d) = $p;
+        } elseif (preg_match('#\b(\d{1,2})/(\d{1,2})/(\d{4}|\d{2})\b#', $text, $p)) {
+            list(, $m, $d, $y) = $p;
+            if (strlen($y) === 2) $y = ((int) $y > 70 ? 1900 : 2000) + (int) $y;
+        } elseif (preg_match('/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.? (\d{1,2}),? (\d{4})\b/i', $text, $p)) {
+            $m = 1 + array_search(strtolower($p[1]), array('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'), true);
+            $d = $p[2];
+            $y = $p[3];
+        } else {
+            return null;
+        }
+        $y = (int) $y; $m = (int) $m; $d = (int) $d;
+        if (!checkdate($m, $d, $y) || $y < 1990 || $y > (int) gmdate('Y') + 1) return null;
+        return sprintf('%04d-%02d-%02d', $y, $m, $d);
+    }
+
     /**
      * Categories of harm, worst first. Patterns match inside one sentence.
      * 'requires' is a second pattern the same sentence must also match;
@@ -394,7 +425,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             $pdo->exec("CREATE TABLE IF NOT EXISTS inspection_highlights (
                 id INTEGER PRIMARY KEY AUTOINCREMENT, report_id INTEGER NOT NULL, facility_id INTEGER NOT NULL,
                 finding_key TEXT NOT NULL, text_hash TEXT NOT NULL, state TEXT NOT NULL, category TEXT NOT NULL, categories TEXT NOT NULL,
-                score INTEGER NOT NULL, excerpt TEXT NOT NULL, standard TEXT, state_label TEXT, kind TEXT,
+                score INTEGER NOT NULL, finding_date TEXT, excerpt TEXT NOT NULL, standard TEXT, state_label TEXT, kind TEXT,
                 corrected_on_site INTEGER, status TEXT NOT NULL DEFAULT 'pending', reviewed_by TEXT,
                 reviewed_at TEXT, review_note TEXT, scanner_version INTEGER NOT NULL,
                 created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -413,6 +444,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             category varchar(40) NOT NULL COMMENT 'Worst category of harm matched',
             categories varchar(255) NOT NULL COMMENT 'Every category matched, comma separated',
             score tinyint unsigned NOT NULL,
+            finding_date date DEFAULT NULL COMMENT 'The report''s date, parsed; the reports table holds it as text',
             excerpt text NOT NULL COMMENT 'The state''s own words',
             standard varchar(500) DEFAULT NULL,
             state_label varchar(120) DEFAULT NULL COMMENT 'Severity or substantiation as the state recorded it',
@@ -428,14 +460,53 @@ if (!function_exists('kop_ih_scanner_version')) {
             PRIMARY KEY (id),
             UNIQUE KEY report_finding (report_id, finding_key),
             KEY status_score (status, score),
+            KEY status_date (status, finding_date),
             KEY facility_text (facility_id, text_hash)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+        // The first production batch was saved before finding_date existed.
+        if (!$pdo->query("SHOW COLUMNS FROM inspection_highlights LIKE 'finding_date'")->fetch()) {
+            $pdo->exec("ALTER TABLE inspection_highlights
+                ADD COLUMN finding_date date DEFAULT NULL COMMENT 'The report''s date, parsed; the reports table holds it as text' AFTER score,
+                ADD KEY status_date (status, finding_date)");
+        }
+        kop_ih_backfill_dates($pdo);
         $pdo->exec("CREATE TABLE IF NOT EXISTS inspection_highlight_scans (
             report_id int(11) NOT NULL,
             scanner_version int(11) NOT NULL,
             scanned_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
             PRIMARY KEY (report_id)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    /** Fill finding_date on rows that have none. Touches no other field, whatever the status. */
+    function kop_ih_backfill_dates(PDO $pdo) {
+        $rows = $pdo->query('SELECT h.id, r.report_date FROM inspection_highlights h
+            JOIN inspection_reports r ON r.id = h.report_id WHERE h.finding_date IS NULL')->fetchAll(PDO::FETCH_ASSOC);
+        $set = $pdo->prepare('UPDATE inspection_highlights SET finding_date = ? WHERE id = ?');
+        $filled = 0;
+        foreach ($rows as $row) {
+            $date = kop_ih_parse_date($row['report_date']);
+            if ($date === null) continue;
+            $set->execute(array($date, (int) $row['id']));
+            $filled++;
+        }
+        return $filled;
+    }
+
+    /**
+     * The approved severe findings, most recent first: what the site
+     * highlights. Dated rows come before undated ones; on one day the worse
+     * finding leads. Runs on MySQL and SQLite; pass the limit as an integer.
+     */
+    function kop_ih_recent_severe_sql($limit) {
+        return "SELECT h.id, h.report_id, h.state, h.category, h.categories, h.score, h.finding_date, h.excerpt,
+                   h.standard, h.state_label, f.facility_name, r.report_date, r.report_url, r.report_id AS source_report_id
+            FROM inspection_highlights h
+            JOIN inspection_facilities f ON f.id = h.facility_id
+            JOIN inspection_reports r ON r.id = h.report_id
+            WHERE h.status = 'approved' AND h.score >= " . (int) kop_ih_severe_score() . "
+            ORDER BY (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC
+            LIMIT " . (int) $limit;
     }
 
     /**
@@ -458,7 +529,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $c['standard'] !== '' ? substr($c['standard'], 0, 500) : null,
                 $c['state_label'] !== '' ? $c['state_label'] : null, $c['kind'],
                 $c['corrected_on_site'] === null ? null : (int) $c['corrected_on_site'],
-                kop_ih_scanner_version(),
+                kop_ih_scanner_version(), kop_ih_parse_date($row['report_date'] ?? ''),
             );
             if (!isset($existing[$c['finding_key']])) {
                 // The scrapers hold some reports under two ids; the first row scanned keeps the finding.
@@ -466,14 +537,14 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $dup->execute(array((int) $row['facility_id'], $c['text_hash'], $report_id));
                 if ($dup->fetchColumn()) { $counts['duplicate']++; continue; }
                 $pdo->prepare('INSERT INTO inspection_highlights
-                    (category, categories, score, excerpt, standard, state_label, kind, corrected_on_site, scanner_version,
+                    (category, categories, score, excerpt, standard, state_label, kind, corrected_on_site, scanner_version, finding_date,
                      report_id, facility_id, finding_key, text_hash, state, status)
-                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+                    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
                     ->execute(array_merge($values, array($report_id, (int) $row['facility_id'], $c['finding_key'], $c['text_hash'], strtoupper($state), 'pending')));
                 $counts['added']++;
             } elseif ($existing[$c['finding_key']]['status'] === 'pending') {
                 $pdo->prepare('UPDATE inspection_highlights SET category=?, categories=?, score=?, excerpt=?, standard=?,
-                    state_label=?, kind=?, corrected_on_site=?, scanner_version=? WHERE id=?')
+                    state_label=?, kind=?, corrected_on_site=?, scanner_version=?, finding_date=? WHERE id=?')
                     ->execute(array_merge($values, array((int) $existing[$c['finding_key']]['id'])));
                 $counts['refreshed']++;
             } else {
@@ -537,6 +608,7 @@ if (!function_exists('kop_ih_scanner_version')) {
                     $seen[$dup_key] = true;
                     $result['candidates'][] = $c + array(
                         'report_row' => (int) $row['id'], 'state' => $row['state'],
+                        'finding_date' => kop_ih_parse_date($row['report_date']),
                         'facility_name' => $row['facility_name'], 'report_date' => $row['report_date'],
                     );
                 }
@@ -554,6 +626,79 @@ if (!function_exists('kop_ih_scanner_version')) {
             return true;
         } catch (PDOException $e) {
             return false;
+        }
+    }
+
+    /** A page a person can open for the report: the scraped link, or California's facility page. */
+    function kop_ih_source_url(array $row) {
+        $url = trim((string) ($row['report_url'] ?? ''));
+        if ($url !== '') return $url;
+        if (($row['state'] ?? '') === 'CA' && preg_match('/^(\d{6,})-/', (string) ($row['source_report_id'] ?? ''), $m)) {
+            return 'https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/' . $m[1];
+        }
+        return '';
+    }
+
+    /** An excerpt cut to fit a card, at a word, with the cut marked. */
+    function kop_ih_card_excerpt($excerpt, $limit = 320) {
+        $excerpt = trim((string) $excerpt);
+        if (mb_strlen($excerpt) <= $limit) return $excerpt;
+        $cut = mb_substr($excerpt, 0, $limit);
+        $space = mb_strrpos($cut, ' ');
+        if ($space !== false && $space > $limit * 0.6) $cut = mb_substr($cut, 0, $space);
+        return rtrim($cut, " ,;:") . ' [...]';
+    }
+}
+
+// ---------------------------------------------------------------------------
+// On the site (WordPress): the home page and the inspection reports hub
+// ---------------------------------------------------------------------------
+
+if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights')) {
+
+    /**
+     * Approved severe findings, most recent first. Empty until the scan has
+     * run and someone has approved something, so the pages can call it
+     * unconditionally. A missing table is remembered for ten minutes only.
+     */
+    function kop_ih_site_highlights($limit) {
+        global $wpdb;
+        $suppress = $wpdb->suppress_errors(true);
+        $ready = get_transient('kop_inspection_highlights_ready_v1');
+        if ($ready === false) {
+            $ready = $wpdb->get_var("SHOW COLUMNS FROM inspection_highlights LIKE 'finding_date'") ? 'yes' : 'no';
+            set_transient('kop_inspection_highlights_ready_v1', $ready, $ready === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
+        }
+        $rows = $ready === 'yes' ? $wpdb->get_results(kop_ih_recent_severe_sql($limit), ARRAY_A) : array();
+        $wpdb->suppress_errors($suppress);
+        return (array) $rows;
+    }
+
+    /** Cards for the "demand attention" grid, in the markup the hand-featured cards use. */
+    function kop_ih_render_cards(array $rows, array $tracker_slugs) {
+        $categories = kop_ih_categories();
+        foreach ($rows as $row) {
+            $tracker = strtolower($row['state']) . '-reports';
+            $date = $row['finding_date'] ? date_i18n('F j, Y', strtotime($row['finding_date'] . ' 12:00:00')) : trim((string) $row['report_date']);
+            $source = kop_ih_source_url($row);
+            $label = $categories[$row['category']]['label'] ?? '';
+            ?>
+                <div class="kop-flagged-card kop-flagged-finding">
+                    <h3><?php echo esc_html($row['facility_name']); ?>
+                        <span class="kop-flagged-state"><?php echo esc_html($row['state']); ?></span></h3>
+                    <div class="kop-flagged-date"><?php echo $date !== '' ? 'Inspected ' . esc_html($date) : ''; ?><?php echo $date !== '' && $label !== '' ? ' &middot; ' : ''; ?><?php echo esc_html($label); ?></div>
+                    <blockquote class="kop-flagged-quote"><?php echo esc_html(kop_ih_card_excerpt($row['excerpt'])); ?></blockquote>
+                    <div class="kop-flagged-source">From the state's report<?php echo $row['state_label'] ? '. ' . esc_html($row['state_label']) : ''; ?></div>
+                    <div class="kop-flagged-links">
+                        <?php if ($source !== ''): ?>
+                            <a href="<?php echo esc_url($source); ?>" target="_blank" rel="noopener noreferrer">State source</a>
+                        <?php endif; ?>
+                        <?php if (in_array($tracker, $tracker_slugs, true)): ?>
+                            <a href="/<?php echo esc_attr($tracker); ?>"><?php echo esc_html(strtoupper($row['state'])); ?> tracker</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php
         }
     }
 }
