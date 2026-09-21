@@ -17,7 +17,7 @@ at the end.
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 6 done (2026-09-18) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
-| 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Operators tab done (2026-09-20); staff tab open |
+| 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
@@ -1160,12 +1160,38 @@ Youth Services International goes from 11 connections to 63, CSC from 5 to
 which the board had as a facility, now runs enough places that the build
 reads it as a company.
 
-Two things this leaves: the current operator of twelve places is a county or
-state agency the board does not have (Maryland DJS, Georgia DJJ, the Dallas
-County Juvenile Department), and those lines are not drawn; and the sheet's
-staff tab, 320 people with roles, is untouched. One question for the owner:
-Three Springs New Directions and Sequel TSI Madison share a zip code and may
-be one campus.
+**The rest of the sheet (2026-09-21).** Three Springs New Directions and
+Sequel TSI Madison share a zip code; the owner confirmed they are one campus,
+so New Directions is an alias of Sequel TSI Madison now. The eleven current
+operators the board did not have are nodes: the Maryland Department of
+Juvenile Services, the Georgia Department of Juvenile Justice, the Alabama
+Department of Human Resources, the Dallas County Juvenile Department, the
+Bowie County Juvenile Probation Department, the Hays County Juvenile Board,
+the Multi-County Interlocal Government Operation (government), and AMIkids,
+Everyday Life, Willow Grove LLC and Successful Dreams (companies), each with
+an `operates (current)` line to the fourteen places they run.
+
+The staff tab (320 people) is `js/data/network/sequel-staff.csv`, in the
+staff list's own shape (person, place, role, source), and the build reads it
+alongside `staff-list.csv`, crediting its lines to the "Sequel/TSI/YSI/Vivant
+staff sheet". It is a file of its own because `parse-staff-list.js` rewrites
+`staff-list.csv`. Each role names its company ("Sequel TSI: Director of
+Admissions at Lakeside Academy (2013-2016)"); a place on the map named in it
+is where the line goes, and a role that names no place ("Sequel TSI:
+EVP/COO") goes to the company. "Other noteworthy roles" count only where they
+name a place on the map. A handful of the tab's short forms are mapped by hand
+(Sequel TSI Kissimmee, Three Springs of NC, Palm Beach Juvenile Correctional
+Facility, Mingus Mountain RTC). The build's usual rule decides who becomes a
+node, someone tied to two places or leading one, which adds 74 people; the
+rest are counted on the lines between places they joined.
+
+**Layout additions stay where they land.** `build-network-layout.js` used to
+settle the whole map afresh on every run, and every opened view starts its
+own settle from those positions, so adding a handful of names reshuffled
+every view on the map, including the many that gained nothing, and each
+reshuffle tripped a different view check. It now pins every node the last
+`layout.json` placed and settles only the newcomers, from the middle of what
+they connect to; `--fresh` settles everything again, for a new board export.
 
 **Profile past names drawn as rebrands (2026-09-18).** The 51 profile
 names that are another board node were held back in case some were sister

@@ -34,6 +34,27 @@ const OUTPUT_FILE = path.join(DATA_DIR, 'graph.json');
 const STAFF_MOVEMENT_CSV = path.join(DATA_DIR, 'staff-movement.csv');
 /* The owner's staff list, parsed by scripts/parse-staff-list.js. A backup. */
 const STAFF_LIST_CSV = path.join(DATA_DIR, 'staff-list.csv');
+/* Other staff lists in the same shape (person, place, role, source), each
+ * with the name its connections are credited to. sequel-staff.csv is the
+ * staff tab of the owner's "Sequel/TSI/YSI/Vivant" sheet (2026-09-21); it is
+ * kept apart because parse-staff-list.js rewrites staff-list.csv. */
+const STAFF_LISTS = [
+    { file: STAFF_LIST_CSV, label: 'staff list' },
+    { file: path.join(DATA_DIR, 'sequel-staff.csv'), label: 'Sequel/TSI/YSI/Vivant staff sheet' }
+];
+
+/* Every staff-list row, each marked with the list it came from. */
+function readStaffLists() {
+    const rows = [];
+    STAFF_LISTS.forEach(function (list) {
+        if (!fs.existsSync(list.file)) return;
+        parseCsv(fs.readFileSync(list.file, 'utf8')).forEach(function (row) {
+            row.list = list.label;
+            rows.push(row);
+        });
+    });
+    return rows;
+}
 const QA_FILE = path.join(ROOT, 'tmp', 'network-qa.md');
 const SQLITE_FILE = path.join(ROOT, 'tmp', 'prod.sqlite');
 const PROGRAMS_FILE = path.join(ROOT, 'js', 'data', 'reddit-wiki', 'programs-array.json');
@@ -969,11 +990,9 @@ function addPeople(nodes, nodeById, claims, overrides) {
             note(row.person, to, row.role, 'staff moves');
         });
     }
-    if (fs.existsSync(STAFF_LIST_CSV)) {
-        parseCsv(fs.readFileSync(STAFF_LIST_CSV, 'utf8')).forEach(function (row) {
-            note(row.person, resolve(row.place), row.role, 'staff list');
-        });
-    }
+    readStaffLists().forEach(function (row) {
+        note(row.person, resolve(row.place), row.role, row.list);
+    });
 
     const ids = new Set(nodes.map(function (n) { return n.id; }));
     /* Same surname and first initial as a board person: probably the same
@@ -1123,8 +1142,8 @@ function addStaffMovement(nodes, edges) {
 let staffListAlreadyShown = 0;
 
 function addStaffList(nodes, edges) {
-    if (!fs.existsSync(STAFF_LIST_CSV)) return 0;
-    const rows = parseCsv(fs.readFileSync(STAFF_LIST_CSV, 'utf8'));
+    const rows = readStaffLists();
+    if (!rows.length) return 0;
     const byKey = new Map();
     nodes.forEach(function (node) {
         [node.name].concat(node.aliases || []).forEach(function (name) {
@@ -1190,7 +1209,7 @@ function addStaffList(nodes, edges) {
             }
             if (personNode && place.id === personNode.id) return;
             if (places.some(function (p) { return p.node.id === place.id; })) return;
-            places.push({ node: place, role: String(row.role || '').trim() });
+            places.push({ node: place, role: String(row.role || '').trim(), list: row.list });
         });
 
         if (personNode) {
@@ -1201,7 +1220,7 @@ function addStaffList(nodes, edges) {
                 const a = personNode.kind === 'person' ? personNode : p.node;
                 const b = a === personNode ? p.node : personNode;
                 push(a, b, personNode.kind === 'person' ? category : 'corporate', p.role,
-                    person + what + ' at ' + p.node.name + ' (staff list)');
+                    person + what + ' at ' + p.node.name + ' (' + p.list + ')');
             });
             return;
         }
@@ -1214,7 +1233,7 @@ function addStaffList(nodes, edges) {
         const at = function (p) { return p.node.name + (p.role ? ' (' + p.role + ')' : ''); };
         worked.slice(1).forEach(function (p) {
             push(hub.node, p.node, 'staff', 'worked at both',
-                person + ' worked at both ' + at(hub) + ' and ' + at(p) + ' (staff list)');
+                person + ' worked at both ' + at(hub) + ' and ' + at(p) + ' (' + p.list + ')');
         });
     });
     return n;

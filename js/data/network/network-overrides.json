@@ -634,7 +634,8 @@
       "name": "Sequel TSI Madison",
       "kind": "facility",
       "aliases": [
-        "Three Springs of Madison"
+        "Three Springs of Madison",
+        "Three Springs New Directions"
       ],
       "near": "Three Springs Inc.",
       "status": "closed or rebranded",
@@ -765,13 +766,6 @@
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
     },
     {
-      "name": "Three Springs New Directions",
-      "kind": "facility",
-      "near": "Three Springs Inc.",
-      "status": "closed or rebranded",
-      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
-    },
-    {
       "name": "Timberline Academy",
       "kind": "facility",
       "aliases": [
@@ -823,6 +817,98 @@
       "near": "Youth Services International",
       "status": "closed or rebranded",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Bowie County Juvenile Probation Department",
+      "kind": "government",
+      "near": "Bowie County Detention Center",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Willow Grove LLC",
+      "kind": "parent",
+      "near": "Capital Academy",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Maryland Department of Juvenile Services",
+      "kind": "government",
+      "aliases": [
+        "Maryland DJS"
+      ],
+      "near": "Charles H. Hickey, Jr. School",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Georgia Department of Juvenile Justice",
+      "kind": "government",
+      "aliases": [
+        "Georgia DJJ"
+      ],
+      "near": "Crisp County Youth Development Center",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Dallas County Juvenile Department",
+      "kind": "government",
+      "near": "Dallas County Juvenile Facility",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Hays County Juvenile Board",
+      "kind": "government",
+      "near": "Hays County Juvenile Justice Center",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Everyday Life, Inc.",
+      "kind": "parent",
+      "aliases": [
+        "Everyday Life"
+      ],
+      "near": "Los Hermanos Boys Ranch",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Multi-County Interlocal Government Operation",
+      "kind": "government",
+      "near": "Martin Hall Juvenile Facility",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Alabama Department of Human Resources",
+      "kind": "government",
+      "aliases": [
+        "Alabama Dept. of Human Resources"
+      ],
+      "near": "Sequel TSI Montgomery",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "AMIkids",
+      "kind": "parent",
+      "aliases": [
+        "Amikids"
+      ],
+      "near": "Polk Halfway House",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "name": "Successful Dreams",
+      "kind": "parent",
+      "near": "Lakeside Academy of Kansas",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
     }
   ],
   "edges": [
@@ -1950,11 +2036,102 @@
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
     },
     {
-      "from": "Three Springs Inc.",
-      "to": "Three Springs New Directions",
-      "relationship": "operated",
+      "from": "Bowie County Juvenile Probation Department",
+      "to": "Bowie County Detention Center",
+      "relationship": "operates (current)",
       "category": "corporate",
-      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab; the sheet records no years for it"
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Willow Grove LLC",
+      "to": "Capital Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Maryland Department of Juvenile Services",
+      "to": "Charles H. Hickey, Jr. School",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Maryland Department of Juvenile Services",
+      "to": "Victor Cullen Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Georgia Department of Juvenile Justice",
+      "to": "Crisp County Youth Development Center",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Dallas County Juvenile Department",
+      "to": "Dallas County Juvenile Facility",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Dallas County Juvenile Department",
+      "to": "Dallas County Youth Village Secure Program",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Hays County Juvenile Board",
+      "to": "Hays County Juvenile Justice Center",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Everyday Life, Inc.",
+      "to": "Los Hermanos Boys Ranch",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Multi-County Interlocal Government Operation",
+      "to": "Martin Hall Juvenile Facility",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Alabama Department of Human Resources",
+      "to": "Sequel TSI Montgomery",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Alabama Department of Human Resources",
+      "to": "Sequel TSI Tuskegee",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "AMIkids",
+      "to": "Polk Halfway House",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    },
+    {
+      "from": "Successful Dreams",
+      "to": "Lakeside Academy of Kansas",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
     }
   ],  "views": {
     "historical": {

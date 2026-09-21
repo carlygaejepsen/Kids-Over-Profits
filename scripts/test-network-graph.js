@@ -123,7 +123,7 @@ function run() {
             'edge ' + edge.id + ' has provenance "' + edge.provenance + '"');
         check(edge.provenance !== 'staff-movement' || /moved|worked at/.test(edge.raw || ''),
             'staff-movement edge ' + edge.id + ' does not say who moved');
-        check(edge.provenance !== 'staff-list' || /\(staff list\)$/.test(edge.raw || ''),
+        check(edge.provenance !== 'staff-list' || /\((staff list|Sequel\/TSI\/YSI\/Vivant staff sheet)\)$/.test(edge.raw || ''),
             'staff-list edge ' + edge.id + ' does not say where it came from');
     });
 
