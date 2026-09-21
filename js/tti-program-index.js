@@ -974,14 +974,12 @@ function displayFacilities(facilitiesData, containerId) {
             : '';
 
         const websiteItems = normalizeDisplayItems(getValueFromKeys(operator, operatorFieldKeys.websites));
+        // A program's own site: archived copy first, live site only through
+        // /go/ (js/shared/program-links.js, docs/FIX-PLAN-2026-09.md item 11).
         const websiteLinks = websiteItems.map(item => {
-            if (typeof item === 'string') {
-                const safeUrl = escapeAttribute(item);
-                let displayUrl = item.replace(/^https?:\/\/(www\.)?/, '');
-                if (displayUrl.length > 60) displayUrl = displayUrl.substring(0, 57) + '...';
-                return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
-            }
-            return renderItemOp(item);
+            const url = typeof item === 'string' ? item : (item && typeof item.url === 'string' ? item.url : '');
+            if (!url) return renderItemOp(item);
+            return (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url, { max: 60 }) : escapeHtml(url);
         }).filter(Boolean);
 
         const operatorWebsitesHtml = websiteLinks.length
@@ -1119,12 +1117,9 @@ function displayFacilities(facilitiesData, containerId) {
                 if (!validItems.length) return;
 
                 if (field.renderListAsLinks) {
-                    renderedValue = validItems.map(url => {    
+                    renderedValue = validItems.map(url => {
                         if (typeof url !== 'string') return '';
-                        const safeUrl = escapeAttribute(url);
-                        let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
-                        if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
-                        return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+                        return (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url, { max: 50 }) : escapeHtml(url);
                     }).filter(Boolean).join('<br>');
                 } else if (isProseList(validItems)) {
                     isProse = true;

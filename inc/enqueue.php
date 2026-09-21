@@ -278,7 +278,7 @@ function load_facilities_data() {
     wp_enqueue_script(
         'facilities-display',
         get_stylesheet_directory_uri() . '/js/inspections/facilities-display.js',
-        array('kop-facility-resources'),
+        array('kop-facility-resources', 'kop-program-links'),
         $script_version,
         true
 );
@@ -1514,7 +1514,7 @@ function enqueue_tti_processor_scripts() {
     wp_enqueue_script(
         'tti-program-index-script',
         $theme_uri . '/js/tti-program-index.js',
-        array('jquery', 'kop-facility-merge', 'kop-facility-resources'),
+        array('jquery', 'kop-facility-merge', 'kop-facility-resources', 'kop-program-links'),
         file_exists($theme_dir . '/js/tti-program-index.js') ? filemtime($theme_dir . '/js/tti-program-index.js') : time(),
         true
     );
@@ -2016,21 +2016,21 @@ function kop_enqueue_template_assets() {
         $script('kop-facility-merge', '/js/facility-merge.js');
         $script('kop-submit-info', '/js/submit-info.js');
         $script('kop-location-index', '/js/location-index.js',
-            array('kop-document-library-script', 'kop-facility-merge', 'kop-submit-info', 'kop-facility-resources'));
+            array('kop-document-library-script', 'kop-facility-merge', 'kop-submit-info', 'kop-facility-resources', 'kop-program-links'));
         return;
     }
 
     if (kop_page_uses_template('page-referrer-index.php')) {
         $style('kop-referrer-index', '/css/referrer-index.css');
         $script('kop-submit-info', '/js/submit-info.js');
-        $script('kop-referrer-index', '/js/referrer-index-v2.js', array('kop-submit-info'));
+        $script('kop-referrer-index', '/js/referrer-index-v2.js', array('kop-submit-info', 'kop-program-links'));
         return;
     }
 
     if (kop_page_uses_template('page-transporter-index.php')) {
         $style('kop-transporter-index', '/css/transporter-index.css');
         $script('kop-submit-info', '/js/submit-info.js');
-        $script('kop-transporter-index', '/js/transporter-index-v2.js', array('kop-submit-info'));
+        $script('kop-transporter-index', '/js/transporter-index-v2.js', array('kop-submit-info', 'kop-program-links'));
         return;
     }
 

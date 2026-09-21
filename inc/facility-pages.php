@@ -1213,6 +1213,24 @@ if (!function_exists('kop_facility_pages_date_label')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_archive_exempt_domains')) {
+    /**
+     * Domains whose links stay live: the archives themselves, this site, the
+     * places survivors and researchers gather. Shared with the page scripts
+     * through js/shared/program-links.js, so PHP and JS apply one list.
+     */
+    function kop_facility_pages_archive_exempt_domains() {
+        return array(
+            'archive.org', 'archive.today', 'archive.ph', 'archive.is',
+            'kidsoverprofits.org',
+            'reddit.com', 'redd.it', 'wikipedia.org', 'wikimedia.org',
+            'heal-online.org', 'linktr.ee',
+            'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
+            'youtube.com', 'youtu.be', 'linkedin.com',
+        );
+    }
+}
+
 if (!function_exists('kop_facility_pages_archive_exempt_host')) {
     /**
      * True for a host that must keep its live link: the archives themselves,
@@ -1225,15 +1243,7 @@ if (!function_exists('kop_facility_pages_archive_exempt_host')) {
         $host = strtolower(preg_replace('/^www\./', '', (string) $host));
         if ($host === '') return true;
 
-        $exempt = array(
-            'archive.org', 'archive.today', 'archive.ph', 'archive.is',
-            'kidsoverprofits.org',
-            'reddit.com', 'redd.it', 'wikipedia.org', 'wikimedia.org',
-            'heal-online.org', 'linktr.ee',
-            'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
-            'youtube.com', 'youtu.be', 'linkedin.com',
-        );
-        foreach ($exempt as $domain) {
+        foreach (kop_facility_pages_archive_exempt_domains() as $domain) {
             if ($host === $domain || substr($host, -(strlen($domain) + 1)) === '.' . $domain) {
                 return true;
             }
@@ -1256,13 +1266,15 @@ if (!function_exists('kop_facility_pages_archive_link')) {
      * Wayback resolves /web/<url> to its newest snapshot (and offers to take
      * one when it holds none).
      *
-     * Returns url, label and live_url; live_url is '' when the link was left
-     * alone, which is also when url and label come back unchanged.
+     * Returns url, label, live_url and go_url; live_url and go_url are ''
+     * when the link was left alone, which is also when url and label come
+     * back unchanged. go_url is the only way the live site is linked: see
+     * kop_program_go_url().
      */
     function kop_facility_pages_archive_link($url, $label = '') {
         $url   = trim((string) $url);
         $label = trim((string) $label);
-        $out   = array('url' => $url, 'label' => $label, 'live_url' => '');
+        $out   = array('url' => $url, 'label' => $label, 'live_url' => '', 'go_url' => '');
 
         if ($url === '' || !preg_match('#^https?://#i', $url)) return $out;
         $host = wp_parse_url($url, PHP_URL_HOST);
@@ -1273,8 +1285,138 @@ if (!function_exists('kop_facility_pages_archive_link')) {
             'url'      => 'https://web.archive.org/web/' . $url,
             'label'    => $name . ' (archived copy)',
             'live_url' => $url,
+            'go_url'   => kop_program_go_url($url),
         );
     }
+}
+
+// ---------------------------------------------------------------------------
+// /go/: the one way a page links a program's live site
+// ---------------------------------------------------------------------------
+//
+// The archived snapshot is always the primary link. A reader who wants the
+// live site gets it through /go/?u=<url>, which answers noindex/nofollow,
+// forwards with no referrer, and is disallowed in robots.txt, so the program
+// gets no ranking and no referral from us. It only forwards to hosts that
+// appear in our own records, so it cannot be used as an open redirect.
+
+if (!function_exists('kop_program_go_url')) {
+    function kop_program_go_url($url) {
+        return home_url('/go/') . '?u=' . rawurlencode(trim((string) $url));
+    }
+}
+
+if (!function_exists('kop_program_go_hosts')) {
+    /**
+     * Every host any of our records links to: facilities, operators,
+     * referrers and transporters, anywhere in the record, so any link a page
+     * draws from our data can go through /go/. Cached for six hours.
+     *
+     * @return array<string,bool> host (lowercase, no www.) => true
+     */
+    function kop_program_go_hosts($refresh = false) {
+        $cached = $refresh ? false : get_transient('kop_program_go_hosts');
+        if (is_array($cached)) return $cached;
+        global $wpdb;
+        $hosts = array();
+        $add = function ($value) use (&$hosts, &$add) {
+            if (is_array($value)) {
+                foreach ($value as $v) $add($v);
+                return;
+            }
+            if (!is_string($value) || !preg_match('#^https?://#i', trim($value))) return;
+            $host = strtolower(preg_replace('/^www\./', '', (string) wp_parse_url(trim($value), PHP_URL_HOST)));
+            if ($host !== '') $hosts[$host] = true;
+        };
+        if (function_exists('kop_v2_tables_ready') && kop_v2_tables_ready()) {
+            foreach ((array) $wpdb->get_col("SELECT json_data FROM facilities_v2") as $json) {
+                $doc = json_decode((string) $json, true);
+                if (is_array($doc)) $add($doc);
+            }
+            foreach ((array) $wpdb->get_col("SELECT json_data FROM {$wpdb->prefix}kop_operators") as $json) {
+                $doc = json_decode((string) $json, true);
+                if (is_array($doc)) $add($doc);
+            }
+        }
+        foreach (array('referrers_master', 'transporters_master') as $table) {
+            if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) continue;
+            foreach ((array) $wpdb->get_col("SELECT json_data FROM {$table}") as $json) {
+                $doc = json_decode((string) $json, true);
+                if (is_array($doc)) $add($doc);
+            }
+        }
+        set_transient('kop_program_go_hosts', $hosts, 6 * HOUR_IN_SECONDS);
+        return $hosts;
+    }
+}
+
+if (!function_exists('kop_program_go_target')) {
+    /**
+     * The URL /go/ may forward to, or '' when it must not: not http(s), or a
+     * host none of our records links to. A miss rebuilds the host list once
+     * (at most every ten minutes) so a link added since the last build works.
+     */
+    function kop_program_go_target($raw) {
+        $url = trim((string) $raw);
+        if ($url === '' || !preg_match('#^https?://#i', $url) || preg_match('/[\s<>"]/', $url)) return '';
+        $host = strtolower(preg_replace('/^www\./', '', (string) wp_parse_url($url, PHP_URL_HOST)));
+        if ($host === '') return '';
+        $hosts = kop_program_go_hosts();
+        if (!isset($hosts[$host]) && !get_transient('kop_program_go_rebuilt')) {
+            set_transient('kop_program_go_rebuilt', 1, 10 * MINUTE_IN_SECONDS);
+            $hosts = kop_program_go_hosts(true);
+        }
+        return isset($hosts[$host]) ? $url : '';
+    }
+}
+
+if (!function_exists('kop_program_go_route')) {
+    function kop_program_go_route() {
+        $path = (string) wp_parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
+        if (rtrim($path, '/') !== rtrim((string) wp_parse_url(home_url('/go/'), PHP_URL_PATH), '/')) return;
+
+        header('X-Robots-Tag: noindex, nofollow', true);
+        header('Referrer-Policy: no-referrer', true);
+        nocache_headers();
+
+        $target = kop_program_go_target(wp_unslash($_GET['u'] ?? ''));
+        if ($target === '') {
+            status_header(404);
+            header('Content-Type: text/plain; charset=utf-8');
+            echo "This link is not one of ours.\n";
+            exit;
+        }
+        // wp_redirect, not wp_safe_redirect: the target is external by design
+        // and was checked against our own records above.
+        wp_redirect($target, 302, 'Kids Over Profits');
+        exit;
+    }
+    add_action('template_redirect', 'kop_program_go_route', -10);
+}
+
+if (!function_exists('kop_program_go_robots')) {
+    function kop_program_go_robots($output) {
+        return rtrim((string) $output) . "\nDisallow: /go/\n";
+    }
+    add_filter('robots_txt', 'kop_program_go_robots', 20);
+}
+
+if (!function_exists('kop_program_links_register_script')) {
+    /**
+     * js/shared/program-links.js, registered for any page script to depend
+     * on as 'kop-program-links', with the exempt list and the /go/ base.
+     */
+    function kop_program_links_register_script() {
+        $rel = '/js/shared/program-links.js';
+        $path = get_stylesheet_directory() . $rel;
+        if (!file_exists($path)) return;
+        wp_register_script('kop-program-links', get_stylesheet_directory_uri() . $rel, array(), filemtime($path), true);
+        wp_localize_script('kop-program-links', 'KOP_PROGRAM_LINKS', array(
+            'goBase' => home_url('/go/'),
+            'exempt' => kop_facility_pages_archive_exempt_domains(),
+        ));
+    }
+    add_action('wp_enqueue_scripts', 'kop_program_links_register_script', 1);
 }
 
 if (!function_exists('kop_facility_pages_location_search_url')) {

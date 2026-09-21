@@ -1124,12 +1124,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                         const isUrlList = validItems.some(item => typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://')));
                         if (isUrlList) {
+                            // Archived copy first, live site only through /go/
+                            // (js/shared/program-links.js).
                             renderedValue = validItems.map(url => {
                                 if (typeof url !== 'string') return '';
-                                const safeUrl = escapeAttribute(url);
-                                let displayUrl = url.replace(/^https?:\/\/(www\.)?/, '');
-                                if (displayUrl.length > 50) displayUrl = displayUrl.substring(0, 47) + '...';
-                                return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(displayUrl)}</a>` : '';
+                                return (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url, { max: 50 }) : escapeHtml(url);
                             }).filter(Boolean).join('<br>');
                         } else {
                             renderedValue = validItems.map(item => renderItemFac(item)).filter(Boolean).join(', ');

@@ -120,7 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function renderField(label, value) {
         const val = clean(value);
         if (!val || val === 'null') return '';
-        if (val.startsWith('http')) return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value"><a href="${esc(val)}" target="_blank" rel="noopener">Link</a></span></div>`;
+        if (val.startsWith('http')) {
+            // A transport company's own site: archived copy, live site only via /go/.
+            const link = (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(val, { max: 50 }) : esc(val);
+            return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${link}</span></div>`;
+        }
         return `<div class="data-row"><span class="data-label">${label}</span><span class="data-value">${esc(val)}</span></div>`;
     }
 
@@ -153,9 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!items.length) return '';
         const lis = items.map(u => {
             if (/^https?:\/\//i.test(u)) {
-                let d = u.replace(/^https?:\/\/(www\.)?/i, '');
-                if (d.length > 50) d = d.slice(0, 47) + '…';
-                return `<li class="data-list-item"><a href="${esc(u)}" target="_blank" rel="noopener">${esc(d)}</a></li>`;
+                return `<li class="data-list-item">${(window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(u, { max: 50 }) : esc(u)}</li>`;
             }
             return `<li class="data-list-item"><span class="job-role">${esc(u)}</span></li>`;
         }).join('');

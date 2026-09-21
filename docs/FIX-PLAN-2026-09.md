@@ -25,7 +25,7 @@ Last updated 2026-09-18.
 | 8 | Facility links must not land on the program index | Done |
 | 9 | Newsletter sign-up top padding | Done |
 | 10 | Email notifications for new submissions | Done |
-| 11 | Facility websites: Wayback and/or donotlink everywhere | Open: three page types still link live |
+| 11 | Facility websites: Wayback and/or donotlink everywhere | Done: Wayback first, live site only through /go/ |
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Open: design below |
@@ -361,6 +361,39 @@ mail sent.
 # Raised 2026-09-18
 
 ## 11. Facility websites: Wayback and/or donotlink everywhere
+
+**Outcome (2026-09-21).** The owner chose Wayback plus a secondary live link,
+for programs, operators, referrers and transporters alike. donotlink turned
+out to be defunct (donotlink.io does not resolve; donotlink.it and .com are
+parked domains for sale, so anyone could buy one and redirect every link we
+had pointed there), so the live link goes through our own endpoint instead:
+
+- `/go/?u=<url>` (`kop_program_go_route()` in `inc/facility-pages.php`)
+  answers `X-Robots-Tag: noindex, nofollow` and `Referrer-Policy:
+  no-referrer`, forwards with a 302, and is disallowed in robots.txt. It
+  forwards only to hosts that appear somewhere in our facility, operator,
+  referrer or transporter records (cached six hours, rebuilt once on a miss),
+  so it cannot be used as an open redirect.
+- `js/shared/program-links.js` (`KOP.programLinks.html`) is the one renderer:
+  archived copy first, then a small "live site" link through `/go/`; exempt
+  hosts keep a plain link. The exempt list comes from
+  `kop_facility_pages_archive_exempt_domains()`, so PHP and JS share it.
+- Wired into the program index (operator websites and URL lists), the
+  location index, the referrer index, the transporter index (not yet
+  published) and the legacy tracker panel (`facilities-display.js`, which no
+  live page loads). The facility pages' secondary link now uses `go_url`.
+  The live `/xx-reports/` trackers run on `report-page.js`, which prints no
+  program websites, so the plan's third page type needed no change.
+- The feed data is unchanged: the article-discovery cron reads operator
+  websites and profile links from `kop/v1/facilities` to learn each
+  program's own domain, so rewriting them there would have broken it.
+- Tests: `scripts/test-program-links.js` (helper cases, plus every link in a
+  saved feed with `--feed`) and `scripts/test-program-links.php` (/go/ against
+  a prod SQLite mirror: forwards a real program site, refuses other hosts,
+  `javascript:`, protocol-relative and look-alike URLs).
+
+The original plan follows.
+
 
 Item 6 covers the generated facility pages and the state and country hub
 cards, but a program's own website still reaches a visitor as a live link

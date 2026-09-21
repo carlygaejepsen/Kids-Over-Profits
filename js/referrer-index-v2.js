@@ -115,13 +115,11 @@ document.addEventListener('DOMContentLoaded', function() {
         return {};
     }
 
-    // Outbound URLs render as a plain domain citation with nofollow so the
-    // directory documents the site without promoting it or passing it link
-    // authority.
+    // A consultant's or agency's own site: the archived copy, and the live
+    // site only through /go/ (js/shared/program-links.js), so the directory
+    // documents the site without promoting it.
     function citationLink(url) {
-        let d = url.replace(/^https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
-        if (d.length > 50) d = d.slice(0, 47) + '…';
-        return `<a href="${esc(url)}" target="_blank" rel="nofollow noopener noreferrer">${esc(d)}</a>`;
+        return (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url, { max: 50 }) : esc(url);
     }
 
     function renderField(label, value) {

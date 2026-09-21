@@ -376,10 +376,7 @@ function displayFacilities(facilitiesData, containerId) {
                 }
 
                 if (field.renderListAsLinks) {
-                    renderedValue = items.map(url => {
-                        const safeUrl = escapeAttribute(url);
-                        return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(url)}</a>` : '';
-                    }).filter(Boolean).join(', ');
+                    renderedValue = items.map(url => (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url) : escapeHtml(url)).filter(Boolean).join(', ');
                 } else {
                     renderedValue = items.map(item => escapeHtml(item)).filter(Boolean).join(', ');
                 }
@@ -473,10 +470,7 @@ function displayFacilities(facilitiesData, containerId) {
                     }
 
                     if (field.renderListAsLinks) {
-                        renderedValue = items.map(url => {
-                            const safeUrl = escapeAttribute(url);
-                            return safeUrl ? `<a href="${safeUrl}" target="_blank" rel="noopener">${escapeHtml(url)}</a>` : '';
-                        }).filter(Boolean).join(', ');
+                        renderedValue = items.map(url => (window.KOP && window.KOP.programLinks) ? window.KOP.programLinks.html(url) : escapeHtml(url)).filter(Boolean).join(', ');
                     } else {
                         renderedValue = items.map(item => escapeHtml(item)).filter(Boolean).join(', ');
                     }

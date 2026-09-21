@@ -426,7 +426,7 @@ get_header();
                             <li>
                                 <a href="<?php echo esc_url($l['url']); ?>" target="_blank" rel="noopener nofollow"><?php echo esc_html($l['label']); ?></a>
                                 <?php if (!empty($l['live_url'])) : ?>
-                                    <span class="meta"><a href="<?php echo esc_url($l['live_url']); ?>" target="_blank" rel="nofollow noreferrer noopener">live site</a></span>
+                                    <span class="meta"><a href="<?php echo esc_url($l['go_url']); ?>" target="_blank" rel="nofollow noreferrer noopener">live site</a></span>
                                 <?php endif; ?>
                             </li>
                         <?php endforeach; ?>
