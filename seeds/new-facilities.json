@@ -197,5 +197,410 @@
         "zip": "32216"
       }
     }
+  },
+  {
+    "location_id": 17,
+    "location_name": "ARIZONA",
+    "facility": {
+      "identification": {
+        "name": "Desert Hills Center for Youth and Families",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Desert Hills",
+          "Desert Hills - Arizona"
+        ],
+        "pastNames": [
+          "Jay McCaffery School"
+        ],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Tucson",
+        "state": "AZ",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Tucson, AZ",
+      "address": "Tucson, AZ",
+      "otherOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1973,
+        "endYear": 1999,
+        "status": "Closed",
+        "yearsOfOperation": "1973-1999",
+        "notes": [
+          "Founded 1973 as the Jay McCaffery School, originally boys only; by 1993 it was co-ed and ran acute hospitalization, day treatment, residential treatment and outpatient services on two campuses covering 50 acres (New Perspectives, April 1993).",
+          "Youth Services International operated the Desert Hills centers in Arizona, New Mexico and Texas 1995-1997 (KOP research sheet \"Sequel/TSI/YSI/Vivant\").",
+          "The residential adolescent program, which had filled most of the center's 114 beds, closed in 1999; the center cited financial problems (Arizona Daily Star)."
+        ]
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://strugglingteens.com/archives/1993/4/np04.html",
+        "https://nospank.net/n-e44.htm",
+        "https://www.courant.com/1998/10/12/why-they-die-little-training-poor-staffing-put-lives-at-risk/",
+        "https://tucson.com/news/local/family-to-give-up-troubled-son-to-get-treatment-for-him/article_8b60e211-54aa-50eb-8ac7-009132fb05a2.html"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": 114,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": true,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "Edith Campos, 15, died in February 1998 after a face-down restraint by staff that began over a family photograph she was told to hand over (Hartford Courant, \"Why They Die\", 1998-10-12).",
+        "Sister facility: Desert Hills of New Mexico (Albuquerque). Street address not yet confirmed.",
+        "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "",
+        "city": "Tucson",
+        "state": "AZ",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "location_id": 2,
+    "location_name": "CALIFORNIA",
+    "facility": {
+      "identification": {
+        "name": "Renaissance Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Fresno",
+        "state": "CA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Fresno, CA",
+      "address": "Fresno St. and K St., Fresno, CA",
+      "otherOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [],
+      "facilityDetails": {
+        "type": "",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "Name and location (Fresno Street at K Street, downtown Fresno) are as given by the submitter. No operator, dates or program type have been confirmed from public sources yet.",
+        "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "Fresno St. and K St.",
+        "city": "Fresno",
+        "state": "CA",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "location_id": 2,
+    "location_name": "CALIFORNIA",
+    "facility": {
+      "identification": {
+        "name": "Vista Hill Hospital",
+        "currentName": "",
+        "currentOperator": "Vista Hill Foundation",
+        "currentOwner": "Vista Hill Foundation",
+        "currentOwners": [
+          "Vista Hill Foundation"
+        ],
+        "otherNames": [
+          "Vista Hills",
+          "Vista Hill"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Chula Vista",
+        "state": "CA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Chula Vista, CA",
+      "address": "3 N. Second St., Chula Vista, CA",
+      "otherOperators": [],
+      "operatingPeriod": {
+        "startYear": 1957,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": [
+          "Opened 1957 with 50 beds in a facility donated by psychiatrist Elmer Peterson, M.D.; San Diego County's first licensed private psychiatric hospital (Vista Hill 50th anniversary history, 2007).",
+          "Construction of a new Vista Hill Hospital campus in Chula Vista began in the early 1980s; it grew in phases to 89 beds serving children, teens, adults and seniors.",
+          "Vista Hill left the hospital business in the late 1990s (Mesa Vista Hospital and Vista Pacifica went to Sharp HealthCare in 1998). The year Vista Hill Hospital itself closed or changed hands is not confirmed."
+        ]
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "http://vistahill.org/wp-content/uploads/2017/02/VH_50th_Final.pdf",
+        "https://www.vistahill.org/about-vista-hill/"
+      ],
+      "facilityDetails": {
+        "type": "Psychiatric Hospital",
+        "capacity": 89,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "Address is as given by the submitter (\"3 N. Second St.\"); Chula Vista's numbered roads are avenues, so this is likely 3 North Second Avenue. Not yet confirmed.",
+        "The same foundation ran Mesa Vista Hospital (San Diego), Vista Sandia Hospital (Albuquerque, through 1988) and Vista San Diego Center, a 30-bed adolescent residential treatment facility in Kearny Mesa.",
+        "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "3 N. Second St.",
+        "city": "Chula Vista",
+        "state": "CA",
+        "zip": ""
+      }
+    }
+  },
+  {
+    "location_id": 2,
+    "location_name": "CALIFORNIA",
+    "facility": {
+      "identification": {
+        "name": "Broad Horizons",
+        "currentName": "",
+        "currentOperator": "Kids First Foundation",
+        "currentOwner": "Kids First Foundation",
+        "currentOwners": [
+          "Kids First Foundation"
+        ],
+        "otherNames": [
+          "Broad Horizons of Ramona",
+          "Broad Horizons, a Division of Kids First Foundation"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Ramona",
+        "state": "CA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Ramona, CA",
+      "address": "1236 H Street, Ramona, CA 92065",
+      "otherOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": [
+          "One directory marks the Ramona site permanently closed; others still list it. Kids First Foundation (formed 1989, Woodland Hills, CA) was still filing as of June 2025. Status not confirmed."
+        ]
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.grouphomesonline.com/det/broad_horizons_a_div_of_kids_first_foundation-ramona",
+        "https://opennpi.com/provider/1033262688",
+        "https://www.causeiq.com/organizations/kids-first-foundation,621451701/"
+      ],
+      "facilityDetails": {
+        "type": "Therapeutic Group Home",
+        "capacity": 40,
+        "currentCensus": null,
+        "ageRange": {
+          "min": 12,
+          "max": 18
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "newsDetails": "",
+        "hasPressReleases": false,
+        "pressReleasesDetails": "",
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "customResources": []
+      },
+      "notes": [
+        "Group home licensed for up to 40 residents; registered with NPI as a community-based residential treatment facility for mental illness. The operator describes serving adolescents 12-18.",
+        "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
+      ],
+      "addressParts": {
+        "street": "1236 H Street",
+        "city": "Ramona",
+        "state": "CA",
+        "zip": "92065"
+      }
+    }
   }
 ]
