@@ -871,7 +871,8 @@
                     space: spaceFor(node),
                     label: Math.max(node.r * 2, String(node.name || '').length * LABEL_CHAR_WIDTH + BUBBLE_EXTRA),
                     tier: tierOf(node),
-                    years: !!node.years
+                    years: !!node.years,
+                    node: node
                 };
                 byId[node.id] = point;
                 return point;
@@ -1780,7 +1781,14 @@
                 });
             });
 
-            standBetween(points, adjacent, byId, needOf);
+            /* Measured as drawn, and grown where drawn grown: the packer's
+             * own estimate of a name leaves out the pill a person is drawn in. */
+            var widthOf = function (p) {
+                var w = p.node && renderer.labelBox ? renderer.labelBox(p.node).width : p.label + STAND_BETWEEN_AIR * 2;
+                return w * (isHead[p.id] ? HEAD_GROW : 1);
+            };
+            var whole = viewport.frameOf(points, padding);
+            standBetween(points, adjacent, byId, whole && whole.k > 0 ? Math.min(1, whole.k) : 1, widthOf);
 
             grid = {
                 x0: -width * spread / 2, y0: (bounds.y0 - midRow) * rowH - rowH / 2,
@@ -1804,16 +1812,19 @@
          * a wide row the trip is halfway across the board. Standing between
          * the two places, the line goes straight through them.
          *
-         * Only into room that is already there. Widening rows to make space
-         * came out of the zoom - the Second Nature view pushed four
-         * companies off the stage to pay for it - so a person moves only
-         * where the gap between two of their places already holds them, and
-         * stays where they were when it does not. Nothing else moves.
+         * Only into room that is already there, or that a row can make inside
+         * the board's own edges. Widening the board to make space came out of
+         * the zoom - the Second Nature view pushed four companies off the
+         * stage to pay for it - so a person moves only where the gap holds
+         * them, and stays where they were when it does not. Room is measured
+         * at the zoom the whole view is framed at (frameK) with the width the
+         * renderer draws (widthOf), since a name keeps its size as the view
+         * zooms out and the gap around it does not.
          *
          * Ownership and renames are untouched: they run between
          * organisations, and no person stands in the middle of one.
          */
-        function standBetween(points, adjacent, byId, needOf) {
+        function standBetween(points, adjacent, byId, frameK, widthOf) {
             var isPerson = function (p) { return p && (p.tier === TIER_COMMAND || p.tier === TIER_STAFF); };
 
             /* Who is on each row, left to right. Rows are the lattice the
@@ -1862,35 +1873,41 @@
             /* Widest first: the name that needs the most room gets first
              * refusal on the gaps, rather than being the one left out
              * because a shorter name took the only space it fitted. */
-            movers.sort(function (a, b) { return needOf(b) - needOf(a); });
+            movers.sort(function (a, b) { return widthOf(b) - widthOf(a); });
 
             movers.forEach(function (p) {
                 var places = (adjacent[p.id] || []).map(function (id) { return byId[id]; })
                     .sort(function (a, b) { return a.x - b.x; });
                 var row = rows[places[0].y] || [];
-                /* The bubble and a little air, not the full column the
-                 * packer gives a name of its own: this is a name squeezing
-                 * into a gap that is already there, and the gutter either
-                 * side of it belongs to the places it stands between. */
-                var want = p.label + STAND_BETWEEN_AIR * 2;
+                /* Where on that row the name clears both neighbours at the
+                 * zoom the whole view will be framed at. Names are drawn at
+                 * one size however far out the view is, so the gap a name
+                 * needs grows as the zoom falls: a spot that holds it at full
+                 * size can leave it on top of a place once the view is framed
+                 * out, and a pair that no zoom short of the top of the range
+                 * pulls apart is what zoomed Provo Canyon School's view in
+                 * until twenty of its fifty-three names were a pan away. */
+                var reach = function (a, b) { return (widthOf(a) + widthOf(b)) / (2 * frameK); };
                 var best = null;
                 /* Any gap on that row that lies between the two places,
                  * not only the space immediately between them: on a busy
                  * row there is usually somebody else along the way, and
                  * standing in the next gap over still reads as standing
-                 * between the two. The gap nearest where they already are
+                 * between the two. The spot nearest where they already are
                  * wins, so a name moves as little as the row allows. */
                 var span = [places[0].x, places[places.length - 1].x];
-                var widest = null;
+                var tightest = null;
                 for (var i = 1; i < row.length; i++) {
-                    var from = row[i - 1].x + row[i - 1].label / 2;
-                    var to = row[i].x - row[i].label / 2;
-                    var at = (from + to) / 2;
-                    if (at <= span[0] || at >= span[1]) continue;
-                    if (to - from >= want) {
+                    var left = row[i - 1];
+                    var right = row[i];
+                    var lo = Math.max(left.x + reach(left, p), span[0]);
+                    var hi = Math.min(right.x - reach(p, right), span[1]);
+                    if (lo < hi) {
+                        var at = Math.min(hi, Math.max(lo, p.x));
                         if (best === null || Math.abs(at - p.x) < Math.abs(best - p.x)) best = at;
-                    } else if (!widest || to - from > widest.gap) {
-                        widest = { gap: to - from, index: i, from: from, to: to };
+                    } else if (right.x > span[0] && left.x < span[1]) {
+                        var short = reach(left, p) + reach(p, right) - (right.x - left.x);
+                        if (!tightest || short < tightest.short) tightest = { short: short, index: i };
                     }
                 }
 
@@ -1900,16 +1917,15 @@
                  * row that grows within them costs the reader nothing, and
                  * one that grows past them costs every name on the board
                  * some of its zoom. */
-                if (best === null && widest) {
+                if (best === null && tightest) {
                     var edges = extentOf(row);
-                    var need = want - widest.gap;
+                    var need = tightest.short;
                     if (edges[0] - need / 2 >= boardBox[0] && edges[1] + need / 2 <= boardBox[1]) {
                         row.forEach(function (other, j) {
-                            other.x += j < widest.index ? -need / 2 : need / 2;
+                            other.x += j < tightest.index ? -need / 2 : need / 2;
                         });
-                        /* The two sides move apart by the same step, so the
-                         * middle of the gap is where it always was. */
-                        best = (widest.from + widest.to) / 2;
+                        var l = row[tightest.index - 1];
+                        best = l.x + reach(l, p);
                     }
                 }
                 if (best === null) return;

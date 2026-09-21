@@ -240,6 +240,18 @@ Where there is no room, the person stays where they were. Across the ten
 busiest views, 8 of 26 such people now stand between their places; Provo
 Canyon School's median line came down from 3 rows to 2.
 
+Room is measured at the zoom the whole view is framed at, with the width the
+renderer draws (a person's pill is wider than the packer's estimate of the
+name, and the clicked node is drawn grown), not at full size (2026-09-21).
+Names are drawn at one size however far out the view is, so a spot that held
+a name at full size could leave it on top of a place once the view was framed
+out, and no zoom short of 1.1 pulled the pair apart: once the Sequel/YSI chain
+was on the board, Provo Canyon School's view zoomed in until 22 of its 53
+names were a pan away (2 without the moves), and hovering then pulled them
+back in over each other. With room measured that way the view keeps 2 a pan
+away. Fewer people move - three across the test suite's views - because the
+rest had been standing where they would collide.
+
 Ownership and renames are untouched: they run between organisations, and no
 person stands in the middle of one.
 
