@@ -1,8 +1,8 @@
 """Open the network map from the working tree in a real browser.
 
-The live page is behind the beta password and WordPress is not needed to see
-the map: the template's shell is real HTML and everything else is static
-files. This builds the page from templates/page-network-map.php with the PHP
+WordPress is not needed to see the map: the template's shell is real HTML and
+everything else is static files, so a change can be looked at before it is
+pushed. This builds the page from templates/page-network-map.php with the PHP
 stripped out, serves the theme over http on a free port, and either holds
 the server open for you or drives it with Playwright and saves screenshots.
 
@@ -13,10 +13,10 @@ the server open for you or drives it with Playwright and saves screenshots.
 tmp/map-preview/ is gitignored.
 
 The module list is read from inc/enqueue.php, so a module added there is
-loaded here. What this cannot show is anything PHP decides: the password
-gate, the "Start from" select (left out), and facility profile links (the
-config's facilityUrls is empty, so the drawer falls back to the location
-index search).
+loaded here. What this cannot show is anything PHP decides: the "Start from"
+select (left out) and facility profile links (the config's facilityUrls is
+empty, so the drawer falls back to the location index search). Check those
+on the live page after the deploy.
 
 Needs Python Playwright for --shots only (pip install playwright).
 """

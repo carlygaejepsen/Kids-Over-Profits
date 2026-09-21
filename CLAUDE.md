@@ -35,7 +35,7 @@ node scripts/test-network-graph.js
 
 # After editing anything in js/network-map/
 node scripts/test-network-modules.js
-# The live map is behind a password; see the working tree in a browser instead
+# See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 ```
 

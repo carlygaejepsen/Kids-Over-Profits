@@ -21,7 +21,8 @@ if (have_posts()) {
     the_post();
 }
 
-// A password-protected page (how the map is shared with beta testers) gets
+// A password-protected page (how the map was shared with beta testers until
+// 2026-09-21; it is public now, and this is how it could be gated again) gets
 // WordPress's own password form and nothing else. This template prints its
 // own markup instead of the_content(), so without this check the protection
 // would never be asked for.
