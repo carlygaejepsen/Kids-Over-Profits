@@ -20,7 +20,7 @@
  *
  * Covers store, canvas, viewport, focus, filters, search (ranking and
  * opening), the drawer, URL state, and paths between two names (the store's
- * routes, the route view and its drawer list).
+ * routes, the route view and its drawer list), and the keyboard on the stage.
  */
 
 const fs = require('fs');
@@ -210,6 +210,7 @@ function buildSandbox() {
         path.join('js', 'network-map', 'search.js'),
         path.join('js', 'network-map', 'drawer.js'),
         path.join('js', 'network-map', 'path.js'),
+        path.join('js', 'network-map', 'keys.js'),
         path.join('js', 'network-map', 'url-state.js'),
         path.join('js', 'network-map', 'filters.js')
     ];
@@ -2703,6 +2704,163 @@ function run() {
     routeDrawer.update();
     check(!focus.isPath() && routeDrawer.shownId() === routes[routes.length - 1].ids[1],
         'a name in the written-out route did not open, or the drawer did not follow it');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    }
+
+    /* ------------------------------------------------ the keyboard on the stage -- */
+
+    /* Step 7. The canvas is one element standing for every name on it, so
+     * the arrow keys move a cursor from name to name, the cursor previews
+     * the way a pointer's hover does, and Enter opens what it is on. */
+    {
+    const Keys = sandbox.KOPNetworkKeys;
+    check(!!Keys, 'keys.js did not load');
+
+    /* The nearest name in the arrow's direction, on a small board. */
+    const board = [
+        { id: 'a', x: 0, y: 0 }, { id: 'b', x: 100, y: 0 }, { id: 'c', x: 200, y: 0 },
+        { id: 'd', x: 0, y: 100 }, { id: 'e', x: 110, y: 100 }
+    ];
+    const at = (id) => board.find((p) => p.id === id);
+    const go = (id, dir) => { const n = Keys.nextInDirection(board, at(id), dir); return n ? n.id : null; };
+    const RIGHT = [1, 0], LEFT = [-1, 0], UP = [0, -1], DOWN = [0, 1];
+    check(go('a', RIGHT) === 'b' && go('b', RIGHT) === 'c', 'right does not walk along the row');
+    /* Left and right carry on into the next row, in reading order, so the
+     * two of them reach every name; only the first and last have an edge. */
+    check(go('c', RIGHT) === 'd' && go('d', LEFT) === 'c', 'right at the end of a row does not carry on into the next');
+    check(go('e', RIGHT) === null && go('a', LEFT) === null, 'an arrow found a name where there is none');
+    check(go('a', DOWN) === 'd', 'down does not go to the name below');
+    check(go('b', DOWN) === 'e', 'down from b went to ' + go('b', DOWN) + ', not the name nearly under it');
+    check(go('e', UP) === 'b', 'up from e went to ' + go('e', UP));
+    check(go('a', UP) === null && go('b', UP) === null, 'a name level with the cursor counted as above it');
+
+    /* On the real map. A canvas of its own, so the stub's one-listener-per-
+     * event canvas keeps the viewport's. */
+    let said = '';
+    let prevented = 0;
+    const press = (key) => keys.key({ key, preventDefault() { prevented++; } });
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    const keys = Keys.create({
+        canvas: { addEventListener() {} }, focus, viewport, renderer,
+        announce: (text) => { said = text; }
+    });
+
+    /* The opening view has no head, so the cursor starts nearest the middle. */
+    press('ArrowRight');
+    const openingIds = focus.scene().nodeIds;
+    check(!!keys.cursor() && openingIds[keys.cursor()], 'the first arrow on the opening view did not put the cursor on a name');
+    check(prevented === 1, 'an arrow key was left to scroll the page');
+
+    focus.select(hub);
+    flushFrames();
+    press('ArrowDown');
+    check(keys.cursor() === hub.id, 'the cursor did not start on what was opened: ' + keys.cursor());
+    check(said.indexOf(hub.name) === 0 && /connections on the map/.test(said) && /Enter/.test(said),
+        'the cursor did not say where it is: ' + said);
+    check(!!renderer.emphasis.near && renderer.emphasis.near[hub.id], 'the cursor does not preview the name it is on');
+
+    /* Each arrow lands on a name that really is that way on screen. */
+    const screenOf = (id) => {
+        const p = focus.positionOf(store.node(id));
+        const t = viewport.transform;
+        return { x: p.x * t.k + t.x, y: p.y * t.k + t.y };
+    };
+    [['ArrowDown', 0, 1], ['ArrowRight', 1, 0], ['ArrowUp', 0, -1], ['ArrowLeft', -1, 0]].forEach(([key, dx, dy]) => {
+        const before = keys.cursor();
+        const from = screenOf(before);
+        press(key);
+        flushFrames();
+        if (keys.cursor() === before) return;
+        /* Measured before any pan the move caused, so compare world order. */
+        const a = focus.positionOf(store.node(before));
+        const b = focus.positionOf(store.node(keys.cursor()));
+        check((b.x - a.x) * dx + (b.y - a.y) * dy > 0,
+            key + ' moved the cursor from ' + before + ' to ' + keys.cursor() + ', which is not that way');
+        check(focus.scene().nodeIds[keys.cursor()], key + ' put the cursor on a name that is not on the map');
+        void from;
+    });
+
+    /* Every name on a view can be reached with the arrows, from where the
+     * cursor starts. Checked on the opening view and the busiest names. */
+    const reachable = (scene, startId) => {
+        const t = viewport.transform;
+        const pts = scene.nodes.map((n) => {
+            const p = focus.positionOf(n);
+            return { id: n.id, x: p.x * t.k + t.x, y: p.y * t.k + t.y };
+        });
+        const byId = {};
+        pts.forEach((p) => { byId[p.id] = p; });
+        const seen = { [startId]: true };
+        const q = [startId];
+        while (q.length) {
+            const cur = byId[q.shift()];
+            [RIGHT, LEFT, UP, DOWN].forEach((dir) => {
+                const n = Keys.nextInDirection(pts, cur, dir);
+                if (n && !seen[n.id]) { seen[n.id] = true; q.push(n.id); }
+            });
+        }
+        return scene.nodes.filter((n) => !seen[n.id]);
+    };
+    const busiest = store.nodes.slice().sort((a, b) => b.degree - a.degree).slice(0, 40);
+    let stranded = 0;
+    let walked = 0;
+    const strandedIn = [];
+    busiest.forEach((node) => {
+        focus.clear();
+        focus.select(node);
+        flushFrames();
+        const scene = focus.scene();
+        const lost = reachable(scene, node.id);
+        walked += scene.nodes.length;
+        if (lost.length) { stranded += lost.length; strandedIn.push(node.name + ' (' + lost.map((n) => n.name).slice(0, 3).join(', ') + ')'); }
+    });
+    check(stranded === 0, stranded + ' names cannot be reached with the arrow keys: ' + strandedIn.slice(0, 4).join('; '),
+        'the arrow keys reach all ' + walked + ' names across the 40 busiest views');
+
+    /* Enter opens the name under the cursor. */
+    focus.clear();
+    focus.select(hub);
+    flushFrames();
+    press('ArrowDown');
+    press('ArrowDown');
+    flushFrames();
+    const under = keys.cursor();
+    check(under && under !== hub.id, 'the cursor did not leave the opened name, so Enter is untested');
+    press('Enter');
+    flushFrames();
+    check(focus.chain()[focus.chain().length - 1] === under, 'Enter did not open the name under the cursor');
+
+    /* A cursor name that is off the stage is brought onto it. */
+    const t0 = viewport.transform;
+    viewport.setTransform(t0.k, t0.x - 5000, t0.y);
+    press('ArrowLeft');
+    const back = screenOf(keys.cursor());
+    check(back.x >= 0 && back.x <= WIDTH && back.y >= 0 && back.y <= HEIGHT,
+        'the cursor is on a name that is off the stage');
+
+    /* Plus and minus zoom; zero puts the view back. */
+    focus.reframe();
+    flushFrames();
+    const framedK = viewport.transform.k;
+    press('+');
+    check(viewport.transform.k > framedK, 'plus did not zoom in');
+    press('-');
+    press('-');
+    check(viewport.transform.k < framedK, 'minus did not zoom out');
+    press('0');
+    flushFrames();
+    check(Math.abs(viewport.transform.k - framedK) < 1e-6, 'zero did not reset the view');
+
+    /* A shortcut with a modifier belongs to the browser. */
+    const kBefore = viewport.transform.k;
+    keys.key({ key: '+', ctrlKey: true, preventDefault() { prevented = -99; } });
+    check(viewport.transform.k === kBefore && prevented !== -99, 'Ctrl-plus was taken from the browser');
+
+    focus.hover(null);
     focus.setMode('focus');
     focus.clear();
     flushFrames();

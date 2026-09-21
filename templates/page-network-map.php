@@ -243,7 +243,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						class="kop-network__canvas"
 						tabindex="0"
 						role="application"
-						aria-label="Network map. Use arrow keys to move between names, Enter to follow one, Escape to go back."></canvas>
+						aria-label="Network map. Arrow keys move between names, Enter opens one, plus and minus zoom, zero resets the view, Escape starts over."></canvas>
 
 					<p class="kop-network__loading" id="kop-network-loading">Loading the map...</p>
 

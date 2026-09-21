@@ -15,7 +15,7 @@ at the end.
 | Phase | Scope | State |
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
-| 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 6 done (2026-09-18) |
+| 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile, keyboard | Steps 1 to 7 done (keyboard 2026-09-21) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
@@ -536,6 +536,7 @@ decisions.
 | `js/network-map/connection.js` | What a line says: the DOM-free description of the lines between two names, and the hover/pinned popup that shows it |
 | `js/network-map/drawer.js` | Selected node panel and connection list |
 | `js/network-map/path.js` | How two names are connected: the Path form, and the route written out in the drawer |
+| `js/network-map/keys.js` | The keyboard on the stage: arrow keys move a cursor between names, Enter opens one, plus, minus and zero for the view |
 | `js/network-map/url-state.js` | Encodes selection, filters and viewport into the hash, restores on load |
 | `js/network-map/app.js` | Bootstrap and event wiring |
 | `scripts/test-network-modules.js` | Node tests for store, search ranking and url-state, which are DOM-free |
@@ -915,7 +916,33 @@ Each step leaves the branch deployable.
      **Done**, commits 52b0ab6 through 89a9940.
 6. Search, drawer, URL state. **Done** (2026-09-18); see "Step 2 closed"
    under Phase 2b.
-7. Mobile breakpoints, keyboard, reduced motion, module tests.
+7. Mobile breakpoints, keyboard, reduced motion, module tests. **Done.**
+   The breakpoints, reduced motion and tests arrived with the steps above;
+   the keyboard was the last of it (2026-09-21, `js/network-map/keys.js`).
+   The canvas's label had promised arrow keys and Enter since the shell was
+   written, with only Escape built.
+   - The arrow keys move a cursor between the names on screen, and the
+     cursor is the hover: the name and what it connects to light up and the
+     rest dims, so a keyboard user gets the same preview a pointer does and
+     there is no second highlight to keep in step. The live region says the
+     name, what it is, its years, how many connections are on the map and
+     how many more are behind its +N.
+   - Left and right follow reading order, along a row and on into the next,
+     so the two of them reach every name. Nearest-in-that-direction for all
+     four arrows was tried first and stranded 2 of the 1,767 names on the
+     40 busiest views (Browning Distance Learning Academy in WWASPS's view
+     could not be reached from anywhere). Up and down go to the nearest name
+     above or below.
+   - The first arrow puts the cursor on what was opened last (or the name
+     nearest the middle, on the opening view) without moving it. A name a
+     pan away is centred when the cursor reaches it.
+   - Enter or Space opens the name; plus and minus zoom; zero is Reset view;
+     Escape starts over, as before. Keys with Ctrl, Alt or Cmd are left to
+     the browser. Leaving the canvas puts the preview away.
+   - Tests: the direction rules on a small board, the cursor's start and
+     announcement, each arrow landing on a name that really is that way,
+     every name on the 40 busiest views reachable, Enter, the pan, the zoom
+     keys and the modifier rule. Driven in a real browser as well.
 8. Chain hulls, if they fit. Probably superseded by the band layout, which
    already groups by kind.
 

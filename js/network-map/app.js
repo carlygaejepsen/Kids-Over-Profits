@@ -208,6 +208,13 @@
             });
         }
 
+        /* Arrow keys, Enter and zoom on the stage; Escape is bound below. */
+        if (window.KOPNetworkKeys) {
+            app.keys = window.KOPNetworkKeys.create({
+                canvas: canvas, focus: focus, viewport: viewport, renderer: renderer, announce: announce
+            });
+        }
+
         store.load(CONFIG).then(function () {
             renderer.useChainIndex(store.chainIndex);
             renderer.useBoardColours(store.meta);
@@ -502,6 +509,8 @@
     }
 
     /**
+     * The arrow keys, Enter and the zoom keys are keys.js. This is Escape.
+     *
      * Escape returns to the whole map from any depth, the same as the Start
      * over button. Stepping back one crumb at a time is what the breadcrumb is
      * for. It is bound to the canvas rather than the document so it cannot
