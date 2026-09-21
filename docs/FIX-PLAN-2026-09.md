@@ -75,6 +75,10 @@ session can do it. The tools that change data show a dry run first; add
    about 13 more loads finish it. An approved finding scoring 70 or more
    appears on the home page and the inspection reports hub, most recent
    first, so the review screen opens on the most recent severe candidates.
+   All of them are listed on [/severe-reports/](https://kidsoverprofits.org/severe-reports/)
+   and flagged in the state trackers. Re-run
+   [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php)
+   with `?apply=1` to put Severe Reports in the Monitor menu.
 
 ## Working in this repository
 
@@ -681,12 +685,56 @@ column existed; `kop_ih_ensure_tables()` adds it and fills it, touching no
 other field, the next time the scan or the review screen runs. Checked
 against a throwaway MySQL 8 holding a table in the first shape.
 
+**Every approved severe report has a page, and the trackers flag them**
+(owner, 2026-09-21). The grids above show the newest few; two more places
+carry all of them.
+
+- [/severe-reports/](https://kidsoverprofits.org/severe-reports/)
+  (`templates/page-severe-reports.php`, created by `kop_tool_page_specs()`,
+  step version 6) lists every approved severe finding, most recent first, 50
+  to a page, with filters for state and kind of harm. Each entry has the full
+  quote, every category it matched, the state's label, the rule cited,
+  whether the state recorded it as corrected at the inspection, the state
+  source and the tracker, and an anchor (`#finding-<id>`) the other pages link
+  to. The page says how a report gets there, that unsubstantiated complaints
+  are not listed, and that absence from it says nothing about a facility. The
+  home page and the hub link it under their grids ("See all N severe
+  reports"), and it is in the Monitor list of `api/rebuild-header-menu.php`,
+  which has to be re-run for the menu entry.
+- In the regular feed, `js/inspections/severe-flags.js` marks the same
+  reports on every `/xx-reports/` page: a "Severe finding" flag on the
+  report's row, a count beside the facility's name, a note inside the opened
+  report linking to its entry on the page above, and a banner over the list
+  with a "Severe reports only" switch. The trackers read static JSON whose
+  report ids are not the database's (California's are stored under two
+  schemes), so a report is recognised by the state's own words:
+  `api/inspection-highlights-read.php?state=XX` (public, approved severe
+  findings only, no scores or notes) sends the opening of each quote,
+  lower-cased with the spaces removed, and a report is that finding when its
+  text contains it. A short opening must also sit under the same facility
+  name; one of 60 characters or more is unique enough to match whatever the
+  viewer calls the facility. The script reads the rendered page, so the state
+  viewers were not touched, and it covers both markups (the Texas and
+  California viewers and the shared `report-page.js` engine, whose lazily
+  rendered reports are checked when opened).
+- Checked in a real browser against the live Texas and California trackers
+  with the unshipped script injected and the api answered from two reports on
+  the page: the right two reports flagged, a short quote under another
+  facility's name not flagged, the flags back after the viewer re-renders on
+  search, the observer idle afterwards. The first version checked every
+  report in 12 ms slices and took a minute on Texas's 11,559 reports, all of it
+  the browser re-styling the page between slices; it now checks each
+  facility's text once and opens its reports only on a hit: 1.3 seconds.
+  Known limit: California's viewer renders a few facilities at a time, so
+  "Severe reports only" filters what is on screen there, not the state.
+- Tests: `scripts/test-severe-flags.js` (the matching rule) and the page's
+  query, filters and paging in `scripts/test-inspection-highlights.php`.
+
 Still to do: adapters for the other eleven states (Arizona, Connecticut,
 Washington and Florida carry structured deficiencies; North Carolina,
 Georgia, Arkansas, Minnesota and Oregon need the report text; Utah and
 Nevada carry only counts and grades); a "What inspectors found" block on
-the facility pages and the state trackers (the rest of step 5); the cron
-line (step 6).
+the facility pages (the rest of step 5); the cron line (step 6).
 
 What the data holds (production mirror, 57,089 reports in 13 states): no
 report is stored in a common structure (`is_structured` is 0 everywhere).

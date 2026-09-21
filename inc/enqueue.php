@@ -558,6 +558,20 @@ function kop_enqueue_report_scripts() {
                 array('jsonFileUrls' => $json_urls)
             );
 
+            // Flags the reports an admin approved as severe findings
+            // (api/review-inspection-highlights.php) in this state's feed.
+            // It reads the rendered page, so it needs nothing from the viewer.
+            $severe_js  = get_stylesheet_directory() . '/js/inspections/severe-flags.js';
+            $severe_css = get_stylesheet_directory() . '/css/severe-reports.css';
+            if (file_exists($severe_js) && file_exists($severe_css)) {
+                wp_enqueue_style('kop-severe-reports', get_stylesheet_directory_uri() . '/css/severe-reports.css', array('kop-colors'), filemtime($severe_css));
+                wp_enqueue_script('kop-severe-flags', get_stylesheet_directory_uri() . '/js/inspections/severe-flags.js', array(), filemtime($severe_js), true);
+                wp_localize_script('kop-severe-flags', 'KOP_SEVERE_FLAGS', array(
+                    'url'     => get_stylesheet_directory_uri() . '/api/inspection-highlights-read.php?state=' . rawurlencode(strtoupper(substr($page_slug, 0, 2))),
+                    'pageUrl' => home_url('/severe-reports/'),
+                ));
+            }
+
             // Stop after finding the first matching page to avoid unnecessary checks.
             break;
         }

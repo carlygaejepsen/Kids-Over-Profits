@@ -192,6 +192,21 @@ check($order === array(12, 13, 11, 16), 'site: approved severe findings, most re
 check(!in_array(14, $order, true), 'site: a pending finding is never shown, however recent');
 check(!in_array(15, $order, true), 'site: an approved finding below the severe score is not highlighted');
 check(count($site->query(kop_ih_recent_severe_sql(2))->fetchAll()) === 2, 'site: the limit holds');
+// The Severe Reports page and the tracker flags: all of them, not the newest few.
+$run = static function (array $q) use ($site) {
+    $stmt = $site->prepare($q[0]);
+    $stmt->execute($q[1]);
+    return array_map(static function ($r) { return (int) $r['report_id']; }, $stmt->fetchAll(PDO::FETCH_ASSOC));
+};
+check($run(kop_ih_severe_query()) === array(12, 13, 11, 16), 'severe page: every approved severe finding, most recent first');
+check($run(kop_ih_severe_query('tx')) === array(12, 13, 11, 16) && $run(kop_ih_severe_query('CA')) === array(), 'severe page: the state filter');
+check($run(kop_ih_severe_query('', 'death')) === array(11, 16), 'severe page: the category filter');
+check($run(kop_ih_severe_query('', 'physical_abuse')) === array(12), 'severe page: a category matches a whole entry of the list');
+check($run(kop_ih_severe_query('', 'not-a-category')) === array(12, 13, 11, 16), 'severe page: an unknown category filters nothing');
+check($run(kop_ih_severe_query('', '', 2, 1)) === array(13, 11), 'severe page: limit and offset page through the list');
+check(kop_ih_flag_needle("Staff  punched a Resident.\nIn the face. [...] Later text.") === 'staffpunchedaresident.intheface.', 'flag needle: the first run of the excerpt, lower-cased, spaces removed');
+check(mb_strlen(kop_ih_flag_needle(str_repeat('abcdefghij ', 40))) === 160, 'flag needle: capped at 160 characters');
+
 check(kop_ih_card_excerpt(str_repeat('word ', 100), 50) === 'word word word word word word word word word word [...]', 'site: a long excerpt is cut at a word and the cut is marked');
 
 echo "Rules: $checks checks, $failures failed.\n";

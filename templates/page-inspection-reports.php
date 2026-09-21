@@ -181,6 +181,7 @@ $kop_ir_tracker_slugs = function_exists('kop_state_inspection_page_map')
             <?php endforeach; ?>
             <?php if ($kop_ir_highlights) kop_ih_render_cards($kop_ir_highlights, $kop_ir_tracker_slugs); ?>
         </div>
+        <?php if (function_exists('kop_ih_render_all_link')) kop_ih_render_all_link(); ?>
     </section>
     <?php endif; ?>
 

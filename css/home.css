@@ -416,6 +416,13 @@
     margin: 0 0 0.6rem;
 }
 
+/* Under the grid: the way to every severe report (templates/page-severe-reports.php) */
+.kop-flagged-all {
+    text-align: center;
+    font-weight: 700;
+    margin: 1rem 0 0;
+}
+
 .kop-flagged-links a {
     color: var(--kop-navy-blue, #000080);
     font-weight: 700;

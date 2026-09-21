@@ -295,6 +295,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
             <?php endforeach; ?>
             <?php if ($kop_highlights) kop_ih_render_cards($kop_highlights, $kop_tracker_slugs); ?>
         </div>
+        <?php if (function_exists('kop_ih_render_all_link')) kop_ih_render_all_link(); ?>
     </section>
     <?php endif; ?>
 

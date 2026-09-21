@@ -510,6 +510,45 @@ if (!function_exists('kop_ih_scanner_version')) {
     }
 
     /**
+     * Every approved severe finding, for the Severe Reports page and the flags
+     * in the state trackers: same order as above, all of them, optionally one
+     * state or one category. Returns array(sql, params) for a prepared query;
+     * $limit 0 means no limit.
+     */
+    function kop_ih_severe_query($state = '', $category = '', $limit = 0, $offset = 0) {
+        $where = "h.status = 'approved' AND h.score >= " . (int) kop_ih_severe_score();
+        $params = array();
+        if ($state !== '') { $where .= ' AND h.state = ?'; $params[] = strtoupper($state); }
+        if ($category !== '' && isset(kop_ih_categories()[$category])) {
+            // categories is a comma list. Four plain comparisons match a whole
+            // entry on MySQL and SQLite alike (|| is OR on one and concat on the other).
+            $where .= ' AND (h.categories = ? OR h.categories LIKE ? OR h.categories LIKE ? OR h.categories LIKE ?)';
+            array_push($params, $category, $category . ',%', '%,' . $category, '%,' . $category . ',%');
+        }
+        $sql = "SELECT h.id, h.report_id, h.state, h.category, h.categories, h.score, h.finding_date, h.excerpt,
+                   h.standard, h.state_label, h.corrected_on_site, f.facility_name, r.report_date, r.report_url,
+                   r.report_id AS source_report_id
+            FROM inspection_highlights h
+            JOIN inspection_facilities f ON f.id = h.facility_id
+            JOIN inspection_reports r ON r.id = h.report_id
+            WHERE $where
+            ORDER BY (h.finding_date IS NULL) ASC, h.finding_date DESC, h.score DESC, h.id DESC";
+        if ($limit > 0) $sql .= ' LIMIT ' . (int) $limit . ' OFFSET ' . (int) $offset;
+        return array($sql, $params);
+    }
+
+    /**
+     * What a tracker page looks for to flag a report: the first run of the
+     * excerpt (up to the first gap), lower-cased with every space removed, so
+     * line breaks and markup in the viewer cannot break the match.
+     */
+    function kop_ih_flag_needle($excerpt) {
+        $parts = explode(' [...] ', (string) $excerpt, 2);
+        $squashed = (string) preg_replace('/\s+/u', '', mb_strtolower($parts[0]));
+        return mb_substr($squashed, 0, 160);
+    }
+
+    /**
      * Save one report's candidates. New ones are inserted as pending. A
      * pending one is refreshed; an approved or rejected one is left exactly
      * as the reviewer left it. A pending row the rules no longer produce is
@@ -663,15 +702,57 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
      */
     function kop_ih_site_highlights($limit) {
         global $wpdb;
+        if (!kop_ih_site_ready()) return array();
         $suppress = $wpdb->suppress_errors(true);
-        $ready = get_transient('kop_inspection_highlights_ready_v1');
-        if ($ready === false) {
-            $ready = $wpdb->get_var("SHOW COLUMNS FROM inspection_highlights LIKE 'finding_date'") ? 'yes' : 'no';
-            set_transient('kop_inspection_highlights_ready_v1', $ready, $ready === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
-        }
-        $rows = $ready === 'yes' ? $wpdb->get_results(kop_ih_recent_severe_sql($limit), ARRAY_A) : array();
+        $rows = $wpdb->get_results(kop_ih_recent_severe_sql($limit), ARRAY_A);
         $wpdb->suppress_errors($suppress);
         return (array) $rows;
+    }
+
+    /** True once the highlights table exists in its current shape. A "no" is remembered for ten minutes only. */
+    function kop_ih_site_ready() {
+        global $wpdb;
+        $ready = get_transient('kop_inspection_highlights_ready_v1');
+        if ($ready === false) {
+            $suppress = $wpdb->suppress_errors(true);
+            $ready = $wpdb->get_var("SHOW COLUMNS FROM inspection_highlights LIKE 'finding_date'") ? 'yes' : 'no';
+            $wpdb->suppress_errors($suppress);
+            set_transient('kop_inspection_highlights_ready_v1', $ready, $ready === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
+        }
+        return $ready === 'yes';
+    }
+
+    /** Where every approved severe finding is listed. */
+    function kop_ih_severe_page_url($finding_id = 0) {
+        return home_url('/severe-reports/') . ($finding_id ? '#finding-' . (int) $finding_id : '');
+    }
+
+    /** All approved severe findings (one state or category when given), most recent first. */
+    function kop_ih_site_severe($state = '', $category = '', $limit = 0, $offset = 0) {
+        global $wpdb;
+        if (!kop_ih_site_ready()) return array();
+        list($sql, $params) = kop_ih_severe_query($state, $category, $limit, $offset);
+        $sql = str_replace('?', '%s', $sql);
+        $suppress = $wpdb->suppress_errors(true);
+        $rows = $wpdb->get_results($params ? $wpdb->prepare($sql, $params) : $sql, ARRAY_A);
+        $wpdb->suppress_errors($suppress);
+        return (array) $rows;
+    }
+
+    /** How many approved severe findings there are, per state code; 'all' holds the total. */
+    function kop_ih_site_severe_counts() {
+        global $wpdb;
+        $counts = array('all' => 0);
+        if (!kop_ih_site_ready()) return $counts;
+        $suppress = $wpdb->suppress_errors(true);
+        $rows = $wpdb->get_results("SELECT state, COUNT(*) AS n FROM inspection_highlights
+            WHERE status = 'approved' AND score >= " . (int) kop_ih_severe_score() . ' GROUP BY state', ARRAY_A);
+        $wpdb->suppress_errors($suppress);
+        foreach ((array) $rows as $row) {
+            $counts[strtoupper($row['state'])] = (int) $row['n'];
+            $counts['all'] += (int) $row['n'];
+        }
+        return $counts;
     }
 
     /** Cards for the "demand attention" grid, in the markup the hand-featured cards use. */
@@ -696,9 +777,18 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
                         <?php if (in_array($tracker, $tracker_slugs, true)): ?>
                             <a href="/<?php echo esc_attr($tracker); ?>"><?php echo esc_html(strtoupper($row['state'])); ?> tracker</a>
                         <?php endif; ?>
+                        <a href="<?php echo esc_url(kop_ih_severe_page_url($row['id'])); ?>">Full finding</a>
                     </div>
                 </div>
             <?php
         }
+    }
+
+    /** The line under the grid that leads to the whole list. Prints nothing while the list is empty. */
+    function kop_ih_render_all_link() {
+        $counts = kop_ih_site_severe_counts();
+        if ($counts['all'] < 1) return;
+        echo '<p class="kop-flagged-all"><a href="' . esc_url(kop_ih_severe_page_url()) . '">See all '
+            . esc_html(number_format($counts['all'])) . ' severe ' . ($counts['all'] === 1 ? 'report' : 'reports') . '</a></p>';
     }
 }

@@ -1,0 +1,147 @@
+/*
+ * Severe reports: the page that lists every approved severe finding
+ * (templates/page-severe-reports.php) and the flags the state trackers put on
+ * the same reports in their feeds (js/inspections/severe-flags.js).
+ * Card, quote and link styles come from css/home.css on the page itself.
+ */
+
+/* ---- The page ---- */
+
+.kop-sr-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    align-items: end;
+    justify-content: center;
+    margin: 0 0 1.5rem;
+}
+
+.kop-sr-filters label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-sr-filters select {
+    padding: 0.45rem 0.6rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font: inherit;
+    font-weight: 400;
+    max-width: 100%;
+}
+
+.kop-sr-finding {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin: 0 0 1rem;
+    scroll-margin-top: 120px;
+}
+
+.kop-sr-finding:target {
+    border-color: var(--kop-orange, #EF9034);
+    box-shadow: 0 0 0 3px var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+.kop-sr-finding h2 {
+    font-size: 1.1rem;
+    margin: 0 0 0.35rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-sr-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.6rem;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #4a5568;
+    margin: 0 0 0.7rem;
+}
+
+.kop-sr-pill,
+.kop-sr-pill:visited {
+    border: 2px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 999px;
+    padding: 0 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: none;
+}
+
+.kop-sr-pill:hover {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+.kop-sr-finding .kop-flagged-quote {
+    font-size: 0.95rem;
+}
+
+.kop-sr-pager {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-weight: 700;
+}
+
+/* ---- Flags in the state trackers ---- */
+
+.kop-severe-flag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0 0.55rem;
+    border: 2px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.kop-severe-count {
+    border-color: var(--kop-orange, #EF9034);
+}
+
+.kop-severe-note {
+    margin: 0 0 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-left: 4px solid var(--kop-coral-pink, #FE8088);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    font-size: 0.9rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-severe-banner {
+    margin: 0 0 1rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--kop-coral-pink, #FE8088);
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.92rem;
+}
+
+.kop-severe-banner label {
+    margin-left: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* "Severe reports only": a report that is not one, and a facility with none. */
+.kop-severe-only details[data-kop-severe="no"],
+.kop-severe-only .facility-box:not([data-kop-severe-count]),
+.kop-severe-only .facility-box[data-kop-severe-count="0"],
+.kop-severe-only .kop-rp-facility:not([data-kop-severe-count]),
+.kop-severe-only .kop-rp-facility[data-kop-severe-count="0"] {
+    display: none !important;
+}
