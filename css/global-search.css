@@ -13,6 +13,7 @@
     position: fixed;
     left: 16px;
     bottom: 16px;
+    width: auto; /* page CSS that stretches bare buttons on phones must not reach this */
     z-index: 99980;
     display: inline-flex;
     align-items: center;

@@ -3,11 +3,15 @@
  * data editor and wiki editor. Uses the shared --kop-* palette.
  */
 
-/* Floating open button */
+/* Floating open button. Sits above the round tutorial "?" button, which owns
+   the bottom-right corner (css/tutorial-overlay.css). width:auto because the
+   data form's phone rule stretches every bare <button> to 100%. */
 .kop-dv-toggle {
     position: fixed;
     right: 18px;
-    bottom: 18px;
+    bottom: 76px;
+    width: auto;
+    max-width: calc(100vw - 36px);
     z-index: 99000;
     background: var(--kop-teal, #33A7B5);
     color: #fff;
@@ -42,6 +46,13 @@ body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
     flex-direction: column;
 }
 .kop-dv-panel.is-open { display: flex; }
+
+/* Signed-in editors: start below the WP toolbar, which would otherwise sit on
+   top of the header and its Browse / close buttons. */
+body.admin-bar .kop-dv-panel { top: 32px; }
+@media screen and (max-width: 782px) {
+    body.admin-bar .kop-dv-panel { top: 46px; }
+}
 
 .kop-dv-resizer {
     position: absolute;
@@ -158,9 +169,27 @@ body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
     font-size: 0.86rem;
     color: var(--kop-midnight, #000435);
 }
+/* The parent theme paints focused buttons white-on-colour; on these rows that
+   left the chosen document's name invisible against the yellow. */
+.kop-dv-item:hover,
+.kop-dv-item:focus,
+.kop-dv-item:active,
+.kop-dv-item.is-active { color: var(--kop-midnight, #000435); }
 .kop-dv-item:hover { background: var(--kop-mint, #B6E3D4); }
 .kop-dv-item.is-active { background: var(--kop-soft-yellow, #FFF5CB); box-shadow: inset 3px 0 0 var(--kop-orange, #EF9034); }
-.kop-dv-item-icon { flex: 0 0 auto; }
+.kop-dv-item-icon {
+    flex: 0 0 auto;
+    min-width: 2.6em;
+    padding: 2px 4px;
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-radius: 4px;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    color: var(--kop-navy, #000080);
+    background: #fff;
+}
 .kop-dv-item-name { flex: 1 1 auto; word-break: break-word; }
 
 .kop-dv-loading, .kop-dv-empty, .kop-dv-error {
@@ -189,7 +218,24 @@ body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
     border-bottom: 1px solid rgba(0, 4, 53, 0.1);
     font-size: 0.84rem;
 }
-.kop-dv-preview-title { font-weight: 600; word-break: break-word; }
+.kop-dv-preview-title { flex: 1 1 auto; font-weight: 600; word-break: break-word; }
+.kop-dv-tools { flex: 0 0 auto; display: flex; gap: 4px; }
+.kop-dv-tool,
+.kop-dv-tool:hover,
+.kop-dv-tool:focus {
+    width: auto;
+    min-width: 28px;
+    padding: 3px 8px;
+    border: 1px solid var(--kop-navy, #000080);
+    border-radius: 5px;
+    background: #fff;
+    color: var(--kop-navy, #000080);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1.3;
+    cursor: pointer;
+}
+.kop-dv-tool:hover { background: var(--kop-mint, #B6E3D4); }
 .kop-dv-open { flex: 0 0 auto; color: var(--kop-navy, #000080); font-weight: 600; text-decoration: none; }
 .kop-dv-open:hover { color: var(--kop-orange, #EF9034); }
 
@@ -207,9 +253,54 @@ body.kop-dv-resizing.kop-dv-bottom { cursor: row-resize; }
 }
 .kop-dv-imgwrap img { max-width: 100%; height: auto; }
 
+/* PDF pages drawn by pdf.js, for browsers with no inline PDF viewer. */
+.kop-dv-pages {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    padding: 8px;
+    background: #2b2b2b;
+    -webkit-overflow-scrolling: touch;
+}
+.kop-dv-pages .kop-dv-loading,
+.kop-dv-pages .kop-dv-empty { color: #ddd; }
+.kop-dv-pages .kop-dv-empty a { color: var(--kop-orange, #EF9034); font-weight: 600; }
+.kop-dv-page {
+    position: relative;
+    margin: 0 auto 8px;
+    background: #fff;
+    overflow: hidden;
+}
+.kop-dv-page canvas { display: block; width: 100%; height: 100%; }
+.kop-dv-cover { display: block; max-width: 100%; height: auto; margin: 0 auto; }
+
+/* Invisible, selectable text laid over each page image so passages can be
+   copied into the form. pdf.js positions the spans; --scale-factor is set
+   per page by the script. */
+.kop-dv-textlayer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    line-height: 1;
+    text-align: initial;
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    forced-color-adjust: none;
+}
+.kop-dv-textlayer span,
+.kop-dv-textlayer br {
+    position: absolute;
+    color: transparent;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+.kop-dv-textlayer ::selection { background: rgba(51, 167, 181, 0.4); }
+
 /* Bottom-docked (top/bottom split) layout for narrow screens.
    Driven by JS toggling body.kop-dv-bottom below the desktop breakpoint. */
-body.kop-dv-bottom .kop-dv-panel {
+body.kop-dv-bottom .kop-dv-panel,
+body.admin-bar.kop-dv-bottom .kop-dv-panel {
     top: auto;
     left: 0;
     right: 0;

@@ -82,6 +82,10 @@
     color: var(--kop-midnight, #000435);
 }
 .kop-fb-row:last-child { border-bottom: none; }
+/* Keep the label dark: the parent theme turns hovered/focused buttons white. */
+.kop-fb-row:hover,
+.kop-fb-row:focus,
+.kop-fb-row:active { color: var(--kop-midnight, #000435); }
 .kop-fb-row:hover { background: var(--kop-mint, #B6E3D4); }
 .kop-fb-row.is-current {
     background: var(--kop-soft-yellow, #FFF5CB);

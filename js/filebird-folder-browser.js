@@ -6,8 +6,11 @@
  *
  * Usage:
  *   const result = await window.KOPFolderBrowser.open({
- *       foldersUrl,   // REST endpoint returning [{id, name, parent}, ...]
- *       currentId     // optionally highlight the currently-selected folder
+ *       foldersUrl,   // REST endpoint returning [{id, name, parent, files}, ...]
+ *       currentId,    // optionally highlight the currently-selected folder
+ *       hideEmpty,    // true = list only folders holding documents (viewers;
+ *                     // the filing tools leave it off, empty folders are targets)
+ *       allowClear    // false = no "Use no folder" button
  *   });
  *   // result === null              → cancelled
  *   // result === { id: null }      → "no folder" chosen (clear)
@@ -53,7 +56,7 @@
     // readable "Parent / Child" path string for each folder (used when searching).
     function buildHierarchy(folders) {
         var byId = {};
-        folders.forEach(function (f) { byId[String(f.id)] = { id: f.id, name: f.name, parent: String(f.parent || 0), children: [] }; });
+        folders.forEach(function (f) { byId[String(f.id)] = { id: f.id, name: f.name, parent: String(f.parent || 0), files: f.files, children: [] }; });
         var roots = [];
         Object.keys(byId).forEach(function (k) {
             var f = byId[k];
@@ -65,7 +68,7 @@
             nodes.slice().sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); })
                 .forEach(function (node) {
                     var path = prefix ? prefix + ' / ' + node.name : node.name;
-                    flat.push({ id: node.id, name: node.name, depth: depth, path: path });
+                    flat.push({ id: node.id, name: node.name, depth: depth, path: path, files: node.files });
                     if (node.children.length) walk(node.children, depth + 1, path);
                 });
         }
@@ -77,6 +80,7 @@
         opts = opts || {};
         var foldersUrl = opts.foldersUrl;
         var currentId = opts.currentId != null ? String(opts.currentId) : null;
+        var hideEmpty = !!opts.hideEmpty;
 
         return new Promise(function (resolve) {
             var overlay = el('div', 'kop-fb-overlay');
@@ -100,7 +104,7 @@
             clearBtn.type = 'button';
             var cancelBtn = el('button', 'kop-fb-btn kop-fb-cancel', 'Cancel');
             cancelBtn.type = 'button';
-            footer.appendChild(clearBtn);
+            if (opts.allowClear !== false) footer.appendChild(clearBtn);
             footer.appendChild(cancelBtn);
             dialog.appendChild(footer);
 
@@ -108,13 +112,16 @@
             searchInput.focus();
 
             var hierarchy = [];
+            var folderCount = 0;
 
             function render(filter) {
                 var f = (filter || '').toLowerCase().trim();
                 list.innerHTML = '';
                 if (!hierarchy.length) {
-                    list.innerHTML = '<div class="kop-fb-empty">No FileBird folders found. ' +
-                        'Check that FileBird is installed and the folders endpoint is reachable.</div>';
+                    list.innerHTML = hideEmpty && folderCount
+                        ? '<div class="kop-fb-empty">No folder holds any documents yet.</div>'
+                        : '<div class="kop-fb-empty">No FileBird folders found. ' +
+                          'Check that FileBird is installed and the folders endpoint is reachable.</div>';
                     return;
                 }
                 var rows = hierarchy;
@@ -132,9 +139,11 @@
                     // When searching show the full path; otherwise indent by depth.
                     var label = searching
                         ? esc(r.path)
-                        : '<span class="kop-fb-indent">' + '&nbsp;&nbsp;'.repeat(r.depth) + '</span>📁 ' + esc(r.name);
+                        : '<span class="kop-fb-indent">' + '&nbsp;&nbsp;'.repeat(r.depth) + '</span>' + esc(r.name);
+                    var count = typeof r.files === 'number'
+                        ? r.files + (r.files === 1 ? ' file' : ' files') + ' &middot; ' : '';
                     row.innerHTML = '<span class="kop-fb-name">' + label + '</span>' +
-                        '<span class="kop-fb-id">#' + esc(r.id) + '</span>';
+                        '<span class="kop-fb-id">' + count + '#' + esc(r.id) + '</span>';
                     if (currentId !== null && String(r.id) === currentId) {
                         row.classList.add('is-current');
                     }
@@ -144,6 +153,15 @@
             }
 
             loadFolders(foldersUrl).then(function (folders) {
+                folderCount = folders.length;
+                // `files` counts the whole subtree, so a parent whose documents
+                // all sit in subfolders survives and the tree stays connected.
+                // Feeds without the count are listed in full.
+                if (hideEmpty) {
+                    folders = folders.filter(function (f) {
+                        return typeof f.files !== 'number' || f.files > 0;
+                    });
+                }
                 hierarchy = buildHierarchy(folders);
                 render('');
             });
