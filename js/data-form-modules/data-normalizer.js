@@ -900,6 +900,12 @@
         return Object.keys(value).length ? value : {};
     }
 
+    // Mirrors kop_facility_is_int_placeholder(): "Present", "N/A" say "no value".
+    function v2IsIntPlaceholder(s) {
+        const t = String(s).toLowerCase().replace(/^[\s.?-]+|[\s.?-]+$/g, '');
+        return ['', 'present', 'current', 'ongoing', 'now', 'n/a', 'na', 'unknown', 'none', 'tbd'].includes(t);
+    }
+
     function v2Int(value, rejected, label) {
         if (value === null || value === undefined || value === '' || typeof value === 'object') return null;
         if (typeof value === 'number') return Number.isFinite(value) ? Math.trunc(value) : null;
@@ -907,6 +913,7 @@
         const s = String(value).trim();
         if (s === '') return null;
         if (/^-?\d+$/.test(s)) return parseInt(s, 10);
+        if (v2IsIntPlaceholder(s)) return null;
         const note = () => { if (rejected && label) rejected.push(`${label}: ${s}`); };
         const year = s.match(/\d{4}/);
         if (year && parseInt(year[0], 10) > 1500 && parseInt(year[0], 10) < 2200) {
@@ -1552,8 +1559,12 @@
         doc.operatingPeriod.startYear = v2Int(op.startYear, rejected, 'startYear');
         doc.operatingPeriod.endYear = v2Int(op.endYear, rejected, 'endYear');
         doc.operatingPeriod.yearsOfOperation = v2Str(op.yearsOfOperation);
-        doc.operatingPeriod.notes = v2List(op.notes);
-        const status = normalizeFacilityStatus(v2Str(op.status));
+        // An earlier pass flagged placeholders ("endYear: Present") as unparsed.
+        doc.operatingPeriod.notes = v2List(op.notes).filter((n) => {
+            const m = typeof n === 'string' ? n.match(/^migration: unparsed [\w.]+: ([\s\S]*)$/) : null;
+            return !(m && v2IsIntPlaceholder(m[1]));
+        });
+        const status =normalizeFacilityStatus(v2Str(op.status));
         doc.operatingPeriod.status = status.status;
         if (status.note !== '') doc.operatingPeriod.notes.push(status.note);
 

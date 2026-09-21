@@ -141,6 +141,12 @@ if (!function_exists('kop_facility_map')) {
 }
 
 if (!function_exists('kop_facility_int')) {
+    /** Words an importer wrote where a number belongs: they say "no value", so they are not flagged as unparsed. */
+    function kop_facility_is_int_placeholder($s) {
+        $s = strtolower(trim((string)$s, " \t\n\r\0\x0B.?-"));
+        return in_array($s, array('', 'present', 'current', 'ongoing', 'now', 'n/a', 'na', 'unknown', 'none', 'tbd'), true);
+    }
+
     /**
      * Integer or null. A non-numeric non-empty value is dropped and reported
      * through $rejected so the caller can keep the original in notes.
@@ -153,6 +159,8 @@ if (!function_exists('kop_facility_int')) {
         $s = trim((string)$value);
         if ($s === '') return null;
         if (preg_match('/^-?\d+$/', $s)) return (int)$s;
+        // "Present", "N/A": a placeholder for no number, nothing to keep.
+        if (kop_facility_is_int_placeholder($s)) return null;
         // "1994-2005", "circa 1994", "1994?" - take the first 4-digit run for
         // years, the first integer otherwise.
         if (preg_match('/\d{4}/', $s, $m) && (int)$m[0] > 1500 && (int)$m[0] < 2200) {
@@ -833,6 +841,10 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['operatingPeriod']['endYear']   = kop_facility_int($op['endYear'] ?? null, $legacy_notes, 'endYear');
         $doc['operatingPeriod']['yearsOfOperation'] = kop_facility_str($op['yearsOfOperation'] ?? '');
         $doc['operatingPeriod']['notes'] = kop_facility_list($op['notes'] ?? array());
+        // An earlier pass flagged placeholders ("endYear: Present") as unparsed.
+        $doc['operatingPeriod']['notes'] = array_values(array_filter($doc['operatingPeriod']['notes'], function ($n) {
+            return !(is_string($n) && preg_match('/^migration: unparsed [\w.]+: (.*)$/s', $n, $m) && kop_facility_is_int_placeholder($m[1]));
+        }));
 
         $status_raw = kop_facility_str($op['status'] ?? '');
         $status = kop_facility_normalize_status($status_raw, $status_note);

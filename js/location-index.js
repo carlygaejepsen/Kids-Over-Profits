@@ -266,6 +266,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof value === 'string') {
             const lower = value.trim().toLowerCase();
             if (!lower) return true; // empty or whitespace-only
+            // Migration bookkeeping lines (inc/facility-store.php) are for the admin form, not readers.
+            if (lower.startsWith('migration:')) return true;
             const placeholders = ['none', 'no', 'n/a', 'na', 'n.a.', 'n.a', 'unknown', 'null', 'undefined', 'false', 'empty', '-', '--', '—', '–', 'tbd', 'tba', '[]', '{}', 'not specified', 'not available', 'not applicable', 'no data', 'no info', 'no information', 'pending', 'none reported', 'not reported', 'no report', 'nil', 'unspecified'];
             if (placeholders.includes(lower)) return true;
             const stripped = lower.replace(/[.,;:\-–—]+$/, '');

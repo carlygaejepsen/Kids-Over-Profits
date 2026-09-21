@@ -129,6 +129,10 @@ function displayFacilities(facilitiesData, containerId) {
             // Standard empty strings
             if (!lower) return true;
 
+            // Migration bookkeeping lines (inc/facility-store.php) are for the
+            // admin form, not readers.
+            if (lower.startsWith('migration:')) return true;
+
             // Explicit placeholder list — only suppress values that are truly meaningless
             // NOTE: "no", "pending", "none reported", "not reported" removed — these are informative
             const placeholders = [
