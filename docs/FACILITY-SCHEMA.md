@@ -203,12 +203,15 @@ re-saved every document on 2026-09-18.
   Residential Treatment Center` is `Juvenile Justice RTC`; `Therapeutic
   Residential School` and `TBS` are `Therapeutic Boarding School`. Other
   values are kept as entered.
-- **Operator block** (`provenance.sourceOperator`): `name`, `currentName`,
+- **Operator block** (`provenance.sourceOperator`, and the `operator` block
+  of a `kop_operators` row, which takes the same shape on save): `name`,
+  `currentName`,
   `otherNames[]`, `founded`, `headquarters`, `headquartersCity`,
   `headquartersState`, `location`, `locationCity`, `locationState`,
   `operatingPeriod`, `status`, `websites[]`, `parentCompanies[]`, `owners[]`,
   `investors[]`, `keyStaff {ceo, founders[], keyExecutives[]}`, `notes[]`,
-  `fieldNotes[]`. Unknown keys are kept.
+  `fieldNotes[]`. Unknown keys are kept, such as the `type` on the ten
+  operator rows that carry one.
 - **Additional locations**: the street is re-derived from `raw` whenever
   there is one (the form never writes it). The address parser drops a
   trailing bracketed note and reads `City ST 12345` without a comma before

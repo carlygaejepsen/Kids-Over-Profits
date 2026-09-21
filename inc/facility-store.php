@@ -1110,8 +1110,8 @@ if (!function_exists('kop_facility_type')) {
 
 if (!function_exists('kop_facility_operator_block')) {
     /**
-     * provenance.sourceOperator: the operator block a copy was synced with,
-     * in one shape. Unknown keys are kept.
+     * An operator block in one shape: the row in kop_operators and the copy
+     * a facility keeps in provenance.sourceOperator. Unknown keys are kept.
      */
     function kop_facility_operator_block($value) {
         if (!is_array($value) || $value === array()) return null;
@@ -1140,6 +1140,8 @@ if (!function_exists('kop_facility_operator_block')) {
                 'keyExecutives' => kop_facility_person_list($staff['keyExecutives'] ?? array()),
             ),
             'notes'             => kop_facility_list($notes),
+            // A list, not a map: PHP cannot carry an empty map inside a
+            // nested structure, and these are all empty.
             'fieldNotes'        => kop_facility_list($value['fieldNotes'] ?? array()),
         );
         foreach ($staff as $k => $v) {

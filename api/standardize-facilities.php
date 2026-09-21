@@ -1,6 +1,7 @@
 <?php
 /**
- * Re-save every facilities_v2 document through kop_facility_normalize, so
+ * Re-save every facilities_v2 document through kop_facility_normalize, and
+ * every kop_operators block through kop_facility_operator_block, so
  * each one takes the standard shapes in docs/FACILITY-SCHEMA.md ("Standard
  * shapes"): staff entries {name, role, pastJobs}, past TTI jobs {role,
  * organization, employer}, profile links as URLs, the full resources
@@ -75,7 +76,8 @@ try {
 
     $out = array(
         'success' => true, 'applied' => $apply,
-        'totals'  => array('facilities' => 0, 'would_change' => 0, 'updated' => 0, 'unchanged' => 0, 'errors' => 0),
+        'totals'  => array('facilities' => 0, 'would_change' => 0, 'updated' => 0, 'unchanged' => 0, 'errors' => 0,
+                           'operators' => 0, 'operators_changed' => 0, 'operators_updated' => 0),
         'paths'   => array(), 'samples' => array(), 'errors' => array(),
     );
 
@@ -106,6 +108,33 @@ try {
             if ($apply) {
                 kop_facility_save($doc, $opts, $status);
                 if ($status === 'updated') $out['totals']['updated']++;
+            }
+        }
+        // Operator rows: the block only; legacy_blocks and the join rows are
+        // the form's own bookkeeping.
+        foreach ($pdo->query("SELECT id, unique_name, name, json_data FROM `{$t['operators']}` ORDER BY id")->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $out['totals']['operators']++;
+            $stored = json_decode((string)$r['json_data'], true);
+            if (!is_array($stored)) continue;
+            $block = isset($stored['operator']) && is_array($stored['operator']) ? $stored['operator'] : array();
+            // An empty block still gets the keys, with the name the row carries.
+            $with_name = $block;
+            if (kop_facility_str($with_name['name'] ?? '') === '') {
+                $with_name['name'] = (string)($r['name'] !== '' ? $r['name'] : $r['unique_name']);
+            }
+            $new = kop_facility_operator_block($with_name) ?? array();
+            if (kop_facility_same_document(array('o' => $block), array('o' => $new))) continue;
+            $out['totals']['operators_changed']++;
+            foreach (array_keys(kop_sf_changed_paths($block, $new)) as $p) {
+                $key = 'operator.' . $p;
+                $out['paths'][$key] = ($out['paths'][$key] ?? 0) + 1;
+                if (count($out['samples'][$key] ?? array()) < 2) $out['samples'][$key][] = (int)$r['id'];
+            }
+            if ($apply) {
+                $stored['operator'] = $new;
+                $pdo->prepare("UPDATE `{$t['operators']}` SET json_data = ? WHERE id = ?")
+                    ->execute(array(json_encode($stored, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int)$r['id']));
+                $out['totals']['operators_updated']++;
             }
         }
         arsort($out['paths']);

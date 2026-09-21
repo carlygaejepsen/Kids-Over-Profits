@@ -521,6 +521,11 @@ if (!function_exists('kop_v2_save_operator_project')) {
         $name = kop_facility_str($operator['name'] ?? '');
         if ($name === '' && $op) $name = (string)$op['name'];
         if ($name === '') $name = $project_name;
+        // One shape for every operator block, as for the copy each facility
+        // keeps (docs/FACILITY-SCHEMA.md, "Standard shapes"). A row whose block
+        // is empty still gets the keys, with the name it is filed under.
+        $operator['name'] = $name;
+        $operator = kop_facility_operator_block($operator) ?? array();
 
         $blocks = (is_array($stored) && isset($stored['legacy_blocks']) && is_array($stored['legacy_blocks'])) ? $stored['legacy_blocks'] : array();
         foreach ($data as $k => $v) {
