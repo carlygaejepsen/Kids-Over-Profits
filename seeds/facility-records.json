@@ -6609,5 +6609,54 @@
         "administrator": []
       }
     }
+  },
+  {
+    "id": 100133,
+    "unique_name": "Desert Hills Center for Youth and Families",
+    "version": 1,
+    "note": "street address, closure detail, CEO and archived article link from the 1999-05-07 Arizona Daily Star story (2026-09-21)",
+    "facility": {
+      "address": "2797 N. Introspect Drive, Tucson, AZ",
+      "addressParts": {
+        "street": "2797 N. Introspect Drive",
+        "city": "Tucson",
+        "state": "AZ",
+        "zip": ""
+      },
+      "profileLinks": [
+        "https://strugglingteens.com/archives/1993/4/np04.html",
+        "https://web.archive.org/web/20110207045534/http://nospank.net/n-e44.htm",
+        "https://www.courant.com/1998/10/12/why-they-die-little-training-poor-staffing-put-lives-at-risk/",
+        "https://tucson.com/news/local/family-to-give-up-troubled-son-to-get-treatment-for-him/article_8b60e211-54aa-50eb-8ac7-009132fb05a2.html"
+      ],
+      "operatingPeriod": {
+        "startYear": 1973,
+        "endYear": 1999,
+        "status": "Closed",
+        "yearsOfOperation": "1973-1999",
+        "notes": [
+          "Founded 1973 as the Jay McCaffery School, originally boys only; by 1993 it was co-ed and ran acute hospitalization, day treatment, residential treatment and outpatient services on two campuses covering 50 acres (New Perspectives, April 1993).",
+          "Youth Services International operated the Desert Hills centers in Arizona, New Mexico and Texas 1995-1997 (KOP research sheet \"Sequel/TSI/YSI/Vivant\").",
+          "The residential adolescent program, which once filled 80 percent of the center's 114 beds, closed by June 4, 1999. Pima County Juvenile Court removed 38 youths on April 12, 1999 citing safety concerns, and the Arizona Department of Juvenile Corrections, the main source of residents since 1994, did not renew its contract. The for-profit center had lost $2.3 million the year before. Day treatment and the charter school were to stay open at least through that summer (Arizona Daily Star, 1999-05-07)."
+        ]
+      },
+      "staff": {
+        "administrator": [
+          {
+            "name": "Joe W. King",
+            "role": "President and CEO (1999)",
+            "pastJobs": []
+          }
+        ],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "notes": [
+        "Edith Campos, 15, died in February 1998 after a face-down restraint by staff that began over a family photograph she was told to hand over (Hartford Courant, \"Why They Die\", 1998-10-12).",
+        "Sister facility: Desert Hills of New Mexico (Albuquerque).",
+        "In February 1999 a 17-year-old patient's skull was fractured in an attack outside a Desert Hills group home that state regulators said was not adequately staffed; in March 1999 police arrested a staff member on charges of sexual conduct with two patients, ages 14 and 17. The state had sanctioned the center in 1998 after the restraint death (Arizona Daily Star, 1999-05-07).",
+        "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
+      ]
+    }
   }
 ]
