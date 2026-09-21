@@ -35,8 +35,10 @@
     "                \"kind\", \"aliases\", \"network\" (frame), \"near\" (a board node",
     "                to start beside), \"dates\", \"status\", \"source\"}.",
     "edges         - lines the board is missing: {\"from\", \"to\", \"relationship\",",
-    "                \"source\"}. Worded like the board's own labels; source is",
-    "                the citation, for reviewers.",
+    "                \"category\", \"source\"}. Worded like the board's own labels;",
+    "                a category settles what the wording alone would not",
+    "                (\"operated 1993-1999\" names no role the rules know); source",
+    "                is the citation, for reviewers.",
     "views         - other lists the map can open on, offered as \"Start from\":",
     "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
     "                Keys are lowercase with hyphens; \"default\" is the headline.",
@@ -68,7 +70,9 @@
     "CEDU Family of Services": ["CEDU"],
     "Cantrill Nielsen": ["Cantril Nielsen"],
     "Tasir El- Souessi": ["Taisir El-Souessi"],
-    "\"Brother Jim\" Clemenson": ["James Clemenson", "Jim Clemenson"]
+    "\"Brother Jim\" Clemenson": ["James Clemenson", "Jim Clemenson"],
+    "Three Springs Blue Ridge": ["Three Springs of Blue Ridge"],
+    "Three Springs Duck River": ["Three Springs of Duck River"]
   },
   "kinds": {
     "Embark at Flathead Valley": "facility",
@@ -113,7 +117,12 @@
       ]
     }
   },
-  "facilities": {},
+  "facilities": {
+    "Lakeside Academy": 100098,
+    "Normative Services Academy": 13410,
+    "Everglades Academy": null,
+    "Pompano Academy": null
+  },
   "acquirers": {
     "e0241": "Universal Health Services",
     "e0363": "Universal Health Services",
@@ -181,6 +190,639 @@
       "near": "Youth Services International",
       "status": "closed or rebranded",
       "source": "https://web.archive.org/web/20020822155138/http://www.youthservices.com/Programs/Facility_Type/Program_Offerings/Cypress/Polk/polk.html"
+    },
+    {
+      "name": "Bayamon Treatment Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Bill Clayton Detention Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Blackwater STOP Camp",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Bowie County Detention Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Caldwell County Juvenile Justice Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Camp Washington",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Capital Academy",
+      "kind": "facility",
+      "aliases": [
+        "Sequel of New Jersey, Inc."
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Chamberlain Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Chanute Transition Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Charles Britt Academy",
+      "kind": "facility",
+      "aliases": [
+        "Britt Halfway House",
+        "Britt Technical Youth Academy"
+      ],
+      "near": "Youth Services International",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Charles H. Hickey, Jr. School",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Colorado County Boot Camp",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Crisp County Youth Development Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Cypress Creek Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Dallas County Juvenile Facility",
+      "kind": "facility",
+      "aliases": [
+        "Medlock Juvenile Center"
+      ],
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Dallas County Youth Village Secure Program",
+      "kind": "facility",
+      "aliases": [
+        "Dallas County Last Chance Program"
+      ],
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Desert Hills - Arizona",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Desert Hills - New Mexico",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Desert Hills - Texas",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Developmental Behavioral Consultants",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Elmore Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Everglades Academy",
+      "kind": "facility",
+      "aliases": [
+        "Dade Juvenile Residential Facility"
+      ],
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Genesis Treatment Agency",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Hays County Juvenile Justice Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Hemphill County Juvenile Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Jemison Group Home",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "JoAnn Bridges Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Judge Roger Hashem Center",
+      "kind": "facility",
+      "aliases": [
+        "Rockdale Juvenile Justice Center",
+        "Milam, Robertson and Falls Counties Juvenile Facility"
+      ],
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Keweenaw Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Kingston Academy",
+      "kind": "facility",
+      "aliases": [
+        "Camelot School"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "dates": "from 1985",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "La Salle County Juvenile Justice Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Lakeside Academy",
+      "kind": "facility",
+      "near": "Sequel Youth and Family Services",
+      "dates": "from 1907",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Lexington Academy",
+      "kind": "facility",
+      "aliases": [
+        "Three Springs of Englishton Park",
+        "Sequel TSI of Indiana"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Los Hermanos Boys Ranch",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Martin Hall Juvenile Facility",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "McIntosh Youth Development Center",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Medina County Detention Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Mountain Home Academy",
+      "kind": "facility",
+      "aliases": [
+        "Sequel TSI of Idaho",
+        "Three Springs of Mountain Home"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "New Dominion School of Maryland",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "dates": "from 1981",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "New Dominion School of Virginia",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "dates": "from 1976",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Normative Services Academy",
+      "kind": "facility",
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Northern Illinois Academy",
+      "kind": "facility",
+      "aliases": [
+        "Sequel Schools LLC"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Palm Beach Regional Juvenile Correctional Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Parc Place",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Paulding Regional Youth Detention Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Pompano Academy",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Pompano Youth Treatment Center",
+      "kind": "facility",
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Promise House",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Reflections Treatment Agency",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Athena's Circle of Providence",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Riverside Academy",
+      "kind": "facility",
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Rose Rock Academy",
+      "kind": "facility",
+      "aliases": [
+        "Sequel of Oklahoma LLC"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Salinas Treatment Center",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Santa Rosa Residential Facility",
+      "kind": "facility",
+      "aliases": [
+        "Santa Rosa Youth Academy"
+      ],
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel Pomegranate",
+      "kind": "facility",
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel Transition Academy",
+      "kind": "facility",
+      "aliases": [
+        "Brighter Transition Youth Treatment Center"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel TSI Madison",
+      "kind": "facility",
+      "aliases": [
+        "Three Springs of Madison"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel TSI Montgomery",
+      "kind": "facility",
+      "aliases": [
+        "Brighter Path Montgomery"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel TSI North Carolina",
+      "kind": "facility",
+      "aliases": [
+        "Three Springs of North Carolina"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel TSI Sierra Vista",
+      "kind": "facility",
+      "aliases": [
+        "Three Springs Sierra Vista Schools"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Sequel TSI Tuskegee",
+      "kind": "facility",
+      "aliases": [
+        "Tuskegee Secure Program",
+        "Brighter Path Tuskegee"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Snowden Cottage Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Springfield Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "St John's Youth Academy",
+      "kind": "facility",
+      "aliases": [
+        "Sequel of St. John's"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Starr Albion Prep",
+      "kind": "facility",
+      "aliases": [
+        "Albion Academy"
+      ],
+      "near": "Sequel Youth and Family Services",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Stuart E. Nunn Juvenile Justice Center",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Summit View Youth Correctional Facility",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Tallulah Correctional Center for Youth",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Tampa Bay Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Tarkio Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Thompson Academy",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Three Springs Augusta",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Three Springs New Directions",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Timberline Academy",
+      "kind": "facility",
+      "aliases": [
+        "Daytona Juvenile Residential Facility",
+        "Three Springs of Daytona"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Union Juvenile Residential Facility",
+      "kind": "facility",
+      "aliases": [
+        "Redwood Youth Academy"
+      ],
+      "near": "Three Springs Inc.",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Victor Cullen Academy",
+      "kind": "facility",
+      "near": "Correctional Services Corporation",
+      "status": "open",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Wayne County Girls Program",
+      "kind": "facility",
+      "near": "Three Springs Inc.",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "Withlacoochee Juvenile Residential Facility",
+      "kind": "facility",
+      "aliases": [
+        "Withlacoochee STOP Camp"
+      ],
+      "near": "Three Springs Inc.",
+      "dates": "from 1978",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "name": "YSI of Utah",
+      "kind": "facility",
+      "near": "Youth Services International",
+      "status": "closed or rebranded",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
     }
   ],
   "edges": [
@@ -277,6 +919,1042 @@
       "relationship": "operated (2017)",
       "category": "corporate",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Bayamon Treatment Center",
+      "relationship": "operated 1998-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Bayamon Treatment Center",
+      "relationship": "operated 1999-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Bill Clayton Detention Center",
+      "relationship": "operated (2000)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Bill Clayton Detention Center",
+      "relationship": "operated until 2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Blackwater STOP Camp",
+      "relationship": "operated 2004-2005",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Blackwater STOP Camp",
+      "relationship": "operated 2006-2010",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Bowie County Detention Center",
+      "relationship": "operated 1998-2002",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Caldwell County Juvenile Justice Center",
+      "relationship": "operated 1998-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Camp Washington",
+      "relationship": "operated (1996)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Capital Academy",
+      "relationship": "operated 2013-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Chamberlain Academy",
+      "relationship": "operated (1993)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Chamberlain Academy",
+      "relationship": "operated 1997-2011",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Chanute Transition Center",
+      "relationship": "operated (1996)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Chanute Transition Center",
+      "relationship": "operated 1999-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Charles Britt Academy",
+      "relationship": "operated (2013)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Charles Britt Academy",
+      "relationship": "operated 2016-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Wayne Halfway House",
+      "to": "Charles Britt Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Charles H. Hickey, Jr. School",
+      "relationship": "operated (1993)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Charles H. Hickey, Jr. School",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Colorado County Boot Camp",
+      "relationship": "operated (1998)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Colorado County Boot Camp",
+      "relationship": "operated 2001-2008",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Crisp County Youth Development Center",
+      "relationship": "operated (2006)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Cypress Creek Academy",
+      "relationship": "operated 1997-2003",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Cypress Creek Academy",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Cypress Creek Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Dallas County Juvenile Facility",
+      "relationship": "operated 1998-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Dallas County Juvenile Facility",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Dallas County Youth Village Secure Program",
+      "relationship": "operated 1998-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Dallas County Youth Village Secure Program",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Desert Hills - Arizona",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Desert Hills - New Mexico",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Desert Hills - Texas",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Developmental Behavioral Consultants",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Elmore Academy",
+      "relationship": "operated (1998)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Elmore Academy",
+      "relationship": "operated 1999-2014",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Everglades Academy",
+      "relationship": "operated 1996-2006",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Genesis Treatment Agency",
+      "relationship": "operated (1997)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Genesis Treatment Agency",
+      "relationship": "operated 1999-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Hays County Juvenile Justice Center",
+      "relationship": "operated 2000-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Hemphill County Juvenile Center",
+      "relationship": "operated 1994-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Hemphill County Juvenile Center",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Jemison Group Home",
+      "relationship": "operated (1999)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "JoAnn Bridges Academy",
+      "relationship": "operated (1998)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "JoAnn Bridges Academy",
+      "relationship": "operated 1999-2015",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "JoAnn Bridges Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Judge Roger Hashem Center",
+      "relationship": "operated (1997)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Judge Roger Hashem Center",
+      "relationship": "operated (2002)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Opportunity Investments",
+      "to": "Judge Roger Hashem Center",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Keweenaw Academy",
+      "relationship": "operated (1997)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Keweenaw Academy",
+      "relationship": "operated 1999-2003",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Kingston Academy",
+      "relationship": "operated 2011-2019",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "La Salle County Juvenile Justice Center",
+      "relationship": "operated 1998-2000",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Lakeside Academy",
+      "relationship": "operated 2007-2020",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Lexington Academy",
+      "relationship": "operated 1996-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Lexington Academy",
+      "relationship": "operated 2009-2017",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Los Hermanos Boys Ranch",
+      "relationship": "operated 1997-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Martin Hall Juvenile Facility",
+      "relationship": "operated 1997-1998",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "McIntosh Youth Development Center",
+      "relationship": "operated (2001)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "McIntosh Youth Development Center",
+      "relationship": "operated (2006)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Medina County Detention Center",
+      "relationship": "operated 1999-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Medina County Detention Center",
+      "relationship": "operated (1998)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Mountain Home Academy",
+      "relationship": "operated",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Mountain Home Academy",
+      "relationship": "operated 2009-2020",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "New Dominion School of Maryland",
+      "relationship": "operated 1994-2008",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "New Dominion School of Virginia",
+      "relationship": "operated 1994-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Normative Services Academy",
+      "relationship": "operated 2003-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Northern Illinois Academy",
+      "relationship": "operated 2006-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Palm Beach Regional Juvenile Correctional Center",
+      "relationship": "operated 2006-2016",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Palm Beach Regional Juvenile Correctional Center",
+      "relationship": "operated (2016)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Parc Place",
+      "relationship": "operated 1996-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Paulding Regional Youth Detention Center",
+      "relationship": "operated (1999)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Paulding Regional Youth Detention Center",
+      "relationship": "operated 2003-2013",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Pompano Academy",
+      "relationship": "operated 1997-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Pompano Youth Treatment Center",
+      "relationship": "operated 2017-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Promise House",
+      "relationship": "operated 1995-1997",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Reflections Treatment Agency",
+      "relationship": "operated (1992)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Reflections Treatment Agency",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Athena's Circle of Providence",
+      "relationship": "operated (2006)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Riverside Academy",
+      "relationship": "operated 2011-2019",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Rose Rock Academy",
+      "relationship": "operated 2011-2016",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Salinas Treatment Center",
+      "relationship": "operated 2000-2002",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Santa Rosa Residential Facility",
+      "relationship": "operated 2006-2014",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel Pomegranate",
+      "relationship": "operated 2016-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel Transition Academy",
+      "relationship": "operated 2013-2022",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Sequel Transition Academy",
+      "relationship": "operated (2022)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Sequel Transition Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Sequel TSI Madison",
+      "relationship": "operated 1999-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI Madison",
+      "relationship": "operated 2009-2019",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Sequel TSI Montgomery",
+      "relationship": "operated 2003-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI Montgomery",
+      "relationship": "operated 2013-2022",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Sequel TSI Montgomery",
+      "relationship": "operated (2022)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Sequel TSI North Carolina",
+      "relationship": "operated 1990-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI North Carolina",
+      "relationship": "operated 2009-2011",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Sequel TSI Sierra Vista",
+      "relationship": "operated",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI Sierra Vista",
+      "relationship": "operated 2009-2011",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Sequel TSI Tuskegee",
+      "relationship": "operated (2001)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI Tuskegee",
+      "relationship": "operated 2009-2022",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Sequel TSI Tuskegee",
+      "relationship": "operated (2022)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Snowden Cottage Academy",
+      "relationship": "operated (1997)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Snowden Cottage Academy",
+      "relationship": "operated 1999-2002",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Springfield Academy",
+      "relationship": "operated (1993)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Springfield Academy",
+      "relationship": "operated (1999)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "St John's Youth Academy",
+      "relationship": "operated",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "St John's Youth Academy",
+      "relationship": "operated 2015-2022",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Opportunity Investments",
+      "to": "St John's Youth Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Starr Albion Prep",
+      "relationship": "operated 2014-2020",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Stuart E. Nunn Juvenile Justice Center",
+      "relationship": "operated",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Summit View Youth Correctional Facility",
+      "relationship": "operated 2000-2002",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Tallulah Correctional Center for Youth",
+      "relationship": "operated 1998-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Tampa Bay Academy",
+      "relationship": "operated 1999-2005",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Tampa Bay Academy",
+      "relationship": "operated 1996-2010",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Tarkio Academy",
+      "relationship": "operated (1994)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Tarkio Academy",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Thompson Academy",
+      "relationship": "operated 2006-2012",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Three Springs Augusta",
+      "relationship": "operated 1993-2007",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Timberline Academy",
+      "relationship": "operated (2001)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Timberline Academy",
+      "relationship": "operated (1997)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Timberline Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Union Juvenile Residential Facility",
+      "relationship": "operated 2006-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Union Juvenile Residential Facility",
+      "relationship": "operated 2009-2019",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Wayne Halfway House",
+      "to": "Union Juvenile Residential Facility",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Victor Cullen Academy",
+      "relationship": "operated 1992-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Victor Cullen Academy",
+      "relationship": "operated 1999-2002",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Wayne County Girls Program",
+      "relationship": "operated (2003)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Withlacoochee Juvenile Residential Facility",
+      "relationship": "operated 2005-2007",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "YSI of Utah",
+      "relationship": "operated (1993)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Western Youth",
+      "to": "YSI of Utah",
+      "relationship": "merged (1994)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Polk Halfway House",
+      "relationship": "operated 1995-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Polk Halfway House",
+      "relationship": "operated 1999-2004",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Broward Youth Treatment Center",
+      "relationship": "operated 2009-2012",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Rite of Passage, Inc",
+      "to": "Columbus Youth Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Forest Ridge Youth Services",
+      "relationship": "operates from 2022",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Hillsborough Girls Academy",
+      "relationship": "operated 1997-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Hillsborough Girls Academy",
+      "relationship": "operated 1999-2001",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Wayne Halfway House",
+      "to": "Hillsborough Girls Academy",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Marion Youth Academy",
+      "relationship": "operated 2007-2010",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Norris Academy",
+      "relationship": "operated 2009-2021",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Correctional Services Corporation",
+      "to": "Crestview Youth Academy",
+      "relationship": "operated 1998-1999",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Crestview Youth Academy",
+      "relationship": "operated 1999-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Pathway of Madison County",
+      "to": "Brighter Path Courtland",
+      "relationship": "operates (current)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Kissimmee Youth Academy",
+      "relationship": "operated 2002-2009",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Kissimmee Youth Academy",
+      "relationship": "operated 2009-2016",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Brighter Path Owens Cross Roads",
+      "relationship": "operated (2022)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Sequel TSI Paint Rock Valley",
+      "relationship": "operated 2009-2011",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Youth Services International",
+      "to": "Woodward Academy",
+      "relationship": "operated (1995)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Sequel Youth and Family Services",
+      "to": "Woodward Academy",
+      "relationship": "operated (2001)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Vivant Behavioral Healthcare",
+      "to": "Woodward Academy",
+      "relationship": "operated (2021)",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
+    },
+    {
+      "from": "Three Springs Inc.",
+      "to": "Three Springs New Directions",
+      "relationship": "operated",
+      "category": "corporate",
+      "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab; the sheet records no years for it"
     }
   ],  "views": {
     "historical": {

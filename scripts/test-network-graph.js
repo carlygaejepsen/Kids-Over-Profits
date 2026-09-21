@@ -86,10 +86,11 @@ function run() {
     /* Where one end of a rebrand is still open, the other end is the name
      * that was dropped, so it reads "rebranded", never plain "closed". The
      * statuses override is the one sanctioned exception. */
-    let overridden = {};
+    let overrides = {};
     try {
-        overridden = JSON.parse(fs.readFileSync(path.join(ROOT, 'js', 'data', 'network', 'network-overrides.json'), 'utf8')).statuses || {};
-    } catch (err) { overridden = {}; }
+        overrides = JSON.parse(fs.readFileSync(path.join(ROOT, 'js', 'data', 'network', 'network-overrides.json'), 'utf8'));
+    } catch (err) { overrides = {}; }
+    const overridden = overrides.statuses || {};
     edges.forEach(function (edge) {
         if (edge.direction !== 'renamed') return;
         const a = byId.get(edge.source);
@@ -168,6 +169,30 @@ function run() {
     }
 
     notes.push(nodes.length + ' nodes, ' + edges.length + ' edges, ' + linked.length + ' facility links');
+
+    /* What the board is missing and the overrides add has to arrive. A name
+     * typed a hair differently only shows up in the QA report otherwise, and
+     * the additions are now large enough to lose a row in. */
+    const byName = new Map(nodes.map(function (n) { return [n.name, n]; }));
+    const drawn = new Set();
+    edges.forEach(function (edge) {
+        const a = byId.get(edge.source);
+        const b = byId.get(edge.target);
+        if (a && b) {
+            drawn.add(a.name + ' -> ' + b.name);
+            drawn.add(b.name + ' -> ' + a.name);
+        }
+    });
+    (overrides.nodes || []).forEach(function (node) {
+        check(byName.has(node.name), 'overrides.nodes: ' + node.name + ' never reached the graph');
+        check(byName.has(node.near), 'overrides.nodes: ' + node.name + ' is placed near "' + node.near + '", which is not a node');
+    });
+    (overrides.edges || []).forEach(function (edge) {
+        check(drawn.has(edge.from + ' -> ' + edge.to),
+            'overrides.edges: ' + edge.from + ' -> ' + edge.to + ' was not drawn');
+    });
+    notes.push((overrides.nodes || []).length + ' override nodes and ' +
+        (overrides.edges || []).length + ' override edges all drawn');
 }
 
 run();

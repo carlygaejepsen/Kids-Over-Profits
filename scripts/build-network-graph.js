@@ -1248,10 +1248,19 @@ function rescaleBoard(nodes) {
  * export rows. Each is placed on the board beside `near`, an existing node,
  * so the layout starts it among the things it belongs with. A kind given
  * here is written into overrides.kinds, which wins over every rule.
+ *
+ * A batch spreads over a square block beside its anchor, not a column four
+ * wide: the thirty places an operator ran would otherwise seed a mile below
+ * it, and the layout starts from these coordinates.
  */
 function addOverrideNodeRows(nodeRows, overrides) {
     const at = new Map(nodeRows.map(function (row) { return [row.name, row]; }));
-    overrides.nodes.forEach(function (node, i) {
+    const share = new Map();
+    overrides.nodes.forEach(function (node) {
+        share.set(node.near, (share.get(node.near) || 0) + 1);
+    });
+    const placed = new Map();
+    overrides.nodes.forEach(function (node) {
         if (at.has(node.name)) {
             qa.missingViewNames.push('nodes: ' + node.name + ' is already on the board; drop it from the overrides');
             return;
@@ -1260,12 +1269,15 @@ function addOverrideNodeRows(nodeRows, overrides) {
         if (!near) qa.missingViewNames.push('nodes: ' + node.name + ' is placed near "' + node.near + '", which is not on the board');
         if (node.kind) overrides.kinds[node.name] = node.kind;
         if (node.aliases) overrides.aliases[node.name] = (overrides.aliases[node.name] || []).concat(node.aliases);
+        const nth = placed.get(node.near) || 0;
+        placed.set(node.near, nth + 1);
+        const cols = Math.max(1, Math.ceil(Math.sqrt(share.get(node.near) || 1)));
         const row = {
             name: node.name, dates: node.dates || '', status: node.status || 'unmarked',
             network: node.network || (near ? near.network : ''), chain: node.chain || '',
             natsap_member: 'False', importance: '0', connections: '0',
-            board_x: String((near ? Number(near.board_x) : 0) + 60 * (i % 4 + 1)),
-            board_y: String((near ? Number(near.board_y) : 0) + 60 * (Math.floor(i / 4) + 1))
+            board_x: String((near ? Number(near.board_x) : 0) + 60 * (nth % cols + 1)),
+            board_y: String((near ? Number(near.board_y) : 0) + 60 * (Math.floor(nth / cols) + 1))
         };
         nodeRows.push(row);
         at.set(row.name, row);
@@ -1852,9 +1864,16 @@ function connectView(namedIds, nodes, edges, key) {
         qa.missingViewNames.push(key + ': ' + id + ' has no route to the rest of the view');
     });
 
+    /* Anything joining two named items is the connection between them and
+     * would otherwise be invisible: John Stallone and Bob Molin stand between
+     * Synanon and CEDU, which the direct Synanon-CEDU line would make a route
+     * skip. A place does not qualify, however many of the view's companies ran
+     * it in turn: it hangs under them and arrives on the first click, and the
+     * chains share enough facilities that taking them all in doubles the
+     * opening view. */
     const named = new Set(namedIds);
     nodes.forEach(function (n) {
-        if (inView.has(n.id) || n.kind === 'association') return;
+        if (inView.has(n.id) || n.kind === 'association' || n.kind === 'facility') return;
         const touches = around(shownAdjacent, n.id).filter(function (id) { return named.has(id); }).length;
         if (touches >= 2) { inView.add(n.id); order.push(n.id); }
     });

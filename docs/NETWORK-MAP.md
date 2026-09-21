@@ -16,7 +16,8 @@ at the end.
 |---|---|---|
 | 1 | Data pipeline: CSVs to graph.json, overrides, QA report, tests | Done, branch `feat/network-graph-pipeline` |
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 6 done (2026-09-18) |
-| 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Open, itemised below |
+| 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
+| 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Operators tab done (2026-09-20); staff tab open |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
@@ -1101,20 +1102,23 @@ between them, so an unnamed connection is an invisible one:
    Enterprises and the Rebekah Home (he signed the 1997 alternative
    accreditation law, lobbied for by Roloff's attorney David Gibbs, that the
    Roloff homes returned to Texas under). The view is now eight nodes.
-2. Bridge: anything with a direct line to two named items is added (Stallone
-   and Molin between Synanon and CEDU, which the direct Synanon-CEDU line
-   would otherwise make the route skip).
+2. Bridge: anyone and any company with a direct line to two named items is
+   added (Stallone and Molin between Synanon and CEDU, which the direct
+   Synanon-CEDU line would otherwise make the route skip). A place is not,
+   however many of the view's companies ran it in turn: it hangs under them
+   and arrives on the first click, and once the whole Sequel/YSI chain was on
+   the board (2026-09-20) taking them all in doubled juvenile-justice to 71.
 
 `test-network-modules.js` opens every view and fails if any node on it has
 no drawn line to the rest.
 
 | View | Named | On screen |
 |---|---|---|
-| historical | Synanon, The Brown Schools, Devereux Foundation, CEDU Family of Services, Straight Inc. (+ Stallone, Molin, Lane, Knopf, The Seed, the Semblers) | 19 |
+| historical | Synanon, The Brown Schools, Devereux Foundation, CEDU Family of Services, Straight Inc. (+ Stallone, Molin, Lane, Knopf, The Seed, the Semblers) | 18 |
 | todays-top-players | Universal Health Services, Acadia Healthcare, Newport Academy (+ Procopia, Norton) | 29 |
 | wilderness | Eckerd Youth Alternatives, Second Nature, Aspen Education Group, ANASAZI Foundation (+ Ben Pearson) | 33 |
-| juvenile-justice | Rite of Passage, Youth Opportunity Investments, Youth Services International, Sequel, G4S Youth Services, VisionQuest, Glen Mills, Ramsay Youth Services, Keystone Education and Youth Services, Eckerd Youth Alternatives | 29 |
-| fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 8 (+ Governor Bush) |
+| juvenile-justice | Rite of Passage, Youth Opportunity Investments, Youth Services International, Sequel, G4S Youth Services, VisionQuest, Glen Mills, Ramsay Youth Services, Keystone Education and Youth Services, Eckerd Youth Alternatives, Correctional Services Corporation | 36 |
+| fundamentalist | Lester Roloff, Roloff Evangelistic Enterprises, Rebekah, Anchor, Lighthouse, Bethesda, Teen Challenge | 12 (+ Governor Bush) |
 
 **Additions the board is missing (2026-09-18).** `network-overrides.json`
 now takes `nodes` (organisations and people, placed beside a named board
@@ -1127,8 +1131,41 @@ acquired Youth Services International in 1999; James F. Slattery was CSC's
 chairman and CEO and YSI's president; Forest Ridge, Palm Beach Youth Academy
 (formerly Pahokee Youth Development Center) and Polk Youth Development
 Center passed from CSC to YSI to Sequel, and Rite of Passage runs Palm Beach
-now. CSC is in the juvenile-justice view. The sheet lists about forty more
-CSC and YSI facilities that are not on the board.
+now. CSC is in the juvenile-justice view.
+
+**The rest of that sheet (2026-09-20).** The sheet's operators tab lists 110
+places against the five companies that ran them in turn (Three Springs, CSC,
+YSI, Sequel, Vivant). 29 were already on the board, so 79 are new nodes, and
+two were the board's own places under another spelling (Three Springs of Blue
+Ridge, Three Springs of Duck River) and became aliases. Each new place is a
+facility beside the company that ran it first, closed unless the sheet names
+a live operator, and every tenure is a line worded as the board words them:
+`operated 1993-1999`, `operated (1995)`, `operates from 2022`. Where the
+sheet gives years no rule can read ("x", "?") the line says plain `operated`.
+Four places carry their own opening year from the sheet's history column;
+the rest take years from the facility record if they have one. 39 of the 79
+match a `facilities_v2` record, so the map links straight to their profile;
+`Lakeside Academy` (three records) and `Normative Services Academy` (two)
+are pinned under `facilities`, and `Everglades Academy` and `Pompano Academy`
+are set to null there because the lookalike the matcher offered is a
+different place.
+
+20 more lines went to places already on the board where the board drew no
+line to a company the sheet names at all. The board keeps some campuses under
+one name per era - Three Springs Courtland, Sequel TSI Courtland, Brighter
+Path Courtland are one place - so a tenure is drawn on the node carrying that
+company's own brand, which is where the board had already put most of them.
+Youth Services International goes from 11 connections to 63, CSC from 5 to
+36, Sequel from 23 to 50, Three Springs from 13 to 33. Wayne Halfway House,
+which the board had as a facility, now runs enough places that the build
+reads it as a company.
+
+Two things this leaves: the current operator of twelve places is a county or
+state agency the board does not have (Maryland DJS, Georgia DJJ, the Dallas
+County Juvenile Department), and those lines are not drawn; and the sheet's
+staff tab, 320 people with roles, is untouched. One question for the owner:
+Three Springs New Directions and Sequel TSI Madison share a zip code and may
+be one campus.
 
 **Profile past names drawn as rebrands (2026-09-18).** The 51 profile
 names that are another board node were held back in case some were sister
