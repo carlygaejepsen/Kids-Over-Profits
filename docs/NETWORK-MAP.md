@@ -1431,6 +1431,39 @@ since most facilities are only in the former.
   Copy link. Colour mode moves into the filter sheet.
 - Stage height becomes `calc(100vh - header)`.
 
+**Closed (2026-09-21).** Most of this had already arrived piecemeal: the
+trail became one fixed-height row of chips and the intro one band in the
+design pass, the filter panel became the Key folded into the stage's corner
+(`9077b19`), and the app has been `100svh` tall since full screen went in.
+What was left, and what was done with it:
+
+- *Colour by is in the Key*, above the legend it changes. It was the fourth
+  control in the toolbar and the one that pushed a phone's toolbar onto a
+  third row. `filters.js` binds it by id, so only the template moved.
+- *Reset view and Full screen sit on the stage*, in the corner opposite the
+  Key and drawn like its button: they act on the view, and a map's own
+  controls live on the map. The toolbar is now search, Start from,
+  Focus/Expand, Path and Copy link: one row on a desktop, search plus one
+  row at 390 px (it was search plus two).
+- *Copy link works.* The button had been in the template since step 2 with
+  nothing bound to it. It copies the page's address, which already carries
+  the trail, the mode and the starter view, says "Link copied" for two
+  seconds and announces it; without the clipboard API it falls back to
+  selecting the address in a field.
+- *The trail still scrolls rather than middle-truncating.* Past the width of
+  the strip it scrolls sideways and keeps the newest step in view. That
+  keeps every step one tap away; an ellipsis in the middle would need a menu
+  to reach what it hid, for a case (seven or more steps) the scroll already
+  handles.
+- The legend's one-line summary strip was not built: closed, the Key is one
+  small button, which is less than a strip would be.
+
+Checked in a real browser at 1440 and 390 px (a local harness that builds
+the page from the template, since the live page is behind the beta
+password): one toolbar row and two, no horizontal scroll, the colour mode
+changing from inside the Key, Reset view from its new place, and the
+clipboard holding `#open=wwasps` after Copy link.
+
 ### 2b.10 Starter views
 
 `network-overrides.json` gains `views`: named lists of node names

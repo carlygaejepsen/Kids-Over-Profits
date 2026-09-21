@@ -594,6 +594,58 @@ html.kop-network-pinned {
 
 /* ------------------------------------------------------------------ key -- */
 
+/* Reset view and Full screen: the stage's own controls, in its top-right
+ * corner, drawn like the Key's button opposite them. */
+.kop-network__view-controls {
+	position: absolute;
+	z-index: 5;
+	top: 0.5rem;
+	right: 0.5rem;
+	display: flex;
+	gap: 0.35rem;
+}
+
+.kop-network__stage-button {
+	padding: 0.25rem 0.7rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	color: inherit;
+	font: inherit;
+	font-size: 0.8rem;
+	font-weight: 600;
+	white-space: nowrap;
+	cursor: pointer;
+	box-shadow: 0 2px 6px rgba(0, 4, 53, 0.1);
+}
+
+.kop-network__stage-button:hover {
+	border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-network__stage-button:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 1px;
+}
+
+/* The colour mode, at the head of the Key it changes. */
+.kop-network__colour--key {
+	justify-content: space-between;
+	margin-bottom: 0.6rem;
+	padding-bottom: 0.6rem;
+	border-bottom: 1px solid var(--kop-net-border);
+}
+
+.kop-network__colour--key .kop-network__select {
+	height: 1.9rem;
+}
+
+/* Copy link says so for a moment once it has. */
+.kop-network__button[data-copied="true"] {
+	border-color: var(--kop-teal, #33A7B5);
+	background: var(--kop-mint-green, #B6E3D4);
+}
+
 /* Folded into the stage's top-left corner: a button when closed, a panel
  * under it when open. Over the map rather than beside it, so opening it does
  * not resize the stage and re-lay the map out; capped in size so that even
@@ -1044,7 +1096,7 @@ button.kop-network__popup-person {
 
 	/* The selects' captions go quiet on a phone so the controls fit in two
 	 * rows. The caption stays in the accessible name. */
-	.kop-network__colour > span {
+	.kop-network__colour:not(.kop-network__colour--key) > span {
 		position: absolute;
 		width: 1px;
 		height: 1px;

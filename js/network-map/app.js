@@ -400,6 +400,55 @@
         }, true);
     }
 
+    /**
+     * Copy link: the address bar already carries the trail, the mode and the
+     * starter view (url-state.js), so the link to this view is the page's own
+     * address. The button says it worked, because a copy shows nothing.
+     */
+    function wireShare(app) {
+        var button = byId('kop-network-share');
+        if (!button) return;
+        var label = button.textContent;
+        var timer = 0;
+
+        var done = function (ok) {
+            button.textContent = ok ? 'Link copied' : 'Copy failed';
+            button.setAttribute('data-copied', ok ? 'true' : 'false');
+            app.announce(ok ? 'A link to this view was copied.' : 'The link could not be copied. Copy it from the address bar.');
+            if (timer) window.clearTimeout(timer);
+            timer = window.setTimeout(function () {
+                button.textContent = label;
+                button.removeAttribute('data-copied');
+            }, 2000);
+        };
+
+        /* For a page not served over https, or a browser without the
+         * clipboard API: select the address in a field and copy that. */
+        var legacy = function (text) {
+            var field = document.createElement('textarea');
+            field.value = text;
+            field.setAttribute('readonly', '');
+            field.style.position = 'fixed';
+            field.style.opacity = '0';
+            document.body.appendChild(field);
+            field.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            document.body.removeChild(field);
+            return ok;
+        };
+
+        button.addEventListener('click', function () {
+            if (app.urlState) app.urlState.write();
+            var text = window.location.href;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(legacy(text)); });
+            } else {
+                done(legacy(text));
+            }
+        });
+    }
+
     function wireControls(app) {
         var reset = byId('kop-network-reset-view');
         if (reset) {
@@ -412,6 +461,7 @@
         }
 
         wireFullscreen(app);
+        wireShare(app);
 
         /* The colour-mode select is bound in filters.js, which owns the
          * legend that has to change with it. */

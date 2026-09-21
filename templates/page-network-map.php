@@ -152,14 +152,6 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</label>
 					<?php endif; ?>
 
-					<label class="kop-network__colour">
-						<span>Colour by</span>
-						<select id="kop-network-colour-mode" class="kop-network__select">
-							<option value="kind" selected>What it is</option>
-							<option value="chain">Who owns it</option>
-						</select>
-					</label>
-
 					<?php
 					// What a click does. Focus shows the clicked node's own
 					// connections and nothing else; Expand adds them to whatever
@@ -219,16 +211,8 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</div>
 					</div>
 
-					<button type="button" class="kop-network__button" id="kop-network-reset-view">
-						Reset view
-					</button>
 					<button type="button" class="kop-network__button" id="kop-network-share">
 						Copy link
-					</button>
-					<?php // The map and its controls over the whole screen; app.js owns the label. ?>
-					<button type="button" class="kop-network__button kop-network__button--full" id="kop-network-fullscreen"
-						aria-pressed="false">
-						Full screen
 					</button>
 				</div>
 			</div>
@@ -276,12 +260,40 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						$kop_net_kind_labels[$kind] = kop_network_map_label($kind, 'kind');
 					}
 					?>
+					<?php
+					// Reset view and Full screen act on the stage, so they sit on
+					// it, in the corner opposite the Key, the way a map's own
+					// controls do. app.js owns the second one's label.
+					?>
+					<div class="kop-network__view-controls">
+						<button type="button" class="kop-network__stage-button" id="kop-network-reset-view">
+							Reset view
+						</button>
+						<button type="button" class="kop-network__stage-button kop-network__button--full" id="kop-network-fullscreen"
+							aria-pressed="false">
+							Full screen
+						</button>
+					</div>
+
 					<div class="kop-network__key">
 						<button type="button" class="kop-network__key-toggle" id="kop-network-filters-toggle"
 							aria-expanded="false" aria-controls="kop-network-rail">
 							Key
 						</button>
 						<div class="kop-network__rail" id="kop-network-rail" role="region" aria-label="Key" hidden>
+							<?php
+							// What the colours stand for is chosen where they are
+							// explained. It used to be a fourth control in the
+							// toolbar, which is what pushed a phone's toolbar onto a
+							// third row.
+							?>
+							<label class="kop-network__colour kop-network__colour--key">
+								<span>Colour by</span>
+								<select id="kop-network-colour-mode" class="kop-network__select">
+									<option value="kind" selected>What it is</option>
+									<option value="chain">Who owns it</option>
+								</select>
+							</label>
 							<div class="kop-network__group kop-network__legend" id="kop-network-legend"
 								role="group" aria-label="Legend"
 								data-kind-labels="<?php echo esc_attr(wp_json_encode($kop_net_kind_labels)); ?>"></div>
