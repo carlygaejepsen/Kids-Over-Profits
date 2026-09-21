@@ -112,8 +112,8 @@ $kop_sr_link = static function (array $change) use ($kop_sr_state, $kop_sr_categ
             <blockquote class="kop-flagged-quote"><?php echo esc_html($kop_sr_row['excerpt']); ?></blockquote>
             <p class="kop-flagged-source">From the state's report<?php echo $kop_sr_row['state_label'] ? '. ' . esc_html($kop_sr_row['state_label']) : ''; ?><?php
                 echo $kop_sr_row['standard'] ? '. Cited: ' . esc_html($kop_sr_row['standard']) : ''; ?><?php
-                echo $kop_sr_row['corrected_on_site'] ? '. The state recorded it as corrected at the inspection' : ''; ?>.
-                "[...]" marks text left out between sentences.</p>
+                echo $kop_sr_row['corrected_on_site'] ? '. The state recorded it as corrected at the inspection' : ''; ?>.<?php
+                echo strpos($kop_sr_row['excerpt'], ' [...] ') !== false ? ' "[...]" marks text left out between sentences.' : ''; ?></p>
             <div class="kop-flagged-links">
                 <?php if ($kop_sr_source !== '') : ?>
                     <a href="<?php echo esc_url($kop_sr_source); ?>" target="_blank" rel="noopener noreferrer">State source</a>
