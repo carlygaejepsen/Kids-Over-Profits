@@ -154,6 +154,9 @@ if (!function_exists('kop_network_map_facility_urls')) {
             $index = kop_facility_pages_index();
             $key .= ':' . substr((string) ($index['fingerprint'] ?? ''), 0, 12);
         }
+        // Bumped when the shape of the cached array changes, so a stale
+        // entry is not served until it expires.
+        $key .= ':v2';
 
         $cached = get_transient('kop_network_map_facility_urls');
         if (is_array($cached) && ($cached['_key'] ?? '') === $key) {
@@ -178,7 +181,13 @@ if (!function_exists('kop_network_map_facility_urls')) {
             }
         }
 
-        set_transient('kop_network_map_facility_urls', array_merge($urls, array('_key' => $key)), DAY_IN_SECONDS);
+        // Not array_merge: it renumbers integer keys, and the keys are the
+        // facility ids. The cached copy came back as 0, 1, 2..., so every
+        // request after the first found no id it looked up and the drawer
+        // never linked a profile (found on the live page, 2026-09-21).
+        $cached = $urls;
+        $cached['_key'] = $key;
+        set_transient('kop_network_map_facility_urls', $cached, DAY_IN_SECONDS);
         return $urls;
     }
 }

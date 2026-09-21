@@ -357,6 +357,36 @@ $check('kop_facility_page_url for a generated page', kop_facility_page_url($firs
 $check('kop_facility_page_url for a thin record is empty', kop_facility_page_url($thin_id) === '');
 
 // ---------------------------------------------------------------------------
+// The network map's facility id => profile URL map (inc/network-map.php)
+// ---------------------------------------------------------------------------
+// The map is keyed by facility id and cached for a day. The first request
+// after a cache miss returned it keyed correctly and every request after
+// that got it back renumbered 0, 1, 2 (array_merge), so the drawer never
+// linked a profile on the live page. Both the fresh and the cached copy
+// have to carry the ids.
+require_once dirname(__DIR__) . '/inc/network-map.php';
+if (function_exists('kop_network_map_facility_urls') && function_exists('kop_network_map_graph') && kop_network_map_graph()) {
+    $fresh = kop_network_map_facility_urls();
+    $again = kop_network_map_facility_urls();
+    $graph_ids = array();
+    foreach (kop_network_map_graph()['nodes'] as $n) {
+        if (!empty($n['facilityId'])) $graph_ids[(int) $n['facilityId']] = true;
+    }
+    $keyed = function ($urls) use ($graph_ids) {
+        if (!is_array($urls) || !$urls) return false;
+        foreach ($urls as $id => $url) {
+            if (!isset($graph_ids[$id]) || !is_string($url) || $url === '') return false;
+        }
+        return true;
+    };
+    $check('network map facility URLs are keyed by facility id', $keyed($fresh), json_encode(array_slice(array_keys($fresh), 0, 5)));
+    $check('network map facility URLs keep their ids through the cache', $keyed($again) && $again === $fresh, json_encode(array_slice(array_keys($again), 0, 5)));
+    $check('network map facility URLs cover linked nodes', count($fresh) > 100, 'only ' . count($fresh) . ' of ' . count($graph_ids));
+} else {
+    $check('network map module loads with a graph', false, 'inc/network-map.php or js/data/network/graph.json missing');
+}
+
+// ---------------------------------------------------------------------------
 // Render samples
 // ---------------------------------------------------------------------------
 
