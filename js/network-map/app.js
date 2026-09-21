@@ -168,7 +168,32 @@
                 config: CONFIG,
                 drawer: byId('kop-network-drawer'),
                 body: byId('kop-network-drawer-body'),
-                close: byId('kop-network-drawer-close')
+                close: byId('kop-network-drawer-close'),
+                /* A route is read in the drawer; path.js writes it. Looked
+                 * up when called, since that module is created below. */
+                renderPath: function (body) {
+                    return app.path ? app.path.renderInto(body) : false;
+                }
+            });
+        }
+
+        if (window.KOPNetworkPath) {
+            app.path = window.KOPNetworkPath.create({
+                store: store,
+                focus: focus,
+                announce: announce,
+                elements: {
+                    toggle: byId('kop-network-path-toggle'),
+                    panel: byId('kop-network-path'),
+                    form: byId('kop-network-path-form'),
+                    from: byId('kop-network-path-from'),
+                    fromList: byId('kop-network-path-from-results'),
+                    to: byId('kop-network-path-to'),
+                    toList: byId('kop-network-path-to-results'),
+                    swap: byId('kop-network-path-swap'),
+                    close: byId('kop-network-path-close'),
+                    message: byId('kop-network-path-message')
+                }
             });
         }
 
@@ -306,7 +331,9 @@
     }
 
     /* The mode radios follow the chain: search can switch to expand when it
-     * opens several names at once, and the toggle has to say so. */
+     * opens several names at once, and the toggle has to say so. With a route
+     * on the board neither is checked: a click there leaves the route, in
+     * Focus, whatever was set before. */
     function syncMode(app) {
         var current = app.focus.mode();
         var modes = document.querySelectorAll('input[name="kop-network-mode"]');

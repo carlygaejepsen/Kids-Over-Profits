@@ -7,6 +7,10 @@
  * picking one puts it on the board through focus.select(), so it arrives the
  * way a click brings anything: with its connections.
  *
+ * The Path form (path.js) uses the same box twice over to name the two ends
+ * of a route. There a pick does not open anything: options.onChoose takes the
+ * name, and it stays written in the box.
+ *
  * Ranking is its own function (rank) so the tests can hold it to account
  * without a document: a name that starts with what was typed beats one where
  * a later word does, which beats a match in the middle of a word; a name
@@ -70,7 +74,7 @@
 
     var KIND_WORDS = {
         facility: 'programme', parent: 'company', person: 'person',
-        trade: 'trade group', church: 'church', government: 'government body'
+        association: 'trade group', church: 'church', government: 'government body'
     };
 
     function create(options) {
@@ -80,7 +84,10 @@
         var list = options.list;
         var announce = options.announce || function () {};
         var document_ = options.document || root.document;
-        if (!store || !focus || !input || !list) return null;
+        var onChoose = options.onChoose || null;
+        if (!store || (!focus && !onChoose) || !input || !list) return null;
+        /* More than one box on the page, so option ids hang off the list's own. */
+        var idPrefix = (list.id || 'kop-network-search-results') + '-option-';
 
         var results = [];
         var active = -1;
@@ -117,7 +124,7 @@
                     none.className = 'kop-network__search-none';
                     none.setAttribute('role', 'option');
                     none.setAttribute('aria-disabled', 'true');
-                    none.id = 'kop-network-search-none';
+                    none.id = idPrefix + 'none';
                     none.textContent = 'No name on the map matches.';
                     list.appendChild(none);
                     list.hidden = false;
@@ -129,7 +136,7 @@
             }
             results.forEach(function (hit, index) {
                 var item = document_.createElement('li');
-                item.id = 'kop-network-search-option-' + index;
+                item.id = idPrefix + index;
                 item.className = 'kop-network__search-option';
                 item.setAttribute('role', 'option');
                 item.setAttribute('aria-selected', 'false');
@@ -159,6 +166,13 @@
         /** Put the chosen names on the board, with their connections. */
         function pick(nodes) {
             close();
+            if (onChoose) {
+                /* Naming an end of a route: the name stays in the box. */
+                if (!nodes.length) return;
+                input.value = nodes[0].name;
+                onChoose(nodes[0]);
+                return;
+            }
             input.value = '';
             if (!nodes.length) return;
             if (nodes.length === 1) {

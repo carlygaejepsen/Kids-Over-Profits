@@ -12,13 +12,17 @@
  * of the chain whenever the chain changes, and hides it when the chain is
  * empty. Closing it with the button keeps it closed until the next name is
  * opened.
+ *
+ * When the trail is a route between two names (focus.showPath), the drawer
+ * is where the route is read: options.renderPath, which is path.js, fills
+ * the body instead.
  */
 (function (root) {
     'use strict';
 
     var KIND_WORDS = {
         facility: 'Programme', parent: 'Company', person: 'Person',
-        trade: 'Trade group', church: 'Church', government: 'Government body'
+        association: 'Trade group', church: 'Church', government: 'Government body'
     };
     var STATUS_WORDS = {
         open: 'Operating', closed: 'Closed', rebranded: 'Rebranded',
@@ -181,13 +185,23 @@
             shownId = null;
         }
 
-        /** Follow the head of the chain. */
+        /** Follow the head of the chain, or the route when the chain is one. */
         function update() {
             var chain = focus.chain();
             if (!chain.length) {
                 dismissedId = null;
                 hide();
                 return;
+            }
+            if (focus.isPath && focus.isPath() && options.renderPath) {
+                var routeId = 'route:' + chain.join(',');
+                if (routeId === dismissedId) return;
+                dismissedId = null;
+                if (options.renderPath(body)) {
+                    shownId = routeId;
+                    aside.hidden = false;
+                    return;
+                }
             }
             var head = store.node(chain[chain.length - 1]);
             if (!head) { hide(); return; }

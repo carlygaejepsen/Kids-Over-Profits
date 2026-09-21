@@ -178,6 +178,47 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</label>
 					</fieldset>
 
+					<?php
+					// How two names are connected (path.js). The form opens under
+					// the button and closes again once it has an answer, which is
+					// read in the drawer, so nothing sits over the route it found.
+					?>
+					<div class="kop-network__path-wrap">
+						<button type="button" class="kop-network__button" id="kop-network-path-toggle"
+							aria-expanded="false" aria-controls="kop-network-path">
+							Path
+						</button>
+						<div class="kop-network__path" id="kop-network-path" hidden>
+							<form id="kop-network-path-form" class="kop-network__path-form" autocomplete="off">
+								<p class="kop-network__path-title">How are two names connected?</p>
+								<div class="kop-network__search kop-network__path-field">
+									<label for="kop-network-path-from">From</label>
+									<input type="search" id="kop-network-path-from" class="kop-network__search-input"
+										placeholder="A person, programme or company" autocomplete="off"
+										role="combobox" aria-expanded="false"
+										aria-controls="kop-network-path-from-results" aria-autocomplete="list">
+									<ul id="kop-network-path-from-results" class="kop-network__search-results"
+										role="listbox" aria-label="Names matching the first end" hidden></ul>
+								</div>
+								<div class="kop-network__search kop-network__path-field">
+									<label for="kop-network-path-to">To</label>
+									<input type="search" id="kop-network-path-to" class="kop-network__search-input"
+										placeholder="Another name" autocomplete="off"
+										role="combobox" aria-expanded="false"
+										aria-controls="kop-network-path-to-results" aria-autocomplete="list">
+									<ul id="kop-network-path-to-results" class="kop-network__search-results"
+										role="listbox" aria-label="Names matching the second end" hidden></ul>
+								</div>
+								<div class="kop-network__path-actions">
+									<button type="submit" class="kop-network__button kop-network__path-find">Find routes</button>
+									<button type="button" class="kop-network__button" id="kop-network-path-swap">Swap</button>
+									<button type="button" class="kop-network__button" id="kop-network-path-close">Close</button>
+								</div>
+								<p class="kop-network__path-message" id="kop-network-path-message" role="status"></p>
+							</form>
+						</div>
+					</div>
+
 					<button type="button" class="kop-network__button" id="kop-network-reset-view">
 						Reset view
 					</button>

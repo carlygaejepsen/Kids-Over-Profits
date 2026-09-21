@@ -269,6 +269,148 @@ html.kop-network-pinned {
 	background: transparent;
 }
 
+/* ---------------------------------------------------------------- path -- */
+
+/* The Path form hangs under its button, over the top of the stage, and goes
+ * away once it has an answer: the route is read in the drawer, so nothing is
+ * left sitting on the map it describes. */
+.kop-network__path-wrap {
+	position: relative;
+}
+
+.kop-network__path-wrap > .kop-network__button[aria-expanded="true"] {
+	border-color: var(--kop-teal, #33A7B5);
+	background: var(--kop-sand, #F2EEDF);
+}
+
+.kop-network__path {
+	position: absolute;
+	z-index: 25;
+	top: calc(100% + 6px);
+	right: 0;
+	width: min(340px, calc(100vw - 2rem));
+	padding: 0.75rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	box-shadow: 0 8px 24px rgba(0, 4, 53, 0.18);
+}
+
+.kop-network__path[hidden] {
+	display: none;
+}
+
+.kop-network__path-form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.55rem;
+	margin: 0;
+}
+
+.kop-network__path-title {
+	margin: 0;
+	font-size: 0.95rem;
+	font-weight: 700;
+	color: var(--kop-midnight-blue, #000435);
+}
+
+/* The search box's own layout rules are for the toolbar; in the form a
+ * field is a full-width row with its label above it. */
+.kop-network__path-field {
+	flex: 0 0 auto;
+	max-width: none;
+}
+
+.kop-network__path-field label {
+	display: block;
+	margin-bottom: 0.15rem;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #4a4f6a;
+}
+
+.kop-network__path-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+}
+
+.kop-network__path-find {
+	border-color: var(--kop-navy-blue, #000080);
+	background: var(--kop-navy-blue, #000080);
+	color: #fff;
+	font-weight: 600;
+}
+
+.kop-network__path-find:hover {
+	background: var(--kop-midnight-blue, #000435);
+}
+
+.kop-network__path-message {
+	margin: 0;
+	font-size: 0.82rem;
+	color: #4a4f6a;
+}
+
+.kop-network__path-message:empty {
+	display: none;
+}
+
+/* The route, written out in the drawer: each name, and under it what joins
+ * it to the next, down a rule that stands for the line on the board. */
+.kop-network__route {
+	margin: 0.6rem 0 0.9rem;
+	padding: 0;
+	list-style: none;
+	counter-reset: kop-route;
+}
+
+.kop-network__route-step {
+	position: relative;
+	padding: 0 0 0.7rem 1.6rem;
+	counter-increment: kop-route;
+}
+
+.kop-network__route-step::before {
+	content: counter(kop-route);
+	position: absolute;
+	top: 0.3rem;
+	left: 0;
+	width: 1.2rem;
+	height: 1.2rem;
+	border-radius: 50%;
+	background: var(--kop-navy-blue, #000080);
+	color: #fff;
+	font-size: 0.7rem;
+	font-weight: 700;
+	line-height: 1.2rem;
+	text-align: center;
+}
+
+.kop-network__route-step:not(:last-child)::after {
+	content: "";
+	position: absolute;
+	top: 1.6rem;
+	bottom: 0;
+	left: calc(0.6rem - 1px);
+	border-left: 2px solid var(--kop-teal, #33A7B5);
+}
+
+.kop-network__route-join {
+	display: block;
+	margin: 0.1rem 0 0 0.4rem;
+	padding-left: 0.5rem;
+	border-left: 2px solid var(--kop-net-border);
+	font-size: 0.8rem;
+	font-style: italic;
+	color: #33384f;
+}
+
+.kop-network__drawer-link[aria-current="true"] {
+	font-weight: 700;
+	background: var(--kop-sand, #F2EEDF);
+}
+
 /* Focus / Expand: a two-way switch styled as one control. */
 .kop-network__mode {
 	display: inline-flex;
@@ -926,6 +1068,23 @@ button.kop-network__popup-person {
 	.kop-network__key {
 		max-width: min(220px, calc(100% - 1rem));
 		max-height: 60%;
+	}
+
+	/* The toolbar wraps on a phone, so the button can be anywhere along its
+	 * row; the form is pinned to the screen's edges instead of the button's. */
+	.kop-network__path-wrap {
+		position: static;
+	}
+
+	.kop-network__toolbar {
+		position: relative;
+	}
+
+	.kop-network__path {
+		top: 100%;
+		left: 0;
+		right: 0;
+		width: auto;
 	}
 
 	/* A sheet over the lower half, not the whole screen: the map has to

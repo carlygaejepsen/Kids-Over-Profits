@@ -1980,7 +1980,7 @@ function kop_enqueue_template_assets() {
         // Files that do not exist yet are skipped, which is what lets the page
         // shell ship before the modules do.
         $deps = array('kop-d3-force');
-        foreach (array('store', 'canvas', 'viewport', 'focus', 'connection', 'search', 'filters', 'drawer', 'url-state', 'app') as $module) {
+        foreach (array('store', 'canvas', 'viewport', 'focus', 'connection', 'search', 'filters', 'drawer', 'path', 'url-state', 'app') as $module) {
             $handle = 'kop-network-' . $module;
             $script($handle, '/js/network-map/' . $module . '.js', $deps);
             if (wp_script_is($handle, 'enqueued')) {

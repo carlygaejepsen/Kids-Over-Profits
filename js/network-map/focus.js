@@ -240,9 +240,44 @@
         var mode = 'focus';
         function currentRoots() {
             if (!chain.length) return [];
-            return mode === 'expand' ? chain.slice() : [chain[chain.length - 1]];
+            return mode === 'focus' ? [chain[chain.length - 1]] : chain.slice();
         }
         focus.mode = function () { return mode; };
+
+        /*
+         * A third thing the trail can be: a route. store.paths() finds how
+         * two names are connected, and showPath() puts one route on the board
+         * as itself - its names in order, the lines between each and the
+         * next, and nothing else. Every rule below that brings more onto the
+         * board (a person's places, a programme's owner) stands aside: the
+         * question was how A reaches B, and the answer is these names.
+         *
+         * Nobody is folded into a line here either. On a route the person
+         * who joins two places is the answer, so they are a name.
+         *
+         * It is a mode of the trail rather than a separate state so that the
+         * crumbs, the address bar and the drawer carry on working: the trail
+         * is the route, a crumb cuts the route back to that name, and
+         * #open=a,b,c&mode=path reopens it. Clicking a name on the route
+         * leaves it for that name's own view, in Focus.
+         */
+        function inPath() {
+            return mode === 'path' && chain.length > 1;
+        }
+        focus.isPath = inPath;
+
+        /** Whether the trail, read as a route, still has a line for every step. */
+        function pathHolds() {
+            if (chain.length < 2) return false;
+            var live = store.visible().nodeIds;
+            var seen = Object.create(null);
+            for (var i = 0; i < chain.length; i++) {
+                if (!live[chain[i]] || seen[chain[i]]) return false;
+                seen[chain[i]] = true;
+                if (i && !store.edgesBetween(chain[i - 1], chain[i]).length) return false;
+            }
+            return true;
+        }
         focus.setMode = function (next) {
             next = next === 'expand' ? 'expand' : 'focus';
             if (next === mode) return;
@@ -253,6 +288,12 @@
 
         function visibleIds() {
             var live = store.visible().nodeIds;
+
+            if (inPath()) {
+                var route = Object.create(null);
+                chain.forEach(function (id) { if (live[id]) route[id] = true; });
+                return route;
+            }
 
             /* What the visitor actually asked for: everything opened, and
              * everyone those touch. The organisations the map opened with
@@ -390,6 +431,16 @@
             var edges = visible.edges.filter(function (edge) {
                 return ids[edge.sourceId] && ids[edge.targetId];
             });
+            if (inPath()) {
+                /* Only the lines of the route itself. Two names on a longer
+                 * route can also be joined directly, and that line drawn
+                 * here would be a shortcut across the route being shown. */
+                var stepOf = Object.create(null);
+                chain.forEach(function (id, i) { stepOf[id] = i; });
+                edges = edges.filter(function (edge) {
+                    return Math.abs(stepOf[edge.sourceId] - stepOf[edge.targetId]) === 1;
+                });
+            }
 
             /* Once something has been opened, the map is about that. The
              * organisations it opened with have no bearing on the question
@@ -430,7 +481,9 @@
                 ids = reach;
             }
 
-            var fold = foldConnectors(nodes, edges);
+            var fold = inPath()
+                ? { nodes: nodes, edges: edges, folded: Object.create(null) }
+                : foldConnectors(nodes, edges);
             nodes = fold.nodes;
             edges = fold.edges;
             var shown = Object.create(null);
@@ -918,6 +971,16 @@
 
         focus.select = function (node) {
             if (!node) return;
+            if (mode === 'path') {
+                /* A click on a route leaves it for that name's own view. In
+                 * Focus whatever the toggle said before: Expand would lay
+                 * every name on the route out with all it touches at once. */
+                mode = 'focus';
+                if (chain[chain.length - 1] !== node.id) chain.push(node.id);
+                animateNext = true;
+                enterFocus();
+                return;
+            }
             if (chain.length && chain[chain.length - 1] === node.id) return;
             /* In expand mode a node already on the trail is already on the
              * board; clicking it again adds nothing. */
@@ -946,13 +1009,31 @@
         };
 
         /**
+         * Put one route on the board: ids in order, first to last. False,
+         * and nothing changes, when a step has no line under the current
+         * filters.
+         */
+        focus.showPath = function (ids) {
+            var before = { chain: chain, mode: mode };
+            chain = (ids || []).slice();
+            mode = 'path';
+            if (!pathHolds()) {
+                chain = before.chain;
+                mode = before.mode;
+                return false;
+            }
+            enterFocus();
+            return true;
+        };
+
+        /**
          * Put a whole trail back at once: a shared link, or the page reloaded.
          * Unknown ids are dropped (a board export can rename a node), and an
          * empty result is the opening view. Nothing is announced beyond what
          * entering the view announces.
          */
         focus.restore = function (ids, nextMode) {
-            if (nextMode === 'expand' || nextMode === 'focus') mode = nextMode;
+            if (nextMode === 'expand' || nextMode === 'focus' || nextMode === 'path') mode = nextMode;
             var live = store.visible().nodeIds;
             var seen = Object.create(null);
             chain = (ids || []).filter(function (id) {
@@ -961,6 +1042,7 @@
                 return true;
             });
             if (!chain.length) {
+                if (mode === 'path') mode = 'focus';
                 layout = null;
                 showOpeningView();
                 onChange();
@@ -989,6 +1071,7 @@
          */
         function resetToWholeMap() {
             chain = [];
+            if (mode === 'path') mode = 'focus';
             layout = null;
             hoverId = null;
             hoverEdgeIds = null;
@@ -1074,6 +1157,10 @@
             hoverId = null;
             hoverEdgeIds = null;
 
+            /* A route cut back to one name, or one whose step a filter has
+             * just taken away, is not a route: show its last name instead. */
+            if (mode === 'path' && !pathHolds()) mode = 'focus';
+
             var scene = focus.scene();
             if (!scene.nodes.length) {
                 /* The filters can hide everything the chain points at. Rather
@@ -1099,7 +1186,8 @@
                     seed[node.id] = { x: p.x, y: p.y };
                 });
             }
-            var head = store.node(chain[chain.length - 1]);
+            /* A route has two ends and no head: nothing on it is grown. */
+            var head = inPath() ? null : store.node(chain[chain.length - 1]);
             /* Grown before the frame is chosen, so the zoom is measured
              * against the size it will be drawn at. */
             baseGrow = 1;
@@ -1113,10 +1201,16 @@
             drawn = scene.nodeIds;
             if (before) startYoyo(scene, before, head);
 
-            announce(head
-                ? (head.name + ' and ' + (scene.nodes.length - 1) + ' connected names. ' +
-                    'Step ' + chain.length + ' of your trail.')
-                : (scene.nodes.length + ' names.'));
+            if (inPath()) {
+                var names = chain.map(function (id) { return (store.node(id) || {}).name || id; });
+                announce('Route from ' + names[0] + ' to ' + names[names.length - 1] + ', ' +
+                    (chain.length - 1) + (chain.length === 2 ? ' step: ' : ' steps: ') + names.join(', then ') + '.');
+            } else {
+                announce(head
+                    ? (head.name + ' and ' + (scene.nodes.length - 1) + ' connected names. ' +
+                        'Step ' + chain.length + ' of your trail.')
+                    : (scene.nodes.length + ' names.'));
+            }
             onChange();
         }
 
@@ -1162,6 +1256,15 @@
                     above: edge.above || null
                 };
             });
+
+            if (inPath()) {
+                var routeOverhang = pathLayout(points, gridPadding);
+                var routePositions = Object.create(null);
+                points.forEach(function (point) {
+                    routePositions[point.id] = { x: point.x, y: point.y };
+                });
+                return { positions: routePositions, points: points, byId: byId, overhang: routeOverhang };
+            }
 
             if (d3 && d3.forceSimulation && points.length > 1) {
                 var sim = d3.forceSimulation(points)
@@ -1968,6 +2071,74 @@
         }
 
         /**
+         * A route, laid out as one: its names in order along a row, or down
+         * a column when the row would not fit the stage.
+         *
+         * The board layout arranges by hierarchy - owners above what they
+         * own, people hung off their places - which is right for a
+         * neighbourhood and wrong here: a route through a company, a
+         * programme and a person came out as a zigzag that had to be traced
+         * by eye to find its order. In a line the order is the reading
+         * order, every step is one straight trace, and each trace has room
+         * for its caption, so the route reads as a sentence: who, what joins
+         * them to the next, and so on to the other end.
+         *
+         * A column rather than a smaller row when the row is too wide: names
+         * are drawn at one size whatever the zoom, so zooming a row out to
+         * fit only pushes the names into each other.
+         */
+        var PATH_ROW_GAP = 150;
+        var PATH_COLUMN_GAP = 34;
+
+        function pathLayout(points, padding) {
+            grid = null;
+            if (!points.length || !renderer.width) return 0;
+            var stepOf = Object.create(null);
+            chain.forEach(function (id, i) { stepOf[id] = i; });
+            var ordered = points.slice().sort(function (a, b) { return stepOf[a.id] - stepOf[b.id]; });
+
+            var board = Math.max(200, renderer.width - padding * 2);
+            var tallest = ordered.reduce(function (t, p) { return Math.max(t, p.r); }, 0);
+            var yearsLine = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.YEARS_LINE) || 11;
+            var rowH = tallest * 2 + LABEL_ROOM + ROW_GUTTER +
+                (ordered.some(function (p) { return p.years; }) ? yearsLine : 0);
+
+            var total = ordered.reduce(function (sum, p) { return sum + p.label; }, 0) +
+                PATH_ROW_GAP * (ordered.length - 1);
+            if (total <= board) {
+                var x = -total / 2;
+                ordered.forEach(function (p) {
+                    p.x = x + p.label / 2;
+                    p.y = 0;
+                    x += p.label + PATH_ROW_GAP;
+                });
+                grid = { x0: -total / 2, y0: -rowH / 2, cellW: total, cellH: rowH, cols: 1, rows: 1 };
+                /* The frame is fitted to where names are centred, and a name
+                 * keeps its size as the view zooms in to fill the stage, so
+                 * the two end names hang over the frame by half their drawn
+                 * width. Without this a three-name row was framed with both
+                 * ends cut off by the stage's edges. */
+                var drawnHalf = function (p) {
+                    return (p.node && renderer.labelBox ? renderer.labelBox(p.node).width : p.label) / 2;
+                };
+                return Math.max(0, Math.max(drawnHalf(ordered[0]), drawnHalf(ordered[ordered.length - 1])) + 12 - padding);
+            }
+
+            var pitch = rowH + PATH_COLUMN_GAP;
+            var widest = ordered.reduce(function (w, p) { return Math.max(w, p.label); }, 0);
+            var top = -pitch * (ordered.length - 1) / 2;
+            ordered.forEach(function (p, i) {
+                p.x = 0;
+                p.y = top + i * pitch;
+            });
+            grid = {
+                x0: -widest / 2, y0: top - pitch / 2, cellW: widest, cellH: pitch,
+                cols: 1, rows: ordered.length
+            };
+            return 0;
+        }
+
+        /**
          * Lay the view out as a board: clusters of names that belong
          * together, each drawn as a small tree with ownership and command
          * reading downwards, fitted together to fill the stage.
@@ -2352,7 +2523,7 @@
             var frame = viewport.frameOf(points, padding);
             /* What was just clicked and its own connections: the part of
              * the board the visitor is looking at. */
-            var head = chain.length ? store.node(chain[chain.length - 1]) : null;
+            var head = chain.length && !inPath() ? store.node(chain[chain.length - 1]) : null;
             var near = null;
             if (head) {
                 /* Read off the lines on screen, so a place joined to the

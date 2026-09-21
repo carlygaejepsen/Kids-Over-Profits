@@ -19,7 +19,8 @@
  * Run it after editing anything in js/network-map/.
  *
  * Covers store, canvas, viewport, focus, filters, search (ranking and
- * opening), the drawer and URL state.
+ * opening), the drawer, URL state, and paths between two names (the store's
+ * routes, the route view and its drawer list).
  */
 
 const fs = require('fs');
@@ -208,6 +209,7 @@ function buildSandbox() {
         path.join('js', 'network-map', 'connection.js'),
         path.join('js', 'network-map', 'search.js'),
         path.join('js', 'network-map', 'drawer.js'),
+        path.join('js', 'network-map', 'path.js'),
         path.join('js', 'network-map', 'url-state.js'),
         path.join('js', 'network-map', 'filters.js')
     ];
@@ -2410,6 +2412,301 @@ function run() {
     focus.setMode('focus');
     focus.clear();
     flushFrames();
+
+    /* ---------------------------------------------- paths between two names -- */
+
+    /* Phase 3. store.paths: every route between two names, shortest first,
+     * over the filtered lines, never through a trade association. A block of
+     * its own, so its names cannot collide with the rest of run(). */
+    {
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    store.resetFilters();
+    const lineBetween = (a, b) => store.edgesBetween(a, b).length > 0;
+    const gil = store.node('david-gilcrease');
+    const syn = store.node('synanon');
+    check(!!gil && !!syn, 'the path fixture (David Gilcrease, Synanon) is not on the board');
+    const routes = store.paths(gil.id, syn.id);
+    check(routes.length > 0, 'no route found from David Gilcrease to Synanon',
+        routes.length + ' routes from David Gilcrease to Synanon, ' +
+        routes[0].hops + ' to ' + routes[routes.length - 1].hops + ' steps');
+    check(routes.every((r) => r.ids[0] === gil.id && r.ids[r.ids.length - 1] === syn.id),
+        'a route does not run from the first name to the second');
+    check(routes.every((r) => r.hops === r.ids.length - 1 && r.hops <= store.PATH_MAX_HOPS),
+        'a route is longer than the limit, or miscounts its steps');
+    check(routes.every((r) => r.ids.every((id, i) => i === 0 || lineBetween(r.ids[i - 1], id))),
+        'a route takes a step the map has no line for');
+    check(routes.every((r) => new Set(r.ids).size === r.ids.length), 'a route visits a name twice');
+    check(routes.every((r, i) => i === 0 || r.hops >= routes[i - 1].hops), 'routes are not shortest first');
+    check(new Set(routes.map((r) => r.ids.join('>'))).size === routes.length, 'the same route is listed twice');
+    check(routes.length <= store.PATH_LIMIT, 'more routes than the limit came back');
+    check(routes.every((r) => r.ids.slice(1, -1).every((id) => store.node(id).kind !== 'association')),
+        'a route passes through a trade association');
+
+    /* The shortest really is: breadth first by hand, under the same rule. */
+    const bfsHops = (fromId, toId) => {
+        const seenAt = { [fromId]: 0 };
+        const q = [fromId];
+        while (q.length) {
+            const at = q.shift();
+            if (at === toId) return seenAt[at];
+            store.neighbours(at, true).forEach((l) => {
+                const o = l.other;
+                if (seenAt[o.id] !== undefined) return;
+                if (o.id !== toId && o.kind === 'association') return;
+                seenAt[o.id] = seenAt[at] + 1;
+                q.push(o.id);
+            });
+        }
+        return -1;
+    };
+    check(routes[0].hops === bfsHops(gil.id, syn.id),
+        'the first route is ' + routes[0].hops + ' steps; the shortest is ' + bfsHops(gil.id, syn.id));
+    const back = store.paths(syn.id, gil.id);
+    check(back.length === routes.length && back[0].hops === routes[0].hops,
+        'the routes from B to A are not the routes from A to B');
+
+    /* Two members of one trade group are not joined by belonging to it... */
+    const natsap = store.node('natsap');
+    if (natsap) {
+        const members = store.neighbours(natsap.id, true).map((l) => l.other);
+        let viaOnly = null;
+        for (let i = 0; i < members.length && !viaOnly; i++) {
+            for (let j = i + 1; j < members.length && !viaOnly; j++) {
+                const open = store.paths(members[i].id, members[j].id, { throughAssociations: true, shortestOnly: true });
+                if (open.length && open[0].hops === 2 && open.every((r) => r.ids[1] === natsap.id)) {
+                    viaOnly = [members[i], members[j]];
+                }
+            }
+        }
+        if (viaOnly) {
+            const kept = store.paths(viaOnly[0].id, viaOnly[1].id);
+            check(kept.every((r) => r.ids.indexOf(natsap.id) === -1),
+                viaOnly[0].name + ' and ' + viaOnly[1].name + ' are joined through NATSAP membership',
+                viaOnly[0].name + ' and ' + viaOnly[1].name + ' share only NATSAP, and no route uses it');
+        }
+        /* ...but a trade group asked for by name is found. */
+        check(store.paths(natsap.id, syn.id).length > 0, 'a trade association cannot be the end of a route');
+    }
+
+    /* Nothing joins a name with no connections, a name to itself, or a name
+     * the board does not have; and a hidden connection type is not used. */
+    const loner = store.nodes.find((n) => n.isolated);
+    check(!loner || store.paths(syn.id, loner.id).length === 0, 'a route reached a name with no connections');
+    check(store.paths(syn.id, syn.id).length === 0, 'a name has a route to itself');
+    check(store.paths(syn.id, 'not-a-real-node').length === 0, 'a route reached a name the board does not have');
+    const usedCategories = new Set();
+    routes[0].ids.forEach((id, i) => {
+        if (i) store.edgesBetween(routes[0].ids[i - 1], id).forEach((e) => usedCategories.add(e.category));
+    });
+    usedCategories.forEach((c) => store.toggleIn('categories', c, false));
+    const without = store.paths(gil.id, syn.id);
+    check(without.every((r) => r.ids.join('>') !== routes[0].ids.join('>')),
+        'a route still uses connection types that are switched off');
+    store.resetFilters();
+
+    /* The worst case is two hubs; it has to stay instant on a phone. */
+    const hubsByDegree = store.nodes.slice().sort((a, b) => b.degree - a.degree).slice(0, 12);
+    const pathClock = Date.now();
+    hubsByDegree.forEach((a) => hubsByDegree.forEach((b) => { if (a !== b) store.paths(a.id, b.id); }));
+    const perPair = (Date.now() - pathClock) / (hubsByDegree.length * (hubsByDegree.length - 1));
+    check(perPair < 50, 'a route between two hubs takes ' + perPair.toFixed(1) + ' ms',
+        'routes between the 12 busiest names: ' + perPair.toFixed(2) + ' ms a pair');
+
+    /* The route on the board: its names, in order, the lines between each
+     * and the next, and nothing else - no folding, nobody's other places. */
+    const longest = routes[routes.length - 1];
+    check(focus.showPath(longest.ids) === true, 'a route the store found could not be shown');
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const routeScene = focus.scene();
+    check(focus.isPath() && focus.mode() === 'path', 'showing a route did not enter path mode');
+    check(focus.chain().join(',') === longest.ids.join(','), 'the trail is not the route');
+    check(routeScene.nodes.length === longest.ids.length && longest.ids.every((id) => routeScene.nodeIds[id]),
+        'the route view shows ' + routeScene.nodes.length + ' names for a route of ' + longest.ids.length);
+    check(Object.keys(routeScene.folded).length === 0, 'somebody on a route was folded into a line');
+    const stepIndex = {};
+    longest.ids.forEach((id, i) => { stepIndex[id] = i; });
+    check(routeScene.edges.length >= longest.hops &&
+        routeScene.edges.every((e) => Math.abs(stepIndex[e.sourceId] - stepIndex[e.targetId]) === 1),
+        'the route view draws a line that is not a step of the route');
+    /* In order along one line: a row left to right, or a column top to bottom. */
+    const routePts = longest.ids.map((id) => focus.positionOf(store.node(id)));
+    const inRow = routePts.every((p) => Math.abs(p.y - routePts[0].y) < 0.5) &&
+        routePts.every((p, i) => i === 0 || p.x > routePts[i - 1].x);
+    const inColumn = routePts.every((p) => Math.abs(p.x - routePts[0].x) < 0.5) &&
+        routePts.every((p, i) => i === 0 || p.y > routePts[i - 1].y);
+    check(inRow || inColumn, 'the route is not laid out in order along one line',
+        'a ' + longest.hops + '-step route is drawn as a ' + (inRow ? 'row' : 'column') + ' of ' + longest.ids.length);
+    const routeNames = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+    longest.ids.forEach((id) => {
+        check(routeNames.indexOf(store.node(id).name) !== -1, store.node(id).name + ' is on the route without its name');
+    });
+    check(collidingLabels(labelBoxes).length === 0, 'names on the route overlap');
+    const routeT = viewport.transform;
+    check(routePts.every((p) => {
+        const x = p.x * routeT.k + routeT.x;
+        const y = p.y * routeT.k + routeT.y;
+        return x >= 0 && x <= WIDTH && y >= 0 && y <= HEIGHT;
+    }), 'part of the route is off the stage');
+    /* Every trace is straight: one leg, crossing nobody. */
+    check((renderer.routes || []).length >= longest.hops && renderer.routes.every((r) => r.pts.length === 2),
+        'a step of the route is drawn with a bend, or not drawn');
+    check(/^Route from David Gilcrease to Synanon, \d steps/.test(announced), 'the route was not announced: ' + announced);
+
+    /* A short route fits in a row; the same code at a phone width stacks it. */
+    const direct = store.paths(gil.id, 'wwasps', { shortestOnly: true })[0];
+    check(!!direct && direct.hops === 1, 'David Gilcrease to WWASPS should be one step');
+    focus.showPath(direct.ids);
+    flushFrames();
+    const directPts = direct.ids.map((id) => focus.positionOf(store.node(id)));
+    check(Math.abs(directPts[0].y - directPts[1].y) < 0.5 && directPts[1].x > directPts[0].x,
+        'a two-name route on a wide stage is not a row');
+    /* A row is framed by where its names are centred, and the names at its
+     * two ends are as wide on screen at any zoom: both have to be on the
+     * stage whole, not cut off by its edges. */
+    const rowRoute = store.paths('sequel-youth-and-family-services', 'youth-services-international', { shortestOnly: true })[0];
+    const ROW_STAGE = 1300;
+    setStage(ROW_STAGE, HEIGHT);
+    renderer.resize();
+    focus.showPath(rowRoute.ids);
+    flushFrames();
+    const rowT = viewport.transform;
+    const rowXs = rowRoute.ids.map((id) => focus.positionOf(store.node(id)).x);
+    check(rowXs.every((x, i) => i === 0 || x > rowXs[i - 1]),
+        'three long names on a ' + ROW_STAGE + ' px stage are not a row, so the row framing is untested');
+    rowRoute.ids.forEach((id) => {
+        const node = store.node(id);
+        const at = focus.positionOf(node).x * rowT.k + rowT.x;
+        const half = renderer.labelBox(node).width / 2;
+        check(at - half >= 0 && at + half <= ROW_STAGE,
+            node.name + ' hangs off the stage in a row route: ' + Math.round(at - half) + ' to ' + Math.round(at + half));
+    });
+    setStage(375, 640);
+    renderer.resize();
+    focus.showPath(longest.ids);
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const phonePts = longest.ids.map((id) => focus.positionOf(store.node(id)));
+    check(phonePts.every((p, i) => Math.abs(p.x - phonePts[0].x) < 0.5 && (i === 0 || p.y > phonePts[i - 1].y)),
+        'a long route at 375 px is not a column');
+    check(collidingLabels(labelBoxes).length === 0, 'names on the route overlap at 375 px');
+    setStage(WIDTH, HEIGHT);
+    renderer.resize();
+
+    /* A route the map has no line for is refused, and nothing changes. */
+    focus.showPath(longest.ids);
+    flushFrames();
+    check(focus.showPath([gil.id, syn.id]) === false && focus.chain().join(',') === longest.ids.join(','),
+        'a route with a missing step was shown, or replaced the one on the board');
+
+    /* A crumb cuts the route back; cut back to one name it is that name's view. */
+    focus.truncateTo(2);
+    flushFrames();
+    check(focus.isPath() && focus.scene().nodes.length === 3, 'a crumb did not cut the route back to its third name');
+    focus.truncateTo(0);
+    flushFrames();
+    check(!focus.isPath() && focus.mode() === 'focus' && focus.chain().join(',') === gil.id,
+        'a route cut back to one name is still a route');
+    check(store.neighbours(gil.id, true).every((l) => onMap(focus.scene(), l.other.id)),
+        'leaving a route did not open the name that was left');
+
+    /* A click on the route leaves it for that name, in Focus. */
+    focus.setMode('expand');
+    focus.showPath(longest.ids);
+    flushFrames();
+    const midStep = store.node(longest.ids[1]);
+    focus.select(midStep);
+    flushFrames();
+    check(focus.mode() === 'focus' && !focus.isPath() && focus.chain()[focus.chain().length - 1] === midStep.id,
+        'clicking a name on a route did not open it in focus mode');
+    check(store.neighbours(midStep.id, true).every((l) => onMap(focus.scene(), l.other.id)),
+        'the name clicked on a route did not arrive with its connections');
+
+    /* A filter that takes a step away takes the route with it, not the page. */
+    focus.showPath(routes[0].ids);
+    flushFrames();
+    usedCategories.forEach((c) => store.toggleIn('categories', c, false));
+    focus.refresh();
+    flushFrames();
+    check(!focus.isPath(), 'a route survived the filter that removed its lines');
+    store.resetFilters();
+    focus.clear();
+    flushFrames();
+    check(focus.mode() === 'focus', 'starting over from a route left the map in path mode');
+
+    /* The address bar carries a route, and a link opens one. */
+    check(Url.parse(Url.format(longest.ids, 'path')).mode === 'path', 'the hash does not round-trip a route');
+    focus.showPath(longest.ids);
+    flushFrames();
+    url.write();
+    check(fakeLocation.hash === '#open=' + longest.ids.join(',') + '&mode=path', 'a route was not written to the hash: ' + fakeLocation.hash);
+    focus.clear();
+    flushFrames();
+    fakeLocation.hash = '#open=' + longest.ids.join(',') + '&mode=path';
+    url.read();
+    flushFrames();
+    check(focus.isPath() && focus.chain().join(',') === longest.ids.join(','), 'a shared link did not reopen its route');
+    /* A link whose route the board no longer has opens its last name instead. */
+    fakeLocation.hash = '#open=' + gil.id + ',' + syn.id + '&mode=path';
+    url.read();
+    flushFrames();
+    check(!focus.isPath() && focus.chain()[focus.chain().length - 1] === syn.id,
+        'a link to a route that no longer holds did not fall back to a name');
+    focus.clear();
+    flushFrames();
+
+    /* path.js: the form's find(), and the route written out in the drawer. */
+    const PathUi = sandbox.KOPNetworkPath;
+    check(!!PathUi, 'path.js did not load');
+    const pathMessage = doc.createElement('p');
+    const pathUi = PathUi.create({ store, focus, document: doc, elements: { message: pathMessage } });
+    check(pathUi.find(gil, gil).length === 0 && /same name/.test(pathMessage.textContent), 'the same name twice was not refused');
+    check(pathUi.find(syn, loner).length === 0 && /No route/.test(pathMessage.textContent), 'no route was not reported');
+    check(!focus.isPath(), 'a search that found nothing changed the board');
+    const foundRoutes = pathUi.find(gil, syn);
+    flushFrames();
+    check(foundRoutes.length === routes.length && focus.isPath() &&
+        focus.chain().join(',') === routes[0].ids.join(','), 'finding routes did not put the shortest on the board');
+
+    const told = PathUi.describeRoute(store, routes[0].ids, sandbox.KOPNetworkConnection, sandbox.KOPNetworkCanvas);
+    check(told.length === routes[0].ids.length && told[told.length - 1].joins.length === 0 &&
+        told.slice(0, -1).every((step) => step.joins.length > 0),
+        'a step of the route says nothing about what joins it to the next',
+        'route, written out: ' + told.map((t) => t.node.name + (t.joins.length ? ' [' + t.joins[0] + ']' : '')).join(' > '));
+
+    const routeDrawerEl = doc.createElement('aside');
+    routeDrawerEl.hidden = true;
+    const routeDrawerBody = doc.createElement('div');
+    const routeDrawer = Drawer.create({
+        store, focus, config: drawerConfig, document: doc,
+        drawer: routeDrawerEl, body: routeDrawerBody, close: doc.createElement('button'),
+        renderPath: (body) => pathUi.renderInto(body)
+    });
+    routeDrawer.update();
+    const stepButtons = routeDrawerBody.querySelectorAll('.kop-network__route-step');
+    check(routeDrawerEl.hidden === false && stepButtons.length === routes[0].ids.length,
+        'the drawer does not list the route: ' + stepButtons.length + ' steps for ' + routes[0].ids.length + ' names');
+    const routeButtons = routeDrawerBody.querySelectorAll('.kop-network__drawer-list')[0].querySelectorAll('.kop-network__drawer-link');
+    check(routeButtons.length === routes.length, 'the drawer offers ' + routeButtons.length + ' of ' + routes.length + ' routes');
+    check(routeButtons.filter((b) => b.getAttribute('aria-current') === 'true').length === 1,
+        'the drawer does not mark which route is on the board');
+    routeButtons[routeButtons.length - 1].dispatch('click');
+    flushFrames();
+    check(focus.chain().join(',') === routes[routes.length - 1].ids.join(','), 'choosing another route in the drawer did not show it');
+    routeDrawer.update();
+    routeDrawerBody.querySelectorAll('.kop-network__route-step')[1].querySelector('.kop-network__drawer-link').dispatch('click');
+    flushFrames();
+    routeDrawer.update();
+    check(!focus.isPath() && routeDrawer.shownId() === routes[routes.length - 1].ids[1],
+        'a name in the written-out route did not open, or the drawer did not follow it');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    }
 
     /* 2b.4 In expand mode the newest click is framed with its own
      * connections, not lost in a corner of everything opened so far. */

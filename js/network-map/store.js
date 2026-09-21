@@ -388,6 +388,127 @@
             });
         };
 
+        /* ---------------------------------------------------------- paths -- */
+
+        /**
+         * How two names are connected: every route between them, shortest
+         * first, as [{ ids: [from, ..., to], hops }].
+         *
+         * The trail answers this only for someone who already suspects the
+         * route, a click at a time. This walks the graph instead - over the
+         * filtered edge set, so a connection type the visitor has turned off
+         * is not used to join anything.
+         *
+         * A route never passes through a trade association. Thirty-one names
+         * are NATSAP members, so "both belong to NATSAP" would join half the
+         * map in two steps and bury the routes that say something: a shared
+         * owner, a therapist who worked at both. An association asked for as
+         * one of the two ends is still found. (The build's starter views
+         * follow the same rule; see connectView.)
+         *
+         * A route is a list of names, not of lines: two names joined by three
+         * records are one step. Shortest first means by length and then as
+         * found, which is stable for a given graph.
+         *
+         * Distance to the target is worked out once, breadth first, and the
+         * search only ever steps to a name that can still reach the target in
+         * the hops it has left. That is what keeps a walk out of Sequel's 88
+         * connections from costing anything: without it six hops from a hub
+         * is millions of dead ends. The step budget is the seatbelt behind
+         * that, not the mechanism.
+         */
+        var PATH_MAX_HOPS = 6;
+        var PATH_LIMIT = 50;
+        var PATH_BUDGET = 400000;
+        store.PATH_MAX_HOPS = PATH_MAX_HOPS;
+        store.PATH_LIMIT = PATH_LIMIT;
+
+        store.paths = function (fromId, toId, options) {
+            options = options || {};
+            var maxHops = options.maxHops || PATH_MAX_HOPS;
+            var limit = options.limit || PATH_LIMIT;
+            var vis = store.visible();
+            if (!vis.nodeIds[fromId] || !vis.nodeIds[toId]) return [];
+            if (fromId === toId) return [];
+
+            var adjacent = Object.create(null);
+            vis.edges.forEach(function (edge) {
+                var a = edge.sourceId, b = edge.targetId;
+                if (a === b) return;
+                var listA = adjacent[a] = adjacent[a] || [];
+                var listB = adjacent[b] = adjacent[b] || [];
+                if (listA.indexOf(b) === -1) listA.push(b);
+                if (listB.indexOf(a) === -1) listB.push(a);
+            });
+
+            /* May a route pass through this name? The two ends always may. */
+            function through(id) {
+                if (id === fromId || id === toId) return true;
+                var node = store.nodeById[id];
+                return !!node && (options.throughAssociations || node.kind !== 'association');
+            }
+
+            /* Hops from every name to the target, through allowed names only. */
+            var dist = Object.create(null);
+            dist[toId] = 0;
+            var queue = [toId];
+            while (queue.length) {
+                var at = queue.shift();
+                if (dist[at] >= maxHops) continue;
+                (adjacent[at] || []).forEach(function (other) {
+                    if (dist[other] !== undefined || !through(other)) return;
+                    dist[other] = dist[at] + 1;
+                    queue.push(other);
+                });
+            }
+            if (dist[fromId] === undefined) return [];
+
+            var found = [];
+            var budget = PATH_BUDGET;
+            var trail = [fromId];
+            var onTrail = Object.create(null);
+            onTrail[fromId] = true;
+
+            /* Routes of exactly `length` hops, so each round adds the next
+             * longest and the list comes out shortest first. */
+            function walk(id, left) {
+                if (found.length >= limit || budget <= 0) return;
+                if (left === 0) {
+                    if (id === toId) found.push({ ids: trail.slice(), hops: trail.length - 1 });
+                    return;
+                }
+                var next = adjacent[id] || [];
+                for (var i = 0; i < next.length; i++) {
+                    var other = next[i];
+                    if (onTrail[other] || dist[other] === undefined || dist[other] > left - 1) continue;
+                    /* The target ends a route; it is never a step on the way. */
+                    if (other === toId && left !== 1) continue;
+                    budget--;
+                    onTrail[other] = true;
+                    trail.push(other);
+                    walk(other, left - 1);
+                    trail.pop();
+                    onTrail[other] = false;
+                    if (found.length >= limit || budget <= 0) return;
+                }
+            }
+
+            for (var length = dist[fromId]; length <= maxHops; length++) {
+                walk(fromId, length);
+                if (found.length >= limit || budget <= 0) break;
+                /* Only the shortest routes, when that is all that was asked. */
+                if (options.shortestOnly && found.length) break;
+            }
+            return found;
+        };
+
+        /** The filtered lines between two names, whichever end each was drawn from. */
+        store.edgesBetween = function (a, b) {
+            return store.neighbours(a, true).filter(function (link) {
+                return link.other.id === b;
+            }).map(function (link) { return link.edge; });
+        };
+
         /**
          * The organisations the map opens on, as nodes.
          *

@@ -18,7 +18,7 @@ at the end.
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile | Steps 1 to 6 done (2026-09-18) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
-| 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Outlined |
+| 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
 ## Phase 1 recap
@@ -535,6 +535,7 @@ decisions.
 | `js/network-map/focus.js` | The chain: hover preview, click to commit, breadcrumb truncation, and the live re-settle of a focused neighbourhood |
 | `js/network-map/connection.js` | What a line says: the DOM-free description of the lines between two names, and the hover/pinned popup that shows it |
 | `js/network-map/drawer.js` | Selected node panel and connection list |
+| `js/network-map/path.js` | How two names are connected: the Path form, and the route written out in the drawer |
 | `js/network-map/url-state.js` | Encodes selection, filters and viewport into the hash, restores on load |
 | `js/network-map/app.js` | Bootstrap and event wiring |
 | `scripts/test-network-modules.js` | Node tests for store, search ranking and url-state, which are DOM-free |
@@ -912,9 +913,8 @@ Each step leaves the branch deployable.
      traces, every name drawn), the three rules for what is on the board,
      Focus/Expand, labels as hit targets, the rail closed by default.
      **Done**, commits 52b0ab6 through 89a9940.
-6. Search, drawer, URL state. **Not started**: the search box in the
-   template is inert and nothing on the page links to a facility profile
-   yet, though the config already carries the URL map.
+6. Search, drawer, URL state. **Done** (2026-09-18); see "Step 2 closed"
+   under Phase 2b.
 7. Mobile breakpoints, keyboard, reduced motion, module tests.
 8. Chain hulls, if they fit. Probably superseded by the band layout, which
    already groups by kind.
@@ -1525,21 +1525,107 @@ The owner's four complaints, and what answers each:
   window with `kop-network__app--full` instead, and Escape leaves it. The
   stage resizes either way and the resize observer re-lays the view out.
 
-## Phase 3: analysis tools (outline)
+## Phase 3: analysis tools
 
 Focus and Path were the headline items here. Focus became the core Phase 2
-interaction instead, and the chain covers some of what Path was for, so
-what is left is:
+interaction instead. Path is built; the list view and corrections are
+still outlines.
 
-- **Shortest path and all paths between two named nodes**: the chain
-  walks the graph a hop at a time, which answers "how is A connected to B"
-  only if you already suspect the route. `store.paths(fromId, toId,
-  {max})` in the DOM-free store: BFS for the shortest, bounded DFS (six
-  hops, fifty results) for all simple paths, over the filtered edge set.
-  UI: a Path button opens two search boxes; the result sets the chain to
-  the path nodes in Focus mode and a list under the breadcrumb offers every
-  found path. Test against the real graph (Gilcrease to Synanon is a good
-  fixture).
+### Paths between two names (2026-09-21)
+
+The trail walks the graph a click at a time, which answers "how is A
+connected to B" only for somebody who already suspects the route. The Path
+button asks the store instead.
+
+**`store.paths(fromId, toId, options)`** returns every route between two
+names of six steps or fewer, shortest first, at most fifty, as
+`[{ ids, hops }]`. It runs over the filtered lines, so a connection type
+switched off in the Key joins nothing. A route is a list of names, not of
+lines: two names joined by three records are one step.
+
+- *Never through a trade association.* Thirty-one names are NATSAP members,
+  so "both belong to NATSAP" would join half the map in two steps and bury
+  the routes that say something. An association asked for as one of the two
+  ends is still found. The build's starter views keep the same rule
+  (`connectView`). `throughAssociations: true` lifts it; nothing on the page
+  does.
+- *How it stays instant.* Distance to the target is worked out once, breadth
+  first, and the walk only steps to a name that can still reach the target
+  in the hops it has left. Routes are found a length at a time, so the list
+  comes out shortest first without sorting. Between the twelve busiest names
+  it takes about 2 ms a pair; without the pruning, six hops out of Sequel's
+  88 connections is millions of dead ends. A step budget of 400,000 is the
+  seatbelt behind that, and has never been reached on the real graph.
+
+**The route on the board (`focus.showPath`).** A route is a third mode of
+the trail, `path`, beside Focus and Expand: the trail is the route. That is
+what lets the rest of the page carry on unchanged - the crumbs name the
+route and a crumb cuts it back to that name, `#open=a,b,c&mode=path`
+reopens it from a link, and Start over and Escape leave it.
+
+- The scene is the route's names and the lines between each and the next,
+  and nothing else. Every rule that brings more onto the board (a person's
+  places, a programme's owner) stands aside, and a line between two names
+  that are not neighbours on the route is left out, since it would be a
+  shortcut across the route being shown.
+- Nobody is folded into a line. On a route the person who joins two places
+  is the answer, so they are a name.
+- *Laid out as a line, not a board* (`pathLayout`). The board layout
+  arranges by hierarchy, and a route through a company, a programme and a
+  person came out as a zigzag that had to be traced to find its order. A
+  route is a row in reading order when it fits the stage at full size (gaps
+  of 150, room for each line's caption), and a column when it does not:
+  names are one size whatever the zoom, so zooming a row out only pushes
+  them into each other. Every step is one straight trace. A row's end names
+  hang over the frame by half their width, so the layout reports that as
+  overhang; without it a three-name row was framed with both ends cut off
+  by the stage (found in the browser, not by the tests, which now check it
+  at a 1300 px stage).
+- Nothing on a route is grown and the view frames the whole route, since a
+  route has two ends and no head.
+- Clicking a name on the route leaves it for that name's own view, in
+  Focus whatever the toggle said before: Expand would lay out every name on
+  the route with everything it touches. With a route on the board neither
+  radio is checked.
+- A route whose step a filter takes away, or a link to a route the board no
+  longer has, falls back to the last name's own view.
+
+**The page (`path.js`).** The Path button in the toolbar opens a small form
+under it: two search boxes (the same combobox as the main search, through a
+new `onChoose` option, so a pick names an end instead of opening it), Find
+routes, Swap and Close. With something already open on the map, From is
+filled in with it. Typed text that was never picked is taken as its best
+match. The form closes once it has an answer, so it never sits over the
+route it found; when it has none it says why (no route in six steps, the
+association rule, the Key's filters).
+
+The answer is read in the drawer, which is where a name is already read
+about, does not cover the stage, and is already a sheet on a phone. It
+shows the route on the board as a numbered list - each name a button that
+opens it, and under it what the record says joins it to the next
+(`describeRoute`, built on `connection.describe`, so it is the same wording
+as the line's own popup) - then every route found, each a button that puts
+that one on the board instead, with the one showing marked. This is also
+the route's text alternative: nothing about it is reachable only by
+hovering a line.
+
+Tests (`scripts/test-network-modules.js`, "paths between two names"): every
+route runs end to end over real lines, visits no name twice, is within the
+limit and shortest first, and the first matches a breadth-first search done
+by hand; A to B finds what B to A finds; two members who share only NATSAP
+are not joined by it; no route reaches an unconnected name or uses a
+switched-off connection type; the hub timing; the route view's names, lines,
+order, straight traces, framing as a row and as a column at 375 px; crumbs,
+clicks and filters leaving a route; the hash round trip; and the drawer's
+list. The association rule, the step-only lines and the row framing were
+each checked by breaking them.
+
+One thing to look at on a phone: the drawer is a sheet over the lower half
+of the stage, as it is after any click, and a route drawn as a column runs
+down behind it. Closing the sheet shows the whole route.
+
+### Still outlined
+
 - **List view**: an accessible, sortable table of the same filtered nodes
   and edges, with CSV export. This is the screen-reader path.
 - **Suggest a correction**: reuses `submit-info.js` to write to

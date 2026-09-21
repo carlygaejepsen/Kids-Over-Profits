@@ -6,6 +6,10 @@
  *
  *   #open=provo-canyon-school,wwasps&mode=expand
  *
+ * A route between two names (focus.showPath) is a trail too, in its own mode:
+ *
+ *   #open=david-gilcrease,wwasps,provo-canyon-school&mode=path
+ *
  * The hash rather than the query string, because nothing here needs the
  * server and a query change would reload the page. replaceState rather than
  * pushState: every click would otherwise be a Back step, and the breadcrumb
@@ -16,7 +20,7 @@
 (function (root) {
     'use strict';
 
-    /** {ids: [...], mode: 'focus'|'expand'|null, view: key|null} from a hash string. */
+    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null} from a hash string. */
     function parse(hash) {
         var out = { ids: [], mode: null, view: null };
         var text = String(hash || '').replace(/^#/, '');
@@ -33,7 +37,7 @@
             }
             if (key === 'open') {
                 out.ids = value.split(',').map(function (id) { return id.trim(); }).filter(Boolean);
-            } else if (key === 'mode' && (value === 'focus' || value === 'expand')) {
+            } else if (key === 'mode' && (value === 'focus' || value === 'expand' || value === 'path')) {
                 out.mode = value;
             } else if (key === 'view' && /^[a-z0-9-]+$/.test(value)) {
                 out.view = value;
@@ -49,7 +53,7 @@
             parts.push('open=' + ids.map(encodeURIComponent).join(','));
             /* Focus is the default, so it is left out and a plain link stays
              * short. */
-            if (mode === 'expand') parts.push('mode=expand');
+            if (mode === 'expand' || mode === 'path') parts.push('mode=' + mode);
         }
         if (view && view !== 'default') parts.push('view=' + encodeURIComponent(view));
         return parts.length ? '#' + parts.join('&') : '';
