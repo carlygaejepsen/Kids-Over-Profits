@@ -32,6 +32,11 @@ node scripts/extract-reddit-wiki-links.js
 # After editing the network map CSVs or network-overrides.json
 node scripts/build-network-graph.js
 node scripts/test-network-graph.js
+
+# After editing anything in js/network-map/
+node scripts/test-network-modules.js
+# The live map is behind a password; see the working tree in a browser instead
+python scripts/preview-network-map.py --shots tmp/map-preview
 ```
 
 ### Network map data

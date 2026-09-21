@@ -892,6 +892,18 @@ Three layers:
 2. A manual browser list: desktop Chrome, Firefox and Safari; iOS Safari
    for pinch; Android Chrome; one pass at 375 px width; a Lighthouse
    accessibility run.
+
+   The live page is behind the beta password, so the working tree is looked
+   at with `python scripts/preview-network-map.py`: it builds the page from
+   the template with the PHP stripped, serves the theme on a free port, and
+   either waits for a browser or, with `--shots tmp/map-preview`, saves
+   desktop and phone screenshots through Playwright (add `--hash
+   "#open=wwasps"` to open a view) and reports console errors. It reads the
+   module list from `inc/enqueue.php`. It cannot show what PHP decides: the
+   password gate, the Start from select, facility profile links. It is what
+   found the cut-off row in the route view and the Escape key closing the
+   Path form along with its search list, neither of which the module tests
+   could see.
 3. Deploy verified by fetching the vendor bundle and layout.json with a
    browser user agent, since HTML pages are bot-walled.
 
