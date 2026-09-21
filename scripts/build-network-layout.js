@@ -26,7 +26,16 @@
  * run by hand rather than on a timer, and output is rounded to one decimal.
  * Rebuilding without changing graph.json rewrites the same bytes.
  *
- * Usage: node scripts/build-network-layout.js
+ * Additions do not move what is already placed. Every node the last
+ * layout.json positioned is pinned where it was, at the size it was, and only
+ * the new ones are simulated, starting from the middle of whatever they
+ * connect to that is already on the map. Every opened view starts its own
+ * settle from these positions, so a fresh layout after adding a handful of
+ * names reshuffled every view on the map, including the many that gained
+ * nothing (2026-09-21). Run with --fresh after a new board export, when the
+ * whole picture should be settled again from the Miro coordinates.
+ *
+ * Usage: node scripts/build-network-layout.js [--fresh]
  */
 
 const fs = require('fs');
@@ -180,9 +189,10 @@ function round1(value) {
     return Math.round(value * 10) / 10;
 }
 
-function build() {
+function build(fresh) {
     const graph = load(GRAPH_FILE);
     const d3 = loadD3();
+    const before = !fresh && fs.existsSync(OUTPUT_FILE) ? load(OUTPUT_FILE).positions || {} : {};
 
     /* Work on copies: d3 adds vx/vy and rewrites link endpoints to objects. */
     const all = graph.nodes.map(function (n) {
@@ -198,6 +208,39 @@ function build() {
         };
     });
     assignRadii(all);
+
+    /* Pinned where the last layout left them. A new node starts at the middle
+     * of its placed neighbours, nudged apart by its index so two newcomers
+     * on the same neighbours do not start on top of each other; a new node
+     * with none keeps its board seed. */
+    const placedBefore = new Map();
+    all.forEach(function (node) {
+        const was = before[node.id];
+        if (!was) return;
+        node.x = node.fx = was.x;
+        node.y = node.fy = was.y;
+        node.r = was.r;
+        placedBefore.set(node.id, node);
+    });
+    let added = 0;
+    if (placedBefore.size) {
+        const around = new Map();
+        graph.edges.forEach(function (e) {
+            [[e.source, e.target], [e.target, e.source]].forEach(function (pair) {
+                if (placedBefore.has(pair[0]) || !placedBefore.has(pair[1])) return;
+                if (!around.has(pair[0])) around.set(pair[0], []);
+                around.get(pair[0]).push(placedBefore.get(pair[1]));
+            });
+        });
+        all.forEach(function (node, i) {
+            if (placedBefore.has(node.id)) return;
+            added++;
+            const near = around.get(node.id);
+            if (!near) return;
+            node.x = near.reduce(function (s, n) { return s + n.x; }, 0) / near.length + 12 * Math.cos(i);
+            node.y = near.reduce(function (s, n) { return s + n.y; }, 0) / near.length + 12 * Math.sin(i);
+        });
+    }
 
     const simulated = all.filter(function (n) { return !n.isolated; });
     const isolated = all.filter(function (n) { return n.isolated; });
@@ -228,6 +271,33 @@ function build() {
 
     for (let i = 0; i < TICKS; i++) sim.tick();
 
+    /* The collision force shares a push between the two nodes it separates,
+     * and a pinned node takes none of its share, so a newcomer can finish
+     * the ticks still sitting on the edge of one. Step each newcomer out of
+     * anything it overlaps, the whole way, in a fixed order. */
+    if (placedBefore.size) {
+        const loose = simulated.filter(function (n) { return !placedBefore.has(n.id); });
+        for (let round = 0; round < 50; round++) {
+            let moved = false;
+            loose.forEach(function (a) {
+                simulated.forEach(function (b) {
+                    if (a === b) return;
+                    const dx = a.x - b.x;
+                    const dy = a.y - b.y;
+                    const dist = Math.hypot(dx, dy);
+                    const clear = a.r + b.r + 5;
+                    if (dist >= clear) return;
+                    const ux = dist > 0 ? dx / dist : 1;
+                    const uy = dist > 0 ? dy / dist : 0;
+                    a.x = b.x + ux * clear;
+                    a.y = b.y + uy * clear;
+                    moved = true;
+                });
+            });
+            if (!moved) break;
+        }
+    }
+
     /* Park the isolated nodes in a row below everything that settled. */
     let bottom = 0;
     let left = 0;
@@ -236,6 +306,7 @@ function build() {
         left = Math.min.apply(null, simulated.map(function (n) { return n.x - n.r; }));
     }
     isolated.forEach(function (node, i) {
+        if (placedBefore.has(node.id)) return;
         node.x = left + i * ISOLATED_GAP;
         node.y = bottom + ISOLATED_MARGIN;
     });
@@ -278,13 +349,15 @@ function build() {
     console.log('Wrote ' + path.relative(ROOT, OUTPUT_FILE) + ':');
     console.log('  ' + all.length + ' nodes (' + simulated.length + ' simulated, ' +
         isolated.length + ' isolated), ' + links.length + ' links, ' + TICKS + ' ticks');
+    console.log('  ' + (placedBefore.size ? placedBefore.size + ' kept where they were, ' + added + ' new placed around them'
+        : 'settled fresh from the board'));
     console.log('  extent x ' + extent.minX + '..' + extent.maxX +
         ', y ' + extent.minY + '..' + extent.maxY);
 }
 
 if (require.main === module) {
     try {
-        build();
+        build(process.argv.indexOf('--fresh') !== -1);
     } catch (err) {
         console.error('Layout build failed: ' + err.message);
         process.exit(1);
