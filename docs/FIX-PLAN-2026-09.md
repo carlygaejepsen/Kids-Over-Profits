@@ -28,7 +28,7 @@ Last updated 2026-09-18.
 | 11 | Facility websites: Wayback and/or donotlink everywhere | Done: Wayback first, live site only through /go/ |
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
-| 14 | Parser that flags the worst inspection findings | Open: design below |
+| 14 | Parser that flags the worst inspection findings | Steps 1 to 4 built for Texas and California; first scan waiting on the owner; other states, the site blocks and the nightly run still open |
 
 ## Waiting on the owner
 
@@ -62,6 +62,13 @@ session can do it. The tools that change data show a dry run first; add
    of proposed crisis lines, reporting routes and family resources that
    visitors cannot see. Check every number, then move the ones to publish
    into `kop_resources_groups()` in `inc/resources-list.php`.
+8. **Inspection highlights (14).** Open
+   [scan-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/scan-inspection-highlights.php)
+   for the dry run, then `?apply=1` repeatedly until it reports 0 remaining
+   (about 14 loads). It only adds two new tables. Then review the queue in
+   [review-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php).
+   Approving changes nothing on the site yet; the blocks that show approved
+   highlights are the next step.
 7. **Starter views for the map (1).** Done 2026-09-18: four views are in
    `js/data/network/network-overrides.json` (Historical, Today's top
    players, Wilderness, Fundamentalist). Edit that file to change or add
@@ -593,6 +600,68 @@ in the featured tool.
 A pass over the inspection reports that finds the most serious findings,
 pulls each one out with its quote and source, and queues it for review
 before anything is highlighted on the site.
+
+**Built 2026-09-21: extract, score, store and review, for Texas and
+California** (41,971 of the 57,089 reports). Nothing is on the site yet and
+nothing can be until a person approves it.
+
+- `inc/inspection-highlights.php` holds all three steps and needs no
+  WordPress. Texas: each row is one citation, scored from its deficiency
+  narrative and scaled by HHSC's risk level (High 1.0 down to Low 0.4).
+  California: a complaint investigation is one finding. The scraped
+  `complaint_status` is wrong for about one report in ten (985 reports filed
+  as unsubstantiated substantiate one allegation and not another, and 169
+  more only say "substantiated"), so the outcome is read from the analyst's
+  text: Substantiated 1.0, Partly substantiated 0.8, Inconclusive 0.5,
+  unsubstantiated never queued. A facility evaluation counts only when its
+  narrative cites a deficiency (0.7). Form boilerplate is cut off first.
+- Scoring is per sentence, never per report. Nine categories with starter
+  weights: death 100, sexual abuse 90, physical abuse or assault 80,
+  restraint or seclusion with an injury named in the same sentence 75,
+  suicide attempt or self-harm 65 (added to the plan's list), medical
+  neglect 60, hospitalisation 55, child missing or ran away 45, police 40.
+  A mention is dropped when a negation ("no", "denied", "unfounded") or a
+  hypothetical ("could result in", "must report", "threatened", "hoped")
+  stands within 60 characters before it. The score is the worst category's
+  weight plus 5 for each further category (15 at most), times the state's
+  factor; below 30 is not queued. The excerpt is the matching sentences
+  verbatim, with `[...]` where text between them is left out.
+- `inspection_highlights` keeps each candidate with its status, reviewer and
+  note; `inspection_highlight_scans` records which reports this version of
+  the rules has seen, so the nightly run reads only new reports, and bumping
+  `kop_ih_scanner_version()` rescans everything. A re-run refreshes pending
+  rows, withdraws pending rows the rules no longer produce, and never touches
+  an approved or rejected one. `corrected_on_site` is stored, not scored,
+  until that decision is made.
+- The mirror holds 9,107 California reports twice for the same facility under
+  two id schemes (`455002153-3` and `455002153-3-d92232c9bd`). The parser
+  queues the finding once; the duplicate rows themselves are a scraper fault
+  still to fix, and they inflate the report counts on the hub.
+- Result against the mirror of 2026-09-17: 1,689 candidates (Texas 851,
+  California 838) in 13 seconds; 113 score 90 or more, 348 score 70 to 89.
+  By worst category: missing 498, physical abuse 311, sexual abuse 239,
+  self-harm 202, medical neglect 183, hospitalisation 119, restraint injury
+  53, police 49, death 35. The top of the queue is what it should be (a
+  choking death while unsupervised, staff absconding with a minor, prone
+  restraints with injuries); the known weakness is attribution, since a rule
+  cannot tell a child assaulting staff from the reverse, which is what the
+  review step is for.
+- `api/scan-inspection-highlights.php` runs the scan (browser: dry run, then
+  `?apply=1`, one batch per load; CLI: `apply` works through the backlog).
+  `api/review-inspection-highlights.php` is the review screen: worst first,
+  filters by state, category, score and facility, the full report under each
+  excerpt, approve or reject with a note, and back to pending.
+- Tests: `scripts/test-inspection-highlights.php` (45 rule cases including
+  every false positive found so far, then a read-only dry run over the mirror;
+  `--report=<file.md>` writes the top candidates per category and a random
+  slice for reading). The store was also run twice against a throwaway
+  MySQL 8: a second pass adds nothing and reviewed rows survive.
+
+Still to do: adapters for the other eleven states (Arizona, Connecticut,
+Washington and Florida carry structured deficiencies; North Carolina,
+Georgia, Arkansas, Minnesota and Oregon need the report text; Utah and
+Nevada carry only counts and grades); the blocks on the site (step 5); the
+cron line (step 6).
 
 What the data holds (production mirror, 57,089 reports in 13 states): no
 report is stored in a common structure (`is_structured` is 0 everywhere).
