@@ -52,7 +52,6 @@
       "match": [
         "wilderness therapy",
         "wilderness program",
-        "wilderness camp",
         "wilderness rehab",
         "wilderness treatment"
       ]
@@ -91,9 +90,24 @@
     {
       "label": "paris-hilton-advocacy",
       "q": "\"Paris Hilton\" (teen OR facility OR bill OR abuse OR lawsuit OR survivors)",
+      "_comment": "Match phrases are advocacy context, not her name: her name plus a keyword let every celebrity-death tribute through (11 Presley Gerber stories in one run).",
       "boost": 2,
       "match": [
-        "paris hilton"
+        "troubled teen",
+        "provo canyon",
+        "institutional",
+        "congregate care",
+        "residential",
+        "boarding school",
+        "foster",
+        "congress",
+        "senate",
+        "legislat",
+        "lawmakers",
+        "testif",
+        "capitol",
+        " bill",
+        "survivors"
       ]
     },
     {
@@ -229,8 +243,9 @@
     },
     {
       "label": "tti-corporate-operators",
+      "_boostComment": "boost 0: the match phrases are the operator names, which already score as a facility match. A boost on top accepted promo pieces with no keyword at all (\"Newport Healthcare helping manage teen mental health\").",
       "q": "(\"Acadia Healthcare\" OR \"Universal Health Services\" OR \"Sequel Youth\" OR \"Vivant Behavioral\" OR \"Embark Behavioral\" OR \"Newport Healthcare\" OR \"Family Help & Wellness\") (youth OR adolescent OR teen OR children OR patients) (lawsuit OR investigation OR abuse OR settlement OR death OR license OR closing)",
-      "boost": 2,
+      "boost": 0,
       "match": [
         "acadia healthcare",
         "universal health services",
@@ -251,7 +266,6 @@
         "foster care",
         "foster child",
         "foster youth",
-        "child welfare",
         "state custody"
       ]
     },
@@ -365,5 +379,15 @@
     "The Village",
     "Summit View",
     "Our Home Inc."
-  ]
+  ],
+  "_ignoreAliasesComment": "Names that must never count as a facility match or be searched on their own. For facility records whose name is not a real place name (a record literally named \"Kansas\" turned every Kansas City crime story into a facility hit). Bare US state names are ignored automatically. Compared case-insensitively after stripping punctuation.",
+  "ignoreAliases": [
+    "Kansas",
+    "Behavioral Health"
+  ],
+  "_redditBoostComment": "Score added to r/troubledteens candidates (threshold is 3). link = a post whose target is an external article: 3 accepts it on the subreddit alone, since members post on-topic news that rarely uses the abuse keywords. selftext = a link inside a text post: 1 means it still needs a strong keyword or a facility match.",
+  "redditBoost": {
+    "link": 3,
+    "selftext": 1
+  }
 }
