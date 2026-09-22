@@ -90,6 +90,7 @@ const AI_RATE_LIMIT_STOP_AFTER = 3;    // consecutive rate-limited candidates be
 const AI_RATE_LIMIT_WAIT_MS   = 45000;
 const MAX_SEEN_URLS        = 50000;
 const MAX_REJECTED_ENTRIES = 2000;  // rejected log cap (deduped by link)
+const REJECTED_URL_TTL_DAYS = 7;      // reject suppression window for noisy repeats
 const PER_FACILITY_CAP     = 15;    // RSS items considered per facility
 const REQUEST_TIMEOUT_MS   = 30000;
 const AI_TIMEOUT_MS        = 90000;
@@ -403,11 +404,12 @@ function loadState() {
     if (s) {
         if (!Array.isArray(s.seenUrls)) s.seenUrls = [];
         if (!s.seenHeadlines || typeof s.seenHeadlines !== 'object' || Array.isArray(s.seenHeadlines)) s.seenHeadlines = {};
+        if (!s.rejectedUrls || typeof s.rejectedUrls !== 'object' || Array.isArray(s.rejectedUrls)) s.rejectedUrls = {};
         if (!Array.isArray(s.pending)) s.pending = [];
         if (!s.stats) s.stats = { discovered: 0, submitted: 0, rejected: 0 };
         return s;
     }
-    return { version: 2, lastRun: null, seenUrls: [], seenHeadlines: {}, pending: [], stats: { discovered: 0, submitted: 0, rejected: 0 } };
+    return { version: 2, lastRun: null, seenUrls: [], seenHeadlines: {}, rejectedUrls: {}, pending: [], stats: { discovered: 0, submitted: 0, rejected: 0 } };
 }
 
 function saveState(state) {
@@ -419,6 +421,12 @@ function saveState(state) {
         ? state.seenHeadlines : {};
     state.seenHeadlines = Object.fromEntries(
         Object.entries(headlines).filter(([, d]) => typeof d === 'string' && d >= cutoff)
+    );
+    const rejectedCutoff = new Date(Date.now() - REJECTED_URL_TTL_DAYS * 86400000).toISOString().slice(0, 10);
+    const rejectedUrls = state.rejectedUrls && typeof state.rejectedUrls === 'object' && !Array.isArray(state.rejectedUrls)
+        ? state.rejectedUrls : {};
+    state.rejectedUrls = Object.fromEntries(
+        Object.entries(rejectedUrls).filter(([, d]) => typeof d === 'string' && d >= rejectedCutoff)
     );
     // Carried candidates expire; keep the newest when the queue is over the cap.
     const pendingCutoff = new Date(Date.now() - PENDING_MAX_AGE_DAYS * 86400000).toISOString().slice(0, 10);
@@ -550,7 +558,8 @@ function loadDiscoveryQueries() {
             ? Number(raw.maxTopicSubmissionsPerRun) : 20,
         topicQueries,
         genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean)),
-        ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean))
+        ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean)),
+        genericAliasWords: new Set(strList(raw.genericAliasWords).map(normalizeName).filter(Boolean))
     };
 }
 
@@ -599,7 +608,7 @@ function parseLocation(loc) {
  *   - bucket:    'facility' or 'operator'
  *   - state:     '' for operators (cross-state) and for unknown locations
  */
-function buildFacilityIndex(apiResponse, ignoreAliases = new Set()) {
+function buildFacilityIndex(apiResponse, ignoreAliases = new Set(), genericAliasWords = new Set()) {
     const projects = (apiResponse && apiResponse.projects) || {};
     // Names that are never a facility in a headline: bad records ("Kansas",
     // "Behavioral Health") from ignoreAliases, plus every bare state name.
@@ -727,9 +736,13 @@ function buildFacilityIndex(apiResponse, ignoreAliases = new Set()) {
 
     const facilities = Array.from(byKey.values());
 
-    // Identify generic aliases — names shared across N+ deduped entries (e.g.,
-    // "Juvenile Detention Center"). These get stricter state-validation in
-    // evaluateCandidate so generic name collisions don't slip through.
+    // Identify generic aliases -- names shared across N+ deduped entries (e.g.,
+    // "Juvenile Detention Center") and one- or two-word names made only of
+    // common words ("Youth Reach", "Cornerstone", "Turning Point"), which turn
+    // up in ordinary prose. These get stricter state-validation in
+    // evaluateCandidate so generic name collisions don't slip through, and
+    // are not searched on their own. Longer common-word names ("New Hope
+    // Youth Center") stay distinctive enough to match on their own.
     const aliasCounts = new Map();
     for (const fac of facilities) {
         const seen = new Set();
@@ -742,7 +755,12 @@ function buildFacilityIndex(apiResponse, ignoreAliases = new Set()) {
     }
     const genericAliases = new Set();
     for (const [k, n] of aliasCounts) {
-        if (n >= GENERIC_ALIAS_MIN_FACILITIES) genericAliases.add(k);
+        const words = k.split(' ');
+        if (n >= GENERIC_ALIAS_MIN_FACILITIES ||
+            (genericAliasWords.size && words.filter(w => w.length > 1).length <= 2 &&
+             words.every(w => genericAliasWords.has(w)))) {
+            genericAliases.add(k);
+        }
     }
 
     return { facilities, ownHosts, genericAliases };
@@ -1059,19 +1077,17 @@ async function fetchRedditCandidates() {
  * non-alphanumeric-boundary checks to avoid substring false positives.
  */
 function matchFacility(text, facilityIndex) {
-    const hay = ' ' + text.toLowerCase() + ' ';
+    // Whole-word match on a punctuation-free haystack: quotes, dashes and
+    // possessives around a name ("'Youth Reach'", "Hyde School's") no
+    // longer hide it, and a name never matches inside another word.
+    const hay = ' ' + normalizeName(text) + ' ';
     let best = null;
 
     for (const fac of facilityIndex) {
         for (const alias of fac.aliases) {
-            const needle = alias.toLowerCase().trim();
+            const needle = normalizeName(alias);
             if (needle.length < 5) continue;     // too-short = noise
-            const padded = ` ${needle} `;
-            if (hay.includes(padded) ||
-                hay.includes(' ' + needle + ',') ||
-                hay.includes(' ' + needle + '.') ||
-                hay.includes(' ' + needle + "'") ||
-                hay.includes(' ' + needle + ':')) {
+            if (hay.includes(` ${needle} `)) {
                 if (!best || alias.length > best.matchedAlias.length) {
                     best = { facility: fac, matchedAlias: alias };
                 }
@@ -1098,11 +1114,28 @@ function extractStateSignals(text) {
     return found;
 }
 
+/**
+ * First keyword of the list that starts a word in the lower-cased text, else
+ * null. A keyword may run on ("abuse" matches "abused") but it cannot start
+ * inside a word: "killed" no longer matches "Skilled", "sued" "issued",
+ * "fined" "confined", "raid" "afraid", "closed" "disclosed".
+ */
+function findKeyword(list, hay) {
+    for (const kw of list) {
+        let at = hay.indexOf(kw);
+        while (at !== -1) {
+            if (at === 0 || !/[a-z0-9]/.test(hay[at - 1])) return kw;
+            at = hay.indexOf(kw, at + 1);
+        }
+    }
+    return null;
+}
+
 function countAbuseKeywords(text) {
     const hay = text.toLowerCase();
     let n = 0;
     for (const kw of ABUSE_KEYWORDS) {
-        if (hay.includes(kw)) n++;
+        if (findKeyword([kw], hay)) n++;
     }
     return n;
 }
@@ -1117,7 +1150,7 @@ function countAbuseKeywords(text) {
  *   +1   abuse keyword in description (only if not already in title)
  *   +2   facility alias matched
  *   +2   matched facility's city appears in text (city-level boost)
- *   accept (no score) every r/troubledteens link: the subreddit is the filter
+ *   accept Reddit links only when a facility or abuse signal is present
  *   reject (no score) if blacklist hit or HARD_BLOCKED host
  *   reject (no score) if facility match but state CONTRADICTS facility's state
  */
@@ -1126,6 +1159,40 @@ function isHomepageUrl(url) {
         const u = new URL(url);
         return (u.pathname === '' || u.pathname === '/') && !u.search;
     } catch { return false; }
+}
+
+/**
+ * Does the text really refer to the matched facility? Call it when the
+ * facility's city is not named in the text. Returns null when the match
+ * stands, else { conflict, meta }:
+ *   state-mismatch            a state is named and it is not the facility's
+ *   generic-alias-unconfirmed the alias is generic (shared by N+ records, or
+ *                             made only of common words such as "Youth Reach")
+ *                             and nothing confirms it: no state in the text,
+ *                             or the record has no state, or it is an operator
+ */
+function facilityMatchConflict(match, text, genericAliases) {
+    const fac = match.facility;
+    const isGeneric = !!(genericAliases && genericAliases.has(normalizeName(match.matchedAlias)));
+    const canValidate = !!fac.state && fac.bucket !== 'operator';
+    if (!isGeneric && !canValidate) return null;
+    const signals = extractStateSignals(text);
+    let conflict = null;
+    if (canValidate && signals.size > 0 && !signals.has(fac.state)) {
+        conflict = 'state-mismatch';
+    } else if (isGeneric && !(canValidate && signals.has(fac.state))) {
+        conflict = 'generic-alias-unconfirmed';
+    }
+    if (!conflict) return null;
+    return {
+        conflict,
+        meta: {
+            matchedAlias: match.matchedAlias,
+            facility: fac.queryName,
+            expectedState: fac.state,
+            detectedStates: Array.from(signals)
+        }
+    };
 }
 
 function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts, genericAliases, opts = {}) {
@@ -1148,7 +1215,14 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
         if (isPdfUrl(candidate.link)) {
             return { accept: false, reason: 'pdf-document', meta: { link: candidate.link } };
         }
-        const redditMatch = matchFacility(text, facilityIndex);
+        let redditMatch = matchFacility(text, facilityIndex);
+        // Tag the facility only when the text really refers to it, so the
+        // queue is not labelled with a namesake from another state.
+        if (redditMatch &&
+            !(redditMatch.facility.city && text.toLowerCase().includes(redditMatch.facility.city.toLowerCase())) &&
+            facilityMatchConflict(redditMatch, text, genericAliases)) {
+            redditMatch = null;
+        }
         const redditReasons = ['r/troubledteens'];
         if (redditMatch) redditReasons.push(`facility:${redditMatch.matchedAlias}`);
         return {
@@ -1221,37 +1295,13 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
             reasons.push(`city:${fac.city}`);
         }
 
-        // State-match validation (skip for operators and entries without a known state)
-        if (!cityMatched && fac.state && fac.bucket !== 'operator') {
-            const signals = extractStateSignals(text);
-            const conflictMeta = {
-                matchedAlias: match.matchedAlias,
-                facility: fac.queryName,
-                expectedState: fac.state,
-                detectedStates: Array.from(signals)
-            };
-            let conflict = null;
-            if (signals.size > 0 && !signals.has(fac.state)) {
-                conflict = 'state-mismatch';
-            } else if (genericAliases && genericAliases.has(normalizeName(match.matchedAlias)) && !signals.has(fac.state)) {
-                // Generic alias (shared by N+ facilities) requires POSITIVE state
-                // confirmation, not just absence of mismatch. Without it, names
-                // like "Juvenile Detention Center" would match unrelated facilities
-                // in articles that don't happen to mention any state.
-                conflict = 'generic-alias-unconfirmed';
-            }
-            if (conflict) {
-                if (!candidate.origin.startsWith('reddit')) {
-                    return { accept: false, reason: conflict, meta: conflictMeta };
-                }
-                // A member-posted article is on topic either way; the name
-                // just belongs to some other program ("Teen Challenge" in
-                // Indiana vs our Nevada record). Score it without the match.
-                match = null;
-                score = 0;
-                reasons.length = 0;
-                reasons.push(`facility-dropped:${conflict}`);
-            }
+        // State-match validation. A generic alias needs POSITIVE state
+        // confirmation, not just absence of a mismatch: without it, "Youth
+        // Reach" matched "Skilled Youth reach China" and "Juvenile Detention
+        // Center" matches every county's.
+        if (!cityMatched) {
+            const bad = facilityMatchConflict(match, text, genericAliases);
+            if (bad) return { accept: false, reason: bad.conflict, meta: bad.meta };
         }
     }
 
@@ -1259,21 +1309,20 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     // keywords outrank weak ones)
     const titleLower = candidate.title.toLowerCase();
     const descLower = candidate.description.toLowerCase();
-    const titleHit = ABUSE_KEYWORDS.find(k => titleLower.includes(k));
-    const weakTitleHit = titleHit ? null : WEAK_ABUSE_KEYWORDS.find(k => titleLower.includes(k));
+    const titleHit = findKeyword(ABUSE_KEYWORDS, titleLower);
+    const weakTitleHit = titleHit ? null : findKeyword(WEAK_ABUSE_KEYWORDS, titleLower);
+    const descHit = !titleHit && !weakTitleHit
+        ? (findKeyword(ABUSE_KEYWORDS, descLower) || findKeyword(WEAK_ABUSE_KEYWORDS, descLower))
+        : null;
     if (titleHit) {
         score += 3;
         reasons.push(`title-kw:${titleHit}`);
     } else if (weakTitleHit) {
         score += 2;
         reasons.push(`title-kw-weak:${weakTitleHit}`);
-    } else {
-        const descHit = ABUSE_KEYWORDS.find(k => descLower.includes(k)) ||
-                        WEAK_ABUSE_KEYWORDS.find(k => descLower.includes(k));
-        if (descHit) {
-            score += 1;
-            reasons.push(`desc-kw:${descHit}`);
-        }
+    } else if (descHit) {
+        score += 1;
+        reasons.push(`desc-kw:${descHit}`);
     }
 
     // A per-facility Google News query only proves the article mentions the
@@ -1521,7 +1570,7 @@ async function main() {
     // -- Fetch facility data live from API --
     log('\nFetching facilities from API...');
     const facJson = await fetchJson(FACILITIES_URL, { timeoutMs: 60000 });
-    const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson, queries.ignoreAliases);
+    const { facilities: facilityIndex, ownHosts: facilityOwnHosts, genericAliases } = buildFacilityIndex(facJson, queries.ignoreAliases, queries.genericAliasWords);
     log(`  built facility index: ${facilityIndex.length} unique active entries`);
     log(`  facility-owned hosts: ${facilityOwnHosts.size} (skipped as candidates)`);
     log(`  generic aliases:      ${genericAliases.size} (require positive state-signal match)`);
@@ -1573,6 +1622,7 @@ async function main() {
         for (const c of candidates) {
             if (!c.link || !c.link.startsWith('http')) continue;
             const h = hashUrl(c.link);
+            if (state.rejectedUrls && state.rejectedUrls[h]) continue;
             if (seen.has(h) || dedupeSeen.has(h)) continue;
             dedupeSeen.add(h);
             // Collapse syndicated copies (same wire headline, different outlet).
@@ -1591,6 +1641,7 @@ async function main() {
                 queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });
             } else {
                 state.stats.rejected += 1;
+                state.rejectedUrls[h] = new Date().toISOString().slice(0, 10);
                 rejected.push({
                     link: c.link,
                     title: c.title,

@@ -431,13 +431,14 @@ function load_state(): array {
     if (is_array($s)) {
         if (!isset($s['seenUrls']) || !is_array($s['seenUrls'])) $s['seenUrls'] = [];
         if (!isset($s['seenHeadlines']) || !is_array($s['seenHeadlines'])) $s['seenHeadlines'] = [];
+        if (!isset($s['rejectedUrls']) || !is_array($s['rejectedUrls'])) $s['rejectedUrls'] = [];
         if (!isset($s['pending']) || !is_array($s['pending'])) $s['pending'] = [];
         if (!isset($s['stats']) || !is_array($s['stats'])) {
             $s['stats'] = ['discovered' => 0, 'submitted' => 0, 'rejected' => 0];
         }
         return $s;
     }
-    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'pending' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
+    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'rejectedUrls' => [], 'pending' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
 }
 
 function save_state(array $state): void {
@@ -448,6 +449,11 @@ function save_state(array $state): void {
     $state['seenHeadlines'] = array_filter(
         is_array($state['seenHeadlines'] ?? null) ? $state['seenHeadlines'] : [],
         static fn($d) => is_string($d) && $d >= $cutoff
+    );
+    $rejectedCutoff = gmdate('Y-m-d', time() - REJECTED_URL_TTL_DAYS * 86400);
+    $state['rejectedUrls'] = array_filter(
+        is_array($state['rejectedUrls'] ?? null) ? $state['rejectedUrls'] : [],
+        static fn($d) => is_string($d) && $d >= $rejectedCutoff
     );
     // Carried candidates expire; keep the newest when the queue is over the cap.
     $pendingCutoff = gmdate('Y-m-d', time() - PENDING_MAX_AGE_DAYS * 86400);
@@ -601,6 +607,11 @@ function load_discovery_queries(): array {
         $k = normalize_name($n);
         if ($k !== '') $ignoreAliases[$k] = true;
     }
+    $genericAliasWords = [];
+    foreach ($strList($raw['genericAliasWords'] ?? null) as $n) {
+        $k = normalize_name($n);
+        if ($k !== '') $genericAliasWords[$k] = true;
+    }
     $maxPerTopic = is_numeric($raw['maxItemsPerTopic'] ?? null) && (int)$raw['maxItemsPerTopic'] > 0
         ? (int)$raw['maxItemsPerTopic'] : 25;
     $maxTopicSubmissions = is_numeric($raw['maxTopicSubmissionsPerRun'] ?? null) && (int)$raw['maxTopicSubmissionsPerRun'] >= 0
@@ -614,7 +625,8 @@ function load_discovery_queries(): array {
         'maxTopicSubmissionsPerRun' => $maxTopicSubmissions,
         'topicQueries' => $topicQueries,
         'genericQueryNames' => $generic,
-        'ignoreAliases' => $ignoreAliases
+        'ignoreAliases' => $ignoreAliases,
+        'genericAliasWords' => $genericAliasWords
     ];
 }
 
@@ -650,7 +662,7 @@ function parse_location($loc): array {
  * facility-owned host set, and the generic-alias set. Mirrors the JS shape:
  * ['facilities' => [...], 'ownHosts' => [host => true], 'genericAliases' => [norm => true]]
  */
-function build_facility_index(array $apiResponse, array $ignoreAliases = []): array {
+function build_facility_index(array $apiResponse, array $ignoreAliases = [], array $genericAliasWords = []): array {
     global $EXCLUDED_FACILITY_STATUSES, $EXCLUDED_OPERATOR_STATUSES, $STATE_NAMES;
 
     // Names that are never a facility in a headline: bad records ("Kansas",
@@ -776,7 +788,12 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = []): ar
 
     $facilities = array_values($byKey);
 
-    // Generic aliases — names shared across N+ deduped entries.
+    // Generic aliases -- names shared across N+ deduped entries, and one- or
+    // two-word names made only of common words ("Youth Reach", "Cornerstone",
+    // "Turning Point"), which turn up in ordinary prose. These get stricter
+    // state-validation in evaluate_candidate and are not searched on their
+    // own. Longer common-word names ("New Hope Youth Center") stay distinctive
+    // enough to match on their own.
     $aliasCounts = [];
     foreach ($facilities as $fac) {
         $seen = [];
@@ -789,7 +806,19 @@ function build_facility_index(array $apiResponse, array $ignoreAliases = []): ar
     }
     $genericAliases = [];
     foreach ($aliasCounts as $k => $n) {
-        if ($n >= GENERIC_ALIAS_MIN_FACILITIES) $genericAliases[$k] = true;
+        if ($n >= GENERIC_ALIAS_MIN_FACILITIES) {
+            $genericAliases[$k] = true;
+            continue;
+        }
+        $words = explode(' ', $k);
+        $longWords = array_filter($words, static fn($w) => strlen($w) > 1);
+        if ($genericAliasWords && count($longWords) <= 2) {
+            $allCommon = true;
+            foreach ($words as $w) {
+                if (!isset($genericAliasWords[$w])) { $allCommon = false; break; }
+            }
+            if ($allCommon) $genericAliases[$k] = true;
+        }
     }
 
     return ['facilities' => $facilities, 'ownHosts' => $ownHosts, 'genericAliases' => $genericAliases];
@@ -1108,18 +1137,17 @@ function fetch_reddit_candidates(): array {
  * matched alias (favors specificity) or null.
  */
 function match_facility(string $text, array $facilityIndex): ?array {
-    $hay = ' ' . mb_strtolower($text) . ' ';
+    // Whole-word match on a punctuation-free haystack: quotes, dashes and
+    // possessives around a name ("'Youth Reach'", "Hyde School's") no
+    // longer hide it, and a name never matches inside another word.
+    $hay = ' ' . normalize_name($text) . ' ';
     $best = null;
 
     foreach ($facilityIndex as $fac) {
         foreach ($fac['aliases'] as $alias) {
-            $needle = mb_strtolower(trim((string)$alias));
+            $needle = normalize_name($alias);
             if (mb_strlen($needle) < 5) continue;
-            if (str_contains($hay, " {$needle} ") ||
-                str_contains($hay, " {$needle},") ||
-                str_contains($hay, " {$needle}.") ||
-                str_contains($hay, " {$needle}'") ||
-                str_contains($hay, " {$needle}:")) {
+            if (str_contains($hay, " {$needle} ")) {
                 if ($best === null || mb_strlen((string)$alias) > mb_strlen($best['matchedAlias'])) {
                     $best = ['facility' => $fac, 'matchedAlias' => (string)$alias];
                 }
@@ -1130,6 +1158,23 @@ function match_facility(string $text, array $facilityIndex): ?array {
 }
 
 /** Returns [abbr => true] for every state signal found in the text. */
+/**
+ * First keyword of the list that starts a word in the lower-cased text, else
+ * null. A keyword may run on ("abuse" matches "abused") but it cannot start
+ * inside a word: "killed" no longer matches "Skilled", "sued" "issued",
+ * "fined" "confined", "raid" "afraid", "closed" "disclosed".
+ */
+function find_keyword(array $list, string $hay): ?string {
+    foreach ($list as $kw) {
+        $at = strpos($hay, $kw);
+        while ($at !== false) {
+            if ($at === 0 || !ctype_alnum($hay[$at - 1])) return $kw;
+            $at = strpos($hay, $kw, $at + 1);
+        }
+    }
+    return null;
+}
+
 function extract_state_signals(string $text): array {
     global $STATE_NAMES;
     $found = [];
@@ -1155,6 +1200,40 @@ function is_homepage_url(string $url): bool {
     return ($path === null || $path === false || $path === '' || $path === '/') && ($query === null || $query === false || $query === '');
 }
 
+/**
+ * Does the text really refer to the matched facility? Call it when the
+ * facility's city is not named in the text. Returns null when the match
+ * stands, else ['conflict' => reason, 'meta' => [...]]:
+ *   state-mismatch            a state is named and it is not the facility's
+ *   generic-alias-unconfirmed the alias is generic (shared by N+ records, or
+ *                             made only of common words such as "Youth Reach")
+ *                             and nothing confirms it: no state in the text,
+ *                             or the record has no state, or it is an operator
+ */
+function facility_match_conflict(array $match, string $text, array $genericAliases): ?array {
+    $fac = $match['facility'];
+    $isGeneric = isset($genericAliases[normalize_name($match['matchedAlias'])]);
+    $canValidate = $fac['state'] !== '' && $fac['bucket'] !== 'operator';
+    if (!$isGeneric && !$canValidate) return null;
+    $signals = extract_state_signals($text);
+    $conflict = null;
+    if ($canValidate && count($signals) > 0 && !isset($signals[$fac['state']])) {
+        $conflict = 'state-mismatch';
+    } elseif ($isGeneric && !($canValidate && isset($signals[$fac['state']]))) {
+        $conflict = 'generic-alias-unconfirmed';
+    }
+    if ($conflict === null) return null;
+    return [
+        'conflict' => $conflict,
+        'meta' => [
+            'matchedAlias' => $match['matchedAlias'],
+            'facility' => $fac['queryName'],
+            'expectedState' => $fac['state'],
+            'detectedStates' => array_keys($signals)
+        ]
+    ];
+}
+
 function evaluate_candidate(array $candidate, array $facilityIndex, array $blacklist, array $facilityOwnHosts, array $genericAliases, array $opts = []): array {
     global $ABUSE_KEYWORDS, $WEAK_ABUSE_KEYWORDS;
     $text = $candidate['title'] . ' ' . $candidate['description'];
@@ -1175,6 +1254,13 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
             return ['accept' => false, 'reason' => 'pdf-document', 'meta' => ['link' => $candidate['link']]];
         }
         $match = match_facility($text, $facilityIndex);
+        // Tag the facility only when the text really refers to it, so the
+        // queue is not labelled with a namesake from another state.
+        if ($match !== null &&
+            !($match['facility']['city'] !== '' && str_contains(mb_strtolower($text), mb_strtolower($match['facility']['city']))) &&
+            facility_match_conflict($match, $text, $genericAliases) !== null) {
+            $match = null;
+        }
         $reasons = ['r/troubledteens'];
         if ($match !== null) $reasons[] = 'facility:' . $match['matchedAlias'];
         return [
@@ -1243,31 +1329,13 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
             $reasons[] = 'city:' . $fac['city'];
         }
 
-        if (!$cityMatched && $fac['state'] !== '' && $fac['bucket'] !== 'operator') {
-            $signals = extract_state_signals($text);
-            $conflictMeta = [
-                'matchedAlias' => $match['matchedAlias'],
-                'facility' => $fac['queryName'],
-                'expectedState' => $fac['state'],
-                'detectedStates' => array_keys($signals)
-            ];
-            $conflict = null;
-            if (count($signals) > 0 && !isset($signals[$fac['state']])) {
-                $conflict = 'state-mismatch';
-            } elseif ($genericAliases && isset($genericAliases[normalize_name($match['matchedAlias'])]) && !isset($signals[$fac['state']])) {
-                $conflict = 'generic-alias-unconfirmed';
-            }
-            if ($conflict !== null) {
-                if (!str_starts_with($candidate['origin'], 'reddit')) {
-                    return ['accept' => false, 'reason' => $conflict, 'meta' => $conflictMeta];
-                }
-                // A member-posted article is on topic either way; the name
-                // just belongs to some other program ("Teen Challenge" in
-                // Indiana vs our Nevada record). Score it without the match.
-                $match = null;
-                $score = 0;
-                $reasons = ["facility-dropped:{$conflict}"];
-            }
+        // State-match validation. A generic alias needs POSITIVE state
+        // confirmation, not just absence of a mismatch: without it, "Youth
+        // Reach" matched "Skilled Youth reach China" and "Juvenile Detention
+        // Center" matches every county's.
+        if (!$cityMatched) {
+            $bad = facility_match_conflict($match, $text, $genericAliases);
+            if ($bad !== null) return ['accept' => false, 'reason' => $bad['conflict'], 'meta' => $bad['meta']];
         }
     }
 
@@ -1281,8 +1349,8 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
     };
     $titleLower = mb_strtolower($candidate['title']);
     $descLower = mb_strtolower($candidate['description']);
-    $titleHit = $firstHit($ABUSE_KEYWORDS, $titleLower);
-    $weakTitleHit = $titleHit !== null ? null : $firstHit($WEAK_ABUSE_KEYWORDS, $titleLower);
+    $titleHit = find_keyword($ABUSE_KEYWORDS, $titleLower);
+    $weakTitleHit = $titleHit !== null ? null : find_keyword($WEAK_ABUSE_KEYWORDS, $titleLower);
     if ($titleHit !== null) {
         $score += 3;
         $reasons[] = 'title-kw:' . $titleHit;
@@ -1290,7 +1358,7 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
         $score += 2;
         $reasons[] = 'title-kw-weak:' . $weakTitleHit;
     } else {
-        $descHit = $firstHit($ABUSE_KEYWORDS, $descLower) ?? $firstHit($WEAK_ABUSE_KEYWORDS, $descLower);
+        $descHit = find_keyword($ABUSE_KEYWORDS, $descLower) ?? find_keyword($WEAK_ABUSE_KEYWORDS, $descLower);
         if ($descHit !== null) {
             $score += 1;
             $reasons[] = 'desc-kw:' . $descHit;
@@ -1525,7 +1593,7 @@ function main(): void {
     // -- Fetch facility data live from API --
     kop_log("\nFetching facilities from API...");
     $facJson = fetch_json(FACILITIES_URL, ['timeoutMs' => 60000]);
-    $index = build_facility_index($facJson, $queries['ignoreAliases']);
+    $index = build_facility_index($facJson, $queries['ignoreAliases'], $queries['genericAliasWords']);
     $facilityIndex = $index['facilities'];
     $facilityOwnHosts = $index['ownHosts'];
     $genericAliases = $index['genericAliases'];
@@ -1586,6 +1654,7 @@ function main(): void {
         foreach ($candidates as $c) {
             if (empty($c['link']) || !str_starts_with($c['link'], 'http')) continue;
             $h = hash_url($c['link']);
+            if (isset($state['rejectedUrls'][$h])) continue;
             if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
             $dedupeSeen[$h] = true;
             // Collapse syndicated copies (same wire headline, different outlet).
@@ -1604,6 +1673,7 @@ function main(): void {
                 $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
             } else {
                 $state['stats']['rejected'] += 1;
+                $state['rejectedUrls'][$h] = gmdate('Y-m-d');
                 $rejected[] = [
                     'link' => $c['link'],
                     'title' => $c['title'],
