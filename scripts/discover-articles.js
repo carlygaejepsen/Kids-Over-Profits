@@ -2,10 +2,18 @@
 /**
  * Article Discovery
  *
- * Pulls candidate articles from Google News RSS (topic queries, then one
- * query per active facility) and r/troubledteens (new posts), pre-filters
- * them with a state-aware scoring pass, then feeds surviving URLs through
- * the existing AI processor into the news_submissions review queue.
+ * Pulls candidate articles from r/troubledteens (new posts) and Google News
+ * RSS (topic queries, then one query per active facility), pre-filters them
+ * with a state-aware scoring pass, then feeds surviving URLs through the
+ * existing AI processor into the news_submissions review queue.
+ *
+ * Order matters: the Reddit + topic tier is filtered and submitted BEFORE the
+ * per-facility sweep. The sweep's ~550 RSS requests get the server IP rate-
+ * limited on the article-page step of the Google News link resolver, so any
+ * link resolved after it comes back HTTP 429. Candidates a run cannot finish
+ * (unresolved link, topic cap, provider quota, time budget) are carried in
+ * the state file (`pending`) and submitted first thing next run, before a
+ * single Google News request is made.
  *
  * Search terms live in scripts/discovery-queries.json (topic queries, the
  * per-facility keyword OR-group, generic facility names to skip). Edit that
@@ -98,6 +106,13 @@ const SEEN_HEADLINE_DAYS = 60;
 // failures in a row, the remaining Google News candidates are left for the
 // next run instead of being thrown away.
 const GN_RESOLVE_FAIL_STOP_AFTER = 3;
+// Accepted candidates a run could not finish (resolver 429, topic cap, provider
+// quota, time budget) are carried in the state file and submitted first thing
+// next run, before any Google News request. Given up after this many carries
+// or days, whichever comes first.
+const PENDING_MAX_ATTEMPTS = 4;
+const PENDING_MAX_AGE_DAYS = 7;
+const PENDING_MAX_ENTRIES = 300;
 // Wall-clock budgets. The GitHub Actions job is killed at 60 minutes; a full
 // 7-way shard is ~560 facilities and Google News 503-throttles runner IPs
 // partway through, stretching the RSS phase past the hour so the run was
@@ -388,10 +403,11 @@ function loadState() {
     if (s) {
         if (!Array.isArray(s.seenUrls)) s.seenUrls = [];
         if (!s.seenHeadlines || typeof s.seenHeadlines !== 'object' || Array.isArray(s.seenHeadlines)) s.seenHeadlines = {};
+        if (!Array.isArray(s.pending)) s.pending = [];
         if (!s.stats) s.stats = { discovered: 0, submitted: 0, rejected: 0 };
         return s;
     }
-    return { version: 2, lastRun: null, seenUrls: [], seenHeadlines: {}, stats: { discovered: 0, submitted: 0, rejected: 0 } };
+    return { version: 2, lastRun: null, seenUrls: [], seenHeadlines: {}, pending: [], stats: { discovered: 0, submitted: 0, rejected: 0 } };
 }
 
 function saveState(state) {
@@ -404,6 +420,12 @@ function saveState(state) {
     state.seenHeadlines = Object.fromEntries(
         Object.entries(headlines).filter(([, d]) => typeof d === 'string' && d >= cutoff)
     );
+    // Carried candidates expire; keep the newest when the queue is over the cap.
+    const pendingCutoff = new Date(Date.now() - PENDING_MAX_AGE_DAYS * 86400000).toISOString().slice(0, 10);
+    let pending = (Array.isArray(state.pending) ? state.pending : [])
+        .filter(p => p && typeof p === 'object' && typeof p.addedAt === 'string' && p.addedAt >= pendingCutoff);
+    if (pending.length > PENDING_MAX_ENTRIES) pending = pending.slice(-PENDING_MAX_ENTRIES);
+    state.pending = pending;
     saveJson(STATE_FILE, state);
 }
 
@@ -1513,6 +1535,300 @@ async function main() {
     log(`  today = shard ${shardIndex}/${SHARD_COUNT} → ${slice.length} facilities to query` +
         (MAX_FACILITIES ? ` (capped from ${todaysShard.length})` : ''));
 
+    const evalOpts = { redditLinkBoost: queries.redditLinkBoost, redditSelftextBoost: queries.redditSelftextBoost };
+    // Counters accumulated across every submit batch in this run.
+    const totals = {
+        candidates: 0, accepted: 0, rejected: 0,
+        submitted: 0, submitErrors: 0, postResolveRejected: 0,
+        topicSubmitted: 0, topicAttempted: 0, topicDeferred: 0,
+        gnResolveDeferred: 0, carriedIn: 0, droppedPending: 0
+    };
+    let stopRun = false;              // provider quota spent or time budget gone: carry what is left
+    const dedupeSeen = new Set();     // URL hashes already queued or evaluated this run
+    const dedupeHeadlines = new Set(); // headline keys claimed by an accepted copy this run
+    let pending = [];                 // candidates carried to the next run
+
+    // Queue a candidate for the next run instead of dropping it. Carried
+    // entries keep their first-seen date and count attempts, so a link that
+    // never resolves or never extracts is given up after PENDING_MAX_ATTEMPTS.
+    function defer(q, why) {
+        pending.push({
+            candidate: q.candidate,
+            evalResult: q.evalResult,
+            urlHash: q.urlHash,
+            headlineKey: q.headlineKey,
+            addedAt: q.addedAt || new Date().toISOString().slice(0, 10),
+            attempts: (Number(q.attempts) || 0) + 1,
+            why
+        });
+    }
+
+    // -- Filter one tier's raw items into a submit queue --
+    function filterBatch(candidates, label) {
+        totals.candidates += candidates.length;
+        state.stats.discovered += candidates.length;
+        const queue = [];
+        const rejected = [];
+        let duplicateHeadlines = 0;
+        let previouslySubmitted = 0;
+
+        for (const c of candidates) {
+            if (!c.link || !c.link.startsWith('http')) continue;
+            const h = hashUrl(c.link);
+            if (seen.has(h) || dedupeSeen.has(h)) continue;
+            dedupeSeen.add(h);
+            // Collapse syndicated copies (same wire headline, different outlet).
+            // Google News origins only: every link pulled from one Reddit post
+            // carries that post's title. Only an accepted copy claims the key, so
+            // a rejected first copy (wire host, state mismatch) does not hide a
+            // good one from another outlet.
+            // A reddit link post carries one link, so its title is the headline too.
+            const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic' || c.origin === 'reddit-link') ? headlineKey(c.title) : '';
+            if (hk && dedupeHeadlines.has(hk)) { duplicateHeadlines++; continue; }
+            // Same story already submitted on an earlier night under another URL.
+            if (hk && state.seenHeadlines[hk]) { previouslySubmitted++; continue; }
+
+            const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases, evalOpts);
+            if (result.accept) {
+                if (hk) dedupeHeadlines.add(hk);
+                queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });
+            } else {
+                state.stats.rejected += 1;
+                rejected.push({
+                    link: c.link,
+                    title: c.title,
+                    origin: c.origin,
+                    host: hostOf(c.sourceUrl || c.link),
+                    facilityQuery: c.facilityQuery || null,
+                    topicQuery: c.topicQuery || null,
+                    reason: result.reason,
+                    meta: result.meta || null
+                });
+            }
+        }
+        log(`After filter [${label}]: ${queue.length} accepted, ${rejected.length} rejected (threshold ${SCORE_THRESHOLD})`);
+        const byOrigin = {};
+        for (const q of queue) byOrigin[q.candidate.origin] = (byOrigin[q.candidate.origin] || 0) + 1;
+        log(`  accepted by origin: ${Object.entries(byOrigin).map(([k, v]) => `${k}=${v}`).join(', ') || 'none'}`);
+        if (duplicateHeadlines) log(`  syndicated duplicates collapsed: ${duplicateHeadlines}`);
+        if (previouslySubmitted) log(`  headlines already submitted on an earlier run: ${previouslySubmitted}`);
+        totals.accepted += queue.length;
+        totals.rejected += rejected.length;
+
+        // Persist the rejected log right away (useful even if the submit phase aborts)
+        if (rejected.length) persistRejected(rejected);
+
+        // Reddit candidates go ahead of topic candidates, so a stalled topic
+        // tier (rate limits, extraction failures) cannot starve them.
+        // Array.prototype.sort is stable, so order within each tier is kept.
+        queue.sort((a, b) => (a.candidate.origin === 'google-news-topic') - (b.candidate.origin === 'google-news-topic'));
+        return queue;
+    }
+
+    // -- Resolve, AI-process and submit one queue --
+    // Each accepted candidate goes through:
+    //   1. Resolve Google News redirect → canonical URL
+    //   2. Re-check dedup, host blacklist, path blacklist, facility-own-website
+    //      on the canonical URL (Google News hid the real URL from earlier checks)
+    //   3. AI process → submit
+    // Anything this run cannot finish is carried to the next run instead of
+    // being dropped.
+    async function submitBatch(queue, label) {
+        if (!queue.length) return;
+
+        if (DRY_RUN) {
+            log(`\n--- DRY RUN [${label}] — resolving + would-submit (showing up to 30 of ${queue.length}) ---`);
+            let resolveUnresolved = 0;
+            for (const q of queue.slice(0, 30)) {
+                const orig = q.candidate.link;
+                const resolved = await resolveGoogleNewsUrl(orig);
+                const unresolved = resolved.startsWith('https://news.google.com/');
+                if (unresolved) resolveUnresolved++;
+                log(`  [score ${q.evalResult.score}] ${unresolved ? '✗ UNRESOLVED' : '✓'} ${resolved}`);
+                if (resolved !== orig && !unresolved) log(`     was:     ${orig.slice(0, 80)}…`);
+                log(`     title:   ${q.candidate.title.slice(0, 100)}`);
+                log(`     reasons: ${q.evalResult.reasons.join(', ')}`);
+                if (q.evalResult.match) log(`     match:   ${JSON.stringify(q.evalResult.match)}`);
+            }
+            if (resolveUnresolved > 0) log(`  ${resolveUnresolved} Google News URL(s) could not be resolved — would be carried to the next run.`);
+            return;
+        }
+
+        log(`\nSubmitting [${label}]: ${queue.length} candidates`);
+        const topicCap = queries.maxTopicSubmissionsPerRun;
+        let gnResolveFailStreak = 0;
+        let consecutiveRateLimited = 0;
+        const postResolveLog = [];
+
+        for (const q of queue) {
+            if (totals.submitted >= SUBMIT_LIMIT) break;   // --limit smoke tests: the rest is rediscovered
+            if (stopRun) { defer(q, 'run stopped'); continue; }
+            const isTopic = q.candidate.origin === 'google-news-topic';
+            // Per-run cap on topic-query submissions (Groq rate limit).
+            if (isTopic && topicCap > 0 && totals.topicAttempted >= topicCap) {
+                totals.topicDeferred++;
+                defer(q, 'topic cap');
+                continue;
+            }
+            if (Date.now() >= runDeadline) {
+                warn('  ! run time budget exhausted — carrying the remaining candidates to the next run');
+                stopRun = true;
+                defer(q, 'time budget');
+                continue;
+            }
+
+            // Resolve if it's a Google News redirect (no-op otherwise)
+            const originalLink = q.candidate.link;
+            const isGnLink = originalLink.startsWith('https://news.google.com/');
+            // Google is rate-limiting the resolver: stop asking for this run.
+            if (isGnLink && gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
+                totals.gnResolveDeferred++;
+                defer(q, 'resolver rate-limited');
+                continue;
+            }
+            const resolvedLink = await resolveGoogleNewsUrl(originalLink);
+
+            // Never submit an unresolved GN URL: the AI stage gets the consent
+            // page, which has no article body. The failure is almost always a
+            // 429 burst, so the candidate is carried to the next run, which
+            // resolves it before touching Google News.
+            if (resolvedLink.startsWith('https://news.google.com/')) {
+                gnResolveFailStreak++;
+                totals.gnResolveDeferred++;
+                defer(q, 'unresolved');
+                continue;
+            }
+            if (isGnLink) gnResolveFailStreak = 0;
+
+            if (resolvedLink !== originalLink) {
+                // Re-dedup against the canonical URL — same article may appear under
+                // multiple Google News redirect tokens.
+                const newHash = hashUrl(resolvedLink);
+                if (seen.has(newHash)) {
+                    seen.add(q.urlHash);  // also record the redirect token as seen
+                    totals.postResolveRejected++;
+                    postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'duplicate-after-resolution' });
+                    continue;
+                }
+
+                // Re-check blacklists on the canonical URL
+                const newHost = articleHostOf(resolvedLink);
+                if (newHost && blacklist.hostBlocked(newHost)) {
+                    seen.add(q.urlHash);
+                    totals.postResolveRejected++;
+                    postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-host-post-resolve', host: newHost });
+                    continue;
+                }
+                if (newHost && facilityOwnHosts.has(newHost)) {
+                    seen.add(q.urlHash);
+                    totals.postResolveRejected++;
+                    postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'facility-own-website-post-resolve', host: newHost });
+                    continue;
+                }
+                const pathHit = blacklist.pathBlocked(resolvedLink);
+                if (pathHit) {
+                    seen.add(q.urlHash);
+                    totals.postResolveRejected++;
+                    postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-path-post-resolve', pattern: pathHit });
+                    continue;
+                }
+                if (isPdfUrl(resolvedLink)) {
+                    seen.add(q.urlHash);
+                    seen.add(hashUrl(resolvedLink));
+                    totals.postResolveRejected++;
+                    postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'pdf-post-resolve' });
+                    continue;
+                }
+
+                // Update candidate with canonical URL for submission
+                q.candidate.link = resolvedLink;
+                // Also mark the canonical URL as seen so a future run won't re-submit it
+                seen.add(newHash);
+            }
+
+            // Mark the original/canonical link as seen before attempting submission,
+            // so a flaky URL isn't retried every run.
+            seen.add(q.urlHash);
+
+            if (isTopic) totals.topicAttempted++;
+            await sleep(AI_REQUEST_DELAY_MS);
+            let r = await submitCandidate(q.candidate, q.evalResult);
+
+            // Provider rate limits are transient — wait a cool-down and retry a
+            // couple of times within the run before carrying the candidate to
+            // the next run.
+            for (let attempt = 1; attempt <= AI_RATE_LIMIT_RETRIES &&
+                 !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || ''); attempt++) {
+                log(`    rate-limited; retry ${attempt}/${AI_RATE_LIMIT_RETRIES} after ${AI_RATE_LIMIT_WAIT_MS / 1000}s cool-down…`);
+                await sleep(AI_RATE_LIMIT_WAIT_MS);
+                r = await submitCandidate(q.candidate, q.evalResult);
+            }
+
+            if (r.ok) {
+                totals.submitted++;
+                state.stats.submitted += 1;
+                if (q.headlineKey) state.seenHeadlines[q.headlineKey] = new Date().toISOString().slice(0, 10);
+                if (isTopic) totals.topicSubmitted++;
+            } else {
+                totals.submitErrors++;
+                // A failure at the AI stage says nothing bad about the URL itself
+                // (rate limit, provider hiccup, timeout) — un-mark both the
+                // original and canonical hashes and carry it to the next run.
+                // Submit-stage failures (e.g. duplicates) stay marked.
+                if (r.stage === 'ai') {
+                    seen.delete(q.urlHash);
+                    seen.delete(hashUrl(q.candidate.link));
+                    defer(q, 'AI stage failed');
+                }
+            }
+
+            // Still rate-limited after the in-run retries: the provider quota is
+            // spent for the night. Stop instead of burning the time budget; the
+            // rest of the queue is carried to the next run.
+            const rateLimited = !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || '');
+            consecutiveRateLimited = rateLimited ? consecutiveRateLimited + 1 : 0;
+            if (consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
+                warn(`  ! AI provider still rate-limited after ${AI_RATE_LIMIT_STOP_AFTER} candidates in a row — carrying the rest to the next run`);
+                stopRun = true;
+            }
+        }
+
+        if (postResolveLog.length) {
+            state.stats.rejected += postResolveLog.length;
+            persistRejected(postResolveLog);
+        }
+
+        // Save after every batch so a crash in a later phase keeps this one's marks.
+        state.seenUrls = Array.from(seen);
+        state.pending = pending;
+        saveState(state);
+    }
+
+    // -- Carried-over queue: submit before this run touches Google News --
+    // The per-facility sweep is what gets the server IP rate-limited on the
+    // article-page step of the link resolver, so anything resolved after it
+    // 429s. Candidates an earlier run could not finish go first, while the
+    // resolver still works.
+    const carried = [];
+    for (const p of state.pending) {
+        if (!p || typeof p !== 'object' || !p.candidate || !p.candidate.link || !p.evalResult || typeof p.evalResult !== 'object') continue;
+        if ((Number(p.attempts) || 0) >= PENDING_MAX_ATTEMPTS) { totals.droppedPending++; continue; }
+        const hk = String(p.headlineKey || '');
+        if (hk && state.seenHeadlines[hk]) { totals.droppedPending++; continue; }
+        const h = String(p.urlHash || hashUrl(p.candidate.link));
+        if (seen.has(h) || dedupeSeen.has(h)) continue;
+        dedupeSeen.add(h);
+        if (hk) dedupeHeadlines.add(hk);
+        carried.push({ ...p, urlHash: h, headlineKey: hk });
+    }
+    state.pending = [];
+    totals.carriedIn = carried.length;
+    if (carried.length || totals.droppedPending) {
+        log(`\nCarried over from earlier runs: ${carried.length} candidates` +
+            (totals.droppedPending ? ` (${totals.droppedPending} dropped: too many attempts or story already submitted)` : ''));
+    }
+    await submitBatch(carried, 'carried over');
+
     const candidates = [];
 
     // -- Reddit pass --
@@ -1526,7 +1842,7 @@ async function main() {
     // rest of the run: after N consecutive failures take one cool-down, then
     // abandon Google News for the day rather than burn the budget on doomed
     // requests. The counter is shared so topic failures count toward it.
-    const gnDeadline = Math.min(Date.now() + GN_TIME_BUDGET_MS, runDeadline);
+    let gnDeadline = Math.min(Date.now() + GN_TIME_BUDGET_MS, runDeadline);
     const gn = { consecutiveFailures: 0, cooldownsLeft: 1, abandoned: false };
     async function gnGate(where) {
         if (gn.abandoned) return false;
@@ -1570,270 +1886,64 @@ async function main() {
         log(`  ${topicCandidates} topic items`);
     }
 
+    // Reddit + topic candidates are filtered and submitted now, before the
+    // per-facility sweep: after ~550 RSS requests the link resolver gets
+    // HTTP 429 for the rest of the run, and this tier is where the real
+    // stories come from.
+    log(`\nRaw candidates (Reddit + topics): ${candidates.length}`);
+    await submitBatch(filterBatch(candidates, 'reddit + topics'), 'reddit + topics');
+
     // -- Google News per facility (with politeness delay) --
+    // Runs last on purpose (see above). Whatever it accepts and cannot
+    // resolve is carried to the next run, which resolves it first.
     const querySlice = slice.filter(f => !isGenericQueryName(f, queries, genericAliases));
     const skippedGeneric = slice.length - querySlice.length;
-    log(`\nQuerying Google News per facility (${querySlice.length} facilities, ${skippedGeneric} generic names skipped)...`);
+    gnDeadline = Math.min(Date.now() + GN_TIME_BUDGET_MS, runDeadline);   // fresh budget for the sweep
+    const facilityCandidates = [];
     let facilitiesQueried = 0;
-    for (let i = 0; i < querySlice.length; i++) {
-        if (!(await gnGate(`${i}/${querySlice.length} facilities`))) break;
-        const fac = querySlice[i];
-        await sleep(RSS_REQUEST_DELAY_MS);
-        const { items, failed } = await fetchGoogleNewsForFacility(fac, queries);
-        facilitiesQueried++;
-        gn.consecutiveFailures = failed ? gn.consecutiveFailures + 1 : 0;
-        if (items.length > 0) log(`  [${fac.queryName}${fac.state ? ' / ' + fac.state : ''}] ${items.length} items`);
-        candidates.push(...items);
-        if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${querySlice.length} (running total: ${candidates.length})`);
-    }
-
-    log(`\nTotal raw candidates: ${candidates.length}`);
-    state.stats.discovered += candidates.length;
-
-    // -- Dedupe + filter --
-    const queue = [];
-    const rejected = [];
-    const dedupeSeen = new Set();
-    const dedupeHeadlines = new Set();
-    let duplicateHeadlines = 0;
-    let previouslySubmitted = 0;
-    const evalOpts = { redditLinkBoost: queries.redditLinkBoost, redditSelftextBoost: queries.redditSelftextBoost };
-
-    for (const c of candidates) {
-        if (!c.link || !c.link.startsWith('http')) continue;
-        const h = hashUrl(c.link);
-        if (seen.has(h) || dedupeSeen.has(h)) continue;
-        dedupeSeen.add(h);
-        // Collapse syndicated copies (same wire headline, different outlet).
-        // Google News origins only: every link pulled from one Reddit post
-        // carries that post's title. Only an accepted copy claims the key, so
-        // a rejected first copy (wire host, state mismatch) does not hide a
-        // good one from another outlet.
-        // A reddit link post carries one link, so its title is the headline too.
-        const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic' || c.origin === 'reddit-link') ? headlineKey(c.title) : '';
-        if (hk && dedupeHeadlines.has(hk)) { duplicateHeadlines++; continue; }
-        // Same story already submitted on an earlier night under another URL.
-        if (hk && state.seenHeadlines[hk]) { previouslySubmitted++; continue; }
-
-        const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases, evalOpts);
-        if (result.accept) {
-            if (hk) dedupeHeadlines.add(hk);
-            queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });
-        } else {
-            state.stats.rejected += 1;
-            rejected.push({
-                link: c.link,
-                title: c.title,
-                origin: c.origin,
-                host: hostOf(c.sourceUrl || c.link),
-                facilityQuery: c.facilityQuery || null,
-                topicQuery: c.topicQuery || null,
-                reason: result.reason,
-                meta: result.meta || null
-            });
+    if (querySlice.length) {
+        log(`\nQuerying Google News per facility (${querySlice.length} facilities, ${skippedGeneric} generic names skipped)...`);
+        for (let i = 0; i < querySlice.length; i++) {
+            if (!(await gnGate(`${i}/${querySlice.length} facilities`))) break;
+            const fac = querySlice[i];
+            await sleep(RSS_REQUEST_DELAY_MS);
+            const { items, failed } = await fetchGoogleNewsForFacility(fac, queries);
+            facilitiesQueried++;
+            gn.consecutiveFailures = failed ? gn.consecutiveFailures + 1 : 0;
+            if (items.length > 0) log(`  [${fac.queryName}${fac.state ? ' / ' + fac.state : ''}] ${items.length} items`);
+            facilityCandidates.push(...items);
+            if ((i + 1) % 25 === 0) log(`  ...${i + 1}/${querySlice.length} (running total: ${facilityCandidates.length})`);
         }
+        log(`\nRaw candidates (facilities): ${facilityCandidates.length}`);
+        if (facilityCandidates.length) await submitBatch(filterBatch(facilityCandidates, 'facilities'), 'facilities');
     }
-    log(`After filter: ${queue.length} accepted, ${rejected.length} rejected (threshold ${SCORE_THRESHOLD})`);
-    const byOrigin = {};
-    for (const q of queue) byOrigin[q.candidate.origin] = (byOrigin[q.candidate.origin] || 0) + 1;
-    log(`  accepted by origin: ${Object.entries(byOrigin).map(([k, v]) => `${k}=${v}`).join(', ') || 'none'}`);
-    if (duplicateHeadlines) log(`  syndicated duplicates collapsed: ${duplicateHeadlines}`);
-    if (previouslySubmitted) log(`  headlines already submitted on an earlier run: ${previouslySubmitted}`);
-
-    // Facility and Reddit candidates go ahead of topic candidates, so a
-    // stalled topic tier (rate limits, extraction failures) cannot starve them.
-    // Array.prototype.sort is stable, so order within each tier is kept.
-    queue.sort((a, b) => (a.candidate.origin === 'google-news-topic') - (b.candidate.origin === 'google-news-topic'));
-
-    // -- Persist rejected log right away (useful even if submit phase aborts) --
-    if (rejected.length) persistRejected(rejected);
 
     if (DRY_RUN) {
-        log('\n--- DRY RUN — resolving + would-submit (showing up to 30) ---');
-        let resolveUnresolved = 0;
-        for (const q of queue.slice(0, 30)) {
-            const orig = q.candidate.link;
-            const resolved = await resolveGoogleNewsUrl(orig);
-            const unresolved = resolved.startsWith('https://news.google.com/');
-            if (unresolved) resolveUnresolved++;
-            log(`  [score ${q.evalResult.score}] ${unresolved ? '✗ UNRESOLVED' : '✓'} ${resolved}`);
-            if (resolved !== orig && !unresolved) log(`     was:     ${orig.slice(0, 80)}…`);
-            log(`     title:   ${q.candidate.title.slice(0, 100)}`);
-            log(`     reasons: ${q.evalResult.reasons.join(', ')}`);
-            if (q.evalResult.match) log(`     match:   ${JSON.stringify(q.evalResult.match)}`);
-        }
-        log(`\nDry run done. Would attempt ${Math.min(queue.length, SUBMIT_LIMIT)} submissions.`);
-        if (resolveUnresolved > 0) log(`  ${resolveUnresolved} Google News URL(s) could not be resolved — would be rejected.`);
+        log(`\nDry run done. Would attempt ${Math.min(totals.accepted + totals.carriedIn, SUBMIT_LIMIT)} submissions.`);
         return;
     }
 
-    // -- Submit --
-    // Each accepted candidate goes through:
-    //   1. Resolve Google News redirect → canonical URL
-    //   2. Re-check dedup, host blacklist, path blacklist, facility-own-website
-    //      on the canonical URL (Google News hid the real URL from earlier checks)
-    //   3. AI process → submit
-    let submitted = 0, submitErrors = 0, postResolveRejected = 0;
-    let topicSubmitted = 0, topicDeferred = 0;
-    let topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
-    let consecutiveRateLimited = 0;
-    let gnResolveFailStreak = 0, gnResolveDeferred = 0;
-    const topicCap = queries.maxTopicSubmissionsPerRun;
-    const postResolveLog = [];
-
-    for (const q of queue) {
-        if (submitted >= SUBMIT_LIMIT) break;
-        // Per-run cap on topic-query submissions (Groq rate limit). Deferred
-        // candidates stay unmarked, so a later run picks them up if they are
-        // still in the feed.
-        if (q.candidate.origin === 'google-news-topic' && topicCap > 0 && topicAttempted >= topicCap) {
-            topicDeferred++;
-            continue;
-        }
-        if (Date.now() >= runDeadline) {
-            // Unprocessed candidates were never marked seen, so the next daily
-            // run picks them up. Breaking here (instead of being killed by the
-            // workflow timeout) is what lets state get saved below.
-            warn(`  ! run time budget exhausted with ${queue.length - submitted - submitErrors - postResolveRejected} candidates unprocessed — saving state and exiting`);
-            break;
-        }
-
-        // Resolve if it's a Google News redirect (no-op otherwise)
-        const originalLink = q.candidate.link;
-        const isGnLink = originalLink.startsWith('https://news.google.com/');
-        // Google is rate-limiting the resolver: stop asking for this run.
-        if (isGnLink && gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
-            gnResolveDeferred++;
-            continue;
-        }
-        const resolvedLink = await resolveGoogleNewsUrl(originalLink);
-
-        // Never submit an unresolved GN URL: the AI stage gets the consent
-        // page, which has no article body. The failure is almost always a
-        // 429 burst, so the candidate stays unmarked and the next run
-        // retries it instead of losing it for good.
-        if (resolvedLink.startsWith('https://news.google.com/')) {
-            gnResolveFailStreak++;
-            gnResolveDeferred++;
-            continue;
-        }
-        if (isGnLink) gnResolveFailStreak = 0;
-
-        if (resolvedLink !== originalLink) {
-            // Re-dedup against the canonical URL — same article may appear under
-            // multiple Google News redirect tokens.
-            const newHash = hashUrl(resolvedLink);
-            if (seen.has(newHash)) {
-                seen.add(q.urlHash);  // also record the redirect token as seen
-                postResolveRejected++;
-                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'duplicate-after-resolution' });
-                continue;
-            }
-
-            // Re-check blacklists on the canonical URL
-            const newHost = articleHostOf(resolvedLink);
-            if (newHost && blacklist.hostBlocked(newHost)) {
-                seen.add(q.urlHash);
-                postResolveRejected++;
-                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-host-post-resolve', host: newHost });
-                continue;
-            }
-            if (newHost && facilityOwnHosts.has(newHost)) {
-                seen.add(q.urlHash);
-                postResolveRejected++;
-                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'facility-own-website-post-resolve', host: newHost });
-                continue;
-            }
-            const pathHit = blacklist.pathBlocked(resolvedLink);
-            if (pathHit) {
-                seen.add(q.urlHash);
-                postResolveRejected++;
-                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'blacklist-path-post-resolve', pattern: pathHit });
-                continue;
-            }
-            if (isPdfUrl(resolvedLink)) {
-                seen.add(q.urlHash);
-                seen.add(hashUrl(resolvedLink));
-                postResolveRejected++;
-                postResolveLog.push({ link: originalLink, resolvedTo: resolvedLink, reason: 'pdf-post-resolve' });
-                continue;
-            }
-
-            // Update candidate with canonical URL for submission
-            q.candidate.link = resolvedLink;
-            // Also mark the canonical URL as seen so a future run won't re-submit it
-            seen.add(newHash);
-        }
-
-        // Mark the original/canonical link as seen before attempting submission,
-        // so a flaky URL isn't retried every run.
-        seen.add(q.urlHash);
-
-        if (q.candidate.origin === 'google-news-topic') topicAttempted++;
-        await sleep(AI_REQUEST_DELAY_MS);
-        let r = await submitCandidate(q.candidate, q.evalResult);
-
-        // Provider rate limits are transient — wait a cool-down and retry a
-        // couple of times within the run before giving the URL back to
-        // tomorrow's run.
-        for (let attempt = 1; attempt <= AI_RATE_LIMIT_RETRIES &&
-             !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || ''); attempt++) {
-            log(`    rate-limited; retry ${attempt}/${AI_RATE_LIMIT_RETRIES} after ${AI_RATE_LIMIT_WAIT_MS / 1000}s cool-down…`);
-            await sleep(AI_RATE_LIMIT_WAIT_MS);
-            r = await submitCandidate(q.candidate, q.evalResult);
-        }
-
-        if (r.ok) {
-            submitted++;
-            state.stats.submitted += 1;
-            if (q.headlineKey) state.seenHeadlines[q.headlineKey] = new Date().toISOString().slice(0, 10);
-            if (q.candidate.origin === 'google-news-topic') topicSubmitted++;
-        } else {
-            submitErrors++;
-            // A failure at the AI stage says nothing bad about the URL itself
-            // (rate limit, provider hiccup, timeout) — un-mark both the
-            // original and canonical hashes so the next daily run retries.
-            // Submit-stage failures (e.g. duplicates) stay marked.
-            if (r.stage === 'ai') {
-                seen.delete(q.urlHash);
-                seen.delete(hashUrl(q.candidate.link));
-            }
-        }
-
-        // Still rate-limited after the in-run retries: the provider quota is
-        // spent for the night. Stop instead of burning the time budget; the
-        // un-marked candidates come back tomorrow.
-        const rateLimited = !r.ok && r.stage === 'ai' && /rate limit/i.test(r.error || '');
-        consecutiveRateLimited = rateLimited ? consecutiveRateLimited + 1 : 0;
-        if (consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
-            warn(`  ! AI provider still rate-limited after ${AI_RATE_LIMIT_STOP_AFTER} candidates in a row — saving state and exiting`);
-            break;
-        }
-    }
-
-    if (postResolveLog.length) {
-        state.stats.rejected += postResolveLog.length;
-        persistRejected(postResolveLog);
-    }
-
     state.seenUrls = Array.from(seen);
+    state.pending = pending;
     state.lastRun = new Date().toISOString();
     saveState(state);
 
     log(`\n--- Done ---`);
     log(`  facilities queried:  ${facilitiesQueried}/${querySlice.length} (${skippedGeneric} generic skipped, shard ${slice.length})`);
     log(`  topic items:         ${topicCandidates}`);
-    log(`  candidates found:    ${candidates.length}`);
-    log(`  accepted by filter:  ${queue.length}`);
-    log(`  submitted (ok):      ${submitted}` + (topicSubmitted ? ` (${topicSubmitted} from topic queries)` : ''));
-    log(`  submitted (errors):  ${submitErrors}`);
-    if (topicDeferred) log(`  topic deferred (cap): ${topicDeferred}`);
-    log(`  rejected (pre-fetch):  ${rejected.length}`);
-    log(`  rejected (post-resolve): ${postResolveRejected}`);
-    if (gnResolveDeferred) log(`  deferred (GN link unresolved, retried next run): ${gnResolveDeferred}`);
+    log(`  candidates found:    ${totals.candidates}`);
+    log(`  accepted by filter:  ${totals.accepted}`);
+    if (totals.carriedIn) log(`  carried in:          ${totals.carriedIn}`);
+    log(`  submitted (ok):      ${totals.submitted}` + (totals.topicSubmitted ? ` (${totals.topicSubmitted} from topic queries)` : ''));
+    log(`  submitted (errors):  ${totals.submitErrors}`);
+    if (totals.topicDeferred) log(`  topic deferred (cap): ${totals.topicDeferred}`);
+    log(`  rejected (pre-fetch):  ${totals.rejected}`);
+    log(`  rejected (post-resolve): ${totals.postResolveRejected}`);
+    if (totals.gnResolveDeferred) log(`  deferred (GN link unresolved): ${totals.gnResolveDeferred}`);
+    if (pending.length) log(`  carried to next run: ${pending.length}`);
     log(`  cumulative stats:    ${JSON.stringify(state.stats)}`);
 
-    if (submitErrors > 0 && submitted === 0) process.exitCode = 1;
+    if (totals.submitErrors > 0 && totals.submitted === 0) process.exitCode = 1;
 }
 
 // Only auto-run when invoked as a CLI. When required as a module (e.g. by

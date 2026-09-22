@@ -4,10 +4,18 @@
  *
  * Written for the NixiHost cPanel cron, where no Node runtime exists. Behavior
  * mirrors the JS original 1:1 (same flags, same state files, same scoring):
- * pulls candidate articles from Google News RSS (topic queries, then one
- * query per active facility) and r/troubledteens (new posts), pre-filters
- * them with a state-aware scoring pass, then feeds surviving URLs through the
- * AI processor into the news_submissions review queue.
+ * pulls candidate articles from r/troubledteens (new posts) and Google News
+ * RSS (topic queries, then one query per active facility), pre-filters them
+ * with a state-aware scoring pass, then feeds surviving URLs through the AI
+ * processor into the news_submissions review queue.
+ *
+ * Order matters: the Reddit + topic tier is filtered and submitted BEFORE the
+ * per-facility sweep. The sweep's ~550 RSS requests get the server IP rate-
+ * limited on the article-page step of the Google News link resolver, so any
+ * link resolved after it comes back HTTP 429. Candidates a run cannot finish
+ * (unresolved link, topic cap, provider quota, time budget) are carried in
+ * the state file (`pending`) and submitted first thing next run, before a
+ * single Google News request is made.
  *
  * Search terms live in scripts/discovery-queries.json (topic queries, the
  * per-facility keyword OR-group, generic facility names to skip). Edit that
@@ -97,6 +105,13 @@ define('SEEN_HEADLINE_DAYS', 60);
 // failures in a row, the remaining Google News candidates are left for the
 // next run instead of being thrown away.
 define('GN_RESOLVE_FAIL_STOP_AFTER', 3);
+// Accepted candidates a run could not finish (resolver 429, topic cap, provider
+// quota, time budget) are carried in the state file and submitted first thing
+// next run, before any Google News request. Given up after this many carries
+// or days, whichever comes first.
+define('PENDING_MAX_ATTEMPTS', 4);
+define('PENDING_MAX_AGE_DAYS', 7);
+define('PENDING_MAX_ENTRIES', 300);
 // Wall-clock budgets (same as the JS). Cap the Google News phase and the
 // overall run so the filter/submit/save-state phases always run with whatever
 // was collected, instead of the job being killed mid-fetch.
@@ -416,12 +431,13 @@ function load_state(): array {
     if (is_array($s)) {
         if (!isset($s['seenUrls']) || !is_array($s['seenUrls'])) $s['seenUrls'] = [];
         if (!isset($s['seenHeadlines']) || !is_array($s['seenHeadlines'])) $s['seenHeadlines'] = [];
+        if (!isset($s['pending']) || !is_array($s['pending'])) $s['pending'] = [];
         if (!isset($s['stats']) || !is_array($s['stats'])) {
             $s['stats'] = ['discovered' => 0, 'submitted' => 0, 'rejected' => 0];
         }
         return $s;
     }
-    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
+    return ['version' => 2, 'lastRun' => null, 'seenUrls' => [], 'seenHeadlines' => [], 'pending' => [], 'stats' => ['discovered' => 0, 'submitted' => 0, 'rejected' => 0]];
 }
 
 function save_state(array $state): void {
@@ -433,6 +449,14 @@ function save_state(array $state): void {
         is_array($state['seenHeadlines'] ?? null) ? $state['seenHeadlines'] : [],
         static fn($d) => is_string($d) && $d >= $cutoff
     );
+    // Carried candidates expire; keep the newest when the queue is over the cap.
+    $pendingCutoff = gmdate('Y-m-d', time() - PENDING_MAX_AGE_DAYS * 86400);
+    $pending = array_values(array_filter(
+        is_array($state['pending'] ?? null) ? $state['pending'] : [],
+        static fn($p) => is_array($p) && is_string($p['addedAt'] ?? null) && $p['addedAt'] >= $pendingCutoff
+    ));
+    if (count($pending) > PENDING_MAX_ENTRIES) $pending = array_slice($pending, -PENDING_MAX_ENTRIES);
+    $state['pending'] = $pending;
     save_json_file(STATE_FILE, $state);
 }
 
@@ -1515,6 +1539,304 @@ function main(): void {
     kop_log("  today = shard {$shardIndex}/" . SHARD_COUNT . ' → ' . count($slice) . ' facilities to query' .
         (MAX_FACILITIES ? ' (capped from ' . count($todaysShard) . ')' : ''));
 
+    $evalOpts = ['redditLinkBoost' => $queries['redditLinkBoost'], 'redditSelftextBoost' => $queries['redditSelftextBoost']];
+    // Counters accumulated across every submit batch in this run.
+    $totals = [
+        'candidates' => 0, 'accepted' => 0, 'rejected' => 0,
+        'submitted' => 0, 'submitErrors' => 0, 'postResolveRejected' => 0,
+        'topicSubmitted' => 0, 'topicAttempted' => 0, 'topicDeferred' => 0,
+        'gnResolveDeferred' => 0, 'carriedIn' => 0, 'droppedPending' => 0
+    ];
+    $stopRun = false;         // provider quota spent or time budget gone: carry what is left
+    $dedupeSeen = [];         // URL hashes already queued or evaluated this run
+    $dedupeHeadlines = [];    // headline keys claimed by an accepted copy this run
+    $pending = [];            // candidates carried to the next run
+
+    // Queue a candidate for the next run instead of dropping it. Carried
+    // entries keep their first-seen date and count attempts, so a link that
+    // never resolves or never extracts is given up after PENDING_MAX_ATTEMPTS.
+    $defer = static function (array $q, string $why) use (&$pending): void {
+        $pending[] = [
+            'candidate' => $q['candidate'],
+            'evalResult' => $q['evalResult'],
+            'urlHash' => $q['urlHash'],
+            'headlineKey' => $q['headlineKey'],
+            'addedAt' => $q['addedAt'] ?? gmdate('Y-m-d'),
+            'attempts' => (int)($q['attempts'] ?? 0) + 1,
+            'why' => $why
+        ];
+    };
+
+    // -- Filter one tier's raw items into a submit queue --
+    $filterBatch = function (array $candidates, string $label) use (
+        &$state, &$seen, &$dedupeSeen, &$dedupeHeadlines, &$totals,
+        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts
+    ): array {
+        $totals['candidates'] += count($candidates);
+        $state['stats']['discovered'] += count($candidates);
+        $queue = [];
+        $rejected = [];
+        $duplicateHeadlines = 0;
+        $previouslySubmitted = 0;
+
+        foreach ($candidates as $c) {
+            if (empty($c['link']) || !str_starts_with($c['link'], 'http')) continue;
+            $h = hash_url($c['link']);
+            if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
+            $dedupeSeen[$h] = true;
+            // Collapse syndicated copies (same wire headline, different outlet).
+            // Google News origins only: every link pulled from one Reddit post
+            // carries that post's title. Only an accepted copy claims the key, so
+            // a rejected first copy (wire host, state mismatch) does not hide a
+            // good one from another outlet.
+            // A reddit link post carries one link, so its title is the headline too.
+            $hk = in_array($c['origin'], ['google-news', 'google-news-topic', 'reddit-link'], true) ? headline_key($c['title']) : '';
+            if ($hk !== '' && isset($dedupeHeadlines[$hk])) { $duplicateHeadlines++; continue; }
+            // Same story already submitted on an earlier night under another URL.
+            if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
+
+            $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts);
+            if ($result['accept']) {
+                if ($hk !== '') $dedupeHeadlines[$hk] = true;
+                $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
+            } else {
+                $state['stats']['rejected'] += 1;
+                $rejected[] = [
+                    'link' => $c['link'],
+                    'title' => $c['title'],
+                    'origin' => $c['origin'],
+                    'host' => host_of($c['sourceUrl'] !== '' ? $c['sourceUrl'] : $c['link']),
+                    'facilityQuery' => $c['facilityQuery'] ?? null,
+                    'topicQuery' => $c['topicQuery'] ?? null,
+                    'reason' => $result['reason'],
+                    'meta' => $result['meta'] ?? null
+                ];
+            }
+        }
+        kop_log("After filter [{$label}]: " . count($queue) . ' accepted, ' . count($rejected) . ' rejected (threshold ' . SCORE_THRESHOLD . ')');
+        $byOrigin = [];
+        foreach ($queue as $q) {
+            $o = $q['candidate']['origin'];
+            $byOrigin[$o] = ($byOrigin[$o] ?? 0) + 1;
+        }
+        $parts = [];
+        foreach ($byOrigin as $k => $v) $parts[] = "{$k}={$v}";
+        kop_log('  accepted by origin: ' . ($parts ? implode(', ', $parts) : 'none'));
+        if ($duplicateHeadlines) kop_log("  syndicated duplicates collapsed: {$duplicateHeadlines}");
+        if ($previouslySubmitted) kop_log("  headlines already submitted on an earlier run: {$previouslySubmitted}");
+        $totals['accepted'] += count($queue);
+        $totals['rejected'] += count($rejected);
+
+        // Persist the rejected log right away (useful even if the submit phase aborts)
+        if ($rejected) persist_rejected($rejected);
+
+        // Reddit candidates go ahead of topic candidates, so a stalled topic
+        // tier (rate limits, extraction failures) cannot starve them.
+        return array_merge(
+            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] !== 'google-news-topic')),
+            array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] === 'google-news-topic'))
+        );
+    };
+
+    // -- Resolve, AI-process and submit one queue --
+    // Each accepted candidate: resolve GN redirect → re-check dedup/blacklists
+    // on the canonical URL → AI process → submit. Anything this run cannot
+    // finish is carried to the next run instead of being dropped.
+    $submitBatch = function (array $queue, string $label) use (
+        &$state, &$seen, &$totals, &$stopRun, &$pending, $defer,
+        $runDeadline, $blacklist, $facilityOwnHosts, $queries
+    ): void {
+        if (!$queue) return;
+
+        if (DRY_RUN) {
+            kop_log("\n--- DRY RUN [{$label}] — resolving + would-submit (showing up to 30 of " . count($queue) . ') ---');
+            $resolveUnresolved = 0;
+            foreach (array_slice($queue, 0, 30) as $q) {
+                $orig = $q['candidate']['link'];
+                $resolved = resolve_google_news_url($orig);
+                $unresolved = str_starts_with($resolved, 'https://news.google.com/');
+                if ($unresolved) $resolveUnresolved++;
+                kop_log("  [score {$q['evalResult']['score']}] " . ($unresolved ? '✗ UNRESOLVED' : '✓') . " {$resolved}");
+                if ($resolved !== $orig && !$unresolved) kop_log('     was:     ' . substr($orig, 0, 80) . '…');
+                kop_log('     title:   ' . substr($q['candidate']['title'], 0, 100));
+                kop_log('     reasons: ' . implode(', ', $q['evalResult']['reasons']));
+                if ($q['evalResult']['match'] !== null) kop_log('     match:   ' . json_encode($q['evalResult']['match'], JSON_UNESCAPED_SLASHES));
+            }
+            if ($resolveUnresolved > 0) kop_log("  {$resolveUnresolved} Google News URL(s) could not be resolved — would be carried to the next run.");
+            return;
+        }
+
+        kop_log("\nSubmitting [{$label}]: " . count($queue) . ' candidates');
+        $topicCap = $queries['maxTopicSubmissionsPerRun'];
+        $gnResolveFailStreak = 0;
+        $consecutiveRateLimited = 0;
+        $postResolveLog = [];
+
+        foreach ($queue as $q) {
+            if ($totals['submitted'] >= SUBMIT_LIMIT) break;   // --limit smoke tests: the rest is rediscovered
+            if ($stopRun) { $defer($q, 'run stopped'); continue; }
+            $isTopic = $q['candidate']['origin'] === 'google-news-topic';
+            // Per-run cap on topic-query submissions (Groq rate limit).
+            if ($isTopic && $topicCap > 0 && $totals['topicAttempted'] >= $topicCap) {
+                $totals['topicDeferred']++;
+                $defer($q, 'topic cap');
+                continue;
+            }
+            if (microtime(true) >= $runDeadline) {
+                kop_warn('  ! run time budget exhausted — carrying the remaining candidates to the next run');
+                $stopRun = true;
+                $defer($q, 'time budget');
+                continue;
+            }
+
+            $originalLink = $q['candidate']['link'];
+            $isGnLink = str_starts_with($originalLink, 'https://news.google.com/');
+            // Google is rate-limiting the resolver: stop asking for this run.
+            if ($isGnLink && $gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
+                $totals['gnResolveDeferred']++;
+                $defer($q, 'resolver rate-limited');
+                continue;
+            }
+            $resolvedLink = resolve_google_news_url($originalLink);
+
+            // Never submit an unresolved GN URL: the AI stage gets the consent
+            // page, which has no article body. The failure is almost always a
+            // 429 burst, so the candidate is carried to the next run, which
+            // resolves it before touching Google News.
+            if (str_starts_with($resolvedLink, 'https://news.google.com/')) {
+                $gnResolveFailStreak++;
+                $totals['gnResolveDeferred']++;
+                $defer($q, 'unresolved');
+                continue;
+            }
+            if ($isGnLink) $gnResolveFailStreak = 0;
+
+            if ($resolvedLink !== $originalLink) {
+                // Re-dedup against the canonical URL — same article may appear
+                // under multiple Google News redirect tokens.
+                $newHash = hash_url($resolvedLink);
+                if (isset($seen[$newHash])) {
+                    $seen[$q['urlHash']] = true;
+                    $totals['postResolveRejected']++;
+                    $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'duplicate-after-resolution'];
+                    continue;
+                }
+
+                $newHost = article_host_of($resolvedLink);
+                if ($newHost !== '' && $blacklist['hostBlocked']($newHost)) {
+                    $seen[$q['urlHash']] = true;
+                    $totals['postResolveRejected']++;
+                    $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'blacklist-host-post-resolve', 'host' => $newHost];
+                    continue;
+                }
+                if ($newHost !== '' && isset($facilityOwnHosts[$newHost])) {
+                    $seen[$q['urlHash']] = true;
+                    $totals['postResolveRejected']++;
+                    $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'facility-own-website-post-resolve', 'host' => $newHost];
+                    continue;
+                }
+                $pathHit = $blacklist['pathBlocked']($resolvedLink);
+                if ($pathHit) {
+                    $seen[$q['urlHash']] = true;
+                    $totals['postResolveRejected']++;
+                    $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'blacklist-path-post-resolve', 'pattern' => $pathHit];
+                    continue;
+                }
+                if (is_pdf_url($resolvedLink)) {
+                    $seen[$q['urlHash']] = true;
+                    $seen[$newHash] = true;
+                    $totals['postResolveRejected']++;
+                    $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'pdf-post-resolve'];
+                    continue;
+                }
+
+                $q['candidate']['link'] = $resolvedLink;
+                $seen[$newHash] = true;
+            }
+
+            // Mark seen before attempting submission so a flaky URL isn't retried
+            // every run.
+            $seen[$q['urlHash']] = true;
+
+            if ($isTopic) $totals['topicAttempted']++;
+            sleep_ms(AI_REQUEST_DELAY_MS);
+            $r = submit_candidate($q['candidate'], $q['evalResult']);
+
+            // Provider rate limits are transient — wait a cool-down and retry a
+            // couple of times within the run before carrying the candidate to
+            // the next run.
+            for ($attempt = 1; $attempt <= AI_RATE_LIMIT_RETRIES &&
+                 !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? ''); $attempt++) {
+                kop_log("    rate-limited; retry {$attempt}/" . AI_RATE_LIMIT_RETRIES . ' after ' . (AI_RATE_LIMIT_WAIT_MS / 1000) . 's cool-down…');
+                sleep_ms(AI_RATE_LIMIT_WAIT_MS);
+                $r = submit_candidate($q['candidate'], $q['evalResult']);
+            }
+
+            if ($r['ok']) {
+                $totals['submitted']++;
+                $state['stats']['submitted'] += 1;
+                if ($q['headlineKey'] !== '') $state['seenHeadlines'][$q['headlineKey']] = gmdate('Y-m-d');
+                if ($isTopic) $totals['topicSubmitted']++;
+            } else {
+                $totals['submitErrors']++;
+                // AI-stage failure says nothing bad about the URL (rate limit,
+                // provider hiccup, timeout) — un-mark and carry it to the next
+                // run. Submit-stage failures (e.g. duplicates) stay marked.
+                if ($r['stage'] === 'ai') {
+                    unset($seen[$q['urlHash']], $seen[hash_url($q['candidate']['link'])]);
+                    $defer($q, 'AI stage failed');
+                }
+            }
+
+            // Still rate-limited after the in-run retries: the provider quota is
+            // spent for the night. Stop instead of burning the time budget; the
+            // rest of the queue is carried to the next run.
+            $rateLimited = !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? '');
+            $consecutiveRateLimited = $rateLimited ? $consecutiveRateLimited + 1 : 0;
+            if ($consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
+                kop_warn('  ! AI provider still rate-limited after ' . AI_RATE_LIMIT_STOP_AFTER . ' candidates in a row — carrying the rest to the next run');
+                $stopRun = true;
+            }
+        }
+
+        if ($postResolveLog) {
+            $state['stats']['rejected'] += count($postResolveLog);
+            persist_rejected($postResolveLog);
+        }
+
+        // Save after every batch so a crash in a later phase keeps this one's marks.
+        $state['seenUrls'] = array_keys($seen);
+        $state['pending'] = $pending;
+        save_state($state);
+    };
+
+    // -- Carried-over queue: submit before this run touches Google News --
+    // The per-facility sweep is what gets the server IP rate-limited on the
+    // article-page step of the link resolver, so anything resolved after it
+    // 429s. Candidates an earlier run could not finish go first, while the
+    // resolver still works.
+    $carried = [];
+    foreach ($state['pending'] as $p) {
+        if (!is_array($p) || empty($p['candidate']['link']) || !is_array($p['evalResult'] ?? null)) continue;
+        if ((int)($p['attempts'] ?? 0) >= PENDING_MAX_ATTEMPTS) { $totals['droppedPending']++; continue; }
+        $hk = (string)($p['headlineKey'] ?? '');
+        if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $totals['droppedPending']++; continue; }
+        $h = (string)($p['urlHash'] ?? hash_url($p['candidate']['link']));
+        if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
+        $dedupeSeen[$h] = true;
+        if ($hk !== '') $dedupeHeadlines[$hk] = true;
+        $p['urlHash'] = $h;
+        $p['headlineKey'] = $hk;
+        $carried[] = $p;
+    }
+    $state['pending'] = [];
+    $totals['carriedIn'] = count($carried);
+    if ($carried || $totals['droppedPending']) {
+        kop_log("\nCarried over from earlier runs: " . count($carried) . ' candidates' .
+            ($totals['droppedPending'] ? " ({$totals['droppedPending']} dropped: too many attempts or story already submitted)" : ''));
+    }
+    $submitBatch($carried, 'carried over');
+
     $candidates = [];
 
     // -- Reddit pass --
@@ -1530,7 +1852,7 @@ function main(): void {
     // requests. The counter is shared so topic failures count toward it.
     $gnDeadline = min(microtime(true) + GN_TIME_BUDGET_MS / 1000, $runDeadline);
     $gn = ['consecutiveFailures' => 0, 'cooldownsLeft' => 1, 'abandoned' => false];
-    $gnGate = static function (string $where) use (&$gn, $gnDeadline): bool {
+    $gnGate = static function (string $where) use (&$gn, &$gnDeadline): bool {
         if ($gn['abandoned']) return false;
         if (microtime(true) >= $gnDeadline) {
             kop_warn("  ! Google News time budget exhausted at {$where} — continuing to filter/submit with partial results");
@@ -1571,276 +1893,68 @@ function main(): void {
         kop_log("  {$topicCandidates} topic items");
     }
 
+    // Reddit + topic candidates are filtered and submitted now, before the
+    // per-facility sweep: after ~550 RSS requests the link resolver gets
+    // HTTP 429 for the rest of the run, and this tier is where the real
+    // stories come from.
+    kop_log("\nRaw candidates (Reddit + topics): " . count($candidates));
+    $submitBatch($filterBatch($candidates, 'reddit + topics'), 'reddit + topics');
+
     // -- Google News per facility (with politeness delay) --
+    // Runs last on purpose (see above). Whatever it accepts and cannot
+    // resolve is carried to the next run, which resolves it first.
     $querySlice = array_values(array_filter(
         $slice,
         static fn($f) => !is_generic_query_name($f, $queries, $genericAliases)
     ));
     $skippedGeneric = count($slice) - count($querySlice);
-    kop_log("\nQuerying Google News per facility (" . count($querySlice) . " facilities, {$skippedGeneric} generic names skipped)...");
+    $gnDeadline = min(microtime(true) + GN_TIME_BUDGET_MS / 1000, $runDeadline);   // fresh budget for the sweep
+    $facilityCandidates = [];
     $facilitiesQueried = 0;
-    foreach ($querySlice as $i => $fac) {
-        if (!$gnGate("{$i}/" . count($querySlice) . ' facilities')) break;
-        sleep_ms(RSS_REQUEST_DELAY_MS);
-        $r = fetch_google_news_for_facility($fac, $queries);
-        $facilitiesQueried++;
-        $gn['consecutiveFailures'] = $r['failed'] ? $gn['consecutiveFailures'] + 1 : 0;
-        if (count($r['items']) > 0) {
-            kop_log("  [{$fac['queryName']}" . ($fac['state'] !== '' ? ' / ' . $fac['state'] : '') . '] ' . count($r['items']) . ' items');
+    if ($querySlice) {
+        kop_log("\nQuerying Google News per facility (" . count($querySlice) . " facilities, {$skippedGeneric} generic names skipped)...");
+        foreach ($querySlice as $i => $fac) {
+            if (!$gnGate("{$i}/" . count($querySlice) . ' facilities')) break;
+            sleep_ms(RSS_REQUEST_DELAY_MS);
+            $r = fetch_google_news_for_facility($fac, $queries);
+            $facilitiesQueried++;
+            $gn['consecutiveFailures'] = $r['failed'] ? $gn['consecutiveFailures'] + 1 : 0;
+            if (count($r['items']) > 0) {
+                kop_log("  [{$fac['queryName']}" . ($fac['state'] !== '' ? ' / ' . $fac['state'] : '') . '] ' . count($r['items']) . ' items');
+            }
+            array_push($facilityCandidates, ...($r['items'] ?: []));
+            if (($i + 1) % 25 === 0) kop_log('  ...' . ($i + 1) . '/' . count($querySlice) . ' (running total: ' . count($facilityCandidates) . ')');
         }
-        array_push($candidates, ...($r['items'] ?: []));
-        if (($i + 1) % 25 === 0) kop_log('  ...' . ($i + 1) . '/' . count($querySlice) . ' (running total: ' . count($candidates) . ')');
+        kop_log("\nRaw candidates (facilities): " . count($facilityCandidates));
+        if ($facilityCandidates) $submitBatch($filterBatch($facilityCandidates, 'facilities'), 'facilities');
     }
-
-    kop_log("\nTotal raw candidates: " . count($candidates));
-    $state['stats']['discovered'] += count($candidates);
-
-    // -- Dedupe + filter --
-    $queue = [];
-    $rejected = [];
-    $dedupeSeen = [];
-    $dedupeHeadlines = [];
-    $duplicateHeadlines = 0;
-    $previouslySubmitted = 0;
-    $evalOpts = ['redditLinkBoost' => $queries['redditLinkBoost'], 'redditSelftextBoost' => $queries['redditSelftextBoost']];
-
-    foreach ($candidates as $c) {
-        if (empty($c['link']) || !str_starts_with($c['link'], 'http')) continue;
-        $h = hash_url($c['link']);
-        if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
-        $dedupeSeen[$h] = true;
-        // Collapse syndicated copies (same wire headline, different outlet).
-        // Google News origins only: every link pulled from one Reddit post
-        // carries that post's title. Only an accepted copy claims the key, so
-        // a rejected first copy (wire host, state mismatch) does not hide a
-        // good one from another outlet.
-        // A reddit link post carries one link, so its title is the headline too.
-        $hk = in_array($c['origin'], ['google-news', 'google-news-topic', 'reddit-link'], true) ? headline_key($c['title']) : '';
-        if ($hk !== '' && isset($dedupeHeadlines[$hk])) { $duplicateHeadlines++; continue; }
-        // Same story already submitted on an earlier night under another URL.
-        if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
-
-        $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts);
-        if ($result['accept']) {
-            if ($hk !== '') $dedupeHeadlines[$hk] = true;
-            $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
-        } else {
-            $state['stats']['rejected'] += 1;
-            $rejected[] = [
-                'link' => $c['link'],
-                'title' => $c['title'],
-                'origin' => $c['origin'],
-                'host' => host_of($c['sourceUrl'] !== '' ? $c['sourceUrl'] : $c['link']),
-                'facilityQuery' => $c['facilityQuery'] ?? null,
-                'topicQuery' => $c['topicQuery'] ?? null,
-                'reason' => $result['reason'],
-                'meta' => $result['meta'] ?? null
-            ];
-        }
-    }
-    kop_log('After filter: ' . count($queue) . ' accepted, ' . count($rejected) . ' rejected (threshold ' . SCORE_THRESHOLD . ')');
-    $byOrigin = [];
-    foreach ($queue as $q) {
-        $o = $q['candidate']['origin'];
-        $byOrigin[$o] = ($byOrigin[$o] ?? 0) + 1;
-    }
-    $parts = [];
-    foreach ($byOrigin as $k => $v) $parts[] = "{$k}={$v}";
-    kop_log('  accepted by origin: ' . ($parts ? implode(', ', $parts) : 'none'));
-    if ($duplicateHeadlines) kop_log("  syndicated duplicates collapsed: {$duplicateHeadlines}");
-    if ($previouslySubmitted) kop_log("  headlines already submitted on an earlier run: {$previouslySubmitted}");
-
-    // Facility and Reddit candidates go ahead of topic candidates, so a
-    // stalled topic tier (rate limits, extraction failures) cannot starve them.
-    $queue = array_merge(
-        array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] !== 'google-news-topic')),
-        array_values(array_filter($queue, static fn($q) => $q['candidate']['origin'] === 'google-news-topic'))
-    );
-
-    // -- Persist rejected log right away (useful even if submit phase aborts) --
-    if ($rejected) persist_rejected($rejected);
 
     if (DRY_RUN) {
-        kop_log("\n--- DRY RUN — resolving + would-submit (showing up to 30) ---");
-        $resolveUnresolved = 0;
-        foreach (array_slice($queue, 0, 30) as $q) {
-            $orig = $q['candidate']['link'];
-            $resolved = resolve_google_news_url($orig);
-            $unresolved = str_starts_with($resolved, 'https://news.google.com/');
-            if ($unresolved) $resolveUnresolved++;
-            kop_log("  [score {$q['evalResult']['score']}] " . ($unresolved ? '✗ UNRESOLVED' : '✓') . " {$resolved}");
-            if ($resolved !== $orig && !$unresolved) kop_log('     was:     ' . substr($orig, 0, 80) . '…');
-            kop_log('     title:   ' . substr($q['candidate']['title'], 0, 100));
-            kop_log('     reasons: ' . implode(', ', $q['evalResult']['reasons']));
-            if ($q['evalResult']['match'] !== null) kop_log('     match:   ' . json_encode($q['evalResult']['match'], JSON_UNESCAPED_SLASHES));
-        }
-        kop_log("\nDry run done. Would attempt " . min(count($queue), SUBMIT_LIMIT) . ' submissions.');
-        if ($resolveUnresolved > 0) kop_log("  {$resolveUnresolved} Google News URL(s) could not be resolved — would be rejected.");
+        kop_log("\nDry run done. Would attempt " . min($totals['accepted'] + $totals['carriedIn'], SUBMIT_LIMIT) . ' submissions.');
         return;
     }
 
-    // -- Submit --
-    // Each accepted candidate: resolve GN redirect → re-check dedup/blacklists
-    // on the canonical URL → AI process → submit.
-    $submitted = 0;
-    $submitErrors = 0;
-    $postResolveRejected = 0;
-    $topicSubmitted = 0;
-    $topicAttempted = 0;   // counts toward maxTopicSubmissionsPerRun
-    $topicDeferred = 0;
-    $consecutiveRateLimited = 0;
-    $gnResolveFailStreak = 0;
-    $gnResolveDeferred = 0;
-    $topicCap = $queries['maxTopicSubmissionsPerRun'];
-    $postResolveLog = [];
-
-    foreach ($queue as $q) {
-        if ($submitted >= SUBMIT_LIMIT) break;
-        // Per-run cap on topic-query submissions (Groq rate limit). Deferred
-        // candidates stay unmarked, so a later run picks them up if they are
-        // still in the feed.
-        if ($q['candidate']['origin'] === 'google-news-topic' && $topicCap > 0 && $topicAttempted >= $topicCap) {
-            $topicDeferred++;
-            continue;
-        }
-        if (microtime(true) >= $runDeadline) {
-            // Unprocessed candidates were never marked seen, so the next daily
-            // run picks them up. Breaking here is what lets state get saved.
-            $left = count($queue) - $submitted - $submitErrors - $postResolveRejected;
-            kop_warn("  ! run time budget exhausted with {$left} candidates unprocessed — saving state and exiting");
-            break;
-        }
-
-        $originalLink = $q['candidate']['link'];
-        $isGnLink = str_starts_with($originalLink, 'https://news.google.com/');
-        // Google is rate-limiting the resolver: stop asking for this run.
-        if ($isGnLink && $gnResolveFailStreak >= GN_RESOLVE_FAIL_STOP_AFTER) {
-            $gnResolveDeferred++;
-            continue;
-        }
-        $resolvedLink = resolve_google_news_url($originalLink);
-
-        // Never submit an unresolved GN URL: the AI stage gets the consent
-        // page, which has no article body. The failure is almost always a
-        // 429 burst, so the candidate stays unmarked and the next run
-        // retries it instead of losing it for good.
-        if (str_starts_with($resolvedLink, 'https://news.google.com/')) {
-            $gnResolveFailStreak++;
-            $gnResolveDeferred++;
-            continue;
-        }
-        if ($isGnLink) $gnResolveFailStreak = 0;
-
-        if ($resolvedLink !== $originalLink) {
-            // Re-dedup against the canonical URL — same article may appear
-            // under multiple Google News redirect tokens.
-            $newHash = hash_url($resolvedLink);
-            if (isset($seen[$newHash])) {
-                $seen[$q['urlHash']] = true;
-                $postResolveRejected++;
-                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'duplicate-after-resolution'];
-                continue;
-            }
-
-            $newHost = article_host_of($resolvedLink);
-            if ($newHost !== '' && $blacklist['hostBlocked']($newHost)) {
-                $seen[$q['urlHash']] = true;
-                $postResolveRejected++;
-                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'blacklist-host-post-resolve', 'host' => $newHost];
-                continue;
-            }
-            if ($newHost !== '' && isset($facilityOwnHosts[$newHost])) {
-                $seen[$q['urlHash']] = true;
-                $postResolveRejected++;
-                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'facility-own-website-post-resolve', 'host' => $newHost];
-                continue;
-            }
-            $pathHit = $blacklist['pathBlocked']($resolvedLink);
-            if ($pathHit) {
-                $seen[$q['urlHash']] = true;
-                $postResolveRejected++;
-                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'blacklist-path-post-resolve', 'pattern' => $pathHit];
-                continue;
-            }
-            if (is_pdf_url($resolvedLink)) {
-                $seen[$q['urlHash']] = true;
-                $seen[$newHash] = true;
-                $postResolveRejected++;
-                $postResolveLog[] = ['link' => $originalLink, 'resolvedTo' => $resolvedLink, 'reason' => 'pdf-post-resolve'];
-                continue;
-            }
-
-            $q['candidate']['link'] = $resolvedLink;
-            $seen[$newHash] = true;
-        }
-
-        // Mark seen before attempting submission so a flaky URL isn't retried
-        // every run.
-        $seen[$q['urlHash']] = true;
-
-        if ($q['candidate']['origin'] === 'google-news-topic') $topicAttempted++;
-        sleep_ms(AI_REQUEST_DELAY_MS);
-        $r = submit_candidate($q['candidate'], $q['evalResult']);
-
-        // Provider rate limits are transient — wait a cool-down and retry a
-        // couple of times within the run before giving the URL back to
-        // tomorrow's run.
-        for ($attempt = 1; $attempt <= AI_RATE_LIMIT_RETRIES &&
-             !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? ''); $attempt++) {
-            kop_log("    rate-limited; retry {$attempt}/" . AI_RATE_LIMIT_RETRIES . ' after ' . (AI_RATE_LIMIT_WAIT_MS / 1000) . 's cool-down…');
-            sleep_ms(AI_RATE_LIMIT_WAIT_MS);
-            $r = submit_candidate($q['candidate'], $q['evalResult']);
-        }
-
-        if ($r['ok']) {
-            $submitted++;
-            $state['stats']['submitted'] += 1;
-            if ($q['headlineKey'] !== '') $state['seenHeadlines'][$q['headlineKey']] = gmdate('Y-m-d');
-            if ($q['candidate']['origin'] === 'google-news-topic') $topicSubmitted++;
-        } else {
-            $submitErrors++;
-            // AI-stage failure says nothing bad about the URL (rate limit,
-            // provider hiccup, timeout) — un-mark so the next daily run
-            // retries. Submit-stage failures (e.g. duplicates) stay marked.
-            if ($r['stage'] === 'ai') {
-                unset($seen[$q['urlHash']], $seen[hash_url($q['candidate']['link'])]);
-            }
-        }
-
-        // Still rate-limited after the in-run retries: the provider quota is
-        // spent for the night. Stop instead of burning the time budget; the
-        // un-marked candidates come back tomorrow.
-        $rateLimited = !$r['ok'] && $r['stage'] === 'ai' && preg_match('/rate limit/i', $r['error'] ?? '');
-        $consecutiveRateLimited = $rateLimited ? $consecutiveRateLimited + 1 : 0;
-        if ($consecutiveRateLimited >= AI_RATE_LIMIT_STOP_AFTER) {
-            kop_warn('  ! AI provider still rate-limited after ' . AI_RATE_LIMIT_STOP_AFTER . ' candidates in a row — saving state and exiting');
-            break;
-        }
-    }
-
-    if ($postResolveLog) {
-        $state['stats']['rejected'] += count($postResolveLog);
-        persist_rejected($postResolveLog);
-    }
-
     $state['seenUrls'] = array_keys($seen);
+    $state['pending'] = $pending;
     $state['lastRun'] = gmdate('Y-m-d\TH:i:s\Z');
     save_state($state);
 
     kop_log("\n--- Done ---");
     kop_log("  facilities queried:  {$facilitiesQueried}/" . count($querySlice) . " ({$skippedGeneric} generic skipped, shard " . count($slice) . ')');
     kop_log("  topic items:         {$topicCandidates}");
-    kop_log('  candidates found:    ' . count($candidates));
-    kop_log('  accepted by filter:  ' . count($queue));
-    kop_log('  submitted (ok):      ' . $submitted . ($topicSubmitted ? " ({$topicSubmitted} from topic queries)" : ''));
-    kop_log('  submitted (errors):  ' . $submitErrors);
-    if ($topicDeferred) kop_log("  topic deferred (cap): {$topicDeferred}");
-    kop_log('  rejected (pre-fetch):  ' . count($rejected));
-    kop_log('  rejected (post-resolve): ' . $postResolveRejected);
-    if ($gnResolveDeferred) kop_log("  deferred (GN link unresolved, retried next run): {$gnResolveDeferred}");
+    kop_log("  candidates found:    {$totals['candidates']}");
+    kop_log("  accepted by filter:  {$totals['accepted']}");
+    if ($totals['carriedIn']) kop_log("  carried in:          {$totals['carriedIn']}");
+    kop_log("  submitted (ok):      {$totals['submitted']}" . ($totals['topicSubmitted'] ? " ({$totals['topicSubmitted']} from topic queries)" : ''));
+    kop_log("  submitted (errors):  {$totals['submitErrors']}");
+    if ($totals['topicDeferred']) kop_log("  topic deferred (cap): {$totals['topicDeferred']}");
+    kop_log("  rejected (pre-fetch):  {$totals['rejected']}");
+    kop_log("  rejected (post-resolve): {$totals['postResolveRejected']}");
+    if ($totals['gnResolveDeferred']) kop_log("  deferred (GN link unresolved): {$totals['gnResolveDeferred']}");
+    if ($pending) kop_log('  carried to next run: ' . count($pending));
     kop_log('  cumulative stats:    ' . json_encode($state['stats'], JSON_UNESCAPED_SLASHES));
 
-    if ($submitErrors > 0 && $submitted === 0) {
+    if ($totals['submitErrors'] > 0 && $totals['submitted'] === 0) {
         exit(1);
     }
 }
