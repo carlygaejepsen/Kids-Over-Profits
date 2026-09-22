@@ -5,13 +5,13 @@ issues the owner raised on 2026-09-18 (items 11 to 14). Everything from the
 first list is live on kidsoverprofits.org except the network map's last
 steps; the second list is open.
 
-Last updated 2026-09-21.
+Last updated 2026-09-22.
 
 ## Status
 
 | # | Item | State |
 |---|---|---|
-| 1 | Network map | Most of Phase 2b done; see [section 1](#1-network-map) |
+| 1 | Network map | Phase 2b and Paths done; ten reader suggestions of 2026-09-22 open; see [section 1](#1-network-map) |
 | 2A | Research: relevance tiers and sort | Done; tiers waiting on the owner |
 | 2B | Research: tag facilities mentioned | Done; tag proposals waiting on the owner |
 | 3A | Form: help line on every collapsed panel | Done |
@@ -111,15 +111,40 @@ connections shown by default; starter views, with four lists (Historical,
 Today's top players, Wilderness, Fundamentalist); a draft Network Map page
 behind a password.
 
-Still open:
+Done since: 2b.9 toolbar and trail compaction (2026-09-21), Paths between
+two names (2026-09-21), the Sequel/TSI/YSI/Vivant chain from the owner's
+sheet (2026-09-21), the board's own look with straight lines and clusters
+round the click (2026-09-22). The page is public at
+https://kidsoverprofits.org/network-map/.
+
+Still open, in build order (each is itemised as 2d.n under "Phase 2d" in
+`docs/NETWORK-MAP.md`, with what the map already does against each):
+
+1. **Zoom controls (2d.10) and a fuller legend (2d.9).** Plus, minus and
+   Fit to screen on the stage under Reset view; the Key gains kind rows,
+   the arrowhead, the people-on-a-line circle, a two-line "How to read
+   this", and opens on a first visit. Answers suggestions 3, 9 and 10.
+2. **Hover cards (2d.5).** Kind, status and years, state, deaths and
+   connection count on hover, from the drawer's own profile; not on touch.
+3. **Open on one major cluster (2d.1).** One chain already opened on load
+   instead of the five Historical organisations. Waiting on the owner:
+   which chain (Sequel/YSI, WWASPS or Aspen).
+4. **Simplify (2d.7) and Show all connections (2d.8).** A toolbar toggle
+   that folds leaves into pills and drops staff, family and referral lines;
+   a drawer and toolbar action that opens every pill in view, guarded by
+   the legibility floor. Settles the last open decision of Phase 2.
+5. **Highlight a route on the board in view (2d.6).** A found path lit on
+   the current board, and "Route to this from ..." in the drawer.
+6. **Kind marks (2d.2).** A non-colour mark for company, trade group and
+   programme. Waiting on the owner: it departs from the board's key.
+7. **Chain hulls and group-by-network (2d.4).** The one that costs real
+   time; can slip to Phase 3.
+
+And from the first list:
 
 - **2b.1 David Gilcrease.** The data holds all five of his connections. The
   check on the deployed build with the cross-group toggle off, and a module
   test asserting all five, are still to do.
-- **2b.9 Toolbar and trail compaction.** The trail as one row of chips, the
-  legend as a collapsible overlay, the toolbar in one row, the stage at full
-  height.
-- **Paths between two nodes.** Phase 3 in `docs/NETWORK-MAP.md`.
 
 ---
 

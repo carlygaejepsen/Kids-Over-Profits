@@ -7,8 +7,9 @@ Miro board export.
 
 This document is the working plan. Phase 1 is done. Phase 2 is planned below
 in detail. The fix list raised on 2026-09-17 is reconciled against what has
-been built in its own section before Phase 3. Phases 3 and 4 are outlined
-at the end.
+been built in its own section before Phase 3, and the ten reader suggestions
+of 2026-09-22 the same way (Phase 2d). Phases 3 and 4 are outlined at the
+end.
 
 ## Status
 
@@ -18,6 +19,7 @@ at the end.
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile, keyboard | Steps 1 to 7 done (keyboard 2026-09-21) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
+| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Open, itemised below in build order |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
@@ -1637,6 +1639,231 @@ The owner's four complaints, and what answers each:
   browser has none or refuses (iPhone Safari), the app is pinned over the
   window with `kop-network__app--full` instead, and Escape leaves it. The
   stage resizes either way and the resize observer re-lays the view out.
+
+## Phase 2d: reader suggestions of 2026-09-22
+
+Ten suggestions came in on 2026-09-22, each a line long. They are kept here
+as sent, and under each is what the map already does, so the owner can see
+where the gap really is, and what is left to build. The build order is at
+the end. Numbers below are the suggestion's own.
+
+### 2d.1 "Show a major cluster on load. Not 6 random nodes."
+
+*What it has.* The opening view is the curated "Historical" starter view
+(2b.10): Synanon, The Brown Schools, Devereux, CEDU and Straight, joined up
+by the build with the people on the shortest routes between them, 18 names.
+Nothing about it is random, but nothing on the page says so, and it reads
+as a scatter: five organisations with a few thin lines between them, each
+drawn as a small cluster of its own.
+
+*The gap.* A reader's first screen should look like the map's argument,
+which is a dense web, not a sample. One chain with everything it owns and
+who ran it does that; five organisations chosen for their history do not.
+
+*To build.* Open on one connected cluster, already opened, the way a click
+on it would leave the board: the candidates are the Sequel/YSI/Vivant
+chain (the biggest, about 80 names once the 2c additions are on the board,
+which is at the legibility floor on a phone), WWASPS, or Aspen. Put the
+choice in `views` in `network-overrides.json` as a view whose named
+organisation is opened on load rather than merely shown, so the rest of
+the starter views keep working from the "Start from" select. On a phone
+open the same cluster in Focus on its headline company, which is the
+30-name neighbourhood the stage can frame. Decision for the owner: which
+chain.
+
+### 2d.2 "Add node types (company, facility, individual)."
+
+*What it has.* The graph carries a kind on every node (`facility`,
+`parent`, `person`, `association`, `church`, `government`) and the drawer
+says it. On the stage a person is an ellipse and everything else is a box,
+which is the Miro board's own key, and since the 2026-09-22 look pass
+nothing else tells a company from a programme from a trade group.
+
+*The gap.* On a board of eighty boxes the companies and the places look the
+same until they are clicked. The lines tell them apart to someone who
+knows the arrowheads, which is nobody on a first visit.
+
+*To build.* A mark that is not a colour, because colour by kind is what the
+owner took out on 2026-09-22 (see "The look is the board's"): the options
+are a heavier or doubled outline for a company, a small-caps kind word set
+under the name (COMPANY, TRADE GROUP), or a different corner radius. The
+kind word is the one a legend can point at without a swatch, and it costs
+nothing at small zoom because it can fade with the labels. Whichever it
+is, the legend (2d.9) gets a row per kind painted by the same painter. This
+departs from the board's key, so it needs the owner's yes before it is
+drawn.
+
+### 2d.3 "Add color coding."
+
+*What it has.* Colour already carries four things, all from the board:
+status as the fill (pale yellow open, grey closed or rebranded, white
+unrecorded), NATSAP membership as a blue name, deaths as a red ring, and
+the company on each line and arrowhead (`meta.chainColours`). A colour-by-
+kind mode existed and was removed on 2026-09-22 at the owner's request.
+
+*The gap.* The colours are not explained on screen until the Key is opened,
+and the Key is closed by default. A reader who does not open it sees
+colours and no code.
+
+*To build.* Nothing on the canvas. This is 2d.9 (a legend that explains
+every colour, open on a first visit) plus 2d.2 for the kinds. Reopening
+kind colour is the owner's call and would reverse a decision made two days
+earlier; not planned.
+
+### 2d.4 "Add clustering by network."
+
+*What it has.* Since 2026-09-22 the layout is a cluster round each root:
+what it owned in rows below it, its owners above, everyone else beside. In
+Expand mode each root gets its own fan and they sit side by side. Lines
+carry the company's colour, so a chain's lines share a colour.
+
+*The gap.* When several chains are on the board there is no boundary round
+each, no name on the group, and a name two chains share sits wherever the
+settle left it. Hulls have been the open decision since Phase 2 ("Hulls in
+Phase 2 or Phase 3").
+
+*To build.* Chain hulls: a soft outline round the nodes a company's lines
+reach, in that company's colour at low alpha, with the company's name on
+the hull's edge, drawn under the lines and only in Expand mode or when more
+than one chain is in view. Plus a "group by network" nudge in the settle,
+one weak force per chain towards its company, so two chains on an expanded
+trail pull apart instead of interleaving. The QA report already has the
+chain membership; the renderer gets a hull layer.
+
+### 2d.5 "Add hover previews."
+
+*What it has.* Hovering a name rings it, grows its label, lights its
+connections and dims everything else to fifteen percent. Hovering a line
+opens a popup beside the pointer that says what the record says of the
+two, and hovering a person's circle on a line says who. The drawer, with
+the profile, years, deaths and the connection list, opens on click only.
+
+*The gap.* Nothing on hover says what a name is. To learn that a box is a
+closed 1990s programme in Utah with two deaths the reader has to click it,
+and each click re-lays the board out (Focus) or adds to it (Expand).
+
+*To build.* A hover card for nodes: kind, status with years, state, deaths,
+connection count, and "Click to open", built from the drawer's
+`profileFor` so the two cannot disagree. Delayed about 300 ms so a pointer
+crossing the board does not flicker cards; never on touch (there is no
+hover; the drawer is the tap); shown for the keyboard-focused node too, so
+arrow-key navigation gets the same preview. Reuses the line popup's
+placement code in `connection.js`.
+
+### 2d.6 "Add a 'highlight path' mode."
+
+*What it has.* The Path button (Phase 3, 2026-09-21) takes two names and
+finds every route of six steps or fewer, shortest first; the board draws
+the chosen route and the drawer lists it, with every other route as a
+button that swaps it in. The trail strip shows the clicks taken so far.
+
+*The gap.* A found route is drawn as its own board. There is no way to light
+a route on the board already in view, and no way to ask "how does this
+name connect to what I have already opened" without typing both ends.
+
+*To build.* Highlight on the board in view: a route found while a trail is
+open is lit on the existing board where its names are already on screen
+(the emphasis mechanism the hover uses, `near` and `nearEdges`, held until
+Escape), and only the names it needs are added. Plus a one-ended path from
+the drawer: "Route to this from ..." with the current root pre-filled as
+the other end. The store's `paths()` already answers both; this is
+plumbing and a held emphasis state.
+
+### 2d.7 "Add a 'simplify view' mode."
+
+*What it has.* Focus mode shows a click's own connections and nothing else.
+People who only join two names are folded onto the line between them as
+circles (2026-09-22), and unopened connections are a "+N" pill instead of
+nodes. The filter checkboxes and degree slider that `filters.js` still
+supports left the template when the rail became the Key (2b.9), so there
+is no filtering on the page today.
+
+*The gap.* An Expand trail of three companies is a hundred names, and there
+is no one-click way back to a readable board short of Start over.
+
+*To build.* A Simplify toggle in the toolbar, carried in the URL like the
+mode: hides names with one connection into their neighbour's "+N" pill,
+turns off staff, family and referral lines (ownership, rename, membership
+stay), and drops closed-and-unconnected leaves. The store already has the
+category filter; the pill already counts hidden neighbours. Announce the
+count hidden. Off by default, because the map's point is the connections.
+
+### 2d.8 "Add a 'show all connections' mode."
+
+*What it has.* Expand mode adds each click to the board; the "+N" pill
+marks what a name has not yet shown; a company brought on as an owner
+brings only itself (the owner's decision, 2b.1), so a board never opens
+out on its own. The "no off-screen neighbours" question is the last open
+decision in Phase 2.
+
+*The gap.* A researcher who wants everything a chain touches clicks each
+pill in turn. On Sequel that is dozens of clicks.
+
+*To build.* "Show all connections" as an action, not a mode: on the drawer
+(for one name: open every one of its unopened connections) and on the
+toolbar (for the board: open every pill on screen, one hop). It switches
+to Expand and reports how many names it added. Guarded by the legibility
+floor: past about 120 names it stops and says so rather than drawing a
+hairball, and the reader can narrow with Simplify (2d.7) or Focus. This is
+the same code path as `openMany` (the Path route's opening), given a
+different set of ids.
+
+### 2d.9 "Add a more detailed legend."
+
+*What it has.* The Key, folded into the stage corner and closed by default:
+"What the names mean" (the four status fills, NATSAP name, person, deaths,
+the "+N" pill), "Whose lines" (the companies in view by colour), and
+"Connections shown" (each line style). It lists only what is on screen.
+
+*The gap.* No row tells a company from a programme (nothing on the stage
+does either, 2d.2). Nothing says what an arrowhead means, that dash-dot
+lines carry people, or that lines leave from any side. Closed by default,
+a first-time reader never sees it.
+
+*To build.* Rows for each kind once 2d.2 has a mark to show; a row for the
+arrowhead ("points from owner to owned") and the people-on-a-line circle;
+a two-line "How to read this" at the top of the Key; and the Key open on
+a first visit, closed thereafter (remembered in localStorage, wrapped in
+try/catch since private windows throw). The legend is painted by the
+renderer's own painter, so every new mark is a swatch call, not a drawing.
+
+### 2d.10 "Add a 'Reset zoom' button."
+
+*What it has.* A Reset view button on the stage (2b.3) re-lays the board
+out and frames it; the `0` key does the same; `+` and `-` zoom; double-
+click zooms in and shift-double-click out; Start over in the trail returns
+to the opening view. The button sits in the stage corner opposite the Key.
+
+*The gap.* The button exists but does not say "zoom", and there is no
+magnifier control a lost reader looks for. After a wheel zoom into a
+corner of a large board, the Reset view button may be the one control they
+do not try.
+
+*To build.* Zoom controls on the stage, under Reset view: `+`, `-` and a
+fit button, drawn like the Key's button, with the fit button labelled
+"Fit to screen" and Reset view keeping its name for what it does (re-lay
+out). A hint the first time the zoom leaves the fitted range ("Press 0 or
+Fit to screen to see everything"), once per visit. On a phone, the same
+three buttons in a column, since pinch is not discoverable either.
+
+### Order
+
+1. **2d.10 zoom controls** and **2d.9 legend** first: both are chrome, no
+   layout change, a day between them, and they answer three of the ten
+   (3, 9, 10).
+2. **2d.5 hover cards**: the drawer's profile in a card, reuses the line
+   popup. Answers 5.
+3. **2d.1 opening cluster**: once the owner names the chain. Answers 1.
+4. **2d.7 Simplify** and **2d.8 Show all connections** together: they are
+   the two ends of one dial and share the pill and category code. Answer
+   7 and 8, and settle the last open decision of Phase 2.
+5. **2d.6 highlight on the board in view**: a held emphasis state and a
+   drawer button. Answers 6.
+6. **2d.2 kind marks** after the owner's yes, with their legend rows.
+   Answers 2, and the rest of 3.
+7. **2d.4 hulls and group-by-network**: the one that costs real time; it
+   was already the open decision, and it slips to Phase 3 without loss.
+   Answers 4.
 
 ## Phase 3: analysis tools
 
