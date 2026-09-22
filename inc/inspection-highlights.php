@@ -14,6 +14,18 @@
  *   store    candidates go to inspection_highlights as pending; a re-run
  *            adds new ones and never touches a row a person has reviewed
  *
+ * Three gates keep the queue short (owner rules, 2026-09-21):
+ *
+ *   substantiated  only findings the state itself confirmed are queued: a
+ *                  Texas citation, a California deficiency, or a California
+ *                  complaint the analyst substantiated. Inconclusive and
+ *                  partly substantiated reports count only where the
+ *                  substantiated verdict sits with the sentence quoted.
+ *   peers          an assault by another child is not queued (physical or
+ *                  sexual); the categories are about what adults did.
+ *   elopement      a child running away is not queued on its own, only when
+ *                  the same finding records a death or a serious injury.
+ *
  * Nothing here publishes anything. A candidate names a facility and
  * describes harm, so it stays pending until an admin approves it.
  *
@@ -25,7 +37,7 @@ if (!function_exists('kop_ih_scanner_version')) {
 
     /** Bump when the rules change; the scanner then looks at every report again. */
     function kop_ih_scanner_version() {
-        return 1;
+        return 2;
     }
 
     /** Candidates scoring below this are not queued. */
@@ -81,6 +93,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             'sexual_abuse' => array(
                 'label'    => 'Sexual abuse',
                 'weight'   => 90,
+                'exclude'  => kop_ih_peer_pattern(),
                 'patterns' => array(
                     '\bsexual(?:ly)? (?:abus\w+|assault\w*|misconduct|contact|relationships?|activity|intercourse|acts?|exploit\w+|harass\w+|inappropriate|touch\w*)',
                     '\b(?:rape[ds]?|raping|molest\w+|sodomi\w+|fondl\w+|grop(?:ed|ing)|sexting)\b',
@@ -92,6 +105,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             'physical_abuse' => array(
                 'label'    => 'Physical abuse or assault',
                 'weight'   => 80,
+                'exclude'  => kop_ih_peer_pattern(),
                 'patterns' => array(
                     '\b(?:staff|caregiver|employee|counselor|supervisor|houseparent|house parent|administrator|teacher)s?\b[^.]{0,80}\b(?:hit|hitting|struck|punch\w*|slapp\w+|kick\w*|chok\w+|shov\w+|threw|thrown|slamm\w+|dragg\w+|assault\w*|beat|beating|spank\w+|whipp\w+|pinch\w+|bit)\b',
                     '\bphysical(?:ly)? (?:abus\w+|assault\w*)',
@@ -173,6 +187,92 @@ if (!function_exists('kop_ih_scanner_version')) {
         return 60;
     }
 
+    /**
+     * A sentence in which the other party is a child: "by another child",
+     * "between the residents", "C1 ... with C2" (California labels clients
+     * C1, C2 and staff S1, S2). Such a sentence is not physical or sexual
+     * abuse for the queue, whatever the verb.
+     */
+    function kop_ih_peer_pattern() {
+        // A client label: "C1", "Y2", "Client #2", "Child 1 (C1)", each maybe followed by a
+        // form reference in brackets. Staff are S1, S2 and never match.
+        $label = '(?:(?:Client|Child|Youth|Resident|Minor) ?#?\s?\d+(?:\s*\([CYR]\d+\))?|\b[CYR]\d+\b)(?:\s*\([^)]{0,60}\))?';
+        $second = '(?:(?:Client|Child|Youth|Resident|Minor) ?)?\(?' . $label;
+        $verb = '(?:hit|hitting|struck|punch|slapp|kick|chok|shov|assault|attack|fought|fight|beat|touch|grop|fondl|rape|raping|molest|sexual|engag|had sex)';
+        $noun = '(?:child|children|client|clients|resident|residents|youth|youths|minor|minors|student|students|peer|peers|kids?|roommates?)';
+        $other = '(?:another|other|fellow|younger|older) ' . $noun;
+        // "by another child" is the other child acting; "the staff hit another resident" is not.
+        return '\b(?:by|with|from|between) ' . $other . '\b'
+            . '|\b' . $noun . '\s+(?:\w+\s+){0,3}' . $verb . '\w*\s+(?:\w+\s+){0,2}' . $other . '\b'
+            . '|\b(?:by|with|from) (?:a |his |her |their |the )?peers?\b'
+            . '|\b(?:each other|one another)\b'
+            . '|\bpeer[- ]?(?:to|on)[- ]?peer\b'
+            . '|\b(?:child|resident|client|youth|minor|student)[- ]?(?:to|on)[- ]?(?:child|resident|client|youth|minor|student)\b'
+            . '|\bbetween (?:the |two |two of the |several |the other )?(?:children|clients|residents|youths?|minors|students|peers|kids)\b'
+            . '|\bbetween ' . $second
+            // "C1 was assaulted by Client #2", "C1 hit C2", "C1 and C2 engaged in": two clients joined by the verb.
+            . '|' . $label . '\)?\s+(?:\w+\s+){0,4}' . $verb . '\w*[^.]{0,40}?\s(?:by|with|on|against|toward|towards|and)\s+' . $second
+            . '|' . $label . '\)?\s+(?:\w+\s+){0,2}' . $verb . '\w*\s+' . $second
+            . '|' . $label . '\)?\s+and\s+' . $second . '\)?\s+(?:\w+\s+){0,3}' . $verb;
+    }
+
+    /** The ways a state says an allegation did not hold up. */
+    function kop_ih_unsubstantiated_pattern() {
+        return '\bun-?substantiated\b|\bunfounded\b|\bnot substantiated\b'
+            . '|\b(?:cannot|can ?not|could not|couldn\'t|unable to|not|never|(?:has|have|had) not) be(?:en)? substantiated\b'
+            . '|\b(?:unable|insufficient(?: evidence)?|not enough(?: evidence)?|fail\w*) to substantiate\b'
+            . '|\b(?:did|does|do) not substantiate\b';
+    }
+
+    /**
+     * What one sentence says about the allegation: 'substantiated',
+     * 'unsubstantiated', or null when it says nothing. A sentence that says
+     * both is read as unsubstantiated, so it can never carry a finding.
+     */
+    function kop_ih_sentence_verdict($sentence) {
+        if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) return 'unsubstantiated';
+        if (preg_match('/\bsubstantiated\b/iu', $sentence)) return 'substantiated';
+        return null;
+    }
+
+    /** How many sentences after a quoted one its verdict may stand. */
+    function kop_ih_verdict_window() {
+        return 3;
+    }
+
+    /**
+     * Whether the sentence at $i is covered by a substantiated verdict: the
+     * first verdict at or after it, within the window, says substantiated.
+     */
+    function kop_ih_verdict_near(array $verdicts, $i) {
+        for ($j = $i; $j <= $i + kop_ih_verdict_window(); $j++) {
+            if (!isset($verdicts[$j])) continue;
+            return $verdicts[$j] === 'substantiated';
+        }
+        return false;
+    }
+
+    /** An injury serious enough for a runaway finding to stay in the queue. */
+    function kop_ih_serious_injury_pattern() {
+        return '\b(?:serious(?:ly)? (?:injur\w+|hurt)|(?:severe|significant|substantial|critical|life[- ]threatening) (?:physical |bodily )?injur\w+'
+            . '|fractur\w+|broken (?:arm|leg|bone|nose|jaw|wrist|ankle|rib|hand|foot|collarbone|skull)s?|concussion|unconscious|lacerat\w+'
+            . '|stitches|sutures|surgery|(?:hit|struck) by a (?:car|vehicle|truck|train)|hypothermia|frostbite|drown\w*)\b';
+    }
+
+    /** Whether a sentence has a match of $pattern with no negation or hypothetical cue shortly before it. */
+    function kop_ih_sentence_has($sentence, $pattern) {
+        if (!preg_match_all('/' . $pattern . '/iu', $sentence, $m, PREG_OFFSET_CAPTURE)) return false;
+        $neg = '/' . kop_ih_negation_pattern() . '/iu';
+        $hyp = '/' . kop_ih_hypothetical_pattern() . '/iu';
+        foreach ($m[0] as $hit) {
+            $start = max(0, $hit[1] - kop_ih_cue_window());
+            $before = substr($sentence, $start, $hit[1] - $start);
+            if (preg_match($neg, $before) || preg_match($hyp, $before)) continue;
+            return $hit[0];
+        }
+        return false;
+    }
+
     /** Collapse whitespace; the text is otherwise kept as the state wrote it. */
     function kop_ih_clean_text($text) {
         $text = str_replace(array("\xE2\x80\x8B", "\xC2\xA0"), array('', ' '), (string) $text);
@@ -199,20 +299,14 @@ if (!function_exists('kop_ih_scanner_version')) {
      */
     function kop_ih_match_sentence($sentence) {
         $found = array();
-        $neg = '/' . kop_ih_negation_pattern() . '/iu';
-        $hyp = '/' . kop_ih_hypothetical_pattern() . '/iu';
         foreach (kop_ih_categories() as $key => $cat) {
             if (!empty($cat['requires']) && !preg_match('/' . $cat['requires'] . '/iu', $sentence)) continue;
             if (!empty($cat['exclude']) && preg_match('/' . $cat['exclude'] . '/iu', $sentence)) continue;
             foreach ($cat['patterns'] as $pattern) {
-                if (!preg_match_all('/' . $pattern . '/iu', $sentence, $m, PREG_OFFSET_CAPTURE)) continue;
-                foreach ($m[0] as $hit) {
-                    $start = max(0, $hit[1] - kop_ih_cue_window());
-                    $before = substr($sentence, $start, $hit[1] - $start);
-                    if (preg_match($neg, $before) || preg_match($hyp, $before)) continue;
-                    $found[$key] = $hit[0];
-                    break 2;
-                }
+                $words = kop_ih_sentence_has($sentence, $pattern);
+                if ($words === false) continue;
+                $found[$key] = $words;
+                break;
             }
         }
         return $found;
@@ -247,7 +341,11 @@ if (!function_exists('kop_ih_scanner_version')) {
         return array();
     }
 
-    /** Texas: every row is one citation, with HHSC's own risk level. */
+    /**
+     * Texas: every row is one citation, with HHSC's own risk level. A
+     * citation is a deficiency the inspector found, so it is substantiated
+     * by nature; there is no complaint outcome to read.
+     */
     function kop_ih_extract_tx(array $data) {
         $text = kop_ih_clean_text($data['Deficiency Narrative'] ?? '');
         if ($text === '') return array();
@@ -278,7 +376,11 @@ if (!function_exists('kop_ih_scanner_version')) {
      * complaint_status is wrong for about one report in ten (a report that
      * substantiates one allegation and not another is filed as
      * unsubstantiated), so the outcome is read from the analyst's text.
-     * A facility evaluation counts only when its narrative cites a deficiency.
+     * Only a substantiated complaint is queued. A report that substantiates
+     * one allegation and not another is queued only for a sentence the
+     * substantiated verdict covers (kop_ih_verdict_near); an inconclusive
+     * one never is. A facility evaluation counts only when its narrative
+     * cites a deficiency.
      */
     function kop_ih_extract_ca(array $data) {
         $findings = kop_ih_ca_strip_boilerplate($data['investigation_findings'] ?? '');
@@ -295,22 +397,20 @@ if (!function_exists('kop_ih_scanner_version')) {
             ));
         }
 
-        $without_un = (string) preg_replace('/\bun-?substantiated\b|\bnot substantiated\b/iu', ' ', $text);
-        $has_sub = (bool) preg_match('/\bsubstantiated\b/iu', $without_un);
-        $has_unsub = (bool) preg_match('/\bun-?substantiated\b|\bnot substantiated\b|\bunfounded\b/iu', $text);
-        $has_inconclusive = (bool) preg_match('/\binconclusive\b/iu', $text);
+        $unsub = '/' . kop_ih_unsubstantiated_pattern() . '/iu';
+        $has_sub = (bool) preg_match('/\bsubstantiated\b/iu', (string) preg_replace($unsub, ' ', $text));
+        $has_unsub = (bool) preg_match($unsub, $text);
         $status = strtolower(trim((string) ($data['complaint_status'] ?? '')));
 
+        $require_verdict = false;
         if ($has_sub && $has_unsub) {
-            $label = 'Partly substantiated'; $factor = 0.8;
+            $label = 'Substantiated (one of several allegations)'; $factor = 1.0; $require_verdict = true;
         } elseif ($has_sub) {
             $label = 'Substantiated'; $factor = 1.0;
         } elseif ($has_unsub) {
             return array();
         } elseif ($status === 'substantiated') {
             $label = 'Substantiated'; $factor = 1.0;
-        } elseif ($has_inconclusive || $status === 'inconclusive') {
-            $label = 'Inconclusive'; $factor = 0.5;
         } else {
             return array();
         }
@@ -322,6 +422,7 @@ if (!function_exists('kop_ih_scanner_version')) {
         return array(array(
             'text' => $text, 'standard' => $standard, 'state_label' => $label,
             'factor' => $factor, 'corrected_on_site' => null, 'kind' => 'complaint',
+            'require_verdict' => $require_verdict,
         ));
     }
 
@@ -339,14 +440,30 @@ if (!function_exists('kop_ih_scanner_version')) {
      * candidate: category (the worst), categories, score 0..100, excerpt.
      * The excerpt is the matching sentences in the state's words, in order,
      * joined by " [...] " where text between them is left out.
+     *
+     * A finding with require_verdict set (a California report that
+     * substantiates some allegations and not others) keeps only the
+     * sentences a substantiated verdict covers. A finding whose only
+     * categories are the child going missing, and the police looking, is
+     * dropped unless the text records a serious injury; a death or a
+     * hospital visit is its own category and keeps it anyway.
      */
     function kop_ih_score_finding(array $finding) {
         $cats = kop_ih_categories();
         $hits = array();
         $matched = array();
-        foreach (kop_ih_split_sentences($finding['text']) as $i => $sentence) {
+        $sentences = kop_ih_split_sentences($finding['text']);
+        $verdicts = array();
+        if (!empty($finding['require_verdict'])) {
+            foreach ($sentences as $i => $sentence) {
+                $v = kop_ih_sentence_verdict($sentence);
+                if ($v !== null) $verdicts[$i] = $v;
+            }
+        }
+        foreach ($sentences as $i => $sentence) {
             // A sentence that itself says the allegation failed is not a finding.
-            if (preg_match('/\b(?:un-?substantiated|unfounded|not substantiated)\b/iu', $sentence)) continue;
+            if (preg_match('/' . kop_ih_unsubstantiated_pattern() . '/iu', $sentence)) continue;
+            if (!empty($finding['require_verdict']) && !kop_ih_verdict_near($verdicts, $i)) continue;
             $found = kop_ih_match_sentence($sentence);
             if (!$found) continue;
             $top = 0;
@@ -357,6 +474,13 @@ if (!function_exists('kop_ih_scanner_version')) {
             $matched[] = array('i' => $i, 'weight' => $top, 'text' => $sentence);
         }
         if (!$hits) return null;
+        if (!array_diff(array_keys($hits), array('missing', 'police'))) {
+            $injured = false;
+            foreach ($sentences as $sentence) {
+                if (kop_ih_sentence_has($sentence, kop_ih_serious_injury_pattern()) !== false) { $injured = true; break; }
+            }
+            if (!$injured) return null;
+        }
 
         $weights = array();
         foreach (array_keys($hits) as $key) $weights[$key] = $cats[$key]['weight'];

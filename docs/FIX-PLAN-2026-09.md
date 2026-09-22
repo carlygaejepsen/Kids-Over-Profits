@@ -618,9 +618,20 @@ nothing can be until a person approves it.
   `complaint_status` is wrong for about one report in ten (985 reports filed
   as unsubstantiated substantiate one allegation and not another, and 169
   more only say "substantiated"), so the outcome is read from the analyst's
-  text: Substantiated 1.0, Partly substantiated 0.8, Inconclusive 0.5,
-  unsubstantiated never queued. A facility evaluation counts only when its
-  narrative cites a deficiency (0.7). Form boilerplate is cut off first.
+  text: Substantiated 1.0, unsubstantiated never queued. A report that
+  substantiates one allegation and not another is queued only for a
+  sentence whose next verdict (within three sentences) is substantiated;
+  an inconclusive one is not queued (owner rule 2026-09-21: all reports
+  must be substantiated; scanner version 2). A facility evaluation counts
+  only when its narrative cites a deficiency (0.7). Form boilerplate is
+  cut off first.
+- Two more gates from the same owner rule, scanner version 2: a sentence
+  where the other party is a child ("by another child", "between the
+  residents", "C1 ... with C2") is not physical or sexual abuse; and a
+  finding whose only categories are missing and police is dropped unless
+  the text records a serious injury (a death or a hospital visit is its
+  own category and keeps it). Against the 2026-09-17 mirror this took the
+  queue from 1,689 candidates to the figure in the commit message.
 - Scoring is per sentence, never per report. Nine categories with starter
   weights: death 100, sexual abuse 90, physical abuse or assault 80,
   restraint or seclusion with an injury named in the same sentence 75,

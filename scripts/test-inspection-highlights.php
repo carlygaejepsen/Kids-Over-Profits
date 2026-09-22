@@ -66,6 +66,27 @@ $sentence_cases = array(
     array('Two children in care were missing from the operation for 15 minutes.', array('missing')),
     array('The caregiver signature was missing on two medication logs.', array()),
     array('A child in care was reported missing at 3 AM.', array('missing')),
+    // Child on child is not queued as abuse; what an adult did is.
+    array('Due to staff not being aware, one child was put in a choke hold by another child.', array()),
+    array('A child inappropriately touched another child by grabbing them in the private area.', array()),
+    array('C1 engaged in sexual intercourse with C2 in the facility bathroom.', array()),
+    array('Inappropriate sexual contact occurred between two residents.', array()),
+    array('Staff failed to stop a peer-on-peer assault in the day room.', array()),
+    array('Two children were able to engage in consensual inappropriate sexual contact with each other.', array()),
+    array('CCL received an allegation that Client #1 (C1) was sexually assaulted by Client #2 while in care.', array()),
+    array('Child 1 (C1) and Child (C2) engaged in inappropriate sexual behaviors while overnight staff slept.', array()),
+    array('Staff did not follow the plan, resulting in Client #2 (C2) and Client #3 (C3) physically assaulting (C1).', array()),
+    array('Staff failed to intervene when C1 hit C2.', array()),
+    array('Residents and staff reported multiple incidents where the child hit younger peers.', array()),
+    array('S1 physically assaulted C1 and C2.', array('physical_abuse')),
+    array('CCL received an allegation that Client #1 (C1) (see LIC811, dated 12/16/2021) was sexually assaulted by Client #2 while in care.', array()),
+    array('Staff failed to separate two children after a child was hit twice by another child.', array()),
+    array('The operation failed to report sexual abuse against a child in care by another resident.', array()),
+    array('All residents interviewed stated they have either been hit by the staff or witnessed the staff hit another resident.', array('physical_abuse')),
+    array('Staff member S1 was seen on video hitting C1 in the day room.', array('physical_abuse')),
+    array('Staff sexually abused a child in care.', array('sexual_abuse')),
+    array('On video, a staff member was seen shoving a child to prevent them from going into the room of a peer.', array('physical_abuse')),
+    array('A child in care was subjected to physical abuse by a operation staff member.', array('physical_abuse')),
 );
 foreach ($sentence_cases as $case) {
     $got = array();
@@ -97,6 +118,22 @@ $tx_none = $tx;
 $tx_none['categories_json'] = json_encode(array('Standard Risk Level' => 'High', 'Deficiency Narrative' => 'Two smoke detectors had no batteries.'));
 check(kop_ih_candidates('TX', $tx_none) === array(), 'TX: a High citation with no harm is not queued');
 
+// A runaway on its own is not queued; one that ends in a death or a serious injury is.
+$tx_run = static function ($narrative) use ($tx) {
+    $row = $tx;
+    $row['categories_json'] = json_encode(array('Standard Risk Level' => 'High', 'Deficiency Narrative' => $narrative));
+    return kop_ih_candidates('TX', $row);
+};
+check($tx_run('The child ran away from the operation on 01/03/22 at 11:30pm.') === array(), 'TX: a runaway alone is not queued');
+check($tx_run('The child absconded from the facility and police were called to search for him.') === array(), 'TX: a runaway with the police searching is still a runaway alone');
+check($tx_run('The child ran away and returned the next day with no injuries.') === array(), 'TX: a runaway who came back unhurt is not queued');
+$c = $tx_run('The child ran away and was hit by a car, suffering a fractured leg.');
+check(count($c) === 1 && $c[0]['category'] === 'missing', 'TX: a runaway with a serious injury is queued');
+$c = $tx_run('The child ran away from the operation. The child was found deceased two days later.');
+check(count($c) === 1 && $c[0]['category'] === 'death', 'TX: a runaway who died is queued as a death');
+$c = $tx_run('The child ran away from the operation and was later taken to the hospital by ambulance.');
+check(count($c) === 1 && $c[0]['category'] === 'hospitalization', 'TX: a runaway who ended up in hospital is queued');
+
 // California
 $ca_text = '13On 9-27-24 LPA conducted an unannounced inspection. Staff physically assaulted client in care. '
     . 'The preponderance of the evidence has been met. Therefore, these allegations are Substantiated. '
@@ -117,11 +154,31 @@ $ca_unsub['categories_json'] = json_encode(array('complaint_status' => 'unsubsta
     'investigation_findings' => 'The complaint alleged that staff hit a minor. There is not a preponderance of evidence. Therefore, the allegations are UNSUBSTANTIATED.'));
 check(kop_ih_candidates('CA', $ca_unsub) === array(), 'CA: an unsubstantiated complaint is not queued');
 
-$ca_mixed = $ca;
-$ca_mixed['categories_json'] = json_encode(array('complaint_status' => 'unsubstantiated',
-    'investigation_findings' => 'Staff slapped a client in care. This allegation is Substantiated. The allegation that staff withheld food is Unsubstantiated.'));
-$c = kop_ih_candidates('CA', $ca_mixed);
-check(count($c) === 1 && $c[0]['state_label'] === 'Partly substantiated' && $c[0]['score'] === 64, 'CA: a mixed report is queued at 0.8');
+// A report that substantiates one allegation and not another: only the substantiated one counts.
+$ca_mixed = static function ($findings) use ($ca) {
+    $row = $ca;
+    $row['categories_json'] = json_encode(array('complaint_status' => 'unsubstantiated', 'investigation_findings' => $findings));
+    return kop_ih_candidates('CA', $row);
+};
+$c = $ca_mixed('Staff slapped a client in care. This allegation is Substantiated. The allegation that staff withheld food is Unsubstantiated.');
+check(count($c) === 1 && $c[0]['state_label'] === 'Substantiated (one of several allegations)' && $c[0]['score'] === 80, 'CA: a mixed report is queued at full score for the substantiated allegation');
+check($c && $c[0]['excerpt'] === 'Staff slapped a client in care.', 'CA: a mixed report quotes the harm, not the verdict');
+check($ca_mixed('Staff slapped a client in care. This allegation is Unsubstantiated. Staff withheld food from clients. This allegation is Substantiated.') === array(),
+    'CA: a mixed report whose harm was the unsubstantiated allegation is not queued');
+check($ca_mixed('The allegation that staff physically abused a client in care is Substantiated. The allegation that staff withheld food is Unsubstantiated.') !== array(),
+    'CA: the verdict may sit in the same sentence as the harm');
+check($ca_mixed('Staff slapped a client in care. LPA reviewed the file. LPA interviewed C1. LPA interviewed S1. This allegation is Substantiated. The food allegation is Unsubstantiated.') === array(),
+    'CA: a verdict more than three sentences after the harm does not cover it');
+check($ca_mixed('The allegation that staff sexually abused a minor in care cannot be substantiated because the staff did not work that shift.') === array(),
+    'CA: "cannot be substantiated" is unsubstantiated');
+check($ca_mixed('Interviews did not substantiate the allegation that staff hit a youth in care.') === array(),
+    'CA: "did not substantiate" is unsubstantiated');
+check($ca_mixed('Staff physically abused a client in care. Based on the interviews the allegation is inconclusive.') === array(),
+    'CA: an inconclusive complaint is not queued');
+$ca_inc = $ca;
+$ca_inc['categories_json'] = json_encode(array('complaint_status' => 'inconclusive',
+    'investigation_findings' => 'Staff physically abused a client in care. The evidence gathered did not settle the matter.'));
+check(kop_ih_candidates('CA', $ca_inc) === array(), 'CA: a complaint the state filed as inconclusive is not queued');
 
 $ca_eval = array('id' => 3, 'facility_id' => 3, 'categories_json' => json_encode(array(
     'report_type' => 'Facility Evaluation', 'narrative' => 'LPA toured the facility. All bedrooms were clean. No deficiencies were cited.')));
@@ -176,7 +233,7 @@ $site_rows = array(
     array(12, '06/01/2026', 'Staff punched a resident in the face during an argument.', 'High', 'approved'),
     array(13, 'March 3, 2025', 'Staff engaged in a sexual relationship with a 16-year-old resident.', 'High', 'approved'),
     array(14, '08/01/2026', 'Staff slapped a resident during an argument.', 'High', 'pending'),
-    array(15, '07/01/2026', 'The child absconded from the facility overnight.', 'High', 'approved'),
+    array(15, '07/01/2026', 'The child was taken to the hospital by ambulance after a fall.', 'High', 'approved'),
     array(16, 'unknown', 'A child in care died in a vehicle accident while staff drove.', 'High', 'approved'),
 );
 foreach ($site_rows as $sr) {
