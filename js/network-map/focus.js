@@ -66,6 +66,12 @@
      * than this: six names framed alone would be blown up into blobs. */
     var CLOSER = 1.1;
     var NEAR_MAX_ZOOM = 2.4;
+    /* The stage's own controls (Key at the left, Reset view and Full screen
+     * at the right) sit in a band along its top, so a name framed there is
+     * under a button; and a name against an edge is cut. What was clicked
+     * keeps its whole box clear of both. */
+    var STAGE_TOP = 48;
+    var STAGE_EDGE = 12;
     /* How much room a node needs to itself while the simulation arranges
      * things: enough for its own shape, and enough for its name, which is
      * drawn centred underneath and is almost always the wider of the two.
@@ -200,8 +206,33 @@
          */
         var mode = 'focus';
         function currentRoots() {
-            if (!chain.length) return [];
+            if (!chain.length) {
+                var opening = openingRoot();
+                return opening ? [opening] : [];
+            }
             return mode === 'focus' ? [chain[chain.length - 1]] : chain.slice();
+        }
+
+        /*
+         * The map can open on one organisation already opened (2d.1): the
+         * first screen is what a click on it would leave, its cluster with
+         * it in the middle, and no trail. The build names it on the default
+         * view as `root`. Everything that asks "what was clicked" asks
+         * headOf(), so the opening root is laid out, framed and grown as a
+         * click is; the trail, the crumbs and the address bar stay empty,
+         * so Start over has nothing to go back to and the hash stays clean.
+         */
+        function openingRoot() {
+            var id = store.viewRoot ? store.viewRoot() : null;
+            return id && store.visible().nodeIds[id] ? id : null;
+        }
+
+        /** The name the view is about: the newest click, or the opening root. */
+        function headOf() {
+            if (inPath()) return null;
+            if (chain.length) return store.node(chain[chain.length - 1]) || null;
+            var opening = openingRoot();
+            return opening ? store.node(opening) || null : null;
         }
         focus.mode = function () { return mode; };
 
@@ -1078,6 +1109,17 @@
             drawn = scene.nodeIds;
             if (!scene.nodes.length) return;
             if (!renderer.width) return; /* no stage yet; the resize observer calls back */
+            var head = headOf();
+            if (head) {
+                /* Opened on one organisation: laid out, grown and framed as
+                 * a click on it would be, not as a block of grown names. */
+                baseGrow = 1;
+                scene.nodes.forEach(function (node) { grown[node.id] = 1; });
+                renderer.setGrow(growFor(head));
+                var cluster = settleLayout(scene, 70);
+                applyLayout(scene, cluster.positions, 70 + cluster.overhang);
+                return;
+            }
             /* The frame is fitted to where names are centred, so the padding
              * has to hold half of the widest one as it is drawn here. */
             var padding = baseGrow === 1 ? 90 : scene.nodes.reduce(function (t, node) {
@@ -1861,9 +1903,10 @@
                 return { x: p.x, y: p.y, r: node.r };
             });
             var frame = viewport.frameOf(points, padding);
-            /* What was just clicked and its own connections: the part of
-             * the board the visitor is looking at. */
-            var head = chain.length && !inPath() ? store.node(chain[chain.length - 1]) : null;
+            /* What was just clicked (or the organisation the map opened on)
+             * and its own connections: the part of the board the visitor is
+             * looking at. */
+            var head = headOf();
             var near = null;
             if (head) {
                 /* Read off the lines on screen, so a place joined to the
@@ -1938,15 +1981,36 @@
                     chosen = centredAt(lowestClean(frame.k, top, mid(frame)), mid(frame));
                 }
                 if (head && chosen) {
-                    /* Whatever else had to go off the stage, the click stays on it. */
+                    /* Whatever else had to go off the stage, the click stays
+                     * on it: its whole box, drawn grown, clear of the
+                     * controls along the top and of the edges. Its centre
+                     * alone was not enough: a company with its programmes
+                     * in rows below it sits at the top of its own cluster,
+                     * and on a phone was framed with its name half under
+                     * the Key and cut at the right. Names keep their size
+                     * whatever the zoom, so the box is in screen pixels.
+                     *
+                     * Nudged, not re-centred. On a phone the drawer is a
+                     * sheet over the lower half of the stage, which the
+                     * frame does not know about, so a click put at the
+                     * stage's middle is under the sheet; where the frame
+                     * put it, near the top, it is in view. The view moves
+                     * the least it can and is then checked again for
+                     * dropped names around its new centre. */
                     var hp = at(head);
+                    var hbox = renderer.labelBox ? renderer.labelBox(head) : { width: head.r * 2, height: head.r * 2 };
+                    var hw = hbox.width * HEAD_GROW / 2;
+                    var hh = hbox.height * HEAD_GROW / 2;
                     var hx = hp.x * chosen.k + chosen.x;
                     var hy = hp.y * chosen.k + chosen.y;
-                    if (hx < 0 || hx > renderer.width || hy < 0 || hy > renderer.height) {
-                        /* Moved, the view has to be checked again: the
-                         * zoom that was clean around the old centre dropped
-                         * two names around this one on a phone. */
-                        chosen = centredAt(lowestClean(chosen.k, Math.max(top, chosen.k), hp), hp);
+                    var dx = 0, dy = 0;
+                    if (hx - hw < STAGE_EDGE) dx = STAGE_EDGE - (hx - hw);
+                    else if (hx + hw > renderer.width - STAGE_EDGE) dx = (renderer.width - STAGE_EDGE) - (hx + hw);
+                    if (hy - hh < STAGE_TOP) dy = STAGE_TOP - (hy - hh);
+                    else if (hy + hh > renderer.height - STAGE_EDGE) dy = (renderer.height - STAGE_EDGE) - (hy + hh);
+                    if (dx || dy) {
+                        var moved = { k: chosen.k, x: chosen.x + dx, y: chosen.y + dy };
+                        chosen = centredAt(lowestClean(moved.k, Math.max(top, moved.k), mid(moved)), mid(moved));
                     }
                 }
             }

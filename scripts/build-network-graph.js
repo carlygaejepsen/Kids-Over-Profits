@@ -1667,8 +1667,20 @@ function build() {
 
     /* The views the map can open on, headline first as "default". Resolved
      * to ids here for the same reason as the headline; a view that resolves
-     * to nothing is left out rather than offered empty. */
-    const views = [{ key: 'default', label: 'The largest networks', ids: headline }];
+     * to nothing is left out rather than offered empty.
+     *
+     * A headline of one name is a root, not a list: the map opens on that
+     * organisation already opened, the way a click on it leaves the board
+     * (2d.1, "open on UHS"). Several names are shown side by side as they
+     * were, a block of organisations to pick from. */
+    const rootId = headline.length === 1 ? headline[0] : null;
+    const rootNode = rootId ? nodes.filter(function (n) { return n.id === rootId; })[0] : null;
+    const views = [{
+        key: 'default',
+        label: rootNode ? rootNode.name : 'The largest networks',
+        ids: headline
+    }];
+    if (rootId) views[0].root = rootId;
     Object.keys(overrides.views).forEach(function (key) {
         if (key === 'default' || !/^[a-z0-9-]+$/.test(key)) {
             qa.missingViewNames.push('view key "' + key + '" is reserved or not lowercase-with-hyphens');
@@ -1713,7 +1725,9 @@ function build() {
              * the curator listed them. Names that match nothing are dropped
              * here rather than left for the browser to trip over. */
             headline: headline,
-            /* [{key, label, ids}], "default" first: the headline. */
+            /* [{key, label, ids, root?}], "default" first: the headline.
+             * `root` on the default view is the organisation the map opens
+             * on opened out; see the views comment above. */
             views: views,
             /* The colours the board draws each company's connections in. */
             chainColours: overrides.chainColours,

@@ -860,36 +860,49 @@ function run() {
 
     /* --- the opening view --- */
 
-    /* The map opens on a handful of the networks that shaped the industry
-     * and nothing else. Which ones is curated in network-overrides.json,
-     * because influence and prevalence are an editorial judgement that no
-     * count reproduces: Synanon has six recorded connections and belongs at
-     * the top; plenty of nodes with thirty do not. */
+    /* The map opens on one organisation already opened (2d.1): the first
+     * screen is a major cluster, what a click on it would leave, not a
+     * handful of names to pick from. Which one is curated in
+     * network-overrides.json (headline, one name), because it is an
+     * editorial judgement that no count reproduces; the owner chose
+     * Universal Health Services on 2026-09-22. */
     const seeds = store.seeds();
-    check(seeds.length > 0 && seeds.length <= 12,
-        'the map opens on ' + seeds.length + ' organisations',
+    check(seeds.length === 1 && seeds[0].id === 'universal-health-services',
+        'the map opens on ' + seeds.map((n) => n.name).join(', ') + ', expected Universal Health Services alone',
         'opens on: ' + seeds.map((n) => n.name).join(', '));
     check(graph.meta.headline && graph.meta.headline.length === seeds.length,
         'the opening view is not coming from the curated list');
-    ['WWASPS', 'Synanon', 'Teen Challenge'].forEach((name) => {
-        check(seeds.some((n) => n.name === name), 'the map does not open on ' + name);
-    });
-    /* Curated, not ranked: at least one of them is not among that many
-     * best-connected nodes. */
+    check(store.viewRoot() === 'universal-health-services',
+        'the default view does not carry its organisation as the root');
+    /* Curated, not ranked: it is not the best-connected name. */
     const ranked = store.visible().nodes.map((n) => n.degree).sort((a, b) => b - a);
-    const cutoff = ranked[Math.min(seeds.length, ranked.length) - 1];
-    check(seeds.some((n) => n.degree < cutoff),
-        'the opening view is just the best-connected nodes, not a curated list');
+    check(seeds[0].degree < ranked[0],
+        'the opening view is just the best-connected node, not a curated one');
 
+    /* What a click on it would show, no more and no less: the root, its
+     * connections, the places of its people, the owners of its programmes.
+     * With no trail, though: nothing to Start over from and a clean hash. */
     const opening = focus.scene();
-    check(opening.nodes.length === seeds.length,
-        'the opening view draws ' + opening.nodes.length + ' nodes, expected ' + seeds.length);
-    /* The promise: a name nobody asked for is not on the map at all. */
-    const famous = store.node('provo-canyon-school');
+    const openingCount = opening.nodes.length;
+    check(focus.chain().length === 0, 'the opening view has a trail');
+    check(opening.nodeIds['universal-health-services'], 'the opening view does not hold the organisation it opens on');
+    check(openingCount > 10,
+        'the opening view is ' + openingCount + ' names, not a cluster');
+    focus.select(store.node('universal-health-services'));
+    flushFrames();
+    const clicked = focus.scene().nodes.map((n) => n.id).sort().join(',');
+    focus.clear();
+    flushFrames();
+    const openedOn = focus.scene().nodes.map((n) => n.id).sort().join(',');
+    check(clicked === openedOn,
+        'the opening view is not what a click on its organisation shows',
+        'the map opens on Universal Health Services and its ' + (openingCount - 1) + ' connected names, as a click would');
+    /* The promise: a name nobody asked for is not on the map at all.
+     * (WWASPS is: Provo Canyon School is UHS-owned and has a WWASPS line,
+     * and a programme always brings its owners.) */
+    const famous = store.node('synanon');
     check(!opening.nodeIds[famous.id],
         'a node nobody has opened or searched for is on the opening map');
-    check(opening.nodes.every((n) => store.seedIds()[n.id]),
-        'the opening view holds something that is not one of the organisations it opens on');
 
     /* Everything on the map is named: what is on screen is there because
      * somebody asked for it, and an unnamed dot is no use to them. */
@@ -1527,8 +1540,12 @@ function run() {
     focused.edges.forEach((e) => { linked.add(e.sourceId); linked.add(e.targetId); });
     check(focused.nodes.every((n) => linked.has(n.id) || n.id === hub.id),
         'an opened view kept a node with nothing connecting it to anything');
-    check(Object.keys(seedIds).some((id) => !focused.nodeIds[id]),
-        'opening a node left every one of the opening organisations on screen, connected or not');
+    /* The organisation the map opened on has no claim on a later view:
+     * it is there only if a line joins it to what was opened. */
+    Object.keys(seedIds).forEach((id) => {
+        check(!focused.nodeIds[id] || linked.has(id),
+            'opening a node kept the organisation the map opened on with nothing connecting it');
+    });
     /* Opening a node puts it and everyone it touches on the map - not the
      * organisations the map opened with, which belong to the opening view -
      * and then opens out any person among them, because a name with one
@@ -1820,9 +1837,9 @@ function run() {
     check(focus.chain().length === 0, 'clearing did not leave the trail empty');
     check(hub.x === mapX && hub.y === mapY, 'the stored layout was disturbed');
     const reopened = focus.scene();
-    check(reopened.nodes.length === store.seeds().length,
+    check(reopened.nodes.length === openingCount,
         'clearing left ' + reopened.nodes.length + ' nodes, expected the ' +
-        store.seeds().length + ' the map opens on');
+        openingCount + ' the map opens on');
     check(changes > 0, 'the chain never reported a change for the breadcrumb to render');
 
     /* --- the filters can move under a focused trail --- */
@@ -2467,9 +2484,9 @@ function run() {
      * connections, the way a click would. */
     focus.clear();
     flushFrames();
-    const target = store.node('provo-canyon-school');
+    const target = store.node('synanon');
     check(!focus.scene().nodeIds[target.id], 'the search target is already on the opening view, so the test proves nothing');
-    const picked = Search.rank(store.nodes, 'provo canyon school')[0].node;
+    const picked = Search.rank(store.nodes, 'synanon')[0].node;
     focus.select(picked);
     flushFrames();
     const afterPick = focus.scene();
@@ -3210,13 +3227,29 @@ function run() {
     flushFrames();
     resetOps();
     renderer.draw();
+    /* The opening view is a click's cluster (2d.1), so on a phone it is
+     * framed as a click is: the organisation and its own connections on
+     * the stage at a legible zoom, the rest a pan away, and everything on
+     * the stage named. */
     const phoneScene = focus.scene();
     const phoneLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
-    check(phoneLabels.length === phoneScene.nodes.length,
-        'at 375 px the opening view named ' + phoneLabels.length + ' of ' + phoneScene.nodes.length,
-        'the opening view names all ' + phoneLabels.length + ' organisations at 375 px');
+    const openT = viewport.transform;
+    const openOnStage = phoneScene.nodes.filter((n) => {
+        const p = focus.positionOf(n);
+        const sxp = p.x * openT.k + openT.x;
+        const syp = p.y * openT.k + openT.y;
+        return sxp >= 0 && sxp <= 375 && syp >= 0 && syp <= 640;
+    });
+    check(openOnStage.length >= 8, 'only ' + openOnStage.length + ' of the opening view is on the stage at 375 px');
+    check(openOnStage.some((n) => n.id === 'universal-health-services'),
+        'at 375 px the organisation the map opens on is off the stage');
+    openOnStage.forEach((n) => {
+        check(phoneLabels.indexOf(n.name) !== -1,
+            'at 375 px the opening view has ' + n.name + ' on the stage without its name');
+    });
     check(collidingLabels(labelBoxes).length === 0,
-        'labels overlap at 375 px: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null));
+        'labels overlap at 375 px: ' + JSON.stringify(collidingLabels(labelBoxes)[0] || null),
+        'at 375 px the opening view has ' + openOnStage.length + ' of ' + phoneScene.nodes.length + ' names on the stage, all named');
 
     focus.select(store.node('wwasps'));
     flushFrames();

@@ -572,6 +572,18 @@
             }).slice(0, 8);
         };
 
+        /**
+         * The organisation the current view opens on opened out, or null
+         * for a view that is a list of names shown side by side. The build
+         * sets it on the default view when the headline is one name
+         * (2d.1); focus.js treats it as a click with no trail.
+         */
+        store.viewRoot = function () {
+            var current = store.views().filter(function (v) { return v.key === store.view; })[0];
+            var id = current && current.root;
+            return id && store.nodeById[id] ? id : null;
+        };
+
         store.seedIds = function () {
             var set = Object.create(null);
             store.seeds().forEach(function (node) { set[node.id] = true; });

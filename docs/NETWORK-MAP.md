@@ -19,7 +19,7 @@ end.
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile, keyboard | Steps 1 to 7 done (keyboard 2026-09-21) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
-| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Open, itemised below in build order |
+| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster done (UHS, 2026-09-22); the rest itemised below in build order |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
@@ -114,6 +114,9 @@ So the map opens on six organisations and nothing else. Everything else is
 absent - not faint, not small, not drawn - until it is asked for, by
 clicking something already on screen or by searching for it by name. Every
 name after the first six arrived because someone went looking for it.
+*Since 2026-09-22 the six are one: the map opens on Universal Health
+Services already opened, its cluster of 30 names, and grows from there.
+See 2d.1.*
 
 Which six is curated in `network-overrides.json`, resolved to ids by the
 build, and it has to be curated: influence and prevalence are an editorial
@@ -1649,27 +1652,64 @@ the end. Numbers below are the suggestion's own.
 
 ### 2d.1 "Show a major cluster on load. Not 6 random nodes."
 
-*What it has.* The opening view is the curated "Historical" starter view
-(2b.10): Synanon, The Brown Schools, Devereux, CEDU and Straight, joined up
-by the build with the people on the shortest routes between them, 18 names.
-Nothing about it is random, but nothing on the page says so, and it reads
-as a scatter: five organisations with a few thin lines between them, each
-drawn as a small cluster of its own.
+*What it had.* The opening view was the `headline` list in
+`network-overrides.json`: WWASPS, Synanon, Teen Challenge, CEDU, Sequel and
+Universal Health Services, six organisations drawn grown and side by side
+with the two lines that happen to run between them. Curated, not random,
+but nothing on the page said so, and six names across an empty stage
+read as a sample, not a map.
 
 *The gap.* A reader's first screen should look like the map's argument,
-which is a dense web, not a sample. One chain with everything it owns and
-who ran it does that; five organisations chosen for their history do not.
+which is a dense web. One chain with everything it owns and who ran it
+does that; six organisations chosen for their weight do not.
 
-*To build.* Open on one connected cluster, already opened, the way a click
-on it would leave the board: the candidates are the Sequel/YSI/Vivant
-chain (the biggest, about 80 names once the 2c additions are on the board,
-which is at the legibility floor on a phone), WWASPS, or Aspen. Put the
-choice in `views` in `network-overrides.json` as a view whose named
-organisation is opened on load rather than merely shown, so the rest of
-the starter views keep working from the "Start from" select. On a phone
-open the same cluster in Focus on its headline company, which is the
-30-name neighbourhood the stage can frame. Decision for the owner: which
-chain.
+**Closed (2026-09-22): the map opens on Universal Health Services.** The
+owner's choice. `headline` is now one name, and one name means something
+different from a list: the build (`build-network-graph.js`) puts it on the
+default view as `root`, and the default view's label is the organisation's
+name, so the "Start from" select reads "Universal Health Services" where
+it read "The largest networks". The five curated lists are still there to
+start from; the six-name list is gone, since it was the thing the reader
+called random.
+
+In the browser the opening view is a click with no trail. `store.viewRoot()`
+says which organisation; `focus.js` asks `headOf()` wherever it used to ask
+for the newest click, and `currentRoots()` answers the opening root when
+the trail is empty. So the first screen is exactly what a click on UHS
+leaves (the module test asserts the two scenes are the same set of names):
+UHS pinned in the middle grown as a head is, its 12 programmes in rows
+below, its owners and the companies it bought above, its two people, the
+places those people lead to, and the owners of its programmes, which is
+how WWASPS arrives, through Provo Canyon School. 30 names, 28 on screen
+once two people fold into lines. What is different from a click is what is
+not there: no crumb, so Start over stays hidden, and no hash, so a plain
+link to the page is a link to this view. Reset view re-lays it out as a
+click's board. On a phone it is framed as a click is: UHS and its own
+connections at a legible zoom, the rest a pan away, and everything on
+the stage named (the 375 px check now says that rather than "all 28",
+which a phone cannot hold).
+
+A headline of several names still opens the old way, grown and abreast, so
+the mechanism is not lost if the owner wants a list again.
+
+*Phone framing, fixed on the way (applyLayout).* The first phone screenshot
+had UHS at the top edge, its name half under the Key and Reset view
+buttons and cut at the right. A click on it did the same: the frame is
+centred on the click and its own connections, and a company with its
+programmes in rows below it sits at the top of that group, so the rule
+"whatever else goes off the stage, the click stays on it" was met by its
+centre alone. The rule now wants the whole box, drawn grown, inside the
+stage with 48 px clear at the top for the controls and 12 px at the
+edges (`STAGE_TOP`, `STAGE_EDGE`); otherwise the view is nudged by the
+least that brings the box inside, at the same zoom, then checked again
+for dropped names around its new centre. Nudged rather than re-centred:
+the first cut put the click at the stage's middle, and on a phone the
+drawer is a sheet over the lower half of the stage that the frame knows
+nothing about, so the click on WWASPS came out with an empty strip above
+the sheet and the name under it. Desktop views that fit whole are
+untouched, since nothing is chosen for them. Still open: the frame does
+not know the sheet's height; a phone click is in view because the frame
+happens to put it near the top, not because anything keeps it there.
 
 ### 2d.2 "Add node types (company, facility, individual)."
 
@@ -1853,7 +1893,8 @@ three buttons in a column, since pinch is not discoverable either.
    (3, 9, 10).
 2. **2d.5 hover cards**: the drawer's profile in a card, reuses the line
    popup. Answers 5.
-3. **2d.1 opening cluster**: once the owner names the chain. Answers 1.
+3. **2d.1 opening cluster**: done 2026-09-22, the map opens on UHS.
+   Answers 1.
 4. **2d.7 Simplify** and **2d.8 Show all connections** together: they are
    the two ends of one dial and share the pill and category code. Answer
    7 and 8, and settle the last open decision of Phase 2.

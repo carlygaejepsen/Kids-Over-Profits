@@ -95,25 +95,16 @@
    "YSI"
   ],
   "headline": [
-   "wwasps",
-   "synanon",
-   "teen-challenge",
-   "cedu-family-of-services",
-   "sequel-youth-and-family-services",
    "universal-health-services"
   ],
   "views": [
    {
     "key": "default",
-    "label": "The largest networks",
+    "label": "Universal Health Services",
     "ids": [
-     "wwasps",
-     "synanon",
-     "teen-challenge",
-     "cedu-family-of-services",
-     "sequel-youth-and-family-services",
      "universal-health-services"
-    ]
+    ],
+    "root": "universal-health-services"
    },
    {
     "key": "historical",
@@ -136,7 +127,8 @@
      "new-haven-rtc",
      "scott-boice",
      "universal-health-services",
-     "bill-lane-and-associates"
+     "bill-lane-and-associates",
+     "mel-wasserman"
     ],
     "named": 12
    },
@@ -276,10 +268,7 @@
      "betty-wills",
      "dennis-mcelwrath"
     ],
-    "named": 7,
-    "show": [
-     "referral"
-    ]
+    "named": 7
    }
   ],
   "chainColours": {

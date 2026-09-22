@@ -126,9 +126,10 @@ Still open, in build order (each is itemised as 2d.n under "Phase 2d" in
    this", and opens on a first visit. Answers suggestions 3, 9 and 10.
 2. **Hover cards (2d.5).** Kind, status and years, state, deaths and
    connection count on hover, from the drawer's own profile; not on touch.
-3. **Open on one major cluster (2d.1).** One chain already opened on load
-   instead of the five Historical organisations. Waiting on the owner:
-   which chain (Sequel/YSI, WWASPS or Aspen).
+3. **Open on one major cluster (2d.1).** Done 2026-09-22: the map opens on
+   Universal Health Services already opened, 30 names, exactly what a click
+   on it shows, with no trail. The six-name "largest networks" list is
+   gone; the five curated lists remain under Start from.
 4. **Simplify (2d.7) and Show all connections (2d.8).** A toolbar toggle
    that folds leaves into pills and drops staff, family and referral lines;
    a drawer and toolbar action that opens every pill in view, guarded by
