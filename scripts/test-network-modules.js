@@ -570,14 +570,16 @@ function run() {
         },
         /* What the pointer last said about a line; the popup is wired on
          * further down, where the lines are tested. */
-        onHoverEdge: (edge, point) => {
+        /* As app.js wires them: the circle on a line, when the pointer is
+         * on one, rides along as the last argument. */
+        onHoverEdge: (edge, point, marker) => {
             lineEvents.hovered = edge;
-            if (lineEvents.popup) lineEvents.popup.hover(edge, point);
+            if (lineEvents.popup) lineEvents.popup.hover(edge, point, marker);
         },
-        onSelectEdge: (edge, point) => {
+        onSelectEdge: (edge, point, event, marker) => {
             lineEvents.selected = edge;
             lineEvents.selections++;
-            if (lineEvents.popup) lineEvents.popup.pin(edge, point);
+            if (lineEvents.popup) lineEvents.popup.pin(edge, point, marker);
         }
     });
 
@@ -2090,8 +2092,12 @@ function run() {
         const y = p.y * bt.k + bt.y;
         return x >= 0 && x <= renderer.width && y >= 0 && y <= renderer.height;
     }).length;
-    check(markedOnStage > 0 && badgeCalls.length === markedOnStage,
-        'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + markedOnStage + ' marked nodes on the stage',
+    /* A "+N" pill on a line (the people it has no room for) is text of
+     * the same shape; the renderer says how many of those it drew. */
+    const morePills = (renderer.markers || []).filter((m) => m.kind === 'more').length;
+    check(markedOnStage > 0 && badgeCalls.length === markedOnStage + morePills,
+        'the renderer drew ' + badgeCalls.length + ' off-screen counts for ' + markedOnStage + ' marked nodes on the stage' +
+        (morePills ? ' and ' + morePills + ' +N pills on lines' : ''),
         'each of the ' + markedOnStage + ' marked nodes on the stage carries a +N pill');
     check(badgeCalls.every((t) => /^\+[1-9]\d*$/.test(t)), 'an off-screen pill reads something other than +N');
 
@@ -2124,6 +2130,8 @@ function run() {
                 const y = route.pts[i - 1][1] + (route.pts[i][1] - route.pts[i - 1][1]) * f;
                 if (x < 0 || x > WIDTH || y < 0 || y > HEIGHT) continue;
                 if (viewport.nodeAt(x, y)) continue;
+                /* A circle on the line is the person, not the line. */
+                if (viewport.markerAt(x, y)) continue;
                 if (samePairAs(viewport.edgeAt(x, y))) return { x, y };
             }
         }
@@ -2259,6 +2267,120 @@ function run() {
                 check(lineEvents.selections === before + 1 && lineEvents.selected === null && !popup.pinned(),
                     'a click on empty stage left the popup pinned');
             }
+
+            /* 2b.11b The people on a line are on it: one small circle each
+             * across the middle of the line, and a "+N" pill for the ones
+             * the line has no room for. Every circle and pill sits on the
+             * stage and on no name. Hover a circle and the popup names
+             * that person alone, with their role at each end; click it and
+             * they are a button. The pill names the rest. */
+            popup.hide();
+            focus.clear();
+            flushFrames();
+            focus.select(lineHub);
+            flushFrames();
+            resetOps();
+            renderer.draw();
+            const Canvas = sandbox.KOPNetworkCanvas;
+            const markers = renderer.markers || [];
+            const peopleLines = (renderer.routes || []).filter((r) => Canvas.peopleOf(r.edge).length > 0);
+            check(peopleLines.length > 0, 'no line in ' + lineHub.name + "'s view stands for people");
+            const markedLines = {};
+            markers.forEach((m) => { (markedLines[m.edge.id] = markedLines[m.edge.id] || []).push(m); });
+            let wrongCount = 0;
+            let tooMany = 0;
+            let onName = 0;
+            let offStage = 0;
+            let pills = 0;
+            peopleLines.forEach((r) => {
+                const ms = markedLines[r.edge.id] || [];
+                if (!ms.length) return;
+                const n = Canvas.peopleOf(r.edge).length;
+                const circles = ms.filter((m) => m.kind === 'person');
+                const more = ms.filter((m) => m.kind === 'more');
+                const carried = circles.length + more.reduce((s, m) => s + m.people.length, 0);
+                if (carried !== n || more.length > 1) wrongCount++;
+                if (circles.length > Canvas.MARKER_MAX) tooMany++;
+                pills += more.length;
+                ms.forEach((m) => {
+                    if (m.box[0] < 0 || m.box[2] > WIDTH || m.box[1] < 0 || m.box[3] > HEIGHT) offStage++;
+                    if (renderer.labelHits.some((b) => m.box[0] < b.box[2] && m.box[2] > b.box[0] &&
+                        m.box[1] < b.box[3] && m.box[3] > b.box[1])) onName++;
+                });
+            });
+            const linesMarked = Object.keys(markedLines).length;
+            check(linesMarked > 0, 'no line in ' + lineHub.name + "'s view carries its people as circles",
+                linesMarked + ' of ' + peopleLines.length + ' lines with people carry circles, ' +
+                markers.filter((m) => m.kind === 'person').length + ' circles and ' + pills + ' +N pills');
+            check(wrongCount === 0, wrongCount + ' lines carry a different number of people than they stand for');
+            check(tooMany === 0, tooMany + ' lines carry more than ' + Canvas.MARKER_MAX + ' circles');
+            check(onName === 0 && offStage === 0,
+                onName + ' circles or pills sit on a name and ' + offStage + ' are off the stage');
+            check(captionCalls.every((c) => !/[0-9]+ people$/.test(String(c))),
+                'a line still says "N people" in words as well as circles');
+
+            /* Hover a circle: that person alone, on the line they are on. */
+            const circle = markers.find((m) => m.kind === 'person' && !viewport.nodeAt(m.x, m.y));
+            check(!!circle, 'no circle can be pointed at');
+            if (circle) {
+                const who = circle.people[0];
+                const others = Canvas.peopleOf(circle.edge).filter((p) => p.key !== who.key);
+                fire('pointermove', 1, circle.x, circle.y);
+                const circleText = popup.element.textContent;
+                check(popup.element.hidden === false && circleText.indexOf(who.name) !== -1,
+                    'hovering a circle did not bring up ' + who.name);
+                check(lineEvents.hovered === circle.edge,
+                    'hovering a circle did not report the line it is on');
+                check(others.every((p) => circleText.indexOf(p.name) === -1),
+                    'the popup for one circle names the other people on the line');
+                check(circleText.indexOf(circle.edge.source.name) !== -1 && circleText.indexOf(circle.edge.target.name) !== -1,
+                    'the popup for a circle does not say which two places the person joins');
+                check(renderer.emphasis.hoverMarker === circle.key,
+                    'the hovered circle is not marked for the renderer');
+                fire('pointerdown', 1, circle.x, circle.y);
+                fire('pointerup', 1, circle.x, circle.y);
+                check(popup.pinned(), 'clicking a circle did not pin its popup');
+                const circleButtons = popup.element.querySelectorAll('button');
+                check(circleButtons.length === (who.node ? 1 : 0),
+                    'a pinned circle has ' + circleButtons.length + ' buttons for one person');
+                popup.hide();
+                fire('pointermove', 1, 2, 2);
+                check(!renderer.emphasis.hoverMarker, 'the circle stayed marked after the pointer left it');
+            }
+
+            /* The pill: the people the line had no room for. Second Nature's
+             * view rarely needs one, so a busier view is opened for it. */
+            let pill = markers.find((m) => m.kind === 'more' && !viewport.nodeAt(m.x, m.y));
+            let pillHub = lineHub;
+            if (!pill) {
+                popup.hide();
+                pillHub = store.node('provo-canyon-school');
+                focus.clear();
+                flushFrames();
+                focus.select(pillHub);
+                flushFrames();
+                resetOps();
+                renderer.draw();
+                pill = (renderer.markers || []).find((m) => m.kind === 'more' && !viewport.nodeAt(m.x, m.y));
+            }
+            check(!!pill, 'no line in ' + pillHub.name + "'s view needs a +N pill, so the pill is untested");
+            if (pill) {
+                const pillLine = (renderer.markers || []).filter((m) => m.edge === pill.edge);
+                const pillCircles = pillLine.filter((m) => m.kind === 'person').length;
+                check(pillCircles + pill.people.length === Canvas.peopleOf(pill.edge).length && pillCircles > 0,
+                    'the pill on the line from ' + pill.edge.source.name + ' hides the wrong people');
+                fire('pointermove', 1, pill.x, pill.y);
+                const pillText = popup.element.textContent;
+                check(popup.element.hidden === false && pill.people.every((p) => pillText.indexOf(p.name) !== -1),
+                    'hovering a +N pill does not name the ' + pill.people.length + ' people behind it');
+                check(badgeCalls.indexOf('+' + pill.people.length) !== -1,
+                    'the pill does not read +' + pill.people.length);
+                popup.hide();
+                fire('pointermove', 1, 2, 2);
+            }
+            check(true, '', pill ? 'in ' + pillHub.name + "'s view a +N pill hides " + pill.people.length +
+                ' people on the line from ' + pill.edge.source.name + ' to ' + pill.edge.target.name
+                : '');
         }
 
         /* What the record says of two names directly reads the same way. */

@@ -759,6 +759,9 @@
 
         /* Ids of the lines under the pointer, or null. */
         var hoverEdgeIds = null;
+        /* And the key of the circle or pill on one of them, if the pointer
+         * is on that rather than the line. */
+        var hoverMarkerKey = null;
 
         /** Every line on screen between these two names, either way round. */
         focus.linesBetween = function (a, b) {
@@ -778,10 +781,11 @@
          * a click is still reeling its names in, every line is on its way
          * somewhere else, and a popup pinned to one would be left behind.
          */
-        focus.hoverEdge = function (edge) {
+        focus.hoverEdge = function (edge, marker) {
             if (edge && yoyo) return false;
+            var markKey = (edge && marker && marker.key) || null;
             /* Called on every move along a line; only a change repaints. */
-            if (edge && hoverEdgeIds && hoverEdgeIds[edge.id]) return true;
+            if (edge && hoverEdgeIds && hoverEdgeIds[edge.id] && markKey === hoverMarkerKey) return true;
             var next = null;
             if (edge) {
                 next = Object.create(null);
@@ -790,6 +794,7 @@
             }
             if (!next && !hoverEdgeIds) return true;
             hoverEdgeIds = next;
+            hoverMarkerKey = markKey;
             applyEmphasis();
             viewport.scheduleDraw();
             return true;
@@ -799,6 +804,7 @@
             renderer.setEmphasis({
                 hoverId: hoverId,
                 hoverEdges: hoverEdgeIds,
+                hoverMarker: hoverMarkerKey,
                 /* Hover always lights what the node touches and drops the
                  * rest back. This used to be suppressed once something had
                  * been opened, on the reasoning that the neighbourhood was
@@ -1036,6 +1042,7 @@
             layout = null;
             hoverId = null;
             hoverEdgeIds = null;
+            hoverMarkerKey = null;
             stopSettle();
             dropGather();
             /* The position source is the same function throughout; it reads
@@ -1117,6 +1124,7 @@
             dropGather();
             hoverId = null;
             hoverEdgeIds = null;
+            hoverMarkerKey = null;
 
             /* A route cut back to one name, or one whose step a filter has
              * just taken away, is not a route: show its last name instead. */

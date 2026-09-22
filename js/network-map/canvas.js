@@ -141,6 +141,19 @@
     var EDGE_LABEL_MAX = 400;
     var EDGE_LABEL_CHARS = 32;
 
+    /* The people a line stands for, drawn on it: one small circle each,
+     * side by side across the middle of the line, and where the line has
+     * no room for all of them a "+N" pill for the rest. Screen pixels, so
+     * a circle is the same size however far out the view is. */
+    var MARKER_R = 5;
+    var MARKER_GAP = 4;
+    var MARKER_MAX = 5;
+    var MARKER_SIZE = 8.5;
+    /* A strip of markers keeps this clear of the bubble at either end. */
+    var MARKER_END_PAD = 10;
+    /* Where along a line the strip is tried: the middle first. */
+    var MARKER_SPOTS = [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74];
+
     /**
      * Whether a line between two places stands for the people who worked at
      * both: one the map folded a person into (focus.js, foldConnectors), or
@@ -155,39 +168,48 @@
     }
 
     /**
-     * The names a line stands for: the people folded into it, then the ones
-     * the staff list names in its text ("X worked at both A and B; Y ...").
+     * The people a line stands for: the ones folded into it, each with
+     * their node, then the ones the staff list names in its text ("X worked
+     * at both A and B; Y ..."), who were never nodes. Each is
+     * { key, name, node }, and the key is what connection.js keys its
+     * items by, so a marker can ask the popup for one person.
      */
-    function peopleOn(edge) {
-        var names = (edge.via || []).map(function (v) { return v.person.name; });
+    function peopleOf(edge) {
+        var people = (edge.via || []).map(function (v) {
+            return { key: v.person.id, name: v.person.name, node: v.person };
+        });
         var roles = edge.roles || [];
         if ((edge.provenance === 'staff-list' || edge.provenance === 'staff-movement') &&
             (roles[0] === 'worked at both' || roles[0] === 'staff moved')) {
             String(edge.raw || '').split('; ').forEach(function (part) {
                 var name = part.split(/ \(| worked at | moved from /)[0].trim();
-                if (name && names.indexOf(name) === -1) names.push(name);
+                if (!name) return;
+                for (var i = 0; i < people.length; i++) if (people[i].name === name) return;
+                people.push({ key: name, name: name, node: null });
             });
         }
-        return names;
+        return people;
+    }
+
+    /** The names a line stands for. */
+    function peopleOn(edge) {
+        return peopleOf(edge).map(function (p) { return p.name; });
     }
 
     /**
      * The words to write on a line: the relationship as the board wrote it
-     * ("cofounder/CEO", "rebrand"). A line the build added between two
-     * places because somebody worked at both says who, since that person
-     * is the connection. Nothing for a line the board left unlabelled: the
-     * build files those as "affiliated", which is its reading, not the
-     * board's words.
+     * ("cofounder/CEO", "rebrand"). Nothing for a line that stands for
+     * people: they are drawn on it as circles, one each, which say how
+     * many better than a count would. Nothing either for a line the board
+     * left unlabelled: the build files those as "affiliated", which is its
+     * reading, not the board's words.
      */
     function edgeLabelText(edge) {
         var roles = edge.roles || [];
         var raw = String(edge.raw || '');
         var text = '';
         if (isPeopleLine(edge)) {
-            /* Who is a hover away; the line itself only says when it stands
-             * for more than one of them. */
-            var count = peopleOn(edge).length;
-            text = count > 1 ? count + ' people' : '';
+            text = '';
         } else if (edge.provenance) {
             text = roles.join(' / ');
         } else {
@@ -200,6 +222,108 @@
 
     /* The memorial ring. Not the coral accent: this is a warning. */
     var DEATH_RED = '#B00020';
+
+    /* Is the point inside the box? */
+    function inBox(p, box) {
+        return p[0] >= box[0] && p[0] <= box[2] && p[1] >= box[1] && p[1] <= box[3];
+    }
+
+    /* Along the segment from p (inside the box) towards q, the fraction at
+     * which it leaves the box. More than 1 when q is inside too. */
+    function exitT(p, q, box) {
+        var dx = q[0] - p[0], dy = q[1] - p[1];
+        var t = Infinity;
+        if (dx > 0) t = Math.min(t, (box[2] - p[0]) / dx);
+        else if (dx < 0) t = Math.min(t, (box[0] - p[0]) / dx);
+        if (dy > 0) t = Math.min(t, (box[3] - p[1]) / dy);
+        else if (dy < 0) t = Math.min(t, (box[1] - p[1]) / dy);
+        return t;
+    }
+
+    /**
+     * Where the people on a line go: a strip of `n` circles across the
+     * middle of the line, and a "+N" pill for those there is no room for.
+     *
+     * The line runs from the centre of one bubble to the centre of the
+     * other, so each leg is first cut back to the part outside the two
+     * bubbles. The longest leg is tried first, at its middle and then
+     * further along either way, with as many circles as the line can
+     * hold, then fewer and a pill; every circle and the pill has to sit on
+     * the stage, clear of every name and shape, and clear of whatever the
+     * frame has already placed in the collision grid. Nothing is drawn on
+     * a line that has no room even for the pill alone: the line still
+     * answers to the pointer as a whole.
+     *
+     * Returns { circles: [[x, y], ...], more: { x, y, w, h, count } | null }
+     * or null, and claims what it placed in the grid.
+     */
+    function placeMarkers(ctx2, pts, boxA, boxB, n, grid, blockers, w, h) {
+        var legs = [];
+        for (var li = 1; li < pts.length; li++) {
+            var p = pts[li - 1], q = pts[li];
+            var t0 = 0, t1 = 1;
+            if (inBox(p, boxA)) t0 = exitT(p, q, boxA);
+            if (inBox(q, boxB)) t1 = 1 - exitT(q, p, boxB);
+            if (t0 < 0) t0 = 0;
+            if (t1 > 1) t1 = 1;
+            if (!(t1 > t0)) continue;
+            var x0 = p[0] + (q[0] - p[0]) * t0, y0 = p[1] + (q[1] - p[1]) * t0;
+            var x1 = p[0] + (q[0] - p[0]) * t1, y1 = p[1] + (q[1] - p[1]) * t1;
+            var len = Math.hypot(x1 - x0, y1 - y0);
+            if (len < MARKER_END_PAD * 2 + MARKER_R * 2) continue;
+            legs.push({ x0: x0, y0: y0, ux: (x1 - x0) / len, uy: (y1 - y0) / len, len: len });
+        }
+        if (!legs.length) return null;
+        legs.sort(function (a, b) { return b.len - a.len; });
+
+        var pillH = MARKER_SIZE + 5;
+        for (var m = Math.min(n, MARKER_MAX); m >= 0; m--) {
+            var more = n - m;
+            if (!m && !more) break;
+            var pillW = more ? Math.max(pillH, ctx2.measureText('+' + more).width + 8) : 0;
+            var strip = m * MARKER_R * 2 + Math.max(0, m - 1) * MARKER_GAP +
+                (more ? (m ? MARKER_GAP : 0) + pillW : 0);
+            for (var lj = 0; lj < legs.length; lj++) {
+                var leg = legs[lj];
+                if (strip > leg.len - MARKER_END_PAD * 2) continue;
+                for (var sj = 0; sj < MARKER_SPOTS.length; sj++) {
+                    var centre = leg.len * MARKER_SPOTS[sj];
+                    var from = centre - strip / 2;
+                    if (from < MARKER_END_PAD || from + strip > leg.len - MARKER_END_PAD) continue;
+                    var circles = [];
+                    var boxes = [];
+                    var cursor = from;
+                    var at = function (d) { return [leg.x0 + leg.ux * d, leg.y0 + leg.uy * d]; };
+                    for (var c = 0; c < m; c++) {
+                        var cp = at(cursor + MARKER_R);
+                        circles.push(cp);
+                        boxes.push([cp[0] - MARKER_R - 1, cp[1] - MARKER_R - 1, cp[0] + MARKER_R + 1, cp[1] + MARKER_R + 1]);
+                        cursor += MARKER_R * 2 + MARKER_GAP;
+                    }
+                    var pill = null;
+                    if (more) {
+                        var pp = at(cursor + pillW / 2);
+                        pill = { x: pp[0], y: pp[1], w: pillW, h: pillH, count: more };
+                        boxes.push([pp[0] - pillW / 2, pp[1] - pillH / 2, pp[0] + pillW / 2, pp[1] + pillH / 2]);
+                    }
+                    var ok = true;
+                    for (var bi = 0; bi < boxes.length && ok; bi++) {
+                        var bx = boxes[bi];
+                        if (bx[0] < 0 || bx[2] > w || bx[1] < 0 || bx[3] > h) { ok = false; break; }
+                        if (!fitsInGrid(grid, bx)) { ok = false; break; }
+                        for (var ki = 0; ki < blockers.length; ki++) {
+                            var kb = blockers[ki];
+                            if (bx[0] < kb[2] && bx[2] > kb[0] && bx[1] < kb[3] && bx[3] > kb[1]) { ok = false; break; }
+                        }
+                    }
+                    if (!ok) continue;
+                    for (var oi = 0; oi < boxes.length; oi++) occupyGrid(grid, boxes[oi]);
+                    return { circles: circles, boxes: boxes, more: pill };
+                }
+            }
+        }
+        return null;
+    }
 
     /* The "+N" pill on a node with connections off screen. */
     var BADGE_SIZE = 9;
@@ -1393,6 +1517,83 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'top';
 
+            /* --- the people on a line ---
+             *
+             * A line that stands for people carries them: one small circle
+             * per person across its middle, drawn like a person's bubble
+             * with the name left out, and a "+N" pill where the line has
+             * no room for them all. Pointing at a circle asks the popup
+             * about that one person; the pill, about the rest. Placed into
+             * the same collision grid as the names, after them, so a name
+             * always wins, and before the captions, so a caption never
+             * lands on a circle. With a neighbourhood lit, only its own
+             * lines carry their people. */
+            var markers = [];
+            var hoverMarker = emphasis.hoverMarker || null;
+            ctx.font = '600 ' + MARKER_SIZE + 'px ' + FONT;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            for (i = 0; i < routes.length; i++) {
+                var mroute = routes[i];
+                var medge = mroute.edge;
+                if (near && !(nearEdges ? nearEdges[medge.id]
+                    : (near[medge.sourceId] && near[medge.targetId]))) continue;
+                var people = peopleOf(medge);
+                if (!people.length) continue;
+                var placed = placeMarkers(ctx, mroute.pts, extent[medge.source._i], extent[medge.target._i],
+                    people.length, labelGrid, blockers, w, h);
+                if (!placed) continue;
+                for (var ci = 0; ci < placed.circles.length; ci++) {
+                    var cpt = placed.circles[ci];
+                    var mkey = medge.id + '#' + ci;
+                    markers.push({
+                        kind: 'person', key: mkey, edge: medge, people: [people[ci]],
+                        x: cpt[0], y: cpt[1], r: MARKER_R, box: placed.boxes[ci]
+                    });
+                    /* A disc of the stage colour first, so the line is cut
+                     * either side of the circle rather than running through
+                     * it. */
+                    ctx.beginPath();
+                    ctx.arc(cpt[0], cpt[1], MARKER_R + 2.5, 0, Math.PI * 2);
+                    ctx.fillStyle = SURFACE;
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(cpt[0], cpt[1], MARKER_R, 0, Math.PI * 2);
+                    ctx.fillStyle = STATUS_FILLS.unknown;
+                    ctx.fill();
+                    ctx.strokeStyle = OUTLINE;
+                    ctx.lineWidth = BORDER_BUBBLE;
+                    ctx.stroke();
+                    if (hoverMarker === mkey) {
+                        ctx.beginPath();
+                        ctx.arc(cpt[0], cpt[1], MARKER_R + 3.5, 0, Math.PI * 2);
+                        ctx.strokeStyle = OUTLINE;
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    }
+                }
+                if (placed.more) {
+                    var pm = placed.more;
+                    var pkey = medge.id + '#more';
+                    markers.push({
+                        kind: 'more', key: pkey, edge: medge, people: people.slice(placed.circles.length),
+                        x: pm.x, y: pm.y, r: pm.h / 2, box: placed.boxes[placed.boxes.length - 1]
+                    });
+                    ctx.beginPath();
+                    roundedRect(ctx, pm.x - pm.w / 2, pm.y - pm.h / 2, pm.w, pm.h, pm.h / 2);
+                    ctx.fillStyle = hoverMarker === pkey ? '#000080' : '#000435';
+                    ctx.fill();
+                    ctx.strokeStyle = SURFACE;
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillText('+' + pm.count, pm.x, pm.y + 0.5);
+                }
+            }
+            renderer.markers = markers;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
             /* --- what each line says ---
              *
              * After the names, into the same collision grid, so a name always
@@ -1574,6 +1775,30 @@
         };
 
         /**
+         * The circle or "+N" pill under a canvas point, or null: the nearest
+         * marker drawn last frame within `slop` pixels of its edge. Asked
+         * before edgeAt, since a marker sits on its line and the more
+         * particular answer wins.
+         */
+        renderer.markerAt = function (px, py, slop) {
+            var list = renderer.markers || [];
+            var best = null;
+            var nearest = Infinity;
+            for (var i = 0; i < list.length; i++) {
+                var m = list[i];
+                var d;
+                if (m.kind === 'person') {
+                    d = Math.hypot(px - m.x, py - m.y) - m.r;
+                } else {
+                    var b = m.box;
+                    d = Math.hypot(Math.max(b[0] - px, 0, px - b[2]), Math.max(b[1] - py, 0, py - b[3]));
+                }
+                if (d <= slop && d < nearest) { best = m; nearest = d; }
+            }
+            return best;
+        };
+
+        /**
          * The on-screen box a node's bubble takes, with the gap it keeps
          * from its neighbours: width and height in pixels. focus.js uses it
          * to work out the lowest zoom at which neighbouring bubbles still
@@ -1613,6 +1838,8 @@
         styleFor: styleFor,
         isPeopleLine: isPeopleLine,
         peopleOn: peopleOn,
+        peopleOf: peopleOf,
+        MARKER_MAX: MARKER_MAX,
         edgeSwatch: edgeSwatch,
         edgeFadeFor: edgeFadeFor,
         swatch: swatch,

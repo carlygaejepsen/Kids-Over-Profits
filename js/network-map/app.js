@@ -56,11 +56,11 @@
             onHover: function (node) {
                 if (focus) focus.hover(node);
             },
-            onHoverEdge: function (edge, point) {
-                if (popup) popup.hover(edge, point);
+            onHoverEdge: function (edge, point, marker) {
+                if (popup) popup.hover(edge, point, marker);
             },
-            onSelectEdge: function (edge, point) {
-                if (popup) popup.pin(edge, point);
+            onSelectEdge: function (edge, point, event, marker) {
+                if (popup) popup.pin(edge, point, marker);
             },
             /* A pan or a zoom moves the line out from under its popup. */
             onChange: function () {

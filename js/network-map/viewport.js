@@ -89,6 +89,8 @@
         var pinch = null;
         var hoverId = null;
         var hoverEdge = null;
+        /* The circle or pill on a line the pointer is on, if any. */
+        var hoverMarker = null;
         var frame = 0;
         /* Set by the last pointer down: a finger needs more room than a
          * mouse, and the same map has to serve both. */
@@ -238,6 +240,17 @@
         }
         viewport.edgeAt = edgeAt;
 
+        /**
+         * The circle or "+N" pill on a line under a canvas point, or null.
+         * Asked after nodeAt and before edgeAt: a marker is on its line, and
+         * the pointer on it means that person, not the whole line.
+         */
+        function markerAt(px, py) {
+            if (!renderer.markerAt) return null;
+            return renderer.markerAt(px, py, coarse ? HIT_SLOP_TOUCH : HIT_SLOP);
+        }
+        viewport.markerAt = markerAt;
+
         /* ------------------------------------------------------ painting -- */
 
         /** One paint per frame however many inputs arrived. */
@@ -279,12 +292,15 @@
         /* The pointer keeps moving along a line it is already on, and the
          * popup follows it, so this reports every move and not only the
          * change of line. */
-        function setHoverEdge(edge, point) {
-            var changed = (hoverEdge && hoverEdge.id) !== (edge && edge.id);
+        function setHoverEdge(edge, point, marker) {
+            marker = marker || null;
+            var changed = (hoverEdge && hoverEdge.id) !== (edge && edge.id) ||
+                (hoverMarker && hoverMarker.key) !== (marker && marker.key);
             if (!changed && !edge) return;
             hoverEdge = edge;
+            hoverMarker = marker;
             if (!hoverId) canvas.style.cursor = edge ? 'pointer' : 'grab';
-            onHoverEdge(edge, point || null);
+            onHoverEdge(edge, point || null, marker);
             if (changed) scheduleDraw();
         }
 
@@ -422,7 +438,8 @@
                 if (!mode) {
                     var over = nodeAt(point.x, point.y);
                     setHover(over ? over.id : null);
-                    setHoverEdge(over ? null : edgeAt(point.x, point.y), point);
+                    var mark = over ? null : markerAt(point.x, point.y);
+                    setHoverEdge(over ? null : (mark ? mark.edge : edgeAt(point.x, point.y)), point, mark);
                 }
                 return;
             }
@@ -502,9 +519,10 @@
                     onSelectEdge(null, null, event);
                     onSelect(hit, event);
                 } else {
-                    /* A line, or nothing at all - which is how a pinned
-                     * popup is put away. */
-                    onSelectEdge(edgeAt(point.x, point.y), point, event);
+                    /* A circle on a line, the line, or nothing at all -
+                     * which is how a pinned popup is put away. */
+                    var clickedMark = markerAt(point.x, point.y);
+                    onSelectEdge(clickedMark ? clickedMark.edge : edgeAt(point.x, point.y), point, event, clickedMark);
                 }
             } else if (wasDrag) {
                 /* Positions moved, so the index over them is stale. */

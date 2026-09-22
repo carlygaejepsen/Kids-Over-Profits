@@ -14,6 +14,11 @@
  * nothing hovers. A click anywhere else, Escape, or the view changing under
  * it puts it away.
  *
+ * The people on a line are also drawn on it, as circles (canvas.js), and
+ * pointing at a circle asks about that one person: the popup then carries
+ * only them, with their role at each end. The "+N" pill on a line with
+ * more people than room carries the rest.
+ *
  * describe() is DOM-free, so scripts/test-network-modules.js can check what
  * a line says without a document.
  */
@@ -46,8 +51,13 @@
      * label, text, source }. `text` is the whole of it in one sentence, for
      * the live region. People the staff list names in a line's text were
      * never nodes, so they come without one and cannot be opened.
+     *
+     * Each person carries a `key` - their node's id, or their name when
+     * they have no node - which is what canvas.js keys the circles on a
+     * line by. With `only` (a list of keys) the answer is just those
+     * people: what a circle, or the "+N" pill, stands for.
      */
-    function describe(edges, styleFor, canvasApi) {
+    function describe(edges, styleFor, canvasApi, only) {
         edges = (edges || []).filter(Boolean);
         if (!edges.length) return null;
         var a = edges[0].source;
@@ -63,6 +73,7 @@
                 seenPerson[via.person.id] = true;
                 items.push({
                     kind: 'person',
+                    key: via.person.id,
                     node: via.person,
                     name: via.person.name,
                     places: [a, b].map(function (place) {
@@ -87,7 +98,7 @@
                     if (!part) return;
                     var name = part.split(/ \(| worked at | moved from /)[0].trim();
                     items.push({
-                        kind: 'person', node: null, name: name || part,
+                        kind: 'person', key: name || part, node: null, name: name || part,
                         places: [], note: part.slice(name.length).trim()
                     });
                 });
@@ -106,6 +117,12 @@
                 source: edge.provenance === 'profile' ? 'from the profile' : ''
             });
         });
+
+        if (only) {
+            items = items.filter(function (item) {
+                return item.kind === 'person' && only.indexOf(item.key) !== -1;
+            });
+        }
 
         var said = items.map(function (item) {
             if (item.kind === 'person') return item.name;
@@ -152,7 +169,7 @@
                 : (canvasApi && canvasApi.styleFor ? canvasApi.styleFor(edge, false) : null);
         }
 
-        function render(said, interactive) {
+        function render(said, interactive, marker) {
             box.textContent = '';
             box.appendChild(el('p', 'kop-network__popup-title', said.a.name + ' – ' + said.b.name));
 
@@ -188,7 +205,9 @@
             box.appendChild(list);
 
             if (!interactive && said.items.some(function (item) { return item.kind === 'person' && item.node; })) {
-                box.appendChild(el('p', 'kop-network__popup-hint', 'Click the line to open a person.'));
+                box.appendChild(el('p', 'kop-network__popup-hint', marker
+                    ? (marker.kind === 'person' ? 'Click the circle to open them.' : 'Click for the others.')
+                    : 'Click the line to open a person.'));
             }
         }
 
@@ -207,13 +226,14 @@
             box.style.top = Math.max(4, y) + 'px';
         }
 
-        function show(edge, point, interactive) {
+        function show(edge, point, interactive, marker) {
+            var only = marker ? marker.people.map(function (p) { return p.key; }) : null;
             var said = describe(focus.linesBetween(edge.sourceId, edge.targetId).concat([edge]).filter(
-                function (e, i, all) { return all.indexOf(e) === i; }), styleOf, canvasApi);
+                function (e, i, all) { return all.indexOf(e) === i; }), styleOf, canvasApi, only);
             if (!said || !said.items.length) { hide(); return null; }
-            var key = keyOf(edge) + (interactive ? ':pinned' : '');
+            var key = keyOf(edge) + (marker ? ':' + marker.key : '') + (interactive ? ':pinned' : '');
             if (key !== shownKey) {
-                render(said, interactive);
+                render(said, interactive, marker);
                 shownKey = key;
             }
             box.hidden = false;
@@ -237,20 +257,22 @@
             describe: function (edge) {
                 return describe(focus.linesBetween(edge.sourceId, edge.targetId), styleOf, canvasApi);
             },
-            /** The pointer is over a line, or (null) has left it. */
-            hover: function (edge, point) {
+            /** The pointer is over a line, or a circle on one (`marker`),
+             * or (null) has left it. */
+            hover: function (edge, point, marker) {
                 if (pinned) return;
                 if (!edge) { hide(); return; }
                 /* Not while a click is still moving the lines about. */
-                if (focus.hoverEdge(edge) === false) { hide(); return; }
-                show(edge, point, false);
+                if (focus.hoverEdge(edge, marker) === false) { hide(); return; }
+                show(edge, point, false, marker);
             },
-            /** A line was clicked, or (null) the click landed on nothing. */
-            pin: function (edge, point) {
+            /** A line or a circle on one was clicked, or (null) the click
+             * landed on nothing. */
+            pin: function (edge, point, marker) {
                 if (!edge) { hide(); return; }
                 pinned = false;
-                if (focus.hoverEdge(edge) === false) { hide(); return; }
-                var said = show(edge, point, true);
+                if (focus.hoverEdge(edge, marker) === false) { hide(); return; }
+                var said = show(edge, point, true, marker);
                 pinned = !!said;
                 if (said) announce(said.text);
             },

@@ -354,6 +354,37 @@ pointable while a click is still reeling its names in. The drawer still
 lists every connection as text, folded people included, so nobody is
 reachable only by hovering.
 
+**The people on a line are drawn on it (2026-09-22).** The owner's next
+idea: a line that stands for people should show them, one small circle per
+person, so a reader can see at a glance that three people moved between two
+programmes and ask about each one. So every line with people on it -
+folded people (`edge.via`) and the names a staff-list line carries in its
+text - has a strip of circles across its middle (`placeMarkers` in
+canvas.js), each drawn like a person's bubble with the name left out.
+
+- *Room decides how many.* Each leg of the line is cut back to the part
+  outside the two bubbles, and the longest is tried at its middle and then
+  further along either way, with as many circles as the line will hold, at
+  most five (`MARKER_MAX`), then fewer and a "+N" pill for the rest. Every
+  circle and the pill has to sit on the stage, clear of every name and
+  shape, and clear of what the frame has already placed in the collision
+  grid - the names go in first, so a name always wins, and the captions
+  come after, so a caption never lands on a circle. A line with no room
+  even for the pill alone draws nothing and still answers to the pointer
+  as a whole. The "N people" caption is gone: the circles say it.
+- *A circle is that person.* `renderer.markerAt` finds the circle or pill
+  under the pointer, and the viewport asks it after `nodeAt` and before
+  `edgeAt`, so on a circle the popup carries that one person, with their
+  role at each end (`describe(..., only)` in connection.js), and on the
+  pill the people the line had no room for. Clicking pins it as with the
+  line, with the person a button, which is also the way in on a touch
+  screen. The hovered circle is ringed like a hovered name; the line under
+  it is stroked heavier as before.
+- The tests check, in Second Nature's view, that every marked line carries
+  exactly the people it stands for, none on a name or off the stage, that a
+  circle's popup names its person and nobody else on the line, and that a
+  pill names the rest.
+
 **A click is a yoyo (2026-09-18).** The owner asked for a click to zoom in,
 make the name bigger and draw its connections closer. So:
 
