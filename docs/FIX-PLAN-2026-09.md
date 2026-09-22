@@ -631,7 +631,28 @@ nothing can be until a person approves it.
   finding whose only categories are missing and police is dropped unless
   the text records a serious injury (a death or a hospital visit is its
   own category and keeps it). Against the 2026-09-17 mirror this took the
-  queue from 1,689 candidates to the figure in the commit message.
+  queue from 1,689 candidates to 988.
+- **2026-09-22, scanner version 3: Utah, Arizona and Connecticut.** Utah
+  keeps its findings in the report text, one line per rule cited
+  ("R501-19-4(4): Supervision ... - The provider was out of compliance
+  ..."); Arizona's deficiencies carry the surveyor's evidence statement
+  and numbered findings (residents R1, employees E1); Connecticut's field
+  visit form has an "Areas of regulatory non-compliance" section and its
+  licensing letters list "the areas of non-compliance", split per
+  regulation cited. None of the three attaches a severity, so a cited
+  deficiency is trusted at 1.0 when the state was investigating a
+  complaint or incident and 0.85 on a routine inspection
+  (`kop_ih_citation_factor`). Arizona surveyors quote policies, statutes
+  and intake histories at length, so a sentence-level noise rule
+  (`kop_ih_noise_pattern`) now sets aside quoted policies and rules,
+  instructions, training-topic lists, intake histories and events at an
+  earlier placement, for every state. Also excluded: assaults by a child
+  on staff, ligature hazards in the building, "deceased bird", "homicide
+  risk". Mirror: Utah 49 candidates (36 severe), Arizona 188 (94),
+  Connecticut 9 (0). Not built: Florida (its deficiency lists hold only
+  the rule text; the narrative is in 68 KB PDF text), Washington (PDF
+  columns interleaved by the scraper), Nevada (grade only), and the
+  raw-text states NC, GA, AR, MN, OR.
 - Scoring is per sentence, never per report. Nine categories with starter
   weights: death 100, sexual abuse 90, physical abuse or assault 80,
   restraint or seclusion with an injury named in the same sentence 75,

@@ -83,11 +83,44 @@ $sentence_cases = array(
     array('Staff failed to separate two children after a child was hit twice by another child.', array()),
     array('The operation failed to report sexual abuse against a child in care by another resident.', array()),
     array('All residents interviewed stated they have either been hit by the staff or witnessed the staff hit another resident.', array('physical_abuse')),
+    // Utah and Arizona wording.
+    array('The information gathered substantiated that an incident of sexual activity between three clients was reported late.', array()),
+    array('During this time, two clients engaged in sexual activity.', array()),
+    array('R1 reported to a parent that another resident sexually assaulted R1.', array()),
+    array('Video evidence showed clients overwhelming personnel, engaging in physical assaults against staff, and seizing staff keys.', array()),
+    array('A staff member bit a client during a physical restraint incident; the client incurred an injury as a result.', array('physical_abuse', 'restraint_injury')),
+    array('A review of facility documentation revealed an "Incident, Accident or Death Report" was created on March 14, 2024.', array()),
+    array('This deficient practice can lead to patient death or harm in an emergency.', array()),
+    array('A review of an incident report revealed E1 punched R1 in the face.', array('physical_abuse')),
+    array('The Compliance Officer observed bird feathers and one deceased bird on the ground in the back yard.', array()),
+    array('Failure to have anti-ligature curtain rods presents a health and safety risk for patients including possible death.', array()),
+    array('The assessment listed Homicide risk: low and suicidal ideations: passive.', array()),
+    array('The administrator failed to provide written notification to the Department of a resident\'s death within one working day.', array('death')),
+    array('The complaint alleged a resident had an unauthorized absence and later passed away.', array('death', 'missing')),
+);
+// Whole sentences the scorer sets aside: quoted policies, instructions, training lists.
+$noise_cases = array(
+    'The policy stated "Therapeutic holds are only to be used where a resident has physically engaged himself or others in an attempt to cause bodily harm."',
+    'In the event of an unauthorized absence staff are to contact: Administrator on duty; Local enforcement and/or 911; Case manager.',
+    'a) Submit a detailed plan to ensure the RN checks MARs to identify medication errors and missed medications.',
+    'The following required annual trainings expired in May 2025: Medical Consent, Recognizing and Reporting Child Sexual Abuse, Runaway Prevention.',
+    'When youth are discharged and subsequently admitted to the Hospital, the name of the person responsible should be documented.',
+    'This deficient practice poses the potential condition in which patients could physically harm themselves, causing physical injury or death.',
+    'Mom reported that member was sexually assaulted in their previous group home.',
+    'The document stated "...History of physical aggression, suicidal ideation, self harm, running away..."',
+    'A.R.S. § 13-3620(A) states any person who reasonably believes that a minor has been the victim of physical injury shall report.',
+    'A.R.S. § 13-3620 Any person who reasonably believes that a minor is or has been the victim of physical injury, abuse, child abuse, or death shall immediately report.',
+);
+foreach ($noise_cases as $s) check((bool) preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is set aside');
+foreach (array('The incident report stated E1 punched R1 in the face.', 'Staff failed to follow the treatment plan and the child was hospitalized.', 'The child was found unresponsive when the door was opened.') as $s) {
+    check(!preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is kept');
+}
+$sentence_cases = array_merge($sentence_cases, array(
     array('Staff member S1 was seen on video hitting C1 in the day room.', array('physical_abuse')),
     array('Staff sexually abused a child in care.', array('sexual_abuse')),
     array('On video, a staff member was seen shoving a child to prevent them from going into the room of a peer.', array('physical_abuse')),
     array('A child in care was subjected to physical abuse by a operation staff member.', array('physical_abuse')),
-);
+));
 foreach ($sentence_cases as $case) {
     $got = array();
     foreach (kop_ih_split_sentences($case[0]) as $s) $got = array_merge($got, array_keys(kop_ih_match_sentence($s)));
@@ -183,6 +216,74 @@ check(kop_ih_candidates('CA', $ca_inc) === array(), 'CA: a complaint the state f
 $ca_eval = array('id' => 3, 'facility_id' => 3, 'categories_json' => json_encode(array(
     'report_type' => 'Facility Evaluation', 'narrative' => 'LPA toured the facility. All bedrooms were clean. No deficiencies were cited.')));
 check(kop_ih_candidates('CA', $ca_eval) === array(), 'CA: an evaluation with nothing cited is not queued');
+
+// Utah: one line per rule cited in the report text.
+$ut_raw = "R380-80-5(4): Provider shall protect clients from abuse, prevent abuse \xE2\x80\x94 The provider was out of compliance with R380-80-5(4) by not protecting clients from harm. During the investigation inspection, the evidence substantiated that staff members harmed a client by forcibly removing a client from the top bunk of a bed. During the unnecessary physical restraint, the client incurred a concussion.\n"
+    . "R501-1-8(1)(a)-(i): Facility and safety requirements \xE2\x80\x94 The licensee was out of compliance by having a prescription cream out in the med room.\n"
+    . "This was a repeat noncompliance as noted on 03/28/2024.\n"
+    . "Checklist 642294: Census: 27; Capacity: 45; Contact: Scott Jones; Licensor: Heather Holbrook";
+$ut = array('id' => 31, 'facility_id' => 7, 'report_date' => '11/17/2025', 'raw_content' => $ut_raw,
+    'categories_json' => json_encode(array('Inspection Date' => '11/17/2025', 'Inspection Type' => 'Investigation Inspection', 'Findings Count' => '2')));
+$f = kop_ih_extract('UT', $ut);
+check(count($f) === 2, 'UT: one finding per rule line, checklist line skipped; got ' . count($f));
+check($f && $f[0]['standard'] === 'R380-80-5(4) Provider shall protect clients from abuse, prevent abuse', 'UT: the rule and its title are the standard');
+check($f && strpos($f[0]['text'], 'The provider was out of compliance') === 0, 'UT: the text starts after the dash');
+check($f && substr($f[1]['text'], -11) === '03/28/2024.', 'UT: a repeat note joins the finding before it');
+check(count(kop_ih_split_sentences('1. A review of the file revealed E1 punched R1. 2. R1 was seen by a nurse. Two children were missing for 15 minutes. Then staff called.')) === 4, 'sentences: list numbers stay with their sentence, a number ending one does not');
+check($f && $f[0]['state_label'] === 'Out of compliance, investigation inspection' && $f[0]['factor'] === 1.0, 'UT: an investigation is trusted fully');
+$c = kop_ih_candidates('UT', $ut);
+check(count($c) === 1 && $c[0]['category'] === 'restraint_injury' && $c[0]['score'] === 75, 'UT: the concussion during a forced removal is a restraint injury at 75');
+$ut_annual = $ut;
+$ut_annual['categories_json'] = json_encode(array('Inspection Type' => 'Announced, Annual Inspection'));
+$c = kop_ih_candidates('UT', $ut_annual);
+check($c && $c[0]['score'] === 64, 'UT: an annual inspection is scaled to 0.85');
+check(kop_ih_candidates('UT', array('id' => 32, 'facility_id' => 7, 'raw_content' => "Checklist 1: Census: 5", 'categories_json' => '{}')) === array(), 'UT: a checklist-only report has no findings');
+
+// Arizona: evidence plus numbered findings per deficiency.
+$az = array('id' => 41, 'facility_id' => 8, 'report_date' => '8/23/2024', 'categories_json' => json_encode(array(
+    'inspection_type' => 'Complaint', 'inspection_number' => 'INSP-1',
+    'deficiencies' => array(
+        array('rule' => 'R9-10-706. Treatment Plan. A. An administrator shall ensure that a treatment plan is developed for each resident.',
+            'evidence' => 'Based on record review and interview, the administrator failed to ensure the health and safety of a resident.',
+            'findings' => "1. A review of an incident report revealed E1 punched R1 in the face. 2. R1 was transported to the emergency room. 3. (A.R.S.) \\'a7 36-425.03(E) was not on file."),
+        array('rule' => 'R9-10-703. Personnel.', 'evidence' => 'The administrator failed to ensure personnel records were complete.', 'findings' => '1. E2 had no CPR card.'),
+    ),
+)));
+$f = kop_ih_extract('AZ', $az);
+check(count($f) === 2 && $f[0]['standard'] === 'R9-10-706. Treatment Plan. A. An administrator shall ensure that a treatment plan is developed for each resident.', 'AZ: one finding per deficiency with its rule');
+check($f && strpos($f[0]['text'], '§ 36-425.03') !== false, 'AZ: the RTF section sign is decoded');
+check($f && $f[0]['state_label'] === 'Deficiency cited, complaint' && $f[0]['factor'] === 1.0, 'AZ: a complaint inspection is trusted fully');
+$c = kop_ih_candidates('AZ', $az);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && in_array('hospitalization', $c[0]['categories'], true), 'AZ: E1 punching R1 is staff assault, with the ER visit');
+check($c && $c[0]['excerpt'] === '1. A review of an incident report revealed E1 punched R1 in the face. 2. R1 was transported to the emergency room.', 'AZ: excerpt is the two matching findings');
+$az_long = $az;
+$d = json_decode($az['categories_json'], true);
+$d['inspection_type'] = 'Compliance (Annual)';
+$d['deficiencies'][0]['rule'] = str_repeat('36-425.03. Children\'s behavioral health programs; personnel; ', 6);
+$az_long['categories_json'] = json_encode($d);
+$f = kop_ih_extract('AZ', $az_long);
+check($f && mb_strlen($f[0]['standard']) <= 164 && substr($f[0]['standard'], -4) === ' ...' && $f[0]['factor'] === 0.85, 'AZ: a long rule is cut at a word; an annual inspection is 0.85');
+
+// Connecticut: the non-compliance section of a field visit, split per regulation.
+$ct_raw = "Field Visit Reporting Form\n\nList of Areas / Topics covered during visit:\n\xE2\x80\xA2\tCensus is 9.\n\xE2\x80\xA2\tA resident was taken to the hospital by ambulance after a fall; discussed with the PM.\n\n"
+    . "Corrective Actions implemented as a result of previous visit:\nNot applicable\n\n"
+    . "Areas of regulatory non-compliance identified during this visit:\n\nSection 17a-145-63.  Chief administrative officer.\nEvidence:  Staff slapped a resident during a restraint and the program did not report it to the Careline.\n"
+    . "17a-145-64 Personnel policies and procedures.\no Evidence of CPR certification was not found in one file (DS).\n\n"
+    . "Please submit a plan of correction to address the above referenced areas of non-compliance within 30 days.\n\nJames Funaro\nRegulatory Consultant";
+$ct = array('id' => 51, 'facility_id' => 9, 'report_date' => '11/06/2024', 'raw_content' => $ct_raw, 'categories_json' => json_encode(array('visit_details' => array())));
+$f = kop_ih_extract('CT', $ct);
+check(count($f) === 2, 'CT: one finding per regulation in the non-compliance section; got ' . count($f));
+check($f && $f[0]['standard'] === '17a-145-63. Chief administrative officer' && $f[1]['standard'] === '17a-145-64 Personnel policies and procedures', 'CT: the regulation heads each finding');
+check($f && strpos($f[0]['text'], 'Staff slapped a resident') !== false && strpos($f[0]['text'], 'Please submit') === false, 'CT: the section ends before the plan-of-correction request');
+$c = kop_ih_candidates('CT', $ct);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && $c[0]['score'] === 68, 'CT: the slap is queued at 0.85; the hospital trip in the topics list is not a finding');
+$ct_none = $ct;
+$ct_none['raw_content'] = "Areas of regulatory non-compliance identified during this visit:\n\n\xE2\x80\xA2\tNot applicable\n\nPlease submit a plan";
+check(kop_ih_candidates('CT', $ct_none) === array(), 'CT: "Not applicable" is no finding');
+$ct_letter = $ct;
+$ct_letter['raw_content'] = "Dear Ms. Goduti,\n\nOn September 16th, 2024, a biennial licensing inspection was conducted at your facility. The areas of non-compliance are as follows:\n\n17a-145-73 Sleeping accommodations.\nEvidence: A child was found unresponsive in a bedroom and staff did not call 911 for twenty minutes.\n\nDCF licensing has determined that your agency has met the requirements for a regular license.\n\nSincerely,\nPatrick Hughes";
+$c = kop_ih_candidates('CT', $ct_letter);
+check(count($c) === 1 && $c[0]['category'] === 'death' && $c[0]['standard'] === '17a-145-73 Sleeping accommodations', 'CT: a licensing letter is read the same way');
 
 // Store: idempotent, and a reviewed row is never touched.
 $mem = new PDO('sqlite::memory:');
