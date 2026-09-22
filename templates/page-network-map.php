@@ -283,18 +283,10 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						</button>
 						<div class="kop-network__rail" id="kop-network-rail" role="region" aria-label="Key" hidden>
 							<?php
-							// What the colours stand for is chosen where they are
-							// explained. It used to be a fourth control in the
-							// toolbar, which is what pushed a phone's toolbar onto a
-							// third row.
+							// The key is the board's own: fills for status, a blue name
+							// for a NATSAP member, coloured lines for each company.
+							// filters.js fills it with what is on screen.
 							?>
-							<label class="kop-network__colour kop-network__colour--key">
-								<span>Colour by</span>
-								<select id="kop-network-colour-mode" class="kop-network__select">
-									<option value="kind" selected>What it is</option>
-									<option value="chain">Who owns it</option>
-								</select>
-							</label>
 							<div class="kop-network__group kop-network__legend" id="kop-network-legend"
 								role="group" aria-label="Legend"
 								data-kind-labels="<?php echo esc_attr(wp_json_encode($kop_net_kind_labels)); ?>"></div>

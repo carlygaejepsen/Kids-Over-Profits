@@ -249,6 +249,9 @@
             });
         }
         viewport.scheduleDraw = scheduleDraw;
+        /* The renderer asks for one more frame once a zoom has settled,
+         * to route the lines where the names have landed. */
+        renderer.redraw = scheduleDraw;
 
         viewport.resize = function () {
             if (renderer.resize()) scheduleDraw();

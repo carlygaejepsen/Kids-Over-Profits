@@ -17,7 +17,8 @@
 	--kop-net-control: 2.25rem;
 	--kop-net-radius: 8px;
 	--kop-net-border: #d8d2bd;
-	--kop-net-surface: var(--kop-sand, #F2EEDF);
+	/* White, as the board's frames are; the renderer's SURFACE matches. */
+	--kop-net-surface: #FFFFFF;
 	--kop-net-ink: var(--kop-midnight-blue, #000435);
 
 	max-width: 2200px;
@@ -626,18 +627,6 @@ html.kop-network-pinned {
 .kop-network__stage-button:focus-visible {
 	outline: 2px solid var(--kop-teal, #33A7B5);
 	outline-offset: 1px;
-}
-
-/* The colour mode, at the head of the Key it changes. */
-.kop-network__colour--key {
-	justify-content: space-between;
-	margin-bottom: 0.6rem;
-	padding-bottom: 0.6rem;
-	border-bottom: 1px solid var(--kop-net-border);
-}
-
-.kop-network__colour--key .kop-network__select {
-	height: 1.9rem;
 }
 
 /* Copy link says so for a moment once it has. */

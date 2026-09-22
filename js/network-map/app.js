@@ -210,6 +210,9 @@
 
         /* Arrow keys, Enter and zoom on the stage; Escape is bound below. */
         if (window.KOPNetworkKeys) {
+            /* For a browser console or a Playwright script: the live
+             * objects, so a layout or a route can be read off the page. */
+            window.KOPNetworkDebug = { store: store, renderer: renderer, viewport: viewport, focus: focus };
             app.keys = window.KOPNetworkKeys.create({
                 canvas: canvas, focus: focus, viewport: viewport, renderer: renderer, announce: announce
             });

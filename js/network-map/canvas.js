@@ -18,32 +18,26 @@
 (function (root) {
     'use strict';
 
-    var SURFACE = '#F2EEDF'; /* --kop-sand, matching the stage background. */
-    var INK = 'rgba(0, 4, 53, ';
+    var SURFACE = '#FFFFFF'; /* The stage is white, as the board's frames are. */
     var FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-    /* Colour mode one: what a node is. Teal, navy and orange carry the three
-     * kinds that make up 96% of the map; trade groups get a chartreuse
-     * outline on sand rather than a fill, and the long tail is grey, nudged
-     * apart just enough to tell a state agency from a church. */
-    var KIND_COLOURS = {
-        person: '#33A7B5',
-        facility: '#000080',
-        parent: '#EF9034',
-        association: '#F2EEDF',
-        government: '#4A5568',
-        church: '#7D7A6B',
-        other: '#9A9A9A'
-    };
-    var KIND_OUTLINE = {
-        association: '#B2E102'
-    };
+    /* Nodes are drawn the way the board's key draws them: a box with a thin
+     * dark outline, filled by status - pale yellow for a place still open,
+     * grey for one closed or carried on under another name, white where the
+     * record does not say - with the name in dark ink, or in blue for a
+     * NATSAP member. What a thing is (a person, a programme, a company) is
+     * told by its shape and by the drawer, never by a coloured background:
+     * the orange and navy blocks this used to draw were the thing the
+     * board's owner asked to have back the way it was. */
+    var STATUS_FILLS = { open: '#FAEBA1', closed: '#E6E6E6', rebranded: '#E6E6E6', unknown: '#FFFFFF' };
+    var OUTLINE = '#1A1A1A';
+    var INK_TEXT = '#1A1A1A';
+    var NATSAP_INK = '#0B2BF0';
 
-    /* Colour mode two: who owns it. Indexed by position in meta.chains, so a
-     * chain keeps its colour when the view is filtered. Ten chains exist
-     * today; the list runs to twelve so a board export can add two before
-     * anyone has to think about it. Everything with no recorded owner is
-     * grey, which is most of the map and should read as unremarkable. */
+    /* Company colours, for the lines: the board's own where it gave one
+     * (meta.chainColours), this palette for a chain it left black. Indexed
+     * by position in meta.chains, so a chain keeps its colour when the view
+     * is filtered. Everything with no recorded owner is grey. */
     var CHAIN_COLOURS = [
         '#000080', '#33A7B5', '#EF9034', '#FE8088', '#FC8ED6', '#AEE0ED',
         '#B6E3D4', '#ECF385', '#000435', '#B2E102', '#8C6239', '#5B7FA6'
@@ -69,30 +63,31 @@
         /* X became Y. Teal, because it is a continuation rather than a
          * transaction, and the same teal the map uses for people is not in
          * play between two organisations. */
-        rebrand:    { colour: '#1E7F8C', width: 2.2, dash: null, arrow: true, label: 'Became' },
+        rebrand:    { colour: '#1E7F8C', width: 3, dash: null, arrow: true, label: 'Became' },
         /* X acquired Y. */
-        acquired:   { colour: '#C96A12', width: 2.2, dash: null, arrow: true, label: 'Acquired' },
-        corporate:  { colour: 'rgba(0, 4, 53, 0.72)', width: 1.8, dash: null, label: 'Ownership' },
+        acquired:   { colour: '#C96A12', width: 3, dash: null, arrow: true, label: 'Acquired' },
+        corporate:  { colour: 'rgba(26, 26, 26, 0.8)', width: 1.8, dash: null, label: 'Ownership' },
         /* Married, divorced, siblings: the only edges on the map that join
          * two people to each other rather than a person to a programme, and
          * the ones a reader is most likely to be looking for. */
-        family:     { colour: '#D6455A', width: 2, dash: [6, 3], label: 'Family' },
+        family:     { colour: '#D6455A', width: 2, dash: [2, 3], label: 'Family' },
         survivor:   { colour: '#B5359B', width: 1.8, dash: null, label: 'Survivor account' },
-        board:      { colour: 'rgba(0, 4, 53, 0.55)', width: 1.4, dash: [2, 2], label: 'Board member' },
-        leadership: { colour: 'rgba(0, 4, 53, 0.52)', width: 1.4, dash: null, label: 'Leadership' },
-        clinical:   { colour: 'rgba(0, 64, 96, 0.46)', width: 1.2, dash: null, label: 'Clinical staff' },
+        board:      { colour: 'rgba(26, 26, 26, 0.6)', width: 1.4, dash: [1, 3], label: 'Board member' },
+        leadership: { colour: 'rgba(26, 26, 26, 0.6)', width: 1.4, dash: null, label: 'Leadership' },
+        clinical:   { colour: 'rgba(26, 26, 26, 0.5)', width: 1.2, dash: null, label: 'Clinical staff' },
         referral:   { colour: 'rgba(120, 70, 0, 0.5)', width: 1.3, dash: [4, 3], label: 'Referral' },
-        unknown:    { colour: 'rgba(0, 4, 53, 0.34)', width: 1, dash: [1, 3], label: 'Unrecorded' },
-        admissions: { colour: 'rgba(0, 4, 53, 0.44)', width: 1.15, dash: [5, 2], label: 'Admissions' },
-        staff:      { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other staff' },
-        membership: { colour: 'rgba(0, 4, 53, 0.5)', width: 1.3, dash: [8, 3], label: 'Member' },
+        unknown:    { colour: 'rgba(26, 26, 26, 0.34)', width: 1, dash: [1, 3], label: 'Unrecorded' },
+        admissions: { colour: 'rgba(26, 26, 26, 0.5)', width: 1.15, dash: [5, 2], label: 'Admissions' },
+        staff:      { colour: 'rgba(26, 26, 26, 0.5)', width: 1.15, dash: null, label: 'Other staff' },
+        /* Dashed the way the board's key draws a professional association. */
+        membership: { colour: 'rgba(26, 26, 26, 0.55)', width: 1.3, dash: [5, 5], label: 'Member' },
         /* Two places joined by somebody who worked at both. The person is
          * not a name on the board; they are this line, and hovering it says
          * who. Dash-dot, so it reads as a different kind of statement from a
          * line the record draws between the two places themselves. */
-        people:     { colour: 'rgba(0, 4, 53, 0.6)', width: 1.6, dash: [9, 3, 2, 3], label: 'Shared people' },
+        people:     { colour: 'rgba(26, 26, 26, 0.65)', width: 1.6, dash: [9, 3, 2, 3], label: 'Shared people' },
         /* "Other" would read as the node kind of the same name in the key. */
-        _default:   { colour: 'rgba(0, 4, 53, 0.42)', width: 1.15, dash: null, label: 'Other connection' }
+        _default:   { colour: 'rgba(26, 26, 26, 0.5)', width: 1.15, dash: null, label: 'Other connection' }
     };
 
     var CROSS_STYLE = { colour: '#EF9034', width: 1.8, dash: null };
@@ -113,13 +108,6 @@
     var LABEL_SIZE = 12;
     var LABEL_SIZE_HOVER = 13.5;
     var LABEL_LINE = 13;
-    /* Offsets for the lines of successive hubs in one gutter, in steps of
-     * five pixels: the middle, then either side of it. */
-    var LANES = [0, 1, -1, 2, -2];
-    /* How much further, in pixels, a line will go to join a trunk its hub's
-     * other lines already run down rather than take a channel of its own. */
-    var TRUNK_PULL = 90;
-
     /* Bucket size for the collision grid, in screen pixels. */
     var LABEL_CELL = 48;
 
@@ -128,16 +116,11 @@
     var BUBBLE_PAD_X = 9;
     var BUBBLE_PAD_Y = 5;
     var BUBBLE_GAP = 4;
-    /* A bubble's border carries the colour coding - its company's colour, or
-     * its kind's on a closed place - so it is drawn heavy enough to read from
-     * across the board, and the rings outside it step out to clear it. A dot
-     * is too small for that weight and keeps the light strokes. */
-    var BORDER_PLAIN = 1.5;
-    var BORDER_CODED = 4;
-    var BORDER_HOLLOW = 3.5;
-    var RING_NATSAP = 4.5;
-    var RING_DEATHS = 5.5;
-    var RING_DEATHS_OVER_NATSAP = 8.5;
+    /* A bubble's outline is thin and dark, as on the board; a dot's thinner
+     * still. The memorial ring steps out to clear it. */
+    var BORDER_BUBBLE = 1.5;
+    var BORDER_DOT = 1;
+    var RING_DEATHS = 4.5;
     var RING_HOVER = 8;
     /* A node that cannot hold its name is drawn as a dot this size, in
      * screen pixels: big enough to read as a person or a place, small
@@ -237,29 +220,14 @@
         return EDGE_FADE_MIN + (1 - EDGE_FADE_MIN) * t;
     }
 
-    /* Relative luminance of a hex colour, memoised. Used to decide how hard
-     * a node's outline has to work: navy needs almost none, pale spring
-     * yellow sits close enough to the sand background to need a firm one. */
-    var luminanceCache = Object.create(null);
-    function luminance(hex) {
-        if (luminanceCache[hex] !== undefined) return luminanceCache[hex];
-        var m = /^#([0-9a-f]{6})$/i.exec(hex);
-        var value = 0.5;
-        if (m) {
-            var n = parseInt(m[1], 16);
-            value = (0.2126 * ((n >> 16) & 255) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) / 255;
-        }
-        return (luminanceCache[hex] = value);
-    }
-
     /* Which way a connection runs is the first thing about it, so it is the
      * first thing checked. */
     /* The categories that keep their own colour whatever company they sit
-     * in: a rebrand or a takeover has to read as one, and so does a family
-     * tie or a survivor's account. The rest are drawn in the colour the
-     * board gives the company, with their own width and dash, so the key
-     * still tells the kinds of connection apart. */
-    var OWN_COLOUR = { rebrand: true, acquired: true, family: true, survivor: true };
+     * in: a family tie or a survivor's account. The rest, a rebrand and a
+     * takeover included, are drawn in the colour the board gives the
+     * company, as the board draws them, with their own width, dash and
+     * arrowhead, so the key still tells the kinds of connection apart. */
+    var OWN_COLOUR = { family: true, survivor: true };
     var companyStyles = Object.create(null);
 
     /* colourOf(edge) is the board colour the line should carry, or ''. */
@@ -287,80 +255,199 @@
             '|' + (style.arrow ? 'a' : '');
     }
 
-    /* Corner radius on an orthogonal run, in screen pixels. */
+    /* Corner radius where a line turns, in screen pixels. */
     var TRACE_RADIUS = 7;
-    /* Clear ring left around a node, so a trace passing it is visibly
+    /* Clear ring left around a node, so a line passing it is visibly
      * passing rather than arriving. */
     var TRACE_CLEARANCE = 4;
+    /* How far outside that ring a detour turns its corner. */
+    var DETOUR_MARGIN = 2;
+    /* How far around a line's two ends the router looks for a way past, in
+     * screen pixels, and the most corners it will weigh. */
+    var DETOUR_REACH = 220;
+    var DETOUR_CORNERS = 24;
+    /* And, when that fails, one wider search before giving up. */
+    var DETOUR_CORNERS_WIDE = 160;
+    /* A view with more names than this is a field of dots, where a
+     * detour round each is a scribble and costs more than the frame has:
+     * its lines go straight. */
+    var DETOUR_MAX_NODES = 160;
+    /* And a line with more boxes than this within reach is in a crowd the
+     * search cannot afford either. */
+    var DETOUR_MAX_NEAR = 80;
+    /* Two lines between the same pair sit this far apart. */
+    var PARALLEL_GAP = 5;
 
     /**
-     * Route one connection the way a track runs on a board: out of the node
-     * into the gutter beside its row, along the gutter, up or down a clear
-     * column, along the gutter beside the target's row, and in.
-     *
-     * Straight diagonals between grid cells cross each other at every angle
-     * and read as a scribble. Right angles are followable, but a right angle
-     * drawn naively is not enough either: a vertical leg at the node's own x
-     * runs through every cell in that column between the two rows, and on a
-     * map where a line means a recorded relationship that draws relationships
-     * nobody recorded - the opening view had Synanon's line to CEDU running
-     * straight through WWASPS. So the long legs run only in gutters, and the
-     * one vertical channel is checked against every node between the rows
-     * and moved sideways until it is clear.
-     *
-     * Two nodes in the same row route through the gutter below them, which
-     * passes behind both labels; labels are drawn last with a halo, so the
-     * text stays legible over the line.
-     *
-     * The gutter is the fallback, not the rule. Every connection was sent
-     * down into it, including two names side by side with nothing between
-     * them, which drew a line down, along and back up where one straight
-     * line would do. So the shortest shape that crosses nobody wins: a
-     * straight line along a row or down a column, then a single right
-     * angle (out of the side of one node and into the top or bottom of
-     * the other, or the other way round), and only then the gutter.
-     *
-     * Returns the points of the route and the direction of its final leg,
-     * which is what the arrowhead follows.
+     * Whether a straight line from p to q enters the box: a slab test, so a
+     * diagonal is judged by where it actually runs and not by the box
+     * around it. The box is shrunk by half a pixel so a line that only
+     * grazes an edge is not a hit.
      */
-    function routeEdge(ax, ay, bx, by, jitter, geo, skipA, skipB, trunk) {
-        if (!geo || !geo.rowStep) {
-            var dx = bx - ax;
-            var dy = by - ay;
-            return { pts: [[ax, ay], [bx, by]], dir: Math.abs(dy) >= Math.abs(dx) ? [0, dy < 0 ? -1 : 1] : [dx < 0 ? -1 : 1, 0] };
-        }
-        var step = geo.rowStep;
-        var sameRow = Math.abs(by - ay) < step / 2;
-        var direct = function (pts) {
-            for (var i = 1; i < pts.length; i++) {
-                if (!geo.clearSeg(pts[i - 1], pts[i], skipA, skipB)) return null;
-            }
-            var from = pts[pts.length - 2];
-            var to = pts[pts.length - 1];
-            return { pts: tidy(pts), dir: to[1] !== from[1] ? [0, to[1] > from[1] ? 1 : -1] : [to[0] > from[0] ? 1 : -1, 0] };
-        };
-        var straight = sameRow ? direct([[ax, ay], [bx, ay]])
-            : (Math.abs(bx - ax) < 1 ? direct([[ax, ay], [ax, by]]) : null);
-        if (straight) return straight;
-        if (!sameRow) {
-            var bend = direct([[ax, ay], [bx, ay], [bx, by]]) || direct([[ax, ay], [ax, by], [bx, by]]);
-            if (bend) return bend;
-        }
-        var down = sameRow || by > ay;
-        var exitY = geo.channelAt(ay + (down ? step / 2 : -step / 2)) + jitter;
-        var enterY = sameRow ? exitY : geo.channelAt(by + (down ? -step / 2 : step / 2)) + jitter;
-
-        var pts;
-        if (Math.abs(exitY - enterY) < 1) {
-            pts = [[ax, ay], [ax, exitY], [bx, exitY], [bx, by]];
+    function segmentHitsBox(p, q, box) {
+        var x0 = p[0], y0 = p[1];
+        var dx = q[0] - x0, dy = q[1] - y0;
+        var lo = 0, hi = 1, r, s, tmp;
+        if (dx === 0) {
+            if (x0 < box[0] + 0.5 || x0 > box[2] - 0.5) return false;
         } else {
-            /* Arrive straight into the target if that column is clear
-             * between the two gutters, otherwise the nearest column that is. */
-            var xv = geo.clearX(bx, exitY, enterY, skipA, skipB, trunk);
-            if (trunk) trunk.push(xv);
-            pts = [[ax, ay], [ax, exitY], [xv, exitY], [xv, enterY], [bx, enterY], [bx, by]];
+            r = (box[0] + 0.5 - x0) / dx;
+            s = (box[2] - 0.5 - x0) / dx;
+            if (r > s) { tmp = r; r = s; s = tmp; }
+            if (r > lo) lo = r;
+            if (s < hi) hi = s;
+            if (lo > hi) return false;
         }
-        return { pts: tidy(pts), dir: [0, by > pts[pts.length - 2][1] ? 1 : -1] };
+        if (dy === 0) {
+            if (y0 < box[1] + 0.5 || y0 > box[3] - 0.5) return false;
+        } else {
+            r = (box[1] + 0.5 - y0) / dy;
+            s = (box[3] - 0.5 - y0) / dy;
+            if (r > s) { tmp = r; r = s; s = tmp; }
+            if (r > lo) lo = r;
+            if (s < hi) hi = s;
+        }
+        return lo <= hi;
+    }
+
+    /**
+     * Route one connection: a straight line from centre to centre, which is
+     * the shortest path there is and leaves each bubble on whichever side
+     * faces the other end - and, only where that line would run through
+     * somebody else's name, the shortest way round.
+     *
+     * A line through a name reads as a connection to it, so a route never
+     * crosses a node it does not join. The way round is found on the
+     * corners of the boxes in the way: every corner is a place the line
+     * can turn, a leg between two of them counts if it clears every box,
+     * and Dijkstra over that little graph gives the shortest chain of
+     * legs. The first pass uses only the boxes the straight line hits; if
+     * their corners are themselves boxed in, everything within reach of
+     * the two ends joins the search. A line the search cannot get past
+     * goes straight and crosses, which the layout is meant never to ask
+     * for.
+     *
+     * Right-angled traces in the gutters between rows were tried first and
+     * dropped: every line left its node from the bottom, and a line to the
+     * next name over went down, along and back up.
+     *
+     * Points are in screen pixels. skipA and skipB index the two ends' own
+     * boxes, which a line is allowed to leave and enter.
+     */
+    function routeEdge(ax, ay, bx, by, blockers, skipA, skipB, straightOnly) {
+        var a = [ax, ay], b = [bx, by];
+        if (straightOnly) return [a, b];
+        var lo = [Math.min(ax, bx) - DETOUR_REACH, Math.min(ay, by) - DETOUR_REACH];
+        var hi = [Math.max(ax, bx) + DETOUR_REACH, Math.max(ay, by) + DETOUR_REACH];
+        /* Only the boxes near the line can be in its way, or its detour's. */
+        var near = [];
+        var nearIndex = [];
+        for (var i = 0; i < blockers.length; i++) {
+            var bb = blockers[i];
+            if (bb[2] < lo[0] || bb[0] > hi[0] || bb[3] < lo[1] || bb[1] > hi[1]) continue;
+            near.push(bb);
+            nearIndex.push(i);
+        }
+        var clear = function (p, q, skipP, skipQ) {
+            for (var j = 0; j < near.length; j++) {
+                var idx = nearIndex[j];
+                if (idx === skipP || idx === skipQ) continue;
+                if (segmentHitsBox(p, q, near[j])) return false;
+            }
+            return true;
+        };
+        if (clear(a, b, skipA, skipB)) return [a, b];
+        if (near.length > DETOUR_MAX_NEAR) return [a, b];
+
+        var inWay = [];
+        var others = [];
+        for (var j = 0; j < near.length; j++) {
+            if (nearIndex[j] === skipA || nearIndex[j] === skipB) continue;
+            others.push(near[j]);
+            if (segmentHitsBox(a, b, near[j])) inWay.push(near[j]);
+        }
+        var path = detour(a, b, cornersOf(inWay), clear, skipA, skipB);
+        if (!path && others.length > inWay.length) {
+            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS), clear, skipA, skipB);
+        }
+        if (!path && others.length * 4 > DETOUR_CORNERS) {
+            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS_WIDE), clear, skipA, skipB);
+        }
+        return path || [a, b];
+    }
+
+    /* The turning points a detour can use: each box's four corners, set
+     * out past its clearance. Capped at `keep`, nearest the straight line
+     * between the two ends first: a corner beside the line is a way past
+     * whatever blocks it, a corner beside an end is usually in the crowd
+     * the end sits in. */
+    function cornersOf(boxes, a, b, keep) {
+        var m = DETOUR_MARGIN;
+        var out = [];
+        for (var i = 0; i < boxes.length; i++) {
+            var bb = boxes[i];
+            out.push([bb[0] - m, bb[1] - m], [bb[2] + m, bb[1] - m], [bb[0] - m, bb[3] + m], [bb[2] + m, bb[3] + m]);
+        }
+        if (keep && out.length > keep) {
+            /* Costed once each, not in the comparator: this sort was most
+             * of the router's time. */
+            var dx = b[0] - a[0], dy = b[1] - a[1];
+            var len2 = dx * dx + dy * dy || 1;
+            for (var c = 0; c < out.length; c++) {
+                var p = out[c];
+                var t = ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / len2;
+                t = t < 0 ? 0 : (t > 1 ? 1 : t);
+                p.cost = Math.hypot(p[0] - (a[0] + dx * t), p[1] - (a[1] + dy * t));
+            }
+            out.sort(function (p, q) { return p.cost - q.cost; });
+            out.length = keep;
+        }
+        return out;
+    }
+
+    /* The shortest chain of clear legs from a to b through the corners:
+     * A* on a graph small enough to check its legs as it goes, the
+     * straight-line distance left as the estimate, so the corners the
+     * line would never use are never settled. Vertex 0 is a, 1 is b. */
+    function detour(a, b, corners, clear, skipA, skipB) {
+        var n = corners.length + 2;
+        if (n < 3) return null;
+        var pts = [a, b].concat(corners);
+        var dist = new Float64Array(n);
+        var guess = new Float64Array(n);
+        var prev = new Int32Array(n);
+        var done = new Uint8Array(n);
+        for (var i = 0; i < n; i++) {
+            dist[i] = Infinity;
+            prev[i] = -1;
+            guess[i] = Math.hypot(pts[i][0] - b[0], pts[i][1] - b[1]);
+        }
+        dist[0] = 0;
+        for (;;) {
+            var u = -1;
+            var best = Infinity;
+            for (var c = 0; c < n; c++) {
+                if (done[c] || dist[c] === Infinity) continue;
+                var f = dist[c] + guess[c];
+                if (f < best) { best = f; u = c; }
+            }
+            if (u < 0) return null;
+            if (u === 1) break;
+            done[u] = 1;
+            for (var v = 1; v < n; v++) {
+                if (done[v] || v === u) continue;
+                var d = dist[u] + Math.hypot(pts[v][0] - pts[u][0], pts[v][1] - pts[u][1]);
+                if (d >= dist[v]) continue;
+                /* A leg may pass through its own end's bubble and no other. */
+                if (!clear(pts[u], pts[v], u === 0 ? skipA : -1, v === 1 ? skipB : -1)) continue;
+                dist[v] = d;
+                prev[v] = u;
+            }
+        }
+        var path = [];
+        for (var at = 1; at !== -1; at = prev[at]) path.push(pts[at]);
+        path.reverse();
+        return tidy(path);
     }
 
     /* Drop zero-length legs and merge collinear ones. */
@@ -372,9 +459,8 @@
             if (Math.abs(p[0] - q[0]) < 0.5 && Math.abs(p[1] - q[1]) < 0.5) continue;
             if (out.length >= 2) {
                 var o = out[out.length - 2];
-                var collinear = (Math.abs(o[0] - q[0]) < 0.5 && Math.abs(q[0] - p[0]) < 0.5) ||
-                    (Math.abs(o[1] - q[1]) < 0.5 && Math.abs(q[1] - p[1]) < 0.5);
-                if (collinear) { out[out.length - 1] = p; continue; }
+                var cross = (q[0] - o[0]) * (p[1] - q[1]) - (q[1] - o[1]) * (p[0] - q[0]);
+                if (Math.abs(cross) < 0.5) { out[out.length - 1] = p; continue; }
             }
             out.push(p);
         }
@@ -456,33 +542,25 @@
         c.closePath();
     }
 
-    /* A bubble's outline, grown by `inflate` on every side: a pill for a
-     * person, a softly rounded box for an organisation. */
+    /* A bubble's outline, grown by `inflate` on every side: an ellipse for
+     * a person, a softly rounded box for an organisation, as the board's
+     * key draws them. A canvas without ellipse() gets a pill. */
     function traceBubble(ctx, kind, box, inflate) {
         var x0 = box[0] - inflate, y0 = box[1] - inflate;
         var width = box[2] - box[0] + inflate * 2;
         var height = box[3] - box[1] + inflate * 2;
-        pathRounded(ctx, x0, y0, width, height, kind === 'person' ? height / 2 : 7 + inflate);
-    }
-
-    /* Mix a hex colour toward the stage colour; share is how much of the
-     * colour is kept. */
-    function blendHex(hex, share) {
-        var m = /^#([0-9a-f]{6})$/i.exec(hex);
-        if (!m) return hex;
-        var a = parseInt(m[1], 16), b = parseInt(SURFACE.slice(1), 16);
-        var out = 0;
-        for (var shift = 16; shift >= 0; shift -= 8) {
-            out = out * 256 + Math.round(((a >> shift) & 255) * share + ((b >> shift) & 255) * (1 - share));
+        if (kind === 'person' && ctx.ellipse) {
+            ctx.moveTo(x0 + width, y0 + height / 2);
+            ctx.ellipse(x0 + width / 2, y0 + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+            ctx.closePath();
+            return;
         }
-        return '#' + ('000000' + out.toString(16)).slice(-6);
+        pathRounded(ctx, x0, y0, width, height, kind === 'person' ? height / 2 : 6 + inflate);
     }
 
-    /* Navy or white, whichever reads on the bubble as it is painted. */
+    /* The board's dark ink for a name, blue for a NATSAP member. */
     function inkOn(spec) {
-        if (spec.status === 'closed' || spec.status === 'rebranded') return '#000435';
-        var fill = spec.status === 'unknown' ? blendHex(spec.fill, 0.55) : spec.fill;
-        return luminance(fill) > 0.45 ? '#000435' : '#FFFFFF';
+        return spec.natsap ? NATSAP_INK : INK_TEXT;
     }
 
     /* A line's colour at full strength. Staff lines are drawn translucent so
@@ -531,54 +609,19 @@
         return null;
     }
 
-    /**
-     * How firmly a node's outline has to work. Navy needs almost none; pale
-     * spring yellow sits close enough to the sand background to need a firm
-     * one. Trade groups are the exception: a chartreuse outline on sand is
-     * how that kind is drawn at all.
-     */
-    function outlineFor(kind, fill, byKind) {
-        if (byKind && KIND_OUTLINE[kind]) return KIND_OUTLINE[kind];
-        return INK + (luminance(fill) > 0.62 ? '0.72)' : '0.45)');
-    }
-
-    /* Fill and outline for one node, whatever its outline is. The path must
-     * already be traced. */
+    /* Fill and outline for one node, whatever its shape. The path must
+     * already be traced. Filled by status and outlined in the board's dark
+     * ink; a rebrand is dashed, because the place carried on under another
+     * name and the dash says "continues elsewhere". */
     function fillOutline(ctx, spec, alpha, heavy) {
-        if (spec.status === 'closed' || spec.status === 'rebranded') {
-            /* Hollow: no longer operating under this name. Closed is a solid
-             * outline; rebranded is dashed, because the place carried on
-             * under another name and the dash says "continues elsewhere". */
-            ctx.globalAlpha = alpha;
-            ctx.fillStyle = SURFACE;
-            ctx.fill();
-            ctx.strokeStyle = spec.fill === SURFACE
-                ? (KIND_OUTLINE[spec.kind] || INK + '0.6)')
-                : spec.fill;
-            ctx.lineWidth = heavy ? BORDER_HOLLOW : 2;
-            if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash(heavy ? [7, 4] : [4, 3]);
-            ctx.stroke();
-            if (ctx.setLineDash) ctx.setLineDash([]);
-        } else {
-            /* Open solid; status unrecorded the same fill at 55%, so "we do
-             * not know" reads as faded rather than as closed. The stage is
-             * painted under it first so a line running to its centre does
-             * not show through. */
-            if (spec.status === 'unknown') {
-                ctx.globalAlpha = alpha;
-                ctx.fillStyle = SURFACE;
-                ctx.fill();
-            }
-            ctx.globalAlpha = alpha * (spec.status === 'unknown' ? 0.55 : 1);
-            ctx.fillStyle = spec.fill;
-            ctx.fill();
-            ctx.globalAlpha = alpha;
-            ctx.strokeStyle = spec.outline;
-            ctx.lineWidth = heavy
-                ? (spec.coded ? BORDER_CODED : BORDER_PLAIN)
-                : (spec.coded ? 2 : 1);
-            ctx.stroke();
-        }
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = STATUS_FILLS[spec.status] || STATUS_FILLS.unknown;
+        ctx.fill();
+        ctx.strokeStyle = OUTLINE;
+        ctx.lineWidth = heavy ? BORDER_BUBBLE : BORDER_DOT;
+        if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash(heavy ? [5, 3] : [3, 2]);
+        ctx.stroke();
+        if (ctx.setLineDash) ctx.setLineDash([]);
     }
 
     /**
@@ -595,22 +638,21 @@
         fillOutline(ctx, spec, alpha);
 
         /* Deaths recorded in the memorial: a firm red ring outside the shape.
-         * A warning mark, so a true red rather than the coral accent, and
-         * outside the NATSAP ring so a node can carry both. */
+         * A warning mark, so a true red rather than the coral accent. */
         if (spec.deaths) {
             ctx.beginPath();
-            ctx.arc(x, y, r + (spec.natsap ? 5 : 3), 0, Math.PI * 2);
+            ctx.arc(x, y, r + 3, 0, Math.PI * 2);
             ctx.strokeStyle = DEATH_RED;
             ctx.lineWidth = 2;
             ctx.stroke();
         }
 
-        /* NATSAP membership: a thin chartreuse ring outside the shape, so it
-         * reads on a filled and a hollow node alike. */
+        /* A dot has no name to turn blue, so membership is the ink of a
+         * small ring instead. */
         if (spec.natsap) {
             ctx.beginPath();
-            ctx.arc(x, y, r + 2.5, 0, Math.PI * 2);
-            ctx.strokeStyle = '#B2E102';
+            ctx.arc(x, y, r + (spec.deaths ? 5.5 : 2.5), 0, Math.PI * 2);
+            ctx.strokeStyle = NATSAP_INK;
             ctx.lineWidth = 1.5;
             ctx.stroke();
         }
@@ -626,16 +668,9 @@
 
         if (spec.deaths) {
             ctx.beginPath();
-            traceBubble(ctx, spec.kind, box, spec.natsap ? RING_DEATHS_OVER_NATSAP : RING_DEATHS);
+            traceBubble(ctx, spec.kind, box, RING_DEATHS);
             ctx.strokeStyle = DEATH_RED;
             ctx.lineWidth = 2.5;
-            ctx.stroke();
-        }
-        if (spec.natsap) {
-            ctx.beginPath();
-            traceBubble(ctx, spec.kind, box, RING_NATSAP);
-            ctx.strokeStyle = '#B2E102';
-            ctx.lineWidth = 2;
             ctx.stroke();
         }
         ctx.globalAlpha = 1;
@@ -643,7 +678,8 @@
 
     /**
      * Paint one legend swatch into its own small canvas. Same shapes, same
-     * status marks, same NATSAP ring as the map itself.
+     * status fills, same memorial ring as the map itself. A NATSAP member's
+     * name is blue on the map; a swatch has no name, so it shows the ink.
      */
     function swatch(element, spec) {
         if (!element || !element.getContext) return;
@@ -655,13 +691,19 @@
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, size, size);
         paintNode(ctx, {
-            kind: spec.kind || 'person',
-            status: spec.status || 'open',
-            natsap: !!spec.natsap,
-            deaths: !!spec.deaths,
-            fill: spec.fill,
-            outline: spec.outline || outlineFor(spec.kind, spec.fill, spec.byKind)
-        }, size / 2, size / 2, 6, 1);
+            kind: spec.kind || 'facility',
+            status: spec.status || 'unknown',
+            natsap: false,
+            deaths: !!spec.deaths
+        }, size / 2, size / 2, spec.kind === 'person' ? 6 : 7, 1);
+        if (spec.natsap) {
+            ctx.beginPath();
+            ctx.moveTo(size / 2 - 4, size / 2 + 0.5);
+            ctx.lineTo(size / 2 + 4, size / 2 + 0.5);
+            ctx.strokeStyle = NATSAP_INK;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
     }
 
     /* A uniform grid over the placed label boxes. Labels cluster, so a
@@ -736,7 +778,6 @@
             /* Shared with the viewport, which owns panning and zooming and
              * mutates this object in place. */
             transform: { k: 1, x: 0, y: 0 },
-            colourMode: 'kind',
             crossRegionMode: false,
             /* Set by focus.js.
              *   hoverId    the node under the pointer, ringed and labelled
@@ -757,18 +798,23 @@
 
         var scene = { nodes: [], edges: [] };
         var buckets = [];
-        /* Edge id to its offset in a shared gutter; see rebuildBuckets. */
-        var laneOf = Object.create(null);
-        /* Edge id to the hub and style it shares vertical channels with. */
-        var trunkOf = Object.create(null);
+        /* Edge id to its place among the lines joining the same pair; see
+         * rebuildBuckets. */
+        var parallelOf = Object.create(null);
         var chainIndex = null;
         var frameStamp = 0;
-        /* Cell geometry of the current layout, so traces can run along the
-         * gutters between rows instead of across the names in them. */
-        var grid = null;
+        /* Bumped whenever the scene changes, so cached routes are dropped. */
+        var sceneStamp = 0;
+        /* Last frame's routes, keyed by what they depend on; see draw(). */
+        var routeMemo = { sig: '', pts: Object.create(null) };
+        /* The zoom last drawn, and the frames still to wait after it
+         * changes before the lines are routed again; see draw(). */
+        var lastK = 0;
+        var settleFrames = 0;
+        var SETTLE_FRAMES = 6;
         /* Reused by the draw loop so a frame does not allocate one spec per
          * node; paintNode never holds on to it. */
-        var scratch = { kind: '', status: '', natsap: false, deaths: 0, fill: '', outline: '' };
+        var scratch = { kind: '', status: '', natsap: false, deaths: 0 };
 
         /** The store's chain-to-index map, so colour mode two can be resolved. */
         renderer.useChainIndex = function (index) {
@@ -840,10 +886,6 @@
             rebuildBuckets();
         };
 
-        renderer.setColourMode = function (mode) {
-            renderer.colourMode = mode === 'chain' ? 'chain' : 'kind';
-        };
-
         /* Only affects how edges are drawn; the store decides which ones
          * survive the filter. */
         renderer.setCrossRegionMode = function (on) {
@@ -851,9 +893,9 @@
             rebuildBuckets();
         };
 
-        renderer.setGrid = function (next) {
-            grid = next || null;
-        };
+        /* Kept for the layout, which still describes its rows; lines no
+         * longer run in the gutters between them, so nothing here reads it. */
+        renderer.setGrid = function () {};
 
         /* Node id to a size multiplier: the name that was just clicked is
          * drawn bigger than the rest, and swells into it. */
@@ -887,7 +929,10 @@
             }
             var hh = ((LABEL_LINE + (node.years ? YEARS_LINE : 0)) / 2 + BUBBLE_PAD_Y) * scale;
             var hw = (Math.max(nameW, yearsW) / 2 + BUBBLE_PAD_X) * scale;
-            if (node.kind === 'person') hw = Math.max(hh, hw + hh * 0.35);
+            /* An ellipse holds a box only well inside its axes: with the
+             * name's half-height at 0.57 of the ellipse's, the half-width
+             * has to be the name's over 0.82. */
+            if (node.kind === 'person') hw = Math.max(hh * 1.4, (nameW / 2) / 0.82 + BUBBLE_PAD_X * 0.5 * scale);
             return [cx - hw, cy - hh, cx + hw, cy + hh];
         }
 
@@ -913,33 +958,24 @@
              * under an unrecorded one. */
             buckets.sort(function (a, b) { return a.style.width - b.style.width; });
 
-            /* Which offset each line runs at in a shared gutter. Lines are
-             * grouped by the busier of their two ends - the company, not
-             * each of the twenty-four programmes it owned - and a group
-             * shares one offset, so its runs lie on top of each other and
-             * read as one trunk with a branch off to each end, the way the
-             * owner's board draws them. Given an offset each, WWASPS's
-             * ownership lines were twenty-four parallel strands across the
-             * map. Within a style, each hub gets the next offset along, so
-             * two hubs' trunks sit side by side rather than merging into one
-             * that would join things nothing joins. */
-            var count = Object.create(null);
+            /* Two lines between the same pair - one owns the other and they
+             * shared a campus, say - would lie on top of each other, so each
+             * is set a little to one side. The side is fixed by the pair,
+             * not by which end each line calls its source. */
+            var pairs = Object.create(null);
             scene.edges.forEach(function (e) {
-                count[e.sourceId] = (count[e.sourceId] || 0) + 1;
-                count[e.targetId] = (count[e.targetId] || 0) + 1;
+                var key = e.sourceId < e.targetId ? e.sourceId + '|' + e.targetId : e.targetId + '|' + e.sourceId;
+                (pairs[key] = pairs[key] || []).push(e);
             });
-            laneOf = Object.create(null);
-            trunkOf = Object.create(null);
-            buckets.forEach(function (bucket, bi) {
-                var lanes = Object.create(null);
-                var next = 0;
-                bucket.edges.forEach(function (e) {
-                    var hub = (count[e.targetId] || 0) > (count[e.sourceId] || 0) ? e.targetId : e.sourceId;
-                    if (lanes[hub] === undefined) lanes[hub] = next++;
-                    laneOf[e.id] = lanes[hub];
-                    trunkOf[e.id] = bi + ':' + hub;
+            parallelOf = Object.create(null);
+            Object.keys(pairs).forEach(function (key) {
+                var list = pairs[key];
+                if (list.length < 2) return;
+                list.forEach(function (e, i) {
+                    parallelOf[e.id] = { at: (i - (list.length - 1) / 2) * PARALLEL_GAP, flip: e.sourceId > e.targetId };
                 });
             });
+            sceneStamp++;
         }
 
         /* --------------------------------------------------------- sizing -- */
@@ -964,9 +1000,9 @@
 
         /* -------------------------------------------------------- colours -- */
 
+        /* A node's fill: its status, as on the board's key. */
         renderer.colourFor = function (node) {
-            if (renderer.colourMode === 'chain') return renderer.chainColour(node.chain);
-            return KIND_COLOURS[node.kind] || KIND_COLOURS.other;
+            return STATUS_FILLS[node.status] || STATUS_FILLS.unknown;
         };
 
 
@@ -1070,104 +1106,74 @@
                 }
             }
 
-            /* Snap a horizontal run onto the gutter between two rows. Left
-             * at the arithmetic midpoint it lands on a row centre whenever
-             * the two nodes are an even number of rows apart, and a trace
-             * then runs straight through the names in that row - which reads
-             * as a connection to them. */
-            var geo = null;
-            var blockers = [];
-            if (grid && grid.cellH) {
-                var rowsTop = grid.y0 * k + t.y;
-                var rowsStep = grid.cellH * k;
-
-                /* What a leg must not cross: every node's bubble, with its
-                 * clearance. In screen space, one box per node, indexed like
-                 * the scene. */
-                var tallestHalf = 0;
-                for (i = 0; i < scene.nodes.length; i++) {
-                    var ex = extent[i];
-                    blockers.push([ex[0] - TRACE_CLEARANCE, ex[1] - TRACE_CLEARANCE,
-                        ex[2] + TRACE_CLEARANCE, ex[3] + TRACE_CLEARANCE]);
-                    tallestHalf = Math.max(tallestHalf, (ex[3] - ex[1]) / 2);
-                }
-
-                /* The clear band between two rows: bubbles are centred on
-                 * their row, so the band is centred between rows too. */
-                var bandPx = rowsStep - 2 * (tallestHalf + TRACE_CLEARANCE);
-                /* Parallel runs are spread apart only as far as the band
-                 * allows; a spread wider than the band puts a run back onto
-                 * the bubbles it was moved off. */
-                var jitterScale = Math.max(0, Math.min(1, (bandPx / 2 - 2) / 10));
-
-                geo = {
-                    rowStep: rowsStep,
-                    jitterScale: jitterScale,
-                    channelAt: function (screenY) {
-                        return rowsTop + Math.round((screenY - rowsTop) / rowsStep) * rowsStep;
-                    },
-                    /* Whether a straight leg from p to q crosses nobody's
-                     * box but its two ends'. */
-                    clearSeg: function (p, q, skipA, skipB) {
-                        var x0 = Math.min(p[0], q[0]) + 0.5, x1 = Math.max(p[0], q[0]) - 0.5;
-                        var y0 = Math.min(p[1], q[1]) + 0.5, y1 = Math.max(p[1], q[1]) - 0.5;
-                        for (var j = 0; j < blockers.length; j++) {
-                            if (j === skipA || j === skipB) continue;
-                            var bb = blockers[j];
-                            if (x1 > bb[0] && x0 < bb[2] && y1 > bb[1] && y0 < bb[3]) return false;
-                        }
-                        return true;
-                    },
-                    /* The nearest x to the one asked for at which a vertical
-                     * leg between the two gutters crosses nobody's cell but
-                     * the two ends'. Candidates are the requested x and the
-                     * outer edges of every box that leg would hit, nearest
-                     * first; the first that is clear wins.
-                     *
-                     * A channel the same hub's lines already run down wins
-                     * over one a little nearer, so a company's lines to a
-                     * grid of programmes share a few trunks rather than each
-                     * taking a vertical of its own. */
-                    clearX: function (x, y0, y1, skipA, skipB, trunk) {
-                        var lo = Math.min(y0, y1) + 1;
-                        var hi = Math.max(y0, y1) - 1;
-                        var inWay = [];
-                        for (var j = 0; j < blockers.length; j++) {
-                            if (j === skipA || j === skipB) continue;
-                            var bb = blockers[j];
-                            if (bb[3] > lo && bb[1] < hi) inWay.push(bb);
-                        }
-                        var free = function (cx) {
-                            for (var j2 = 0; j2 < inWay.length; j2++) {
-                                if (cx > inWay[j2][0] && cx < inWay[j2][2]) return false;
-                            }
-                            return true;
-                        };
-                        var shared = null;
-                        (trunk || []).forEach(function (tx) {
-                            if (!free(tx)) return;
-                            if (shared === null || Math.abs(tx - x) < Math.abs(shared - x)) shared = tx;
-                        });
-                        var best = x;
-                        if (!free(x)) {
-                            best = null;
-                            var cands = [];
-                            inWay.forEach(function (bb) { cands.push(bb[0] - 2); cands.push(bb[2] + 2); });
-                            cands.sort(function (p, q) { return Math.abs(p - x) - Math.abs(q - x); });
-                            for (var c2 = 0; c2 < cands.length && best === null; c2++) {
-                                if (free(cands[c2])) best = cands[c2];
-                            }
-                            if (best === null) best = x;
-                        }
-                        if (shared !== null && Math.abs(shared - x) <= Math.abs(best - x) + TRUNK_PULL) return shared;
-                        return best;
-                    }
-                };
+            /* What a line must not cross: every node's box, with its
+             * clearance. In screen space, one box per node, indexed like
+             * the scene. */
+            var blockers = new Array(scene.nodes.length);
+            for (i = 0; i < scene.nodes.length; i++) {
+                var ex = extent[i];
+                blockers[i] = [ex[0] - TRACE_CLEARANCE, ex[1] - TRACE_CLEARANCE,
+                    ex[2] + TRACE_CLEARANCE, ex[3] + TRACE_CLEARANCE];
             }
             renderer.blockers = blockers;
+
+            /* A route depends on where the boxes sit relative to each
+             * other, not on where the stage is looking, so a pan reuses
+             * last frame's routes shifted along; only a zoom, a motion or a
+             * change of scene routes again. The key is every box's place
+             * relative to the stage's translation, to the half pixel. */
+            /* A zoom moves every box every frame. Lines go straight while
+             * it runs, and once the zoom has held for a few frames one more
+             * draw is asked for, which routes them where they have landed.
+             * The redraw is the viewport's to give (renderer.redraw). */
+            var zooming = k !== lastK;
+            lastK = k;
+            if (zooming && renderer.redraw && root.requestAnimationFrame) {
+                var wasWaiting = settleFrames > 0;
+                settleFrames = SETTLE_FRAMES;
+                if (!wasWaiting) {
+                    var tick = function () {
+                        if (--settleFrames > 0) { root.requestAnimationFrame(tick); return; }
+                        renderer.redraw();
+                    };
+                    root.requestAnimationFrame(tick);
+                }
+            }
+            /* Names in motion (a click's yoyo, a hover's gather, a zoom in
+             * progress) move every frame, and a detour worked out for one
+             * frame is wrong the next: lines go straight until they settle,
+             * and are routed once, where they land. A view with more names
+             * than DETOUR_MAX_NODES is a field of dots and goes straight
+             * throughout. */
+            var straightOnly = scene.nodes.length > DETOUR_MAX_NODES || !!offsets || zooming;
+            /* The flag is part of the key: routes drawn straight for a
+             * frame in motion must not be served to the frame at rest. */
+            var sigParts = [k, sceneStamp, straightOnly ? 1 : 0];
+            for (i = 0; i < scene.nodes.length; i++) {
+                var ex2 = extent[i];
+                sigParts.push(Math.round((ex2[0] - t.x) * 2), Math.round((ex2[1] - t.y) * 2),
+                    Math.round((ex2[2] - t.x) * 2), Math.round((ex2[3] - t.y) * 2));
+            }
+            var sig = sigParts.join(',');
+            if (routeMemo.sig !== sig) routeMemo = { sig: sig, pts: Object.create(null) };
+            var memo = routeMemo.pts;
+            var routeFor = function (edge, a, c) {
+                var cached = memo[edge.id];
+                if (!cached) {
+                    var ax = sx[a], ay = sy[a], cx = sx[c], cy = sy[c];
+                    var par = parallelOf[edge.id];
+                    if (par) {
+                        var len = Math.hypot(cx - ax, cy - ay) || 1;
+                        var nx = -(cy - ay) / len * par.at * (par.flip ? -1 : 1);
+                        var ny = (cx - ax) / len * par.at * (par.flip ? -1 : 1);
+                        ax += nx; ay += ny; cx += nx; cy += ny;
+                    }
+                    var pts = routeEdge(ax, ay, cx, cy, blockers, a, c, straightOnly);
+                    cached = memo[edge.id] = pts.map(function (p) { return [p[0] - t.x, p[1] - t.y]; });
+                }
+                return cached.map(function (p) { return [p[0] + t.x, p[1] + t.y]; });
+            };
             var routes = [];
-            /* Vertical channels each hub's lines have taken so far, by trunk. */
-            var trunks = Object.create(null);
 
             /* --- edges ---
              *
@@ -1215,16 +1221,8 @@
                          * cross the viewport, which is most of them zoomed in. */
                         if ((ax < -pad && cx < -pad) || (ax > w + pad && cx > w + pad)) continue;
                         if ((ay < -pad && cy < -pad) || (ay > h + pad && cy > h + pad)) continue;
-                        /* Spread the runs of edges sharing a gutter: one
-                         * offset per hub, the middle first. */
-                        var lane = LANES[(laneOf[edge.id] || 0) % LANES.length];
-                        var trunkKey = trunkOf[edge.id];
-                        var trunk = trunkKey ? (trunks[trunkKey] = trunks[trunkKey] || []) : null;
-                        var route = routeEdge(ax, ay, cx, cy, lane * 5 * (geo ? geo.jitterScale : 1), geo, a, c, trunk);
+                        var route = { pts: routeFor(edge, a, c), edge: edge, style: style, lit: lit };
                         strokeRoute(ctx, route.pts);
-                        route.edge = edge;
-                        route.style = style;
-                        route.lit = lit;
                         routes.push(route);
                         drew = true;
                     }
@@ -1269,7 +1267,6 @@
                 var ext = extent[i];
                 if (ext[2] < 0 || ext[0] > w || ext[3] < 0 || ext[1] > h) continue;
 
-                var fill = renderer.colourFor(node);
                 var hovered = node.id === hoverId;
                 /* Dimming is a multiplier, so a status-unrecorded node that is
                  * also off the neighbourhood ends up fainter than either rule
@@ -1281,16 +1278,6 @@
                 scratch.status = node.status;
                 scratch.natsap = node.natsap;
                 scratch.deaths = node.deaths;
-                scratch.fill = fill;
-                scratch.outline = outlineFor(node.kind, fill, renderer.colourMode === 'kind');
-                scratch.coded = false;
-                /* A company's own places and the company itself carry its
-                 * colour on their border, as on the board. */
-                if (renderer.colourMode === 'kind' && node.chain && board.chainColours[node.chain] &&
-                    node.kind !== 'person') {
-                    scratch.outline = board.chainColours[node.chain];
-                    scratch.coded = true;
-                }
 
                 var bubble = bubbles[i];
                 if (!bubble) {
@@ -1299,7 +1286,7 @@
                     if (hovered) {
                         ctx.beginPath();
                         ctx.arc(sx[i], sy[i], r + 5, 0, Math.PI * 2);
-                        ctx.strokeStyle = '#000435';
+                        ctx.strokeStyle = OUTLINE;
                         ctx.lineWidth = 2;
                         ctx.stroke();
                     }
@@ -1311,7 +1298,7 @@
                 if (hovered) {
                     ctx.beginPath();
                     traceBubble(ctx, node.kind, bb3, RING_HOVER);
-                    ctx.strokeStyle = '#000435';
+                    ctx.strokeStyle = OUTLINE;
                     ctx.lineWidth = 2;
                     ctx.stroke();
                 }
@@ -1384,7 +1371,9 @@
                     var eb = extent[i];
                     var bx = bubbles[i] ? eb[2] - 4 : sx[i] + (eb[2] - sx[i]) * 0.75;
                     var by = bubbles[i] ? eb[1] : sy[i] - (sy[i] - eb[1]) * 0.75;
-                    if (bx < -20 || bx > w + 20 || by < -20 || by > h + 20) continue;
+                    /* Judged by the name's own centre: a wide bubble half
+                     * off the stage still carries its count. */
+                    if (sx[i] < -20 || sx[i] > w + 20 || sy[i] < -20 || sy[i] > h + 20) continue;
                     var text = '+' + extra;
                     var bw = Math.max(BADGE_SIZE + 4, ctx.measureText(text).width + 6);
                     var bh = BADGE_SIZE + 4;
@@ -1475,7 +1464,7 @@
                     roundedRect(ctx, cb[0], cb[1], cb[2] - cb[0], cb[3] - cb[1], 3);
                     ctx.fill();
                     ctx.globalAlpha = 1;
-                    ctx.fillStyle = 'rgba(0, 4, 53, 0.78)';
+                    ctx.fillStyle = 'rgba(26, 26, 26, 0.8)';
                     ctx.fillText(captions[i].text, captions[i].x, captions[i].y + 0.5);
                 }
                 ctx.textBaseline = 'top';
@@ -1627,10 +1616,12 @@
         edgeSwatch: edgeSwatch,
         edgeFadeFor: edgeFadeFor,
         swatch: swatch,
-        outlineFor: outlineFor,
+        segmentHitsBox: segmentHitsBox,
+        routeEdge: routeEdge,
         create: create,
-        KIND_COLOURS: KIND_COLOURS,
-        KIND_OUTLINE: KIND_OUTLINE,
+        STATUS_FILLS: STATUS_FILLS,
+        OUTLINE: OUTLINE,
+        NATSAP_INK: NATSAP_INK,
         CHAIN_COLOURS: CHAIN_COLOURS,
         CHAIN_NONE: CHAIN_NONE,
         EDGE_STYLES: EDGE_STYLES,

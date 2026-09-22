@@ -82,7 +82,6 @@
         var degreeOut = byId('kop-network-degree-out');
         var resetButton = byId('kop-network-reset-filters');
         var legend = byId('kop-network-legend');
-        var colourMode = byId('kop-network-colour-mode');
         var rail = byId('kop-network-rail');
         var railToggle = byId('kop-network-filters-toggle');
         var regionsToggle = document_.querySelector('.kop-network__legend-toggle');
@@ -219,88 +218,52 @@
         /**
          * Only what is on screen. A legend that lists ten chains when the
          * rail has left two showing is describing a map nobody is looking at.
+         *
+         * The key is the board's own: a name's fill says whether the place
+         * is open, and a blue name is a NATSAP member. Kinds are told by
+         * shape - people in ellipses - and by the drawer; there is no
+         * colour-by-kind, because a board of coloured blocks was what the
+         * owner asked to have taken away.
          */
         filters.renderLegend = function () {
             if (!legend) return;
             legend.textContent = '';
             var scene = sceneOf();
             if (!scene.nodes.length) return;
+            var painter = root.KOPNetworkCanvas;
 
-            var byChain = renderer.colourMode === 'chain';
-            var list = document_.createElement('ul');
-            list.className = 'kop-network__legend-list';
+            var has = function (test) { return scene.nodes.some(test); };
+            var tally = function (test) { return scene.nodes.filter(test).length; };
 
-            var counts = Object.create(null);
-            var kindOrder = [];
-            scene.nodes.forEach(function (node) {
-                var key = byChain ? (node.chain || '') : node.kind;
-                if (counts[key] === undefined) { counts[key] = 0; kindOrder.push(key); }
-                counts[key]++;
-            });
-
-            /* Board order for chains so the colours run in the same sequence
-             * as the rail; most-common-first for kinds, which has no order of
-             * its own to honour. */
-            if (byChain) {
-                kindOrder.sort(function (a, b) {
-                    if (a === '') return 1;
-                    if (b === '') return -1;
-                    return store.chainColourIndex(a) - store.chainColourIndex(b);
-                });
-            } else {
-                kindOrder.sort(function (a, b) { return counts[b] - counts[a]; });
-            }
-
-            legend.appendChild(section(byChain ? 'Who owns it' : 'What it is'));
-            kindOrder.forEach(function (key) {
-                var label = byChain
-                    ? (key || 'No recorded owner')
-                    : (kindLabels[key] || key);
-                var built = row(label, counts[key]);
-                list.appendChild(built.item);
-                root.KOPNetworkCanvas.swatch(built.mark, {
-                    kind: byChain ? 'person' : key,
-                    status: 'open',
-                    fill: byChain ? chainColour(key) : renderer.colourFor({ kind: key, chain: '' }),
-                    byKind: !byChain
-                });
-            });
-            legend.appendChild(list);
-
-            /* The marks that are not colour. Nothing on this map is encoded by
-             * colour alone, and this is where that is spelled out. */
             var keyList = document_.createElement('ul');
             keyList.className = 'kop-network__legend-list';
-            legend.appendChild(section('How to read it'));
+            legend.appendChild(section('What the names mean'));
             [
-                { label: STATUS_LABELS.open, status: 'open' },
-                { label: STATUS_LABELS.closed, status: 'closed' },
-                { label: STATUS_LABELS.rebranded, status: 'rebranded' },
-                { label: STATUS_LABELS.unknown, status: 'unknown' },
-                { label: 'NATSAP member', status: 'open', natsap: true }
+                { label: STATUS_LABELS.open, status: 'open', count: true,
+                    when: function (n) { return n.status === 'open'; } },
+                { label: STATUS_LABELS.closed, status: 'closed', count: true,
+                    when: function (n) { return n.status === 'closed'; } },
+                { label: STATUS_LABELS.rebranded, status: 'rebranded', count: true,
+                    when: function (n) { return n.status === 'rebranded'; } },
+                { label: STATUS_LABELS.unknown, status: 'unknown', count: true,
+                    when: function (n) { return n.status === 'unknown'; } },
+                { label: 'NATSAP member (name in blue)', status: 'unknown', natsap: true,
+                    when: function (n) { return !!n.natsap; } },
+                { label: 'Person', kind: 'person', status: 'unknown',
+                    when: function (n) { return n.kind === 'person'; } },
+                { label: 'Deaths recorded in the memorial', status: 'unknown', deaths: true,
+                    when: function (n) { return n.deaths > 0; } }
             ].forEach(function (entry) {
-                var built = row(entry.label);
+                if (!has(entry.when)) return;
+                var built = row(entry.label, entry.count ? tally(entry.when) : undefined);
                 keyList.appendChild(built.item);
-                root.KOPNetworkCanvas.swatch(built.mark, {
-                    kind: 'facility',
+                painter.swatch(built.mark, {
+                    kind: entry.kind || 'facility',
                     status: entry.status,
                     natsap: !!entry.natsap,
-                    fill: byChain ? root.KOPNetworkCanvas.CHAIN_NONE : root.KOPNetworkCanvas.KIND_COLOURS.facility,
-                    byKind: false
+                    deaths: !!entry.deaths
                 });
             });
-            /* The memorial ring, only when something on screen carries it. */
-            if (scene.nodes.some(function (node) { return node.deaths > 0; })) {
-                var ring = row('Deaths recorded in the memorial');
-                keyList.appendChild(ring.item);
-                root.KOPNetworkCanvas.swatch(ring.mark, {
-                    kind: 'facility',
-                    status: 'open',
-                    deaths: true,
-                    fill: byChain ? root.KOPNetworkCanvas.CHAIN_NONE : root.KOPNetworkCanvas.KIND_COLOURS.facility,
-                    byKind: false
-                });
-            }
 
             /* The "+N" pill, only when something on screen carries one. */
             if (scene.hidden && Object.keys(scene.hidden).length) {
@@ -323,14 +286,39 @@
             }
             legend.appendChild(keyList);
 
+            /* Whose lines. A company's lines to its own places and people
+             * are drawn in the colour the board gave it, so the chains in
+             * view are listed by that colour, in the board's order. */
+            var chains = [];
+            var chainSeen = Object.create(null);
+            scene.nodes.forEach(function (node) {
+                var chain = node.chain;
+                if (!chain || chainSeen[chain]) return;
+                chainSeen[chain] = true;
+                chains.push(chain);
+            });
+            chains.sort(function (a, b) { return store.chainColourIndex(a) - store.chainColourIndex(b); });
+            if (chains.length) {
+                var chainList = document_.createElement('ul');
+                chainList.className = 'kop-network__legend-list';
+                legend.appendChild(section('Whose lines'));
+                chains.forEach(function (chain) {
+                    var built = row(chain, undefined, true);
+                    chainList.appendChild(built.item);
+                    painter.edgeSwatch(built.mark, { colour: chainColour(chain), width: 2, dash: null });
+                });
+                legend.appendChild(chainList);
+            }
+
             /* The connections. A line on this map says what kind of
              * relationship was recorded and, for the two that would be wrong
              * read backwards, which way it ran - so the key names them. Only
-             * the kinds actually on screen are listed. */
+             * the kinds actually on screen are listed, in their own inks:
+             * the company colour is the row above's business. */
             var seen = Object.create(null);
             var order = [];
             scene.edges.forEach(function (edge) {
-                var style = root.KOPNetworkCanvas.styleFor(edge, renderer.crossRegionMode);
+                var style = painter.styleFor(edge, renderer.crossRegionMode);
                 var label = style.label || 'Other';
                 if (!seen[label]) { seen[label] = style; order.push(label); }
             });
@@ -342,7 +330,7 @@
             order.forEach(function (label) {
                 var built = row(label, undefined, true);
                 edgeList.appendChild(built.item);
-                root.KOPNetworkCanvas.edgeSwatch(built.mark, seen[label]);
+                painter.edgeSwatch(built.mark, seen[label]);
             });
             legend.appendChild(edgeList);
         };
@@ -354,14 +342,6 @@
             if (index < 0) return root.KOPNetworkCanvas.CHAIN_NONE;
             var palette = root.KOPNetworkCanvas.CHAIN_COLOURS;
             return palette[index % palette.length];
-        }
-
-        if (colourMode) {
-            colourMode.addEventListener('change', function () {
-                renderer.setColourMode(colourMode.value);
-                filters.renderLegend();
-                options.redraw && options.redraw();
-            });
         }
 
         /* ---------------------------------------------------- the rail UI -- */

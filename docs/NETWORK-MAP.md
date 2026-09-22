@@ -161,67 +161,67 @@ mostly blank canvas. Measured on a thirty-six node neighbourhood it used 32%
 of the stage, with seventeen nodes in one quadrant and two in another, and
 only twenty of the thirty-six names could be drawn without overlapping.
 
-**Clusters, not bands (2026-09-18).** The first board layout stacked the
-whole view in bands: every company in the top rows, the people who ran
-things under them, every programme below, everyone else at the bottom. It
-used the stage, but it put a person a stage away from the programmes they
-worked at and ran lines from one edge of the map to the other. In Provo
-Canyon School's view the median line was five rows long. The owner's Miro
-board does the opposite: each family of names sits together as its own
-small tree, and the trees fill the space between them.
+**Clusters round the click, not rows (2026-09-22).** The layout has been
+through three shapes. The first stacked the view in bands: every company in
+the top rows, the people who ran things under them, every programme below.
+The second (`boardLayout`, 2026-09-18) packed the view into rows of small
+trees, clustered by modularity, with the lines run as right-angled traces
+through the gutters between the rows. It measured well - shorter lines,
+every ownership reading top to bottom - and the owner's verdict on it was
+that the layout was weird and the lines never left a name from the top, the
+sides or on a diagonal. On rows, they cannot: a line to anything not in the
+same row leaves from the bottom, and a line to the next name over went down
+into the gutter, along and back up.
 
-The layout (`boardLayout` in `focus.js`) now works the same way:
+What the owner wanted from the rebuild was the look of their own board with
+clustering added, so that names far apart on the board could still show
+their connections. So the view is now a cluster (`clusterLayout` in
+`focus.js`): what was clicked in the middle and everything it touches
+gathered round it, lines drawn straight from centre to centre.
 
-- *Levels.* Organisations are levelled first, from what joins them to each
-  other: a company above what it owns, a programme above what it was
-  renamed to, and lineage through a person (a body someone belonged to
-  above what they founded, two levels apart so the person fits between:
-  AA, Dederich, Synanon). People are hung off their organisations
-  afterwards, a level above what they ran and a level below where they
-  worked. People do not push organisations apart; when they did, a staffer
-  at one programme who ran another put the second a level under the first,
-  and a cluster of twenty-four names came out ten rows deep.
-- *Clusters.* Greedy modularity (Louvain's first stage, then once more on
-  its clusters), in a fixed order so a view always splits the same way,
-  with a size cap. Ownership links count three times, so owners stay in
-  the cluster of what they own. Names with one connection follow the name
-  they hang off. What was clicked keeps its own owners and holdings in its
-  cluster. A view of twenty names or fewer is not split at all.
-- *Each cluster as a tree.* Levels are worked out again inside the
-  cluster, so a chain passing through other clusters leaves no empty rows.
-  Barycentre sweeps order each level to cut crossings, a level wider than
-  the cluster's share of the stage wraps under itself (a hub's staff become
-  a small grid under it), and each name slides along its row towards what
-  it connects to, inside a frame a tenth wider than the widest row.
-- *Packing.* The cluster holding the click goes down first; each next one
-  is the unplaced cluster with most links to what is down. It goes where
-  its lines are shortest and the board stays nearest the stage's shape, and
-  it is fitted row by row rather than as a rectangle, so it can sit beside
-  another tree's short top rows. Breaking an ownership or rename between
-  clusters costs 3000 (about a stage of line); breaking a person's level
-  costs 400. At 4000 for both, nearly every slot broke something and every
-  cluster lined up in one board-width strip.
-- Everything stays on one lattice of rows, which is what the router's
-  gutters need.
+- *Seeded by hand, then settled.* Round each root (the click, or every name
+  on an expanded trail) its connections go in a fan: what it owned or
+  became in rows below it, who owned it in rows above, everyone else in
+  columns either side, the rows centred on it and no wider than the stage.
+  Rows rather than rings, because bubbles are wide and low: rings spent
+  the stage's height on names that could have sat beside each other, and a
+  fan the stage could not frame left most of a click's connections a pan
+  away. Everything two steps out is seeded beyond the name it hangs off -
+  straight below or above it when the line between them is an ownership
+  or a rename. On an expanded trail each root has its own fan and they sit
+  side by side, wrapping onto another row when the stage is too narrow;
+  the opening view, having no trail, treats every name on it as a root, so
+  it comes out as a block with the connected ones gathered, and on a phone
+  a column.
+- *The settle.* d3-force for 220 ticks: links at their category's distance
+  and never shorter than the two boxes side by side, a weak charge, an
+  anchor to the seed (strength 0.12, so the seed's reading survives), the
+  click pinned at the origin, and two forces of our own. `boxCollide`
+  keeps bubbles apart as the boxes they are - two names side by side need
+  their half-widths between them, two stacked only their half-heights.
+  `readDown` nudges each ownership or rename so the lower end sits below
+  the upper by the two half-heights and a gap; a nudge, not a constraint,
+  because a firm hold blew the layout apart wherever ownership ran in a
+  cycle.
+- *Shelved last.* What the settle leaves overlapping is shelved
+  (`shelve`): names at about one height go on one row, side by side in the
+  order the settle left them and centred where they were, and the rows are
+  stacked clear of each other outward from the click, which keeps its
+  spot. Pushing overlapping pairs apart, on velocities or on positions,
+  never converged on a heap - forty passes left thirty pairs overlapping in
+  WWASPS's view; shelving is one pass and cannot leave two names sharing
+  pixels.
+- *Which end is upper.* A company is above the place it owns whichever way
+  the record was typed; between two of a kind, the source is the owner;
+  people are left out (`upperOf`).
 
-Measured at a 1200 x 860 stage on fourteen views against the band layout:
-the mean line is shorter in every view over 25 names, by 12-35% in seven of
-the eight (Provo Canyon School 454 world units against 531, Universal
-Health Services 357 against 442, today's top players 263 against 405) and
-by 1% in WWASPS, whose 24 programmes wrap into a grid under it (407 against
-411). Every ownership and rename reads top to
-bottom in all fourteen (the band layout broke one or more in seven: UHS 24
-of 30), and Provo's 95 names still all fit on the stage.
+With `window.KOP_NET_DEBUG = true` set before the page loads, the layout
+logs its overlap count and extent after seeding, settling and shelving;
+`window.KOPNetworkDebug` holds the live store, renderer, viewport and focus
+for a console or a Playwright script.
 
-Lines from one hub share one offset in a gutter (`laneOf` in `canvas.js`),
-so a company's lines to its programmes merge into a trunk with a branch to
-each, as the board draws them, instead of twenty-four parallel strands. Two
-hubs of the same style get neighbouring offsets, so their trunks never merge
-into one that would join things nothing joins.
-
-Rows are packed by the width each name actually needs, not cut into columns
-of a fixed width, and gutters tighten before the fit is ever allowed to
-scale the board down.
+`focus.grid()` still describes the layout's extent and a row pitch, for the
+tests; nothing routes through gutters any more.
 
 **A staff member stands between the places they join (2026-09-20).** The
 owner asked that the person who connects two places be visible on the
@@ -330,8 +330,8 @@ The counts in this section were taken on the graph as it stood before the
 sheet's staff tab was built in. With it the board has 1,342 views, and Provo
 Canyon School opens on 76 names with 28 people folded into lines.
 
-`standBetween` is still there for the one case left to it: a person kept
-as a name because they were clicked earlier in Expand mode.
+`standBetween` went with the rows on 2026-09-22; a person kept as a name
+sits where the cluster puts them.
 
 **A line says what it records when it is pointed at (2026-09-21).** The
 renderer publishes the routes it drew; `renderer.edgeAt` finds the one under
@@ -426,42 +426,42 @@ as landing on the node it names. Only drawn labels count, so a dropped label
 is not clickable, and the boxes never overlap, so the first hit is the only
 hit.
 
-**A trace must never look like a connection.** On a board where a line
+**A line must never look like a connection.** On a board where a line
 means a recorded relationship, a line drawn across a node it does not
-connect is not a cosmetic problem: the map showed CEDU joined to Teen
-Challenge, which share no edge and not even a neighbour, and the opening view
-ran Synanon's line to CEDU straight through WWASPS. A right angle drawn
-naively is not enough - a vertical leg at the node's own x runs through
-every cell in that column between the two rows. So traces are routed the way
-a track runs on a board: out of the node into the gutter beside its row,
-along the gutter, up or down one vertical channel, along the gutter beside
-the target's row, and in. The long legs only ever run in gutters, and the
-one vertical channel is checked against every node between the two rows -
-shape, clearance and label - and moved sideways until it is clear. Two nodes
-in the same row route through the gutter below them, behind both labels;
-labels are drawn last with a halo so the text stays legible over the line.
-Every node also has a clear ring punched through the traces around it before
-any node is drawn, so a line passing a name visibly goes in one side and out
-the other, and a line that really does end there stops a little short of the
-node rather than touching it.
+connect is not a cosmetic problem: the map once showed CEDU joined to Teen
+Challenge, which share no edge and not even a neighbour. So a line never
+crosses a node it does not join, and the test checks every leg of every
+route the renderer drew against every other node's box - by the renderer's
+own segment test and, separately, by walking the leg two pixels at a time.
 
-The renderer publishes every route it drew, and the test checks each leg
-against the box of every node the route does not connect. That test is what
-caught the router not running at all: the label-collision pass declared a
-`var grid` inside `draw()`, which hoists over the whole function and shadowed
-the layout grid the router reads, so every trace had silently fallen back to
-a straight line - including the gutter snapping this paragraph used to claim
-was fixing things. A rename fixed it; the lesson is that a claim about what
-the page draws needs a measurement of what the page draws.
+Lines are straight (`routeEdge` in `canvas.js`, 2026-09-22): centre to
+centre, which is the shortest path there is and leaves each bubble on
+whichever side faces the other end. Only where the straight line would run
+through somebody else's name does it take the shortest way round, found on
+the corners of the boxes in the way: every corner is a place the line can
+turn, a leg between two of them counts if it clears every box, and
+Dijkstra over that little graph gives the shortest chain of legs. The first
+pass uses the corners of the boxes the straight line hits; if those are
+themselves boxed in, the 24 corners nearest the line join the search, and
+failing that the 160 nearest - the last pass is what threads a line through
+a shelved block, twelve legs and all, and without it WWASPS's line to Casa
+by the Sea went straight through four names. A line the search still cannot
+get past goes straight and crosses, which the layout is meant never to ask
+for. The search is A*, with the straight-line distance left as its guess,
+so the corners a line would never use are never settled.
 
-Connections are routed as right-angled traces rather than straight
-diagonals, which is what makes the result readable at that density: diagonals
-between grid cells cross at every angle and read as a scribble over the
-nodes, where right angles run in the gutters between rows and columns and
-can be followed by eye end to end. Turns are offset per edge so two
-connections sharing a channel do not lie exactly on top of each other, and
-an arrowhead points along the final segment rather than back down the
-straight line between the two nodes.
+What that costs: routing a hub's sixty lines with fifteen detours is about
+20 ms, so routes are cached across frames - keyed on every box's place
+relative to the stage's translation, so a pan reuses the last frame's routes
+shifted and only a zoom, a motion or a change of scene routes again - and
+while names are in motion (a click's yoyo, a hover's gather) lines go
+straight, and are routed once where they land. A view with more than 160
+names is a field of dots and goes straight throughout.
+
+Two lines between the same pair (one owns the other and they shared a
+campus) are set a few pixels to either side of the centre line, so neither
+hides the other. The right-angled traces this replaced, with their gutters,
+lanes and shared trunks, are in the history before this date.
 
 Layouts are applied outright, never tweened. Animating the positions meant
 the view had to be aimed at where they were going rather than where they
@@ -697,16 +697,24 @@ a line always meets what it connects to, and a dot in the line's colour
 marks where it lands on the rim. A directed line (became, acquired) gets
 an arrowhead at that point instead.
 
-Colour mode one, the default, by kind: teal, navy, orange, chartreuse
-outline on sand, grey. Colour mode two by chain: twelve hues from the
-tokens plus grey for the rest, with a legend that lists only the chains
-present in the current view.
+**The look is the board's (2026-09-22).** The owner's verdict on the
+colour-by-kind blocks on sand was that the map was ugly and not close enough
+to their original, so the nodes are drawn the way the Miro board's own key
+draws them, read off the board: a white stage; a box with a thin dark
+(#1a1a1a) outline, filled pale yellow (#faeba1) for a place still open, grey
+(#e6e6e6) for one closed or carried on under another name (dashed outline
+for a rebrand), white where the record does not say; the name in dark ink,
+or in blue (#0b2bf0) for a NATSAP member; people in ellipses. Nothing is
+coloured by kind and there is no colour mode: what a thing is, the drawer
+says. The memorial ring (red) is the one mark the board does not have.
+Bubble size comes from the name, not from importance.
 
-Open nodes solid, closed hollow with a two-pixel stroke, NATSAP a thin
-chartreuse ring. Bubble size comes from the name, not from importance.
-
-Edges: corporate solid and thicker, family dashed, unknown dotted grey,
-survivor coral, cross-region orange when that toggle is on.
+Lines carry the company: a company's lines to its own places and people
+are drawn in the colour the board gave it (`meta.chainColours`), a rebrand
+or a takeover included, with an arrowhead; a line between two companies is
+neither's and stays in the plain ink of its kind. The key lists the
+companies in view by that colour. Family ties and survivor accounts keep
+their own colours whatever company they sit in.
 
 Labels: nodes above a degree threshold always, the rest fade in past a zoom
 level, hovered, chained and neighbouring nodes always. Hover drops
@@ -719,8 +727,9 @@ The legend is built by `filters.js`, not here. It is the rail's other half:
 it says what the marks mean and it lists only what the rail has left in
 view. Its swatches are painted by the renderer's own node painter, exported
 for the purpose, so a swatch cannot drift from the thing it describes - the
-kind shapes, the hollow closed node, the faded unrecorded one and the
-chartreuse NATSAP ring are all one code path now.
+status fills, the person's ellipse and the memorial ring are all one code
+path now; the NATSAP row shows its blue as a stroke, since a swatch has no
+name to colour.
 
 **Built.** The renderer takes an `emphasis` object carrying the lit node and
 edge sets, the dim alpha and the gather offsets, and focus.js fills it in;

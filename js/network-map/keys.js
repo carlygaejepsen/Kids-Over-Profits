@@ -46,9 +46,29 @@
      * pixels; names level with the cursor are not above or below it. */
     var ALONG_MIN = 4;
 
+
+    /**
+     * Where an arrow takes the cursor from `from`, or null at the edge of
+     * the view. `dir` is one of the four [dx, dy] above; points are
+     * {id, x, y} in screen pixels. Each arrow goes to the nearest name that
+     * way; left and right, finding none, carry on into the next or the
+     * previous row in reading order, so between them the two reach every
+     * name. Stepping through reading order alone was right for a board of
+     * rows; on a cluster the next name in reading order can be anywhere,
+     * and an arrow has to go where it points first.
+     */
+    function nextInDirection(points, from, dir) {
+        var best = nearestThatWay(points, from, dir);
+        if (best || dir[0] === 0) return best;
+        var order = readingOrder(points);
+        for (var i = 0; i < order.length; i++) {
+            if (order[i].id === from.id) return order[i + dir[0]] || null;
+        }
+        return null;
+    }
+
     /* Names whose centres are within this many pixels of each other
-     * vertically are on one row. Rows are never this close: a row is at
-     * least a name and its gutter tall at any zoom the view is framed at. */
+     * vertically are on one row, for the carry-on. */
     var ROW_TOLERANCE = 8;
 
     /** The points in reading order: row by row, left to right. */
@@ -68,20 +88,7 @@
         return out;
     }
 
-    /**
-     * Where an arrow takes the cursor from `from`, or null at the edge of
-     * the view. `dir` is one of the four [dx, dy] above; points are
-     * {id, x, y} in screen pixels. Left and right are the previous and next
-     * name in reading order; up and down are the nearest name that way.
-     */
-    function nextInDirection(points, from, dir) {
-        if (dir[0] !== 0) {
-            var order = readingOrder(points);
-            for (var i = 0; i < order.length; i++) {
-                if (order[i].id === from.id) return order[i + dir[0]] || null;
-            }
-            return null;
-        }
+    function nearestThatWay(points, from, dir) {
         var best = null;
         var bestScore = Infinity;
         points.forEach(function (p) {
@@ -91,9 +98,10 @@
             var along = dx * dir[0] + dy * dir[1];
             if (along < ALONG_MIN) return;
             var across = Math.abs(dx * dir[1]) + Math.abs(dy * dir[0]);
-            /* Within a quarter-turn of the arrow; past that it is some
-             * other arrow's name. */
-            if (across > along * 3) return;
+            /* Within a quarter-turn of an up or down arrow; past that it
+             * is some other arrow's name. Left and right look narrower,
+             * since a name on the row below is the carry-on's business. */
+            if (across > along * (dir[0] ? 1 : 3)) return;
             var score = along + across * OFF_AXIS;
             if (score < bestScore) { bestScore = score; best = p; }
         });
@@ -114,6 +122,9 @@
         if (!canvas || !focus || !viewport || !renderer) return null;
 
         var cursorId = null;
+        /* The head the cursor was last placed for: a new click starts the
+         * cursor over on what was clicked. */
+        var lastHead = null;
 
         function screenPoints(scene) {
             var t = viewport.transform;
@@ -172,6 +183,9 @@
                 if (!scene.nodes.length) return;
                 event.preventDefault();
                 var points = screenPoints(scene);
+                var trailNow = focus.chain();
+                var headNow = trailNow.length ? trailNow[trailNow.length - 1] : null;
+                if (headNow !== lastHead) { lastHead = headNow; cursorId = null; }
                 var at = cursorId && scene.nodeIds[cursorId]
                     ? points.filter(function (p) { return p.id === cursorId; })[0] : null;
                 if (!at) {
