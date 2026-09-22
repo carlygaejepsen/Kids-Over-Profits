@@ -540,8 +540,6 @@ function loadDiscoveryQueries() {
             when: typeof t.when === 'string' ? t.when.trim() : null
         }));
 
-    const redditBoost = raw.redditBoost && typeof raw.redditBoost === 'object' ? raw.redditBoost : {};
-
     return {
         facilityKeywords: facilityKeywords.length ? facilityKeywords : DEFAULT_FACILITY_KEYWORDS,
         facilityRecency: typeof raw.facilityRecency === 'string' ? raw.facilityRecency.trim() : '',
@@ -552,9 +550,7 @@ function loadDiscoveryQueries() {
             ? Number(raw.maxTopicSubmissionsPerRun) : 20,
         topicQueries,
         genericQueryNames: new Set(strList(raw.genericQueryNames).map(normalizeName).filter(Boolean)),
-        ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean)),
-        redditLinkBoost: Number.isFinite(Number(redditBoost.link)) ? Number(redditBoost.link) : 3,
-        redditSelftextBoost: Number.isFinite(Number(redditBoost.selftext)) ? Number(redditBoost.selftext) : 1
+        ignoreAliases: new Set(strList(raw.ignoreAliases).map(normalizeName).filter(Boolean))
     };
 }
 
@@ -1121,7 +1117,7 @@ function countAbuseKeywords(text) {
  *   +1   abuse keyword in description (only if not already in title)
  *   +2   facility alias matched
  *   +2   matched facility's city appears in text (city-level boost)
- *   +1   reddit-link origin (someone thought it worth sharing)
+ *   accept (no score) every r/troubledteens link: the subreddit is the filter
  *   reject (no score) if blacklist hit or HARD_BLOCKED host
  *   reject (no score) if facility match but state CONTRADICTS facility's state
  */
@@ -1142,6 +1138,23 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
     const candHost = hostOf(candidate.sourceUrl || candidate.link);
     if (!candHost) {
         return { accept: false, reason: 'invalid-url', meta: { link: candidate.link } };
+    }
+    // Everything r/troubledteens links to goes to the review queue: the
+    // subreddit is the filter, so no keyword score, blacklist or state check
+    // applies. Reddit-internal, social and video hosts (nothing to extract)
+    // are skipped in fetchRedditCandidates; a PDF cannot be extracted
+    // either. The facility match is kept for the submission's metadata.
+    if (candidate.origin.startsWith('reddit')) {
+        if (isPdfUrl(candidate.link)) {
+            return { accept: false, reason: 'pdf-document', meta: { link: candidate.link } };
+        }
+        const redditMatch = matchFacility(text, facilityIndex);
+        const redditReasons = ['r/troubledteens'];
+        if (redditMatch) redditReasons.push(`facility:${redditMatch.matchedAlias}`);
+        return {
+            accept: true, score: SCORE_THRESHOLD, reasons: redditReasons,
+            match: redditMatch ? { alias: redditMatch.matchedAlias, facility: redditMatch.facility.queryName, state: redditMatch.facility.state, city: redditMatch.facility.city, bucket: redditMatch.facility.bucket } : null
+        };
     }
     if (blacklist.hostBlocked(candHost)) {
         return { accept: false, reason: 'blacklist-host', meta: { host: candHost } };
@@ -1274,20 +1287,6 @@ function evaluateCandidate(candidate, facilityIndex, blacklist, facilityOwnHosts
             reason: 'facility-unmatched',
             meta: { query: candidate.facilityQuery || '', score, reasons, host: candHost }
         };
-    }
-
-    // Articles people post to r/troubledteens are already on topic: the
-    // subreddit is the filter, so a link post clears the threshold on its own
-    // (redditBoost.link). Links inside a text post are looser (resource
-    // lists, pop-culture asides) and still need a keyword or facility.
-    const redditLinkBoost = Number.isFinite(opts.redditLinkBoost) ? opts.redditLinkBoost : 3;
-    const redditSelftextBoost = Number.isFinite(opts.redditSelftextBoost) ? opts.redditSelftextBoost : 1;
-    if (candidate.origin === 'reddit-link' && redditLinkBoost > 0) {
-        score += redditLinkBoost;
-        reasons.push('reddit-link-post');
-    } else if (candidate.origin === 'reddit-selftext' && redditSelftextBoost > 0) {
-        score += redditSelftextBoost;
-        reasons.push('reddit-selftext-link');
     }
 
     // Topic-query boost: the query itself carried the topical constraint
@@ -1535,7 +1534,6 @@ async function main() {
     log(`  today = shard ${shardIndex}/${SHARD_COUNT} → ${slice.length} facilities to query` +
         (MAX_FACILITIES ? ` (capped from ${todaysShard.length})` : ''));
 
-    const evalOpts = { redditLinkBoost: queries.redditLinkBoost, redditSelftextBoost: queries.redditSelftextBoost };
     // Counters accumulated across every submit batch in this run.
     const totals = {
         candidates: 0, accepted: 0, rejected: 0,
@@ -1578,17 +1576,16 @@ async function main() {
             if (seen.has(h) || dedupeSeen.has(h)) continue;
             dedupeSeen.add(h);
             // Collapse syndicated copies (same wire headline, different outlet).
-            // Google News origins only: every link pulled from one Reddit post
-            // carries that post's title. Only an accepted copy claims the key, so
-            // a rejected first copy (wire host, state mismatch) does not hide a
-            // good one from another outlet.
-            // A reddit link post carries one link, so its title is the headline too.
-            const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic' || c.origin === 'reddit-link') ? headlineKey(c.title) : '';
+            // Google News origins only: a Reddit post's title is the poster's,
+            // and every r/troubledteens link is wanted regardless. Only an
+            // accepted copy claims the key, so a rejected first copy (wire
+            // host, state mismatch) does not hide a good one from another outlet.
+            const hk = (c.origin === 'google-news' || c.origin === 'google-news-topic') ? headlineKey(c.title) : '';
             if (hk && dedupeHeadlines.has(hk)) { duplicateHeadlines++; continue; }
             // Same story already submitted on an earlier night under another URL.
             if (hk && state.seenHeadlines[hk]) { previouslySubmitted++; continue; }
 
-            const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases, evalOpts);
+            const result = evaluateCandidate(c, facilityIndex, blacklist, facilityOwnHosts, genericAliases);
             if (result.accept) {
                 if (hk) dedupeHeadlines.add(hk);
                 queue.push({ candidate: c, evalResult: result, urlHash: h, headlineKey: hk });

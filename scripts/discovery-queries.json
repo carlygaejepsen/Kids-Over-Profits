@@ -385,9 +385,5 @@
     "Kansas",
     "Behavioral Health"
   ],
-  "_redditBoostComment": "Score added to r/troubledteens candidates (threshold is 3). link = a post whose target is an external article: 3 accepts it on the subreddit alone, since members post on-topic news that rarely uses the abuse keywords. selftext = a link inside a text post: 1 means it still needs a strong keyword or a facility match.",
-  "redditBoost": {
-    "link": 3,
-    "selftext": 1
-  }
+  "_redditComment": "Every link posted to r/troubledteens (link posts and links inside text posts) is submitted without scoring: the subreddit is the filter. Only reddit-internal, social and video hosts and PDFs are skipped, because the AI stage has nothing to extract from them."
 }

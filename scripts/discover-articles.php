@@ -601,8 +601,6 @@ function load_discovery_queries(): array {
         $k = normalize_name($n);
         if ($k !== '') $ignoreAliases[$k] = true;
     }
-    $redditBoost = is_array($raw['redditBoost'] ?? null) ? $raw['redditBoost'] : [];
-
     $maxPerTopic = is_numeric($raw['maxItemsPerTopic'] ?? null) && (int)$raw['maxItemsPerTopic'] > 0
         ? (int)$raw['maxItemsPerTopic'] : 25;
     $maxTopicSubmissions = is_numeric($raw['maxTopicSubmissionsPerRun'] ?? null) && (int)$raw['maxTopicSubmissionsPerRun'] >= 0
@@ -616,9 +614,7 @@ function load_discovery_queries(): array {
         'maxTopicSubmissionsPerRun' => $maxTopicSubmissions,
         'topicQueries' => $topicQueries,
         'genericQueryNames' => $generic,
-        'ignoreAliases' => $ignoreAliases,
-        'redditLinkBoost' => is_numeric($redditBoost['link'] ?? null) ? (int)$redditBoost['link'] : 3,
-        'redditSelftextBoost' => is_numeric($redditBoost['selftext'] ?? null) ? (int)$redditBoost['selftext'] : 1
+        'ignoreAliases' => $ignoreAliases
     ];
 }
 
@@ -1169,6 +1165,29 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
     if ($candHost === '') {
         return ['accept' => false, 'reason' => 'invalid-url', 'meta' => ['link' => $candidate['link']]];
     }
+    // Everything r/troubledteens links to goes to the review queue: the
+    // subreddit is the filter, so no keyword score, blacklist or state check
+    // applies. Reddit-internal, social and video hosts (nothing to extract)
+    // are skipped in fetch_reddit_candidates; a PDF cannot be extracted
+    // either. The facility match is kept for the submission's metadata.
+    if (str_starts_with($candidate['origin'], 'reddit')) {
+        if (is_pdf_url($candidate['link'])) {
+            return ['accept' => false, 'reason' => 'pdf-document', 'meta' => ['link' => $candidate['link']]];
+        }
+        $match = match_facility($text, $facilityIndex);
+        $reasons = ['r/troubledteens'];
+        if ($match !== null) $reasons[] = 'facility:' . $match['matchedAlias'];
+        return [
+            'accept' => true, 'score' => SCORE_THRESHOLD, 'reasons' => $reasons,
+            'match' => $match !== null ? [
+                'alias' => $match['matchedAlias'],
+                'facility' => $match['facility']['queryName'],
+                'state' => $match['facility']['state'],
+                'city' => $match['facility']['city'],
+                'bucket' => $match['facility']['bucket']
+            ] : null
+        ];
+    }
     if ($blacklist['hostBlocked']($candHost)) {
         return ['accept' => false, 'reason' => 'blacklist-host', 'meta' => ['host' => $candHost]];
     }
@@ -1289,20 +1308,6 @@ function evaluate_candidate(array $candidate, array $facilityIndex, array $black
             'reason' => 'facility-unmatched',
             'meta' => ['query' => $candidate['facilityQuery'] ?? '', 'score' => $score, 'reasons' => $reasons, 'host' => $candHost]
         ];
-    }
-
-    // Articles people post to r/troubledteens are already on topic: the
-    // subreddit is the filter, so a link post clears the threshold on its own
-    // (redditBoost.link). Links inside a text post are looser (resource
-    // lists, pop-culture asides) and still need a keyword or facility.
-    $redditLinkBoost = (int)($opts['redditLinkBoost'] ?? 3);
-    $redditSelftextBoost = (int)($opts['redditSelftextBoost'] ?? 1);
-    if ($candidate['origin'] === 'reddit-link' && $redditLinkBoost > 0) {
-        $score += $redditLinkBoost;
-        $reasons[] = 'reddit-link-post';
-    } elseif ($candidate['origin'] === 'reddit-selftext' && $redditSelftextBoost > 0) {
-        $score += $redditSelftextBoost;
-        $reasons[] = 'reddit-selftext-link';
     }
 
     // Topic-query boost: the query itself carried the topical constraint
@@ -1539,7 +1544,6 @@ function main(): void {
     kop_log("  today = shard {$shardIndex}/" . SHARD_COUNT . ' → ' . count($slice) . ' facilities to query' .
         (MAX_FACILITIES ? ' (capped from ' . count($todaysShard) . ')' : ''));
 
-    $evalOpts = ['redditLinkBoost' => $queries['redditLinkBoost'], 'redditSelftextBoost' => $queries['redditSelftextBoost']];
     // Counters accumulated across every submit batch in this run.
     $totals = [
         'candidates' => 0, 'accepted' => 0, 'rejected' => 0,
@@ -1570,7 +1574,7 @@ function main(): void {
     // -- Filter one tier's raw items into a submit queue --
     $filterBatch = function (array $candidates, string $label) use (
         &$state, &$seen, &$dedupeSeen, &$dedupeHeadlines, &$totals,
-        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts
+        $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases
     ): array {
         $totals['candidates'] += count($candidates);
         $state['stats']['discovered'] += count($candidates);
@@ -1585,17 +1589,16 @@ function main(): void {
             if (isset($seen[$h]) || isset($dedupeSeen[$h])) continue;
             $dedupeSeen[$h] = true;
             // Collapse syndicated copies (same wire headline, different outlet).
-            // Google News origins only: every link pulled from one Reddit post
-            // carries that post's title. Only an accepted copy claims the key, so
-            // a rejected first copy (wire host, state mismatch) does not hide a
-            // good one from another outlet.
-            // A reddit link post carries one link, so its title is the headline too.
-            $hk = in_array($c['origin'], ['google-news', 'google-news-topic', 'reddit-link'], true) ? headline_key($c['title']) : '';
+            // Google News origins only: a Reddit post's title is the poster's,
+            // and every r/troubledteens link is wanted regardless. Only an
+            // accepted copy claims the key, so a rejected first copy (wire
+            // host, state mismatch) does not hide a good one from another outlet.
+            $hk = in_array($c['origin'], ['google-news', 'google-news-topic'], true) ? headline_key($c['title']) : '';
             if ($hk !== '' && isset($dedupeHeadlines[$hk])) { $duplicateHeadlines++; continue; }
             // Same story already submitted on an earlier night under another URL.
             if ($hk !== '' && isset($state['seenHeadlines'][$hk])) { $previouslySubmitted++; continue; }
 
-            $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases, $evalOpts);
+            $result = evaluate_candidate($c, $facilityIndex, $blacklist, $facilityOwnHosts, $genericAliases);
             if ($result['accept']) {
                 if ($hk !== '') $dedupeHeadlines[$hk] = true;
                 $queue[] = ['candidate' => $c, 'evalResult' => $result, 'urlHash' => $h, 'headlineKey' => $hk];
