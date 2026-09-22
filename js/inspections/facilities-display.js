@@ -97,6 +97,13 @@ function displayFacilities(facilitiesData, containerId) {
 
     // Backwards compatibility wrapper
     const cleanText = value => safeString(value);
+
+    // A "Country: United States" row says nothing on a US-focused site.
+    const isUsCountryField = (key, value) => {
+        if (!key || typeof key !== 'string' || !/(^|\.)country$/i.test(key)) return false;
+        if (typeof value !== 'string') return false;
+        return /^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(cleanText(value).trim());
+    };
     const htmlEscapeMap = {
         '&': '&amp;',
         '<': '&lt;',
@@ -366,6 +373,7 @@ function displayFacilities(facilitiesData, containerId) {
             if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
                 return;
             }
+            if (isUsCountryField(field.key, field.value)) return;
 
             let renderedValue = '';
 
@@ -460,6 +468,7 @@ function displayFacilities(facilitiesData, containerId) {
                 if (!field.value || (Array.isArray(field.value) && field.value.length === 0)) {
                     return;
                 }
+                if (isUsCountryField(field.key, field.value)) return;
 
                 let renderedValue = '';
 
@@ -500,6 +509,22 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityDatasetNameRaw = cleanText(identification.name) || cleanText(identification.currentName) || cleanText(facilityHeaderRaw) || 'Unnamed Facility';
             const facilityDatasetName = escapeAttribute(facilityDatasetNameRaw);
 
+            // Only render the "Learn more" disclosure when there is expanded
+            // content behind it.
+            const facilityExtraContent = [
+                otherFacilityData,
+                holdingsChecklist,
+                renderFieldNotes(facility.fieldNotes)
+            ].join('');
+            const facilityDetailsHtml = facilityExtraContent.trim() !== ''
+                ? `<div class="facility-details">
+                        <details class="facility-expanded-info">
+                            <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                            <div class="facility-extra-content">${facilityExtraContent}</div>
+                        </details>
+                    </div>`
+                : '';
+
             html += `<div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}" data-has-violations="${facilityHasViolationsFlag(facility) ? '1' : '0'}" data-report-count="${facilityInspectionReportCount(facility)}">
                     <div class="facility-summary">
                         <h3 class="facility-name">${facilityHeader}</h3>
@@ -510,16 +535,7 @@ function displayFacilities(facilitiesData, containerId) {
                         </p>
                         ${holdingsSummary}
                     </div>
-                    <div class="facility-details">
-                        <details class="facility-expanded-info">
-                            <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                            <div class="facility-extra-content">
-                                ${otherFacilityData}
-                                ${holdingsChecklist}
-                                ${renderFieldNotes(facility.fieldNotes)}
-                            </div>
-                        </details>
-                    </div>
+                    ${facilityDetailsHtml}
                 </div>`;
         });
         

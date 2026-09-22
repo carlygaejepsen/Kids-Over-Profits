@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!matchingFolder && normalizedFacilityName.length > 6) {
                 matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name) return false;
+                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
                     const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
                     return normalizedFolderName.includes(normalizedFacilityName);
                 });
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!matchingFolder) {
                 matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name) return false;
+                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
                     const normalizedFolderName = normalizeFolderMatchText(folder.name.toLowerCase());
                     return normalizedFolderName.length > 6 && normalizedFacilityName.includes(normalizedFolderName);
                 });
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!matchingFolder && window.filebirdFolderMap) {
                 matchingFolder = window.filebirdFolders.find(folder => {
-                    if (!folder.name) return false;
+                    if (!folder.name || isPlaceFolderName(folder.name)) return false;
                     const parentId = String(folder.parent || '0');
                     if (parentId === '0') return false;
                     const parentFolder = window.filebirdFolderMap[parentId];
@@ -283,6 +283,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return true;
     };
+
+    // A "Country: United States" row says nothing on a US-focused site (and
+    // the header already shows the country when it is anything else), so it
+    // never earns a "More details" section of its own.
+    const isUsCountryField = (key, value) => {
+        if (!key || typeof key !== 'string' || !/(^|\.)country$/i.test(key)) return false;
+        if (typeof value !== 'string') return false;
+        return /^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(cleanText(value).trim());
+    };
+
+    // Drop folders that hold no live documents anywhere in their subtree, so
+    // a name match never produces a button that opens onto an empty library.
+    // The kop/v1/folders endpoint attaches the `files` count; a list without
+    // it (older responses) is left alone.
+    const dropEmptyFolders = folders => Array.isArray(folders)
+        ? folders.filter(folder => !(folder && typeof folder.files === 'number' && folder.files <= 0))
+        : folders;
+
+    // Folders named for a state or country are filing buckets, not programs.
+    // Loose (substring / path-word) matching must never land on one: with the
+    // empty per-facility skeleton folders filtered out, "Alabama Baptist
+    // Children's Homes" would otherwise fall through to the ALABAMA bucket.
+    // Exact-name matches are unaffected.
+    const PLACE_FOLDER_NAMES = new Set([
+        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut',
+        'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa',
+        'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan',
+        'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire',
+        'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio',
+        'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota',
+        'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia',
+        'wisconsin', 'wyoming', 'district of columbia', 'washington dc', 'puerto rico',
+        'united states', 'usa', 'canada', 'mexico', 'united kingdom', 'jamaica', 'costa rica',
+        'dominican republic', 'samoa', 'american samoa', 'czech republic', 'international'
+    ]);
+    const isPlaceFolderName = name => PLACE_FOLDER_NAMES.has(
+        cleanText(name).toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim()
+    );
 
     const htmlEscapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
     const escapeHtml = value => {
@@ -512,7 +550,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const restBase = getRestBase();
             const foldersResponse = await fetch(`${restBase}folders`, { credentials: 'same-origin' });
             if (foldersResponse.ok) {
-                window.filebirdFolders = await foldersResponse.json();
+                window.filebirdFolders = dropEmptyFolders(await foldersResponse.json());
                 window.filebirdFolderMap = null;
             }
         } catch (error) {
@@ -1115,6 +1153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 facilityFields.forEach(field => {
                     if (shouldSuppressFacilityField(field.key)) return;
                     if (isValueEmpty(field.value)) return;
+                    if (isUsCountryField(field.key, field.value)) return;
                     let renderedValue = '';
                     let isMultiColumn = false;
                     if (field.isList) {
@@ -1210,6 +1249,36 @@ document.addEventListener('DOMContentLoaded', function() {
                     documentsSectionHtml = renderDetailSection('Documents', `<div class="facility-detail-grid">${documentsHtml}</div>`, 'facility-documents-section');
                 }
 
+                // Only render the "Learn more" disclosure when there is expanded
+                // content behind it. A card with nothing to expand keeps just the
+                // submission button, so thin records still have a way in.
+                const submitInfoRowHtml = `
+                                    <div class="kop-submit-info-row">
+                                        <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">Submit info about this facility</button>
+                                    </div>`;
+                const facilityExtraContent = [
+                    factsHtml,
+                    notesHtml,
+                    newsSectionHtml,
+                    lawsuitSectionHtml,
+                    memorialSectionHtml,
+                    resourcesSectionHtml,
+                    documentsSectionHtml,
+                    additionalDetailsHtml,
+                    fieldNotesSectionHtml
+                ].join('');
+                const facilityDetailsHtml = facilityExtraContent.trim() !== ''
+                    ? `<div class="facility-details">
+                            <details class="facility-expanded-info">
+                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
+                                <div class="facility-extra-content">
+                                    ${facilityExtraContent}
+                                    ${submitInfoRowHtml}
+                                </div>
+                            </details>
+                        </div>`
+                    : `<div class="facility-details facility-details-empty">${submitInfoRowHtml}</div>`;
+
                 contentHtml += `
                     <div class="facility-card status-${statusClass}" data-facility="${facilityDatasetName}" data-status="${statusClass}" data-kop-bug-feature="location-index/facility-card" data-kop-bug-label="Facility: ${facilityDatasetName}">
                         <div class="facility-summary">
@@ -1224,25 +1293,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         ${lawsuitStripHtml}
                         ${memorialStripHtml}
-                        <div class="facility-details">
-                            <details class="facility-expanded-info">
-                                <summary><span class="closed-text">+ Learn more</span><span class="open-text">- Collapse details</span></summary>
-                                <div class="facility-extra-content">
-                                    ${factsHtml}
-                                    ${notesHtml}
-                                    ${newsSectionHtml}
-                                    ${lawsuitSectionHtml}
-                                    ${memorialSectionHtml}
-                                    ${resourcesSectionHtml}
-                                    ${documentsSectionHtml}
-                                    ${additionalDetailsHtml}
-                                    ${fieldNotesSectionHtml}
-                                    <div class="kop-submit-info-row">
-                                        <button type="button" class="kop-submit-info-btn" data-kop-submit-type="facility" data-kop-submit-name="${escapeAttribute(facilityHeaderRaw || '')}">Submit info about this facility</button>
-                                    </div>
-                                </div>
-                            </details>
-                        </div>
+                        ${facilityDetailsHtml}
                     </div>
                 `;
             });

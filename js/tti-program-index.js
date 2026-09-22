@@ -11,6 +11,15 @@ const getRestBase = () => {
     return '/wp-json/kop/v1/';
 };
 
+// Drop folders that hold no live documents anywhere in their subtree, so a
+// name match never produces a button that opens onto an empty library. The
+// kop/v1/folders endpoint attaches the `files` count; a list without it
+// (older responses) is left alone. File scope: the folder fetch below runs
+// outside displayFacilities().
+const dropEmptyFolders = folders => Array.isArray(folders)
+    ? folders.filter(folder => !(folder && typeof folder.files === 'number' && folder.files <= 0))
+    : folders;
+
 const escapeHtmlValue = value => {
     if (value === null || value === undefined) return '';
     const text = typeof value === 'string' ? value : String(value);
@@ -170,6 +179,37 @@ function displayFacilities(facilitiesData, containerId) {
 
         return true;
     };
+
+    // A "Country: United States" row says nothing on a US-focused site (and
+    // the header already shows the country when it is anything else), so it
+    // never earns a "More details" section of its own.
+    const isUsCountryField = (key, value) => {
+        if (!key || typeof key !== 'string' || !/(^|\.)country$/i.test(key)) return false;
+        if (typeof value !== 'string') return false;
+        return /^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(cleanText(value).trim());
+    };
+
+
+    // Folders named for a state or country are filing buckets, not programs.
+    // Loose (substring / path-word) matching must never land on one: with the
+    // empty per-facility skeleton folders filtered out, "Alabama Baptist
+    // Children's Homes" would otherwise fall through to the ALABAMA bucket.
+    // Exact-name matches are unaffected.
+    const PLACE_FOLDER_NAMES = new Set([
+        'alabama', 'alaska', 'arizona', 'arkansas', 'california', 'colorado', 'connecticut',
+        'delaware', 'florida', 'georgia', 'hawaii', 'idaho', 'illinois', 'indiana', 'iowa',
+        'kansas', 'kentucky', 'louisiana', 'maine', 'maryland', 'massachusetts', 'michigan',
+        'minnesota', 'mississippi', 'missouri', 'montana', 'nebraska', 'nevada', 'new hampshire',
+        'new jersey', 'new mexico', 'new york', 'north carolina', 'north dakota', 'ohio',
+        'oklahoma', 'oregon', 'pennsylvania', 'rhode island', 'south carolina', 'south dakota',
+        'tennessee', 'texas', 'utah', 'vermont', 'virginia', 'washington', 'west virginia',
+        'wisconsin', 'wyoming', 'district of columbia', 'washington dc', 'puerto rico',
+        'united states', 'usa', 'canada', 'mexico', 'united kingdom', 'jamaica', 'costa rica',
+        'dominican republic', 'samoa', 'american samoa', 'czech republic', 'international'
+    ]);
+    const isPlaceFolderName = name => PLACE_FOLDER_NAMES.has(
+        cleanText(name).toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim()
+    );
 
     const htmlEscapeMap = {
         '&': '&amp;',
@@ -558,12 +598,12 @@ function displayFacilities(facilitiesData, containerId) {
             }
             // 3. Folder name contains target name
             if (!match && normName.length > 6) {
-                match = window.filebirdFolders.find(f => f.name && normalize(f.name.toLowerCase()).includes(normName));
+                match = window.filebirdFolders.find(f => f.name && !isPlaceFolderName(f.name) && normalize(f.name.toLowerCase()).includes(normName));
             }
             // 4. Target name contains folder name
             if (!match) {
                 match = window.filebirdFolders.find(f => {
-                    if (!f.name) return false;
+                    if (!f.name || isPlaceFolderName(f.name)) return false;
                     const nf = normalize(f.name.toLowerCase());
                     return nf.length > 6 && normName.includes(nf);
                 });
@@ -571,7 +611,7 @@ function displayFacilities(facilitiesData, containerId) {
             // 5. Parent + child path match (subfolders organized under an operator)
             if (!match && window.filebirdFolderMap) {
                 match = window.filebirdFolders.find(f => {
-                    if (!f.name) return false;
+                    if (!f.name || isPlaceFolderName(f.name)) return false;
                     const parentId = String(f.parent || '0');
                     if (parentId === '0') return false;
                     const parent = window.filebirdFolderMap[parentId];
@@ -598,13 +638,19 @@ function displayFacilities(facilitiesData, containerId) {
     const resolveDocFolder = (explicitId, rawName) => {
         const idNum = parseInt(explicitId, 10);
         if (Number.isFinite(idNum) && idNum > 0) {
-            if (window.filebirdFolderMap && window.filebirdFolderMap[String(idNum)]) {
-                return window.filebirdFolderMap[String(idNum)];
-            }
-            if (!window.filebirdFolderMap) {
+            if (!Array.isArray(window.filebirdFolders)) {
                 // Folder list not loaded (yet); trust the stored ID.
                 return { id: idNum };
             }
+            if (!window.filebirdFolderMap) {
+                window.filebirdFolderMap = {};
+                window.filebirdFolders.forEach(f => { window.filebirdFolderMap[String(f.id)] = f; });
+            }
+            if (window.filebirdFolderMap[String(idNum)]) {
+                return window.filebirdFolderMap[String(idNum)];
+            }
+            // Stored ID is gone (folder merged/deleted) or the folder is
+            // empty: fall back to name matching among populated folders.
         }
         return findMatchingFolder(rawName);
     };
@@ -1110,6 +1156,7 @@ function displayFacilities(facilitiesData, containerId) {
         operatorFields.forEach(field => {
             if (shouldSuppressOperatorField(field.key)) return;
             if (isValueEmpty(field.value)) return;
+            if (isUsCountryField(field.key, field.value)) return;
 
             let renderedValue = '';
             let isProse = false;
@@ -1749,6 +1796,7 @@ function displayFacilities(facilitiesData, containerId) {
             facilityFields.forEach(field => {
                 if (shouldSuppressFacilityField(field.key)) return;
                 if (isValueEmpty(field.value)) return;
+                if (isUsCountryField(field.key, field.value)) return;
 
                 let renderedValue = '';
                 let isMultiColumn = false;
@@ -2674,7 +2722,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const restBase = getRestBase();
                     const foldersResponse = await fetch(`${restBase}folders`);
                     if (foldersResponse.ok) {
-                        window.filebirdFolders = await foldersResponse.json();
+                        window.filebirdFolders = dropEmptyFolders(await foldersResponse.json());
+                        window.filebirdFolderMap = null;
                     }
                 } catch (e) {
                     console.warn('Facilities script: failed to load FileBird folders', e);

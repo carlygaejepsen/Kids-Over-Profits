@@ -729,6 +729,9 @@
             }
         }
 
+        // With file counts loaded, every candidate left here is empty; a
+        // documents button that opens onto nothing is worse than none.
+        if (hasCounts) return null;
         return exactId !== null ? exactId : emptyPrefixId;
     };
 
@@ -1182,6 +1185,10 @@
 
     // Strip empties, false flags, and already-rendered keys from a raw record so
     // the "Additional source fields" block only shows what the card is missing.
+    // "United States" is the default on this site, so it never earns a row.
+    const isUsCountry = value => typeof value === 'string'
+        && /^(us|usa|u\.s\.a?\.?|united states( of america)?)$/i.test(value.trim());
+
     const pruneSourceValue = (value, depth = 0) => {
         if (value === null || value === undefined || value === '' || value === false) return undefined;
         if (typeof value !== 'object') return value;
@@ -1193,6 +1200,7 @@
         const out = {};
         Object.entries(value).forEach(([key, child]) => {
             if (depth === 0 && SOURCE_KEYS_ALREADY_SHOWN.has(key)) return;
+            if (/country$/i.test(key) && isUsCountry(child)) return;
             const pruned = pruneSourceValue(child, depth + 1);
             if (pruned !== undefined) out[key] = pruned;
         });
@@ -1427,7 +1435,7 @@
             detailRows.push(renderScalarRow('Age range', ageText));
         }
         if (facility.gender) detailRows.push(renderScalarRow('Gender', facility.gender));
-        if (facility.country) detailRows.push(renderScalarRow('Country', facility.country));
+        if (facility.country && !isUsCountry(facility.country)) detailRows.push(renderScalarRow('Country', facility.country));
 
         // Licensing record (inspection_facilities): what the licensing authority
         // lists for this program beyond its reports.
