@@ -83,6 +83,9 @@ tmp/*.sql.part
 # Network map QA report (scripts/build-network-graph.js); regenerated on every
 # build from the committed CSVs, so it is review output, not source.
 tmp/network-qa.md
+# Dry-run report from scripts/test-inspection-highlights.php --report; quotes
+# unreviewed findings by facility name, so it never goes to the public repo.
+tmp/highlights-*.md
 # Screenshots from scripts/preview-network-map.py --shots tmp/map-preview
 tmp/map-preview/
 
