@@ -256,6 +256,14 @@ is a preview precisely because it is reversible.
 **Built.** Several things about it are worth recording, including two that
 cost an afternoon each.
 
+**Why the width has to be packed, not zoomed into.** Names are drawn at one
+size whatever the zoom, so a block of names cannot be stretched to fit the
+stage: the frame never blows a block up past full size, so width the rows
+leave unused stays empty for good, and a block wider than the stage is
+framed zoomed out, where the renderer has to start dropping names. Both
+failures have the same answer - pack every row to the width the stage
+actually has - which is what `fillRows` does after the settle.
+
 **The layout is a board: a hierarchy vertically, distance from the click
 along it.** A force layout arranges by relationship, which is the right
 input and the wrong output: it packs the well-connected into a knot and
@@ -308,12 +316,29 @@ gathered round it, lines drawn straight from centre to centre.
   cycle.
 - *Shelved last.* What the settle leaves overlapping is shelved
   (`shelve`): names at about one height go on one row, side by side in the
-  order the settle left them and centred where they were, and the rows are
-  stacked clear of each other outward from the click, which keeps its
-  spot. Pushing overlapping pairs apart, on velocities or on positions,
-  never converged on a heap - forty passes left thirty pairs overlapping in
-  WWASPS's view; shelving is one pass and cannot leave two names sharing
-  pixels.
+  order the settle left them, and the rows are stacked clear of each other
+  outward from the click, which keeps its spot. Pushing overlapping pairs
+  apart, on velocities or on positions, never converged on a heap - forty
+  passes left thirty pairs overlapping in WWASPS's view; shelving is one
+  pass and cannot leave two names sharing pixels.
+- *Packed to the stage's width (2026-09-23).* The shelved rows are then
+  re-broken to the width of the stage (`fillRows`). Everything below the
+  click is read as one run of names - row by row, left to right within a
+  row - and packed into rows as wide as the stage will hold; above the
+  click the same run is read from the click outward. So a row short of the
+  stage's width draws its next names sideways out of the row beyond it,
+  and a row wider than the stage spills what will not fit onto a new row.
+  Each row is then ordered by where the names it connects to landed on the
+  row already placed beside it (`orderRow`), so packing a name in from
+  another row does not leave it at the far end of the stage from whatever
+  owns it, and the rows are stacked at exactly the pitch they need, so a
+  row the packing emptied does not leave its height behind as a gap.
+  Rows only ever break where the run does: the two ends of an ownership or
+  a rename never share a row, whatever width that leaves unused, because a
+  company beside the programme it owns says the opposite of what the map
+  means. The click's own row is held whole - it is the neighbourhood being
+  read, and breaking it up pushed the click's own connections off the
+  stage.
 - *Which end is upper.* A company is above the place it owns whichever way
   the record was typed; between two of a kind, the source is the owner;
   people are left out (`upperOf`).
