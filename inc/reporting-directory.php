@@ -236,7 +236,7 @@ function kop_reporting_render_channel($channel, $heading_level = 'h3') {
                 <li><a href="mailto:<?php echo esc_attr($channel['email']); ?>"><?php echo esc_html($channel['email']); ?></a></li>
             <?php endif; ?>
             <?php if (!empty($channel['mail'])) : ?>
-                <li class="kop-rep-mail"><?php echo esc_html($channel['mail']); ?></li>
+                <li class="kop-rep-mail"><span class="kop-rep-label">By post</span><?php echo esc_html($channel['mail']); ?></li>
             <?php endif; ?>
         </ul>
 

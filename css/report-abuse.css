@@ -140,38 +140,49 @@
     margin: 0 0 1.75rem;
     max-width: 72ch;
     line-height: 1.6;
-    color: var(--kop-text-secondary, #000080);
+    color: var(--kop-text-primary, #000435);
 }
 
 .kop-rep-group {
-    margin-bottom: 2.25rem;
+    margin-bottom: 2.75rem;
 }
 
 .kop-rep-group-h {
-    margin: 0 0 0.2rem;
-    font-size: 1.22rem;
+    margin: 0 0 0.25rem;
+    font-size: 1.32rem;
+    line-height: 1.3;
     color: var(--kop-navy-blue, #000080);
 }
 
 .kop-rep-group-blurb {
-    margin: 0 0 1rem;
+    margin: 0 0 1.15rem;
     font-size: 0.95rem;
+    line-height: 1.5;
     color: #4a4f6a;
 }
 
 .kop-rep-cards {
     display: grid;
-    gap: 1rem;
+    gap: 1.1rem;
 }
 
 /* ---- One channel ------------------------------------------------------- */
 
+/*
+ * The card is its own container: the label column below collapses on the
+ * card's width, not the window's, because this card is as likely to be in a
+ * state hub's narrow column as on the full-width page.
+ */
 .kop-rep-card {
     background: var(--kop-white, #fff);
     border: 1px solid var(--kop-border-primary, #B6E3D4);
     border-left: 5px solid var(--kop-teal, #33A7B5);
-    border-radius: 8px;
-    padding: 1.15rem 1.25rem;
+    border-radius: 10px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 1px 2px rgba(0, 4, 53, 0.05), 0 8px 20px rgba(0, 4, 53, 0.05);
+    container-type: inline-size;
+    /* Channels are deep-linked by id from facility pages. */
+    scroll-margin-top: 6rem;
 }
 
 .kop-rep-group[data-category="legal"] .kop-rep-card {
@@ -190,13 +201,13 @@
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 0.5rem 0.75rem;
-    margin-bottom: 0.6rem;
+    gap: 0.4rem 0.75rem;
+    margin-bottom: 0.7rem;
 }
 
 .kop-rep-card-name {
     margin: 0;
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     line-height: 1.35;
     color: var(--kop-midnight-blue, #000435);
 }
@@ -217,7 +228,7 @@
 .kop-rep-cannot,
 .kop-rep-line,
 .kop-rep-note {
-    margin: 0 0 0.6rem;
+    margin: 0 0 0.55rem;
     line-height: 1.6;
     max-width: 74ch;
 }
@@ -228,19 +239,30 @@
     padding-left: 0.7rem;
 }
 
+/*
+ * "Use this when" / "How" / "Deadline" are a column, not a run-in: the eye
+ * goes down the labels to find the one it wants. A grid keeps the values
+ * starting in the same place whatever the label's length, and keeps the
+ * second line of a value under the first rather than back under the label.
+ */
+.kop-rep-line {
+    display: grid;
+    grid-template-columns: 7.25rem minmax(0, 1fr);
+    gap: 0.1rem 0.9rem;
+    align-items: baseline;
+}
+
 .kop-rep-label {
-    display: inline-block;
-    min-width: 6.5rem;
     font-weight: 700;
-    font-size: 0.82rem;
+    font-size: 0.76rem;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--kop-teal, #33A7B5);
-    vertical-align: baseline;
+    letter-spacing: 0.05em;
+    /* teal ink, not teal: this is text, and the accent fails on white. */
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-rep-deadline .kop-rep-label {
-    color: var(--kop-orange, #EF9034);
+    color: var(--kop-orange-ink, #A3570D);
 }
 
 .kop-rep-note {
@@ -248,17 +270,29 @@
     color: #4a4f6a;
 }
 
+/* Too narrow for two columns: the label becomes a heading over its value. */
+@container (max-width: 30rem) {
+    .kop-rep-line {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
 /* ---- Contact block ----------------------------------------------------- */
 
+/*
+ * Baseline, not centre. The phone carries a note under it, which makes its
+ * item taller than the button beside it; centring floated the button and the
+ * links at three different heights. On a baseline they read as one line.
+ */
 .kop-rep-contact {
     list-style: none;
-    margin: 0.9rem 0 0;
-    padding: 0.9rem 0 0;
-    border-top: 1px solid var(--kop-sand, #F2EEDF);
+    margin: 1rem 0 0;
+    padding: 0.95rem 0 0;
+    border-top: 1px solid var(--kop-border-primary, #B6E3D4);
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem 1.25rem;
+    align-items: baseline;
+    gap: 0.75rem 1.15rem;
 }
 
 .kop-rep-phone a {
@@ -275,7 +309,9 @@
 
 .kop-rep-phone-note {
     display: block;
+    margin-top: 0.15rem;
     font-size: 0.85rem;
+    line-height: 1.45;
     color: #4a4f6a;
 }
 
@@ -300,14 +336,18 @@
     flex-basis: 100%;
 }
 
+.kop-rep-mail .kop-rep-label {
+    margin-right: 0.5rem;
+}
+
 /* ---- Card footer ------------------------------------------------------- */
 
 .kop-rep-card-foot {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.4rem 0.8rem;
-    margin-top: 0.9rem;
+    gap: 0.45rem 0.8rem;
+    margin-top: 1rem;
     font-size: 0.82rem;
     color: #5c6078;
 }
@@ -326,12 +366,12 @@
 
 .kop-rep-anon-maybe {
     border-color: var(--kop-orange, #EF9034);
-    color: #8a5210;
+    color: var(--kop-orange-ink, #A3570D);
 }
 
 .kop-rep-anon-no {
     border-color: var(--kop-coral-pink, #FE8088);
-    color: #9c2c36;
+    color: var(--kop-coral-pink-ink, #D9020F);
 }
 
 .kop-rep-verified a {
@@ -371,7 +411,7 @@
 }
 
 .kop-rep-embed .kop-rep-group-h {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .kop-rep-more {
@@ -384,10 +424,8 @@
         padding: 1.25rem 1rem 3rem;
     }
 
-    .kop-rep-label {
-        display: block;
-        min-width: 0;
-        margin-bottom: 0.1rem;
+    .kop-rep-line {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .kop-rep-action {
