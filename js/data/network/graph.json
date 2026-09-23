@@ -405,7 +405,10 @@
     "x": -524.27,
     "y": -297.71
    },
-   "years": "1989-2005"
+   "years": "1989-2005",
+   "formerNames": [
+    "Esmor Correctional Corporation"
+   ]
   },
   {
    "id": "three-springs-inc",
@@ -500,7 +503,7 @@
     "y": -3.11
    },
    "years": "from 1971",
-   "formerNames": [
+   "otherNames": [
     "PCS",
     "UHS of Provo Canyon dba Provo Campus"
    ]
@@ -808,7 +811,10 @@
     "x": 278.54,
     "y": -493.44
    },
-   "years": "from 2008"
+   "years": "from 2008",
+   "otherNames": [
+    "Wilderness Training & Consulting LLC"
+   ]
   },
   {
    "id": "wingate-wilderness-therapy",
@@ -1507,7 +1513,7 @@
    },
    "years": "2008-2024",
    "deaths": 2,
-   "formerNames": [
+   "otherNames": [
     "Trails Academy",
     "The Academy at Trails"
    ]
@@ -3008,7 +3014,7 @@
    },
    "years": "from 2005",
    "deaths": 1,
-   "formerNames": [
+   "otherNames": [
     "Discovery Ranch Academy",
     "Discovery Ranch for Boys",
     "Discovery Ranch - Mapleton"
@@ -3070,7 +3076,9 @@
    },
    "years": "from 2014",
    "formerNames": [
-    "Integrity House RTC",
+    "Integrity House RTC"
+   ],
+   "otherNames": [
     "Integrity House (2001-2013)"
    ]
   },
@@ -7019,7 +7027,7 @@
     "y": 57.42
    },
    "years": "2009-2010",
-   "formerNames": [
+   "otherNames": [
     "Three Springs of North Carolina"
    ]
   },
@@ -8370,7 +8378,7 @@
     "x": -237.75,
     "y": -291.49
    },
-   "formerNames": [
+   "otherNames": [
     "Camp E-Ma-Laku"
    ]
   },
@@ -9303,7 +9311,7 @@
     "y": -336.46
    },
    "years": "1984-1998",
-   "formerNames": [
+   "otherNames": [
     "KIDS of New Jersey"
    ]
   },
@@ -9580,7 +9588,7 @@
    },
    "years": "from 2007",
    "formerNames": [
-    "Three Springs of Marion (Previous Name)"
+    "Three Springs of Marion"
    ]
   },
   {
@@ -10448,7 +10456,7 @@
     "x": -755.97,
     "y": 9.05
    },
-   "formerNames": [
+   "otherNames": [
     "Three Springs Turning Point",
     "Three Springs New Beginnings"
    ]
@@ -10809,7 +10817,7 @@
     "y": 60.81
    },
    "years": "2009-2019",
-   "formerNames": [
+   "otherNames": [
     "Redwood Youth Academy"
    ]
   },
@@ -10891,7 +10899,7 @@
     "x": 917.75,
     "y": -217.62
    },
-   "formerNames": [
+   "otherNames": [
     "Green Valley Academy"
    ]
   },
@@ -12190,7 +12198,7 @@
     "y": -516.07
    },
    "years": "from 2020",
-   "formerNames": [
+   "otherNames": [
     "Casa Grande Youth Treatment Center"
    ]
   },
@@ -12274,7 +12282,7 @@
     "x": -520.87,
     "y": -294.32
    },
-   "formerNames": [
+   "otherNames": [
     "Britt Halfway House"
    ]
   },
@@ -15225,7 +15233,7 @@
     "y": 54.02
    },
    "years": "1996-2017",
-   "formerNames": [
+   "otherNames": [
     "Three Springs of Englishton Park",
     "Englishton Park Sequel TSI"
    ]
@@ -15994,7 +16002,7 @@
     "y": 239.68
    },
    "years": "from 2004",
-   "formerNames": [
+   "otherNames": [
     "Academy at Cedar Mountain (1999-2004)"
    ]
   },
@@ -17120,7 +17128,7 @@
     "y": 57.42
    },
    "years": "2009-2019",
-   "formerNames": [
+   "otherNames": [
     "Three Springs of Madison"
    ]
   },
@@ -17314,7 +17322,9 @@
    },
    "years": "from 2008",
    "formerNames": [
-    "Samaya RTC",
+    "Samaya RTC"
+   ],
+   "otherNames": [
     "Solstice RTC (2008-2012)"
    ]
   },
@@ -17882,7 +17892,7 @@
     "y": 60.81
    },
    "years": "from 1997",
-   "formerNames": [
+   "otherNames": [
     "Three Springs of Daytona"
    ]
   },
@@ -18256,7 +18266,7 @@
     "x": -230.4,
     "y": -662.8
    },
-   "formerNames": [
+   "otherNames": [
     "Robert Louis Stevenson Youth Academy",
     "Mole Ole Ava"
    ]
@@ -20250,7 +20260,7 @@
     "y": -25.74
    },
    "years": "2013-2021",
-   "formerNames": [
+   "otherNames": [
     "Sequel of New Jersey"
    ]
   },
@@ -25184,7 +25194,7 @@
     "y": -25.74
    },
    "years": "2009-2019",
-   "formerNames": [
+   "otherNames": [
     "Camelot School"
    ]
   },
@@ -27389,7 +27399,7 @@
     "y": 57.42
    },
    "years": "1976-2009",
-   "formerNames": [
+   "otherNames": [
     "New Dominion Wilderness Camp"
    ]
   },
@@ -27680,7 +27690,7 @@
     "y": -710.83
    },
    "years": "1986-2007",
-   "formerNames": [
+   "otherNames": [
     "Majestic Youth Academy"
    ]
   },
@@ -29370,8 +29380,7 @@
     "y": 57.42
    },
    "years": "2009-2011",
-   "formerNames": [
-    "Inc.",
+   "otherNames": [
     "Three Springs Sierra Vista Schools"
    ]
   },
@@ -29803,7 +29812,7 @@
     "y": -18.95
    },
    "years": "2014-2020",
-   "formerNames": [
+   "otherNames": [
     "Albion Academy"
    ]
   },
@@ -29913,7 +29922,7 @@
     "y": -396.93
    },
    "years": "1982-1987",
-   "formerNames": [
+   "otherNames": [
     "Pathway Family Center"
    ]
   },
@@ -29996,7 +30005,7 @@
     "y": -789.17
    },
    "years": "1995",
-   "formerNames": [
+   "otherNames": [
     "Sunrise Center"
    ]
   },
@@ -30374,7 +30383,7 @@
     "y": -157.48
    },
    "years": "from 2024",
-   "formerNames": [
+   "otherNames": [
     "Ironwood Maine (2006-2024)"
    ]
   },
@@ -31408,7 +31417,7 @@
     "x": -351.96,
     "y": -274.8
    },
-   "formerNames": [
+   "otherNames": [
     "Karum Group Inc."
    ]
   },
@@ -33364,7 +33373,7 @@
     "y": 416.73
    },
    "years": "from 2021",
-   "formerNames": [
+   "otherNames": [
     "Zion Hills Academy (2017-2021)"
    ]
   },
@@ -34980,7 +34989,7 @@
     "y": -751.22
    },
    "years": "2004-2012",
-   "formerNames": [
+   "otherNames": [
     "Academy at Dundee Ranch (2000-2003)"
    ]
   },
@@ -35289,7 +35298,7 @@
     "x": 237.02,
     "y": -398.63
    },
-   "formerNames": [
+   "otherNames": [
     "Ten Broeck Hospital",
     "Ten Broeck Jacksonville LLC"
    ]
@@ -35638,7 +35647,7 @@
     "y": -792.28
    },
    "years": "2014-2022",
-   "formerNames": [
+   "otherNames": [
     "SCISU"
    ]
   },
@@ -36457,7 +36466,7 @@
     "y": -695.78
    },
    "years": "2015-2018",
-   "formerNames": [
+   "otherNames": [
     "Red River Academy (2006-2015)"
    ]
   },
@@ -36737,7 +36746,7 @@
     "y": -696.18
    },
    "years": "1994-2022",
-   "formerNames": [
+   "otherNames": [
     "Refuge of Grace"
    ]
   },
@@ -36768,7 +36777,7 @@
     "y": 64.2
    },
    "years": "from 1978",
-   "formerNames": [
+   "otherNames": [
     "Withlacoochee STOP Camp"
    ]
   },

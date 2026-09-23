@@ -65,6 +65,55 @@ Key facts the map depends on:
 - `graph.json` carries no timestamp, so rebuilds are byte-identical when
   the inputs have not changed.
 
+### Past names on the map (2026-09-22)
+
+A place that changed its name is two names in the record and one node on
+the board, and until now the board showed only the newer one. A reader who
+knows a programme as Island View RTC could not find Elevations RTC, and the
+map said nothing about the change.
+
+Where the old name is **itself a node** on the board, nothing is needed:
+the build already draws a rebrand edge, so both names stand with a "Became"
+arrow between them, which is the fullest answer. What was missing is the
+other case, where the old name is only a string in the record.
+
+- The build now reads `identification.pastNames`, `identification.otherNames`
+  and `identification.currentName` from `facilities_v2`, and the matching
+  fields from the operator records, for every node it has linked. It kept
+  none of them before: a past name that did not resolve to another board
+  node was dropped.
+- They are kept apart, because they are different claims. `pastNames` says
+  the place traded under that name and stopped, so it is drawn on the map;
+  `otherNames` is anything else it answers to - abbreviations, legal names -
+  so it goes to the drawer only. A name whose own text says so
+  ("Three Springs of Marion (Previous Name)") is read as a past name
+  whichever list the record files it under, and the note is stripped.
+- A fragment the matcher reduces to nothing is not a name: "Inc." is what
+  was left where a record had split "Three Springs, Inc." on its comma.
+- `formerNames` in `network-overrides.json` records one by hand, for a
+  company or trade group no facility or operator record covers.
+- The map draws it under the name, joined to the years by a middot where
+  there are years, so a bubble gains a line only where it had none. The
+  drawer says "Formerly ...", "Now called ..." and "Also called ..." as
+  three separate lines, and search matches every one of them.
+
+**What it costs, and what that bought.** 17 nodes carry one, and the map
+had to be measured twice before it cost nothing.
+
+Letting the old name widen its bubble put six of seventy lines off
+straight: a bubble grown for one name pushes every neighbour away, so the
+cost of an annotation falls on the whole view. Letting it start a third
+line was worse in a different way - two names in the Provo Canyon School
+view, Spring Creek Lodge Academy and San Marcos Treatment Center, were
+enough on their own to pull eight ownership pairs out of order.
+
+So it does neither. The name and its years size the bubble exactly as they
+always did; the old name joins the years line, never a line of its own; and
+it is cut to the room they leave, with the whole of it in the drawer. The
+only bubbles that grow at all are the six with an old name and no years,
+which gain the line any dated name already had. Every layout test holds at
+the numbers it held before.
+
 ## Phase 2: core map
 
 Scoped to what a visitor can use on day one. Analysis tools wait for Phase

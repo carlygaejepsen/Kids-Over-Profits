@@ -110,6 +110,18 @@ function buildSandbox() {
     const captionCalls = [];
     const yearsCalls = [];
 
+    /* The small lines a bubble carries under its name: the years, the name
+     * the place traded under before, or the two on one line. They belong to
+     * the name above them and are not labels of their own, so the overlap
+     * checks must not count them as names. Built from strings rather than
+     * written as a literal, to keep the character classes free of escapes. */
+    const YEARS_PART = '(from |until )?[0-9]{4}( ?[-\u2013] ?[0-9]{4})?';
+    const OLD_NAME_PART = '(formerly|now) .+';
+    const SUB_LINE = new RegExp('^(' + YEARS_PART + '( \u00b7 ' + OLD_NAME_PART + ')?|' +
+        OLD_NAME_PART + ')$');
+    /* And the same line cut to the room the name left it. */
+    const SUB_LINE_CUT = new RegExp('^(' + YEARS_PART + '|(formerly|now) ).*\u2026$');
+
     const ctx = {
         setTransform() {}, clearRect() {}, save() {}, restore() {},
         beginPath: bump('beginPath'), closePath() {},
@@ -123,9 +135,8 @@ function buildSandbox() {
             /* What a line says is written in italic on the line; it is not a
              * name either. */
             if (String(ctx.font || '').indexOf('italic') === 0) { captionCalls.push(t); return; }
-            /* The years line under a name belongs to the name above it and is
-             * not a label of its own. */
-            if (/^(from |until )?\d{4}(\s*[-–]\s*\d{4})?$/.test(String(t))) { yearsCalls.push(t); return; }
+            /* A sub-line belongs to the name above it, not to itself. */
+            if (SUB_LINE.test(String(t)) || SUB_LINE_CUT.test(String(t))) { yearsCalls.push(t); return; }
             labelCalls.push('text:' + t);
             /* textAlign matters: a label that could not fit below its node is
              * drawn beside it, left or right aligned, and its box is then on
@@ -2617,6 +2628,46 @@ function run() {
     check(focus.chain()[focus.chain().length - 1] === follow.getAttribute('data-id'),
         'a connection button in the drawer did not follow the connection');
     check(drawer.shownId() === follow.getAttribute('data-id'), 'the drawer did not move to the name it followed');
+    /* A place that changed its name carries the old one: on the board under
+     * the current name, in the drawer in full, and in the search box, which
+     * is where a reader who only knows the old name goes first. */
+    const renamed = store.nodes.filter((n) => (n.formerNames || []).length)
+        .sort((a, b) => (b.degree || 0) - (a.degree || 0))[0];
+    check(!!renamed, 'no node carries a past name, so past names are untested');
+    if (renamed) {
+        const wasCalled = renamed.formerNames[0];
+        focus.clear();
+        flushFrames();
+        focus.select(renamed);
+        flushFrames();
+        drawer.update();
+        const aliasLines = drawerBody.querySelectorAll('p')
+            .filter((p) => p.className === 'kop-network__drawer-aliases')
+            .map((p) => p.textContent);
+        check(aliasLines.some((line) => line.indexOf('Formerly') === 0 && line.indexOf(wasCalled) !== -1),
+            'the drawer does not say what ' + renamed.name + ' was called before; it says ' +
+                JSON.stringify(aliasLines));
+        check(!aliasLines.some((line) => line.indexOf('Also called') === 0 && line.indexOf(wasCalled) !== -1),
+            'the drawer lists ' + renamed.name + "'s past name as merely another name for it");
+
+        const found = sandbox.KOPNetworkSearch.rank(store.nodes, wasCalled, 8);
+        check(found.length > 0 && found[0].node.id === renamed.id,
+            'searching the old name "' + wasCalled + '" does not find ' + renamed.name,
+            'searching "' + wasCalled + '" finds ' + renamed.name);
+
+        resetOps();
+        renderer.draw();
+        const drawnSub = yearsCalls.find((t) => String(t).indexOf('formerly') !== -1);
+        check(!!drawnSub,
+            'no name on the board says what it was called before, though ' + renamed.name + ' was ' + wasCalled,
+            'the board says: ' + drawnSub);
+        focus.clear();
+        flushFrames();
+        focus.select(hub);
+        flushFrames();
+        drawer.update();
+    }
+
     drawerClose.dispatch('click');
     check(drawerEl.hidden === true, 'the close button did not close the drawer');
     drawer.update();

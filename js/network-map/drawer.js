@@ -117,8 +117,22 @@
             if (node.years) facts.push(node.years);
             body.appendChild(el('p', 'kop-network__drawer-meta', facts.filter(Boolean).join(' · ')));
 
-            if (node.aliases && node.aliases.length) {
-                body.appendChild(el('p', 'kop-network__drawer-aliases', 'Also called ' + node.aliases.join(', ')));
+            /* Names, in order of what they claim. A past name says the
+             * place traded under it and stopped; a current name says the
+             * board's name is the one it stopped using; everything else is
+             * only another name for the same thing, so it comes last and is
+             * not dressed up as a history. */
+            if (node.formerNames && node.formerNames.length) {
+                body.appendChild(el('p', 'kop-network__drawer-aliases',
+                    'Formerly ' + node.formerNames.join(', ')));
+            }
+            if (node.currentName) {
+                body.appendChild(el('p', 'kop-network__drawer-aliases',
+                    'Now called ' + node.currentName));
+            }
+            var alsoCalled = (node.aliases || []).concat(node.otherNames || []);
+            if (alsoCalled.length) {
+                body.appendChild(el('p', 'kop-network__drawer-aliases', 'Also called ' + alsoCalled.join(', ')));
             }
 
             if (node.deaths) {

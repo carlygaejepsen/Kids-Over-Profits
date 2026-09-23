@@ -214,6 +214,45 @@ function run() {
         (overrides.edges || []).length + ' override edges and ' +
         (overrides.lines || []).length + ' corrected lines all drawn');
 
+    /* Names a place is also known by. A past name is a claim that it
+     * stopped using the name; the rest is not, and the two must not blur
+     * into each other, or the map says a history it does not have. */
+    const named = nodes.filter(function (node) {
+        return (node.formerNames || []).length || (node.otherNames || []).length || node.currentName;
+    });
+    named.forEach(function (node) {
+        const key = function (s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); };
+        const own = key(node.name);
+        (node.formerNames || []).concat(node.otherNames || []).forEach(function (other) {
+            check(key(other) !== own,
+                node.name + ' lists its own name as another name it goes by');
+            check(String(other).trim().length > 0,
+                node.name + ' carries an empty name among its other names');
+        });
+        const former = new Set((node.formerNames || []).map(key));
+        (node.otherNames || []).forEach(function (other) {
+            check(!former.has(key(other)),
+                node.name + ' lists "' + other + '" as both a past name and another name');
+        });
+        check(!node.currentName || key(node.currentName) !== own,
+            node.name + ' says it is now called what it is already called');
+    });
+    /* Where the old name is itself on the board, the rebrand edge shows it
+     * and the node must not repeat it: two drawings of one name read as two
+     * places. */
+    const nodeNames = new Map();
+    nodes.forEach(function (node) {
+        nodeNames.set(String(node.name).toLowerCase(), node);
+    });
+    named.forEach(function (node) {
+        (node.formerNames || []).forEach(function (other) {
+            const twin = nodeNames.get(String(other).toLowerCase());
+            check(!twin || twin.id === node.id,
+                node.name + ' carries "' + other + '" as a past name although it is its own node on the board');
+        });
+    });
+    notes.push(named.length + ' names carry another name they are known by');
+
     /* A trade association owns nothing. An unlabelled line to one is that
      * body's membership, and drawn as ownership it says something false
      * about both ends. */

@@ -123,6 +123,17 @@
                     id: raw.id,
                     name: raw.name,
                     aliases: raw.aliases || [],
+                    /* Names the place traded under before, and anything
+                     * else it answers to. The first is a claim about time
+                     * and is drawn on the map under the current name; the
+                     * second is not, and lives in the drawer. Both are
+                     * searchable, because a reader who knows the old name
+                     * is exactly who needs to find the place. */
+                    formerNames: raw.formerNames || [],
+                    otherNames: raw.otherNames || [],
+                    /* What the place is called now, where the board's name
+                     * is the old one. */
+                    currentName: raw.currentName || '',
                     kind: raw.kind,
                     status: statusBucket(raw.status),
                     statusRaw: raw.status || '',

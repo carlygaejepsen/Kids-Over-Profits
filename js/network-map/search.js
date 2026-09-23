@@ -51,16 +51,23 @@
             var best = levelOf(normalise(node.name), needle);
             var via = '';
             var score = best === -1 ? Infinity : best * 2;
-            (node.aliases || []).forEach(function (alias) {
-                var level = levelOf(normalise(alias), needle);
-                /* An alias match ranks just below a name match at the same
-                 * level, so "Provo" finds Provo Canyon School before a place
-                 * that was once called something Provo. */
-                if (level !== -1 && level * 2 + 1 < score) {
-                    score = level * 2 + 1;
-                    via = alias;
-                }
-            });
+            /* Every other name the place answers to: the board's aliases,
+             * the names it traded under before, and the rest. Someone who
+             * remembers the old name is exactly the reader who needs to
+             * find the place. */
+            (node.aliases || [])
+                .concat(node.formerNames || [], node.otherNames || [],
+                    node.currentName ? [node.currentName] : [])
+                .forEach(function (alias) {
+                    var level = levelOf(normalise(alias), needle);
+                    /* An alias match ranks just below a name match at the
+                     * same level, so "Provo" finds Provo Canyon School
+                     * before a place that was once called something Provo. */
+                    if (level !== -1 && level * 2 + 1 < score) {
+                        score = level * 2 + 1;
+                        via = alias;
+                    }
+                });
             if (score === Infinity) return;
             hits.push({ node: node, level: score, via: via });
         });

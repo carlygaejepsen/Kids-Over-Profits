@@ -137,7 +137,7 @@ function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
         return {
             merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
-            statuses: {}, years: {}, deaths: {}, views: {}, edges: [], lines: [], nodes: []
+            statuses: {}, years: {}, deaths: {}, formerNames: {}, views: {}, edges: [], lines: [], nodes: []
         };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
@@ -151,6 +151,9 @@ function loadOverrides() {
         statuses: raw.statuses || {},
         /* name -> "1971-2004", for a node no record dates. */
         years: raw.years || {},
+        /* name -> ["the name it traded under before", ...], for a company
+         * or trade group no facility or operator record covers. */
+        formerNames: raw.formerNames || {},
         /* name -> count, for memorial rows the matcher cannot place. */
         deaths: raw.deaths || {},
         /* key -> {label, names}: the other ways the map can open (2b.10). */
@@ -755,6 +758,57 @@ function profileTexts(value) {
     }).map(function (s) { return String(s).trim(); }).filter(Boolean);
 }
 
+/* A parenthesis that says the name is an old one; see addOtherName. */
+const PAST_NOTE = /(previous|former)/i;
+
+/** Two spellings of one name, by the same key the matcher uses. */
+function sameName(a, b) {
+    return nameKey(a) === nameKey(b);
+}
+
+/**
+ * Another name the place is known by, kept on the node so the map and the
+ * drawer can show it.
+ *
+ * The record lists the same name twice often enough - under `pastNames`
+ * and again, differently punctuated, under `otherNames` ("Integrity House
+ * RTC" and "Integrity House (2001-2013)") - that a spelling already held
+ * under the matcher's key is dropped rather than repeated. The longer
+ * spelling wins, since that is the one carrying the dates. A name already
+ * held as a past name is not repeated as another name: the stronger claim
+ * keeps it.
+ */
+function addOtherName(node, field, name) {
+    let clean = String(name || '').trim();
+    /* A note inside the name is the claim, however the record files it:
+     * "Three Springs of Marion (Previous Name)" is a past name even though
+     * it sits under otherNames. The note is not part of the name, so it
+     * comes off; a parenthesis holding dates stays, because those are worth
+     * reading. */
+    const note = clean.lastIndexOf('(');
+    if (note > 0 && PAST_NOTE.test(clean.slice(note))) {
+        clean = clean.slice(0, note).trim();
+        field = 'formerNames';
+    }
+    if (!clean || sameName(clean, node.name)) return;
+    const key = nameKey(clean);
+    /* A fragment the matcher reduces to nothing is not a name: "Inc." is
+     * what is left where a record split "Three Springs, Inc." on its comma
+     * at data entry. */
+    if (!key) return;
+    if (field === 'otherNames' && (node.formerNames || []).some(function (held) {
+        return nameKey(held) === key;
+    })) return;
+    if (!node[field]) node[field] = [];
+    const list = node[field];
+    for (let i = 0; i < list.length; i++) {
+        if (nameKey(list[i]) !== key) continue;
+        if (clean.length > list[i].length) list[i] = clean;
+        return;
+    }
+    list.push(clean);
+}
+
 function readProfileClaims(nodes, overrides) {
     const claims = [];
     if (!fs.existsSync(SQLITE_FILE)) return claims;
@@ -796,11 +850,33 @@ function readProfileClaims(nodes, overrides) {
             [['past', ident.pastNames], ['other', ident.otherNames]].forEach(function (list) {
                 profileTexts(list[1]).forEach(function (name) {
                     const other = resolve(name);
-                    if (!other || other.id === node.id) return;
+                    if (!other || other.id === node.id) {
+                        /* The old name is not itself on the board, so this
+                         * node is the only place it can show. It rides on
+                         * the node: the map draws a past name under the
+                         * current one, and the drawer lists the rest. Where
+                         * the old name IS a board node, the rebrand edge
+                         * below already draws it as its own name, and saying
+                         * it twice would read as two places.
+                         *
+                         * `pastNames` is a claim the place traded under that
+                         * name before; `otherNames` is anything else it
+                         * answers to, abbreviations and legal names
+                         * included, which is not the same claim and must not
+                         * be captioned as one. */
+                        addOtherName(node, list[0] === 'past' ? 'formerNames' : 'otherNames', name);
+                        return;
+                    }
                     qa.profileNames.push(node.name + ' lists "' + name + '", which is the board node ' + other.name);
                     claim(name, node, 'corporate', 'rebrand', 'facility profile', false, list[0]);
                 });
             });
+            /* The other way round: the board's name is the old one and the
+             * record knows what the place is called now. */
+            const nowCalled = String(ident.currentName || '').trim();
+            if (nowCalled && !sameName(nowCalled, node.name) && !resolve(nowCalled)) {
+                node.currentName = nowCalled;
+            }
         });
 
         const operators = new Map(db.prepare('SELECT id, name, json_data FROM wpdl_kop_operators').all()
@@ -815,6 +891,17 @@ function readProfileClaims(nodes, overrides) {
             const record = (doc && (doc.operator || doc)) || {};
             const keyStaff = record.keyStaff || {};
             const opNode = resolve(op.name);
+            /* A company's other names, the same way a place's are read: the
+             * operator record is where a parent company's history of names
+             * lives, and the board has no column for it. */
+            if (opNode) {
+                profileTexts(record.otherNames).forEach(function (name) {
+                    if (resolve(name)) return;
+                    addOtherName(opNode, 'otherNames', name);
+                });
+                const opNow = String(record.currentName || '').trim();
+                if (opNow && !sameName(opNow, opNode.name) && !resolve(opNow)) opNode.currentName = opNow;
+            }
             profileTexts(record.parentCompanies).forEach(function (name) { claim(name, opNode, 'corporate', 'parent company', 'operator profile'); });
             /* Founders sit under keyStaff on the operator record; older
              * records carried them at the top level. */
@@ -1395,6 +1482,26 @@ function applyLineOverrides(edgeRows, overrides) {
     });
 }
 
+/**
+ * Names the curator records by hand, for a company or trade group no
+ * facility or operator record covers. They are added after the records, so
+ * a name already read off a profile is not repeated.
+ */
+function applyFormerNameOverrides(nodes, overrides) {
+    const byName = new Map();
+    nodes.forEach(function (node) { byName.set(node.name, node); });
+    Object.keys(overrides.formerNames).forEach(function (name) {
+        const node = byName.get(name);
+        if (!node) {
+            qa.missingViewNames.push('formerNames: ' + name + ' is not a node on the board');
+            return;
+        }
+        (overrides.formerNames[name] || []).forEach(function (former) {
+            addOtherName(node, 'formerNames', former);
+        });
+    });
+}
+
 function build() {
     const overrides = loadOverrides();
     const nodeRows = parseCsv(fs.readFileSync(NODES_CSV, 'utf8'));
@@ -1669,6 +1776,7 @@ function build() {
 
     /* --- 7c. connections the facility profiles record ------------- */
     const claims = readProfileClaims(nodes, overrides);
+    applyFormerNameOverrides(nodes, overrides);
     const people = addPeople(nodes, nodeById, claims, overrides);
     const added = addProfileEdges(nodes, edges, claims, overrides) + addStaffMovement(nodes, edges) +
         addStaffList(nodes, edges);

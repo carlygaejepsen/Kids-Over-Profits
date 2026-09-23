@@ -129,6 +129,59 @@
     var DOT_MAX = 9;
     /* The dot where a line lands on a bubble. */
     var PORT_R = 3;
+    /* How long a list of old names may run before it is given as the first
+     * name and a count. The line is cut to the bubble in any case, and
+     * "formerly Sequel TSI Owens Cross R…" says less than "formerly
+     * Sequel TSI Owens Cross Rds +1", which at least admits there is more. */
+    var FORMER_CHARS = 34;
+    /* How far a sub-line may stretch its bubble past the name's own width;
+     * see baseWidth. */
+    var SUB_STRETCH = 1;
+
+    /**
+     * The small lines a bubble carries under its name, in reading order.
+     *
+     * The years of operation, and then the name the place traded under
+     * before, which is the one thing a reader searching for an old name
+     * cannot otherwise see on the board: the record holds it, the drawer
+     * says it, and until now the map did not. Where a place has more than
+     * one old name the line names the first and counts the rest, and the
+     * drawer lists them all.
+     */
+    function subLines(node) {
+        if (node._subLines !== undefined) return node._subLines;
+        var lines = [];
+        if (node.years) lines.push(node.years);
+
+        var former = node.formerNames || [];
+        var text = '';
+        if (former.length) {
+            text = 'formerly ' + former.join(', ');
+            if (text.length > FORMER_CHARS) {
+                text = 'formerly ' + former[0];
+                if (former.length > 1) text += ' +' + (former.length - 1);
+            }
+        } else if (node.currentName) {
+            text = 'now ' + node.currentName;
+        }
+
+        if (text) {
+            /* Where the name already carries its years, the old name joins
+             * that line. It never starts a third: a bubble one line taller
+             * is a bubble its neighbours must be pushed away from, and that
+             * cost falls on every name in the view, not only the one with a
+             * history. Two names in the Provo Canyon School view were enough
+             * to pull eight ownership pairs out of order when they split.
+             * Nothing is lost by folding: the line is cut to the bubble
+             * either way, and the drawer has the whole of it. */
+            if (lines.length) lines[0] += ' \u00b7 ' + text;
+            else lines.push(text);
+        }
+
+        node._subLines = lines;
+        return lines;
+    }
+
     /* The years of operation, a smaller second line under a name. */
     var YEARS_SIZE = 9.5;
     var YEARS_LINE = 11;
@@ -1080,18 +1133,65 @@
          * round both. A person's pill is a little wider, because its round
          * ends take room the name cannot use.
          */
-        function bubbleBox(node, cx, cy, scale) {
-            var nameW = textWidth(ctx, node, null, LABEL_SIZE) * (node.degree >= 8 ? 1.08 : 1);
-            var yearsW = 0;
-            if (node.years) {
-                if (node._yearsW === undefined) {
-                    ctx.font = YEARS_SIZE + 'px ' + FONT;
-                    node._yearsW = ctx.measureText(node.years).width;
+        /**
+         * The width a bubble is sized to: its name, and its years, which are
+         * a short bounded stamp. Nothing else widens it.
+         *
+         * A former name is as long as a name, and a bubble grown to hold one
+         * pushes every neighbour away - the cost of an annotation falling on
+         * the whole view rather than on the name that carries it. Measured
+         * against the board, that cost was real: six of seventy lines stopped
+         * running straight. So the old name takes the room the name leaves
+         * and is cut to fit, with the whole of it in the drawer.
+         */
+        function baseWidth(node) {
+            if (node._baseW === undefined) {
+                var nameW = textWidth(ctx, node, null, LABEL_SIZE) * (node.degree >= 8 ? 1.08 : 1);
+                ctx.font = YEARS_SIZE + 'px ' + FONT;
+                /* The name and its years size the bubble, exactly as they
+                 * always have: a short name with a long span of years is
+                 * still as wide as the years. */
+                var core = Math.max(nameW, node.years ? ctx.measureText(node.years).width : 0);
+                var subW = 0;
+                var subs = subLines(node);
+                for (var s = 0; s < subs.length; s++) {
+                    subW = Math.max(subW, ctx.measureText(subs[s]).width);
                 }
-                yearsW = node._yearsW;
+                /* The old name takes the room they leave, and a little more;
+                 * past SUB_STRETCH of that it is cut, with the whole of it in
+                 * the drawer. Measured against the board, letting it stretch
+                 * the bubble freely put six of seventy lines off straight -
+                 * the cost of one name's annotation falling on every name in
+                 * the view. */
+                node._baseW = Math.max(core, Math.min(subW, core * SUB_STRETCH));
             }
-            var hh = ((LABEL_LINE + (node.years ? YEARS_LINE : 0)) / 2 + BUBBLE_PAD_Y) * scale;
-            var hw = (Math.max(nameW, yearsW) / 2 + BUBBLE_PAD_X) * scale;
+            return node._baseW;
+        }
+
+        /**
+         * A sub-line cut to the room the name leaves it, with an ellipsis
+         * where it had to be cut. The cut is worked out once per node and
+         * line and then held: the text does not change, and the ratio of
+         * room to text does not either, because both scale together.
+         */
+        function fitSub(node, index, text, room) {
+            if (!node._fitSub) node._fitSub = [];
+            if (node._fitSub[index] !== undefined) return node._fitSub[index];
+            var fitted = text;
+            if (ctx.measureText(text).width > room) {
+                var cut = text.length;
+                while (cut > 1 && ctx.measureText(text.slice(0, cut) + '\u2026').width > room) cut--;
+                fitted = text.slice(0, cut).replace(/[ ,]+$/, '') + '\u2026';
+            }
+            node._fitSub[index] = fitted;
+            return fitted;
+        }
+
+        function bubbleBox(node, cx, cy, scale) {
+            var subs = subLines(node);
+            var hh = ((LABEL_LINE + subs.length * YEARS_LINE) / 2 + BUBBLE_PAD_Y) * scale;
+            var hw = (baseWidth(node) / 2 + BUBBLE_PAD_X) * scale;
+            var nameW = baseWidth(node);
             /* An ellipse holds a box only well inside its axes: with the
              * name's half-height at 0.57 of the ellipse's, the half-width
              * has to be the name's over 0.82. */
@@ -1466,19 +1566,25 @@
                     ctx.stroke();
                 }
 
-                /* The name, and under it the years where the data has them,
-                 * in whichever of navy or white reads on the fill. */
+                /* The name, and under it the years and the name the place
+                 * traded under before where the record has them, in
+                 * whichever of navy or white reads on the fill. */
                 var ink = inkOn(scratch);
                 var size = LABEL_SIZE * bubble.scale;
-                var nameY = (bb3[1] + bb3[3]) / 2 - (node.years ? YEARS_LINE * bubble.scale / 2 : 0);
+                var subs = subLines(node);
+                var nameY = (bb3[1] + bb3[3]) / 2 - subs.length * YEARS_LINE * bubble.scale / 2;
                 ctx.globalAlpha = alpha;
                 ctx.fillStyle = ink;
                 ctx.font = (node.degree >= 8 ? '600 ' : '') + size + 'px ' + FONT;
                 ctx.fillText(node.name, sx[i], nameY + 0.5);
-                if (node.years) {
+                if (subs.length) {
                     ctx.globalAlpha = alpha * 0.8;
                     ctx.font = (YEARS_SIZE * bubble.scale) + 'px ' + FONT;
-                    ctx.fillText(node.years, sx[i], nameY + (LABEL_LINE / 2 + YEARS_LINE / 2) * bubble.scale);
+                    var room = baseWidth(node) * bubble.scale;
+                    for (var si = 0; si < subs.length; si++) {
+                        ctx.fillText(fitSub(node, si, subs[si], room), sx[i],
+                            nameY + (LABEL_LINE / 2 + YEARS_LINE / 2 + si * YEARS_LINE) * bubble.scale);
+                    }
                 }
                 ctx.globalAlpha = 1;
             }
@@ -1874,6 +1980,9 @@
         LABEL_PITCH: LABEL_LINE + BUBBLE_PAD_Y * 2 + BUBBLE_GAP * 2,
         /* And how much more a name with a years line needs. */
         YEARS_LINE: YEARS_LINE,
+        /* The small lines under a name, so a layout working without a live
+         * renderer budgets the same room the painter will use. */
+        subLines: subLines,
         styleFor: styleFor,
         isPeopleLine: isPeopleLine,
         peopleOn: peopleOn,

@@ -95,6 +95,23 @@
     /* Height of the label that hangs under a node. */
     var LABEL_ROOM = 18;
 
+    /**
+     * How many small lines a point's name carries under it: its years, and
+     * the name it traded under before.
+     *
+     * The painter owns the answer, because it is the one that draws them.
+     * This is only for the layouts that run before a renderer exists, or
+     * without one in a test; where `renderer.labelBox` is available the
+     * measured box already includes them.
+     */
+    function subLineCount(point) {
+        var painter = root.KOPNetworkCanvas;
+        if (painter && painter.subLines && point && point.node) {
+            return painter.subLines(point.node).length;
+        }
+        return point && point.years ? 1 : 0;
+    }
+
     /* Matches build-network-layout.js. A focused view is a different problem
      * from the whole board, so the numbers are not identical, but a
      * connection type that pulls tight there should pull tight here. */
@@ -1336,8 +1353,12 @@
             var board = Math.max(200, renderer.width - padding * 2);
             var tallest = ordered.reduce(function (t, p) { return Math.max(t, p.r); }, 0);
             var yearsLine = (root.KOPNetworkCanvas && root.KOPNetworkCanvas.YEARS_LINE) || 11;
+            /* A row is as tall as the deepest label in it: a name can carry
+             * its years and the name it traded under before. */
             var rowH = tallest * 2 + LABEL_ROOM + ROW_GUTTER +
-                (ordered.some(function (p) { return p.years; }) ? yearsLine : 0);
+                ordered.reduce(function (deepest, p) {
+                    return Math.max(deepest, subLineCount(p));
+                }, 0) * yearsLine;
 
             var total = ordered.reduce(function (sum, p) { return sum + p.label; }, 0) +
                 PATH_ROW_GAP * (ordered.length - 1);
@@ -1433,7 +1454,7 @@
                 byId[p.id] = p;
                 var box = p.node && renderer.labelBox
                     ? renderer.labelBox(p.node)
-                    : { width: p.label, height: LABEL_ROOM + (p.years ? yearsLine : 0) };
+                    : { width: p.label, height: LABEL_ROOM + subLineCount(p) * yearsLine };
                 var grow = p.id === headId ? HEAD_GROW : baseGrow;
                 p.hw = Math.max(box.width * grow / 2, p.r) + CLUSTER_GAP / 2;
                 p.hh = Math.max(box.height * grow / 2, p.r) + CLUSTER_GAP / 2;
@@ -2064,7 +2085,10 @@
             var boxOf = renderer.labelBox
                 ? function (node) { return renderer.labelBox(node); }
                 : function (node) {
-                    return { width: labelWidth(node) + 10, height: LABEL_ROOM + (node.years ? 11 : 0) };
+                    return {
+                        width: labelWidth(node) + 10,
+                        height: LABEL_ROOM + subLineCount({ node: node, years: !!node.years }) * 11
+                    };
                 };
             var floor = 0;
 
