@@ -191,8 +191,48 @@ function run() {
         check(drawn.has(edge.from + ' -> ' + edge.to),
             'overrides.edges: ' + edge.from + ' -> ' + edge.to + ' was not drawn');
     });
-    notes.push((overrides.nodes || []).length + ' override nodes and ' +
-        (overrides.edges || []).length + ' override edges all drawn');
+    /* A correction has to reach the graph in the order it names, or the
+     * caption still reads backwards. */
+    (overrides.lines || []).forEach(function (fix) {
+        const found = edges.filter(function (edge) {
+            const a = byId.get(edge.source);
+            const b = byId.get(edge.target);
+            return a && b && a.name === fix.from && b.name === fix.to;
+        });
+        check(found.length === 1,
+            'overrides.lines: ' + fix.from + ' -> ' + fix.to + ' is drawn ' + found.length + ' times, not once');
+        if (found.length === 1) {
+            check(found[0].raw === (fix.relationship || ''),
+                'overrides.lines: ' + fix.from + ' -> ' + fix.to + ' is captioned "' + found[0].raw +
+                    '", not "' + fix.relationship + '"');
+            check(!fix.category || found[0].category === fix.category,
+                'overrides.lines: ' + fix.from + ' -> ' + fix.to + ' is a ' + found[0].category +
+                    ' line, not ' + fix.category);
+        }
+    });
+    notes.push((overrides.nodes || []).length + ' override nodes, ' +
+        (overrides.edges || []).length + ' override edges and ' +
+        (overrides.lines || []).length + ' corrected lines all drawn');
+
+    /* A trade association owns nothing. An unlabelled line to one is that
+     * body's membership, and drawn as ownership it says something false
+     * about both ends. */
+    const ownedByAssociation = edges.filter(function (edge) {
+        if (edge.category !== 'corporate') return false;
+        const a = byId.get(edge.source);
+        const b = byId.get(edge.target);
+        return a && b && (a.kind === 'association' || b.kind === 'association');
+    }).filter(function (edge) {
+        /* A rebrand is a real corporate fact even for an association:
+         * Straight Inc. became the Drug-Free America Foundation. */
+        const raw = (edge.raw || '').toLowerCase();
+        return raw.indexOf('rebrand') === -1 && raw.indexOf('merger') === -1 &&
+            raw.indexOf('acquired') === -1;
+    });
+    check(ownedByAssociation.length === 0,
+        ownedByAssociation.length + ' line(s) make a trade association an owner, e.g. ' +
+            (ownedByAssociation[0] ? byId.get(ownedByAssociation[0].source).name + ' -> ' +
+                byId.get(ownedByAssociation[0].target).name : ''));
 }
 
 run();

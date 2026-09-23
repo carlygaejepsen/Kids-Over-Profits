@@ -45,7 +45,16 @@ Key facts the map depends on:
   the cross-network view uses `crossesRegion`.
 - Node kinds: person, facility, parent, association, government, church,
   other. Edge categories: corporate, family, survivor, referral, board,
-  leadership, clinical, admissions, staff, other, unknown.
+  leadership, clinical, admissions, staff, membership, other, unknown.
+- An unlabelled line between two organisations is the board's shorthand for
+  "part of the same group", and is read as corporate - unless one end is a
+  trade association, which owns nothing: then it is that body's membership,
+  drawn in the board's own membership ink (2026-09-22, after a reader saw
+  an ownership line from NATSAP to Spring Ridge Academy). A correction to
+  one specific board line, where the wording is wrong or missing and so
+  `relationships` cannot key on it, goes in the overrides' `lines` list,
+  named by both ends rather than by an edge id: ids are row positions and
+  the next export moves them.
 - Edges store the person first on person-to-organisation edges. For
   takeovers, `source` is the acquirer. For rebrands, `source` became
   `target`.

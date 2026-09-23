@@ -20,7 +20,7 @@
    "kind_government": 16,
    "kind_church": 7,
    "kind_other": 3,
-   "edge_corporate": 637,
+   "edge_corporate": 628,
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 11,
@@ -29,7 +29,7 @@
    "edge_clinical": 390,
    "edge_admissions": 124,
    "edge_staff": 354,
-   "edge_membership": 11,
+   "edge_membership": 20,
    "edge_other": 6,
    "edge_unknown": 225
   },
@@ -607,7 +607,7 @@
    "degree": 31,
    "degreeByCategory": {
     "board": 15,
-    "corporate": 6,
+    "membership": 6,
     "unknown": 3,
     "leadership": 7
    },
@@ -1602,8 +1602,9 @@
    "degreeByCategory": {
     "leadership": 7,
     "unknown": 3,
-    "corporate": 2,
+    "membership": 1,
     "admissions": 1,
+    "corporate": 1,
     "clinical": 1
    },
    "facilityId": 12539,
@@ -1659,10 +1660,11 @@
    "degree": 14,
    "degreeByCategory": {
     "clinical": 4,
-    "corporate": 2,
+    "membership": 1,
     "unknown": 4,
     "staff": 2,
-    "leadership": 2
+    "leadership": 2,
+    "corporate": 1
    },
    "facilityId": 12293,
    "uniqueName": "Spring Ridge Academy",
@@ -2196,7 +2198,8 @@
    "degree": 11,
    "degreeByCategory": {
     "leadership": 5,
-    "corporate": 2,
+    "membership": 1,
+    "corporate": 1,
     "clinical": 1,
     "staff": 2,
     "admissions": 1
@@ -3742,7 +3745,7 @@
    "degree": 7,
    "degreeByCategory": {
     "leadership": 2,
-    "corporate": 1,
+    "membership": 1,
     "unknown": 3,
     "admissions": 1
    },
@@ -9931,8 +9934,7 @@
    "importance": 93355,
    "degree": 4,
    "degreeByCategory": {
-    "membership": 3,
-    "corporate": 1
+    "membership": 4
    },
    "facilityId": null,
    "uniqueName": null,
@@ -11398,7 +11400,8 @@
    "importance": 28749,
    "degree": 3,
    "degreeByCategory": {
-    "corporate": 2,
+    "membership": 1,
+    "corporate": 1,
     "staff": 1
    },
    "facilityId": null,
@@ -13099,8 +13102,7 @@
    "importance": 40882,
    "degree": 3,
    "degreeByCategory": {
-    "corporate": 1,
-    "membership": 2
+    "membership": 3
    },
    "facilityId": null,
    "uniqueName": null,
@@ -18614,7 +18616,7 @@
    "importance": 49254,
    "degree": 2,
    "degreeByCategory": {
-    "corporate": 1,
+    "membership": 1,
     "unknown": 1
    },
    "facilityId": null,
@@ -21008,7 +21010,7 @@
    "importance": 25020,
    "degree": 2,
    "degreeByCategory": {
-    "corporate": 1,
+    "membership": 1,
     "leadership": 1
    },
    "facilityId": 12347,
@@ -27248,7 +27250,7 @@
    "degree": 2,
    "degreeByCategory": {
     "board": 1,
-    "corporate": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -34343,7 +34345,7 @@
    "importance": 77529,
    "degree": 1,
    "degreeByCategory": {
-    "corporate": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -34497,7 +34499,7 @@
    "importance": 93355,
    "degree": 1,
    "degreeByCategory": {
-    "corporate": 1
+    "membership": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -40501,7 +40503,7 @@
    "id": "e0297",
    "source": "natsap",
    "target": "crater-lake-school",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -40551,7 +40553,7 @@
    "id": "e0301",
    "source": "natsap",
    "target": "hidden-lake-academy",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -40564,7 +40566,7 @@
    "id": "e0302",
    "source": "natsap",
    "target": "montana-academy",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -40577,7 +40579,7 @@
    "id": "e0303",
    "source": "natsap",
    "target": "cascade-school",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -40642,7 +40644,7 @@
    "id": "e0308",
    "source": "natsap",
    "target": "aspen-youth-services",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -40666,13 +40668,13 @@
   },
   {
    "id": "e0310",
-   "source": "natsap",
-   "target": "spring-ridge-academy",
-   "category": "corporate",
+   "source": "spring-ridge-academy",
+   "target": "natsap",
+   "category": "membership",
    "roles": [
-    "affiliated"
+    "founding sponsor"
    ],
-   "raw": "",
+   "raw": "founding sponsor",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true
@@ -43955,7 +43957,7 @@
    "id": "e0566",
    "source": "all-addicts-anonymous",
    "target": "east-ridge-recovery-center",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -49358,7 +49360,7 @@
    "id": "e0984",
    "source": "national-association-of-therapeutic-wilderness-camping",
    "target": "national-association-of-therapeutic-wilderness-camps",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],
@@ -49642,7 +49644,7 @@
    "id": "e1006",
    "source": "northwest-association-of-schools-and-of-colleges-and-universities",
    "target": "northwest-association-international-school-visitation-team",
-   "category": "corporate",
+   "category": "membership",
    "roles": [
     "affiliated"
    ],

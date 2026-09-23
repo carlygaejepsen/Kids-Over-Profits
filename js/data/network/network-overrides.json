@@ -39,6 +39,14 @@
     "                a category settles what the wording alone would not",
     "                (\"operated 1993-1999\" names no role the rules know); source",
     "                is the citation, for reviewers.",
+    "lines         - lines the board DOES draw but labels wrongly, or not at",
+    "                all: {\"from\", \"to\", \"relationship\", \"category\",",
+    "                \"source\"}. Matched on the pair of names either way",
+    "                round, and rewritten in the order given here, so the",
+    "                caption reads the right way. Use this rather than an",
+    "                edge id: ids are row positions and the next export",
+    "                moves them. `relationships` cannot reach an unlabelled",
+    "                line, because the wording is what is missing.",
     "views         - other lists the map can open on, offered as \"Start from\":",
     "                {\"key\": {\"label\": \"Shown in the select\", \"names\": [...]}}.",
     "                Keys are lowercase with hyphens; \"default\" is the headline.",
@@ -904,6 +912,15 @@
       "near": "Lakeside Academy of Kansas",
       "status": "open",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab, current operator column"
+    }
+  ],
+  "lines": [
+    {
+      "from": "Spring Ridge Academy",
+      "to": "NATSAP",
+      "relationship": "founding sponsor",
+      "category": "membership",
+      "source": "Owner, 2026-09-22: Spring Ridge Academy was a founding sponsor of NATSAP. The board draws the line unlabelled, which the rules read as ownership."
     }
   ],
   "edges": [

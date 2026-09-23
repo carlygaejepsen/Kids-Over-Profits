@@ -137,7 +137,7 @@ function loadOverrides() {
     if (!fs.existsSync(OVERRIDES_FILE)) {
         return {
             merges: [], aliases: {}, kinds: {}, relationships: {}, facilities: {}, acquirers: {}, headline: [],
-            statuses: {}, years: {}, deaths: {}, views: {}, edges: [], nodes: []
+            statuses: {}, years: {}, deaths: {}, views: {}, edges: [], lines: [], nodes: []
         };
     }
     const raw = JSON.parse(fs.readFileSync(OVERRIDES_FILE, 'utf8'));
@@ -158,6 +158,10 @@ function loadOverrides() {
         /* [{from, to, relationship, source}]: lines the board is missing,
          * fed to the build as if they were export rows. */
         edges: raw.edges || [],
+        /* [{from, to, relationship, category, source}]: lines the board does
+         * draw but labels wrongly or not at all. Keyed on the pair of names
+         * rather than the edge id, because ids move with the next export. */
+        lines: raw.lines || [],
         /* [{name, kind, aliases, network, near, dates, status, source}]: organisations
          * and people the board is missing, fed in as export rows. */
         nodes: raw.nodes || [],
@@ -280,9 +284,20 @@ function categoriseEdge(raw, roles, sourceNode, targetNode, overrides) {
     const bothOrgs = sourceNode.kind !== 'person' && targetNode.kind !== 'person';
 
     if (roles.length === 0) {
-        /* A plain line between two organisations is the board shorthand for
-         * "part of the same group"; between people it says nothing. */
-        if (bothOrgs) return { category: 'corporate', roles: ['affiliated'], matched: true };
+        if (bothOrgs) {
+            /* A trade association owns nothing. The board's unlabelled line
+             * from NATSAP to a programme is that programme's membership of
+             * it, and read as ownership it says something false about both
+             * ends - so the association wins over the group shorthand. It
+             * is then drawn in the board's own membership blue. */
+            if (sourceNode.kind === 'association' || targetNode.kind === 'association') {
+                return { category: 'membership', roles: ['affiliated'], matched: true };
+            }
+            /* A plain line between two organisations is the board shorthand
+             * for "part of the same group". */
+            return { category: 'corporate', roles: ['affiliated'], matched: true };
+        }
+        /* Between people, or between a person and a place, it says nothing. */
         return { category: 'unknown', roles: [], matched: true };
     }
 
@@ -1337,12 +1352,56 @@ function addOverrideEdgeRows(edgeRows, nodeRows, overrides) {
     });
 }
 
+/**
+ * Lines the board draws but labels wrongly, or not at all.
+ *
+ * `relationships` cannot reach these: it is keyed on the raw wording, and
+ * the wording is exactly what is missing. An edge id cannot either, because
+ * ids are the row's position in the export and the next export moves them.
+ * So a correction names both ends, in the order it wants them read, and the
+ * matching row is rewritten before anything is categorised: the caption
+ * then says what the record says, and the classifier is given a wording it
+ * can place.
+ *
+ * The pair is matched either way round, since the board's own order is not
+ * a claim about who did what. Anything that matches no row, or more than
+ * one, is reported rather than guessed at.
+ */
+function applyLineOverrides(edgeRows, overrides) {
+    overrides.lines.forEach(function (fix) {
+        const hits = edgeRows.filter(function (row) {
+            return (row.from === fix.from && row.to === fix.to) ||
+                (row.from === fix.to && row.to === fix.from);
+        });
+        if (hits.length !== 1) {
+            qa.missingViewNames.push('lines: ' + fix.from + ' -> ' + fix.to + ' matches ' +
+                (hits.length ? hits.length + ' lines on the board' : 'no line on the board') +
+                '; it must name exactly one');
+            return;
+        }
+        const row = hits[0];
+        /* Read in the order the correction gives, not the board's. */
+        if (row.from !== fix.from) {
+            const from = row.from, fromNetwork = row.from_network;
+            row.from = row.to; row.from_network = row.to_network;
+            row.to = from; row.to_network = fromNetwork;
+        }
+        row.relationship = fix.relationship || '';
+        /* As for an added line: a category settles what the wording alone
+         * would not. */
+        if (fix.category && fix.relationship) {
+            overrides.relationships[fix.relationship] = { category: fix.category, roles: [fix.relationship] };
+        }
+    });
+}
+
 function build() {
     const overrides = loadOverrides();
     const nodeRows = parseCsv(fs.readFileSync(NODES_CSV, 'utf8'));
     const edgeRows = parseCsv(fs.readFileSync(EDGES_CSV, 'utf8'));
     addOverrideNodeRows(nodeRows, overrides);
     addOverrideEdgeRows(edgeRows, nodeRows, overrides);
+    applyLineOverrides(edgeRows, overrides);
     const sourceHash = crypto.createHash('sha1')
         .update(fs.readFileSync(NODES_CSV)).update(fs.readFileSync(EDGES_CSV))
         .digest('hex').slice(0, 12);

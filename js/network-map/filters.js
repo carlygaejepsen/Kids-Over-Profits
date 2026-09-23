@@ -326,7 +326,18 @@
             scene.edges.forEach(function (edge) {
                 var style = painter.styleFor(edge, renderer.crossRegionMode);
                 var label = style.label || 'Other';
-                if (!seen[label]) { seen[label] = style; order.push(label); }
+                if (seen[label]) return;
+                /* Membership is the one kind drawn in an ink of its own -
+                 * the board's colour for belonging to a trade group, the
+                 * same for every such line - rather than in the colour of
+                 * whichever company the line touches. So the key shows that
+                 * ink; the company colours stay the business of the row
+                 * above. */
+                if (edge.category === 'membership' && !renderer.crossRegionMode && renderer.styleOf) {
+                    style = renderer.styleOf(edge);
+                }
+                seen[label] = style;
+                order.push(label);
             });
             if (!order.length) return;
 
