@@ -158,6 +158,37 @@
     margin-left: 1rem;
 }
 
+/* ---- Micro-summary under a heading (15C) -------------------------------- */
+
+/*
+ * One sentence saying what a section covers, written in the page and marked
+ * either by the block's own class or by [kop_summary].
+ *
+ * It has to look like an answer to the heading rather than the first line of
+ * the writing, and it sits directly under a heading that already carries
+ * weight, so the separation is a quiet rule and lighter ink rather than
+ * another box: three of those in a column would be louder than the article.
+ *
+ * The selector is qualified past `.kop-article .entry-content > p` in
+ * article.css, which sets the reading measure for running text and would
+ * otherwise win on specificity.
+ */
+.kop-article-summary,
+.kop-article .entry-content > p.kop-article-summary {
+    max-width: 60ch;
+    margin: 0.35rem 0 1.25rem;
+    padding: 0 0 0 0.9rem;
+    border-left: 3px solid var(--kop-piece-rule, #aee0ed);
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #000080);
+}
+
+/* Under a bold marker paragraph the gap above is already there. */
+.kop-article .entry-content > p.kop-article-marker + p.kop-article-summary {
+    margin-top: 0;
+}
+
 /* ---- Sources ----------------------------------------------------------- */
 
 .kop-article-sources {

@@ -30,11 +30,11 @@ Last updated 2026-09-23.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
-| 15 | Long-form articles: orientation and structure | 15A, 15F, 15G, 15H, 15I done; 15B to 15E are editorial now - the pieces exist (19) and the text goes in the page, not in a store, see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 15 | Long-form articles: orientation and structure | Code done; 15B to 15E are editorial now - the pieces exist (19) and the text goes in the page, not in a store, see [section 15](#15-long-form-articles-orientation-and-structure) |
 | 16 | Spacing, typography and colour contrast | Done: 16B ink tokens with a test; 16A checked at 390px and already sound. The admin stylesheets are still accent-as-text |
 | 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
-| 19 | Reusable article pieces | Done 2026-09-23: four pieces and four shortcodes in `inc/article-pieces.php` |
+| 19 | Reusable article pieces | Done 2026-09-23: five pieces and five shortcodes in `inc/article-pieces.php` |
 | 20 | The staging copy, and what still points at it | Content clean as of 2026-09-23 bar one pingback comment; the hosting lock-down is the owner's |
 
 ## Waiting on the owner
@@ -955,14 +955,22 @@ Corporatization, Advocacy History, Straight Inc, WWASP.
 
 **15C. Micro-summaries under each section header.** One sentence per
 section, editorial, never generated - and written in the page, under the
-heading it belongs to, per the decision above. Where a section is wrapped in
-the collapsible piece from item 19, its `summary` attribute is that
-sentence and prints in the right place already; where it is not, the
-sentence is simply the paragraph after the heading, and all the item needs
-in code is a rule that makes that first paragraph read as a summary rather
-than as the start of the prose. No meta, no table: an editor writes the
-sentence where a reader will see it, and the site's search finds it because
-it is in the page.
+heading it belongs to, per the decision above. No meta, no table: an editor
+writes the sentence where a reader will see it, and the site's search finds
+it because it is in the page.
+
+**The code is done 2026-09-23; what is left is writing them.** A section
+wrapped in the collapsible piece carries its sentence as the `summary`
+attribute and always did. Everywhere else the sentence is a paragraph the
+editor marks, either by giving the block the class `kop-article-summary` in
+the editor sidebar or by typing `[kop_summary]`, and `css/article-pieces.css`
+draws it as a quiet rule and lighter ink under the heading - not another
+box, because three boxes in a column are louder than the article.
+
+It has to be marked, and that is the one design decision here. A rule on
+"the paragraph after a heading" needs no editor at all, and would restyle
+the first line of the prose in every section that has no summary yet, which
+today is all of them across 29 articles.
 
 (The earlier plan here was post meta keyed by section id, and it was also
 going to feed 15F its years. 15F shipped on 2026-09-23 without it - the
@@ -1176,7 +1184,9 @@ once the new markup exists), then 15C, 15D, 15F and 15H, then 17, then 18.
 **Done 2026-09-23.** `inc/article-pieces.php` holds all four, each as a
 function that returns markup and a shortcode that calls the same builder, so
 what an editor places and what a template prints cannot drift apart:
-`[kop_era]`, `[kop_section]`, `[kop_sources]` and `[kop_why]`.
+`[kop_era]`, `[kop_section]`, `[kop_sources]` and `[kop_why]`. A fifth,
+`[kop_summary]`, was added the same day for 15C - the one sentence under a
+heading that is not wrapped in a collapsible section.
 `css/article-pieces.css` is loaded by both `page-article.php` and
 `page-hub.php`. Covered by `scripts/test-article-pieces.php`.
 
@@ -1199,8 +1209,7 @@ Three decisions the pieces make, rather than leave to whoever places one:
 What each dependent item still needs, now that the pieces exist: 15B, a pass
 over the long articles deciding which sections are worth wrapping and above
 what length; 15E, the writing, and `[kop_why]` placed where it belongs -
-there is nothing left to build; 15C, the writing, plus one CSS rule for the
-summary paragraph of a section that is not wrapped; 15D, nothing but placing
+there is nothing left to build; 15C, the writing; 15D, nothing but placing
 the tags. 18 is editorial throughout.
 
 None of them is waiting on a decision any more: the owner settled the

@@ -224,7 +224,7 @@ echo "\n-- Shortcodes --\n";
 
 $registered = array_keys($GLOBALS['kop_shortcodes']);
 sort($registered);
-check('shortcodes: four registered', $registered, array('kop_era', 'kop_section', 'kop_sources', 'kop_why'));
+check('shortcodes: five registered', $registered, array('kop_era', 'kop_section', 'kop_sources', 'kop_summary', 'kop_why'));
 
 $sc = call_user_func($GLOBALS['kop_shortcodes']['kop_section'], array('title' => 'From a shortcode'), '<p>Body text.</p>');
 has('shortcodes: a section from the editor is the same piece', $sc, '<details class="kop-article-section" id="from-a-shortcode" open>');
@@ -241,7 +241,42 @@ has('shortcodes: every line of them', $scSources, '>Three</cite>');
 $scWhy = call_user_func($GLOBALS['kop_shortcodes']['kop_why'], array('title' => 'Why this matters here'), 'Because.');
 has('shortcodes: why this matters takes its own title', $scWhy, '>Why this matters here</h2>');
 
-// --- 7. Nothing escapes unescaped -------------------------------------------
+// --- 7. The micro-summary (15C) ---------------------------------------------
+
+echo "\n-- Micro-summary --\n";
+
+check(
+    'summary: one sentence, one marked paragraph',
+    kop_article_summary('Twelve years, five states.'),
+    '<p class="kop-article-summary">Twelve years, five states.</p>'
+);
+
+/* wpautop runs before shortcodes, so what arrives here is often already
+ * wrapped; the class has to end up on the paragraph, not around it. */
+check(
+    'summary: a paragraph it arrives wrapped in is not doubled',
+    kop_article_summary('<p>Already a paragraph.</p>'),
+    '<p class="kop-article-summary">Already a paragraph.</p>'
+);
+
+has(
+    'summary: a link in the sentence survives',
+    kop_article_summary('See <a href="https://example.test/">the filing</a>.'),
+    '<a href="https://example.test/">the filing</a>'
+);
+
+check('summary: nothing to say, nothing printed', kop_article_summary(''), '');
+check('summary: whitespace alone prints nothing', kop_article_summary("  \n "), '');
+check('summary: an empty paragraph prints nothing', kop_article_summary('<p> </p>'), '');
+
+$scSummary = call_user_func($GLOBALS['kop_shortcodes']['kop_summary'], array(), 'From the editor.');
+check(
+    'summary: the shortcode is the same piece',
+    $scSummary,
+    '<p class="kop-article-summary">From the editor.</p>'
+);
+
+// --- 8. Nothing escapes unescaped -------------------------------------------
 
 echo "\n-- Escaping --\n";
 

@@ -398,13 +398,46 @@ function kop_article_why_this_matters($args = array()) {
     return $out . '</aside>';
 }
 
-/* -- The same four, for an editor placing one mid-article ----------------- */
+/**
+ * 15C's micro-summary: the one sentence under a section heading.
+ *
+ * A section wrapped in the collapsible piece carries its summary as an
+ * attribute and needs none of this. Everywhere else - which is most of these
+ * articles, bold marker paragraphs from end to end - the sentence is simply a
+ * paragraph the editor marked, either by giving the block the class
+ * `kop-article-summary` in the editor or by typing [kop_summary].
+ *
+ * It has to be marked. A rule on "the paragraph after a heading" would catch
+ * the first line of the prose on every section that has no summary, which is
+ * all of them today, and quietly restyle 29 articles' worth of writing.
+ */
+function kop_article_summary($text) {
+    $text = trim((string) $text);
+    if ($text === '') {
+        return '';
+    }
+    // The editor's own paragraph markup, if it came wrapped, is not wanted
+    // here: this is one sentence and it gets one paragraph.
+    $text = trim(preg_replace('#^\s*<p[^>]*>(.*)</p>\s*$#is', '$1', $text));
+    if ($text === '') {
+        return '';
+    }
+    return '<p class="kop-article-summary">' . wp_kses_post($text) . '</p>';
+}
+
+/* -- The same five, for an editor placing one mid-article ----------------- */
 
 if (function_exists('add_shortcode')) {
     add_shortcode('kop_era', 'kop_article_era_shortcode');
     add_shortcode('kop_section', 'kop_article_section_shortcode');
     add_shortcode('kop_sources', 'kop_article_sources_shortcode');
     add_shortcode('kop_why', 'kop_article_why_shortcode');
+    add_shortcode('kop_summary', 'kop_article_summary_shortcode');
+}
+
+/** [kop_summary]one sentence[/kop_summary] */
+function kop_article_summary_shortcode($atts, $content = null) {
+    return kop_article_summary(do_shortcode((string) $content));
 }
 
 /** [kop_era era="for-profit" title="..." summary="..." icon="" id=""] */
