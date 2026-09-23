@@ -366,3 +366,33 @@ function kop_report_state_sentence() {
     $last = array_pop($names);
     return implode(', ', $names) . ' and ' . $last;
 }
+
+/**
+ * The placeholder a section shows while its data is still being fetched.
+ *
+ * The state and country hubs paint immediately and then ask the REST API for
+ * their facilities, news, lawsuits and legislation, so for a second or two
+ * each section held one line of italic grey text. A reader on a slow
+ * connection could not tell a section that was still loading from one that
+ * had nothing in it.
+ *
+ * This draws the shape of what is coming instead: card outlines the size of
+ * the real cards. The words stay for screen readers, which cannot see a
+ * shape, and the live region tells them when the real content arrives -
+ * every one of these containers has its innerHTML replaced wholesale, so
+ * nothing here has to be cleaned up.
+ *
+ * $label is what is loading ("facilities"), $rows how many cards to draw.
+ */
+function kop_loading_skeleton($label, $rows = 3) {
+    $out = '<div class="kop-skeleton" role="status" aria-live="polite">';
+    $out .= '<span class="screen-reader-text">Loading ' . esc_html($label) . '&hellip;</span>';
+    for ($i = 0; $i < max(1, (int) $rows); $i++) {
+        $out .= '<div class="kop-skeleton__card" aria-hidden="true">'
+            . '<div class="kop-skeleton__line kop-skeleton__line--title"></div>'
+            . '<div class="kop-skeleton__line"></div>'
+            . '<div class="kop-skeleton__line kop-skeleton__line--short"></div>'
+            . '</div>';
+    }
+    return $out . '</div>';
+}

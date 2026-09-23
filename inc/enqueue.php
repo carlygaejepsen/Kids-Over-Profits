@@ -492,6 +492,15 @@ function kop_enqueue_report_scripts() {
                         filemtime($components_css)
                     );
                 }
+                $skeleton_css = get_stylesheet_directory() . '/css/skeleton.css';
+                if (file_exists($skeleton_css)) {
+                    wp_enqueue_style(
+                        'kop-skeleton',
+                        get_stylesheet_directory_uri() . '/css/skeleton.css',
+                        array('kop-colors'),
+                        filemtime($skeleton_css)
+                    );
+                }
                 $engine_css = get_stylesheet_directory() . '/css/report-page.css';
                 if (file_exists($engine_css)) {
                     wp_enqueue_style(
@@ -1487,6 +1496,12 @@ function enqueue_tti_processor_scripts() {
 
     // Styles
     wp_enqueue_style(
+        'kop-skeleton',
+        $theme_uri . '/css/skeleton.css',
+        array('kop-colors'),
+        file_exists($theme_dir . '/css/skeleton.css') ? filemtime($theme_dir . '/css/skeleton.css') : time()
+    );
+    wp_enqueue_style(
         'tti-program-index-styles',
         $theme_uri . '/css/tti-program-index.css',
         array('kadence-parent-style', 'kop-colors'),
@@ -2012,6 +2027,7 @@ function kop_enqueue_template_assets() {
     $is_country = kop_page_uses_template('page-country.php');
     if ($is_state || $is_country) {
         kop_enqueue_shared_facility_ui(); // kop-components css + kop-facility-resources js
+        $style('kop-skeleton', '/css/skeleton.css', array('kop-colors'));
         $style('kop-state-page', '/css/state-page.css', array('kop-colors', 'kop-components'));
         $script('kop-submit-info', '/js/submit-info.js');
         if ($is_state) {
@@ -2023,6 +2039,7 @@ function kop_enqueue_template_assets() {
     }
 
     if (kop_page_uses_template('page-location-index.php')) {
+        $style('kop-skeleton', '/css/skeleton.css', array('kop-colors'));
         $style('tti-program-index-styles', '/css/tti-program-index.css', array('kadence-parent-style', 'kop-colors'));
         $style('kop-document-library-style', '/css/document-library.css', array('kop-colors', 'tti-program-index-styles'));
         kop_enqueue_shared_facility_ui();

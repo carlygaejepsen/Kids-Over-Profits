@@ -55,9 +55,7 @@ get_header();
 
         <!-- Facilities Container (populated by JavaScript) -->
         <div id="facilities-container">
-            <div class="loading-message">
-                <p>Loading facility data...</p>
-            </div>
+            <?php echo kop_loading_skeleton('the facility list', 5); ?>
         </div>
 
     </div>

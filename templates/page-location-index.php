@@ -53,9 +53,7 @@ get_header();
 
         <!-- Locations Container (populated by JavaScript) -->
         <div id="locations-container">
-            <div class="loading-message">
-                <p>Loading location data...</p>
-            </div>
+            <?php echo kop_loading_skeleton('the location list', 5); ?>
         </div>
 
     </div>

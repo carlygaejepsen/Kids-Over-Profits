@@ -1,0 +1,61 @@
+/*
+ * Loading skeletons.
+ *
+ * The pages that paint first and fetch afterwards - the state and country
+ * hubs, the program index, the location index - used to show one line of
+ * italic grey text per section while the REST call was in flight, which a
+ * reader could not tell apart from a section that had nothing in it.
+ *
+ * kop_loading_skeleton() in inc/utilities.php prints these; the card is sized
+ * to .facility-card so a section does not jump when the real cards land.
+ */
+
+/* The shape of what is coming, drawn while the REST call is in flight. Sized
+ * to .facility-card above, so the section does not jump when the real cards
+ * land. kop_loading_skeleton() in inc/utilities.php prints it. */
+.kop-skeleton {
+    display: grid;
+    gap: 0.6em;
+}
+
+.kop-skeleton__card {
+    background: #fff;
+    border: 1px solid #d8dff0;
+    border-left: 4px solid #d8dff0;
+    border-radius: 6px;
+    padding: 0.85em 1em;
+}
+
+.kop-skeleton__line {
+    height: 0.7em;
+    margin: 0.45em 0;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #eceff7 25%, #f6f8fc 37%, #eceff7 63%);
+    background-size: 400% 100%;
+    animation: kop-skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+.kop-skeleton__line--title {
+    height: 1em;
+    width: 55%;
+    margin-top: 0;
+}
+
+.kop-skeleton__line--short {
+    width: 35%;
+    margin-bottom: 0;
+}
+
+@keyframes kop-skeleton-sweep {
+    0% { background-position: 100% 50%; }
+    100% { background-position: 0 50%; }
+}
+
+/* A sweep across four cards is a lot of movement for anybody who asked for
+ * less of it; the shapes alone still say "something is coming". */
+@media (prefers-reduced-motion: reduce) {
+    .kop-skeleton__line {
+        animation: none;
+        background: #eceff7;
+    }
+}

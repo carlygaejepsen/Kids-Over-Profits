@@ -64,7 +64,7 @@ get_header();
 								</div>
 
 								<div id="report-container" class="report-list">
-									<p class="loading-message">Loading report data...</p>
+									<?php echo kop_loading_skeleton('the inspection reports', 4); ?>
 								</div>
 							</div>
 						</div>
