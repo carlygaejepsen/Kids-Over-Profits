@@ -699,6 +699,29 @@ function run() {
     check(renderer.chainColour('') === sandbox.KOPNetworkCanvas.CHAIN_NONE,
         'no recorded owner was given a chain colour');
 
+    /* A name's border is its group's colour, so the border and the lines
+     * leaving it say the same thing; a name in no group keeps the plain
+     * dark ink, and a colour too pale to read as an outline is darkened
+     * rather than swapped, so the hue still names the group. */
+    const INK = sandbox.KOPNetworkCanvas.OUTLINE;
+    const borderInk = sandbox.KOPNetworkCanvas.borderInk;
+    check(renderer.clusterInk(hub) === borderInk(renderer.chainColour(hub.chain)),
+        hub.name + " is not outlined in its own company's colour");
+    const loner = graph.nodes.find((n) => !n.chain && !(n.regions || []).length);
+    check(!loner || renderer.clusterInk(store.node(loner.id)) === INK,
+        'a name in no group was given a border colour anyway');
+    const luma = (c) => {
+        const m = /^rgb\((\d+),(\d+),(\d+)\)$/.exec(c) ||
+            [null, parseInt(c.slice(1, 3), 16), parseInt(c.slice(3, 5), 16), parseInt(c.slice(5, 7), 16)];
+        return (0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3]) / 255;
+    };
+    const pale = sandbox.KOPNetworkCanvas.CHAIN_COLOURS.filter((c) => luma(c) > 0.55);
+    check(pale.length > 0 && pale.every((c) => luma(borderInk(c)) <= 0.53),
+        'a pale company colour is used as a border as it is, where it cannot be seen',
+        pale.length + " of the palette's colours are darkened to be read as a border");
+    check(sandbox.KOPNetworkCanvas.BORDER_BUBBLE >= 2,
+        'a coloured border is drawn too thin to read as a colour');
+
     /* --------------------------------------------------------- viewport -- */
 
     let point = screenOf(hub);
@@ -1188,9 +1211,29 @@ function run() {
     check(crossings === 0,
         crossings + ' route legs cross a node they do not connect',
         routes.length + ' routes, ' + legs + ' legs, none through a node they do not connect');
-    /* The shortest path is a straight line, and most lines take it; a
-     * line bends only round a name in its way. */
-    check(straight >= routes.length * 0.3,
+    /* A line bends for one of two reasons and no others: a name is in its
+     * way, or it is a long line that would otherwise run through the
+     * middle of the crowd instead of round it. A short line always goes
+     * straight - bowing those would say two names are further apart than
+     * they are - so anything bent is either long enough to bow or blocked.
+     */
+    const BOW_MIN = sandbox.KOPNetworkCanvas.BOW_MIN_LENGTH;
+    const shortBends = routes.filter((route) => {
+        if (route.pts.length < 3) return false;
+        const p = route.pts[0], q = route.pts[route.pts.length - 1];
+        if (Math.hypot(q[0] - p[0], q[1] - p[1]) >= BOW_MIN) return false;
+        /* Blocked is the other good reason, so only an unblocked short
+         * line that bent anyway is a fault. */
+        return boxes.every((box, j) =>
+            j === route.edge.source._i || j === route.edge.target._i || !hitsBox(p, q, box));
+    });
+    check(shortBends.length === 0,
+        shortBends.length + ' short lines bend with nothing in their way, the first from ' +
+        (shortBends[0] && shortBends[0].edge.source.name),
+        'every line under ' + BOW_MIN + 'px goes straight unless a name is in its way');
+    /* And enough of them do go straight that the view still reads as
+     * lines between names rather than as a maze. */
+    check(straight >= routes.length * 0.25,
         'only ' + straight + ' of ' + routes.length + ' lines are straight',
         straight + ' of ' + routes.length + ' lines are straight');
     /* A line leaves its name on whichever side faces the other end, so
