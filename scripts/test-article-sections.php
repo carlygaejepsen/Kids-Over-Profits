@@ -41,6 +41,7 @@ function sanitize_title($text) {
 function get_stylesheet_directory() { return ABSPATH; }
 function get_stylesheet_directory_uri() { return 'https://example.test'; }
 function wp_enqueue_style() {}
+function wp_enqueue_script() {}
 function get_header() { throw new KopTemplateLoaded('functions are defined'); }
 /* The local PHP build has no mbstring; production does. The template only
  * uses it to measure a marker's length, so plain strlen stands in here. */
