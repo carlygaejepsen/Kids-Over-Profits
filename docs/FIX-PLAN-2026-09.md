@@ -30,7 +30,7 @@ Last updated 2026-09-23.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
-| 15 | Long-form articles: orientation and structure | 15A, 15F, 15G, 15H, 15I done; 15B to 15E open (those four do need editorial input), see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 15 | Long-form articles: orientation and structure | 15A, 15F, 15G, 15H, 15I done; 15B to 15E are editorial now - the pieces exist (19) and the text goes in the page, not in a store, see [section 15](#15-long-form-articles-orientation-and-structure) |
 | 16 | Spacing, typography and colour contrast | Done: 16B ink tokens with a test; 16A checked at 390px and already sound. The admin stylesheets are still accent-as-text |
 | 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
@@ -877,11 +877,18 @@ build needed correcting, and the items say what replaces them:
 
 - **ACF is installed; the theme does not use it.** Corrected 2026-09-22:
   `advanced-custom-fields/acf.php` is active on production, though nothing
-  in the theme calls `get_field()`. Either route works for the editorial
-  values below. Post meta with a small accessor keeps them in git-tracked
-  code and needs no field group, the way `kop_research_relevance` already
-  works (item 2A); ACF gives an editor a form without any code. The choice
-  is the owner's, and it can differ per field.
+  in the theme calls `get_field()`. The brief assumed the editorial values
+  below would be stored away from the article, in fields of some kind.
+
+  **Settled by the owner on 2026-09-23: they are not stored anywhere new.**
+  Not ACF, not post meta, not a table of their own. The summaries and the
+  "Why this matters" text are written in the page, in the body, with the
+  pieces from item 19 - which is also the only place the site's own search
+  can see them. `inc/global-search.php` searches the SQL tables and the
+  title and body of a WordPress page; it does not read post meta, and it
+  would not read an ACF field either, so text kept in one would have been
+  invisible to the search that every other kind of content on this site
+  answers to. Nothing below needs a field group, an accessor or a table.
 - **A custom post type is not needed and would cost URLs.** The 29
   timelines and case analyses are ordinary Pages already assigned
   `templates/page-article.php` by slug in `kop_template_assignments()`
@@ -947,11 +954,20 @@ has to open the target section first. Candidates named in the brief:
 Corporatization, Advocacy History, Straight Inc, WWASP.
 
 **15C. Micro-summaries under each section header.** One sentence per
-section, editorial, never generated. `kop_article_sections()` already
-assigns a stable id to every heading it finds; store the summaries as post
-meta (`kop_article_section_summaries`, JSON keyed by that id) and have the
-template print each one under its heading. The same meta gives 15F its
-years.
+section, editorial, never generated - and written in the page, under the
+heading it belongs to, per the decision above. Where a section is wrapped in
+the collapsible piece from item 19, its `summary` attribute is that
+sentence and prints in the right place already; where it is not, the
+sentence is simply the paragraph after the heading, and all the item needs
+in code is a rule that makes that first paragraph read as a summary rather
+than as the start of the prose. No meta, no table: an editor writes the
+sentence where a reader will see it, and the site's search finds it because
+it is in the page.
+
+(The earlier plan here was post meta keyed by section id, and it was also
+going to feed 15F its years. 15F shipped on 2026-09-23 without it - the
+years were in the writing all along - so nothing else depends on that meta
+existing.)
 
 **15D. Colour-coded era tags.** CSS utility classes over `css/colors.css`,
 one per era: nonprofit, for-profit, private equity, survivor advocacy. Two
@@ -960,11 +976,18 @@ highlights, not backgrounds, so an era reads as a rule or a chip outline,
 not a block of colour. And colour must not be the only carrier of the
 meaning (WCAG 1.4.1): the tag always prints its era name.
 
-**15E. A "Why this matters" block.** Post meta
-(`kop_article_why_this_matters`), printed by the template between the
-standfirst and the contents list, so it is consistent across pages and no
-editor has to place it in the body. Written for journalists, policymakers
-and parents.
+**15E. A "Why this matters" block.** The block itself shipped with item 19;
+what is left is writing one per page and placing it. An editor puts
+`[kop_why]` where it belongs in the article, usually straight under the
+standfirst. Written for journalists, policymakers and parents.
+
+The earlier plan had this in post meta so the template could print it in the
+same place on every page without an editor thinking about it. Keeping it in
+the body trades that guarantee for a block the search can actually find: the
+position is now an editorial habit rather than something the template
+enforces. Worth watching as the first few are written - if they drift about
+the page, the template can hoist a `[kop_why]` block to a fixed position
+without the text moving out of the body.
 
 **15F. A horizontal timeline graphic.** Done 2026-09-23, and **the reason
 this was written up as blocked was wrong**. The note said it needed a year
@@ -1175,9 +1198,14 @@ Three decisions the pieces make, rather than leave to whoever places one:
 
 What each dependent item still needs, now that the pieces exist: 15B, a pass
 over the long articles deciding which sections are worth wrapping and above
-what length; 15C and 15E, the editorial text plus the storage decision at the
-head of this list (post meta with an accessor, or ACF); 15D, nothing but
-placing the tags. 18 is editorial throughout.
+what length; 15E, the writing, and `[kop_why]` placed where it belongs -
+there is nothing left to build; 15C, the writing, plus one CSS rule for the
+summary paragraph of a section that is not wrapped; 15D, nothing but placing
+the tags. 18 is editorial throughout.
+
+None of them is waiting on a decision any more: the owner settled the
+storage question on 2026-09-23, and the answer was that this text belongs in
+the page, where the search reaches it.
 
 ---
 
