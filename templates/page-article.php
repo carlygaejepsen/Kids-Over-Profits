@@ -25,6 +25,17 @@ if (file_exists($kop_trail_css_path)) {
     );
 }
 
+$kop_art_js_path = get_stylesheet_directory() . '/js/article-toc.js';
+if (file_exists($kop_art_js_path)) {
+    wp_enqueue_script(
+        'kop-article-toc',
+        get_stylesheet_directory_uri() . '/js/article-toc.js',
+        array(),
+        filemtime($kop_art_js_path),
+        true
+    );
+}
+
 $kop_art_css_path = get_stylesheet_directory() . '/css/article.css';
 if (file_exists($kop_art_css_path)) {
     wp_enqueue_style(

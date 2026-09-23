@@ -47,53 +47,6 @@
     font-size: 0.95rem;
 }
 
-.kop-article-toc summary {
-    cursor: pointer;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    color: var(--kop-midnight-blue, #000435);
-}
-
-.kop-article-toc summary:focus-visible {
-    outline: 2px solid var(--kop-teal, #33a7b5);
-    outline-offset: 2px;
-}
-
-.kop-article-toc ol {
-    margin: 0.75rem 0 0;
-    padding-left: 1.4rem;
-    columns: 1;
-}
-
-@media (min-width: 760px) {
-    .kop-article-toc ol {
-        columns: 2;
-        column-gap: 2rem;
-    }
-}
-
-.kop-article-toc li {
-    margin: 0 0 0.3rem;
-    break-inside: avoid;
-}
-
-.kop-article-toc li.kop-toc-l3 {
-    margin-left: 1rem;
-    font-size: 0.9em;
-}
-
-.kop-article-toc a {
-    color: var(--kop-navy-blue, #000080);
-    text-decoration: none;
-}
-
-.kop-article-toc a:hover,
-.kop-article-toc a:focus-visible {
-    text-decoration: underline;
-}
-
 /* ---- Reading measure --------------------------------------------------- */
 
 .kop-article .entry-content > p,
@@ -132,6 +85,82 @@
 .kop-article .entry-content h3[id],
 .kop-article .entry-content p.kop-article-marker {
     scroll-margin-top: 6rem;
+}
+
+/* ---- Jump to contents -------------------------------------------------- */
+
+/* The button js/article-toc.js puts in the corner once the contents box has
+ * scrolled away, and the panel it opens. Fixed, so that nothing it does can
+ * move the article: a sticky contents box shoves the text the reader is
+ * looking at by its own height every time it changes size.
+ *
+ * Bottom right rather than top: at the top it would sit over a heading the
+ * reader had just jumped to. */
+.kop-article-jump {
+    position: fixed;
+    right: 1.25rem;
+    bottom: 1.25rem;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+}
+
+.kop-article-jump__button {
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-radius: 999px;
+    background: var(--kop-sand, #f2eedf);
+    color: var(--kop-midnight-blue, #000435);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 4, 53, 0.18);
+}
+
+.kop-article-jump__button:hover {
+    border-color: var(--kop-teal, #33a7b5);
+}
+
+.kop-article-jump__button:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: 2px;
+}
+
+/* The panel opens upwards from the button, so it never covers it. */
+.kop-article-jump__list {
+    order: -1;
+    max-width: min(22rem, calc(100vw - 2.5rem));
+    max-height: min(60vh, 30rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0.8rem 1.1rem;
+    background: var(--kop-sand, #f2eedf);
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+    border-radius: 6px;
+    box-shadow: 0 8px 24px rgba(0, 4, 53, 0.22);
+}
+
+.kop-article-jump__list ol {
+    margin: 0;
+    padding-left: 1.3rem;
+}
+
+.kop-article-jump__list li {
+    margin: 0 0 0.35rem;
+}
+
+.kop-article-jump__list a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+}
+
+.kop-article-jump__list a:hover,
+.kop-article-jump__list a:focus-visible {
+    text-decoration: underline;
 }
 
 /* ---- Section anchors --------------------------------------------------- */
