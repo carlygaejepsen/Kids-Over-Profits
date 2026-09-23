@@ -164,6 +164,11 @@ while (have_posts()) :
     $kop_art_html = apply_filters('the_content', $kop_art_raw);
     $kop_art_html = str_replace(']]>', ']]&gt;', $kop_art_html);
     $kop_art      = kop_article_sections($kop_art_html);
+    /* Dated list entries get ids here so the timeline band can point at them;
+     * the band itself is printed below the contents box. */
+    $kop_art_dated = function_exists('kop_article_timeline_entries')
+        ? kop_article_timeline_entries($kop_art['html'])
+        : array();
     ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class('entry content-bg single-entry kop-article'); ?>>
     <div class="entry-content-wrap">
@@ -206,6 +211,14 @@ while (have_posts()) :
                 </ol>
             </details>
         <?php endif; ?>
+
+        <?php
+        // Nine of these articles are dated lists spanning centuries. The band
+        // says so, and lets a reader jump to a period. inc/article-parts.php.
+        if (function_exists('kop_article_timeline')) {
+            kop_article_timeline($kop_art_dated);
+        }
+        ?>
 
         <div class="entry-content single-content">
             <?php

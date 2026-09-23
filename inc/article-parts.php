@@ -288,3 +288,187 @@ function kop_article_continue($slug) {
     }
     echo '</nav>';
 }
+
+/* -------------------------------------------------------------- timelines --
+ *
+ * Nine of these articles are timelines: a list of dated entries, each one a
+ * list item whose first bold run begins with a year -
+ * "<strong>1660 - First U.S. Workhouse Established (Boston)</strong>",
+ * with the detail in a nested list under it. Juvenile Justice has 71 of them
+ * across 1660 to 2023, Fundamentalist Christian Homes 48 across 1517 to 2011.
+ *
+ * Nothing said so on the page. A reader arriving at forty thousand characters
+ * of prose could not see that it covered three centuries, or get to the
+ * 1970s without scrolling for them.
+ *
+ * The years are already in the writing, so none of this asks an editor for
+ * anything: the entries are read out of the rendered content, given ids, and
+ * drawn as a band above the article.
+ */
+
+/** How many dated entries make a page worth drawing a timeline for. */
+define('KOP_ARTICLE_TIMELINE_MIN', 8);
+
+/**
+ * The year an entry starts with, or null. Handles "1912", "1730s", "1179 CE",
+ * "c. 1400" and "1968:", which are all shapes these articles use.
+ */
+function kop_article_entry_year($text) {
+    $text = trim(html_entity_decode(wp_strip_all_tags((string) $text), ENT_QUOTES, 'UTF-8'));
+    if (preg_match('/^(?:c\.?\s*)?(1[0-9]{3}|20[0-2][0-9])s?\b/u', $text, $m)) {
+        return (int) $m[1];
+    }
+    return null;
+}
+
+/**
+ * Find the dated entries in rendered article content, give each one an id so
+ * the timeline can point at it, and return them in the order they appear.
+ *
+ * $html is edited in place. Only the id is added: the entry's own markup is
+ * otherwise untouched, and an entry that already has an id keeps it.
+ *
+ * Returns array of array('id' => ..., 'year' => int, 'text' => ...).
+ */
+function kop_article_timeline_entries(&$html) {
+    $entries = array();
+    $used    = array();
+
+    $html = preg_replace_callback(
+        '#<li([^>]*)>(\s*(?:<[^>]+>\s*)*?<strong>)(.{0,120}?)</strong>#is',
+        static function ($m) use (&$entries, &$used) {
+            $year = kop_article_entry_year($m[3]);
+            if ($year === null) {
+                return $m[0];
+            }
+            $text = trim(html_entity_decode(wp_strip_all_tags($m[3]), ENT_QUOTES, 'UTF-8'));
+            $attrs = $m[1];
+            if (preg_match('/\sid=["\']([^"\']+)["\']/i', $attrs, $idm)) {
+                $id = $idm[1];
+            } else {
+                /* The title already begins with the year, so the slug of
+                 * the title carries it: "y1660-first-u-s-workhouse". The
+                 * letter keeps it a valid id whatever a browser thinks of
+                 * one starting with a digit. */
+                $id   = 'y' . sanitize_title($text);
+                $base = $id;
+                $n    = 2;
+                while (isset($used[$id])) {
+                    $id = $base . '-' . $n++;
+                }
+                $attrs .= ' id="' . esc_attr($id) . '"';
+            }
+            $used[$id] = true;
+            $entries[] = array('id' => $id, 'year' => $year, 'text' => $text);
+            return '<li' . $attrs . ' class="kop-article-dated">' . $m[2] . $m[3] . '</strong>';
+        },
+        $html
+    );
+
+    return $entries;
+}
+
+/**
+ * The ticks along the band: a round number of years apart, chosen so a span
+ * of three centuries does not get one mark per decade and a span of forty
+ * years does not get one mark in total.
+ */
+function kop_article_timeline_step($span) {
+    foreach (array(10, 20, 25, 50, 100, 200) as $step) {
+        if ($span / $step <= 12) {
+            return $step;
+        }
+    }
+    return 500;
+}
+
+/**
+ * The band itself: one dot per entry at its year, and a handful of labelled
+ * marks a reader can click or tab to.
+ *
+ * Positions are percentages of the span, so the whole thing is fluid and
+ * needs no SVG - the brief asked for one, but an SVG here would be a fixed
+ * coordinate system standing in for what CSS already does properly at any
+ * width.
+ *
+ * The dots are a picture of where the entries fall, and they are a shortcut
+ * for a pointer, but they are not the accessible route: seventy-one tab stops
+ * in front of an article would be an obstacle, not a feature. They are hidden
+ * from assistive technology and skipped by the keyboard; the labelled marks,
+ * each jumping to the first entry of its period, are the interface, and the
+ * article's own contents list is beside them.
+ */
+function kop_article_timeline($entries) {
+    if (count($entries) < KOP_ARTICLE_TIMELINE_MIN) {
+        return;
+    }
+    $years = array();
+    foreach ($entries as $entry) {
+        $years[] = $entry['year'];
+    }
+    $first = min($years);
+    $last  = max($years);
+    $span  = $last - $first;
+    if ($span < 20) {
+        return;
+    }
+
+    $step  = kop_article_timeline_step($span);
+    $start = (int) (floor($first / $step) * $step);
+    $end   = (int) (ceil($last / $step) * $step);
+    $width = max(1, $end - $start);
+
+    $place = static function ($year) use ($start, $width) {
+        return round((($year - $start) / $width) * 100, 3);
+    };
+
+    /* Each labelled mark jumps to the first entry at or after it, so a click
+     * always lands on something. */
+    $marks = array();
+    for ($year = $start; $year <= $end; $year += $step) {
+        $target = null;
+        foreach ($entries as $entry) {
+            if ($entry['year'] >= $year && ($year + $step) > $entry['year']) {
+                $target = $entry;
+                break;
+            }
+        }
+        $marks[] = array('year' => $year, 'target' => $target);
+    }
+
+    echo '<nav class="kop-article-timeline" aria-label="Timeline of this article">';
+    echo '<p class="kop-article-timeline__caption">'
+        . esc_html(count($entries) . ' dated entries, ' . $first . ' to ' . $last)
+        . '</p>';
+    echo '<div class="kop-article-timeline__band">';
+
+    foreach ($entries as $entry) {
+        echo '<a class="kop-article-timeline__dot" href="#' . esc_attr($entry['id']) . '"'
+            . ' style="left:' . $place($entry['year']) . '%"'
+            . ' tabindex="-1" aria-hidden="true" title="'
+            . esc_attr($entry['year'] . ' ' . $entry['text']) . '"></a>';
+    }
+
+    /* Every other year is marked "minor" so a narrow screen can drop half the
+     * labels and keep the rest evenly spaced. A CSS nth-of-type would not do
+     * it: the marks are a mix of links and plain spans, and the two are
+     * counted separately, which thins them out unevenly. */
+    foreach ($marks as $index => $mark) {
+        $left  = $place($mark['year']);
+        $minor = ($index % 2 === 1) ? ' is-minor' : '';
+        if ($mark['target']) {
+            echo '<a class="kop-article-timeline__mark' . $minor . '"'
+                . ' href="#' . esc_attr($mark['target']['id']) . '"'
+                . ' style="left:' . $left . '%">'
+                . '<span class="kop-article-timeline__year">' . esc_html($mark['year']) . '</span>'
+                . '<span class="screen-reader-text">'
+                . esc_html(': jump to ' . $mark['target']['text']) . '</span></a>';
+        } else {
+            echo '<span class="kop-article-timeline__mark is-empty' . $minor . '"'
+                . ' style="left:' . $left . '%" aria-hidden="true">'
+                . '<span class="kop-article-timeline__year">' . esc_html($mark['year']) . '</span></span>';
+        }
+    }
+
+    echo '</div></nav>';
+}

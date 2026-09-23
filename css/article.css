@@ -87,6 +87,113 @@
     scroll-margin-top: 6rem;
 }
 
+/* ---- Timeline band ------------------------------------------------------ */
+
+/* Nine of these articles are dated lists running over centuries, and nothing
+ * on the page said so. The band puts one dot per entry at its year, with a
+ * labelled mark every round number of years, so the span is visible at a
+ * glance and a period is one click away. inc/article-parts.php builds it.
+ *
+ * Positions are percentages of the span, set inline, so it is fluid at any
+ * width and needs no fixed coordinate system. */
+.kop-article-timeline {
+    max-width: 72ch;
+    margin: 0 0 2.25rem;
+}
+
+.kop-article-timeline__caption {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-article-timeline__band {
+    position: relative;
+    height: 3.4rem;
+    border-bottom: 2px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+/* One per entry, at its year. A picture of where the writing is dense, and a
+ * shortcut for a pointer; the labelled marks below are the keyboard's route,
+ * which is why these are out of the tab order. */
+.kop-article-timeline__dot {
+    position: absolute;
+    top: 0.55rem;
+    width: 7px;
+    height: 7px;
+    margin-left: -3.5px;
+    border-radius: 50%;
+    background: var(--kop-teal, #33a7b5);
+    opacity: 0.55;
+}
+
+.kop-article-timeline__dot:hover {
+    opacity: 1;
+    transform: scale(1.5);
+    background: var(--kop-orange, #EF9034);
+}
+
+/* A round year, on the rule. */
+.kop-article-timeline__mark {
+    position: absolute;
+    bottom: -2px;
+    transform: translateX(-50%);
+    padding-bottom: 0.5rem;
+    border-left: 1px solid var(--kop-border-secondary, #d9d3c0);
+    color: var(--kop-navy-blue, #000080);
+    font-size: 0.72rem;
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.kop-article-timeline__year {
+    display: inline-block;
+    padding-left: 0.25rem;
+}
+
+.kop-article-timeline__mark.is-empty {
+    color: var(--kop-text-secondary, #4a4f6a);
+    opacity: 0.55;
+}
+
+a.kop-article-timeline__mark:hover,
+a.kop-article-timeline__mark:focus-visible {
+    color: var(--kop-teal-ink, #24757F);
+    border-left-color: var(--kop-teal, #33a7b5);
+    text-decoration: underline;
+}
+
+a.kop-article-timeline__mark:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: 2px;
+}
+
+/* The entry a mark or a dot jumps to, so it is not left under the header. */
+.kop-article .entry-content li.kop-article-dated {
+    scroll-margin-top: 6rem;
+}
+
+/* Narrow: the years would collide, so every other one goes and the dots
+ * carry the shape on their own. */
+@media (max-width: 640px) {
+    .kop-article-timeline__band {
+        height: 2.8rem;
+    }
+
+    .kop-article-timeline__mark.is-minor .kop-article-timeline__year {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kop-article-timeline__dot:hover {
+        transform: none;
+    }
+}
+
 /* ---- Jump to contents -------------------------------------------------- */
 
 /* The button js/article-toc.js puts in the corner once the contents box has
@@ -309,4 +416,18 @@
     border-left: 4px solid var(--kop-teal, #33a7b5);
     background: var(--kop-sand, #f2eedf);
     padding: 0.75rem 1.25rem;
+}
+
+/* Kadence supplies .screen-reader-text, but this file must not depend on it:
+ * without it the timeline's "jump to ..." labels print on the page. */
+.kop-article-timeline .screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
 }
