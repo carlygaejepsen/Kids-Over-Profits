@@ -421,6 +421,7 @@ foreach ($files as $f) {
         @chmod($dest, 0644);
         $type = wp_check_filetype($filename);
         $attachment_id = wp_insert_attachment(array(
+            'guid'           => trailingslashit($upload_dir['url']) . $filename,   // as media_handle_upload does
             'post_mime_type' => $type['type'] ?: $f['mimeType'],
             'post_title'     => preg_replace('/\.[^.]+$/', '', $f['name']),
             'post_content'   => '',
@@ -447,6 +448,19 @@ foreach ($files as $f) {
 
 if ($apply && ($imported || !empty($counts['folders created']))) {
     delete_transient('kop_hidden_preview_ids');
+}
+if ($apply) {
+    // The first batches went in with the attachment page as their guid; give
+    // them the file's address like every other upload.
+    $fixed = $wpdb->query($wpdb->prepare(
+        "UPDATE {$wpdb->posts} p
+         JOIN {$wpdb->postmeta} d ON d.post_id = p.ID AND d.meta_key = '_kop_drive_file_id'
+         JOIN {$wpdb->postmeta} a ON a.post_id = p.ID AND a.meta_key = '_wp_attached_file'
+         SET p.guid = CONCAT(%s, a.meta_value)
+         WHERE p.guid NOT LIKE %s",
+        trailingslashit($upload_dir['baseurl']), '%/wp-content/uploads/%'
+    ));
+    if ($fixed) $counts['guids fixed'] = (int)$fixed;
 }
 ksort($counts);
 echo json_encode(array(
