@@ -1,0 +1,251 @@
+/*
+ * The four reusable article pieces (inc/article-pieces.php): era header,
+ * collapsible section, sources list, "Why this matters".
+ *
+ * Loaded by templates/page-article.php and templates/page-hub.php, because
+ * three of the four are wanted on a hub page too.
+ *
+ * The era colours are here rather than in the PHP: an era is a class, and the
+ * class picks two tokens out of css/colors.css. The bright accents are a rule
+ * and a chip outline only - the palette keeps them off backgrounds - and the
+ * text of a tag is always the -ink variant, which is the same hue dark enough
+ * to read. An era's name is printed either way, so none of this is load
+ * bearing: a page with the stylesheet missing loses the colour and keeps the
+ * meaning.
+ */
+
+.kop-article-era,
+.kop-article-section,
+.kop-article-sources,
+.kop-article-why,
+.kop-article-era__tag {
+    --kop-piece-ink: var(--kop-text-secondary, #000080);
+    --kop-piece-rule: var(--kop-border-secondary, #aee0ed);
+}
+
+/* ---- Era header -------------------------------------------------------- */
+
+/*
+ * Each era is named twice: on the header it opens, and on the tag itself,
+ * because a tag is used away from a header too - a collapsible section takes
+ * one in its summary. Colouring the tag rather than only its surroundings is
+ * what makes it portable.
+ */
+.kop-article-era--nonprofit,
+.kop-article-era__tag.is-nonprofit {
+    --kop-piece-ink: var(--kop-teal-ink, #24757f);
+    --kop-piece-rule: var(--kop-teal, #33a7b5);
+}
+
+.kop-article-era--for-profit,
+.kop-article-era__tag.is-for-profit {
+    --kop-piece-ink: var(--kop-orange-ink, #a3570d);
+    --kop-piece-rule: var(--kop-orange, #ef9034);
+}
+
+.kop-article-era--private-equity,
+.kop-article-era__tag.is-private-equity {
+    --kop-piece-ink: var(--kop-coral-pink-ink, #d9020f);
+    --kop-piece-rule: var(--kop-coral-pink, #fe8088);
+}
+
+.kop-article-era--survivor-advocacy,
+.kop-article-era__tag.is-survivor-advocacy {
+    --kop-piece-ink: var(--kop-chartreuse-ink, #5c7401);
+    --kop-piece-rule: var(--kop-chartreuse, #b2e102);
+}
+
+.kop-article-era {
+    max-width: 72ch;
+    margin: 2.5rem auto 1.25rem;
+    padding: 0 0 0 1rem;
+    border-left: 4px solid var(--kop-piece-rule);
+}
+
+.kop-article-era__tagline {
+    margin: 0 0 0.35rem;
+}
+
+.kop-article-era__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.15rem 0.6rem;
+    border: 1px solid var(--kop-piece-rule);
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-piece-ink);
+    background: transparent;
+}
+
+.kop-article-era__icon {
+    width: 0.9em;
+    height: 0.9em;
+    flex: 0 0 auto;
+}
+
+.kop-article-era__title {
+    margin: 0;
+    color: var(--kop-text-primary, #000435);
+}
+
+.kop-article-era__summary {
+    max-width: 60ch;
+    margin: 0.4rem 0 0;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #000080);
+}
+
+/* ---- Collapsible section ----------------------------------------------- */
+
+/*
+ * These stay open. The rules below are for the one a reader has closed
+ * themselves, which is the only way one is ever closed.
+ */
+.kop-article-section {
+    max-width: 72ch;
+    margin: 1.75rem auto;
+}
+
+.kop-article-section > .kop-article-section__summary {
+    cursor: pointer;
+    padding: 0.2rem 0;
+}
+
+.kop-article-section > .kop-article-section__summary:focus-visible {
+    outline: 2px solid var(--kop-focus-color, #33a7b5);
+    outline-offset: 3px;
+}
+
+/* Inline, so the browser's own disclosure triangle keeps its place beside
+ * the title instead of being pushed onto a line of its own. */
+.kop-article-section__title {
+    display: inline;
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+/* The title is inline, so a tag beside it needs its own space. */
+.kop-article-section__summary .kop-article-era__tag {
+    margin-left: 0.5rem;
+    vertical-align: 0.15em;
+}
+
+.kop-article-section__hint {
+    display: block;
+    margin: 0.25rem 0 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-article-section__body {
+    padding: 0.25rem 0 0 1rem;
+    border-left: 2px solid var(--kop-piece-rule);
+}
+
+.kop-article-section[open] > .kop-article-section__summary {
+    margin-bottom: 0.5rem;
+}
+
+/* A section's own sources belong to its body, so they line up with it rather
+ * than starting again at the margin. */
+.kop-article-section > .kop-article-sources {
+    margin-left: 1rem;
+}
+
+/* ---- Sources ----------------------------------------------------------- */
+
+.kop-article-sources {
+    max-width: 72ch;
+    margin: 2rem auto;
+    padding: 1rem 1.25rem;
+    background: var(--kop-sand, #f2eedf);
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+    font-size: 0.95rem;
+}
+
+.kop-article-sources__title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-article-sources__list {
+    margin: 0;
+    padding-left: 1.4rem;
+}
+
+.kop-article-sources__item {
+    margin: 0 0 0.5rem;
+    line-height: 1.5;
+}
+
+.kop-article-sources__item:last-child {
+    margin-bottom: 0;
+}
+
+.kop-article-sources__cite {
+    font-style: normal;
+    font-weight: 600;
+}
+
+.kop-article-sources__publisher,
+.kop-article-sources__date {
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-article-sources__note {
+    color: var(--kop-text-secondary, #000080);
+}
+
+/* A source linked from the text: the one it landed on is marked, so a reader
+ * who followed a number can see which line answered them. */
+.kop-article-sources__item:target {
+    outline: 2px solid var(--kop-orange, #ef9034);
+    outline-offset: 4px;
+}
+
+/* ---- Why this matters --------------------------------------------------- */
+
+.kop-article-why {
+    max-width: 72ch;
+    margin: 1.5rem auto 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--kop-bg-accent, #fff5cb);
+    border-left: 4px solid var(--kop-orange, #ef9034);
+}
+
+.kop-article-why__title {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--kop-text-primary, #000435);
+}
+
+.kop-article-why__body {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.kop-article-why__body > :last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .kop-article-era {
+        margin-top: 2rem;
+    }
+
+    .kop-article-sources,
+    .kop-article-why {
+        padding: 0.9rem 1rem;
+    }
+}

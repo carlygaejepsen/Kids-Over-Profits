@@ -87,5 +87,9 @@ require_once get_stylesheet_directory() . '/inc/network-map.php';
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';
 
+// The pieces a long-form page is assembled from: era header, collapsible
+// section, sources, "Why this matters" - as functions and as shortcodes
+require_once get_stylesheet_directory() . '/inc/article-pieces.php';
+
 // Keeps crawlers out of the staging copy of the site
 require_once get_stylesheet_directory() . '/inc/staging-links.php';

@@ -6,7 +6,7 @@ reading-experience brief of 2026-09-22 (items 15 to 19). Everything from
 the first list is live on kidsoverprofits.org except the network map's
 last steps; the second list is open, and the third has not been started.
 
-Last updated 2026-09-22.
+Last updated 2026-09-23.
 
 ## Status
 
@@ -34,7 +34,7 @@ Last updated 2026-09-22.
 | 16 | Spacing, typography and colour contrast | Done: 16B ink tokens with a test; 16A checked at 390px and already sound. The admin stylesheets are still accent-as-text |
 | 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
-| 19 | Reusable article pieces | Open |
+| 19 | Reusable article pieces | Done 2026-09-23: four pieces and four shortcodes in `inc/article-pieces.php` |
 | 20 | The staging copy, and what still points at it | Content clean as of 2026-09-23 bar one pingback comment; the hosting lock-down is the owner's |
 
 ## Waiting on the owner
@@ -1149,6 +1149,35 @@ the theme has no bundler and should not gain one.
 Suggested order of work: 19 first (the pieces), then 15A, 15B, 15E and 15G
 (the structure), then 16 (a sweep that touches every page and is easier
 once the new markup exists), then 15C, 15D, 15F and 15H, then 17, then 18.
+
+**Done 2026-09-23.** `inc/article-pieces.php` holds all four, each as a
+function that returns markup and a shortcode that calls the same builder, so
+what an editor places and what a template prints cannot drift apart:
+`[kop_era]`, `[kop_section]`, `[kop_sources]` and `[kop_why]`.
+`css/article-pieces.css` is loaded by both `page-article.php` and
+`page-hub.php`. Covered by `scripts/test-article-pieces.php`.
+
+Three decisions the pieces make, rather than leave to whoever places one:
+
+- **A collapsible section has no closed state.** 15B's rule was "open by
+  default"; the piece does not offer the alternative at all, because nothing
+  in the theme opens a `<details>` on a hash change, and a closed one loses
+  find-in-page and swallows a jump from the contents list. Asking for closed
+  gives open, and the test says so.
+- **The heading goes inside the `<summary>`.** That is where
+  `kop_article_sections()` finds it, so a collapsible section reaches the
+  contents list and the anchor marks from 15I like any other section.
+- **An era is a name first.** The tag prints its era's name always; the
+  colour is a class over it, one per era, in CSS over the tokens in
+  `colors.css`, as a rule and a chip outline rather than a fill. An era
+  nobody has written CSS for is written out in the neutral ink instead of
+  being dropped (WCAG 1.4.1, and the palette's rule about bright accents).
+
+What each dependent item still needs, now that the pieces exist: 15B, a pass
+over the long articles deciding which sections are worth wrapping and above
+what length; 15C and 15E, the editorial text plus the storage decision at the
+head of this list (post meta with an accessor, or ACF); 15D, nothing but
+placing the tags. 18 is editorial throughout.
 
 ---
 

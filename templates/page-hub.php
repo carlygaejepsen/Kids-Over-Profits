@@ -32,6 +32,19 @@ if (file_exists($kop_hub_css_path)) {
     );
 }
 
+/* Three of the four article pieces are wanted on a hub page too - an era
+ * header over a group of links, a sources list, and "Why this matters" at
+ * the top of a section index. inc/article-pieces.php. */
+$kop_hub_pieces_css_path = get_stylesheet_directory() . '/css/article-pieces.css';
+if (file_exists($kop_hub_pieces_css_path)) {
+    wp_enqueue_style(
+        'kop-article-pieces',
+        get_stylesheet_directory_uri() . '/css/article-pieces.css',
+        array(),
+        filemtime($kop_hub_pieces_css_path)
+    );
+}
+
 if (!function_exists('kop_hub_module_for')) {
     /**
      * Page slug => module callback name. Filter 'kop_hub_modules' to add one.

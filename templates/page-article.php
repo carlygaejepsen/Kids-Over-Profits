@@ -46,6 +46,16 @@ if (file_exists($kop_art_css_path)) {
     );
 }
 
+$kop_art_pieces_css_path = get_stylesheet_directory() . '/css/article-pieces.css';
+if (file_exists($kop_art_pieces_css_path)) {
+    wp_enqueue_style(
+        'kop-article-pieces',
+        get_stylesheet_directory_uri() . '/css/article-pieces.css',
+        array(),
+        filemtime($kop_art_pieces_css_path)
+    );
+}
+
 if (!function_exists('kop_article_anchor')) {
     /**
      * The link mark that lets a reader copy the address of one section.
