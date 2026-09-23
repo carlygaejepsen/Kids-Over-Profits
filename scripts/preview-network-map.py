@@ -9,14 +9,17 @@ the server open for you or drives it with Playwright and saves screenshots.
     python scripts/preview-network-map.py                         # serve, print the URL, wait
     python scripts/preview-network-map.py --shots tmp/map-preview # desktop + phone screenshots
     python scripts/preview-network-map.py --shots tmp/map-preview --hash "#open=wwasps"
+    python scripts/preview-network-map.py --config tmp/live-config.json   # e.g. the live facilityUrls
 
 tmp/map-preview/ is gitignored.
 
 The module list is read from inc/enqueue.php, so a module added there is
 loaded here. What this cannot show is anything PHP decides: the "Start from"
 select (left out) and facility profile links (the config's facilityUrls is
-empty, so the drawer falls back to the location index search). Check those
-on the live page after the deploy.
+empty, so the drawer falls back to the location index search) - unless
+--config names a JSON file whose keys go over the defaults, such as the live
+page's KOP_NETWORK_CONFIG saved to a file. Check those on the live page after
+the deploy.
 
 Needs Python Playwright for --shots only (pip install playwright).
 """
@@ -30,6 +33,9 @@ import sys
 import threading
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Keys from --config, laid over the preview's own config.
+CONFIG_EXTRA = {}
 
 KIND_LABELS = {
     'person': 'Person', 'facility': 'Programme', 'parent': 'Company',
@@ -62,6 +68,7 @@ def page_html():
         'graphUrl': '/js/data/network/graph.json', 'layoutUrl': '/js/data/network/layout.json',
         'directoryUrl': '/location-index/', 'facilityUrls': {}, 'memorialUrl': '/in-loving-memory/',
     }
+    config.update({k: v for k, v in CONFIG_EXTRA.items() if k not in ('graphUrl', 'layoutUrl')})
     return """<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>Network map preview</title>
 <link rel="stylesheet" href="/css/colors.css"><link rel="stylesheet" href="/css/network-map.css">
@@ -129,7 +136,10 @@ def main():
     parser.add_argument('--port', type=int, default=0, help='port to serve on (default: any free port)')
     parser.add_argument('--shots', metavar='DIR', help='save desktop and phone screenshots here, then exit')
     parser.add_argument('--hash', default='', help='a map address to open, e.g. "#open=wwasps"')
+    parser.add_argument('--config', metavar='FILE', help='JSON laid over the preview config (data URLs stay local)')
     args = parser.parse_args()
+    if args.config:
+        CONFIG_EXTRA.update(json.load(open(args.config, encoding='utf-8')))
 
     server, url = serve(args.port)
     if args.shots:

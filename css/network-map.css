@@ -1128,6 +1128,91 @@ button.kop-network__popup-person {
 	color: #4a4f6a;
 }
 
+/* A name and, when it has one, its facility profile beside it. */
+.kop-network__drawer-row {
+	display: flex;
+	align-items: baseline;
+	gap: 0.4rem;
+}
+
+.kop-network__drawer-row .kop-network__drawer-link {
+	flex: 1 1 auto;
+	width: auto;
+	min-width: 0;
+}
+
+.kop-network__drawer-item-profile {
+	flex: 0 0 auto;
+	font-size: 0.75rem;
+	font-weight: 600;
+	color: var(--kop-navy-blue, #000080);
+}
+
+/* The role on a connection, under its name. */
+.kop-network__drawer-role {
+	display: block;
+	padding: 0 0.4rem 0.2rem;
+	font-size: 0.78rem;
+	color: #2b2f4a;
+}
+
+/* Everywhere else a person has been: indented under them, ruled in teal. */
+.kop-network__drawer-also {
+	margin: 0.1rem 0 0.45rem 0.6rem;
+	padding: 0 0 0 0.55rem;
+	list-style: none;
+	border-left: 2px solid var(--kop-teal, #33A7B5);
+}
+
+.kop-network__drawer-also li {
+	padding: 0.1rem 0;
+}
+
+.kop-network__drawer-also .kop-network__drawer-role {
+	display: inline;
+	padding: 0 0.35rem 0 0;
+}
+
+.kop-network__drawer-also .kop-network__drawer-role::before {
+	content: "- ";
+}
+
+.kop-network__drawer-also-link {
+	padding: 0.1rem 0.25rem;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	text-align: left;
+	font: inherit;
+	font-size: 0.8rem;
+	color: var(--kop-navy-blue, #000080);
+	cursor: pointer;
+}
+
+.kop-network__drawer-also-link:hover,
+.kop-network__drawer-also-link:focus-visible {
+	background: var(--kop-sand, #F2EEDF);
+	text-decoration: underline;
+}
+
+.kop-network__drawer-toggle {
+	display: block;
+	margin: 0.2rem 0 0.2rem;
+	padding: 0.25rem 0.6rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: 999px;
+	background: #fff;
+	font: inherit;
+	font-size: 0.78rem;
+	color: var(--kop-midnight-blue, #000435);
+	cursor: pointer;
+}
+
+.kop-network__drawer-toggle:hover,
+.kop-network__drawer-toggle:focus-visible {
+	background: var(--kop-sand, #F2EEDF);
+}
+
 .kop-network__drawer-empty {
 	font-size: 0.85rem;
 	font-style: italic;

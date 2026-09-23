@@ -2901,6 +2901,82 @@ function run() {
         drawer.update();
     }
 
+    /* The people listed under a place carry, open, everywhere else they
+     * have been; a facility in any list links to its own profile. */
+    {
+        const placeWithTraveller = store.nodes.find((n) => n.kind !== 'person' &&
+            store.neighbours(n.id, true).some((link) => link.other.kind === 'person' &&
+                Drawer.otherRolesFor(store, link.other, n.id).some((row) => row.node.facilityId)));
+        check(!!placeWithTraveller, 'no place has a person who worked anywhere else');
+        const traveller = store.neighbours(placeWithTraveller.id, true)
+            .map((link) => link.other)
+            .find((p) => p.kind === 'person' && Drawer.otherRolesFor(store, p, placeWithTraveller.id).some((row) => row.node.facilityId));
+        const elsewhere = Drawer.otherRolesFor(store, traveller, placeWithTraveller.id);
+        check(elsewhere.every((row) => row.node.id !== placeWithTraveller.id && row.node.kind !== 'person'),
+            'a person\'s other roles list the place the drawer is open on, or other people');
+        const linkedElsewhere = elsewhere.find((row) => row.node.facilityId).node;
+        drawerConfig.facilityUrls[linkedElsewhere.facilityId] = 'https://example.test/facility/elsewhere/';
+
+        focus.clear();
+        flushFrames();
+        focus.select(placeWithTraveller);
+        flushFrames();
+        drawer.update();
+        const alsoLists = drawerBody.querySelectorAll('.kop-network__drawer-also');
+        const theirs = alsoLists.find((list) => list.getAttribute('aria-label') === 'Other roles of ' + traveller.name);
+        check(!!theirs, traveller.name + '\'s other roles are not listed under them when ' +
+            placeWithTraveller.name + ' is open');
+        if (theirs) {
+            const places = theirs.querySelectorAll('.kop-network__drawer-also-link');
+            check(places.length === elsewhere.length, 'the drawer lists ' + places.length + ' other places for ' +
+                traveller.name + ', the record has ' + elsewhere.length);
+            const profiles = theirs.querySelectorAll('.kop-network__drawer-item-profile')
+                .map((a) => a.href);
+            check(profiles.indexOf('https://example.test/facility/elsewhere/') !== -1,
+                linkedElsewhere.name + ' has a profile but no link to it under ' + traveller.name);
+            const place = places.find((b) => b.getAttribute('data-id') === linkedElsewhere.id);
+            place.dispatch('click');
+            flushFrames();
+            drawer.update();
+            check(drawer.shownId() === linkedElsewhere.id, 'a place under a person did not open it');
+        }
+
+        /* Turning the roles off holds from one name to the next, and back on. */
+        focus.clear();
+        flushFrames();
+        focus.select(placeWithTraveller);
+        flushFrames();
+        drawer.update();
+        const toggle = drawerBody.querySelector('.kop-network__drawer-toggle');
+        check(!!toggle && toggle.getAttribute('aria-pressed') === 'true', 'no switch for people\'s other roles, or it starts off');
+        toggle.dispatch('click');
+        check(drawerBody.querySelectorAll('.kop-network__drawer-also').length === 0, 'hiding other roles left them listed');
+        check(drawerBody.querySelectorAll('.kop-network__drawer-link').length === store.neighbours(placeWithTraveller.id, true).length,
+            'hiding other roles changed the connection list');
+        drawer.show(placeWithTraveller);
+        check(drawerBody.querySelectorAll('.kop-network__drawer-also').length === 0, 'the hidden roles came back on the next render');
+        drawerBody.querySelector('.kop-network__drawer-toggle').dispatch('click');
+        check(drawerBody.querySelectorAll('.kop-network__drawer-also').length > 0, 'showing other roles again did not');
+
+        /* A facility with a page, listed as a plain connection, links to it too. */
+        const listedLinked = store.neighbours(placeWithTraveller.id, true)
+            .map((link) => link.other).find((o) => o.facilityId);
+        if (listedLinked) {
+            drawerConfig.facilityUrls[listedLinked.facilityId] = 'https://example.test/facility/listed/';
+            drawer.show(placeWithTraveller);
+            const rowLinks = drawerBody.querySelectorAll('.kop-network__drawer-row')
+                .filter((row) => row.querySelector('.kop-network__drawer-link').getAttribute('data-id') === listedLinked.id)
+                .map((row) => row.querySelector('.kop-network__drawer-item-profile'));
+            check(rowLinks.length > 0 && rowLinks.every((a) => a && a.href === 'https://example.test/facility/listed/'),
+                listedLinked.name + ' is listed without a link to its profile');
+        }
+        focus.clear();
+        flushFrames();
+        focus.select(hub);
+        flushFrames();
+        drawer.update();
+    }
+
     drawerClose.dispatch('click');
     check(drawerEl.hidden === true, 'the close button did not close the drawer');
     drawer.update();

@@ -1260,6 +1260,25 @@ are open with the files involved.
   drawer is a sheet over the lower half, not the whole screen. The link glyph
   beside a label was left out: the drawer and Ctrl-click already reach the
   profile, and a glyph on every linked label crowded the rows.
+
+  *Profiles in the lists and people's other roles (2026-09-23).* The owner
+  asked for every facility to link to its profile and for the people in
+  the drawer to show, by default, every other role they have had. Each row
+  now carries a "Profile" link beside a facility that has a page (the same
+  `profileFor`, own pages only - a location-index search on every row was
+  noise), the role on the connection under the name, and under each person
+  an open, teal-ruled list of every other place they have been and in what
+  role (`otherRolesFor`: every recorded line, not the filtered ones, since
+  it is the person's record; the place the drawer is open on is left out).
+  Each place is a button that opens it and carries its own profile link.
+  "Hide people's other roles" turns the lists off and the choice holds from
+  one name to the next. On the live data 321 of the 556 facility nodes have
+  a page; 36 more match a record that does not qualify for one, and 199
+  match no record (the QA report's unmatched, ambiguous and suggested
+  sections), so those still fall back to the search when opened.
+  `preview-network-map.py --config FILE` lays a saved live
+  `KOP_NETWORK_CONFIG` over the preview's, so the profile links can be seen
+  before a deploy.
 - **URL state** (`js/network-map/url-state.js`). `#open=id,id&mode=expand`,
   written with replaceState on every change and read once the data loads
   and on hashchange, through `focus.restore`. A name the board no longer has
