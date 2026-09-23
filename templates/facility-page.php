@@ -439,6 +439,28 @@ get_header();
 
     </div>
 
+    <?php
+    /* Where to report this one. Somebody who has just read a facility's record
+     * is the likeliest person in the site to need it, so it sits at the end of
+     * the record rather than behind another click. One line and a deep link
+     * into that state's block, not the whole directory. Prints nothing for a
+     * state the directory has not covered. */
+    $kop_fp_report_url = function_exists('kop_reporting_state_url')
+        ? kop_reporting_state_url($page['state_name'] ?: $page['state_code'])
+        : '';
+    if ($kop_fp_report_url !== '') :
+    ?>
+        <aside class="kop-fp-reporting">
+            <h2>Reporting this program</h2>
+            <p>
+                If something happened here, <a href="<?php echo esc_url($kop_fp_report_url); ?>">the
+                <?php echo esc_html($page['state_name']); ?> reporting channels</a> list who can act and
+                what each one can actually do - the board that licenses the therapist, the agency that
+                licenses the program, and the bodies with a right to investigate it.
+            </p>
+        </aside>
+    <?php endif; ?>
+
     <footer class="kop-fp-footer">
         <?php if ($page['updated_label'] !== '') : ?>
             <span>Record updated <time datetime="<?php echo esc_attr(date('c', strtotime($page['updated_at']) ?: time())); ?>"><?php echo esc_html($page['updated_label']); ?></time>.</span>

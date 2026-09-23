@@ -108,6 +108,25 @@ function kop_reporting_state($state) {
     return null;
 }
 
+/**
+ * Deep link to one state's block on the reporting page, or '' when that state
+ * is not covered or the page does not exist on this install.
+ *
+ * For somewhere like a facility page, which wants to point at the right state
+ * without carrying the whole directory.
+ */
+function kop_reporting_state_url($state) {
+    $record = kop_reporting_state($state);
+    if (!$record) {
+        return '';
+    }
+    $page = get_page_by_path(KOP_REPORTING_SLUG);
+    if (!$page) {
+        return '';
+    }
+    return (string) add_query_arg('state', $record['slug'], get_permalink($page));
+}
+
 /** Categories in render order, as the build wrote them. */
 function kop_reporting_categories() {
     $directory = kop_reporting_directory();

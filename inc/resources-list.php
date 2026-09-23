@@ -10,12 +10,15 @@
  * kop_resources_groups() is what the page shows everybody. It was ported from
  * the live page, so every entry in it is something the site already published.
  *
- * kop_resources_proposed() is a starter set for the three needs the page has
- * never covered: a crisis line, how to report abuse, and where a family in the
- * middle of a placement can turn. Those are rendered only for someone who can
- * edit the page, under a heading that says so, because they are proposals: the
- * site owner decides which belong and what they should say. Moving one into
- * kop_resources_groups() publishes it; deleting it from here drops it.
+ * kop_resources_proposed() is a starter set for the needs the page has never
+ * covered. It began with three: a crisis line, how to report abuse, and where
+ * a family in the middle of a placement can turn. The reporting one has since
+ * been published, backed by js/data/reporting/ - every number there is sourced
+ * and dated, so it no longer needed to wait on somebody checking it by hand.
+ * The other two are still proposals, rendered only for someone who can edit
+ * the page, under a heading that says so, because the site owner decides which
+ * belong and what they should say. Moving one into kop_resources_groups()
+ * publishes it; deleting it from here drops it.
  *
  * Every entry takes:
  *   name     - the link text
@@ -48,6 +51,30 @@ if (!defined('KOP_RESOURCES_SLUG')) {
  */
 function kop_resources_groups() {
     return apply_filters('kop_resources_groups', array(
+        // First, because it is the thing somebody is most often here to find
+        // and the only group that leads anywhere with a phone number on it.
+        array(
+            'heading' => 'Reporting abuse in a program',
+            'intro'   => 'A report can go to more than one place at once, and usually should. The bodies that can act are different in every state, and they do not talk to each other reliably.',
+            'entries' => array(
+                array(
+                    'name' => 'Where to report, state by state',
+                    'page' => KOP_REPORTING_SLUG,
+                    'note' => 'Every state and DC: the board that holds the therapist\'s licence, the agency that licenses the program, the legal and law enforcement channels, and the oversight bodies with a right to investigate. Each entry says what that body can actually do, whether it takes an anonymous report, and the day somebody last checked the number.',
+                ),
+                array(
+                    'name'    => 'Childhelp National Child Abuse Hotline',
+                    'url'     => 'https://childhelphotline.org/',
+                    'contact' => 'Call or text 1-800-422-4453',
+                    'note'    => 'Counselors around the clock. They will talk through what happened and work out which state agency takes the report, if you would rather start there than with a form.',
+                ),
+                array(
+                    'name' => 'Tell this project',
+                    'page' => 'tti-data-submission',
+                    'note' => 'Anonymous. It does not reach any authority, but it goes into the public record of the program.',
+                ),
+            ),
+        ),
         array(
             'heading' => 'Taking legal action',
             'intro'   => 'What a survivor needs to know before looking for a lawyer.',
@@ -243,10 +270,12 @@ function kop_resources_groups() {
 /**
  * Proposed entries, shown only to someone who can edit the page.
  *
- * The three needs the page has never answered. Everything here is a national
- * United States service, because the page has no international list yet; that
- * is one of the decisions waiting. Check every number before publishing one:
- * a wrong crisis number is worse than no number.
+ * The needs the page has never answered. Everything here is a national United
+ * States service, because the page has no international list yet; that is one
+ * of the decisions waiting. Check every number before publishing one: a wrong
+ * crisis number is worse than no number. The reporting group that used to sit
+ * here is published now - see kop_resources_groups() - because the reporting
+ * directory carries a source and a verification date for every entry.
  */
 function kop_resources_proposed() {
     return apply_filters('kop_resources_proposed', array(
@@ -289,38 +318,6 @@ function kop_resources_proposed() {
                     'url'     => 'https://hotline.rainn.org/',
                     'contact' => 'Call 1-800-656-4673',
                     'note'    => 'Sexual assault support, including assault that happened years ago.',
-                ),
-            ),
-        ),
-        array(
-            'heading' => 'Reporting abuse in a program',
-            'intro'   => 'A report can go to more than one place at once, and usually should.',
-            'entries' => array(
-                array(
-                    'name'    => 'Childhelp National Child Abuse Hotline',
-                    'url'     => 'https://www.childhelphotline.org/',
-                    'contact' => 'Call or text 1-800-422-4453',
-                    'note'    => 'Will talk through what to report and where, including anonymously.',
-                ),
-                array(
-                    'name' => 'Your state child protection line',
-                    'url'  => 'https://www.childwelfare.gov/topics/responding/reporting/how/',
-                    'note' => 'The federal directory of state reporting numbers. Report to the state the program is in, not the state you live in.',
-                ),
-                array(
-                    'name' => 'The state licensing agency',
-                    'page' => 'inspection-reports',
-                    'note' => 'The agency that inspects the program is the one that can suspend its licence. This page lists the state trackers and what each agency publishes.',
-                ),
-                array(
-                    'name' => 'Your state Protection and Advocacy agency',
-                    'url'  => 'https://www.ndrn.org/about/ndrn-member-agencies/',
-                    'note' => 'The P&A network has legal authority to investigate abuse of disabled people in institutions, which covers most of these programs.',
-                ),
-                array(
-                    'name' => 'Tell this project',
-                    'page' => 'tti-data-submission',
-                    'note' => 'Anonymous. It does not reach any authority, but it goes into the public record of the program.',
                 ),
             ),
         ),

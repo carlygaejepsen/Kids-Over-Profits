@@ -118,7 +118,14 @@ function get_option($name, $default = false) {
     return $default;
 }
 function update_option() { return true; }
-function get_page_by_path() { return null; }
+/* Only the pages the templates actually look up by slug. Returning null for
+ * everything used to mean the facility page's "where to report this" callout
+ * was never rendered by this harness at all, so a break in it would have gone
+ * unnoticed until it reached the site. */
+function get_page_by_path($slug = '') {
+    if ($slug === 'report-abuse') return (object) array('ID' => 1, 'post_name' => 'report-abuse');
+    return null;
+}
 function get_permalink($post = null) { return is_object($post) && isset($post->post_name) ? home_url('/' . $post->post_name . '/') : ''; }
 function get_posts($args = array()) {
     global $wpdb;
@@ -227,6 +234,8 @@ require_once dirname(__DIR__) . '/inc/database.php';
 require_once dirname(__DIR__) . '/inc/rest-api.php';
 require_once dirname(__DIR__) . '/inc/country-rest-api.php';
 require_once dirname(__DIR__) . '/inc/facility-pages.php';
+// The facility template asks this for the "where to report" deep link.
+require_once dirname(__DIR__) . '/inc/reporting-directory.php';
 
 $failures = 0;
 $check = function ($label, $ok, $detail = '') use (&$failures) {
@@ -442,6 +451,31 @@ foreach ($picks as $id) {
     echo '      ' . $file . "\n";
 }
 echo '  sections rendered across samples: ' . json_encode($sections_seen) . "\n";
+
+// Where-to-report callout. It appears only for a state the reporting directory
+// covers, and it has to deep-link into that state rather than the bare page.
+// Without this, a break in the callout would go unnoticed until it shipped.
+$reporting_seen = 0;
+$reporting_bad = array();
+foreach ($picks as $rid) {
+    $rdata = kop_facility_page_data($rid);
+    if (!$rdata) continue;
+    $rfile = $out_dir . '/' . $rdata['slug'] . '.html';
+    if (!is_readable($rfile)) continue;
+    $rhtml = file_get_contents($rfile);
+    $has = strpos($rhtml, 'kop-fp-reporting') !== false;
+    $covered = kop_reporting_state($rdata['state_name'] !== '' ? $rdata['state_name'] : $rdata['state_code']) !== null;
+    if ($has !== $covered) {
+        $reporting_bad[] = $rdata['slug'] . ($covered ? ' (covered, no callout)' : ' (uncovered, callout shown)');
+    } elseif ($has && strpos($rhtml, 'state=') === false) {
+        $reporting_bad[] = $rdata['slug'] . ' (callout does not deep-link a state)';
+    }
+    if ($has) $reporting_seen++;
+}
+$check('where-to-report callout matches directory coverage', !$reporting_bad,
+    $reporting_bad ? implode('; ', $reporting_bad)
+                   : $reporting_seen . ' of ' . count($picks) . ' sampled facilities carry it');
+
 
 // Sitemap entries
 $entries = kop_facility_pages_sitemap_entries();

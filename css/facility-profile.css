@@ -308,6 +308,36 @@
     color: var(--kop-teal-ink, #24757F);
 }
 
+/* Where to report this program. Sits between the record and the footer: the
+ * person who has just read a facility's history is the likeliest reader on the
+ * site to need it, so it gets a rule above it rather than a card fighting the
+ * sections for attention. inc/reporting-directory.php decides whether it
+ * appears at all. */
+.kop-fp-reporting {
+    margin-top: 2.5rem;
+    padding: 1rem 1.15rem;
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-radius: 0 6px 6px 0;
+}
+
+.kop-fp-reporting h2 {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-fp-reporting p {
+    margin: 0;
+    max-width: 68ch;
+    line-height: 1.6;
+}
+
+.kop-fp-reporting a {
+    color: var(--kop-teal-ink, #24757F);
+    font-weight: 600;
+}
+
 @media (max-width: 640px) {
     .kop-facility-profile {
         padding: 1rem 1rem 2rem;
