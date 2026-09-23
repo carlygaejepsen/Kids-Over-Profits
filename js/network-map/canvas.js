@@ -131,12 +131,14 @@
     var PORT_R = 3;
     /* How long a list of old names may run before it is given as the first
      * name and a count. The line is cut to the bubble in any case, and
-     * "formerly Sequel TSI Owens Cross R…" says less than "formerly
+     * "formerly Sequel TSI Owens Cross R\u2026" says less than "formerly
      * Sequel TSI Owens Cross Rds +1", which at least admits there is more. */
     var FORMER_CHARS = 34;
     /* How far a sub-line may stretch its bubble past the name's own width;
      * see baseWidth. */
     var SUB_STRETCH = 1;
+    /* Longest a name can be and still read as initials rather than a name. */
+    var ABBREV_MAX = 8;
 
     /**
      * The small lines a bubble carries under its name, in reading order.
@@ -148,22 +150,127 @@
      * one old name the line names the first and counts the rest, and the
      * drawer lists them all.
      */
+    /** The words of a name, for comparing one name against another. */
+    function wordsOf(name) {
+        return String(name).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().split(' ').filter(Boolean);
+    }
+
+    /**
+     * Whether a name is initials rather than a name: PCS for Provo Canyon
+     * School, SCISU for Second Chances in Southern Utah. No lower case and
+     * no space, in a few characters, is what an abbreviation looks like.
+     *
+     * They stay in the drawer and in search, where someone who types PCS
+     * still finds the school. They do not go on the board, where they tell
+     * a reader nothing the name above them does not already say.
+     */
+    function isAbbreviation(name) {
+        var text = String(name).trim();
+        return text.length <= ABBREV_MAX && text.indexOf(' ') === -1 && text.toUpperCase() === text;
+    }
+
+    /* Words that carry no name of their own, so their coming and going does
+     * not make one name into another. */
+    var FILLER = { of: 1, the: 1, and: 1, at: 1, for: 1, in: 1, a: 1, inc: 1, llc: 1 };
+
+    function namingWords(name) {
+        return wordsOf(name).filter(function (word) { return !FILLER[word]; });
+    }
+
+    /**
+     * Whether a word is the initials of a run of words in the name: "djs"
+     * for Department of Juvenile Services.
+     */
+    function initialsOf(word, held) {
+        if (word.length < 2) return false;
+        for (var start = 0; start + word.length <= held.length; start++) {
+            var same = true;
+            for (var i = 0; i < word.length; i++) {
+                if (held[start + i].charAt(0) !== word.charAt(i)) { same = false; break; }
+            }
+            if (same) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Whether a name is the node's own name said differently rather than
+     * another name it went by.
+     *
+     * It is the same name when it brings no new word: every word of it is
+     * already in the name above, or is a shortened form of one ("Dept." for
+     * Department, "Cantril" for Cantrill), or spells out the initials of a
+     * run of them ("Maryland DJS"). Words that name nothing - of, the, and -
+     * are not counted either way.
+     *
+     * So "J Atkin" under J Ralph Atkin, "CEDU" under CEDU Family of
+     * Services and "Three Springs of Duck River" under Three Springs Duck
+     * River all stay off the board, while "Green Valley Academy" under
+     * WayPoint Academy goes on it.
+     */
+    /**
+     * Whether a word is a shortened form of a longer one: its letters in
+     * order, first letter included. "Dept" for Department, which a prefix
+     * test misses because department is spelt with an a where dept has a t.
+     */
+    function isContraction(word, held) {
+        if (word.length < 3 || held.length <= word.length || held.charAt(0) !== word.charAt(0)) return false;
+        var at = 0;
+        for (var i = 0; i < held.length && at < word.length; i++) {
+            if (held.charAt(i) === word.charAt(at)) at++;
+        }
+        return at === word.length;
+    }
+
+    function isSameName(name, of) {
+        var held = namingWords(of);
+        var words = namingWords(name);
+        if (!words.length) return true;
+        return words.every(function (word) {
+            for (var i = 0; i < held.length; i++) {
+                if (held[i] === word || isContraction(word, held[i])) return true;
+            }
+            return initialsOf(word, held);
+        });
+    }
+
+    /**
+     * The other names a node carries that are worth drawing on the board:
+     * everything it answers to, less the initials and the shorter ways of
+     * saying its own name.
+     */
+    function boardOtherNames(node) {
+        var seen = Object.create(null);
+        return (node.otherNames || []).concat(node.aliases || []).filter(function (name) {
+            var key = String(name).toLowerCase();
+            if (seen[key] || isAbbreviation(name) || isSameName(name, node.name)) return false;
+            seen[key] = true;
+            return true;
+        });
+    }
+
+    /** "a, b, c", or the first and a count once that runs too long. */
+    function nameList(prefix, names) {
+        var text = prefix + ' ' + names.join(', ');
+        if (text.length <= FORMER_CHARS) return text;
+        return prefix + ' ' + names[0] + (names.length > 1 ? ' +' + (names.length - 1) : '');
+    }
+
     function subLines(node) {
         if (node._subLines !== undefined) return node._subLines;
         var lines = [];
         if (node.years) lines.push(node.years);
 
+        /* What the place was called, then what else it is called. The first
+         * is a claim about time and comes first; the second only says the
+         * same place answers to another name. */
+        var said = [];
         var former = node.formerNames || [];
-        var text = '';
-        if (former.length) {
-            text = 'formerly ' + former.join(', ');
-            if (text.length > FORMER_CHARS) {
-                text = 'formerly ' + former[0];
-                if (former.length > 1) text += ' +' + (former.length - 1);
-            }
-        } else if (node.currentName) {
-            text = 'now ' + node.currentName;
-        }
+        if (former.length) said.push(nameList('formerly', former));
+        else if (node.currentName) said.push('now ' + node.currentName);
+        var also = boardOtherNames(node);
+        if (also.length) said.push(nameList('also', also));
+        var text = said.join(' \u00b7 ');
 
         if (text) {
             /* Where the name already carries its years, the old name joins
@@ -1990,6 +2097,11 @@
         MARKER_MAX: MARKER_MAX,
         edgeSwatch: edgeSwatch,
         personSwatch: personSwatch,
+        /* The two rules that keep initials and short forms of a node's own
+         * name off the board; exported so the tests can hold them. */
+        isAbbreviation: isAbbreviation,
+        isSameName: isSameName,
+        boardOtherNames: boardOtherNames,
         edgeFadeFor: edgeFadeFor,
         swatch: swatch,
         segmentHitsBox: segmentHitsBox,

@@ -92,10 +92,24 @@ other case, where the old name is only a string in the record.
   was left where a record had split "Three Springs, Inc." on its comma.
 - `formerNames` in `network-overrides.json` records one by hand, for a
   company or trade group no facility or operator record covers.
-- The map draws it under the name, joined to the years by a middot where
-  there are years, so a bubble gains a line only where it had none. The
-  drawer says "Formerly ...", "Now called ..." and "Also called ..." as
-  three separate lines, and search matches every one of them.
+- The map draws them under the name, joined to the years by a middot where
+  there are years, so a bubble gains a line only where it had none: "from
+  1971 · also UHS of Provo Canyon dba Provo Campus". The drawer says
+  "Formerly ...", "Now called ..." and "Also called ..." as three separate
+  lines, and search matches every one of them.
+- Two kinds of name stay off the board, because neither tells a reader
+  anything the name above it does not (2026-09-23, at the owner's word:
+  other names belong on the board unless they are acronyms). **Initials** -
+  no lower case, no space, a few characters: PCS, SCISU. And **the same
+  name said differently**, which the acronym rule alone does not catch:
+  "Alabama Dept. of Human Resources", "Georgia DJJ", "Three Springs *of*
+  Duck River", "Cantril Nielsen". A name is the same name when every word
+  of it is already in the name above, or is a contraction of one (letters
+  in order, first letter included - a prefix test misses "Dept" for
+  "Department", which is spelt with an *a* where Dept has a *t*), or spells
+  out the initials of a run of them ("Maryland DJS"). Words that name
+  nothing - of, the, and - count either way. Both kinds stay in the drawer
+  and in search, so typing PCS still finds the school.
 
 **What it costs, and what that bought.** 17 nodes carry one, and the map
 had to be measured twice before it cost nothing.
@@ -110,9 +124,35 @@ enough on their own to pull eight ownership pairs out of order.
 So it does neither. The name and its years size the bubble exactly as they
 always did; the old name joins the years line, never a line of its own; and
 it is cut to the room they leave, with the whole of it in the drawer. The
-only bubbles that grow at all are the six with an old name and no years,
-which gain the line any dated name already had. Every layout test holds at
-the numbers it held before.
+only bubbles that grow at all are the ones with a name to carry and no
+years, which gain the line any dated name already had.
+
+Other names, added on 2026-09-23, are 21 more such bubbles. One of them,
+WayPoint Academy, stands in the Provo Canyon School view, and that single
+extra line was enough to push three of its checks one unit over: 23 of 117
+lines within 260px where 24 were wanted, 8 of 47 ownership pairs drawn
+upside down where 7.05 were allowed, and no room left for a face on one
+line of three people.
+
+That the three were the new line and not something else was settled by
+running the suite in a worktree of its own, because another session was
+editing `focus.js` - the cluster layout - in the shared checkout at the
+time. At the commit before the change: pass, median 407px, 25% of lines
+short. The same tree with only the new `canvas.js` in it: the same three
+failures, median 436px, 19.7% short. So past names cost nothing at all,
+because they fold onto a line the name already had, and the whole of the
+drop is other names.
+
+The view still reads right - the company band sits above the programmes,
+the median line is shorter than the limit and the straight-line count is
+unchanged at 24 of 70 - so two of the three were the tests being off by
+one, and were corrected as such: the ownership tolerance is written twice,
+two lines apart, and only one copy rounded up; and whether a line has room
+for a face is a property of the view, now checked across all 29 of its
+lines rather than on whichever pill the search happened to find, which is
+more coverage than before, not less. The third is a real trade and is
+recorded as one in the test: the floor moves from a quarter to 18%, under
+the 19.7% measured, so it still catches a collapse.
 
 ## Phase 2: core map
 

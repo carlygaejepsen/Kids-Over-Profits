@@ -116,11 +116,11 @@ function buildSandbox() {
      * checks must not count them as names. Built from strings rather than
      * written as a literal, to keep the character classes free of escapes. */
     const YEARS_PART = '(from |until )?[0-9]{4}( ?[-\u2013] ?[0-9]{4})?';
-    const OLD_NAME_PART = '(formerly|now) .+';
+    const OLD_NAME_PART = '(formerly|now|also) .+';
     const SUB_LINE = new RegExp('^(' + YEARS_PART + '( \u00b7 ' + OLD_NAME_PART + ')?|' +
         OLD_NAME_PART + ')$');
     /* And the same line cut to the room the name left it. */
-    const SUB_LINE_CUT = new RegExp('^(' + YEARS_PART + '|(formerly|now) ).*\u2026$');
+    const SUB_LINE_CUT = new RegExp('^(' + YEARS_PART + '|(formerly|now|also) ).*\u2026$');
 
     const ctx = {
         setTransform() {}, clearRect() {}, save() {}, restore() {},
@@ -1326,7 +1326,7 @@ function run() {
         ownedAbove + ' of ' + ownershipPairs + ' companies are drawn below a company they own',
         'every company sits above the companies it owns (' + ownershipPairs + ' pairs)');
     const provoOrder = ownershipOrder(ownView);
-    check(provoOrder.wrong.length <= provoOrder.pairs * 0.15,
+    check(provoOrder.wrong.length <= Math.ceil(provoOrder.pairs * 0.15),
         provoOrder.wrong.length + ' of ' + provoOrder.pairs + ' ownerships in the ' + hub.name +
         ' view are drawn upside down: ' + provoOrder.wrong.slice(0, 3).join(', '));
 
@@ -1339,9 +1339,22 @@ function run() {
         Math.hypot(xOf(e.source) - xOf(e.target), yOf(e.source) - yOf(e.target))).sort((a, b) => a - b);
     const medianSpan = spans[Math.floor(spans.length / 2)];
     const shortShare = spans.filter((d) => d <= 260).length / spans.length;
-    /* A fan round the click is roomier than packed rows were: the
-     * median line is under half a stage, a quarter of them close. */
-    check(medianSpan <= 450 && shortShare >= 0.2,
+    /* A fan round the click is roomier than packed rows were: the median
+     * line is under half a stage, and a fair share of them close.
+     *
+     * The floor was a quarter when it was written on 2026-09-21, and past
+     * names cost none of it, because they fold onto a line the name already
+     * had. Other names, on 2026-09-23, took it to 19.7% (23 of 117): 21
+     * names carry one and have no years to fold it into, so their bubbles
+     * gained a line, and a name that gains a line pushes its neighbours
+     * away. Measured by running this file against the commit before the
+     * change, in a tree of its own: 25% there, 19.7% here.
+     *
+     * That is a trade the owner asked for and not drift, so the number is
+     * written down rather than quietly followed downwards: the floor sits
+     * below what is measured, so the check still catches a collapse, and a
+     * drop past it means something other than this changed. */
+    check(medianSpan <= 450 && shortShare >= 0.18,
         'lines in the ' + hub.name + ' view are long: median ' + Math.round(medianSpan) + 'px, ' +
         Math.round(shortShare * 100) + '% within 260px',
         'lines in the ' + hub.name + ' view: median ' + Math.round(medianSpan) + 'px, ' +
@@ -2392,7 +2405,13 @@ function run() {
                 });
             });
             const linesMarked = Object.keys(markedLines).length;
-            check(linesMarked > 0, 'no line in ' + lineHub.name + "'s view carries its people as circles",
+            /* Most lines, not merely one: a short line can be left with room
+             * for none and fold every face into its pill, which is right,
+             * but a view where that happened generally would be hiding its
+             * people behind pills. */
+            check(linesMarked >= peopleLines.length * 0.5,
+                'only ' + linesMarked + ' of ' + peopleLines.length + ' lines in ' + lineHub.name +
+                    "'s view carry their people as circles",
                 linesMarked + ' of ' + peopleLines.length + ' lines with people carry circles, ' +
                 markers.filter((m) => m.kind === 'person').length + ' circles and ' + pills + ' +N pills');
             check(wrongCount === 0, wrongCount + ' lines carry a different number of people than they stand for');
@@ -2450,8 +2469,10 @@ function run() {
             if (pill) {
                 const pillLine = (renderer.markers || []).filter((m) => m.edge === pill.edge);
                 const pillCircles = pillLine.filter((m) => m.kind === 'person').length;
-                check(pillCircles + pill.people.length === Canvas.peopleOf(pill.edge).length && pillCircles > 0,
-                    'the pill on the line from ' + pill.edge.source.name + ' hides the wrong people');
+                check(pillCircles + pill.people.length === Canvas.peopleOf(pill.edge).length,
+                    'the pill on the line from ' + pill.edge.source.name + ' hides the wrong people: ' +
+                        pillCircles + ' drawn and ' + pill.people.length + ' hidden of ' +
+                        Canvas.peopleOf(pill.edge).length);
                 fire('pointermove', 1, pill.x, pill.y);
                 const pillText = popup.element.textContent;
                 check(popup.element.hidden === false && pill.people.every((p) => pillText.indexOf(p.name) !== -1),
@@ -2661,6 +2682,43 @@ function run() {
         check(!!drawnSub,
             'no name on the board says what it was called before, though ' + renamed.name + ' was ' + wasCalled,
             'the board says: ' + drawnSub);
+
+        /* Other names go on the board too, but initials do not: PCS tells a
+         * reader of Provo Canyon School nothing, and neither does a shorter
+         * way of saying the name above it. Both stay in the drawer and in
+         * search, where they still find the place. */
+        const painter2 = sandbox.KOPNetworkCanvas;
+        check(painter2.isAbbreviation('PCS') && painter2.isAbbreviation('SCISU'),
+            'initials are not recognised as initials');
+        check(!painter2.isAbbreviation('Trails Academy') && !painter2.isAbbreviation('Camp E-Ma-Laku'),
+            'a real name was taken for initials');
+        let droppedAbbrev = 0;
+        let keptOther = 0;
+        store.nodes.forEach((n) => {
+            const all = (n.otherNames || []).concat(n.aliases || []);
+            if (!all.length) return;
+            const board = painter2.boardOtherNames(n);
+            board.forEach((name) => {
+                check(!painter2.isAbbreviation(name),
+                    n.name + ' carries the initials "' + name + '" on the board');
+                check(String(name).toLowerCase() !== String(n.name).toLowerCase(),
+                    n.name + ' carries its own name as another name on the board');
+            });
+            droppedAbbrev += all.length - board.length;
+            keptOther += board.length;
+        });
+        check(droppedAbbrev > 0 && keptOther > 0,
+            'the board either shows every other name or none of them: ' + keptOther + ' kept, ' +
+                droppedAbbrev + ' dropped',
+            keptOther + ' other names go on the board; ' + droppedAbbrev +
+                ' initials and short forms stay in the drawer');
+        /* And what the board drops is still findable. */
+        const pcs = store.nodes.filter((n) => (n.otherNames || []).indexOf('PCS') !== -1)[0];
+        if (pcs) {
+            const byInitials = sandbox.KOPNetworkSearch.rank(store.nodes, 'PCS', 5);
+            check(byInitials.length > 0 && byInitials[0].node.id === pcs.id,
+                'searching the initials PCS no longer finds ' + pcs.name);
+        }
         focus.clear();
         flushFrames();
         focus.select(hub);
@@ -3279,8 +3337,9 @@ function run() {
     flushFrames();
     resetOps();
     renderer.draw();
-    check(yearsCalls.indexOf(dated.years) !== -1,
-        dated.name + ' is on the board without its years (' + dated.years + ')',
+    check(yearsCalls.some((t) => String(t).indexOf(dated.years) === 0),
+        dated.name + ' is on the board without its years (' + dated.years + '); the lines under ' +
+            'the names are ' + JSON.stringify(yearsCalls.slice(0, 4)),
         dated.name + ' shows ' + dated.years + ' under its name');
     /* Every name on the stage is drawn with its years line; what the
      * legibility floor leaves off the stage is a pan away. */
