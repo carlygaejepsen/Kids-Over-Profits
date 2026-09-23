@@ -79,3 +79,6 @@ require_once get_stylesheet_directory() . '/inc/resources-list.php';
 
 // Network map data access (graph metadata + facility profile URLs)
 require_once get_stylesheet_directory() . '/inc/network-map.php';
+
+// Where each long-form article sits: its trail back to a hub, and what to read next
+require_once get_stylesheet_directory() . '/inc/article-parts.php';

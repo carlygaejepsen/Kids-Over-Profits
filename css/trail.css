@@ -1,0 +1,40 @@
+/*
+ * The trail above the title on the long-form articles and the hub pages.
+ *
+ * Its own file because the two templates load different stylesheets and both
+ * print the trail: inc/article-parts.php decides what is in it.
+ */
+
+/* ---- Trail ------------------------------------------------------------- */
+
+/* Above the title, quiet: it is orientation, not part of the piece. The
+ * separator is drawn by CSS rather than typed into the list, so a screen
+ * reader reads the links and not a row of arrows. */
+.kop-article-trail {
+    margin: 0 0 1.25rem;
+    font-size: 0.82rem;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-article-trail ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-article-trail li + li::before {
+    content: "\203A";
+    margin-right: 0.5rem;
+    opacity: 0.55;
+}
+
+.kop-article-trail a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-article-trail [aria-current="page"] {
+    color: var(--kop-text-secondary, #4a4f6a);
+}

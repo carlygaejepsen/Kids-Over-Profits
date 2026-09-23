@@ -1,9 +1,10 @@
 # Fix plan, September 2026
 
 The fix list raised on 2026-09-17 and what became of each item, then four
-issues the owner raised on 2026-09-18 (items 11 to 14). Everything from the
-first list is live on kidsoverprofits.org except the network map's last
-steps; the second list is open.
+issues the owner raised on 2026-09-18 (items 11 to 14), then a
+reading-experience brief of 2026-09-22 (items 15 to 19). Everything from
+the first list is live on kidsoverprofits.org except the network map's
+last steps; the second list is open, and the third has not been started.
 
 Last updated 2026-09-22.
 
@@ -29,6 +30,12 @@ Last updated 2026-09-22.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
+| 15 | Long-form articles: orientation and structure | 15A breadcrumbs and 15G next links done 2026-09-22; seven parts open, see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 16 | Spacing, typography and colour contrast | Open; five accent pairs fail WCAG AA as text |
+| 17 | Loading skeletons for the JSON-driven pages | Open |
+| 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
+| 19 | Reusable article pieces | Open |
+| 20 | Two live links point into the public staging site | Open; both fixes are the owner's (content edit, hosting) |
 
 ## Waiting on the owner
 
@@ -851,3 +858,269 @@ Plan:
 Open decisions: the scoring weights and the harm categories (a starter set
 is above), whether a finding the facility corrected on the spot ranks lower,
 and whether the page shows the Texas risk level or the site's own score.
+
+---
+
+# Raised 2026-09-22: reading the long pages
+
+A list of site improvements arrived on 2026-09-22, written by another
+assistant as a hand-off brief for a developer. It is reproduced below as
+items 15 to 19, regrouped and checked against this theme. Nothing in it is
+wrong about the reading experience; three of its assumptions about the
+build needed correcting, and the items say what replaces them:
+
+- **ACF is installed; the theme does not use it.** Corrected 2026-09-22:
+  `advanced-custom-fields/acf.php` is active on production, though nothing
+  in the theme calls `get_field()`. Either route works for the editorial
+  values below. Post meta with a small accessor keeps them in git-tracked
+  code and needs no field group, the way `kop_research_relevance` already
+  works (item 2A); ACF gives an editor a form without any code. The choice
+  is the owner's, and it can differ per field.
+- **A custom post type is not needed and would cost URLs.** The 29
+  timelines and case analyses are ordinary Pages already assigned
+  `templates/page-article.php` by slug in `kop_template_assignments()`
+  (`inc/admin.php`), and the 11 hubs are assigned `page-hub.php` the same
+  way. That map is the ordering and grouping hook the brief wants a CPT
+  for. Converting would mean migrating every page, every URL and every
+  inbound link for no behaviour the map cannot give.
+- **Yoast is installed and already prints a BreadcrumbList, a flat one.**
+  Corrected 2026-09-22: every page carries "Home > this page" in Yoast's
+  schema graph and nothing in between, because no page has a parent. The
+  hierarchy still has to come from somewhere, but it should be handed to
+  Yoast rather than printed again: two BreadcrumbLists on one page disagree
+  with each other. Yoast draws no visible trail on this theme, so that part
+  is the template's.
+
+Some of the brief is already live and should not be rebuilt.
+`templates/page-article.php` prints a reading time, an updated date, a
+standfirst from the excerpt, a contents list (a native `<details>` block,
+open by default) built from the article's own headings or its bold-only
+marker paragraphs, and a corrections link. `css/article.css` sets a 72ch
+measure at 1.7 line-height and `scroll-margin-top: 6rem` on headings, so
+in-page anchors already clear the fixed header.
+
+The pages the brief names are
+[/advocacy-history/](https://kidsoverprofits.org/advocacy-history/),
+[/corporatization/](https://kidsoverprofits.org/corporatization/),
+[/lawsuits/](https://kidsoverprofits.org/lawsuits/). The fourth, "Survivors
+& Families Fight Back", is the same page as the first (see 18D).
+
+---
+
+## 15. Long-form articles: orientation and structure
+
+All of this lands in `templates/page-article.php`, `templates/page-hub.php`
+and `css/article.css`. No bundler, no new plugin.
+
+**15A. Breadcrumbs on every article and hub page.** Done 2026-09-22.
+`inc/article-parts.php` holds `kop_article_parents()`, an ordered map of
+page slug to the slug it is read under, and both templates print the trail
+above the title (`css/trail.css`, loaded by each). The order of the map is
+also the reading order, so 15G falls out of the same three lines.
+
+The History branch is not guesswork: the hub links its four, and
+`early-child-control` and `birth-of-the-tti` turned out to be index pages -
+a page of links and nothing else - so each is a real step between the hub
+and the timeline a reader lands on. The articles under the other four hubs
+are placed by subject and are the owner's to move; nothing else changes
+when one does. `scripts/test-article-parts.php` checks the map against
+`kop_template_assignments()`, so an article that gains the reading template
+and is never placed fails the test instead of reaching a reader with no
+trail.
+
+The machine-readable copy goes to Yoast through `wpseo_breadcrumb_links`,
+not into a second `<script>` of our own.
+
+**15B. Collapsible sections.** Wrap each h2 section of a long article in a
+native `<details>`, no JavaScript. Two rules, or it costs more than it
+buys: keep them **open by default** (a closed `<details>` is invisible to
+the browser's find-in-page and to an anchor jump from the contents list),
+and only apply it above a length threshold, so the short articles are
+untouched. If a collapsed default is ever wanted, a `hashchange` handler
+has to open the target section first. Candidates named in the brief:
+Corporatization, Advocacy History, Straight Inc, WWASP.
+
+**15C. Micro-summaries under each section header.** One sentence per
+section, editorial, never generated. `kop_article_sections()` already
+assigns a stable id to every heading it finds; store the summaries as post
+meta (`kop_article_section_summaries`, JSON keyed by that id) and have the
+template print each one under its heading. The same meta gives 15F its
+years.
+
+**15D. Colour-coded era tags.** CSS utility classes over `css/colors.css`,
+one per era: nonprofit, for-profit, private equity, survivor advocacy. Two
+constraints. The palette reserves the bright accents for borders and
+highlights, not backgrounds, so an era reads as a rule or a chip outline,
+not a block of colour. And colour must not be the only carrier of the
+meaning (WCAG 1.4.1): the tag always prints its era name.
+
+**15E. A "Why this matters" block.** Post meta
+(`kop_article_why_this_matters`), printed by the template between the
+standfirst and the contents list, so it is consistent across pages and no
+editor has to place it in the body. Written for journalists, policymakers
+and parents.
+
+**15F. A horizontal timeline graphic.** Inline SVG plus CSS, year nodes
+linking to the section anchors the template already generates. Needs a year
+per section from 15C's meta. It has to be keyboard-reachable (each node a
+real link), it must not be the only route to a section (the contents list
+stays), and on a phone it either scrolls horizontally with a visible
+scrollbar or is hidden.
+
+**15G. "Continue to next section".** Done 2026-09-22. Previous and next
+cards at the foot of each article, from a depth-first walk of its hub, so
+the last timeline under one index page leads on to the next index page
+rather than stopping. An article at either end of its hub prints only the
+card it has, and one the map does not place prints neither.
+
+**15H. A sticky "On this page" for wide screens.** Desktop only, degrading
+to the existing `<details>` contents block below the breakpoint. Note the
+constraint before starting: `inc/template-layout.php` puts every child
+template inside Kadence's wrapper with the site sidebar beside it, and that
+sidebar already holds search, Givebutter and MailerLite. A second column
+will not fit, so the sticky list belongs inside the content column
+(`position: sticky` beside the measure) rather than in a new sidebar.
+
+**15I. Visible anchor links on headings.** A link mark on hover and on
+keyboard focus that copies the section URL. The scroll offset is already
+handled (`scroll-margin-top: 6rem`).
+
+---
+
+## 16. Spacing, typography and colour contrast
+
+**16A. Mobile spacing and typography.** Increase the vertical rhythm
+between subsections, fix the collapsed margins on the long pages, and check
+the measure and line-height below 760px, where `css/article.css` currently
+changes layout.
+
+**16B. Contrast, to WCAG AA.** Measured against the current palette, the
+body pairs pass and the accents do not:
+
+| Pair | Ratio | AA text (4.5) |
+|---|---|---|
+| Secondary text `#4a4f6a` on sand `#F2EEDF` | 6.9 | passes |
+| Midnight `#000435` on sand | 16.9 | passes |
+| Navy `#000080` on white | 16.0 | passes |
+| Teal `#33A7B5` on white | 2.86 | fails |
+| Teal on sand | 2.46 | fails |
+| Orange `#EF9034` on white | 2.41 | fails |
+| Coral `#FE8088` on white | 2.43 | fails |
+| Chartreuse `#B2E102` on white | 1.54 | fails |
+
+Teal on midnight blue is 6.86 and passes, which is why the accents work as
+borders and on the dark grounds and not as text. One live instance to fix:
+`.kop-article-footer a` in `css/article.css` sets link text to teal at
+0.88rem, which is 2.86 against white. Sweep the timelines for the same
+pattern and move accent text to navy, keeping the accent on the border.
+
+---
+
+## 17. Loading skeletons for the JSON-driven pages
+
+The state hubs, the country pages, the program index and the location index
+fetch their data after the page paints and show a bare line in the meantime
+("Loading facilities...", `templates/page-state.php`). Replace it with a
+skeleton of three or four card outlines, one CSS animation, honouring
+`prefers-reduced-motion`.
+
+Not the lawsuits page: `templates/page-lawsuits.php` renders its rows in
+PHP and filters them client-side, so there is nothing to wait for. The
+brief's "state reports" belong here only once the state trackers are on the
+same JSON path.
+
+---
+
+## 18. The four pages named in the brief
+
+Editorial work mostly, once 15 and 19 exist to hang it on.
+
+**18A. Advocacy History.** An intro paragraph saying what the timeline is
+for; a micro-summary per decade (15C); collapsible sections for Straight
+Inc, WWASP and the GAO hearings (15B); era colours (15D); a "Key
+milestones" list; and a "Submit your story" call to action at the foot,
+pointing at the existing submission form.
+
+**18B. Corporatization.** A collapsible section per corporation (15B); era
+hierarchy (15D); a corporate-layering diagram as inline SVG; a "Key
+concepts" glossary block; and, in place of the brief's "Corporate ownership
+map" sidebar, a link into the live map at
+[/network-map/](https://kidsoverprofits.org/network-map/) opened on the
+chain the page is about - the map already takes a view in its URL, so this
+is a link, not a new component.
+
+**18C. Lawsuits and legal cases.** An intro explaining how to use the
+database; a colour and label per case status; micro-copy under each filter;
+grouping by facility, corporation or state; a "Recent updates" panel; and a
+short block on how to submit a lawsuit, linking to
+[/submit-lawsuit/](https://kidsoverprofits.org/submit-lawsuit/).
+
+**18D. Survivors and Families Fight Back.** The brief lists this and
+"Advocacy History" as two pages; they are one. The only page with that
+title is [/advocacy-history/](https://kidsoverprofits.org/advocacy-history/),
+whose title is "Survivors & Families Fight Back!" - so everything the brief
+asks for here belongs to 18A, and the separate hub at
+[/survivors/](https://kidsoverprofits.org/survivors/) ("For Survivors") was
+not in the brief at all.
+
+That hub could still use the same treatment: a thesis statement at the top,
+a description under each link, an icon and colour per category, and a line
+telling the reader they can read in order or jump ahead. `page-hub.php`
+prints the editor's content unchanged and appends a module by slug, so the
+descriptions are editor work and only the icons and colours need CSS.
+
+---
+
+## 19. Reusable article pieces
+
+Four partials in `inc/`, each a function the templates call and, where an
+editor needs to place one mid-article, a shortcode. No block build step:
+the theme has no bundler and should not gain one.
+
+1. **Era header.** Title, era colour tag, one-line summary, optional icon,
+   anchor id. Used by 15C, 15D and 15F.
+2. **Collapsible section.** Title, summary, body, optional sources. The
+   `<details>` rules in 15B apply wherever it is used.
+3. **Sources.** One citation format, auto-numbered, with the same markup on
+   every page, so a reader learns it once.
+4. **Why this matters.** The block from 15E, callable on hub pages too.
+
+Suggested order of work: 19 first (the pieces), then 15A, 15B, 15E and 15G
+(the structure), then 16 (a sweep that touches every page and is easier
+once the new markup exists), then 15C, 15D, 15F and 15H, then 17, then 18.
+
+---
+
+## 20. Two live links point into the staging site, which is public
+
+Found on 2026-09-22 while mapping the articles for 15A.
+
+[/birth-of-the-tti/](https://kidsoverprofits.org/birth-of-the-tti/) is a page
+of five links and nothing else. Two of them are absolute URLs into the
+staging install:
+
+- Juvenile Justice Reform Timeline -> `https://kidsoverprofits.org/staging/juvenile-justice-timeline/`
+- Experimental Group Psychology -> `https://kidsoverprofits.org/staging/experimental-group-psychology/`
+
+Both answer 200. The staging copy of the first is 153 KB against the live
+page's 137 KB and its title ends "- Staging", so a reader following either
+link reads a stale copy of the page and never sees the live one. The other
+three links are relative and correct.
+
+`https://kidsoverprofits.org/robots.txt` allows everything, and the staging
+page carries no `noindex`, so the whole staging site is crawlable as a
+duplicate of the live one.
+
+Two separate fixes, neither of them a theme change:
+
+1. **The links.** Edit the two on
+   [/birth-of-the-tti/](https://kidsoverprofits.org/birth-of-the-tti/) to
+   `/juvenile-justice-timeline/` and `/experimental-group-psychology/`.
+   A redirect in `inc/redirects.php` would not help: `/staging/...` is served
+   by the staging WordPress, so production's `template_redirect` never runs.
+2. **The exposure.** Whether staging should answer the public at all is the
+   owner's call. Short of taking it down, the usual guards are an
+   `.htaccess` password on `/staging/`, `Disallow: /staging/` in robots.txt,
+   and Search > Discourage search engines inside the staging install. A
+   check of what is indexed today is worth doing at the same time.
+

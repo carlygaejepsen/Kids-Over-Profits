@@ -12,6 +12,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$kop_hub_trail_css_path = get_stylesheet_directory() . '/css/trail.css';
+if (file_exists($kop_hub_trail_css_path)) {
+    wp_enqueue_style(
+        'kop-trail',
+        get_stylesheet_directory_uri() . '/css/trail.css',
+        array(),
+        filemtime($kop_hub_trail_css_path)
+    );
+}
+
 $kop_hub_css_path = get_stylesheet_directory() . '/css/hub.css';
 if (file_exists($kop_hub_css_path)) {
     wp_enqueue_style(
@@ -201,6 +211,15 @@ while (have_posts()) :
     ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class('entry content-bg single-entry kop-hub'); ?>>
     <div class="entry-content-wrap">
+
+        <?php
+        // One step, Home > this hub. It is what tells a reader who landed
+        // here from a search engine that they are in a section of a site.
+        // inc/article-parts.php.
+        if (function_exists('kop_article_breadcrumbs')) {
+            kop_article_breadcrumbs($kop_hub_slug, get_the_title());
+        }
+        ?>
 
         <header class="entry-header page-title title-align-center kop-hub-header">
             <h1 class="entry-title"><?php the_title(); ?></h1>

@@ -151,6 +151,61 @@
     color: var(--kop-teal, #33a7b5);
 }
 
+/* ---- Continue ----------------------------------------------------------- */
+
+/* Two cards at the foot, previous on the left and next on the right, and on
+ * a phone one above the other with next first: a reader who has reached the
+ * bottom is looking forwards. */
+.kop-article-continue {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    max-width: 72ch;
+    margin: 2.5rem auto 0;
+}
+
+.kop-article-continue a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--kop-border-secondary, #d9d3c0);
+    border-radius: 6px;
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: none;
+    line-height: 1.35;
+}
+
+.kop-article-continue a:hover,
+.kop-article-continue a:focus-visible {
+    border-color: var(--kop-teal, #33a7b5);
+}
+
+.kop-article-continue span {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+/* Next alone still sits on the right, where it would be with a pair. */
+.kop-article-continue__next {
+    grid-column: 2;
+    text-align: right;
+}
+
+@media (max-width: 600px) {
+    .kop-article-continue {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .kop-article-continue__next {
+        grid-column: 1;
+        grid-row: 1;
+        text-align: left;
+    }
+}
+
 /* ---- Timelines (History section) ------------------------------------- */
 /* Entries are "<strong>date</strong> – event" with detail in a nested list. */
 

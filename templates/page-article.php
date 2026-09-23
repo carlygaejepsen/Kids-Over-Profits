@@ -15,6 +15,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+$kop_trail_css_path = get_stylesheet_directory() . '/css/trail.css';
+if (file_exists($kop_trail_css_path)) {
+    wp_enqueue_style(
+        'kop-trail',
+        get_stylesheet_directory_uri() . '/css/trail.css',
+        array(),
+        filemtime($kop_trail_css_path)
+    );
+}
+
 $kop_art_css_path = get_stylesheet_directory() . '/css/article.css';
 if (file_exists($kop_art_css_path)) {
     wp_enqueue_style(
@@ -125,6 +135,16 @@ while (have_posts()) :
 <article id="post-<?php the_ID(); ?>" <?php post_class('entry content-bg single-entry kop-article'); ?>>
     <div class="entry-content-wrap">
 
+        <?php
+        // Where this page sits. The articles are flat in the database, so
+        // without this a reader who landed on a timeline from a search
+        // engine has no way of knowing it is one of five under Birth of the
+        // TTI, itself one of four under History. inc/article-parts.php.
+        if (function_exists('kop_article_breadcrumbs')) {
+            kop_article_breadcrumbs(get_post_field('post_name', get_the_ID()), get_the_title());
+        }
+        ?>
+
         <header class="entry-header page-title title-align-center kop-article-header">
             <h1 class="entry-title"><?php the_title(); ?></h1>
             <?php if (has_excerpt()) : ?>
@@ -163,6 +183,14 @@ while (have_posts()) :
             ));
             ?>
         </div>
+
+        <?php
+        // What to read next, in the order the hub lists it. A timeline is
+        // one of a set, and the set is what makes sense of it.
+        if (function_exists('kop_article_continue')) {
+            kop_article_continue(get_post_field('post_name', get_the_ID()));
+        }
+        ?>
 
         <footer class="kop-article-footer">
             <span>Updated <time datetime="<?php echo esc_attr(get_the_modified_date('c')); ?>"><?php echo esc_html(get_the_modified_date()); ?></time>.</span>
