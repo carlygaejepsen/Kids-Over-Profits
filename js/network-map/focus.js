@@ -1140,6 +1140,24 @@
          * measured before the page has finished settling and the opening
          * view ends up framed for a stage that never existed.
          */
+        /* The padding the current view was framed with; see applyLayout. */
+        var lastPadding = 70;
+
+        /**
+         * Fit to screen: frame everything on the board where it stands.
+         *
+         * Reset view lays the trail out again, which is the right answer to
+         * a board that has been dragged about, and the wrong one to a reader
+         * who has only zoomed too far in and wants the whole of what they
+         * were looking at back. This moves the camera and nothing else.
+         */
+        focus.fitAll = function () {
+            if (!store.ready) return;
+            var scene = focus.scene();
+            if (!scene.nodes.length) return;
+            viewport.fit(scene.nodes, lastPadding);
+        };
+
         focus.reframe = function () {
             if (!store.ready) return;
             /* A click opens the drawer, which narrows the stage and lands
@@ -1880,6 +1898,9 @@
          * precomputed layout was for.
          */
         function applyLayout(scene, targets, padding) {
+            /* Kept for Fit to screen, which frames the same names with the
+             * same breathing room without laying them out again. */
+            lastPadding = padding;
             var next = Object.create(null);
             scene.nodes.forEach(function (node) {
                 var target = targets[node.id];

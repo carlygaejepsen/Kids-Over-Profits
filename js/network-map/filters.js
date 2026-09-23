@@ -184,9 +184,14 @@
 
         /* -------------------------------------------------------- legend -- */
 
-        function row(label, count, wide) {
+        /* `wide` gives the mark the room a line needs; `wrap` lets a row
+         * that explains something run onto a second line rather than be cut
+         * off at the panel's edge. */
+        function row(label, count, wide, wrap) {
             var item = document_.createElement('li');
-            item.className = 'kop-network__legend-row';
+            item.className = wrap
+                ? 'kop-network__legend-row kop-network__legend-row--wrap'
+                : 'kop-network__legend-row';
             var mark = document_.createElement('canvas');
             mark.className = wide
                 ? 'kop-network__legend-mark kop-network__legend-mark--line'
@@ -267,7 +272,8 @@
 
             /* The "+N" pill, only when something on screen carries one. */
             if (scene.hidden && Object.keys(scene.hidden).length) {
-                var pill = row('Connections not on the map yet. Click the name to bring them in.');
+                var pill = row('Connections not on the map yet. Click the name to bring them in.',
+                    undefined, false, true);
                 keyList.appendChild(pill.item);
                 var pc = pill.mark.getContext && pill.mark.getContext('2d');
                 if (pc) {
@@ -333,6 +339,37 @@
                 painter.edgeSwatch(built.mark, seen[label]);
             });
             legend.appendChild(edgeList);
+
+            /* What a line carries. The rows above name the kinds of
+             * connection; these two say how to read the marks drawn on a
+             * line, which nothing else on the page explains: the arrowhead
+             * on the two directed kinds, and the circle a line wears for
+             * each person it stands for. Each row appears only when that
+             * mark is on screen. */
+            var arrowed = order.some(function (label) { return !!seen[label].arrow; });
+            var carried = scene.edges.some(function (edge) {
+                return painter.peopleOf(edge).length > 0;
+            });
+            if (arrowed || carried) {
+                var marksList = document_.createElement('ul');
+                marksList.className = 'kop-network__legend-list';
+                legend.appendChild(section('What a line carries'));
+                if (arrowed) {
+                    var arrowRow = row('An arrowhead points from the owner to what it owned.',
+                        undefined, true, true);
+                    marksList.appendChild(arrowRow.item);
+                    painter.edgeSwatch(arrowRow.mark, {
+                        colour: painter.OUTLINE, width: 2, dash: null, arrow: true
+                    });
+                }
+                if (carried) {
+                    var personRow = row('A circle on a line is someone who was at both ends. Click it for the name.',
+                        undefined, true, true);
+                    marksList.appendChild(personRow.item);
+                    painter.personSwatch(personRow.mark);
+                }
+                legend.appendChild(marksList);
+            }
         };
 
         /* The board's colour for the chain, so the key matches the map. */
@@ -362,6 +399,36 @@
          * nothing re-lays out when it opens or closes.
          */
         var narrow = root.matchMedia ? root.matchMedia(NARROW) : null;
+
+        /*
+         * Open the first time, closed every time after.
+         *
+         * A key nobody opens explains nothing, and a first-time reader does
+         * not know there is one; a reader who has already read it wants the
+         * map, not the panel over it. So the Key opens itself once and
+         * remembers that it has. A private window throws on localStorage and
+         * a blocked one can come back empty, so both sides are wrapped and
+         * the panel simply opens again for a reader we cannot remember -
+         * which is the safe way round.
+         */
+        var SEEN_KEY = 'kop-network-key-seen';
+
+        function keySeen() {
+            try {
+                return root.localStorage && root.localStorage.getItem(SEEN_KEY) === '1';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function markKeySeen() {
+            try {
+                if (root.localStorage) root.localStorage.setItem(SEEN_KEY, '1');
+            } catch (e) { /* private window: it opens again next time. */ }
+        }
+
+        /* Set by start(), once the data has landed: the panel has nothing
+         * to show before then. */
         var railOpen = false;
 
         function syncRail() {
@@ -375,6 +442,7 @@
         if (railToggle) {
             railToggle.addEventListener('click', function () {
                 railOpen = !railOpen;
+                markKeySeen();
                 syncRail();
                 if (railOpen && rail) {
                     var first = rail.querySelector('input, button');
@@ -410,6 +478,9 @@
         filters.start = function () {
             filters.syncFromStore();
             filters.renderLegend();
+            /* Shown once counts as seen, whether or not it is ever clicked. */
+            railOpen = !keySeen();
+            if (railOpen) markKeySeen();
             syncRail();
         };
 

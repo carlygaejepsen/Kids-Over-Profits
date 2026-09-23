@@ -19,7 +19,7 @@ end.
 | 2 | Core map: page, renderer, opening view, board layout, Focus/Expand, filters, search, drawer, URL state, mobile, keyboard | Steps 1 to 7 done (keyboard 2026-09-21) |
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
-| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster done (UHS, 2026-09-22); the rest itemised below in build order |
+| 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster, zoom controls and the fuller legend done (2026-09-22); hover cards next; the rest itemised below in build order |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
@@ -1867,6 +1867,33 @@ a first visit, closed thereafter (remembered in localStorage, wrapped in
 try/catch since private windows throw). The legend is painted by the
 renderer's own painter, so every new mark is a swatch call, not a drawing.
 
+*Built (2026-09-22), less the kind rows.* The Key now opens with two lines
+of "How to read this" - what a click does, and that a line is coloured for
+its company and leaves a name from whichever side is nearest - and ends
+with a third section, "What a line carries": the arrowhead, captioned
+"An arrowhead points from the owner to what it owned", and the circle,
+"A circle on a line is someone who was at both ends. Click it for the
+name." Both rows follow the rule the rest of the Key follows and appear
+only when that mark is on screen; the circle's swatch is
+`KOPNetworkCanvas.personSwatch`, which draws the line, the stage-coloured
+disc that cuts it and the circle in the hole, so the key cannot drift from
+the map. A row that explains a mark is a sentence, so it wraps
+(`kop-network__legend-row--wrap`) instead of being cut off at the panel's
+edge; the "+N" pill row, which had the same problem, wraps with them.
+
+The Key opens itself the first time and is shut every time after,
+remembered as `kop-network-key-seen` in localStorage. Both sides are
+wrapped in try/catch and a reader it has no record of gets it open, which
+is the safe way round: a private window shows the Key every visit rather
+than never. It is read in `start()`, not at create time, so the panel has
+something in it when it opens. On a phone the open Key is a sheet across
+the stage rather than a 220 px column, because at 390 px the column left
+the stage's own buttons showing half-covered behind its edge; that also
+turned up a `box-sizing` bug in `.kop-network__rail`, which had been
+overhanging its own box by its padding and border all along.
+
+*Still open.* The kind rows, which wait on 2d.2 and the owner's answer.
+
 ### 2d.10 "Add a 'Reset zoom' button."
 
 *What it has.* A Reset view button on the stage (2b.3) re-lays the board
@@ -1886,13 +1913,33 @@ out). A hint the first time the zoom leaves the fitted range ("Press 0 or
 Fit to screen to see everything"), once per visit. On a phone, the same
 three buttons in a column, since pinch is not discoverable either.
 
+*Built (2026-09-22).* `+`, `-` and Fit to screen sit in a column under
+Reset view and Full screen, drawn as the same pill, at every width. Plus
+and minus take the same notch the `+` and `-` keys take, so the two ways of
+asking agree. Fit to screen is `focus.fitAll()`: it frames the names where
+they stand, with the padding the current view was laid out with, and moves
+nothing - which is the answer to "I have zoomed too far in", as against
+Reset view, which lays the trail out again and is the answer to a board
+that has been dragged about. A module test asserts both halves: everything
+back on the stage, and not one position changed.
+
+The hint is the first time the reader's own zoom - wheel, pinch or double
+click, not a view the map framed - leaves a name off the stage. "Leaves the
+fitted range" is asked of the board rather than of a number:
+`viewport.everythingInView()` walks the scene and reports whether every
+name, at its drawn position and radius, is inside the canvas. It is said
+once a visit, in the live region as well as on the stage, and takes itself
+away after nine seconds or when Reset view, Fit to screen or `0` answers
+it.
+
 ### Order
 
 1. **2d.10 zoom controls** and **2d.9 legend** first: both are chrome, no
    layout change, a day between them, and they answer three of the ten
-   (3, 9, 10).
+   (3, 9, 10). Done 2026-09-22, less the kind rows of 2d.9, which wait on
+   2d.2.
 2. **2d.5 hover cards**: the drawer's profile in a card, reuses the line
-   popup. Answers 5.
+   popup. Answers 5. Next.
 3. **2d.1 opening cluster**: done 2026-09-22, the map opens on UHS.
    Answers 1.
 4. **2d.7 Simplify** and **2d.8 Show all connections** together: they are

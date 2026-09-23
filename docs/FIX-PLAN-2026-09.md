@@ -114,18 +114,22 @@ behind a password.
 Done since: 2b.9 toolbar and trail compaction (2026-09-21), Paths between
 two names (2026-09-21), the Sequel/TSI/YSI/Vivant chain from the owner's
 sheet (2026-09-21), the board's own look with straight lines and clusters
-round the click (2026-09-22). The page is public at
+round the click (2026-09-22), the zoom controls and the fuller legend
+(2026-09-22). The page is public at
 https://kidsoverprofits.org/network-map/.
 
 Still open, in build order (each is itemised as 2d.n under "Phase 2d" in
 `docs/NETWORK-MAP.md`, with what the map already does against each):
 
-1. **Zoom controls (2d.10) and a fuller legend (2d.9).** Plus, minus and
-   Fit to screen on the stage under Reset view; the Key gains kind rows,
-   the arrowhead, the people-on-a-line circle, a two-line "How to read
-   this", and opens on a first visit. Answers suggestions 3, 9 and 10.
+1. **Zoom controls (2d.10) and a fuller legend (2d.9).** Done 2026-09-22:
+   plus, minus and Fit to screen on the stage under Reset view, with a hint
+   the first time the reader's own zoom leaves a name off the stage; the
+   Key gained the arrowhead row, the people-on-a-line circle, a two-line
+   "How to read this", and opens itself on a first visit. Answers
+   suggestions 3, 9 and 10, less the kind rows, which wait on 2d.2.
 2. **Hover cards (2d.5).** Kind, status and years, state, deaths and
    connection count on hover, from the drawer's own profile; not on touch.
+   Next.
 3. **Open on one major cluster (2d.1).** Done 2026-09-22: the map opens on
    Universal Health Services already opened, 30 names, exactly what a click
    on it shows, with no trail. The six-name "largest networks" list is

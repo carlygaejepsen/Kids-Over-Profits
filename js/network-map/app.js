@@ -19,6 +19,12 @@
 
     var CONFIG = window.KOP_NETWORK_CONFIG || null;
 
+    /* One notch of the zoom buttons: the same step the + and - keys take, so
+     * the two ways of asking agree. */
+    var ZOOM_STEP = 1.25;
+    /* How long the zoom hint stays up before it takes itself away. */
+    var HINT_MS = 9000;
+
     function byId(id) {
         return document.getElementById(id);
     }
@@ -65,6 +71,11 @@
             /* A pan or a zoom moves the line out from under its popup. */
             onChange: function () {
                 if (popup) popup.hide();
+            },
+            /* A zoom the reader drove themselves. If it has taken part of
+             * the board off the stage, offer the way back - once. */
+            onZoomGesture: function () {
+                maybeZoomHint();
             },
             onSelect: function (node, event) {
                 /* Ctrl- or Cmd-click opens the name's profile in a new tab
@@ -138,6 +149,47 @@
             }
         };
         window.KOPNetworkMap = app;
+
+        /* --------------------------------------------------- zoom hint -- */
+
+        /*
+         * The way back from a zoom, said once.
+         *
+         * 0, + and - have always done it, and Fit to screen does it now, but
+         * a reader who has wheeled into a corner of a large board has no
+         * reason to know any of that, and a stage full of one cluster does
+         * not look like a stage with more off the edge of it. So the first
+         * time the reader's own zoom takes a name off the stage, the map
+         * says where the way back is - and then never again this visit.
+         */
+        var hintShown = false;
+        var hintTimer = 0;
+
+        function hideZoomHint() {
+            var hint = byId('kop-network-zoom-hint');
+            if (hintTimer) { window.clearTimeout(hintTimer); hintTimer = 0; }
+            if (hint) hint.hidden = true;
+        }
+
+        function maybeZoomHint() {
+            if (hintShown) return;
+            var hint = byId('kop-network-zoom-hint');
+            if (!hint || !viewport.everythingInView || viewport.everythingInView()) return;
+            hintShown = true;
+            hint.hidden = false;
+            announce('Part of the map is off screen. Press 0 or Fit to screen to see everything.');
+            hintTimer = window.setTimeout(function () {
+                hintTimer = 0;
+                hint.hidden = true;
+            }, HINT_MS);
+        }
+
+        app.hideZoomHint = hideZoomHint;
+
+        /* 0 does what Reset view does, so it puts the hint away with it. */
+        canvas.addEventListener('keydown', function (event) {
+            if (event.key === '0') hideZoomHint();
+        });
 
         if (window.KOPNetworkConnection && stage) {
             popup = window.KOPNetworkConnection.create({
@@ -467,6 +519,34 @@
              * dragged to and left the layout as it was. */
             reset.addEventListener('click', function () {
                 app.focus.reframe();
+                if (app.hideZoomHint) app.hideZoomHint();
+            });
+        }
+
+        /* The zoom, for the reader who never finds the keys. Plus and minus
+         * take the same notch the + and - keys do; Fit to screen frames the
+         * board where it stands, which is the answer to "I have zoomed in
+         * too far", as against Reset view, which lays the trail out again. */
+        var zoomIn = byId('kop-network-zoom-in');
+        if (zoomIn) {
+            zoomIn.addEventListener('click', function () {
+                app.viewport.zoomBy(ZOOM_STEP);
+            });
+        }
+
+        var zoomOut = byId('kop-network-zoom-out');
+        if (zoomOut) {
+            zoomOut.addEventListener('click', function () {
+                app.viewport.zoomBy(1 / ZOOM_STEP);
+            });
+        }
+
+        var fitButton = byId('kop-network-zoom-fit');
+        if (fitButton) {
+            fitButton.addEventListener('click', function () {
+                app.focus.fitAll();
+                if (app.hideZoomHint) app.hideZoomHint();
+                app.announce('The whole map is in view.');
             });
         }
 

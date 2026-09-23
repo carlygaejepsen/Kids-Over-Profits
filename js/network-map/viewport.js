@@ -55,6 +55,11 @@
         var onHover = options.onHover || function () {};
         var onSelect = options.onSelect || function () {};
         var onChange = options.onChange || function () {};
+        /* A zoom the reader drove themselves - wheel, pinch, double click -
+         * as against one the map made when it framed a view. app.js uses it
+         * to offer the way back the first time part of the board goes off
+         * the stage. */
+        var onZoomGesture = options.onZoomGesture || function () {};
         /* A line under the pointer, and a line clicked. Both are called
          * with null when the pointer has moved off, or clicked on nothing. */
         var onHoverEdge = options.onHoverEdge || function () {};
@@ -372,6 +377,27 @@
             if (framed) viewport.setTransform(framed.k, framed.x, framed.y);
         };
 
+        /**
+         * Whether every name in the scene is on the stage as the view stands.
+         * The question the zoom hint asks: a reader who has just zoomed into
+         * a corner of a large board cannot see that there is more, so the
+         * map has to say so.
+         */
+        viewport.everythingInView = function () {
+            if (!renderer.width || !scene.nodes.length) return true;
+            var offsets = offsetsOf();
+            for (var i = 0; i < scene.nodes.length; i++) {
+                var node = scene.nodes[i];
+                var p = positionOf(node);
+                var off = offsets ? offsets[node.id] : null;
+                var s = toScreen(off ? p.x + off[0] : p.x, off ? p.y + off[1] : p.y);
+                var r = (node.r || 0) * transform.k;
+                if (s.x - r < 0 || s.y - r < 0 ||
+                    s.x + r > renderer.width || s.y + r > renderer.height) return false;
+            }
+            return true;
+        };
+
         /** Put a node in the middle without changing the zoom. */
         viewport.centreOn = function (node) {
             if (!node) return;
@@ -503,6 +529,9 @@
                 pinch = null;
                 mode = pointerCount ? 'pan' : null;
                 if (!pointerCount) canvas.style.cursor = 'grab';
+                /* At the end of the pinch, not on every frame of it: the
+                 * hint must not appear under the fingers still moving. */
+                onZoomGesture();
                 return;
             }
 
@@ -544,6 +573,7 @@
              * Firefox wheel tick is not forty times a Chrome one. */
             var delta = event.deltaY * (event.deltaMode === 1 ? 16 : (event.deltaMode === 2 ? 400 : 1));
             zoomAbout(transform.k * Math.exp(-delta * WHEEL_GAIN), point.x, point.y);
+            onZoomGesture();
         }
 
         canvas.addEventListener('pointerdown', onPointerDown);
@@ -557,6 +587,7 @@
             /* Shift is the usual "and back out again" on a map. */
             var factor = event.shiftKey ? 1 / DOUBLE_STEP : DOUBLE_STEP;
             zoomAbout(transform.k * factor, point.x, point.y);
+            onZoomGesture();
         }
 
         canvas.addEventListener('wheel', onWheel, { passive: false });

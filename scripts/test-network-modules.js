@@ -182,6 +182,18 @@ function buildSandbox() {
          * queue is driven by the test rather than by the wall clock. */
         setTimeout: (fn, ms) => { timers.push({ id: ++timerId, fn, at: clock + (ms || 0) }); return timerId; },
         clearTimeout: (id) => { timers = timers.filter((entry) => entry.id !== id); },
+        /* What the Key remembers between visits. A real one can throw or come
+         * back empty, and the module has to survive both, so the stub is the
+         * plain case and the throwing case is the module's own try/catch. */
+        localStorage: (() => {
+            const kept = new Map();
+            return {
+                getItem: (k) => (kept.has(k) ? kept.get(k) : null),
+                setItem: (k, v) => { kept.set(k, String(v)); },
+                removeItem: (k) => { kept.delete(k); },
+                clear: () => { kept.clear(); }
+            };
+        })(),
         matchMedia: (query) => ({
             media: query,
             /* A getter, not a snapshot: the modules hold the list and read
@@ -1893,6 +1905,15 @@ function run() {
     });
     rail.start();
 
+    /* The Key opens itself on a first visit. A panel nobody opens explains
+     * nothing, and nothing else on the page says there is one to open. */
+    check(shell.rail.hidden === false,
+        'the Key stayed shut on a first visit, so a first-time reader never sees it');
+    check(sandbox.localStorage.getItem('kop-network-key-seen') === '1',
+        'the Key did not write down that it had been shown');
+    /* Shut again, so the checks below see the map as a returning reader does. */
+    shell.railToggle.dispatch('click');
+
     const kindBox = (kind) => doc.querySelectorAll('input[name="kop-network-kind"]')
         .find((input) => input.value === kind);
 
@@ -2006,6 +2027,27 @@ function run() {
         'the legend does not list the company whose lines are in view');
     check(labels.filter((l) => chainsShowing.has(l)).length === chainsShowing.size,
         'the legend lists companies that are not on screen');
+    /* 2d.9 The two marks a line can carry. Nothing else on the page says
+     * what an arrowhead means, or that the circles strung along a line are
+     * the people who were at both ends, and each row shows only when that
+     * mark is actually on screen. */
+    const painter = sandbox.KOPNetworkCanvas;
+    const ARROW_ROW = 'An arrowhead points from the owner to what it owned.';
+    const PERSON_ROW = 'A circle on a line is someone who was at both ends. Click it for the name.';
+    const arrowShowing = legendScene.edges.some((e) => painter.styleFor(e, false).arrow);
+    const peopleOnLines = legendScene.edges.some((e) => painter.peopleOf(e).length > 0);
+    check(arrowShowing === (labels.indexOf(ARROW_ROW) !== -1),
+        'the legend and the map disagree about whether an arrowhead is on screen');
+    check(peopleOnLines === (labels.indexOf(PERSON_ROW) !== -1),
+        'the legend and the map disagree about whether a line carries people',
+        'the key explains the marks on a line: arrowhead ' + (arrowShowing ? 'yes' : 'no') +
+            ', people ' + (peopleOnLines ? 'yes' : 'no'));
+    if (arrowShowing || peopleOnLines) {
+        check(shell.legend.querySelectorAll('li')
+            .filter((li) => li.className.indexOf('kop-network__legend-row--wrap') !== -1).length > 0,
+            'a row that explains a mark is not marked to wrap, so it will be cut off at the panel edge');
+    }
+
     const openedRows = labels;
 
     /* Going back to the opening view narrows it again. */
@@ -2044,6 +2086,19 @@ function run() {
     motion.narrow = false;
     mediaListeners.forEach((fn) => fn({ matches: false }));
     check(shell.rail.hidden === true, 'crossing the breakpoint left a sheet open as a column');
+
+    /* And the round trip: shown once, the Key stays shut on the next visit;
+     * a reader it has no record of - a new browser, a private window, a
+     * cleared store - gets it open again, which is the safe way round. */
+    rail.start();
+    check(shell.rail.hidden === true,
+        'the Key opened again over the map for a reader who has already been shown it');
+    sandbox.localStorage.clear();
+    rail.start();
+    check(shell.rail.hidden === false,
+        'the Key stayed shut for a reader it has no record of',
+        'the Key opens on a first visit and stays shut once it has been shown');
+    shell.railToggle.dispatch('click');
 
     store.resetFilters();
 
@@ -3121,6 +3176,31 @@ function run() {
     check(Math.abs(cellAfter.x - cellBefore.x) < 1 && Math.abs(cellAfter.y - cellBefore.y) < 1,
         'Reset view left a dragged node where it was dropped',
         'Reset view puts a dragged node back in its cell');
+
+    /* 2d.10 Fit to screen is the other half of that pair: it moves the
+     * camera and nothing else, so a reader who has zoomed too far in gets
+     * the whole board back without the board rearranging itself under
+     * them. */
+    focus.select(hub);
+    flushFrames();
+    const fitLayout = {};
+    focus.scene().nodes.forEach((n) => { fitLayout[n.id] = Object.assign({}, focus.positionOf(n)); });
+    viewport.setTransform(sandbox.KOPNetworkViewport.MAX_ZOOM, 0, 0);
+    flushFrames();
+    check(!viewport.everythingInView(),
+        'zoomed to the ceiling in a corner, the map still says everything is on the stage');
+    focus.fitAll();
+    flushFrames();
+    check(viewport.everythingInView(),
+        'Fit to screen left part of the map off the stage');
+    check(focus.scene().nodes.every((n) => {
+        const was = fitLayout[n.id];
+        const now = focus.positionOf(n);
+        return was && Math.abs(now.x - was.x) < 0.001 && Math.abs(now.y - was.y) < 0.001;
+    }), 'Fit to screen moved the names as well as the camera',
+        'Fit to screen brings all ' + focus.scene().nodes.length +
+            ' names back on the stage and moves nothing');
+
     focus.clear();
     flushFrames();
 

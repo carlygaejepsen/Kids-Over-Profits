@@ -895,6 +895,45 @@
         }
     }
 
+    /**
+     * The circle a line wears for one of the people it stands for, on a short
+     * length of that line: the stage-coloured disc that cuts the line, then
+     * the circle in the hole, exactly as the map draws it.
+     */
+    function personSwatch(element) {
+        if (!element || !element.getContext) return;
+        var dpr = Math.min(root.devicePixelRatio || 1, 2);
+        var w = 26;
+        var h = 18;
+        element.width = Math.round(w * dpr);
+        element.height = Math.round(h * dpr);
+        var ctx = element.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+
+        var line = EDGE_STYLES.people;
+        ctx.strokeStyle = line.colour;
+        ctx.lineWidth = line.width;
+        ctx.setLineDash(line.dash || []);
+        ctx.beginPath();
+        ctx.moveTo(1, h / 2);
+        ctx.lineTo(w - 1, h / 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.arc(w / 2, h / 2, MARKER_R + 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = SURFACE;
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(w / 2, h / 2, MARKER_R, 0, Math.PI * 2);
+        ctx.fillStyle = STATUS_FILLS.unknown;
+        ctx.fill();
+        ctx.strokeStyle = OUTLINE;
+        ctx.lineWidth = BORDER_BUBBLE;
+        ctx.stroke();
+    }
+
     function create(canvas) {
         var ctx = canvas.getContext('2d');
 
@@ -1841,6 +1880,7 @@
         peopleOf: peopleOf,
         MARKER_MAX: MARKER_MAX,
         edgeSwatch: edgeSwatch,
+        personSwatch: personSwatch,
         edgeFadeFor: edgeFadeFor,
         swatch: swatch,
         segmentHitsBox: segmentHitsBox,

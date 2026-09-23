@@ -265,15 +265,49 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					// Reset view and Full screen act on the stage, so they sit on
 					// it, in the corner opposite the Key, the way a map's own
 					// controls do. app.js owns the second one's label.
+					//
+					// Under them, the zoom: a reader who has wheeled into a
+					// corner of a large board looks for a magnifier, not for a
+					// button called Reset view. The keys do the same (+, -, 0)
+					// but only a keyboard finds them, and pinch is no more
+					// discoverable on a phone, so the three buttons show at
+					// every width. Fit to screen frames what is on the map
+					// where it stands; Reset view keeps its own job, which is
+					// to lay the view out again.
 					?>
 					<div class="kop-network__view-controls">
-						<button type="button" class="kop-network__stage-button" id="kop-network-reset-view">
-							Reset view
-						</button>
-						<button type="button" class="kop-network__stage-button kop-network__button--full" id="kop-network-fullscreen"
-							aria-pressed="false">
-							Full screen
-						</button>
+						<div class="kop-network__view-row">
+							<button type="button" class="kop-network__stage-button" id="kop-network-reset-view">
+								Reset view
+							</button>
+							<button type="button" class="kop-network__stage-button kop-network__button--full" id="kop-network-fullscreen"
+								aria-pressed="false">
+								Full screen
+							</button>
+						</div>
+						<div class="kop-network__zoom" role="group" aria-label="Zoom">
+							<button type="button" class="kop-network__stage-button kop-network__stage-button--icon"
+								id="kop-network-zoom-in" aria-label="Zoom in" title="Zoom in">
+								+
+							</button>
+							<button type="button" class="kop-network__stage-button kop-network__stage-button--icon"
+								id="kop-network-zoom-out" aria-label="Zoom out" title="Zoom out">
+								&minus;
+							</button>
+							<button type="button" class="kop-network__stage-button" id="kop-network-zoom-fit">
+								Fit to screen
+							</button>
+						</div>
+						<?php
+						// Said once, the first time a zoom takes part of the map
+						// off the stage: the way back is a button, not a guess.
+						// It sits under the controls it is pointing at, so it
+						// stacks with them rather than being placed against a
+						// guess at their height.
+						?>
+						<p class="kop-network__zoom-hint" id="kop-network-zoom-hint" hidden>
+							Press 0 or Fit to screen to see everything.
+						</p>
 					</div>
 
 					<div class="kop-network__key">
@@ -282,6 +316,19 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 							Key
 						</button>
 						<div class="kop-network__rail" id="kop-network-rail" role="region" aria-label="Key" hidden>
+							<?php
+							// Two lines before the swatches, because a reader who
+							// opens the Key is asking how the map works, not only
+							// what a colour means. Printed here rather than drawn
+							// by filters.js: it never changes with the scene.
+							?>
+							<p class="kop-network__legend-intro">
+								<strong>How to read this.</strong>
+								Click a name to see what it connects to; click again to go
+								deeper, and use the trail above to come back.
+								Each line is coloured for the company it belongs to and
+								leaves a name from whichever side is nearest.
+							</p>
 							<?php
 							// The key is the board's own: fills for status, a blue name
 							// for a NATSAP member, coloured lines for each company.
