@@ -436,6 +436,106 @@ function kop_tool_page_specs() {
  *
  * Safe to run repeatedly.
  */
+/**
+ * Nav menu entries that should exist, as page slug => where to hang it.
+ *
+ * The menu itself is curated in wp-admin and this list does not try to own it:
+ * it only adds an entry that is missing, matched on the page it points at, so
+ * dragging one somewhere else or renaming it sticks. Nothing here ever moves
+ * or deletes an item somebody has arranged by hand.
+ *
+ *   slug   - the page the item links to
+ *   parent - the label of the top-level item to nest under, matched
+ *            case-insensitively; the item goes in whichever menu that
+ *            parent lives in, so no menu or item ID is hard-coded
+ *   title  - the label to give the new item
+ */
+function kop_nav_item_specs() {
+    return array(
+        array(
+            'slug'   => KOP_REPORTING_SLUG,
+            'parent' => 'Get Involved',
+            'title'  => 'Report Abuse',
+        ),
+    );
+}
+
+/**
+ * Add any missing entry from kop_nav_item_specs() to the menu its parent is in.
+ *
+ * Appended after the parent's existing children rather than inserted at a
+ * chosen position, because reordering siblings means rewriting menu_order for
+ * items an editor placed deliberately. Moving it afterwards is one drag in
+ * wp-admin and this will not undo it.
+ *
+ * @return array Human-readable summary lines, for the manual runs.
+ */
+function kop_ensure_nav_items() {
+    $done = array();
+    if (!function_exists('wp_get_nav_menus') || !function_exists('wp_update_nav_menu_item')) {
+        return $done;
+    }
+
+    foreach (kop_nav_item_specs() as $spec) {
+        $page = get_page_by_path($spec['slug']);
+        if (!$page) {
+            $done[] = $spec['slug'] . ': page does not exist yet';
+            continue;
+        }
+
+        foreach (wp_get_nav_menus() as $menu) {
+            $items = wp_get_nav_menu_items($menu->term_id);
+            if (!$items) {
+                continue;
+            }
+
+            // The top-level item to nest under, by label.
+            $parent = null;
+            foreach ($items as $item) {
+                if ((int) $item->menu_item_parent === 0
+                    && strcasecmp(trim(wp_strip_all_tags($item->title)), $spec['parent']) === 0) {
+                    $parent = $item;
+                    break;
+                }
+            }
+            if (!$parent) {
+                continue;
+            }
+
+            // Already linked from this menu, wherever it sits — leave it alone.
+            $exists = false;
+            $last_position = (int) $parent->menu_order;
+            foreach ($items as $item) {
+                if ($item->object === 'page' && (int) $item->object_id === (int) $page->ID) {
+                    $exists = true;
+                    break;
+                }
+                if ((int) $item->menu_item_parent === (int) $parent->ID) {
+                    $last_position = max($last_position, (int) $item->menu_order);
+                }
+            }
+            if ($exists) {
+                continue;
+            }
+
+            $new_id = wp_update_nav_menu_item($menu->term_id, 0, array(
+                'menu-item-object-id' => (int) $page->ID,
+                'menu-item-object'    => 'page',
+                'menu-item-type'      => 'post_type',
+                'menu-item-title'     => $spec['title'],
+                'menu-item-parent-id' => (int) $parent->ID,
+                'menu-item-status'    => 'publish',
+                'menu-item-position'  => $last_position + 1,
+            ));
+            if ($new_id && !is_wp_error($new_id)) {
+                $done[] = sprintf('%s => %s > %s', $spec['slug'], $menu->name, $spec['parent']);
+            }
+        }
+    }
+
+    return $done;
+}
+
 function kop_ensure_tool_pages() {
     foreach (kop_tool_page_specs() as $spec) {
         $template_value = 'templates/' . $spec['template'];
@@ -1444,6 +1544,9 @@ function kop_apply_template_assignments() {
         $summary['assigned'][] = $slug . ' => ' . $template;
     }
 
+    // Last, so a menu entry is only added once the page it points at exists.
+    $summary['nav'] = kop_ensure_nav_items();
+
     return $summary;
 }
 
@@ -1453,7 +1556,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '29';
+    $version = '30';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
