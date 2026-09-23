@@ -21,17 +21,23 @@
  * Admin-only. Loads WordPress via config.php.
  */
 
-require_once __DIR__ . '/config.php';
+// scripts/test-staging-link-fixer.php defines KOP_FSL_TEST, stubs the handful
+// of WordPress functions the resolver uses, and returns below once the
+// functions are defined. A web request cannot set a constant before the file
+// it is requesting, so this is not a way past the check underneath it.
+if (!defined('KOP_FSL_TEST')) {
+    require_once __DIR__ . '/config.php';
 
-if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
-    http_response_code(403);
-    header('Content-Type: text/plain; charset=utf-8');
-    echo 'Not authorized. Log in to WordPress as an administrator first.';
-    exit;
+    if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
+        http_response_code(403);
+        header('Content-Type: text/plain; charset=utf-8');
+        echo 'Not authorized. Log in to WordPress as an administrator first.';
+        exit;
+    }
+
+    header('Content-Type: text/html; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
 }
-
-header('Content-Type: text/html; charset=utf-8');
-header('X-Content-Type-Options: nosniff');
 
 $STAGING_NEEDLE = 'kidsoverprofits.org/staging/';
 $URL_PATTERN = '~https?://(?:www\.)?kidsoverprofits\.org/staging/([^"\'\s<>)]*)~i';
@@ -162,6 +168,98 @@ function kop_fsl_post_types() {
     return array('post', 'page', 'attachment', 'wp_navigation', 'pagelayer-template', 'dlm_download');
 }
 
+/**
+ * Tables that are not post content but are printed on the site all the same,
+ * so a staging URL in one reaches a reader exactly as if it were in a page.
+ *
+ * Found on 2026-09-22, after this tool had cleaned the post content: three
+ * memorial records still pointed at the staging copy (two "read more" links
+ * and one source PDF), and the Code Snippets snippet that prints the home
+ * page's og:image was using the staging copy of the logo, so that was the
+ * picture some scrapers took when the site was shared.
+ *
+ * Each entry: the table, its key column, the columns to rewrite, and a label
+ * plus a column to name the row by in the preview.
+ */
+function kop_fsl_extra_tables() {
+    global $wpdb;
+    return array(
+        array(
+            'table'   => 'memorial_victims',
+            'key'     => 'id',
+            'columns' => array('kop_url', 'source_url'),
+            'label'   => 'Memorial records',
+            'name'    => 'name',
+            'note'    => 'Printed by templates/page-memorial.php on /in-loving-memory/.',
+        ),
+        array(
+            'table'   => $wpdb->prefix . 'snippets',
+            'key'     => 'id',
+            'columns' => array('code'),
+            'label'   => 'Code Snippets',
+            'name'    => 'name',
+            'note'    => 'PHP the Code Snippets plugin runs on the front end.',
+        ),
+    );
+}
+
+/** The extra tables that exist in this database, with their rows to fix. */
+function kop_fsl_extra_preview() {
+    global $wpdb, $STAGING_NEEDLE;
+    $like = '%' . $wpdb->esc_like($STAGING_NEEDLE) . '%';
+    $out  = array();
+
+    foreach (kop_fsl_extra_tables() as $spec) {
+        $table = $spec['table'];
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $table)) !== $table) {
+            continue;
+        }
+        $where = array();
+        foreach ($spec['columns'] as $column) {
+            $where[] = $wpdb->prepare("`{$column}` LIKE %s", $like);
+        }
+        $select = '`' . $spec['key'] . '`, `' . $spec['name'] . '`, `'
+            . implode('`, `', $spec['columns']) . '`';
+        $rows = $wpdb->get_results(
+            "SELECT {$select} FROM `{$table}` WHERE " . implode(' OR ', $where)
+            . " ORDER BY `{$spec['key']}`"
+        );
+        foreach ($rows as $row) {
+            $columns = array();
+            $ok = 0;
+            foreach ($spec['columns'] as $column) {
+                $plan = kop_fsl_plan($row->$column);
+                if (!$plan) {
+                    continue;
+                }
+                foreach ($plan as $target) {
+                    if ($target !== null) {
+                        $ok++;
+                    }
+                }
+                $columns[$column] = $plan;
+            }
+            if (!$columns) {
+                continue;
+            }
+            $out[] = array(
+                'spec'    => $spec,
+                'id'      => (int) $row->{$spec['key']},
+                'name'    => (string) $row->{$spec['name']},
+                'columns' => $columns,
+                'ok'      => $ok,
+            );
+        }
+    }
+    return $out;
+}
+
+// Everything above is pure enough to test; everything below reads and writes
+// the database and prints the screen.
+if (defined('KOP_FSL_TEST')) {
+    return;
+}
+
 // ---------------------------------------------------------------------------
 // Apply
 // ---------------------------------------------------------------------------
@@ -242,13 +340,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         }
     }
 
-    if ($done > 0 || $meta_done > 0) {
+    // The tables that are not post content: memorial records, snippets.
+    $extra_requests = isset($_POST['extra']) && is_array($_POST['extra']) ? $_POST['extra'] : array();
+    $extra_done = 0;
+    $extra_skipped = 0;
+    if ($extra_requests) {
+        $specs = array();
+        foreach (kop_fsl_extra_tables() as $spec) {
+            $specs[$spec['table']] = $spec;
+        }
+        foreach ($extra_requests as $key => $req) {
+            if (empty($req['go'])) {
+                continue;
+            }
+            $parts = explode('|', (string) $key, 2);
+            $table = isset($parts[0]) ? $parts[0] : '';
+            $row_id = isset($parts[1]) ? (int) $parts[1] : 0;
+            // Only the tables this file names: the key comes from a form.
+            if (!isset($specs[$table]) || $row_id <= 0) {
+                $extra_skipped++;
+                continue;
+            }
+            $spec = $specs[$table];
+            $current = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM `{$table}` WHERE `{$spec['key']}` = %d", $row_id
+            ));
+            if (!$current) {
+                $extra_skipped++;
+                continue;
+            }
+            // Recompute from what is in the table now, as the post path does.
+            $update = array();
+            foreach ($spec['columns'] as $column) {
+                $old = (string) $current->$column;
+                $new = kop_fsl_rewrite($old, kop_fsl_plan($old));
+                if ($new !== $old) {
+                    $update[$column] = $new;
+                }
+            }
+            if (!$update) {
+                $extra_skipped++;
+                continue;
+            }
+            $ok = $wpdb->update($table, $update, array($spec['key'] => $row_id));
+            if ($ok === false) {
+                $extra_skipped++;
+                continue;
+            }
+            $extra_done++;
+        }
+    }
+
+    if ($done > 0 || $meta_done > 0 || $extra_done > 0) {
         do_action('litespeed_purge_all');
     }
     $applied = true;
-    $apply_log[] = "Updated {$done} post(s), {$links} distinct link(s); {$meta_done} postmeta row(s)."
-        . (($skipped || $meta_skipped) ? " Skipped {$skipped} post(s) and {$meta_skipped} meta row(s) (already fixed, target missing, edited since preview, or update failed)." : '')
-        . (($done || $meta_done) ? ' LiteSpeed cache purged.' : '');
+    $apply_log[] = "Updated {$done} post(s), {$links} distinct link(s); {$meta_done} postmeta row(s); {$extra_done} row(s) in other tables."
+        . (($skipped || $meta_skipped || $extra_skipped) ? " Skipped {$skipped} post(s), {$meta_skipped} meta row(s) and {$extra_skipped} other row(s) (already fixed, target missing, edited since preview, or update failed)." : '')
+        . (($done || $meta_done || $extra_done) ? ' LiteSpeed cache purged.' : '');
 }
 
 // ---------------------------------------------------------------------------
@@ -302,6 +451,8 @@ $meta_rows = $wpdb->get_results($wpdb->prepare(
       LIMIT 200",
     $like
 ));
+$extra_preview = kop_fsl_extra_preview();
+
 $meta_preview = array();
 foreach ($meta_rows as $m) {
     $plan = kop_fsl_meta_plan((int) $m->post_id, $m->meta_key);
@@ -430,7 +581,49 @@ foreach ($meta_rows as $m) {
     </table>
 <?php endif; ?>
 
-<?php if ($preview || $meta_preview): ?>
+<h2>Other tables the site prints from</h2>
+<?php if (!$extra_preview): ?>
+    <p>None.</p>
+<?php else: ?>
+    <p>Not post content, but printed on the site all the same: a staging URL here
+       reaches a reader exactly as one in a page would.</p>
+    <table>
+        <thead><tr><th></th><th>Row</th><th>Column</th><th>Links</th></tr></thead>
+        <tbody>
+        <?php foreach ($extra_preview as $xp): ?>
+            <tr class="<?php echo $xp['ok'] ? '' : 'skip'; ?>">
+                <td>
+                    <?php if ($xp['ok']): ?>
+                        <input type="checkbox" name="extra[<?php echo esc_attr($xp['spec']['table'] . '|' . $xp['id']); ?>][go]" value="1" checked>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php echo esc_html($xp['name'] !== '' ? $xp['name'] : '(unnamed)'); ?><br>
+                    <small><?php echo esc_html($xp['spec']['label'] . ' / #' . $xp['id']); ?></small><br>
+                    <small><?php echo esc_html($xp['spec']['note']); ?></small>
+                </td>
+                <td class="url"><?php echo esc_html(implode(', ', array_keys($xp['columns']))); ?></td>
+                <td>
+                    <?php foreach ($xp['columns'] as $plan): ?>
+                        <?php foreach ($plan as $url => $target): ?>
+                            <div class="url">
+                                <?php echo esc_html($url); ?>
+                                <?php if ($target !== null): ?>
+                                    <span class="good">-&gt; <?php echo esc_html($target); ?></span>
+                                <?php else: ?>
+                                    <span class="bad">(skipped: no published page, upload, or theme file at that path)</span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
+
+<?php if ($preview || $meta_preview || $extra_preview): ?>
     <p>
         <button type="submit" name="do_apply" value="1">Apply ticked rows</button>
     </p>

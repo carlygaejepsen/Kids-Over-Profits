@@ -35,7 +35,7 @@ Last updated 2026-09-22.
 | 17 | Loading skeletons for the JSON-driven pages | Open |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
 | 19 | Reusable article pieces | Open |
-| 20 | The staging copy, and what still points at it | robots.txt guard done 2026-09-22; three links on the memorial page and a stale og:image are the owner's |
+| 20 | The staging copy, and what still points at it | robots.txt guard live; the fixer now covers the memorial and snippet tables; one apply run and the hosting lock-down are the owner's |
 
 ## Waiting on the owner
 
@@ -87,6 +87,9 @@ session can do it. The tools that change data show a dry run first; add
    [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php)
    with `?apply=1` to put Severe Reports in the Monitor menu.
 
+9. **Staging links (20).** [fix-staging-links.php](https://kidsoverprofits.org/wp-content/themes/child/api/fix-staging-links.php) shows a preview with a tick per row; the new third section covers the
+   three memorial records, the OG Image snippet and the two images on the
+   Hyde profile. Tick and apply. It purges the LiteSpeed cache itself.
 ## Working in this repository
 
 Several sessions share the checkout at `C:\Users\daniu\source\repos\Kids-Over-Profits`
@@ -1096,48 +1099,62 @@ once the new markup exists), then 15C, 15D, 15F and 15H, then 17, then 18.
 Raised 2026-09-22, and **the first version of this item was wrong**. It said
 two links on [/birth-of-the-tti/](https://kidsoverprofits.org/birth-of-the-tti/)
 pointed into the staging install. They did when `tmp/prod.sqlite` was taken on
-2026-09-17; they had been fixed in the database since, and the rendered page
-has linked to `/juvenile-justice-timeline/` all along. The claim came from
-reading the mirror instead of the page. `scripts/check-staging-links.py` now
-reads rendered pages for exactly that reason, and the mirror is used only to
-choose which pages to fetch.
+2026-09-17; they had been fixed since - by
+[fix-staging-links.php](https://kidsoverprofits.org/wp-content/themes/child/api/fix-staging-links.php),
+which already existed and which the owner had run - and the rendered page has
+linked to `/juvenile-justice-timeline/` all along. The claim came from reading
+the mirror instead of the page. `scripts/check-staging-links.py` now reads
+rendered pages for exactly that reason, and the mirror is used only to choose
+which pages to fetch.
 
-What is actually true, from a run over 26 rendered pages on 2026-09-22:
+That tool cleaned post content, postmeta, attachments and the block menu: 45
+pages down to 2. What it could not see was everything the site prints from
+somewhere other than a post, which is where the last six links were hiding.
 
-**Three links on the memorial page.**
-[/in-loving-memory/](https://kidsoverprofits.org/in-loving-memory/) still
-sends a reader into staging three times. All three have a live copy that
-answers 200, so this is an editor's job, three replacements:
+**Done 2026-09-22.**
 
-| On the page | Should be |
+- `inc/staging-links.php` adds `Disallow: /staging/` to robots.txt, on the
+  same filter `inc/facility-pages.php` uses for `/go/`. Live and confirmed in
+  [robots.txt](https://kidsoverprofits.org/robots.txt).
+- `api/fix-staging-links.php` gained a third section, "Other tables the site
+  prints from", covering `memorial_victims` (`kop_url`, `source_url`) and the
+  Code Snippets table (`code`). Same rules as the rest of the tool: a preview
+  with a tick per row, the plan recomputed from the live value on apply, and a
+  URL is only rewritten when the live target is confirmed. Tested offline by
+  `scripts/test-staging-link-fixer.php`.
+
+**Waiting on the owner: open the tool and apply.** Six links on four pages,
+all with a live target:
+
+| Where | What |
 |---|---|
-| `/staging/document-library-discovery-ranch/` | `/document-library-discovery-ranch/` |
-| `/staging/trails-carolina-lawsuits/` | `/trails-carolina-lawsuits/` |
-| `/staging/wp-content/uploads/2025/05/2004-Island-View-Police-Report-Death.pdf` | the same path without `/staging` |
+| `memorial_victims` #5 Biruk Silvers | `kop_url` -> the Discovery Ranch document library |
+| `memorial_victims` #11 Clark Harman | `kop_url` -> the Trails Carolina lawsuits page |
+| `memorial_victims` #117 Ian Mulhare | `source_url` -> the 2004 Island View police report |
+| Code Snippets #6 "OG Image" | the home page's `og:image`, the staging copy of the logo |
+| Post 2365 `hyde` | two images in a visual link preview block |
+| Post 5634 `facility-form-test` | nothing to do: the file it wants is 404 on staging too |
 
-**The home page's sharing image.** `/` and `/kids-over-profits/` each carry a
-second `og:image` pointing at
-`/staging/wp-content/uploads/2025/08/Kidsoverprofitslogo2-1.png`, so that is
-the picture some scrapers will use when the site is shared. Yoast's own
-`og:image` (the live `banner-scaled.png`) is right there beside it, and the
-theme prints neither, so the stale one comes from a plugin or a Code Snippets
-snippet. The live copy of that logo exists at the same path without
-`/staging`.
+Two things the tool will not decide:
+
+1. **The OG Image snippet duplicates Yoast.** It prints `og:image`, `og:title`,
+   `og:description`, `og:type` and `og:url` on the front page, and Yoast prints
+   the same five, so the home page carries two of each and a scraper picks
+   whichever it likes. Yoast's image is `banner-scaled.png`; the snippet's is
+   the logo. Fixing the URL keeps both sets; deciding which set should exist is
+   the owner's, and deactivating the snippet is the tidier end of it.
+2. **`facility-form-test` is a published post.** A development test page, live
+   on the site, linking to a script that no longer exists. It looks like it
+   should be a draft.
 
 **The copy itself is still open.** `https://kidsoverprofits.org/staging/`
 answers 200. Its front page carries `noindex`, but the inner pages do not -
-`/staging/juvenile-justice-timeline/` has no robots meta at all - so the stale
-copy is crawlable page by page.
+`/staging/juvenile-justice-timeline/` has no robots meta at all - so page by
+page it is still crawlable, and robots.txt is a request rather than a control.
+Closing it properly is hosting work and the owner's: a password on `/staging/`
+in cPanel, "Discourage search engines" inside the staging install, or taking it
+down. Do the six links above first; locking staging down would break them.
 
-Done 2026-09-22: `inc/staging-links.php` adds `Disallow: /staging/` to
-robots.txt, on the same filter `inc/facility-pages.php` uses for `/go/`. That
-is the only lever the theme has, and it is a request to crawlers, not a
-control: it does not stop anybody reading those pages, and a URL already
-indexed can stay. Closing the copy properly is the owner's: a password on
-`/staging/`, or "Discourage search engines" inside the staging install, or
-taking it down. Doing that would also break the two things above until they
-are fixed, which is the order to do them in.
-
-Re-check any time with `python scripts/check-staging-links.py` (add `--all`
-to fetch every page the mirror suspects rather than the first 25); it exits 1
+Re-check any time with `python scripts/check-staging-links.py` (add `--all` to
+fetch every page the mirror suspects rather than the first 25); it exits 1
 while anything reader-facing remains.

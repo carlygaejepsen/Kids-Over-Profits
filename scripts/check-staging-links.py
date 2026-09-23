@@ -47,10 +47,13 @@ UA = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
 URL_RE = re.compile(r'https?://kidsoverprofits\.org/staging/[^\s"\'<>)\\]*')
 NOINDEX_RE = re.compile(r'<meta[^>]+name=["\']robots["\'][^>]+noindex', re.I)
 
-# Checked on every run whatever the mirror says: the home page carries the
-# header, the sharing tags and the widgets, which is where a stale URL hides
-# without appearing in anybody's post_content.
-ALWAYS = ['/', '/birth-of-the-tti/', '/researchreports/', '/history/']
+# Checked on every run whatever the mirror says, because a query over
+# post_content cannot see any of these: the home page's sharing tags come from
+# a Code Snippets snippet, the memorial cards come from the memorial_victims
+# table, and /hyde/ is the facility profile that keeps picking up staging
+# images from the visual link preview block.
+ALWAYS = ['/', '/in-loving-memory/', '/hyde/', '/birth-of-the-tti/',
+          '/researchreports/', '/history/']
 
 QUERY = ("select post_name, post_type from wpdl_posts "
          "where post_content like '%/staging/%' and post_status = 'publish' "
