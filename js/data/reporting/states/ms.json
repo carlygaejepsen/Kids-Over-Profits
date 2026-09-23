@@ -1,0 +1,73 @@
+{
+  "state": "Mississippi",
+  "abbr": "MS",
+  "updated": "2026-09-22",
+  "note": "Mississippi sets the highest bar of any state here for complaining about a clinician: the complaint must be written, signed under oath and notarised, on the Board's own form, and it must name the specific statute or rule you say was broken and the dates of what happened. Anonymous complaints are not investigated at all. Worth preparing properly rather than sending something that will be returned.",
+  "channels": [
+    {
+      "id": "ms-social-work-mft-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Mississippi Board of Examiners for Social Workers and Marriage and Family Therapists",
+      "what_it_can_do": "Licenses and disciplines social workers and marriage and family therapists in Mississippi, and publishes its disciplinary actions. Any person, firm, corporation, board member or public officer may complain.",
+      "what_it_cannot_do": "It will not investigate an anonymous complaint, and it will only formally address one that arrives in writing on its form.",
+      "who_to_report": "A licensed social worker or marriage and family therapist in Mississippi.",
+      "how": "Use the Board's official complaint form. It must be in writing, signed under oath and notarised, must specify the statute or rule allegedly violated, and must set out the acts or omissions and the dates they happened. Post the completed notarised form to the Board.",
+      "complaint_url": "https://www.swmft.ms.gov/complaints",
+      "info_url": "https://www.swmft.ms.gov/disciplinary-actions",
+      "mail": "MSBOESWMFT, P.O. Box 4508, Jackson, MS 39296-4508",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.swmft.ms.gov/complaints",
+        "https://www.swmft.ms.gov/disciplinary-actions"
+      ]
+    },
+    {
+      "id": "ms-child-abuse-hotline",
+      "category": "legal",
+      "name": "Mississippi Child Abuse Hotline",
+      "what_it_can_do": "The statewide 24-hour report line run by the Department of Child Protection Services, for abuse, neglect, exploitation and human trafficking. Staff of residential care facilities and group homes licensed by the Department count as persons responsible for the care of children, so their conduct falls squarely within what this line takes.",
+      "who_to_report": "A child at a Mississippi program.",
+      "how": "Call the hotline, or report online through the Department's site.",
+      "complaint_url": "https://www.mdcps.ms.gov/programs/reporting-child-abuse-and-neglect",
+      "info_url": "https://www.mdcps.ms.gov/programs/child-abuse-prevention/legal-definitions-reporting-abuse-and-neglect",
+      "phone": "1-800-222-8000",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.mdcps.ms.gov/programs/reporting-child-abuse-and-neglect",
+        "https://www.mdcps.ms.gov/programs/child-abuse-prevention/legal-definitions-reporting-abuse-and-neglect"
+      ]
+    },
+    {
+      "id": "ms-child-care-licensure-complaints",
+      "category": "facility-licensing",
+      "name": "Mississippi State Department of Health, Child Care Facilities Licensure",
+      "what_it_can_do": "Licenses child care facilities in Mississippi and runs a dedicated licensure complaint line, separate from the child abuse hotline.",
+      "who_to_report": "A licensed facility, where the issue is a licensing breach rather than abuse.",
+      "how": "Call the licensure complaint hotline.",
+      "phone": "1-866-489-8734",
+      "phone_note": "Child Care Facilities Licensure complaint line, toll free.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://msdh.ms.gov/page/resources/799.pdf"]
+    },
+    {
+      "id": "ms-disability-rights-mississippi",
+      "category": "oversight",
+      "name": "Disability Rights Mississippi",
+      "what_it_can_do": "Mississippi's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Mississippi program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "http://www.drms.ms/",
+      "phone": "1-800-772-4057",
+      "phone_note": "Main line 601-968-0600 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=mississippi"]
+    }
+  ]
+}

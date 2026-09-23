@@ -1,0 +1,96 @@
+{
+  "state": "Alabama",
+  "abbr": "AL",
+  "updated": "2026-09-22",
+  "note": "Alabama reports child abuse to the county Department of Human Resources or to local law enforcement rather than to a single state hotline, and the county has seven calendar days to begin investigating - immediately where there is immediate danger to health or safety. Complaints about a facility go somewhere else again, to the Child Care Services Division intake line.",
+  "channels": [
+    {
+      "id": "al-counseling-board",
+      "category": "professional-board",
+      "profession": "Professional counselor",
+      "name": "Alabama Board of Examiners in Counseling",
+      "what_it_can_do": "Licenses and certifies counselors in private practice in Alabama and disciplines unethical practice by licensed professional counselors.",
+      "who_to_report": "A licensed professional counselor in Alabama. The Board publishes a licensee search so you can confirm the licence first.",
+      "how": "Use the Board's fillable complaint form, which it publishes alongside separate written instructions for filling it in.",
+      "complaint_url": "https://abec.alabama.gov/complaints/",
+      "info_url": "https://abec.alabama.gov/licensees/licensee-search/",
+      "phone": "334-569-8640",
+      "mail": "Alabama Board of Examiners in Counseling, 400 South Union Street, Suite 245, Montgomery, AL 36104",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://abec.alabama.gov/complaints/"
+      ]
+    },
+    {
+      "id": "al-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Alabama Board of Examiners in Psychology",
+      "what_it_can_do": "Licenses and disciplines psychologists in Alabama.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "Use the Board's complaints page.",
+      "complaint_url": "https://psychology.alabama.gov/consumers/complaints/",
+      "info_url": "https://psychology.alabama.gov/",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://psychology.alabama.gov/consumers/complaints/"
+      ]
+    },
+    {
+      "id": "al-child-care-services-complaints",
+      "category": "facility-licensing",
+      "name": "Alabama DHR, Child Care Services Division",
+      "what_it_can_do": "Licenses child care and residential providers against Alabama's Child Care Minimum Standards and investigates complaints that a provider has breached them.",
+      "who_to_report": "A licensed provider - conditions, staffing, supervision, anything that breaches the minimum standards.",
+      "how": "Call the intake line and ask for Child Care Intake, or email the licensing intake address.",
+      "complaint_url": "https://dhr.alabama.gov/faq/how-do-i-file-a-complaint-against-a-provider/",
+      "phone": "1-866-528-1694",
+      "phone_note": "Ask for Child Care Intake.",
+      "email": "childcarelicensingintake@dhr.alabama.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhr.alabama.gov/faq/how-do-i-file-a-complaint-against-a-provider/"
+      ]
+    },
+    {
+      "id": "al-child-abuse-reporting",
+      "category": "legal",
+      "name": "Alabama child abuse and neglect reporting",
+      "what_it_can_do": "Starts a county Department of Human Resources or law enforcement investigation. The county or the law enforcement authority must investigate within seven calendar days of the report, and immediately where there is immediate danger to a child's health or safety.",
+      "who_to_report": "A child at an Alabama program. Report to the county DHR office where the program is, or to local law enforcement there.",
+      "how": "Call the county DHR office, local law enforcement, or the state line.",
+      "complaint_url": "https://dhr.alabama.gov/child-protective-services/child-abuse-neglect-reporting/",
+      "info_url": "https://dhr.alabama.gov/child-protective-services/",
+      "phone": "334-242-9500",
+      "phone_note": "For reporting suspected child abuse anywhere in Alabama.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhr.alabama.gov/child-protective-services/child-abuse-neglect-reporting/",
+        "https://dhr.alabama.gov/faqs-dhr/"
+      ]
+    },
+    {
+      "id": "al-disabilities-advocacy-program",
+      "category": "oversight",
+      "name": "Alabama Disabilities Advocacy Program (ADAP)",
+      "what_it_can_do": "Alabama's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to abuse and neglect of people with disabilities.",
+      "who_to_report": "An Alabama program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "complaint_url": "https://sites.ua.edu/adap/community-issues/abuse-neglect/",
+      "info_url": "https://adap.ua.edu/",
+      "phone": "1-800-826-1675",
+      "phone_note": "Main line 205-348-4928; TTD 205-348-9484.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://sites.ua.edu/adap/community-issues/abuse-neglect/",
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=alabama"
+      ]
+    }
+  ]
+}

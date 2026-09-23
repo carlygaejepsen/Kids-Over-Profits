@@ -1,0 +1,84 @@
+{
+  "state": "Kentucky",
+  "abbr": "KY",
+  "updated": "2026-09-22",
+  "note": "Kentucky's hotline is answered by people around the clock, but its online reporting form is only monitored on weekdays between 8am and 4:30pm Eastern - so an urgent report at a weekend has to be a phone call, not a form. Its counseling board is unusually clear about what happens next: it acknowledges a written complaint within two business days, sends a copy to the counselor for a response, and puts both in front of the board at its next meeting.",
+  "channels": [
+    {
+      "id": "ky-licensed-professional-counselors-board",
+      "category": "professional-board",
+      "profession": "Professional counselor",
+      "name": "Kentucky Board of Licensed Professional Counselors",
+      "what_it_can_do": "Takes complaints that a counselor has breached Kentucky's statutes or regulations, and disciplines the licence.",
+      "who_to_report": "A licensed professional counselor in Kentucky.",
+      "how": "Send a written complaint to the Board. It must be in writing and signed by whoever is making it.",
+      "complaint_url": "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf",
+      "info_url": "https://lpc.ky.gov/",
+      "phone": "502-782-8803",
+      "email": "LPC@KY.GOV",
+      "mail": "Kentucky Board of Licensed Professional Counselors, 500 Mero Street 2SC32, Frankfort, KY 40601",
+      "anonymous": "not-allowed",
+      "note": "The Board acknowledges a written complaint within two business days, sends the counselor a copy and asks for a response, then puts your complaint and their answer to the board at its next scheduled meeting.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"]
+    },
+    {
+      "id": "ky-social-work-board",
+      "category": "professional-board",
+      "profession": "Social worker",
+      "name": "Kentucky Board of Social Work",
+      "what_it_can_do": "Takes complaints that a social worker has breached Kentucky's statutes or regulations, and disciplines the licence.",
+      "who_to_report": "A licensed social worker in Kentucky.",
+      "how": "Use the Board's online complaint form.",
+      "complaint_url": "https://secure.kentucky.gov/formservices/BSW/ComplaintForm",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://secure.kentucky.gov/formservices/BSW/ComplaintForm"]
+    },
+    {
+      "id": "ky-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Kentucky Board of Examiners of Psychology",
+      "what_it_can_do": "Licenses and disciplines psychologists in Kentucky.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "Contact the Board for its complaint process.",
+      "phone": "502-782-8812",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"]
+    },
+    {
+      "id": "ky-child-abuse-hotline",
+      "category": "legal",
+      "name": "Kentucky child abuse and neglect hotline",
+      "what_it_can_do": "The statutory report line for child abuse, neglect and dependency, run by the Department for Community Based Services, which investigates through its regional offices covering all 120 counties.",
+      "who_to_report": "A child at a Kentucky program.",
+      "how": "Call. Staff answer 24 hours a day including weekends and holidays. There is an online form as well, but it is only monitored 8am to 4:30pm Eastern on weekdays, so use the phone if it is urgent or out of hours.",
+      "info_url": "https://www.chfs.ky.gov/agencies/dcbs/dpp/cpb/Pages/default.aspx",
+      "phone": "1-877-597-2331",
+      "phone_note": "877-KYSAFE1. Answered 24 hours a day, every day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.chfs.ky.gov/agencies/dcbs/dpp/cpb/Pages/default.aspx",
+        "https://www.chfs.ky.gov/agencies/dcbs/Pages/default.aspx"
+      ]
+    },
+    {
+      "id": "ky-protection-and-advocacy",
+      "category": "oversight",
+      "name": "Kentucky Protection and Advocacy",
+      "what_it_can_do": "Kentucky's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Kentucky program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.kypa.net/",
+      "phone": "1-800-372-2988",
+      "phone_note": "Main line 502-564-2967.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kentucky"]
+    }
+  ]
+}

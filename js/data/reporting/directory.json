@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T01:30:07.483Z",
+  "generated": "2026-09-23T01:40:00.173Z",
   "categories": [
     {
       "key": "professional-board",
@@ -165,6 +165,103 @@
     ]
   },
   "states": [
+    {
+      "state": "Alabama",
+      "abbr": "AL",
+      "slug": "alabama",
+      "updated": "2026-09-22",
+      "note": "Alabama reports child abuse to the county Department of Human Resources or to local law enforcement rather than to a single state hotline, and the county has seven calendar days to begin investigating - immediately where there is immediate danger to health or safety. Complaints about a facility go somewhere else again, to the Child Care Services Division intake line.",
+      "channels": [
+        {
+          "id": "al-counseling-board",
+          "category": "professional-board",
+          "profession": "Professional counselor",
+          "name": "Alabama Board of Examiners in Counseling",
+          "what_it_can_do": "Licenses and certifies counselors in private practice in Alabama and disciplines unethical practice by licensed professional counselors.",
+          "who_to_report": "A licensed professional counselor in Alabama. The Board publishes a licensee search so you can confirm the licence first.",
+          "how": "Use the Board's fillable complaint form, which it publishes alongside separate written instructions for filling it in.",
+          "complaint_url": "https://abec.alabama.gov/complaints/",
+          "info_url": "https://abec.alabama.gov/licensees/licensee-search/",
+          "phone": "334-569-8640",
+          "mail": "Alabama Board of Examiners in Counseling, 400 South Union Street, Suite 245, Montgomery, AL 36104",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://abec.alabama.gov/complaints/"
+          ]
+        },
+        {
+          "id": "al-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Alabama Board of Examiners in Psychology",
+          "what_it_can_do": "Licenses and disciplines psychologists in Alabama.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "Use the Board's complaints page.",
+          "complaint_url": "https://psychology.alabama.gov/consumers/complaints/",
+          "info_url": "https://psychology.alabama.gov/",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://psychology.alabama.gov/consumers/complaints/"
+          ]
+        },
+        {
+          "id": "al-child-care-services-complaints",
+          "category": "facility-licensing",
+          "name": "Alabama DHR, Child Care Services Division",
+          "what_it_can_do": "Licenses child care and residential providers against Alabama's Child Care Minimum Standards and investigates complaints that a provider has breached them.",
+          "who_to_report": "A licensed provider - conditions, staffing, supervision, anything that breaches the minimum standards.",
+          "how": "Call the intake line and ask for Child Care Intake, or email the licensing intake address.",
+          "complaint_url": "https://dhr.alabama.gov/faq/how-do-i-file-a-complaint-against-a-provider/",
+          "phone": "1-866-528-1694",
+          "phone_note": "Ask for Child Care Intake.",
+          "email": "childcarelicensingintake@dhr.alabama.gov",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhr.alabama.gov/faq/how-do-i-file-a-complaint-against-a-provider/"
+          ]
+        },
+        {
+          "id": "al-child-abuse-reporting",
+          "category": "legal",
+          "name": "Alabama child abuse and neglect reporting",
+          "what_it_can_do": "Starts a county Department of Human Resources or law enforcement investigation. The county or the law enforcement authority must investigate within seven calendar days of the report, and immediately where there is immediate danger to a child's health or safety.",
+          "who_to_report": "A child at an Alabama program. Report to the county DHR office where the program is, or to local law enforcement there.",
+          "how": "Call the county DHR office, local law enforcement, or the state line.",
+          "complaint_url": "https://dhr.alabama.gov/child-protective-services/child-abuse-neglect-reporting/",
+          "info_url": "https://dhr.alabama.gov/child-protective-services/",
+          "phone": "334-242-9500",
+          "phone_note": "For reporting suspected child abuse anywhere in Alabama.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhr.alabama.gov/child-protective-services/child-abuse-neglect-reporting/",
+            "https://dhr.alabama.gov/faqs-dhr/"
+          ]
+        },
+        {
+          "id": "al-disabilities-advocacy-program",
+          "category": "oversight",
+          "name": "Alabama Disabilities Advocacy Program (ADAP)",
+          "what_it_can_do": "Alabama's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to abuse and neglect of people with disabilities.",
+          "who_to_report": "An Alabama program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "complaint_url": "https://sites.ua.edu/adap/community-issues/abuse-neglect/",
+          "info_url": "https://adap.ua.edu/",
+          "phone": "1-800-826-1675",
+          "phone_note": "Main line 205-348-4928; TTD 205-348-9484.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://sites.ua.edu/adap/community-issues/abuse-neglect/",
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=alabama"
+          ]
+        }
+      ]
+    },
     {
       "state": "Arizona",
       "abbr": "AZ",
@@ -563,6 +660,89 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=colorado"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Connecticut",
+      "abbr": "CT",
+      "slug": "connecticut",
+      "updated": "2026-09-22",
+      "note": "Connecticut puts a clock on reporting: an oral report to the DCF Careline within 12 hours of the suspected abuse, followed by the written DCF-136 form within 48 hours of that. Anyone reporting in good faith is immune from civil or criminal liability. The Department of Public Health is equally clear about its own limits - it can only act against a licence, and nothing it does will get a consumer compensated.",
+      "channels": [
+        {
+          "id": "ct-public-health-practitioner-investigations",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Connecticut Department of Public Health, Practitioner Investigations Unit",
+          "what_it_can_do": "Investigates complaints against the health care practitioners the Department regulates, including licensed professional counselors, clinical social workers, psychologists and marital and family therapists, and the boards act against the licence.",
+          "what_it_cannot_do": "Its jurisdiction is limited by law to action against the licence. The Department says plainly that nothing it or a board does will result in any compensation, monetary or otherwise, to the person who complained.",
+          "who_to_report": "A licensed counselor, clinical social worker, psychologist or marital and family therapist in Connecticut.",
+          "how": "Read the Department's complaint page and its practitioner complaints FAQ first, then file. You can call to have a complaint form posted to you.",
+          "complaint_url": "https://portal.ct.gov/dph/practitioner-licensing--investigations/plis/reporting-a-complaint",
+          "info_url": "https://portal.ct.gov/dph/practitioner-licensing--investigations/complaints",
+          "phone": "860-509-7552",
+          "phone_note": "To request a complaint form by post.",
+          "mail": "Department of Public Health, Practitioner Investigations Unit, P.O. Box 340308, Hartford, CT 06134-0308",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://portal.ct.gov/dph/practitioner-licensing--investigations/plis/reporting-a-complaint",
+            "https://portal.ct.gov/dph/practitioner-licensing--investigations/complaints"
+          ]
+        },
+        {
+          "id": "ct-dcf-careline",
+          "category": "legal",
+          "name": "Connecticut DCF Careline",
+          "what_it_can_do": "The statutory report line for child abuse and neglect, open around the clock, and the route into a Department of Children and Families investigation.",
+          "who_to_report": "A child under 18 at a Connecticut program. Anyone with reasonable cause to suspect abuse may report.",
+          "how": "Make the oral report within 12 hours of the suspected abuse, then send the written DCF-136 form within 48 hours of that. A report can also go to a law enforcement agency.",
+          "complaint_url": "https://portal.ct.gov/dcf/knowledge-base/articles/supports-for-children-and-families/child-abuse-and-neglect/report-child-abuse",
+          "info_url": "https://portal.ct.gov/dcf/supports-for-children-and-families/child-abuse-and-neglect",
+          "phone": "1-800-842-2288",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "deadline": "Not a deadline on the abuse, but on the report: oral within 12 hours, written DCF-136 within 48 hours of the oral report.",
+          "note": "Anyone who makes a report in good faith is immune from civil and criminal liability for it.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://portal.ct.gov/dcf/knowledge-base/articles/supports-for-children-and-families/child-abuse-and-neglect/report-child-abuse",
+            "https://portal.ct.gov/dcf/supports-for-children-and-families/child-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "ct-office-early-childhood-licensing",
+          "category": "facility-licensing",
+          "name": "Connecticut Office of Early Childhood, Licensing Division",
+          "what_it_can_do": "Licenses child care programs and camps in Connecticut and investigates complaints against them.",
+          "who_to_report": "A licensed child care program or camp. Where abuse or neglect is happening at one, Connecticut tells you to call the Careline as well as this division.",
+          "how": "Use the Office's complaint page, or call the Licensing Division.",
+          "complaint_url": "https://www.ctoec.org/contact-us/file-a-complaint/",
+          "phone": "1-800-282-6063",
+          "phone_note": "Licensing Division. Direct line 860-500-4450.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ctoec.org/contact-us/file-a-complaint/"
+          ]
+        },
+        {
+          "id": "ct-disability-rights-connecticut",
+          "category": "oversight",
+          "name": "Disability Rights Connecticut",
+          "what_it_can_do": "Connecticut's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Connecticut program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.disrightsct.org",
+          "phone": "1-800-842-7303",
+          "phone_note": "Main line 860-297-4300.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=connecticut"
           ]
         }
       ]
@@ -976,6 +1156,364 @@
       ]
     },
     {
+      "state": "Iowa",
+      "abbr": "IA",
+      "slug": "iowa",
+      "updated": "2026-09-22",
+      "note": "Iowa runs a separate number for abuse suspected inside a licensed facility or program, distinct from the general child abuse hotline - use it if what happened was inside a program. Iowa also folded its Board of Psychology into the Board of Behavioral Health Professionals in 2024, so one board now covers psychologists along with counselors and social workers. And the Iowa Office of Ombudsman covers both the licensing boards and Health and Human Services, which makes it the escalation route when either one stalls.",
+      "channels": [
+        {
+          "id": "ia-behavioral-health-professionals-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Iowa Board of Behavioral Health Professionals",
+          "what_it_can_do": "Receives and investigates complaints against mental health counselors, marriage and family therapists, social workers, behavior analysts and - since the boards merged under 2024 Iowa Acts SF 2385 - psychologists, and disciplines their licences. Iowa publishes its discipline documents.",
+          "who_to_report": "Any licensed behavioral health professional in Iowa. Anyone may file: a patient, a family member, anyone else.",
+          "how": "File through the Department of Inspections, Appeals and Licensing complaints page, which routes it to the right board.",
+          "complaint_url": "https://dial.iowa.gov/i-need/complaints",
+          "info_url": "https://dial.iowa.gov/about-dial/boards/behavioral-health",
+          "anonymous": "unknown",
+          "note": "Iowa law keeps the complainant's information confidential.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dial.iowa.gov/i-need/complaints",
+            "https://dial.iowa.gov/about-dial/boards/behavioral-health"
+          ]
+        },
+        {
+          "id": "ia-facility-abuse-reporting",
+          "category": "legal",
+          "name": "Iowa reporting of abuse in a licensed facility",
+          "what_it_can_do": "The route Iowa gives for abuse suspected inside a licensed facility or program, separate from the general child abuse hotline.",
+          "who_to_report": "A young person abused inside an Iowa licensed facility or program.",
+          "how": "Call the facility line rather than the general hotline.",
+          "info_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+          "phone": "1-877-686-0027",
+          "phone_note": "For abuse suspected in a licensed facility or program.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+          ]
+        },
+        {
+          "id": "ia-child-abuse-hotline",
+          "category": "legal",
+          "name": "Iowa Child Abuse Hotline",
+          "what_it_can_do": "The statewide confidential 24-hour line taking reports of suspected abuse of children and dependent adults. The Child Protective Services intake unit screens them.",
+          "who_to_report": "A child at an Iowa program.",
+          "how": "Call. Have identifying details and the child's whereabouts ready.",
+          "complaint_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+          "phone": "1-800-362-2178",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "You may stay anonymous unless you are reporting as a mandatory reporter, in which case you have to leave your name and contact details.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+          ]
+        },
+        {
+          "id": "ia-office-of-ombudsman",
+          "category": "oversight",
+          "name": "Iowa Office of Ombudsman",
+          "what_it_can_do": "An independent office that reviews complaints about state agencies, and it names both the professional licensing boards and the Department of Health and Human Services among the bodies it covers. The route when a licensing complaint or an abuse report has gone nowhere.",
+          "what_it_cannot_do": "It examines how an agency handled something rather than disciplining a clinician or a program itself.",
+          "who_to_report": "Somebody who has already complained to an Iowa board or to HHS and got no response they can make sense of.",
+          "info_url": "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/professional-licensing-boards",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/professional-licensing-boards",
+            "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/department-of-human-services"
+          ]
+        },
+        {
+          "id": "ia-disability-rights-iowa",
+          "category": "oversight",
+          "name": "Disability Rights Iowa",
+          "what_it_can_do": "Iowa's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Iowa program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightsiowa.org/",
+          "phone": "1-800-779-2502",
+          "phone_note": "Main line 515-278-2502; TDD 515-278-0571.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=iowa"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Kentucky",
+      "abbr": "KY",
+      "slug": "kentucky",
+      "updated": "2026-09-22",
+      "note": "Kentucky's hotline is answered by people around the clock, but its online reporting form is only monitored on weekdays between 8am and 4:30pm Eastern - so an urgent report at a weekend has to be a phone call, not a form. Its counseling board is unusually clear about what happens next: it acknowledges a written complaint within two business days, sends a copy to the counselor for a response, and puts both in front of the board at its next meeting.",
+      "channels": [
+        {
+          "id": "ky-licensed-professional-counselors-board",
+          "category": "professional-board",
+          "profession": "Professional counselor",
+          "name": "Kentucky Board of Licensed Professional Counselors",
+          "what_it_can_do": "Takes complaints that a counselor has breached Kentucky's statutes or regulations, and disciplines the licence.",
+          "who_to_report": "A licensed professional counselor in Kentucky.",
+          "how": "Send a written complaint to the Board. It must be in writing and signed by whoever is making it.",
+          "complaint_url": "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf",
+          "info_url": "https://lpc.ky.gov/",
+          "phone": "502-782-8803",
+          "email": "LPC@KY.GOV",
+          "mail": "Kentucky Board of Licensed Professional Counselors, 500 Mero Street 2SC32, Frankfort, KY 40601",
+          "anonymous": "not-allowed",
+          "note": "The Board acknowledges a written complaint within two business days, sends the counselor a copy and asks for a response, then puts your complaint and their answer to the board at its next scheduled meeting.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"
+          ]
+        },
+        {
+          "id": "ky-social-work-board",
+          "category": "professional-board",
+          "profession": "Social worker",
+          "name": "Kentucky Board of Social Work",
+          "what_it_can_do": "Takes complaints that a social worker has breached Kentucky's statutes or regulations, and disciplines the licence.",
+          "who_to_report": "A licensed social worker in Kentucky.",
+          "how": "Use the Board's online complaint form.",
+          "complaint_url": "https://secure.kentucky.gov/formservices/BSW/ComplaintForm",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://secure.kentucky.gov/formservices/BSW/ComplaintForm"
+          ]
+        },
+        {
+          "id": "ky-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Kentucky Board of Examiners of Psychology",
+          "what_it_can_do": "Licenses and disciplines psychologists in Kentucky.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "Contact the Board for its complaint process.",
+          "phone": "502-782-8812",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"
+          ]
+        },
+        {
+          "id": "ky-child-abuse-hotline",
+          "category": "legal",
+          "name": "Kentucky child abuse and neglect hotline",
+          "what_it_can_do": "The statutory report line for child abuse, neglect and dependency, run by the Department for Community Based Services, which investigates through its regional offices covering all 120 counties.",
+          "who_to_report": "A child at a Kentucky program.",
+          "how": "Call. Staff answer 24 hours a day including weekends and holidays. There is an online form as well, but it is only monitored 8am to 4:30pm Eastern on weekdays, so use the phone if it is urgent or out of hours.",
+          "info_url": "https://www.chfs.ky.gov/agencies/dcbs/dpp/cpb/Pages/default.aspx",
+          "phone": "1-877-597-2331",
+          "phone_note": "877-KYSAFE1. Answered 24 hours a day, every day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.chfs.ky.gov/agencies/dcbs/dpp/cpb/Pages/default.aspx",
+            "https://www.chfs.ky.gov/agencies/dcbs/Pages/default.aspx"
+          ]
+        },
+        {
+          "id": "ky-protection-and-advocacy",
+          "category": "oversight",
+          "name": "Kentucky Protection and Advocacy",
+          "what_it_can_do": "Kentucky's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Kentucky program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.kypa.net/",
+          "phone": "1-800-372-2988",
+          "phone_note": "Main line 502-564-2967.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kentucky"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Louisiana",
+      "abbr": "LA",
+      "slug": "louisiana",
+      "updated": "2026-09-22",
+      "note": "Louisiana's child protection hotline explicitly covers abuse and neglect inside licensed residential and treatment facilities, not only in family homes, so it is the right call for something that happened in a program. Its counseling board, by contrast, will not accept an anonymous complaint at all unless the documents you send with it plainly show a breach of law on their own.",
+      "channels": [
+        {
+          "id": "la-lpc-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Louisiana Licensed Professional Counselors Board of Examiners",
+          "what_it_can_do": "Receives complaints against licensed professional counselors, provisional licensed professional counselors, and licensed and provisional marriage and family therapists, and disciplines their licences through its Disciplinary Committee.",
+          "who_to_report": "An LPC, PLPC, LMFT or PLMFT in Louisiana.",
+          "how": "Use the Board's online complaint form. Include your contact details.",
+          "complaint_url": "https://www.lpcboard.org/file-complaint",
+          "info_url": "https://www.lpcboard.org/page/75",
+          "anonymous": "not-allowed",
+          "note": "Anonymous complaints are not accepted unless the documentation you provide clearly shows a violation of law by itself. The administrator first checks whether the person is within the Board's jurisdiction at all.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.lpcboard.org/file-complaint",
+            "https://www.lpcboard.org/page/75"
+          ]
+        },
+        {
+          "id": "la-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Louisiana State Board of Examiners of Psychologists",
+          "what_it_can_do": "Licenses and disciplines psychologists in Louisiana, and exists in statute to protect the public from unauthorised, unqualified and improper practice of psychology.",
+          "who_to_report": "A licensed psychologist in Louisiana, or somebody practising psychology without authorisation.",
+          "how": "Submit a complaint through the Board's portal.",
+          "complaint_url": "https://www.lsbepportal.com/file-complaint",
+          "info_url": "https://lsbep.org/",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.lsbepportal.com/file-complaint",
+            "https://lsbep.org/"
+          ]
+        },
+        {
+          "id": "la-child-protection-hotline",
+          "category": "legal",
+          "name": "Louisiana Child Protection Hotline",
+          "what_it_can_do": "The statutory report line, run by the Department of Children and Family Services, which is mandated to receive and investigate reports of child abuse and neglect - including abuse or neglect occurring in licensed DCFS or Department of Health residential and treatment facilities.",
+          "who_to_report": "A child at a Louisiana program, including abuse, neglect, sexual abuse and juvenile sex trafficking.",
+          "how": "Call. It is open every hour of every day of the year, and all calls are confidential.",
+          "complaint_url": "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
+          "info_url": "https://www.dcfs.louisiana.gov/page/109",
+          "phone": "1-855-452-5437",
+          "phone_note": "855-4LA-KIDS. 24 hours a day, 365 days a year.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
+            "https://www.dcfs.louisiana.gov/page/109"
+          ]
+        },
+        {
+          "id": "la-disability-rights-louisiana",
+          "category": "oversight",
+          "name": "Disability Rights Louisiana",
+          "what_it_can_do": "Louisiana's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Louisiana program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightsla.org/",
+          "phone": "1-800-960-7705",
+          "phone_note": "Main line 504-522-2337 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=louisiana"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Maine",
+      "abbr": "ME",
+      "slug": "maine",
+      "updated": "2026-09-22",
+      "note": "Maine runs one number for two different jobs: 1-800-452-1999 takes reports of suspected child abuse and it takes licensing concerns about a children's residential facility, because the same Office of Child and Family Services unit licenses and investigates them. Maine also has an independent Child Welfare Ombudsman, outside the department, for when the department itself is the problem.",
+      "channels": [
+        {
+          "id": "me-professional-licensing-boards",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Maine Office of Professional and Occupational Regulation",
+          "what_it_can_do": "Houses the Board of Counseling Professionals Licensure, the Board of Examiners of Psychologists and the State Board of Social Worker Licensure, and takes complaints against all of them through one form. Complaints, investigations and legal negotiations are handled by the Office's own investigators and attorneys.",
+          "who_to_report": "A licensed counselor, psychologist or social worker in Maine.",
+          "how": "File through the Office's online complaint form.",
+          "complaint_url": "https://me.accessgov.com/pfr/Forms/Page/pfr-opor/oporcomplaint/0",
+          "info_url": "https://www.maine.gov/pfr/professionallicensing/professions/board-of-counseling-professionals-licensure",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.maine.gov/pfr/professionallicensing/professions/board-of-counseling-professionals-licensure"
+          ]
+        },
+        {
+          "id": "me-childrens-licensing-investigation",
+          "category": "facility-licensing",
+          "name": "Maine OCFS, Children's Licensing and Investigation Unit",
+          "what_it_can_do": "Licenses and oversees every children's residential facility in Maine, including shelters, along with child placing agencies and child care providers, and investigates complaints against them.",
+          "who_to_report": "A children's residential facility - licensing violations as well as suspected abuse or neglect inside one.",
+          "how": "Call the same number used for child abuse reports and say it is a licensing concern about a facility.",
+          "info_url": "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect",
+          "phone": "1-800-452-1999",
+          "phone_note": "24 hours a day, seven days a week, including holidays.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "me-child-abuse-intake",
+          "category": "legal",
+          "name": "Maine OCFS Intake (child abuse and neglect)",
+          "what_it_can_do": "The statutory report line for suspected child abuse and neglect in Maine, staffed around the clock including holidays.",
+          "who_to_report": "A child at a Maine program.",
+          "how": "Call.",
+          "info_url": "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect",
+          "phone": "1-800-452-1999",
+          "phone_note": "24 hours a day, seven days a week, including holidays.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "me-child-welfare-ombudsman",
+          "category": "oversight",
+          "name": "Maine Child Welfare Ombudsman",
+          "what_it_can_do": "An independent office, outside the Department of Health and Human Services, that takes complaints about how the Department is handling a child's case.",
+          "what_it_cannot_do": "It reviews the Department's conduct rather than licensing or prosecuting a program.",
+          "who_to_report": "A family or young person who believes the Department has mishandled a child's case, including after a report was made.",
+          "how": "Submit a complaint through the office's site, or call.",
+          "complaint_url": "https://cwombudsman.org/submit-a-complaint/",
+          "info_url": "https://cwombudsman.org/",
+          "phone": "1-866-621-0758",
+          "phone_note": "Also 207-213-4773.",
+          "email": "ombudsman@cwombudsman.org",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://cwombudsman.org/"
+          ]
+        },
+        {
+          "id": "me-disability-rights-maine",
+          "category": "oversight",
+          "name": "Disability Rights Maine",
+          "what_it_can_do": "Maine's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Maine program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://drme.org",
+          "phone": "1-800-452-1948",
+          "phone_note": "Voice and TTY. Main line 207-626-2774.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=maine"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Maryland",
       "abbr": "MD",
       "slug": "maryland",
@@ -1362,6 +1900,84 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=minnesota"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Mississippi",
+      "abbr": "MS",
+      "slug": "mississippi",
+      "updated": "2026-09-22",
+      "note": "Mississippi sets the highest bar of any state here for complaining about a clinician: the complaint must be written, signed under oath and notarised, on the Board's own form, and it must name the specific statute or rule you say was broken and the dates of what happened. Anonymous complaints are not investigated at all. Worth preparing properly rather than sending something that will be returned.",
+      "channels": [
+        {
+          "id": "ms-social-work-mft-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Mississippi Board of Examiners for Social Workers and Marriage and Family Therapists",
+          "what_it_can_do": "Licenses and disciplines social workers and marriage and family therapists in Mississippi, and publishes its disciplinary actions. Any person, firm, corporation, board member or public officer may complain.",
+          "what_it_cannot_do": "It will not investigate an anonymous complaint, and it will only formally address one that arrives in writing on its form.",
+          "who_to_report": "A licensed social worker or marriage and family therapist in Mississippi.",
+          "how": "Use the Board's official complaint form. It must be in writing, signed under oath and notarised, must specify the statute or rule allegedly violated, and must set out the acts or omissions and the dates they happened. Post the completed notarised form to the Board.",
+          "complaint_url": "https://www.swmft.ms.gov/complaints",
+          "info_url": "https://www.swmft.ms.gov/disciplinary-actions",
+          "mail": "MSBOESWMFT, P.O. Box 4508, Jackson, MS 39296-4508",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.swmft.ms.gov/complaints",
+            "https://www.swmft.ms.gov/disciplinary-actions"
+          ]
+        },
+        {
+          "id": "ms-child-abuse-hotline",
+          "category": "legal",
+          "name": "Mississippi Child Abuse Hotline",
+          "what_it_can_do": "The statewide 24-hour report line run by the Department of Child Protection Services, for abuse, neglect, exploitation and human trafficking. Staff of residential care facilities and group homes licensed by the Department count as persons responsible for the care of children, so their conduct falls squarely within what this line takes.",
+          "who_to_report": "A child at a Mississippi program.",
+          "how": "Call the hotline, or report online through the Department's site.",
+          "complaint_url": "https://www.mdcps.ms.gov/programs/reporting-child-abuse-and-neglect",
+          "info_url": "https://www.mdcps.ms.gov/programs/child-abuse-prevention/legal-definitions-reporting-abuse-and-neglect",
+          "phone": "1-800-222-8000",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.mdcps.ms.gov/programs/reporting-child-abuse-and-neglect",
+            "https://www.mdcps.ms.gov/programs/child-abuse-prevention/legal-definitions-reporting-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "ms-child-care-licensure-complaints",
+          "category": "facility-licensing",
+          "name": "Mississippi State Department of Health, Child Care Facilities Licensure",
+          "what_it_can_do": "Licenses child care facilities in Mississippi and runs a dedicated licensure complaint line, separate from the child abuse hotline.",
+          "who_to_report": "A licensed facility, where the issue is a licensing breach rather than abuse.",
+          "how": "Call the licensure complaint hotline.",
+          "phone": "1-866-489-8734",
+          "phone_note": "Child Care Facilities Licensure complaint line, toll free.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://msdh.ms.gov/page/resources/799.pdf"
+          ]
+        },
+        {
+          "id": "ms-disability-rights-mississippi",
+          "category": "oversight",
+          "name": "Disability Rights Mississippi",
+          "what_it_can_do": "Mississippi's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Mississippi program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "http://www.drms.ms/",
+          "phone": "1-800-772-4057",
+          "phone_note": "Main line 601-968-0600 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=mississippi"
           ]
         }
       ]
@@ -2113,6 +2729,88 @@
       ]
     },
     {
+      "state": "Oklahoma",
+      "abbr": "OK",
+      "slug": "oklahoma",
+      "updated": "2026-09-22",
+      "note": "Oklahoma has an Office of Client Advocacy whose investigations unit exists specifically to investigate abuse, neglect, exploitation and caretaker misconduct involving children in congregate care settings. That is unusually close to this industry, and it is a separate route from the general child abuse hotline. Oklahoma also splits complaints about a residential facility: anything rising to abuse or neglect goes to Child Welfare Services, everything else is investigated by Child Care Services.",
+      "channels": [
+        {
+          "id": "ok-behavioral-health-licensure",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Oklahoma State Board of Behavioral Health Licensure",
+          "what_it_can_do": "Enforces the rules governing Licensed Professional Counselors, Licensed Marital and Family Therapists and Licensed Behavioral Practitioners, and disciplines their licences. It also takes complaints about people delivering counseling services with no licence at all.",
+          "who_to_report": "An LPC, LMFT or LBP in Oklahoma, a candidate for one of those licences, or somebody practising without one. Psychologists are licensed separately by the Oklahoma State Board of Examiners of Psychologists.",
+          "how": "Oklahoma calls this a Request for Inquiry rather than a complaint. Anyone may file one, and it has to be in writing.",
+          "complaint_url": "https://oklahoma.gov/behavioralhealth/file-a-complaint.html",
+          "info_url": "https://oklahoma.gov/behavioralhealth.html",
+          "phone": "405-522-3696",
+          "email": "Info.BehavioralHealth@bbhl.ok.gov",
+          "mail": "State Board of Behavioral Health Licensure, 3815 N Santa Fe, Ste. 110, Oklahoma City, OK 73118",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://oklahoma.gov/behavioralhealth/file-a-complaint.html",
+            "https://oklahoma.gov/behavioralhealth.html"
+          ]
+        },
+        {
+          "id": "ok-office-client-advocacy",
+          "category": "oversight",
+          "name": "Oklahoma Office of Client Advocacy, Investigations Unit",
+          "what_it_can_do": "Investigates abuse, neglect, exploitation and caretaker misconduct involving children living in Office of Juvenile Affairs facilities, day treatment programs and other congregate care settings.",
+          "who_to_report": "A child in an Oklahoma congregate care setting - which is what most programs in this industry are.",
+          "how": "Report online at abuseisnotok.org, call the statewide hotline, or contact OCA intake directly.",
+          "complaint_url": "https://www.abuseisnotok.org/",
+          "info_url": "https://oklahoma.gov/health/about-us/office-of-accountability-systems/office-of-client-advocacy.html",
+          "phone": "405-522-2720",
+          "phone_note": "OCA Intake. The 24-hour statewide hotline is 1-800-522-3511.",
+          "email": "oca.intake@health.ok.gov",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://oklahoma.gov/health/about-us/office-of-accountability-systems/office-of-client-advocacy.html"
+          ]
+        },
+        {
+          "id": "ok-child-abuse-hotline",
+          "category": "legal",
+          "name": "Oklahoma Statewide Child Abuse and Neglect Hotline",
+          "what_it_can_do": "The statutory 24-hour report line. Where a complaint about a residential child care facility rises to abuse or neglect it is referred to Child Welfare Services to screen and investigate; other allegations go to Child Care Services.",
+          "who_to_report": "A child at an Oklahoma program.",
+          "how": "Call, or report online through abuseisnotok.org.",
+          "complaint_url": "https://www.abuseisnotok.org/",
+          "info_url": "https://oklahoma.gov/okdhs/services/reportabuse.html",
+          "phone": "1-800-522-3511",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://oklahoma.gov/okdhs/services/reportabuse.html"
+          ]
+        },
+        {
+          "id": "ok-disability-law-center",
+          "category": "oversight",
+          "name": "Disability Rights Oklahoma",
+          "what_it_can_do": "Oklahoma's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Oklahoma program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://drok.org/",
+          "phone": "1-800-880-7755",
+          "phone_note": "Voice and TDD. Main line 405-525-7755.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oklahoma"
+          ],
+          "note": "Operates as Disability Rights Oklahoma (DROK); the older Oklahoma Disability Law Center name and okdlc.org address still redirect here."
+        }
+      ]
+    },
+    {
       "state": "Oregon",
       "abbr": "OR",
       "slug": "oregon",
@@ -2256,6 +2954,90 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "South Carolina",
+      "abbr": "SC",
+      "slug": "south-carolina",
+      "updated": "2026-09-22",
+      "note": "South Carolina has a division specifically for this: Out of Home Abuse and Neglect, inside the Department of Social Services, which handles abuse and neglect of people in facilities rather than in family homes. That is the right first call for something that happened inside a program, and it has its own daytime and after-hours numbers.",
+      "channels": [
+        {
+          "id": "sc-llr-boards",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "South Carolina Department of Labor, Licensing and Regulation, Office of Investigations and Enforcement",
+          "what_it_can_do": "Investigates complaints against licensed professionals - including professional counselors, marriage and family therapists, psychologists and social workers - and against unlicensed people practising a profession that requires a licence, to decide whether the facts alleged could breach the law regulating that profession.",
+          "who_to_report": "Any licensed mental health professional in South Carolina, or somebody practising without the licence.",
+          "how": "Use the online complaint system, or call. State the facts briefly and clearly, give the name, address and phone number of every witness and what each of them knows, and attach any documents, records, statements or contracts that help.",
+          "complaint_url": "https://llr.sc.gov/fileacomplaint.aspx",
+          "info_url": "https://llr.sc.gov/for/complaint.aspx",
+          "phone": "803-896-4470",
+          "phone_note": "Complaints. The Counselors board direct line is 803-896-4658.",
+          "email": "Contact.Counselor@llr.sc.gov",
+          "mail": "SC Department of Labor, Licensing and Regulation, 110 Centerview Dr, Columbia, SC 29210",
+          "anonymous": "unknown",
+          "note": "The Department puts the burden on you: it says the complaining party is responsible for making sure everything needed is on the form.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://llr.sc.gov/fileacomplaint.aspx",
+            "https://llr.sc.gov/for/complaint.aspx"
+          ]
+        },
+        {
+          "id": "sc-out-of-home-abuse-neglect",
+          "category": "legal",
+          "name": "South Carolina DSS, Out of Home Abuse and Neglect (OHAN)",
+          "what_it_can_do": "The Department of Social Services division that investigates abuse and neglect of people living in facilities, as distinct from abuse in a family home.",
+          "who_to_report": "A young person abused or neglected inside a South Carolina facility. This is the right first call for something that happened in a program.",
+          "how": "Call the daytime line during office hours, or the after-hours number outside them.",
+          "info_url": "https://dss.sc.gov/contact-dss",
+          "phone": "803-898-7669",
+          "phone_note": "8:30am to 5:00pm. After hours, 1-800-645-9789.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+            "https://dss.sc.gov/contact-dss"
+          ]
+        },
+        {
+          "id": "sc-child-abuse-hotline",
+          "category": "legal",
+          "name": "South Carolina child abuse and neglect hotline",
+          "what_it_can_do": "The Department of Social Services 24-hour line for reporting suspected child abuse or neglect.",
+          "who_to_report": "A child at a South Carolina program. For abuse inside a facility, Out of Home Abuse and Neglect is the more specific route.",
+          "how": "Call.",
+          "complaint_url": "https://dss.sc.gov/child-well-being/report-child-abuse-and-neglect",
+          "phone": "1-888-227-3487",
+          "phone_note": "1-888-CARE4US. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dss.sc.gov/child-well-being/report-child-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "sc-disability-rights-south-carolina",
+          "category": "oversight",
+          "name": "Disability Rights South Carolina",
+          "what_it_can_do": "South Carolina's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to reporting abuse in a facility, naming each agency.",
+          "who_to_report": "A South Carolina program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line, or start from its reporting guide.",
+          "complaint_url": "https://www.disabilityrightssc.org/request-help/",
+          "info_url": "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+          "phone": "1-866-275-7273",
+          "phone_note": "Main line 803-782-0639; TTY 1-866-232-4525.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=south-carolina"
           ]
         }
       ]
@@ -2894,28 +3676,19 @@
     }
   ],
   "coverage": {
-    "covered": 28,
+    "covered": 37,
     "total": 51,
     "missing": [
       "AK",
-      "AL",
-      "CT",
       "DC",
       "DE",
       "HI",
-      "IA",
       "KS",
-      "KY",
-      "LA",
-      "ME",
-      "MS",
       "ND",
       "NE",
       "NH",
       "NM",
-      "OK",
       "RI",
-      "SC",
       "SD",
       "VT",
       "WV",

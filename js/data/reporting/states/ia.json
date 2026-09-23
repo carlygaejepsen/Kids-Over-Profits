@@ -1,0 +1,86 @@
+{
+  "state": "Iowa",
+  "abbr": "IA",
+  "updated": "2026-09-22",
+  "note": "Iowa runs a separate number for abuse suspected inside a licensed facility or program, distinct from the general child abuse hotline - use it if what happened was inside a program. Iowa also folded its Board of Psychology into the Board of Behavioral Health Professionals in 2024, so one board now covers psychologists along with counselors and social workers. And the Iowa Office of Ombudsman covers both the licensing boards and Health and Human Services, which makes it the escalation route when either one stalls.",
+  "channels": [
+    {
+      "id": "ia-behavioral-health-professionals-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Iowa Board of Behavioral Health Professionals",
+      "what_it_can_do": "Receives and investigates complaints against mental health counselors, marriage and family therapists, social workers, behavior analysts and - since the boards merged under 2024 Iowa Acts SF 2385 - psychologists, and disciplines their licences. Iowa publishes its discipline documents.",
+      "who_to_report": "Any licensed behavioral health professional in Iowa. Anyone may file: a patient, a family member, anyone else.",
+      "how": "File through the Department of Inspections, Appeals and Licensing complaints page, which routes it to the right board.",
+      "complaint_url": "https://dial.iowa.gov/i-need/complaints",
+      "info_url": "https://dial.iowa.gov/about-dial/boards/behavioral-health",
+      "anonymous": "unknown",
+      "note": "Iowa law keeps the complainant's information confidential.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dial.iowa.gov/i-need/complaints",
+        "https://dial.iowa.gov/about-dial/boards/behavioral-health"
+      ]
+    },
+    {
+      "id": "ia-facility-abuse-reporting",
+      "category": "legal",
+      "name": "Iowa reporting of abuse in a licensed facility",
+      "what_it_can_do": "The route Iowa gives for abuse suspected inside a licensed facility or program, separate from the general child abuse hotline.",
+      "who_to_report": "A young person abused inside an Iowa licensed facility or program.",
+      "how": "Call the facility line rather than the general hotline.",
+      "info_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+      "phone": "1-877-686-0027",
+      "phone_note": "For abuse suspected in a licensed facility or program.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"]
+    },
+    {
+      "id": "ia-child-abuse-hotline",
+      "category": "legal",
+      "name": "Iowa Child Abuse Hotline",
+      "what_it_can_do": "The statewide confidential 24-hour line taking reports of suspected abuse of children and dependent adults. The Child Protective Services intake unit screens them.",
+      "who_to_report": "A child at an Iowa program.",
+      "how": "Call. Have identifying details and the child's whereabouts ready.",
+      "complaint_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+      "phone": "1-800-362-2178",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "You may stay anonymous unless you are reporting as a mandatory reporter, in which case you have to leave your name and contact details.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"]
+    },
+    {
+      "id": "ia-office-of-ombudsman",
+      "category": "oversight",
+      "name": "Iowa Office of Ombudsman",
+      "what_it_can_do": "An independent office that reviews complaints about state agencies, and it names both the professional licensing boards and the Department of Health and Human Services among the bodies it covers. The route when a licensing complaint or an abuse report has gone nowhere.",
+      "what_it_cannot_do": "It examines how an agency handled something rather than disciplining a clinician or a program itself.",
+      "who_to_report": "Somebody who has already complained to an Iowa board or to HHS and got no response they can make sense of.",
+      "info_url": "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/professional-licensing-boards",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/professional-licensing-boards",
+        "https://ombudsman.iowa.gov/services/for-the-public/what-the-iowa-office-of-ombudsman-can-do/2/department-of-human-services"
+      ]
+    },
+    {
+      "id": "ia-disability-rights-iowa",
+      "category": "oversight",
+      "name": "Disability Rights Iowa",
+      "what_it_can_do": "Iowa's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Iowa program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsiowa.org/",
+      "phone": "1-800-779-2502",
+      "phone_note": "Main line 515-278-2502; TDD 515-278-0571.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=iowa"]
+    }
+  ]
+}

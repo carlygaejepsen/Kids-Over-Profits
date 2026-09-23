@@ -1,0 +1,83 @@
+{
+  "state": "South Carolina",
+  "abbr": "SC",
+  "updated": "2026-09-22",
+  "note": "South Carolina has a division specifically for this: Out of Home Abuse and Neglect, inside the Department of Social Services, which handles abuse and neglect of people in facilities rather than in family homes. That is the right first call for something that happened inside a program, and it has its own daytime and after-hours numbers.",
+  "channels": [
+    {
+      "id": "sc-llr-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "South Carolina Department of Labor, Licensing and Regulation, Office of Investigations and Enforcement",
+      "what_it_can_do": "Investigates complaints against licensed professionals - including professional counselors, marriage and family therapists, psychologists and social workers - and against unlicensed people practising a profession that requires a licence, to decide whether the facts alleged could breach the law regulating that profession.",
+      "who_to_report": "Any licensed mental health professional in South Carolina, or somebody practising without the licence.",
+      "how": "Use the online complaint system, or call. State the facts briefly and clearly, give the name, address and phone number of every witness and what each of them knows, and attach any documents, records, statements or contracts that help.",
+      "complaint_url": "https://llr.sc.gov/fileacomplaint.aspx",
+      "info_url": "https://llr.sc.gov/for/complaint.aspx",
+      "phone": "803-896-4470",
+      "phone_note": "Complaints. The Counselors board direct line is 803-896-4658.",
+      "email": "Contact.Counselor@llr.sc.gov",
+      "mail": "SC Department of Labor, Licensing and Regulation, 110 Centerview Dr, Columbia, SC 29210",
+      "anonymous": "unknown",
+      "note": "The Department puts the burden on you: it says the complaining party is responsible for making sure everything needed is on the form.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://llr.sc.gov/fileacomplaint.aspx",
+        "https://llr.sc.gov/for/complaint.aspx"
+      ]
+    },
+    {
+      "id": "sc-out-of-home-abuse-neglect",
+      "category": "legal",
+      "name": "South Carolina DSS, Out of Home Abuse and Neglect (OHAN)",
+      "what_it_can_do": "The Department of Social Services division that investigates abuse and neglect of people living in facilities, as distinct from abuse in a family home.",
+      "who_to_report": "A young person abused or neglected inside a South Carolina facility. This is the right first call for something that happened in a program.",
+      "how": "Call the daytime line during office hours, or the after-hours number outside them.",
+      "info_url": "https://dss.sc.gov/contact-dss",
+      "phone": "803-898-7669",
+      "phone_note": "8:30am to 5:00pm. After hours, 1-800-645-9789.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+        "https://dss.sc.gov/contact-dss"
+      ]
+    },
+    {
+      "id": "sc-child-abuse-hotline",
+      "category": "legal",
+      "name": "South Carolina child abuse and neglect hotline",
+      "what_it_can_do": "The Department of Social Services 24-hour line for reporting suspected child abuse or neglect.",
+      "who_to_report": "A child at a South Carolina program. For abuse inside a facility, Out of Home Abuse and Neglect is the more specific route.",
+      "how": "Call.",
+      "complaint_url": "https://dss.sc.gov/child-well-being/report-child-abuse-and-neglect",
+      "phone": "1-888-227-3487",
+      "phone_note": "1-888-CARE4US. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dss.sc.gov/child-well-being/report-child-abuse-and-neglect"
+      ]
+    },
+    {
+      "id": "sc-disability-rights-south-carolina",
+      "category": "oversight",
+      "name": "Disability Rights South Carolina",
+      "what_it_can_do": "South Carolina's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to reporting abuse in a facility, naming each agency.",
+      "who_to_report": "A South Carolina program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line, or start from its reporting guide.",
+      "complaint_url": "https://www.disabilityrightssc.org/request-help/",
+      "info_url": "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+      "phone": "1-866-275-7273",
+      "phone_note": "Main line 803-782-0639; TTY 1-866-232-4525.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.disabilityrightssc.org/resources/abuse-neglect/",
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=south-carolina"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "state": "Connecticut",
+  "abbr": "CT",
+  "updated": "2026-09-22",
+  "note": "Connecticut puts a clock on reporting: an oral report to the DCF Careline within 12 hours of the suspected abuse, followed by the written DCF-136 form within 48 hours of that. Anyone reporting in good faith is immune from civil or criminal liability. The Department of Public Health is equally clear about its own limits - it can only act against a licence, and nothing it does will get a consumer compensated.",
+  "channels": [
+    {
+      "id": "ct-public-health-practitioner-investigations",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Connecticut Department of Public Health, Practitioner Investigations Unit",
+      "what_it_can_do": "Investigates complaints against the health care practitioners the Department regulates, including licensed professional counselors, clinical social workers, psychologists and marital and family therapists, and the boards act against the licence.",
+      "what_it_cannot_do": "Its jurisdiction is limited by law to action against the licence. The Department says plainly that nothing it or a board does will result in any compensation, monetary or otherwise, to the person who complained.",
+      "who_to_report": "A licensed counselor, clinical social worker, psychologist or marital and family therapist in Connecticut.",
+      "how": "Read the Department's complaint page and its practitioner complaints FAQ first, then file. You can call to have a complaint form posted to you.",
+      "complaint_url": "https://portal.ct.gov/dph/practitioner-licensing--investigations/plis/reporting-a-complaint",
+      "info_url": "https://portal.ct.gov/dph/practitioner-licensing--investigations/complaints",
+      "phone": "860-509-7552",
+      "phone_note": "To request a complaint form by post.",
+      "mail": "Department of Public Health, Practitioner Investigations Unit, P.O. Box 340308, Hartford, CT 06134-0308",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://portal.ct.gov/dph/practitioner-licensing--investigations/plis/reporting-a-complaint",
+        "https://portal.ct.gov/dph/practitioner-licensing--investigations/complaints"
+      ]
+    },
+    {
+      "id": "ct-dcf-careline",
+      "category": "legal",
+      "name": "Connecticut DCF Careline",
+      "what_it_can_do": "The statutory report line for child abuse and neglect, open around the clock, and the route into a Department of Children and Families investigation.",
+      "who_to_report": "A child under 18 at a Connecticut program. Anyone with reasonable cause to suspect abuse may report.",
+      "how": "Make the oral report within 12 hours of the suspected abuse, then send the written DCF-136 form within 48 hours of that. A report can also go to a law enforcement agency.",
+      "complaint_url": "https://portal.ct.gov/dcf/knowledge-base/articles/supports-for-children-and-families/child-abuse-and-neglect/report-child-abuse",
+      "info_url": "https://portal.ct.gov/dcf/supports-for-children-and-families/child-abuse-and-neglect",
+      "phone": "1-800-842-2288",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "deadline": "Not a deadline on the abuse, but on the report: oral within 12 hours, written DCF-136 within 48 hours of the oral report.",
+      "note": "Anyone who makes a report in good faith is immune from civil and criminal liability for it.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://portal.ct.gov/dcf/knowledge-base/articles/supports-for-children-and-families/child-abuse-and-neglect/report-child-abuse",
+        "https://portal.ct.gov/dcf/supports-for-children-and-families/child-abuse-and-neglect"
+      ]
+    },
+    {
+      "id": "ct-office-early-childhood-licensing",
+      "category": "facility-licensing",
+      "name": "Connecticut Office of Early Childhood, Licensing Division",
+      "what_it_can_do": "Licenses child care programs and camps in Connecticut and investigates complaints against them.",
+      "who_to_report": "A licensed child care program or camp. Where abuse or neglect is happening at one, Connecticut tells you to call the Careline as well as this division.",
+      "how": "Use the Office's complaint page, or call the Licensing Division.",
+      "complaint_url": "https://www.ctoec.org/contact-us/file-a-complaint/",
+      "phone": "1-800-282-6063",
+      "phone_note": "Licensing Division. Direct line 860-500-4450.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ctoec.org/contact-us/file-a-complaint/"]
+    },
+    {
+      "id": "ct-disability-rights-connecticut",
+      "category": "oversight",
+      "name": "Disability Rights Connecticut",
+      "what_it_can_do": "Connecticut's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Connecticut program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disrightsct.org",
+      "phone": "1-800-842-7303",
+      "phone_note": "Main line 860-297-4300.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=connecticut"]
+    }
+  ]
+}

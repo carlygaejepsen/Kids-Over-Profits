@@ -1,0 +1,82 @@
+{
+  "state": "Maine",
+  "abbr": "ME",
+  "updated": "2026-09-22",
+  "note": "Maine runs one number for two different jobs: 1-800-452-1999 takes reports of suspected child abuse and it takes licensing concerns about a children's residential facility, because the same Office of Child and Family Services unit licenses and investigates them. Maine also has an independent Child Welfare Ombudsman, outside the department, for when the department itself is the problem.",
+  "channels": [
+    {
+      "id": "me-professional-licensing-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Maine Office of Professional and Occupational Regulation",
+      "what_it_can_do": "Houses the Board of Counseling Professionals Licensure, the Board of Examiners of Psychologists and the State Board of Social Worker Licensure, and takes complaints against all of them through one form. Complaints, investigations and legal negotiations are handled by the Office's own investigators and attorneys.",
+      "who_to_report": "A licensed counselor, psychologist or social worker in Maine.",
+      "how": "File through the Office's online complaint form.",
+      "complaint_url": "https://me.accessgov.com/pfr/Forms/Page/pfr-opor/oporcomplaint/0",
+      "info_url": "https://www.maine.gov/pfr/professionallicensing/professions/board-of-counseling-professionals-licensure",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.maine.gov/pfr/professionallicensing/professions/board-of-counseling-professionals-licensure"]
+    },
+    {
+      "id": "me-childrens-licensing-investigation",
+      "category": "facility-licensing",
+      "name": "Maine OCFS, Children's Licensing and Investigation Unit",
+      "what_it_can_do": "Licenses and oversees every children's residential facility in Maine, including shelters, along with child placing agencies and child care providers, and investigates complaints against them.",
+      "who_to_report": "A children's residential facility - licensing violations as well as suspected abuse or neglect inside one.",
+      "how": "Call the same number used for child abuse reports and say it is a licensing concern about a facility.",
+      "info_url": "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect",
+      "phone": "1-800-452-1999",
+      "phone_note": "24 hours a day, seven days a week, including holidays.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect"]
+    },
+    {
+      "id": "me-child-abuse-intake",
+      "category": "legal",
+      "name": "Maine OCFS Intake (child abuse and neglect)",
+      "what_it_can_do": "The statutory report line for suspected child abuse and neglect in Maine, staffed around the clock including holidays.",
+      "who_to_report": "A child at a Maine program.",
+      "how": "Call.",
+      "info_url": "https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect",
+      "phone": "1-800-452-1999",
+      "phone_note": "24 hours a day, seven days a week, including holidays.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.maine.gov/dhhs/ocfs/provider-resources/reporting-suspected-child-abuse-and-neglect"]
+    },
+    {
+      "id": "me-child-welfare-ombudsman",
+      "category": "oversight",
+      "name": "Maine Child Welfare Ombudsman",
+      "what_it_can_do": "An independent office, outside the Department of Health and Human Services, that takes complaints about how the Department is handling a child's case.",
+      "what_it_cannot_do": "It reviews the Department's conduct rather than licensing or prosecuting a program.",
+      "who_to_report": "A family or young person who believes the Department has mishandled a child's case, including after a report was made.",
+      "how": "Submit a complaint through the office's site, or call.",
+      "complaint_url": "https://cwombudsman.org/submit-a-complaint/",
+      "info_url": "https://cwombudsman.org/",
+      "phone": "1-866-621-0758",
+      "phone_note": "Also 207-213-4773.",
+      "email": "ombudsman@cwombudsman.org",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://cwombudsman.org/"]
+    },
+    {
+      "id": "me-disability-rights-maine",
+      "category": "oversight",
+      "name": "Disability Rights Maine",
+      "what_it_can_do": "Maine's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Maine program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drme.org",
+      "phone": "1-800-452-1948",
+      "phone_note": "Voice and TTY. Main line 207-626-2774.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=maine"]
+    }
+  ]
+}

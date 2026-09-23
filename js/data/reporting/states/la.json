@@ -1,0 +1,76 @@
+{
+  "state": "Louisiana",
+  "abbr": "LA",
+  "updated": "2026-09-22",
+  "note": "Louisiana's child protection hotline explicitly covers abuse and neglect inside licensed residential and treatment facilities, not only in family homes, so it is the right call for something that happened in a program. Its counseling board, by contrast, will not accept an anonymous complaint at all unless the documents you send with it plainly show a breach of law on their own.",
+  "channels": [
+    {
+      "id": "la-lpc-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Louisiana Licensed Professional Counselors Board of Examiners",
+      "what_it_can_do": "Receives complaints against licensed professional counselors, provisional licensed professional counselors, and licensed and provisional marriage and family therapists, and disciplines their licences through its Disciplinary Committee.",
+      "who_to_report": "An LPC, PLPC, LMFT or PLMFT in Louisiana.",
+      "how": "Use the Board's online complaint form. Include your contact details.",
+      "complaint_url": "https://www.lpcboard.org/file-complaint",
+      "info_url": "https://www.lpcboard.org/page/75",
+      "anonymous": "not-allowed",
+      "note": "Anonymous complaints are not accepted unless the documentation you provide clearly shows a violation of law by itself. The administrator first checks whether the person is within the Board's jurisdiction at all.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.lpcboard.org/file-complaint",
+        "https://www.lpcboard.org/page/75"
+      ]
+    },
+    {
+      "id": "la-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Louisiana State Board of Examiners of Psychologists",
+      "what_it_can_do": "Licenses and disciplines psychologists in Louisiana, and exists in statute to protect the public from unauthorised, unqualified and improper practice of psychology.",
+      "who_to_report": "A licensed psychologist in Louisiana, or somebody practising psychology without authorisation.",
+      "how": "Submit a complaint through the Board's portal.",
+      "complaint_url": "https://www.lsbepportal.com/file-complaint",
+      "info_url": "https://lsbep.org/",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.lsbepportal.com/file-complaint",
+        "https://lsbep.org/"
+      ]
+    },
+    {
+      "id": "la-child-protection-hotline",
+      "category": "legal",
+      "name": "Louisiana Child Protection Hotline",
+      "what_it_can_do": "The statutory report line, run by the Department of Children and Family Services, which is mandated to receive and investigate reports of child abuse and neglect - including abuse or neglect occurring in licensed DCFS or Department of Health residential and treatment facilities.",
+      "who_to_report": "A child at a Louisiana program, including abuse, neglect, sexual abuse and juvenile sex trafficking.",
+      "how": "Call. It is open every hour of every day of the year, and all calls are confidential.",
+      "complaint_url": "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
+      "info_url": "https://www.dcfs.louisiana.gov/page/109",
+      "phone": "1-855-452-5437",
+      "phone_note": "855-4LA-KIDS. 24 hours a day, 365 days a year.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
+        "https://www.dcfs.louisiana.gov/page/109"
+      ]
+    },
+    {
+      "id": "la-disability-rights-louisiana",
+      "category": "oversight",
+      "name": "Disability Rights Louisiana",
+      "what_it_can_do": "Louisiana's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Louisiana program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsla.org/",
+      "phone": "1-800-960-7705",
+      "phone_note": "Main line 504-522-2337 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=louisiana"]
+    }
+  ]
+}

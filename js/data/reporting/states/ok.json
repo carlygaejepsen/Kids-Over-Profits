@@ -1,0 +1,81 @@
+{
+  "state": "Oklahoma",
+  "abbr": "OK",
+  "updated": "2026-09-22",
+  "note": "Oklahoma has an Office of Client Advocacy whose investigations unit exists specifically to investigate abuse, neglect, exploitation and caretaker misconduct involving children in congregate care settings. That is unusually close to this industry, and it is a separate route from the general child abuse hotline. Oklahoma also splits complaints about a residential facility: anything rising to abuse or neglect goes to Child Welfare Services, everything else is investigated by Child Care Services.",
+  "channels": [
+    {
+      "id": "ok-behavioral-health-licensure",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Oklahoma State Board of Behavioral Health Licensure",
+      "what_it_can_do": "Enforces the rules governing Licensed Professional Counselors, Licensed Marital and Family Therapists and Licensed Behavioral Practitioners, and disciplines their licences. It also takes complaints about people delivering counseling services with no licence at all.",
+      "who_to_report": "An LPC, LMFT or LBP in Oklahoma, a candidate for one of those licences, or somebody practising without one. Psychologists are licensed separately by the Oklahoma State Board of Examiners of Psychologists.",
+      "how": "Oklahoma calls this a Request for Inquiry rather than a complaint. Anyone may file one, and it has to be in writing.",
+      "complaint_url": "https://oklahoma.gov/behavioralhealth/file-a-complaint.html",
+      "info_url": "https://oklahoma.gov/behavioralhealth.html",
+      "phone": "405-522-3696",
+      "email": "Info.BehavioralHealth@bbhl.ok.gov",
+      "mail": "State Board of Behavioral Health Licensure, 3815 N Santa Fe, Ste. 110, Oklahoma City, OK 73118",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://oklahoma.gov/behavioralhealth/file-a-complaint.html",
+        "https://oklahoma.gov/behavioralhealth.html"
+      ]
+    },
+    {
+      "id": "ok-office-client-advocacy",
+      "category": "oversight",
+      "name": "Oklahoma Office of Client Advocacy, Investigations Unit",
+      "what_it_can_do": "Investigates abuse, neglect, exploitation and caretaker misconduct involving children living in Office of Juvenile Affairs facilities, day treatment programs and other congregate care settings.",
+      "who_to_report": "A child in an Oklahoma congregate care setting - which is what most programs in this industry are.",
+      "how": "Report online at abuseisnotok.org, call the statewide hotline, or contact OCA intake directly.",
+      "complaint_url": "https://www.abuseisnotok.org/",
+      "info_url": "https://oklahoma.gov/health/about-us/office-of-accountability-systems/office-of-client-advocacy.html",
+      "phone": "405-522-2720",
+      "phone_note": "OCA Intake. The 24-hour statewide hotline is 1-800-522-3511.",
+      "email": "oca.intake@health.ok.gov",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://oklahoma.gov/health/about-us/office-of-accountability-systems/office-of-client-advocacy.html"
+      ]
+    },
+    {
+      "id": "ok-child-abuse-hotline",
+      "category": "legal",
+      "name": "Oklahoma Statewide Child Abuse and Neglect Hotline",
+      "what_it_can_do": "The statutory 24-hour report line. Where a complaint about a residential child care facility rises to abuse or neglect it is referred to Child Welfare Services to screen and investigate; other allegations go to Child Care Services.",
+      "who_to_report": "A child at an Oklahoma program.",
+      "how": "Call, or report online through abuseisnotok.org.",
+      "complaint_url": "https://www.abuseisnotok.org/",
+      "info_url": "https://oklahoma.gov/okdhs/services/reportabuse.html",
+      "phone": "1-800-522-3511",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://oklahoma.gov/okdhs/services/reportabuse.html"
+      ]
+    },
+    {
+      "id": "ok-disability-law-center",
+      "category": "oversight",
+      "name": "Disability Rights Oklahoma",
+      "what_it_can_do": "Oklahoma's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Oklahoma program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drok.org/",
+      "phone": "1-800-880-7755",
+      "phone_note": "Voice and TDD. Main line 405-525-7755.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oklahoma"
+      ],
+      "note": "Operates as Disability Rights Oklahoma (DROK); the older Oklahoma Disability Law Center name and okdlc.org address still redirect here."
+    }
+  ]
+}
