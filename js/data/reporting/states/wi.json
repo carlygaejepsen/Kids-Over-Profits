@@ -30,11 +30,10 @@
       "who_to_report": "Someone in a Wisconsin program whose rights are being breached - restrictions, treatment, how they are being handled day to day - whether or not it amounts to abuse.",
       "how": "File a formal grievance using the sample form, or ask a client rights staff member to write it down for you, which the Department says they will do. There is a published flow chart of the whole procedure.",
       "complaint_url": "https://www.dhs.wisconsin.gov/clientrights/grievances.htm",
-      "info_url": "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+      "info_url": "https://www.dhs.wisconsin.gov/clientrights/index.htm",
       "anonymous": "not-allowed",
       "verified_on": "2026-09-22",
       "sources": [
-        "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
         "https://www.dhs.wisconsin.gov/clientrights/grievances.htm"
       ]
     },
@@ -67,7 +66,7 @@
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
       "sources": [
-        "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+        "https://www.dhs.wisconsin.gov/clientrights/grievances.htm",
         "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wisconsin"
       ]
     },

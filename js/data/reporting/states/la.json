@@ -46,16 +46,16 @@
       "what_it_can_do": "The statutory report line, run by the Department of Children and Family Services, which is mandated to receive and investigate reports of child abuse and neglect - including abuse or neglect occurring in licensed DCFS or Department of Health residential and treatment facilities.",
       "who_to_report": "A child at a Louisiana program, including abuse, neglect, sexual abuse and juvenile sex trafficking.",
       "how": "Call. It is open every hour of every day of the year, and all calls are confidential.",
-      "complaint_url": "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
-      "info_url": "https://www.dcfs.louisiana.gov/page/109",
+      "complaint_url": "https://dcfs.louisiana.gov/child-welfare/reporting-child-abuse-neglect/",
+      "info_url": "https://dcfs.louisiana.gov/child-welfare/reporting-child-abuse-neglect/",
       "phone": "1-855-452-5437",
       "phone_note": "855-4LA-KIDS. 24 hours a day, 365 days a year.",
       "anonymous": "allowed",
       "mandatory_reporter": true,
       "verified_on": "2026-09-22",
       "sources": [
-        "https://dcfs.louisiana.gov/page/reporting-child-abuse-neglect",
-        "https://www.dcfs.louisiana.gov/page/109"
+        "https://dcfs.louisiana.gov/child-welfare/reporting-child-abuse-neglect/",
+        "https://dcfs.louisiana.gov/child-welfare/reporting-child-abuse-neglect/"
       ]
     },
     {
@@ -81,15 +81,15 @@
       "what_it_can_do": "Licenses child residential facilities and child placing agencies in Louisiana and enforces the Child Care Facilities and Child Placing Agencies Licensing Act. It has revoked licences and sought injunctions against unlicensed providers.",
       "who_to_report": "A child residential facility. Louisiana defines a complaint broadly: any allegation that someone is breaching the standards, or acting or failing to act in a way that harms the health, safety, rights or welfare of a child living there.",
       "how": "Contact the Licensing Section. It aims to inspect every residential licensing complaint within 30 days.",
-      "info_url": "https://www.dcfs.louisiana.gov/page/246",
+      "info_url": "https://dcfs.louisiana.gov/division-of-management-finance/residential-care-and-special-population-licensing/",
       "phone": "225-342-4350",
       "phone_note": "Licensing staff, 8:00am to 4:30pm weekdays except legal holidays.",
       "anonymous": "unknown",
       "note": "Louisiana publishes a list of every currently licensed facility, so it is worth checking whether a program holds a licence at all.",
       "verified_on": "2026-09-22",
       "sources": [
-        "https://www.dcfs.louisiana.gov/page/246",
-        "https://dcfs.louisiana.gov/page/licensed-facilities"
+        "https://dcfs.louisiana.gov/division-of-management-finance/residential-care-and-special-population-licensing/",
+        "https://dcfs.louisiana.gov/division-of-management-finance/dcfs-licensed-facilities-5-23/"
       ]
     }
   ]

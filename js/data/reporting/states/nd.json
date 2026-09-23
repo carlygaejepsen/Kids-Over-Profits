@@ -1,0 +1,101 @@
+{
+  "state": "North Dakota",
+  "abbr": "ND",
+  "updated": "2026-09-22",
+  "note": "North Dakota's reporting line is not staffed around the clock: live agents answer between 8am and 5pm Central on weekdays, and outside that you can only leave a message. If a child is in immediate danger at a weekend, call law enforcement rather than waiting on a callback. North Dakota law does require institutional abuse reports to be made and received the same way as every other report, so a program is not a special case.",
+  "channels": [
+    {
+      "id": "nd-counselor-examiners-board",
+      "category": "professional-board",
+      "profession": "Professional counselor",
+      "name": "North Dakota Board of Counselor Examiners",
+      "what_it_can_do": "Licenses and disciplines professional counselors in North Dakota.",
+      "who_to_report": "A licensed professional counselor.",
+      "how": "The complaint process begins once the Board's formal complaint form is signed and returned to its office.",
+      "complaint_url": "https://www.ndbce.org/PDFs/ComplaintForm.pdf",
+      "info_url": "https://www.ndbce.org/",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndbce.org/PDFs/ComplaintForm.pdf",
+        "https://www.ndbce.org/"
+      ]
+    },
+    {
+      "id": "nd-psychologist-examiners-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "North Dakota State Board of Psychologist Examiners",
+      "what_it_can_do": "Licenses and disciplines psychologists, registrants and psychology residents in North Dakota.",
+      "who_to_report": "A licensed psychologist, registrant or psychology resident.",
+      "how": "Complete and sign the Board's complaint form, setting out the nature of the allegation and the facts behind it. You may attach supporting documents.",
+      "complaint_url": "https://www.ndsbpe.org/consumer/index-complaint.asp",
+      "info_url": "https://www.ndsbpe.org/verify/",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndsbpe.org/consumer/index-complaint.asp"]
+    },
+    {
+      "id": "nd-social-work-examiners-board",
+      "category": "professional-board",
+      "profession": "Social worker",
+      "name": "North Dakota Board of Social Work Examiners",
+      "what_it_can_do": "Licenses social workers in North Dakota and ensures they comply with the laws and regulations governing the practice.",
+      "what_it_cannot_do": "It cannot take a complaint over the phone, and the form has to be signed.",
+      "who_to_report": "A licensed social worker.",
+      "how": "Send a written, signed complaint to the Board.",
+      "complaint_url": "https://www.ndbswe.com/discipline/report.asp",
+      "info_url": "https://www.ndbswe.com/",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndbswe.com/discipline/report.asp"]
+    },
+    {
+      "id": "nd-child-abuse-reporting-line",
+      "category": "legal",
+      "name": "North Dakota Child Abuse and Neglect Reporting Line",
+      "what_it_can_do": "The statewide report line. North Dakota law requires reports of known or suspected institutional child abuse or neglect to be made and received in the same way as any other report.",
+      "who_to_report": "A child at a North Dakota program.",
+      "how": "Call. Live agents answer 8am to 5pm Central on weekdays; outside those hours you can leave a message. If a child is in immediate danger, contact law enforcement.",
+      "complaint_url": "https://www.hhs.nd.gov/cfs/cps",
+      "info_url": "https://www.hhs.nd.gov/cfs",
+      "phone": "1-833-958-3500",
+      "phone_note": "Live 8am to 5pm Central, Monday to Friday. Messages can be left outside those hours.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.hhs.nd.gov/cfs/cps",
+        "https://www.hhs.nd.gov/cfs"
+      ]
+    },
+    {
+      "id": "nd-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "North Dakota HHS licensing",
+      "what_it_can_do": "Licenses North Dakota's child care and residential facilities and investigates complaints that one has breached the licensing standards.",
+      "who_to_report": "A licensed North Dakota facility.",
+      "how": "Contact Health and Human Services. Abuse and neglect go to the reporting line.",
+      "info_url": "https://www.hhs.nd.gov/cfs/early-childhood-services/child-care-licensing",
+      "phone": "701-328-2316",
+      "phone_note": "Child and Family Services; toll free 1-800-245-3736.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.hhs.nd.gov/cfs/early-childhood-services/child-care-licensing"]
+    },
+    {
+      "id": "nd-protection-advocacy-project",
+      "category": "oversight",
+      "name": "North Dakota Protection and Advocacy Project",
+      "what_it_can_do": "North Dakota's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A North Dakota program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.ndpanda.org/",
+      "phone": "1-800-472-2670",
+      "phone_note": "Main line 701-328-2950.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=north-dakota"]
+    }
+  ]
+}

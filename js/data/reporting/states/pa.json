@@ -68,12 +68,12 @@
       "who_to_report": "A licensed children's residential or day treatment provider operating out of compliance.",
       "how": "File through the Department's certification and licensing complaint form. Check the provider directory first: Pennsylvania publishes each facility's licensing status and its completed inspection reports.",
       "complaint_url": "https://www.pa.gov/services/dhs/file-a-child-care-facility-complaint",
-      "info_url": "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+      "info_url": "https://www.pa.gov/agencies/dhs/resources/licensing/children-youth-residential-licensing",
       "anonymous": "unknown",
       "note": "The Department publishes a quarterly licensing report and an online provider directory carrying every licensed facility's status and inspection history.",
       "verified_on": "2026-09-22",
       "sources": [
-        "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+        "https://www.pa.gov/agencies/dhs/resources/licensing/children-youth-residential-licensing",
         "https://www.pa.gov/agencies/dhs/resources/licensing"
       ]
     }

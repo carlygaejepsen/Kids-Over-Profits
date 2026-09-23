@@ -136,6 +136,22 @@ async function check(url, args) {
 /* Status codes that mean "a filter refused us", not "there is nothing here". */
 const BLOCKED_STATUSES = new Set([401, 403, 405, 429, 503]);
 
+/* Bot-challenge services that answer 200 with an interstitial instead of the
+ * page. A redirect onto one of these hosts is the same thing as a 403: the
+ * agency's page is fine and the checker was turned away. Without this they
+ * look like a redirect to an unrelated site, which is a more alarming finding
+ * than it deserves. */
+const CHALLENGE_HOSTS = [
+    'validate.perfdrive.com',
+    'geo.captcha-delivery.com',
+    'challenges.cloudflare.com',
+    'www.google.com/recaptcha'
+];
+
+function isChallenge(finalUrl) {
+    return CHALLENGE_HOSTS.some((host) => finalUrl.includes(host));
+}
+
 /* The server dropped the connection instead of answering. Some state sites
  * (ocfs.ny.gov among them) do this to any client whose TLS fingerprint does
  * not look like a real browser, and serve the page perfectly to Chrome. That
@@ -231,13 +247,14 @@ async function main() {
      * several state portals sit behind one and refuse anything that is not a
      * real browser, however the User-Agent is dressed up. Reported separately
      * so a genuine 404 is not lost in the noise. */
-    const blocked = checked.filter((r) => BLOCKED_STATUSES.has(r.status) || r.refused);
+    const blocked = checked.filter((r) => BLOCKED_STATUSES.has(r.status) || r.refused
+        || isChallenge(r.finalUrl || ''));
     const broken = checked.filter((r) => !r.tls && !r.refused && !BLOCKED_STATUSES.has(r.status)
         && (r.status === 0 || r.status >= 400));
     const bounced = checked.filter((r) => r.status >= 200 && r.status < 400
-        && !sameEnough(r.url, r.finalUrl) && landedOnRoot(r.finalUrl));
+        && !sameEnough(r.url, r.finalUrl) && !isChallenge(r.finalUrl) && landedOnRoot(r.finalUrl));
     const moved = checked.filter((r) => r.status >= 200 && r.status < 400
-        && !sameEnough(r.url, r.finalUrl) && !landedOnRoot(r.finalUrl));
+        && !sameEnough(r.url, r.finalUrl) && !isChallenge(r.finalUrl) && !landedOnRoot(r.finalUrl));
 
     writeReport({ checked, broken, bounced, moved, tls, blocked, args });
     if (args.json) {

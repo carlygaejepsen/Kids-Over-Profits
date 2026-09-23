@@ -1,0 +1,104 @@
+{
+  "state": "Wyoming",
+  "abbr": "WY",
+  "updated": "2026-09-22",
+  "note": "Wyoming reports abuse to the county field office where it happened rather than to a statewide hotline, with 911 as the around-the-clock route. It also has a Department of Family Services ombudsman who takes complaints about the Department's own handling of a case, which is the escalation route when a report goes nowhere.",
+  "channels": [
+    {
+      "id": "wy-mental-health-professions-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Wyoming Mental Health Professions Licensing Board",
+      "what_it_can_do": "Licenses and disciplines Wyoming's counselors, certified alcohol and drug abuse counselors and certified mental health workers. Anyone may complain - clients and former clients, family members, colleagues and co-workers all do.",
+      "what_it_cannot_do": "Complaints can only be filed against individuals, not against a practice or a program.",
+      "who_to_report": "A licensed or certified mental health professional in Wyoming.",
+      "how": "File through the Board's complaints page. A copy of your complaint goes to the licence or certificate holder.",
+      "complaint_url": "https://mentalhealth.wyo.gov/public/complaints",
+      "info_url": "https://mentalhealth.wyo.gov/public",
+      "phone": "307-777-3628",
+      "anonymous": "not-allowed",
+      "note": "The Board says the review, investigation and legal stages may take a long time, depending on the complexity of the case and the caseload already waiting.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://mentalhealth.wyo.gov/public/complaints",
+        "https://mentalhealth.wyo.gov/public"
+      ]
+    },
+    {
+      "id": "wy-board-of-psychology",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Wyoming Board of Psychology",
+      "what_it_can_do": "Licenses and disciplines psychologists in Wyoming.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "File through the Board's public page.",
+      "complaint_url": "https://psychology.wyo.gov/public",
+      "info_url": "https://psychology.wyo.gov/",
+      "phone": "307-777-5403",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://psychology.wyo.gov/public"]
+    },
+    {
+      "id": "wy-child-protection-reporting",
+      "category": "legal",
+      "name": "Wyoming child abuse and neglect reporting",
+      "what_it_can_do": "Starts a Department of Family Services child protection response. Reports go to the county field office where the abuse or neglect happened or is happening.",
+      "who_to_report": "A child at a Wyoming program. Report to the county the program sits in.",
+      "how": "Call the county field office, or 911 at any hour to reach local law enforcement. The state line will also direct you.",
+      "complaint_url": "https://dfs.wyo.gov/i-need-to-report/abuse-neglect-exploitation/",
+      "info_url": "https://dfs.wyo.gov/services/child-youth-services/child-protection-services/",
+      "phone": "1-800-457-3659",
+      "phone_note": "Also 307-777-7564. For an emergency at any hour, 911.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dfs.wyo.gov/i-need-to-report/abuse-neglect-exploitation/",
+        "https://dfs.wyo.gov/services/child-youth-services/child-protection-services/"
+      ]
+    },
+    {
+      "id": "wy-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "Wyoming DFS child care and facility licensing",
+      "what_it_can_do": "Licenses Wyoming's child care and residential facilities and takes concerns that one has breached its licensing requirements.",
+      "who_to_report": "A licensed Wyoming facility.",
+      "how": "Contact the child care licenser for the area, or the licensing support contact.",
+      "complaint_url": "https://dfs.wyo.gov/providers/child-care-2/report-a-concern-on-a-child-care-facility/",
+      "phone": "307-777-3540",
+      "phone_note": "Licensing contact support.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dfs.wyo.gov/providers/child-care-2/report-a-concern-on-a-child-care-facility/"]
+    },
+    {
+      "id": "wy-dfs-ombudsman",
+      "category": "oversight",
+      "name": "Wyoming DFS Ombudsman",
+      "what_it_can_do": "Takes complaints about how the Department of Family Services has handled a case.",
+      "what_it_cannot_do": "It reviews the Department rather than the program.",
+      "who_to_report": "A family or young person whose report to DFS has gone nowhere.",
+      "info_url": "https://dfs.wyo.gov/about/contact-us/",
+      "phone": "307-777-6597",
+      "email": "clint.hanes1@wyo.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dfs.wyo.gov/about/contact-us/"]
+    },
+    {
+      "id": "wy-protection-advocacy-system",
+      "category": "oversight",
+      "name": "Wyoming Protection and Advocacy System",
+      "what_it_can_do": "Wyoming's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Wyoming program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.wypanda.com/",
+      "phone": "1-800-624-7648",
+      "phone_note": "Also 1-800-821-3091 voice/TDD; main line 307-632-3496.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wyoming"]
+    }
+  ]
+}

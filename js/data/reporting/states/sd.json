@@ -1,0 +1,80 @@
+{
+  "state": "South Dakota",
+  "abbr": "SD",
+  "updated": "2026-09-22",
+  "note": "South Dakota's child protection intake runs on office hours only - 8am to 5pm Central on weekdays - and the state tells you to call local law enforcement instead for anything urgent outside them. Its counseling board is unusually frank that the process is slow: the licensee gets 20 days to answer, everything then goes to a board member, and the Board says the whole thing is generally lengthy.",
+  "channels": [
+    {
+      "id": "sd-counselors-mft-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "South Dakota Board of Examiners for Counselors and Marriage and Family Therapists",
+      "what_it_can_do": "Licenses counselors and marriage and family therapists in South Dakota and reviews complaints against them, with board members investigating where needed.",
+      "who_to_report": "A licensed counselor or marriage and family therapist in South Dakota. Social workers and psychologists have their own boards, which share an office in Spearfish on 605-642-1600.",
+      "how": "Complete the Board's complaint form. A copy goes to the licensee, who has 20 days to respond in writing; everything then goes to a board member for review and any investigation.",
+      "complaint_url": "https://dss.sd.gov/licensingboards/counselors/complaints.aspx",
+      "info_url": "https://dss.sd.gov/licensingboards/counselors/counselors.aspx",
+      "phone": "605-224-1721",
+      "phone_note": "Fax 1-888-425-3032.",
+      "email": "SDBCE@midwestsolutionssd.com",
+      "mail": "SD Board of Examiners for Counselors and Marriage and Family Therapists, P.O. Box 340, 1351 N. Harrison Ave., Pierre, SD 57501-0340",
+      "anonymous": "not-allowed",
+      "note": "All complaint proceedings are held in executive session, and the Board warns the process is generally lengthy.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dss.sd.gov/licensingboards/counselors/complaints.aspx",
+        "https://dss.sd.gov/licensingboards/counselors/counselors.aspx"
+      ]
+    },
+    {
+      "id": "sd-child-protection-services",
+      "category": "legal",
+      "name": "South Dakota Child Protection Services",
+      "what_it_can_do": "The statutory report line for child abuse and neglect, run by the Department of Social Services.",
+      "who_to_report": "A child at a South Dakota program.",
+      "how": "Call during office hours. For an emergency before 8am, after 5pm, at a weekend or on a holiday, the Department tells you to contact local law enforcement instead.",
+      "complaint_url": "https://dss.sd.gov/childprotection/protective.aspx",
+      "info_url": "https://dss.sd.gov/childprotection/default.aspx",
+      "phone": "1-877-244-0864",
+      "phone_note": "Intake specialists 8am to 5pm Central, Monday to Friday. Outside those hours, call local law enforcement.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dss.sd.gov/childprotection/protective.aspx",
+        "https://dss.sd.gov/childprotection/default.aspx"
+      ]
+    },
+    {
+      "id": "sd-dss-licensing",
+      "category": "facility-licensing",
+      "name": "South Dakota DSS licensing",
+      "what_it_can_do": "The Department of Social Services licenses South Dakota's foster homes and residential facilities and maintains the state's abuse registry, which bars people from working in these settings.",
+      "who_to_report": "A licensed South Dakota facility.",
+      "how": "Contact the Department. Abuse and neglect go to Child Protection Services.",
+      "info_url": "https://dss.sd.gov/contactus/",
+      "phone": "1-877-244-0864",
+      "phone_note": "Child Protection Services intake also takes concerns about licensed facilities.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dss.sd.gov/contactus/",
+        "https://dss.sd.gov/childprotection/default.aspx"
+      ]
+    },
+    {
+      "id": "sd-disability-rights-south-dakota",
+      "category": "oversight",
+      "name": "Disability Rights South Dakota",
+      "what_it_can_do": "South Dakota's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A South Dakota program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drsdlaw.org/",
+      "phone": "1-800-658-4782",
+      "phone_note": "Voice and TTY. Main line 605-224-8294.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=south-dakota"]
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "state": "Alaska",
+  "abbr": "AK",
+  "updated": "2026-09-22",
+  "note": "Alaska takes abuse reports by phone, email or fax, and says its hotline staff will answer questions about mandatory reporting and take all the required information over the phone - which is worth knowing if you are unsure whether what you have is enough to report. All the mental health licensing boards sit under one division, with a single investigations unit behind them.",
+  "channels": [
+    {
+      "id": "ak-professional-licensing-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Alaska Division of Corporations, Business and Professional Licensing",
+      "what_it_can_do": "Staffs and investigates for the Board of Professional Counselors, the Board of Psychologist and Psychological Associate Examiners and the Board of Social Work Examiners, and the boards discipline the licence.",
+      "who_to_report": "A licensed professional counselor, psychologist, psychological associate or social worker in Alaska.",
+      "how": "File the complaint with the Division, which handles investigations for all three boards.",
+      "complaint_url": "https://www.commerce.alaska.gov/web/cbpl/professionallicensing",
+      "info_url": "https://www.commerce.alaska.gov/web/cbpl/",
+      "phone": "907-269-8160",
+      "phone_note": "Investigations fax 907-269-8195.",
+      "mail": "Division of Corporations, Business and Professional Licensing, 550 W 7th Ave, Ste 1500, Anchorage, AK 99501-3567",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.commerce.alaska.gov/web/cbpl/professionallicensing",
+        "https://www.commerce.alaska.gov/web/cbpl/"
+      ]
+    },
+    {
+      "id": "ak-ocs-report-child-abuse",
+      "category": "legal",
+      "name": "Alaska Office of Children's Services reporting hotline",
+      "what_it_can_do": "The statutory report line for child abuse and neglect in Alaska.",
+      "who_to_report": "A child at an Alaska program.",
+      "how": "Call, email or fax. Staff will answer questions about mandatory reporting and take everything they need over the phone.",
+      "complaint_url": "https://dfcs.alaska.gov/office-of-childrens-services/report-child-abuse/",
+      "info_url": "https://dfcs.alaska.gov/reporting-hub/",
+      "phone": "1-800-478-4444",
+      "phone_note": "Fax 907-269-3939.",
+      "email": "ReportChildAbuse@alaska.gov",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "If the problem is the Office of Children's Services itself rather than a program, there is a separate formal complaint process for that.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dfcs.alaska.gov/office-of-childrens-services/report-child-abuse/",
+        "https://dfcs.alaska.gov/reporting-hub/"
+      ]
+    },
+    {
+      "id": "ak-residential-licensing",
+      "category": "facility-licensing",
+      "name": "Alaska residential child care facility licensing",
+      "what_it_can_do": "Licenses Alaska's residential child care facilities against the state licensing regulations and investigates complaints that a facility has breached them.",
+      "who_to_report": "A licensed Alaska residential child care facility.",
+      "how": "Start from the Department's reporting hub, which sets out which body takes which kind of concern.",
+      "info_url": "https://dfcs.alaska.gov/reporting-hub/",
+      "phone": "1-800-478-4444",
+      "phone_note": "The Office of Children's Services line also takes concerns about licensed facilities.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dfcs.alaska.gov/reporting-hub/"]
+    },
+    {
+      "id": "ak-disability-law-center-alaska",
+      "category": "oversight",
+      "name": "Disability Law Center of Alaska",
+      "what_it_can_do": "Alaska's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Alaska program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.dlcak.org/",
+      "phone": "1-800-478-1234",
+      "phone_note": "Main line 907-565-1002 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=alaska"]
+    }
+  ]
+}

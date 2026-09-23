@@ -1,0 +1,76 @@
+{
+  "state": "District of Columbia",
+  "abbr": "DC",
+  "updated": "2026-09-22",
+  "note": "The District runs every complaint about a health professional through one investigating body, the Health Regulation and Licensing Administration, which works on behalf of all the occupation boards. It will not accept an anonymous complaint. Its boards can reprimand, impose probation, fine, suspend or revoke a licence under the Health Occupations Revision Act.",
+  "channels": [
+    {
+      "id": "dc-health-regulation-licensing",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "DC Health Regulation and Licensing Administration (HRLA)",
+      "what_it_can_do": "Investigates complaints on behalf of the District's health occupation boards, including the Board of Professional Counseling, the Board of Psychology and the Board of Social Work. Disciplinary action runs from a reprimand through probation, a fine and suspension to revoking the licence.",
+      "who_to_report": "A licensed professional counselor, psychologist or social worker in the District.",
+      "how": "Complete the complaint form and send it to the board that regulates that profession.",
+      "complaint_url": "https://dchealth.dc.gov/node/145702",
+      "info_url": "https://dchealth.dc.gov/release/board-professional-counseling",
+      "phone": "202-724-4900",
+      "phone_note": "HRLA; also 202-724-8800. Board of Professional Counseling 202-442-5955.",
+      "mail": "Board of Professional Counseling, 2201 Shannon Place SE, Washington, DC 20020",
+      "anonymous": "not-allowed",
+      "note": "The Board will not accept an anonymous complaint.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dchealth.dc.gov/node/145702",
+        "https://dchealth.dc.gov/release/board-professional-counseling"
+      ]
+    },
+    {
+      "id": "dc-cfsa-hotline",
+      "category": "legal",
+      "name": "DC Child and Family Services Agency hotline",
+      "what_it_can_do": "The District's statutory report line, taken by CFSA's Office of Hotline and Investigations around the clock for children up to 18.",
+      "who_to_report": "A child at a District program.",
+      "how": "Call at any hour.",
+      "complaint_url": "https://cfsa.dc.gov/service/report-child-abuse-and-neglect",
+      "info_url": "https://cfsa.dc.gov/page/about-cfsa",
+      "phone": "202-671-7233",
+      "phone_note": "202-671-SAFE. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://cfsa.dc.gov/service/report-child-abuse-and-neglect",
+        "https://cfsa.dc.gov/page/about-cfsa"
+      ]
+    },
+    {
+      "id": "dc-cfsa-licensing",
+      "category": "facility-licensing",
+      "name": "DC Child and Family Services Agency, facility oversight",
+      "what_it_can_do": "The District's public child welfare agency, responsible for protecting children at risk of abuse and neglect and for the programs placed children are in.",
+      "who_to_report": "A District facility or program caring for children.",
+      "how": "Contact CFSA. Abuse or neglect goes to the hotline.",
+      "info_url": "https://cfsa.dc.gov/agency/child-and-family-services-agency",
+      "phone": "202-442-6100",
+      "phone_note": "Monday to Friday, 8:15am to 4:45pm.",
+      "mail": "Child and Family Services Agency, 200 I Street SE, Washington, DC 20003",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://cfsa.dc.gov/agency/child-and-family-services-agency"]
+    },
+    {
+      "id": "dc-university-legal-services",
+      "category": "oversight",
+      "name": "University Legal Services (the District's Protection and Advocacy agency)",
+      "what_it_can_do": "The District's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A District program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.uls-dc.org/",
+      "phone": "202-547-0198",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=district-of-columbia"]
+    }
+  ]
+}

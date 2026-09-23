@@ -38,7 +38,7 @@
       "note": "If the complaint involves suspected abuse or neglect rather than a licensing breach, EEC tells you to file a 51A with DCF first.",
       "verified_on": "2026-09-22",
       "sources": [
-        "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+        "https://www.mass.gov/info-details/oca-resource-guide-child-serving-state-agencies",
         "https://eeclead.my.site.com/eeclead/s/reportunlicensedcare"
       ]
     },
@@ -67,10 +67,10 @@
       "what_it_can_do": "An independent office overseeing every child-serving state agency in Massachusetts. It publishes a resource guide naming which agency does what, and takes concerns about how the system has handled a child.",
       "what_it_cannot_do": "It reviews the agencies rather than licensing or prosecuting a program.",
       "who_to_report": "A family or young person who has reported to a Massachusetts agency and got nowhere.",
-      "info_url": "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+      "info_url": "https://www.mass.gov/info-details/oca-resource-guide-child-serving-state-agencies",
       "anonymous": "unknown",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.mass.gov/oca-resource-guide-child-serving-state-agencies"]
+      "sources": ["https://www.mass.gov/info-details/oca-resource-guide-child-serving-state-agencies"]
     },
     {
       "id": "ma-disability-law-center",

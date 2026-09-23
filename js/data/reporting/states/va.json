@@ -31,12 +31,12 @@
       "what_it_can_do": "Licenses and inspects children's residential facilities in Virginia and takes complaints about them.",
       "who_to_report": "A licensed children's residential facility. A facility providing behavioral health treatment may instead be licensed by the Department of Behavioral Health and Developmental Services, which runs its own Office of Licensing.",
       "how": "Use the online complaint form or call the licensing line.",
-      "info_url": "https://www.dss.virginia.gov/facility/",
+      "info_url": "https://www.dss.virginia.gov/licensed-care/",
       "phone": "1-800-543-7545",
       "phone_note": "Richmond area 804-692-2394.",
       "anonymous": "unknown",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.dss.virginia.gov/abuse/"]
+      "sources": ["https://www.dss.virginia.gov/supporting-families/child-protective-services/report-abuse/"]
     },
     {
       "id": "va-dbhds-office-of-licensing",
@@ -58,13 +58,13 @@
       "who_to_report": "A child at a Virginia program.",
       "how": "Call. Virginia says you do not have to give your name, and you do not have to provide evidence to make a report.",
       "complaint_url": "https://vacps.dss.virginia.gov/VACPSWeb/",
-      "info_url": "https://www.dss.virginia.gov/abuse/",
+      "info_url": "https://www.dss.virginia.gov/supporting-families/child-protective-services/report-abuse/",
       "phone": "1-800-552-7096",
       "phone_note": "24 hours a day.",
       "anonymous": "allowed",
       "mandatory_reporter": true,
       "verified_on": "2026-09-22",
-      "sources": ["https://www.dss.virginia.gov/abuse/"]
+      "sources": ["https://www.dss.virginia.gov/supporting-families/child-protective-services/report-abuse/"]
     },
     {
       "id": "va-disability-law-center-virginia",
