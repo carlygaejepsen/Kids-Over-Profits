@@ -20,7 +20,9 @@
       "anonymous": "not-allowed",
       "note": "The Board acknowledges a written complaint within two business days, sends the counselor a copy and asks for a response, then puts your complaint and their answer to the board at its next scheduled meeting.",
       "verified_on": "2026-09-22",
-      "sources": ["https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"]
+      "sources": [
+        "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"
+      ]
     },
     {
       "id": "ky-social-work-board",
@@ -33,7 +35,9 @@
       "complaint_url": "https://secure.kentucky.gov/formservices/BSW/ComplaintForm",
       "anonymous": "unknown",
       "verified_on": "2026-09-22",
-      "sources": ["https://secure.kentucky.gov/formservices/BSW/ComplaintForm"]
+      "sources": [
+        "https://secure.kentucky.gov/formservices/BSW/ComplaintForm"
+      ]
     },
     {
       "id": "ky-psychology-board",
@@ -46,7 +50,9 @@
       "phone": "502-782-8812",
       "anonymous": "unknown",
       "verified_on": "2026-09-22",
-      "sources": ["https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"]
+      "sources": [
+        "https://lpc.ky.gov/Documents/DPL-LPC-11-%20Complaint%20with%20instructions%20CLEAN.pdf"
+      ]
     },
     {
       "id": "ky-child-abuse-hotline",
@@ -78,7 +84,26 @@
       "phone_note": "Main line 502-564-2967.",
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kentucky"]
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kentucky"
+      ]
+    },
+    {
+      "id": "ky-division-regulated-child-care",
+      "category": "facility-licensing",
+      "name": "Kentucky Division of Regulated Child Care (DRCC)",
+      "what_it_can_do": "Licenses and investigates complaints against residential child caring facilities and child placing agencies in Kentucky, as well as child care centres. It also takes reports of child care operating without approval at all.",
+      "who_to_report": "A residential child caring facility, or a program you believe is operating unapproved.",
+      "how": "Call the DRCC call centre or email it.",
+      "info_url": "https://www.chfs.ky.gov/agencies/os/oig/drcc/Pages/Home.aspx",
+      "phone": "502-564-7962",
+      "email": "CHFSOIGRCCCallCenter@ky.gov",
+      "anonymous": "allowed",
+      "note": "DRCC says its staff will not give the provider the name of whoever reported them during an investigation.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.chfs.ky.gov/agencies/os/oig/drcc/Pages/Home.aspx"
+      ]
     }
   ]
 }

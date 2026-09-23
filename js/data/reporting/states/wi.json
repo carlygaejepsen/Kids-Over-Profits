@@ -70,6 +70,23 @@
         "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
         "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wisconsin"
       ]
+    },
+    {
+      "id": "wi-county-child-protective-services",
+      "category": "legal",
+      "name": "Wisconsin county Child Protective Services",
+      "what_it_can_do": "Starts a child protection response. Wisconsin's CPS is state-supervised but county-administered in 71 counties, and state-administered in Milwaukee, so the report goes to the county agency where the child is. An Access worker takes it and decides whether it meets the statutory definition.",
+      "who_to_report": "A child at a Wisconsin program. Anyone can report, to the local CPS agency or to law enforcement.",
+      "how": "Find the county agency in the Department's directory and call it; the directory also lists after-hours numbers. If the abuse is happening now or is violent, call 911.",
+      "complaint_url": "https://dcf.wisconsin.gov/reportabuse",
+      "info_url": "https://dcf.wisconsin.gov/cps/process",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcf.wisconsin.gov/reportabuse",
+        "https://dcf.wisconsin.gov/cps/process"
+      ]
     }
   ]
 }

@@ -76,6 +76,22 @@
         "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oklahoma"
       ],
       "note": "Operates as Disability Rights Oklahoma (DROK); the older Oklahoma Disability Law Center name and okdlc.org address still redirect here."
+    },
+    {
+      "id": "ok-child-care-services-licensing",
+      "category": "facility-licensing",
+      "name": "Oklahoma Human Services, Child Care Services licensing",
+      "what_it_can_do": "Licenses residential child care facilities in Oklahoma and investigates the complaint allegations that do not rise to abuse or neglect - conditions, staffing, supervision, compliance with the licensing requirements.",
+      "who_to_report": "A licensed Oklahoma residential facility, where the issue is how the place is run. Anything amounting to abuse or neglect is referred instead to Child Welfare Services.",
+      "how": "Report through the statewide hotline or the online reporting site; Oklahoma routes the allegation to whichever of the two units should handle it.",
+      "complaint_url": "https://www.abuseisnotok.org/",
+      "info_url": "https://oklahoma.gov/okdhs/services/child-care-services.html",
+      "phone": "1-800-522-3511",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://oklahoma.gov/okdhs/services/reportabuse.html"
+      ]
     }
   ]
 }

@@ -56,7 +56,26 @@
       "phone_note": "Main line 717-236-8110; TDD 717-346-0293.",
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"]
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"
+      ]
+    },
+    {
+      "id": "pa-children-youth-residential-licensing",
+      "category": "facility-licensing",
+      "name": "Pennsylvania DHS, Office of Children, Youth and Families residential licensing",
+      "what_it_can_do": "Licenses the private providers running residential and day treatment, secure care and transitional living settings for children in Pennsylvania, alongside county child welfare offices. It inspects them, and can impose a provisional licence or revoke one outright.",
+      "who_to_report": "A licensed children's residential or day treatment provider operating out of compliance.",
+      "how": "File through the Department's certification and licensing complaint form. Check the provider directory first: Pennsylvania publishes each facility's licensing status and its completed inspection reports.",
+      "complaint_url": "https://www.pa.gov/services/dhs/file-a-child-care-facility-complaint",
+      "info_url": "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+      "anonymous": "unknown",
+      "note": "The Department publishes a quarterly licensing report and an online provider directory carrying every licensed facility's status and inspection history.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+        "https://www.pa.gov/agencies/dhs/resources/licensing"
+      ]
     }
   ]
 }

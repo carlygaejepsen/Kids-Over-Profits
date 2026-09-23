@@ -35,7 +35,9 @@
       "anonymous": "allowed",
       "mandatory_reporter": true,
       "verified_on": "2026-09-22",
-      "sources": ["https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"]
+      "sources": [
+        "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+      ]
     },
     {
       "id": "ia-child-abuse-hotline",
@@ -51,7 +53,9 @@
       "mandatory_reporter": true,
       "note": "You may stay anonymous unless you are reporting as a mandatory reporter, in which case you have to leave your name and contact details.",
       "verified_on": "2026-09-22",
-      "sources": ["https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"]
+      "sources": [
+        "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+      ]
     },
     {
       "id": "ia-office-of-ombudsman",
@@ -80,7 +84,25 @@
       "phone_note": "Main line 515-278-2502; TDD 515-278-0571.",
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=iowa"]
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=iowa"
+      ]
+    },
+    {
+      "id": "ia-hhs-facility-licensing",
+      "category": "facility-licensing",
+      "name": "Iowa HHS facility licensing and certification",
+      "what_it_can_do": "Licenses and certifies Iowa's residential facilities and programs for children, and takes the complaints about abuse inside them through its dedicated facility reporting line.",
+      "who_to_report": "A licensed Iowa facility or program.",
+      "how": "Use the facility abuse line for abuse inside a licensed program, and the Department's contacts page for anything else.",
+      "info_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+      "phone": "1-877-686-0027",
+      "phone_note": "For abuse suspected in a licensed facility or program.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+      ]
     }
   ]
 }

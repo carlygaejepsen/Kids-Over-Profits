@@ -78,6 +78,23 @@
         "https://www.disabilityrightssc.org/resources/abuse-neglect/",
         "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=south-carolina"
       ]
+    },
+    {
+      "id": "sc-dss-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "South Carolina DSS child care and residential licensing",
+      "what_it_can_do": "Sets the licensing standards for child care and group care facilities in South Carolina, inspects against them, investigates complaints and takes enforcement action. On receiving a regulatory complaint it must carry out an unannounced inspection of the facility.",
+      "who_to_report": "A licensed facility, where the problem is a regulatory breach rather than a specific allegation of abuse.",
+      "how": "File through the Department's complaint route. A complaint alleging immediate danger to children is investigated within 24 to 48 hours.",
+      "complaint_url": "https://scchildcare.org/families/filing-a-complaint/",
+      "info_url": "https://scchildcare.org/programs/child-care-licensing/",
+      "anonymous": "unknown",
+      "note": "The unannounced inspection is the point: a regulatory complaint forces the state through the door without warning.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://scchildcare.org/families/filing-a-complaint/",
+        "https://scchildcare.org/programs/child-care-licensing/"
+      ]
     }
   ]
 }

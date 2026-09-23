@@ -59,6 +59,22 @@
         "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
         "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-jersey"
       ]
+    },
+    {
+      "id": "nj-office-of-licensing",
+      "category": "facility-licensing",
+      "name": "New Jersey DCF Office of Licensing",
+      "what_it_can_do": "The Department of Children and Families' licensing and regulatory authority for youth and residential programs, children's group homes, resource family homes and adoption agencies. It inspects them and investigates health and safety violations.",
+      "who_to_report": "A licensed New Jersey youth or residential program. Allegations of abuse go to the State Central Registry instead.",
+      "how": "Call the licensing complaint line or file online. Complaints may be made anonymously.",
+      "info_url": "https://www.nj.gov/dcf/divisions-offices/ool/",
+      "phone": "1-877-667-9845",
+      "anonymous": "allowed",
+      "note": "Inspection and violation reports, and a summary of any complaint made against a licensed centre, have to be made available on request.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.nj.gov/dcf/divisions-offices/ool/"
+      ]
     }
   ]
 }

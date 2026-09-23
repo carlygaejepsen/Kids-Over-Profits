@@ -75,7 +75,25 @@
       "phone_note": "Main line 518-432-7861; TTY 518-512-3448.",
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-york"]
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-york"
+      ]
+    },
+    {
+      "id": "ny-ocfs-omh-facility-oversight",
+      "category": "facility-licensing",
+      "name": "New York OCFS and OMH residential facility oversight",
+      "what_it_can_do": "The Office of Mental Health regulates residential treatment facilities for children and youth, and the OCFS Regional Office investigates child abuse and neglect allegations involving facilities OMH licenses or operates. Between them they hold the licence and investigate what happens inside it.",
+      "who_to_report": "A New York residential treatment facility - unsafe conditions, inadequate supervision, hygiene and health neglect, anything that is a standards failure rather than one person's conduct.",
+      "how": "Report through the OCFS portal or the Statewide Central Register. For a licensed facility the Justice Center's Vulnerable Persons Central Register is usually the stronger route.",
+      "info_url": "https://ocfs.ny.gov/programs/childcare/safety-hotline.php",
+      "phone": "1-800-732-5207",
+      "phone_note": "Statewide Central Register line used for reports about facilities.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://ocfs.ny.gov/programs/childcare/safety-hotline.php"
+      ]
     }
   ]
 }

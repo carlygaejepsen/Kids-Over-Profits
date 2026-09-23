@@ -35,7 +35,9 @@
       "mandatory_reporter": true,
       "note": "You can report anonymously, and even if you give your name, Indiana law requires the Department to keep the identity and contact details of every report source confidential.",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.in.gov/dcs/hotline/"]
+      "sources": [
+        "https://www.in.gov/dcs/hotline/"
+      ]
     },
     {
       "id": "in-dcs-ombudsman",
@@ -48,7 +50,9 @@
       "phone": "1-877-682-0101",
       "anonymous": "unknown",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.in.gov/dcs/hotline/"]
+      "sources": [
+        "https://www.in.gov/dcs/hotline/"
+      ]
     },
     {
       "id": "in-indiana-disability-rights",
@@ -62,7 +66,27 @@
       "phone_note": "Main line 317-722-5555 voice/TDD.",
       "anonymous": "discouraged",
       "verified_on": "2026-09-22",
-      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=indiana"]
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=indiana"
+      ]
+    },
+    {
+      "id": "in-dcs-residential-licensing",
+      "category": "facility-licensing",
+      "name": "Indiana DCS Residential Licensing Unit",
+      "what_it_can_do": "Licenses child caring institutions, private secure facilities, group homes and emergency shelters in Indiana. Its Residential Licensing Unit reviews every institutional report of alleged child abuse or neglect connected to a licensed facility - including reports that were screened out - to decide whether the facility broke its licence or its contract.",
+      "who_to_report": "A DCS-licensed residential facility. The Indiana Department of Health separately runs at least annual unannounced health, food and sanitation surveys of these same facilities.",
+      "how": "An institutional report goes in through the child abuse hotline; the Residential Licensing Unit picks it up from there.",
+      "info_url": "https://www.in.gov/dcs/overview/policies/child-welfare-policies/chapter-17-residential-licensing/",
+      "phone": "1-800-800-5556",
+      "phone_note": "The child abuse hotline is the intake route for institutional reports.",
+      "anonymous": "allowed",
+      "note": "That the Unit reviews even screened-out reports matters: a report that child protection declines to investigate can still count against the facility's licence.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.in.gov/dcs/overview/policies/child-welfare-policies/chapter-17-residential-licensing/",
+        "https://www.in.gov/health/cshcr/survey-supports-and-guidance/department-of-child-services-residential-facility-compliance/"
+      ]
     }
   ]
 }

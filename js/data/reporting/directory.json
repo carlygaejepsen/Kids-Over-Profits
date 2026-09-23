@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T01:40:00.173Z",
+  "generated": "2026-09-23T01:43:27.956Z",
   "categories": [
     {
       "key": "professional-board",
@@ -1152,6 +1152,24 @@
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=indiana"
           ]
+        },
+        {
+          "id": "in-dcs-residential-licensing",
+          "category": "facility-licensing",
+          "name": "Indiana DCS Residential Licensing Unit",
+          "what_it_can_do": "Licenses child caring institutions, private secure facilities, group homes and emergency shelters in Indiana. Its Residential Licensing Unit reviews every institutional report of alleged child abuse or neglect connected to a licensed facility - including reports that were screened out - to decide whether the facility broke its licence or its contract.",
+          "who_to_report": "A DCS-licensed residential facility. The Indiana Department of Health separately runs at least annual unannounced health, food and sanitation surveys of these same facilities.",
+          "how": "An institutional report goes in through the child abuse hotline; the Residential Licensing Unit picks it up from there.",
+          "info_url": "https://www.in.gov/dcs/overview/policies/child-welfare-policies/chapter-17-residential-licensing/",
+          "phone": "1-800-800-5556",
+          "phone_note": "The child abuse hotline is the intake route for institutional reports.",
+          "anonymous": "allowed",
+          "note": "That the Unit reviews even screened-out reports matters: a report that child protection declines to investigate can still count against the facility's licence.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.in.gov/dcs/overview/policies/child-welfare-policies/chapter-17-residential-licensing/",
+            "https://www.in.gov/health/cshcr/survey-supports-and-guidance/department-of-child-services-residential-facility-compliance/"
+          ]
         }
       ]
     },
@@ -1244,6 +1262,22 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=iowa"
+          ]
+        },
+        {
+          "id": "ia-hhs-facility-licensing",
+          "category": "facility-licensing",
+          "name": "Iowa HHS facility licensing and certification",
+          "what_it_can_do": "Licenses and certifies Iowa's residential facilities and programs for children, and takes the complaints about abuse inside them through its dedicated facility reporting line.",
+          "who_to_report": "A licensed Iowa facility or program.",
+          "how": "Use the facility abuse line for abuse inside a licensed program, and the Department's contacts page for anything else.",
+          "info_url": "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting",
+          "phone": "1-877-686-0027",
+          "phone_note": "For abuse suspected in a licensed facility or program.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
           ]
         }
       ]
@@ -1338,6 +1372,23 @@
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kentucky"
           ]
+        },
+        {
+          "id": "ky-division-regulated-child-care",
+          "category": "facility-licensing",
+          "name": "Kentucky Division of Regulated Child Care (DRCC)",
+          "what_it_can_do": "Licenses and investigates complaints against residential child caring facilities and child placing agencies in Kentucky, as well as child care centres. It also takes reports of child care operating without approval at all.",
+          "who_to_report": "A residential child caring facility, or a program you believe is operating unapproved.",
+          "how": "Call the DRCC call centre or email it.",
+          "info_url": "https://www.chfs.ky.gov/agencies/os/oig/drcc/Pages/Home.aspx",
+          "phone": "502-564-7962",
+          "email": "CHFSOIGRCCCallCenter@ky.gov",
+          "anonymous": "allowed",
+          "note": "DRCC says its staff will not give the provider the name of whoever reported them during an investigation.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.chfs.ky.gov/agencies/os/oig/drcc/Pages/Home.aspx"
+          ]
         }
       ]
     },
@@ -1416,6 +1467,24 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=louisiana"
+          ]
+        },
+        {
+          "id": "la-residential-licensing",
+          "category": "facility-licensing",
+          "name": "Louisiana DCFS Licensing Section (Residential Care)",
+          "what_it_can_do": "Licenses child residential facilities and child placing agencies in Louisiana and enforces the Child Care Facilities and Child Placing Agencies Licensing Act. It has revoked licences and sought injunctions against unlicensed providers.",
+          "who_to_report": "A child residential facility. Louisiana defines a complaint broadly: any allegation that someone is breaching the standards, or acting or failing to act in a way that harms the health, safety, rights or welfare of a child living there.",
+          "how": "Contact the Licensing Section. It aims to inspect every residential licensing complaint within 30 days.",
+          "info_url": "https://www.dcfs.louisiana.gov/page/246",
+          "phone": "225-342-4350",
+          "phone_note": "Licensing staff, 8:00am to 4:30pm weekdays except legal holidays.",
+          "anonymous": "unknown",
+          "note": "Louisiana publishes a list of every currently licensed facility, so it is worth checking whether a program holds a licence at all.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dcfs.louisiana.gov/page/246",
+            "https://dcfs.louisiana.gov/page/licensed-facilities"
           ]
         }
       ]
@@ -2361,6 +2430,22 @@
             "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-jersey"
           ]
+        },
+        {
+          "id": "nj-office-of-licensing",
+          "category": "facility-licensing",
+          "name": "New Jersey DCF Office of Licensing",
+          "what_it_can_do": "The Department of Children and Families' licensing and regulatory authority for youth and residential programs, children's group homes, resource family homes and adoption agencies. It inspects them and investigates health and safety violations.",
+          "who_to_report": "A licensed New Jersey youth or residential program. Allegations of abuse go to the State Central Registry instead.",
+          "how": "Call the licensing complaint line or file online. Complaints may be made anonymously.",
+          "info_url": "https://www.nj.gov/dcf/divisions-offices/ool/",
+          "phone": "1-877-667-9845",
+          "anonymous": "allowed",
+          "note": "Inspection and violation reports, and a summary of any complaint made against a licensed centre, have to be made available on request.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.nj.gov/dcf/divisions-offices/ool/"
+          ]
         }
       ]
     },
@@ -2444,6 +2529,22 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-york"
+          ]
+        },
+        {
+          "id": "ny-ocfs-omh-facility-oversight",
+          "category": "facility-licensing",
+          "name": "New York OCFS and OMH residential facility oversight",
+          "what_it_can_do": "The Office of Mental Health regulates residential treatment facilities for children and youth, and the OCFS Regional Office investigates child abuse and neglect allegations involving facilities OMH licenses or operates. Between them they hold the licence and investigate what happens inside it.",
+          "who_to_report": "A New York residential treatment facility - unsafe conditions, inadequate supervision, hygiene and health neglect, anything that is a standards failure rather than one person's conduct.",
+          "how": "Report through the OCFS portal or the Statewide Central Register. For a licensed facility the Justice Center's Vulnerable Persons Central Register is usually the stronger route.",
+          "info_url": "https://ocfs.ny.gov/programs/childcare/safety-hotline.php",
+          "phone": "1-800-732-5207",
+          "phone_note": "Statewide Central Register line used for reports about facilities.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://ocfs.ny.gov/programs/childcare/safety-hotline.php"
           ]
         }
       ]
@@ -2807,6 +2908,22 @@
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oklahoma"
           ],
           "note": "Operates as Disability Rights Oklahoma (DROK); the older Oklahoma Disability Law Center name and okdlc.org address still redirect here."
+        },
+        {
+          "id": "ok-child-care-services-licensing",
+          "category": "facility-licensing",
+          "name": "Oklahoma Human Services, Child Care Services licensing",
+          "what_it_can_do": "Licenses residential child care facilities in Oklahoma and investigates the complaint allegations that do not rise to abuse or neglect - conditions, staffing, supervision, compliance with the licensing requirements.",
+          "who_to_report": "A licensed Oklahoma residential facility, where the issue is how the place is run. Anything amounting to abuse or neglect is referred instead to Child Welfare Services.",
+          "how": "Report through the statewide hotline or the online reporting site; Oklahoma routes the allegation to whichever of the two units should handle it.",
+          "complaint_url": "https://www.abuseisnotok.org/",
+          "info_url": "https://oklahoma.gov/okdhs/services/child-care-services.html",
+          "phone": "1-800-522-3511",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://oklahoma.gov/okdhs/services/reportabuse.html"
+          ]
         }
       ]
     },
@@ -2955,6 +3072,23 @@
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"
           ]
+        },
+        {
+          "id": "pa-children-youth-residential-licensing",
+          "category": "facility-licensing",
+          "name": "Pennsylvania DHS, Office of Children, Youth and Families residential licensing",
+          "what_it_can_do": "Licenses the private providers running residential and day treatment, secure care and transitional living settings for children in Pennsylvania, alongside county child welfare offices. It inspects them, and can impose a provisional licence or revoke one outright.",
+          "who_to_report": "A licensed children's residential or day treatment provider operating out of compliance.",
+          "how": "File through the Department's certification and licensing complaint form. Check the provider directory first: Pennsylvania publishes each facility's licensing status and its completed inspection reports.",
+          "complaint_url": "https://www.pa.gov/services/dhs/file-a-child-care-facility-complaint",
+          "info_url": "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+          "anonymous": "unknown",
+          "note": "The Department publishes a quarterly licensing report and an online provider directory carrying every licensed facility's status and inspection history.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhs.pa.gov/providers/Clearances-and-Licensing/Pages/Children-and-Youth-Residential-Licensing.aspx",
+            "https://www.pa.gov/agencies/dhs/resources/licensing"
+          ]
         }
       ]
     },
@@ -3038,6 +3172,23 @@
           "sources": [
             "https://www.disabilityrightssc.org/resources/abuse-neglect/",
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=south-carolina"
+          ]
+        },
+        {
+          "id": "sc-dss-child-care-licensing",
+          "category": "facility-licensing",
+          "name": "South Carolina DSS child care and residential licensing",
+          "what_it_can_do": "Sets the licensing standards for child care and group care facilities in South Carolina, inspects against them, investigates complaints and takes enforcement action. On receiving a regulatory complaint it must carry out an unannounced inspection of the facility.",
+          "who_to_report": "A licensed facility, where the problem is a regulatory breach rather than a specific allegation of abuse.",
+          "how": "File through the Department's complaint route. A complaint alleging immediate danger to children is investigated within 24 to 48 hours.",
+          "complaint_url": "https://scchildcare.org/families/filing-a-complaint/",
+          "info_url": "https://scchildcare.org/programs/child-care-licensing/",
+          "anonymous": "unknown",
+          "note": "The unannounced inspection is the point: a regulatory complaint forces the state through the door without warning.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://scchildcare.org/families/filing-a-complaint/",
+            "https://scchildcare.org/programs/child-care-licensing/"
           ]
         }
       ]
@@ -3670,6 +3821,23 @@
           "sources": [
             "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wisconsin"
+          ]
+        },
+        {
+          "id": "wi-county-child-protective-services",
+          "category": "legal",
+          "name": "Wisconsin county Child Protective Services",
+          "what_it_can_do": "Starts a child protection response. Wisconsin's CPS is state-supervised but county-administered in 71 counties, and state-administered in Milwaukee, so the report goes to the county agency where the child is. An Access worker takes it and decides whether it meets the statutory definition.",
+          "who_to_report": "A child at a Wisconsin program. Anyone can report, to the local CPS agency or to law enforcement.",
+          "how": "Find the county agency in the Department's directory and call it; the directory also lists after-hours numbers. If the abuse is happening now or is violent, call 911.",
+          "complaint_url": "https://dcf.wisconsin.gov/reportabuse",
+          "info_url": "https://dcf.wisconsin.gov/cps/process",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcf.wisconsin.gov/reportabuse",
+            "https://dcf.wisconsin.gov/cps/process"
           ]
         }
       ]
