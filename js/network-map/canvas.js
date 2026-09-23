@@ -1079,6 +1079,187 @@
         return null;
     }
 
+    /* --- where a line leaves a name ---
+     *
+     * A line runs from one name's centre to the other's, so where it
+     * crosses the rim used to be decided entirely by where the other end
+     * sat. On a hub that means a dozen lines out of the same edge: a
+     * bubble is six times wider than it is tall, so any other name more
+     * than a little below it is below it by the box's reckoning, and the
+     * lines arrive in whatever order their targets happen to sit in -
+     * three of them within a few pixels of each other while the two sides
+     * of the bubble, which is most of its rim, go unused.
+     *
+     * So the rim is shared out. Each line still asks for the point facing
+     * its own other end, and where the points are far enough apart it
+     * gets exactly that. Where they are not they are pushed apart until
+     * each has PORT_GAP to the next - and, because they are pushed around
+     * the perimeter rather than along the one side, a crowded bottom
+     * spills round the corners and the lines come out of the sides, which
+     * is where the room was. They are pushed in the cyclic order they
+     * started in, which is what stops two of them swapping places and
+     * crossing each other on the rim.
+     */
+    /* The room a line asks for where it meets a name. */
+    var PORT_GAP = 15;
+    /* How far inside the rim a line actually starts, so the bubble drawn
+     * over it still covers its first pixel and rimPoint has an inside
+     * point to walk out from. */
+    var PORT_SINK = 3;
+    /* Below this a name's lines are not in each other's way, and each one
+     * points honestly at its own other end. */
+    var PORT_MIN_LINES = 3;
+    /* The most of a rim the ports may take between them.
+     *
+     * Where a name has more lines than its rim has room for at PORT_GAP,
+     * they take less each rather than more of the rim. Letting them fill
+     * it was tried and is the one way this can do real harm: with every
+     * port needed to hold the next one off, the only arrangement left is
+     * an even ring, and an even ring is decided by nothing at all - a
+     * WWASPS with thirty lines, all of them to names below it, was giving
+     * a third of them a port on its top edge, where the line left upward,
+     * doubled back under the name and came out below. A port that cannot
+     * say where its other end is should at least not say the opposite. So
+     * the ports keep slack between them, and a crowded name simply has
+     * its lines closer together, which is the truth about it. */
+    var PORT_SHARE = 0.72;
+
+    /* Where a ray from the box's centre toward (tx, ty) crosses the rim,
+     * as a distance clockwise round the perimeter from the top left. */
+    function rimPos(box, tx, ty) {
+        var w = box[2] - box[0], h = box[3] - box[1];
+        var cx = box[0] + w / 2, cy = box[1] + h / 2;
+        var dx = tx - cx, dy = ty - cy;
+        if (!dx && !dy) return 0;
+        var tX = dx ? (w / 2) / Math.abs(dx) : Infinity;
+        var tY = dy ? (h / 2) / Math.abs(dy) : Infinity;
+        var at;
+        if (tX < tY) {
+            at = Math.min(Math.max(cy + dy * tX - box[1], 0), h);
+            return dx > 0 ? w + at : 2 * w + 2 * h - at;
+        }
+        at = Math.min(Math.max(cx + dx * tY - box[0], 0), w);
+        return dy > 0 ? w + h + (w - at) : at;
+    }
+
+    /**
+     * The point that distance round the rim, pulled just inside the shape
+     * the node is actually drawn as.
+     *
+     * The spacing is worked out on the bounding box, because a box has a
+     * perimeter a port can be slid along; the point it gives is then put
+     * back on the shape. A person is an ellipse, and the corners of its
+     * box are a long way outside it - a port left there would hang in
+     * clear space beside the name with its line starting at nothing - so
+     * the point is drawn back along its own radius until it is on the
+     * ellipse. Then everything sinks PORT_SINK further in, which is what
+     * puts a line's first pixel under the bubble painted over it and
+     * leaves rimPoint an inside point to walk out from.
+     */
+    function rimAt(box, at, kind) {
+        var w = box[2] - box[0], h = box[3] - box[1];
+        var per = 2 * (w + h);
+        var p = ((at % per) + per) % per;
+        var x, y;
+        if (p < w) { x = box[0] + p; y = box[1]; }
+        else if ((p -= w) < h) { x = box[2]; y = box[1] + p; }
+        else if ((p -= h) < w) { x = box[2] - p; y = box[3]; }
+        else { x = box[0]; y = box[3] - (p - w); }
+
+        var cx = box[0] + w / 2, cy = box[1] + h / 2;
+        var dx = x - cx, dy = y - cy;
+        if (kind === 'person' && w && h) {
+            var k = Math.hypot(dx / (w / 2), dy / (h / 2));
+            if (k > 1) { dx /= k; dy /= k; }
+        }
+        var len = Math.hypot(dx, dy);
+        if (len > PORT_SINK) {
+            var pull = (len - PORT_SINK) / len;
+            dx *= pull;
+            dy *= pull;
+        }
+        return [cx + dx, cy + dy];
+    }
+
+    /**
+     * Push a name's ports apart until each has `gap` to the next, keeping
+     * the order they arrived in.
+     *
+     * The array is the cyclic order, and a position is free to run past
+     * either end of the perimeter while this works: rimAt takes it modulo
+     * the perimeter at the end, so a port pushed off the bottom edge
+     * simply appears on the side round the corner. Where a name has more
+     * lines than its rim has room for, they share it equally instead.
+     */
+    function spreadPorts(pos, per, gap) {
+        var n = pos.length;
+        var i;
+        if (n < 2) return;
+        if (n * gap > per * PORT_SHARE) gap = per * PORT_SHARE / n;
+
+        /* Cut the ring at its widest natural gap. That is the join a crowd
+         * is least likely to straddle, and with it cut there the rim can
+         * be treated as a line. Pushing pairs apart round the ring was
+         * tried first and dropped: on a name whose lines all want the same
+         * spot it is a diffusion, and it had not finished spreading sixty
+         * of them after forty passes. */
+        var cut = 0, widest = -1;
+        for (i = 0; i < n; i++) {
+            var d = (i === n - 1 ? pos[0] + per : pos[i + 1]) - pos[i];
+            if (d > widest) { widest = d; cut = (i + 1) % n; }
+        }
+        var want = new Float64Array(n);
+        for (i = 0; i < n; i++) {
+            var j = (cut + i) % n;
+            /* What this port asked for, less the room the ports before it
+             * take: in these terms the arrangement is legal exactly when
+             * the numbers do not decrease. */
+            want[i] = pos[j] + (j < cut ? per : 0) - i * gap;
+        }
+
+        /* Pool adjacent violators: the nearest arrangement, in total
+         * movement, that has every port clear of the next and none of them
+         * out of the order they arrived in - which is what stops two lines
+         * swapping places and crossing each other on the rim. A block is a
+         * run that has closed up and now moves as one, at the average of
+         * what its members asked for. */
+        var value = new Float64Array(n);
+        var count = new Int32Array(n);
+        var blocks = 0;
+        for (i = 0; i < n; i++) {
+            value[blocks] = want[i];
+            count[blocks] = 1;
+            blocks++;
+            while (blocks > 1 && value[blocks - 2] > value[blocks - 1]) {
+                var sum = value[blocks - 2] * count[blocks - 2] + value[blocks - 1] * count[blocks - 1];
+                count[blocks - 2] += count[blocks - 1];
+                value[blocks - 2] = sum / count[blocks - 2];
+                blocks--;
+            }
+        }
+        var out = new Float64Array(n);
+        var at = 0;
+        for (var b = 0; b < blocks; b++) {
+            for (var k = 0; k < count[b]; k++) { out[at] = value[b] + at * gap; at++; }
+        }
+
+        /* The one case cutting the ring cannot answer: the ports have
+         * closed up all the way round, so the far end is now crowding the
+         * near one. Then there is nothing to choose between them and they
+         * share the rim equally, set where it costs the least to put them.
+         */
+        if (out[0] + per - out[n - 1] < gap - 0.001) {
+            var mean = 0;
+            for (i = 0; i < n; i++) mean += want[i];
+            mean /= n;
+            for (i = 0; i < n; i++) out[i] = mean + i * gap;
+        }
+        for (i = 0; i < n; i++) {
+            var back = (cut + i) % n;
+            pos[back] = out[i] - (back < cut ? per : 0);
+        }
+    }
+
     /* Fill and outline for one node, whatever its shape. The path must
      * already be traced. Filled by status and outlined in its company's
      * colour - the same colour the lines round it are drawn in, so a name
@@ -1702,6 +1883,44 @@
             }
             renderer.blockers = blockers;
 
+            /* The rim shared out, a name at a time: every line that will be
+             * drawn asks its two ends for a place to land, and a name with
+             * enough lines to crowd its rim spreads them (see spreadPorts).
+             *
+             * Built from every edge whose two ends are in the scene rather
+             * than from the ones the viewport happens to be showing, so
+             * panning cannot change where a line leaves its name - the
+             * routes below are remembered across a pan and would otherwise
+             * be served against ports that had moved.
+             */
+            var ports = Object.create(null);
+            var incident = Object.create(null);
+            for (i = 0; i < scene.edges.length; i++) {
+                var pe = scene.edges[i];
+                if (pe.source._frame !== frameStamp || pe.target._frame !== frameStamp) continue;
+                (incident[pe.source._i] = incident[pe.source._i] || []).push({ edge: pe, at: 0, other: pe.target._i });
+                (incident[pe.target._i] = incident[pe.target._i] || []).push({ edge: pe, at: 1, other: pe.source._i });
+            }
+            Object.keys(incident).forEach(function (key) {
+                var at = +key;
+                /* A dot's rim is a few pixels round; there is nothing to
+                 * share out, and its lines already leave from every side. */
+                if (!bubbles[at]) return;
+                var list = incident[at];
+                if (list.length < PORT_MIN_LINES) return;
+                var box = extent[at];
+                var per = 2 * ((box[2] - box[0]) + (box[3] - box[1]));
+                list.forEach(function (it) { it.p = rimPos(box, sx[it.other], sy[it.other]); });
+                list.sort(function (p1, p2) { return p1.p - p2.p; });
+                var pos = list.map(function (it) { return it.p; });
+                spreadPorts(pos, per, PORT_GAP);
+                list.forEach(function (it, n) {
+                    var slot = ports[it.edge.id] || (ports[it.edge.id] = [null, null]);
+                    slot[it.at] = rimAt(box, pos[n], scene.nodes[at].kind);
+                });
+            });
+            renderer.ports = ports;
+
             /* A route depends on where the boxes sit relative to each
              * other, not on where the stage is looking, so a pan reuses
              * last frame's routes shifted along; only a zoom, a motion or a
@@ -1745,8 +1964,15 @@
             var routeFor = function (edge, a, c) {
                 var cached = memo[edge.id];
                 if (!cached) {
-                    var ax = sx[a], ay = sy[a], cx = sx[c], cy = sy[c];
-                    var par = parallelOf[edge.id];
+                    var port = ports[edge.id];
+                    var ax = port && port[0] ? port[0][0] : sx[a];
+                    var ay = port && port[0] ? port[0][1] : sy[a];
+                    var cx = port && port[1] ? port[1][0] : sx[c];
+                    var cy = port && port[1] ? port[1][1] : sy[c];
+                    /* Two lines between the same pair are held apart by
+                     * their ports already; the offset would only push them
+                     * off the rim they were just given. */
+                    var par = port ? null : parallelOf[edge.id];
                     if (par) {
                         var len = Math.hypot(cx - ax, cy - ay) || 1;
                         var nx = -(cy - ay) / len * par.at * (par.flip ? -1 : 1);
@@ -2323,6 +2549,10 @@
         segmentHitsBox: segmentHitsBox,
         routeEdge: routeEdge,
         borderInk: borderInk,
+        spreadPorts: spreadPorts,
+        rimPos: rimPos,
+        rimAt: rimAt,
+        PORT_GAP: PORT_GAP,
         BOW_MIN_LENGTH: BOW_MIN_LENGTH,
         BORDER_BUBBLE: BORDER_BUBBLE,
         create: create,

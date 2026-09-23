@@ -1251,6 +1251,102 @@ function run() {
         'lines only ever leave from ' + JSON.stringify(sides),
         'lines leave from every side: ' + JSON.stringify(sides));
 
+    /* And a name with more lines than one edge of it has room for shares
+     * its whole rim out, rather than landing them three deep on the edge
+     * that happens to face their other ends.
+     *
+     * The spreading itself is checked on its own first, because in a
+     * drawn view the thing that would hide a bug in it - ports that quietly
+     * stayed where they were - looks exactly like a view with no crowding. */
+    const spreadPorts = sandbox.KOPNetworkCanvas.spreadPorts;
+    const PORT_GAP = sandbox.KOPNetworkCanvas.PORT_GAP;
+    const gapsOf = (list, per) => list.map((v, i) =>
+        (i === list.length - 1 ? list[0] + per : list[i + 1]) - v);
+    const heaped = [100, 101, 102, 140, 141, 142, 143];
+    const heapedWas = heaped.slice();
+    spreadPorts(heaped, 400, PORT_GAP);
+    check(gapsOf(heaped, 400).every((g) => g >= PORT_GAP - 0.5),
+        'crowded ports were left ' + JSON.stringify(gapsOf(heaped, 400).map(Math.round)) + ' apart',
+        'seven ports heaped on 40px of a 400px rim end up ' + PORT_GAP + 'px apart');
+    check(heaped.every((v, i) => i === 0 || v > heaped[i - 1]) &&
+        heaped.every((v, i) => Math.abs(v - heapedWas[i]) < 200),
+        'spreading ports reordered them, so two lines would cross on the rim');
+    const roomy = [0, 100, 200, 300];
+    const roomyWas = roomy.slice();
+    spreadPorts(roomy, 400, PORT_GAP);
+    check(roomy.every((v, i) => v === roomyWas[i]),
+        'ports with room to spare were moved anyway, so a line no longer points at its own other end');
+    /* More lines than the rim has room for: they take less each rather
+     * than more of the rim. The rim must not close up, because a closed
+     * ring is an even ring, and an even ring is decided by nothing - a
+     * port on the far side from its own other end is worse than a port
+     * crowded against its neighbour. */
+    const tooMany = new Array(60).fill(10);
+    spreadPorts(tooMany, 400, PORT_GAP);
+    const tooManyGaps = gapsOf(tooMany, 400);
+    const slack = Math.max(...tooManyGaps);
+    check(Math.min(...tooManyGaps) > 1 && slack > 400 * 0.2,
+        'sixty lines close the 400px rim up (widest gap left: ' + Math.round(slack) + 'px), ' +
+        'so their ports are an even ring and say nothing about where they go',
+        'sixty lines on a 400px rim stay apart and leave ' + Math.round(slack) + 'px of it free');
+
+    /* Then in the view: the busiest name on screen uses more than the one
+     * edge its lines all face. */
+    const portsBy = new Map();
+    routes.forEach((route) => {
+        const pair = (renderer.ports || {})[route.edge.id];
+        if (!pair) return;
+        [[route.edge.source._i, pair[0]], [route.edge.target._i, pair[1]]].forEach((end) => {
+            if (!end[1]) return;
+            if (!portsBy.has(end[0])) portsBy.set(end[0], []);
+            portsBy.get(end[0]).push(end[1]);
+        });
+    });
+    const sideAt = (box, pt) => {
+        const dx = (pt[0] - (box[0] + box[2]) / 2) / ((box[2] - box[0]) / 2 || 1);
+        const dy = (pt[1] - (box[1] + box[3]) / 2) / ((box[3] - box[1]) / 2 || 1);
+        return Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 'right' : 'left') : (dy > 0 ? 'bottom' : 'top');
+    };
+    let busiest = -1;
+    portsBy.forEach((list, idx) => {
+        if (busiest < 0 || list.length > portsBy.get(busiest).length) busiest = idx;
+    });
+    check(busiest >= 0 && portsBy.get(busiest).length >= 6, 'no name busy enough to test the rim on');
+    const busySides = new Set(portsBy.get(busiest).map((pt) => sideAt(renderer.blockers[busiest], pt)));
+    /* And however crowded, a port still faces its own other end: the
+     * spreading moves it off the exact bearing, never onto the far side,
+     * which would leave the line to double back under the name it just
+     * left. */
+    let turned = 0;
+    let worstTurn = 0;
+    routes.forEach((route) => {
+        const pair = (renderer.ports || {})[route.edge.id];
+        if (!pair) return;
+        [[route.edge.source._i, route.edge.target._i, pair[0]],
+            [route.edge.target._i, route.edge.source._i, pair[1]]].forEach((end) => {
+            if (!end[2]) return;
+            const box = renderer.blockers[end[0]];
+            const far = renderer.blockers[end[1]];
+            const cx = (box[0] + box[2]) / 2, cy = (box[1] + box[3]) / 2;
+            const toEnd = Math.atan2((far[1] + far[3]) / 2 - cy, (far[0] + far[2]) / 2 - cx);
+            const toPort = Math.atan2(end[2][1] - cy, end[2][0] - cx);
+            let off = Math.abs(toPort - toEnd) * 180 / Math.PI;
+            if (off > 180) off = 360 - off;
+            if (off > worstTurn) worstTurn = off;
+            if (off > 90) turned++;
+        });
+    });
+    check(turned === 0,
+        turned + ' ports face away from their own other end, the worst by ' +
+        Math.round(worstTurn) + ' degrees',
+        'no port is turned more than ' + Math.round(worstTurn) + ' degrees off its own other end');
+
+    check(busySides.size >= 2,
+        hubScene.nodes[busiest].name + "'s " + portsBy.get(busiest).length +
+        ' lines all leave the same edge',
+        hubScene.nodes[busiest].name + "'s " + portsBy.get(busiest).length +
+        ' lines leave from ' + [...busySides].join(', '));
+
     /* The board fills the stage: a block near the stage's own shape, not
      * a strip across it or a column down it, and not knotted into one
      * corner. */
