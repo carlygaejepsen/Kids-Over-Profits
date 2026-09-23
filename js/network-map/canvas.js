@@ -2122,7 +2122,11 @@
             /* An ellipse holds a box only well inside its axes: with the
              * name's half-height at 0.57 of the ellipse's, the half-width
              * has to be the name's over 0.82. */
-            if (node.kind === 'person') hw = Math.max(hh * 1.4, (nameW / 2) / 0.82 + BUBBLE_PAD_X * 0.5 * scale);
+            /* The name is drawn at the bubble's scale, so the ellipse has
+             * to hold it at that scale: measured at the working size, a
+             * clicked person (grown 1.6 times) had a name wider than the
+             * ellipse drawn round it. */
+            if (node.kind === 'person') hw = Math.max(hh * 1.4, (nameW * scale / 2) / 0.82 + BUBBLE_PAD_X * 0.5 * scale);
             return [cx - hw, cy - hh, cx + hw, cy + hh];
         }
 
