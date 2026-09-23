@@ -30,12 +30,12 @@ Last updated 2026-09-22.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
-| 15 | Long-form articles: orientation and structure | 15A breadcrumbs and 15G next links done 2026-09-22; seven parts open, see [section 15](#15-long-form-articles-orientation-and-structure) |
-| 16 | Spacing, typography and colour contrast | Open; five accent pairs fail WCAG AA as text |
-| 17 | Loading skeletons for the JSON-driven pages | Open |
+| 15 | Long-form articles: orientation and structure | 15A, 15G, 15I done; 15B to 15F and 15H open, see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 16 | Spacing, typography and colour contrast | 16B done: ink tokens, 26 declarations switched, a test guards it. 16A (mobile spacing) and the admin stylesheets open |
+| 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
 | 19 | Reusable article pieces | Open |
-| 20 | The staging copy, and what still points at it | robots.txt guard live; the fixer now covers the memorial and snippet tables; one apply run and the hosting lock-down are the owner's |
+| 20 | The staging copy, and what still points at it | Content clean as of 2026-09-23 bar one pingback comment; the hosting lock-down is the owner's |
 
 ## Waiting on the owner
 
@@ -87,9 +87,12 @@ session can do it. The tools that change data show a dry run first; add
    [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php)
    with `?apply=1` to put Severe Reports in the Monitor menu.
 
-9. **Staging links (20).** [fix-staging-links.php](https://kidsoverprofits.org/wp-content/themes/child/api/fix-staging-links.php) shows a preview with a tick per row; the new third section covers the
-   three memorial records, the OG Image snippet and the two images on the
-   Hyde profile. Tick and apply. It purges the LiteSpeed cache itself.
+9. **Staging links (20).** Done by the owner on 2026-09-23: the fixer was
+   run and the memorial records, the OG Image snippet and the Hyde images are
+   all on the live site now. One thing it does not reach: comment 453 on
+   [/hyde/](https://kidsoverprofits.org/hyde/) is a pingback from the staging
+   copy of the Fuller page, so it still prints a /staging/ link under the
+   post. Delete it in Comments; it is a clone pinging the original.
 ## Working in this repository
 
 Several sessions share the checkout at `C:\Users\daniu\source\repos\Kids-Over-Profits`
@@ -984,9 +987,17 @@ sidebar already holds search, Givebutter and MailerLite. A second column
 will not fit, so the sticky list belongs inside the content column
 (`position: sticky` beside the measure) rather than in a new sidebar.
 
-**15I. Visible anchor links on headings.** A link mark on hover and on
-keyboard focus that copies the section URL. The scroll offset is already
-handled (`scroll-margin-top: 6rem`).
+**15I. Visible anchor links on headings.** Done 2026-09-23. Every heading
+and every bold marker paragraph carries a link mark, hidden until the
+heading is hovered and always reachable by keyboard, with the section's own
+name in its label rather than "Link to this section" thirty times over. It
+is dropped on touch screens, which have no hover to reveal it, and on an
+article with too little structure for a contents box.
+`scripts/test-article-sections.php` covers the heading path and the marker
+path, and holds the function to leaving the prose exactly as it found it -
+which matters here, because most of these articles have no headings at all:
+advocacy-history, fundamentalist, war-on-drugs and the timelines are bold
+marker paragraphs from end to end.
 
 ---
 
@@ -997,40 +1008,45 @@ between subsections, fix the collapsed margins on the long pages, and check
 the measure and line-height below 760px, where `css/article.css` currently
 changes layout.
 
-**16B. Contrast, to WCAG AA.** Measured against the current palette, the
-body pairs pass and the accents do not:
+**16B. Contrast, to WCAG AA.** Done 2026-09-23. `css/colors.css` gained an
+ink version of each accent - same hue, same saturation, darkened until it
+passes 4.5 on white, on sand and on the pastel yellow, so one value is safe
+on any light ground the site uses:
 
-| Pair | Ratio | AA text (4.5) |
+| Token | Value | Worst light ground |
 |---|---|---|
-| Secondary text `#4a4f6a` on sand `#F2EEDF` | 6.9 | passes |
-| Midnight `#000435` on sand | 16.9 | passes |
-| Navy `#000080` on white | 16.0 | passes |
-| Teal `#33A7B5` on white | 2.86 | fails |
-| Teal on sand | 2.46 | fails |
-| Orange `#EF9034` on white | 2.41 | fails |
-| Coral `#FE8088` on white | 2.43 | fails |
-| Chartreuse `#B2E102` on white | 1.54 | fails |
+| `--kop-teal-ink` | `#24757F` | 4.60 on sand |
+| `--kop-orange-ink` | `#A3570D` | 4.60 on sand |
+| `--kop-coral-pink-ink` | `#D9020F` | 4.56 on sand |
+| `--kop-chartreuse-ink` | `#5C7401` | 4.57 on sand |
 
-Teal on midnight blue is 6.86 and passes, which is why the accents work as
-borders and on the dark grounds and not as text. One live instance to fix:
-`.kop-article-footer a` in `css/article.css` sets link text to teal at
-0.88rem, which is 2.86 against white. Sweep the timelines for the same
-pattern and move accent text to navy, keeping the accent on the border.
+Twenty-six declarations in the reading stylesheets had a display accent as
+text and now use the ink; borders and fills keep the accent, and a rule with
+a dark background of its own is left alone, since teal on midnight is
+already 6.86. `scripts/test-colour-contrast.py` checks the arithmetic and
+then reads the stylesheets back, so a new accent-as-text declaration fails a
+test rather than shipping.
+
+Still open: the admin stylesheets, which have about fifty more and are one
+person's workbench rather than a page a visitor reads.
 
 ---
 
 ## 17. Loading skeletons for the JSON-driven pages
 
-The state hubs, the country pages, the program index and the location index
-fetch their data after the page paints and show a bare line in the meantime
-("Loading facilities...", `templates/page-state.php`). Replace it with a
-skeleton of three or four card outlines, one CSS animation, honouring
-`prefers-reduced-motion`.
+Done 2026-09-23. `kop_loading_skeleton()` in `inc/utilities.php` prints card
+outlines the size of the real cards, and `css/skeleton.css` styles them.
+Nine sections across five templates use it: the four sections of the state
+and country hubs, the program index, the location index and the state
+report pages. The words stay in a live region for anybody who cannot see a
+shape, and the sweep stops under `prefers-reduced-motion`.
 
-Not the lawsuits page: `templates/page-lawsuits.php` renders its rows in
-PHP and filters them client-side, so there is nothing to wait for. The
-brief's "state reports" belong here only once the state trackers are on the
-same JSON path.
+Every one of those containers has its innerHTML replaced wholesale when the
+data lands, so no JavaScript changed and nothing has to clean up after the
+skeleton.
+
+Not the lawsuits page: `templates/page-lawsuits.php` renders its rows in PHP
+and filters them client-side, so there is nothing to wait for.
 
 ---
 
@@ -1123,28 +1139,25 @@ somewhere other than a post, which is where the last six links were hiding.
   URL is only rewritten when the live target is confirmed. Tested offline by
   `scripts/test-staging-link-fixer.php`.
 
-**Waiting on the owner: open the tool and apply.** Six links on four pages,
-all with a live target:
+**Done by the owner on 2026-09-23.** The tool was run and the six links are
+gone from the live site. `scripts/check-staging-links.py` over 27 rendered
+pages finds one thing left, and it is not something the tool can reach:
+comment 453 on [/hyde/](https://kidsoverprofits.org/hyde/) is a pingback
+from the staging copy of the Fuller page, so the comment list under the post
+still carries a /staging/ link. Delete the comment - a clone pinging the
+original is not a record of anything.
 
-| Where | What |
-|---|---|
-| `memorial_victims` #5 Biruk Silvers | `kop_url` -> the Discovery Ranch document library |
-| `memorial_victims` #11 Clark Harman | `kop_url` -> the Trails Carolina lawsuits page |
-| `memorial_victims` #117 Ian Mulhare | `source_url` -> the 2004 Island View police report |
-| Code Snippets #6 "OG Image" | the home page's `og:image`, the staging copy of the logo |
-| Post 2365 `hyde` | two images in a visual link preview block |
-| Post 5634 `facility-form-test` | nothing to do: the file it wants is 404 on staging too |
+Two decisions taken on the way, neither of them the tool's to make:
 
-Two things the tool will not decide:
-
-1. **The OG Image snippet duplicates Yoast.** It prints `og:image`, `og:title`,
-   `og:description`, `og:type` and `og:url` on the front page, and Yoast prints
-   the same five, so the home page carries two of each and a scraper picks
-   whichever it likes. Yoast's image is `banner-scaled.png`; the snippet's is
-   the logo. Fixing the URL keeps both sets; deciding which set should exist is
-   the owner's, and deactivating the snippet is the tidier end of it.
-2. **`facility-form-test` is a published post.** A development test page, live
-   on the site, linking to a script that no longer exists. It looks like it
+1. **The OG Image snippet duplicates Yoast.** It prints `og:image`,
+   `og:title`, `og:description`, `og:type` and `og:url` on the front page and
+   Yoast prints the same five, so the home page carries two of each and a
+   scraper takes whichever it likes. Fixing the URL kept both sets. Yoast's
+   image is `banner-scaled.png` and the snippet's is the logo; deactivating
+   snippet 6 in Code Snippets is the tidier end of it, and leaves Yoast as
+   the one place sharing is configured.
+2. **`facility-form-test` is a published post.** A development test page,
+   live on the site, linking to a script that no longer exists anywhere. It
    should be a draft.
 
 **The copy itself is still open.** `https://kidsoverprofits.org/staging/`
@@ -1153,7 +1166,8 @@ answers 200. Its front page carries `noindex`, but the inner pages do not -
 page it is still crawlable, and robots.txt is a request rather than a control.
 Closing it properly is hosting work and the owner's: a password on `/staging/`
 in cPanel, "Discourage search engines" inside the staging install, or taking it
-down. Do the six links above first; locking staging down would break them.
+down. The links that depended on it are fixed, so nothing on the live site
+breaks when it goes.
 
 Re-check any time with `python scripts/check-staging-links.py` (add `--all` to
 fetch every page the mirror suspects rather than the first 25); it exits 1
