@@ -326,8 +326,9 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 								<strong>How to read this.</strong>
 								Click a name to see what it connects to; click again to go
 								deeper, and use the trail above to come back.
-								Each line is coloured for the company it belongs to and
-								leaves a name from whichever side is nearest.
+								Each name is outlined, and each line coloured, for the
+								company it belongs to, and a line leaves a name from
+								whichever side is nearest.
 							</p>
 							<?php
 							// The key is the board's own: fills for status, a blue name

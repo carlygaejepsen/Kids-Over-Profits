@@ -292,9 +292,11 @@
             }
             legend.appendChild(keyList);
 
-            /* Whose lines. A company's lines to its own places and people
-             * are drawn in the colour the board gave it, so the chains in
-             * view are listed by that colour, in the board's order. */
+            /* Whose colour. A company's lines to its own places and people
+             * are drawn in the colour the board gave it, and since the
+             * border of a name is drawn in it too, this one row now reads
+             * both marks. The chains in view are listed by that colour, in
+             * the board's order. */
             var chains = [];
             var chainSeen = Object.create(null);
             scene.nodes.forEach(function (node) {
@@ -307,7 +309,7 @@
             if (chains.length) {
                 var chainList = document_.createElement('ul');
                 chainList.className = 'kop-network__legend-list';
-                legend.appendChild(section('Whose lines'));
+                legend.appendChild(section('Whose colour'));
                 chains.forEach(function (chain) {
                     var built = row(chain, undefined, true);
                     chainList.appendChild(built.item);

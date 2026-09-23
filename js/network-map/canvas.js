@@ -116,10 +116,13 @@
     var BUBBLE_PAD_X = 9;
     var BUBBLE_PAD_Y = 5;
     var BUBBLE_GAP = 4;
-    /* A bubble's outline is thin and dark, as on the board; a dot's thinner
-     * still. The memorial ring steps out to clear it. */
-    var BORDER_BUBBLE = 1.5;
-    var BORDER_DOT = 1;
+    /* A bubble's outline carries its company's colour (see clusterInk), so
+     * it is drawn heavy enough to read as a colour rather than as a hair
+     * round the fill: at 1.5px the difference between navy and teal was
+     * only visible if you already knew it was there. The memorial ring
+     * steps out to clear it. */
+    var BORDER_BUBBLE = 2.6;
+    var BORDER_DOT = 1.8;
     var RING_DEATHS = 4.5;
     var RING_HOVER = 8;
     /* A node that cannot hold its name is drawn as a dot this size, in
@@ -559,6 +562,47 @@
     /* And a line with more boxes than this within reach is in a crowd the
      * search cannot afford either. */
     var DETOUR_MAX_NEAR = 80;
+
+    /* --- going round the outside ---
+     *
+     * A route used to be judged on length alone, and a straight line that
+     * happened to thread a gap between two names was taken without a
+     * second thought. That is how the middle of a cluster filled up: every
+     * long connection ran through it, because the shortest way between two
+     * names on opposite sides of a hub is across the hub, and the gutters
+     * between names are wide enough to let a line through. The result read
+     * as a knot with names round it rather than as a structure.
+     *
+     * So length is no longer the whole cost. A leg is charged extra for
+     * every name it passes close to, and a route is searched for even when
+     * the straight line is not blocked: a line that brushes past several
+     * names now loses to one that swings out round them, as long as the
+     * way round is not so much longer that it stops reading as the same
+     * connection. Short lines inside one cluster never qualify - bowing
+     * those would only say two names are further apart than they are.
+     */
+    /* How close to a name a line passes before it counts as running
+     * through the crowd rather than round it. */
+    var CROWD_HALO = 24;
+    /* What each name a leg brushes past adds to that leg's length. Two
+     * names make a leg cost twice what it measures, which is about where a
+     * way round the outside starts to win. */
+    var CROWD_WEIGHT = 0.5;
+    /* A line shorter than this stays inside one cluster and goes straight. */
+    var BOW_MIN_LENGTH = 150;
+    /* How many names a clear straight line has to brush past before a way
+     * round is worth searching for. */
+    var BOW_MIN_CROWD = 2;
+    /* The longest a way round may be, against the straight line it
+     * replaces. Past this the detour is a different story from the
+     * connection it is meant to draw. */
+    var BOW_MAX = 2.2;
+    /* A crowd this big is not something one line can get round. */
+    var BOW_MAX_NEAR = 60;
+    /* A bow turns its corners out here rather than at DETOUR_MARGIN: it is
+     * not squeezing past one name in the way, it is going round a group,
+     * and it should visibly clear them. */
+    var BOW_MARGIN = 12;
     /* Two lines between the same pair sit this far apart. */
     var PARALLEL_GAP = 5;
 
@@ -640,7 +684,26 @@
             }
             return true;
         };
-        if (clear(a, b, skipA, skipB)) return [a, b];
+        /* How many names a leg brushes past: the boxes again, each grown
+         * by the halo, so a line squeezing between two names is charged
+         * for both of them. */
+        var crowd = function (p, q, skipP, skipQ) {
+            var n = 0;
+            for (var j = 0; j < near.length; j++) {
+                var idx = nearIndex[j];
+                if (idx === skipP || idx === skipQ) continue;
+                var bb = near[j];
+                if (segmentHitsBox(p, q, [bb[0] - CROWD_HALO, bb[1] - CROWD_HALO,
+                    bb[2] + CROWD_HALO, bb[3] + CROWD_HALO])) n++;
+            }
+            return n;
+        };
+        var cost = function (p, q, skipP, skipQ) {
+            return Math.hypot(q[0] - p[0], q[1] - p[1]) *
+                (1 + CROWD_WEIGHT * crowd(p, q, skipP, skipQ));
+        };
+
+        if (clear(a, b, skipA, skipB)) return bow(a, b, near, nearIndex, clear, cost, crowd, skipA, skipB);
         if (near.length > DETOUR_MAX_NEAR) return [a, b];
 
         var inWay = [];
@@ -650,14 +713,72 @@
             others.push(near[j]);
             if (segmentHitsBox(a, b, near[j])) inWay.push(near[j]);
         }
-        var path = detour(a, b, cornersOf(inWay), clear, skipA, skipB);
+        var path = detour(a, b, cornersOf(inWay), clear, skipA, skipB, cost);
         if (!path && others.length > inWay.length) {
-            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS), clear, skipA, skipB);
+            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS), clear, skipA, skipB, cost);
         }
         if (!path && others.length * 4 > DETOUR_CORNERS) {
-            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS_WIDE), clear, skipA, skipB);
+            path = detour(a, b, cornersOf(others, a, b, DETOUR_CORNERS_WIDE), clear, skipA, skipB, cost);
         }
         return path || [a, b];
+    }
+
+    /**
+     * A clear straight line, or - where it runs through the crowd rather
+     * than round it - the way round.
+     *
+     * The turning points offered are the corners of the names the line
+     * brushes past, set well out, and eight points on the outside of the
+     * whole local crowd: its bounding box's corners and the middle of each
+     * of its sides. Those eight are what let a route leave the structure
+     * altogether and come back on the far side, which the corners of the
+     * names in the middle can never do on their own.
+     */
+    function bow(a, b, near, nearIndex, clear, cost, crowd, skipA, skipB) {
+        var straightLen = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        if (straightLen < BOW_MIN_LENGTH || near.length > BOW_MAX_NEAR) return [a, b];
+        var brushedCount = crowd(a, b, skipA, skipB);
+        if (brushedCount < BOW_MIN_CROWD) return [a, b];
+
+        var brushed = [];
+        for (var j = 0; j < near.length; j++) {
+            var idx = nearIndex[j];
+            if (idx === skipA || idx === skipB) continue;
+            var bb = near[j];
+            if (segmentHitsBox(a, b, [bb[0] - CROWD_HALO, bb[1] - CROWD_HALO,
+                bb[2] + CROWD_HALO, bb[3] + CROWD_HALO])) brushed.push(bb);
+        }
+        var turns = cornersOf(brushed, a, b, DETOUR_CORNERS, BOW_MARGIN).concat(outsideOf(near));
+        var path = detour(a, b, turns, clear, skipA, skipB, cost);
+        if (!path || path.length < 3) return [a, b];
+
+        var len = 0, spent = 0;
+        for (var i = 1; i < path.length; i++) {
+            len += Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+            spent += cost(path[i - 1], path[i], i === 1 ? skipA : -1, i === path.length - 1 ? skipB : -1);
+        }
+        if (len > straightLen * BOW_MAX) return [a, b];
+        return spent < straightLen * (1 + CROWD_WEIGHT * brushedCount) ? path : [a, b];
+    }
+
+    /* Eight points on the outside of a crowd of boxes: the corners of the
+     * box round all of them and the middle of each side, set out past the
+     * halo so a route through them visibly passes outside the group. */
+    function outsideOf(boxes) {
+        if (!boxes.length) return [];
+        var x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (var i = 0; i < boxes.length; i++) {
+            var bb = boxes[i];
+            if (bb[0] < x0) x0 = bb[0];
+            if (bb[1] < y0) y0 = bb[1];
+            if (bb[2] > x1) x1 = bb[2];
+            if (bb[3] > y1) y1 = bb[3];
+        }
+        var m = BOW_MARGIN;
+        x0 -= m; y0 -= m; x1 += m; y1 += m;
+        var mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+        return [[x0, y0], [mx, y0], [x1, y0], [x1, my],
+            [x1, y1], [mx, y1], [x0, y1], [x0, my]];
     }
 
     /* The turning points a detour can use: each box's four corners, set
@@ -665,8 +786,8 @@
      * between the two ends first: a corner beside the line is a way past
      * whatever blocks it, a corner beside an end is usually in the crowd
      * the end sits in. */
-    function cornersOf(boxes, a, b, keep) {
-        var m = DETOUR_MARGIN;
+    function cornersOf(boxes, a, b, keep, margin) {
+        var m = margin === undefined ? DETOUR_MARGIN : margin;
         var out = [];
         for (var i = 0; i < boxes.length; i++) {
             var bb = boxes[i];
@@ -689,11 +810,15 @@
         return out;
     }
 
-    /* The shortest chain of clear legs from a to b through the corners:
+    /* The cheapest chain of clear legs from a to b through the corners:
      * A* on a graph small enough to check its legs as it goes, the
      * straight-line distance left as the estimate, so the corners the
-     * line would never use are never settled. Vertex 0 is a, 1 is b. */
-    function detour(a, b, corners, clear, skipA, skipB) {
+     * line would never use are never settled. Vertex 0 is a, 1 is b.
+     *
+     * `cost` prices one leg. It is never less than the leg's length, so
+     * the straight-line estimate stays a lower bound and A* still settles
+     * on the cheapest route; left out, a leg costs what it measures. */
+    function detour(a, b, corners, clear, skipA, skipB, cost) {
         var n = corners.length + 2;
         if (n < 3) return null;
         var pts = [a, b].concat(corners);
@@ -720,10 +845,14 @@
             done[u] = 1;
             for (var v = 1; v < n; v++) {
                 if (done[v] || v === u) continue;
-                var d = dist[u] + Math.hypot(pts[v][0] - pts[u][0], pts[v][1] - pts[u][1]);
-                if (d >= dist[v]) continue;
                 /* A leg may pass through its own end's bubble and no other. */
-                if (!clear(pts[u], pts[v], u === 0 ? skipA : -1, v === 1 ? skipB : -1)) continue;
+                var skipP = u === 0 ? skipA : -1;
+                var skipQ = v === 1 ? skipB : -1;
+                if (dist[u] + Math.hypot(pts[v][0] - pts[u][0], pts[v][1] - pts[u][1]) >= dist[v]) continue;
+                if (!clear(pts[u], pts[v], skipP, skipQ)) continue;
+                var d = dist[u] + (cost ? cost(pts[u], pts[v], skipP, skipQ)
+                    : Math.hypot(pts[v][0] - pts[u][0], pts[v][1] - pts[u][1]));
+                if (d >= dist[v]) continue;
                 dist[v] = d;
                 prev[v] = u;
             }
@@ -777,6 +906,15 @@
      * than under it. Drawn per edge rather than batched, which is affordable
      * because only the hundred-odd directed edges have one.
      */
+    /* An arrowhead, and the two things that were wrong with the old one:
+     * it was as narrow as the line it sat on, so at a glance it read as a
+     * thickening rather than as a direction, and it was drawn straight
+     * over whatever it landed among, so on a crowded rim it disappeared
+     * into the lines behind it. It is now a broad head, and it is stroked
+     * in the stage colour before it is filled, which leaves a thin clear
+     * margin round it - the same trick the hovered line uses. */
+    var ARROW_WING = 0.66;
+    var ARROW_HALO = 3;
     function drawArrow(ctx, ax, ay, bx, by, backoff, size) {
         var dx = bx - ax;
         var dy = by - ay;
@@ -788,12 +926,22 @@
         var tipY = by - uy * backoff;
         var baseX = tipX - ux * size;
         var baseY = tipY - uy * size;
-        var wing = size * 0.5;
+        var wing = size * ARROW_WING;
         ctx.beginPath();
         ctx.moveTo(tipX, tipY);
         ctx.lineTo(baseX - uy * wing, baseY + ux * wing);
         ctx.lineTo(baseX + uy * wing, baseY - ux * wing);
         ctx.closePath();
+        var join = ctx.lineJoin;
+        var dash = null;
+        if (ctx.getLineDash) dash = ctx.getLineDash();
+        if (ctx.setLineDash) ctx.setLineDash([]);
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = SURFACE;
+        ctx.lineWidth = ARROW_HALO;
+        ctx.stroke();
+        ctx.lineJoin = join;
+        if (dash && dash.length && ctx.setLineDash) ctx.setLineDash(dash);
         ctx.fill();
     }
 
@@ -854,6 +1002,44 @@
         return m ? 'rgb(' + m[1] + ',' + m[2] + ',' + m[3] + ')' : colour;
     }
 
+    /** A colour as [r, g, b], or null for one this does not read. */
+    function toRgb(colour) {
+        var text = String(colour).trim();
+        var hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(text);
+        if (hex) {
+            var h = hex[1];
+            if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+            return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+        }
+        var fn = /^rgba?\(([^)]+)\)$/i.exec(text);
+        if (!fn) return null;
+        var parts = fn[1].split(',');
+        if (parts.length < 3) return null;
+        return [Math.round(parseFloat(parts[0])), Math.round(parseFloat(parts[1])), Math.round(parseFloat(parts[2]))];
+    }
+
+    /* How dark an outline has to be to read against the pale fills a node
+     * is given. Half the board's company colours are pastels chosen to be
+     * seen as a line on white, and a pastel border round a pale yellow box
+     * is no border at all, so anything lighter than this is mixed toward
+     * black until it is - which keeps the hue, and so keeps the border
+     * recognisably the same company as the lines leaving it. */
+    var BORDER_LUMA = 0.52;
+    var inkCache = Object.create(null);
+    function borderInk(colour) {
+        if (!colour) return OUTLINE;
+        if (inkCache[colour]) return inkCache[colour];
+        var rgb = toRgb(colour);
+        if (!rgb) return (inkCache[colour] = colour);
+        var luma = (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+        var out = colour;
+        if (luma > BORDER_LUMA) {
+            var f = BORDER_LUMA / luma;
+            out = 'rgb(' + Math.round(rgb[0] * f) + ',' + Math.round(rgb[1] * f) + ',' + Math.round(rgb[2] * f) + ')';
+        }
+        return (inkCache[colour] = out);
+    }
+
     /* The dot where a line lands on a bubble. */
     function drawPort(ctx, x, y, colour) {
         ctx.beginPath();
@@ -894,14 +1080,18 @@
     }
 
     /* Fill and outline for one node, whatever its shape. The path must
-     * already be traced. Filled by status and outlined in the board's dark
-     * ink; a rebrand is dashed, because the place carried on under another
-     * name and the dash says "continues elsewhere". */
+     * already be traced. Filled by status and outlined in its company's
+     * colour - the same colour the lines round it are drawn in, so a name
+     * and the group it belongs to can be read off each other without
+     * following a line to its end - or in the board's dark ink where the
+     * record names no owner. A rebrand is dashed, because the place
+     * carried on under another name and the dash says "continues
+     * elsewhere". */
     function fillOutline(ctx, spec, alpha, heavy) {
         ctx.globalAlpha = alpha;
         ctx.fillStyle = STATUS_FILLS[spec.status] || STATUS_FILLS.unknown;
         ctx.fill();
-        ctx.strokeStyle = OUTLINE;
+        ctx.strokeStyle = spec.border || OUTLINE;
         ctx.lineWidth = heavy ? BORDER_BUBBLE : BORDER_DOT;
         if (spec.status === 'rebranded' && ctx.setLineDash) ctx.setLineDash(heavy ? [5, 3] : [3, 2]);
         ctx.stroke();
@@ -1046,12 +1236,12 @@
         ctx.setLineDash(style.dash || []);
         ctx.beginPath();
         ctx.moveTo(1, h / 2);
-        ctx.lineTo(style.arrow ? w - 8 : w - 1, h / 2);
+        ctx.lineTo(style.arrow ? w - 10 : w - 1, h / 2);
         ctx.stroke();
         ctx.setLineDash([]);
         if (style.arrow) {
             ctx.fillStyle = style.colour;
-            drawArrow(ctx, 1, h / 2, w - 1, h / 2, 0, 8);
+            drawArrow(ctx, 1, h / 2, w - 1, h / 2, 0, 10);
         }
     }
 
@@ -1137,7 +1327,7 @@
         var SETTLE_FRAMES = 6;
         /* Reused by the draw loop so a frame does not allocate one spec per
          * node; paintNode never holds on to it. */
-        var scratch = { kind: '', status: '', natsap: false, deaths: 0 };
+        var scratch = { kind: '', status: '', natsap: false, deaths: 0, border: '' };
 
         /** The store's chain-to-index map, so colour mode two can be resolved. */
         renderer.useChainIndex = function (index) {
@@ -1174,6 +1364,31 @@
             if (board.chainColours[region]) return region;
             return board.regionChains[region] || '';
         }
+
+        /* The group a node is drawn as belonging to, for its border. Wider
+         * than companyOf, which answers only for a chain the board gave a
+         * colour of its own: a name with no border colour is the thing the
+         * border is there to fix, so a chain the board left black falls
+         * back to the palette, and a name with no owner of its own is
+         * taken to belong where the board frame it sits in belongs. */
+        function clusterOf(node) {
+            if (!node) return '';
+            if (node.chain) return node.chain;
+            var region = node.regions && node.regions[0];
+            if (!region) return '';
+            if (board.chainColours[region]) return region;
+            return board.regionChains[region] || '';
+        }
+
+        /* A node's border: its group's colour, darkened where the board's
+         * own is too pale to read as an outline, and the plain dark ink
+         * where the record puts the name in no group at all. */
+        renderer.clusterInk = function (node) {
+            var chain = clusterOf(node);
+            if (!chain) return OUTLINE;
+            var colour = renderer.chainColour(chain);
+            return !colour || colour === CHAIN_NONE ? OUTLINE : borderInk(colour);
+        };
 
         /* A line between one company's places and people is that company's
          * colour; a line between two companies is neither's, so it stays the
@@ -1648,6 +1863,7 @@
                 scratch.status = node.status;
                 scratch.natsap = node.natsap;
                 scratch.deaths = node.deaths;
+                scratch.border = renderer.clusterInk(node);
 
                 var bubble = bubbles[i];
                 if (!bubble) {
@@ -1717,7 +1933,7 @@
                 if (rstyle.arrow && end) {
                     var before = end.from;
                     drawArrow(ctx, before[0], before[1], end[0], end[1], 0,
-                        Math.max(6, Math.min(11, 7 * Math.sqrt(k))));
+                        Math.max(10, Math.min(17, 11 * Math.sqrt(k))));
                 } else if (end) {
                     drawPort(ctx, end[0], end[1], rstyle.colour);
                 }
@@ -2106,6 +2322,9 @@
         swatch: swatch,
         segmentHitsBox: segmentHitsBox,
         routeEdge: routeEdge,
+        borderInk: borderInk,
+        BOW_MIN_LENGTH: BOW_MIN_LENGTH,
+        BORDER_BUBBLE: BORDER_BUBBLE,
         create: create,
         STATUS_FILLS: STATUS_FILLS,
         OUTLINE: OUTLINE,
