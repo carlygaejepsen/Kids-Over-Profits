@@ -134,6 +134,48 @@
     scroll-margin-top: 6rem;
 }
 
+/* ---- Section anchors --------------------------------------------------- */
+
+/* One per heading and per marker paragraph, for citing a section of a very
+ * long page. Out of the way until the heading is hovered, and always there
+ * for the keyboard: opacity rather than display:none keeps it focusable and
+ * keeps it in the accessibility tree. */
+.kop-article-anchor {
+    opacity: 0;
+    margin-left: 0.35rem;
+    color: var(--kop-teal-ink, #24757F);
+    font-weight: 400;
+    text-decoration: none;
+    transition: opacity 0.12s ease-in-out;
+}
+
+.kop-article .entry-content h2:hover .kop-article-anchor,
+.kop-article .entry-content h3:hover .kop-article-anchor,
+.kop-article .entry-content p.kop-article-marker:hover .kop-article-anchor,
+.kop-article-anchor:focus-visible {
+    opacity: 1;
+}
+
+.kop-article-anchor:focus-visible {
+    outline: 2px solid var(--kop-teal, #33a7b5);
+    outline-offset: 2px;
+}
+
+/* A touch screen has no hover, so there is nothing to reveal: the marks
+ * would sit there permanently or never appear at all. They are for citing a
+ * section from a desktop, so they go. */
+@media (hover: none) {
+    .kop-article-anchor {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .kop-article-anchor {
+        transition: none;
+    }
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 
 .kop-article-footer {
@@ -148,7 +190,7 @@
 }
 
 .kop-article-footer a {
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 /* ---- Continue ----------------------------------------------------------- */

@@ -112,7 +112,7 @@
     padding: 0.4rem 0.9rem;
     border: 1px solid var(--kop-teal, #33a7b5);
     border-radius: 4px;
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
     font-size: 0.9rem;
     font-weight: 600;
     text-decoration: none;
@@ -165,7 +165,7 @@
 }
 
 .kop-hub-footer a {
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 /* Research & Reports: document card grid (inc/research-library.php) */
@@ -268,7 +268,7 @@
 
 .kop-rl-summary {
     font-weight: 600;
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-rl-file {
@@ -429,7 +429,7 @@
 
 .kop-rl-tag-remove:hover,
 .kop-rl-tag-remove:focus-visible {
-    color: var(--kop-coral-pink, #fe8088);
+    color: var(--kop-coral-pink-ink, #D9020F);
 }
 
 .kop-rl-tag-search {
@@ -506,7 +506,7 @@
     border: 1px solid var(--kop-teal, #33a7b5);
     border-radius: 999px;
     background: transparent;
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
@@ -565,7 +565,7 @@
 
 .kop-rl-edit:hover {
     border-color: var(--kop-teal, #33a7b5);
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-research-library.is-editing .kop-rl-card {
@@ -674,7 +674,7 @@
 .kop-rl-photo-actions button:hover,
 .kop-rl-form-actions button:hover {
     border-color: var(--kop-teal, #33a7b5);
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 .kop-rl-form-msg {
@@ -685,7 +685,7 @@
 }
 
 .kop-rl-form-msg.is-error {
-    color: var(--kop-coral-pink, #fe8088);
+    color: var(--kop-coral-pink-ink, #D9020F);
     font-weight: 600;
 }
 

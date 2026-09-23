@@ -24,6 +24,30 @@
     --kop-powder-blue: #AEE0ED;
     --kop-bubblegum-pink: #FC8ED6;
 
+    /*
+     * Ink versions of the accents, for TEXT on a light ground.
+     *
+     * The accents above are display colours: they are for borders, fills and
+     * marks, and every one of them fails WCAG AA as body text. Measured
+     * against sand (#F2EEDF), the ground most of the site uses:
+     *
+     *   teal #33A7B5   2.46      chartreuse #B2E102  1.32
+     *   orange #EF9034 2.07      coral #FE8088       2.09
+     *
+     * AA wants 4.5 for body text. Each ink below is the same hue and
+     * saturation darkened until it passes 4.5 on white, on sand and on the
+     * pastel yellow, so one value is safe on any of the three light grounds
+     * (teal ink: 5.35 / 4.60 / 4.88).
+     *
+     * Use the ink for text and the accent for everything else. On a dark
+     * ground - midnight, navy - keep the accent: teal on midnight is 6.86,
+     * and the ink would disappear.
+     */
+    --kop-teal-ink: #24757F;
+    --kop-orange-ink: #A3570D;
+    --kop-coral-pink-ink: #D9020F;
+    --kop-chartreuse-ink: #5C7401;
+
     /* Semantic Color Aliases */
     --kop-bg-primary: var(--kop-sand);
     --kop-bg-secondary: var(--kop-white);

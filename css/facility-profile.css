@@ -32,7 +32,7 @@
 }
 
 .kop-fp-eyebrow a {
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: none;
 }
 
@@ -305,7 +305,7 @@
 }
 
 .kop-fp-footer a {
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
 }
 
 @media (max-width: 640px) {
@@ -328,7 +328,7 @@
 }
 
 .kop-fp-body sup.kop-cite a {
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: none;
 }
 
@@ -493,7 +493,7 @@
 
 .kop-fp-report-link {
     font-weight: 600;
-    color: var(--kop-teal, #33a7b5);
+    color: var(--kop-teal-ink, #24757F);
     text-decoration: none;
     white-space: nowrap;
 }

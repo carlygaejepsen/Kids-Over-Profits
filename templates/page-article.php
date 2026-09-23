@@ -35,6 +35,22 @@ if (file_exists($kop_art_css_path)) {
     );
 }
 
+if (!function_exists('kop_article_anchor')) {
+    /**
+     * The link mark that lets a reader copy the address of one section.
+     *
+     * Hidden until the heading is hovered or the link itself is focused, so
+     * it is there for the person who wants to cite a section of a 46,000
+     * character timeline and invisible to everybody else. It carries the
+     * section's own name, because "Link to this section" thirty times over
+     * is no use to somebody listening to the page.
+     */
+    function kop_article_anchor($id, $text) {
+        return ' <a class="kop-article-anchor" href="#' . esc_attr($id) . '"'
+            . ' aria-label="' . esc_attr('Link to this section: ' . $text) . '">#</a>';
+    }
+}
+
 if (!function_exists('kop_article_sections')) {
     /**
      * Find section markers in rendered content and make sure each has an id.
@@ -77,7 +93,8 @@ if (!function_exists('kop_article_sections')) {
                 }
                 $id    = $make_id($text, $existing);
                 $toc[] = array($id, $text, $m[1] === 'h2' ? 2 : 3);
-                return '<' . $m[1] . $attrs . ' id="' . esc_attr($id) . '">' . $m[3] . '</' . $m[1] . '>';
+                return '<' . $m[1] . $attrs . ' id="' . esc_attr($id) . '">' . $m[3]
+                    . kop_article_anchor($id, $text) . '</' . $m[1] . '>';
             },
             $html
         );
@@ -100,15 +117,20 @@ if (!function_exists('kop_article_sections')) {
                     }
                     $id        = $make_id($text, $existing);
                     $markers[] = array($id, $text, 2);
-                    return '<p' . $attrs . ' id="' . esc_attr($id) . '" class="kop-article-marker"><strong>' . $m[2] . '</strong></p>';
+                    return '<p' . $attrs . ' id="' . esc_attr($id) . '" class="kop-article-marker"><strong>'
+                        . $m[2] . '</strong>' . kop_article_anchor($id, $text) . '</p>';
                 },
                 $html
             );
             if (count($markers) >= 3) {
                 $toc = array_merge($toc, $markers);
             } else {
-                // Not enough markers to be worth a contents box; leave paragraphs as they were.
+                // Not enough markers to be worth a contents box; leave the
+                // paragraphs as they were, anchor marks included - without
+                // the contents list there is nothing for them to point back
+                // to, and a stray "#" on three paragraphs reads as a typo.
                 $html = preg_replace('/ class="kop-article-marker"/', '', $html);
+                $html = preg_replace('~\s*<a class="kop-article-anchor"[^>]*>#</a>~', '', $html);
             }
         }
 
