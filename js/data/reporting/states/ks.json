@@ -1,0 +1,78 @@
+{
+  "state": "Kansas",
+  "abbr": "KS",
+  "updated": "2026-09-22",
+  "note": "Kansas splits the work usefully: the Department for Children and Families investigates abuse or neglect alleged to have happened in a childcare or residential care facility, and it is required to pass any investigation involving a licensed facility straight to the Department of Health and Environment, which holds the licence. So one call to the Protection Report Center reaches both the investigation and the licensor.",
+  "channels": [
+    {
+      "id": "ks-behavioral-sciences-regulatory-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Kansas Behavioral Sciences Regulatory Board",
+      "what_it_can_do": "Regulates psychologists, social workers, professional counselors, marriage and family therapists, addiction counselors and behavior analysts, and disciplines their licences. Every complaint gets a case number, and once the Board decides to investigate, the licensee is told what is alleged.",
+      "what_it_cannot_do": "It says plainly that it does not represent individuals and does not obtain compensation on anyone's behalf.",
+      "who_to_report": "Any licensed behavioral health professional in Kansas - one board covers all of them.",
+      "how": "Complete the Board's Report of Alleged Violation. All complaints must be in writing.",
+      "complaint_url": "https://www.ksbsrb.ks.gov/complaints/complaint-faqs",
+      "info_url": "https://www.ksbsrb.ks.gov/about-us/contact-ksbsrb",
+      "mail": "Kansas Behavioral Sciences Regulatory Board, Eisenhower State Office Building, 700 SW Harrison St, Ste 420, Topeka, KS 66603-3817",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ksbsrb.ks.gov/complaints/complaint-faqs",
+        "https://www.ksbsrb.ks.gov/about-us/contact-ksbsrb"
+      ]
+    },
+    {
+      "id": "ks-kdhe-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "Kansas Department of Health and Environment, child care licensing",
+      "what_it_can_do": "Administers the Kansas child care licensing law and issues the licences. Where there is a regulatory concern it is required to carry out an on-site complaint survey to check whether the facility complies.",
+      "who_to_report": "A licensed Kansas facility, where the problem is a regulatory breach.",
+      "how": "File through the Department's complaint page, or call its complaint hotline.",
+      "complaint_url": "https://www.kdhe.ks.gov/381/File-a-Complaint",
+      "info_url": "https://www.kdhe.ks.gov/625/Complaint-Hotline",
+      "anonymous": "unknown",
+      "note": "A regulatory complaint forces an on-site survey; that is the practical value of using this channel alongside the abuse report.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.kdhe.ks.gov/381/File-a-Complaint",
+        "https://www.kdhe.ks.gov/625/Complaint-Hotline"
+      ]
+    },
+    {
+      "id": "ks-protection-report-center",
+      "category": "legal",
+      "name": "Kansas Protection Report Center",
+      "what_it_can_do": "Takes reports of abuse, neglect and exploitation of children and adults. The Department for Children and Families receives, investigates and assesses allegations of abuse or neglect said to have happened in a childcare or residential care facility, and must promptly report any investigation involving a licensed facility to the Department of Health and Environment.",
+      "who_to_report": "A child at a Kansas program.",
+      "how": "Call, or report online. Lines are staffed around the clock.",
+      "complaint_url": "https://www.dcf.ks.gov/services/pps/pages/kips/kipswebintake.aspx",
+      "info_url": "https://www.dcf.ks.gov/Pages/Report-Abuse-or-Neglect.aspx",
+      "phone": "1-800-922-5330",
+      "phone_note": "24 hours a day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "Kansas says every call is taken seriously and every effort is made to protect the caller's identity.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dcf.ks.gov/Pages/Report-Abuse-or-Neglect.aspx",
+        "https://www.dcf.ks.gov/services/pps/pages/kips/kipswebintake.aspx"
+      ]
+    },
+    {
+      "id": "ks-disability-rights-center-kansas",
+      "category": "oversight",
+      "name": "Disability Rights Center of Kansas",
+      "what_it_can_do": "Kansas's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Kansas program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drckansas.org/",
+      "phone": "1-877-776-1541",
+      "phone_note": "Main line 785-273-9661.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kansas"]
+    }
+  ]
+}

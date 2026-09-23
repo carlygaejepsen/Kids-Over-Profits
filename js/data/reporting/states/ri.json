@@ -1,0 +1,77 @@
+{
+  "state": "Rhode Island",
+  "abbr": "RI",
+  "updated": "2026-09-22",
+  "note": "Rhode Island's reporting law names this industry directly: under RIGL 40-11-3 every person in the state must report suspected child abuse or neglect within 24 hours, and the law defines abuse to include injury, sexual abuse or exploitation, negligent treatment or maltreatment by any employee of a residential facility or any staff person providing out-of-home care. The same department licenses those facilities and takes the reports.",
+  "channels": [
+    {
+      "id": "ri-health-licensee-complaints",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Rhode Island Department of Health, licensee complaints",
+      "what_it_can_do": "Licenses and disciplines Rhode Island's clinical mental health counselors, marriage and family therapists, social workers and psychologists through its boards, and takes complaints against all of them through one route.",
+      "who_to_report": "A licensed mental health professional in Rhode Island.",
+      "how": "Submit a complaint through the Department's licensee complaints page.",
+      "complaint_url": "https://health.ri.gov/licensing/submit-complaint",
+      "info_url": "https://health.ri.gov/licensing/marriage-family-and-mental-health-therapy",
+      "phone": "401-222-5960",
+      "phone_note": "Psychology Licensing Board. Department main line 401-222-5500.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://health.ri.gov/licensing/marriage-family-and-mental-health-therapy",
+        "https://health.ri.gov/licensing/submit-complaint"
+      ]
+    },
+    {
+      "id": "ri-dcyf-licensing",
+      "category": "facility-licensing",
+      "name": "Rhode Island DCYF Licensing",
+      "what_it_can_do": "Under RI General Law 42-72.1 the Department of Children, Youth and Families licenses, monitors and enforces the regulations for every foster home, residential facility and child-placing agency in the state.",
+      "who_to_report": "A Rhode Island residential facility.",
+      "how": "Complain to the Department's licensing staff. If you are not satisfied with the decision, there is a right of appeal to a judicial forum.",
+      "complaint_url": "https://datadcyf.ri.gov/policyregs/complaints_and_hearings.htm",
+      "info_url": "https://dcyf.ri.gov/services/licensing",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcyf.ri.gov/services/licensing",
+        "https://datadcyf.ri.gov/policyregs/complaints_and_hearings.htm"
+      ]
+    },
+    {
+      "id": "ri-child-abuse-hotline",
+      "category": "legal",
+      "name": "Rhode Island Child Abuse Hotline",
+      "what_it_can_do": "The statutory report line, open around the clock. Rhode Island law defines reportable abuse to include maltreatment by any employee of a residential facility or staff person providing out-of-home care, so conduct inside a program is squarely covered.",
+      "who_to_report": "A child under 18 at a Rhode Island program. Every person in Rhode Island is required to report within 24 hours of knowing or suspecting.",
+      "how": "Call. All calls are recorded, and you may call anonymously.",
+      "complaint_url": "https://dcyf.ri.gov/contact-us/report-child-abuse-or-neglect",
+      "info_url": "https://dcyf.ri.gov/services/child-protective-services",
+      "phone": "1-800-742-4453",
+      "phone_note": "1-800-RI-CHILD. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "deadline": "The duty is to report within 24 hours of knowing or suspecting - a deadline on the reporter, not on the abuse.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcyf.ri.gov/contact-us/report-child-abuse-or-neglect",
+        "https://dcyf.ri.gov/services/child-protective-services"
+      ]
+    },
+    {
+      "id": "ri-disability-rights-rhode-island",
+      "category": "oversight",
+      "name": "Disability Rights Rhode Island",
+      "what_it_can_do": "Rhode Island's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Rhode Island program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.drri.org/",
+      "phone": "1-800-733-5332",
+      "phone_note": "Main line 401-831-3150; TTY 401-831-5335.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=rhode-island"]
+    }
+  ]
+}

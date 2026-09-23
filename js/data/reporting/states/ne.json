@@ -1,0 +1,87 @@
+{
+  "state": "Nebraska",
+  "abbr": "NE",
+  "updated": "2026-09-22",
+  "note": "Nebraska has an Office of Inspector General of Nebraska Child Welfare that sits in the legislature rather than in the department it scrutinises, and takes complaints directly. That independence matters when the concern is that the agency itself is not acting. Nebraska also says its hotline reports are confidential and are not shared with the family.",
+  "channels": [
+    {
+      "id": "ne-dhhs-office-of-investigations",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Nebraska DHHS, Division of Public Health, Office of Investigations",
+      "what_it_can_do": "Investigates complaints against licensed, registered and certified health care professionals in Nebraska, including mental health practitioners and psychologists, for breaches of the Uniform Credentialing Act and the rules governing their practice.",
+      "who_to_report": "A licensed mental health practitioner or psychologist in Nebraska.",
+      "how": "Get the reporting form from the Investigations page or by phone. Describe every allegation in detail, give specific dates for each incident, list any witnesses, and attach copies of the documents that bear on it.",
+      "complaint_url": "https://dhhs.ne.gov/pages/investigations.aspx",
+      "info_url": "https://dhhs.ne.gov/licensure/Pages/Mental-Health-and-Social-Work-Practice-FAQs.aspx",
+      "phone": "402-471-5175",
+      "anonymous": "unknown",
+      "note": "A licensed professional has to report their own misdemeanour or felony conviction, or discipline elsewhere, to this office within 30 days - so it may already hold a history.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhhs.ne.gov/pages/investigations.aspx",
+        "https://dhhs.ne.gov/licensure/Pages/Mental-Health-and-Social-Work-Practice-FAQs.aspx"
+      ]
+    },
+    {
+      "id": "ne-childrens-services-licensing",
+      "category": "facility-licensing",
+      "name": "Nebraska DHHS Children's Services Licensing",
+      "what_it_can_do": "Licenses Residential Child-Caring Agencies and Child-Placing Agencies in Nebraska, and investigates every allegation of a licensing violation in a children and youth care facility.",
+      "who_to_report": "A licensed residential child-caring agency.",
+      "how": "Email or write to Children's Services Licensing.",
+      "info_url": "https://dhhs.ne.gov/licensure/Pages/Residential-Child-Caring-Agency-Licensing-and-Child-Placing-Agency-Licensing.aspx",
+      "email": "DHHS.ChildCareLicensing@nebraska.gov",
+      "mail": "DHHS Children's Services Licensing, PO Box 94986, Lincoln, NE 68509",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dhhs.ne.gov/licensure/Pages/Residential-Child-Caring-Agency-Licensing-and-Child-Placing-Agency-Licensing.aspx"]
+    },
+    {
+      "id": "ne-child-abuse-hotline",
+      "category": "legal",
+      "name": "Nebraska Child Abuse and Neglect Hotline",
+      "what_it_can_do": "The statewide report line for suspected child abuse and neglect.",
+      "who_to_report": "A child at a Nebraska program.",
+      "how": "Call, or report through the online hotline system.",
+      "complaint_url": "https://neabusehotline-dhhs.ne.gov/",
+      "info_url": "https://dhhs.ne.gov/Pages/Child-Abuse.aspx",
+      "phone": "1-800-652-1999",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "Reports are confidential and are not shared with the family. A Child and Family Services Specialist may contact you during the assessment, and you can ask to stay anonymous. Online, the reporter's information stays confidential unless a court or a law enforcement agency with jurisdiction requests it.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhhs.ne.gov/Pages/Child-Abuse.aspx",
+        "https://neabusehotline-dhhs.ne.gov/"
+      ]
+    },
+    {
+      "id": "ne-inspector-general-child-welfare",
+      "category": "oversight",
+      "name": "Office of Inspector General of Nebraska Child Welfare",
+      "what_it_can_do": "An independent office in the Nebraska legislature, outside the department it oversees, taking complaints about the child welfare system and the facilities in it.",
+      "what_it_cannot_do": "It scrutinises the system rather than licensing or prosecuting a program itself.",
+      "who_to_report": "Anyone who believes Nebraska's child welfare system, or a facility within it, has failed a child - particularly where a report to the department has gone nowhere.",
+      "how": "File through the Office's own complaint page.",
+      "complaint_url": "https://oig.legislature.ne.gov/?page_id=15",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://oig.legislature.ne.gov/?page_id=15"]
+    },
+    {
+      "id": "ne-disability-rights-nebraska",
+      "category": "oversight",
+      "name": "Disability Rights Nebraska",
+      "what_it_can_do": "Nebraska's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Nebraska program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightsnebraska.org/",
+      "phone": "1-800-422-6691",
+      "phone_note": "Main line 402-413-2016 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=nebraska"]
+    }
+  ]
+}

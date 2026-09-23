@@ -1,0 +1,101 @@
+{
+  "state": "New Hampshire",
+  "abbr": "NH",
+  "updated": "2026-09-22",
+  "note": "New Hampshire has a Special Investigations Unit that exists to investigate allegations of abuse and neglect in institutional settings and residential facilities, rather than leaving them to an ordinary district office. It also has an Office of the Child Advocate whose remit expressly covers any organisation certified or contracted to provide direct services to children - which means the residential facilities themselves, not only the state agency.",
+  "channels": [
+    {
+      "id": "nh-mental-health-practice-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "New Hampshire Board of Mental Health Practice",
+      "what_it_can_do": "Licenses and regulates New Hampshire's mental health professionals and disciplines them. It treats a communication about alleged misconduct as a complaint where, if true, the conduct could breach the ethical codes, the administrative rules or the law. It publishes its board actions.",
+      "who_to_report": "A licensed mental health professional in New Hampshire. Psychologists have their own board under the same Office of Professional Licensure and Certification.",
+      "how": "File through the Board's complaints page.",
+      "complaint_url": "https://www.oplc.nh.gov/board-mental-health-practice-complaints",
+      "info_url": "https://www.oplc.nh.gov/board-mental-health-practice-actions",
+      "anonymous": "unknown",
+      "note": "New Hampshire's online licence verification shows a licensee's current status and its disciplinary documents, so you can check what has already been found against them.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.oplc.nh.gov/board-mental-health-practice-complaints",
+        "https://www.oplc.nh.gov/board-mental-health-practice-actions"
+      ]
+    },
+    {
+      "id": "nh-psychologists-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "New Hampshire Board of Psychologists",
+      "what_it_can_do": "Regulates and licenses the psychology profession in New Hampshire and disciplines its licensees.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "File through the Office of Professional Licensure and Certification.",
+      "complaint_url": "https://www.oplc.nh.gov/board-psychologists",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.oplc.nh.gov/board-psychologists"]
+    },
+    {
+      "id": "nh-dcyf-hotline",
+      "category": "legal",
+      "name": "New Hampshire DCYF child abuse and neglect hotline",
+      "what_it_can_do": "The statewide report line, staffed 24 hours a day including weekends and holidays. Allegations arising in foster homes, institutional settings and residential facilities go to a Special Investigations Unit rather than to a district office.",
+      "who_to_report": "A child at a New Hampshire program. Residential child care facilities are themselves required to report suspected abuse to this number.",
+      "how": "Call.",
+      "complaint_url": "https://www.dhhs.nh.gov/report-concern/report-child-abuse",
+      "info_url": "https://www.dhhs.nh.gov/programs-services/child-protection-juvenile-justice/child-protection-services",
+      "phone": "1-800-894-5533",
+      "phone_note": "24 hours a day, including weekends and holidays.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dhhs.nh.gov/report-concern/report-child-abuse",
+        "https://www.dhhs.nh.gov/programs-services/child-protection-juvenile-justice/child-protection-services"
+      ]
+    },
+    {
+      "id": "nh-residential-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "New Hampshire DHHS residential child care licensing",
+      "what_it_can_do": "Licenses New Hampshire's residential child care facilities under the He-C 4001 rules and enforces them, including the requirement that facilities report suspected abuse themselves.",
+      "who_to_report": "A licensed residential child care facility.",
+      "how": "Contact DHHS through its DCYF contact directory.",
+      "info_url": "https://www.dhhs.nh.gov/dcyf-contact-directory",
+      "phone": "1-800-894-5533",
+      "phone_note": "The DCYF line is the reporting route facilities themselves are required to use.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dhhs.nh.gov/dcyf-contact-directory",
+        "https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/inline-documents/sonh/he-c-4001-child-care-residential-rules-eff-12-30-2020.pdf"
+      ]
+    },
+    {
+      "id": "nh-office-child-advocate",
+      "category": "oversight",
+      "name": "New Hampshire Office of the Child Advocate",
+      "what_it_can_do": "An independent office reviewing complaints about children currently or previously involved with the state's child-serving agencies, and expressly about any organisation certified or contracted to provide direct services to children and families - residential facilities included.",
+      "who_to_report": "A young person who has been through a New Hampshire residential facility or the state system, whether or not they are still in it.",
+      "how": "Contact the office directly.",
+      "complaint_url": "https://www.childadvocate.nh.gov/contact-us",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.childadvocate.nh.gov/contact-us"]
+    },
+    {
+      "id": "nh-disability-rights-center",
+      "category": "oversight",
+      "name": "Disability Rights Center - New Hampshire",
+      "what_it_can_do": "New Hampshire's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A New Hampshire program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drcnh.org/",
+      "phone": "1-800-834-1721",
+      "phone_note": "Voice and TTY. Main line 603-228-0432.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-hampshire"]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T01:43:27.956Z",
+  "generated": "2026-09-23T01:51:00.782Z",
   "categories": [
     {
       "key": "professional-board",
@@ -748,6 +748,87 @@
       ]
     },
     {
+      "state": "Delaware",
+      "abbr": "DE",
+      "slug": "delaware",
+      "updated": "2026-09-22",
+      "note": "Delaware has an Institutional Abuse Unit inside the Department of Services for Children, Youth and Their Families that investigates abuse or neglect of a child while at a facility or program, so an institutional report does not get handled as an ordinary family case. Delaware also places a duty on every licensed practitioner to report another practitioner they reasonably believe is doing something that would be grounds for discipline - useful if you are a clinician who has seen something and is wondering whether you may say so.",
+      "channels": [
+        {
+          "id": "de-division-professional-regulation",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Delaware Division of Professional Regulation",
+          "what_it_can_do": "Houses the Board of Mental Health and Chemical Dependency Professionals, the Board of Professional Counselors and the psychology board. The boards monitor complaints against their licensees, hold formal hearings and impose sanctions.",
+          "who_to_report": "A licensed mental health or chemical dependency professional in Delaware.",
+          "how": "Submit the complaint in writing to the Director of the Division of Professional Regulation. At the Board's next scheduled meeting a contact person is appointed and given a copy of it.",
+          "complaint_url": "https://dpr.delaware.gov/boards/profcounselors/forms/",
+          "info_url": "https://dpr.delaware.gov/boards/profcounselors/members/",
+          "phone": "302-744-4500",
+          "email": "customerservice.dpr@state.de.us",
+          "anonymous": "not-allowed",
+          "note": "Under Title 24 Chapter 30, every licensee has a duty to report in writing where they reasonably believe another practitioner or health care provider has engaged in conduct that would be grounds for discipline.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dpr.delaware.gov/boards/profcounselors/forms/",
+            "https://delcode.delaware.gov/title24/c030/sc01/index.html"
+          ]
+        },
+        {
+          "id": "de-institutional-abuse-reporting",
+          "category": "legal",
+          "name": "Delaware Child Abuse Report Line (Institutional Abuse Unit)",
+          "what_it_can_do": "The statutory 24-hour report line. Where the complaint concerns abuse or neglect of a child while at a facility or program, the Department's Institutional Abuse Unit or law enforcement investigates it.",
+          "who_to_report": "A child at a Delaware program.",
+          "how": "Call the report line at any hour.",
+          "info_url": "https://kids.delaware.gov/family-services/child-abuse-and-neglect-reporting/",
+          "phone": "1-800-292-9582",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://kids.delaware.gov/family-services/child-abuse-and-neglect-reporting/"
+          ]
+        },
+        {
+          "id": "de-office-child-care-licensing",
+          "category": "facility-licensing",
+          "name": "Delaware Office of Child Care Licensing (OCCL)",
+          "what_it_can_do": "Investigates complaints that a licensed facility has broken the licensing rules, including the regulations governing residential child care facilities.",
+          "what_it_cannot_do": "It has no authority over financial matters and does not investigate personal disputes. Abuse and neglect go to the Child Abuse Report Line instead.",
+          "who_to_report": "A licensed Delaware residential child care facility, where the issue is a licensing breach.",
+          "how": "File a confidential complaint online, or call the office for the county the facility is in.",
+          "complaint_url": "https://education.delaware.gov/families/birth-age-5/occl/make_a_complaint",
+          "phone": "1-800-822-2236",
+          "phone_note": "Kent and Sussex counties; also 302-739-5487. New Castle County 302-892-5800.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://education.delaware.gov/families/birth-age-5/occl/make_a_complaint",
+            "https://regulations.delaware.gov/AdminCode/title14/900/935.shtml"
+          ]
+        },
+        {
+          "id": "de-disability-rights-delaware",
+          "category": "oversight",
+          "name": "Disability Rights Delaware (Community Legal Aid Society)",
+          "what_it_can_do": "Delaware's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Delaware program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://declasi.org/",
+          "phone": "1-800-292-7980",
+          "phone_note": "Main line 302-575-0660; TTY 302-575-0696.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=delaware"
+          ],
+          "note": "Operates as part of the Community Legal Aid Society; its site is declasi.org."
+        }
+      ]
+    },
+    {
       "state": "Florida",
       "abbr": "FL",
       "slug": "florida",
@@ -921,6 +1002,85 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=georgia"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Hawaii",
+      "abbr": "HI",
+      "slug": "hawaii",
+      "updated": "2026-09-22",
+      "note": "Hawaii has a name for what happens in these places: Institutional Harm, meaning abuse or neglect in any substitute care arrangement the Department licenses - foster, group or child care. Its Child Welfare Intake Unit takes Institutional Harm reports around the clock alongside ordinary abuse reports, which means you do not have to argue about which category your call belongs in.",
+      "channels": [
+        {
+          "id": "hi-regulated-industries-complaints-office",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Hawaii Regulated Industries Complaints Office (RICO)",
+          "what_it_can_do": "The licence-enforcement arm of the Department of Commerce and Consumer Affairs. It reviews complaints against licensees of the professional boards - psychologists, marriage and family therapists, clinical social workers, physicians and psychiatrists among them - files administrative actions against them, and sues people providing those services with no board licence at all.",
+          "who_to_report": "A licensed mental health professional in Hawaii, or somebody practising without a licence.",
+          "how": "Use the Health Care Provider Complaint Form from the Professional and Vocational Licensing pages.",
+          "complaint_url": "https://cca.hawaii.gov/rico/",
+          "info_url": "https://cca.hawaii.gov/rico/check/",
+          "phone": "808-587-3295",
+          "phone_note": "RICO Consumer Resource Center; also 808-587-4272.",
+          "anonymous": "unknown",
+          "note": "The Resource Center will tell you a licensee's current status and whether they have a prior complaint history, which is worth asking before you file.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://cca.hawaii.gov/rico/",
+            "https://cca.hawaii.gov/rico/check/"
+          ]
+        },
+        {
+          "id": "hi-child-welfare-intake",
+          "category": "legal",
+          "name": "Hawaii Child Abuse and Neglect Hotline",
+          "what_it_can_do": "The statutory report line. The Child Welfare Intake Unit takes reports around the clock, including Institutional Harm reports - abuse or neglect in any substitute care arrangement the Department licenses.",
+          "who_to_report": "A child at a Hawaii program.",
+          "how": "Call. From the neighbour islands there is a toll-free number.",
+          "info_url": "https://humanservices.hawaii.gov/ssd/home/child-welfare-services/",
+          "phone": "808-832-5300",
+          "phone_note": "Oahu. Toll free from the neighbour islands, 1-888-380-3088. 24 hours a day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://humanservices.hawaii.gov/ssd/home/child-welfare-services/",
+            "https://humanservices.hawaii.gov/important-phone-numbers/"
+          ]
+        },
+        {
+          "id": "hi-child-care-licensing",
+          "category": "facility-licensing",
+          "name": "Hawaii DHS child care and residential licensing",
+          "what_it_can_do": "Licenses Hawaii's substitute care arrangements and decides whether a complaint discloses a breach of the child care law or licensing rules that needs investigating.",
+          "who_to_report": "A licensed Hawaii facility, where the issue is a licensing breach. Abuse or neglect goes to the hotline instead, and the Department says so directly.",
+          "how": "Report to the licensing unit for the facility.",
+          "complaint_url": "https://humanservices.hawaii.gov/bessd/child-care-program/reporting-complaints-and-investigations/",
+          "info_url": "https://humanservices.hawaii.gov/bessd/child-care-program/child-care-licensing/reporting-child-care-complaints-and-investigations/",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://humanservices.hawaii.gov/bessd/child-care-program/reporting-complaints-and-investigations/",
+            "https://humanservices.hawaii.gov/bessd/child-care-program/child-care-licensing/reporting-child-care-complaints-and-investigations/"
+          ]
+        },
+        {
+          "id": "hi-disability-rights-center",
+          "category": "oversight",
+          "name": "Hawaii Disability Rights Center",
+          "what_it_can_do": "Hawaii's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Hawaii program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.hawaiidisabilityrights.org",
+          "phone": "808-949-2922",
+          "phone_note": "Voice and TTY. Toll-free TTY 1-800-882-1057.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=hawaii"
           ]
         }
       ]
@@ -1278,6 +1438,87 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://hhs.iowa.gov/contacts/child-or-dependent-adult-abuse-reporting"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Kansas",
+      "abbr": "KS",
+      "slug": "kansas",
+      "updated": "2026-09-22",
+      "note": "Kansas splits the work usefully: the Department for Children and Families investigates abuse or neglect alleged to have happened in a childcare or residential care facility, and it is required to pass any investigation involving a licensed facility straight to the Department of Health and Environment, which holds the licence. So one call to the Protection Report Center reaches both the investigation and the licensor.",
+      "channels": [
+        {
+          "id": "ks-behavioral-sciences-regulatory-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Kansas Behavioral Sciences Regulatory Board",
+          "what_it_can_do": "Regulates psychologists, social workers, professional counselors, marriage and family therapists, addiction counselors and behavior analysts, and disciplines their licences. Every complaint gets a case number, and once the Board decides to investigate, the licensee is told what is alleged.",
+          "what_it_cannot_do": "It says plainly that it does not represent individuals and does not obtain compensation on anyone's behalf.",
+          "who_to_report": "Any licensed behavioral health professional in Kansas - one board covers all of them.",
+          "how": "Complete the Board's Report of Alleged Violation. All complaints must be in writing.",
+          "complaint_url": "https://www.ksbsrb.ks.gov/complaints/complaint-faqs",
+          "info_url": "https://www.ksbsrb.ks.gov/about-us/contact-ksbsrb",
+          "mail": "Kansas Behavioral Sciences Regulatory Board, Eisenhower State Office Building, 700 SW Harrison St, Ste 420, Topeka, KS 66603-3817",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ksbsrb.ks.gov/complaints/complaint-faqs",
+            "https://www.ksbsrb.ks.gov/about-us/contact-ksbsrb"
+          ]
+        },
+        {
+          "id": "ks-kdhe-child-care-licensing",
+          "category": "facility-licensing",
+          "name": "Kansas Department of Health and Environment, child care licensing",
+          "what_it_can_do": "Administers the Kansas child care licensing law and issues the licences. Where there is a regulatory concern it is required to carry out an on-site complaint survey to check whether the facility complies.",
+          "who_to_report": "A licensed Kansas facility, where the problem is a regulatory breach.",
+          "how": "File through the Department's complaint page, or call its complaint hotline.",
+          "complaint_url": "https://www.kdhe.ks.gov/381/File-a-Complaint",
+          "info_url": "https://www.kdhe.ks.gov/625/Complaint-Hotline",
+          "anonymous": "unknown",
+          "note": "A regulatory complaint forces an on-site survey; that is the practical value of using this channel alongside the abuse report.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.kdhe.ks.gov/381/File-a-Complaint",
+            "https://www.kdhe.ks.gov/625/Complaint-Hotline"
+          ]
+        },
+        {
+          "id": "ks-protection-report-center",
+          "category": "legal",
+          "name": "Kansas Protection Report Center",
+          "what_it_can_do": "Takes reports of abuse, neglect and exploitation of children and adults. The Department for Children and Families receives, investigates and assesses allegations of abuse or neglect said to have happened in a childcare or residential care facility, and must promptly report any investigation involving a licensed facility to the Department of Health and Environment.",
+          "who_to_report": "A child at a Kansas program.",
+          "how": "Call, or report online. Lines are staffed around the clock.",
+          "complaint_url": "https://www.dcf.ks.gov/services/pps/pages/kips/kipswebintake.aspx",
+          "info_url": "https://www.dcf.ks.gov/Pages/Report-Abuse-or-Neglect.aspx",
+          "phone": "1-800-922-5330",
+          "phone_note": "24 hours a day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "Kansas says every call is taken seriously and every effort is made to protect the caller's identity.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dcf.ks.gov/Pages/Report-Abuse-or-Neglect.aspx",
+            "https://www.dcf.ks.gov/services/pps/pages/kips/kipswebintake.aspx"
+          ]
+        },
+        {
+          "id": "ks-disability-rights-center-kansas",
+          "category": "oversight",
+          "name": "Disability Rights Center of Kansas",
+          "what_it_can_do": "Kansas's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Kansas program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://drckansas.org/",
+          "phone": "1-877-776-1541",
+          "phone_note": "Main line 785-273-9661.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=kansas"
           ]
         }
       ]
@@ -2253,6 +2494,100 @@
       ]
     },
     {
+      "state": "Nebraska",
+      "abbr": "NE",
+      "slug": "nebraska",
+      "updated": "2026-09-22",
+      "note": "Nebraska has an Office of Inspector General of Nebraska Child Welfare that sits in the legislature rather than in the department it scrutinises, and takes complaints directly. That independence matters when the concern is that the agency itself is not acting. Nebraska also says its hotline reports are confidential and are not shared with the family.",
+      "channels": [
+        {
+          "id": "ne-dhhs-office-of-investigations",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Nebraska DHHS, Division of Public Health, Office of Investigations",
+          "what_it_can_do": "Investigates complaints against licensed, registered and certified health care professionals in Nebraska, including mental health practitioners and psychologists, for breaches of the Uniform Credentialing Act and the rules governing their practice.",
+          "who_to_report": "A licensed mental health practitioner or psychologist in Nebraska.",
+          "how": "Get the reporting form from the Investigations page or by phone. Describe every allegation in detail, give specific dates for each incident, list any witnesses, and attach copies of the documents that bear on it.",
+          "complaint_url": "https://dhhs.ne.gov/pages/investigations.aspx",
+          "info_url": "https://dhhs.ne.gov/licensure/Pages/Mental-Health-and-Social-Work-Practice-FAQs.aspx",
+          "phone": "402-471-5175",
+          "anonymous": "unknown",
+          "note": "A licensed professional has to report their own misdemeanour or felony conviction, or discipline elsewhere, to this office within 30 days - so it may already hold a history.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhhs.ne.gov/pages/investigations.aspx",
+            "https://dhhs.ne.gov/licensure/Pages/Mental-Health-and-Social-Work-Practice-FAQs.aspx"
+          ]
+        },
+        {
+          "id": "ne-childrens-services-licensing",
+          "category": "facility-licensing",
+          "name": "Nebraska DHHS Children's Services Licensing",
+          "what_it_can_do": "Licenses Residential Child-Caring Agencies and Child-Placing Agencies in Nebraska, and investigates every allegation of a licensing violation in a children and youth care facility.",
+          "who_to_report": "A licensed residential child-caring agency.",
+          "how": "Email or write to Children's Services Licensing.",
+          "info_url": "https://dhhs.ne.gov/licensure/Pages/Residential-Child-Caring-Agency-Licensing-and-Child-Placing-Agency-Licensing.aspx",
+          "email": "DHHS.ChildCareLicensing@nebraska.gov",
+          "mail": "DHHS Children's Services Licensing, PO Box 94986, Lincoln, NE 68509",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhhs.ne.gov/licensure/Pages/Residential-Child-Caring-Agency-Licensing-and-Child-Placing-Agency-Licensing.aspx"
+          ]
+        },
+        {
+          "id": "ne-child-abuse-hotline",
+          "category": "legal",
+          "name": "Nebraska Child Abuse and Neglect Hotline",
+          "what_it_can_do": "The statewide report line for suspected child abuse and neglect.",
+          "who_to_report": "A child at a Nebraska program.",
+          "how": "Call, or report through the online hotline system.",
+          "complaint_url": "https://neabusehotline-dhhs.ne.gov/",
+          "info_url": "https://dhhs.ne.gov/Pages/Child-Abuse.aspx",
+          "phone": "1-800-652-1999",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "Reports are confidential and are not shared with the family. A Child and Family Services Specialist may contact you during the assessment, and you can ask to stay anonymous. Online, the reporter's information stays confidential unless a court or a law enforcement agency with jurisdiction requests it.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhhs.ne.gov/Pages/Child-Abuse.aspx",
+            "https://neabusehotline-dhhs.ne.gov/"
+          ]
+        },
+        {
+          "id": "ne-inspector-general-child-welfare",
+          "category": "oversight",
+          "name": "Office of Inspector General of Nebraska Child Welfare",
+          "what_it_can_do": "An independent office in the Nebraska legislature, outside the department it oversees, taking complaints about the child welfare system and the facilities in it.",
+          "what_it_cannot_do": "It scrutinises the system rather than licensing or prosecuting a program itself.",
+          "who_to_report": "Anyone who believes Nebraska's child welfare system, or a facility within it, has failed a child - particularly where a report to the department has gone nowhere.",
+          "how": "File through the Office's own complaint page.",
+          "complaint_url": "https://oig.legislature.ne.gov/?page_id=15",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://oig.legislature.ne.gov/?page_id=15"
+          ]
+        },
+        {
+          "id": "ne-disability-rights-nebraska",
+          "category": "oversight",
+          "name": "Disability Rights Nebraska",
+          "what_it_can_do": "Nebraska's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Nebraska program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.disabilityrightsnebraska.org/",
+          "phone": "1-800-422-6691",
+          "phone_note": "Main line 402-413-2016 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=nebraska"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Nevada",
       "abbr": "NV",
       "slug": "nevada",
@@ -2369,6 +2704,114 @@
       ]
     },
     {
+      "state": "New Hampshire",
+      "abbr": "NH",
+      "slug": "new-hampshire",
+      "updated": "2026-09-22",
+      "note": "New Hampshire has a Special Investigations Unit that exists to investigate allegations of abuse and neglect in institutional settings and residential facilities, rather than leaving them to an ordinary district office. It also has an Office of the Child Advocate whose remit expressly covers any organisation certified or contracted to provide direct services to children - which means the residential facilities themselves, not only the state agency.",
+      "channels": [
+        {
+          "id": "nh-mental-health-practice-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "New Hampshire Board of Mental Health Practice",
+          "what_it_can_do": "Licenses and regulates New Hampshire's mental health professionals and disciplines them. It treats a communication about alleged misconduct as a complaint where, if true, the conduct could breach the ethical codes, the administrative rules or the law. It publishes its board actions.",
+          "who_to_report": "A licensed mental health professional in New Hampshire. Psychologists have their own board under the same Office of Professional Licensure and Certification.",
+          "how": "File through the Board's complaints page.",
+          "complaint_url": "https://www.oplc.nh.gov/board-mental-health-practice-complaints",
+          "info_url": "https://www.oplc.nh.gov/board-mental-health-practice-actions",
+          "anonymous": "unknown",
+          "note": "New Hampshire's online licence verification shows a licensee's current status and its disciplinary documents, so you can check what has already been found against them.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.oplc.nh.gov/board-mental-health-practice-complaints",
+            "https://www.oplc.nh.gov/board-mental-health-practice-actions"
+          ]
+        },
+        {
+          "id": "nh-psychologists-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "New Hampshire Board of Psychologists",
+          "what_it_can_do": "Regulates and licenses the psychology profession in New Hampshire and disciplines its licensees.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "File through the Office of Professional Licensure and Certification.",
+          "complaint_url": "https://www.oplc.nh.gov/board-psychologists",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.oplc.nh.gov/board-psychologists"
+          ]
+        },
+        {
+          "id": "nh-dcyf-hotline",
+          "category": "legal",
+          "name": "New Hampshire DCYF child abuse and neglect hotline",
+          "what_it_can_do": "The statewide report line, staffed 24 hours a day including weekends and holidays. Allegations arising in foster homes, institutional settings and residential facilities go to a Special Investigations Unit rather than to a district office.",
+          "who_to_report": "A child at a New Hampshire program. Residential child care facilities are themselves required to report suspected abuse to this number.",
+          "how": "Call.",
+          "complaint_url": "https://www.dhhs.nh.gov/report-concern/report-child-abuse",
+          "info_url": "https://www.dhhs.nh.gov/programs-services/child-protection-juvenile-justice/child-protection-services",
+          "phone": "1-800-894-5533",
+          "phone_note": "24 hours a day, including weekends and holidays.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhhs.nh.gov/report-concern/report-child-abuse",
+            "https://www.dhhs.nh.gov/programs-services/child-protection-juvenile-justice/child-protection-services"
+          ]
+        },
+        {
+          "id": "nh-residential-child-care-licensing",
+          "category": "facility-licensing",
+          "name": "New Hampshire DHHS residential child care licensing",
+          "what_it_can_do": "Licenses New Hampshire's residential child care facilities under the He-C 4001 rules and enforces them, including the requirement that facilities report suspected abuse themselves.",
+          "who_to_report": "A licensed residential child care facility.",
+          "how": "Contact DHHS through its DCYF contact directory.",
+          "info_url": "https://www.dhhs.nh.gov/dcyf-contact-directory",
+          "phone": "1-800-894-5533",
+          "phone_note": "The DCYF line is the reporting route facilities themselves are required to use.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhhs.nh.gov/dcyf-contact-directory",
+            "https://www.dhhs.nh.gov/sites/g/files/ehbemt476/files/inline-documents/sonh/he-c-4001-child-care-residential-rules-eff-12-30-2020.pdf"
+          ]
+        },
+        {
+          "id": "nh-office-child-advocate",
+          "category": "oversight",
+          "name": "New Hampshire Office of the Child Advocate",
+          "what_it_can_do": "An independent office reviewing complaints about children currently or previously involved with the state's child-serving agencies, and expressly about any organisation certified or contracted to provide direct services to children and families - residential facilities included.",
+          "who_to_report": "A young person who has been through a New Hampshire residential facility or the state system, whether or not they are still in it.",
+          "how": "Contact the office directly.",
+          "complaint_url": "https://www.childadvocate.nh.gov/contact-us",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.childadvocate.nh.gov/contact-us"
+          ]
+        },
+        {
+          "id": "nh-disability-rights-center",
+          "category": "oversight",
+          "name": "Disability Rights Center - New Hampshire",
+          "what_it_can_do": "New Hampshire's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A New Hampshire program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://drcnh.org/",
+          "phone": "1-800-834-1721",
+          "phone_note": "Voice and TTY. Main line 603-228-0432.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-hampshire"
+          ]
+        }
+      ]
+    },
+    {
       "state": "New Jersey",
       "abbr": "NJ",
       "slug": "new-jersey",
@@ -2445,6 +2888,84 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.nj.gov/dcf/divisions-offices/ool/"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "New Mexico",
+      "abbr": "NM",
+      "slug": "new-mexico",
+      "updated": "2026-09-22",
+      "note": "New Mexico deserves a warning its own government has already published. The state Department of Justice reported that CYFD, which licenses congregate care and behavioral health settings, had no written policies or procedures governing how its Licensing and Certification Authority investigates allegations of abuse or neglect in those facilities, and recommended it adopt and publish some. Report anyway - but pair it with the Protection and Advocacy agency and with Statewide Central Intake rather than relying on the licensor alone.",
+      "channels": [
+        {
+          "id": "nm-counseling-therapy-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "New Mexico Regulation and Licensing Department, behavioral health boards",
+          "what_it_can_do": "Houses the Counseling and Therapy Practice Board, the Social Work Board and the Psychologist Examiners Board, takes complaints against their licensees and runs the disciplinary proceedings against those who break the practice laws.",
+          "who_to_report": "A licensed counselor, therapist, social worker or psychologist in New Mexico. All three boards share a phone number and a mailing address.",
+          "how": "Use the Department's boards complaint form.",
+          "complaint_url": "https://www.rld.nm.gov/wp-content/uploads/2021/06/BCD_Complaint_Form__Rev._03.01.2021_-3.pdf",
+          "info_url": "https://www.rld.nm.gov/boards-and-commissions/individual-boards-and-commissions/counseling-and-therapy-practice/",
+          "phone": "505-476-4622",
+          "email": "counseling.board@rld.nm.gov",
+          "mail": "New Mexico Regulation and Licensing Department, PO Box 25101, Santa Fe, NM 87504",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.rld.nm.gov/boards-and-commissions/individual-boards-and-commissions/counseling-and-therapy-practice/",
+            "https://www.rld.nm.gov/wp-content/uploads/2021/06/BCD_Complaint_Form__Rev._03.01.2021_-3.pdf"
+          ]
+        },
+        {
+          "id": "nm-cyfd-licensing-certification",
+          "category": "facility-licensing",
+          "name": "New Mexico CYFD, Licensing and Certification Authority",
+          "what_it_can_do": "Licenses congregate care and behavioral health settings in New Mexico, monitors their programming, and is the body responsible for ensuring trauma-responsive care.",
+          "what_it_cannot_do": "The New Mexico Department of Justice found it had no written policies or procedures for how it investigates abuse and neglect allegations in the facilities it licenses, and no statewide tracking to stop somebody who has abused a child working at another licensed facility. Treat a report here as necessary but not sufficient.",
+          "who_to_report": "A licensed congregate care or behavioral health facility in New Mexico.",
+          "how": "Contact CYFD. Report the same facts to Statewide Central Intake and to Disability Rights New Mexico as well, and keep your own record of what you sent and when.",
+          "info_url": "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://nmdoj.gov/publications/cyfd-report/recommendations/",
+            "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/"
+          ]
+        },
+        {
+          "id": "nm-statewide-central-intake",
+          "category": "legal",
+          "name": "New Mexico CYFD Statewide Central Intake",
+          "what_it_can_do": "The statutory report line for child abuse and neglect, open around the clock.",
+          "who_to_report": "A child at a New Mexico program.",
+          "how": "Call.",
+          "info_url": "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/",
+          "phone": "1-855-333-7233",
+          "phone_note": "1-855-333-SAFE. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/"
+          ]
+        },
+        {
+          "id": "nm-disability-rights-new-mexico",
+          "category": "oversight",
+          "name": "Disability Rights New Mexico",
+          "what_it_can_do": "New Mexico's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. Given what the state's own Department of Justice found about CYFD's investigations, this is a more important channel in New Mexico than in most states.",
+          "who_to_report": "A New Mexico program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.drnm.org/",
+          "phone": "1-800-432-4682",
+          "phone_note": "Main line 505-256-3100.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-mexico"
           ]
         }
       ]
@@ -3093,6 +3614,86 @@
       ]
     },
     {
+      "state": "Rhode Island",
+      "abbr": "RI",
+      "slug": "rhode-island",
+      "updated": "2026-09-22",
+      "note": "Rhode Island's reporting law names this industry directly: under RIGL 40-11-3 every person in the state must report suspected child abuse or neglect within 24 hours, and the law defines abuse to include injury, sexual abuse or exploitation, negligent treatment or maltreatment by any employee of a residential facility or any staff person providing out-of-home care. The same department licenses those facilities and takes the reports.",
+      "channels": [
+        {
+          "id": "ri-health-licensee-complaints",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Rhode Island Department of Health, licensee complaints",
+          "what_it_can_do": "Licenses and disciplines Rhode Island's clinical mental health counselors, marriage and family therapists, social workers and psychologists through its boards, and takes complaints against all of them through one route.",
+          "who_to_report": "A licensed mental health professional in Rhode Island.",
+          "how": "Submit a complaint through the Department's licensee complaints page.",
+          "complaint_url": "https://health.ri.gov/licensing/submit-complaint",
+          "info_url": "https://health.ri.gov/licensing/marriage-family-and-mental-health-therapy",
+          "phone": "401-222-5960",
+          "phone_note": "Psychology Licensing Board. Department main line 401-222-5500.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://health.ri.gov/licensing/marriage-family-and-mental-health-therapy",
+            "https://health.ri.gov/licensing/submit-complaint"
+          ]
+        },
+        {
+          "id": "ri-dcyf-licensing",
+          "category": "facility-licensing",
+          "name": "Rhode Island DCYF Licensing",
+          "what_it_can_do": "Under RI General Law 42-72.1 the Department of Children, Youth and Families licenses, monitors and enforces the regulations for every foster home, residential facility and child-placing agency in the state.",
+          "who_to_report": "A Rhode Island residential facility.",
+          "how": "Complain to the Department's licensing staff. If you are not satisfied with the decision, there is a right of appeal to a judicial forum.",
+          "complaint_url": "https://datadcyf.ri.gov/policyregs/complaints_and_hearings.htm",
+          "info_url": "https://dcyf.ri.gov/services/licensing",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcyf.ri.gov/services/licensing",
+            "https://datadcyf.ri.gov/policyregs/complaints_and_hearings.htm"
+          ]
+        },
+        {
+          "id": "ri-child-abuse-hotline",
+          "category": "legal",
+          "name": "Rhode Island Child Abuse Hotline",
+          "what_it_can_do": "The statutory report line, open around the clock. Rhode Island law defines reportable abuse to include maltreatment by any employee of a residential facility or staff person providing out-of-home care, so conduct inside a program is squarely covered.",
+          "who_to_report": "A child under 18 at a Rhode Island program. Every person in Rhode Island is required to report within 24 hours of knowing or suspecting.",
+          "how": "Call. All calls are recorded, and you may call anonymously.",
+          "complaint_url": "https://dcyf.ri.gov/contact-us/report-child-abuse-or-neglect",
+          "info_url": "https://dcyf.ri.gov/services/child-protective-services",
+          "phone": "1-800-742-4453",
+          "phone_note": "1-800-RI-CHILD. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "deadline": "The duty is to report within 24 hours of knowing or suspecting - a deadline on the reporter, not on the abuse.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcyf.ri.gov/contact-us/report-child-abuse-or-neglect",
+            "https://dcyf.ri.gov/services/child-protective-services"
+          ]
+        },
+        {
+          "id": "ri-disability-rights-rhode-island",
+          "category": "oversight",
+          "name": "Disability Rights Rhode Island",
+          "what_it_can_do": "Rhode Island's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Rhode Island program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.drri.org/",
+          "phone": "1-800-733-5332",
+          "phone_note": "Main line 401-831-3150; TTY 401-831-5335.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=rhode-island"
+          ]
+        }
+      ]
+    },
+    {
       "state": "South Carolina",
       "abbr": "SC",
       "slug": "south-carolina",
@@ -3561,6 +4162,86 @@
       ]
     },
     {
+      "state": "Vermont",
+      "abbr": "VT",
+      "slug": "vermont",
+      "updated": "2026-09-22",
+      "note": "Vermont runs one number for both jobs: the Department for Children and Families Centralized Intake Unit takes child abuse reports and complaints about residential treatment programs alike, and Vermont's licensing rules require a residential treatment program to cooperate fully in any investigation of a complaint or allegation about it.",
+      "channels": [
+        {
+          "id": "vt-office-professional-regulation",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Vermont Office of Professional Regulation",
+          "what_it_can_do": "Regulates Vermont's clinical social workers, clinical mental health counselors, psychologists and other allied mental health professions. On a complaint it runs an administrative review to see whether the professional conduct statute covers what you describe, then assigns a committee to investigate and recommend action. Discipline runs from a warning to revoking the licence.",
+          "who_to_report": "A licensed clinical social worker, clinical mental health counselor or psychologist in Vermont.",
+          "how": "Call or write to the Director of the Office to obtain a complaint form.",
+          "complaint_url": "https://vtlawhelp.org/office-professional-regulation-complaint-form",
+          "info_url": "https://sos.vermont.gov/opr/",
+          "phone": "802-828-1505",
+          "mail": "Director, Office of Professional Regulation, Secretary of State's Office, 89 Main Street, 3rd Floor, Montpelier, VT 05620-3402",
+          "anonymous": "unknown",
+          "note": "All complaint investigations are confidential.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://vtlawhelp.org/office-professional-regulation-complaint-form"
+          ]
+        },
+        {
+          "id": "vt-residential-treatment-licensing",
+          "category": "facility-licensing",
+          "name": "Vermont DCF residential treatment program licensing",
+          "what_it_can_do": "Licenses Vermont's residential treatment programs and investigates complaints against them. Its rules require a licensed program to cooperate fully in the investigation of any complaint or allegation associated with it.",
+          "who_to_report": "A Vermont residential treatment program.",
+          "how": "Report to the Centralized Intake Unit, which takes program complaints as well as abuse reports.",
+          "info_url": "https://dcf.vermont.gov/fsd",
+          "phone": "1-800-649-5285",
+          "phone_note": "Centralized Intake Unit. 24 hours a day.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcf.vermont.gov/fsd",
+            "https://dcf.vermont.gov/contacts/helplines"
+          ]
+        },
+        {
+          "id": "vt-child-abuse-hotline",
+          "category": "legal",
+          "name": "Vermont child abuse and neglect hotline",
+          "what_it_can_do": "The statutory report line, run by the Family Services Division's Centralized Intake Unit, open every hour of every day.",
+          "who_to_report": "A child at a Vermont program.",
+          "how": "Call.",
+          "complaint_url": "https://dcf.vermont.gov/fsd/report",
+          "info_url": "https://dcf.vermont.gov/contacts/helplines",
+          "phone": "1-800-649-5285",
+          "phone_note": "24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcf.vermont.gov/fsd/report",
+            "https://dcf.vermont.gov/contacts/helplines"
+          ]
+        },
+        {
+          "id": "vt-disability-rights-vermont",
+          "category": "oversight",
+          "name": "Disability Rights Vermont",
+          "what_it_can_do": "Vermont's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Vermont program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightsvt.org/",
+          "phone": "1-800-834-7890",
+          "phone_note": "Main line 802-229-1355.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=vermont"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Virginia",
       "abbr": "VA",
       "slug": "virginia",
@@ -3750,6 +4431,101 @@
       ]
     },
     {
+      "state": "West Virginia",
+      "abbr": "WV",
+      "slug": "west-virginia",
+      "updated": "2026-09-22",
+      "note": "West Virginia funnels every report of suspected abuse or neglect - of children and of vulnerable adults alike - through one Centralized Intake, staffed every hour of every day of the year. Its counseling board is candid about the limit on what a complaint can achieve: it can suspend, revoke or reprimand a licence, but it cannot recover a penny for you.",
+      "channels": [
+        {
+          "id": "wv-counseling-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "West Virginia Board of Examiners in Counseling",
+          "what_it_can_do": "Licenses professional counselors and marriage and family therapists in West Virginia and enforces the licensure rules and ethical standards. On a finding of probable cause it can reprimand, suspend or revoke a licence.",
+          "what_it_cannot_do": "It cannot seek or recover any money for the person who complained. Its meetings discussing complaints and investigations are confidential and closed to the public.",
+          "who_to_report": "A licensed professional counselor or marriage and family therapist in West Virginia.",
+          "how": "Contact the Board to request a complaint form.",
+          "complaint_url": "https://wvbec.org/",
+          "info_url": "https://wvbec.org/counselor-and-therapist-license-verification/",
+          "phone": "304-558-5494",
+          "mail": "West Virginia Board of Examiners in Counseling, 815 Quarrier Street, Suite 212, Charleston, WV 25301",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://wvbec.org/",
+            "https://www.wv.gov/agencies/counseling-board-examiners"
+          ]
+        },
+        {
+          "id": "wv-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "West Virginia Board of Examiners of Psychologists",
+          "what_it_can_do": "Licenses and disciplines psychologists in West Virginia.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "Use the Board's complaint page.",
+          "complaint_url": "https://psychbd.wv.gov/pages/complaint.aspx",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://psychbd.wv.gov/pages/complaint.aspx"
+          ]
+        },
+        {
+          "id": "wv-centralized-intake",
+          "category": "legal",
+          "name": "West Virginia Centralized Intake for Abuse and Neglect",
+          "what_it_can_do": "The single point of entry for every report of suspected abuse and neglect in West Virginia, covering both children and vulnerable adults. Open 24 hours a day, 365 days a year.",
+          "who_to_report": "A child under 18 at a West Virginia program who is being abused or neglected, or is at risk of it. Anyone concerned for a child can report.",
+          "how": "Call Centralized Intake, and report to local law enforcement as well. Mandated reporters may also send a non-emergency report by email.",
+          "complaint_url": "https://bss.wv.gov/centralized-intake-abuse-and-neglect",
+          "info_url": "https://bfa.wv.gov/page/child-abuse-prevention",
+          "phone": "1-800-352-6513",
+          "phone_note": "24 hours a day, seven days a week, 365 days a year.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://bss.wv.gov/centralized-intake-abuse-and-neglect",
+            "https://bfa.wv.gov/page/child-abuse-prevention"
+          ]
+        },
+        {
+          "id": "wv-facility-complaints",
+          "category": "facility-licensing",
+          "name": "West Virginia Department of Human Services, facility complaints",
+          "what_it_can_do": "Licenses and regulates West Virginia's residential and behavioral health facilities and takes complaints about them. The state also maintains an abuse registry covering people barred from working in these settings.",
+          "who_to_report": "A licensed West Virginia facility.",
+          "how": "Contact the Department's complaint line, and report any abuse to Centralized Intake as well.",
+          "info_url": "https://dohs.wv.gov/",
+          "phone": "1-800-642-8589",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dohs.wv.gov/",
+            "https://bss.wv.gov/centralized-intake-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "wv-disability-rights-west-virginia",
+          "category": "oversight",
+          "name": "Disability Rights of West Virginia",
+          "what_it_can_do": "West Virginia's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A West Virginia program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.drofwv.org/",
+          "phone": "1-800-950-5250",
+          "phone_note": "Main line 304-346-0847 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=west-virginia"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Wisconsin",
       "abbr": "WI",
       "slug": "wisconsin",
@@ -3844,22 +4620,13 @@
     }
   ],
   "coverage": {
-    "covered": 37,
+    "covered": 46,
     "total": 51,
     "missing": [
       "AK",
       "DC",
-      "DE",
-      "HI",
-      "KS",
       "ND",
-      "NE",
-      "NH",
-      "NM",
-      "RI",
       "SD",
-      "VT",
-      "WV",
       "WY"
     ]
   }

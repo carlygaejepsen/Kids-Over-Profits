@@ -1,0 +1,80 @@
+{
+  "state": "Delaware",
+  "abbr": "DE",
+  "updated": "2026-09-22",
+  "note": "Delaware has an Institutional Abuse Unit inside the Department of Services for Children, Youth and Their Families that investigates abuse or neglect of a child while at a facility or program, so an institutional report does not get handled as an ordinary family case. Delaware also places a duty on every licensed practitioner to report another practitioner they reasonably believe is doing something that would be grounds for discipline - useful if you are a clinician who has seen something and is wondering whether you may say so.",
+  "channels": [
+    {
+      "id": "de-division-professional-regulation",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Delaware Division of Professional Regulation",
+      "what_it_can_do": "Houses the Board of Mental Health and Chemical Dependency Professionals, the Board of Professional Counselors and the psychology board. The boards monitor complaints against their licensees, hold formal hearings and impose sanctions.",
+      "who_to_report": "A licensed mental health or chemical dependency professional in Delaware.",
+      "how": "Submit the complaint in writing to the Director of the Division of Professional Regulation. At the Board's next scheduled meeting a contact person is appointed and given a copy of it.",
+      "complaint_url": "https://dpr.delaware.gov/boards/profcounselors/forms/",
+      "info_url": "https://dpr.delaware.gov/boards/profcounselors/members/",
+      "phone": "302-744-4500",
+      "email": "customerservice.dpr@state.de.us",
+      "anonymous": "not-allowed",
+      "note": "Under Title 24 Chapter 30, every licensee has a duty to report in writing where they reasonably believe another practitioner or health care provider has engaged in conduct that would be grounds for discipline.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dpr.delaware.gov/boards/profcounselors/forms/",
+        "https://delcode.delaware.gov/title24/c030/sc01/index.html"
+      ]
+    },
+    {
+      "id": "de-institutional-abuse-reporting",
+      "category": "legal",
+      "name": "Delaware Child Abuse Report Line (Institutional Abuse Unit)",
+      "what_it_can_do": "The statutory 24-hour report line. Where the complaint concerns abuse or neglect of a child while at a facility or program, the Department's Institutional Abuse Unit or law enforcement investigates it.",
+      "who_to_report": "A child at a Delaware program.",
+      "how": "Call the report line at any hour.",
+      "info_url": "https://kids.delaware.gov/family-services/child-abuse-and-neglect-reporting/",
+      "phone": "1-800-292-9582",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://kids.delaware.gov/family-services/child-abuse-and-neglect-reporting/"
+      ]
+    },
+    {
+      "id": "de-office-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "Delaware Office of Child Care Licensing (OCCL)",
+      "what_it_can_do": "Investigates complaints that a licensed facility has broken the licensing rules, including the regulations governing residential child care facilities.",
+      "what_it_cannot_do": "It has no authority over financial matters and does not investigate personal disputes. Abuse and neglect go to the Child Abuse Report Line instead.",
+      "who_to_report": "A licensed Delaware residential child care facility, where the issue is a licensing breach.",
+      "how": "File a confidential complaint online, or call the office for the county the facility is in.",
+      "complaint_url": "https://education.delaware.gov/families/birth-age-5/occl/make_a_complaint",
+      "phone": "1-800-822-2236",
+      "phone_note": "Kent and Sussex counties; also 302-739-5487. New Castle County 302-892-5800.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://education.delaware.gov/families/birth-age-5/occl/make_a_complaint",
+        "https://regulations.delaware.gov/AdminCode/title14/900/935.shtml"
+      ]
+    },
+    {
+      "id": "de-disability-rights-delaware",
+      "category": "oversight",
+      "name": "Disability Rights Delaware (Community Legal Aid Society)",
+      "what_it_can_do": "Delaware's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Delaware program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://declasi.org/",
+      "phone": "1-800-292-7980",
+      "phone_note": "Main line 302-575-0660; TTY 302-575-0696.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=delaware"
+      ],
+      "note": "Operates as part of the Community Legal Aid Society; its site is declasi.org."
+    }
+  ]
+}

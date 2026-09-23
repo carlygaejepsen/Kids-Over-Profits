@@ -1,0 +1,75 @@
+{
+  "state": "Vermont",
+  "abbr": "VT",
+  "updated": "2026-09-22",
+  "note": "Vermont runs one number for both jobs: the Department for Children and Families Centralized Intake Unit takes child abuse reports and complaints about residential treatment programs alike, and Vermont's licensing rules require a residential treatment program to cooperate fully in any investigation of a complaint or allegation about it.",
+  "channels": [
+    {
+      "id": "vt-office-professional-regulation",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Vermont Office of Professional Regulation",
+      "what_it_can_do": "Regulates Vermont's clinical social workers, clinical mental health counselors, psychologists and other allied mental health professions. On a complaint it runs an administrative review to see whether the professional conduct statute covers what you describe, then assigns a committee to investigate and recommend action. Discipline runs from a warning to revoking the licence.",
+      "who_to_report": "A licensed clinical social worker, clinical mental health counselor or psychologist in Vermont.",
+      "how": "Call or write to the Director of the Office to obtain a complaint form.",
+      "complaint_url": "https://vtlawhelp.org/office-professional-regulation-complaint-form",
+      "info_url": "https://sos.vermont.gov/opr/",
+      "phone": "802-828-1505",
+      "mail": "Director, Office of Professional Regulation, Secretary of State's Office, 89 Main Street, 3rd Floor, Montpelier, VT 05620-3402",
+      "anonymous": "unknown",
+      "note": "All complaint investigations are confidential.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://vtlawhelp.org/office-professional-regulation-complaint-form"]
+    },
+    {
+      "id": "vt-residential-treatment-licensing",
+      "category": "facility-licensing",
+      "name": "Vermont DCF residential treatment program licensing",
+      "what_it_can_do": "Licenses Vermont's residential treatment programs and investigates complaints against them. Its rules require a licensed program to cooperate fully in the investigation of any complaint or allegation associated with it.",
+      "who_to_report": "A Vermont residential treatment program.",
+      "how": "Report to the Centralized Intake Unit, which takes program complaints as well as abuse reports.",
+      "info_url": "https://dcf.vermont.gov/fsd",
+      "phone": "1-800-649-5285",
+      "phone_note": "Centralized Intake Unit. 24 hours a day.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcf.vermont.gov/fsd",
+        "https://dcf.vermont.gov/contacts/helplines"
+      ]
+    },
+    {
+      "id": "vt-child-abuse-hotline",
+      "category": "legal",
+      "name": "Vermont child abuse and neglect hotline",
+      "what_it_can_do": "The statutory report line, run by the Family Services Division's Centralized Intake Unit, open every hour of every day.",
+      "who_to_report": "A child at a Vermont program.",
+      "how": "Call.",
+      "complaint_url": "https://dcf.vermont.gov/fsd/report",
+      "info_url": "https://dcf.vermont.gov/contacts/helplines",
+      "phone": "1-800-649-5285",
+      "phone_note": "24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcf.vermont.gov/fsd/report",
+        "https://dcf.vermont.gov/contacts/helplines"
+      ]
+    },
+    {
+      "id": "vt-disability-rights-vermont",
+      "category": "oversight",
+      "name": "Disability Rights Vermont",
+      "what_it_can_do": "Vermont's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Vermont program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsvt.org/",
+      "phone": "1-800-834-7890",
+      "phone_note": "Main line 802-229-1355.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=vermont"]
+    }
+  ]
+}

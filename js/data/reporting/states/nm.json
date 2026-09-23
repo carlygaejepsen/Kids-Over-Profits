@@ -1,0 +1,73 @@
+{
+  "state": "New Mexico",
+  "abbr": "NM",
+  "updated": "2026-09-22",
+  "note": "New Mexico deserves a warning its own government has already published. The state Department of Justice reported that CYFD, which licenses congregate care and behavioral health settings, had no written policies or procedures governing how its Licensing and Certification Authority investigates allegations of abuse or neglect in those facilities, and recommended it adopt and publish some. Report anyway - but pair it with the Protection and Advocacy agency and with Statewide Central Intake rather than relying on the licensor alone.",
+  "channels": [
+    {
+      "id": "nm-counseling-therapy-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "New Mexico Regulation and Licensing Department, behavioral health boards",
+      "what_it_can_do": "Houses the Counseling and Therapy Practice Board, the Social Work Board and the Psychologist Examiners Board, takes complaints against their licensees and runs the disciplinary proceedings against those who break the practice laws.",
+      "who_to_report": "A licensed counselor, therapist, social worker or psychologist in New Mexico. All three boards share a phone number and a mailing address.",
+      "how": "Use the Department's boards complaint form.",
+      "complaint_url": "https://www.rld.nm.gov/wp-content/uploads/2021/06/BCD_Complaint_Form__Rev._03.01.2021_-3.pdf",
+      "info_url": "https://www.rld.nm.gov/boards-and-commissions/individual-boards-and-commissions/counseling-and-therapy-practice/",
+      "phone": "505-476-4622",
+      "email": "counseling.board@rld.nm.gov",
+      "mail": "New Mexico Regulation and Licensing Department, PO Box 25101, Santa Fe, NM 87504",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.rld.nm.gov/boards-and-commissions/individual-boards-and-commissions/counseling-and-therapy-practice/",
+        "https://www.rld.nm.gov/wp-content/uploads/2021/06/BCD_Complaint_Form__Rev._03.01.2021_-3.pdf"
+      ]
+    },
+    {
+      "id": "nm-cyfd-licensing-certification",
+      "category": "facility-licensing",
+      "name": "New Mexico CYFD, Licensing and Certification Authority",
+      "what_it_can_do": "Licenses congregate care and behavioral health settings in New Mexico, monitors their programming, and is the body responsible for ensuring trauma-responsive care.",
+      "what_it_cannot_do": "The New Mexico Department of Justice found it had no written policies or procedures for how it investigates abuse and neglect allegations in the facilities it licenses, and no statewide tracking to stop somebody who has abused a child working at another licensed facility. Treat a report here as necessary but not sufficient.",
+      "who_to_report": "A licensed congregate care or behavioral health facility in New Mexico.",
+      "how": "Contact CYFD. Report the same facts to Statewide Central Intake and to Disability Rights New Mexico as well, and keep your own record of what you sent and when.",
+      "info_url": "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://nmdoj.gov/publications/cyfd-report/recommendations/",
+        "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/"
+      ]
+    },
+    {
+      "id": "nm-statewide-central-intake",
+      "category": "legal",
+      "name": "New Mexico CYFD Statewide Central Intake",
+      "what_it_can_do": "The statutory report line for child abuse and neglect, open around the clock.",
+      "who_to_report": "A child at a New Mexico program.",
+      "how": "Call.",
+      "info_url": "https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/",
+      "phone": "1-855-333-7233",
+      "phone_note": "1-855-333-SAFE. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.cyfd.nm.gov/protective-services/child-abuse-and-neglect/"]
+    },
+    {
+      "id": "nm-disability-rights-new-mexico",
+      "category": "oversight",
+      "name": "Disability Rights New Mexico",
+      "what_it_can_do": "New Mexico's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. Given what the state's own Department of Justice found about CYFD's investigations, this is a more important channel in New Mexico than in most states.",
+      "who_to_report": "A New Mexico program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.drnm.org/",
+      "phone": "1-800-432-4682",
+      "phone_note": "Main line 505-256-3100.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-mexico"]
+    }
+  ]
+}

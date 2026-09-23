@@ -1,0 +1,94 @@
+{
+  "state": "West Virginia",
+  "abbr": "WV",
+  "updated": "2026-09-22",
+  "note": "West Virginia funnels every report of suspected abuse or neglect - of children and of vulnerable adults alike - through one Centralized Intake, staffed every hour of every day of the year. Its counseling board is candid about the limit on what a complaint can achieve: it can suspend, revoke or reprimand a licence, but it cannot recover a penny for you.",
+  "channels": [
+    {
+      "id": "wv-counseling-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "West Virginia Board of Examiners in Counseling",
+      "what_it_can_do": "Licenses professional counselors and marriage and family therapists in West Virginia and enforces the licensure rules and ethical standards. On a finding of probable cause it can reprimand, suspend or revoke a licence.",
+      "what_it_cannot_do": "It cannot seek or recover any money for the person who complained. Its meetings discussing complaints and investigations are confidential and closed to the public.",
+      "who_to_report": "A licensed professional counselor or marriage and family therapist in West Virginia.",
+      "how": "Contact the Board to request a complaint form.",
+      "complaint_url": "https://wvbec.org/",
+      "info_url": "https://wvbec.org/counselor-and-therapist-license-verification/",
+      "phone": "304-558-5494",
+      "mail": "West Virginia Board of Examiners in Counseling, 815 Quarrier Street, Suite 212, Charleston, WV 25301",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://wvbec.org/",
+        "https://www.wv.gov/agencies/counseling-board-examiners"
+      ]
+    },
+    {
+      "id": "wv-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "West Virginia Board of Examiners of Psychologists",
+      "what_it_can_do": "Licenses and disciplines psychologists in West Virginia.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "Use the Board's complaint page.",
+      "complaint_url": "https://psychbd.wv.gov/pages/complaint.aspx",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://psychbd.wv.gov/pages/complaint.aspx"
+      ]
+    },
+    {
+      "id": "wv-centralized-intake",
+      "category": "legal",
+      "name": "West Virginia Centralized Intake for Abuse and Neglect",
+      "what_it_can_do": "The single point of entry for every report of suspected abuse and neglect in West Virginia, covering both children and vulnerable adults. Open 24 hours a day, 365 days a year.",
+      "who_to_report": "A child under 18 at a West Virginia program who is being abused or neglected, or is at risk of it. Anyone concerned for a child can report.",
+      "how": "Call Centralized Intake, and report to local law enforcement as well. Mandated reporters may also send a non-emergency report by email.",
+      "complaint_url": "https://bss.wv.gov/centralized-intake-abuse-and-neglect",
+      "info_url": "https://bfa.wv.gov/page/child-abuse-prevention",
+      "phone": "1-800-352-6513",
+      "phone_note": "24 hours a day, seven days a week, 365 days a year.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://bss.wv.gov/centralized-intake-abuse-and-neglect",
+        "https://bfa.wv.gov/page/child-abuse-prevention"
+      ]
+    },
+    {
+      "id": "wv-facility-complaints",
+      "category": "facility-licensing",
+      "name": "West Virginia Department of Human Services, facility complaints",
+      "what_it_can_do": "Licenses and regulates West Virginia's residential and behavioral health facilities and takes complaints about them. The state also maintains an abuse registry covering people barred from working in these settings.",
+      "who_to_report": "A licensed West Virginia facility.",
+      "how": "Contact the Department's complaint line, and report any abuse to Centralized Intake as well.",
+      "info_url": "https://dohs.wv.gov/",
+      "phone": "1-800-642-8589",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dohs.wv.gov/",
+        "https://bss.wv.gov/centralized-intake-abuse-and-neglect"
+      ]
+    },
+    {
+      "id": "wv-disability-rights-west-virginia",
+      "category": "oversight",
+      "name": "Disability Rights of West Virginia",
+      "what_it_can_do": "West Virginia's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A West Virginia program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.drofwv.org/",
+      "phone": "1-800-950-5250",
+      "phone_note": "Main line 304-346-0847 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=west-virginia"
+      ]
+    }
+  ]
+}
