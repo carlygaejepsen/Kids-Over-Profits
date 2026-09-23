@@ -1211,31 +1211,60 @@ function run() {
     check(crossings === 0,
         crossings + ' route legs cross a node they do not connect',
         routes.length + ' routes, ' + legs + ' legs, none through a node they do not connect');
-    /* A line bends for one of two reasons and no others: a name is in its
-     * way, or it is a long line that would otherwise run through the
-     * middle of the crowd instead of round it. A short line always goes
-     * straight - bowing those would say two names are further apart than
-     * they are - so anything bent is either long enough to bow or blocked.
-     */
-    const BOW_MIN = sandbox.KOPNetworkCanvas.BOW_MIN_LENGTH;
-    const shortBends = routes.filter((route) => {
-        if (route.pts.length < 3) return false;
-        const p = route.pts[0], q = route.pts[route.pts.length - 1];
-        if (Math.hypot(q[0] - p[0], q[1] - p[1]) >= BOW_MIN) return false;
-        /* Blocked is the other good reason, so only an unblocked short
-         * line that bent anyway is a fault. */
-        return boxes.every((box, j) =>
-            j === route.edge.source._i || j === route.edge.target._i || !hitsBox(p, q, box));
+    /* Lines run at right angles (2026-09-23): the owner found straight
+     * lines from centre to centre hard to follow, and asked for lines that
+     * do not overlap, with room between them, turning at right angles and
+     * as few times as they can. So, at rest: every leg of every line is
+     * across or down; the typical line turns at most twice; and two lines
+     * that share no end never run along the same lane - the one overlap
+     * allowed is a trunk shared by lines out of the same name. */
+    const oblique = routes.filter((route) => route.pts.some((q, i) => i > 0 &&
+        Math.abs(q[0] - route.pts[i - 1][0]) > 0.6 && Math.abs(q[1] - route.pts[i - 1][1]) > 0.6));
+    check(oblique.length === 0,
+        oblique.length + ' of ' + routes.length + ' lines run on a slant, the first from ' +
+        (oblique[0] && oblique[0].edge.source.name + ' to ' + oblique[0].edge.target.name),
+        'all ' + routes.length + ' lines run across and down');
+    const bends = routes.map((route) => route.pts.length - 2).sort((a, b) => a - b);
+    const medianBends = bends[Math.floor(bends.length / 2)];
+    check(medianBends <= 2 && straight >= 1,
+        'the typical line turns ' + medianBends + ' times',
+        straight + ' of ' + routes.length + ' lines are straight, the typical one turns ' + medianBends +
+        ' times, the most ' + bends[bends.length - 1]);
+    /* Sampled every 2px along each leg: a sample two unrelated lines both
+     * pass through, going the same way, is a stretch where one hides the
+     * other. */
+    const lanes = new Map();
+    let sampled = 0;
+    routes.forEach((route, ri) => {
+        const ends = [route.edge.sourceId, route.edge.targetId];
+        for (let i = 1; i < route.pts.length; i++) {
+            const p = route.pts[i - 1], q = route.pts[i];
+            const across = Math.abs(q[1] - p[1]) < 0.6;
+            const len = Math.hypot(q[0] - p[0], q[1] - p[1]);
+            for (let s = 0; s <= len; s += 2) {
+                const x = p[0] + (q[0] - p[0]) * s / (len || 1), y = p[1] + (q[1] - p[1]) * s / (len || 1);
+                const key = (across ? 'h' : 'v') + Math.round(x / 2) + ',' + Math.round(y / 2);
+                if (!lanes.has(key)) lanes.set(key, []);
+                lanes.get(key).push({ ri, ends });
+                sampled++;
+            }
+        }
     });
-    check(shortBends.length === 0,
-        shortBends.length + ' short lines bend with nothing in their way, the first from ' +
-        (shortBends[0] && shortBends[0].edge.source.name),
-        'every line under ' + BOW_MIN + 'px goes straight unless a name is in its way');
-    /* And enough of them do go straight that the view still reads as
-     * lines between names rather than as a maze. */
-    check(straight >= routes.length * 0.25,
-        'only ' + straight + ' of ' + routes.length + ' lines are straight',
-        straight + ' of ' + routes.length + ' lines are straight');
+    let shared = 0;
+    lanes.forEach((list) => {
+        for (let i = 0; i < list.length; i++) {
+            for (let j = i + 1; j < list.length; j++) {
+                const a = list[i], b = list[j];
+                if (a.ri === b.ri) continue;
+                if (a.ends.some((id) => b.ends.indexOf(id) !== -1)) continue;
+                shared++;
+                return;
+            }
+        }
+    });
+    check(shared <= sampled * 0.01,
+        Math.round(shared * 2) + 'px of line in the WWASPS view lies on another line it has no end in common with',
+        Math.round(shared * 2) + 'px of ' + Math.round(sampled * 2) + 'px of line lies on an unrelated line');
     /* A line leaves its name on whichever side faces the other end, so
      * the lines of a busy view leave from every side, not only the bottom. */
     const sides = { top: 0, bottom: 0, left: 0, right: 0 };
@@ -1416,7 +1445,7 @@ function run() {
     });
     check(wwOwn.length > 10 && wwOff.length === 0 && wwFar <= WIDTH * 0.75,
         wwOff.length + " of WWASPS's " + wwOwn.length + ' connections are off the stage, the furthest ' +
-        Math.round(wwFar) + 'px away',
+        Math.round(wwFar) + 'px away: ' + wwOff.slice(0, 3).map((n) => n.name).join(', '),
         'all ' + wwOwn.length + " of WWASPS's connections on the stage, the furthest " + Math.round(wwFar) + 'px away');
 
     /* A click is a yoyo: the clicked name swells and its connections are
@@ -1493,7 +1522,14 @@ function run() {
      * written down rather than quietly followed downwards: the floor sits
      * below what is measured, so the check still catches a collapse, and a
      * drop past it means something other than this changed. */
-    check(medianSpan <= 450 && shortShare >= 0.18,
+    /* 2026-09-23: rows are now set across the whole stage rather than
+     * packed into its middle, which the owner asked for (no empty sides,
+     * more room for the lines), so a line between two names on different
+     * rows runs further than it did. Measured at the change: median 504px,
+     * 16% within 260px, against 436px and 19.7% before it. The bound is
+     * still under two thirds of the stage's width, so a view that flies
+     * apart still fails. */
+    check(medianSpan <= 600 && shortShare >= 0.12,
         'lines in the ' + hub.name + ' view are long: median ' + Math.round(medianSpan) + 'px, ' +
         Math.round(shortShare * 100) + '% within 260px',
         'lines in the ' + hub.name + ' view: median ' + Math.round(medianSpan) + 'px, ' +

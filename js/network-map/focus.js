@@ -1345,6 +1345,8 @@
 
         function pathLayout(points, padding) {
             grid = null;
+            filled = null;
+            shown = null;
             if (!points.length || !renderer.width) return 0;
             var stepOf = Object.create(null);
             chain.forEach(function (id, i) { stepOf[id] = i; });
@@ -1400,13 +1402,10 @@
          * everything it touches gathered round it, each name as far from
          * the next as its bubble needs and no further.
          *
-         * Lines are drawn straight, so the layout that makes them shortest
-         * is the one where each name sits as near as it can to what it
-         * connects to and leaves its neighbours by whichever side faces
-         * them. Rows cannot give that: with every name on a row and the
-         * lines run through the gutters, every line left its name from
-         * the bottom, and a line to the next name over went down, along
-         * and back up, which is what the owner asked to have undone.
+         * The settle puts each name near what it connects to; the rows it
+         * is shelved into at the end are then set across the whole stage
+         * with room between them for the lines, which are routed at right
+         * angles through that room (canvas.js, routeOrthogonal).
          *
          * The shape is seeded by hand and then settled. Round each root
          * (the click, or every name on an expanded trail) its connections
@@ -1417,28 +1416,54 @@
          * and pulls each name toward what it connects to, anchored to its
          * seed so the reading - owners above, holdings below - survives.
          *
-         * Built in screen pixels, centred on the origin, so the fit that
-         * follows lands at a zoom of about one. Bubbles are boxes, and it
+         * Built in screen pixels, centred on the origin, and framed at a
+         * zoom of exactly one. Bubbles are boxes, and it
          * is their boxes that keep names apart, not the link lengths.
          */
-        /* Wide enough for a line to pass between two names: the router
-         * keeps 4px clear of a name and turns 2px outside that, so two
-         * names 18px apart leave it a 6px corridor. */
+        /* The room each name keeps round it while the settle arranges
+         * things; the lanes for lines are added on top (COL_GAP, ROW_GAP). */
         var CLUSTER_GAP = 18;
         var OWNER_ABOVE = 36;
         var CLUSTER_TICKS = 220;
         /* How far beyond the name it hangs off a name two steps out is
          * seeded. */
         var RING_STEP = 58;
-        /* The stage's width the fan may use, less this much either side.
-         * The same margin the frame leaves round a settled block, so the
-         * width a layout is built to is the width it is framed at. */
-        var FAN_MARGIN = 70;
         /* Clear space between two roots' clusters on an expanded trail. */
         var CLUSTER_APART = 48;
+        /* Lanes for the lines (2026-09-23). Lines are routed at right
+         * angles along lanes eight pixels apart, and what a reader can
+         * follow is decided by how many lanes a gap holds: the 36px the
+         * cluster left between rows held three, so a busy view's lines lay
+         * along each other. On top of CLUSTER_GAP, then: this much more
+         * between two names on a row, and at least this much more between
+         * two rows - more where the stage is tall enough to give it, up to
+         * ROW_GAP_MAX, so a view that fits spreads down the whole stage
+         * instead of sitting in a band across the middle of it. */
+        var COL_GAP = 26;
+        /* And where that leaves the click's own connections off the stage,
+         * this instead: the names closer, the lines still with a lane. */
+        var COL_GAP_TIGHT = 6;
+        var colGap = COL_GAP;
+        var ROW_GAP = 52;
+        var ROW_GAP_PHONE = 28;
+        var ROW_GAP_MAX = 150;
+        /* The least a gap between rows is squeezed to so that everything a
+         * click connects to is on the stage at once: four lanes. */
+        var ROW_GAP_TIGHT = 22;
+        /* The rows the frame must show, from shelve: the click and its own
+         * connections. */
+        var shown = null;
+        /* Clear space between the block and the stage's two sides. */
+        var STAGE_SIDE = 14;
+        /* The box the last cluster layout filled, in the units it was laid
+         * out in; applyLayout frames exactly that at full size. Null for a
+         * route, which is framed the old way. */
+        var filled = null;
 
         function clusterLayout(points, links, roots) {
             grid = null;
+            filled = null;
+            shown = null;
             if (!points.length || !renderer.width) return 0;
             var d3 = root.d3;
             var painter = root.KOPNetworkCanvas || {};
@@ -1514,7 +1539,8 @@
                  * clear of each other outward from the click. Pushing
                  * pairs apart never converged on a heap; shelving is one
                  * pass and cannot leave two names sharing pixels. */
-                shelve(points, headId, stackedPairs(links, byId), neighbours(links, byId));
+                var lead = headOf();
+                shelve(points, headId, stackedPairs(links, byId), neighbours(links, byId), lead ? lead.id : headId);
             }
             report('parted');
             points.forEach(function (p) { delete p.fx; delete p.fy; });
@@ -1530,6 +1556,7 @@
                 x0: minX, y0: minY, cellW: maxX - minX, cellH: pitch,
                 cols: 1, rows: Math.max(1, Math.ceil((maxY - minY) / pitch))
             };
+            filled = { minX: minX, maxX: maxX, minY: minY, maxY: maxY, shown: shown };
             /* Every name has exactly its own width, so nothing hangs over. */
             return 0;
         }
@@ -1790,24 +1817,29 @@
         }
 
         /**
-         * The width a row of names has to work with: the stage, less the
-         * margin the frame will leave either side. Rows are built in screen
-         * pixels for a zoom of one, so this is the width the block will
-         * actually occupy once it is framed.
+         * The width a row of names has to work with: the stage, less a
+         * narrow margin either side. Rows are built in screen pixels and
+         * framed at a zoom of one (applyLayout), so this is exactly the
+         * width the block occupies on screen.
          *
-         * Never less than a phone's stage can hold two names on. A phone is
-         * panned across the block whatever this says - the whole of a view
-         * has never fitted one - and rows a single name wide only made the
-         * block longer to pan down.
+         * It used to be held to at least 500px, so that a phone got rows
+         * two names wide and was panned across them. A view is framed at
+         * full size now, and a row wider than a phone's stage would be cut
+         * off at both sides, so a phone gets a column instead.
          */
         function stageRoom() {
-            return Math.max(500, (renderer.width || 1200) - FAN_MARGIN * 2);
+            return Math.max(240, (renderer.width || 1200) - STAGE_SIDE * 2);
         }
 
         /** How wide a row of names is, the gaps between them included. */
         function rowWidth(members) {
             return members.reduce(function (t, p) { return t + p.hw * 2; }, 0) +
-                CLUSTER_GAP * Math.max(0, members.length - 1);
+                (CLUSTER_GAP + colGap) * Math.max(0, members.length - 1);
+        }
+
+        /** Clear space between two rows, at least: less on a phone. */
+        function rowGap() {
+            return (renderer.width || 1200) < 600 ? ROW_GAP_PHONE : ROW_GAP;
         }
 
         /** What each name connects to, by id, both ways round. */
@@ -1839,6 +1871,7 @@
                 anchor.members.forEach(function (p) { over[p.id] = p.x; });
             }
             var keys = Object.create(null);
+            var held = Object.create(null);
             members.forEach(function (p) {
                 var sum = 0, n = 0;
                 (near[p.id] || []).forEach(function (id) {
@@ -1847,8 +1880,76 @@
                     n++;
                 });
                 keys[p.id] = n ? sum / n : p.x;
+                if (n) held[p.id] = keys[p.id];
             });
             members.sort(function (a, b) { return keys[a.id] - keys[b.id]; });
+            return held;
+        }
+
+        /**
+         * Set a row's names across the whole width of the stage, in the
+         * order they are in (2026-09-23).
+         *
+         * A row used to be packed tight in the middle, and the frame then
+         * zoomed the block to fit: names keep their size whatever the
+         * zoom, so a block framed zoomed out was narrower than the stage,
+         * and the sides were left empty. Now every row reaches from one
+         * side of the stage to the other, and the view is framed at full
+         * size (applyLayout).
+         *
+         * Each name asks for a spot: straight over or under what it
+         * connects to on the row already placed, where it connects to
+         * anything there - which is what lets a line between them drop
+         * straight down without a turn - and otherwise an even share of
+         * the row. The spots are then pulled apart, in order, until every
+         * pair has its gap, and held inside the stage: the nearest
+         * arrangement to what was asked for that has nothing overlapping
+         * (pool adjacent violators, as spreadPorts does on a name's rim).
+         */
+        function spreadRow(m, held) {
+            var gap = CLUSTER_GAP + colGap;
+            var room = stageRoom();
+            var total = rowWidth(m);
+            var x;
+            if (total >= room || m.length === 0) {
+                x = -total / 2;
+                m.forEach(function (p) { p.x = x + p.hw; x += p.hw * 2 + gap; });
+                return;
+            }
+            var n = m.length;
+            var boxes = m.reduce(function (t, p) { return t + p.hw * 2; }, 0);
+            var share = (room - boxes) / n;
+            var want = new Float64Array(n);
+            var offset = new Float64Array(n);
+            x = -room / 2 + share / 2;
+            var i;
+            for (i = 0; i < n; i++) {
+                var slot = x + m[i].hw;
+                x += m[i].hw * 2 + share;
+                want[i] = held && held[m[i].id] !== undefined ? held[m[i].id] : slot;
+                offset[i] = i ? offset[i - 1] + m[i - 1].hw + m[i].hw + gap : 0;
+            }
+            /* In these terms the row is legal exactly when the numbers do
+             * not decrease. */
+            var value = new Float64Array(n), count = new Int32Array(n), blocks = 0;
+            for (i = 0; i < n; i++) {
+                value[blocks] = want[i] - offset[i];
+                count[blocks] = 1;
+                blocks++;
+                while (blocks > 1 && value[blocks - 2] > value[blocks - 1]) {
+                    var sum = value[blocks - 2] * count[blocks - 2] + value[blocks - 1] * count[blocks - 1];
+                    count[blocks - 2] += count[blocks - 1];
+                    value[blocks - 2] = sum / count[blocks - 2];
+                    blocks--;
+                }
+            }
+            var lo = -room / 2 + m[0].hw;
+            var hi = room / 2 - m[n - 1].hw - offset[n - 1];
+            var at = 0;
+            for (var b = 0; b < blocks; b++) {
+                var v = Math.min(hi, Math.max(lo, value[b]));
+                for (var k = 0; k < count[b]; k++) { m[at].x = v + offset[at]; at++; }
+            }
         }
 
         /**
@@ -1888,7 +1989,7 @@
          * sideways into the row above until it reaches across the stage,
          * and on to the row below once it is full.
          */
-        function shelve(points, headId, stacked, near) {
+        function shelve(points, headId, stacked, near, leadId) {
             var head = headId ? points.filter(function (p) { return p.id === headId; })[0] : null;
             var sorted = points.slice().sort(function (a, b) { return a.y - b.y; });
             var pitch = points.reduce(function (t, p) { return Math.max(t, p.hh * 2); }, 0) + CLUSTER_GAP;
@@ -1898,16 +1999,27 @@
                 if (row && p.y - row.top < pitch * 0.75) { row.members.push(p); return; }
                 rows.push({ top: p.y, members: [p] });
             });
-            /* Where the block is centred is read off the settle, before
-             * anything moves between rows, and every row is then centred on
-             * that one line: a row left centred on wherever its own few
-             * names happened to settle would push the block wider than the
-             * stage all over again. */
-            var mid = points.reduce(function (t, p) { return t + p.x; }, 0) / points.length;
             rows.forEach(function (row) {
                 row.members.sort(function (a, b) { return a.x - b.x; });
             });
-            rows = fillRows(rows, head, stacked);
+            /* Laid out with room for the lines between names first, and
+             * again with the names closer together where that leaves what
+             * the click connects to taller than the stage. */
+            var shelved = rows;
+            colGap = COL_GAP;
+            if (!arrange(shelved, head, stacked, near, leadId)) {
+                colGap = COL_GAP_TIGHT;
+                arrange(shelved, head, stacked, near, leadId);
+            }
+        }
+
+        /**
+         * Break the shelved rows to the stage's width, set each across it,
+         * and stack them. True when the click and everything it connects
+         * to fit the stage's height at full size.
+         */
+        function arrange(shelved, head, stacked, near, leadId) {
+            var rows = fillRows(shelved, head, stacked, leadId, near);
             /* Placed outward from the click's own row, because each row is
              * ordered against the one already placed beside it. */
             var at = 0;
@@ -1918,17 +2030,10 @@
             }
             var place = function (row, anchor) {
                 var m = row.members;
-                orderRow(m, anchor, near || Object.create(null));
+                var held = orderRow(m, anchor, near || Object.create(null));
                 row.h = m.reduce(function (t, p) { return Math.max(t, p.hh * 2); }, 0);
-                var x = mid - rowWidth(m) / 2;
-                m.forEach(function (p) {
-                    p.x = x + p.hw;
-                    x += p.hw * 2 + CLUSTER_GAP;
-                });
-                /* The click keeps its spot: its row slides so it does. */
+                spreadRow(m, held);
                 if (head && m.indexOf(head) !== -1) {
-                    var dx = head.x;
-                    m.forEach(function (p) { p.x -= dx; });
                     row.y = 0;
                     row.head = true;
                 }
@@ -1936,20 +2041,63 @@
             place(rows[at], null);
             for (var down = at + 1; down < rows.length; down++) place(rows[down], rows[down - 1]);
             for (var up = at - 1; up >= 0; up--) place(rows[up], rows[up + 1]);
-            /* Stacked at exactly the pitch the rows need, not at whatever
-             * the settle happened to leave between them: a row the filling
-             * emptied would otherwise leave its height behind as a gap. */
+            /* Stacked at the pitch the rows need, not at whatever the
+             * settle happened to leave between them: a row the filling
+             * emptied would otherwise leave its height behind as a gap.
+             * Where the stage is taller than the rows, the spare height
+             * goes between them, as room for the lines. */
+            /* The rows the click's own connections are on, which the frame
+             * has to show whole: all of them on the opening view. */
+            var from = 0, to = rows.length - 1;
+            if (leadId && shelved.some(function (row) { return row.members.some(function (p) { return p.id === leadId; }); })) {
+                /* On an expanded trail, the newest click's. */
+                var own = Object.create(null);
+                own[leadId] = true;
+                ((near || {})[leadId] || []).forEach(function (id) { own[id] = true; });
+                from = rows.length;
+                to = -1;
+                rows.forEach(function (row, i) {
+                    if (!row.members.some(function (p) { return own[p.id]; })) return;
+                    from = Math.min(from, i);
+                    to = Math.max(to, i);
+                });
+            }
+            var tallOf = function (a, b) {
+                var t = 0;
+                for (var q = a; q <= b; q++) t += rows[q].h;
+                return t;
+            };
+            var stageTall = (renderer.height || 700) - STAGE_TOP - STAGE_EDGE;
+            var roomy = rowGap();
+            var gapY = roomy;
+            var fits = true;
+            if (rows.length > 1) {
+                var fitAll = (stageTall - tallOf(0, rows.length - 1)) / (rows.length - 1);
+                var fitOwn = to > from ? (stageTall - tallOf(from, to)) / (to - from) : Infinity;
+                if (fitAll >= roomy) gapY = Math.min(ROW_GAP_MAX, fitAll);
+                else if (fitAll >= ROW_GAP_TIGHT) gapY = fitAll;
+                else gapY = Math.max(ROW_GAP_TIGHT, Math.min(roomy, fitOwn));
+                fits = fitOwn >= ROW_GAP_TIGHT;
+            }
+            if (!head) rows[at].y = 0;
             for (var lower = at + 1; lower < rows.length; lower++) {
                 rows[lower].y = rows[lower - 1].y +
-                    (rows[lower - 1].h + rows[lower].h) / 2 + CLUSTER_GAP;
+                    (rows[lower - 1].h + rows[lower].h) / 2 + gapY;
             }
             for (var upper = at - 1; upper >= 0; upper--) {
                 rows[upper].y = rows[upper + 1].y -
-                    (rows[upper + 1].h + rows[upper].h) / 2 - CLUSTER_GAP;
+                    (rows[upper + 1].h + rows[upper].h) / 2 - gapY;
             }
             rows.forEach(function (row) {
                 row.members.forEach(function (p) { p.y = row.y; });
             });
+            if (from <= to) {
+                shown = {
+                    minY: rows[from].y - rows[from].h / 2,
+                    maxY: rows[to].y + rows[to].h / 2
+                };
+            }
+                    return fits;
         }
 
         /**
@@ -1973,7 +2121,7 @@
          * starts the next row under it; going up, the name owned has
          * already been placed and its owner starts the next row over it.
          */
-        function fillRows(rows, head, stacked) {
+        function fillRows(rows, head, stacked, leadId, near) {
             var room = stageRoom();
             var at = -1;
             if (head) {
@@ -1987,12 +2135,35 @@
                 return !line.some(function (m) { return over[m.id]; });
             };
             /* The names of every row from `from` outward, in one run. */
+            /* What the click connects to comes first in each run, so it
+             * is packed into the rows next to the click and the frame can
+             * show it all at full size; everything two steps out follows
+             * in the order it had. A name stacked with one already passed
+             * over (its owner, or what it was renamed from) brings that
+             * one forward with it, ahead of it, so the pair still reads
+             * the right way up. */
+            var own = Object.create(null);
+            if (leadId) ((near || {})[leadId] || []).forEach(function (id) { own[id] = true; });
             var run = function (from, step) {
                 var seq = [];
                 for (var i = from; i >= 0 && i < rows.length; i += step) {
                     rows[i].members.forEach(function (p) { seq.push(p); });
                 }
-                return seq;
+                if (!leadId) return seq;
+                var first = [], rest = [];
+                seq.forEach(function (p) {
+                    if (!own[p.id]) { rest.push(p); return; }
+                    var over = stacked && stacked[p.id];
+                    if (over) {
+                        rest = rest.filter(function (q) {
+                            if (!over[q.id]) return true;
+                            first.push(q);
+                            return false;
+                        });
+                    }
+                    first.push(p);
+                });
+                return first.concat(rest);
             };
             /* Pack a run into rows no wider than the stage, starting from
              * `first` where there is one - the click's own row, which the
@@ -2002,7 +2173,7 @@
                 var line = first || null;
                 var width = line ? rowWidth(line) : 0;
                 seq.forEach(function (p) {
-                    var need = line ? width + CLUSTER_GAP + p.hw * 2 : p.hw * 2;
+                    var need = line ? width + CLUSTER_GAP + colGap + p.hw * 2 : p.hw * 2;
                     /* A row always takes one name, however wide: a name
                      * wider than the stage has nowhere else to go. */
                     if (line && (need > room || !canJoin(line, p))) line = null;
@@ -2012,7 +2183,12 @@
                 });
                 return lines.filter(function (l) { return l.length; });
             };
-            var below = pack(run(at + 1, 1), at >= 0 ? rows[at].members : null);
+            /* Held whole only while it fits: a row wider than the stage is
+             * framed at full size now (applyLayout), so what did not fit
+             * would be cut off at the stage's sides. */
+            var headWhole = at >= 0 && rowWidth(rows[at].members) <= room;
+            var below = headWhole ? pack(run(at + 1, 1), rows[at].members.slice())
+                : pack(run(Math.max(at, 0), 1), null);
             var above = at > 0 ? pack(run(at - 1, -1), null) : [];
             /* Above the click the run was read upward, so the rows come
              * back nearest-first and go back on the board the other way. */
@@ -2115,6 +2291,47 @@
             });
             layout = next;
             renderer.setGrid(grid);
+
+            /* A cluster is laid out to the stage (spreadRow), so it is
+             * framed at exactly the size it was laid out at: its rows
+             * reach from one side of the stage to the other. Zooming it
+             * out to get more of it on at once would narrow every row,
+             * because names keep their size whatever the zoom, and leave
+             * the stage's two sides empty - which is what the owner asked
+             * to have undone (2026-09-23). A block taller than the stage
+             * is shown from what was clicked, and the rest is a scroll
+             * down or up, never a band of nothing above or below it. */
+            if (filled && !inPath()) {
+                var topEdge = STAGE_TOP, bottomEdge = renderer.height - STAGE_EDGE;
+                var fx = renderer.width / 2 - (filled.minX + filled.maxX) / 2;
+                var fy;
+                if (filled.maxY - filled.minY <= bottomEdge - topEdge) {
+                    fy = (topEdge + bottomEdge) / 2 - (filled.minY + filled.maxY) / 2;
+                } else {
+                    /* The click and its own connections in the middle of
+                     * the stage, where they fit, and otherwise from the
+                     * top of them down. */
+                    var own = filled.shown || { minY: filled.minY, maxY: filled.minY };
+                    var lead = headOf();
+                    var leadAt = lead && next[lead.id];
+                    if (own.maxY - own.minY <= bottomEdge - topEdge || !leadAt) {
+                        fy = (topEdge + bottomEdge) / 2 - (own.minY + own.maxY) / 2;
+                    } else {
+                        /* More than the stage holds: the click in the
+                         * middle, and as much round it as there is room
+                         * for. */
+                        fy = (topEdge + bottomEdge) / 2 - leadAt.y;
+                        fy = Math.min(fy, topEdge - own.minY);
+                        fy = Math.max(fy, bottomEdge - own.maxY);
+                    }
+                    fy = Math.min(fy, topEdge - filled.minY);
+                    fy = Math.max(fy, bottomEdge - filled.maxY);
+                }
+                viewport.setTransform(1, fx, fy);
+                viewport.rebuildTree();
+                viewport.scheduleDraw();
+                return;
+            }
 
             /* Names are drawn at a fixed size whatever the zoom, so framing a
              * block that does not fit means zooming out until the rows are

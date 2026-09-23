@@ -880,6 +880,430 @@
         return out;
     }
 
+    /* --- right-angled lines (2026-09-23) ---
+     *
+     * The owner's verdict on straight lines from centre to centre was that
+     * they were hard to follow: diagonals at every angle, crossing and
+     * running along each other through the middle of a cluster. What was
+     * asked for instead is lines that do not overlap, with room between
+     * them, turning at right angles and as few times as they can.
+     *
+     * So a settled view is routed as a whole, on a grid of lanes LANE
+     * pixels apart. Every name is a block on the grid with a clear ring
+     * round it; a line leaves a name straight out of any side, travels
+     * along the lanes and arrives straight into a side of the other name.
+     * Each line is the cheapest way across that grid, where a step costs
+     * its length, a turn costs ORTHO_BEND steps, and a lane another line
+     * already runs along costs ORTHO_OVERLAP - so a line takes a free lane
+     * beside another rather than lying on top of it, and turns only when
+     * that is cheaper than going round. Lanes right beside another line
+     * or hard against a name cost a little extra, which is what spreads
+     * the lines out into the room the layout leaves between rows.
+     *
+     * The one overlap that is allowed, and made cheap, is lines that share
+     * an end: a company's lines to the programmes it owns leave it as one
+     * trunk and branch off to each, like an organisation chart. That reads
+     * as what it is - one name, many connections - where the same trunk
+     * shared by two unrelated lines would say they were connected.
+     *
+     * Lines are routed shortest first, so the short local connections get
+     * the straight lanes and the long ones go round them, and then every
+     * line still lying on another is taken up and routed again against
+     * everything else, once.
+     */
+    /* Distance between two lanes, in screen pixels. */
+    var LANE = 8;
+    /* The grid is coarsened past this many cells, so a huge view costs
+     * the same as a large one. */
+    var ORTHO_MAX_CELLS = 70000;
+    /* Clear ring round a name that no line may enter except its own. */
+    var ORTHO_CLEAR = 5;
+    /* A turn costs this many steps: a line takes a detour of up to this
+     * many lanes to save one. */
+    var ORTHO_BEND = 10;
+    /* Running along a lane another line already holds. */
+    var ORTHO_OVERLAP = 40;
+    /* Crossing another line. Cheap, because crossings at right angles are
+     * easy to read, but not free, so a line does not seek them out. */
+    var ORTHO_CROSS = 2;
+    /* A lane right beside another line, and a lane against a name. */
+    var ORTHO_BESIDE = 0.6;
+    var ORTHO_HUG = 0.5;
+    /* A lane already carrying a line that shares this line's end. */
+    var ORTHO_TRUNK = 0.55;
+    /* Leaving a name off the middle of a side costs this much per lane
+     * along it: enough to prefer the middle, not enough to turn for it. */
+    var ORTHO_OFF_MIDDLE = 0.08;
+    /* How far one search may look before the line goes straight. */
+    var ORTHO_MAX_EXPAND = 150000;
+
+    /* Directions: 0 up, 1 right, 2 down, 3 left. */
+    var DIR_DX = [0, 1, 0, -1];
+    var DIR_DY = [-1, 0, 1, 0];
+
+    /**
+     * Route every connection of a settled view at right angles.
+     *
+     * `boxes` is each node's box in screen pixels (index = node index),
+     * `kinds` each node's kind (a person is an ellipse, so it is left from
+     * near the middle of a side), and `edges` the lines, each
+     * { id, a, b } with a and b node indices. Returns id -> points, the
+     * first inside box a and the last inside box b, as the rest of the
+     * renderer expects of a route; a line with no way through is left out,
+     * for the caller to draw some other way.
+     */
+    function routeOrthogonal(edges, boxes, kinds) {
+        var out = Object.create(null);
+        if (!edges.length || !boxes.length) return out;
+        var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        var i, j;
+        for (i = 0; i < boxes.length; i++) {
+            var bx = boxes[i];
+            if (!bx) continue;
+            if (bx[0] < minX) minX = bx[0];
+            if (bx[1] < minY) minY = bx[1];
+            if (bx[2] > maxX) maxX = bx[2];
+            if (bx[3] > maxY) maxY = bx[3];
+        }
+        if (!isFinite(minX)) return out;
+        var S = LANE;
+        var margin = ORTHO_CLEAR + LANE * 5;
+        var spanX = maxX - minX + margin * 2, spanY = maxY - minY + margin * 2;
+        while ((spanX / S) * (spanY / S) > ORTHO_MAX_CELLS) S += 2;
+        margin = ORTHO_CLEAR + S * 5;
+        var x0 = minX - margin, y0 = minY - margin;
+        var cols = Math.ceil((maxX - minX + margin * 2) / S) + 1;
+        var rows = Math.ceil((maxY - minY + margin * 2) / S) + 1;
+        var N = cols * rows;
+        var C = ORTHO_CLEAR;
+
+        /* Blocked cells, and cells beside a name. */
+        var blocked = new Uint8Array(N);
+        var hug = new Uint8Array(N);
+        for (i = 0; i < boxes.length; i++) {
+            var b = boxes[i];
+            if (!b) continue;
+            var c0 = Math.max(0, Math.ceil((b[0] - C - x0) / S));
+            var c1 = Math.min(cols - 1, Math.floor((b[2] + C - x0) / S));
+            var r0 = Math.max(0, Math.ceil((b[1] - C - y0) / S));
+            var r1 = Math.min(rows - 1, Math.floor((b[3] + C - y0) / S));
+            for (var r = r0; r <= r1; r++) {
+                for (var c = c0; c <= c1; c++) blocked[r * cols + c] = 1;
+            }
+            for (r = Math.max(0, r0 - 1); r <= Math.min(rows - 1, r1 + 1); r++) {
+                for (c = Math.max(0, c0 - 1); c <= Math.min(cols - 1, c1 + 1); c++) hug[r * cols + c] = 1;
+            }
+        }
+
+        /* Where a line can leave each name: the first free cell straight
+         * out from a side, the point on the rim it starts from, and which
+         * way it is heading. Worked out once per name. */
+        var portsOf = new Array(boxes.length);
+        var portList = function (n) {
+            if (portsOf[n]) return portsOf[n];
+            var list = [];
+            var b = boxes[n];
+            if (!b) return (portsOf[n] = list);
+            var w = b[2] - b[0], h = b[3] - b[1];
+            var cx = (b[0] + b[2]) / 2, cy = (b[1] + b[3]) / 2;
+            var person = kinds && kinds[n] === 'person';
+            var insetX = person ? w * 0.3 : Math.min(10, w / 4);
+            var insetY = person ? h * 0.3 : Math.min(6, h / 4);
+            var add = function (c, r, dir, px, py, off) {
+                if (c < 0 || r < 0 || c >= cols || r >= rows) return;
+                var cell = r * cols + c;
+                if (blocked[cell]) return;
+                list.push({ cell: cell, dir: dir, x: px, y: py, cost: off * ORTHO_OFF_MIDDLE / S });
+            };
+            var cA = Math.ceil((b[0] + insetX - x0) / S), cB = Math.floor((b[2] - insetX - x0) / S);
+            /* A name narrower than a lane still has its middle one. */
+            if (cA > cB) cA = cB = Math.round((cx - x0) / S);
+            var rTop = Math.ceil((b[1] - C - y0) / S) - 1;
+            var rBot = Math.floor((b[3] + C - y0) / S) + 1;
+            for (var c = cA; c <= cB; c++) {
+                var px = x0 + c * S;
+                var dy = person ? (h / 2) * Math.sqrt(Math.max(0, 1 - Math.pow((px - cx) / (w / 2), 2))) : h / 2;
+                add(c, rTop, 0, px, cy - dy + PORT_SINK, Math.abs(px - cx));
+                add(c, rBot, 2, px, cy + dy - PORT_SINK, Math.abs(px - cx));
+            }
+            var rA = Math.ceil((b[1] + insetY - y0) / S), rB = Math.floor((b[3] - insetY - y0) / S);
+            if (rA > rB) rA = rB = Math.round((cy - y0) / S);
+            var cLeft = Math.ceil((b[0] - C - x0) / S) - 1;
+            var cRight = Math.floor((b[2] + C - x0) / S) + 1;
+            for (var r = rA; r <= rB; r++) {
+                var py = y0 + r * S;
+                var dx = person ? (w / 2) * Math.sqrt(Math.max(0, 1 - Math.pow((py - cy) / (h / 2), 2))) : w / 2;
+                add(cLeft, r, 3, cx - dx + PORT_SINK, py, Math.abs(py - cy) * 3);
+                add(cRight, r, 1, cx + dx - PORT_SINK, py, Math.abs(py - cy) * 3);
+            }
+            return (portsOf[n] = list);
+        };
+
+        /* Lines already down: how many run through each cell, along each
+         * axis (0 across, 1 down), and the cells each one took. */
+        var occ = [new Uint16Array(N), new Uint16Array(N)];
+        var laid = Object.create(null);
+        var byNode = new Array(boxes.length);
+        /* The lines sharing an end with the one being routed, marked for
+         * that search only. */
+        var mine = [new Uint16Array(N), new Uint16Array(N)];
+
+        var commit = function (edge, cells, sign) {
+            for (var k = 0; k < cells.length; k++) occ[cells[k] & 1][cells[k] >> 1] += sign;
+            if (sign > 0) {
+                laid[edge.id] = cells;
+            } else {
+                delete laid[edge.id];
+            }
+        };
+        var markMine = function (edge, sign) {
+            var mark = function (n) {
+                var list = byNode[n] || [];
+                for (var k = 0; k < list.length; k++) {
+                    var other = list[k];
+                    if (other.id === edge.id || !laid[other.id]) continue;
+                    /* A line between the same two names is not a trunk to
+                     * share: lying on it would hide one of the two. */
+                    if ((other.a === edge.a && other.b === edge.b) || (other.a === edge.b && other.b === edge.a)) continue;
+                    var cells = laid[other.id];
+                    for (var q = 0; q < cells.length; q++) mine[cells[q] & 1][cells[q] >> 1] += sign;
+                }
+            };
+            mark(edge.a);
+            if (edge.b !== edge.a) mark(edge.b);
+        };
+
+        var S4 = N * 4;
+        var g = new Float64Array(S4 + 1);
+        var seen = new Uint32Array(S4 + 1);
+        var closed = new Uint32Array(S4 + 1);
+        var prev = new Int32Array(S4 + 1);
+        var goalDir = new Int8Array(N);
+        var goalCost = new Float64Array(N);
+        var goalSeen = new Uint32Array(N);
+        var gen = 0;
+        /* A binary heap of states by estimated total. */
+        var heapS = new Int32Array(1024), heapF = new Float64Array(1024), heapN = 0;
+        var push = function (s, f) {
+            if (heapN === heapS.length) {
+                var ns = new Int32Array(heapN * 2), nf = new Float64Array(heapN * 2);
+                ns.set(heapS); nf.set(heapF); heapS = ns; heapF = nf;
+            }
+            var at = heapN++;
+            while (at > 0) {
+                var up = (at - 1) >> 1;
+                if (heapF[up] <= f) break;
+                heapS[at] = heapS[up]; heapF[at] = heapF[up]; at = up;
+            }
+            heapS[at] = s; heapF[at] = f;
+        };
+        var pop = function () {
+            var top = heapS[0];
+            var lastS = heapS[--heapN], lastF = heapF[heapN];
+            var at = 0;
+            for (;;) {
+                var l = at * 2 + 1;
+                if (l >= heapN) break;
+                var rr = l + 1 < heapN && heapF[l + 1] < heapF[l] ? l + 1 : l;
+                if (heapF[rr] >= lastF) break;
+                heapS[at] = heapS[rr]; heapF[at] = heapF[rr]; at = rr;
+            }
+            heapS[at] = lastS; heapF[at] = lastF;
+            return top;
+        };
+
+        /* What a step into `cell` along `axis` costs, lines already down
+         * counted. */
+        var foreign = function (axis, cell) { return occ[axis][cell] - mine[axis][cell]; };
+        var stepCost = function (cell, axis) {
+            var cost;
+            var theirs = foreign(axis, cell);
+            if (theirs > 0) cost = 1 + ORTHO_OVERLAP * theirs;
+            else cost = mine[axis][cell] > 0 ? ORTHO_TRUNK : 1;
+            if (foreign(1 - axis, cell) > 0) cost += ORTHO_CROSS;
+            var side1 = axis === 0 ? cell - cols : cell - 1;
+            var side2 = axis === 0 ? cell + cols : cell + 1;
+            if ((side1 >= 0 && foreign(axis, side1) > 0) || (side2 < N && foreign(axis, side2) > 0)) cost += ORTHO_BESIDE;
+            if (hug[cell]) cost += ORTHO_HUG;
+            return cost;
+        };
+
+        var search = function (edge) {
+            var from = portList(edge.a), to = portList(edge.b);
+            if (!from.length || !to.length) return null;
+            gen++;
+            heapN = 0;
+            var gc0 = Infinity, gc1 = -Infinity, gr0 = Infinity, gr1 = -Infinity;
+            var k;
+            for (k = 0; k < to.length; k++) {
+                var tp = to[k];
+                goalSeen[tp.cell] = gen;
+                goalDir[tp.cell] = (tp.dir + 2) % 4;
+                /* A foreign line already leaving by this spot. */
+                goalCost[tp.cell] = tp.cost + (foreign(0, tp.cell) + foreign(1, tp.cell) > 0 ? ORTHO_OVERLAP : 0);
+                var tc = tp.cell % cols, tr = (tp.cell / cols) | 0;
+                if (tc < gc0) gc0 = tc;
+                if (tc > gc1) gc1 = tc;
+                if (tr < gr0) gr0 = tr;
+                if (tr > gr1) gr1 = tr;
+            }
+            var estimate = function (cell) {
+                var c = cell % cols, r = (cell / cols) | 0;
+                var dx = c < gc0 ? gc0 - c : (c > gc1 ? c - gc1 : 0);
+                var dy = r < gr0 ? gr0 - r : (r > gr1 ? r - gr1 : 0);
+                /* A step at full price and a turn wherever the goal is
+                 * off both axes. The trunk discount makes this an over-
+                 * estimate along a shared trunk, which costs a slightly
+                 * longer route there at worst, and is what keeps a long
+                 * search from flooding the grid. */
+                return dx + dy + (dx && dy ? ORTHO_BEND : 0);
+            };
+            var startOf = Object.create(null);
+            for (k = 0; k < from.length; k++) {
+                var fp = from[k];
+                var s = fp.cell * 4 + fp.dir;
+                var cost0 = fp.cost + (foreign(0, fp.cell) + foreign(1, fp.cell) > 0 ? ORTHO_OVERLAP : 0) +
+                    (hug[fp.cell] ? ORTHO_HUG : 0);
+                if (seen[s] === gen && g[s] <= cost0) continue;
+                seen[s] = gen;
+                g[s] = cost0;
+                prev[s] = -1;
+                startOf[s] = fp;
+                push(s, cost0 + estimate(fp.cell));
+            }
+            var END = S4;
+            var expanded = 0;
+            var endPort = null, endBest = Infinity;
+            while (heapN) {
+                var st = pop();
+                if (st === END) break;
+                if (closed[st] === gen) continue;
+                closed[st] = gen;
+                if (++expanded > ORTHO_MAX_EXPAND) return null;
+                var cell = st >> 2, dir = st & 3;
+                if (goalSeen[cell] === gen) {
+                    var total = g[st] + goalCost[cell] + (goalDir[cell] === dir ? 0 : ORTHO_BEND);
+                    if (total < endBest) {
+                        endBest = total;
+                        seen[END] = gen;
+                        g[END] = total;
+                        prev[END] = st;
+                        push(END, total);
+                    }
+                }
+                var c = cell % cols, r = (cell / cols) | 0;
+                for (var nd = 0; nd < 4; nd++) {
+                    if (nd === ((dir + 2) & 3)) continue;
+                    var nc = c + DIR_DX[nd], nr = r + DIR_DY[nd];
+                    if (nc < 0 || nr < 0 || nc >= cols || nr >= rows) continue;
+                    var next = nr * cols + nc;
+                    if (blocked[next]) continue;
+                    var axis = nd & 1 ? 0 : 1;
+                    var cost = g[st] + stepCost(next, axis) + (nd === dir ? 0 : ORTHO_BEND);
+                    var ns2 = next * 4 + nd;
+                    if (seen[ns2] === gen && g[ns2] <= cost) continue;
+                    seen[ns2] = gen;
+                    g[ns2] = cost;
+                    prev[ns2] = st;
+                    push(ns2, cost + estimate(next));
+                }
+            }
+            if (seen[END] !== gen || prev[END] < 0) return null;
+
+            /* Walk back: the cells, each tagged with its axis for the
+             * occupancy, and the corners for the drawing. */
+            var chainStates = [];
+            for (var at = prev[END]; at >= 0; at = prev[at]) chainStates.push(at);
+            chainStates.reverse();
+            var first = startOf[chainStates[0]];
+            var lastCell = chainStates[chainStates.length - 1] >> 2;
+            for (k = 0; k < to.length; k++) {
+                if (to[k].cell === lastCell) { endPort = to[k]; break; }
+            }
+            var cells = [];
+            var pts = [[first.x, first.y]];
+            var px = function (cellId) { return [x0 + (cellId % cols) * S, y0 + ((cellId / cols) | 0) * S]; };
+            for (k = 0; k < chainStates.length; k++) {
+                var sk = chainStates[k];
+                var ck = sk >> 2, dk = sk & 3;
+                var ax = dk & 1 ? 0 : 1;
+                cells.push(ck * 2 + ax);
+                if (k > 0 && (chainStates[k - 1] & 3) !== dk) {
+                    /* Turned: the corner is the cell turned in, which
+                     * holds a lane each way. */
+                    var turnCell = chainStates[k - 1] >> 2;
+                    cells.push(turnCell * 2 + ax);
+                    pts.push(px(turnCell));
+                }
+            }
+            /* The first cell holds the lane of the way it was left by. */
+            var lastState = chainStates[chainStates.length - 1];
+            var lastDir = lastState & 3;
+            if (endPort && lastDir !== ((endPort.dir + 2) & 3)) {
+                /* Turned into the name on the last cell. */
+                pts.push(px(lastCell));
+                cells.push(lastCell * 2 + (endPort.dir & 1 ? 0 : 1));
+            } else {
+                pts.push(px(lastCell));
+            }
+            pts.push([endPort.x, endPort.y]);
+            return { pts: tidy(pts), cells: cells, cost: endBest };
+        };
+
+        /* Shortest first, by the distance between the two names. */
+        var order = edges.filter(function (e) { return boxes[e.a] && boxes[e.b] && e.a !== e.b; });
+        var centre = function (n) { var bb = boxes[n]; return [(bb[0] + bb[2]) / 2, (bb[1] + bb[3]) / 2]; };
+        order.forEach(function (e) {
+            var p = centre(e.a), q = centre(e.b);
+            e.span = Math.abs(p[0] - q[0]) + Math.abs(p[1] - q[1]);
+            (byNode[e.a] = byNode[e.a] || []).push(e);
+            (byNode[e.b] = byNode[e.b] || []).push(e);
+        });
+        order.sort(function (p, q) { return p.span - q.span; });
+
+        var found = Object.create(null);
+        var route = function (e) {
+            markMine(e, 1);
+            var got = search(e);
+            markMine(e, -1);
+            if (got) {
+                commit(e, got.cells, 1);
+                found[e.id] = got;
+            }
+        };
+        order.forEach(route);
+
+        /* Once more for every line still lying along another. */
+        var overlapping = function (e) {
+            var cells = laid[e.id];
+            if (!cells) return false;
+            markMine(e, 1);
+            var hit = false;
+            for (var q = 0; q < cells.length && !hit; q++) {
+                var axis = cells[q] & 1, cell = cells[q] >> 1;
+                /* Its own cells count once in occ. */
+                if (occ[axis][cell] - mine[axis][cell] > 1) hit = true;
+            }
+            markMine(e, -1);
+            return hit;
+        };
+        for (j = 0; j < order.length; j++) {
+            var e = order[j];
+            if (!overlapping(e)) continue;
+            var before = found[e.id];
+            commit(e, before.cells, -1);
+            delete found[e.id];
+            route(e);
+            if (!found[e.id]) {
+                commit(e, before.cells, 1);
+                found[e.id] = before;
+            }
+        }
+
+        Object.keys(found).forEach(function (id) { out[id] = found[id].pts; });
+        return out;
+    }
+
     /** Append a route to the current path, rounding every corner. */
     function strokeRoute(ctx, pts) {
         var r = TRACE_RADIUS;
@@ -1943,26 +2367,87 @@
                     root.requestAnimationFrame(tick);
                 }
             }
-            /* Names in motion (a click's yoyo, a hover's gather, a zoom in
-             * progress) move every frame, and a detour worked out for one
-             * frame is wrong the next: lines go straight until they settle,
-             * and are routed once, where they land. A view with more names
-             * than DETOUR_MAX_NODES is a field of dots and goes straight
-             * throughout. */
-            var straightOnly = scene.nodes.length > DETOUR_MAX_NODES || !!offsets || zooming;
+            /* A zoom in progress moves every name every frame, and a route
+             * worked out for one frame is wrong the next: lines go straight
+             * until it settles, and are routed once, where they land. A
+             * view with more names than DETOUR_MAX_NODES is a field of dots
+             * and goes straight throughout.
+             *
+             * A click's yoyo and a hover's gather move some names and not
+             * others. The view is routed where every name sits at rest, and
+             * only the lines of the names that are away from their spot go
+             * straight while they are (see routeFor); the rest keep their
+             * routes, so pointing at a name does not throw the whole view
+             * back to diagonals. */
+            var straightOnly = scene.nodes.length > DETOUR_MAX_NODES || zooming;
+            /* The boxes lines are routed round: each name where it sits at
+             * rest and at the size it is drawn there, not grown under the
+             * pointer, so hovering a name does not route the whole view
+             * again; and a name off the stage as the bubble it will be when
+             * panned to, so a pan does not either. */
+            var routeBoxes = new Array(scene.nodes.length);
+            for (i = 0; i < scene.nodes.length; i++) {
+                node = scene.nodes[i];
+                var restP = positionOf(node);
+                var rx = restP.x * k + t.x, ry = restP.y * k + t.y;
+                var onStage = rx >= -300 && rx <= w + 300 && ry >= -60 && ry <= h + 60;
+                if (bubbles[i] || !onStage) {
+                    routeBoxes[i] = bubbleBox(node, rx, ry, grow[node.id] || 1);
+                } else {
+                    var dotAt = extent[i];
+                    routeBoxes[i] = [dotAt[0] + rx - sx[i], dotAt[1] + ry - sy[i],
+                        dotAt[2] + rx - sx[i], dotAt[3] + ry - sy[i]];
+                }
+            }
+            /* A view zoomed out until its names sit on each other has no
+             * lanes between them to route along: its lines go straight. */
+            if (!straightOnly) {
+                var piled = 0;
+                for (i = 0; i < routeBoxes.length && piled <= routeBoxes.length / 10; i++) {
+                    for (var pj = i + 1; pj < routeBoxes.length; pj++) {
+                        var r1 = routeBoxes[i], r2 = routeBoxes[pj];
+                        if (r1[0] < r2[2] && r1[2] > r2[0] && r1[1] < r2[3] && r1[3] > r2[1]) piled++;
+                    }
+                }
+                if (piled > routeBoxes.length / 10) straightOnly = true;
+            }
             /* The flag is part of the key: routes drawn straight for a
              * frame in motion must not be served to the frame at rest. */
             var sigParts = [k, sceneStamp, straightOnly ? 1 : 0];
             for (i = 0; i < scene.nodes.length; i++) {
-                var ex2 = extent[i];
+                var ex2 = routeBoxes[i];
                 sigParts.push(Math.round((ex2[0] - t.x) * 2), Math.round((ex2[1] - t.y) * 2),
                     Math.round((ex2[2] - t.x) * 2), Math.round((ex2[3] - t.y) * 2));
             }
             var sig = sigParts.join(',');
-            if (routeMemo.sig !== sig) routeMemo = { sig: sig, pts: Object.create(null) };
+            if (routeMemo.sig !== sig) {
+                routeMemo = { sig: sig, pts: Object.create(null), ortho: null };
+                if (!straightOnly) {
+                    var wanted = [];
+                    var kinds = scene.nodes.map(function (n) { return n.kind; });
+                    for (i = 0; i < scene.edges.length; i++) {
+                        var oe = scene.edges[i];
+                        if (oe.source._frame !== frameStamp || oe.target._frame !== frameStamp) continue;
+                        wanted.push({ id: oe.id, a: oe.source._i, b: oe.target._i });
+                    }
+                    var routeStart = Date.now();
+                    var laidOut = routeOrthogonal(wanted, routeBoxes, kinds);
+                    if (root.KOP_NET_DEBUG && root.console) {
+                        root.console.log('KOPDEBUG routed', Object.keys(laidOut).length, 'of', wanted.length,
+                            'lines in', Date.now() - routeStart, 'ms');
+                    }
+                    routeMemo.ortho = Object.create(null);
+                    Object.keys(laidOut).forEach(function (id) {
+                        routeMemo.ortho[id] = laidOut[id].map(function (p) { return [p[0] - t.x, p[1] - t.y]; });
+                    });
+                }
+            }
             var memo = routeMemo.pts;
+            var ortho = routeMemo.ortho;
             var routeFor = function (edge, a, c) {
-                var cached = memo[edge.id];
+                var moved = offsets && (offsets[edge.sourceId] || offsets[edge.targetId]);
+                if (moved) return [[sx[a], sy[a]], [sx[c], sy[c]]];
+                var cached = memo[edge.id] || (ortho && ortho[edge.id]);
                 if (!cached) {
                     var port = ports[edge.id];
                     var ax = port && port[0] ? port[0][0] : sx[a];
@@ -2548,6 +3033,8 @@
         swatch: swatch,
         segmentHitsBox: segmentHitsBox,
         routeEdge: routeEdge,
+        routeOrthogonal: routeOrthogonal,
+        LANE: LANE,
         borderInk: borderInk,
         spreadPorts: spreadPorts,
         rimPos: rimPos,

@@ -288,7 +288,7 @@ What the owner wanted from the rebuild was the look of their own board with
 clustering added, so that names far apart on the board could still show
 their connections. So the view is now a cluster (`clusterLayout` in
 `focus.js`): what was clicked in the middle and everything it touches
-gathered round it, lines drawn straight from centre to centre.
+gathered round it, lines drawn straight from centre to centre (right-angled since 2026-09-23; see below).
 
 - *Seeded by hand, then settled.* Round each root (the click, or every name
   on an expanded trail) its connections go in a fan: what it owned or
@@ -343,13 +343,58 @@ gathered round it, lines drawn straight from centre to centre.
   the record was typed; between two of a kind, the source is the owner;
   people are left out (`upperOf`).
 
+**Right-angled lines, rows across the stage (2026-09-23).** The owner's
+verdict on the cluster was that the display was still wonky: space was not
+used well and the lines were hard to follow. What was asked for: lines
+drawn where they do not overlap other lines, with more room, at right
+angles and with as few bends as possible, and no empty space at the
+stage's two sides. Three changes answer it.
+
+- *Lines are routed as a whole, at right angles* (`routeOrthogonal` in
+  `canvas.js`). A settled view is laid on a grid of lanes 8px apart; every
+  name is a block with a 5px clear ring. A line leaves a name straight out
+  of any side and arrives straight into a side of the other, and is the
+  cheapest path across the grid (A*), where a step costs its length, a turn
+  costs 10 steps and a lane another line already holds costs 40, so a line
+  takes a free lane beside another rather than lying on it. Lanes right
+  beside a line or hard against a name cost a little more, which spreads
+  lines into the room between rows. The one overlap made cheap is a trunk
+  shared by lines out of the same name, so a company's lines leave it
+  together and branch off like an organisation chart. Lines are routed
+  shortest first, and any line still lying on another is routed again
+  once. In the WWASPS view at 1000x700: all 68 lines run across and down,
+  the typical one turns twice, and no two unrelated lines share a lane.
+  Routing takes about 115ms on Provo Canyon School's 117 lines, once per
+  settle. Hovering does not route again (lines are routed round the names
+  where they sit at rest, at rest size), and while a hover's gather or a
+  click's yoyo holds some names off their spot, only those names' lines go
+  straight. The old straight-line router (`routeEdge`) is still the
+  fallback for a line with no way through, for a zoom in progress, and for
+  views over 160 names.
+- *Rows reach across the stage* (`spreadRow` in `focus.js`). Each name asks
+  for the spot straight over or under what it connects to on the row
+  already placed, so the line between them can drop without turning, or
+  otherwise an even share of the row. The spots are pulled apart in order
+  until each pair has its gap, and held inside the stage. Names on a row
+  have 26px more between them than before, and rows at least 52px more
+  (28px on a phone), rising to 150px where the stage is tall enough, so a
+  view that fits spreads down the whole stage.
+- *Framed at full size* (`applyLayout`). Names keep their size whatever the
+  zoom, so zooming a block out to fit narrowed every row and left both
+  sides empty. A cluster is now framed at a zoom of one, and what does not
+  fit is a scroll up or down. To keep what a click connects to on the stage,
+  those names come first in each run of rows (`fillRows`), the row gap
+  shrinks as far as 22px to fit them, and where they still do not fit the
+  names are set closer (6px instead of 26px) and laid out again.
+
 With `window.KOP_NET_DEBUG = true` set before the page loads, the layout
-logs its overlap count and extent after seeding, settling and shelving;
+logs its overlap count and extent after seeding, settling and shelving,
+and the renderer logs how long each routing pass took;
 `window.KOPNetworkDebug` holds the live store, renderer, viewport and focus
 for a console or a Playwright script.
 
 `focus.grid()` still describes the layout's extent and a row pitch, for the
-tests; nothing routes through gutters any more.
+tests; the router does not read it (it builds its own lane grid from the boxes on screen).
 
 **A staff member stands between the places they join (2026-09-20).** The
 owner asked that the person who connects two places be visible on the
