@@ -30,8 +30,8 @@ Last updated 2026-09-22.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
-| 15 | Long-form articles: orientation and structure | 15A, 15G, 15I done; 15B to 15F and 15H open, see [section 15](#15-long-form-articles-orientation-and-structure) |
-| 16 | Spacing, typography and colour contrast | 16B done: ink tokens, 26 declarations switched, a test guards it. 16A (mobile spacing) and the admin stylesheets open |
+| 15 | Long-form articles: orientation and structure | 15A, 15G, 15H, 15I done; 15B to 15F open (each needs editorial input), see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 16 | Spacing, typography and colour contrast | Done: 16B ink tokens with a test; 16A checked at 390px and already sound. The admin stylesheets are still accent-as-text |
 | 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
 | 19 | Reusable article pieces | Open |
@@ -979,13 +979,25 @@ the last timeline under one index page leads on to the next index page
 rather than stopping. An article at either end of its hub prints only the
 card it has, and one the map does not place prints neither.
 
-**15H. A sticky "On this page" for wide screens.** Desktop only, degrading
-to the existing `<details>` contents block below the breakpoint. Note the
-constraint before starting: `inc/template-layout.php` puts every child
-template inside Kadence's wrapper with the site sidebar beside it, and that
-sidebar already holds search, Givebutter and MailerLite. A second column
-will not fit, so the sticky list belongs inside the content column
-(`position: sticky` beside the measure) rather than in a new sidebar.
+**15H. Getting back to the contents from anywhere.** Done 2026-09-23, but
+not as a sticky box. A small Contents button appears in the corner of the
+window once the contents box has scrolled off, and opens a copy of the same
+list; `js/article-toc.js` builds it from the list the template printed, so
+the two cannot disagree. Below 1024px it stays away.
+
+A sticky contents box was built first and it worked - it pinned under the
+header, collapsed to its title bar, opened on hover. It was thrown away
+because a sticky box is still part of the page: every time it changed size
+it changed the height of the article and moved the text under the reader,
+206 pixels on Spiritual Abuse, and a heading jumped to from the list ended
+up off the top of the screen. A fixed panel cannot do that. Measured in
+Chrome against the live articles: opening it moves the text by 0.0 pixels,
+and a jumped-to heading lands in the reading area, clear of the button.
+
+The constraint that ruled out a second column still stands:
+`inc/template-layout.php` puts every child template inside Kadence's wrapper
+with the site sidebar beside it, and that sidebar already holds search,
+Givebutter and MailerLite.
 
 **15I. Visible anchor links on headings.** Done 2026-09-23. Every heading
 and every bold marker paragraph carries a link mark, hidden until the
@@ -1003,10 +1015,13 @@ marker paragraphs from end to end.
 
 ## 16. Spacing, typography and colour contrast
 
-**16A. Mobile spacing and typography.** Increase the vertical rhythm
-between subsections, fix the collapsed margins on the long pages, and check
-the measure and line-height below 760px, where `css/article.css` currently
-changes layout.
+**16A. Mobile spacing and typography.** Checked 2026-09-23 and left alone.
+Rendered at 390px in Chrome, the long-form pages already have what the brief
+asks for: 1.7 line-height on running text, a 72ch measure, 2.25rem above
+each marker paragraph with a rule over it, and `scroll-margin-top` clearing
+the fixed header. Nothing measurable was wrong, so nothing was changed -
+the accessibility problem on these pages was the colour contrast in 16B,
+not the spacing.
 
 **16B. Contrast, to WCAG AA.** Done 2026-09-23. `css/colors.css` gained an
 ink version of each accent - same hue, same saturation, darkened until it
