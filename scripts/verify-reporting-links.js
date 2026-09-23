@@ -126,12 +126,22 @@ async function check(url, args) {
         if (TLS_CHAIN_ERRORS.has(code)) {
             return { status: 0, finalUrl: url, tls: code, error: `TLS chain: ${code}` };
         }
+        if (REFUSED_ERRORS.has(code)) {
+            return { status: 0, finalUrl: url, refused: code, error: `connection ${code}` };
+        }
         return { status: 0, finalUrl: url, error: failure.message };
     }
 }
 
 /* Status codes that mean "a filter refused us", not "there is nothing here". */
 const BLOCKED_STATUSES = new Set([401, 403, 405, 429, 503]);
+
+/* The server dropped the connection instead of answering. Some state sites
+ * (ocfs.ny.gov among them) do this to any client whose TLS fingerprint does
+ * not look like a real browser, and serve the page perfectly to Chrome. That
+ * is indistinguishable from a genuinely broken host at this level, so it is
+ * reported as "could not tell" rather than asserted to be either. */
+const REFUSED_ERRORS = new Set(['ECONNRESET', 'EPIPE', 'ECONNREFUSED', 'UND_ERR_SOCKET']);
 
 /**
  * A server that does not send its intermediate certificate.
@@ -221,8 +231,8 @@ async function main() {
      * several state portals sit behind one and refuse anything that is not a
      * real browser, however the User-Agent is dressed up. Reported separately
      * so a genuine 404 is not lost in the noise. */
-    const blocked = checked.filter((r) => BLOCKED_STATUSES.has(r.status));
-    const broken = checked.filter((r) => !r.tls && !BLOCKED_STATUSES.has(r.status)
+    const blocked = checked.filter((r) => BLOCKED_STATUSES.has(r.status) || r.refused);
+    const broken = checked.filter((r) => !r.tls && !r.refused && !BLOCKED_STATUSES.has(r.status)
         && (r.status === 0 || r.status >= 400));
     const bounced = checked.filter((r) => r.status >= 200 && r.status < 400
         && !sameEnough(r.url, r.finalUrl) && landedOnRoot(r.finalUrl));
@@ -280,8 +290,8 @@ function writeReport({ checked, broken, bounced, moved, tls, blocked, args }) {
     section('Broken', broken,
         'These returned an error or did not answer. Find where the form went and update the record, or remove it.');
     section('Refused by a bot filter', blocked,
-        'A WAF turned the checker away. The page almost certainly still exists - open it in a browser to confirm '
-        + 'rather than removing the record.');
+        'A WAF turned the checker away, either with a status code or by dropping the connection outright. The page '
+        + 'very likely still exists - open it in a browser to confirm rather than removing the record.');
     section('TLS chain misconfigured', tls,
         'The agency\'s server does not send a complete certificate chain. A browser will usually load these anyway, '
         + 'so the link is kept, but confirm each one by hand and consider telling the agency.');

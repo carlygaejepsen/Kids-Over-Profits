@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T00:51:57.525Z",
+  "generated": "2026-09-23T01:23:22.885Z",
   "categories": [
     {
       "key": "professional-board",
@@ -274,6 +274,120 @@
       ]
     },
     {
+      "state": "Arkansas",
+      "abbr": "AR",
+      "slug": "arkansas",
+      "updated": "2026-09-22",
+      "note": "Two things set Arkansas apart. Its child abuse hotline is run by the State Police Crimes Against Children Division rather than by the human services department, so a report there goes straight to law enforcement. And the Office of Long-Term Care - the sole licensing authority for Psychiatric Residential Treatment Facilities - now publishes its monitoring reports, complaint visit reports, corrective action plans and notices of adverse action online, so you can read a facility's record before you call.",
+      "channels": [
+        {
+          "id": "ar-counseling-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Arkansas Board of Examiners in Counseling and Marriage and Family Therapy",
+          "what_it_can_do": "Takes complaints against its licensees and applicants from any person, investigates them and disciplines licences.",
+          "who_to_report": "A licensed professional counselor or marriage and family therapist in Arkansas.",
+          "how": "Complaints must be in writing and on the Board's own complaint form, which is filed through its online portal.",
+          "complaint_url": "https://abecmft.portalus.thentiacloud.net/webs/portal/register/",
+          "info_url": "https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/",
+          "phone": "501-683-5800",
+          "mail": "Arkansas Board of Examiners in Counseling, Freeway Medical Center, 5800 W. 10th Street, Suite 405, Little Rock, AR 72204",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/"
+          ]
+        },
+        {
+          "id": "ar-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Arkansas Psychology Board",
+          "what_it_can_do": "Takes complaints about the practice of any of its licensees, from any concerned citizen or organisation, and disciplines licences.",
+          "who_to_report": "A licensed psychologist in Arkansas.",
+          "how": "The complaint must be in writing, and the document has to be signed and dated. It goes to the Board's Complaints Committee.",
+          "complaint_url": "https://healthy.arkansas.gov/boards-commissions/boards/psychology-arkansas-board/complaints-ethical-violations/",
+          "info_url": "https://psychologyboard.arkansas.gov/public/",
+          "mail": "Arkansas Psychology Board, Complaints Committee, 101 East Capitol, Suite 415, Little Rock, AR 72201",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://healthy.arkansas.gov/boards-commissions/boards/psychology-arkansas-board/complaints-ethical-violations/",
+            "https://psychologyboard.arkansas.gov/public/"
+          ]
+        },
+        {
+          "id": "ar-social-work-board",
+          "category": "professional-board",
+          "profession": "Social worker",
+          "name": "Arkansas Social Work Licensing Board",
+          "what_it_can_do": "Licenses and disciplines social workers in Arkansas.",
+          "who_to_report": "A licensed social worker.",
+          "how": "Contact the Board for its complaint form.",
+          "phone": "501-372-5071",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/"
+          ]
+        },
+        {
+          "id": "ar-office-long-term-care",
+          "category": "facility-licensing",
+          "name": "Arkansas Office of Long-Term Care (Psychiatric Residential Treatment Facilities)",
+          "what_it_can_do": "The sole licensing authority for Psychiatric Residential Treatment Facilities in Arkansas. It licenses, surveys, regulates and investigates them, and takes enforcement action against failed facility practices.",
+          "who_to_report": "A PRTF - the licensed psychiatric residential category most Arkansas programs in this industry fall under.",
+          "how": "Call the complaint hotline or email the complaints address.",
+          "complaint_url": "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/occupational-licensing/psychiatric-residential-treatment-facilities-prtf/",
+          "info_url": "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/information-about-our-licensed-providers/enforcement-violation-reports/",
+          "phone": "1-800-582-4887",
+          "email": "complaints.OLTC@arkansas.gov",
+          "anonymous": "allowed",
+          "note": "Arkansas publishes PRTF monitoring and complaint visit reports, corrective action plans and notices of adverse action online. Read what has already been found against a program before you file.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/occupational-licensing/psychiatric-residential-treatment-facilities-prtf/",
+            "https://humanservices.arkansas.gov/news/dhs-makes-reports-on-psychiatric-residential-treatment-facilities-available-online/"
+          ]
+        },
+        {
+          "id": "ar-child-abuse-hotline",
+          "category": "legal",
+          "name": "Arkansas Child Abuse Hotline (State Police Crimes Against Children Division)",
+          "what_it_can_do": "The statutory report line for child maltreatment, run by the Arkansas State Police rather than by the human services department, so a report reaches law enforcement directly.",
+          "who_to_report": "A child at an Arkansas program. Anyone may report, at any hour.",
+          "how": "Call. Have the child's name and address, the alleged offender's name and address, and what happened. If a child's life may be in immediate danger, call 911 or local law enforcement first, then the hotline. Mandated reporters can file through the secure online portal instead.",
+          "complaint_url": "https://mandatedreporter.arkansas.gov/mrp/",
+          "info_url": "https://humanservices.arkansas.gov/divisions-shared-services/children-family-services/how-to-report-child-abuse-neglect/",
+          "phone": "1-800-482-5964",
+          "phone_note": "Also 1-844-SAVE-A-CHILD. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://humanservices.arkansas.gov/divisions-shared-services/children-family-services/how-to-report-child-abuse-neglect/",
+            "https://dps.arkansas.gov/law-enforcement/arkansas-state-police/divisions/crimes-against-children/"
+          ]
+        },
+        {
+          "id": "ar-disability-rights-arkansas",
+          "category": "oversight",
+          "name": "Disability Rights Arkansas",
+          "what_it_can_do": "Arkansas's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Arkansas program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightsar.org/",
+          "phone": "1-800-482-1174",
+          "phone_note": "Main line 501-296-1775 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=arkansas"
+          ]
+        }
+      ]
+    },
+    {
       "state": "California",
       "abbr": "CA",
       "slug": "california",
@@ -352,6 +466,103 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=california"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Colorado",
+      "abbr": "CO",
+      "slug": "colorado",
+      "updated": "2026-09-22",
+      "note": "Colorado puts every licensed profession behind one complaint form at the Division of Professions and Occupations. It also has an independent Child Protection Ombudsman with its own complaint form, which publishes investigative reports naming what it found; that is a real route when a report has already been made and nothing moved.",
+      "channels": [
+        {
+          "id": "co-division-professions-occupations",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Colorado Division of Professions and Occupations (DORA)",
+          "what_it_can_do": "Takes and investigates complaints against every mental health licence Colorado issues - psychologists, clinical social workers, professional counselors, marriage and family therapists and addiction counselors - through one form, and the boards discipline the licence.",
+          "who_to_report": "Any licensed mental health professional in Colorado. Anyone can file: a client, a colleague, a family member.",
+          "how": "Use the Division's single complaint form and pick the licence type.",
+          "complaint_url": "https://dpo.colorado.gov/FileComplaint",
+          "info_url": "https://dora.colorado.gov/file-complaint",
+          "phone": "303-894-7855",
+          "phone_note": "DORA main line. Toll free 1-800-886-7675.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dora.colorado.gov/file-complaint",
+            "https://dpo.colorado.gov/FileComplaint"
+          ],
+          "note": "Colorado's mental health practice act sets a filing deadline, but the Division's own pages did not state it when this was checked. Ask the Division how long you have before assuming you are out of time."
+        },
+        {
+          "id": "co-behavioral-health-administration",
+          "category": "facility-licensing",
+          "name": "Colorado Behavioral Health Administration",
+          "what_it_can_do": "Licenses behavioral health entities in Colorado and takes complaints about the services they provide.",
+          "who_to_report": "A licensed behavioral health provider or program.",
+          "how": "Submit a complaint through the BHA's complaint page, or email the complaints address.",
+          "complaint_url": "https://bha.colorado.gov/help/submit-a-complaint",
+          "phone": "303-866-7191",
+          "email": "CDHS_BHA_complaint@state.co.us",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://bha.colorado.gov/help/submit-a-complaint"
+          ]
+        },
+        {
+          "id": "co-child-abuse-hotline",
+          "category": "legal",
+          "name": "Colorado Child Abuse and Neglect Hotline",
+          "what_it_can_do": "The statewide report line for child abuse and neglect. It routes the report to the county department that investigates.",
+          "who_to_report": "A child at a Colorado program.",
+          "how": "Call. It is answered at any hour, every day.",
+          "info_url": "https://co4kids.org/",
+          "phone": "1-844-264-5437",
+          "phone_note": "1-844-CO-4-KIDS. 24 hours a day, every day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://co4kids.org/",
+            "https://cdhs.colorado.gov/child-welfare"
+          ]
+        },
+        {
+          "id": "co-child-protection-ombudsman",
+          "category": "oversight",
+          "name": "Office of Colorado's Child Protection Ombudsman",
+          "what_it_can_do": "An independent office that investigates complaints about the child protection system, including how an agency handled a case, and publishes investigative reports setting out what it found. It has looked at residential child care facilities directly.",
+          "what_it_cannot_do": "It examines how the system responded rather than licensing or prosecuting a program itself.",
+          "who_to_report": "A family or young person who reported something to a Colorado agency and got nowhere, or who believes the response itself caused harm.",
+          "how": "Use the office's own complaint form.",
+          "complaint_url": "https://coloradocpo.org/complaint-form/",
+          "info_url": "https://coloradocpo.org/reports/",
+          "phone": "720-625-8640",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://coloradocpo.org/"
+          ]
+        },
+        {
+          "id": "co-disability-justice",
+          "category": "oversight",
+          "name": "Disability Justice (Colorado's Protection and Advocacy agency)",
+          "what_it_can_do": "Colorado's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Colorado program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityjustice.co",
+          "phone": "1-800-288-1376",
+          "phone_note": "Main line 303-722-0300 voice/TDD.",
+          "anonymous": "discouraged",
+          "note": "Formerly Disability Law Colorado; it now operates as Disability Justice.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=colorado"
           ]
         }
       ]
@@ -615,6 +826,83 @@
       ]
     },
     {
+      "state": "Michigan",
+      "abbr": "MI",
+      "slug": "michigan",
+      "updated": "2026-09-22",
+      "note": "Michigan puts abuse in a child caring institution through the same centralised intake line as any other child abuse report, and its own guidance says a child can make that call themselves. Reports are then passed to whoever should investigate - law enforcement, or the licensing bureau. Licensing the facility and licensing the therapist are separate departments: MDHHS for the institution, LARA for the clinician.",
+      "channels": [
+        {
+          "id": "mi-bureau-professional-licensing",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Michigan LARA, Bureau of Professional Licensing",
+          "what_it_can_do": "Takes complaints against counselors, marriage and family therapists, psychologists, social workers and other health professionals, assigns an investigator, gathers documents and interviews the professional complained about.",
+          "what_it_cannot_do": "If the documents and interviews do not establish a violation, the investigation ends and the file is closed.",
+          "who_to_report": "Any licensed mental health professional in Michigan. Anyone can file.",
+          "how": "Complete the Bureau's complaint form and send it in. It asks whether any civil action or police report is pending, and whether you would be willing to testify at an administrative hearing.",
+          "complaint_url": "https://www.michigan.gov/lara/bureau-list/bpl/complaint",
+          "info_url": "https://www.michigan.gov/lara/i-need-to/make-a-complaint-about-a-licensed-professional-or-business",
+          "phone": "1-800-882-6006",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.michigan.gov/lara/bureau-list/bpl/complaint",
+            "https://www.michigan.gov/lara/i-need-to/make-a-complaint-about-a-licensed-professional-or-business"
+          ]
+        },
+        {
+          "id": "mi-child-welfare-licensing",
+          "category": "facility-licensing",
+          "name": "Michigan MDHHS, Division of Child Welfare Licensing",
+          "what_it_can_do": "Licenses child caring institutions, children's foster homes and child placing agencies in Michigan, and investigates licensing complaints against them.",
+          "who_to_report": "The facility - how it is run, staffed and supervised, as distinct from a specific allegation of abuse, which goes to centralised intake.",
+          "how": "Use the Division's online complaint form, or its complaint page.",
+          "complaint_url": "https://www.michigan.gov/mdhhs/doing-business/licensing/child-welfare/complaints",
+          "info_url": "https://www.michigan.gov/en/mdhhs/doing-business/licensing/child-welfare/Child-Placing/contact-us/online-complaint-form-division-of-child-welfare-licensing",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.michigan.gov/mdhhs/doing-business/licensing/child-welfare/complaints"
+          ]
+        },
+        {
+          "id": "mi-centralized-intake",
+          "category": "legal",
+          "name": "Michigan Centralized Intake for Abuse and Neglect",
+          "what_it_can_do": "The statewide 24-hour line for abuse or neglect of any child or adult, including abuse of a child in a child caring institution, a juvenile court operated facility or a children's foster home. Reports are passed to whoever should investigate - law enforcement, or the licensing bureau.",
+          "who_to_report": "A child at a Michigan program. Michigan says explicitly that anyone can report, including a child.",
+          "how": "Call, at any hour.",
+          "info_url": "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect/childrens/report-process",
+          "phone": "1-855-444-3911",
+          "phone_note": "24 hours a day, every day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect/childrens/report-process",
+            "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect"
+          ]
+        },
+        {
+          "id": "mi-disability-rights-michigan",
+          "category": "oversight",
+          "name": "Disability Rights Michigan",
+          "what_it_can_do": "Michigan's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Michigan program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://drmich.org/",
+          "phone": "1-800-288-5923",
+          "phone_note": "Main line 517-487-1755; TTY 517-374-4687.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=michigan"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Missouri",
       "abbr": "MO",
       "slug": "missouri",
@@ -816,6 +1104,206 @@
       ]
     },
     {
+      "state": "Nevada",
+      "abbr": "NV",
+      "slug": "nevada",
+      "updated": "2026-09-22",
+      "note": "Nevada has no single child abuse hotline. Clark County and Washoe County each run their own, and the Division of Child and Family Services covers everywhere else - and in those rural counties, out of hours, the Division tells you to call local law enforcement instead. Nevada's board websites were also mid-reorganisation when this was checked, and several published complaint forms had gone; where that is the case the phone number and address below came from the board's own live page, and it is worth asking them to send you the current form.",
+      "channels": [
+        {
+          "id": "nv-marriage-family-counselor-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Nevada Board of Examiners for Marriage and Family Therapists and Clinical Professional Counselors",
+          "what_it_can_do": "Takes complaints against Nevada marriage and family therapists, clinical professional counselors, their interns, and anyone else under its jurisdiction including allegations of unlicensed practice, and disciplines licences.",
+          "who_to_report": "An LMFT or CPC in Nevada, an intern working under one, or somebody practising without the licence.",
+          "how": "The complaint must be in writing and signed by you, and posted with your supporting documents. Ask the Board for its current complaint form.",
+          "info_url": "https://www.marriage.nv.gov/",
+          "phone": "702-486-7388",
+          "phone_note": "Walk-in, phone and email hours are Tuesday to Thursday, 9am to 4pm only.",
+          "email": "mftbd2@mftbd.nv.gov",
+          "mail": "Board of Examiners for Marriage and Family Therapists and Clinical Professional Counselors, 500 N. Rainbow Boulevard, Suite 201, Las Vegas, NV 89107",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.marriage.nv.gov/"
+          ]
+        },
+        {
+          "id": "nv-psychological-examiners",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Nevada Board of Psychological Examiners",
+          "what_it_can_do": "Reviews and disciplines complaints against licensed psychologists in Nevada.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "Complete the Board's complaint form, and the Release of Psychological Records form where it applies, with as much detail and supporting documentation as you can. Complaints cannot be taken by phone - they must be in writing.",
+          "complaint_url": "https://www.psyexam.nv.gov/complaints-discipline/disciplinary-policy/",
+          "info_url": "https://www.psyexam.nv.gov/contact/",
+          "phone": "702-276-0926",
+          "email": "complaints@nvbope.net",
+          "mail": "Nevada Board of Psychological Examiners, 3080 South Durango Drive, Suite 102, Las Vegas, NV 89117",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.psyexam.nv.gov/complaints-discipline/disciplinary-policy/",
+            "https://www.psyexam.nv.gov/contact/"
+          ]
+        },
+        {
+          "id": "nv-social-work-board",
+          "category": "professional-board",
+          "profession": "Social worker",
+          "name": "Nevada Board of Examiners for Social Workers",
+          "what_it_can_do": "Licenses and disciplines social workers in Nevada, including licensed clinical social workers. It calls the process filing an accusation of wrongdoing.",
+          "who_to_report": "An LCSW or other licensed social worker.",
+          "how": "File an accusation of wrongdoing through the Board's consumer page, which also sets out the disciplinary laws and regulations it works to.",
+          "complaint_url": "https://www.socwork.nv.gov/consumers/file-an-accusation-of-wrongdoing/",
+          "info_url": "https://www.socwork.nv.gov/consumers/",
+          "phone": "775-688-2555",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.socwork.nv.gov/consumers/file-an-accusation-of-wrongdoing/",
+            "https://www.socwork.nv.gov/consumers/"
+          ]
+        },
+        {
+          "id": "nv-health-care-quality-compliance",
+          "category": "facility-licensing",
+          "name": "Nevada Bureau of Health Care Quality and Compliance (HCQC)",
+          "what_it_can_do": "Licenses, certifies and investigates health care facilities in Nevada, including facilities for the treatment of alcohol and drug abuse and residential psychiatric facilities. Investigators use interviews, records reviews and in-person observation.",
+          "who_to_report": "An HCQC-licensed facility - complaints about patient care or about how the facility is run.",
+          "how": "Call the complaint intake line; a message can be left at any hour and calls are returned within 48 to 72 hours. A complaint form can also be faxed to 702-486-6520.",
+          "info_url": "https://www.dpbh.nv.gov/regulatory/hcqc/hcqc-redirect/",
+          "phone": "702-668-3250",
+          "phone_note": "Complaint intake. Messages can be left 24/7; calls returned in 48 to 72 hours.",
+          "anonymous": "allowed",
+          "note": "You may give your name or stay anonymous, and if you give it you can ask that it be kept confidential during the investigation. Every complaint is triaged by how much harm it suggests: a serious one can start an investigation within 48 hours, a lesser one waits for staff to be free.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dpbh.nv.gov/regulatory/hcqc/hcqc-redirect/"
+          ]
+        },
+        {
+          "id": "nv-child-abuse-reporting",
+          "category": "legal",
+          "name": "Nevada child abuse and neglect reporting",
+          "what_it_can_do": "Starts a child protective services investigation. Which agency takes the report depends on the county.",
+          "who_to_report": "A child at a Nevada program. Report to the county the program is in: Clark County (Las Vegas and Henderson) on 702-399-0081, Washoe County (Reno and Sparks) on 833-900-7233, and the Division of Child and Family Services for every other county on 833-571-1041.",
+          "how": "Call the number for that county. In the rural counties, out of hours and at weekends, the Division tells you to call local law enforcement to make the report instead. In an emergency, 911.",
+          "complaint_url": "https://www.dcfs.nv.gov/contact-us/report-suspected-child-abuse-neglect/",
+          "phone": "1-833-571-1041",
+          "phone_note": "Division of Child and Family Services, for counties other than Clark and Washoe.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dcfs.nv.gov/contact-us/report-suspected-child-abuse-neglect/"
+          ]
+        },
+        {
+          "id": "nv-disability-advocacy-law-center",
+          "category": "oversight",
+          "name": "Nevada Disability Advocacy and Law Center",
+          "what_it_can_do": "Nevada's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Nevada program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.ndalc.org/",
+          "phone": "1-888-349-3843",
+          "phone_note": "Main line 702-257-8150.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=nevada"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "New York",
+      "abbr": "NY",
+      "slug": "new-york",
+      "updated": "2026-09-22",
+      "note": "New York has something most states do not: the Justice Center for the Protection of People with Special Needs, created by statute in 2013, with its own 24-hour register, its own investigators and the power to support criminal prosecution. It says every allegation is investigated to conclusion, and it provides advocates to victims and families during the investigation. If the program is a New York state-operated, licensed or certified facility, this is the strongest channel in the state.",
+      "channels": [
+        {
+          "id": "ny-office-professional-discipline",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "New York Office of the Professions, Office of Professional Discipline",
+          "what_it_can_do": "Investigates professional misconduct by anyone licensed by the State of New York - psychologists, mental health counselors, marriage and family therapists, creative arts therapists, psychoanalysts and social workers - and illegal practice by the unlicensed. Outcomes run from a warning letter to revoking the licence.",
+          "who_to_report": "A licensed mental health professional in New York, or someone practising without the licence.",
+          "how": "Complete the discipline complaint form and post it to the regional Office of Professional Discipline nearest where the incident happened, or fax it. Complaints must be in writing; they cannot be made by phone, though you can call for help with the form.",
+          "complaint_url": "https://www.op.nysed.gov/enforcement/discipline-complaint-form",
+          "info_url": "https://www.op.nysed.gov/enforcement/enforcement-actions",
+          "phone": "1-800-442-8106",
+          "phone_note": "For information on filing. The complaint itself has to be in writing. Fax 212-951-6420.",
+          "email": "conduct@nysed.gov",
+          "anonymous": "not-allowed",
+          "note": "Investigators in the regional office may consult members of the State board for that profession before deciding.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.op.nysed.gov/enforcement/discipline-complaint-form",
+            "https://www.op.nysed.gov/enforcement/enforcement-actions"
+          ]
+        },
+        {
+          "id": "ny-justice-center",
+          "category": "oversight",
+          "name": "New York State Justice Center for the Protection of People with Special Needs",
+          "what_it_can_do": "Runs the Vulnerable Persons Central Register, a 24-hour hotline for abuse, neglect, financial misappropriation and any significant incident threatening the health, safety or welfare of someone in a New York state-operated, licensed or certified facility. It investigates every allegation to conclusion, and works with prosecutors on criminal cases arising from them.",
+          "who_to_report": "A young person with special needs - which includes a mental health diagnosis - receiving services at a New York state-operated, licensed or certified facility or program.",
+          "how": "Call the Vulnerable Persons Central Register. If somebody is in immediate danger, call 911 first.",
+          "complaint_url": "https://www.justicecenter.ny.gov/reporting-incident",
+          "info_url": "https://www.justicecenter.ny.gov/investigations-appeals",
+          "phone": "1-855-373-2122",
+          "phone_note": "Vulnerable Persons Central Register, 24 hours a day. Advocates for victims and families on 1-800-624-4143.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "The Justice Center provides advocates who answer questions about the process and give case updates during an investigation - unusual, and worth using.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.justicecenter.ny.gov/",
+            "https://www.justicecenter.ny.gov/reporting-incident"
+          ]
+        },
+        {
+          "id": "ny-statewide-central-register",
+          "category": "legal",
+          "name": "New York Statewide Central Register of Child Abuse and Maltreatment",
+          "what_it_can_do": "The state's child abuse hotline, run by the Office of Children and Family Services. Takes reports from the general public and routes them to the local child protective service for investigation.",
+          "who_to_report": "A child at a New York program. Neighbours, relatives and concerned citizens can all use the public line.",
+          "how": "Call the 24-hour toll-free line. If a child is in immediate danger, call 911 or the local police first.",
+          "info_url": "https://ocfs.ny.gov/programs/cps/",
+          "phone": "1-800-342-3720",
+          "phone_note": "24 hours a day. TDD/TTY 1-800-638-5163, or have a Video Relay provider call the main number.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://ocfs.ny.gov/programs/cps/",
+            "https://ocfs.ny.gov/main/contact/"
+          ]
+        },
+        {
+          "id": "ny-disability-rights-new-york",
+          "category": "oversight",
+          "name": "Disability Rights New York",
+          "what_it_can_do": "New York's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A New York program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.drny.org/",
+          "phone": "1-800-993-8982",
+          "phone_note": "Main line 518-432-7861; TTY 518-512-3448.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-york"
+          ]
+        }
+      ]
+    },
+    {
       "state": "North Carolina",
       "abbr": "NC",
       "slug": "north-carolina",
@@ -987,6 +1475,115 @@
       ]
     },
     {
+      "state": "Ohio",
+      "abbr": "OH",
+      "slug": "ohio",
+      "updated": "2026-09-22",
+      "note": "Ohio has something rare and worth knowing about: a Youth and Family Ombudsmen Office that takes complaints directly from young people, with a separate form for youth and for families. Most state oversight assumes an adult is doing the reporting. Ohio's child abuse line is also a directory rather than a call centre - it connects you to the county office that will actually handle it.",
+      "channels": [
+        {
+          "id": "oh-cswmft-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Ohio Counselor, Social Worker and Marriage and Family Therapist Board",
+          "what_it_can_do": "Licenses and disciplines counselors, social workers and marriage and family therapists in Ohio, and investigates complaints including incompetent practice, breaking confidentiality, failure to tell clients the nature and extent of services, sexual harassment, discrimination, physical or verbal abuse and conflict of interest.",
+          "who_to_report": "A licensed counselor, social worker or marriage and family therapist in Ohio. Psychologists have their own board.",
+          "how": "File through the Board's eLicense complaint portal, or download the form and fax it.",
+          "complaint_url": "https://cswmft.ohio.gov/wps/portal/gov/cswmft/for-the-public/file-a-complaint-elicense-portal",
+          "info_url": "https://cswmft.ohio.gov/about-the-board",
+          "phone": "614-466-0912",
+          "phone_note": "Fax 614-728-7790.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://cswmft.ohio.gov/"
+          ]
+        },
+        {
+          "id": "oh-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Ohio State Board of Psychology",
+          "what_it_can_do": "Licenses and disciplines psychologists and school psychologists in Ohio, and publishes how its investigation process works alongside its complaint form.",
+          "who_to_report": "A licensed psychologist in Ohio.",
+          "how": "Use the Board's complaint page, which sets out the investigation process as well as the form.",
+          "complaint_url": "https://psychology.ohio.gov/wps/portal/gov/psy/for-the-public/how-to-file-complaint",
+          "info_url": "https://psychology.ohio.gov/",
+          "phone": "614-466-8808",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://psychology.ohio.gov/"
+          ]
+        },
+        {
+          "id": "oh-department-behavioral-health",
+          "category": "facility-licensing",
+          "name": "Ohio Department of Behavioral Health",
+          "what_it_can_do": "Licenses and certifies behavioral health providers in Ohio, including residential treatment, and takes complaints about the services they give.",
+          "who_to_report": "A certified or licensed behavioral health provider or residential program.",
+          "how": "Contact the Department.",
+          "info_url": "https://dbh.ohio.gov/",
+          "phone": "614-466-2596",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dbh.ohio.gov/"
+          ],
+          "note": "Formerly the Ohio Department of Mental Health and Addiction Services (OhioMHAS); the old mha.ohio.gov address now redirects here."
+        },
+        {
+          "id": "oh-child-abuse-hotline",
+          "category": "legal",
+          "name": "Ohio child abuse and neglect reporting line",
+          "what_it_can_do": "An automated directory that connects you straight to the child welfare or law enforcement office in the relevant county, which is where the report is actually handled.",
+          "who_to_report": "A child at an Ohio program. Report to the county the program is in.",
+          "how": "Call. Reports can be anonymous.",
+          "info_url": "https://childrenandyouth.ohio.gov/help-center/child-safety-concerns/child-safety-concerns",
+          "phone": "1-855-642-4453",
+          "phone_note": "1-855-O-H-CHILD.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://childrenandyouth.ohio.gov/help-center/child-safety-concerns/child-safety-concerns",
+            "https://youthandfamilyombudsmen.ohio.gov/home"
+          ]
+        },
+        {
+          "id": "oh-youth-family-ombudsman",
+          "category": "oversight",
+          "name": "Ohio Youth and Family Ombudsmen Office",
+          "what_it_can_do": "An independent office for anyone concerned about the Ohio children services system. It takes complaints directly from young people, with a separate route for youth and for families.",
+          "who_to_report": "A young person in the Ohio system who wants to complain themselves, or a family who has hit a wall with an agency.",
+          "how": "Use the Youth complaint form or the Family complaint form on the office's site.",
+          "complaint_url": "https://youthandfamilyombudsmen.ohio.gov/home",
+          "phone": "1-877-649-6884",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://youthandfamilyombudsmen.ohio.gov/home"
+          ]
+        },
+        {
+          "id": "oh-disability-rights-ohio",
+          "category": "oversight",
+          "name": "Disability Rights Ohio",
+          "what_it_can_do": "Ohio's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Ohio program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.disabilityrightsohio.org/",
+          "phone": "1-800-282-9181",
+          "phone_note": "Main line 614-466-7264.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=ohio"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Oregon",
       "abbr": "OR",
       "slug": "oregon",
@@ -1065,6 +1662,71 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oregon"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Pennsylvania",
+      "abbr": "PA",
+      "slug": "pennsylvania",
+      "updated": "2026-09-22",
+      "note": "Pennsylvania routes every complaint about a licensed professional through one bureau, the Bureau of Professional and Occupational Affairs, whichever board holds the licence. Its ChildLine is one of the clearer state hotlines: it takes both formal abuse referrals and general child well-being concerns, so you do not have to be certain you are describing abuse before you call.",
+      "channels": [
+        {
+          "id": "pa-bureau-professional-occupational-affairs",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Pennsylvania Bureau of Professional and Occupational Affairs (BPOA)",
+          "what_it_can_do": "Receives and processes every complaint against a state-licensed professional in Pennsylvania, including those under the State Board of Social Workers, Marriage and Family Therapists and Professional Counselors, and the State Board of Psychology. The Department's Bureau of Enforcement and Investigation does the investigating, and the boards discipline the licence.",
+          "who_to_report": "A licensed social worker, marriage and family therapist, professional counselor or psychologist in Pennsylvania. Any member of the public can file.",
+          "how": "Use the Department of State's complaint form for a PA-licensed professional.",
+          "complaint_url": "https://www.pa.gov/services/dos/file-a-complaint-against-a-pa-licensed-professional",
+          "info_url": "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/social-workers-marriage-family-therapists-professional-counselors",
+          "phone": "1-833-367-2762",
+          "phone_note": "1-833-DOS-BPOA.",
+          "mail": "State Board of Social Workers, Marriage and Family Therapists and Professional Counselors, P.O. Box 2649, Harrisburg, PA 17105-2649",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/social-workers-marriage-family-therapists-professional-counselors",
+            "https://www.pa.gov/agencies/dos/programs/professional-licensing"
+          ]
+        },
+        {
+          "id": "pa-childline",
+          "category": "legal",
+          "name": "Pennsylvania ChildLine",
+          "what_it_can_do": "The statewide child protective services referral line. Trained specialists take both suspected abuse referrals and general child well-being concerns, and decide what happens next with each one.",
+          "who_to_report": "A child at a Pennsylvania program. You do not have to be sure it is abuse - ChildLine explicitly takes general well-being concerns too.",
+          "how": "Call, at any hour. Mandated reporters have a separate electronic route; permissive reporters - anyone else - may report anonymously.",
+          "complaint_url": "https://www.pa.gov/services/dhs/report-child-abuse-or-neglect",
+          "info_url": "https://www.pa.gov/agencies/dhs/resources/keep-kids-safe/report-child-abuse",
+          "phone": "1-800-932-0313",
+          "phone_note": "24 hours a day, seven days a week. TDD 1-866-872-1677.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "Pennsylvania distinguishes mandated reporters, who must report and have their own portal, from permissive reporters, who are encouraged to and may do so anonymously.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.pa.gov/agencies/dhs/report-abuse",
+            "https://www.pa.gov/agencies/dhs/resources/keep-kids-safe/report-child-abuse"
+          ]
+        },
+        {
+          "id": "pa-disability-rights-pennsylvania",
+          "category": "oversight",
+          "name": "Disability Rights Pennsylvania",
+          "what_it_can_do": "Pennsylvania's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Pennsylvania program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.disabilityrightspa.org/",
+          "phone": "1-800-692-7443",
+          "phone_note": "Main line 717-236-8110; TDD 717-346-0293.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"
           ]
         }
       ]
@@ -1435,16 +2097,203 @@
           ]
         }
       ]
+    },
+    {
+      "state": "Virginia",
+      "abbr": "VA",
+      "slug": "virginia",
+      "updated": "2026-09-22",
+      "note": "Virginia is blunt about the cost of filing, and it is worth reading before you do. A complaint to the Department of Health Professions cannot be withdrawn once submitted, you cannot get a copy of your own form back afterwards, and Virginia law requires the details to be shared with the licensee you complained about. The Department cannot guarantee anonymity either - if you want to be anonymous, it warns that you must keep your identity out of the form and every document attached to it.",
+      "channels": [
+        {
+          "id": "va-health-professions",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Virginia Department of Health Professions, Enforcement Division",
+          "what_it_can_do": "Receives and investigates complaints for all thirteen of Virginia's licensing and regulatory boards, including the Board of Counseling, the Board of Social Work and the Board of Psychology, and the boards discipline the licence.",
+          "what_it_cannot_do": "It has no authority to make a licensee return money or provide any other personal remedy. It cannot give you a copy of your complaint form once submitted, and the complaint cannot be withdrawn.",
+          "who_to_report": "A licensed counselor, social worker or psychologist in Virginia. Identify them by full name and licence type.",
+          "how": "Use the online complaint form, or return the Word or PDF form to the Enforcement Division by email, fax, post or in person.",
+          "complaint_url": "https://www.dhp.virginia.gov/Complaints/",
+          "info_url": "https://www.dhp.virginia.gov/PractitionerResources/Enforcement/FileaComplaint/",
+          "phone": "1-800-533-1560",
+          "phone_note": "Enforcement Division. Direct line 804-367-4691; fax 804-212-2174.",
+          "email": "enfcomplaints@dhp.virginia.gov",
+          "mail": "Virginia Department of Health Professions, Enforcement Division, Perimeter Center, 9960 Mayland Drive, Suite 300, Henrico, VA 23233-1463",
+          "anonymous": "discouraged",
+          "note": "Anonymity cannot be guaranteed. If you mean to file anonymously, the Department warns you must leave any identifying information out of both the form and every supporting document - naming yourself anywhere means you are not anonymous.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhp.virginia.gov/PractitionerResources/Enforcement/FileaComplaint/"
+          ]
+        },
+        {
+          "id": "va-dss-licensing",
+          "category": "facility-licensing",
+          "name": "Virginia Department of Social Services, Division of Licensing Programs",
+          "what_it_can_do": "Licenses and inspects children's residential facilities in Virginia and takes complaints about them.",
+          "who_to_report": "A licensed children's residential facility. A facility providing behavioral health treatment may instead be licensed by the Department of Behavioral Health and Developmental Services, which runs its own Office of Licensing.",
+          "how": "Use the online complaint form or call the licensing line.",
+          "info_url": "https://www.dss.virginia.gov/facility/",
+          "phone": "1-800-543-7545",
+          "phone_note": "Richmond area 804-692-2394.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dss.virginia.gov/abuse/"
+          ]
+        },
+        {
+          "id": "va-dbhds-office-of-licensing",
+          "category": "facility-licensing",
+          "name": "Virginia DBHDS Office of Licensing",
+          "what_it_can_do": "Licenses and regulates behavioral health and developmental services providers in Virginia, including residential treatment programs, and investigates complaints about them.",
+          "who_to_report": "A program licensed to provide mental health or substance use treatment, as distinct from a children's residential facility licensed by Social Services.",
+          "how": "Contact the Office of Licensing through its contact page, which lists the specialist for each region and service type.",
+          "info_url": "https://dbhds.virginia.gov/clinical-and-quality-management/office-of-licensing/ol-contact-info/",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dbhds.virginia.gov/clinical-and-quality-management/office-of-licensing/ol-contact-info/"
+          ]
+        },
+        {
+          "id": "va-child-abuse-hotline",
+          "category": "legal",
+          "name": "Virginia Child Protective Services Hotline",
+          "what_it_can_do": "The statewide 24-hour line for reporting suspected child abuse or neglect, which routes the report to the local department that investigates.",
+          "who_to_report": "A child at a Virginia program.",
+          "how": "Call. Virginia says you do not have to give your name, and you do not have to provide evidence to make a report.",
+          "complaint_url": "https://vacps.dss.virginia.gov/VACPSWeb/",
+          "info_url": "https://www.dss.virginia.gov/abuse/",
+          "phone": "1-800-552-7096",
+          "phone_note": "24 hours a day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dss.virginia.gov/abuse/"
+          ]
+        },
+        {
+          "id": "va-disability-law-center-virginia",
+          "category": "oversight",
+          "name": "disAbility Law Center of Virginia",
+          "what_it_can_do": "Virginia's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Virginia program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.dlcv.org/",
+          "phone": "1-800-552-3962",
+          "phone_note": "Main line 804-225-2042 voice/TTY.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=virginia"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Washington",
+      "abbr": "WA",
+      "slug": "washington",
+      "updated": "2026-09-22",
+      "note": "Washington is unusually clear about what its health complaint system will and will not take on: unprofessional conduct, a provider unable to practise safely, and unlicensed practice, but not scheduling, personality conflicts or billing. It also has an independent Office of the Family and Children's Ombuds, which exists to look at how the state itself handled a child's case.",
+      "channels": [
+        {
+          "id": "wa-doh-health-professions",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Washington State Department of Health, Health Systems Quality Assurance",
+          "what_it_can_do": "Licenses and disciplines mental health counselors, marriage and family therapists, social workers and psychologists, and investigates three kinds of complaint: unprofessional conduct, a provider whose mental or physical condition means they cannot practise with reasonable skill and safety, and practice without a valid Washington credential.",
+          "what_it_cannot_do": "It says plainly it may not be able to help with complaints unrelated to patient safety - scheduling problems, personality conflicts, disputes over bills or insurance.",
+          "who_to_report": "A licensed mental health professional in Washington, or somebody practising without a credential. Physicians go to the Washington Medical Commission instead.",
+          "how": "Use the Department's complaint forms. The complaint process page explains what happens to it afterwards.",
+          "complaint_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/complaint-forms",
+          "info_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/health-professions-complaint-process",
+          "phone": "360-236-4700",
+          "phone_note": "Health Systems Quality Assurance customer service.",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility",
+            "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/health-professions-complaint-process"
+          ]
+        },
+        {
+          "id": "wa-doh-facility-complaints",
+          "category": "facility-licensing",
+          "name": "Washington State Department of Health, facility complaints",
+          "what_it_can_do": "Takes and investigates complaints about the health care facilities the Department licenses, through a process separate from the one for individual providers.",
+          "who_to_report": "A DOH-licensed facility, including behavioral health agencies.",
+          "how": "Use the facility complaint process and the Department's complaint forms.",
+          "complaint_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/facility-complaint-process",
+          "info_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility",
+          "phone": "360-236-4700",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility"
+          ]
+        },
+        {
+          "id": "wa-end-harm-hotline",
+          "category": "legal",
+          "name": "Washington child abuse and neglect hotline (End Harm)",
+          "what_it_can_do": "The statewide 24-hour line, which connects you to the local office that will take the report. It also takes concerns about a licensed facility, and about unlicensed care.",
+          "who_to_report": "A child at a Washington program, and any concern about how a licensed facility is treating children.",
+          "how": "Call. A DCYF licensor starts acting on a referral within five working days, and a complaint is usually inspected and resolved within 45 days.",
+          "info_url": "https://dcyf.wa.gov/safety/report-abuse",
+          "phone": "1-866-363-4276",
+          "phone_note": "1-866-END-HARM. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "For a complaint about DCYF itself rather than about a program, Constituent Relations takes those on 1-800-723-4831.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcyf.wa.gov/safety/report-abuse",
+            "https://dcyf.wa.gov/contact-us"
+          ]
+        },
+        {
+          "id": "wa-family-children-ombuds",
+          "category": "oversight",
+          "name": "Washington Office of the Family and Children's Ombuds",
+          "what_it_can_do": "An independent office that reviews how the state's child protection and child welfare system handled a case, and publishes where it finds fault.",
+          "what_it_cannot_do": "It examines the state's conduct rather than licensing or prosecuting a program.",
+          "who_to_report": "A family or young person whose report to a Washington agency went nowhere.",
+          "info_url": "https://ofco.wa.gov/other-places-go-help",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://ofco.wa.gov/other-places-go-help"
+          ]
+        },
+        {
+          "id": "wa-disability-rights-washington",
+          "category": "oversight",
+          "name": "Disability Rights Washington",
+          "what_it_can_do": "Washington's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Washington program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.disabilityrightswa.org/",
+          "phone": "1-800-562-2702",
+          "phone_note": "Main line 206-324-1521.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=washington"
+          ]
+        }
+      ]
     }
   ],
   "coverage": {
-    "covered": 12,
+    "covered": 21,
     "total": 51,
     "missing": [
       "AK",
       "AL",
-      "AR",
-      "CO",
       "CT",
       "DC",
       "DE",
@@ -1458,7 +2307,6 @@
       "MA",
       "MD",
       "ME",
-      "MI",
       "MN",
       "MS",
       "ND",
@@ -1466,17 +2314,11 @@
       "NH",
       "NJ",
       "NM",
-      "NV",
-      "NY",
-      "OH",
       "OK",
-      "PA",
       "RI",
       "SC",
       "SD",
-      "VA",
       "VT",
-      "WA",
       "WI",
       "WV",
       "WY"

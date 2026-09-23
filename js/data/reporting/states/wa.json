@@ -1,0 +1,87 @@
+{
+  "state": "Washington",
+  "abbr": "WA",
+  "updated": "2026-09-22",
+  "note": "Washington is unusually clear about what its health complaint system will and will not take on: unprofessional conduct, a provider unable to practise safely, and unlicensed practice, but not scheduling, personality conflicts or billing. It also has an independent Office of the Family and Children's Ombuds, which exists to look at how the state itself handled a child's case.",
+  "channels": [
+    {
+      "id": "wa-doh-health-professions",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Washington State Department of Health, Health Systems Quality Assurance",
+      "what_it_can_do": "Licenses and disciplines mental health counselors, marriage and family therapists, social workers and psychologists, and investigates three kinds of complaint: unprofessional conduct, a provider whose mental or physical condition means they cannot practise with reasonable skill and safety, and practice without a valid Washington credential.",
+      "what_it_cannot_do": "It says plainly it may not be able to help with complaints unrelated to patient safety - scheduling problems, personality conflicts, disputes over bills or insurance.",
+      "who_to_report": "A licensed mental health professional in Washington, or somebody practising without a credential. Physicians go to the Washington Medical Commission instead.",
+      "how": "Use the Department's complaint forms. The complaint process page explains what happens to it afterwards.",
+      "complaint_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/complaint-forms",
+      "info_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/health-professions-complaint-process",
+      "phone": "360-236-4700",
+      "phone_note": "Health Systems Quality Assurance customer service.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility",
+        "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/health-professions-complaint-process"
+      ]
+    },
+    {
+      "id": "wa-doh-facility-complaints",
+      "category": "facility-licensing",
+      "name": "Washington State Department of Health, facility complaints",
+      "what_it_can_do": "Takes and investigates complaints about the health care facilities the Department licenses, through a process separate from the one for individual providers.",
+      "who_to_report": "A DOH-licensed facility, including behavioral health agencies.",
+      "how": "Use the facility complaint process and the Department's complaint forms.",
+      "complaint_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility/facility-complaint-process",
+      "info_url": "https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility",
+      "phone": "360-236-4700",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://doh.wa.gov/licenses-permits-and-certificates/file-complaint-about-provider-or-facility"]
+    },
+    {
+      "id": "wa-end-harm-hotline",
+      "category": "legal",
+      "name": "Washington child abuse and neglect hotline (End Harm)",
+      "what_it_can_do": "The statewide 24-hour line, which connects you to the local office that will take the report. It also takes concerns about a licensed facility, and about unlicensed care.",
+      "who_to_report": "A child at a Washington program, and any concern about how a licensed facility is treating children.",
+      "how": "Call. A DCYF licensor starts acting on a referral within five working days, and a complaint is usually inspected and resolved within 45 days.",
+      "info_url": "https://dcyf.wa.gov/safety/report-abuse",
+      "phone": "1-866-363-4276",
+      "phone_note": "1-866-END-HARM. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "For a complaint about DCYF itself rather than about a program, Constituent Relations takes those on 1-800-723-4831.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcyf.wa.gov/safety/report-abuse",
+        "https://dcyf.wa.gov/contact-us"
+      ]
+    },
+    {
+      "id": "wa-family-children-ombuds",
+      "category": "oversight",
+      "name": "Washington Office of the Family and Children's Ombuds",
+      "what_it_can_do": "An independent office that reviews how the state's child protection and child welfare system handled a case, and publishes where it finds fault.",
+      "what_it_cannot_do": "It examines the state's conduct rather than licensing or prosecuting a program.",
+      "who_to_report": "A family or young person whose report to a Washington agency went nowhere.",
+      "info_url": "https://ofco.wa.gov/other-places-go-help",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://ofco.wa.gov/other-places-go-help"]
+    },
+    {
+      "id": "wa-disability-rights-washington",
+      "category": "oversight",
+      "name": "Disability Rights Washington",
+      "what_it_can_do": "Washington's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Washington program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightswa.org/",
+      "phone": "1-800-562-2702",
+      "phone_note": "Main line 206-324-1521.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=washington"]
+    }
+  ]
+}

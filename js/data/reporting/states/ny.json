@@ -1,0 +1,81 @@
+{
+  "state": "New York",
+  "abbr": "NY",
+  "updated": "2026-09-22",
+  "note": "New York has something most states do not: the Justice Center for the Protection of People with Special Needs, created by statute in 2013, with its own 24-hour register, its own investigators and the power to support criminal prosecution. It says every allegation is investigated to conclusion, and it provides advocates to victims and families during the investigation. If the program is a New York state-operated, licensed or certified facility, this is the strongest channel in the state.",
+  "channels": [
+    {
+      "id": "ny-office-professional-discipline",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "New York Office of the Professions, Office of Professional Discipline",
+      "what_it_can_do": "Investigates professional misconduct by anyone licensed by the State of New York - psychologists, mental health counselors, marriage and family therapists, creative arts therapists, psychoanalysts and social workers - and illegal practice by the unlicensed. Outcomes run from a warning letter to revoking the licence.",
+      "who_to_report": "A licensed mental health professional in New York, or someone practising without the licence.",
+      "how": "Complete the discipline complaint form and post it to the regional Office of Professional Discipline nearest where the incident happened, or fax it. Complaints must be in writing; they cannot be made by phone, though you can call for help with the form.",
+      "complaint_url": "https://www.op.nysed.gov/enforcement/discipline-complaint-form",
+      "info_url": "https://www.op.nysed.gov/enforcement/enforcement-actions",
+      "phone": "1-800-442-8106",
+      "phone_note": "For information on filing. The complaint itself has to be in writing. Fax 212-951-6420.",
+      "email": "conduct@nysed.gov",
+      "anonymous": "not-allowed",
+      "note": "Investigators in the regional office may consult members of the State board for that profession before deciding.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.op.nysed.gov/enforcement/discipline-complaint-form",
+        "https://www.op.nysed.gov/enforcement/enforcement-actions"
+      ]
+    },
+    {
+      "id": "ny-justice-center",
+      "category": "oversight",
+      "name": "New York State Justice Center for the Protection of People with Special Needs",
+      "what_it_can_do": "Runs the Vulnerable Persons Central Register, a 24-hour hotline for abuse, neglect, financial misappropriation and any significant incident threatening the health, safety or welfare of someone in a New York state-operated, licensed or certified facility. It investigates every allegation to conclusion, and works with prosecutors on criminal cases arising from them.",
+      "who_to_report": "A young person with special needs - which includes a mental health diagnosis - receiving services at a New York state-operated, licensed or certified facility or program.",
+      "how": "Call the Vulnerable Persons Central Register. If somebody is in immediate danger, call 911 first.",
+      "complaint_url": "https://www.justicecenter.ny.gov/reporting-incident",
+      "info_url": "https://www.justicecenter.ny.gov/investigations-appeals",
+      "phone": "1-855-373-2122",
+      "phone_note": "Vulnerable Persons Central Register, 24 hours a day. Advocates for victims and families on 1-800-624-4143.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "The Justice Center provides advocates who answer questions about the process and give case updates during an investigation - unusual, and worth using.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.justicecenter.ny.gov/",
+        "https://www.justicecenter.ny.gov/reporting-incident"
+      ]
+    },
+    {
+      "id": "ny-statewide-central-register",
+      "category": "legal",
+      "name": "New York Statewide Central Register of Child Abuse and Maltreatment",
+      "what_it_can_do": "The state's child abuse hotline, run by the Office of Children and Family Services. Takes reports from the general public and routes them to the local child protective service for investigation.",
+      "who_to_report": "A child at a New York program. Neighbours, relatives and concerned citizens can all use the public line.",
+      "how": "Call the 24-hour toll-free line. If a child is in immediate danger, call 911 or the local police first.",
+      "info_url": "https://ocfs.ny.gov/programs/cps/",
+      "phone": "1-800-342-3720",
+      "phone_note": "24 hours a day. TDD/TTY 1-800-638-5163, or have a Video Relay provider call the main number.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://ocfs.ny.gov/programs/cps/",
+        "https://ocfs.ny.gov/main/contact/"
+      ]
+    },
+    {
+      "id": "ny-disability-rights-new-york",
+      "category": "oversight",
+      "name": "Disability Rights New York",
+      "what_it_can_do": "New York's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A New York program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.drny.org/",
+      "phone": "1-800-993-8982",
+      "phone_note": "Main line 518-432-7861; TTY 518-512-3448.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-york"]
+    }
+  ]
+}

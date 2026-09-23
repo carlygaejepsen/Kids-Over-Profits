@@ -1,0 +1,62 @@
+{
+  "state": "Pennsylvania",
+  "abbr": "PA",
+  "updated": "2026-09-22",
+  "note": "Pennsylvania routes every complaint about a licensed professional through one bureau, the Bureau of Professional and Occupational Affairs, whichever board holds the licence. Its ChildLine is one of the clearer state hotlines: it takes both formal abuse referrals and general child well-being concerns, so you do not have to be certain you are describing abuse before you call.",
+  "channels": [
+    {
+      "id": "pa-bureau-professional-occupational-affairs",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Pennsylvania Bureau of Professional and Occupational Affairs (BPOA)",
+      "what_it_can_do": "Receives and processes every complaint against a state-licensed professional in Pennsylvania, including those under the State Board of Social Workers, Marriage and Family Therapists and Professional Counselors, and the State Board of Psychology. The Department's Bureau of Enforcement and Investigation does the investigating, and the boards discipline the licence.",
+      "who_to_report": "A licensed social worker, marriage and family therapist, professional counselor or psychologist in Pennsylvania. Any member of the public can file.",
+      "how": "Use the Department of State's complaint form for a PA-licensed professional.",
+      "complaint_url": "https://www.pa.gov/services/dos/file-a-complaint-against-a-pa-licensed-professional",
+      "info_url": "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/social-workers-marriage-family-therapists-professional-counselors",
+      "phone": "1-833-367-2762",
+      "phone_note": "1-833-DOS-BPOA.",
+      "mail": "State Board of Social Workers, Marriage and Family Therapists and Professional Counselors, P.O. Box 2649, Harrisburg, PA 17105-2649",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.pa.gov/agencies/dos/department-and-offices/bpoa/boards-commissions/social-workers-marriage-family-therapists-professional-counselors",
+        "https://www.pa.gov/agencies/dos/programs/professional-licensing"
+      ]
+    },
+    {
+      "id": "pa-childline",
+      "category": "legal",
+      "name": "Pennsylvania ChildLine",
+      "what_it_can_do": "The statewide child protective services referral line. Trained specialists take both suspected abuse referrals and general child well-being concerns, and decide what happens next with each one.",
+      "who_to_report": "A child at a Pennsylvania program. You do not have to be sure it is abuse - ChildLine explicitly takes general well-being concerns too.",
+      "how": "Call, at any hour. Mandated reporters have a separate electronic route; permissive reporters - anyone else - may report anonymously.",
+      "complaint_url": "https://www.pa.gov/services/dhs/report-child-abuse-or-neglect",
+      "info_url": "https://www.pa.gov/agencies/dhs/resources/keep-kids-safe/report-child-abuse",
+      "phone": "1-800-932-0313",
+      "phone_note": "24 hours a day, seven days a week. TDD 1-866-872-1677.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "Pennsylvania distinguishes mandated reporters, who must report and have their own portal, from permissive reporters, who are encouraged to and may do so anonymously.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.pa.gov/agencies/dhs/report-abuse",
+        "https://www.pa.gov/agencies/dhs/resources/keep-kids-safe/report-child-abuse"
+      ]
+    },
+    {
+      "id": "pa-disability-rights-pennsylvania",
+      "category": "oversight",
+      "name": "Disability Rights Pennsylvania",
+      "what_it_can_do": "Pennsylvania's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Pennsylvania program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightspa.org/",
+      "phone": "1-800-692-7443",
+      "phone_note": "Main line 717-236-8110; TDD 717-346-0293.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=pennsylvania"]
+    }
+  ]
+}

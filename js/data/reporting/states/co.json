@@ -1,0 +1,96 @@
+{
+  "state": "Colorado",
+  "abbr": "CO",
+  "updated": "2026-09-22",
+  "note": "Colorado puts every licensed profession behind one complaint form at the Division of Professions and Occupations. It also has an independent Child Protection Ombudsman with its own complaint form, which publishes investigative reports naming what it found; that is a real route when a report has already been made and nothing moved.",
+  "channels": [
+    {
+      "id": "co-division-professions-occupations",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Colorado Division of Professions and Occupations (DORA)",
+      "what_it_can_do": "Takes and investigates complaints against every mental health licence Colorado issues - psychologists, clinical social workers, professional counselors, marriage and family therapists and addiction counselors - through one form, and the boards discipline the licence.",
+      "who_to_report": "Any licensed mental health professional in Colorado. Anyone can file: a client, a colleague, a family member.",
+      "how": "Use the Division's single complaint form and pick the licence type.",
+      "complaint_url": "https://dpo.colorado.gov/FileComplaint",
+      "info_url": "https://dora.colorado.gov/file-complaint",
+      "phone": "303-894-7855",
+      "phone_note": "DORA main line. Toll free 1-800-886-7675.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dora.colorado.gov/file-complaint",
+        "https://dpo.colorado.gov/FileComplaint"
+      ],
+      "note": "Colorado's mental health practice act sets a filing deadline, but the Division's own pages did not state it when this was checked. Ask the Division how long you have before assuming you are out of time."
+    },
+    {
+      "id": "co-behavioral-health-administration",
+      "category": "facility-licensing",
+      "name": "Colorado Behavioral Health Administration",
+      "what_it_can_do": "Licenses behavioral health entities in Colorado and takes complaints about the services they provide.",
+      "who_to_report": "A licensed behavioral health provider or program.",
+      "how": "Submit a complaint through the BHA's complaint page, or email the complaints address.",
+      "complaint_url": "https://bha.colorado.gov/help/submit-a-complaint",
+      "phone": "303-866-7191",
+      "email": "CDHS_BHA_complaint@state.co.us",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://bha.colorado.gov/help/submit-a-complaint"
+      ]
+    },
+    {
+      "id": "co-child-abuse-hotline",
+      "category": "legal",
+      "name": "Colorado Child Abuse and Neglect Hotline",
+      "what_it_can_do": "The statewide report line for child abuse and neglect. It routes the report to the county department that investigates.",
+      "who_to_report": "A child at a Colorado program.",
+      "how": "Call. It is answered at any hour, every day.",
+      "info_url": "https://co4kids.org/",
+      "phone": "1-844-264-5437",
+      "phone_note": "1-844-CO-4-KIDS. 24 hours a day, every day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://co4kids.org/",
+        "https://cdhs.colorado.gov/child-welfare"
+      ]
+    },
+    {
+      "id": "co-child-protection-ombudsman",
+      "category": "oversight",
+      "name": "Office of Colorado's Child Protection Ombudsman",
+      "what_it_can_do": "An independent office that investigates complaints about the child protection system, including how an agency handled a case, and publishes investigative reports setting out what it found. It has looked at residential child care facilities directly.",
+      "what_it_cannot_do": "It examines how the system responded rather than licensing or prosecuting a program itself.",
+      "who_to_report": "A family or young person who reported something to a Colorado agency and got nowhere, or who believes the response itself caused harm.",
+      "how": "Use the office's own complaint form.",
+      "complaint_url": "https://coloradocpo.org/complaint-form/",
+      "info_url": "https://coloradocpo.org/reports/",
+      "phone": "720-625-8640",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://coloradocpo.org/"
+      ]
+    },
+    {
+      "id": "co-disability-justice",
+      "category": "oversight",
+      "name": "Disability Justice (Colorado's Protection and Advocacy agency)",
+      "what_it_can_do": "Colorado's federally mandated P&A, with authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Colorado program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityjustice.co",
+      "phone": "1-800-288-1376",
+      "phone_note": "Main line 303-722-0300 voice/TDD.",
+      "anonymous": "discouraged",
+      "note": "Formerly Disability Law Colorado; it now operates as Disability Justice.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=colorado"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "state": "Nevada",
+  "abbr": "NV",
+  "updated": "2026-09-22",
+  "note": "Nevada has no single child abuse hotline. Clark County and Washoe County each run their own, and the Division of Child and Family Services covers everywhere else - and in those rural counties, out of hours, the Division tells you to call local law enforcement instead. Nevada's board websites were also mid-reorganisation when this was checked, and several published complaint forms had gone; where that is the case the phone number and address below came from the board's own live page, and it is worth asking them to send you the current form.",
+  "channels": [
+    {
+      "id": "nv-marriage-family-counselor-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Nevada Board of Examiners for Marriage and Family Therapists and Clinical Professional Counselors",
+      "what_it_can_do": "Takes complaints against Nevada marriage and family therapists, clinical professional counselors, their interns, and anyone else under its jurisdiction including allegations of unlicensed practice, and disciplines licences.",
+      "who_to_report": "An LMFT or CPC in Nevada, an intern working under one, or somebody practising without the licence.",
+      "how": "The complaint must be in writing and signed by you, and posted with your supporting documents. Ask the Board for its current complaint form.",
+      "info_url": "https://www.marriage.nv.gov/",
+      "phone": "702-486-7388",
+      "phone_note": "Walk-in, phone and email hours are Tuesday to Thursday, 9am to 4pm only.",
+      "email": "mftbd2@mftbd.nv.gov",
+      "mail": "Board of Examiners for Marriage and Family Therapists and Clinical Professional Counselors, 500 N. Rainbow Boulevard, Suite 201, Las Vegas, NV 89107",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.marriage.nv.gov/"]
+    },
+    {
+      "id": "nv-psychological-examiners",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Nevada Board of Psychological Examiners",
+      "what_it_can_do": "Reviews and disciplines complaints against licensed psychologists in Nevada.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "Complete the Board's complaint form, and the Release of Psychological Records form where it applies, with as much detail and supporting documentation as you can. Complaints cannot be taken by phone - they must be in writing.",
+      "complaint_url": "https://www.psyexam.nv.gov/complaints-discipline/disciplinary-policy/",
+      "info_url": "https://www.psyexam.nv.gov/contact/",
+      "phone": "702-276-0926",
+      "email": "complaints@nvbope.net",
+      "mail": "Nevada Board of Psychological Examiners, 3080 South Durango Drive, Suite 102, Las Vegas, NV 89117",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.psyexam.nv.gov/complaints-discipline/disciplinary-policy/",
+        "https://www.psyexam.nv.gov/contact/"
+      ]
+    },
+    {
+      "id": "nv-social-work-board",
+      "category": "professional-board",
+      "profession": "Social worker",
+      "name": "Nevada Board of Examiners for Social Workers",
+      "what_it_can_do": "Licenses and disciplines social workers in Nevada, including licensed clinical social workers. It calls the process filing an accusation of wrongdoing.",
+      "who_to_report": "An LCSW or other licensed social worker.",
+      "how": "File an accusation of wrongdoing through the Board's consumer page, which also sets out the disciplinary laws and regulations it works to.",
+      "complaint_url": "https://www.socwork.nv.gov/consumers/file-an-accusation-of-wrongdoing/",
+      "info_url": "https://www.socwork.nv.gov/consumers/",
+      "phone": "775-688-2555",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.socwork.nv.gov/consumers/file-an-accusation-of-wrongdoing/",
+        "https://www.socwork.nv.gov/consumers/"
+      ]
+    },
+    {
+      "id": "nv-health-care-quality-compliance",
+      "category": "facility-licensing",
+      "name": "Nevada Bureau of Health Care Quality and Compliance (HCQC)",
+      "what_it_can_do": "Licenses, certifies and investigates health care facilities in Nevada, including facilities for the treatment of alcohol and drug abuse and residential psychiatric facilities. Investigators use interviews, records reviews and in-person observation.",
+      "who_to_report": "An HCQC-licensed facility - complaints about patient care or about how the facility is run.",
+      "how": "Call the complaint intake line; a message can be left at any hour and calls are returned within 48 to 72 hours. A complaint form can also be faxed to 702-486-6520.",
+      "info_url": "https://www.dpbh.nv.gov/regulatory/hcqc/hcqc-redirect/",
+      "phone": "702-668-3250",
+      "phone_note": "Complaint intake. Messages can be left 24/7; calls returned in 48 to 72 hours.",
+      "anonymous": "allowed",
+      "note": "You may give your name or stay anonymous, and if you give it you can ask that it be kept confidential during the investigation. Every complaint is triaged by how much harm it suggests: a serious one can start an investigation within 48 hours, a lesser one waits for staff to be free.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.dpbh.nv.gov/regulatory/hcqc/hcqc-redirect/"]
+    },
+    {
+      "id": "nv-child-abuse-reporting",
+      "category": "legal",
+      "name": "Nevada child abuse and neglect reporting",
+      "what_it_can_do": "Starts a child protective services investigation. Which agency takes the report depends on the county.",
+      "who_to_report": "A child at a Nevada program. Report to the county the program is in: Clark County (Las Vegas and Henderson) on 702-399-0081, Washoe County (Reno and Sparks) on 833-900-7233, and the Division of Child and Family Services for every other county on 833-571-1041.",
+      "how": "Call the number for that county. In the rural counties, out of hours and at weekends, the Division tells you to call local law enforcement to make the report instead. In an emergency, 911.",
+      "complaint_url": "https://www.dcfs.nv.gov/contact-us/report-suspected-child-abuse-neglect/",
+      "phone": "1-833-571-1041",
+      "phone_note": "Division of Child and Family Services, for counties other than Clark and Washoe.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.dcfs.nv.gov/contact-us/report-suspected-child-abuse-neglect/"]
+    },
+    {
+      "id": "nv-disability-advocacy-law-center",
+      "category": "oversight",
+      "name": "Nevada Disability Advocacy and Law Center",
+      "what_it_can_do": "Nevada's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Nevada program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.ndalc.org/",
+      "phone": "1-888-349-3843",
+      "phone_note": "Main line 702-257-8150.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=nevada"]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "state": "Michigan",
+  "abbr": "MI",
+  "updated": "2026-09-22",
+  "note": "Michigan puts abuse in a child caring institution through the same centralised intake line as any other child abuse report, and its own guidance says a child can make that call themselves. Reports are then passed to whoever should investigate - law enforcement, or the licensing bureau. Licensing the facility and licensing the therapist are separate departments: MDHHS for the institution, LARA for the clinician.",
+  "channels": [
+    {
+      "id": "mi-bureau-professional-licensing",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Michigan LARA, Bureau of Professional Licensing",
+      "what_it_can_do": "Takes complaints against counselors, marriage and family therapists, psychologists, social workers and other health professionals, assigns an investigator, gathers documents and interviews the professional complained about.",
+      "what_it_cannot_do": "If the documents and interviews do not establish a violation, the investigation ends and the file is closed.",
+      "who_to_report": "Any licensed mental health professional in Michigan. Anyone can file.",
+      "how": "Complete the Bureau's complaint form and send it in. It asks whether any civil action or police report is pending, and whether you would be willing to testify at an administrative hearing.",
+      "complaint_url": "https://www.michigan.gov/lara/bureau-list/bpl/complaint",
+      "info_url": "https://www.michigan.gov/lara/i-need-to/make-a-complaint-about-a-licensed-professional-or-business",
+      "phone": "1-800-882-6006",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.michigan.gov/lara/bureau-list/bpl/complaint",
+        "https://www.michigan.gov/lara/i-need-to/make-a-complaint-about-a-licensed-professional-or-business"
+      ]
+    },
+    {
+      "id": "mi-child-welfare-licensing",
+      "category": "facility-licensing",
+      "name": "Michigan MDHHS, Division of Child Welfare Licensing",
+      "what_it_can_do": "Licenses child caring institutions, children's foster homes and child placing agencies in Michigan, and investigates licensing complaints against them.",
+      "who_to_report": "The facility - how it is run, staffed and supervised, as distinct from a specific allegation of abuse, which goes to centralised intake.",
+      "how": "Use the Division's online complaint form, or its complaint page.",
+      "complaint_url": "https://www.michigan.gov/mdhhs/doing-business/licensing/child-welfare/complaints",
+      "info_url": "https://www.michigan.gov/en/mdhhs/doing-business/licensing/child-welfare/Child-Placing/contact-us/online-complaint-form-division-of-child-welfare-licensing",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.michigan.gov/mdhhs/doing-business/licensing/child-welfare/complaints"]
+    },
+    {
+      "id": "mi-centralized-intake",
+      "category": "legal",
+      "name": "Michigan Centralized Intake for Abuse and Neglect",
+      "what_it_can_do": "The statewide 24-hour line for abuse or neglect of any child or adult, including abuse of a child in a child caring institution, a juvenile court operated facility or a children's foster home. Reports are passed to whoever should investigate - law enforcement, or the licensing bureau.",
+      "who_to_report": "A child at a Michigan program. Michigan says explicitly that anyone can report, including a child.",
+      "how": "Call, at any hour.",
+      "info_url": "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect/childrens/report-process",
+      "phone": "1-855-444-3911",
+      "phone_note": "24 hours a day, every day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect/childrens/report-process",
+        "https://www.michigan.gov/mdhhs/adult-child-serv/abuse-neglect"
+      ]
+    },
+    {
+      "id": "mi-disability-rights-michigan",
+      "category": "oversight",
+      "name": "Disability Rights Michigan",
+      "what_it_can_do": "Michigan's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Michigan program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://drmich.org/",
+      "phone": "1-800-288-5923",
+      "phone_note": "Main line 517-487-1755; TTY 517-374-4687.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=michigan"]
+    }
+  ]
+}

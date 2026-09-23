@@ -1,0 +1,107 @@
+{
+  "state": "Arkansas",
+  "abbr": "AR",
+  "updated": "2026-09-22",
+  "note": "Two things set Arkansas apart. Its child abuse hotline is run by the State Police Crimes Against Children Division rather than by the human services department, so a report there goes straight to law enforcement. And the Office of Long-Term Care - the sole licensing authority for Psychiatric Residential Treatment Facilities - now publishes its monitoring reports, complaint visit reports, corrective action plans and notices of adverse action online, so you can read a facility's record before you call.",
+  "channels": [
+    {
+      "id": "ar-counseling-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Arkansas Board of Examiners in Counseling and Marriage and Family Therapy",
+      "what_it_can_do": "Takes complaints against its licensees and applicants from any person, investigates them and disciplines licences.",
+      "who_to_report": "A licensed professional counselor or marriage and family therapist in Arkansas.",
+      "how": "Complaints must be in writing and on the Board's own complaint form, which is filed through its online portal.",
+      "complaint_url": "https://abecmft.portalus.thentiacloud.net/webs/portal/register/",
+      "info_url": "https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/",
+      "phone": "501-683-5800",
+      "mail": "Arkansas Board of Examiners in Counseling, Freeway Medical Center, 5800 W. 10th Street, Suite 405, Little Rock, AR 72204",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/"]
+    },
+    {
+      "id": "ar-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Arkansas Psychology Board",
+      "what_it_can_do": "Takes complaints about the practice of any of its licensees, from any concerned citizen or organisation, and disciplines licences.",
+      "who_to_report": "A licensed psychologist in Arkansas.",
+      "how": "The complaint must be in writing, and the document has to be signed and dated. It goes to the Board's Complaints Committee.",
+      "complaint_url": "https://healthy.arkansas.gov/boards-commissions/boards/psychology-arkansas-board/complaints-ethical-violations/",
+      "info_url": "https://psychologyboard.arkansas.gov/public/",
+      "mail": "Arkansas Psychology Board, Complaints Committee, 101 East Capitol, Suite 415, Little Rock, AR 72201",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://healthy.arkansas.gov/boards-commissions/boards/psychology-arkansas-board/complaints-ethical-violations/",
+        "https://psychologyboard.arkansas.gov/public/"
+      ]
+    },
+    {
+      "id": "ar-social-work-board",
+      "category": "professional-board",
+      "profession": "Social worker",
+      "name": "Arkansas Social Work Licensing Board",
+      "what_it_can_do": "Licenses and disciplines social workers in Arkansas.",
+      "who_to_report": "A licensed social worker.",
+      "how": "Contact the Board for its complaint form.",
+      "phone": "501-372-5071",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://healthy.arkansas.gov/boards-commissions/boards/examiners-in-counseling-arkansas-state-board/"]
+    },
+    {
+      "id": "ar-office-long-term-care",
+      "category": "facility-licensing",
+      "name": "Arkansas Office of Long-Term Care (Psychiatric Residential Treatment Facilities)",
+      "what_it_can_do": "The sole licensing authority for Psychiatric Residential Treatment Facilities in Arkansas. It licenses, surveys, regulates and investigates them, and takes enforcement action against failed facility practices.",
+      "who_to_report": "A PRTF - the licensed psychiatric residential category most Arkansas programs in this industry fall under.",
+      "how": "Call the complaint hotline or email the complaints address.",
+      "complaint_url": "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/occupational-licensing/psychiatric-residential-treatment-facilities-prtf/",
+      "info_url": "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/information-about-our-licensed-providers/enforcement-violation-reports/",
+      "phone": "1-800-582-4887",
+      "email": "complaints.OLTC@arkansas.gov",
+      "anonymous": "allowed",
+      "note": "Arkansas publishes PRTF monitoring and complaint visit reports, corrective action plans and notices of adverse action online. Read what has already been found against a program before you file.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://humanservices.arkansas.gov/divisions-shared-services/provider-services-quality-assurance/occupational-licensing/psychiatric-residential-treatment-facilities-prtf/",
+        "https://humanservices.arkansas.gov/news/dhs-makes-reports-on-psychiatric-residential-treatment-facilities-available-online/"
+      ]
+    },
+    {
+      "id": "ar-child-abuse-hotline",
+      "category": "legal",
+      "name": "Arkansas Child Abuse Hotline (State Police Crimes Against Children Division)",
+      "what_it_can_do": "The statutory report line for child maltreatment, run by the Arkansas State Police rather than by the human services department, so a report reaches law enforcement directly.",
+      "who_to_report": "A child at an Arkansas program. Anyone may report, at any hour.",
+      "how": "Call. Have the child's name and address, the alleged offender's name and address, and what happened. If a child's life may be in immediate danger, call 911 or local law enforcement first, then the hotline. Mandated reporters can file through the secure online portal instead.",
+      "complaint_url": "https://mandatedreporter.arkansas.gov/mrp/",
+      "info_url": "https://humanservices.arkansas.gov/divisions-shared-services/children-family-services/how-to-report-child-abuse-neglect/",
+      "phone": "1-800-482-5964",
+      "phone_note": "Also 1-844-SAVE-A-CHILD. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://humanservices.arkansas.gov/divisions-shared-services/children-family-services/how-to-report-child-abuse-neglect/",
+        "https://dps.arkansas.gov/law-enforcement/arkansas-state-police/divisions/crimes-against-children/"
+      ]
+    },
+    {
+      "id": "ar-disability-rights-arkansas",
+      "category": "oversight",
+      "name": "Disability Rights Arkansas",
+      "what_it_can_do": "Arkansas's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Arkansas program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsar.org/",
+      "phone": "1-800-482-1174",
+      "phone_note": "Main line 501-296-1775 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=arkansas"]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "state": "Ohio",
+  "abbr": "OH",
+  "updated": "2026-09-22",
+  "note": "Ohio has something rare and worth knowing about: a Youth and Family Ombudsmen Office that takes complaints directly from young people, with a separate form for youth and for families. Most state oversight assumes an adult is doing the reporting. Ohio's child abuse line is also a directory rather than a call centre - it connects you to the county office that will actually handle it.",
+  "channels": [
+    {
+      "id": "oh-cswmft-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Ohio Counselor, Social Worker and Marriage and Family Therapist Board",
+      "what_it_can_do": "Licenses and disciplines counselors, social workers and marriage and family therapists in Ohio, and investigates complaints including incompetent practice, breaking confidentiality, failure to tell clients the nature and extent of services, sexual harassment, discrimination, physical or verbal abuse and conflict of interest.",
+      "who_to_report": "A licensed counselor, social worker or marriage and family therapist in Ohio. Psychologists have their own board.",
+      "how": "File through the Board's eLicense complaint portal, or download the form and fax it.",
+      "complaint_url": "https://cswmft.ohio.gov/wps/portal/gov/cswmft/for-the-public/file-a-complaint-elicense-portal",
+      "info_url": "https://cswmft.ohio.gov/about-the-board",
+      "phone": "614-466-0912",
+      "phone_note": "Fax 614-728-7790.",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://cswmft.ohio.gov/"
+      ]
+    },
+    {
+      "id": "oh-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Ohio State Board of Psychology",
+      "what_it_can_do": "Licenses and disciplines psychologists and school psychologists in Ohio, and publishes how its investigation process works alongside its complaint form.",
+      "who_to_report": "A licensed psychologist in Ohio.",
+      "how": "Use the Board's complaint page, which sets out the investigation process as well as the form.",
+      "complaint_url": "https://psychology.ohio.gov/wps/portal/gov/psy/for-the-public/how-to-file-complaint",
+      "info_url": "https://psychology.ohio.gov/",
+      "phone": "614-466-8808",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://psychology.ohio.gov/"
+      ]
+    },
+    {
+      "id": "oh-department-behavioral-health",
+      "category": "facility-licensing",
+      "name": "Ohio Department of Behavioral Health",
+      "what_it_can_do": "Licenses and certifies behavioral health providers in Ohio, including residential treatment, and takes complaints about the services they give.",
+      "who_to_report": "A certified or licensed behavioral health provider or residential program.",
+      "how": "Contact the Department.",
+      "info_url": "https://dbh.ohio.gov/",
+      "phone": "614-466-2596",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dbh.ohio.gov/"
+      ],
+      "note": "Formerly the Ohio Department of Mental Health and Addiction Services (OhioMHAS); the old mha.ohio.gov address now redirects here."
+    },
+    {
+      "id": "oh-child-abuse-hotline",
+      "category": "legal",
+      "name": "Ohio child abuse and neglect reporting line",
+      "what_it_can_do": "An automated directory that connects you straight to the child welfare or law enforcement office in the relevant county, which is where the report is actually handled.",
+      "who_to_report": "A child at an Ohio program. Report to the county the program is in.",
+      "how": "Call. Reports can be anonymous.",
+      "info_url": "https://childrenandyouth.ohio.gov/help-center/child-safety-concerns/child-safety-concerns",
+      "phone": "1-855-642-4453",
+      "phone_note": "1-855-O-H-CHILD.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://childrenandyouth.ohio.gov/help-center/child-safety-concerns/child-safety-concerns",
+        "https://youthandfamilyombudsmen.ohio.gov/home"
+      ]
+    },
+    {
+      "id": "oh-youth-family-ombudsman",
+      "category": "oversight",
+      "name": "Ohio Youth and Family Ombudsmen Office",
+      "what_it_can_do": "An independent office for anyone concerned about the Ohio children services system. It takes complaints directly from young people, with a separate route for youth and for families.",
+      "who_to_report": "A young person in the Ohio system who wants to complain themselves, or a family who has hit a wall with an agency.",
+      "how": "Use the Youth complaint form or the Family complaint form on the office's site.",
+      "complaint_url": "https://youthandfamilyombudsmen.ohio.gov/home",
+      "phone": "1-877-649-6884",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://youthandfamilyombudsmen.ohio.gov/home"
+      ]
+    },
+    {
+      "id": "oh-disability-rights-ohio",
+      "category": "oversight",
+      "name": "Disability Rights Ohio",
+      "what_it_can_do": "Ohio's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Ohio program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightsohio.org/",
+      "phone": "1-800-282-9181",
+      "phone_note": "Main line 614-466-7264.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=ohio"
+      ]
+    }
+  ]
+}
