@@ -30,7 +30,7 @@ Last updated 2026-09-22.
 | 12 | State pages: alternate names missing | Done in code; filling the 4,334 records with no alternate name is research |
 | 13 | Featured inspections not displaying | Done: both featured reports show on the home page and the hub |
 | 14 | Parser that flags the worst inspection findings | Steps 1 to 5 built for Texas and California; the scan and the review are the owner's; other states and the nightly run still open |
-| 15 | Long-form articles: orientation and structure | 15A, 15G, 15H, 15I done; 15B to 15F open (each needs editorial input), see [section 15](#15-long-form-articles-orientation-and-structure) |
+| 15 | Long-form articles: orientation and structure | 15A, 15F, 15G, 15H, 15I done; 15B to 15E open (those four do need editorial input), see [section 15](#15-long-form-articles-orientation-and-structure) |
 | 16 | Spacing, typography and colour contrast | Done: 16B ink tokens with a test; 16A checked at 390px and already sound. The admin stylesheets are still accent-as-text |
 | 17 | Loading skeletons for the JSON-driven pages | Done 2026-09-23; nine sections across five templates |
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
@@ -966,12 +966,39 @@ standfirst and the contents list, so it is consistent across pages and no
 editor has to place it in the body. Written for journalists, policymakers
 and parents.
 
-**15F. A horizontal timeline graphic.** Inline SVG plus CSS, year nodes
-linking to the section anchors the template already generates. Needs a year
-per section from 15C's meta. It has to be keyboard-reachable (each node a
-real link), it must not be the only route to a section (the contents list
-stays), and on a phone it either scrolls horizontally with a visible
-scrollbar or is hidden.
+**15F. A horizontal timeline graphic.** Done 2026-09-23, and **the reason
+this was written up as blocked was wrong**. The note said it needed a year
+per section from 15C's meta, which nobody has filled in. The years were in
+the writing all along, one level below the sections: every entry on these
+pages is a list item whose bold run starts with a year, which is why the
+contents list never saw them. Nine articles carry them - Juvenile Justice 76
+entries across 1660 to 2023, Corporatization 75 across 1912 to 2024,
+Fundamentalist Christian Homes 53 from 1517.
+
+A band above the article draws one dot per entry at its year, over a ruler
+whose step comes from the span (three centuries get half centuries, forty
+years get decades, nothing gets more than thirteen marks). Each labelled
+mark jumps to the first entry of its period. `kop_article_timeline_entries()`
+reads the entries out of the rendered content and gives each one an id;
+nothing is asked of an editor and nothing is written back to the post.
+
+Positions are percentages rather than the SVG the brief asked for: a fixed
+coordinate system would be standing in for what CSS already does at any
+width. The dots are hidden from assistive technology and out of the tab
+order - seventy-six tab stops in front of an article is an obstacle, not a
+feature - so the labelled marks and the contents list are the route for
+anybody not using a pointer.
+
+`scripts/test-article-timeline.php` covers the year shapes these pages use
+("1912 -", "1730s-1790s", "1179 CE", "1968:", "c. 1400") and holds the
+parser to leaving the prose exactly as it found it. Three non-timeline
+articles were checked too, and correctly get no band.
+
+Worth knowing for anything else that relies on anchors: the Easy Table of
+Contents plugin intercepts in-page anchor clicks and scrolls with its own
+offset, so `scroll-margin-top` governs a link followed from outside the page
+but not a click inside it. Nothing on these templates is fixed over the
+content, so both land somewhere sensible.
 
 **15G. "Continue to next section".** Done 2026-09-22. Previous and next
 cards at the foot of each article, from a depth-first walk of its hub, so
