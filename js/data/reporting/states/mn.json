@@ -1,0 +1,115 @@
+{
+  "state": "Minnesota",
+  "abbr": "MN",
+  "updated": "2026-09-22",
+  "note": "Minnesota keeps a separate board for each profession, so check which licence the person holds before you file. Two things are worth knowing. Any person may voluntarily report a child who is being abused, or who has been abused in the past three years - that lookback is stated in the state's own guidance. And a maltreatment investigation by the Office of Health Facility Complaints ends in a narrative report that is shared with law enforcement, prosecutors and the licensing boards of everyone involved, so one report can reach several places at once.",
+  "channels": [
+    {
+      "id": "mn-behavioral-health-therapy-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Minnesota Board of Behavioral Health and Therapy",
+      "what_it_can_do": "Licenses and disciplines professional counselors and alcohol and drug counselors in Minnesota. Its reach covers licensees, temporary permit holders, applicants, and people practising without a licence or claiming to hold one of its licences.",
+      "what_it_cannot_do": "It does not licence every mental health profession. Psychologists, social workers and marriage and family therapists each have their own board.",
+      "who_to_report": "A licensed professional counselor or alcohol and drug counselor, or somebody claiming to be one.",
+      "how": "Download the Board's complaint form and complete it. Complaints must be in writing, and can go by post, email or fax.",
+      "complaint_url": "https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp",
+      "info_url": "https://mn.gov/boards/behavioral-health/public-information/complaints-discipline.jsp",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp",
+        "https://mn.gov/boards/behavioral-health/public-information/complaints-discipline.jsp"
+      ]
+    },
+    {
+      "id": "mn-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Minnesota Board of Psychology",
+      "what_it_can_do": "Licenses and disciplines psychologists in Minnesota.",
+      "who_to_report": "A licensed psychologist.",
+      "how": "File through the Board's complaints page.",
+      "complaint_url": "https://mn.gov/boards/psychology/public/complaints/index.jsp",
+      "phone": "612-617-2230",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://mn.gov/boards/psychology/public/complaints/index.jsp"]
+    },
+    {
+      "id": "mn-marriage-family-therapy-board",
+      "category": "professional-board",
+      "profession": "Marriage and family therapist",
+      "name": "Minnesota Board of Marriage and Family Therapy",
+      "what_it_can_do": "Licenses and disciplines marriage and family therapists in Minnesota.",
+      "who_to_report": "A licensed marriage and family therapist.",
+      "how": "File through the Board's complaints page.",
+      "complaint_url": "https://mn.gov/boards/marriage-and-family/consumer-info/complaints/",
+      "phone": "612-617-2220",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://mn.gov/boards/marriage-and-family/consumer-info/complaints/"]
+    },
+    {
+      "id": "mn-social-work-board",
+      "category": "professional-board",
+      "profession": "Social worker",
+      "name": "Minnesota Board of Social Work",
+      "what_it_can_do": "Licenses and disciplines social workers in Minnesota.",
+      "who_to_report": "A licensed social worker.",
+      "how": "Contact the Board for its complaint process.",
+      "phone": "612-617-2100",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp"]
+    },
+    {
+      "id": "mn-office-health-facility-complaints",
+      "category": "facility-licensing",
+      "name": "Minnesota Office of Health Facility Complaints (OHFC)",
+      "what_it_can_do": "The Department of Health's lead investigative agency under the Maltreatment of Minors Act as well as the Vulnerable Adults Act. It investigates complaints against facilities the Department licenses and produces a narrative report finding maltreatment substantiated, inconclusive or unsubstantiated.",
+      "who_to_report": "A facility licensed by the Minnesota Department of Health.",
+      "how": "File a complaint against the facility through the Office's complaint page.",
+      "complaint_url": "https://www.health.state.mn.us/facilities/regulation/ohfc/filecomp.html",
+      "info_url": "https://www.health.state.mn.us/facilities/regulation/ohfc/compinvt.html",
+      "anonymous": "unknown",
+      "note": "Its finished report is shared with law enforcement, medical examiners, criminal prosecutors and the licensing boards of everyone involved in the incident. One report can therefore reach several channels without you filing again.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.health.state.mn.us/facilities/regulation/ohfc/filecomp.html",
+        "https://www.health.state.mn.us/facilities/regulation/ohfc/compinvt.html"
+      ]
+    },
+    {
+      "id": "mn-child-protection-reporting",
+      "category": "legal",
+      "name": "Minnesota child maltreatment reporting",
+      "what_it_can_do": "Starts a child protection response. Reports go to the child protection agency in the county or Tribal Nation where the child lives, and intake screeners decide the response path.",
+      "who_to_report": "A child at a Minnesota program. Any person may report voluntarily if they know or suspect a child is being abused or neglected, or has been in the past three years.",
+      "how": "Contact the county or Tribal Nation child protection agency. If a child is in immediate danger, call 911. Mandated reporters must report within 24 hours and follow up in writing within 72.",
+      "complaint_url": "https://dcyf.mn.gov/individuals-and-families/report-abuse",
+      "info_url": "https://mn.gov/dhs/report-abuse/",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcyf.mn.gov/individuals-and-families/report-abuse",
+        "https://mn.gov/dhs/report-abuse/"
+      ]
+    },
+    {
+      "id": "mn-disability-law-center",
+      "category": "oversight",
+      "name": "Minnesota Disability Law Center",
+      "what_it_can_do": "Minnesota's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Minnesota program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://mylegalaid.org/disability-law-center/",
+      "phone": "1-800-292-4150",
+      "phone_note": "Main line 612-334-5970.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=minnesota"]
+    }
+  ]
+}

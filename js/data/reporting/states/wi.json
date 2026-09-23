@@ -1,0 +1,75 @@
+{
+  "state": "Wisconsin",
+  "abbr": "WI",
+  "updated": "2026-09-22",
+  "note": "Wisconsin gives anyone receiving mental health or substance use treatment a statutory set of client rights, with a formal grievance procedure behind them and client rights staff who will write the grievance for you if you ask. That is separate from complaining about the clinician or the facility, and it is the channel most people in a Wisconsin program have never been told exists.",
+  "channels": [
+    {
+      "id": "wi-mpsw-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Wisconsin Marriage and Family Therapy, Professional Counseling and Social Work Examining Board",
+      "what_it_can_do": "A combined board under the Department of Safety and Professional Services covering marriage and family therapists, professional counselors and social workers. DSPS provides the investigators and prosecutors for it, and the board disciplines the licence.",
+      "who_to_report": "A licensed marriage and family therapist, professional counselor or social worker in Wisconsin. Psychologists have their own examining board under the same department.",
+      "how": "File a written complaint through the Department's Division of Legal Services and Compliance. Board staff first decide whether it is within their jurisdiction.",
+      "complaint_url": "https://dsps.wi.gov/Pages/SelfService/FileAComplaint.aspx",
+      "info_url": "https://dsps.wi.gov/Pages/RulesStatutes/MPSW.aspx",
+      "anonymous": "unknown",
+      "note": "Complaints are accepted from clients, employers, colleagues and other agencies alike.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dsps.wi.gov/Pages/SelfService/FileAComplaint.aspx",
+        "https://dsps.wi.gov/Pages/RulesStatutes/MPSW.aspx"
+      ]
+    },
+    {
+      "id": "wi-client-rights-grievance",
+      "category": "oversight",
+      "name": "Wisconsin client rights grievance procedure (DHS 94)",
+      "what_it_can_do": "Wisconsin law gives people receiving mental health, substance use or developmental disability services a set of client rights and a formal grievance procedure to enforce them. The provider must have a client rights specialist, and a grievance can be escalated beyond the provider.",
+      "who_to_report": "Someone in a Wisconsin program whose rights are being breached - restrictions, treatment, how they are being handled day to day - whether or not it amounts to abuse.",
+      "how": "File a formal grievance using the sample form, or ask a client rights staff member to write it down for you, which the Department says they will do. There is a published flow chart of the whole procedure.",
+      "complaint_url": "https://www.dhs.wisconsin.gov/clientrights/grievances.htm",
+      "info_url": "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+      "anonymous": "not-allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+        "https://www.dhs.wisconsin.gov/clientrights/grievances.htm"
+      ]
+    },
+    {
+      "id": "wi-residential-care-licensing",
+      "category": "facility-licensing",
+      "name": "Wisconsin DHS, residential and community-based care licensing",
+      "what_it_can_do": "Licenses and certifies Wisconsin's residential and community-based care providers and takes complaints against them.",
+      "who_to_report": "A licensed residential program.",
+      "how": "Use the Department's complaint route.",
+      "complaint_url": "https://www.dhs.wisconsin.gov/complaints/index.htm",
+      "info_url": "https://www.dhs.wisconsin.gov/regulations/residcare-index.htm",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dhs.wisconsin.gov/regulations/residcare-index.htm",
+        "https://www.dhs.wisconsin.gov/complaints/index.htm"
+      ]
+    },
+    {
+      "id": "wi-disability-rights-wisconsin",
+      "category": "oversight",
+      "name": "Disability Rights Wisconsin",
+      "what_it_can_do": "Wisconsin's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. The Department of Health Services names it directly as where to take a disability rights grievance.",
+      "who_to_report": "A Wisconsin program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightswi.org/",
+      "phone": "1-800-928-8778",
+      "phone_note": "Direct line 608-308-2648.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wisconsin"
+      ]
+    }
+  ]
+}

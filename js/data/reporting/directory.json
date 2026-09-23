@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-23T01:23:22.885Z",
+  "generated": "2026-09-23T01:30:07.483Z",
   "categories": [
     {
       "key": "professional-board",
@@ -826,6 +826,346 @@
       ]
     },
     {
+      "state": "Illinois",
+      "abbr": "IL",
+      "slug": "illinois",
+      "updated": "2026-09-22",
+      "note": "Illinois has a practical shortcut worth knowing: if a facility has broken state licensing standards, you can call the child abuse hotline and say you want to make a licensing complaint. That is the state's own advice, and it saves working out which of the licensing offices covers a program. Every complaint about a licensed clinician, whatever the profession, goes to one intake unit at IDFPR.",
+      "channels": [
+        {
+          "id": "il-idfpr",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Illinois Department of Financial and Professional Regulation, Division of Professional Regulation",
+          "what_it_can_do": "Licenses and disciplines professional counselors, clinical social workers, psychologists and marriage and family therapists among more than a hundred professions, and investigates complaints against any of them through one Complaint Intake Unit.",
+          "who_to_report": "Any licensed mental health professional in Illinois. Complaints are accepted from clients, families, colleagues and anybody else.",
+          "how": "File through the Division's complaint page. The licensee is notified of the allegations in writing once it is logged.",
+          "complaint_url": "https://idfpr.illinois.gov/admin/dpr/dprcomplaint.html",
+          "info_url": "https://idfpr.illinois.gov/admin/complaints.html",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://idfpr.illinois.gov/admin/dpr/dprcomplaint.html",
+            "https://idfpr.illinois.gov/admin/complaints.html"
+          ]
+        },
+        {
+          "id": "il-dcfs-licensing",
+          "category": "facility-licensing",
+          "name": "Illinois DCFS Licensing",
+          "what_it_can_do": "Licenses child care and child welfare facilities in Illinois against state licensing standards, and investigates complaints that a facility has breached them.",
+          "who_to_report": "A facility you believe has broken licensing standards - staffing, supervision, conditions, how children are treated.",
+          "how": "Complain to the local DCFS Licensing Office, or call the Child Abuse Hotline and say you want to make a licensing complaint. Complaints can be made by post, email, fax or in person.",
+          "complaint_url": "https://sunshine.dcfs.illinois.gov/Content/Licensing/Daycare/FileComplaint.aspx",
+          "phone": "1-800-252-2873",
+          "phone_note": "The Child Abuse Hotline also takes licensing complaints - say that is what you are calling about.",
+          "anonymous": "allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://sunshine.dcfs.illinois.gov/Content/Licensing/Daycare/FileComplaint.aspx"
+          ]
+        },
+        {
+          "id": "il-dcfs-hotline",
+          "category": "legal",
+          "name": "Illinois DCFS Child Abuse Hotline",
+          "what_it_can_do": "The statewide 24-hour line for reporting a child harmed or at risk of harm through abuse or neglect, and the route into a DCFS investigation.",
+          "who_to_report": "A child at an Illinois program.",
+          "how": "Call, at any hour.",
+          "info_url": "https://dcfs.illinois.gov/safe-kids/reporting.html",
+          "phone": "1-800-252-2873",
+          "phone_note": "1-800-25-ABUSE. 24 hours a day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcfs.illinois.gov/safe-kids/reporting.html"
+          ]
+        },
+        {
+          "id": "il-equip-for-equality",
+          "category": "oversight",
+          "name": "Equip for Equality",
+          "what_it_can_do": "Illinois's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Illinois program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.equipforequality.org",
+          "phone": "1-800-537-2632",
+          "phone_note": "Main line 312-341-0022; TTD 1-800-610-2779.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=illinois"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Indiana",
+      "abbr": "IN",
+      "slug": "indiana",
+      "updated": "2026-09-22",
+      "note": "Indiana is the state where a complaint about a therapist does not start at the licensing board at all. It goes to the Attorney General's Consumer Protection Division, which reviews it and only then takes it to the relevant board asking for action against the licence. Indiana also protects reporters unusually firmly: state law requires the Department of Child Services to keep the identity of anyone reporting abuse confidential.",
+      "channels": [
+        {
+          "id": "in-attorney-general-licensing-complaints",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Indiana Attorney General, Consumer Protection Division (licensing complaints)",
+          "what_it_can_do": "Takes complaints from the public against licensed professionals, reviews them first, and where it finds merit brings the case to the relevant board - the Behavioral Health and Human Services Licensing Board, or the Psychology Board - seeking action against the licence.",
+          "who_to_report": "A licensed social worker, marriage and family therapist, mental health counselor, clinical addiction counselor or psychologist in Indiana.",
+          "how": "Obtain the complaint form from the Attorney General's Consumer Protection Division and file it there, not with the licensing agency.",
+          "complaint_url": "https://www.in.gov/attorneygeneral/consumer-protection-division/licensing/",
+          "info_url": "https://www.in.gov/pla/licensure-discipline/report-a-professional",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.in.gov/pla/licensure-discipline/report-a-professional",
+            "https://www.in.gov/attorneygeneral/consumer-protection-division/licensing/"
+          ]
+        },
+        {
+          "id": "in-child-abuse-hotline",
+          "category": "legal",
+          "name": "Indiana Child Abuse and Neglect Hotline",
+          "what_it_can_do": "The statewide 24-hour report line run by the Department of Child Services. It also connects families with no open case to free home-based services.",
+          "who_to_report": "A child at an Indiana program.",
+          "how": "Call, at any hour including weekends and holidays. If every line is busy, there is a second number. Press option 2 instead if you want a referral to local support rather than to make a report.",
+          "info_url": "https://www.in.gov/dcs/hotline/",
+          "phone": "1-800-800-5556",
+          "phone_note": "24 hours a day. If the lines are down, 1-833-800-5556.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "note": "You can report anonymously, and even if you give your name, Indiana law requires the Department to keep the identity and contact details of every report source confidential.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.in.gov/dcs/hotline/"
+          ]
+        },
+        {
+          "id": "in-dcs-ombudsman",
+          "category": "oversight",
+          "name": "Indiana DCS Ombudsman Bureau",
+          "what_it_can_do": "Takes complaints about the Department of Child Services itself - how it handled a case, or failed to.",
+          "what_it_cannot_do": "It reviews the agency, not the program.",
+          "who_to_report": "A family or young person whose report to DCS went nowhere.",
+          "info_url": "https://www.in.gov/dcs/hotline/",
+          "phone": "1-877-682-0101",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.in.gov/dcs/hotline/"
+          ]
+        },
+        {
+          "id": "in-indiana-disability-rights",
+          "category": "oversight",
+          "name": "Indiana Disability Rights",
+          "what_it_can_do": "Indiana's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "An Indiana program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.in.gov/idr/",
+          "phone": "1-800-622-4845",
+          "phone_note": "Main line 317-722-5555 voice/TDD.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=indiana"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Maryland",
+      "abbr": "MD",
+      "slug": "maryland",
+      "updated": "2026-09-22",
+      "note": "Maryland reports abuse to the local department of social services or to local police rather than to a single statewide intake, though 1-800-91-PREVENT will take the call. It also licenses Residential Child Care programs as their own category through the Department of Human Services. One useful piece of Maryland law: since October 2016, where a local department believes a mandated reporter knowingly failed to report, it must file a complaint with that reporter's own licensing board.",
+      "channels": [
+        {
+          "id": "md-counselors-therapists-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Maryland Board of Professional Counselors and Therapists",
+          "what_it_can_do": "Licenses and disciplines professional counselors and therapists, including marriage and family therapists and alcohol and drug counselors. Where the Board votes to investigate, it assigns its own investigator, and a thorough investigation has to come before any charge against a licensee.",
+          "what_it_cannot_do": "It says many financial and interpersonal issues fall outside its jurisdiction because no breach of the Professional Counselors Act is involved. It cannot help you sue for money or settle a fee dispute.",
+          "who_to_report": "A licensed counselor or therapist in Maryland. Psychologists and social workers have separate boards.",
+          "how": "File through the Board's complaint gateway. Complaints are taken from patients, family members and any other member of the public.",
+          "complaint_url": "https://mdbpct-complaints.thtspn.com/",
+          "info_url": "https://health.maryland.gov/bopc/pages/publicorders.aspx",
+          "email": "mdh.bopctcompliance@maryland.gov",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://mdbpct-complaints.thtspn.com/",
+            "https://health.maryland.gov/bopc/pages/publicorders.aspx"
+          ]
+        },
+        {
+          "id": "md-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Maryland Board of Examiners of Psychologists",
+          "what_it_can_do": "Licenses and disciplines psychologists and registered psychology associates in Maryland.",
+          "who_to_report": "A licensed psychologist or registered psychology associate.",
+          "how": "Complete the Board's complaint form - there are separate written instructions for filling it in - and send it to the Board.",
+          "complaint_url": "https://health.maryland.gov/psych/Pages/complaint.aspx",
+          "phone": "410-764-4787",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://health.maryland.gov/psych/Pages/complaint.aspx"
+          ]
+        },
+        {
+          "id": "md-residential-child-care",
+          "category": "facility-licensing",
+          "name": "Maryland DHS, Licensing and Monitoring (Residential Child Care)",
+          "what_it_can_do": "Licenses and monitors Residential Child Care programs in Maryland as a distinct category, and takes complaints about them.",
+          "who_to_report": "A licensed residential child care program.",
+          "how": "Contact the Department of Human Services.",
+          "info_url": "https://dhs.maryland.gov/residential-child-care/",
+          "phone": "1-800-332-6347",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhs.maryland.gov/residential-child-care/",
+            "https://dhs.maryland.gov/business-center/documents/licensing-and-monitoring/"
+          ]
+        },
+        {
+          "id": "md-child-abuse-reporting",
+          "category": "legal",
+          "name": "Maryland child abuse and neglect reporting",
+          "what_it_can_do": "Starts a child protective services investigation. Reports go to the local department of social services for the county the child is in, or to local law enforcement.",
+          "who_to_report": "A child at a Maryland program.",
+          "how": "Call the local department of social services, or 1-800-91-PREVENT, or 911 in an emergency. Report orally straight away; a mandated reporter must also file a written report within 48 hours.",
+          "complaint_url": "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/local-offices/",
+          "info_url": "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/",
+          "phone": "1-800-917-7383",
+          "phone_note": "1-800-91-PREVENT.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/",
+            "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/mandated-reporters/"
+          ]
+        },
+        {
+          "id": "md-disability-rights-maryland",
+          "category": "oversight",
+          "name": "Disability Rights Maryland",
+          "what_it_can_do": "Maryland's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Maryland program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightsmd.org/",
+          "phone": "1-800-233-7201",
+          "phone_note": "Main line 410-727-6352; TTY 410-235-5387.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=maryland"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Massachusetts",
+      "abbr": "MA",
+      "slug": "massachusetts",
+      "updated": "2026-09-22",
+      "note": "Massachusetts calls a child abuse report a 51A, after the section of law that creates it, and you will hear that shorthand from every agency in the state. The Department of Early Education and Care licenses the residential and congregate care programs themselves, which is not where most people would think to look, and the state also has an independent Office of the Child Advocate covering every child-serving agency.",
+      "channels": [
+        {
+          "id": "ma-occupational-licensure-boards",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Massachusetts Division of Occupational Licensure, Office of Investigations",
+          "what_it_can_do": "Investigates complaints against licensed mental health counselors, marriage and family therapists, psychiatric nurse mental health specialists, psychologists and social workers, and the boards discipline those who breach the licensing regulations.",
+          "who_to_report": "Any of those licence types in Massachusetts.",
+          "how": "File through the Commonwealth's ePLACE portal, or call or write the Office of Investigations and ask for a complaint form. File a separate complaint for each person or facility.",
+          "complaint_url": "https://www.mass.gov/how-to/file-a-complaint-against-an-occupational-board-licensee",
+          "info_url": "https://www.mass.gov/orgs/board-of-registration-of-allied-mental-health-and-human-services-professions",
+          "phone": "617-624-6199",
+          "phone_note": "Board of Registration of Allied Mental Health and Human Services Professions, 9am to 5pm weekdays.",
+          "email": "amh.board@mass.gov",
+          "anonymous": "unknown",
+          "note": "Be specific: location, date, the licensee's name and licence number, any witnesses, and copies of records, correspondence or photographs that support what you are saying.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.mass.gov/orgs/board-of-registration-of-allied-mental-health-and-human-services-professions",
+            "https://www.mass.gov/how-to/file-a-complaint-against-an-occupational-board-licensee"
+          ]
+        },
+        {
+          "id": "ma-early-education-care-licensing",
+          "category": "facility-licensing",
+          "name": "Massachusetts Department of Early Education and Care (EEC)",
+          "what_it_can_do": "Licenses the residential facilities and congregate care programs themselves, along with foster care and adoption placement agencies - around 9,000 programs in all - and takes complaints about them.",
+          "who_to_report": "The residential program. EEC also takes reports of care being provided without a licence at all.",
+          "how": "Call the EEC regional office for the area the program is in. There is a separate online form for reporting unlicensed care.",
+          "complaint_url": "https://eeclead.my.site.com/eeclead/s/reportunlicensedcare",
+          "info_url": "https://www.mass.gov/info-details/child-welfare-information",
+          "anonymous": "unknown",
+          "note": "If the complaint involves suspected abuse or neglect rather than a licensing breach, EEC tells you to file a 51A with DCF first.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+            "https://eeclead.my.site.com/eeclead/s/reportunlicensedcare"
+          ]
+        },
+        {
+          "id": "ma-dcf-child-at-risk-hotline",
+          "category": "legal",
+          "name": "Massachusetts Child-at-Risk Hotline (51A report)",
+          "what_it_can_do": "The 24-hour line for reporting suspected child abuse or neglect to the Department of Children and Families. A report here is what Massachusetts calls a 51A.",
+          "who_to_report": "A child at a Massachusetts program.",
+          "how": "Call the hotline. Every other agency in the state will tell you to do this first where abuse or neglect is alleged.",
+          "info_url": "https://www.mass.gov/info-details/reporting-alleged-child-abuse-or-neglect-filing-a-51a-report",
+          "phone": "1-800-792-5200",
+          "phone_note": "24 hours a day.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.mass.gov/info-details/reporting-alleged-child-abuse-or-neglect-filing-a-51a-report",
+            "https://www.mass.gov/child-abuse-and-neglect"
+          ]
+        },
+        {
+          "id": "ma-office-child-advocate",
+          "category": "oversight",
+          "name": "Massachusetts Office of the Child Advocate",
+          "what_it_can_do": "An independent office overseeing every child-serving state agency in Massachusetts. It publishes a resource guide naming which agency does what, and takes concerns about how the system has handled a child.",
+          "what_it_cannot_do": "It reviews the agencies rather than licensing or prosecuting a program.",
+          "who_to_report": "A family or young person who has reported to a Massachusetts agency and got nowhere.",
+          "info_url": "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies"
+          ]
+        },
+        {
+          "id": "ma-disability-law-center",
+          "category": "oversight",
+          "name": "Disability Law Center (Massachusetts)",
+          "what_it_can_do": "Massachusetts's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Massachusetts program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://www.dlc-ma.org/",
+          "phone": "1-800-872-9992",
+          "phone_note": "Main line 617-723-8455; TTY 617-892-4404.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=massachusetts"
+          ]
+        }
+      ]
+    },
+    {
       "state": "Michigan",
       "abbr": "MI",
       "slug": "michigan",
@@ -898,6 +1238,130 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=michigan"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "Minnesota",
+      "abbr": "MN",
+      "slug": "minnesota",
+      "updated": "2026-09-22",
+      "note": "Minnesota keeps a separate board for each profession, so check which licence the person holds before you file. Two things are worth knowing. Any person may voluntarily report a child who is being abused, or who has been abused in the past three years - that lookback is stated in the state's own guidance. And a maltreatment investigation by the Office of Health Facility Complaints ends in a narrative report that is shared with law enforcement, prosecutors and the licensing boards of everyone involved, so one report can reach several places at once.",
+      "channels": [
+        {
+          "id": "mn-behavioral-health-therapy-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Minnesota Board of Behavioral Health and Therapy",
+          "what_it_can_do": "Licenses and disciplines professional counselors and alcohol and drug counselors in Minnesota. Its reach covers licensees, temporary permit holders, applicants, and people practising without a licence or claiming to hold one of its licences.",
+          "what_it_cannot_do": "It does not licence every mental health profession. Psychologists, social workers and marriage and family therapists each have their own board.",
+          "who_to_report": "A licensed professional counselor or alcohol and drug counselor, or somebody claiming to be one.",
+          "how": "Download the Board's complaint form and complete it. Complaints must be in writing, and can go by post, email or fax.",
+          "complaint_url": "https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp",
+          "info_url": "https://mn.gov/boards/behavioral-health/public-information/complaints-discipline.jsp",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp",
+            "https://mn.gov/boards/behavioral-health/public-information/complaints-discipline.jsp"
+          ]
+        },
+        {
+          "id": "mn-psychology-board",
+          "category": "professional-board",
+          "profession": "Psychologist",
+          "name": "Minnesota Board of Psychology",
+          "what_it_can_do": "Licenses and disciplines psychologists in Minnesota.",
+          "who_to_report": "A licensed psychologist.",
+          "how": "File through the Board's complaints page.",
+          "complaint_url": "https://mn.gov/boards/psychology/public/complaints/index.jsp",
+          "phone": "612-617-2230",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://mn.gov/boards/psychology/public/complaints/index.jsp"
+          ]
+        },
+        {
+          "id": "mn-marriage-family-therapy-board",
+          "category": "professional-board",
+          "profession": "Marriage and family therapist",
+          "name": "Minnesota Board of Marriage and Family Therapy",
+          "what_it_can_do": "Licenses and disciplines marriage and family therapists in Minnesota.",
+          "who_to_report": "A licensed marriage and family therapist.",
+          "how": "File through the Board's complaints page.",
+          "complaint_url": "https://mn.gov/boards/marriage-and-family/consumer-info/complaints/",
+          "phone": "612-617-2220",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://mn.gov/boards/marriage-and-family/consumer-info/complaints/"
+          ]
+        },
+        {
+          "id": "mn-social-work-board",
+          "category": "professional-board",
+          "profession": "Social worker",
+          "name": "Minnesota Board of Social Work",
+          "what_it_can_do": "Licenses and disciplines social workers in Minnesota.",
+          "who_to_report": "A licensed social worker.",
+          "how": "Contact the Board for its complaint process.",
+          "phone": "612-617-2100",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://mn.gov/boards/behavioral-health/public-information/filingacomplaint.jsp"
+          ]
+        },
+        {
+          "id": "mn-office-health-facility-complaints",
+          "category": "facility-licensing",
+          "name": "Minnesota Office of Health Facility Complaints (OHFC)",
+          "what_it_can_do": "The Department of Health's lead investigative agency under the Maltreatment of Minors Act as well as the Vulnerable Adults Act. It investigates complaints against facilities the Department licenses and produces a narrative report finding maltreatment substantiated, inconclusive or unsubstantiated.",
+          "who_to_report": "A facility licensed by the Minnesota Department of Health.",
+          "how": "File a complaint against the facility through the Office's complaint page.",
+          "complaint_url": "https://www.health.state.mn.us/facilities/regulation/ohfc/filecomp.html",
+          "info_url": "https://www.health.state.mn.us/facilities/regulation/ohfc/compinvt.html",
+          "anonymous": "unknown",
+          "note": "Its finished report is shared with law enforcement, medical examiners, criminal prosecutors and the licensing boards of everyone involved in the incident. One report can therefore reach several channels without you filing again.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.health.state.mn.us/facilities/regulation/ohfc/filecomp.html",
+            "https://www.health.state.mn.us/facilities/regulation/ohfc/compinvt.html"
+          ]
+        },
+        {
+          "id": "mn-child-protection-reporting",
+          "category": "legal",
+          "name": "Minnesota child maltreatment reporting",
+          "what_it_can_do": "Starts a child protection response. Reports go to the child protection agency in the county or Tribal Nation where the child lives, and intake screeners decide the response path.",
+          "who_to_report": "A child at a Minnesota program. Any person may report voluntarily if they know or suspect a child is being abused or neglected, or has been in the past three years.",
+          "how": "Contact the county or Tribal Nation child protection agency. If a child is in immediate danger, call 911. Mandated reporters must report within 24 hours and follow up in writing within 72.",
+          "complaint_url": "https://dcyf.mn.gov/individuals-and-families/report-abuse",
+          "info_url": "https://mn.gov/dhs/report-abuse/",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dcyf.mn.gov/individuals-and-families/report-abuse",
+            "https://mn.gov/dhs/report-abuse/"
+          ]
+        },
+        {
+          "id": "mn-disability-law-center",
+          "category": "oversight",
+          "name": "Minnesota Disability Law Center",
+          "what_it_can_do": "Minnesota's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+          "who_to_report": "A Minnesota program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://mylegalaid.org/disability-law-center/",
+          "phone": "1-800-292-4150",
+          "phone_note": "Main line 612-334-5970.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=minnesota"
           ]
         }
       ]
@@ -1215,6 +1679,71 @@
           "verified_on": "2026-09-22",
           "sources": [
             "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=nevada"
+          ]
+        }
+      ]
+    },
+    {
+      "state": "New Jersey",
+      "abbr": "NJ",
+      "slug": "new-jersey",
+      "updated": "2026-09-22",
+      "note": "Two things New Jersey states plainly. Every report of abuse or neglect in an institutional setting - and it names residential treatment centres specifically - must go to the State Central Registry, and an investigator has to start within 24 hours. And a complaint form sent to a professional board is a government record: the board may be obliged to hand it to anyone who asks for it once the investigation is over.",
+      "channels": [
+        {
+          "id": "nj-consumer-affairs-boards",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "New Jersey Division of Consumer Affairs, professional boards",
+          "what_it_can_do": "Houses the Professional Counselor Examiners Committee, the Board of Social Work Examiners, the State Board of Psychological Examiners and the State Board of Marriage and Family Therapy Examiners, and takes complaints against all of them through one portal.",
+          "who_to_report": "A licensed counselor, social worker, psychologist or marriage and family therapist in New Jersey.",
+          "how": "File through the Division's board complaint portal, or post the board's form to its Newark address.",
+          "complaint_url": "https://njconsumeraffairs.nj.gov/board-complaints/",
+          "info_url": "https://www.njconsumeraffairs.gov/mft",
+          "phone": "973-504-6200",
+          "mail": "New Jersey Division of Consumer Affairs, 124 Halsey Street, Newark, NJ 07101",
+          "anonymous": "discouraged",
+          "note": "The Division warns that anything you put on the complaint form may become public. The completed form is a government record, and once any investigation is finished the board may be obliged to release it to anyone who requests it.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://njconsumeraffairs.nj.gov/board-complaints/",
+            "https://www.njconsumeraffairs.gov/mft"
+          ]
+        },
+        {
+          "id": "nj-state-central-registry",
+          "category": "legal",
+          "name": "New Jersey State Central Registry (1-877 NJ ABUSE)",
+          "what_it_can_do": "The statutory report line for child abuse and neglect. New Jersey requires every report of abuse in an institutional setting - child care centres, schools, foster homes and residential treatment centres - to come here, and the Division of Child Protection and Permanency must start investigating within 24 hours.",
+          "who_to_report": "A child at a New Jersey program. You do not need proof, and you can report anonymously.",
+          "how": "Call the 24-hour line. If the child is in immediate danger, call 911 as well.",
+          "info_url": "https://www.nj.gov/dcf/reporting/how/",
+          "phone": "1-877-652-2873",
+          "phone_note": "1-877-NJ-ABUSE. 24 hours a day, seven days a week.",
+          "anonymous": "allowed",
+          "mandatory_reporter": true,
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.nj.gov/dcf/reporting/how/",
+            "https://www.nj.gov/dcf/families/hotlines/"
+          ]
+        },
+        {
+          "id": "nj-disability-rights-new-jersey",
+          "category": "oversight",
+          "name": "Disability Rights New Jersey",
+          "what_it_can_do": "New Jersey's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to reporting abuse or neglect in New Jersey.",
+          "who_to_report": "A New Jersey program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line, or start from its reporting guide.",
+          "complaint_url": "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
+          "info_url": "https://disabilityrightsnj.org/",
+          "phone": "1-800-922-7233",
+          "phone_note": "Main line 609-292-9742; TTY 609-633-7106.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-jersey"
           ]
         }
       ]
@@ -2286,10 +2815,86 @@
           ]
         }
       ]
+    },
+    {
+      "state": "Wisconsin",
+      "abbr": "WI",
+      "slug": "wisconsin",
+      "updated": "2026-09-22",
+      "note": "Wisconsin gives anyone receiving mental health or substance use treatment a statutory set of client rights, with a formal grievance procedure behind them and client rights staff who will write the grievance for you if you ask. That is separate from complaining about the clinician or the facility, and it is the channel most people in a Wisconsin program have never been told exists.",
+      "channels": [
+        {
+          "id": "wi-mpsw-board",
+          "category": "professional-board",
+          "profession": "Multiple professions",
+          "name": "Wisconsin Marriage and Family Therapy, Professional Counseling and Social Work Examining Board",
+          "what_it_can_do": "A combined board under the Department of Safety and Professional Services covering marriage and family therapists, professional counselors and social workers. DSPS provides the investigators and prosecutors for it, and the board disciplines the licence.",
+          "who_to_report": "A licensed marriage and family therapist, professional counselor or social worker in Wisconsin. Psychologists have their own examining board under the same department.",
+          "how": "File a written complaint through the Department's Division of Legal Services and Compliance. Board staff first decide whether it is within their jurisdiction.",
+          "complaint_url": "https://dsps.wi.gov/Pages/SelfService/FileAComplaint.aspx",
+          "info_url": "https://dsps.wi.gov/Pages/RulesStatutes/MPSW.aspx",
+          "anonymous": "unknown",
+          "note": "Complaints are accepted from clients, employers, colleagues and other agencies alike.",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://dsps.wi.gov/Pages/SelfService/FileAComplaint.aspx",
+            "https://dsps.wi.gov/Pages/RulesStatutes/MPSW.aspx"
+          ]
+        },
+        {
+          "id": "wi-client-rights-grievance",
+          "category": "oversight",
+          "name": "Wisconsin client rights grievance procedure (DHS 94)",
+          "what_it_can_do": "Wisconsin law gives people receiving mental health, substance use or developmental disability services a set of client rights and a formal grievance procedure to enforce them. The provider must have a client rights specialist, and a grievance can be escalated beyond the provider.",
+          "who_to_report": "Someone in a Wisconsin program whose rights are being breached - restrictions, treatment, how they are being handled day to day - whether or not it amounts to abuse.",
+          "how": "File a formal grievance using the sample form, or ask a client rights staff member to write it down for you, which the Department says they will do. There is a published flow chart of the whole procedure.",
+          "complaint_url": "https://www.dhs.wisconsin.gov/clientrights/grievances.htm",
+          "info_url": "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+          "anonymous": "not-allowed",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+            "https://www.dhs.wisconsin.gov/clientrights/grievances.htm"
+          ]
+        },
+        {
+          "id": "wi-residential-care-licensing",
+          "category": "facility-licensing",
+          "name": "Wisconsin DHS, residential and community-based care licensing",
+          "what_it_can_do": "Licenses and certifies Wisconsin's residential and community-based care providers and takes complaints against them.",
+          "who_to_report": "A licensed residential program.",
+          "how": "Use the Department's complaint route.",
+          "complaint_url": "https://www.dhs.wisconsin.gov/complaints/index.htm",
+          "info_url": "https://www.dhs.wisconsin.gov/regulations/residcare-index.htm",
+          "anonymous": "unknown",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhs.wisconsin.gov/regulations/residcare-index.htm",
+            "https://www.dhs.wisconsin.gov/complaints/index.htm"
+          ]
+        },
+        {
+          "id": "wi-disability-rights-wisconsin",
+          "category": "oversight",
+          "name": "Disability Rights Wisconsin",
+          "what_it_can_do": "Wisconsin's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. The Department of Health Services names it directly as where to take a disability rights grievance.",
+          "who_to_report": "A Wisconsin program where the young person has a disability or a mental health diagnosis.",
+          "how": "Contact the intake line.",
+          "info_url": "https://disabilityrightswi.org/",
+          "phone": "1-800-928-8778",
+          "phone_note": "Direct line 608-308-2648.",
+          "anonymous": "discouraged",
+          "verified_on": "2026-09-22",
+          "sources": [
+            "https://www.dhs.wisconsin.gov/clientrights/complaints.htm",
+            "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=wisconsin"
+          ]
+        }
+      ]
     }
   ],
   "coverage": {
-    "covered": 21,
+    "covered": 28,
     "total": 51,
     "missing": [
       "AK",
@@ -2299,27 +2904,20 @@
       "DE",
       "HI",
       "IA",
-      "IL",
-      "IN",
       "KS",
       "KY",
       "LA",
-      "MA",
-      "MD",
       "ME",
-      "MN",
       "MS",
       "ND",
       "NE",
       "NH",
-      "NJ",
       "NM",
       "OK",
       "RI",
       "SC",
       "SD",
       "VT",
-      "WI",
       "WV",
       "WY"
     ]

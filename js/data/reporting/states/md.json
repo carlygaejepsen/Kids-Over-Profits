@@ -1,0 +1,90 @@
+{
+  "state": "Maryland",
+  "abbr": "MD",
+  "updated": "2026-09-22",
+  "note": "Maryland reports abuse to the local department of social services or to local police rather than to a single statewide intake, though 1-800-91-PREVENT will take the call. It also licenses Residential Child Care programs as their own category through the Department of Human Services. One useful piece of Maryland law: since October 2016, where a local department believes a mandated reporter knowingly failed to report, it must file a complaint with that reporter's own licensing board.",
+  "channels": [
+    {
+      "id": "md-counselors-therapists-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Maryland Board of Professional Counselors and Therapists",
+      "what_it_can_do": "Licenses and disciplines professional counselors and therapists, including marriage and family therapists and alcohol and drug counselors. Where the Board votes to investigate, it assigns its own investigator, and a thorough investigation has to come before any charge against a licensee.",
+      "what_it_cannot_do": "It says many financial and interpersonal issues fall outside its jurisdiction because no breach of the Professional Counselors Act is involved. It cannot help you sue for money or settle a fee dispute.",
+      "who_to_report": "A licensed counselor or therapist in Maryland. Psychologists and social workers have separate boards.",
+      "how": "File through the Board's complaint gateway. Complaints are taken from patients, family members and any other member of the public.",
+      "complaint_url": "https://mdbpct-complaints.thtspn.com/",
+      "info_url": "https://health.maryland.gov/bopc/pages/publicorders.aspx",
+      "email": "mdh.bopctcompliance@maryland.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://mdbpct-complaints.thtspn.com/",
+        "https://health.maryland.gov/bopc/pages/publicorders.aspx"
+      ]
+    },
+    {
+      "id": "md-psychology-board",
+      "category": "professional-board",
+      "profession": "Psychologist",
+      "name": "Maryland Board of Examiners of Psychologists",
+      "what_it_can_do": "Licenses and disciplines psychologists and registered psychology associates in Maryland.",
+      "who_to_report": "A licensed psychologist or registered psychology associate.",
+      "how": "Complete the Board's complaint form - there are separate written instructions for filling it in - and send it to the Board.",
+      "complaint_url": "https://health.maryland.gov/psych/Pages/complaint.aspx",
+      "phone": "410-764-4787",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://health.maryland.gov/psych/Pages/complaint.aspx"]
+    },
+    {
+      "id": "md-residential-child-care",
+      "category": "facility-licensing",
+      "name": "Maryland DHS, Licensing and Monitoring (Residential Child Care)",
+      "what_it_can_do": "Licenses and monitors Residential Child Care programs in Maryland as a distinct category, and takes complaints about them.",
+      "who_to_report": "A licensed residential child care program.",
+      "how": "Contact the Department of Human Services.",
+      "info_url": "https://dhs.maryland.gov/residential-child-care/",
+      "phone": "1-800-332-6347",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhs.maryland.gov/residential-child-care/",
+        "https://dhs.maryland.gov/business-center/documents/licensing-and-monitoring/"
+      ]
+    },
+    {
+      "id": "md-child-abuse-reporting",
+      "category": "legal",
+      "name": "Maryland child abuse and neglect reporting",
+      "what_it_can_do": "Starts a child protective services investigation. Reports go to the local department of social services for the county the child is in, or to local law enforcement.",
+      "who_to_report": "A child at a Maryland program.",
+      "how": "Call the local department of social services, or 1-800-91-PREVENT, or 911 in an emergency. Report orally straight away; a mandated reporter must also file a written report within 48 hours.",
+      "complaint_url": "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/local-offices/",
+      "info_url": "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/",
+      "phone": "1-800-917-7383",
+      "phone_note": "1-800-91-PREVENT.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/",
+        "https://dhs.maryland.gov/child-protective-services/reporting-suspected-child-abuse-or-neglect/mandated-reporters/"
+      ]
+    },
+    {
+      "id": "md-disability-rights-maryland",
+      "category": "oversight",
+      "name": "Disability Rights Maryland",
+      "what_it_can_do": "Maryland's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Maryland program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsmd.org/",
+      "phone": "1-800-233-7201",
+      "phone_note": "Main line 410-727-6352; TTY 410-235-5387.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=maryland"]
+    }
+  ]
+}

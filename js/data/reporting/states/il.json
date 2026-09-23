@@ -1,0 +1,68 @@
+{
+  "state": "Illinois",
+  "abbr": "IL",
+  "updated": "2026-09-22",
+  "note": "Illinois has a practical shortcut worth knowing: if a facility has broken state licensing standards, you can call the child abuse hotline and say you want to make a licensing complaint. That is the state's own advice, and it saves working out which of the licensing offices covers a program. Every complaint about a licensed clinician, whatever the profession, goes to one intake unit at IDFPR.",
+  "channels": [
+    {
+      "id": "il-idfpr",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Illinois Department of Financial and Professional Regulation, Division of Professional Regulation",
+      "what_it_can_do": "Licenses and disciplines professional counselors, clinical social workers, psychologists and marriage and family therapists among more than a hundred professions, and investigates complaints against any of them through one Complaint Intake Unit.",
+      "who_to_report": "Any licensed mental health professional in Illinois. Complaints are accepted from clients, families, colleagues and anybody else.",
+      "how": "File through the Division's complaint page. The licensee is notified of the allegations in writing once it is logged.",
+      "complaint_url": "https://idfpr.illinois.gov/admin/dpr/dprcomplaint.html",
+      "info_url": "https://idfpr.illinois.gov/admin/complaints.html",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://idfpr.illinois.gov/admin/dpr/dprcomplaint.html",
+        "https://idfpr.illinois.gov/admin/complaints.html"
+      ]
+    },
+    {
+      "id": "il-dcfs-licensing",
+      "category": "facility-licensing",
+      "name": "Illinois DCFS Licensing",
+      "what_it_can_do": "Licenses child care and child welfare facilities in Illinois against state licensing standards, and investigates complaints that a facility has breached them.",
+      "who_to_report": "A facility you believe has broken licensing standards - staffing, supervision, conditions, how children are treated.",
+      "how": "Complain to the local DCFS Licensing Office, or call the Child Abuse Hotline and say you want to make a licensing complaint. Complaints can be made by post, email, fax or in person.",
+      "complaint_url": "https://sunshine.dcfs.illinois.gov/Content/Licensing/Daycare/FileComplaint.aspx",
+      "phone": "1-800-252-2873",
+      "phone_note": "The Child Abuse Hotline also takes licensing complaints - say that is what you are calling about.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://sunshine.dcfs.illinois.gov/Content/Licensing/Daycare/FileComplaint.aspx"]
+    },
+    {
+      "id": "il-dcfs-hotline",
+      "category": "legal",
+      "name": "Illinois DCFS Child Abuse Hotline",
+      "what_it_can_do": "The statewide 24-hour line for reporting a child harmed or at risk of harm through abuse or neglect, and the route into a DCFS investigation.",
+      "who_to_report": "A child at an Illinois program.",
+      "how": "Call, at any hour.",
+      "info_url": "https://dcfs.illinois.gov/safe-kids/reporting.html",
+      "phone": "1-800-252-2873",
+      "phone_note": "1-800-25-ABUSE. 24 hours a day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://dcfs.illinois.gov/safe-kids/reporting.html"]
+    },
+    {
+      "id": "il-equip-for-equality",
+      "category": "oversight",
+      "name": "Equip for Equality",
+      "what_it_can_do": "Illinois's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Illinois program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.equipforequality.org",
+      "phone": "1-800-537-2632",
+      "phone_note": "Main line 312-341-0022; TTD 1-800-610-2779.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=illinois"]
+    }
+  ]
+}

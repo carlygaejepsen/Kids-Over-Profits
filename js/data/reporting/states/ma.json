@@ -1,0 +1,90 @@
+{
+  "state": "Massachusetts",
+  "abbr": "MA",
+  "updated": "2026-09-22",
+  "note": "Massachusetts calls a child abuse report a 51A, after the section of law that creates it, and you will hear that shorthand from every agency in the state. The Department of Early Education and Care licenses the residential and congregate care programs themselves, which is not where most people would think to look, and the state also has an independent Office of the Child Advocate covering every child-serving agency.",
+  "channels": [
+    {
+      "id": "ma-occupational-licensure-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Massachusetts Division of Occupational Licensure, Office of Investigations",
+      "what_it_can_do": "Investigates complaints against licensed mental health counselors, marriage and family therapists, psychiatric nurse mental health specialists, psychologists and social workers, and the boards discipline those who breach the licensing regulations.",
+      "who_to_report": "Any of those licence types in Massachusetts.",
+      "how": "File through the Commonwealth's ePLACE portal, or call or write the Office of Investigations and ask for a complaint form. File a separate complaint for each person or facility.",
+      "complaint_url": "https://www.mass.gov/how-to/file-a-complaint-against-an-occupational-board-licensee",
+      "info_url": "https://www.mass.gov/orgs/board-of-registration-of-allied-mental-health-and-human-services-professions",
+      "phone": "617-624-6199",
+      "phone_note": "Board of Registration of Allied Mental Health and Human Services Professions, 9am to 5pm weekdays.",
+      "email": "amh.board@mass.gov",
+      "anonymous": "unknown",
+      "note": "Be specific: location, date, the licensee's name and licence number, any witnesses, and copies of records, correspondence or photographs that support what you are saying.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.mass.gov/orgs/board-of-registration-of-allied-mental-health-and-human-services-professions",
+        "https://www.mass.gov/how-to/file-a-complaint-against-an-occupational-board-licensee"
+      ]
+    },
+    {
+      "id": "ma-early-education-care-licensing",
+      "category": "facility-licensing",
+      "name": "Massachusetts Department of Early Education and Care (EEC)",
+      "what_it_can_do": "Licenses the residential facilities and congregate care programs themselves, along with foster care and adoption placement agencies - around 9,000 programs in all - and takes complaints about them.",
+      "who_to_report": "The residential program. EEC also takes reports of care being provided without a licence at all.",
+      "how": "Call the EEC regional office for the area the program is in. There is a separate online form for reporting unlicensed care.",
+      "complaint_url": "https://eeclead.my.site.com/eeclead/s/reportunlicensedcare",
+      "info_url": "https://www.mass.gov/info-details/child-welfare-information",
+      "anonymous": "unknown",
+      "note": "If the complaint involves suspected abuse or neglect rather than a licensing breach, EEC tells you to file a 51A with DCF first.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+        "https://eeclead.my.site.com/eeclead/s/reportunlicensedcare"
+      ]
+    },
+    {
+      "id": "ma-dcf-child-at-risk-hotline",
+      "category": "legal",
+      "name": "Massachusetts Child-at-Risk Hotline (51A report)",
+      "what_it_can_do": "The 24-hour line for reporting suspected child abuse or neglect to the Department of Children and Families. A report here is what Massachusetts calls a 51A.",
+      "who_to_report": "A child at a Massachusetts program.",
+      "how": "Call the hotline. Every other agency in the state will tell you to do this first where abuse or neglect is alleged.",
+      "info_url": "https://www.mass.gov/info-details/reporting-alleged-child-abuse-or-neglect-filing-a-51a-report",
+      "phone": "1-800-792-5200",
+      "phone_note": "24 hours a day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.mass.gov/info-details/reporting-alleged-child-abuse-or-neglect-filing-a-51a-report",
+        "https://www.mass.gov/child-abuse-and-neglect"
+      ]
+    },
+    {
+      "id": "ma-office-child-advocate",
+      "category": "oversight",
+      "name": "Massachusetts Office of the Child Advocate",
+      "what_it_can_do": "An independent office overseeing every child-serving state agency in Massachusetts. It publishes a resource guide naming which agency does what, and takes concerns about how the system has handled a child.",
+      "what_it_cannot_do": "It reviews the agencies rather than licensing or prosecuting a program.",
+      "who_to_report": "A family or young person who has reported to a Massachusetts agency and got nowhere.",
+      "info_url": "https://www.mass.gov/oca-resource-guide-child-serving-state-agencies",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.mass.gov/oca-resource-guide-child-serving-state-agencies"]
+    },
+    {
+      "id": "ma-disability-law-center",
+      "category": "oversight",
+      "name": "Disability Law Center (Massachusetts)",
+      "what_it_can_do": "Massachusetts's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Massachusetts program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.dlc-ma.org/",
+      "phone": "1-800-872-9992",
+      "phone_note": "Main line 617-723-8455; TTY 617-892-4404.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=massachusetts"]
+    }
+  ]
+}

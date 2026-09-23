@@ -1,0 +1,64 @@
+{
+  "state": "New Jersey",
+  "abbr": "NJ",
+  "updated": "2026-09-22",
+  "note": "Two things New Jersey states plainly. Every report of abuse or neglect in an institutional setting - and it names residential treatment centres specifically - must go to the State Central Registry, and an investigator has to start within 24 hours. And a complaint form sent to a professional board is a government record: the board may be obliged to hand it to anyone who asks for it once the investigation is over.",
+  "channels": [
+    {
+      "id": "nj-consumer-affairs-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "New Jersey Division of Consumer Affairs, professional boards",
+      "what_it_can_do": "Houses the Professional Counselor Examiners Committee, the Board of Social Work Examiners, the State Board of Psychological Examiners and the State Board of Marriage and Family Therapy Examiners, and takes complaints against all of them through one portal.",
+      "who_to_report": "A licensed counselor, social worker, psychologist or marriage and family therapist in New Jersey.",
+      "how": "File through the Division's board complaint portal, or post the board's form to its Newark address.",
+      "complaint_url": "https://njconsumeraffairs.nj.gov/board-complaints/",
+      "info_url": "https://www.njconsumeraffairs.gov/mft",
+      "phone": "973-504-6200",
+      "mail": "New Jersey Division of Consumer Affairs, 124 Halsey Street, Newark, NJ 07101",
+      "anonymous": "discouraged",
+      "note": "The Division warns that anything you put on the complaint form may become public. The completed form is a government record, and once any investigation is finished the board may be obliged to release it to anyone who requests it.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://njconsumeraffairs.nj.gov/board-complaints/",
+        "https://www.njconsumeraffairs.gov/mft"
+      ]
+    },
+    {
+      "id": "nj-state-central-registry",
+      "category": "legal",
+      "name": "New Jersey State Central Registry (1-877 NJ ABUSE)",
+      "what_it_can_do": "The statutory report line for child abuse and neglect. New Jersey requires every report of abuse in an institutional setting - child care centres, schools, foster homes and residential treatment centres - to come here, and the Division of Child Protection and Permanency must start investigating within 24 hours.",
+      "who_to_report": "A child at a New Jersey program. You do not need proof, and you can report anonymously.",
+      "how": "Call the 24-hour line. If the child is in immediate danger, call 911 as well.",
+      "info_url": "https://www.nj.gov/dcf/reporting/how/",
+      "phone": "1-877-652-2873",
+      "phone_note": "1-877-NJ-ABUSE. 24 hours a day, seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.nj.gov/dcf/reporting/how/",
+        "https://www.nj.gov/dcf/families/hotlines/"
+      ]
+    },
+    {
+      "id": "nj-disability-rights-new-jersey",
+      "category": "oversight",
+      "name": "Disability Rights New Jersey",
+      "what_it_can_do": "New Jersey's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. It publishes its own guide to reporting abuse or neglect in New Jersey.",
+      "who_to_report": "A New Jersey program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line, or start from its reporting guide.",
+      "complaint_url": "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
+      "info_url": "https://disabilityrightsnj.org/",
+      "phone": "1-800-922-7233",
+      "phone_note": "Main line 609-292-9742; TTY 609-633-7106.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://disabilityrightsnj.org/how-to-report-abuse-or-neglect/",
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=new-jersey"
+      ]
+    }
+  ]
+}

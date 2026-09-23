@@ -1,0 +1,68 @@
+{
+  "state": "Indiana",
+  "abbr": "IN",
+  "updated": "2026-09-22",
+  "note": "Indiana is the state where a complaint about a therapist does not start at the licensing board at all. It goes to the Attorney General's Consumer Protection Division, which reviews it and only then takes it to the relevant board asking for action against the licence. Indiana also protects reporters unusually firmly: state law requires the Department of Child Services to keep the identity of anyone reporting abuse confidential.",
+  "channels": [
+    {
+      "id": "in-attorney-general-licensing-complaints",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Indiana Attorney General, Consumer Protection Division (licensing complaints)",
+      "what_it_can_do": "Takes complaints from the public against licensed professionals, reviews them first, and where it finds merit brings the case to the relevant board - the Behavioral Health and Human Services Licensing Board, or the Psychology Board - seeking action against the licence.",
+      "who_to_report": "A licensed social worker, marriage and family therapist, mental health counselor, clinical addiction counselor or psychologist in Indiana.",
+      "how": "Obtain the complaint form from the Attorney General's Consumer Protection Division and file it there, not with the licensing agency.",
+      "complaint_url": "https://www.in.gov/attorneygeneral/consumer-protection-division/licensing/",
+      "info_url": "https://www.in.gov/pla/licensure-discipline/report-a-professional",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.in.gov/pla/licensure-discipline/report-a-professional",
+        "https://www.in.gov/attorneygeneral/consumer-protection-division/licensing/"
+      ]
+    },
+    {
+      "id": "in-child-abuse-hotline",
+      "category": "legal",
+      "name": "Indiana Child Abuse and Neglect Hotline",
+      "what_it_can_do": "The statewide 24-hour report line run by the Department of Child Services. It also connects families with no open case to free home-based services.",
+      "who_to_report": "A child at an Indiana program.",
+      "how": "Call, at any hour including weekends and holidays. If every line is busy, there is a second number. Press option 2 instead if you want a referral to local support rather than to make a report.",
+      "info_url": "https://www.in.gov/dcs/hotline/",
+      "phone": "1-800-800-5556",
+      "phone_note": "24 hours a day. If the lines are down, 1-833-800-5556.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "You can report anonymously, and even if you give your name, Indiana law requires the Department to keep the identity and contact details of every report source confidential.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.in.gov/dcs/hotline/"]
+    },
+    {
+      "id": "in-dcs-ombudsman",
+      "category": "oversight",
+      "name": "Indiana DCS Ombudsman Bureau",
+      "what_it_can_do": "Takes complaints about the Department of Child Services itself - how it handled a case, or failed to.",
+      "what_it_cannot_do": "It reviews the agency, not the program.",
+      "who_to_report": "A family or young person whose report to DCS went nowhere.",
+      "info_url": "https://www.in.gov/dcs/hotline/",
+      "phone": "1-877-682-0101",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.in.gov/dcs/hotline/"]
+    },
+    {
+      "id": "in-indiana-disability-rights",
+      "category": "oversight",
+      "name": "Indiana Disability Rights",
+      "what_it_can_do": "Indiana's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Indiana program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.in.gov/idr/",
+      "phone": "1-800-622-4845",
+      "phone_note": "Main line 317-722-5555 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=indiana"]
+    }
+  ]
+}
