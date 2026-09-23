@@ -3,17 +3,17 @@
   "sourceHash": "6c769881b11a",
   "facilitySource": "facilities_v2",
   "counts": {
-   "nodes": 1344,
-   "edges": 2532,
+   "nodes": 1345,
+   "edges": 2529,
    "facilityMatches": 373,
    "withYears": 225,
    "withDeaths": 29,
    "rebranded": 89,
    "profileEdges": 84,
    "staffMovementEdges": 28,
-   "staffListEdges": 939,
-   "addedPeople": 344,
-   "kind_person": 677,
+   "staffListEdges": 936,
+   "addedPeople": 345,
+   "kind_person": 678,
    "kind_facility": 556,
    "kind_parent": 71,
    "kind_association": 14,
@@ -24,14 +24,14 @@
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 11,
-   "edge_board": 35,
-   "edge_leadership": 686,
-   "edge_clinical": 390,
+   "edge_board": 37,
+   "edge_leadership": 687,
+   "edge_clinical": 391,
    "edge_admissions": 124,
    "edge_staff": 354,
    "edge_membership": 20,
    "edge_other": 6,
-   "edge_unknown": 225
+   "edge_unknown": 218
   },
   "categories": [
    "corporate",
@@ -499,7 +499,11 @@
     "x": -654.2,
     "y": -3.11
    },
-   "years": "from 1971"
+   "years": "from 1971",
+   "formerNames": [
+    "PCS",
+    "UHS of Provo Canyon dba Provo Campus"
+   ]
   },
   {
    "id": "island-view-rtc",
@@ -606,9 +610,9 @@
    "importance": 25808,
    "degree": 31,
    "degreeByCategory": {
-    "board": 15,
+    "board": 17,
     "membership": 6,
-    "unknown": 3,
+    "unknown": 1,
     "leadership": 7
    },
    "facilityId": null,
@@ -729,9 +733,9 @@
    "degree": 27,
    "degreeByCategory": {
     "leadership": 8,
-    "unknown": 7,
+    "unknown": 5,
     "corporate": 10,
-    "staff": 1,
+    "staff": 3,
     "admissions": 1
    },
    "facilityId": null,
@@ -882,8 +886,8 @@
    "importance": 30674,
    "degree": 22,
    "degreeByCategory": {
-    "clinical": 9,
-    "unknown": 5,
+    "clinical": 10,
+    "unknown": 4,
     "corporate": 1,
     "staff": 3,
     "leadership": 4
@@ -1226,7 +1230,10 @@
     "y": 138.08
    },
    "years": "1989-2011",
-   "deaths": 1
+   "deaths": 1,
+   "formerNames": [
+    "Wilderness Academy"
+   ]
   },
   {
    "id": "rite-of-passage-inc",
@@ -1499,7 +1506,11 @@
     "y": -434.1
    },
    "years": "2008-2024",
-   "deaths": 2
+   "deaths": 2,
+   "formerNames": [
+    "Trails Academy",
+    "The Academy at Trails"
+   ]
   },
   {
    "id": "agape-boarding-school",
@@ -1662,8 +1673,8 @@
     "clinical": 4,
     "membership": 1,
     "unknown": 4,
-    "staff": 2,
-    "leadership": 2,
+    "staff": 1,
+    "leadership": 3,
     "corporate": 1
    },
    "facilityId": 12293,
@@ -2785,7 +2796,7 @@
     "corporate": 4,
     "membership": 1,
     "leadership": 1,
-    "unknown": 2,
+    "staff": 2,
     "other": 1
    },
    "facilityId": null,
@@ -2996,7 +3007,12 @@
     "y": 271.13
    },
    "years": "from 2005",
-   "deaths": 1
+   "deaths": 1,
+   "formerNames": [
+    "Discovery Ranch Academy",
+    "Discovery Ranch for Boys",
+    "Discovery Ranch - Mapleton"
+   ]
   },
   {
    "id": "discovery-ranch-for-girls",
@@ -3052,7 +3068,11 @@
     "x": -476.35,
     "y": 432.01
    },
-   "years": "from 2014"
+   "years": "from 2014",
+   "formerNames": [
+    "Integrity House RTC",
+    "Integrity House (2001-2013)"
+   ]
   },
   {
    "id": "ironwood-maine",
@@ -3563,7 +3583,10 @@
     "x": -407.57,
     "y": -264.57
    },
-   "years": "1988-2013"
+   "years": "1988-2013",
+   "formerNames": [
+    "Wilderness Conquest"
+   ]
   },
   {
    "id": "agape-boys-ranch",
@@ -4506,7 +4529,10 @@
     "x": -420.64,
     "y": 372.78
    },
-   "years": "from 2005"
+   "years": "from 2005",
+   "formerNames": [
+    "Cherry Gulch Boys Ranch"
+   ]
   },
   {
    "id": "circle-of-hope-girls-ranch",
@@ -4846,33 +4872,6 @@
    }
   },
   {
-   "id": "michael-charnley",
-   "name": "Michael Charnley",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Wilderness"
-   ],
-   "natsap": false,
-   "importance": 13664,
-   "degree": 6,
-   "degreeByCategory": {
-    "leadership": 1,
-    "clinical": 2,
-    "staff": 3
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 901.18,
-    "y": -231.19
-   }
-  },
-  {
    "id": "narvin-lichfield",
    "name": "Narvin Lichfield",
    "aliases": [],
@@ -5155,7 +5154,10 @@
     "x": -70.26,
     "y": -755.4
    },
-   "years": "1979-2009"
+   "years": "1979-2009",
+   "formerNames": [
+    "Spring Creek Community School"
+   ]
   },
   {
    "id": "st-johns-youth-academy",
@@ -6510,32 +6512,6 @@
    }
   },
   {
-   "id": "life",
-   "name": "LIFE",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 25020,
-   "degree": 5,
-   "degreeByCategory": {
-    "leadership": 1,
-    "staff": 4
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -727.12,
-    "y": -429.23
-   }
-  },
-  {
    "id": "michael-bednarz",
    "name": "Michael Bednarz",
    "aliases": [],
@@ -6559,6 +6535,33 @@
    "board": {
     "x": 6.73,
     "y": 371.08
+   }
+  },
+  {
+   "id": "michael-charnley",
+   "name": "Michael Charnley",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Wilderness"
+   ],
+   "natsap": false,
+   "importance": 13664,
+   "degree": 5,
+   "degreeByCategory": {
+    "leadership": 1,
+    "clinical": 2,
+    "staff": 2
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 901.18,
+    "y": -231.19
    }
   },
   {
@@ -6870,33 +6873,6 @@
    "deaths": 3
   },
   {
-   "id": "rudy-bentz",
-   "name": "Rudy Bentz",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "FHW"
-   ],
-   "natsap": false,
-   "importance": 10047,
-   "degree": 5,
-   "degreeByCategory": {
-    "staff": 2,
-    "leadership": 2,
-    "family": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": 236.68,
-    "y": -470.7
-   }
-  },
-  {
    "id": "san-marcos-treatment-center",
    "name": "San Marcos Treatment Center",
    "aliases": [],
@@ -6923,7 +6899,10 @@
     "x": -437.89,
     "y": -278.88
    },
-   "years": "from 1940"
+   "years": "from 1940",
+   "formerNames": [
+    "The Brown Schools at San Marcos"
+   ]
   },
   {
    "id": "scott-hess",
@@ -7039,7 +7018,10 @@
     "x": -681.24,
     "y": 57.42
    },
-   "years": "2009-2010"
+   "years": "2009-2010",
+   "formerNames": [
+    "Three Springs of North Carolina"
+   ]
   },
   {
    "id": "shawn-farrell",
@@ -8387,7 +8369,10 @@
    "board": {
     "x": -237.75,
     "y": -291.49
-   }
+   },
+   "formerNames": [
+    "Camp E-Ma-Laku"
+   ]
   },
   {
    "id": "ed-callahan",
@@ -8657,7 +8642,7 @@
    "degreeByCategory": {
     "leadership": 1,
     "staff": 2,
-    "unknown": 1
+    "board": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -9317,7 +9302,10 @@
     "x": -744.26,
     "y": -336.46
    },
-   "years": "1984-1998"
+   "years": "1984-1998",
+   "formerNames": [
+    "KIDS of New Jersey"
+   ]
   },
   {
    "id": "kristi-ragsdale",
@@ -9590,7 +9578,10 @@
     "x": -549.27,
     "y": -549.27
    },
-   "years": "from 2007"
+   "years": "from 2007",
+   "formerNames": [
+    "Three Springs of Marion (Previous Name)"
+   ]
   },
   {
    "id": "matthew-fitzgerald",
@@ -9868,6 +9859,33 @@
     "y": -17.54
    },
    "years": "2011-2019"
+  },
+  {
+   "id": "new-hope-academy",
+   "name": "New Hope Academy",
+   "aliases": [],
+   "kind": "facility",
+   "status": "rebranded",
+   "chain": "WWASPS",
+   "regions": [
+    "WWASPS"
+   ],
+   "natsap": false,
+   "importance": 33534,
+   "degree": 4,
+   "degreeByCategory": {
+    "leadership": 1,
+    "corporate": 2,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -147.87,
+    "y": -648.26
+   }
   },
   {
    "id": "newport-academy",
@@ -10325,6 +10343,33 @@
    }
   },
   {
+   "id": "rudy-bentz",
+   "name": "Rudy Bentz",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "FHW"
+   ],
+   "natsap": false,
+   "importance": 10047,
+   "degree": 4,
+   "degreeByCategory": {
+    "staff": 1,
+    "leadership": 2,
+    "family": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": 236.68,
+    "y": -470.7
+   }
+  },
+  {
    "id": "santiam-crossing",
    "name": "Santiam Crossing",
    "aliases": [],
@@ -10402,7 +10447,11 @@
    "board": {
     "x": -755.97,
     "y": 9.05
-   }
+   },
+   "formerNames": [
+    "Three Springs Turning Point",
+    "Three Springs New Beginnings"
+   ]
   },
   {
    "id": "sequel-tsi-tuskegee",
@@ -10759,7 +10808,10 @@
     "x": -677.85,
     "y": 60.81
    },
-   "years": "2009-2019"
+   "years": "2009-2019",
+   "formerNames": [
+    "Redwood Youth Academy"
+   ]
   },
   {
    "id": "victory-christian-academy",
@@ -10838,7 +10890,10 @@
    "board": {
     "x": 917.75,
     "y": -217.62
-   }
+   },
+   "formerNames": [
+    "Green Valley Academy"
+   ]
   },
   {
    "id": "westwood-boys-ranch",
@@ -12134,7 +12189,10 @@
     "x": -526.36,
     "y": -516.07
    },
-   "years": "from 2020"
+   "years": "from 2020",
+   "formerNames": [
+    "Casa Grande Youth Treatment Center"
+   ]
   },
   {
    "id": "cedar-county-sheriffs-department",
@@ -12215,7 +12273,10 @@
    "board": {
     "x": -520.87,
     "y": -294.32
-   }
+   },
+   "formerNames": [
+    "Britt Halfway House"
+   ]
   },
   {
    "id": "charles-h-hickey-jr-school",
@@ -13663,35 +13724,6 @@
    }
   },
   {
-   "id": "guinevere-hilton",
-   "name": "Guinevere Hilton",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "HOPE Group"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 3,
-   "degreeByCategory": {
-    "staff": 2,
-    "unknown": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -394.76,
-    "y": 49.58
-   },
-   "addedFrom": [
-    "staff list"
-   ]
-  },
-  {
    "id": "gulf-coast-treatment-center",
    "name": "Gulf Coast Treatment Center",
    "aliases": [],
@@ -14261,32 +14293,6 @@
    ]
   },
   {
-   "id": "jim-graves",
-   "name": "Jim Graves",
-   "aliases": [],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "UHS"
-   ],
-   "natsap": false,
-   "importance": 11644,
-   "degree": 3,
-   "degreeByCategory": {
-    "clinical": 1,
-    "staff": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -533.49,
-    "y": 65.62
-   }
-  },
-  {
    "id": "joann-bridges-academy",
    "name": "JoAnn Bridges Academy",
    "aliases": [],
@@ -14718,7 +14724,10 @@
    "board": {
     "x": -778.48,
     "y": -598.2
-   }
+   },
+   "formerNames": [
+    "Highland Girls Academy"
+   ]
   },
   {
    "id": "kathy-ruiz",
@@ -15215,7 +15224,11 @@
     "x": -688.03,
     "y": 54.02
    },
-   "years": "1996-2017"
+   "years": "1996-2017",
+   "formerNames": [
+    "Three Springs of Englishton Park",
+    "Englishton Park Sequel TSI"
+   ]
   },
   {
    "id": "liahona-academy",
@@ -15980,7 +15993,10 @@
     "x": -733.74,
     "y": 239.68
    },
-   "years": "from 2004"
+   "years": "from 2004",
+   "formerNames": [
+    "Academy at Cedar Mountain (1999-2004)"
+   ]
   },
   {
    "id": "mycala-cherry",
@@ -16036,32 +16052,6 @@
    "addedFrom": [
     "staff list"
    ]
-  },
-  {
-   "id": "new-hope-academy",
-   "name": "New Hope Academy",
-   "aliases": [],
-   "kind": "facility",
-   "status": "rebranded",
-   "chain": "WWASPS",
-   "regions": [
-    "WWASPS"
-   ],
-   "natsap": false,
-   "importance": 33534,
-   "degree": 3,
-   "degreeByCategory": {
-    "leadership": 1,
-    "corporate": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -147.87,
-    "y": -648.26
-   }
   },
   {
    "id": "new-hope-boys-home",
@@ -16332,7 +16322,11 @@
    "board": {
     "x": -775.31,
     "y": 23.19
-   }
+   },
+   "formerNames": [
+    "Sequel TSI Owens Cross Rds",
+    "New Beginnings Residential School"
+   ]
   },
   {
    "id": "patrick-logan",
@@ -17125,7 +17119,10 @@
     "x": -688.03,
     "y": 57.42
    },
-   "years": "2009-2019"
+   "years": "2009-2019",
+   "formerNames": [
+    "Three Springs of Madison"
+   ]
   },
   {
    "id": "sequel-tsi-paint-rock-valley",
@@ -17315,7 +17312,11 @@
     "x": 312.14,
     "y": -515.9
    },
-   "years": "from 2008"
+   "years": "from 2008",
+   "formerNames": [
+    "Samaya RTC",
+    "Solstice RTC (2008-2012)"
+   ]
   },
   {
    "id": "spark-academy",
@@ -17880,7 +17881,10 @@
     "x": -681.24,
     "y": 60.81
    },
-   "years": "from 1997"
+   "years": "from 1997",
+   "formerNames": [
+    "Three Springs of Daytona"
+   ]
   },
   {
    "id": "tom-bratter",
@@ -17988,7 +17992,8 @@
     "x": -510.69,
     "y": -280.74
    },
-   "years": "from 1965"
+   "years": "from 1965",
+   "currentName": "Victor Cullen Center"
   },
   {
    "id": "village-behavioral-health-treatment-center",
@@ -18250,7 +18255,11 @@
    "board": {
     "x": -230.4,
     "y": -662.8
-   }
+   },
+   "formerNames": [
+    "Robert Louis Stevenson Youth Academy",
+    "Mole Ole Ava"
+   ]
   },
   {
    "id": "abundant-life-academy",
@@ -20240,7 +20249,10 @@
     "x": -736.17,
     "y": -25.74
    },
-   "years": "2013-2021"
+   "years": "2013-2021",
+   "formerNames": [
+    "Sequel of New Jersey"
+   ]
   },
   {
    "id": "carol-sowers",
@@ -21679,7 +21691,10 @@
    "board": {
     "x": -346.42,
     "y": -146.79
-   }
+   },
+   "formerNames": [
+    "Reality Trek Wilderness Program"
+   ]
   },
   {
    "id": "dottie-lank",
@@ -22305,7 +22320,7 @@
    "degree": 2,
    "degreeByCategory": {
     "leadership": 1,
-    "unknown": 1
+    "board": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -22314,6 +22329,35 @@
    "board": {
     "x": 83.72,
     "y": -358.47
+   },
+   "addedFrom": [
+    "staff list"
+   ]
+  },
+  {
+   "id": "guinevere-hilton",
+   "name": "Guinevere Hilton",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "HOPE Group"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 2,
+   "degreeByCategory": {
+    "leadership": 1,
+    "unknown": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -394.76,
+    "y": 49.58
    },
    "addedFrom": [
     "staff list"
@@ -22971,7 +23015,8 @@
    "importance": 0,
    "degree": 2,
    "degreeByCategory": {
-    "unknown": 2
+    "clinical": 1,
+    "unknown": 1
    },
    "facilityId": null,
    "uniqueName": null,
@@ -23664,6 +23709,32 @@
    }
   },
   {
+   "id": "jim-graves",
+   "name": "Jim Graves",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "UHS"
+   ],
+   "natsap": false,
+   "importance": 11644,
+   "degree": 2,
+   "degreeByCategory": {
+    "clinical": 1,
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -533.49,
+    "y": 65.62
+   }
+  },
+  {
    "id": "jj-bond",
    "name": "JJ Bond",
    "aliases": [],
@@ -24059,7 +24130,7 @@
    "importance": 0,
    "degree": 2,
    "degreeByCategory": {
-    "unknown": 2
+    "staff": 2
    },
    "facilityId": null,
    "uniqueName": null,
@@ -25112,7 +25183,10 @@
     "x": -732.78,
     "y": -25.74
    },
-   "years": "2009-2019"
+   "years": "2009-2019",
+   "formerNames": [
+    "Camelot School"
+   ]
   },
   {
    "id": "kirk-voss",
@@ -27081,7 +27155,7 @@
    "importance": 0,
    "degree": 2,
    "degreeByCategory": {
-    "unknown": 2
+    "staff": 2
    },
    "facilityId": null,
    "uniqueName": null,
@@ -27314,7 +27388,10 @@
     "x": -691.42,
     "y": 57.42
    },
-   "years": "1976-2009"
+   "years": "1976-2009",
+   "formerNames": [
+    "New Dominion Wilderness Camp"
+   ]
   },
   {
    "id": "new-leaf-academy-of-oregon",
@@ -27602,7 +27679,10 @@
     "x": -70.77,
     "y": -710.83
    },
-   "years": "1986-2007"
+   "years": "1986-2007",
+   "formerNames": [
+    "Majestic Youth Academy"
+   ]
   },
   {
    "id": "olympus-academy",
@@ -27628,7 +27708,10 @@
    "board": {
     "x": -179.6,
     "y": -553.12
-   }
+   },
+   "formerNames": [
+    "Red Rock Ranch Academy"
+   ]
   },
   {
    "id": "orval-hagerman",
@@ -29286,7 +29369,11 @@
     "x": -677.85,
     "y": 57.42
    },
-   "years": "2009-2011"
+   "years": "2009-2011",
+   "formerNames": [
+    "Inc.",
+    "Three Springs Sierra Vista Schools"
+   ]
   },
   {
    "id": "sequoia-smith",
@@ -29715,7 +29802,10 @@
     "x": -729.38,
     "y": -18.95
    },
-   "years": "2014-2020"
+   "years": "2014-2020",
+   "formerNames": [
+    "Albion Academy"
+   ]
   },
   {
    "id": "sterling-deveraux",
@@ -29822,7 +29912,10 @@
     "x": -712.47,
     "y": -396.93
    },
-   "years": "1982-1987"
+   "years": "1982-1987",
+   "formerNames": [
+    "Pathway Family Center"
+   ]
   },
   {
    "id": "straight-southern-california",
@@ -29902,7 +29995,10 @@
     "x": -235.38,
     "y": -789.17
    },
-   "years": "1995"
+   "years": "1995",
+   "formerNames": [
+    "Sunrise Center"
+   ]
   },
   {
    "id": "suws-adolescent-and-youth-programs",
@@ -30221,7 +30317,10 @@
     "x": -156.69,
     "y": -609.23
    },
-   "years": "1990-2024"
+   "years": "1990-2024",
+   "formerNames": [
+    "Remuda Ranch"
+   ]
   },
   {
    "id": "the-pinnacle-schools",
@@ -30274,7 +30373,10 @@
     "x": 539.6,
     "y": -157.48
    },
-   "years": "from 2024"
+   "years": "from 2024",
+   "formerNames": [
+    "Ironwood Maine (2006-2024)"
+   ]
   },
   {
    "id": "the-wardle-home",
@@ -30724,7 +30826,10 @@
    "board": {
     "x": -740.58,
     "y": -571.95
-   }
+   },
+   "formerNames": [
+    "Teen Challenge Vero Beach"
+   ]
   },
   {
    "id": "turnabout-academy",
@@ -31302,7 +31407,10 @@
    "board": {
     "x": -351.96,
     "y": -274.8
-   }
+   },
+   "formerNames": [
+    "Karum Group Inc."
+   ]
   },
   {
    "id": "anneewakee-school",
@@ -32416,6 +32524,34 @@
    ]
   },
   {
+   "id": "dan-wakefield",
+   "name": "Dan Wakefield",
+   "aliases": [],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "WWASPS"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 1,
+   "degreeByCategory": {
+    "staff": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -147.87,
+    "y": -648.26
+   },
+   "addedFrom": [
+    "staff list"
+   ]
+  },
+  {
    "id": "danville-rtc",
    "name": "Danville RTC",
    "aliases": [],
@@ -33227,7 +33363,10 @@
     "x": -494.4,
     "y": 416.73
    },
-   "years": "from 2021"
+   "years": "from 2021",
+   "formerNames": [
+    "Zion Hills Academy (2017-2021)"
+   ]
   },
   {
    "id": "havenwood-south",
@@ -33948,6 +34087,31 @@
    "board": {
     "x": 365.6,
     "y": -512.05
+   }
+  },
+  {
+   "id": "life",
+   "name": "LIFE",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "Synanon"
+   ],
+   "natsap": false,
+   "importance": 25020,
+   "degree": 1,
+   "degreeByCategory": {
+    "leadership": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -727.12,
+    "y": -429.23
    }
   },
   {
@@ -34815,7 +34979,10 @@
     "x": -131.8,
     "y": -751.22
    },
-   "years": "2004-2012"
+   "years": "2004-2012",
+   "formerNames": [
+    "Academy at Dundee Ranch (2000-2003)"
+   ]
   },
   {
    "id": "pine-view-christian-academy",
@@ -35121,7 +35288,11 @@
    "board": {
     "x": 237.02,
     "y": -398.63
-   }
+   },
+   "formerNames": [
+    "Ten Broeck Hospital",
+    "Ten Broeck Jacksonville LLC"
+   ]
   },
   {
    "id": "rob-dias",
@@ -35466,7 +35637,10 @@
     "x": -78.63,
     "y": -792.28
    },
-   "years": "2014-2022"
+   "years": "2014-2022",
+   "formerNames": [
+    "SCISU"
+   ]
   },
   {
    "id": "seneca-ranch",
@@ -36099,7 +36273,10 @@
    "board": {
     "x": 870.74,
     "y": 179.6
-   }
+   },
+   "formerNames": [
+    "Rock Creek Center"
+   ]
   },
   {
    "id": "timothy-p-cole",
@@ -36279,7 +36456,10 @@
     "x": -69.63,
     "y": -695.78
    },
-   "years": "2015-2018"
+   "years": "2015-2018",
+   "formerNames": [
+    "Red River Academy (2006-2015)"
+   ]
   },
   {
    "id": "utah-boys-ranch",
@@ -36556,7 +36736,10 @@
     "x": -441.85,
     "y": -696.18
    },
-   "years": "1994-2022"
+   "years": "1994-2022",
+   "formerNames": [
+    "Refuge of Grace"
+   ]
   },
   {
    "id": "withlacoochee-juvenile-residential-facility",
@@ -36584,7 +36767,10 @@
     "x": -688.03,
     "y": 64.2
    },
-   "years": "from 1978"
+   "years": "from 1978",
+   "formerNames": [
+    "Withlacoochee STOP Camp"
+   ]
   },
   {
    "id": "woodland-hills-rtc",
@@ -58079,20 +58265,6 @@
   },
   {
    "id": "l0050",
-   "source": "jim-graves",
-   "target": "life",
-   "category": "staff",
-   "roles": [
-    "dean of residential"
-   ],
-   "raw": "Jim Graves (dean of residential) at LIFE (staff list)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": true,
-   "provenance": "staff-list"
-  },
-  {
-   "id": "l0051",
    "source": "saul-rudman",
    "target": "ascent-wilderness-therapy",
    "category": "staff",
@@ -58106,7 +58278,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0052",
+   "id": "l0051",
    "source": "saul-rudman",
    "target": "boulder-creek-academy",
    "category": "staff",
@@ -58120,7 +58292,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0053",
+   "id": "l0052",
    "source": "saul-rudman",
    "target": "northwest-academy",
    "category": "staff",
@@ -58134,7 +58306,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0054",
+   "id": "l0053",
    "source": "tere-snodgrass",
    "target": "silverado-boys-ranch",
    "category": "admissions",
@@ -58148,7 +58320,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0055",
+   "id": "l0054",
    "source": "tere-snodgrass",
    "target": "aspen-achievement-academy",
    "category": "admissions",
@@ -58162,7 +58334,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0056",
+   "id": "l0055",
    "source": "tere-snodgrass",
    "target": "auldern-academy",
    "category": "unknown",
@@ -58174,7 +58346,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0057",
+   "id": "l0056",
    "source": "tere-snodgrass",
    "target": "provo-canyon-school",
    "category": "unknown",
@@ -58186,7 +58358,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0058",
+   "id": "l0057",
    "source": "tere-snodgrass",
    "target": "academy-at-canyon-creek",
    "category": "unknown",
@@ -58198,7 +58370,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0059",
+   "id": "l0058",
    "source": "tim-mcmahon",
    "target": "eckerd-academy-of-the-blue-ridge",
    "category": "leadership",
@@ -58212,7 +58384,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0060",
+   "id": "l0059",
    "source": "ashley-auchterlonie",
    "target": "fulshear-treatment-to-transition",
    "category": "admissions",
@@ -58226,7 +58398,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0061",
+   "id": "l0060",
    "source": "ashley-auchterlonie",
    "target": "sunrise-rtc",
    "category": "staff",
@@ -58240,7 +58412,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0062",
+   "id": "l0061",
    "source": "ashley-auchterlonie",
    "target": "alldredge-wilderness-journey",
    "category": "staff",
@@ -58254,7 +58426,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0063",
+   "id": "l0062",
    "source": "ashley-auchterlonie",
    "target": "greenbrier-academy",
    "category": "staff",
@@ -58268,7 +58440,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0064",
+   "id": "l0063",
    "source": "dale-erdmann",
    "target": "fulshear-treatment-to-transition",
    "category": "clinical",
@@ -58282,55 +58454,63 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0065",
+   "id": "l0064",
    "source": "john-stallone",
    "target": "synanon",
-   "category": "unknown",
-   "roles": [],
-   "raw": "John stallone at Synanon (staff list)",
+   "category": "staff",
+   "roles": [
+    "family head"
+   ],
+   "raw": "John stallone (family head) at Synanon (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
    "provenance": "staff-list"
   },
   {
-   "id": "l0066",
+   "id": "l0065",
    "source": "john-stallone",
    "target": "cedu-family-of-services",
-   "category": "unknown",
-   "roles": [],
-   "raw": "John stallone at CEDU Family of Services (staff list)",
+   "category": "staff",
+   "roles": [
+    "family head"
+   ],
+   "raw": "John stallone (family head) at CEDU Family of Services (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true,
+   "provenance": "staff-list"
+  },
+  {
+   "id": "l0066",
+   "source": "morty-molin",
+   "target": "synanon",
+   "category": "staff",
+   "roles": [
+    "family head"
+   ],
+   "raw": "Morty Molin (family head) at Synanon (staff list)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
    "provenance": "staff-list"
   },
   {
    "id": "l0067",
    "source": "morty-molin",
-   "target": "synanon",
-   "category": "unknown",
-   "roles": [],
-   "raw": "Morty Molin at Synanon (staff list)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": false,
-   "provenance": "staff-list"
-  },
-  {
-   "id": "l0068",
-   "source": "morty-molin",
    "target": "cedu-family-of-services",
-   "category": "unknown",
-   "roles": [],
-   "raw": "Morty Molin at CEDU Family of Services (staff list)",
+   "category": "staff",
+   "roles": [
+    "family head"
+   ],
+   "raw": "Morty Molin (family head) at CEDU Family of Services (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true,
    "provenance": "staff-list"
   },
   {
-   "id": "l0069",
+   "id": "l0068",
    "source": "george-ross",
    "target": "kids-helping-kids",
    "category": "leadership",
@@ -58344,7 +58524,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0070",
+   "id": "l0069",
    "source": "loretta-parrish",
    "target": "straight-inc",
    "category": "admissions",
@@ -58352,6 +58532,20 @@
     "marketing director"
    ],
    "raw": "Loretta Parrish (marketing director) at Straight Inc. (staff list)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "staff-list"
+  },
+  {
+   "id": "l0070",
+   "source": "dan-wakefield",
+   "target": "new-hope-academy",
+   "category": "staff",
+   "roles": [
+    "co-owner/island Manager"
+   ],
+   "raw": "Dan Wakefield (co-owner/island Manager) at New Hope Academy (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
@@ -58459,9 +58653,11 @@
    "id": "l0078",
    "source": "jamey-seabrook",
    "target": "second-nature",
-   "category": "unknown",
-   "roles": [],
-   "raw": "Jamey Seabrook at Second Nature (staff list)",
+   "category": "clinical",
+   "roles": [
+    "therapy intern"
+   ],
+   "raw": "Jamey Seabrook (therapy intern) at Second Nature (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
@@ -58827,20 +59023,6 @@
   },
   {
    "id": "l0105",
-   "source": "michael-charnley",
-   "target": "life",
-   "category": "staff",
-   "roles": [
-    "residential"
-   ],
-   "raw": "Michael Charnley (residential) at LIFE (staff list)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": true,
-   "provenance": "staff-list"
-  },
-  {
-   "id": "l0106",
    "source": "sequoia-smith",
    "target": "spring-ridge-academy",
    "category": "unknown",
@@ -58852,7 +59034,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0107",
+   "id": "l0106",
    "source": "rae-ann-knopf",
    "target": "king-george-school",
    "category": "leadership",
@@ -58866,7 +59048,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0108",
+   "id": "l0107",
    "source": "david-ericksen",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "unknown",
@@ -58878,7 +59060,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0109",
+   "id": "l0108",
    "source": "david-ericksen",
    "target": "rivendell-of-utah",
    "category": "clinical",
@@ -58892,7 +59074,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0110",
+   "id": "l0109",
    "source": "billy-giblin",
    "target": "aspen-achievement-academy",
    "category": "staff",
@@ -58906,7 +59088,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0111",
+   "id": "l0110",
    "source": "billy-giblin",
    "target": "aspen-ranch",
    "category": "unknown",
@@ -58918,7 +59100,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0112",
+   "id": "l0111",
    "source": "billy-giblin",
    "target": "second-nature",
    "category": "unknown",
@@ -58930,7 +59112,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0113",
+   "id": "l0112",
    "source": "ken-murphy",
    "target": "aspen-achievement-academy",
    "category": "clinical",
@@ -58944,7 +59126,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0114",
+   "id": "l0113",
    "source": "ken-murphy",
    "target": "aspen-youth-alternatives",
    "category": "unknown",
@@ -58956,7 +59138,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0115",
+   "id": "l0114",
    "source": "ken-murphy",
    "target": "the-oakley-school",
    "category": "unknown",
@@ -58968,7 +59150,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0116",
+   "id": "l0115",
    "source": "gil-hallows",
    "target": "aspen-achievement-academy",
    "category": "leadership",
@@ -58982,7 +59164,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0117",
+   "id": "l0116",
    "source": "gil-hallows",
    "target": "aspen-ranch",
    "category": "staff",
@@ -58996,7 +59178,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0118",
+   "id": "l0117",
    "source": "gil-hallows",
    "target": "passages-to-recovery",
    "category": "staff",
@@ -59010,19 +59192,21 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0119",
+   "id": "l0118",
    "source": "gil-hallows",
    "target": "natsap",
-   "category": "unknown",
-   "roles": [],
-   "raw": "Gil Hallows at NATSAP (staff list)",
+   "category": "board",
+   "roles": [
+    "board member"
+   ],
+   "raw": "Gil Hallows (board member) at NATSAP (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true,
    "provenance": "staff-list"
   },
   {
-   "id": "l0120",
+   "id": "l0119",
    "source": "christopher-carlin",
    "target": "cedu-family-of-services",
    "category": "unknown",
@@ -59034,7 +59218,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0121",
+   "id": "l0120",
    "source": "christopher-carlin",
    "target": "rocky-mountain-academy",
    "category": "staff",
@@ -59048,7 +59232,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0122",
+   "id": "l0121",
    "source": "greg-lindsey",
    "target": "hidden-lake-academy",
    "category": "leadership",
@@ -59062,19 +59246,21 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0123",
+   "id": "l0122",
    "source": "greg-lindsey",
    "target": "natsap",
-   "category": "unknown",
-   "roles": [],
-   "raw": "Greg Lindsey at NATSAP (staff list)",
+   "category": "board",
+   "roles": [
+    "board of directors"
+   ],
+   "raw": "Greg Lindsey (board of directors) at NATSAP (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true,
    "provenance": "staff-list"
   },
   {
-   "id": "l0124",
+   "id": "l0123",
    "source": "joe-sapp",
    "target": "hidden-lake-academy",
    "category": "leadership",
@@ -59088,7 +59274,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0125",
+   "id": "l0124",
    "source": "joe-sapp",
    "target": "cedu-high-school",
    "category": "unknown",
@@ -59100,21 +59286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0126",
-   "source": "rudy-bentz",
-   "target": "life",
-   "category": "staff",
-   "roles": [
-    "dean of student"
-   ],
-   "raw": "Rudy Bentz (dean of student) at LIFE (staff list)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": true,
-   "provenance": "staff-list"
-  },
-  {
-   "id": "l0127",
+   "id": "l0125",
    "source": "jill-bentz",
    "target": "hidden-lake-academy",
    "category": "unknown",
@@ -59126,7 +59298,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0128",
+   "id": "l0126",
    "source": "jill-bentz",
    "target": "cedu-high-school",
    "category": "unknown",
@@ -59138,7 +59310,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0129",
+   "id": "l0127",
    "source": "karen-hanson",
    "target": "ironwood-maine",
    "category": "clinical",
@@ -59152,7 +59324,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0130",
+   "id": "l0128",
    "source": "karen-hanson",
    "target": "sequel-youth-and-family-services",
    "category": "clinical",
@@ -59166,35 +59338,21 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0131",
-   "source": "guinevere-hilton",
-   "target": "life",
-   "category": "staff",
-   "roles": [
-    "community"
-   ],
-   "raw": "Guinevere Hilton (community) at LIFE (staff list)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": true,
-   "provenance": "staff-list"
-  },
-  {
-   "id": "l0132",
+   "id": "l0129",
    "source": "guinevere-hilton",
    "target": "spring-ridge-academy",
-   "category": "staff",
+   "category": "leadership",
    "roles": [
-    "community"
+    "community life director"
    ],
-   "raw": "Guinevere Hilton (community) at Spring Ridge Academy (staff list)",
+   "raw": "Guinevere Hilton (community life director) at Spring Ridge Academy (staff list)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false,
    "provenance": "staff-list"
   },
   {
-   "id": "l0133",
+   "id": "l0130",
    "source": "guinevere-hilton",
    "target": "king-george-school",
    "category": "unknown",
@@ -59206,7 +59364,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0134",
+   "id": "l0131",
    "source": "raquel-barnes",
    "target": "lone-star-expeditions",
    "category": "admissions",
@@ -59220,7 +59378,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0135",
+   "id": "l0132",
    "source": "raquel-barnes",
    "target": "three-springs-inc",
    "category": "admissions",
@@ -59234,7 +59392,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0136",
+   "id": "l0133",
    "source": "raquel-barnes",
    "target": "king-george-school",
    "category": "admissions",
@@ -59248,7 +59406,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0137",
+   "id": "l0134",
    "source": "michael-bednarz",
    "target": "second-nature",
    "category": "staff",
@@ -59262,7 +59420,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0138",
+   "id": "l0135",
    "source": "mike-ervin",
    "target": "cherry-gulch",
    "category": "leadership",
@@ -59276,7 +59434,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0139",
+   "id": "l0136",
    "source": "jack-kline",
    "target": "four-circles-recovery-center",
    "category": "leadership",
@@ -59290,7 +59448,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0140",
+   "id": "l0137",
    "source": "jack-kline",
    "target": "suws-of-the-carolinas",
    "category": "unknown",
@@ -59302,7 +59460,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0141",
+   "id": "l0138",
    "source": "jack-kline",
    "target": "phoenix-outdoor",
    "category": "unknown",
@@ -59314,7 +59472,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0142",
+   "id": "l0139",
    "source": "dan-kemp",
    "target": "phoenix-outdoor",
    "category": "admissions",
@@ -59328,7 +59486,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0143",
+   "id": "l0140",
    "source": "dan-kemp",
    "target": "northwest-academy",
    "category": "admissions",
@@ -59342,7 +59500,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0144",
+   "id": "l0141",
    "source": "dan-kemp",
    "target": "island-view-rtc",
    "category": "leadership",
@@ -59356,7 +59514,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0145",
+   "id": "l0142",
    "source": "dan-kemp",
    "target": "the-oakley-school",
    "category": "admissions",
@@ -59370,7 +59528,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0146",
+   "id": "l0143",
    "source": "dan-kemp",
    "target": "aspen-education-group",
    "category": "leadership",
@@ -59384,7 +59542,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0147",
+   "id": "l0144",
    "source": "dan-kemp",
    "target": "suws-adolescent-and-youth-programs",
    "category": "admissions",
@@ -59398,7 +59556,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0148",
+   "id": "l0145",
    "source": "lynn-wadsworth",
    "target": "phoenix-outdoor",
    "category": "staff",
@@ -59412,7 +59570,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0149",
+   "id": "l0146",
    "source": "lynn-wadsworth",
    "target": "suws-of-the-carolinas",
    "category": "unknown",
@@ -59424,7 +59582,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0150",
+   "id": "l0147",
    "source": "eric-belsterling",
    "target": "phoenix-outdoor",
    "category": "clinical",
@@ -59438,7 +59596,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0151",
+   "id": "l0148",
    "source": "eric-belsterling",
    "target": "aspen-achievement-academy",
    "category": "unknown",
@@ -59450,7 +59608,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0152",
+   "id": "l0149",
    "source": "eric-belsterling",
    "target": "four-circles-recovery-center",
    "category": "unknown",
@@ -59462,7 +59620,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0153",
+   "id": "l0150",
    "source": "eric-belsterling",
    "target": "suws-of-the-carolinas",
    "category": "unknown",
@@ -59474,7 +59632,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0154",
+   "id": "l0151",
    "source": "eric-belsterling",
    "target": "passages-to-recovery",
    "category": "unknown",
@@ -59486,7 +59644,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0155",
+   "id": "l0152",
    "source": "john-looney",
    "target": "peninsula-village",
    "category": "leadership",
@@ -59500,7 +59658,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0156",
+   "id": "l0153",
    "source": "john-looney",
    "target": "timberlawn-behavioral-health-system",
    "category": "unknown",
@@ -59512,7 +59670,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0157",
+   "id": "l0154",
    "source": "daniel-fishburn",
    "target": "fulshear-treatment-to-transition",
    "category": "clinical",
@@ -59526,7 +59684,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0158",
+   "id": "l0155",
    "source": "bryan-delaney",
    "target": "outdoor-behavioral-healthcare-industry-council",
    "category": "staff",
@@ -59540,7 +59698,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0159",
+   "id": "l0156",
    "source": "shawn-farrell",
    "target": "suws-of-the-carolinas",
    "category": "leadership",
@@ -59554,7 +59712,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0160",
+   "id": "l0157",
    "source": "shawn-farrell",
    "target": "on-track-wilderness-program",
    "category": "staff",
@@ -59568,7 +59726,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0161",
+   "id": "l0158",
    "source": "shawn-farrell",
    "target": "aspen-achievement-academy",
    "category": "leadership",
@@ -59582,7 +59740,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0162",
+   "id": "l0159",
    "source": "shawn-farrell",
    "target": "lone-star-expeditions",
    "category": "leadership",
@@ -59596,7 +59754,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0163",
+   "id": "l0160",
    "source": "shawn-farrell",
    "target": "passages-to-recovery",
    "category": "leadership",
@@ -59610,7 +59768,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0164",
+   "id": "l0161",
    "source": "jesse-quam",
    "target": "suws-of-the-carolinas",
    "category": "clinical",
@@ -59624,7 +59782,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0165",
+   "id": "l0162",
    "source": "jesse-quam",
    "target": "aspen-achievement-academy",
    "category": "staff",
@@ -59638,7 +59796,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0166",
+   "id": "l0163",
    "source": "jesse-quam",
    "target": "passages-to-recovery",
    "category": "staff",
@@ -59652,7 +59810,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0167",
+   "id": "l0164",
    "source": "don-vardell",
    "target": "casa-by-the-sea",
    "category": "unknown",
@@ -59664,7 +59822,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0168",
+   "id": "l0165",
    "source": "mike-strader",
    "target": "hidden-lake-academy",
    "category": "unknown",
@@ -59676,7 +59834,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0169",
+   "id": "l0166",
    "source": "christopher-locke",
    "target": "shortridge-academy",
    "category": "staff",
@@ -59690,7 +59848,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0170",
+   "id": "l0167",
    "source": "christopher-locke",
    "target": "academy-at-swift-river",
    "category": "unknown",
@@ -59702,7 +59860,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0171",
+   "id": "l0168",
    "source": "roger-d-topp",
    "target": "shortridge-academy",
    "category": "admissions",
@@ -59716,7 +59874,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0172",
+   "id": "l0169",
    "source": "roger-d-topp",
    "target": "ascent-wilderness-therapy",
    "category": "clinical",
@@ -59730,7 +59888,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0173",
+   "id": "l0170",
    "source": "adele-logan-okeefe",
    "target": "shortridge-academy",
    "category": "admissions",
@@ -59744,7 +59902,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0174",
+   "id": "l0171",
    "source": "adele-logan-okeefe",
    "target": "rocky-mountain-academy",
    "category": "staff",
@@ -59758,7 +59916,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0175",
+   "id": "l0172",
    "source": "adele-logan-okeefe",
    "target": "academy-at-swift-river",
    "category": "staff",
@@ -59772,7 +59930,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0176",
+   "id": "l0173",
    "source": "dave-hampton",
    "target": "boulder-creek-academy",
    "category": "staff",
@@ -59786,7 +59944,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0177",
+   "id": "l0174",
    "source": "dave-hampton",
    "target": "rocky-mountain-academy",
    "category": "staff",
@@ -59800,7 +59958,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0178",
+   "id": "l0175",
    "source": "dave-hampton",
    "target": "cedu-family-of-services",
    "category": "staff",
@@ -59814,7 +59972,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0179",
+   "id": "l0176",
    "source": "dave-hampton",
    "target": "northwest-academy",
    "category": "staff",
@@ -59828,7 +59986,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0180",
+   "id": "l0177",
    "source": "kenton-clairmont",
    "target": "boulder-creek-academy",
    "category": "staff",
@@ -59842,7 +60000,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0181",
+   "id": "l0178",
    "source": "kenton-clairmont",
    "target": "rocky-mountain-academy",
    "category": "unknown",
@@ -59854,7 +60012,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0182",
+   "id": "l0179",
    "source": "justin-cantalini",
    "target": "whetstone-academy",
    "category": "clinical",
@@ -59868,7 +60026,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0183",
+   "id": "l0180",
    "source": "justin-cantalini",
    "target": "suws-of-the-carolinas",
    "category": "staff",
@@ -59882,7 +60040,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0184",
+   "id": "l0181",
    "source": "justin-cantalini",
    "target": "seasons",
    "category": "clinical",
@@ -59896,7 +60054,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0185",
+   "id": "l0182",
    "source": "chass-armstrong",
    "target": "whetstone-academy",
    "category": "leadership",
@@ -59910,7 +60068,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0186",
+   "id": "l0183",
    "source": "chass-armstrong",
    "target": "family-help-wellness",
    "category": "admissions",
@@ -59924,7 +60082,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0187",
+   "id": "l0184",
    "source": "james-holcomb",
    "target": "whetstone-academy",
    "category": "leadership",
@@ -59938,7 +60096,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0188",
+   "id": "l0185",
    "source": "james-holcomb",
    "target": "cherokee-creek-boys-school",
    "category": "unknown",
@@ -59950,7 +60108,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0189",
+   "id": "l0186",
    "source": "matt-kiefer",
    "target": "whetstone-academy",
    "category": "clinical",
@@ -59964,7 +60122,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0190",
+   "id": "l0187",
    "source": "matt-kiefer",
    "target": "mount-pleasant-academy",
    "category": "leadership",
@@ -59978,7 +60136,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0191",
+   "id": "l0188",
    "source": "paul-johnson",
    "target": "rocky-mountain-academy",
    "category": "unknown",
@@ -59990,7 +60148,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0192",
+   "id": "l0189",
    "source": "paul-johnson",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -60004,7 +60162,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0193",
+   "id": "l0190",
    "source": "shawnale-wilson",
    "target": "mountain-springs-preparatory-academy",
    "category": "unknown",
@@ -60016,7 +60174,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0194",
+   "id": "l0191",
    "source": "john-l-singleton",
    "target": "new-leaf-academy-of-north-carolina",
    "category": "staff",
@@ -60030,7 +60188,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0195",
+   "id": "l0192",
    "source": "john-l-singleton",
    "target": "cedars-academy",
    "category": "leadership",
@@ -60044,7 +60202,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0196",
+   "id": "l0193",
    "source": "mike-naylor",
    "target": "boulder-creek-academy",
    "category": "leadership",
@@ -60058,7 +60216,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0197",
+   "id": "l0194",
    "source": "mike-naylor",
    "target": "provo-canyon-school",
    "category": "unknown",
@@ -60070,7 +60228,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0198",
+   "id": "l0195",
    "source": "mike-naylor",
    "target": "rocky-mountain-academy",
    "category": "leadership",
@@ -60084,7 +60242,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0199",
+   "id": "l0196",
    "source": "mike-naylor",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -60098,7 +60256,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0200",
+   "id": "l0197",
    "source": "beth-black",
    "target": "cherokee-creek-boys-school",
    "category": "leadership",
@@ -60112,7 +60270,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0201",
+   "id": "l0198",
    "source": "jackson-culotta",
    "target": "boulder-creek-academy",
    "category": "leadership",
@@ -60126,7 +60284,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0202",
+   "id": "l0199",
    "source": "jackson-culotta",
    "target": "rocky-mountain-academy",
    "category": "unknown",
@@ -60138,7 +60296,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0203",
+   "id": "l0200",
    "source": "jackson-culotta",
    "target": "cascade-school",
    "category": "leadership",
@@ -60152,7 +60310,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0204",
+   "id": "l0201",
    "source": "jackson-culotta",
    "target": "cherokee-creek-boys-school",
    "category": "leadership",
@@ -60166,7 +60324,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0205",
+   "id": "l0202",
    "source": "david-lepere",
    "target": "mount-bachelor-academy",
    "category": "staff",
@@ -60180,7 +60338,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0206",
+   "id": "l0203",
    "source": "david-lepere",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -60194,7 +60352,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0207",
+   "id": "l0204",
    "source": "david-lepere",
    "target": "outdoor-behavioral-healthcare-industry-council",
    "category": "membership",
@@ -60208,7 +60366,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0208",
+   "id": "l0205",
    "source": "ron-may",
    "target": "cherokee-creek-boys-school",
    "category": "staff",
@@ -60222,7 +60380,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0209",
+   "id": "l0206",
    "source": "ron-may",
    "target": "cedu-family-of-services",
    "category": "unknown",
@@ -60234,7 +60392,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0210",
+   "id": "l0207",
    "source": "ron-may",
    "target": "boulder-creek-academy",
    "category": "unknown",
@@ -60246,7 +60404,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0211",
+   "id": "l0208",
    "source": "sharon-stricker",
    "target": "cherokee-creek-boys-school",
    "category": "clinical",
@@ -60260,7 +60418,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0212",
+   "id": "l0209",
    "source": "sharon-stricker",
    "target": "whetstone-academy",
    "category": "unknown",
@@ -60272,7 +60430,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0213",
+   "id": "l0210",
    "source": "jane-may",
    "target": "cherokee-creek-boys-school",
    "category": "staff",
@@ -60286,7 +60444,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0214",
+   "id": "l0211",
    "source": "jane-may",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -60300,7 +60458,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0215",
+   "id": "l0212",
    "source": "jane-may",
    "target": "rocky-mountain-academy",
    "category": "leadership",
@@ -60314,7 +60472,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0216",
+   "id": "l0213",
    "source": "jane-may",
    "target": "boulder-creek-academy",
    "category": "leadership",
@@ -60328,7 +60486,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0217",
+   "id": "l0214",
    "source": "jane-may",
    "target": "northwest-academy",
    "category": "leadership",
@@ -60342,7 +60500,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0218",
+   "id": "l0215",
    "source": "jane-may",
    "target": "ascent-wilderness-therapy",
    "category": "leadership",
@@ -60356,7 +60514,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0219",
+   "id": "l0216",
    "source": "genelle-petrey-boeggeman",
    "target": "cherokee-creek-boys-school",
    "category": "leadership",
@@ -60370,7 +60528,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0220",
+   "id": "l0217",
    "source": "genelle-petrey-boeggeman",
    "target": "cascade-school",
    "category": "admissions",
@@ -60384,7 +60542,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0221",
+   "id": "l0218",
    "source": "genelle-petrey-boeggeman",
    "target": "mount-bachelor-academy",
    "category": "admissions",
@@ -60398,7 +60556,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0222",
+   "id": "l0219",
    "source": "rob-spear",
    "target": "boulder-creek-academy",
    "category": "leadership",
@@ -60412,7 +60570,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0223",
+   "id": "l0220",
    "source": "rob-spear",
    "target": "rocky-mountain-academy",
    "category": "leadership",
@@ -60426,7 +60584,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0224",
+   "id": "l0221",
    "source": "rob-spear",
    "target": "cedu-high-school",
    "category": "unknown",
@@ -60438,7 +60596,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0225",
+   "id": "l0222",
    "source": "lori-rist",
    "target": "boulder-creek-academy",
    "category": "leadership",
@@ -60452,7 +60610,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0226",
+   "id": "l0223",
    "source": "lori-rist",
    "target": "cedu-high-school",
    "category": "leadership",
@@ -60466,7 +60624,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0227",
+   "id": "l0224",
    "source": "lori-rist",
    "target": "northwest-academy",
    "category": "unknown",
@@ -60478,7 +60636,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0228",
+   "id": "l0225",
    "source": "kaysie-dannemiller",
    "target": "ascent-wilderness-therapy",
    "category": "clinical",
@@ -60492,7 +60650,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0229",
+   "id": "l0226",
    "source": "kaysie-dannemiller",
    "target": "catherine-freer-wilderness-therapy",
    "category": "staff",
@@ -60506,7 +60664,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0230",
+   "id": "l0227",
    "source": "kaysie-dannemiller",
    "target": "rite-of-passage-inc",
    "category": "staff",
@@ -60520,7 +60678,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0231",
+   "id": "l0228",
    "source": "rachel-m-webster",
    "target": "ascent-wilderness-therapy",
    "category": "clinical",
@@ -60534,7 +60692,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0232",
+   "id": "l0229",
    "source": "rachel-m-webster",
    "target": "boulder-creek-academy",
    "category": "clinical",
@@ -60548,7 +60706,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0233",
+   "id": "l0230",
    "source": "trilby-hoover",
    "target": "northwest-academy",
    "category": "unknown",
@@ -60560,7 +60718,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0234",
+   "id": "l0231",
    "source": "trilby-hoover",
    "target": "passages-to-recovery",
    "category": "admissions",
@@ -60574,7 +60732,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0235",
+   "id": "l0232",
    "source": "ramon-palacios",
    "target": "ascent-wilderness-therapy",
    "category": "leadership",
@@ -60588,7 +60746,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0236",
+   "id": "l0233",
    "source": "ramon-palacios",
    "target": "northwest-academy",
    "category": "clinical",
@@ -60602,7 +60760,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0237",
+   "id": "l0234",
    "source": "ramon-palacios",
    "target": "boulder-creek-academy",
    "category": "clinical",
@@ -60616,7 +60774,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0238",
+   "id": "l0235",
    "source": "ramon-palacios",
    "target": "wilderness-quest",
    "category": "leadership",
@@ -60630,7 +60788,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0239",
+   "id": "l0236",
    "source": "brian-macinnes",
    "target": "ascent-wilderness-therapy",
    "category": "leadership",
@@ -60644,7 +60802,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0240",
+   "id": "l0237",
    "source": "brian-macinnes",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -60658,7 +60816,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0241",
+   "id": "l0238",
    "source": "brian-macinnes",
    "target": "santiam-crossing",
    "category": "leadership",
@@ -60672,7 +60830,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0242",
+   "id": "l0239",
    "source": "larry-blakey",
    "target": "on-track-wilderness-program",
    "category": "unknown",
@@ -60684,7 +60842,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0243",
+   "id": "l0240",
    "source": "larry-blakey",
    "target": "rocky-mountain-academy",
    "category": "staff",
@@ -60698,7 +60856,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0244",
+   "id": "l0241",
    "source": "andy-herod",
    "target": "willow-springs-center",
    "category": "leadership",
@@ -60712,7 +60870,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0245",
+   "id": "l0242",
    "source": "andy-herod",
    "target": "covenant-health",
    "category": "clinical",
@@ -60726,7 +60884,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0246",
+   "id": "l0243",
    "source": "mack-wigley",
    "target": "san-marcos-treatment-center",
    "category": "leadership",
@@ -60740,7 +60898,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0247",
+   "id": "l0244",
    "source": "mack-wigley",
    "target": "the-brown-schools",
    "category": "staff",
@@ -60754,7 +60912,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0248",
+   "id": "l0245",
    "source": "jeanette-jackson",
    "target": "laurel-oaks-behavioral-health-center",
    "category": "leadership",
@@ -60768,7 +60926,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0249",
+   "id": "l0246",
    "source": "jeanette-jackson",
    "target": "gulf-coast-treatment-center",
    "category": "leadership",
@@ -60782,7 +60940,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0250",
+   "id": "l0247",
    "source": "janet-lippold",
    "target": "meridell-achievement-center",
    "category": "leadership",
@@ -60796,7 +60954,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0251",
+   "id": "l0248",
    "source": "wayne-lippold",
    "target": "meridell-achievement-center",
    "category": "leadership",
@@ -60810,7 +60968,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0252",
+   "id": "l0249",
    "source": "barry-woodward",
    "target": "community-psychiatric-centers",
    "category": "unknown",
@@ -60822,7 +60980,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0253",
+   "id": "l0250",
    "source": "ron-s-tuinei",
    "target": "copper-hills-youth-center",
    "category": "leadership",
@@ -60836,7 +60994,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0254",
+   "id": "l0251",
    "source": "ron-s-tuinei",
    "target": "heritage-schools-heritage-rtc",
    "category": "staff",
@@ -60850,7 +61008,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0255",
+   "id": "l0252",
    "source": "ron-s-tuinei",
    "target": "cottonwood-treatment-center",
    "category": "leadership",
@@ -60864,7 +61022,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0256",
+   "id": "l0253",
    "source": "ron-s-tuinei",
    "target": "the-oakley-school",
    "category": "leadership",
@@ -60878,7 +61036,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0257",
+   "id": "l0254",
    "source": "ron-s-tuinei",
    "target": "san-marcos-treatment-center",
    "category": "unknown",
@@ -60890,7 +61048,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0258",
+   "id": "l0255",
    "source": "manuel-tello-jr",
    "target": "copper-hills-youth-center",
    "category": "staff",
@@ -60904,7 +61062,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0259",
+   "id": "l0256",
    "source": "manuel-tello-jr",
    "target": "rivendell-of-utah",
    "category": "staff",
@@ -60918,7 +61076,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0260",
+   "id": "l0257",
    "source": "manuel-tello-jr",
    "target": "olympus-view-hospital-rtc",
    "category": "staff",
@@ -60932,7 +61090,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0261",
+   "id": "l0258",
    "source": "brian-savage",
    "target": "copper-hills-youth-center",
    "category": "clinical",
@@ -60946,7 +61104,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0262",
+   "id": "l0259",
    "source": "brian-savage",
    "target": "discovery-academy",
    "category": "clinical",
@@ -60960,7 +61118,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0263",
+   "id": "l0260",
    "source": "charter-medical-corporation",
    "target": "provo-canyon-school",
    "category": "leadership",
@@ -60974,7 +61132,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0264",
+   "id": "l0261",
    "source": "robert-b-lichfield",
    "target": "browning-distance-learning-academy",
    "category": "leadership",
@@ -60988,7 +61146,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0265",
+   "id": "l0262",
    "source": "jade-robinson",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -61000,7 +61158,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0266",
+   "id": "l0263",
    "source": "jade-robinson",
    "target": "high-impact",
    "category": "staff",
@@ -61014,7 +61172,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0267",
+   "id": "l0264",
    "source": "narvin-lichfield",
    "target": "teen-help-llc",
    "category": "admissions",
@@ -61028,7 +61186,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0268",
+   "id": "l0265",
    "source": "dace-goulding",
    "target": "paradise-cove",
    "category": "unknown",
@@ -61040,7 +61198,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0269",
+   "id": "l0266",
    "source": "miguel-rodriguez",
    "target": "high-impact",
    "category": "leadership",
@@ -61054,7 +61212,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0270",
+   "id": "l0267",
    "source": "miguel-rodriguez",
    "target": "casa-by-the-sea",
    "category": "unknown",
@@ -61066,7 +61224,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0271",
+   "id": "l0268",
    "source": "brian-vaifanua",
    "target": "paradise-cove",
    "category": "leadership",
@@ -61080,7 +61238,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0272",
+   "id": "l0269",
    "source": "brian-vaifanua",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -61092,7 +61250,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0273",
+   "id": "l0270",
    "source": "brian-vaifanua",
    "target": "midwest-academy",
    "category": "leadership",
@@ -61106,7 +61264,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0274",
+   "id": "l0271",
    "source": "cameron-pullan",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -61118,7 +61276,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0275",
+   "id": "l0272",
    "source": "chaffin-pullan",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -61130,7 +61288,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0276",
+   "id": "l0273",
    "source": "dan-peart",
    "target": "majestic-ranch-academy",
    "category": "leadership",
@@ -61144,7 +61302,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0277",
+   "id": "l0274",
    "source": "dan-peart",
    "target": "old-west-academy",
    "category": "leadership",
@@ -61158,7 +61316,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0278",
+   "id": "l0275",
    "source": "tammy-prince-behrman",
    "target": "spring-ridge-academy",
    "category": "unknown",
@@ -61170,7 +61328,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0279",
+   "id": "l0276",
    "source": "patty-bowman",
    "target": "copper-canyon-academy",
    "category": "leadership",
@@ -61184,7 +61342,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0280",
+   "id": "l0277",
    "source": "patty-bowman",
    "target": "spring-ridge-academy",
    "category": "unknown",
@@ -61196,7 +61354,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0281",
+   "id": "l0278",
    "source": "rob-dias",
    "target": "diamond-ranch-academy",
    "category": "leadership",
@@ -61210,7 +61368,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0282",
+   "id": "l0279",
    "source": "kade-mathews",
    "target": "heritage-schools-heritage-rtc",
    "category": "staff",
@@ -61224,7 +61382,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0283",
+   "id": "l0280",
    "source": "kade-mathews",
    "target": "diamond-ranch-academy",
    "category": "clinical",
@@ -61238,7 +61396,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0284",
+   "id": "l0281",
    "source": "rachel-steinberg",
    "target": "heritage-schools-heritage-rtc",
    "category": "clinical",
@@ -61252,7 +61410,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0285",
+   "id": "l0282",
    "source": "kirk-simon",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "clinical",
@@ -61266,7 +61424,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0286",
+   "id": "l0283",
    "source": "mayer-jeppson",
    "target": "three-points-center",
    "category": "clinical",
@@ -61280,7 +61438,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0287",
+   "id": "l0284",
    "source": "mayer-jeppson",
    "target": "diamond-ranch-academy",
    "category": "clinical",
@@ -61294,7 +61452,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0288",
+   "id": "l0285",
    "source": "mayer-jeppson",
    "target": "second-nature-entrada",
    "category": "clinical",
@@ -61308,7 +61466,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0289",
+   "id": "l0286",
    "source": "mayer-jeppson",
    "target": "evoke-entrada",
    "category": "clinical",
@@ -61322,7 +61480,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0290",
+   "id": "l0287",
    "source": "aspen-education-group",
    "target": "bain-capital",
    "category": "corporate",
@@ -61336,7 +61494,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0291",
+   "id": "l0288",
    "source": "virgil-miller-newton",
    "target": "straight-inc",
    "category": "clinical",
@@ -61350,7 +61508,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0292",
+   "id": "l0289",
    "source": "virgil-miller-newton",
    "target": "kids-centers-of-america",
    "category": "leadership",
@@ -61364,7 +61522,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0293",
+   "id": "l0290",
    "source": "w-kimball-delamare",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "leadership",
@@ -61378,7 +61536,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0294",
+   "id": "l0291",
    "source": "cheryl-kehl",
    "target": "second-nature",
    "category": "leadership",
@@ -61392,7 +61550,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0295",
+   "id": "l0292",
    "source": "devin-glissmeyer",
    "target": "second-nature",
    "category": "leadership",
@@ -61406,7 +61564,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0296",
+   "id": "l0293",
    "source": "jeff-scott",
    "target": "heritage-schools-heritage-rtc",
    "category": "clinical",
@@ -61420,7 +61578,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0297",
+   "id": "l0294",
    "source": "jack-hinman",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -61434,7 +61592,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0298",
+   "id": "l0295",
    "source": "jack-hinman",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -61448,7 +61606,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0299",
+   "id": "l0296",
    "source": "ken-huey",
    "target": "havenwood-academy",
    "category": "leadership",
@@ -61462,7 +61620,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0300",
+   "id": "l0297",
    "source": "jeff-smith",
    "target": "logan-river-academy",
    "category": "leadership",
@@ -61476,7 +61634,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0301",
+   "id": "l0298",
    "source": "jeff-smith",
    "target": "provo-canyon-school",
    "category": "leadership",
@@ -61490,7 +61648,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0302",
+   "id": "l0299",
    "source": "jeff-smith",
    "target": "mount-bachelor-academy",
    "category": "unknown",
@@ -61502,7 +61660,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0303",
+   "id": "l0300",
    "source": "mark-petersen",
    "target": "logan-river-academy",
    "category": "leadership",
@@ -61516,7 +61674,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0304",
+   "id": "l0301",
    "source": "mark-petersen",
    "target": "teen-help-llc",
    "category": "staff",
@@ -61530,7 +61688,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0305",
+   "id": "l0302",
    "source": "larry-carter",
    "target": "aspen-education-group",
    "category": "staff",
@@ -61544,7 +61702,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0306",
+   "id": "l0303",
    "source": "eugene-thorne",
    "target": "provo-canyon-school",
    "category": "leadership",
@@ -61558,7 +61716,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0307",
+   "id": "l0304",
    "source": "eugene-thorne",
    "target": "discovery-academy",
    "category": "leadership",
@@ -61572,7 +61730,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0308",
+   "id": "l0305",
    "source": "brian-heath",
    "target": "rite-of-passage-inc",
    "category": "leadership",
@@ -61586,7 +61744,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0309",
+   "id": "l0306",
    "source": "brian-heath",
    "target": "canyon-state-academy",
    "category": "leadership",
@@ -61600,7 +61758,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0310",
+   "id": "l0307",
    "source": "john-padgett",
    "target": "cedu-family-of-services",
    "category": "unknown",
@@ -61612,7 +61770,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0311",
+   "id": "l0308",
    "source": "john-padgett",
    "target": "cascade-school",
    "category": "unknown",
@@ -61624,7 +61782,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0312",
+   "id": "l0309",
    "source": "jeff-johnson",
    "target": "suws-idaho",
    "category": "admissions",
@@ -61638,7 +61796,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0313",
+   "id": "l0310",
    "source": "jeff-johnson",
    "target": "mount-bachelor-academy",
    "category": "unknown",
@@ -61650,7 +61808,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0314",
+   "id": "l0311",
    "source": "jeff-johnson",
    "target": "skyline-journey",
    "category": "unknown",
@@ -61662,7 +61820,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0315",
+   "id": "l0312",
    "source": "jeff-johnson",
    "target": "wilderness-quest",
    "category": "unknown",
@@ -61674,7 +61832,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0316",
+   "id": "l0313",
    "source": "jeff-johnson",
    "target": "ascent-wilderness-therapy",
    "category": "unknown",
@@ -61686,7 +61844,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0317",
+   "id": "l0314",
    "source": "jeff-johnson",
    "target": "boulder-creek-academy",
    "category": "unknown",
@@ -61698,7 +61856,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0318",
+   "id": "l0315",
    "source": "jeff-johnson",
    "target": "adirondack-leadership-expeditions",
    "category": "unknown",
@@ -61710,7 +61868,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0319",
+   "id": "l0316",
    "source": "jeff-johnson",
    "target": "three-rivers-montana",
    "category": "unknown",
@@ -61722,7 +61880,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0320",
+   "id": "l0317",
    "source": "jeff-johnson",
    "target": "lone-star-expeditions",
    "category": "unknown",
@@ -61734,7 +61892,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0321",
+   "id": "l0318",
    "source": "jeff-johnson",
    "target": "auldern-academy",
    "category": "unknown",
@@ -61746,7 +61904,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0322",
+   "id": "l0319",
    "source": "jeff-johnson",
    "target": "sunhawk-academy",
    "category": "unknown",
@@ -61758,7 +61916,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0323",
+   "id": "l0320",
    "source": "jeff-johnson",
    "target": "suws-of-the-carolinas",
    "category": "unknown",
@@ -61770,7 +61928,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0324",
+   "id": "l0321",
    "source": "jeff-johnson",
    "target": "allynwood-academy",
    "category": "unknown",
@@ -61782,7 +61940,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0325",
+   "id": "l0322",
    "source": "jeff-johnson",
    "target": "trails-carolina",
    "category": "unknown",
@@ -61794,7 +61952,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0326",
+   "id": "l0323",
    "source": "pat-lockwood",
    "target": "suws-idaho",
    "category": "unknown",
@@ -61806,7 +61964,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0327",
+   "id": "l0324",
    "source": "pat-lockwood",
    "target": "bluefire-wilderness-therapy",
    "category": "unknown",
@@ -61818,7 +61976,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0328",
+   "id": "l0325",
    "source": "pat-lockwood",
    "target": "outdoor-behavioral-healthcare-industry-council",
    "category": "membership",
@@ -61832,7 +61990,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0329",
+   "id": "l0326",
    "source": "andy-sapp",
    "target": "cherry-gulch",
    "category": "leadership",
@@ -61846,7 +62004,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0330",
+   "id": "l0327",
    "source": "andy-sapp",
    "target": "novitas-academy",
    "category": "unknown",
@@ -61858,7 +62016,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0331",
+   "id": "l0328",
    "source": "andy-sapp",
    "target": "natsap",
    "category": "board",
@@ -61872,7 +62030,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0332",
+   "id": "l0329",
    "source": "glenn-bender",
    "target": "carlbrook-school",
    "category": "staff",
@@ -61886,7 +62044,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0333",
+   "id": "l0330",
    "source": "glenn-bender",
    "target": "academy-at-ivy-ridge",
    "category": "unknown",
@@ -61898,7 +62056,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0334",
+   "id": "l0331",
    "source": "glenn-bender",
    "target": "rocky-mountain-academy",
    "category": "unknown",
@@ -61910,7 +62068,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0335",
+   "id": "l0332",
    "source": "glenn-bender",
    "target": "cascade-school",
    "category": "unknown",
@@ -61922,7 +62080,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0336",
+   "id": "l0333",
    "source": "glenn-bender",
    "target": "alldredge-academy",
    "category": "unknown",
@@ -61934,7 +62092,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0337",
+   "id": "l0334",
    "source": "glenn-bender",
    "target": "academy-at-swift-river",
    "category": "unknown",
@@ -61946,7 +62104,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0338",
+   "id": "l0335",
    "source": "hilary-gibson",
    "target": "alabama-clinical-schools",
    "category": "leadership",
@@ -61960,7 +62118,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0339",
+   "id": "l0336",
    "source": "hilary-gibson",
    "target": "universal-health-services",
    "category": "staff",
@@ -61974,7 +62132,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0340",
+   "id": "l0337",
    "source": "dmarcus-reed",
    "target": "alabama-clinical-schools",
    "category": "staff",
@@ -61988,7 +62146,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0341",
+   "id": "l0338",
    "source": "dmarcus-reed",
    "target": "hill-crest-behavioral-health",
    "category": "clinical",
@@ -62002,7 +62160,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0342",
+   "id": "l0339",
    "source": "jennifer-snyder",
    "target": "hill-crest-behavioral-health",
    "category": "leadership",
@@ -62016,7 +62174,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0343",
+   "id": "l0340",
    "source": "jennifer-snyder",
    "target": "alabama-clinical-schools",
    "category": "leadership",
@@ -62030,7 +62188,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0344",
+   "id": "l0341",
    "source": "bob-lee",
    "target": "columbus-girls-academy",
    "category": "leadership",
@@ -62044,7 +62202,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0345",
+   "id": "l0342",
    "source": "bob-lee",
    "target": "teen-challenge",
    "category": "leadership",
@@ -62058,7 +62216,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0346",
+   "id": "l0343",
    "source": "bob-lee",
    "target": "lakeland-girls-academy",
    "category": "leadership",
@@ -62072,7 +62230,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0347",
+   "id": "l0344",
    "source": "karla-lee",
    "target": "columbus-girls-academy",
    "category": "leadership",
@@ -62086,7 +62244,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0348",
+   "id": "l0345",
    "source": "karla-lee",
    "target": "lakeland-girls-academy",
    "category": "leadership",
@@ -62100,7 +62258,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0349",
+   "id": "l0346",
    "source": "mike-merchant",
    "target": "anasazi-foundation",
    "category": "leadership",
@@ -62114,7 +62272,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0350",
+   "id": "l0347",
    "source": "mike-merchant",
    "target": "outdoor-behavioral-healthcare-industry-council",
    "category": "leadership",
@@ -62128,7 +62286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0351",
+   "id": "l0348",
    "source": "mike-merchant",
    "target": "natsap",
    "category": "leadership",
@@ -62142,7 +62300,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0352",
+   "id": "l0349",
    "source": "nathan-mitchell",
    "target": "anasazi-foundation",
    "category": "leadership",
@@ -62156,7 +62314,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0353",
+   "id": "l0350",
    "source": "nathan-mitchell",
    "target": "oxbow-academy",
    "category": "unknown",
@@ -62168,7 +62326,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0354",
+   "id": "l0351",
    "source": "sulay-tovar",
    "target": "anasazi-foundation",
    "category": "leadership",
@@ -62182,7 +62340,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0355",
+   "id": "l0352",
    "source": "sulay-tovar",
    "target": "west-ridge-academy",
    "category": "unknown",
@@ -62194,7 +62352,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0356",
+   "id": "l0353",
    "source": "mary-thompson",
    "target": "anasazi-foundation",
    "category": "clinical",
@@ -62208,7 +62366,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0357",
+   "id": "l0354",
    "source": "mary-thompson",
    "target": "devereux-foundation",
    "category": "clinical",
@@ -62222,7 +62380,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0358",
+   "id": "l0355",
    "source": "candice-bahm",
    "target": "anasazi-foundation",
    "category": "clinical",
@@ -62236,7 +62394,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0359",
+   "id": "l0356",
    "source": "candice-bahm",
    "target": "redcliff-ascent",
    "category": "staff",
@@ -62250,7 +62408,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0360",
+   "id": "l0357",
    "source": "luke-hallows",
    "target": "arivaca-boys-ranch",
    "category": "staff",
@@ -62264,7 +62422,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0361",
+   "id": "l0358",
    "source": "luke-hallows",
    "target": "casa-by-the-sea",
    "category": "staff",
@@ -62278,7 +62436,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0362",
+   "id": "l0359",
    "source": "luke-hallows",
    "target": "high-impact",
    "category": "unknown",
@@ -62290,7 +62448,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0363",
+   "id": "l0360",
    "source": "glenn-banks-jr",
    "target": "arivaca-boys-ranch",
    "category": "clinical",
@@ -62304,7 +62462,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0364",
+   "id": "l0361",
    "source": "glenn-banks-jr",
    "target": "anasazi-foundation",
    "category": "unknown",
@@ -62316,7 +62474,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0365",
+   "id": "l0362",
    "source": "james-bednark",
    "target": "canyon-state-academy",
    "category": "leadership",
@@ -62330,7 +62488,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0366",
+   "id": "l0363",
    "source": "james-bednark",
    "target": "rite-of-passage-inc",
    "category": "leadership",
@@ -62344,7 +62502,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0367",
+   "id": "l0364",
    "source": "darlene-barnes",
    "target": "re-creation-retreat",
    "category": "staff",
@@ -62358,7 +62516,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0368",
+   "id": "l0365",
    "source": "darlene-barnes",
    "target": "cinnamon-hills-youth-crisis-center",
    "category": "unknown",
@@ -62370,7 +62528,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0369",
+   "id": "l0366",
    "source": "charlie-casper",
    "target": "re-creation-retreat",
    "category": "staff",
@@ -62384,7 +62542,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0370",
+   "id": "l0367",
    "source": "charlie-casper",
    "target": "cinnamon-hills-youth-crisis-center",
    "category": "unknown",
@@ -62396,7 +62554,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0371",
+   "id": "l0368",
    "source": "daniel-taylor",
    "target": "re-creation-retreat",
    "category": "leadership",
@@ -62410,7 +62568,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0372",
+   "id": "l0369",
    "source": "daniel-taylor",
    "target": "integrity-house",
    "category": "leadership",
@@ -62424,7 +62582,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0373",
+   "id": "l0370",
    "source": "daniel-taylor",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -62436,7 +62594,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0374",
+   "id": "l0371",
    "source": "daniel-taylor",
    "target": "brightway-adolescent-hospital",
    "category": "unknown",
@@ -62448,7 +62606,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0375",
+   "id": "l0372",
    "source": "daniel-taylor",
    "target": "copper-hills-youth-center",
    "category": "unknown",
@@ -62460,7 +62618,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0376",
+   "id": "l0373",
    "source": "daniel-taylor",
    "target": "academy-of-eastern-arizona",
    "category": "leadership",
@@ -62474,7 +62632,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0377",
+   "id": "l0374",
    "source": "dan-dekker",
    "target": "integrity-house",
    "category": "leadership",
@@ -62488,7 +62646,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0378",
+   "id": "l0375",
    "source": "garth-lasater",
    "target": "ashcreek-ranch-academy",
    "category": "leadership",
@@ -62502,7 +62660,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0379",
+   "id": "l0376",
    "source": "garth-lasater",
    "target": "three-points-center",
    "category": "leadership",
@@ -62516,7 +62674,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0380",
+   "id": "l0377",
    "source": "garth-lasater",
    "target": "cross-creek-programs",
    "category": "unknown",
@@ -62528,7 +62686,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0381",
+   "id": "l0378",
    "source": "albert-behling",
    "target": "havenwood-academy",
    "category": "leadership",
@@ -62542,7 +62700,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0382",
+   "id": "l0379",
    "source": "albert-behling",
    "target": "discovery-ranch-for-girls",
    "category": "staff",
@@ -62556,7 +62714,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0383",
+   "id": "l0380",
    "source": "kyle-peterson",
    "target": "havenwood-academy",
    "category": "clinical",
@@ -62570,7 +62728,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0384",
+   "id": "l0381",
    "source": "kyle-peterson",
    "target": "discovery-ranch-for-girls",
    "category": "clinical",
@@ -62584,7 +62742,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0385",
+   "id": "l0382",
    "source": "bryan-cook",
    "target": "havenwood-academy",
    "category": "leadership",
@@ -62598,7 +62756,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0386",
+   "id": "l0383",
    "source": "bryan-cook",
    "target": "hope-group",
    "category": "staff",
@@ -62612,7 +62770,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0387",
+   "id": "l0384",
    "source": "bryan-cook",
    "target": "lava-heights-academy",
    "category": "unknown",
@@ -62624,7 +62782,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0388",
+   "id": "l0385",
    "source": "oscar-fakahua",
    "target": "havenwood-academy",
    "category": "leadership",
@@ -62638,7 +62796,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0389",
+   "id": "l0386",
    "source": "oscar-fakahua",
    "target": "falcon-ridge-ranch",
    "category": "staff",
@@ -62652,7 +62810,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0390",
+   "id": "l0387",
    "source": "oscar-fakahua",
    "target": "ashcreek-ranch-academy",
    "category": "leadership",
@@ -62666,7 +62824,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0391",
+   "id": "l0388",
    "source": "greg-burnham",
    "target": "outback-therapeutic-expeditions",
    "category": "clinical",
@@ -62680,7 +62838,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0392",
+   "id": "l0389",
    "source": "greg-burnham",
    "target": "cedar-ridge-academy",
    "category": "clinical",
@@ -62694,7 +62852,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0393",
+   "id": "l0390",
    "source": "greg-burnham",
    "target": "new-haven-rtc",
    "category": "clinical",
@@ -62708,7 +62866,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0394",
+   "id": "l0391",
    "source": "greg-burnham",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -62722,7 +62880,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0395",
+   "id": "l0392",
    "source": "richard-meeves",
    "target": "outback-therapeutic-expeditions",
    "category": "leadership",
@@ -62736,7 +62894,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0396",
+   "id": "l0393",
    "source": "richard-meeves",
    "target": "crc-health-group",
    "category": "clinical",
@@ -62750,7 +62908,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0397",
+   "id": "l0394",
    "source": "richard-meeves",
    "target": "aspiro-wilderness-adventure-therapy",
    "category": "leadership",
@@ -62764,7 +62922,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0398",
+   "id": "l0395",
    "source": "mark-wardle",
    "target": "on-track-wilderness-program",
    "category": "staff",
@@ -62778,7 +62936,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0399",
+   "id": "l0396",
    "source": "brent-charles-hall",
    "target": "cross-creek-programs",
    "category": "clinical",
@@ -62792,7 +62950,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0400",
+   "id": "l0397",
    "source": "brent-charles-hall",
    "target": "discovery-academy",
    "category": "leadership",
@@ -62806,7 +62964,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0401",
+   "id": "l0398",
    "source": "steve-barrick",
    "target": "falcon-ridge-ranch",
    "category": "clinical",
@@ -62820,7 +62978,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0402",
+   "id": "l0399",
    "source": "steve-barrick",
    "target": "kolob-canyon-rtc",
    "category": "unknown",
@@ -62832,7 +62990,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0403",
+   "id": "l0400",
    "source": "steve-barrick",
    "target": "liahona-academy",
    "category": "unknown",
@@ -62844,7 +63002,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0404",
+   "id": "l0401",
    "source": "cindy-cox",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -62858,7 +63016,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0405",
+   "id": "l0402",
    "source": "cindy-cox",
    "target": "clarinda-academy",
    "category": "leadership",
@@ -62872,7 +63030,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0406",
+   "id": "l0403",
    "source": "john-stewart",
    "target": "new-haven-rtc",
    "category": "leadership",
@@ -62886,7 +63044,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0407",
+   "id": "l0404",
    "source": "john-stewart",
    "target": "innerchange",
    "category": "admissions",
@@ -62900,7 +63058,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0408",
+   "id": "l0405",
    "source": "john-stewart",
    "target": "natsap",
    "category": "board",
@@ -62914,7 +63072,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0409",
+   "id": "l0406",
    "source": "tawny-thomas",
    "target": "certs",
    "category": "leadership",
@@ -62928,7 +63086,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0410",
+   "id": "l0407",
    "source": "tawny-thomas",
    "target": "kolob-canyon-rtc",
    "category": "staff",
@@ -62942,7 +63100,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0411",
+   "id": "l0408",
    "source": "tawny-thomas",
    "target": "moonridge-academy",
    "category": "staff",
@@ -62956,7 +63114,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0412",
+   "id": "l0409",
    "source": "kris-archer",
    "target": "new-haven-rtc",
    "category": "admissions",
@@ -62970,7 +63128,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0413",
+   "id": "l0410",
    "source": "alex-stavros",
    "target": "innerchange",
    "category": "unknown",
@@ -62982,7 +63140,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0414",
+   "id": "l0411",
    "source": "alex-stavros",
    "target": "embark-behavioral-health",
    "category": "leadership",
@@ -62996,7 +63154,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0415",
+   "id": "l0412",
    "source": "thomas-ahern",
    "target": "embark-behavioral-health",
    "category": "admissions",
@@ -63010,7 +63168,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0416",
+   "id": "l0413",
    "source": "thomas-ahern",
    "target": "crc-health-group",
    "category": "staff",
@@ -63024,7 +63182,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0417",
+   "id": "l0414",
    "source": "thomas-ahern",
    "target": "calo-programs",
    "category": "staff",
@@ -63038,7 +63196,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0418",
+   "id": "l0415",
    "source": "rob-gent",
    "target": "embark-behavioral-health",
    "category": "clinical",
@@ -63052,7 +63210,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0419",
+   "id": "l0416",
    "source": "rob-gent",
    "target": "calo-programs",
    "category": "clinical",
@@ -63066,7 +63224,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0420",
+   "id": "l0417",
    "source": "dustin-tibbitts",
    "target": "oasis-academy",
    "category": "unknown",
@@ -63078,7 +63236,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0421",
+   "id": "l0418",
    "source": "kenny-parnell",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "leadership",
@@ -63092,7 +63250,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0422",
+   "id": "l0419",
    "source": "kenny-parnell",
    "target": "montana-academy",
    "category": "leadership",
@@ -63106,7 +63264,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0423",
+   "id": "l0420",
    "source": "jalane-christian-stoker",
    "target": "moonridge-academy",
    "category": "clinical",
@@ -63120,7 +63278,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0424",
+   "id": "l0421",
    "source": "jalane-christian-stoker",
    "target": "kolob-canyon-rtc",
    "category": "clinical",
@@ -63134,7 +63292,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0425",
+   "id": "l0422",
    "source": "nateasa-mcguire",
    "target": "moonridge-academy",
    "category": "clinical",
@@ -63148,7 +63306,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0426",
+   "id": "l0423",
    "source": "nateasa-mcguire",
    "target": "evoke-therapy-programs",
    "category": "clinical",
@@ -63162,7 +63320,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0427",
+   "id": "l0424",
    "source": "mary-alexine",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "leadership",
@@ -63176,7 +63334,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0428",
+   "id": "l0425",
    "source": "mary-alexine",
    "target": "montana-academy",
    "category": "leadership",
@@ -63190,7 +63348,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0429",
+   "id": "l0426",
    "source": "corey-hickman",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "leadership",
@@ -63204,7 +63362,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0430",
+   "id": "l0427",
    "source": "corey-hickman",
    "target": "new-haven-rtc",
    "category": "staff",
@@ -63218,7 +63376,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0431",
+   "id": "l0428",
    "source": "corey-hickman",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -63232,7 +63390,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0432",
+   "id": "l0429",
    "source": "corey-hickman",
    "target": "lake-house-academy",
    "category": "leadership",
@@ -63246,7 +63404,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0433",
+   "id": "l0430",
    "source": "mackenzie-hall",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "leadership",
@@ -63260,7 +63418,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0434",
+   "id": "l0431",
    "source": "mackenzie-hall",
    "target": "sunrise-rtc",
    "category": "staff",
@@ -63274,7 +63432,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0435",
+   "id": "l0432",
    "source": "mackenzie-hall",
    "target": "lake-house-academy",
    "category": "leadership",
@@ -63288,7 +63446,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0436",
+   "id": "l0433",
    "source": "dayna-rust",
    "target": "new-haven-rtc",
    "category": "clinical",
@@ -63302,7 +63460,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0437",
+   "id": "l0434",
    "source": "dayna-rust",
    "target": "turn-about-ranch",
    "category": "clinical",
@@ -63316,7 +63474,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0438",
+   "id": "l0435",
    "source": "dayna-rust",
    "target": "youth-care-of-utah",
    "category": "leadership",
@@ -63330,7 +63488,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0439",
+   "id": "l0436",
    "source": "scott-boice",
    "target": "new-haven-rtc",
    "category": "clinical",
@@ -63344,7 +63502,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0440",
+   "id": "l0437",
    "source": "scott-boice",
    "target": "hidden-lake-academy",
    "category": "clinical",
@@ -63358,7 +63516,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0441",
+   "id": "l0438",
    "source": "scott-boice",
    "target": "devereux-foundation",
    "category": "clinical",
@@ -63372,7 +63530,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0442",
+   "id": "l0439",
    "source": "scott-boice",
    "target": "three-springs-inc",
    "category": "clinical",
@@ -63386,7 +63544,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0443",
+   "id": "l0440",
    "source": "scott-boice",
    "target": "pacific-quest",
    "category": "leadership",
@@ -63400,7 +63558,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0444",
+   "id": "l0441",
    "source": "scott-boice",
    "target": "innerchange",
    "category": "clinical",
@@ -63414,7 +63572,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0445",
+   "id": "l0442",
    "source": "kendra-meiklejohn",
    "target": "outback-therapeutic-expeditions",
    "category": "clinical",
@@ -63428,7 +63586,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0446",
+   "id": "l0443",
    "source": "jeremy-meyer",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "staff",
@@ -63442,7 +63600,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0447",
+   "id": "l0444",
    "source": "jeremy-meyer",
    "target": "innerchange",
    "category": "staff",
@@ -63456,7 +63614,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0448",
+   "id": "l0445",
    "source": "jeremy-meyer",
    "target": "second-nature-uintas",
    "category": "staff",
@@ -63470,7 +63628,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0449",
+   "id": "l0446",
    "source": "fotu-soliai",
    "target": "lake-house-academy",
    "category": "leadership",
@@ -63484,7 +63642,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0450",
+   "id": "l0447",
    "source": "fotu-soliai",
    "target": "diamond-ranch-academy",
    "category": "leadership",
@@ -63498,7 +63656,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0451",
+   "id": "l0448",
    "source": "fotu-soliai",
    "target": "sedona-sky-academy",
    "category": "leadership",
@@ -63512,7 +63670,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0452",
+   "id": "l0449",
    "source": "fotu-soliai",
    "target": "ashcreek-ranch-academy",
    "category": "leadership",
@@ -63526,7 +63684,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0453",
+   "id": "l0450",
    "source": "alex-hamilton",
    "target": "lake-house-academy",
    "category": "clinical",
@@ -63540,7 +63698,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0454",
+   "id": "l0451",
    "source": "alex-hamilton",
    "target": "chrysalis-therapeutic-boarding-school",
    "category": "clinical",
@@ -63554,7 +63712,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0455",
+   "id": "l0452",
    "source": "erika-mackey",
    "target": "lake-house-academy",
    "category": "admissions",
@@ -63568,7 +63726,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0456",
+   "id": "l0453",
    "source": "erika-mackey",
    "target": "new-vision-wilderness",
    "category": "admissions",
@@ -63582,7 +63740,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0457",
+   "id": "l0454",
    "source": "craig-lamont",
    "target": "natsap",
    "category": "leadership",
@@ -63596,7 +63754,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0458",
+   "id": "l0455",
    "source": "brian-pace",
    "target": "falcon-ridge-ranch",
    "category": "leadership",
@@ -63610,7 +63768,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0459",
+   "id": "l0456",
    "source": "brian-pace",
    "target": "lava-heights-academy",
    "category": "leadership",
@@ -63624,7 +63782,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0460",
+   "id": "l0457",
    "source": "brian-pace",
    "target": "mount-pleasant-academy",
    "category": "leadership",
@@ -63638,7 +63796,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0461",
+   "id": "l0458",
    "source": "bernie-farrow",
    "target": "red-rock-canyon-school",
    "category": "unknown",
@@ -63650,7 +63808,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0462",
+   "id": "l0459",
    "source": "matt-bulkley",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -63664,7 +63822,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0463",
+   "id": "l0460",
    "source": "matt-bulkley",
    "target": "redcliff-ascent",
    "category": "clinical",
@@ -63678,7 +63836,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0464",
+   "id": "l0461",
    "source": "joel-beckstrand",
    "target": "sunrise-rtc",
    "category": "staff",
@@ -63692,7 +63850,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0465",
+   "id": "l0462",
    "source": "joel-beckstrand",
    "target": "red-rock-canyon-school",
    "category": "unknown",
@@ -63704,7 +63862,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0466",
+   "id": "l0463",
    "source": "dave-prior",
    "target": "sunrise-rtc",
    "category": "leadership",
@@ -63718,7 +63876,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0467",
+   "id": "l0464",
    "source": "dave-prior",
    "target": "cedar-ridge-academy",
    "category": "clinical",
@@ -63732,7 +63890,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0468",
+   "id": "l0465",
    "source": "dave-prior",
    "target": "new-haven-rtc",
    "category": "clinical",
@@ -63746,7 +63904,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0469",
+   "id": "l0466",
    "source": "dave-prior",
    "target": "innerchange",
    "category": "leadership",
@@ -63760,7 +63918,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0470",
+   "id": "l0467",
    "source": "helen-b-johnson",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -63774,7 +63932,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0471",
+   "id": "l0468",
    "source": "helen-b-johnson",
    "target": "mountain-springs-preparatory-academy",
    "category": "unknown",
@@ -63786,7 +63944,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0472",
+   "id": "l0469",
    "source": "tracey-gerlach",
    "target": "sunrise-rtc",
    "category": "leadership",
@@ -63800,7 +63958,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0473",
+   "id": "l0470",
    "source": "tracey-gerlach",
    "target": "suws-of-the-carolinas",
    "category": "staff",
@@ -63814,7 +63972,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0474",
+   "id": "l0471",
    "source": "tracey-gerlach",
    "target": "innerchange",
    "category": "admissions",
@@ -63828,7 +63986,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0475",
+   "id": "l0472",
    "source": "derek-barney",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -63842,7 +64000,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0476",
+   "id": "l0473",
    "source": "derek-barney",
    "target": "alpine-academy",
    "category": "unknown",
@@ -63854,7 +64012,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0477",
+   "id": "l0474",
    "source": "kim-seay-smith",
    "target": "sunrise-rtc",
    "category": "clinical",
@@ -63868,7 +64026,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0478",
+   "id": "l0475",
    "source": "kim-seay-smith",
    "target": "lava-heights-academy",
    "category": "leadership",
@@ -63882,7 +64040,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0479",
+   "id": "l0476",
    "source": "nikki-garza",
    "target": "fulshear-treatment-to-transition",
    "category": "leadership",
@@ -63896,7 +64054,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0480",
+   "id": "l0477",
    "source": "nikki-garza",
    "target": "alpine-academy",
    "category": "clinical",
@@ -63910,7 +64068,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0481",
+   "id": "l0478",
    "source": "kevin-randall",
    "target": "fulshear-treatment-to-transition",
    "category": "clinical",
@@ -63924,7 +64082,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0482",
+   "id": "l0479",
    "source": "kevin-randall",
    "target": "new-haven-rtc",
    "category": "clinical",
@@ -63938,7 +64096,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0483",
+   "id": "l0480",
    "source": "helaine-sandler",
    "target": "fulshear-treatment-to-transition",
    "category": "admissions",
@@ -63952,7 +64110,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0484",
+   "id": "l0481",
    "source": "helaine-sandler",
    "target": "alpine-academy",
    "category": "admissions",
@@ -63966,7 +64124,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0485",
+   "id": "l0482",
    "source": "helaine-sandler",
    "target": "innerchange",
    "category": "admissions",
@@ -63980,7 +64138,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0486",
+   "id": "l0483",
    "source": "allyson-smith",
    "target": "fulshear-treatment-to-transition",
    "category": "leadership",
@@ -63994,7 +64152,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0487",
+   "id": "l0484",
    "source": "allyson-smith",
    "target": "new-haven-rtc",
    "category": "staff",
@@ -64008,7 +64166,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0488",
+   "id": "l0485",
    "source": "daniel-kikkert",
    "target": "deschutes-wilderness-therapy",
    "category": "leadership",
@@ -64022,7 +64180,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0489",
+   "id": "l0486",
    "source": "daniel-kikkert",
    "target": "second-nature-entrada",
    "category": "staff",
@@ -64036,7 +64194,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0490",
+   "id": "l0487",
    "source": "daniel-kikkert",
    "target": "evoke-entrada",
    "category": "unknown",
@@ -64048,7 +64206,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0491",
+   "id": "l0488",
    "source": "matt-potanko",
    "target": "deschutes-wilderness-therapy",
    "category": "staff",
@@ -64062,7 +64220,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0492",
+   "id": "l0489",
    "source": "matt-potanko",
    "target": "evoke-entrada",
    "category": "staff",
@@ -64076,7 +64234,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0493",
+   "id": "l0490",
    "source": "daryn-reiner",
    "target": "deschutes-wilderness-therapy",
    "category": "admissions",
@@ -64090,7 +64248,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0494",
+   "id": "l0491",
    "source": "daryn-reiner",
    "target": "aspiro-wilderness-adventure-therapy",
    "category": "staff",
@@ -64104,7 +64262,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0495",
+   "id": "l0492",
    "source": "daryn-reiner",
    "target": "discovery-ranch-for-girls",
    "category": "admissions",
@@ -64118,7 +64276,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0496",
+   "id": "l0493",
    "source": "janae-sporrer",
    "target": "deschutes-wilderness-therapy",
    "category": "staff",
@@ -64132,7 +64290,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0497",
+   "id": "l0494",
    "source": "janae-sporrer",
    "target": "true-north-wilderness-program",
    "category": "staff",
@@ -64146,7 +64304,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0498",
+   "id": "l0495",
    "source": "david-chiarito",
    "target": "embark-at-flathead-valley",
    "category": "leadership",
@@ -64160,7 +64318,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0499",
+   "id": "l0496",
    "source": "david-chiarito",
    "target": "montana-academy",
    "category": "leadership",
@@ -64174,7 +64332,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0500",
+   "id": "l0497",
    "source": "lynn-marshall",
    "target": "embark-at-flathead-valley",
    "category": "clinical",
@@ -64188,7 +64346,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0501",
+   "id": "l0498",
    "source": "lynn-marshall",
    "target": "boulder-creek-academy",
    "category": "unknown",
@@ -64200,7 +64358,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0502",
+   "id": "l0499",
    "source": "lynn-marshall",
    "target": "montana-academy",
    "category": "clinical",
@@ -64214,7 +64372,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0503",
+   "id": "l0500",
    "source": "anne-barrier",
    "target": "embark-at-flathead-valley",
    "category": "leadership",
@@ -64228,7 +64386,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0504",
+   "id": "l0501",
    "source": "anne-barrier",
    "target": "montana-academy",
    "category": "leadership",
@@ -64242,7 +64400,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0505",
+   "id": "l0502",
    "source": "amy-zink",
    "target": "embark-at-flathead-valley",
    "category": "staff",
@@ -64256,7 +64414,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0506",
+   "id": "l0503",
    "source": "amy-zink",
    "target": "montana-academy",
    "category": "staff",
@@ -64270,7 +64428,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0507",
+   "id": "l0504",
    "source": "bryn-wade",
    "target": "embark-at-flathead-valley",
    "category": "admissions",
@@ -64284,7 +64442,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0508",
+   "id": "l0505",
    "source": "bryn-wade",
    "target": "montana-academy",
    "category": "admissions",
@@ -64298,7 +64456,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0509",
+   "id": "l0506",
    "source": "rebecca-flagg",
    "target": "embark-at-flathead-valley",
    "category": "admissions",
@@ -64312,7 +64470,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0510",
+   "id": "l0507",
    "source": "rebecca-flagg",
    "target": "montana-academy",
    "category": "staff",
@@ -64326,7 +64484,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0511",
+   "id": "l0508",
    "source": "tiffany-neibaur",
    "target": "embark-at-flathead-valley",
    "category": "leadership",
@@ -64340,7 +64498,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0512",
+   "id": "l0509",
    "source": "tiffany-neibaur",
    "target": "kolob-canyon-rtc",
    "category": "staff",
@@ -64354,7 +64512,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0513",
+   "id": "l0510",
    "source": "chris-johstoneaux",
    "target": "embark-at-the-forge",
    "category": "leadership",
@@ -64368,7 +64526,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0514",
+   "id": "l0511",
    "source": "chris-johstoneaux",
    "target": "heritage-schools-heritage-rtc",
    "category": "clinical",
@@ -64382,7 +64540,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0515",
+   "id": "l0512",
    "source": "chris-johstoneaux",
    "target": "monarch-school",
    "category": "clinical",
@@ -64396,7 +64554,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0516",
+   "id": "l0513",
    "source": "chris-johstoneaux",
    "target": "boulder-creek-academy",
    "category": "unknown",
@@ -64408,7 +64566,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0517",
+   "id": "l0514",
    "source": "josh-nordean",
    "target": "embark-at-the-forge",
    "category": "clinical",
@@ -64422,7 +64580,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0518",
+   "id": "l0515",
    "source": "josh-nordean",
    "target": "calo-programs",
    "category": "clinical",
@@ -64436,7 +64594,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0519",
+   "id": "l0516",
    "source": "jeff-holloway",
    "target": "hidden-lake-academy",
    "category": "leadership",
@@ -64450,7 +64608,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0520",
+   "id": "l0517",
    "source": "steve-sawyer",
    "target": "new-vision-wilderness",
    "category": "leadership",
@@ -64464,7 +64622,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0521",
+   "id": "l0518",
    "source": "jean-coyle",
    "target": "first-light-wilderness-therapy",
    "category": "staff",
@@ -64478,7 +64636,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0522",
+   "id": "l0519",
    "source": "jean-coyle",
    "target": "suws-of-the-carolinas",
    "category": "staff",
@@ -64492,7 +64650,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0523",
+   "id": "l0520",
    "source": "kathleen-jamila-minnifield",
    "target": "first-light-wilderness-therapy",
    "category": "clinical",
@@ -64506,7 +64664,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0524",
+   "id": "l0521",
    "source": "kathleen-jamila-minnifield",
    "target": "trails-carolina",
    "category": "staff",
@@ -64520,7 +64678,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0525",
+   "id": "l0522",
    "source": "kayla-cox-davenport",
    "target": "first-light-wilderness-therapy",
    "category": "clinical",
@@ -64534,7 +64692,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0526",
+   "id": "l0523",
    "source": "kayla-cox-davenport",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "clinical",
@@ -64548,7 +64706,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0527",
+   "id": "l0524",
    "source": "dan-mcdougal",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "leadership",
@@ -64562,7 +64720,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0528",
+   "id": "l0525",
    "source": "dan-mcdougal",
    "target": "aspen-achievement-academy",
    "category": "staff",
@@ -64576,7 +64734,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0529",
+   "id": "l0526",
    "source": "dan-mcdougal",
    "target": "second-nature-uintas",
    "category": "staff",
@@ -64590,7 +64748,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0530",
+   "id": "l0527",
    "source": "dan-mcdougal",
    "target": "second-nature-blue-ridge",
    "category": "leadership",
@@ -64604,7 +64762,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0531",
+   "id": "l0528",
    "source": "andy-dunn",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "leadership",
@@ -64618,7 +64776,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0532",
+   "id": "l0529",
    "source": "andy-dunn",
    "target": "summit-achievement",
    "category": "staff",
@@ -64632,7 +64790,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0533",
+   "id": "l0530",
    "source": "andy-dunn",
    "target": "second-nature-blue-ridge",
    "category": "staff",
@@ -64646,7 +64804,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0534",
+   "id": "l0531",
    "source": "andy-dunn",
    "target": "second-nature-uintas",
    "category": "leadership",
@@ -64660,7 +64818,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0535",
+   "id": "l0532",
    "source": "andy-dunn",
    "target": "equinox-rtc",
    "category": "leadership",
@@ -64674,7 +64832,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0536",
+   "id": "l0533",
    "source": "christine-riley",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "clinical",
@@ -64688,7 +64846,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0537",
+   "id": "l0534",
    "source": "christine-riley",
    "target": "pacific-quest",
    "category": "clinical",
@@ -64702,7 +64860,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0538",
+   "id": "l0535",
    "source": "christine-riley",
    "target": "adirondack-leadership-expeditions",
    "category": "clinical",
@@ -64716,7 +64874,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0539",
+   "id": "l0536",
    "source": "emily-miranda",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "clinical",
@@ -64730,7 +64888,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0540",
+   "id": "l0537",
    "source": "emily-miranda",
    "target": "aspen-achievement-academy",
    "category": "clinical",
@@ -64744,7 +64902,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0541",
+   "id": "l0538",
    "source": "emily-miranda",
    "target": "vista-treatment-centers",
    "category": "clinical",
@@ -64758,7 +64916,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0542",
+   "id": "l0539",
    "source": "emily-miranda",
    "target": "willow-creek-school",
    "category": "clinical",
@@ -64772,7 +64930,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0543",
+   "id": "l0540",
    "source": "emily-miranda",
    "target": "open-sky-wilderness-program",
    "category": "clinical",
@@ -64786,7 +64944,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0544",
+   "id": "l0541",
    "source": "heather-harvie",
    "target": "blue-ridge-therapeutic-wilderness",
    "category": "staff",
@@ -64800,7 +64958,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0545",
+   "id": "l0542",
    "source": "heather-harvie",
    "target": "calo-programs",
    "category": "clinical",
@@ -64814,7 +64972,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0546",
+   "id": "l0543",
    "source": "mycala-cherry",
    "target": "first-light-wilderness-therapy",
    "category": "clinical",
@@ -64828,7 +64986,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0547",
+   "id": "l0544",
    "source": "emily-smith",
    "target": "first-light-wilderness-therapy",
    "category": "clinical",
@@ -64842,7 +65000,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0548",
+   "id": "l0545",
    "source": "emily-smith",
    "target": "trails-carolina",
    "category": "clinical",
@@ -64856,7 +65014,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0549",
+   "id": "l0546",
    "source": "emily-smith",
    "target": "journey-home",
    "category": "clinical",
@@ -64870,7 +65028,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0550",
+   "id": "l0547",
    "source": "summer-hornbeck",
    "target": "new-vision-wilderness",
    "category": "admissions",
@@ -64884,7 +65042,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0551",
+   "id": "l0548",
    "source": "nicole-prescott",
    "target": "new-vision-wilderness",
    "category": "clinical",
@@ -64898,7 +65056,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0552",
+   "id": "l0549",
    "source": "bryan-daniels",
    "target": "new-vision-wilderness",
    "category": "clinical",
@@ -64912,7 +65070,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0553",
+   "id": "l0550",
    "source": "bryan-daniels",
    "target": "discovery-ranch-for-girls",
    "category": "clinical",
@@ -64926,7 +65084,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0554",
+   "id": "l0551",
    "source": "jacob-thomason",
    "target": "new-vision-wilderness",
    "category": "clinical",
@@ -64940,7 +65098,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0555",
+   "id": "l0552",
    "source": "jacob-thomason",
    "target": "trails-carolina",
    "category": "clinical",
@@ -64954,7 +65112,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0556",
+   "id": "l0553",
    "source": "jacob-thomason",
    "target": "passages-to-recovery",
    "category": "clinical",
@@ -64968,7 +65126,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0557",
+   "id": "l0554",
    "source": "tabitha-salyer",
    "target": "asheville-academy-for-girls",
    "category": "clinical",
@@ -64982,7 +65140,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0558",
+   "id": "l0555",
    "source": "tabitha-salyer",
    "target": "lake-house-academy",
    "category": "staff",
@@ -64996,7 +65154,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0559",
+   "id": "l0556",
    "source": "ben-chamberlain",
    "target": "asheville-academy-for-girls",
    "category": "staff",
@@ -65010,7 +65168,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0560",
+   "id": "l0557",
    "source": "ben-chamberlain",
    "target": "solstice-east",
    "category": "staff",
@@ -65024,7 +65182,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0561",
+   "id": "l0558",
    "source": "natalie-hollenback",
    "target": "asheville-academy-for-girls",
    "category": "clinical",
@@ -65038,7 +65196,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0562",
+   "id": "l0559",
    "source": "natalie-hollenback",
    "target": "solstice-east",
    "category": "staff",
@@ -65052,7 +65210,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0563",
+   "id": "l0560",
    "source": "chandler-ray",
    "target": "asheville-academy-for-girls",
    "category": "clinical",
@@ -65066,7 +65224,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0564",
+   "id": "l0561",
    "source": "chandler-ray",
    "target": "solstice-east",
    "category": "staff",
@@ -65080,7 +65238,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0565",
+   "id": "l0562",
    "source": "michael-wellons",
    "target": "family-help-wellness",
    "category": "staff",
@@ -65094,7 +65252,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0566",
+   "id": "l0563",
    "source": "michael-wellons",
    "target": "aspen-education-group",
    "category": "staff",
@@ -65108,7 +65266,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0567",
+   "id": "l0564",
    "source": "michael-wellons",
    "target": "acadia-healthcare",
    "category": "staff",
@@ -65122,7 +65280,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0568",
+   "id": "l0565",
    "source": "john-gordon",
    "target": "family-help-wellness",
    "category": "staff",
@@ -65136,7 +65294,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0569",
+   "id": "l0566",
    "source": "john-gordon",
    "target": "crc-health-group",
    "category": "admissions",
@@ -65150,7 +65308,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0570",
+   "id": "l0567",
    "source": "reid-treadaway",
    "target": "bluefire-wilderness-therapy",
    "category": "admissions",
@@ -65164,7 +65322,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0571",
+   "id": "l0568",
    "source": "reid-treadaway",
    "target": "rocky-mountain-academy",
    "category": "admissions",
@@ -65178,7 +65336,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0572",
+   "id": "l0569",
    "source": "reid-treadaway",
    "target": "suws-of-the-carolinas",
    "category": "admissions",
@@ -65192,7 +65350,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0573",
+   "id": "l0570",
    "source": "reid-treadaway",
    "target": "cedu-family-of-services",
    "category": "admissions",
@@ -65206,7 +65364,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0574",
+   "id": "l0571",
    "source": "reid-treadaway",
    "target": "innerchange",
    "category": "admissions",
@@ -65220,7 +65378,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0575",
+   "id": "l0572",
    "source": "reid-treadaway",
    "target": "new-haven-rtc",
    "category": "admissions",
@@ -65234,7 +65392,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0576",
+   "id": "l0573",
    "source": "reid-treadaway",
    "target": "sunrise-rtc",
    "category": "admissions",
@@ -65248,7 +65406,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0577",
+   "id": "l0574",
    "source": "reid-treadaway",
    "target": "fulshear-treatment-to-transition",
    "category": "admissions",
@@ -65262,7 +65420,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0578",
+   "id": "l0575",
    "source": "reid-treadaway",
    "target": "boulder-creek-academy",
    "category": "admissions",
@@ -65276,7 +65434,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0579",
+   "id": "l0576",
    "source": "john-worbets",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65290,7 +65448,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0580",
+   "id": "l0577",
    "source": "john-worbets",
    "target": "suws-idaho",
    "category": "staff",
@@ -65304,7 +65462,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0581",
+   "id": "l0578",
    "source": "john-worbets",
    "target": "summit-preparatory-school",
    "category": "clinical",
@@ -65318,7 +65476,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0582",
+   "id": "l0579",
    "source": "lindsay-myrick",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65332,7 +65490,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0583",
+   "id": "l0580",
    "source": "lindsay-myrick",
    "target": "true-north-wilderness-program",
    "category": "staff",
@@ -65346,7 +65504,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0584",
+   "id": "l0581",
    "source": "paul-goddard",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65360,7 +65518,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0585",
+   "id": "l0582",
    "source": "paul-goddard",
    "target": "vista-treatment-centers",
    "category": "clinical",
@@ -65374,7 +65532,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0586",
+   "id": "l0583",
    "source": "paul-goddard",
    "target": "adirondack-leadership-expeditions",
    "category": "leadership",
@@ -65388,7 +65546,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0587",
+   "id": "l0584",
    "source": "paul-goddard",
    "target": "second-nature-entrada",
    "category": "clinical",
@@ -65402,7 +65560,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0588",
+   "id": "l0585",
    "source": "paul-goddard",
    "target": "evoke-entrada",
    "category": "clinical",
@@ -65416,7 +65574,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0589",
+   "id": "l0586",
    "source": "mark-ellis",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65430,7 +65588,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0590",
+   "id": "l0587",
    "source": "mark-ellis",
    "target": "suws-idaho",
    "category": "clinical",
@@ -65444,7 +65602,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0591",
+   "id": "l0588",
    "source": "ted-bost-iii",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65458,7 +65616,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0592",
+   "id": "l0589",
    "source": "ted-bost-iii",
    "target": "suws-of-the-carolinas",
    "category": "staff",
@@ -65472,7 +65630,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0593",
+   "id": "l0590",
    "source": "ted-bost-iii",
    "target": "phoenix-outdoor",
    "category": "staff",
@@ -65486,7 +65644,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0594",
+   "id": "l0591",
    "source": "morri-fager",
    "target": "bluefire-wilderness-therapy",
    "category": "admissions",
@@ -65500,7 +65658,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0595",
+   "id": "l0592",
    "source": "morri-fager",
    "target": "suws-idaho",
    "category": "staff",
@@ -65514,7 +65672,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0596",
+   "id": "l0593",
    "source": "don-thompson",
    "target": "bluefire-wilderness-therapy",
    "category": "clinical",
@@ -65528,7 +65686,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0597",
+   "id": "l0594",
    "source": "don-thompson",
    "target": "j-bar-j-youth-services",
    "category": "admissions",
@@ -65542,7 +65700,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0598",
+   "id": "l0595",
    "source": "don-thompson",
    "target": "sagewalk-wilderness",
    "category": "staff",
@@ -65556,7 +65714,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0599",
+   "id": "l0596",
    "source": "judi-jacques",
    "target": "elevations-rtc",
    "category": "leadership",
@@ -65570,7 +65728,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0600",
+   "id": "l0597",
    "source": "judi-jacques",
    "target": "island-view-rtc",
    "category": "leadership",
@@ -65584,7 +65742,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0601",
+   "id": "l0598",
    "source": "jennifer-wilde",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -65598,7 +65756,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0602",
+   "id": "l0599",
    "source": "jennifer-wilde",
    "target": "second-nature-uintas",
    "category": "clinical",
@@ -65612,7 +65770,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0603",
+   "id": "l0600",
    "source": "jennifer-wilde",
    "target": "willow-creek-school",
    "category": "clinical",
@@ -65626,7 +65784,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0604",
+   "id": "l0601",
    "source": "jennifer-wilde",
    "target": "viewpoint-center",
    "category": "clinical",
@@ -65640,7 +65798,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0605",
+   "id": "l0602",
    "source": "eric-flores",
    "target": "island-view-rtc",
    "category": "leadership",
@@ -65654,7 +65812,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0606",
+   "id": "l0603",
    "source": "matt-seelos",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -65668,7 +65826,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0607",
+   "id": "l0604",
    "source": "carla-shorts",
    "target": "magnolia-mill-school",
    "category": "leadership",
@@ -65682,7 +65840,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0608",
+   "id": "l0605",
    "source": "carla-shorts",
    "target": "solstice-east",
    "category": "leadership",
@@ -65696,7 +65854,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0609",
+   "id": "l0606",
    "source": "carla-shorts",
    "target": "cherokee-creek-boys-school",
    "category": "clinical",
@@ -65710,7 +65868,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0610",
+   "id": "l0607",
    "source": "carla-shorts",
    "target": "aspiro-wilderness-adventure-therapy",
    "category": "leadership",
@@ -65724,7 +65882,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0611",
+   "id": "l0608",
    "source": "caitlin-crolley",
    "target": "magnolia-mill-school",
    "category": "clinical",
@@ -65738,7 +65896,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0612",
+   "id": "l0609",
    "source": "caitlin-crolley",
    "target": "solstice-east",
    "category": "clinical",
@@ -65752,7 +65910,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0613",
+   "id": "l0610",
    "source": "kim-gregor",
    "target": "magnolia-mill-school",
    "category": "leadership",
@@ -65766,7 +65924,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0614",
+   "id": "l0611",
    "source": "kim-gregor",
    "target": "solstice-east",
    "category": "leadership",
@@ -65780,7 +65938,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0615",
+   "id": "l0612",
    "source": "bri-anicetti",
    "target": "magnolia-mill-school",
    "category": "admissions",
@@ -65794,7 +65952,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0616",
+   "id": "l0613",
    "source": "bri-anicetti",
    "target": "solstice-east",
    "category": "admissions",
@@ -65808,7 +65966,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0617",
+   "id": "l0614",
    "source": "carol-sowers",
    "target": "magnolia-mill-school",
    "category": "staff",
@@ -65822,7 +65980,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0618",
+   "id": "l0615",
    "source": "carol-sowers",
    "target": "solstice-east",
    "category": "staff",
@@ -65836,7 +65994,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0619",
+   "id": "l0616",
    "source": "meg-narea",
    "target": "magnolia-mill-school",
    "category": "leadership",
@@ -65850,7 +66008,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0620",
+   "id": "l0617",
    "source": "meg-narea",
    "target": "solstice-east",
    "category": "leadership",
@@ -65864,7 +66022,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0621",
+   "id": "l0618",
    "source": "brandon-park",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "leadership",
@@ -65878,7 +66036,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0622",
+   "id": "l0619",
    "source": "john-webb",
    "target": "new-focus-academy",
    "category": "clinical",
@@ -65892,7 +66050,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0623",
+   "id": "l0620",
    "source": "john-webb",
    "target": "west-ridge-academy",
    "category": "leadership",
@@ -65906,7 +66064,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0624",
+   "id": "l0621",
    "source": "alta-swarnes",
    "target": "new-focus-academy",
    "category": "leadership",
@@ -65920,7 +66078,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0625",
+   "id": "l0622",
    "source": "alta-swarnes",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -65934,7 +66092,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0626",
+   "id": "l0623",
    "source": "alta-swarnes",
    "target": "west-ridge-academy",
    "category": "clinical",
@@ -65948,7 +66106,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0627",
+   "id": "l0624",
    "source": "alta-swarnes",
    "target": "redcliff-ascent",
    "category": "clinical",
@@ -65962,7 +66120,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0628",
+   "id": "l0625",
    "source": "laura-bennion",
    "target": "new-focus-academy",
    "category": "clinical",
@@ -65976,7 +66134,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0629",
+   "id": "l0626",
    "source": "laura-bennion",
    "target": "heritage-schools-heritage-rtc",
    "category": "clinical",
@@ -65990,7 +66148,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0630",
+   "id": "l0627",
    "source": "oliver-cooperman",
    "target": "red-mountain-colorado",
    "category": "clinical",
@@ -66004,7 +66162,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0631",
+   "id": "l0628",
    "source": "lauren-clark-angerosa",
    "target": "roots-transition",
    "category": "admissions",
@@ -66018,7 +66176,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0632",
+   "id": "l0629",
    "source": "lauren-clark-angerosa",
    "target": "the-oakley-school",
    "category": "clinical",
@@ -66032,7 +66190,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0633",
+   "id": "l0630",
    "source": "lauren-clark-angerosa",
    "target": "outback-therapeutic-expeditions",
    "category": "clinical",
@@ -66046,7 +66204,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0634",
+   "id": "l0631",
    "source": "lauren-clark-angerosa",
    "target": "eva-carlston-academy",
    "category": "admissions",
@@ -66060,7 +66218,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0635",
+   "id": "l0632",
    "source": "lauren-clark-angerosa",
    "target": "wingate-wilderness-therapy",
    "category": "admissions",
@@ -66074,7 +66232,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0636",
+   "id": "l0633",
    "source": "erik-yost",
    "target": "roots-transition",
    "category": "leadership",
@@ -66088,7 +66246,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0637",
+   "id": "l0634",
    "source": "erik-yost",
    "target": "second-nature-uintas",
    "category": "staff",
@@ -66102,7 +66260,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0638",
+   "id": "l0635",
    "source": "erik-yost",
    "target": "monarch-school",
    "category": "unknown",
@@ -66114,7 +66272,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0639",
+   "id": "l0636",
    "source": "erik-yost",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66128,7 +66286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0640",
+   "id": "l0637",
    "source": "cassandra-ali",
    "target": "roots-transition",
    "category": "leadership",
@@ -66142,7 +66300,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0641",
+   "id": "l0638",
    "source": "cassandra-ali",
    "target": "aspiro-wilderness-adventure-therapy",
    "category": "staff",
@@ -66156,7 +66314,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0642",
+   "id": "l0639",
    "source": "linda-zimmerman",
    "target": "positive-impact-rtc",
    "category": "staff",
@@ -66170,7 +66328,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0643",
+   "id": "l0640",
    "source": "jonathan-mack",
    "target": "sandhill-child-development-center",
    "category": "clinical",
@@ -66184,7 +66342,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0644",
+   "id": "l0641",
    "source": "jonathan-mack",
    "target": "positive-impact-rtc",
    "category": "clinical",
@@ -66198,7 +66356,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0645",
+   "id": "l0642",
    "source": "matthew-macqueen",
    "target": "sandhill-child-development-center",
    "category": "leadership",
@@ -66212,7 +66370,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0646",
+   "id": "l0643",
    "source": "matthew-macqueen",
    "target": "aspiro-wilderness-adventure-therapy",
    "category": "leadership",
@@ -66226,7 +66384,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0647",
+   "id": "l0644",
    "source": "liz-mcghee",
    "target": "sandhill-child-development-center",
    "category": "admissions",
@@ -66240,7 +66398,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0648",
+   "id": "l0645",
    "source": "liz-mcghee",
    "target": "cramer-creek-school",
    "category": "staff",
@@ -66254,7 +66412,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0649",
+   "id": "l0646",
    "source": "christopher-mccaffrey",
    "target": "sandhill-child-development-center",
    "category": "leadership",
@@ -66268,7 +66426,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0650",
+   "id": "l0647",
    "source": "blake-taylor",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66282,7 +66440,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0651",
+   "id": "l0648",
    "source": "blake-taylor",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -66296,7 +66454,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0652",
+   "id": "l0649",
    "source": "rich-michaelson",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -66310,7 +66468,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0653",
+   "id": "l0650",
    "source": "rich-michaelson",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66324,7 +66482,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0654",
+   "id": "l0651",
    "source": "andrea-jones",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66338,7 +66496,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0655",
+   "id": "l0652",
    "source": "andrea-jones",
    "target": "journey-home",
    "category": "clinical",
@@ -66352,7 +66510,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0656",
+   "id": "l0653",
    "source": "andrea-jones",
    "target": "west-ridge-academy",
    "category": "staff",
@@ -66366,7 +66524,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0657",
+   "id": "l0654",
    "source": "parker-keoni-anderson",
    "target": "solstice-rtc",
    "category": "leadership",
@@ -66380,7 +66538,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0658",
+   "id": "l0655",
    "source": "parker-keoni-anderson",
    "target": "island-view-rtc",
    "category": "leadership",
@@ -66394,7 +66552,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0659",
+   "id": "l0656",
    "source": "dan-stuart",
    "target": "solstice-rtc",
    "category": "leadership",
@@ -66408,7 +66566,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0660",
+   "id": "l0657",
    "source": "dan-stuart",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -66422,7 +66580,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0661",
+   "id": "l0658",
    "source": "kyle-gillett",
    "target": "solstice-rtc",
    "category": "leadership",
@@ -66436,7 +66594,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0662",
+   "id": "l0659",
    "source": "kyle-gillett",
    "target": "telos-rtc",
    "category": "clinical",
@@ -66450,7 +66608,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0663",
+   "id": "l0660",
    "source": "kyle-gillett",
    "target": "solstice-east",
    "category": "leadership",
@@ -66464,7 +66622,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0664",
+   "id": "l0661",
    "source": "kyle-gillett",
    "target": "equinox-rtc",
    "category": "leadership",
@@ -66478,7 +66636,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0665",
+   "id": "l0662",
    "source": "charlie-falatea",
    "target": "solstice-west",
    "category": "leadership",
@@ -66492,7 +66650,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0666",
+   "id": "l0663",
    "source": "charlie-falatea",
    "target": "west-ridge-academy",
    "category": "leadership",
@@ -66506,7 +66664,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0667",
+   "id": "l0664",
    "source": "charlie-falatea",
    "target": "copper-hills-youth-center",
    "category": "staff",
@@ -66520,7 +66678,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0668",
+   "id": "l0665",
    "source": "charlie-falatea",
    "target": "youth-care-of-utah",
    "category": "staff",
@@ -66534,7 +66692,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0669",
+   "id": "l0666",
    "source": "wes-selent",
    "target": "solstice-rtc",
    "category": "unknown",
@@ -66546,7 +66704,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0670",
+   "id": "l0667",
    "source": "wes-selent",
    "target": "solstice-east",
    "category": "unknown",
@@ -66558,7 +66716,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0671",
+   "id": "l0668",
    "source": "wes-selent",
    "target": "equinox-rtc",
    "category": "unknown",
@@ -66570,7 +66728,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0672",
+   "id": "l0669",
    "source": "jennifer-selent",
    "target": "solstice-rtc",
    "category": "unknown",
@@ -66582,7 +66740,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0673",
+   "id": "l0670",
    "source": "jennifer-selent",
    "target": "solstice-east",
    "category": "unknown",
@@ -66594,7 +66752,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0674",
+   "id": "l0671",
    "source": "jennifer-selent",
    "target": "equinox-rtc",
    "category": "unknown",
@@ -66606,7 +66764,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0675",
+   "id": "l0672",
    "source": "donovan-tagaloa",
    "target": "solstice-rtc",
    "category": "leadership",
@@ -66620,7 +66778,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0676",
+   "id": "l0673",
    "source": "donovan-tagaloa",
    "target": "west-ridge-academy",
    "category": "unknown",
@@ -66632,7 +66790,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0677",
+   "id": "l0674",
    "source": "donovan-tagaloa",
    "target": "journey-home",
    "category": "staff",
@@ -66646,7 +66804,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0678",
+   "id": "l0675",
    "source": "jenn-mcmurry",
    "target": "solstice-rtc",
    "category": "admissions",
@@ -66660,7 +66818,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0679",
+   "id": "l0676",
    "source": "jenn-mcmurry",
    "target": "island-view-rtc",
    "category": "staff",
@@ -66674,7 +66832,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0680",
+   "id": "l0677",
    "source": "jenn-mcmurry",
    "target": "calo-programs",
    "category": "admissions",
@@ -66688,7 +66846,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0681",
+   "id": "l0678",
    "source": "jeff-lavallee",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66702,7 +66860,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0682",
+   "id": "l0679",
    "source": "jeff-lavallee",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -66716,7 +66874,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0683",
+   "id": "l0680",
    "source": "melissa-stephens-child",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -66730,7 +66888,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0684",
+   "id": "l0681",
    "source": "melissa-stephens-child",
    "target": "island-view-rtc",
    "category": "clinical",
@@ -66744,7 +66902,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0685",
+   "id": "l0682",
    "source": "melissa-stephens-child",
    "target": "la-europa-academy",
    "category": "clinical",
@@ -66758,7 +66916,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0686",
+   "id": "l0683",
    "source": "kristi-ragsdale",
    "target": "solstice-rtc",
    "category": "admissions",
@@ -66772,7 +66930,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0687",
+   "id": "l0684",
    "source": "kristi-ragsdale",
    "target": "utah-youth-village",
    "category": "staff",
@@ -66786,7 +66944,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0688",
+   "id": "l0685",
    "source": "kristi-ragsdale",
    "target": "uinta-academy",
    "category": "leadership",
@@ -66800,7 +66958,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0689",
+   "id": "l0686",
    "source": "kristi-ragsdale",
    "target": "eva-carlston-academy",
    "category": "leadership",
@@ -66814,7 +66972,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0690",
+   "id": "l0687",
    "source": "sydney-haga",
    "target": "solstice-rtc",
    "category": "staff",
@@ -66828,7 +66986,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0691",
+   "id": "l0688",
    "source": "sydney-haga",
    "target": "eva-carlston-academy",
    "category": "clinical",
@@ -66842,7 +67000,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0692",
+   "id": "l0689",
    "source": "dottie-lank",
    "target": "trails-carolina",
    "category": "admissions",
@@ -66856,7 +67014,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0693",
+   "id": "l0690",
    "source": "dottie-lank",
    "target": "cedars-academy",
    "category": "admissions",
@@ -66870,7 +67028,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0694",
+   "id": "l0691",
    "source": "jason-mckeown",
    "target": "suws-of-the-carolinas",
    "category": "clinical",
@@ -66884,7 +67042,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0695",
+   "id": "l0692",
    "source": "travis-wireback",
    "target": "asheville-academy-for-girls",
    "category": "clinical",
@@ -66898,7 +67056,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0696",
+   "id": "l0693",
    "source": "tasir-el-souessi",
    "target": "suws-of-the-carolinas",
    "category": "staff",
@@ -66912,7 +67070,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0697",
+   "id": "l0694",
    "source": "tasir-el-souessi",
    "target": "phoenix-outdoor",
    "category": "staff",
@@ -66926,7 +67084,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0698",
+   "id": "l0695",
    "source": "tasir-el-souessi",
    "target": "asheville-academy-for-girls",
    "category": "unknown",
@@ -66938,7 +67096,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0699",
+   "id": "l0696",
    "source": "anthony-geraci",
    "target": "new-haven-rtc",
    "category": "staff",
@@ -66952,7 +67110,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0700",
+   "id": "l0697",
    "source": "anthony-geraci",
    "target": "sunrise-rtc",
    "category": "unknown",
@@ -66964,7 +67122,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0701",
+   "id": "l0698",
    "source": "anthony-geraci",
    "target": "fulshear-treatment-to-transition",
    "category": "unknown",
@@ -66976,7 +67134,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0702",
+   "id": "l0699",
    "source": "anthony-geraci",
    "target": "wilderness-quest",
    "category": "unknown",
@@ -66988,7 +67146,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0703",
+   "id": "l0700",
    "source": "r-jeffrey-simpson",
    "target": "uinta-academy",
    "category": "leadership",
@@ -67002,7 +67160,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0704",
+   "id": "l0701",
    "source": "r-jeffrey-simpson",
    "target": "waypoint-academy",
    "category": "leadership",
@@ -67016,7 +67174,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0705",
+   "id": "l0702",
    "source": "becky-simpson",
    "target": "uinta-academy",
    "category": "leadership",
@@ -67030,7 +67188,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0706",
+   "id": "l0703",
    "source": "becky-simpson",
    "target": "utah-youth-village",
    "category": "staff",
@@ -67044,7 +67202,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0707",
+   "id": "l0704",
    "source": "russ-pryor",
    "target": "uinta-academy",
    "category": "leadership",
@@ -67058,7 +67216,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0708",
+   "id": "l0705",
    "source": "russ-pryor",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "admissions",
@@ -67072,7 +67230,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0709",
+   "id": "l0706",
    "source": "lanae-kimber",
    "target": "uinta-academy",
    "category": "admissions",
@@ -67086,7 +67244,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0710",
+   "id": "l0707",
    "source": "lanae-kimber",
    "target": "solstice-rtc",
    "category": "clinical",
@@ -67100,7 +67258,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0711",
+   "id": "l0708",
    "source": "melissa-keller-adamson",
    "target": "uinta-academy",
    "category": "clinical",
@@ -67114,7 +67272,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0712",
+   "id": "l0709",
    "source": "melissa-keller-adamson",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "clinical",
@@ -67128,7 +67286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0713",
+   "id": "l0710",
    "source": "bryan-shores",
    "target": "uinta-academy",
    "category": "clinical",
@@ -67142,7 +67300,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0714",
+   "id": "l0711",
    "source": "bryan-shores",
    "target": "outback-therapeutic-expeditions",
    "category": "clinical",
@@ -67156,7 +67314,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0715",
+   "id": "l0712",
    "source": "jordan-rigby",
    "target": "viewpoint-center",
    "category": "leadership",
@@ -67170,7 +67328,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0716",
+   "id": "l0713",
    "source": "jordan-rigby",
    "target": "la-europa-academy",
    "category": "leadership",
@@ -67184,7 +67342,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0717",
+   "id": "l0714",
    "source": "jordan-killpack",
    "target": "viewpoint-center",
    "category": "clinical",
@@ -67198,7 +67356,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0718",
+   "id": "l0715",
    "source": "jordan-killpack",
    "target": "provo-canyon-school",
    "category": "clinical",
@@ -67212,7 +67370,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0719",
+   "id": "l0716",
    "source": "britten-lamb",
    "target": "viewpoint-center",
    "category": "clinical",
@@ -67226,7 +67384,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0720",
+   "id": "l0717",
    "source": "britten-lamb",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "clinical",
@@ -67240,7 +67398,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0721",
+   "id": "l0718",
    "source": "randi-nelson",
    "target": "viewpoint-center",
    "category": "admissions",
@@ -67254,7 +67412,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0722",
+   "id": "l0719",
    "source": "randi-nelson",
    "target": "aspen-institute-for-behavioral-assessment",
    "category": "unknown",
@@ -67266,7 +67424,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0723",
+   "id": "l0720",
    "source": "bryan-tomes",
    "target": "equinox-rtc",
    "category": "leadership",
@@ -67280,7 +67438,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0724",
+   "id": "l0721",
    "source": "dan-hadley",
    "target": "equinox-rtc",
    "category": "clinical",
@@ -67294,7 +67452,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0725",
+   "id": "l0722",
    "source": "dan-hadley",
    "target": "solstice-east",
    "category": "clinical",
@@ -67308,7 +67466,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0726",
+   "id": "l0723",
    "source": "natalie-stark",
    "target": "equinox-rtc",
    "category": "clinical",
@@ -67322,7 +67480,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0727",
+   "id": "l0724",
    "source": "natalie-stark",
    "target": "provo-canyon-school",
    "category": "unknown",
@@ -67334,7 +67492,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0728",
+   "id": "l0725",
    "source": "natalie-stark",
    "target": "vista-treatment-centers",
    "category": "unknown",
@@ -67346,7 +67504,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0729",
+   "id": "l0726",
    "source": "laura-g-storey",
    "target": "equinox-rtc",
    "category": "admissions",
@@ -67360,7 +67518,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0730",
+   "id": "l0727",
    "source": "laura-g-storey",
    "target": "asheville-academy-for-girls",
    "category": "leadership",
@@ -67374,7 +67532,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0731",
+   "id": "l0728",
    "source": "bonnie-richardson",
    "target": "equinox-rtc",
    "category": "staff",
@@ -67388,7 +67546,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0732",
+   "id": "l0729",
    "source": "bonnie-richardson",
    "target": "summit-achievement",
    "category": "leadership",
@@ -67402,7 +67560,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0733",
+   "id": "l0730",
    "source": "benjamin-stivers",
    "target": "equinox-rtc",
    "category": "staff",
@@ -67416,7 +67574,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0734",
+   "id": "l0731",
    "source": "benjamin-stivers",
    "target": "pacific-quest",
    "category": "staff",
@@ -67430,7 +67588,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0735",
+   "id": "l0732",
    "source": "kristin-scheewe-tui",
    "target": "equinox-rtc",
    "category": "staff",
@@ -67444,7 +67602,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0736",
+   "id": "l0733",
    "source": "kristin-scheewe-tui",
    "target": "lake-house-academy",
    "category": "leadership",
@@ -67458,7 +67616,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0737",
+   "id": "l0734",
    "source": "rick-pollard",
    "target": "solstice-east",
    "category": "leadership",
@@ -67472,7 +67630,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0738",
+   "id": "l0735",
    "source": "rick-pollard",
    "target": "new-leaf-academy-of-north-carolina",
    "category": "staff",
@@ -67486,7 +67644,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0739",
+   "id": "l0736",
    "source": "rick-pollard",
    "target": "maple-hall-academy",
    "category": "leadership",
@@ -67500,7 +67658,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0740",
+   "id": "l0737",
    "source": "danielle-andrews",
    "target": "solstice-east",
    "category": "leadership",
@@ -67514,7 +67672,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0741",
+   "id": "l0738",
    "source": "danielle-andrews",
    "target": "four-circles-recovery-center",
    "category": "leadership",
@@ -67528,7 +67686,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0742",
+   "id": "l0739",
    "source": "danielle-andrews",
    "target": "catherine-freer-wilderness-therapy",
    "category": "staff",
@@ -67542,7 +67700,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0743",
+   "id": "l0740",
    "source": "melissa-j-villodas",
    "target": "solstice-east",
    "category": "clinical",
@@ -67556,7 +67714,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0744",
+   "id": "l0741",
    "source": "melissa-j-villodas",
    "target": "second-nature-blue-ridge",
    "category": "clinical",
@@ -67570,7 +67728,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0745",
+   "id": "l0742",
    "source": "melissa-j-villodas",
    "target": "asheville-academy-for-girls",
    "category": "clinical",
@@ -67584,7 +67742,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0746",
+   "id": "l0743",
    "source": "sarah-matulich",
    "target": "solstice-east",
    "category": "staff",
@@ -67598,7 +67756,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0747",
+   "id": "l0744",
    "source": "sarah-matulich",
    "target": "stone-mountain-school",
    "category": "staff",
@@ -67612,7 +67770,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0748",
+   "id": "l0745",
    "source": "shayne-gallagher",
    "target": "anasazi-foundation",
    "category": "leadership",
@@ -67626,7 +67784,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0749",
+   "id": "l0746",
    "source": "shayne-gallagher",
    "target": "second-nature-uintas",
    "category": "staff",
@@ -67640,7 +67798,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0750",
+   "id": "l0747",
    "source": "shayne-gallagher",
    "target": "outback-therapeutic-expeditions",
    "category": "staff",
@@ -67654,7 +67812,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0751",
+   "id": "l0748",
    "source": "josh-gunalda",
    "target": "wingate-wilderness-therapy",
    "category": "admissions",
@@ -67668,7 +67826,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0752",
+   "id": "l0749",
    "source": "josh-gunalda",
    "target": "suws-of-the-carolinas",
    "category": "admissions",
@@ -67682,7 +67840,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0753",
+   "id": "l0750",
    "source": "josh-gunalda",
    "target": "aspen-education-group",
    "category": "clinical",
@@ -67696,7 +67854,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0754",
+   "id": "l0751",
    "source": "scott-hess",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -67710,7 +67868,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0755",
+   "id": "l0752",
    "source": "scott-hess",
    "target": "aspen-ranch",
    "category": "clinical",
@@ -67724,7 +67882,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0756",
+   "id": "l0753",
    "source": "scott-hess",
    "target": "fulshear-treatment-to-transition",
    "category": "staff",
@@ -67738,7 +67896,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0757",
+   "id": "l0754",
    "source": "scott-hess",
    "target": "outback-therapeutic-expeditions",
    "category": "unknown",
@@ -67750,7 +67908,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0758",
+   "id": "l0755",
    "source": "erin-grover",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -67764,7 +67922,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0759",
+   "id": "l0756",
    "source": "erin-grover",
    "target": "outback-therapeutic-expeditions",
    "category": "staff",
@@ -67778,7 +67936,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0760",
+   "id": "l0757",
    "source": "erin-grover",
    "target": "vista-treatment-centers",
    "category": "staff",
@@ -67792,7 +67950,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0761",
+   "id": "l0758",
    "source": "derek-cook",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -67806,7 +67964,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0762",
+   "id": "l0759",
    "source": "derek-cook",
    "target": "wilderness-quest",
    "category": "clinical",
@@ -67820,7 +67978,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0763",
+   "id": "l0760",
    "source": "kathy-ruiz",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -67834,7 +67992,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0764",
+   "id": "l0761",
    "source": "kathy-ruiz",
    "target": "evoke-entrada",
    "category": "staff",
@@ -67848,7 +68006,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0765",
+   "id": "l0762",
    "source": "kathy-ruiz",
    "target": "falcon-ridge-ranch",
    "category": "clinical",
@@ -67862,7 +68020,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0766",
+   "id": "l0763",
    "source": "michael-sanders",
    "target": "wingate-wilderness-therapy",
    "category": "staff",
@@ -67876,7 +68034,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0767",
+   "id": "l0764",
    "source": "michael-sanders",
    "target": "anasazi-foundation",
    "category": "staff",
@@ -67890,7 +68048,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0768",
+   "id": "l0765",
    "source": "greg-hitchcock",
    "target": "wingate-wilderness-therapy",
    "category": "admissions",
@@ -67904,7 +68062,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0769",
+   "id": "l0766",
    "source": "greg-hitchcock",
    "target": "cedu-high-school",
    "category": "staff",
@@ -67918,7 +68076,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0770",
+   "id": "l0767",
    "source": "greg-hitchcock",
    "target": "wilderness-quest",
    "category": "leadership",
@@ -67932,7 +68090,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0771",
+   "id": "l0768",
    "source": "greg-hitchcock",
    "target": "abundant-life-academy",
    "category": "leadership",
@@ -67946,7 +68104,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0772",
+   "id": "l0769",
    "source": "eric-fawson",
    "target": "wingate-wilderness-therapy",
    "category": "clinical",
@@ -67960,7 +68118,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0773",
+   "id": "l0770",
    "source": "eric-fawson",
    "target": "provo-canyon-school",
    "category": "clinical",
@@ -67974,7 +68132,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0774",
+   "id": "l0771",
    "source": "eric-fawson",
    "target": "silverado-boys-ranch",
    "category": "leadership",
@@ -67988,7 +68146,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0775",
+   "id": "l0772",
    "source": "eric-fawson",
    "target": "redcliff-ascent",
    "category": "clinical",
@@ -68002,7 +68160,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0776",
+   "id": "l0773",
    "source": "tracy-schrunk",
    "target": "vista-treatment-centers",
    "category": "clinical",
@@ -68016,7 +68174,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0777",
+   "id": "l0774",
    "source": "tracy-schrunk",
    "target": "fulshear-treatment-to-transition",
    "category": "leadership",
@@ -68030,7 +68188,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0778",
+   "id": "l0775",
    "source": "rev-bobby-ray-papa-wills",
    "target": "rebekah-home-for-girls",
    "category": "staff",
@@ -68044,7 +68202,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0779",
+   "id": "l0776",
    "source": "betty-wills",
    "target": "bethesda-home-for-girls",
    "category": "leadership",
@@ -68058,7 +68216,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0780",
+   "id": "l0777",
    "source": "betty-wills",
    "target": "rebekah-home-for-girls",
    "category": "staff",
@@ -68072,7 +68230,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0781",
+   "id": "l0778",
    "source": "betty-wills",
    "target": "mountain-park-baptist-boarding-academy",
    "category": "leadership",
@@ -68086,7 +68244,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0782",
+   "id": "l0779",
    "source": "stephanie-householder",
    "target": "agape-boys-ranch",
    "category": "staff",
@@ -68100,7 +68258,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0783",
+   "id": "l0780",
    "source": "bryan-clemenson",
    "target": "agape-boarding-school",
    "category": "leadership",
@@ -68114,7 +68272,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0784",
+   "id": "l0781",
    "source": "brother-jim-clemenson",
    "target": "agape-baptist-academy",
    "category": "leadership",
@@ -68128,7 +68286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0785",
+   "id": "l0782",
    "source": "brother-jim-clemenson",
    "target": "agape-boarding-school",
    "category": "leadership",
@@ -68142,7 +68300,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0786",
+   "id": "l0783",
    "source": "kathy-maam-clemenson",
    "target": "agape-boarding-school",
    "category": "leadership",
@@ -68156,7 +68314,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0787",
+   "id": "l0784",
    "source": "dennis-mcelwrath",
    "target": "roloff-evangelistic-enterprises",
    "category": "staff",
@@ -68170,7 +68328,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0788",
+   "id": "l0785",
    "source": "dennis-mcelwrath",
    "target": "anchor-home-for-boys",
    "category": "leadership",
@@ -68184,7 +68342,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0789",
+   "id": "l0786",
    "source": "dennis-mcelwrath",
    "target": "anchor-academy",
    "category": "board",
@@ -68198,7 +68356,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0790",
+   "id": "l0787",
    "source": "rev-wiley-cameron",
    "target": "rebekah-home-for-girls",
    "category": "leadership",
@@ -68212,7 +68370,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0791",
+   "id": "l0788",
    "source": "rev-wiley-cameron",
    "target": "new-beginnings-girls-academy",
    "category": "leadership",
@@ -68226,7 +68384,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0792",
+   "id": "l0789",
    "source": "rev-wiley-cameron",
    "target": "peoples-baptist-church",
    "category": "leadership",
@@ -68240,7 +68398,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0793",
+   "id": "l0790",
    "source": "rev-wiley-cameron",
    "target": "roloff-evangelistic-enterprises",
    "category": "leadership",
@@ -68254,7 +68412,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0794",
+   "id": "l0791",
    "source": "helen-gowanny",
    "target": "straight-inc",
    "category": "staff",
@@ -68268,7 +68426,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0795",
+   "id": "l0792",
    "source": "matt-shaw",
    "target": "boise-girls-academy",
    "category": "leadership",
@@ -68282,7 +68440,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0796",
+   "id": "l0793",
    "source": "matt-shaw",
    "target": "teen-challenge",
    "category": "leadership",
@@ -68296,7 +68454,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0797",
+   "id": "l0794",
    "source": "alan-biggers",
    "target": "kansas-city-girls-academy",
    "category": "leadership",
@@ -68310,7 +68468,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0798",
+   "id": "l0795",
    "source": "alan-biggers",
    "target": "teen-challenge",
    "category": "leadership",
@@ -68324,7 +68482,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0799",
+   "id": "l0796",
    "source": "maynard-sweigard",
    "target": "new-hope-boys-home",
    "category": "leadership",
@@ -68338,7 +68496,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0800",
+   "id": "l0797",
    "source": "maynard-sweigard",
    "target": "anderson-academy",
    "category": "leadership",
@@ -68352,7 +68510,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0801",
+   "id": "l0798",
    "source": "sterling-deveraux",
    "target": "a-better-way-youth-academy",
    "category": "leadership",
@@ -68366,7 +68524,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0802",
+   "id": "l0799",
    "source": "sterling-deveraux",
    "target": "western-youth",
    "category": "clinical",
@@ -68380,7 +68538,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0803",
+   "id": "l0800",
    "source": "jeff-pirtle",
    "target": "new-hope-boys-home",
    "category": "clinical",
@@ -68394,7 +68552,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0804",
+   "id": "l0801",
    "source": "jeff-pirtle",
    "target": "kansas-city-girls-academy",
    "category": "unknown",
@@ -68406,7 +68564,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0805",
+   "id": "l0802",
    "source": "bill-henry",
    "target": "steve-cartisano",
    "category": "staff",
@@ -68420,7 +68578,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0806",
+   "id": "l0803",
    "source": "lance-horsehair-jaggar",
    "target": "steve-cartisano",
    "category": "staff",
@@ -68434,7 +68592,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0807",
+   "id": "l0804",
    "source": "mel-wasserman",
    "target": "synanon",
    "category": "other",
@@ -68448,7 +68606,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0808",
+   "id": "l0805",
    "source": "jan-andrew",
    "target": "sequel-tsi-north-carolina",
    "category": "staff",
@@ -68462,7 +68620,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0809",
+   "id": "l0806",
    "source": "jan-andrew",
    "target": "three-springs-inc",
    "category": "staff",
@@ -68476,7 +68634,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0810",
+   "id": "l0807",
    "source": "jan-andrew",
    "target": "auldern-academy",
    "category": "staff",
@@ -68490,7 +68648,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0811",
+   "id": "l0808",
    "source": "katie-arnold",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68504,7 +68662,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0812",
+   "id": "l0809",
    "source": "katie-arnold",
    "target": "vivant-behavioral-healthcare",
    "category": "leadership",
@@ -68518,7 +68676,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0813",
+   "id": "l0810",
    "source": "christine-aron",
    "target": "sequel-youth-and-family-services",
    "category": "admissions",
@@ -68532,7 +68690,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0814",
+   "id": "l0811",
    "source": "christine-aron",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68546,7 +68704,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0815",
+   "id": "l0812",
    "source": "amber-austin",
    "target": "falcon-ridge-ranch",
    "category": "admissions",
@@ -68560,7 +68718,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0816",
+   "id": "l0813",
    "source": "amber-austin",
    "target": "lava-heights-academy",
    "category": "admissions",
@@ -68574,7 +68732,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0817",
+   "id": "l0814",
    "source": "chris-banken",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68588,7 +68746,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0818",
+   "id": "l0815",
    "source": "sarah-ann-belcher",
    "target": "sequel-tsi-north-carolina",
    "category": "clinical",
@@ -68602,7 +68760,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0819",
+   "id": "l0816",
    "source": "sarah-ann-belcher",
    "target": "auldern-academy",
    "category": "leadership",
@@ -68616,7 +68774,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0820",
+   "id": "l0817",
    "source": "fred-beyer",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68630,7 +68788,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0821",
+   "id": "l0818",
    "source": "fred-beyer",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -68644,7 +68802,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0822",
+   "id": "l0819",
    "source": "marianne-birmingham",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68658,7 +68816,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0823",
+   "id": "l0820",
    "source": "marianne-birmingham",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68672,7 +68830,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0824",
+   "id": "l0821",
    "source": "richard-block",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68686,7 +68844,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0825",
+   "id": "l0822",
    "source": "richard-block",
    "target": "three-springs-inc",
    "category": "leadership",
@@ -68700,7 +68858,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0826",
+   "id": "l0823",
    "source": "jj-bond",
    "target": "sequel-youth-and-family-services",
    "category": "admissions",
@@ -68714,7 +68872,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0827",
+   "id": "l0824",
    "source": "jj-bond",
    "target": "embark-behavioral-health",
    "category": "admissions",
@@ -68728,7 +68886,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0828",
+   "id": "l0825",
    "source": "jacob-brantz",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68742,7 +68900,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0829",
+   "id": "l0826",
    "source": "jacob-brantz",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68756,7 +68914,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0830",
+   "id": "l0827",
    "source": "jason-cagle",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68770,7 +68928,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0831",
+   "id": "l0828",
    "source": "jason-cagle",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -68784,7 +68942,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0832",
+   "id": "l0829",
    "source": "elizabeth-carey",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68798,7 +68956,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0833",
+   "id": "l0830",
    "source": "clayton-carr",
    "target": "lakeside-academy-of-kansas",
    "category": "leadership",
@@ -68812,7 +68970,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0834",
+   "id": "l0831",
    "source": "clayton-carr",
    "target": "riverside-academy",
    "category": "leadership",
@@ -68826,7 +68984,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0835",
+   "id": "l0832",
    "source": "jay-carroll",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68840,7 +68998,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0836",
+   "id": "l0833",
    "source": "timothy-p-cole",
    "target": "youth-services-international",
    "category": "leadership",
@@ -68854,7 +69012,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0837",
+   "id": "l0834",
    "source": "randy-copas",
    "target": "starr-albion-prep",
    "category": "leadership",
@@ -68868,7 +69026,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0838",
+   "id": "l0835",
    "source": "randy-copas",
    "target": "vivant-behavioral-healthcare",
    "category": "leadership",
@@ -68882,7 +69040,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0839",
+   "id": "l0836",
    "source": "ira-cotler",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -68896,7 +69054,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0840",
+   "id": "l0837",
    "source": "anita-cronin",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -68910,7 +69068,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0841",
+   "id": "l0838",
    "source": "anita-cronin",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68924,7 +69082,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0842",
+   "id": "l0839",
    "source": "roy-day",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -68938,7 +69096,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0843",
+   "id": "l0840",
    "source": "denise-deveaux",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -68952,7 +69110,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0844",
+   "id": "l0841",
    "source": "denise-deveaux",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68966,7 +69124,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0845",
+   "id": "l0842",
    "source": "paul-donnelly",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -68980,7 +69138,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0846",
+   "id": "l0843",
    "source": "samantha-dunham",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -68994,7 +69152,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0847",
+   "id": "l0844",
    "source": "samantha-dunham",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69008,7 +69166,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0848",
+   "id": "l0845",
    "source": "kwanjalin-edwards",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69022,7 +69180,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0849",
+   "id": "l0846",
    "source": "kwanjalin-edwards",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69036,7 +69194,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0850",
+   "id": "l0847",
    "source": "leslie-foster",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69050,7 +69208,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0851",
+   "id": "l0848",
    "source": "leslie-foster",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69064,7 +69222,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0852",
+   "id": "l0849",
    "source": "orvando-freeman",
    "target": "st-johns-youth-academy",
    "category": "leadership",
@@ -69078,7 +69236,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0853",
+   "id": "l0850",
    "source": "angie-fusco",
    "target": "three-springs-paint-rock-valley",
    "category": "clinical",
@@ -69092,7 +69250,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0854",
+   "id": "l0851",
    "source": "angie-fusco",
    "target": "three-springs-inc",
    "category": "leadership",
@@ -69106,7 +69264,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0855",
+   "id": "l0852",
    "source": "angie-fusco",
    "target": "auldern-academy",
    "category": "leadership",
@@ -69120,7 +69278,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0856",
+   "id": "l0853",
    "source": "jacqueline-gabler",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69134,7 +69292,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0857",
+   "id": "l0854",
    "source": "jacqueline-gabler",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69148,7 +69306,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0858",
+   "id": "l0855",
    "source": "michael-c-garretson",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -69162,7 +69320,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0859",
+   "id": "l0856",
    "source": "radaun-gleave",
    "target": "mount-pleasant-academy",
    "category": "admissions",
@@ -69176,7 +69334,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0860",
+   "id": "l0857",
    "source": "radaun-gleave",
    "target": "red-rock-canyon-school",
    "category": "admissions",
@@ -69190,7 +69348,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0861",
+   "id": "l0858",
    "source": "jasmine-golden",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69204,7 +69362,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0862",
+   "id": "l0859",
    "source": "jasmine-golden",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69218,7 +69376,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0863",
+   "id": "l0860",
    "source": "simone-griffith",
    "target": "three-springs-inc",
    "category": "board",
@@ -69232,7 +69390,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0864",
+   "id": "l0861",
    "source": "simone-griffith",
    "target": "auldern-academy",
    "category": "clinical",
@@ -69246,7 +69404,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0865",
+   "id": "l0862",
    "source": "vito-guarnaccia",
    "target": "auldern-academy",
    "category": "clinical",
@@ -69260,7 +69418,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0866",
+   "id": "l0863",
    "source": "vito-guarnaccia",
    "target": "sequel-youth-and-family-services",
    "category": "clinical",
@@ -69274,7 +69432,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0867",
+   "id": "l0864",
    "source": "darci-hall",
    "target": "new-dominion-school-of-virginia",
    "category": "clinical",
@@ -69288,7 +69446,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0868",
+   "id": "l0865",
    "source": "darci-hall",
    "target": "auldern-academy",
    "category": "clinical",
@@ -69302,7 +69460,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0869",
+   "id": "l0866",
    "source": "tony-harper",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69316,7 +69474,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0870",
+   "id": "l0867",
    "source": "tony-harper",
    "target": "three-springs-inc",
    "category": "staff",
@@ -69330,7 +69488,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0871",
+   "id": "l0868",
    "source": "woodrow-harper",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -69344,7 +69502,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0872",
+   "id": "l0869",
    "source": "michael-e-henderson",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69358,7 +69516,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0873",
+   "id": "l0870",
    "source": "michael-e-henderson",
    "target": "casa-grande-academy",
    "category": "leadership",
@@ -69372,7 +69530,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0874",
+   "id": "l0871",
    "source": "james-hindman",
    "target": "youth-services-international",
    "category": "staff",
@@ -69386,7 +69544,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0875",
+   "id": "l0872",
    "source": "jason-katz",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69400,7 +69558,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0876",
+   "id": "l0873",
    "source": "dick-kelsey",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69414,7 +69572,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0877",
+   "id": "l0874",
    "source": "samantha-lee",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69428,7 +69586,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0878",
+   "id": "l0875",
    "source": "samantha-lee",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69442,7 +69600,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0879",
+   "id": "l0876",
    "source": "thomas-locke",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69456,7 +69614,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0880",
+   "id": "l0877",
    "source": "thomas-locke",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69470,7 +69628,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0881",
+   "id": "l0878",
    "source": "robert-matthews",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -69484,7 +69642,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0882",
+   "id": "l0879",
    "source": "mike-mcfarland",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69498,7 +69656,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0883",
+   "id": "l0880",
    "source": "mike-mcfarland",
    "target": "mingus-mountain-academy",
    "category": "leadership",
@@ -69512,7 +69670,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0884",
+   "id": "l0881",
    "source": "marshanna-mcfarlin",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69526,7 +69684,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0885",
+   "id": "l0882",
    "source": "marshanna-mcfarlin",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69540,7 +69698,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0886",
+   "id": "l0883",
    "source": "shaun-mohon",
    "target": "vivant-behavioral-healthcare",
    "category": "leadership",
@@ -69554,7 +69712,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0887",
+   "id": "l0884",
    "source": "shaun-mohon",
    "target": "mingus-mountain-academy",
    "category": "leadership",
@@ -69568,7 +69726,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0888",
+   "id": "l0885",
    "source": "bette-moore",
    "target": "sequel-tsi-madison",
    "category": "leadership",
@@ -69582,7 +69740,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0889",
+   "id": "l0886",
    "source": "bette-moore",
    "target": "sequel-tsi-owens-cross-roads",
    "category": "leadership",
@@ -69596,7 +69754,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0890",
+   "id": "l0887",
    "source": "jared-nabors",
    "target": "lava-heights-academy",
    "category": "staff",
@@ -69610,7 +69768,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0891",
+   "id": "l0888",
    "source": "jared-nabors",
    "target": "lakeside-academy",
    "category": "staff",
@@ -69624,7 +69782,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0892",
+   "id": "l0889",
    "source": "jared-nabors",
    "target": "vivant-behavioral-healthcare",
    "category": "leadership",
@@ -69638,7 +69796,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0893",
+   "id": "l0890",
    "source": "jared-nabors",
    "target": "embark-behavioral-health",
    "category": "staff",
@@ -69652,7 +69810,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0894",
+   "id": "l0891",
    "source": "james-mac-oconnor",
    "target": "three-springs-inc",
    "category": "leadership",
@@ -69666,7 +69824,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0895",
+   "id": "l0892",
    "source": "rebecca-oatts",
    "target": "vivant-behavioral-healthcare",
    "category": "admissions",
@@ -69680,7 +69838,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0896",
+   "id": "l0893",
    "source": "rebecca-oatts",
    "target": "normative-services-academy",
    "category": "admissions",
@@ -69694,7 +69852,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0897",
+   "id": "l0894",
    "source": "sally-patterson",
    "target": "youth-services-international",
    "category": "leadership",
@@ -69708,7 +69866,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0898",
+   "id": "l0895",
    "source": "sally-patterson",
    "target": "pompano-academy",
    "category": "leadership",
@@ -69722,7 +69880,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0899",
+   "id": "l0896",
    "source": "kendall-payne",
    "target": "sequel-youth-and-family-services",
    "category": "admissions",
@@ -69736,7 +69894,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0900",
+   "id": "l0897",
    "source": "kendall-payne",
    "target": "vivant-behavioral-healthcare",
    "category": "admissions",
@@ -69750,7 +69908,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0901",
+   "id": "l0898",
    "source": "chris-perkins",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69764,7 +69922,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0902",
+   "id": "l0899",
    "source": "paula-pickens",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69778,7 +69936,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0903",
+   "id": "l0900",
    "source": "paula-pickens",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69792,7 +69950,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0904",
+   "id": "l0901",
    "source": "michele-price",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -69806,7 +69964,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0905",
+   "id": "l0902",
    "source": "michele-price",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69820,7 +69978,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0906",
+   "id": "l0903",
    "source": "russell-rau",
    "target": "correctional-services-corporation",
    "category": "admissions",
@@ -69834,7 +69992,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0907",
+   "id": "l0904",
    "source": "beverly-richard",
    "target": "sequel-youth-and-family-services",
    "category": "leadership",
@@ -69848,7 +70006,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0908",
+   "id": "l0905",
    "source": "beverly-richard",
    "target": "three-springs-inc",
    "category": "leadership",
@@ -69862,7 +70020,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0909",
+   "id": "l0906",
    "source": "jeremy-roach",
    "target": "kingston-academy",
    "category": "clinical",
@@ -69876,7 +70034,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0910",
+   "id": "l0907",
    "source": "jeremy-roach",
    "target": "norris-academy",
    "category": "clinical",
@@ -69890,7 +70048,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0911",
+   "id": "l0908",
    "source": "kenny-roberts",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69904,7 +70062,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0912",
+   "id": "l0909",
    "source": "kenny-roberts",
    "target": "three-springs-paint-rock-valley",
    "category": "leadership",
@@ -69918,7 +70076,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0913",
+   "id": "l0910",
    "source": "chris-roussos",
    "target": "vivant-behavioral-healthcare",
    "category": "leadership",
@@ -69932,7 +70090,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0914",
+   "id": "l0911",
    "source": "jane-samuel",
    "target": "three-springs-inc",
    "category": "staff",
@@ -69946,7 +70104,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0915",
+   "id": "l0912",
    "source": "jane-samuel",
    "target": "auldern-academy",
    "category": "leadership",
@@ -69960,7 +70118,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0916",
+   "id": "l0913",
    "source": "ryan-santi",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -69974,7 +70132,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0917",
+   "id": "l0914",
    "source": "ryan-santi",
    "target": "woodward-academy",
    "category": "leadership",
@@ -69988,7 +70146,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0918",
+   "id": "l0915",
    "source": "nacole-seldon",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -70002,7 +70160,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0919",
+   "id": "l0916",
    "source": "nacole-seldon",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -70016,7 +70174,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0920",
+   "id": "l0917",
    "source": "michael-smith",
    "target": "union-juvenile-residential-facility",
    "category": "leadership",
@@ -70030,7 +70188,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0921",
+   "id": "l0918",
    "source": "michael-smith",
    "target": "st-johns-youth-academy",
    "category": "leadership",
@@ -70044,7 +70202,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0922",
+   "id": "l0919",
    "source": "michael-smith",
    "target": "eckerd-youth-alternatives",
    "category": "leadership",
@@ -70058,7 +70216,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0923",
+   "id": "l0920",
    "source": "matt-sparling",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -70072,7 +70230,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0924",
+   "id": "l0921",
    "source": "matt-sparling",
    "target": "sequel-youth-and-family-services",
    "category": "admissions",
@@ -70086,7 +70244,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0925",
+   "id": "l0922",
    "source": "aaron-speisman",
    "target": "correctional-services-corporation",
    "category": "board",
@@ -70100,7 +70258,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0926",
+   "id": "l0923",
    "source": "richard-p-staley",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -70114,7 +70272,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0927",
+   "id": "l0924",
    "source": "kelly-stone",
    "target": "lexington-academy",
    "category": "leadership",
@@ -70128,7 +70286,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0928",
+   "id": "l0925",
    "source": "kelly-stone",
    "target": "mountain-home-academy",
    "category": "leadership",
@@ -70142,7 +70300,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0929",
+   "id": "l0926",
    "source": "karen-storm",
    "target": "three-points-center",
    "category": "clinical",
@@ -70156,7 +70314,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0930",
+   "id": "l0927",
    "source": "karen-storm",
    "target": "auldern-academy",
    "category": "clinical",
@@ -70170,7 +70328,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0931",
+   "id": "l0928",
    "source": "mel-strobel",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -70184,7 +70342,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0932",
+   "id": "l0929",
    "source": "mel-strobel",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -70198,7 +70356,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0933",
+   "id": "l0930",
    "source": "john-stupak",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -70212,7 +70370,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0934",
+   "id": "l0931",
    "source": "john-stupak",
    "target": "joint-commission",
    "category": "board",
@@ -70226,7 +70384,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0935",
+   "id": "l0932",
    "source": "melissa-sutherland",
    "target": "sequel-youth-and-family-services",
    "category": "staff",
@@ -70240,7 +70398,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0936",
+   "id": "l0933",
    "source": "melissa-sutherland",
    "target": "vivant-behavioral-healthcare",
    "category": "staff",
@@ -70254,7 +70412,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0937",
+   "id": "l0934",
    "source": "bernard-wagner",
    "target": "correctional-services-corporation",
    "category": "leadership",
@@ -70268,7 +70426,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0938",
+   "id": "l0935",
    "source": "amanda-woolard",
    "target": "auldern-academy",
    "category": "clinical",
@@ -70282,7 +70440,7 @@
    "provenance": "staff-list"
   },
   {
-   "id": "l0939",
+   "id": "l0936",
    "source": "amanda-woolard",
    "target": "three-points-center",
    "category": "admissions",

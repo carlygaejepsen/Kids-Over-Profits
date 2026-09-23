@@ -215,6 +215,21 @@ function cleanPerson(raw) {
 const FAMILY = /\b(married|wife|husband|son|daughter|father|mother|brother|sister|in-law|related)\b/i;
 const NOT_TTI = /not tti|non-tti/i;
 
+/* Board names that are also ordinary words the list uses inside job titles:
+ * "community life director Spring Ridge Academy" is a job at Spring Ridge,
+ * not a job at the programme called LIFE. The list writes a place as a
+ * name — "founder LIFE", "executive director SAFE Inc" — so only a
+ * capitalised spelling counts, and a lowercase one is hidden from the
+ * matcher. The mask keeps the word's length so the role text, which is
+ * read off the entry as written, is unaffected. */
+const WORD_NAMES = /\b(life|safe|seed|seasons|momentum|bravo|straight|luna)\b/g;
+
+function maskWordNames(entry) {
+    return entry.replace(WORD_NAMES, function (word) {
+        return 'x'.repeat(word.length);
+    });
+}
+
 function buildMatcher(nodes) {
     const keys = new Map();
     const add = function (key, node) {
@@ -246,10 +261,31 @@ function buildMatcher(nodes) {
     }) };
 }
 
+/* Words that carry on naming or placing a programme rather than starting a
+ * job title, so what follows a place is not the person's role. */
+const PLACE_TAIL = /^(academy|school|schools|manor|ranch|house|home|lodge|center|centre|hospital|programs?|campus|village|inc|llc|of|at|in|on|for|and|near)\b/i;
+
+/* The word index where a place's name starts in the entry, as written:
+ * drop words off the front until what is left starts with the name. */
+function startOfPlace(words, key) {
+    for (let i = 0; i < words.length; i++) {
+        if ((nameKey(words.slice(i).join(' ')) + ' ').indexOf(key + ' ') === 0) return i;
+    }
+    return -1;
+}
+
+/* The word index just past a place's name, counting from where it starts. */
+function endOfPlace(words, start, key) {
+    for (let i = start + 1; i <= words.length; i++) {
+        if (nameKey(words.slice(start, i).join(' ')) === key) return i;
+    }
+    return -1;
+}
+
 /* Every board place named in one entry, left to right, with the role text
- * that precedes the first one. */
+ * that surrounds them. */
 function findPlaces(entry, matcher) {
-    let key = ' ' + nameKey(entry) + ' ';
+    let key = ' ' + nameKey(maskWordNames(entry)) + ' ';
     const hits = [];
     matcher.sorted.forEach(function (k) {
         const needle = ' ' + k + ' ';
@@ -261,16 +297,22 @@ function findPlaces(entry, matcher) {
         }
     });
     hits.sort(function (a, b) { return a.at - b.at; });
-    /* The role is the words before the first place, as written: drop words
-     * off the front until what is left starts with the matched name. */
     let role = '';
     if (hits.length) {
         const words = entry.split(/\s+/);
-        for (let i = 0; i < words.length; i++) {
-            if ((nameKey(words.slice(i).join(' ')) + ' ').indexOf(hits[0].key + ' ') === 0) {
-                role = words.slice(0, i).join(' ');
-                break;
-            }
+        const start = startOfPlace(words, hits[0].key);
+        if (start > 0) role = words.slice(0, start).join(' ');
+        /* An entry that leads with the place puts the job after it
+         * instead: "NATSAP board member", "Tranquility Bay director". Text
+         * that carries on about the place is not a job: either the rest of
+         * a longer spelling than the board's ("Cross Creek Manor") or where
+         * the place is ("Rite of Passage of Nevada"). */
+        if (!role) {
+            const last = hits[hits.length - 1];
+            const from = startOfPlace(words, last.key);
+            const past = from === -1 ? -1 : endOfPlace(words, from, last.key);
+            const tail = past === -1 ? '' : words.slice(past).join(' ');
+            if (!PLACE_TAIL.test(tail)) role = tail;
         }
     }
     return { hits: hits, role: role };
