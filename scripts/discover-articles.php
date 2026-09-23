@@ -93,6 +93,7 @@ define('AI_RATE_LIMIT_WAIT_MS', 45000);
 define('AI_RATE_LIMIT_STOP_AFTER', 3);   // consecutive rate-limited candidates before the submit phase stops
 define('MAX_SEEN_URLS', 50000);
 define('MAX_REJECTED_ENTRIES', 2000);   // rejected log cap (deduped by link)
+define('REJECTED_URL_TTL_DAYS', 7);      // reject suppression window for noisy repeats
 define('PER_FACILITY_CAP', 15);
 define('REQUEST_TIMEOUT_MS', 30000);
 define('AI_TIMEOUT_MS', 90000);
