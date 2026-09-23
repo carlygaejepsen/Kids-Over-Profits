@@ -1,0 +1,94 @@
+{
+  "state": "Missouri",
+  "abbr": "MO",
+  "updated": "2026-09-22",
+  "note": "Missouri matters to this industry for a particular reason: for decades religious residential facilities operated here entirely outside licensing. HB 557, signed in July 2021, did not licence them, but it did require every license-exempt facility to register with the state and to run background checks on everyone with access to children. So a Missouri program may be licensed, registered-but-exempt, or operating in breach of the notification law - and which one it is changes who you report to.",
+  "channels": [
+    {
+      "id": "mo-professional-registration",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Missouri Division of Professional Registration",
+      "what_it_can_do": "Houses the separate committees that license psychologists, professional counselors, social workers and physicians, and investigates complaints about them. Each committee can discipline the licence it issued.",
+      "who_to_report": "Any licensed clinician in Missouri. One form covers all of them; the committee it goes to depends on the licence.",
+      "how": "All the committees use the same complaint form, number 375-0195. Download it, fill it in, and send it to the committee that issued the licence.",
+      "complaint_url": "https://pr.mo.gov/boards/375-0195.pdf",
+      "info_url": "https://pr.mo.gov/counselors.asp",
+      "phone": "573-751-0018",
+      "phone_note": "Professional Counselors. Psychologists 573-751-0099; Social Workers 573-751-0885; Healing Arts, for physicians and psychiatrists, 573-751-0098.",
+      "email": "profcounselor@pr.mo.gov",
+      "mail": "Division of Professional Registration, P.O. Box 1335, Jefferson City, MO 65102-1335",
+      "anonymous": "unknown",
+      "note": "Each committee publishes its own disciplinary actions, so you can check whether a name has come up before.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://pr.mo.gov/counselors.asp",
+        "https://pr.mo.gov/psychologists.asp",
+        "https://pr.mo.gov/socialworkers.asp"
+      ]
+    },
+    {
+      "id": "mo-childrens-division-licensing",
+      "category": "facility-licensing",
+      "name": "Missouri Children's Division, residential licensing",
+      "what_it_can_do": "Licenses residential care facilities and child placing agencies for children and youth, runs the background check requirements, and holds the register of license-exempt facilities. Unless the law specifically exempts them, private agencies providing residential treatment for children must be licensed by the Division.",
+      "what_it_cannot_do": "It does not licence the exempt facilities, only record that they exist. An exempt program is still bound by the background check rules in 13 CSR 35-71.015 and by the duty to notify the Division that it is operating.",
+      "who_to_report": "The facility. A program that never told the Division it exists is itself a violation worth reporting.",
+      "how": "Contact the Children's Division. Its residential licensing pages set out what a licensed and a license-exempt facility each have to do.",
+      "info_url": "https://dss.mo.gov/provider-services/children/residential-program",
+      "phone": "1-855-373-4636",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dss.mo.gov/provider-services/children/residential-program"]
+    },
+    {
+      "id": "mo-child-abuse-hotline",
+      "category": "legal",
+      "name": "Missouri Child Abuse and Neglect Hotline",
+      "what_it_can_do": "The statutory report line for child abuse and neglect in Missouri, staffed around the clock. A report starts a Children's Division response and can bring in law enforcement.",
+      "who_to_report": "A child at a Missouri program right now.",
+      "how": "Call the hotline, or use the Online System for Child Abuse and Neglect Reporting (OSCR).",
+      "complaint_url": "https://apps.dss.mo.gov/OnlineCanReporting/default.aspx",
+      "info_url": "https://dss.mo.gov/cd/keeping-kids-safe/can",
+      "phone": "1-800-392-3738",
+      "phone_note": "24 hours a day, every day. Relay Missouri 1-800-735-2466 voice, 1-800-735-2966 text.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://dss.mo.gov/cd/keeping-kids-safe/can"]
+    },
+    {
+      "id": "mo-medicaid-fraud-patient-abuse",
+      "category": "legal",
+      "name": "Missouri Attorney General, Medicaid Fraud Control Unit",
+      "what_it_can_do": "Investigates and prosecutes abuse and neglect of residents in Medicaid-funded facilities, alongside Medicaid provider fraud.",
+      "who_to_report": "A Medicaid-funded Missouri program where a young person was abused or neglected.",
+      "how": "Call the toll-free line, use the online resident abuse complaint form, email or write.",
+      "complaint_url": "https://ago.mo.gov/divisions/medicaid-fraud/resident-patient-abuse-neglect-or-exploitation-complaint/",
+      "info_url": "https://ago.mo.gov/healthcare-fraud-patient-abuse/",
+      "phone": "1-800-286-3932",
+      "email": "attorney.general@ago.mo.gov",
+      "mail": "Missouri Attorney General's Office, Medicaid Fraud Control Unit, P.O. Box 899, Jefferson City, MO 65102",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://ago.mo.gov/divisions/medicaid-fraud/resident-patient-abuse-neglect-or-exploitation-complaint/",
+        "https://ago.mo.gov/healthcare-fraud-patient-abuse/"
+      ]
+    },
+    {
+      "id": "mo-protection-advocacy",
+      "category": "oversight",
+      "name": "Missouri Protection and Advocacy Services",
+      "what_it_can_do": "Missouri's federally mandated P&A. Authority to investigate abuse and neglect where a person with a disability receives services, with a right of access to the facility, plus free legal advocacy.",
+      "who_to_report": "A Missouri program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.moadvocacy.org/",
+      "phone": "1-800-392-8667",
+      "phone_note": "Main line 573-893-3333; TDD 1-800-735-2966.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=missouri"]
+    }
+  ]
+}

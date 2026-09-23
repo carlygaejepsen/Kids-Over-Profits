@@ -1,0 +1,121 @@
+{
+  "updated": "2026-09-22",
+  "note": "Bodies that take a report wherever the program is. None of these replaces the state channels: the state licensing board and the state licensor are the ones that can take somebody's licence away. For crisis lines, see the Resources page - this list is about reporting, not about getting through tonight.",
+  "channels": [
+    {
+      "id": "us-childhelp",
+      "category": "legal",
+      "name": "Childhelp National Child Abuse Hotline",
+      "what_it_can_do": "Talks through what happened, tells you which state agency takes the report, and stays on the line while you work out what to say. Counselors are available 24/7.",
+      "what_it_cannot_do": "It is not itself an investigating agency. It routes you; it does not open a case.",
+      "who_to_report": "Anyone unsure where a report about a child should go, including a survivor who is now an adult and a parent who has just got their child out.",
+      "how": "Call, text GO to the same number, or use the live chat on the site.",
+      "info_url": "https://childhelphotline.org/",
+      "phone": "1-800-422-4453",
+      "phone_note": "24 hours, every day. Text GO to 800-422-4453, or chat from the website.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://childhelphotline.org/",
+        "https://www.childwelfare.gov/state-child-abuse-and-neglect-reporting-numbers"
+      ]
+    },
+    {
+      "id": "us-state-cps-directory",
+      "category": "legal",
+      "name": "State child abuse and neglect reporting numbers (Child Welfare Information Gateway)",
+      "what_it_can_do": "The federal government's directory of every state's child protection intake line, with each state's online reporting option where one exists.",
+      "who_to_report": "A child currently at the program. Report to the state the program sits in, not the state the family lives in - the agency with jurisdiction is the one where the child is.",
+      "how": "Find the state on the directory page, then call that state's intake line.",
+      "complaint_url": "https://www.childwelfare.gov/state-child-abuse-and-neglect-reporting-numbers",
+      "info_url": "https://www.childwelfare.gov/how-report-child-abuse-and-neglect/",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "Most states take an anonymous report but will act on more of it if they can call you back.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.childwelfare.gov/state-child-abuse-and-neglect-reporting-numbers"]
+    },
+    {
+      "id": "us-doj-civil-rights",
+      "category": "legal",
+      "name": "U.S. Department of Justice, Civil Rights Division",
+      "what_it_can_do": "Takes reports of civil rights violations, including conditions in institutions where people are held. Its Special Litigation Section is the part that investigates residential facilities under CRIPA and can sue an institution or a state over a pattern of abuse.",
+      "what_it_cannot_do": "It does not act for one person against one program. It looks for patterns, and it decides on its own whether to open anything.",
+      "who_to_report": "A facility where the abuse is systemic rather than one member of staff - restraint practice, seclusion, denial of medical care, conditions across a whole program.",
+      "how": "Submit the online report form. Paper forms can be downloaded and mailed.",
+      "complaint_url": "https://civilrights.justice.gov/report/",
+      "info_url": "https://civilrights.justice.gov/",
+      "phone": "1-855-856-1247",
+      "phone_note": "Toll free. Direct line 202-514-3847, TTY 711.",
+      "mail": "U.S. Department of Justice, Civil Rights Division, 950 Pennsylvania Avenue NW, Washington, DC 20530-0001",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://civilrights.justice.gov/"]
+    },
+    {
+      "id": "us-hhs-oig",
+      "category": "legal",
+      "name": "U.S. Department of Health and Human Services, Office of Inspector General hotline",
+      "what_it_can_do": "Investigates fraud and abuse in federally funded health programs. Where a program bills Medicaid, this is often the lever that moves first, because billing for treatment that was not given is easier to prove than the treatment being abusive.",
+      "what_it_cannot_do": "It will not get you a refund or a remedy in your own case, and says so plainly. Volume means most complaints get no reply.",
+      "who_to_report": "A program billing Medicaid or another federal program - for therapy hours nobody delivered, for staff who were not qualified, for a level of care the child was not getting.",
+      "how": "Submit through the online tips portal. It only takes unclassified complaints online.",
+      "complaint_url": "https://tips.oig.hhs.gov/",
+      "info_url": "https://oig.hhs.gov/fraud/report-fraud/",
+      "phone": "1-800-447-8477",
+      "phone_note": "1-800-HHS-TIPS.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": ["https://oig.hhs.gov/fraud/report-fraud/"]
+    },
+    {
+      "id": "us-protection-and-advocacy",
+      "category": "oversight",
+      "name": "Your state's Protection and Advocacy agency",
+      "what_it_can_do": "Every state has one, funded by Congress. Under the DD Act and PAIMI they have legal authority to investigate abuse and neglect wherever a person with a disability receives services, and a right of access to the place itself - they can go in. Several of the hardest reports on programs in this industry came from P&A investigations.",
+      "who_to_report": "A program where the young person has a disability or a mental health diagnosis, which covers most placements in this industry. You do not need a formal diagnosis to call and ask.",
+      "how": "Find your state's agency in the NDRN directory and contact its intake line. Report to the state the program is in.",
+      "complaint_url": "https://www.ndrn.org/about/ndrn-member-agencies/",
+      "info_url": "https://acl.gov/programs/aging-and-disability-networks/state-protection-advocacy-systems",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/",
+        "https://acl.gov/programs/aging-and-disability-networks/state-protection-advocacy-systems"
+      ]
+    },
+    {
+      "id": "us-joint-commission",
+      "category": "oversight",
+      "name": "The Joint Commission, Office of Quality and Patient Safety",
+      "what_it_can_do": "Accredits behavioral health organisations and can review, cite, or ultimately withdraw accreditation. Losing accreditation can cost a program its insurance contracts and its Medicaid participation, which is sometimes the fastest real consequence available.",
+      "what_it_cannot_do": "It only has standing over organisations it accredits, and it does not discipline an individual clinician. Check the program is accredited first.",
+      "who_to_report": "A Joint Commission accredited facility. Its Find Accredited Organizations search will tell you whether a program is one.",
+      "how": "Use the online submission form, which it prefers, or call. It does not take walk-ins, faxes or email, and it shreds medical records, photos and invoices on arrival.",
+      "complaint_url": "https://apps.jointcommission.org/QMSInternet/IncidentEntry.aspx",
+      "info_url": "https://www.jointcommission.org/en-us/contact-us/report-a-patient-safety-event",
+      "phone": "1-800-994-6610",
+      "mail": "Office of Quality and Patient Safety, The Joint Commission, One Renaissance Boulevard, Oakbrook Terrace, IL 60181",
+      "anonymous": "allowed",
+      "note": "You can file anonymously, but it can only tell you what it did with the complaint if you give your name.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.jointcommission.org/en-us/contact-us/report-a-patient-safety-event"]
+    },
+    {
+      "id": "us-carf",
+      "category": "oversight",
+      "name": "CARF International",
+      "what_it_can_do": "The other accreditor much of this industry uses. Takes concerns about an accredited provider and can act on its accreditation.",
+      "what_it_cannot_do": "Like any accreditor it has no power over an unaccredited program, and none over an individual therapist's licence.",
+      "who_to_report": "A CARF-accredited program. CARF asks you to try the provider's own grievance process first, and says to go to your state P&A agency or the state licensor if that does not resolve it.",
+      "how": "Use the feedback form on the public page, or call the dedicated line.",
+      "complaint_url": "https://carf.org/accreditation/public/",
+      "phone": "1-866-510-2273",
+      "phone_note": "Toll free, 866-510-CARF.",
+      "mail": "CARF International, 6951 East Southpoint Road, Tucson, AZ 85756",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://carf.org/accreditation/public/"]
+    }
+  ]
+}

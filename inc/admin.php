@@ -419,6 +419,10 @@ function kop_tool_page_specs() {
         // with beta testers: Edit page, Visibility > Password protected,
         // Publish, and send them the link and the password.
         array('template' => 'page-network-map.php',        'title' => 'Network Map',         'slug' => 'network-map',        'status' => 'draft'),
+        // Where to report an abusive therapist or program, state by state.
+        // Published: it is a reference list of public agencies, and every
+        // entry carries the source and the date it was checked.
+        array('template' => 'page-report-abuse.php',       'title' => 'Report Abuse',        'slug' => 'report-abuse',       'status' => 'publish'),
     );
 }
 
@@ -474,7 +478,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '6';
+    $version = '7';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -1449,7 +1453,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '28';
+    $version = '29';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

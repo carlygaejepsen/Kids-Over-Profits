@@ -1,0 +1,397 @@
+/*
+ * Reporting directory (templates/page-report-abuse.php, inc/reporting-directory.php).
+ *
+ * Somebody reads this page having decided to do something difficult, often on
+ * a phone, sometimes quickly. So: one column, generous line height, the phone
+ * number and the complaint link as the two things the eye lands on, and the
+ * "what it cannot do" line set apart rather than hidden, because finding out
+ * afterwards that a body was never going to help is the thing that makes
+ * people stop.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-rep-page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+}
+
+.kop-rep-header {
+    margin-bottom: 1.5rem;
+}
+
+.kop-rep-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-rep-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-rep-editor-content {
+    margin-bottom: 2rem;
+}
+
+/* ---- Intro ------------------------------------------------------------- */
+
+.kop-rep-intro {
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    padding: 0.25rem 0 0.25rem 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.kop-rep-lede {
+    margin: 0;
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--kop-text-primary, #000435);
+}
+
+.kop-rep-crisis {
+    margin: 0.75rem 0 0;
+    font-size: 0.98rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+/* ---- State picker ------------------------------------------------------ */
+
+.kop-rep-picker {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-radius: 10px;
+    padding: 1.15rem 1.25rem;
+    margin-bottom: 2.5rem;
+}
+
+.kop-rep-picker label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 0.55rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-rep-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+}
+
+.kop-rep-picker select {
+    flex: 1 1 16rem;
+    min-width: 0;
+    padding: 0.6rem 0.7rem;
+    font-size: 1rem;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #000435);
+}
+
+.kop-rep-picker select:focus-visible,
+.kop-rep-go:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+}
+
+.kop-rep-go {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background: var(--kop-button-primary, #33A7B5);
+    color: var(--kop-white, #fff);
+    cursor: pointer;
+}
+
+.kop-rep-go:hover {
+    background: var(--kop-button-primary-hover, #000080);
+}
+
+.kop-rep-picker-hint {
+    margin: 0.7rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--kop-navy-blue, #000080);
+}
+
+/* ---- Sections ---------------------------------------------------------- */
+
+.kop-rep-state,
+.kop-rep-national,
+.kop-rep-coverage {
+    margin-bottom: 3rem;
+}
+
+.kop-rep-state-h,
+.kop-rep-embed-h {
+    margin: 0 0 0.5rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 3px solid var(--kop-chartreuse, #B2E102);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-rep-state-note {
+    margin: 0 0 1.75rem;
+    max-width: 72ch;
+    line-height: 1.6;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-rep-group {
+    margin-bottom: 2.25rem;
+}
+
+.kop-rep-group-h {
+    margin: 0 0 0.2rem;
+    font-size: 1.22rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-rep-group-blurb {
+    margin: 0 0 1rem;
+    font-size: 0.95rem;
+    color: #4a4f6a;
+}
+
+.kop-rep-cards {
+    display: grid;
+    gap: 1rem;
+}
+
+/* ---- One channel ------------------------------------------------------- */
+
+.kop-rep-card {
+    background: var(--kop-white, #fff);
+    border: 1px solid var(--kop-border-primary, #B6E3D4);
+    border-left: 5px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    padding: 1.15rem 1.25rem;
+}
+
+.kop-rep-group[data-category="legal"] .kop-rep-card {
+    border-left-color: var(--kop-orange, #EF9034);
+}
+
+.kop-rep-group[data-category="facility-licensing"] .kop-rep-card {
+    border-left-color: var(--kop-navy-blue, #000080);
+}
+
+.kop-rep-group[data-category="oversight"] .kop-rep-card {
+    border-left-color: var(--kop-coral-pink, #FE8088);
+}
+
+.kop-rep-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem 0.75rem;
+    margin-bottom: 0.6rem;
+}
+
+.kop-rep-card-name {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.35;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-rep-tag {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.18rem 0.5rem;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-radius: 999px;
+    color: var(--kop-navy-blue, #000080);
+    white-space: nowrap;
+}
+
+.kop-rep-can,
+.kop-rep-cannot,
+.kop-rep-line,
+.kop-rep-note {
+    margin: 0 0 0.6rem;
+    line-height: 1.6;
+    max-width: 74ch;
+}
+
+.kop-rep-cannot {
+    color: #5a4230;
+    border-left: 3px solid var(--kop-orange, #EF9034);
+    padding-left: 0.7rem;
+}
+
+.kop-rep-label {
+    display: inline-block;
+    min-width: 6.5rem;
+    font-weight: 700;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--kop-teal, #33A7B5);
+    vertical-align: baseline;
+}
+
+.kop-rep-deadline .kop-rep-label {
+    color: var(--kop-orange, #EF9034);
+}
+
+.kop-rep-note {
+    font-size: 0.95rem;
+    color: #4a4f6a;
+}
+
+/* ---- Contact block ----------------------------------------------------- */
+
+.kop-rep-contact {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0.9rem 0 0;
+    border-top: 1px solid var(--kop-sand, #F2EEDF);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 1.25rem;
+}
+
+.kop-rep-phone a {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.kop-rep-phone a:hover {
+    text-decoration: underline;
+}
+
+.kop-rep-phone-note {
+    display: block;
+    font-size: 0.85rem;
+    color: #4a4f6a;
+}
+
+.kop-rep-action {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--kop-button-primary, #33A7B5);
+    color: var(--kop-white, #fff);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.kop-rep-action:hover {
+    background: var(--kop-button-primary-hover, #000080);
+    color: var(--kop-white, #fff);
+}
+
+.kop-rep-mail {
+    font-size: 0.9rem;
+    color: #4a4f6a;
+    flex-basis: 100%;
+}
+
+/* ---- Card footer ------------------------------------------------------- */
+
+.kop-rep-card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.8rem;
+    margin-top: 0.9rem;
+    font-size: 0.82rem;
+    color: #5c6078;
+}
+
+.kop-rep-anon {
+    padding: 0.16rem 0.55rem;
+    border-radius: 999px;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.kop-rep-anon-yes {
+    border-color: var(--kop-mint-green, #B6E3D4);
+    color: #1d6b58;
+}
+
+.kop-rep-anon-maybe {
+    border-color: var(--kop-orange, #EF9034);
+    color: #8a5210;
+}
+
+.kop-rep-anon-no {
+    border-color: var(--kop-coral-pink, #FE8088);
+    color: #9c2c36;
+}
+
+.kop-rep-verified a {
+    color: inherit;
+}
+
+/* ---- Coverage, disclaimer, states with nothing yet --------------------- */
+
+.kop-rep-coverage p,
+.kop-rep-missing {
+    max-width: 72ch;
+    line-height: 1.6;
+}
+
+.kop-rep-missing {
+    background: var(--kop-sand, #F2EEDF);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    padding: 0.9rem 1.1rem;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 2.5rem;
+}
+
+.kop-rep-disclaimer {
+    max-width: 72ch;
+    margin-top: 2.5rem;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--kop-border-primary, #B6E3D4);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #5c6078;
+}
+
+/* ---- Embedded in a state hub ------------------------------------------- */
+
+.kop-rep-embed {
+    margin: 2.5rem 0;
+}
+
+.kop-rep-embed .kop-rep-group-h {
+    font-size: 1.1rem;
+}
+
+.kop-rep-more {
+    margin-top: 1rem;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .kop-rep-page {
+        padding: 1.25rem 1rem 3rem;
+    }
+
+    .kop-rep-label {
+        display: block;
+        min-width: 0;
+        margin-bottom: 0.1rem;
+    }
+
+    .kop-rep-action {
+        width: 100%;
+        text-align: center;
+    }
+}

@@ -79,6 +79,16 @@ $rest_url = esc_url_raw(rest_url('kop/v1/state/' . $state_slug));
     </section>
 </div>
 
+<?php
+/* Where to report abuse in this state. Outside the tab panels on purpose:
+ * somebody who has just read the facility list is the person most likely to
+ * need it, and it should not be behind a tab they have no reason to open.
+ * Prints nothing for a state the directory has not covered yet. */
+if (function_exists('kop_reporting_render_state_block')) {
+    kop_reporting_render_state_block($state_name);
+}
+?>
+
 <script>
 window.statePageConfig = {
     stateName: <?php echo wp_json_encode($state_name); ?>,

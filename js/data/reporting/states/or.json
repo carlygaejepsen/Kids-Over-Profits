@@ -1,0 +1,78 @@
+{
+  "state": "Oregon",
+  "abbr": "OR",
+  "updated": "2026-09-22",
+  "note": "Oregon's mental health licensing boards sit under one agency, the Mental Health Regulatory Agency, which investigates on its own initiative as well as on complaints - it names newspaper articles and broadcasts as a reason it will open a case, which is unusually explicit. Licensees in Oregon are themselves required to report a colleague they believe is in breach, which is worth knowing if you are a clinician who has seen something.",
+  "channels": [
+    {
+      "id": "or-mental-health-regulatory-agency",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Oregon Mental Health Regulatory Agency",
+      "what_it_can_do": "Runs compliance for the Board of Licensed Professional Counselors and Therapists (LPCs, LMFTs and registered associates) and the Board of Psychology. Its staff investigate licensees, registrants and people practising without a licence, and the boards discipline those found in breach.",
+      "who_to_report": "A counselor, marriage and family therapist or psychologist in Oregon, or somebody practising as one without a licence. Social workers have their own board.",
+      "how": "Use the online complaint form for the relevant board.",
+      "complaint_url": "https://www.oregon.gov/mhra/pages/complaint.aspx",
+      "info_url": "https://www.oregon.gov/oblpct/Pages/Compliance.aspx",
+      "phone": "503-378-5499",
+      "email": "lpct.board@mhra.oregon.gov",
+      "mail": "Board of Licensed Professional Counselors and Therapists, 3218 Pringle Rd SE #120, Salem, OR 97302-6312",
+      "anonymous": "discouraged",
+      "note": "The Board will not confirm who complained, and says it makes every effort to protect a complainant who wants anonymity - but warns that your identity may become obvious through the investigation itself.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.oregon.gov/mhra/pages/complaint.aspx",
+        "https://www.oregon.gov/oblpct/Pages/Compliance.aspx"
+      ]
+    },
+    {
+      "id": "or-oha-licensing-certification",
+      "category": "facility-licensing",
+      "name": "Oregon Health Authority, Licensing and Certification (Residential and Outpatient Behavioral Health Programs)",
+      "what_it_can_do": "Licenses and certifies residential and outpatient behavioral health programs in Oregon and investigates complaints about them. Every complaint is assigned to a compliance specialist who follows it up with you and with the program.",
+      "who_to_report": "The program itself.",
+      "how": "Fill in the Licensing and Certification Complaint Intake Form in full, attach supporting documents, and send it by secure email or post. You can also phone a member of the unit.",
+      "complaint_url": "https://www.oregon.gov/oha/HSD/AMH-LC/Pages/Complaints.aspx",
+      "info_url": "https://www.oregon.gov/oha/hsd/amh-lc/pages/index.aspx",
+      "phone": "503-378-8467",
+      "email": "LCCTMS.Complaints@oha.oregon.gov",
+      "mail": "Licensing & Certification, 500 Summer Street NE - E86, Salem, OR 97301",
+      "anonymous": "unknown",
+      "note": "The Division aims to resolve a complaint within 30 days and sends a resolution letter saying what it found and what happens next.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.oregon.gov/oha/HSD/AMH-LC/Pages/Complaints.aspx"]
+    },
+    {
+      "id": "or-child-abuse-hotline",
+      "category": "legal",
+      "name": "Oregon Child Abuse Hotline",
+      "what_it_can_do": "The statutory report line for child abuse and neglect, open every hour of every day. A Child Welfare screener takes the report.",
+      "who_to_report": "A child at an Oregon program. The Health Authority's own licensing pages send you here when abuse is suspected, rather than to the licensing complaint route.",
+      "how": "Call. The screener will ask for the child's name, age and where they are. What you tell them is kept confidential.",
+      "info_url": "https://www.oregon.gov/odhs/report-abuse/pages/default.aspx",
+      "phone": "1-855-503-7233",
+      "phone_note": "855-503-SAFE. 24 hours a day, 365 days a year.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.oregon.gov/odhs/report-abuse/pages/default.aspx",
+        "https://www.oregon.gov/oha/hsd/amh-lc/pages/index.aspx"
+      ]
+    },
+    {
+      "id": "or-disability-rights-oregon",
+      "category": "oversight",
+      "name": "Disability Rights Oregon",
+      "what_it_can_do": "Oregon's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Oregon program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://droregon.org/",
+      "phone": "1-800-452-1694",
+      "phone_note": "Main line 503-243-2081.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=oregon"]
+    }
+  ]
+}

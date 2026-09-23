@@ -35,9 +35,23 @@ node scripts/test-network-graph.js
 
 # After editing anything in js/network-map/
 node scripts/test-network-modules.js
+
+# After editing the reporting directory data in js/data/reporting/
+node scripts/build-reporting-directory.js
+node scripts/verify-reporting-links.js          # slow, hits every agency site
+php scripts/test-reporting-directory.php        # renders the page offline
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 ```
+
+### Reporting directory data
+
+`js/data/reporting/` holds where to report an abusive therapist or program,
+state by state: `national.json`, one `states/<abbr>.json` per state, and the
+generated `directory.json` the /report-abuse/ page reads. Every channel needs
+a source URL and a `verified_on` date or the build refuses it. `README.md` in
+that folder is the field-by-field schema. Rendered server-side by
+`inc/reporting-directory.php`; the state hubs embed their own state's block.
 
 ### Network map data
 

@@ -1,0 +1,79 @@
+{
+  "state": "Florida",
+  "abbr": "FL",
+  "updated": "2026-09-22",
+  "note": "Florida runs every complaint about a licensed clinician through one portal at the Department of Health, whatever the profession, and it has a hard six-year deadline running from the last date of treatment. The facility is regulated separately by the Agency for Health Care Administration, which licenses residential treatment centers for children and adolescents, including therapeutic group homes.",
+  "channels": [
+    {
+      "id": "fl-doh-mqa",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Florida Department of Health, Medical Quality Assurance",
+      "what_it_can_do": "Investigates complaints against every health care practitioner the Department licenses - psychologists, clinical social workers, marriage and family therapists, mental health counselors and physicians - and can reprimand, fine, restrict practice, impose probation, suspend or revoke a licence.",
+      "what_it_cannot_do": "Everything it can do is administrative. It cannot award you damages, and it may require you to pay for copies of medical records it needs.",
+      "who_to_report": "Any licensed clinician who treated you or your child in Florida. Verify the licence first through the Department's lookup, which also shows any disciplinary history.",
+      "how": "File through the Florida Health Care Complaint Portal. It cannot be done over the phone, and Florida law requires the complaint to be signed. Unlicensed practice is the exception and can be reported by phone.",
+      "complaint_url": "https://complaint-portal.mqa.flhealthsource.gov/",
+      "info_url": "https://www.floridahealth.gov/licensing-regulations/complaints-enforcement/",
+      "phone": "1-877-425-8852",
+      "phone_note": "877-HALT-ULA, for unlicensed activity only. A complaint against a licensee has to be in writing.",
+      "email": "MQA.ConsumerServices@FLHealth.gov",
+      "anonymous": "not-allowed",
+      "deadline": "Six years from the last date of treatment, and the whole investigation and probable cause finding has to be finished inside it, so filing late in the window may leave too little time.",
+      "note": "Complaints stay confidential until ten days after probable cause is found, and permanently if it is not. Patient identity and records stay confidential either way. If the case is opened, the practitioner gets a copy of the complaint.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.floridahealth.gov/licensing-regulations/complaints-enforcement/"]
+    },
+    {
+      "id": "fl-ahca",
+      "category": "facility-licensing",
+      "name": "Florida Agency for Health Care Administration, Complaint Administration Unit",
+      "what_it_can_do": "Licenses and regulates Residential Treatment Centers for Children and Adolescents - 24-hour residential programs including therapeutic group homes - and investigates complaints about the care they give.",
+      "who_to_report": "The facility. Check first on FloridaHealthFinder.gov whether AHCA regulates it; if it is not AHCA-licensed it may be licensed by the Department of Children and Families instead, or by nobody.",
+      "how": "Use the online Health Care Facility Complaint Form, or call the complaint line. There is a separate form for reporting a facility operating without a licence.",
+      "complaint_url": "https://apps.ahca.myflorida.com/hcfc/",
+      "info_url": "https://ahca.myflorida.com/health-quality-assurance/bureau-of-health-facility-regulation/hospital-outpatient-services-unit/residential-treatment-centers-for-children-and-adolescents.html",
+      "phone": "1-888-419-3456",
+      "phone_note": "Monday to Friday, 8am to 5pm Eastern. Florida Relay TDD 1-800-955-8771.",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://ahca.myflorida.com/health-quality-assurance/bureau-of-field-operations/complaint-administration-unit.html",
+        "https://ahca.myflorida.com/health-quality-assurance/bureau-of-health-facility-regulation/hospital-outpatient-services-unit/residential-treatment-centers-for-children-and-adolescents.html"
+      ]
+    },
+    {
+      "id": "fl-abuse-hotline",
+      "category": "legal",
+      "name": "Florida Abuse Hotline",
+      "what_it_can_do": "The statutory report line for child abuse, neglect and abandonment in Florida. Where the person accused is a caregiver, the Department of Children and Families investigates; where they are not, the report is transferred electronically to the local law enforcement agency where the child lives.",
+      "who_to_report": "A child at a Florida program. Florida law requires anyone who suspects a child has been abused by any person to report it here.",
+      "how": "Call, report online, or fax. Florida Relay 711 and TTY 1-800-453-5145.",
+      "complaint_url": "https://reportabuse.myflfamilies.com/s/",
+      "info_url": "https://www.myflfamilies.com/services/abuse/abuse-hotline/how-report-abuse/",
+      "phone": "1-800-962-2873",
+      "phone_note": "24 hours a day, every day. Fax 1-800-914-0004.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.myflfamilies.com/services/abuse/abuse-hotline",
+        "https://www.myflfamilies.com/services/abuse/abuse-hotline/about/"
+      ]
+    },
+    {
+      "id": "fl-disability-rights-florida",
+      "category": "oversight",
+      "name": "Disability Rights Florida",
+      "what_it_can_do": "Florida's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities and a right of access to them. Free legal advocacy for eligible clients.",
+      "who_to_report": "A Florida program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsflorida.org/",
+      "phone": "1-800-342-0823",
+      "phone_note": "Main line 850-488-9071; TDD 1-800-346-4127.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=florida"]
+    }
+  ]
+}

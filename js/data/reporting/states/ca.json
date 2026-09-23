@@ -1,0 +1,80 @@
+{
+  "state": "California",
+  "abbr": "CA",
+  "updated": "2026-09-22",
+  "note": "California has a trap that catches families constantly. The Board of Behavioral Sciences warns that a complaint filed by anyone other than the client may be impossible to pursue, because the client owns the confidentiality of their own treatment records - so a parent complaining about their adult child's therapist, or a sibling complaining for a survivor, may need signed authorisations from everyone involved before the Board can investigate at all. Sort that out before you file, not after.",
+  "channels": [
+    {
+      "id": "ca-board-behavioral-sciences",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "California Board of Behavioral Sciences",
+      "what_it_can_do": "Licenses and disciplines marriage and family therapists, clinical social workers, professional clinical counselors and educational psychologists, and registers their associates. It can file a formal Accusation leading to probation, suspension or revocation of a licence.",
+      "what_it_cannot_do": "A third-party complaint may be impossible for it to pursue unless everyone involved authorises release of the treatment records. An anonymous complaint will be reviewed but, in the Board's own words, may be impossible to pursue without documented evidence.",
+      "who_to_report": "An LMFT, LCSW, LPCC or LEP, or one of their registered associates. Psychologists are the separate Board of Psychology.",
+      "how": "File online through DCA BreEZe, or post the Consumer Complaint Form and Authorization Release. It must be in writing, and first-hand, verifiable detail counts for much more than anything else, including contact details for anyone who can corroborate it.",
+      "complaint_url": "https://www.bbs.ca.gov/consumers/consumer_complaints.html",
+      "info_url": "https://www.bbs.ca.gov/consumers/enforcement_actions.html",
+      "anonymous": "discouraged",
+      "note": "The Board says it reviews every complaint whatever its source, acknowledges receipt in writing where it can, and writes to you again if the disposition changes.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.bbs.ca.gov/consumers/consumer_complaints.html",
+        "https://www.bbs.ca.gov/consumers/enforcement_actions.html"
+      ]
+    },
+    {
+      "id": "ca-community-care-licensing",
+      "category": "facility-licensing",
+      "name": "California Community Care Licensing Division, Centralized Complaint and Information Bureau",
+      "what_it_can_do": "Licenses and inspects Short-Term Residential Therapeutic Programs, group homes and the other children's residential facilities, investigates complaints, and publishes what it finds against each facility.",
+      "who_to_report": "The facility. The Community Care Facility search lets you look a program up first and read its licensing record.",
+      "how": "Call the hotline, or complain online, by email, letter or fax.",
+      "complaint_url": "https://complaints.ccld.dss.ca.gov/Home/SubmitComplaint",
+      "info_url": "https://cdss.ca.gov/inforesources/ccld-complaint-hotline",
+      "phone": "1-844-538-8766",
+      "phone_note": "1-844-LET-US-NO.",
+      "email": "letusno@dss.ca.gov",
+      "mail": "California Department of Social Services, Centralized Complaint and Information Bureau, 744 P Street, Mail Station 9-3-52, Sacramento, CA 95814",
+      "anonymous": "allowed",
+      "note": "The Division says you may remain anonymous.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://cdss.ca.gov/inforesources/ccld-complaint-hotline",
+        "https://cdss.ca.gov/reporting/file-a-complaint/ccld-complaints"
+      ]
+    },
+    {
+      "id": "ca-county-child-protective-services",
+      "category": "legal",
+      "name": "Your county Child Protective Services hotline",
+      "what_it_can_do": "California has no statewide child abuse hotline. Each county runs its own 24-hour line, staffed by trained social workers, and that county agency investigates.",
+      "who_to_report": "A child at a California program. Report to the county the program sits in, not the county you live in.",
+      "how": "Find the county's hotline through the state's reporting page and call it. In an emergency, 911.",
+      "complaint_url": "https://www.cdss.ca.gov/reporting/report-abuse/child-protective-services/report-child-abuse",
+      "info_url": "https://www.cdss.ca.gov/reporting/report-abuse/child-protective-services",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "If it is the county child welfare agency itself that has mishandled things, the state takes complaints about county agencies separately.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.cdss.ca.gov/reporting/report-abuse/child-protective-services/report-child-abuse",
+        "https://www.cdss.ca.gov/reporting/file-a-complaint/county-complaints"
+      ]
+    },
+    {
+      "id": "ca-disability-rights-california",
+      "category": "oversight",
+      "name": "Disability Rights California",
+      "what_it_can_do": "California's Protection and Advocacy agency and the largest in the country. Federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A California program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightsca.org/",
+      "phone": "1-800-776-5746",
+      "phone_note": "Main line 916-504-5800; TTY 1-800-719-5798.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=california"]
+    }
+  ]
+}

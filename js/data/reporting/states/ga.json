@@ -1,0 +1,87 @@
+{
+  "state": "Georgia",
+  "abbr": "GA",
+  "updated": "2026-09-22",
+  "note": "Two things to know about Georgia before you file. The licensing boards will not accept a complaint without the licensee's name and licence number, so look them up first. And several of the outcomes a board can reach - a letter of concern, a private consent order - are confidential and will never be published, so a program's clean public record does not prove nothing was found.",
+  "channels": [
+    {
+      "id": "ga-composite-board",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Georgia Composite Board of Professional Counselors, Social Workers and Marriage and Family Therapists",
+      "what_it_can_do": "Licenses and disciplines professional counselors, social workers and marriage and family therapists. Where a complaint substantiates unlicensed practice, or somebody aiding unlicensed practice, the board can move to a cease and desist order or refer it for criminal prosecution.",
+      "what_it_cannot_do": "It has no power over an unlicensed individual or facility unless they apply for a licence. Investigations are confidential by law, and the board will not tell you over the phone whether it even received your complaint.",
+      "who_to_report": "A counselor, social worker or marriage and family therapist licensed in Georgia. Psychologists have their own board under the same Secretary of State division and the same process.",
+      "how": "Use the Secretary of State's licensing complaint route. You must give the licensee's name and licence number - find them in the licensee search - and attach any supporting documents.",
+      "complaint_url": "https://sos.ga.gov/page/how-submit-licensing-complaint",
+      "info_url": "https://sos.ga.gov/board-professional-counselors-social-workers-and-marriage-family-therapists",
+      "anonymous": "not-allowed",
+      "note": "Complaints and everything about them are exempt from open records and strictly confidential. Of the ways a case can close, only a public consent order and an order for monies received become public; a letter of concern and a private consent order do not.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://sos.ga.gov/page/how-submit-licensing-complaint",
+        "https://sos.ga.gov/board-professional-counselors-social-workers-and-marriage-family-therapists"
+      ]
+    },
+    {
+      "id": "ga-residential-child-care-licensing",
+      "category": "facility-licensing",
+      "name": "Georgia DHS, Office of Inspector General, Residential Child Care Licensing",
+      "what_it_can_do": "Monitors, inspects and licenses residential child care facilities, programs and services, including Child Caring Institutions - the group homes and institutions providing full-time care for six or more children away from their own homes. It investigates complaints against them.",
+      "who_to_report": "The facility. If you know its name or address you can go straight into the public complaint portal.",
+      "how": "Use the public complaint portal, or email the full details to the reports address. Give your contact information if you want to be told what the investigation found; it is kept confidential.",
+      "complaint_url": "https://rcctrails.dhs.ga.gov/Public/PublicComplaintLanding.aspx",
+      "info_url": "https://dhs.georgia.gov/organization/about/divisions-offices/office-inspector-general/residential-child-care-licensing",
+      "email": "RCCreports@dhs.ga.gov",
+      "anonymous": "allowed",
+      "note": "You can complain anonymously, but the unit says it needs your contact details to come back to you with the result.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhs.georgia.gov/organization/about/divisions-offices/office-inspector-general/residential-child-care-licensing",
+        "https://dhs.georgia.gov/contacts/residential-child-care-licensing-unit"
+      ]
+    },
+    {
+      "id": "ga-child-abuse-hotline",
+      "category": "legal",
+      "name": "Georgia Child Abuse and Neglect Reporting (DFCS)",
+      "what_it_can_do": "The statutory report line for child abuse and neglect in Georgia, staffed seven days a week. A report starts a Division of Family and Children Services response.",
+      "who_to_report": "A child at a Georgia program right now.",
+      "how": "Call the hotline. Mandated reporters can also submit a referral through the online child protective services portal.",
+      "complaint_url": "https://cps.dhs.ga.gov/Main/Default.aspx",
+      "info_url": "https://dfcs.georgia.gov/services/child-abuse-neglect",
+      "phone": "1-855-422-4453",
+      "phone_note": "1.855.GACHILD. Seven days a week.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://dfcs.georgia.gov/services/child-abuse-neglect"]
+    },
+    {
+      "id": "ga-office-child-advocate",
+      "category": "oversight",
+      "name": "Georgia Office of the Child Advocate",
+      "what_it_can_do": "An independent state office that reviews how the child protection system handles cases and takes complaints about it. The route when a report has already gone in and nothing has moved.",
+      "what_it_cannot_do": "It reviews the state's handling rather than licensing or prosecuting the program itself.",
+      "who_to_report": "A family or young person who has already reported and got nowhere.",
+      "info_url": "https://oca.georgia.gov/child-abuse-and-neglect-reporting",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://oca.georgia.gov/child-abuse-and-neglect-reporting"]
+    },
+    {
+      "id": "ga-advocacy-office",
+      "category": "oversight",
+      "name": "Georgia Advocacy Office",
+      "what_it_can_do": "Georgia's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Georgia program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://thegao.org/",
+      "phone": "1-800-537-2329",
+      "phone_note": "Main line 404-885-1234 voice/TDD; toll-free TDD 1-800-610-2779.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=georgia"]
+    }
+  ]
+}

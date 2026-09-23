@@ -1,0 +1,93 @@
+{
+  "state": "Montana",
+  "abbr": "MT",
+  "updated": "2026-09-22",
+  "note": "Montana licenses these programs under their own category - Private Alternative Adolescent Residential or Outdoor Programs - so there is a regulator whose job is specifically this industry. Oversight moved in 2019: the legislature dissolved the old PAARP board at the Department of Labor and gave licensing to DPHHS, which has since revoked a program's licence outright. Complaints to the Licensure Bureau are always anonymous, and the corrective actions it imposes are published.",
+  "channels": [
+    {
+      "id": "mt-behavioral-health-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Montana Board of Behavioral Health (Department of Labor and Industry)",
+      "what_it_can_do": "The Department and its licensing boards take action against unprofessional, incompetent or unlawful practice, up to discipline of the licence. The Board of Behavioral Health covers mental health counselors, licensed professional counselors, addiction counselors and social workers; psychologists have their own board, and the same complaint route serves both.",
+      "what_it_cannot_do": "To bring formal charges the Department needs evidence in the form of a document or a statement - a complaint with nothing behind it will not get far.",
+      "who_to_report": "Anyone holding a Montana behavioral health or psychology licence. The Department's licence search shows current status and any disciplinary history.",
+      "how": "Use the online licence complaint form. There is a downloadable paper form as an alternative, and an FAQ written for complainants rather than licensees.",
+      "complaint_url": "https://dli.cliogrow.com/intake/f446463111629815b4d3bcc4f48fcefd",
+      "info_url": "https://bsd.dli.mt.gov/filing-complaint",
+      "phone": "406-444-6880",
+      "email": "DLIBSDCOMPLAINTS@MT.GOV",
+      "mail": "Board of Behavioral Health, 301 S. Park Avenue, 4th Floor, Helena, MT 59620",
+      "anonymous": "unknown",
+      "note": "This board covers the clinician, not the program. A complaint about a facility goes to the DPHHS Licensure Bureau instead, and the Department's own page says so.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://bsd.dli.mt.gov/filing-complaint"]
+    },
+    {
+      "id": "mt-licensure-bureau",
+      "category": "facility-licensing",
+      "name": "Montana DPHHS, Quality Assurance Division, Licensure Bureau",
+      "what_it_can_do": "Licenses and regulates private alternative adolescent residential and outdoor programs, inspects them, imposes corrective action and can revoke a licence. It has done so: Montana permanently revoked one program's licence and removed the children from another.",
+      "who_to_report": "The program itself - conditions, staffing, supervision, how it treats the young people in it.",
+      "how": "Contact the Licensure Bureau by phone or post. The corrective actions it imposes are published on the Bureau's website, so it is worth reading what a program has already been cited for.",
+      "info_url": "https://dphhs.mt.gov/oig/licensure/healthcarefacilitylicensure/lbfacilityapplications/privatealternativeadolescentresidentialoutdoorprogram",
+      "phone": "406-444-6794",
+      "phone_note": "Licensure Bureau Chief 406-439-2504.",
+      "mail": "DPHHS Licensure Bureau, PO Box 202953, Helena, MT 59620-2953",
+      "anonymous": "allowed",
+      "note": "DPHHS states that complaints against the programs it licenses are always kept anonymous.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dphhs.mt.gov/oig/Licensure/lbcontact",
+        "https://dphhs.mt.gov/oig/licensure/healthcarefacilitylicensure/lbfacilityapplications/privatealternativeadolescentresidentialoutdoorprogram"
+      ]
+    },
+    {
+      "id": "mt-child-abuse-hotline",
+      "category": "legal",
+      "name": "Montana Child Abuse and Neglect Hotline (Centralized Intake)",
+      "what_it_can_do": "The statutory intake line for child abuse and neglect. Where a complaint covers both abuse and a licensing breach, the Child and Family Services Division leads the child protection side of the investigation and the Licensure Bureau handles the licence.",
+      "who_to_report": "A child at a Montana program right now. Montana's own rules require the programs themselves to report suspected abuse to this number.",
+      "how": "Call. It takes reports around the clock.",
+      "phone": "1-866-820-5437",
+      "phone_note": "24 hours a day, every day.",
+      "info_url": "https://dojmt.gov/ocfo/",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dojmt.gov/ocfo/",
+        "https://dphhs.mt.gov/assets/oig/PAARPARMS20251.pdf"
+      ]
+    },
+    {
+      "id": "mt-child-family-ombudsman",
+      "category": "oversight",
+      "name": "Montana Office of the Child and Family Ombudsman",
+      "what_it_can_do": "An independent office in the Department of Justice that reviews how the child protection system handles a case and publishes its findings. Useful when a report has already been made and nothing happened.",
+      "what_it_cannot_do": "It reviews the state's handling rather than investigating the program directly, and it does not licence anybody.",
+      "who_to_report": "A family or young person who reported something and has hit a wall.",
+      "how": "File a request for assistance online.",
+      "complaint_url": "https://dojmt.gov/ocfo/ofco-request-for-assistance/",
+      "info_url": "https://dojmt.gov/ocfo/",
+      "phone": "406-444-2759",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://dojmt.gov/ocfo/"]
+    },
+    {
+      "id": "mt-disability-rights-montana",
+      "category": "oversight",
+      "name": "Disability Rights Montana",
+      "what_it_can_do": "Montana's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Montana program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightsmt.org/",
+      "phone": "1-800-245-4743",
+      "phone_note": "Main line 406-449-2344 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=montana"]
+    }
+  ]
+}

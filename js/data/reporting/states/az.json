@@ -1,0 +1,107 @@
+{
+  "state": "Arizona",
+  "abbr": "AZ",
+  "updated": "2026-09-22",
+  "note": "Arizona splits the work three ways: the Board of Behavioral Health Examiners holds the therapist's licence, the Department of Health Services licenses the behavioral health residential facility, and the Department of Child Safety runs both the abuse hotline and its own Office of Licensing and Regulation for group homes. Which licensor applies depends on how the program is registered, so the DHS facility database is worth checking first.",
+  "channels": [
+    {
+      "id": "az-behavioral-health-examiners",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Arizona Board of Behavioral Health Examiners",
+      "what_it_can_do": "Licenses social workers, counselors, marriage and family therapists and substance abuse counselors, investigates complaints against them and disciplines those who breach the standards of practice or their profession's code of ethics.",
+      "who_to_report": "Any of those four licence types. Psychologists are licensed separately by the Arizona Board of Psychologist Examiners, and physicians by the Arizona Medical Board.",
+      "how": "File through the Board's online complaint portal, or post the complaint to the Phoenix address.",
+      "complaint_url": "https://azbbhe.mi-licensing.com/complaint/create",
+      "info_url": "https://bbhe.az.gov/",
+      "phone": "602-542-1882",
+      "email": "information@azbbhe.us",
+      "mail": "Arizona Board of Behavioral Health Examiners, 1740 W. Adams St., Suite 3600, Phoenix, AZ 85007",
+      "anonymous": "unknown",
+      "note": "The Board's own site sits behind a filter that refuses automated clients, so it may look unreachable to a link checker while loading normally in a browser.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://bbhe.az.gov/",
+        "https://azdirect.az.gov/board-behavioral-health-examiners"
+      ]
+    },
+    {
+      "id": "az-dhs-facility-licensing",
+      "category": "facility-licensing",
+      "name": "Arizona Department of Health Services, Behavioral Health Facilities Licensing",
+      "what_it_can_do": "Licenses and inspects behavioral health residential facilities, and investigates complaints about them. It publishes a licence history search and a map of every licensed facility, along with professional licence revocations.",
+      "who_to_report": "The facility. Check the AZ Care Check licence history first - it shows what a program has already been cited for.",
+      "how": "Use the online complaint form.",
+      "complaint_url": "https://app3.azdhs.gov/PROD-AZHSComplaint-UI",
+      "info_url": "https://www.azdhs.gov/licensing/bbhl-facilities/index.php",
+      "anonymous": "allowed",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.azdhs.gov/licensing/index.php",
+        "https://www.azdhs.gov/licensing/bbhl-facilities/index.php"
+      ]
+    },
+    {
+      "id": "az-child-abuse-hotline",
+      "category": "legal",
+      "name": "Arizona Child Abuse Hotline (Department of Child Safety)",
+      "what_it_can_do": "The statutory report line for child abuse and neglect. Reports are taken by a social work professional, and where the child is in a licensed facility the hotline also forwards the report to whichever body holds that licence.",
+      "who_to_report": "A child at an Arizona program. Arizona law (ARS 13-3620.A) requires certain people who suspect non-accidental injury or neglect to report it to DCS or to law enforcement.",
+      "how": "Call the statewide toll-free hotline, or report to a local law enforcement office. Have the child's details, where they are now, and what your concern is.",
+      "info_url": "https://dcs.az.gov/report-child-abuse",
+      "phone": "1-888-767-2445",
+      "phone_note": "1-888-SOS-CHILD.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "DCS finishes by marking a report substantiated or unsubstantiated. Unsubstantiated means the information gathered did not support a finding, not that nothing happened.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcs.az.gov/report-child-abuse"
+      ]
+    },
+    {
+      "id": "az-dcs-licensing-regulation",
+      "category": "facility-licensing",
+      "name": "Arizona DCS Office of Licensing and Regulation",
+      "what_it_can_do": "Licenses and regulates the group homes and child welfare agencies that DCS oversees, as distinct from the behavioral health facilities DHS licenses.",
+      "who_to_report": "A group home or child welfare agency rather than a licensed behavioral health residential facility.",
+      "how": "Contact the office through DCS. DCS also runs a separate ombudsman complaint form for disagreements with the department itself.",
+      "info_url": "https://dcs.az.gov/services/olr",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcs.az.gov/report-child-abuse"
+      ]
+    },
+    {
+      "id": "az-disability-rights-arizona",
+      "category": "oversight",
+      "name": "Disability Rights Arizona",
+      "what_it_can_do": "Arizona's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "An Arizona program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightsaz.org/",
+      "phone": "1-800-927-2260",
+      "phone_note": "Main line 520-327-9547.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=arizona"
+      ]
+    },
+    {
+      "id": "az-ombudsman-citizens-aide",
+      "category": "oversight",
+      "name": "Arizona Ombudsman-Citizens' Aide",
+      "what_it_can_do": "An independent office that investigates complaints about state agencies, including the Department of Child Safety. The route to take when the state body you reported to has not acted.",
+      "what_it_cannot_do": "It looks at the agency's conduct, not the program's. It cannot licence, fine or prosecute anybody.",
+      "who_to_report": "Somebody who has already reported to an Arizona agency and got nowhere.",
+      "info_url": "https://www.azoca.gov/faqs/child-safety/",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.azoca.gov/faqs/child-safety/"
+      ]
+    }
+  ]
+}

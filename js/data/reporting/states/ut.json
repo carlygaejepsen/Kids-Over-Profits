@@ -1,0 +1,117 @@
+{
+  "state": "Utah",
+  "abbr": "UT",
+  "updated": "2026-09-22",
+  "note": "Utah licenses every mental health profession through one division, DOPL, so a complaint about a therapist, a psychologist, a counselor or a psychiatrist all start in the same place. It is also one of the few states with an ombuds office written specifically for young people in residential programs, and that office takes calls from the youth themselves.",
+  "channels": [
+    {
+      "id": "ut-dopl",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Utah Division of Professional Licensing (DOPL)",
+      "what_it_can_do": "Investigates licensed professionals and can discipline, restrict, suspend or revoke a licence. It licenses psychologists, clinical social workers, clinical mental health counselors, marriage and family therapists, substance use disorder counselors and physicians, so one complaint form covers whichever kind of clinician it was.",
+      "what_it_cannot_do": "It says in writing that it will not act as your attorney, will not recover money for you, and cannot investigate for the benefit of your own lawsuit.",
+      "who_to_report": "A named clinician who holds or held a Utah licence. It also takes complaints about unlicensed people practising as though they were licensed, which is worth knowing in an industry that leans on unlicensed staff.",
+      "how": "File through the online complaint service, or download the PDF form and mail it. Complete every section; write N/A where one does not apply.",
+      "complaint_url": "https://commerce.utah.gov/dopl/file-a-complaint/",
+      "info_url": "https://commerce.utah.gov/dopl/enforcement/disciplinary-actions-and-citations/",
+      "phone": "801-530-6628",
+      "phone_note": "Monday to Friday, 8am to 5pm Mountain, except state holidays.",
+      "email": "DOPL@utah.gov",
+      "mail": "Utah Division of Professional Licensing, P.O. Box 146741, Salt Lake City, UT 84114-6741",
+      "anonymous": "discouraged",
+      "note": "Complaints are not public record under Utah law. DOPL publishes the disciplinary actions that result, so you can check whether anything came of an earlier one.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://commerce.utah.gov/dopl/file-a-complaint/",
+        "https://commerce.utah.gov/dopl/enforcement/disciplinary-actions-and-citations/"
+      ]
+    },
+    {
+      "id": "ut-office-of-licensing",
+      "category": "facility-licensing",
+      "name": "Utah Office of Licensing, Division of Licensing and Background Checks (DLBC)",
+      "what_it_can_do": "Licenses and inspects the residential treatment programs, therapeutic schools and outdoor youth programs themselves. It sets the health and safety standards, inspects against them, and can require corrective action, impose civil money penalties, or act against the licence.",
+      "what_it_cannot_do": "It regulates the program, not the individual therapist - that is DOPL - and it does not investigate the abuse allegation itself, which goes to DCFS.",
+      "who_to_report": "The facility: staffing levels, restraint and seclusion practice, conditions, supervision, anything that is a standards problem rather than one person's conduct.",
+      "how": "Contact the Office of Licensing directly. Utah publishes its inspection findings, so it is worth reading what has already been cited before you call.",
+      "info_url": "https://dlbc.utah.gov/home/office-of-licensing/human-services/",
+      "phone": "801-538-4242",
+      "phone_note": "Monday to Friday, 8am to 5pm, except state holidays.",
+      "mail": "Division of Licensing and Background Checks, 195 North 1950 West, Salt Lake City, UT 84116",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dlbc.utah.gov/home/office-of-licensing/",
+        "https://dlbc.utah.gov/information-for-the-public/contact/"
+      ]
+    },
+    {
+      "id": "ut-dcfs-hotline",
+      "category": "legal",
+      "name": "Utah Division of Child and Family Services child abuse hotline",
+      "what_it_can_do": "The statutory intake point for child abuse and neglect in Utah. A report here starts a CPS investigation and can bring in law enforcement.",
+      "who_to_report": "A child currently at a program in Utah who is being abused or neglected, or who is in a situation likely to result in it.",
+      "how": "Call the 24/7 intake line, or use the online reporting form. Give names and ages, what happened, any injuries you saw, and dates.",
+      "complaint_url": "https://dcfs.utah.gov/child-abuse-reporting-form/",
+      "info_url": "https://dcfs.utah.gov/contact-us",
+      "phone": "1-855-323-3237",
+      "phone_note": "1-855-323-DCFS. 24 hours, every day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "deadline": "No deadline on making a report.",
+      "note": "Under Utah Code 80-2-601 anyone who believes a child is being abused must report it; failure to report can be a crime. Reporters acting in good faith are protected from civil and criminal liability. If DCFS itself mishandles the report, the independent Child Protection Ombudsman takes complaints about DCFS on 801-538-4589.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dcfs.utah.gov/contact-us",
+        "https://dcfs.utah.gov/child-abuse-reporting-form/"
+      ]
+    },
+    {
+      "id": "ut-medicaid-fraud-patient-abuse",
+      "category": "legal",
+      "name": "Utah Attorney General, Medicaid Fraud and Patient Abuse Division",
+      "what_it_can_do": "Criminally investigates and prosecutes both Medicaid provider fraud and the abuse, neglect or exploitation of patients, where the abuse happened in a health care facility or any setting where a provider is paid by Medicaid. This is a prosecutor's office, not a licensing body: it is the channel that can put somebody in front of a criminal court.",
+      "who_to_report": "A program paid by Medicaid where a young person was abused, neglected or exploited, or where the billing does not match the care that was given.",
+      "how": "Call or email the division directly, or use the Attorney General's online report form.",
+      "complaint_url": "https://attorneygeneral.utah.gov/medicaid-fraud/",
+      "phone": "801-281-1259",
+      "email": "mfcucomplaints@agutah.gov",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://attorneygeneral.utah.gov/medicaid-fraud/"]
+    },
+    {
+      "id": "ut-youth-in-care-ombuds",
+      "category": "oversight",
+      "name": "Utah Youth in Care (Congregate Care) Ombuds",
+      "what_it_can_do": "An independent office inside DHHS for young people in residential programs, therapeutic schools and outdoor youth programs. It listens, advocates, conducts independent reviews, works directly with the program, and can open an investigation. It takes calls from a youth still inside a Utah program and from a parent in another state.",
+      "what_it_cannot_do": "It does not investigate abuse or neglect allegations - those go to DCFS - and it does not investigate health and safety standards, which go to the Office of Licensing. It refers them on rather than dropping them. It does not give legal advice.",
+      "who_to_report": "A young person in a Utah program who feels unheard or unsafe, or a parent who cannot get a straight answer out of the program.",
+      "how": "Submit the online contact form. You will hear back within three business days, and contact is confidential.",
+      "complaint_url": "https://dhhs.utah.gov/ombuds-services/congregate-care-ombuds/congregate-care-contact/",
+      "info_url": "https://dhhs.utah.gov/ombuds-services/congregate-care-ombuds/",
+      "anonymous": "not-allowed",
+      "deadline": "There is a time limit and the office states it two different ways: the programme page says you must make contact within 9 months of the incident, while the contact form says the situation must have occurred within the last 3 months. Treat 3 months as the safe assumption and call if you are outside it.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dhhs.utah.gov/ombuds-services/congregate-care-ombuds/",
+        "https://dhhs.utah.gov/ombuds-services/congregate-care-ombuds/congregate-care-contact/"
+      ]
+    },
+    {
+      "id": "ut-disability-law-center",
+      "category": "oversight",
+      "name": "Disability Law Center (Utah's Protection and Advocacy agency)",
+      "what_it_can_do": "Utah's federally mandated P&A. It investigates abuse and neglect in residential facilities, has a right of access to them, and provides free legal advocacy to eligible clients, including representation in hearings and court. Its published reports on Utah programs have forced state responses.",
+      "who_to_report": "A Utah program where the young person has a disability or a mental health diagnosis. Call and ask if you are not sure whether that applies.",
+      "how": "Intake by phone, or online through the site. It no longer takes walk-ins, though you can come in to fill in the paperwork.",
+      "info_url": "https://disabilitylawcenter.org/about/contact-us/",
+      "phone": "1-800-662-9080",
+      "phone_note": "Salt Lake City line 801-363-1347. Video Relay Service available.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://disabilitylawcenter.org/about/contact-us/"]
+    }
+  ]
+}

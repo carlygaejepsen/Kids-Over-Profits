@@ -1,0 +1,73 @@
+{
+  "state": "Idaho",
+  "abbr": "ID",
+  "updated": "2026-09-22",
+  "note": "Idaho has a trap worth knowing before you pick up the phone. The child protection division's role is limited to what happens in a family home: where the person who harmed a child does not live with them, as in any residential program, the report is forwarded to law enforcement instead of being investigated by child protection. So for abuse inside a program, the police and the licensing division are the substantive channels, and the hotline is the way in rather than the destination.",
+  "channels": [
+    {
+      "id": "id-dopl",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Idaho Division of Occupational and Professional Licenses (DOPL)",
+      "what_it_can_do": "Houses the boards for professional counselors and marriage and family therapists, psychologist examiners, and social work examiners, and runs a single complaint and investigation process for all of them. Where a formal administrative complaint is filed, an independent administrative law judge holds an evidentiary hearing.",
+      "what_it_cannot_do": "If there is no jurisdiction, or no possible breach of that board's own laws and rules, no case is opened at all.",
+      "who_to_report": "A counselor, marriage and family therapist, psychologist or social worker licensed in Idaho.",
+      "how": "File through the Division's complaint page. It decides first whether there is jurisdiction, then whether to assign an investigator.",
+      "complaint_url": "https://dopl.idaho.gov/filing-a-complaint/",
+      "info_url": "https://dopl.idaho.gov/investigation-and-disciplinary-process/",
+      "phone": "208-334-3233",
+      "email": "dopl@dopl.idaho.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://dopl.idaho.gov/filing-a-complaint/",
+        "https://dopl.idaho.gov/investigation-and-disciplinary-process/"
+      ]
+    },
+    {
+      "id": "id-childrens-residential-licensing",
+      "category": "facility-licensing",
+      "name": "Idaho DHW, Children's Residential Licensing",
+      "what_it_can_do": "Licenses children's residential care facilities, children's agencies and children's therapeutic outdoor programs under IDAPA 16.04.18, and investigates complaints against them. Its representatives must be given access to the program, its grounds and its records to investigate a complaint - a real power in an industry that relies on keeping people out.",
+      "what_it_cannot_do": "Idaho exempts a good deal from licensing, including facilities operating as private or religious schools. An exempt program is outside this channel, which is exactly the gap several Idaho programs have operated in.",
+      "who_to_report": "A licensed children's residential care facility or therapeutic outdoor program. If the program claims to be a private or religious school, check whether anybody licenses it at all.",
+      "how": "Call the complaint line or email.",
+      "info_url": "https://healthandwelfare.idaho.gov/providers/childrens-residential-licensing/childrens-residential-programs",
+      "phone": "1-877-457-2815",
+      "email": "DDARH@dhw.idaho.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://healthandwelfare.idaho.gov/providers/childrens-residential-licensing/childrens-residential-programs"]
+    },
+    {
+      "id": "id-child-abuse-hotline",
+      "category": "legal",
+      "name": "Idaho Child Abuse and Neglect Hotline",
+      "what_it_can_do": "Takes reports of child abuse, neglect and abandonment around the clock. Where the person who harmed the child does not live in their home, the report is forwarded to law enforcement - which is the usual position for abuse inside a program.",
+      "who_to_report": "A child at an Idaho program. Idaho Code 16-1605 requires everyone in Idaho to report suspected abuse, neglect or abandonment, with a narrow exception for clergy.",
+      "how": "Call. You do not have to be sure, and you do not have to prove anything first; the Department says to let it or law enforcement decide. Report within 24 hours of becoming aware if you can.",
+      "info_url": "https://healthandwelfare.idaho.gov/services-programs/children-families-older-adults/child-and-family-services-and-foster-care-3",
+      "phone": "1-855-552-5437",
+      "phone_note": "855-552-KIDS. In the Treasure Valley, 208-334-5437. 24 hours a day.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "note": "Callers may stay anonymous, and the Department says it does not disclose caller information to the family. Reporting in good faith carries immunity from civil liability.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://healthandwelfare.idaho.gov/services-programs/children-families-older-adults/child-and-family-services-and-foster-care-3"]
+    },
+    {
+      "id": "id-disability-rights-idaho",
+      "category": "oversight",
+      "name": "DisAbility Rights Idaho",
+      "what_it_can_do": "Idaho's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy. In a state where much of the industry sits outside licensing, a P&A investigation may be the only outside look a program ever gets.",
+      "who_to_report": "An Idaho program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://disabilityrightsidaho.org/",
+      "phone": "1-866-262-3462",
+      "phone_note": "Main line 208-336-5353 voice/TDD.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=idaho"]
+    }
+  ]
+}

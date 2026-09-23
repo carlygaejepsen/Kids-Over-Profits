@@ -1,0 +1,93 @@
+{
+  "state": "Tennessee",
+  "abbr": "TN",
+  "updated": "2026-09-22",
+  "note": "Three Tennessee specifics. The abuse hotline stops taking calls at weekends - from 11pm Central Friday to 11pm Central Sunday it plays a recording sending you to the online portal - so if something happens on a Saturday, use the portal. Licensing splits on whether a program calls itself clinical: DCS licenses the non-clinical residential programs, the Health Facilities Commission licenses the healthcare facilities. And unlike most states, the Department of Health says it will not reveal a complainant's name to the practitioner.",
+  "channels": [
+    {
+      "id": "tn-health-related-boards",
+      "category": "professional-board",
+      "profession": "Multiple professions",
+      "name": "Tennessee Department of Health, Health Related Boards, Office of Investigations",
+      "what_it_can_do": "Investigates complaints against every mental health practitioner the state licenses - professional counselors, marital and family therapists, clinical pastoral therapists, social workers and psychologists - through one Office of Investigations. A board consultant and a department attorney decide whether the statutes or rules were broken.",
+      "what_it_cannot_do": "If they conclude there was no statutory violation the file is closed, and all you get is a letter telling you so.",
+      "who_to_report": "Any licensed or certified mental health practitioner in Tennessee.",
+      "how": "Complete an Allegations Report form and the voluntary Release of Information form, attach your evidence, and send them in. Call the Office of Investigations first if you want to talk it through, or to ask whether the practitioner has been disciplined before.",
+      "complaint_url": "https://www.tn.gov/content/dam/tn/health/healthprofboards/PH-3466.pdf",
+      "info_url": "https://www.tn.gov/health/licensure/pct.html",
+      "phone": "1-800-852-2187",
+      "phone_note": "Office of Investigations. Board office 615-741-5735, or 1-800-778-4123 nationwide.",
+      "email": "Unit1HRB.Health@tn.gov",
+      "mail": "Health Related Boards, 665 Mainstream Drive, 2nd Floor, Nashville, TN 37243",
+      "anonymous": "discouraged",
+      "note": "Your name is not revealed to the practitioner - the Department says the complainant's identity is confidential. You are given a complaint number and written notice when the case reaches a disposition. A complaint only becomes public if the Department files a notice of charges. The Department's website was being relaunched when this was checked, so some of its pages have moved.",
+      "verified_on": "2026-09-22",
+      "sources": [
+        "https://www.tn.gov/content/dam/tn/health/healthprofboards/PH-3466.pdf",
+        "https://www.tn.gov/health/licensure/pct.html"
+      ]
+    },
+    {
+      "id": "tn-health-facilities-commission",
+      "category": "facility-licensing",
+      "name": "Tennessee Health Facilities Commission, Complaint Intake Unit",
+      "what_it_can_do": "Licenses and regulates healthcare facilities in Tennessee and takes complaints against licensed, certified and unlicensed ones alike - the unlicensed part matters in this industry. It publishes facility action and abuse reports, and survey deficiencies for any facility taking Medicare or TennCare.",
+      "who_to_report": "A facility providing clinical treatment, or one you believe is operating without a licence.",
+      "how": "Use the public complaints portal, call the intake unit, or ask them to post you a complaint form.",
+      "complaint_url": "https://www.tn.gov/hfc/division-of-licensure-and-regulation/filing-a-complaint.html",
+      "info_url": "https://www.tn.gov/hfc/publication-and-reports/facility-action-and-abuse-reports.html",
+      "phone": "1-877-287-0010",
+      "phone_note": "Toll free, Monday to Friday 8:00am to 4:30pm.",
+      "mail": "Tennessee Health Facilities Commission, Andrew Jackson Building, 9th Floor, 502 Deaderick Street, Nashville, TN 37243",
+      "anonymous": "allowed",
+      "note": "The online Public Records and Complaints portal opened to the public in July 2025 and is the quickest route.",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.tn.gov/hfc/division-of-licensure-and-regulation/filing-a-complaint.html"]
+    },
+    {
+      "id": "tn-child-welfare-licensing",
+      "category": "facility-licensing",
+      "name": "Tennessee DCS, Office of Child Welfare Licensing",
+      "what_it_can_do": "Licenses and regulates Tennessee's non-clinical residential programs for children and youth, including private foster care programs, runaway houses and maternity homes, and takes complaints about them. Its board of review weighs the safety and best interests of the children, the training and character of the staff, and whether caregivers will actually protect children from harm.",
+      "what_it_cannot_do": "It does not licence a facility providing clinical treatment; that is the Health Facilities Commission, or the Department of Mental Health and Substance Abuse Services.",
+      "who_to_report": "A non-clinical residential program, or a program you believe is operating without the licence it needs.",
+      "how": "Email the licensing office with the details, or call the child care complaint hotline.",
+      "info_url": "https://www.tn.gov/dcs/program-areas/licensing.html",
+      "phone": "1-800-462-8261",
+      "email": "EI_DCS.Licensing@tn.gov",
+      "anonymous": "unknown",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.tn.gov/dcs/program-areas/licensing.html"]
+    },
+    {
+      "id": "tn-child-abuse-hotline",
+      "category": "legal",
+      "name": "Tennessee Child Abuse Hotline",
+      "what_it_can_do": "The statutory report line for child abuse and neglect, run by the Department of Children's Services.",
+      "who_to_report": "A child at a Tennessee program. Tennessee Code 37-1-403 makes everyone in the state a mandated reporter.",
+      "how": "Call, or use the secure online referral portal. At weekends the phone line redirects you to the portal, so use it directly then.",
+      "complaint_url": "https://carat.app.tn.gov/carat/",
+      "info_url": "https://www.tn.gov/dcs/program-areas/child-safety/report-child-abuse.html",
+      "phone": "1-877-237-0004",
+      "phone_note": "24 hours on weekdays. From 11pm Central Friday to 11pm Central Sunday the call is redirected to the online portal.",
+      "anonymous": "allowed",
+      "mandatory_reporter": true,
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.tn.gov/dcs/program-areas/child-safety/report-child-abuse.html"]
+    },
+    {
+      "id": "tn-disability-rights-tennessee",
+      "category": "oversight",
+      "name": "Disability Rights Tennessee",
+      "what_it_can_do": "Tennessee's Protection and Advocacy agency, with federal authority to investigate abuse and neglect of people with disabilities in facilities, a right of access to them, and free legal advocacy.",
+      "who_to_report": "A Tennessee program where the young person has a disability or a mental health diagnosis.",
+      "how": "Contact the intake line.",
+      "info_url": "https://www.disabilityrightstn.org/",
+      "phone": "1-800-342-1660",
+      "phone_note": "Main line 615-298-1080; TTY 1-800-852-2852.",
+      "anonymous": "discouraged",
+      "verified_on": "2026-09-22",
+      "sources": ["https://www.ndrn.org/about/ndrn-member-agencies/?agency_location=tennessee"]
+    }
+  ]
+}
