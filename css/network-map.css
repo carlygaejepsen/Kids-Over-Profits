@@ -65,6 +65,12 @@
 	opacity: 0.7;
 }
 
+.kop-network__donate {
+	flex: 0 0 auto;
+	align-self: center;
+	margin-left: auto;
+}
+
 .kop-network__editorial {
 	flex: 1 0 100%;
 	margin-top: 0.5rem;

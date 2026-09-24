@@ -78,6 +78,24 @@ function kop_template_layout_no_sidebar() {
 }
 
 /**
+ * The sidebar's Givebutter donate button, for the templates above that drop
+ * the sidebar. The widget library is enqueued site-wide by the Givebutter
+ * plugin, so the element alone is enough. Filter 'kop_donate_widget_id' if
+ * the widget in Appearance > Widgets is ever replaced.
+ */
+function kop_donate_widget($class = '') {
+    $id = (string) apply_filters('kop_donate_widget_id', 'Lv4r0p');
+    if ($id === '') {
+        return;
+    }
+    printf(
+        '<div class="kop-donate%s"><givebutter-widget id="%s"></givebutter-widget></div>',
+        $class !== '' ? ' ' . esc_attr($class) : '',
+        esc_attr($id)
+    );
+}
+
+/**
  * Kadence resolves the page layout lazily (first has_sidebar() call, which
  * happens while building the body class), so a filter registered at load
  * time is enough to switch the admin tools to no sidebar.

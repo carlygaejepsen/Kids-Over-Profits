@@ -121,6 +121,56 @@ function kop_glossary_entry_matches($entry, $program, $words) {
     return true;
 }
 
+/**
+ * Glossary entries for the site search (inc/global-search.php, search.php):
+ * a phrase found in the term or an aka ranks first, then one found in the
+ * definition. Each item: term, url (the entry's anchor on /glossary/), text
+ * (the definition, markdown stripped) and section.
+ */
+function kop_glossary_search($phrase, $limit = 5) {
+    $data = kop_glossary_data();
+    $phrase = trim((string) $phrase);
+    if (!$data || $phrase === '') {
+        return array();
+    }
+    $lower = function ($s) {
+        return function_exists('mb_strtolower') ? mb_strtolower((string) $s, 'UTF-8') : strtolower((string) $s);
+    };
+    $needle = $lower($phrase);
+    $page = get_page_by_path(KOP_GLOSSARY_SLUG);
+    $base = $page ? get_permalink($page) : home_url('/' . KOP_GLOSSARY_SLUG . '/');
+
+    $hits = array();
+    $walk = function ($node, $section) use (&$walk, &$hits, $needle, $lower, $base) {
+        foreach ($node['entries'] as $entry) {
+            $names = $lower($entry['term'] . ' ' . implode(' ', $entry['aka']));
+            $rank = $lower($entry['term']) === $needle ? 0
+                : (strpos($names, $needle) !== false ? 1
+                : (strpos(kop_glossary_entry_haystack($entry), $needle) !== false ? 2 : -1));
+            if ($rank < 0) {
+                continue;
+            }
+            $hits[] = array(
+                'rank'    => $rank,
+                'term'    => $entry['term'] . ($entry['note'] !== '' ? ' (' . $entry['note'] . ')' : ''),
+                'url'     => $base . '#' . $entry['id'],
+                'text'    => str_replace('*', '', $entry['text']),
+                'section' => $section,
+            );
+        }
+        foreach ($node['groups'] as $group) {
+            $walk($group, $group['title']);
+        }
+    };
+    foreach ($data['sections'] as $section) {
+        $walk($section, $section['title']);
+    }
+    usort($hits, function ($a, $b) {
+        return $a['rank'] - $b['rank'] ?: strcasecmp($a['term'], $b['term']);
+    });
+    return array_slice($hits, 0, $limit);
+}
+
 /** The program list's display name for a slug, or ''. */
 function kop_glossary_program_name($slug) {
     $data = kop_glossary_data();
@@ -360,6 +410,9 @@ function kop_glossary_render_page($program, $query, $page_url) {
                         <?php endforeach; ?>
                     </ol>
                 </details>
+                <?php if (function_exists('kop_donate_widget')) {
+                    kop_donate_widget('kop-gl-donate');
+                } ?>
             </nav>
 
             <div class="kop-gl-main">

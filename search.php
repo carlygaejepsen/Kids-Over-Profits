@@ -439,6 +439,32 @@ global $wpdb;
 
     <?php
     // -------------------------------------------------------------------------
+    // 4b. Glossary terms (js/data/glossary/glossary.json)
+    // -------------------------------------------------------------------------
+    $glossary_results = function_exists('kop_glossary_search') ? kop_glossary_search($search_query, 10) : array();
+    ?>
+
+    <?php if (!empty($glossary_results)): ?>
+    <section class="kop-search-section kop-search-glossary">
+        <h2 class="kop-search-section-title">Glossary</h2>
+        <ul class="kop-search-result-list">
+            <?php foreach ($glossary_results as $hit): ?>
+            <li class="kop-search-result kop-result-glossary">
+                <div class="kop-result-main">
+                    <a class="kop-result-name kop-result-link" href="<?php echo esc_url($hit['url']); ?>">
+                        <?php echo esc_html($hit['term']); ?>
+                    </a>
+                    <span class="kop-result-meta"><?php echo esc_html($hit['section']); ?></span>
+                    <p class="kop-result-summary"><?php echo esc_html(wp_trim_words($hit['text'], 25)); ?></p>
+                </div>
+            </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+    <?php endif; ?>
+
+    <?php
+    // -------------------------------------------------------------------------
     // 5. WordPress posts / pages
     // -------------------------------------------------------------------------
     $wp_results = new WP_Query(array(
@@ -471,7 +497,7 @@ global $wpdb;
     </section>
     <?php endif; ?>
 
-    <?php if (!$any_master_results && empty($wiki_results) && empty($inspection_results) && empty($news_results) && !$wp_results->have_posts()): ?>
+    <?php if (!$any_master_results && empty($wiki_results) && empty($inspection_results) && empty($news_results) && empty($glossary_results) && !$wp_results->have_posts()): ?>
         <div class="kop-search-no-results">
             <p>No results found for <strong><?php echo $safe_query; ?></strong>. Try a different term, or <a href="<?php echo esc_url(get_post_type_archive_link('page')); ?>">browse the site</a>.</p>
         </div>

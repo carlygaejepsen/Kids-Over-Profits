@@ -77,6 +77,14 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 		<?php endif; ?>
 
 		<?php
+		// The site sidebar is dropped for the map's width; its donate button
+		// is not.
+		if (function_exists('kop_donate_widget')) {
+			kop_donate_widget('kop-network__donate');
+		}
+		?>
+
+		<?php
 		// Anything an editor adds to the page body renders above the map.
 		if (trim(get_the_content()) !== '') {
 			echo '<div class="kop-network__editorial entry-content">';
