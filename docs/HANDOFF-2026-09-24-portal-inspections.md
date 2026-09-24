@@ -22,8 +22,13 @@ up. Section 8 is the open work, in the order I would do it.
 - **Other sessions share this checkout.** Stage files by path, never
   `git add -A` or `git add .`. Before committing, run
   `git status --short` and leave other people's modified files alone.
-  At the time of writing, `CLAUDE.md` and `README.md` have
-  uncommitted edits that are not from this session.
+  At the time of writing, another session has uncommitted work across
+  about 25 files: `CLAUDE.md`, `README.md`, and the data forms
+  (`api/save-master.php`, `api/save-suggestion.php`,
+  `js/data-form-modules/*`, `templates/data-form-*.php`, a new
+  `js/data-form/provider-form.js`, and parts of `inc/enqueue.php` and
+  `inc/rest-api.php`). None of it is from this session. Do not commit
+  it or revert it.
 - **No emojis** anywhere: chat, code, UI text or commit messages.
 - **Reports to the owner** carry full clickable URLs: live pages,
   GitHub commits
