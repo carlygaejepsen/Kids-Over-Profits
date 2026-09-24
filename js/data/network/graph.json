@@ -4,23 +4,23 @@
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 1345,
-   "edges": 2539,
-   "facilityMatches": 531,
-   "withYears": 323,
+   "edges": 2540,
+   "facilityMatches": 537,
+   "withYears": 329,
    "withDeaths": 28,
    "rebranded": 89,
-   "profileEdges": 96,
+   "profileEdges": 97,
    "staffMovementEdges": 26,
    "staffListEdges": 936,
    "addedPeople": 345,
    "kind_person": 678,
-   "kind_facility": 528,
+   "kind_facility": 527,
    "kind_parent": 93,
    "kind_association": 14,
    "kind_government": 16,
    "kind_church": 7,
-   "kind_other": 9,
-   "edge_corporate": 637,
+   "kind_other": 10,
+   "edge_corporate": 638,
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 11,
@@ -363,9 +363,9 @@
    ],
    "natsap": false,
    "importance": 0,
-   "degree": 48,
+   "degree": 49,
    "degreeByCategory": {
-    "corporate": 38,
+    "corporate": 39,
     "leadership": 8,
     "admissions": 1,
     "board": 1
@@ -2265,7 +2265,13 @@
     "x": -223.61,
     "y": 458.03
    },
-   "years": "from 1998"
+   "years": "from 1998",
+   "formerNames": [
+    "Second Nature Wilderness Program"
+   ],
+   "otherNames": [
+    "Second Nature Therapeutic Program"
+   ]
   },
   {
    "id": "youth-care-of-utah",
@@ -8352,8 +8358,8 @@
     "corporate": 3,
     "leadership": 1
    },
-   "facilityId": 100032,
-   "uniqueName": "Eckerd Academy of the Blue Ridge (GA)",
+   "facilityId": 12514,
+   "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
@@ -8781,7 +8787,10 @@
     "x": -251.05,
     "y": -693.63
    },
-   "years": "1978-2005"
+   "years": "1978-2005",
+   "otherNames": [
+    "Bethel Academy"
+   ]
   },
   {
    "id": "hill-crest-behavioral-health",
@@ -10510,18 +10519,15 @@
     "corporate": 3,
     "leadership": 1
    },
-   "facilityId": 100079,
-   "uniqueName": "Sequel TSI Owens Cross Roads (AL)",
+   "facilityId": 9644,
+   "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -755.97,
     "y": 9.05
    },
-   "otherNames": [
-    "Three Springs Turning Point",
-    "Three Springs New Beginnings"
-   ]
+   "years": "from 1996"
   },
   {
    "id": "sequel-tsi-tuskegee",
@@ -12169,14 +12175,15 @@
    "degreeByCategory": {
     "corporate": 3
    },
-   "facilityId": 100079,
+   "facilityId": 9644,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -773.96,
     "y": 9.05
-   }
+   },
+   "years": "from 1996"
   },
   {
    "id": "brightway-adolescent-hospital",
@@ -25289,14 +25296,19 @@
     "leadership": 1,
     "corporate": 1
    },
-   "facilityId": null,
+   "facilityId": 100123,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -690.18,
     "y": -411.47
-   }
+   },
+   "years": "2006-2008",
+   "formerNames": [
+    "Straight – Midwest, Inc.",
+    "Kids Helping Kids of Cincinnati"
+   ]
   },
   {
    "id": "kids-of-north-new-jersey",
@@ -25630,6 +25642,35 @@
    },
    "addedFrom": [
     "staff list"
+   ]
+  },
+  {
+   "id": "la-salle-county-juvenile-justice-center",
+   "name": "La Salle County Juvenile Justice Center",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 2,
+   "degreeByCategory": {
+    "corporate": 2
+   },
+   "facilityId": 100176,
+   "uniqueName": "La Salle County Juvenile Justice Center",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -510.69,
+    "y": -290.93
+   },
+   "years": "1998-2000",
+   "otherNames": [
+    "Cotulla Boot Camp"
    ]
   },
   {
@@ -30660,7 +30701,8 @@
    },
    "years": "from 2024",
    "otherNames": [
-    "Ironwood Maine (2006-2024)"
+    "Ironwood Maine (2006-2024)",
+    "Ridge RTC Maine"
    ]
   },
   {
@@ -30847,7 +30889,8 @@
    },
    "years": "from 1996",
    "otherNames": [
-    "Three Springs Turning Point"
+    "Three Springs Turning Point",
+    "Three Springs New Beginnings"
    ]
   },
   {
@@ -31112,14 +31155,15 @@
     "leadership": 1,
     "corporate": 1
    },
-   "facilityId": null,
+   "facilityId": 100139,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -166.25,
     "y": 382.62
-   }
+   },
+   "years": "from 1988"
   },
   {
    "id": "utah-girls-village",
@@ -31692,14 +31736,18 @@
    "degreeByCategory": {
     "unknown": 1
    },
-   "facilityId": null,
+   "facilityId": 12561,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -153.13,
     "y": -294.94
-   }
+   },
+   "formerNames": [
+    "Inner Harbour for Children and Families",
+    "Anneewakee Treatment Center for Emotionally Disturbed Youth"
+   ]
   },
   {
    "id": "arden-oaks-rtc",
@@ -34060,11 +34108,7 @@
     "x": -698.61,
     "y": -378.04
    },
-   "years": "2006-2008",
-   "formerNames": [
-    "Straight – Midwest, Inc.",
-    "Kids Helping Kids of Cincinnati"
-   ]
+   "years": "2006-2008"
   },
   {
    "id": "koinonia-foster-homes",
@@ -34116,31 +34160,6 @@
     "y": -276.73
    },
    "years": "from 2012"
-  },
-  {
-   "id": "la-salle-county-juvenile-justice-center",
-   "name": "La Salle County Juvenile Justice Center",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 1,
-   "degreeByCategory": {
-    "corporate": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -510.69,
-    "y": -290.93
-   }
   },
   {
    "id": "lad-lake",
@@ -35315,8 +35334,8 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100177,
+   "uniqueName": "Promise House",
    "dates": "",
    "isolated": false,
    "board": {
@@ -35692,14 +35711,18 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100178,
+   "uniqueName": "Salinas Treatment Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -510.69,
     "y": -284.14
-   }
+   },
+   "years": "until 2002",
+   "otherNames": [
+    "Salinas Behavioral Management Treatment Facility for Males"
+   ]
   },
   {
    "id": "samaritan-daytop-village",
@@ -36176,7 +36199,7 @@
    "id": "teen-discovery",
    "name": "Teen Discovery",
    "aliases": [],
-   "kind": "facility",
+   "kind": "other",
    "status": "closed",
    "chain": "WWASPS",
    "regions": [
@@ -57041,6 +57064,20 @@
   },
   {
    "id": "p0056",
+   "source": "correctional-services-corporation",
+   "target": "la-salle-county-juvenile-justice-center",
+   "category": "corporate",
+   "roles": [
+    "past operator"
+   ],
+   "raw": "past operator (facility profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0057",
    "source": "altior-healthcare",
    "target": "the-ridge-maine",
    "category": "corporate",
@@ -57054,7 +57091,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0057",
+   "id": "p0058",
    "source": "acadia-healthcare",
    "target": "turn-about-ranch",
    "category": "corporate",
@@ -57068,23 +57105,9 @@
    "provenance": "profile"
   },
   {
-   "id": "p0058",
-   "source": "acadia-healthcare",
-   "target": "youth-care-of-utah",
-   "category": "corporate",
-   "roles": [
-    "operator"
-   ],
-   "raw": "operator (operator profile)",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": true,
-   "provenance": "profile"
-  },
-  {
    "id": "p0059",
    "source": "acadia-healthcare",
-   "target": "village-behavioral-health-treatment-center",
+   "target": "youth-care-of-utah",
    "category": "corporate",
    "roles": [
     "operator"
@@ -57098,7 +57121,7 @@
   {
    "id": "p0060",
    "source": "acadia-healthcare",
-   "target": "ridgeview-group-home",
+   "target": "village-behavioral-health-treatment-center",
    "category": "corporate",
    "roles": [
     "operator"
@@ -57112,7 +57135,7 @@
   {
    "id": "p0061",
    "source": "acadia-healthcare",
-   "target": "talisman-camps",
+   "target": "ridgeview-group-home",
    "category": "corporate",
    "roles": [
     "operator"
@@ -57126,7 +57149,7 @@
   {
    "id": "p0062",
    "source": "acadia-healthcare",
-   "target": "aspen-education-group",
+   "target": "talisman-camps",
    "category": "corporate",
    "roles": [
     "operator"
@@ -57139,8 +57162,8 @@
   },
   {
    "id": "p0063",
-   "source": "aspen-education-group",
-   "target": "youth-care-of-utah",
+   "source": "acadia-healthcare",
+   "target": "aspen-education-group",
    "category": "corporate",
    "roles": [
     "operator"
@@ -57154,6 +57177,20 @@
   {
    "id": "p0064",
    "source": "aspen-education-group",
+   "target": "youth-care-of-utah",
+   "category": "corporate",
+   "roles": [
+    "operator"
+   ],
+   "raw": "operator (operator profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": true,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0065",
+   "source": "aspen-education-group",
    "target": "outback-therapeutic-expeditions",
    "category": "corporate",
    "roles": [
@@ -57166,7 +57203,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0065",
+   "id": "p0066",
    "source": "aspen-education-group",
    "target": "pine-ridge-academy",
    "category": "corporate",
@@ -57180,7 +57217,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0066",
+   "id": "p0067",
    "source": "aspen-education-group",
    "target": "lone-star-expeditions",
    "category": "corporate",
@@ -57194,7 +57231,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0067",
+   "id": "p0068",
    "source": "aspen-education-group",
    "target": "talisman-school",
    "category": "corporate",
@@ -57208,7 +57245,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0068",
+   "id": "p0069",
    "source": "aspen-education-group",
    "target": "bromley-brook-school",
    "category": "corporate",
@@ -57222,7 +57259,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0069",
+   "id": "p0070",
    "source": "aspen-education-group",
    "target": "cedars-academy",
    "category": "corporate",
@@ -57236,7 +57273,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0070",
+   "id": "p0071",
    "source": "aspen-education-group",
    "target": "mount-bachelor-academy",
    "category": "corporate",
@@ -57250,7 +57287,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0071",
+   "id": "p0072",
    "source": "aspen-education-group",
    "target": "sagewalk-wilderness",
    "category": "corporate",
@@ -57264,7 +57301,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0072",
+   "id": "p0073",
    "source": "eckerd-connects",
    "target": "eckerd-academy-of-the-blue-ridge",
    "category": "corporate",
@@ -57278,7 +57315,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0073",
+   "id": "p0074",
    "source": "embark-behavioral-health",
    "target": "fulshear-treatment-to-transition",
    "category": "corporate",
@@ -57292,7 +57329,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0074",
+   "id": "p0075",
    "source": "embark-behavioral-health",
    "target": "calo-teens",
    "category": "corporate",
@@ -57306,7 +57343,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0075",
+   "id": "p0076",
    "source": "family-help-wellness",
    "target": "solstice-west",
    "category": "corporate",
@@ -57320,7 +57357,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0076",
+   "id": "p0077",
    "source": "family-help-wellness",
    "target": "solstice-east",
    "category": "corporate",
@@ -57334,7 +57371,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0077",
+   "id": "p0078",
    "source": "family-help-wellness",
    "target": "red-mountain-sedona",
    "category": "corporate",
@@ -57348,7 +57385,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0078",
+   "id": "p0079",
    "source": "family-help-wellness",
    "target": "sedona-sky-academy",
    "category": "corporate",
@@ -57362,7 +57399,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0079",
+   "id": "p0080",
    "source": "family-help-wellness",
    "target": "kokua-recovery",
    "category": "corporate",
@@ -57376,7 +57413,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0080",
+   "id": "p0081",
    "source": "family-help-wellness",
    "target": "triple-divide-lodge",
    "category": "corporate",
@@ -57390,7 +57427,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0081",
+   "id": "p0082",
    "source": "kids-centers-of-america",
    "target": "kids-of-north-new-jersey",
    "category": "corporate",
@@ -57404,7 +57441,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0082",
+   "id": "p0083",
    "source": "rite-of-passage-inc",
    "target": "norris-academy",
    "category": "corporate",
@@ -57418,7 +57455,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0083",
+   "id": "p0084",
    "source": "rite-of-passage-inc",
    "target": "oak-grove-academy",
    "category": "corporate",
@@ -57432,7 +57469,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0084",
+   "id": "p0085",
    "source": "rite-of-passage-inc",
    "target": "palm-beach-regional-juvenile-correctional-center",
    "category": "corporate",
@@ -57446,7 +57483,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0085",
+   "id": "p0086",
    "source": "rite-of-passage-inc",
    "target": "ponca-pines-academy",
    "category": "corporate",
@@ -57460,7 +57497,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0086",
+   "id": "p0087",
    "source": "teen-challenge",
    "target": "treasure-coast-boys-academy",
    "category": "corporate",
@@ -57474,7 +57511,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0087",
+   "id": "p0088",
    "source": "teen-challenge",
    "target": "evangelhouse-christian-academy",
    "category": "corporate",
@@ -57488,7 +57525,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0088",
+   "id": "p0089",
    "source": "teen-challenge",
    "target": "evangeline-christian-academy",
    "category": "corporate",
@@ -57502,7 +57539,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0089",
+   "id": "p0090",
    "source": "three-springs-inc",
    "target": "auldern-academy",
    "category": "corporate",
@@ -57516,7 +57553,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0090",
+   "id": "p0091",
    "source": "wayne-halfway-house",
    "target": "jacksonville-youth-academy",
    "category": "corporate",
@@ -57530,7 +57567,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0091",
+   "id": "p0092",
    "source": "youth-services-international",
    "target": "marion-youth-academy",
    "category": "corporate",
@@ -57544,7 +57581,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0092",
+   "id": "p0093",
    "source": "universal-health-services",
    "target": "cedu-family-of-services",
    "category": "corporate",
@@ -57558,7 +57595,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0093",
+   "id": "p0094",
    "source": "mel-wasserman",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -57572,7 +57609,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0094",
+   "id": "p0095",
    "source": "brigitte-wasserman",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -57586,7 +57623,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0095",
+   "id": "p0096",
    "source": "universal-health-services",
    "target": "the-brown-schools",
    "category": "corporate",
@@ -57600,7 +57637,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0096",
+   "id": "p0097",
    "source": "tim-dupell",
    "target": "family-help-wellness",
    "category": "leadership",

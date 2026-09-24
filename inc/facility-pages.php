@@ -472,7 +472,7 @@ if (!function_exists('kop_facility_profile_record_names')) {
      */
     function kop_facility_profile_record_names() {
         return apply_filters('kop_facility_profile_record_names', array(
-            'the-ridge-rtc-maine' => 'Ridge RTC Maine',
+            'the-ridge-rtc-maine' => 'The Ridge Maine',
         ));
     }
 }
