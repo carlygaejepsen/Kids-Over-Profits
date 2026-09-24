@@ -43,10 +43,10 @@ get_header();
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation" data-kop-bug-feature="data-form/project-picker" data-kop-bug-label="Project Picker &amp; Categories">
             <div class="category-tabs">
-                <button class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
-                <button class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
-                <button class="category-tab" data-category="referrers">👥 Referrers</button>
-                <button class="category-tab" data-category="transporters">🚐 Transporters</button>
+                <button class="category-tab active" data-category="companies">Parent Companies/Organizations</button>
+                <button class="category-tab" data-category="locations">Locations/States/Countries</button>
+                <button class="category-tab" data-category="referrers">Referrers</button>
+                <button class="category-tab" data-category="transporters">Transporters</button>
                 <button class="category-tab" data-category="providers">Mental Health Providers</button>
             </div>
 

@@ -25,11 +25,11 @@ get_header();
         <!-- Category Navigation -->
         <div class="category-navigation" id="category-navigation">
             <div class="category-tabs">
-                <button type="button" class="category-tab active" data-category="companies">🏢 Parent Companies/Organizations</button>
-                <button type="button" class="category-tab" data-category="operators">🏛️ Operators (Edit Only)</button>
-                <button type="button" class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
-                <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
-                <button type="button" class="category-tab" data-category="transporters">🚐 Transporters</button>
+                <button type="button" class="category-tab active" data-category="companies">Parent Companies/Organizations</button>
+                <button type="button" class="category-tab" data-category="operators">Operators (Edit Only)</button>
+                <button type="button" class="category-tab" data-category="locations">Locations/States/Countries</button>
+                <button type="button" class="category-tab" data-category="referrers">Referrers</button>
+                <button type="button" class="category-tab" data-category="transporters">Transporters</button>
                 <button type="button" class="category-tab" data-category="providers">Mental Health Providers</button>
             </div>
 
