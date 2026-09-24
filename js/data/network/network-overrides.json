@@ -138,7 +138,8 @@
     "Koinonia Foster Homes": "parent",
     "Resource Realizations": "other",
     "Saving Teens": "other",
-    "UHS of Kootenai River": "parent"
+    "UHS of Kootenai River": "parent",
+    "Teen Discovery": "other"
   },
   "relationships": {
     "recruited deputies as transporters": {
@@ -199,7 +200,7 @@
     "Anchor Home for Boys": 10636,
     "Bethel Academy for Girls": 13926,
     "Bethel Baptist Children's Home": 13927,
-    "Brighter Path Owens Cross Roads": 100079,
+    "Brighter Path Owens Cross Roads": 9644,
     "Dallas County Juvenile Facility": 10709,
     "Dallas County Youth Village Secure Program": 10710,
     "Judge Roger Hashem Center": 10878,
@@ -282,7 +283,10 @@
     "Utah Boys Ranch": 10579,
     "Trails Momentum": 100169,
     "Kansas Industrial School for GIrls": 100143,
-    "LIFE": 100168
+    "LIFE": 100168,
+    "Turnabout Academy": 100139,
+    "Anneewakee School": 12561,
+    "Kids Helping Kids of Hebron, KY": 100123
   },
   "acquirers": {
     "e0241": "Universal Health Services",
