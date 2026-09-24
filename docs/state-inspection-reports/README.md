@@ -97,6 +97,13 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 ### Severe Findings
 - `inc/inspection-highlights.php` extracts findings per sentence, scores them by category of harm (death, sexual abuse, physical abuse, restraint with injury, self-harm, medical neglect, hospitalisation, missing child, police) scaled by the state's own severity signal, and stores candidates in `inspection_highlights` (scan progress in `inspection_highlight_scans`). Only substantiated findings are queued. Adapters exist for TX, CA, UT, AZ and CT (`kop_ih_supported_states()`, scanner version 3).
 - `api/scan-inspection-highlights.php` runs the scan (browser: dry run, then `?apply=1` per batch; CLI: `php api/scan-inspection-highlights.php apply`). `api/review-inspection-highlights.php` is the admin review screen.
+- Nightly cron (cPanel > Cron Jobs; the CLI binary, since cron's `php` is php-cgi and exits "CLI only."):
+
+  ```
+  15 4 * * * cd /home/kidsover/public_html/wp-content/themes/child && /opt/cpanel/ea-php82/root/usr/bin/php api/scan-inspection-highlights.php apply >> /home/kidsover/logs/inspection-highlights-scan.log 2>&1
+  ```
+
+  Each night scans only reports this version of the rules has not seen, so it is quick once the backlog is done; new candidates wait in the review screen.
 - A finding is severe at score 70 or more (`kop_ih_severe_score()`); nothing is published until an admin approves it. Approved severe findings appear on the home page, the hub and `/severe-reports/`, newest first.
 - On the tracker pages, `js/inspections/severe-flags.js` reads `api/inspection-highlights-read.php?state=XX` (public, approved severe findings only) and flags matching reports by the opening words of the quote, since the static JSON report ids do not match the database. It works on both the shared engine and the legacy TX and CA markup.
 - Tests: `php scripts/test-inspection-highlights.php` (rule cases plus a dry run over `tmp/prod.sqlite`) and `node scripts/test-severe-flags.js`.
@@ -120,5 +127,5 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 - Migrate Texas and California to the shared engine.
 - Washington: a `--full` run of `wa_scraper.py` (needs the API key).
 - Florida and North Carolina payloads from `api/inspections-read.php` are around 100 MB each.
-- Severe-finding extractors for WA, FL, NV and the raw-text states (NC, GA, AR, MN, OR); the nightly scan cron line; a "What inspectors found" block on the facility pages.
+- Severe-finding extractors for WA, FL, NV and the raw-text states (NC, GA, AR, MN, OR); a "What inspectors found" block on the facility pages.
 - California stores about 9,100 reports twice under two id schemes, which inflates the hub counts.
