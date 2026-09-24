@@ -3,10 +3,23 @@
 
 .wiki-feed-container {
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 1.5rem auto 3rem;
     padding: 2rem;
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     color: var(--kop-text-primary, #000435);
+}
+
+/* Text never sits on the site's gradient: the page is one white card, edge
+ * to edge on a phone as the records pages are. */
+@media (max-width: 600px) {
+    .wiki-feed-container {
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 0;
+    }
 }
 
 .wiki-feed-header {
@@ -28,7 +41,7 @@
 /* Grid Layout */
 .wiki-feed-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
     gap: 2rem;
 }
 

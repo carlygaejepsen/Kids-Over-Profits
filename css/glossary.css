@@ -12,10 +12,24 @@
 
 .kop-gl-page {
     max-width: 76rem;
-    margin: 0 auto;
-    padding: 2rem 1.25rem 4rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
     color: var(--kop-text-primary, #000435);
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
 }
+
+/* Text never sits on the site's gradient: the page is one white card, edge
+ * to edge on a phone as the records pages are. */
+@media (max-width: 600px) {
+    .kop-gl-page {
+        margin-left: 0;
+        margin-right: 0;
+        border-radius: 0;
+    }
+}
+
 
 .kop-gl-header {
     margin-bottom: 1.25rem;
@@ -569,6 +583,7 @@ a.kop-gl-ref:hover {
 @media (max-width: 40rem) {
     .kop-gl-page {
         padding: 1.25rem 1rem 3rem;
+        margin-top: 0;
     }
 
     .kop-gl-filter {

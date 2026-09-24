@@ -43,6 +43,8 @@ php scripts/test-reporting-directory.php        # renders the page offline
 # After editing the glossary source js/data/glossary/glossary.md
 node scripts/build-glossary.js
 php scripts/test-glossary.php                   # renders /glossary/ offline, checks every #link
+# After any template or page CSS change: no text may sit on the gradient body background
+python scripts/check-bare-text.py               # one page per child template, live site
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 ```
