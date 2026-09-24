@@ -31,6 +31,10 @@ function kop_template_layout_current_template() {
     if (function_exists('kop_facility_pages_is_page') && kop_facility_pages_is_page()) {
         return 'templates/facility-page.php';
     }
+    // Same for the generated parent company pages (inc/operator-pages.php).
+    if (function_exists('kop_operator_pages_is_page') && kop_operator_pages_is_page()) {
+        return 'templates/operator-page.php';
+    }
     // Pages and posts alike: a post can carry a "Template Post Type: post"
     // template (templates/single-facility-profile.php) via the same meta.
     if (!is_singular()) {
@@ -51,6 +55,7 @@ function kop_template_layout_normal_width() {
     return apply_filters('kop_template_layout_normal_width', array(
         'templates/single-facility-profile.php',
         'templates/facility-page.php',
+        'templates/operator-page.php',
     ));
 }
 

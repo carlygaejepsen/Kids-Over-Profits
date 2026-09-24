@@ -528,6 +528,7 @@ if (!function_exists('kop_v2_search')) {
             $out['operators'][] = array(
                 'kind' => 'operator', 'display' => $o['name'], 'operator' => $o['name'],
                 'location' => $hq, 'fac_count' => (int)$o['n'], 'url' => '',
+                'profile_url' => function_exists('kop_operator_page_url') ? kop_operator_page_url((int)$o['id']) : '',
             );
         }
 

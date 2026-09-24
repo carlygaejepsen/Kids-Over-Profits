@@ -43,6 +43,9 @@ php scripts/test-reporting-directory.php        # renders the page offline
 # After editing the glossary source js/data/glossary/glossary.md
 node scripts/build-glossary.js
 php scripts/test-glossary.php                   # renders /glossary/ offline, checks every #link
+# Generated /facility/ and /operator/ (parent company) pages, against tmp/prod.sqlite
+php scripts/test-facility-pages.php
+php scripts/test-operator-pages.php               # renders every /operator/<slug>/ page to tmp/operator-pages/
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # See the working tree's map in a browser before pushing it

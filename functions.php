@@ -42,6 +42,7 @@ require_once get_stylesheet_directory() . '/inc/redirects.php';
 
 // Generated facility pages (/facility/<slug>/) rendered from facilities_v2
 require_once get_stylesheet_directory() . '/inc/facility-pages.php';
+require_once get_stylesheet_directory() . '/inc/operator-pages.php';
 
 // Inspection highlights: the reviewed severe findings the home page and the
 // inspection reports hub show, most recent first

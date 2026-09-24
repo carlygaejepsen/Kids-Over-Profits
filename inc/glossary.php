@@ -193,6 +193,27 @@ function kop_glossary_program_aliases() {
 }
 
 /**
+ * Glossary names for a company, as its record in kop_operators is named, for
+ * the names the operator lookup would not find on its own.
+ */
+function kop_glossary_company_aliases() {
+    return apply_filters('kop_glossary_company_aliases', array(
+        'WWASP programs' => 'WWASPS',
+    ));
+}
+
+/**
+ * Program group headings about a company whose name is not itself a
+ * glossary program ("Three Springs programs"). Heading => company name.
+ */
+function kop_glossary_group_companies() {
+    return apply_filters('kop_glossary_group_companies', array(
+        'WWASP and affiliated programs' => 'WWASPS',
+        'Three Springs programs'        => 'Three Springs Inc.',
+    ));
+}
+
+/**
  * Program slug => profile URL (the hand-written Facility Profile when there
  * is one, else the generated /facility/ page), for every glossary program
  * whose record has a page. Programs without one are simply absent.
@@ -211,6 +232,12 @@ function kop_glossary_program_urls() {
     foreach ($data['programs'] as $program) {
         $name = isset($aliases[$program['name']]) ? $aliases[$program['name']] : $program['name'];
         $url = (string) kop_facility_page_url_for_name($name);
+        // A company rather than one facility ("CEDU", "WWASP programs"):
+        // its parent company page (inc/operator-pages.php).
+        if ($url === '' && function_exists('kop_operator_page_url_for_name')) {
+            $companies = kop_glossary_company_aliases();
+            $url = (string) kop_operator_page_url_for_name(isset($companies[$program['name']]) ? $companies[$program['name']] : $program['name']);
+        }
         if ($url !== '') {
             $urls[$program['slug']] = $url;
         }
@@ -406,10 +433,17 @@ function kop_glossary_group_profiles($title) {
             $links[] = '<a href="' . esc_url($urls[$program['slug']]) . '">' . esc_html($program['name']) . '</a>';
         }
     }
+    $companies = kop_glossary_group_companies();
+    if (isset($companies[$title]) && function_exists('kop_operator_page_url_for_name')) {
+        $url = kop_operator_page_url_for_name($companies[$title]);
+        if ($url !== '') {
+            array_unshift($links, '<a href="' . esc_url($url) . '">' . esc_html($companies[$title]) . '</a>');
+        }
+    }
     if (!$links) {
         return '';
     }
-    $label = count($links) === 1 ? 'Program profile' : 'Program profiles';
+    $label = count($links) === 1 ? 'Profile' : 'Profiles';
     return '<p class="kop-gl-profiles"><span>' . $label . '</span> ' . implode('<span aria-hidden="true"> &middot; </span>', $links) . '</p>';
 }
 

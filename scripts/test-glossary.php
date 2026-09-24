@@ -49,6 +49,15 @@ function kop_facility_page_url_for_name($name) {
     );
     return isset($known[$name]) ? $known[$name] : '';
 }
+/* Parent company pages for the companies the glossary names. */
+function kop_operator_page_url_for_name($name) {
+    $known = array(
+        'CEDU'               => 'https://kidsoverprofits.org/operator/cedu/',
+        'WWASPS'             => 'https://kidsoverprofits.org/operator/world-wide-association-of-specialty-programs-and-schools/',
+        'Three Springs Inc.' => 'https://kidsoverprofits.org/operator/three-springs-inc/',
+    );
+    return isset($known[$name]) ? $known[$name] : '';
+}
 function apply_filters($hook, $value) {
     return $value;
 }
@@ -126,7 +135,10 @@ check($profile_tags > 50, "tags for programs with a profile link to it ($profile
 check($xp->query('//a[contains(@class,"kop-gl-tag-name")][@href="https://kidsoverprofits.org/hyde/"]')->length > 0, 'a Hyde School tag opens /hyde/');
 check($xp->query('//*[@id="g-hyde-school"]//*[contains(@class,"kop-gl-profiles")]//a[@href="https://kidsoverprofits.org/hyde/"]')->length === 1, 'the Hyde School heading links its profile');
 check($xp->query('//*[@id="g-island-view-and-elevations-rtc"]//*[contains(@class,"kop-gl-profiles")]//a')->length === 2, 'a two-program heading links both profiles (alias used for Island View)');
-check($xp->query('//a[contains(@class,"kop-gl-tag-filter")][@data-program="cedu"]')->length > 0, 'a program without a profile still filters');
+check($xp->query('//a[contains(@class,"kop-gl-tag-name")][@href="https://kidsoverprofits.org/operator/cedu/"]')->length > 0, 'a CEDU tag opens the CEDU parent company page');
+check($xp->query('//a[contains(@class,"kop-gl-tag-name")][contains(@href,"/operator/world-wide")]')->length > 0, 'a "WWASP programs" tag opens the WWASPS page');
+check($xp->query('//*[@id="g-three-springs-programs"]//*[contains(@class,"kop-gl-profiles")]//a[@href="https://kidsoverprofits.org/operator/three-springs-inc/"]')->length === 1, 'the Three Springs heading links the company page');
+check($xp->query('//a[contains(@class,"kop-gl-tag-filter")][@data-program="vista"]')->length > 0, 'a program without a profile still filters');
 
 /* ---- Filtered ----------------------------------------------------------- */
 

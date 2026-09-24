@@ -1161,6 +1161,24 @@ if (!function_exists('kop_facility_page_url_for_name')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_operator_url')) {
+    /**
+     * Where a facility page's operator name links: the operator's own page
+     * (inc/operator-pages.php) when there is one, else the program index
+     * filtered to the name.
+     */
+    function kop_facility_pages_operator_url($operator_row, $operator_name) {
+        if (function_exists('kop_operator_page_url')) {
+            $url = $operator_row ? kop_operator_page_url((int) $operator_row['id']) : '';
+            if ($url === '' && $operator_name !== '' && function_exists('kop_operator_page_url_for_name')) {
+                $url = kop_operator_page_url_for_name($operator_name);
+            }
+            if ($url !== '') return $url;
+        }
+        return $operator_name !== '' ? kop_facility_pages_index_search_url($operator_name) : '';
+    }
+}
+
 if (!function_exists('kop_facility_pages_thin_target')) {
     /** Where a record without a page of its own sends the visitor. */
     function kop_facility_pages_thin_target($facility_id) {
@@ -1754,7 +1772,7 @@ if (!function_exists('kop_facility_page_data')) {
             'hub_url'       => $hub_url,
             'operator'      => array(
                 'name' => $operator_name,
-                'url'  => $operator_name !== '' ? kop_facility_pages_index_search_url($operator_name) : '',
+                'url'  => kop_facility_pages_operator_url($operator_row, $operator_name),
             ),
             'siblings'      => $siblings,
             'addresses'     => $addresses,
@@ -2141,6 +2159,13 @@ if (!function_exists('kop_facility_pages_sitemap_entries')) {
                 'loc' => kop_facility_pages_url_for_slug($e['slug']),
                 'mod' => $e['updated'] !== '' ? $e['updated'] : gmdate('Y-m-d H:i:s', (int) $index['built']),
             );
+        }
+        // The generated parent company pages ride in the same sitemap.
+        if (function_exists('kop_operator_pages_index')) {
+            $ops = kop_operator_pages_index();
+            foreach ($ops['ids'] as $e) {
+                $out[] = array('loc' => kop_operator_pages_url_for_slug($e['slug']), 'mod' => gmdate('Y-m-d H:i:s', (int) $index['built']));
+            }
         }
         usort($out, static function ($a, $b) { return strcmp($b['mod'], $a['mod']); });
         return $out;
