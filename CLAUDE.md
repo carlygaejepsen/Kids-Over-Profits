@@ -40,6 +40,9 @@ node scripts/test-network-modules.js
 node scripts/build-reporting-directory.js
 node scripts/verify-reporting-links.js          # slow, hits every agency site
 php scripts/test-reporting-directory.php        # renders the page offline
+# After editing the glossary source js/data/glossary/glossary.md
+node scripts/build-glossary.js
+php scripts/test-glossary.php                   # renders /glossary/ offline, checks every #link
 # See the working tree's map in a browser before pushing it
 python scripts/preview-network-map.py --shots tmp/map-preview
 ```
@@ -52,6 +55,14 @@ generated `directory.json` the /report-abuse/ page reads. Every channel needs
 a source URL and a `verified_on` date or the build refuses it. `README.md` in
 that folder is the field-by-field schema. Rendered server-side by
 `inc/reporting-directory.php`; the state hubs embed their own state's block.
+
+### Glossary data
+
+`js/data/glossary/glossary.md` is the TTI glossary source (sections `##`,
+program groups `###`/`####`, entries `**Term** *(aka ...)*: text. Used at: *A, B*`).
+`build-glossary.js` writes the `glossary.json` the /glossary/ page reads and
+fails on any `**cross-reference**` that does not name an entry. Rendered
+server-side by `inc/glossary.php` (`templates/page-glossary.php`).
 
 ### Network map data
 

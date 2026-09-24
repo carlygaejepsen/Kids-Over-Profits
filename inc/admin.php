@@ -423,6 +423,8 @@ function kop_tool_page_specs() {
         // Published: it is a reference list of public agencies, and every
         // entry carries the source and the date it was checked.
         array('template' => 'page-report-abuse.php',       'title' => 'Report Abuse',        'slug' => 'report-abuse',       'status' => 'publish'),
+        // The TTI glossary, rendered from js/data/glossary/glossary.json.
+        array('template' => 'page-glossary.php',           'title' => 'TTI Glossary',        'slug' => 'glossary',           'status' => 'publish'),
     );
 }
 
@@ -456,6 +458,11 @@ function kop_nav_item_specs() {
             'slug'   => KOP_REPORTING_SLUG,
             'parent' => 'Get Involved',
             'title'  => 'Report Abuse',
+        ),
+        array(
+            'slug'   => KOP_GLOSSARY_SLUG,
+            'parent' => 'Learn More',
+            'title'  => 'TTI Glossary',
         ),
     );
 }
@@ -578,7 +585,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '7';
+    $version = '8';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -1604,7 +1611,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '32';
+    $version = '33';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

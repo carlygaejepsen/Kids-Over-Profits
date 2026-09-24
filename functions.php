@@ -77,6 +77,7 @@ require_once get_stylesheet_directory() . '/inc/research-library.php';
 // Where to report an abusive therapist or program, state by state. Loaded
 // before the resources list, which links to it by KOP_REPORTING_SLUG.
 require_once get_stylesheet_directory() . '/inc/reporting-directory.php';
+require_once get_stylesheet_directory() . '/inc/glossary.php';
 
 // The /resources/ list (crisis lines, survivor support, advocacy, reading)
 require_once get_stylesheet_directory() . '/inc/resources-list.php';

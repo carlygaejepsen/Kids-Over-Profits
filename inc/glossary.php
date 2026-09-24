@@ -1,0 +1,390 @@
+<?php
+/**
+ * The TTI glossary: the language of the Troubled Teen Industry, from program
+ * handbooks, staff manuals, state records and survivor accounts.
+ *
+ * The data is js/data/glossary/glossary.json, built from glossary.md by
+ * scripts/build-glossary.js. Nothing here writes; a correction is an edit to
+ * the markdown and a rebuild.
+ *
+ * Rendered server-side, every entry, so the page is readable, searchable with
+ * the browser's own find, and linkable (/glossary/#bust) with no JavaScript.
+ * ?program=<slug> and ?q=<words> filter on the server too; js/glossary.js
+ * only makes the same two filters instant.
+ *
+ * Entry points:
+ *   kop_glossary_data()                  the whole decoded file, or null
+ *   kop_glossary_render_page($program, $query, $base_url)
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+if (!defined('KOP_GLOSSARY_SLUG')) {
+    define('KOP_GLOSSARY_SLUG', 'glossary');
+}
+
+/** Path to the built glossary. */
+function kop_glossary_data_path() {
+    return get_stylesheet_directory() . '/js/data/glossary/glossary.json';
+}
+
+/** The decoded glossary, or null when the file is missing or unreadable. */
+function kop_glossary_data() {
+    static $data = false;
+    if ($data !== false) {
+        return $data;
+    }
+    $data = null;
+    $path = kop_glossary_data_path();
+    if (!is_readable($path)) {
+        return null;
+    }
+    $decoded = json_decode((string) file_get_contents($path), true);
+    if (is_array($decoded) && !empty($decoded['sections'])) {
+        $data = $decoded;
+    }
+    return $data;
+}
+
+/**
+ * The glossary's light markdown as HTML: **Term** is a link to that entry
+ * (the build has already checked it names one), *words* is emphasis. Escaped
+ * first, so nothing in the file reaches the page as markup.
+ *
+ * $ref_base is prefixed to every #anchor: empty on the full page, the page
+ * URL on a filtered one, where the entry referred to may not be shown.
+ */
+function kop_glossary_inline($text, $ref_base = '') {
+    $data = kop_glossary_data();
+    $refs = $data && !empty($data['refs']) ? $data['refs'] : array();
+    /* A section's own name (the intro names them) links to the section. */
+    $sections = array();
+    foreach (($data['sections'] ?? array()) as $section) {
+        $sections[$section['title']] = $section['id'];
+    }
+    $html = esc_html((string) $text);
+    $html = preg_replace_callback('/\*\*(.+?)\*\*/u', function ($m) use ($refs, $sections, $ref_base) {
+        $name = html_entity_decode($m[1], ENT_QUOTES, 'UTF-8');
+        $key  = function_exists('mb_strtolower') ? mb_strtolower($name, 'UTF-8') : strtolower($name);
+        if (isset($refs[$key])) {
+            return '<a class="kop-gl-ref" href="' . esc_url($ref_base . '#' . $refs[$key]) . '">' . $m[1] . '</a>';
+        }
+        if (isset($sections[$name])) {
+            return '<a class="kop-gl-ref" href="' . esc_url($ref_base . '#' . $sections[$name]) . '">' . $m[1] . '</a>';
+        }
+        return '<strong>' . $m[1] . '</strong>';
+    }, $html);
+    $html = preg_replace('/\*(.+?)\*/u', '<em>$1</em>', $html);
+    return $html;
+}
+
+/** Plain lower-case text of an entry, for the search filter. */
+function kop_glossary_entry_haystack($entry) {
+    $parts = array($entry['term'], $entry['note'], $entry['text']);
+    foreach ($entry['aka'] as $aka) {
+        $parts[] = $aka;
+    }
+    foreach (array_merge($entry['used'], $entry['reported']) as $tag) {
+        $parts[] = $tag['program'];
+        if (!empty($tag['note'])) {
+            $parts[] = $tag['note'];
+        }
+    }
+    $text = str_replace('*', '', implode(' ', $parts));
+    return function_exists('mb_strtolower') ? mb_strtolower($text, 'UTF-8') : strtolower($text);
+}
+
+/** Program slugs an entry is tagged with. */
+function kop_glossary_entry_programs($entry) {
+    $slugs = array();
+    foreach (array_merge($entry['used'], $entry['reported']) as $tag) {
+        $slugs[$tag['slug']] = true;
+    }
+    return array_keys($slugs);
+}
+
+/** Does the entry pass the filters? Every word of $query must appear. */
+function kop_glossary_entry_matches($entry, $program, $words) {
+    if ($program !== '' && !in_array($program, kop_glossary_entry_programs($entry), true)) {
+        return false;
+    }
+    if ($words) {
+        $hay = kop_glossary_entry_haystack($entry);
+        foreach ($words as $word) {
+            if (strpos($hay, $word) === false) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/** The program list's display name for a slug, or ''. */
+function kop_glossary_program_name($slug) {
+    $data = kop_glossary_data();
+    foreach (($data['programs'] ?? array()) as $program) {
+        if ($program['slug'] === $slug) {
+            return $program['name'];
+        }
+    }
+    return '';
+}
+
+/** Every entry in the file, in reading order. */
+function kop_glossary_all_entries($data) {
+    $out = array();
+    $walk = function ($node) use (&$walk, &$out) {
+        foreach ($node['entries'] as $entry) {
+            $out[] = $entry;
+        }
+        foreach ($node['groups'] as $group) {
+            $walk($group);
+        }
+    };
+    foreach ($data['sections'] as $section) {
+        $walk($section);
+    }
+    return $out;
+}
+
+/** "12 terms used at Spring Ridge Academy matching "phase"". Kept in step with js/glossary.js. */
+function kop_glossary_status_text($shown, $program, $query) {
+    $text = $shown === 1 ? '1 term' : number_format($shown) . ' terms';
+    if ($program !== '') {
+        $text .= ' tagged ' . kop_glossary_program_name($program);
+    }
+    if ($query !== '') {
+        $text .= ' matching “' . $query . '”';
+    }
+    return $text;
+}
+
+/** One entry. */
+function kop_glossary_render_entry($entry, $page_url, $ref_base, $show) {
+    $id = $entry['id'];
+    ?>
+    <div class="kop-gl-entry" id="<?php echo esc_attr($id); ?>"
+         data-programs="<?php echo esc_attr(implode(' ', kop_glossary_entry_programs($entry))); ?>"
+         data-search="<?php echo esc_attr(kop_glossary_entry_haystack($entry)); ?>"<?php echo $show ? '' : ' hidden'; ?>>
+        <dt class="kop-gl-term">
+            <dfn><?php echo esc_html($entry['term']); ?></dfn>
+            <?php if ($entry['note'] !== '') : ?>
+                <span class="kop-gl-qualifier">(<?php echo esc_html($entry['note']); ?>)</span>
+            <?php endif; ?>
+            <a class="kop-gl-anchor" href="<?php echo esc_url($ref_base . '#' . $id); ?>" aria-label="<?php echo esc_attr('Link to ' . $entry['term']); ?>">#</a>
+        </dt>
+        <dd class="kop-gl-def">
+            <?php if (!empty($entry['aka'])) : ?>
+                <p class="kop-gl-aka"><span>Also called</span> <?php echo esc_html(implode(', ', $entry['aka'])); ?></p>
+            <?php endif; ?>
+            <p><?php echo kop_glossary_inline($entry['text'], $ref_base); ?></p>
+            <?php
+            $rows = array(
+                array('Used at', $entry['used'], ''),
+                array('Reportedly used at', $entry['reported'], ' kop-gl-tag--reported'),
+            );
+            foreach ($rows as $row) :
+                if (empty($row[1])) {
+                    continue;
+                }
+                ?>
+                <p class="kop-gl-tags">
+                    <span class="kop-gl-tags-label"><?php echo esc_html($row[0]); ?></span>
+                    <?php foreach ($row[1] as $tag) : ?>
+                        <a class="kop-gl-tag<?php echo esc_attr($row[2]); ?>" data-program="<?php echo esc_attr($tag['slug']); ?>"
+                           href="<?php echo esc_url(add_query_arg('program', $tag['slug'], $page_url) . '#kop-gl-results'); ?>"><?php
+                            echo esc_html($tag['program']);
+                            if (!empty($tag['note'])) {
+                                echo ' <span class="kop-gl-tag-note">' . esc_html($tag['note']) . '</span>';
+                            }
+                        ?></a>
+                    <?php endforeach; ?>
+                </p>
+            <?php endforeach; ?>
+        </dd>
+    </div>
+    <?php
+}
+
+/**
+ * Entries, notes and subgroups of one section or group. Returns how many
+ * entries passed the filters, so the caller can hide an empty block.
+ */
+function kop_glossary_render_block($node, $level, $page_url, $ref_base, $program, $words) {
+    $filtered = ($program !== '' || $words);
+    ob_start();
+    $shown = 0;
+
+    if (!empty($node['sources'])) {
+        echo '<p class="kop-gl-sources"><span>Sources</span> ' . kop_glossary_inline($node['sources'], $ref_base) . '</p>';
+    }
+    foreach ($node['notes'] as $note) {
+        echo '<p class="kop-gl-note"' . ($filtered ? ' hidden' : '') . '>' . kop_glossary_inline($note, $ref_base) . '</p>';
+    }
+    if (!empty($node['entries'])) {
+        echo '<dl class="kop-gl-list">';
+        foreach ($node['entries'] as $entry) {
+            $show = kop_glossary_entry_matches($entry, $program, $words);
+            $shown += $show ? 1 : 0;
+            kop_glossary_render_entry($entry, $page_url, $ref_base, $show);
+        }
+        echo '</dl>';
+    }
+    foreach ($node['groups'] as $group) {
+        $tag = 'h' . min(6, $level + 1);
+        ob_start();
+        $n = kop_glossary_render_block($group, $level + 1, $page_url, $ref_base, $program, $words);
+        $inner = ob_get_clean();
+        $shown += $n;
+        printf(
+            '<section class="kop-gl-group kop-gl-group--l%d" id="%s" aria-labelledby="%s-h"%s><%s class="kop-gl-group-title" id="%s-h">%s</%s>%s</section>',
+            $level + 1,
+            esc_attr('g-' . $group['id']),
+            esc_attr('g-' . $group['id']),
+            $n ? '' : ' hidden',
+            $tag,
+            esc_attr('g-' . $group['id']),
+            esc_html($group['title']),
+            $tag,
+            $inner
+        );
+    }
+    $html = ob_get_clean();
+    echo $html;
+    return $shown;
+}
+
+/** First letters of a section's entries, for the A-Z strip. */
+function kop_glossary_letters($section) {
+    $letters = array();
+    foreach ($section['entries'] as $entry) {
+        $plain = function_exists('iconv') ? @iconv('UTF-8', 'ASCII//TRANSLIT', $entry['term']) : $entry['term'];
+        $first = strtoupper(substr(preg_replace('/^(the\s+)|[^A-Za-z0-9]/i', '', (string) $plain), 0, 1));
+        $key = ctype_alpha($first) ? $first : '#';
+        if (!isset($letters[$key])) {
+            $letters[$key] = $entry['id'];
+        }
+    }
+    return $letters;
+}
+
+/**
+ * The page body under the title.
+ *
+ * @param string $program  a program slug from the file, or ''
+ * @param string $query    free-text search, already unslashed
+ * @param string $page_url the page's own URL, for filter links
+ */
+function kop_glossary_render_page($program, $query, $page_url) {
+    $data = kop_glossary_data();
+    if (!$data) {
+        echo '<p class="kop-gl-empty">The glossary is being updated. Please check back shortly.</p>';
+        return;
+    }
+
+    if ($program !== '' && kop_glossary_program_name($program) === '') {
+        $program = '';
+    }
+    $query = trim(preg_replace('/\s+/', ' ', (string) $query));
+    $lower = function_exists('mb_strtolower') ? mb_strtolower($query, 'UTF-8') : strtolower($query);
+    $words = $lower === '' ? array() : explode(' ', $lower);
+    $filtered = ($program !== '' || $words);
+    $ref_base = $filtered ? $page_url : '';
+
+    $shown = 0;
+    foreach (kop_glossary_all_entries($data) as $entry) {
+        $shown += kop_glossary_entry_matches($entry, $program, $words) ? 1 : 0;
+    }
+    $program_count = count($data['programs']);
+    $updated = !empty($data['updated']) ? strtotime($data['updated'] . ' 12:00:00') : 0;
+    ?>
+    <div class="kop-gl" data-total="<?php echo (int) $data['count']; ?>">
+
+        <div class="kop-gl-intro">
+            <?php foreach ($data['intro'] as $para) : ?>
+                <p><?php echo kop_glossary_inline($para, $ref_base); ?></p>
+            <?php endforeach; ?>
+            <p class="kop-gl-meta">
+                <?php echo esc_html(number_format((int) $data['count'])); ?> terms
+                <span aria-hidden="true">&middot;</span>
+                <?php echo esc_html($program_count); ?> programs
+                <?php if ($updated) : ?>
+                    <span aria-hidden="true">&middot;</span>
+                    Updated <time datetime="<?php echo esc_attr($data['updated']); ?>"><?php echo esc_html(date_i18n('F j, Y', $updated)); ?></time>
+                <?php endif; ?>
+            </p>
+        </div>
+
+        <form class="kop-gl-filter" method="get" action="<?php echo esc_url($page_url); ?>" role="search" id="kop-gl-results">
+            <div class="kop-gl-field kop-gl-field--search">
+                <label for="kop-gl-q">Search the glossary</label>
+                <input type="search" id="kop-gl-q" name="q" value="<?php echo esc_attr($query); ?>"
+                       placeholder="A word, a phrase, a program" autocomplete="off">
+            </div>
+            <div class="kop-gl-field">
+                <label for="kop-gl-program">Program</label>
+                <select id="kop-gl-program" name="program">
+                    <option value="">All programs</option>
+                    <?php foreach ($data['programs'] as $p) : ?>
+                        <option value="<?php echo esc_attr($p['slug']); ?>"<?php selected($program, $p['slug']); ?>>
+                            <?php echo esc_html($p['name'] . ' (' . $p['count'] . ')'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="kop-gl-actions">
+                <button type="submit" class="kop-gl-go">Filter</button>
+                <a class="kop-gl-clear" href="<?php echo esc_url($page_url); ?>"<?php echo $filtered ? '' : ' hidden'; ?>>Show all</a>
+            </div>
+            <p class="kop-gl-status" role="status" aria-live="polite"><?php echo esc_html($filtered ? kop_glossary_status_text($shown, $program, $query) : ''); ?></p>
+        </form>
+
+        <div class="kop-gl-layout">
+            <nav class="kop-gl-toc" aria-label="Glossary sections">
+                <details>
+                    <summary>Contents</summary>
+                    <ol>
+                        <?php foreach ($data['sections'] as $section) : ?>
+                            <li>
+                                <a href="#<?php echo esc_attr($section['id']); ?>"><?php echo esc_html($section['title']); ?></a>
+                                <?php if (!empty($section['groups'])) : ?>
+                                    <ol>
+                                        <?php foreach ($section['groups'] as $group) : ?>
+                                            <li><a href="#<?php echo esc_attr('g-' . $group['id']); ?>"><?php echo esc_html($group['title']); ?></a></li>
+                                        <?php endforeach; ?>
+                                    </ol>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ol>
+                </details>
+            </nav>
+
+            <div class="kop-gl-main">
+                <?php
+                foreach ($data['sections'] as $section) :
+                    ob_start();
+                    $n = kop_glossary_render_block($section, 2, $page_url, $ref_base, $program, $words);
+                    $inner = ob_get_clean();
+                    $letters = (count($section['entries']) > 40) ? kop_glossary_letters($section) : array();
+                    ?>
+                    <section class="kop-gl-section" id="<?php echo esc_attr($section['id']); ?>" aria-labelledby="<?php echo esc_attr($section['id']); ?>-h"<?php echo $n ? '' : ' hidden'; ?>>
+                        <h2 class="kop-gl-section-title" id="<?php echo esc_attr($section['id']); ?>-h"><?php echo esc_html($section['title']); ?></h2>
+                        <?php if ($letters) : ?>
+                            <nav class="kop-gl-letters" aria-label="<?php echo esc_attr($section['title'] . ' by letter'); ?>"<?php echo $filtered ? ' hidden' : ''; ?>>
+                                <?php foreach ($letters as $letter => $id) : ?>
+                                    <a href="#<?php echo esc_attr($id); ?>"><?php echo esc_html($letter); ?></a>
+                                <?php endforeach; ?>
+                            </nav>
+                        <?php endif; ?>
+                        <?php echo $inner; // Built from escaped parts above. ?>
+                    </section>
+                <?php endforeach; ?>
+                <p class="kop-gl-none"<?php echo ($filtered && !$shown) ? '' : ' hidden'; ?>>No terms match. Try fewer words, or <a href="<?php echo esc_url($page_url); ?>">show the whole glossary</a>.</p>
+            </div>
+        </div>
+    </div>
+    <?php
+}
