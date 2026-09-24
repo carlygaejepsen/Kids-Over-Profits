@@ -276,6 +276,7 @@ select:focus {
 
 .category-tabs {
     display: flex;
+    flex-wrap: wrap; /* Six tabs do not fit one row in the content column */
     gap: 5px;
     background: #FFF5CB; /* Soft Pastel Yellow */
     padding: 5px;

@@ -415,7 +415,7 @@ if (window.TutorialOverlay) {
                             }
                         }
                         this.highlightElement(targetEl, padding);
-                        this.positionCard(targetEl, step.position || 'bottom');
+                        this.positionCard(targetEl, step.position || 'bottom', step.clearOf);
                     } else {
                         this.clearHighlight();
                         this.centerCard();
@@ -811,11 +811,21 @@ if (window.TutorialOverlay) {
             }
         }
 
-        positionCard(targetEl, position) {
+        // clearOf: optional selector of an ancestor (e.g. a wrapping row of tabs) whose
+        // full height the card keeps clear of, so it does not cover the target's siblings.
+        positionCard(targetEl, position, clearOf) {
             this.card.style.position = 'fixed';
             this.card.style.width = '320px';
 
-            const targetRect = targetEl.getBoundingClientRect();
+            let targetRect = targetEl.getBoundingClientRect();
+            const clearEl = clearOf ? targetEl.closest(clearOf) : null;
+            if (clearEl && (position === 'top' || position === 'bottom')) {
+                const clearRect = clearEl.getBoundingClientRect();
+                targetRect = {
+                    top: clearRect.top, bottom: clearRect.bottom,
+                    left: targetRect.left, right: targetRect.right, width: targetRect.width
+                };
+            }
             const cardRect = this.card.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
             const viewportWidth = window.innerWidth;
@@ -963,31 +973,36 @@ if (window.TutorialOverlay) {
                 title: 'Parent Companies',
                 content: 'Track TTI programs organized by their parent companies and corporate owners. Use this to research ownership structures, corporate networks, and which companies operate multiple facilities.',
                 target: '.category-tab[data-category="companies"]',
-                position: 'bottom'
+                position: 'bottom',
+                clearOf: '.category-tabs'
             },
             {
                 title: 'Locations',
                 content: 'Browse programs organized by state or country. Useful for logging facilities that are not part of a bigger chain or parent organization.',
                 target: '.category-tab[data-category="locations"]',
-                position: 'bottom'
+                position: 'bottom',
+                clearOf: '.category-tabs'
             },
             {
                 title: 'Referrers',
                 content: 'Track education consultants and agencies that refer kids to TTI programs. Research who is sending children to these facilities and their professional networks.',
                 target: '.category-tab[data-category="referrers"]',
-                position: 'bottom'
+                position: 'bottom',
+                clearOf: '.category-tabs'
             },
             {
                 title: 'Transporters',
                 content: 'Track youth transport companies and the individuals who escort kids to TTI programs. Log companies, personnel, service areas, and their affiliations with facilities.',
                 target: '.category-tab[data-category="transporters"]',
-                position: 'bottom'
+                position: 'bottom',
+                clearOf: '.category-tabs'
             },
             {
                 title: 'Mental Health Providers',
                 content: 'Track providers outside the TTI that use its practices or send kids into it: acute psychiatric wards, PHP and IOP programs, day schools, respite care and outpatient therapists. The form works like a facility report, plus the type of care, the TTI facilities they refer to, and each staff member\'s known TTI connections and past TTI jobs.',
                 target: '.category-tab[data-category="providers"]',
-                position: 'bottom'
+                position: 'bottom',
+                clearOf: '.category-tabs'
             },
             {
                 title: 'Choose a Category to Edit',
