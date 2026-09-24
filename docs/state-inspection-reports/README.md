@@ -84,12 +84,14 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 
 `facility_info` also carries `phone`, `program_name`, `executive_director`, `bed_capacity`, `license_exp_date`, `relicense_visit_date` and `action`. `categories` is the decoded `categories_json`, whose shape differs by state; the adapters normalize it. `scraped_timestamp` populates the visible last-updated stamp; without one the API falls back to the newest facility `updated_at`. A state with no facilities returns only `total_facilities`, `source_state` and an empty `facilities`.
 
+**`?lite=1`** (used by the FL and NC pages) leaves out every report's `raw_content` and adds `row_id`, `has_text` and `text_signals`: what the state's adapter would have read from the text at load (NC: citations, survey result, complaint outcome, opening sentence; FL DJJ: compliance words, PREA date and standard counts, SPEP period, facility name). They come from `api/lib-inspection-text-signals.php`, a PHP port of the adapters' readers; `node scripts/test-inspection-text-signals.js --php=<php.exe>` runs both over every FL and NC report in the mirror and must report no difference. The lite response is cached in `wp-content/uploads/kop-cache/` until the state's reports change (Florida went from 106 MB to 1.5 MB, 0.13 MB compressed; North Carolina from 95 MB to 3.4 MB). **`?text=<row_id>`** returns one report's `raw_content`; `KOP.reportPage.withText()` fetches it when a report is opened. `scripts/test-inspections-read-lite.php` checks both against the full response.
+
 ## Key Features
 
 ### Shared Report Experience (`report-page.js`)
 - Alphabet filter, full-text search, sorts (default A-Z, name, violations only, most violations, most recent inspection) and a "new reports only" toggle (last 30 days).
 - Optional per-state filter dropdowns and a note for states whose data records no findings.
-- Report bodies can render lazily on first open, which keeps states with large document text listable.
+- Report bodies can render lazily on first open, which keeps states with large document text listable. A body may also return a promise (see `withText()`), shown as a loading line until it settles.
 
 ### State-Specific Normalization
 - Each adapter in `js/inspections/states/` decides how its data loads, what counts as a violation (read from the document text where the scraper's own fields are unreliable) and what a facility summary and a report show. The header comment of each adapter records those decisions.
@@ -126,6 +128,5 @@ The canonical state-to-slug list is `kop_state_inspection_page_map()` in `inc/re
 
 - Migrate Texas and California to the shared engine.
 - Washington: a `--full` run of `wa_scraper.py` (needs the API key).
-- Florida and North Carolina payloads from `api/inspections-read.php` are around 100 MB each.
 - Severe-finding extractors for WA, FL, NV and the raw-text states (NC, GA, AR, MN, OR); a "What inspectors found" block on the facility pages.
 - California stores about 9,100 reports twice under two id schemes, which inflates the hub counts.
