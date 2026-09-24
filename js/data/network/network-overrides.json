@@ -328,7 +328,9 @@
     "VisionQuest": "closed",
     "Wilderness Quest": "closed"
   },
-  "years": {},
+  "years": {
+    "Integrity House": "2001-2014"
+  },
   "deaths": {},
   "nodes": [
     {
