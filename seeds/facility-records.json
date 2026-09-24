@@ -10051,5 +10051,25 @@
         "knownReferrers": []
       }
     }
+  },
+  {
+    "id": 9622,
+    "unique_name": "Uta Halee Academy",
+    "version": 3,
+    "note": "Takes \"Ponca Pines Academy\" out of the past names: it was a different, earlier program (2008-2012) that closed June 30, 2012 after its parent Uta Halee Girls Village closed; Uta Halee Academy began in 2013 under Rite of Passage. https://strugglingteens.com/artman/publish/PoncaPinesAcademyBN_120614.shtml",
+    "facility": {
+      "identification": {
+        "name": "Uta Halee Academy",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "Rite of Passage, Inc.",
+        "currentOwner": "ROP",
+        "currentOwners": [
+          "ROP"
+        ],
+        "knownReferrers": []
+      }
+    }
   }
 ]
