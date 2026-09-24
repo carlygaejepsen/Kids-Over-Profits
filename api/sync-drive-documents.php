@@ -280,7 +280,11 @@ function kop_sd_resolve(array $path) {
         }));
     }
     if (count($pool) === 1) return array($pool[0], array(), 'same name');
-    if (count($pool) > 1 || count($live) > 1) return array(0, array(), 'ambiguous: "' . end($path) . '" is several folders on the site');
+    if ((count($pool) > 1 || count($live) > 1) && !$depth) {
+        return array(0, array(), 'ambiguous: "' . end($path) . '" is several folders on the site');
+    }
+    // A generic name ("Lawsuits", "Newsletters") under a parent the site does
+    // have: it's that parent's own subfolder, so make it there.
 
     // 3. New to the site: create what's missing under the part that matched.
     return array($id, array_slice($path, $depth), $id ? 'new subfolder' : 'new top-level folder');
