@@ -1632,7 +1632,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '36';
+    $version = '37';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
