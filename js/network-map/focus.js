@@ -1450,6 +1450,12 @@
         /* The least a gap between rows is squeezed to so that everything a
          * click connects to is on the stage at once: four lanes. */
         var ROW_GAP_TIGHT = 22;
+        /* And where even that, with the names closer, leaves them taller
+         * than the stage, the last squeeze: a lane and a half. WWASPS's
+         * nine rows of owners, programs and renames came to 698px on a
+         * 640px stage at the four-lane gap (2026-09-23). */
+        var ROW_GAP_LAST = 12;
+        var rowGapFloor = ROW_GAP_TIGHT;
         /* The rows the frame must show, from shelve: the click and its own
          * connections. */
         var shown = null;
@@ -2007,9 +2013,13 @@
              * the click connects to taller than the stage. */
             var shelved = rows;
             colGap = COL_GAP;
+            rowGapFloor = ROW_GAP_TIGHT;
             if (!arrange(shelved, head, stacked, near, leadId)) {
                 colGap = COL_GAP_TIGHT;
-                arrange(shelved, head, stacked, near, leadId);
+                if (!arrange(shelved, head, stacked, near, leadId)) {
+                    rowGapFloor = ROW_GAP_LAST;
+                    arrange(shelved, head, stacked, near, leadId);
+                }
             }
         }
 
@@ -2075,9 +2085,9 @@
                 var fitAll = (stageTall - tallOf(0, rows.length - 1)) / (rows.length - 1);
                 var fitOwn = to > from ? (stageTall - tallOf(from, to)) / (to - from) : Infinity;
                 if (fitAll >= roomy) gapY = Math.min(ROW_GAP_MAX, fitAll);
-                else if (fitAll >= ROW_GAP_TIGHT) gapY = fitAll;
-                else gapY = Math.max(ROW_GAP_TIGHT, Math.min(roomy, fitOwn));
-                fits = fitOwn >= ROW_GAP_TIGHT;
+                else if (fitAll >= rowGapFloor) gapY = fitAll;
+                else gapY = Math.max(rowGapFloor, Math.min(roomy, fitOwn));
+                fits = fitOwn >= rowGapFloor;
             }
             if (!head) rows[at].y = 0;
             for (var lower = at + 1; lower < rows.length; lower++) {

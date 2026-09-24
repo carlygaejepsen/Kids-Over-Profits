@@ -279,7 +279,10 @@
     "Sundance Canyon Academy": 10534,
     "The Goodale School": 11932,
     "Three Springs Augusta": 9645,
-    "Utah Boys Ranch": 10579
+    "Utah Boys Ranch": 10579,
+    "Trails Momentum": 100169,
+    "Kansas Industrial School for GIrls": 100143,
+    "LIFE": 100168
   },
   "acquirers": {
     "e0241": "Universal Health Services",
@@ -492,7 +495,7 @@
     },
     {
       "name": "Developmental Behavioral Consultants",
-      "kind": "facility",
+      "kind": "parent",
       "near": "Youth Services International",
       "status": "closed or rebranded",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"
@@ -966,7 +969,7 @@
     },
     {
       "name": "YSI of Utah",
-      "kind": "facility",
+      "kind": "parent",
       "near": "Youth Services International",
       "status": "closed or rebranded",
       "source": "KOP research sheet \"Sequel/TSI/YSI/Vivant\" (Google Drive), operators tab"

@@ -4,23 +4,23 @@
   "facilitySource": "facilities_v2",
   "counts": {
    "nodes": 1345,
-   "edges": 2535,
-   "facilityMatches": 490,
-   "withYears": 293,
+   "edges": 2539,
+   "facilityMatches": 531,
+   "withYears": 323,
    "withDeaths": 28,
    "rebranded": 89,
-   "profileEdges": 92,
+   "profileEdges": 96,
    "staffMovementEdges": 26,
    "staffListEdges": 936,
    "addedPeople": 345,
    "kind_person": 678,
-   "kind_facility": 530,
-   "kind_parent": 91,
+   "kind_facility": 528,
+   "kind_parent": 93,
    "kind_association": 14,
    "kind_government": 16,
    "kind_church": 7,
    "kind_other": 9,
-   "edge_corporate": 633,
+   "edge_corporate": 637,
    "edge_family": 47,
    "edge_survivor": 6,
    "edge_referral": 11,
@@ -331,11 +331,11 @@
    ],
    "natsap": false,
    "importance": 69534,
-   "degree": 66,
+   "degree": 67,
    "degreeByCategory": {
     "unknown": 1,
     "leadership": 4,
-    "corporate": 60,
+    "corporate": 61,
     "staff": 1
    },
    "facilityId": null,
@@ -347,6 +347,41 @@
     "y": -301.11
    },
    "years": "1992-2017"
+  },
+  {
+   "id": "correctional-services-corporation",
+   "name": "Correctional Services Corporation",
+   "aliases": [
+    "CSC",
+    "Esmor Correctional Services"
+   ],
+   "kind": "parent",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 48,
+   "degreeByCategory": {
+    "corporate": 38,
+    "leadership": 8,
+    "admissions": 1,
+    "board": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "1989-2005",
+   "isolated": false,
+   "board": {
+    "x": -524.27,
+    "y": -297.71
+   },
+   "years": "1989-2005",
+   "formerNames": [
+    "Esmor Correctional Corporation"
+   ]
   },
   {
    "id": "vivant-behavioral-healthcare",
@@ -375,41 +410,6 @@
     "x": -496.04,
     "y": -543.33
    }
-  },
-  {
-   "id": "correctional-services-corporation",
-   "name": "Correctional Services Corporation",
-   "aliases": [
-    "CSC",
-    "Esmor Correctional Services"
-   ],
-   "kind": "parent",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 45,
-   "degreeByCategory": {
-    "corporate": 35,
-    "leadership": 8,
-    "admissions": 1,
-    "board": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "1989-2005",
-   "isolated": false,
-   "board": {
-    "x": -524.27,
-    "y": -297.71
-   },
-   "years": "1989-2005",
-   "formerNames": [
-    "Esmor Correctional Corporation"
-   ]
   },
   {
    "id": "three-springs-inc",
@@ -8607,8 +8607,8 @@
     "unknown": 2,
     "leadership": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100137,
+   "uniqueName": "Four Circles Recovery Center",
    "dates": "",
    "isolated": false,
    "board": {
@@ -9920,14 +9920,15 @@
     "corporate": 2,
     "staff": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100138,
+   "uniqueName": "New Hope Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -147.87,
     "y": -648.26
-   }
+   },
+   "years": "1998-1999"
   },
   {
    "id": "newport-academy",
@@ -10650,14 +10651,15 @@
     "leadership": 2,
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100139,
+   "uniqueName": "Stillwater Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -217.22,
     "y": 406.55
-   }
+   },
+   "years": "from 1988"
   },
   {
    "id": "talisman-camps",
@@ -11916,6 +11918,31 @@
    ]
   },
   {
+   "id": "bowie-county-detention-center",
+   "name": "Bowie County Detention Center",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 3,
+   "degreeByCategory": {
+    "corporate": 3
+   },
+   "facilityId": 100146,
+   "uniqueName": "Bowie County Detention Center",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -514.09,
+    "y": -297.71
+   }
+  },
+  {
    "id": "boyd-householder",
    "name": "Boyd Householder",
    "aliases": [],
@@ -12644,6 +12671,32 @@
    }
   },
   {
+   "id": "crisp-county-youth-development-center",
+   "name": "Crisp County Youth Development Center",
+   "aliases": [],
+   "kind": "facility",
+   "status": "open",
+   "chain": "",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 3,
+   "degreeByCategory": {
+    "corporate": 3
+   },
+   "facilityId": 100150,
+   "uniqueName": "Crisp County Youth Development Center",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -517.48,
+    "y": -294.32
+   },
+   "years": "from 2004"
+  },
+  {
    "id": "dallas-county-juvenile-facility",
    "name": "Dallas County Juvenile Facility",
    "aliases": [
@@ -13318,14 +13371,18 @@
    "degreeByCategory": {
     "membership": 3
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100140,
+   "uniqueName": "East Ridge Recovery Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -891.73,
     "y": -378.04
-   }
+   },
+   "otherNames": [
+    "East Ridge",
+    "All Addicts Anonymous East Ridge retreat"
+   ]
   },
   {
    "id": "eilean-mackenzie",
@@ -15826,6 +15883,35 @@
    }
   },
   {
+   "id": "medina-county-detention-center",
+   "name": "Medina County Detention Center",
+   "aliases": [],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "Vivant",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 3,
+   "degreeByCategory": {
+    "corporate": 3
+   },
+   "facilityId": 100155,
+   "uniqueName": "Medina County Detention Center",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -520.87,
+    "y": -284.14
+   },
+   "years": "1998-2001",
+   "otherNames": [
+    "Hondo Detention Center"
+   ]
+  },
+  {
    "id": "mel-sembler",
    "name": "Mel Sembler",
    "aliases": [],
@@ -16639,14 +16725,17 @@
    "degreeByCategory": {
     "corporate": 3
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100141,
+   "uniqueName": "Polk Youth Development Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -517.48,
     "y": -297.71
-   }
+   },
+   "otherNames": [
+    "Polk City Youth Training Center"
+   ]
   },
   {
    "id": "positive-impact-rtc",
@@ -17495,14 +17584,15 @@
     "corporate": 1,
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100142,
+   "uniqueName": "Spark Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -269.94,
     "y": -626.48
-   }
+   },
+   "years": "from 2019"
   },
   {
    "id": "stephanie-householder",
@@ -18335,14 +18425,18 @@
     "corporate": 2,
     "unknown": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100143,
+   "uniqueName": "Youth Center at Beloit",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -585.87,
     "y": -286.17
-   }
+   },
+   "years": "1888-2009",
+   "formerNames": [
+    "State Industrial School for Girls"
+   ]
   },
   {
    "id": "youth-intervention-transport",
@@ -19453,14 +19547,18 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100144,
+   "uniqueName": "Bill Clayton Detention Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -517.48,
     "y": -294.32
-   }
+   },
+   "years": "from 2000",
+   "otherNames": [
+    "Bill W. Clayton Detention Center"
+   ]
   },
   {
    "id": "bill-hoffman",
@@ -19606,14 +19704,18 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100145,
+   "uniqueName": "Blackwater STOP Camp",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -514.09,
     "y": -294.32
-   }
+   },
+   "years": "from 2003",
+   "otherNames": [
+    "Blackwater Short Term Offender Program"
+   ]
   },
   {
    "id": "blaine-fisher",
@@ -19777,31 +19879,6 @@
    "addedFrom": [
     "staff list"
    ]
-  },
-  {
-   "id": "bowie-county-detention-center",
-   "name": "Bowie County Detention Center",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -514.09,
-    "y": -297.71
-   }
   },
   {
    "id": "boys-town",
@@ -20526,14 +20603,19 @@
     "corporate": 1,
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100147,
+   "uniqueName": "Challenger Hawaii",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -105.89,
     "y": -670.15
-   }
+   },
+   "years": "from 1990",
+   "otherNames": [
+    "Challenger V",
+    "Challenger 5"
+   ]
   },
   {
    "id": "challenger-utah",
@@ -20632,14 +20714,15 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100148,
+   "uniqueName": "Chanute Transition Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -507.3,
     "y": -294.32
-   }
+   },
+   "years": "1998-2001"
   },
   {
    "id": "charles-chuck-dederich",
@@ -21070,14 +21153,19 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100149,
+   "uniqueName": "Colorado County Boot Camp",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -520.87,
     "y": -290.93
-   }
+   },
+   "years": "from 1998",
+   "otherNames": [
+    "Colorado County Juvenile Facility",
+    "Colorado County Juvenile Residential Facility"
+   ]
   },
   {
    "id": "community-psychiatric-centers",
@@ -21209,31 +21297,6 @@
     "y": -318.31
    },
    "years": "1997-2004"
-  },
-  {
-   "id": "crisp-county-youth-development-center",
-   "name": "Crisp County Youth Development Center",
-   "aliases": [],
-   "kind": "facility",
-   "status": "open",
-   "chain": "",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -517.48,
-    "y": -294.32
-   }
   },
   {
    "id": "dmarcus-reed",
@@ -22244,6 +22307,37 @@
    }
   },
   {
+   "id": "everglades-academy",
+   "name": "Everglades Academy",
+   "aliases": [
+    "Dade Juvenile Residential Facility"
+   ],
+   "kind": "facility",
+   "status": "closed",
+   "chain": "",
+   "regions": [
+    "YSI"
+   ],
+   "natsap": false,
+   "importance": 0,
+   "degree": 2,
+   "degreeByCategory": {
+    "corporate": 2
+   },
+   "facilityId": 100166,
+   "uniqueName": "Everglades Academy",
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -517.48,
+    "y": -290.93
+   },
+   "years": "from 1996",
+   "otherNames": [
+    "Dade Juvenile Residential Facility"
+   ]
+  },
+  {
    "id": "fred-beyer",
    "name": "Fred Beyer",
    "aliases": [],
@@ -22338,14 +22432,18 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100151,
+   "uniqueName": "Genesis Treatment Agency",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -503.9,
     "y": -290.93
-   }
+   },
+   "years": "1997-2003",
+   "otherNames": [
+    "Genesis Treatment Program"
+   ]
   },
   {
    "id": "glenn-banks-jr",
@@ -22713,14 +22811,19 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100152,
+   "uniqueName": "Hemphill County Juvenile Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -520.87,
     "y": -287.53
-   }
+   },
+   "years": "1994-2004",
+   "otherNames": [
+    "Hemphill County Juvenile Detention Center",
+    "Hemphill County Juvenile Facility"
+   ]
   },
   {
    "id": "high-frontier",
@@ -25975,14 +26078,18 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100153,
+   "uniqueName": "Los Hermanos Boys Ranch",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -507.3,
     "y": -287.53
-   }
+   },
+   "years": "until 1999",
+   "otherNames": [
+    "Los Hermanos Ranch"
+   ]
   },
   {
    "id": "luke-hatch",
@@ -26276,14 +26383,17 @@
     "staff": 1,
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100154,
+   "uniqueName": "Mars Home for Youth",
    "dates": "",
    "isolated": false,
    "board": {
     "x": 345.23,
     "y": 795.9
-   }
+   },
+   "formerNames": [
+    "United Presbyterian Home for Children"
+   ]
   },
   {
    "id": "marshanna-mcfarlin",
@@ -26776,31 +26886,6 @@
    "board": {
     "x": -684.64,
     "y": 54.02
-   }
-  },
-  {
-   "id": "medina-county-detention-center",
-   "name": "Medina County Detention Center",
-   "aliases": [],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "Vivant",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 2,
-   "degreeByCategory": {
-    "corporate": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -520.87,
-    "y": -284.14
    }
   },
   {
@@ -28206,14 +28291,18 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100156,
+   "uniqueName": "Paulding Regional Youth Detention Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -517.48,
     "y": -284.14
-   }
+   },
+   "years": "until 2013",
+   "otherNames": [
+    "Paulding RYDC"
+   ]
   },
   {
    "id": "penny-baker",
@@ -28309,14 +28398,15 @@
     "corporate": 1,
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100157,
+   "uniqueName": "Pompano Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -517.48,
     "y": -287.53
-   }
+   },
+   "years": "1997-2000"
   },
   {
    "id": "ponca-pines-academy",
@@ -28692,14 +28782,15 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100158,
+   "uniqueName": "Reflections Treatment Agency",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -514.09,
     "y": -284.14
-   }
+   },
+   "years": "from 1992"
   },
   {
    "id": "remuda-ranch-programs",
@@ -29904,14 +29995,15 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100159,
+   "uniqueName": "Springfield Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -503.9,
     "y": -284.14
-   }
+   },
+   "years": "until 2011"
   },
   {
    "id": "st-augustine-youth-academy",
@@ -30395,14 +30487,15 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100160,
+   "uniqueName": "Tarkio Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -514.09,
     "y": -280.74
-   }
+   },
+   "years": "1994-2004"
   },
   {
    "id": "teen-mentor",
@@ -30932,14 +31025,17 @@
    "degreeByCategory": {
     "corporate": 2
    },
-   "facilityId": null,
+   "facilityId": 100169,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": 262.98,
     "y": -382.62
-   }
+   },
+   "otherNames": [
+    "Momentum Young Adult"
+   ]
   },
   {
    "id": "travis-wireback",
@@ -31351,7 +31447,7 @@
    "id": "ysi-of-utah",
    "name": "YSI of Utah",
    "aliases": [],
-   "kind": "facility",
+   "kind": "parent",
    "status": "closed",
    "chain": "",
    "regions": [
@@ -32111,14 +32207,15 @@
    "degreeByCategory": {
     "staff": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100161,
+   "uniqueName": "Brush Ranch School",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -254.27,
     "y": 456.5
-   }
+   },
+   "years": "until 2004"
   },
   {
    "id": "bryan-clemenson",
@@ -32189,14 +32286,19 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100162,
+   "uniqueName": "Caldwell County Juvenile Justice Center",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -510.69,
     "y": -297.71
-   }
+   },
+   "years": "1998-2001",
+   "otherNames": [
+    "Caldwell Juvenile Justice Center",
+    "Lockhart Boot Camp"
+   ]
   },
   {
    "id": "calo-preteens",
@@ -32265,14 +32367,18 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100163,
+   "uniqueName": "Camp Washington",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -524.27,
     "y": -294.32
-   }
+   },
+   "years": "1996-2000",
+   "otherNames": [
+    "Virginia Juvenile Boot Camp"
+   ]
   },
   {
    "id": "catalyst-rtc",
@@ -32823,20 +32929,26 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100164,
+   "uniqueName": "Desert Hills - Texas",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -524.27,
     "y": -290.93
-   }
+   },
+   "years": "until 1998",
+   "otherNames": [
+    "Desert Hills - College Station",
+    "Desert Hills of Texas",
+    "College Station program"
+   ]
   },
   {
    "id": "developmental-behavioral-consultants",
    "name": "Developmental Behavioral Consultants",
    "aliases": [],
-   "kind": "facility",
+   "kind": "parent",
    "status": "closed",
    "chain": "",
    "regions": [
@@ -32951,14 +33063,15 @@
    "degreeByCategory": {
     "admissions": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100165,
+   "uniqueName": "Dragonfly Transitions",
    "dates": "",
    "isolated": false,
    "board": {
     "x": 919.79,
     "y": 224.46
-   }
+   },
+   "years": "from 2000"
   },
   {
    "id": "eagle-ranch-academy",
@@ -33061,33 +33174,6 @@
    "board": {
     "x": 23.36,
     "y": 375.66
-   }
-  },
-  {
-   "id": "everglades-academy",
-   "name": "Everglades Academy",
-   "aliases": [
-    "Dade Juvenile Residential Facility"
-   ],
-   "kind": "facility",
-   "status": "closed",
-   "chain": "",
-   "regions": [
-    "YSI"
-   ],
-   "natsap": false,
-   "importance": 0,
-   "degree": 1,
-   "degreeByCategory": {
-    "corporate": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -517.48,
-    "y": -290.93
    }
   },
   {
@@ -33593,14 +33679,17 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100167,
+   "uniqueName": "Heritage Homestead",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -253.14,
     "y": -589.77
-   }
+   },
+   "otherNames": [
+    "Heritage Schools, Inc. - Homestead"
+   ]
   },
   {
    "id": "highlands-youth-academy",
@@ -33912,14 +34001,15 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
+   "facilityId": 100143,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -585.87,
     "y": -301.22
-   }
+   },
+   "years": "1888-2009"
   },
   {
    "id": "kentucky-river-academy",
@@ -34219,14 +34309,15 @@
    "degreeByCategory": {
     "leadership": 1
    },
-   "facilityId": null,
+   "facilityId": 100168,
    "uniqueName": null,
    "dates": "",
    "isolated": false,
    "board": {
     "x": -727.12,
     "y": -429.23
-   }
+   },
+   "years": "from 1980"
   },
   {
    "id": "lighthouse-for-boys",
@@ -34499,8 +34590,8 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100169,
+   "uniqueName": "Momentum",
    "dates": "",
    "isolated": false,
    "board": {
@@ -35035,14 +35126,18 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100170,
+   "uniqueName": "Parc Place",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -520.87,
     "y": -287.53
-   }
+   },
+   "otherNames": [
+    "Southwestern Children's Health Services",
+    "Oasis Behavioral Health"
+   ]
   },
   {
    "id": "paul-donnelly",
@@ -35374,14 +35469,17 @@
    "degreeByCategory": {
     "unknown": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100171,
+   "uniqueName": "Ridgeview Institute",
    "dates": "",
    "isolated": false,
    "board": {
     "x": 316.78,
     "y": -476.19
-   }
+   },
+   "otherNames": [
+    "Ridgeview Institute Smyrna"
+   ]
   },
   {
    "id": "river-point-behavioral-health",
@@ -35831,14 +35929,15 @@
    "degreeByCategory": {
     "admissions": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100172,
+   "uniqueName": "Shadow Mountain Academy",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -373.52,
     "y": -151.83
-   }
+   },
+   "years": "from 2007"
   },
   {
    "id": "south-florida-youth-academy",
@@ -35906,14 +36005,17 @@
    "degreeByCategory": {
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100173,
+   "uniqueName": "Stone of Help Group Homes",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -385.11,
     "y": -680.62
-   }
+   },
+   "otherNames": [
+    "Stone of Help"
+   ]
   },
   {
    "id": "stuart-e-nunn-juvenile-justice-center",
@@ -36032,14 +36134,18 @@
    "degreeByCategory": {
     "corporate": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100174,
+   "uniqueName": "Tallulah Correctional Center for Youth",
    "dates": "",
    "isolated": false,
    "board": {
     "x": -520.87,
     "y": -280.74
-   }
+   },
+   "years": "1994-2004",
+   "otherNames": [
+    "Swanson Correctional Center for Youth/Madison Parish Unit"
+   ]
   },
   {
    "id": "tampa-residential-facility",
@@ -36311,14 +36417,19 @@
    "degreeByCategory": {
     "leadership": 1
    },
-   "facilityId": null,
-   "uniqueName": null,
+   "facilityId": 100175,
+   "uniqueName": "Three Strands Wilderness",
    "dates": "",
    "isolated": false,
    "board": {
     "x": 962.72,
     "y": 133.16
-   }
+   },
+   "years": "from 2019",
+   "otherNames": [
+    "Three Strands",
+    "3 Strands"
+   ]
   },
   {
    "id": "threepeaks-ascent-rtc",
@@ -56874,6 +56985,62 @@
   },
   {
    "id": "p0052",
+   "source": "correctional-services-corporation",
+   "target": "bowie-county-detention-center",
+   "category": "corporate",
+   "roles": [
+    "past operator"
+   ],
+   "raw": "past operator (facility profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0053",
+   "source": "correctional-services-corporation",
+   "target": "crisp-county-youth-development-center",
+   "category": "corporate",
+   "roles": [
+    "past operator"
+   ],
+   "raw": "past operator (facility profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0054",
+   "source": "youth-services-international",
+   "target": "medina-county-detention-center",
+   "category": "corporate",
+   "roles": [
+    "past operator"
+   ],
+   "raw": "past operator (facility profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0055",
+   "source": "correctional-services-corporation",
+   "target": "everglades-academy",
+   "category": "corporate",
+   "roles": [
+    "past operator"
+   ],
+   "raw": "past operator (facility profile)",
+   "direction": "none",
+   "crossesChain": false,
+   "crossesRegion": false,
+   "provenance": "profile"
+  },
+  {
+   "id": "p0056",
    "source": "altior-healthcare",
    "target": "the-ridge-maine",
    "category": "corporate",
@@ -56887,7 +57054,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0053",
+   "id": "p0057",
    "source": "acadia-healthcare",
    "target": "turn-about-ranch",
    "category": "corporate",
@@ -56901,7 +57068,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0054",
+   "id": "p0058",
    "source": "acadia-healthcare",
    "target": "youth-care-of-utah",
    "category": "corporate",
@@ -56915,7 +57082,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0055",
+   "id": "p0059",
    "source": "acadia-healthcare",
    "target": "village-behavioral-health-treatment-center",
    "category": "corporate",
@@ -56929,7 +57096,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0056",
+   "id": "p0060",
    "source": "acadia-healthcare",
    "target": "ridgeview-group-home",
    "category": "corporate",
@@ -56943,7 +57110,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0057",
+   "id": "p0061",
    "source": "acadia-healthcare",
    "target": "talisman-camps",
    "category": "corporate",
@@ -56957,7 +57124,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0058",
+   "id": "p0062",
    "source": "acadia-healthcare",
    "target": "aspen-education-group",
    "category": "corporate",
@@ -56971,7 +57138,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0059",
+   "id": "p0063",
    "source": "aspen-education-group",
    "target": "youth-care-of-utah",
    "category": "corporate",
@@ -56985,7 +57152,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0060",
+   "id": "p0064",
    "source": "aspen-education-group",
    "target": "outback-therapeutic-expeditions",
    "category": "corporate",
@@ -56999,7 +57166,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0061",
+   "id": "p0065",
    "source": "aspen-education-group",
    "target": "pine-ridge-academy",
    "category": "corporate",
@@ -57013,7 +57180,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0062",
+   "id": "p0066",
    "source": "aspen-education-group",
    "target": "lone-star-expeditions",
    "category": "corporate",
@@ -57027,7 +57194,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0063",
+   "id": "p0067",
    "source": "aspen-education-group",
    "target": "talisman-school",
    "category": "corporate",
@@ -57041,7 +57208,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0064",
+   "id": "p0068",
    "source": "aspen-education-group",
    "target": "bromley-brook-school",
    "category": "corporate",
@@ -57055,7 +57222,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0065",
+   "id": "p0069",
    "source": "aspen-education-group",
    "target": "cedars-academy",
    "category": "corporate",
@@ -57069,7 +57236,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0066",
+   "id": "p0070",
    "source": "aspen-education-group",
    "target": "mount-bachelor-academy",
    "category": "corporate",
@@ -57083,7 +57250,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0067",
+   "id": "p0071",
    "source": "aspen-education-group",
    "target": "sagewalk-wilderness",
    "category": "corporate",
@@ -57097,7 +57264,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0068",
+   "id": "p0072",
    "source": "eckerd-connects",
    "target": "eckerd-academy-of-the-blue-ridge",
    "category": "corporate",
@@ -57111,7 +57278,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0069",
+   "id": "p0073",
    "source": "embark-behavioral-health",
    "target": "fulshear-treatment-to-transition",
    "category": "corporate",
@@ -57125,7 +57292,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0070",
+   "id": "p0074",
    "source": "embark-behavioral-health",
    "target": "calo-teens",
    "category": "corporate",
@@ -57139,7 +57306,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0071",
+   "id": "p0075",
    "source": "family-help-wellness",
    "target": "solstice-west",
    "category": "corporate",
@@ -57153,7 +57320,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0072",
+   "id": "p0076",
    "source": "family-help-wellness",
    "target": "solstice-east",
    "category": "corporate",
@@ -57167,7 +57334,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0073",
+   "id": "p0077",
    "source": "family-help-wellness",
    "target": "red-mountain-sedona",
    "category": "corporate",
@@ -57181,7 +57348,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0074",
+   "id": "p0078",
    "source": "family-help-wellness",
    "target": "sedona-sky-academy",
    "category": "corporate",
@@ -57195,7 +57362,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0075",
+   "id": "p0079",
    "source": "family-help-wellness",
    "target": "kokua-recovery",
    "category": "corporate",
@@ -57209,7 +57376,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0076",
+   "id": "p0080",
    "source": "family-help-wellness",
    "target": "triple-divide-lodge",
    "category": "corporate",
@@ -57223,7 +57390,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0077",
+   "id": "p0081",
    "source": "kids-centers-of-america",
    "target": "kids-of-north-new-jersey",
    "category": "corporate",
@@ -57237,7 +57404,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0078",
+   "id": "p0082",
    "source": "rite-of-passage-inc",
    "target": "norris-academy",
    "category": "corporate",
@@ -57251,7 +57418,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0079",
+   "id": "p0083",
    "source": "rite-of-passage-inc",
    "target": "oak-grove-academy",
    "category": "corporate",
@@ -57265,7 +57432,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0080",
+   "id": "p0084",
    "source": "rite-of-passage-inc",
    "target": "palm-beach-regional-juvenile-correctional-center",
    "category": "corporate",
@@ -57279,7 +57446,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0081",
+   "id": "p0085",
    "source": "rite-of-passage-inc",
    "target": "ponca-pines-academy",
    "category": "corporate",
@@ -57293,7 +57460,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0082",
+   "id": "p0086",
    "source": "teen-challenge",
    "target": "treasure-coast-boys-academy",
    "category": "corporate",
@@ -57307,7 +57474,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0083",
+   "id": "p0087",
    "source": "teen-challenge",
    "target": "evangelhouse-christian-academy",
    "category": "corporate",
@@ -57321,7 +57488,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0084",
+   "id": "p0088",
    "source": "teen-challenge",
    "target": "evangeline-christian-academy",
    "category": "corporate",
@@ -57335,7 +57502,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0085",
+   "id": "p0089",
    "source": "three-springs-inc",
    "target": "auldern-academy",
    "category": "corporate",
@@ -57349,7 +57516,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0086",
+   "id": "p0090",
    "source": "wayne-halfway-house",
    "target": "jacksonville-youth-academy",
    "category": "corporate",
@@ -57363,7 +57530,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0087",
+   "id": "p0091",
    "source": "youth-services-international",
    "target": "marion-youth-academy",
    "category": "corporate",
@@ -57377,7 +57544,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0088",
+   "id": "p0092",
    "source": "universal-health-services",
    "target": "cedu-family-of-services",
    "category": "corporate",
@@ -57391,7 +57558,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0089",
+   "id": "p0093",
    "source": "mel-wasserman",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -57405,7 +57572,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0090",
+   "id": "p0094",
    "source": "brigitte-wasserman",
    "target": "cedu-family-of-services",
    "category": "leadership",
@@ -57419,7 +57586,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0091",
+   "id": "p0095",
    "source": "universal-health-services",
    "target": "the-brown-schools",
    "category": "corporate",
@@ -57433,7 +57600,7 @@
    "provenance": "profile"
   },
   {
-   "id": "p0092",
+   "id": "p0096",
    "source": "tim-dupell",
    "target": "family-help-wellness",
    "category": "leadership",
