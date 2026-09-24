@@ -500,6 +500,58 @@ a.kop-gl-ref:hover {
     color: var(--kop-navy-blue, #000080);
 }
 
+/* ---- Definition popup (js/glossary.js) --------------------------------- */
+
+.kop-gl-pop {
+    position: absolute;
+    z-index: 1000;
+    width: max-content;
+    max-width: min(26rem, calc(100vw - 16px));
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 0.8rem 1rem;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #000435);
+    border: 1px solid var(--kop-teal, #33A7B5);
+    border-top: 3px solid var(--kop-teal, #33A7B5);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 4, 53, 0.18);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.kop-gl-pop[hidden] {
+    display: none;
+}
+
+.kop-gl-pop p {
+    margin: 0 0 0.45rem;
+}
+
+.kop-gl-pop p:last-child {
+    margin-bottom: 0;
+}
+
+.kop-gl-pop-term {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-gl-pop .kop-gl-ref {
+    font-weight: 600;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-pop .kop-gl-tags {
+    gap: 0.25rem;
+}
+
+.kop-gl-pop .kop-gl-tag {
+    font-size: 0.78rem;
+    padding: 0.1rem 0.45rem;
+}
+
 .kop-gl-none,
 .kop-gl-empty {
     padding: 1.25rem;

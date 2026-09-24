@@ -250,6 +250,173 @@
         }
     }
 
+    /* ---- Definition popups -------------------------------------------- */
+
+    /* Pointing at a cross-reference shows the entry it names without leaving
+     * the place you were reading; clicking still jumps there (above). Only
+     * for a mouse or the keyboard: on a touch screen a tap is the jump. */
+    var pop = document.createElement('div');
+    pop.className = 'kop-gl-pop';
+    pop.id = 'kop-gl-pop';
+    pop.setAttribute('role', 'tooltip');
+    pop.hidden = true;
+    document.body.appendChild(pop);
+
+    var popFor = null;
+    var showTimer = null;
+    var hideTimer = null;
+
+    function entryFor(link) {
+        var href = link.getAttribute('href') || '';
+        var hash = href.indexOf('#');
+        if (hash === -1) {
+            return null;
+        }
+        var target = document.getElementById(decodeURIComponent(href.slice(hash + 1)));
+        return target && target.classList.contains('kop-gl-entry') ? target : null;
+    }
+
+    function fillPop(entry) {
+        pop.textContent = '';
+        var head = document.createElement('p');
+        head.className = 'kop-gl-pop-term';
+        var term = entry.querySelector('.kop-gl-term dfn');
+        var qualifier = entry.querySelector('.kop-gl-term .kop-gl-qualifier');
+        head.textContent = (term ? term.textContent : '') + (qualifier ? ' ' + qualifier.textContent : '');
+        pop.appendChild(head);
+        entry.querySelectorAll('.kop-gl-def > p').forEach(function (p) {
+            var copy = p.cloneNode(true);
+            /* Read-only copy: nothing inside it takes focus or a click. */
+            copy.querySelectorAll('a').forEach(function (a) {
+                var span = document.createElement('span');
+                span.className = a.className;
+                span.innerHTML = a.innerHTML;
+                a.parentNode.replaceChild(span, a);
+            });
+            copy.removeAttribute('id');
+            pop.appendChild(copy);
+        });
+    }
+
+    function placePop(link) {
+        var r = link.getBoundingClientRect();
+        pop.style.left = '0px';
+        pop.style.top = '0px';
+        var w = pop.offsetWidth;
+        var h = pop.offsetHeight;
+        var vw = document.documentElement.clientWidth;
+        var left = Math.min(Math.max(8, r.left), vw - w - 8);
+        var below = r.bottom + 8;
+        var top = (below + h > window.innerHeight - 8 && r.top - h - 8 > 8) ? r.top - h - 8 : below;
+        pop.style.left = Math.round(left + window.scrollX) + 'px';
+        pop.style.top = Math.round(top + window.scrollY) + 'px';
+    }
+
+    function showPop(link) {
+        var entry = entryFor(link);
+        if (!entry || entry.contains(link)) {
+            return;
+        }
+        window.clearTimeout(hideTimer);
+        if (popFor !== link) {
+            if (popFor) {
+                popFor.removeAttribute('aria-describedby');
+            }
+            fillPop(entry);
+            popFor = link;
+            link.setAttribute('aria-describedby', 'kop-gl-pop');
+        }
+        pop.hidden = false;
+        placePop(link);
+    }
+
+    function hidePop() {
+        window.clearTimeout(showTimer);
+        pop.hidden = true;
+        if (popFor) {
+            popFor.removeAttribute('aria-describedby');
+            popFor = null;
+        }
+    }
+
+    function hideSoon() {
+        window.clearTimeout(showTimer);
+        window.clearTimeout(hideTimer);
+        hideTimer = window.setTimeout(hidePop, 200);
+    }
+
+    /* After a jump the page moves under a still pointer, which would open
+     * a popup for whatever link lands beneath it. Wait for a real move. */
+    var stillSinceJump = false;
+
+    function hoverLink(event) {
+        if (event.pointerType === 'touch') {
+            return;
+        }
+        var link = event.target.closest && event.target.closest('a.kop-gl-ref');
+        if (!link) {
+            return;
+        }
+        window.clearTimeout(hideTimer);
+        window.clearTimeout(showTimer);
+        showTimer = window.setTimeout(function () {
+            showPop(link);
+        }, 250);
+    }
+
+    root.addEventListener('pointerover', function (event) {
+        if (!stillSinceJump) {
+            hoverLink(event);
+        }
+    });
+    /* The first real move after a jump counts as arriving on the link. */
+    document.addEventListener('pointermove', function (event) {
+        if (stillSinceJump) {
+            stillSinceJump = false;
+            hoverLink(event);
+        }
+    }, { passive: true });
+    root.addEventListener('pointerout', function (event) {
+        var link = event.target.closest('a.kop-gl-ref');
+        if (link && !link.contains(event.relatedTarget)) {
+            hideSoon();
+        }
+    });
+    /* The popup can be pointed at, to read a long one or select its text. */
+    pop.addEventListener('pointerover', function () {
+        window.clearTimeout(hideTimer);
+    });
+    pop.addEventListener('pointerout', function (event) {
+        if (!pop.contains(event.relatedTarget)) {
+            hideSoon();
+        }
+    });
+    root.addEventListener('focusin', function (event) {
+        var link = event.target.closest && event.target.closest('a.kop-gl-ref');
+        if (link && link.matches(':focus-visible')) {
+            showPop(link);
+        }
+    });
+    root.addEventListener('focusout', function (event) {
+        if (event.target.closest && event.target.closest('a.kop-gl-ref')) {
+            hidePop();
+        }
+    });
+    root.addEventListener('click', function () {
+        hidePop();
+        stillSinceJump = true;
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !pop.hidden) {
+            hidePop();
+        }
+    });
+    window.addEventListener('scroll', function () {
+        if (popFor) {
+            placePop(popFor);
+        }
+    }, { passive: true });
+
     /* ---- Contents rail: mark the section being read -------------------- */
 
     var tocLinks = root.querySelectorAll('.kop-gl-toc a');
