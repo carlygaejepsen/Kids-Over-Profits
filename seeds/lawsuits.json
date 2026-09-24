@@ -2295,6 +2295,41 @@
           "U.S. Department of Justice, Civil Rights Division (amicus curiae on appeal)"
         ]
       }
+    },
+    {
+      "match_case_name": "State of Iowa v. Benjamin G. Trane",
+      "set": {
+        "court": "Iowa District Court for Lee (South) County; Iowa Supreme Court",
+        "status": "ruling",
+        "summary": "Benjamin G. Trane opened Midwest Academy in Keokuk, Iowa in 2003 and ran it until it closed in 2016 after state and federal agents searched the school. In 2015 a female student reported that he sexually abused her, and two male students reported physical abuse; the State of Iowa charged Trane with third-degree sexual abuse, sexual exploitation by a counselor or therapist, and child endangerment. At a jury trial in Keokuk in December 2017, a child protection worker testified that the Iowa Department of Human Services and the FBI had received a report in March 2015 that students were held in isolation rooms with human waste, and agents described searches of the school on January 28, February 1 and February 11, 2016. On December 22, 2017 the jury convicted Trane of assault with intent to commit sexual abuse, a pattern, practice or scheme to engage in sexual exploitation by a counselor or therapist, and child endangerment. He was sentenced on May 10, 2018 to nine years in prison, ten years of supervised release and sex offender registration. His appeals failed: the Iowa Supreme Court affirmed the convictions in 2019 subject to a rape shield hearing, affirmed again on January 6, 2023, and on January 31, 2025 reversed a lower court's grant of a new trial on the child endangerment count.",
+        "outcome": "Convicted December 22, 2017 of assault with intent to commit sexual abuse, sexual exploitation by a counselor or therapist (pattern, practice or scheme), and child endangerment. Sentenced May 10, 2018 to 9 years in prison. Convictions affirmed by the Iowa Supreme Court (State v. Trane, 934 N.W.2d 447 (Iowa 2019); No. 21-1211, January 6, 2023). Trane reported to the Lee County jail to begin his sentence in March 2023. In postconviction proceedings the Iowa Supreme Court (No. 23-1928, January 31, 2025) reversed the grant of a new trial on the child endangerment count.",
+        "claims": [
+          "Sexual abuse in the third degree (convicted of the lesser offense of assault with intent to commit sexual abuse)",
+          "Sexual exploitation by a counselor or therapist",
+          "Child endangerment"
+        ],
+        "source_urls": [
+          "https://www.iowacourts.gov/iowa-courts/supreme-court/supreme-court-opinions/case/21-1211",
+          "https://caselaw.findlaw.com/court/ia-supreme-court/116888726.html",
+          "https://www.radioiowa.com/2017/12/22/jury-finds-former-owner-of-midwest-academy-in-keokuk-guilty/",
+          "https://cbs2iowa.com/news/local/iowa-boarding-school-director-sentenced-to-9-years-for-abuse",
+          "https://khqa.com/news/local/former-keokuk-boarding-school-owner-turns-himself-in-to-begin-prison-sentence"
+        ]
+      }
+    },
+    {
+      "match_case_name": "State of Nevada v. Patricia Chappuis, et al.",
+      "set": {
+        "status": "closed",
+        "summary": "In August 2019 the Nye County District Attorney filed a criminal complaint charging Patricia Lynn Chappuis and Marcel Claude Chappuis with 45 counts of felony child abuse or neglect over their running of Northwest Academy, 1492 South Highway 373 in Amargosa Valley, Nevada. Each count concerns a different enrolled child, aged roughly 11 to 17. Prosecutors alleged that between February 9, 2018 and February 12, 2019 the defendants failed to give the children enough potable water, let them drink unsafe tap water, and failed to screen and supervise staff to protect the children from physical and verbal abuse. The complaint was filed in the Beatty Township Justice Court on August 6, 2019, with an arraignment set for August 19, 2019. In July 2021 the case ended in a plea agreement: Marcel Chappuis pleaded no contest to two misdemeanor counts of disturbing the peace, Patricia Chappuis agreed to plead guilty to one gross misdemeanor, each was fined $2,000, and no jail time or probation was sought. Both maintained their innocence through their attorney.",
+        "outcome": "Resolved by plea agreement. On July 19, 2021 in Beatty Justice Court, Marcel Chappuis pleaded no contest to two misdemeanor counts of disturbing the peace and paid a $2,000 fine; Patricia Chappuis waived her preliminary hearing and agreed to plead guilty to one gross misdemeanor count in district court in Tonopah, with a $2,000 fine. Prosecutors agreed not to seek jail time or probation, and the 45 felony counts against each were dropped. News coverage found does not report Patricia Chappuis's later court date.",
+        "source_urls": [
+          "https://pvtimes.com/news/plea-deal-allows-married-owners-of-northwest-academy-to-avoid-prison-102238/",
+          "https://www.reviewjournal.com/crime/courts/2-years-later-plea-deal-decimates-northwest-academy-child-abuse-case-2402553/",
+          "https://pvtimes.com/news/northwest-academy-owners-strike-tentative-deal-in-child-abuse-case-98200/",
+          "https://pvtimes.com/news/owners-of-northwest-academy-face-45-count-criminal-complaint-73622/"
+        ]
+      }
     }
   ],
   "facility_links_add": [
