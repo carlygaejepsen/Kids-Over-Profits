@@ -58,26 +58,33 @@ const KOP_SUBMISSION_NOTIFY_DIGEST_HOOK       = 'kop_submission_notify_digest';
  * belongs to. 'template' is a page template basename resolved to a permalink
  * at send time (these review screens are front-end pages, not wp-admin
  * screens); 'admin_page' is a wp-admin menu slug used instead when set.
+ * 'tab' opens Submissions Review on that type (its ?type= parameter).
  */
 function kop_submission_types() {
     return array(
+        // Facility edits, wiki entries and articles are all approved on
+        // Submissions Review, not on the screens they were written in.
         'suggested_edit' => array(
-            'label'      => 'facility edit suggestion',
-            'admin_page' => 'approve-facility-edits',
+            'label'    => 'facility edit suggestion',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'data',
         ),
         'wiki' => array(
             'label'    => 'wiki submission',
-            'template' => 'page-wiki-editor.php',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'wiki',
         ),
         'news' => array(
             'label'    => 'news submission',
-            'template' => 'page-news-processor.php',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'news',
         ),
         // Same table and screen as 'news'; separate so the nightly discovery
         // run can be digested while a person's submission still mails at once.
         'news_auto' => array(
             'label'    => 'auto-discovered article',
-            'template' => 'page-news-processor.php',
+            'template' => 'page-admin-submissions.php',
+            'tab'      => 'news',
         ),
         'document' => array(
             'label'    => 'anonymous document',
@@ -107,6 +114,9 @@ function kop_submission_review_url($type) {
     if (!empty($spec['template']) && function_exists('kop_find_template_page_url')) {
         $url = (string) kop_find_template_page_url($spec['template']);
         if ($url !== '') {
+            if (!empty($spec['tab'])) {
+                $url .= (strpos($url, '?') === false ? '?' : '&') . 'type=' . rawurlencode($spec['tab']);
+            }
             return $url;
         }
     }

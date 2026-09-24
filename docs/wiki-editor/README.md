@@ -47,7 +47,7 @@ The **Wiki Editor** (page title "TTI Wiki Entry Generator") helps users create, 
 - **Save:** "Submit to Database" posts to `api/save-wiki-submission.php`, which writes to `wiki_submissions`.
 - **Permissions:** non-admins may only set `draft` or `submitted` and may only update rows still in one of those statuses. Other statuses (approved, published, rejected) are admin-only; deleting (a soft `status = 'deleted'`) also requires the `kop_wiki_editor` nonce sent as `X-KOP-Nonce`. Submitter contact details are returned to admins only.
 - **Program link:** any non-draft save without `facilityUniqueName` is rejected (HTTP 422, `facility_link_required`).
-- **Email notification:** when a non-admin creates a new submission, `kop_notify_admins('wiki', ...)` (`inc/submission-notify.php`) mails the admins. Recipients come from the `kop_submission_notify_emails` option (falling back to the site admin email); admin saves are not mailed.
+- **Email notification:** when a non-admin's entry reaches `submitted` (saved as submitted, or a draft later submitted), `kop_notify_admins('wiki', ...)` (`inc/submission-notify.php`) mails the admins a link to Submissions Review on the wiki tab. Saving a draft sends nothing. Recipients come from the `kop_submission_notify_emails` option (falling back to the site admin email); admin saves are not mailed.
 - **Review:** submissions are approved, rejected or published on the Submissions Review page (`templates/page-admin-submissions.php`, `api/manage-submissions.php`; see [Admin Submissions](../admin-submissions/README.md)). Approving or publishing a wiki submission upserts it into `wiki_master`. Admins can also confirm or repoint the program link through `api/link-wiki-facility.php`.
 
 ### 5. Wiki Feed

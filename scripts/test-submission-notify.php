@@ -119,8 +119,8 @@ check('lawsuit: links the review screen',
 reset_mail();
 kop_notify_admins('suggested_edit', 'Provo Canyon School', '', array('Changes' => 3));
 $mail = last_mail();
-check('suggested edit: links wp-admin approval screen',
-    $mail && strpos($mail['body'], 'wp-admin/admin.php?page=approve-facility-edits') !== false);
+check('suggested edit: links Submissions Review on the data tab',
+    $mail && strpos($mail['body'], 'https://example.org/submissions-review/?type=data') !== false);
 
 // --- Submitted text cannot carry markup or unbounded length -----------------
 
@@ -184,7 +184,7 @@ check('digest: lists each item', $mail
     && strpos($mail['body'], 'Article 1') !== false
     && strpos($mail['body'], 'Article 3') !== false);
 check('digest: links the review screen',
-    $mail && strpos($mail['body'], 'https://example.org/news-processor/') !== false);
+    $mail && strpos($mail['body'], 'https://example.org/submissions-review/?type=news') !== false);
 check('digest: queue cleared', get_option('kop_submission_notify_queue', array()) === array());
 
 reset_mail();
@@ -196,7 +196,13 @@ check('digest: really nothing sent', count($GLOBALS['kop_test_mail']) === 0);
 reset_mail();
 kop_notify_admins('wiki', 'Turn-About Ranch');
 $mail = last_mail();
-check('wiki: falls back to the tools menu',
+check('wiki: links Submissions Review on the wiki tab',
+    $mail && strpos($mail['body'], 'https://example.org/submissions-review/?type=wiki') !== false, $mail ? $mail['body'] : '');
+
+reset_mail();
+kop_notify_admins('legislation', 'HB 1234');
+$mail = last_mail();
+check('legislation: no review page, falls back to the tools menu',
     $mail && strpos($mail['body'], 'wp-admin/admin.php?page=kop-tools') !== false, $mail ? $mail['body'] : '');
 
 // --- The daily event is scheduled once --------------------------------------

@@ -405,6 +405,18 @@ try {
             }
         }
 
+        // A public draft that is now submitted is new to the reviewers.
+        if (!$kop_is_admin && ($currentStatus ?? null) === 'draft' && $status === 'submitted'
+            && function_exists('kop_notify_admins')) {
+            kop_notify_admins('wiki', $programName, '', [
+                'Location'     => $cityState,
+                'Organization' => $organization,
+                'Submitted by' => $submittedBy,
+                'Notes'        => $submissionNotes,
+                'Reference'    => '#' . (int)$submissionId,
+            ]);
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Submission updated successfully',
@@ -437,10 +449,11 @@ try {
         
         $newId = $pdo->lastInsertId();
 
-        // Tell the admins (inc/submission-notify.php). Best effort, and only
-        // for public submissions: an admin working in the wiki editor does not
-        // need to be mailed about their own draft.
-        if (!$kop_is_admin && function_exists('kop_notify_admins')) {
+        // Tell the admins (inc/submission-notify.php). Best effort, only for
+        // public submissions (an admin working in the wiki editor does not
+        // need to be mailed about their own work), and only once the entry
+        // is submitted for review: a saved draft is not ready to review.
+        if (!$kop_is_admin && $status === 'submitted' && function_exists('kop_notify_admins')) {
             kop_notify_admins('wiki', $programName, '', [
                 'Location'     => $cityState,
                 'Organization' => $organization,

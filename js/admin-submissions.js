@@ -119,6 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // type a name/email. Fall back to any previously-saved value for safety.
     const REVIEWER = config.reviewer || localStorage.getItem('adminEmail') || '';
 
+    // Open on the tab a notification email links to (?type=wiki and so on).
+    const linkedType = new URLSearchParams(window.location.search).get('type');
+    if (typeFilter && linkedType && typeFilter.querySelector('option[value="' + CSS.escape(linkedType) + '"]')) {
+        typeFilter.value = linkedType;
+    }
+
     // Initialize
     loadStats();
     loadSubmissions();

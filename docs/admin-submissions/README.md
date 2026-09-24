@@ -55,8 +55,7 @@ Since 2026-09-18 facility writes go to the v2 tables (`facilities_v2` and relate
 
 Each public insert path calls `kop_notify_admins()` (`inc/submission-notify.php`), which emails the addresses in the `kop_submission_notify_emails` option (comma or newline separated; defaults to the site admin email) with a link to the right review screen:
 
-- `suggested_edit` -> the wp-admin **Approve Edits** screen (`admin.php?page=approve-facility-edits`, which iframes `api/approve-edits.php`)
-- `wiki` -> Wiki Editor, `news` -> News Processor
+- `suggested_edit`, `wiki`, `news` and `news_auto` -> this page, opened on the matching tab (`?type=data`, `?type=wiki`, `?type=news`; `js/admin-submissions.js` reads the parameter)
 - `lawsuit` -> Lawsuit Admin (`templates/page-admin-lawsuits.php`), `legislation` -> Legislation Admin (`templates/page-admin-legislation.php`)
 - `news_auto` (articles posted by nightly discovery) is queued and sent as a daily digest; change the digested types with the `KOP_SUBMISSION_DIGEST_TYPES` constant.
 
