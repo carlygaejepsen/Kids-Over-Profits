@@ -22,11 +22,17 @@ if (!defined('ABSPATH')) {
  * 
  * Features:
  * - Virus/malware scanning with Cloudmersive
- * - Path traversal protection
- * - File type validation (whitelist)
- * - MIME type verification
- * - Metadata stripping
- * - Secure file storage
+ * - File type validation (extension whitelist) and size limit
+ * - Encryption on arrival: each file and its notes are sealed with the
+ *   portal's public key (libsodium sealed box) before anything is written
+ *   to disk. The server never holds the private key, so it cannot read a
+ *   submission back; the owner downloads the .sealed file from wp-admin and
+ *   opens it locally with scripts/anon-portal-decrypt.php.
+ *
+ * The public key lives in inc/anonymous-portal-public.key (made by
+ * scripts/anon-portal-keygen.php) or the KOP_ANON_PORTAL_PUBLIC_KEY
+ * constant. Without a usable key the portal refuses uploads rather than
+ * store anything unencrypted.
  */
 
 class AnonymousDocPortal {
@@ -42,6 +48,8 @@ class AnonymousDocPortal {
         add_action('wp_ajax_submit_anonymous_doc', array($this, 'handle_submission'));
         add_shortcode('anonymous_doc_portal', array($this, 'render_portal'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_post_kop_anon_download', array($this, 'handle_admin_download'));
+        add_action('admin_post_kop_anon_encrypt_existing', array($this, 'handle_encrypt_existing'));
 
         // Securely load API key: prefer a PHP constant (wp-config.php),
         // fall back to environment / .env so the key can live in .env alongside other secrets.
@@ -108,6 +116,46 @@ class AnonymousDocPortal {
         }
 
         return '';
+    }
+
+    /**
+     * The portal's public key (32 raw bytes), or '' when none is configured
+     * or sodium is missing. Callers must refuse to store anything then.
+     */
+    private function public_key() {
+        if (!function_exists('sodium_crypto_box_seal')) {
+            return '';
+        }
+        $b64 = '';
+        if (defined('KOP_ANON_PORTAL_PUBLIC_KEY') && KOP_ANON_PORTAL_PUBLIC_KEY !== '') {
+            $b64 = KOP_ANON_PORTAL_PUBLIC_KEY;
+        } else {
+            $path = __DIR__ . '/anonymous-portal-public.key';
+            if (is_readable($path)) {
+                $b64 = (string) file_get_contents($path);
+            }
+        }
+        $key = base64_decode(trim($b64), true);
+        return (is_string($key) && strlen($key) === SODIUM_CRYPTO_BOX_PUBLICKEYBYTES) ? $key : '';
+    }
+
+    /** Short fingerprint of the public key, to check which key is in use. */
+    private function key_fingerprint($public_key) {
+        return $public_key === '' ? '' : substr(hash('sha256', $public_key), 0, 16);
+    }
+
+    /**
+     * Seal one submission: a JSON header (original name, notes, date) and the
+     * file bytes, in one sealed box. Layout inside the box:
+     * "KOPANON1" . uint32 big-endian header length . header JSON . file bytes.
+     * scripts/anon-portal-decrypt.php reads the same layout.
+     */
+    private function seal_submission($public_key, $file_bytes, array $meta) {
+        $header = wp_json_encode($meta);
+        $plain  = 'KOPANON1' . pack('N', strlen($header)) . $header . $file_bytes;
+        $sealed = sodium_crypto_box_seal($plain, $public_key);
+        sodium_memzero($plain);
+        return $sealed;
     }
 
     /**
@@ -181,7 +229,7 @@ class AnonymousDocPortal {
                 'nonce'    => wp_create_nonce('anonymous_doc_portal_nonce'),
                 'max_file_size' => $this->max_file_size,
                 'i18n' => array(
-                    'uploading' => __('Encrypting and uploading...', 'kadence-child'),
+                    'uploading' => __('Uploading and encrypting...', 'kadence-child'),
                     'success' => __('Document submitted securely. Thank you.', 'kadence-child'),
                     'error' => __('Upload failed. Please try again.', 'kadence-child'),
                     'file_too_large' => __('File is too large. Max size is 10MB.', 'kadence-child'),
@@ -199,7 +247,7 @@ class AnonymousDocPortal {
         <div class="anonymous-portal-container" data-kop-bug-feature="document-portal/upload" data-kop-bug-label="Anonymous Document Portal">
             <div class="anonymous-portal-header">
                 <h3><span class="dashicons dashicons-lock"></span> Secure Anonymous Document Drop</h3>
-                <p>Submit documents securely and anonymously. All files are scanned for malware and stored in an encrypted directory.</p>
+                <p>Submit documents anonymously. Files are scanned for malware, then encrypted the moment they reach our server, together with your notes. Only the site owner holds the key that opens them.</p>
             </div>
             
             <form id="anonymous-doc-form" class="anonymous-doc-form" enctype="multipart/form-data">
@@ -219,7 +267,7 @@ class AnonymousDocPortal {
                 
                 <div class="form-group submit-group">
                     <div class="security-badge">
-                        <span class="dashicons dashicons-shield"></span> End-to-End Encrypted
+                        <span class="dashicons dashicons-shield"></span> Encrypted on arrival
                     </div>
                     <button type="submit" id="submit-doc" class="submit-btn">
                         <span class="btn-text">Secure Submit</span>
@@ -242,7 +290,15 @@ class AnonymousDocPortal {
         }
         
         $file = $_FILES['doc_file'];
-        
+
+        // 0. Refuse outright when there is no key to encrypt with; never
+        // store a submission unencrypted.
+        $public_key = $this->public_key();
+        if ($public_key === '') {
+            error_log('Anonymous portal: no usable public key (inc/anonymous-portal-public.key) or sodium missing; upload refused');
+            wp_send_json_error(array('message' => 'The document drop is temporarily unavailable. Please try again later.'));
+        }
+
         // 1. Validate File Type (Extension & MIME)
         $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
         $file_mime = mime_content_type($file['tmp_name']);
@@ -264,32 +320,36 @@ class AnonymousDocPortal {
             wp_send_json_error(array('message' => 'Security check failed: ' . $scan_result['message']));
         }
         
-        // 4. Sanitize Filename & Generate Unique ID
+        // 4. Seal the file and notes together. The original filename goes
+        // inside the sealed box only; on disk the submission is just its id.
         $submission_id = uniqid('sub_');
-        $safe_filename = $submission_id . '_' . sanitize_file_name($file['name']);
-        $target_path = $this->upload_dir . $safe_filename;
-        
-        // 5. Move File to Secure Directory
-        if (move_uploaded_file($file['tmp_name'], $target_path)) {
-            
-            // 6. Handle Notes (Save as separate text file)
-            if (!empty($_POST['doc_notes'])) {
-                $notes = sanitize_textarea_field($_POST['doc_notes']);
-                $notes_filename = $submission_id . '_notes.txt';
-                file_put_contents($this->upload_dir . $notes_filename, $notes);
-            }
-            
-            // 7. Internal notification (inc/submission-notify.php).
+        $file_bytes = file_get_contents($file['tmp_name']);
+        if ($file_bytes === false) {
+            wp_send_json_error(array('message' => 'Failed to store file.'));
+        }
+        $has_notes = !empty($_POST['doc_notes']);
+        $sealed = $this->seal_submission($public_key, $file_bytes, array(
+            'id'       => $submission_id,
+            'name'     => sanitize_file_name($file['name']),
+            'notes'    => $has_notes ? sanitize_textarea_field(wp_unslash($_POST['doc_notes'])) : '',
+            'received' => gmdate('c'),
+        ));
+        sodium_memzero($file_bytes);
+
+        // 5. Write only the sealed file; the plaintext upload is PHP's temp
+        // file, which PHP removes when the request ends.
+        if (file_put_contents($this->upload_dir . $submission_id . '.sealed', $sealed) !== false) {
+
+            // 6. Internal notification (inc/submission-notify.php).
             // The portal is anonymous, so the mail carries the submission id,
             // the file type and the size and nothing else: not the original
-            // filename, not the notes, not an address. Whoever reviews it
-            // opens the file on the server.
+            // filename, not the notes, not an address.
             if (function_exists('kop_notify_admins')) {
                 $ext = strtolower((string) pathinfo($file['name'], PATHINFO_EXTENSION));
                 kop_notify_admins('document', 'Anonymous document ' . $submission_id, admin_url('admin.php?page=anonymous-docs'), array(
                     'File type' => $ext !== '' ? $ext : 'unknown',
                     'Size'      => size_format((int) $file['size']),
-                    'Notes'     => empty($_POST['doc_notes']) ? 'none' : 'included (read on the server)',
+                    'Notes'     => $has_notes ? 'included (encrypted with the file)' : 'none',
                 ));
             }
 
@@ -312,37 +372,167 @@ class AnonymousDocPortal {
         );
     }
 
+    /**
+     * Submissions stored before encryption existed, grouped by id:
+     * id => array(original name => stored filename). Each is one document
+     * plus, optionally, a sub_x_notes.txt.
+     */
+    private function plaintext_submissions() {
+        $groups = array();
+        foreach (array_diff((array) scandir($this->upload_dir), array('.', '..', '.htaccess', 'index.php')) as $name) {
+            if (substr($name, -7) === '.sealed' || !is_file($this->upload_dir . $name)) {
+                continue;
+            }
+            if (preg_match('/^(sub_[0-9a-f]+)_(.+)$/', $name, $m)) {
+                $groups[$m[1]][$m[2]] = $name;
+            }
+        }
+        return $groups;
+    }
+
     public function render_admin_page() {
         if (!current_user_can('manage_options')) {
             return;
         }
-        
-        $files = scandir($this->upload_dir);
-        $files = array_diff($files, array('.', '..', '.htaccess', 'index.php'));
-        
+
+        $public_key = $this->public_key();
+        $sealed = array();
+        foreach ((array) scandir($this->upload_dir) as $name) {
+            if (preg_match('/^sub_[0-9a-f]+\.sealed$/', $name)) {
+                $sealed[] = $name;
+            }
+        }
+        rsort($sealed);
+        $plaintext = $this->plaintext_submissions();
+
         echo '<div class="wrap"><h1>Anonymous Submissions</h1>';
-        echo '<p>Files are stored in: <code>' . esc_html($this->upload_dir) . '</code></p>';
-        echo '<table class="widefat fixed striped">';
-        echo '<thead><tr><th>Filename</th><th>Size</th><th>Date</th><th>Actions</th></tr></thead>';
-        echo '<tbody>';
-        
-        if (empty($files)) {
-            echo '<tr><td colspan="4">No submissions yet.</td></tr>';
+
+        if (isset($_GET['encrypted'])) {
+            echo '<div class="notice notice-success"><p>' . esc_html((int) $_GET['encrypted']) . ' older submission(s) encrypted; their unencrypted copies were deleted.</p></div>';
+        }
+
+        if ($public_key === '') {
+            echo '<div class="notice notice-error"><p><strong>No public key is configured, so the portal is refusing uploads.</strong> '
+                . 'Run <code>scripts/anon-portal-keygen.php</code> and deploy <code>inc/anonymous-portal-public.key</code>.</p></div>';
         } else {
-            foreach ($files as $file) {
-                $filepath = $this->upload_dir . $file;
+            echo '<p>Uploads are sealed with public key <code>' . esc_html($this->key_fingerprint($public_key)) . '</code>. '
+                . 'This server cannot open them. Download a file and open it on your own computer with '
+                . '<code>scripts/anon-portal-decrypt.php</code> and your private key.</p>';
+        }
+
+        if (!empty($plaintext)) {
+            echo '<div class="notice notice-warning"><p><strong>' . count($plaintext) . ' submission(s) from before encryption are stored unencrypted.</strong></p>';
+            if ($public_key !== '') {
+                echo '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">';
+                echo '<input type="hidden" name="action" value="kop_anon_encrypt_existing">';
+                wp_nonce_field('kop_anon_encrypt_existing');
+                echo '<p><button type="submit" class="button button-primary">Encrypt them now and delete the unencrypted copies</button></p></form>';
+            }
+            echo '</div>';
+        }
+
+        echo '<table class="widefat fixed striped">';
+        echo '<thead><tr><th>Submission</th><th>Size</th><th>Received</th><th>Actions</th></tr></thead>';
+        echo '<tbody>';
+
+        if (empty($sealed)) {
+            echo '<tr><td colspan="4">No encrypted submissions yet.</td></tr>';
+        } else {
+            foreach ($sealed as $name) {
+                $filepath = $this->upload_dir . $name;
+                $url = wp_nonce_url(admin_url('admin-post.php?action=kop_anon_download&file=' . rawurlencode($name)), 'kop_anon_download_' . $name);
                 echo '<tr>';
-                echo '<td>' . esc_html($file) . '</td>';
-                echo '<td>' . size_format(filesize($filepath)) . '</td>';
-                echo '<td>' . date("Y-m-d H:i:s", filemtime($filepath)) . '</td>';
-                // Note: Direct download link won't work due to .htaccess deny from all.
-                // A specialized download handler would be needed for a full admin interface.
-                echo '<td><span class="description">Protected (FTP Access Only)</span></td>';
+                echo '<td><code>' . esc_html($name) . '</code></td>';
+                echo '<td>' . esc_html(size_format(filesize($filepath))) . '</td>';
+                echo '<td>' . esc_html(gmdate('Y-m-d H:i', filemtime($filepath))) . ' UTC</td>';
+                echo '<td><a class="button button-small" href="' . esc_url($url) . '">Download (encrypted)</a></td>';
                 echo '</tr>';
             }
         }
-        
+
         echo '</tbody></table></div>';
+    }
+
+    /** Send one sealed file to an admin. It stays encrypted in transit and on their disk. */
+    public function handle_admin_download() {
+        $name = isset($_GET['file']) ? basename(wp_unslash($_GET['file'])) : '';
+        if (!current_user_can('manage_options') || !preg_match('/^sub_[0-9a-f]+\.sealed$/', $name)) {
+            wp_die('Not allowed.', 403);
+        }
+        check_admin_referer('kop_anon_download_' . $name);
+        $path = $this->upload_dir . $name;
+        if (!is_file($path)) {
+            wp_die('Not found.', 404);
+        }
+        nocache_headers();
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $name . '"');
+        header('Content-Length: ' . filesize($path));
+        readfile($path);
+        exit;
+    }
+
+    /**
+     * Seal the submissions stored before encryption, then delete their
+     * plaintext. A submission's plaintext is deleted only once every one of
+     * its sealed files has been written in full.
+     */
+    public function handle_encrypt_existing() {
+        if (!current_user_can('manage_options')) {
+            wp_die('Not allowed.', 403);
+        }
+        check_admin_referer('kop_anon_encrypt_existing');
+        $public_key = $this->public_key();
+        if ($public_key === '') {
+            wp_die('No public key is configured.');
+        }
+
+        $done = 0;
+        foreach ($this->plaintext_submissions() as $id => $parts) {
+            // A lone "notes.txt" is the document itself, not notes.
+            $notes = '';
+            $docs  = $parts;
+            if (isset($parts['notes.txt']) && count($parts) > 1) {
+                $notes = (string) file_get_contents($this->upload_dir . $parts['notes.txt']);
+                unset($docs['notes.txt']);
+            }
+
+            $ok = true;
+            $i  = 0;
+            foreach ($docs as $orig => $stored) {
+                $path  = $this->upload_dir . $stored;
+                $bytes = file_get_contents($path);
+                if ($bytes === false) {
+                    $ok = false;
+                    break;
+                }
+                $out_id = $i === 0 ? $id : $id . sprintf('%02d', $i);
+                $sealed = $this->seal_submission($public_key, $bytes, array(
+                    'id'       => $out_id,
+                    'name'     => $orig,
+                    'notes'    => $notes,
+                    'received' => gmdate('c', filemtime($path)),
+                ));
+                sodium_memzero($bytes);
+                $out = $this->upload_dir . $out_id . '.sealed';
+                if (file_put_contents($out, $sealed) !== strlen($sealed)) {
+                    $ok = false;
+                    break;
+                }
+                touch($out, filemtime($path));
+                $i++;
+            }
+
+            if ($ok) {
+                foreach ($parts as $stored) {
+                    unlink($this->upload_dir . $stored);
+                }
+                $done++;
+            }
+        }
+
+        wp_safe_redirect(admin_url('admin.php?page=anonymous-docs&encrypted=' . $done));
+        exit;
     }
 }
 
