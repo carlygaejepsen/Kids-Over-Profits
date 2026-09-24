@@ -125,6 +125,10 @@
         return found;
     }
 
+    // For the parity test (scripts/test-inspection-text-signals.js); the PHP
+    // port is kop_its_nc_statement() in api/lib-inspection-text-signals.php.
+    (window.KOP.textSignals = window.KOP.textSignals || {}).NC = function (text) { return readStatement(text); };
+
     function readStatement(text) {
         var citations = (String(text).match(NOT_MET) || []).length;
         var saysNone = SAID_NONE.test(text);
@@ -161,7 +165,8 @@
                 var cats = report.categories || {};
                 var text = String(report.raw_content || '');
                 var statement = isStatement(cats.document_type || report.summary);
-                var read = statement ? readStatement(text) : { citations: 0, clean: false, attempted: false, complaint: {}, opening: '' };
+                // text_signals: readStatement() worked out by the server (?lite=1).
+                var read = statement ? (report.text_signals || readStatement(text)) : { citations: 0, clean: false, attempted: false, complaint: {}, opening: '' };
                 return {
                     report_date:   cats.inspection_date || report.report_date || '',
                     survey:        surveyLabel(cats.inspection_type),
@@ -169,6 +174,8 @@
                     pages:         parseInt(cats.pages, 10) || 0,
                     pdf_url:       cats.pdf_url || report.report_url || '',
                     raw_content:   text,
+                    has_text:      report.has_text !== undefined ? !!report.has_text : text.trim() !== '',
+                    row_id:        report.row_id || null,
                     citations:     read.citations,
                     clean:         read.clean,
                     attempted:     read.attempted,
@@ -202,7 +209,9 @@
         emptyMessage: 'No facilities found in the database for North Carolina.',
 
         load: function () {
-            return fetch('/wp-content/themes/child/api/inspections-read.php?state=NC')
+            // lite: no document text in the list (about 1 MB instead of 90);
+            // withText() fetches a report's text when it is opened.
+            return fetch('/wp-content/themes/child/api/inspections-read.php?state=NC&lite=1')
                 .then(function (resp) {
                     if (!resp.ok) throw new Error('API returned ' + resp.status);
                     return resp.json();
@@ -279,7 +288,7 @@
                 facts: [report.pages ? ctx.plural(report.pages, 'page') : ''],
                 link: { href: report.pdf_url, text: 'Official report' },
                 preview: report.opening,
-                body: function () {
+                body: function () { return page.withText(report, 'NC', function () {
                     var html = '';
                     if (report.opening) html += ui.paragraphs([report.opening]);
                     if (report.is_statement && report.citations) {
@@ -307,7 +316,7 @@
                     }
                     html += ui.section('Full report text', ui.docText(report.raw_content));
                     return html;
-                }
+                }); }
             };
         }
     });

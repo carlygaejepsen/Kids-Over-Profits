@@ -5,6 +5,15 @@
  * the frontend JS already expects.
  *
  * Usage: inspections-read.php?state=CT
+ *
+ * ?lite=1 leaves each report's raw_content out and sends instead row_id,
+ * has_text and, for the states whose page reads the text at load
+ * (kop_its_states()), text_signals: what the page would have read from it
+ * (api/lib-inspection-text-signals.php). The FL and NC lists drop from about
+ * 100 MB to about 1 MB. The lite response is cached on disk until the
+ * state's reports change.
+ * ?state=FL&text=<row_id> returns one report's raw_content, for a report
+ * opened on a lite page.
  */
 require_once __DIR__ . '/config.php';
 
@@ -12,10 +21,67 @@ header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
 $state = strtoupper(trim($_GET['state'] ?? ''));
-if (!$state) {
+if (!$state || !preg_match('/^[A-Z]{2}$/', $state)) {
     http_response_code(400);
     echo json_encode(['error' => 'Missing ?state= parameter']);
     exit;
+}
+$lite = !empty($_GET['lite']);
+$textId = isset($_GET['text']) ? (int) $_GET['text'] : 0;
+
+// One report's text, for a report opened on a lite page.
+if ($textId > 0) {
+    try {
+        $stmt = $pdo->prepare("
+            SELECT r.raw_content FROM inspection_reports r
+            JOIN inspection_facilities f ON f.id = r.facility_id
+            WHERE r.id = ? AND f.state = ?
+        ");
+        $stmt->execute([$textId, $state]);
+        $raw = $stmt->fetchColumn();
+        if ($raw === false) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Report not found']);
+            exit;
+        }
+        header('Cache-Control: public, max-age=86400');
+        echo json_encode(['raw_content' => (string) $raw], JSON_UNESCAPED_UNICODE);
+    } catch (Exception $e) {
+        http_response_code(500);
+        error_log("inspections-read text error: " . $e->getMessage());
+        echo json_encode(['error' => 'Database error']);
+    }
+    exit;
+}
+
+$liteCacheFile = '';
+if ($lite) {
+    require_once __DIR__ . '/lib-inspection-text-signals.php';
+    try {
+        // The cache key changes whenever a report or facility of the state is
+        // added or updated, or the signal rules change.
+        $stampStmt = $pdo->prepare("
+            SELECT COUNT(*), MAX(r.id), MAX(r.updated_at), MAX(f.updated_at)
+            FROM inspection_facilities f
+            LEFT JOIN inspection_reports r ON r.facility_id = f.id
+            WHERE f.state = ?
+        ");
+        $stampStmt->execute([$state]);
+        $stamp = $stampStmt->fetch(PDO::FETCH_NUM);
+        $cacheDir = dirname(__DIR__, 3) . '/uploads/kop-cache';
+        if (is_dir($cacheDir) || @mkdir($cacheDir, 0755, true)) {
+            $liteCacheFile = $cacheDir . '/inspections-' . $state . '-lite-'
+                . md5(json_encode([$stamp, kop_its_version(), 1])) . '.json';
+            if (is_readable($liteCacheFile)) {
+                header('Cache-Control: public, max-age=600');
+                readfile($liteCacheFile);
+                exit;
+            }
+        }
+    } catch (Exception $e) {
+        error_log("inspections-read lite cache check failed: " . $e->getMessage());
+        $liteCacheFile = '';
+    }
 }
 
 try {
@@ -107,7 +173,7 @@ try {
         $reports = [];
         foreach ($reportsByFacility[$fac['id']] ?? [] as $rep) {
             $categories = json_decode($rep['categories_json'], true) ?: [];
-            $reports[] = [
+            $out = [
                 'report_id'      => $rep['report_id'],
                 'report_date'    => $rep['report_date'],
                 'report_url'     => $rep['report_url'],
@@ -117,6 +183,16 @@ try {
                 'summary'        => $rep['summary'],
                 'categories'     => $categories,
             ];
+            if ($lite) {
+                $raw = (string) $rep['raw_content'];
+                unset($out['raw_content']);
+                $out['row_id'] = (int) $rep['id'];
+                $out['has_text'] = kop_its_trim($raw) !== '';
+                $out['text_signals'] = in_array($state, kop_its_states(), true)
+                    ? kop_inspection_text_signals($state, $raw)
+                    : null;
+            }
+            $reports[] = $out;
             $totalReports++;
         }
 
@@ -141,7 +217,7 @@ try {
         }
     }
 
-    echo json_encode([
+    $json = json_encode([
         'total_facilities' => count($facilities),
         'source_state'     => $state,
         'scraped_timestamp' => $latestTimestamp,
@@ -150,6 +226,23 @@ try {
         ],
         'facilities' => $facilities,
     ], JSON_UNESCAPED_UNICODE);
+
+    if ($lite && $liteCacheFile !== '' && $json !== false) {
+        // Write beside, then rename, so a reader never sees half a file; drop
+        // the state's older lite files.
+        $tmp = $liteCacheFile . '.' . getmypid() . '.tmp';
+        if (@file_put_contents($tmp, $json) !== false && @rename($tmp, $liteCacheFile)) {
+            foreach (glob(dirname($liteCacheFile) . '/inspections-' . $state . '-lite-*.json') ?: [] as $old) {
+                if ($old !== $liteCacheFile) @unlink($old);
+            }
+        } else {
+            @unlink($tmp);
+        }
+    }
+    if ($lite) {
+        header('Cache-Control: public, max-age=600');
+    }
+    echo $json;
 
 } catch (Exception $e) {
     http_response_code(500);

@@ -537,7 +537,17 @@
             var build = lazyBodies[index];
             lazyBodies[index] = null;
             var slot = report.querySelector('.kop-rp-report-content');
-            if (build && slot) slot.innerHTML = build() || '';
+            if (!build || !slot) return;
+            var out = build();
+            if (out && typeof out.then === 'function') {
+                // The body needs data fetched on open (withText below).
+                slot.innerHTML = '<p class="kop-rp-note" role="status">Loading the report text&hellip;</p>';
+                out.then(function (html) { slot.innerHTML = html || ''; }, function () {
+                    slot.innerHTML = '<p class="kop-rp-note">The report text could not be loaded. The official report has the details.</p>';
+                });
+            } else {
+                slot.innerHTML = out || '';
+            }
         }
 
         // Build a lazy body just before a report opens (click on its summary),
@@ -594,8 +604,30 @@
         initializeReport();
     }
 
+    /**
+     * For states whose list loads without document text (inspections-read.php
+     * ?lite=1): run build() once report.raw_content is filled, fetching it by
+     * report.row_id first when the list came without it. Returns html, or a
+     * promise of html that the engine shows when it arrives. A body function
+     * returns withText(report, 'NC', function () { ... }).
+     */
+    function withText(report, state, build) {
+        if (report.raw_content || !report.has_text || !report.row_id) return build();
+        return fetch('/wp-content/themes/child/api/inspections-read.php?state=' + encodeURIComponent(state)
+            + '&text=' + encodeURIComponent(report.row_id))
+            .then(function (resp) {
+                if (!resp.ok) throw new Error('API returned ' + resp.status);
+                return resp.json();
+            })
+            .then(function (data) {
+                report.raw_content = String((data && data.raw_content) || '');
+                return build();
+            });
+    }
+
     KOP.reportPage = {
         mount: mount,
+        withText: withText,
         escapeHtml: escapeHtml,
         safeString: safeString,
         displayName: displayName,

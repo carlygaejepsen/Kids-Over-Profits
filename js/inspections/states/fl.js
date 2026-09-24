@@ -123,9 +123,43 @@
 
     // ---- DJJ ----------------------------------------------------------------
 
+    /**
+     * Everything the list needs from a DJJ report's full text. The server
+     * sends the same values as report.text_signals (?lite=1) so the text
+     * itself can load only when a report is opened; the PHP port is
+     * api/lib-inspection-text-signals.php and must return exactly this
+     * (scripts/test-inspection-text-signals.js checks every report).
+     */
+    function djjTextSignals(text) {
+        text = String(text || '');
+        var t = flat(text);
+        var DATE = '([A-Za-z]+\\s+\\d{1,2},\\s*\\d{4})';
+        var dateM = t.match(new RegExp('Date of Final Audit Report:\\s*' + DATE, 'i'))
+            || t.match(new RegExp('Date of Report:?\\s*' + DATE, 'i'))
+            || t.match(new RegExp('Date of Interim Audit Report:\\s*' + DATE, 'i'))
+            || t.match(new RegExp('Date of facility visit:\\s*' + DATE, 'i'));
+        var num = function (re) { var m = t.match(re); return m ? parseInt(m[1], 10) : null; };
+        var period = t.match(/SPEP Review Period:\s*([A-Za-z]+ \d{1,2}, \d{4}\s*-\s*[A-Za-z]+ \d{1,2}, \d{4})/i);
+        var name = t.match(/Name of (?:facility|program):\s*(.{3,80}?)\s+(?:Physical|Mailing)\s+address/i);
+        return {
+            failed_or_limited: /Failed Compliance|Limited Compliance/i.test(text),
+            satisfactory: /Satisfactory Compliance/i.test(text),
+            prea_date: dateM ? dateM[1] : '',
+            exceeded: num(/Number of Standards Exceeded:\s*(\d+)/i),
+            met: num(/Number of Standards Met:\s*(\d+)/i),
+            not_met: num(/Number of Standards Not Met:\s*(\d+)/i),
+            spep_period: period ? period[1] : '',
+            facility_name: name ? name[1] : ''
+        };
+    }
+
+    // For the parity test (scripts/test-inspection-text-signals.js).
+    (window.KOP.textSignals = window.KOP.textSignals || {}).FL = djjTextSignals;
+
     function readDjj(report, cats) {
         var type = safeString(cats.report_type);
         var text = String(report.raw_content || '');
+        var sig = report.text_signals || djjTextSignals(text);
         var base = {
             agency: 'DJJ',
             date: safeString(report.report_date),
@@ -135,6 +169,9 @@
             unmatched: !!cats.unmatched,
             url: safeString(cats.pdf_url),
             raw_content: text,
+            has_text: report.has_text !== undefined ? !!report.has_text : text.trim() !== '',
+            row_id: report.row_id || null,
+            name_in_text: sig.facility_name,
             items: [],
             count: 0,
             status: 'neutral'
@@ -148,24 +185,17 @@
             }).filter(function (f) { return /failed|limited/i.test(f.rating); });
             base.count = base.items.length;
             if (base.count) base.status = 'flagged';
-            else if (!/Failed Compliance|Limited Compliance/i.test(text) && /Satisfactory Compliance/i.test(text)) base.status = 'clean';
+            else if (!sig.failed_or_limited && sig.satisfactory) base.status = 'clean';
             return base;
         }
 
         if (type === 'PREA') {
-            var t = flat(text);
             base.kind = 'prea';
             base.label = 'PREA audit';
-            var DATE = '([A-Za-z]+\\s+\\d{1,2},\\s*\\d{4})';
-            var dateM = t.match(new RegExp('Date of Final Audit Report:\\s*' + DATE, 'i'))
-                || t.match(new RegExp('Date of Report:?\\s*' + DATE, 'i'))
-                || t.match(new RegExp('Date of Interim Audit Report:\\s*' + DATE, 'i'))
-                || t.match(new RegExp('Date of facility visit:\\s*' + DATE, 'i'));
-            if (dateM) base.date = dateM[1];
-            var num = function (re) { var m = t.match(re); return m ? parseInt(m[1], 10) : null; };
-            base.exceeded = num(/Number of Standards Exceeded:\s*(\d+)/i);
-            base.met = num(/Number of Standards Met:\s*(\d+)/i);
-            base.notMet = num(/Number of Standards Not Met:\s*(\d+)/i);
+            if (sig.prea_date) base.date = sig.prea_date;
+            base.exceeded = sig.exceeded;
+            base.met = sig.met;
+            base.notMet = sig.not_met;
             base.items = (Array.isArray(cats.findings) ? cats.findings : [])
                 .filter(function (f) { return /does not meet/i.test(f.rating || ''); })
                 .map(function (f) { return { rule: safeString(f.rule), text: '', rating: 'Does not meet standard' }; });
@@ -177,8 +207,7 @@
 
         base.kind = 'spep';
         base.label = 'Program evaluation (SPEP)';
-        var period = flat(text).match(/SPEP Review Period:\s*([A-Za-z]+ \d{1,2}, \d{4}\s*-\s*[A-Za-z]+ \d{1,2}, \d{4})/i);
-        base.period = period ? period[1].replace(/\s*-\s*/, ' to ') : '';
+        base.period = sig.spep_period ? sig.spep_period.replace(/\s*-\s*/, ' to ') : '';
         return base;
     }
 
@@ -251,8 +280,8 @@
             if (!looksLikeSlug(f.name)) return true;
             var named = '';
             f.reports.some(function (r) {
-                var m = flat(r.raw_content).match(/Name of (?:facility|program):\s*(.{3,80}?)\s+(?:Physical|Mailing)\s+address/i);
-                if (m && !/^facility$/i.test(m[1].trim())) { named = m[1].trim(); return true; }
+                var found = r.name_in_text || '';
+                if (found && !/^facility$/i.test(found.trim())) { named = found.trim(); return true; }
                 return false;
             });
             if (!named) return true;
@@ -313,7 +342,9 @@
         }],
 
         load: function () {
-            return fetch('/wp-content/themes/child/api/inspections-read.php?state=FL')
+            // lite: no document text in the list (about 1 MB instead of 100);
+            // withText() fetches a report's text when it is opened.
+            return fetch('/wp-content/themes/child/api/inspections-read.php?state=FL&lite=1')
                 .then(function (resp) {
                     if (!resp.ok) throw new Error('API returned ' + resp.status);
                     return resp.json();
@@ -383,7 +414,7 @@
                 ],
                 link: { href: report.url, text: 'Official report' },
                 preview: preview,
-                body: function () {
+                body: function () { return page.withText(report, 'FL', function () {
                     var html = '';
                     if (report.unmatched) {
                         html += ui.note('This report’s program name did not match a current DJJ facility, so it is likely a closed or earlier program.');
@@ -441,7 +472,7 @@
                     }
                     html += ui.section('Full report text', ui.docText(report.raw_content));
                     return html;
-                }
+                }); }
             };
         }
     });
