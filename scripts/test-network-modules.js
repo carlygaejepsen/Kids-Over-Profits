@@ -3352,6 +3352,112 @@ function run() {
     flushFrames();
     }
 
+    /* ------------------------------------------- Simplify and Show all -- */
+
+    /* 2d.7 and 2d.8, the two ends of one dial. Simplify keeps only the
+     * lines about who owns and runs what, and the names they hold; Show all
+     * opens every "+N" on the board, one step, short of a board too big to
+     * read. */
+    {
+    const KEEP = { corporate: true, leadership: true, board: true, membership: true, people: true };
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    const full = focus.scene();
+    focus.setSimple(true);
+    flushFrames();
+    const quiet = focus.scene();
+    check(focus.isSimple() && quiet.nodeIds[hub.id], 'Simplify dropped the name that was opened');
+    check(quiet.nodes.length < full.nodes.length && quiet.simplified > 0,
+        'Simplify left ' + quiet.nodes.length + ' of ' + full.nodes.length + ' names on ' + hub.name + "'s board");
+    const minor = quiet.edges.filter((e) => !KEEP[e.category]);
+    check(minor.length === 0, 'Simplify still draws ' + minor.length + ' staff, family or other minor lines, e.g. ' +
+        (minor[0] ? minor[0].category : ''));
+    const lineCount = Object.create(null);
+    quiet.edges.forEach((e) => { lineCount[e.sourceId] = (lineCount[e.sourceId] || 0) + 1; lineCount[e.targetId] = (lineCount[e.targetId] || 0) + 1; });
+    const loose = quiet.nodes.filter((n) => n.id !== hub.id && !lineCount[n.id]);
+    check(loose.length === 0, 'Simplify left names with no line: ' + loose.map((n) => n.name).slice(0, 3).join(', '));
+    const closedLeaf = quiet.nodes.filter((n) => n.id !== hub.id && lineCount[n.id] === 1 &&
+        (n.status === 'closed' || n.status === 'rebranded') && !quiet.folded[n.id]);
+    check(closedLeaf.length === 0, 'Simplify kept a closed name on a single line: ' + (closedLeaf[0] || {}).name);
+    check(/^Simplified: \d+ names?/.test(announced), 'Simplify did not say what it took off: ' + announced);
+    /* What went is not lost: it is counted on the name it hung from. */
+    check((quiet.hidden[hub.id] || 0) >= (full.hidden[hub.id] || 0), 'Simplify took names away without counting them');
+    focus.setSimple(false);
+    flushFrames();
+    check(!focus.isSimple() && focus.scene().nodes.length === full.nodes.length,
+        'turning Simplify off did not bring every name back');
+    notes.push('Simplify on ' + hub.name + ': ' + full.nodes.length + ' names to ' + quiet.nodes.length);
+
+    /* In the link, and only when on. */
+    const Url = sandbox.KOPNetworkUrlState;
+    check(Url.format(['a'], 'focus', null, true) === '#open=a&simple=1' && Url.parse('#open=a&simple=1').simple === true &&
+        Url.format(['a'], 'focus', null, false) === '#open=a' && Url.parse('#open=a').simple === false &&
+        Url.format([], 'focus', null, true) === '#simple=1',
+        'Simplify does not round-trip through the address bar');
+
+    /* Show all, from a name's own view. */
+    const before = focus.scene();
+    const pills = before.nodes.filter((n) => before.hidden[n.id] && n.id !== hub.id).length;
+    check(pills > 0, hub.name + "'s view has no +N to open, so Show all was not exercised");
+    const opened = focus.showAll();
+    flushFrames();
+    const after = focus.scene();
+    const trail = focus.chain();
+    check(opened.added > 0 && focus.mode() === 'expand', 'Show all opened nothing, or did not switch to Expand');
+    check(trail[trail.length - 1] === hub.id, 'Show all moved the name being read off the end of the trail');
+    check(after.nodes.length <= 120 && after.nodes.length === opened.names && after.nodes.length > before.nodes.length,
+        'Show all left ' + after.nodes.length + ' names (reported ' + opened.names + ', limit 120, was ' + before.nodes.length + ')');
+    check(opened.added + opened.left === pills, 'Show all accounted for ' + (opened.added + opened.left) + ' of ' + pills + ' names with +N');
+    check(/^Opened \d+ names?: \d+ names on the board/.test(announced) && /Expand mode/.test(announced),
+        'Show all did not say what it did: ' + announced);
+    notes.push('Show all on ' + hub.name + ': opened ' + opened.added + ', left ' + opened.left + ', ' + before.nodes.length +
+        ' names to ' + after.nodes.length);
+
+    /* A board it cannot add to without passing the limit says so and
+     * changes nothing. */
+    const heavy = store.nodes.slice().sort((a, b) => b.degree - a.degree).slice(0, 8);
+    focus.clear();
+    flushFrames();
+    focus.openAll(heavy);
+    flushFrames();
+    const crowded = focus.scene();
+    const trailBefore = focus.chain().join(',');
+    const refused = focus.showAll();
+    flushFrames();
+    if (crowded.nodes.length > 120 || refused.added === 0) {
+        check(focus.chain().join(',') === trailBefore, 'Show all changed a board it could not add to');
+        check(refused.added > 0 || /too many to read|already/.test(announced), 'Show all refused without saying why: ' + announced);
+    }
+    check(focus.scene().nodes.length <= Math.max(120, crowded.nodes.length), 'Show all pushed a crowded board further');
+
+    /* From the opening view, the opening organisation stays the one being read. */
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    const openingHead = store.viewRoot ? store.viewRoot() : null;
+    const fromOpening = focus.showAll();
+    flushFrames();
+    if (openingHead && fromOpening.added) {
+        const t = focus.chain();
+        check(t[t.length - 1] === openingHead, 'Show all from the opening view did not keep its organisation last');
+    }
+
+    /* Not on a route. */
+    const routeIds = store.paths('david-gilcrease', store.node('synanon') ? 'synanon' : hub.id)[0];
+    if (routeIds) {
+        focus.showPath(routeIds.ids);
+        flushFrames();
+        const onRoute = focus.showAll();
+        check(onRoute.added === 0 && focus.isPath(), 'Show all opened names on a route');
+    }
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    }
+
     /* ------------------------------------------------------ the hover card -- */
 
     /* 2d.5. Resting on a name says what it is without clicking it: the

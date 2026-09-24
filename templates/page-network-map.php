@@ -296,6 +296,23 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 								Full screen
 							</button>
 						</div>
+						<?php
+						// What is on the board (2d.7, 2d.8). Show all opens every
+						// name with a "+N", one step, and stops short of a board
+						// too big to read; it is hidden when nothing on the board
+						// has more to show. Simplify leaves only the lines about
+						// who owns and runs what, and is kept in the link.
+						?>
+						<div class="kop-network__view-row">
+							<button type="button" class="kop-network__stage-button" id="kop-network-show-all"
+								aria-label="Show all connections of the names on the map" hidden>
+								Show all
+							</button>
+							<button type="button" class="kop-network__stage-button" id="kop-network-simplify"
+								aria-pressed="false" title="Only ownership, leadership, board and membership lines">
+								Simplify
+							</button>
+						</div>
 						<div class="kop-network__zoom" role="group" aria-label="Zoom">
 							<button type="button" class="kop-network__stage-button kop-network__stage-button--icon"
 								id="kop-network-zoom-in" aria-label="Zoom in" title="Zoom in">

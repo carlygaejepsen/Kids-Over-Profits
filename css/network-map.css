@@ -671,6 +671,17 @@ html.kop-network-pinned {
 	box-shadow: 0 2px 6px rgba(0, 4, 53, 0.1);
 }
 
+/* Simplify while it is on: pressed, in the navy of the mode toggle. */
+.kop-network__stage-button.is-on {
+	border-color: var(--kop-navy-blue, #000080);
+	background: var(--kop-navy-blue, #000080);
+	color: #fff;
+}
+
+.kop-network__stage-button[hidden] {
+	display: none;
+}
+
 .kop-network__stage-button:hover {
 	border-color: var(--kop-teal, #33A7B5);
 }

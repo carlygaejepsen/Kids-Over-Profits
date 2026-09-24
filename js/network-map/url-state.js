@@ -10,6 +10,10 @@
  *
  *   #open=david-gilcrease,wwasps,provo-canyon-school&mode=path
  *
+ * Simplify (focus.setSimple) rides along as simple=1, trail or no trail:
+ *
+ *   #open=sequel-youth-and-family-services&simple=1
+ *
  * The hash rather than the query string, because nothing here needs the
  * server and a query change would reload the page. replaceState rather than
  * pushState: every click would otherwise be a Back step, and the breadcrumb
@@ -20,9 +24,9 @@
 (function (root) {
     'use strict';
 
-    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null} from a hash string. */
+    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null, simple: bool} from a hash string. */
     function parse(hash) {
-        var out = { ids: [], mode: null, view: null };
+        var out = { ids: [], mode: null, view: null, simple: false };
         var text = String(hash || '').replace(/^#/, '');
         if (!text) return out;
         text.split('&').forEach(function (pair) {
@@ -41,13 +45,15 @@
                 out.mode = value;
             } else if (key === 'view' && /^[a-z0-9-]+$/.test(value)) {
                 out.view = value;
+            } else if (key === 'simple') {
+                out.simple = value === '1';
             }
         });
         return out;
     }
 
-    /** The hash for a trail and a starter view, or '' for the plain opening view. */
-    function format(ids, mode, view) {
+    /** The hash for a trail, a starter view and Simplify, or '' for the plain opening view. */
+    function format(ids, mode, view, simple) {
         var parts = [];
         if (ids && ids.length) {
             parts.push('open=' + ids.map(encodeURIComponent).join(','));
@@ -56,6 +62,7 @@
             if (mode === 'expand' || mode === 'path') parts.push('mode=' + mode);
         }
         if (view && view !== 'default') parts.push('view=' + encodeURIComponent(view));
+        if (simple) parts.push('simple=1');
         return parts.length ? '#' + parts.join('&') : '';
     }
 
@@ -69,7 +76,8 @@
 
         /** Mirror the trail into the address bar. */
         function write() {
-            var hash = format(focus.chain(), focus.mode(), options.view ? options.view() : null);
+            var hash = format(focus.chain(), focus.mode(), options.view ? options.view() : null,
+                focus.isSimple ? focus.isSimple() : false);
             if ((location_.hash || '') === hash) return;
             writing = true;
             var base = String(location_.href || '').split('#')[0];
@@ -85,6 +93,7 @@
         function read() {
             var state = parse(location_.hash);
             var viewChanged = options.onView ? options.onView(state.view || 'default') : false;
+            if (focus.setSimple && focus.isSimple() !== state.simple) focus.setSimple(state.simple);
             if (!state.ids.length && !focus.chain().length && !viewChanged) return;
             focus.restore(state.ids, state.mode);
         }

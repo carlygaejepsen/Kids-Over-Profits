@@ -298,6 +298,40 @@
             onChange();
         };
 
+        /*
+         * Simplify (2d.7): the board with only the lines that say who owns
+         * and who runs what - ownership, renames and sales, leadership, board
+         * seats and trade-group membership. Staff, clinical, admissions,
+         * family, referral and unlabelled lines are left off, then every
+         * name those lines were all that held on the board, and every closed
+         * or rebranded name hanging off a single line. What goes is counted
+         * into the "+N" of the name it hung from, and the drawer still lists
+         * every connection: the record is the same, only the board is
+         * quieter. Off by default, because the map's point is the
+         * connections. Not applied to a route, which is only its own lines.
+         */
+        var simple = false;
+        focus.isSimple = function () { return simple; };
+        focus.setSimple = function (on) {
+            on = !!on;
+            if (on === simple) return;
+            simple = on;
+            if (!store.ready) { onChange(); return; }
+            var before = current ? current.nodes.length : 0;
+            if (chain.length) enterFocus();
+            else { showOpeningView(); onChange(); }
+            var after = focus.scene();
+            /* The board's own difference: scene.simplified also counts people
+             * who would have been folded into a line anyway. */
+            var gone = Math.max(0, before - after.nodes.length);
+            announce(simple
+                ? 'Simplified: ' + gone + (gone === 1 ? ' name' : ' names') +
+                    ' and the staff, clinical, family and referral lines are off the board. ' +
+                    after.nodes.length + ' names showing.'
+                : 'Every connection is back: ' + after.nodes.length + ' names showing' +
+                    (before && after.nodes.length > before ? ', ' + (after.nodes.length - before) + ' more' : '') + '.');
+        };
+
         function visibleIds() {
             var live = store.visible().nodeIds;
 
@@ -493,11 +527,31 @@
                 ids = reach;
             }
 
+            var simplified = 0;
+            if (simple && !inPath()) {
+                var quiet = simplifyScene(nodes, edges, currentRoots());
+                simplified = nodes.length - quiet.nodes.length;
+                nodes = quiet.nodes;
+                edges = quiet.edges;
+            }
+
             var fold = inPath()
                 ? { nodes: nodes, edges: edges, folded: Object.create(null) }
                 : foldConnectors(nodes, edges);
             nodes = fold.nodes;
             edges = fold.edges;
+            if (simple && !inPath()) {
+                /* Until nothing more goes: a name that goes can leave the
+                 * one it hung from on a single line in turn. */
+                var roots = currentRoots();
+                for (var pass = 0; pass < 20; pass++) {
+                    var settled = dropClosedLeaves(nodes, edges, fold.folded, roots);
+                    if (settled.nodes.length === nodes.length) break;
+                    simplified += nodes.length - settled.nodes.length;
+                    nodes = settled.nodes;
+                    edges = settled.edges;
+                }
+            }
             var shown = Object.create(null);
             nodes.forEach(function (node) { shown[node.id] = true; });
 
@@ -522,9 +576,101 @@
 
             return {
                 nodes: nodes, edges: edges, nodeIds: shown,
-                degrees: visible.degrees, hidden: hidden, folded: fold.folded
+                degrees: visible.degrees, hidden: hidden, folded: fold.folded,
+                simplified: simplified
             };
         };
+
+        /**
+         * Simplify's last pass, on the board as drawn: a closed or rebranded
+         * name hanging off one line goes. Counted after folding, because
+         * folding can make two lines one (two people who both ran Rocky
+         * Mountain Academy and one other place become a single line), and a
+         * single line is what the reader sees. A person folded only into
+         * lines that went is no longer on the board, so they stop counting
+         * as folded and count in the "+N" instead.
+         */
+        function dropClosedLeaves(nodes, edges, folded, roots) {
+            var isRoot = Object.create(null);
+            roots.forEach(function (id) { isRoot[id] = true; });
+            var lines = Object.create(null);
+            edges.forEach(function (edge) {
+                lines[edge.sourceId] = (lines[edge.sourceId] || 0) + 1;
+                lines[edge.targetId] = (lines[edge.targetId] || 0) + 1;
+            });
+            var leave = Object.create(null);
+            var any = false;
+            nodes.forEach(function (node) {
+                if (isRoot[node.id] || lines[node.id] !== 1) return;
+                if (node.status !== 'closed' && node.status !== 'rebranded') return;
+                leave[node.id] = true;
+                any = true;
+            });
+            if (!any) return { nodes: nodes, edges: edges };
+            var kept = edges.filter(function (edge) { return !leave[edge.sourceId] && !leave[edge.targetId]; });
+            var stillFolded = Object.create(null);
+            kept.forEach(function (edge) {
+                (edge.via || []).forEach(function (v) { if (v.person) stillFolded[v.person.id] = true; });
+            });
+            Object.keys(folded).forEach(function (id) {
+                if (!stillFolded[id]) delete folded[id];
+            });
+            return {
+                nodes: nodes.filter(function (node) { return !leave[node.id]; }),
+                edges: kept
+            };
+        }
+
+        /* The lines Simplify keeps: who owns and who runs what. */
+        var SIMPLE_KEEP = { corporate: true, leadership: true, board: true, membership: true };
+
+        /**
+         * The board with only the kept lines, less the names they no longer
+         * hold there. What was opened always stays. Where something was
+         * opened, a name also has to be reachable from it along the kept
+         * lines; the opening view of several organisations has no one place
+         * to measure from, so there only the loose names go.
+         */
+        function simplifyScene(nodes, edges, roots) {
+            var isRoot = Object.create(null);
+            roots.forEach(function (id) { isRoot[id] = true; });
+            var kept = edges.filter(function (edge) { return SIMPLE_KEEP[edge.category]; });
+            var lines = Object.create(null);
+            kept.forEach(function (edge) {
+                lines[edge.sourceId] = (lines[edge.sourceId] || 0) + 1;
+                lines[edge.targetId] = (lines[edge.targetId] || 0) + 1;
+            });
+            var stays = Object.create(null);
+            nodes.forEach(function (node) {
+                var count = lines[node.id] || 0;
+                if (isRoot[node.id]) { stays[node.id] = true; return; }
+                if (!count) return;
+                if (count === 1 && (node.status === 'closed' || node.status === 'rebranded')) return;
+                stays[node.id] = true;
+            });
+            kept = kept.filter(function (edge) { return stays[edge.sourceId] && stays[edge.targetId]; });
+            if (roots.length) {
+                var adjacent = Object.create(null);
+                kept.forEach(function (edge) {
+                    (adjacent[edge.sourceId] = adjacent[edge.sourceId] || []).push(edge.targetId);
+                    (adjacent[edge.targetId] = adjacent[edge.targetId] || []).push(edge.sourceId);
+                });
+                var reach = Object.create(null);
+                var queue = roots.filter(function (id) { return stays[id]; });
+                queue.forEach(function (id) { reach[id] = true; });
+                while (queue.length) {
+                    (adjacent[queue.shift()] || []).forEach(function (other) {
+                        if (!reach[other]) { reach[other] = true; queue.push(other); }
+                    });
+                }
+                stays = reach;
+                kept = kept.filter(function (edge) { return reach[edge.sourceId] && reach[edge.targetId]; });
+            }
+            return {
+                nodes: nodes.filter(function (node) { return stays[node.id]; }),
+                edges: kept
+            };
+        }
 
         /**
          * Fold the people who join two places into the line between them.
@@ -1027,6 +1173,67 @@
             announce(ids.length + ' names opened together. The map is now in Expand mode.');
         };
 
+        /*
+         * Show all connections (2d.8): open every name on the board that has
+         * connections off it - every "+N" - one step, in Expand. The name the
+         * view is about stays last on the trail, so the drawer stays on it.
+         * In Focus the board is that name's view alone, so the names opened
+         * are its neighbours, not everything clicked before.
+         *
+         * A board past SHOW_ALL_MAX names is a hairball nobody can read, so
+         * names are opened biggest first while the board stays under it, and
+         * the rest are left as their "+N" and counted in what is announced.
+         * Returns { added, left, names }.
+         */
+        var SHOW_ALL_MAX = 120;
+        focus.showAllLimit = SHOW_ALL_MAX;
+        focus.showAll = function () {
+            var none = { added: 0, left: 0, names: current ? current.nodes.length : 0 };
+            if (!store.ready || inPath()) return none;
+            var scene = focus.scene();
+            var head = chain.length ? chain[chain.length - 1] : openingRoot();
+            var base = mode === 'expand' ? chain.slice(0, -1) : [];
+            var candidates = scene.nodes.filter(function (node) {
+                return scene.hidden[node.id] && node.id !== head && base.indexOf(node.id) === -1;
+            }).sort(function (a, b) {
+                return (b.importance || 0) - (a.importance || 0) || (b.degree || 0) - (a.degree || 0) ||
+                    String(a.name).localeCompare(String(b.name));
+            });
+            if (!candidates.length) {
+                announce('Every name on the map is showing all its connections already.');
+                return none;
+            }
+            var before = { chain: chain, mode: mode };
+            var tail = head ? [head] : [];
+            var added = [];
+            var names = scene.nodes.length;
+            mode = 'expand';
+            candidates.forEach(function (node) {
+                chain = base.concat(added, [node.id], tail);
+                var size = focus.scene().nodes.length;
+                if (size <= SHOW_ALL_MAX) {
+                    added.push(node.id);
+                    names = size;
+                }
+            });
+            chain = base.concat(added, tail);
+            if (!added.length) {
+                chain = before.chain;
+                mode = before.mode;
+                announce('Opening any of these names would put more than ' + SHOW_ALL_MAX +
+                    ' on the board, too many to read. Click one to open it, or turn on Simplify.');
+                return { added: 0, left: candidates.length, names: scene.nodes.length };
+            }
+            animateNext = true;
+            enterFocus();
+            var left = candidates.length - added.length;
+            announce('Opened ' + added.length + (added.length === 1 ? ' name' : ' names') + ': ' + names +
+                ' names on the board' +
+                (left ? '. ' + left + ' more would pass ' + SHOW_ALL_MAX + ' names, so they stay as +N' : '') +
+                (before.mode !== 'expand' ? '. The map is now in Expand mode.' : '.'));
+            return { added: added.length, left: left, names: names };
+        };
+
         /**
          * Put one route on the board: ids in order, first to last. False,
          * and nothing changes, when a step has no line under the current
@@ -1220,7 +1427,7 @@
             }
             current = scene;
 
-            var key = mode + ':' + chain.join(',');
+            var key = mode + (simple ? '+simple' : '') + ':' + chain.join(',');
             if (key !== seedKey) {
                 /* The first click off a grown opening view settles from the
                  * map's own positions. That arrangement is sized to the

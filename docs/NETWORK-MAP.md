@@ -2090,6 +2090,21 @@ stay), and drops closed-and-unconnected leaves. The store already has the
 category filter; the pill already counts hidden neighbours. Announce the
 count hidden. Off by default, because the map's point is the connections.
 
+*Built (2026-09-24).* A **Simplify** button on the stage, under Reset view
+(`focus.setSimple`, `simplifyScene` in focus.js), pressed while on and
+carried in the link as `simple=1`. It keeps the lines about who owns and
+runs what (corporate, which holds ownership, renames and sales; leadership;
+board; membership) and leaves off staff, clinical, admissions, family,
+referral, survivor and unlabelled lines. Then it drops every name those
+lines alone held on the board, and every closed or rebranded name hanging
+off a single line on the board as drawn, after people are folded into lines (folding can make two lines one), repeated until none is left, since one going can leave the name it hung from on a single line in turn. Where something is opened, a name also has to be
+reachable from it along the kept lines. What was opened always stays.
+Everything taken away counts in the "+N" of the name it hung from, and the
+drawer still lists every connection. The live region says how many names
+went: Provo Canyon School's board goes from 78 names to 45. It is not
+applied to a route. Unlike the plan above, open names with a single line
+stay: a company's own programs are the reason to open it.
+
 ### 2d.8 "Add a 'show all connections' mode."
 
 *What it has.* Expand mode adds each click to the board; the "+N" pill
@@ -2109,6 +2124,19 @@ floor: past about 120 names it stops and says so rather than drawing a
 hairball, and the reader can narrow with Simplify (2d.7) or Focus. This is
 the same code path as `openMany` (the Path route's opening), given a
 different set of ids.
+
+*Built (2026-09-24), the board half.* A **Show all** button beside Simplify
+(`focus.showAll`). It opens every name on the board that has a "+N", one
+step, in Expand. The name being read stays last on the trail, so the drawer
+stays on it. From Focus, only that name's view is opened out, not every
+earlier click. Names are opened biggest first (importance, then degree)
+while the board stays at or under `SHOW_ALL_MAX` (120). The rest keep their
+"+N", and the live region says how many: from Provo Canyon School it opens
+7 names to reach 120 and leaves 56. A board it cannot add to says so and
+changes nothing. The button is hidden when nothing on the board has more to
+show, when the board is already at the limit, and on a route. The drawer
+half (one name's connections) is what a click in Expand already does, so it
+was not built separately.
 
 ### 2d.9 "Add a more detailed legend."
 
@@ -2204,9 +2232,8 @@ it.
    which the nodes do not carry. Answers 5.
 3. **2d.1 opening cluster**: done 2026-09-22, the map opens on UHS.
    Answers 1.
-4. **2d.7 Simplify** and **2d.8 Show all connections** together: they are
-   the two ends of one dial and share the pill and category code. Answer
-   7 and 8, and settle the last open decision of Phase 2.
+4. **2d.7 Simplify** and **2d.8 Show all connections** together: done
+   2026-09-24. Answers 7 and 8.
 5. **2d.6 highlight on the board in view**: a held emphasis state and a
    drawer button. Answers 6.
 6. **2d.2 kind marks** after the owner's yes, with their legend rows.

@@ -111,6 +111,7 @@
                 if (card) card.hide();
                 renderChain(app);
                 syncMode(app);
+                syncBoardControls(app);
                 if (app.drawer) app.drawer.update();
                 if (app.urlState) app.urlState.write();
                 /* A trail narrows what is on screen, and the legend lists
@@ -426,6 +427,30 @@
         });
     }
 
+    /* Show all is offered only when a name on the board has a "+N" it
+     * could open, the board has room for it, and never on a route;
+     * Simplify says whether it is on. */
+    function syncBoardControls(app) {
+        var showAll = byId('kop-network-show-all');
+        if (showAll) {
+            var scene = app.focus.scene();
+            var chain = app.focus.chain();
+            var head = chain[chain.length - 1];
+            /* A board already at the limit has nothing Show all could add. */
+            var room = scene.nodes.length < (app.focus.showAllLimit || 120);
+            var more = room && !app.focus.isPath() && scene.nodes.some(function (node) {
+                return scene.hidden[node.id] && node.id !== head;
+            });
+            showAll.hidden = !more;
+        }
+        var simplify = byId('kop-network-simplify');
+        if (simplify) {
+            var on = app.focus.isSimple();
+            simplify.setAttribute('aria-pressed', on ? 'true' : 'false');
+            simplify.classList.toggle('is-on', on);
+        }
+    }
+
     /**
      * The map over the whole screen: toolbar, trail, stage and drawer, with
      * the page around them gone. The browser's own full screen where it has
@@ -534,6 +559,24 @@
     }
 
     function wireControls(app) {
+        /* Show all (2d.8) and Simplify (2d.7). What they did is said in
+         * the live region by focus.js; syncBoardControls keeps the buttons
+         * true to the board after every change. */
+        var showAll = byId('kop-network-show-all');
+        if (showAll) {
+            showAll.addEventListener('click', function () {
+                app.focus.showAll();
+            });
+        }
+        var simplify = byId('kop-network-simplify');
+        if (simplify) {
+            simplify.addEventListener('click', function () {
+                app.focus.setSimple(!app.focus.isSimple());
+                if (app.urlState) app.urlState.write();
+                syncBoardControls(app);
+            });
+        }
+
         var reset = byId('kop-network-reset-view');
         if (reset) {
             /* Re-lay out what is on screen and frame it, the same path a
