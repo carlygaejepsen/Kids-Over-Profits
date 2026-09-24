@@ -263,10 +263,20 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
             $lawsuit_id   = (int)$case['id'];
             $facility_tags = $facility_tags_for($facilities, $facility_links[$lawsuit_id] ?? []);
             $coverage      = $news_links[$lawsuit_id] ?? [];
-            // A case's FileBird folder (and its subfolders) lists every filing,
-            // minus the ones already linked as "Court doc N" above it.
+            // A case's own FileBird folder (and its subfolders) lists every filing,
+            // minus the ones already linked as "Court doc N" above it. Only a
+            // folder named like a caption ("Doe v Hyde", "... lawsuits") counts:
+            // many cases point at their facility's folder of handbooks and
+            // inspection reports, which are not case documents.
             $folder_docs = [];
-            if (!empty($case['filebird_folder_id']) && function_exists('kop_get_attachments_in_folder_ids')) {
+            $case_folder_name = '';
+            if (!empty($case['filebird_folder_id'])) {
+                global $wpdb;
+                $case_folder_name = html_entity_decode((string)$wpdb->get_var($wpdb->prepare(
+                    "SELECT name FROM {$wpdb->prefix}fbv WHERE id = %d", (int)$case['filebird_folder_id']
+                )), ENT_QUOTES);
+            }
+            if (preg_match('/\bvs?\.?\s|lawsuit/i', $case_folder_name) && function_exists('kop_get_attachments_in_folder_ids')) {
                 $linked = array_flip($doc_urls);
                 foreach (kop_get_attachments_in_folder_ids(kop_get_descendant_ids_for_roots([(int)$case['filebird_folder_id']])) as $att) {
                     $att_url = wp_get_attachment_url($att->ID);
@@ -388,7 +398,7 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
 
             <?php if ($folder_docs): ?>
             <details class="kop-card-docs">
-                <summary><?php echo esc_html(count($folder_docs) . ' more court document' . (count($folder_docs) === 1 ? '' : 's')); ?></summary>
+                <summary><?php echo esc_html(count($folder_docs) . ' more case document' . (count($folder_docs) === 1 ? '' : 's')); ?></summary>
                 <ul class="kop-coverage-list">
                     <?php foreach ($folder_docs as $doc): ?>
                     <li class="kop-coverage-item"><a href="<?php echo esc_url($doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($doc['title']); ?></a></li>
