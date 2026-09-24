@@ -39,22 +39,38 @@
 
     /* ---- Sticky offsets ------------------------------------------------ */
 
-    /* A sticky site header (Kadence can make one) would cover the filter
-     * bar; measure it and push the bar below it. */
+    /* Kadence's sticky header only turns fixed once the page scrolls, and
+     * would then cover the filter bar; keep the bar below whatever part of
+     * it is on screen. */
+    var headers = document.querySelectorAll('.kadence-sticky-header, #masthead');
     function measure() {
-        var header = document.querySelector('#masthead, .site-header');
         var top = 0;
-        if (header) {
-            var style = window.getComputedStyle(header);
-            if (style.position === 'fixed' || style.position === 'sticky') {
-                top = header.getBoundingClientRect().height;
+        for (var i = 0; i < headers.length; i++) {
+            var style = window.getComputedStyle(headers[i]);
+            if (style.position !== 'fixed' && style.position !== 'sticky') {
+                continue;
+            }
+            var rect = headers[i].getBoundingClientRect();
+            if (rect.height > 0 && rect.top <= 0 && rect.bottom > top) {
+                top = rect.bottom;
             }
         }
-        page.style.setProperty('--kop-gl-sticky-top', top + 'px');
+        page.style.setProperty('--kop-gl-sticky-top', Math.round(top) + 'px');
         page.style.setProperty('--kop-gl-filter-height', form.getBoundingClientRect().height + 'px');
     }
+    var queued = false;
+    function queueMeasure() {
+        if (!queued) {
+            queued = true;
+            window.requestAnimationFrame(function () {
+                queued = false;
+                measure();
+            });
+        }
+    }
     measure();
-    window.addEventListener('resize', measure);
+    window.addEventListener('resize', queueMeasure);
+    window.addEventListener('scroll', queueMeasure, { passive: true });
 
     /* Contents open beside the list on a wide screen, folded on a phone. */
     var toc = root.querySelector('.kop-gl-toc details');

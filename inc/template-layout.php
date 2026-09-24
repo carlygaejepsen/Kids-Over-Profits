@@ -71,6 +71,9 @@ function kop_template_layout_no_sidebar() {
         'templates/page-news-processor.php',
         // Not an admin tool, but the map wants every pixel of width it can get.
         'templates/page-network-map.php',
+        // The glossary has its own contents rail; beside the site sidebar the
+        // entries were squeezed into a third of the screen.
+        'templates/page-glossary.php',
     ));
 }
 
