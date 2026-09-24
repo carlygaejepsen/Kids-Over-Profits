@@ -124,7 +124,8 @@
     border-radius: 6px;
 }
 
-.section-search {
+/* input. prefix: Kadence's input[type="text"] { max-width: 100% } outranks a bare class */
+input.section-search {
     width: 100%;
     max-width: 400px;
     padding: 0.5em 0.75em;
