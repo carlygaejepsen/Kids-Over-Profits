@@ -56,6 +56,8 @@
         var focus = null;
         /* The popup that says what a line records; built once focus exists. */
         var popup = null;
+        /* The card that says what a name is, on hover; likewise. */
+        var card = null;
         var viewport = window.KOPNetworkViewport.create({
             canvas: canvas,
             renderer: renderer,
@@ -68,9 +70,11 @@
             onSelectEdge: function (edge, point, event, marker) {
                 if (popup) popup.pin(edge, point, marker);
             },
-            /* A pan or a zoom moves the line out from under its popup. */
+            /* A pan or a zoom moves the line out from under its popup,
+             * and the name out from beside its card. */
             onChange: function () {
                 if (popup) popup.hide();
+                if (card) card.hide();
             },
             /* A zoom the reader drove themselves. If it has taken part of
              * the board off the stage, offer the way back - once. */
@@ -98,9 +102,13 @@
             renderer: renderer,
             viewport: viewport,
             announce: announce,
+            onHover: function (node) {
+                if (card) card.hover(node);
+            },
             onChange: function () {
                 /* The line the popup describes may not be in the new view. */
                 if (popup) popup.hide();
+                if (card) card.hide();
                 renderChain(app);
                 syncMode(app);
                 if (app.drawer) app.drawer.update();
@@ -271,6 +279,17 @@
             app.keys = window.KOPNetworkKeys.create({
                 canvas: canvas, focus: focus, viewport: viewport, renderer: renderer, announce: announce
             });
+        }
+
+        if (window.KOPNetworkCard && stage) {
+            card = window.KOPNetworkCard.create({
+                stage: stage,
+                store: store,
+                focus: focus,
+                renderer: renderer,
+                keyboardCursor: function () { return app.keys ? app.keys.cursor() : null; }
+            });
+            app.card = card;
         }
 
         store.load(CONFIG).then(function () {

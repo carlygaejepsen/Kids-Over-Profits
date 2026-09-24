@@ -135,6 +135,9 @@
         var renderer = options.renderer;
         var viewport = options.viewport;
         var onChange = options.onChange || function () {};
+        /* Told of each name the pointer or the keyboard cursor comes to
+         * rest on, and (null) of it leaving: the hover card listens. */
+        var onHover = options.onHover || function () {};
         var announce = options.announce || function () {};
 
         /* Ids the visitor has clicked through, oldest first. */
@@ -680,6 +683,7 @@
             var id = node ? node.id : null;
             if (id === hoverId) return;
             hoverId = id;
+            onHover(node || null);
 
             if (!id) {
                 releaseGather();

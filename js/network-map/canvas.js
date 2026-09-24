@@ -2996,6 +2996,24 @@
             };
         };
 
+        /**
+         * Where a node's bubble is on the stage right now, as [left, top,
+         * right, bottom] in pixels: at its position this frame, gather
+         * offset included, and at the size it is drawn (grown if clicked,
+         * bigger again under the pointer). The hover card sits beside it.
+         */
+        renderer.screenBox = function (node) {
+            var t = renderer.transform;
+            var p = positionOf(node);
+            var emphasis = renderer.emphasis || {};
+            var off = emphasis.offsets ? emphasis.offsets[node.id] : null;
+            var hoverId = emphasis.hoverId || null;
+            var scale = (grow[node.id] || 1) * (node.id === hoverId ? LABEL_SIZE_HOVER / LABEL_SIZE : 1);
+            return bubbleBox(node,
+                (off ? p.x + off[0] : p.x) * t.k + t.x,
+                (off ? p.y + off[1] : p.y) * t.k + t.y, scale);
+        };
+
         /* Measuring text is not free and a name never changes, so each node
          * carries its width at the base size and the other size is scaled
          * from it. */

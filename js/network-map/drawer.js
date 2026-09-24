@@ -54,6 +54,15 @@
         return null;
     }
 
+    /** "Program · Closed · 1985-2009": what a name is, as the drawer and
+     * the hover card both head it. */
+    function factsFor(node) {
+        var facts = [KIND_WORDS[node.kind] || node.kind];
+        if (node.status && STATUS_WORDS[node.status]) facts.push(STATUS_WORDS[node.status]);
+        if (node.years) facts.push(node.years);
+        return facts.filter(Boolean).join(' · ');
+    }
+
     /* A connection's own words ("cofounder/CEO"), as the line popup says
      * them; connection.js loads first on the page. */
     var wordsOf = (root.KOPNetworkConnection && root.KOPNetworkConnection.wordsOf) || function (edge) {
@@ -166,10 +175,7 @@
 
             body.appendChild(el('h2', 'kop-network__drawer-title', node.name));
 
-            var facts = [KIND_WORDS[node.kind] || node.kind];
-            if (node.status && STATUS_WORDS[node.status]) facts.push(STATUS_WORDS[node.status]);
-            if (node.years) facts.push(node.years);
-            body.appendChild(el('p', 'kop-network__drawer-meta', facts.filter(Boolean).join(' · ')));
+            body.appendChild(el('p', 'kop-network__drawer-meta', factsFor(node)));
 
             /* Names, in order of what they claim. A past name says the
              * place traded under it and stopped; a current name says the
@@ -338,5 +344,5 @@
         return { update: update, show: show, hide: hide, shownId: function () { return shownId; } };
     }
 
-    root.KOPNetworkDrawer = { create: create, profileFor: profileFor, groupsFor: groupsFor, otherRolesFor: otherRolesFor };
+    root.KOPNetworkDrawer = { create: create, profileFor: profileFor, factsFor: factsFor, groupsFor: groupsFor, otherRolesFor: otherRolesFor };
 })(typeof self !== 'undefined' ? self : this);

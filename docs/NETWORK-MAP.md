@@ -2009,6 +2009,45 @@ hover; the drawer is the tap); shown for the keyboard-focused node too, so
 arrow-key navigation gets the same preview. Reuses the line popup's
 placement code in `connection.js`.
 
+*Built (2026-09-24).* `js/network-map/card.js`. Resting on a name for 300 ms
+shows a card beside its bubble: the drawer's own first line
+(`KOPNetworkDrawer.factsFor`: kind, status, years), "Part of <group>" for a
+program or person in a company's colour, NATSAP membership, "Now called" and
+"Formerly" (two names, then "and N others"), the memorial's deaths, and the
+connection count the drawer would list with how many are not on the board
+yet. The last line says "Click to open", "Press Enter to open" for the
+keyboard cursor, or "Already open" on the name the drawer is showing.
+
+- *No state.* The nodes carry no state or city, so the card has none. It
+  needs the build to add one from `facilities_v2`.
+- *Never "Part of" a company.* A group's colour takes in its owners and
+  what it bought as well as the company itself (Bain Capital is in Embark's,
+  Acadia Healthcare in Aspen's), so saying a company is part of its colour
+  would often be backwards. The drawer's ownership lines say which way it
+  runs.
+- *Where it sits.* `renderer.screenBox(node)` gives the bubble as drawn this
+  frame (gather offset and hover growth included). The card goes right of
+  it, else left, else under or over it on a narrow stage, and is kept to the
+  part of the stage the window shows: on a short window the stage runs below
+  the fold and a card clamped to the stage alone went off the screen.
+- *What takes it away.* The pointer leaving the name, a pan or zoom, and
+  anything being opened. Moving from one name to another inside the wait
+  shows only the second. It does not take the pointer (`pointer-events:
+  none`), so it cannot swallow the move to the next name. `focus.create`
+  gained an `onHover` option, which is how both the pointer and keys.js reach
+  it. Touch has no hover path and the card is `display: none` under `(hover:
+  none)`.
+- It is `aria-hidden`: the live region already reads the name for the
+  keyboard (keys.js) and the drawer is its text version.
+
+Tests ("the hover card"): the card and the drawer head a name the same way;
+deaths, group, NATSAP and former names are given; a company is never "part
+of" its colour; the count matches the drawer's list; the three hints;
+placement right, left, under, over and inside a window shorter than the
+stage; `screenBox` is round the drawn name; the wait, leaving during it,
+passing on to a second name, and a name that left the board while the card
+waited. Checked in Chromium at 1440 and 800 wide and on a touch phone.
+
 ### 2d.6 "Add a 'highlight path' mode."
 
 *What it has.* The Path button (Phase 3, 2026-09-21) takes two names and
@@ -2161,8 +2200,8 @@ it.
    layout change, a day between them, and they answer three of the ten
    (3, 9, 10). Done 2026-09-22, less the kind rows of 2d.9, which wait on
    2d.2.
-2. **2d.5 hover cards**: the drawer's profile in a card, reuses the line
-   popup. Answers 5. Next.
+2. **2d.5 hover cards**: done 2026-09-24 (`card.js`), less the state,
+   which the nodes do not carry. Answers 5.
 3. **2d.1 opening cluster**: done 2026-09-22, the map opens on UHS.
    Answers 1.
 4. **2d.7 Simplify** and **2d.8 Show all connections** together: they are

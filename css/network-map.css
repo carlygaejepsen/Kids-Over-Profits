@@ -1028,6 +1028,57 @@ button.kop-network__popup-person {
 	margin: 0.4rem 0 0;
 }
 
+/* What a name is, beside it once the pointer or the keyboard cursor has
+ * rested on it (js/network-map/card.js). Never in the pointer's way: it
+ * must not swallow the move that takes the pointer to the next name. */
+.kop-network__card {
+	position: absolute;
+	z-index: 6;
+	width: max-content;
+	max-width: min(260px, calc(100% - 8px));
+	padding: 0.5rem 0.65rem;
+	border: 1px solid var(--kop-net-border);
+	border-left: 3px solid var(--kop-navy-blue, #000080);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	box-shadow: 0 6px 20px rgba(0, 4, 53, 0.18);
+	color: var(--kop-midnight-blue, #000435);
+	font-size: 0.8rem;
+	line-height: 1.35;
+	pointer-events: none;
+}
+
+.kop-network__card p {
+	margin: 0;
+}
+
+.kop-network__card-name {
+	font-weight: 700;
+	font-size: 0.9rem;
+}
+
+.kop-network__card-facts {
+	margin-bottom: 0.25rem !important;
+	color: #4a4f6a;
+}
+
+.kop-network__card-deaths {
+	font-weight: 600;
+	color: #6d0014;
+}
+
+.kop-network__card-hint {
+	margin-top: 0.3rem !important;
+	font-size: 0.72rem;
+	color: #4a4f6a;
+}
+
+@media (hover: none) {
+	.kop-network__card {
+		display: none;
+	}
+}
+
 .kop-network__status {
 	position: absolute;
 	width: 1px;

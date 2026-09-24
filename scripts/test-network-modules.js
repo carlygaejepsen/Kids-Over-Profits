@@ -234,6 +234,7 @@ function buildSandbox() {
         path.join('js', 'network-map', 'connection.js'),
         path.join('js', 'network-map', 'search.js'),
         path.join('js', 'network-map', 'drawer.js'),
+        path.join('js', 'network-map', 'card.js'),
         path.join('js', 'network-map', 'path.js'),
         path.join('js', 'network-map', 'keys.js'),
         path.join('js', 'network-map', 'url-state.js'),
@@ -3347,6 +3348,114 @@ function run() {
         notes.push('every name has a connection, so the no-connections drawer was not checked');
     }
     focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    }
+
+    /* ------------------------------------------------------ the hover card -- */
+
+    /* 2d.5. Resting on a name says what it is without clicking it: the
+     * drawer's first line, its group, NATSAP, other names, deaths and how
+     * many connections, after a short wait, beside the name. */
+    {
+    const Card = sandbox.KOPNetworkCard;
+    const DrawerApi = sandbox.KOPNetworkDrawer;
+    check(!!Card, 'card.js did not load');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+
+    /* What it says. */
+    const mourned = store.nodes.find((n) => n.deaths && n.years);
+    const saidOfMourned = Card.summary(mourned, { store, scene: focus.scene() });
+    check(saidOfMourned.facts === DrawerApi.factsFor(mourned),
+        'the card and the drawer head ' + mourned.name + ' differently: ' + saidOfMourned.facts);
+    check(saidOfMourned.deaths.indexOf(String(mourned.deaths)) === 0,
+        'the card does not give the deaths of ' + mourned.name);
+    const member = hub.natsap && hub.chain ? hub
+        : store.nodes.find((n) => n.kind === 'facility' && n.natsap && n.chain);
+    const saidOfMember = Card.summary(member, { store });
+    check(saidOfMember.lines.indexOf('Part of ' + member.chain) !== -1 && saidOfMember.lines.indexOf('NATSAP member') !== -1,
+        'the card for ' + member.name + ' does not say its group and NATSAP: ' + saidOfMember.lines.join('; '));
+    /* A company is in a group's colour as its owner as often as its part. */
+    const owner = store.node('bain-capital') || store.nodes.find((n) => n.kind === 'parent' && n.chain);
+    check(!Card.summary(owner, { store }).lines.some((l) => l.indexOf('Part of') === 0),
+        owner.name + ' is said to be part of ' + owner.chain);
+    const renamed = store.nodes.find((n) => n.formerNames && n.formerNames.length);
+    if (renamed) {
+        check(Card.summary(renamed, { store }).lines.some((l) => l.indexOf('Formerly ' + renamed.formerNames[0]) === 0),
+            'the card for ' + renamed.name + ' does not give its former name');
+    }
+    /* The count is what the drawer would list. */
+    const listed = Object.create(null);
+    DrawerApi.groupsFor(store, hub).forEach((g) => g.nodes.forEach((n) => { listed[n.id] = true; }));
+    const listedCount = Object.keys(listed).length;
+    check(Card.summary(hub, { store }).connections.indexOf(listedCount + ' connection') === 0,
+        'the card counts ' + Card.summary(hub, { store }).connections + ' for ' + hub.name + ', the drawer ' + listedCount);
+    check(Card.summary(hub, { store, scene: { hidden: { [hub.id]: 7 } } }).connections.indexOf('7 not on the board yet') !== -1,
+        'the card does not say how many connections are off the board');
+    check(Card.summary(hub, { store }).hint === 'Click to open' &&
+        Card.summary(hub, { store, keyboard: true }).hint === 'Press Enter to open' &&
+        Card.summary(hub, { store, head: hub.id }).hint.indexOf('Already open') === 0,
+        'the card hint does not follow pointer, keyboard and the name already open');
+
+    /* Where it goes: right of the name, else left, else under or over it,
+     * and always on the stage. */
+    const at = (box, w, h, sw, sh) => { const p = Card.placeBeside(box, w, h, sw, sh); return p.x + ',' + p.y; };
+    check(at([100, 100, 200, 130], 150, 80, 1000, 600) === '210,100', 'the card is not right of the name');
+    check(at([850, 100, 990, 130], 150, 80, 1000, 600) === '690,100', 'the card is not left of a name at the right edge');
+    check(at([60, 100, 320, 130], 250, 80, 375, 600) === '65,140', 'on a narrow stage the card is not under the name');
+    check(at([60, 540, 320, 570], 250, 80, 375, 600) === '65,450', 'at the foot of a narrow stage the card is not over the name');
+    check(at([100, 570, 200, 598], 150, 80, 1000, 600) === '210,516', 'the card runs off the foot of the stage');
+    check(Card.placeBeside([100, 570, 200, 598], 150, 80, 1000, 500, 0).y === 416,
+        'the card runs off the foot of the window when the stage goes on below it');
+    check(Card.placeBeside([100, 10, 200, 40], 150, 80, 1000, 600, 200).y === 204,
+        'the card is above the window when the stage starts above it');
+
+    /* The bubble it sits beside is where the name is drawn. */
+    focus.select(hub);
+    flushFrames();
+    const t = viewport.transform;
+    const p = focus.positionOf(hub);
+    const sb = renderer.screenBox(hub);
+    const cx = p.x * t.k + t.x, cy = p.y * t.k + t.y;
+    check(sb[0] < cx && cx < sb[2] && sb[1] < cy && cy < sb[3] && Math.abs((sb[0] + sb[2]) / 2 - cx) < 0.5,
+        'renderer.screenBox is not round ' + hub.name + ': ' + sb.map(Math.round).join(',') + ' for ' + Math.round(cx) + ',' + Math.round(cy));
+
+    /* The wait, and what cancels it. */
+    let due = null;
+    const cardStage = doc.createElement('div');
+    cardStage.clientWidth = 1300;
+    cardStage.clientHeight = 700;
+    const hoverCard = Card.create({
+        stage: cardStage, store, focus, renderer, document: doc,
+        setTimeout: (fn) => { due = fn; return 1; },
+        clearTimeout: () => { due = null; }
+    });
+    const onBoard = focus.scene().nodes.filter((n) => n.id !== hub.id);
+    const first = onBoard[0], second = onBoard[1];
+    hoverCard.hover(first);
+    check(hoverCard.element.hidden === true && typeof due === 'function', 'the card showed at once, or never set its wait');
+    due();
+    check(hoverCard.element.hidden === false && hoverCard.shownId() === first.id &&
+        hoverCard.element.textContent.indexOf(first.name) === 0 && /px$/.test(hoverCard.element.style.left),
+        'after the wait the card does not show ' + first.name + ' beside it');
+    hoverCard.hover(null);
+    check(hoverCard.element.hidden === true, 'the pointer leaving did not take the card away');
+    hoverCard.hover(first);
+    hoverCard.hover(null);
+    check(due === null && hoverCard.element.hidden === true, 'the pointer leaving during the wait did not cancel the card');
+    hoverCard.hover(first);
+    hoverCard.hover(second);
+    due();
+    check(hoverCard.shownId() === second.id, 'passing over one name to another showed the first');
+    hoverCard.hover(hub);
+    due();
+    check(hoverCard.element.textContent.indexOf('Already open') !== -1, 'the card offers to open the name already open');
+    const offBoard = store.nodes.find((n) => !focus.scene().nodeIds[n.id]);
+    hoverCard.hover(offBoard);
+    due();
+    check(hoverCard.element.hidden === true, 'a card showed for a name no longer on the board');
     focus.clear();
     flushFrames();
     }
