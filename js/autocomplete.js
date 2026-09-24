@@ -1316,10 +1316,10 @@ function autoInitialize() {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     // Check if the added node or its descendants have autocomplete fields
-                    if (node.matches && node.matches('input[data-autocomplete-category]:not([data-autocomplete-init="true"])')) {
+                    if (node.matches && node.matches('[data-autocomplete-category]:not([data-autocomplete-init="true"])')) {
                         shouldReinit = true;
                     } else if (node.querySelectorAll) {
-                        const newFields = node.querySelectorAll('input[data-autocomplete-category]:not([data-autocomplete-init="true"])');
+                        const newFields = node.querySelectorAll('[data-autocomplete-category]:not([data-autocomplete-init="true"])');
                         if (newFields.length > 0) {
                             shouldReinit = true;
                         }
@@ -1359,7 +1359,7 @@ if (document.readyState === 'loading') {
 document.addEventListener('formReady', () => {
     debugLog('📢 formReady event received, re-initializing autocomplete...');
     // Clear init flags to allow re-initialization with fresh data
-    document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
+    document.querySelectorAll('[data-autocomplete-category]').forEach(field => {
         delete field.dataset.autocompleteInit;
     });
     initializeAutocompleteFields();

@@ -185,7 +185,7 @@
 
                 setTimeout(() => {
                     debugLog('Re-initializing autocomplete with cloud data...');
-                    document.querySelectorAll('input[data-autocomplete-category]').forEach(field => {
+                    document.querySelectorAll('[data-autocomplete-category]').forEach(field => {
                         delete field.dataset.autocompleteInit;
                     });
                     if (typeof window.delegateInitializeAutocompleteFields === 'function') {

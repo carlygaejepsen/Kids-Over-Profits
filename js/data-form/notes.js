@@ -871,8 +871,8 @@ function createFieldNote(field, group) {
     removeNoteBtn.style.height = '20px';
     removeNoteBtn.title = 'Remove this note';
 
-    const noteInput = document.createElement('input');
-    noteInput.type = 'text';
+    const noteInput = document.createElement('textarea');
+    noteInput.rows = 2;
     noteInput.className = 'note-input';
     noteInput.placeholder = 'Add notes or context for this field...';
     noteInput.style.fontSize = '14px';

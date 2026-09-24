@@ -550,8 +550,8 @@
                         data[index] = normalized;
                     }
 
-                    const roleInp = document.createElement('input');
-                    roleInp.type = 'text';
+                    const roleInp = document.createElement('textarea');
+                    roleInp.rows = 1;
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
                     roleInp.setAttribute('data-autocomplete-category', 'role');
@@ -565,8 +565,8 @@
                         }
                     };
 
-                    const employerInp = document.createElement('input');
-                    employerInp.type = 'text';
+                    const employerInp = document.createElement('textarea');
+                    employerInp.rows = 1;
                     employerInp.className = 'array-input array-input-name';
                     employerInp.placeholder = 'Employer';
                     employerInp.setAttribute('data-autocomplete-category', 'operator');
@@ -604,8 +604,8 @@
                     mainRow.style.width = '100%';
                     mainRow.style.alignItems = 'center';
 
-                    const roleInp = document.createElement('input');
-                    roleInp.type = 'text';
+                    const roleInp = document.createElement('textarea');
+                    roleInp.rows = 1;
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
                     roleInp.setAttribute('data-autocomplete-category', 'role');
@@ -619,8 +619,8 @@
                         }
                     };
 
-                    const nameInp = document.createElement('input');
-                    nameInp.type = 'text';
+                    const nameInp = document.createElement('textarea');
+                    nameInp.rows = 1;
                     nameInp.className = 'array-input array-input-name';
                     nameInp.placeholder = 'Name';
                     nameInp.setAttribute('data-autocomplete-category', 'human');
@@ -766,8 +766,8 @@
                         if (typeof normalized.zip !== 'string') normalized.zip = '';
                     }
 
-                    const addressInp = document.createElement('input');
-                    addressInp.type = 'text';
+                    const addressInp = document.createElement('textarea');
+                    addressInp.rows = 1;
                     addressInp.className = 'array-input array-input-name';
                     addressInp.placeholder = 'Address';
                     addressInp.value = normalized.address || '';
@@ -780,8 +780,8 @@
                         }
                     };
 
-                    const cityInp = document.createElement('input');
-                    cityInp.type = 'text';
+                    const cityInp = document.createElement('textarea');
+                    cityInp.rows = 1;
                     cityInp.className = 'array-input array-input-name';
                     cityInp.placeholder = 'City';
                     cityInp.value = normalized.city || '';
@@ -794,8 +794,8 @@
                         }
                     };
 
-                    const stateInp = document.createElement('input');
-                    stateInp.type = 'text';
+                    const stateInp = document.createElement('textarea');
+                    stateInp.rows = 1;
                     stateInp.className = 'array-input array-input-role';
                     stateInp.placeholder = 'State';
                     stateInp.style.maxWidth = '90px';
@@ -810,8 +810,8 @@
                         }
                     };
 
-                    const zipInp = document.createElement('input');
-                    zipInp.type = 'text';
+                    const zipInp = document.createElement('textarea');
+                    zipInp.rows = 1;
                     zipInp.className = 'array-input array-input-role';
                     zipInp.placeholder = 'ZIP';
                     zipInp.style.maxWidth = '90px';
@@ -841,7 +841,8 @@
                     }
 
                     const makeInput = (field, placeholder, opts = {}) => {
-                        const inp = document.createElement('input');
+                        const inp = opts.type === 'number' ? document.createElement('input') : document.createElement('textarea');
+                        if (opts.type !== 'number') inp.rows = 1;
                         inp.type = opts.type || 'text';
                         inp.className = 'array-input ' + (opts.cls || 'array-input-name');
                         inp.placeholder = placeholder;
@@ -866,8 +867,8 @@
                     row.appendChild(makeInput('fromYear', 'From yr', { type: 'number', cls: 'array-input-role', maxWidth: '80px' }));
                     row.appendChild(makeInput('toYear', 'To yr', { type: 'number', cls: 'array-input-role', maxWidth: '80px' }));
                 } else if (typeof item === 'object' && item !== null) {
-                    const roleInp = document.createElement('input');
-                    roleInp.type = 'text';
+                    const roleInp = document.createElement('textarea');
+                    roleInp.rows = 1;
                     roleInp.className = 'array-input array-input-role';
                     roleInp.placeholder = 'Role';
                     roleInp.setAttribute('data-autocomplete-category', 'role');
@@ -877,8 +878,8 @@
                         if (window.updateJSON) window.updateJSON();
                     };
 
-                    const nameInp = document.createElement('input');
-                    nameInp.type = 'text';
+                    const nameInp = document.createElement('textarea');
+                    nameInp.rows = 1;
                     nameInp.className = 'array-input array-input-name';
                     nameInp.placeholder = 'Name';
                     if (defaultCategory) nameInp.setAttribute('data-autocomplete-category', defaultCategory);
@@ -891,8 +892,8 @@
                     row.appendChild(roleInp);
                     row.appendChild(nameInp);
                 } else {
-                    const inp = document.createElement('input');
-                    inp.type = 'text';
+                    const inp = document.createElement('textarea');
+                    inp.rows = 1;
                     inp.className = 'array-input';
                     if (defaultCategory) inp.setAttribute('data-autocomplete-category', defaultCategory);
                     inp.value = item || '';

@@ -2828,7 +2828,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                     
                     // Initialize the autocomplete functionality
                     setTimeout(() => {
-                        const ownerInput = document.querySelector('input[data-field="owner"]');
+                        const ownerInput = document.querySelector('[data-field="owner"]');
                         const otherOwnersContainer = document.querySelector('.array-container[data-path="otherOwners"]');
                         
                         // Initialize autocomplete for the other owners input
@@ -2839,7 +2839,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                             });
                         }
                         
-                        const otherOwnersInput = document.querySelector('input[data-field="otherOwners"]');
+                        const otherOwnersInput = document.querySelector('[data-field="otherOwners"]');
                         if (otherOwnersInput && window.attachAutocompleteToInput) {
                             window.attachAutocompleteToInput(otherOwnersInput, window.getHumanNames, 'human', function(selectedValue) {
                                 otherOwnersInput.value = selectedValue;
@@ -2946,7 +2946,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                         const operatorName = newOperatorInput.value.trim();
                         if (operatorName) {
                             // Set the operator name in the form
-                            const currentOperatorField = document.querySelector('input[data-field="identification.currentOperator"]');
+                            const currentOperatorField = document.querySelector('[data-field="identification.currentOperator"]');
                             if (currentOperatorField) {
                                 currentOperatorField.value = operatorName;
                                 currentOperatorField.dispatchEvent(new Event('input', { bubbles: true }));

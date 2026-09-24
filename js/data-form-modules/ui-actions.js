@@ -112,7 +112,7 @@
         // Scroll to the facility name input field
         setTimeout(() => {
             const facilityNameInput = document.getElementById('facility-name')
-                || document.querySelector('input[data-path="identification.name"]');
+                || document.querySelector('[data-path="identification.name"]');
             if (facilityNameInput) {
                 facilityNameInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 facilityNameInput.focus();

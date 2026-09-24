@@ -13,6 +13,35 @@
         textarea.style.overflowY = 'hidden';
     }
 
+    function convertTextInput(input) {
+        if (!input || input.tagName !== 'INPUT' || input.dataset.growingTextField === 'true') return input;
+        const type = (input.getAttribute('type') || 'text').toLowerCase();
+        if (!['text', 'email', 'url', 'tel', 'search'].includes(type)) return input;
+
+        const textarea = document.createElement('textarea');
+        Array.from(input.attributes).forEach(attribute => {
+            if (attribute.name !== 'type') {
+                textarea.setAttribute(attribute.name, attribute.value);
+            }
+        });
+        textarea.rows = 1;
+        textarea.value = input.value;
+        textarea.dataset.growingTextField = 'true';
+        input.replaceWith(textarea);
+        resizeTextarea(textarea);
+        return textarea;
+    }
+
+    function convertTextInputs(root) {
+        const scope = root && root.querySelectorAll ? root : document;
+        const selector = 'input[type="text"], input[type="email"], input[type="url"], input[type="tel"], input[type="search"], input:not([type])';
+        const fields = scope.matches?.(selector) ? [scope] : [];
+        fields.push(...scope.querySelectorAll(selector));
+        fields.forEach(convertTextInput);
+    }
+
+    window.kopConvertTextInputs = convertTextInputs;
+
     document.addEventListener('input', function (e) {
         if (e.target && e.target.tagName === 'TEXTAREA') {
             resizeTextarea(e.target);
@@ -20,7 +49,19 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        convertTextInputs(document);
         document.querySelectorAll('textarea').forEach(resizeTextarea);
+
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                mutation.addedNodes.forEach(node => {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        convertTextInputs(node);
+                    }
+                });
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
     });
 
     // "Years of Operation" is a derived, read-only field: it always mirrors the
