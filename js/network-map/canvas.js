@@ -116,6 +116,9 @@
     var BUBBLE_PAD_X = 9;
     var BUBBLE_PAD_Y = 5;
     var BUBBLE_GAP = 4;
+    /* A person's ellipse is at most this many times as wide as it is tall,
+     * so a long name gets a rounder, taller oval rather than a pointed one. */
+    var PERSON_ASPECT = 1.8;
     /* A bubble's outline carries its company's colour (see clusterInk), so
      * it is drawn heavy enough to read as a colour rather than as a hair
      * round the fill: at 1.5px the difference between navy and teal was
@@ -2126,7 +2129,18 @@
              * to hold it at that scale: measured at the working size, a
              * clicked person (grown 1.6 times) had a name wider than the
              * ellipse drawn round it. */
-            if (node.kind === 'person') hw = Math.max(hh * 1.4, (nameW * scale / 2) / 0.82 + BUBBLE_PAD_X * 0.5 * scale);
+            /* Widening alone left a long name in a sliver pointed at both
+             * ends, so the ellipse is instead the one of PERSON_ASPECT
+             * width to height that just holds the text's box: a box of
+             * half-sides a, b sits inside axes A, B when
+             * (a/A)^2 + (b/B)^2 <= 1. */
+            if (node.kind === 'person') {
+                var a = nameW * scale / 2 + BUBBLE_PAD_X * 0.5 * scale;
+                var b = ((LABEL_LINE + subs.length * YEARS_LINE) / 2 + 2) * scale;
+                var semiY = Math.sqrt(Math.pow(a / PERSON_ASPECT, 2) + b * b);
+                hh = Math.max(hh, semiY);
+                hw = Math.max(hh * 1.4, semiY * PERSON_ASPECT);
+            }
             return [cx - hw, cy - hh, cx + hw, cy + hh];
         }
 
