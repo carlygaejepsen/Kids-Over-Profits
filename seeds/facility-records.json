@@ -9817,5 +9817,199 @@
         "notes": []
       }
     }
+  },
+  {
+    "id": 9622,
+    "unique_name": "Uta Halee Academy",
+    "version": 2,
+    "note": "Removes the NATSAP line matched through Ponca Pines Academy (2008-2012), a different, earlier program; Uta Halee Academy began in 2013 under Rite of Passage: https://utahaleeacademy.com/about-us/",
+    "facility": {
+      "memberships": []
+    }
+  },
+  {
+    "id": 9724,
+    "unique_name": "Novitas Academy",
+    "version": 2,
+    "note": "Status research of 2026-09-24 (network map conflicts). In Emmett since 2015 and closed March 18, 2022 (Idaho Press): https://www.idahopress.com/emmett/news/novitas-to-close-high-school-doors-in-march/article_153f1c9a-a5d7-59cc-97c8-da8efcf3a868.html",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2015,
+        "endYear": 2022,
+        "status": "Closed",
+        "yearsOfOperation": "2015-2022",
+        "notes": [
+          "In Emmett since 2015 and closed March 18, 2022 (Idaho Press): https://www.idahopress.com/emmett/news/novitas-to-close-high-school-doors-in-march/article_153f1c9a-a5d7-59cc-97c8-da8efcf3a868.html"
+        ]
+      }
+    }
+  },
+  {
+    "id": 10779,
+    "unique_name": "High Frontier RTC",
+    "version": 1,
+    "note": "Status research of 2026-09-24 (network map conflicts). Built in 1976; closed during the COVID-19 pandemic (about 2020) and the property became a resort (Big Bend Sentinel, October 2024): https://bigbendsentinel.com/2024/10/09/construction-on-high-frontier-resort-nears-completion/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 1976,
+        "endYear": 2020,
+        "status": "Closed",
+        "yearsOfOperation": "1976-2020",
+        "notes": [
+          "Built in 1976; closed during the COVID-19 pandemic (about 2020) and the property became a resort (Big Bend Sentinel, October 2024): https://bigbendsentinel.com/2024/10/09/construction-on-high-frontier-resort-nears-completion/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 11095,
+    "unique_name": "Marion Youth Academy",
+    "version": 3,
+    "note": "Status research of 2026-09-24 (network map conflicts). The same 40-bed DJJ program at 10420 NW Gainesville Rd, Ocala, run by Sequel TSI of Florida through 2022, operates as Silver Springs Youth Academy under Youth Opportunity Investments by 2025: https://www.djj.state.fl.us/content/download/232583/file/MarionYA-FINAL-FY2122.pdf",
+    "facility": {
+      "identification": {
+        "name": "Marion Youth Academy",
+        "currentName": "Silver Springs Youth Academy",
+        "otherNames": [],
+        "pastNames": [
+          "Three Springs of Marion"
+        ],
+        "currentOperator": "Youth Opportunity Investments",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      },
+      "pastOperators": [
+        "Sequel TSI"
+      ],
+      "operatingPeriod": {
+        "startYear": 2007,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2004-2021",
+        "notes": [
+          "The same 40-bed DJJ program at 10420 NW Gainesville Rd, Ocala, run by Sequel TSI of Florida through 2022, operates as Silver Springs Youth Academy under Youth Opportunity Investments by 2025: https://www.djj.state.fl.us/content/download/232583/file/MarionYA-FINAL-FY2122.pdf"
+        ]
+      }
+    }
+  },
+  {
+    "id": 11107,
+    "unique_name": "Lake Academy",
+    "version": 1,
+    "note": "Status research of 2026-09-24 (network map conflicts). Florida DJJ shut it in June 2024 after 17-year-old Zy'kiria Bell died there on May 29, 2024, and ended TrueCore's contract; the site later reopened under other names and operators: https://www.tampabay28.com/news/local-news/i-team-investigates/tampa-juvenile-facility-shut-down-twice-in-2-years-amid-safety-concerns-and-assault-allegations",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2024,
+        "status": "Closed",
+        "yearsOfOperation": "until 2024",
+        "notes": [
+          "Florida DJJ shut it in June 2024 after 17-year-old Zy'kiria Bell died there on May 29, 2024, and ended TrueCore's contract; the site later reopened under other names and operators: https://www.tampabay28.com/news/local-news/i-team-investigates/tampa-juvenile-facility-shut-down-twice-in-2-years-amid-safety-concerns-and-assault-allegations"
+        ]
+      }
+    }
+  },
+  {
+    "id": 11223,
+    "unique_name": "Tampa Bay Academy",
+    "version": 2,
+    "note": "Status research of 2026-09-24 (network map conflicts). Residential program and group homes closed December 2010 after DCF removed the children that September; the attached charter school lasted until 2012 (Tampa Bay Times): https://www.tampabay.com/archive/2010/12/11/tampa-bay-academy-closing/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2010,
+        "status": "Closed",
+        "yearsOfOperation": "until 2010",
+        "notes": [
+          "Residential program and group homes closed December 2010 after DCF removed the children that September; the attached charter school lasted until 2012 (Tampa Bay Times): https://www.tampabay.com/archive/2010/12/11/tampa-bay-academy-closing/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 12622,
+    "unique_name": "Red Mountain Colorado",
+    "version": 2,
+    "note": "Status research of 2026-09-24 (network map conflicts). Opened October 2018 as Kokua Recovery at the former Greeley Guest House, later renamed Red Mountain Colorado (BizWest): https://bizwest.com/2018/09/17/greeley-guest-house-to-become-adolescent-recovery-center/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2018,
+        "endYear": 2023,
+        "status": "Closed",
+        "yearsOfOperation": "2018-2023",
+        "notes": [
+          "Opened October 2018 as Kokua Recovery at the former Greeley Guest House, later renamed Red Mountain Colorado (BizWest): https://bizwest.com/2018/09/17/greeley-guest-house-to-become-adolescent-recovery-center/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 12731,
+    "unique_name": "Summit Preparatory School",
+    "version": 2,
+    "note": "Status research of 2026-09-24 (network map conflicts). Ran from 2003; closed May 1, 2020 (Flathead Beacon): https://flatheadbeacon.com/2020/03/11/summit-preparatory-school-close/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2003,
+        "endYear": 2020,
+        "status": "Closed",
+        "yearsOfOperation": "2003-2020",
+        "notes": [
+          "Ran from 2003; closed May 1, 2020 (Flathead Beacon): https://flatheadbeacon.com/2020/03/11/summit-preparatory-school-close/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 13011,
+    "unique_name": "Elmore Academy",
+    "version": 1,
+    "note": "Status research of 2026-09-24 (network map conflicts). Run by Youth Services International from 1998; closed January 2014 (Fairmont Sentinel): https://www.fairmontsentinel.com/news/local-news/2014/01/09/elmore-academy-closing-up/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 2014,
+        "status": "Closed",
+        "yearsOfOperation": "1998-2014",
+        "notes": [
+          "Run by Youth Services International from 1998; closed January 2014 (Fairmont Sentinel): https://www.fairmontsentinel.com/news/local-news/2014/01/09/elmore-academy-closing-up/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 13540,
+    "unique_name": "Brush Creek Academy",
+    "version": 1,
+    "note": "Status research of 2026-09-24 (network map conflicts). Operating as a Teen Challenge of Oklahoma boys program (site checked 2026-09-24): https://www.brushcreekacademy.com/",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 2015,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2015-present",
+        "notes": [
+          "Operating as a Teen Challenge of Oklahoma boys program (site checked 2026-09-24): https://www.brushcreekacademy.com/"
+        ]
+      }
+    }
+  },
+  {
+    "id": 14060,
+    "unique_name": "Chamberlain Academy",
+    "version": 1,
+    "note": "Status research of 2026-09-24 (network map conflicts). Closed January 2014 by Youth Services International (Rapid City Journal): https://rapidcityjournal.com/business/local/youth-treatment-center-in-chamberlain-closing/article_54972bfd-2b33-5c03-90aa-9e819b646299.html",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2014,
+        "status": "Closed",
+        "yearsOfOperation": "until 2014",
+        "notes": [
+          "Closed January 2014 by Youth Services International (Rapid City Journal): https://rapidcityjournal.com/business/local/youth-treatment-center-in-chamberlain-closing/article_54972bfd-2b33-5c03-90aa-9e819b646299.html"
+        ]
+      }
+    }
   }
 ]
