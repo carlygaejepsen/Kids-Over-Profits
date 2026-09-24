@@ -119,7 +119,10 @@ function parseEntry(para) {
     let note = head[2] ? head[2].trim() : '';
     let aka = [];
     if (/^aka /i.test(note)) {
-        aka = splitList(note.slice(4)).map(a => a.replace(/^"|"$/g, '').replace(/,$/, ''));
+        const quoted = note.slice(4).match(/"[^"]+"/g);
+        aka = quoted
+            ? quoted.map(q => q.slice(1, -1).replace(/,$/, ''))   /* aka "a," "b," "c" */
+            : splitList(note.slice(4));
         note = '';
     }
     let text = para.slice(head[0].length);
