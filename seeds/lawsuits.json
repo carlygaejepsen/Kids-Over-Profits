@@ -1226,6 +1226,819 @@
           "link_type": "primary"
         }
       ]
+    },
+    {
+      "case_name": "J.P., as Father and Next Friend of G.P. v. Sequel TSI of Alabama, LLC, et al.",
+      "case_number": "CV-2022-900020.00 (removed to federal court as 3:22-cv-00190-CWB)",
+      "court": "Circuit Court of Macon County, Alabama (removed to the U.S. District Court for the Middle District of Alabama, then remanded)",
+      "jurisdiction": "Alabama",
+      "filing_date": "2022-03-18",
+      "status": "unknown",
+      "plaintiffs": [
+        "J.P., as father and next friend of G.P., a minor"
+      ],
+      "defendants": [
+        "Sequel TSI of Alabama, LLC d/b/a Sequel TSI of Tuskegee",
+        "Sequel Youth & Family Services, LLC",
+        "Sequel TSI Holdings, LLC",
+        "Fictitious Defendants A-F"
+      ],
+      "facilities_mentioned": [
+        "Sequel TSI of Tuskegee (Tuskegee, Alabama)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Sequel Youth & Family Services, LLC",
+        "Sequel TSI Holdings, LLC",
+        "Brighter Path Alabama LLC (Sequel TSI of Alabama's name from about March 1, 2022)",
+        "SYFS SaleCo, LLC",
+        "Vivant Behavioral Healthcare, LLC",
+        "Alabama Department of Youth Services",
+        "Alabama Department of Human Resources"
+      ],
+      "claims": [
+        "Outrageous conduct (intentional infliction of emotional distress)",
+        "Negligent or wanton failure to monitor and supervise",
+        "Negligent or wanton failure to protect a child from assault and abuse",
+        "Failure to provide a safe and humane living environment",
+        "Combined and concurring negligence causing injury"
+      ],
+      "outcome": "Defendants removed the case to the U.S. District Court for the Middle District of Alabama on April 20, 2022, arguing that the two Sequel parent companies were fraudulently joined. On March 17, 2023 Magistrate Judge Chad W. Bryan granted the plaintiff's motion to remand, holding that the defendants had not shown the amount in controversy exceeded $75,000, and sent the case back to the Circuit Court of Macon County. The documents do not show what happened after remand.",
+      "settlement_amount": "",
+      "summary": "J.P. sued on behalf of his 15-year-old son G.P. in the Circuit Court of Macon County, Alabama on March 18, 2022, against Sequel TSI of Tuskegee, a psychiatric residential treatment facility, and its parent companies Sequel Youth & Family Services and Sequel TSI Holdings. The complaint alleges that after the Alabama Department of Youth Services placed G.P. there on November 2, 2021, he was sexually assaulted within four days and was choked, beaten and bitten by residents during a seven-week stay while staff failed to intervene, and that he attempted suicide. It also alleges dangerous restraints such as chokeholds, contraband smuggled in by staff and a lack of mental health care. The defendants removed the case to federal court, where an affidavit said Sequel's parent companies had given up control of the facility on October 1, 2021 and that the facility's owner had been renamed Brighter Path Alabama. On March 17, 2023 the federal court sent the case back to state court; the documents do not show how it ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.1.1.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.20.0.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.1.0.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.1.3.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.1.2.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.almd_.77768.1.4.pdf"
+      ],
+      "tags": [
+        "Alabama",
+        "Sequel Youth & Family Services",
+        "psychiatric residential treatment facility",
+        "sexual assault",
+        "restraint",
+        "state placement"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 20,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Mary Ann McMahan-McWhorter v. Sequel TSI Holdings, LLC",
+      "case_number": "5:20-cv-01926",
+      "court": "U.S. District Court for the Northern District of Alabama",
+      "jurisdiction": "Federal",
+      "filing_date": "2020-12-03",
+      "status": "dismissed",
+      "plaintiffs": [
+        "Mary Ann McMahan-McWhorter"
+      ],
+      "defendants": [
+        "Sequel TSI Holdings, LLC"
+      ],
+      "facilities_mentioned": [],
+      "staff_mentioned": [
+        "Mary Caudle"
+      ],
+      "organizations_mentioned": [
+        "Equal Employment Opportunity Commission"
+      ],
+      "claims": [
+        "Disability discrimination under the Americans with Disabilities Act",
+        "Retaliation for requesting a disability accommodation",
+        "Wrongful termination"
+      ],
+      "outcome": "The parties filed a joint stipulation of dismissal, which dismissed the case with prejudice; on August 24, 2021 Judge Liles C. Burke directed the clerk to close the case. The documents do not show any settlement terms.",
+      "settlement_amount": "",
+      "summary": "Mary Ann McMahan-McWhorter, who worked in accounts receivable for Sequel TSI Holdings in Huntsville, Alabama from about May 2014, sued the company in federal court on December 3, 2020. She alleges that after she developed a vision condition in early 2019 and asked for dimmer lighting, Sequel moved her to a brighter workstation, gave her screen-heavy data entry work as a demotion, and fired her on about April 4, 2019. She brought disability discrimination and retaliation claims under the Americans with Disabilities Act after an EEOC charge. This is an employment case, not an abuse case. The parties jointly dismissed it with prejudice and the court closed it on August 24, 2021.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.alnd_.175794.1.0.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/gov.uscourts.alnd_.175794.39.0.pdf"
+      ],
+      "tags": [
+        "Alabama",
+        "Sequel Youth & Family Services",
+        "employment",
+        "disability discrimination"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 20,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Shayrena Penn v. Diamond Ranch Academy, Inc.",
+      "case_number": "",
+      "court": "Fifth Judicial District Court, Washington County, Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Shayrena Penn"
+      ],
+      "defendants": [
+        "Diamond Ranch Academy, Inc."
+      ],
+      "facilities_mentioned": [
+        "Diamond Ranch Academy (Hurricane, Utah)"
+      ],
+      "staff_mentioned": [
+        "Riley Dias",
+        "Marcel Harkey",
+        "Trever Thompson",
+        "McKay Lewis",
+        "Rodney Mellor",
+        "Rob Dias (registered agent)"
+      ],
+      "organizations_mentioned": [],
+      "claims": [
+        "Negligent hiring, retention and supervision",
+        "Assault",
+        "Battery",
+        "Intentional infliction of emotional distress",
+        "Punitive damages"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Former student Shayrena Penn sued Diamond Ranch Academy in Utah's Fifth Judicial District Court in Washington County; the complaint is dated April 29, 2021. She alleges that during a four- to five-month stay that began when she was 15, staff restrained her as punishment using pressure points, held her down while she said she could not breathe, and pressed her face into the ground so hard that she suffered lasting paralysis on the left side of her face. It also alleges sleep deprivation, strip searches, forced exercise with water withheld, inadequate clothing in winter, and weeks of isolation. It names five staff members and brings negligent hiring and supervision, assault, battery and emotional distress claims. The document on file is the complaint and does not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/DRA-Complaint-1.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "restraint",
+        "isolation",
+        "physical abuse"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 10425,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Dean Jeffries L. Goodridge, individually and as Personal Representative of the Estate of Taylor Goodridge v. Diamond Ranch Academy, Inc.",
+      "case_number": "4:22-cv-00102-DN-PK",
+      "court": "U.S. District Court for the District of Utah",
+      "jurisdiction": "Federal",
+      "filing_date": "2022-12-30",
+      "status": "filed",
+      "plaintiffs": [
+        "Dean Jeffries L. Goodridge, individually and as personal representative of the Estate of Taylor Goodridge"
+      ],
+      "defendants": [
+        "Diamond Ranch Academy, Inc."
+      ],
+      "facilities_mentioned": [
+        "Diamond Ranch Academy (Hurricane, Utah)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [],
+      "claims": [
+        "Wrongful death",
+        "Negligence and knowing and reckless indifference",
+        "Medical neglect",
+        "Breach of fiduciary duty",
+        "Premises liability"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Dean Goodridge, the father of Taylor Goodridge, sued Diamond Ranch Academy in federal court in Utah on December 30, 2022, ten days after his daughter died at the program. The complaint alleges that from November 2022 Taylor had extreme abdominal pain, collapsed in her own vomit and begged staff for help, and that staff told her she was faking and gave her only water and aspirin. It alleges she collapsed and died on December 20, 2022, likely of sepsis, and that the program told her father she had had a heart attack and died at the hospital when she had died before leaving the campus. It brings negligence, breach of fiduciary duty and premises liability claims and says a Utah Health Care Malpractice Act claim would be added later. The document on file is the complaint and does not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/taylor-goodridge-DRA-lawsuit-complaint.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "death",
+        "medical neglect",
+        "wrongful death"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 10425,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Wood, et al. v. World Wide Association of Specialty Programs and Schools, Inc., et al.",
+      "case_number": "120500380",
+      "court": "Fifth Judicial District Court, Washington County, Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "William Chase Wood (aka Chase McKinney)",
+        "et al. (357 numbered former students and parents)"
+      ],
+      "defendants": [
+        "World Wide Association of Specialty Programs and Schools, Inc. (WWASPS)",
+        "Robert B. Lichfield",
+        "Ken Kay",
+        "Brent M. Facer",
+        "Patricia E. Lichfield",
+        "Teen Help, L.L.C.",
+        "Cross Creek Center for Boys, L.L.C.",
+        "Cross Creek Manor, L.L.C.",
+        "Majestic Ranch Academy, Inc.",
+        "Midwest Academy, L.L.C.",
+        "Red River Academy, L.L.C.",
+        "Spring Creek Lodge, L.L.C.",
+        "Academy at Ivy Ridge, LLC",
+        "Carolina Springs Academy",
+        "Teens In Crisis, L.L.C.",
+        "et al."
+      ],
+      "facilities_mentioned": [
+        "Cross Creek Center for Boys (La Verkin, Utah)",
+        "Cross Creek Manor (La Verkin, Utah)",
+        "Cross Creek Academy (Utah)",
+        "Brightway Adolescent Hospital (La Verkin, Utah)",
+        "Majestic Ranch Academy (Randolph, Utah)",
+        "Red Rock Academy (Utah)",
+        "Midwest Academy (Iowa)",
+        "Red River Academy (Lecompte, Louisiana)",
+        "Spring Creek Lodge (Montana)",
+        "Academy at Ivy Ridge (New York)",
+        "Carolina Springs Academy (Donalds, South Carolina)",
+        "Sky View Academy (Nevada)",
+        "Casa By The Sea (Mexico)",
+        "High Impact (Baja California, Mexico)",
+        "Pacific View Retreat (Mexico)",
+        "Sunrise Beach (Cancun, Mexico)",
+        "Tranquility Bay (Jamaica)",
+        "Dundee Ranch (Costa Rica)",
+        "Paradise Cove (Western Samoa)",
+        "Morava Academy (Brno, Czech Republic)",
+        "Darrington Academy"
+      ],
+      "staff_mentioned": [
+        "Robert B. Lichfield",
+        "Ken Kay",
+        "Brent M. Facer",
+        "Patricia E. Lichfield",
+        "Narvin Lichfield",
+        "Karr Farnsworth",
+        "Kerry Gubler",
+        "Dan Peart",
+        "Donna Peart",
+        "Willard Jake Peart",
+        "Dace Goulding",
+        "Brian Viafanua",
+        "Steven Roach",
+        "Glenda Roach"
+      ],
+      "organizations_mentioned": [
+        "Teen Help, L.L.C. (Adolescent Services International)",
+        "The Browning Schools, Inc. (Browning Distance Learning Academy)",
+        "R & B Management Group, L.L.C.",
+        "R & B Billing, L.L.C.",
+        "National Contracting Services, Inc.",
+        "Lifelines Family Services, Inc.",
+        "Premier Education, Inc.",
+        "Recaf, Inc.",
+        "Jill-Co., Inc.",
+        "BMF and RBL holding entities",
+        "Robert Browning Lichfield Family Limited Partnership"
+      ],
+      "claims": [
+        "Physical, emotional and sexual abuse of students at WWASPS programs",
+        "Negligence and respondeat superior",
+        "Actual and constructive fraud in marketing to parents",
+        "Breach of contract and warranty",
+        "Civil conspiracy and fraudulent concealment of abuse",
+        "Breach of fiduciary duty",
+        "Intentional and negligent infliction of emotional distress and battery"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "William Chase Wood and several hundred other former students and their parents sued the World Wide Association of Specialty Programs and Schools (WWASPS), founder Robert Lichfield, his business partners and dozens of affiliated programs, marketing and billing companies in Utah's Fifth Judicial District Court in Washington County. The document on file is the plaintiffs' 228-page first amended complaint, submitted July 24, 2013, which refers to claim sheets filed in the case on December 17, 2012 in opposition to a WWASPS motion to dismiss. It alleges that students placed at WWASPS programs in Utah, other states, Mexico, Jamaica, Costa Rica, Samoa and the Czech Republic from the mid-1990s to the mid-2000s were beaten, restrained, locked in isolation and small boxes or cages, denied food and medical care, sexually abused and forced to work without pay. It alleges the programs operated as a single enterprise that deceived parents and concealed the abuse, and brings negligence, fraud, contract, conspiracy and emotional distress claims. The document does not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/StGeorgeUtah.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "WWASPS",
+        "Robert Lichfield",
+        "mass tort",
+        "fraud",
+        "physical abuse",
+        "sexual abuse"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 29,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 10372,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 10373,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 13398,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 12729,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 12023,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 13983,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 14131,
+          "link_type": "mentioned"
+        }
+      ]
+    },
+    {
+      "case_name": "John Doe M.D.Y. v. Trails Academy, LLC, et al.",
+      "case_number": "1:24-cv-00253-MOC-SCR",
+      "court": "United States District Court for the Western District of North Carolina, Asheville Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2024-10-11",
+      "status": "in_progress",
+      "plaintiffs": [
+        "John Doe M.D.Y."
+      ],
+      "defendants": [
+        "Trails Academy, LLC",
+        "Trails Carolina, LLC",
+        "Trails Momentum a/k/a Trails Carolina",
+        "Wilderness Training & Consulting, LLC d/b/a Family Help & Wellness",
+        "WTC Holdco, LLC",
+        "WTCSL, LLC",
+        "Unnamed Entities 1-10"
+      ],
+      "facilities_mentioned": [
+        "Trails Momentum (Hendersonville, North Carolina)",
+        "Trails Carolina (Lake Toxaway, North Carolina)"
+      ],
+      "staff_mentioned": [
+        "Francis van de Beuken",
+        "Wayne Laird"
+      ],
+      "organizations_mentioned": [
+        "Family Help & Wellness",
+        "Wilderness Training & Consulting, LLC",
+        "WTC Holdco, LLC",
+        "WTCSL, LLC",
+        "FHW/THP Blocker, Inc.",
+        "Rhine Law Firm, P.C."
+      ],
+      "claims": [
+        "Negligence and gross negligence",
+        "Negligent infliction of emotional distress",
+        "Forced labor in violation of the federal labor trafficking law (18 U.S.C. 1589)",
+        "Unfair and deceptive trade practices under North Carolina law",
+        "Unlawful trade practices under Oregon law (against Family Help & Wellness and Wilderness Training & Consulting)"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "A young man identified as John Doe M.D.Y. sued Trails Academy, Trails Carolina and their Oregon parent companies, which do business as Family Help & Wellness, in federal court in Asheville on October 11, 2024. He enrolled at 18 in the Trails Momentum young-adult wilderness program and stayed 93 days, from March to June 2021 (the defense gives March 3 to June 3, 2021). The complaint alleges an invasive strip search on arrival in which a staff member touched his genitals, two weeks isolated in a cabin, censored letters and a single muted phone call home, unpaid cleaning, cooking and landscaping work, days in freezing weather with frozen boots and limited food and water, threats that he would be arrested if he left, and little mental health care, and says his mental health collapsed afterward, including a suicide attempt in October 2021. It also alleges an admissions employee misled his parents. The plaintiff asked for a Rule 9(j) extension for any medical malpractice claims, which the defendants opposed, and on December 30, 2024 the defendants moved to dismiss or compel arbitration under a March 2021 enrollment agreement; the documents do not show rulings on those motions.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/10/trails-lawsuit-john-doe.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe-v-Trails-123024-32-Defendants-ask-for-arbitration.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_v_Trails_Academy_LLC-31-plaintiffs-reply-to-motion-to-dismiss.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_v_Trails_Academy_LLC-111524-27-plaintiffs-motion-for-extension.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_v_Trails_Academy_LLC-29-defendants-opposition-to-extension.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_v_Trails_Academy_LLC-30-plaintiffs-reply-to-defendents-opposition-of-extension.pdf"
+      ],
+      "tags": [
+        "wilderness therapy",
+        "North Carolina",
+        "young adults",
+        "labor trafficking",
+        "arbitration",
+        "Family Help & Wellness"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11660,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Jane Doe L.Y. and June Doe A.D. v. Trails Academy, LLC, et al.",
+      "case_number": "1:24-cv-00254-MOC-SCR",
+      "court": "United States District Court for the Western District of North Carolina, Asheville Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2024-10-11",
+      "status": "in_progress",
+      "plaintiffs": [
+        "Jane Doe L.Y.",
+        "June Doe A.D."
+      ],
+      "defendants": [
+        "Trails Academy, LLC",
+        "Trails Carolina, LLC",
+        "Trails Momentum a/k/a Trails Carolina",
+        "Wilderness Training & Consulting, LLC d/b/a Family Help & Wellness",
+        "WTC Holdco, LLC",
+        "WTCSL, LLC",
+        "Unnamed Entities 1-10"
+      ],
+      "facilities_mentioned": [
+        "Trails Momentum (Hendersonville, North Carolina)",
+        "Trails Carolina (Lake Toxaway, North Carolina)"
+      ],
+      "staff_mentioned": [
+        "Francis van de Beuken"
+      ],
+      "organizations_mentioned": [
+        "Family Help & Wellness",
+        "Wilderness Training & Consulting, LLC",
+        "WTC Holdco, LLC",
+        "WTCSL, LLC",
+        "FHW/THP Blocker, Inc.",
+        "Rhine Law Firm, P.C.",
+        "Justice Law Collaborative"
+      ],
+      "claims": [
+        "Unfair and deceptive trade practices under North Carolina law (nationwide class)",
+        "Deceptive and unfair trade practices under Florida law (Florida class)",
+        "Unlawful trade practices under Oregon law",
+        "Negligent misrepresentation",
+        "Negligent infliction of emotional distress (the named parents individually)"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Two Florida parents, Jane Doe L.Y. and June Doe A.D., filed a proposed class action on October 11, 2024 in federal court in Asheville against Trails Academy, Trails Carolina and their Oregon parent companies doing business as Family Help & Wellness. They seek to represent everyone in the United States who bought residential program services from the defendants, with a Florida subclass, and seek repayment of tuition. The complaint alleges the companies misrepresented the Trails Momentum program, which their son attended in 2021, as safe and therapeutic, pressured families through an admissions salesperson, and charged a 3,900 dollar enrollment fee plus 585 dollars a day, 24,570 dollars for the first 42 days. On December 30, 2024 the defendants moved to dismiss or compel arbitration under the family's enrollment agreement; the documents do not show a ruling or a class certification decision.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2024/10/trails2.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_et_al_v_Trails_Academy_LLC-24-defendants-formal-motion-to-dismiss.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/01/Doe_et_al_v_Trails_Academy_LLC-25-defendants-motion-to-dismiss-or-compel-arbitration.pdf"
+      ],
+      "tags": [
+        "class action",
+        "wilderness therapy",
+        "North Carolina",
+        "consumer fraud",
+        "arbitration",
+        "Family Help & Wellness"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11660,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Beverly J. MacKerron v. Elan One, et al.",
+      "case_number": "CV-79-613",
+      "court": "Maine Superior Court, Androscoggin County",
+      "jurisdiction": "Maine",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "Beverly J. MacKerron"
+      ],
+      "defendants": [
+        "Elan One",
+        "Central Maine Power Company (party in interest)",
+        "Depositors Trust Company of Southern Maine (party in interest)"
+      ],
+      "facilities_mentioned": [
+        "Elan School (Poland Spring, Maine)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Elan One Corporation",
+        "D & R Realty",
+        "Central Maine Power Company",
+        "Depositors Trust Company of Southern Maine",
+        "Skelton, Taintor & Abbott, P.A."
+      ],
+      "claims": [
+        "Foreclosure and sale of two parcels in Poland, Maine, under two defaulted mortgages",
+        "Default on two 30,750 dollar promissory notes from Elan One's February 1, 1974 land purchase",
+        "About 16,973.51 dollars claimed due on each note"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "This is a mortgage foreclosure case, not an abuse case. Beverly J. MacKerron sued Elan One, the Maine company behind the Elan School, in Androscoggin County Superior Court in November 1979; the complaint is dated November 14, 1979. She and Neil D. MacKerron had sold Elan One Corporation two parcels on Upper Range Pond in Poland on February 1, 1974 for two promissory notes of 30,750 dollars secured by mortgages, and the complaint says Elan One stopped paying in October 1979, with about 16,973.51 dollars due on each note. Central Maine Power, which held a 1975 power-line easement across the land, and Depositors Trust Company, which held a 1979 mortgage, were named as parties in interest. The documents show only the complaint and the clerk's certificate of filing, not the result.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/mackerron-v-elan-1-complaint.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/mackerron-v-elan-1-certificate-of-filing.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/CMP-v-elan-1-1975.pdf"
+      ],
+      "tags": [
+        "Elan School",
+        "Maine",
+        "foreclosure",
+        "financial"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11017,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Martha Amesbury v. Golden Ark Enterprises and Elan One Corporation",
+      "case_number": "",
+      "court": "Maine Superior Court, Cumberland County",
+      "jurisdiction": "Maine",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "Martha Amesbury"
+      ],
+      "defendants": [
+        "Golden Ark Enterprises",
+        "Elan One Corporation"
+      ],
+      "facilities_mentioned": [
+        "Elan School (Poland Spring, Maine)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Golden Ark Enterprises",
+        "Elan One Corporation"
+      ],
+      "claims": [
+        "Underlying claims are not stated in the document",
+        "Court-ordered attachment of 65,000 dollars against Elan One Corporation's real property"
+      ],
+      "outcome": "After a hearing and with the parties' agreement, the court ordered a 65,000 dollar attachment on Elan One Corporation's real property, finding a reasonable likelihood the plaintiff would recover at least that much.",
+      "settlement_amount": "",
+      "summary": "Martha Amesbury sued Golden Ark Enterprises and Elan One Corporation, companies behind the Elan School, in Cumberland County Superior Court in Maine. The only document is an order of attachment signed at Portland in 1987 which, after a hearing and by agreement of the parties, allowed a 65,000 dollar attachment on Elan One's real estate; it was received at the Androscoggin County Registry of Deeds on December 28 (the year is partly illegible). The order refers to her affidavit but does not say what the lawsuit was about. The documents do not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/Amesbury-v-elan-1988.pdf"
+      ],
+      "tags": [
+        "Elan School",
+        "Maine",
+        "attachment"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11017,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Joseph J. Ricci, et al. v. Key Bancshares of Maine, Inc., et al.",
+      "case_number": "82-0249-P",
+      "court": "United States District Court for the District of Maine",
+      "jurisdiction": "Federal",
+      "filing_date": "",
+      "status": "settled",
+      "plaintiffs": [
+        "Joseph J. Ricci",
+        "Gerald E. Davidson",
+        "Golden Ark Enterprises, Inc.",
+        "Elan One Corporation",
+        "Elan Two Corporation",
+        "Elan Three Corporation",
+        "Elan Four Corporation",
+        "Elan Five Corporation",
+        "Elan Six Corporation",
+        "Elan Eight Corporation",
+        "Performing Arts and Concerts Company",
+        "Davric Maine Corporation",
+        "Williamsburg Corporation"
+      ],
+      "defendants": [
+        "Key Bancshares of Maine, Inc.",
+        "Key Bank of Southern Maine, Inc.",
+        "Key Bank of Central Maine"
+      ],
+      "facilities_mentioned": [
+        "Elan School (Poland Spring, Maine)"
+      ],
+      "staff_mentioned": [
+        "Joseph J. Ricci",
+        "Gerald E. Davidson"
+      ],
+      "organizations_mentioned": [
+        "Golden Ark Enterprises, Inc.",
+        "Elan One Corporation",
+        "Key Bancshares of Maine, Inc.",
+        "Key Bank of Southern Maine, Inc."
+      ],
+      "claims": [
+        "Credit discrimination based on Joseph Ricci's national origin under the Equal Credit Opportunity Act",
+        "Failure to give Gerald Davidson a statement of reasons for denying credit",
+        "Breach of the line of credit agreement and of the duty of good faith",
+        "Intentional infliction of emotional distress on Joseph Ricci"
+      ],
+      "outcome": "A jury found for the Elan owners and companies in April 1987 and assessed 15 million dollars in damages; the court added 10,000 dollars in punitive damages on each of two federal counts, set aside a 12.5 million dollar punitive award, denied the banks' motions for a new trial, and on June 16, 1987 ordered a 15 million dollar attachment on the banks' Maine property. On July 31, 1987 the plaintiffs acknowledged the judgment had been satisfied in full by settlement and the attachment was discharged. The settlement amount is not stated.",
+      "settlement_amount": "",
+      "summary": "This is a banking case brought by Elan's owners, not a case about the treatment of students. Elan School founders Joseph J. Ricci and Gerald E. Davidson and their companies, including Golden Ark Enterprises and the Elan One through Elan Eight corporations, sued Key Bancshares of Maine and Key Bank of Southern Maine in federal court in Maine over the banks' termination of their line of credit. A jury found for the plaintiffs in April 1987 and assessed 15 million dollars in damages, and Judge James L. Watson of the Court of International Trade, sitting by designation, upheld the verdict on June 16, 1987 and ordered a 15 million dollar attachment on the banks' Maine real estate. The judgment of April 29, 1987 was satisfied in full by a settlement on July 31, 1987, and the release was recorded in Androscoggin County in February 1989.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-key-1987.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-judgment-1989.pdf"
+      ],
+      "tags": [
+        "Elan School",
+        "Maine",
+        "banking",
+        "jury verdict"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11017,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Elan One Corporation liens, judgments and UCC filings (Poland, Maine, 1987-2001)",
+      "case_number": "",
+      "court": "Androscoggin County Registry of Deeds and Maine District Court, Lewiston",
+      "jurisdiction": "Maine",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "Town of Poland, Maine",
+        "Chuck R. Starbird d/b/a Minot Excavating & Construction",
+        "Owen Haskell, Inc.",
+        "Riviera Finance"
+      ],
+      "defendants": [
+        "Elan One Corporation"
+      ],
+      "facilities_mentioned": [
+        "Elan School (Poland Spring, Maine)"
+      ],
+      "staff_mentioned": [
+        "Gerald E. Davidson"
+      ],
+      "organizations_mentioned": [
+        "Elan One Corporation",
+        "Town of Poland, Maine",
+        "Minot Excavating & Construction",
+        "Owen Haskell, Inc.",
+        "Riviera Finance",
+        "Peoples Heritage Savings Bank"
+      ],
+      "claims": [
+        "Unpaid town property taxes (1987 and 2001 tax liens)",
+        "Unpaid excavation work (1991 mechanics lien)",
+        "Unpaid debt (1993 District Court judgment)",
+        "Secured financing later terminated (Riviera Finance UCC filing)"
+      ],
+      "outcome": "The documents show the Riviera Finance financing statement terminated and a lien discharge filed for a creditor named Snow; they do not show whether the tax liens, the mechanics lien or the 1993 judgment were paid.",
+      "settlement_amount": "",
+      "summary": "These are debt records against Elan One Corporation, the company that owned the Elan School property in Poland, Maine, not lawsuits about the school's treatment of students. The Town of Poland recorded a tax lien in May 1987 for 8,108.54 dollars in 1986 taxes plus 443.86 dollars interest. Chuck R. Starbird, doing business as Minot Excavating & Construction, filed a mechanics lien on February 1, 1991 for 3,627.62 dollars of excavation work done between October and December 1990. Owen Haskell, Inc. won a 1,085 dollar judgment plus 35 dollars costs against Elan One in the Lewiston District Court on June 16, 1993, with a writ of execution dated October 1, 1993. The town recorded another tax lien on July 16, 2001 for 7,617.81 dollars still unpaid. Riviera Finance filed a termination of its financing statement against Elan One (date not legible), and a lien discharge for a creditor named Snow is in the file but its text could not be read.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-poland-lien-1987.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-1-starbird-lien.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-Haskell-lien-1993.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-poland-lien-2001.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-riviera-finance-debt-termination.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/06/elan-Snow-lien-discharge.pdf"
+      ],
+      "tags": [
+        "Elan School",
+        "Maine",
+        "liens",
+        "financial"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11017,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "State of Nevada v. Patricia Chappuis, et al.",
+      "case_number": "19CR00069B",
+      "court": "Justice Court of Beatty Township, Nye County, Nevada",
+      "jurisdiction": "Nevada",
+      "filing_date": "2019-08-06",
+      "status": "filed",
+      "plaintiffs": [
+        "State of Nevada"
+      ],
+      "defendants": [
+        "Patricia Lynn Chappuis",
+        "Marcel Claude Chappuis"
+      ],
+      "facilities_mentioned": [
+        "Northwest Academy (Amargosa Valley, Nevada)"
+      ],
+      "staff_mentioned": [
+        "Patricia Lynn Chappuis",
+        "Marcel Claude Chappuis"
+      ],
+      "organizations_mentioned": [
+        "Nye County District Attorney"
+      ],
+      "claims": [
+        "Child abuse or neglect, Category B felony under NRS 200.508(1)(b)(1) (45 counts, one per child)",
+        "Failing to give enrolled children enough safe drinking water and letting them drink unsafe tap water",
+        "Failing to screen and supervise faculty and staff to protect children from physical and verbal abuse"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "In August 2019 the Nye County District Attorney filed a criminal complaint charging Patricia Lynn Chappuis and Marcel Claude Chappuis with 45 counts of felony child abuse or neglect over their running of Northwest Academy, 1492 South Highway 373 in Amargosa Valley, Nevada. Each count concerns a different enrolled child, aged roughly 11 to 17. Prosecutors alleged that between February 9, 2018 and February 12, 2019 the defendants failed to give the children enough potable water, let them drink unsafe tap water, and failed to screen and supervise staff to protect the children from physical and verbal abuse. The complaint was filed in the Beatty Township Justice Court on August 6, 2019, with an arraignment set for August 19, 2019. The document does not show how the charges were resolved.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/PATRICIA-CHAPPUIS-19CR00069B.pdf"
+      ],
+      "tags": [
+        "criminal"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 9691,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "State of Iowa v. Benjamin G. Trane",
+      "case_number": "",
+      "court": "Iowa District Court for Lee County",
+      "jurisdiction": "Iowa",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "State of Iowa"
+      ],
+      "defendants": [
+        "Benjamin G. Trane"
+      ],
+      "facilities_mentioned": [
+        "Midwest Academy (Keokuk, Iowa)"
+      ],
+      "staff_mentioned": [
+        "Benjamin G. Trane",
+        "Layani Trane",
+        "Colton Trane",
+        "Devon Dade"
+      ],
+      "organizations_mentioned": [
+        "Iowa Division of Criminal Investigation",
+        "Federal Bureau of Investigation",
+        "Iowa Department of Human Services",
+        "Lee County Sheriff's Office",
+        "Lee County Attorney's Office"
+      ],
+      "claims": [
+        "Sexual abuse of a female student (the specific charges are not in these transcripts)",
+        "Holding students in isolation rooms",
+        "Student records missing when agents returned with a warrant (raised in testimony)"
+      ],
+      "outcome": "The transcripts show a jury trial in December 2017 in which Trane testified in his own defense and denied the sexual abuse allegations. They do not show the verdict or any sentence.",
+      "settlement_amount": "",
+      "summary": "Benjamin G. Trane, who opened Midwest Academy in Keokuk, Iowa in 2003 and ran it until it closed, was prosecuted by the State of Iowa and tried before a jury in Keokuk in December 2017. A child protection worker testified that the Iowa Department of Human Services and the FBI received a report in March 2015 that several students had been held in isolation rooms with human waste. State and federal agents searched the school on January 28, 2016, and returned with more warrants on February 1 and February 11, 2016; on a later visit a room of student records Trane had shown agents was found empty. An FBI agent testified that Trane turned himself in to the Lee County Jail a few days after agents tried to serve an arrest warrant in Idaho. Prosecutors alleged sexual abuse of a female student, which Trane denied on the stand. The transcripts do not state the charges read to the jury, the case number, or the verdict.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Ben-Trane-Testimony-Part-1-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Jennifer-Richardson-Testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Joe-Lestina-Testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Thomas-Pearson-Testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/Ryan-Herman-testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Dr-Anna-Salter-testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Full-Layani-Trane-Testimony-midwest-academy.pdf",
+        "https://kidsoverprofits.org/wp-content/uploads/2025/09/Devon-Dade-Daughter-testimony-midwest-academy.pdf"
+      ],
+      "tags": [
+        "criminal"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 13398,
+          "link_type": "primary"
+        }
+      ]
     }
   ],
   "updates": [
@@ -1454,6 +2267,33 @@
           "Arizona"
         ],
         "filebird_folder_id": 7852
+      }
+    },
+    {
+      "match_case_name": "Sherman, et al. v. Trinity Teen Solutions, et al.",
+      "set": {
+        "status": "in_progress",
+        "outcome": "The district court dismissed the RICO, negligence and negligent infliction of emotional distress claims under Rule 12(b)(6), leaving the forced labor and trafficking claims. After the plaintiffs moved for class certification in August 2022, the district court denied it. On October 31, 2023, in a published opinion (No. 22-8080), the U.S. Court of Appeals for the Tenth Circuit held the district court had applied the wrong legal standards for commonality, typicality and predominance, vacated the denial of class certification and sent the case back for further proceedings. The United States filed an amicus brief in the appeal.",
+        "summary": "Former residents Carlie Sherman, Anna Gozun, Amanda Nash, Andrew Scavuzzo and Ehan Jelinek sued Trinity Teen Solutions, Triangle Cross Ranch, the Schneider and Woodward families who own and run them, a Carmelite monastery that sells Mystic Monk Coffee, the Diocese of Cheyenne, and others in the U.S. District Court for the District of Wyoming, first filing in November 2020 and filing a first amended complaint on February 12, 2021. The suit alleges the ranches near Powell, Wyoming promised parents therapy and schooling and instead made teens work long hours on the ranches without pay under threat of punishment and longer stays. The district court dismissed the RICO and negligence claims, leaving forced labor and trafficking claims under federal law, and later denied class certification. On October 31, 2023 the Tenth Circuit vacated that denial and sent the class certification question back to the district court. The case's lawsuit page reported that trial was scheduled for 03/17/2025.",
+        "tags": [
+          "class action",
+          "Wyoming",
+          "forced labor",
+          "trafficking",
+          "RICO",
+          "appeal",
+          "Tenth Circuit"
+        ],
+        "organizations_mentioned": [
+          "Monks of the Most Blessed Virgin Mary of Mount Carmel (Mystic Monk Coffee)",
+          "Dally-Up, LLC",
+          "Rock Creek Ranch, Inc.",
+          "Diocese of Cheyenne",
+          "Society of Our Lady of the Most Holy Trinity",
+          "New Mount Carmel Foundation, Inc.",
+          "Wyoming Department of Family Services",
+          "U.S. Department of Justice, Civil Rights Division (amicus curiae on appeal)"
+        ]
       }
     }
   ],
