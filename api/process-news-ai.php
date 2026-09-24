@@ -394,9 +394,16 @@ function isTransientCurlError($errno) {
 function processWithClaude($apiKey, $content, $url = '', $customInstructions = '') {
     $prompt = buildPrompt($content, $url, $customInstructions);
 
+    // ANTHROPIC_MODEL overrides the model when this one is retired.
+    // Claude Opus 5 thinks by default and rejects temperature; low effort
+    // suits a single extraction. fallbacks "default" re-runs a request the
+    // model's safety classifier declines (TTI abuse coverage can trip it)
+    // on the model Anthropic recommends for that kind of refusal.
     $requestData = [
-        'model' => 'claude-3-5-sonnet-20241022',
-        'max_tokens' => 4096,
+        'model' => getenv('ANTHROPIC_MODEL') ?: 'claude-opus-5',
+        'max_tokens' => 16000,
+        'output_config' => ['effort' => 'low'],
+        'fallbacks' => 'default',
         'messages' => [
             [
                 'role' => 'user',
@@ -414,9 +421,10 @@ function processWithClaude($apiKey, $content, $url = '', $customInstructions = '
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Content-Type: application/json',
         'x-api-key: ' . $apiKey,
-        'anthropic-version: 2023-06-01'
+        'anthropic-version: 2023-06-01',
+        'anthropic-beta: server-side-fallback-2026-07-01'
     ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 
     $result = executeCurlRequest($ch, 'Claude');
     curl_close($ch);
@@ -432,12 +440,22 @@ function processWithClaude($apiKey, $content, $url = '', $customInstructions = '
 
     $responseData = json_decode($response, true);
 
-    if (!isset($responseData['content'][0]['text'])) {
-        error_log("[Claude] Unexpected response structure: " . substr($response, 0, 500));
-        throw new Exception('Invalid response from Claude API - missing content.text');
+    if (($responseData['stop_reason'] ?? '') === 'refusal') {
+        $category = $responseData['stop_details']['category'] ?? 'unspecified';
+        throw new Exception("Claude declined to process this article (refusal: $category). Try a different AI provider.");
     }
 
-    $aiResponse = $responseData['content'][0]['text'];
+    // The reply can open with thinking blocks; the answer is the text blocks.
+    $aiResponse = '';
+    foreach ($responseData['content'] ?? [] as $block) {
+        if (($block['type'] ?? '') === 'text') {
+            $aiResponse .= $block['text'];
+        }
+    }
+    if ($aiResponse === '') {
+        error_log("[Claude] Unexpected response structure: " . substr($response, 0, 500));
+        throw new Exception('Invalid response from Claude API - no text block (stop_reason: ' . ($responseData['stop_reason'] ?? 'none') . ')');
+    }
 
     return parseAIResponse($aiResponse, 'Claude');
 }
@@ -592,9 +610,11 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
         'contents' => [
             ['parts' => [['text' => $prompt]]]
         ],
+        // Gemini 3 models are tuned for the default temperature (Google
+        // advises against lowering it), and their thinking tokens count
+        // against maxOutputTokens, so the cap leaves room for both.
         'generationConfig' => [
-            'temperature' => 0.1,
-            'maxOutputTokens' => 4096,
+            'maxOutputTokens' => 16384,
             'responseMimeType' => 'application/json'
         ],
         'safetySettings' => [
@@ -606,8 +626,11 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
     ];
 
     $ch = curl_init();
-    // Use gemini-2.0-flash-lite (free tier, fast, generous quota)
-    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=$apiKey");
+    // Flash-Lite: free tier, fast. gemini-2.0-flash-lite was shut down on
+    // 2026-06-01; GEMINI_MODEL overrides this when the next one retires
+    // (https://ai.google.dev/gemini-api/docs/deprecations).
+    $geminiModel = rawurlencode(getenv('GEMINI_MODEL') ?: 'gemini-3.5-flash-lite');
+    curl_setopt($ch, CURLOPT_URL, "https://generativelanguage.googleapis.com/v1beta/models/$geminiModel:generateContent?key=$apiKey");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_POST, true);
@@ -650,12 +673,19 @@ function processWithGemini($apiKey, $content, $url = '', $customInstructions = '
         throw new Exception("Gemini blocked the response due to content safety filters. This article may contain sensitive content. Try a different AI provider.");
     }
 
-    if (!isset($responseData['candidates'][0]['content']['parts'][0]['text'])) {
+    // Join the answer's text parts, skipping any thought-summary parts.
+    $text = '';
+    foreach ($responseData['candidates'][0]['content']['parts'] ?? [] as $part) {
+        if (isset($part['text']) && empty($part['thought'])) {
+            $text .= $part['text'];
+        }
+    }
+    if ($text === '') {
         error_log("[Gemini] Unexpected response structure: " . substr($response, 0, 500));
         throw new Exception('Invalid response from Gemini - no text in response. The content may have been filtered.');
     }
 
-    return parseAIResponse($responseData['candidates'][0]['content']['parts'][0]['text'], 'Gemini');
+    return parseAIResponse($text, 'Gemini');
 }
 
 /**
