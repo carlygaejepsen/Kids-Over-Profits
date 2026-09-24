@@ -17,7 +17,7 @@ Kids Over Profits is a WordPress child theme (Kadence parent) that powers a data
 - **Production (default)**: `https://kidsoverprofits.org` — NixiHost shared hosting (Apache/LiteSpeed, PHP 8.2, MySQL)
 - **Local (only when specified)**: Flywheel Local at `https://kids-over-profits.local`
 - **CMS**: WordPress with Kadence parent theme
-- **No build process**: Plain PHP, vanilla JavaScript (ES6 modules), CSS
+- **No build process**: Plain PHP, vanilla JavaScript (plain scripts loaded in order by `wp_enqueue_script` dependencies, not ES modules), CSS
 
 ## Key Commands
 
@@ -100,13 +100,13 @@ to the program aggregate otherwise.
 - `{prefix}kop_addresses` / `{prefix}kop_facility_addresses` - Physical address IDs and which facility stood where (`api/manage-addresses.php`; join table rebuilt from facility data on each seed)
 
 ### Page Template → Script Loading Pattern
-The system uses WordPress conditional loading in `functions.php`:
-- `page-admin-data.php` → Admin form assets, mode='master'
-- `page-data.php` → Public form assets, mode='suggestion'
-- `page-tti-program-index.php` → Facility directory
-- `page-wiki-editor.php` → Wiki content editor
-- `page-news-processor.php` → News processing
-- State report pages detected by slug pattern `*-reports`
+Templates live in `templates/`; `inc/enqueue.php` loads each page's assets conditionally:
+- `templates/page-admin-data.php` → Admin form assets, mode='admin'
+- `templates/page-data.php` → Public form assets, mode='suggestions'
+- `templates/page-tti-program-index.php` → Program index (operators and chains)
+- `templates/page-wiki-editor.php` → Wiki content editor
+- `templates/page-news-processor.php` → News processing
+- State report pages: `kop_enqueue_report_scripts()` matches a fixed list of slugs (`ca-reports`, `ut-reports`, ...), not a `*-reports` pattern; a new state must be added there and in `inc/rest-api.php`
 
 ### JavaScript Module Structure
 ```
@@ -119,7 +119,7 @@ js/data/                 ← Static JSON fallbacks
 Module dependency chain: `config.js` → `data-normalizer.js` → `api.js` → `project.js` → UI modules
 
 ### API Configuration
-Credentials loaded from `.env`, WordPress constants, or `api/config.local.php` (gitignored). The JavaScript reads `KOP_DATA_FORM_CONFIG` localized by PHP containing `apiBase`, `endpoints`, and `mode`.
+Credentials loaded from `.env`, WordPress constants, or `api/config.local.php` (gitignored). The data forms read `KOP_DATA_FORM_CONFIG` (also localized as `dataFormConfig`), which carries `ajaxUrl`, `restUrl`, `nonce`, `isAdmin`, `endpoints` and `mode`. There is no `apiBase` key.
 
 ## Code Conventions
 
