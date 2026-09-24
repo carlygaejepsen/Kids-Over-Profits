@@ -309,6 +309,9 @@ function kop_article_continue($slug) {
 /** How many dated entries make a page worth drawing a timeline for. */
 define('KOP_ARTICLE_TIMELINE_MIN', 8);
 
+/** How far apart, in percent of the band, two dots in one row must be. */
+define('KOP_ARTICLE_TIMELINE_GAP', 1.6);
+
 /**
  * The year an entry starts with, or null. Handles "1912", "1730s", "1179 CE",
  * "c. 1400" and "1968:", which are all shapes these articles use.
@@ -328,20 +331,30 @@ function kop_article_entry_year($text) {
  * $html is edited in place. Only the id is added: the entry's own markup is
  * otherwise untouched, and an entry that already has an id keeps it.
  *
- * Returns array of array('id' => ..., 'year' => int, 'text' => ...).
+ * Returns array of array('id' => ..., 'year' => int, 'text' => the bold run,
+ * 'label' => the whole first line, for the dot's popup).
  */
 function kop_article_timeline_entries(&$html) {
     $entries = array();
     $used    = array();
 
     $html = preg_replace_callback(
-        '#<li([^>]*)>(\s*(?:<[^>]+>\s*)*?<strong>)(.{0,120}?)</strong>#is',
+        '#<li([^>]*)>(\s*(?:<[^>]+>\s*)*?<strong>)(.{0,120}?)</strong>((?:(?!<(?:ul|ol|/li|!--)).){0,400})#is',
         static function ($m) use (&$entries, &$used) {
             $year = kop_article_entry_year($m[3]);
             if ($year === null) {
                 return $m[0];
             }
             $text = trim(html_entity_decode(wp_strip_all_tags($m[3]), ENT_QUOTES, 'UTF-8'));
+            /* Most entries bold only the date - "<strong>1660</strong> -
+             * First U.S. Workhouse" - so the dot's popup needs the rest of
+             * the line too, up to the nested detail list. */
+            $rest  = trim(html_entity_decode(wp_strip_all_tags($m[4]), ENT_QUOTES, 'UTF-8'));
+            $rest  = preg_replace('/^[\s\p{Pd}:,]+/u', '', $rest);
+            $label = trim(preg_replace('/\s+/u', ' ', $text . ($rest !== '' ? ' - ' . $rest : '')));
+            if (preg_match('/^(.{159}).{2,}/us', $label, $cut)) {
+                $label = rtrim($cut[1]) . '…';
+            }
             $attrs = $m[1];
             if (preg_match('/\sid=["\']([^"\']+)["\']/i', $attrs, $idm)) {
                 $id = $idm[1];
@@ -359,8 +372,8 @@ function kop_article_timeline_entries(&$html) {
                 $attrs .= ' id="' . esc_attr($id) . '"';
             }
             $used[$id] = true;
-            $entries[] = array('id' => $id, 'year' => $year, 'text' => $text);
-            return '<li' . $attrs . ' class="kop-article-dated">' . $m[2] . $m[3] . '</strong>';
+            $entries[] = array('id' => $id, 'year' => $year, 'text' => $text, 'label' => $label);
+            return '<li' . $attrs . ' class="kop-article-dated">' . $m[2] . $m[3] . '</strong>' . $m[4];
         },
         $html
     );
@@ -436,17 +449,43 @@ function kop_article_timeline($entries) {
         $marks[] = array('year' => $year, 'target' => $target);
     }
 
+    /* Entries from the same few years land on the same spot - Juvenile Justice
+     * has a dozen in the 1990s alone - and drawn in one row they merge into a
+     * single smear. So each dot goes in the lowest row where it clears the
+     * last dot by KOP_ARTICLE_TIMELINE_GAP, and the band grows a row at a
+     * time to hold the tallest stack. */
+    $rows   = array();
+    $placed = array();
+    $sorted = $entries;
+    usort($sorted, static function ($a, $b) {
+        return $a['year'] - $b['year'];
+    });
+    foreach ($sorted as $entry) {
+        $left = $place($entry['year']);
+        $row  = 0;
+        while (isset($rows[$row]) && $left - $rows[$row] < KOP_ARTICLE_TIMELINE_GAP) {
+            $row++;
+        }
+        $rows[$row] = $left;
+        $placed[]   = array('entry' => $entry, 'left' => $left, 'row' => $row);
+    }
+
     echo '<nav class="kop-article-timeline" aria-label="Timeline of this article">';
     echo '<p class="kop-article-timeline__caption">'
         . esc_html(count($entries) . ' dated entries, ' . $first . ' to ' . $last)
         . '</p>';
-    echo '<div class="kop-article-timeline__band">';
+    echo '<div class="kop-article-timeline__band" style="--kop-timeline-rows:' . count($rows) . '">';
 
-    foreach ($entries as $entry) {
-        echo '<a class="kop-article-timeline__dot" href="#' . esc_attr($entry['id']) . '"'
-            . ' style="left:' . $place($entry['year']) . '%"'
-            . ' tabindex="-1" aria-hidden="true" title="'
-            . esc_attr($entry['year'] . ' ' . $entry['text']) . '"></a>';
+    /* The popup is the dot's own ::after reading data-label, not a title: a
+     * title waits a second and a half and then shows a system tooltip, which
+     * is no use for skimming along a row of dots. Dots on the right half open
+     * leftward so the popup stays inside the page. */
+    foreach ($placed as $dot) {
+        $side = $dot['left'] > 50 ? ' is-right' : '';
+        echo '<a class="kop-article-timeline__dot' . $side . '" href="#' . esc_attr($dot['entry']['id']) . '"'
+            . ' style="left:' . $dot['left'] . '%;--kop-timeline-row:' . $dot['row'] . '"'
+            . ' tabindex="-1" aria-hidden="true"'
+            . ' data-label="' . esc_attr(isset($dot['entry']['label']) ? $dot['entry']['label'] : $dot['entry']['text']) . '"></a>';
     }
 
     /* Every other year is marked "minor" so a narrow screen can drop half the

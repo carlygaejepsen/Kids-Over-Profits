@@ -109,30 +109,72 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+/* --kop-timeline-rows is set inline: the tallest stack of dots, so the band
+ * is as tall as the busiest decade needs and no taller. */
 .kop-article-timeline__band {
+    --kop-timeline-pitch: 11px;
     position: relative;
-    height: 3.4rem;
+    height: calc(2.3rem + var(--kop-timeline-rows, 1) * var(--kop-timeline-pitch));
     border-bottom: 2px solid var(--kop-border-secondary, #d9d3c0);
 }
 
-/* One per entry, at its year. A picture of where the writing is dense, and a
- * shortcut for a pointer; the labelled marks below are the keyboard's route,
- * which is why these are out of the tab order. */
+/* One per entry, at its year, stacked in rows (--kop-timeline-row, inline)
+ * where entries sit too close to share one. A picture of where the writing is
+ * dense, and a shortcut for a pointer; the labelled marks below are the
+ * keyboard's route, which is why these are out of the tab order. */
 .kop-article-timeline__dot {
     position: absolute;
-    top: 0.55rem;
-    width: 7px;
-    height: 7px;
-    margin-left: -3.5px;
+    bottom: calc(1.7rem + var(--kop-timeline-row, 0) * var(--kop-timeline-pitch));
+    width: 8px;
+    height: 8px;
+    margin-left: -4px;
     border-radius: 50%;
     background: var(--kop-teal, #33a7b5);
-    opacity: 0.55;
+    box-shadow: 0 0 0 1px var(--kop-white, #fff);
 }
 
 .kop-article-timeline__dot:hover {
-    opacity: 1;
+    z-index: 2;
     transform: scale(1.5);
     background: var(--kop-orange, #EF9034);
+}
+
+/* The entry, on hover. Opens rightward from dots on the left half and
+ * leftward from the right half (.is-right) so it never runs off the page. */
+.kop-article-timeline__dot::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 0;
+    width: max-content;
+    /* Half the screen at most: a dot never has less than half the band on
+     * the side its popup opens toward. */
+    max-width: min(18rem, 45vw);
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    /* The dot scales 1.5x on hover; this undoes it for the popup. */
+    transform: scale(0.667);
+    transform-origin: bottom left;
+}
+
+.kop-article-timeline__dot.is-right::after {
+    left: auto;
+    right: 0;
+    transform-origin: bottom right;
+}
+
+.kop-article-timeline__dot:hover::after {
+    opacity: 1;
+    visibility: visible;
 }
 
 /* A round year, on the rule. */
@@ -179,17 +221,14 @@ a.kop-article-timeline__mark:focus-visible {
 /* Narrow: the years would collide, so every other one goes and the dots
  * carry the shape on their own. */
 @media (max-width: 640px) {
-    .kop-article-timeline__band {
-        height: 2.8rem;
-    }
-
     .kop-article-timeline__mark.is-minor .kop-article-timeline__year {
         display: none;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .kop-article-timeline__dot:hover {
+    .kop-article-timeline__dot:hover,
+    .kop-article-timeline__dot::after {
         transform: none;
     }
 }
