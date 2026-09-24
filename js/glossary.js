@@ -26,6 +26,7 @@
     var clear = form.querySelector('.kop-gl-clear');
     var go = form.querySelector('.kop-gl-go');
     var none = root.querySelector('.kop-gl-none');
+    var profileLink = form.querySelector('.kop-gl-profile-link');
     var entries = Array.prototype.slice.call(root.querySelectorAll('.kop-gl-entry'));
     var groups = Array.prototype.slice.call(root.querySelectorAll('.kop-gl-group'));
     var sections = Array.prototype.slice.call(root.querySelectorAll('.kop-gl-section'));
@@ -141,6 +142,15 @@
         if (clear) {
             clear.hidden = !filtered;
         }
+        if (profileLink) {
+            var option = program && select ? select.options[select.selectedIndex] : null;
+            var profile = option ? option.getAttribute('data-profile') : '';
+            profileLink.hidden = !profile;
+            if (profile) {
+                profileLink.href = profile;
+                profileLink.textContent = 'Open the ' + programName(program) + ' profile';
+            }
+        }
         if (none) {
             none.hidden = !filtered || shown > 0;
         }
@@ -199,7 +209,7 @@
 
     /* A program tag filters in place instead of reloading. */
     root.addEventListener('click', function (event) {
-        var tag = event.target.closest('.kop-gl-tag');
+        var tag = event.target.closest('.kop-gl-tag-filter');
         if (tag && select) {
             event.preventDefault();
             select.value = tag.getAttribute('data-program') || '';

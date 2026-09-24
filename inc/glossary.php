@@ -171,6 +171,53 @@ function kop_glossary_search($phrase, $limit = 5) {
     return array_slice($hits, 0, $limit);
 }
 
+/**
+ * Glossary program names spelled differently from the facility record they
+ * mean. Only unambiguous ones: a name that covers several places (CEDU,
+ * Straight, Teen Challenge, Vista) is left without a link rather than
+ * pointed at one of them.
+ */
+function kop_glossary_program_aliases() {
+    return apply_filters('kop_glossary_program_aliases', array(
+        'Allendale'                  => 'Allendale Association',
+        "\u{00C9}lan"                    => 'Elan School',
+        'Island View'                => 'Island View RTC',
+        'Judge Rotenberg Center'     => 'Judge Rotenberg Educational Center',
+        'Maple Lake Academy'         => "Maple Lake Academy, LLC \u{2013} Girls\u{2019} Home",
+        'Second Nature'              => 'Second Nature Wilderness Program',
+        "Shodair Children's Hospital" => 'Shodair RTC',
+        'Spring Creek Lodge'         => 'Spring Creek Lodge Academy',
+        'Triangle Cross Ranch'       => 'Triangle Cross Boys Ranch',
+        'Trinity Teen Solutions'     => 'Trinity Teen Solutions, Inc.',
+    ));
+}
+
+/**
+ * Program slug => profile URL (the hand-written Facility Profile when there
+ * is one, else the generated /facility/ page), for every glossary program
+ * whose record has a page. Programs without one are simply absent.
+ */
+function kop_glossary_program_urls() {
+    static $urls = null;
+    if ($urls !== null) {
+        return $urls;
+    }
+    $urls = array();
+    $data = kop_glossary_data();
+    if (!$data || !function_exists('kop_facility_page_url_for_name')) {
+        return $urls;
+    }
+    $aliases = kop_glossary_program_aliases();
+    foreach ($data['programs'] as $program) {
+        $name = isset($aliases[$program['name']]) ? $aliases[$program['name']] : $program['name'];
+        $url = (string) kop_facility_page_url_for_name($name);
+        if ($url !== '') {
+            $urls[$program['slug']] = $url;
+        }
+    }
+    return $urls;
+}
+
 /** The program list's display name for a slug, or ''. */
 function kop_glossary_program_name($slug) {
     $data = kop_glossary_data();
@@ -211,6 +258,45 @@ function kop_glossary_status_text($shown, $program, $query) {
     return $text;
 }
 
+/**
+ * One program tag. With a profile, the name opens the profile and a small
+ * filter button beside it shows every term tagged with the program; without
+ * one, the whole chip is the filter.
+ */
+function kop_glossary_render_tag($tag, $modifier, $page_url) {
+    $urls = kop_glossary_program_urls();
+    $filter_url = add_query_arg('program', $tag['slug'], $page_url) . '#kop-gl-results';
+    $label = esc_html($tag['program']);
+    if (!empty($tag['note'])) {
+        $label .= ' <span class="kop-gl-tag-note">' . esc_html($tag['note']) . '</span>';
+    }
+    if (!isset($urls[$tag['slug']])) {
+        printf(
+            '<a class="kop-gl-tag kop-gl-tag-filter%s" data-program="%s" href="%s">%s</a> ',
+            esc_attr($modifier),
+            esc_attr($tag['slug']),
+            esc_url($filter_url),
+            $label
+        );
+        return;
+    }
+    printf(
+        '<span class="kop-gl-tag kop-gl-tag--profile%s" data-program="%s">'
+        . '<a class="kop-gl-tag-name" href="%s">%s</a>'
+        . '<a class="kop-gl-tag-filter" data-program="%s" href="%s" aria-label="%s" title="%s">'
+        . '<svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true" focusable="false"><path d="M1.5 2.5h13l-5 6v5l-3-1.5v-3.5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>'
+        . '</a></span> ',
+        esc_attr($modifier),
+        esc_attr($tag['slug']),
+        esc_url($urls[$tag['slug']]),
+        $label,
+        esc_attr($tag['slug']),
+        esc_url($filter_url),
+        esc_attr('Show every term tagged ' . $tag['program']),
+        esc_attr('Show every term tagged ' . $tag['program'])
+    );
+}
+
 /** One entry. */
 function kop_glossary_render_entry($entry, $page_url, $ref_base, $show) {
     $id = $entry['id'];
@@ -242,15 +328,9 @@ function kop_glossary_render_entry($entry, $page_url, $ref_base, $show) {
                 ?>
                 <p class="kop-gl-tags">
                     <span class="kop-gl-tags-label"><?php echo esc_html($row[0]); ?></span>
-                    <?php foreach ($row[1] as $tag) : ?>
-                        <a class="kop-gl-tag<?php echo esc_attr($row[2]); ?>" data-program="<?php echo esc_attr($tag['slug']); ?>"
-                           href="<?php echo esc_url(add_query_arg('program', $tag['slug'], $page_url) . '#kop-gl-results'); ?>"><?php
-                            echo esc_html($tag['program']);
-                            if (!empty($tag['note'])) {
-                                echo ' <span class="kop-gl-tag-note">' . esc_html($tag['note']) . '</span>';
-                            }
-                        ?></a>
-                    <?php endforeach; ?>
+                    <?php foreach ($row[1] as $tag) {
+                        kop_glossary_render_tag($tag, $row[2], $page_url);
+                    } ?>
                 </p>
             <?php endforeach; ?>
             <?php /* Shown by js/glossary.js, which owns the form they open. */ ?>
@@ -294,7 +374,7 @@ function kop_glossary_render_block($node, $level, $page_url, $ref_base, $program
         $inner = ob_get_clean();
         $shown += $n;
         printf(
-            '<section class="kop-gl-group kop-gl-group--l%d" id="%s" aria-labelledby="%s-h"%s><%s class="kop-gl-group-title" id="%s-h">%s</%s>%s</section>',
+            '<section class="kop-gl-group kop-gl-group--l%d" id="%s" aria-labelledby="%s-h"%s><%s class="kop-gl-group-title" id="%s-h">%s</%s>%s%s</section>',
             $level + 1,
             esc_attr('g-' . $group['id']),
             esc_attr('g-' . $group['id']),
@@ -303,12 +383,34 @@ function kop_glossary_render_block($node, $level, $page_url, $ref_base, $program
             esc_attr('g-' . $group['id']),
             esc_html($group['title']),
             $tag,
+            kop_glossary_group_profiles($group['title']),
             $inner
         );
     }
     $html = ob_get_clean();
     echo $html;
     return $shown;
+}
+
+/**
+ * "Program profile" links under a group heading, for each program with a
+ * profile whose name the heading contains ("Island View and Elevations RTC"
+ * links both). '' when none.
+ */
+function kop_glossary_group_profiles($title) {
+    $data = kop_glossary_data();
+    $urls = kop_glossary_program_urls();
+    $links = array();
+    foreach (($data['programs'] ?? array()) as $program) {
+        if (isset($urls[$program['slug']]) && stripos($title, $program['name']) !== false) {
+            $links[] = '<a href="' . esc_url($urls[$program['slug']]) . '">' . esc_html($program['name']) . '</a>';
+        }
+    }
+    if (!$links) {
+        return '';
+    }
+    $label = count($links) === 1 ? 'Program profile' : 'Program profiles';
+    return '<p class="kop-gl-profiles"><span>' . $label . '</span> ' . implode('<span aria-hidden="true"> &middot; </span>', $links) . '</p>';
 }
 
 /** First letters of a section's entries, for the A-Z strip. */
@@ -384,7 +486,12 @@ function kop_glossary_render_page($program, $query, $page_url) {
                 <select id="kop-gl-program" name="program">
                     <option value="">All programs</option>
                     <?php foreach ($data['programs'] as $p) : ?>
-                        <option value="<?php echo esc_attr($p['slug']); ?>"<?php selected($program, $p['slug']); ?>>
+                        <option value="<?php echo esc_attr($p['slug']); ?>"<?php
+                            $kop_gl_urls = kop_glossary_program_urls();
+                            if (isset($kop_gl_urls[$p['slug']])) {
+                                echo ' data-profile="' . esc_url($kop_gl_urls[$p['slug']]) . '"';
+                            }
+                            selected($program, $p['slug']); ?>>
                             <?php echo esc_html($p['name'] . ' (' . $p['count'] . ')'); ?>
                         </option>
                     <?php endforeach; ?>
@@ -395,6 +502,10 @@ function kop_glossary_render_page($program, $query, $page_url) {
                 <a class="kop-gl-clear" href="<?php echo esc_url($page_url); ?>"<?php echo $filtered ? '' : ' hidden'; ?>>Show all</a>
             </div>
             <p class="kop-gl-status" role="status" aria-live="polite"><?php echo esc_html($filtered ? kop_glossary_status_text($shown, $program, $query) : ''); ?></p>
+            <?php $kop_gl_urls = kop_glossary_program_urls(); ?>
+            <a class="kop-gl-profile-link"<?php echo ($program !== '' && isset($kop_gl_urls[$program])) ? ' href="' . esc_url($kop_gl_urls[$program]) . '"' : ' hidden'; ?>><?php
+                echo esc_html($program !== '' ? 'Open the ' . kop_glossary_program_name($program) . ' profile' : '');
+            ?></a>
         </form>
 
         <div class="kop-gl-layout">

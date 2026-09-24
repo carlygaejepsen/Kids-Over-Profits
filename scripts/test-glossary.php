@@ -39,6 +39,19 @@ function selected($a, $b) {
 function date_i18n($format, $timestamp) {
     return date($format, $timestamp);
 }
+/* Profiles for a handful of programs, so the linked-tag branch renders. */
+function kop_facility_page_url_for_name($name) {
+    $known = array(
+        'Hyde School'          => 'https://kidsoverprofits.org/hyde/',
+        'Spring Ridge Academy' => 'https://kidsoverprofits.org/facility/spring-ridge-academy/',
+        'Island View RTC'      => 'https://kidsoverprofits.org/facility/island-view-rtc/',
+        'Elevations RTC'       => 'https://kidsoverprofits.org/elevations-rtc/',
+    );
+    return isset($known[$name]) ? $known[$name] : '';
+}
+function apply_filters($hook, $value) {
+    return $value;
+}
 function rest_url($path) {
     return 'https://kidsoverprofits.org/wp-json/' . $path;
 }
@@ -107,6 +120,13 @@ check(!preg_match('/(?<![\w"=])\*(?!\*)[^*<>\s][^*<>]*\*/', strip_tags($html)), 
 
 $refs = $xp->query('//a[contains(@class,"kop-gl-ref")]')->length;
 check($refs > 100, "cross-references render as links ($refs)");
+
+$profile_tags = $xp->query('//*[contains(@class,"kop-gl-tag--profile")]')->length;
+check($profile_tags > 50, "tags for programs with a profile link to it ($profile_tags)");
+check($xp->query('//a[contains(@class,"kop-gl-tag-name")][@href="https://kidsoverprofits.org/hyde/"]')->length > 0, 'a Hyde School tag opens /hyde/');
+check($xp->query('//*[@id="g-hyde-school"]//*[contains(@class,"kop-gl-profiles")]//a[@href="https://kidsoverprofits.org/hyde/"]')->length === 1, 'the Hyde School heading links its profile');
+check($xp->query('//*[@id="g-island-view-and-elevations-rtc"]//*[contains(@class,"kop-gl-profiles")]//a')->length === 2, 'a two-program heading links both profiles (alias used for Island View)');
+check($xp->query('//a[contains(@class,"kop-gl-tag-filter")][@data-program="cedu"]')->length > 0, 'a program without a profile still filters');
 
 /* ---- Filtered ----------------------------------------------------------- */
 

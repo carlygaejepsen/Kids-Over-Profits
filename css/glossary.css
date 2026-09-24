@@ -497,6 +497,76 @@ a.kop-gl-ref:hover {
     border-color: var(--kop-navy-blue, #000080);
 }
 
+/* A tag for a program with a profile: the name opens the profile, the
+ * funnel beside it filters the glossary to that program. */
+.kop-gl-tag--profile {
+    display: inline-flex;
+    align-items: stretch;
+    padding: 0;
+    overflow: hidden;
+}
+
+.kop-gl-tag--profile:hover {
+    background: var(--kop-white, #fff);
+    border-color: var(--kop-teal, #33A7B5);
+}
+
+.kop-gl-tag-name {
+    padding: 0.18rem 0.5rem 0.18rem 0.55rem;
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: underline;
+    text-decoration-color: var(--kop-teal, #33A7B5);
+    text-underline-offset: 2px;
+}
+
+.kop-gl-tag-name:hover {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+}
+
+.kop-gl-tag--profile .kop-gl-tag-filter {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.45rem;
+    border-left: 1px solid var(--kop-border-secondary, #AEE0ED);
+    color: var(--kop-teal-ink, #24757F);
+}
+
+.kop-gl-tag--profile .kop-gl-tag-filter:hover {
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-tag--reported.kop-gl-tag--profile .kop-gl-tag-filter {
+    border-left-style: dashed;
+    border-left-color: var(--kop-coral-pink, #FE8088);
+}
+
+.kop-gl-profiles {
+    margin: 0 0 0.6rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.kop-gl-profiles > span:first-child {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+    margin-right: 0.35rem;
+    color: var(--kop-teal-ink, #24757F);
+}
+
+.kop-gl-profiles a {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-profile-link {
+    flex: 1 0 100%;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--kop-navy-blue, #000080);
+}
+
 .kop-gl-tag--reported {
     border-style: dashed;
     border-color: var(--kop-coral-pink, #FE8088);
