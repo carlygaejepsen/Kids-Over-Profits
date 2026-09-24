@@ -43,6 +43,7 @@ php scripts/test-reporting-directory.php        # renders the page offline
 # After editing the glossary source js/data/glossary/glossary.md
 node scripts/build-glossary.js
 php scripts/test-glossary.php                   # renders /glossary/ offline, checks every #link
+php scripts/test-glossary-build.php             # PHP build == glossary.json, editor round trips
 # After editing the FL/NC adapters' text readers or api/lib-inspection-text-signals.php (PHP must match JS exactly)
 node scripts/test-inspection-text-signals.js --php=<Local php.exe>
 php scripts/test-inspections-read-lite.php     # inspections-read.php ?lite=1 / ?text= against tmp/prod.sqlite
@@ -71,6 +72,13 @@ program groups `###`/`####`, entries `**Term** *(aka ...)*: text. Used at: *A, B
 `build-glossary.js` writes the `glossary.json` the /glossary/ page reads and
 fails on any `**cross-reference**` that does not name an entry. Rendered
 server-side by `inc/glossary.php` (`templates/page-glossary.php`).
+Admins can also edit entries in wp-admin (KOP Data Tools > Glossary Editor,
+`inc/glossary-editor.php`): saved changes sit in the `kop_glossary_edits`
+option and are applied over the deployed glossary.md by a PHP port of the
+build (`inc/glossary-build.php`), live at once. Commit them by downloading the
+merged glossary.md from the editor, rebuilding and committing; they then clear
+themselves. `php scripts/test-glossary-build.php` checks the PHP build still
+matches `glossary.json` exactly, so change both builds together.
 
 ### Network map data
 

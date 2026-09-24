@@ -4,8 +4,10 @@
  * handbooks, staff manuals, state records and survivor accounts.
  *
  * The data is js/data/glossary/glossary.json, built from glossary.md by
- * scripts/build-glossary.js. Nothing here writes; a correction is an edit to
- * the markdown and a rebuild.
+ * scripts/build-glossary.js. Edits saved in wp-admin (Glossary Editor,
+ * inc/glossary-editor.php) are applied over glossary.md and rebuilt on the
+ * server until they are committed; kop_glossary_data() returns that version
+ * when there is one.
  *
  * Rendered server-side, every entry, so the page is readable, searchable with
  * the browser's own find, and linkable (/glossary/#bust) with no JavaScript.
@@ -37,6 +39,11 @@ function kop_glossary_data() {
         return $data;
     }
     $data = null;
+    $live = function_exists('kop_glossary_live_data') ? kop_glossary_live_data() : null;
+    if ($live) {
+        $data = $live;
+        return $data;
+    }
     $path = kop_glossary_data_path();
     if (!is_readable($path)) {
         return null;

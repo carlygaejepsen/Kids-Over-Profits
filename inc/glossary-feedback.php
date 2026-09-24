@@ -6,8 +6,8 @@
  * Each glossary entry carries two buttons (js/glossary.js) that open one
  * small form and POST it to /wp-json/kop/v1/glossary-feedback. Submissions
  * land in {prefix}kop_glossary_feedback for review under KOP Data Tools >
- * Glossary Feedback; nothing reaches the page until someone edits
- * js/data/glossary/glossary.md and rebuilds. The admin is emailed on each
+ * Glossary Feedback; nothing reaches the page until someone acts on it in
+ * the Glossary Editor (inc/glossary-editor.php). The admin is emailed on each
  * submission.
  *
  * Plain text only: tags are stripped, lengths capped, a honeypot field and
@@ -238,7 +238,7 @@ function kop_render_glossary_feedback_page() {
     $base = admin_url('admin.php?page=kop-glossary-feedback');
     echo '<div class="wrap"><h1>Glossary Feedback</h1>';
     echo '<p>Reader notes from the buttons under each entry on <a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/')) . '" target="_blank" rel="noopener">the glossary</a>. '
-        . 'To act on one, edit <code>js/data/glossary/glossary.md</code>, run <code>node scripts/build-glossary.js</code>, and mark it added.</p>';
+        . 'To act on one, follow its Edit entry link to the <a href="' . esc_url(admin_url('admin.php?page=kop-glossary-editor')) . '">Glossary Editor</a>; saving there marks the note added.</p>';
     echo '<ul class="subsubsub">';
     $tabs = array_merge($statuses, array('all' => 'All'));
     $i = 0;
@@ -267,7 +267,8 @@ function kop_render_glossary_feedback_page() {
         echo '<td>' . (int) $r->id . '</td>';
         echo '<td>' . esc_html(get_date_from_gmt($r->created_at, 'M j, Y g:ia')) . '</td>';
         echo '<td><a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $r->term_id)) . '" target="_blank" rel="noopener"><strong>'
-            . esc_html($r->term) . '</strong></a><br><span style="color:#666">' . esc_html($kinds[$r->kind] ?? $r->kind) . '</span></td>';
+            . esc_html($r->term) . '</strong></a><br><span style="color:#666">' . esc_html($kinds[$r->kind] ?? $r->kind) . '</span>'
+            . '<br><a href="' . esc_url(add_query_arg(array('view' => 'edit', 'entry' => $r->term_id, 'feedback' => (int) $r->id), admin_url('admin.php?page=kop-glossary-editor'))) . '">Edit entry</a></td>';
         echo '<td>';
         if ($r->program) {
             echo '<p style="margin:0 0 6px"><em>Program:</em> <strong>' . esc_html($r->program) . '</strong></p>';

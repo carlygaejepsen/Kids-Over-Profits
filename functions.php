@@ -80,6 +80,7 @@ require_once get_stylesheet_directory() . '/inc/research-library.php';
 require_once get_stylesheet_directory() . '/inc/reporting-directory.php';
 require_once get_stylesheet_directory() . '/inc/glossary.php';
 require_once get_stylesheet_directory() . '/inc/glossary-feedback.php';
+require_once get_stylesheet_directory() . '/inc/glossary-editor.php';
 
 // The /resources/ list (crisis lines, survivor support, advocacy, reading)
 require_once get_stylesheet_directory() . '/inc/resources-list.php';
