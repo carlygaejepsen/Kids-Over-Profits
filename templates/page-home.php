@@ -215,7 +215,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         <a class="kop-memorial-card" href="<?php echo esc_url(get_permalink($kop_memorial->ID)); ?>">
             <h2>In Loving Memory</h2>
             <p>Remembering the children whose deaths in the Troubled Teen Industry were preventable.
-            Their stories are why this work exists.</p>
+            We grieve them today and every day.</p>
             <span class="kop-memorial-more">Visit the memorial &raquo;</span>
         </a>
     </section>

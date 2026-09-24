@@ -212,8 +212,11 @@ try {
 
         $parsed = kop_parse_news_post((string)$post->post_content);
 
-        // Must look like a curated news entry.
-        if ($parsed['url'] === '' || $parsed['summary'] === '') { $stats['skipped_non_news']++; continue; }
+        // Skip only posts that are missing both the source URL and summary.
+        // A valid news item should still be imported even if one of the two is
+        // empty in a partial/legacy post; the import is meant to accept curated
+        // entries, not hard-fail on a single missing field.
+        if ($parsed['url'] === '' && $parsed['summary'] === '') { $stats['skipped_non_news']++; continue; }
         if (isset($existingUrls[strtolower(trim($parsed['url']))])) { $stats['skipped_existing']++; continue; }
 
         $title = html_entity_decode(get_the_title($post), ENT_QUOTES | ENT_HTML5, 'UTF-8');

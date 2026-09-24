@@ -6,6 +6,23 @@
     // Depends on KOP_UI_Actions for some button clicks
     const KOP_UI_Actions = window.KOP_UI_Actions || {};
 
+    function resizeTextarea(textarea) {
+        if (!textarea) return;
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.max(textarea.scrollHeight, textarea.offsetHeight) + 'px';
+        textarea.style.overflowY = 'hidden';
+    }
+
+    document.addEventListener('input', function (e) {
+        if (e.target && e.target.tagName === 'TEXTAREA') {
+            resizeTextarea(e.target);
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('textarea').forEach(resizeTextarea);
+    });
+
     // "Years of Operation" is a derived, read-only field: it always mirrors the
     // Opened/Closed year pickers so the three never disagree. This must produce
     // exactly the same string the REST layer builds from startYear/endYear
