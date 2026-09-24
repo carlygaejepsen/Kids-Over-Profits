@@ -700,7 +700,9 @@ function loadFacilityData() {
     const facilityType = document.getElementById('facility-type');
     if (facilityType) facilityType.value = facility.facilityDetails?.type || '';
 
-    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'staff.pastTTIJobs', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes', 'locationDetails.additionalLocations', 'locationDetails.formerLocations'];
+    const arrayPaths = ['identification.otherNames', 'identification.knownReferrers', 'otherOperators', 'operatingPeriod.notes', 'staff.administrator', 'staff.notableStaff', 'staff.pastTTIJobs', 'profileLinks', 'accreditations.current', 'accreditations.past', 'memberships', 'certifications', 'licensing', 'resources.notes', 'notes', 'locationDetails.additionalLocations', 'locationDetails.formerLocations',
+        // Mental health provider lists; renderArray skips them outside the providers view.
+        'providerDetails.otherCareTypes', 'providerDetails.otherTtiPractices', 'providerDetails.ttiReferrals', 'providerDetails.transportersUsed', 'providerDetails.ttiAffiliations'];
     arrayPaths.forEach(path => {
         const container = document.querySelector(`[data-path="${path}"]`);
         if (container) {
@@ -1838,6 +1840,34 @@ function attachButtonListeners() {
             generateProjectsReport({ categories: ['transporters'], filename: 'projects-report-transporters.json' });
         };
         generateReportBtnTransporter.dataset.listenerAttached = 'true';
+    }
+
+    // Mental health provider project buttons (same trio as transporters)
+    const newBtnProvider = document.getElementById('new-project-btn-provider');
+    if (newBtnProvider && !newBtnProvider.dataset.listenerAttached) {
+        newBtnProvider.onclick = () => {
+            newProject();
+            if (window.KOP_UI_Render && typeof window.KOP_UI_Render.scrollToFormInput === 'function') {
+                window.KOP_UI_Render.scrollToFormInput();
+            }
+        };
+        newBtnProvider.dataset.listenerAttached = 'true';
+    }
+
+    const exportAllBtnProvider = document.getElementById('export-all-btn-provider');
+    if (exportAllBtnProvider && !exportAllBtnProvider.dataset.listenerAttached) {
+        exportAllBtnProvider.onclick = () => {
+            exportProjectsToFile({ categories: ['providers'], filename: 'projects-export-providers.json' });
+        };
+        exportAllBtnProvider.dataset.listenerAttached = 'true';
+    }
+
+    const generateReportBtnProvider = document.getElementById('generate-report-btn-provider');
+    if (generateReportBtnProvider && !generateReportBtnProvider.dataset.listenerAttached) {
+        generateReportBtnProvider.onclick = () => {
+            generateProjectsReport({ categories: ['providers'], filename: 'projects-report-providers.json' });
+        };
+        generateReportBtnProvider.dataset.listenerAttached = 'true';
     }
 
     const newReferrerBtn = document.getElementById('new-referrer-project-btn');

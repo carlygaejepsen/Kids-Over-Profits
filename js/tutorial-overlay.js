@@ -955,7 +955,7 @@ if (window.TutorialOverlay) {
             },
             {
                 title: 'Category Selection',
-                content: 'Let\'s explore the four types of data you can collect. Each category organizes information differently to help you research the TTI effectively.',
+                content: 'Let\'s explore the five types of data you can collect. Each category organizes information differently to help you research the TTI effectively.',
                 target: '.category-tabs',
                 position: 'bottom'
             },
@@ -984,6 +984,12 @@ if (window.TutorialOverlay) {
                 position: 'bottom'
             },
             {
+                title: 'Mental Health Providers',
+                content: 'Track providers outside the TTI that use its practices or send kids into it: acute psychiatric wards, PHP and IOP programs, day schools, respite care and outpatient therapists. The form works like a facility report, plus the type of care, the TTI facilities they refer to, and each staff member\'s known TTI connections and past TTI jobs.',
+                target: '.category-tab[data-category="providers"]',
+                position: 'bottom'
+            },
+            {
                 title: 'Choose a Category to Edit',
                 content: 'Pick the category tab that matches the data you want to update. This keeps saved projects and fields organized by type.',
                 target: '.category-tabs',
@@ -992,9 +998,9 @@ if (window.TutorialOverlay) {
             {
                 title: 'Select a Saved Project',
                 content: 'Click a project in the Saved Projects list to load it for editing.',
-                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list',
+                target: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list',
                 position: 'right',
-                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list',
+                scrollTarget: '#company-saved-projects-list, #location-saved-projects-list, #referrer-saved-projects-list, #transporter-saved-projects-list, #provider-saved-projects-list',
                 highlightPadding: 8
             },
             {

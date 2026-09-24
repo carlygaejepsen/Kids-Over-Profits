@@ -43,6 +43,7 @@
                 locations: document.getElementById('location-saved-projects-list'),
                 referrers: document.getElementById('referrer-saved-projects-list'),
                 transporters: document.getElementById('transporter-saved-projects-list'),
+                providers: document.getElementById('provider-saved-projects-list'),
                 // Operators view: an edit-only list of the same parent-company
                 // projects (each carries the operator record). Populated below by
                 // aliasing the companies group.
@@ -113,6 +114,7 @@
                 locations: [],
                 referrers: [],
                 transporters: [],
+                providers: [],
                 operators: []
             };
 
@@ -130,6 +132,7 @@
                 if (category === 'location' || category === 'states') category = 'locations';
                 if (category === 'referrer') category = 'referrers';
                 if (category === 'transporter') category = 'transporters';
+                if (category === 'provider') category = 'providers';
 
                 // Determine search query for this category
                 let searchQuery = '';
@@ -137,6 +140,7 @@
                 else if (category === 'locations') searchQuery = searchQueries.location;
                 else if (category === 'referrers') searchQuery = searchQueries.referrer;
                 else if (category === 'transporters') searchQuery = searchQueries.transporter;
+                else if (category === 'providers') searchQuery = searchQueries.provider;
 
                 let matchSnippet = null;
 
@@ -477,6 +481,11 @@
             if (!container) return;
             container.innerHTML = '';
 
+            // Provider-only lists: rendering creates the array in formData, so
+            // skip them outside the providers view (js/data-form/provider-form.js).
+            const inProviderView = typeof window.isProviderContext === 'function' && window.isProviderContext();
+            if (/^providerDetails\./.test(path) && !inProviderView) return;
+
             // If items is not an array, try to get/create it from formData via path resolution
             let data;
             if (Array.isArray(items)) {
@@ -509,7 +518,8 @@
             if (path.includes('parentCompanies') || path === 'otherOperators') defaultCategory = 'operator';
             else if (path.includes('Owners') || path.includes('founders') || path.includes('keyExecutives') || path.includes('investors') || path.includes('keyPersonnel')) defaultCategory = 'human';
             else if (path.includes('Referrers') || path.includes('knownReferrers')) defaultCategory = 'referrer';
-            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred')) defaultCategory = 'facility';
+            else if (path.includes('knownReferrals') || path.includes('facilitiesReferred') || path.includes('ttiReferrals')) defaultCategory = 'facility';
+            else if (path.includes('transportersUsed')) defaultCategory = 'transporter';
             else if (path.includes('accreditations')) defaultCategory = 'accreditation';
             else if (path === 'memberships' || path.includes('affiliations')) defaultCategory = 'membership';
             else if (path === 'certifications') defaultCategory = 'certification';
@@ -696,6 +706,37 @@
 
                     detailsDiv.appendChild(jobsLabel);
                     detailsDiv.appendChild(jobsInp);
+
+                    // Providers are not TTI programs, so their staff also get a
+                    // box for how each person connects to the TTI.
+                    if (inProviderView && /^staff\./.test(path)) {
+                        const connectionsLabel = document.createElement('label');
+                        connectionsLabel.textContent = 'Known TTI Connections (referrals made, board seats, trainings, family ties, one per line)';
+                        connectionsLabel.style.display = 'block';
+                        connectionsLabel.style.fontSize = '12px';
+                        connectionsLabel.style.marginBottom = '4px';
+                        connectionsLabel.style.marginTop = '10px';
+                        connectionsLabel.style.color = '#666';
+
+                        const connectionsInp = document.createElement('textarea');
+                        connectionsInp.className = 'input-form';
+                        connectionsInp.rows = 3;
+                        connectionsInp.style.fontSize = '13px';
+                        connectionsInp.value = normalized.ttiConnections || '';
+                        connectionsInp.placeholder = 'e.g. Referred patients to Provo Canyon School\nNATSAP conference speaker';
+                        connectionsInp.oninput = (e) => {
+                            if (typeof window.updateArrayObjectItemValue === 'function') {
+                                window.updateArrayObjectItemValue(path, index, 'ttiConnections', e.target.value);
+                            } else {
+                                normalized.ttiConnections = e.target.value;
+                                if (window.updateJSON) window.updateJSON();
+                            }
+                        };
+
+                        detailsDiv.appendChild(connectionsLabel);
+                        detailsDiv.appendChild(connectionsInp);
+                    }
+
                     detailsDiv.appendChild(linksLabel);
                     detailsDiv.appendChild(linksInp);
 
@@ -707,7 +748,7 @@
                     };
 
                     // Auto-open if data exists
-                    if (normalized.pastJobs || normalized.links) {
+                    if (normalized.pastJobs || normalized.links || (inProviderView && normalized.ttiConnections)) {
                         detailsDiv.style.display = 'block';
                         detailsBtn.style.background = '#e2e8f0';
                     }
@@ -1026,7 +1067,7 @@
             // (edit-only) view, where we stay put and just edit the operator fields.
             const operatorsViewActive = document.querySelector('.category-tab.active')?.dataset.category === 'operators';
             if (!operatorsViewActive) {
-                const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', companies: 'companies' };
+                const categoryMap = { locations: 'states', referrers: 'referrers', transporters: 'transporters', providers: 'providers', companies: 'companies' };
                 const tabCategory = categoryMap[projectData.category] || projectData.category;
                 const targetTab = document.querySelector(`.category-tab[data-category="${tabCategory}"]`);
                 if (targetTab && !targetTab.classList.contains('active')) {
@@ -1054,6 +1095,7 @@
                     : projectData.data;
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
+                if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
                 if (window.updateJSON && typeof window.updateJSON === 'function') {
                     window.updateJSON();
                 }

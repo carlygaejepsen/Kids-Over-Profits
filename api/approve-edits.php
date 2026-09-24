@@ -123,6 +123,7 @@ function kop_load_existing_master_data(PDO $pdo, $master_id, $tables) {
         $preferred_order[] = $tables['referrers'];
         $preferred_order[] = $tables['transporters'];
     } else {
+        $preferred_order[] = $tables['providers'];
         $preferred_order[] = $tables['facilities'];
         $preferred_order[] = $tables['referrers'];
         $preferred_order[] = $tables['transporters'];
@@ -228,6 +229,7 @@ $master_tables = [
     'facilities' => kop_resolve_table_name($pdo, 'facilities_master', $wp_prefix),
     'referrers' => kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix),
     'transporters' => kop_resolve_table_name($pdo, 'transporters_master', $wp_prefix),
+    'providers' => kop_resolve_table_name($pdo, 'providers_master', ''),
     'locations' => kop_resolve_table_name($pdo, 'locations_master', $wp_prefix),
 ];
 

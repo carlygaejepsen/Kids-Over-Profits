@@ -45,19 +45,19 @@ window.KOP_UI_State = {
 
         // Define default and referrer-specific labels
         const labels = {
-            toolbarTitle: { default: 'Facility tools', referrer: 'Referrer tools' },
-            toolbarHint: { default: 'Add, switch, search, or clone facilities', referrer: 'Add, switch, search, or clone entries' },
-            operatorSectionTitle: { default: 'Parent Company Information', referrer: 'Group/Agency Information' },
-            operatorNameLabel: { default: 'Parent Company Name', referrer: 'Group/Agency Name' },
-            currentOperatorLabel: { default: 'Current Parent Company', referrer: 'Current Agency' },
-            facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview' },
-            addFacilityButton: { default: 'Add New Facility', referrer: 'Add New' },
-            addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New' },
-            currentFacilityLabel: { default: 'Current Facility', referrer: 'Current' },
+            toolbarTitle: { default: 'Facility tools', referrer: 'Referrer tools', provider: 'Provider tools' },
+            toolbarHint: { default: 'Add, switch, search, or clone facilities', referrer: 'Add, switch, search, or clone entries', provider: 'Add, switch, search, or clone provider sites' },
+            operatorSectionTitle: { default: 'Parent Company Information', referrer: 'Group/Agency Information', provider: 'Parent Organization / Health System' },
+            operatorNameLabel: { default: 'Parent Company Name', referrer: 'Group/Agency Name', provider: 'Parent Organization Name' },
+            currentOperatorLabel: { default: 'Current Parent Company', referrer: 'Current Agency', provider: 'Current Parent Organization / Health System' },
+            facilitiesOverviewTitle: { default: 'Facilities Overview', referrer: 'Individuals Overview', provider: 'Sites Overview' },
+            addFacilityButton: { default: 'Add New Facility', referrer: 'Add New', provider: 'Add New Site' },
+            addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New', provider: 'Add New Site' },
+            currentFacilityLabel: { default: 'Current Facility', referrer: 'Current', provider: 'Current Site' },
             addFacilityToolbar: { default: '📄<span class="toolbar-label">Add Entry</span>', referrer: '📄<span class="toolbar-label">Add Entry</span>' },
             cloneFacilityToolbar: { default: '📋', referrer: '📋' },
             removeFacilityToolbar: { default: '🗑️', referrer: '🗑️' },
-            facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name' },
+            facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name', provider: 'Provider / Site Name' },
             facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
             facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
             facilityOperationsTitle: { default: 'Facility Operations', referrer: 'Individual\'s Operations' },
@@ -94,7 +94,13 @@ window.KOP_UI_State = {
             const el = document.querySelector(selector);
             if (el) el.textContent = text;
         };
-        const mode = (category === 'referrers') ? 'referrer' : 'default';
+        // Mental health providers (js/data-form/provider-form.js) fall back to
+        // the facility wording wherever they have no label of their own.
+        const rawMode = (category === 'referrers') ? 'referrer' : (category === 'providers' ? 'provider' : 'default');
+        Object.values(labels).forEach(entry => {
+            if (!(rawMode in entry)) entry[rawMode] = entry.default;
+        });
+        const mode = rawMode;
 
         // Update main section titles
         setLabelForQuery('#operator-section .section-title', labels.operatorSectionTitle[mode]);

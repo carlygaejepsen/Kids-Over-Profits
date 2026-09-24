@@ -124,6 +124,8 @@ try {
                     $default_category = 'referrers';
                 } elseif ($sourceLabel === 'transporters') {
                     $default_category = 'transporters';
+                } elseif ($sourceLabel === 'providers') {
+                    $default_category = 'providers';
                 } elseif ($sourceLabel === 'locations') {
                     $default_category = 'locations';
                 } elseif ($sourceLabel === 'facilities') {
@@ -158,6 +160,12 @@ try {
     $processTable('transporters_master', 'transporters');
     if (!empty($prefix)) {
         $processTable($prefix . 'transporters_master', 'transporters');
+    }
+
+    // 2b. Mental health providers (not TTI facilities; own table)
+    $processTable('providers_master', 'providers');
+    if (!empty($prefix)) {
+        $processTable($prefix . 'providers_master', 'providers');
     }
 
     // 3-4. Operator projects and location profiles. Once admin saves write the

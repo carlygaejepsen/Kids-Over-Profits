@@ -24,7 +24,7 @@
  *      Wiki entries (submissions + master) linked to one program.
  *
  * POST {action:"move_category", unique_name, target_category}
- *      Move a record between facilities/referrers/transporters tables.
+ *      Move a record between facilities/referrers/transporters/providers tables.
  *
  * POST {action:"reassign_facility", from_unique_name, to_unique_name,
  *       facility_index?|facility_id?}
@@ -70,6 +70,7 @@ $CATEGORY_TABLE = [
     'companies'    => 'facilities_master',
     'referrers'    => 'referrers_master',
     'transporters' => 'transporters_master',
+    'providers'    => 'providers_master',
     'locations'    => 'locations_master',
 ];
 $TABLE_CATEGORY = array_flip($CATEGORY_TABLE);
@@ -714,6 +715,20 @@ try {
             echo json_encode(['success' => false,
                 'error' => "A record named '$uniqueName' already exists in the target category. Rename one first."]);
             exit;
+        }
+
+        // Transporter and provider tables are created on first use. Do it
+        // before the transaction: CREATE TABLE commits implicitly.
+        if (in_array($targetTable, ['transporters_master', 'providers_master'], true)) {
+            $pdo->exec("CREATE TABLE IF NOT EXISTS `$targetTable` (
+                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+                unique_name VARCHAR(255) NOT NULL,
+                json_data LONGTEXT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                UNIQUE KEY unique_name (unique_name),
+                KEY updated_at (updated_at)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
         }
 
         // Update the embedded category label, then move the row atomically.

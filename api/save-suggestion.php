@@ -89,6 +89,10 @@ function kop_infer_submission_category($input, $data, $active_category) {
         }
     }
 
+    if (strtolower(trim((string) ($data['category'] ?? ''))) === 'providers') {
+        return 'providers';
+    }
+
     if (!empty($data['referrerAgency']['name']) || !empty($data['referrerConsultants'][0]['firstName']) || !empty($data['referrerConsultants'][0]['lastName'])) {
         return 'referrers';
     }
@@ -138,6 +142,27 @@ function kop_strip_transporter_submission_data(&$data) {
         'transporterType',
     ] as $field) {
         unset($data[$field]);
+    }
+}
+
+/**
+ * Mental health provider data (facilities[].providerDetails, category tag)
+ * belongs only to provider submissions.
+ */
+function kop_strip_provider_submission_data(&$data) {
+    if (!is_array($data)) {
+        return;
+    }
+
+    if (strtolower(trim((string) ($data['category'] ?? ''))) === 'providers') {
+        unset($data['category']);
+    }
+    if (is_array($data['facilities'] ?? null)) {
+        foreach ($data['facilities'] as $index => $facility) {
+            if (is_array($facility)) {
+                unset($data['facilities'][$index]['providerDetails']);
+            }
+        }
     }
 }
 
@@ -260,6 +285,13 @@ try {
 
     if ($effective_category !== 'transporters') {
         kop_strip_transporter_submission_data($data);
+    }
+
+    // Provider submissions are tagged so approval files them in providers_master.
+    if ($effective_category === 'providers') {
+        $data['category'] = 'providers';
+    } else {
+        kop_strip_provider_submission_data($data);
     }
 
     $facilities = is_array($data['facilities'] ?? null) ? $data['facilities'] : [];

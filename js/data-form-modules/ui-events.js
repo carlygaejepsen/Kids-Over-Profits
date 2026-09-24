@@ -476,6 +476,42 @@
             }
         });
 
+        // Facility checkboxes (treatment types, philosophies, incidents,
+        // resources, provider care types). Ported from data-form.v4.js's
+        // attachFieldListeners_DEPRECATED_LOCAL, which nothing calls, so ticking
+        // a box never reached formData. loadFacilityData() sets their state.
+        document.querySelectorAll('.facility-checkbox').forEach(checkbox => {
+            if (checkbox.dataset.listenerAttached) return;
+            checkbox.addEventListener('change', () => {
+                const path = checkbox.dataset.field;
+                if (path && window.formData) {
+                    const facilityIndex = window.currentFacilityIndex || 0;
+                    ensureCurrentFacility();
+                    setValueAtPath(window.formData, `facilities.${facilityIndex}.${path}`, checkbox.checked);
+                }
+
+                const controlledElement = checkbox.dataset.controls ? document.getElementById(checkbox.dataset.controls) : null;
+                if (controlledElement) {
+                    controlledElement.style.display = checkbox.checked ? '' : 'none';
+                }
+
+                // A newly ticked box opens an empty note for its evidence.
+                const notes = window.NotesModule;
+                const scope = checkbox.dataset.noteScope;
+                const key = checkbox.dataset.noteKey;
+                if (checkbox.checked && scope && key && notes && typeof notes.getFieldNotes === 'function' && typeof notes.addFieldNote === 'function') {
+                    const existing = notes.getFieldNotes(scope, key);
+                    if (!existing || existing.length === 0) {
+                        notes.addFieldNote(scope, key);
+                    }
+                }
+
+                if (typeof window.updateJSON === 'function') window.updateJSON();
+                if (typeof window.autoSave === 'function') window.autoSave();
+            }, { passive: true });
+            checkbox.dataset.listenerAttached = 'true';
+        });
+
         Object.entries(STANDALONE_FIELD_BINDINGS).forEach(([id, binding]) => {
             const field = document.getElementById(id);
             if (!field || field.dataset.listenerAttached) {

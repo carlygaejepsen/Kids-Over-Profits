@@ -906,6 +906,26 @@ function enqueue_data_form_script() {
 
         );
 
+        // Enqueue mental health provider form (providers category)
+
+        $provider_form_relative = '/js/data-form/provider-form.js';
+
+        $provider_form_path = get_stylesheet_directory() . $provider_form_relative;
+
+        wp_enqueue_script(
+
+            'provider-form-script',
+
+            get_stylesheet_directory_uri() . $provider_form_relative,
+
+            array('jquery', 'utilities-module-script', 'autocomplete-module-script'),
+
+            file_exists($provider_form_path) ? filemtime($provider_form_path) : time(),
+
+            true
+
+        );
+
     
 
         // Enqueue notes module
@@ -1282,7 +1302,7 @@ function enqueue_data_form_script() {
 
 
 
-                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
+                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'provider-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
 
 
 

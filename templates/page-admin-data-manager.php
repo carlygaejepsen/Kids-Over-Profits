@@ -34,6 +34,7 @@ get_header();
             <option value="companies">Companies / Operators</option>
             <option value="referrers">Referrers</option>
             <option value="transporters">Transporters</option>
+            <option value="providers">Mental Health Providers</option>
             <option value="locations">Locations</option>
         </select>
         <button type="button" id="dmRefresh" class="kop-dm-btn kop-dm-btn-ghost">↻ Refresh</button>

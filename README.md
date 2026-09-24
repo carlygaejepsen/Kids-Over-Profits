@@ -27,6 +27,7 @@ This repository is the source for the Kids Over Profits WordPress child theme. T
 ### Data Forms
 - `page-admin-data.php` plus `templates/data-form-admin.php` handle direct admin editing.
 - `page-data.php` plus `templates/data-form-public.php` handle public suggestions.
+- Categories: parent companies, locations, referrers, transporters, and mental health providers (psychiatric wards, PHP/IOP, day schools, respite care and outpatient therapy outside the TTI that use its practices or refer to it; saved to `providers_master`, see `docs/data-forms/README.md`).
 - The frontend relies on `KOP_DATA_FORM_CONFIG` and the `js/data-form/` plus `js/data-form-modules/` stacks.
 
 ### TTI Program Index

@@ -19,7 +19,8 @@ const KOP_Search = (function() {
             company: document.getElementById('company-search-input')?.value || '',
             location: document.getElementById('location-search-input')?.value || '',
             referrer: document.getElementById('referrer-search-input')?.value || '',
-            transporter: document.getElementById('transporter-search-input')?.value || ''
+            transporter: document.getElementById('transporter-search-input')?.value || '',
+            provider: document.getElementById('provider-search-input')?.value || ''
         };
     }
 
@@ -57,7 +58,7 @@ const KOP_Search = (function() {
      */
     function searchDatabase(searchQueries) {
         // Skip if all queries are empty
-        if (!searchQueries.company && !searchQueries.location && !searchQueries.referrer && !searchQueries.transporter) {
+        if (!searchQueries.company && !searchQueries.location && !searchQueries.referrer && !searchQueries.transporter && !searchQueries.provider) {
             window.databaseProjects = {};
             if (window.KOP_UI_Render && typeof window.KOP_UI_Render.refreshSavedProjectPanels === 'function') {
                 window.KOP_UI_Render.refreshSavedProjectPanels(searchQueries);
@@ -71,6 +72,7 @@ const KOP_Search = (function() {
         if (searchQueries.location) params.append('location', searchQueries.location);
         if (searchQueries.referrer) params.append('referrer', searchQueries.referrer);
         if (searchQueries.transporter) params.append('transporter', searchQueries.transporter);
+        if (searchQueries.provider) params.append('provider', searchQueries.provider);
         params.append('limit', '20');
 
         // REST root: KOP_DATA_FORM_CONFIG.restUrl already ends in kop/v1/.
@@ -141,6 +143,13 @@ const KOP_Search = (function() {
             transporterSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
             transporterSearchInput.dataset.listenerAttached = 'true';
         }
+
+        // Mental health provider search input
+        const providerSearchInput = document.getElementById('provider-search-input');
+        if (providerSearchInput && !providerSearchInput.dataset.listenerAttached) {
+            providerSearchInput.addEventListener('input', refreshProjectsWithSearch, { passive: true });
+            providerSearchInput.dataset.listenerAttached = 'true';
+        }
     }
 
     /**
@@ -158,6 +167,9 @@ const KOP_Search = (function() {
 
         const transporterSearchInput = document.getElementById('transporter-search-input');
         if (transporterSearchInput) transporterSearchInput.value = '';
+
+        const providerSearchInput = document.getElementById('provider-search-input');
+        if (providerSearchInput) providerSearchInput.value = '';
 
         // Clear database search results
         window.databaseProjects = {};

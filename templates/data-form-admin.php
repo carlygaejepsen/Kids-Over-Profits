@@ -30,6 +30,7 @@ get_header();
                 <button type="button" class="category-tab" data-category="locations">🌍 Locations/States/Countries</button>
                 <button type="button" class="category-tab" data-category="referrers">👥 Referrers</button>
                 <button type="button" class="category-tab" data-category="transporters">🚐 Transporters</button>
+                <button type="button" class="category-tab" data-category="providers">Mental Health Providers</button>
             </div>
 
             <!-- Category contents wrapper -->
@@ -155,6 +156,34 @@ get_header();
                             <button type="button" id="new-project-btn-transporter" class="kop-btn project-action-btn">New Transporter Project</button>
                             <button type="button" id="export-all-btn-transporter" class="kop-btn project-action-btn">Export Transporters</button>
                             <button type="button" id="generate-report-btn-transporter" class="kop-btn project-action-btn">Generate Transporter Report</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Mental Health Providers Content -->
+                <div id="providers-content" class="category-content view-hidden" data-section-views="providers">
+                    <div class="content-header">
+                        <h3>Mental Health Providers (TTI-Adjacent)</h3>
+                    </div>
+
+                    <div class="project-management" id="provider-project-panel-inner">
+                        <h2>Provider Projects &amp; Data Import</h2>
+                        <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">Psychiatric wards, PHP and IOP programs, day schools, respite care and outpatient therapists that are not TTI programs but use TTI practices or refer children to TTI facilities.</p>
+                        <div id="provider-project-status"></div>
+                        <div class="form-group">
+                            <label>Saved Provider Projects</label>
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="provider-search-input" class="input-form project-search-input" placeholder="Search by provider name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                            </div>
+                            <div id="provider-saved-projects-list" class="saved-projects-list">
+                                <div style="color: #6b7280; font-style: italic;">No saved provider projects</div>
+                            </div>
+                        </div>
+                        <div class="project-actions">
+                            <button type="button" id="new-project-btn-provider" class="kop-btn project-action-btn">New Provider Project</button>
+                            <button type="button" id="export-all-btn-provider" class="kop-btn project-action-btn">Export Providers</button>
+                            <button type="button" id="generate-report-btn-provider" class="kop-btn project-action-btn">Generate Provider Report</button>
                         </div>
                     </div>
 
@@ -636,7 +665,7 @@ get_header();
         </div>
 
         <!-- Fixed Toolbar -->
-        <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters">
+        <div class="fixed-toolbar minimized" id="fixed-toolbar" data-section-views="companies,locations,referrers,transporters,providers">
             <div class="toolbar-header">
                 <div class="toolbar-title">
                     <strong>📋 Admin Editor</strong>
@@ -677,7 +706,7 @@ get_header();
         </div>
 
         <!-- Facility Loader Panel -->
-        <div class="facility-loader-panel" data-section-views="companies,locations,referrers,transporters">
+        <div class="facility-loader-panel" data-section-views="companies,locations,referrers,transporters,providers">
             <h2 id="quick-loader-heading">Jump to Facility</h2>
             <div class="form-group">
                 <label id="quick-loader-label">All Facilities in Current Project</label>
@@ -687,7 +716,7 @@ get_header();
             </div>
         </div>
 
-        <div id="facility-main-wrapper" data-section-views="companies,locations">
+        <div id="facility-main-wrapper" data-section-views="companies,locations,providers">
             <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title">📊 Data Organizer</h2>
@@ -773,7 +802,7 @@ get_header();
         </div>
 
         <!-- Operator Information Section -->
-        <div class="section expanded" id="operator-section" data-section-views="companies,locations,operators">
+        <div class="section expanded" id="operator-section" data-section-views="companies,locations,operators,providers">
             <div class="section-header">
                 <h2 class="section-title">Parent Company Information</h2>
                 <span class="section-toggle">🔎</span>
@@ -901,7 +930,7 @@ get_header();
         </div>
 
         <!-- Identification Section -->
-        <div class="section" id="identification-section" data-section-views="companies,locations">
+        <div class="section" id="identification-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Identification & Names</h2>
                 <span class="section-toggle">🔎</span>
@@ -946,8 +975,129 @@ get_header();
             </div>
         </div>
 
+        <!-- Mental Health Provider Section (providers view only; js/data-form/provider-form.js) -->
+        <div class="section" id="provider-section" data-section-views="providers">
+            <div class="section-header">
+                <h2 class="section-title">Type of Care &amp; TTI Ties</h2>
+                <span class="section-toggle"></span>
+            </div>
+            <div class="section-content">
+                <p style="margin: 0 0 12px; color: #6b7280; font-size: 14px;">For providers outside the TTI that use its practices or send children into it. Each site of the provider is its own entry, like a facility.</p>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">Type of Care</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <?php kop_form_panel_help('provider-care-types'); ?>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasPartialHospitalization" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasPartialHospitalization" id="care-partial-hospitalization">
+                            <label for="care-partial-hospitalization">Partial Hospitalization Program (PHP)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasIntensiveOutpatient" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasIntensiveOutpatient" id="care-intensive-outpatient">
+                            <label for="care-intensive-outpatient">Intensive Outpatient Program (IOP)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasRespiteCare" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasRespiteCare" id="care-respite-care">
+                            <label for="care-respite-care">Respite Care</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasOutpatientTherapy" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasOutpatientTherapy" id="care-outpatient-therapy">
+                            <label for="care-outpatient-therapy">Outpatient Therapy</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasAcutePsychiatric" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasAcutePsychiatric" id="care-acute-psychiatric">
+                            <label for="care-acute-psychiatric">Acute Psychiatric Ward / Inpatient Unit</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.careTypes.hasDaySchool" data-note-scope="facility" data-note-key="providerDetails.careTypes.hasDaySchool" id="care-day-school">
+                            <label for="care-day-school">Day School / Day Treatment</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Other Types of Care</label>
+                            <div class="array-container" data-path="providerDetails.otherCareTypes"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">TTI Practices Used</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <?php kop_form_panel_help('provider-tti-practices'); ?>
+                    <div class="sub-section-content">
+                        <p style="margin: 0 0 10px; color: #6b7280; font-size: 14px;">Also mark therapies and philosophies in the Treatment Types and Philosophy sections below.</p>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasLevelSystem" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasLevelSystem" id="practice-level-system">
+                            <label for="practice-level-system">Level / Point System</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasRestraint" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasRestraint" id="practice-restraint">
+                            <label for="practice-restraint">Physical or Chemical Restraint</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasSeclusion" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasSeclusion" id="practice-seclusion">
+                            <label for="practice-seclusion">Seclusion / Isolation Rooms</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasCommunicationRestrictions" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasCommunicationRestrictions" id="practice-communication-restrictions">
+                            <label for="practice-communication-restrictions">Communication Restrictions (family contact, mail, phone)</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasConfrontationGroups" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasConfrontationGroups" id="practice-confrontation-groups">
+                            <label for="practice-confrontation-groups">Confrontation / Hot-seat Groups</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasBehaviorContracts" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasBehaviorContracts" id="practice-behavior-contracts">
+                            <label for="practice-behavior-contracts">Behavior Contracts / Loss of Privileges</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasStripSearches" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasStripSearches" id="practice-strip-searches">
+                            <label for="practice-strip-searches">Strip Searches</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" class="facility-checkbox" data-field="providerDetails.ttiPractices.hasForcedMedication" data-note-scope="facility" data-note-key="providerDetails.ttiPractices.hasForcedMedication" id="practice-forced-medication">
+                            <label for="practice-forced-medication">Forced or Coerced Medication</label>
+                        </div>
+                        <div class="form-group">
+                            <label>Other TTI Practices</label>
+                            <div class="array-container" data-path="providerDetails.otherTtiPractices"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">Referrals Into the TTI</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <?php kop_form_panel_help('provider-tti-referrals'); ?>
+                    <div class="sub-section-content">
+                        <div class="form-group">
+                            <label>TTI Facilities They Refer To</label>
+                            <div class="array-container" data-path="providerDetails.ttiReferrals"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Transport Companies Used or Recommended</label>
+                            <div class="array-container" data-path="providerDetails.transportersUsed"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>Other TTI Ties (step-down agreements, contracts, NATSAP membership, shared owners)</label>
+                            <div class="array-container" data-path="providerDetails.ttiAffiliations"></div>
+                        </div>
+                        <div class="form-group">
+                            <label>How Referrals Happen (evidence, quotes, sources)</label>
+                            <textarea class="facility-field" data-field="providerDetails.referralNotes" rows="4" placeholder="e.g. Discharge planners hand families a list of wilderness programs; source: ..." style="width: 100%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Location Section -->
-        <div class="section" id="location-section" data-section-views="companies,locations">
+        <div class="section" id="location-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Location & Address</h2>
                 <span class="section-toggle">🔎</span>
@@ -1020,7 +1170,7 @@ get_header();
         </div>
         
         <!-- Operations Section -->
-        <div class="section" id="operations-section" data-section-views="companies,locations">
+        <div class="section" id="operations-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Facility Operations</h2>
                 <span class="section-toggle">🔎</span>
@@ -1059,7 +1209,7 @@ get_header();
         </div>
         
         <!-- Staff Section -->
-        <div class="section" id="staff-section" data-section-views="companies,locations">
+        <div class="section" id="staff-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Staff & Links</h2>
                 <span class="section-toggle">🔎</span>
@@ -1085,7 +1235,7 @@ get_header();
         </div>
         
         <!-- Facility Details Section -->
-        <div class="section" id="facility-section" data-section-views="companies,locations">
+        <div class="section" id="facility-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Facility Details</h2>
                 <span class="section-toggle">🔎</span>
@@ -1125,7 +1275,7 @@ get_header();
         </div>
         
         <!-- Accreditations & Memberships Section -->
-        <div class="section" id="accreditations-section" data-section-views="companies,locations">
+        <div class="section" id="accreditations-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Accreditations & Memberships</h2>
                 <span class="section-toggle">🔎</span>
@@ -1155,7 +1305,7 @@ get_header();
         </div>
         
         <!-- Resources & Documentation Section -->
-        <div class="section" id="resources-section" data-section-views="companies,locations">
+        <div class="section" id="resources-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Available Resources & Documentation</h2>
                 <span class="section-toggle">🔎</span>
@@ -1267,7 +1417,7 @@ get_header();
         </div>
 
         <!-- Treatment Types Section -->
-        <div class="section" id="treatment-section" data-section-views="companies,locations">
+        <div class="section" id="treatment-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Treatment Types</h2>
                 <span class="section-toggle">🔎</span>
@@ -1373,7 +1523,7 @@ get_header();
         </div>
 
         <!-- Philosophy Section -->
-        <div class="section" id="philosophy-section" data-section-views="companies,locations">
+        <div class="section" id="philosophy-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Philosophy</h2>
                 <span class="section-toggle">🔎</span>
@@ -1439,7 +1589,7 @@ get_header();
         </div>
 
         <!-- Critical Incidents Section -->
-        <div class="section" id="incidents-section" data-section-views="companies,locations">
+        <div class="section" id="incidents-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Critical Incidents</h2>
                 <span class="section-toggle">🔎</span>
@@ -1481,7 +1631,7 @@ get_header();
         </div>
         
         <!-- General Notes Section -->
-        <div class="section" id="notes-section" data-section-views="companies,locations">
+        <div class="section" id="notes-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">General Notes</h2>
                 <span class="section-toggle">🔎</span>
@@ -1522,7 +1672,7 @@ get_header();
         </div>
 
         <!-- Submission Section -->
-        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters,operators" style="border: 2px solid #1e40af; background: #f8fafc;">
+        <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters,operators,providers" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
                 <h2 class="section-title" style="color: white; pointer-events: none;">💾 Save to Master Database</h2>
             </div>
@@ -1546,7 +1696,7 @@ get_header();
     </div>
 
     <!-- Advanced User Mode Section -->
-    <div class="section" id="advanced-mode-section" data-section-views="companies,locations,referrers,transporters" style="border: 2px solid #6b7280; background: #f9fafb;">
+    <div class="section" id="advanced-mode-section" data-section-views="companies,locations,referrers,transporters,providers" style="border: 2px solid #6b7280; background: #f9fafb;">
         <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
             <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
             <span class="section-toggle">🔎</span>

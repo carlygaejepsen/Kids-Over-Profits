@@ -67,6 +67,11 @@ function kop_form_help_lines() {
         // --- Harm --------------------------------------------------------------------
         'standard-incident-types' => 'Kinds of harm that have been reported at this program, such as restraint injuries, deaths or escapes. Tick what has been reported, and put the evidence under News & Media or Official Documentation.',
         'custom-incidents' => 'A kind of incident reported at this program that is not in the standard list. Describe it plainly and briefly.',
+
+        // --- Mental health providers (outside the TTI) ------------------------------
+        'provider-care-types' => 'The levels of care this provider offers, such as an acute psychiatric unit, a partial hospitalization program (PHP) or an intensive outpatient program (IOP). Tick every one that applies.',
+        'provider-tti-practices' => 'TTI methods reported at this provider even though it is not a TTI program, such as a level system, seclusion or cutting off family contact. Tick what has been reported.',
+        'provider-tti-referrals' => 'Where this provider sends children: the TTI programs it refers to, the transport companies it uses, and any agreements with them. For example "discharges to Provo Canyon School".',
     );
 }
 

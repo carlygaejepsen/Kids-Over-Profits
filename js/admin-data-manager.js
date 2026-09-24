@@ -29,6 +29,7 @@
         companies: 'Company',
         referrers: 'Referrer',
         transporters: 'Transporter',
+        providers: 'Mental Health Provider',
         locations: 'Location'
     };
 
@@ -637,7 +638,7 @@
 
     function actionCategory(item) {
         var body = el('div', 'dm-form');
-        var opts = ['companies', 'referrers', 'transporters']
+        var opts = ['companies', 'referrers', 'transporters', 'providers']
             .map(function (c) {
                 return '<option value="' + c + '"' + (c === item.category ? ' selected' : '') + '>' +
                     esc(CATEGORY_LABELS[c]) + '</option>';

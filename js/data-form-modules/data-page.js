@@ -599,6 +599,12 @@
                 stripTransporterSubmissionData(dataToSubmit);
             }
 
+            if (activeCategory === 'providers') {
+                dataToSubmit.category = 'providers';
+            } else if (typeof window.stripProviderData === 'function') {
+                window.stripProviderData(dataToSubmit);
+            }
+
             const actualProjectName = (
                 window.currentProjectName ||
                 dataToSubmit.projectName ||

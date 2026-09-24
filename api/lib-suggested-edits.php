@@ -2,7 +2,7 @@
 /**
  * Shared library for applying approved suggested_edits rows to the master
  * tables (facilities_master / referrers_master / transporters_master /
- * locations_master).
+ * providers_master / locations_master).
  *
  * Used by process-edit.php (legacy single-submission endpoint) and
  * manage-submissions.php (Submissions Review approve action) so that
@@ -330,9 +330,13 @@ if (!function_exists('kop_apply_suggested_edit')) {
         $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $wp_prefix);
         $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $wp_prefix);
         $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $wp_prefix);
+        $providers_table = kop_resolve_table_name($pdo, 'providers_master', '');
         $locations_table = kop_resolve_table_name($pdo, 'locations_master', $wp_prefix);
 
         try {
+            // CREATE TABLE commits implicitly, so create it before the
+            // transaction opens rather than when a provider row is found.
+            kop_ensure_master_table($pdo, $providers_table);
             $pdo->beginTransaction();
 
             $stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE id = ? AND status = 'pending' LIMIT 1");
@@ -382,6 +386,10 @@ if (!function_exists('kop_apply_suggested_edit')) {
                 $resolved_master_id = $masterIdUpper;
             }
 
+            // Mental health providers (js/data-form/provider-form.js) are tagged
+            // on the data; they are facility-shaped but are not TTI facilities.
+            $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
+
             $isReferrer = !empty($project_data['referrerAgency']['name']) ||
                           !empty($project_data['referrerConsultants'][0]['firstName']) ||
                           !empty($project_data['referrerConsultants'][0]['lastName']);
@@ -394,6 +402,9 @@ if (!function_exists('kop_apply_suggested_edit')) {
             if ($isLocation) {
                 $tableName = $locations_table;
                 $category = 'locations';
+            } elseif ($isProvider) {
+                $tableName = $providers_table;
+                $category = 'providers';
             } elseif ($isReferrer) {
                 $tableName = $referrers_table;
                 $category = 'referrers';

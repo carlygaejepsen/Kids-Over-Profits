@@ -122,6 +122,7 @@ if (!function_exists('kop_resolve_table_name')) {
 $facilities_table = kop_resolve_table_name($pdo, 'facilities_master', $prefix);
 $referrers_table = kop_resolve_table_name($pdo, 'referrers_master', $prefix);
 $transporters_table = kop_resolve_table_name($pdo, 'transporters_master', $prefix);
+$providers_table = kop_resolve_table_name($pdo, 'providers_master', '');
 $locations_table = kop_resolve_table_name($pdo, 'locations_master', $prefix);
 $wiki_table = kop_resolve_table_name($pdo, 'wiki_master', $prefix);
 
@@ -241,8 +242,13 @@ if ($projectName) {
     }
 }
 
-// If the payload looks like an operator project, force it to companies unless it's a location.
-if ($category !== 'locations' && is_array($data)) {
+// If the payload looks like an operator project, force it to companies unless
+// the caller tagged it as another known type. Every form payload carries empty
+// operator/facilities blocks, so without this list referrer, transporter and
+// provider saves were rewritten into the facility tables (matches the REST
+// save in inc/rest-api.php).
+$kop_known_non_company = ['locations', 'referrers', 'transporters', 'providers', 'wiki'];
+if (!in_array($category, $kop_known_non_company, true) && is_array($data)) {
     $has_operator_data = isset($data['operator']) || isset($data['facilities']);
     if ($has_operator_data && $category !== 'companies' && $category !== 'company') {
         $category = 'companies';
@@ -310,8 +316,8 @@ if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
                 $message .= ". Its {$result['facilities_kept']} facilities are kept and stay on their state pages";
             }
             if (!$is_location && !$deleted) {
-                // Not an operator: a referrer or transporter project of that name.
-                foreach (['referrers_master', 'transporters_master'] as $table) {
+                // Not an operator: a referrer, transporter or provider project of that name.
+                foreach (['referrers_master', 'transporters_master', $providers_table] as $table) {
                     try {
                         $stmt = $pdo->prepare("DELETE FROM `$table` WHERE unique_name = :projectName");
                         $stmt->execute([':projectName' => $projectName]);
@@ -320,7 +326,7 @@ if (kop_v2_writes_active($pdo, $kop_v2_prefix)) {
                             $message = "Project '$projectName' deleted from $table";
                         }
                     } catch (PDOException $e) {
-                        // transporters_master may not exist yet.
+                        // transporters_master / providers_master may not exist yet.
                     }
                 }
             }
@@ -1086,6 +1092,7 @@ if ($action === 'delete') {
         $deletedFromFacilities = false;
         $deletedFromReferrers = false;
         $deletedFromTransporters = false;
+        $deletedFromProviders = false;
         $deletedFromLocations = false;
 
         $stmt = $pdo->prepare("DELETE FROM facilities_master WHERE unique_name = :projectName");
@@ -1105,16 +1112,26 @@ if ($action === 'delete') {
             // Table doesn't exist yet — that's fine.
         }
 
+        try {
+            $stmt = $pdo->prepare("DELETE FROM `{$providers_table}` WHERE unique_name = :projectName");
+            $stmt->execute([':projectName' => $projectName]);
+            $deletedFromProviders = $stmt->rowCount() > 0;
+        } catch (PDOException $e) {
+            // providers_master is created on first save.
+        }
+
         $stmt = $pdo->prepare("DELETE FROM locations_master WHERE unique_name = :projectName");
         $stmt->execute([':projectName' => $projectName]);
         $deletedFromLocations = $stmt->rowCount() > 0;
 
-        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromTransporters || $deletedFromLocations) {
+        if ($deletedFromFacilities || $deletedFromReferrers || $deletedFromTransporters || $deletedFromProviders || $deletedFromLocations) {
             $fromTable = $deletedFromReferrers
                 ? 'referrers_master'
                 : ($deletedFromTransporters
                     ? 'transporters_master'
-                    : ($deletedFromLocations ? 'locations_master' : 'facilities_master'));
+                    : ($deletedFromProviders
+                        ? $providers_table
+                        : ($deletedFromLocations ? 'locations_master' : 'facilities_master')));
             
             // For non-location projects, also remove this project's entries from all location projects
             $cleanedLocations = [];
@@ -1165,8 +1182,9 @@ if ($action === 'save') {
     // has a facility_id, creating __facility_ref rows for any that don't yet.
     // Mutates $data in place so updateLocationProjectsFromSave() (called later)
     // gets the same stamped entries when it clones into state buckets.
+    // Provider sites are not TTI facilities: no __facility_ref rows for them.
     $autoPromotedCount = 0;
-    if (is_array($data) && $category !== 'wiki') {
+    if (is_array($data) && $category !== 'wiki' && $category !== 'providers') {
         try {
             $autoPromotedCount = kop_ensure_facility_ids_in_data($pdo, $data);
         } catch (Exception $e) {
@@ -1197,6 +1215,9 @@ if ($action === 'save') {
         $tableName = $referrers_table;
     } elseif ($category === 'transporters') {
         $tableName = $transporters_table;
+        kop_ensure_master_table($pdo, $tableName);
+    } elseif ($category === 'providers') {
+        $tableName = $providers_table;
         kop_ensure_master_table($pdo, $tableName);
     } elseif ($category === 'wiki') {
         $tableName = $wiki_table;
@@ -1260,7 +1281,7 @@ if ($action === 'save') {
         // location index and facilities_master in step without a manual
         // backfill.
         $refLinkStats = [];
-        if ($category !== 'wiki' && function_exists('kop_link_refs_to_locations')) {
+        if ($category !== 'wiki' && $category !== 'providers' && function_exists('kop_link_refs_to_locations')) {
             try {
                 $refLinkStats = kop_link_refs_to_locations($pdo);
                 foreach ($refLinkStats['locations_updated'] ?? [] as $loc) {

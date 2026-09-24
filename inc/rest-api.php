@@ -716,7 +716,7 @@ function kop_save_project_rest_callback($request) {
     if (is_array($data)) {
         $has_operator_data = isset($data['operator']) || isset($data['facilities']);
         $known_non_company = in_array($category, array(
-            'referrers', 'referrer', 'transporters', 'transporter', 'locations', 'location'
+            'referrers', 'referrer', 'transporters', 'transporter', 'providers', 'provider', 'locations', 'location'
         ), true);
         if ($has_operator_data && !$known_non_company) {
             $category = 'companies';
@@ -760,11 +760,26 @@ function kop_save_project_rest_callback($request) {
         'referrer' => 'referrers_master',
         'transporters' => 'transporters_master',
         'transporter' => 'transporters_master',
+        'providers' => 'providers_master',
+        'provider' => 'providers_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
 
     $table_name = isset($table_map[$category]) ? $table_map[$category] : 'facilities_master';
+
+    // Transporter and provider tables are created on first save.
+    if (in_array($table_name, array('transporters_master', 'providers_master'), true)) {
+        $wpdb->query("CREATE TABLE IF NOT EXISTS `{$table_name}` (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            unique_name VARCHAR(255) NOT NULL,
+            json_data LONGTEXT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_name (unique_name),
+            KEY updated_at (updated_at)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
 
     // Encode data as JSON
     $json_data = wp_json_encode($data);
@@ -853,6 +868,8 @@ function kop_delete_project_rest_callback($request) {
         'referrer' => 'referrers_master',
         'transporters' => 'transporters_master',
         'transporter' => 'transporters_master',
+        'providers' => 'providers_master',
+        'provider' => 'providers_master',
         'locations' => 'locations_master',
         'location' => 'locations_master',
     );
@@ -1773,6 +1790,7 @@ function kop_search_database_rest_callback($request) {
     );
     $referrer_query = (string) $request->get_param('referrer');
     $transporter_query = (string) $request->get_param('transporter');
+    $provider_query = (string) $request->get_param('provider');
     $limit = (int) $request->get_param('limit');
     $max_results = $limit > 0 ? max(1, min(100, $limit)) : 20;
 
@@ -1785,7 +1803,7 @@ function kop_search_database_rest_callback($request) {
     }
 
     // At least one search query must be provided
-    if (!$has_facility_query && $referrer_query === '' && $transporter_query === '') {
+    if (!$has_facility_query && $referrer_query === '' && $transporter_query === '' && $provider_query === '') {
         return rest_ensure_response(array(
             'success' => true,
             'results' => array(),
@@ -1992,6 +2010,49 @@ function kop_search_database_rest_callback($request) {
                             'data' => $data,
                         );
                     }
+                }
+            }
+        }
+    }
+
+    // Mental health provider search - providers_master rows (the providers
+    // search box on the data form). Created on first save, so it may not exist.
+    if ($provider_query !== '') {
+        $providers_table = 'providers_master';
+        $providers_exists = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = %s AND table_name = %s",
+            DB_NAME,
+            $providers_table
+        ));
+
+        if ($providers_exists) {
+            $provider_rows = $wpdb->get_results("SELECT unique_name, json_data FROM {$providers_table}", ARRAY_A);
+            foreach (is_array($provider_rows) ? $provider_rows : array() as $row) {
+                if (empty($row['json_data'])) {
+                    continue;
+                }
+                $unique_name = isset($row['unique_name']) ? $row['unique_name'] : '';
+                $data = kop_normalize_project_payload($row['json_data']);
+                if (!$data) {
+                    continue;
+                }
+
+                $match_snippet = stripos($unique_name, $provider_query) !== false
+                    ? 'Name: ' . $unique_name
+                    : kop_search_in_data($data, $provider_query);
+
+                if ($match_snippet) {
+                    $all_results[] = array(
+                        'name' => $unique_name,
+                        'label' => $unique_name,
+                        'category' => 'providers',
+                        'operator' => isset($data['operator']['name']) ? (string) $data['operator']['name'] : '',
+                        'facilityCount' => isset($data['facilities']) && is_array($data['facilities']) ? count($data['facilities']) : 0,
+                        'matchSnippet' => $match_snippet,
+                        'matchType' => 'provider',
+                        'source' => 'database',
+                        'data' => $data,
+                    );
                 }
             }
         }

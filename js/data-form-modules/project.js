@@ -151,6 +151,7 @@
                 }
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
+                if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
                 window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                     window.currentFacilityIndex = 0;
@@ -175,6 +176,7 @@
 
                 if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
                 if (typeof handleTransporterToggle === 'function') handleTransporterToggle();
+                if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
                 if (typeof updateAllUI === 'function') {
                     updateAllUI();
                     updateLabelsForProjectType(projectName);
@@ -219,6 +221,7 @@
         const activeTab = document.querySelector('.category-tab.active');
         const activeCategory = activeTab ? activeTab.dataset.category : 'companies';
 
+        if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
         if (typeof updateAllUI === 'function') updateAllUI();
         if (typeof updateLabelsForProjectType === 'function') updateLabelsForProjectType();
         if (typeof handleReferrerToggle === 'function') handleReferrerToggle();
@@ -232,6 +235,8 @@
                 firstSection = document.getElementById('referrer-agency-section');
             } else if (activeCategory === 'transporters') {
                 firstSection = document.getElementById('transporter-company-section');
+            } else if (activeCategory === 'providers') {
+                firstSection = document.getElementById('identification-section');
             } else {
                 firstSection = document.getElementById('operator-section');
             }
@@ -298,6 +303,7 @@ Click Cancel to stay on the current tab.`);
             
             if (typeof window.handleReferrerToggle === 'function') window.handleReferrerToggle();
             if (typeof window.handleTransporterToggle === 'function') window.handleTransporterToggle();
+            if (typeof window.handleProviderToggle === 'function') window.handleProviderToggle();
             if (typeof window.applyViewLayout === 'function') window.applyViewLayout(newCategory);
             if (typeof window.refreshSavedProjectPanels === 'function') window.refreshSavedProjectPanels();
             if (typeof window.updateLabelsForProjectType === 'function') window.updateLabelsForProjectType();
@@ -373,12 +379,12 @@ Click Cancel to stay on the current tab.`);
         }
         const currentCategory = determineProjectCategory(projectName);
         const newCategory = prompt(`Project "${projectName}" is currently in "${currentCategory}".
-Enter new category (companies, locations, referrers, or transporters):`, currentCategory);
+Enter new category (companies, locations, referrers, transporters, or providers):`, currentCategory);
         if (!newCategory || newCategory.trim().toLowerCase() === currentCategory) {
             showUploadStatus('ℹ️ Reclassification cancelled or category not changed.', 'info');
             return;
         }
-        const validCategories = ['companies', 'locations', 'referrers', 'transporters'];
+        const validCategories = ['companies', 'locations', 'referrers', 'transporters', 'providers'];
         const normalizedCategory = newCategory.trim().toLowerCase();
         if (!validCategories.includes(normalizedCategory)) {
             showUploadStatus(`❌ Invalid category. Please use one of: ${validCategories.join(', ')}.`, 'error');

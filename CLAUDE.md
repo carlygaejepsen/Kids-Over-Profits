@@ -95,6 +95,7 @@ to the program aggregate otherwise.
 - `facilities_master` - Official facility records
 - `suggested_edits` - Public submissions pending approval
 - `locations_master` / `referrers_master` - Related data
+- `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)

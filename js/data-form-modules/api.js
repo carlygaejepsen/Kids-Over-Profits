@@ -401,6 +401,13 @@
                 category: category
             };
 
+            // Provider sites carry providerDetails; every other category drops it.
+            if (category === 'providers') {
+                projectData.data.category = 'providers';
+            } else if (typeof window.stripProviderData === 'function') {
+                window.stripProviderData(projectData.data);
+            }
+
             const payload = {
                 projectName: projectName,
                 data: projectData.data,
