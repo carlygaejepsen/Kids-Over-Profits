@@ -1254,11 +1254,23 @@ function kop_apply_new_facility_seeds() {
     }
     $v2_prefix = kop_seed_v2_prefix($pdo);
     if ($v2_prefix !== null) {
-        // The facility is saved once and placed on the named profile; a facility
-        // already there (same name and place) is matched, not duplicated.
+        // The facility is saved once and placed on the named profile. One that
+        // is already in the data (same name, same state) is left alone: saving
+        // the seed's copy again on every run put back whatever it said, so an
+        // edit made since, in the data form or in seeds/facility-records.json,
+        // was undone at the next deploy. Corrections go in facility-records.
+        $t = kop_migration_tables($v2_prefix);
+        $exists = $pdo->prepare("SELECT id FROM `{$t['facilities']}` WHERE name_key = ? AND (? = '' OR state IS NULL OR state = '' OR state = ?) LIMIT 1");
         foreach ($entries as $entry) {
             $facility = $entry['facility'] ?? null;
             if (empty($entry['location_name']) || !is_array($facility) || trim((string) ($facility['identification']['name'] ?? '')) === '') {
+                continue;
+            }
+            $state = strtoupper(trim((string) ($facility['locationDetails']['state'] ?? '')));
+            $exists->execute(array(kop_facility_name_key((string) $facility['identification']['name']), $state, $state));
+            $found = $exists->fetchColumn();
+            $exists->closeCursor();
+            if ($found) {
                 continue;
             }
             try {
@@ -1632,7 +1644,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '38';
+    $version = '39';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
