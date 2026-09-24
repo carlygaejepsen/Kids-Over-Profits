@@ -371,6 +371,861 @@
       "news_ids": [
         206
       ]
+    },
+    {
+      "case_name": "Cheryl Struble, et al. v. Herman Fountain, et al.",
+      "case_number": "",
+      "court": "U.S. District Court for the Southern District of Mississippi, Southern Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2004-11-02",
+      "status": "filed",
+      "plaintiffs": [
+        "Cheryl Struble, Kelly Dukes, Willie Dukes, Mark P. and Sandra Riepenhoff, Patty Crawford, Cindy McCoy, Linda Griggs, Charles and Carolyn Campbell, Leroy Lawrence",
+        "Their minor sons, by next friend"
+      ],
+      "defendants": [
+        "Herman Fountain",
+        "John Fountain Jr.",
+        "Josh Fountain",
+        "Susan Churchwell",
+        "Kevin McGowan",
+        "John Butler"
+      ],
+      "facilities_mentioned": [
+        "Bethel Boys Academy (Lucedale, Mississippi)"
+      ],
+      "staff_mentioned": [
+        "Herman Fountain",
+        "John Fountain Jr.",
+        "Josh Fountain",
+        "Susan Churchwell",
+        "William Knott",
+        "James Bonner",
+        "Oscar Bonner",
+        "Kevin McGowan",
+        "John Butler",
+        "Tommy Fortenberry"
+      ],
+      "organizations_mentioned": [
+        "Bethel Baptist Church"
+      ],
+      "claims": [
+        "Fraud and breach of contract against parents who paid tuition",
+        "Assault and battery by staff and by cadets ordered to beat other cadets",
+        "False imprisonment",
+        "Intentional infliction of emotional distress",
+        "Negligent medical care",
+        "Failure to pay minimum wage and overtime under the Fair Labor Standards Act for forced labor"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Eight families of former students (called cadets) sued Herman Fountain, John Fountain Jr., Josh Fountain, Susan Churchwell and others who ran Bethel Boys Academy near Lucedale, Mississippi, in federal court, claiming federal Fair Labor Standards Act and state-law claims. The complaint alleges that staff and cadets forced by staff beat new arrivals, that boys were locked in footlockers, made to hold electric fences, held underwater at a swamp, denied bathroom breaks, sleep, food and medical care, and made to work up to 18 hours a day without pay. It alleges the academy misled parents about care, education and a staff nurse, and kept tuition and other payments. The enrollments described run from 2002 to 2003. The extracted text is missing the caption page, so the docket number, district and filing date are not shown, and the document shows nothing beyond the complaint.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/BethelComplaint2TC.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 13930,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "The Estate of Jason Britt and Kathleen Britt v. Agape Baptist Church, Inc. d/b/a Agape Boarding School",
+      "case_number": "6:23-cv-03316-MDH",
+      "court": "United States District Court for the Western District of Missouri, Southern Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2023-10-11",
+      "status": "filed",
+      "plaintiffs": [
+        "The Estate of Jason Britt",
+        "Kathleen Britt"
+      ],
+      "defendants": [
+        "Agape Baptist Church, Inc. d/b/a Agape Boarding School"
+      ],
+      "facilities_mentioned": [
+        "Agape Boarding School (Stockton, Missouri)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "Agape Baptist Church, Inc."
+      ],
+      "claims": [
+        "Physical and sexual abuse of a student, including an alleged gang rape",
+        "Forced labor and trafficking under 18 U.S.C. 1589, 1591 and 1595",
+        "Negligent hiring, supervision and retention",
+        "Failure to protect residents and to report abuse",
+        "Wrongful death under Missouri law"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "The estate of Jason Britt and his mother Kathleen Britt sued Agape Baptist Church, Inc., which ran Agape Boarding School in Stockton, Missouri, in federal court on October 11, 2023. The complaint alleges that in 2009-2010, when he was 16, Jason Britt was taken to the unlicensed facility in the middle of the night and was strip-searched, confined in a dark padded room, beaten, forced to exercise to exhaustion, and gang-raped in a basement. It alleges Agape knew of earlier abuse at the school and failed to protect residents or report abuse. It alleges the abuse led to mental health problems and his suicide on February 4, 2022, and seeks damages under federal trafficking and forced labor law and Missouri wrongful death law. The document shows only the filing of the complaint.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Britt-v-Agape-Complaint.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 11361,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "United States, et al. ex rel. Rodney Brockenbrough v. TrueCore Behavioral Solutions, LLC, et al.",
+      "case_number": "8:19-cv-02557-TPB-AAS",
+      "court": "United States District Court for the Middle District of Florida, Tampa Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2019-10-16",
+      "status": "filed",
+      "plaintiffs": [
+        "United States of America",
+        "State of Florida",
+        "State of Texas",
+        "Rodney Brockenbrough (relator)"
+      ],
+      "defendants": [
+        "TrueCore Behavioral Solutions, LLC",
+        "Boyne Capital",
+        "BHSB Holdings, Inc.",
+        "BHSB Investors, LLC",
+        "G4S US",
+        "G4S Youth Services, LLC",
+        "G4S Secure Solutions",
+        "The Henry & Rilla White Youth Foundation, Inc."
+      ],
+      "facilities_mentioned": [],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "TrueCore Behavioral Solutions (formerly Behavioral Health Solutions)",
+        "Boyne Capital",
+        "G4S Youth Services",
+        "The Henry & Rilla White Youth Foundation",
+        "USDA Food and Nutrition Service",
+        "Florida Department of Agriculture and Consumer Services",
+        "Texas Department of Agriculture"
+      ],
+      "claims": [
+        "False Claims Act violations for National School Lunch Program funds",
+        "Using a nonprofit foundation as a front so for-profit youth facilities could claim school lunch money",
+        "Florida False Claims Act violations",
+        "Texas Medicaid Fraud Prevention Act violations",
+        "Retaliation against the relator"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Rodney Brockenbrough, former chief operating officer of TrueCore Behavioral Solutions, filed a sealed qui tam complaint on October 16, 2019, on behalf of the United States, Florida and Texas against TrueCore, its private equity owner Boyne Capital and related holding companies, the G4S entities that formerly ran the business, and the Henry & Rilla White Youth Foundation. The complaint alleges that the White Foundation posed as the owner of nineteen for-profit G4S/TrueCore youth facilities so they could collect National School Lunch Program money that only nonprofit institutions may receive. It alleges TrueCore quietly left the program in 2018 after a Texas audit, then cut staffing and overtime to make up the lost money, and that Brockenbrough resigned on August 2, 2019. It seeks treble damages and penalties under the federal and state false claims laws. The document shows only the filing of the complaint.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Brockenbrough-v.-TrueCore-Behavioral-Solutions-LLC-et-al-COMPLAINT-against-BHSB-Holdings-Inc.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 23,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Rowenna Clark v. Solstice RTC, LLC dba Solstice Residential Treatment Center",
+      "case_number": "",
+      "court": "Second Judicial District Court, Davis County, Farmington Department, State of Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Rowenna Clark"
+      ],
+      "defendants": [
+        "Solstice RTC, LLC dba Solstice Residential Treatment Center"
+      ],
+      "facilities_mentioned": [
+        "Solstice Residential Treatment Center (Layton, Utah)"
+      ],
+      "staff_mentioned": [
+        "Alicia Sherman"
+      ],
+      "organizations_mentioned": [
+        "Utah Division of Occupational and Professional Licensing prelitigation panel",
+        "Davis Hospital"
+      ],
+      "claims": [
+        "Medical negligence under the Utah Medical Malpractice Act",
+        "Refusing a resident's requests to go to the hospital",
+        "Failing to monitor and act on failing vital signs",
+        "No medical professional on site",
+        "Negligent policies for passing on resident health information"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Rowenna Clark sued Solstice RTC, LLC, which runs Solstice Residential Treatment Center in Layton, Utah, in Utah state court in Davis County; the complaint is signed January 27, 2017. She alleges that in late August 2014, shortly after she turned 18 at Solstice, she became acutely ill for several days and staff refused her repeated requests to go to the hospital, dismissed her low blood pressure as an equipment error, and relied on a nurse who was mostly off site. She alleges she was finally taken to Davis Hospital with septic shock and kidney failure, was placed on life support in an induced coma for about eleven days, and has lasting health problems. The complaint states a DOPL prelitigation panel issued its certificate of compliance on December 2, 2016. The document shows only the complaint; no case number is filled in.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/CLARK-ROWENNA-vs.-SOLSTICE-RTC-LLC-Complaint.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 10359,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Tenia Goshay, Personal Representative of the Estate of Cornelius Frederick v. Lakeside for Children d/b/a Lakeside Academy, et al.",
+      "case_number": "1:21-cv-00848-RJJ-RSK",
+      "court": "United States District Court for the Western District of Michigan, Southern Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2021-09-30",
+      "status": "filed",
+      "plaintiffs": [
+        "Tenia Goshay, Personal Representative of the Estate of Cornelius Frederick"
+      ],
+      "defendants": [
+        "Lakeside for Children d/b/a Lakeside Academy",
+        "Lakeside Academy",
+        "Sequel Youth Services of Michigan, LLC",
+        "Sequel TSI Holdings, LLC",
+        "Sequel Youth and Family Services, LLC",
+        "Sequel Academy Holdings, LLC",
+        "Sequel Youth Services, LLC",
+        "Cole Hodge",
+        "Zachary Solis",
+        "Michael Mosley",
+        "Orlando Little, Jr.",
+        "Coady Ries",
+        "Maurice Davis",
+        "Ja'Shon Cheeks",
+        "Brandon Reynolds",
+        "Heather McLogan",
+        "Bradley Hodge"
+      ],
+      "facilities_mentioned": [
+        "Lakeside Academy (Kalamazoo, Michigan)"
+      ],
+      "staff_mentioned": [
+        "Cole Hodge",
+        "Zachary Solis",
+        "Michael Mosley",
+        "Orlando Little, Jr.",
+        "Coady Ries",
+        "Maurice Davis",
+        "Ja'Shon Cheeks",
+        "Brandon Reynolds",
+        "Heather McLogan",
+        "Bradley Hodge",
+        "Chris Roussos",
+        "Chip Ripley",
+        "Samantha Lee"
+      ],
+      "organizations_mentioned": [
+        "Sequel Youth and Family Services, LLC",
+        "Michigan Department of Health and Human Services",
+        "Youth Services International",
+        "Bronson Methodist Hospital"
+      ],
+      "claims": [
+        "Excessive force through a suffocating restraint that killed a 16-year-old",
+        "Failure to give medical aid or intervene",
+        "Monell claim that Sequel had a custom and policy of dangerous restraints",
+        "Civil rights violations under 42 U.S.C. 1983 (Eighth and Fourteenth Amendments)",
+        "Failure to train, supervise and discipline staff"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Tenia Goshay, as personal representative of the estate of Cornelius Frederick, sued Lakeside Academy, several Sequel Youth and Family Services companies and ten staff members in federal court in Michigan on September 30, 2021. The complaint alleges that on April 29, 2020, staff at Lakeside Academy in Kalamazoo restrained the 16-year-old state ward on the floor for throwing a sandwich and suffocated him while he said he could not breathe, then gave no aid, and that he died at Bronson Methodist Hospital on May 1, 2020. It alleges he had been restrained many times before, that Sequel was warned by Oregon Senator Sara Gelser about its restraint practices, and that the state had cited the facility for restraint and staffing violations since 2016. It states the state revoked Lakeside Academy's license after his death. The document shows only the filing of the complaint.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/cornelius-frederick-lawsuit-complaint.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 20,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Falcon Ridge Ranch, Inc., et al. v. Sequel Youth Services of Red Rock Canyon, LLC, et al.",
+      "case_number": "200500204",
+      "court": "Fifth Judicial District Court in and for Washington County, State of Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Falcon Ridge Ranch, Inc.",
+        "Red Rock Canyon School, L.L.C.",
+        "Lava Heights Academy, Inc.",
+        "Mount Pleasant Academy, LLC",
+        "Red Rock Canyon School Non-Profit Organization",
+        "Falcon Ridge Ranch Non-Profit Organization",
+        "Red Rock Canyon Charitable Remainder Trust Dated August 15, 2016",
+        "Frank Habibian",
+        "Frank Habibian Dynasty Trust Dated August 9, 2016"
+      ],
+      "defendants": [
+        "Sequel Youth Services of Red Rock Canyon, LLC",
+        "Sequel Youth Services of Falcon Ridge Ranch, LLC",
+        "Sequel Youth Services of Lava Heights, LLC",
+        "Sequel Youth Services of Mount Pleasant, LLC",
+        "Care Youth Corporation"
+      ],
+      "facilities_mentioned": [
+        "Falcon Ridge Ranch (Utah)",
+        "Red Rock Canyon School (St. George, Utah)",
+        "Lava Heights Academy (Utah)",
+        "Mount Pleasant Academy (Utah)"
+      ],
+      "staff_mentioned": [
+        "Frank Habibian",
+        "Melanie Habibian",
+        "Sherman Habibian",
+        "Gerard Habibian",
+        "Brian Pace",
+        "John Stupak",
+        "John (Jay) Ripley",
+        "Sybil Potts",
+        "Ryan Santi",
+        "Mandy Moses",
+        "Steve Gilbert",
+        "Susanne Young",
+        "Roy Day"
+      ],
+      "organizations_mentioned": [
+        "Sequel Youth and Family Services, LLC",
+        "American Arbitration Association",
+        "Nevada Medicaid program",
+        "U.S. Department of Justice"
+      ],
+      "claims": [
+        "Petition to confirm an arbitration award under the Utah Uniform Arbitration Act",
+        "Underlying dispute over Sequel's 2016 purchase of the four CARE Schools",
+        "Sequel's indemnification claim for its 2017 settlement with the United States and Nevada over referral fees tied to Nevada Medicaid students",
+        "Sellers' counterclaim that Sequel breached the purchase agreement and good faith duties to avoid an earn-out payment"
+      ],
+      "outcome": "In the underlying AAA arbitration (No. 01-17-0005-9666), the arbitrator issued an Interim Award on March 2, 2020, and a Final Award on May 1, 2020, denying the Sequel buyers' claims, granting the sellers' counterclaim (a contingent payment of at least $3,118,445), and awarding the sellers $1,300,000 in fees and costs. The sellers filed this amended petition on May 11, 2020, asking the court to confirm the awards; the documents do not show the court's ruling.",
+      "settlement_amount": "",
+      "summary": "Frank Habibian and the companies that sold Falcon Ridge Ranch, Red Rock Canyon School, Lava Heights Academy and Mount Pleasant Academy (the CARE Schools) to Sequel Youth Services in August 2016 asked a Utah state court in Washington County to confirm an arbitration award against the Sequel buyers; the amended petition is dated May 11, 2020. In the arbitration, Sequel sought indemnity for a June 2017 settlement of about $2.58 million it paid the United States and Nevada after self-reporting that the schools had paid referral fees for students covered by Nevada Medicaid. The arbitrator dismissed that claim because Sequel settled without notifying the sellers, found the sellers had been ignorant of the law rather than fraudulent, and ruled that Sequel breached the purchase agreement in how it ran the schools after the sale. This is a business dispute between a program's sellers and buyers, not an abuse case, but it documents the referral-fee practice and the Medicaid settlement. The documents do not show whether the court confirmed the award.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/FALCON-RIDGE-RANCH-INC-et-al.-vs.-SEQUEL-YOUTH-SVCS-FALCON-RIDGE-et-al-Amended-Petition.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 9607,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 10368,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 9611,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 10367,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 20,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Scott Green and Michele Green v. Susan L. Scheff, et al.",
+      "case_number": "",
+      "court": "Circuit Court of the Seventeenth Judicial Circuit in and for Broward County, Florida",
+      "jurisdiction": "Florida",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Scott Green",
+        "Michele Green"
+      ],
+      "defendants": [
+        "Susan L. Scheff",
+        "Parents Universal Resource Experts, Inc.",
+        "Focal Point Academy, LLC",
+        "Glen Horlacher",
+        "Boyd Hooper"
+      ],
+      "facilities_mentioned": [
+        "Focal Point Academy (Mesquite, Nevada)"
+      ],
+      "staff_mentioned": [
+        "Glen Horlacher",
+        "Kellee Horlacher",
+        "Kimberly Allen",
+        "Tim Hamilton",
+        "Boyd Hooper",
+        "Susan L. Scheff"
+      ],
+      "organizations_mentioned": [
+        "Parents Universal Resource Experts, Inc. (P.U.R.E.)",
+        "AKME Consulting",
+        "WWASP"
+      ],
+      "claims": [
+        "Fraud in the inducement by a referral service that hid per-student kickbacks",
+        "Breach of contract",
+        "Breach of the implied covenant of good faith and fair dealing",
+        "Breach of fiduciary duty",
+        "Unjust enrichment",
+        "Failure to protect a student from sexual and physical assaults by other students"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Scott and Michele Green sued Sue Scheff, her referral company Parents Universal Resource Experts (P.U.R.E.), Focal Point Academy of Mesquite, Nevada, its co-owner Glen Horlacher, and recruiter Boyd Hooper in Broward County, Florida circuit court; the complaint is dated June 2007. They allege Scheff presented herself as an unpaid parent advocate while Focal Point paid her per referral, and that Hooper posed as a school administrator while working as a paid recruiter. They allege the school misrepresented its accreditation, therapy and teachers, never did the paid assessment, let their son choose his own medications, left an ear infection untreated, and did nothing when he reported repeated beatings and sexual assaults by other students, instead isolating him when he tried to call home. They allege they removed him in 2006 and never received a promised refund. The document shows only the complaint.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/green-v-focal-point-academy.pdf"
+      ],
+      "tags": [],
+      "facility_links": [
+        {
+          "facility_id": 12440,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "J.O.R., et al. v. Hidden Lake Academy, Inc., et al.",
+      "case_number": "2:06-cv-00146-WCO",
+      "court": "U.S. District Court for the Northern District of Georgia, Gainesville Division",
+      "jurisdiction": "Federal",
+      "filing_date": "2006-09-11",
+      "status": "filed",
+      "plaintiffs": [
+        "J.O.R.",
+        "R.R.",
+        "D.M.",
+        "R.B."
+      ],
+      "defendants": [
+        "Hidden Lake Academy, Inc.",
+        "HLA, Inc.",
+        "Hidden Lake Foundation, Inc.",
+        "Dr. Leonard Buccellato"
+      ],
+      "facilities_mentioned": [
+        "Hidden Lake Academy (Dahlonega, Georgia)",
+        "Ridge Creek (Dahlonega, Georgia)"
+      ],
+      "staff_mentioned": [
+        "Dr. Leonard Buccellato",
+        "Kenneth Spooner",
+        "Clarke Poole",
+        "Nicole Fuglslang",
+        "Dr. Steven Taylor",
+        "Dr. Brad Carpenter"
+      ],
+      "organizations_mentioned": [
+        "HLA, Inc.",
+        "Hidden Lake Foundation, Inc.",
+        "Ridge Creek, Inc.",
+        "St. Francis Day School"
+      ],
+      "claims": [
+        "Misrepresenting teacher and counselor credentials to families",
+        "Letting unlicensed staff dispense prescription medication",
+        "Enrolling violent or court-ordered students despite promising otherwise",
+        "Routine strip searches of students not disclosed to parents",
+        "Undisclosed fees and mark-ups despite advertised all-inclusive tuition",
+        "Using students for manual labor",
+        "Founder's self-dealing with school funds and gifts to education consultants"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Four families identified by initials filed a class action complaint on September 11, 2006 in federal court in Gainesville, Georgia against Hidden Lake Academy, its related nonprofit entities, and founder Dr. Leonard Buccellato. The complaint alleges that from 2000 onward the therapeutic boarding school misrepresented that its teachers were state certified and its counselors clinically trained, let unlicensed staff dispense medication, and enrolled violent students despite telling parents it did not. It also alleges routine strip searches, student labor, and undisclosed charges and mark-ups on top of an advertised all-inclusive tuition of over $5,900 a month. The copy on file is the first 27 pages of the complaint and does not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/HiddenLakeComplaint.pdf"
+      ],
+      "tags": [
+        "class action",
+        "Georgia",
+        "therapeutic boarding school"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 12539,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "John R. v. United Behavioral Health, et al.",
+      "case_number": "2:18-cv-35-TC-DAO",
+      "court": "U.S. District Court for the District of Utah, Central Division",
+      "jurisdiction": "Federal",
+      "filing_date": "",
+      "status": "ruling",
+      "plaintiffs": [
+        "John R.",
+        "Charles R."
+      ],
+      "defendants": [
+        "United Behavioral Health",
+        "The Guardian Choice Plus POS Plan for Home Office Employees"
+      ],
+      "facilities_mentioned": [
+        "Summit Achievement (Maine)",
+        "Second Nature Blue Ridge Wilderness Therapy (Georgia)",
+        "In Balance Ranch Academy (Arizona)"
+      ],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "UnitedHealthcare",
+        "Guardian Life Insurance Company of America",
+        "In Balance Counseling, Inc."
+      ],
+      "claims": [
+        "Wrongful denial of ERISA health plan benefits",
+        "Insurer refused coverage for wilderness and residential treatment",
+        "Denials based on medical necessity and claim-filing deadlines"
+      ],
+      "outcome": "On September 24, 2021 the court granted the defendants' motion for summary judgment and denied the plaintiffs' motion, upholding the denial of coverage for all three programs.",
+      "settlement_amount": "",
+      "summary": "John R. and his son Charles R. sued United Behavioral Health and his employer's health plan under ERISA after the insurer denied coverage for the son's treatment as a teenager from 2014 to 2016. The treatment included about two months at Summit Achievement wilderness program in Maine, about two and a half months at Second Nature Blue Ridge in Georgia, and about a year and a half at In Balance Ranch Academy in Arizona. The insurer denied the Summit and In Balance claims on procedural grounds and the Second Nature claim as not medically necessary. On September 24, 2021 Judge Tena Campbell granted summary judgment to the defendants and affirmed all three denials. The case is about insurance coverage, not abuse at the programs.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/insurance-coverage-lawsuit-2NBR-In-Balance-Ranch-Summit-Achievment.pdf"
+      ],
+      "tags": [
+        "insurance",
+        "ERISA",
+        "wilderness therapy",
+        "Utah"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 11030,
+          "link_type": "mentioned"
+        },
+        {
+          "facility_id": 12238,
+          "link_type": "mentioned"
+        }
+      ]
+    },
+    {
+      "case_name": "Newman v. Lichfield, et al.",
+      "case_number": "DA 10-0548",
+      "court": "Supreme Court of Montana (appeal from the Twentieth Judicial District Court, Sanders County)",
+      "jurisdiction": "Montana",
+      "filing_date": "2006-10-23",
+      "status": "ruling",
+      "plaintiffs": [
+        "Judith Newman, as Personal Representative of the Estate of Karlye Newman"
+      ],
+      "defendants": [
+        "Robert Lichfield",
+        "World Wide Association of Specialty Programs and Schools, Inc."
+      ],
+      "facilities_mentioned": [
+        "Spring Creek Lodge Academy (Thompson Falls, Montana)"
+      ],
+      "staff_mentioned": [
+        "Robert Lichfield",
+        "Brent Facer",
+        "Cameron Pullan",
+        "Chaffin Pullan"
+      ],
+      "organizations_mentioned": [
+        "World Wide Association of Specialty Programs and Schools (WWASP)",
+        "Premier Educational Systems, LLC",
+        "Teen Help, LLC",
+        "National Contract Services, LLC",
+        "Peacox Enterprises, LLC",
+        "Spring Creek Lodge, Inc."
+      ],
+      "claims": [
+        "Wrongful death after a student's suicide at the school",
+        "Negligent care and supervision of a suicidal student",
+        "Deceit and negligent misrepresentation in marketing",
+        "Breach of contract and fiduciary duty",
+        "Civil conspiracy and Consumer Protection Act violations"
+      ],
+      "outcome": "Newman settled with Spring Creek, Teen Help and National Contract in early 2010. A jury returned a defense verdict for Lichfield and WWASP on October 27, 2010. On March 6, 2012 the Montana Supreme Court affirmed in part, reversed in part and remanded for a new trial, holding the trial court wrongly limited evidence on foreseeability.",
+      "settlement_amount": "",
+      "summary": "Judith Newman sued over the death of her daughter Karlye, who was found hanged at Spring Creek Lodge Academy in Thompson Falls, Montana on October 7, 2004 and died at age 16. She filed suit on October 23, 2006 against Spring Creek and its directors, later adding WWASP founder Robert Lichfield, WWASP, Teen Help, National Contract and Peacox, and alleged negligent care, wrongful death and deceptive marketing to parents of suicidal youth. She settled with Spring Creek, Teen Help and National Contract in 2010, and a jury found for Lichfield and WWASP in October 2010. On March 6, 2012 the Montana Supreme Court reversed in part and ordered a new trial. The documents do not show what happened after remand.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Newman-v.-Lichfield-Spring-Creek-Lodge.pdf"
+      ],
+      "tags": [
+        "WWASP",
+        "wrongful death",
+        "suicide",
+        "Montana",
+        "appeal"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 12729,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 29,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Kennefick and Whitcomb v. Lifeline for Youth, et al.",
+      "case_number": "",
+      "court": "Bountiful Judicial District Court, Davis County, Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Joseph Kennefick",
+        "Hillary Whitcomb",
+        "Estate of Joseph Hunter Kennefick"
+      ],
+      "defendants": [
+        "Lifeline for Youth",
+        "Lifeline Behavioral Health, LLC",
+        "Life-Line, Inc.",
+        "Jane Doe X",
+        "John Doe Y",
+        "John Does 1-10"
+      ],
+      "facilities_mentioned": [
+        "Lifeline for Youth (North Salt Lake, Utah)"
+      ],
+      "staff_mentioned": [
+        "Jane Doe X (counselor)",
+        "John Doe Y (counselor)"
+      ],
+      "organizations_mentioned": [],
+      "claims": [
+        "Counselors took residents out and supplied them alcohol and drugs",
+        "Breach of contract and fraudulent inducement",
+        "Negligent hiring, training and retention",
+        "Intentional and negligent infliction of emotional distress",
+        "Wrongful death"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Joseph Kennefick and Hillary Whitcomb, individually and for the estate of their son Joseph Hunter Kennefick, filed a complaint dated October 19, 2018 in Davis County, Utah against Lifeline for Youth and related entities. They allege that in 2011, while their son was 13 or 14 and in residential drug treatment at Lifeline, two of his counselors took him and other youths out, supplied them alcohol and drugs, and encouraged them to use. The complaint alleges this set off years of relapse and contributed to his death in September 2018 at age 21, and brings thirteen claims including breach of contract, fraud, negligent hiring and wrongful death. The copy on file carries no case number or filing stamp and does not show an outcome. This is a different case from Whitcomb and Clifford v. InnerChange Chrysalis already on the page.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Whitcomb-vs-LifeLine-Behavioral-Health-Complaint.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "wrongful death",
+        "drug treatment"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 10466,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Zanolini v. Liahona Academy for Youth, LLC",
+      "case_number": "",
+      "court": "Fifth Judicial District Court, Washington County, Utah",
+      "jurisdiction": "Utah",
+      "filing_date": "",
+      "status": "filed",
+      "plaintiffs": [
+        "Jordan Alexander Zanolini"
+      ],
+      "defendants": [
+        "Liahona Academy for Youth, LLC"
+      ],
+      "facilities_mentioned": [
+        "Liahona Academy (Virgin, Utah)"
+      ],
+      "staff_mentioned": [
+        "Parker Haslam (program director)",
+        "Derek Durham",
+        "Taylor Jacobson",
+        "Jared (staff member, last name not given)"
+      ],
+      "organizations_mentioned": [],
+      "claims": [
+        "Punching and pressure-point restraints by staff",
+        "Forced to stand outside in freezing temperatures in shorts",
+        "Forced to wear diapers for months",
+        "Made to sit facing a wall from 6 am to 10 pm for weeks",
+        "Negligent hiring and supervision",
+        "Assault, battery and intentional infliction of emotional distress"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Jordan Zanolini, a former student placed at Liahona Academy in Virgin, Utah as a minor, sued Liahona Academy for Youth, LLC in a complaint dated April 26, 2021 in Utah's Fifth Judicial District Court in Washington County. He alleges staff punched him and repeatedly restrained him with pressure points, that the program director lifted him by the neck, threw him across a room and rubbed his face into a carpet, and that he was made to stand outside in freezing weather in shorts. He also alleges he was forced to wear diapers for months and punished on work crew by sitting facing a wall from 6 am to 10 pm for weeks. The copy on file has no case number and does not show an outcome.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Zanolini-vs-Liahona-Academy-Complaint.pdf"
+      ],
+      "tags": [
+        "Utah",
+        "physical abuse",
+        "restraint"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 10462,
+          "link_type": "primary"
+        }
+      ]
+    },
+    {
+      "case_name": "Dungan, et al. v. The Academy at Ivy Ridge, et al.",
+      "case_number": "",
+      "court": "U.S. District Court for the Northern District of New York",
+      "jurisdiction": "Federal",
+      "filing_date": "2006-07-25",
+      "status": "filed",
+      "plaintiffs": [
+        "Bruce Dungan",
+        "Shelley Dungan",
+        "W. Patrick Dungan",
+        "Cecelia Eighmey",
+        "Steven Eighmey",
+        "Tommy Lee Halford, Sr.",
+        "Tommy Lee Halford, Jr.",
+        "Roger Keroack",
+        "Lori Keroack",
+        "Holly Stepp",
+        "Robert P. MacRae",
+        "Patricia A. MacRae",
+        "Anthony Mazzullo",
+        "Anthony Mazzullo, Jr.",
+        "Irene Pfeffer",
+        "Victoria Shevchenko",
+        "Vadim Soskil",
+        "Lisa Stocki",
+        "Edward Stocki",
+        "Krystina Stocki",
+        "Ronald Wose",
+        "Sandra Wose",
+        "C. Richard Wyatt",
+        "Rebecca Wyatt",
+        "Farrah Wyatt"
+      ],
+      "defendants": [
+        "The Academy at Ivy Ridge",
+        "Academy at Ivy Ridge, Inc.",
+        "Academy at Ivy Ridge, LLC",
+        "Jason G. Finlinson",
+        "Joseph Mitchell",
+        "Alyn Mitchell",
+        "Robert B. Lichfield",
+        "World Wide Association of Specialty Programs and Schools, Inc.",
+        "Northwest Association of Accredited Schools, Inc.",
+        "et al."
+      ],
+      "facilities_mentioned": [
+        "The Academy at Ivy Ridge (Ogdensburg, New York)"
+      ],
+      "staff_mentioned": [
+        "Jason G. Finlinson",
+        "Joseph Mitchell",
+        "Alyn Mitchell",
+        "Robert B. Lichfield"
+      ],
+      "organizations_mentioned": [
+        "World Wide Association of Specialty Programs and Schools (WWASP)",
+        "Premier Educational Systems, LLC",
+        "Northwest Association of Schools and Colleges and Universities, Inc.",
+        "Northwest Association of Accredited Schools, Inc.",
+        "Jason G. Finlinson Corp.",
+        "Joseph & Alyn Mitchell Corp.",
+        "Teens In Crisis, Inc.",
+        "Teens In Crisis, LLC",
+        "Lifelines Family Services, Inc. (Teen Life Lines)",
+        "Teen Soulutions, LLC"
+      ],
+      "claims": [
+        "Falsely representing the school was licensed by New York to award credits and diplomas",
+        "RICO violations",
+        "Fraud, fraud in the inducement and conspiracy to defraud",
+        "Negligent misrepresentation and unjust enrichment",
+        "Deceptive business practices under New York General Business Law 349 and 350",
+        "Breach of contract"
+      ],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Families of former students filed a class action complaint on July 25, 2006 in federal court in the Northern District of New York against The Academy at Ivy Ridge in Ogdensburg, its owners, WWASP and Robert Lichfield, an accrediting body, and several referral companies. The complaint alleges the defendants falsely told parents and the public that Ivy Ridge was licensed and authorized by New York State to award high school credits and diplomas. It brings claims under RICO and New York law, including fraud, conspiracy, deceptive business practices and breach of contract. The document on file is the complaint and does not show how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/ivyridge_classaction_suit.pdf"
+      ],
+      "tags": [
+        "class action",
+        "WWASP",
+        "New York",
+        "RICO",
+        "diplomas"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 12023,
+          "link_type": "primary"
+        },
+        {
+          "facility_id": 29,
+          "link_type": "related"
+        }
+      ]
+    },
+    {
+      "case_name": "Houlahan v. World Wide Association of Specialty Programs and Schools, et al.",
+      "case_number": "1:04-cv-01161",
+      "court": "U.S. District Court for the District of Columbia",
+      "jurisdiction": "Federal",
+      "filing_date": "",
+      "status": "unknown",
+      "plaintiffs": [
+        "Thomas G. Houlahan"
+      ],
+      "defendants": [
+        "World Wide Association of Specialty Programs and Schools",
+        "et al."
+      ],
+      "facilities_mentioned": [],
+      "staff_mentioned": [],
+      "organizations_mentioned": [
+        "World Wide Association of Specialty Programs and Schools (WWASP)",
+        "Teen Help",
+        "NATSAP",
+        "IECA",
+        "Woodbury Reports"
+      ],
+      "claims": [],
+      "outcome": "",
+      "settlement_amount": "",
+      "summary": "Thomas G. Houlahan was the plaintiff in a federal case against the World Wide Association of Specialty Programs and Schools (WWASP) and others in the U.S. District Court for the District of Columbia. The only document on file is the report of the plaintiff's expert witness, industry consultant Lon Woodbury, filed as an exhibit on February 1, 2006. Woodbury's report compares WWASP programs to industry standards, citing referral fees, commission-paid marketers, enrollments far over 200, open-ended phone blackouts, students used as junior staff to enforce discipline, and more abuse claims and closures than at other programs. The document does not state the plaintiff's claims or how the case ended.",
+      "source_urls": [],
+      "document_urls": [
+        "https://kidsoverprofits.org/wp-content/uploads/Lon-Woodbury-Expert-Report.pdf"
+      ],
+      "tags": [
+        "WWASP",
+        "expert report",
+        "Federal"
+      ],
+      "facility_links": [
+        {
+          "facility_id": 29,
+          "link_type": "primary"
+        }
+      ]
     }
   ],
   "updates": [
@@ -414,6 +1269,192 @@
           "https://www.reddit.com/r/troubledteens/wiki/index/provocanyon/"
         ]
       }
+    },
+    {
+      "match_case_name": "Sherman, et al. v. Trinity Teen Solutions, et al.",
+      "set": {
+        "case_number": "20-CV-00215-SWS",
+        "court": "U.S. District Court for the District of Wyoming",
+        "jurisdiction": "Federal",
+        "defendants": [
+          "Trinity Teen Solutions, Inc.",
+          "Triangle Cross Ranch, LLC",
+          "Monks of the Most Blessed Virgin Mary of Mount Carmel (Mystic Monk Coffee)",
+          "Gerald E. Schneider",
+          "Michaeleen P. Schneider",
+          "Angela C. Woodward",
+          "Jerry D. Woodward",
+          "Diocese of Cheyenne",
+          "Society of Our Lady of the Most Holy Trinity",
+          "et al."
+        ],
+        "facilities_mentioned": [
+          "Trinity Teen Solutions (Powell, Wyoming)",
+          "Triangle Cross Ranch (Powell, Wyoming)",
+          "Mount Carmel Youth Ranch (Wyoming)",
+          "Rock Creek Ranch (Wyoming)"
+        ],
+        "staff_mentioned": [
+          "Gerald (Jerry) Schneider",
+          "Michaeleen P. Schneider",
+          "Angela (Angie) Woodward",
+          "Jerry D. Woodward",
+          "Fr. Daniel Schneider",
+          "Mathew Schneider",
+          "Mark Schneider",
+          "Kara Woodward",
+          "Kyle Woodward",
+          "Thomas George",
+          "Judith Jefferis"
+        ],
+        "organizations_mentioned": [
+          "Monks of the Most Blessed Virgin Mary of Mount Carmel (Mystic Monk Coffee)",
+          "Dally-Up, LLC",
+          "Rock Creek Ranch, Inc.",
+          "Diocese of Cheyenne",
+          "Society of Our Lady of the Most Holy Trinity",
+          "New Mount Carmel Foundation, Inc.",
+          "Wyoming Department of Family Services"
+        ],
+        "claims": [
+          "Forced labor of teens under the Trafficking Victims Protection Reauthorization Act",
+          "Trafficking for labor",
+          "RICO violations",
+          "Promised therapies the programs did not provide",
+          "Negligence and negligent infliction of emotional distress"
+        ],
+        "summary": "Former residents Carlie Sherman, Anna Gozun, Amanda Nash, Andrew Scavuzzo and Ehan Jelinek brought a class action in the U.S. District Court for the District of Wyoming against Trinity Teen Solutions, Triangle Cross Ranch, the Schneider and Woodward families who own and run them, a Carmelite monastery that sells Mystic Monk Coffee, the Diocese of Cheyenne, and others. The first amended complaint, filed February 12, 2021, alleges the ranches near Powell, Wyoming charged parents for therapy and schooling they did not provide and instead used teens as unpaid ranch and other labor. It brings forced labor and trafficking claims under federal law, RICO claims, and negligence claims. Class action status was approved 10/31/2023, and trial was scheduled for 03/17/2025.",
+        "document_urls": [
+          "https://kidsoverprofits.org/wp-content/uploads/sherman-et-al-v-trinity-teen-solutions-et-al.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/2024/08/Class-Action-Approval-TTS-TCR.pdf"
+        ],
+        "tags": [
+          "class action",
+          "Wyoming",
+          "forced labor",
+          "trafficking",
+          "RICO"
+        ]
+      }
+    },
+    {
+      "match_case_name": "Shiver v. Southstone Behavioral Health and Acadia Healthcare",
+      "set": {
+        "case_name": "Shiver v. Acadia Healthcare, LLC and Southstone Behavioral Health",
+        "case_number": "CL24000490-00",
+        "court": "Halifax County Circuit Court, Virginia",
+        "defendants": [
+          "Acadia Healthcare, LLC",
+          "Southstone Behavioral Healthcare Center, LLC (sued as Southstone Behavioral Health)"
+        ],
+        "outcome": "On September 5, 2024 the court granted the defense motion to quash service and denied Shiver's first motion for default judgment. After Southstone was re-served on September 11, 2024, it filed an answer six business days late on October 10, 2024 with a motion for leave; Shiver opposed and noticed a renewed default judgment motion for November 8, 2024. The documents do not show the ruling.",
+        "summary": "Joshua Caleb Shiver, representing himself, sued Acadia Healthcare and its Halifax County, Virginia facility Southstone Behavioral Health in Halifax County Circuit Court; the complaint was filed 06/14/2024. On September 5, 2024 the court granted the defense motion to quash improper service and denied Shiver's motion for default judgment. Southstone was re-served on September 11, 2024 and filed its answer late on October 10, 2024, denying the allegations and raising defenses including the statute of limitations and Virginia's malpractice damages cap. Shiver opposed the late answer and moved again for default judgment, with a hearing noticed for November 8, 2024.",
+        "document_urls": [
+          "https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Complaint.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/2024/08/Shiver-v.-Southstone-Summons.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/2024-10-10-Answer-to-Complaint93753554.1.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/southstone-joshua-2024-10-23-Brief-in-Support-of-Motion-for-Leave-to-File-Late-Answer94433561.1.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/southstone-joshua-brief-in-opposition.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/2024/08/SouthstoneDefaultMotion.pdf",
+          "https://kidsoverprofits.org/wp-content/uploads/SouthstoneDefaultMotion-1.pdf"
+        ],
+        "tags": [
+          "Acadia Healthcare",
+          "Virginia",
+          "default judgment",
+          "pro se"
+        ]
+      }
+    },
+    {
+      "match_case_name": "Anonymous v. Hyde School at South Woodstock (Connecticut)",
+      "set": {
+        "status": "in_progress",
+        "defendants": [
+          "Hyde School at South Woodstock, Inc.",
+          "Hyde School"
+        ],
+        "facilities_mentioned": [
+          "Hyde School at South Woodstock (Woodstock, Connecticut)"
+        ],
+        "organizations_mentioned": [
+          "Hyde School (Bath, Maine)"
+        ],
+        "staff_mentioned": [
+          "Duncan McCrann (described in a plaintiff's motion as head of Hyde School at the time)"
+        ],
+        "claims": [
+          "Negligence in supervising campers at the Summer Leadership Challenge camp",
+          "Negligent infliction of emotional distress",
+          "Negligent supervision and training of camp staff",
+          "Negligent hiring and retention of camp staff"
+        ],
+        "outcome": "No final judgment, settlement or withdrawal of the action appears in the filings. On Sep 4, 2024 the court let the defendants file a late summary judgment motion; the plaintiff's response deadline was extended to Nov 18, 2024. On Oct 30, 2024 the court granted a joint motion to continue the Feb 4, 2025 jury trial (requested to early June 2025).",
+        "summary": "A woman proceeding as Jane Doe sued Hyde School at South Woodstock, Inc. and Hyde School (Bath, Maine) in Connecticut Superior Court at Putnam in February 2021. She alleges that in summer 2005, as a 16-year-old camper at the schools' Summer Leadership Challenge camp on the Woodstock campus, two male campers woke her at night, took her to a secluded spot and sexually assaulted her, and that the schools failed to supervise campers and to hire, train and supervise staff properly, causing lasting PTSD and depression. The court allowed her to proceed under a pseudonym (temporary order March 2, 2021; full ruling by Judge Ann E. Lynch on June 8, 2021); no order sealing the file appears, only the pseudonym order. After a request to revise, she filed a revised complaint on September 14, 2021 and withdrew four duplicate emotional-distress counts; a defense motion for nonsuit over late discovery answers (September 2021) was followed by her compliance that October, and pleadings were certified closed on May 29, 2024. Discovery included her December 2022 deposition, out-of-state depositions of a former roommate and former boyfriend, a treating counselor and a causation expert for the plaintiff, a defense psychiatric examination the court allowed over her objection, and a subpoena to former head of school Duncan McCrann. The defendants moved for summary judgment in August 2024, arguing she has no evidence the campers or any staff member had a known propensity for such conduct; the filings end with that motion pending and the February 2025 trial continued by agreement toward June 2025.",
+        "filebird_folder_id": 7803
+      }
+    },
+    {
+      "match_case_name": "Sweidy v. Spring Ridge Academy, et al.",
+      "set": {
+        "case_number": "3:21-cv-08013-SPL",
+        "filing_date": "2021-01-21",
+        "status": "in_progress",
+        "defendants": [
+          "Spring Ridge Academy",
+          "Kate Deily",
+          "Jean Courtney",
+          "Suzanne Courtney",
+          "Brandon Courtney",
+          "Erin Smith",
+          "Leslie Filsinger",
+          "Justin Zych",
+          "Veronica Borges"
+        ],
+        "facilities_mentioned": [
+          "Spring Ridge Academy (Mayer, Arizona)"
+        ],
+        "staff_mentioned": [
+          "Jean Courtney (co-founder)",
+          "David Gilcrease (co-founder)",
+          "Suzanne Courtney (Executive Director)",
+          "Brandon Courtney (President/CEO and Program Director)",
+          "Erin Smith (Director of Operational Excellence)",
+          "Leslie Filsinger (Clinical Director)",
+          "Justin Zych (Principal)",
+          "Kate Deily (Admissions Director)",
+          "Veronica Borges (therapist)",
+          "Kelly Rudolf (Community Life Director, Transition Specialist)",
+          "Susan Dougherty (staff supervisor)"
+        ],
+        "organizations_mentioned": [
+          "Lifespring",
+          "National Association of Therapeutic Schools and Programs (NATSAP)",
+          "Arizona Department of Health Services",
+          "Yavapai County Sheriff's Office",
+          "Reddit, Inc."
+        ],
+        "claims": [
+          "Actual and constructive fraud in inducing enrollment",
+          "Arizona Consumer Fraud Act violations",
+          "Breach of contract and warranty",
+          "Breach of the covenant of good faith and fair dealing",
+          "Civil RICO",
+          "Negligence per se",
+          "Intentional infliction of emotional distress and conversion"
+        ],
+        "outcome": "On August 15, 2023 the court granted summary judgment to Veronica Borges, Jean Courtney, Suzanne Courtney, Brandon Courtney, Erin Smith, Leslie Filsinger and Justin Zych, and dismissed every claim except fraud and consumer fraud against Spring Ridge Academy and Kate Deily. After a jury trial that began May 29, 2024, the jury returned a $2.5 million verdict for Kimberly Sweidy on June 14, 2024. On January 8, 2025 the court granted the defendants' motion for a new trial, finding a reasonable possibility that a juror viewed prejudicial outside information on Reddit during deliberations, and vacated the verdict; pending motions for attorney fees and costs were denied as moot.",
+        "summary": "Kimberly Sweidy sued Spring Ridge Academy, a therapeutic boarding school for girls in Mayer, Arizona, and eight of its staff in federal court in Arizona on January 21, 2021, after enrolling her daughter there in December 2019 and removing her in February 2020. She alleges the school misrepresented its program before enrollment, used seminars modeled on Lifespring-style large group awareness training rather than evidence-based therapy, and used shaming, isolation and restricted parent contact. In August 2023 the court dismissed the individual staff defendants except Admissions Director Kate Deily and left only the fraud and consumer fraud claims for trial. A jury trial ran from May 29 to June 14, 2024, with testimony from school leaders and staff, former students, a parent of another student and expert witnesses on both sides. The jury returned a $2.5 million verdict for Sweidy on June 14, 2024. On January 8, 2025 Judge Steven P. Logan granted a new trial, finding a juror had likely visited Reddit during deliberations and later posted in the Troubled Teens subreddit that they had served on the jury, so the verdict no longer stands and the case awaits retrial.",
+        "tags": [
+          "fraud",
+          "consumer fraud",
+          "jury verdict",
+          "new trial",
+          "large group awareness training",
+          "Arizona"
+        ],
+        "filebird_folder_id": 7852
+      }
     }
   ],
   "facility_links_add": [
@@ -431,6 +1472,16 @@
       "lawsuit_id": 13,
       "facility_id": 10335,
       "link_type": "primary"
+    }
+  ],
+  "delete_duplicates": [
+    {
+      "keep_id": 17,
+      "drop_id": 22
+    },
+    {
+      "keep_id": 15,
+      "drop_id": 23
     }
   ]
 }

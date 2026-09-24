@@ -358,6 +358,27 @@ a.kop-tag:focus-visible {
     text-decoration: underline;
 }
 
+/* Every filing in the case's document folder, collapsed by default */
+.kop-card-docs {
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.kop-card-docs summary {
+    cursor: pointer;
+    color: var(--kop-teal);
+    font-weight: 600;
+}
+
+.kop-card-docs summary:hover {
+    color: var(--kop-navy-blue);
+}
+
+.kop-card-docs .kop-coverage-list {
+    max-height: 22rem;
+    overflow-y: auto;
+}
+
 /* ── Summary (expandable) ────────────────────────────── */
 
 .kop-card-summary-toggle {

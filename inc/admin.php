@@ -1474,6 +1474,27 @@ function kop_apply_lawsuit_seeds() {
                 $done[] = 'updated:' . $target_id;
             }
         }
+        // Second copies of a case the seed inserted twice. Only dropped while the
+        // kept row still carries the same case_name, so a later rename is safe.
+        $name_of = $pdo->prepare('SELECT case_name FROM lawsuits WHERE id = ?');
+        foreach ((array) ($spec['delete_duplicates'] ?? array()) as $dup) {
+            $keep = (int) ($dup['keep_id'] ?? 0);
+            $drop = (int) ($dup['drop_id'] ?? 0);
+            if ($keep <= 0 || $drop <= 0 || $keep === $drop) {
+                continue;
+            }
+            $name_of->execute(array($keep));
+            $keep_name = $name_of->fetchColumn();
+            $name_of->execute(array($drop));
+            $drop_name = $name_of->fetchColumn();
+            if ($keep_name === false || $keep_name !== $drop_name) {
+                continue;
+            }
+            $pdo->prepare('DELETE FROM lawsuit_facility_links WHERE lawsuit_id = ?')->execute(array($drop));
+            $pdo->prepare('DELETE FROM lawsuit_news_links WHERE lawsuit_id = ?')->execute(array($drop));
+            $pdo->prepare('DELETE FROM lawsuits WHERE id = ?')->execute(array($drop));
+            $done[] = 'deleted:' . $drop;
+        }
         foreach ((array) ($spec['facility_links_add'] ?? array()) as $link) {
             if (empty($link['lawsuit_id']) || empty($link['facility_id'])) {
                 continue;
@@ -1611,7 +1632,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '33';
+    $version = '34';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

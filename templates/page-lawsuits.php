@@ -263,6 +263,19 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
             $lawsuit_id   = (int)$case['id'];
             $facility_tags = $facility_tags_for($facilities, $facility_links[$lawsuit_id] ?? []);
             $coverage      = $news_links[$lawsuit_id] ?? [];
+            // A case's FileBird folder (and its subfolders) lists every filing,
+            // minus the ones already linked as "Court doc N" above it.
+            $folder_docs = [];
+            if (!empty($case['filebird_folder_id']) && function_exists('kop_get_attachments_in_folder_ids')) {
+                $linked = array_flip($doc_urls);
+                foreach (kop_get_attachments_in_folder_ids(kop_get_descendant_ids_for_roots([(int)$case['filebird_folder_id']])) as $att) {
+                    $att_url = wp_get_attachment_url($att->ID);
+                    if ($att_url && !isset($linked[$att_url])) {
+                        $folder_docs[] = ['title' => $att->post_title, 'url' => $att_url];
+                    }
+                }
+                usort($folder_docs, static function ($a, $b) { return strnatcasecmp($a['title'], $b['title']); });
+            }
         ?>
         <div class="kop-record-card"
              data-status="<?php echo esc_attr($status_slug); ?>"
@@ -371,6 +384,17 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
                     <a class="kop-card-link" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">Court doc<?php echo count($doc_urls) > 1 ? ' ' . ($doc_i + 1) : ''; ?> &rarr;</a>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
+
+            <?php if ($folder_docs): ?>
+            <details class="kop-card-docs">
+                <summary><?php echo esc_html(count($folder_docs) . ' more court document' . (count($folder_docs) === 1 ? '' : 's')); ?></summary>
+                <ul class="kop-coverage-list">
+                    <?php foreach ($folder_docs as $doc): ?>
+                    <li class="kop-coverage-item"><a href="<?php echo esc_url($doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($doc['title']); ?></a></li>
+                    <?php endforeach; ?>
+                </ul>
+            </details>
             <?php endif; ?>
         </div>
         <?php endforeach; ?>
