@@ -4,6 +4,13 @@
  * Template Post Type: page
  */
 
+// Its styles (css/kop-styles.css) were never enqueued, so the page
+// rendered unstyled, straight on the site's gradient.
+$kop_styles_css = get_stylesheet_directory() . '/css/kop-styles.css';
+if (file_exists($kop_styles_css)) {
+    wp_enqueue_style('kop-styles', get_stylesheet_directory_uri() . '/css/kop-styles.css', array('kop-colors'), filemtime($kop_styles_css));
+}
+
 get_header();
 ?>
 
