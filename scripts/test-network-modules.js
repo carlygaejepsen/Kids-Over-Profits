@@ -3315,6 +3315,37 @@ function run() {
     routeDrawer.update();
     check(!focus.isPath() && routeDrawer.shownId() === routes[routes.length - 1].ids[1],
         'a name in the written-out route did not open, or the drawer did not follow it');
+
+    /* A name's drawer is a way into the form: "How is this connected
+     * to...?" opens it with that name as From and an empty To. */
+    const startEls = {
+        panel: doc.createElement('div'), toggle: doc.createElement('button'),
+        from: doc.createElement('input'), to: doc.createElement('input'), message: doc.createElement('p')
+    };
+    startEls.panel.hidden = true;
+    startEls.to.value = 'left over from before';
+    const startUi = PathUi.create({ store, focus, document: doc, elements: startEls });
+    let routedFrom = null;
+    const startBody = doc.createElement('div');
+    const startDrawer = Drawer.create({
+        store, focus, config: drawerConfig, document: doc,
+        drawer: doc.createElement('aside'), body: startBody, close: doc.createElement('button'),
+        routeFrom: (node) => { routedFrom = node; startUi.startFrom(node); }
+    });
+    startDrawer.show(gil);
+    const routeFromButtons = startBody.querySelectorAll('.kop-network__drawer-route');
+    check(routeFromButtons.length === 1, 'a name with connections has ' + routeFromButtons.length + ' "How is this connected" buttons');
+    routeFromButtons[0].dispatch('click');
+    check(routedFrom === gil && startEls.panel.hidden === false && startEls.from.value === gil.name && startEls.to.value === '',
+        'the drawer button did not open the form with this name as From and an empty To');
+    const bare = store.nodes.find((n) => !store.neighbours(n.id, true).length);
+    if (bare) {
+        startDrawer.show(bare);
+        check(startBody.querySelectorAll('.kop-network__drawer-route').length === 0,
+            'a name with no connections offers to connect it');
+    } else {
+        notes.push('every name has a connection, so the no-connections drawer was not checked');
+    }
     focus.setMode('focus');
     focus.clear();
     flushFrames();

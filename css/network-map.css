@@ -1092,6 +1092,27 @@ button.kop-network__popup-person {
 	color: var(--kop-navy-blue, #000080);
 }
 
+/* Opens the Connect two names form with this name as one end. A button, not
+ * a link, so it is drawn as one: the reader has to see that it does something. */
+.kop-network__drawer-route {
+	display: block;
+	margin: 0.2rem 0 0.6rem;
+	padding: 0.4rem 0.7rem;
+	border: 1px solid var(--kop-teal, #33A7B5);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	color: var(--kop-navy-blue, #000080);
+	font: inherit;
+	font-size: 0.85rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.kop-network__drawer-route:hover,
+.kop-network__drawer-route:focus-visible {
+	background: var(--kop-sand, #F2EEDF);
+}
+
 .kop-network__drawer-group {
 	margin: 0.9rem 0 0.3rem;
 	font-size: 0.72rem;
@@ -1308,6 +1329,14 @@ button.kop-network__popup-person {
 		max-height: 50vh;
 		border-radius: var(--kop-net-radius) var(--kop-net-radius) 0 0;
 		box-shadow: 0 -8px 28px rgba(0, 4, 53, 0.22);
+	}
+}
+
+/* "Connect two names" is "Connect" on a phone, so Copy link stays on the
+ * same row; the button's aria-label keeps the whole name. */
+@media (max-width: 480px) {
+	.kop-network__path-toggle-rest {
+		display: none;
 	}
 }
 

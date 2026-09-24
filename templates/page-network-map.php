@@ -183,11 +183,14 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					// How two names are connected (path.js). The form opens under
 					// the button and closes again once it has an answer, which is
 					// read in the drawer, so nothing sits over the route it found.
+					// The label says what it takes: "Path" alone read as another
+					// view setting beside Focus and Expand. A phone shows only
+					// "Connect", so the toolbar stays one row under the search.
 					?>
 					<div class="kop-network__path-wrap">
 						<button type="button" class="kop-network__button" id="kop-network-path-toggle"
-							aria-expanded="false" aria-controls="kop-network-path">
-							Path
+							aria-expanded="false" aria-controls="kop-network-path" aria-label="Connect two names">
+							Connect<span class="kop-network__path-toggle-rest"> two names</span>
 						</button>
 						<div class="kop-network__path" id="kop-network-path" hidden>
 							<form id="kop-network-path-form" class="kop-network__path-form" autocomplete="off">
@@ -337,6 +340,8 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 								Each name is outlined, and each line coloured, for the
 								company it belongs to, and a line leaves a name from
 								whichever side is nearest.
+								To see how two names are joined, use Connect two names
+								above the map, or the button under any name you open.
 							</p>
 							<?php
 							// The key is the board's own: fills for status, a blue name

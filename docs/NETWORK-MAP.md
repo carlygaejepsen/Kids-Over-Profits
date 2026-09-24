@@ -2028,6 +2028,10 @@ the drawer: "Route to this from ..." with the current root pre-filled as
 the other end. The store's `paths()` already answers both; this is
 plumbing and a held emphasis state.
 
+*Built (2026-09-23), the drawer half.* "How is this connected to...?" in
+each name's drawer opens the form with that name as From (see "Finding it"
+under Phase 3). Highlighting on the board in view is still open.
+
 ### 2d.7 "Add a 'simplify view' mode."
 
 *What it has.* Focus mode shows a click's own connections and nothing else.
@@ -2270,6 +2274,26 @@ each checked by breaking them.
 One thing to look at on a phone: the drawer is a sheet over the lower half
 of the stage, as it is after any click, and a route drawn as a column runs
 down behind it. Closing the sheet shows the whole route.
+
+**Finding it (2026-09-23).** The owner asked whether paths had been built
+at all: a toolbar button reading "Path", between Focus/Expand and Copy link,
+looked like another view setting and said nothing about taking two names.
+Three ways in now:
+
+- The toolbar button reads **Connect two names** (just "Connect" at 480 px
+  and under, so the phone toolbar stays one row under the search; its
+  `aria-label` keeps the whole name).
+- Every name's drawer with at least one connection has a **How is this
+  connected to...?** button under its profile link. It calls
+  `path.startFrom(node)`: the form opens with that name as From, To emptied
+  and focused. This is the one-ended half of 2d.6; lighting a route on the
+  board already in view is still open.
+- The Key's "How to read this" ends with a sentence pointing at both.
+
+Tests: the drawer offers the button once for a connected name and not for
+an unconnected one, and clicking it opens the form with From filled and To
+empty. Checked in the browser end to end (drawer button, type the second
+name, Find routes, route on the board).
 
 ### Still outlined
 

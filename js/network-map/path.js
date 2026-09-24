@@ -275,8 +275,24 @@
             return true;
         }
 
+        /**
+         * Open the form with one end already named: the drawer's "How is
+         * this connected to...?" button. The other box is emptied, since
+         * whatever was there was asked about a different name, and takes the
+         * cursor.
+         */
+        function startFrom(node) {
+            if (!node) return;
+            chosen.from = node;
+            chosen.to = null;
+            if (els.from) els.from.value = node.name;
+            if (els.to) els.to.value = '';
+            setOpen(true);
+            if (els.toggle && els.toggle.scrollIntoView) els.toggle.scrollIntoView({ block: 'nearest' });
+        }
+
         return {
-            find: find, renderInto: renderInto, open: function () { setOpen(true); },
+            find: find, renderInto: renderInto, open: function () { setOpen(true); }, startFrom: startFrom,
             close: function () { setOpen(false); }, routesFor: routesFor
         };
     }

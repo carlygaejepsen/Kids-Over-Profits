@@ -216,6 +216,14 @@
             if (!groups.length) {
                 body.appendChild(el('p', 'kop-network__drawer-empty',
                     'No connections recorded, or the filters are hiding all of them.'));
+            } else if (options.routeFrom) {
+                /* The way into the Path form from a name being read about,
+                 * with this name already filled in as one end. */
+                var route = el('button', 'kop-network__drawer-route', 'How is this connected to...?');
+                route.type = 'button';
+                route.setAttribute('aria-label', 'Find how ' + node.name + ' is connected to another name');
+                route.addEventListener('click', function () { options.routeFrom(node); });
+                body.appendChild(route);
             }
             /* The people listed, with everywhere else each has been. Worked
              * out first so the switch is only offered when it hides something. */

@@ -225,6 +225,9 @@
                  * up when called, since that module is created below. */
                 renderPath: function (body) {
                     return app.path ? app.path.renderInto(body) : false;
+                },
+                routeFrom: function (node) {
+                    if (app.path) app.path.startFrom(node);
                 }
             });
         }
