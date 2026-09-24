@@ -45,6 +45,9 @@ foreach (array_slice($argv, 1) as $arg) {
     }
 }
 $apply = in_array('apply', $argv, true);
+// The host's CLI php stops scripts after 600 s, and a batch of PDF previews
+// takes longer than that. --minutes is the budget instead.
+set_time_limit(0);
 
 // Folders at the top of the Drive FileBird folder that are the scrapers' output
 // (see backup_reports.py in the tools repo), plus the doc finder's holding pen.
@@ -431,12 +434,14 @@ foreach ($files as $f) {
             @unlink($dest);
             throw new RuntimeException('could not register the attachment');
         }
-        wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $dest));
+        // Recorded and filed before the slow part, so a run that dies making the
+        // preview still leaves an attachment the next run recognises.
         update_post_meta($attachment_id, '_kop_import_md5', $got);
         update_post_meta($attachment_id, '_kop_drive_file_id', $f['id']);
         $by_md5[$got] = $attachment_id;
         $by_drive_id[$f['id']] = $attachment_id;
         kop_sd_file_in($attachment_id, $folder_id);
+        wp_update_attachment_metadata($attachment_id, wp_generate_attachment_metadata($attachment_id, $dest));
         $imported++;
         $bump('imported', '#' . $attachment_id . ' (' . $how . ')');
     } catch (Throwable $e) {
