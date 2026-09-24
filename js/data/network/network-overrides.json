@@ -79,6 +79,24 @@
           "network": "Wilderness"
         }
       ]
+    },
+    {
+      "canonical": "George W Bush",
+      "note": "one person, drawn with separate governor and president role labels",
+      "rows": [
+        {
+          "name": "George W Bush",
+          "network": "Synanon"
+        },
+        {
+          "name": "Governor George W. Bush of Texas",
+          "network": "Synanon"
+        },
+        {
+          "name": "President George W. Bush of the United States of America",
+          "network": "Synanon"
+        }
+      ]
     }
   ],
   "aliases": {
@@ -1106,19 +1124,26 @@
       "relationship": "founding sponsor",
       "category": "membership",
       "source": "Owner, 2026-09-22: Spring Ridge Academy was a founding sponsor of NATSAP. The board draws the line unlabelled, which the rules read as ownership."
+    },
+    {
+      "from": "Teen Challenge",
+      "to": "Governor George W. Bush of Texas",
+      "relationship": "endorsed (as Governor of Texas)",
+      "category": "referral",
+      "source": "Owner: retain George W. Bush as one node while preserving the governor role on the endorsement."
     }
   ],
   "edges": [
     {
       "from": "Governor George W. Bush of Texas",
       "to": "Roloff Evangelistic Enterprises",
-      "relationship": "endorsed (1997 accreditation)",
+      "relationship": "endorsed (as Governor of Texas; 1997 accreditation)",
       "source": "https://www.texasobserver.org/437-dateline-texas-taking-deregulation-on-faith/"
     },
     {
       "from": "Governor George W. Bush of Texas",
       "to": "Rebekah Home for Girls",
-      "relationship": "endorsed (1997 accreditation)",
+      "relationship": "endorsed (as Governor of Texas; 1997 accreditation)",
       "source": "https://www.austinchronicle.com/news/2000-12-15/79818/"
     },
     {

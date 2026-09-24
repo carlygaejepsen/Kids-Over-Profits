@@ -9,7 +9,7 @@
  *   Author: <name>
  *   Trigger warnings: <comma list>            (optional)  -> content_warnings
  *   <a href="EXTERNAL_URL">Read the full article here.</a> -> article_url
- *   Summary: <text...>                                     -> summary
+ *   Summary: <text...> or unlabeled article text           -> summary
  *
  *   post title  -> article_title          post date     -> publication_date
  *   url host    -> publication_name        categories    -> article_location + tags
@@ -120,21 +120,48 @@ function kop_parse_news_post(string $html): array {
         }
     }
 
-    // Strip tags to plain text (keep line breaks) for the labelled fields.
-    $text = preg_replace('/<br\s*\/?>/i', "\n", $html);
-    $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    // Strip links and tags for the text fields while retaining paragraph/list
+    // boundaries. Older /news entries often have an unlabeled summary or a
+    // "Key Points" section instead of the newer "Summary:" label.
+    $text_html = preg_replace('/<a\b[^>]*>.*?<\/a>/is', ' ', $html);
+    $text_html = preg_replace('/<br\s*\/?>|<\/(?:p|div|li|h[1-6])\s*>/i', "\n", $text_html);
+    $text = html_entity_decode(strip_tags($text_html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = preg_replace('/\r\n?/', "\n", $text);
+    $text = preg_replace('/[ \t]+/', ' ', $text);
+    $text = preg_replace('/\n{3,}/', "\n\n", $text);
+    $text = trim($text);
 
-    if (preg_match('/Author:\s*(.+)/i', $text, $a)) {
+    if (preg_match('/^\s*Authors?\s*:\s*(.+)$/im', $text, $a)) {
         $out['author'] = trim(preg_split('/\R/', trim($a[1]))[0]);
     }
-    if (preg_match('/Trigger warnings?:\s*(.+)/i', $text, $w)) {
+    if (preg_match('/^\s*(?:Trigger warnings?|Triggers?|TW|Warnings)\s*:\s*(.+)$/im', $text, $w)) {
         $line = trim(preg_split('/\R/', trim($w[1]))[0]);
         $out['warnings'] = array_values(array_filter(array_map('trim', explode(',', $line))));
     }
-    // Summary: everything from the "Summary:" marker onward.
-    if (preg_match('/Summary:\s*(.+)/is', $text, $s)) {
-        $out['summary'] = trim($s[1]);
+
+    // Remove labelled metadata lines from fallback body text. Keep the
+    // article's own prose and bullet points as the feed summary.
+    $body_lines = preg_split('/\R/', $text);
+    $body_lines = array_values(array_filter(array_map('trim', $body_lines), function ($line) {
+        if ($line === '') return false;
+        return !preg_match('/^(?:Authors?|Facilities?|Programs?|Source|Publisher|Publication|Published|Date|Trigger warnings?|Triggers?|TW|Warnings|Post Tags?)\s*:/i', $line)
+            && !preg_match('/^(?:Additional coverage|Related coverage|Key Points?)\s*:\s*$/i', $line);
+    }));
+    $body_text = trim(implode("\n", $body_lines));
+
+    // Prefer an explicit summary; otherwise use a Key Points section when one
+    // exists, then fall back to the remaining article notes/prose.
+    if (preg_match('/(?:^|\n)[ \t]*Summary:[ \t]*/i', $text, $s, PREG_OFFSET_CAPTURE)) {
+        $out['summary'] = trim(substr($text, $s[0][1] + strlen($s[0][0])));
+    } elseif (preg_match('/(?:^|\n)[ \t]*Key Points?:[ \t]*/i', $text, $s, PREG_OFFSET_CAPTURE)) {
+        $out['summary'] = trim(substr($text, $s[0][1] + strlen($s[0][0])));
+    } else {
+        $out['summary'] = $body_text;
     }
+
+    // Avoid carrying archive/navigation fragments if they were stored in the
+    // post body along with the article notes.
+    $out['summary'] = trim((string) preg_split('/\R\s*(?:Post Tags?|Additional Coverage|Related Coverage|Previous|Next)\s*:?/i', $out['summary'], 2)[0]);
     return $out;
 }
 

@@ -3,8 +3,8 @@
   "sourceHash": "6c769881b11a",
   "facilitySource": "facilities_v2",
   "counts": {
-   "nodes": 1345,
-   "edges": 2541,
+   "nodes": 1343,
+   "edges": 2539,
    "facilityMatches": 536,
    "withYears": 334,
    "withDeaths": 28,
@@ -13,7 +13,7 @@
    "staffMovementEdges": 26,
    "staffListEdges": 936,
    "addedPeople": 345,
-   "kind_person": 678,
+   "kind_person": 676,
    "kind_facility": 527,
    "kind_parent": 93,
    "kind_association": 14,
@@ -31,7 +31,7 @@
    "edge_staff": 354,
    "edge_membership": 20,
    "edge_other": 6,
-   "edge_unknown": 218
+   "edge_unknown": 216
   },
   "categories": [
    "corporate",
@@ -263,7 +263,7 @@
      "lighthouse-for-boys",
      "bethesda-home-for-girls",
      "teen-challenge",
-     "governor-george-w-bush-of-texas",
+     "george-w-bush",
      "rev-bobby-ray-papa-wills",
      "rev-wiley-cameron",
      "betty-wills",
@@ -8654,6 +8654,36 @@
    }
   },
   {
+   "id": "george-w-bush",
+   "name": "George W Bush",
+   "aliases": [
+    "Governor George W. Bush of Texas",
+    "President George W. Bush of the United States of America",
+    "George Bush"
+   ],
+   "kind": "person",
+   "status": "",
+   "chain": "",
+   "regions": [
+    "Synanon"
+   ],
+   "natsap": false,
+   "importance": 63543,
+   "degree": 4,
+   "degreeByCategory": {
+    "referral": 3,
+    "family": 1
+   },
+   "facilityId": null,
+   "uniqueName": null,
+   "dates": "",
+   "isolated": false,
+   "board": {
+    "x": -674.28,
+    "y": -411.47
+   }
+  },
+  {
    "id": "gil-hallows",
    "name": "Gil Hallows",
    "aliases": [],
@@ -8682,34 +8712,6 @@
    "addedFrom": [
     "staff list"
    ]
-  },
-  {
-   "id": "governor-george-w-bush-of-texas",
-   "name": "Governor George W. Bush of Texas",
-   "aliases": [
-    "Governor Texas"
-   ],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 50766,
-   "degree": 4,
-   "degreeByCategory": {
-    "referral": 3,
-    "unknown": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "1995-2000",
-   "isolated": false,
-   "board": {
-    "x": -658.78,
-    "y": -429.52
-   }
   },
   {
    "id": "greenbrier-academy",
@@ -13872,34 +13874,6 @@
    "addedFrom": [
     "staff list"
    ]
-  },
-  {
-   "id": "george-w-bush",
-   "name": "George W Bush",
-   "aliases": [
-    "George Bush"
-   ],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 25020,
-   "degree": 3,
-   "degreeByCategory": {
-    "family": 1,
-    "unknown": 2
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "",
-   "isolated": false,
-   "board": {
-    "x": -674.28,
-    "y": -411.47
-   }
   },
   {
    "id": "glenda-glen-roach",
@@ -35346,33 +35320,6 @@
    "years": "1983-1991"
   },
   {
-   "id": "president-george-w-bush-of-the-united-states-of-america",
-   "name": "President George W. Bush of the United States of America",
-   "aliases": [
-    "President America"
-   ],
-   "kind": "person",
-   "status": "",
-   "chain": "",
-   "regions": [
-    "Synanon"
-   ],
-   "natsap": false,
-   "importance": 63543,
-   "degree": 1,
-   "degreeByCategory": {
-    "unknown": 1
-   },
-   "facilityId": null,
-   "uniqueName": null,
-   "dates": "2000-2008",
-   "isolated": false,
-   "board": {
-    "x": -685.71,
-    "y": -430.37
-   }
-  },
-  {
    "id": "promise-house",
    "name": "Promise House",
    "aliases": [],
@@ -43244,13 +43191,13 @@
   },
   {
    "id": "e0474",
-   "source": "governor-george-w-bush-of-texas",
+   "source": "george-w-bush",
    "target": "teen-challenge",
    "category": "referral",
    "roles": [
-    "endorsed"
+    "endorsed (as Governor of Texas)"
    ],
-   "raw": "endorsed",
+   "raw": "endorsed (as Governor of Texas)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true
@@ -47588,17 +47535,6 @@
    "crossesRegion": false
   },
   {
-   "id": "e0810",
-   "source": "george-w-bush",
-   "target": "president-george-w-bush-of-the-united-states-of-america",
-   "category": "unknown",
-   "roles": [],
-   "raw": "",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": false
-  },
-  {
    "id": "e0811",
    "source": "adam-shapiro",
    "target": "glen-mills-school",
@@ -47633,17 +47569,6 @@
     "director"
    ],
    "raw": "director",
-   "direction": "none",
-   "crossesChain": false,
-   "crossesRegion": false
-  },
-  {
-   "id": "e0814",
-   "source": "governor-george-w-bush-of-texas",
-   "target": "george-w-bush",
-   "category": "unknown",
-   "roles": [],
-   "raw": "",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": false
@@ -54050,26 +53975,26 @@
   },
   {
    "id": "e1311",
-   "source": "governor-george-w-bush-of-texas",
+   "source": "george-w-bush",
    "target": "roloff-evangelistic-enterprises",
    "category": "referral",
    "roles": [
-    "endorsed (1997 accreditation)"
+    "endorsed (as Governor of Texas; 1997 accreditation)"
    ],
-   "raw": "endorsed (1997 accreditation)",
+   "raw": "endorsed (as Governor of Texas; 1997 accreditation)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true
   },
   {
    "id": "e1312",
-   "source": "governor-george-w-bush-of-texas",
+   "source": "george-w-bush",
    "target": "rebekah-home-for-girls",
    "category": "referral",
    "roles": [
-    "endorsed (1997 accreditation)"
+    "endorsed (as Governor of Texas; 1997 accreditation)"
    ],
-   "raw": "endorsed (1997 accreditation)",
+   "raw": "endorsed (as Governor of Texas; 1997 accreditation)",
    "direction": "none",
    "crossesChain": false,
    "crossesRegion": true

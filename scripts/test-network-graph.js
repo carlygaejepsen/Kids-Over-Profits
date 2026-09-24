@@ -174,6 +174,15 @@ function run() {
      * typed a hair differently only shows up in the QA report otherwise, and
      * the additions are now large enough to lose a row in. */
     const byName = new Map(nodes.map(function (n) { return [n.name, n]; }));
+    const mergedNames = new Map();
+    (overrides.merges || []).forEach(function (merge) {
+        (merge.rows || []).forEach(function (row) {
+            mergedNames.set(row.name, merge.canonical);
+        });
+    });
+    function overrideName(name) {
+        return mergedNames.get(name) || name;
+    }
     const drawn = new Set();
     edges.forEach(function (edge) {
         const a = byId.get(edge.source);
@@ -188,7 +197,7 @@ function run() {
         check(byName.has(node.near), 'overrides.nodes: ' + node.name + ' is placed near "' + node.near + '", which is not a node');
     });
     (overrides.edges || []).forEach(function (edge) {
-        check(drawn.has(edge.from + ' -> ' + edge.to),
+        check(drawn.has(overrideName(edge.from) + ' -> ' + overrideName(edge.to)),
             'overrides.edges: ' + edge.from + ' -> ' + edge.to + ' was not drawn');
     });
     /* A correction has to reach the graph in the order it names, or the
@@ -197,7 +206,8 @@ function run() {
         const found = edges.filter(function (edge) {
             const a = byId.get(edge.source);
             const b = byId.get(edge.target);
-            return a && b && a.name === fix.from && b.name === fix.to;
+            return a && b && ((a.name === overrideName(fix.from) && b.name === overrideName(fix.to)) ||
+                (a.name === overrideName(fix.to) && b.name === overrideName(fix.from)));
         });
         check(found.length === 1,
             'overrides.lines: ' + fix.from + ' -> ' + fix.to + ' is drawn ' + found.length + ' times, not once');
