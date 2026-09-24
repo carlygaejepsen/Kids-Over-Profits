@@ -319,7 +319,9 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
             'templates/single-facility-profile.php'
         ), ARRAY_N);
         $parts[] = 'posts:' . (is_array($posts) ? implode('|', array_map('strval', $posts)) : '?');
-        $parts[] = 'v:3';
+        // A new build of the network map changes which facilities it draws.
+        $parts[] = 'network:' . (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '-');
+        $parts[] = 'v:4';
         return md5(implode(';', $parts));
     }
 }
@@ -569,7 +571,8 @@ if (!function_exists('kop_facility_pages_link_sets')) {
     function kop_facility_pages_link_sets() {
         global $wpdb;
         $sets = array('news' => array(), 'lawsuits' => array(), 'lawsuit_keys' => array(), 'memorial_keys' => array(),
-                      'wiki' => array(), 'inspections' => array(), 'operators' => array(), 'folders' => array());
+                      'wiki' => array(), 'inspections' => array(), 'operators' => array(), 'folders' => array(),
+                      'network' => array());
 
         if (kop_facility_pages_table_exists('news_facility_links') && kop_facility_pages_table_exists('news_submissions')) {
             $rows = $wpdb->get_results("SELECT l.facility_id, COUNT(*) AS n FROM news_facility_links l JOIN news_submissions n ON n.id = l.news_id WHERE n.status IN ('approved','published') GROUP BY l.facility_id", ARRAY_A);
@@ -630,6 +633,12 @@ if (!function_exists('kop_facility_pages_link_sets')) {
             }
         }
         $sets['folders'] = kop_facility_pages_folder_map();
+        // Facilities the network map draws, with how many connections each has.
+        if (function_exists('kop_network_map_facility_connections')) {
+            foreach (kop_network_map_facility_connections() as $fid => $entry) {
+                if (!empty($entry['links'])) $sets['network'][(int) $fid] = count($entry['links']);
+            }
+        }
         return $sets;
     }
 }
@@ -1052,6 +1061,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (!empty($links['news'][$id])) $s[] = 'news';
         if (!empty($links['lawsuits'][$id])) $s[] = 'lawsuits';
         if (!empty($links['operators'][$id])) $s[] = 'operator';
+        if (!empty($links['network'][$id])) $s[] = 'network';
 
         $keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $state_code = strtoupper(trim((string) ($loc['state'] ?? '')));
@@ -1765,6 +1775,7 @@ if (!function_exists('kop_facility_page_data')) {
             'inspections'   => $inspections,
             'documents'     => $documents,
             'research'      => $research,
+            'network'       => kop_facility_pages_network($facility_id),
             'updated_at'    => $updated,
             'updated_label' => $updated !== '' ? date_i18n(get_option('date_format') ?: 'F j, Y', strtotime($updated) ?: time()) : '',
             'index_url'     => kop_facility_pages_location_search_url($name),
@@ -2214,4 +2225,65 @@ if (!function_exists('kop_facility_pages_register_core_sitemap')) {
         wp_sitemaps_add_provider('facility', new KOP_Facility_Pages_Sitemap_Provider());
     }
     add_action('init', 'kop_facility_pages_register_core_sitemap', 40);
+}
+
+if (!function_exists('kop_facility_pages_network')) {
+    /**
+     * The facility's connections on the network map, for its page:
+     * array('map_url', 'groups' => array(array('label', 'items' => array(
+     * array('name', 'url', 'role')))) ), or null when the map does not draw it.
+     * Grouped as the map's drawer groups them, largest group first; a
+     * facility that has its own page links to it, and a rename or an
+     * acquisition says which way it went.
+     */
+    function kop_facility_pages_network($facility_id) {
+        if (!function_exists('kop_network_map_facility_connections')) return null;
+        $all = kop_network_map_facility_connections();
+        $entry = $all[(int) $facility_id] ?? null;
+        if (!$entry || empty($entry['links'])) return null;
+
+        $groups = array();
+        foreach ($entry['links'] as $link) {
+            if ($link['relation'] === 'became' || $link['relation'] === 'formerly') {
+                $label = 'Names';
+            } elseif ($link['relation'] !== '') {
+                $label = 'Acquisitions';
+            } else {
+                $label = function_exists('kop_network_map_label') ? kop_network_map_label($link['category'], 'category') : ucfirst($link['category']);
+            }
+            $role = $link['role'];
+            if ($link['relation'] === 'became') $role = 'Later known as';
+            elseif ($link['relation'] === 'formerly') $role = 'Earlier name';
+            elseif ($link['relation'] === 'acquired') $role = 'Acquired by this program' . ($role !== '' ? ' (' . $role . ')' : '');
+            elseif ($link['relation'] === 'acquired by') $role = 'Acquired this program' . ($role !== '' ? ' (' . $role . ')' : '');
+            $url = !empty($link['facilityId']) && (int) $link['facilityId'] !== (int) $facility_id
+                ? kop_facility_page_url((int) $link['facilityId'])
+                : '';
+            $key = $link['node'];
+            if (isset($groups[$label]['items'][$key])) {
+                $seen = &$groups[$label]['items'][$key];
+                if ($role !== '' && stripos($seen['role'], $role) === false) {
+                    $seen['role'] = $seen['role'] === '' ? $role : $seen['role'] . '; ' . $role;
+                }
+                unset($seen);
+                continue;
+            }
+            $groups[$label]['label'] = $label;
+            $groups[$label]['items'][$key] = array('name' => $link['name'], 'url' => $url, 'role' => $role);
+        }
+        foreach ($groups as &$group) {
+            $group['items'] = array_values($group['items']);
+            usort($group['items'], static function ($a, $b) { return strcasecmp($a['name'], $b['name']); });
+        }
+        unset($group);
+        $groups = array_values($groups);
+        usort($groups, static function ($a, $b) {
+            return count($b['items']) - count($a['items']) ?: strcasecmp($a['label'], $b['label']);
+        });
+        $map = kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/');
+        return array(
+            'map_url' => $map . '#open=' . rawurlencode($entry['node']),
+            'groups'  => $groups,
+        );
+    }
 }

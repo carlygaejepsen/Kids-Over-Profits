@@ -52,17 +52,58 @@
      * the view. `dir` is one of the four [dx, dy] above; points are
      * {id, x, y} in screen pixels. Each arrow goes to the nearest name that
      * way; left and right, finding none, carry on into the next or the
-     * previous row in reading order, so between them the two reach every
+     * previous row in reading order, and a name no arrow would land on is
+     * taken in by the name nearest it, so between them the arrows reach every
      * name. Stepping through reading order alone was right for a board of
      * rows; on a cluster the next name in reading order can be anywhere,
      * and an arrow has to go where it points first.
      */
     function nextInDirection(points, from, dir) {
+        return adopted(points, from, dir) || plainStep(points, from, dir);
+    }
+
+    function plainStep(points, from, dir) {
         var best = nearestThatWay(points, from, dir);
         if (best || dir[0] === 0) return best;
         var order = readingOrder(points);
         for (var i = 0; i < order.length; i++) {
             if (order[i].id === from.id) return order[i + dir[0]] || null;
+        }
+        return null;
+    }
+
+    var ARROWS = [[1, 0], [-1, 0], [0, -1], [0, 1]];
+
+    /**
+     * A name no arrow leads to - alone at the edge of a view, nearest to
+     * nothing in any arrow's reach (Timothy P. Cole above YSI's programs) -
+     * is taken in by the name closest to it, through the arrow that points
+     * at it from there. Returns that name when `from` is its host and `dir`
+     * is that arrow, else null.
+     */
+    function adopted(points, from, dir) {
+        var led = Object.create(null);
+        points.forEach(function (p) {
+            ARROWS.forEach(function (arrow) {
+                var hit = plainStep(points, p, arrow);
+                if (hit) led[hit.id] = true;
+            });
+        });
+        for (var i = 0; i < points.length; i++) {
+            var orphan = points[i];
+            if (orphan.id === from.id || led[orphan.id]) continue;
+            var host = null;
+            var hostDistance = Infinity;
+            points.forEach(function (p) {
+                if (p.id === orphan.id) return;
+                var d = Math.hypot(p.x - orphan.x, p.y - orphan.y);
+                if (d < hostDistance) { hostDistance = d; host = p; }
+            });
+            if (!host || host.id !== from.id) continue;
+            var dx = orphan.x - from.x;
+            var dy = orphan.y - from.y;
+            var arrow = Math.abs(dx) >= Math.abs(dy) ? [dx > 0 ? 1 : -1, 0] : [0, dy > 0 ? 1 : -1];
+            if (arrow[0] === dir[0] && arrow[1] === dir[1]) return orphan;
         }
         return null;
     }
@@ -109,7 +150,7 @@
     }
 
     var KIND_WORDS = {
-        facility: 'programme', parent: 'company', person: 'person',
+        facility: 'program', parent: 'company', person: 'person',
         association: 'trade group', church: 'church', government: 'government body'
     };
 

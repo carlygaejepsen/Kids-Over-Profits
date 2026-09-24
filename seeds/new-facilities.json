@@ -609,5 +609,3709 @@
         "zip": "92065"
       }
     }
+  },
+  {
+    "location_id": 12,
+    "location_name": "NORTH CAROLINA",
+    "facility": {
+      "identification": {
+        "name": "Four Circles Recovery Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Horse Shoe",
+        "state": "NC",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Horse Shoe, NC",
+      "address": "156 Clear Crossing Ln, Horse Shoe, NC 28742",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://natsap.wordpress.com/2015/08/24/natsap-shines-the-spotlight-on-four-circles-recovery-center/",
+        "https://www.yelp.com/biz/four-circles-recovery-center-horse-shoe",
+        "https://www.outdoored.com/companies/four-circles-recovery-center/"
+      ],
+      "facilityDetails": {
+        "type": "Wilderness Therapy Program",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Wilderness-based substance abuse treatment program for young adult men and women ages 18-30 with co-occurring mental health conditions (NATSAP spotlight, 2015).",
+        "Located in Horse Shoe, NC, about 15 miles from Asheville (OutdoorEd.com).",
+        "Listed as closed at 156 Clear Crossing Ln, Horse Shoe, NC (Yelp).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 485,
+    "location_name": "SAMOA",
+    "facility": {
+      "identification": {
+        "name": "New Hope Academy",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "",
+        "state": "",
+        "country": "Samoa",
+        "additionalLocations": []
+      },
+      "location": "Samoa",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 1999,
+        "status": "Closed",
+        "yearsOfOperation": "1998-1999",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.deseret.com/1999/8/10/19459920/cartisano-back-in-business-outside-u-s-br-he-urges-parents-to-send-teens-to-overseas-camps/",
+        "https://www.deseret.com/2001/7/23/19597875/teens-taken-from-samoa-center/"
+      ],
+      "facilityDetails": {
+        "type": "Other",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Utah businessmen hired Steve Cartisano in 1998 to help start New Hope Academy (Deseret News, 2001-07-23).",
+        "Dan Wakefield was one of the Utah County businessmen behind it; company officials allege Cartisano wrote $23,000 in bad checks in the two weeks he ran it (Deseret News, 1999-08-10).",
+        "New Hope closed in 1999, reportedly stranding five youths in Samoa (Deseret News, 2001-07-23).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 3,
+    "location_name": "UTAH",
+    "facility": {
+      "identification": {
+        "name": "Stillwater Academy",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [
+          "Turnabout Academy"
+        ],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "South Jordan",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "South Jordan, UT",
+      "address": "11175 S Redwood Rd, South Jordan, UT 84095",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 1988,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "1988-present",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.breakingcodesilence.org/turnabout-stillwater-academy/",
+        "https://www.niche.com/k12/stillwater-academy-south-jordan-ut/"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Founded in 1988 as Turnabout Academy and renamed Stillwater Academy in 2001 (Breaking Code Silence).",
+        "Lee W. Caldwell is CEO and Executive Director (Breaking Code Silence).",
+        "Residential treatment for ages 12-17; students sleep in host homes rather than at the South Jordan site (Breaking Code Silence).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 14,
+    "location_name": "NEW YORK",
+    "facility": {
+      "identification": {
+        "name": "East Ridge Recovery Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "East Ridge",
+          "All Addicts Anonymous East Ridge retreat"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Callicoon",
+        "state": "NY",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Callicoon, NY",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://aaagnostica.org/dr-wilson-and-mr-hide/",
+        "https://bookshopsantacruz.com/book/9798865485704"
+      ],
+      "facilityDetails": {
+        "type": "Substance Abuse Treatment",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Tom Powers set up his own sober community at the All Addicts Anonymous East Ridge retreat in Callicoon, New York, after leaving AA in 1958 (AA Agnostica).",
+        "Tom Powers Sr. is described as founder of All Addicts Anonymous and patriarch of the East Ridge Community at Hankins, NY (Bookshop Santa Cruz listing).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "Polk Youth Development Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Polk City Youth Training Center"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Polk City",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Polk City, FL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/0000914670/000107261302000573/form10-k_11125.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Correctional Services Corporation listed Polk City Youth Training Center, Polk City, Florida (1997), 350 beds, secure treatment facility, state contract (CSC Form 10-K405, FY2001).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 3,
+    "location_name": "UTAH",
+    "facility": {
+      "identification": {
+        "name": "Spark Academy",
+        "currentName": "",
+        "currentOperator": "The Heritage Community",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Provo",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Provo, UT",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 2019,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "2019-present",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.heraldextra.com/news/2020/feb/01/provo-home-for-teens-with-autism-opens/",
+        "https://www.facebook.com/HeritageSparkAcademy/posts/spark-academy-was-born-in-2019-when-the-heritage-legacy-split-students-into-acad/825022869635011/",
+        "https://www.spark.heritagertc.org/team/neil-wallace"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Spark Academy began in 2019 when Heritage split students into academies (Spark Academy Facebook post).",
+        "Its residence, the Michael S. Sproul Smart Home on The Heritage Community campus in Provo, began taking 24 teens on the autism spectrum or with developmental or learning disabilities in February 2020 (Daily Herald, 2020-02-01).",
+        "Neil Wallace is Executive Director (Spark Academy website).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 36,
+    "location_name": "KANSAS",
+    "facility": {
+      "identification": {
+        "name": "Youth Center at Beloit",
+        "currentName": "",
+        "currentOperator": "Kansas Juvenile Justice Authority",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Beloit Juvenile Correctional Facility"
+        ],
+        "pastNames": [
+          "Kansas Industrial School for Girls",
+          "State Industrial School for Girls"
+        ],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Beloit",
+        "state": "KS",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Beloit, KS",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Women's Christian Temperance Union",
+        "State of Kansas"
+      ],
+      "operatingPeriod": {
+        "startYear": 1888,
+        "endYear": 2009,
+        "status": "Closed",
+        "yearsOfOperation": "1888-2009",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://en.wikipedia.org/wiki/Kansas_Industrial_School_for_Girls",
+        "https://www2.ljworld.com/news/2009/oct/25/closed-reformatory-remembered-horror-haven/",
+        "https://www.kansashistory.gov/archives/229017"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Girls"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Opened February 1, 1888 as the Kansas Industrial School for Girls; renamed Youth Center at Beloit on July 1, 1974 and Beloit Juvenile Correctional Facility on July 1, 1997 (Wikipedia).",
+        "Closed August 28, 2009; remaining girls were moved to the Kansas Juvenile Correctional Complex in Topeka (Wikipedia).",
+        "Run by the Kansas Juvenile Justice Authority from 1997 to 2009 (Wikipedia).",
+        "The Women's Christian Temperance Union established it in Beloit on February 1, 1888; the State of Kansas took over in 1889 (Wikipedia).",
+        "Also known as the State Industrial School for Girls, the Kansas Girls' Industrial School and the Youth Center at Beloit; renamed Beloit Juvenile Correctional Facility on July 1, 1997 (Wikipedia).",
+        "The state closed it in 2009, after 121 years (Wikipedia).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Bill Clayton Detention Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Bill W. Clayton Detention Center"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Littlefield",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Littlefield, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Texson Management Group",
+        "Correctional Services Corporation",
+        "GEO Group"
+      ],
+      "operatingPeriod": {
+        "startYear": 2000,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "2000",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/000091467001000001/0000914670-01-000001.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000107261302000573/form10-k_11125.txt",
+        "https://www.texasobserver.org/a-prison-by-any-other-name/",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "The city of Littlefield approved $11 million in bonds in December 1999 to build the juvenile detention center and named it after former Texas House speaker Bill W. Clayton (Texas Observer).",
+        "CSC listed it as a 152-bed secure juvenile treatment facility, contracted with the State, operations starting 2000 (CSC 10-K 2001).",
+        "By 2004 CSC used it for adult offenders; the Texas Observer says GEO Group left in 2009 and it reopened in 2015 as the Texas Civil Commitment Center for sex offenders (CSC 10-K 2005; Texas Observer).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "Blackwater STOP Camp",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Blackwater Short Term Offender Program"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Milton",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Milton, FL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 2003,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "2003",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.djj.state.fl.us/content/download/21390/file/residential_services_all_0607.pdf",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312504053953/d10k.htm",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Florida DJJ lists the Blackwater Short Term Offender Program in Santa Rosa County, operated by Youth Services International, with 24 beds (FL DJJ residential services report 2006-07).",
+        "CSC listed Blackwater STOP Camp in Milton, Florida, with operations beginning in 2003 (CSC 10-K 2004, 2005).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Bowie County Detention Center",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International",
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/000104596903000848/d10k.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000107261302000573/form10-k_11125.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Detention Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC listed 'Bowie County Detention Center (Juvenile)' among facilities it discontinued in 2002 due to lack of occupancy (CSC 10-K 2003).",
+        "CSC's earlier 10-Ks list a 124-bed 'Texarkana Boot Camp' in Texarkana, Texas (1998) that disappears after 2002; it may be the same facility, but no source ties the two names together (CSC 10-K 2002).",
+        "Correctional Services Corporation ran it as a juvenile detention center and discontinued its operation in 2002 for lack of occupancy (CSC 10-K for 2002, SEC EDGAR).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 21,
+    "location_name": "HAWAII",
+    "facility": {
+      "identification": {
+        "name": "Challenger Hawaii",
+        "currentName": "",
+        "currentOperator": "Challenger Foundation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Challenger V",
+          "Challenger 5"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "",
+        "state": "HI",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "HI",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 1990,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "1990",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://archives.starbulletin.com/2001/07/23/news/story7.html",
+        "https://en.wikipedia.org/wiki/Steve_Cartisano",
+        "https://www.deseret.com/1990/9/30/18883668/new-cartisano-project-is-a-real-challenger/"
+      ],
+      "facilityDetails": {
+        "type": "Wilderness Therapy Program",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Cartisano started the Challenger wilderness program in Hawaii in 1990 without telling state licensing officials; police found nine teens in remote Wailua Valley on Molokai, and a judge suspended the program indefinitely (Honolulu Star-Bulletin 2001).",
+        "Wikipedia says Challenger V was based on Molokai (Wikipedia: Steve Cartisano).",
+        "The Deseret News reported in September 1990 that a program called Challenger 5 was to open October 19, 1990 in Kona (Deseret News 1990).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 38,
+    "location_name": "ILLINOIS",
+    "facility": {
+      "identification": {
+        "name": "Chanute Transition Center",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Rantoul",
+        "state": "IL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Rantoul, IL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 2001,
+        "status": "Closed",
+        "yearsOfOperation": "1998-2001",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000091467001000001/0000914670-01-000001.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000107261302000573/form10-k_11125.txt"
+      ],
+      "facilityDetails": {
+        "type": "Other",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI renovated buildings in Rantoul, Illinois for a juvenile transition program for about 50 adjudicated youth, expected to open in March 1998 (YSI 10-K 1998).",
+        "CSC listed Chanute Transition Center, Rantoul, IL (1998), 56 beds, a non-secure transition facility contracted with the State (CSC 10-K 2000, 2001).",
+        "CSC closed it in 2001 as part of a restructuring (CSC 10-K 2002).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Colorado County Boot Camp",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Colorado County Juvenile Facility",
+          "Colorado County Juvenile Residential Facility"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Eagle Lake",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Eagle Lake, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "1998",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-99-000004.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000107261302000573/form10-k_11125.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC listed Colorado County Boot Camp, Eagle Lake, Texas (1998), 100 beds, a secure detention facility managed under a multi-county contract (CSC 10-K 2000).",
+        "Capacity was listed as 156 beds in 2002, and CSC part-owned the facility (CSC 10-K 2002).",
+        "CSC recorded a $1.5 million impairment on the Colorado County Juvenile Facility in Eagle Lake in late 2004 (CSC 10-K 2005).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 20,
+    "location_name": "GEORGIA",
+    "facility": {
+      "identification": {
+        "name": "Crisp County Youth Development Center",
+        "currentName": "",
+        "currentOperator": "Georgia Department of Juvenile Justice",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Cordele",
+        "state": "GA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Cordele, GA",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International",
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 2004,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "2004",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312504053953/d10k.htm",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm",
+        "https://djj.georgia.gov/locations/crisp-rydc",
+        "https://djj.georgia.gov/locations/crisp-campus-0205"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC described the Crisp County Youth Development Center as a 64-bed residential facility for juveniles in Cordele, Georgia, which it managed for the Georgia Department of Juvenile Justice (CSC 10-K 2005).",
+        "CSC began operating it in January 2004 (CSC 10-K 2004).",
+        "It is not clear from these sources whether it is the same site as today's Crisp RYDC (130 Haralson Rd) or the DJJ Crisp Campus (130 Rehab Rd) in Cordele (Georgia DJJ location pages).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 28,
+    "location_name": "VIRGINIA",
+    "facility": {
+      "identification": {
+        "name": "Genesis Treatment Agency",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Genesis Treatment Program"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Newport News",
+        "state": "VA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Newport News, VA",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1997,
+        "endYear": 2003,
+        "status": "Closed",
+        "yearsOfOperation": "1997-2003",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000091467001000001/0000914670-01-000001.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000104596903000848/d10k.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312504053953/d10k.htm",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI listed Genesis Treatment Agency, VA, a sexual offender program started May 1997 with 20 licensed beds (YSI 10-K 1998).",
+        "CSC listed it in Richmond, Virginia (1997) with 36 beds, then in Newport News, Virginia with 75 beds (CSC 10-K 2000, 2001).",
+        "Start-up costs in 2001 related to moving the Genesis Treatment Program to the Newport News property; the program served males aged 12 to 21 (CSC 10-K 2003).",
+        "The program stopped operating in October 2003 (CSC 10-K 2005).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Hemphill County Juvenile Center",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Hemphill County Juvenile Detention Center",
+          "Hemphill County Juvenile Facility"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Canadian",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Canadian, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Esmor Correctional Services",
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1994,
+        "endYear": 2004,
+        "status": "Closed",
+        "yearsOfOperation": "1994-2004",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-99-000004.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312505067085/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC listed Hemphill County Juvenile Detention Center, Canadian, Texas (1994), 100 beds, a secure boot camp facility leased under a county contract; the contract was between Esmor Canadian, Inc. and the Hemphill County Juvenile Detention Center board (CSC 10-K 1999).",
+        "In 2004 CSC discontinued its operation and management of the Hemphill County Juvenile Facility in Canadian, Texas (CSC 10-K 2005).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Los Hermanos Boys Ranch",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Los Hermanos Ranch"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Bryan",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Bryan, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Texas Children's Health Services Inc."
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 1999,
+        "status": "Closed",
+        "yearsOfOperation": "until 1999",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000119312504053953/d10k.htm"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI acquired Texas Children's Health Services Inc. ('Los Hermanos') as part of its behavioral health business; the Los Hermanos Ranch facility, a behavioral health program in Texas, was held for sale at the end of 1997 (YSI 10-K 1998).",
+        "The Company closed the Los Hermanos program in 1999 (CSC 10-K 2000); in 2002 it sold the property in Bryan, Texas from which it had operated the Los Hermanos Ranch program, closed in November 1999 (CSC 10-K 2004).",
+        "The map says Everyday Life, Inc. runs it today. Everyday Life Inc is in Bryan (record 10731, 6955 Broach Rd), but no source I read says it uses the former Los Hermanos property.",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 11,
+    "location_name": "PENNSYLVANIA",
+    "facility": {
+      "identification": {
+        "name": "Mars Home for Youth",
+        "currentName": "",
+        "currentOperator": "MHY Family Services",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "MHY Family Services"
+        ],
+        "pastNames": [
+          "United Presbyterian Home for Children"
+        ],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Mars",
+        "state": "PA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Mars, PA",
+      "address": "521 Route 228, Mars, PA 16046",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.butlereagle.com/20120820/mars-home-for-youth-changes-name-focus/",
+        "https://web.archive.org/web/2020/https://mhyfamilyservices.org/about-us/"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Established in 1929 as an orphan's home run by the Fourth United Presbyterian Church of Allegheny County; renamed United Presbyterian Home for Children in the 1950s and Mars Home for Youth in the 1970s (Butler Eagle 2012).",
+        "Renamed MHY Family Services in August 2012; it then offered long-term residential services for ages 12-18 and a new 28-day intensive residential program for ages 9-18 (Butler Eagle 2012).",
+        "The organization lists its address as 521 Route 228, Mars, PA 16046 and runs Longmore Academy on its campus (MHY Family Services website).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Medina County Detention Center",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Hondo Detention Center"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Hondo",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Hondo, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 2001,
+        "status": "Closed",
+        "yearsOfOperation": "1998-2001",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000091467001000001/0000914670-01-000001.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000107261302000573/form10-k_11125.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Detention Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC listed Hondo Detention Center, Hondo, Texas (1998), 15 beds, a secure detention facility under a county contract, with operations to end March 31, 2001 (CSC 10-K 2000, 2001).",
+        "CSC stopped running the Medina County Detention Center (Juvenile) in 2001 due to lack of occupancy (CSC 10-K 2002). The two names are matched by location and timing; no source states it explicitly.",
+        "CSC lists the Medina County Detention Center among the juvenile facilities it stopped operating in 2001 (CSC 10-K for 2001). The town is inferred: its earlier filings list a 15-bed CSC \"Hondo Detention Center\" in Hondo, the county seat.",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 20,
+    "location_name": "GEORGIA",
+    "facility": {
+      "identification": {
+        "name": "Paulding Regional Youth Detention Center",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Paulding RYDC"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Dallas",
+        "state": "GA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Dallas, GA",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2013,
+        "status": "Closed",
+        "yearsOfOperation": "until 2013",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://patch.com/georgia/dallas-hiram/faqs-youth-detention-center-closing",
+        "https://jjie.org/2013/10/29/georgia-closing-juvenile-prison-with-nations-highest-rate-of-sexual-victimization/",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Detention Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Correctional Services Corporation listed it as a 126-bed secure detention facility it managed under a State of Georgia contract, starting 1999 (CSC 10-K for 1999).",
+        "Youth Services International ran it under a state contract; in a 2012 Bureau of Justice Statistics survey about one in three youth there reported sexual victimization by staff, the highest rate in the nation (JJIE, Oct 2013).",
+        "Georgia DJJ let the contract end on December 31, 2013 and closed the facility, which then held about 50 youth (Patch).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "Pompano Academy",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Pompano Beach",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Pompano Beach, FL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 1997,
+        "endYear": 2000,
+        "status": "Closed",
+        "yearsOfOperation": "1997-2000",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-01-000001.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "CSC listed Pompano Academy, Pompano Beach, Florida (1997), as a 52-bed secure academy it managed under a state contract (CSC 10-K for 1999).",
+        "CSC reported it stopped running Pompano Academy during 2000 (CSC 10-K for 2000).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 8,
+    "location_name": "TENNESSEE",
+    "facility": {
+      "identification": {
+        "name": "Reflections Treatment Agency",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Knoxville",
+        "state": "TN",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Knoxville, TN",
+      "address": "6628 Central Avenue Pike, Knoxville, TN 37912",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1992,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "1992",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/0000876726/000095013396002043/0000950133-96-002043.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://carelistings.com/psych-residences-and-mental-health-centers/knoxville-tn/closed-reflections-treatment-agency/5ace88f693efd2372f98f4a8"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI's 1996 10-K lists Reflections Treatment, TN, started 9/92 by RFP, licensed capacity 42 (YSI 10-K FY1996).",
+        "CSC listed it as a 52-bed leased secure sexual offender facility in Knoxville, Tennessee (CSC 10-K for 1999).",
+        "CareListings lists it as a closed Medicaid-certified psychiatric residential treatment facility at 6628 Central Avenue Pike, Knoxville (CareListings).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 48,
+    "location_name": "SOUTH DAKOTA",
+    "facility": {
+      "identification": {
+        "name": "Springfield Academy",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Springfield",
+        "state": "SD",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Springfield, SD",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2011,
+        "status": "Closed",
+        "yearsOfOperation": "until 2011",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/0000876726/000095013396002043/0000950133-96-002043.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.yankton.net/community/article_6a3a5188-ce29-56fd-8e00-fc622ffea841.html"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI's 1996 10-K lists Springfield Academy, SD as acquired 11/93 (YSI 10-K FY1996).",
+        "CSC listed it as a 108-bed owned non-secure academy in Springfield, South Dakota (1993) (CSC 10-K for 1999).",
+        "In January 2011 YSI said it would close the PRTF, which then housed 26 state-placed youth aged 12-18, after repeated escapes (Yankton Press & Dakotan, Jan 5, 2011).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 9,
+    "location_name": "MISSOURI",
+    "facility": {
+      "identification": {
+        "name": "Tarkio Academy",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Tarkio",
+        "state": "MO",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Tarkio, MO",
+      "address": "300 N. 13th Street, Tarkio, MO 64491",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 1994,
+        "endYear": 2004,
+        "status": "Closed",
+        "yearsOfOperation": "1994-2004",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://dssmanuals.mo.gov/wp-content/themes/mogovwp_dssmanuals/public/cd/memos/2004/70/cd0470.pdf",
+        "https://www.sec.gov/Archives/edgar/data/0000876726/000095013396002043/0000950133-96-002043.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.encyclopedia.com/books/politics-and-business-magazines/youth-services-international-inc"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI leased the vacant Tarkio College property to run a juvenile offenders program (Encyclopedia.com, YSI history).",
+        "YSI's 1996 10-K lists Tarkio Academy, MO as opened de novo 9/94 (YSI 10-K FY1996).",
+        "CSC listed it as a 302-bed secure academy and sexual offender facility taking youth from several states (CSC 10-K for 1999).",
+        "Missouri Children's Division said YSI put it on voluntary intake suspension and would close it on September 19, 2004, citing falling intakes and lack of financial stability (MO DSS memo CD04-70, July 27, 2004).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 26,
+    "location_name": "NEW MEXICO",
+    "facility": {
+      "identification": {
+        "name": "Brush Ranch School",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Tererro",
+        "state": "NM",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Tererro, NM",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2004,
+        "status": "Closed",
+        "yearsOfOperation": "until 2004",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.youretheheartofus.com/brush-ranch-brief-history/",
+        "https://strugglingteens.com/archives/1999/2/visit04.html"
+      ],
+      "facilityDetails": {
+        "type": "Boarding School",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Newcomb and Kitty Rice founded Brush Ranch camp in 1956; a boarding school for middle and high school students with learning differences opened on the property in the 1970s (youretheheartofus.com, 'Brush Ranch: A Brief History').",
+        "The final season of operation was 2004, after which the property was sold (youretheheartofus.com, 'Brush Ranch: A Brief History').",
+        "In January 1999 the headmaster was Gary Emmons; the 283-acre campus straddles the Pecos River and the school took average-to-bright children with learning differences and acting-out behaviors (Struggling Teens visit report, February 1999).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Caldwell County Juvenile Justice Center",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Caldwell Juvenile Justice Center",
+          "Lockhart Boot Camp"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Lockhart",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Lockhart, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 2001,
+        "status": "Closed",
+        "yearsOfOperation": "1998-2001",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-01-000001.txt",
+        "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000914670&type=10-K"
+      ],
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Correctional Services Corp's 1999 and 2000 10-Ks list Lockhart Boot Camp, Lockhart, Texas (1998), 38 beds, a leased multi-county secure boot camp/detention facility (CSC 10-K FY1999, FY2000).",
+        "The FY2001 10-K lists the Caldwell Juvenile Justice Center among juvenile facilities discontinued in 2001, closed as part of the company's restructuring (CSC 10-K FY2001).",
+        "CSC lists the Caldwell Juvenile Justice Center among the juvenile facilities it stopped operating in 2001 (CSC 10-K for 2001). The town is inferred: its earlier filings list a CSC \"Lockhart Boot Camp\" in Lockhart, the county seat.",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 28,
+    "location_name": "VIRGINIA",
+    "facility": {
+      "identification": {
+        "name": "Camp Washington",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Virginia Juvenile Boot Camp"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Carrsville",
+        "state": "VA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Carrsville, VA",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": 1996,
+        "endYear": 2000,
+        "status": "Closed",
+        "yearsOfOperation": "1996-2000",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-97-002587.txt",
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-01-000001.txt",
+        "https://www.referenceforbusiness.com/history2/62/Youth-Services-International-Inc.html"
+      ],
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI began operating Camp Washington, VA in January 1996 under an RFP contract, a 45-bed boot camp (YSI 10-K FY1996, FY1997).",
+        "YSI's Carrsville, Virginia boot camp served 48 male youth in a military atmosphere, with a 20-bed female section planned (YSI company history, referenceforbusiness.com).",
+        "Listed as a 45-bed secure boot camp in Carrsville, Virginia (1996), managed/leased, with a city contract (CSC 10-K FY1999).",
+        "Correctional Services Corp discontinued its operation of Camp Washington in 2000 (CSC 10-K FY2000).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "Desert Hills - Texas",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Desert Hills - College Station",
+          "Desert Hills of Texas",
+          "College Station program"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "College Station",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "College Station, TX",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 1998,
+        "status": "Closed",
+        "yearsOfOperation": "until 1998",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-97-002587.txt",
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI assumed operation of the College Station, TX program, an academy and RTC, from the prior operator in July 1995, based on its relationship with the mortgagee of the real estate (YSI 10-K FY1996).",
+        "The Desert Hills - College Station and Los Hermanos Ranch facilities, both mainly behavioral health programs in Texas, were held for sale as of December 31, 1997 (YSI 10-K FY1997).",
+        "The College Station program closed on September 15, 1998 (CSC 10-K FY1999).",
+        "The operating subsidiary was Desert Hills of Texas, Inc. (YSI 10-K FY1997 subsidiary list).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 18,
+    "location_name": "OREGON",
+    "facility": {
+      "identification": {
+        "name": "Dragonfly Transitions",
+        "currentName": "",
+        "currentOperator": "Embark Behavioral Health",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Klamath Falls",
+        "state": "OR",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Klamath Falls, OR",
+      "address": "901 Main St, Klamath Falls, OR 97601",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 2000,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "2000",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://recovery.com/dragonfly-transitions-klamath-falls-oregon/",
+        "https://www.allkindsoftherapy.com/young-adults-at-dragonfly-transitions-learn-to-thrive-in-transition",
+        "https://www.yelp.com/biz/dragonfly-transitions-ashland"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "A nine-to-twelve-month program for young adults in southern Oregon, founded in 2000, Joint Commission accredited and licensed by DHS (All Kinds of Therapy).",
+        "Listed as closed and operated by Embark Behavioral Health, at 901 Main St, Klamath Falls; residential transitional living for ages 18 and up (recovery.com).",
+        "Also had a location at 34 Union St, Ashland, OR, now listed closed (Yelp).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "Everglades Academy",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Dade Juvenile Residential Facility"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Florida City",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Florida City, FL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International",
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 1996,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "1996",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-97-002587.txt",
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-98-001184.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-01-000001.txt",
+        "https://www.countyoffice.org/dade-juvenile-residential-facility-and-dade-youth-academy-homestead-fl-4de/"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "In October 1996 Florida DJJ awarded YSI a contract to run a 102-bed juvenile corrections facility for adjudicated youth in Dade County; operations began in early December 1996 (YSI 10-K FY1996).",
+        "Listed as Everglades Academy, Florida City, Florida (1996), 102-bed secure academy, state contract, managed (CSC 10-K FY1999).",
+        "Correctional Services Corp discontinued operating Everglades Academy in 2000 (CSC 10-K FY2000).",
+        "Dade Juvenile Residential Facility is a DJJ residential program in South Dade for adjudicated boys in grades 7-12 (countyoffice.org listing summary).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 3,
+    "location_name": "UTAH",
+    "facility": {
+      "identification": {
+        "name": "Heritage Homestead",
+        "currentName": "",
+        "currentOperator": "Heritage Schools, Inc.",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Heritage Schools, Inc. - Homestead"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Payson",
+        "state": "UT",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Payson, UT",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sltrib.com/news/2024/08/29/teen-dies-by-suicide-heritage/",
+        "https://www.cde.ca.gov/SchoolDirectory/details?cdscode=77764220165522"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Heritage Schools' Homestead program is in Payson, Utah; a teenager died by suicide there in June 2024 and the state said the program was being monitored and could be shut down (Salt Lake Tribune, 2024-08-29).",
+        "The California Department of Education school directory lists it as 'Heritage Schools, Inc. - Homestead' (CDE school directory).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 7,
+    "location_name": "FLORIDA",
+    "facility": {
+      "identification": {
+        "name": "LIFE",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "LIFE, Inc."
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Sarasota",
+        "state": "FL",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Sarasota, FL",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 1980,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "1980",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "http://survivingstraightinc.com/newspaper__magazine_articles_covering_straight_inc_1976-1993/more_straight_spinoffs_straight_renamed_by_george_ross"
+      ],
+      "facilityDetails": {
+        "type": "Substance Abuse Treatment",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "George Ross, on Straight Inc's executive staff from 1978, helped open LIFE in Sarasota, Florida, incorporated March 1980 (Surviving Straight Inc, 'More Straight SpinOffs by George Ross').",
+        "The Sarasota Herald-Tribune ran 'Drug Program Director Resigns' about LIFE on May 7, 1981 (Surviving Straight Inc article list).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 12,
+    "location_name": "NORTH CAROLINA",
+    "facility": {
+      "identification": {
+        "name": "Momentum",
+        "currentName": "",
+        "currentOperator": "Family Help & Wellness",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Momentum Young Adult"
+        ],
+        "pastNames": [
+          "Trails Momentum"
+        ],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Hendersonville",
+        "state": "NC",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Hendersonville, NC",
+      "address": "555 Sky Valley Camp Rd, Hendersonville, NC 28739",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://wlos.com/news/local/trails-carolina-wilderness-training-consulting-llc-buncombe-henderson-county-parent-company-program-license-issues-raise-concerns-related-facilities",
+        "https://trailsmomentum.weebly.com/contact.html",
+        "https://thebluebanner.net/17687/news/nc-wilderness-program-implements-drastic-reforms-amid-safety-concerns-declining-attendance/",
+        "https://recovery.com/residential/momentum-north-carolina/"
+      ],
+      "facilityDetails": {
+        "type": "Wilderness Therapy Program",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Young adult wilderness program for ages 18 to 25 in Henderson County, managed by Family Help & Wellness (WLOS).",
+        "NCDHHS: Trails Momentum is not licensed by DHSR's Mental Health Licensure Section (WLOS).",
+        "Trails Momentum listed its address as 555 Sky Valley Camp Rd, Hendersonville, NC 28739 (trailsmomentum.weebly.com contact page).",
+        "Trails Momentum serves young adults 18-25 and has the same parent as Trails Carolina, Family Help & Wellness; as an adult program it falls under looser licensing rules (The Blue Banner, Dec 10, 2024).",
+        "Ignite Adulthood, formerly Momentum, is a co-ed young-adult program in Hendersonville, NC 28739 in the Family Help & Wellness network (Recovery.com).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 17,
+    "location_name": "ARIZONA",
+    "facility": {
+      "identification": {
+        "name": "Parc Place",
+        "currentName": "",
+        "currentOperator": "Southwestern Children's Health Services, Inc.",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Southwestern Children's Health Services",
+          "Oasis Behavioral Health"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Chandler",
+        "state": "AZ",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Chandler, AZ",
+      "address": "2190 N Grace Blvd, Chandler, AZ 85225",
+      "otherOperators": [],
+      "pastOperators": [
+        "Youth Services International"
+      ],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.encyclopedia.com/books/politics-and-business-magazines/youth-services-international-inc",
+        "https://arizona.drugrehab101.com/clinicDetails_198.html",
+        "https://npino.com/hospital/1750702312-oasis-behavioral-health/"
+      ],
+      "facilityDetails": {
+        "type": "Residential Treatment Center",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Youth Services International established Parc Place in Arizona as a subsidiary (Encyclopedia.com YSI company history).",
+        "Southwestern Childrens Health Services AKA Parc Place, 2190 North Grace Boulevard, Chandler, offered short- and long-term residential mental health and substance abuse treatment for adolescents (drugrehab101).",
+        "The legal entity Southwestern Children's Health Services, Inc. at 2190 N Grace Blvd, Chandler now does business as Oasis Behavioral Health (NPI registry via npino.com).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 20,
+    "location_name": "GEORGIA",
+    "facility": {
+      "identification": {
+        "name": "Ridgeview Institute",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Ridgeview Institute Smyrna"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Smyrna",
+        "state": "GA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Smyrna, GA",
+      "address": "3995 S Cobb Dr SE, Smyrna, GA",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Open",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.ridgeviewsmyrna.com/",
+        "https://www.ridgeviewsmyrna.com/treatment/youth-program/",
+        "https://www.yelp.com/biz/ridgeview-institute-smyrna"
+      ],
+      "facilityDetails": {
+        "type": "Psychiatric Hospital",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Ridgeview Institute Smyrna offers inpatient, partial hospitalization and intensive outpatient services for adolescents 12-17 on a 37-acre campus outside Atlanta (ridgeviewsmyrna.com).",
+        "Address 3995 S Cobb Dr SE, Smyrna, Georgia (Yelp).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 26,
+    "location_name": "NEW MEXICO",
+    "facility": {
+      "identification": {
+        "name": "Shadow Mountain Academy",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Taos",
+        "state": "NM",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Taos, NM",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 2007,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "2007",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://strugglingteens.com/artman/publish/ShadowMountainAcademyVR_071023.shtml"
+      ],
+      "facilityDetails": {
+        "type": "Substance Abuse Treatment",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Transition/recovery program for young men ages 17-24 on 37 acres about 8.5 miles outside Taos, New Mexico; opened May 2007; owned by Robb and Deb Holub (StrugglingTeens visit report).",
+        "Closed status is from the network map, not a source.",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 9,
+    "location_name": "MISSOURI",
+    "facility": {
+      "identification": {
+        "name": "Stone of Help Group Homes",
+        "currentName": "",
+        "currentOperator": "Stone of Help",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Stone of Help"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Stockton",
+        "state": "MO",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Stockton, MO",
+      "address": "12978 E. 1430 Rd, Stockton, MO",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.wane.com/news/new-school-for-troubled-boys-to-open-on-agape-grounds/amp/"
+      ],
+      "facilityDetails": {
+        "type": "Group Home",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Nonprofit Stone of Help filed with the Missouri Secretary of State on Sept. 15, 2022; Jennifer and Jason Derksen are named on filings for Stone of Help Group Homes (WANE/Nexstar).",
+        "Planned capacity 30 boys at 12978 E. 1430 Rd, Stockton, 0.2 miles from Agape Boarding School, sharing employees, land and students with Agape (WANE/Nexstar).",
+        "Jason Derksen is a former Agape principal (WANE/Nexstar).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 42,
+    "location_name": "LOUISIANA",
+    "facility": {
+      "identification": {
+        "name": "Tallulah Correctional Center for Youth",
+        "currentName": "",
+        "currentOperator": "State of Louisiana",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Swanson Correctional Center for Youth/Madison Parish Unit"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Tallulah",
+        "state": "LA",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Tallulah, LA",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [
+        "Trans-American Development Associates",
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 1994,
+        "endYear": 2004,
+        "status": "Closed",
+        "yearsOfOperation": "1994-2004",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://en.wikipedia.org/wiki/Tallulah,_Louisiana",
+        "https://www.encyclopedia.com/books/politics-and-business-magazines/correctional-services-corporation",
+        "https://ips-dc.org/whos-profiting-americas-private-juvenile-prisons/"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Correctional Facility",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Opened November 1994 as a privately operated youth prison on the western edge of Tallulah (Wikipedia, Tallulah, Louisiana).",
+        "CSC's 1998 annual report called it the largest privately run juvenile facility in the country (Encyclopedia.com CSC history).",
+        "Trans-American Development Associates built it; three of its executives received $8.7 million from the deal between 1995 and 2001 (IPS).",
+        "The state took over in 1999 and renamed it Swanson Correctional Center for Youth/Madison Parish Unit; the Juvenile Justice Reform Act of 2003 required it to close by the end of 2004 (Wikipedia).",
+        "The site later became the Louisiana Transitional Center for Women (Wikipedia).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 23,
+    "location_name": "COLORADO",
+    "facility": {
+      "identification": {
+        "name": "Three Strands Wilderness",
+        "currentName": "",
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Three Strands",
+          "3 Strands"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Oak Creek",
+        "state": "CO",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Oak Creek, CO",
+      "address": "Routt County Road 16, near Lynx Pass",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": 2019,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "2019",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.steamboatpilot.com/news/new-treatment-center-in-south-routt-utilizes-ranch-work-wilderness-experience-to-fight-addiction/",
+        "https://us.bold.pro/my/patrick-hawkins"
+      ],
+      "facilityDetails": {
+        "type": "Substance Abuse Treatment",
+        "capacity": null,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": ""
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Opened 2019 on a 1,378-acre ranch off Routt County Road 16 near Lynx Pass in South Routt; 90 days of ranch work and therapy with a 30-day wilderness expedition; young men 18-27; president Hans Aschinger (Steamboat Pilot, Aug 27 2019).",
+        "Patrick Hawkins was Operational Director from July 2019 to August 2020 (Bold.pro resume).",
+        "The network map marks it closed; no source read confirms closure.",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
   }
 ]

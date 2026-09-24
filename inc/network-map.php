@@ -224,6 +224,7 @@ if (!function_exists('kop_network_map_flush')) {
     function kop_network_map_flush() {
         delete_transient('kop_network_map_meta');
         delete_transient('kop_network_map_facility_urls');
+        delete_transient('kop_network_map_facility_links');
     }
     add_action('kop_facility_v2_sync', 'kop_network_map_flush', 20);
 }
@@ -266,5 +267,97 @@ if (!function_exists('kop_network_map_label')) {
             return $map[$value];
         }
         return ucfirst(str_replace('-', ' ', (string) $value));
+    }
+}
+
+if (!function_exists('kop_network_map_facility_connections')) {
+    /**
+     * What the map records about each facility record it names, keyed by
+     * facilities_v2 id: the node it is drawn as and every connection it has,
+     *
+     *   id => array('node' => 'provo-canyon-school', 'name' => ...,
+     *               'links' => array(array('name', 'kind', 'node', 'facilityId',
+     *                                      'category', 'role', 'relation'), ...))
+     *
+     * relation is '' for an ordinary line, or 'became', 'formerly',
+     * 'acquired', 'acquired by' for the two directed kinds. The facility
+     * pages read it twice: a facility on the map qualifies for a page, and
+     * the page lists these connections. Cached against the graph build.
+     */
+    function kop_network_map_facility_connections() {
+        static $memo = null;
+        if ($memo !== null) {
+            return $memo;
+        }
+        $key = kop_network_map_cache_key();
+        if ($key === '') {
+            return $memo = array();
+        }
+        $key .= ':v2';
+        $cached = get_transient('kop_network_map_facility_links');
+        if (is_array($cached) && ($cached['_key'] ?? '') === $key && isset($cached['map'])) {
+            return $memo = $cached['map'];
+        }
+
+        $graph = kop_network_map_graph();
+        if (!$graph) {
+            return $memo = array();
+        }
+        $nodes = array();
+        foreach ($graph['nodes'] as $node) {
+            $nodes[(string) $node['id']] = $node;
+        }
+        $map = array();
+        $node_for = array();
+        // Several map names can be one record (a program and its tracks, two
+        // spellings); the record gets every one of their connections, and the
+        // first name is the one the page links to on the map.
+        foreach ($nodes as $id => $node) {
+            $fid = isset($node['facilityId']) ? (int) $node['facilityId'] : 0;
+            if ($fid <= 0) {
+                continue;
+            }
+            if (!isset($map[$fid])) {
+                $map[$fid] = array('node' => $id, 'name' => (string) $node['name'], 'links' => array());
+            }
+            $node_for[$id] = $fid;
+        }
+        foreach ((array) ($graph['edges'] ?? array()) as $edge) {
+            foreach (array('source', 'target') as $end) {
+                $here = (string) $edge[$end];
+                if (!isset($node_for[$here])) {
+                    continue;
+                }
+                $there = (string) $edge[$end === 'source' ? 'target' : 'source'];
+                if (!isset($nodes[$there])) {
+                    continue;
+                }
+                $other = $nodes[$there];
+                if (isset($node_for[$there]) && $node_for[$there] === $node_for[$here]) {
+                    continue; // two names for the same record
+                }
+                $relation = '';
+                $direction = (string) ($edge['direction'] ?? 'none');
+                if ($direction === 'renamed') {
+                    $relation = $end === 'source' ? 'became' : 'formerly';
+                } elseif ($direction === 'acquirer') {
+                    $relation = $end === 'source' ? 'acquired' : 'acquired by';
+                }
+                $roles = array_filter(array_map('strval', (array) ($edge['roles'] ?? array())), static function ($r) {
+                    return trim($r) !== '' && strcasecmp(trim($r), 'affiliated') !== 0;
+                });
+                $map[$node_for[$here]]['links'][] = array(
+                    'name'       => (string) $other['name'],
+                    'kind'       => (string) ($other['kind'] ?? ''),
+                    'node'       => $there,
+                    'facilityId' => isset($other['facilityId']) ? (int) $other['facilityId'] : 0,
+                    'category'   => (string) ($edge['category'] ?? 'unknown'),
+                    'role'       => implode(' / ', $roles),
+                    'relation'   => $relation,
+                );
+            }
+        }
+        set_transient('kop_network_map_facility_links', array('_key' => $key, 'map' => $map), WEEK_IN_SECONDS);
+        return $memo = $map;
     }
 }

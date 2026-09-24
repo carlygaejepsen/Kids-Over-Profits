@@ -47,6 +47,7 @@ define('OBJECT', 'OBJECT');
 define('MINUTE_IN_SECONDS', 60);
 define('HOUR_IN_SECONDS', 3600);
 define('DAY_IN_SECONDS', 86400);
+define('WEEK_IN_SECONDS', 604800);
 
 $GLOBALS['kop_test_query_vars'] = array();
 $GLOBALS['kop_test_transients'] = array();
@@ -234,6 +235,9 @@ require_once dirname(__DIR__) . '/inc/database.php';
 require_once dirname(__DIR__) . '/inc/rest-api.php';
 require_once dirname(__DIR__) . '/inc/country-rest-api.php';
 require_once dirname(__DIR__) . '/inc/facility-pages.php';
+// Loaded before the index is built: a facility the network map draws
+// qualifies for a page, and the page lists its connections.
+require_once dirname(__DIR__) . '/inc/network-map.php';
 // The facility template asks this for the "where to report" deep link.
 require_once dirname(__DIR__) . '/inc/reporting-directory.php';
 
@@ -373,7 +377,6 @@ $check('kop_facility_page_url for a thin record is empty', kop_facility_page_url
 // that got it back renumbered 0, 1, 2 (array_merge), so the drawer never
 // linked a profile on the live page. Both the fresh and the cached copy
 // have to carry the ids.
-require_once dirname(__DIR__) . '/inc/network-map.php';
 if (function_exists('kop_network_map_facility_urls') && function_exists('kop_network_map_graph') && kop_network_map_graph()) {
     $fresh = kop_network_map_facility_urls();
     $again = kop_network_map_facility_urls();
@@ -391,6 +394,29 @@ if (function_exists('kop_network_map_facility_urls') && function_exists('kop_net
     $check('network map facility URLs are keyed by facility id', $keyed($fresh), json_encode(array_slice(array_keys($fresh), 0, 5)));
     $check('network map facility URLs keep their ids through the cache', $keyed($again) && $again === $fresh, json_encode(array_slice(array_keys($again), 0, 5)));
     $check('network map facility URLs cover linked nodes', count($fresh) > 100, 'only ' . count($fresh) . ' of ' . count($graph_ids));
+
+    // Every record the map draws with a connection has a page, and the page
+    // lists what the map says about it.
+    $drawn = kop_network_map_facility_connections();
+    $existing = array();
+    foreach ($wpdb->get_col('SELECT id FROM facilities_v2') as $fid) $existing[(int) $fid] = true;
+    $pageless = array();
+    foreach ($drawn as $fid => $entry) {
+        if (!empty($entry['links']) && isset($existing[$fid]) && kop_facility_page_url($fid) === '') $pageless[] = $fid . ' ' . $entry['name'];
+    }
+    $check('every facility on the network map has a page', !$pageless, count($pageless) . ': ' . implode('; ', array_slice($pageless, 0, 5)));
+    $sample = null;
+    foreach ($drawn as $fid => $entry) {
+        if (isset($existing[$fid]) && count($entry['links']) >= 3) { $sample = $fid; break; }
+    }
+    if ($sample !== null) {
+        $net = kop_facility_pages_network($sample);
+        $listed = 0;
+        foreach ($net['groups'] ?? array() as $g) $listed += count($g['items']);
+        $check('a facility page lists its network connections', $listed > 0 && strpos($net['map_url'], '#open=' . rawurlencode($drawn[$sample]['node'])) !== false,
+            $drawn[$sample]['name'] . ': ' . $listed . ' listed, ' . ($net['map_url'] ?? 'no map link'));
+        $want_ids[] = $sample;
+    }
 } else {
     $check('network map module loads with a graph', false, 'inc/network-map.php or js/data/network/graph.json missing');
 }

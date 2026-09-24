@@ -45,6 +45,7 @@ $kop_fp_has_docs = !empty($page['documents']['html']) || $kop_fp_has_research;
 $kop_fp_has_wiki = !empty($page['wiki']);
 $kop_fp_has_siblings = !empty($page['siblings']);
 $kop_fp_has_resources = !empty($page['resources']) || !empty($page['profile_links']);
+$kop_fp_has_network = !empty($page['network']['groups']);
 
 if ($kop_fp_has_inspections) $kop_fp_sections['inspections'] = 'Licensing and inspections';
 if ($kop_fp_has_news) $kop_fp_sections['news'] = 'News coverage';
@@ -52,6 +53,7 @@ if ($kop_fp_has_lawsuits) $kop_fp_sections['lawsuits'] = 'Lawsuits';
 if ($kop_fp_has_memorials) $kop_fp_sections['memorials'] = 'Deaths on record';
 if ($kop_fp_has_practices) $kop_fp_sections['practices'] = 'Reported practices';
 if ($kop_fp_has_staff) $kop_fp_sections['staff'] = 'Staff';
+if ($kop_fp_has_network) $kop_fp_sections['network'] = 'Network';
 if ($kop_fp_has_docs) $kop_fp_sections['documents'] = 'Documents';
 if ($kop_fp_has_notes) $kop_fp_sections['notes'] = 'Research notes';
 if ($kop_fp_has_wiki) $kop_fp_sections['wiki'] = 'Wiki entries';
@@ -309,6 +311,28 @@ get_header();
                     ?>
                     <h3 class="kop-fp-subhead"><?php echo esc_html($label); ?></h3>
                     <?php $kop_fp_list($page['staff'][$key], 'kop-fp-people'); ?>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_network) : ?>
+            <section class="kop-fp-section" id="network">
+                <h2>Connections on the network map</h2>
+                <p class="kop-fp-count">The companies, people and programs our research map ties to this program. <a href="<?php echo esc_url($page['network']['map_url']); ?>">Open it on the network map</a>.</p>
+                <?php foreach ($page['network']['groups'] as $group) : ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($group['items'] as $item) : ?>
+                            <li>
+                                <?php if ($item['url'] !== '') : ?>
+                                    <a href="<?php echo esc_url($item['url']); ?>"><?php echo esc_html($item['name']); ?></a>
+                                <?php else : ?>
+                                    <span><?php echo esc_html($item['name']); ?></span>
+                                <?php endif; ?>
+                                <?php if ($item['role'] !== '') : ?><span class="meta"><?php echo esc_html($item['role']); ?></span><?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
                 <?php endforeach; ?>
             </section>
             <?php endif; ?>

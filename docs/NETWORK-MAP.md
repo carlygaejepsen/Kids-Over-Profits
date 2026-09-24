@@ -69,7 +69,7 @@ Key facts the map depends on:
 
 A place that changed its name is two names in the record and one node on
 the board, and until now the board showed only the newer one. A reader who
-knows a programme as Island View RTC could not find Elevations RTC, and the
+knows a program as Island View RTC could not find Elevations RTC, and the
 map said nothing about the change.
 
 Where the old name is **itself a node** on the board, nothing is needed:
@@ -143,7 +143,7 @@ failures, median 436px, 19.7% short. So past names cost nothing at all,
 because they fold onto a line the name already had, and the whole of the
 drop is other names.
 
-The view still reads right - the company band sits above the programmes,
+The view still reads right - the company band sits above the programs,
 the median line is shorter than the limit and the straight-line count is
 unchanged at 24 of 70 - so two of the three were the tests being off by
 one, and were corrected as such: the ownership tolerance is written twice,
@@ -274,7 +274,7 @@ only twenty of the thirty-six names could be drawn without overlapping.
 
 **Clusters round the click, not rows (2026-09-22).** The layout has been
 through three shapes. The first stacked the view in bands: every company in
-the top rows, the people who ran things under them, every programme below.
+the top rows, the people who ran things under them, every program below.
 The second (`boardLayout`, 2026-09-18) packed the view into rows of small
 trees, clustered by modularity, with the lines run as right-angled traces
 through the gutters between the rows. It measured well - shorter lines,
@@ -335,7 +335,7 @@ gathered round it, lines drawn straight from centre to centre (right-angled sinc
   row the packing emptied does not leave its height behind as a gap.
   Rows only ever break where the run does: the two ends of an ownership or
   a rename never share a row, whatever width that leaves unused, because a
-  company beside the programme it owns says the opposite of what the map
+  company beside the program it owns says the opposite of what the map
   means. The click's own row is held whole - it is the neighbourhood being
   read, and breaking it up pushed the click's own connections off the
   stage.
@@ -431,7 +431,7 @@ person stands in the middle of one.
 
 **The person who joins two places is the line between them (2026-09-21).**
 The owner changed their mind about the paragraph above. Connected
-programmes are what belong on the board, always; the person who connects
+programs are what belong on the board, always; the person who connects
 them should not be a third name to read but something the line gives up
 when it is hovered. So `foldConnectors` (focus.js) runs on every scene:
 
@@ -470,32 +470,32 @@ Treatment Center, which it owned). And a name with more than 36 lines no
 longer gathers on hover, only lights: fifty-two names pulled a third of the
 way in landed on each other and twenty-two were dropped.
 
-Owners are unchanged: a programme's owner comes along and brings only
+Owners are unchanged: a program's owner comes along and brings only
 itself, with its other holdings behind the +N. A folded person is on screen
 as their line, so they are not counted in anybody's +N.
 
 **A person is never on the map without their places (2026-09-21).** The
 owner's rule, stated flatly: the map is about relationships, so if a person
-connects to a programme or a company, it shows. Two things still broke it
+connects to a program or a company, it shows. Two things still broke it
 after the fold, and both are closed:
 
 - *People who arrived second-hand.* The one-step stop meant a person brought
   in by another person (Narvin Lichfield, in Provo Canyon School's view as
-  somebody's brother) stood there with every programme he ran behind a +N:
+  somebody's brother) stood there with every program he ran behind a +N:
   197 missing connections across 68 of the 1,258 views. The stop is for
   people bringing people, which is what runs away. `withTheirPlaces`
-  (focus.js) now adds every programme and company of every person in the
+  (focus.js) now adds every program and company of every person in the
   view, whoever brought them, and the same for the people a starter view
   names. What those places bring in turn is still a click away.
 - *Connection types hidden by default.* Board seats, referrals, survivors
   and "other" started unchecked. All 55 of those lines join a person to a
-  programme or company and none joins anything else, so the default hid
+  program or company and none joins anything else, so the default hid
   exactly what the map is for. Every type is on by default now
   (`DEFAULT_CATEGORIES` in store.js); the rail keeps a checkbox for each.
 
 `scripts/test-network-modules.js` checks the rule from every name on the
 board, not a sample: in each of the 1,258 views, every person drawn as a
-name or a line has every programme and company they connect to. Starter
+name or a line has every program and company they connect to. Starter
 views grow with it (today's top players from 29 to 60), by places of their
 own people and nothing else, which the test also holds them to.
 
@@ -530,7 +530,7 @@ reachable only by hovering.
 **The people on a line are drawn on it (2026-09-22).** The owner's next
 idea: a line that stands for people should show them, one small circle per
 person, so a reader can see at a glance that three people moved between two
-programmes and ask about each one. So every line with people on it -
+programs and ask about each one. So every line with people on it -
 folded people (`edge.via`) and the names a staff-list line carries in its
 text - has a strip of circles across its middle (`placeMarkers` in
 canvas.js), each drawn like a person's bubble with the name left out.
@@ -586,7 +586,7 @@ make the name bigger and draw its connections closer. So:
   mid-flight; the reframe carries the motion on from where the names are
   rather than cutting to the end. Hover is ignored while it runs, and
   reduced motion skips it.
-- A hub's lines to a grid of programmes share vertical channels
+- A hub's lines to a grid of programs share vertical channels
   (`TRUNK_PULL`): a line takes a channel its hub's other lines already run
   down if that is no more than 90 px further than its own nearest clear one.
 
@@ -595,7 +595,7 @@ something is clicked, the board holds that node and everything it touches,
 and then three rules run:
 
 - *A person never appears alone.* The fact worth having about someone on
-  this map is which programmes they turn up at, so when a person surfaces
+  this map is which programs they turn up at, so when a person surfaces
   everywhere they connect to surfaces with them. One step and stop: a person
   reached through another person's expansion does not expand in turn. When
   that would take the view past 30 names (`PERSON_REACH_BUDGET` in
@@ -608,7 +608,7 @@ and then three rules run:
   the ownership chain, not the whole of it - Provo Canyon School walks up
   through ten organisations if you let it. Owners only, never their other
   holdings: two facilities owned by the same company are not each other's
-  business, and only somebody who worked at both puts a second programme on
+  business, and only somebody who worked at both puts a second program on
   screen beside the first. The rule applies to what was asked for, not to
   the opening organisations; letting the background expand turned a click on
   Casa Grande Academy into nineteen parent companies.
@@ -1202,7 +1202,7 @@ cPanel job has been flaky about new paths.
   about (see 2b.1). The remaining gap is facilities and companies at the
   edge of the board, whose unopened connections are not drawn. Either the
   sisters rule goes, and a click on a UHS facility brings every UHS
-  programme, or the edge nodes get an unopened-connections mark. The list
+  program, or the edge nodes get an unopened-connections mark. The list
   says the former; decide with a UHS view on screen.
 
 ## Phase 2b: the fix list of 2026-09-17
@@ -1279,6 +1279,38 @@ are open with the files involved.
   `preview-network-map.py --config FILE` lays a saved live
   `KOP_NETWORK_CONFIG` over the preview's, so the profile links can be seen
   before a deploy.
+
+  *Every map facility gets a page (2026-09-23).* The owner asked for pages
+  for the facilities with none, and for them to be in the database. Two
+  halves:
+  - A facility the map draws qualifies for a `/facility/` page on that alone
+    (the `network` signal in `kop_facility_page_signals`), and the page has a
+    "Connections on the network map" section: companies, people with their
+    roles, renames and acquisitions, each program linking to its own page,
+    and a link that opens it on the map. The data is
+    `kop_network_map_facility_connections()` (inc/network-map.php), keyed by
+    facility id, cached against the graph build; several map names that
+    are one record pool their connections. The page index fingerprint
+    includes the graph build, so a new graph re-reads which facilities
+    qualify. This gave the 36 records that had no page one.
+  - The 199 facility names with no record were researched one by one (six
+    agents, then a review): 117 are existing records under another spelling
+    or a later name, pinned under `facilities` in the overrides; 28 are not
+    one place (companies, umbrella brands, seminar outfits, a referral
+    site), relabelled under `kinds`; 39 are real places missing from the
+    database, added to `seeds/new-facilities.json` with sourced city, state,
+    status, years and operator, and inserted into `facilities_v2` on the
+    next init (seed version 31); 13 stay unresolved (no source ties the name
+    to a place, or the only match was a shared address). Two pairs were one
+    place under two names on the map (Trails Momentum and Momentum; Kansas
+    Industrial School for Girls and Youth Center at Beloit) and are one
+    record each with the old name as a past name. Many of the juvenile
+    justice sites come from the Correctional Services Corporation and Youth
+    Services International 10-K filings on SEC EDGAR, each checked to name
+    the facility it is cited for.
+  - After the deploy: re-sync the mirror, rebuild the graph so the new
+    records match by name, and pin the two merged names and any new record
+    whose name differs from the map's.
 - **URL state** (`js/network-map/url-state.js`). `#open=id,id&mode=expand`,
   written with replaceState on every change and read once the data loads
   and on hashchange, through `focus.restore`. A name the board no longer has
@@ -1341,7 +1373,7 @@ and `founders`. Each carries `provenance: "profile"`, the drawer marks it
 "from the profile", and every one is listed in the QA report. A name must
 resolve to exactly one node. Facility `pastNames` and `otherNames` that
 resolve to another node are not turned into edges - they would assert a
-rebrand, and some are sister programmes (Asheville Academy for Girls and
+rebrand, and some are sister programs (Asheville Academy for Girls and
 Stone Mountain School) - so the 50 of them are listed for a person to
 decide.
 
@@ -1373,7 +1405,7 @@ Greenbrier Academy for Girls, OceanQuest under VisionQuest).
 The build adds 17 staff edges with `provenance: "staff-movement"`. A person
 who is a board node is connected to both places; otherwise - most are not,
 and the board stays the roster - the two places are joined by a staff edge
-that names who moved, which is what puts a second programme beside the
+that names who moved, which is what puts a second program beside the
 first. The drawer prints that sentence under the connection. Five rows name
 a place not on the board (Silverado Academy is left there on purpose: it
 may or may not be Silverado Boys Ranch) and are listed in the QA report.
@@ -1572,7 +1604,7 @@ they connect to; `--fresh` settles everything again, for a new board export.
 
 **Profile past names drawn as rebrands (2026-09-18).** The 51 profile
 names that are another board node were held back in case some were sister
-programmes; the owner confirmed them as rebrands. Pairs the board already
+programs; the owner confirmed them as rebrands. Pairs the board already
 connects keep the board's line, which leaves eleven new rebrand lines. The
 years decide which name came first where both ends have them; otherwise a
 past name is the older one, and an "other" name is older if it is the one
@@ -1864,9 +1896,9 @@ says which organisation; `focus.js` asks `headOf()` wherever it used to ask
 for the newest click, and `currentRoots()` answers the opening root when
 the trail is empty. So the first screen is exactly what a click on UHS
 leaves (the module test asserts the two scenes are the same set of names):
-UHS pinned in the middle grown as a head is, its 12 programmes in rows
+UHS pinned in the middle grown as a head is, its 12 programs in rows
 below, its owners and the companies it bought above, its two people, the
-places those people lead to, and the owners of its programmes, which is
+places those people lead to, and the owners of its programs, which is
 how WWASPS arrives, through Provo Canyon School. 30 names, 28 on screen
 once two people fold into lines. What is different from a click is what is
 not there: no crumb, so Start over stays hidden, and no hash, so a plain
@@ -1883,7 +1915,7 @@ the mechanism is not lost if the owner wants a list again.
 had UHS at the top edge, its name half under the Key and Reset view
 buttons and cut at the right. A click on it did the same: the frame is
 centred on the click and its own connections, and a company with its
-programmes in rows below it sits at the top of that group, so the rule
+programs in rows below it sits at the top of that group, so the rule
 "whatever else goes off the stage, the click stays on it" was met by its
 centre alone. The rule now wants the whole box, drawn grown, inside the
 stage with 48 px clear at the top for the controls and 12 px at the
@@ -1904,7 +1936,7 @@ happens to put it near the top, not because anything keeps it there.
 `parent`, `person`, `association`, `church`, `government`) and the drawer
 says it. On the stage a person is an ellipse and everything else is a box,
 which is the Miro board's own key, and since the 2026-09-22 look pass
-nothing else tells a company from a programme from a trade group.
+nothing else tells a company from a program from a trade group.
 
 *The gap.* On a board of eighty boxes the companies and the places look the
 same until they are clicked. The lines tell them apart to someone who
@@ -1966,7 +1998,7 @@ two, and hovering a person's circle on a line says who. The drawer, with
 the profile, years, deaths and the connection list, opens on click only.
 
 *The gap.* Nothing on hover says what a name is. To learn that a box is a
-closed 1990s programme in Utah with two deaths the reader has to click it,
+closed 1990s program in Utah with two deaths the reader has to click it,
 and each click re-lays the board out (Focus) or adds to it (Expand).
 
 *To build.* A hover card for nodes: kind, status with years, state, deaths,
@@ -2042,7 +2074,7 @@ different set of ids.
 the "+N" pill), "Whose lines" (the companies in view by colour), and
 "Connections shown" (each line style). It lists only what is on screen.
 
-*The gap.* No row tells a company from a programme (nothing on the stage
+*The gap.* No row tells a company from a program (nothing on the stage
 does either, 2d.2). Nothing says what an arrowhead means, that dash-dot
 lines carry people, or that lines leave from any side. Closed by default,
 a first-time reader never sees it.
@@ -2180,13 +2212,13 @@ reopens it from a link, and Start over and Escape leave it.
 
 - The scene is the route's names and the lines between each and the next,
   and nothing else. Every rule that brings more onto the board (a person's
-  places, a programme's owner) stands aside, and a line between two names
+  places, a program's owner) stands aside, and a line between two names
   that are not neighbours on the route is left out, since it would be a
   shortcut across the route being shown.
 - Nobody is folded into a line. On a route the person who joins two places
   is the answer, so they are a name.
 - *Laid out as a line, not a board* (`pathLayout`). The board layout
-  arranges by hierarchy, and a route through a company, a programme and a
+  arranges by hierarchy, and a route through a company, a program and a
   person came out as a zigzag that had to be traced to find its order. A
   route is a row in reading order when it fits the stage at full size (gaps
   of 150, room for each line's caption), and a column when it does not:
