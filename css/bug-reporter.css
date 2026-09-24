@@ -19,7 +19,12 @@
        it in block, flex, and grid parents alike. */
     display: flex;
     width: fit-content;
+    height: auto;
     align-items: center;
+    /* In a flex-row or grid parent the default align-self: stretch pulls
+       the pill to the full height of the row. Pin it to the bottom-right. */
+    align-self: flex-end;
+    justify-self: end;
     margin: 6px 0 0 auto;
     padding: 3px 7px;
     border-width: 1px;
@@ -35,6 +40,7 @@
     display: inline-flex;
     width: auto;
     margin: 0 0 0 8px;
+    align-self: center;
     vertical-align: middle;
 }
 
