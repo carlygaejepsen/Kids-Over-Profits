@@ -10011,5 +10011,45 @@
         ]
       }
     }
+  },
+  {
+    "id": 9644,
+    "unique_name": "Three Springs New Beginnings",
+    "version": 2,
+    "note": "Takes \"Brighter Path Owens Cross Roads\" back out of the other names added on 2026-09-24: it was the later name of this campus (after Sequel TSI Owens Cross Roads), and the map reads a listed name as an earlier one, which drew the rename backwards.",
+    "facility": {
+      "identification": {
+        "name": "Three Springs New Beginnings",
+        "currentName": "Pathway of Madison County",
+        "otherNames": [
+          "Sequel TSI Owens Cross Roads",
+          "Three Springs Turning Point",
+          "Three Springs New Beginnings"
+        ],
+        "pastNames": [],
+        "currentOperator": "Pathway of Madison County",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9734,
+    "unique_name": "SUWS Idaho",
+    "version": 2,
+    "note": "Takes \"SUWS Adolescent and Youth Programs\" back out of the other names added on 2026-09-24: it is the same Idaho program under its full name, not a rename, and the map drew it as one.",
+    "facility": {
+      "identification": {
+        "name": "SUWS Idaho",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
   }
 ]
