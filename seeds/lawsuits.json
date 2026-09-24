@@ -2330,6 +2330,31 @@
           "https://pvtimes.com/news/owners-of-northwest-academy-face-45-count-criminal-complaint-73622/"
         ]
       }
+    },
+    {
+      "match_case_name": "Sherman, et al. v. Trinity Teen Solutions, et al.",
+      "set": {
+        "filing_date": "2020-11-25",
+        "status": "settled",
+        "settlement_amount": "$2.3 million",
+        "summary": "Former residents Carlie Sherman, Anna Gozun, Amanda Nash, Andrew Scavuzzo and Ehan Jelinek sued Trinity Teen Solutions, Triangle Cross Ranch, the Schneider and Woodward families who own and run them, a Carmelite monastery that sells Mystic Monk Coffee, the Diocese of Cheyenne, and others in the U.S. District Court for the District of Wyoming, first filing in November 2020 and filing a first amended complaint on February 12, 2021. The suit alleges the ranches near Powell, Wyoming promised parents therapy and schooling and instead made teens work long hours on the ranches without pay under threat of punishment and longer stays. The district court dismissed the RICO and negligence claims, leaving forced labor and trafficking claims under federal law, and later denied class certification. On October 31, 2023 the Tenth Circuit vacated that denial and sent the class certification question back to the district court. In 2025 the case settled as a class action: 262 women who were sent to the ranches as teenagers will share $2.3 million from Trinity Teen Solutions and Triangle Cross Ranch, with no admission of wrongdoing. Class members who accept payment must agree not to disparage the defendants; lead plaintiff Anna Gozun declined to take part. Judge Scott Skavdahl approved the settlement in fall 2025 as fair given the risk of recovering nothing, and the case closed on October 6, 2025.",
+        "outcome": "The district court dismissed the RICO, negligence and negligent infliction of emotional distress claims under Rule 12(b)(6), leaving the forced labor and trafficking claims. After the plaintiffs moved for class certification in August 2022, the district court denied it. On October 31, 2023, in a published opinion (No. 22-8080), the U.S. Court of Appeals for the Tenth Circuit held the district court had applied the wrong legal standards for commonality, typicality and predominance, vacated the denial of class certification and sent the case back for further proceedings. The United States filed an amicus brief in the appeal. Back in the district court, the case settled in 2025 for $2.3 million, to be shared by a class of 262 former residents; the defendants admitted no wrongdoing and class members who accept payment must agree not to disparage them. Judge Scott Skavdahl gave final approval in fall 2025 and the case was terminated on October 6, 2025.",
+        "tags": [
+          "class action",
+          "Wyoming",
+          "forced labor",
+          "trafficking",
+          "appeal",
+          "Tenth Circuit",
+          "settlement"
+        ],
+        "source_urls": [
+          "https://www.codyenterprise.com/news/local/article_31d7308f-8dab-4b9e-acb3-e2420a2d90e1.html",
+          "https://www.ca10.uscourts.gov/opinion/22-8080",
+          "https://dockets.justia.com/docket/wyoming/wydce/2:2020cv00215/56518",
+          "https://www.freedomunited.org/news/settlement-for-camp-survivors/"
+        ]
+      }
     }
   ],
   "facility_links_add": [
