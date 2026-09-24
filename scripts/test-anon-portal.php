@@ -91,14 +91,21 @@ check($call('public_key') === sodium_crypto_box_publickey($pair), 'constant key 
 file_put_contents($up . 'sub_aaaa1111_leak.pdf', 'PDF-ONE');
 file_put_contents($up . 'sub_aaaa1111_notes.txt', 'the notes');
 file_put_contents($up . 'sub_bbbb2222_notes.txt', 'a document that happens to be named notes.txt');
+// The October 2025 naming, plus the preview JPGs WordPress rendered from it.
+file_put_contents($up . 'SUB-2025-YLVUY0CL_pJlaHQv1mxi2.pdf', 'OLD-PDF');
+foreach (array('', '-116x150', '-232x300', '-309x400', '-768x994') as $size) {
+    file_put_contents($up . 'SUB-2025-YLVUY0CL_pJlaHQv1mxi2-pdf' . $size . '.jpg', 'preview');
+}
 try {
     $portal->handle_encrypt_existing();
 } catch (KopTestStop $e) {
-    check(strpos($e->getMessage(), 'encrypted=2') !== false, 'migration reports 2 submissions: ' . $e->getMessage());
+    check(strpos($e->getMessage(), 'encrypted=3') !== false, 'migration reports 3 submissions: ' . $e->getMessage());
 }
 $left = array_values(array_diff(scandir($up), array('.', '..', '.htaccess', 'index.php')));
 sort($left);
-check($left === array('sub_aaaa1111.sealed', 'sub_abc123.sealed', 'sub_bbbb2222.sealed'), 'only sealed files remain: ' . implode(', ', $left));
+check($left === array('SUB-2025-YLVUY0CL.sealed', 'sub_aaaa1111.sealed', 'sub_abc123.sealed', 'sub_bbbb2222.sealed'), 'only sealed files remain, previews gone: ' . implode(', ', $left));
+exec(str_replace(escapeshellarg($up . 'sub_abc123.sealed'), escapeshellarg($up . 'SUB-2025-YLVUY0CL.sealed'), $cmd), $out4, $code4);
+check($code4 === 0 && @file_get_contents($tmp . '/out/SUB-2025-YLVUY0CL_pJlaHQv1mxi2.pdf') === 'OLD-PDF', 'October 2025 submission opens');
 
 exec(str_replace(escapeshellarg($up . 'sub_abc123.sealed'), escapeshellarg($up . 'sub_aaaa1111.sealed') . ' ' . escapeshellarg($up . 'sub_bbbb2222.sealed'), $cmd), $out3, $code3);
 check($code3 === 0 && @file_get_contents($tmp . '/out/sub_aaaa1111_leak.pdf') === 'PDF-ONE', 'migrated document opens');

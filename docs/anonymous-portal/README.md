@@ -41,7 +41,7 @@ Every submission is encrypted the moment it reaches the server, before anything 
 
 - Files go to `wp-content/uploads/anonymous-submissions/` as `<submission id>.sealed`, where the id is `uniqid('sub_')`. The original filename is inside the sealed box only.
 - When the directory is first created it gets an `.htaccess` (`Deny from all`) and an `index.php` so the files cannot be fetched or listed over the web.
-- Submissions stored before encryption (September 2026 and earlier: `<id>_<original name>` plus `<id>_notes.txt`) show as a warning on the admin screen, with a button that seals them and then deletes the unencrypted copies. A submission's plaintext is deleted only after all of its sealed files are written in full. Server backups taken before that still hold the plaintext.
+- Submissions stored before encryption (`<id>_<original name>` plus `<id>_notes.txt`, or the October 2025 portal's `SUB-2025-<code>_<random>.<ext>` with the preview JPGs WordPress rendered from it) show as a warning on the admin screen, with a button that seals them and then deletes the unencrypted copies. A submission's plaintext is deleted only after all of its sealed files are written in full. Server backups taken before that still hold the plaintext.
 
 ## Notification
 

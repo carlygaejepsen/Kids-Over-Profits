@@ -36,7 +36,10 @@ if (!defined('ABSPATH')) {
  */
 
 class AnonymousDocPortal {
-    
+
+    /** Submission ids: uniqid('sub_') now, SUB-2025-XXXXXXXX from the October 2025 portal. */
+    const ID_PATTERN = 'sub_[0-9a-f]+|SUB-\d{4}-[A-Z0-9]+';
+
     private $upload_dir;
     private $allowed_types = array('pdf', 'doc', 'docx', 'txt', 'jpg', 'jpeg', 'png', 'zip');
     private $max_file_size = 10485760; // 10MB
@@ -375,7 +378,8 @@ class AnonymousDocPortal {
     /**
      * Submissions stored before encryption existed, grouped by id:
      * id => array(original name => stored filename). Each is one document
-     * plus, optionally, a sub_x_notes.txt.
+     * plus, optionally, a sub_x_notes.txt. Two namings: sub_<hex>_<name>
+     * (2026) and SUB-2025-<code>_<random>.<ext> (the October 2025 portal).
      */
     private function plaintext_submissions() {
         $groups = array();
@@ -383,11 +387,22 @@ class AnonymousDocPortal {
             if (substr($name, -7) === '.sealed' || !is_file($this->upload_dir . $name)) {
                 continue;
             }
-            if (preg_match('/^(sub_[0-9a-f]+)_(.+)$/', $name, $m)) {
+            if (preg_match('/^(' . self::ID_PATTERN . ')_(.+)$/', $name, $m)) {
                 $groups[$m[1]][$m[2]] = $name;
             }
         }
         return $groups;
+    }
+
+    /**
+     * Is $name a WordPress preview image of a PDF in the same submission
+     * (report.pdf -> report-pdf.jpg, report-pdf-232x300.jpg)? Those are
+     * renderings of the PDF, so migration deletes them instead of sealing
+     * each one separately.
+     */
+    private static function is_pdf_preview($name, array $parts) {
+        return preg_match('/^(.+)-pdf(?:-\d+x\d+)?\.jpg$/i', $name, $m) === 1
+            && isset($parts[$m[1] . '.pdf']);
     }
 
     public function render_admin_page() {
@@ -398,7 +413,7 @@ class AnonymousDocPortal {
         $public_key = $this->public_key();
         $sealed = array();
         foreach ((array) scandir($this->upload_dir) as $name) {
-            if (preg_match('/^sub_[0-9a-f]+\.sealed$/', $name)) {
+            if (preg_match('/^(' . self::ID_PATTERN . ')\.sealed$/', $name)) {
                 $sealed[] = $name;
             }
         }
@@ -456,7 +471,7 @@ class AnonymousDocPortal {
     /** Send one sealed file to an admin. It stays encrypted in transit and on their disk. */
     public function handle_admin_download() {
         $name = isset($_GET['file']) ? basename(wp_unslash($_GET['file'])) : '';
-        if (!current_user_can('manage_options') || !preg_match('/^sub_[0-9a-f]+\.sealed$/', $name)) {
+        if (!current_user_can('manage_options') || !preg_match('/^(' . self::ID_PATTERN . ')\.sealed$/', $name)) {
             wp_die('Not allowed.', 403);
         }
         check_admin_referer('kop_anon_download_' . $name);
@@ -495,6 +510,11 @@ class AnonymousDocPortal {
             if (isset($parts['notes.txt']) && count($parts) > 1) {
                 $notes = (string) file_get_contents($this->upload_dir . $parts['notes.txt']);
                 unset($docs['notes.txt']);
+            }
+            foreach (array_keys($docs) as $orig) {
+                if (self::is_pdf_preview($orig, $parts)) {
+                    unset($docs[$orig]);
+                }
             }
 
             $ok = true;
