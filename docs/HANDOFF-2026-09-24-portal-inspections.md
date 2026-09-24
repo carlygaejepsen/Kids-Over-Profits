@@ -184,16 +184,14 @@ that WordPress generated from it.
   with empty message and contact fields and a small `files_data` blob
   naming the original file. It is harmless but could be cleared.
 
-### Unconfirmed
+### Confirmed and unconfirmed
 
-- **Whether `CLOUDMERSIVE_API_KEY` is set in production.** If it is
-  not, the portal is now refusing every upload. Evidence that it is
-  set: the URL scanner's cache (`url_scan_cache` in the mirror) has
-  real results up to 2026-09-06. The owner was asked to open the admin
-  screen and look for a red "Malware scanning is not configured" box.
-  No answer was recorded.
-- No real upload was sent through the live form; the offline test
-  covers that path.
+- **`CLOUDMERSIVE_API_KEY` is set in production.** The owner checked
+  the Anonymous Docs screen on 2026-09-24 and it shows no red "Malware
+  scanning is not configured" box, so uploads are being accepted and
+  scanned.
+- Unconfirmed: no real upload was sent through the live form. The
+  offline test covers that path.
 
 ---
 
@@ -300,7 +298,7 @@ Nothing else needs to change.
 
 ---
 
-## 4. Nightly severe-findings scan (waiting on the owner)
+## 4. Nightly severe-findings scan
 
 `api/scan-inspection-highlights.php` already had a CLI mode. The cron
 line is in `docs/state-inspection-reports/README.md` under "Severe
@@ -310,9 +308,10 @@ Findings":
 15 4 * * * cd /home/kidsover/public_html/wp-content/themes/child && /opt/cpanel/ea-php82/root/usr/bin/php api/scan-inspection-highlights.php apply >> /home/kidsover/logs/inspection-highlights-scan.log 2>&1
 ```
 
-The owner was given the cPanel steps. **Whether they added it is
-unknown.** Ask them, or ask for the first lines of that log. The scan
-only queues candidates. Nothing reaches `/severe-reports/` until an
+**The owner added this cron job in cPanel on 2026-09-24.** Its first
+run was due at 04:15 server time on 2026-09-25. Nobody has checked the
+log yet: ask the owner for its first lines, which should read "Saved:
+scanned N reports, 0 remaining". The scan only queues candidates. Nothing reaches `/severe-reports/` until an
 admin approves it at `api/review-inspection-highlights.php`. Use the
 full PHP path: cron's plain `php` is php-cgi and exits "CLI only.".
 
@@ -385,12 +384,9 @@ retired models. They now use:
 
 ## 8. Open work, in the order I would take it
 
-1. **Confirm the two owner actions from this session**:
-   - the severe-scan cron job (section 4)
-   - that the Cloudmersive key is set, i.e. the Anonymous Docs screen
-     shows no red box (section 2)
-
-   If the key is missing, the portal is refusing every upload.
+1. **Check the first severe-scan log** (section 4). The cron job is in
+   place; ask the owner for the log's first lines, then look at any new
+   candidates on the review screen.
 2. **Move TX and CA to the shared viewer.** They are the last two
    states on legacy scripts (`js/inspections/tx_reports.js`,
    `js/inspections/ca-reports.js`). CA loads static
