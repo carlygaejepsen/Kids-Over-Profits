@@ -7,6 +7,11 @@ says where to read about each part.
 
 ## Start here
 
+- [Handoff, 2026-09-24: portal, inspections, AI providers](./HANDOFF-2026-09-24-portal-inspections.md):
+  the anonymous portal's encryption and keys, the FL/NC lite report lists,
+  the AI model updates, what is waiting on the owner and the open work.
+- [Handoff, 2026-09-24: network map](./HANDOFF-2026-09-24-network-map.md):
+  the next two network map features (route highlight, list view).
 - [Handoff, 2026-09-18](./HANDOFF-2026-09-18.md): orientation for a new
   contributor or agent, and pointers to the working plans.
 - [Fix plan, September 2026](./FIX-PLAN-2026-09.md): the September fix list
