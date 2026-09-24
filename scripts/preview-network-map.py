@@ -38,7 +38,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_EXTRA = {}
 
 KIND_LABELS = {
-    'person': 'Person', 'facility': 'Programme', 'parent': 'Company',
+    'person': 'Person', 'facility': 'Program', 'parent': 'Company',
     'association': 'Trade group', 'government': 'Government body',
     'church': 'Church', 'other': 'Other',
 }

@@ -23,7 +23,7 @@
     'use strict';
 
     var KIND_WORDS = {
-        facility: 'programme', parent: 'company', person: 'person',
+        facility: 'program', parent: 'company', person: 'person',
         association: 'trade group', church: 'church', government: 'government body'
     };
 

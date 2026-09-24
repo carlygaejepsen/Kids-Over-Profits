@@ -217,7 +217,7 @@ const NOT_TTI = /not tti|non-tti/i;
 
 /* Board names that are also ordinary words the list uses inside job titles:
  * "community life director Spring Ridge Academy" is a job at Spring Ridge,
- * not a job at the programme called LIFE. The list writes a place as a
+ * not a job at the program called LIFE. The list writes a place as a
  * name — "founder LIFE", "executive director SAFE Inc" — so only a
  * capitalised spelling counts, and a lowercase one is hidden from the
  * matcher. The mask keeps the word's length so the role text, which is
@@ -261,7 +261,7 @@ function buildMatcher(nodes) {
     }) };
 }
 
-/* Words that carry on naming or placing a programme rather than starting a
+/* Words that carry on naming or placing a program rather than starting a
  * job title, so what follows a place is not the person's role. */
 const PLACE_TAIL = /^(academy|school|schools|manor|ranch|house|home|lodge|center|centre|hospital|programs?|campus|village|inc|llc|of|at|in|on|for|and|near)\b/i;
 

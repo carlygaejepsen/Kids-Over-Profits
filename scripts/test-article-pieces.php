@@ -91,14 +91,14 @@ echo "\n-- Era header --\n";
 $era = kop_article_era_header(array(
     'title'   => 'The for-profit turn',
     'era'     => 'for-profit',
-    'summary' => 'Chains buy the programmes their founders ran.',
+    'summary' => 'Chains buy the programs their founders ran.',
 ));
 
 has('era: the era name is printed, not just its colour', $era, '>For-profit<');
 has('era: the era is a class, so the colour comes from CSS', $era, 'kop-article-era--for-profit');
 has('era: the title is a real heading', $era, '<h2 class="kop-article-era__title">The for-profit turn</h2>');
 has('era: the id is made from the title', $era, 'id="the-for-profit-turn"');
-has('era: the summary is kept', $era, 'Chains buy the programmes their founders ran.');
+has('era: the summary is kept', $era, 'Chains buy the programs their founders ran.');
 
 $era3 = kop_article_era_header(array('title' => 'A sub era', 'era' => 'nonprofit', 'level' => 3));
 has('era: level 3 gives an h3', $era3, '<h3 class="kop-article-era__title">');

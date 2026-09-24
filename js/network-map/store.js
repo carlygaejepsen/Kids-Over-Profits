@@ -40,7 +40,7 @@
      * them. The map is about relationships, so none is hidden to start with.
      * Board seats, referrals, survivors and "other" used to be a checkbox
      * away, to keep a view down to ownership and staff - but every one of
-     * those 55 lines joins a person to a programme or a company, which is
+     * those 55 lines joins a person to a program or a company, which is
      * exactly what the map exists to show, and a person drawn without one of
      * their places reads as someone who was never there. The rail still has
      * a checkbox for each. */

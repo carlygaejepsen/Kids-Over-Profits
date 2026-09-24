@@ -66,7 +66,7 @@ function collidingLabels(boxes) {
 /**
  * What a name is joined to on screen: { others, lines }, read off the scene
  * rather than the store. A person who only joins two places is drawn as the
- * line between them (focus.js, foldConnectors), so a programme's connections
+ * line between them (focus.js, foldConnectors), so a program's connections
  * on screen are not its edges in the data: its staff are lines, and the
  * places they lead to are its neighbours.
  */
@@ -468,7 +468,7 @@ function run() {
 
     /* Every connection type is on until the visitor turns one off. Board
      * seats, referrals, survivors and "other" used to start hidden, and
-     * every one of those lines joins a person to a programme or a company:
+     * every one of those lines joins a person to a program or a company:
      * the map is about relationships, so it does not open with any hidden. */
     const defaultCats = store.filters.categories;
     check(graph.meta.categories.every((c) => defaultCats[c]),
@@ -926,7 +926,7 @@ function run() {
         'the opening view is just the best-connected node, not a curated one');
 
     /* What a click on it would show, no more and no less: the root, its
-     * connections, the places of its people, the owners of its programmes.
+     * connections, the places of its people, the owners of its programs.
      * With no trail, though: nothing to Start over from and a clean hash. */
     const opening = focus.scene();
     const openingCount = opening.nodes.length;
@@ -945,7 +945,7 @@ function run() {
         'the map opens on Universal Health Services and its ' + (openingCount - 1) + ' connected names, as a click would');
     /* The promise: a name nobody asked for is not on the map at all.
      * (WWASPS is: Provo Canyon School is UHS-owned and has a WWASPS line,
-     * and a programme always brings its owners.) */
+     * and a program always brings its owners.) */
     const famous = store.node('synanon');
     check(!opening.nodeIds[famous.id],
         'a node nobody has opened or searched for is on the opening map');
@@ -986,7 +986,7 @@ function run() {
             leftOut.slice(0, 3).join(', '));
         /* The people in a view bring their places like anyone, so a view can
          * hold more than its list - but nothing else: whatever is extra is
-         * a programme or company one of its people connects to. */
+         * a program or company one of its people connects to. */
         const viewPeople = view.ids.filter((id) => store.node(id) && store.node(id).kind === 'person');
         const theirPlaces = new Set();
         viewPeople.forEach((id) => store.neighbours(id, true).forEach((l) => theirPlaces.add(l.other.id)));
@@ -1051,7 +1051,7 @@ function run() {
     renderer.draw();
     const hubScene = focus.scene();
     const hubLabels = labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
-    /* Every programme a view's people lead to is on the board now, so a
+    /* Every program a view's people lead to is on the board now, so a
      * hub's view can be bigger than the stage; what does not fit is a pan
      * away. The promise is about what is on the stage: none of it unnamed. */
     const hubOnStage = hubScene.nodes.filter((n) => {
@@ -1391,7 +1391,7 @@ function run() {
         Math.round(spanH * 100) + '% down');
 
     /* The map reads downwards the way the owner's board does: a company
-     * above what it owns and a programme above what it was renamed to,
+     * above what it owns and a program above what it was renamed to,
      * whichever cluster each end landed in. */
     const bandOf = (n) => {
         if (n.kind === 'parent' || n.kind === 'association') return 0;
@@ -1427,7 +1427,7 @@ function run() {
     const ownedBelow = hubScene.edges.filter((e) => e.sourceId === 'wwasps' && e.category === 'corporate' &&
         e.target.kind === 'facility');
     check(ownedBelow.length > 10 && ownedBelow.filter((e) => yOf(e.target) <= yOf(wwasps)).length <= 1,
-        'a programme WWASPS owned is drawn level with it or above it');
+        'a program WWASPS owned is drawn level with it or above it');
 
     /* A click draws its own connections in close around it: every one of
      * them on the stage, none further off than the stage is wide. Clustered
@@ -1499,7 +1499,7 @@ function run() {
         ' view are drawn upside down: ' + provoOrder.wrong.slice(0, 3).join(', '));
 
     /* Clusters keep lines short. Every company along the top and every
-     * programme along the bottom, the layout this replaced, put the median
+     * program along the bottom, the layout this replaced, put the median
      * line in this view at half a stage; gathered round what it connects
      * to, what belongs together is drawn together. */
     const xOf = (n) => focus.positionOf(n).x;
@@ -1539,7 +1539,7 @@ function run() {
     focus.select(store.node('wwasps'));
     flushFrames();
 
-    /* Whoever owned a programme is never left off: ownership is the question
+    /* Whoever owned a program is never left off: ownership is the question
      * this map exists to answer. */
     focus.clear();
     flushFrames();
@@ -1556,7 +1556,7 @@ function run() {
 
     /* The owner of what was clicked is a neighbour of it and would be on
      * screen anyway, so the rule is only really doing work for the
-     * programmes that arrived on somebody's coat-tails. Those are the ones
+     * programs that arrived on somebody's coat-tails. Those are the ones
      * to check. */
     focus.clear();
     flushFrames();
@@ -1566,7 +1566,7 @@ function run() {
     const direct = new Set(store.neighbours(hub.id, true).map((l) => l.other.id));
     const arrived = viaStaff.nodes.filter((n) =>
         n.kind === 'facility' && !direct.has(n.id) && n.id !== hub.id);
-    check(arrived.length > 2, 'too few programmes arrived indirectly to test the ownership rule');
+    check(arrived.length > 2, 'too few programs arrived indirectly to test the ownership rule');
     let unowned = 0;
     arrived.forEach((n) => {
         const owns = store.neighbours(n.id, true)
@@ -1574,8 +1574,8 @@ function run() {
         if (owns.length && !owns.some((l) => viaStaff.nodeIds[l.other.id])) unowned++;
     });
     check(unowned === 0,
-        unowned + ' programmes are on screen with a recorded owner that is not',
-        'all ' + arrived.length + ' programmes that arrived indirectly show who owned them');
+        unowned + ' programs are on screen with a recorded owner that is not',
+        'all ' + arrived.length + ' programs that arrived indirectly show who owned them');
 
     /* But an owner brings only itself. Two facilities owned by the same
      * company are not each other's business; somebody who worked at both
@@ -1653,7 +1653,7 @@ function run() {
 
     /* --- the gather --- */
 
-    /* A crowd does not gather. With every programme its staff lead to on
+    /* A crowd does not gather. With every program its staff lead to on
      * the board, this hub has more lines than there is room to pull in, and
      * hover is lighting alone: gathered, its names landed on each other. */
     flushFrames();
@@ -1773,14 +1773,14 @@ function run() {
     });
     /* ...and nobody is on the map without their places, whoever brought
      * them: a person who arrived as somebody's brother brings the
-     * programmes he ran, though not the people he knows in turn. */
+     * programs he ran, though not the people he knows in turn. */
     [...expected].forEach((id) => {
         const node = store.node(id);
         if (node && node.kind === 'person') {
             store.neighbours(id, true).forEach((l) => { if (l.other.kind !== 'person') expected.add(l.other.id); });
         }
     });
-    /* ...and whoever owned any programme in it, one step up. */
+    /* ...and whoever owned any program in it, one step up. */
     [...expected].forEach((id) => {
         if (store.node(id).kind !== 'facility') return;
         store.neighbours(id, true).forEach((l) => {
@@ -1875,7 +1875,7 @@ function run() {
     }
 
     /* A person with one line back to whatever revealed them hides the thing
-     * worth knowing: which programmes they turn up at. Whenever a name
+     * worth knowing: which programs they turn up at. Whenever a name
      * surfaces, everywhere it connects to surfaces with it - always, since
      * the person is drawn as the line to it and there is nothing else on
      * screen to say the place exists. */
@@ -2679,7 +2679,7 @@ function run() {
     }
 
     /* 2b.12 The rule the map stands on: it is about relationships, so a
-     * person on it is never there without every programme and company they
+     * person on it is never there without every program and company they
      * connect to - as a name or as a line, whoever brought them, whatever
      * kind of connection it is. Checked from every name on the board, not
      * from a sample: the gap this closes was in 68 views out of 1,258, the
@@ -2711,7 +2711,7 @@ function run() {
     check(viewsChecked > 1000 && homelessIn.length === 0,
         homelessIn.length + ' times a person is on the map without a place they connect to, e.g. ' +
         homelessIn.slice(0, 3).join('; '),
-        'in all ' + viewsChecked + ' views, every person on the map has every programme and company they connect to');
+        'in all ' + viewsChecked + ' views, every person on the map has every program and company they connect to');
     focus.restore([], 'focus');
     flushFrames();
 

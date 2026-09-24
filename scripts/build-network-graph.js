@@ -289,7 +289,7 @@ function categoriseEdge(raw, roles, sourceNode, targetNode, overrides) {
     if (roles.length === 0) {
         if (bothOrgs) {
             /* A trade association owns nothing. The board's unlabelled line
-             * from NATSAP to a programme is that programme's membership of
+             * from NATSAP to a program is that program's membership of
              * it, and read as ownership it says something false about both
              * ends - so the association wins over the group shorthand. It
              * is then drawn in the board's own membership blue. */
@@ -723,7 +723,7 @@ function deriveDeaths(nodes, facilities, overrides) {
  *
  * A facility's other or past name that is another node is drawn as a
  * rebrand, the old name to the new as the board draws them. These were held
- * back for review as possibly sister programmes; the owner confirmed them as
+ * back for review as possibly sister programs; the owner confirmed them as
  * rebrands on 2026-09-18. They stay listed in the QA report, so a wrong one
  * can be fixed in the profile.
  */
@@ -1152,7 +1152,7 @@ function addPeople(nodes, nodeById, claims, overrides) {
  * somebody worked at both places. Where the person is a board node, they
  * are connected to each place; where they are not - most are not, and the
  * board stays the roster - the two places are connected by a staff edge
- * that names them, which is what puts a second programme on screen beside
+ * that names them, which is what puts a second program on screen beside
  * the first. A place that does not resolve to exactly one node is reported
  * and the row skipped. Edges carry provenance "staff-movement".
  */
@@ -1234,7 +1234,7 @@ function addStaffMovement(nodes, edges) {
  * scripts/parse-staff-list.js from staff-list.txt. It says where someone
  * worked, not in what order, so nothing here claims a move. A person who is
  * a board node is connected to each place. Otherwise the person's first
- * place in the list (usually the programme the list was compiled under) is
+ * place in the list (usually the program the list was compiled under) is
  * connected to each of the others by a staff edge that names them. Only
  * pairs the map has no line between are drawn; everything else is counted.
  * Survivor and family ties never join two places. Edges carry provenance
@@ -2150,7 +2150,7 @@ function writeQaReport(graph) {
 
     section(lines, 'Profile names drawn as rebrands', qa.profileNames, function (item) { return item; },
         'Drawn as rebrands, old name to new (confirmed by the owner 2026-09-18). A pair already ' +
-        'connected keeps its board line. A sister programme listed as a name by mistake: fix the profile.');
+        'connected keeps its board line. A sister program listed as a name by mistake: fix the profile.');
 
     section(lines, 'Staff moves drawn from staff-movement.csv', qa.staffMoves, function (item) { return item; },
         'Reviewed rows that resolved. Correct a row in the CSV, not here.');

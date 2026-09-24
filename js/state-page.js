@@ -1384,7 +1384,7 @@
     };
 
     // "Now known as" / "Also known as" / "Formerly" under the name. A visitor
-    // searching a name the programme has since dropped, or the one it trades
+    // searching a name the program has since dropped, or the one it trades
     // under now, has to see it without opening Details.
     const renderAltNameLines = (facility, displayName) => {
         const seen = new Set([displayName, facility.name].map(n => String(n || '').trim().toLowerCase()));

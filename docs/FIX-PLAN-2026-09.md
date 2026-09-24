@@ -154,7 +154,7 @@ Still open, in build order (each is itemised as 2d.n under "Phase 2d" in
 5. **Highlight a route on the board in view (2d.6).** A found path lit on
    the current board, and "Route to this from ..." in the drawer.
 6. **Kind marks (2d.2).** A non-colour mark for company, trade group and
-   programme. Waiting on the owner: it departs from the board's key.
+   program. Waiting on the owner: it departs from the board's key.
 7. **Chain hulls and group-by-network (2d.4).** The one that costs real
    time; can slip to Phase 3.
 

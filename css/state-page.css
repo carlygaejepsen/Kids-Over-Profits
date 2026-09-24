@@ -268,7 +268,7 @@
 }
 
 /* Alternate names sit on the card face: someone searching a name the
-   programme has dropped has to find it without opening Details. */
+   program has dropped has to find it without opening Details. */
 .facility-card-akas {
     margin-bottom: 0.3em;
     font-size: 0.82em;

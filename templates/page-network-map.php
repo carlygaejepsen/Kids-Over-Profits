@@ -64,7 +64,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 		// How to use the map is said where it is used, in the trail strip.
 		?>
 		<p class="kop-network__standfirst">
-			Connections on record between programmes, the people who ran them and
+			Connections on record between programs, the people who ran them and
 			the companies behind them. A line means a relationship was documented,
 			not an allegation of wrongdoing.
 		</p>
@@ -101,7 +101,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 			<p class="kop-network__noscript">
 				The map needs JavaScript to draw and explore. Without it, the
 				<a href="<?php echo esc_url($kop_net_directory); ?>">facility directory</a>
-				lists the same programmes with their ownership and history in plain
+				lists the same programs with their ownership and history in plain
 				text.
 			</p>
 		</noscript>
@@ -122,7 +122,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						type="search"
 						id="kop-network-search"
 						class="kop-network__search-input"
-						placeholder="Search a person, programme or company"
+						placeholder="Search a person, program or company"
 						autocomplete="off"
 						role="combobox"
 						aria-expanded="false"
@@ -187,7 +187,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 								<div class="kop-network__search kop-network__path-field">
 									<label for="kop-network-path-from">From</label>
 									<input type="search" id="kop-network-path-from" class="kop-network__search-input"
-										placeholder="A person, programme or company" autocomplete="off"
+										placeholder="A person, program or company" autocomplete="off"
 										role="combobox" aria-expanded="false"
 										aria-controls="kop-network-path-from-results" aria-autocomplete="list">
 									<ul id="kop-network-path-from-results" class="kop-network__search-results"

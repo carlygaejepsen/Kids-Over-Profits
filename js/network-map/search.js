@@ -80,7 +80,7 @@
     }
 
     var KIND_WORDS = {
-        facility: 'programme', parent: 'company', person: 'person',
+        facility: 'program', parent: 'company', person: 'person',
         association: 'trade group', church: 'church', government: 'government body'
     };
 
@@ -215,7 +215,7 @@
                 event.preventDefault();
                 /* A chosen option opens that one; Enter on the typed text
                  * alone opens every match together, so "Aspen" puts the
-                 * Aspen programmes on the board side by side. */
+                 * Aspen programs on the board side by side. */
                 pick(active >= 0 ? [results[active].node] : results.map(function (h) { return h.node; }));
             } else if (key === 'Escape' || key === 'Esc') {
                 if (list.hidden) return;

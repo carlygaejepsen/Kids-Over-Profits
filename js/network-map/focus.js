@@ -43,7 +43,7 @@
     /* Past this many connections nothing gathers and hover is lighting
      * alone. A view packs its names as close as they will go, so pulling a
      * few of them in finds room and pulling in fifty does not: with every
-     * programme its staff lead to on the board, Provo Canyon School has
+     * program its staff lead to on the board, Provo Canyon School has
      * fifty-two lines, and gathered, twenty-two of those names landed on
      * top of each other and were dropped. */
     var GATHER_MAX = 36;
@@ -258,7 +258,7 @@
          * two names are connected, and showPath() puts one route on the board
          * as itself - its names in order, the lines between each and the
          * next, and nothing else. Every rule below that brings more onto the
-         * board (a person's places, a programme's owner) stands aside: the
+         * board (a person's places, a program's owner) stands aside: the
          * question was how A reaches B, and the answer is these names.
          *
          * Nobody is folded into a line here either. On a route the person
@@ -318,14 +318,14 @@
             });
 
             /* A person on their own says nothing. The fact worth having about
-             * someone on this map is which programmes they turn up at - the
+             * someone on this map is which programs they turn up at - the
              * therapist who appears at four schools in a row, the director
              * whose next job is the company that bought the last one - and a
              * name sitting alone with a single line back to whatever revealed
              * it hides exactly that. So when a person surfaces, everywhere
              * they connect to surfaces with them.
              *
-             * This is also the only thing that puts a second programme on
+             * This is also the only thing that puts a second program on
              * screen beside the first. Two facilities owned by the same
              * company are not each other's business; somebody who worked at
              * both is.
@@ -354,19 +354,19 @@
              * can bring a person in second-hand - Narvin Lichfield arrives in
              * Provo Canyon School's view as somebody's brother - and the
              * one-step stop then left them standing there with every
-             * programme they ran behind a +N: a person with a relationship
+             * program they ran behind a +N: a person with a relationship
              * the map was not showing, in 68 views. The stop is for people
              * bringing people, which is what runs away. A person's
-             * programmes and companies always come, whoever brought the
+             * programs and companies always come, whoever brought the
              * person; what those places bring in turn is a click away. */
             withTheirPlaces(asked);
 
             /* Whoever owned it is never left off. Ownership is the question
-             * this map exists to answer, so a programme on screen without the
+             * this map exists to answer, so a program on screen without the
              * company behind it is the one gap worth closing automatically.
              *
-             * Programmes only, and owners only: the edge has to run from a
-             * company into the programme. Run for every name on screen and in
+             * Programs only, and owners only: the edge has to run from a
+             * company into the program. Run for every name on screen and in
              * either direction, it pulled in whatever a company owned and
              * whoever owned it - opening Synanon brought CEDU's owners and
              * Leadership Dynamics' holdings, four companies nobody asked
@@ -377,7 +377,7 @@
              * walks up through ten organisations if you let it, which answers
              * a question nobody asked and buries the one they did. And owners
              * only, never their other holdings: a company's remaining
-             * programmes are its business with them, not this facility's. */
+             * programs are its business with them, not this facility's. */
             Object.keys(asked).forEach(function (id) {
                 var node = store.node(id);
                 if (!node || node.kind !== 'facility') return;
@@ -416,7 +416,7 @@
             return ids;
         }
 
-        /** Add every programme and company the people in this set connect to. */
+        /** Add every program and company the people in this set connect to. */
         function withTheirPlaces(set) {
             Object.keys(set).forEach(function (id) {
                 var node = store.node(id);
@@ -430,7 +430,7 @@
         /**
          * The scene to draw: those nodes, and every edge between them. That
          * is deliberately more than the opened nodes' own connections -
-         * seeing that two of someone's programmes also connect to each other
+         * seeing that two of someone's programs also connect to each other
          * is the point of putting them on screen together.
          */
         focus.scene = function () {
@@ -526,11 +526,11 @@
         /**
          * Fold the people who join two places into the line between them.
          *
-         * Two programmes that share a therapist are connected, and the
+         * Two programs that share a therapist are connected, and the
          * connection is what belongs on the board: one line from one place
          * to the other, with the person a hover away on it. Drawn as a name
          * of their own the person was a third thing to read, with two lines
-         * where the record is one fact, and a view of a programme with a
+         * where the record is one fact, and a view of a program with a
          * staff list was mostly staff.
          *
          * A person folds when every line they have on screen runs to an
@@ -1330,7 +1330,7 @@
          * The board layout arranges by hierarchy - owners above what they
          * own, people hung off their places - which is right for a
          * neighbourhood and wrong here: a route through a company, a
-         * programme and a person came out as a zigzag that had to be traced
+         * program and a person came out as a zigzag that had to be traced
          * by eye to find its order. In a line the order is the reading
          * order, every step is one straight trace, and each trace has room
          * for its caption, so the route reads as a sentence: who, what joins
@@ -1514,7 +1514,7 @@
                     .force('link', d3.forceLink(links)
                         .id(function (d) { return d.id; })
                         /* Never shorter than the two boxes side by side:
-                         * a hub's two dozen programmes pulled to seventy
+                         * a hub's two dozen programs pulled to seventy
                          * pixels of it were a heap the collision could
                          * not undo. */
                         .distance(function (l) {
@@ -1861,7 +1861,7 @@
          * nothing there, over where the settle left it.
          *
          * Without this a row is in the order the settle happened to leave
-         * it, and a programme packed in from the row below can land at the
+         * it, and a program packed in from the row below can land at the
          * far end of the stage from the company that owns it: a long
          * diagonal that then has to bend round everything between them.
          */
@@ -1955,7 +1955,7 @@
         /**
          * Which names read as one above the other: the two ends of every
          * ownership and every rename, both ways round. A pair like that must
-         * never be shelved onto one row - a company beside the programme it
+         * never be shelved onto one row - a company beside the program it
          * owns says the opposite of what the map means.
          */
         function stackedPairs(links, byId) {
@@ -2429,7 +2429,7 @@
                     /* Whatever else had to go off the stage, the click stays
                      * on it: its whole box, drawn grown, clear of the
                      * controls along the top and of the edges. Its centre
-                     * alone was not enough: a company with its programmes
+                     * alone was not enough: a company with its programs
                      * in rows below it sits at the top of its own cluster,
                      * and on a phone was framed with its name half under
                      * the Key and cut at the right. Names keep their size

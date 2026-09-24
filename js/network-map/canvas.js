@@ -25,7 +25,7 @@
      * dark outline, filled by status - pale yellow for a place still open,
      * grey for one closed or carried on under another name, white where the
      * record does not say - with the name in dark ink, or in blue for a
-     * NATSAP member. What a thing is (a person, a programme, a company) is
+     * NATSAP member. What a thing is (a person, a program, a company) is
      * told by its shape and by the drawer, never by a coloured background:
      * the orange and navy blocks this used to draw were the thing the
      * board's owner asked to have back the way it was. */
@@ -53,7 +53,7 @@
      * Direction outranks category, because "became" and "acquired" are the
      * two statements on this map that are wrong if you read them backwards.
      * Both carry an arrowhead and their own colour: a rebrand is one
-     * programme continuing under another name, an acquisition is one company
+     * program continuing under another name, an acquisition is one company
      * taking another, and a visitor should not have to work out which from a
      * grey line. Every other connection is undirected and has no arrow,
      * which is itself the honest signal that the record does not say who
@@ -68,7 +68,7 @@
         acquired:   { colour: '#C96A12', width: 3, dash: null, arrow: true, label: 'Acquired' },
         corporate:  { colour: 'rgba(26, 26, 26, 0.8)', width: 1.8, dash: null, label: 'Ownership' },
         /* Married, divorced, siblings: the only edges on the map that join
-         * two people to each other rather than a person to a programme, and
+         * two people to each other rather than a person to a program, and
          * the ones a reader is most likely to be looking for. */
         family:     { colour: '#D6455A', width: 2, dash: [2, 3], label: 'Family' },
         survivor:   { colour: '#B5359B', width: 1.8, dash: null, label: 'Survivor account' },
@@ -901,7 +901,7 @@
      * the lines out into the room the layout leaves between rows.
      *
      * The one overlap that is allowed, and made cheap, is lines that share
-     * an end: a company's lines to the programmes it owns leave it as one
+     * an end: a company's lines to the programs it owns leave it as one
      * trunk and branch off to each, like an organisation chart. That reads
      * as what it is - one name, many connections - where the same trunk
      * shared by two unrelated lines would say they were connected.

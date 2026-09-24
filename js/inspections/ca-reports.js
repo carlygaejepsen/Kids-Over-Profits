@@ -501,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- MERGE FACILITIES WITH THE SAME RESOLVED NAME ---
     // A single operator may hold multiple license numbers (e.g. different buildings)
-    // that all share the same programme name. Collapse them into one card so the
+    // that all share the same program name. Collapse them into one card so the
     // same facility doesn't appear as several separate entries.
     function isAddressLikeName(name) {
         return isStreetAddressLike(name);
