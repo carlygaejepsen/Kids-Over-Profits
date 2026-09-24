@@ -1305,6 +1305,53 @@ function kop_apply_new_facility_seeds() {
     return $done;
 }
 /**
+ * Wording fixes in stored text (seeds/text-fixes.json): each entry names a
+ * row by table and id, the columns to change, and the words to swap. Only
+ * the tables and columns listed here can be touched, and a swap that has
+ * already been made finds nothing to replace, so running it again changes
+ * nothing.
+ */
+function kop_apply_text_fixes() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/text-fixes.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $entries = json_decode((string) file_get_contents($path), true);
+    $pdo     = kop_seed_pdo();
+    if (!is_array($entries) || !$pdo) {
+        return $done;
+    }
+    $allowed = array(
+        'news_submissions' => array('summary', 'json_data', 'generated_output'),
+    );
+    foreach ($entries as $entry) {
+        $table = (string) ($entry['table'] ?? '');
+        $id    = (int) ($entry['id'] ?? 0);
+        $swaps = is_array($entry['replace'] ?? null) ? $entry['replace'] : array();
+        if (!isset($allowed[$table]) || $id <= 0 || !$swaps) {
+            continue;
+        }
+        foreach ((array) ($entry['columns'] ?? array()) as $column) {
+            if (!in_array($column, $allowed[$table], true)) {
+                continue;
+            }
+            foreach ($swaps as $from => $to) {
+                try {
+                    $q = $pdo->prepare("UPDATE `{$table}` SET `{$column}` = REPLACE(`{$column}`, ?, ?) WHERE id = ? AND `{$column}` LIKE ?");
+                    $q->execute(array((string) $from, (string) $to, $id, '%' . $from . '%'));
+                    if ($q->rowCount() > 0) {
+                        $done[] = $table . '#' . $id . '.' . $column;
+                    }
+                } catch (Throwable $e) {
+                    // Leave the row alone; the admin can edit it by hand.
+                }
+            }
+        }
+    }
+    return array_values(array_unique($done));
+}
+/**
  * Lawsuit records assembled offline (seeds/lawsuits.json). Each case is
  * inserted once, matched by case_name, as a published record with the
  * facility links and news links the seed names. Existing cases are never
@@ -1505,6 +1552,7 @@ function kop_apply_template_assignments() {
     }
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
+    $summary['text']         = kop_apply_text_fixes();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -1556,7 +1604,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '31';
+    $version = '32';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

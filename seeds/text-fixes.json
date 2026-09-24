@@ -1,0 +1,23 @@
+[
+  {
+    "table": "news_submissions",
+    "id": 278,
+    "columns": ["summary", "json_data", "generated_output"],
+    "replace": {"programmes": "programs", "programme": "program", "Programmes": "Programs", "Programme": "Program"},
+    "note": "House style is \"program\" (2026-09-23)."
+  },
+  {
+    "table": "news_submissions",
+    "id": 285,
+    "columns": ["summary", "json_data", "generated_output"],
+    "replace": {"programmes": "programs", "programme": "program", "Programmes": "Programs", "Programme": "Program"},
+    "note": "House style is \"program\" (2026-09-23)."
+  },
+  {
+    "table": "news_submissions",
+    "id": 287,
+    "columns": ["summary", "json_data", "generated_output"],
+    "replace": {"programmes": "programs", "programme": "program", "Programmes": "Programs", "Programme": "Program"},
+    "note": "House style is \"program\" (2026-09-23)."
+  }
+]

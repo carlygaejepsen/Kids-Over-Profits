@@ -4313,5 +4313,281 @@
         "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
       ]
     }
+  },
+  {
+    "location_id": 4,
+    "location_name": "TEXAS",
+    "facility": {
+      "identification": {
+        "name": "La Salle County Juvenile Justice Center",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Cotulla Boot Camp"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Cotulla",
+        "state": "TX",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Cotulla, TX",
+      "address": "703 N. Main, Cotulla, TX 78014",
+      "otherOperators": [],
+      "pastOperators": [
+        "Correctional Services Corporation"
+      ],
+      "operatingPeriod": {
+        "startYear": 1998,
+        "endYear": 2000,
+        "status": "Closed",
+        "yearsOfOperation": "1998-2000",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://kidsoverprofits.org/wp-content/uploads/La-Salle-County-JJC-2000.pdf",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-01-000001.txt"
+      ],
+      "facilityDetails": {
+        "type": "Boot Camp",
+        "capacity": 64,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Girls"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "YSI's own web page (archived 2000) lists La Salle County Juvenile Justice Center at 703 N. Main, Cotulla, TX: a 64-bed boot camp for girls aged 13-18 placed by the Texas Youth Commission, run in a military format (YSI website, La Salle County JJC 2000, in the document library).",
+        "Correctional Services Corporation, which absorbed YSI, listed it as the 64-bed Cotulla Boot Camp opened in 1998 and discontinued its operation in 2000 (CSC 10-K for 1999 and 2000).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_id": 17,
+    "location_name": "ARIZONA",
+    "facility": {
+      "identification": {
+        "name": "Promise House",
+        "currentName": "",
+        "currentOperator": "Youth Services International",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Glendale",
+        "state": "AZ",
+        "country": "United States",
+        "additionalLocations": []
+      },
+      "location": "Glendale, AZ",
+      "address": "5323 West Westwind Drive, Glendale, AZ 85310",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": null,
+        "status": "Unknown",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://kidsoverprofits.org/wp-content/uploads/Sequel%20TSI/YSI/YSI%20Website%20Promise%20House%201997.pdf",
+        "https://www.sec.gov/Archives/edgar/data/876726/0000950133-96-002043.txt"
+      ],
+      "facilityDetails": {
+        "type": "Group Home",
+        "capacity": 55,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Co-ed"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Youth Services International bought Promise House, Inc., an Arizona company running group home treatment programs, effective October 1, 1994 (YSI 10-K for fiscal 1996).",
+        "YSI's 1997 web page gives Promise House at 5323 West Westwind Drive, Glendale, AZ: a group care agency licensed for 55 children, infants to 18, in seven group homes in Phoenix-area neighborhoods (YSI website, Promise House 1997, in the document library).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
+  },
+  {
+    "location_name": "PUERTO RICO",
+    "facility": {
+      "identification": {
+        "name": "Salinas Treatment Center",
+        "currentName": "",
+        "currentOperator": "Correctional Services Corporation",
+        "currentOwner": "",
+        "currentOwners": [],
+        "otherNames": [
+          "Salinas Behavioral Management Treatment Facility for Males"
+        ],
+        "pastNames": [],
+        "knownReferrers": []
+      },
+      "locationDetails": {
+        "city": "Salinas",
+        "state": "",
+        "country": "Puerto Rico",
+        "additionalLocations": []
+      },
+      "location": "Salinas, Puerto Rico",
+      "address": "",
+      "otherOperators": [],
+      "pastOperators": [],
+      "operatingPeriod": {
+        "startYear": null,
+        "endYear": 2002,
+        "status": "Closed",
+        "yearsOfOperation": "",
+        "notes": []
+      },
+      "staff": {
+        "administrator": [],
+        "notableStaff": [],
+        "pastTTIJobs": []
+      },
+      "profileLinks": [
+        "https://www.sec.gov/Archives/edgar/data/914670/0000914670-00-000010.txt",
+        "https://www.sec.gov/Archives/edgar/data/914670/000104596903000848/d10k.txt"
+      ],
+      "facilityDetails": {
+        "type": "Juvenile Detention Facility",
+        "capacity": 144,
+        "currentCensus": null,
+        "ageRange": {
+          "min": null,
+          "max": null
+        },
+        "gender": "Boys"
+      },
+      "accreditations": {
+        "current": [],
+        "past": []
+      },
+      "memberships": [],
+      "certifications": [],
+      "licensing": [],
+      "resources": {
+        "hasNews": false,
+        "hasPressReleases": false,
+        "hasInspections": false,
+        "hasStateReports": false,
+        "hasRegulatoryFilings": false,
+        "hasLawsuits": false,
+        "hasPoliceReports": false,
+        "hasArticlesOfOrganization": false,
+        "hasPropertyRecords": false,
+        "hasPromotionalMaterials": false,
+        "hasEnrollmentDocuments": false,
+        "hasResearch": false,
+        "hasFinancial": false,
+        "hasStudent": false,
+        "hasStaff": false,
+        "hasVideo": false,
+        "hasAudio": false,
+        "hasSocialMedia": false,
+        "hasWebsite": false,
+        "hasNATSAP": false,
+        "hasOther": false,
+        "newsDetails": "",
+        "pressReleasesDetails": "",
+        "customResources": []
+      },
+      "notes": [
+        "Correctional Services Corporation built a secure juvenile treatment facility in Salinas, Puerto Rico under a contract with the Commonwealth's Juvenile Institutions Administration: 100 beds planned in 1999, 144 by 2000 (CSC 10-K for 1998, 1999 and 2000).",
+        "It was completed in 2001 but never opened, because the Puerto Rican government could not fund the contract, and CSC sold it to the Puerto Rican government in November 2002 (CSC 10-K for 2002).",
+        "Added 2026-09-23 from the research network map (seeds/new-facilities.json)."
+      ]
+    }
   }
 ]
