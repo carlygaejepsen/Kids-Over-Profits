@@ -720,11 +720,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const facilitiesConfig = window.facilitiesConfig || {};
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
-    const defaultDatasetPath = '/wp-content/themes/child/js/data/facilities_master.json';
+    // Only the URLs inc/enqueue.php configures (the REST feed first). There is
+    // no static copy: js/data/facilities_master.json never existed.
     const datasetCandidates = Array.from(new Set([
         facilitiesConfig.jsonDataUrl,
-        ...configUrls,
-        defaultDatasetPath
+        ...configUrls
     ].filter(url => typeof url === 'string' && url.trim().length > 0)));
 
     if (!datasetCandidates.length) {

@@ -19,7 +19,7 @@ Fourteen tracker pages, one per state, at `/xx-reports/`:
 | Nevada (`NV`) | `nv-reports` | shared engine | API |
 | North Carolina (`NC`) | `nc-reports` | shared engine | API |
 | Oregon (`OR`) | `or-reports` | shared engine | API |
-| Texas (`TX`) | `tx-reports` | `js/inspections/tx_reports.js` (legacy) | API (a `js/data/tx_reports.json`, if present, is read first; none is checked in) |
+| Texas (`TX`) | `tx-reports` | `js/inspections/tx_reports.js` (legacy) | API |
 | Utah (`UT`) | `ut-reports` | shared engine | `js/data/ut_checklists/ut_reports*.json` (else `js/data/ut_reports*.json`) merged with the API |
 | Washington (`WA`) | `wa-reports` | shared engine | API |
 

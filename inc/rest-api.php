@@ -2464,7 +2464,8 @@ function kop_state_inspection_dataset_urls($state_name) {
             $glob_groups = array(array($theme_dir . '/js/data/ccl*.json'));
             break;
         case 'Texas':
-            $glob_groups = array(array($theme_dir . '/js/data/tx_reports.json'));
+            // Served live from inspections-read.php; no tx_reports.json exists.
+            $glob_groups = array();
             break;
         case 'Montana':
             $glob_groups = array(array($theme_dir . '/js/data/mt_reports.json'));
@@ -2476,7 +2477,8 @@ function kop_state_inspection_dataset_urls($state_name) {
             $glob_groups = array(array($theme_dir . '/js/data/wa_reports.json'));
             break;
         case 'Arkansas':
-            $glob_groups = array(array($theme_dir . '/js/data/ar_reports.json'));
+            // Served live from inspections-read.php; no ar_reports.json exists.
+            $glob_groups = array();
             break;
         case 'Minnesota':
             $glob_groups = array(array($theme_dir . '/js/data/mn_reports.json'));

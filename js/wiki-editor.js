@@ -64,11 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const wikiForm = document.getElementById('wikiForm');
     const generateBtn = document.getElementById('generateBtn');
     const outputCode = document.getElementById('outputCode');
-    const entriesList = document.getElementById('entriesList');
-    const entrySearch = document.getElementById('entrySearch');
-    const pageInfo = document.getElementById('pageInfo');
-    const prevPageBtn = document.getElementById('prevPageBtn');
-    const nextPageBtn = document.getElementById('nextPageBtn');
     const backBtn = document.getElementById('backBtn');
 
     if (!wikiForm) {
@@ -180,9 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             delete el.dataset.loadedAddressLink;
         }
     };
-    let currentPage = 1;
-    let totalEntries = 0;
-    const entriesPerPage = 25;
     let currentNavType = '';
     let currentNavList = [];
     let currentNavIndex = -1;
@@ -3827,108 +3819,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setIndexSearchEnabled(false);
     updateNavButtons();
 
-    // Load entries from API
-    async function loadEntries() {
-        if (!entriesList) return;
-
-        entriesList.innerHTML = '<p class="loading">Loading entries...</p>';
-
-        try {
-            const searchQuery = entrySearch ? entrySearch.value.trim() : '';
-            const offset = (currentPage - 1) * entriesPerPage;
-
-            let url = `/wp-content/themes/child/api/save-wiki-submission.php?limit=${entriesPerPage}&offset=${offset}`;
-            if (searchQuery) {
-                url += `&search=${encodeURIComponent(searchQuery)}`;
-            }
-
-            const response = await fetch(url);
-            const result = await response.json();
-
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to load entries');
-            }
-
-            totalEntries = result.total || 0;
-            const entries = result.data || [];
-
-            // Update pagination
-            const totalPages = Math.ceil(totalEntries / entriesPerPage);
-            if (pageInfo) pageInfo.textContent = `Page ${currentPage} of ${totalPages} (${totalEntries} total)`;
-            if (prevPageBtn) prevPageBtn.disabled = currentPage <= 1;
-            if (nextPageBtn) nextPageBtn.disabled = currentPage >= totalPages;
-
-            // Render entries
-            if (entries.length === 0) {
-                entriesList.innerHTML = '<p class="no-entries">No entries found.</p>';
-                return;
-            }
-
-            let html = '<div class="entries-table"><table><thead><tr><th>Program Name</th><th>Location</th><th>Type</th><th>Years Active</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
-
-            entries.forEach(entry => {
-                const createdDate = new Date(entry.created_at).toLocaleDateString();
-                const status = String(entry.status || '').toLowerCase();
-
-                // Check if entry content indicates it doesn't exist
-                const content = entry.generated_markdown || entry.original_markdown || '';
-                const isEmptyPage = content.toLowerCase().includes('does not exist') ||
-                                   content.toLowerCase().includes('not found') ||
-                                   content.trim().length < 50; // Very short content likely means empty page
-
-                const notFoundFlag = isEmptyPage ? '<span class="entry-not-found-flag" title="This page has no content">⚠️ EMPTY</span> ' : '';
-                const statusBadge = status === 'approved' || status === 'published'
-                    ? `<span class="entry-status-badge entry-status-${escapeHtml(status)}" title="This markdown upload has already been ${escapeHtml(status)}">${escapeHtml(status === 'published' ? 'Published' : 'Approved')}</span> `
-                    : '';
-
-                const actionButtons = `
-                    <tr data-entry-id="${entry.id}">
-                        <td class="entry-name" data-label="Program Name">${statusBadge}${notFoundFlag}<strong>${escapeHtml(entry.program_name || 'Untitled')}</strong></td>
-                        <td data-label="Location">${escapeHtml(entry.city_state || '-')}</td>
-                        <td data-label="Type">${escapeHtml(entry.program_type || '-')}</td>
-                        <td data-label="Years Active">${escapeHtml(entry.years_active || '-')}</td>
-                        <td data-label="Created">${createdDate}</td>
-                        <td data-label="Actions">
-                        <button type="button" class="load-entry-btn" data-entry-id="${entry.id}">Load</button>
-
-                        ${isAdminMode ? `<button type="button" class="delete-entry-btn" data-entry-id="${entry.id}">Delete</button>` : ''}
-                    </td>
-                </tr>
-                `;
-                html += actionButtons;
-            });
-
-            html += '</tbody></table></div>';
-            entriesList.innerHTML = html;
-
-            // Attach event listeners to load buttons
-            entriesList.querySelectorAll('.load-entry-btn').forEach((btn, index) => {
-                btn.addEventListener('click', () => {
-                    currentNavType = 'facilities';
-                    currentNavList = entries;
-                    currentNavIndex = index;
-                    updateNavButtons();
-                    const entryId = btn.getAttribute('data-entry-id');
-                    loadEntryIntoForm(entryId);
-                });
-            });
-
-
-
-            // Attach event listeners to delete buttons
-            entriesList.querySelectorAll('.delete-entry-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const entryId = btn.getAttribute('data-entry-id');
-                    deleteEntry(entryId);
-                });
-            });
-
-        } catch (error) {
-            console.error('Error loading entries:', error);
-            entriesList.innerHTML = `<p class="error">Error loading entries: ${escapeHtml(error.message)}</p>`;
-        }
-    }
-
     // Load entry into form
     async function loadEntryIntoForm(entryId) {
         if (!confirmDiscardIfDirty('Loading this entry')) return;
@@ -4046,44 +3936,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(`Failed to load entry: ${error.message}`);
         }
     }
-    // Delete entry
-    async function deleteEntry(entryId) {
-        if (!isAdminMode) {
-            alert('Only admins can delete entries.');
-            return;
-        }
-        if (!confirm('Are you sure you want to delete this entry? This cannot be undone.')) {
-            return;
-        }
-
-        try {
-            // Note: We need to add DELETE endpoint to the API
-            // For now, we can use a workaround by setting status to 'deleted'
-            const response = await fetch(editorSettings.saveApi || '/wp-content/themes/child/api/save-wiki-submission.php', {
-                method: 'POST',
-                headers: kopApiHeaders(),
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    id: entryId,
-                    status: 'deleted'
-                })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Entry deleted successfully');
-                loadEntries(); // Refresh the list
-            } else {
-                throw new Error(result.error || 'Delete failed');
-            }
-
-        } catch (error) {
-            console.error('Error deleting entry:', error);
-            alert(`Failed to delete entry: ${error.message}`);
-        }
-    }
-
     // Check URL params for auto-loading
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('entry_id')) {

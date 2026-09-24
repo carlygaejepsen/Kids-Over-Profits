@@ -342,7 +342,7 @@ function kop_enqueue_report_scripts() {
             'script_handle' => 'tx-reports-script',
             'script_path'   => '/js/inspections/tx_reports.js',
             'data_object'   => 'txReportsData',
-            'json_glob'     => get_stylesheet_directory() . '/js/data/tx_reports.json',
+            'json_glob'     => '', // API only (inspections-read.php); no tx_reports.json exists
         ),
         'mt-reports' => array(
             'script_handle' => 'mt-reports-script',
@@ -378,7 +378,7 @@ function kop_enqueue_report_scripts() {
             'script_handle' => 'ar-reports-script',
             'script_path'   => '/js/inspections/states/ar.js',
             'data_object'   => 'arReportsData',
-            'json_glob'     => get_stylesheet_directory() . '/js/data/ar_reports.json',
+            'json_glob'     => '', // API only (inspections-read.php); no ar_reports.json exists
             // Adapter for the shared js/inspections/report-page.js engine.
             // Rollback: point script_path back at /js/inspections/ar_reports.js
             // and drop this flag.

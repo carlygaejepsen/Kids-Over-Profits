@@ -23,7 +23,8 @@ The TTI Program Index (`/tti-program-index/`) is the public searchable directory
 The frontend tries each URL in order and uses the first that returns valid JSON:
 1. `/wp-json/kop/v1/facilities` (`inc/rest-api.php`)
 2. `api/get-master-data.php`
-3. `js/data/facilities_master.json` (hardcoded last resort in the JS; the file is not in the repo, so this step always fails)
+
+There is no static copy to fall back to; if both fail, the page shows an error.
 
 `kop/v1/facilities` reads the v2 facility model (`kop_v2_get_facilities_projects()` in `inc/facility-v2-readers.php`, built from `facilities_v2`, `kop_operators` and `kop_operator_facilities`) when the `program_index` area is switched on via the `kop_data_model` / `kop_data_model_areas` options, or when the page is opened with `?model=v2`. Otherwise it reads the legacy tables through `kop_get_facilities_projects_from_database()` in `inc/database.php`. Both paths attach linked news, lawsuits, memorials and inspection stats. See `docs/FACILITY-SCHEMA.md` for the v2 model.
 

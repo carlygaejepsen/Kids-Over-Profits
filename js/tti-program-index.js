@@ -2680,11 +2680,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const facilitiesConfig = window.facilitiesConfig || {};    
     const configUrls = Array.isArray(facilitiesConfig.jsonFileUrls) ? facilitiesConfig.jsonFileUrls : [];
-    const defaultDatasetPath = '/wp-content/themes/child/js/data/facilities_master.json';
+    // The REST feed, then api/get-master-data.php (inc/enqueue.php). There is
+    // no static copy: js/data/facilities_master.json never existed, so a
+    // default pointing at it could only ever 404.
     const datasetCandidates = Array.from(new Set([
         facilitiesConfig.jsonDataUrl,
-        ...configUrls,
-        defaultDatasetPath
+        ...configUrls
     ].filter(url => typeof url === 'string' && url.trim().length > 0)));
 
     if (!datasetCandidates.length) {
