@@ -13,6 +13,7 @@ The **Anonymous Portal** lets whistleblowers, survivors and staff send a documen
 
 - One file per submission. Drag and drop onto the drop zone or click to browse.
 - Allowed extensions: `pdf`, `doc`, `docx`, `txt`, `jpg`, `jpeg`, `png`, `zip`. Maximum size 10 MB. The browser checks both before upload; the server checks them again (`$allowed_types`, `$max_file_size`). The client-side list is a copy of the server one, so change both together.
+- The server also checks that the file's contents match its extension (`AnonymousDocPortal::mime_matches()`, using PHP's fileinfo): a program renamed to `.pdf`, or an HTML page renamed to `.pdf`, is rejected. Any `text/*` type passes for `.txt`; `.docx` may be detected as `application/zip`.
 - An optional notes field. There are no contact fields.
 - The form posts `action`, `security` (the nonce), `doc_file` and `doc_notes` to `admin-ajax.php`. The server verifies the nonce with `check_ajax_referer('anonymous_doc_portal_nonce', 'security')`.
 
@@ -21,7 +22,7 @@ The **Anonymous Portal** lets whistleblowers, survivors and staff send a documen
 Each file is sent to Cloudmersive's `virus/scan/file` endpoint before it is stored.
 
 - The API key `CLOUDMERSIVE_API_KEY` is read from a PHP constant, then the environment, then a `.env` file found by walking up from the theme directory. See `.env.example`. Never commit the key.
-- **No key configured:** the scan is skipped and the upload is accepted (a warning goes to the PHP error log).
+- **No key configured:** the portal refuses uploads ("temporarily unavailable"), logs why, and the Anonymous Docs screen shows an error. The owner opens these files on their own computer, so nothing unscanned is accepted.
 - **API error or non-200 response:** the upload is rejected.
 - **Threat found:** the upload is rejected and the temporary file deleted.
 

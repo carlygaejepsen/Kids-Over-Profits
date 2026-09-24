@@ -142,6 +142,30 @@ class AnonymousDocPortal {
         return (is_string($key) && strlen($key) === SODIUM_CRYPTO_BOX_PUBLICKEYBYTES) ? $key : '';
     }
 
+    /**
+     * Does the type detected from a file's contents fit its extension?
+     * Office files are ZIP (docx) or OLE (doc) containers underneath, and
+     * libmagic names those several ways, so each extension lists them all.
+     */
+    public static function mime_matches($ext, $mime) {
+        $ok = array(
+            'pdf'  => array('application/pdf'),
+            'jpg'  => array('image/jpeg'),
+            'jpeg' => array('image/jpeg'),
+            'png'  => array('image/png'),
+            'txt'  => array('text/plain'),
+            'zip'  => array('application/zip', 'application/x-zip-compressed'),
+            'docx' => array('application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'),
+            'doc'  => array('application/msword', 'application/x-ole-storage', 'application/CDFV2', 'application/vnd.ms-office'),
+        );
+        $mime = strtolower((string) $mime);
+        if ($ext === 'txt') {
+            // libmagic calls plain text text/csv, text/x-c and so on.
+            return strpos($mime, 'text/') === 0;
+        }
+        return isset($ok[$ext]) && in_array($mime, array_map('strtolower', $ok[$ext]), true);
+    }
+
     /** Short fingerprint of the public key, to check which key is in use. */
     private function key_fingerprint($public_key) {
         return $public_key === '' ? '' : substr(hash('sha256', $public_key), 0, 16);
@@ -169,9 +193,9 @@ class AnonymousDocPortal {
      */
     private function scan_file_cloudmersive($file_path) {
         if (empty($this->cloudmersive_api_key)) {
-            // API key not configured - log warning but allow upload
+            // No key means no scan, and an unscanned file is not clean.
             error_log('Cloudmersive API key not configured for file scanning');
-            return array('clean' => true, 'message' => 'Scan skipped - API not configured');
+            return array('clean' => false, 'message' => 'Scanning service unavailable');
         }
         
         $url = 'https://api.cloudmersive.com/virus/scan/file';
@@ -302,19 +326,30 @@ class AnonymousDocPortal {
             wp_send_json_error(array('message' => 'The document drop is temporarily unavailable. Please try again later.'));
         }
 
-        // 1. Validate File Type (Extension & MIME)
+        // Likewise without a malware scanner: the owner opens these files on
+        // their own computer, so nothing unscanned is accepted.
+        if (empty($this->cloudmersive_api_key)) {
+            error_log('Anonymous portal: CLOUDMERSIVE_API_KEY not configured; upload refused');
+            wp_send_json_error(array('message' => 'The document drop is temporarily unavailable. Please try again later.'));
+        }
+
+        // 1. Validate File Type: the extension must be allowed, and the
+        // file's contents must match it (a renamed .exe is not a .pdf).
         $file_ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        $file_mime = mime_content_type($file['tmp_name']);
-        
-        if (!in_array($file_ext, $this->allowed_types)) {
+        if (!in_array($file_ext, $this->allowed_types, true)) {
             wp_send_json_error(array('message' => 'Invalid file type.'));
         }
-        
+        $file_mime = function_exists('mime_content_type') ? (string) mime_content_type($file['tmp_name']) : '';
+        if (!self::mime_matches($file_ext, $file_mime)) {
+            error_log("Anonymous portal: .{$file_ext} upload rejected, contents are {$file_mime}");
+            wp_send_json_error(array('message' => 'The file\'s contents do not match its type (.' . $file_ext . ').'));
+        }
+
         // 2. Validate File Size
         if ($file['size'] > $this->max_file_size) {
             wp_send_json_error(array('message' => 'File too large.'));
         }
-        
+
         // 3. Scan with Cloudmersive
         $scan_result = $this->scan_file_cloudmersive($file['tmp_name']);
         if (!$scan_result['clean']) {
@@ -430,6 +465,10 @@ class AnonymousDocPortal {
             echo '<div class="notice notice-error"><p><strong>No public key is configured, so the portal is refusing uploads.</strong> '
                 . 'Run <code>scripts/anon-portal-keygen.php</code> and deploy <code>inc/anonymous-portal-public.key</code>.</p></div>';
         } else {
+            if (empty($this->cloudmersive_api_key)) {
+                echo '<div class="notice notice-error"><p><strong>Malware scanning is not configured (no CLOUDMERSIVE_API_KEY), so the portal is refusing uploads.</strong> '
+                    . 'Add the key to the server&#8217;s <code>.env</code> or <code>wp-config.php</code>.</p></div>';
+            }
             echo '<p>Uploads are sealed with public key <code>' . esc_html($this->key_fingerprint($public_key)) . '</code>. '
                 . 'This server cannot open them. Download a file and open it on your own computer with '
                 . '<code>scripts/anon-portal-decrypt.php</code> and your private key.</p>';

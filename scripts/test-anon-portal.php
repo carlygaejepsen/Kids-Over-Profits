@@ -112,6 +112,44 @@ check($code3 === 0 && @file_get_contents($tmp . '/out/sub_aaaa1111_leak.pdf') ==
 check(trim((string) @file_get_contents($tmp . '/out/sub_aaaa1111_notes.txt')) === 'the notes', 'migrated notes open');
 check(@file_get_contents($tmp . '/out/sub_bbbb2222_notes.txt') === 'a document that happens to be named notes.txt', 'a lone notes.txt is kept as the document');
 
+// 5. No scanner key: a file counts as not clean.
+$scan = $call('scan_file_cloudmersive', $key_file);
+check($scan['clean'] === false, 'no Cloudmersive key -> file is not clean');
+
+// 6. Contents must match the extension (needs the fileinfo extension).
+if (function_exists('mime_content_type')) {
+    $samples = array(
+        'real.pdf'  => array('pdf',  "%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF\n", true),
+        'real.png'  => array('png',  base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='), true),
+        'real.jpg'  => array('jpg',  base64_decode('/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q=='), true),
+        'notes.txt' => array('txt',  "name,date\nSomeone,2025-01-01\n", true),
+        'fake.pdf'  => array('pdf',  "MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00\xff\xff\x00\x00" . str_repeat("\x00", 44) . "\x80\x00\x00\x00" . str_repeat("\x00", 64) . "PE\x00\x00", false),
+        'page.pdf'  => array('pdf',  "<html><body><script>alert(1)</script></body></html>\n", false),
+        'text.png'  => array('png',  "just text\n", false),
+    );
+    if (class_exists('ZipArchive')) {
+        foreach (array('real.zip' => 'zip', 'real.docx' => 'docx') as $n => $e) {
+            $z = new ZipArchive();
+            $z->open($tmp . '/' . $n, ZipArchive::CREATE);
+            if ($e === 'docx') {
+                $z->addFromString('[Content_Types].xml', '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+                $z->addFromString('word/document.xml', '<w:document/>');
+            } else {
+                $z->addFromString('a.txt', 'hello');
+            }
+            $z->close();
+            $samples[$n] = array($e, null, true);
+        }
+    }
+    foreach ($samples as $n => $s) {
+        if ($s[1] !== null) file_put_contents($tmp . '/' . $n, $s[1]);
+        $mime = (string) mime_content_type($tmp . '/' . $n);
+        check(AnonymousDocPortal::mime_matches($s[0], $mime) === $s[2], "$n detected as $mime -> " . ($s[2] ? 'accepted' : 'rejected'));
+    }
+} else {
+    echo "skip type checks (run with -d extension=fileinfo)\n";
+}
+
 // Clean up the temp folder.
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tmp, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 foreach ($it as $f) { $f->isDir() ? rmdir($f) : unlink($f); }
