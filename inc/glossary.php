@@ -253,6 +253,11 @@ function kop_glossary_render_entry($entry, $page_url, $ref_base, $show) {
                     <?php endforeach; ?>
                 </p>
             <?php endforeach; ?>
+            <?php /* Shown by js/glossary.js, which owns the form they open. */ ?>
+            <p class="kop-gl-fb-row" hidden>
+                <button type="button" class="kop-gl-fb" data-kind="used_at">My facility used this too</button>
+                <button type="button" class="kop-gl-fb" data-kind="correction">Suggest a correction</button>
+            </p>
         </dd>
     </div>
     <?php
@@ -350,7 +355,8 @@ function kop_glossary_render_page($program, $query, $page_url) {
     $program_count = count($data['programs']);
     $updated = !empty($data['updated']) ? strtotime($data['updated'] . ' 12:00:00') : 0;
     ?>
-    <div class="kop-gl" data-total="<?php echo (int) $data['count']; ?>">
+    <div class="kop-gl" data-total="<?php echo (int) $data['count']; ?>"
+         data-feedback="<?php echo esc_url(function_exists('rest_url') ? rest_url('kop/v1/glossary-feedback') : ''); ?>">
 
         <div class="kop-gl-intro">
             <?php foreach ($data['intro'] as $para) : ?>

@@ -566,6 +566,199 @@ a.kop-gl-ref:hover {
     padding: 0.1rem 0.45rem;
 }
 
+/* ---- Reader feedback (js/glossary.js, inc/glossary-feedback.php) ------- */
+
+.kop-gl-fb-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-top: 0.55rem !important;
+}
+
+.kop-gl-fb {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--kop-teal-ink, #24757F);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.kop-gl-fb:hover {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration-color: currentColor;
+}
+
+.kop-gl-fb:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+
+.kop-gl-fb-dialog {
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    padding: 0;
+    border: none;
+    border-top: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 12px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #000435);
+    box-shadow: 0 16px 48px rgba(0, 4, 53, 0.25);
+}
+
+.kop-gl-fb-dialog::backdrop {
+    background: rgba(0, 4, 53, 0.45);
+}
+
+.kop-gl-fb-form {
+    padding: 1.4rem 1.5rem 1.25rem;
+}
+
+.kop-gl-fb-form h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-gl-fb-term {
+    margin: 0.2rem 0 1.1rem;
+    font-weight: 600;
+    color: var(--kop-teal-ink, #24757F);
+}
+
+.kop-gl-fb-field {
+    margin-bottom: 0.9rem;
+}
+
+.kop-gl-fb-field[hidden] {
+    display: none;
+}
+
+.kop-gl-fb-field label {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.kop-gl-fb-field label span {
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-fb-field input,
+.kop-gl-fb-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.55rem 0.7rem;
+    font: inherit;
+    font-size: 1rem;
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    border-radius: 6px;
+    background: var(--kop-white, #fff);
+    color: var(--kop-text-primary, #000435);
+}
+
+.kop-gl-fb-field textarea {
+    resize: vertical;
+    min-height: 6rem;
+}
+
+.kop-gl-fb-field input:focus-visible,
+.kop-gl-fb-field textarea:focus-visible,
+.kop-gl-fb-buttons button:focus-visible {
+    outline: 3px solid var(--kop-focus-color, #33A7B5);
+    outline-offset: 1px;
+}
+
+/* The honeypot: off screen, not display:none, so bots still see it. */
+.kop-gl-fb-hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.kop-gl-fb-note {
+    margin: 0 0 0.6rem;
+    font-size: 0.82rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-fb-status {
+    margin: 0 0 0.6rem;
+    font-weight: 600;
+}
+
+.kop-gl-fb-status:empty {
+    display: none;
+}
+
+.kop-gl-fb-status.is-error {
+    color: var(--kop-coral-pink-ink, #D9020F);
+}
+
+.kop-gl-fb-status.is-done {
+    padding: 0.75rem 0.9rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-gl-fb-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+
+.kop-gl-fb-buttons button {
+    padding: 0.55rem 1.1rem;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.kop-gl-fb-cancel {
+    border: 1px solid var(--kop-border-secondary, #AEE0ED);
+    background: var(--kop-white, #fff);
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-gl-fb-send {
+    border: none;
+    background: var(--kop-button-primary, #33A7B5);
+    color: var(--kop-white, #fff);
+}
+
+.kop-gl-fb-send:hover {
+    background: var(--kop-button-primary-hover, #000080);
+}
+
+.kop-gl-fb-send:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+.kop-gl-fb-buttons button[hidden] {
+    display: none;
+}
+
+@media print {
+    .kop-gl-fb-row {
+        display: none !important;
+    }
+}
+
 .kop-gl-none,
 .kop-gl-empty {
     padding: 1.25rem;

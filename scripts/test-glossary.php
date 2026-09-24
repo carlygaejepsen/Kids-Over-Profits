@@ -39,6 +39,9 @@ function selected($a, $b) {
 function date_i18n($format, $timestamp) {
     return date($format, $timestamp);
 }
+function rest_url($path) {
+    return 'https://kidsoverprofits.org/wp-json/' . $path;
+}
 function add_query_arg($key, $value, $url) {
     return $url . (strpos($url, '?') === false ? '?' : '&') . rawurlencode($key) . '=' . rawurlencode($value);
 }

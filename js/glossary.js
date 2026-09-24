@@ -417,6 +417,177 @@
         }
     }, { passive: true });
 
+    /* ---- Reader feedback ---------------------------------------------- */
+
+    /* Two buttons under every entry open one shared form, posted to
+     * inc/glossary-feedback.php for review. Nothing changes on the page
+     * until a person has checked it. */
+    var feedbackUrl = root.getAttribute('data-feedback');
+    if (feedbackUrl && typeof HTMLDialogElement === 'function') {
+        root.querySelectorAll('.kop-gl-fb-row').forEach(function (row) {
+            row.hidden = false;
+        });
+
+        var dialog = document.createElement('dialog');
+        dialog.className = 'kop-gl-fb-dialog';
+        dialog.setAttribute('aria-labelledby', 'kop-gl-fb-title');
+        dialog.innerHTML =
+            '<form class="kop-gl-fb-form" novalidate>' +
+            '<h2 id="kop-gl-fb-title"></h2>' +
+            '<p class="kop-gl-fb-term"></p>' +
+            '<div class="kop-gl-fb-field" data-for="used_at">' +
+            '<label for="kop-gl-fb-program">Facility or program name <span>required</span></label>' +
+            '<input id="kop-gl-fb-program" name="program" maxlength="200" autocomplete="off">' +
+            '</div>' +
+            '<div class="kop-gl-fb-field">' +
+            '<label for="kop-gl-fb-details"></label>' +
+            '<textarea id="kop-gl-fb-details" name="details" rows="4" maxlength="4000"></textarea>' +
+            '</div>' +
+            '<div class="kop-gl-fb-field">' +
+            '<label for="kop-gl-fb-source">How do you know? <span>optional</span></label>' +
+            '<input id="kop-gl-fb-source" name="source" maxlength="500" placeholder="I was there; a handbook; a link">' +
+            '</div>' +
+            '<div class="kop-gl-fb-field">' +
+            '<label for="kop-gl-fb-contact">Email, if we may ask you about it <span>optional</span></label>' +
+            '<input id="kop-gl-fb-contact" name="contact" type="email" maxlength="200" autocomplete="email">' +
+            '</div>' +
+            '<div class="kop-gl-fb-hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>' +
+            '<p class="kop-gl-fb-note">Everything is read by a person before anything changes on the page. Your email is never published.</p>' +
+            '<p class="kop-gl-fb-status" role="status" aria-live="polite"></p>' +
+            '<div class="kop-gl-fb-buttons">' +
+            '<button type="button" class="kop-gl-fb-cancel">Cancel</button>' +
+            '<button type="submit" class="kop-gl-fb-send">Send</button>' +
+            '</div>' +
+            '</form>';
+        document.body.appendChild(dialog);
+
+        var fbForm = dialog.querySelector('form');
+        var fbTitle = dialog.querySelector('#kop-gl-fb-title');
+        var fbTerm = dialog.querySelector('.kop-gl-fb-term');
+        var fbProgramField = dialog.querySelector('[data-for="used_at"]');
+        var fbProgram = dialog.querySelector('#kop-gl-fb-program');
+        var fbDetails = dialog.querySelector('#kop-gl-fb-details');
+        var fbDetailsLabel = dialog.querySelector('label[for="kop-gl-fb-details"]');
+        var fbStatus = dialog.querySelector('.kop-gl-fb-status');
+        var fbSend = dialog.querySelector('.kop-gl-fb-send');
+        var fbCancel = dialog.querySelector('.kop-gl-fb-cancel');
+        var fbKind = '';
+        var fbEntry = null;
+        var fbOpener = null;
+
+        var fbCopy = {
+            used_at: {
+                title: 'My facility used this too',
+                details: 'What was it called there, or how was it used? <span>optional</span>'
+            },
+            correction: {
+                title: 'Suggest a correction',
+                details: 'What is wrong, and what should it say? <span>required</span>'
+            }
+        };
+
+        function fbSay(text, state) {
+            fbStatus.textContent = text;
+            fbStatus.className = 'kop-gl-fb-status' + (state ? ' is-' + state : '');
+        }
+
+        function openFeedback(kind, entry, opener) {
+            fbKind = kind;
+            fbEntry = entry;
+            fbOpener = opener;
+            fbForm.reset();
+            fbSay('', '');
+            fbSend.disabled = false;
+            fbSend.hidden = false;
+            fbCancel.textContent = 'Cancel';
+            fbForm.querySelectorAll('.kop-gl-fb-field').forEach(function (f) {
+                f.hidden = false;
+            });
+            fbTitle.textContent = fbCopy[kind].title;
+            fbDetailsLabel.innerHTML = fbCopy[kind].details;
+            fbProgramField.hidden = kind !== 'used_at';
+            var term = entry.querySelector('.kop-gl-term dfn');
+            var qualifier = entry.querySelector('.kop-gl-term .kop-gl-qualifier');
+            fbTerm.textContent = (term ? term.textContent : '') + (qualifier ? ' ' + qualifier.textContent : '');
+            hidePop();
+            dialog.showModal();
+            (kind === 'used_at' ? fbProgram : fbDetails).focus();
+        }
+
+        dialog.addEventListener('close', function () {
+            if (fbOpener) {
+                fbOpener.focus();
+            }
+        });
+        fbCancel.addEventListener('click', function () {
+            dialog.close();
+        });
+        /* A click on the backdrop lands on the dialog itself, outside the form. */
+        dialog.addEventListener('click', function (event) {
+            if (event.target === dialog) {
+                dialog.close();
+            }
+        });
+
+        root.addEventListener('click', function (event) {
+            var button = event.target.closest('.kop-gl-fb');
+            var entry = button && button.closest('.kop-gl-entry');
+            if (entry) {
+                openFeedback(button.getAttribute('data-kind'), entry, button);
+            }
+        });
+
+        fbForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            var fields = {
+                kind: fbKind,
+                term_id: fbEntry ? fbEntry.id : '',
+                program: fbProgram.value.trim(),
+                details: fbDetails.value.trim(),
+                source: fbForm.elements.source.value.trim(),
+                contact: fbForm.elements.contact.value.trim(),
+                website: fbForm.elements.website.value
+            };
+            if (fbKind === 'used_at' && !fields.program) {
+                fbSay('Please name the facility or program.', 'error');
+                fbProgram.focus();
+                return;
+            }
+            if (fbKind === 'correction' && !fields.details) {
+                fbSay('Please say what should change.', 'error');
+                fbDetails.focus();
+                return;
+            }
+            fbSend.disabled = true;
+            fbSay('Sending...', '');
+            fetch(feedbackUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fields)
+            }).then(function (response) {
+                return response.json().catch(function () {
+                    return { success: false };
+                });
+            }).then(function (result) {
+                if (result && result.success) {
+                    fbForm.querySelectorAll('.kop-gl-fb-field').forEach(function (f) {
+                        f.hidden = true;
+                    });
+                    fbSay('Thank you. We will read it and update the glossary if it checks out.', 'done');
+                    fbSend.hidden = true;
+                    fbCancel.textContent = 'Close';
+                    fbCancel.focus();
+                } else {
+                    fbSend.disabled = false;
+                    fbSay((result && result.error) || 'That did not go through. Please try again.', 'error');
+                }
+            }).catch(function () {
+                fbSend.disabled = false;
+                fbSay('That did not go through. Check your connection and try again.', 'error');
+            });
+        });
+    }
+
     /* ---- Contents rail: mark the section being read -------------------- */
 
     var tocLinks = root.querySelectorAll('.kop-gl-toc a');
