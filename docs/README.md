@@ -22,8 +22,8 @@ says where to read about each part.
   facility (`facilities_v2`). The write switch has been on since 2026-09-18.
 - [Facility schema (v2)](./FACILITY-SCHEMA.md): the canonical facility
   document. Every writer goes through `inc/facility-store.php`.
-- [Data Forms](./data-forms/README.md): the admin form (`mode=master`) and
-  the public suggestion form (`mode=suggestion`) for facilities, operators,
+- [Data Forms](./data-forms/README.md): the admin form (`mode=admin`) and
+  the public suggestion form (`mode=suggestions`) for facilities, operators,
   locations and referrers.
 - [Admin Submissions](./admin-submissions/README.md): the review dashboard
   for wiki, news and data-form submissions.
