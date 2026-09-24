@@ -6658,5 +6658,3164 @@
         "Added 2026-09-21 from a reader submission (seeds/new-facilities.json)."
       ]
     }
+  },
+  {
+    "id": 9607,
+    "unique_name": "Falcon Ridge Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Falcon Ridge Ranch Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2008, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 9619,
+    "unique_name": "Sierra Sage Treatment Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sierra Sage Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 9622,
+    "unique_name": "Uta Halee Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Ponca Pines Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Ponca Pines Academy; member from 2009, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 9637,
+    "unique_name": "Auldern Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Auldern Academy. Replaces: National Association of Therapeutic Schools and Programs (NATSAP).",
+    "facility": {
+      "memberships": [
+        "National Independent Private Schools Association (NIPSA)",
+        "Small Boarding School Association (SBSA)",
+        "NATSAP (former member; member from 2002, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 9642,
+    "unique_name": "New Dominion School of Maryland",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Dominion School of Maryland.",
+    "facility": {
+      "memberships": [
+        "Association of Experiential Education",
+        "NATSAP (former member; member from 2001, last listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 9643,
+    "unique_name": "New Dominion School of Virginia",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Dominion School of Virginia.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 9646,
+    "unique_name": "Three Springs of Blue Ridge",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Three Springs of Blue Ridge.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2005)"
+      ]
+    }
+  },
+  {
+    "id": 9647,
+    "unique_name": "Three Springs of Courtland",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Three Springs Courtland.",
+    "facility": {
+      "memberships": [
+        "Association of Experiential Education",
+        "NATSAP (former member; member from 2005, last listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 9652,
+    "unique_name": "Three Springs of North Carolina",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Three Springs of North Carolina.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 9676,
+    "unique_name": "Meadowridge Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Meadowridge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 9684,
+    "unique_name": "Innercept",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Innercept.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 9685,
+    "unique_name": "BlueFire Wilderness Therapy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as BlueFire Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2014; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 9689,
+    "unique_name": "Boulder Creek Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Boulder Creek Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 9691,
+    "unique_name": "Northwest Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Northwest Academy. Replaces: NATSAP.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 9696,
+    "unique_name": "Cherry Gulch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cherry Gulch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 9700,
+    "unique_name": "Daybreak Canyon, LLC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Daybreak Canyon.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 9703,
+    "unique_name": "Elk Mountain Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Elk Mountain Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 9724,
+    "unique_name": "Novitas Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Novitas Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 9725,
+    "unique_name": "Project PATCH",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Project Patch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2015; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 9727,
+    "unique_name": "Rocky Mountain Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Rocky Mountain Academy. Replaces: NATSAP.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 9739,
+    "unique_name": "CEDU Middle School",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as CEDU Middle School. Replaces: NATSAP.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 9740,
+    "unique_name": "CEDU High School",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as CEDU High School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 9741,
+    "unique_name": "Wellspring Academies",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Academy of the Sierras.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Academy of the Sierras; member from 2004, last listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 9744,
+    "unique_name": "Optimum Performance Institute",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Optimum Performance Institute.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 9862,
+    "unique_name": "Cascade School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cascade School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2003)"
+      ]
+    }
+  },
+  {
+    "id": 9915,
+    "unique_name": "Echo Malibu Youth Treatment Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Echo Malibu Youth Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 9935,
+    "unique_name": "Family Life Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Family Life Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 10184,
+    "unique_name": "Remi Vista – Ranch School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Remi Vista Ranch School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 10310,
+    "unique_name": "Visions Adolescent Treatment Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Visions Adolescent Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10333,
+    "unique_name": "Discovery Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Discovery Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10334,
+    "unique_name": "Discovery Ranch South",
+    "version": 3,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Discovery Ranch South; Discovery Ranch for Girls. Replaces: NATSAP (since 2013).",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2013; still listed on natsap.org in September 2026)",
+        "NATSAP (listed as Discovery Ranch for Girls; member from 2005, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10335,
+    "unique_name": "Discovery Ranch",
+    "version": 3,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Discovery Ranch. Replaces: NATSAP (member since 2005).",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10336,
+    "unique_name": "Oxbow Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Oxbow Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2007; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10337,
+    "unique_name": "OASIS Ascent",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as OASIS Ascent.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10338,
+    "unique_name": "RedCliff Ascent",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as RedCliff Ascent.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 1999; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10340,
+    "unique_name": "Kaizen Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Kaizen Academy; Birdseye Boys Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2011; still listed on natsap.org in September 2026)",
+        "NATSAP (listed as Birdseye Boys Ranch; member from 2001, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 10341,
+    "unique_name": "La Europa Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as La Europa Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10342,
+    "unique_name": "Kolob Canyon RTC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Kolob Canyon RTC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10343,
+    "unique_name": "Moonridge Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Moonridge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2006; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10344,
+    "unique_name": "Turn-About Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Turn-About Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10346,
+    "unique_name": "Aspen Institute for Behavioral Assessment",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Aspen Institute for Behavioral Assessment.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2010, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 10347,
+    "unique_name": "Aspen Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Aspen Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 10348,
+    "unique_name": "Island View RTC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Island View RTC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 10349,
+    "unique_name": "Oakley School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Oakley School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10350,
+    "unique_name": "Outback Therapeutic Expeditions",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Outback Therapeutic Expeditions.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2002, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10351,
+    "unique_name": "Passages to Recovery",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Passages To Recovery.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2002, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 10353,
+    "unique_name": "New Haven RTC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Haven Residential Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 1999; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10356,
+    "unique_name": "Elevations RTC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Elevations RTC. Replaces: National Association of Therapeutic Schools and Programs (NATSAP).",
+    "facility": {
+      "memberships": [
+        "All Kinds of Therapy",
+        "NATSAP (member since 1999; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10359,
+    "unique_name": "Solstice West",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Solstice RTC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10360,
+    "unique_name": "Uinta Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Uinta Academy RTC, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2004; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10361,
+    "unique_name": "Viewpoint Center",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as ViewPoint Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2010; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10362,
+    "unique_name": "Wingate Wilderness Therapy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as WinGate Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2008, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10363,
+    "unique_name": "Havenwood Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Havenwood Academy, Inc.; Integrity House.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2016; still listed on natsap.org in September 2026)",
+        "NATSAP (listed as Integrity House; listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 10368,
+    "unique_name": "Red Rock Canyon School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Red Rock Canyon School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2000, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10370,
+    "unique_name": "Copper Hills Youth Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Copper Hills Youth Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 10371,
+    "unique_name": "Provo Canyon School",
+    "version": 3,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Provo Canyon School. Replaces: NATSAP (member from 2005; no longer listed).",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 10376,
+    "unique_name": "Gateway Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Gateway Academy, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2002; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10379,
+    "unique_name": "Academy at Canyon Creek",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Academy at Canyon Creek.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 10382,
+    "unique_name": "Alpine Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Alpine Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2001; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10383,
+    "unique_name": "Alternative Youth Adventures of Utah",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Alternative Youth Adventures of Utah.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 10388,
+    "unique_name": "Ashcreek Ranch Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Ashcreek Ranch Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2012, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10389,
+    "unique_name": "Aspen Achievement Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Aspen Achievement Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 10390,
+    "unique_name": "Aspiro Group Inc.",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Aspiro.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2007, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10405,
+    "unique_name": "Cascade Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cascade Academy, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10410,
+    "unique_name": "Cedar Ridge Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cedar Ridge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 10426,
+    "unique_name": "Discovery Connections",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Discovery Connections.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10434,
+    "unique_name": "Equine Journeys LLC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Equine Journeys.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 10438,
+    "unique_name": "Evoke Entrada",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Evoke Entrada; Second Nature Entrada.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2020-21)",
+        "NATSAP (listed as Second Nature Entrada; member from 2005, last listed 2014-15)"
+      ]
+    }
+  },
+  {
+    "id": 10447,
+    "unique_name": "Heritage Schools, Inc.",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Heritage Schools, Inc.; The Heritage Community.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2001; still listed on natsap.org in September 2026)",
+        "NATSAP (listed as The Heritage Community; member from 2001, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10458,
+    "unique_name": "Kiva Adventure Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Kiva Adventure Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10461,
+    "unique_name": "Legacy Outdoor Adventures",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Legacy Outdoor Adventures.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2016, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10471,
+    "unique_name": "Logan River Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Logan River Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2000; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10482,
+    "unique_name": "Mountain Homes Youth Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mountain Homes Youth Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 10483,
+    "unique_name": "Mountain Springs Preparatory Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Academy at Cedar Mountain.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Academy at Cedar Mountain; member from 2003, last listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 10487,
+    "unique_name": "New Haven",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Haven Residential Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 1999; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10519,
+    "unique_name": "Skyline Journey",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Skyline Journey.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 10523,
+    "unique_name": "Sorenson’s Ranch School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sorenson’s Ranch School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10527,
+    "unique_name": "Star Guides",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Star Guides.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2019, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10535,
+    "unique_name": "SunHawk Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as SunHawk Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 10536,
+    "unique_name": "Sunrise RTC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sunrise RTC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2006; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10537,
+    "unique_name": "Synergy Youth Treatment",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Synergy Youth Treatment.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2014-15)"
+      ]
+    }
+  },
+  {
+    "id": 10540,
+    "unique_name": "Telos Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Telos.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2004; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10545,
+    "unique_name": "Three Points Center, LLC",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Three Points Center, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10549,
+    "unique_name": "Top Flight Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Top Flight Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 10570,
+    "unique_name": "Vive Adolescent Care",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Vive Adolescent Care.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10577,
+    "unique_name": "WayPoint Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as WayPoint Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10579,
+    "unique_name": "West Ridge Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as West Ridge Academy; Utah Boys Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2020-21)",
+        "NATSAP (listed as Utah Boys Ranch; member from 2004, last listed 2005)"
+      ]
+    }
+  },
+  {
+    "id": 10581,
+    "unique_name": "White River Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as White River Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10584,
+    "unique_name": "Wilderness Quest",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Wilderness Quest.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 10587,
+    "unique_name": "Willow Creek School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Willow Creek School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 10607,
+    "unique_name": "Excel Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Excel Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 10608,
+    "unique_name": "Lone Star Expeditions",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Lone Star Expeditions.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 10612,
+    "unique_name": "Fulshear Treatment to Transition",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Fulshear Treatment to Transition.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10617,
+    "unique_name": "Meridell Achievement Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Meridell Achievement Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2001; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 10652,
+    "unique_name": "Bayes Achievement Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Bayes Achievement Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 10741,
+    "unique_name": "Fulshear Treatment to Transition – The Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Fulshear Ranch Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Fulshear Ranch Academy; member from 2004, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 11017,
+    "unique_name": "Elan School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Elan School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 11024,
+    "unique_name": "New Horizons for Young Women",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Horizons For Young Women.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 11030,
+    "unique_name": "Summit Achievement",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Summit Achievement.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2000; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 11034,
+    "unique_name": "The Ridge New Hampshire",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Shortridge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Shortridge Academy; member from 2003, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11048,
+    "unique_name": "Hunter School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Hunter School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 11067,
+    "unique_name": "Oliverian School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as The Oliverian School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 11080,
+    "unique_name": "Wediko Children’s Services",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Wediko Children’s Services.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 11119,
+    "unique_name": "National Deaf Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as National Deaf Academy, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 11172,
+    "unique_name": "Family First Adolescent Services",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Family First Adolescent Services.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2019; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 11223,
+    "unique_name": "Tampa Bay Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Tampa Bay Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 11233,
+    "unique_name": "University Behavioral Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as University Behavioral Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2006)"
+      ]
+    }
+  },
+  {
+    "id": 11260,
+    "unique_name": "Acadia Village",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Acadia Village.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 11264,
+    "unique_name": "ARCH Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as ARCH Academy of Cumberland Heights.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2009; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 11380,
+    "unique_name": "Eagle Summit",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Eagle Summit.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 11652,
+    "unique_name": "New Leaf Academy of North Carolina",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Leaf Academy of North Carolina.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 11653,
+    "unique_name": "Stone Mountain School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Stone Mountain School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2002, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 11655,
+    "unique_name": "Lake House Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Lake House Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11656,
+    "unique_name": "Asheville Academy for Girls",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Asheville Academy for Girls.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2017, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11657,
+    "unique_name": "Equinox RTC",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Equinox RTC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2017, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11660,
+    "unique_name": "Trails Carolina",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Trails Carolina. Replaces: National Association of Therapeutic Schools and Programs (NATSAP).",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11698,
+    "unique_name": "Black Mountain Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Black Mountain Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2018; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 11769,
+    "unique_name": "Foothills at Red Oak Recovery",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Foothills At Red Oak Recovery.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11875,
+    "unique_name": "Phoenix Outdoor",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Phoenix Outdoor.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2010, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 11924,
+    "unique_name": "SUWS of the Carolinas",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as SUWS of the Carolinas.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2002, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 11977,
+    "unique_name": "Academy at Swift River",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Academy at Swift River.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 11978,
+    "unique_name": "Ashby Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Ashby Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 11982,
+    "unique_name": "Chamberlain International School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Chamberlain International School; F.L. Chamberlain School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)",
+        "NATSAP (listed as F.L. Chamberlain School; member from 2005, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 12002,
+    "unique_name": "Eagleton School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Eagleton School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2015-16)"
+      ]
+    }
+  },
+  {
+    "id": 12007,
+    "unique_name": "John Dewey Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as John Dewey Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12017,
+    "unique_name": "Valley View School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Valley View School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2002; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12019,
+    "unique_name": "Adirondack Leadership Expeditions",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Adirondack Leadership Expeditions.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 12050,
+    "unique_name": "Family Foundation School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Family Foundation School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 12056,
+    "unique_name": "Green Chimneys",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Green Chimneys.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2019, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12079,
+    "unique_name": "Mountain Lake Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mountain Lake Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12132,
+    "unique_name": "Bromley Brook School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Bromley Brook School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12137,
+    "unique_name": "King George School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as King George School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12144,
+    "unique_name": "Cedars Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cedars Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 12155,
+    "unique_name": "Copper Canyon Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Copper Canyon Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 12160,
+    "unique_name": "Red Mountain Sedona",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Red Mountain Sedona.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2016; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12161,
+    "unique_name": "Sedona Sky Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sedona Sky Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12176,
+    "unique_name": "Anasazi Foundation",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as ANASAZI Foundation.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2002; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12192,
+    "unique_name": "Blue Hills Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Blue Hills Academy, LLC.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2005)"
+      ]
+    }
+  },
+  {
+    "id": 12222,
+    "unique_name": "Estrella Vista Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Estrella Vista Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2010, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12238,
+    "unique_name": "In Balance Ranch Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as In Balance Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2007; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12293,
+    "unique_name": "Spring Ridge Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Spring Ridge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12294,
+    "unique_name": "St. Paul’s Preparatory Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as St. Paul's Preparatory Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 12322,
+    "unique_name": "Mount Bachelor Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mount Bachelor Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 12323,
+    "unique_name": "New Leaf Academy of Oregon",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Leaf Academy of Oregon.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 12326,
+    "unique_name": "Deschutes Wilderness Therapy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Deschutes Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12329,
+    "unique_name": "Academy at Sisters",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Academy at Sisters.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12347,
+    "unique_name": "Crater Lake School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Crater Lake School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2003)"
+      ]
+    }
+  },
+  {
+    "id": 12355,
+    "unique_name": "Evoke Cascades",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Evoke at Cascades; Second Nature Cascades.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2020-21)",
+        "NATSAP (listed as Second Nature Cascades; member from 1999, last listed 2014-15)"
+      ]
+    }
+  },
+  {
+    "id": 12395,
+    "unique_name": "NorthStar Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as NorthStar Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12398,
+    "unique_name": "Obsidian Trails Outdoor School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Obsidian Trails Outdoor School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 12401,
+    "unique_name": "Pendleton Academies",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Pendleton Academies.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2007, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12405,
+    "unique_name": "Santiam Crossing",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Santiam Crossing School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 12506,
+    "unique_name": "Blue Ridge Therapeutic Wilderness",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Blue Ridge Therapeutic Wilderness.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2004; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12509,
+    "unique_name": "Breakthrough Recovery Outreach",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Breakthrough Recovery Outreach.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 12514,
+    "unique_name": "Camp E-Ma-Laku",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Eckerd Academy of the Blue Ridge, merged into this record on 2026-09-23.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Eckerd Academy of the Blue Ridge; former member; member from 2008, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12539,
+    "unique_name": "Hidden Lake Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Hidden Lake Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 12555,
+    "unique_name": "Shepherd’s Hill Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Shepherd’s Hill Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12565,
+    "unique_name": "Pacific Quest",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Pacific Quest.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2013; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12566,
+    "unique_name": "SeaChange Hawaii",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as SeaChange Hawaii.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2010, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12570,
+    "unique_name": "New Vision Wilderness Therapy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Vision Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12578,
+    "unique_name": "Genesee Lake School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Genesee Lake School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2012, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12591,
+    "unique_name": "Lakemary Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Lakemary Center, Inc..",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12596,
+    "unique_name": "New Vision Wilderness",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Vision Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2013, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12615,
+    "unique_name": "Tipton Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Tipton Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12620,
+    "unique_name": "White Rock Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as White Rock Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 12638,
+    "unique_name": "Emily Griffith Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Emily Griffith Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 12641,
+    "unique_name": "Forest Heights Lodge",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Forest Heights Lodge.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12652,
+    "unique_name": "Open Sky Wilderness Therapy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Open Sky Wilderness Therapy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12668,
+    "unique_name": "Trailhead Wilderness School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Monarch Center for Family Healing (formerly Trailhead | Wilderness School).",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Monarch Center for Family Healing; member from 2006, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 12679,
+    "unique_name": "Grove School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Grove School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 1999; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12683,
+    "unique_name": "Wellspring",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Wellspring & The Arch Bridge School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2001; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12684,
+    "unique_name": "Chrysalis Therapeutic Boarding School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Chrysalis Therapeutic Boarding School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2000; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12692,
+    "unique_name": "Big Sky Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Big Sky Academy; Cramer Creek School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2020-21)",
+        "NATSAP (listed as Cramer Creek School; member from 2009, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 12695,
+    "unique_name": "Building Bridges Inc.",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Building Bridges.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2001; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12698,
+    "unique_name": "Clearview Girls Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Clearview Girls Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (current member; listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 12710,
+    "unique_name": "Mission Mountain School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mission Mountain School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12712,
+    "unique_name": "Monarch School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Monarch School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12713,
+    "unique_name": "Montana Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Montana Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12731,
+    "unique_name": "Summit Preparatory School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Summit Preparatory School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12733,
+    "unique_name": "Three Rivers Montana",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Three Rivers Montana.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12735,
+    "unique_name": "Turning Winds Academic Institute",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Turning Winds Academic Institute.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12737,
+    "unique_name": "Wilderness Treatment Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Wilderness Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2015-16)"
+      ]
+    }
+  },
+  {
+    "id": 12739,
+    "unique_name": "Yellowstone Girls and Boys Ranch",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Yellowstone Boys and Girls Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12742,
+    "unique_name": "Sandhill Child Development Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sandhill Child Development Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2015, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12753,
+    "unique_name": "Rancho Valmora",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Rancho Valmora.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 12754,
+    "unique_name": "San Cristobal Ranch Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as San Cristobal Ranch Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 12817,
+    "unique_name": "Blackwater Outdoor Experiences",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Blackwater Outdoor Experiences.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2007)"
+      ]
+    }
+  },
+  {
+    "id": 12859,
+    "unique_name": "Graydon Manor",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Graydon Manor.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 12879,
+    "unique_name": "Keswick School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Little Keswick School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Little Keswick School; member from 2007, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 12918,
+    "unique_name": "The Discovery Schools of Virginia",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as The Discovery Schools of Virginia, Inc..",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2007, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 12919,
+    "unique_name": "Timber Ridge School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Timber Ridge School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2015-16)"
+      ]
+    }
+  },
+  {
+    "id": 12928,
+    "unique_name": "Newport Academy – Port Townsend",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Gray Wolf Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Gray Wolf Ranch; member from 2000, last listed 2015-16)"
+      ]
+    }
+  },
+  {
+    "id": 12967,
+    "unique_name": "Shamrock Educational Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Shamrock Educational Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2001)"
+      ]
+    }
+  },
+  {
+    "id": 12973,
+    "unique_name": "Straight Arrow Apex",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Straight Arrow Apex.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2003, last listed 2005)"
+      ]
+    }
+  },
+  {
+    "id": 12982,
+    "unique_name": "Tyler Ranch",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Tyler Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2003)"
+      ]
+    }
+  },
+  {
+    "id": 13034,
+    "unique_name": "Minnesota Girls Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as The Minnesota Girls Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2011-12)"
+      ]
+    }
+  },
+  {
+    "id": 13069,
+    "unique_name": "Soltreks",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Soltreks.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2000, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 13304,
+    "unique_name": "Compass Rose Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Compass Rose Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2014, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 13422,
+    "unique_name": "Heart Mountain New Beginnings",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Heart Mountain New Beginnings.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 13435,
+    "unique_name": "Triangle Cross Boys Ranch",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mount Carmel Youth Ranch.",
+    "facility": {
+      "memberships": [
+        "NATSAP (listed as Mount Carmel Youth Ranch; member from 2009, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 13436,
+    "unique_name": "Trinity Teen Solutions, Inc.",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Trinity Teen Solutions, Inc..",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2009, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 13458,
+    "unique_name": "Chaddock",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Chaddock.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2011)"
+      ]
+    }
+  },
+  {
+    "id": 13535,
+    "unique_name": "The Sonia Shankman Orthogenic School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sonia Shankman Orthogenic School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 13650,
+    "unique_name": "Elk River Treatment Program",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Elk River Treatment Program.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2006, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 13743,
+    "unique_name": "Evangelhouse Christian Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Evangelhouse Christian Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2005; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 13881,
+    "unique_name": "The Cleveland Home",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as The Cleveland Home.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; listed 2004)"
+      ]
+    }
+  },
+  {
+    "id": 13984,
+    "unique_name": "Cherokee Creek Boys School",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Cherokee Creek Boys School.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2009; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 14009,
+    "unique_name": "Whetstone Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Whetstone Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (member since 2018; still listed on natsap.org in September 2026)"
+      ]
+    }
+  },
+  {
+    "id": 14017,
+    "unique_name": "Alldredge Wilderness Journey",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Alldredge Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2008)"
+      ]
+    }
+  },
+  {
+    "id": 14033,
+    "unique_name": "Greenbrier Academy for Girls",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Greenbrier Academy for Girls.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2008, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 14064,
+    "unique_name": "Sky Ranch for Boys, Inc.",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Sky Ranch For Boys, Inc..",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2004, last listed 2006)"
+      ]
+    }
+  },
+  {
+    "id": 14110,
+    "unique_name": "New Summit Academy Costa Rica",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as New Summit Academy of Costa Rica.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2007, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 14147,
+    "unique_name": "Coral Reef Academy",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Coral Reef Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2010)"
+      ]
+    }
+  },
+  {
+    "id": 14163,
+    "unique_name": "Mountain Valley Treatment Center",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Mountain Valley Treatment Center.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 1999, last listed 2016-17)"
+      ]
+    }
+  },
+  {
+    "id": 100031,
+    "unique_name": "Eckerd Academy at Deer Lodge (TN)",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Eckerd Academy at Deer Lodge.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 100080,
+    "unique_name": "Talisman Academy",
+    "version": 2,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Talisman Academy.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2011, last listed 2012-13)"
+      ]
+    }
+  },
+  {
+    "id": 100113,
+    "unique_name": "Prescott House (AZ)",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Prescott House.",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2005, last listed 2009)"
+      ]
+    }
+  },
+  {
+    "id": 100124,
+    "unique_name": "Clearview Horizon (MT)",
+    "version": 1,
+    "note": "NATSAP membership from the NATSAP directories and member lists in the media library (2001-2020-21) and the natsap.org program directory (checked 2026-09-18); matched as Clearview Horizon, Inc..",
+    "facility": {
+      "memberships": [
+        "NATSAP (former member; member from 2001, last listed 2020-21)"
+      ]
+    }
+  },
+  {
+    "id": 9605,
+    "unique_name": "Canyon State Academy",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Arizona Boys Ranch.",
+    "facility": {
+      "identification": {
+        "name": "Canyon State Academy",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Arizona Boys Ranch"
+        ],
+        "currentOperator": "Rite of Passage, Inc.",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9636,
+    "unique_name": "Straight – Yorba Linda",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: STRAIGHT Southern California.",
+    "facility": {
+      "identification": {
+        "name": "Straight – Yorba Linda",
+        "currentName": "",
+        "otherNames": [
+          "STRAIGHT Southern California"
+        ],
+        "pastNames": [
+          "KIDS of Southern California"
+        ],
+        "currentOperator": "Straight Inc.",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9644,
+    "unique_name": "Three Springs New Beginnings",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Brighter Path Owens Cross Roads.",
+    "facility": {
+      "identification": {
+        "name": "Three Springs New Beginnings",
+        "currentName": "Pathway of Madison County",
+        "otherNames": [
+          "Sequel TSI Owens Cross Roads",
+          "Three Springs Turning Point",
+          "Three Springs New Beginnings",
+          "Brighter Path Owens Cross Roads"
+        ],
+        "pastNames": [],
+        "currentOperator": "Pathway of Madison County",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9686,
+    "unique_name": "Mountain Home Academy",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Sequel TSI of Idaho, Three Springs of Mountain Home.",
+    "facility": {
+      "identification": {
+        "name": "Mountain Home Academy",
+        "currentName": "",
+        "otherNames": [
+          "Sequel TSI of Idaho",
+          "Three Springs of Mountain Home"
+        ],
+        "pastNames": [],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9707,
+    "unique_name": "Hawk’s Landing Therapeutic Home for Boys",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Schrom Boy's Home @ Hawk's Landing.",
+    "facility": {
+      "identification": {
+        "name": "Hawk’s Landing Therapeutic Home for Boys",
+        "currentName": "",
+        "otherNames": [
+          "Schrom Boy's Home @ Hawk's Landing"
+        ],
+        "pastNames": [
+          "Schrom Boys Home"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 9734,
+    "unique_name": "SUWS Idaho",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: SUWS Adolescent and Youth Programs.",
+    "facility": {
+      "identification": {
+        "name": "SUWS Idaho",
+        "currentName": "",
+        "otherNames": [
+          "SUWS Adolescent and Youth Programs"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10363,
+    "unique_name": "Havenwood Academy",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Integrity House, Havenwood South.",
+    "facility": {
+      "identification": {
+        "name": "Havenwood Academy",
+        "currentName": "",
+        "otherNames": [
+          "Integrity House (2001-2013)",
+          "Integrity House",
+          "Havenwood South"
+        ],
+        "pastNames": [
+          "Integrity House RTC"
+        ],
+        "currentOperator": "Hope Group",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10372,
+    "unique_name": "Cross Creek Center",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Red Rock Academy.",
+    "facility": {
+      "identification": {
+        "name": "Cross Creek Center",
+        "currentName": "",
+        "otherNames": [
+          "Red Rock Academy"
+        ],
+        "pastNames": [],
+        "currentOperator": "World Wide Association of Specialty Programs and Schools (WWASPS)",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10562,
+    "unique_name": "Utah Youth Village",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Utah Girls' Village.",
+    "facility": {
+      "identification": {
+        "name": "Utah Youth Village",
+        "currentName": "",
+        "otherNames": [
+          "Utah Girls' Village"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10617,
+    "unique_name": "Meridell Achievement Center",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Westwood Boys Ranch, Westwood Program.",
+    "facility": {
+      "identification": {
+        "name": "Meridell Achievement Center",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Westwood Boys Ranch",
+          "Westwood Program"
+        ],
+        "currentOperator": "Universal Health Services (UHS)",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10709,
+    "unique_name": "Dallas County Juvenile Department – Lyle B. Medlock RTC",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Dallas County Juvenile Facility, Medlock Juvenile Center.",
+    "facility": {
+      "identification": {
+        "name": "Dallas County Juvenile Department – Lyle B. Medlock RTC",
+        "currentName": "",
+        "otherNames": [
+          "Dallas County Juvenile Facility",
+          "Medlock Juvenile Center"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10710,
+    "unique_name": "Dallas County Juvenile Department – Youth Village",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Dallas County Youth Village Secure Program, Dallas County Last Chance Program.",
+    "facility": {
+      "identification": {
+        "name": "Dallas County Juvenile Department – Youth Village",
+        "currentName": "",
+        "otherNames": [
+          "Dallas County Youth Village Secure Program",
+          "Dallas County Last Chance Program"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10769,
+    "unique_name": "Hays County Juvenile Detention",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Hays County Juvenile Justice Center.",
+    "facility": {
+      "identification": {
+        "name": "Hays County Juvenile Detention",
+        "currentName": "",
+        "otherNames": [
+          "Hays County Juvenile Justice Center"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 10878,
+    "unique_name": "Rockdale Regional Juvenile Justice Center",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Judge Roger Hashem Center, Rockdale Juvenile Justice Center, Milam, Robertson and Falls Counties Juvenile Facility.",
+    "facility": {
+      "identification": {
+        "name": "Rockdale Regional Juvenile Justice Center",
+        "currentName": "",
+        "otherNames": [
+          "Rockdale Youth Academy",
+          "Judge Roger Hashem Center",
+          "Rockdale Juvenile Justice Center",
+          "Milam, Robertson and Falls Counties Juvenile Facility"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11034,
+    "unique_name": "The Ridge New Hampshire",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Shortridge Academy.",
+    "facility": {
+      "identification": {
+        "name": "The Ridge New Hampshire",
+        "currentName": "",
+        "otherNames": [
+          "Shortridge Academy (2002-2023)"
+        ],
+        "pastNames": [
+          "Shortridge Academy"
+        ],
+        "currentOperator": "Altior Healthcare",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11095,
+    "unique_name": "Marion Youth Academy",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Three Springs of Marion.",
+    "facility": {
+      "identification": {
+        "name": "Marion Youth Academy",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Three Springs of Marion"
+        ],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11098,
+    "unique_name": "St. John's Youth Academy",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Sequel of St. John's.",
+    "facility": {
+      "identification": {
+        "name": "St. John's Youth Academy",
+        "currentName": "",
+        "otherNames": [
+          "Sequel of St. John's"
+        ],
+        "pastNames": [],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11191,
+    "unique_name": "Lighthouse Christian Academy",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Lighthouse of Northwest Florida.",
+    "facility": {
+      "identification": {
+        "name": "Lighthouse Christian Academy",
+        "currentName": "",
+        "otherNames": [
+          "Lighthouse of Northwest Florida"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11215,
+    "unique_name": "Santa Rosa Juvenile Residential Facility",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Santa Rosa Youth Academy.",
+    "facility": {
+      "identification": {
+        "name": "Santa Rosa Juvenile Residential Facility",
+        "currentName": "",
+        "otherNames": [
+          "Santa Rosa Youth Academy"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11643,
+    "unique_name": "The Clock Tower Schools",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Glen Mills School.",
+    "facility": {
+      "identification": {
+        "name": "The Clock Tower Schools",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Glen Mills Schools",
+          "Philadelphia House of Refuge",
+          "Glen Mills School"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 11932,
+    "unique_name": "The Goodale School and Recovery Community",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Montfort Hall.",
+    "facility": {
+      "identification": {
+        "name": "The Goodale School and Recovery Community",
+        "currentName": "",
+        "otherNames": [
+          "Montfort Hall"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12304,
+    "unique_name": "The Meadows Ranch",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Remuda Ranch Programs for Anorexia and Bulimia.",
+    "facility": {
+      "identification": {
+        "name": "The Meadows Ranch",
+        "currentName": "",
+        "otherNames": [
+          "Remuda Ranch Programs for Anorexia and Bulimia"
+        ],
+        "pastNames": [
+          "Remuda Ranch"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12398,
+    "unique_name": "Obsidian Trails Outdoor School",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Obsidian Schools.",
+    "facility": {
+      "identification": {
+        "name": "Obsidian Trails Outdoor School",
+        "currentName": "",
+        "otherNames": [
+          "Obsidian Schools"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12470,
+    "unique_name": "Summit View Youth Center",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Summit View Youth Correctional Facility.",
+    "facility": {
+      "identification": {
+        "name": "Summit View Youth Center",
+        "currentName": "",
+        "otherNames": [
+          "Summit View Youth Correctional Facility"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12561,
+    "unique_name": "Youth Villages – Inner Harbour Campus",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Anneewakee School.",
+    "facility": {
+      "identification": {
+        "name": "Youth Villages – Inner Harbour Campus",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Inner Harbour for Children and Families",
+          "Anneewakee Treatment Center for Emotionally Disturbed Youth",
+          "Anneewakee School"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12622,
+    "unique_name": "Red Mountain Colorado",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Kokua Recovery.",
+    "facility": {
+      "identification": {
+        "name": "Red Mountain Colorado",
+        "currentName": "",
+        "otherNames": [
+          "Kokua Recovery"
+        ],
+        "pastNames": [],
+        "currentOperator": "Family Help & Wellness",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12684,
+    "unique_name": "Chrysalis Therapeutic Boarding School",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Chrysalis Academy.",
+    "facility": {
+      "identification": {
+        "name": "Chrysalis Therapeutic Boarding School",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Chrysalis Academy"
+        ],
+        "currentOperator": "Embark Behavioral Health",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 12760,
+    "unique_name": "KIDS of Bergen County",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: KIDS of North New Jersey.",
+    "facility": {
+      "identification": {
+        "name": "KIDS of Bergen County",
+        "currentName": "",
+        "otherNames": [
+          "KIDS of New Jersey",
+          "KIDS of North New Jersey"
+        ],
+        "pastNames": [],
+        "currentOperator": "KIDS Centers of America",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 13285,
+    "unique_name": "Lexington Academy",
+    "version": 2,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Sequel TSI of Indiana.",
+    "facility": {
+      "identification": {
+        "name": "Lexington Academy",
+        "currentName": "",
+        "otherNames": [
+          "Three Springs of Englishton Park",
+          "Englishton Park Sequel TSI",
+          "Sequel TSI of Indiana"
+        ],
+        "pastNames": [],
+        "currentOperator": "Sequel TSI",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 13369,
+    "unique_name": "White’s Residential and Family Services",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Josiah White's.",
+    "facility": {
+      "identification": {
+        "name": "White’s Residential and Family Services",
+        "currentName": "",
+        "otherNames": [
+          "Josiah White's"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 13641,
+    "unique_name": "Brighter Path Tuskegee",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Tuskegee Secure Program.",
+    "facility": {
+      "identification": {
+        "name": "Brighter Path Tuskegee",
+        "currentName": "",
+        "otherNames": [
+          "Tuskegee Secure Program"
+        ],
+        "pastNames": [
+          "Sequel TSI Tuskegee"
+        ],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 13694,
+    "unique_name": "Southeast Alabama Youth Leadership Academy",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Camp SAYLA.",
+    "facility": {
+      "identification": {
+        "name": "Southeast Alabama Youth Leadership Academy",
+        "currentName": "",
+        "otherNames": [
+          "Camp SAYLA"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 14054,
+    "unique_name": "Brighter Transition Youth Treatment Center",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Past: Sequel Transition Academy.",
+    "facility": {
+      "identification": {
+        "name": "Brighter Transition Youth Treatment Center",
+        "currentName": "",
+        "otherNames": [],
+        "pastNames": [
+          "Sequel Transition Academy"
+        ],
+        "currentOperator": "Vivant Behavioral Health",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 100076,
+    "unique_name": "Sequel TSI Madison (AL)",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Three Springs New Directions.",
+    "facility": {
+      "identification": {
+        "name": "Sequel TSI Madison",
+        "currentName": "",
+        "otherNames": [
+          "Three Springs of Madison",
+          "Three Springs New Directions"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 100077,
+    "unique_name": "Sequel TSI Montgomery (AL)",
+    "version": 1,
+    "note": "Names the network map draws this facility under (js/data/network/graph.json, from the research board), added 2026-09-24. Other: Brighter Path Montgomery.",
+    "facility": {
+      "identification": {
+        "name": "Sequel TSI Montgomery",
+        "currentName": "",
+        "otherNames": [
+          "Brighter Path Montgomery"
+        ],
+        "pastNames": [],
+        "currentOperator": "",
+        "currentOwner": "",
+        "currentOwners": [],
+        "knownReferrers": []
+      }
+    }
+  },
+  {
+    "id": 100098,
+    "unique_name": "Lakeside Academy (MI)",
+    "version": 1,
+    "note": "Opening year 1907 as the network map gives it (research board).",
+    "facility": {
+      "operatingPeriod": {
+        "startYear": 1907,
+        "endYear": null,
+        "status": "Closed",
+        "yearsOfOperation": "from 1907",
+        "notes": []
+      }
+    }
   }
 ]
