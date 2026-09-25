@@ -842,7 +842,7 @@ function kop_filebird_library_shortcode($atts) {
                                 ?>
                                 <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
                                     <a href="<?php echo esc_url($file_url); ?>"
-                                       class="doc-link"
+                                       class="doc-link nofancybox"
                                        target="_blank"
                                        rel="noopener"
                                        data-title="<?php echo esc_attr($display_title); ?>"
@@ -936,7 +936,7 @@ function kop_render_doc_file_li($attachment, $layout = 'grid') {
     ?>
     <li class="doc-item" data-title="<?php echo esc_attr($display_title); ?>">
         <a href="<?php echo esc_url($file_url); ?>"
-           class="doc-link"
+           class="doc-link nofancybox"
            target="_blank"
            rel="noopener"
            data-title="<?php echo esc_attr($display_title); ?>"
@@ -1155,7 +1155,7 @@ function kop_document_shortcode($atts) {
         ?>
         <div class="kop-document-single">
             <a href="<?php echo esc_url($file_url); ?>" 
-               class="doc-link" 
+               class="doc-link nofancybox" 
                target="_blank" 
                rel="noopener"
                data-title="<?php echo esc_attr($display_title); ?>"

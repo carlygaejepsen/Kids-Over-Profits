@@ -129,7 +129,7 @@ function kop_doc_archive_covers($folder_id, $n = 3) {
  * removed, and every six hours.
  */
 function kop_doc_archive_data() {
-    $cached = get_transient('kop_doc_archive_v3');
+    $cached = get_transient('kop_doc_archive_v4');
     if (is_array($cached)) {
         return $cached;
     }
@@ -259,6 +259,9 @@ function kop_doc_archive_data() {
         }
         $fname = $clean($by_id[$fid]['name']);
         $rname = $clean($by_id[$root]['name']);
+        if ($rname === strtoupper($rname) && in_array(ucwords(strtolower($rname)), kop_doc_archive_places(), true)) {
+            $rname = ucwords(strtolower($rname));
+        }
         if ($fname === '' || in_array(strtolower($fname), $skip, true) || in_array(strtolower($rname), $skip, true)) {
             continue;
         }
@@ -291,14 +294,14 @@ function kop_doc_archive_data() {
         'programs' => array_values($programs),
         'recent'   => $recent,
     );
-    set_transient('kop_doc_archive_v3', $data, 6 * HOUR_IN_SECONDS);
+    set_transient('kop_doc_archive_v4', $data, 6 * HOUR_IN_SECONDS);
     return $data;
 }
 
 add_action('add_attachment', 'kop_doc_archive_flush');
 add_action('delete_attachment', 'kop_doc_archive_flush');
 function kop_doc_archive_flush() {
-    delete_transient('kop_doc_archive_v3');
+    delete_transient('kop_doc_archive_v4');
 }
 
 /** The "Start here" row: rated research library items, else the fallback titles. */
