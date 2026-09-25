@@ -74,6 +74,8 @@ require_once get_stylesheet_directory() . '/inc/global-search.php';
 
 // Research & Reports card library (Academia + Government FileBird folders)
 require_once get_stylesheet_directory() . '/inc/research-library.php';
+// Facility-specific context for documents throughout the FileBird library
+require_once get_stylesheet_directory() . '/inc/document-facility-links.php';
 
 // Where to report an abusive therapist or program, state by state. Loaded
 // before the resources list, which links to it by KOP_REPORTING_SLUG.

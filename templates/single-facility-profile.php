@@ -179,10 +179,12 @@ $kop_fp_transfers     = array_values(array_filter(array(
 $kop_fp_record_id = 0;
 $kop_fp_facility  = array();
 $kop_fp_lawsuits  = array();
+$kop_fp_linked_documents = array();
 $kop_fp_config    = get_stylesheet_directory() . '/api/config.php';
 if (file_exists($kop_fp_config)) {
     require_once $kop_fp_config;
 }
+
 if (isset($pdo) && $pdo instanceof PDO) {
     try {
         if (function_exists('kop_v2_active') && kop_v2_active('facility_profiles')) {
@@ -217,6 +219,18 @@ if (isset($pdo) && $pdo instanceof PDO) {
         $kop_fp_facility = array();
         $kop_fp_lawsuits = array();
     }
+}
+
+if ($kop_fp_record_id && function_exists('kop_facility_pages_research')) {
+    $kop_fp_folder_id = (int) ($kop_fp_facility['documentFolderId'] ?? 0);
+    $kop_fp_folder_document_ids = array();
+    if ($kop_fp_folder_id && function_exists('kop_get_equivalent_folder_ids') && function_exists('kop_get_descendant_ids_for_roots') && function_exists('kop_get_attachments_in_folder_ids')) {
+        $kop_fp_folder_roots = kop_get_equivalent_folder_ids($kop_fp_folder_id);
+        $kop_fp_folder_tree = kop_get_descendant_ids_for_roots($kop_fp_folder_roots);
+        $kop_fp_folder_posts = kop_get_attachments_in_folder_ids($kop_fp_folder_tree);
+        $kop_fp_folder_document_ids = array_map(static function ($post) { return (int) $post->ID; }, (array) $kop_fp_folder_posts);
+    }
+    $kop_fp_linked_documents = kop_facility_pages_research($kop_fp_record_id, $kop_fp_folder_document_ids);
 }
 
 $kop_fp_status = '';
@@ -446,6 +460,35 @@ while (have_posts()) :
 
             <?php
             the_content();
+            if ($kop_fp_linked_documents) : ?>
+                <section class="kop-fp-linked-documents" aria-labelledby="kop-fp-linked-documents-title">
+                    <h2 id="kop-fp-linked-documents-title">Documents that mention this program</h2>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($kop_fp_linked_documents as $kop_fp_doc) : ?>
+                            <li>
+                                <?php if (!empty($kop_fp_doc['in_folder'])) : ?>
+                                    <span><?php echo esc_html($kop_fp_doc['title']); ?></span>
+                                <?php else : ?>
+                                    <a href="<?php echo esc_url($kop_fp_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_doc['title']); ?></a>
+                                <?php endif; ?>
+                                <?php
+                                $kop_fp_doc_meta = array_filter(array(
+                                    $kop_fp_doc['byline'] ?? '',
+                                    $kop_fp_doc['pages'] ?? '',
+                                    $kop_fp_doc['note'] ?? '',
+                                    !empty($kop_fp_doc['in_folder']) ? 'Document is also listed in the library above.' : '',
+                                    (empty($kop_fp_doc['pages']) || empty($kop_fp_doc['note'])) ? 'Context note or page reference pending.' : '',
+                                ), 'strlen');
+                                if ($kop_fp_doc_meta) :
+                                ?>
+                                    <span class="meta"><?php echo esc_html(implode(' - ', $kop_fp_doc_meta)); ?></span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </section>
+            <?php endif; ?>
+            <?php
             wp_link_pages(array(
                 'before' => '<div class="page-links">',
                 'after'  => '</div>',

@@ -1734,12 +1734,12 @@ if (!function_exists('kop_facility_page_data')) {
         // ---- Linked records ----------------------------------------------------
         $name_keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $news = kop_facility_pages_news($facility_id);
-        $research = kop_facility_pages_research($facility_id);
         $lawsuits = kop_facility_pages_lawsuits($facility_id, $name_keys);
         $memorials = kop_facility_pages_memorials($name_keys, $state_name);
         $wiki = kop_facility_pages_wiki($name, $unique_name, $current_name);
         $inspections = kop_facility_pages_inspections($name_keys, $state_code, $state_name);
         $documents = kop_facility_pages_documents($doc, $entry ? $entry['folder'] : 0);
+        $research = kop_facility_pages_research($facility_id, $documents['attachment_ids']);
 
         // ---- Copy ----------------------------------------------------------------
         $summary = kop_facility_pages_summary_sentence($name, $type, $place, $operator_name, $status, $start, $end, $years_text);
@@ -1811,24 +1811,29 @@ if (!function_exists('kop_facility_page_data')) {
 
 if (!function_exists('kop_facility_pages_research')) {
     /**
-     * Research & Reports documents tagged with this facility, newest first.
-     * An editor sets the tag on the card at /researchreports/, which stores one
-     * kop_research_facilities meta row per facility (inc/research-library.php),
-     * so this is a plain meta query.
+     * Library documents tagged with this facility, newest first. Tags are
+     * attachment-to-facility links, with a separate note and page reference for
+     * this facility. Existing folder items stay in their folder renderer; their
+     * tagged row is shown as an annotation so the document itself is not listed
+     * twice.
      */
-    function kop_facility_pages_research($facility_id) {
+    function kop_facility_pages_research($facility_id, $folder_attachment_ids = array()) {
         $facility_id = (int) $facility_id;
         if ($facility_id <= 0 || !defined('KOP_RESEARCH_FACILITY_META')) {
             return array();
         }
 
+        $folder_attachment_ids = array_fill_keys(array_map('intval', (array) $folder_attachment_ids), true);
+        $hidden = function_exists('kop_get_hidden_preview_ids') ? kop_get_hidden_preview_ids() : array();
+
         $attachments = get_posts(array(
             'post_type'        => 'attachment',
             'post_status'      => 'inherit',
-            'posts_per_page'   => 20,
+            'posts_per_page'   => -1,
             'orderby'          => 'date',
             'order'            => 'DESC',
             'suppress_filters' => false,
+            'post__not_in'     => $hidden,
             'meta_query'       => array(
                 array(
                     'key'   => KOP_RESEARCH_FACILITY_META,
@@ -1837,24 +1842,56 @@ if (!function_exists('kop_facility_pages_research')) {
             ),
         ));
 
-        $library_url = kop_facility_pages_page_url_by_template('page-hub.php', '/researchreports/');
-        if (defined('KOP_RESEARCH_SLUG')) {
-            $page = get_page_by_path(KOP_RESEARCH_SLUG);
+        $library_url = home_url('/document-archive/');
+        if (defined('KOP_DOC_ARCHIVE_SLUG')) {
+            $page = get_page_by_path(KOP_DOC_ARCHIVE_SLUG);
             if ($page) $library_url = (string) get_permalink($page);
         }
 
         $out = array();
         foreach ((array) $attachments as $attachment) {
             $url = (string) wp_get_attachment_url($attachment->ID);
-            $why = trim((string) get_post_meta($attachment->ID, 'kop_research_relevance_note', true));
+            $contexts = function_exists('kop_document_facility_contexts')
+                ? kop_document_facility_contexts($attachment->ID)
+                : array();
+            $context = $contexts[$facility_id] ?? array();
             $out[] = array(
+                'id'      => (int) $attachment->ID,
                 'title'   => (string) $attachment->post_title,
                 'url'     => $url !== '' ? $url : $library_url,
                 'byline'  => trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt)),
-                'why'     => $why,
+                'note'    => trim((string) ($context['note'] ?? '')),
+                'pages'   => trim((string) ($context['pages'] ?? '')),
+                'in_folder' => isset($folder_attachment_ids[(int) $attachment->ID]),
                 'library' => $library_url,
             );
         }
+
+        // The Research & Reports hub also has a few publisher links without a
+        // local attachment. Keep those linkable from facility pages too.
+        if (function_exists('kop_research_library_external') && function_exists('kop_research_external_edits')) {
+            $edits = kop_research_external_edits();
+            foreach (kop_research_library_external() as $entry) {
+                $edit = isset($edits[$entry['id']]) && is_array($edits[$entry['id']]) ? $edits[$entry['id']] : array();
+                $ids = array_values(array_unique(array_map('intval', (array) ($edit['facilities'] ?? array()))));
+                if (!in_array($facility_id, $ids, true)) {
+                    continue;
+                }
+                $context_map = isset($edit['facility_contexts']) && is_array($edit['facility_contexts']) ? $edit['facility_contexts'] : array();
+                $context = $context_map[$facility_id] ?? $context_map[(string) $facility_id] ?? array();
+                $out[] = array(
+                    'id'        => 'ext:' . $entry['id'],
+                    'title'     => (string) ($edit['title'] ?? $entry['title']),
+                    'url'       => (string) $entry['url'],
+                    'byline'    => trim((string) ($entry['byline'] ?? '')),
+                    'note'      => trim((string) ($context['note'] ?? '')),
+                    'pages'     => trim((string) ($context['pages'] ?? '')),
+                    'in_folder' => false,
+                    'library'   => $library_url,
+                );
+            }
+        }
+
         return $out;
     }
 }
@@ -2131,13 +2168,31 @@ if (!function_exists('kop_facility_pages_documents')) {
     function kop_facility_pages_documents(array $doc, $folder_id) {
         $folder_id = (int) $folder_id;
         if ($folder_id <= 0 && !empty($doc['documentFolderId'])) $folder_id = (int) $doc['documentFolderId'];
-        if ($folder_id <= 0) return array('folder_id' => 0, 'html' => '');
+        if ($folder_id <= 0) return array('folder_id' => 0, 'html' => '', 'attachment_ids' => array());
         $html = '';
         if (function_exists('shortcode_exists') && shortcode_exists('filebird_folder')) {
             $html = do_shortcode('[filebird_folder folder_id="' . $folder_id . '" merge="name" layout="grid" title="Documents on file" show_count="yes"]');
             if (stripos($html, 'no-documents') !== false) $html = '';
         }
-        return array('folder_id' => $folder_id, 'html' => $html);
+
+        // Match the shortcode's equivalent-folder union so tagged documents
+        // already in this library can be marked as annotations, not duplicates.
+        $roots = function_exists('kop_get_equivalent_folder_ids')
+            ? kop_get_equivalent_folder_ids($folder_id)
+            : array($folder_id);
+        $folder_ids = function_exists('kop_get_descendant_ids_for_roots')
+            ? kop_get_descendant_ids_for_roots($roots)
+            : $roots;
+        $posts = function_exists('kop_get_attachments_in_folder_ids')
+            ? kop_get_attachments_in_folder_ids($folder_ids)
+            : array();
+        $attachment_ids = array_map(static function ($post) { return (int) $post->ID; }, (array) $posts);
+
+        return array(
+            'folder_id' => $folder_id,
+            'html' => $html,
+            'attachment_ids' => array_values(array_unique($attachment_ids)),
+        );
     }
 }
 

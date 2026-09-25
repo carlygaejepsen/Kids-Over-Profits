@@ -98,6 +98,26 @@ Shows all folders with search functionality.
 3. Click on a folder in FileBird
 4. Look at the URL: `...&folder=5` - that's your folder ID
 
+## Link Documents to Facilities
+
+The **Document Facility Links** screen under KOP Tools lets an administrator
+review every attachment filed in a FileBird folder, including documents filed
+in more than one folder. Search by title or filename, then edit a document's
+facility links. Each facility link has its own note and page reference, so one
+report can appear on several facility profiles with different supporting
+details. Saving with no facilities marks the document reviewed with no matches.
+
+The facility profile shows tagged documents in its Documents section. A
+document already shown in that facility's FileBird folder is not added a second
+time; its page reference and context note appear as an annotation.
+
+For a starting set of suggestions, an administrator can open
+`/wp-content/themes/child/api/propose-research-facility-tags.php` while logged
+in. The tool writes a review file under uploads and does not save suggestions
+until `?apply=1` is used. PDF page hints refer to the PDF viewer's page count;
+check the printed page numbers before saving them in the editor. Automatic name
+matches still need a person to confirm the facility and write the context note.
+
 ## Real Examples
 
 ### Link to a PDF Report

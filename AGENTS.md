@@ -38,6 +38,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `inc/utilities.php` contains shared helpers and context detection.
 - `inc/enqueue.php` owns script and style loading, page-specific asset routing, and localized config objects.
 - `inc/database.php` contains database access helpers for facilities and related records.
+- `inc/document-facility-links.php` manages library-wide document-to-facility links, per-facility notes/page references, the admin review queue, and its REST endpoints.
 - `inc/rest-api.php` registers the `kop/v1/*` REST routes and related callbacks.
 - `inc/admin.php` contains admin menu and admin-page glue code.
 - `inc/features.php` contains feature classes such as `AnonymousDocPortal`.
@@ -57,6 +58,7 @@ This repository is the Kids Over Profits WordPress child theme. Treat it as the 
 - `api/save-suggestion.php` and `api/process-edit.php` power the public suggestion workflow and approval pipeline.
 - `api/manage-submissions.php`, `api/save-wiki-submission.php`, and `api/save-news-submission.php` power the submission review flows.
 - `api/inspections-read.php` and `api/inspections-write.php` power the state inspection reports.
+- `api/propose-research-facility-tags.php` proposes facility mentions across FileBird documents for human review; it writes no links until `?apply=1`.
 - `api/config.php` resolves credentials from `.env`, WordPress constants, environment variables, or `api/config.local.php`.
 
 ## Repository Layout

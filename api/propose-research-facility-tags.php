@@ -1,12 +1,11 @@
 <?php
 /**
- * Propose facility tags for the Research & Reports library.
+ * Propose facility links for documents filed anywhere in the FileBird library.
  *
- * A document in the library (inc/research-library.php) can be tagged with the
- * facilities it is about, which puts it on those facility pages and puts chips
- * on its card. Tagging the existing library by hand means reading a hundred
- * PDFs, so this reads them instead: every facility name it finds in a
- * document's title, description or extracted text becomes a proposal.
+ * A document can be linked to the facilities it discusses. This tool scans
+ * every attachment filed in FileBird and proposes exact name matches from its
+ * title, description, byline and extracted text. PDF text is kept page by page
+ * so a proposal can include PDF page numbers for an editor to verify.
  *
  * Nothing is saved on a proposal run. The proposals are written to a review
  * file in the uploads directory; delete the rows that are wrong, then run again
@@ -15,6 +14,7 @@
  * GET                       - propose: scan, write the review file, report
  * GET ?apply=1              - save the tags in the review file
  * GET ?limit=40             - documents per proposal run (1 to 200, default 40)
+ * GET ?offset=0             - starting position in the FileBird document list
  * GET ?text=0               - titles and descriptions only, no PDF text
  *
  * Matching is deliberately timid. A facility name counts only when it has two
@@ -51,7 +51,7 @@ if (!function_exists('current_user_can') || !current_user_can('manage_options'))
 require_once __DIR__ . '/facility-aliases.php';          // kop_normalize_name_key()
 require_once __DIR__ . '/lawsuit-extraction-lib.php';    // kop_extract_pdf_text()
 
-if (!defined('KOP_RESEARCH_FACILITY_META')) {
+if (!defined('KOP_RESEARCH_FACILITY_META') || !defined('KOP_DOCUMENT_FACILITY_REVIEWED_META')) {
     echo json_encode(['success' => false, 'error' => 'The research library module did not load.']);
     exit;
 }
@@ -143,13 +143,22 @@ function kop_prft_name_index() {
 
 /** The library's own documents, as attachment ids. */
 function kop_prft_library_attachments() {
-    $ids = [];
-    foreach (kop_research_library_folders() as $folder_id => $kind) {
-        foreach ((array) kop_get_folder_attachments((int) $folder_id) as $attachment) {
-            $ids[(int) $attachment->ID] = true;
-        }
+    global $wpdb;
+    $source = function_exists('kop_document_library_relation_table')
+        ? kop_document_library_relation_table()
+        : '';
+    if ($source === '') {
+        return [];
     }
-    return array_keys($ids);
+    $hidden = function_exists('kop_get_hidden_preview_ids') ? kop_get_hidden_preview_ids() : [];
+    $not_hidden = $hidden ? ' AND p.ID NOT IN (' . implode(',', array_map('intval', $hidden)) . ')' : '';
+    return array_map('intval', (array) $wpdb->get_col(
+        "SELECT DISTINCT af.attachment_id
+         FROM $source af
+         INNER JOIN {$wpdb->posts} p ON p.ID = af.attachment_id
+         WHERE p.post_type = 'attachment' AND p.post_status NOT IN ('trash','auto-draft'){$not_hidden}
+         ORDER BY af.attachment_id ASC"
+    ));
 }
 
 /** Facility ids whose name appears in the text, with the name that matched. */
@@ -185,8 +194,22 @@ function kop_prft_matches($text, array $index) {
     return $kept;
 }
 
+/** First readable text line that contains a proposed facility name. */
+function kop_prft_excerpt($text, $facility_id, array $index) {
+    foreach (preg_split('/\R+/', (string) $text) as $line) {
+        $line = trim(preg_replace('/\s+/', ' ', $line));
+        if ($line === '') continue;
+        if (isset(kop_prft_matches($line, $index)[(int) $facility_id])) {
+            if (strlen($line) > 280) $line = substr($line, 0, 277) . '...';
+            return $line;
+        }
+    }
+    return '';
+}
+
 $apply = isset($_GET['apply']) && $_GET['apply'] === '1';
 $limit = isset($_GET['limit']) ? max(1, min(200, (int) $_GET['limit'])) : 40;
+$offset = isset($_GET['offset']) ? max(0, (int) $_GET['offset']) : 0;
 $read_text = !isset($_GET['text']) || $_GET['text'] !== '0';
 $review_path = kop_prft_review_path();
 
@@ -214,22 +237,39 @@ if ($apply) {
             : [];
         $ids = kop_research_valid_facility_ids($ids);
 
-        if ($attachment_id <= 0 || get_post_type($attachment_id) !== 'attachment' || !$ids) {
-            $skipped[] = ['attachment' => $attachment_id, 'why' => 'no such document, or nothing left to save'];
+        if ($attachment_id <= 0 || get_post_type($attachment_id) !== 'attachment') {
+            $skipped[] = ['attachment' => $attachment_id, 'why' => 'no such document'];
             continue;
         }
 
         // Added to what is already there: an editor's own tags stay.
         $existing = kop_research_facility_ids('att:' . $attachment_id);
         $merged = array_values(array_unique(array_merge($existing, $ids)));
-        if ($merged === $existing) {
-            $skipped[] = ['attachment' => $attachment_id, 'why' => 'already tagged with all of them'];
-            continue;
+        $old_contexts = function_exists('kop_document_facility_contexts')
+            ? kop_document_facility_contexts($attachment_id)
+            : [];
+        $proposed_pages = [];
+        foreach ((array) ($row['facilities'] ?? []) as $facility) {
+            if (is_array($facility) && !empty($facility['id']) && !empty($facility['pages'])) {
+                $proposed_pages[(int) $facility['id']] = (string) $facility['pages'];
+            }
         }
-
-        delete_post_meta($attachment_id, KOP_RESEARCH_FACILITY_META);
+        $associations = [];
         foreach ($merged as $facility_id) {
-            add_post_meta($attachment_id, KOP_RESEARCH_FACILITY_META, $facility_id);
+            $context = $old_contexts[$facility_id] ?? [];
+            $associations[] = [
+                'facility_id' => $facility_id,
+                'note' => (string) ($context['note'] ?? ''),
+                'pages' => (string) (($context['pages'] ?? '') !== '' ? $context['pages'] : ($proposed_pages[$facility_id] ?? '')),
+            ];
+        }
+        if (function_exists('kop_document_save_facility_associations')) {
+            kop_document_save_facility_associations($attachment_id, $associations, true);
+        } else {
+            delete_post_meta($attachment_id, KOP_RESEARCH_FACILITY_META);
+            foreach ($merged as $facility_id) {
+                add_post_meta($attachment_id, KOP_RESEARCH_FACILITY_META, $facility_id);
+            }
         }
         $saved[] = [
             'attachment' => $attachment_id,
@@ -252,17 +292,21 @@ if ($apply) {
 // --- Propose ----------------------------------------------------------------
 
 $index = kop_prft_name_index();
-$attachments = kop_prft_library_attachments();
+$all_attachments = kop_prft_library_attachments();
+$attachments = array_slice($all_attachments, $offset, $limit);
 
 $proposals = [];
 $scanned = 0;
 $no_text = [];
 
 foreach ($attachments as $attachment_id) {
-    if ($scanned >= $limit) {
-        break;
-    }
     $scanned++;
+
+    // A checked document stays out of the proposal queue until an editor
+    // explicitly revisits it in the Document Facility Links screen.
+    if (get_post_meta($attachment_id, KOP_DOCUMENT_FACILITY_REVIEWED_META, true) !== '') {
+        continue;
+    }
 
     $post = get_post($attachment_id);
     if (!$post) {
@@ -271,6 +315,8 @@ foreach ($attachments as $attachment_id) {
 
     $where = [];
     $hits = [];
+    $page_hits = [];
+    $excerpts = [];
     foreach (['title' => $post->post_title, 'description' => $post->post_content, 'byline' => $post->post_excerpt] as $field => $value) {
         foreach (kop_prft_matches($value, $index) as $facility_id => $name_key) {
             $hits[$facility_id] = $name_key;
@@ -280,14 +326,37 @@ foreach ($attachments as $attachment_id) {
 
     if ($read_text) {
         $path = get_attached_file($attachment_id);
-        $text = ($path && file_exists($path)) ? kop_extract_pdf_text($path) : '';
+        $mime = (string) $post->post_mime_type;
+        if ($path && file_exists($path) && stripos($mime, 'pdf') !== false) {
+            $text = kop_extract_pdf_text($path, true);
+        } elseif ($path && file_exists($path) && function_exists('kop_extract_document_text')) {
+            $text = kop_extract_document_text($path, $mime);
+        } else {
+            $text = '';
+        }
         if (trim($text) === '') {
             $no_text[] = ['attachment' => (int) $attachment_id, 'title' => $post->post_title];
         } else {
-            foreach (kop_prft_matches($text, $index) as $facility_id => $name_key) {
-                if (!isset($hits[$facility_id])) {
-                    $hits[$facility_id] = $name_key;
-                    $where[$facility_id] = 'text';
+            if (stripos($mime, 'pdf') !== false) {
+                $pages = preg_split('/\f/', $text);
+                foreach ($pages as $page_index => $page_text) {
+                    foreach (kop_prft_matches($page_text, $index) as $facility_id => $name_key) {
+                        if (!isset($hits[$facility_id])) {
+                            $hits[$facility_id] = $name_key;
+                            $where[$facility_id] = 'text';
+                        }
+                        $page_hits[$facility_id][] = $page_index + 1;
+                        if (empty($excerpts[$facility_id])) {
+                            $excerpts[$facility_id] = kop_prft_excerpt($page_text, $facility_id, $index);
+                        }
+                    }
+                }
+            } else {
+                foreach (kop_prft_matches($text, $index) as $facility_id => $name_key) {
+                    if (!isset($hits[$facility_id])) {
+                        $hits[$facility_id] = $name_key;
+                        $where[$facility_id] = 'text';
+                    }
                 }
             }
         }
@@ -296,6 +365,8 @@ foreach ($attachments as $attachment_id) {
     $existing = kop_research_facility_ids('att:' . $attachment_id);
     foreach ($existing as $facility_id) {
         unset($hits[$facility_id]);
+        unset($page_hits[$facility_id]);
+        unset($excerpts[$facility_id]);
     }
     if (!$hits) {
         continue;
@@ -310,6 +381,11 @@ foreach ($attachments as $attachment_id) {
             'place'   => $chip['place'],
             'matched' => $hits[$chip['id']],
             'found_in' => $where[$chip['id']],
+            'pages' => !empty($page_hits[$chip['id']])
+                ? 'PDF ' . (count(array_unique($page_hits[$chip['id']])) === 1 ? 'p. ' : 'pp. ')
+                    . implode(', ', array_unique($page_hits[$chip['id']]))
+                : '',
+            'excerpt' => (string) ($excerpts[$chip['id']] ?? ''),
         ];
     }
 
@@ -332,9 +408,11 @@ echo json_encode([
     'success'        => true,
     'mode'           => 'propose',
     'names_indexed'  => count($index),
-    'library_documents' => count($attachments),
     'scanned'        => $scanned,
-    'remaining'      => max(0, count($attachments) - $scanned),
+    'offset'         => $offset,
+    'next_offset'    => $offset + count($attachments),
+    'remaining'      => max(0, count($all_attachments) - ($offset + count($attachments))),
+    'library_documents' => count($all_attachments),
     'documents_with_proposals' => count($proposals),
     'facilities_proposed' => array_sum(array_map(static function ($row) { return count($row['facilities']); }, $proposals)),
     'no_text_extracted' => $no_text,

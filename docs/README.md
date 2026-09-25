@@ -51,13 +51,13 @@ here, and the tests `CLAUDE.md` names for each one:
 
 | Page | Code |
 | --- | --- |
-| `/facility/<slug>/` | `inc/facility-pages.php`, `templates/facility-page.php` |
+| `/facility/<slug>/` | `inc/facility-pages.php`, `inc/document-facility-links.php`, `templates/facility-page.php` |
 | `/operator/<slug>/` | `inc/operator-pages.php`, `templates/operator-page.php` |
 | State and country hubs | `templates/page-state.php`, `templates/page-country.php`, `inc/rest-api.php`, `inc/country-rest-api.php` |
 | `/report-abuse/` | `inc/reporting-directory.php`, data in `js/data/reporting/` (schema in its `README.md`) |
 | `/glossary/` | `inc/glossary.php`, `inc/glossary-feedback.php`, source in `js/data/glossary/glossary.md` |
 | Lawsuits and legislation | `templates/page-lawsuits.php`, `templates/page-legislation.php` and their admin and submit templates |
-| Research library and resources | `inc/research-library.php`, `inc/resources-list.php` |
+| Research library and resources | `inc/research-library.php`, `inc/document-facility-links.php`, `inc/resources-list.php` |
 | Hubs and long-form articles | `templates/page-hub.php`, `templates/page-article.php`, `inc/article-parts.php`, `inc/article-pieces.php` |
 
 ## Content tools
@@ -75,6 +75,7 @@ here, and the tests `CLAUDE.md` names for each one:
 
 These guides are for editors placing documents on WordPress pages:
 
+- [Facility links and review workflow](./DOCUMENT-LIBRARY-SIMPLE-GUIDE.md#link-documents-to-facilities)
 - [Simple guide](./DOCUMENT-LIBRARY-SIMPLE-GUIDE.md)
 - [Shortcodes cheat sheet](./SHORTCODES-CHEAT-SHEET.md)
 - [Copy-paste templates](./COPY-PASTE-TEMPLATES.md)

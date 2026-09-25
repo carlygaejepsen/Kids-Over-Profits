@@ -1,0 +1,223 @@
+.kop-document-links-admin .kop-dfl-coverage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+    border-left: 4px solid #33A7B5;
+    background: #fff;
+}
+
+.kop-document-links-admin .kop-dfl-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 1rem 0;
+}
+
+.kop-document-links-admin .kop-dfl-toolbar input[type="search"] {
+    width: min(32rem, 70vw);
+}
+
+.kop-document-links-admin .kop-dfl-table th,
+.kop-document-links-admin .kop-dfl-table td {
+    vertical-align: middle;
+}
+
+.kop-document-links-admin .kop-dfl-title-cell {
+    min-width: 18rem;
+}
+
+.kop-document-links-admin .kop-dfl-title-cell small {
+    display: block;
+    margin-top: 0.25rem;
+    color: #646970;
+}
+
+.kop-document-links-admin .kop-dfl-folders,
+.kop-document-links-admin .kop-dfl-linked {
+    max-width: 24rem;
+}
+
+.kop-document-links-admin .kop-dfl-status {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.kop-document-links-admin .is-reviewed {
+    color: #14532d;
+    background: #dcfce7;
+}
+
+.kop-document-links-admin .is-pending {
+    color: #713f12;
+    background: #fef3c7;
+}
+
+.kop-document-links-admin .is-context {
+    color: #7c2d12;
+    background: #ffedd5;
+}
+
+.kop-document-links-admin .kop-dfl-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.2rem 0;
+}
+
+.kop-document-links-admin .kop-dfl-page-number {
+    min-width: 7rem;
+    text-align: center;
+}
+
+.kop-document-links-admin .kop-dfl-message {
+    margin: 0.6rem 0;
+    color: #14532d;
+}
+
+.kop-document-links-admin .kop-dfl-empty {
+    padding: 1rem;
+    background: #fff;
+}
+
+.kop-dfl-dialog {
+    width: min(48rem, calc(100vw - 2rem));
+    max-height: min(88vh, 58rem);
+    padding: 0;
+    border: 1px solid #c3c4c7;
+    border-radius: 0.5rem;
+    box-shadow: 0 16px 48px rgb(0 0 0 / 24%);
+}
+
+.kop-dfl-dialog::backdrop {
+    background: rgb(0 0 0 / 55%);
+}
+
+.kop-dfl-dialog .kop-dfl-form {
+    max-height: min(88vh, 58rem);
+    overflow: auto;
+    padding: 1.25rem 1.5rem;
+}
+
+.kop-dfl-dialog h2 {
+    margin-top: 0;
+}
+
+.kop-dfl-doc-title {
+    margin: 0.5rem 0 1rem;
+    font-weight: 600;
+}
+
+.kop-dfl-association {
+    position: relative;
+    margin: 0 0 1rem;
+    padding: 1rem;
+    border: 1px solid #c3c4c7;
+    border-radius: 0.35rem;
+}
+
+.kop-dfl-association legend {
+    padding: 0 0.35rem;
+    font-weight: 700;
+}
+
+.kop-dfl-association .kop-dfl-remove {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.75rem;
+    border: 0;
+    padding: 0.2rem;
+    color: #8a2424;
+    background: transparent;
+    cursor: pointer;
+}
+
+.kop-dfl-field {
+    display: block;
+    margin-top: 0.8rem;
+}
+
+.kop-dfl-field > span,
+.kop-dfl-facility-search > label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.kop-dfl-field textarea,
+.kop-dfl-field input,
+.kop-dfl-facility-search input {
+    width: 100%;
+}
+
+.kop-dfl-facility-search {
+    position: relative;
+    margin: 1rem 0;
+}
+
+.kop-dfl-facility-search ul {
+    position: absolute;
+    z-index: 2;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 16rem;
+    overflow: auto;
+    margin: 0;
+    padding: 0.25rem;
+    border: 1px solid #8c8f94;
+    background: #fff;
+    box-shadow: 0 5px 15px rgb(0 0 0 / 12%);
+    list-style: none;
+}
+
+.kop-dfl-facility-result {
+    display: block;
+    width: 100%;
+    border: 0;
+    padding: 0.55rem;
+    text-align: left;
+    background: #fff;
+    cursor: pointer;
+}
+
+.kop-dfl-facility-result:hover,
+.kop-dfl-facility-result:focus {
+    background: #f0f6fc;
+}
+
+.kop-dfl-no-result,
+.kop-dfl-no-associations {
+    padding: 0.65rem;
+    color: #646970;
+}
+
+.kop-dfl-dialog-message {
+    min-height: 1.5rem;
+    color: #8a2424;
+}
+
+.kop-dfl-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.6rem;
+    padding-top: 0.5rem;
+}
+
+@media (max-width: 782px) {
+    .kop-document-links-admin .kop-dfl-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .kop-dfl-dialog .kop-dfl-form {
+        padding: 1rem;
+    }
+}

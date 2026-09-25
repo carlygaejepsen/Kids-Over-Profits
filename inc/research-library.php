@@ -1173,10 +1173,16 @@ function kop_research_save_entry($request) {
         } else {
             delete_post_meta($id, KOP_RESEARCH_RELEVANCE_NOTE_META);
         }
-        // One row per facility: rewritten whole, so removing a chip removes it.
-        delete_post_meta($id, KOP_RESEARCH_FACILITY_META);
-        foreach ($facilities as $facility_id) {
-            add_post_meta($id, KOP_RESEARCH_FACILITY_META, $facility_id);
+        // Keep per-facility notes and page references for the tags that remain.
+        // The library-wide editor owns review status; this card editor only
+        // changes the tags the editor selected here.
+        if (function_exists('kop_document_sync_facility_ids')) {
+            kop_document_sync_facility_ids($id, $facilities);
+        } else {
+            delete_post_meta($id, KOP_RESEARCH_FACILITY_META);
+            foreach ($facilities as $facility_id) {
+                add_post_meta($id, KOP_RESEARCH_FACILITY_META, $facility_id);
+            }
         }
         // Marks the attachment's own fields as authoritative from now on.
         update_post_meta($id, KOP_RESEARCH_EDITED_META, current_time('mysql'));
@@ -1193,14 +1199,27 @@ function kop_research_save_entry($request) {
         }
 
         $edits      = kop_research_external_edits();
-        $edits[$id] = array(
+        $previous   = isset($edits[$id]) && is_array($edits[$id]) ? $edits[$id] : array();
+        $old_contexts = isset($previous['facility_contexts']) && is_array($previous['facility_contexts'])
+            ? $previous['facility_contexts']
+            : array();
+        $contexts = array();
+        foreach ($facilities as $facility_id) {
+            if (isset($old_contexts[$facility_id])) {
+                $contexts[$facility_id] = $old_contexts[$facility_id];
+            } elseif (isset($old_contexts[(string) $facility_id])) {
+                $contexts[$facility_id] = $old_contexts[(string) $facility_id];
+            }
+        }
+        $edits[$id] = array_merge($previous, array(
             'title'          => $title,
             'description'    => $description,
             'cover_id'       => $cover_id,
             'relevance'      => $relevance,
             'relevance_note' => $why,
             'facilities'     => $facilities,
-        );
+            'facility_contexts' => $contexts,
+        ));
         update_option(KOP_RESEARCH_EXTERNAL_OPTION, $edits, false);
 
         $cover = $cover_id ? wp_get_attachment_image_url($cover_id, 'large') : '';

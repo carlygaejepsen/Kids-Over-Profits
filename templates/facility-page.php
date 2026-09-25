@@ -344,13 +344,23 @@ get_header();
                     <?php echo $page['documents']['html']; // Shortcode output, escaped by the shortcode. ?>
                 <?php endif; ?>
                 <?php if ($kop_fp_has_research) : ?>
-                    <h3 class="kop-fp-subhead">Research that mentions this program</h3>
+                    <h3 class="kop-fp-subhead">Library documents that mention this program</h3>
                     <ul class="kop-fp-records">
                         <?php foreach ($page['research'] as $kop_fp_doc) : ?>
                             <li>
-                                <a href="<?php echo esc_url($kop_fp_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_doc['title']); ?></a>
+                                <?php if (!empty($kop_fp_doc['in_folder'])) : ?>
+                                    <span><?php echo esc_html($kop_fp_doc['title']); ?></span>
+                                <?php else : ?>
+                                    <a href="<?php echo esc_url($kop_fp_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_doc['title']); ?></a>
+                                <?php endif; ?>
                                 <?php
-                                $kop_fp_doc_meta = array_filter(array($kop_fp_doc['byline'], $kop_fp_doc['why']), 'strlen');
+                                $kop_fp_doc_meta = array_filter(array(
+                                    $kop_fp_doc['byline'] ?? '',
+                                    !empty($kop_fp_doc['pages']) ? $kop_fp_doc['pages'] : '',
+                                    $kop_fp_doc['note'] ?? '',
+                                    !empty($kop_fp_doc['in_folder']) ? 'Document is also listed above.' : '',
+                                    (empty($kop_fp_doc['pages']) || empty($kop_fp_doc['note'])) ? 'Context note or page reference pending.' : '',
+                                ), 'strlen');
                                 if ($kop_fp_doc_meta) :
                                 ?>
                                     <span class="meta"><?php echo esc_html(implode(' - ', $kop_fp_doc_meta)); ?></span>
@@ -359,7 +369,7 @@ get_header();
                         <?php endforeach; ?>
                     </ul>
                     <?php if (!empty($page['research'][0]['library'])) : ?>
-                        <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">The whole research library</a></p>
+                        <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">Browse the full document library</a></p>
                     <?php endif; ?>
                 <?php endif; ?>
             </section>

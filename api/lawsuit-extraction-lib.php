@@ -208,12 +208,13 @@ function kop_extract_document_text(string $path, string $mime_type): string {
     return kop_extract_pdf_text($path);
 }
 
-function kop_extract_pdf_text(string $path): string {
+function kop_extract_pdf_text(string $path, bool $preserve_page_breaks = false): string {
     foreach (['pdftotext', '/usr/bin/pdftotext', '/usr/local/bin/pdftotext'] as $bin) {
         $which = trim((string)@shell_exec('which ' . escapeshellarg($bin) . ' 2>/dev/null'));
         $exe   = ($which !== '') ? $which : $bin;
         if (@is_executable($exe)) {
-            $out = @shell_exec(escapeshellarg($exe) . ' -enc UTF-8 -nopgbrk ' . escapeshellarg($path) . ' - 2>/dev/null');
+            $page_flag = $preserve_page_breaks ? '' : ' -nopgbrk';
+            $out = @shell_exec(escapeshellarg($exe) . ' -enc UTF-8' . $page_flag . ' ' . escapeshellarg($path) . ' - 2>/dev/null');
             if ($out !== null && strlen(trim($out)) > 50) return $out;
             break;
         }

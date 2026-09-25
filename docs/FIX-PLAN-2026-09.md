@@ -194,28 +194,33 @@ Tests: `scripts/test-research-library.php` (including that an unrated
 library keeps the old order) and `scripts/test-research-sort.js` (the
 JavaScript order matches the PHP one).
 
-**2B. Tag facilities mentioned.** Done. A document carries the
-`facilities_v2` ids it is about as `kop_research_facilities`, one meta row
-per facility, so a facility page finds its research with a meta query
-(`kop_facility_pages_research()`). Cards show the programs as chips linking
-to `/facility/<slug>/`, falling back to the location index; an id with no
-row in `facilities_v2` is dropped rather than linked nowhere. The facility
-page's Documents section gained "Research that mentions this program".
+**2B. Tag facilities mentioned.** The original Research & Reports tags have
+been expanded to the whole FileBird library. A document keeps one canonical
+attachment and can link to many `facilities_v2` IDs through the indexed
+`kop_research_facilities` rows. Each relationship has its own note and page
+reference in `kop_document_facility_contexts`; the reviewed timestamp also
+records documents checked with no facility matches.
 
-The editor dialog gained a picker: the stored tags as removable chips, plus
-a search box on `GET kop/v1/research-facilities` (editors only).
+Administrators review the complete folder-backed library in **KOP Tools →
+Document Facility Links**. The list searches title and filename and filters
+unreviewed documents, reviewed documents, and links missing a note or page
+reference. Publisher links from the Research & Reports hub are included too.
+The REST routes are `GET kop/v1/document-library` and
+`POST kop/v1/document-facility-links`; facility search reuses
+`GET kop/v1/research-facilities`.
 
-`api/propose-research-facility-tags.php` proposes tags for the existing
-library from each document's title, description, byline and extracted PDF
-text. A proposal run saves nothing; `?apply=1` saves exactly what the
-pruned proposals file holds, merged with hand-set tags. Matching is timid
-on purpose: two words and ten characters minimum, generic program phrases
-excluded, a name two facilities share dropped, and the longer name wins
-where one sits inside another. Against the production mirror, 4,648 names
-are indexed and 40 KB of industry prose proposes nothing.
+Generated and hand-written facility profiles now show linked documents with
+the facility-specific note and page reference. A document already in the
+facility's FileBird collection is represented there as an annotation rather
+than a second file listing. Documents without a note or page reference remain
+visible with a pending-context label.
 
-Tests: `scripts/test-research-library.php` and
-`scripts/test-research-tag-proposals.php`.
+`api/propose-research-facility-tags.php` scans batches from all FileBird
+folders (`?offset=0&limit=40`). PDF matches carry PDF-viewer page hints and a
+text excerpt into the review file. Nothing is saved during a proposal run;
+after pruning false matches, `?apply=1` adds the tags and page hints while
+preserving hand-set links. Editors still verify printed pagination and write
+the facility-specific note in Document Facility Links.
 
 ---
 
