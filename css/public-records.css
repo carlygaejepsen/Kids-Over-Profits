@@ -57,6 +57,14 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+/* A select sizes itself to its longest option; some lawsuit claim types run
+   to a full sentence, so cap it and let long text clip. */
+.kop-records-filters .kop-filter-select {
+    max-width: min(100%, 18rem);
+    min-width: 0;
+    text-overflow: ellipsis;
+}
+
 .kop-filter-select {
     padding: 0.4rem 0.75rem;
     border: 2px solid var(--kop-teal);
