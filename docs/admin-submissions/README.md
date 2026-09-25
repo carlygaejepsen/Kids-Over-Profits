@@ -25,9 +25,10 @@ Public insert paths: `api/save-wiki-submission.php`, `api/save-news-submission.p
 
 ## Page features
 
-- **Stats:** Pending / Approved / Published / Rejected counts for the selected type.
-- **Filters:** type, status, and keyword search (per-type columns: program name/location for wiki, title/publication/author for news, `master_id` for data, title/number/jurisdiction for legislation and lawsuits).
-- **Reject All Pending:** rejects every pending submission currently listed.
+- **Section tabs:** Wiki, News, Program data, Legislation and Lawsuits; notification links can open a specific tab with `?type=...`.
+- **Stats:** Pending / Approved / Published / Rejected counts for the selected section.
+- **Filters:** status and keyword search (per-type columns: program name/location for wiki, title/publication/author for news, `master_id` for data, title/number/jurisdiction for legislation and lawsuits).
+- **Approve All Pending / Reject All Pending:** reviews every pending submission in the selected section, across all result pages and regardless of the visible filters. The action asks for confirmation and processes records in batches. Approving legislation or lawsuits publishes those records immediately.
 - **Duplicate URL warning:** flags news and wiki submissions whose URL appears in more than one listed submission.
 - **URL safety check:** scans a submission's URLs through Cloudmersive via `api/scan-submission-urls.php`.
 - **Wiki markdown editor:** side-by-side "Original / Uploaded" vs. "Generated / Editable" markdown with a diff view; Save Edits writes `generated_markdown`.

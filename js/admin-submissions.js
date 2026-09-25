@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // DOM Elements
     const statusFilter = document.getElementById('statusFilter');
-    const typeFilter = document.getElementById('typeFilter'); // New type filter
+    const typeTabs = Array.from(document.querySelectorAll('[data-submission-type]'));
+    const submissionsPanel = document.getElementById('submissionsPanel');
     const searchFilter = document.getElementById('searchFilter');
     const refreshBtn = document.getElementById('refreshBtn');
     const submissionsList = document.getElementById('submissionsList');
@@ -59,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rejectBtn = document.getElementById('rejectBtn');
     const publishBtn = document.getElementById('publishBtn');
     const deleteBtn = document.getElementById('deleteBtn');
+    const approveAllBtn = document.getElementById('approveAllBtn');
     const rejectAllBtn = document.getElementById('rejectAllBtn');
 
     // Stats elements
@@ -69,9 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // State
     let currentSubmission = null;
-    let allSubmissions = [];
+    let activeType = 'news';
     let currentOriginalMarkdown = '';
     let duplicateUrlMap = new Map(); // Map of normalized URLs to array of submission IDs
+    let statsRequestId = 0;
+    let listRequestId = 0;
 
     // Inline-expansion state. The submissionModal element gets physically
     // moved into the active card when View Details is clicked; we cache its
@@ -108,6 +112,54 @@ document.addEventListener('DOMContentLoaded', () => {
         expandedCardId = null;
     }
 
+    function updateTypeTabs() {
+        typeTabs.forEach(tab => {
+            const selected = tab.dataset.submissionType === activeType;
+            tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+            tab.tabIndex = selected ? 0 : -1;
+        });
+        if (submissionsPanel) {
+            submissionsPanel.setAttribute('aria-labelledby', 'tab-' + activeType);
+        }
+    }
+
+    function activateTypeTab(type, focusTab = false) {
+        if (!typeTabs.some(tab => tab.dataset.submissionType === type)) return;
+        if (activeType === type) {
+            if (focusTab) {
+                const tab = typeTabs.find(item => item.dataset.submissionType === type);
+                if (tab) tab.focus();
+            }
+            return;
+        }
+        if (submissionModal.style.display !== 'none') closeModal();
+        activeType = type;
+        updateTypeTabs();
+        if (focusTab) {
+            const tab = typeTabs.find(item => item.dataset.submissionType === type);
+            if (tab) tab.focus();
+        }
+
+        const url = new URL(window.location.href);
+        url.searchParams.set('type', type);
+        window.history.replaceState({}, '', url);
+        loadStats();
+        loadSubmissions();
+    }
+
+    function handleTypeTabKeydown(event) {
+        const index = typeTabs.indexOf(event.currentTarget);
+        let nextIndex = index;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % typeTabs.length;
+        else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + typeTabs.length) % typeTabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = typeTabs.length - 1;
+        else return;
+
+        event.preventDefault();
+        activateTypeTab(typeTabs[nextIndex].dataset.submissionType, true);
+    }
+
     // API endpoints
     // Use localized config if available, otherwise fallback to default (though default might be wrong if theme folder differs)
     const config = window.adminSubmissionsConfig || {};
@@ -119,23 +171,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // type a name/email. Fall back to any previously-saved value for safety.
     const REVIEWER = config.reviewer || localStorage.getItem('adminEmail') || '';
 
-    // Open on the tab a notification email links to (?type=wiki and so on).
+    // Open on the section a notification email links to (?type=wiki and so on).
     const linkedType = new URLSearchParams(window.location.search).get('type');
-    if (typeFilter && linkedType && typeFilter.querySelector('option[value="' + CSS.escape(linkedType) + '"]')) {
-        typeFilter.value = linkedType;
+    if (linkedType && typeTabs.some(tab => tab.dataset.submissionType === linkedType)) {
+        activeType = linkedType;
     }
+    updateTypeTabs();
 
     // Initialize
     loadStats();
     loadSubmissions();
 
     // Event Listeners
-    if (typeFilter) {
-        typeFilter.addEventListener('change', () => {
-            loadStats();
-            loadSubmissions();
-        });
-    }
+    typeTabs.forEach(tab => {
+        tab.addEventListener('click', () => activateTypeTab(tab.dataset.submissionType));
+        tab.addEventListener('keydown', handleTypeTabKeydown);
+    });
     statusFilter.addEventListener('change', loadSubmissions);
     searchFilter.addEventListener('input', debounce(loadSubmissions, 500));
     refreshBtn.addEventListener('click', () => {
@@ -161,8 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    if (approveAllBtn) {
+        approveAllBtn.addEventListener('click', () => reviewAllPending('approve'));
+    }
     if (rejectAllBtn) {
-        rejectAllBtn.addEventListener('click', rejectAllPending);
+        rejectAllBtn.addEventListener('click', () => reviewAllPending('reject'));
     }
 
     if (saveEditsBtn) {
@@ -212,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function buildDuplicateMap(submissions) {
         duplicateUrlMap.clear();
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
         
         submissions.forEach(submission => {
             let url = null;
@@ -267,18 +321,20 @@ document.addEventListener('DOMContentLoaded', () => {
      * Load submission statistics
      */
     async function loadStats() {
+        const requestId = ++statsRequestId;
+        const requestedType = activeType;
         try {
-            const currentType = typeFilter ? typeFilter.value : 'wiki';
             const response = await fetch(MANAGE_API, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'stats', type: currentType })
+                body: JSON.stringify({ action: 'stats', type: requestedType })
             });
 
             const result = await response.json();
+            if (requestId !== statsRequestId || requestedType !== activeType) return;
             if (result.success) {
                 let stats = {};
-                if (currentType === 'news' && result.news) {
+                if (requestedType === 'news' && result.news) {
                     stats = result.news.by_status || {};
                 } else if (result.stats) {
                     // legislation / lawsuits return a generic per-type stats block
@@ -303,9 +359,10 @@ document.addEventListener('DOMContentLoaded', () => {
      * Load submissions based on current filters
      */
     async function loadSubmissions() {
+        const requestId = ++listRequestId;
         const status = statusFilter.value;
         const search = searchFilter.value.trim();
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
 
         // Build query parameters
         const params = new URLSearchParams({
@@ -331,11 +388,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
             console.log('API Response:', result);
 
+            if (requestId !== listRequestId || currentType !== activeType) return;
+
             loadingMessage.style.display = 'none';
 
             if (result.success && result.data && result.data.length > 0) {
                 console.log('Found submissions:', result.data.length);
-                allSubmissions = result.data;
                 buildDuplicateMap(result.data);
                 renderSubmissions(result.data);
             } else {
@@ -348,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 noSubmissions.style.display = 'block';
             }
         } catch (error) {
+            if (requestId !== listRequestId || currentType !== activeType) return;
             console.error('Failed to load submissions:', error);
             loadingMessage.style.display = 'none';
             submissionsList.innerHTML = '<div class="error-message">Failed to load submissions. Please try again.</div>';
@@ -360,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderSubmissions(submissions) {
         detachModal();              // see comment in loadSubmissions — must precede wiping list
         submissionsList.innerHTML = '';
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
 
         submissions.forEach(submission => {
             const card = document.createElement('div');
@@ -472,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // (don't hide the modal — we'll move it into the new card)
         if (expandedCardId !== null) detachModal();
         try {
-            const currentType = typeFilter ? typeFilter.value : 'wiki';
+            const currentType = activeType;
             const detailParams = new URLSearchParams({
                 action: 'get',
                 type: currentType,
@@ -505,7 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function showModal(submission) {
         console.log('showModal called with submission:', submission);
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
         console.log('Current type:', currentType);
 
         // Parse JSON data safely
@@ -706,7 +765,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // suggested_edits enum for data submissions only allows
         // ('pending','approved','rejected'), so hide the button entirely
         // for data — approve already applies the edit.
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
         publishBtn.style.display = currentType === 'data' ? 'none' : '';
 
         // Disable based on current status
@@ -1093,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function saveMarkdownEdits() {
         if (!currentSubmission || !modalMarkdown) return;
 
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
         const editedMarkdown = modalMarkdown.value;
 
         saveEditsBtn.disabled = true;
@@ -1362,7 +1421,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Persist structured-editor changes via the update_fields action. */
     async function saveStructuredFields() {
         if (!currentSubmission) return;
-        const type = typeFilter ? typeFilter.value : 'wiki';
+        const type = activeType;
         const fields = collectStructuredFields(type);
         if (!fields) return;
         if (fields.__error) { setEditorStatus(fields.__error, true); return; }
@@ -1403,7 +1462,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function performAction(action) {
         if (!currentSubmission) return;
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
 
         const notes = reviewerNotes.value.trim();
         // Reviewer identity is the logged-in admin (REVIEWER); the editable
@@ -1463,65 +1522,109 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Reject all pending submissions currently displayed
-     */
-    async function rejectAllPending() {
-        // Get all pending submissions from the current list. "Pending" is
-        // 'submitted' in wiki/news and 'pending' in data/legislation/lawsuit.
-        const pendingSubmissions = allSubmissions.filter(s => s.status === 'submitted' || s.status === 'pending');
-
-        if (pendingSubmissions.length === 0) {
-            alert('No pending submissions to reject.');
-            return;
-        }
-
-        const confirmMessage = `Are you sure you want to reject all ${pendingSubmissions.length} pending submission(s)?\n\nThis will mark them all as rejected.`;
-        if (!confirm(confirmMessage)) {
-            return;
-        }
-
-        // Reviewer identity is the logged-in admin — no prompt needed.
-        const email = REVIEWER || localStorage.getItem('adminEmail') || '';
-        if (email) {
-            localStorage.setItem('adminEmail', email);
-        }
-
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
-        const ids = pendingSubmissions.map(s => s.id);
-
-        // Disable the button during processing
-        rejectAllBtn.disabled = true;
-        rejectAllBtn.textContent = 'Rejecting...';
+    /** Review every pending item in the active section, independent of filters. */
+    async function reviewAllPending(action) {
+        const type = activeType;
+        const actionLabel = action === 'approve' ? 'approve' : 'reject';
+        const actionPast = action === 'approve' ? 'approved' : 'rejected';
+        const buttons = [approveAllBtn, rejectAllBtn].filter(Boolean);
+        const originalLabels = buttons.map(button => button.textContent);
+        buttons.forEach(button => { button.disabled = true; });
+        typeTabs.forEach(tab => { tab.disabled = true; });
+        if (submissionsPanel) submissionsPanel.setAttribute('aria-busy', 'true');
+        if (approveAllBtn) approveAllBtn.textContent = 'Loading pending items…';
+        if (rejectAllBtn) rejectAllBtn.textContent = 'Loading pending items…';
 
         try {
-            const response = await fetch(MANAGE_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: 'reject',
-                    type: currentType,
-                    ids: ids,
-                    reviewerNotes: 'Bulk rejection',
-                    reviewedBy: email
-                })
-            });
+            // Fetch every pending row in bounded pages; the visible list and its
+            // search/status filters must not limit what “all” means.
+            const pending = [];
+            let offset = 0;
+            let total = Infinity;
+            while (offset < total) {
+                const params = new URLSearchParams({
+                    action: 'list',
+                    type,
+                    status: 'submitted',
+                    limit: '200',
+                    offset: String(offset)
+                });
+                const response = await fetch(`${MANAGE_API}?${params.toString()}`);
+                const result = await response.json();
+                if (!response.ok || !result.success || !Array.isArray(result.data)) {
+                    throw new Error(result.error || 'Could not load the pending submissions.');
+                }
+                total = Number(result.total) || 0;
+                pending.push(...result.data);
+                if (result.data.length === 0) break;
+                offset += result.data.length;
+            }
 
-            const result = await response.json();
+            if (!pending.length) {
+                alert(`There are no pending ${type} submissions to ${actionLabel}.`);
+                return;
+            }
 
-            if (result.success) {
-                alert(`Successfully rejected ${ids.length} submission(s).`);
-                loadStats();
-                loadSubmissions();
+            let confirmation = `Are you sure you want to ${actionLabel} all ${pending.length} pending ${type} submission(s)?`;
+            if (action === 'approve' && ['legislation', 'lawsuit'].includes(type)) {
+                confirmation += '\n\nApproval publishes these records immediately.';
+            }
+            if (!confirm(confirmation)) return;
+
+            const progressLabel = action === 'approve' ? 'Approving…' : 'Rejecting…';
+            if (approveAllBtn) approveAllBtn.textContent = progressLabel;
+            if (rejectAllBtn) rejectAllBtn.textContent = progressLabel;
+
+            const email = REVIEWER || localStorage.getItem('adminEmail') || '';
+            if (email) localStorage.setItem('adminEmail', email);
+
+            let affected = 0;
+            const errors = [];
+            const ids = pending.map(submission => submission.id);
+            for (let start = 0; start < ids.length; start += 50) {
+                const batch = ids.slice(start, start + 50);
+                const progress = `${action === 'approve' ? 'Approving' : 'Rejecting'} ${Math.min(start + batch.length, ids.length)} of ${ids.length}…`;
+                if (approveAllBtn) approveAllBtn.textContent = progress;
+                if (rejectAllBtn) rejectAllBtn.textContent = progress;
+                try {
+                    const response = await fetch(MANAGE_API, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action,
+                            type,
+                            ids: batch,
+                            reviewerNotes: `Bulk ${actionLabel}`,
+                            reviewedBy: email
+                        })
+                    });
+                    const result = await response.json();
+                    affected += Number(result.affected) || 0;
+                    if (!response.ok || !result.success) {
+                        errors.push(result.error || `A batch of ${batch.length} could not be processed.`);
+                    }
+                } catch (error) {
+                    errors.push(error.message || `A batch of ${batch.length} could not be processed.`);
+                }
+            }
+
+            loadStats();
+            loadSubmissions();
+            if (errors.length) {
+                alert(`${affected} submission(s) were processed. Some items need attention:\n\n${errors.join('\n')}`);
             } else {
-                alert(`Failed to reject submissions: ${result.error || 'Unknown error'}`);
+                alert(`Successfully ${actionPast} ${affected} ${type} submission(s).`);
             }
         } catch (error) {
-            console.error('Reject all failed:', error);
-            alert('Network error while rejecting submissions.');
+            console.error(`Bulk ${actionLabel} failed:`, error);
+            alert(error.message || `Could not ${actionLabel} all pending submissions.`);
         } finally {
-            rejectAllBtn.disabled = false;
-            rejectAllBtn.textContent = '✗ Reject All Pending';
+            buttons.forEach((button, index) => {
+                button.disabled = false;
+                button.textContent = originalLabels[index];
+            });
+            typeTabs.forEach(tab => { tab.disabled = false; });
+            if (submissionsPanel) submissionsPanel.removeAttribute('aria-busy');
         }
     }
 
@@ -1604,7 +1707,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /** Show the facility-link section and load the current link state. */
     async function initFacilityLink(submissionId) {
         if (!facilityLinkSection) return;
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const currentType = activeType;
         if (currentType !== 'wiki') {
             facilityLinkSection.style.display = 'none';
             return;
@@ -1759,7 +1862,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submissionModal.style.display !== 'none' &&
             currentSubmission
         ) {
-            const currentType = typeFilter ? typeFilter.value : 'wiki';
+            const currentType = activeType;
             if (currentType === 'wiki') {
                 initFacilityLink(currentSubmission.id);
             }

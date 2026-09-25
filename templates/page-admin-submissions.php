@@ -34,41 +34,44 @@ get_header();
             </div>
         </header>
 
-        <div class="admin-controls">
-            <div class="filter-controls">
-                <label for="typeFilter">Type:</label>
-                <select id="typeFilter">
-                    <option value="wiki">Wiki Submissions</option>
-                    <option value="news" selected>News Submissions</option>
-                    <option value="data">Data Form Submissions</option>
-                    <option value="legislation">Legislation Submissions</option>
-                    <option value="lawsuit">Lawsuit Submissions</option>
-                </select>
-
-                <label for="statusFilter">Status:</label>
-                <select id="statusFilter">
-                    <option value="">All</option>
-                    <option value="submitted" selected>Pending Review</option>
-                    <option value="approved">Approved</option>
-                    <option value="published">Published</option>
-                    <option value="rejected">Rejected</option>
-                </select>
-
-                <label for="searchFilter">Search:</label>
-                <input type="text" id="searchFilter" placeholder="Program name or location...">
-
-                <button type="button" id="refreshBtn" class="btn-secondary">🔄 Refresh</button>
-            </div>
-            <div class="bulk-actions">
-                <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions">✗ Reject All Pending</button>
-            </div>
+        <div class="submission-section-tabs" role="tablist" aria-label="Submission sections">
+            <button type="button" class="submission-section-tab" id="tab-wiki" role="tab" data-submission-type="wiki" aria-controls="submissionsPanel" aria-selected="false" tabindex="-1">Wiki</button>
+            <button type="button" class="submission-section-tab" id="tab-news" role="tab" data-submission-type="news" aria-controls="submissionsPanel" aria-selected="true" tabindex="0">News</button>
+            <button type="button" class="submission-section-tab" id="tab-data" role="tab" data-submission-type="data" aria-controls="submissionsPanel" aria-selected="false" tabindex="-1">Program data</button>
+            <button type="button" class="submission-section-tab" id="tab-legislation" role="tab" data-submission-type="legislation" aria-controls="submissionsPanel" aria-selected="false" tabindex="-1">Legislation</button>
+            <button type="button" class="submission-section-tab" id="tab-lawsuit" role="tab" data-submission-type="lawsuit" aria-controls="submissionsPanel" aria-selected="false" tabindex="-1">Lawsuits</button>
         </div>
 
-        <div class="submissions-list-container">
-            <div id="loadingMessage" class="loading-message">Loading submissions...</div>
-            <div id="submissionsList" class="submissions-list"></div>
-            <div id="noSubmissions" class="no-submissions" style="display: none;">
-                No submissions found.
+        <div id="submissionsPanel" role="tabpanel" tabindex="0" aria-labelledby="tab-news">
+            <div class="admin-controls">
+                <div class="filter-controls">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter">
+                        <option value="">All</option>
+                        <option value="submitted" selected>Pending Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="published">Published</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+
+                    <label for="searchFilter">Search:</label>
+                    <input type="text" id="searchFilter" placeholder="Program name or location...">
+
+                    <button type="button" id="refreshBtn" class="btn-secondary">🔄 Refresh</button>
+                </div>
+                <div class="bulk-actions">
+                    <span class="bulk-actions-note">Actions apply to every pending submission in this section, regardless of the current filters.</span>
+                    <button type="button" id="approveAllBtn" class="btn-approve-all" title="Approve every pending submission in this section">✓ Approve All Pending</button>
+                    <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject every pending submission in this section">✗ Reject All Pending</button>
+                </div>
+            </div>
+
+            <div class="submissions-list-container">
+                <div id="loadingMessage" class="loading-message">Loading submissions...</div>
+                <div id="submissionsList" class="submissions-list"></div>
+                <div id="noSubmissions" class="no-submissions" style="display: none;">
+                    No submissions found.
+                </div>
             </div>
         </div>
 
