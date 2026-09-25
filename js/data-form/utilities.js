@@ -175,14 +175,23 @@ function getNestedValue(obj, path) {
  */
 function setNestedValue(obj, path, value) {
     const keys = path.split('.');
-    const lastKey = keys.pop();
-    const target = keys.reduce((current, key) => {
-        if (!current[key] || typeof current[key] !== 'object') {
-            current[key] = {};
+    keys.reduce((current, key, i) => {
+        if (i === keys.length - 1) {
+            current[key] = value;
+            return current;
         }
-        return current[key];
+        const nextKey = keys[i + 1];
+        let child = current[key];
+        if (!child || typeof child !== 'object') {
+            child = current[key] = {};
+        } else if (Array.isArray(child) && !/^\d+$/.test(nextKey)) {
+            // PHP stores an empty map (treatmentTypes, philosophy, ...) as [].
+            // A named key set on an array is dropped by JSON.stringify, so the
+            // value never reaches a save or submission. Same rule as v2Map().
+            child = current[key] = child.length ? { _legacy: child.slice() } : {};
+        }
+        return child;
     }, obj);
-    target[lastKey] = value;
 }
 
 // ============================================
