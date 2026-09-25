@@ -54,6 +54,10 @@ php scripts/test-operator-pages.php               # renders every /operator/<slu
 php scripts/test-hub-posts.php
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
+# Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
+# seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
+python scripts/build-media-subfolders.py
+php scripts/test-media-subfolders.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # See the working tree's map in a browser before pushing it

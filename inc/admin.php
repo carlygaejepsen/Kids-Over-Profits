@@ -1549,6 +1549,77 @@ function kop_apply_lawsuit_seeds() {
  * second folder; moves and removals rewrite FileBird's own membership table.
  * Every operation is idempotent.
  */
+/**
+ * Subfolders for the largest flat FileBird folders (seeds/media-subfolders.json,
+ * written by scripts/build-media-subfolders.py). Each entry: parent folder id,
+ * subfolder name, attachment ids. The subfolder is reused when the parent
+ * already has one of that name (the copy holding the most files), created
+ * otherwise the way api/import-documents.php creates folders. An attachment
+ * moves only while it still sits directly in the parent, so a re-run, or a
+ * document someone has since filed elsewhere, is left alone.
+ */
+function kop_apply_media_subfolders() {
+    global $wpdb;
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/media-subfolders.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $spec = json_decode((string) file_get_contents($path), true);
+    $fbv  = $wpdb->prefix . 'fbv';
+    $rel  = $wpdb->prefix . 'fbv_attachment_folder';
+    if (!is_array($spec) || empty($spec['folders']) || $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $rel)) !== $rel) {
+        return $done;
+    }
+    $columns = (array) $wpdb->get_col("SHOW COLUMNS FROM {$fbv}");
+    foreach ($spec['folders'] as $entry) {
+        $parent = (int) ($entry['parent'] ?? 0);
+        $name   = trim((string) ($entry['name'] ?? ''));
+        $ids    = array_filter(array_map('intval', (array) ($entry['attachments'] ?? array())));
+        if ($parent <= 0 || $name === '' || !$ids) {
+            continue;
+        }
+        if (!$wpdb->get_var($wpdb->prepare("SELECT 1 FROM {$fbv} WHERE id = %d AND type = 0", $parent))) {
+            continue;
+        }
+        // Only worth a folder while something is still waiting in the parent.
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        $waiting = (array) $wpdb->get_col($wpdb->prepare(
+            "SELECT attachment_id FROM {$rel} WHERE folder_id = %d AND attachment_id IN ($placeholders)",
+            array_merge(array($parent), $ids)
+        ));
+        if (!$waiting) {
+            continue;
+        }
+        $child = (int) $wpdb->get_var($wpdb->prepare(
+            "SELECT f.id FROM {$fbv} f LEFT JOIN {$rel} r ON r.folder_id = f.id
+             WHERE f.type = 0 AND f.parent = %d AND LOWER(TRIM(f.name)) = LOWER(%s)
+             GROUP BY f.id ORDER BY COUNT(r.attachment_id) DESC, f.id ASC LIMIT 1",
+            $parent, $name
+        ));
+        if (!$child) {
+            $row = array('name' => $name, 'parent' => $parent, 'type' => 0);
+            $formats = array('%s', '%d', '%d');
+            if (in_array('created_by', $columns, true)) { $row['created_by'] = 0; $formats[] = '%d'; }
+            if (in_array('ord', $columns, true))        { $row['ord'] = 0;        $formats[] = '%d'; }
+            if ($wpdb->insert($fbv, $row, $formats) === false) {
+                continue;
+            }
+            $child = (int) $wpdb->insert_id;
+            $done[] = 'folder:' . $parent . '/' . $name;
+        }
+        foreach ($waiting as $aid) {
+            $wpdb->query($wpdb->prepare("DELETE FROM {$rel} WHERE attachment_id = %d AND folder_id = %d", (int) $aid, $parent));
+            $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$rel} (folder_id, attachment_id) VALUES (%d, %d)", $child, (int) $aid));
+        }
+        $done[] = 'moved:' . count($waiting) . ' to ' . $name;
+    }
+    if ($done && function_exists('kop_doc_archive_flush')) {
+        kop_doc_archive_flush();
+    }
+    return $done;
+}
+
 function kop_apply_media_folder_fixes() {
     global $wpdb;
     $done = array();
@@ -1636,6 +1707,7 @@ function kop_apply_template_assignments() {
     }
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
+    $summary['subfolders']   = kop_apply_media_subfolders();
     $summary['text']         = kop_apply_text_fixes();
     $summary['news_import']  = kop_apply_news_post_import();
 
@@ -1689,7 +1761,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '45';
+    $version = '46';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
