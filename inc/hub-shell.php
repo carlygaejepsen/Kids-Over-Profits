@@ -94,7 +94,8 @@ function kop_hub_config($slug) {
             'standfirst' => 'For people who went through a troubled teen program: support groups, advice written by other survivors, legal options and places to tell your story.',
             'actions'    => array(
                 array('label' => 'Find support', 'slug' => 'resources'),
-                array('label' => 'Guide to legal action', 'slug' => 'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs'),
+                // The page was retired for the PDF it wrapped (inc/redirects.php).
+                array('label' => 'Guide to legal action', 'url' => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Survivors-Guide-to-Legal-Action-Against-Troubled-Teen-Industry-Programs.pdf'),
                 array('label' => 'Where to report abuse', 'template' => 'page-report-abuse.php', 'path' => '/report-abuse/'),
             ),
             'reading'       => 'Written for survivors',
