@@ -9,10 +9,10 @@ if (!function_exists('kop_legal_document_lawsuit')) {
      * @return array|null
      */
     function kop_legal_document_lawsuit($post_id) {
-        global $wpdb;
-
-        if (!isset($wpdb) || !is_object($wpdb) || !method_exists($wpdb, 'prepare')
-            || !method_exists($wpdb, 'get_results') || !function_exists('get_permalink')) {
+        // The lawsuits table is in the records database api/config.php
+        // connects to, not the WordPress one, so $wpdb cannot see it.
+        $pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
+        if (!$pdo instanceof PDO || !function_exists('get_permalink')) {
             return null;
         }
 
@@ -21,11 +21,23 @@ if (!function_exists('kop_legal_document_lawsuit')) {
             return null;
         }
 
-        $like = '%' . (method_exists($wpdb, 'esc_like') ? $wpdb->esc_like($page_url) : addcslashes($page_url, '_%\\')) . '%';
-        $rows = $wpdb->get_results(
-            $wpdb->prepare('SELECT * FROM lawsuits WHERE document_urls LIKE %s ORDER BY id DESC', $like),
-            ARRAY_A
-        );
+        // document_urls is JSON, so "/" is stored escaped as "\/"; match on
+        // the slug, then compare decoded paths below.
+        $slug = basename(untrailingslashit((string) wp_parse_url($page_url, PHP_URL_PATH)));
+        if ($slug === '') {
+            return null;
+        }
+        try {
+            $stmt = $pdo->prepare(
+                "SELECT * FROM lawsuits WHERE document_urls LIKE ?
+                   AND publication_status IN ('approved','published') ORDER BY id DESC"
+            );
+            // A "_" wildcard in the slug only over-matches; the path check below is exact.
+            $stmt->execute(array('%' . $slug . '%'));
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return null;
+        }
 
         $page_path = wp_parse_url($page_url, PHP_URL_PATH);
         $page_path = untrailingslashit((string) $page_path);

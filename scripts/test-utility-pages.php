@@ -60,13 +60,18 @@ function get_option($name) { return $name === 'date_format' ? 'F j, Y' : ''; }
 function get_children($args) { return $GLOBALS['kop_test_attachments'] ?? array(); }
 function wp_get_attachment_url($id) { return 'https://kidsoverprofits.org/wp-content/uploads/test-opinion.pdf'; }
 
-class KOP_Test_WPDB {
-    public $rows = array();
-    public function esc_like($value) { return addcslashes($value, '_%\\'); }
-    public function prepare($query, ...$args) { return array($query, $args); }
-    public function get_results($query, $output = null) { return $this->rows; }
+// The records database (api/config.php) as kop_seed_pdo() hands it out.
+if (!extension_loaded('pdo_sqlite')) exit("pdo_sqlite is required.\n");
+$GLOBALS['kop_test_pdo'] = new PDO('sqlite::memory:');
+$GLOBALS['kop_test_pdo']->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$GLOBALS['kop_test_pdo']->exec('CREATE TABLE lawsuits (id INTEGER, case_name TEXT, court TEXT, filing_date TEXT, plaintiffs TEXT, defendants TEXT, document_urls TEXT, publication_status TEXT, updated_at TEXT)');
+function kop_seed_pdo() { return $GLOBALS['kop_test_pdo']; }
+function kop_test_lawsuits(array $rows) {
+    $pdo = $GLOBALS['kop_test_pdo'];
+    $pdo->exec('DELETE FROM lawsuits');
+    $insert = $pdo->prepare('INSERT INTO lawsuits (id, case_name, court, filing_date, plaintiffs, defendants, document_urls, publication_status, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    foreach ($rows as $r) $insert->execute(array($r['id'], $r['case_name'], $r['court'], $r['filing_date'], $r['plaintiffs'], $r['defendants'], $r['document_urls'], $r['publication_status'], $r['updated_at']));
 }
-$GLOBALS['wpdb'] = new KOP_Test_WPDB();
 require ABSPATH . 'inc/utility-pages.php';
 require ABSPATH . 'inc/legal-documents.php';
 
@@ -91,9 +96,16 @@ $case = array(
     'filing_date' => '2024-01-14',
     'plaintiffs' => '["Finn Richardson"]',
     'defendants' => '["Elevations RTC"]',
-    'document_urls' => '["https://kidsoverprofits.org/richardson-v-elevations-rtc-prelitigation-panel-opinion/"]',
+    // Stored the way json_encode writes it, with escaped slashes.
+    'document_urls' => json_encode(array('https://kidsoverprofits.org/wp-content/uploads/2024/08/complaint.pdf', 'https://kidsoverprofits.org/richardson-v-elevations-rtc-prelitigation-panel-opinion/')),
+    'publication_status' => 'published',
+    'updated_at' => '2026-09-20 10:00:00',
 );
-$GLOBALS['wpdb']->rows = array($case);
+$draft = array_merge($case, array('id' => 11, 'case_name' => 'Unpublished draft', 'publication_status' => 'pending'));
+kop_test_lawsuits(array($draft));
+$GLOBALS['kop_test_page'] = array('post_name' => 'richardson-v-elevations-rtc-prelitigation-panel-opinion');
+kop_test_assert(kop_legal_document_lawsuit(317) === null, 'an unpublished lawsuit is not shown');
+kop_test_lawsuits(array($case, $draft));
 $GLOBALS['kop_test_page'] = array('post_name' => 'richardson-v-elevations-rtc-prelitigation-panel-opinion');
 $matched = kop_legal_document_lawsuit(317);
 kop_test_assert(is_array($matched) && (int) $matched['id'] === 10, 'lawsuit found by linked document URL');
@@ -135,7 +147,6 @@ $GLOBALS['kop_test_page'] = array(
     'post_content' => '<figure><img src="page-1.webp" alt=""></figure><figure><img src="page-2.webp" alt=""></figure><figure><img src="page-3.webp" alt=""></figure><figure><img src="page-4.webp" alt=""></figure>',
     'post_excerpt' => '',
 );
-$GLOBALS['wpdb']->rows = array($case);
 $GLOBALS['kop_test_template'] = 'templates/page-legal-document.php';
 $GLOBALS['kop_test_loop_remaining'] = 1;
 ob_start();
