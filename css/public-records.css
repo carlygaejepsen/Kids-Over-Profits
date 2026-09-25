@@ -131,6 +131,17 @@
 
 .kop-record-card[hidden] { display: none; }
 
+/* A card linked by id (#lawsuit-12, #bill-7), e.g. from the Law & Policy hub's
+   newest records: clear of the sticky header, and marked as the one asked for. */
+.kop-record-card {
+    scroll-margin-top: 7rem;
+}
+
+.kop-record-card:target {
+    border-color: var(--kop-teal, #33A7B5);
+    box-shadow: 0 0 0 3px var(--kop-teal, #33A7B5), 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
 /* ── Card header ─────────────────────────────────────── */
 
 .kop-card-header {

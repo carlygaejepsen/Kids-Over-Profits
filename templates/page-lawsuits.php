@@ -287,7 +287,7 @@ $facility_tags_for = static function (array $mentions, array $linked) use ($faci
                 usort($folder_docs, static function ($a, $b) { return strnatcasecmp($a['title'], $b['title']); });
             }
         ?>
-        <div class="kop-record-card"
+        <div class="kop-record-card" id="lawsuit-<?php echo (int) $case['id']; ?>"
              data-status="<?php echo esc_attr($status_slug); ?>"
              data-jurisdiction="<?php echo esc_attr($case['jurisdiction'] ?? ''); ?>"
              data-claims="<?php echo $claims_json; ?>">

@@ -1,17 +1,59 @@
 /*
- * Hub Page template (templates/page-hub.php).
+ * Hub Page template (templates/page-hub.php, inc/hub-shell.php).
  *
- * The editor content renders inside Kadence's normal .entry-content, so only
- * the header standfirst, the appended live modules and the footer are styled
- * here.
+ * Top to bottom: the orientation header (title, standfirst, actions), the
+ * editor content inside Kadence's normal .entry-content, the live module,
+ * the articles filed under the hub, where to contribute, and the footer.
  */
 
+/* ---- Orientation ------------------------------------------------------- */
+
+.kop-hub-header {
+    margin: 0 0 2rem;
+    padding: 0 0 1.5rem;
+    border-bottom: 3px solid var(--kop-teal, #33a7b5);
+    text-align: left;
+}
+
+.kop-hub-header .entry-title {
+    margin: 0;
+}
+
 .kop-hub-standfirst {
-    max-width: 60ch;
-    margin: 0.75rem auto 0;
-    font-size: 1.1rem;
-    line-height: 1.5;
+    max-width: 62ch;
+    margin: 0.75rem 0 0;
+    font-size: 1.15rem;
+    line-height: 1.55;
     color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-hub-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+}
+
+.kop-hub-action {
+    display: inline-block;
+    padding: 0.55rem 1.1rem;
+    border: 2px solid var(--kop-teal-ink, #24757F);
+    border-radius: 6px;
+    color: var(--kop-teal-ink, #24757F);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.kop-hub-action--primary {
+    background: var(--kop-teal-ink, #24757F);
+    color: var(--kop-white, #fff);
+}
+
+.kop-hub-action:hover,
+.kop-hub-action:focus-visible {
+    background: var(--kop-navy-blue, #000080);
+    border-color: var(--kop-navy-blue, #000080);
+    color: var(--kop-white, #fff);
 }
 
 .kop-hub-thumbnail {
@@ -31,6 +73,12 @@
     margin-top: 2.5rem;
     padding-top: 1.75rem;
     border-top: 3px solid var(--kop-teal, #33a7b5);
+}
+
+.kop-hub-modules--lead {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
 }
 
 .kop-hub-module {
@@ -58,18 +106,74 @@
     border-radius: 999px;
 }
 
-/* Law & Policy: two columns of newest records */
+/* Law & Policy: one panel per directory - what it covers, the count, the
+   newest records and the way in */
 
 .kop-hub-law {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.25rem;
 }
 
 @media (min-width: 760px) {
     .kop-hub-law {
         grid-template-columns: 1fr 1fr;
     }
+}
+
+.kop-hub-law .kop-hub-col {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1.35rem 1.35rem;
+    background: var(--kop-sand, #f2eedf);
+    border-top: 4px solid var(--kop-teal, #33a7b5);
+    border-radius: 8px;
+}
+
+.kop-hub-law .kop-hub-col--legislation {
+    border-top-color: var(--kop-orange, #EF9034);
+}
+
+.kop-hub-law .kop-hub-h {
+    font-size: 1.4rem;
+}
+
+.kop-hub-h a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.kop-hub-h a:hover,
+.kop-hub-h a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-hub-law .kop-hub-count {
+    background: var(--kop-white, #fff);
+}
+
+.kop-hub-col-intro {
+    margin: 0 0 1rem;
+    line-height: 1.55;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-hub-subh {
+    margin: 0 0 0.25rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+.kop-hub-law .kop-hub-list {
+    margin-bottom: auto;
+}
+
+.kop-hub-law .kop-hub-more {
+    align-self: flex-start;
+    background: var(--kop-white, #fff);
 }
 
 .kop-hub-list {
@@ -151,12 +255,105 @@
     text-decoration: underline;
 }
 
+/* ---- Reading: the articles filed under the hub ------------------------ */
+
+.kop-hub-reading {
+    margin-top: 2.5rem;
+}
+
+.kop-hub-reading .kop-hub-h {
+    font-size: 1.3rem;
+}
+
+.kop-hub-reading-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 760px) {
+    .kop-hub-reading-list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.kop-hub-reading-list li {
+    margin: 0;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+.kop-hub-reading-list a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.kop-hub-reading-list a:hover,
+.kop-hub-reading-list a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-hub-reading-list p {
+    margin: 0.2rem 0 0;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    color: var(--kop-text-secondary, #4a4f6a);
+}
+
+/* ---- Contribute -------------------------------------------------------- */
+
+.kop-hub-contribute {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.35rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 8px;
+}
+
+.kop-hub-contribute ul {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 760px) {
+    .kop-hub-contribute ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.kop-hub-contribute li {
+    margin: 0;
+}
+
+.kop-hub-contribute a {
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+}
+
+.kop-hub-contribute span {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--kop-midnight-blue, #000435);
+}
+
 /* ---- Footer ------------------------------------------------------------ */
 
 .kop-hub-footer {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem 1.25rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.25rem;
     margin-top: 2.5rem;
     padding-top: 0.9rem;
     border-top: 1px solid var(--kop-border-secondary, #d9d3c0);
@@ -164,8 +361,20 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
+.kop-hub-footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+}
+
 .kop-hub-footer a {
     color: var(--kop-teal-ink, #24757F);
+}
+
+.kop-hub-share .addtoany_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
 }
 
 /* Research & Reports: document card grid (inc/research-library.php) */

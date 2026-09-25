@@ -131,7 +131,7 @@ $status_labels = [
             $last_date    = $bill['last_action_date']   ? date('M j, Y', strtotime($bill['last_action_date'])) : '';
             $is_federal   = ($bill['jurisdiction'] ?? '') === 'Federal';
         ?>
-        <div class="kop-record-card"
+        <div class="kop-record-card" id="bill-<?php echo (int) $bill['id']; ?>"
              data-status="<?php echo esc_attr($status_slug); ?>"
              data-jurisdiction="<?php echo esc_attr($bill['jurisdiction'] ?? ''); ?>"
              data-position="<?php echo esc_attr($position); ?>"

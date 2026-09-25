@@ -2,10 +2,12 @@
 /**
  * Template Name: Hub Page
  * Description: The navigation hub pages (History, Survivors, Families, Law &
- * Policy, ...) keep their curated editor content; this template prints it
- * unchanged inside the same article markup Kadence uses, then appends a live
- * module chosen by page slug (kop_hub_module_for()). Pages with no module get
- * only the consistent header and footer.
+ * Policy, ...). Orientation (breadcrumb, title, standfirst, actions), the
+ * page's own editor content, a live module chosen by page slug
+ * (kop_hub_module_for()), the articles filed under the hub, where to
+ * contribute, then the footer. What each hub shows is set in
+ * kop_hub_config() (inc/hub-shell.php); a hub with no settings gets its
+ * editor content, its module if any, and the header and footer.
  */
 
 if (!defined('ABSPATH')) {
@@ -81,92 +83,119 @@ if (!function_exists('kop_hub_pdo')) {
     }
 }
 
-if (!function_exists('kop_hub_page_url')) {
-    /** Permalink of the page using a child template, with a fallback path. */
-    function kop_hub_page_url($template, $fallback) {
-        $url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template($template) : '';
-        return $url ? $url : home_url($fallback);
-    }
-}
-
 if (!function_exists('kop_hub_module_law_policy')) {
     /**
-     * Law & Policy: live counts and the newest published lawsuits and bills,
-     * each column linking to its directory.
+     * Law & Policy: one column per directory - what it covers, how many
+     * records it holds, the five newest (each linking to its own card), and
+     * the way in. The two paragraphs are the page's editor text, which
+     * kop_hub_config() leaves out so they are not printed twice.
      */
     function kop_hub_module_law_policy() {
-        $pdo = kop_hub_pdo();
-        if (!$pdo) {
-            return;
-        }
         $lawsuits = array();
         $bills    = array();
-        $n_law    = 0;
-        $n_bill   = 0;
-        try {
-            $n_law = (int) $pdo->query("SELECT COUNT(*) FROM lawsuits WHERE publication_status IN ('approved','published')")->fetchColumn();
-            $stmt  = $pdo->query(
-                "SELECT case_name, filing_date, status, jurisdiction FROM lawsuits
-                 WHERE publication_status IN ('approved','published')
-                 ORDER BY filing_date DESC, id DESC LIMIT 5"
-            );
-            $lawsuits = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : array();
+        $n_law    = null;
+        $n_bill   = null;
+        $pdo      = kop_hub_pdo();
+        if ($pdo) {
+            try {
+                $n_law = (int) $pdo->query("SELECT COUNT(*) FROM lawsuits WHERE publication_status IN ('approved','published')")->fetchColumn();
+                $stmt  = $pdo->query(
+                    "SELECT id, case_name, filing_date, status, jurisdiction FROM lawsuits
+                     WHERE publication_status IN ('approved','published')
+                     ORDER BY filing_date DESC, id DESC LIMIT 5"
+                );
+                $lawsuits = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : array();
 
-            $n_bill = (int) $pdo->query("SELECT COUNT(*) FROM legislation WHERE publication_status IN ('approved','published')")->fetchColumn();
-            $stmt   = $pdo->query(
-                "SELECT bill_number, bill_title, jurisdiction, status, last_action_date, introduced_date FROM legislation
-                 WHERE publication_status IN ('approved','published')
-                 ORDER BY last_action_date DESC, introduced_date DESC, id DESC LIMIT 5"
-            );
-            $bills = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : array();
-        } catch (Throwable $e) {
-            return;
+                $n_bill = (int) $pdo->query("SELECT COUNT(*) FROM legislation WHERE publication_status IN ('approved','published')")->fetchColumn();
+                $stmt   = $pdo->query(
+                    "SELECT id, bill_number, bill_title, jurisdiction, status, last_action_date, introduced_date FROM legislation
+                     WHERE publication_status IN ('approved','published')
+                     ORDER BY last_action_date DESC, introduced_date DESC, id DESC LIMIT 5"
+                );
+                $bills = $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : array();
+            } catch (Throwable $e) {
+                // The columns still print their introduction and the way in;
+                // only the counts and the newest records are missing.
+                $n_law = $n_bill = null;
+                $lawsuits = $bills = array();
+            }
         }
-        if (!$lawsuits && !$bills) {
-            return;
-        }
-        $lawsuits_url    = kop_hub_page_url('page-lawsuits.php', '/lawsuits/');
-        $legislation_url = kop_hub_page_url('page-legislation.php', '/legislative-efforts/');
         $label = static function ($s) {
             return ucfirst(str_replace('_', ' ', (string) $s));
         };
+        $meta = static function (array $parts) {
+            return implode(" \u{00B7} ", array_filter($parts, 'strlen'));
+        };
+
+        $columns = array(
+            array(
+                'key'   => 'lawsuits',
+                'title' => 'Lawsuits',
+                'count' => $n_law === null ? '' : $n_law . ' tracked',
+                'intro' => 'Legal cases against programs in the troubled teen industry: allegations of abuse, negligence and wrongful death, and how survivors and families are using the courts to hold programs accountable.',
+                'url'   => kop_hub_page_url('page-lawsuits.php', '/lawsuits/'),
+                'more'  => 'All lawsuits',
+                'rows'  => array_map(static function ($c) use ($label, $meta) {
+                    return array(
+                        'anchor' => 'lawsuit-' . (int) $c['id'],
+                        'title'  => (string) $c['case_name'],
+                        'meta'   => $meta(array(
+                            $c['filing_date'] ? substr((string) $c['filing_date'], 0, 4) : '',
+                            (string) ($c['jurisdiction'] ?? ''),
+                            $label($c['status'] ?? ''),
+                        )),
+                    );
+                }, $lawsuits),
+            ),
+            array(
+                'key'   => 'legislation',
+                'title' => 'Legislation',
+                'count' => $n_bill === null ? '' : $n_bill . ' ' . ($n_bill === 1 ? 'bill' : 'bills') . ' tracked',
+                'intro' => 'Proposed and passed laws aimed at regulating the troubled teen industry: efforts to improve oversight, protect kids in residential care and create lasting change.',
+                'url'   => kop_hub_page_url('page-legislation.php', '/legislative-efforts/'),
+                'more'  => 'All legislation',
+                'rows'  => array_map(static function ($b) use ($label, $meta) {
+                    $when = $b['last_action_date'] ?: $b['introduced_date'];
+                    return array(
+                        'anchor' => 'bill-' . (int) $b['id'],
+                        'title'  => trim($b['bill_number'] . ' ' . $b['bill_title']),
+                        'meta'   => $meta(array(
+                            (string) ($b['jurisdiction'] ?? ''),
+                            $label($b['status'] ?? ''),
+                            $when ? date_i18n('M j, Y', strtotime($when)) : '',
+                        )),
+                    );
+                }, $bills),
+            ),
+        );
         ?>
-        <section class="kop-hub-module kop-hub-law" aria-label="Latest lawsuits and legislation">
-            <div class="kop-hub-col">
-                <h2 class="kop-hub-h">Latest lawsuits <span class="kop-hub-count"><?php echo (int) $n_law; ?> tracked</span></h2>
-                <ul class="kop-hub-list">
-                    <?php foreach ($lawsuits as $c) : ?>
-                        <li>
-                            <a href="<?php echo esc_url($lawsuits_url); ?>"><?php echo esc_html($c['case_name']); ?></a>
-                            <span class="kop-hub-meta"><?php echo esc_html(implode(" \u{00B7} ", array_filter(array(
-                                $c['filing_date'] ? substr((string) $c['filing_date'], 0, 4) : '',
-                                $c['jurisdiction'] ?? '',
-                                $label($c['status'] ?? ''),
-                            ), 'strlen'))); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-                <a class="kop-hub-more" href="<?php echo esc_url($lawsuits_url); ?>">All lawsuits</a>
-            </div>
-            <div class="kop-hub-col">
-                <h2 class="kop-hub-h">Latest legislation <span class="kop-hub-count"><?php echo (int) $n_bill; ?> bills tracked</span></h2>
-                <ul class="kop-hub-list">
-                    <?php foreach ($bills as $b) :
-                        $when = $b['last_action_date'] ?: $b['introduced_date'];
-                        ?>
-                        <li>
-                            <a href="<?php echo esc_url($legislation_url); ?>"><?php echo esc_html(trim($b['bill_number'] . ' ' . $b['bill_title'])); ?></a>
-                            <span class="kop-hub-meta"><?php echo esc_html(implode(" \u{00B7} ", array_filter(array(
-                                $b['jurisdiction'] ?? '',
-                                $label($b['status'] ?? ''),
-                                $when ? date_i18n('M j, Y', strtotime($when)) : '',
-                            ), 'strlen'))); ?></span>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-                <a class="kop-hub-more" href="<?php echo esc_url($legislation_url); ?>">All legislation</a>
-            </div>
-        </section>
+        <div class="kop-hub-module kop-hub-law">
+            <?php foreach ($columns as $col) : ?>
+                <section class="kop-hub-col kop-hub-col--<?php echo esc_attr($col['key']); ?>" aria-labelledby="kop-hub-<?php echo esc_attr($col['key']); ?>-h">
+                    <h2 class="kop-hub-h" id="kop-hub-<?php echo esc_attr($col['key']); ?>-h">
+                        <a href="<?php echo esc_url($col['url']); ?>"><?php echo esc_html($col['title']); ?></a>
+                        <?php if ($col['count'] !== '') : ?>
+                            <span class="kop-hub-count"><?php echo esc_html($col['count']); ?></span>
+                        <?php endif; ?>
+                    </h2>
+                    <p class="kop-hub-col-intro"><?php echo esc_html($col['intro']); ?></p>
+                    <?php if ($col['rows']) : ?>
+                        <h3 class="kop-hub-subh">Newest</h3>
+                        <ul class="kop-hub-list">
+                            <?php foreach ($col['rows'] as $row) : ?>
+                                <li>
+                                    <a href="<?php echo esc_url($col['url'] . '#' . $row['anchor']); ?>"><?php echo esc_html($row['title']); ?></a>
+                                    <?php if ($row['meta'] !== '') : ?>
+                                        <span class="kop-hub-meta"><?php echo esc_html($row['meta']); ?></span>
+                                    <?php endif; ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                    <a class="kop-hub-more" href="<?php echo esc_url($col['url']); ?>"><?php echo esc_html($col['more']); ?></a>
+                </section>
+            <?php endforeach; ?>
+        </div>
         <?php
     }
 }
@@ -219,8 +248,10 @@ get_header();
 
 while (have_posts()) :
     the_post();
-    $kop_hub_slug   = get_post_field('post_name', get_the_ID());
-    $kop_hub_module = kop_hub_module_for($kop_hub_slug);
+    $kop_hub_slug    = get_post_field('post_name', get_the_ID());
+    $kop_hub_module  = kop_hub_module_for($kop_hub_slug);
+    $kop_hub_config  = function_exists('kop_hub_config') ? kop_hub_config($kop_hub_slug) : array();
+    $kop_hub_content = !isset($kop_hub_config['content']) || $kop_hub_config['content'] !== false;
     ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class('entry content-bg single-entry kop-hub'); ?>>
     <div class="entry-content-wrap">
@@ -234,15 +265,25 @@ while (have_posts()) :
         }
         ?>
 
-        <header class="entry-header page-title title-align-center kop-hub-header">
+        <header class="entry-header page-title kop-hub-header">
             <h1 class="entry-title"><?php the_title(); ?></h1>
             <?php
-            // The excerpt when an editor wrote one; otherwise a hub's module
-            // file can supply one on 'kop_hub_standfirst' (inc/hub-posts.php).
-            $kop_hub_standfirst = has_excerpt() ? get_the_excerpt() : (string) apply_filters('kop_hub_standfirst', '', $kop_hub_slug);
+            // The excerpt when an editor wrote one; otherwise the hub's
+            // settings (inc/hub-shell.php) or a module file on
+            // 'kop_hub_standfirst' (inc/hub-posts.php) can supply one.
+            $kop_hub_standfirst = has_excerpt() ? get_the_excerpt() : '';
+            if ($kop_hub_standfirst === '' && !empty($kop_hub_config['standfirst'])) {
+                $kop_hub_standfirst = $kop_hub_config['standfirst'];
+            }
+            $kop_hub_standfirst = (string) apply_filters('kop_hub_standfirst', $kop_hub_standfirst, $kop_hub_slug);
             if ($kop_hub_standfirst !== '') : ?>
                 <p class="kop-hub-standfirst"><?php echo esc_html($kop_hub_standfirst); ?></p>
             <?php endif; ?>
+            <?php
+            if (function_exists('kop_hub_actions')) {
+                kop_hub_actions($kop_hub_slug);
+            }
+            ?>
         </header>
 
         <?php if (has_post_thumbnail()) : ?>
@@ -251,25 +292,47 @@ while (have_posts()) :
             </div>
         <?php endif; ?>
 
-        <div class="entry-content single-content">
-            <?php
-            the_content();
-            wp_link_pages(array(
-                'before' => '<div class="page-links">',
-                'after'  => '</div>',
-            ));
-            ?>
-        </div>
+        <?php if ($kop_hub_content) : ?>
+            <div class="entry-content single-content">
+                <?php
+                if (function_exists('kop_hub_the_content')) {
+                    kop_hub_the_content();
+                } else {
+                    the_content();
+                }
+                wp_link_pages(array(
+                    'before' => '<div class="page-links">',
+                    'after'  => '</div>',
+                ));
+                ?>
+            </div>
+        <?php endif; ?>
 
         <?php if ($kop_hub_module) : ?>
-            <div class="kop-hub-modules">
+            <div class="kop-hub-modules<?php echo $kop_hub_content ? '' : ' kop-hub-modules--lead'; ?>">
                 <?php call_user_func($kop_hub_module); ?>
             </div>
         <?php endif; ?>
 
+        <?php
+        if (function_exists('kop_hub_reading')) {
+            kop_hub_reading($kop_hub_slug);
+        }
+        if (function_exists('kop_hub_contribute')) {
+            kop_hub_contribute($kop_hub_slug);
+        }
+        ?>
+
         <footer class="kop-hub-footer">
-            <span>Updated <time datetime="<?php echo esc_attr(get_the_modified_date('c')); ?>"><?php echo esc_html(get_the_modified_date()); ?></time></span>
-            <?php edit_post_link('Edit this page', '<span class="kop-hub-edit">', '</span>'); ?>
+            <div class="kop-hub-footer-meta">
+                <span>Updated <time datetime="<?php echo esc_attr(get_the_modified_date('c')); ?>"><?php echo esc_html(get_the_modified_date()); ?></time></span>
+                <?php edit_post_link('Edit this page', '<span class="kop-hub-edit">', '</span>'); ?>
+            </div>
+            <?php
+            if (function_exists('kop_hub_share')) {
+                kop_hub_share();
+            }
+            ?>
         </footer>
 
     </div>

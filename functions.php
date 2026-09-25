@@ -94,6 +94,9 @@ require_once get_stylesheet_directory() . '/inc/article-parts.php';
 // Hub pages that list one category's posts (Editorials, Investigatory Spotlight)
 require_once get_stylesheet_directory() . '/inc/hub-posts.php';
 
+// The frame a hub page is assembled in, and each hub's settings
+require_once get_stylesheet_directory() . '/inc/hub-shell.php';
+
 // The Document Archive: featured reports, collections, every program A to Z
 require_once get_stylesheet_directory() . '/inc/document-archive.php';
 

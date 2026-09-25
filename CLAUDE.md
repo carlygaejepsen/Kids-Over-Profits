@@ -52,6 +52,8 @@ php scripts/test-facility-pages.php
 php scripts/test-operator-pages.php               # renders every /operator/<slug>/ page to tmp/operator-pages/
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
+# Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
+php scripts/test-hub-pages.php
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
