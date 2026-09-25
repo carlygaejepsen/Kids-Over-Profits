@@ -832,7 +832,7 @@ function enqueue_data_form_script() {
 
             $api_module_uri,
 
-            array('jquery', 'kop-form-config-script', 'kop-data-normalizer-script'),
+            array('jquery', 'kop-form-config-script', 'kop-data-normalizer-script', 'autocomplete-module-script'),
 
             file_exists($api_module_file_path) ? filemtime($api_module_file_path) : time(),
 
@@ -1119,7 +1119,7 @@ function enqueue_data_form_script() {
 
             $ui_render_uri,
 
-            array('jquery'),
+            array('jquery', 'autocomplete-module-script'),
 
             file_exists($ui_render_file) ? filemtime($ui_render_file) : time(),
 
@@ -1143,7 +1143,7 @@ function enqueue_data_form_script() {
             true
         );
 
-        $ui_deps = ['jquery', 'kop-form-config-script', 'kop-project-script', 'kop-ui-render-script'];
+        $ui_deps = ['jquery', 'kop-form-config-script', 'kop-project-script', 'kop-ui-render-script', 'autocomplete-module-script'];
 
 
 
@@ -1302,7 +1302,7 @@ function enqueue_data_form_script() {
 
 
 
-                    array('jquery', 'utilities-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'provider-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
+                    array('jquery', 'utilities-module-script', 'autocomplete-module-script', 'location-form-script', 'referrer-form-script', 'transporter-form-script', 'provider-form-script', 'notes-module-script', 'data-report-generator', 'kop-ui-render-script', 'kop-ui-state-script', 'kop-ui-events-script', 'kop-project-script', 'kop-ui-actions-script', 'kop-data-search-script', 'kop-custom-modals'),
 
 
 
