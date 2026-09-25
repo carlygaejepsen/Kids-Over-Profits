@@ -2038,6 +2038,18 @@ function kop_enqueue_template_assets() {
         }
     };
 
+    if (kop_page_uses_template('page-utility.php')) {
+        $style('kop-utility', '/css/utility.css');
+        return;
+    }
+
+    if (kop_page_uses_template('page-legal-document.php')) {
+        // utility.css carries the breadcrumb both templates share.
+        $style('kop-utility', '/css/utility.css');
+        $style('kop-legal-document', '/css/legal-document.css', array('kop-colors', 'kop-utility'));
+        return;
+    }
+
     if (kop_page_uses_template('page-network-map.php')
         && !(is_singular() && post_password_required(get_queried_object_id()))) {
         $style('kop-network-map', '/css/network-map.css');

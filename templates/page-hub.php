@@ -325,7 +325,21 @@ while (have_posts()) :
 
         <footer class="kop-hub-footer">
             <div class="kop-hub-footer-meta">
-                <span>Updated <time datetime="<?php echo esc_attr(get_the_modified_date('c')); ?>"><?php echo esc_html(get_the_modified_date()); ?></time></span>
+                <?php
+                $kop_hub_updated_raw = '';
+                if (!empty($kop_hub_config['updated']) && is_callable($kop_hub_config['updated'])) {
+                    $kop_hub_updated_raw = call_user_func($kop_hub_config['updated']);
+                }
+                $kop_hub_updated_ts = $kop_hub_updated_raw ? strtotime((string) $kop_hub_updated_raw) : false;
+                if ($kop_hub_updated_ts === false) {
+                    $kop_hub_updated_datetime = get_the_modified_date('c');
+                    $kop_hub_updated_label = get_the_modified_date();
+                } else {
+                    $kop_hub_updated_datetime = date('c', $kop_hub_updated_ts);
+                    $kop_hub_updated_label = date_i18n('F j, Y', $kop_hub_updated_ts);
+                }
+                ?>
+                <span>Updated <time datetime="<?php echo esc_attr($kop_hub_updated_datetime); ?>"><?php echo esc_html($kop_hub_updated_label); ?></time></span>
                 <?php edit_post_link('Edit this page', '<span class="kop-hub-edit">', '</span>'); ?>
             </div>
             <?php

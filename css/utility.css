@@ -1,0 +1,111 @@
+/* Shared shell for utility pages; editor blocks retain their own styling. */
+.kop-utility {
+    max-width: 980px;
+    margin-inline: auto;
+    padding: clamp(1rem, 3vw, 2.25rem);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(0, 4, 53, 0.08);
+}
+
+.kop-utility__breadcrumb ol,
+.kop-legal-document__breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.65rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9rem;
+}
+
+.kop-utility__breadcrumb li + li::before,
+.kop-legal-document__breadcrumb li + li::before {
+    content: "/";
+    margin-right: 0.65rem;
+    color: var(--kop-text-secondary, #000080);
+}
+
+.kop-utility__breadcrumb a,
+.kop-legal-document__breadcrumb a {
+    color: var(--kop-teal-ink, #24757f);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.kop-utility__header,
+.kop-utility .entry-title {
+    margin-top: 0;
+}
+
+.kop-utility__standfirst {
+    max-width: 65ch;
+    margin: 0.65rem 0 1.5rem;
+    color: var(--kop-text-secondary, #000080);
+    font-size: 1.08rem;
+    line-height: 1.55;
+}
+
+.kop-utility__content {
+    min-width: 0;
+}
+
+.kop-utility__content > :first-child {
+    margin-top: 0;
+}
+
+.kop-utility__primary-action {
+    margin: 1.25rem 0;
+}
+
+.kop-utility__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.65rem 1rem;
+    border: 2px solid var(--kop-navy-blue, #000080);
+    border-radius: 5px;
+    background: var(--kop-navy-blue, #000080);
+    color: var(--kop-white, #fff);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.kop-utility__button:hover,
+.kop-utility__button:focus-visible {
+    background: var(--kop-midnight-blue, #000435);
+    color: var(--kop-white, #fff);
+    outline: 3px solid var(--kop-chartreuse, #b2e102);
+    outline-offset: 2px;
+}
+
+.kop-utility__other-ways {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+    background: var(--kop-sand, #f2eedf);
+}
+
+.kop-utility__other-ways h2 {
+    margin-top: 0;
+    font-size: 1.2rem;
+}
+
+.kop-utility__other-ways ul {
+    margin-bottom: 0;
+}
+
+.kop-utility__footer {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .kop-utility {
+        padding: 1rem;
+        border-radius: 5px;
+    }
+}

@@ -54,6 +54,12 @@ php scripts/test-operator-pages.php               # renders every /operator/<slu
 php scripts/test-hub-posts.php
 # Every hub page through templates/page-hub.php + inc/hub-shell.php (per-hub settings), against tmp/prod.sqlite
 php scripts/test-hub-pages.php
+# Utility and legal page templates: shortcode/share behavior, case metadata and image alt text
+php scripts/test-utility-pages.php
+# Live content with local utility/legal template CSS, screenshots at 390/768/1440
+python scripts/preview-utility-pages.py --shots tmp/utility-preview
+# Live hub frame preview at 390, 768 and 1440 px; defaults to all 13 hubs
+python scripts/preview-hub-pages.py --shots tmp/hub-preview
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into

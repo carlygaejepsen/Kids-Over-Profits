@@ -1,0 +1,110 @@
+/* Case context and page images for legal documents rendered from editor content. */
+.kop-legal-document {
+    max-width: 980px;
+    margin-inline: auto;
+    padding: clamp(1rem, 3vw, 2.25rem);
+    background: var(--kop-white, #fff);
+    color: var(--kop-midnight-blue, #000435);
+    border: 1px solid var(--kop-border-secondary, #aee0ed);
+    border-radius: 8px;
+    box-shadow: 0 8px 28px rgba(0, 4, 53, 0.08);
+}
+
+.kop-legal-document__header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.kop-legal-document__eyebrow {
+    margin: 0 0 0.4rem;
+    color: var(--kop-teal-ink, #24757f);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.kop-legal-document__summary {
+    max-width: 62ch;
+    margin: 0.75rem auto 0;
+    color: var(--kop-text-secondary, #000080);
+    line-height: 1.55;
+}
+
+.kop-legal-document__metadata {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem 1.5rem;
+    margin: 0 auto 2rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--kop-sand, #f2eedf);
+    border-left: 4px solid var(--kop-teal, #33a7b5);
+}
+
+.kop-legal-document__metadata > div {
+    min-width: 0;
+}
+
+.kop-legal-document__metadata dt {
+    color: var(--kop-text-secondary, #000080);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.kop-legal-document__metadata dd {
+    margin: 0.2rem 0 0;
+    overflow-wrap: anywhere;
+}
+
+.kop-legal-document__metadata a {
+    color: var(--kop-teal-ink, #24757f);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.kop-legal-document__source {
+    margin: 0 0 1.5rem;
+}
+
+.kop-legal-document__pages > :first-child {
+    margin-top: 0;
+}
+
+.kop-legal-document__pages figure {
+    margin: 1.5rem auto;
+    text-align: center;
+}
+
+.kop-legal-document__pages img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+}
+
+.kop-legal-document__pages figcaption {
+    margin-top: 0.5rem;
+    color: var(--kop-text-secondary, #000080);
+    font-size: 0.9rem;
+}
+
+.kop-legal-document__footer {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .kop-legal-document {
+        padding: 1rem;
+        border-radius: 5px;
+    }
+
+    .kop-legal-document__metadata {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.7rem;
+        padding: 0.9rem 1rem;
+    }
+}

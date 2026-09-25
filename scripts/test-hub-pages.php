@@ -4,6 +4,7 @@
  * inc/hub-shell.php, against tmp/prod.sqlite.
  *
  *   php scripts/test-hub-pages.php
+ *   php scripts/test-hub-pages.php --live   # HEAD-check action/contribute URLs
  *
  * Each hub's <article> is written to tmp/hub-pages/<slug>.html. Checks that
  * every hub renders with its title and footer; that no hub prints the table
@@ -12,9 +13,9 @@
  * directory columns (each record linking to its own card), lists the
  * articles filed under it and says where to contribute.
  *
- * Only the Law & Policy and Where Are the Kids modules are loaded; the other
- * modules (research library, resources, category posts) have their own
- * tests. Nothing is written to the database.
+ * Law & Policy, Where Are the Kids, and category-post modules are loaded.
+ * Research library and Resources use their own tests. Nothing is written to
+ * the database; --live performs read-only HEAD requests over SSH.
  */
 
 if (PHP_SAPI !== 'cli') {
@@ -101,6 +102,36 @@ function get_the_title($p = null) {
 }
 function has_excerpt($p = null) { $p = $p ?: $GLOBALS['kop_test_post']; return trim($p->post_excerpt) !== ''; }
 function get_the_excerpt($p = null) { $p = $p ?: $GLOBALS['kop_test_post']; return trim($p->post_excerpt); }
+function get_the_date($format, $p = null) {
+    $p = $p ?: $GLOBALS['kop_test_post'];
+    return date($format === 'c' ? 'c' : 'F j, Y', strtotime($p->post_date));
+}
+function get_category_by_slug($slug) {
+    $stmt = $GLOBALS['kop_db']->prepare(
+        "SELECT t.term_id, t.name, t.slug FROM wpdl_terms t
+         JOIN wpdl_term_taxonomy tt ON tt.term_id = t.term_id
+         WHERE tt.taxonomy = 'category' AND t.slug = ? LIMIT 1"
+    );
+    $stmt->execute(array($slug));
+    return $stmt->fetch(PDO::FETCH_OBJ) ?: false;
+}
+function get_the_post_thumbnail($p, $size = 'post-thumbnail', $attr = array()) {
+    $stmt = $GLOBALS['kop_db']->prepare(
+        "SELECT a.guid FROM wpdl_postmeta m
+         JOIN wpdl_posts a ON a.ID = CAST(m.meta_value AS INTEGER)
+         WHERE m.post_id = ? AND m.meta_key = '_thumbnail_id' LIMIT 1"
+    );
+    $stmt->execute(array((int) $p->ID));
+    $src = $stmt->fetchColumn();
+    return $src ? '<img src="' . esc_url($src) . '" alt="' . esc_attr($attr['alt'] ?? '') . '" loading="lazy">' : '';
+}
+function strip_shortcodes($text) { return preg_replace('/\[[^\]]+\]/', '', (string) $text); }
+function excerpt_remove_blocks($text) { return preg_replace('/<!--.*?-->/s', '', (string) $text); }
+function wp_strip_all_tags($text) { return trim(strip_tags((string) $text)); }
+function wp_trim_words($text, $number, $more = '…') {
+    $words = preg_split('/\s+/', trim((string) $text), -1, PREG_SPLIT_NO_EMPTY);
+    return count($words) > $number ? implode(' ', array_slice($words, 0, $number)) . $more : implode(' ', $words);
+}
 function kop_asl_page_url_by_template($template) {
     $stmt = $GLOBALS['kop_db']->prepare(
         "SELECT p.post_name FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID
@@ -111,6 +142,18 @@ function kop_asl_page_url_by_template($template) {
     return $slug ? home_url('/' . $slug . '/') : '';
 }
 function get_posts($args) {
+    if (isset($args['cat'])) {
+        $limit = isset($args['posts_per_page']) ? (int) $args['posts_per_page'] : 100;
+        $stmt = $GLOBALS['kop_db']->prepare(
+            "SELECT p.* FROM wpdl_posts p
+             JOIN wpdl_term_relationships tr ON tr.object_id = p.ID
+             JOIN wpdl_term_taxonomy tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             WHERE tt.term_id = ? AND p.post_status = 'publish' AND p.post_type = 'post'
+             ORDER BY p.post_date DESC LIMIT " . max(1, $limit)
+        );
+        $stmt->execute(array((int) $args['cat']));
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
     // Only the locations module asks: pages by template, by title.
     $stmt = $GLOBALS['kop_db']->prepare(
         "SELECT p.* FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID
@@ -155,16 +198,71 @@ function the_content() {
 require ABSPATH . 'inc/admin.php';
 require ABSPATH . 'inc/article-parts.php';
 require ABSPATH . 'inc/hub-shell.php';
+require ABSPATH . 'inc/hub-posts.php';
 
 // --- Checks -----------------------------------------------------------------
 
 $failures = 0;
+$live_urls = array();
+$check_live_links = in_array('--live', $argv, true);
 function check($label, $ok, $detail = '') {
     global $failures;
     if (!$ok) {
         $failures++;
     }
     echo ($ok ? '  ok   ' : '  FAIL ') . $label . ($detail !== '' ? " ($detail)" : '') . "\n";
+}
+
+/** Opt-in production link check: one remote HEAD request per unique URL. */
+function kop_test_live_head($url) {
+    if (!preg_match('#^https?://#i', $url)) {
+        return array(false, 'not an HTTP URL');
+    }
+    $home = getenv('USERPROFILE');
+    $key  = rtrim((string) $home, '\\/') . DIRECTORY_SEPARATOR . '.ssh' . DIRECTORY_SEPARATOR . 'kop_nixihost';
+    if (!is_file($key)) {
+        return array(false, 'SSH key not found: ' . $key);
+    }
+    $system_root = getenv('SystemRoot') ?: getenv('WINDIR');
+    $windows_ssh = rtrim((string) $system_root, '\\/') . DIRECTORY_SEPARATOR . 'Sysnative' . DIRECTORY_SEPARATOR . 'OpenSSH' . DIRECTORY_SEPARATOR . 'ssh.exe';
+    if (!is_file($windows_ssh)) {
+        $windows_ssh = rtrim((string) $system_root, '\\/') . DIRECTORY_SEPARATOR . 'System32' . DIRECTORY_SEPARATOR . 'OpenSSH' . DIRECTORY_SEPARATOR . 'ssh.exe';
+    }
+    if (!is_file($windows_ssh)) {
+        $windows_ssh = 'ssh';
+    }
+    $agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128 Safari/537.36';
+    $shell_quote = function ($value) {
+        return "'" . str_replace("'", "'\\''", (string) $value) . "'";
+    };
+    $remote = 'curl -sS -I -L --max-redirs 5 --max-time 30 -A ' . $shell_quote($agent)
+        . ' -o /dev/null -w ' . $shell_quote('%{http_code}') . ' ' . $shell_quote($url);
+    $command = array(
+        $windows_ssh, '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=20', '-i', $key,
+        '-p', '1157', 'kidsover@dfw-s07.nixihost.com', 'bash', '-s',
+    );
+    $pipes = array();
+    $process = proc_open($command, array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+        2 => array('pipe', 'w'),
+    ), $pipes, null, null, array('bypass_shell' => true));
+    if (!is_resource($process)) {
+        return array(false, 'could not start OpenSSH');
+    }
+    fwrite($pipes[0], $remote . "\n");
+    fclose($pipes[0]);
+    $stdout = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+    $stderr = stream_get_contents($pipes[2]);
+    fclose($pipes[2]);
+    $status = proc_close($process);
+    $result = trim($stdout . "\n" . $stderr);
+    if ($status !== 0) {
+        return array(false, $result !== '' ? $result : 'SSH/curl failed');
+    }
+    $http = trim($stdout);
+    return array($http === '200', $http !== '' ? 'HTTP ' . $http : $result);
 }
 
 function render_hub($slug) {
@@ -233,16 +331,28 @@ check('every reading item has a line under it', isset($r[1][0]) && substr_count(
 preg_match('#<section class="kop-hub-contribute".*?</section>#s', $law, $c);
 check('contribute has three links', isset($c[0]) && substr_count($c[0], '<a href=') === 3);
 
+$latest_public_update = $GLOBALS['kop_db']->query(
+    "SELECT MAX(updated_at) FROM (
+        SELECT updated_at FROM lawsuits WHERE publication_status IN ('approved','published')
+        UNION ALL
+        SELECT updated_at FROM legislation WHERE publication_status IN ('approved','published')
+    ) AS public_records"
+)->fetchColumn();
+check('Law & Policy date uses the newest public record update',
+    $latest_public_update && strpos($law, date_i18n('F j, Y', strtotime($latest_public_update))) !== false,
+    (string) $latest_public_update);
+
 echo "every hub's settings\n";
 foreach ($rendered as $slug => $html) {
     $config = kop_hub_config($slug);
     $keeps  = !isset($config['content']) || $config['content'] !== false;
     check("$slug " . ($keeps ? 'prints' : 'leaves out') . ' its editor content',
         (strpos($html, 'entry-content single-content') !== false) === $keeps);
-    if (!empty($config['standfirst'])) {
-        // Editorials and Investigatory Spotlight take theirs from
-        // inc/hub-posts.php, which is not loaded here.
+    if (!empty($config['standfirst']) || in_array($slug, array('editorials', 'investigatory-spotlight'), true)) {
         check("$slug has a standfirst", strpos($html, 'kop-hub-standfirst') !== false);
+    }
+    if (in_array($slug, array('editorials', 'investigatory-spotlight'), true)) {
+        check("$slug has its category post module", strpos($html, 'kop-hub-post-list') !== false);
     }
     // A link whose page is missing is dropped without a word, so a typo in a
     // slug would only show as a button that is not there.
@@ -253,12 +363,26 @@ foreach ($rendered as $slug => $html) {
         $resolved = kop_hub_links($links);
         $dropped  = array_diff(array_column($links, 'label'), array_column($resolved, 'label'));
         check("$slug $kind all resolve", !$dropped, implode(', ', $dropped));
+        if ($check_live_links) {
+            foreach ($resolved as $link) {
+                $live_urls[] = preg_replace('/#.*$/', '', $link['url']);
+            }
+        }
     }
     if (!empty($config['reading'])) {
         $children = array_filter(kop_article_children($slug), 'kop_test_page');
         $notes    = $config['reading_notes'] ?? array();
         $bare     = array_filter($children, function ($c) use ($notes) { return !has_excerpt(kop_test_page($c)) && empty($notes[$c]); });
         check("$slug reading has a line for every article", !$bare, implode(', ', $bare));
+    }
+}
+
+if ($check_live_links) {
+    $live_urls = array_values(array_unique($live_urls));
+    echo "\nlive action and contribute URLs\n";
+    foreach ($live_urls as $url) {
+        list($ok, $detail) = kop_test_live_head($url);
+        check($url, $ok, $detail);
     }
 }
 

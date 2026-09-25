@@ -44,6 +44,7 @@ if (!defined('ABSPATH')) {
  *                  content already links them, or they print twice.
  *   reading_notes  slug => one line for an article with no excerpt.
  *   contribute     array('heading' => ..., 'links' => array of links).
+ *   updated        callback returning an updated_at value for this hub.
  *
  * A link is array('label' => ..., 'note' => optional line, and one of
  * 'slug' => a page slug, 'template' => a child template file with 'path' as
@@ -57,6 +58,7 @@ function kop_hub_config($slug) {
             // ending "Read more here."; the module's two columns now open
             // with those paragraphs and link the same two directories.
             'content'    => false,
+            'updated'    => 'kop_hub_law_policy_updated_at',
             'reading'    => 'Background and case analyses',
             'reading_notes' => array(
                 'overview'            => 'What the troubled teen industry is, and why it needs oversight.',
@@ -214,6 +216,26 @@ function kop_hub_config($slug) {
         ),
     ));
     return isset($hubs[$slug]) ? $hubs[$slug] : array();
+}
+
+/** Newest public record update shown by the Law & Policy module. */
+function kop_hub_law_policy_updated_at() {
+    $pdo = function_exists('kop_hub_pdo') ? kop_hub_pdo() : null;
+    if (!$pdo instanceof PDO) {
+        return '';
+    }
+    try {
+        $stmt = $pdo->query(
+            "SELECT MAX(updated_at) FROM (
+                SELECT updated_at FROM lawsuits WHERE publication_status IN ('approved','published')
+                UNION ALL
+                SELECT updated_at FROM legislation WHERE publication_status IN ('approved','published')
+            ) AS public_records"
+        );
+        return (string) ($stmt ? $stmt->fetchColumn() : '');
+    } catch (Throwable $e) {
+        return '';
+    }
 }
 
 /** URL of the published page using a child template, or the fallback path. */

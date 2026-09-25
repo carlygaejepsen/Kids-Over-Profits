@@ -653,6 +653,15 @@ function kop_template_assignments() {
         // The library's front door (2026-09-25): inc/document-archive.php.
         'document-archive'        => 'page-document-archive.php',
 
+        // Utility and legal pages (2026-09-25): integrations and case metadata
+        // remain in editor content / the lawsuits table.
+        'links'                                           => 'page-utility.php',
+        'anon-submit'                                     => 'page-utility.php',
+        'donate'                                          => 'page-utility.php',
+        'contact'                                         => 'page-utility.php',
+        'no-access'                                       => 'page-utility.php',
+        'richardson-v-elevations-rtc-prelitigation-panel-opinion' => 'page-legal-document.php',
+
         // Long-form articles, timelines and case analyses (phase 6): reading layout only.
         'advocacy-history'                                             => 'page-article.php',
         'antiquity'                                                    => 'page-article.php',
@@ -1794,7 +1803,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '47';
+    $version = '48';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

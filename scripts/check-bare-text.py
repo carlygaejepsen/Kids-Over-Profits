@@ -25,6 +25,7 @@ SAMPLES = [
     'in-loving-memory/', 'inspection-reports/', 'severe-reports/', 'tti-program-index/',
     'referrers-educational-consultants/', 'tti-news-feed/', 'ar-reports/',
     'document-library-discovery-ranch/', 'privacy-policy/', 'terms-of-service/',
+    'richardson-v-elevations-rtc-prelitigation-panel-opinion/',
     'submit-lawsuit/', 'submit-legislation/', 'tti-data-submission/',
     'r-troubledteens-wiki-backup/', 'tti-wiki-entry-generator/', 'contact/',
 ]
