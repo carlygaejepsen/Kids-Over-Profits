@@ -85,6 +85,34 @@ function kop_glossary_feedback_find_entry($id) {
     return null;
 }
 
+/**
+ * The glossary entry id a feedback row is about. Rows saved before the
+ * insert gave explicit formats hold term_id 0 (WordPress formats any
+ * term_id column as a number); those are matched by their term label and
+ * repaired. '' when the entry is gone.
+ */
+function kop_glossary_feedback_entry_id($row) {
+    $data = function_exists('kop_glossary_data') ? kop_glossary_data() : null;
+    if (!$data) {
+        return '';
+    }
+    $label_match = '';
+    foreach (kop_glossary_all_entries($data) as $entry) {
+        if ($entry['id'] === (string) $row->term_id) {
+            return $entry['id'];
+        }
+        $label = $entry['term'] . ($entry['note'] !== '' ? ' (' . $entry['note'] . ')' : '');
+        if ($label_match === '' && $label === $row->term) {
+            $label_match = $entry['id'];
+        }
+    }
+    if ($label_match !== '' && (string) $row->term_id === '0') {
+        global $wpdb;
+        $wpdb->update(kop_glossary_feedback_table(), array('term_id' => $label_match), array('id' => (int) $row->id), array('%s'), array('%d'));
+    }
+    return $label_match;
+}
+
 add_action('rest_api_init', function () {
     register_rest_route('kop/v1', '/glossary-feedback', array(
         'methods'             => 'POST',
@@ -165,7 +193,7 @@ function kop_glossary_feedback_submit(WP_REST_Request $request) {
         'contact'    => $contact !== '' ? $contact : null,
         'status'     => 'new',
         'ip_hash'    => $ip_hash,
-    ));
+    ), array_fill(0, 11, '%s'));   // formats: core types a column named term_id as %d
     if (!$ok) {
         return $fail('Your note could not be saved. Please try again in a minute.', 500);
     }
@@ -263,12 +291,13 @@ function kop_render_glossary_feedback_page() {
         . '<th>Note</th><th style="width:110px">Status</th><th style="width:230px">Mark as</th>'
         . '</tr></thead><tbody>';
     foreach ($rows as $r) {
+        $entry_id = kop_glossary_feedback_entry_id($r);
         echo '<tr>';
         echo '<td>' . (int) $r->id . '</td>';
         echo '<td>' . esc_html(get_date_from_gmt($r->created_at, 'M j, Y g:ia')) . '</td>';
-        echo '<td><a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/#' . $r->term_id)) . '" target="_blank" rel="noopener"><strong>'
+        echo '<td><a href="' . esc_url(home_url('/' . KOP_GLOSSARY_SLUG . '/' . ($entry_id !== '' ? '#' . $entry_id : ''))) . '" target="_blank" rel="noopener"><strong>'
             . esc_html($r->term) . '</strong></a><br><span style="color:#666">' . esc_html($kinds[$r->kind] ?? $r->kind) . '</span>'
-            . '<br><a href="' . esc_url(add_query_arg(array('view' => 'edit', 'entry' => $r->term_id, 'feedback' => (int) $r->id), admin_url('admin.php?page=kop-glossary-editor'))) . '">Edit entry</a></td>';
+            . '<br><a href="' . esc_url(add_query_arg($entry_id !== '' ? array('view' => 'edit', 'entry' => $entry_id, 'feedback' => (int) $r->id) : array('view' => 'new', 'feedback' => (int) $r->id), admin_url('admin.php?page=kop-glossary-editor'))) . '">' . ($entry_id !== '' ? 'Edit entry' : 'Entry gone: add it') . '</a></td>';
         echo '<td>';
         if ($r->program) {
             echo '<p style="margin:0 0 6px"><em>Program:</em> <strong>' . esc_html($r->program) . '</strong></p>';

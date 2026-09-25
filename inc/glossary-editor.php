@@ -804,7 +804,20 @@ function kop_glossary_editor_list($state) {
 /** The add / edit form. $fields: values to show again after a failed save. */
 function kop_glossary_editor_form($state, $fields) {
     $entries = kop_glossary_entries_by_id($state['data']);
+
+    /* A reader's note this edit answers. */
+    $feedback_id = (int) ($_REQUEST['kop_ge_feedback'] ?? ($_GET['feedback'] ?? 0));
+    $feedback = null;
+    if ($feedback_id > 0 && function_exists('kop_glossary_feedback_table')) {
+        global $wpdb;
+        $feedback = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . kop_glossary_feedback_table() . ' WHERE id = %d', $feedback_id));
+    }
+
     $entry_id = (string) wp_unslash($_REQUEST['kop_ge_entry'] ?? ($_GET['entry'] ?? ''));
+    /* A note's own record of its entry beats a stale id in the link. */
+    if ($feedback && !isset($entries[$entry_id]) && function_exists('kop_glossary_feedback_entry_id')) {
+        $entry_id = kop_glossary_feedback_entry_id($feedback);
+    }
     $entry = $entry_id !== '' ? ($entries[$entry_id] ?? null) : null;
     if ($entry_id !== '' && !$entry) {
         echo '<h1>Glossary Editor</h1><div class="notice notice-error"><p>No entry "' . esc_html($entry_id) . '". It may have been renamed.</p></div>';
@@ -823,14 +836,6 @@ function kop_glossary_editor_form($state, $fields) {
             'reported'  => $orig ? kop_glossary_tag_lines($orig['reported']) : '',
             'container' => $entry ? kop_glossary_container_label($entry['container']) : ($section_default !== '' ? $section_default : 'Shared Terms A–Z'),
         );
-    }
-
-    /* A reader's note this edit answers. */
-    $feedback_id = (int) ($_REQUEST['kop_ge_feedback'] ?? ($_GET['feedback'] ?? 0));
-    $feedback = null;
-    if ($feedback_id > 0 && function_exists('kop_glossary_feedback_table')) {
-        global $wpdb;
-        $feedback = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . kop_glossary_feedback_table() . ' WHERE id = %d', $feedback_id));
     }
 
     echo '<h1>' . ($entry ? 'Edit "' . esc_html($entry['term']) . '"' : 'Add a term') . '</h1>';
