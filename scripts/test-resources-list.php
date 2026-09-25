@@ -16,17 +16,18 @@ if (PHP_SAPI !== 'cli') {
 }
 
 define('ABSPATH', dirname(__DIR__) . '/');
+define('KOP_REPORTING_SLUG', 'report-abuse'); // inc/reporting-directory.php
 
 // --- WordPress stubs --------------------------------------------------------
 
 // Pages this install is pretending to have. 'families' is deliberately absent,
 // so the drop rule gets exercised.
 $GLOBALS['kop_test_pages'] = array(
-    'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs',
     'researchreports',
     'inspection-reports',
     'location-index',
     'tti-data-submission',
+    'report-abuse',
 );
 $GLOBALS['kop_test_can_edit'] = false;
 
@@ -163,6 +164,7 @@ $html = ob_get_clean();
 contains('the module renders', $html, 'class="kop-hub-module kop-resources"');
 contains('a published group', $html, 'Survivor support');
 contains('an external link opens in a new tab', $html, 'target="_blank" rel="noopener"');
+contains('the legal action guide links its PDF', $html, 'Survivors-Guide-to-Legal-Action-Against-Troubled-Teen-Industry-Programs.pdf');
 $internal = strpos($html, 'href="https://example.test/researchreports/"');
 check('an internal link is not a new tab', $internal !== false && strpos(substr($html, $internal, 120), 'target="_blank"') === false, true);
 contains('the archived entry is marked', $html, 'class="kop-res-archived"');

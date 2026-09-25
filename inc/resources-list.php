@@ -46,7 +46,7 @@ if (!defined('KOP_RESOURCES_SLUG')) {
  *
  * Ported from the /resources/ page as it stood in September 2026. Two changes
  * were made on the way: the Survivor's Guide link pointed at a /staging/ URL
- * and is now resolved from its slug, and SCIAD, which has been down since
+ * and now goes to the PDF itself, and SCIAD, which has been down since
  * November 2024, links to its snapshot rather than to nothing.
  */
 function kop_resources_groups() {
@@ -81,8 +81,10 @@ function kop_resources_groups() {
             'entries' => array(
                 array(
                     'name' => "A Survivor's Guide to Legal Action Against Troubled Teen Industry Programs",
-                    'page' => 'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs',
-                    'note' => 'By Shannon Saul. Statutes of limitation, what evidence matters, and what to expect. Read it here or download it.',
+                    // The page that wrapped this PDF was retired for it on
+                    // 2026-09-25 (inc/redirects.php), so it is linked directly.
+                    'url'  => 'https://kidsoverprofits.org/wp-content/uploads/2024/08/Survivors-Guide-to-Legal-Action-Against-Troubled-Teen-Industry-Programs.pdf',
+                    'note' => 'By Shannon Saul. Statutes of limitation, what evidence matters, and what to expect. PDF.',
                 ),
                 array(
                     'name' => 'Five Facts About the Troubled Teen Industry',
