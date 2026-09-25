@@ -78,6 +78,139 @@ function kop_hub_config($slug) {
                 ),
             ),
         ),
+
+        // The editor text links four of the five articles under History, so
+        // there is no reading list; the one it leaves out is the action.
+        'history' => array(
+            'standfirst' => 'How the troubled teen industry grew out of centuries of institutions for controlling children, and how survivors and families have fought back.',
+            'actions'    => array(
+                array('label' => 'Start with 1919 to 1969', 'slug' => 'tti-history-part-one'),
+                array('label' => 'In loving memory', 'slug' => 'in-loving-memory'),
+                array('label' => 'Network map', 'slug' => 'network-map'),
+            ),
+        ),
+
+        'survivors' => array(
+            'standfirst' => 'For people who went through a troubled teen program: support groups, advice written by other survivors, legal options and places to tell your story.',
+            'actions'    => array(
+                array('label' => 'Find support', 'slug' => 'resources'),
+                array('label' => 'Guide to legal action', 'slug' => 'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs'),
+                array('label' => 'Where to report abuse', 'template' => 'page-report-abuse.php', 'path' => '/report-abuse/'),
+            ),
+            'reading'       => 'Written for survivors',
+            'reading_notes' => array(
+                'common-survivor-experiences' => 'What many survivors feel after leaving a program: confusion, mistrust and the fear of being sent back.',
+                'spiritual-abuse'             => 'How programs misuse religious belief and authority, and the religious trauma that follows.',
+                'survivor-resources-nature'   => 'Getting back to green spaces after a wilderness program, on your own terms.',
+            ),
+            'contribute' => array(
+                'heading' => 'Share what you know',
+                'links'   => array(
+                    array('label' => 'Upload documents anonymously', 'slug' => 'anon-submit',
+                          'note' => 'Records, letters or photos from a program. Encrypted before they leave your browser.'),
+                    array('label' => 'Tell us about a program', 'template' => 'page-data.php', 'path' => '/tti-data-submission/',
+                          'note' => 'Add or correct what we hold on a facility.'),
+                ),
+            ),
+        ),
+
+        // The editor text links the article summaries itself; no reading list.
+        'researchreports' => array(
+            'standfirst' => 'Government audits, academic studies and investigative reports on youth residential treatment, with our notes on what they found.',
+            'actions'    => array(
+                array('label' => 'Browse the document archive', 'slug' => 'document-archive'),
+                array('label' => 'Severe inspection reports', 'template' => 'page-severe-reports.php', 'path' => '/severe-reports/'),
+            ),
+            'contribute' => array(
+                'heading' => 'Have a report we should read?',
+                'links'   => array(
+                    array('label' => 'Upload it anonymously', 'slug' => 'anon-submit',
+                          'note' => 'Encrypted before it leaves your browser.'),
+                ),
+            ),
+        ),
+
+        'families' => array(
+            'standfirst' => 'How to support someone who survived a troubled teen program: what to say, what to do, and what to avoid.',
+            'actions'    => array(
+                array('label' => 'Common survivor experiences', 'slug' => 'common-survivor-experiences'),
+                array('label' => 'Resources', 'slug' => 'resources'),
+            ),
+        ),
+
+        'where-are-the-kids' => array(
+            'standfirst' => 'Troubled teen programs state by state and country by country, with the inspection reports each state publishes.',
+            'actions'    => array(
+                array('label' => 'Parent companies and chains', 'template' => 'page-tti-program-index.php', 'path' => '/tti-program-index/'),
+                array('label' => 'Network map', 'slug' => 'network-map'),
+                array('label' => 'Severe inspection reports', 'template' => 'page-severe-reports.php', 'path' => '/severe-reports/'),
+            ),
+            'contribute' => array(
+                'heading' => 'Know a program we are missing?',
+                'links'   => array(
+                    array('label' => 'Tell us about a program', 'template' => 'page-data.php', 'path' => '/tti-data-submission/',
+                          'note' => 'Add a facility or correct what we hold on one.'),
+                    array('label' => 'Where to report abuse', 'template' => 'page-report-abuse.php', 'path' => '/report-abuse/',
+                          'note' => 'The agencies that take reports about a program, state by state.'),
+                ),
+            ),
+        ),
+
+        'advocates' => array(
+            'standfirst' => 'Research, history and program data for anyone organizing against the troubled teen industry.',
+            'actions'    => array(
+                array('label' => 'Law & Policy', 'slug' => 'law-policy'),
+                array('label' => 'Network map', 'slug' => 'network-map'),
+                array('label' => 'Glossary', 'template' => 'page-glossary.php', 'path' => '/glossary/'),
+            ),
+            'contribute' => array(
+                'heading' => 'Work with us',
+                'links'   => array(
+                    array('label' => 'Volunteer', 'slug' => 'volunteer',
+                          'note' => 'Research, data entry, writing and outreach.'),
+                    array('label' => 'Submit legislation', 'template' => 'page-submit-legislation.php', 'path' => '/submit-legislation/',
+                          'note' => 'A bill, a hearing or a vote we should be following.'),
+                ),
+            ),
+        ),
+
+        'journalists' => array(
+            'standfirst' => 'Sources and guidance for reporting on the troubled teen industry and interviewing survivors.',
+            'actions'    => array(
+                array('label' => 'Research & Reports', 'slug' => 'researchreports'),
+                array('label' => 'Lawsuits', 'template' => 'page-lawsuits.php', 'path' => '/lawsuits/'),
+                array('label' => 'News feed', 'template' => 'page-news-feed.php', 'path' => '/tti-news-feed/'),
+            ),
+        ),
+
+        'support' => array(
+            'standfirst' => 'What your donations pay for now, and what we hope to fund next.',
+            'contribute' => array(
+                'heading' => 'Other ways to help',
+                'links'   => array(
+                    array('label' => 'Volunteer', 'slug' => 'volunteer',
+                          'note' => 'Give time instead: research, data entry, writing and outreach.'),
+                    array('label' => 'Tell us about a program', 'template' => 'page-data.php', 'path' => '/tti-data-submission/',
+                          'note' => 'Add or correct what we hold on a facility.'),
+                ),
+            ),
+        ),
+
+        'volunteer' => array(
+            'standfirst' => 'Help us document the troubled teen industry: submit facility data, documents, news, lawsuits and legislation, or join the team.',
+            'actions'    => array(
+                array('label' => 'Submit facility data', 'template' => 'page-data.php', 'path' => '/tti-data-submission/'),
+                array('label' => 'Upload documents anonymously', 'slug' => 'anon-submit'),
+            ),
+        ),
+
+        'resources' => array(
+            'standfirst' => 'Crisis lines, survivor support groups, advocacy organizations and further reading, grouped by what you need.',
+            'actions'    => array(
+                array('label' => 'Where to report abuse', 'template' => 'page-report-abuse.php', 'path' => '/report-abuse/'),
+                array('label' => 'For survivors', 'slug' => 'survivors'),
+            ),
+        ),
     ));
     return isset($hubs[$slug]) ? $hubs[$slug] : array();
 }
@@ -214,8 +347,14 @@ function kop_hub_is_current() {
     return is_singular('page') && get_page_template_slug() === 'templates/page-hub.php';
 }
 
-/** The contents box lists headings the reader can already see; not on hubs. */
+/**
+ * The contents box lists headings the reader can already see; not on hubs.
+ * Easy Table of Contents (2.0.88) runs the legacy hook, then discards its
+ * answer and returns the new hook's, so the new one is the one that counts;
+ * both are hooked in case a later version reads the legacy one again.
+ */
 add_filter('ez_toc_maybe_apply_the_content_filter', 'kop_hub_no_toc', 99);
+add_filter('eztoc_maybe_apply_the_content_filter', 'kop_hub_no_toc', 99);
 function kop_hub_no_toc($apply) {
     return kop_hub_is_current() ? false : $apply;
 }

@@ -140,7 +140,10 @@ function edit_post_link($text, $before, $after) { echo $before . '<a href="#edit
 function A2A_SHARE_SAVE_add_to_content($c) { return $c . '<div class="addtoany_content">[in-content share]</div>'; }
 add_filter('the_content', 'A2A_SHARE_SAVE_add_to_content', 98);
 function kop_test_ez_toc($c) {
-    return apply_filters('ez_toc_maybe_apply_the_content_filter', true)
+    // As the plugin does it: the legacy hook runs, its answer is dropped,
+    // and the new hook's answer decides.
+    apply_filters('ez_toc_maybe_apply_the_content_filter', true);
+    return apply_filters('eztoc_maybe_apply_the_content_filter', true)
         ? '<div id="ez-toc-container">[table of contents]</div>' . $c : $c;
 }
 add_filter('the_content', 'kop_test_ez_toc', 100);
@@ -230,12 +233,33 @@ check('every reading item has a line under it', isset($r[1][0]) && substr_count(
 preg_match('#<section class="kop-hub-contribute".*?</section>#s', $law, $c);
 check('contribute has three links', isset($c[0]) && substr_count($c[0], '<a href=') === 3);
 
-echo "hubs without settings keep their editor content\n";
+echo "every hub's settings\n";
 foreach ($rendered as $slug => $html) {
-    if ($slug === 'law-policy' || kop_hub_config($slug)) {
-        continue;
+    $config = kop_hub_config($slug);
+    $keeps  = !isset($config['content']) || $config['content'] !== false;
+    check("$slug " . ($keeps ? 'prints' : 'leaves out') . ' its editor content',
+        (strpos($html, 'entry-content single-content') !== false) === $keeps);
+    if (!empty($config['standfirst'])) {
+        // Editorials and Investigatory Spotlight take theirs from
+        // inc/hub-posts.php, which is not loaded here.
+        check("$slug has a standfirst", strpos($html, 'kop-hub-standfirst') !== false);
     }
-    check("$slug prints its editor content", strpos($html, 'entry-content single-content') !== false);
+    // A link whose page is missing is dropped without a word, so a typo in a
+    // slug would only show as a button that is not there.
+    foreach (array('actions' => $config['actions'] ?? array(), 'contribute' => $config['contribute']['links'] ?? array()) as $kind => $links) {
+        if (!$links) {
+            continue;
+        }
+        $resolved = kop_hub_links($links);
+        $dropped  = array_diff(array_column($links, 'label'), array_column($resolved, 'label'));
+        check("$slug $kind all resolve", !$dropped, implode(', ', $dropped));
+    }
+    if (!empty($config['reading'])) {
+        $children = array_filter(kop_article_children($slug), 'kop_test_page');
+        $notes    = $config['reading_notes'] ?? array();
+        $bare     = array_filter($children, function ($c) use ($notes) { return !has_excerpt(kop_test_page($c)) && empty($notes[$c]); });
+        check("$slug reading has a line for every article", !$bare, implode(', ', $bare));
+    }
 }
 
 echo $failures ? "\n$failures failed\n" : "\nall passed\n";
