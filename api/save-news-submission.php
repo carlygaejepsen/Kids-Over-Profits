@@ -138,6 +138,26 @@ try {
         echo json_encode(['success' => false, 'error' => 'Invalid JSON input']);
         exit;
     }
+
+    $organizationLogoName = $data['organizationLogoName'] ?? $data['organization_logo_name'] ?? '';
+    $organizationLogoUrl = $data['organizationLogoUrl'] ?? $data['organization_logo_url'] ?? '';
+    if (!is_string($organizationLogoName) || !is_string($organizationLogoUrl)) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'Organization logo name and URL must be text values.']);
+        exit;
+    }
+    $organizationLogoName = trim($organizationLogoName);
+    $organizationLogoUrl = trim($organizationLogoUrl);
+    if ($organizationLogoUrl !== '') {
+        $logoScheme = strtolower((string)(parse_url($organizationLogoUrl, PHP_URL_SCHEME) ?: ''));
+        if (!filter_var($organizationLogoUrl, FILTER_VALIDATE_URL) || $logoScheme !== 'https') {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'The organization logo URL must be a valid HTTPS URL.']);
+            exit;
+        }
+    }
+    $data['organizationLogoName'] = $organizationLogoName;
+    $data['organizationLogoUrl'] = $organizationLogoUrl;
     
     // Extract key fields
     $articleTitle = $data['title'] ?? $data['article_title'] ?? '';

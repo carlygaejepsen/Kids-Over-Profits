@@ -1193,6 +1193,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'article_url', label: 'Article URL', type: 'url' },
             { key: 'article_type', label: 'Article type', type: 'select', options: ['general','lawsuit','event','expose','arrest','closure','corporate'] },
             { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'organizationLogoName', label: 'Featured company / organization', type: 'text' },
+            { key: 'organizationLogoUrl', label: 'Company logo image URL (HTTPS)', type: 'url' },
             { key: 'facilities_mentioned', label: 'Facilities mentioned (one per line)', type: 'list' },
             { key: 'staff_mentioned', label: 'Staff/owners mentioned (one per line)', type: 'list' },
             { key: 'survivors_mentioned', label: 'Survivors mentioned (one per line)', type: 'list' },
@@ -1230,8 +1232,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /** Where to read a field's current value from, per type. */
-    function editorValueSource(type, submission) {
-        if (RECORD_TYPES.has(type)) return submission.json_data || {};
+    function editorValueSource(type, submission, jsonData) {
+        if (RECORD_TYPES.has(type)) return jsonData || submission.json_data || {};
+        if (type === 'news') return Object.assign({}, jsonData || {}, submission);
         return submission;
     }
 
@@ -1277,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         structuredEditorSection.style.display = 'block';
         structuredEditorBody.innerHTML = '';
-        const src = editorValueSource(type, submission);
+        const src = editorValueSource(type, submission, jsonData);
         const grid = document.createElement('div');
         grid.className = 'kop-edit-grid';
 

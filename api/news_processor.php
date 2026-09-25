@@ -139,6 +139,20 @@ get_header();
 
                     <div class="news-grid-2">
                         <div class="news-form-group">
+                            <label>Featured Company or Organization</label>
+                            <input type="text" name="organizationLogoName" class="news-input" placeholder="e.g., Acadia Healthcare">
+                        </div>
+                        <div class="news-form-group">
+                            <label>Company Logo Image URL</label>
+                            <input type="url" name="organizationLogoUrl" class="news-input" placeholder="https://...">
+                        </div>
+                    </div>
+                    <p class="news-help-text" style="margin: -4px 0 12px; font-size: 0.85em; color: #666;">
+                        Optional. Use this when the story centers on a company or facility. Add its name and a direct HTTPS image URL; a copy in the site Media Library is preferred.
+                    </p>
+
+                    <div class="news-grid-2">
+                        <div class="news-form-group">
                             <label>Staff/Owners Mentioned</label>
                             <div id="staff-container" class="news-dynamic-fields"></div>
                             <button type="button" class="news-btn news-btn-add" data-add-field="staff">+ Add Staff</button>

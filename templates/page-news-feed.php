@@ -608,6 +608,15 @@ try {
                 // So yes, alternate_title is likely the preferred one for display if it exists.
                 $displayTitle = !empty($item['alternate_title']) ? $item['alternate_title'] : $item['article_title'];
 
+                $news_json = json_decode($item['json_data'] ?? '{}', true);
+                $news_json = is_array($news_json) ? $news_json : [];
+                $organization_logo_name_raw = $news_json['organizationLogoName'] ?? $news_json['organization_logo_name'] ?? '';
+                $organization_logo_url_raw = $news_json['organizationLogoUrl'] ?? $news_json['organization_logo_url'] ?? '';
+                $organization_logo_name = is_string($organization_logo_name_raw) ? trim($organization_logo_name_raw) : '';
+                $organization_logo_url = is_string($organization_logo_url_raw) ? trim($organization_logo_url_raw) : '';
+                $organization_logo_scheme = strtolower((string)(wp_parse_url($organization_logo_url, PHP_URL_SCHEME) ?: ''));
+                if ($organization_logo_scheme !== 'https') $organization_logo_url = '';
+
                 // Other outlets' articles about this same story (see the
                 // story_group_id collapse above the card loop).
                 $story_key = !empty($item['story_group_id']) ? 'g' . $item['story_group_id'] : 'i' . $item['id'];
@@ -619,6 +628,16 @@ try {
             ?>
                 <?php // Delimit tags with '|' — facility names contain commas ("Excel Academy, Conroe"). ?>
                 <article class="news-card" data-type="<?php echo esc_attr($item['article_type']); ?>" data-tags="<?php echo esc_attr(implode('|', $tags)); ?>">
+                    <?php if ($organization_logo_url !== ''): ?>
+                        <figure class="news-card-brand">
+                            <img src="<?php echo esc_url($organization_logo_url, ['https']); ?>"
+                                 alt="<?php echo esc_attr($organization_logo_name ? $organization_logo_name . ' logo' : 'Organization logo'); ?>"
+                                 loading="lazy" decoding="async">
+                            <?php if ($organization_logo_name !== ''): ?>
+                                <figcaption><?php echo esc_html($organization_logo_name); ?></figcaption>
+                            <?php endif; ?>
+                        </figure>
+                    <?php endif; ?>
                     <div class="news-card-header">
                         <span class="news-type-badge type-<?php echo esc_attr($item['article_type']); ?>">
                             <?php echo esc_html(ucfirst($item['article_type'])); ?>

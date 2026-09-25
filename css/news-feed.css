@@ -60,6 +60,34 @@
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
+/* Optional company/facility logos for stories centered on an organization. */
+.news-card-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    aspect-ratio: 16 / 9;
+    margin: 0;
+    padding: 1.25rem;
+    background: var(--kop-sand, #F2EEDF);
+    text-align: center;
+}
+
+.news-card-brand img {
+    display: block;
+    max-width: min(78%, 360px);
+    max-height: 72%;
+    object-fit: contain;
+}
+
+.news-card-brand figcaption {
+    color: var(--kop-midnight-blue, #000435);
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
 /* Card Header & Type Badge */
 .news-card-header {
     padding: 1.5rem 1.5rem 0.5rem;

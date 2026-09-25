@@ -139,6 +139,7 @@ function kop_editable_fields($type) {
         case 'news':
             return [
                 'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
+                'json_fields' => ['organizationLogoName','organizationLogoUrl'],
                 'json_array' => ['facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings'],
                 'enums' => [
                     'article_type' => ['lawsuit','event','expose','arrest','closure','corporate','general'],
@@ -786,9 +787,14 @@ try {
 
             $set = [];
             $params = [];
+            $newsJsonFields = [];
             $newsMentions = null; // normalized facilities_mentioned, for post-update link sync
             $lawsuitMentions = null; // ditto for lawsuit_facility_links
             foreach ($fields as $col => $val) {
+                if (in_array($col, $editable['json_fields'] ?? [], true)) {
+                    $newsJsonFields[$col] = $val;
+                    continue;
+                }
                 if (!in_array($col, $editable['cols'], true)) {
                     continue; // not editable
                 }
@@ -861,6 +867,34 @@ try {
                 }
                 $set[] = "`$col` = ?";
                 $params[] = $val;
+            }
+
+            if ($type === 'news' && $newsJsonFields) {
+                $jsonStmt = $pdo->prepare("SELECT json_data FROM $table WHERE id = ?");
+                $jsonStmt->execute([(int)$id]);
+                $newsJson = json_decode((string)$jsonStmt->fetchColumn(), true);
+                if (!is_array($newsJson)) $newsJson = [];
+
+                if (array_key_exists('organizationLogoUrl', $newsJsonFields)) {
+                    $logoUrl = is_string($newsJsonFields['organizationLogoUrl'])
+                        ? trim($newsJsonFields['organizationLogoUrl']) : '';
+                    if ($logoUrl !== '') {
+                        $logoScheme = strtolower((string)(parse_url($logoUrl, PHP_URL_SCHEME) ?: ''));
+                        if (!filter_var($logoUrl, FILTER_VALIDATE_URL) || $logoScheme !== 'https') {
+                            http_response_code(400);
+                            echo json_encode(['success' => false, 'error' => 'The organization logo URL must be a valid HTTPS URL.']);
+                            exit;
+                        }
+                    }
+                    $newsJson['organizationLogoUrl'] = $logoUrl;
+                }
+                if (array_key_exists('organizationLogoName', $newsJsonFields)) {
+                    $newsJson['organizationLogoName'] = is_string($newsJsonFields['organizationLogoName'])
+                        ? trim($newsJsonFields['organizationLogoName']) : '';
+                }
+
+                $set[] = 'json_data = ?';
+                $params[] = json_encode($newsJson, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             }
 
             if (!$set) {

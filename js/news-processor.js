@@ -5,6 +5,7 @@
     const formData = {
         title: '', author: '', publicationDate: '', publicationName: '', url: '',
         location: '', tags: '',
+        organizationLogoName: '', organizationLogoUrl: '',
         facilities: [], staff: '', survivors: '', contentWarnings: [],
         summary: '', alternateTitle: '', needsAlternateTitle: false,
         articleType: '', plaintiffs: '', defendants: '', legalRep: '',
@@ -1460,6 +1461,8 @@
                 url: formData.url,
                 location: formData.location,
                 tags: filterGenericTags((formData.tags || '').split('\n')).join('\n'),
+                organizationLogoName: formData.organizationLogoName,
+                organizationLogoUrl: formData.organizationLogoUrl,
                 articleType: formData.articleType,
                 facilities: formData.facilities,
                 staff: formData.staff,

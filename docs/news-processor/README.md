@@ -62,6 +62,7 @@ The form captures:
 - article title, publication, author, URL, and publication date
 - location and tags
 - facilities and companies mentioned (linked to database facilities when picked from the suggestions, plain text otherwise)
+- optional featured company/facility name and logo image URL for stories centered on that organization (HTTPS; a site Media Library image is preferred)
 - staff, owners, survivors, and victims mentioned
 - trauma-sensitive summary and alternate title when needed
 - content warnings and article-type specific details (types: lawsuit, event, expose, arrest, closure, corporate, general)
@@ -79,6 +80,7 @@ The form captures:
 
 ### Local Draft Persistence
 - `js/news-processor.js` stores working form state and saved values in `localStorage`
+- the optional organization name and logo URL are saved with the article's `json_data`, can be edited in the Submissions Review structured editor, and are rendered in the news card when supplied
 - the AI toggle and custom instructions are also remembered
 - accidental refreshes should not wipe the current draft
 
