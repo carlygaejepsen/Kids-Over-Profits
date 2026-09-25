@@ -7,6 +7,17 @@ template, plus the broader group of published posts that do not have a
 specialized template. The source inventory and repository relationship are in
 [REPOSITORY-MAP.md](REPOSITORY-MAP.md).
 
+## Status
+
+- 2026-09-25: Phase 0 done: [PAGE-CLASSIFICATION.md](PAGE-CLASSIFICATION.md)
+  gives every default-template page a decision. First slice shipped:
+  `editorials` and `investigatory-spotlight` are hubs whose posts list is
+  `inc/hub-posts.php` (test: `php scripts/test-hub-posts.php`); `overview` is
+  an article under Law & Policy; `page-hub.php` takes a standfirst from the
+  `kop_hub_standfirst` filter when a page has no excerpt (no hub page has one).
+  `news` is not a hub and cannot redirect yet: its 78 posts are not in the
+  news feed.
+
 ## Goal
 
 Every intentional public page should have a deliberate PHP rendering path,

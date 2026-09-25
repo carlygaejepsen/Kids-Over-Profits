@@ -645,6 +645,10 @@ function kop_template_assignments() {
         'volunteer'            => 'page-hub.php',
         'law-policy'           => 'page-hub.php',
         'resources'            => 'page-hub.php',
+        // Category landing pages that were a bare query block (2026-09-25):
+        // the posts list is inc/hub-posts.php.
+        'editorials'              => 'page-hub.php',
+        'investigatory-spotlight' => 'page-hub.php',
 
         // Long-form articles, timelines and case analyses (phase 6): reading layout only.
         'advocacy-history'                                             => 'page-article.php',
@@ -676,6 +680,7 @@ function kop_template_assignments() {
         'jane-june-doe-v-trails-carolina-et-al-summary'                => 'page-article.php',
         'john-doe-v-trails-complaint-summary-defendant-information'    => 'page-article.php',
         'news-2'                                                       => 'page-article.php',
+        'overview'                                                     => 'page-article.php',
 
         'wyoming'        => 'page-state.php',
         'australia'      => 'page-country.php',
@@ -1644,7 +1649,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '43';
+    $version = '44';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

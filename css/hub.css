@@ -825,3 +825,86 @@ a.kop-res-name:focus-visible {
 .kop-res-review code {
     font-size: 0.85em;
 }
+
+/* Category post lists: Editorials, Investigatory Spotlight (inc/hub-posts.php) */
+
+.kop-hub-post-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.kop-hub-post {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem 1.5rem;
+    margin: 0;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--kop-border-secondary, #d9d3c0);
+}
+
+.kop-hub-post:first-child {
+    padding-top: 0.25rem;
+}
+
+.kop-hub-post:last-child {
+    border-bottom: 0;
+}
+
+@media (min-width: 640px) {
+    .kop-hub-post.has-thumb {
+        grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+    }
+}
+
+.kop-hub-post-thumb {
+    display: block;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--kop-sand, #f2eedf);
+    aspect-ratio: 16 / 10;
+}
+
+.kop-hub-post-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.kop-hub-post-body {
+    min-width: 0;
+}
+
+.kop-hub-post-title {
+    margin: 0 0 0.2rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.kop-hub-post-title a {
+    color: var(--kop-navy-blue, #000080);
+    text-decoration: none;
+}
+
+.kop-hub-post-title a:hover,
+.kop-hub-post-title a:focus-visible {
+    text-decoration: underline;
+}
+
+.kop-hub-post .kop-hub-meta {
+    margin: 0 0 0.5rem;
+}
+
+.kop-hub-post-summary {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.kop-hub-empty {
+    margin: 0;
+    padding: 1rem 1.25rem;
+    background: var(--kop-sand, #f2eedf);
+    border-radius: 4px;
+}

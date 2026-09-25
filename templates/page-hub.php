@@ -236,8 +236,12 @@ while (have_posts()) :
 
         <header class="entry-header page-title title-align-center kop-hub-header">
             <h1 class="entry-title"><?php the_title(); ?></h1>
-            <?php if (has_excerpt()) : ?>
-                <p class="kop-hub-standfirst"><?php echo esc_html(get_the_excerpt()); ?></p>
+            <?php
+            // The excerpt when an editor wrote one; otherwise a hub's module
+            // file can supply one on 'kop_hub_standfirst' (inc/hub-posts.php).
+            $kop_hub_standfirst = has_excerpt() ? get_the_excerpt() : (string) apply_filters('kop_hub_standfirst', '', $kop_hub_slug);
+            if ($kop_hub_standfirst !== '') : ?>
+                <p class="kop-hub-standfirst"><?php echo esc_html($kop_hub_standfirst); ?></p>
             <?php endif; ?>
         </header>
 

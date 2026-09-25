@@ -63,7 +63,9 @@ function kop_article_parents() {
         'the-kids-are-not-alright'                     => 'researchreports',
         'notes-quotes-summary'                         => 'researchreports',
 
-        // Law and policy: the statutes, the bills and the case analyses.
+        // Law and policy: the statutes, the bills and the case analyses,
+        // after Overview, five paragraphs on why the industry needs oversight.
+        'overview'                                     => 'law-policy',
         'sicaa'                                        => 'law-policy',
         'challenges-in-maine'                          => 'law-policy',
         'doe-v-trails-motions'                         => 'law-policy',
