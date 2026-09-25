@@ -72,7 +72,20 @@ function kop_doc_archive_featured() {
 
 /** Folder names that are site plumbing rather than an archive. */
 function kop_doc_archive_skip_names() {
-    return array('blog', 'stock photos', 'recent user submissions', 'uncategorized', 'google drive');
+    return array('blog', 'stock photos', 'recent user submissions', 'uncategorized', 'google drive', 'focus locations');
+}
+
+/**
+ * A subfolder that sorts a collection by topic ("Newsletters", "Staff
+ * Training") rather than naming a program. Those stay inside their parent's
+ * collection instead of cluttering the A to Z list.
+ */
+function kop_doc_archive_is_topic_folder($name) {
+    return (bool) preg_match('/^(newsletters?|marketing.*|staff training.*|philosophy.*|criticism|studies|directories|strategy|news coverage|important people|affiliates|parent guides?|jtsp|brochures?|press.*|photos?|pictures|images|misc.*|other|documents?|polic(y|ies)|forms|contracts?|lawsuits?|legal|reports?|articles?|media|videos?|correspondence|letters|financials?|tax.*|990s?|court.*|testimon(y|ies)|blog|stock photos|websites?|web ?pages?|history|timeline)$/i', trim($name));
+}
+
+function kop_doc_archive_states() {
+    return array('Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming');
 }
 
 /** A filename-slug title ("gao-08-713t") read as words. */
@@ -116,7 +129,7 @@ function kop_doc_archive_covers($folder_id, $n = 3) {
  * removed, and every six hours.
  */
 function kop_doc_archive_data() {
-    $cached = get_transient('kop_doc_archive_v1');
+    $cached = get_transient('kop_doc_archive_v2');
     if (is_array($cached)) {
         return $cached;
     }
@@ -152,22 +165,45 @@ function kop_doc_archive_data() {
         $types[] = $row;
     }
 
-    // Every top-level folder, same-named duplicates folded into the copy that
-    // holds the most documents (the tree carries many empty duplicates).
+    // Every top-level folder, plus the program folders one level down (a
+    // program filed under its operator: "UHS / Provo Canyon School").
+    // Same-named duplicates fold into the copy holding the most documents
+    // (the tree carries many empty duplicates).
     $skip = kop_doc_archive_skip_names();
     $programs = array();
+    $clean = function ($n) { return trim(html_entity_decode((string) $n, ENT_QUOTES, 'UTF-8')); };
     foreach ($folders as $f) {
-        if ((int) $f['parent'] !== 0 || (int) $f['files'] === 0 || isset($type_ids[(int) $f['id']])) {
+        $fid    = (int) $f['id'];
+        $parent = (int) $f['parent'];
+        if ((int) $f['files'] === 0 || isset($type_ids[$fid])) {
             continue;
         }
-        $name = trim(html_entity_decode((string) $f['name'], ENT_QUOTES, 'UTF-8'));
+        $name = $clean($f['name']);
         $key  = strtolower($name);
         if ($name === '' || in_array($key, $skip, true)) {
             continue;
         }
+        $within = '';
+        if ($parent !== 0) {
+            // One level down only, under a real top-level folder, and only
+            // when the name reads as a program rather than a topic.
+            if (!isset($by_id[$parent]) || (int) $by_id[$parent]['parent'] !== 0 || isset($type_ids[$parent])
+                || kop_doc_archive_is_topic_folder($name)) {
+                continue;
+            }
+            $within = $clean($by_id[$parent]['name']);
+            // State folders are named in capitals ("NEVADA"); acronyms
+            // like NATSAP are not states and keep theirs.
+            if (in_array(ucwords(strtolower($within)), kop_doc_archive_states(), true)) {
+                $within = ucwords(strtolower($within));
+            }
+            if (in_array(strtolower($within), $skip, true)) {
+                continue;
+            }
+        }
         if (!isset($programs[$key]) || (int) $f['files'] > $programs[$key]['best']) {
             $total = isset($programs[$key]) ? $programs[$key]['count'] : 0;
-            $programs[$key] = array('name' => $name, 'folder' => (int) $f['id'], 'best' => (int) $f['files'], 'count' => $total);
+            $programs[$key] = array('name' => $name, 'folder' => $fid, 'best' => (int) $f['files'], 'count' => $total, 'within' => $within);
         }
         $programs[$key]['count'] += (int) $f['files'];
     }
@@ -203,13 +239,31 @@ function kop_doc_archive_data() {
         "SELECT p.ID, p.post_title, p.post_date, p.post_mime_type, MIN(af.folder_id) AS folder_id
          FROM $rel af INNER JOIN {$wpdb->posts} p ON p.ID = af.attachment_id
          WHERE p.post_type = 'attachment' AND p.post_mime_type NOT LIKE 'image/%'{$not_hidden}
-         GROUP BY p.ID ORDER BY p.post_date DESC LIMIT 40"
+         GROUP BY p.ID ORDER BY p.post_date DESC LIMIT 400"
     );
+    // At most two from any one collection, so a batch import of forty
+    // newsletters does not fill the list.
+    $per_root = array();
     foreach ((array) $rows as $r) {
         $fid = (int) $r->folder_id;
-        $fname = isset($by_id[$fid]) ? trim(html_entity_decode((string) $by_id[$fid]['name'], ENT_QUOTES, 'UTF-8')) : '';
-        if ($fname === '' || in_array(strtolower($fname), $skip, true)) {
+        if (!isset($by_id[$fid])) {
             continue;
+        }
+        $root = $fid;
+        for ($i = 0; $i < 10 && (int) $by_id[$root]['parent'] !== 0 && isset($by_id[(int) $by_id[$root]['parent']]); $i++) {
+            $root = (int) $by_id[$root]['parent'];
+        }
+        $fname = $clean($by_id[$fid]['name']);
+        $rname = $clean($by_id[$root]['name']);
+        if ($fname === '' || in_array(strtolower($fname), $skip, true) || in_array(strtolower($rname), $skip, true)) {
+            continue;
+        }
+        $per_root[$root] = (isset($per_root[$root]) ? $per_root[$root] : 0) + 1;
+        if ($per_root[$root] > 2) {
+            continue;
+        }
+        if ($root !== $fid) {
+            $fname = $rname . ' / ' . $fname;
         }
         $recent[] = array(
             'id'     => (int) $r->ID,
@@ -221,7 +275,7 @@ function kop_doc_archive_data() {
             'folder' => $fid,
             'fname'  => $fname,
         );
-        if (count($recent) >= 6) {
+        if (count($recent) >= 8) {
             break;
         }
     }
@@ -233,14 +287,14 @@ function kop_doc_archive_data() {
         'programs' => array_values($programs),
         'recent'   => $recent,
     );
-    set_transient('kop_doc_archive_v1', $data, 6 * HOUR_IN_SECONDS);
+    set_transient('kop_doc_archive_v2', $data, 6 * HOUR_IN_SECONDS);
     return $data;
 }
 
 add_action('add_attachment', 'kop_doc_archive_flush');
 add_action('delete_attachment', 'kop_doc_archive_flush');
 function kop_doc_archive_flush() {
-    delete_transient('kop_doc_archive_v1');
+    delete_transient('kop_doc_archive_v2');
 }
 
 /** The "Start here" row: rated research library items, else the fallback titles. */
@@ -283,7 +337,13 @@ function kop_doc_archive_requested_folder() {
     }
     foreach (kop_get_filebird_folders() as $f) {
         if ((int) $f->id === $id) {
-            return array('id' => $id, 'name' => trim(html_entity_decode((string) $f->name, ENT_QUOTES, 'UTF-8')));
+            $name = trim(html_entity_decode((string) $f->name, ENT_QUOTES, 'UTF-8'));
+            foreach (kop_doc_archive_types() as $type) {
+                if (!empty($type['folder']) && (int) $type['folder'] === $id) {
+                    $name = $type['label'];
+                }
+            }
+            return array('id' => $id, 'name' => $name);
         }
     }
     return null;
@@ -296,6 +356,15 @@ function kop_doc_archive_title_parts($parts) {
         $parts['title'] = $folder['name'] . ' documents';
     }
     return $parts;
+}
+
+/** Yoast writes the <title> itself; give a collection view its own. */
+add_filter('wpseo_title', 'kop_doc_archive_wpseo_title');
+function kop_doc_archive_wpseo_title($title) {
+    if (is_page(KOP_DOC_ARCHIVE_SLUG) && ($folder = kop_doc_archive_requested_folder())) {
+        return $folder['name'] . ' documents - Document Archive - ' . get_bloginfo('name');
+    }
+    return $title;
 }
 
 /** The page's old FileBird blocks are the archive this replaces. */
@@ -446,8 +515,8 @@ function kop_doc_archive_render_landing() {
                     <h3 class="kop-da-letter-h"><?php echo esc_html($letter); ?></h3>
                     <ul>
                         <?php foreach ($group as $p) : ?>
-                            <li data-name="<?php echo esc_attr(strtolower($p['name'])); ?>">
-                                <a href="<?php echo esc_url(kop_doc_archive_collection_url($p['folder'])); ?>"><?php echo esc_html($p['name']); ?></a>
+                            <li data-name="<?php echo esc_attr(strtolower($p['name'] . ' ' . (isset($p['within']) ? $p['within'] : ''))); ?>">
+                                <a href="<?php echo esc_url(kop_doc_archive_collection_url($p['folder'])); ?>"><?php echo esc_html($p['name']); ?><?php if (!empty($p['within'])) : ?> <span class="kop-da-within"><?php echo esc_html($p['within']); ?></span><?php endif; ?></a>
                                 <span class="kop-da-n"><?php echo esc_html(number_format_i18n($p['count'])); ?></span>
                             </li>
                         <?php endforeach; ?>
