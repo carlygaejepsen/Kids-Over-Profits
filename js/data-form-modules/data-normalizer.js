@@ -234,7 +234,7 @@
         // Normalize facilities array
         if (Array.isArray(data.facilities)) {
             data.facilities = data.facilities.map(facility => {
-                // v2 documents are edited in the legacy shape; see facilityFromV2.
+                // Canonical documents are edited in the legacy shape; see facilityFromV2.
                 const normalized = isV2Facility(facility) ? facilityFromV2(facility) : { ...facility };
 
                 // Normalize identification
@@ -813,11 +813,12 @@
     // agree field for field; scripts/check-facility-normalizer-parity.js runs
     // both over a database dump and diffs the output.
     //
-    // The form keeps editing the legacy facility shape. v2 documents are
+    // The form keeps editing the legacy facility shape. Canonical documents are
     // converted to it on load (facilityFromV2) and back on save (facilityToV2)
     // once the site runs the v2 data model (KOP_DATA_FORM_CONFIG.dataModel).
 
-    const V2_SCHEMA_VERSION = 2;
+    const MIN_V2_SCHEMA_VERSION = 2;
+    const FACILITY_SCHEMA_VERSION = 3;
 
     const V2_STATES = {
         AL: 'ALABAMA', AK: 'ALASKA', AZ: 'ARIZONA', AR: 'ARKANSAS', CA: 'CALIFORNIA',
@@ -1171,7 +1172,7 @@
 
     function blankFacilityV2() {
         return {
-            schema_version: V2_SCHEMA_VERSION,
+            schema_version: FACILITY_SCHEMA_VERSION,
             facility_id: null,
             identification: {
                 name: '', nameKey: '', currentName: '', otherNames: [], pastNames: [],
@@ -1190,7 +1191,8 @@
             staff: { administrator: [], notableStaff: [], pastTTIJobs: [] },
             accreditations: { current: [], past: [] },
             memberships: [], certifications: [], licensing: [], profileLinks: [],
-            resources: {}, treatmentTypes: {}, philosophy: {}, conditions: {}, criticalIncidents: {},
+            resources: {}, treatmentTypes: {}, targetedDiagnoses: {}, targetedBehaviors: {}, ttiPractices: {},
+            philosophy: {}, conditions: {}, criticalIncidents: {},
             notes: [], fieldNotes: {},
             documentFolderId: null,
             provenance: {
@@ -1206,6 +1208,7 @@
         'identification', 'locationDetails', 'addressParts', 'address', 'location',
         'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
         'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
+        'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
         'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
         'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
         'isPrivatelyOwned', 'sourceProject', 'sourceProjectId', 'sourceCategory',
@@ -1215,11 +1218,11 @@
     ]);
 
     function isV2Facility(facility) {
-        return isPlainObject(facility) && Number(facility.schema_version) >= V2_SCHEMA_VERSION && isPlainObject(facility.location);
+        return isPlainObject(facility) && Number(facility.schema_version) >= MIN_V2_SCHEMA_VERSION && isPlainObject(facility.location);
     }
 
     /**
-     * Any facility shape to a v2 document. Mirrors kop_facility_normalize();
+     * Any facility shape to the canonical document. Mirrors kop_facility_normalize();
      * `opts` takes facility_id, unique_name, location_key and source.
      */
     // ---- Field standards (docs/FACILITY-SCHEMA.md, "Standard shapes") ----
@@ -1412,7 +1415,7 @@
         }
 
         const doc = blankFacilityV2();
-        const isV2 = f.schema_version !== undefined && Number(f.schema_version) >= V2_SCHEMA_VERSION;
+        const isV2 = f.schema_version !== undefined && Number(f.schema_version) >= MIN_V2_SCHEMA_VERSION;
         const rejected = [];
 
         const ident = isPlainObject(f.identification) ? f.identification : {};
@@ -1606,6 +1609,9 @@
         doc.resources = v2Resources(f.resources);
 
         doc.treatmentTypes = v2Map(f.treatmentTypes);
+        doc.targetedDiagnoses = v2Map(f.targetedDiagnoses);
+        doc.targetedBehaviors = v2Map(f.targetedBehaviors);
+        doc.ttiPractices = v2Map(f.ttiPractices);
         doc.philosophy = v2Map(f.philosophy);
         doc.conditions = v2Map(f.conditions);
         doc.criticalIncidents = v2Map(f.criticalIncidents);
@@ -1649,7 +1655,7 @@
     }
 
     /**
-     * v2 document to the legacy facility shape the form edits. Mirrors
+     * Canonical document to the legacy facility shape the form edits. Mirrors
      * kop_facility_to_legacy() in inc/facility-store.php.
      */
     function facilityFromV2(doc) {
@@ -1703,6 +1709,9 @@
             profileLinks: doc.profileLinks || [],
             resources: doc.resources || {},
             treatmentTypes: doc.treatmentTypes || {},
+            targetedDiagnoses: doc.targetedDiagnoses || {},
+            targetedBehaviors: doc.targetedBehaviors || {},
+            ttiPractices: doc.ttiPractices || {},
             philosophy: doc.philosophy || {},
             conditions: doc.conditions || {},
             criticalIncidents: doc.criticalIncidents || {},

@@ -1,7 +1,9 @@
-# Facility Document Schema (v2)
+# Facility Document Schema (v3)
 
-The canonical shape of one facility, as stored in `facilities_master.json_data`
-after the data model migration (`docs/DATA-MODEL-MIGRATION.md`).
+The canonical shape of one facility, as stored in `facilities_v2.json_data`
+after the data model migration (`docs/DATA-MODEL-MIGRATION.md`). Schema v3 adds
+targeting and common TTI practice maps to the v2 data model; those fields remain
+inside each facility's JSON document, so no SQL columns are added.
 
 - Implementation: `inc/facility-store.php` (`kop_facility_normalize`,
   `kop_facility_validate`, `kop_facility_save`). Everything that writes a
@@ -18,9 +20,10 @@ after the data model migration (`docs/DATA-MODEL-MIGRATION.md`).
    order: `schema_version`, `facility_id`, `identification`, `location`,
    `operatingPeriod`, `facilityDetails`, `staff`, `accreditations`,
    `memberships`, `certifications`, `licensing`, `profileLinks`, `resources`,
-   `treatmentTypes`, `philosophy`, `conditions`, `criticalIncidents`, `notes`,
-   `fieldNotes`, `documentFolderId`, `provenance`, `legacy`. Sections are always
-   present, even when empty, so readers never need to check for them.
+   `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`,
+   `philosophy`, `conditions`, `criticalIncidents`, `notes`, `fieldNotes`,
+   `documentFolderId`, `provenance`, `legacy`. Sections are always present,
+   even when empty, so readers never need to check for them.
 2. **Lists are always arrays** and **maps are always objects**. An empty map is
    stored as `{}`, never `[]` (`kop_facility_json_encode` handles this).
 3. **Numbers are integers or `null`.** Years, capacity, census and ages are
@@ -147,7 +150,7 @@ a `migration: original status "..."` note.
 | `memberships`, `certifications`, `licensing`, `notes` | string[] | |
 | `profileLinks` | string[] | URLs. |
 | `resources` | map | Every standard key is present (see Standard shapes): `hasX` booleans, `xDetails` strings, `customResources[]` and `notes[]`. Keys the form adds later are typed by the same naming rule. |
-| `treatmentTypes`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. A legacy array becomes `{"_legacy": [...]}`. |
+| `treatmentTypes`, `targetedDiagnoses`, `targetedBehaviors`, `ttiPractices`, `philosophy`, `conditions`, `criticalIncidents` | maps | Open-ended checklists. `targetedDiagnoses` and `targetedBehaviors` hold selected `hasX` booleans; `ttiPractices` holds selected `hasX` booleans and an optional `other` string list. A legacy array becomes `{"_legacy": [...]}`. |
 | `fieldNotes` | map | A legacy array becomes `{"_legacy": [...]}`. |
 | `documentFolderId` | int or null | FileBird folder. |
 
@@ -224,7 +227,7 @@ when there are no `error` entries.
 
 | Rule | Severity | Check |
 |---|---|---|
-| `schema.version` | error | `schema_version` is 2. |
+| `schema.version` | error | `schema_version` is 3. |
 | `schema.keys` | error | Top-level keys are exactly the fixed set. |
 | `identity.name` | error | `identification.name` is not empty. |
 | `identity.nameKey` | error | `nameKey` equals `kop_facility_name_key(name)` and is not empty. |
@@ -270,7 +273,7 @@ campus; the identity split gave it its own row:
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "facility_id": 14182,
   "identification": {
     "name": "Hyde School",
@@ -319,6 +322,9 @@ campus; the identity split gave it its own row:
   "profileLinks": [],
   "resources": { "hasNews": false, "hasLawsuits": false, "customResources": [] },
   "treatmentTypes": {},
+  "targetedDiagnoses": {},
+  "targetedBehaviors": {},
+  "ttiPractices": {},
   "philosophy": {},
   "conditions": {},
   "criticalIncidents": {},

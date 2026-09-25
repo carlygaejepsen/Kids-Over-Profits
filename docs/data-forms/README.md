@@ -57,6 +57,17 @@ The v2 write switch has been on since 2026-09-18. The legacy facility tables are
 - `facilities_master` takes no writes. `locations_master` keeps only state-level data with no v2 home (referrer consultants, field notes).
 - Tools that still write the legacy tables must call `kop_v2_exit_if_legacy_frozen()`.
 
+### Facility targeting and common TTI practices
+
+Facility form entries can record the program's stated target population and
+reported TTI practices. `targetedDiagnoses`, `targetedBehaviors`, and
+`ttiPractices` are stored as maps in each facility document. Practices can also
+include an `other` string list. The schema-v3 normalizers in
+`inc/facility-store.php` and `js/data-form-modules/data-normalizer.js` preserve
+these groups when the form loads from or saves to `facilities_v2.json_data`.
+The SQL table already stores the facility document as JSON, so these additions
+do not require new relational columns.
+
 ## Mental Health Providers (hybrid category)
 
 The **Mental Health Providers** tab (`data-category="providers"`) is for providers that are not part of the TTI but use TTI practices and refer children to TTI facilities: acute psychiatric wards, partial hospitalization (PHP) and intensive outpatient (IOP) programs, day schools, respite care and outpatient therapy.

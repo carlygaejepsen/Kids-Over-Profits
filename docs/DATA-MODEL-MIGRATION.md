@@ -12,6 +12,12 @@ Hard requirement from the site owner: every facility that appears on a state
 or country page today must still appear there after migration. Phase 0 and
 the zero-loss gate exist for this. Do not skip them.
 
+The rollout described below created facility document schema v2. The current
+canonical document schema is v3 (see `docs/FACILITY-SCHEMA.md`); it adds target
+diagnosis, behavior, and common TTI practice maps inside the existing JSON
+document. The relational table layout is unchanged. Historical cutover counts
+and `schema_version: 2` checks below refer to the original 2026-09-16 migration.
+
 ## Status (2026-09-16)
 
 | Phase | State |

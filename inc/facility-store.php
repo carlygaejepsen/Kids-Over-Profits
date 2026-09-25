@@ -4,7 +4,7 @@
  * resolver, one write path.
  *
  * Part of the data model migration (docs/DATA-MODEL-MIGRATION.md section 5.5).
- * The v2 document shape is documented in docs/FACILITY-SCHEMA.md.
+ * The canonical document shape is documented in docs/FACILITY-SCHEMA.md.
  *
  * Layering rule: everything above the "Database layer" banner is pure PHP with
  * no WordPress dependency, so scripts/normalize-dump.php and
@@ -14,11 +14,11 @@
  * Legacy shapes accepted by kop_facility_normalize():
  *   - a `__facility_ref` wrapper row  {__facility_ref, name, displayName, city, state, data:{facility}}
  *   - a nested facility entry from locations_master / an operator project
- *   - a v2 document (normalizing a v2 document is a no-op)
+ *   - a canonical facility document (normalizing it is a no-op apart from schema defaults)
  */
 
 if (!defined('KOP_FACILITY_SCHEMA_VERSION')) {
-    define('KOP_FACILITY_SCHEMA_VERSION', 2);
+    define('KOP_FACILITY_SCHEMA_VERSION', 3);
 }
 
 // ---------------------------------------------------------------------------
@@ -531,7 +531,7 @@ if (!function_exists('kop_facility_location_text_names_country')) {
 // ---------------------------------------------------------------------------
 
 if (!function_exists('kop_facility_blank_document')) {
-    /** The v2 skeleton. Every section is always present, so readers stop guarding. */
+    /** The canonical skeleton. Every section is always present, so readers stop guarding. */
     function kop_facility_blank_document() {
         return array(
             'schema_version' => KOP_FACILITY_SCHEMA_VERSION,
@@ -565,6 +565,9 @@ if (!function_exists('kop_facility_blank_document')) {
             'profileLinks'  => array(),
             'resources'     => array(),
             'treatmentTypes' => array(),
+            'targetedDiagnoses' => array(),
+            'targetedBehaviors' => array(),
+            'ttiPractices'  => array(),
             'philosophy'    => array(),
             'conditions'    => array(),
             'criticalIncidents' => array(),
@@ -583,7 +586,7 @@ if (!function_exists('kop_facility_blank_document')) {
 }
 
 if (!function_exists('kop_facility_top_level_keys')) {
-    /** The exact top-level key set of a v2 document. */
+    /** The exact top-level key set of a canonical facility document. */
     function kop_facility_top_level_keys() {
         return array_keys(kop_facility_blank_document());
     }
@@ -629,20 +632,20 @@ if (!function_exists('kop_facility_unwrap')) {
             return array('facility' => array(), 'wrapper' => $wrapper);
         }
 
-        // Already a facility object (nested entry or v2 document).
+        // Already a facility object (nested entry or canonical document).
         return array('facility' => $raw, 'wrapper' => $wrapper);
     }
 }
 
 if (!function_exists('kop_facility_normalize')) {
     /**
-     * Any legacy shape to a v2 document.
+     * Any legacy shape to a canonical facility document.
      *
-     * @param array $raw  ref row, nested entry, or v2 document.
+     * @param array $raw  ref row, nested entry, or canonical facility document.
      * @param array $opts facility_id, unique_name, location_key (the
      *                    locations_master row the copy sat in), updated_at,
      *                    source (a label kept in provenance).
-     * @return array v2 document
+     * @return array canonical facility document
      */
     function kop_facility_normalize(array $raw, array $opts = array()) {
         $unwrapped = kop_facility_unwrap($raw);
@@ -896,6 +899,9 @@ if (!function_exists('kop_facility_normalize')) {
         // Open-ended checklists: the admin form invents keys at runtime, so
         // they pass through as maps rather than being enumerated here.
         $doc['treatmentTypes']    = kop_facility_map($f['treatmentTypes'] ?? array());
+        $doc['targetedDiagnoses'] = kop_facility_map($f['targetedDiagnoses'] ?? array());
+        $doc['targetedBehaviors'] = kop_facility_map($f['targetedBehaviors'] ?? array());
+        $doc['ttiPractices']      = kop_facility_map($f['ttiPractices'] ?? array());
         $doc['philosophy']        = kop_facility_map($f['philosophy'] ?? array());
         $doc['conditions']        = kop_facility_map($f['conditions'] ?? array());
         $doc['criticalIncidents'] = kop_facility_map($f['criticalIncidents'] ?? array());
@@ -933,6 +939,7 @@ if (!function_exists('kop_facility_normalize')) {
             'identification', 'locationDetails', 'addressParts', 'address', 'location',
             'operatingPeriod', 'facilityDetails', 'staff', 'accreditations', 'memberships',
             'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
+            'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
             'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
             'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
             'isPrivatelyOwned', 'sourceProject', 'sourceProjectId', 'sourceCategory',
@@ -1204,11 +1211,11 @@ if (!function_exists('kop_facility_normalize_status')) {
 
 if (!function_exists('kop_facility_json_encode')) {
     /**
-     * Encode a v2 document for storage. The open-ended maps must serialize as
+     * Encode a canonical document for storage. The open-ended maps must serialize as
      * JSON objects even when empty, or every reader has to handle [] as well.
      */
     function kop_facility_json_encode(array $doc) {
-        $object_fields = array('resources', 'treatmentTypes', 'philosophy', 'conditions', 'criticalIncidents', 'fieldNotes', 'legacy');
+        $object_fields = array('resources', 'treatmentTypes', 'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices', 'philosophy', 'conditions', 'criticalIncidents', 'fieldNotes', 'legacy');
         foreach ($object_fields as $field) {
             if (isset($doc[$field]) && is_array($doc[$field]) && $doc[$field] === array()) {
                 $doc[$field] = new stdClass();
@@ -1224,7 +1231,7 @@ if (!function_exists('kop_facility_json_encode')) {
 
 if (!function_exists('kop_facility_validate')) {
     /**
-     * Rule violations for a v2 document; empty when the document is clean.
+     * Rule violations for a canonical document; empty when the document is clean.
      * Each violation is {rule, severity, path, message}. A document is valid
      * for saving when it has no 'error' violations - warnings describe data
      * that needs a human but must not block the migration.
@@ -1338,7 +1345,7 @@ if (!function_exists('kop_facility_validate')) {
             }
         }
 
-        $maps = array('resources', 'treatmentTypes', 'philosophy', 'conditions', 'criticalIncidents', 'fieldNotes', 'legacy');
+        $maps = array('resources', 'treatmentTypes', 'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices', 'philosophy', 'conditions', 'criticalIncidents', 'fieldNotes', 'legacy');
         foreach ($maps as $path) {
             $value = $doc[$path] ?? null;
             if (!is_array($value)) {
@@ -1449,7 +1456,7 @@ if (!function_exists('kop_facility_derive_memberships')) {
 
 if (!function_exists('kop_facility_to_legacy')) {
     /**
-     * Project a v2 document back to the legacy nested facility shape so the
+     * Project a canonical document back to the legacy nested facility shape so the
      * pre-cutover readers keep working while both models are live. Dropped in
      * phase 5 together with the dual write.
      */
@@ -1533,6 +1540,9 @@ if (!function_exists('kop_facility_to_legacy')) {
             'profileLinks'   => $doc['profileLinks'],
             'resources'      => $doc['resources'],
             'treatmentTypes' => $doc['treatmentTypes'],
+            'targetedDiagnoses' => $doc['targetedDiagnoses'] ?? array(),
+            'targetedBehaviors' => $doc['targetedBehaviors'] ?? array(),
+            'ttiPractices'   => $doc['ttiPractices'] ?? array(),
             'philosophy'     => $doc['philosophy'],
             'conditions'     => $doc['conditions'],
             'criticalIncidents' => $doc['criticalIncidents'],
@@ -1760,7 +1770,7 @@ if (!function_exists('kop_facility_same_document')) {
 
 if (!function_exists('kop_facility_load')) {
     /**
-     * A stored v2 document by id, or null.
+     * A stored canonical document by id, or null.
      *
      * @return array|null {id, unique_name, doc}
      */
@@ -1833,7 +1843,7 @@ if (!function_exists('kop_facility_save')) {
      * resolver looks for the same facility (name + place) before a new row is
      * created. An unchanged document is not rewritten.
      *
-     * @param array $doc    a v2 document (run kop_facility_normalize first).
+     * @param array $doc    a canonical document (run kop_facility_normalize first).
      * @param array $opts   pdo, prefix, unique_name (new rows only), force
      *                      (write despite validation errors), skip_memberships.
      * @param string|null $status set to 'created', 'updated' or 'unchanged'.
