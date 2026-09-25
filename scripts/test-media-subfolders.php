@@ -70,6 +70,7 @@ $pdo->exec("CREATE TABLE wpdl_fbv (id INTEGER PRIMARY KEY AUTOINCREMENT, name TE
 $pdo->exec("INSERT INTO wpdl_fbv SELECT id, name, parent, type, ord, created_by FROM m.wpdl_fbv");
 $pdo->exec("CREATE TABLE wpdl_fbv_attachment_folder (folder_id INTEGER, attachment_id INTEGER, UNIQUE(folder_id, attachment_id))");
 $pdo->exec("INSERT OR IGNORE INTO wpdl_fbv_attachment_folder SELECT folder_id, attachment_id FROM m.wpdl_fbv_attachment_folder");
+$pdo->exec("CREATE TABLE wpdl_kop_media_folder_tags (folder_id INTEGER, attachment_id INTEGER, UNIQUE(folder_id, attachment_id))");
 $GLOBALS['wpdb'] = new KopTestWpdb($pdo);
 
 require $root . '/inc/admin.php';
@@ -93,14 +94,22 @@ foreach ($spec['folders'] as $e) {
     if ($id) $existing[] = $e['parent'] . '/' . $e['name'];
 }
 
+// The same order as kop_apply_template_assignments(): folder fixes, then subfolders.
+$fixes = kop_apply_media_folder_fixes();
+$folders_after_fixes = (int) $pdo->query("SELECT COUNT(*) FROM wpdl_fbv")->fetchColumn();
+$created_by_fixes = $folders_after_fixes - $folders0;
 $done = kop_apply_media_subfolders();
 $created = count(array_filter($done, function ($d) { return strpos($d, 'folder:') === 0; }));
 echo count($done) . " actions, $created folders created\n";
 
 check('filings are moved, not added or lost', (int) $pdo->query("SELECT COUNT(*) FROM wpdl_fbv_attachment_folder")->fetchColumn() === $before);
-check('one new folder per planned subfolder that did not exist', $created === count($spec['folders']) - count($existing),
-    "created $created, planned " . count($spec['folders']) . ', existing ' . count($existing));
-check('the folder table grew by exactly that', (int) $pdo->query("SELECT COUNT(*) FROM wpdl_fbv")->fetchColumn() === $folders0 + $created);
+// The fixes may create a planned subfolder first (a move into Hyde / News
+// Clippings / 1970s), so the two passes together create what did not exist.
+check('the fixes create the two folders they name (Mel Blount, 1970s)', $created_by_fixes === 2, "created $created_by_fixes");
+check('together, one new folder per planned subfolder that did not exist',
+    $created + $created_by_fixes - 1 === count($spec['folders']) - count($existing),
+    "subfolders created $created, fixes created $created_by_fixes, planned " . count($spec['folders']) . ', existing ' . count($existing));
+check('the folder table grew by exactly that', (int) $pdo->query("SELECT COUNT(*) FROM wpdl_fbv")->fetchColumn() === $folders_after_fixes + $created);
 
 $misplaced = array();
 foreach ($spec['folders'] as $e) {
@@ -114,7 +123,42 @@ foreach ($spec['folders'] as $e) {
 }
 check('every planned document sits in its subfolder and not in the parent', !$misplaced, implode(', ', array_slice($misplaced, 0, 10)));
 
+// The misfiled documents from the subfolder pass (2026-09-25).
+$folders_of = function ($aid) use ($pdo) {
+    $out = array();
+    foreach ($pdo->query("SELECT f.id, f.name, f.parent FROM wpdl_fbv_attachment_folder r JOIN wpdl_fbv f ON f.id = r.folder_id WHERE r.attachment_id = " . (int) $aid) as $row) {
+        $out[] = (int) $row['parent'] . '/' . $row['name'];
+    }
+    return $out;
+};
+$expect = array(
+    9609  => '150/Aspen Achievement Academy',
+    9610  => '150/Aspen Achievement Academy',
+    11701 => '2701/KIDS of Greater Salt Lake',
+    11700 => '6502/Smokey Point Behavioral Hospital',
+    11702 => '0/Mel Blount Youth Home',
+    9646  => '5617/King George School',
+    11142 => '61/1970s',
+);
+foreach ($expect as $aid => $where) {
+    $got = $folders_of($aid);
+    // Parent ids of the state folders come from the mirror; compare names and
+    // the parent only where the test names it exactly.
+    $ok = false;
+    foreach ($got as $g) {
+        list($gp, $gn) = explode('/', $g, 2);
+        list($ep, $en) = explode('/', $where, 2);
+        if ($gn === $en && (in_array($ep, array('0', '61', '150'), true) ? $gp === $ep : true)) $ok = true;
+    }
+    check("document $aid is filed under $where", $ok && count($got) === 1, implode(', ', $got));
+}
+check('King George School still shows in CEDU through a tag',
+    (int) $pdo->query("SELECT COUNT(*) FROM wpdl_kop_media_folder_tags WHERE folder_id = 22 AND attachment_id = 9646")->fetchColumn() === 1);
+check('one Mel Blount Youth Home folder, at the top level',
+    (int) $pdo->query("SELECT COUNT(*) FROM wpdl_fbv WHERE name = 'Mel Blount Youth Home' AND parent = 0")->fetchColumn() === 1);
+
 $again = kop_apply_media_subfolders();
+check('the folder fixes do nothing on a second run', array_filter(kop_apply_media_folder_fixes(), function ($d) { return strpos($d, 'tag:') !== 0; }) === array());
 check('a second run does nothing', $again === array(), implode(', ', $again));
 
 echo $failures ? "\nmedia subfolders: $failures FAILURES\n" : "\nmedia subfolders: PASS\n";

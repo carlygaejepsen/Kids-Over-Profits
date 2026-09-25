@@ -1550,6 +1550,37 @@ function kop_apply_lawsuit_seeds() {
  * Every operation is idempotent.
  */
 /**
+ * The folder named $name directly under $parent (0 = top level): the copy
+ * holding the most files when there are several, created when there is none,
+ * the way api/import-documents.php creates folders. 0 on failure.
+ */
+function kop_media_folder_child($parent, $name) {
+    global $wpdb;
+    $fbv = $wpdb->prefix . 'fbv';
+    $rel = $wpdb->prefix . 'fbv_attachment_folder';
+    $parent = (int) $parent;
+    $name   = trim((string) $name);
+    if ($name === '' || ($parent > 0 && !$wpdb->get_var($wpdb->prepare("SELECT 1 FROM {$fbv} WHERE id = %d AND type = 0", $parent)))) {
+        return 0;
+    }
+    $id = (int) $wpdb->get_var($wpdb->prepare(
+        "SELECT f.id FROM {$fbv} f LEFT JOIN {$rel} r ON r.folder_id = f.id
+         WHERE f.type = 0 AND f.parent = %d AND LOWER(TRIM(f.name)) = LOWER(%s)
+         GROUP BY f.id ORDER BY COUNT(r.attachment_id) DESC, f.id ASC LIMIT 1",
+        $parent, $name
+    ));
+    if ($id) {
+        return $id;
+    }
+    $columns = (array) $wpdb->get_col("SHOW COLUMNS FROM {$fbv}");
+    $row = array('name' => $name, 'parent' => $parent, 'type' => 0);
+    $formats = array('%s', '%d', '%d');
+    if (in_array('created_by', $columns, true)) { $row['created_by'] = 0; $formats[] = '%d'; }
+    if (in_array('ord', $columns, true))        { $row['ord'] = 0;        $formats[] = '%d'; }
+    return $wpdb->insert($fbv, $row, $formats) === false ? 0 : (int) $wpdb->insert_id;
+}
+
+/**
  * Subfolders for the largest flat FileBird folders (seeds/media-subfolders.json,
  * written by scripts/build-media-subfolders.py). Each entry: parent folder id,
  * subfolder name, attachment ids. The subfolder is reused when the parent
@@ -1571,7 +1602,6 @@ function kop_apply_media_subfolders() {
     if (!is_array($spec) || empty($spec['folders']) || $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $rel)) !== $rel) {
         return $done;
     }
-    $columns = (array) $wpdb->get_col("SHOW COLUMNS FROM {$fbv}");
     foreach ($spec['folders'] as $entry) {
         $parent = (int) ($entry['parent'] ?? 0);
         $name   = trim((string) ($entry['name'] ?? ''));
@@ -1591,21 +1621,12 @@ function kop_apply_media_subfolders() {
         if (!$waiting) {
             continue;
         }
-        $child = (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT f.id FROM {$fbv} f LEFT JOIN {$rel} r ON r.folder_id = f.id
-             WHERE f.type = 0 AND f.parent = %d AND LOWER(TRIM(f.name)) = LOWER(%s)
-             GROUP BY f.id ORDER BY COUNT(r.attachment_id) DESC, f.id ASC LIMIT 1",
-            $parent, $name
-        ));
+        $folders_before = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$fbv}");
+        $child = kop_media_folder_child($parent, $name);
         if (!$child) {
-            $row = array('name' => $name, 'parent' => $parent, 'type' => 0);
-            $formats = array('%s', '%d', '%d');
-            if (in_array('created_by', $columns, true)) { $row['created_by'] = 0; $formats[] = '%d'; }
-            if (in_array('ord', $columns, true))        { $row['ord'] = 0;        $formats[] = '%d'; }
-            if ($wpdb->insert($fbv, $row, $formats) === false) {
-                continue;
-            }
-            $child = (int) $wpdb->insert_id;
+            continue;
+        }
+        if ((int) $wpdb->get_var("SELECT COUNT(*) FROM {$fbv}") > $folders_before) {
             $done[] = 'folder:' . $parent . '/' . $name;
         }
         foreach ($waiting as $aid) {
@@ -1647,12 +1668,21 @@ function kop_apply_media_folder_fixes() {
         $done[] = 'tag:' . (int) $t['attachment_id'];
     }
     foreach ((array) ($spec['moves'] ?? array()) as $m) {
-        if (empty($m['attachment_id']) || empty($m['from']) || empty($m['to'])) {
+        // "to" is a folder id; "to_folder" names one by parent and name
+        // instead ({"parent": 0, "name": "..."} for a new top-level folder),
+        // found or created only when the move is still pending.
+        if (empty($m['attachment_id']) || empty($m['from']) || (empty($m['to']) && empty($m['to_folder']['name']))) {
             continue;
         }
         $aid = (int) $m['attachment_id'];
         if (!$wpdb->get_var($wpdb->prepare("SELECT 1 FROM {$fbv} WHERE attachment_id = %d AND folder_id = %d", $aid, (int) $m['from']))) {
             continue; // already moved
+        }
+        if (empty($m['to'])) {
+            $m['to'] = kop_media_folder_child((int) ($m['to_folder']['parent'] ?? 0), (string) $m['to_folder']['name']);
+            if (!$m['to']) {
+                continue;
+            }
         }
         $wpdb->query($wpdb->prepare("DELETE FROM {$fbv} WHERE attachment_id = %d AND folder_id = %d", $aid, (int) $m['from']));
         $wpdb->query($wpdb->prepare("INSERT IGNORE INTO {$fbv} (folder_id, attachment_id) VALUES (%d, %d)", (int) $m['to'], $aid));
@@ -1666,6 +1696,9 @@ function kop_apply_media_folder_fixes() {
         if ($n) {
             $done[] = 'remove:' . (int) $r['attachment_id'];
         }
+    }
+    if ($done && function_exists('kop_doc_archive_flush')) {
+        kop_doc_archive_flush();
     }
     return $done;
 }
@@ -1761,7 +1794,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '46';
+    $version = '47';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

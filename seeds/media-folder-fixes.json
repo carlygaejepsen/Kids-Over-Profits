@@ -5,6 +5,11 @@
       "folder_id": 4,
       "attachment_id": 1673,
       "why": "Discovery Ranch admissions PDF was filed under Hidden Lake Academy (folder 3)"
+    },
+    {
+      "folder_id": 22,
+      "attachment_id": 9646,
+      "why": "King George School was a CEDU program; keep the listing visible in the CEDU folder too"
     }
   ],
   "moves": [
@@ -37,6 +42,54 @@
       "from": 4,
       "to": 142,
       "why": "Taylor Goodridge DRA lawsuit complaint: Diamond Ranch Academy (copies already in folder 142)"
+    },
+    {
+      "attachment_id": 9609,
+      "from": 22,
+      "to": 204,
+      "why": "Aspen Achievement Academy magazine article (2003) was filed under CEDU"
+    },
+    {
+      "attachment_id": 9610,
+      "from": 22,
+      "to": 204,
+      "why": "Aspen Achievement Academy ad (2006) was filed under CEDU"
+    },
+    {
+      "attachment_id": 11701,
+      "from": 22,
+      "to": 2705,
+      "why": "KIDS of Greater Salt Lake, Deseret News 1990, was filed under CEDU"
+    },
+    {
+      "attachment_id": 11700,
+      "from": 22,
+      "to": 6503,
+      "why": "Smokey Point Behavioral Hospital violation (2021) was filed under CEDU"
+    },
+    {
+      "attachment_id": 11702,
+      "from": 22,
+      "to_folder": {
+        "parent": 0,
+        "name": "Mel Blount Youth Home"
+      },
+      "why": "Mel Blount Youth Home article (2000) was filed under CEDU; no folder existed"
+    },
+    {
+      "attachment_id": 9646,
+      "from": 22,
+      "to": 5618,
+      "why": "King George School NATSAP listing (2009) to its own folder; tagged back into CEDU below"
+    },
+    {
+      "attachment_id": 11142,
+      "from": 7803,
+      "to_folder": {
+        "parent": 61,
+        "name": "1970s"
+      },
+      "why": "Maine Times clipping (1974) was filed with the Doe v. Hyde court filings"
     }
   ],
   "remove": [
