@@ -61,6 +61,8 @@ function kop_form_help_lines() {
         // --- What the program does -------------------------------------------------
         'standard-treatment-types' => 'Tick the kinds of treatment the program says it provides, such as wilderness therapy or residential treatment. These are the labels used across the database.',
         'custom-treatment-types' => 'A kind of treatment this program offers that is not in the standard list. Use the program\'s own words, for example "equine-assisted trauma work".',
+        'targeted-diagnoses-behaviors' => 'Record the diagnoses and behaviors the program says it serves. This describes how the program markets itself, not an assessment of any individual young person.',
+        'common-tti-practices' => 'Tick TTI practices reported at this facility. Add a field note or source for each practice when you can.',
         'standard-philosophies' => 'The approach the program is built on, such as behaviour modification or a level system. Tick everything that applies; most programs combine several.',
         'custom-philosophies' => 'An approach this program names that is not in the standard list, in the program\'s own words.',
 

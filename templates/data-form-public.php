@@ -1643,6 +1643,88 @@ get_header();
             </div>
         </div>
 
+        <!-- Targeted Diagnoses and Behaviors Section -->
+        <div class="section" id="target-profile-section" data-section-views="companies,locations">
+            <div class="section-header">
+                <h2 class="section-title">Target Diagnoses &amp; Behaviors</h2>
+                <span class="section-toggle"></span>
+            </div>
+            <div class="section-content">
+                <?php kop_form_panel_help('targeted-diagnoses-behaviors'); ?>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">Clinical Diagnoses</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasADHD" data-note-scope="facility" data-note-key="targetedDiagnoses.hasADHD" id="target-diagnosis-adhd"><label for="target-diagnosis-adhd">ADHD</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasAutismSpectrumDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasAutismSpectrumDisorder" id="target-diagnosis-autism"><label for="target-diagnosis-autism">Autism Spectrum Disorder</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasBipolarDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasBipolarDisorder" id="target-diagnosis-bipolar"><label for="target-diagnosis-bipolar">Bipolar Disorder</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasDepression" data-note-scope="facility" data-note-key="targetedDiagnoses.hasDepression" id="target-diagnosis-depression"><label for="target-diagnosis-depression">Depression</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasAnxiety" data-note-scope="facility" data-note-key="targetedDiagnoses.hasAnxiety" id="target-diagnosis-anxiety"><label for="target-diagnosis-anxiety">Anxiety</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasOCD" data-note-scope="facility" data-note-key="targetedDiagnoses.hasOCD" id="target-diagnosis-ocd"><label for="target-diagnosis-ocd">OCD</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasPTSD" data-note-scope="facility" data-note-key="targetedDiagnoses.hasPTSD" id="target-diagnosis-ptsd"><label for="target-diagnosis-ptsd">PTSD</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasOppositionalDefiantDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasOppositionalDefiantDisorder" id="target-diagnosis-odd"><label for="target-diagnosis-odd">Oppositional Defiant Disorder (ODD)</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasConductDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasConductDisorder" id="target-diagnosis-conduct"><label for="target-diagnosis-conduct">Conduct Disorder</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasEatingDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasEatingDisorder" id="target-diagnosis-eating"><label for="target-diagnosis-eating">Eating Disorder</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasSubstanceAbuse" data-note-scope="facility" data-note-key="targetedDiagnoses.hasSubstanceAbuse" id="target-diagnosis-substance"><label for="target-diagnosis-substance">Substance Abuse</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasBorderlinePersonalityDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasBorderlinePersonalityDisorder" id="target-diagnosis-bpd"><label for="target-diagnosis-bpd">Borderline Personality Disorder (BPD)</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasPsychiatricDisorders" data-note-scope="facility" data-note-key="targetedDiagnoses.hasPsychiatricDisorders" id="target-diagnosis-psychiatric"><label for="target-diagnosis-psychiatric">Psychiatric Disorders</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasBehavioralDisorders" data-note-scope="facility" data-note-key="targetedDiagnoses.hasBehavioralDisorders" id="target-diagnosis-behavioral"><label for="target-diagnosis-behavioral">Behavioral Disorders</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasEmotionalDisorders" data-note-scope="facility" data-note-key="targetedDiagnoses.hasEmotionalDisorders" id="target-diagnosis-emotional"><label for="target-diagnosis-emotional">Emotional Disorders</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasCoOccurringDisorders" data-note-scope="facility" data-note-key="targetedDiagnoses.hasCoOccurringDisorders" id="target-diagnosis-cooccurring"><label for="target-diagnosis-cooccurring">Co-occurring Disorders</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasReactiveAttachmentDisorder" data-note-scope="facility" data-note-key="targetedDiagnoses.hasReactiveAttachmentDisorder" id="target-diagnosis-rad"><label for="target-diagnosis-rad">Reactive Attachment Disorder (RAD)</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedDiagnoses.hasPersonalityDisorders" data-note-scope="facility" data-note-key="targetedDiagnoses.hasPersonalityDisorders" id="target-diagnosis-personality"><label for="target-diagnosis-personality">Personality Disorders</label></div>
+                    </div>
+                </div>
+                <div class="sub-section">
+                    <div class="sub-section-header">
+                        <h3 class="sub-section-title">Behaviors &amp; Challenges</h3>
+                        <span class="sub-section-toggle">▼</span>
+                    </div>
+                    <div class="sub-section-content">
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasDefiance" data-note-scope="facility" data-note-key="targetedBehaviors.hasDefiance" id="target-behavior-defiance"><label for="target-behavior-defiance">Defiance</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasAggression" data-note-scope="facility" data-note-key="targetedBehaviors.hasAggression" id="target-behavior-aggression"><label for="target-behavior-aggression">Aggression</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasSelfHarm" data-note-scope="facility" data-note-key="targetedBehaviors.hasSelfHarm" id="target-behavior-self-harm"><label for="target-behavior-self-harm">Self-harm</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasRunningAway" data-note-scope="facility" data-note-key="targetedBehaviors.hasRunningAway" id="target-behavior-running-away"><label for="target-behavior-running-away">Running away</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasTruancy" data-note-scope="facility" data-note-key="targetedBehaviors.hasTruancy" id="target-behavior-truancy"><label for="target-behavior-truancy">Truancy</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasAcademicStruggles" data-note-scope="facility" data-note-key="targetedBehaviors.hasAcademicStruggles" id="target-behavior-academic"><label for="target-behavior-academic">Academic struggles</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasSocialProblems" data-note-scope="facility" data-note-key="targetedBehaviors.hasSocialProblems" id="target-behavior-social"><label for="target-behavior-social">Social problems</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasFamilyConflict" data-note-scope="facility" data-note-key="targetedBehaviors.hasFamilyConflict" id="target-behavior-family"><label for="target-behavior-family">Family conflict</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasSexuallyInappropriateBehavior" data-note-scope="facility" data-note-key="targetedBehaviors.hasSexuallyInappropriateBehavior" id="target-behavior-sexual"><label for="target-behavior-sexual">Sexually inappropriate behavior</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasLying" data-note-scope="facility" data-note-key="targetedBehaviors.hasLying" id="target-behavior-lying"><label for="target-behavior-lying">Lying</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasManipulation" data-note-scope="facility" data-note-key="targetedBehaviors.hasManipulation" id="target-behavior-manipulation"><label for="target-behavior-manipulation">Manipulation</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasStealing" data-note-scope="facility" data-note-key="targetedBehaviors.hasStealing" id="target-behavior-stealing"><label for="target-behavior-stealing">Stealing</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasEmotionalDysregulation" data-note-scope="facility" data-note-key="targetedBehaviors.hasEmotionalDysregulation" id="target-behavior-emotional"><label for="target-behavior-emotional">Emotional dysregulation</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasImpulsiveBehavior" data-note-scope="facility" data-note-key="targetedBehaviors.hasImpulsiveBehavior" id="target-behavior-impulsive"><label for="target-behavior-impulsive">Impulsive behavior</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasAttachment" data-note-scope="facility" data-note-key="targetedBehaviors.hasAttachment" id="target-behavior-attachment"><label for="target-behavior-attachment">Attachment issues</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasAdoption" data-note-scope="facility" data-note-key="targetedBehaviors.hasAdoption" id="target-behavior-adoption"><label for="target-behavior-adoption">Adoption issues</label></div>
+                        <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="targetedBehaviors.hasTrafficking" data-note-scope="facility" data-note-key="targetedBehaviors.hasTrafficking" id="target-behavior-trafficking"><label for="target-behavior-trafficking">Trafficking</label></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Common TTI Practices Section -->
+        <div class="section" id="common-tti-practices-section" data-section-views="companies,locations">
+            <div class="section-header">
+                <h2 class="section-title">Common TTI Practices</h2>
+                <span class="section-toggle"></span>
+            </div>
+            <div class="section-content">
+                <?php kop_form_panel_help('common-tti-practices'); ?>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasLevelSystem" data-note-scope="facility" data-note-key="ttiPractices.hasLevelSystem" id="facility-practice-level-system"><label for="facility-practice-level-system">Level / Point System</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasRestraint" data-note-scope="facility" data-note-key="ttiPractices.hasRestraint" id="facility-practice-restraint"><label for="facility-practice-restraint">Physical or Chemical Restraint</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasSeclusion" data-note-scope="facility" data-note-key="ttiPractices.hasSeclusion" id="facility-practice-seclusion"><label for="facility-practice-seclusion">Seclusion / Isolation Rooms</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasCommunicationRestrictions" data-note-scope="facility" data-note-key="ttiPractices.hasCommunicationRestrictions" id="facility-practice-communication-restrictions"><label for="facility-practice-communication-restrictions">Communication Restrictions (family contact, mail, phone)</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasConfrontationGroups" data-note-scope="facility" data-note-key="ttiPractices.hasConfrontationGroups" id="facility-practice-confrontation-groups"><label for="facility-practice-confrontation-groups">Confrontation / Hot-seat Groups</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasBehaviorContracts" data-note-scope="facility" data-note-key="ttiPractices.hasBehaviorContracts" id="facility-practice-behavior-contracts"><label for="facility-practice-behavior-contracts">Behavior Contracts / Loss of Privileges</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasStripSearches" data-note-scope="facility" data-note-key="ttiPractices.hasStripSearches" id="facility-practice-strip-searches"><label for="facility-practice-strip-searches">Strip Searches</label></div>
+                <div class="checkbox-group"><input type="checkbox" class="facility-checkbox" data-field="ttiPractices.hasForcedMedication" data-note-scope="facility" data-note-key="ttiPractices.hasForcedMedication" id="facility-practice-forced-medication"><label for="facility-practice-forced-medication">Forced or Coerced Medication</label></div>
+                <div class="form-group"><label>Other TTI Practices</label><div class="array-container" data-path="ttiPractices.other"></div></div>
+            </div>
+        </div>
+
         <!-- Philosophy Section -->
         <div class="section" id="philosophy-section" data-section-views="companies,locations,providers">
             <div class="section-header">

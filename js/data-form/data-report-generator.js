@@ -364,6 +364,8 @@ function generateFacilitiesSection() {
                 ${generateFacilityAccreditations(facility)}
                 ${generateFacilityResources(facility)}
                 ${generateFacilityTreatmentTypes(facility)}
+                ${generateFacilityTargetProfile(facility)}
+                ${generateFacilityTtiPractices(facility)}
                 ${generateFacilityPhilosophy(facility)}
                 ${generateFacilityCriticalIncidents(facility)}
                 ${generateFacilityNotes(facility)}
@@ -641,6 +643,89 @@ function generateFacilityTreatmentTypes(facility) {
     return `
         <div class="subsection-title">Treatment Types</div>
         <p>${treatments.map(t => escapeHtml(t)).join(', ')}</p>
+    `;
+}
+
+function generateFacilityTargetProfile(facility) {
+    const diagnosisLabels = {
+        hasADHD: 'ADHD',
+        hasAutismSpectrumDisorder: 'Autism Spectrum Disorder',
+        hasBipolarDisorder: 'Bipolar Disorder',
+        hasDepression: 'Depression',
+        hasAnxiety: 'Anxiety',
+        hasOCD: 'OCD',
+        hasPTSD: 'PTSD',
+        hasOppositionalDefiantDisorder: 'Oppositional Defiant Disorder (ODD)',
+        hasConductDisorder: 'Conduct Disorder',
+        hasEatingDisorder: 'Eating Disorder',
+        hasSubstanceAbuse: 'Substance Abuse',
+        hasBorderlinePersonalityDisorder: 'Borderline Personality Disorder (BPD)',
+        hasPsychiatricDisorders: 'Psychiatric Disorders',
+        hasBehavioralDisorders: 'Behavioral Disorders',
+        hasEmotionalDisorders: 'Emotional Disorders',
+        hasCoOccurringDisorders: 'Co-occurring Disorders',
+        hasReactiveAttachmentDisorder: 'Reactive Attachment Disorder (RAD)',
+        hasPersonalityDisorders: 'Personality Disorders'
+    };
+    const behaviorLabels = {
+        hasDefiance: 'Defiance',
+        hasAggression: 'Aggression',
+        hasSelfHarm: 'Self-harm',
+        hasRunningAway: 'Running away',
+        hasTruancy: 'Truancy',
+        hasAcademicStruggles: 'Academic struggles',
+        hasSocialProblems: 'Social problems',
+        hasFamilyConflict: 'Family conflict',
+        hasSexuallyInappropriateBehavior: 'Sexually inappropriate behavior',
+        hasLying: 'Lying',
+        hasManipulation: 'Manipulation',
+        hasStealing: 'Stealing',
+        hasEmotionalDysregulation: 'Emotional dysregulation',
+        hasImpulsiveBehavior: 'Impulsive behavior',
+        hasAttachment: 'Attachment issues',
+        hasAdoption: 'Adoption issues',
+        hasTrafficking: 'Trafficking'
+    };
+    const selected = (values, labels) => Object.keys(labels)
+        .filter(key => values?.[key] === true)
+        .map(key => labels[key]);
+    const diagnoses = selected(facility.targetedDiagnoses, diagnosisLabels);
+    const behaviors = selected(facility.targetedBehaviors, behaviorLabels);
+
+    if (diagnoses.length === 0 && behaviors.length === 0) return '';
+
+    return `
+        <div class="subsection-title">Target Diagnoses &amp; Behaviors</div>
+        ${diagnoses.length ? `<p><strong>Clinical diagnoses:</strong> ${diagnoses.map(escapeHtml).join(', ')}</p>` : ''}
+        ${behaviors.length ? `<p><strong>Behaviors &amp; challenges:</strong> ${behaviors.map(escapeHtml).join(', ')}</p>` : ''}
+    `;
+}
+
+function generateFacilityTtiPractices(facility) {
+    const practiceLabels = {
+        hasLevelSystem: 'Level / Point System',
+        hasRestraint: 'Physical or Chemical Restraint',
+        hasSeclusion: 'Seclusion / Isolation Rooms',
+        hasCommunicationRestrictions: 'Communication Restrictions',
+        hasConfrontationGroups: 'Confrontation / Hot-seat Groups',
+        hasBehaviorContracts: 'Behavior Contracts / Loss of Privileges',
+        hasStripSearches: 'Strip Searches',
+        hasForcedMedication: 'Forced or Coerced Medication'
+    };
+    const practices = facility.ttiPractices || {};
+    const selected = Object.keys(practiceLabels)
+        .filter(key => practices[key] === true)
+        .map(key => practiceLabels[key]);
+    const other = Array.isArray(practices.other)
+        ? practices.other.filter(item => typeof item === 'string' && item.trim())
+        : [];
+    const allPractices = [...selected, ...other];
+
+    if (allPractices.length === 0) return '';
+
+    return `
+        <div class="subsection-title">Common TTI Practices</div>
+        <p>${allPractices.map(escapeHtml).join(', ')}</p>
     `;
 }
 
