@@ -89,10 +89,18 @@ function kop_tools_registry() {
                 'path'  => 'api/manage-addresses.php',
                 'type'  => 'page',
             ),
+        ),
+        'Inspections' => array(
             array(
                 'title' => 'Manage Featured Inspections',
                 'desc'  => 'Curate the "inspections that demand attention" block on the home page: feature scraped inspection reports with a one-line note.',
                 'path'  => 'api/manage-featured-inspections.php',
+                'type'  => 'page',
+            ),
+            array(
+                'title' => 'Review Inspection Highlights',
+                'desc'  => 'Approve or reject the severe findings the parser pulled out of inspection reports; approved ones fill the home page and hub cards after the featured reports.',
+                'path'  => 'api/review-inspection-highlights.php',
                 'type'  => 'page',
             ),
         ),
