@@ -1,0 +1,12 @@
+{
+  "title": "Links",
+  "slug": "links",
+  "post_type": "page",
+  "status": "publish",
+  "content_file": "links.html",
+  "template": "page-utility.php",
+  "seed_version": 1,
+  "allow_published": true,
+  "last_seed_modified_gmt": "2026-09-17 19:26:56",
+  "_note": "2026-09-25: the Trauma Does Not Expire card pointed at attachment 3862, which no longer exists, so it rendered no image. image_id -1 makes Visual Link Preview use image_url, restored from the Wayback Machine to uploads/2025/09/trauma_does_not_expire.jpg. Content is otherwise the page as of last_seed_modified_gmt."
+}

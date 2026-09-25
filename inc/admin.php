@@ -899,6 +899,8 @@ function kop_seed_posts() {
         'history/corporatization.json',
         'history/advocacy-history.json',
         'history/tti-history-part-one.json',
+        // Links page: one link card's image pointed at a deleted attachment (2026-09-25).
+        'links.json',
     );
 }
 
@@ -1802,7 +1804,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '49';
+    $version = '50';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
