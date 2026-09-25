@@ -66,6 +66,58 @@ $status_labels = [
     'dead'          => 'Dead',
     'unknown'       => 'Unknown',
 ];
+
+// Keep flag files with the theme so the tracker makes no third-party image
+// requests. Country aliases come from the shared location data normalizer.
+$legislation_flag_for = static function ($jurisdiction) {
+    $key = strtolower(trim((string) $jurisdiction));
+    if ($key === '') return null;
+
+    $flag_dir = get_stylesheet_directory() . '/images/legislation-flags/';
+    $flag_uri = get_stylesheet_directory_uri() . '/images/legislation-flags/';
+    $state_codes = [
+        'alabama'=>'al', 'alaska'=>'ak', 'arizona'=>'az', 'arkansas'=>'ar', 'california'=>'ca',
+        'colorado'=>'co', 'connecticut'=>'ct', 'delaware'=>'de', 'florida'=>'fl', 'georgia'=>'ga',
+        'hawaii'=>'hi', 'idaho'=>'id', 'illinois'=>'il', 'indiana'=>'in', 'iowa'=>'ia', 'kansas'=>'ks',
+        'kentucky'=>'ky', 'louisiana'=>'la', 'maine'=>'me', 'maryland'=>'md', 'massachusetts'=>'ma',
+        'michigan'=>'mi', 'minnesota'=>'mn', 'mississippi'=>'ms', 'missouri'=>'mo', 'montana'=>'mt',
+        'nebraska'=>'ne', 'nevada'=>'nv', 'new hampshire'=>'nh', 'new jersey'=>'nj', 'new mexico'=>'nm',
+        'new york'=>'ny', 'north carolina'=>'nc', 'north dakota'=>'nd', 'ohio'=>'oh', 'oklahoma'=>'ok',
+        'oregon'=>'or', 'pennsylvania'=>'pa', 'rhode island'=>'ri', 'south carolina'=>'sc',
+        'south dakota'=>'sd', 'tennessee'=>'tn', 'texas'=>'tx', 'utah'=>'ut', 'vermont'=>'vt',
+        'virginia'=>'va', 'washington'=>'wa', 'west virginia'=>'wv', 'wisconsin'=>'wi', 'wyoming'=>'wy',
+    ];
+
+    if (isset($state_codes[$key])) {
+        $file = 'state-' . $state_codes[$key] . '.svg';
+        return file_exists($flag_dir . $file) ? $flag_uri . $file : null;
+    }
+
+    // Puerto Rico has its own flag, though the shared location normalizer
+    // groups it under the United States.
+    if ($key === 'puerto rico') {
+        $file = 'country-pr.svg';
+        return file_exists($flag_dir . $file) ? $flag_uri . $file : null;
+    }
+
+    $country_aliases = function_exists('kop_facility_countries') ? kop_facility_countries() : [];
+    $country_name = $country_aliases[$key] ?? trim((string) $jurisdiction);
+    $country_key = strtolower($country_name);
+    $country_codes = [
+        'federal'=>'us', 'united states'=>'us', 'united states of america'=>'us', 'america'=>'us', 'usa'=>'us', 'u s'=>'us', 'u s a'=>'us',
+        'united kingdom'=>'gb', 'israel'=>'il', 'netherlands'=>'nl', 'argentina'=>'ar', 'australia'=>'au',
+        'canada'=>'ca', 'costa rica'=>'cr', 'czech republic'=>'cz', 'dominican republic'=>'do', 'fiji'=>'fj',
+        'italy'=>'it', 'jamaica'=>'jm', 'mexico'=>'mx', 'new zealand'=>'nz', 'samoa'=>'ws',
+        'united arab emirates'=>'ae', 'germany'=>'de', 'ireland'=>'ie', 'spain'=>'es', 'portugal'=>'pt',
+        'south africa'=>'za', 'kenya'=>'ke', 'india'=>'in', 'philippines'=>'ph', 'thailand'=>'th', 'brazil'=>'br',
+        'peru'=>'pe', 'guatemala'=>'gt', 'honduras'=>'hn', 'belize'=>'bz', 'panama'=>'pa',
+    ];
+
+    if (!isset($country_codes[$country_key])) return null;
+
+    $file = 'country-' . $country_codes[$country_key] . '.svg';
+    return file_exists($flag_dir . $file) ? $flag_uri . $file : null;
+};
 ?>
 
 <div class="kop-records-page kop-legislation-page">
@@ -116,6 +168,7 @@ $status_labels = [
     </div>
 
     <div class="kop-records-grid" id="legislation-grid" data-kop-bug-feature="legislation/table" data-kop-bug-label="Legislation Table">
+        <?php $show_flag_credit = false; ?>
         <?php if (empty($bills)): ?>
             <div class="kop-records-empty">No legislation records found. Check back soon.</div>
         <?php else: ?>
@@ -130,12 +183,20 @@ $status_labels = [
             $intro_date   = $bill['introduced_date']   ? date('M j, Y', strtotime($bill['introduced_date']))   : '';
             $last_date    = $bill['last_action_date']   ? date('M j, Y', strtotime($bill['last_action_date'])) : '';
             $is_federal   = ($bill['jurisdiction'] ?? '') === 'Federal';
+            $flag_image   = $legislation_flag_for($bill['jurisdiction'] ?? '');
+            if ($flag_image) $show_flag_credit = true;
         ?>
         <div class="kop-record-card" id="bill-<?php echo (int) $bill['id']; ?>"
              data-status="<?php echo esc_attr($status_slug); ?>"
              data-jurisdiction="<?php echo esc_attr($bill['jurisdiction'] ?? ''); ?>"
              data-position="<?php echo esc_attr($position); ?>"
              data-level="<?php echo $is_federal ? 'federal' : 'state'; ?>">
+
+            <?php if ($flag_image): ?>
+            <div class="kop-legislation-flag" aria-hidden="true">
+                <img src="<?php echo esc_url($flag_image); ?>" alt="" loading="lazy" decoding="async">
+            </div>
+            <?php endif; ?>
 
             <div class="kop-card-header">
                 <h2 class="kop-card-title">
@@ -212,6 +273,9 @@ $status_labels = [
         <?php endforeach; ?>
         <?php endif; ?>
     </div>
+    <?php if ($show_flag_credit): ?>
+        <p class="kop-flag-credit">Flag artwork via <a href="https://flagpedia.net/" target="_blank" rel="noopener">Flagpedia</a>.</p>
+    <?php endif; ?>
 </div>
 
 <script>
