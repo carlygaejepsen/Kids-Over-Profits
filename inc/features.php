@@ -1046,8 +1046,11 @@ function kop_filebird_folder_shortcode($atts) {
     if ($atts['merge'] === 'name' && function_exists('kop_get_facility_doc_tree')) {
         $tree = kop_get_facility_doc_tree($atts['folder_id'], true);
         $count = count($tree['files']) + kop_count_facility_doc_tree($tree['subfolders']);
-        $body = kop_render_doc_file_list($tree['files'], $atts['layout'])
-              . kop_render_doc_subfolders($tree['subfolders'], $atts['layout']);
+        // Subfolders first, the way a file browser lists them: in a folder
+        // with both, the loose files would otherwise push every subfolder
+        // below the fold.
+        $body = kop_render_doc_subfolders($tree['subfolders'], $atts['layout'])
+              . kop_render_doc_file_list($tree['files'], $atts['layout']);
     } else {
         $attachments = kop_get_folder_attachments($atts['folder_id']);
         $count = count($attachments);
