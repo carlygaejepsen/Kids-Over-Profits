@@ -24,6 +24,11 @@ specialized template. The source inventory and repository relationship are in
   `templates/page-document-archive.php` (`inc/document-archive.php`). The ten
   single-file court document pages and `edcons` are trashed behind their
   redirects.
+- 2026-09-25, evening: Phase 1 mostly done. `templates/page-hub.php` builds
+  every hub from `kop_hub_config()` (`inc/hub-shell.php`); all hubs have
+  settings; test `php scripts/test-hub-pages.php`. What is left of Phase 1,
+  and Phases 3 and 4 in detail, are in
+  [PAGE-TEMPLATE-HANDOFF.md](PAGE-TEMPLATE-HANDOFF.md).
 
 ## Goal
 
