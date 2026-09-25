@@ -76,9 +76,6 @@ function kop_article_parents() {
         'common-survivor-experiences'                  => 'survivors',
         'spiritual-abuse'                              => 'survivors',
         'survivor-resources-nature'                    => 'survivors',
-
-        // The press coverage index.
-        'news-2'                                       => 'journalists',
     ));
 }
 

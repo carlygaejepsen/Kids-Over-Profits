@@ -52,6 +52,8 @@ php scripts/test-facility-pages.php
 php scripts/test-operator-pages.php               # renders every /operator/<slug>/ page to tmp/operator-pages/
 # Hub pages that list a category's posts (Editorials, Investigatory Spotlight; inc/hub-posts.php)
 php scripts/test-hub-posts.php
+# The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
+php scripts/test-news-post-import.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # See the working tree's map in a browser before pushing it

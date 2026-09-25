@@ -1931,7 +1931,8 @@ function kop_enqueue_document_library_assets() {
         has_shortcode($post->post_content, 'kop_folder') ||
         has_shortcode($post->post_content, 'kop_document') ||
         is_page('document-library') ||
-        is_page_template('templates/page-document-folder.php')
+        is_page_template('templates/page-document-folder.php') ||
+        is_page_template('templates/page-document-archive.php')
     )) {
         
         $theme_uri = get_stylesheet_directory_uri();
@@ -1972,6 +1973,28 @@ function kop_enqueue_document_library_assets() {
     }
 }
 add_action('wp_enqueue_scripts', 'kop_enqueue_document_library_assets');
+
+/**
+ * Document Archive (templates/page-document-archive.php): its own layout, the
+ * breadcrumb trail, and the A to Z filter. The folder listings and document
+ * viewer come from kop_enqueue_document_library_assets() above.
+ */
+function kop_enqueue_document_archive_assets() {
+    if (!is_page_template('templates/page-document-archive.php')) {
+        return;
+    }
+    $dir = get_stylesheet_directory();
+    $uri = get_stylesheet_directory_uri();
+    foreach (array('kop-trail' => '/css/trail.css', 'kop-document-archive' => '/css/document-archive.css') as $handle => $rel) {
+        if (file_exists($dir . $rel)) {
+            wp_enqueue_style($handle, $uri . $rel, array('kop-colors'), filemtime($dir . $rel));
+        }
+    }
+    if (file_exists($dir . '/js/document-archive.js')) {
+        wp_enqueue_script('kop-document-archive', $uri . '/js/document-archive.js', array(), filemtime($dir . '/js/document-archive.js'), true);
+    }
+}
+add_action('wp_enqueue_scripts', 'kop_enqueue_document_archive_assets');
 
 /**
  * True when the current singular page uses one of the given child templates

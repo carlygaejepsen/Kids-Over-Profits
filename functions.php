@@ -94,6 +94,9 @@ require_once get_stylesheet_directory() . '/inc/article-parts.php';
 // Hub pages that list one category's posts (Editorials, Investigatory Spotlight)
 require_once get_stylesheet_directory() . '/inc/hub-posts.php';
 
+// The Document Archive: featured reports, collections, every program A to Z
+require_once get_stylesheet_directory() . '/inc/document-archive.php';
+
 // The pieces a long-form page is assembled from: era header, collapsible
 // section, sources, "Why this matters" - as functions and as shortcodes
 require_once get_stylesheet_directory() . '/inc/article-pieces.php';

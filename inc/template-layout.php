@@ -79,6 +79,8 @@ function kop_template_layout_no_sidebar() {
         // The glossary has its own contents rail; beside the site sidebar the
         // entries were squeezed into a third of the screen.
         'templates/page-glossary.php',
+        // The archive's collection grids and A to Z columns need the width.
+        'templates/page-document-archive.php',
     ));
 }
 

@@ -26,7 +26,7 @@ define('ABSPATH', dirname(__DIR__) . '/');
 
 /* Every slug the map names exists here except one, which is left out on
  * purpose so the "drop a page that has gone" rule is exercised. */
-$GLOBALS['kop_test_missing'] = 'news-2';
+$GLOBALS['kop_test_missing'] = 'overview';
 
 /* inc/admin.php is loaded whole, for kop_template_assignments(): the map has
  * to be checked against the real list of pages using the reading template,

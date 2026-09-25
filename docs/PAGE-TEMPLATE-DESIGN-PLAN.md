@@ -17,6 +17,13 @@ specialized template. The source inventory and repository relationship are in
   `kop_hub_standfirst` filter when a page has no excerpt (no hub page has one).
   `news` is not a hub and cannot redirect yet: its 78 posts are not in the
   news feed.
+- 2026-09-25, later: Phase 2 done. The 78 news posts and the 14 entries of the
+  2024 index that no post covered are in the news feed
+  (`api/lib-news-post-import.php`, test `php scripts/test-news-post-import.php`);
+  `/news/` and `/news-2/` 301 to `/tti-news-feed/`. `/document-archive/` is
+  `templates/page-document-archive.php` (`inc/document-archive.php`). The ten
+  single-file court document pages and `edcons` are trashed behind their
+  redirects.
 
 ## Goal
 

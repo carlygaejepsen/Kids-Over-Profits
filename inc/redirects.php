@@ -19,6 +19,12 @@ function kop_redirect_map() {
         // at /czech-republic/. The International map linked /czechia/.
         'czechia'       => '/czech-republic/',
 
+        // The old news listings (2026-09-25). Every post they listed and every
+        // entry of the 2024 index was imported into the news feed first
+        // (kop_apply_news_post_import() in inc/admin.php).
+        'news'          => '/tti-news-feed/',
+        'news-2'        => '/tti-news-feed/',
+
         // Retired shells (phase 3). Each was an empty container or hand-typed
         // list that a template-driven page now covers.
         'edcons'        => '/referrers-educational-consultants/',

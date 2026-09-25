@@ -650,6 +650,9 @@ function kop_template_assignments() {
         'editorials'              => 'page-hub.php',
         'investigatory-spotlight' => 'page-hub.php',
 
+        // The library's front door (2026-09-25): inc/document-archive.php.
+        'document-archive'        => 'page-document-archive.php',
+
         // Long-form articles, timelines and case analyses (phase 6): reading layout only.
         'advocacy-history'                                             => 'page-article.php',
         'antiquity'                                                    => 'page-article.php',
@@ -679,7 +682,6 @@ function kop_template_assignments() {
         'doe-v-trails-motions'                                         => 'page-article.php',
         'jane-june-doe-v-trails-carolina-et-al-summary'                => 'page-article.php',
         'john-doe-v-trails-complaint-summary-defendant-information'    => 'page-article.php',
-        'news-2'                                                       => 'page-article.php',
         'overview'                                                     => 'page-article.php',
 
         'wyoming'        => 'page-state.php',
@@ -727,6 +729,22 @@ function kop_pages_to_trash() {
         'test-scripts' => 'page', // inline copy of the facility report viewer
         'admin-tools'  => 'page', // five buttons; the KOP Tools menu lists every tool
         '405-2'        => 'page', // a heading reading "Kids Over Profits" and nothing else
+
+        // 2026-09-25: one file block each, already 301ing to the file
+        // (inc/redirects.php keeps working once they are gone). WordPress
+        // empties the trash after 30 days, so pages holding hand-written text
+        // (international, news, news-2) stay published behind their redirects.
+        'edcons'                                                                        => 'page',
+        'a-survivors-guide-to-legal-action-against-troubled-teen-industry-programs'     => 'page',
+        'overt-and-covert-conversion-therapy-practices-in-therapeutic-boarding-schools' => 'page',
+        'doe-v-hyde-complaint'                                                          => 'page',
+        'doe-v-hyde-complaint-amended'                                                  => 'page',
+        'richardson-complaint'                                                          => 'page',
+        'shiver-v-southstone-complaint'                                                 => 'page',
+        'shiver-v-southstone-summons'                                                   => 'page',
+        'shiver-v-southstone-motion-for-default-judgement'                              => 'page',
+        'trinity-teen-solutions-trinity-cross-ranch'                                    => 'page',
+        'trinity-teen-trinity-cross-complaint'                                          => 'page',
     );
 }
 
@@ -1581,6 +1599,27 @@ function kop_apply_media_folder_fixes() {
     return $done;
 }
 /**
+ * The legacy news posts and the 2024 press index go into the news feed, so
+ * /news/ and /news-2/ can redirect to it (inc/redirects.php). Idempotent:
+ * api/lib-news-post-import.php skips anything already in the feed.
+ */
+function kop_apply_news_post_import() {
+    $pdo = kop_seed_pdo();
+    $lib = get_stylesheet_directory() . '/api/lib-news-post-import.php';
+    if (!$pdo || !file_exists($lib)) {
+        return array();
+    }
+    require_once $lib;
+    try {
+        $stats = kop_news_post_import($pdo, kop_news_post_import_sources());
+        unset($stats['rows']);
+        return $stats;
+    } catch (Throwable $e) {
+        return array('error' => $e->getMessage());
+    }
+}
+
+/**
  * Apply kop_slug_renames(), kop_template_assignments(), then
  * kop_pages_to_trash(). Idempotent. Returns a summary array for manual runs.
  */
@@ -1598,6 +1637,7 @@ function kop_apply_template_assignments() {
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
     $summary['text']         = kop_apply_text_fixes();
+    $summary['news_import']  = kop_apply_news_post_import();
 
     foreach (kop_pages_to_trash() as $slug => $post_type) {
         $page = get_page_by_path($slug, OBJECT, $post_type);
@@ -1649,7 +1689,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '44';
+    $version = '45';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }
