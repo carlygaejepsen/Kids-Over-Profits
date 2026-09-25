@@ -20,7 +20,7 @@ import sys
 REPO = Path(__file__).resolve().parent.parent
 HUBS = (
     'history', 'survivors', 'researchreports', 'families',
-    'where-are-the-kids', 'advocates', 'journalists', 'support',
+    'where-are-the-kids', 'advocates', 'journalists',
     'volunteer', 'law-policy', 'resources', 'editorials',
     'investigatory-spotlight',
 )
@@ -263,7 +263,7 @@ def take_screenshots(pages, out_dir):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('slugs', nargs='*', choices=HUBS, help='hub slugs (default: all 13)')
+    parser.add_argument('slugs', nargs='*', choices=HUBS, help='hub slugs (default: all 12)')
     parser.add_argument('--shots', default='tmp/hub-preview', metavar='DIR',
                         help='output directory for HTML and screenshots (default: tmp/hub-preview)')
     args = parser.parse_args()

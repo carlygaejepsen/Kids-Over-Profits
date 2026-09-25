@@ -135,6 +135,8 @@ foreach ($fixtures as $slug => $fixture) {
     if ($slug === 'anon-submit') kop_test_assert(strpos($html, 'id="anonymous-portal"') !== false, 'anonymous portal shortcode remains rendered');
     if ($slug === 'no-access') kop_test_assert(strpos($html, 'id="dlm-no-access"') !== false, 'Download Monitor shortcode remains rendered');
     if ($slug === 'donate') kop_test_assert(strpos($html, '<givebutter-widget') !== false, 'Givebutter widget remains rendered');
+    if ($slug === 'donate') kop_test_assert(strpos($html, '>Other ways to help</h2>') !== false && strpos($html, 'href="https://kidsoverprofits.org/volunteer/"') !== false, 'donate carries the Support hub\'s other ways to help');
+    if ($slug === 'contact') kop_test_assert(strpos($html, 'kop-utility__other-ways') === false, 'pages without other_ways print no box');
     if ($slug === 'contact') kop_test_assert(strpos($html, 'mailto:dani@kidsoverprofits.org') !== false, 'contact mailto remains rendered');
     if ($slug === 'links') kop_test_assert(substr_count($html, '<li><a href="https://example.org/') === 5, 'five link cards remain rendered');
     file_put_contents($preview_dir . '/' . $slug . '.html', $html);

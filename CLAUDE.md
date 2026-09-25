@@ -58,7 +58,7 @@ php scripts/test-hub-pages.php
 php scripts/test-utility-pages.php
 # Live content with local utility/legal template CSS, screenshots at 390/768/1440
 python scripts/preview-utility-pages.py --shots tmp/utility-preview
-# Live hub frame preview at 390, 768 and 1440 px; defaults to all 13 hubs
+# Live hub frame preview at 390, 768 and 1440 px; defaults to all 12 hubs
 python scripts/preview-hub-pages.py --shots tmp/hub-preview
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php

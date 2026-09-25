@@ -28,6 +28,14 @@ if (!function_exists('kop_utility_config')) {
             'donate' => array(
                 'standfirst' => 'Your donation helps preserve public records and expand resources for survivors and families.',
                 'share' => true,
+                // Carried over from the Support hub, which now redirects here.
+                'other_ways_heading' => 'Other ways to help',
+                'other_ways' => array(
+                    array('label' => 'Volunteer', 'url' => home_url('/volunteer/'),
+                          'note' => 'Give time instead: research, data entry, writing and outreach.'),
+                    array('label' => 'Tell us about a program', 'url' => home_url('/tti-data-submission/'),
+                          'note' => 'Add or correct what we hold on a facility.'),
+                ),
             ),
             'contact' => array(
                 'share' => false,

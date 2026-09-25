@@ -641,7 +641,6 @@ function kop_template_assignments() {
         'where-are-the-kids'   => 'page-hub.php',
         'advocates'            => 'page-hub.php',
         'journalists'          => 'page-hub.php',
-        'support'              => 'page-hub.php',
         'volunteer'            => 'page-hub.php',
         'law-policy'           => 'page-hub.php',
         'resources'            => 'page-hub.php',
@@ -1803,7 +1802,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '48';
+    $version = '49';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

@@ -53,14 +53,19 @@ while (have_posts()) :
 
         <?php if (!empty($kop_utility['other_ways']) && is_array($kop_utility['other_ways'])) : ?>
             <aside class="kop-utility__other-ways" aria-labelledby="kop-utility-other-ways-title">
-                <h2 id="kop-utility-other-ways-title">Other ways to reach us</h2>
+                <h2 id="kop-utility-other-ways-title"><?php echo esc_html(!empty($kop_utility['other_ways_heading']) ? $kop_utility['other_ways_heading'] : 'Other ways to reach us'); ?></h2>
                 <ul>
                     <?php foreach ($kop_utility['other_ways'] as $way) :
                         if (empty($way['label']) || empty($way['url'])) {
                             continue;
                         }
                         ?>
-                        <li><a href="<?php echo esc_url($way['url']); ?>"><?php echo esc_html($way['label']); ?></a></li>
+                        <li>
+                            <a href="<?php echo esc_url($way['url']); ?>"><?php echo esc_html($way['label']); ?></a>
+                            <?php if (!empty($way['note'])) : ?>
+                                <span class="kop-utility__other-ways-note"><?php echo esc_html($way['note']); ?></span>
+                            <?php endif; ?>
+                        </li>
                     <?php endforeach; ?>
                 </ul>
             </aside>

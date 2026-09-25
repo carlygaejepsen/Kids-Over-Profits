@@ -98,6 +98,16 @@
     margin-bottom: 0;
 }
 
+.kop-utility__other-ways li + li {
+    margin-top: 0.5rem;
+}
+
+.kop-utility__other-ways-note {
+    display: block;
+    font-size: 0.92rem;
+    color: var(--kop-text-secondary, #000080);
+}
+
 .kop-utility__footer {
     margin-top: 2rem;
     font-size: 0.9rem;

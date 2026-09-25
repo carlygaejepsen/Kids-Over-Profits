@@ -14,7 +14,7 @@ point marked **Owner decision**; do not guess those.
 | 0. Classify default-template pages | Done. [PAGE-CLASSIFICATION.md](PAGE-CLASSIFICATION.md) |
 | 1. Finish the hub family | Mostly done 2026-09-25. Remaining work in section 4 |
 | 2. News and document archives | Done. `/news/` and `/news-2/` 301 to `/tti-news-feed/`; `/document-archive/` has its own template |
-| 3. Legal and utility pages | Not started. Section 5 |
+| 3. Legal and utility pages | Done 2026-09-25 (4a026ce, c3a7c02). `/support/` 301s to `/donate/` (5.3). `no-access` still prints raw `[dlm_no_access]` (Download Monitor inactive; owner not concerned) |
 | 4. Posts | Not started. Section 6 |
 
 ### What Phase 1 shipped
@@ -340,7 +340,13 @@ content is four images of the panel opinion, and lawsuit 10's
     page. Recommend the redirect if the PDF has the same content.
   - If no PDF exists: build the template.
 
-### 5.3 Support and Donate (Owner decision)
+### 5.3 Support and Donate (decided 2026-09-25: Donate)
+
+Done. The two pages carried the same funding copy, so nothing moved except
+Support's "Other ways to help" box, now on Donate (`kop_utility_config()`).
+`/support/` is out of the hub list and 301s to `/donate/`; its page stays
+published behind the redirect. The live header menu (Header (categories))
+never linked Support. The original plan follows.
 
 Present the overlap from 4.4 with a recommendation: keep `/donate/` as the
 page the header menu and the Donate buttons point to, move `/support/`'s

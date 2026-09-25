@@ -186,19 +186,6 @@ function kop_hub_config($slug) {
             ),
         ),
 
-        'support' => array(
-            'standfirst' => 'What your donations pay for now, and what we hope to fund next.',
-            'contribute' => array(
-                'heading' => 'Other ways to help',
-                'links'   => array(
-                    array('label' => 'Volunteer', 'slug' => 'volunteer',
-                          'note' => 'Give time instead: research, data entry, writing and outreach.'),
-                    array('label' => 'Tell us about a program', 'template' => 'page-data.php', 'path' => '/tti-data-submission/',
-                          'note' => 'Add or correct what we hold on a facility.'),
-                ),
-            ),
-        ),
-
         'volunteer' => array(
             'standfirst' => 'Help us document the troubled teen industry: submit facility data, documents, news, lawsuits and legislation, or join the team.',
             'actions'    => array(

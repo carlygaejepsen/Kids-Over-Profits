@@ -347,7 +347,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         <p>Want to help? Contact
         <a href="mailto:dani@kidsoverprofits.org">dani@kidsoverprofits.org</a>
         for volunteer opportunities or
-        <a href="/support/">click here to help fund our mission.</a></p>
+        <a href="/donate/">click here to help fund our mission.</a></p>
     </section>
 
     <?php if (shortcode_exists('addtoany')): ?>

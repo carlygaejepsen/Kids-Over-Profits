@@ -33,6 +33,11 @@ function kop_redirect_map() {
         'test-scripts'  => '/',
         'admin-tools'   => '/wp-admin/admin.php?page=kop-tools',
 
+        // Support and Donate carried the same funding copy (2026-09-25, owner
+        // chose Donate). Support's page stays published behind this redirect;
+        // its "Other ways to help" links moved to Donate (inc/utility-pages.php).
+        'support'       => '/donate/',
+
         // Single-file court document pages (phase 4). Each page held one
         // file block and nothing else, so the page now resolves to the file
         // itself; the lawsuit records carry the same URLs. The Trinity
