@@ -84,8 +84,8 @@ function kop_doc_archive_is_topic_folder($name) {
     return (bool) preg_match('/^(newsletters?|marketing.*|staff training.*|philosophy.*|criticism|studies|directories|strategy|news coverage|important people|affiliates|parent guides?|jtsp|brochures?|press.*|photos?|pictures|images|misc.*|other|documents?|polic(y|ies)|forms|contracts?|lawsuits?|legal|reports?|articles?|media|videos?|correspondence|letters|financials?|tax.*|990s?|court.*|testimon(y|ies)|blog|stock photos|websites?|web ?pages?|history|timeline)$/i', trim($name));
 }
 
-function kop_doc_archive_states() {
-    return array('Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming');
+function kop_doc_archive_places() {
+    return array('Australia','Canada','Costa Rica','Czech Republic','Dominican Republic','England','Fiji','Ireland','Israel','Italy','Jamaica','Mexico','Netherlands','New Zealand','Samoa','Scotland','United Kingdom','District Of Columbia','Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming');
 }
 
 /** A filename-slug title ("gao-08-713t") read as words. */
@@ -129,7 +129,7 @@ function kop_doc_archive_covers($folder_id, $n = 3) {
  * removed, and every six hours.
  */
 function kop_doc_archive_data() {
-    $cached = get_transient('kop_doc_archive_v2');
+    $cached = get_transient('kop_doc_archive_v3');
     if (is_array($cached)) {
         return $cached;
     }
@@ -183,6 +183,10 @@ function kop_doc_archive_data() {
         if ($name === '' || in_array($key, $skip, true)) {
             continue;
         }
+        // Place folders are named in capitals ("ALABAMA", "CANADA").
+        if ($name === strtoupper($name) && in_array(ucwords($key), kop_doc_archive_places(), true)) {
+            $name = ucwords($key);
+        }
         $within = '';
         if ($parent !== 0) {
             // One level down only, under a real top-level folder, and only
@@ -194,7 +198,7 @@ function kop_doc_archive_data() {
             $within = $clean($by_id[$parent]['name']);
             // State folders are named in capitals ("NEVADA"); acronyms
             // like NATSAP are not states and keep theirs.
-            if (in_array(ucwords(strtolower($within)), kop_doc_archive_states(), true)) {
+            if (in_array(ucwords(strtolower($within)), kop_doc_archive_places(), true)) {
                 $within = ucwords(strtolower($within));
             }
             if (in_array(strtolower($within), $skip, true)) {
@@ -287,14 +291,14 @@ function kop_doc_archive_data() {
         'programs' => array_values($programs),
         'recent'   => $recent,
     );
-    set_transient('kop_doc_archive_v2', $data, 6 * HOUR_IN_SECONDS);
+    set_transient('kop_doc_archive_v3', $data, 6 * HOUR_IN_SECONDS);
     return $data;
 }
 
 add_action('add_attachment', 'kop_doc_archive_flush');
 add_action('delete_attachment', 'kop_doc_archive_flush');
 function kop_doc_archive_flush() {
-    delete_transient('kop_doc_archive_v2');
+    delete_transient('kop_doc_archive_v3');
 }
 
 /** The "Start here" row: rated research library items, else the fallback titles. */
