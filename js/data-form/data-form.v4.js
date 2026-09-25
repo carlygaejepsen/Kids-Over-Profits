@@ -1038,6 +1038,33 @@ function addCustomListValue(config) {
     showUploadStatus(`Added ${config.label} "${value}".`, 'success');
 }
 
+// Text left in a custom box without pressing Add is added on submit/save
+// rather than silently left behind. Returns how many values were added.
+function flushPendingCustomListValues() {
+    const facility = currentFacilityForCustomLists();
+    if (!facility) return 0;
+    let added = 0;
+    CUSTOM_CHECKBOX_LISTS.forEach(config => {
+        const input = document.getElementById(config.inputId);
+        const value = input ? input.value.trim() : '';
+        if (!value) return;
+        const values = getCustomListValues(facility, config.path);
+        if (!values.some(v => v.toLowerCase() === value.toLowerCase())) {
+            values.push(value);
+            setNestedValue(facility, config.path, values);
+            added++;
+        }
+        input.value = '';
+    });
+    if (added) {
+        renderCustomCheckboxLists(facility);
+        updateJSON();
+        autoSave();
+    }
+    return added;
+}
+window.flushPendingCustomListValues = flushPendingCustomListValues;
+
 function removeCustomListValue(config, value) {
     const facility = currentFacilityForCustomLists();
     if (!facility) return;

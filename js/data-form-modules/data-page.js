@@ -510,6 +510,10 @@
                 return false;
             }
 
+            if (typeof window.flushPendingCustomListValues === 'function') {
+                window.flushPendingCustomListValues();
+            }
+
             const currentFormData = window.formData;
 
             if (!currentFormData) {

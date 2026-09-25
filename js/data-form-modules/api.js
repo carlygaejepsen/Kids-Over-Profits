@@ -289,6 +289,10 @@
         const { showUploadStatus, debugLog, deepClone, newProject, updateAllUI, refreshSavedProjectPanels } = window;
         const API_ENDPOINTS = getAPIEndpoints();
 
+        if (action === 'save' && typeof window.flushPendingCustomListValues === 'function') {
+            window.flushPendingCustomListValues();
+        }
+
         if (action === 'delete') {
             // In suggestion mode there is no server-side delete — the public
             // endpoint only accepts suggestion payloads (data + reason) and
