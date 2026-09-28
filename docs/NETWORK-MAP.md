@@ -1657,6 +1657,17 @@ The wider rule the list states, that nothing on screen has connections off
 screen, is the open decision above. Files: `js/network-map/focus.js`
 (`visibleIds`), `store.js`, `scripts/test-network-modules.js`.
 
+**Closed (2026-09-28).** Both checks hold. The module test (the 2b.1
+block in `scripts/test-network-modules.js`) opens Jeannie Courtney and
+asserts Gilcrease surfaces with all five connections on the board, and
+that `resetFilters` clears the cross-group filter; it passes against the
+current graph. On the deployed build, opening Jeannie Courtney draws all
+five of his connections as lines (e0204, e0264, e0718, e0733, e0734),
+and the toggle that hid three of them cannot be tripped by a reader at
+all any more: the filter checkboxes left the template when the rail
+became the Key (2b.9), and the store's `crossRegionOnly` filter is off
+on load.
+
 ### 2b.2 Search
 
 Step 6, unbuilt. `search.js`: prefix, then word-start, then substring over

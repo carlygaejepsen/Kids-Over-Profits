@@ -214,25 +214,22 @@ The date is when each was last confirmed open.
 Live at https://kidsoverprofits.org/network-map/. Build and ship each on its
 own.
 
-1. **David Gilcrease (2b.1).** A module test asserting all five of his
-   connections, and a check of the deployed build with the cross-group toggle
-   off.
-2. **Kind marks (2d.2) and the legend's kind rows (2d.9)** (owner's choice
+1. **Kind marks (2d.2) and the legend's kind rows (2d.9)** (owner's choice
    2026-09-28): a small-caps kind word set under the name (COMPANY, TRADE
    GROUP), fading with the labels at small zoom, never a colour; the
    legend gets a row per kind painted by the same painter.
-3. **Phase 4 integration** (owner's go-ahead 2026-09-28): the one-hop
+2. **Phase 4 integration** (owner's go-ahead 2026-09-28): the one-hop
    mini graph on facility profile pages with a "See full map" link, admin
    CSV re-import through an `api/` endpoint, and a timeline mode now that
    2b.6 filled in years. Outlined at the end of NETWORK-MAP.md; spec each
    piece there before building, as 2d.6 and the list view were.
-4. Later, not to be started without a word from the owner: chain hulls and
+3. Later, not to be started without a word from the owner: chain hulls and
    group-by-network (2d.4), "Suggest a correction" from the map (Phase 3).
 
-Shipped from this list: the route highlight (2d.6) and the list view with
-CSV download, both 2026-09-28; the record of what was decided is
-NETWORK-MAP.md (the 2d.6 "Built" paragraphs and the Phase 3 "List view"
-section).
+Shipped or closed from this list, all 2026-09-28: the route highlight
+(2d.6), the list view with CSV download, and the David Gilcrease checks
+(2b.1, closed: the module test holds and the deployed build draws all
+five). The record of what was decided is NETWORK-MAP.md.
 
 After any map change: `node scripts/build-network-graph.js`,
 `node scripts/test-network-graph.js`, and
