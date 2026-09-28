@@ -21,6 +21,27 @@
       "facilities_affected": ["Youth residential treatment facilities", "Psychiatric residential treatment facilities (inpatient psychiatric services under 21)", "Out-of-state placements"],
       "tags": ["discussion draft", "Senate Finance Committee", "Warehouses of Neglect"],
       "reviewer_notes": "[claude 2026-09-28] Sources: Finance Committee release https://www.finance.senate.gov/ranking-members-news/wyden-announces-major-reforms-to-youth-residential-treatment-facilities ; section-by-section (titled Discussion Draft) https://www.finance.senate.gov/download/rtf-section-by-section ; draft text (S. __, committee blank) https://www.finance.senate.gov/download/rtf-legislative-text ; Youth Law Center May 2026 briefing still calls it a discussion draft https://www.ylc.org/federal-youth-policy-briefing-may-2026/ ; coverage https://mindsitenews.org/2026/01/07/new-senate-bill-targets-troubled-teen-industry-and-residential-treatment-abuse/ . If it is introduced, set bill_number, introduced_date, status and point official_url at Congress.gov."
+    },
+    {
+      "bill_title": "Residential Child Care Programs - Transportation Companies - Regulation (Preventing Abduction in Youth Transport Act of 2025)",
+      "bill_number": "HB 497",
+      "jurisdiction": "Maryland",
+      "chamber": "house",
+      "session_year": "2025",
+      "bill_type": "HB",
+      "sponsors": ["Vaughn Stewart (primary)", "Crutchfield", "Tomlinson", "Pasteur", "Toles", "Schmidt", "Simmons", "Phillips", "Stinnett", "Taylor", "Simpson", "Grammer", "Sample-Hughes", "Conaway", "Kaufman"],
+      "status": "enacted",
+      "introduced_date": "2025-01-20",
+      "last_action_date": "2025-05-06",
+      "last_action_text": "Approved by the Governor, Chapter 343, Laws of Maryland 2025; effective October 1, 2025. Passed the House 138-0 and the Senate 44-0. Cross-filed Senate bill SB 400 (Senator Gile) was also enacted, as Chapter 344.",
+      "subject_tags": ["youth transport", "restraint prohibition", "overnight pickup ban", "private right of action", "troubled teen industry"],
+      "summary": "Regulates youth transportation companies, defined as businesses that specialize in transporting a child to a residential child care program. For this law a residential child care program includes wilderness or outdoor programs, boot camps, educational or therapeutic boarding schools and behavioral modification programs that serve children with an emotional, behavioral or mental health disorder, a substance use disorder, or an intellectual, developmental, physical or sensory disability. Hospitals, detention and youth correctional facilities, substance abuse treatment facilities, licensed foster homes and other secure facilities are excluded.\n\nWhen the final destination is a residential child care program, a transport company may not use blindfolds, hoods or other visual impairment, or mechanical restraints such as handcuffs, chains, irons, straitjackets or cloth, leather or plastic restraints. Physical restraints and holds are allowed only when there is a substantial likelihood of imminent serious physical harm to the child or others and no less restrictive alternative, only for as long as that risk persists, only by staff trained in restraint, and never as punishment, for convenience or as a substitute for supervision. Companies may not pick up a child between 9 p.m. and 6 a.m., except companies under contract with the Department of Human Services.\n\nThe Attorney General may sue for injunctive relief and statutory damages up to $1,000 for a first offense and $3,000 for a later one. The child may sue for restitution, compensatory damages, statutory damages up to $500 per violation and attorney's fees, within 10 years after reaching the age of majority. The law applies only to transports on or after October 1, 2025.",
+      "full_text_url": "https://mgaleg.maryland.gov/2025RS/Chapters_noln/CH_343_hb0497t.pdf",
+      "official_url": "https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/hb0497?ys=2025RS",
+      "position": "support",
+      "facilities_affected": ["Private youth transport/escort companies", "Wilderness programs", "Boot camps", "Therapeutic boarding schools", "Behavior modification programs"],
+      "tags": [],
+      "reviewer_notes": "[claude 2026-09-28] Sources: bill page https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/hb0497?ys=2025RS ; third reader https://mgaleg.maryland.gov/2025RS/bills/hb/hb0497T.pdf ; chapter text https://mgaleg.maryland.gov/2025RS/Chapters_noln/CH_343_hb0497t.pdf ; revised fiscal and policy note https://mgaleg.maryland.gov/2025RS/fnotes/bil_0007/hb0497.pdf ; cross-file https://mgaleg.maryland.gov/mgawebsite/Legislation/Details/sb0400?ys=2025RS (Chapter 344)."
     }
   ]
 }
