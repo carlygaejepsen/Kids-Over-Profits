@@ -112,6 +112,8 @@
                 renderChain(app);
                 syncMode(app);
                 syncBoardControls(app);
+                /* The list shows the board, so it follows every change. */
+                if (app.list && app.list.isOpen()) app.list.render();
                 if (app.drawer) app.drawer.update();
                 if (app.urlState) app.urlState.write();
                 /* A trail narrows what is on screen, and the legend lists
@@ -241,6 +243,18 @@
             });
         }
 
+        if (window.KOPNetworkList) {
+            app.list = window.KOPNetworkList.create({
+                store: store,
+                focus: focus,
+                config: CONFIG,
+                panel: byId('kop-network-list'),
+                toggle: byId('kop-network-list-toggle'),
+                announce: announce
+            });
+            wireList(app);
+        }
+
         if (window.KOPNetworkPath) {
             app.path = window.KOPNetworkPath.create({
                 store: store,
@@ -306,6 +320,9 @@
                 app.urlState = window.KOPNetworkUrlState.create({
                     focus: focus, window: window,
                     view: function () { return store.view; },
+                    /* The List switch, in and out of the link. */
+                    listOpen: function () { return app.list ? app.list.isOpen() : false; },
+                    onList: function (open) { setListOpen(app, open); },
                     /* A link naming a starter view opens on it. */
                     onView: function (key) {
                         if (key === store.view) return false;
@@ -449,6 +466,54 @@
             simplify.setAttribute('aria-pressed', on ? 'true' : 'false');
             simplify.classList.toggle('is-on', on);
         }
+    }
+
+    /**
+     * The Map / List switch (list.js). Open, the list panel stands in for
+     * the canvas: the canvas and the controls that only make sense on one
+     * (zoom, Fit to screen, Reset view, Full screen, the Key) are hidden by
+     * a class on the stage, while Show all and Simplify, which change what
+     * is on the board, stay. The trail, the drawer and the toolbar keep
+     * working, and the switch rides in the link as list=1.
+     */
+    function setListOpen(app, open) {
+        if (!app.list) return;
+        /* Asked for the state it is in - a read of a plain link on load -
+         * there is nothing to do, and no focus to move. */
+        if (app.list.isOpen() === !!open) return;
+        app.list.setOpen(open);
+        open = app.list.isOpen();
+        var stage = app.elements.stage;
+        if (stage) stage.classList.toggle('kop-network__stage--list', open);
+        var panel = byId('kop-network-list');
+        var toggle = byId('kop-network-list-toggle');
+        if (open) {
+            var heading = panel ? panel.querySelector('h2') : null;
+            if (heading && heading.focus) heading.focus();
+        } else if (toggle && toggle.focus) {
+            toggle.focus();
+        }
+        if (app.urlState) app.urlState.write();
+    }
+
+    function wireList(app) {
+        var toggle = byId('kop-network-list-toggle');
+        var panel = byId('kop-network-list');
+        if (toggle) {
+            toggle.addEventListener('click', function () {
+                setListOpen(app, !app.list.isOpen());
+            });
+        }
+        if (panel) {
+            /* Escape inside the list closes the list, not the trail. */
+            panel.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape' && event.key !== 'Esc') return;
+                event.preventDefault();
+                event.stopPropagation();
+                setListOpen(app, false);
+            });
+        }
+        app.setListOpen = function (open) { setListOpen(app, open); };
     }
 
     /**

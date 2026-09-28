@@ -235,6 +235,7 @@ function buildSandbox() {
         path.join('js', 'network-map', 'search.js'),
         path.join('js', 'network-map', 'drawer.js'),
         path.join('js', 'network-map', 'card.js'),
+        path.join('js', 'network-map', 'list.js'),
         path.join('js', 'network-map', 'path.js'),
         path.join('js', 'network-map', 'keys.js'),
         path.join('js', 'network-map', 'url-state.js'),
@@ -3653,6 +3654,182 @@ function run() {
         const onRoute = focus.showAll();
         check(onRoute.added === 0 && focus.isPath(), 'Show all opened names on a route');
     }
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    }
+
+    /* ---------------------------------------------- the board as a list -- */
+
+    /* Phase 3 list view: the board as two sortable tables with a CSV
+     * download each (js/network-map/list.js). rows(), sortRows() and
+     * toCsv() are DOM-free; create() runs against the stub. */
+    {
+    const List = sandbox.KOPNetworkList;
+    check(!!List, 'list.js did not load');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    store.resetFilters();
+    focus.select(hub);
+    flushFrames();
+    const listScene = focus.scene();
+    const data = List.rows(store, listScene, drawerConfig);
+
+    /* One row per name on the board, the folded people included and said
+     * to be drawn on a line, and every connection row inside that set. */
+    const foldedIds = Object.keys(listScene.folded);
+    check(data.names.length === listScene.nodes.length + foldedIds.length,
+        'the names table has ' + data.names.length + ' rows for ' +
+        listScene.nodes.length + ' names and ' + foldedIds.length + ' folded people');
+    const rowById = Object.create(null);
+    data.names.forEach((r) => { rowById[r.id] = r; });
+    check(listScene.nodes.every((n) => rowById[n.id] && rowById[n.id].shownAs === ''),
+        'a drawn name is missing its row, or is marked as a line');
+    check(foldedIds.every((id) => rowById[id] && rowById[id].shownAs === '(drawn on a line)'),
+        'a folded person is missing their row or its drawn-on-a-line note');
+    check(data.connections.length > 0 && data.connections.every((r) =>
+        (listScene.nodeIds[r.fromId] || listScene.folded[r.fromId]) &&
+        (listScene.nodeIds[r.toId] || listScene.folded[r.toId])),
+        'a connection row joins a name that is not on the board');
+    if (foldedIds.length) {
+        const someone = foldedIds[0];
+        const theirs = data.connections.filter((r) => r.fromId === someone || r.toId === someone);
+        check(theirs.length >= 2, 'a person drawn as a line has ' + theirs.length + ' connection rows');
+        check(rowById[someone].connections === theirs.length,
+            "a folded person's connection count is not their rows");
+    } else {
+        notes.push('no folded people on ' + hub.name + "'s board, so the drawn-on-a-line rows were not checked");
+    }
+
+    /* The counts in the rows match the scene. */
+    check(data.names.every((r) => r.hidden === (listScene.hidden[r.id] || 0)),
+        'the "Not on the board" column does not match scene.hidden');
+
+    /* Profile links only where the name has a page of its own, and never
+     * the program index. */
+    check(data.names.every((r) => {
+        const p = Drawer.profileFor(store.node(r.id), drawerConfig);
+        return r.profile === (p && p.own ? p.url : '');
+    }), 'a profile link is offered where the name has no page of its own');
+    check(data.names.every((r) => String(r.profile).indexOf('/tti-program-index/') === -1),
+        'a profile link points at the program index');
+
+    /* Sorting: both ways, numbers as numbers, and stable for ties. */
+    const byNameAsc = List.sortRows(data.names, 'name', 'asc');
+    const byNameDesc = List.sortRows(data.names, 'name', 'desc');
+    const inOrder = (rows, sign) => rows.every((r, i) => i === 0 ||
+        sign * String(rows[i - 1].name).toLowerCase().localeCompare(String(r.name).toLowerCase()) <= 0);
+    check(byNameAsc.length === data.names.length && inOrder(byNameAsc, 1), 'names do not sort ascending');
+    check(inOrder(byNameDesc, -1), 'names do not sort descending');
+    const numeric = List.sortRows([{ n: 9 }, { n: 10 }, { n: 2 }], 'n', 'asc').map((r) => r.n);
+    check(numeric.join(',') === '2,9,10', 'a number column sorts as text: ' + numeric.join(','));
+    const stable = List.sortRows([{ k: 'a', tag: 1 }, { k: 'b', tag: 2 }, { k: 'a', tag: 3 }], 'k', 'asc');
+    check(stable[0].tag === 1 && stable[1].tag === 3 && stable[2].tag === 2, 'ties do not keep their order');
+
+    /* The CSV: byte order mark, RFC 4180 quoting through a round trip,
+     * formulas disarmed, CRLF ends. */
+    const tricky = [{ name: 'He said "hi", twice\nover', n: 1 }, { name: '=HYPERLINK("x")', n: 2 }];
+    const csv = List.toCsv([{ key: 'name', label: 'Name' }, { key: 'n', label: 'N' }], tricky);
+    check(csv.charCodeAt(0) === 0xFEFF, 'the CSV has no byte order mark');
+    check(csv.endsWith('\r\n'), 'the CSV does not end its last line');
+    const parseCsv = (text) => {
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+        const rows = [[]];
+        let field = '';
+        let quoted = false;
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i];
+            if (quoted) {
+                if (ch === '"' && text[i + 1] === '"') { field += '"'; i++; }
+                else if (ch === '"') quoted = false;
+                else field += ch;
+            } else if (ch === '"') quoted = true;
+            else if (ch === ',') { rows[rows.length - 1].push(field); field = ''; }
+            else if (ch === '\r' && text[i + 1] === '\n') {
+                rows[rows.length - 1].push(field); field = ''; rows.push([]); i++;
+            } else field += ch;
+        }
+        if (field) rows[rows.length - 1].push(field);
+        return rows.filter((r) => r.length);
+    };
+    const parsed = parseCsv(csv);
+    check(parsed.length === 3 && parsed[0].join('|') === 'Name|N' &&
+        parsed[1][0] === 'He said "hi", twice\nover' && parsed[1][1] === '1',
+        'a name with a comma, a quote and a line break does not survive the CSV');
+    check(parsed[2][0] === "'=HYPERLINK(\"x\")", 'a formula field is not disarmed: ' + parsed[2][0]);
+
+    /* create() against the stub DOM: the tables render, the headers sort
+     * and say so, and a name opens itself with the list still showing. */
+    const listPanel = doc.createElement('section');
+    listPanel.hidden = true;
+    const listToggle = doc.createElement('button');
+    const listUi = List.create({
+        store, focus, config: drawerConfig, document: doc,
+        panel: listPanel, toggle: listToggle, announce: (t) => { announced = t; }
+    });
+    listUi.setOpen(true);
+    check(listUi.isOpen() && listPanel.hidden === false && listToggle.getAttribute('aria-pressed') === 'true',
+        'opening the list did not show the panel');
+    check(/^The map as a list: \d+ names, \d+ connections\.$/.test(announced),
+        'the list did not say its counts: ' + announced);
+    check(listPanel.querySelectorAll('table').length === 2,
+        'the list renders ' + listPanel.querySelectorAll('table').length + ' tables');
+    const nameButtons = listPanel.querySelectorAll('.kop-network__list-name');
+    check(nameButtons.length === data.names.length,
+        'the names table has ' + nameButtons.length + ' name buttons for ' + data.names.length + ' rows');
+    check(listPanel.querySelectorAll('th[aria-sort="ascending"]').length === 2,
+        'the default sort is not marked on each table');
+    const sortBy = (label) => listPanel.querySelectorAll('.kop-network__list-sort')
+        .filter((b) => b.textContent === label)[0];
+    sortBy('Kind').dispatch('click');
+    const kindTh = listPanel.querySelectorAll('th[aria-sort="ascending"]')
+        .filter((th) => th.querySelector('.kop-network__list-sort').textContent === 'Kind');
+    check(kindTh.length === 1, 'clicking a header did not sort by it');
+    sortBy('Kind').dispatch('click');
+    check(listPanel.querySelectorAll('th[aria-sort="descending"]').length === 1 &&
+        listPanel.querySelectorAll('th[aria-sort="ascending"]').length === 1,
+        'a second click did not flip the direction');
+    const nameTarget = nameButtons.filter((b) => b.getAttribute('data-id') !== hub.id)[0];
+    const nameTargetId = nameTarget.getAttribute('data-id');
+    nameTarget.dispatch('click');
+    flushFrames();
+    check(focus.chain()[focus.chain().length - 1] === nameTargetId, 'a name button did not open its name');
+    check(listUi.isOpen() && listPanel.hidden === false, 'opening a name closed the list');
+
+    /* The list follows the board: Simplify, then Show all. */
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    focus.setSimple(true);
+    flushFrames();
+    listUi.render();
+    const simpleScene = focus.scene();
+    const simpleButtons = listPanel.querySelectorAll('.kop-network__list-name').length;
+    check(simpleButtons === simpleScene.nodes.length + Object.keys(simpleScene.folded).length,
+        'with Simplify on the list is not the simplified board');
+    const openedOut = focus.showAll();
+    flushFrames();
+    listUi.render();
+    const grownScene = focus.scene();
+    const grownButtons = listPanel.querySelectorAll('.kop-network__list-name').length;
+    check(grownButtons === grownScene.nodes.length + Object.keys(grownScene.folded).length &&
+        (openedOut.added === 0 || grownButtons > simpleButtons),
+        'after Show all the list does not have the new names');
+    focus.setSimple(false);
+    flushFrames();
+    listUi.setOpen(false);
+    check(!listUi.isOpen() && listPanel.hidden === true && listToggle.getAttribute('aria-pressed') === 'false',
+        'closing the list did not hide the panel');
+
+    /* The switch in the link, like Simplify. */
+    const UrlApi = sandbox.KOPNetworkUrlState;
+    check(UrlApi.format(['a'], 'focus', null, false, null, true) === '#open=a&list=1' &&
+        UrlApi.parse('#open=a&list=1').list === true &&
+        UrlApi.parse('#open=a').list === false &&
+        UrlApi.format([], 'focus', null, false, null, true) === '#list=1',
+        'the List switch does not round-trip through the address bar');
     focus.setMode('focus');
     focus.clear();
     flushFrames();

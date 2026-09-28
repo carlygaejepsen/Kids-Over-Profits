@@ -878,6 +878,133 @@ html.kop-network-pinned {
 	outline-offset: -2px;
 }
 
+/* The board as a list (list.js). The panel stands where the canvas does,
+ * scrolling both ways itself so a wide table never scrolls the page, and
+ * its surface is solid white: the tables are text, and text never sits on
+ * the gradient. It slots under the view controls and the Key in stacking
+ * order, so Show all and Simplify, which still change the board the list
+ * shows, stay usable over it. */
+.kop-network__list {
+	position: absolute;
+	inset: 0;
+	z-index: 4;
+	overflow: auto;
+	padding: 0.75rem 1rem 1.25rem;
+	background: #fff;
+}
+
+.kop-network__list[hidden] {
+	display: none;
+}
+
+/* While the list is showing, the canvas and the controls that only make
+ * sense on one go away: zoom, Fit to screen, Reset view, Full screen and
+ * the Key. The first view row is Reset view and Full screen. */
+.kop-network__stage--list .kop-network__canvas,
+.kop-network__stage--list .kop-network__key,
+.kop-network__stage--list .kop-network__zoom,
+.kop-network__stage--list .kop-network__zoom-hint,
+.kop-network__stage--list .kop-network__view-row:first-child {
+	display: none;
+}
+
+.kop-network__list-heading {
+	margin: 0 0 0.6rem;
+	font-size: 1.05rem;
+}
+
+.kop-network__list-section {
+	margin: 0 0 1.6rem;
+}
+
+.kop-network__list-head {
+	display: flex;
+	align-items: baseline;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.kop-network__list-title {
+	margin: 0.4rem 0 0.3rem;
+	font-size: 0.9rem;
+}
+
+.kop-network__list-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 0.8rem;
+}
+
+.kop-network__list-caption {
+	caption-side: top;
+	text-align: left;
+	padding: 0 0 0.35rem;
+	font-size: 0.72rem;
+	color: #4a4f6a;
+}
+
+.kop-network__list-table th {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	background: #fff;
+	text-align: left;
+	white-space: nowrap;
+	padding: 0.3rem 0.55rem;
+	border-bottom: 2px solid var(--kop-net-border);
+}
+
+.kop-network__list-table td {
+	padding: 0.3rem 0.55rem;
+	border-bottom: 1px solid var(--kop-net-border);
+	vertical-align: top;
+}
+
+/* A header is a sort button drawn as text; the active column carries a
+ * small marker drawn from the arrow characters, not an icon font. */
+.kop-network__list-sort {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	font-weight: 600;
+	color: var(--kop-navy-blue, #000080);
+	cursor: pointer;
+}
+
+.kop-network__list-table th[aria-sort="ascending"] .kop-network__list-sort::after {
+	content: " \2191";
+}
+
+.kop-network__list-table th[aria-sort="descending"] .kop-network__list-sort::after {
+	content: " \2193";
+}
+
+.kop-network__list-sort:focus-visible,
+.kop-network__list-name:focus-visible,
+.kop-network__list-profile:focus-visible,
+.kop-network__list-download:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 1px;
+}
+
+/* A name opens itself on the map and the list stays; drawn as the link it
+ * behaves like. */
+.kop-network__list-name {
+	padding: 0;
+	border: 0;
+	background: none;
+	font: inherit;
+	text-align: left;
+	color: var(--kop-navy-blue, #000080);
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.kop-network__list-profile {
+	color: var(--kop-navy-blue, #000080);
+}
+
 .kop-network__loading {
 	position: absolute;
 	top: 50%;

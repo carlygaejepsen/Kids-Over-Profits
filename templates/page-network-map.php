@@ -226,6 +226,17 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					<button type="button" class="kop-network__button" id="kop-network-share">
 						Copy link
 					</button>
+
+					<?php
+					// The board as text (Phase 3). Pressed, the canvas gives way
+					// to two sortable tables - names and connections - filled by
+					// list.js from the same scene the canvas draws, each with a
+					// CSV download. The switch rides in the link as list=1.
+					?>
+					<button type="button" class="kop-network__button" id="kop-network-list-toggle"
+						aria-pressed="false" aria-controls="kop-network-list">
+						List
+					</button>
 				</div>
 			</div>
 
@@ -260,6 +271,18 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					<p class="kop-network__loading" id="kop-network-loading">Loading the map...</p>
 
 					<div class="kop-network__status" id="kop-network-status" role="status" aria-live="polite"></div>
+
+					<?php
+					// The board as a list (Phase 3): two sortable tables that
+					// stand in for the canvas while the List switch is pressed.
+					// Printed empty and hidden; list.js fills it from the scene,
+					// and app.js swaps it with the canvas and the canvas-only
+					// controls. It sits before the view controls and the Key so
+					// that Show all and Simplify, which still apply, paint over
+					// it without any z-index arithmetic.
+					?>
+					<section class="kop-network__list" id="kop-network-list"
+						aria-label="The map as a list" hidden></section>
 
 					<?php
 					// The key folds into a corner of the stage rather than

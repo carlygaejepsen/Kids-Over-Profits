@@ -20,7 +20,7 @@ end.
 | 2b | Fix list of 2026-09-17: data fields (rebrand, years, deaths), reset view, click zoom, chrome compaction, profile links, starter views, imports | Done (2026-09-18), itemised below |
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
 | 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster, zoom controls and the fuller legend done (2026-09-22); hover cards next; the rest itemised below in build order |
-| 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view and corrections outlined |
+| 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view done (2026-09-28); corrections outlined |
 | 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
 
 ## Phase 1 recap
@@ -2273,8 +2273,8 @@ it.
 ## Phase 3: analysis tools
 
 Focus and Path were the headline items here. Focus became the core Phase 2
-interaction instead. Path is built; the list view and corrections are
-still outlines.
+interaction instead. Path and the list view are built; corrections are
+still an outline.
 
 ### Paths between two names (2026-09-21)
 
@@ -2389,10 +2389,51 @@ an unconnected one, and clicking it opens the form with From filled and To
 empty. Checked in the browser end to end (drawer button, type the second
 name, Find routes, route on the board).
 
+### List view (2026-09-28)
+
+The canvas is one element standing for every name on it. The arrow keys
+and the drawer made it usable without a pointer, but there was still no
+way to read the whole board as text, sort it, or take it away. The
+**List** switch in the toolbar (`js/network-map/list.js`) shows what the
+board shows as two sortable tables in place of the canvas: Names, one row
+per name on the board, and Connections, one row per recorded line between
+two of them. Each table has a Download CSV button, which is how a
+researcher gets the board into a spreadsheet, and the list is the
+screen-reader path to the picture itself.
+
+The list is the record, not the drawing. The people folded into lines
+(foldConnectors) are names here, marked "(drawn on a line)", and their
+recorded lines to each place are rows of the connections table - someone
+drawn as one line between two places is two rows - while the synthetic
+line they are drawn as is not a row at all. A name is a button that opens
+it on the map with the list still showing, re-rendered for the new board;
+the profile column links only a name's own page, never the program index.
+The columns say what the drawer says: kind and status in its words, the
+group, NATSAP, years, deaths, connections on the board and the "+N" count
+off it.
+
+Every header sorts both ways (aria-sort on the th, a CSS arrow on the
+button), stable and case-insensitive, numbers as numbers; the default is
+Name, and From then To for connections. The CSV is exactly the rows
+shown in the order shown: RFC 4180 quoting, CRLF ends, a UTF-8 byte
+order mark so Excel reads the accents, and a field that a spreadsheet
+would run as a formula is prefixed with an apostrophe. The file is pure
+data - the source and the date go in each table's caption on the page
+instead - and is named for the name being read
+(`network-map-provo-canyon-school-names.csv`).
+
+The list follows the board: open a name, switch modes, Simplify, Show
+all, light a route, and it re-renders from the same scene the canvas
+draws. While it shows, the canvas and the controls that only make sense
+on one (zoom, Fit to screen, Reset view, Full screen, the Key) are put
+away by a class on the stage; Show all and Simplify stay, since they
+change what is on the board. The panel is its own scroller both ways, so
+a wide table never scrolls the page and the sticky header rows work
+against it. Escape inside the list closes the list, not the trail, and
+the switch rides in the link as `list=1`.
+
 ### Still outlined
 
-- **List view**: an accessible, sortable table of the same filtered nodes
-  and edges, with CSV export. This is the screen-reader path.
 - **Suggest a correction**: reuses `submit-info.js` to write to
   `suggested_edits`.
 - Optional re-layout of the filtered subgraph on demand.
