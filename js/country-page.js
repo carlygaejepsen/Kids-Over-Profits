@@ -1095,49 +1095,84 @@
         return period;
     };
 
+    // Bare URLs in free text become links labelled with their site, so a
+    // research note reads "nytimes.com (student charged...)" instead of a
+    // 300-character tracking URL. The full URL stays in the title.
+    const URL_IN_TEXT = /https?:\/\/[^\s<>"]+/g;
+    const linkLabel = url => {
+        try {
+            return new URL(url).hostname.replace(/^www\./i, '');
+        } catch (e) {
+            return url;
+        }
+    };
+    const linkifyText = value => {
+        const text = String(value ?? '');
+        let out = '';
+        let last = 0;
+        text.replace(URL_IN_TEXT, (match, offset) => {
+            let url = match.replace(/[.,;:!?]+$/, '');
+            if (url.endsWith(')') && !url.includes('(')) url = url.slice(0, -1);
+            out += escapeHtml(text.slice(last, offset));
+            out += `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" title="${escapeHtml(url)}">${escapeHtml(linkLabel(url))}</a>`;
+            last = offset + url.length;
+            return match;
+        });
+        return out + escapeHtml(text.slice(last));
+    };
+
     // Render a single list item: strings pass through; objects pull out the
     // common shape {name, role, employer, organization, url, label}.
     const renderListEntry = item => {
         if (item == null) return '';
         if (typeof item === 'string' || typeof item === 'number') {
-            return escapeHtml(String(item));
+            return linkifyText(String(item));
         }
         if (typeof item !== 'object') return '';
 
         const url = item.url || item.link || item.href || '';
-        const label = item.label || item.name || item.title || item.text || url;
+        const label = item.label || item.name || item.title || item.text || '';
         const role = item.role || '';
         const employer = item.employer || item.organization || '';
 
         let core;
         if (url) {
-            core = `<a href="${escapeHtml(String(url))}" target="_blank" rel="noopener">${escapeHtml(String(label || url))}</a>`;
+            core = `<a href="${escapeHtml(String(url))}" target="_blank" rel="noopener">${escapeHtml(String(label || linkLabel(String(url))))}</a>`;
         } else {
             core = escapeHtml(String(label || ''));
         }
         const extras = [];
         if (role) extras.push(escapeHtml(String(role)));
         if (employer) extras.push(escapeHtml(String(employer)));
-        return extras.length ? `${core} <span class="detail-sub">— ${extras.join(' · ')}</span>` : core;
+        return extras.length ? `${core} <span class="detail-sub">${extras.join(' · ')}</span>` : core;
     };
 
-    // Render a detail sub-section if the array has at least one displayable item.
+    // One label / value line of the Details panel. Empty values render nothing.
+    const detailRow = (label, valueHtml, extraClass = '') => {
+        if (!valueHtml) return '';
+        return `<div class="detail-row${extraClass ? ` ${extraClass}` : ''}"><span class="detail-label">${escapeHtml(label)}</span><div class="detail-value">${valueHtml}</div></div>`;
+    };
+
+    // A titled block of rows; a block whose rows are all empty is dropped.
+    const detailGroup = (title, rows) => {
+        const body = rows.filter(Boolean).join('');
+        return body ? `<section class="detail-group"><h4 class="detail-group-title">${escapeHtml(title)}</h4>${body}</section>` : '';
+    };
+
+    // A list row: one item sits inline, several stack one per line.
     const renderListSection = (label, items) => {
         if (!Array.isArray(items) || !items.length) return '';
-        const lis = items
-            .map(renderListEntry)
-            .filter(s => s && s.trim() !== '')
-            .map(s => `<li>${s}</li>`)
-            .join('');
-        if (!lis) return '';
-        return `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${lis}</ul></div>`;
+        const entries = items.map(renderListEntry).filter(s => s && s.trim() !== '');
+        if (!entries.length) return '';
+        if (entries.length === 1) return detailRow(label, entries[0]);
+        return detailRow(label, `<ul class="detail-value-list">${entries.map(s => `<li>${s}</li>`).join('')}</ul>`);
     };
 
     const renderScalarRow = (label, value) => {
         if (value === null || value === undefined) return '';
         const text = String(value).trim();
         if (!text) return '';
-        return `<div class="detail-row"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(text)}</div>`;
+        return detailRow(label, linkifyText(text));
     };
 
     // Raw source-record keys shown in "Additional source fields":
@@ -1153,24 +1188,35 @@
             .trim()
             .split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(' ');
+            .join(' ')
+            .replace(/\bTti\b/g, 'TTI');
     };
 
     const renderCompleteValue = (value, path, depth = 0) => {
         if (value === null || value === undefined || value === '') return '';
         const label = path || 'Value';
+        if (value === true) return detailRow(label, 'Yes');
         if (typeof value !== 'object') {
             return renderScalarRow(label, value);
         }
         if (depth > 8) return renderScalarRow(label, '[nested data]');
 
         if (Array.isArray(value)) {
+            if (value.every(item => item === null || typeof item !== 'object')) {
+                return renderListSection(label, value);
+            }
             const items = value.map((item, index) => renderCompleteValue(item, `${label} ${index + 1}`, depth + 1)).filter(Boolean);
-            return items.length ? `<div class="detail-row detail-list"><strong>${escapeHtml(label)}:</strong><ul>${items.map(item => `<li>${item}</li>`).join('')}</ul></div>` : '';
+            return items.join('');
         }
 
-        const rows = Object.entries(value)
-            .map(([key, child]) => renderCompleteValue(child, path ? `${path} → ${formatFieldLabel(key)}` : formatFieldLabel(key), depth + 1))
+        // A checklist of hasX flags reads as chips, not one "true" row per flag.
+        const entries = Object.entries(value);
+        if (entries.length && entries.every(([, child]) => child === true)) {
+            return renderChips(label, entries.map(([key]) => humanizeFlagKey(key)));
+        }
+
+        const rows = entries
+            .map(([key, child]) => renderCompleteValue(child, path ? `${path}: ${formatFieldLabel(key)}` : formatFieldLabel(key), depth + 1))
             .filter(Boolean);
         return rows.join('');
     };
@@ -1192,6 +1238,10 @@
         // Database bookkeeping: the facility's FileBird folder and the copies
         // merged into it (api/merge-facility-duplicates.php).
         'documentFolderId', 'mergedFacilities',
+        // Read out of the raw records into their own rows (collectRawFlags,
+        // rawOwnership below).
+        'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices', 'conditions',
+        'isPrivatelyOwned',
     ]);
 
     // Strip empties, false flags, and already-rendered keys from a raw record so
@@ -1236,9 +1286,9 @@
         if (!records.length) return '';
         const showSource = records.length > 1;
         const body = records.map(r => showSource
-            ? `<div class="facility-source-record"><strong>From ${escapeHtml(r.source || 'unnamed record')}:</strong>${r.html}</div>`
+            ? `<div class="facility-source-record"><div class="facility-source-record-name">From ${escapeHtml(r.source || 'unnamed record')}</div>${r.html}</div>`
             : r.html).join('');
-        return `<div class="detail-row detail-complete-data"><strong>Additional source fields</strong>${body}</div>`;
+        return detailGroup('Other recorded fields', [body]);
     };
 
     // "hasWildernessTherapy" / "has12Steps" / "hasEMDR" -> "Wilderness Therapy" / "12 Steps" / "EMDR"
@@ -1256,14 +1306,55 @@
         .trim()
         .replace(/^./, c => c.toUpperCase());
 
+    // A row of chips from already-readable labels.
+    const renderChips = (label, labels, chipClass) => {
+        if (!Array.isArray(labels) || !labels.length) return '';
+        const chips = labels
+            .map(text => `<span class="${chipClass || 'resource-chip'}">${escapeHtml(text)}</span>`)
+            .join('');
+        return detailRow(label, `<div class="detail-chips">${chips}</div>`);
+    };
+
     // Checkbox-group sections (treatment types, philosophy, critical incidents)
     // arrive as arrays of raw has* keys — render them as chips like resources.
     const renderFlagChips = (label, keys, chipClass) => {
         if (!Array.isArray(keys) || !keys.length) return '';
-        const chips = keys
-            .map(k => `<span class="${chipClass || 'resource-chip'}">${escapeHtml(humanizeFlagKey(k))}</span>`)
-            .join('');
-        return `<div class="detail-row detail-resources"><strong>${escapeHtml(label)}:</strong> ${chips}</div>`;
+        return renderChips(label, keys.map(humanizeFlagKey), chipClass);
+    };
+
+    // Checklists the tile feed does not break out, so they reach the card only
+    // inside raw_records: the ticked hasX flags plus any free-text entries
+    // ("other", legacy arrays), merged across the facility's copies.
+    const collectRawFlags = (facility, section) => {
+        const labels = [];
+        const add = text => {
+            const t = String(text || '').trim();
+            if (t && !labels.some(l => l.toLowerCase() === t.toLowerCase())) labels.push(t);
+        };
+        (Array.isArray(facility.raw_records) ? facility.raw_records : []).forEach(record => {
+            const map = record && record.data && record.data[section];
+            if (!map || typeof map !== 'object') return;
+            if (Array.isArray(map)) { map.forEach(v => typeof v === 'string' && add(v)); return; }
+            Object.entries(map).forEach(([key, value]) => {
+                if (value === true) add(humanizeFlagKey(key));
+                else if (Array.isArray(value)) value.forEach(v => typeof v === 'string' && add(v));
+                else if (typeof value === 'string' && !/^has[A-Z0-9]/.test(key)) add(value);
+            });
+        });
+        return labels;
+    };
+
+    // isPrivatelyOwned sits at the top level of older records and under
+    // facilityDetails in the current shape.
+    const rawOwnership = facility => {
+        for (const record of (Array.isArray(facility.raw_records) ? facility.raw_records : [])) {
+            const data = (record && record.data) || {};
+            const value = typeof data.isPrivatelyOwned === 'boolean' ? data.isPrivatelyOwned
+                : (data.facilityDetails && typeof data.facilityDetails.isPrivatelyOwned === 'boolean') ? data.facilityDetails.isPrivatelyOwned
+                : null;
+            if (value !== null) return value ? 'Privately owned' : 'Publicly operated';
+        }
+        return '';
     };
 
 
@@ -1281,7 +1372,7 @@
             return `<li>${escapeHtml(place || 'Location not recorded')}${years ? ` <span class="detail-sub">(${escapeHtml(years)})</span>` : ''}</li>`;
         }).filter(Boolean);
         if (!lis.length) return '';
-        return `<div class="detail-row detail-list"><strong>Former locations:</strong><ul>${lis.join('')}</ul></div>`;
+        return detailRow('Former locations', `<ul class="detail-value-list">${lis.join('')}</ul>`);
     };
 
     const LAWSUIT_STATUS_LABELS = {
@@ -1418,119 +1509,128 @@
     const facilityCardHtml = facility => {
         const displayName = getFacilityDisplayName(facility);
 
-        // Stats / metadata that go into the collapsible "Details" panel.
+        // The collapsible "Details" panel: titled groups of label / value rows.
+        // Current, other and past names are drawn on the card face, not in here.
         const detailRows = [];
 
-        // Current, other and past names are drawn on the card face, not in here.
-
-        // Operator / ownership
-        if (facility.operator_name) {
-            detailRows.push(`<div class="detail-row"><strong>Operator:</strong> ${escapeHtml(facility.operator_name)}</div>`);
-        }
-        detailRows.push(renderListSection('Other operators', facility.other_operators));
-        if (facility.current_owner) {
-            detailRows.push(renderScalarRow('Current owner', facility.current_owner));
-        }
-        detailRows.push(renderListSection('Current owners', facility.current_owners));
-        detailRows.push(renderListSection('Past owners', facility.past_owners));
-
-        // Facility details
-        if (facility.type) {
-            detailRows.push(`<div class="detail-row"><strong>Type:</strong> ${escapeHtml(facility.type)}</div>`);
-        }
+        // Operator / ownership. An operator that just repeats the program's
+        // own name says nothing, and current_owner is usually also the first
+        // of current_owners, so the two are merged into one row.
+        const sameName = value => {
+            const v = String(value || '').trim().toLowerCase();
+            return v !== '' && (v === displayName.trim().toLowerCase() || v === String(facility.name || '').trim().toLowerCase());
+        };
+        const ownerItems = [];
+        const ownerSeen = new Set();
+        [facility.current_owner, ...(Array.isArray(facility.current_owners) ? facility.current_owners : [])].forEach(item => {
+            if (item == null || item === '') return;
+            const key = (typeof item === 'object' ? String(item.name || item.label || item.title || JSON.stringify(item)) : String(item)).trim().toLowerCase();
+            if (!key || ownerSeen.has(key)) return;
+            ownerSeen.add(key);
+            ownerItems.push(item);
+        });
         const ageMin = facility.age_min;
         const ageMax = facility.age_max;
-        if (ageMin != null || ageMax != null) {
-            const ageText = (ageMin != null && ageMax != null) ? `${ageMin}–${ageMax}`
-                : (ageMin != null) ? `${ageMin}+` : `up to ${ageMax}`;
-            detailRows.push(renderScalarRow('Age range', ageText));
-        }
-        if (facility.gender) detailRows.push(renderScalarRow('Gender', facility.gender));
-        if (facility.country && !isUsCountry(facility.country)) detailRows.push(renderScalarRow('Country', facility.country));
+        const ageText = (ageMin != null && ageMax != null) ? `${ageMin}–${ageMax}`
+            : (ageMin != null) ? `${ageMin}+` : (ageMax != null) ? `up to ${ageMax}` : '';
+        detailRows.push(detailGroup('Program', [
+            renderScalarRow('Type', facility.type),
+            renderScalarRow('Ages', ageText),
+            renderScalarRow('Gender', facility.gender),
+            renderScalarRow('Ownership', rawOwnership(facility)),
+            sameName(facility.operator_name) ? '' : renderScalarRow('Operator', facility.operator_name),
+            renderListSection('Other operators', facility.other_operators),
+            renderListSection(ownerItems.length > 1 ? 'Owners' : 'Owner', ownerItems),
+            renderListSection('Past owners', facility.past_owners),
+            (facility.country && !isUsCountry(facility.country)) ? renderScalarRow('Country', facility.country) : '',
+            // Where it operated before moving (locationDetails.formerLocations).
+            renderFormerLocations(facility.former_locations),
+            // Operating period notes (the headline yearLabel renders elsewhere)
+            renderListSection('Operational notes', facility.operating_notes),
+        ]));
 
         // Licensing record (inspection_facilities): what the licensing authority
         // lists for this program beyond its reports.
         // Utah and Texas store the license number in program_name; a name that
         // is all digits is labelled as the number it is.
         const licensedName = String(facility.licensed_program_name || '').trim();
-        detailRows.push(renderScalarRow(/^[\d\s-]+$/.test(licensedName) ? 'License number' : 'Licensed program name', licensedName));
-        detailRows.push(renderScalarRow('Executive director (licensing record)', facility.executive_director));
-        detailRows.push(renderScalarRow('Phone', facility.phone));
-        detailRows.push(renderScalarRow('License expires', facility.license_expiration));
-        detailRows.push(renderScalarRow('Relicensing visit', facility.relicense_visit_date));
-        detailRows.push(renderScalarRow('License status', facility.licensing_action));
-        if (facility.inspected_by) {
-            detailRows.push(renderScalarRow('Inspected by', `${facility.inspected_by} licensing authority (out of state)`));
-        }
+        detailRows.push(detailGroup('Licensing', [
+            renderScalarRow(/^[\d\s-]+$/.test(licensedName) ? 'License number' : 'Licensed as', licensedName),
+            renderScalarRow('Executive director', facility.executive_director),
+            renderScalarRow('Phone', facility.phone),
+            renderScalarRow('License expires', facility.license_expiration),
+            renderScalarRow('Relicensing visit', facility.relicense_visit_date),
+            renderScalarRow('License status', facility.licensing_action),
+            facility.inspected_by ? renderScalarRow('Inspected by', `${facility.inspected_by} licensing authority (out of state)`) : '',
+            renderListSection('Licensing', facility.licensing),
+        ]));
 
-        // Where it operated before moving (locationDetails.formerLocations).
-        detailRows.push(renderFormerLocations(facility.former_locations));
+        detailRows.push(detailGroup('People', [
+            renderListSection('Administration', facility.administrator),
+            renderListSection('Notable staff', facility.notable_staff),
+            renderListSection('Past TTI employment', facility.past_tti_jobs),
+        ]));
 
-        // Operating period notes (the headline yearLabel renders elsewhere)
-        detailRows.push(renderListSection('Operational notes', facility.operating_notes));
-
-        // Staff
-        detailRows.push(renderListSection('Administrator', facility.administrator));
-        detailRows.push(renderListSection('Notable staff', facility.notable_staff));
-        detailRows.push(renderListSection('Past TTI employment', facility.past_tti_jobs));
-
-        // Links & referrals
-        detailRows.push(renderListSection('Profile links', facility.profile_links));
-        detailRows.push(renderListSection('Known referrers', facility.known_referrers));
-
-        // Credentials
-        detailRows.push(renderListSection('Current accreditations', facility.accreditations_current));
-        detailRows.push(renderListSection('Past accreditations', facility.accreditations_past));
-        detailRows.push(renderListSection('Memberships', facility.memberships));
-        detailRows.push(renderListSection('Certifications', facility.certifications));
-        detailRows.push(renderListSection('Licensing', facility.licensing));
+        detailRows.push(detailGroup('Credentials and referrals', [
+            renderListSection('Accreditations', facility.accreditations_current),
+            renderListSection('Past accreditations', facility.accreditations_past),
+            renderListSection('Memberships', facility.memberships),
+            renderListSection('Certifications', facility.certifications),
+            renderListSection('Known referrers', facility.known_referrers),
+            renderListSection('Profile links', facility.profile_links),
+        ]));
 
         // Program characteristics (checkbox groups from the admin form)
-        detailRows.push(renderFlagChips('Treatment types', facility.treatment_types));
-        detailRows.push(renderFlagChips('Philosophy', facility.philosophy_flags));
-        detailRows.push(renderFlagChips('Critical incidents', facility.critical_incidents, 'resource-chip incident-chip'));
+        detailRows.push(detailGroup('Approach', [
+            renderFlagChips('Treatment types', facility.treatment_types),
+            renderFlagChips('Philosophy', facility.philosophy_flags),
+            renderChips('TTI practices', collectRawFlags(facility, 'ttiPractices'), 'resource-chip practice-chip'),
+            renderChips('Targets diagnoses', collectRawFlags(facility, 'targetedDiagnoses')),
+            renderChips('Targets behaviors', collectRawFlags(facility, 'targetedBehaviors')),
+            renderChips('Conditions', collectRawFlags(facility, 'conditions')),
+            renderFlagChips('Critical incidents', facility.critical_incidents, 'resource-chip incident-chip'),
+        ]));
 
         // Materials on file, grouped, from the shared catalog in
         // js/shared/facility-resources.js. Reads facility.resource_flags /
         // resource_details directly; renders nothing when we hold nothing.
-        const holdingsHtml = resourceUi.renderChecklist(facility, { showDetail: false, linkPanels: true });
-        if (holdingsHtml) {
-            detailRows.push(`<div class="detail-row detail-resources">${holdingsHtml}</div>`);
-        }
+        const holdingsHtml = resourceUi.renderChecklist(facility, { showDetail: false, linkPanels: true, heading: '' });
         const rd = facility.resource_details || {};
-        if (rd.newsDetails)          detailRows.push(renderScalarRow('News details', rd.newsDetails));
-        if (rd.pressReleasesDetails) detailRows.push(renderScalarRow('Press release details', rd.pressReleasesDetails));
-        if (Array.isArray(rd.notes)) detailRows.push(renderListSection('Resource notes', rd.notes));
-        else if (rd.notes)           detailRows.push(renderScalarRow('Resource notes', rd.notes));
-        detailRows.push(renderListSection('Custom resources', rd.customResources));
+        detailRows.push(detailGroup('Materials on file', [
+            holdingsHtml ? `<div class="detail-holdings">${holdingsHtml}</div>` : '',
+            rd.newsDetails ? renderScalarRow('News details', rd.newsDetails) : '',
+            rd.pressReleasesDetails ? renderScalarRow('Press release details', rd.pressReleasesDetails) : '',
+            Array.isArray(rd.notes) ? renderListSection('Resource notes', rd.notes) : (rd.notes ? renderScalarRow('Resource notes', rd.notes) : ''),
+            renderListSection('Custom resources', rd.customResources),
+        ]));
 
-        // Facility-level notes
-        detailRows.push(renderListSection('Notes', facility.notes));
-
-        // Per-field research notes, keyed by dotted field path
-        // (e.g. "treatmentTypes.hasABA" -> "Treatment Types — ABA").
+        // Facility-level notes, then per-field research notes keyed by dotted
+        // field path (e.g. "treatmentTypes.hasABA" -> "Treatment Types — ABA").
+        const noteItems = [];
+        (Array.isArray(facility.notes) ? facility.notes : []).forEach(note => {
+            const html = renderListEntry(note);
+            if (html && html.trim()) noteItems.push(`<li>${html}</li>`);
+        });
         const fieldNotes = facility.field_notes;
         if (fieldNotes && typeof fieldNotes === 'object' && !Array.isArray(fieldNotes)) {
-            const noteItems = [];
             Object.keys(fieldNotes).forEach(key => {
-                // Auto-generated "field-<timestamp>" keys carry no readable label.
-                const label = /^field-\d/.test(String(key)) ? '' : String(key).split('.').map(humanizeFlagKey).join(' — ');
+                // Auto-generated "field-<timestamp>" and "_legacy" keys carry no readable label.
+                const label = /^(field-\d|_)/.test(String(key)) ? '' : String(key).split('.').map(humanizeFlagKey).join(' — ');
                 const vals = Array.isArray(fieldNotes[key]) ? fieldNotes[key] : [fieldNotes[key]];
                 vals.forEach(v => {
                     const text = (v && typeof v === 'object') ? String(v.text || '').trim() : String(v == null ? '' : v).trim();
-                    if (text) noteItems.push(`<li>${label ? `<strong>${escapeHtml(label)}:</strong> ` : ''}${escapeHtml(text)}</li>`);
+                    if (text) noteItems.push(`<li>${label ? `<span class="detail-note-field">${escapeHtml(label)}</span> ` : ''}${linkifyText(text)}</li>`);
                 });
             });
-            if (noteItems.length) {
-                detailRows.push(`<div class="detail-row detail-list"><strong>Field notes:</strong><ul>${noteItems.join('')}</ul></div>`);
-            }
+        }
+        if (noteItems.length) {
+            detailRows.push(detailGroup('Research notes', [`<ul class="detail-notes">${noteItems.join('')}</ul>`]));
         }
 
         // Keep the normalized fields above readable, but also expose every
         // non-empty field from the original facility payload. This prevents
         // newer or uncommon form fields from disappearing from state tiles.
-        const completeSourceData = renderCompleteSourceData(facility.raw_records);
-        if (completeSourceData) detailRows.push(completeSourceData);
+        detailRows.push(renderCompleteSourceData(facility.raw_records));
 
         // Inspection / violation summary chips (kept at the bottom of details)
         const statChips = [];
@@ -1547,10 +1647,10 @@
             statChips.push(`<span class="stat">Record updated: ${escapeHtml(formatDate(String(facility.record_updated_at).slice(0, 10)))}</span>`);
         }
         if (statChips.length) {
-            detailRows.push(`<div class="detail-row detail-stats">${statChips.join('')}</div>`);
+            detailRows.push(`<div class="detail-stats">${statChips.join('')}</div>`);
         }
 
-        // Drop empty strings (renderListSection / renderScalarRow return '' when no data).
+        // Drop empty strings (groups and rows return '' when there is no data).
         const filteredDetailRows = detailRows.filter(Boolean);
         detailRows.length = 0;
         detailRows.push(...filteredDetailRows);
