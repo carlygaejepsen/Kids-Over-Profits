@@ -343,7 +343,74 @@
     text-decoration: underline;
 }
 
-/* Featured ("demand attention") inspection reports */
+/* Browse by topic (home page) */
+.kop-home-topics {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+}
+
+.kop-home-topics h2 {
+    font-size: 1.15rem;
+    color: var(--kop-midnight-blue, #000435);
+    margin: 0 0 0.5rem;
+}
+
+.kop-home-topics p {
+    margin: 0 0 0.75rem;
+    color: #4a5568;
+    font-size: 0.95rem;
+}
+
+.kop-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 10px;
+}
+
+.kop-topic-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+    padding: 0.7rem 0.9rem;
+    text-decoration: none;
+    line-height: 1.35;
+}
+
+.kop-topic-link:hover,
+.kop-topic-link:focus {
+    background: var(--kop-mint-green, #B6E3D4);
+}
+
+.kop-topic-icon {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    color: var(--kop-teal, #33A7B5);
+}
+
+.kop-topic-label {
+    display: block;
+    color: var(--kop-navy-blue, #000080);
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.kop-topic-desc {
+    display: block;
+    color: #4a5568;
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
+/* Featured ("demand attention") inspection reports, on the inspection hub */
 .kop-home-flagged {
     max-width: 860px;
     margin: 0 auto 2.5rem;

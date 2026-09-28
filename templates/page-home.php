@@ -5,7 +5,8 @@
  * PHP replacement for the block-built home page. Reproduces the original
  * content (hero, audience buttons, mission, inspection report links, state
  * map, directory + volunteer text) and adds the dynamic Ongoing Stories
- * section (news story arcs curated in api/manage-story-arcs.php).
+ * section (news story arcs curated in api/manage-story-arcs.php) and a
+ * browse-by-topic grid.
  *
  * The Kadence sidebar still renders per the page's layout settings, so the
  * search / newsletter / donation widgets are unaffected. The WP editor
@@ -39,9 +40,22 @@ if (!function_exists('kop_home_template_page_url')) {
     }
 }
 
-// Preview data: latest legislation and lawsuits, plus the curated featured
-// inspection reports (api/manage-featured-inspections.php). All queries are
-// suppressed so a missing table just hides its block.
+/** Permalink of the published page using $template, or '' when there is none. */
+if (!function_exists('kop_home_existing_page_url')) {
+    function kop_home_existing_page_url($template) {
+        $pages = get_pages(array(
+            'meta_key'   => '_wp_page_template',
+            'meta_value' => $template,
+            'number'     => 1,
+        ));
+        return !empty($pages) ? get_permalink($pages[0]->ID) : '';
+    }
+}
+
+// Preview data: latest legislation and lawsuits. Both queries are suppressed
+// so a missing table just hides its block. Inspection findings are not
+// previewed here: quoted abuse findings on the front page were too much to
+// meet without warning, so they stay on the inspection hub and /severe-reports/.
 global $wpdb;
 $kop_suppress = $wpdb->suppress_errors(true);
 $kop_bills = $wpdb->get_results(
@@ -56,33 +70,7 @@ $kop_suits = $wpdb->get_results(
      ORDER BY filing_date DESC, id DESC LIMIT 3",
     ARRAY_A
 );
-// The featured columns are added by api/update-schema.php (and then set in
-// api/manage-featured-inspections.php); until that has run they do not
-// exist, so ask whether they do before querying: without the check this runs a query that can only fail on every
-// home page load, hidden by suppress_errors. Same check as the inspection hub.
-$kop_has_featured = get_transient('kop_inspection_featured_column_v2');
-if ($kop_has_featured === false) {
-    $kop_has_featured = $wpdb->get_var("SHOW COLUMNS FROM inspection_reports LIKE 'featured'") ? 'yes' : 'no';
-    // A missing column is remembered briefly, so running api/update-schema.php
-    // shows the block within minutes instead of a day later. The key carries a
-    // version because a "no" cached for a full day under the old name would
-    // otherwise outlive the migration.
-    set_transient('kop_inspection_featured_column_v2', $kop_has_featured, $kop_has_featured === 'yes' ? DAY_IN_SECONDS : 10 * MINUTE_IN_SECONDS);
-}
-$kop_flagged = $kop_has_featured === 'yes' ? $wpdb->get_results(
-    "SELECT r.report_date, r.report_url, r.featured_note, f.facility_name, f.state
-     FROM inspection_reports r
-     JOIN inspection_facilities f ON f.id = r.facility_id
-     WHERE r.featured = 1
-     ORDER BY r.report_date DESC, r.id DESC LIMIT 4",
-    ARRAY_A
-) : array();
 $wpdb->suppress_errors($kop_suppress);
-
-// After the hand-picked reports: the severe findings the parser found and an
-// admin approved (api/review-inspection-highlights.php), most recent first.
-$kop_highlights = function_exists('kop_ih_site_highlights')
-    ? kop_ih_site_highlights(max(2, 6 - count((array) $kop_flagged))) : array();
 
 // By the numbers: live counts from the inspection database and the facility
 // directory, cached for six hours so the home page doesn't re-run COUNT
@@ -132,9 +120,41 @@ $kop_volunteer_links = array(
           'desc' => 'Report lawsuits involving TTI programs or staff.'),
 );
 
-// Featured inspections link to the state's tracker page when one exists.
-$kop_tracker_slugs = function_exists('kop_state_inspection_page_map')
-    ? array_values(kop_state_inspection_page_map()) : array();
+// Browse by topic: one tile per kind of record the site keeps, each linked to
+// the published page that lists it. A tile whose page does not exist (or is
+// still a draft) is left out rather than linking into a 404.
+$kop_topics = array(
+    array('href' => '#kop-home-map', 'icon' => 'map-pin', 'label' => 'Facilities by state',
+          'desc' => 'Programs near you, state by state.'),
+    array('template' => 'templates/page-tti-program-index.php', 'icon' => 'building', 'label' => 'Parent companies',
+          'desc' => 'The operators and chains behind the programs.'),
+    array('template' => 'templates/page-network-map.php', 'icon' => 'link', 'label' => 'Network map',
+          'desc' => 'Who owns, staffs and refers to whom.'),
+    array('template' => 'templates/page-inspection-reports.php', 'icon' => 'clipboard', 'label' => 'Inspection reports',
+          'desc' => 'State licensing inspections, searchable by facility.'),
+    array('template' => 'templates/page-lawsuits.php', 'icon' => 'scale', 'label' => 'Lawsuits',
+          'desc' => 'Cases filed against programs and staff.'),
+    array('template' => 'templates/page-legislation.php', 'icon' => 'landmark', 'label' => 'Legislation',
+          'desc' => 'Bills that would regulate the industry.'),
+    array('template' => 'templates/page-news-feed.php', 'icon' => 'newspaper', 'label' => 'News coverage',
+          'desc' => 'Reporting on the TTI, newest first.'),
+    array('template' => 'templates/page-referrer-index.php', 'icon' => 'users', 'label' => 'Referrers',
+          'desc' => 'Educational consultants who place kids in programs.'),
+    array('template' => 'templates/page-transporter-index.php', 'icon' => 'van', 'label' => 'Transport companies',
+          'desc' => 'Services hired to take teens to programs.'),
+    array('template' => 'templates/page-glossary.php', 'icon' => 'book', 'label' => 'Glossary',
+          'desc' => 'The terms programs use, explained.'),
+    array('template' => 'templates/page-report-abuse.php', 'icon' => 'shield', 'label' => 'Where to report abuse',
+          'desc' => 'The agencies to contact in each state.'),
+);
+foreach ($kop_topics as $i => $topic) {
+    if (empty($topic['href'])) {
+        $kop_topics[$i]['href'] = kop_home_existing_page_url($topic['template']);
+    }
+}
+$kop_topics = array_filter($kop_topics, function ($topic) {
+    return $topic['href'] !== '';
+});
 
 // State inspection trackers currently available (tracker slug => state name),
 // from the one list in inc/utilities.php that the hub page reads too.
@@ -266,36 +286,21 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     </section>
     <?php endif; ?>
 
-    <?php if ($kop_flagged || $kop_highlights): ?>
-    <section class="kop-home-flagged">
-        <h2>Inspection Reports That Demand Attention</h2>
-        <div class="kop-flagged-grid">
-            <?php foreach ($kop_flagged as $fr):
-                $tracker = strtolower($fr['state']) . '-reports';
-                $has_tracker = in_array($tracker, $kop_tracker_slugs, true);
-            ?>
-                <div class="kop-flagged-card">
-                    <h3><?php echo esc_html($fr['facility_name']); ?>
-                        <span class="kop-flagged-state"><?php echo esc_html($fr['state']); ?></span></h3>
-                    <?php if (!empty($fr['report_date'])): ?>
-                        <div class="kop-flagged-date">Inspected <?php echo esc_html($fr['report_date']); ?></div>
-                    <?php endif; ?>
-                    <?php if (!empty($fr['featured_note'])): ?>
-                        <p><?php echo esc_html($fr['featured_note']); ?></p>
-                    <?php endif; ?>
-                    <div class="kop-flagged-links">
-                        <?php if (!empty($fr['report_url'])): ?>
-                            <a href="<?php echo esc_url($fr['report_url']); ?>" target="_blank" rel="noopener noreferrer">View the report</a>
-                        <?php endif; ?>
-                        <?php if ($has_tracker): ?>
-                            <a href="/<?php echo esc_attr($tracker); ?>"><?php echo esc_html(strtoupper($fr['state'])); ?> tracker</a>
-                        <?php endif; ?>
-                    </div>
-                </div>
+    <?php if ($kop_topics): ?>
+    <section class="kop-home-topics" aria-labelledby="kop-home-topics-title">
+        <h2 id="kop-home-topics-title">Browse by Topic</h2>
+        <p>Pick a kind of record to start from, or use the search above.</p>
+        <div class="kop-topics-grid">
+            <?php foreach ($kop_topics as $topic): ?>
+                <a class="kop-topic-link" href="<?php echo esc_url($topic['href']); ?>">
+                    <?php if (function_exists('kop_icon')) echo kop_icon($topic['icon'], array('class' => 'kop-topic-icon')); ?>
+                    <span class="kop-topic-text">
+                        <span class="kop-topic-label"><?php echo esc_html($topic['label']); ?></span>
+                        <span class="kop-topic-desc"><?php echo esc_html($topic['desc']); ?></span>
+                    </span>
+                </a>
             <?php endforeach; ?>
-            <?php if ($kop_highlights) kop_ih_render_cards($kop_highlights, $kop_tracker_slugs); ?>
         </div>
-        <?php if (function_exists('kop_ih_render_all_link')) kop_ih_render_all_link(); ?>
     </section>
     <?php endif; ?>
 
@@ -314,7 +319,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
         <?php endif; ?>
     </section>
 
-    <section class="kop-home-map">
+    <section class="kop-home-map" id="kop-home-map">
         <?php
         // Interactive Geo Maps block, rendered via the plugin's shortcode.
         if (shortcode_exists('display-map')) {
