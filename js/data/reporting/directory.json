@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-24T00:07:56.659Z",
+  "generated": "2026-09-28T16:23:22.504Z",
   "categories": [
     {
       "key": "professional-board",
@@ -36,6 +36,16 @@
   "national": {
     "updated": "2026-09-22",
     "note": "Bodies that take a report wherever the program is. None of these replaces the state channels: the state licensing board and the state licensor are the ones that can take somebody's licence away. For crisis lines, see the Resources page - this list is about reporting, not about getting through tonight.",
+    "deadlines": {
+      "text": "Deadlines for abuse of a child usually run from the survivor's 18th birthday, or from when they came to understand what happened, not from the day the program closed. Many states have lengthened them, removed them for child sexual abuse, or reopened claims that had already expired. A criminal charge, a lawsuit and a licence complaint each have their own deadline, so one having passed does not mean the others have.",
+      "link_label": "CHILD USA's statute of limitations tracker, updated as each state changes its law",
+      "url": "https://childusa.org/sol/",
+      "verified_on": "2026-09-28",
+      "sources": [
+        "https://childusa.org/sol/",
+        "https://childusa.org/law/"
+      ]
+    },
     "channels": [
       {
         "id": "us-childhelp",

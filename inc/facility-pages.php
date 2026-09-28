@@ -1789,6 +1789,7 @@ if (!function_exists('kop_facility_page_data')) {
             'aka'           => $aka,
             'status'        => $status,
             'status_class'  => sanitize_html_class(strtolower($status)),
+            'end_year'      => $end,
             'place'         => $place,
             'city'          => $city,
             'state_code'    => $state_code,

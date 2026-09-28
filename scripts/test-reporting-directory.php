@@ -180,12 +180,15 @@ foreach (array('', 'utah', 'not-a-state') as $slug) {
     if ($slug === 'utah') {
         check(strpos($html, 'kop-rep-state') !== false, "$label: state section missing");
         check(strpos($html, 'Utah') !== false, "$label: state name missing");
+        check(strpos($html, 'kop-rep-deadlines') !== false, "$label: deadline note missing from the state section");
     }
     if ($slug === 'not-a-state') {
         check(strpos($html, 'kop-rep-missing') !== false, "$label: unknown state should say so");
         check(strpos($html, 'not-a-state') === false, "$label: unknown slug was echoed back into the page");
     }
 }
+
+check(!empty($directory['national']['deadlines']['url']), 'national.json has no deadlines block');
 
 /* ---- The embedded block ------------------------------------------------ */
 
@@ -196,6 +199,10 @@ foreach ($directory['states'] as $record) {
     check(strpos($html, 'kop-rep-embed') !== false, "{$record['abbr']}: embed block did not render");
     check(substr_count($html, 'kop-rep-card') >= count($record['channels']),
         "{$record['abbr']}: embed dropped channels");
+    /* A survivor of a program that closed long ago needs to see, on every
+     * state's list, that deadlines do not run from the closing date. */
+    check(strpos($html, 'kop-rep-deadlines') !== false, "{$record['abbr']}: embed has no deadline note");
+    check(strpos($html, 'https://childusa.org/sol/') !== false, "{$record['abbr']}: deadline note has no tracker link");
     /* Embedded a level deeper, so headings must not jump back to h3. */
     check(strpos($html, '<h3 class="kop-rep-card-name"') === false,
         "{$record['abbr']}: embed used h3 for a card name, breaking heading order");

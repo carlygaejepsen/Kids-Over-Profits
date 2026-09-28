@@ -483,20 +483,42 @@ get_header();
      * is the likeliest person in the site to need it, so it sits at the end of
      * the record rather than behind another click. One line and a deep link
      * into that state's block, not the whole directory. Prints nothing for a
-     * state the directory has not covered. */
+     * state the directory has not covered.
+     *
+     * A closed program gets different words, not no words. The agency that
+     * licensed it has nothing left to act on, so saying it can would be false
+     * hope; but the staff may still hold licences, and deadlines on abuse of
+     * a child run from the survivor's age, not from the closing date, so the
+     * link stays. The deadline note on the reporting page says the rest. */
     $kop_fp_report_url = function_exists('kop_reporting_state_url')
         ? kop_reporting_state_url($page['state_name'] ?: $page['state_code'])
         : '';
+    $kop_fp_closed = $page['status'] === 'Closed';
     if ($kop_fp_report_url !== '') :
     ?>
-        <aside class="kop-fp-reporting">
+        <aside class="kop-fp-reporting<?php echo $kop_fp_closed ? ' kop-fp-reporting--closed' : ''; ?>">
             <h2>Reporting this program</h2>
-            <p>
-                If something happened here, <a href="<?php echo esc_url($kop_fp_report_url); ?>">the
-                <?php echo esc_html($page['state_name']); ?> reporting channels</a> list who can act and
-                what each one can actually do - the board that licenses the therapist, the agency that
-                licenses the program, and the bodies with a right to investigate it.
-            </p>
+            <?php if ($kop_fp_closed) : ?>
+                <p>
+                    This program closed<?php echo $page['end_year'] !== '' ? ' in ' . esc_html($page['end_year']) : ''; ?>,
+                    so the state agency that licensed it can no longer act against it. Other channels may still
+                    be able to: the boards that license the people who worked here, law enforcement, and the
+                    civil courts.
+                </p>
+                <p>
+                    <a href="<?php echo esc_url($kop_fp_report_url); ?>">The <?php echo esc_html($page['state_name']); ?>
+                    reporting channels</a> list each one and what it can do. Deadlines depend on the state, the
+                    kind of harm and the survivor's age, and many states have lengthened or removed them for
+                    child sexual abuse, so a program closing long ago does not by itself mean it is too late.
+                </p>
+            <?php else : ?>
+                <p>
+                    If something happened here, <a href="<?php echo esc_url($kop_fp_report_url); ?>">the
+                    <?php echo esc_html($page['state_name']); ?> reporting channels</a> list who can act and
+                    what each one can actually do - the board that licenses the therapist, the agency that
+                    licenses the program, and the bodies with a right to investigate it.
+                </p>
+            <?php endif; ?>
         </aside>
     <?php endif; ?>
 

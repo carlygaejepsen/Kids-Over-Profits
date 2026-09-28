@@ -307,6 +307,31 @@ function kop_reporting_render_picker($selected_slug) {
 }
 
 /**
+ * The note on filing deadlines, from national.json's "deadlines" block. Every
+ * state's list carries it, because the question a survivor of a program that
+ * closed decades ago brings to this page is whether any of it still applies.
+ * The page states no deadline itself; the law moves every session, so it
+ * points at a tracker that follows it. Prints nothing if the block is absent.
+ */
+function kop_reporting_render_deadlines() {
+    $directory = kop_reporting_directory();
+    $deadlines = $directory['national']['deadlines'] ?? null;
+    if (!is_array($deadlines) || empty($deadlines['text']) || empty($deadlines['url'])) {
+        return;
+    }
+    ?>
+    <aside class="kop-rep-deadlines">
+        <h3 class="kop-rep-deadlines-h">If it happened years ago</h3>
+        <p><?php echo esc_html($deadlines['text']); ?></p>
+        <p>
+            <a href="<?php echo esc_url($deadlines['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($deadlines['link_label']); ?></a>.
+            A lawyer can tell you which deadline applies to you.
+        </p>
+    </aside>
+    <?php
+}
+
+/**
  * The compact block a state hub page embeds: that state's channels only, with
  * a link through to the full page. Prints nothing for a state with no file.
  */
@@ -322,6 +347,7 @@ function kop_reporting_render_state_block($state_name) {
         <?php if (!empty($record['note'])) : ?>
             <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
         <?php endif; ?>
+        <?php kop_reporting_render_deadlines(); ?>
         <?php kop_reporting_render_groups($record['channels'], 'h4'); ?>
         <?php if ($page) : ?>
             <p class="kop-rep-more">
@@ -373,6 +399,7 @@ function kop_reporting_render_page($state_slug = '') {
                 <?php if (!empty($record['note'])) : ?>
                     <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
                 <?php endif; ?>
+                <?php kop_reporting_render_deadlines(); ?>
                 <?php kop_reporting_render_groups($record['channels']); ?>
             </section>
         <?php elseif ($state_slug !== '') : ?>

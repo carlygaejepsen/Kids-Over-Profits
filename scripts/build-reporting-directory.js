@@ -340,6 +340,42 @@ function loadStateFile(file) {
     };
 }
 
+/**
+ * The note on deadlines every state block carries. Deadlines for abuse of a
+ * child run from the survivor's age or from when they understood the harm,
+ * not from the day a program closed, and several states have extended or
+ * removed them, so the page states none itself: it points at a tracker that
+ * follows every legislature. Validated like a channel - a link and a date.
+ */
+function normalizeDeadlines(raw) {
+    if (raw === undefined) return undefined;
+    const where = 'national.json/deadlines';
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        fail(where, 'must be an object');
+        return undefined;
+    }
+    checkString(where, 'text', raw.text, { min: 40 });
+    checkString(where, 'link_label', raw.link_label, { min: 4 });
+    checkUrl(where, 'url', raw.url);
+    if (!isIsoDate(raw.verified_on)) {
+        fail(where, `verified_on must be YYYY-MM-DD - got ${JSON.stringify(raw.verified_on)}`);
+    } else if (daysSince(raw.verified_on) > 365) {
+        warn(where, `verified_on ${raw.verified_on} is over a year old`);
+    }
+    if (!Array.isArray(raw.sources) || !raw.sources.length) {
+        fail(where, 'needs at least one source');
+    } else {
+        raw.sources.forEach((u) => checkUrl(where, 'sources', u));
+    }
+    return {
+        text: raw.text,
+        link_label: raw.link_label,
+        url: raw.url,
+        verified_on: raw.verified_on,
+        sources: raw.sources
+    };
+}
+
 function main() {
     const quiet = process.argv.includes('--quiet');
 
@@ -353,6 +389,7 @@ function main() {
     if (nationalRaw.updated !== undefined && !isIsoDate(nationalRaw.updated)) {
         fail('national.json', `"updated" must be YYYY-MM-DD - got ${JSON.stringify(nationalRaw.updated)}`);
     }
+    const deadlines = normalizeDeadlines(nationalRaw.deadlines);
 
     const files = fs.existsSync(STATES_DIR)
         ? fs.readdirSync(STATES_DIR).filter((f) => f.endsWith('.json')).sort()
@@ -381,6 +418,7 @@ function main() {
         national: {
             updated: nationalRaw.updated || null,
             note: nationalRaw.note || undefined,
+            deadlines,
             channels: national
         },
         states: states.sort((a, b) => a.state.localeCompare(b.state)),

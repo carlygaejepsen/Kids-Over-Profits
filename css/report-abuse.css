@@ -157,6 +157,36 @@
     color: var(--kop-text-primary, #000435);
 }
 
+.kop-rep-deadlines {
+    margin: 0 0 2rem;
+    padding: 1rem 1.25rem;
+    max-width: 72ch;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 0 6px 6px 0;
+    color: var(--kop-text-primary, #000435);
+    line-height: 1.6;
+}
+
+.kop-rep-deadlines-h {
+    margin: 0 0 0.4rem;
+    font-size: 1.05rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-rep-deadlines p {
+    margin: 0 0 0.5rem;
+}
+
+.kop-rep-deadlines a {
+    color: var(--kop-teal-ink, #24757F);
+    font-weight: 600;
+}
+
+.kop-rep-deadlines p:last-child {
+    margin-bottom: 0;
+}
+
 .kop-rep-group {
     margin-bottom: 2.75rem;
 }

@@ -46,6 +46,30 @@ coverage table and every warning.
 }
 ```
 
+## Deadlines
+
+`national.json` also carries one `deadlines` block, printed at the top of
+every state's list on /report-abuse/ and on the state hubs:
+
+```json
+"deadlines": {
+  "text": "What a reader needs to know about deadlines, in general terms.",
+  "link_label": "The words of the link",
+  "url": "https://childusa.org/sol/",
+  "verified_on": "2026-09-28",
+  "sources": ["https://childusa.org/sol/"]
+}
+```
+
+It states no deadline itself. Deadlines on abuse of a child run from the
+survivor's age or from when they understood the harm, not from the day a
+program closed, and legislatures change them every session, so the note
+links a tracker that follows them (CHILD USA's, updated weekly). A deadline
+a specific body publishes for its own complaints still goes in that
+channel's `deadline` field. For the same reason a closed program's facility
+page keeps its reporting link: it drops the claim that the program's
+licensor can act, and says which channels still might.
+
 ## A channel
 
 Only `id`, `category`, `name`, `what_it_can_do`, `verified_on` and `sources`
