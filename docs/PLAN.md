@@ -141,23 +141,18 @@ The date is when each was last confirmed open.
    `?apply=1`.
 6. **Research relevance tiers** (2026-09-23). Rate documents in the
    [research library](https://kidsoverprofits.org/researchreports/) editor.
-7. **Proposed resources** (2026-09-23). Logged in,
-   [/resources/](https://kidsoverprofits.org/resources/) shows a dashed block
-   of proposed crisis lines, reporting routes and family resources. Check
-   every number; the ones to publish move into `kop_resources_groups()` in
-   `inc/resources-list.php`.
-8. **Staging pingback** (2026-09-23). Delete comment 453 on
+7. **Staging pingback** (2026-09-23). Delete comment 453 on
    [/hyde/](https://kidsoverprofits.org/hyde/), a pingback from the staging
    copy.
-9. **WA full scrape** (2026-09-24). `wa_scraper.py --full` in the Tools repo,
+8. **WA full scrape** (2026-09-24). `wa_scraper.py --full` in the Tools repo,
    with `KOP_DATA_API_KEY`.
 
 ### Hosting
 
-10. **Close `/staging/`.** It answers 200 and its inner pages carry no
+9. **Close `/staging/`.** It answers 200 and its inner pages carry no
     `noindex`. Password it in cPanel, set "Discourage search engines" in the
     staging install, or take it down; nothing on the live site depends on it.
-11. **Portal leftovers** (optional). NixiHost backups still hold the one
+10. **Portal leftovers** (optional). NixiHost backups still hold the one
     pre-encryption submission (`SUB-2025-YLVUY0CL`) until they rotate, unless
     support purges them. The owner deleted the public copies and asked
     archive.org to remove its capture on 2026-09-24; not re-checked, at the
@@ -165,7 +160,7 @@ The date is when each was last confirmed open.
 
 ### Decisions
 
-12. **Hub editor content** (page templates 4.4). Changes ship through
+11. **Hub editor content** (page templates 4.4). Changes ship through
     `kop_apply_text_fixes()` in `inc/admin.php`, never by hand on
     production. Recommendations:
     - Where Are the Kids and Advocates link `/international`, which 301s to
@@ -181,32 +176,32 @@ The date is when each was last confirmed open.
       trim the editor content to the introduction.
     - Survivors, Research & Reports, Advocates and Resources use `h6` for
       section headings, History `h5` under `h3`: use `h2` and `h3`.
-13. **Development leftover posts** (page templates 6.2, most exposed).
+12. **Development leftover posts** (page templates 6.2, most exposed).
     Published and public: `facility-form-test`, `data-organizer`, `data`,
     `data-analysis`, `arizona-adhs-inspections` (2.7 MB). Recommendation:
     unpublish to draft, after checking no link or redirect depends on them.
     `tmp/post-inventory.csv` shows zero inbound links for the first four.
-14. **News posts** (6.3). The 75 News posts are now duplicated in the news
+13. **News posts** (6.3). The 75 News posts are now duplicated in the news
     feed. Recommended: 301 each to its feed entry, as `/news/` was.
     Alternative: a `templates/single-news.php`.
-15. **Lawsuit posts** (6.4). Per post: 301 to `/lawsuits/#lawsuit-<id>` when
+14. **Lawsuit posts** (6.4). Per post: 301 to `/lawsuits/#lawsuit-<id>` when
     the row covers it, or keep the analysis and link it from the row.
-16. **OG Image snippet.** Code Snippets snippet 6 duplicates Yoast's five
+15. **OG Image snippet.** Code Snippets snippet 6 duplicates Yoast's five
     `og:` tags on the front page. Recommended: deactivate it.
-17. **Network map.** Kind marks answered 2026-09-28 (a small-caps kind
+16. **Network map.** Kind marks answered 2026-09-28 (a small-caps kind
     word under the name; open work 3.1.3). Still open: the judgement
     calls in `tmp/network-qa.md` (rebuilt by every map build):
     about 50 profiles naming another node as a past or other name, closed-
     to-closed rebrands, unplaced memorial programs, Silverado Academy,
     "Brent Hall" folded into Brent Charles Hall, and the 56 staff-list
     places not on the board.
-18. **Portal table.** Clear the leftover `wpdl_anonymous_submissions` row
+17. **Portal table.** Clear the leftover `wpdl_anonymous_submissions` row
     (empty message and contact, a `files_data` blob naming the file) or drop
     the table.
 
 ### Unconfirmed settings
 
-19. Which mode production's `kop_data_model` / `kop_data_model_areas`
+18. Which mode production's `kop_data_model` / `kop_data_model_areas`
     options use for the `program_index` read area, and the value of
     `kop_submission_notify_emails` (no admin screen; default `admin_email`).
 
@@ -274,7 +269,7 @@ Open:
 3. **"Where are the kids?" posts** (6.5). For each of the 12, where a
    `/facility/<slug>/` page covers the same facility, recommend
    `single-facility-profile.php`, as the 12 facility-profile posts got.
-4. **Act on decisions 13 to 15** once answered.
+4. **Act on decisions 12 to 14** once answered.
 5. **Category archive layout and a 404 page** (6.6), with search and links to
    the main hubs, after 2 to 4. Both on a solid panel.
 

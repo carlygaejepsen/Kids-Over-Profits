@@ -10,15 +10,11 @@
  * kop_resources_groups() is what the page shows everybody. It was ported from
  * the live page, so every entry in it is something the site already published.
  *
- * kop_resources_proposed() is a starter set for the needs the page has never
- * covered. It began with three: a crisis line, how to report abuse, and where
- * a family in the middle of a placement can turn. The reporting one has since
- * been published, backed by js/data/reporting/ - every number there is sourced
- * and dated, so it no longer needed to wait on somebody checking it by hand.
- * The other two are still proposals, rendered only for someone who can edit
- * the page, under a heading that says so, because the site owner decides which
- * belong and what they should say. Moving one into kop_resources_groups()
- * publishes it; deleting it from here drops it.
+ * kop_resources_proposed() holds groups waiting on the site owner, rendered
+ * only for someone who can edit the page, under a heading that says so. It is
+ * empty now: the first three proposals (crisis lines, reporting, families)
+ * were published or replaced by September 2026. Moving a group into
+ * kop_resources_groups() publishes it; deleting it from there drops it.
  *
  * Every entry takes:
  *   name     - the link text
@@ -51,8 +47,51 @@ if (!defined('KOP_RESOURCES_SLUG')) {
  */
 function kop_resources_groups() {
     return apply_filters('kop_resources_groups', array(
-        // First, because it is the thing somebody is most often here to find
-        // and the only group that leads anywhere with a phone number on it.
+        // First, because somebody in crisis should not have to scroll. Every
+        // number was checked against the service's own site on 2026-09-28.
+        array(
+            'heading' => 'If you need help right now',
+            'intro'   => 'Free, confidential and open around the clock.',
+            'entries' => array(
+                array(
+                    'name'    => '988 Suicide and Crisis Lifeline',
+                    'url'     => 'https://988lifeline.org/',
+                    'contact' => 'Call or text 988',
+                    'note'    => 'For anyone in crisis, not only someone who is suicidal.',
+                ),
+                array(
+                    'name'    => 'Crisis Text Line',
+                    'url'     => 'https://www.crisistextline.org/',
+                    'contact' => 'Text HOME to 741741',
+                    'note'    => 'Trained counsellors by text, if a call is not safe or possible.',
+                ),
+                array(
+                    'name'    => 'The Trevor Project',
+                    'url'     => 'https://www.thetrevorproject.org/get-help/',
+                    'contact' => 'Call 1-866-488-7386, or text START to 678-678',
+                    'note'    => 'Crisis support for LGBTQ young people.',
+                ),
+                array(
+                    'name'    => 'Trans Lifeline',
+                    'url'     => 'https://translifeline.org/',
+                    'contact' => 'Call 1-877-565-8860',
+                    'note'    => 'Peer support run by trans people. It does not call the police on a caller.',
+                ),
+                array(
+                    'name'    => 'National Runaway Safeline',
+                    'url'     => 'https://www.1800runaway.org/',
+                    'contact' => 'Call or text 1-800-786-2929',
+                    'note'    => 'For a young person who has run, is thinking about it, or has been thrown out.',
+                ),
+                array(
+                    'name'    => 'RAINN National Sexual Assault Hotline',
+                    'url'     => 'https://hotline.rainn.org/',
+                    'contact' => 'Call 1-800-656-4673',
+                    'note'    => 'Sexual assault support, including assault that happened years ago.',
+                ),
+            ),
+        ),
+        // Next, because it is the thing somebody is most often here to find.
         array(
             'heading' => 'Reporting abuse in a program',
             'intro'   => 'A report can go to more than one place at once, and usually should. The bodies that can act are different in every state, and they do not talk to each other reliably.',
@@ -72,6 +111,27 @@ function kop_resources_groups() {
                     'name' => 'Tell this project',
                     'page' => 'tti-data-submission',
                     'note' => 'Anonymous. It does not reach any authority, but it goes into the public record of the program.',
+                ),
+            ),
+        ),
+        array(
+            'heading' => 'For families: alternatives to a placement',
+            'intro'   => 'Care that keeps a young person at home or with family, instead of sending them away.',
+            'entries' => array(
+                array(
+                    'name' => 'Wraparound basics',
+                    'url'  => 'https://nwi.pdx.edu/wraparound-basics/',
+                    'note' => 'The National Wraparound Initiative at Portland State University on wraparound: a team built around the young person and family, working in the community rather than in a facility.',
+                ),
+                array(
+                    'name' => 'Kinship care facts',
+                    'url'  => 'https://achservices.org/what-to-expect-when-you-werent-expecting/kinship-care-facts/',
+                    'note' => 'ACH Child and Family Services on placing a child with relatives, and why children do better there than with strangers.',
+                ),
+                array(
+                    'name' => 'Unsilenced: safer alternatives',
+                    'url'  => 'https://www.unsilenced.org/safe-treatment/',
+                    'note' => 'Evidence-based treatment for young people with mental health needs, and what to look for in it.',
                 ),
             ),
         ),
@@ -277,79 +337,12 @@ function kop_resources_groups() {
 /**
  * Proposed entries, shown only to someone who can edit the page.
  *
- * The needs the page has never answered. Everything here is a national United
- * States service, because the page has no international list yet; that is one
- * of the decisions waiting. Check every number before publishing one: a wrong
- * crisis number is worse than no number. The reporting group that used to sit
- * here is published now - see kop_resources_groups() - because the reporting
- * directory carries a source and a verification date for every entry.
+ * Empty for now. A group added here renders under "Proposed, not published
+ * yet" for editors and nobody else. Check every number before publishing one:
+ * a wrong crisis number is worse than no number.
  */
 function kop_resources_proposed() {
-    return apply_filters('kop_resources_proposed', array(
-        array(
-            'heading' => 'If you need help right now',
-            'intro'   => 'Free, confidential and open around the clock.',
-            'entries' => array(
-                array(
-                    'name'    => '988 Suicide and Crisis Lifeline',
-                    'url'     => 'https://988lifeline.org/',
-                    'contact' => 'Call or text 988',
-                    'note'    => 'For anyone in crisis, not only someone who is suicidal.',
-                ),
-                array(
-                    'name'    => 'Crisis Text Line',
-                    'url'     => 'https://www.crisistextline.org/',
-                    'contact' => 'Text HOME to 741741',
-                    'note'    => 'Trained counsellors by text, if a call is not safe or possible.',
-                ),
-                array(
-                    'name'    => 'The Trevor Project',
-                    'url'     => 'https://www.thetrevorproject.org/get-help/',
-                    'contact' => 'Call 1-866-488-7386, or text START to 678-678',
-                    'note'    => 'Crisis support for LGBTQ young people.',
-                ),
-                array(
-                    'name'    => 'Trans Lifeline',
-                    'url'     => 'https://translifeline.org/',
-                    'contact' => 'Call 1-877-565-8860',
-                    'note'    => 'Peer support run by trans people. It does not call the police on a caller.',
-                ),
-                array(
-                    'name'    => 'National Runaway Safeline',
-                    'url'     => 'https://www.1800runaway.org/',
-                    'contact' => 'Call or text 1-800-786-2929',
-                    'note'    => 'For a young person who has run, is thinking about it, or has been thrown out.',
-                ),
-                array(
-                    'name'    => 'RAINN National Sexual Assault Hotline',
-                    'url'     => 'https://hotline.rainn.org/',
-                    'contact' => 'Call 1-800-656-4673',
-                    'note'    => 'Sexual assault support, including assault that happened years ago.',
-                ),
-            ),
-        ),
-        array(
-            'heading' => 'For families considering or in a placement',
-            'intro'   => 'What to read before signing, and what to do if your child is already there.',
-            'entries' => array(
-                array(
-                    'name' => 'Look the program up first',
-                    'page' => 'location-index',
-                    'note' => 'Every program this project has a record of, by place: who owns it, what it has been called, its inspections, lawsuits and deaths.',
-                ),
-                array(
-                    'name' => 'Families',
-                    'page' => 'families',
-                    'note' => 'The questions to ask a program, and what the answers usually mean.',
-                ),
-                array(
-                    'name' => 'Unsilenced: for parents',
-                    'url'  => 'https://unsilenced.org/',
-                    'note' => 'Advocates who talk to parents who have already placed a child and want them out.',
-                ),
-            ),
-        ),
-    ));
+    return apply_filters('kop_resources_proposed', array());
 }
 
 /**
@@ -445,7 +438,7 @@ function kop_hub_module_resources() {
             <div class="kop-res-review">
                 <h2 class="kop-hub-h">Proposed, not published yet <span class="kop-hub-count">editors only</span></h2>
                 <p class="kop-res-intro">
-                    Nobody else can see this block. These are the three needs the page has never covered.
+                    Nobody else can see this block.
                     Check every number, then move the entries you want into <code>kop_resources_groups()</code>
                     in <code>inc/resources-list.php</code>, and delete the rest.
                 </p>

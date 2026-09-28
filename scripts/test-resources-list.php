@@ -169,7 +169,10 @@ $internal = strpos($html, 'href="https://example.test/researchreports/"');
 check('an internal link is not a new tab', $internal !== false && strpos(substr($html, $internal, 120), 'target="_blank"') === false, true);
 contains('the archived entry is marked', $html, 'class="kop-res-archived"');
 lacks('no proposed block for a visitor', $html, 'kop-res-review');
-lacks('no crisis line published yet', $html, '988');
+contains('the crisis lines are published', $html, 'Call or text 988');
+contains('the crisis lines come first', $html, 'If you need help right now');
+contains('the families group is published', $html, 'nwi.pdx.edu/wraparound-basics/');
+check('the crisis lines sit above reporting', strpos($html, 'If you need help right now') < strpos($html, 'Reporting abuse in a program'), true);
 lacks('a page this install lacks is not printed', $html, 'The questions to ask a program');
 
 echo "\n-- What an editor is served --\n";
@@ -178,9 +181,7 @@ ob_start();
 kop_hub_module_resources();
 $editor_html = ob_get_clean();
 
-contains('the proposed block shows', $editor_html, 'class="kop-res-review"');
-contains('it says it is not published', $editor_html, 'Proposed, not published yet');
-contains('the crisis line is proposed', $editor_html, 'Call or text 988');
+lacks('an empty proposed list prints no block', $editor_html, 'class="kop-res-review"');
 contains('the number is marked as a number', $editor_html, 'class="kop-res-contact"');
 lacks('the missing families page is still dropped', $editor_html, 'The questions to ask a program');
 
