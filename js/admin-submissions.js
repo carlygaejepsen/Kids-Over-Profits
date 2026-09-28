@@ -1264,6 +1264,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const hint = document.createElement('p');
             hint.className = 'kop-edit-hint';
             hint.textContent = 'This submission is a full facility record. Edit the JSON directly — it must stay valid JSON.';
+            if (config.dataFormUrl && submission && submission.id) {
+                // The full data form is easier than raw JSON: it opens this
+                // submission on its own tab and saves back to it.
+                const formLink = document.createElement('a');
+                const url = new URL(config.dataFormUrl, window.location.href);
+                url.searchParams.set('submission', submission.id);
+                formLink.href = url.toString();
+                formLink.className = 'btn-view';
+                formLink.textContent = 'Edit in data form';
+                formLink.style.display = 'inline-block';
+                formLink.style.marginBottom = '10px';
+                wrap.appendChild(formLink);
+            }
             wrap.appendChild(label);
             wrap.appendChild(ta);
             wrap.appendChild(hint);

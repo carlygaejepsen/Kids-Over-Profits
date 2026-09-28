@@ -97,7 +97,12 @@
         window.__kopLoadedProjectBaseline = cloneFn(window.formData);
     }
 
-    function loadProject(projectName) {
+    /**
+     * Load a project into the form. `override` ({ data, category }) loads data
+     * that is not in window.projects, such as a pending submission opened by
+     * js/data-form/submission-editor.js, without touching the saved project.
+     */
+    function loadProject(projectName, override = null) {
         const { debugLog, showUploadStatus, deepClone, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, handleTransporterToggle, updateConsultantsUI, updateTransportersUI, updateLocationFacilitiesOverview, scrollToFormInput } = window;
         const { normalizeProjectData } = window.KOP_DataNormalizer;
 
@@ -106,7 +111,7 @@
         showUploadStatus(`Loading project "${projectName}"...`, 'info');
 
         let resolvedName = projectName;
-        if (!window.projects[projectName]) {
+        if (!override && !window.projects[projectName]) {
             const upperName = projectName.toUpperCase();
             if (window.projects[upperName]) {
                 resolvedName = upperName;
@@ -114,7 +119,7 @@
             }
         }
         
-        if (!window.projects[resolvedName]) {
+        if (!override && !window.projects[resolvedName]) {
             console.error('❌ Project not found:', projectName, '(also tried:', projectName.toUpperCase(), ')');
             showUploadStatus(`Project "${projectName}" not found.`, 'error');
             return Promise.reject(new Error(`Project not found: ${projectName}`));
@@ -125,7 +130,12 @@
         // operator fields rather than jumping to the project's own category tab.
         const operatorsViewActive = document.querySelector('.category-tab.active')?.dataset.category === 'operators'
             && determineProjectCategory(projectName) === 'companies';
-        const projectCategory = operatorsViewActive ? 'operators' : determineProjectCategory(projectName);
+        const projectCategory = override && override.category
+            ? override.category
+            : (operatorsViewActive ? 'operators' : determineProjectCategory(projectName));
+        const source = override
+            ? { data: override.data || {}, currentFacilityIndex: 0 }
+            : window.projects[projectName];
         debugLog('📂 Project category:', projectCategory);
 
         const targetTab = document.querySelector(`.category-tab[data-category="${projectCategory}"]`);
@@ -144,15 +154,15 @@
             setTimeout(() => {
                 window.currentProjectName = projectName;
                 
-                if (window.projects[projectName].data && Object.keys(window.projects[projectName].data).length > 0) {
-                    window.formData = normalizeProjectData(deepClone(window.projects[projectName].data));
+                if (source.data && Object.keys(source.data).length > 0) {
+                    window.formData = normalizeProjectData(deepClone(source.data));
                 } else {
                     window.formData = createNewProjectData();
                 }
                 if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
                 if (typeof window.ensureTransporterDataStructures === 'function') window.ensureTransporterDataStructures();
                 if (typeof window.ensureProviderDataStructures === 'function') window.ensureProviderDataStructures();
-                window.currentFacilityIndex = window.projects[projectName].currentFacilityIndex || 0;
+                window.currentFacilityIndex = source.currentFacilityIndex || 0;
                 if (!window.formData.facilities || window.currentFacilityIndex >= window.formData.facilities.length) {
                     window.currentFacilityIndex = 0;
                 }

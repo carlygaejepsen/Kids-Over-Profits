@@ -68,6 +68,16 @@ these groups when the form loads from or saves to `facilities_v2.json_data`.
 The SQL table already stores the facility document as JSON, so these additions
 do not require new relational columns.
 
+## Editing a submission before approval
+
+Open the admin data form with `?submission=<id>` to load a pending data submission (a `suggested_edits` row) into the full form. The **Edit in data form** link on each data suggestion in Approve Edits (`api/approve-edits.php`) and in the Submissions Review modal does this. `js/data-form/submission-editor.js` handles it:
+
+- The submission opens on its own tab (providers, referrers, transporters, locations or parent companies, routed the same way approval routes it) through `loadProject(name, { data, category })`, which leaves the saved project of the same name untouched.
+- While it is open, every save (the Save button, the referrer/transporter save buttons and autosave) goes to the submission through `manage-submissions.php` `update_fields`, writing `edited_json_data` and `master_id`, never to the master tables. Local drafts, delete and the draft button are off.
+- The Project Name box sets the project the submission is filed under on approval (`master_id`). Leave it as "Unknown Project" to let approval choose (a provider goes to its state).
+- **Save and approve** saves, then approves through `api/process-edit.php`, the same merge the review queue runs. **Reject** rejects it.
+- If something else replaces the form's data (loading another project, switching tabs, clearing the form), the next save refuses to write it into the submission, ends submission mode and restores the normal saves.
+
 ## Mental Health Providers (hybrid category)
 
 The **Mental Health Providers** tab (`data-category="providers"`) is for providers that are not part of the TTI but use TTI practices and refer children to TTI facilities: acute psychiatric wards, partial hospitalization (PHP) and intensive outpatient (IOP) programs, day schools, respite care and outpatient therapy.

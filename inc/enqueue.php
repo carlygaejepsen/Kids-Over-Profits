@@ -129,6 +129,8 @@ function kop_enqueue_admin_submissions() {
                 'apiBase' => get_stylesheet_directory_uri() . '/api',
                 'manageApi' => get_stylesheet_directory_uri() . '/api/manage-submissions.php',
                 'scanApi' => get_stylesheet_directory_uri() . '/api/scan-submission-urls.php',
+                // Admin data form; ?submission=<id> opens a data submission in it.
+                'dataFormUrl' => function_exists('kop_find_template_page_url') ? kop_find_template_page_url('page-admin-data.php') : '',
                 'reviewer' => $reviewer
             )
         );
@@ -1247,6 +1249,22 @@ function enqueue_data_form_script() {
 
 
                     );
+
+            // ?submission=<id> opens a pending data submission in this form
+            // (js/data-form/submission-editor.js); saves go to the submission.
+            $submission_editor_path = get_stylesheet_directory() . '/js/data-form/submission-editor.js';
+            wp_enqueue_script(
+                'kop-submission-editor',
+                get_stylesheet_directory_uri() . '/js/data-form/submission-editor.js',
+                array('kop-admin-data-page-script'),
+                file_exists($submission_editor_path) ? filemtime($submission_editor_path) : time(),
+                true
+            );
+            wp_localize_script('kop-submission-editor', 'KOP_SUBMISSION_EDITOR', array(
+                'manageApi'      => get_stylesheet_directory_uri() . '/api/manage-submissions.php',
+                'processEditApi' => get_stylesheet_directory_uri() . '/api/process-edit.php',
+                'reviewUrl'      => admin_url('admin.php?page=approve-facility-edits'),
+            ));
 
         }
 

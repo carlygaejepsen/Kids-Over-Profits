@@ -233,6 +233,10 @@ $master_tables = [
     'locations' => kop_resolve_table_name($pdo, 'locations_master', $wp_prefix),
 ];
 
+// The admin data form opens a submission for editing with ?submission=<id>
+// (js/data-form/submission-editor.js).
+$kop_data_form_url = function_exists('kop_find_template_page_url') ? kop_find_template_page_url('page-admin-data.php') : '';
+
 // Fetch pending suggestions (Data Form)
 $stmt = $pdo->prepare("SELECT * FROM `{$suggested_edits_table}` WHERE status = 'pending'");
 $stmt->execute();
@@ -453,6 +457,8 @@ function kop_has_meaningful_referrer_payload($data) {
         .suggestion h3 { margin-top: 0; }
         .actions { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; }
         .actions button { margin-right: 10px; padding: 5px 15px; cursor: pointer; }
+        .actions .edit-in-form { display: inline-block; margin-right: 10px; padding: 5px 15px; background: #24757F; color: #fff; border-radius: 3px; text-decoration: none; }
+        .actions .edit-in-form:hover, .actions .edit-in-form:focus { background: #000080; }
         .diff { border: 1px solid #eee; padding: 10px; background: #f9f9f9; overflow-x: auto; }
         .diff dt { font-weight: bold; margin-top: 5px; }
         .diff dd { margin-left: 20px; margin-bottom: 5px; font-family: monospace; }
@@ -570,6 +576,9 @@ function kop_has_meaningful_referrer_payload($data) {
                                 <?php echo render_diff($diff); ?>
                             </div>
                             <div class="actions">
+                                <?php if ($kop_data_form_url !== ''): ?>
+                                    <a class="edit-in-form" target="_top" href="<?php echo htmlspecialchars(add_query_arg('submission', (int) $suggestion['id'], $kop_data_form_url)); ?>">Edit in data form</a>
+                                <?php endif; ?>
                                 <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'approve', 'suggestion')">Approve</button>
                                 <button onclick="processEdit(<?php echo $suggestion['id']; ?>, 'reject', 'suggestion')">Reject</button>
                             </div>

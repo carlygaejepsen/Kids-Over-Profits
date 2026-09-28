@@ -146,7 +146,8 @@ function kop_editable_fields($type) {
                 ],
             ];
         case 'data':
-            return ['cols' => ['edited_json_data','reason'], 'json_array' => [], 'enums' => []];
+            // master_id is the project the submission is filed under on approval.
+            return ['cols' => ['edited_json_data','reason','master_id'], 'json_array' => [], 'enums' => []];
         default:
             return null; // wiki has its own editor
     }
@@ -838,6 +839,17 @@ try {
                     $newsMentions = $mentions;
                     $set[] = "`$col` = ?";
                     $params[] = json_encode($mentions, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    continue;
+                }
+                if ($type === 'data' && $col === 'master_id') {
+                    // Same sanitizing as save-suggestion.php, so approval
+                    // (kop_resolve_submission_project_name) reads it unchanged.
+                    $val = substr(trim(preg_replace('/\s+/', ' ', preg_replace('/[^a-zA-Z0-9\s\-_]/', '', (string) $val))), 0, 255);
+                    if ($val === '') {
+                        continue;
+                    }
+                    $set[] = "`$col` = ?";
+                    $params[] = $val;
                     continue;
                 }
                 if ($col === 'edited_json_data') {
