@@ -295,7 +295,7 @@ updated.
    harness and a before/after snapshot of counts, badges, previews and
    summaries (the FL/NC lite-list method). `severe-flags.js` reads both
    markups; check the flags still land.
-3. **Severe-finding extractors: WA, and the flags on lite lists.** Built
+3. **Severe-finding extractor for WA.** Built
    (scanner version 4, 2026-09-28): TX, CA, UT, AZ, CT, NC (harm tags only:
    V 131/132, 289-296, 314/315, 366/367, 512-525), GA, MN, AR (federal
    surveys only), FL (DJJ reviews, Failed/Limited indicators). Left out: OR
@@ -303,9 +303,8 @@ updated.
    columns), NV (no text). Rules: substantiated only; no child-on-child
    fights; minors' sexual activity only with an adult taking part or an
    assault; single medication errors never, a pattern of them yes;
-   elopement only with death or injury. `severe-flags.js` matches report
-   text, so NC and FL flags will not show until it matches the lite lists'
-   ids instead.
+   elopement only with death or injury. Flags on the trackers match NC,
+   GA, MN, AR and FL reports by their document link (08172021).
 4. **"What inspectors found" on facility pages** (the rest of fix-plan step
    14.5): approved highlights on `/facility/<slug>/`.
 
