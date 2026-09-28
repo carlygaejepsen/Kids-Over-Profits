@@ -328,6 +328,10 @@ $reading = isset($r[1][0]) ? substr_count($r[1][0], '<li>') : 0;
 $expect  = count(array_filter(kop_article_children('law-policy'), 'kop_test_page'));
 check('reading lists every published article under the hub', $reading === $expect, "$reading of $expect");
 check('every reading item has a line under it', isset($r[1][0]) && substr_count($r[1][0], '<p>') === $reading);
+preg_match('#<ul class="kop-hub-reading-list kop-hub-positions-list">(.*?)</ul>#s', $law, $p);
+check('positions list ABA Resolution 605 with a line under it',
+    isset($p[1]) && strpos($p[1], 'childrens-rights/resolution-605/') !== false && substr_count($p[1], '<p>') === substr_count($p[1], '<li>'));
+check('positions follow the reading', strpos($law, 'kop-hub-positions') > strpos($law, 'kop-hub-reading-list'));
 preg_match('#<section class="kop-hub-contribute".*?</section>#s', $law, $c);
 check('contribute has three links', isset($c[0]) && substr_count($c[0], '<a href=') === 3);
 

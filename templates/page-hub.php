@@ -318,6 +318,9 @@ while (have_posts()) :
         if (function_exists('kop_hub_reading')) {
             kop_hub_reading($kop_hub_slug);
         }
+        if (function_exists('kop_hub_positions')) {
+            kop_hub_positions($kop_hub_slug);
+        }
         if (function_exists('kop_hub_contribute')) {
             kop_hub_contribute($kop_hub_slug);
         }

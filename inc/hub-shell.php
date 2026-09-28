@@ -43,7 +43,9 @@ if (!defined('ABSPATH')) {
  *                  (kop_article_children()); leave out for a hub whose editor
  *                  content already links them, or they print twice.
  *   reading_notes  slug => one line for an article with no excerpt.
- *   contribute     array('heading' => ..., 'links' => array of links).
+ *   positions      array('heading' => ..., 'links' => array of links): policy
+ *                  positions published elsewhere, listed under the reading.
+ *   contribute    array('heading' => ..., 'links' => array of links).
  *   updated        callback returning an updated_at value for this hub.
  *
  * A link is array('label' => ..., 'note' => optional line, and one of
@@ -67,6 +69,14 @@ function kop_hub_config($slug) {
                 'doe-v-trails-motions' => 'The motions filed in the Doe v. Trails Carolina cases.',
                 'jane-june-doe-v-trails-carolina-et-al-summary' => 'The complaint, filed in the Western District of North Carolina, Asheville Division.',
                 'john-doe-v-trails-complaint-summary-defendant-information' => 'The complaint and every defendant it names.',
+            ),
+            'positions' => array(
+                'heading' => 'Positions from legal and medical bodies',
+                'links'   => array(
+                    array('label' => 'ABA Resolution 605: the Troubled Teen Industry and Institutional Child Abuse',
+                          'url'   => 'https://www.americanbar.org/groups/litigation/resources/newsletters/childrens-rights/resolution-605/',
+                          'note'  => 'The American Bar Association, 2023. Backs the Stop Institutional Child Abuse Act and similar state and local laws, and rules against restraint, strip searches, isolation and forced silence in youth residential programs.'),
+                ),
             ),
             'contribute' => array(
                 'heading' => 'Help keep this current',
@@ -316,6 +326,34 @@ function kop_hub_reading($slug) {
                     <a href="<?php echo esc_url($item['url']); ?>"><?php echo esc_html($item['title']); ?></a>
                     <?php if ($item['note'] !== '') : ?>
                         <p><?php echo esc_html($item['note']); ?></p>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    </section>
+    <?php
+}
+
+/** Policy positions published elsewhere, drawn like the reading list. */
+function kop_hub_positions($slug) {
+    $config = kop_hub_config($slug);
+    if (empty($config['positions']['links'])) {
+        return;
+    }
+    $links = kop_hub_links($config['positions']['links']);
+    if (!$links) {
+        return;
+    }
+    $heading = !empty($config['positions']['heading']) ? $config['positions']['heading'] : 'Policy positions';
+    ?>
+    <section class="kop-hub-reading kop-hub-positions" aria-labelledby="kop-hub-positions-h">
+        <h2 class="kop-hub-h" id="kop-hub-positions-h"><?php echo esc_html($heading); ?></h2>
+        <ul class="kop-hub-reading-list kop-hub-positions-list">
+            <?php foreach ($links as $link) : ?>
+                <li>
+                    <a href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>
+                    <?php if ($link['note'] !== '') : ?>
+                        <p><?php echo esc_html($link['note']); ?></p>
                     <?php endif; ?>
                 </li>
             <?php endforeach; ?>

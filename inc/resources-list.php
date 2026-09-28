@@ -91,6 +91,11 @@ function kop_resources_groups() {
                     'url'  => 'https://www.americanbar.org/groups/litigation/resources/newsletters/childrens-rights/five-facts-about-troubled-teen-industry/',
                     'note' => 'The American Bar Association, for a lawyer who has not worked one of these cases before.',
                 ),
+                array(
+                    'name' => 'ABA Resolution 605: the Troubled Teen Industry and Institutional Child Abuse',
+                    'url'  => 'https://www.americanbar.org/groups/litigation/resources/newsletters/childrens-rights/resolution-605/',
+                    'note' => "The American Bar Association's 2023 policy backing the Stop Institutional Child Abuse Act and laws against abusive practices in youth residential programs.",
+                ),
             ),
         ),
         array(
