@@ -669,7 +669,7 @@ if (!function_exists('kop_ih_scanner_version')) {
             if (trim($section) === '') return array();
             return array(array(
                 'text' => kop_ih_clean_text($section), 'standard' => '',
-                'state_label' => kop_ih_short_standard($disposition, 120),
+                'state_label' => kop_ih_short_standard($disposition, 110),
                 'factor' => 1.0, 'corrected_on_site' => null, 'kind' => 'complaint',
             ));
         }
@@ -1194,8 +1194,9 @@ if (!function_exists('kop_ih_scanner_version')) {
         foreach ($candidates as $c) {
             $values = array(
                 $c['category'], implode(',', $c['categories']), $c['score'], $c['excerpt'],
-                $c['standard'] !== '' ? substr($c['standard'], 0, 500) : null,
-                $c['state_label'] !== '' ? $c['state_label'] : null, $c['kind'],
+                // Cut to the column widths (varchar(500), varchar(120)) by character, never mid-letter.
+                $c['standard'] !== '' ? mb_substr($c['standard'], 0, 500) : null,
+                $c['state_label'] !== '' ? mb_substr($c['state_label'], 0, 120) : null, $c['kind'],
                 $c['corrected_on_site'] === null ? null : (int) $c['corrected_on_site'],
                 kop_ih_scanner_version(), kop_ih_parse_date($row['report_date'] ?? ''),
             );

@@ -497,6 +497,8 @@ foreach ($cands as $c) {
     $by_band[$band]++;
     check(trim($c['excerpt']) !== '' && strlen($c['excerpt']) <= 4000, 'mirror: excerpt present and bounded (report ' . $c['report_row'] . ')');
     check(!preg_match('/SUPERVISORS NAME|Estimated Days of Completion/', $c['excerpt']), 'mirror: no form boilerplate in excerpt (report ' . $c['report_row'] . ')');
+    // SQLite ignores column widths; MySQL refuses the row (state_label is varchar(120)).
+    check(mb_strlen($c['state_label']) <= 120, 'mirror: state label fits varchar(120) (report ' . $c['report_row'] . ', ' . mb_strlen($c['state_label']) . ' chars)');
 }
 arsort($by_cat); arsort($labels);
 
