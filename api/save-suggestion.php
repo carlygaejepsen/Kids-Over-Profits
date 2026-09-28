@@ -1,6 +1,7 @@
 <?php
 // Save facility data suggestions to the suggested_edits table
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/lib-suggested-edits.php';
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
@@ -389,6 +390,17 @@ try {
         }
     }
     
+    // A provider with no project name is filed under its parent company, or
+    // else its state (lib-suggested-edits.php), not "Unknown Project".
+    if ($effective_category === 'providers' && kop_is_placeholder_project_name($master_id)) {
+        $provider_name = kop_provider_project_name($data);
+        if ($provider_name !== '') {
+            $master_id = $provider_name;
+            $data['projectName'] = $provider_name;
+            $data['name'] = $provider_name;
+        }
+    }
+
     // Sanitize master_id (remove special characters, limit length)
     $master_id = preg_replace('/[^a-zA-Z0-9\s\-_]/', '', $master_id);
     $master_id = substr($master_id, 0, 255);

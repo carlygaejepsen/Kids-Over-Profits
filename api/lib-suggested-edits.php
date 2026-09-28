@@ -124,6 +124,75 @@ if (!function_exists('kop_get_first_named_facility')) {
     }
 }
 
+if (!function_exists('kop_is_placeholder_project_name')) {
+    /**
+     * Names the form and approval fall back to when no project name was given.
+     */
+    function kop_is_placeholder_project_name($name) {
+        $name = trim((string) $name);
+        return $name === ''
+            || strcasecmp($name, 'Unknown Project') === 0
+            || strcasecmp($name, 'Unnamed Project') === 0
+            || preg_match('/^Approved Suggestion \d+$/i', $name) === 1;
+    }
+}
+
+if (!function_exists('kop_provider_project_name')) {
+    /**
+     * Project name for a mental health provider submission, following the
+     * other tabs: a parent company (the operator) names the project, and a
+     * provider without one is filed under its state (or country), uppercase,
+     * like the location projects. Returns '' when nothing usable is present.
+     */
+    function kop_provider_project_name($project_data) {
+        if (!is_array($project_data)) {
+            return '';
+        }
+
+        $operator_name = trim((string) ($project_data['operator']['name'] ?? ''));
+        if ($operator_name !== '' && !kop_is_placeholder_project_name($operator_name)) {
+            return $operator_name;
+        }
+
+        $states = [
+            'AL' => 'ALABAMA', 'AK' => 'ALASKA', 'AZ' => 'ARIZONA', 'AR' => 'ARKANSAS', 'CA' => 'CALIFORNIA',
+            'CO' => 'COLORADO', 'CT' => 'CONNECTICUT', 'DE' => 'DELAWARE', 'FL' => 'FLORIDA', 'GA' => 'GEORGIA',
+            'HI' => 'HAWAII', 'ID' => 'IDAHO', 'IL' => 'ILLINOIS', 'IN' => 'INDIANA', 'IA' => 'IOWA',
+            'KS' => 'KANSAS', 'KY' => 'KENTUCKY', 'LA' => 'LOUISIANA', 'ME' => 'MAINE', 'MD' => 'MARYLAND',
+            'MA' => 'MASSACHUSETTS', 'MI' => 'MICHIGAN', 'MN' => 'MINNESOTA', 'MS' => 'MISSISSIPPI', 'MO' => 'MISSOURI',
+            'MT' => 'MONTANA', 'NE' => 'NEBRASKA', 'NV' => 'NEVADA', 'NH' => 'NEW HAMPSHIRE', 'NJ' => 'NEW JERSEY',
+            'NM' => 'NEW MEXICO', 'NY' => 'NEW YORK', 'NC' => 'NORTH CAROLINA', 'ND' => 'NORTH DAKOTA', 'OH' => 'OHIO',
+            'OK' => 'OKLAHOMA', 'OR' => 'OREGON', 'PA' => 'PENNSYLVANIA', 'RI' => 'RHODE ISLAND', 'SC' => 'SOUTH CAROLINA',
+            'SD' => 'SOUTH DAKOTA', 'TN' => 'TENNESSEE', 'TX' => 'TEXAS', 'UT' => 'UTAH', 'VT' => 'VERMONT',
+            'VA' => 'VIRGINIA', 'WA' => 'WASHINGTON', 'WV' => 'WEST VIRGINIA', 'WI' => 'WISCONSIN', 'WY' => 'WYOMING',
+        ];
+
+        foreach ((is_array($project_data['facilities'] ?? null) ? $project_data['facilities'] : []) as $facility) {
+            if (!is_array($facility)) {
+                continue;
+            }
+            $facility_operator = trim((string) ($facility['identification']['currentOperator'] ?? ''));
+            if ($facility_operator !== '' && !kop_is_placeholder_project_name($facility_operator)) {
+                return $facility_operator;
+            }
+            $state = strtoupper(trim((string) ($facility['locationDetails']['state'] ?? $facility['addressParts']['state'] ?? '')));
+            if (isset($states[$state])) {
+                return $states[$state];
+            }
+            if (in_array($state, $states, true)) {
+                return $state;
+            }
+            $country = strtoupper(trim((string) ($facility['locationDetails']['country'] ?? '')));
+            if ($country !== '' && !in_array($country, ['US', 'USA', 'UNITED STATES', 'UNITED STATES OF AMERICA'], true)) {
+                return $country;
+            }
+        }
+
+        $first_named_facility = kop_get_first_named_facility($project_data['facilities'] ?? []);
+        return $first_named_facility ? trim((string) $first_named_facility['identification']['name']) : '';
+    }
+}
+
 if (!function_exists('kop_consultant_display_name')) {
     function kop_consultant_display_name($consultant) {
         if (!is_array($consultant)) {
@@ -380,15 +449,32 @@ if (!function_exists('kop_apply_suggested_edit')) {
                 'NEW ZEALAND', 'SOUTH AFRICA', 'ISRAEL', 'JAPAN', 'CHINA', 'INDIA', 'BRAZIL', 'ARGENTINA'
             ];
 
+            // Mental health providers (js/data-form/provider-form.js) are tagged
+            // on the data; they are facility-shaped but are not TTI facilities.
+            $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
+
+            // A provider sent without a project name takes its parent company's
+            // name, or else its state's, instead of "Unknown Project".
+            if ($isProvider && kop_is_placeholder_project_name($master_id)) {
+                $provider_name = kop_sanitize_project_identifier(kop_provider_project_name($project_data));
+                if ($provider_name !== '') {
+                    $resolved_master_id = $provider_name;
+                    if (is_array($decoded_data)) {
+                        $decoded_data['name'] = $provider_name;
+                        $decoded_data['projectName'] = $provider_name;
+                    }
+                }
+            }
+
             $masterIdUpper = strtoupper(trim($resolved_master_id));
             $isLocation = in_array($masterIdUpper, $US_STATE_NAMES) || in_array($masterIdUpper, $COUNTRY_NAMES);
             if ($isLocation) {
                 $resolved_master_id = $masterIdUpper;
             }
-
-            // Mental health providers (js/data-form/provider-form.js) are tagged
-            // on the data; they are facility-shaped but are not TTI facilities.
-            $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
+            // A provider filed under a state stays in providers_master.
+            if ($isProvider) {
+                $isLocation = false;
+            }
 
             $isReferrer = !empty($project_data['referrerAgency']['name']) ||
                           !empty($project_data['referrerConsultants'][0]['firstName']) ||
@@ -456,8 +542,10 @@ if (!function_exists('kop_apply_suggested_edit')) {
             $exists = $checkStmt->fetch(PDO::FETCH_ASSOC);
 
             if ($exists) {
-                // For location projects, merge new facilities into existing data
-                if ($isLocation && !empty($exists['json_data'])) {
+                // For location and provider projects, merge new facilities into
+                // existing data, so a second provider filed under the same state
+                // or parent company is added rather than replacing the first.
+                if (($isLocation || $isProvider) && !empty($exists['json_data'])) {
                     $existingData = kop_build_project_payload(json_decode($exists['json_data'], true), $resolved_master_id, $category);
                     $newData = kop_build_project_payload(json_decode($json_data, true), $resolved_master_id, $category);
 
@@ -467,6 +555,9 @@ if (!function_exists('kop_apply_suggested_edit')) {
                     $existingFacilities = kop_merge_location_facilities($existingFacilities, $newFacilities);
 
                     $existingData['data']['facilities'] = $existingFacilities;
+                    if ($isProvider && !empty($newData['data']['operator']['name'])) {
+                        $existingData['data']['operator'] = $newData['data']['operator'];
+                    }
                     $existingData['timestamp'] = date('c');
                     $json_data = json_encode($existingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
                 }
