@@ -108,6 +108,26 @@ Quick reference for all database tables and their columns.
 
 ---
 
+### journalists (internal only)
+**Columns:** `id`, `name`, `name_key`, `aliases`, `outlet`, `email`, `phone`, `social`, `website`, `location`, `beat`, `outreach`, `notes`, `status`, `source`, `created_at`, `updated_at`
+
+**Purpose:** Journalists who cover the TTI, extracted from `news_submissions.author` bylines (`api/lib-journalists.php`) and curated in `api/manage-journalists.php`. Admin-only; never exposed through REST, search or a public page.
+**Primary Key:** `id`; **Unique Key:** `name_key` (lowercase, accent-folded)
+**Outreach:** `not_contacted`, `contacted`, `responded`, `ongoing`, `do_not_contact`
+**Status:** `active`, `ignored` (not a journalist; the row stays so rescans skip the name)
+**Notes:** `aliases` (one per line) match bylines like `name`. Outlets, article counts and dates are derived from `journalist_articles`, never stored.
+
+---
+
+### journalist_articles (internal only)
+**Columns:** `journalist_id`, `news_id`
+
+**Purpose:** Which journalist wrote which news entry. Rebuilt per article on save (`api/save-news-submission.php`) and for all entries by the manager's "Scan news entries" button.
+**Primary Key:** (`journalist_id`, `news_id`) - composite
+**Notes:** Rejected and deleted entries are never linked.
+
+---
+
 ### saved_form_values
 **Columns:** `id`, `form_type`, `category`, `value`, `use_count`, `created_at`, `updated_at`
 

@@ -101,6 +101,45 @@ try {
         echo "'story_arc_id' column already exists.\n";
     }
 
+    // Journalists who cover the TTI: internal-only contact list, extracted
+    // from news bylines (api/lib-journalists.php) and curated in
+    // api/manage-journalists.php. Never shown publicly.
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS journalists (
+            id int(11) NOT NULL AUTO_INCREMENT,
+            name varchar(255) NOT NULL,
+            name_key varchar(191) NOT NULL COMMENT 'Lowercase, accent-folded match key for bylines',
+            aliases text DEFAULT NULL COMMENT 'Other spellings, one per line; matched like name',
+            outlet varchar(255) DEFAULT NULL COMMENT 'Current outlet; empty = latest from their articles',
+            email varchar(255) DEFAULT NULL,
+            phone varchar(64) DEFAULT NULL,
+            social text DEFAULT NULL COMMENT 'Social profile URLs or handles, one per line',
+            website varchar(500) DEFAULT NULL,
+            location varchar(255) DEFAULT NULL,
+            beat text DEFAULT NULL COMMENT 'What they cover',
+            outreach enum('not_contacted','contacted','responded','ongoing','do_not_contact') NOT NULL DEFAULT 'not_contacted',
+            notes text DEFAULT NULL,
+            status enum('active','ignored') NOT NULL DEFAULT 'active' COMMENT 'ignored = not a journalist; kept so rescans skip the name',
+            source enum('extracted','manual') NOT NULL DEFAULT 'manual',
+            created_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updated_at timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY name_key (name_key),
+            KEY status (status),
+            KEY outreach (outreach)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Internal: journalists covering the TTI'"
+    );
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS journalist_articles (
+            journalist_id int(11) NOT NULL COMMENT 'FK -> journalists.id',
+            news_id int(11) NOT NULL COMMENT 'FK -> news_submissions.id',
+            PRIMARY KEY (journalist_id, news_id),
+            KEY news_id (news_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Internal: which journalist wrote which news entry'"
+    );
+    echo "'journalists' and 'journalist_articles' tables ready.\n";
+    echo "Open api/manage-journalists.php (as an admin) and scan the news entries to fill them.\n";
+
     // Featured ("egregious") inspection reports for the home page block.
     // Curated in api/manage-featured-inspections.php. Guarded: the inspection
     // tables only exist once a scraper has pushed data.

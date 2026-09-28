@@ -62,6 +62,8 @@ python scripts/preview-utility-pages.py --shots tmp/utility-preview
 python scripts/preview-hub-pages.py --shots tmp/hub-preview
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
+# Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
+php scripts/test-journalists.php [--list]
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
 # seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
 python scripts/build-media-subfolders.py
@@ -124,6 +126,7 @@ to the program aggregate otherwise.
 - `locations_master` / `referrers_master` - Related data
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
+- `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)

@@ -29,6 +29,7 @@ require_once __DIR__ . '/url-dedupe.php';
 require_once __DIR__ . '/news-story-groups.php';
 require_once __DIR__ . '/news-story-arcs.php';
 require_once __DIR__ . '/lawsuit-news-links.php';
+require_once __DIR__ . '/lib-journalists.php';
 
 // Fallback: Load WordPress if not already loaded (e.g. if config.php failed to find it)
 if (!defined('ABSPATH')) {
@@ -314,6 +315,7 @@ try {
         kop_news_assign_story_group($pdo, (int)$submissionId);
         kop_news_assign_story_arc($pdo, (int)$submissionId);
         kop_sync_news_lawsuit_links($pdo, (int)$submissionId, $submittedBy ?: null);
+        kop_journalist_sync_article_safe($pdo, (int)$submissionId);
 
         echo json_encode([
             'success' => true,
@@ -368,6 +370,7 @@ try {
         kop_news_assign_story_group($pdo, $newId);
         kop_news_assign_story_arc($pdo, $newId);
         kop_sync_news_lawsuit_links($pdo, $newId, $submittedBy ?: null);
+        kop_journalist_sync_article_safe($pdo, $newId);
 
         // Tell the admins (inc/submission-notify.php). The nightly discovery
         // run posts here too, dozens of rows at a time, so its articles go to
