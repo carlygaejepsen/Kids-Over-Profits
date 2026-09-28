@@ -317,6 +317,20 @@
                 hide();
                 return;
             }
+            /* A route lit on the board reads the same way a path board
+             * does, under its own key, so closing the drawer on it keeps
+             * it closed until the route changes. */
+            var litIds = focus.litRoute ? focus.litRoute() : null;
+            if (litIds && options.renderPath) {
+                var litKey = 'route:' + litIds.join(',');
+                if (litKey === dismissedId) return;
+                dismissedId = null;
+                if (options.renderPath(body)) {
+                    shownId = litKey;
+                    aside.hidden = false;
+                    return;
+                }
+            }
             if (focus.isPath && focus.isPath() && options.renderPath) {
                 var routeId = 'route:' + chain.join(',');
                 if (routeId === dismissedId) return;

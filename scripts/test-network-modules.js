@@ -3352,6 +3352,206 @@ function run() {
     flushFrames();
     }
 
+    /* --------------------------------- a route lit on the board (2d.6) -- */
+
+    /* A route found while a trail is open is lit on the board in view - the
+     * hover emphasis held, only the names the route is missing added -
+     * instead of replacing the board (focus.highlightRoute). Escape, a
+     * click, Start over or another route lets it go, and the link carries
+     * it as route=. */
+    {
+    const gil = store.node('david-gilcrease');
+    const syn = store.node('synanon');
+    const wws = store.node('wwasps');
+    store.resetFilters();
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    focus.select(wws);
+    flushFrames();
+
+    /* A route already wholly on the board lights without adding or moving
+     * anything: two steps along recorded lines of the scene (a folded line
+     * is not a route step, so only lines the store has an edge for count). */
+    const boardScene = focus.scene();
+    const adjacency = Object.create(null);
+    boardScene.edges.forEach((e) => {
+        if (!store.edgesBetween(e.sourceId, e.targetId).length) return;
+        (adjacency[e.sourceId] = adjacency[e.sourceId] || []).push(e.targetId);
+        (adjacency[e.targetId] = adjacency[e.targetId] || []).push(e.sourceId);
+    });
+    let onBoard = null;
+    Object.keys(adjacency).some((mid) => {
+        const ends = adjacency[mid].filter((id, i, a) => a.indexOf(id) === i);
+        if (ends.length < 2) return false;
+        onBoard = [ends[0], mid, ends[1]];
+        return true;
+    });
+    check(!!onBoard, wws.name + "'s board has no two-step route wholly on it, so the no-add case is untested");
+    const countBefore = boardScene.nodes.length;
+    const litKept = focus.highlightRoute(onBoard);
+    flushFrames();
+    check(litKept && litKept.added === 0, 'a route wholly on the board reported adding names');
+    check(!focus.isPath() && focus.mode() === 'focus' && focus.chain().join(',') === wws.id,
+        'lighting a route changed the trail or the mode');
+    check(focus.scene().nodes.length === countBefore, 'lighting a route already on the board changed the node count');
+    check((focus.litRoute() || []).join(',') === onBoard.join(','), 'litRoute() is not the route that was lit');
+    check(/lit on the board/.test(announced) && /Press Escape/.test(announced),
+        'lighting a route was not announced: ' + announced);
+
+    /* The held emphasis: exactly the route's names, and for each step at
+     * least one line, every lit line one of the scene's between a pair. */
+    const emphasis = renderer.emphasis || {};
+    check(emphasis.near && onBoard.every((id) => emphasis.near[id]) &&
+        Object.keys(emphasis.near).length === onBoard.length,
+        'the held emphasis does not hold exactly the route');
+    const pairLineIds = new Set();
+    for (let s = 1; s < onBoard.length; s++) {
+        const lines = focus.linesBetween(onBoard[s - 1], onBoard[s]);
+        check(lines.some((e) => emphasis.nearEdges && emphasis.nearEdges[e.id]),
+            'step ' + s + ' of the lit route has no lit line');
+        lines.forEach((e) => pairLineIds.add(e.id));
+    }
+    check(Object.keys(emphasis.nearEdges || {}).every((id) => pairLineIds.has(id)),
+        'a lit line is not a line between two consecutive route names');
+
+    /* A route with names off the board adds them and only them. */
+    const offRoutes = store.paths(wws.id, syn.id);
+    check(offRoutes.length > 0, 'no route from WWASPS to Synanon, so the adding case is untested');
+    const offIds = offRoutes[0].ids;
+    const beforeAdd = focus.scene();
+    const missing = offIds.filter((id) => !beforeAdd.nodeIds[id]);
+    check(missing.length > 0, 'every name of the WWASPS-Synanon route is already on the board, so the adding case is untested');
+    const litAdded = focus.highlightRoute(offIds);
+    flushFrames();
+    check(litAdded && litAdded.added === missing.length,
+        'the route reported ' + (litAdded && litAdded.added) + ' names added, expected ' + missing.length);
+    const afterAdd = focus.scene();
+    check(offIds.every((id) => afterAdd.nodeIds[id]), 'a lit route name is not on the board');
+    check(afterAdd.nodes.length === beforeAdd.nodes.length + missing.length,
+        'adding a route changed the board beyond the route: ' + beforeAdd.nodes.length + ' + ' +
+        missing.length + ' != ' + afterAdd.nodes.length);
+    check(focus.chain().join(',') === wws.id, 'adding route names changed the trail');
+
+    /* A person on a lit route is a name on the board, never folded. */
+    const gilPlaces = store.neighbours(gil.id, true).map((l) => l.other).filter((n) => n.kind !== 'person');
+    check(gilPlaces.length >= 2, 'David Gilcrease has fewer than two places, so the person-on-a-route case is untested');
+    const viaPerson = [gilPlaces[0].id, gil.id, gilPlaces[1].id];
+    check(focus.highlightRoute(viaPerson) !== false, 'a route through David Gilcrease could not be lit');
+    flushFrames();
+    const viaScene = focus.scene();
+    check(viaScene.nodeIds[gil.id] && !viaScene.folded[gil.id], 'a person on a lit route was folded into a line');
+
+    /* Simplify must not drop a lit name. */
+    focus.setSimple(true);
+    flushFrames();
+    const simpleScene = focus.scene();
+    check(viaPerson.every((id) => simpleScene.nodeIds[id]), 'Simplify dropped a lit name');
+    check((focus.litRoute() || []).join(',') === viaPerson.join(','), 'Simplify let go of the route');
+    focus.setSimple(false);
+    flushFrames();
+
+    /* Letting go: clearRoute, a click, and Start over each drop it, and
+     * the emphasis goes back to nothing held. */
+    focus.clearRoute();
+    flushFrames();
+    check(focus.litRoute() === null, 'clearRoute left the route lit');
+    const bare = renderer.emphasis || {};
+    check(!bare.near && !bare.nearEdges, 'clearing the route left the emphasis held');
+    check(focus.highlightRoute(onBoard) !== false, 're-lighting a route failed');
+    flushFrames();
+    const otherNode = focus.scene().nodes.find((n) => onBoard.indexOf(n.id) === -1 && n.id !== wws.id);
+    focus.select(otherNode);
+    flushFrames();
+    check(focus.litRoute() === null, 'a click did not drop the highlight');
+    check(focus.highlightRoute(onBoard) !== false, 're-lighting a route on the new board failed');
+    flushFrames();
+    focus.clear();
+    flushFrames();
+    check(focus.litRoute() === null && !(renderer.emphasis && renderer.emphasis.near),
+        'Start over left a route lit');
+
+    /* A route that no longer holds is refused and changes nothing. */
+    focus.select(wws);
+    flushFrames();
+    const stepCats = new Set();
+    store.edgesBetween(onBoard[0], onBoard[1]).forEach((e) => stepCats.add(e.category));
+    stepCats.forEach((c) => store.toggleIn('categories', c, false));
+    const nodesBeforeRefused = focus.scene().nodes.length;
+    check(focus.highlightRoute(onBoard) === false && focus.litRoute() === null,
+        'a route with a filtered-off step was lit');
+    check(focus.scene().nodes.length === nodesBeforeRefused, 'a refused route changed the board');
+    store.resetFilters();
+
+    /* The form: with no trail open a found route is the board, as before;
+     * with a trail open it is lit on the board instead. */
+    const PathUi = sandbox.KOPNetworkPath;
+    const pathMsg = doc.createElement('p');
+    const pathUi = PathUi.create({ store, focus, document: doc, elements: { message: pathMsg } });
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    pathUi.find(gil, syn);
+    flushFrames();
+    check(focus.isPath() && focus.mode() === 'path', 'with no trail open, a found route did not become the board');
+    focus.clear();
+    flushFrames();
+    focus.select(wws);
+    flushFrames();
+    const litRoutes = pathUi.find(gil, syn);
+    flushFrames();
+    check(litRoutes.length > 0 && !focus.isPath() && focus.chain().join(',') === wws.id &&
+        (focus.litRoute() || []).join(',') === litRoutes[0].ids.join(','),
+        'with a trail open, a found route did not light on the board');
+
+    /* The address bar carries a lit route, and only on a trail. */
+    check(Url.format(['a', 'b'], 'expand', null, false, ['a', 'x', 'b']) === '#open=a,b&mode=expand&route=a,x,b' &&
+        Url.parse('#open=a,b&mode=expand&route=a,x,b').route.join(',') === 'a,x,b' &&
+        Url.format([], 'focus', null, false, ['a', 'x']) === '',
+        'a route does not round-trip through the address bar, or rides without a trail');
+    url.write();
+    check(fakeLocation.hash === '#open=' + wws.id + '&route=' + litRoutes[0].ids.join(','),
+        'a lit route was not written to the hash: ' + fakeLocation.hash);
+    focus.clear();
+    flushFrames();
+    fakeLocation.hash = '#open=' + wws.id + '&route=' + litRoutes[0].ids.join(',');
+    url.read();
+    flushFrames();
+    check(focus.chain().join(',') === wws.id && (focus.litRoute() || []).join(',') === litRoutes[0].ids.join(','),
+        'a shared link did not reopen its route lit');
+
+    /* The drawer: the numbered route, Show this route on its own, and
+     * Clear route. */
+    const litDrawerEl = doc.createElement('aside');
+    litDrawerEl.hidden = true;
+    const litDrawerBody = doc.createElement('div');
+    const litDrawer = Drawer.create({
+        store, focus, config: drawerConfig, document: doc,
+        drawer: litDrawerEl, body: litDrawerBody, close: doc.createElement('button'),
+        renderPath: (body) => pathUi.renderInto(body)
+    });
+    litDrawer.update();
+    const litSteps = litDrawerBody.querySelectorAll('.kop-network__route-step');
+    const litButtons = litDrawerBody.querySelectorAll('.kop-network__drawer-route');
+    check(litDrawerEl.hidden === false && litSteps.length === litRoutes[0].ids.length,
+        'the drawer does not list a lit route: ' + litSteps.length + ' steps for ' + litRoutes[0].ids.length + ' names');
+    check(litButtons.length === 2, 'the drawer offers ' + litButtons.length + ' route buttons, expected two');
+    litButtons[1].dispatch('click');
+    flushFrames();
+    check(focus.litRoute() === null, 'Clear route in the drawer did not clear it');
+    check(focus.highlightRoute(litRoutes[0].ids) !== false, 're-lighting the route for the drawer failed');
+    flushFrames();
+    litDrawer.update();
+    litDrawerBody.querySelectorAll('.kop-network__drawer-route')[0].dispatch('click');
+    flushFrames();
+    check(focus.isPath() && focus.chain().join(',') === litRoutes[0].ids.join(','),
+        'Show this route on its own did not put the board in path mode');
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    store.resetFilters();
+    }
+
     /* ------------------------------------------- Simplify and Show all -- */
 
     /* 2d.7 and 2d.8, the two ends of one dial. Simplify keeps only the
@@ -3678,8 +3878,14 @@ function run() {
     check(stranded === 0, stranded + ' names cannot be reached with the arrow keys: ' + strandedIn.slice(0, 4).join('; '),
         'the arrow keys reach all ' + walked + ' names across the 40 busiest views');
 
-    /* Enter opens the name under the cursor. */
+    /* Enter opens the name under the cursor. The cursor resets only when
+     * the head changes at a press, so press once on the cleared board
+     * first: reopening the same head otherwise keeps the cursor wherever
+     * the walk above left it, and from there two presses can land back on
+     * the head itself when the layout happens to stack that way. */
     focus.clear();
+    flushFrames();
+    press('ArrowDown');
     focus.select(hub);
     flushFrames();
     press('ArrowDown');

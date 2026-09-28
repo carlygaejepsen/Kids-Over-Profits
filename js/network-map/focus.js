@@ -278,22 +278,28 @@
         }
         focus.isPath = inPath;
 
-        /** Whether the trail, read as a route, still has a line for every step. */
-        function pathHolds() {
-            if (chain.length < 2) return false;
+        /** Whether these ids, read as a route, have a line for every step. */
+        function routeHolds(ids) {
+            if (!ids || ids.length < 2) return false;
             var live = store.visible().nodeIds;
             var seen = Object.create(null);
-            for (var i = 0; i < chain.length; i++) {
-                if (!live[chain[i]] || seen[chain[i]]) return false;
-                seen[chain[i]] = true;
-                if (i && !store.edgesBetween(chain[i - 1], chain[i]).length) return false;
+            for (var i = 0; i < ids.length; i++) {
+                if (!live[ids[i]] || seen[ids[i]]) return false;
+                seen[ids[i]] = true;
+                if (i && !store.edgesBetween(ids[i - 1], ids[i]).length) return false;
             }
             return true;
+        }
+
+        /** Whether the trail, read as a route, still has a line for every step. */
+        function pathHolds() {
+            return routeHolds(chain);
         }
         focus.setMode = function (next) {
             next = next === 'expand' ? 'expand' : 'focus';
             if (next === mode) return;
             mode = next;
+            lit = null;
             if (chain.length) enterFocus();
             onChange();
         };
@@ -330,6 +336,86 @@
                     after.nodes.length + ' names showing.'
                 : 'Every connection is back: ' + after.nodes.length + ' names showing' +
                     (before && after.nodes.length > before ? ', ' + (after.nodes.length - before) + ' more' : '') + '.');
+        };
+
+        /*
+         * A route lit on the board in view (2d.6): the answer to "how do
+         * these two connect" asked while a board is already built. Where
+         * showPath replaces the board with the route alone, this keeps the
+         * board, adds only the route names it is missing, and holds the
+         * hover emphasis - the route lit, the rest dim - until the reader
+         * lets go of it: Escape, Clear route in the drawer, a click, or
+         * another route. Null, or { ids, near, edgeIds, added }: the route
+         * oldest end first, its ids as a set, the ids of the lines between
+         * each step and the next on the current scene, and the ids it had
+         * to add to the board.
+         */
+        var lit = null;
+
+        /**
+         * The lines under the lit route, on the scene as drawn: the ids of
+         * every line between each consecutive pair. Worked out again after
+         * every scene, because a folded line's id changes with the scene.
+         */
+        function litEdges() {
+            if (!lit) return;
+            var edgeIds = Object.create(null);
+            for (var i = 1; i < lit.ids.length; i++) {
+                focus.linesBetween(lit.ids[i - 1], lit.ids[i]).forEach(function (edge) {
+                    edgeIds[edge.id] = true;
+                });
+            }
+            lit.edgeIds = edgeIds;
+        }
+
+        /**
+         * Light a route on the board in view. False, and nothing changes,
+         * when the board is already a route or a step has no line under the
+         * current filters; otherwise { added: <how many names the board did
+         * not have> }. Names the route needs are added and nothing else is;
+         * names already on the board stay where they are, so the board only
+         * re-lays when something had to be added.
+         */
+        focus.highlightRoute = function (ids) {
+            if (inPath() || !routeHolds(ids)) return false;
+            var before = current ? current.nodeIds : Object.create(null);
+            var missing = ids.filter(function (id) { return !before[id]; });
+            var near = Object.create(null);
+            ids.forEach(function (id) { near[id] = true; });
+            lit = { ids: ids.slice(), near: near, edgeIds: Object.create(null), added: missing };
+            if (missing.length) {
+                enterFocus();
+            } else {
+                litEdges();
+                applyEmphasis();
+                viewport.scheduleDraw();
+                onChange();
+            }
+            var names = lit.ids.map(function (id) { return (store.node(id) || {}).name || id; });
+            announce('Route from ' + names[0] + ' to ' + names[names.length - 1] + ' lit on the board, ' +
+                (names.length - 1) + (names.length === 2 ? ' step: ' : ' steps: ') +
+                names.join(', then ') + '. Press Escape to clear it.');
+            return { added: missing.length };
+        };
+
+        /** The lit route's ids, oldest end first, or null. */
+        focus.litRoute = function () { return lit ? lit.ids.slice() : null; };
+
+        /**
+         * Let the route go. The board stays; names the route added have
+         * nothing holding them any more, so the board re-lays without them.
+         */
+        focus.clearRoute = function () {
+            if (!lit) return;
+            var added = lit.added && lit.added.length;
+            lit = null;
+            if (added && chain.length) {
+                enterFocus();
+                return;
+            }
+            applyEmphasis();
+            viewport.scheduleDraw();
+            onChange();
         };
 
         function visibleIds() {
@@ -450,6 +536,13 @@
             Object.keys(asked).forEach(function (id) {
                 if (live[id]) ids[id] = true;
             });
+            /* A lit route's names are on the board whatever the rules above
+             * said, and nothing else comes with them: not their neighbours,
+             * not their owner. The route is the answer being shown, and the
+             * board it is shown on is not the question changing. */
+            if (lit) {
+                lit.ids.forEach(function (id) { if (live[id]) ids[id] = true; });
+            }
             return ids;
         }
 
@@ -516,6 +609,14 @@
                 currentRoots().forEach(function (id) {
                     if (ids[id]) { reach[id] = true; queue.push(id); }
                 });
+                /* A lit route's names count as asked for too, or one added
+                 * off to the side of the board would be dropped again here
+                 * for not reaching what was clicked. */
+                if (lit) {
+                    lit.ids.forEach(function (id) {
+                        if (ids[id] && !reach[id]) { reach[id] = true; queue.push(id); }
+                    });
+                }
                 while (queue.length) {
                     var at = queue.shift();
                     (adjacent[at] || []).forEach(function (other) {
@@ -527,9 +628,13 @@
                 ids = reach;
             }
 
+            /* A lit route's names are as good as opened while it is lit:
+             * Simplify and the leaf-dropping below must not take one away. */
+            var keepRoots = lit ? currentRoots().concat(lit.ids) : currentRoots();
+
             var simplified = 0;
             if (simple && !inPath()) {
-                var quiet = simplifyScene(nodes, edges, currentRoots());
+                var quiet = simplifyScene(nodes, edges, keepRoots);
                 simplified = nodes.length - quiet.nodes.length;
                 nodes = quiet.nodes;
                 edges = quiet.edges;
@@ -543,7 +648,7 @@
             if (simple && !inPath()) {
                 /* Until nothing more goes: a name that goes can leave the
                  * one it hung from on a single line in turn. */
-                var roots = currentRoots();
+                var roots = keepRoots;
                 for (var pass = 0; pass < 20; pass++) {
                     var settled = dropClosedLeaves(nodes, edges, fold.folded, roots);
                     if (settled.nodes.length === nodes.length) break;
@@ -704,6 +809,9 @@
         function foldConnectors(nodes, edges) {
             var rootIds = Object.create(null);
             currentRoots().forEach(function (id) { rootIds[id] = true; });
+            /* On a lit route the person who joins two places is the answer,
+             * the same rule showPath follows: they stay a name. */
+            if (lit) lit.ids.forEach(function (id) { rootIds[id] = true; });
 
             var linksOf = Object.create(null);
             edges.forEach(function (edge) {
@@ -999,18 +1107,28 @@
         };
 
         function applyEmphasis() {
+            /* Hover always lights what the node touches and drops the
+             * rest back. This used to be suppressed once something had
+             * been opened, on the reasoning that the neighbourhood was
+             * already the only thing on screen - which stopped being
+             * true when the map started opening on a curated few and
+             * growing from there. */
+            var near = (gather && gather.near) ? gather.near : null;
+            var nearEdges = (gather && gather.nearEdges) ? gather.nearEdges : null;
+            /* A lit route holds the emphasis a hover only borrows: while no
+             * gather is running the route's names and lines stay lit and
+             * the rest sits at the hover dim. A gather wins while it runs,
+             * so hovering still reads a name's own neighbourhood. */
+            if (!near && lit) {
+                near = lit.near;
+                nearEdges = lit.edgeIds;
+            }
             renderer.setEmphasis({
                 hoverId: hoverId,
                 hoverEdges: hoverEdgeIds,
                 hoverMarker: hoverMarkerKey,
-                /* Hover always lights what the node touches and drops the
-                 * rest back. This used to be suppressed once something had
-                 * been opened, on the reasoning that the neighbourhood was
-                 * already the only thing on screen - which stopped being
-                 * true when the map started opening on a curated few and
-                 * growing from there. */
-                near: (gather && gather.near) ? gather.near : null,
-                nearEdges: (gather && gather.nearEdges) ? gather.nearEdges : null,
+                near: near,
+                nearEdges: nearEdges,
                 offsets: offsets,
                 dim: 0.15
             });
@@ -1146,10 +1264,20 @@
                 enterFocus();
                 return;
             }
-            if (chain.length && chain[chain.length - 1] === node.id) return;
+            /* A click while a route is lit opens the name as usual and
+             * drops the highlight; where the click opens nothing new, the
+             * highlight still goes. */
+            if (chain.length && chain[chain.length - 1] === node.id) {
+                if (lit) focus.clearRoute();
+                return;
+            }
             /* In expand mode a node already on the trail is already on the
              * board; clicking it again adds nothing. */
-            if (mode === 'expand' && chain.indexOf(node.id) !== -1) return;
+            if (mode === 'expand' && chain.indexOf(node.id) !== -1) {
+                if (lit) focus.clearRoute();
+                return;
+            }
+            lit = null;
             chain.push(node.id);
             animateNext = true;
             enterFocus();
@@ -1166,6 +1294,7 @@
             if (!ids.length) return;
             if (ids.length === 1) { focus.select(nodes[0]); return; }
             mode = 'expand';
+            lit = null;
             ids.forEach(function (id) {
                 if (chain.indexOf(id) === -1) chain.push(id);
             });
@@ -1190,6 +1319,10 @@
         focus.showAll = function () {
             var none = { added: 0, left: 0, names: current ? current.nodes.length : 0 };
             if (!store.ready || inPath()) return none;
+            /* Opening the board out is a new question: the highlight goes,
+             * and any name it alone was holding goes with it, before the
+             * counting starts. */
+            if (lit) focus.clearRoute();
             var scene = focus.scene();
             var head = chain.length ? chain[chain.length - 1] : openingRoot();
             var base = mode === 'expand' ? chain.slice(0, -1) : [];
@@ -1240,12 +1373,14 @@
          * filters.
          */
         focus.showPath = function (ids) {
-            var before = { chain: chain, mode: mode };
+            var before = { chain: chain, mode: mode, lit: lit };
             chain = (ids || []).slice();
             mode = 'path';
+            lit = null;
             if (!pathHolds()) {
                 chain = before.chain;
                 mode = before.mode;
+                lit = before.lit;
                 return false;
             }
             enterFocus();
@@ -1259,6 +1394,9 @@
          * entering the view announces.
          */
         focus.restore = function (ids, nextMode) {
+            /* A restored link's own route, if it carries one, is lit again
+             * by the caller (url-state) once the trail is back. */
+            lit = null;
             if (nextMode === 'expand' || nextMode === 'focus' || nextMode === 'path') mode = nextMode;
             var live = store.visible().nodeIds;
             var seen = Object.create(null);
@@ -1280,6 +1418,7 @@
         focus.truncateTo = function (index) {
             if (index < 0 || index >= chain.length) return;
             if (index === chain.length - 1) return;
+            lit = null;
             chain = chain.slice(0, index + 1);
             animateNext = true;
             enterFocus();
@@ -1298,6 +1437,7 @@
         function resetToWholeMap() {
             chain = [];
             if (mode === 'path') mode = 'focus';
+            lit = null;
             layout = null;
             hoverId = null;
             hoverEdgeIds = null;
@@ -1417,6 +1557,9 @@
             /* A route cut back to one name, or one whose step a filter has
              * just taken away, is not a route: show its last name instead. */
             if (mode === 'path' && !pathHolds()) mode = 'focus';
+            /* And a lit route whose step a filter has taken away is not a
+             * route either: the highlight goes with the line. */
+            if (lit && !routeHolds(lit.ids)) lit = null;
 
             var scene = focus.scene();
             if (!scene.nodes.length) {
@@ -1426,8 +1569,10 @@
                 return;
             }
             current = scene;
+            litEdges();
 
-            var key = mode + (simple ? '+simple' : '') + ':' + chain.join(',');
+            var key = mode + (simple ? '+simple' : '') +
+                (lit ? '+route:' + lit.ids.join(',') : '') + ':' + chain.join(',');
             if (key !== seedKey) {
                 /* The first click off a grown opening view settles from the
                  * map's own positions. That arrangement is sized to the
@@ -1452,7 +1597,9 @@
             var settled = settleLayout(scene, 70, seed);
             applyLayout(scene, settled.positions, 70 + settled.overhang);
 
-            renderer.setEmphasis({ hoverId: null });
+            /* The hover state was dropped above, so with no route lit this
+             * is the bare emphasis it always was; with one lit it holds. */
+            applyEmphasis();
             renderer.setScene(scene);
             viewport.setScene(scene);
             drawn = scene.nodeIds;

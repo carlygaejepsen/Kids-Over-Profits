@@ -15,9 +15,10 @@
  * instead. The drawer is where a name is already read about, it does not
  * cover the stage, and on a phone it is already a sheet.
  *
- * The board draws the route (focus.showPath); this module never touches the
- * canvas. describeRoute() and labelFor() are DOM-free so
- * scripts/test-network-modules.js can hold them to account.
+ * The board draws the route: as its own board (focus.showPath) when nothing
+ * is open, or lit on the board in view (focus.highlightRoute) when a trail
+ * is; this module never touches the canvas. describeRoute() and labelFor()
+ * are DOM-free so scripts/test-network-modules.js can hold them to account.
  */
 (function (root) {
     'use strict';
@@ -160,7 +161,14 @@
                 announce('No route found between ' + from.name + ' and ' + to.name + '.');
                 return [];
             }
-            focus.showPath(routes[0].ids);
+            /* A route found while a board is already built is lit on that
+             * board (2d.6) rather than replacing it: the reader asked how
+             * two names connect inside what they are looking at. With no
+             * trail open, or when the board is already a route, the route
+             * is the board, as before. */
+            var onBoard = focus.chain().length && !focus.isPath() &&
+                focus.highlightRoute && focus.highlightRoute(routes[0].ids);
+            if (!onBoard) focus.showPath(routes[0].ids);
             setOpen(false);
             return routes;
         }
@@ -222,11 +230,14 @@
 
         /**
          * The route on the board, written out, and the other routes found.
-         * Called by the drawer when the trail is a route.
+         * Called by the drawer when the trail is a route, and when a route
+         * is lit on the board in view (focus.highlightRoute), where it adds
+         * a way to show the route on its own and a way to let it go.
          */
         function renderInto(body) {
-            var ids = focus.chain();
-            if (!focus.isPath() || ids.length < 2) return false;
+            var litIds = focus.litRoute ? focus.litRoute() : null;
+            var ids = litIds || focus.chain();
+            if ((!litIds && !focus.isPath()) || ids.length < 2) return false;
             var from = store.node(ids[0]);
             var to = store.node(ids[ids.length - 1]);
             if (!from || !to) return false;
@@ -236,6 +247,19 @@
             body.appendChild(el('h2', 'kop-network__drawer-title', from.name + ' to ' + to.name));
             body.appendChild(el('p', 'kop-network__drawer-meta',
                 'A route of ' + stepsWord(ids.length - 1) + ', as recorded. Each line is a documented connection, not an allegation.'));
+
+            if (litIds) {
+                var own = el('button', 'kop-network__drawer-route', 'Show this route on its own');
+                own.type = 'button';
+                own.setAttribute('aria-label', 'Show only this route on the board');
+                own.addEventListener('click', function () { focus.showPath(ids); });
+                body.appendChild(own);
+                var release = el('button', 'kop-network__drawer-route', 'Clear route');
+                release.type = 'button';
+                release.setAttribute('aria-label', 'Stop lighting this route on the board');
+                release.addEventListener('click', function () { focus.clearRoute(); });
+                body.appendChild(release);
+            }
 
             var list = el('ol', 'kop-network__route');
             describeRoute(store, ids, connection, canvasApi).forEach(function (step) {
@@ -265,7 +289,12 @@
                     var show = el('button', 'kop-network__drawer-link', labelFor(store, route));
                     show.type = 'button';
                     if (sameRoute(route.ids, ids)) show.setAttribute('aria-current', 'true');
-                    show.addEventListener('click', function () { focus.showPath(route.ids); });
+                    /* With a route lit, choosing another lights that one on
+                     * the same board; on a path board it swaps the board. */
+                    show.addEventListener('click', function () {
+                        if (litIds) focus.highlightRoute(route.ids);
+                        else focus.showPath(route.ids);
+                    });
                     row.appendChild(show);
                     row.appendChild(el('span', 'kop-network__drawer-source', stepsWord(route.hops)));
                     others.appendChild(row);

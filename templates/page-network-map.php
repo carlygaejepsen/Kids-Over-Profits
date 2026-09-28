@@ -255,7 +255,7 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						class="kop-network__canvas"
 						tabindex="0"
 						role="application"
-						aria-label="Network map. Arrow keys move between names, Enter opens one, plus and minus zoom, zero resets the view, Escape starts over."></canvas>
+						aria-label="Network map. Arrow keys move between names, Enter opens one, plus and minus zoom, zero resets the view, Escape clears a lit route first and then starts over."></canvas>
 
 					<p class="kop-network__loading" id="kop-network-loading">Loading the map...</p>
 
@@ -359,6 +359,8 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 								whichever side is nearest.
 								To see how two names are joined, use Connect two names
 								above the map, or the button under any name you open.
+								A route found while something is open is lit on the board
+								you already built, and Escape clears it.
 							</p>
 							<?php
 							// The key is the board's own: fills for status, a blue name

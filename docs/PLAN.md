@@ -189,8 +189,9 @@ The date is when each was last confirmed open.
     the row covers it, or keep the analysis and link it from the row.
 16. **OG Image snippet.** Code Snippets snippet 6 duplicates Yoast's five
     `og:` tags on the front page. Recommended: deactivate it.
-17. **Network map.** Kind marks (2d.2; departs from the board's key), and
-    the judgement calls in `tmp/network-qa.md` (rebuilt by every map build):
+17. **Network map.** Kind marks answered 2026-09-28 (a small-caps kind
+    word under the name; open work 3.1.3). Still open: the judgement
+    calls in `tmp/network-qa.md` (rebuilt by every map build):
     about 50 profiles naming another node as a past or other name, closed-
     to-closed rebrands, unplaced memorial programs, Silverado Academy,
     "Brent Hall" folded into Brent Charles Hall, and the 56 staff-list
@@ -220,9 +221,17 @@ own. The full specifications are in the [appendix](#appendix-network-map-specifi
 2. **David Gilcrease (2b.1).** A module test asserting all five of his
    connections, and a check of the deployed build with the cross-group toggle
    off.
-3. Later, not to be started without a word from the owner: kind marks (2d.2,
-   decision 17), chain hulls and group-by-network (2d.4), "Suggest a
-   correction" from the map (Phase 3), Phase 4.
+3. **Kind marks (2d.2) and the legend's kind rows (2d.9)** (owner's choice
+   2026-09-28): a small-caps kind word set under the name (COMPANY, TRADE
+   GROUP), fading with the labels at small zoom, never a colour; the
+   legend gets a row per kind painted by the same painter.
+4. **Phase 4 integration** (owner's go-ahead 2026-09-28, after the list
+   view): the one-hop mini graph on facility profile pages with a "See
+   full map" link, admin CSV re-import through an `api/` endpoint, and a
+   timeline mode now that 2b.6 filled in years. Outlined at the end of
+   NETWORK-MAP.md; spec each piece there before building, as 2d.6 was.
+5. Later, not to be started without a word from the owner: chain hulls and
+   group-by-network (2d.4), "Suggest a correction" from the map (Phase 3).
 
 Shipped from this list: the route highlight (2d.6) on 2026-09-28; the
 record of what was decided is NETWORK-MAP.md's 2d.6 "Built" paragraphs.

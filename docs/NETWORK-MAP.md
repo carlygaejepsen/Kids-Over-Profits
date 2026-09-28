@@ -1952,6 +1952,10 @@ is, the legend (2d.9) gets a row per kind painted by the same painter. This
 departs from the board's key, so it needs the owner's yes before it is
 drawn.
 
+*Decided (2026-09-28).* The owner chose the small-caps kind word under
+the name. Not built yet; it sits on the open list (PLAN.md 3.1) after
+the route highlight and the list view.
+
 ### 2d.3 "Add color coding."
 
 *What it has.* Colour already carries four things, all from the board:

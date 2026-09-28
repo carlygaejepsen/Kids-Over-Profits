@@ -677,10 +677,16 @@
         }
         app.elements.canvas.addEventListener('keydown', function (event) {
             if (event.key !== 'Escape' && event.key !== 'Esc') return;
-            /* The popup first: Escape closes the nearest thing. */
+            /* The popup first: Escape closes the nearest thing. Then a lit
+             * route, then the trail itself. */
             if (app.popup && app.popup.pinned()) {
                 event.preventDefault();
                 app.popup.hide();
+                return;
+            }
+            if (app.focus.litRoute && app.focus.litRoute()) {
+                event.preventDefault();
+                app.focus.clearRoute();
                 return;
             }
             if (!app.focus.chain().length) return;

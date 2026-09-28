@@ -14,6 +14,12 @@
  *
  *   #open=sequel-youth-and-family-services&simple=1
  *
+ * A route lit on the board in view (focus.highlightRoute) rides along as
+ * route=, and opens lit; without an open= trail to light it on, or when the
+ * route no longer holds, it is ignored:
+ *
+ *   #open=wwasps,provo-canyon-school&mode=expand&route=wwasps,david-gilcrease,synanon
+ *
  * The hash rather than the query string, because nothing here needs the
  * server and a query change would reload the page. replaceState rather than
  * pushState: every click would otherwise be a Back step, and the breadcrumb
@@ -24,9 +30,9 @@
 (function (root) {
     'use strict';
 
-    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null, simple: bool} from a hash string. */
+    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null, simple: bool, route: [...]} from a hash string. */
     function parse(hash) {
-        var out = { ids: [], mode: null, view: null, simple: false };
+        var out = { ids: [], mode: null, view: null, simple: false, route: [] };
         var text = String(hash || '').replace(/^#/, '');
         if (!text) return out;
         text.split('&').forEach(function (pair) {
@@ -47,19 +53,24 @@
                 out.view = value;
             } else if (key === 'simple') {
                 out.simple = value === '1';
+            } else if (key === 'route') {
+                out.route = value.split(',').map(function (id) { return id.trim(); }).filter(Boolean);
             }
         });
         return out;
     }
 
-    /** The hash for a trail, a starter view and Simplify, or '' for the plain opening view. */
-    function format(ids, mode, view, simple) {
+    /** The hash for a trail, a starter view, Simplify and a lit route, or '' for the plain opening view. */
+    function format(ids, mode, view, simple, route) {
         var parts = [];
         if (ids && ids.length) {
             parts.push('open=' + ids.map(encodeURIComponent).join(','));
             /* Focus is the default, so it is left out and a plain link stays
              * short. */
             if (mode === 'expand' || mode === 'path') parts.push('mode=' + mode);
+            /* A route is lit on a board, so with no board to light it on it
+             * is dropped rather than written. */
+            if (route && route.length) parts.push('route=' + route.map(encodeURIComponent).join(','));
         }
         if (view && view !== 'default') parts.push('view=' + encodeURIComponent(view));
         if (simple) parts.push('simple=1');
@@ -77,7 +88,8 @@
         /** Mirror the trail into the address bar. */
         function write() {
             var hash = format(focus.chain(), focus.mode(), options.view ? options.view() : null,
-                focus.isSimple ? focus.isSimple() : false);
+                focus.isSimple ? focus.isSimple() : false,
+                focus.litRoute ? focus.litRoute() : null);
             if ((location_.hash || '') === hash) return;
             writing = true;
             var base = String(location_.href || '').split('#')[0];
@@ -96,6 +108,12 @@
             if (focus.setSimple && focus.isSimple() !== state.simple) focus.setSimple(state.simple);
             if (!state.ids.length && !focus.chain().length && !viewChanged) return;
             focus.restore(state.ids, state.mode);
+            /* The trail first, then the route lit on it. A route without a
+             * trail, or one the board no longer holds, is ignored:
+             * highlightRoute refuses it and the trail stands as restored. */
+            if (state.route.length && state.ids.length && focus.highlightRoute) {
+                focus.highlightRoute(state.route);
+            }
         }
 
         if (options.window && options.window.addEventListener) {
