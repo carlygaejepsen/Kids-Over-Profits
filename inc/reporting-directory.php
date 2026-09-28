@@ -332,9 +332,23 @@ function kop_reporting_render_deadlines($record) {
             $groups[$item['group']]['items'][] = $item;
         }
     }
+    /* The date the reader is told this was right on: the older of the two
+     * sources, so the caution never claims more currency than the data has. */
+    $checked = array_filter(array($record['deadlines']['verified_on'] ?? '', $csa['checked_on'] ?? ''));
+    sort($checked);
+    $checked_label = $checked ? date_i18n('j F Y', strtotime($checked[0])) : '';
     ?>
     <aside class="kop-rep-deadlines" aria-label="Filing deadlines in <?php echo esc_attr($record['state']); ?>">
-        <h3 class="kop-rep-deadlines-h">Deadlines in <?php echo esc_html($record['state']); ?>, if it happened years ago</h3>
+        <h3 class="kop-rep-deadlines-h">Time limits in <?php echo esc_html($record['state']); ?>: a general guide</h3>
+        <p class="kop-rep-deadlines-caution">
+            <?php if ($checked_label !== '') : ?>
+                This was correct as far as we could tell when we checked it on <?php echo esc_html($checked_label); ?>.
+            <?php endif; ?>
+            Laws on time limits change often, sometimes every legislative session, so some of what follows may have been
+            updated since. It is a starting point, not legal advice: please check with a lawyer before relying on any
+            date here. A time limit on a lawsuit or a criminal charge is also not a time limit on telling someone, and
+            most of the places listed below will still take a report.
+        </p>
         <?php if (is_array($general) && !empty($general['text'])) : ?>
             <p><?php echo esc_html($general['text']); ?></p>
         <?php endif; ?>
@@ -371,21 +385,23 @@ function kop_reporting_render_deadlines($record) {
 
         <p class="kop-rep-deadlines-fine">
             <?php if ($items) : ?>
-                Injury, assault and physical abuse deadlines researched from the statutes linked, checked
+                The injury, assault and physical abuse lines are our reading of the statutes linked, as they stood on
                 <?php echo esc_html(date_i18n('j F Y', strtotime($record['deadlines']['verified_on']))); ?>.
             <?php endif; ?>
             <?php if ($csa) : ?>
-                Child sexual abuse lines are CHILD USA's summary, copied <?php echo esc_html(date_i18n('j F Y', strtotime($csa['checked_on']))); ?>;
-                in them SOL means statute of limitations, CSA child sexual abuse, and CSAM child sexual abuse material.
+                The child sexual abuse lines are CHILD USA's summary as it stood on <?php echo esc_html(date_i18n('j F Y', strtotime($csa['checked_on']))); ?>;
+                their page may be more current than ours.
+                In them SOL means statute of limitations, CSA child sexual abuse, and CSAM child sexual abuse material.
             <?php endif; ?>
             <?php if (array_filter($items, function ($item) { return !empty($item['uncertain']); })) : ?>
-                "Less certain" marks a line that rests on a reading of the statute or of court rulings that has not been confirmed.
+                "Less certain" marks a line where the law is unclear or where our reading has not been confirmed, so please treat it with extra care.
             <?php endif; ?>
-            Exceptions, court rulings and the facts of a case can change any of these.
+            Exceptions, court rulings and the details of what happened can all change which time limit applies, and
+            some of these may be longer or shorter for you than they look here.
             <?php if (is_array($general) && !empty($general['url'])) : ?>
                 <a href="<?php echo esc_url($general['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($general['link_label']); ?></a>.
             <?php endif; ?>
-            A lawyer can tell you which deadline applies to you.
+            A lawyer can tell you which time limit applies to you, and many offer a free first consultation.
         </p>
     </aside>
     <?php

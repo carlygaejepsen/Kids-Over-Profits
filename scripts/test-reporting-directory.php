@@ -203,6 +203,9 @@ foreach ($directory['states'] as $record) {
      * state's list, that deadlines do not run from the closing date. */
     check(strpos($html, 'kop-rep-deadlines') !== false, "{$record['abbr']}: embed has no deadline note");
     check(strpos($html, 'https://childusa.org/sol/') !== false, "{$record['abbr']}: deadline note has no tracker link");
+    /* Deadlines are dated and may be stale; the page must say so. */
+    check(strpos($html, 'kop-rep-deadlines-caution') !== false,
+        "{$record['abbr']}: deadlines shown without the may-be-out-of-date caution");
     if (!empty($record['sexual_abuse'])) {
         check(strpos($html, "CHILD USA's summary") !== false, "{$record['abbr']}: CHILD USA summary not shown");
     }

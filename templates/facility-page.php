@@ -352,7 +352,7 @@ get_header();
                             <li>
                                 <a href="<?php echo esc_url($kop_fp_doc['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($kop_fp_doc['title']); ?></a>
                                 <?php
-                                $kop_fp_doc_meta = array_filter(array($kop_fp_doc['byline'], $kop_fp_doc['why']), 'strlen');
+                                $kop_fp_doc_meta = array_filter(array($kop_fp_doc['byline'], $kop_fp_doc['why'], isset($kop_fp_doc['pages']) && $kop_fp_doc['pages'] !== '' ? 'Named on ' . $kop_fp_doc['pages'] : ''), 'strlen');
                                 if ($kop_fp_doc_meta) :
                                 ?>
                                     <span class="meta"><?php echo esc_html(implode(' - ', $kop_fp_doc_meta)); ?></span>
@@ -507,9 +507,11 @@ get_header();
                 </p>
                 <p>
                     <a href="<?php echo esc_url($kop_fp_report_url); ?>">The <?php echo esc_html($page['state_name']); ?>
-                    reporting channels</a> list each one and what it can do. Deadlines depend on the state, the
+                    reporting channels</a> list each one and what it can do. Time limits depend on the state, the
                     kind of harm and the survivor's age, and many states have lengthened or removed them for
                     child sexual abuse, so a program closing long ago does not by itself mean it is too late.
+                    Laws change, so the time limits we list were correct when we checked them but may have
+                    been updated since; a lawyer can tell you where things stand now.
                 </p>
             <?php else : ?>
                 <p>
