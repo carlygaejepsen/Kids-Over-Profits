@@ -111,6 +111,15 @@ function get_page_by_path($slug = '') {
 function get_permalink($post = null) { return is_object($post) && isset($post->post_name) ? home_url('/' . $post->post_name . '/') : ''; }
 function get_posts($args = array()) {
     global $wpdb;
+    // Research documents tagged with a facility (kop_facility_pages_research).
+    $mq = $args['meta_query'][0] ?? null;
+    if (is_array($mq) && ($mq['key'] ?? '') === 'kop_research_facilities') {
+        return $wpdb->get_results($wpdb->prepare(
+            "SELECT DISTINCT p.ID, p.post_title, p.post_excerpt FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID
+              WHERE m.meta_key = 'kop_research_facilities' AND m.meta_value = %s AND p.post_type = 'attachment' ORDER BY p.post_date DESC",
+            (string) $mq['value']
+        ));
+    }
     if (($args['meta_key'] ?? '') !== '_wp_page_template') return array();
     $rows = $wpdb->get_results($wpdb->prepare(
         "SELECT p.ID, p.post_name, p.post_title FROM wpdl_posts p JOIN wpdl_postmeta m ON m.post_id = p.ID AND m.meta_key = '_wp_page_template'
@@ -121,8 +130,22 @@ function get_posts($args = array()) {
 }
 function get_post_meta($id, $key = '', $single = false) {
     global $wpdb;
-    $v = $wpdb->get_var($wpdb->prepare('SELECT meta_value FROM wpdl_postmeta WHERE post_id = %d AND meta_key = %s LIMIT 1', $id, $key));
-    return $v === null ? '' : $v;
+    // An explicit $single = false asks for every row, as in WordPress.
+    if (func_num_args() >= 3 && !$single) {
+        return $wpdb->get_col($wpdb->prepare('SELECT meta_value FROM wpdl_postmeta WHERE post_id = %d AND meta_key = %s ORDER BY meta_id', $id, $key));
+    }
+    $v =$wpdb->get_var($wpdb->prepare('SELECT meta_value FROM wpdl_postmeta WHERE post_id = %d AND meta_key = %s LIMIT 1', $id, $key));
+    if ($v === null) return '';
+    // Arrays come back unserialized, as WordPress returns them.
+    if (is_string($v) && preg_match('/^a:\d+:\{/', $v)) {
+        $u = @unserialize($v, array('allowed_classes' => false));
+        if ($u !== false) return $u;
+    }
+    return $v;
+}
+function wp_get_attachment_url($id) {
+    $file = get_post_meta($id, '_wp_attached_file', true);
+    return $file === '' ? false : home_url('wp-content/uploads/' . ltrim($file, '/'));
 }
 function get_the_title() { return ''; }
 function has_post_thumbnail() { return false; }

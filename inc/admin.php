@@ -1789,6 +1789,65 @@ function kop_apply_media_subfolders() {
     return $done;
 }
 
+/**
+ * Research documents tagged with the facilities they name
+ * (seeds/research-facility-tags.json): one kop_research_facilities meta row
+ * per facility, the same tag the /researchreports/ editor sets, plus the
+ * printed pages each facility is named on (kop_research_facility_pages,
+ * {id: {pages, pdf_page}}). A tag is added once; the applied pairs are
+ * remembered so one an editor later removes is not put back.
+ */
+function kop_apply_research_facility_tags() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/research-facility-tags.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $spec = json_decode((string) file_get_contents($path), true);
+    if (!is_array($spec) || empty($spec['documents'])) {
+        return $done;
+    }
+    $meta    = defined('KOP_RESEARCH_FACILITY_META') ? KOP_RESEARCH_FACILITY_META : 'kop_research_facilities';
+    $applied = get_option('kop_research_facility_tags_applied', array());
+    $applied = is_array($applied) ? $applied : array();
+    foreach ($spec['documents'] as $doc) {
+        $aid = (int) ($doc['attachment_id'] ?? 0);
+        if ($aid <= 0 || get_post_type($aid) !== 'attachment') {
+            continue;
+        }
+        $offset  = (int) ($doc['pdf_page_offset'] ?? 0);
+        $current = array_map('intval', (array) get_post_meta($aid, $meta, false));
+        $cites   = get_post_meta($aid, 'kop_research_facility_pages', true);
+        $cites   = is_array($cites) ? $cites : array();
+        $added   = 0;
+        foreach ((array) ($doc['facilities'] ?? array()) as $f) {
+            $fid = (int) ($f['id'] ?? 0);
+            if ($fid <= 0) {
+                continue;
+            }
+            $pages = trim((string) ($f['pages'] ?? ''));
+            if ($pages !== '') {
+                $first = preg_match('/\d+/', $pages, $m) ? (int) $m[0] : 0;
+                $cites[$fid] = array('pages' => $pages, 'pdf_page' => $first > 0 ? $first + $offset : 0);
+            }
+            $pair = $aid . ':' . $fid;
+            if (isset($applied[$pair])) {
+                continue;
+            }
+            if (!in_array($fid, $current, true)) {
+                add_post_meta($aid, $meta, $fid);
+                $current[] = $fid;
+                $added++;
+            }
+            $applied[$pair] = 1;
+        }
+        update_post_meta($aid, 'kop_research_facility_pages', $cites);
+        $done[] = 'att:' . $aid . ' +' . $added;
+    }
+    update_option('kop_research_facility_tags_applied', $applied, false);
+    return $done;
+}
+
 function kop_apply_media_folder_fixes() {
     global $wpdb;
     $done = array();
@@ -1889,6 +1948,7 @@ function kop_apply_template_assignments() {
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
     $summary['legislation']  = kop_apply_legislation_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
+    $summary['research_tags'] = kop_apply_research_facility_tags();
     $summary['subfolders']   = kop_apply_media_subfolders();
     $summary['text']         = kop_apply_text_fixes();
     $summary['news_import']  = kop_apply_news_post_import();
@@ -1943,7 +2003,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '53';
+    $version = '54';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

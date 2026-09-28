@@ -14,6 +14,27 @@
         return;
     }
 
+    // A report that names dozens of programs shows the first few and a
+    // button for the rest, so its card stays the size of the others.
+    var CHIPS_SHOWN = 12;
+    Array.prototype.forEach.call(section.querySelectorAll('.kop-rl-facilities'), function (list) {
+        var chips = list.querySelectorAll('.kop-rl-chip');
+        if (chips.length <= CHIPS_SHOWN + 2) {
+            return;
+        }
+        var extra = Array.prototype.slice.call(chips, CHIPS_SHOWN);
+        extra.forEach(function (chip) { chip.hidden = true; });
+        var more = document.createElement('button');
+        more.type = 'button';
+        more.className = 'kop-rl-chip-more';
+        more.textContent = '+' + extra.length + ' more';
+        more.addEventListener('click', function () {
+            extra.forEach(function (chip) { chip.hidden = false; });
+            more.remove();
+        });
+        list.appendChild(more);
+    });
+
     var grid = section.querySelector('.kop-rl-grid');
     var box = section.querySelector('.kop-rl-sort');
     var select = section.querySelector('.kop-rl-sort-by');

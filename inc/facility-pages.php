@@ -319,6 +319,12 @@ if (!function_exists('kop_facility_pages_fingerprint')) {
             'templates/single-facility-profile.php'
         ), ARRAY_N);
         $parts[] = 'posts:' . (is_array($posts) ? implode('|', array_map('strval', $posts)) : '?');
+        // Research documents tagged with a facility give it a page.
+        $research = $wpdb->get_var($wpdb->prepare(
+            "SELECT COUNT(*) FROM {$wpdb->postmeta} WHERE meta_key = %s",
+            'kop_research_facilities'
+        ));
+        $parts[] = 'research:' . (string) $research;
         // A new build of the network map changes which facilities it draws.
         $parts[] = 'network:' . (function_exists('kop_network_map_cache_key') ? kop_network_map_cache_key() : '-');
         $parts[] = 'v:4';
@@ -572,7 +578,7 @@ if (!function_exists('kop_facility_pages_link_sets')) {
         global $wpdb;
         $sets = array('news' => array(), 'lawsuits' => array(), 'lawsuit_keys' => array(), 'memorial_keys' => array(),
                       'wiki' => array(), 'inspections' => array(), 'operators' => array(), 'folders' => array(),
-                      'network' => array());
+                      'network' => array(), 'research' => array());
 
         if (kop_facility_pages_table_exists('news_facility_links') && kop_facility_pages_table_exists('news_submissions')) {
             $rows = $wpdb->get_results("SELECT l.facility_id, COUNT(*) AS n FROM news_facility_links l JOIN news_submissions n ON n.id = l.news_id WHERE n.status IN ('approved','published') GROUP BY l.facility_id", ARRAY_A);
@@ -633,6 +639,12 @@ if (!function_exists('kop_facility_pages_link_sets')) {
             }
         }
         $sets['folders'] = kop_facility_pages_folder_map();
+        // Research documents tagged with the facility at /researchreports/.
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT meta_value AS facility_id, COUNT(*) AS n FROM {$wpdb->postmeta} WHERE meta_key = %s GROUP BY meta_value",
+            'kop_research_facilities'
+        ), ARRAY_A);
+        foreach ((array) $rows as $r) $sets['research'][(int) $r['facility_id']] = (int) $r['n'];
         // Facilities the network map draws, with how many connections each has.
         if (function_exists('kop_network_map_facility_connections')) {
             foreach (kop_network_map_facility_connections() as $fid => $entry) {
@@ -1087,6 +1099,7 @@ if (!function_exists('kop_facility_page_signals')) {
         if (!empty($links['lawsuits'][$id])) $s[] = 'lawsuits';
         if (!empty($links['operators'][$id])) $s[] = 'operator';
         if (!empty($links['network'][$id])) $s[] = 'network';
+        if (!empty($links['research'][$id])) $s[] = 'research';
 
         $keys = kop_facility_pages_doc_name_keys($doc, $unique_name);
         $state_code = strtoupper(trim((string) ($loc['state'] ?? '')));
@@ -1875,11 +1888,30 @@ if (!function_exists('kop_facility_pages_research')) {
         foreach ((array) $attachments as $attachment) {
             $url = (string) wp_get_attachment_url($attachment->ID);
             $why = trim((string) get_post_meta($attachment->ID, 'kop_research_relevance_note', true));
+            // Where in the document this facility is named, from
+            // seeds/research-facility-tags.json: {id: {pages, pdf_page}}.
+            $cites = get_post_meta($attachment->ID, 'kop_research_facility_pages', true);
+            $cite = is_array($cites) && isset($cites[$facility_id]) && is_array($cites[$facility_id]) ? $cites[$facility_id] : array();
+            $pages = trim((string) ($cite['pages'] ?? ''));
+            if ($url !== '' && !empty($cite['pdf_page'])) $url .= '#page=' . (int) $cite['pdf_page'];
+            // The research library's own title and byline for the card, unless
+            // an editor has since edited it (inc/research-library.php).
+            $title = (string) $attachment->post_title;
+            $byline = trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt));
+            if (function_exists('kop_research_library_overrides')) {
+                $overrides = kop_research_library_overrides();
+                $base = strtolower(pathinfo(basename((string) get_post_meta($attachment->ID, '_wp_attached_file', true)), PATHINFO_FILENAME));
+                $override = $overrides['id:' . $attachment->ID] ?? ($overrides[$base] ?? array());
+                $edited = defined('KOP_RESEARCH_EDITED_META') && (string) get_post_meta($attachment->ID, KOP_RESEARCH_EDITED_META, true) !== '';
+                if (!$edited && isset($override['title'])) $title = (string) $override['title'];
+                if (isset($override['byline'])) $byline = (string) $override['byline'];
+            }
             $out[] = array(
-                'title'   => (string) $attachment->post_title,
+                'title'   => $title,
                 'url'     => $url !== '' ? $url : $library_url,
-                'byline'  => trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt)),
+                'byline'  => $byline,
                 'why'     => $why,
+                'pages'   => $pages === '' ? '' : (preg_match('/[,\-]/', $pages) ? 'pp. ' : 'p. ') . $pages,
                 'library' => $library_url,
             );
         }

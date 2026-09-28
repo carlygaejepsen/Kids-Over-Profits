@@ -294,6 +294,62 @@ $check('where-to-report callout matches directory coverage', !$reporting_bad,
     $reporting_bad ? implode('; ', $reporting_bad)
                    : $reporting_seen . ' of ' . count($picks) . ' sampled facilities carry it');
 
+// Research tags (seeds/research-facility-tags.json). Applied by the real
+// deploy step to a TEMP copy of wpdl_postmeta, which shadows the mirror's
+// table for this connection only, so nothing is written to the mirror.
+echo "\n-- Research tags --\n";
+$seed = json_decode((string) file_get_contents(dirname(__DIR__) . '/seeds/research-facility-tags.json'), true);
+$check('research tag seed parses', is_array($seed) && !empty($seed['documents']));
+$seed_ids = array();
+foreach ((array) ($seed['documents'] ?? array()) as $sd) {
+    $seed_att = (int) $sd['attachment_id'];
+    $check("seed attachment $seed_att is a document in the mirror",
+        (string) $wpdb->get_var("SELECT post_type FROM wpdl_posts WHERE ID = $seed_att") === 'attachment');
+    $bad = array();
+    foreach ($sd['facilities'] as $sf) {
+        $seed_ids[(int) $sf['id']] = $seed_att;
+        if (!$wpdb->get_var('SELECT 1 FROM facilities_v2 WHERE id = ' . (int) $sf['id'])) $bad[] = $sf['id'] . ' (no facilities_v2 row)';
+        if (!preg_match('/^\d+(-\d+)?(, \d+(-\d+)?)*$/', (string) $sf['pages'])) $bad[] = $sf['id'] . ' (pages "' . $sf['pages'] . '")';
+    }
+    $check('every seeded facility exists and cites pages', !$bad, $bad ? implode('; ', array_slice($bad, 0, 5)) : count($sd['facilities']) . ' facilities');
+}
+require_once dirname(__DIR__) . '/inc/admin.php';
+require_once dirname(__DIR__) . '/inc/research-library.php';
+function get_post_type($id) { global $wpdb; return (string) $wpdb->get_var('SELECT post_type FROM wpdl_posts WHERE ID = ' . (int) $id); }
+function add_post_meta($id, $key, $value) {
+    global $pdo;
+    $st = $pdo->prepare('INSERT INTO temp.wpdl_postmeta (post_id, meta_key, meta_value) VALUES (?, ?, ?)');
+    return $st->execute(array((int) $id, $key, is_array($value) ? serialize($value) : (string) $value));
+}
+function update_post_meta($id, $key, $value) {
+    global $pdo;
+    $pdo->prepare('DELETE FROM temp.wpdl_postmeta WHERE post_id = ? AND meta_key = ?')->execute(array((int) $id, $key));
+    return add_post_meta($id, $key, $value);
+}
+$pdo->exec('CREATE TEMP TABLE wpdl_postmeta AS SELECT * FROM main.wpdl_postmeta');
+$research_summary = kop_apply_research_facility_tags();
+$tagged = array_map('intval', $wpdb->get_col("SELECT meta_value FROM wpdl_postmeta WHERE meta_key = 'kop_research_facilities'"));
+$check('the deploy step tags every seeded facility once', count($tagged) === count($seed_ids) && !array_diff(array_keys($seed_ids), $tagged),
+    implode(', ', $research_summary) . ', ' . count($tagged) . ' tags');
+$research_index = kop_facility_pages_index(true);
+$check('the tags change the index fingerprint', $research_index['fingerprint'] !== $index['fingerprint']);
+$no_page = array();
+foreach ($seed_ids as $fid => $att) if (!isset($research_index['ids'][$fid])) $no_page[] = $fid;
+$check('every tagged facility has a page', !$no_page, $no_page ? implode(', ', $no_page) : count($seed_ids) . ' pages, ' . (count($research_index['ids']) - $eligible) . ' of them new');
+$sample = 12688;   // Acadia Montana, printed p. 31 = PDF page 32
+if (isset($seed_ids[$sample]) && isset($research_index['ids'][$sample]) && $research_index['ids'][$sample]['editorial'] === '') {
+    $data = kop_facility_page_data($sample);
+    $GLOBALS['kop_facility_page'] = $data;
+    ob_start();
+    include dirname(__DIR__) . '/templates/facility-page.php';
+    $html = ob_get_clean();
+    file_put_contents($out_dir . '/' . $data['slug'] . '.html', $html);
+    $check('a tagged facility page lists the report with its pages', strpos($html, 'Named on p. 31') !== false && strpos($html, '.pdf#page=32') !== false
+        && strpos($html, '>Warehouses of Neglect: How Taxpayers') !== false,
+        $out_dir . '/' . $data['slug'] . '.html');
+}
+$pdo->exec('DROP TABLE temp.wpdl_postmeta');
+kop_facility_pages_index(true);
 
 // Sitemap entries
 $entries = kop_facility_pages_sitemap_entries();

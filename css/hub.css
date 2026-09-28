@@ -573,8 +573,25 @@
     font-size: 0.78rem;
 }
 
-.kop-rl-facilities[hidden] {
+.kop-rl-facilities[hidden],
+.kop-rl-chip[hidden] {
     display: none;
+}
+
+.kop-rl-chip-more {
+    padding: 0.05rem 0.45rem;
+    border: 1px dashed var(--kop-border-secondary, #d9d3c0);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--kop-navy-blue, #000080);
+    font: inherit;
+    cursor: pointer;
+}
+
+.kop-rl-chip-more:hover,
+.kop-rl-chip-more:focus-visible {
+    border-color: var(--kop-teal, #33a7b5);
+    text-decoration: underline;
 }
 
 .kop-rl-facilities-label {

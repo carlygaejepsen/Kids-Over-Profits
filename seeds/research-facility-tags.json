@@ -1,0 +1,806 @@
+{
+  "note": "Research documents tagged with the facilities they name (kop_research_facilities meta, the tag the /researchreports/ editor sets). pages are the printed page numbers; pdf_page_offset turns the first into a #page= link. Applied once per facility by kop_apply_research_facility_tags(), so a tag an editor later removes stays removed.",
+  "documents": [
+    {
+      "attachment_id": 5860,
+      "title": "Warehouses of Neglect (U.S. Senate Committee on Finance, 2024)",
+      "pdf_page_offset": 1,
+      "facilities": [
+        {
+          "id": 10345,
+          "name": "Youth Care of Utah",
+          "state": "UT",
+          "report_names": [
+            "YouthCare"
+          ],
+          "pages": "22"
+        },
+        {
+          "id": 10370,
+          "name": "Copper Hills Youth Center",
+          "state": "UT",
+          "report_names": [
+            "Copper Hills Youth Treatment Center"
+          ],
+          "pages": "33, 36, 50, 52, 60-61, 67-68, 74, 87, 91-93, 101, 107-108, 114, 119"
+        },
+        {
+          "id": 10371,
+          "name": "Provo Canyon School",
+          "state": "UT",
+          "report_names": [
+            "Provo Canyon School"
+          ],
+          "pages": "33, 46, 51, 61, 70-75, 77, 98, 105, 124-125"
+        },
+        {
+          "id": 10557,
+          "name": "UHS of Provo Canyon Springville Campus",
+          "state": "UT",
+          "report_names": [
+            "Provo Canyon School"
+          ],
+          "pages": "33, 46, 51, 61, 70-75, 77, 98, 105, 124-125"
+        },
+        {
+          "id": 10618,
+          "name": "San Marcos Treatment Center",
+          "state": "TX",
+          "report_names": [
+            "San Marcos Treatment Center"
+          ],
+          "pages": "92"
+        },
+        {
+          "id": 11088,
+          "name": "Devereux Florida Specialized Therapeutic Group Home",
+          "state": "FL",
+          "report_names": [
+            "Devereux Titusville"
+          ],
+          "pages": "35, 39"
+        },
+        {
+          "id": 11098,
+          "name": "St. John's Youth Academy",
+          "state": "FL",
+          "report_names": [
+            "St. John's Youth Academy"
+          ],
+          "pages": "48"
+        },
+        {
+          "id": 11122,
+          "name": "SandyPines RTC",
+          "state": "FL",
+          "report_names": [
+            "SandyPines"
+          ],
+          "pages": "67-68, 82, 87, 101, 105-106"
+        },
+        {
+          "id": 11123,
+          "name": "Suncoast Behavioral Health Center RTP",
+          "state": "FL",
+          "report_names": [
+            "Suncoast Behavioral Health Center"
+          ],
+          "pages": "91, 121-122"
+        },
+        {
+          "id": 11160,
+          "name": "Devereux Florida I/DD Program",
+          "state": "FL",
+          "report_names": [
+            "Devereux Advanced Behavioral Health - Viera Campus"
+          ],
+          "pages": "47-48, 102"
+        },
+        {
+          "id": 11161,
+          "name": "Devereux Florida IRTC",
+          "state": "FL",
+          "report_names": [
+            "Devereux Advanced Behavioral Health - Viera Campus"
+          ],
+          "pages": "47-48, 102"
+        },
+        {
+          "id": 11163,
+          "name": "Devereux Florida Specialized Therapeutic Group Homes",
+          "state": "FL",
+          "report_names": [
+            "Devereux Titusville"
+          ],
+          "pages": "35, 39"
+        },
+        {
+          "id": 11240,
+          "name": "Village Behavioral Health Treatment Center",
+          "state": "TN",
+          "report_names": [
+            "Village Behavioral Health"
+          ],
+          "pages": "82, 86, 101, 121"
+        },
+        {
+          "id": 11245,
+          "name": "Hermitage Hall",
+          "state": "TN",
+          "report_names": [
+            "Hermitage Hall"
+          ],
+          "pages": "23"
+        },
+        {
+          "id": 11246,
+          "name": "McDowell Center for Children",
+          "state": "TN",
+          "report_names": [
+            "McDowell Center for Children"
+          ],
+          "pages": "36, 108, 122"
+        },
+        {
+          "id": 11248,
+          "name": "Natchez Trace Youth Academy",
+          "state": "TN",
+          "report_names": [
+            "Natchez Trace Youth Academy"
+          ],
+          "pages": "116"
+        },
+        {
+          "id": 11249,
+          "name": "Oak Plains Academy",
+          "state": "TN",
+          "report_names": [
+            "Oak Plains Academy"
+          ],
+          "pages": "112"
+        },
+        {
+          "id": 11260,
+          "name": "Acadia Village",
+          "state": "TN",
+          "report_names": [
+            "Village Behavioral Health"
+          ],
+          "pages": "82, 86, 101, 121"
+        },
+        {
+          "id": 11279,
+          "name": "Chad Youth Enhancement Center – Oak Plains Academy",
+          "state": "TN",
+          "report_names": [
+            "Oak Plains Academy"
+          ],
+          "pages": "112"
+        },
+        {
+          "id": 11280,
+          "name": "Compass Intervention Center",
+          "state": "TN",
+          "report_names": [
+            "Compass Intervention Center"
+          ],
+          "pages": "90-93, 109"
+        },
+        {
+          "id": 11358,
+          "name": "Heartland Behavioral Health Services RTF",
+          "state": "MO",
+          "report_names": [
+            "Heartland Behavioral Health Services"
+          ],
+          "pages": "81, 96"
+        },
+        {
+          "id": 11464,
+          "name": "Little Creek Behavioral Health Residential Treatment Facility",
+          "state": "AR",
+          "report_names": [
+            "Little Creek Behavioral Health"
+          ],
+          "pages": "22, 103"
+        },
+        {
+          "id": 11465,
+          "name": "Millcreek Behavioral Health Psychiatric Residential Treatment Facility",
+          "state": "AR",
+          "report_names": [
+            "Millcreek Behavioral Health"
+          ],
+          "pages": "11, 16, 39, 41, 46, 54, 59, 63, 78, 80-82, 89, 95, 97, 101, 107-108, 115, 117, 119, 122-123"
+        },
+        {
+          "id": 11512,
+          "name": "Little Creek Behavioral Health",
+          "state": "AR",
+          "report_names": [
+            "Little Creek Behavioral Health"
+          ],
+          "pages": "22, 103"
+        },
+        {
+          "id": 11526,
+          "name": "Piney Ridge Treatment Center",
+          "state": "AR",
+          "report_names": [
+            "Piney Ridge Treatment Center"
+          ],
+          "pages": "4, 12, 37, 50, 56-57, 60-61, 66, 68-71, 73, 75-77, 81, 86, 92-95, 100, 103, 105, 109, 117-118"
+        },
+        {
+          "id": 11566,
+          "name": "Devereux Pennsylvania Brandywine School",
+          "state": "PA",
+          "report_names": [
+            "Devereux Brandywine"
+          ],
+          "pages": "34, 41, 47, 75, 114"
+        },
+        {
+          "id": 11570,
+          "name": "Devereux Pennsylvania Mapleton Intensive Program",
+          "state": "PA",
+          "report_names": [
+            "Devereux Mapleton"
+          ],
+          "pages": "34"
+        },
+        {
+          "id": 11616,
+          "name": "Foundations Behavioral Health RTF",
+          "state": "PA",
+          "report_names": [
+            "Foundations Behavioral Health"
+          ],
+          "pages": "84, 87, 92-93, 96-97, 103, 121, 126"
+        },
+        {
+          "id": 11711,
+          "name": "Brynn Marr Hospital",
+          "state": "NC",
+          "report_names": [
+            "Brynn Marr Hospital"
+          ],
+          "pages": "60, 62, 65, 77, 83, 87, 91, 99-101, 108, 113"
+        },
+        {
+          "id": 11986,
+          "name": "Devereux Advanced Behavioral Health Massachusetts & Rhode Island",
+          "state": "MA",
+          "report_names": [
+            "Devereux Rutland"
+          ],
+          "pages": "107, 115"
+        },
+        {
+          "id": 11987,
+          "name": "Devereux Cathy House",
+          "state": "MA",
+          "report_names": [
+            "Cathy House Group Home"
+          ],
+          "pages": "22"
+        },
+        {
+          "id": 11988,
+          "name": "Devereux Devon House",
+          "state": "MA",
+          "report_names": [
+            "Devon House Group Home"
+          ],
+          "pages": "22"
+        },
+        {
+          "id": 12014,
+          "name": "The Devereux School",
+          "state": "FL",
+          "report_names": [
+            "Devereux Advanced Behavioral Health - Viera Campus"
+          ],
+          "pages": "47-48, 102"
+        },
+        {
+          "id": 12022,
+          "name": "The Devereux Red Hook School",
+          "state": "NY",
+          "report_names": [
+            "Devereux Foundation",
+            "Devereux Red Hook"
+          ],
+          "pages": "5, 102, 110, 114-115"
+        },
+        {
+          "id": 12162,
+          "name": "Casa Grande Academy",
+          "state": "AZ",
+          "report_names": [
+            "Casa Grande Academy"
+          ],
+          "pages": "90, 99, 102"
+        },
+        {
+          "id": 12163,
+          "name": "Mingus Mountain Academy",
+          "state": "AZ",
+          "report_names": [
+            "Mingus Mountain Youth Treatment Center"
+          ],
+          "pages": "103, 121"
+        },
+        {
+          "id": 12419,
+          "name": "Willow Springs Center",
+          "state": "NV",
+          "report_names": [
+            "Willow Springs Center"
+          ],
+          "pages": "85, 88, 90-91, 113, 121"
+        },
+        {
+          "id": 12484,
+          "name": "Devereux Advanced Behavioral Health Georgia",
+          "state": "GA",
+          "report_names": [
+            "Devereux Advanced Behavioral Health"
+          ],
+          "pages": "35, 40"
+        },
+        {
+          "id": 12495,
+          "name": "Laurel Heights Hospital Residential Treatment",
+          "state": "GA",
+          "report_names": [
+            "Laurel Heights Hospital"
+          ],
+          "pages": "58, 113-114"
+        },
+        {
+          "id": 12496,
+          "name": "Lighthouse Care Center of Augusta Psychiatric RTP",
+          "state": "GA",
+          "report_names": [
+            "Lighthouse Care Center of Augusta"
+          ],
+          "pages": "33"
+        },
+        {
+          "id": 12688,
+          "name": "Acadia Montana",
+          "state": "MT",
+          "report_names": [
+            "Acadia Montana Treatment Facility"
+          ],
+          "pages": "31"
+        },
+        {
+          "id": 12748,
+          "name": "Desert Hills of New Mexico Sub-Acute Unit",
+          "state": "NM",
+          "report_names": [
+            "Desert Hills Hospital"
+          ],
+          "pages": "31, 62, 70-71, 84-85"
+        },
+        {
+          "id": 12800,
+          "name": "Cumberland Hospital for Children and Adolescents",
+          "state": "VA",
+          "report_names": [
+            "Cumberland Children's Hospital",
+            "Cumberland Hospital"
+          ],
+          "pages": "36, 44-46, 95, 97"
+        },
+        {
+          "id": 12801,
+          "name": "Harbor Point Behavioral Health Center",
+          "state": "VA",
+          "report_names": [
+            "Harbor Point Behavioral Health Center"
+          ],
+          "pages": "50, 52-54, 75, 82, 94, 96, 115"
+        },
+        {
+          "id": 12804,
+          "name": "Newport News Behavioral Health Center RTF",
+          "state": "VA",
+          "report_names": [
+            "Newport News Behavioral Health Center"
+          ],
+          "pages": "23, 111, 116"
+        },
+        {
+          "id": 12805,
+          "name": "North Spring Behavioral Healthcare Horizons Program",
+          "state": "VA",
+          "report_names": [
+            "North Spring Behavioral Healthcare"
+          ],
+          "pages": "46, 59"
+        },
+        {
+          "id": 12806,
+          "name": "North Spring Behavioral Healthcare Sunrise Program",
+          "state": "VA",
+          "report_names": [
+            "North Spring Behavioral Healthcare"
+          ],
+          "pages": "46, 59"
+        },
+        {
+          "id": 12807,
+          "name": "North Spring Behavioral Healthcare Trailblazers Program",
+          "state": "VA",
+          "report_names": [
+            "North Spring Behavioral Healthcare"
+          ],
+          "pages": "46, 59"
+        },
+        {
+          "id": 12808,
+          "name": "Pines Residential Treatment Center",
+          "state": "VA",
+          "report_names": [
+            "The Pines Residential Treatment Center"
+          ],
+          "pages": "85"
+        },
+        {
+          "id": 12810,
+          "name": "The Hughes Center",
+          "state": "VA",
+          "report_names": [
+            "The Hughes Center"
+          ],
+          "pages": "103"
+        },
+        {
+          "id": 12896,
+          "name": "North Spring Behavioral Healthcare Inc",
+          "state": "VA",
+          "report_names": [
+            "North Spring Behavioral Healthcare"
+          ],
+          "pages": "46, 59"
+        },
+        {
+          "id": 12900,
+          "name": "Pines Residential RTC: Crawford Center",
+          "state": "VA",
+          "report_names": [
+            "The Pines Residential Treatment Center"
+          ],
+          "pages": "85"
+        },
+        {
+          "id": 12901,
+          "name": "Pines RTC: Brighton Campus",
+          "state": "VA",
+          "report_names": [
+            "The Pines Residential Treatment Center"
+          ],
+          "pages": "85"
+        },
+        {
+          "id": 13091,
+          "name": "Havenwyck Hospital Residential Impulse Disorder Program",
+          "state": "MI",
+          "report_names": [
+            "Havenwyck Hospital"
+          ],
+          "pages": "102"
+        },
+        {
+          "id": 13234,
+          "name": "Belmont Pines RTC Program",
+          "state": "OH",
+          "report_names": [
+            "Belmont Pines"
+          ],
+          "pages": "53, 106, 117"
+        },
+        {
+          "id": 13245,
+          "name": "Foundations for Living",
+          "state": "OH",
+          "report_names": [
+            "Foundations for Living"
+          ],
+          "pages": "60, 64-65, 77, 81, 90, 108-109"
+        },
+        {
+          "id": 13347,
+          "name": "Resource Treatment Center – Carina Group Home",
+          "state": "IN",
+          "report_names": [
+            "Resource Indiana",
+            "Resource Treatment Center",
+            "RTC Resource ACQ Corp"
+          ],
+          "pages": "66, 70-71, 90-92, 103-105, 108-109"
+        },
+        {
+          "id": 13348,
+          "name": "Resource Treatment Center – Polaris Group Home",
+          "state": "IN",
+          "report_names": [
+            "Resource Indiana",
+            "Resource Treatment Center",
+            "RTC Resource ACQ Corp"
+          ],
+          "pages": "66, 70-71, 90-92, 103-105, 108-109"
+        },
+        {
+          "id": 13349,
+          "name": "Resource Treatment Center – Wind Rose Home for Girls",
+          "state": "IN",
+          "report_names": [
+            "Resource Indiana",
+            "Resource Treatment Center",
+            "RTC Resource ACQ Corp"
+          ],
+          "pages": "66, 70-71, 90-92, 103-105, 108-109"
+        },
+        {
+          "id": 13380,
+          "name": "Woodward Academy",
+          "state": "IA",
+          "report_names": [
+            "Woodward Academy"
+          ],
+          "pages": "78, 103"
+        },
+        {
+          "id": 13412,
+          "name": "Wyoming Behavioral Institute Pathways Residential Trauma-Informed Care",
+          "state": "WY",
+          "report_names": [
+            "Wyoming Behavioral Institute"
+          ],
+          "pages": "43"
+        },
+        {
+          "id": 13438,
+          "name": "Wyoming Behavioral Institute Pathways Residential",
+          "state": "WY",
+          "report_names": [
+            "Wyoming Behavioral Institute"
+          ],
+          "pages": "43"
+        },
+        {
+          "id": 13526,
+          "name": "Pavilion Behavioral Health System Adolescent RTC",
+          "state": "IL",
+          "report_names": [
+            "Pavilion Behavioral Health System"
+          ],
+          "pages": "20, 64-65, 95, 119"
+        },
+        {
+          "id": 13542,
+          "name": "Cedar Ridge Behavioral Hospital",
+          "state": "OK",
+          "report_names": [
+            "Cedar Ridge Behavioral Hospital"
+          ],
+          "pages": "4, 18, 61-63, 65, 71, 91, 105, 117"
+        },
+        {
+          "id": 13552,
+          "name": "Cedar Ridge Residential Treatment Facility",
+          "state": "OK",
+          "report_names": [
+            "Cedar Ridge Treatment Center"
+          ],
+          "pages": "38, 43, 49, 60-61, 63-64, 76, 91, 114"
+        },
+        {
+          "id": 13624,
+          "name": "Alabama Clinical Schools",
+          "state": "AL",
+          "report_names": [
+            "Alabama Clinical Schools"
+          ],
+          "pages": "90, 108-109"
+        },
+        {
+          "id": 13641,
+          "name": "Brighter Path Tuskegee",
+          "state": "AL",
+          "report_names": [
+            "Brighter Path Tuskegee"
+          ],
+          "pages": "120-121"
+        },
+        {
+          "id": 13661,
+          "name": "Hill Crest RTC",
+          "state": "AL",
+          "report_names": [
+            "Hill Crest Behavioral Health Services"
+          ],
+          "pages": "65-66, 88, 94, 100, 106-107, 119-120, 124"
+        },
+        {
+          "id": 13670,
+          "name": "Laurel Oaks Behavioral Health Center",
+          "state": "AL",
+          "report_names": [
+            "Laurel Oaks Behavioral Health Center"
+          ],
+          "pages": "42"
+        },
+        {
+          "id": 13891,
+          "name": "North Star Behavioral Health DeBarr RTC",
+          "state": "AK",
+          "report_names": [
+            "North Star Debarr"
+          ],
+          "pages": "54, 84, 88, 90, 94-95, 99-101, 115, 119, 126"
+        },
+        {
+          "id": 13892,
+          "name": "North Star Behavioral Health Palmer RTC",
+          "state": "AK",
+          "report_names": [
+            "North Star Palmer Residential Treatment Center"
+          ],
+          "pages": "64, 84, 86, 93"
+        },
+        {
+          "id": 13911,
+          "name": "North Star Behavioral Health DeBarr RTC for Girls",
+          "state": "AK",
+          "report_names": [
+            "North Star Debarr"
+          ],
+          "pages": "54, 84, 88, 90, 94-95, 99-101, 115, 119, 126"
+        },
+        {
+          "id": 13912,
+          "name": "North Star Behavioral Health Palmer RTC for Boys",
+          "state": "AK",
+          "report_names": [
+            "North Star Palmer Residential Treatment Center"
+          ],
+          "pages": "64, 84, 86, 93"
+        },
+        {
+          "id": 13970,
+          "name": "Palmetto Summerville Behavioral Health",
+          "state": "SC",
+          "report_names": [
+            "Palmetto Summerville Behavioral Health"
+          ],
+          "pages": "43, 50-52, 65, 82, 95-96, 98, 104, 118, 122-125"
+        },
+        {
+          "id": 13997,
+          "name": "Palmetto Pines PTRF",
+          "state": "SC",
+          "report_names": [
+            "Palmetto Pines Behavioral Health"
+          ],
+          "pages": "54, 60, 62, 69, 74-75, 114, 118, 122-125"
+        },
+        {
+          "id": 14014,
+          "name": "River Park Hospital – The Barboursville School",
+          "state": "WV",
+          "report_names": [
+            "River Park Hospital"
+          ],
+          "pages": "54, 64, 69, 72-73, 83-84, 92"
+        },
+        {
+          "id": 14015,
+          "name": "River Park Hospital – The Roundtable Program",
+          "state": "WV",
+          "report_names": [
+            "River Park Hospital"
+          ],
+          "pages": "54, 64, 69, 72-73, 83-84, 92"
+        },
+        {
+          "id": 14016,
+          "name": "River Park Hospital – The Bridge Program",
+          "state": "WV",
+          "report_names": [
+            "River Park Hospital"
+          ],
+          "pages": "54, 64, 69, 72-73, 83-84, 92"
+        },
+        {
+          "id": 14054,
+          "name": "Brighter Transition Youth Treatment Center",
+          "state": "SD",
+          "report_names": [
+            "Brighter Transition Youth Treatment Center"
+          ],
+          "pages": "103"
+        },
+        {
+          "id": 14058,
+          "name": "Brighter Transition Youth Treatment Center/Falls Academy",
+          "state": "SD",
+          "report_names": [
+            "Brighter Transition Youth Treatment Center"
+          ],
+          "pages": "103"
+        },
+        {
+          "id": 14160,
+          "name": "Cumberland Hospital",
+          "state": "VA",
+          "report_names": [
+            "Cumberland Children's Hospital",
+            "Cumberland Hospital"
+          ],
+          "pages": "36, 44-46, 95, 97"
+        },
+        {
+          "id": 100006,
+          "name": "The Brown Schools at Cedar Springs",
+          "state": "CO",
+          "report_names": [
+            "Cedar Springs Hospital"
+          ],
+          "pages": "91, 93"
+        },
+        {
+          "id": 100045,
+          "name": "Hill Crest Behavioral Health",
+          "state": "AL",
+          "report_names": [
+            "Hill Crest Behavioral Health Services"
+          ],
+          "pages": "65-66, 88, 94, 100, 106-107, 119-120, 124"
+        },
+        {
+          "id": 100049,
+          "name": "Laurel Oaks Behavioral Health Center RTC",
+          "state": "AL",
+          "report_names": [
+            "Laurel Oaks Behavioral Health Center"
+          ],
+          "pages": "42"
+        },
+        {
+          "id": 100098,
+          "name": "Lakeside Academy",
+          "state": "MI",
+          "report_names": [
+            "Lakeside Academy"
+          ],
+          "pages": "10"
+        },
+        {
+          "id": 100111,
+          "name": "Piney Ridge Center",
+          "state": "AR",
+          "report_names": [
+            "Piney Ridge Treatment Center"
+          ],
+          "pages": "4, 12, 37, 50, 56-57, 60-61, 66, 68-71, 73, 75-77, 81, 86, 92-95, 100, 103, 105, 109, 117-118"
+        }
+      ],
+      "not_in_database": [
+        "Alliance Health Center (The Crossings), UHS, Mississippi",
+        "Behavioral Health Treatment Center (Acadia; Tennessee), a former staffer quoted on p. 98; the report gives no name that places it",
+        "Brentwood Behavioral Healthcare, UHS, Mississippi",
+        "Cove PREP, Acadia, Pennsylvania",
+        "Devereux Brumer Villa, Pennsylvania",
+        "First Hospital Panamericano, UHS, Puerto Rico",
+        "Millcreek of Pontotoc, Acadia, Mississippi",
+        "North Star Behavioral Health System, UHS, Alaska (the system as a whole; DeBarr and Palmer are tagged)",
+        "North Star Psychiatric Hospital, UHS, Alaska"
+      ]
+    }
+  ]
+}
