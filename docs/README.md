@@ -7,16 +7,14 @@ says where to read about each part.
 
 ## Start here
 
-- [Handoff, 2026-09-24: portal, inspections, AI providers](./HANDOFF-2026-09-24-portal-inspections.md):
-  the anonymous portal's encryption and keys, the FL/NC lite report lists,
-  the AI model updates, what is waiting on the owner and the open work.
-- [Handoff, 2026-09-24: network map](./HANDOFF-2026-09-24-network-map.md):
-  the next two network map features (route highlight, list view).
-- [Handoff, 2026-09-18](./HANDOFF-2026-09-18.md): orientation for a new
-  contributor or agent, and pointers to the working plans.
-- [Fix plan, September 2026](./FIX-PLAN-2026-09.md): the September fix list
-  (items 1 to 20) with a status table and a "Waiting on the owner" section
-  for production actions only the site owner can run.
+- [Work plan](./PLAN.md): the one list of open work. How to work in this
+  repository, what is waiting on the owner, and what to pick up next, with
+  the network map's next two features specified in full.
+- [Fix plan, September 2026](./FIX-PLAN-2026-09.md): the record of the
+  September fix list (items 1 to 20), what was built and why.
+- [Page template design plan](./PAGE-TEMPLATE-DESIGN-PLAN.md) and
+  [page classification](./PAGE-CLASSIFICATION.md): the template families
+  and what became of every default-template page.
 - [cPanel deployment guide](./CPANEL-DEPLOYMENT-GUIDE.md): how a push to
   `main` reaches production through `.cpanel.yml`. The deploy never deletes
   files, so a removed file needs its own `rm -f` task there.

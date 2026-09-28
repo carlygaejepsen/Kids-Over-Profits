@@ -26,9 +26,13 @@ specialized template. The source inventory and repository relationship are in
   redirects.
 - 2026-09-25, evening: Phase 1 mostly done. `templates/page-hub.php` builds
   every hub from `kop_hub_config()` (`inc/hub-shell.php`); all hubs have
-  settings; test `php scripts/test-hub-pages.php`. What is left of Phase 1,
-  and Phases 3 and 4 in detail, are in
-  [PAGE-TEMPLATE-HANDOFF.md](PAGE-TEMPLATE-HANDOFF.md).
+  settings; test `php scripts/test-hub-pages.php`.
+- 2026-09-25, late: Phase 3 done. `templates/page-utility.php`
+  (`inc/utility-pages.php`) and `templates/page-legal-document.php`;
+  `/support/` 301s to `/donate/`. Phase 4 has its inventory script
+  (`scripts/inventory-posts.py`) and nothing else yet.
+- What is left (hub visual QA, Phase 4, and the owner's decisions) is
+  tracked in [PLAN.md](PLAN.md) section 3.2.
 
 ## Goal
 

@@ -1,12 +1,13 @@
 # Fix plan, September 2026
 
-The fix list raised on 2026-09-17 and what became of each item, then four
-issues the owner raised on 2026-09-18 (items 11 to 14), then a
-reading-experience brief of 2026-09-22 (items 15 to 19). Everything from
-the first list is live on kidsoverprofits.org except the network map's
-last steps; the second list is open, and the third has not been started.
+The record of the September 2026 fix list: the list raised on 2026-09-17,
+four issues the owner raised on 2026-09-18 (items 11 to 14), and a
+reading-experience brief of 2026-09-22 (items 15 to 19), with what was built
+for each and why. Code comments cite its item numbers.
 
-Last updated 2026-09-23.
+**Open work and owner actions are no longer tracked here.** They moved to
+[PLAN.md](PLAN.md) on 2026-09-28, along with the rules for working in this
+repository. The status table below is as of 2026-09-23.
 
 ## Status
 
@@ -36,75 +37,6 @@ Last updated 2026-09-23.
 | 18 | Advocacy History, Corporatization, Lawsuits, Survivors | Open; editorial, once 15 and 19 exist. The brief's fourth page is its first |
 | 19 | Reusable article pieces | Done 2026-09-23: five pieces and five shortcodes in `inc/article-pieces.php` |
 | 20 | The staging copy, and what still points at it | Content clean as of 2026-09-23 bar one pingback comment; the hosting lock-down is the owner's |
-
-## Waiting on the owner
-
-Each of these has to be run in a browser while logged in as an admin, so no
-session can do it. The tools that change data show a dry run first; add
-`?apply=1` to act.
-
-1. **PDF covers (7B).**
-   [regenerate-pdf-previews.php](https://kidsoverprofits.org/wp-content/themes/child/api/regenerate-pdf-previews.php),
-   then `?apply=1` repeatedly until it reports 0 remaining. Renders the
-   first page of the 153 PDFs that have none.
-2. **Inspection reports in the Monitor menu (4).**
-   [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php),
-   then `?apply=1`.
-3. **Featured inspection reports (4).** Run
-   [update-schema.php](https://kidsoverprofits.org/wp-content/themes/child/api/update-schema.php)
-   first (it has no dry run; on production it only adds the `featured` and
-   `featured_note` columns), then feature reports in
-   [manage-featured-inspections.php](https://kidsoverprofits.org/wp-content/themes/child/api/manage-featured-inspections.php).
-   Done by the owner on 2026-09-18 (two reports featured); see item 13 for
-   why they did not appear at first. Each still needs a `featured_note`.
-4. **Research facility tags (2B).**
-   [propose-research-facility-tags.php](https://kidsoverprofits.org/wp-content/themes/child/api/propose-research-facility-tags.php)
-   writes `kop-research-tag-proposals.json` to the uploads directory. Prune
-   it, then run `?apply=1`.
-5. **Research relevance tiers (2A).** Rate documents in the
-   [research library](https://kidsoverprofits.org/researchreports/) editor.
-   Until something is rated the page keeps its old order.
-6. **Proposed resources (5).** While logged in,
-   [/resources/](https://kidsoverprofits.org/resources/) shows a dashed block
-   of proposed crisis lines, reporting routes and family resources that
-   visitors cannot see. Check every number, then move the ones to publish
-   into `kop_resources_groups()` in `inc/resources-list.php`.
-7. **Starter views for the map (1).** Done 2026-09-18: four views are in
-   `js/data/network/network-overrides.json` (Historical, Today's top
-   players, Wilderness, Fundamentalist). Edit that file to change or add
-   one.
-8. **Inspection highlights (14).** Open
-   [scan-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/scan-inspection-highlights.php)
-   for the dry run, then `?apply=1` repeatedly until it reports 0 remaining
-   (about 14 loads). It only adds two new tables. Then review the queue in
-   [review-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php).
-   The first batch was saved on 2026-09-21 (3,000 reports, 250 candidates);
-   about 13 more loads finish it. An approved finding scoring 70 or more
-   appears on the home page and the inspection reports hub, most recent
-   first, so the review screen opens on the most recent severe candidates.
-   All of them are listed on [/severe-reports/](https://kidsoverprofits.org/severe-reports/)
-   and flagged in the state trackers. Re-run
-   [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php)
-   with `?apply=1` to put Severe Reports in the Monitor menu.
-
-9. **Staging links (20).** Done by the owner on 2026-09-23: the fixer was
-   run and the memorial records, the OG Image snippet and the Hyde images are
-   all on the live site now. One thing it does not reach: comment 453 on
-   [/hyde/](https://kidsoverprofits.org/hyde/) is a pingback from the staging
-   copy of the Fuller page, so it still prints a /staging/ link under the
-   post. Delete it in Comments; it is a clone pinging the original.
-## Working in this repository
-
-Several sessions share the checkout at `C:\Users\daniu\source\repos\Kids-Over-Profits`
-and push to main from scratchpad worktrees, because main is checked out in
-another worktree. The shared checkout's branch therefore falls behind main,
-and VS Code's Source Control fills with files that are already on main. On
-2026-09-18 it showed 43; all of them were on main. The safe cleanup: compare
-each file to `origin/main`, `git reset --mixed origin/main` (moves the branch,
-touches no file), refresh from main only the files that equal an older
-committed version, and set the branch's upstream to `origin/main`. Never
-`git reset --hard` or `git stash` here: another session may have live edits
-in the tree.
 
 ---
 
