@@ -374,7 +374,7 @@
             const result = await response.json();
             
             // DEBUG: Log RAW Acadia from API
-            debugLog('🔬🔬 RAW ACADIA from API:', result.projects && result.projects.Acadia 
+            debugLog('RAW ACADIA from API:', result.projects && result.projects.Acadia 
                 ? JSON.stringify(result.projects.Acadia).substring(0, 800) 
                 : 'Not found');
             
@@ -390,7 +390,7 @@
                 // Normalize projects to flatten nested payloads and keep categories intact
                 const normalizedProjects = normalizeProjectsPayload(result) || result.projects || {};
                 // DEBUG: Log sample project structures
-                debugLog('🔬 LOADED PROJECTS - Sample data structure:');
+                debugLog('LOADED PROJECTS - Sample data structure:');
                 const firstFive = Object.keys(normalizedProjects).slice(0, 5);
                 firstFive.forEach(name => {
                     const p = normalizedProjects[name];
@@ -402,7 +402,7 @@
                 // DEBUG: Verify structure immediately after assignment
                 const acadia = window.projects['Acadia'];
                 if (acadia && DEBUG_LOGGING_ENABLED) {
-                    debugLog('🔬 ACADIA RIGHT AFTER LOAD:', {
+                    debugLog('ACADIA RIGHT AFTER LOAD:', {
                         'acadia.data exists': !!acadia.data,
                         'acadia.data.facilities exists': !!acadia.data && acadia.data.facilities,
                     'acadia.data.facilities.length': (acadia.data && acadia.data.facilities && acadia.data.facilities.length) ?? 'N/A',
@@ -422,7 +422,7 @@
                 // Debug: Check if category metadata is present
                 Object.keys(window.projects).forEach(name => {
                     const project = window.projects[name];
-                    debugLog(`📊 Project "${name}" - Category: ${project.category || 'MISSING'}, Has timestamp: ${!!project.timestamp}, Has currentFacilityIndex: ${!!project.currentFacilityIndex}`);
+                    debugLog(`Project "${name}" - Category: ${project.category || 'MISSING'}, Has timestamp: ${!!project.timestamp}, Has currentFacilityIndex: ${!!project.currentFacilityIndex}`);
                 });
 
                 // Force re-initialize autocomplete after cloud data loads
@@ -493,9 +493,9 @@
         debugLog
     };
 
-    console.log('[DB Loader] ✅ DB Form Loader initialized');
-    debugLog('📍 API Endpoints:', API_ENDPOINTS);
-    debugLog('📂 Fallback URLs:', FALLBACK_PROJECTS_URL_CANDIDATES);
+    console.log('[DB Loader] DB Form Loader initialized');
+    debugLog('API Endpoints:', API_ENDPOINTS);
+    debugLog('Fallback URLs:', FALLBACK_PROJECTS_URL_CANDIDATES);
 
     // Mark as ready
     window.KOP_LOADER_READY = true;

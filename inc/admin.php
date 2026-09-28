@@ -8,20 +8,21 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Add approval page to admin menu
+ * Approve Edits screen, under the KOP Tools menu rather than a top-level entry
+ * of its own. The slug stays approve-facility-edits so existing links
+ * (the submissions editor's reviewUrl) keep working.
  */
 function add_approval_page_to_menu() {
-    add_menu_page(
-        'Approve Facility Edits',           // Page title
-        'Approve Edits',                     // Menu title
-        'manage_options',                    // Capability (admin only)
-        'approve-facility-edits',            // Menu slug
-        'render_approval_page_iframe',       // Callback function
-        'dashicons-yes-alt',                // Icon
-        6
+    add_submenu_page(
+        kop_tools_parent_slug(),
+        'Approve Facility Edits',
+        'Approve Facility Edits',
+        'manage_options',
+        'approve-facility-edits',
+        'render_approval_page_iframe'
     );
 }
-add_action('admin_menu', 'add_approval_page_to_menu');
+add_action('admin_menu', 'add_approval_page_to_menu', 20);
 
 /**
  * Render approval page iframe
@@ -40,21 +41,55 @@ function render_approval_page_iframe() {
  * Pages with a page template assigned, so their URL depends on the page slug
  * the editor chose. Resolve the permalink for whichever page uses a template.
  *
+ * Several pages can share one template (prod has three on the submissions
+ * template and two on the wiki editor's), so the pick is fixed rather than
+ * left to query order: the page at the slug kop_tool_page_specs() gives the
+ * template, then any published or private page, then a draft, oldest first.
+ * Every menu, dashboard and notification link goes through here, so they all
+ * land on the same page.
+ *
  * Returns the permalink, or '' if no page currently uses that template.
  */
 function kop_find_template_page_url($template) {
-    foreach (array($template, 'templates/' . $template) as $value) {
-        $pages = get_pages(array(
-            'meta_key'    => '_wp_page_template',
-            'meta_value'  => $value,
-            'number'      => 1,
-            'post_status' => 'publish,private,draft',
-        ));
-        if (!empty($pages)) {
-            return get_permalink($pages[0]->ID);
+    static $cache = array();
+    if (isset($cache[$template])) {
+        return $cache[$template];
+    }
+    $slug = '';
+    foreach (kop_tool_page_specs() as $spec) {
+        if ($spec['template'] === $template) {
+            $slug = $spec['slug'];
+            break;
         }
     }
-    return '';
+    $pages = get_posts(array(
+        'post_type'        => 'page',
+        'post_status'      => array('publish', 'private', 'draft'),
+        'posts_per_page'   => -1,
+        'orderby'          => 'ID',
+        'order'            => 'ASC',
+        'suppress_filters' => true,
+        'meta_query'       => array(array(
+            'key'     => '_wp_page_template',
+            'value'   => array($template, 'templates/' . $template),
+            'compare' => 'IN',
+        )),
+    ));
+    $best = null;
+    $best_rank = 99;
+    foreach ($pages as $page) {
+        if ($slug !== '' && $page->post_name === $slug) {
+            $rank = 0;
+        } else {
+            $rank = $page->post_status === 'draft' ? 2 : 1;
+        }
+        if ($rank < $best_rank) {
+            $best = $page;
+            $best_rank = $rank;
+        }
+    }
+    $cache[$template] = $best ? (string) get_permalink($best->ID) : '';
+    return $cache[$template];
 }
 
 /**
@@ -349,6 +384,10 @@ function kop_template_display_name($template) {
         'page-wiki-editor.php'        => 'Wiki Editor',
         'page-admin-data.php'         => 'Admin Data Form',
         'page-admin-submissions.php'  => 'Admin - Submissions Review',
+        'page-news-processor.php'     => 'News Article Processor',
+        'page-admin-lawsuits.php'     => 'Admin - Lawsuits',
+        'page-admin-legislation.php'  => 'Admin - Legislation',
+        'page-admin-volunteers.php'   => 'Admin - Volunteer Projects',
     );
     return isset($names[$template]) ? $names[$template] : $template;
 }
@@ -407,7 +446,11 @@ function kop_tool_page_specs() {
     return array(
         array('template' => 'page-admin-data-manager.php', 'title' => 'Data Manager',       'slug' => 'data-manager',       'status' => 'private'),
         array('template' => 'page-admin-data.php',         'title' => 'Admin Data Form',     'slug' => 'admin-data',         'status' => 'private'),
-        array('template' => 'page-admin-submissions.php',  'title' => 'Submissions Review',  'slug' => 'submissions-review', 'status' => 'private'),
+        array('template' => 'page-admin-submissions.php',  'title' => 'Submissions Review',  'slug' => 'admin-submissions',  'status' => 'private'),
+        array('template' => 'page-news-processor.php',     'title' => 'News Processor',      'slug' => 'news-processor',     'status' => 'private'),
+        array('template' => 'page-admin-lawsuits.php',     'title' => 'Lawsuit Admin',       'slug' => 'admin-lawsuits',     'status' => 'private'),
+        array('template' => 'page-admin-legislation.php',  'title' => 'Legislation Admin',   'slug' => 'admin-legislation',  'status' => 'private'),
+        array('template' => 'page-admin-volunteers.php',   'title' => 'Volunteer Admin',     'slug' => 'admin-volunteers',   'status' => 'private'),
         array('template' => 'page-wiki-editor.php',        'title' => 'Wiki Editor',         'slug' => 'wiki-editor',        'status' => 'publish'),
         array('template' => 'page-submit-legislation.php', 'title' => 'Submit Legislation',  'slug' => 'submit-legislation', 'status' => 'publish'),
         array('template' => 'page-submit-lawsuit.php',     'title' => 'Submit a Lawsuit',    'slug' => 'submit-lawsuit',     'status' => 'publish'),
@@ -585,7 +628,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '8';
+    $version = '9';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }

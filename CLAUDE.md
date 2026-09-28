@@ -66,6 +66,9 @@ php scripts/test-news-post-import.php
 # seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
 python scripts/build-media-subfolders.py
 php scripts/test-media-subfolders.php
+# SVG icons that replace emojis (inc/icons.php: kop_icon() / kopIcon(), and the
+# render filter for emojis in post content, widgets and the ACF facility-key field)
+php scripts/test-icons.php
 # After any template or page CSS change: no text may sit on the gradient body background
 python scripts/check-bare-text.py               # one page per child template, live site
 # See the working tree's map in a browser before pushing it

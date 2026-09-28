@@ -723,12 +723,12 @@ function addNoteButtons() {
 
         // Add click handler
         noteBtn.addEventListener('click', (e) => {
-            debugLog('✅ Note button clicked! Field:', field, 'Group:', group);
+            debugLog('Note button clicked! Field:', field, 'Group:', group);
             e.preventDefault();
             e.stopPropagation();
             e.stopImmediatePropagation();
             const result = createFieldNote(field, group);
-            debugLog('✅ createFieldNote returned:', result);
+            debugLog('createFieldNote returned:', result);
         }, { passive: false });
 
         // Prevent button from interfering with input events
@@ -814,9 +814,9 @@ function addNoteButtons() {
  * @returns {HTMLElement} - The created note container
  */
 function createFieldNote(field, group) {
-    debugLog('🔵 createFieldNote START - field:', field, 'group:', group);
+    debugLog('createFieldNote START - field:', field, 'group:', group);
     const fieldId = getFieldIdentifier(field);
-    debugLog('🔵 fieldId:', fieldId);
+    debugLog('fieldId:', fieldId);
     const label = group.querySelector('label');
 
     // Get clean label text without tooltip content
@@ -828,7 +828,7 @@ function createFieldNote(field, group) {
         fieldName = labelClone.textContent.replace(/\?/g, '').trim();
     }
 
-    debugLog('🔵 fieldName:', fieldName);
+    debugLog('fieldName:', fieldName);
 
     // Create a new note container
     const noteContainer = document.createElement('div');
@@ -1270,4 +1270,4 @@ window.NotesModule = {
 };
 
 // Log that the module has loaded
-console.log('📝 Notes module loaded and window.NotesModule is available');
+console.log('Notes module loaded and window.NotesModule is available');

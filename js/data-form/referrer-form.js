@@ -187,7 +187,7 @@ function ensureReferrerDataStructures() {
         return;
     }
 
-    console.log('🔧 ensureReferrerDataStructures() called for:', window.currentProjectName);
+    console.log('ensureReferrerDataStructures() called for:', window.currentProjectName);
     console.log('  - FORM_MODE:', window.FORM_MODE);
     console.log('  - RAW referrerConsultants:', JSON.stringify(window.formData.referrerConsultants));
     console.log('  - RAW referrerAgency:', JSON.stringify(window.formData.referrerAgency));
@@ -316,7 +316,7 @@ function ensureReferrerDataStructures() {
 
     window.formData.referrer = buildReferrerEntries(window.formData);
 
-    console.log('✅ ensureReferrerDataStructures() finished');
+    console.log('ensureReferrerDataStructures() finished');
     console.log('  - FINAL referrerConsultants count:', window.formData.referrerConsultants?.length);
     console.log('  - FINAL currentConsultantIndex:', window.currentConsultantIndex);
     console.log('  - FINAL referrerConsultants[0]:', JSON.stringify(window.formData.referrerConsultants?.[0]));
@@ -385,7 +385,7 @@ function loadReferrerData() {
     const agency = window.formData.referrerAgency || createDefaultReferrerGroup();
 
     if (typeof debugLog === 'function') {
-        debugLog('📋 loadReferrerData called', {
+        debugLog('loadReferrerData called', {
             'currentProject': window.currentProjectName,
             'referrerAgency': agency,
             'referrerIndividual': window.formData.referrerIndividual,
@@ -452,7 +452,7 @@ function loadReferrerData() {
     const consultant = window.formData.referrerIndividual || consultants[window.currentConsultantIndex] || createDefaultReferrerIndividual();
     window.formData.referrerIndividual = consultant;
     if (typeof debugLog === 'function') {
-        debugLog('📋 Consultant data:', consultant);
+        debugLog('Consultant data:', consultant);
     }
 
     // Normalize name parts so UI never collapses to a single-letter fullName
@@ -778,7 +778,7 @@ function loadConsultantData() {
     const consultant = window.formData.referrerConsultants[window.currentConsultantIndex];
 
     if (!consultant) {
-        console.warn('⚠️ Consultant not found at index', window.currentConsultantIndex);
+        console.warn('Consultant not found at index', window.currentConsultantIndex);
         return;
     }
 
@@ -868,7 +868,7 @@ function updateConsultantDropdown() {
 
     dropdown.value = window.currentConsultantIndex || 0;
     if (typeof debugLog === 'function') {
-        debugLog('✅ Consultant dropdown updated with', consultants.length, 'consultants');
+        debugLog('Consultant dropdown updated with', consultants.length, 'consultants');
     }
 }
 
@@ -877,7 +877,7 @@ function updateConsultantDropdown() {
  */
 function updateConsultantsUI() {
     if (typeof debugLog === 'function') {
-        debugLog('🔄 updateConsultantsUI called');
+        debugLog('updateConsultantsUI called');
     }
     // Ensure data structures exist before loading
     ensureReferrerDataStructures();
@@ -887,7 +887,7 @@ function updateConsultantsUI() {
     if (typeof updateJSON === 'function') updateJSON();
     if (typeof autoSave === 'function') autoSave();
     if (typeof debugLog === 'function') {
-        debugLog('✅ updateConsultantsUI complete');
+        debugLog('updateConsultantsUI complete');
     }
 }
 
@@ -976,10 +976,10 @@ function initializeConsultantsTocToggle() {
 
             if (isCollapsed) {
                 content.style.display = 'block';
-                consultantsTocToggle.textContent = '🔎';
+                consultantsTocToggle.innerHTML = (typeof kopIcon === 'function') ? kopIcon('search') : '';
             } else {
                 content.style.display = 'none';
-                consultantsTocToggle.textContent = '👁️';
+                consultantsTocToggle.innerHTML = (typeof kopIcon === 'function') ? kopIcon('eye') : '';
             }
         }, { passive: true });
         consultantsTocToggle.dataset.listenerAttached = 'true';
@@ -1174,8 +1174,8 @@ window.initializeConsultantsTocToggle = initializeConsultantsTocToggle;
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('📋 Referrer form module loaded');
+        console.log('Referrer form module loaded');
     });
 } else {
-    console.log('📋 Referrer form module loaded');
+    console.log('Referrer form module loaded');
 }

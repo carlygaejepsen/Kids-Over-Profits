@@ -838,10 +838,10 @@ function initializeTransportersTocToggle() {
 
             if (isCollapsed) {
                 content.style.display = 'block';
-                toggleBtn.textContent = '🔎';
+                toggleBtn.innerHTML = (typeof kopIcon === 'function') ? kopIcon('search') : '';
             } else {
                 content.style.display = 'none';
-                toggleBtn.textContent = '👁️';
+                toggleBtn.innerHTML = (typeof kopIcon === 'function') ? kopIcon('eye') : '';
             }
         }, { passive: true });
         toggleBtn.dataset.listenerAttached = 'true';
@@ -961,8 +961,8 @@ window.initializeTransportersTocToggle = initializeTransportersTocToggle;
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('🚐 Transporter form module loaded');
+        console.log('Transporter form module loaded');
     });
 } else {
-    console.log('🚐 Transporter form module loaded');
+    console.log('Transporter form module loaded');
 }

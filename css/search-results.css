@@ -147,9 +147,29 @@
 
 /* Section type accents */
 
-.kop-search-facilities .kop-search-section-title::before { content: "🏫 "; }
-.kop-search-news .kop-search-section-title::before       { content: "📰 "; }
-.kop-search-posts .kop-search-section-title::before      { content: "📄 "; }
+.kop-search-facilities .kop-search-section-title::before,
+.kop-search-news .kop-search-section-title::before,
+.kop-search-posts .kop-search-section-title::before {
+    content: "";
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3em;
+    vertical-align: -0.15em;
+    background: currentColor;
+    -webkit-mask: var(--kop-search-section-icon) center/contain no-repeat;
+    mask: var(--kop-search-section-icon) center/contain no-repeat;
+}
+
+.kop-search-facilities .kop-search-section-title::before {
+    --kop-search-section-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%22M21.42%2010.922a1%201%200%200%200-.019-1.838L12.83%205.18a2%202%200%200%200-1.66%200L2.6%209.08a1%201%200%200%200%200%201.832l8.57%203.908a2%202%200%200%200%201.66%200z%22/%3E%3Cpath%20d%3D%22M22%2010v6%22/%3E%3Cpath%20d%3D%22M6%2012.5V16a6%203%200%200%200%2012%200v-3.5%22/%3E%3C/svg%3E");
+}
+.kop-search-news .kop-search-section-title::before {
+    --kop-search-section-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%22M4%2022h16a2%202%200%200%200%202-2V4a2%202%200%200%200-2-2H8a2%202%200%200%200-2%202v16a2%202%200%200%201-2%202Zm0%200a2%202%200%200%201-2-2v-9c0-1.1.9-2%202-2h2%22/%3E%3Cpath%20d%3D%22M18%2014h-8%22/%3E%3Cpath%20d%3D%22M15%2018h-5%22/%3E%3Cpath%20d%3D%22M10%206h8v4h-8V6Z%22/%3E%3C/svg%3E");
+}
+.kop-search-posts .kop-search-section-title::before {
+    --kop-search-section-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%20fill%3D%27none%27%20stroke%3D%27black%27%20stroke-width%3D%272%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%3E%3Cpath%20d%3D%22M15%202H6a2%202%200%200%200-2%202v16a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V7z%22/%3E%3Cpath%20d%3D%22M14%202v4a2%202%200%200%200%202%202h4%22/%3E%3Cpath%20d%3D%22M16%2013H8%22/%3E%3Cpath%20d%3D%22M16%2017H8%22/%3E%3Cpath%20d%3D%22M10%209H8%22/%3E%3C/svg%3E");
+}
 
 /* No results / empty states */
 

@@ -214,18 +214,18 @@ The date is when each was last confirmed open.
 Live at https://kidsoverprofits.org/network-map/. Build and ship each on its
 own. The full specifications are in the [appendix](#appendix-network-map-specifications).
 
-1. **Light a route on the board in view** (2d.6). A route found while a
-   trail is open is lit on the current board instead of replacing it.
-   Not started as of 2026-09-28 (no `highlightRoute` in `js/network-map/`).
-2. **List view with CSV download** (Phase 3). A Map / List switch showing
+1. **List view with CSV download** (Phase 3). A Map / List switch showing
    the board as two sortable tables with CSV export. Not started (no
    `js/network-map/list.js`).
-3. **David Gilcrease (2b.1).** A module test asserting all five of his
+2. **David Gilcrease (2b.1).** A module test asserting all five of his
    connections, and a check of the deployed build with the cross-group toggle
    off.
-4. Later, not to be started without a word from the owner: kind marks (2d.2,
+3. Later, not to be started without a word from the owner: kind marks (2d.2,
    decision 17), chain hulls and group-by-network (2d.4), "Suggest a
    correction" from the map (Phase 3), Phase 4.
+
+Shipped from this list: the route highlight (2d.6) on 2026-09-28; the
+record of what was decided is NETWORK-MAP.md's 2d.6 "Built" paragraphs.
 
 After any map change: `node scripts/build-network-graph.js`,
 `node scripts/test-network-graph.js`, and
@@ -338,10 +338,10 @@ the text goes in the page body, never in post meta, ACF or a table (owner,
 
 ## Appendix: network map specifications
 
-Written 2026-09-24 for items 1 and 2 of section 3.1. Build the route
-highlight first: it is smaller and touches only code the list view needs
-too. Ship each on its own: commit, push, deploy, check live, then start the
-next.
+Written 2026-09-24 for the route highlight and the list view. The route
+highlight (A) shipped 2026-09-28 and its section is gone from here; what
+was built and why is NETWORK-MAP.md 2d.6. The list view remains. Ship it
+on its own: commit, push, deploy, check live.
 
 ### 0. Read this first
 
@@ -444,206 +444,7 @@ next.
 
 ---
 
-### A. Light a route on the board in view (2d.6)
-
-#### What it has today
-
-"Connect two names" (toolbar button `#kop-network-path-toggle`, `path.js`)
-takes two names, finds every route of six steps or fewer
-(`store.paths(from, to)`, shortest first) and calls `focus.showPath(ids)`.
-That replaces the board with the route alone, in mode `'path'`. The drawer
-then lists the route and the other routes (`path.renderInto`). Each name's
-drawer has "How is this connected to...?", which opens the form with that
-name as From (`path.startFrom`).
-
-The gap: a reader looking at a board they built (say, Expand with three
-companies open) who asks how two names on it connect loses the board. They
-want to see the route inside what they are already looking at.
-
-#### What to build
-
-When a route is found **while a trail is open and not already a route**, it
-is lit on the board in view instead of replacing it:
-
-1. The route's names already on the board stay where they are. Any route
-   name not on the board is added, and nothing else is: not its
-   neighbours, not its owner. Adding names re-lays the board (that is
-   fine); lighting names already there does not.
-2. Everything else on the board dims to the hover dim (0.15). The route's
-   names and the lines joining each to the next stay lit.
-3. The highlight holds until the reader clears it: Escape, a "Clear route"
-   button in the drawer, a click on any name (which opens it as usual and
-   drops the highlight), Start over, or finding another route (which
-   replaces it).
-4. Hover still works while a route is lit. Hovering a name lights that
-   name's neighbourhood for as long as the pointer is on it, then the route
-   comes back.
-5. The drawer shows the route the same way it does for a path today
-   (numbered names, what joins each to the next, then the other routes). It
-   adds two buttons at the top: **Show this route on its own**, which calls
-   `focus.showPath(ids)`, and **Clear route**. Choosing another route in
-   the list lights that one on the same board.
-6. With no trail open (the opening view), or when the board is already a
-   route, keep today's behaviour: `showPath`.
-7. People on a lit route are never folded into a line: on a route the
-   person who joins two places is the answer (the same rule `showPath`
-   follows). Simplify must not drop a lit name either.
-8. A link to a lit route opens it lit: `#open=a,b&mode=expand&route=x,y,z`.
-   `route` is ignored when `open` is empty or when the route no longer
-   holds (a step has no line under the current filters).
-
-#### Where the code goes
-
-**focus.js**
-
-- New state beside `simple`: `var lit = null;` holding
-  `{ ids: [...], edgeIds: {...} }` or null.
-- `focus.highlightRoute(ids)`: return false and change nothing when the
-  route does not hold. Use the same check as `pathHolds()`, generalised to
-  take ids. Otherwise set `lit`. If any id is missing from
-  `focus.scene().nodeIds`, call `enterFocus()`; if not, just refresh the
-  emphasis and `onChange()`. Announce: "Route from A to B lit on the board,
-  N steps: A, then B, then C. Press Escape to clear it." Return
-  `{ added: <names added> }`.
-- `focus.clearRoute()`, `focus.litRoute()` (the ids or null).
-- `visibleIds()`: when `lit` is set, add `lit.ids` (live ones only) to the
-  result after the existing rules, so they are on the board whatever the
-  rules said.
-- `foldConnectors()` (look for `rootIds[node.id]`): treat lit ids like
-  roots, so a lit person is never folded.
-- `simplifyScene()` and `dropClosedLeaves()`: treat lit ids like roots
-  (they take a `roots` argument; pass roots plus lit ids).
-- The scene's reachability filter in `focus.scene()` (the `if
-  (chain.length)` block that keeps only names reachable from the roots):
-  start the walk from the lit ids as well, or a lit name added off to one
-  side will be dropped again.
-- After the scene is built, work out `lit.edgeIds`: for each consecutive
-  pair, the ids of `focus.linesBetween(a, b)` on the new scene. Compute it
-  in `enterFocus()` after `current = scene` (and in the no-relayout path),
-  because the ids of folded lines change with the scene.
-- `applyEmphasis()`: while no hover gather is running and `lit` is set, pass
-  `near = set of lit.ids`, `nearEdges = lit.edgeIds`, `dim: 0.15`. A hover
-  gather wins while it runs.
-- Clear `lit` in `focus.select` (any click), `focus.clear` /
-  `resetToWholeMap`, `focus.showPath`, `focus.restore` (unless the restore
-  itself carries a route; see url-state), `focus.truncateTo`, `setMode`,
-  `showAll`. Search for every place `chain` is reassigned and decide each
-  one; a stale highlight left over from the previous board is the bug to
-  avoid.
-- The layout seed key: add `lit ? '+route:' + lit.ids.join(',') : ''`, so a
-  board with added route names settles fresh.
-
-**path.js**
-
-- In `find(from, to)`: if `focus.chain().length && !focus.isPath()`, call
-  `focus.highlightRoute(routes[0].ids)` instead of `showPath`. Fall back to
-  `showPath` if it returns false.
-- `renderInto(body)`: today it returns false unless `focus.isPath()`. Make
-  it also render when `focus.litRoute()` is set, reading the ids from
-  there. Add the two buttons ("Show this route on its own", "Clear route").
-  In the list of other routes, a click calls `highlightRoute` when a route
-  is lit and `showPath` when the board is a path.
-- `describeRoute` and `labelFor` already do the wording. Reuse them.
-
-**drawer.js**
-
-- `update()` hands the body to `options.renderPath` when `focus.isPath()`.
-  Do the same when `focus.litRoute()` is set, with its own
-  `'route:' + ids` key for `dismissedId`, so closing the drawer on a lit
-  route keeps it closed until the route changes.
-
-**url-state.js**
-
-- `parse`: `route=a,b,c` becomes `out.route = [...]`. `format(ids, mode,
-  view, simple, route)` writes it when a route is lit and `ids` is not
-  empty. Keep the argument order; existing callers pass four arguments.
-- `read()`: after `focus.restore(...)`, call `focus.highlightRoute(state.route)`
-  when there is one.
-- `write()`: pass `focus.litRoute()`.
-- Update the header comment with an example link.
-
-**app.js**
-
-- Escape (`wireKeyboard`): after the pinned popup and before
-  `focus.clear()`, if `focus.litRoute()` is set, clear the route and stop.
-  The order is popup, then route, then start over.
-- Update the canvas `aria-label` in the template to mention that Escape
-  clears a lit route first.
-
-**Template and CSS**
-
-- No new toolbar controls. The two drawer buttons reuse the drawer's
-  existing button styles (look at `.kop-network__drawer-route`).
-- Update the Key's "How to read this" (in the template) with one sentence:
-  a route found while something is open is lit on the board, and Escape
-  clears it.
-
-#### Tests (add a block to `scripts/test-network-modules.js`)
-
-Put it after the "paths between two names" block. Use real names, as the
-existing blocks do: `store.node('david-gilcrease')`, `'wwasps'`,
-`'provo-canyon-school'`, `'synanon'`.
-
-1. Open a name in Focus. Find a route whose both ends are already on the
-   board, then highlight it. The trail and mode are unchanged,
-   `focus.isPath()` is false, and no names were added (the node count is
-   unchanged).
-2. The emphasis: `renderer.emphasis.near` holds exactly the route's ids.
-   `renderer.emphasis.nearEdges` holds, for each consecutive pair, at least
-   one edge id, and every one is an edge on the scene between that pair.
-3. A route with a name off the board adds that name and only the names the
-   route needs: count before plus the missing ones equals count after.
-4. A person on a lit route is a name on the board, not folded
-   (`!scene.folded[id] && scene.nodeIds[id]`).
-5. With Simplify on, every lit name stays on the board.
-6. Clearing: `clearRoute()`, then `select(other)`, then `clear()` each
-   leave `litRoute()` null, and `renderer.emphasis.near` goes back to null
-   when no hover is running.
-7. `highlightRoute` on a route that no longer holds returns false and
-   changes nothing. To break a step, switch off its connection type in
-   `store.filters.categories` the way the "paths between two names" block
-   does (search it for `categories`), and switch it back afterwards.
-8. With no trail open, `path.find()` still calls `showPath` (mode becomes
-   `'path'`). With a trail open, it lights the route instead.
-9. `url-state`: `format` and `parse` round-trip `route`; `route` without
-   `open` is dropped by `format`.
-10. The drawer: with a route lit, `drawer.update()` renders the numbered
-    route list and both buttons. Clicking "Clear route" clears it.
-    Clicking "Show this route on its own" puts the board in path mode.
-
-Break each rule once by hand and see its test fail before you trust it.
-
-#### Check it in a browser
-
-`python scripts/preview-network-map.py` serves the working tree. Drive it
-with Playwright (see `scripts/preview-network-map.py`'s `shots()` for the
-setup) at 1440x900 and 390x780:
-
-- Open `#open=wwasps`, switch to Expand, open Provo Canyon School too.
-  Then use Connect two names from a name on the board to another one on
-  the board. The board should keep its layout, with the route lit and the
-  rest dim.
-- Hover a dimmed name. Its neighbourhood lights, and the route returns when
-  the pointer leaves.
-- Press Escape: the route clears, and the board stays. Press it again and
-  you are back at the opening view.
-- Copy the link while a route is lit and open it in a new page. It opens
-  lit.
-- No console errors or page errors at either width.
-
-#### Done when
-
-- Every test passes, including the new block.
-- It works in the browser at both widths.
-- `docs/NETWORK-MAP.md` 2d.6 gets a "*Built (date).*" paragraph under the
-  existing "*Built (2026-09-23), the drawer half.*" one, and the Order
-  list's item 5 is marked done. Write it in the style of the other Built
-  paragraphs, saying what was decided and why.
-- It is deployed and checked on the live page with Playwright.
-
----
-
-### B. List view with CSV download (Phase 3)
+### List view with CSV download (Phase 3)
 
 #### Why
 

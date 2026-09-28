@@ -21,6 +21,7 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/icons.php';
 
 if (!function_exists('current_user_can') || !current_user_can('manage_options')) {
     http_response_code(403);
@@ -827,8 +828,8 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 
 <div class="kop-layout">
 <nav class="kop-tree">
-    <a class="special <?php echo $mode === 'misfiled' ? 'sel' : ''; ?>" href="?mode=misfiled">⚠ Likely mis-filed</a>
-    <a class="special <?php echo $folder_filter === 'uncat' ? 'sel' : ''; ?>" href="?folder=uncat">🗃 Uncategorized <span class="cnt">(<?php echo $uncat_count; ?>)</span></a>
+    <a class="special <?php echo $mode === 'misfiled' ? 'sel' : ''; ?>" href="?mode=misfiled"><?php echo kop_icon('alert-triangle'); ?> Likely mis-filed</a>
+    <a class="special <?php echo $folder_filter === 'uncat' ? 'sel' : ''; ?>" href="?folder=uncat"><?php echo kop_icon('archive'); ?> Uncategorized <span class="cnt">(<?php echo $uncat_count; ?>)</span></a>
     <hr>
     <?php kop_sm_tree(0, $children, $by_id, $fcounts, $folder_filter, $open_set); ?>
 </nav>
@@ -841,7 +842,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         placeholder="<?php echo $mode === 'misfiled' ? 'Search within mis-filed…' : ($folder_filter !== '' ? 'Search this folder…' : 'Search the whole library…'); ?>" style="width:260px">
     <button type="submit" style="background:#000080">Search</button>
     <?php if ($mode === 'browse' && $folder_filter !== '' && $folder_filter !== 'uncat' && isset($by_id[(int)$folder_filter])): ?>
-        <strong style="margin-left:8px">📂 <?php echo esc_html(kop_sm_path((int)$folder_filter, $by_id)); ?></strong>
+        <strong style="margin-left:8px"><?php echo kop_icon('folder-open'); ?> <?php echo esc_html(kop_sm_path((int)$folder_filter, $by_id)); ?></strong>
     <?php endif; ?>
 </form>
 
@@ -866,28 +867,28 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
     </div>
     <div class="bar">
         <input type="search" id="kop-filter" placeholder="Filter visible rows…" style="width:200px">
-        <button type="button" id="kop-tick-visible" style="background:#000080">☑ Tick visible</button>
-        <button type="button" id="kop-untick-visible" style="background:#7a7a7a">☐ Untick</button>
-        <button type="button" id="kop-bulk-pick">🗂️ Send ticked to folder…</button>
+        <button type="button" id="kop-tick-visible" style="background:#000080"><?php echo kop_icon('square-check'); ?> Tick visible</button>
+        <button type="button" id="kop-untick-visible" style="background:#7a7a7a"><?php echo kop_icon('square'); ?> Untick</button>
+        <button type="button" id="kop-bulk-pick"><?php echo kop_icon('archive'); ?> Send ticked to folder…</button>
         <button type="submit" name="do_move" value="1" style="background:#1b7e3c"
             onclick="return window.confirm('MOVE the ticked files to their target folders?\n\nThis REPLACES their current folder membership(s).');">
-            ✅ Apply moves (replace)</button>
+            <?php echo kop_icon('check-circle'); ?> Apply moves (replace)</button>
         <button type="submit" name="do_tag" value="1" style="background:#000080"
             onclick="return window.confirm('ADD the ticked files to their target folders?\n\nCurrent folder memberships are KEPT — the file will show up in both places (no duplicate file is created).');">
-            🏷️ Add to folder (keep current)</button>
+            <?php echo kop_icon('tag'); ?> Add to folder (keep current)</button>
         <?php if ($mode === 'misfiled'): ?>
         <button type="submit" name="do_confirm" value="1" style="background:#b8860b"
             onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files that are correctly filed first.');return false;} return window.confirm('Mark '+n+' ticked file(s) as CORRECTLY filed?\n\nThey stay exactly where they are and stop appearing in the mis-filed scan (until they move).');">
-            ✔ Not mis-filed (approve as is)</button>
+            <?php echo kop_icon('check-circle'); ?> Not mis-filed (approve as is)</button>
         <?php endif; ?>
         <button type="submit" name="do_delete" value="1" style="background:#7a1f1f"
             onclick="var n=document.querySelectorAll('tbody input[name$=&quot;[go]&quot;]:checked').length; if(!n){alert('Tick the files to delete first.');return false;} return window.confirm('PERMANENTLY delete '+n+' file(s) from the media library?\n\nThis removes the actual files and cannot be undone.');">
-            🗑️ Delete ticked</button>
+            <?php echo kop_icon('trash'); ?> Delete ticked</button>
     </div>
     <div class="bar">
-        <strong style="font-size:0.85rem">➕ New folder:</strong>
+        <strong style="font-size:0.85rem"><?php echo kop_icon('plus'); ?> New folder:</strong>
         <input type="text" id="kop-nf-name" placeholder="folder name" style="width:170px">
-        <button type="button" id="kop-nf-parent" style="background:#7a7a7a">📁 parent: top level</button>
+        <button type="button" id="kop-nf-parent" style="background:#7a7a7a"><?php echo kop_icon('folder'); ?> parent: top level</button>
         <button type="button" id="kop-nf-create" style="background:#EF9034">Create</button>
         <small>row-click ticks · shift-click ranges · nothing changes until Apply/Delete</small>
     </div>
@@ -900,7 +901,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         return esc_html(kop_sm_path($cid, $by_id));
     }, $r['curs']);
     foreach ($r['tags'] as $tid) {
-        $cur_parts[] = '🏷 ' . esc_html(kop_sm_path($tid, $by_id)) . ' <small class="ok">(tag)</small>';
+        $cur_parts[] = kop_icon('tag') . ' ' . esc_html(kop_sm_path($tid, $by_id)) . ' <small class="ok">(tag)</small>';
     }
     if ($cur_parts) {
         $cur_label = implode('<br>', $cur_parts);
@@ -926,7 +927,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
         <td>
             <input type="number" name="file[<?php echo $r['id']; ?>][target]" min="1"
                 value="<?php echo $r['sug'] !== null && !in_array($r['sug'], array_merge($r['curs'], $r['tags']), true) ? (int)$r['sug'] : ''; ?>" placeholder="folder ID">
-            <button type="button" class="kop-pick" title="Browse folders">📁 pick</button>
+            <button type="button" class="kop-pick" title="Browse folders"><?php echo kop_icon('folder'); ?> pick</button>
             <div class="kop-picked-name" style="font-size:0.78rem;color:#000080"></div>
         </td>
     </tr>
@@ -942,6 +943,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
 
 <link rel="stylesheet" href="<?php echo esc_url(get_stylesheet_directory_uri() . '/css/filebird-folder-browser.css'); ?>">
 <script src="<?php echo esc_url(get_stylesheet_directory_uri() . '/js/filebird-folder-browser.js'); ?>"></script>
+<script><?php echo kop_icons_js(); ?></script>
 <script>
 (function () {
     var foldersUrl = <?php echo wp_json_encode(rest_url('kop/v1/folders')); ?>;
@@ -1113,7 +1115,8 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
                 .then(function (res) {
                     if (!res) return;
                     nfParent = res.id === null ? { id: 0, name: 'top level' } : { id: parseInt(res.id, 10), name: res.name };
-                    nfParentBtn.textContent = '📁 parent: ' + nfParent.name;
+                    nfParentBtn.textContent = 'parent: ' + nfParent.name;
+                    nfParentBtn.insertAdjacentHTML('afterbegin', kopIcon('folder') + ' ');
                 })
                 .catch(function () { alert('Folder browser error.'); });
         });
@@ -1142,7 +1145,7 @@ select, input[type=search], input[type=text] { padding: 6px 9px; border: 1px sol
                 document.getElementById('kop-bulk-name').textContent =
                     'Created “' + fullName + '” (#' + data.id + ')' +
                     (n ? ' — ' + n + ' ticked row(s) targeted; review, then Apply moves'
-                       : ' — tick rows and use the bulk button, or 📁 pick it per row');
+                       : ' — tick rows and use the bulk button, or pick it per row');
                 nfNameInput.value = '';
             }).catch(function (err) {
                 nfCreateBtn.disabled = false;

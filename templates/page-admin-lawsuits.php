@@ -110,14 +110,14 @@ get_header();
                 </div>
 
                 <div class="form-row autofill-row">
-                    <button type="button" id="fetchLawsuitBtn" class="primary-btn autofill-btn">✨ Auto-populate from CourtListener (federal)</button>
+                    <button type="button" id="fetchLawsuitBtn" class="primary-btn autofill-btn"><?php echo kop_icon('sparkles'); ?> Auto-populate from CourtListener (federal)</button>
                     <div class="upload-complaint-label">
                         <input type="file" id="lawsuit-complaint-file" accept=".pdf,.doc,.docx,.txt,application/pdf" hidden>
-                        <button type="button" id="extractLawsuitBtn" class="primary-btn autofill-btn">📄 Upload complaint &amp; auto-extract</button>
+                        <button type="button" id="extractLawsuitBtn" class="primary-btn autofill-btn"><?php echo kop_icon('file-text'); ?> Upload complaint &amp; auto-extract</button>
                         <span class="upload-complaint-hint">PDF/DOCX/TXT, up to 20MB · saved to media library</span>
                     </div>
                     <div class="upload-complaint-label">
-                        <button type="button" id="pasteJsonBtn" class="primary-btn autofill-btn">📋 Paste extracted JSON</button>
+                        <button type="button" id="pasteJsonBtn" class="primary-btn autofill-btn"><?php echo kop_icon('clipboard'); ?> Paste extracted JSON</button>
                         <span class="upload-complaint-hint">Import JSON from ChatGPT, Claude, etc.</span>
                     </div>
                 </div>

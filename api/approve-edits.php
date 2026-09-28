@@ -25,6 +25,7 @@ if (!function_exists('current_user_can') || !(current_user_can('edit_posts') || 
 
 // Include configuration
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/icons.php';
 
 // Fetch submissions from suggested_edits table
 if (!$pdo) {
@@ -481,7 +482,7 @@ function kop_has_meaningful_referrer_payload($data) {
     <div class="container">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1>Approve Submissions</h1>
-            <button onclick="approveAll('all')" style="background: #28a745; color: white; border: none; padding: 10px 20px; font-size: 1.1em; cursor: pointer; border-radius: 4px;">✅ Approve Everything</button>
+            <button onclick="approveAll('all')" style="background: #28a745; color: white; border: none; padding: 10px 20px; font-size: 1.1em; cursor: pointer; border-radius: 4px;"><?php echo kop_icon('check-circle'); ?> Approve Everything</button>
         </div>
 
         <!-- Section 1: Data Form Suggestions (Suggested Edits) -->

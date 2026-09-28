@@ -38,11 +38,12 @@ echo "<style>body{font-family:monospace;padding:20px;background:#1a1a2e;color:#e
 echo ".delete{color:#ff6b6b;} .keep{color:#51cf66;} .info{color:#74c0fc;} ";
 echo "h1{color:#ffd43b;} pre{background:#2d2d44;padding:10px;border-radius:5px;overflow-x:auto;}</style></head><body>";
 
-echo "<h1>🧹 Cleanup Lowercase Location Projects</h1>";
+echo "<h1>" . kop_icon('eraser') . " Cleanup Lowercase Location Projects</h1>";
 
 // Try to load config
 try {
     require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/../inc/icons.php';
     require_once __DIR__ . '/../inc/facility-v2-writer.php';
     kop_v2_exit_if_legacy_frozen($pdo ?? null, 'cleanup-lowercase.php');
     echo "<p class='keep'>✓ Config loaded successfully</p>";
@@ -133,7 +134,7 @@ try {
     echo "<pre>";
     foreach ($locationProjects as $loc) {
         if (isLowercase($loc)) {
-            echo "<span class='delete'>❌ $loc (WILL DELETE - has lowercase)</span>\n";
+            echo "<span class='delete'>" . kop_icon('x-circle') . " $loc (WILL DELETE - has lowercase)</span>\n";
         } else {
             echo "<span class='keep'>✓ $loc (keeping - all uppercase)</span>\n";
         }
@@ -164,7 +165,7 @@ try {
             
             echo "<h2 class='keep'>✓ Deleted $deleted lowercase location projects!</h2>";
         } else {
-            echo "<p class='info'>👆 Add <code>?run=1</code> to URL to delete these projects.</p>";
+            echo "<p class='info'>" . kop_icon('arrow-up') . " Add <code>?run=1</code> to URL to delete these projects.</p>";
         }
     }
     

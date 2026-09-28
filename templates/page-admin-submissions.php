@@ -57,7 +57,7 @@ get_header();
                 <label for="searchFilter">Search:</label>
                 <input type="text" id="searchFilter" placeholder="Program name or location...">
 
-                <button type="button" id="refreshBtn" class="btn-secondary">🔄 Refresh</button>
+                <button type="button" id="refreshBtn" class="btn-secondary"><?php echo kop_icon('refresh'); ?> Refresh</button>
             </div>
             <div class="bulk-actions">
                 <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions">✗ Reject All Pending</button>
@@ -118,7 +118,7 @@ get_header();
                     <!-- Duplicate URL Warning -->
                     <div class="duplicate-warning-section" id="duplicateWarningSection" style="display: none;">
                         <div class="duplicate-warning-box">
-                            <h3>⚠️ Duplicate URL Detected</h3>
+                            <h3><?php echo kop_icon('alert-triangle'); ?> Duplicate URL Detected</h3>
                             <p id="duplicateWarningMessage">This URL has been submitted multiple times.</p>
                             <div id="duplicateSubmissionsList" class="duplicate-submissions-list"></div>
                         </div>
@@ -126,7 +126,7 @@ get_header();
 
                     <!-- URL Safety (Cloudmersive) -->
                     <div class="url-safety-section" id="urlSafetySection" style="display: none;">
-                        <h3>🔒 URL Safety Check</h3>
+                        <h3><?php echo kop_icon('lock'); ?> URL Safety Check</h3>
                         <div id="urlSafetyStatus" class="url-safety-status">Scanning…</div>
                         <ul id="urlSafetyList" class="url-safety-list"></ul>
                     </div>
@@ -137,8 +137,8 @@ get_header();
                             <h3>Review & Edit Markdown</h3>
                             <p>Compare the original submission with the generated output. Keep <strong>Diff view</strong> on to review changes (<span class="diff-key-ins">green = added</span>, <span class="diff-key-del">red = removed</span>); turn it off to edit the right panel before approving.</p>
                             <div class="markdown-editor-actions">
-                                <button type="button" id="copyMarkdownBtn" class="btn-secondary">📋 Copy</button>
-                                <button type="button" id="saveEditsBtn" class="btn-save-edits">💾 Save Edits</button>
+                                <button type="button" id="copyMarkdownBtn" class="btn-secondary"><?php echo kop_icon('clipboard'); ?> Copy</button>
+                                <button type="button" id="saveEditsBtn" class="btn-save-edits"><?php echo kop_icon('save'); ?> Save Edits</button>
                                 <label class="diff-toggle">
                                     <input type="checkbox" id="showDiffHighlights" checked>
                                     <span>Diff view</span>
@@ -184,7 +184,7 @@ get_header();
                             <h3>Review &amp; Edit Fields</h3>
                             <p class="structured-editor-intro">Edit any field below, then <strong>Save Edits</strong>. Saving does not change the submission's status — use Approve / Reject / Publish for that.</p>
                             <div class="structured-editor-actions">
-                                <button type="button" id="saveFieldsBtn" class="btn-save-edits">💾 Save Edits</button>
+                                <button type="button" id="saveFieldsBtn" class="btn-save-edits"><?php echo kop_icon('save'); ?> Save Edits</button>
                                 <span id="structuredEditorStatus" class="structured-editor-status"></span>
                             </div>
                         </div>
@@ -215,7 +215,7 @@ get_header();
                         </div>
 
                         <div class="facility-link-suggest-wrap">
-                            <button type="button" id="suggestLinksBtn" class="btn-secondary btn-suggest-links">🔍 Find Matching Facilities</button>
+                            <button type="button" id="suggestLinksBtn" class="btn-secondary btn-suggest-links"><?php echo kop_icon('search'); ?> Find Matching Facilities</button>
                         </div>
 
                         <div id="facilityLinkCandidates" class="facility-link-candidates" style="display:none;">
@@ -266,8 +266,8 @@ get_header();
                     <div class="action-buttons">
                         <button type="button" id="approveBtn" class="btn-approve">✓ Approve</button>
                         <button type="button" id="rejectBtn" class="btn-reject">✗ Reject</button>
-                        <button type="button" id="publishBtn" class="btn-publish">📤 Mark as Published</button>
-                        <button type="button" id="deleteBtn" class="btn-delete">🗑️ Delete</button>
+                        <button type="button" id="publishBtn" class="btn-publish"><?php echo kop_icon('upload'); ?> Mark as Published</button>
+                        <button type="button" id="deleteBtn" class="btn-delete"><?php echo kop_icon('trash'); ?> Delete</button>
                     </div>
                     <div id="actionStatus" class="action-status"></div>
                 </div>

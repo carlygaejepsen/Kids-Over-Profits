@@ -21,7 +21,7 @@ get_header();
             <!-- Quick Start Templates -->
             <div class="news-section">
                 <div class="news-templates-header">
-                    <h3>🚀 Quick Start Templates</h3>
+                    <h3><?php echo kop_icon('rocket'); ?> Quick Start Templates</h3>
                     <p>Choose a template to pre-configure the form for common article types</p>
                 </div>
                 <div class="news-templates-grid" id="template-buttons"></div>
@@ -34,7 +34,7 @@ get_header();
                         <label class="news-toggle-label">
                             <input type="checkbox" id="ai-enabled" class="news-toggle-input">
                             <span class="news-toggle-slider"></span>
-                            <span class="news-toggle-text">🤖 AI Assistant</span>
+                            <span class="news-toggle-text"><?php echo kop_icon('bot'); ?> AI Assistant</span>
                         </label>
                     </div>
                 </div>
@@ -63,7 +63,7 @@ get_header();
                         <textarea id="ai-custom-instructions" class="news-textarea" rows="2" placeholder="e.g., 'Be extra careful with victim blaming language' or 'Focus on the financial connections'"></textarea>
                     </div>
 
-                    <button id="process-with-ai" class="news-btn news-btn-ai">🤖 Process with AI</button>
+                    <button id="process-with-ai" class="news-btn news-btn-ai"><?php echo kop_icon('bot'); ?> Process with AI</button>
                     <div id="ai-status" class="news-ai-status"></div>
                 </div>
             </div>
@@ -72,7 +72,7 @@ get_header();
             <div class="news-section">
                 <button class="news-section-header" data-section="basic">
                     <div class="news-section-title">
-                        <span class="news-icon">📄</span>
+                        <span class="news-icon"><?php echo kop_icon('file-text'); ?></span>
                         <h2>1. Basic Details Extraction</h2>
                     </div>
                     <span class="news-chevron">▼</span>
@@ -89,7 +89,7 @@ get_header();
                             <div class="news-input-with-save">
                                 <input type="text" name="author" class="news-input" data-autocomplete-category="human" list="authors-list" placeholder="Author name">
                                 <datalist id="authors-list"></datalist>
-                                <button class="news-save-btn" data-save="authors" data-field="author">💾</button>
+                                <button class="news-save-btn" data-save="authors" data-field="author" title="Save" aria-label="Save"><?php echo kop_icon('save'); ?></button>
                             </div>
                             <div class="news-saved-tags" data-category="authors"></div>
                         </div>
@@ -105,7 +105,7 @@ get_header();
                             <div class="news-input-with-save">
                                 <input type="text" name="publicationName" class="news-input" list="publications-list" placeholder="e.g., New York Times">
                                 <datalist id="publications-list"></datalist>
-                                <button class="news-save-btn" data-save="publications" data-field="publicationName">💾</button>
+                                <button class="news-save-btn" data-save="publications" data-field="publicationName" title="Save" aria-label="Save"><?php echo kop_icon('save'); ?></button>
                             </div>
                             <div class="news-saved-tags" data-category="publications"></div>
                         </div>
@@ -170,7 +170,7 @@ get_header();
             <div class="news-section">
                 <button class="news-section-header" data-section="warnings">
                     <div class="news-section-title">
-                        <span class="news-icon">⚠️</span>
+                        <span class="news-icon"><?php echo kop_icon('alert-triangle'); ?></span>
                         <h2>2. Content Warnings</h2>
                         <span class="news-count" id="warnings-count">0</span>
                     </div>
@@ -185,7 +185,7 @@ get_header();
             <div class="news-section">
                 <button class="news-section-header" data-section="summary">
                     <div class="news-section-title">
-                        <span class="news-icon">✏️</span>
+                        <span class="news-icon"><?php echo kop_icon('pencil'); ?></span>
                         <h2>3. Trauma-Sensitive Summary</h2>
                     </div>
                     <span class="news-chevron">▶</span>
@@ -221,7 +221,7 @@ get_header();
             <div class="news-section">
                 <button class="news-section-header" data-section="type">
                     <div class="news-section-title">
-                        <span class="news-icon">🏷️</span>
+                        <span class="news-icon"><?php echo kop_icon('tag'); ?></span>
                         <h2>4. Article Type & Specific Details</h2>
                     </div>
                     <span class="news-chevron">▶</span>
@@ -239,7 +239,7 @@ get_header();
             <div class="news-footer">
                 <button id="export-json" class="news-btn news-btn-primary">Export as JSON</button>
                 <button id="export-text" class="news-btn news-btn-secondary">Export as Text</button>
-                <button id="submit-to-db" class="news-btn news-btn-submit">💾 Submit to Database</button>
+                <button id="submit-to-db" class="news-btn news-btn-submit"><?php echo kop_icon('save'); ?> Submit to Database</button>
                 <button id="clear-form" class="news-btn news-btn-clear">Clear Form</button>
             </div>
         </div>

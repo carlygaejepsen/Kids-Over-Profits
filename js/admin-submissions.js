@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.classList.add('has-duplicate');
                 }
                 
-                const duplicateBadge = hasDuplicates ? '<span class="duplicate-badge">⚠ Duplicate</span>' : '';
+                const duplicateBadge = hasDuplicates ? `<span class="duplicate-badge">${kopIcon('alert-triangle')} Duplicate</span>` : '';
                 
                 card.innerHTML = `
                     <div class="submission-header">
@@ -392,9 +392,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>📰 ${escapeHtml(source)}</span>
-                        <span>✍️ ${escapeHtml(author)}</span>
-                        <span>🏷️ ${escapeHtml(submission.article_type || 'general')}</span>
+                        <span>${kopIcon('newspaper')} ${escapeHtml(source)}</span>
+                        <span>${kopIcon('pen-line')} ${escapeHtml(author)}</span>
+                        <span>${kopIcon('tag')} ${escapeHtml(submission.article_type || 'general')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>🔄 Data Update</span>
+                        <span>${kopIcon('refresh')} Data Update</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             } else if (currentType === 'legislation' || currentType === 'lawsuit') {
-                const icon  = currentType === 'legislation' ? '🏛️' : '⚖️';
+                const icon  = currentType === 'legislation' ? kopIcon('landmark') : kopIcon('scale');
                 const label = currentType === 'legislation' ? 'Bill' : 'Court case';
                 card.innerHTML = `
                     <div class="submission-header">
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="submission-meta">
                         <span>${icon} ${label}</span>
-                        <span>📍 ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
+                        <span>${kopIcon('map-pin')} ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -439,9 +439,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="status-badge ${statusClass}">${submission.status}</span>
                     </div>
                     <div class="submission-meta">
-                        <span>📍 ${escapeHtml(submission.city_state || 'Location unknown')}</span>
-                        <span>📅 ${escapeHtml(submission.years_active || 'Years unknown')}</span>
-                        <span>🏷️ ${escapeHtml(submission.program_type || 'Type unknown')}</span>
+                        <span>${kopIcon('map-pin')} ${escapeHtml(submission.city_state || 'Location unknown')}</span>
+                        <span>${kopIcon('calendar')} ${escapeHtml(submission.years_active || 'Years unknown')}</span>
+                        <span>${kopIcon('tag')} ${escapeHtml(submission.program_type || 'Type unknown')}</span>
                     </div>
                     <div class="submission-footer">
                         <span class="submission-date">Submitted: ${date}</span>
@@ -818,7 +818,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (result.flagged > 0) {
-                status.textContent = `⚠ ${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
+                status.textContent = `${result.flagged} of ${result.scanned} URL(s) flagged as unsafe.`;
+                status.insertAdjacentHTML('afterbegin', kopIcon('alert-triangle') + ' ');
                 status.className = 'url-safety-status flagged';
             } else {
                 status.textContent = `✓ All ${result.scanned} URL(s) clean.`;
@@ -836,7 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const icon = document.createElement('span');
                 icon.className = 'url-safety-icon';
-                icon.textContent = r.clean === true ? '✓' : r.clean === false ? '⚠' : '?';
+                icon.innerHTML = r.clean === true ? '✓' : r.clean === false ? kopIcon('alert-triangle') : '?';
                 li.appendChild(icon);
 
                 const safe = safeUrl(r.url);
@@ -897,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await navigator.clipboard.writeText(modalMarkdown.value);
             copyMarkdownBtn.textContent = '✓ Copied!';
             setTimeout(() => {
-                copyMarkdownBtn.textContent = '📋 Copy';
+                copyMarkdownBtn.innerHTML = `${kopIcon('clipboard')} Copy`;
             }, 2000);
         } catch (error) {
             alert('Failed to copy to clipboard');
@@ -1117,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveEditsBtn.textContent = '✓ Saved!';
                 currentSubmission.generated_markdown = editedMarkdown;
                 setTimeout(() => {
-                    saveEditsBtn.textContent = '💾 Save Edits';
+                    saveEditsBtn.innerHTML = `${kopIcon('save')} Save Edits`;
                     saveEditsBtn.disabled = false;
                 }, 2000);
             } else {
@@ -1127,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Save failed:', error);
             saveEditsBtn.textContent = '✗ Error';
             setTimeout(() => {
-                saveEditsBtn.textContent = '💾 Save Edits';
+                saveEditsBtn.innerHTML = `${kopIcon('save')} Save Edits`;
                 saveEditsBtn.disabled = false;
             }, 2000);
             alert(`Failed to save edits: ${error.message}`);
@@ -1385,7 +1386,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const id = currentSubmission.id;
         saveFieldsBtn.disabled = true;
-        const original = saveFieldsBtn.textContent;
+        const original = saveFieldsBtn.innerHTML;
         saveFieldsBtn.textContent = 'Saving...';
         setEditorStatus('');
 
@@ -1410,7 +1411,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setEditorStatus('✗ Network error', true);
         } finally {
             saveFieldsBtn.disabled = false;
-            saveFieldsBtn.textContent = original;
+            saveFieldsBtn.innerHTML = original;
         }
     }
 

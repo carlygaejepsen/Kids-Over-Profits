@@ -47,7 +47,7 @@ class TTIProgramAutoLinker {
         }
 
         // Fall back to monolithic file
-        console.log('⚠ Component files not found, falling back to monolithic file...');
+        console.log('Component files not found, falling back to monolithic file...');
         return await this.loadFromMonolithic();
     }
 

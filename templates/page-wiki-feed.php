@@ -219,11 +219,11 @@ get_header();
 
                     <div class="wiki-card-meta">
                         <span class="meta-item location">
-                            📍 <?php echo esc_html($item['city_state']); ?>
+                            <?php echo kop_icon('map-pin'); ?> <?php echo esc_html($item['city_state']); ?>
                         </span>
                         <span class="meta-separator">•</span>
                         <span class="meta-item years">
-                            📅 <?php echo esc_html($years); ?>
+                            <?php echo kop_icon('calendar'); ?> <?php echo esc_html($years); ?>
                         </span>
                     </div>
 

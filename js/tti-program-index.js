@@ -662,7 +662,7 @@ function displayFacilities(facilitiesData, containerId) {
             <div class="field-row full-width-grid facility-document-row${cls}" id="documents-${folder.id}" data-documents-container="true">
                 <span class="field-value doc-library-btn-wrap">
                     <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${folder.id}" data-container-id="documents-${folder.id}">
-                        📂 View Document Library
+                        ${kopIcon('folder-open')} View Document Library
                     </button>
                 </span>
             </div>`;
@@ -1272,7 +1272,7 @@ function displayFacilities(facilitiesData, containerId) {
             if (latest.publication_date) latestMeta.push(escapeHtml(fmtDate(latest.publication_date)));
             const moreCount = operatorLinkedNews.length - 1;
             operatorLatestNewsHtml = `<div class="facility-latest-news operator-latest-news">
-                    <span class="facility-latest-news-label">📰 Latest news</span>
+                    <span class="facility-latest-news-label">${kopIcon('newspaper')} Latest news</span>
                     ${latestTitleHtml}
                     ${latestMeta.length ? `<span class="facility-latest-news-meta">${latestMeta.join(' &middot; ')}</span>` : ''}
                     ${moreCount > 0 ? `<span class="facility-latest-news-more">+${moreCount} more below</span>` : ''}
@@ -1956,7 +1956,7 @@ function displayFacilities(facilitiesData, containerId) {
                 if (latest.publication_date) latestMeta.push(escapeHtml(formatDate(latest.publication_date)));
                 const moreCount = linkedNews.length - 1;
                 latestNewsHtml = `<div class="facility-latest-news">
-                        <span class="facility-latest-news-label">📰 Latest news</span>
+                        <span class="facility-latest-news-label">${kopIcon('newspaper')} Latest news</span>
                         ${latestTitleHtml}
                         ${latestMeta.length ? `<span class="facility-latest-news-meta">${latestMeta.join(' &middot; ')}</span>` : ''}
                         ${moreCount > 0 ? `<span class="facility-latest-news-more">+${moreCount} more below</span>` : ''}

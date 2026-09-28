@@ -212,7 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const idText = linkedProgram.id ? ` (#${linkedProgram.id})` : '';
                 display.classList.remove('linked-program-none');
                 display.classList.add('linked-program-set');
-                display.textContent = `✅ ${linkedProgram.uniqueName}${idText}`;
+                display.textContent = `${linkedProgram.uniqueName}${idText}`;
+                display.insertAdjacentHTML('afterbegin', kopIcon('check') + ' ');
 
                 // One-click jump to the program's document library in the
                 // split-screen viewer, so sources sit beside the form.
@@ -222,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const docsBtn = document.createElement('button');
                     docsBtn.type = 'button';
                     docsBtn.className = 'linked-program-docs-btn';
-                    docsBtn.textContent = '📄 View documents';
+                    docsBtn.innerHTML = kopIcon('file-text') + ' View documents';
                     docsBtn.title = 'Open this program’s document folder beside the form';
                     docsBtn.addEventListener('click', () => {
                         window.KOPDocViewer.openFolder(
@@ -233,7 +234,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     display.appendChild(document.createTextNode(' '));
                     display.appendChild(docsBtn);
                 } else if (linkedProgram.documentFolderId) {
-                    display.textContent += ` · 📂 folder ${linkedProgram.documentFolderId}`;
+                    display.insertAdjacentHTML('beforeend',
+                        ` · ${kopIcon('folder-open')} folder ${escapeHtml(String(linkedProgram.documentFolderId))}`);
                 }
             } else {
                 display.classList.add('linked-program-none');
@@ -1236,8 +1238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hasLegacyBrowserToggles) {
             if (indexPanel) indexPanel.style.display = 'none';
             if (facilitiesPanel) facilitiesPanel.style.display = 'none';
-            if (indexBtn) indexBtn.textContent = '📄 Browse Index Pages';
-            if (facilitiesBtn) facilitiesBtn.textContent = '🏢 Browse Saved Facilities';
+            if (indexBtn) indexBtn.innerHTML = kopIcon('file-text') + ' Browse Index Pages';
+            if (facilitiesBtn) facilitiesBtn.innerHTML = kopIcon('building') + ' Browse Saved Facilities';
         } else {
             if (indexPanel) indexPanel.style.display = '';
             if (facilitiesPanel) facilitiesPanel.style.display = '';
@@ -1810,10 +1812,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const modeBadge = document.getElementById('entryModeBadge');
         if (modeBadge) {
             if (isOrganizationEntry) {
-                modeBadge.textContent = '🏢 Organization Mode';
+                modeBadge.innerHTML = kopIcon('building') + ' Organization Mode';
                 modeBadge.className = 'entry-mode-badge mode-org';
             } else {
-                modeBadge.textContent = '📋 Facility Mode';
+                modeBadge.innerHTML = kopIcon('clipboard') + ' Facility Mode';
                 modeBadge.className = 'entry-mode-badge mode-facility';
             }
         }
@@ -2172,7 +2174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const computedStyle = window.getComputedStyle(importPanel);
             const isHidden = computedStyle.display === 'none' || importPanel.style.display === 'none';
             importPanel.style.display = isHidden ? 'block' : 'none';
-            toggleImportBtn.textContent = isHidden ? '✖️ Close Import' : '📥 Import from Reddit Markdown';
+            toggleImportBtn.innerHTML = isHidden ? (kopIcon('x') + ' Close Import') : (kopIcon('download') + ' Import from Reddit Markdown');
         });
     }
 
@@ -2181,7 +2183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cancelImportBtn.addEventListener('click', (e) => {
             e.preventDefault();
             importPanel.style.display = 'none';
-            if (toggleImportBtn) toggleImportBtn.textContent = '📥 Import from Reddit Markdown';
+            if (toggleImportBtn) toggleImportBtn.innerHTML = kopIcon('download') + ' Import from Reddit Markdown';
             if (importTextarea) importTextarea.value = '';
         });
     }
@@ -2204,14 +2206,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const isHidden = extractProsePanel.style.display === 'none' || extractProsePanel.style.display === '';
             extractProsePanel.style.display = isHidden ? 'block' : 'none';
-            toggleExtractProseBtn.textContent = isHidden ? '✖️ Close Extractor' : '🤖 Extract from Prose (AI)';
+            toggleExtractProseBtn.innerHTML = isHidden ? (kopIcon('x') + ' Close Extractor') : (kopIcon('bot') + ' Extract from Prose (AI)');
         });
     }
     if (cancelExtractProseBtn && extractProsePanel) {
         cancelExtractProseBtn.addEventListener('click', (e) => {
             e.preventDefault();
             extractProsePanel.style.display = 'none';
-            if (toggleExtractProseBtn) toggleExtractProseBtn.textContent = '🤖 Extract from Prose (AI)';
+            if (toggleExtractProseBtn) toggleExtractProseBtn.innerHTML = kopIcon('bot') + ' Extract from Prose (AI)';
         });
     }
 
@@ -2266,7 +2268,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             extractProseBtn.disabled = true;
             const originalText = extractProseBtn.textContent;
-            extractProseBtn.textContent = '🤖 Extracting…';
+            extractProseBtn.innerHTML = kopIcon('bot') + ' Extracting…';
             setStatus('Analyzing prose…', '');
 
             try {
@@ -2344,7 +2346,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ? 'Plain text converted to wiki markdown and imported! Form fields have been populated — review the section assignments and formatting before saving.'
                     : 'Import successful! Form fields have been populated. Review and edit as needed.');
                 if (importPanel) importPanel.style.display = 'none';
-                if (toggleImportBtn) toggleImportBtn.textContent = '📥 Import from Clipboard';
+                if (toggleImportBtn) toggleImportBtn.innerHTML = kopIcon('download') + ' Import from Clipboard';
                 if (importTextarea) importTextarea.value = '';
                 if (importFileInput) importFileInput.value = '';
                 // The pasted source was just cleared, so the populated form is
@@ -2689,27 +2691,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const outputCode = document.getElementById('outputCode')?.value || '';
 
             if (!programName.trim()) {
-                submitStatus.innerHTML = '<span class="error">❌ Program name is required</span>';
+                submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} Program name is required</span>`;
                 return;
             }
 
             if (!outputCode.trim()) {
-                submitStatus.innerHTML = '<span class="error">❌ Please generate wiki code first</span>';
+                submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} Please generate wiki code first</span>`;
                 return;
             }
 
             // Require a linked program. If none yet, open the picker inline so the
             // user can select/create one without losing their place.
             if (!linkedProgram || !linkedProgram.uniqueName) {
-                submitStatus.innerHTML = '<span class="loading">🔗 Select a matching program to continue…</span>';
+                submitStatus.innerHTML = `<span class="loading">${kopIcon('link')} Select a matching program to continue…</span>`;
                 const picked = await openProgramPicker();
                 if (!picked || !picked.uniqueName) {
-                    submitStatus.innerHTML = '<span class="error">❌ A matching program index entry is required before submitting.</span>';
+                    submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} A matching program index entry is required before submitting.</span>`;
                     return;
                 }
             }
 
-            submitStatus.innerHTML = '<span class="loading">⏳ Submitting...</span>';
+            submitStatus.innerHTML = `<span class="loading">${kopIcon('hourglass')} Submitting...</span>`;
             confirmSubmitBtn.disabled = true;
 
             const formData = collectCurrentFormData();
@@ -2739,7 +2741,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
 
                 if (result.success) {
-                    submitStatus.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${escapeHtml(String(result.id))})</span>`;
+                    submitStatus.innerHTML = `<span class="success">${kopIcon('check-circle')} Submitted successfully! (ID: ${escapeHtml(String(result.id))})</span>`;
                     formIsDirty = false;
                     setTimeout(() => {
                         submitModal.style.display = 'none';
@@ -2747,12 +2749,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }, 3000);
                 } else {
                     // API failure responses use `error` (message is unused there)
-                    submitStatus.innerHTML = `<span class="error">❌ ${escapeHtml(result.error || result.message || 'Submission failed')}</span>`;
+                    submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} ${escapeHtml(result.error || result.message || 'Submission failed')}</span>`;
                     offerBugReport('save-failed', result.error || 'Submission failed', submitStatus);
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                submitStatus.innerHTML = '<span class="error">❌ Network error. Please try again.</span>';
+                submitStatus.innerHTML = `<span class="error">${kopIcon('x-circle')} Network error. Please try again.</span>`;
                 offerBugReport('save-failed', error.message || 'Network error while saving', submitStatus);
             } finally {
                 confirmSubmitBtn.disabled = false;
@@ -2776,7 +2778,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBulkUploadBtn.addEventListener('click', () => {
             const isHidden = bulkUploadPanel.style.display === 'none';
             bulkUploadPanel.style.display = isHidden ? 'block' : 'none';
-            toggleBulkUploadBtn.textContent = isHidden ? '✖️ Close Bulk Upload' : '📤 Bulk Upload Markdown Files';
+            toggleBulkUploadBtn.innerHTML = isHidden ? (kopIcon('x') + ' Close Bulk Upload') : (kopIcon('upload') + ' Bulk Upload Markdown Files');
         });
     }
 
@@ -2784,7 +2786,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cancelBulkUploadBtn && bulkUploadPanel) {
         cancelBulkUploadBtn.addEventListener('click', () => {
             bulkUploadPanel.style.display = 'none';
-            if (toggleBulkUploadBtn) toggleBulkUploadBtn.textContent = '📤 Bulk Upload Markdown Files';
+            if (toggleBulkUploadBtn) toggleBulkUploadBtn.innerHTML = kopIcon('upload') + ' Bulk Upload Markdown Files';
             if (bulkFileInput) bulkFileInput.value = '';
             if (uploadProgress) uploadProgress.style.display = 'none';
             if (uploadResults) uploadResults.innerHTML = '';
@@ -2957,7 +2959,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let resultsHtml = '<h4>Upload Results</h4>';
 
                 if (results.success.length > 0) {
-                    resultsHtml += `<div class="upload-success"><h5>✅ Successfully uploaded (${results.success.length}):</h5><ul>`;
+                    resultsHtml += `<div class="upload-success"><h5>${kopIcon('check-circle')} Successfully uploaded (${results.success.length}):</h5><ul>`;
                     results.success.forEach(item => {
                         // File names / parsed titles / server messages are untrusted — escape them.
                         resultsHtml += `<li><strong>${escapeHtml(item.program)}</strong> (${escapeHtml(item.file)}) - ID: ${escapeHtml(String(item.id))}</li>`;
@@ -2966,7 +2968,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (results.failed.length > 0) {
-                    resultsHtml += `<div class="upload-failed"><h5>❌ Failed (${results.failed.length}):</h5><ul>`;
+                    resultsHtml += `<div class="upload-failed"><h5>${kopIcon('x-circle')} Failed (${results.failed.length}):</h5><ul>`;
                     results.failed.forEach(item => {
                         resultsHtml += `<li><strong>${escapeHtml(item.file)}</strong>: ${escapeHtml(item.error)}</li>`;
                     });
@@ -3594,7 +3596,7 @@ document.addEventListener('DOMContentLoaded', () => {
             : allStubsCache;
 
         if (!matches.length) {
-            updateIndexEntriesMessage(filter ? 'No stubs match that filter.' : 'No entries need creation. 🎉');
+            updateIndexEntriesMessage(filter ? 'No stubs match that filter.' : 'No entries need creation.');
             return;
         }
 

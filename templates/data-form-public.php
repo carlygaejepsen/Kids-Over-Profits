@@ -10,11 +10,11 @@ get_header();
 
     <div class="container">
         <div class="admin-header">
-            <h1>📮 Submit TTI Data Suggestions</h1>
+            <h1><?php echo kop_icon('send'); ?> Submit TTI Data Suggestions</h1>
         </div>
 
         <div class="admin-warning">
-            ❗ <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
+            <?php echo kop_icon('alert-circle'); ?> <strong>Suggestions Mode:</strong> Data entered here will be saved as suggestions for review before being added to the master database.
         </div>
         
         <ol class="kop-steps" aria-label="How to submit">
@@ -55,7 +55,7 @@ get_header();
                 <!-- Companies Content -->
                 <div id="companies-content" class="category-content" data-section-views="companies">
                     <div class="content-header">
-                        <h3>🏢 Parent Companies/Organizations</h3>
+                        <h3><?php echo kop_icon('building'); ?> Parent Companies/Organizations</h3>
                     </div>
                     <div class="project-management" id="project-panel-inner">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Projects &amp; Data Import</h2>
@@ -64,7 +64,7 @@ get_header();
                         <div class="form-group">
                             <label>Saved Projects</label>
                             <div style="margin-bottom: 10px;">
-                                <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="🔍 Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <input type="text" id="company-search-input" class="input-form project-search-input" placeholder="Search by company name, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="company-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                                 <div style="color: #6b7280; font-style: italic;">No saved company projects</div>
@@ -77,7 +77,7 @@ get_header();
                 <!-- States Content -->
                 <div id="states-content" class="category-content view-hidden" data-section-views="locations">
                     <div class="content-header">
-                        <h3>🌍 Locations/States/Countries</h3>
+                        <h3><?php echo kop_icon('globe'); ?> Locations/States/Countries</h3>
                     </div>
                     <div class="project-management location-project-management">
                         <h2 style="margin: 20px 0; color: #1f2937; font-size: 18px;">Location Projects &amp; Data Import</h2>
@@ -85,7 +85,7 @@ get_header();
                         <div class="form-group">
                             <label>Saved Location Projects</label>
                             <div style="margin-bottom: 10px;">
-                                <input type="text" id="location-search-input" class="input-form project-search-input" placeholder="🔍 Search by location, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <input type="text" id="location-search-input" class="input-form project-search-input" placeholder="Search by location, program type, or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="location-saved-projects-list" style="max-height: 150px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; background: #fafafa;">
                                 <div style="color: #6b7280; font-style: italic;">No saved location projects</div>
@@ -115,7 +115,7 @@ get_header();
                 <!-- Referrers Content -->
                 <div id="referrers-content" class="category-content view-hidden" data-section-views="referrers">
                     <div class="content-header">
-                        <h3>👥 Referrers (Education Consultants / School Districts)</h3>
+                        <h3><?php echo kop_icon('users'); ?> Referrers (Education Consultants / School Districts)</h3>
                     </div>
 
                     <div class="project-management" id="referrer-project-panel-inner">
@@ -124,7 +124,7 @@ get_header();
                         <div class="form-group">
                             <label>Saved Referrer Projects</label>
                             <div style="margin-bottom: 10px;">
-                                <input type="text" id="referrer-search-input" class="input-form project-search-input" placeholder="🔍 Search by referrer name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <input type="text" id="referrer-search-input" class="input-form project-search-input" placeholder="Search by referrer name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="referrer-saved-projects-list" class="saved-projects-list">
                                 <div style="color: #6b7280; font-style: italic;">No saved referrer projects</div>
@@ -142,7 +142,7 @@ get_header();
                 <!-- Transporters Content -->
                 <div id="transporters-content" class="category-content view-hidden" data-section-views="transporters">
                     <div class="content-header">
-                        <h3>🚐 Transporters (Youth Transport Companies)</h3>
+                        <h3><?php echo kop_icon('van'); ?> Transporters (Youth Transport Companies)</h3>
                     </div>
 
                     <div class="project-management" id="transporter-project-panel-inner">
@@ -151,7 +151,7 @@ get_header();
                         <div class="form-group">
                             <label>Saved Transporter Projects</label>
                             <div style="margin-bottom: 10px;">
-                                <input type="text" id="transporter-search-input" class="input-form project-search-input" placeholder="🔍 Search by transporter name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
+                                <input type="text" id="transporter-search-input" class="input-form project-search-input" placeholder="Search by transporter name or keyword..." style="width: 100%; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;">
                             </div>
                             <div id="transporter-saved-projects-list" class="saved-projects-list">
                                 <div style="color: #6b7280; font-style: italic;">No saved transporter projects</div>
@@ -229,7 +229,7 @@ get_header();
             <div class="facility-toc" id="consultants-toc">
                 <div class="toc-header">
                     <h2 class="toc-title">Consultants Overview</h2>
-                    <button class="toc-toggle" id="consultants-toc-toggle-btn">🔎</button>
+                    <button class="toc-toggle" id="consultants-toc-toggle-btn"><?php echo kop_icon('search'); ?></button>
                 </div>
                 <div class="toc-content">
                     <div class="toc-stats" id="consultants-toc-stats">Total: 1 consultant</div>
@@ -243,7 +243,7 @@ get_header();
             <div class="section expanded" id="referrer-agency-section">
                 <div class="section-header">
                     <h2 class="section-title">Agency/Group Information</h2>
-                    <span class="section-toggle">🔎</span>
+                    <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
                 </div>
                 <div class="section-content">
                     <div class="form-group">
@@ -283,7 +283,7 @@ get_header();
             <div class="section expanded" id="referrer-consultants-section">
                 <div class="section-header">
                     <h2 class="section-title">Individual Consultants</h2>
-                    <span class="section-toggle">🔎</span>
+                    <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
                 </div>
                 <div class="section-content">
                     <!-- Individual Consultant Form -->
@@ -361,7 +361,7 @@ get_header();
             <!-- Referrer Submission Section -->
             <div class="section expanded" id="referrer-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
                 <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                    <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Referrer for Review</h2>
+                    <h2 class="section-title" style="color: white; pointer-events: none;"><?php echo kop_icon('send'); ?> Submit Referrer for Review</h2>
                 </div>
                 <div class="section-content" style="display: block;">
                     <div class="form-group">
@@ -370,7 +370,7 @@ get_header();
                     </div>
                     <div class="form-group">
                         <button type="button" class="save-master-btn" id="save-referrer-project-btn">
-                            📮 Submit for Review
+                            <?php echo kop_icon('send'); ?> Submit for Review
                         </button>
                     </div>
                 </div>
@@ -385,7 +385,7 @@ get_header();
             <div class="facility-toc" id="transporters-toc">
                 <div class="toc-header">
                     <h2 class="toc-title">Transporters Overview</h2>
-                    <button class="toc-toggle" id="transporters-toc-toggle-btn">🔎</button>
+                    <button class="toc-toggle" id="transporters-toc-toggle-btn"><?php echo kop_icon('search'); ?></button>
                 </div>
                 <div class="toc-content">
                     <div class="toc-stats" id="transporters-toc-stats">Total: 1 transporter</div>
@@ -397,7 +397,7 @@ get_header();
             <div class="section expanded" id="transporter-company-section">
                 <div class="section-header">
                     <h2 class="section-title">Transport Company</h2>
-                    <span class="section-toggle">🔎</span>
+                    <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
                 </div>
                 <div class="section-content">
                     <div class="form-group">
@@ -542,7 +542,7 @@ get_header();
             <div class="section expanded" id="transporter-individuals-section">
                 <div class="section-header">
                     <h2 class="section-title">Individual Transporters</h2>
-                    <span class="section-toggle">🔎</span>
+                    <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
                 </div>
                 <div class="section-content">
                     <div class="facility-nav-controls" style="margin-bottom: 15px;">
@@ -638,7 +638,7 @@ get_header();
             <!-- Transporter Submission Section -->
             <div class="section expanded" id="transporter-submission-section" style="border: 2px solid #1e40af; background: #f8fafc;">
                 <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                    <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Transporter for Review</h2>
+                    <h2 class="section-title" style="color: white; pointer-events: none;"><?php echo kop_icon('send'); ?> Submit Transporter for Review</h2>
                 </div>
                 <div class="section-content" style="display: block;">
                     <div class="form-group">
@@ -647,7 +647,7 @@ get_header();
                     </div>
                     <div class="form-group">
                         <button type="button" class="save-master-btn" id="save-transporter-project-btn">
-                            📮 Submit for Review
+                            <?php echo kop_icon('send'); ?> Submit for Review
                         </button>
                     </div>
                 </div>
@@ -668,15 +668,15 @@ get_header();
             <div class="toolbar-content" id="toolbar-content" data-kop-bug-feature="data-form/toolbar" data-kop-bug-label="Facility Toolbar">
                 <div class="toolbar-section">
                     <div class="toolbar-group">
-                        <a href="<?php echo esc_url(home_url('/')); ?>" class="btn-toolbar btn-secondary" title="Go back to homepage">🏠<span class="toolbar-label">Home</span></a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>" class="btn-toolbar btn-secondary" title="Go back to homepage"><?php echo kop_icon('home'); ?><span class="toolbar-label">Home</span></a>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project">🆕<span class="toolbar-label">New Project</span></button>
-                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project">📊<span class="toolbar-label">Report</span></button>
+                        <button type="button" class="btn-toolbar btn-success" id="new-project-btn-toolbar" title="Create a new project"><?php echo kop_icon('file-plus'); ?><span class="toolbar-label">New Project</span></button>
+                        <button type="button" class="btn-toolbar btn-primary" id="generate-report-btn-toolbar" title="Generate report for current project"><?php echo kop_icon('bar-chart'); ?><span class="toolbar-label">Report</span></button>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility">📄<span class="toolbar-label">Add Entry</span></button>
-                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top">⬆️<span class="toolbar-label">Scroll Top</span></button>
+                        <button type="button" class="btn-toolbar btn-primary" id="add-facility-btn-toolbar" title="Add a new facility"><?php echo kop_icon('file-text'); ?><span class="toolbar-label">Add Entry</span></button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="scroll-to-top-btn-toolbar" title="Scroll to top"><?php echo kop_icon('arrow-up'); ?><span class="toolbar-label">Scroll Top</span></button>
                     </div>
                     <div class="toolbar-group facility-nav-group">
                         <div class="facility-selector">
@@ -686,8 +686,8 @@ get_header();
                         </div>
                     </div>
                     <div class="toolbar-group">
-                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data">🔍<span class="toolbar-label">Search</span></button>
-                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion">✅<span class="toolbar-label">Submit</span></button>
+                        <button type="button" class="btn-toolbar btn-secondary" id="show-organizer-modal-btn" title="Search facility data"><?php echo kop_icon('search'); ?><span class="toolbar-label">Search</span></button>
+                        <button type="button" class="btn-toolbar btn-success" id="submit-suggestion-btn-toolbar" title="Submit suggestion"><?php echo kop_icon('check-circle'); ?><span class="toolbar-label">Submit</span></button>
                     </div>
                 </div>
             </div>
@@ -708,13 +708,13 @@ get_header();
             <div class="kop-step-kicker" data-step="2">Fill in the details<small>Each bar below is a section. Click it or press Expand to open it. You only need to fill in what you know.</small></div>
             <div class="section" id="data-organizer-section" style="display: none;">
             <div class="section-header">
-                <h2 class="section-title">📊 Data Organizer</h2>
-                <span class="section-toggle">🔎</span>
+                <h2 class="section-title"><?php echo kop_icon('bar-chart'); ?> Data Organizer</h2>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="bg-light content-box">
                     <p class="info-text" style="margin: 0;">
-                        <strong>🔍 Find all facilities by a specific data point:</strong> 
+                        <strong><?php echo kop_icon('search'); ?> Find all facilities by a specific data point:</strong> 
                         Select a data type (like staff member, operator, location) and search for a specific value to see all facilities that contain it.
                     </p>
                 </div>
@@ -742,7 +742,7 @@ get_header();
                 </div>
                 
                 <div class="mb-15">
-                    <button class="btn d-none" id="organize-search-btn">🔍 Search</button>
+                    <button class="btn d-none" id="organize-search-btn"><?php echo kop_icon('search'); ?> Search</button>
                     <button class="btn btn-secondary d-none" id="organize-clear-btn">Clear Results</button>
                 </div>
                 
@@ -778,7 +778,7 @@ get_header();
         <div class="section expanded" id="operator-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Parent Company Information</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="form-row">
@@ -812,7 +812,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🏢 Headquarters</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('building'); ?> Headquarters</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('headquarters'); ?>
@@ -862,7 +862,7 @@ get_header();
                 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">👥 Key Staff</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('users'); ?> Key Staff</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('key-staff'); ?>
@@ -905,7 +905,7 @@ get_header();
         <div class="section" id="identification-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Identification & Names</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="form-row">
@@ -923,7 +923,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">👤 Facility Ownership</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('user'); ?> Facility Ownership</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('facility-ownership'); ?>
@@ -949,7 +949,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🏷️ Other Names</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('tag'); ?> Other Names</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('other-names'); ?>
@@ -963,7 +963,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">👥 Known Referrers</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('users'); ?> Known Referrers</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('known-referrers'); ?>
@@ -977,7 +977,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🌐 Website Links</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('globe'); ?> Website Links</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('website-links'); ?>
@@ -1116,12 +1116,12 @@ get_header();
         <div class="section" id="location-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Location & Address</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🌍 International Program</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('globe'); ?> International Program</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('international-program'); ?>
@@ -1150,7 +1150,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">📍 Address Details</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('map-pin'); ?> Address Details</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('address-details'); ?>
@@ -1195,12 +1195,12 @@ get_header();
         <div class="section" id="operations-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Facility Operations</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🏢 Other Parent Companies</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('building'); ?> Other Parent Companies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('other-parent-companies'); ?>
@@ -1214,7 +1214,7 @@ get_header();
                 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">📅 Facility Operating Dates</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('calendar'); ?> Facility Operating Dates</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('operating-dates'); ?>
@@ -1250,12 +1250,12 @@ get_header();
         <div class="section" id="staff-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Staff & Links</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">👥 Key Staff Positions</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('users'); ?> Key Staff Positions</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('key-staff-positions'); ?>
@@ -1277,7 +1277,7 @@ get_header();
         <div class="section" id="facility-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Facility Details</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="form-group">
@@ -1317,12 +1317,12 @@ get_header();
         <div class="section" id="accreditations-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Accreditations & Memberships</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">✅ Current Accreditations</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('check-circle'); ?> Current Accreditations</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('current-accreditations'); ?>
@@ -1336,7 +1336,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">📜 Past Accreditations & Memberships</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('scroll'); ?> Past Accreditations & Memberships</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('past-accreditations'); ?>
@@ -1354,7 +1354,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🆔 Licensing & Certifications</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('id-card'); ?> Licensing & Certifications</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('licensing'); ?>
@@ -1376,14 +1376,14 @@ get_header();
         <div class="section" id="resources-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Available Resources & Documentation</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <h3 style="margin: 20px 0 15px 0; color: #1f2937; font-size: 15px;">Standard Resource Types</h3>
                 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h4 class="sub-section-title">📰 News & Media</h4>
+                        <h4 class="sub-section-title"><?php echo kop_icon('newspaper'); ?> News & Media</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('news-media'); ?>
@@ -1407,7 +1407,7 @@ get_header();
                 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h4 class="sub-section-title">📋 Official Documentation</h4>
+                        <h4 class="sub-section-title"><?php echo kop_icon('clipboard'); ?> Official Documentation</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('official-documentation'); ?>
@@ -1429,7 +1429,7 @@ get_header();
                 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h4 class="sub-section-title">⚖️ Legal & Compliance</h4>
+                        <h4 class="sub-section-title"><?php echo kop_icon('scale'); ?> Legal & Compliance</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('legal-compliance'); ?>
@@ -1447,7 +1447,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h4 class="sub-section-title">🏢 Business & Property</h4>
+                        <h4 class="sub-section-title"><?php echo kop_icon('building'); ?> Business & Property</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('business-property'); ?>
@@ -1473,7 +1473,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h4 class="sub-section-title">📚 Other Standard Resources</h4>
+                        <h4 class="sub-section-title"><?php echo kop_icon('book'); ?> Other Standard Resources</h4>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('other-resources'); ?>
@@ -1528,12 +1528,12 @@ get_header();
         <div class="section" id="treatment-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Treatment Types</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🏥 Standard Treatment Types</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('hospital'); ?> Standard Treatment Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('standard-treatment-types'); ?>
@@ -1623,7 +1623,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🧪 Custom Treatment Types</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('flask'); ?> Custom Treatment Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('custom-treatment-types'); ?>
@@ -1729,12 +1729,12 @@ get_header();
         <div class="section" id="philosophy-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Philosophy</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">📜 Standard Philosophies</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('scroll'); ?> Standard Philosophies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('standard-philosophies'); ?>
@@ -1784,7 +1784,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🖋️ Custom Philosophies</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('pen-line'); ?> Custom Philosophies</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('custom-philosophies'); ?>
@@ -1808,12 +1808,12 @@ get_header();
         <div class="section" id="incidents-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">Critical Incidents</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🚨 Standard Incident Types</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('siren'); ?> Standard Incident Types</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('standard-incident-types'); ?>
@@ -1839,7 +1839,7 @@ get_header();
 
                 <div class="sub-section">
                     <div class="sub-section-header">
-                        <h3 class="sub-section-title">🛠️ Custom Critical Incidents</h3>
+                        <h3 class="sub-section-title"><?php echo kop_icon('wrench'); ?> Custom Critical Incidents</h3>
                         <span class="sub-section-toggle">▼</span>
                     </div>
                     <?php kop_form_panel_help('custom-incidents'); ?>
@@ -1863,7 +1863,7 @@ get_header();
         <div class="section" id="notes-section" data-section-views="companies,locations,providers">
             <div class="section-header">
                 <h2 class="section-title">General Notes</h2>
-                <span class="section-toggle">🔎</span>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
                 <div class="form-group">
@@ -1877,21 +1877,21 @@ get_header();
         <div class="kop-step-kicker" data-step="3" data-section-views="companies,locations,referrers,transporters,providers">Submit for review</div>
         <div class="section expanded" id="submission-section" data-section-views="companies,locations,referrers,transporters,providers" data-kop-bug-feature="data-form/submit" data-kop-bug-label="Submit Suggestions" style="border: 2px solid #1e40af; background: #f8fafc;">
             <div class="section-header" style="background: #1e40af; color: white; cursor: default; pointer-events: none;">
-                <h2 class="section-title" style="color: white; pointer-events: none;">📮 Submit Suggestions</h2>
+                <h2 class="section-title" style="color: white; pointer-events: none;"><?php echo kop_icon('send'); ?> Submit Suggestions</h2>
             </div>
             <div class="section-content" style="display: block;">
                 <div id="suggestion-status" style="display: none;"></div>
 
                 <div class="form-group" style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button type="button" class="save-master-btn" id="submit-suggestion-btn-section" onclick="submitSuggestion()">
-                        📮 Submit for Review
+                        <?php echo kop_icon('send'); ?> Submit for Review
                     </button>
                     <button type="button" id="save-draft-locally-btn" class="save-master-btn" style="background: #6b7280;" title="Save your work in progress to your browser's local storage so you can continue later">
-                        💾 Save Draft Locally
+                        <?php echo kop_icon('save'); ?> Save Draft Locally
                     </button>
                 </div>
                 <p style="margin-top: 10px; color: #6b7280; font-size: 13px;">
-                    💡 <strong>Save Draft Locally</strong> saves your work to this browser so you can continue later. Your data stays on your device until you submit.
+                    <?php echo kop_icon('lightbulb'); ?> <strong>Save Draft Locally</strong> saves your work to this browser so you can continue later. Your data stays on your device until you submit.
                 </p>
             </div>
         </div>
@@ -1899,8 +1899,8 @@ get_header();
         <!-- Advanced User Mode Section -->
         <div class="section" id="advanced-mode-section" data-kop-bug-feature="data-form/import-export" data-kop-bug-label="Import / Export" style="border: 2px solid #6b7280; background: #f9fafb;">
             <div class="section-header" style="background: #6b7280; color: white; cursor: pointer;">
-                <h2 class="section-title" style="color: white;">⚙️ Advanced User Mode</h2>
-                <span class="section-toggle">🔎</span>
+                <h2 class="section-title" style="color: white;"><?php echo kop_icon('settings'); ?> Advanced User Mode</h2>
+                <span class="section-toggle"><?php echo kop_icon('search'); ?></span>
             </div>
             <div class="section-content">
  <div class="form-group">
@@ -2040,7 +2040,7 @@ get_header();
     <div id="data-organizer-modal" class="organizer-modal">
         <div class="organizer-modal-content" data-kop-bug-feature="data-form/data-search" data-kop-bug-label="Data Search">
             <div class="organizer-modal-header" style="padding: 12px 20px;">
-                <h2 style="font-size: 18px;">🔍 Search Facility Data</h2>
+                <h2 style="font-size: 18px;"><?php echo kop_icon('search'); ?> Search Facility Data</h2>
                 <button class="organizer-modal-close" id="organizer-modal-close">&times;</button>
             </div>
             <div class="organizer-modal-body" style="padding: 15px 20px;">
@@ -2062,7 +2062,7 @@ get_header();
                 </div>
 
                 <div style="margin-bottom: 20px; text-align: center;">
-                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;">🔍 Search</button>
+                    <button class="btn" id="organize-search-btn-modal" style="background: #33A7B5; color: white; padding: 10px 30px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; transition: all 0.2s;"><?php echo kop_icon('search'); ?> Search</button>
                     <button class="btn btn-secondary d-none" id="organize-clear-btn-modal" style="padding: 10px 30px; border-radius: 6px; margin-left: 10px; background: #FE8088; color: #000435; border: none; cursor: pointer; transition: all 0.2s;">Clear Results</button>
                 </div>
 

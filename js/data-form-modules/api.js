@@ -170,7 +170,7 @@
                 if (typeof window.syncLocationProjectsFromSources === 'function') {
                     window.syncLocationProjectsFromSources(deduplicatedProjects);
                 } else {
-                    console.error('❌ syncLocationProjectsFromSources function not found!');
+                    console.error('syncLocationProjectsFromSources function not found!');
                 }
 
                 window.projects = deduplicatedProjects;
@@ -306,14 +306,14 @@
                     console.warn('Local persistence failed:', storageError);
                 }
                 if (window.currentProjectName === projectName) newProject();
-                showUploadStatus(`✅ Removed local draft "${projectName}".`, 'success');
+                showUploadStatus(`Removed local draft "${projectName}".`, 'success');
                 if (typeof updateAllUI === 'function') updateAllUI();
                 if (typeof refreshSavedProjectPanels === 'function') refreshSavedProjectPanels();
                 return true;
             }
 
             try {
-                showUploadStatus(`🗑️ Deleting "${projectName}"...`, 'info');
+                showUploadStatus(`Deleting "${projectName}"...`, 'info');
                 const payload = { projectName: projectName, action: 'delete' };
 
                 const response = await fetch(API_ENDPOINTS.SAVE_PROJECT, {
@@ -333,19 +333,19 @@
                 localStorage.removeItem(`project_${projectName}`);
                 if (window.currentProjectName === projectName) newProject();
 
-                showUploadStatus(`✅ Deleted "${projectName}" successfully!`, 'success');
+                showUploadStatus(`Deleted "${projectName}" successfully!`, 'success');
                 if (typeof updateAllUI === 'function') updateAllUI();
                 if (typeof refreshSavedProjectPanels === 'function') refreshSavedProjectPanels();
                 return true;
             } catch (error) {
-                console.error('❌ DELETE FAILED:', error.message);
-                showUploadStatus(`❌ Failed to delete: ${error.message}`, 'error');
+                console.error('DELETE FAILED:', error.message);
+                showUploadStatus(`Failed to delete: ${error.message}`, 'error');
                 return false;
             }
         }
 
         if (!projectName || !window.formData) {
-            showUploadStatus('❌ No project name or data to save', 'error');
+            showUploadStatus('No project name or data to save', 'error');
             return false;
         }
 
@@ -354,14 +354,14 @@
             const saved = persistProjectLocally(projectName, {
                 showStatus: true,
                 statusType: 'info',
-                statusMessage: '💾 Draft saved locally. Use "Submit Suggestion for Review" to send updates to Kids Over Profits.'
+                statusMessage: 'Draft saved locally. Use "Submit Suggestion for Review" to send updates to Kids Over Profits.'
             });
-            if (!saved) showUploadStatus('❌ Unable to save draft locally. Please try again.', 'error');
+            if (!saved) showUploadStatus('Unable to save draft locally. Please try again.', 'error');
             return false;
         }
 
         try {
-            showUploadStatus(`💾 Saving "${projectName}" to cloud...`, 'info');
+            showUploadStatus(`Saving "${projectName}" to cloud...`, 'info');
             if (typeof window.ensureReferrerDataStructures === 'function') window.ensureReferrerDataStructures();
             
             const normalizedName = projectName.toLowerCase().trim();
@@ -478,16 +478,16 @@
             if(typeof window.invalidateAggregatedData === 'function') window.invalidateAggregatedData();
             window.currentProjectName = projectName;
             persistProjectLocally(projectName);
-            showUploadStatus(`✅ Saved "${projectName}" successfully!`, 'success');
+            showUploadStatus(`Saved "${projectName}" successfully!`, 'success');
             if (typeof updateAllUI === 'function') updateAllUI();
             return true;
         } catch (error) {
-            console.error('❌ SAVE FAILED:', error.message);
-            showUploadStatus(`❌ Failed to save: ${error.message}`, 'error');
+            console.error('SAVE FAILED:', error.message);
+            showUploadStatus(`Failed to save: ${error.message}`, 'error');
             persistProjectLocally(projectName, {
                 showStatus: true,
                 statusType: 'info',
-                statusMessage: '⚠️ Saved to local storage only (cloud save failed).'
+                statusMessage: 'Saved to local storage only (cloud save failed).'
             });
             return false;
         }

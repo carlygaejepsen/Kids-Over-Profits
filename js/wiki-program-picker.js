@@ -96,7 +96,7 @@
 
             // "No match → create" area
             var createToggle = el('button', 'kop-pp-create-toggle',
-                '➕ Not in the list? Create a new program entry');
+                kopIcon('plus') + ' Not in the list? Create a new program entry');
             createToggle.type = 'button';
             dialog.appendChild(createToggle);
 
@@ -116,13 +116,13 @@
             // Document library folder id
             var docWrap = el('div', 'kop-pp-doc');
             docWrap.innerHTML =
-                '<label class="kop-pp-doc-label">📂 Document library folder ' +
+                '<label class="kop-pp-doc-label">' + kopIcon('folder-open') + ' Document library folder ' +
                 '<span class="kop-pp-doc-hint">(FileBird folder — optional)</span></label>' +
                 '<div class="kop-pp-doc-row">' +
                 '<input type="number" min="1" step="1" class="kop-pp-doc-input" ' +
                 'value="' + (selected.documentFolderId ? escapeHtml(selected.documentFolderId) : '') + '" ' +
                 'placeholder="folder ID">' +
-                '<button type="button" class="kop-pp-doc-browse">📁 Browse folders…</button>' +
+                '<button type="button" class="kop-pp-doc-browse">' + kopIcon('folder') + ' Browse folders…</button>' +
                 '</div>' +
                 '<div class="kop-pp-doc-chosen"></div>';
             dialog.appendChild(docWrap);
@@ -269,7 +269,7 @@
 
                 var warn = el('div', 'kop-pp-dup-warning');
                 warn.appendChild(el('p', 'kop-pp-dup-title',
-                    '⚠️ ' + escapeHtml(data.error || 'Similar programs already exist.') +
+                    kopIcon('alert-triangle') + ' ' + escapeHtml(data.error || 'Similar programs already exist.') +
                     ' Please check this list before creating a new entry:'));
 
                 var list = el('div', 'kop-pp-dup-list');

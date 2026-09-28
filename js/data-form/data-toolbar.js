@@ -94,7 +94,7 @@
 
         // Check if no project is loaded
         if (!window.currentProjectName) {
-            dropdown.innerHTML = '<option>📂 Load a project to begin</option>';
+            dropdown.innerHTML = '<option>Load a project to begin</option>';
             dropdown.classList.add('toolbar-dropdown-no-project');
 
             // Make the dropdown clickable to scroll to project loader
@@ -154,11 +154,11 @@
     }
 
     function initializeToolbarButtons() {
-        console.log('🟢 initializeToolbarButtons() called');
+        console.log('initializeToolbarButtons() called');
         const elements = getElements();
         const { toolbar, toolbarToggle, toolbarContent, dropdown, prevBtn, nextBtn, newProjectBtn, addBtn, cloneBtn, scrollTopBtn, removeBtn } = elements;
 
-        console.log('🟢 Toolbar elements found:', {
+        console.log('Toolbar elements found:', {
             toolbar: !!toolbar,
             newProjectBtn: !!newProjectBtn,
             addBtn: !!addBtn,
@@ -179,7 +179,7 @@
                 _toolbarResizeObserver.observe(toolbar);
             }
         } else {
-            console.error('❌ Toolbar element not found!');
+            console.error('Toolbar element not found!');
         }
 
         if (toolbarToggle && toolbar && !toolbarToggle.dataset.listenerAttached) {
@@ -195,7 +195,7 @@
 
             toolbarToggle.addEventListener('click', (e) => {
                 e.preventDefault();
-                console.log('🔘 Toolbar toggle clicked');
+                console.log('Toolbar toggle clicked');
                 const freshElements = getElements();
                 if (!freshElements.toolbar) return;
                 const isMinimized = freshElements.toolbar.classList.toggle('minimized');
@@ -240,7 +240,7 @@
 
         if (newProjectBtn && !newProjectBtn.dataset.listenerAttached) {
             newProjectBtn.addEventListener('click', () => {
-                log('🔵 New Project button clicked');
+                log('New Project button clicked');
                 log('window.newProject exists?', typeof window.newProject === 'function');
                 log('window.KOP_Project exists?', !!window.KOP_Project);
                 log('window.KOP_Project.newProject exists?', !!(window.KOP_Project && window.KOP_Project.newProject));
@@ -253,18 +253,18 @@
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 } else {
-                    console.error('❌ window.newProject is not a function');
+                    console.error('window.newProject is not a function');
                 }
             }, { passive: true });
             newProjectBtn.dataset.listenerAttached = 'true';
-            log('✅ New Project button listener attached');
+            log('New Project button listener attached');
         } else if (!newProjectBtn) {
-            log('❌ New Project button not found in DOM');
+            log('New Project button not found in DOM');
         }
 
         if (addBtn && !addBtn.dataset.listenerAttached) {
             addBtn.addEventListener('click', () => {
-                log('🔵 Add Facility button clicked');
+                log('Add Facility button clicked');
                 log('window.addFacility exists?', typeof window.addFacility === 'function');
                 log('window.KOP_UI_Actions exists?', !!window.KOP_UI_Actions);
                 log('window.KOP_UI_Actions.addFacility exists?', !!(window.KOP_UI_Actions && window.KOP_UI_Actions.addFacility));
@@ -272,13 +272,13 @@
                 if (typeof window.addFacility === 'function') {
                     window.addFacility();
                 } else {
-                    console.error('❌ window.addFacility is not a function');
+                    console.error('window.addFacility is not a function');
                 }
             }, { passive: true });
             addBtn.dataset.listenerAttached = 'true';
-            log('✅ Add Facility button listener attached');
+            log('Add Facility button listener attached');
         } else if (!addBtn) {
-            log('❌ Add Facility button not found in DOM');
+            log('Add Facility button not found in DOM');
         }
 
         if (cloneBtn && !cloneBtn.dataset.listenerAttached) {
@@ -308,7 +308,7 @@
 
         if (elements.generateReportBtn && !elements.generateReportBtn.dataset.listenerAttached) {
             elements.generateReportBtn.addEventListener('click', () => {
-                log('🔵 Generate Report button clicked');
+                log('Generate Report button clicked');
                 const hasProjectsFn = typeof window.generateProjectsReport === 'function';
                 const hasHTMLReport = typeof window.generateHTMLReport === 'function';
                 log('window.generateProjectsReport exists?', hasProjectsFn);
@@ -319,7 +319,7 @@
                     let categories;
                     let filename;
 
-                    console.log('📊 Report Button Debug:', { category });
+                    console.log('Report Button Debug:', { category });
 
                     if (category === 'referrers') {
                         categories = ['referrers'];
@@ -334,7 +334,7 @@
 
                     log('Generating report with:', { categories, filename });
                     try {
-                        console.log('🚀 Calling window.generateProjectsReport...');
+                        console.log('Calling window.generateProjectsReport...');
                         window.generateProjectsReport({ categories, filename });
                     } catch (err) {
                         console.error('Error calling generateProjectsReport():', err);
@@ -353,25 +353,25 @@
                     return;
                 }
 
-                console.error('❌ No report generator available: window.generateProjectsReport and window.generateHTMLReport are missing');
+                console.error('No report generator available: window.generateProjectsReport and window.generateHTMLReport are missing');
             }, { passive: true });
             elements.generateReportBtn.dataset.listenerAttached = 'true';
-            log('✅ Generate Report button listener attached');
+            log('Generate Report button listener attached');
         } else if (!elements.generateReportBtn) {
-            log('❌ Generate Report button not found in DOM');
+            log('Generate Report button not found in DOM');
         }
 
         log('Toolbar buttons initialized');
     }
 
     function initializeFixedToolbar() {
-        console.log('🟢 initializeFixedToolbar() called');
+        console.log('initializeFixedToolbar() called');
         const toolbar = document.getElementById('fixed-toolbar');
         if (!toolbar) {
-            console.error('❌ Fixed toolbar element not found, skipping initialization.');
+            console.error('Fixed toolbar element not found, skipping initialization.');
             return;
         }
-        console.log('✅ Fixed toolbar element found');
+        console.log('Fixed toolbar element found');
         initializeToolbarButtons();
     }
 
@@ -422,17 +422,17 @@
     window.initializeFacilityToolbarToggle = initializeFacilityToolbarToggle;
 
     const bootToolbar = () => {
-        console.log('🟢 bootToolbar() called, readyState:', document.readyState);
+        console.log('bootToolbar() called, readyState:', document.readyState);
         initializeFixedToolbar();
     };
 
-    console.log('🟢 data-toolbar.js loaded, readyState:', document.readyState);
+    console.log('data-toolbar.js loaded, readyState:', document.readyState);
 
     if (document.readyState === 'loading') {
-        console.log('🟡 Waiting for DOMContentLoaded...');
+        console.log('Waiting for DOMContentLoaded...');
         document.addEventListener('DOMContentLoaded', bootToolbar, { once: true });
     } else {
-        console.log('🟡 DOM already ready, initializing immediately');
+        console.log('DOM already ready, initializing immediately');
         bootToolbar();
     }
 })(window);

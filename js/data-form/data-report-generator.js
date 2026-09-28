@@ -395,7 +395,7 @@ function generateReferrerSection() {
         return '';
     }
 
-    let html = '<div class="section"><h2 class="section-title">👥 Referrer Information</h2>';
+    let html = '<div class="section"><h2 class="section-title">' + ((typeof kopIcon === 'function') ? kopIcon('users') : '') + ' Referrer Information</h2>';
 
     // Agency/Group information
     if (hasAgencyData && !isIndependent) {
@@ -915,7 +915,7 @@ function renderFieldNotes(fieldNotes, sectionLabel = 'Field') {
 
     return `
         <div class="field-notes-section">
-            <div class="subsection-title">📝 ${sectionLabel} Notes</div>
+            <div class="subsection-title">${(typeof kopIcon === 'function') ? kopIcon('pen-line') : ''} ${sectionLabel} Notes</div>
             ${notesHTML}
         </div>
     `;

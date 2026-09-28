@@ -153,7 +153,7 @@
     const articleTemplates = {
         lawsuit: {
             name: 'Lawsuit Article',
-            icon: '⚖️',
+            icon: kopIcon('scale'),
             fields: {
                 articleType: 'lawsuit',
                 contentWarnings: ['Physical Restraint', 'Seclusion']
@@ -161,7 +161,7 @@
         },
         arrest: {
             name: 'Staff Arrest',
-            icon: '👮',
+            icon: kopIcon('shield'),
             fields: {
                 articleType: 'arrest',
                 contentWarnings: ['Child Sexual Abuse', 'Law Enforcement Abuse']
@@ -169,7 +169,7 @@
         },
         closure: {
             name: 'Facility Closure',
-            icon: '🏢',
+            icon: kopIcon('building'),
             fields: {
                 articleType: 'closure',
                 contentWarnings: []
@@ -177,7 +177,7 @@
         },
         expose: {
             name: 'Survivor Account',
-            icon: '📰',
+            icon: kopIcon('newspaper'),
             fields: {
                 articleType: 'expose',
                 contentWarnings: ['Graphic Descriptions of Assaults or Injuries', 'Physical Restraint']
@@ -185,7 +185,7 @@
         },
         corporate: {
             name: 'Corporate Change',
-            icon: '🏛️',
+            icon: kopIcon('landmark'),
             fields: {
                 articleType: 'corporate',
                 contentWarnings: []
@@ -356,7 +356,7 @@
                         <div class="news-input-with-save">
                             <input type="text" name="legalRep" class="news-input" data-autocomplete-category="human" list="legalReps-list" value="${escAttr(formData.legalRep)}">
                             <datalist id="legalReps-list"></datalist>
-                            <button class="news-save-btn" data-save="legalReps" data-field="legalRep">💾</button>
+                            <button class="news-save-btn" data-save="legalReps" data-field="legalRep" title="Save" aria-label="Save">${kopIcon('save')}</button>
                         </div>
                         <div class="news-saved-tags" data-category="legalReps"></div>
                     </div>
@@ -370,7 +370,7 @@
                             <div class="news-input-with-save">
                                 <input type="text" name="jurisdiction" class="news-input" data-autocomplete-category="location" list="jurisdictions-list" value="${escAttr(formData.jurisdiction)}">
                                 <datalist id="jurisdictions-list"></datalist>
-                                <button class="news-save-btn" data-save="jurisdictions" data-field="jurisdiction">💾</button>
+                                <button class="news-save-btn" data-save="jurisdictions" data-field="jurisdiction" title="Save" aria-label="Save">${kopIcon('save')}</button>
                             </div>
                             <div class="news-saved-tags" data-category="jurisdictions"></div>
                         </div>
@@ -1324,7 +1324,7 @@
             localStorage.setItem('news_ai_custom_instructions', customInstructions);
         }
 
-        statusEl.innerHTML = '<span class="loading">🤖 Processing with AI...</span>';
+        statusEl.innerHTML = `<span class="loading">${kopIcon('bot')} Processing with AI...</span>`;
         processBtn.disabled = true;
 
         try {
@@ -1395,13 +1395,13 @@
                 saveToLocalStorage();
                 location.reload(); // Reload to show all populated fields
 
-                statusEl.innerHTML = '<span class="success">✅ Article processed successfully!</span>';
+                statusEl.innerHTML = `<span class="success">${kopIcon('check-circle')} Article processed successfully!</span>`;
             } else {
-                statusEl.innerHTML = `<span class="error">❌ ${result.error || 'Processing failed'}</span>`;
+                statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} ${result.error || 'Processing failed'}</span>`;
             }
         } catch (error) {
             console.error('AI processing error:', error);
-            statusEl.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+            statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} Network error: ${error.message}</span>`;
         } finally {
             processBtn.disabled = false;
         }
@@ -1436,7 +1436,7 @@
             const title = formData.title || '';
             
             if (!title.trim()) {
-                statusEl.innerHTML = '<span class="error">❌ Article title is required</span>';
+                statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} Article title is required</span>`;
                 return;
             }
 
@@ -1448,7 +1448,7 @@
                 return;
             }
 
-            statusEl.innerHTML = '<span class="loading">⏳ Submitting...</span>';
+            statusEl.innerHTML = `<span class="loading">${kopIcon('hourglass')} Submitting...</span>`;
             confirmBtn.disabled = true;
 
             // Build submission data
@@ -1512,18 +1512,18 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    statusEl.innerHTML = `<span class="success">✅ Submitted successfully! (ID: ${result.id})</span>`;
+                    statusEl.innerHTML = `<span class="success">${kopIcon('check-circle')} Submitted successfully! (ID: ${result.id})</span>`;
                     setTimeout(() => {
                         modal.style.display = 'none';
                     }, 2000);
                 } else {
                     // Duplicate rejections put the human-readable text in
                     // `message` (error is just the token 'duplicate').
-                    statusEl.innerHTML = `<span class="error">❌ ${escAttr(result.message || result.error || 'Submission failed')}</span>`;
+                    statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} ${escAttr(result.message || result.error || 'Submission failed')}</span>`;
                 }
             } catch (error) {
                 console.error('Submission error:', error);
-                statusEl.innerHTML = `<span class="error">❌ Network error: ${error.message}</span>`;
+                statusEl.innerHTML = `<span class="error">${kopIcon('x-circle')} Network error: ${error.message}</span>`;
             } finally {
                 confirmBtn.disabled = false;
             }

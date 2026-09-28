@@ -106,8 +106,8 @@
         const { debugLog, showUploadStatus, deepClone, updateAllUI, updateLabelsForProjectType, handleReferrerToggle, handleTransporterToggle, updateConsultantsUI, updateTransportersUI, updateLocationFacilitiesOverview, scrollToFormInput } = window;
         const { normalizeProjectData } = window.KOP_DataNormalizer;
 
-        debugLog('🔄 loadProject called with:', projectName);
-        debugLog('📦 Available projects:', Object.keys(window.projects || {}));
+        debugLog('loadProject called with:', projectName);
+        debugLog('Available projects:', Object.keys(window.projects || {}));
         showUploadStatus(`Loading project "${projectName}"...`, 'info');
 
         let resolvedName = projectName;
@@ -115,12 +115,12 @@
             const upperName = projectName.toUpperCase();
             if (window.projects[upperName]) {
                 resolvedName = upperName;
-                debugLog('📍 Resolved project name to uppercase:', resolvedName);
+                debugLog('Resolved project name to uppercase:', resolvedName);
             }
         }
         
         if (!override && !window.projects[resolvedName]) {
-            console.error('❌ Project not found:', projectName, '(also tried:', projectName.toUpperCase(), ')');
+            console.error('Project not found:', projectName, '(also tried:', projectName.toUpperCase(), ')');
             showUploadStatus(`Project "${projectName}" not found.`, 'error');
             return Promise.reject(new Error(`Project not found: ${projectName}`));
         }
@@ -136,13 +136,13 @@
         const source = override
             ? { data: override.data || {}, currentFacilityIndex: 0 }
             : window.projects[projectName];
-        debugLog('📂 Project category:', projectCategory);
+        debugLog('Project category:', projectCategory);
 
         const targetTab = document.querySelector(`.category-tab[data-category="${projectCategory}"]`);
         if (targetTab) {
             document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
             targetTab.classList.add('active');
-            debugLog('✅ Switched to', projectCategory, 'tab');
+            debugLog('Switched to', projectCategory, 'tab');
         }
 
         document.querySelectorAll('.category-content').forEach(content => content.classList.add('view-hidden', 'd-none'));
@@ -320,23 +320,23 @@ Click Cancel to stay on the current tab.`);
             if (typeof window.updateAllUI === 'function') window.updateAllUI();
         });
         categoryTabsContainer.dataset.tabsInitialized = 'true';
-        debugLog('✅ Category tab switching logic initialized.');
+        debugLog('Category tab switching logic initialized.');
     }
 
     async function renameProject(oldName) {
         const { showUploadStatus, updateAllUI } = window;
         const { API_ENDPOINTS } = window.KOP_FormConfig;
         if (!oldName) {
-            showUploadStatus('❌ No project selected to rename.', 'error');
+            showUploadStatus('No project selected to rename.', 'error');
             return;
         }
         const newName = prompt(`Enter the new name for project "${oldName}":`, oldName);
         if (!newName || newName.trim() === '' || newName.trim() === oldName) {
-            showUploadStatus('ℹ️ Rename cancelled or name not changed.', 'info');
+            showUploadStatus('Rename cancelled or name not changed.', 'info');
             return;
         }
         if (window.projects && window.projects[newName.trim()]) {
-            showUploadStatus(`❌ A project named "${newName.trim()}" already exists.`, 'error');
+            showUploadStatus(`A project named "${newName.trim()}" already exists.`, 'error');
             return;
         }
         try {
@@ -357,13 +357,13 @@ Click Cancel to stay on the current tab.`);
                     const projectNameInput = document.getElementById('project-name');
                     if (projectNameInput) projectNameInput.value = newName.trim();
                 }
-                showUploadStatus(`✅ Project renamed to "${newName.trim()}"`, 'success');
+                showUploadStatus(`Project renamed to "${newName.trim()}"`, 'success');
                 updateAllUI();
             } else {
                 throw new Error(result.error || 'Failed to rename project.');
             }
         } catch (error) {
-            showUploadStatus(`❌ Rename failed: ${error.message}`, 'error');
+            showUploadStatus(`Rename failed: ${error.message}`, 'error');
             console.error('Rename failed:', error);
         }
     }
@@ -372,7 +372,7 @@ Click Cancel to stay on the current tab.`);
         const { showUploadStatus } = window;
         const { saveProjectToCloud } = window.KOP_API;
         if (!projectName) {
-            showUploadStatus('❌ No project selected to delete.', 'error');
+            showUploadStatus('No project selected to delete.', 'error');
             return;
         }
         if (!confirm(`Are you sure you want to permanently delete the project "${projectName}"? This cannot be undone.`)) return;
@@ -384,26 +384,26 @@ Click Cancel to stay on the current tab.`);
         const { persistProjectLocally, saveProjectToCloud } = window.KOP_API;
 
         if (!projectName || !window.projects || !window.projects[projectName]) {
-            showUploadStatus('❌ Project not found to reclassify.', 'error');
+            showUploadStatus('Project not found to reclassify.', 'error');
             return;
         }
         const currentCategory = determineProjectCategory(projectName);
         const newCategory = prompt(`Project "${projectName}" is currently in "${currentCategory}".
 Enter new category (companies, locations, referrers, transporters, or providers):`, currentCategory);
         if (!newCategory || newCategory.trim().toLowerCase() === currentCategory) {
-            showUploadStatus('ℹ️ Reclassification cancelled or category not changed.', 'info');
+            showUploadStatus('Reclassification cancelled or category not changed.', 'info');
             return;
         }
         const validCategories = ['companies', 'locations', 'referrers', 'transporters', 'providers'];
         const normalizedCategory = newCategory.trim().toLowerCase();
         if (!validCategories.includes(normalizedCategory)) {
-            showUploadStatus(`❌ Invalid category. Please use one of: ${validCategories.join(', ')}.`, 'error');
+            showUploadStatus(`Invalid category. Please use one of: ${validCategories.join(', ')}.`, 'error');
             return;
         }
         window.projects[projectName].category = normalizedCategory;
         if (isSuggestionMode()) {
             persistProjectLocally(projectName);
-            showUploadStatus(`✅ Project "${projectName}" reclassified to "${normalizedCategory}" in your local drafts.`, 'success');
+            showUploadStatus(`Project "${projectName}" reclassified to "${normalizedCategory}" in your local drafts.`, 'success');
         } else {
             const originalCurrentProjectName = window.currentProjectName;
             try {

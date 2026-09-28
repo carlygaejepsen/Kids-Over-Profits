@@ -182,14 +182,14 @@ function invalidateAggregatedData(category = null) {
         Object.keys(aggregatedDataCache).forEach(key => {
             aggregatedDataCache[key] = null;
         });
-        debugLog('🔄 All aggregated data caches invalidated');
+        debugLog('All aggregated data caches invalidated');
         return;
     }
 
     const cacheKey = CACHE_CATEGORY_MAP[category];
     if (cacheKey) {
         aggregatedDataCache[cacheKey] = null;
-        debugLog('🔄 Aggregated data cache invalidated for:', cacheKey);
+        debugLog('Aggregated data cache invalidated for:', cacheKey);
     }
 }
 
@@ -792,7 +792,7 @@ function attachCustomValueRecorder(input, category) {
         
         if (!existingValues.includes(value)) {
             addCustomValue(category, value);
-            debugLog(`📝 Recorded new custom value for ${category}:`, value);
+            debugLog(`Recorded new custom value for ${category}:`, value);
         }
     };
 
@@ -817,7 +817,7 @@ function attachCustomValueRecorder(input, category) {
 function createAutocomplete(input, getDataFunction, category) {
     // Prevent double-initialization
     if (input.dataset.autocompleteInit === 'true') {
-        debugLog('✅ Autocomplete already initialized for', input.id || input.name);
+        debugLog('Autocomplete already initialized for', input.id || input.name);
         return;
     }
 
@@ -1042,7 +1042,7 @@ function createAutocomplete(input, getDataFunction, category) {
                 });
 
                 if (!resp.ok) {
-                    console.warn(`⚠️ Autocomplete API returned ${resp.status} for category "${category}"`);
+                    console.warn(`Autocomplete API returned ${resp.status} for category "${category}"`);
                     // Show "No matches" only after fetch fails and local is empty
                     if (localSorted.length === 0) {
                         showDropdown([]);
@@ -1052,7 +1052,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
                 const contentType = resp.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
-                    console.warn(`⚠️ Autocomplete API returned non-JSON content-type: ${contentType}`);
+                    console.warn(`Autocomplete API returned non-JSON content-type: ${contentType}`);
                     if (localSorted.length === 0) {
                         showDropdown([]);
                     }
@@ -1064,9 +1064,9 @@ function createAutocomplete(input, getDataFunction, category) {
                     const merged = Array.from(new Set([...localSorted, ...json.values]));
                     const mergedSorted = sortByRelevance(merged, value);
                     showDropdown(mergedSorted);
-                    debugLog(`✅ Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
+                    debugLog(`Autocomplete loaded ${json.values.length} remote suggestions for "${category}"`);
                 } else {
-                    console.warn('⚠️ Autocomplete API returned unexpected format:', json);
+                    console.warn('Autocomplete API returned unexpected format:', json);
                     if (localSorted.length === 0) {
                         showDropdown([]);
                     }
@@ -1076,7 +1076,7 @@ function createAutocomplete(input, getDataFunction, category) {
                     // Request was cancelled, ignore silently
                     return;
                 }
-                console.warn(`⚠️ Autocomplete fetch failed for category "${category}":`, e.message);
+                console.warn(`Autocomplete fetch failed for category "${category}":`, e.message);
                 // Show "No matches" only if local was also empty
                 if (localSorted.length === 0) {
                     showDropdown([]);
@@ -1170,7 +1170,7 @@ function createAutocomplete(input, getDataFunction, category) {
 
     // Mark as initialized to prevent double-initialization
     input.dataset.autocompleteInit = 'true';
-    debugLog('✅ Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
+    debugLog('Autocomplete initialized for', category, 'on', input.id || input.name || 'unnamed input');
 }
 
 // ============================================
@@ -1224,11 +1224,11 @@ function initializeAutocompleteFields() {
         if (typeof dataFunction === 'function') {
             createAutocomplete(field, dataFunction, category);
         } else {
-            console.warn('⚠️ No autocomplete data provider configured for category', category, field);
+            console.warn('No autocomplete data provider configured for category', category, field);
         }
     });
 
-    debugLog('✅ Autocomplete fields initialization complete');
+    debugLog('Autocomplete fields initialization complete');
 }
 
 // ============================================
@@ -1303,7 +1303,7 @@ window.DEFAULT_STAFF_ROLES = DEFAULT_STAFF_ROLES;
  * Also set up a MutationObserver to handle dynamically added fields
  */
 function autoInitialize() {
-    debugLog('🚀 Auto-initializing autocomplete fields...');
+    debugLog('Auto-initializing autocomplete fields...');
     
     // Initialize all existing fields with data-autocomplete-category
     initializeAutocompleteFields();
@@ -1332,7 +1332,7 @@ function autoInitialize() {
             // Debounce re-initialization
             clearTimeout(autoInitialize._debounceTimer);
             autoInitialize._debounceTimer = setTimeout(() => {
-                debugLog('🔄 Re-initializing autocomplete for dynamically added fields...');
+                debugLog('Re-initializing autocomplete for dynamically added fields...');
                 initializeAutocompleteFields();
             }, 100);
         }
@@ -1344,7 +1344,7 @@ function autoInitialize() {
         subtree: true
     });
     
-    debugLog('✅ Autocomplete auto-initialization complete. MutationObserver active.');
+    debugLog('Autocomplete auto-initialization complete. MutationObserver active.');
 }
 
 // Initialize when DOM is ready
@@ -1357,7 +1357,7 @@ if (document.readyState === 'loading') {
 
 // Also re-initialize when formReady event fires (after all data is loaded)
 document.addEventListener('formReady', () => {
-    debugLog('📢 formReady event received, re-initializing autocomplete...');
+    debugLog('formReady event received, re-initializing autocomplete...');
     // Clear init flags to allow re-initialization with fresh data
     document.querySelectorAll('[data-autocomplete-category]').forEach(field => {
         delete field.dataset.autocompleteInit;

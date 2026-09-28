@@ -117,7 +117,7 @@ get_header();
                 </div>
 
                 <div class="form-row">
-                    <button type="button" id="fetchLegislationBtn" class="primary-btn autofill-btn">✨ Auto-populate details from government sources</button>
+                    <button type="button" id="fetchLegislationBtn" class="primary-btn autofill-btn"><?php echo kop_icon('sparkles'); ?> Auto-populate details from government sources</button>
                 </div>
 
                 <div class="form-row">

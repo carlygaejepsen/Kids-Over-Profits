@@ -53,10 +53,11 @@ echo "<style>body{font-family:monospace;padding:20px;background:#1a1a2e;color:#e
 echo ".change{color:#ffd43b;} .keep{color:#51cf66;} .info{color:#74c0fc;} .warn{color:#ff6b6b;} ";
 echo "h1{color:#ffd43b;} pre{background:#2d2d44;padding:10px;border-radius:5px;overflow-x:auto;}</style></head><body>";
 
-echo "<h1>🧹 Clean Historical Identification Fields</h1>";
+echo "<h1>" . kop_icon('eraser') . " Clean Historical Identification Fields</h1>";
 
 try {
     require_once __DIR__ . '/config.php';
+    require_once __DIR__ . '/../inc/icons.php';
     require_once __DIR__ . '/../inc/facility-v2-writer.php';
     kop_v2_exit_if_legacy_frozen($pdo ?? null, 'clean-historical-fields.php');
     echo "<p class='keep'>✓ Config loaded</p>";
@@ -337,7 +338,7 @@ foreach ($updates as $u) {
 echo "</pre>";
 
 if ($dryRun) {
-    echo "<p class='info'>👆 Add <code>?run=1</code> to the URL to apply these changes.</p></body></html>";
+    echo "<p class='info'>" . kop_icon('arrow-up') . " Add <code>?run=1</code> to the URL to apply these changes.</p></body></html>";
     exit;
 }
 
@@ -364,10 +365,10 @@ try {
         $backupNote = $backupFile;
         echo "<p class='keep'>✓ Backup written: " . htmlspecialchars($backupFile) . "</p>";
     } else {
-        echo "<p class='warn'>⚠ Could not write backup file (continuing; updates are transactional and originals are listed above).</p>";
+        echo "<p class='warn'>" . kop_icon('alert-triangle') . " Could not write backup file (continuing; updates are transactional and originals are listed above).</p>";
     }
 } catch (Throwable $e) {
-    echo "<p class='warn'>⚠ Backup step failed: " . htmlspecialchars($e->getMessage()) . " (continuing)</p>";
+    echo "<p class='warn'>" . kop_icon('alert-triangle') . " Backup step failed: " . htmlspecialchars($e->getMessage()) . " (continuing)</p>";
 }
 
 $applied = 0;

@@ -20,6 +20,7 @@
  */
 
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/../inc/icons.php';
 
 // --- Load WordPress + require admin ---------------------------------------
 if (!function_exists('current_user_can')) {
@@ -201,7 +202,7 @@ header('Content-Type: text/html; charset=utf-8');
 </style>
 </head>
 <body>
-<h1>🧹 Wiki Submissions Cleanup</h1>
+<h1><?php echo kop_icon('eraser'); ?> Wiki Submissions Cleanup</h1>
 
 <?php if ($done !== null): ?>
     <?php if (!empty($done['error'])): ?>

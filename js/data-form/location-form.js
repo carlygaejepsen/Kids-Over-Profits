@@ -176,7 +176,7 @@ function deduplicateLocationProjects(projectsObj) {
             const originalKey = keys[0];
             result[upperName] = mergeLocationProjectRecords(projectsObj[originalKey], null, upperName);
             if (typeof debugLog === 'function') {
-                debugLog(`📍 Location project "${originalKey}" normalized to "${upperName}"`);
+                debugLog(`Location project "${originalKey}" normalized to "${upperName}"`);
             }
         } else {
             let mergedProject = null;
@@ -185,12 +185,12 @@ function deduplicateLocationProjects(projectsObj) {
             });
 
             result[upperName] = mergedProject;
-            console.log(`🔀 Deduplicated location "${upperName}": merged variants ${keys.join(', ')}`);
+            console.log(`Deduplicated location "${upperName}": merged variants ${keys.join(', ')}`);
         }
     });
 
     if (typeof debugLog === 'function') {
-        debugLog(`📦 Deduplication complete: ${Object.keys(projectsObj).length} → ${Object.keys(result).length} projects`);
+        debugLog(`Deduplication complete: ${Object.keys(projectsObj).length} → ${Object.keys(result).length} projects`);
     }
     return result;
 }
@@ -202,7 +202,7 @@ function deduplicateLocationProjects(projectsObj) {
  */
 function syncLocationProjectsFromSources(projectsObj) {
     if (typeof debugLog === 'function') {
-        debugLog('🔄 Syncing location projects from company and referrer sources...');
+        debugLog('Syncing location projects from company and referrer sources...');
     }
 
     // Collect facilities by state from company and referrer projects
@@ -280,7 +280,7 @@ function syncLocationProjectsFromSources(projectsObj) {
     });
 
     if (typeof debugLog === 'function') {
-        debugLog(`📍 Found facilities in ${Object.keys(facilitiesByState).length} states`);
+        debugLog(`Found facilities in ${Object.keys(facilitiesByState).length} states`);
     }
 
     // Now update or create location projects for each state with facilities
@@ -312,7 +312,7 @@ function syncLocationProjectsFromSources(projectsObj) {
             existingProject.currentFacilityIndex = existingProject.currentFacilityIndex || 0;
 
             if (addedCount > 0 && typeof debugLog === 'function') {
-                debugLog(`📍 Updated location "${state}": added ${addedCount} new facilities (total: ${existingFacilities.length})`);
+                debugLog(`Updated location "${state}": added ${addedCount} new facilities (total: ${existingFacilities.length})`);
             }
         } else {
             // Create new location project with proper nested structure
@@ -326,13 +326,13 @@ function syncLocationProjectsFromSources(projectsObj) {
                 timestamp: new Date().toISOString()
             };
             if (typeof debugLog === 'function') {
-                debugLog(`📍 Created location project "${state}" with ${facilities.length} facilities`);
+                debugLog(`Created location project "${state}" with ${facilities.length} facilities`);
             }
         }
     });
 
     if (typeof debugLog === 'function') {
-        debugLog('✅ Location sync complete');
+        debugLog('Location sync complete');
     }
 }
 
@@ -490,10 +490,10 @@ function initializeLocationFacilitiesToc() {
 
             if (isCollapsed) {
                 content.style.display = 'block';
-                locationFacilitiesTocToggle.textContent = '🔎';
+                locationFacilitiesTocToggle.innerHTML = (typeof kopIcon === 'function') ? kopIcon('search') : '';
             } else {
                 content.style.display = 'none';
-                locationFacilitiesTocToggle.textContent = '👁️';
+                locationFacilitiesTocToggle.innerHTML = (typeof kopIcon === 'function') ? kopIcon('eye') : '';
             }
         }, { passive: true });
         locationFacilitiesTocToggle.dataset.listenerAttached = 'true';
@@ -521,8 +521,8 @@ window.initializeLocationFacilitiesToc = initializeLocationFacilitiesToc;
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('📍 Location form module loaded');
+        console.log('Location form module loaded');
     });
 } else {
-    console.log('📍 Location form module loaded');
+    console.log('Location form module loaded');
 }

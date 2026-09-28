@@ -360,7 +360,7 @@ function initializeNoteControls() { if (window.NotesModule) window.NotesModule.i
 function autoSave() {
     // Skip autoSave if we're in the middle of a programmatic UI update
     if (isUpdatingUI) {
-        debugLog('⏸️ autoSave skipped - UI update in progress');
+        debugLog('autoSave skipped - UI update in progress');
         return;
     }
 
@@ -386,7 +386,7 @@ function autoSave() {
         window.autoSaveTimer = setTimeout(async () => {
             // Prevent overlapping saves
             if (isSaveInProgress) {
-                debugLog('⏸️ Save skipped - another save already in progress');
+                debugLog('Save skipped - another save already in progress');
                 return;
             }
             isSaveInProgress = true;
@@ -557,7 +557,7 @@ function renderArray(container, path, items) { if (window.KOP_UI_Render) window.
 
 function loadOperatorData() {
     if (!window.formData) {
-        debugLog('⚠️ loadOperatorData: formData not ready yet');
+        debugLog('loadOperatorData: formData not ready yet');
         return;
     }
     
@@ -570,7 +570,7 @@ function loadOperatorData() {
         // For location projects, use the current facility's sourceOperator
         const currentFacility = window.formData.facilities[window.currentFacilityIndex];
         operator = currentFacility.sourceOperator || {};
-        debugLog('📍 Location project: loading operator from facility.sourceOperator:', operator.name);
+        debugLog('Location project: loading operator from facility.sourceOperator:', operator.name);
     } else {
         // For company/referrer projects, use the project-level operator
         if (!window.formData.operator) window.formData.operator = createNewProjectData().operator;
@@ -1305,12 +1305,12 @@ async function showProjectSelectionModal(categories = null) {
 }
 
 async function generateProjectsReport({ categories = null, filename } = {}) {
-    console.log('📄 generateProjectsReport called', { categories, filename });
+    console.log('generateProjectsReport called', { categories, filename });
     const hasCategories = categories && categories.length > 0;
     let projectsToReport;
     let reportType = 'full'; // Default to full report
 
-    console.log('🔍 Report Context:', {
+    console.log('Report Context:', {
         hasCategories,
         hasFormData: !!window.formData,
         currentProjectName: window.currentProjectName
@@ -2091,55 +2091,55 @@ async function initializeForm() {
 
     // Wait for referrer module to be ready
     if (typeof window.ensureReferrerDataStructures !== 'function') {
-        console.warn('⚠️ Referrer module not ready, waiting...');
+        console.warn('Referrer module not ready, waiting...');
         for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
             await new Promise(resolve => setTimeout(resolve, 100));
             if (typeof window.ensureReferrerDataStructures === 'function') {
-                debugLog('✅ Referrer module loaded successfully after', i * 100, 'ms');
+                debugLog('Referrer module loaded successfully after', i * 100, 'ms');
                 break;
             }
         }
         if (typeof window.ensureReferrerDataStructures !== 'function') {
-            console.error('❌ Referrer module failed to load after 5 seconds. Referrer form may not work.');
+            console.error('Referrer module failed to load after 5 seconds. Referrer form may not work.');
             showUploadStatus('Error: Referrer module failed to load.', 'error');
         }
     }
 
     // Wait for autocomplete module to be ready
     if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
-        console.warn('⚠️ Autocomplete module not ready, waiting...');
+        console.warn('Autocomplete module not ready, waiting...');
         for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
             await new Promise(resolve => setTimeout(resolve, 100));
             if (typeof window.initializeAutocompleteFields === 'function' && !window.initializeAutocompleteFields.toString().includes('module not loaded')) {
-                debugLog('✅ Autocomplete module loaded successfully after', i * 100, 'ms');
+                debugLog('Autocomplete module loaded successfully after', i * 100, 'ms');
                 break;
             }
         }
         if (typeof window.initializeAutocompleteFields !== 'function' || window.initializeAutocompleteFields.toString().includes('module not loaded')) {
-            console.error('❌ Autocomplete module failed to load after 5 seconds. Autocomplete will not work.');
+            console.error('Autocomplete module failed to load after 5 seconds. Autocomplete will not work.');
             showUploadStatus('Error: Autocomplete module failed to load.', 'error');
         }
     }
 
     // Wait for notes module to be ready
     if (typeof window.NotesModule === 'undefined') {
-        console.warn('⚠️ Notes module not ready, waiting...');
+        console.warn('Notes module not ready, waiting...');
         for (let i = 0; i < 50; i++) { // Wait up to 5 seconds
             await new Promise(resolve => setTimeout(resolve, 100));
             if (typeof window.NotesModule !== 'undefined') {
-                debugLog('✅ Notes module loaded successfully after', i * 100, 'ms');
+                debugLog('Notes module loaded successfully after', i * 100, 'ms');
                 break;
             }
         }
         if (typeof window.NotesModule === 'undefined') {
-            console.error('❌ Notes module failed to load after 5 seconds. Field notes may not work.');
+            console.error('Notes module failed to load after 5 seconds. Field notes may not work.');
             showUploadStatus('Warning: Notes module failed to load.', 'error');
         }
     }
 
     // Wait for loader to be available (with better diagnostics)
     if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
-        console.warn('⚠️ KOP_FormLoader not ready, waiting...', {
+        console.warn('KOP_FormLoader not ready, waiting...', {
             'KOP_FormLoader exists': typeof window.KOP_FormLoader !== 'undefined',
             'KOP_LOADER_READY': window.KOP_LOADER_READY
         });
@@ -2148,13 +2148,13 @@ async function initializeForm() {
         for (let i = 0; i < 50; i++) {
             await new Promise(resolve => setTimeout(resolve, 100));
             if (typeof window.KOP_FormLoader !== 'undefined' && window.KOP_LOADER_READY) {
-                debugLog('✅ KOP_FormLoader loaded successfully after', i * 100, 'ms');
+                debugLog('KOP_FormLoader loaded successfully after', i * 100, 'ms');
                 break;
             }
         }
 
         if (typeof window.KOP_FormLoader === 'undefined' || !window.KOP_LOADER_READY) {
-            console.error('❌ KOP_FormLoader failed to load after 5 seconds');
+            console.error('KOP_FormLoader failed to load after 5 seconds');
             console.error('Debug info:', {
                 'window.KOP_FormLoader': window.KOP_FormLoader,
                 'window.KOP_LOADER_READY': window.KOP_LOADER_READY,
@@ -2163,7 +2163,7 @@ async function initializeForm() {
             showUploadStatus('Failed to load data loader module', 'error');
 
             // Don't completely fail - try to continue with limited functionality
-            console.warn('⚠️ Continuing with limited functionality...');
+            console.warn('Continuing with limited functionality...');
             window.projects = {};
         }
     }
@@ -2172,7 +2172,7 @@ async function initializeForm() {
     if (typeof window.KOP_FormLoader !== 'undefined' && typeof window.KOP_FormLoader.loadCustomDataFromLocalStorage === 'function') {
         window.KOP_FormLoader.loadCustomDataFromLocalStorage();
     } else {
-        console.error('❌ loadCustomDataFromLocalStorage not available');
+        console.error('loadCustomDataFromLocalStorage not available');
         // Initialize empty arrays as fallback
         window.customOperators = window.customOperators || [];
         window.customFacilityNames = window.customFacilityNames || [];
@@ -2187,14 +2187,14 @@ async function initializeForm() {
             // Keep local reference in sync with loader output
             projects = window.projects || projects;
         } catch (error) {
-            console.error('❌ Error loading projects:', error);
+            console.error('Error loading projects:', error);
             showUploadStatus('Error loading projects: ' + error.message, 'error');
             // Ensure projects object exists even if loading failed
             window.projects = window.projects || {};
             projects = window.projects;
         }
     } else {
-        console.error('❌ loadAllProjectsFromCloud not available');
+        console.error('loadAllProjectsFromCloud not available');
         // Ensure projects object exists
         window.projects = window.projects || {};
         projects = window.projects;
@@ -2240,7 +2240,7 @@ async function initializeForm() {
     // Signal that the form and its functions are ready
     window.formReady = true;
     document.dispatchEvent(new CustomEvent('formReady'));
-    debugLog('🚀 Dispatched formReady event.');
+    debugLog('Dispatched formReady event.');
 
     debugLog('Form initialized successfully with', Object.keys(projects).length, 'projects from cloud');
 }
@@ -2456,7 +2456,7 @@ window.addEventListener('load', () => {
 
     // ONLY run once - use flag to prevent multiple calls (FIX #1: Prevents rendering loops)
     if (window._uiInitializedOnLoad) {
-        debugLog('✅ UI already initialized on load, skipping duplicate initialization');
+        debugLog('UI already initialized on load, skipping duplicate initialization');
         return;
     }
     window._uiInitializedOnLoad = true;
@@ -2466,12 +2466,12 @@ window.addEventListener('load', () => {
             // Only update UI if formData is ready
             if (window.formData && typeof window.updateAllUI === 'function') {
                 window.updateAllUI();
-                debugLog('✅ data-form.v4.js: updateAllUI re-run on load (once)');
+                debugLog('data-form.v4.js: updateAllUI re-run on load (once)');
             } else {
-                debugLog('⚠️ Skipping updateAllUI on load - formData not ready');
+                debugLog('Skipping updateAllUI on load - formData not ready');
             }
         } catch (e) {
-            console.error('❌ data-form.v4.js: error during load-time UI verification', e);
+            console.error('data-form.v4.js: error during load-time UI verification', e);
         }
     }, 150);
 }, { passive: true });

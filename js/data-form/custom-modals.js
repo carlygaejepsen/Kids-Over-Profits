@@ -425,7 +425,7 @@ class OrganizerModal {
         const modalResults = document.getElementById('organize-results-modal');
         const modalMatches = document.getElementById('organize-matches-modal');
 
-        console.log('🔍 Modal search triggered', {
+        console.log('Modal search triggered', {
             modalBySelect: !!modalBySelect,
             modalValueInput: !!modalValueInput,
             modalResults: !!modalResults
@@ -440,7 +440,7 @@ class OrganizerModal {
         const searchType = modalBySelect.value;
         const searchValue = modalValueInput.value.trim();
 
-        console.log('🔍 Search params:', { searchType, searchValue });
+        console.log('Search params:', { searchType, searchValue });
 
         if (!searchType || !searchValue) {
             this.announceStatus('Select a data point and enter a search value, then click Search.', 'error');
@@ -453,7 +453,7 @@ class OrganizerModal {
         if (modalResults) {
             modalResults.classList.remove('d-none');
             if (modalMatches) {
-                modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">🔍</span><br>Searching database...</p>';
+                modalMatches.innerHTML = '<p style="padding: 40px; text-align: center; color: #6b7280;"><span style="font-size: 24px;">' + ((typeof kopIcon === 'function') ? kopIcon('search') : '') + '</span><br>Searching database...</p>';
             }
         }
 
@@ -558,7 +558,7 @@ class OrganizerModal {
         const modalMatches = document.getElementById('organize-matches-modal');
         const modalClearBtn = document.getElementById('organize-clear-btn-modal');
 
-        console.log('📊 Displaying results:', { count: results.length, modalResults: !!modalResults, modalMatches: !!modalMatches });
+        console.log('Displaying results:', { count: results.length, modalResults: !!modalResults, modalMatches: !!modalMatches });
 
         if (!modalResults) {
             console.error('organize-results-modal not found!');
@@ -668,7 +668,7 @@ class OrganizerModal {
      * Navigate to a specific facility
      */
     async goToFacility(projectName, facilityIndex, facilityName = '') {
-        console.log(`🎯 goToFacility called: project="${projectName}", facility=${facilityIndex}`);
+        console.log(`goToFacility called: project="${projectName}", facility=${facilityIndex}`);
 
         // Hide the modal first
         const modal = document.getElementById('data-organizer-modal');

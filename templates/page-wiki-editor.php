@@ -28,8 +28,8 @@ get_header();
 
         <!-- Editor Mode Toggle -->
         <div class="editor-mode-toggle">
-            <button type="button" id="modeFormBtn" class="mode-btn active">📝 Form Editor</button>
-            <button type="button" id="modeMarkdownBtn" class="mode-btn">💻 Markdown Editor</button>
+            <button type="button" id="modeFormBtn" class="mode-btn active"><?php echo kop_icon('pen-line'); ?> Form Editor</button>
+            <button type="button" id="modeMarkdownBtn" class="mode-btn"><?php echo kop_icon('laptop'); ?> Markdown Editor</button>
         </div>
 
         <!-- Wiki Entry Management (Refactored Split-Pane View) -->
@@ -39,9 +39,9 @@ get_header();
             <div class="index-selection-pane project-management" data-kop-bug-feature="wiki-editor/entry-browser" data-kop-bug-label="Entry Browser">
                 <h2>Browse Indexes</h2>
                 <div class="category-tabs">
-                    <button class="category-tab active" data-category="location-indexes">📍 Locations</button>
-                    <button class="category-tab" data-category="organization-indexes">🏢 Organizations</button>
-                    <button class="category-tab" data-category="stub-indexes">📝 Stubs</button>
+                    <button class="category-tab active" data-category="location-indexes"><?php echo kop_icon('map-pin'); ?> Locations</button>
+                    <button class="category-tab" data-category="organization-indexes"><?php echo kop_icon('building'); ?> Organizations</button>
+                    <button class="category-tab" data-category="stub-indexes"><?php echo kop_icon('pen-line'); ?> Stubs</button>
                 </div>
 
                 <div class="category-contents-wrapper">
@@ -96,9 +96,9 @@ get_header();
         <div class="project-management bulk-upload-section">
             <h2>Bulk Actions</h2>
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button type="button" id="toggleBulkUploadBtn" class="btn btn-secondary">📤 Bulk Upload Markdown Files</button>
-                <button type="button" id="toggleImportBtn" class="btn btn-secondary">📥 Import from Clipboard</button>
-                <button type="button" id="toggleExtractProseBtn" class="btn btn-secondary">🤖 Extract from Prose (AI)</button>
+                <button type="button" id="toggleBulkUploadBtn" class="btn btn-secondary"><?php echo kop_icon('upload'); ?> Bulk Upload Markdown Files</button>
+                <button type="button" id="toggleImportBtn" class="btn btn-secondary"><?php echo kop_icon('download'); ?> Import from Clipboard</button>
+                <button type="button" id="toggleExtractProseBtn" class="btn btn-secondary"><?php echo kop_icon('bot'); ?> Extract from Prose (AI)</button>
             </div>
             
             <!-- Bulk Upload Panel -->
@@ -138,7 +138,7 @@ get_header();
 
             <!-- Extract-from-Prose Panel (AI) -->
             <div id="extractProsePanel" class="import-panel" style="display: none;" data-kop-bug-feature="wiki-editor/ai-extract" data-kop-bug-label="AI Prose Extraction">
-                <h3>🤖 Extract Fields from Prose</h3>
+                <h3><?php echo kop_icon('bot'); ?> Extract Fields from Prose</h3>
                 <p>Paste any prose about a program (a description, article, report, or notes) and the AI will fill in the fields it can identify. <strong>Review everything before saving</strong> — AI can be wrong or incomplete. Long narrative lists (complaints, allegations, staff) still need manual entry.</p>
                 <textarea id="extractProseTextarea" class="import-textarea" rows="10" placeholder="Paste prose about the program here..."></textarea>
                 <div class="import-controls" style="margin-top:15px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
@@ -158,16 +158,16 @@ get_header();
                         <option value="facility">Individual Facility / Program</option>
                         <option value="organization">Parent Organization</option>
                     </select>
-                    <span class="entry-mode-badge" id="entryModeBadge">📋 Facility Mode</span>
+                    <span class="entry-mode-badge" id="entryModeBadge"><?php echo kop_icon('clipboard'); ?> Facility Mode</span>
                 </div>
 
                 <div class="submit-program-link inline-program-link">
-                    <label>🔗 Linked Program Index Entry (required):</label>
+                    <label><?php echo kop_icon('link'); ?> Linked Program Index Entry (required):</label>
                     <div class="linked-program-display linked-program-none">
                         No program selected yet.
                     </div>
                     <button type="button" class="select-program-btn">
-                        🔗 Select / Create Program ID
+                        <?php echo kop_icon('link'); ?> Select / Create Program ID
                     </button>
                     <p class="linked-program-help">
                         Pick the matching program in the index now so this entry carries a unique ID.
@@ -745,7 +745,7 @@ get_header();
             <div class="auto-linking-options">
                 <label class="checkbox-inline">
                     <input type="checkbox" id="autoLinkPrograms" checked>
-                    <span>🔗 Automatically link TTI program mentions</span>
+                    <span><?php echo kop_icon('link'); ?> Automatically link TTI program mentions</span>
                 </label>
                 <p class="auto-linking-help">When enabled, mentions of other TTI programs will automatically be linked to their Reddit wiki pages.</p>
             </div>
@@ -759,7 +759,7 @@ get_header();
         <div class="output-actions" data-kop-bug-feature="wiki-editor/generated-code" data-kop-bug-label="Generated Wiki Code">
             <button type="button" id="convertPastBtn">Convert to Past Tense</button>
             <button type="button" id="copyBtn">Copy to Clipboard</button>
-            <button type="button" id="submitToDbBtn" class="submit-db-btn">💾 Submit to Database</button>
+            <button type="button" id="submitToDbBtn" class="submit-db-btn"><?php echo kop_icon('save'); ?> Submit to Database</button>
         </div>
         
         <!-- Submission Modal -->
@@ -780,7 +780,7 @@ get_header();
                         No program selected yet.
                     </div>
                     <button type="button" id="selectProgramBtn" class="select-program-btn">
-                        🔗 Select / Create Program
+                        <?php echo kop_icon('link'); ?> Select / Create Program
                     </button>
                     <p class="linked-program-help">
                         Each wiki entry must match a program in the index so it carries a unique ID.

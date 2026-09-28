@@ -389,7 +389,7 @@
         if (window.innerWidth > 768 || document.querySelector('.mobile-section-controls')) return;
         const controlsBar = document.createElement('div');
         controlsBar.className = 'mobile-section-controls';
-        controlsBar.innerHTML = `<span class="section-control-label">📋 Sections</span><div class="section-control-btns"><button class="btn-section-control" id="expand-all-sections">Expand All</button><button class="btn-section-control" id="collapse-all-sections">Collapse All</button></div>`;
+        controlsBar.innerHTML = `<span class="section-control-label">${kopIcon('clipboard')} Sections</span><div class="section-control-btns"><button class="btn-section-control" id="expand-all-sections">Expand All</button><button class="btn-section-control" id="collapse-all-sections">Collapse All</button></div>`;
         const facilityWrapper = document.getElementById('facility-main-wrapper');
         const referrerWrapper = document.getElementById('referrer-main-wrapper');
         const transporterWrapper = document.getElementById('transporter-main-wrapper');

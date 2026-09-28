@@ -132,21 +132,21 @@
         // Override save function for suggestions
         // Function to load project and sync with our form
         function loadProjectAndSync(projectName) {
-            console.log('📂 Loading and syncing project:', projectName);
+            console.log('Loading and syncing project:', projectName);
 
             // Check if this project is already loaded
             const currentProject = window.currentProjectName;
             if (currentProject === projectName) {
                 console.log('Project already loaded:', projectName);
                 if (typeof showUploadStatus === 'function') {
-                    showUploadStatus(`ℹ️ Already working on "${projectName}"`, 'info');
+                    showUploadStatus(`Already working on "${projectName}"`, 'info');
                 }
                 return;
             }
             
             // Show loading status
             if (typeof showUploadStatus === 'function') {
-                showUploadStatus(`🔄 Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
+                showUploadStatus(`Switching from "${currentProject || 'none'}" to "${projectName}"...`, 'info');
             }
             
             // Don't call newProject() - it shows a confirmation dialog
@@ -154,7 +154,7 @@
             
             // Use the existing project manager to load the project
             if (window.projectManager && window.projectManager.loadProject) {
-                console.log('📥 Loading project:', projectName);
+                console.log('Loading project:', projectName);
                 window.projectManager.loadProject(projectName);
                 
                 // Wait a moment for the load to complete, then sync our formData
@@ -165,9 +165,9 @@
                         
                         // Extensive debugging
                         console.log('Project loaded and synced:', projectName);
-                        console.log('📊 Current project data:', formData);
-                        console.log('🏢 Project facilities:', formData?.facilities?.length || 0);
-                        console.log('📝 Current project name from variables:', {
+                        console.log('Current project data:', formData);
+                        console.log('Project facilities:', formData?.facilities?.length || 0);
+                        console.log('Current project name from variables:', {
                             'window.currentProjectName': window.currentProjectName,
                             'formData.projectName': formData?.projectName,
                             'requested': projectName
@@ -176,15 +176,15 @@
                         // Verify we loaded the right project
                         const actualCurrentProject = window.currentProjectName;
                         if (actualCurrentProject !== projectName) {
-                            console.warn(`⚠️ PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
+                            console.warn(`PROJECT MISMATCH! Requested: "${projectName}", Actually loaded: "${actualCurrentProject}"`);
                             if (typeof showUploadStatus === 'function') {
-                                showUploadStatus(`⚠️ Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
+                                showUploadStatus(`Warning: Loaded "${actualCurrentProject}" instead of "${projectName}"`, 'error');
                             }
                         } else {
                             // Show additional success status
                             if (typeof showUploadStatus === 'function') {
                                 const facilityCount = formData?.facilities?.length || 0;
-                                showUploadStatus(`✅ Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
+                                showUploadStatus(`Now working on "${actualCurrentProject}" (${facilityCount} facilities)`, 'success');
                             }
                         }
                         
@@ -196,7 +196,7 @@
                         }
 
                         if (typeof window.updateToolbarFacilityInfo === 'function') {
-                            console.log('🔔 Calling updateToolbarFacilityInfo from loadProjectAndSync');
+                            console.log('Calling updateToolbarFacilityInfo from loadProjectAndSync');
                             window.updateToolbarFacilityInfo();
                             setTimeout(window.updateToolbarFacilityInfo, 100);
                             setTimeout(window.updateToolbarFacilityInfo, 300);
@@ -206,14 +206,14 @@
                     } else {
                         console.warn('formData not found after project load');
                         if (typeof showUploadStatus === 'function') {
-                            showUploadStatus('⚠️ Project loaded but data sync failed', 'error');
+                            showUploadStatus('Project loaded but data sync failed', 'error');
                         }
                     }
                 }, 300);
             } else {
                 console.error('Project manager not available');
                 if (typeof showUploadStatus === 'function') {
-                    showUploadStatus('❌ Project manager not available', 'error');
+                    showUploadStatus('Project manager not available', 'error');
                 }
             }
         }
@@ -517,31 +517,31 @@
             const currentFormData = window.formData;
 
             if (!currentFormData) {
-                console.error('❌ No formData found for submission', {
+                console.error('No formData found for submission', {
                     formData: window.formData,
                     projects: window.projects ? Object.keys(window.projects) : 'undefined',
                     currentProjectName: window.currentProjectName
                 });
 
                 if (window.projects && Object.keys(window.projects).length > 0) {
-                    showSuggestionStatus('❌ Error: No project loaded. Please load a project from the list or create a new project before submitting.', 'error');
+                    showSuggestionStatus('Error: No project loaded. Please load a project from the list or create a new project before submitting.', 'error');
                 } else {
-                    showSuggestionStatus('❌ Error: The form data is still initializing. Please wait a moment and try again.', 'error');
+                    showSuggestionStatus('Error: The form data is still initializing. Please wait a moment and try again.', 'error');
                 }
 
                 return false;
             }
 
             suggestionSubmissionInProgress = true;
-            showSuggestionStatus('📤 Preparing your suggestion for submission...', 'info');
+            showSuggestionStatus('Preparing your suggestion for submission...', 'info');
 
             let dataToSubmit;
 
             try {
                 dataToSubmit = JSON.parse(JSON.stringify(currentFormData));
             } catch (error) {
-                console.error('❌ Failed to clone form data for submission', error);
-                showSuggestionStatus('❌ Error: Unable to prepare your data for submission. Please try again.', 'error');
+                console.error('Failed to clone form data for submission', error);
+                showSuggestionStatus('Error: Unable to prepare your data for submission. Please try again.', 'error');
                 suggestionSubmissionInProgress = false;
                 return false;
             }
@@ -647,7 +647,7 @@
                 return false;
             }
 
-            console.log('📤 Submitting changes for project:', actualProjectName, {
+            console.log('Submitting changes for project:', actualProjectName, {
                 facilityCount,
                 facilities: dataToSubmit.facilities?.map(f => f?.identification?.name || 'Unnamed Facility') || []
             });
@@ -676,16 +676,16 @@
                 try {
                     result = await response.json();
                 } catch (parseError) {
-                    console.error('❌ Failed to parse suggestion submission response', parseError);
+                    console.error('Failed to parse suggestion submission response', parseError);
                 }
 
                 if (!response.ok || !result || !result.success) {
                     const errorMessage = result?.error || response.statusText || 'Failed to submit suggestion';
-                    showSuggestionStatus(`❌ Error: ${errorMessage}`, 'error');
+                    showSuggestionStatus(`Error: ${errorMessage}`, 'error');
                     return false;
                 }
 
-                showSuggestionStatus(`☑️ Suggestion submitted successfully for "${actualProjectName}"! It will be reviewed before being added to the database.`, 'success');
+                showSuggestionStatus(`Suggestion submitted successfully for "${actualProjectName}"! It will be reviewed before being added to the database.`, 'success');
 
                 document.dispatchEvent(new CustomEvent('suggestionSubmitted', {
                     detail: {
@@ -702,8 +702,8 @@
 
                 return true;
             } catch (error) {
-                console.error('❌ Error while submitting suggestion', error);
-                showSuggestionStatus(`❌ Error: ${error.message}`, 'error');
+                console.error('Error while submitting suggestion', error);
+                showSuggestionStatus(`Error: ${error.message}`, 'error');
                 return false;
             } finally {
                 suggestionSubmissionInProgress = false;
@@ -838,11 +838,11 @@
                     if (typeof window.persistProjectLocally === 'function') {
                         const result = window.persistProjectLocally(finalProjectName, {
                             showNotification: true,
-                            statusMessage: `💾 Draft "${finalProjectName}" saved locally! Your work is stored in this browser.`
+                            statusMessage: `Draft "${finalProjectName}" saved locally! Your work is stored in this browser.`
                         });
                         if (result) {
                             window.currentProjectName = finalProjectName;
-                            console.log('✅ Draft saved locally for:', finalProjectName);
+                            console.log('Draft saved locally for:', finalProjectName);
 
                             // Refresh the project lists if available
                             if (typeof window.refreshSavedProjectPanels === 'function') {
@@ -850,9 +850,9 @@
                             }
                         }
                     } else {
-                        console.error('❌ persistProjectLocally function not available');
+                        console.error('persistProjectLocally function not available');
                         if (typeof showUploadStatus === 'function') {
-                            showUploadStatus('❌ Unable to save draft - function not available', 'error');
+                            showUploadStatus('Unable to save draft - function not available', 'error');
                         }
                     }
                 };
@@ -866,7 +866,7 @@
                         customPrompt('Enter a name for this draft:', '', 'Draft Name').then(enteredName => {
                             if (!enteredName || !enteredName.trim()) {
                                 if (typeof showUploadStatus === 'function') {
-                                    showUploadStatus('❌ Draft name is required', 'error');
+                                    showUploadStatus('Draft name is required', 'error');
                                 }
                                 return;
                             }
@@ -1347,7 +1347,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                     
                     // Header
                     reportWindow.document.write('<div class="header">');
-                    reportWindow.document.write('<h1>📋 Kids Over Profits TTI Data Report</h1>');
+                    reportWindow.document.write('<h1>' + kopIcon('clipboard') + ' Kids Over Profits TTI Data Report</h1>');
                     reportWindow.document.write('<p>Generated on ' + new Date().toLocaleString() + '</p>');
                     reportWindow.document.write('</div>');
                     
@@ -1355,7 +1355,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                     if (reportData.operator) {
                         const op = reportData.operator;
                         reportWindow.document.write('<div class="section">');
-                        reportWindow.document.write('<h2>🏢 Operator Information</h2>');
+                        reportWindow.document.write('<h2>' + kopIcon('building') + ' Operator Information</h2>');
                         
                         reportWindow.document.write(renderField('Operator Name', op.name));
                         reportWindow.document.write(renderField('Current Name', op.currentName));
@@ -1383,7 +1383,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                     
                     // Facilities Section - COMPLETE
                     reportWindow.document.write('<div class="section">');
-                    reportWindow.document.write('<h2>🏫 Facilities (' + reportData.facilities.length + ')</h2>');
+                    reportWindow.document.write('<h2>' + kopIcon('graduation-cap') + ' Facilities (' + reportData.facilities.length + ')</h2>');
                     
                     reportData.facilities.forEach((facility, index) => {
                         reportWindow.document.write('<div class="facility-card">');
@@ -1523,7 +1523,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                     
                     // Raw JSON (collapsible)
                     reportWindow.document.write('<div class="section">');
-                    reportWindow.document.write('<h2>📄 Raw Data (JSON)</h2>');
+                    reportWindow.document.write('<h2>' + kopIcon('file-text') + ' Raw Data (JSON)</h2>');
                     reportWindow.document.write('<details><summary style="cursor: pointer; font-weight: 600; padding: 10px; background: #f8fafc; border-radius: 6px;">Click to expand JSON data</summary>');
                     reportWindow.document.write('<pre style="background: #1f2937; color: #f8fafc; padding: 20px; border-radius: 6px; overflow-x: auto; margin-top: 10px; font-size: 12px;">' + escapeHtml(JSON.stringify(reportData, null, 2)) + '</pre>');
                     reportWindow.document.write('</details></div>');
@@ -1604,7 +1604,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             const controlsBar = document.createElement('div');
             controlsBar.className = 'mobile-section-controls';
             controlsBar.innerHTML = `
-                <span class="section-control-label">📋 Sections</span>
+                <span class="section-control-label">${kopIcon('clipboard')} Sections</span>
                 <div class="section-control-btns">
                     <button class="btn-section-control" id="expand-all-sections">Expand All</button>
                     <button class="btn-section-control" id="collapse-all-sections">Collapse All</button>
@@ -1737,7 +1737,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             organizerSection.style.display = 'none';
         }
         if (showOrganizerBtn) {
-            showOrganizerBtn.textContent = '📊 Data Organizer';
+            showOrganizerBtn.innerHTML = `${kopIcon('bar-chart')} Data Organizer`;
         }
         
         const showOrganizerArea = () => {
@@ -1766,7 +1766,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                 if (organizerSection) {
                     organizerSection.style.display = organizerVisible ? 'block' : 'none';
                 }
-                showOrganizerBtn.textContent = organizerVisible ? '📊 Hide Organizer' : '📊 Data Organizer'; // Corrected text
+                showOrganizerBtn.innerHTML = organizerVisible ? `${kopIcon('bar-chart')} Hide Organizer` : `${kopIcon('bar-chart')} Data Organizer`; // Corrected text
 
                 if (organizerVisible && organizerSection) {
                     organizerSection.scrollIntoView({ behavior: 'smooth' });
@@ -1780,14 +1780,14 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                 e.preventDefault();
                 showOrganizerArea();
                 if (showOrganizerBtn) {
-                    showOrganizerBtn.textContent = '📊 Hide Organizer';
+                    showOrganizerBtn.innerHTML = `${kopIcon('bar-chart')} Hide Organizer`;
                 }
                 // Attach modal handlers when modal opens
                 setTimeout(() => {
                     // Modal search button
                     const searchBtn = document.getElementById('organize-search-btn-modal');
                     if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
-                        console.log('✅ Attaching modal search button handler on modal open');
+                        console.log('Attaching modal search button handler on modal open');
                         searchBtn.addEventListener('click', () => {
                             if (typeof window.performOrganizedSearchModal === 'function') {
                                 window.performOrganizedSearchModal();
@@ -1902,7 +1902,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             const attachModalSearchHandler = () => {
                 const searchBtn = document.getElementById('organize-search-btn-modal');
                 if (searchBtn && !searchBtn.dataset.organizerSearchAttached) {
-                    console.log('✅ Attaching modal search button handler');
+                    console.log('Attaching modal search button handler');
                     searchBtn.addEventListener('click', window.performOrganizedSearchModal, { passive: true });
                     searchBtn.dataset.organizerSearchAttached = 'true';
                 }
@@ -2397,7 +2397,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                 return;
             }
 
-            console.log('🚀 Form is ready. Initializing page-specific components.');
+            console.log('Form is ready. Initializing page-specific components.');
 
             if (typeof initializeDataOrganizer === 'function') {
                 const didInit = initializeDataOrganizer();
@@ -2448,7 +2448,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
         }
         
         function populateCompaniesList() {
-            console.log('🎨 Rendering projects list...');
+            console.log('Rendering projects list...');
             const container = document.getElementById('operators-list');
             if (!container) {
                 console.error('operators-list container not found!');
@@ -2458,11 +2458,11 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('🎨 Projects to render:', projectNames.length, projectNames);
+            console.log('Projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No projects to display');
+                console.log('No projects to display');
                 return;
             }
             
@@ -2500,7 +2500,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
         }
 
         function populateLocationsList() {
-            console.log('🎨 Rendering location projects list...');
+            console.log('Rendering location projects list...');
             const container = document.getElementById('locations-list');
             if (!container) {
                 console.error('locations-list container not found!');
@@ -2510,11 +2510,11 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             const projectList = projects;
             const projectNames = Object.keys(projectList);
             
-            console.log('🌍 Location projects to render:', projectNames.length, projectNames);
+            console.log('Location projects to render:', projectNames.length, projectNames);
 
             if (projectNames.length === 0) {
                 container.innerHTML = '<div class="projects-empty">No saved location projects yet<br><small>Save your current form data as a project to see it here</small></div>';
-                console.log('📭 No location projects to display');
+                console.log('No location projects to display');
                 return;
             }
             
@@ -2565,7 +2565,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
         }
         
         function renderFilteredProjectsList(containerId, filterType) {
-            console.log('🎨 Rendering filtered projects list...', filterType);
+            console.log('Rendering filtered projects list...', filterType);
             const container = document.getElementById(containerId);
             if (!container) {
                 console.error('Container not found:', containerId);
@@ -2603,14 +2603,14 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
                 }
             });
             
-            console.log('🔍 Filtered projects:', filteredNames.length, 'of', projectNames.length);
+            console.log('Filtered projects:', filteredNames.length, 'of', projectNames.length);
 
             if (filteredNames.length === 0) {
                 const emptyMessage = filterType === 'locations' ?
                     'No state/country projects found<br><small>Create projects named after states like "California" or countries like "Canada"</small>' :
                     'No company projects found<br><small>Create projects with company/operator names</small>';
-                container.innerHTML = `<div class="projects-empty">📭 ${emptyMessage}</div>`;
-                console.log('📭 No filtered projects to display');
+                container.innerHTML = `<div class="projects-empty">${kopIcon('inbox')} ${emptyMessage}</div>`;
+                console.log('No filtered projects to display');
                 return;
             }
             
@@ -2757,7 +2757,7 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
 
             // Function to clear operator fields when switching to private mode
             function clearOperatorFields() {
-                console.log('🧹 Clearing operator fields for private facility mode');
+                console.log('Clearing operator fields for private facility mode');
                 
                 // Clear operator section fields
                 const operatorInputs = document.querySelectorAll('#operator-section input, #operator-section textarea');
@@ -2887,17 +2887,17 @@ window.resolvePrivateOwnership = resolvePrivateOwnership;
             const facilityMainWrapper = document.getElementById('facility-main-wrapper');
             const referrerMainWrapper = document.getElementById('referrer-main-wrapper');
 
-            console.log('🚀 Initializing page with active category:', activeCategory);
+            console.log('Initializing page with active category:', activeCategory);
 
             if (activeCategory === 'referrers') {
                 if (facilityMainWrapper) facilityMainWrapper.style.display = 'none';
                 if (referrerMainWrapper) referrerMainWrapper.style.display = 'block';
-                console.log('✅ Initialized referrers view');
+                console.log('Initialized referrers view');
             } else {
                 // Companies or locations view - show data forms
                 if (facilityMainWrapper) facilityMainWrapper.style.display = 'block';
                 if (referrerMainWrapper) referrerMainWrapper.style.display = 'none';
-                console.log('✅ Initialized', activeCategory, 'view');
+                console.log('Initialized', activeCategory, 'view');
             }
 
             // Refresh saved project panels (from facility-form.v4.js)

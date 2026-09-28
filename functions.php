@@ -18,6 +18,9 @@ if (!defined('ABSPATH')) {
 // Core Utilities & Helper Functions
 require_once get_stylesheet_directory() . '/inc/utilities.php';
 
+// Inline SVG icons (kop_icon() / kopIcon()), used in place of emojis
+require_once get_stylesheet_directory() . '/inc/icons.php';
+
 // Script & Style Enqueuing
 require_once get_stylesheet_directory() . '/inc/enqueue.php';
 

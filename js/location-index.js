@@ -1242,7 +1242,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="field-row full-width-grid facility-document-row" id="documents-${matchingFolder.id}" data-documents-container="true">
                             <span class="field-value doc-library-btn-wrap">
                                 <button type="button" class="kop-doc-button doc-library-button" data-folder-id="${matchingFolder.id}" data-container-id="documents-${matchingFolder.id}">
-                                    📂 View Document Library
+                                    ${kopIcon('folder-open')} View Document Library
                                 </button>
                             </span>
                         </div>`;

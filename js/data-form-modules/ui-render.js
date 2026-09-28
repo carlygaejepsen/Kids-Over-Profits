@@ -271,7 +271,7 @@
 
                     // Load Button
                     const loadBtn = document.createElement('button');
-                    loadBtn.innerHTML = '📂 Load';
+                    loadBtn.innerHTML = `${kopIcon('folder-open')} Load`;
                     loadBtn.className = 'project-item-btn project-item-load';
                     loadBtn.title = 'Load Project';
                     loadBtn.onclick = (e) => {
@@ -291,7 +291,7 @@
                     // Admin Buttons
                     if (isAdmin) {
                         const renameBtn = document.createElement('button');
-                        renameBtn.innerHTML = '✏️';
+                        renameBtn.innerHTML = kopIcon('pencil', { label: 'Rename' });
                         renameBtn.className = 'project-item-btn project-item-rename';
                         renameBtn.title = 'Rename';
                         renameBtn.onclick = (e) => { 
@@ -301,7 +301,7 @@
                         actionsDiv.appendChild(renameBtn);
 
                         const deleteBtn = document.createElement('button');
-                        deleteBtn.innerHTML = '🗑️';
+                        deleteBtn.innerHTML = kopIcon('trash', { label: 'Delete' });
                         deleteBtn.className = 'project-item-btn project-item-delete';
                         deleteBtn.title = 'Delete';
                         deleteBtn.onclick = (e) => { 
@@ -637,7 +637,7 @@
                     const detailsBtn = document.createElement('button');
                     detailsBtn.type = 'button';
                     detailsBtn.className = 'btn-secondary';
-                    detailsBtn.innerHTML = '📝';
+                    detailsBtn.innerHTML = kopIcon('pen-line', { label: 'Add details (Past Jobs, Links)' });
                     detailsBtn.title = 'Add details (Past Jobs, Links)';
                     detailsBtn.style.padding = '4px 8px';
                     detailsBtn.style.fontSize = '14px';

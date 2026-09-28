@@ -137,7 +137,7 @@
     }
 
     // --- in-place row updates (so saving never rebuilds the table / loses place) ---
-    function docCellHtml(id) { return id ? '📂 ' + esc(id) : '<span class="dm-muted">—</span>'; }
+    function docCellHtml(id) { return id ? ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' ' + esc(id) : '<span class="dm-muted">—</span>'; }
     function setDocCell(item) { if (item._docCell) item._docCell.innerHTML = docCellHtml(item.document_folder_id); }
     function setWikiCell(item) { if (item._wikiCell) item._wikiCell.innerHTML = wikiBadge(item.wiki_links); }
     function setFacCount(item) {
@@ -189,7 +189,7 @@
                 '<td>' + badge(it.category) + '</td>' +
                 '<td class="dm-mono">#' + esc(it.id) + '</td>' +
                 '<td class="dm-center dm-fac-cell">' + facCell + '</td>' +
-                '<td class="dm-center">' + (it.document_folder_id ? '📂 ' + esc(it.document_folder_id) : '<span class="dm-muted">—</span>') + '</td>' +
+                '<td class="dm-center">' + (it.document_folder_id ? ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' ' + esc(it.document_folder_id) : '<span class="dm-muted">—</span>') + '</td>' +
                 '<td class="dm-center">' + wikiBadge(it.wiki_links) + '</td>';
 
             // Cache cell refs for in-place updates (avoids full table reloads on save).
@@ -202,7 +202,7 @@
             var actions = el('td', 'dm-actions');
             var actionDefs = [];
             // Auto-link only makes sense for actual programs, not location aggregates.
-            if (it.category !== 'locations') actionDefs.push(['✨ Auto', 'auto']);
+            if (it.category !== 'locations') actionDefs.push([((typeof kopIcon === 'function') ? kopIcon('sparkles') + ' ' : '') + 'Auto', 'auto']);
             actionDefs.push(
                 ['Rename', 'rename'],
                 ['Doc ID', 'docfolder'],
@@ -217,7 +217,7 @@
                 // No-link fallback indicator: wiki entries name-match this program
                 // but aren't explicitly linked — flag the Wiki button for review.
                 if (a[1] === 'wiki' && it.name_match_unlinked > 0) {
-                    label = 'Wiki ⚠' + it.name_match_unlinked;
+                    label = 'Wiki ' + ((typeof kopIcon === 'function') ? kopIcon('alert-triangle') : '') + it.name_match_unlinked;
                     cls += ' dm-act-attention';
                 }
                 var btn = el('button', cls, label);
@@ -287,27 +287,28 @@
                 d.facilities.forEach(function (f) {
                     var row = el('div', 'dm-fac-item');
                     row.innerHTML =
-                        '<span class="dm-fac-item-name">🏫 ' + esc(f.name) +
+                        '<span class="dm-fac-item-name">' + ((typeof kopIcon === 'function') ? kopIcon('graduation-cap') : '') + ' ' + esc(f.name) +
                         (f.location ? ' <span class="dm-muted">(' + esc(f.location) + ')</span>' : '') +
                         (f.facility_id ? ' <span class="dm-id">id ' + esc(f.facility_id) + '</span>' : '') +
-                        (f.document_folder_id ? ' <span class="dm-fac-doc">📂 ' + esc(f.document_folder_id) + '</span>' : '') +
-                        (f.wiki_count ? ' <span class="dm-fac-wiki">🔗 ' + esc(f.wiki_count) + '</span>' : '') +
+                        (f.document_folder_id ? ' <span class="dm-fac-doc">' + ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' ' + esc(f.document_folder_id) + '</span>' : '') +
+                        (f.wiki_count ? ' <span class="dm-fac-wiki">' + ((typeof kopIcon === 'function') ? kopIcon('link') : '') + ' ' + esc(f.wiki_count) + '</span>' : '') +
                         '</span>';
                     var acts = el('span', 'dm-fac-item-acts');
                     [
-                        ['✨ Auto', function () { facilityAuto(operator, f, container); }],
-                        ['Rename', function () { facilityRename(operator, f, container); }],
-                        ['Doc ID', function () { facilityDocFolder(operator, f, container); }],
-                        ['Wiki', function () { facilityWiki(operator, f, container); }],
-                        ['Move', function () { facilityReassign(operator, f, container); }],
-                        ['Delete', function () { facilityDelete(operator, f, container); }]
+                        ['auto', ((typeof kopIcon === 'function') ? kopIcon('sparkles') + ' ' : '') + 'Auto', function () { facilityAuto(operator, f, container); }],
+                        ['rename', 'Rename', function () { facilityRename(operator, f, container); }],
+                        ['docfolder', 'Doc ID', function () { facilityDocFolder(operator, f, container); }],
+                        ['wiki', 'Wiki', function () { facilityWiki(operator, f, container); }],
+                        ['move', 'Move', function () { facilityReassign(operator, f, container); }],
+                        ['delete', 'Delete', function () { facilityDelete(operator, f, container); }]
                     ].forEach(function (a) {
+                        var key = a[0], label = a[1], handler = a[2];
                         var cls = 'dm-act';
-                        if (a[0] === 'Delete') cls += ' dm-act-delete';
-                        if (a[0] === '✨ Auto') cls += ' dm-act-auto';
-                        var b = el('button', cls, a[0]);
+                        if (key === 'delete') cls += ' dm-act-delete';
+                        if (key === 'auto') cls += ' dm-act-auto';
+                        var b = el('button', cls, label);
                         b.type = 'button';
-                        b.addEventListener('click', a[1]);
+                        b.addEventListener('click', handler);
                         acts.appendChild(b);
                     });
                     row.appendChild(acts);
@@ -354,8 +355,8 @@
             }
             var d = res.data;
             var html = '<p class="dm-status-ok">' + esc(d.message) + '</p><ul class="dm-auto-notes">';
-            if (d.folder) html += '<li>📂 Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
-            if (d.wiki) html += '<li>🔗 Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
+            if (d.folder) html += '<li>' + ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
+            if (d.wiki) html += '<li>' + ((typeof kopIcon === 'function') ? kopIcon('link') : '') + ' Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
             (d.notes || []).forEach(function (n) { html += '<li class="dm-muted">' + esc(n) + '</li>'; });
             html += '</ul><div class="dm-form-actions"><button type="button" class="kop-dm-btn dm-done">Done</button></div>';
             body.innerHTML = html;
@@ -403,7 +404,7 @@
             '<p class="dm-muted">Document library folder for facility “' + esc(f.name) + '”. Browse to pick one, or clear.</p>' +
             '<div class="dm-doc-row">' +
             '<input type="number" min="1" step="1" class="dm-doc-input" placeholder="folder ID" value="' + (f.document_folder_id || '') + '">' +
-            '<button type="button" class="kop-dm-btn dm-doc-browse">📁 Browse folders…</button></div>' +
+            '<button type="button" class="kop-dm-btn dm-doc-browse">' + ((typeof kopIcon === 'function') ? kopIcon('folder') : '') + ' Browse folders…</button></div>' +
             '<div class="dm-doc-chosen dm-muted"></div>' +
             '<div class="dm-form-actions">' +
             '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-cancel">Cancel</button>' +
@@ -532,8 +533,8 @@
                 var d = res.data;
                 if (d.folder) item.document_folder_id = d.folder.id; // keep in-memory item fresh
                 var html = '<p class="dm-status-ok">' + esc(d.message) + '</p><ul class="dm-auto-notes">';
-                if (d.folder) html += '<li>📂 Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
-                if (d.wiki) html += '<li>🔗 Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
+                if (d.folder) html += '<li>' + ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' Folder: <strong>' + esc(d.folder.name) + '</strong> #' + esc(d.folder.id) + '</li>';
+                if (d.wiki) html += '<li>' + ((typeof kopIcon === 'function') ? kopIcon('link') : '') + ' Wiki: <strong>' + esc(d.wiki.program_name) + '</strong> <span class="dm-muted">(suggested — confirm under Wiki)</span></li>';
                 (d.notes || []).forEach(function (n) { html += '<li class="dm-muted">' + esc(n) + '</li>'; });
                 html += '</ul><div class="dm-form-actions">' +
                     '<button type="button" class="kop-dm-btn kop-dm-btn-ghost dm-fix-doc">Edit folder</button>' +
@@ -592,7 +593,7 @@
             '<label>Document library folder</label>' +
             '<div class="dm-doc-row">' +
             '<input type="number" min="1" step="1" class="dm-doc-input" placeholder="folder ID" value="' + (item.document_folder_id || '') + '">' +
-            '<button type="button" class="kop-dm-btn dm-doc-browse">📁 Browse folders…</button>' +
+            '<button type="button" class="kop-dm-btn dm-doc-browse">' + ((typeof kopIcon === 'function') ? kopIcon('folder') : '') + ' Browse folders…</button>' +
             '</div>' +
             '<div class="dm-doc-chosen dm-muted"></div>' +
             '<div class="dm-form-actions">' +
@@ -948,8 +949,8 @@
         body.innerHTML =
             '<p class="dm-muted">This walks every program (skipping location aggregates) and, using strong name matches:</p>' +
             '<ul class="dm-auto-notes">' +
-            '<li>📂 sets a document folder where one is <strong>empty</strong> and a folder name matches,</li>' +
-            '<li>🔗 links every <strong>unlinked</strong> wiki entry whose organization matches a program (as <em>suggested</em>, for review).</li>' +
+            '<li>' + ((typeof kopIcon === 'function') ? kopIcon('folder-open') : '') + ' sets a document folder where one is <strong>empty</strong> and a folder name matches,</li>' +
+            '<li>' + ((typeof kopIcon === 'function') ? kopIcon('link') : '') + ' links every <strong>unlinked</strong> wiki entry whose organization matches a program (as <em>suggested</em>, for review).</li>' +
             '</ul>' +
             '<p class="dm-muted">It never overwrites an existing folder and never moves an already-linked wiki entry. Safe to re-run.</p>' +
             '<div class="dm-scrape-progress" style="display:none;"><div class="dm-scrape-bar"><div class="dm-scrape-fill"></div></div>' +
@@ -1081,7 +1082,7 @@
             nodes.forEach(function (node) {
                 var row = el('div', 'dm-fb-row');
                 row.style.paddingLeft = (depth * 18) + 'px';
-                row.innerHTML = '<span class="dm-fb-name">📁 ' + esc(node.name) + ' <span class="dm-id">#' + esc(node.id) + '</span></span>';
+                row.innerHTML = '<span class="dm-fb-name">' + ((typeof kopIcon === 'function') ? kopIcon('folder') : '') + ' ' + esc(node.name) + ' <span class="dm-id">#' + esc(node.id) + '</span></span>';
 
                 var acts = el('span', 'dm-fb-acts');
 

@@ -237,10 +237,10 @@ function showToast(message, type = 'info', duration = 5000) {
     
     // Icon based on type
     const icons = {
-        success: '✅',
-        error: '❌',
-        warning: '⚠️',
-        info: 'ℹ️'
+        success: 'check-circle',
+        error: 'x-circle',
+        warning: 'alert-triangle',
+        info: 'alert-circle'
     };
     
     // Color schemes
@@ -319,8 +319,10 @@ function showToast(message, type = 'info', duration = 5000) {
     }
     
     const icon = document.createElement('span');
-    icon.style.cssText = 'font-size: 20px; flex-shrink: 0;';
-    icon.textContent = icons[type] || icons.info;
+    icon.style.cssText = 'font-size: 20px; flex-shrink: 0; display: inline-flex; align-items: center;';
+    if (typeof kopIcon === 'function') {
+        icon.innerHTML = kopIcon(icons[type] || icons.info);
+    }
     
     const text = document.createElement('span');
     text.style.cssText = 'flex: 1;';
@@ -559,9 +561,9 @@ window.buildProjectExport = buildProjectExport;
 // Auto-initialize when DOM is ready
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('🔧 Utilities module loaded');
+        console.log('Utilities module loaded');
     });
 } else {
-    console.log('🔧 Utilities module loaded');
+    console.log('Utilities module loaded');
 }
 

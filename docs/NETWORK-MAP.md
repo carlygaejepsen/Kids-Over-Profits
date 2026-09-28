@@ -2071,6 +2071,29 @@ plumbing and a held emphasis state.
 each name's drawer opens the form with that name as From (see "Finding it"
 under Phase 3). Highlighting on the board in view is still open.
 
+*Built (2026-09-28), the board half.* A route found while a trail is open
+is lit on the board in view (`focus.highlightRoute`): the emphasis the
+hover uses (`near`, `nearEdges`) held until the reader lets go of it, and
+only the names the route is missing added to the board - not their
+neighbours, not their owners, because the board is the question being
+asked and the route is the answer, not a new question. Names already on
+the board stay where they are; the board re-lays only when a name had to
+be added (the route joins the layout's seed key). A person on a lit route
+is never folded into a line and Simplify never drops a lit name, the same
+rule `showPath` follows: on a route the person who joins two places is
+the answer. Hover borrows the emphasis while the pointer rests on a name
+and the route takes it back. The drawer reads a lit route the way it
+reads a path board, with two buttons above the steps - **Show this route
+on its own** (`showPath`) and **Clear route** - and choosing another
+route in its list lights that one on the same board. Escape clears the
+route before it starts the trail over; a click on any name opens it as
+usual and drops the highlight; Show all and switching mode drop it too,
+as new questions. The link carries it as `route=`
+(`#open=a,b&mode=expand&route=x,y,z`), ignored without an `open=` trail
+or when a step's line is off under the filters. With no trail open, or
+when the board is already a route, Connect two names replaces the board
+with the route alone, as before.
+
 ### 2d.7 "Add a 'simplify view' mode."
 
 *What it has.* Focus mode shows a click's own connections and nothing else.
@@ -2234,8 +2257,9 @@ it.
    Answers 1.
 4. **2d.7 Simplify** and **2d.8 Show all connections** together: done
    2026-09-24. Answers 7 and 8.
-5. **2d.6 highlight on the board in view**: a held emphasis state and a
-   drawer button. Answers 6.
+5. **2d.6 highlight on the board in view**: done 2026-09-28
+   (`focus.highlightRoute`, the held emphasis, `route=` in the link).
+   Answers 6.
 6. **2d.2 kind marks** after the owner's yes, with their legend rows.
    Answers 2, and the rest of 3.
 7. **2d.4 hulls and group-by-network**: the one that costs real time; it

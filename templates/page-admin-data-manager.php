@@ -38,8 +38,8 @@ get_header();
             <option value="locations">Locations</option>
         </select>
         <button type="button" id="dmRefresh" class="kop-dm-btn kop-dm-btn-ghost">↻ Refresh</button>
-        <button type="button" id="dmManageFolders" class="kop-dm-btn">📁 Manage Folders</button>
-        <button type="button" id="dmScrape" class="kop-dm-btn">🔗 Initial Scrape</button>
+        <button type="button" id="dmManageFolders" class="kop-dm-btn"><?php echo kop_icon('folder'); ?> Manage Folders</button>
+        <button type="button" id="dmScrape" class="kop-dm-btn"><?php echo kop_icon('link'); ?> Initial Scrape</button>
         <span id="dmCount" class="kop-dm-result-count"></span>
     </div>
 

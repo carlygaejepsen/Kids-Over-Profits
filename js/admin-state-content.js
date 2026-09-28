@@ -358,7 +358,7 @@
 
                 fetchLawsuitBtn.disabled = true;
                 const originalHTML = fetchLawsuitBtn.innerHTML;
-                fetchLawsuitBtn.textContent = '✨ Fetching...';
+                fetchLawsuitBtn.innerHTML = kopIcon('sparkles') + ' Fetching...';
                 status.textContent = 'Fetching lawsuit details...';
                 status.style.color = '';
 
@@ -420,7 +420,7 @@
 
                 try {
                     // Step 1: upload file and get job_id + total_chunks
-                    extractLawsuitBtn.textContent = '📄 Uploading…';
+                    extractLawsuitBtn.innerHTML = kopIcon('file-text') + ' Uploading…';
                     status.textContent = `Uploading "${file.name}"…`;
 
                     const uploadForm = new FormData();
@@ -446,12 +446,14 @@
                     for (let i = 0; i < total_chunks; i++) {
                         if (i > 0) {
                             // Wait 65s so we don't exceed the per-minute token quota.
-                            extractLawsuitBtn.textContent = `📄 Waiting… (${i}/${total_chunks})`;
+                            extractLawsuitBtn.textContent = `Waiting… (${i}/${total_chunks})`;
+                            extractLawsuitBtn.insertAdjacentHTML('afterbegin', kopIcon('file-text') + ' ');
                             status.textContent = `Chunk ${i} of ${total_chunks} done. Waiting 65s before next chunk…`;
                             await new Promise(resolve => setTimeout(resolve, 65000));
                         }
 
-                        extractLawsuitBtn.textContent = `📄 Chunk ${i + 1}/${total_chunks}…`;
+                        extractLawsuitBtn.textContent = `Chunk ${i + 1}/${total_chunks}…`;
+                        extractLawsuitBtn.insertAdjacentHTML('afterbegin', kopIcon('file-text') + ' ');
                         status.textContent = `Processing chunk ${i + 1} of ${total_chunks}…`;
 
                         const chunkData = await postJson({ action: 'chunk', job_id, chunk_index: i });
@@ -462,7 +464,7 @@
                     }
 
                     // Step 3: merge all chunk results and register the attachment
-                    extractLawsuitBtn.textContent = '📄 Finalizing…';
+                    extractLawsuitBtn.innerHTML = kopIcon('file-text') + ' Finalizing…';
                     status.textContent = 'Merging extraction results…';
 
                     const finalRes = await postJson({ action: 'finalize', job_id });
@@ -753,7 +755,7 @@
 
                 fetchBtn.disabled = true;
                 const originalHTML = fetchBtn.innerHTML;
-                fetchBtn.textContent = '✨ Fetching...';
+                fetchBtn.innerHTML = kopIcon('sparkles') + ' Fetching...';
                 status.textContent = 'Fetching bill details...';
                 status.style.color = '';
 

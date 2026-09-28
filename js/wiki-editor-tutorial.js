@@ -24,7 +24,7 @@
             },
             {
                 title: 'Browse Existing Entries',
-                content: 'Load an existing wiki entry to edit it. Browse by <strong>📍 Location</strong> (state), <strong>🏢 Organization</strong> (parent company), or <strong>📝 Stubs</strong> — empty entries that still need to be written. Stubs are a great place to start contributing!',
+                content: `Load an existing wiki entry to edit it. Browse by <strong>${kopIcon('map-pin')} Location</strong> (state), <strong>${kopIcon('building')} Organization</strong> (parent company), or <strong>${kopIcon('pen-line')} Stubs</strong> — empty entries that still need to be written. Stubs are a great place to start contributing!`,
                 target: '.index-selection-pane .category-tabs',
                 position: 'bottom'
             },
@@ -43,7 +43,7 @@
             },
             {
                 title: 'Bulk Actions & Importing',
-                content: '<strong>📤 Bulk Upload</strong> submits multiple markdown files at once. <strong>📥 Import from Clipboard</strong> converts a pasted wiki entry or plain-text article into form fields. <strong>🤖 Extract from Prose</strong> uses AI to fill fields from any pasted text — always review what it fills in!',
+                content: `<strong>${kopIcon('upload')} Bulk Upload</strong> submits multiple markdown files at once. <strong>${kopIcon('download')} Import from Clipboard</strong> converts a pasted wiki entry or plain-text article into form fields. <strong>${kopIcon('bot')} Extract from Prose</strong> uses AI to fill fields from any pasted text — always review what it fills in!`,
                 target: '#toggleBulkUploadBtn, #toggleImportBtn, #toggleExtractProseBtn',
                 highlightAll: true,
                 position: 'bottom',
@@ -65,7 +65,7 @@
             },
             {
                 title: 'Read Source Documents Side-by-Side',
-                content: 'Click <strong>📄 Source Docs</strong> to open a split-screen document viewer — browse a program\'s document folder and read PDFs, images, and other files right next to the form while you type. Drag its edge to resize. Once you\'ve linked a program, the <strong>📄 View documents</strong> button on the linked-program banner jumps straight to that program\'s folder.',
+                content: `Click <strong>${kopIcon('file-text')} Source Docs</strong> to open a split-screen document viewer — browse a program's document folder and read PDFs, images, and other files right next to the form while you type. Drag its edge to resize. Once you've linked a program, the <strong>${kopIcon('file-text')} View documents</strong> button on the linked-program banner jumps straight to that program's folder.`,
                 target: '.kop-dv-toggle',
                 position: 'top',
                 highlightPadding: 6
@@ -109,7 +109,7 @@
             },
             {
                 title: 'Copy or Submit',
-                content: '<strong>Copy to Clipboard</strong> lets you paste the entry straight into the Reddit wiki editor. <strong>Convert to Past Tense</strong> rewrites the entry for closed programs. <strong>💾 Submit to Database</strong> sends the entry to our team for review — it opens a dialog where you confirm the linked program and can add your email and notes.',
+                content: `<strong>Copy to Clipboard</strong> lets you paste the entry straight into the Reddit wiki editor. <strong>Convert to Past Tense</strong> rewrites the entry for closed programs. <strong>${kopIcon('save')} Submit to Database</strong> sends the entry to our team for review — it opens a dialog where you confirm the linked program and can add your email and notes.`,
                 target: '#convertPastBtn, #copyBtn, #submitToDbBtn',
                 highlightAll: true,
                 highlightMode: 'sequential',

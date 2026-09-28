@@ -14,7 +14,7 @@ window.KOP_UI_State = {
 
         if (window.currentProjectName) {
             const facilityCount = window.formData?.facilities?.length || 0;
-            const baseMessage = `<strong>📂 Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
+            const baseMessage = `<strong>${kopIcon('folder-open')} Current Project:</strong> <span style="color: #ff9500;">${escapeHtmlForAttr(window.currentProjectName)}</span> (${facilityCount} facilities)`;
 
             statusTargets.forEach(target => {
                 if (target.id === 'referrer-project-status') {
@@ -28,11 +28,11 @@ window.KOP_UI_State = {
         } else {
             statusTargets.forEach(target => {
                 if (target.id === 'referrer-project-status') {
-                    target.innerHTML = '⚠️ No project loaded - referrer entries will be stored temporarily';
+                    target.innerHTML = `${kopIcon('alert-triangle')} No project loaded - referrer entries will be stored temporarily`;
                 } else if (target.id === 'project-status-location') {
-                    target.innerHTML = '⚠️ No project loaded - viewing temporary location data';
+                    target.innerHTML = `${kopIcon('alert-triangle')} No project loaded - viewing temporary location data`;
                 } else {
-                    target.innerHTML = '⚠️ No project loaded - working with temporary data';
+                    target.innerHTML = `${kopIcon('alert-triangle')} No project loaded - working with temporary data`;
                 }
             });
         }
@@ -54,9 +54,9 @@ window.KOP_UI_State = {
             addFacilityButton: { default: 'Add New Facility', referrer: 'Add New', provider: 'Add New Site' },
             addFacilityTOC: { default: 'Add New Facility', referrer: 'Add New', provider: 'Add New Site' },
             currentFacilityLabel: { default: 'Current Facility', referrer: 'Current', provider: 'Current Site' },
-            addFacilityToolbar: { default: '📄<span class="toolbar-label">Add Entry</span>', referrer: '📄<span class="toolbar-label">Add Entry</span>' },
-            cloneFacilityToolbar: { default: '📋', referrer: '📋' },
-            removeFacilityToolbar: { default: '🗑️', referrer: '🗑️' },
+            addFacilityToolbar: { default: 'Add Entry', referrer: 'Add Entry' },
+            cloneFacilityToolbar: { default: 'Clone', referrer: 'Clone' },
+            removeFacilityToolbar: { default: 'Delete', referrer: 'Delete' },
             facilityNameLabel: { default: 'Facility Name', referrer: 'Individual\'s Name', provider: 'Provider / Site Name' },
             facilityIdentificationTitle: { default: 'Identification & Names', referrer: 'Individual Identification' },
             facilityDetailsTitle: { default: 'Facility Details', referrer: 'Individual Details' },
@@ -94,6 +94,25 @@ window.KOP_UI_State = {
             const el = document.querySelector(selector);
             if (el) el.textContent = text;
         };
+
+        // Toolbar icon buttons carry a static kopIcon() SVG plus a
+        // .toolbar-label span whose text changes with the category. Update
+        // the label in place instead of overwriting the button's innerHTML,
+        // so the icon (and the span itself) survive repeated calls.
+        const setToolbarButton = (elementId, iconName, text) => {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (!el.querySelector('.kop-icon') && typeof kopIcon === 'function') {
+                el.insertAdjacentHTML('afterbegin', kopIcon(iconName));
+            }
+            let labelEl = el.querySelector('.toolbar-label');
+            if (!labelEl) {
+                labelEl = document.createElement('span');
+                labelEl.className = 'toolbar-label';
+                el.appendChild(labelEl);
+            }
+            labelEl.textContent = text;
+        };
         // Mental health providers (js/data-form/provider-form.js) fall back to
         // the facility wording wherever they have no label of their own.
         const rawMode = (category === 'referrers') ? 'referrer' : (category === 'providers' ? 'provider' : 'default');
@@ -117,10 +136,10 @@ window.KOP_UI_State = {
         setLabelForQuery('.toolbar-title strong', labels.toolbarTitle[mode]);
         setLabel('toolbar-hint', labels.toolbarHint[mode]);
         setLabel('toolbar-current-item-label', `${labels.currentFacilityLabel[mode]}:`);
-        setLabel('add-facility-btn-toolbar', labels.addFacilityToolbar[mode]);
-        setLabel('clone-facility-btn-toolbar', labels.cloneFacilityToolbar[mode]);
-        setLabel('remove-facility-btn-toolbar', labels.removeFacilityToolbar[mode]);
-        setLabel('delete-facility-btn-toolbar', labels.removeFacilityToolbar[mode]); // Legacy ID fallback
+        setToolbarButton('add-facility-btn-toolbar', 'file-text', labels.addFacilityToolbar[mode]);
+        setToolbarButton('clone-facility-btn-toolbar', 'clipboard', labels.cloneFacilityToolbar[mode]);
+        setToolbarButton('remove-facility-btn-toolbar', 'trash', labels.removeFacilityToolbar[mode]);
+        setToolbarButton('delete-facility-btn-toolbar', 'trash', labels.removeFacilityToolbar[mode]); // Legacy ID fallback
 
         // Update Facility-specific sections
         setLabelForQuery('#identification-section .section-title', labels.facilityIdentificationTitle[mode]);
