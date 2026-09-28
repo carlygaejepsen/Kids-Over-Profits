@@ -105,6 +105,9 @@ try {
     if ($category !== '') { $where[] = 'FIND_IN_SET(?, h.categories)'; $params[] = $category; }
     if ($min > 0) { $where[] = 'h.score >= ?'; $params[] = $min; }
     if ($q !== '') { $where[] = 'f.facility_name LIKE ?'; $params[] = '%' . $q . '%'; }
+    // A hand-picked list (?ids=12,40), for findings reviewed before a rule changed.
+    $ids = array_values(array_filter(array_map('intval', explode(',', (string) ($_GET['ids'] ?? '')))));
+    if ($ids) { $where[] = 'h.id IN (' . implode(',', $ids) . ')'; }
     $sql_where = implode(' AND ', $where);
 
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM inspection_highlights h JOIN inspection_facilities f ON f.id = h.facility_id WHERE $sql_where");

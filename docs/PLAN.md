@@ -127,7 +127,11 @@ The date is when each was last confirmed open.
    scanned N reports, 0 remaining"), then review candidates in
    [review-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php).
    Nothing reaches [/severe-reports/](https://kidsoverprofits.org/severe-reports/)
-   unapproved.
+   unapproved. Scanner version 4 (2026-09-28) adds NC, GA, MN, AR and FL
+   and tightens two rules; approved findings the new rules no longer back
+   stay published until rejected by hand:
+   [13 approved findings to recheck](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php?status=approved&ids=230,1285,1123,1306,561,1307,616,859,875,114,199,408,894)
+   (minors' sexual activity without an adult, single medication errors).
 4. **Featured report notes** (2026-09-18). The two featured UHS of Provo
    Canyon reports have no `featured_note`; add one each in
    [manage-featured-inspections.php](https://kidsoverprofits.org/wp-content/themes/child/api/manage-featured-inspections.php).
@@ -291,10 +295,17 @@ updated.
    harness and a before/after snapshot of counts, badges, previews and
    summaries (the FL/NC lite-list method). `severe-flags.js` reads both
    markups; check the flags still land.
-3. **Severe-finding extractors for more states.** Built: TX, CA, UT, AZ, CT
-   (`kop_ih_supported_states()`, scanner version 3). Next the raw-text states
-   NC, FL, GA, AR, MN, OR, then WA and NV. Rules: substantiated only, no
-   child-on-child incidents, elopement only with death or injury.
+3. **Severe-finding extractors: WA, and the flags on lite lists.** Built
+   (scanner version 4, 2026-09-28): TX, CA, UT, AZ, CT, NC (harm tags only:
+   V 131/132, 289-296, 314/315, 366/367, 512-525), GA, MN, AR (federal
+   surveys only), FL (DJJ reviews, Failed/Limited indicators). Left out: OR
+   (findings are the rule's own wording), WA (scraper interleaves the PDF
+   columns), NV (no text). Rules: substantiated only; no child-on-child
+   fights; minors' sexual activity only with an adult taking part or an
+   assault; single medication errors never, a pattern of them yes;
+   elopement only with death or injury. `severe-flags.js` matches report
+   text, so NC and FL flags will not show until it matches the lite lists'
+   ids instead.
 4. **"What inspectors found" on facility pages** (the rest of fix-plan step
    14.5): approved highlights on `/facility/<slug>/`.
 

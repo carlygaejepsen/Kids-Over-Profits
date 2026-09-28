@@ -66,27 +66,27 @@ $sentence_cases = array(
     array('Two children in care were missing from the operation for 15 minutes.', array('missing')),
     array('The caregiver signature was missing on two medication logs.', array()),
     array('A child in care was reported missing at 3 AM.', array('missing')),
-    // Child on child is not queued as abuse; what an adult did is.
+    // Child on child is not queued as abuse, except a sexual assault (owner rule, 2026-09-28); what an adult did is.
     array('Due to staff not being aware, one child was put in a choke hold by another child.', array()),
     array('A child inappropriately touched another child by grabbing them in the private area.', array()),
     array('C1 engaged in sexual intercourse with C2 in the facility bathroom.', array()),
     array('Inappropriate sexual contact occurred between two residents.', array()),
     array('Staff failed to stop a peer-on-peer assault in the day room.', array()),
     array('Two children were able to engage in consensual inappropriate sexual contact with each other.', array()),
-    array('CCL received an allegation that Client #1 (C1) was sexually assaulted by Client #2 while in care.', array()),
+    array('CCL received an allegation that Client #1 (C1) was sexually assaulted by Client #2 while in care.', array('sexual_abuse')),
     array('Child 1 (C1) and Child (C2) engaged in inappropriate sexual behaviors while overnight staff slept.', array()),
     array('Staff did not follow the plan, resulting in Client #2 (C2) and Client #3 (C3) physically assaulting (C1).', array()),
     array('Staff failed to intervene when C1 hit C2.', array()),
     array('Residents and staff reported multiple incidents where the child hit younger peers.', array()),
     array('S1 physically assaulted C1 and C2.', array('physical_abuse')),
-    array('CCL received an allegation that Client #1 (C1) (see LIC811, dated 12/16/2021) was sexually assaulted by Client #2 while in care.', array()),
+    array('CCL received an allegation that Client #1 (C1) (see LIC811, dated 12/16/2021) was sexually assaulted by Client #2 while in care.', array('sexual_abuse')),
     array('Staff failed to separate two children after a child was hit twice by another child.', array()),
-    array('The operation failed to report sexual abuse against a child in care by another resident.', array()),
+    array('The operation failed to report sexual abuse against a child in care by another resident.', array('sexual_abuse')),
     array('All residents interviewed stated they have either been hit by the staff or witnessed the staff hit another resident.', array('physical_abuse')),
     // Utah and Arizona wording.
     array('The information gathered substantiated that an incident of sexual activity between three clients was reported late.', array()),
     array('During this time, two clients engaged in sexual activity.', array()),
-    array('R1 reported to a parent that another resident sexually assaulted R1.', array()),
+    array('R1 reported to a parent that another resident sexually assaulted R1.', array('sexual_abuse')),
     array('Video evidence showed clients overwhelming personnel, engaging in physical assaults against staff, and seizing staff keys.', array()),
     array('A staff member bit a client during a physical restraint incident; the client incurred an injury as a result.', array('physical_abuse', 'restraint_injury')),
     array('A review of facility documentation revealed an "Incident, Accident or Death Report" was created on March 14, 2024.', array()),
@@ -111,11 +111,44 @@ $noise_cases = array(
     'A.R.S. § 13-3620(A) states any person who reasonably believes that a minor has been the victim of physical injury shall report.',
     'A.R.S. § 13-3620 Any person who reasonably believes that a minor is or has been the victim of physical injury, abuse, child abuse, or death shall immediately report.',
 );
+$noise_cases = array_merge($noise_cases, array(
+    'Diagnoses of Conduct Disorder, ADHD, Child Physical Abuse, PTSD.',
+    'These crimes include Article 6, Homicide; Article 7A, Rape and Other Sex Offenses; Article 8, Assaults.',
+    'One staff was missing Human Trafficking, Prison Rape Elimination Act (PREA), and Sexual Harassment training.',
+    'The program conducted thirty mock mental health drills in response to a suicide attempt.',
+    '“Medication error” means: a. The failure to administer an ordered medication.',
+));
 foreach ($noise_cases as $s) check((bool) preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is set aside');
 foreach (array('The incident report stated E1 punched R1 in the face.', 'Staff failed to follow the treatment plan and the child was hospitalized.', 'The child was found unresponsive when the door was opened.') as $s) {
     check(!preg_match('/' . kop_ih_noise_pattern() . '/iu', $s), 'noise: "' . $s . '" is kept');
 }
 $sentence_cases = array_merge($sentence_cases, array(
+    // Owner rule, 2026-09-28: minors' sexual activity is severe only with an adult taking part or an assault.
+    array('Two children in care (15 and 17 years of age) were involved in inappropriate sexualized behavior, and the caregiver was unaware of the children\'s activity.', array()),
+    array('A caregiver failed to supervise children resulting in children engaging in inappropriate sexual behavior.', array()),
+    array('Based on the information obtained, minors had engaged in inappropriate sexual activities while in care.', array()),
+    array('Three of four staff members interviewed stated that a former client did inappropriately touch another client in care.', array()),
+    array('Staff (S1) was oblivious towards the inappropriate touching between C1 and C2 throughout the yoga session.', array()),
+    array('A staff member was found having inappropriate sexual contact and relationship with a 17-year-old child in care.', array('sexual_abuse')),
+    array('Administrator was aware of on-going inappropriate relationship between a staff member at the operation and a child in care.', array('sexual_abuse')),
+    array('The complaint alleged staff did not provide adequate supervision resulting in minor engaging in sexual behavior with an adult.', array('sexual_abuse')),
+    array('An operational volunteer did not use proper judgement and did not demonstrate self-control in the presence of the children by engaging in inappropriate sexualized contact with two children in care.', array('sexual_abuse')),
+    array('Allegations involving inappropriate sexual comments made by a staff member were not reported timely to Licensing.', array('sexual_abuse')),
+    array('Victim Child alleged that residents had nonconsensual sex inside the facility.', array('sexual_abuse')),
+    array('The screening for sexually abusive behavior was not completed within six days of admission.', array()),
+    // Owner rule, 2026-09-28: a single medication error is not queued; a pattern of them is.
+    array('Medication error occurred.', array()),
+    array('A child in care received the wrong dose of medication.', array()),
+    array('A child in care was not given their medication as prescribed.', array()),
+    array('Some of the children\'s medication records were missing the medication counts.', array()),
+    array('The child missed their dose of Concerta 36mg, on 5/4, 5/5, 5/21, 5/22, and 5/23.', array('medical_neglect')),
+    array('Six children in care missed dosages of prescribed medications on multiple occasions for consecutive days.', array('medical_neglect')),
+    array('A child was given the wrong dosage of medication for a month, after a change in medication.', array('medical_neglect')),
+    array('LPA observed that this is the second medication error in the facility within thirty days.', array('medical_neglect')),
+    array('A child sustained a hand fracture and was not provided medical care until 5 days later.', array('medical_neglect')),
+    // North Carolina's record reviews.
+    array('FC #4 was in the custody of DSS since November 2017 after FC #4\'s grandmother passed away.', array()),
+    array('On 5/6/25, client #1 told him she wanted to kill herself and be with a friend who committed suicide.', array()),
     array('Staff member S1 was seen on video hitting C1 in the day room.', array('physical_abuse')),
     array('Staff sexually abused a child in care.', array('sexual_abuse')),
     array('On video, a staff member was seen shoving a child to prevent them from going into the room of a peer.', array('physical_abuse')),
@@ -131,6 +164,7 @@ foreach ($sentence_cases as $case) {
 }
 
 check(count(kop_ih_split_sentences('Dr. Smith met Mr. Jones at 9 a.m. on Monday. They left.')) === 2, 'abbreviations do not end a sentence');
+check(count(kop_ih_split_sentences('Review of an incident report revealed: -On 1/31/26 Client #1 walked off. -Staff #2 called law enforcement - 17 year old male')) === 4, 'a bullet is a sentence of its own');
 
 // Texas
 $tx = array('id' => 1, 'facility_id' => 1, 'categories_json' => json_encode(array(
@@ -285,6 +319,63 @@ $ct_letter['raw_content'] = "Dear Ms. Goduti,\n\nOn September 16th, 2024, a bien
 $c = kop_ih_candidates('CT', $ct_letter);
 check(count($c) === 1 && $c[0]['category'] === 'death' && $c[0]['standard'] === '17a-145-73 Sleeping accommodations', 'CT: a licensing letter is read the same way');
 
+// North Carolina: a statement of deficiencies, page headers in the middle, harm tags only.
+$nc_raw = "Division of Health Service Regulation\nPRINTED: 10/04/2019\nFORM APPROVED\nV 000 INITIAL COMMENTS V 000\nA complaint survey was completed. The complaint was substantiated.\n"
+    . "V 512 27D .0304 Client Rights - Harm, Abuse, Neglect V 512\n(a) Each client shall be free from harm, abuse, neglect and exploitation.\nThis Rule is not met as evidenced by:\n"
+    . "Based on record review and interview, staff failed to protect clients from harm. The findings are:\nReview on 9/12/19 of the incident report revealed:\n-Staff #1 punched Client #2 in the face\n"
+    . "Division of Health Service Regulation\nSTATEMENT OF DEFICIENCIES (X1) PROVIDER/SUPPLIER/CLIA\nALEXANDER YOUTH NETWORK - CHARLOTTE DAY 1\nV 512 Continued From page 2 V 512\n"
+    . "during a restraint on 9/1/19.\n-Diagnoses of Conduct Disorder, Child Physical Abuse, PTSD.\nThis deficiency constitutes a Type A1 rule violation for serious abuse.\n"
+    . "V 112 27G .0205 (C-D) Treatment Plan V 112\nThis Rule is not met as evidenced by:\nBased on record review the facility failed to develop goals. History of self harm, suicide attempts and running away was documented.\n";
+$nc = array('id' => 61, 'facility_id' => 11, 'report_date' => '10/2/2019', 'raw_content' => $nc_raw, 'categories_json' => json_encode(array('inspection_type' => 'MHLCS Complaint')));
+$f = kop_ih_extract('NC', $nc);
+check(count($f) === 1 && strpos($f[0]['standard'], 'V 512') === 0, 'NC: one finding, from the harm tag; the treatment plan tag is left out');
+check($f && strpos($f[0]['text'], 'PRINTED') === false && strpos($f[0]['text'], 'ALEXANDER') === false && strpos($f[0]['text'], 'Continued From') === false && strpos($f[0]['text'], 'shall be free') === false, 'NC: headers, the rule text and the continuation line are dropped');
+check($f && $f[0]['factor'] === 1.0 && strpos($f[0]['state_label'], 'Type A1 violation') !== false, 'NC: a Type A1 violation carries the full score');
+$c = kop_ih_candidates('NC', $nc);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && strpos($c[0]['excerpt'], 'Diagnoses') === false, 'NC: the punch is queued, the diagnoses list is not');
+
+// Georgia: one tag per rule, the severity letter scales the score.
+$ga_raw = "STATEMENT OF DEFICIENCIES\nTAG\nSUMMARY OF STATEMENT OF DEFICIENCIES PLAN OF CORRECTION\nNUMBER\n0000 Severity : 0 Survey Type(s) : 2 Completed Date : ____\nOpen Comment\nThe purpose of this survey was to investigate an incident.\n"
+    . "1511 Severity : D Survey Type(s) : 2 Completed Date : ____\nResident Rights\nThis Requirement is not met as evidenced by:\nBased on record review and interview, the facility failed to protect a resident.\nFindings include:\nResident #1 informed Staff A that Staff D hit him/her twice in the chest.\n9/1/2026 1:22:36 PM 1\n"
+    . "1602 Severity : G Survey Type(s) : 2 Completed Date : ____\nSupervision\nThis Requirement is not met as evidenced by:\nResident #2 was found unresponsive in the bathroom and later died at the hospital.\n";
+$ga = array('id' => 62, 'facility_id' => 12, 'report_date' => '08/18/2025', 'raw_content' => $ga_raw, 'categories_json' => json_encode(array('survey_type' => 'Incident')));
+$f = kop_ih_extract('GA', $ga);
+check(count($f) === 2 && $f[0]['factor'] === 0.85 && $f[1]['factor'] === 1.0 && $f[0]['state_label'] === 'Deficiency cited, severity D, incident survey', 'GA: severity D is 0.85, G is 1.0; the opening comment is no finding');
+check($f && strpos($f[0]['text'], '1:22:36') === false, 'GA: the page footer is dropped');
+
+// Minnesota: a maltreatment memo counts only when maltreatment was determined; a correction order lists violations.
+$mn_memo = "MALTREATMENT INVESTIGATION MEMORANDUM\nDisposition: Maltreatment determined as to physical abuse of an alleged victim by a staff person.\nSuspected Maltreatment Reported:\nIt was reported that a staff person hit a child.\n"
+    . "Summary of Findings:\nThe AV said the SP slapped him.\nConclusion:\nA. Maltreatment:\nThe SP slapped the AV in the face. It was determined that physical abuse occurred.\nB. Responsibility pursuant to Minnesota Statutes:\nThe SP was responsible.";
+$mn = array('id' => 63, 'facility_id' => 13, 'report_date' => 'April 28, 2023', 'raw_content' => $mn_memo, 'categories_json' => json_encode(array('doc_type' => 'Maltreatment Finding')));
+$f = kop_ih_extract('MN', $mn);
+check(count($f) === 1 && strpos($f[0]['text'], 'SP slapped the AV') !== false && strpos($f[0]['text'], 'responsible') === false && $f[0]['factor'] === 1.0, 'MN: a determined memo gives its conclusion');
+$mn_not = $mn;
+$mn_not['raw_content'] = str_replace('Maltreatment determined as to physical abuse', 'Maltreatment not determined', $mn_memo);
+check(kop_ih_extract('MN', $mn_not) === array(), 'MN: a memo that did not determine maltreatment is no finding');
+$mn_order = $mn;
+$mn_order['categories_json'] = json_encode(array('doc_type' => 'Correction Order'));
+$mn_order['raw_content'] = "CORRECTION ORDER\nA licensing review and licensing investigation was conducted.\n1. Violation: The license holder failed to protect a resident; staff restrained the resident face down and the resident suffered a broken wrist.\nRule Violated: Minnesota Rules, part 2960.0710.\nCorrective Action Required: Immediately.\n2. Violation: Postings were outdated.\nStatute Violated: 245A.65.";
+$f = kop_ih_extract('MN', $mn_order);
+check(count($f) === 1 && strpos($f[0]['text'], 'broken wrist') !== false && $f[0]['factor'] === 1.0, 'MN: each violation paragraph is a finding (a short one is not); an investigation is 1.0');
+
+// Arkansas: only the federal surveys; the facility's own notices and police logs are not findings.
+$ar = array('id' => 64, 'facility_id' => 14, 'report_date' => '6/12/2025', 'raw_content' => "N 123 Restraint\nThis STANDARD is not met as evidenced by:\nVia video, two male staff members were seen dragging Client #1 from the seclusion room.\n", 'categories_json' => json_encode(array('doc_type' => 'Complaint Survey')));
+check(count(kop_ih_extract('AR', $ar)) === 1, 'AR: a complaint survey is read');
+$ar['categories_json'] = json_encode(array('doc_type' => 'Notice of Incident'));
+check(kop_ih_extract('AR', $ar) === array(), 'AR: a facility notice of incident is not');
+
+// Florida: DJJ compliance reviews, indicators rated Failed or Limited only.
+$fl_raw = "2.08 Youth Needs Assessment Summary (YNAS) Satisfactory Compliance\nThe program shall ensure a YNAS is completed.\nEach of the five youth had a YNAS completed on time.\n"
+    . "Florida Department of Juvenile Justice Residential Annual Compliance Report\nOffice of Accountability and Program Support Page 21 of 65 (Revised August 2025)\n"
+    . "5.05 Use of Force\nFailed Compliance\n(Critical)\nThe program shall ensure staff use force only as a last resort.\nVideo showed a staff member slammed a youth to the floor during a restraint, causing a laceration to the youth's chin.\n";
+$fl = array('id' => 65, 'facility_id' => 15, 'report_date' => '06/30/2026', 'raw_content' => $fl_raw, 'categories_json' => json_encode(array('source' => 'DJJ', 'report_type' => 'QI Residential')));
+$f = kop_ih_extract('FL', $fl);
+check(count($f) === 1 && $f[0]['standard'] === 'Indicator 5.05 Use of Force' && $f[0]['factor'] === 1.0 && strpos($f[0]['text'], 'Page 21') === false, 'FL: the failed indicator is a finding, the satisfactory one is not');
+$c = kop_ih_candidates('FL', $fl);
+check(count($c) === 1 && $c[0]['category'] === 'physical_abuse' && strpos($c[0]['excerpt'], 'shall') === false, 'FL: the standard\'s own "shall" sentence is not quoted');
+$fl['categories_json'] = json_encode(array('source' => 'DJJ', 'report_type' => 'SPEP'));
+check(kop_ih_extract('FL', $fl) === array(), 'FL: a research evaluation (SPEP) is not read');
+
 // Store: idempotent, and a reviewed row is never touched.
 $mem = new PDO('sqlite::memory:');
 $mem->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -387,7 +478,7 @@ $pdo = new PDO('sqlite:file:' . str_replace('\\', '/', realpath($db_path)) . '?m
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $started = microtime(true);
-$dry = kop_ih_scan($pdo, 1000000, false);
+$dry = kop_ih_scan($pdo, 1000000, false, array(), true);
 $seconds = round(microtime(true) - $started, 1);
 $cands = $dry['candidates'];
 usort($cands, static function ($a, $b) { return $b['score'] <=> $a['score'] ?: $b['report_row'] <=> $a['report_row']; });
