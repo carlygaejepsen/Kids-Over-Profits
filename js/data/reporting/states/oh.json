@@ -3,6 +3,49 @@
   "abbr": "OH",
   "updated": "2026-09-22",
   "note": "Ohio has something rare and worth knowing about: a Youth and Family Ombudsmen Office that takes complaints directly from young people, with a separate form for youth and for families. Most state oversight assumes an adult is doing the reporting. Ohio's child abuse line is also a directory rather than a call centre - it connects you to the county office that will actually handle it.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year for assault, battery or false imprisonment. Two years for other bodily injury claims, such as negligence (for example, a program that failed to protect you).",
+      "citation": "Ohio Rev. Code §§ 2305.111(B), 2305.11(A), 2305.10(A)",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-2305.111",
+      "quote": "an action for assault or battery shall be brought within one year after the cause of the action accrues.",
+      "confidence": "high",
+      "note": "2305.10(A) (https://codes.ohio.gov/ohio-revised-code/section-2305.10): 'an action for bodily injury ... shall be brought within two years after the cause of action accrues.' 2305.11(A) (https://codes.ohio.gov/ohio-revised-code/section-2305.11): false imprisonment 'shall be commenced within one year after the cause of action accrued.' Under 2305.111(B), if the victim did not know who the attacker was, the assault/battery claim accrues when the identity was learned or reasonably should have been. Section 2305.111 current version effective March 21, 2025."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, the clock does not start until you turn 18. So assault or battery claims are due by your 19th birthday, and negligence claims by your 20th.",
+      "citation": "Ohio Rev. Code § 2305.16",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-2305.16",
+      "quote": "if a person entitled to bring any action mentioned in those sections, unless for penalty or forfeiture, is, at the time the cause of action accrues, within the age of minority or of unsound mind, the person may bring it within the respective times limited by those sections, after the disability ...",
+      "confidence": "high",
+      "note": "Applies to sections 2305.04 to 2305.14, which covers 2305.10, 2305.11 and 2305.111. No cap on the tolling. No general discovery rule or extended period for non-sexual child abuse was found; the 12-year childhood sexual abuse period in 2305.111(C) is sexual-abuse only and out of scope here."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against the State of Ohio go to the Court of Claims within two years (or a shorter period if one applies, such as one year for assault); claims against a county, city or other local government must be filed within two years, paused while the victim is a minor.",
+      "citation": "Ohio Rev. Code §§ 2743.16(A), 2744.04(A)",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-2744.04",
+      "quote": "shall be brought within two years after the cause of action accrues, or within any applicable shorter period of time for bringing the action provided by the Revised Code. The period of limitation contained in this division shall be tolled pursuant to section 2305.16 of the Revised Code.",
+      "confidence": "medium",
+      "note": "2743.16(A) (https://codes.ohio.gov/ohio-revised-code/section-2743.16): state claims 'shall be commenced no later than two years after the date of accrual' or any shorter period applicable to similar suits between private parties. No separate pre-suit notice-of-claim requirement was found in these sections. Whether 2305.16 minority tolling applies to Court of Claims actions was not confirmed; political subdivision (2744.04) tolling is explicit. Immunity rules in Chapter 2744 may bar many claims regardless of timing."
+    },
+    "criminal_child_abuse": {
+      "summary": "Six years for a felony. For crimes that injured a child in a way that suggests abuse or neglect, the six years do not start until the victim turns 18 or until a children services agency or police officer is told about the abuse, whichever comes first.",
+      "citation": "Ohio Rev. Code § 2901.13(A)(1), (J)",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-2901.13",
+      "quote": "shall not begin to run until either of the following occurs: (1) The victim of the offense reaches the age of majority. (2) A public children services agency, or a municipal or county peace officer ... has been notified that abuse or neglect is known, suspected, or believed to have occurred.",
+      "confidence": "high",
+      "note": "Subsection (J) applies to offenses involving a 'physical or mental wound, injury, disability, or condition of a nature that reasonably indicates abuse or neglect of a child under eighteen years of age.' Important: a report to children services or police while the victim is still a minor can start the clock early. Misdemeanor child endangering: 2 years. Section current version effective April 9, 2025."
+    },
+    "criminal_felony_assault": {
+      "summary": "Six years for felony assault. Misdemeanor assault must be charged within two years.",
+      "citation": "Ohio Rev. Code § 2901.13(A)(1)",
+      "source_url": "https://codes.ohio.gov/ohio-revised-code/section-2901.13",
+      "quote": "For a felony, six years; For a misdemeanor other than a minor misdemeanor, two years; For a minor misdemeanor, six months.",
+      "confidence": "high",
+      "note": "No limit for aggravated murder and murder (2901.13(A)(2)). 2901.13(A)(3) sets 20 years for listed offenses including kidnapping (2905.01) and felony assault under 2903.13, and for felonious or aggravated assault (2903.11, 2903.12) only when the victim is a peace officer; otherwise felonious assault is under the six-year rule. Failure of a mandated reporter to report child abuse (2151.421) has four years (2901.13(A)(6)). Other subsections of 2901.13 (not quoted) can pause the clock, for example while the offender is out of state."
+    }
+  },
   "channels": [
     {
       "id": "oh-cswmft-board",

@@ -3,6 +3,49 @@
   "abbr": "NJ",
   "updated": "2026-09-22",
   "note": "Two things New Jersey states plainly. Every report of abuse or neglect in an institutional setting - and it names residential treatment centres specifically - must go to the State Central Registry, and an investigator has to start within 24 hours. And a complaint form sent to a professional board is a government record: the board may be obliged to hand it to anyone who asks for it once the investigation is over.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for personal injury, which covers assault, battery and negligence alike.",
+      "citation": "N.J. Stat. Ann. 2A:14-2(a)",
+      "source_url": "https://lis.njleg.state.nj.us/nxt/gateway.dll/statutes/1/112/308",
+      "quote": "Except as otherwise provided by law, every action at law for an injury to the person caused by the wrongful act, neglect or default of any person within this State shall be commenced within two years next after the cause of any such action shall have accrued",
+      "confidence": "high",
+      "note": "The one statute covers intentional torts and negligence. False imprisonment is generally treated as an injury to the person under the same two years, but I did not find a separate false imprisonment section. Child sexual abuse has its own rules (2A:14-2a, 2A:61B-1), not covered here."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were under 18 when you were hurt, the two years do not start until you turn 18, so the deadline is usually your 20th birthday. There is no general extended deadline for physical (non-sexual) child abuse.",
+      "citation": "N.J. Stat. Ann. 2A:14-21",
+      "source_url": "https://lis.njleg.state.nj.us/nxt/gateway.dll/statutes/1/112/330",
+      "quote": "is under the age of 18 years ... at the time the cause of action or right or title accrues, the person may commence the action or make the entry, within the time as limited by those statutes, after reaching majority",
+      "confidence": "high",
+      "note": "The only carve-out is medical malpractice for birth injuries (must be filed before the 13th birthday). New Jersey courts also apply an equitable discovery rule to personal injury claims in some cases."
+    },
+    "civil_government_claims": {
+      "summary": "Against the state, a county, a town or another public entity, you must file a notice of claim within 90 days (a judge may allow late notice up to one year for extraordinary circumstances) and sue within two years; a minor can do both after turning 18.",
+      "citation": "N.J. Stat. Ann. 59:8-8, 59:8-9 (Tort Claims Act)",
+      "source_url": "https://law.justia.com/codes/new-jersey/title-59/section-59-8-8/",
+      "quote": "The claimant shall be forever barred ... if: a. The claimant failed to file the claim with the public entity within 90 days of accrual of the claim except as otherwise provided in N.J.S.59:8-9; or b. Two years have elapsed since the accrual of the claim",
+      "confidence": "high",
+      "note": "Same section: 'Nothing in this section shall prohibit a minor ... from commencing an action under this act within the time limitations contained herein, after reaching majority.' Read on Justia's 2025 New Jersey Revised Statutes page (official NJ site search was not reachable for this section)."
+    },
+    "criminal_child_abuse": {
+      "summary": "For endangering the welfare of a child (which includes a caregiver causing a child physical abuse or neglect): five years after the victim turns 18, or two years after the victim discovers the offense, whichever is later. Other child cruelty charges (a fourth-degree crime) have the general five years from the offense.",
+      "citation": "N.J. Stat. Ann. 2C:1-6(b)(4); offenses 2C:24-4(a)(2), 9:6-3",
+      "source_url": "https://law.justia.com/codes/new-jersey/title-2c/section-2c-1-6/",
+      "quote": "A prosecution for an offense set forth in N.J.S.2C:14-3 or N.J.S.2C:24-4, when the victim at the time of the offense is below the age of 18 years, must be commenced within five years of the victim's attaining the age of 18 or within two years of the discovery of the offense by the victim",
+      "confidence": "high",
+      "note": "2C:24-4(a)(2): a person with a legal duty of care or 'who has assumed responsibility for the care of a child who causes the child harm that would make the child an abused or neglected child' commits a second-degree crime - this fits program staff. 9:6-3 cruelty/neglect is a fourth-degree crime with the general 5-years-from-offense limit (2C:1-6(b)(1)). Text read on Justia's 2025 edition; the same wording appears in the 2024 bill S1988 on pub.njleg.gov."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years from the offense for aggravated assault and other indictable crimes. Simple assault (a disorderly persons offense): one year.",
+      "citation": "N.J. Stat. Ann. 2C:1-6(b)(1), (b)(2); aggravated assault 2C:12-1(b)",
+      "source_url": "https://law.justia.com/codes/new-jersey/title-2c/section-2c-1-6/",
+      "quote": "(1) A prosecution for a crime must be commenced within five years after it is committed; (2) A prosecution for a disorderly persons offense or petty disorderly persons offense must be commenced within one year after it is committed",
+      "confidence": "high",
+      "note": "New Jersey uses 'crimes' (indictable, roughly felonies) and 'disorderly persons offenses' rather than felony/misdemeanor. The limits do not apply to anyone fleeing from justice (2C:1-6(f))."
+    }
+  },
   "channels": [
     {
       "id": "nj-consumer-affairs-boards",

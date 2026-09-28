@@ -3,6 +3,49 @@
   "abbr": "PA",
   "updated": "2026-09-22",
   "note": "Pennsylvania routes every complaint about a licensed professional through one bureau, the Bureau of Professional and Occupational Affairs, whichever board holds the licence. Its ChildLine is one of the clearer state hotlines: it takes both formal abuse referrals and general child well-being concerns, so you do not have to be certain you are describing abuse before you call.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for assault, battery, false imprisonment, or injury caused by negligence.",
+      "citation": "42 Pa.C.S. § 5524(1), (2), (7)",
+      "source_url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.024.000..HTM",
+      "quote": "The following actions and proceedings must be commenced within two years: (1) An action for assault, battery, false imprisonment, false arrest, malicious prosecution or malicious abuse of process. (2) An action to recover damages for injuries to the person ... caused by the wrongful act or ...",
+      "confidence": "high",
+      "note": "Read from the official Pennsylvania General Assembly consolidated statutes HTM file."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, the clock does not start until you turn 18. You then get the same two years as anyone else, so the deadline is your 20th birthday.",
+      "citation": "42 Pa.C.S. § 5533(b)(1)",
+      "source_url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.033.000..HTM",
+      "quote": "If an individual entitled to bring a civil action is an unemancipated minor at the time the cause of action accrues, the period of minority shall not be deemed a portion of the time period within which the action must be commenced. Such person shall have the same time for commencing an action ...",
+      "confidence": "high",
+      "note": "No cap. No general discovery rule or extended period for non-sexual child abuse was found in the statute; the 37-years-after-18 period in 5533(b)(2) is for sexual abuse only. Pennsylvania courts apply a judge-made discovery rule in some cases, not researched here."
+    },
+    "civil_government_claims": {
+      "summary": "Before suing a state agency, county, school district or other government unit, you must file a written notice within six months of the injury; the lawsuit itself generally has the normal two-year deadline. Courts can excuse a late notice for a reasonable excuse.",
+      "citation": "42 Pa.C.S. § 5522(a)",
+      "source_url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.022.000..HTM",
+      "quote": "Within six months from the date that any injury was sustained or any cause of action accrued, any person who is about to commence any civil action or proceeding ... against a government unit for damages on account of any injury to his person or property ... shall file in the office of the ...",
+      "confidence": "medium",
+      "note": "For local (non-Commonwealth) government units, failure to give notice is not a bar if the unit had actual or constructive notice (5522(a)(3)(iii)). The notice rule does not apply to sexual-abuse claims under the immunity exceptions (5522(c)). Whether minority tolls the six-month notice was not confirmed. Sovereign and governmental immunity (42 Pa.C.S. 8521 et seq., 8541 et seq.) bar many claims regardless of timing; not researched here."
+    },
+    "criminal_child_abuse": {
+      "summary": "Most physical abuse crimes must be charged within two years, or five years for aggravated assault. But if the abuser was a person responsible for the child's welfare, the clock does not start until the child turns 18.",
+      "citation": "42 Pa.C.S. §§ 5552(a), (b)(1), 5554(3)",
+      "source_url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.054.000..HTM",
+      "quote": "the period of limitation does not run during any time when: ... (3) a child is under 18 years of age, where the crime involves injuries to the person of the child caused by the wrongful act, or neglect, or unlawful violence, or negligence of the child's parents or by a person responsible for ...",
+      "confidence": "medium",
+      "note": "Base periods from 5552 (https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.052.000..HTM): 2 years general, 5 years for aggravated assault (18 Pa.C.S. 2702). Endangering welfare of children (18 Pa.C.S. 4304) is listed in 5552(c)(3) as a 'sexual offense' that can be charged until the victim turns 55; whether that reaches a non-sexual EWOC charge was not confirmed, so it is not relied on here. Whether residential program staff count as a 'person responsible for the child's welfare' under 5554(3) was not confirmed from case law. 5552(c)(2) extends the period for offenses by public employees in connection with their employment."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years for aggravated assault. Simple assault and most other offenses must be charged within two years.",
+      "citation": "42 Pa.C.S. § 5552(a), (b)(1)",
+      "source_url": "https://www.legis.state.pa.us/WU01/LI/LI/CT/HTM/42/00.055.052.000..HTM",
+      "quote": "(a) General rule.--Except as otherwise provided in this subchapter, a prosecution for an offense must be commenced within two years after it is committed. (b) Major offenses.--A prosecution for any of the following offenses must be commenced within five years ... Section 2702 (relating to ...",
+      "confidence": "high",
+      "note": "Pennsylvania has no general felony default; offenses not listed use the two-year rule. Tolling for child victims under 5554(3) can also apply."
+    }
+  },
   "channels": [
     {
       "id": "pa-bureau-professional-occupational-affairs",

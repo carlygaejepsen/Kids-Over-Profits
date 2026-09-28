@@ -3,6 +3,49 @@
   "abbr": "WV",
   "updated": "2026-09-22",
   "note": "West Virginia funnels every report of suspected abuse or neglect - of children and of vulnerable adults alike - through one Centralized Intake, staffed every hour of every day of the year. Its counseling board is candid about the limit on what a complaint can achieve: it can suspend, revoke or reprimand a licence, but it cannot recover a penny for you.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for personal injury, which includes assault, battery and negligence. Courts treat false imprisonment as a one-year claim.",
+      "citation": "W. Va. Code § 55-2-12(b); § 55-2-12(c) (one year)",
+      "source_url": "https://code.wvlegislature.gov/55-2-12/",
+      "quote": "(b) within two years next after the right to bring the same shall have accrued if it be for damages for personal injuries; and (c) within one year next after the right to bring the same shall have accrued if it be for any other matter",
+      "confidence": "medium",
+      "note": "The statute does not name assault, battery or false imprisonment. The one-year period for false imprisonment (and defamation) under 55-2-12(c) comes from case law, which I found only through secondary sources and did not read directly. West Virginia courts also apply a general discovery rule to accrual."
+    },
+    "civil_minor_tolling": {
+      "summary": "For someone injured as a child, the same number of years (usually two) starts at 18. No claim can be brought more than 20 years after the injury. West Virginia's special longer deadline in this section is for childhood sexual abuse only.",
+      "citation": "W. Va. Code § 55-2-15(b)",
+      "source_url": "https://code.wvlegislature.gov/55-2-15/",
+      "quote": "the same may be brought within the like number of years after his or her becoming of full age or sane that is allowed to a person having no such impediment ... except that it shall in no case be brought after 20 years from the time when the right accrues.",
+      "confidence": "high",
+      "note": "Subsection (a), the childhood sexual abuse provision amended by 2020 HB 4559, is excluded from this general rule and was not researched. I found no childhood-abuse extension in 55-2-15 for non-sexual physical abuse."
+    },
+    "civil_government_claims": {
+      "summary": "Suits against a county, city, school board or other political subdivision must be filed within two years of the injury (or of its discovery), and a child still gets the extra time until 18. Before suing a state agency, you must mail written notice to the agency head and the Attorney General at least 30 days in advance.",
+      "citation": "W. Va. Code § 29-12A-6(a) (political subdivisions); W. Va. Code § 55-17-3(a) (state agencies)",
+      "source_url": "https://code.wvlegislature.gov/29-12A-6/",
+      "quote": "(a) An action against a political subdivision to recover damages for injury ... shall be brought within two years after the cause of action arose or after the injury, death or loss was discovered or reasonably should have been discovered, whichever last occurs",
+      "confidence": "medium",
+      "note": "29-12A-6(b) would limit tolling for minors injured under age 10. In Whitlow v. Board of Education of Kanawha County (W. Va. 1993) the court held that 29-12A-6 violates equal protection 'to the extent that it denies to minors the benefit of' the general tolling statute, 55-2-15. I confirmed this from a CourtListener search summary (https://www.courtlistener.com/opinion/1252879/whitlow-v-bd-of-educ-of-kanawha-cty/), not a full read. 55-17-3(a)(1) requires written notice by certified mail 'at least 30 days prior to the institution of an action against a governmental agency', and the limitation is tolled for 30 days after notice (https://code.wvlegislature.gov/55-17-3/). Recovery against the state itself is generally limited to its liability insurance or goes through the Legislative Claims Commission. That was not researched in detail."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit for felony child abuse: West Virginia has no statute of limitations for felonies. Misdemeanor child abuse must be charged within one year.",
+      "citation": "W. Va. Code § 61-11-9 (limits misdemeanors and perjury only); W. Va. Code § 61-8D-3 (child abuse)",
+      "source_url": "https://code.wvlegislature.gov/61-11-9/",
+      "quote": "A prosecution for committing or procuring another person to commit perjury shall be commenced within three years next after the perjury was committed. A prosecution for a misdemeanor shall be commenced within one year after the offense was committed",
+      "confidence": "high",
+      "note": "The 'no limit' comes from the absence of any felony limitation: 61-11-9 sets periods only for perjury and misdemeanors. Under 61-8D-3(b) and (c), child abuse by a parent, guardian, custodian or 'person in a position of trust' is a felony when it causes serious bodily injury or creates a substantial risk of death or serious bodily injury. That wording would cover program staff. Abuse creating a substantial risk of bodily injury is a misdemeanor under (d)(1), with one year (https://code.wvlegislature.gov/61-8D-3/)."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for felony malicious or unlawful wounding. Misdemeanor assault and battery must be charged within one year.",
+      "citation": "W. Va. Code § 61-11-9; W. Va. Code § 61-2-9",
+      "source_url": "https://code.wvlegislature.gov/61-11-9/",
+      "quote": "A prosecution for a misdemeanor shall be commenced within one year after the offense was committed",
+      "confidence": "high",
+      "note": "Malicious or unlawful wounding under 61-2-9(a) is a felony. Assault (61-2-9(b)) and battery (61-2-9(c)) are misdemeanors (https://code.wvlegislature.gov/61-2-9/)."
+    }
+  },
   "channels": [
     {
       "id": "wv-counseling-board",

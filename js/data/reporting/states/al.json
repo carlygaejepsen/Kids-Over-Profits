@@ -3,6 +3,49 @@
   "abbr": "AL",
   "updated": "2026-09-22",
   "note": "Alabama reports child abuse to the county Department of Human Resources or to local law enforcement rather than to a single state hotline, and the county has seven calendar days to begin investigating - immediately where there is immediate danger to health or safety. Complaints about a facility go somewhere else again, to the Child Care Services Division intake line.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Assault, battery and false imprisonment: six years. Negligence and other personal-injury claims: two years. A claim that holds an employer (such as a program) responsible for what its staff did, under respondeat superior, must be brought within two years.",
+      "citation": "Ala. Code § 6-2-34(1); § 6-2-38(l), (n)",
+      "source_url": "https://alison.legislature.state.al.us/code-of-alabama?section=6-2-34",
+      "quote": "The following must be commenced within six years: (1) Actions for any trespass to person or liberty, such as false imprisonment or assault and battery;",
+      "confidence": "high",
+      "note": "§ 6-2-38(n): 'All actions commenced to recover damages for injury to the person ... wherein a principal or master is sought to be held liable for the act or conduct of his agent, servant, or employee under the doctrine of respondeat superior must be brought within two years.' So a suit against the program for a staff member's battery may have only two years, even though a suit against the staff member directly has six. Text read via the official ALISON site's data service (same content as the ?section= page)."
+    },
+    "civil_minor_tolling": {
+      "summary": "In Alabama you are a minor until 19. Someone hurt before 19 has until three years after their 19th birthday (age 22), or less if the normal deadline is shorter: for a two-year claim like negligence, until age 21. No claim can be extended more than 20 years past the injury.",
+      "citation": "Ala. Code § 6-2-8(a)",
+      "source_url": "https://alison.legislature.state.al.us/code-of-alabama?section=6-2-8",
+      "quote": "below the age of 19 years ... he or she shall have three years, or the period allowed by law ... if it be less than three years, after the termination of the disability ... No disability shall extend the period ... after the lapse of 20 years from the time the claim or right accrued.",
+      "confidence": "high",
+      "note": "Subsection (b) gives six years after 19 for sex-offense injuries only. No general statutory discovery rule for non-sexual abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against the State itself go to the State Board of Adjustment within one year (the State cannot be sued in court); tort claims against a city must be filed with the city clerk within six months; claims against a county must be presented within 12 months (a minor has 12 months after turning 19).",
+      "citation": "Ala. Code § 41-9-65(a); § 11-47-23; § 11-12-8",
+      "source_url": "https://alison.legislature.state.al.us/code-of-alabama?section=41-9-65",
+      "quote": "all claims must be presented to the Board of Adjustment within one year after the cause of action accrues. [11-47-23] Claims for damages growing out of torts shall be presented within six months from the accrual thereof or shall be barred.",
+      "confidence": "medium",
+      "note": "State sovereign immunity (Ala. Const. art. I, § 14) is why state claims go to the Board of Adjustment; individual state employees may still be sued subject to state-agent immunity doctrines (case law, not checked). The municipal six-month rule has no minority exception in its text; the county rule does."
+    },
+    "criminal_child_abuse": {
+      "summary": "Willful abuse, cruel beating or torture of a child under 18 is a felony. If it involved violence, attempted violence, a threat of violence or serious physical injury, there is no time limit to prosecute. Otherwise, five years from the offense.",
+      "citation": "Ala. Code § 15-3-5(a)(2)-(3); § 26-15-3; § 15-3-1",
+      "source_url": "https://alison.legislature.state.al.us/code-of-alabama?section=15-3-5",
+      "quote": "There is no limitation of time within which a prosecution must be commenced for any of the following offenses: ... (2) Any felony involving the use, attempted use, or threat of, violence to a person. (3) Any felony involving serious physical injury or death of a person.",
+      "confidence": "medium",
+      "note": "§ 26-15-3: 'A responsible person who shall torture, willfully abuse, willfully mistreat, cruelly beat, or otherwise willfully maltreat any child under the age of 18 years ... shall be guilty of a Class C felony.' Whether a particular abuse charge 'involves violence' is decided case by case; non-violent maltreatment (e.g. deprivation) would fall under the five-year default in § 15-3-1. No minority tolling needed where no limit applies."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault involves violence, so there is no time limit to prosecute it. Other felonies: five years. Misdemeanor assault: 12 months.",
+      "citation": "Ala. Code § 15-3-5(a)(2); § 15-3-1; § 15-3-2",
+      "source_url": "https://alison.legislature.state.al.us/code-of-alabama?section=15-3-5",
+      "quote": "(2) Any felony involving the use, attempted use, or threat of, violence to a person. [15-3-1] the prosecution of all felonies, except those specified in ... Section 15-3-5 ... shall be commenced within five years after the commission of the offense.",
+      "confidence": "high",
+      "note": "§ 15-3-2: misdemeanors 'must be commenced within 12 months after the commission of the offense.'"
+    }
+  },
   "channels": [
     {
       "id": "al-counseling-board",

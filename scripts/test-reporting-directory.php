@@ -203,6 +203,14 @@ foreach ($directory['states'] as $record) {
      * state's list, that deadlines do not run from the closing date. */
     check(strpos($html, 'kop-rep-deadlines') !== false, "{$record['abbr']}: embed has no deadline note");
     check(strpos($html, 'https://childusa.org/sol/') !== false, "{$record['abbr']}: deadline note has no tracker link");
+    if (!empty($record['sexual_abuse'])) {
+        check(strpos($html, "CHILD USA's summary") !== false, "{$record['abbr']}: CHILD USA summary not shown");
+    }
+    /* Every researched deadline is shown, each with the statute it rests on. */
+    foreach ($record['deadlines']['items'] ?? array() as $item) {
+        check(strpos($html, esc_html($item['summary'])) !== false, "{$record['abbr']}: deadline {$item['key']} not shown");
+        check(strpos($html, esc_url($item['source_url'])) !== false, "{$record['abbr']}: deadline {$item['key']} has no statute link");
+    }
     /* Embedded a level deeper, so headings must not jump back to h3. */
     check(strpos($html, '<h3 class="kop-rep-card-name"') === false,
         "{$record['abbr']}: embed used h3 for a card name, breaking heading order");

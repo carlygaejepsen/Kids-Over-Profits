@@ -3,6 +3,49 @@
   "abbr": "VT",
   "updated": "2026-09-22",
   "note": "Vermont runs one number for both jobs: the Department for Children and Families Centralized Intake Unit takes child abuse reports and complaints about residential treatment programs alike, and Vermont's licensing rules require a residential treatment program to cooperate fully in any investigation of a complaint or allegation about it.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for assault and battery, false imprisonment, and other personal injury including negligence. For personal injury in general, the three years run from when the injury was discovered.",
+      "citation": "12 V.S.A. § 512",
+      "source_url": "https://legislature.vermont.gov/statutes/section/12/023/00512",
+      "quote": "Actions for the following causes shall be commenced within three years after the cause of action accrues, and not after: (1) assault and battery; (2) false imprisonment; ... (4) ... injuries to the person suffered by the act or default of another person",
+      "confidence": "high",
+      "note": "The discovery-accrual language is in subdivision (4) (general personal injury) only, not in (1) assault and battery or (2) false imprisonment. § 512(4) continues: \"provided that the cause of action shall be deemed to accrue as of the date of the discovery of the injury\"."
+    },
+    "civil_minor_tolling": {
+      "summary": "No time limit to sue over physical abuse as a child that would count as aggravated assault, or over childhood sexual abuse. For other injuries, the three years start at 18.",
+      "citation": "12 V.S.A. § 522 (childhood sexual or physical abuse); 12 V.S.A. § 551(a) (minority)",
+      "source_url": "https://legislature.vermont.gov/statutes/section/12/023/00522",
+      "quote": "(a) A civil action brought by any person for recovery of damages for injury suffered as a result of childhood sexual or physical abuse may be commenced at any time after the act alleged to have caused the injury or condition.",
+      "confidence": "high",
+      "note": "'Childhood physical abuse' means 'any act other than an attempt committed by the defendant against a complainant who was under 18 years of age at the time of the act and which act would have constituted a violation of a statute prohibiting aggravated assault.' Physical abuse that would not be aggravated assault (13 V.S.A. § 1024, e.g. serious bodily injury, or bodily injury with a deadly weapon) is not covered. Under § 522(e), this applies retroactively to physical abuse before July 1, 2021 (added by 2021 Act 26). For claims that were already time-barred, an employer or supervising entity is liable only on a finding of gross negligence. For other claims, § 551(a): a minor 'may bring such action within the times in this chapter respectively limited, after the disability is removed' (https://legislature.vermont.gov/statutes/section/12/023/00551)."
+    },
+    "civil_government_claims": {
+      "summary": "Vermont's state tort claims law has no separate notice-of-claim deadline. However, the state has not waived immunity for assault and battery claims unless insurance covers them, and state employees can be sued personally only for gross negligence or willful misconduct.",
+      "citation": "12 V.S.A. §§ 5601, 5602 (Vermont Tort Claims Act)",
+      "source_url": "https://legislature.vermont.gov/statutes/section/12/189/05601",
+      "quote": "(e) This section shall not apply to: ... (6) Any claim arising out of alleged assault, battery, abuse of process, misrepresentation, deceit, fraud, or interference with contractual rights.",
+      "confidence": "medium",
+      "note": "I read chapter 189 (§§ 5601-5606; § 5605 is repealed) and found no notice-of-claim deadline and no special limitation period. The ordinary periods in 12 V.S.A. ch. 23 appear to apply. Under § 5602, the action lies against the State, not the employee, except for 'gross negligence or willful misconduct' (https://legislature.vermont.gov/statutes/section/12/189/05602). Claims against towns and municipalities were not researched. § 5601(f): the (e) exclusions \"do not apply to claims against the State of Vermont to the extent that there exists coverage under a policy of liability insurance\"."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years from the offense for most non-sexual child abuse and cruelty offenses. Maiming has a 40-year limit, and murder and manslaughter have none. Vermont does not pause the criminal clock until 18 for non-sexual abuse.",
+      "citation": "13 V.S.A. § 4501(e); § 4501(c)(2) (maiming, 40 years)",
+      "source_url": "https://legislature.vermont.gov/statutes/section/13/151/04501",
+      "quote": "(e) Prosecutions for other felonies and for misdemeanors shall be commenced within three years after the commission of the offense, and not after.",
+      "confidence": "medium",
+      "note": "The longer periods and no-limit offenses in § 4501(a)-(d) are sexual offenses, homicide, kidnapping, maiming (40 years), arson and first degree aggravated domestic assault (11 years). No non-sexual child abuse or cruelty offense is listed, so § 4501(e) applies. I could not load the text of 13 V.S.A. § 1304 (cruelty to children) to confirm its grade, but either way § 4501(e) sets 3 years."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the offense for aggravated assault and for simple assault. First degree aggravated domestic assault has 11 years, and maiming has 40 years.",
+      "citation": "13 V.S.A. § 4501(e), (d), (c)(2)",
+      "source_url": "https://legislature.vermont.gov/statutes/section/13/151/04501",
+      "quote": "(d) Prosecutions for arson and first degree aggravated domestic assault shall be commenced within 11 years after the commission of the offense, and not after. (e) Prosecutions for other felonies and for misdemeanors shall be commenced within three years",
+      "confidence": "high",
+      "note": "Aggravated assault is 13 V.S.A. § 1024 (https://legislature.vermont.gov/statutes/section/13/019/01024). Under § 4503, a prosecution begun after the limitation is void unless the defendant waives the limitation in writing."
+    }
+  },
   "channels": [
     {
       "id": "vt-office-professional-regulation",

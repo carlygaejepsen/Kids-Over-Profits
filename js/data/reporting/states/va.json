@@ -3,6 +3,49 @@
   "abbr": "VA",
   "updated": "2026-09-22",
   "note": "Virginia is blunt about the cost of filing, and it is worth reading before you do. A complaint to the Department of Health Professions cannot be withdrawn once submitted, you cannot get a copy of your own form back afterwards, and Virginia law requires the details to be shared with the licensee you complained about. The Department cannot guarantee anonymity either - if you want to be anonymous, it warns that you must keep your identity out of the form and every document attached to it.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for any personal injury, whether it is assault, battery or negligence. False imprisonment is also two years.",
+      "citation": "Va. Code § 8.01-243(A); Va. Code § 8.01-248 (catch-all for personal actions)",
+      "source_url": "https://law.lis.virginia.gov/vacode/title8.01/chapter4/section8.01-243/",
+      "quote": "A. Unless otherwise provided in this section or by other statute, every action for personal injuries, whatever the theory of recovery, and every action for damages resulting from fraud, shall be brought within two years after the cause of action accrues.",
+      "confidence": "high",
+      "note": "If false imprisonment is not treated as a 'personal injury' under 8.01-243(A), it falls under the 8.01-248 catch-all, which is also two years: 'Every personal action accruing on or after July 1, 1995, for which no limitation is otherwise prescribed, shall be brought within two years' (https://law.lis.virginia.gov/vacode/title8.01/chapter4/section8.01-248/). The longer periods in 8.01-243(D)-(D2) cover sexual abuse only."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18. For someone injured as a child, the two years start at 18. Virginia's longer deadline and discovery rule for childhood abuse cover sexual abuse only, not physical abuse.",
+      "citation": "Va. Code § 8.01-229(A)(1)-(2)",
+      "source_url": "https://law.lis.virginia.gov/vacode/title8.01/chapter4/section8.01-229/",
+      "quote": "1. If a person entitled to bring any action is at the time the cause of action accrues an infant, except if such infant has been emancipated ... or incapacitated, such person may bring it within the prescribed limitation period after such disability is removed",
+      "confidence": "high",
+      "note": "The tolling does not apply to an emancipated minor. The childhood abuse accrual rule in 8.01-249(6) and the 20-year period in 8.01-243(D) cover 'sexual abuse' only (https://law.lis.virginia.gov/vacode/title8.01/chapter4/section8.01-249/). Medical malpractice claims by minors have their own rules (8.01-243.1), not researched here."
+    },
+    "civil_government_claims": {
+      "summary": "For a claim against the state (Commonwealth), file a written notice of claim within one year. The lawsuit must then be filed within 18 months of the notice or two years of the injury. For negligence claims against a county, city or town, the written notice is due within six months. For both, the clock is paused for a child until 18.",
+      "citation": "Va. Code §§ 8.01-195.6, 8.01-195.7 (Virginia Tort Claims Act); Va. Code § 15.2-209 (localities)",
+      "source_url": "https://law.lis.virginia.gov/vacode/title8.01/chapter3/section8.01-195.6/",
+      "quote": "Every claim cognizable against the Commonwealth ... shall be forever barred unless the claimant ... has filed a written statement of the nature of the claim ... within one year after such cause of action accrued.",
+      "confidence": "high",
+      "note": "8.01-195.7: 'All claims against the Commonwealth ... shall be forever barred unless such action is commenced within 18 months of the filing of the notice of claim, or within two years after the cause of action accrues' (https://law.lis.virginia.gov/vacode/title8.01/chapter3/section8.01-195.7/). 15.2-209 applies to claims 'for negligence' against a county, city or town, with a six-month notice and the same disability tolling (https://law.lis.virginia.gov/vacode/title15.2/chapter2/section15.2-209/). Sovereign immunity may bar some claims altogether."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit for felony child abuse or neglect: Virginia has no statute of limitations for felonies. Misdemeanor offenses generally must be charged within one year.",
+      "citation": "Va. Code § 19.2-8 (limits misdemeanors only); Va. Code § 18.2-371.1 (felony child abuse and neglect)",
+      "source_url": "https://law.lis.virginia.gov/vacode/title19.2/chapter1/section19.2-8/",
+      "quote": "A prosecution for a misdemeanor, or any pecuniary fine, forfeiture, penalty or amercement, shall be commenced within one year next after there was cause therefor",
+      "confidence": "high",
+      "note": "The 'no limit' comes from the absence of any felony limitation: 19.2-8 sets periods for misdemeanors and some listed offenses only. No statute says in so many words that felonies have no limit. 18.2-371.1(A) (serious injury to a child by a caregiver, Class 4 felony) and (B) (gross, wanton and culpable acts or omissions, Class 6 felony) are felonies (https://law.lis.virginia.gov/vacode/title18.2/chapter8/section18.2-371.1/). 19.2-8 extends misdemeanors with a minor victim only for certain listed, mostly sexual, offenses."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for felony assault (malicious or unlawful wounding and other felonies). Misdemeanor assault and battery must be charged within one year.",
+      "citation": "Va. Code § 19.2-8",
+      "source_url": "https://law.lis.virginia.gov/vacode/title19.2/chapter1/section19.2-8/",
+      "quote": "A prosecution for a misdemeanor, or any pecuniary fine, forfeiture, penalty or amercement, shall be commenced within one year next after there was cause therefor",
+      "confidence": "high",
+      "note": "As above, the lack of a felony limit comes from 19.2-8 covering only misdemeanors. The section also says: 'Nothing in this section shall be construed to apply to any person fleeing from justice or concealing himself ... to avoid arrest.'"
+    }
+  },
   "channels": [
     {
       "id": "va-health-professions",

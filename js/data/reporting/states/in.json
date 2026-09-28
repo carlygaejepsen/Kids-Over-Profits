@@ -3,6 +3,49 @@
   "abbr": "IN",
   "updated": "2026-09-22",
   "note": "Indiana is the state where a complaint about a therapist does not start at the licensing board at all. It goes to the Attorney General's Consumer Protection Division, which reviews it and only then takes it to the relevant board asking for action against the licence. Indiana also protects reporters unusually firmly: state law requires the Department of Child Services to keep the identity of anyone reporting abuse confidential.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for any personal injury claim, including assault, battery, false imprisonment and negligence.",
+      "citation": "Ind. Code § 34-11-2-4(a)",
+      "source_url": "https://codes.findlaw.com/in/title-34-civil-law-and-procedure/in-code-sect-34-11-2-4.html",
+      "quote": "(a) An action for: (1) injury to person or character; (2) injury to personal property; or (3) a forfeiture of penalty given by statute; must be commenced within two (2) years after the cause of action accrues.",
+      "confidence": "high",
+      "note": "The longer periods in § 34-11-2-4(b)-(d) apply only to child sexual abuse. The official Indiana Code site (iga.in.gov) renders only through JavaScript and Justia blocks automated access, so text was read on FindLaw, marked 'Current as of January 01, 2026'."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. A person who was under 18 when hurt has 2 years after turning 18 (until age 20) to sue. The statute sets no cap.",
+      "citation": "Ind. Code § 34-11-6-1; § 1-1-4-5(a)(24)",
+      "source_url": "https://codes.findlaw.com/in/title-34-civil-law-and-procedure/in-code-sect-34-11-6-1.html",
+      "quote": "A person who is under legal disabilities when the cause of action accrues may bring the action within two (2) years after the disability is removed.",
+      "confidence": "high",
+      "note": "§ 1-1-4-5(a)(24) (https://codes.findlaw.com/in/title-1-general-provisions/in-code-sect-1-1-4-5.html): '\"Under legal disabilities\" includes persons less than eighteen (18) years of age'. No general discovery rule statute for non-sexual abuse."
+    },
+    "civil_government_claims": {
+      "summary": "Before suing, written notice is required: within 270 days of the injury for the State (to the Attorney General or the agency), or within 180 days for a county, city, school or other local body. The lawsuit itself follows the normal two-year deadline.",
+      "citation": "Ind. Code §§ 34-13-3-6(a), 34-13-3-8(a), 34-13-3-9",
+      "source_url": "https://codes.findlaw.com/in/title-34-civil-law-and-procedure/in-code-sect-34-13-3-6.html",
+      "quote": "a claim against the state is barred unless notice is filed with the attorney general or the state agency involved within two hundred seventy (270) days after the loss occurs.",
+      "confidence": "medium",
+      "note": "§ 34-13-3-8(a) (political subdivisions): notice 'within one hundred eighty (180) days after the loss occurs'. § 34-13-3-9: 'If a person is incapacitated and cannot give notice ... the person's claim is barred unless notice is filed within one hundred eighty (180) days after the incapacity is removed.' The statute says 'incapacitated', not 'minor'; whether minority alone extends the notice deadline was not confirmed, so a survivor injured as a child should not rely on it."
+    },
+    "criminal_child_abuse": {
+      "summary": "Most felony child abuse (battery on a child, or neglect of a dependent, which includes cruel confinement or restraining a child with handcuffs, rope or tape) must be charged within 5 years. The most serious grades (Level 1 or 2 felonies, such as neglect causing death or catastrophic injury to a child under 14, or battery causing death of a child under 14) can be charged at any time. The clock is not paused until the child turns 18.",
+      "citation": "Ind. Code § 35-41-4-2(a)(1), (c), (h); § 35-46-1-4; § 35-42-2-1",
+      "source_url": "https://codes.findlaw.com/in/title-35-criminal-law-and-procedure/in-code-sect-35-41-4-2.html",
+      "quote": "a prosecution for an offense is barred unless it is commenced: (1) within five (5) years after the commission of the offense, in the case of ... a Level 3, Level 4, Level 5, or Level 6 felony ... (c) ... a Level 1 felony or Level 2 felony ... may be commenced at any time.",
+      "confidence": "high",
+      "note": "Neglect of a dependent (§ 35-46-1-4) applies to 'A person having the care of a dependent, whether assumed voluntarily or because of a legal obligation': Level 6, Level 5 with bodily injury or cruel confinement using 'handcuffs, a rope, a cord, tape, or a similar device to physically restrain a dependent', Level 3 with serious bodily injury, Level 1 with death or catastrophic injury of a dependent under 14. Battery (§ 35-42-2-1) is enhanced for victims under 14 only. § 35-41-4-2(h): time does not run while the accused is out of state or conceals evidence of the offense. Victim-age extensions in (e) and (m) cover sex offenses only."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony battery (Level 3 to 6) must be charged within 5 years; Level 1 and 2 felonies have no limit. Misdemeanor battery must be charged within 2 years.",
+      "citation": "Ind. Code § 35-41-4-2(a); § 35-42-2-1",
+      "source_url": "https://codes.findlaw.com/in/title-35-criminal-law-and-procedure/in-code-sect-35-41-4-2.html",
+      "quote": "(2) within two (2) years after the commission of the offense, in the case of a misdemeanor.",
+      "confidence": "high",
+      "note": "Indiana uses 'battery' rather than 'assault'. § 35-42-2-1: battery with moderate bodily injury is Level 6; with serious bodily injury or a deadly weapon, Level 5; causing death of a child under 14, Level 2. Simple battery is a Class B misdemeanor, Class A with bodily injury."
+    }
+  },
   "channels": [
     {
       "id": "in-attorney-general-licensing-complaints",

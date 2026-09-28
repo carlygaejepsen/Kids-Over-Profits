@@ -3,6 +3,49 @@
   "abbr": "NM",
   "updated": "2026-09-22",
   "note": "New Mexico deserves a warning its own government has already published. The state Department of Justice reported that CYFD, which licenses congregate care and behavioral health settings, had no written policies or procedures governing how its Licensing and Certification Authority investigates allegations of abuse or neglect in those facilities, and recommended it adopt and publish some. Report anyway - but pair it with the Protection and Advocacy agency and with Statewide Central Intake rather than relying on the licensor alone.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for an injury to the person, which covers assault, battery, false imprisonment and negligence.",
+      "citation": "N.M. Stat. Ann. 37-1-8",
+      "source_url": "https://law.justia.com/codes/new-mexico/chapter-37/article-1/section-37-1-8/",
+      "quote": "and for an injury to the person or reputation of any person, within three years.",
+      "confidence": "high",
+      "note": "Read on Justia's 2025 New Mexico Statutes (the official nmonesource.com site blocked automated access). New Mexico courts apply a discovery rule to some personal injury claims (e.g., Gerke v. Romero, 2010-NMCA-060, noted in the annotations)."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes, but short. A minor has until one year after turning 18 (age 19), or three years from the injury, whichever gives more time. No general extended deadline for physical (non-sexual) child abuse.",
+      "citation": "N.M. Stat. Ann. 37-1-10",
+      "source_url": "https://law.justia.com/codes/new-mexico/chapter-37/article-1/section-37-1-10/",
+      "quote": "The times limited for the bringing of actions by the preceding provisions of this chapter shall, in favor of minors and incapacitated persons, be extended so that they shall have one year from and after the termination of such incapacity within which to commence said actions.",
+      "confidence": "high",
+      "note": "Annotation: 'A minor's lawsuit for personal injuries is not barred until one year after the minor reaches the age of majority or until three years after the accident, whichever computation of time gives the injured minor the most time to act.' Gomez v. Chavarria, 2009-NMCA-035. This toll does NOT apply to claims under the Tort Claims Act (see civil_government_claims)."
+    },
+    "civil_government_claims": {
+      "summary": "Against the state or a local public body (including state juvenile facilities): written notice within 90 days of the incident (unless the government had actual notice) and suit within two years. Minority does not extend the two years, except that a child under 7 has until the 9th birthday.",
+      "citation": "N.M. Stat. Ann. 41-4-15(A) (limitation); 41-4-16 (90-day notice)",
+      "source_url": "https://law.justia.com/codes/new-mexico/chapter-41/article-4/section-41-4-15/",
+      "quote": "Actions against a governmental entity or a public employee for torts shall be forever barred, unless such action is commenced within two years after the date of occurrence resulting in loss, injury or death, except that a minor under the full age of seven years shall have until his ninth birthday",
+      "confidence": "high",
+      "note": "41-4-15(A) adds: 'This subsection applies to all persons regardless of minority or other legal disability.' 41-4-16 (https://law.justia.com/codes/new-mexico/chapter-41/article-4/section-41-4-16/) requires notice 'within ninety days after an occurrence', excused if 'the governmental entity had actual notice'; per annotations it does not apply to claims against individual public employees. New Mexico's Civil Rights Act (2021, chapter 41 article 4A) creates a separate state-law claim against public bodies with its own deadline, not researched here."
+    },
+    "criminal_child_abuse": {
+      "summary": "The clock for child abuse does not start until the child turns 18 or the abuse is reported to law enforcement, whichever comes first. Then five years for a third-degree felony (most first offenses without great bodily harm) or six years for a second-degree felony; abuse causing great bodily harm is a first-degree felony and may have no limit.",
+      "citation": "N.M. Stat. Ann. 30-1-9.1; 30-1-8(A), (B), (I); offense at 30-6-1",
+      "source_url": "https://law.justia.com/codes/new-mexico/chapter-30/article-1/section-30-1-9-1/",
+      "quote": "The applicable time period for commencing prosecution pursuant to Section 30-1-8 NMSA 1978 shall not commence to run for an alleged violation of Section 30-6-1 ... until the victim attains the age of eighteen or the violation is reported to a law enforcement agency, whichever occurs first.",
+      "confidence": "medium",
+      "note": "Applies to crimes on or after June 19, 1987. Per State v. Whittington, 2008-NMCA-063, only the specific reported violation starts the clock. 30-6-1(E): abuse not causing death or great bodily harm is a third degree felony (first offense) or second degree (repeat); 'If the abuse results in great bodily harm to the child, the person is guilty of a first degree felony.' 30-1-8(I) removes the limit for 'a first degree violent felony' but I could not confirm whether first-degree child abuse counts as a 'first degree violent felony' - hence medium confidence."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years from the offense for felony aggravated battery (a third-degree felony); six years for a second-degree felony. Misdemeanor battery: two years (petty misdemeanor simple battery: one year).",
+      "citation": "N.M. Stat. Ann. 30-1-8(A)-(D); aggravated battery 30-3-5(C)",
+      "source_url": "https://law.justia.com/codes/new-mexico/chapter-30/article-1/section-30-1-8/",
+      "quote": "A. for a second degree felony, within six years from the time the crime was committed; B. for a third or fourth degree felony, within five years from the time the crime was committed; C. for a misdemeanor, within two years",
+      "confidence": "high",
+      "note": "30-3-5(C): aggravated battery 'inflicting great bodily harm or ... with a deadly weapon' is a third degree felony; 30-3-5(B) lesser aggravated battery is a misdemeanor. 30-1-8 last amended 2022 (second-degree murder)."
+    }
+  },
   "channels": [
     {
       "id": "nm-counseling-therapy-board",

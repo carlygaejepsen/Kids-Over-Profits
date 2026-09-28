@@ -48,27 +48,57 @@ coverage table and every warning.
 
 ## Deadlines
 
-`national.json` also carries one `deadlines` block, printed at the top of
-every state's list on /report-abuse/ and on the state hubs:
+Every state's list opens with "Deadlines in <State>, if it happened years
+ago". It is built from three places:
 
-```json
-"deadlines": {
-  "text": "What a reader needs to know about deadlines, in general terms.",
-  "link_label": "The words of the link",
-  "url": "https://childusa.org/sol/",
-  "verified_on": "2026-09-28",
-  "sources": ["https://childusa.org/sol/"]
-}
-```
+1. **`national.json` → `deadlines`**: the general note (deadlines run from the
+   survivor's age or discovery, not the day a program closed) and the link
+   to CHILD USA's tracker. `text`, `link_label`, `url`, `verified_on`,
+   `sources`.
+2. **`childusa-sol.json`**: CHILD USA's civil and criminal summaries for
+   child sexual abuse, trafficking and CSAM, one entry per state. Generated;
+   do not edit. Refresh monthly, and after each spring legislative season:
 
-It states no deadline itself. Deadlines on abuse of a child run from the
-survivor's age or from when they understood the harm, not from the day a
-program closed, and legislatures change them every session, so the note
-links a tracker that follows them (CHILD USA's, updated weekly). A deadline
-a specific body publishes for its own complaints still goes in that
-channel's `deadline` field. For the same reason a closed program's facility
-page keeps its reporting link: it drops the claim that the program's
-licensor can act, and says which channels still might.
+   ```bash
+   node scripts/pull-childusa-sol.js      # then read `git diff` on the file
+   node scripts/build-reporting-directory.js
+   ```
+
+   A state whose page no longer parses keeps its previous entry and the pull
+   exits non-zero. The build warns once the file is 45 days old.
+3. **`states/<abbr>.json` → `deadlines`**: researched from the statute text,
+   for everything CHILD USA does not cover:
+
+   ```json
+   "deadlines": {
+     "verified_on": "2026-09-28",
+     "civil_injury": { ... },
+     "civil_minor_tolling": { ... },
+     "civil_government_claims": { ... },
+     "criminal_child_abuse": { ... },
+     "criminal_felony_assault": { ... }
+   }
+   ```
+
+   | Field | What it covers |
+   | --- | --- |
+   | `civil_injury` | Suing over assault, battery, false imprisonment, negligence |
+   | `civil_minor_tolling` | Whether the clock waits until 18, and any cap |
+   | `civil_government_claims` | Notice-of-claim deadlines and immunity for state-run or state-contracted programs |
+   | `criminal_child_abuse` | Charging felony physical child abuse, endangerment, cruelty |
+   | `criminal_felony_assault` | Charging felony assault; misdemeanour assault as an aside |
+
+   Each is `null` (not researched) or an object with `summary` (plain
+   English), `citation`, `source_url` (the page the statute text was read
+   on, official legislature site first), `quote` (verbatim text the summary
+   rests on), `confidence` (`high`, `medium`, `low`) and optional `note`.
+   The build fails an entry without a citation, source or quote, and leaves
+   `low` ones off the page until somebody confirms them. Law-firm pages and
+   "SOL by state" listicles are leads, never sources.
+
+None of this is used to hide a reporting channel. A closed program's facility
+page keeps its link: it drops the claim that the program's licensor can act,
+and says which channels still might.
 
 ## A channel
 

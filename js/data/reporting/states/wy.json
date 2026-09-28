@@ -3,6 +3,49 @@
   "abbr": "WY",
   "updated": "2026-09-22",
   "note": "Wyoming reports abuse to the county field office where it happened rather than to a statewide hotline, with 911 as the around-the-clock route. It also has a Department of Family Services ombudsman who takes complaints about the Department's own handling of a case, which is the escalation route when a report goes nowhere.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year for assault, battery and false imprisonment. Four years for negligence and other personal injury.",
+      "citation": "Wyo. Stat. § 1-3-105(a)(v)(B)-(C) (one year); § 1-3-105(a)(iv)(C) (four years)",
+      "source_url": "https://wyoleg.gov/statutes/compress/title01.pdf",
+      "quote": "(v) Within one (1) year, an action for: (A) Libel or slander; (B) Assault or battery not including sexual assault; (C) Malicious prosecution or false imprisonment;",
+      "confidence": "high",
+      "note": "§ 1-3-105(a)(iv): 'Within four (4) years, an action for: ... (C) An injury to the rights of the plaintiff, not arising on contract and not herein enumerated'. Source is the official Title 1 PDF on wyoleg.gov. Claims against licensed professionals and health care providers fall under § 1-3-107, not researched here."
+    },
+    "civil_minor_tolling": {
+      "summary": "For someone injured as a child, the deadline is three years after turning 18 (age 21), or the normal period if that ends later. Wyoming has no longer deadline for physical abuse of a child. Its special rule in § 1-3-105(b) covers sexual assault only.",
+      "citation": "Wyo. Stat. § 1-3-114",
+      "source_url": "https://wyoleg.gov/statutes/compress/title01.pdf",
+      "quote": "is, at the time the cause of action accrues, a minor or subject to any other legal disability, the person may bring the action within three (3) years after the disability is removed or within any other statutory period of limitation, whichever is greater.",
+      "confidence": "high",
+      "note": "Section 1-3-114 does not apply to claims for professional or health care services, or for a penalty or forfeiture. § 1-3-105(b) (8 years after 18, or 3 years after discovery) is limited to 'sexual assault as defined by W.S. 6-2-301(a)(v) against a minor'."
+    },
+    "civil_government_claims": {
+      "summary": "To sue the state or a local government, first present a written, itemized claim within two years of the act (or two years after discovery, in limited cases). You must then file the lawsuit within one year after filing the claim.",
+      "citation": "Wyo. Stat. §§ 1-39-113(a), 1-39-114 (Wyoming Governmental Claims Act)",
+      "source_url": "https://wyoleg.gov/statutes/compress/title01.pdf",
+      "quote": "No action shall be brought under this act against a governmental entity unless the claim upon which the action is based is presented to the entity as an itemized statement in writing within two (2) years of the date of the alleged act, error or omission",
+      "confidence": "high",
+      "note": "§ 1-39-114: actions 'shall be forever barred unless commenced within one (1) year after the date the claim is filed'. For a minor aged 7 or younger, the suit must be filed within 2 years of the occurrence or by the eighth birthday, whichever is later. The Act says its period can never be longer than any other applicable statute of limitations. Claims against the state go to the general services division of the department of administration (§ 1-39-113(c)). Whether ordinary minority tolling (§ 1-3-114) extends the Act's deadlines for children over 7 was not confirmed."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit. Wyoming has no statute of limitations for any crime, so child abuse can be charged at any time.",
+      "citation": "No criminal statute of limitations in Wyoming; Ridinger v. State, 2021 WY 4, ¶ 14, 478 P.3d 1160 (quoting Phillips v. State, 835 P.2d 1062, 1069 (Wyo. 1992))",
+      "source_url": "https://storage.courtlistener.com/pdf/2021/01/07/martin_alan_ridinger_v._the_state_of_wyoming.pdf",
+      "quote": "\"Wyoming has no statute of limitations for criminal offenses, and prosecution for such offenses may be commenced at any time during the life of the offender.\"",
+      "confidence": "high",
+      "note": "This rests on the absence of any statute, as confirmed by the Wyoming Supreme Court. The same opinion notes that excessive pre-charge delay may violate due process. Wyoming's child abuse offense is Wyo. Stat. § 6-2-503 (not read, since no limitation applies either way)."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit. Aggravated assault, and misdemeanor assault and battery, can be charged at any time.",
+      "citation": "Ridinger v. State, 2021 WY 4, ¶ 14, 478 P.3d 1160",
+      "source_url": "https://storage.courtlistener.com/pdf/2021/01/07/martin_alan_ridinger_v._the_state_of_wyoming.pdf",
+      "quote": "\"Wyoming has no statute of limitations for criminal offenses, and prosecution for such offenses may be commenced at any time during the life of the offender.\"",
+      "confidence": "high",
+      "note": "This applies to misdemeanors as well as felonies."
+    }
+  },
   "channels": [
     {
       "id": "wy-mental-health-professions-board",

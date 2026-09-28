@@ -3,6 +3,49 @@
   "abbr": "MD",
   "updated": "2026-09-22",
   "note": "Maryland reports abuse to the local department of social services or to local police rather than to a single statewide intake, though 1-800-91-PREVENT will take the call. It also licenses Residential Child Care programs as their own category through the Department of Human Services. One useful piece of Maryland law: since October 2016, where a local department believes a mandated reporter knowingly failed to report, it must file a complaint with that reporter's own licensing board.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years from the injury for battery, false imprisonment and negligence. A claim for assault alone (a threat without physical contact) has only one year.",
+      "citation": "Md. Code, Cts. & Jud. Proc. §§ 5-101, 5-105",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&section=5-101&enactments=false",
+      "quote": "A civil action at law shall be filed within three years from the date it accrues unless another provision of the Code provides a different period of time within which an action shall be commenced.",
+      "confidence": "high",
+      "note": "§ 5-105: 'An action for assault, libel, or slander shall be filed within one year from the date it accrues.' (https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&section=5-105&enactments=false). Battery is not named in § 5-105 and falls under the three-year general period; a lawyer should plead battery where there was physical contact."
+    },
+    "civil_minor_tolling": {
+      "summary": "For someone injured as a child, the clock starts at 18: three years for battery or negligence (so by the 21st birthday), and one year for assault alone. There is no longer deadline for non-sexual physical abuse of a child.",
+      "citation": "Md. Code, Cts. & Jud. Proc. § 5-201",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&section=5-201&enactments=false",
+      "quote": "When a cause of action subject to a limitation under Subtitle 1 of this title ... accrues in favor of a minor or mental incompetent, that person shall file his action within the lesser of three years or the applicable period of limitations after the date the disability is removed.",
+      "confidence": "high",
+      "note": "The 'lesser of' wording means the one-year assault period stays one year after 18. The special child abuse provision (§ 5-117) covers sexual abuse only and was not researched."
+    },
+    "civil_government_claims": {
+      "summary": "Against the State: a written claim to the State Treasurer within 1 year of the injury, and suit within 3 years. Against a county or city: written notice within 1 year of the injury under the Local Government Tort Claims Act.",
+      "citation": "Md. Code, State Gov't § 12-106; Cts. & Jud. Proc. § 5-304",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gsg&section=12-106&enactments=false",
+      "quote": "the claimant submits a written claim to the Treasurer or a designee of the Treasurer within 1 year after the injury to person or property that is the basis of the claim; (2) the Treasurer or designee denies the claim finally; and (3) the action is filed within 3 years after the cause of action arises.",
+      "confidence": "high",
+      "note": "Local notice: § 5-304(b)(1) 'notice of the claim required by this section is given within 1 year after the injury' (https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&section=5-304&enactments=false). Both allow late notice for good cause if the government was not prejudiced, and neither requires notice if the government had actual or constructive notice within 1 year."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit. Child abuse by a parent, household member or anyone with care or custody of a minor is a felony in Maryland, and Maryland has no statute of limitations for felonies.",
+      "citation": "Md. Code, Crim. Law § 3-601; Cts. & Jud. Proc. § 5-106(a)",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcr&section=3-601&enactments=false",
+      "quote": "A parent or other person who has permanent or temporary care or custody or responsibility for the supervision of a minor may not cause abuse to the minor.",
+      "confidence": "medium",
+      "note": "No statute states 'no limit' for felonies; § 5-106 sets limits for misdemeanors only, and felonies are prosecutable at any time under Maryland common law. § 3-601(d)(2): a violator 'is guilty of the felony of child abuse in the second degree and on conviction is subject to imprisonment not exceeding 15 years'; first degree (death or severe physical injury) is a felony with up to 25 years."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for first degree assault, a felony. Second degree assault is a misdemeanor; ordinary misdemeanors must be charged within one year, but Maryland exempts misdemeanors that can be punished with a penitentiary sentence, and whether second degree assault falls under that exemption is not settled here.",
+      "citation": "Md. Code, Crim. Law §§ 3-202, 3-203; Cts. & Jud. Proc. § 5-106(a)",
+      "source_url": "https://mgaleg.maryland.gov/mgawebsite/Laws/StatuteText?article=gcj&section=5-106&enactments=false",
+      "quote": "Except as provided by this section, § 1-303 of the Environment Article, and § 8-1815 of the Natural Resources Article, a prosecution for a misdemeanor shall be instituted within 1 year after the offense was committed.",
+      "confidence": "medium",
+      "note": "First degree assault (§ 3-202) is 'the felony of assault in the first degree'. Second degree assault (§ 3-203) is 'the misdemeanor of assault in the second degree' with up to 10 years' imprisonment. § 5-106(b) removes the limit for misdemeanors a statute makes punishable 'in the penitentiary'; § 3-203 does not say that, so the one-year limit appears to apply, but this was not confirmed against case law."
+    }
+  },
   "channels": [
     {
       "id": "md-counselors-therapists-board",

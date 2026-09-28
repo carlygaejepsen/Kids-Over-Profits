@@ -3,6 +3,49 @@
   "abbr": "LA",
   "updated": "2026-09-22",
   "note": "Louisiana's child protection hotline explicitly covers abuse and neglect inside licensed residential and treatment facilities, not only in family homes, so it is the right call for something that happened in a program. Its counseling board, by contrast, will not accept an anonymous complaint at all unless the documents you send with it plainly show a breach of law on their own.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the day of the injury for a delictual (tort) claim, including battery, false imprisonment and negligence, for injuries on or after July 1, 2024. Injuries before July 1, 2024 fell under the old one-year period. Injuries from a crime of violence also have two years.",
+      "citation": "La. Civ. Code art. 3493.1; La. Civ. Code art. 3493.3",
+      "source_url": "https://www.legis.la.gov/Legis/Law.aspx?d=1386443",
+      "quote": "Delictual actions are subject to a liberative prescription of two years. This prescription commences to run from the day that injury or damage is sustained.",
+      "confidence": "high",
+      "note": "Art. 3493.1 was enacted by Acts 2024, No. 423, eff. July 1, 2024, replacing the one-year prescription of former art. 3492. Act 423 applies prospectively, so injuries sustained before July 1, 2024 are governed by the former one-year period (not re-read in statute text here). Art. 3493.3 (redesignated from former art. 3493.10) separately gives two years for damages from a crime of violence: https://www.legis.la.gov/legis/Law.aspx?d=1386445. Louisiana does not have separate periods for battery versus negligence; both are delictual actions."
+    },
+    "civil_minor_tolling": {
+      "summary": "Louisiana does not pause the clock for children in general: prescription runs against minors, so a parent or guardian must sue within the normal period. But a claim for physical abuse of a minor that caused permanent impairment, permanent physical injury or scarring never expires, and neither does a claim against someone convicted of a crime against the child.",
+      "citation": "La. R.S. 9:2800.9(A); La. Civ. Code art. 3468",
+      "source_url": "https://legis.la.gov/Legis/Law.aspx?d=107288",
+      "quote": "An action against a person for sexual abuse of a minor or for physical abuse of a minor resulting in permanent impairment or permanent physical injury or scarring does not prescribe. \"Abuse\" has the same meaning as provided in Children's Code Article 603.",
+      "confidence": "high",
+      "note": "No-limit rule applies only to physical abuse with permanent impairment, injury or scarring, and to suits against a person convicted of a crime against the child (R.S. 9:2800.9(A)(2)). Other physical-abuse claims by a minor follow the two-year delictual period with no minority suspension: Civ. Code art. 3468 says 'Prescription runs against absent persons and incompetents, including minors and interdicts, unless exception is established by legislation' (https://www.legis.la.gov/legis/Law.aspx?d=110491). Plaintiffs 21 or older suing under 9:2800.9 must file certificates of merit (R.S. 9:2800.9(B)). 'Abuse' is defined by reference to Children's Code art. 603, which may limit which defendants (e.g. caretakers) are covered; not verified here. The jurisprudential doctrine of contra non valentem may suspend prescription in some cases."
+    },
+    "civil_government_claims": {
+      "summary": "Louisiana has no general advance notice-of-claim requirement for suits against the state or local governments; the normal two-year delictual period applies, but service on the government defendant must be requested within 90 days of filing suit or the suit can be dismissed.",
+      "citation": "La. R.S. 13:5107(D)",
+      "source_url": "https://legis.la.gov/legis/Law.aspx?d=77935",
+      "quote": "In all suits in which the state, a state agency, or political subdivision, or any officer or employee thereof is named as a party, service of citation shall be requested within ninety days of the commencement of the action",
+      "confidence": "medium",
+      "note": "The absence of a general presuit notice statute is based on not finding one, not on a statute saying so; a lawyer should confirm for the specific agency or parish."
+    },
+    "criminal_child_abuse": {
+      "summary": "Cruelty to juveniles: four years (six years if the child was eight or younger, or for second degree cruelty causing serious injury). When the victim was under 18, the clock does not start until the victim turns 18.",
+      "citation": "La. C.Cr.P. arts. 572, 573(3); La. R.S. 14:93, 14:93.2.3",
+      "source_url": "https://www.legis.la.gov/legis/LawPrint.aspx?d=112623",
+      "quote": "The time limitations established by Article 572 shall not commence to run as to the following offenses until the relationship or status involved has ceased to exist when: ... (3) The offense charged is a felony crime of violence as defined in R.S. 14:2(B) or cruelty to juveniles as defined in R.S. 14:93 and the victim is under eighteen years of age",
+      "confidence": "medium",
+      "note": "Period depends on the penalty: art. 572 gives six years for a felony necessarily punishable at hard labor and four years for one not necessarily at hard labor (https://www.legis.la.gov/legis/Law.aspx?d=112622). Cruelty to juveniles (R.S. 14:93(D)(1)) is 'with or without hard labor for not more than ten years' = four years; if the victim is eight or younger it is 'at hard labor for not more than twenty years' = six years. Second degree cruelty (R.S. 14:93.2.3, serious bodily injury) is 'at hard labor for not more than forty years' = six years. Reading art. 573's 'status ... ceased to exist' as the victim turning 18 is the standard interpretation but is inferred. Art. 573 was amended by Acts 2026, No. 364."
+    },
+    "criminal_felony_assault": {
+      "summary": "Four years for aggravated battery and other felonies not necessarily punished at hard labor; six years for felonies that must be punished at hard labor. Misdemeanor assault or battery: two years.",
+      "citation": "La. C.Cr.P. art. 572(A); La. R.S. 14:34",
+      "source_url": "https://www.legis.la.gov/legis/Law.aspx?d=112622",
+      "quote": "(1) Six years, for a felony necessarily punishable by imprisonment at hard labor. (2) Four years, for a felony not necessarily punishable by imprisonment at hard labor. (3) Two years, for a misdemeanor punishable by a fine, or imprisonment, or both.",
+      "confidence": "medium",
+      "note": "Aggravated battery (R.S. 14:34) is punishable 'with or without hard labor for not more than ten years', so four years. If the victim was under 18 and the charge is a felony crime of violence, art. 573(3) delays the start until the status ends (victim turns 18). Crimes punishable by death or life imprisonment have no limit (art. 571). Art. 572 was amended by Acts 2026, No. 364."
+    }
+  },
   "channels": [
     {
       "id": "la-lpc-board",

@@ -3,6 +3,48 @@
   "abbr": "AZ",
   "updated": "2026-09-22",
   "note": "Arizona splits the work three ways: the Board of Behavioral Health Examiners holds the therapist's licence, the Department of Health Services licenses the behavioral health residential facility, and the Department of Child Safety runs both the abuse hotline and its own Office of Licensing and Regulation for group homes. Which licensor applies depends on how the program is registered, so the DHS facility database is worth checking first.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for physical injuries, including assault, battery and negligence. False imprisonment (for example, being held against your will) has a shorter deadline: one year.",
+      "citation": "Ariz. Rev. Stat. § 12-542(1); § 12-541(1)",
+      "source_url": "https://www.azleg.gov/ars/12/00542.htm",
+      "quote": "there shall be commenced and prosecuted within two years after the cause of action accrues, and not afterward, the following actions: 1. For injuries done to the person of another including causes of action for medical malpractice",
+      "confidence": "high",
+      "note": "§ 12-541(1) (https://www.azleg.gov/ars/12/00541.htm): 'within one year after the cause of action accrues ... 1. For malicious prosecution, or for false imprisonment'. Arizona courts apply a common-law discovery rule to accrual (case law, not verified here)."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18. After turning 18 they get the full normal period: two years for injury claims (until age 20), one year for false imprisonment.",
+      "citation": "Ariz. Rev. Stat. § 12-502",
+      "source_url": "https://www.azleg.gov/ars/12/00502.htm",
+      "quote": "If a person entitled to bring an action ... is at the time the cause of action accrues either under eighteen years of age or of unsound mind, the period of such disability shall not be deemed a portion of the period limited for commencement of the action.",
+      "confidence": "high",
+      "note": "No cap on the tolling in the text. No statutory discovery rule for non-sexual abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "Before suing a state or local government body, public school or public employee, you must file a written notice of claim, with a specific settlement amount, within 180 days; the lawsuit itself must be filed within one year. A minor may file the notice within 180 days after turning 18.",
+      "citation": "Ariz. Rev. Stat. § 12-821; § 12-821.01(A), (B), (D)",
+      "source_url": "https://www.azleg.gov/ars/12/00821-01.htm",
+      "quote": "Any claim that is not filed within one hundred eighty days after the cause of action accrues is barred and no action may be maintained thereon. ... D. Notwithstanding subsection A, a minor or an insane or incompetent person may file a claim within one hundred eighty days after the disability ceases.",
+      "confidence": "high",
+      "note": "§ 12-821: 'All actions against any public entity or public employee shall be brought within one year after the cause of action accrues and not afterward.' Accrual for these claims uses a discovery test (§ 12-821.01(B)). Whether the one-year suit deadline is also tolled for minors under § 12-502 was not confirmed from statute text."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony child abuse must be charged within seven years after the state discovers (or reasonably should have discovered) the offense. There is no rule pausing it until the child turns 18, but the clock starts at discovery, not the act.",
+      "citation": "Ariz. Rev. Stat. § 13-107(B)(1) (child abuse is § 13-3623)",
+      "source_url": "https://www.azleg.gov/ars/13/00107.htm",
+      "quote": "prosecutions for other offenses must be commenced within the following periods after actual discovery by the state ... or discovery ... that should have occurred with the exercise of reasonable diligence, whichever first occurs: 1. For a class 2 through a class 6 felony, seven years.",
+      "confidence": "high",
+      "note": "The no-limit list in § 13-107(A) covers homicide and class 2 felonies in chapters 14 and 35.1 (sexual offenses), not § 13-3623. The clock also stops while the accused is out of state (§ 13-107(D)), and for serious offenses while the offender's identity is unknown (§ 13-107(E))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Aggravated assault and other class 2-6 felonies: seven years from when the state discovers the offense. Misdemeanor assault: one year.",
+      "citation": "Ariz. Rev. Stat. § 13-107(B)",
+      "source_url": "https://www.azleg.gov/ars/13/00107.htm",
+      "quote": "1. For a class 2 through a class 6 felony, seven years. 2. For a misdemeanor, one year. 3. For a petty offense, six months.",
+      "confidence": "high"
+    }
+  },
   "channels": [
     {
       "id": "az-behavioral-health-examiners",

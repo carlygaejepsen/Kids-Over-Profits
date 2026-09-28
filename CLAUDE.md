@@ -39,6 +39,7 @@ node scripts/test-network-modules.js
 # After editing the reporting directory data in js/data/reporting/
 node scripts/build-reporting-directory.js
 node scripts/verify-reporting-links.js          # slow, hits every agency site
+node scripts/pull-childusa-sol.js               # monthly: CHILD USA sexual-abuse deadlines, review the diff, then rebuild
 php scripts/test-reporting-directory.php        # renders the page offline
 # After editing the glossary source js/data/glossary/glossary.md
 node scripts/build-glossary.js

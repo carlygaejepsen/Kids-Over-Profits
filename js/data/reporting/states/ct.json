@@ -3,6 +3,48 @@
   "abbr": "CT",
   "updated": "2026-09-22",
   "note": "Connecticut puts a clock on reporting: an oral report to the DCF Careline within 12 hours of the suspected abuse, followed by the written DCF-136 form within 48 hours of that. Anyone reporting in good faith is immune from civil or criminal liability. The Department of Public Health is equally clear about its own limits - it can only act against a licence, and nothing it does will get a consumer compensated.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Intentional harm such as assault, battery or false imprisonment: three years from the date of the act (not the date you discovered it). Negligence or reckless conduct: two years from when the injury was sustained or discovered, but never more than three years after the act.",
+      "citation": "Conn. Gen. Stat. § 52-577; § 52-584",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_926.htm#sec_52-577",
+      "quote": "No action founded upon a tort shall be brought but within three years from the date of the act or omission complained of.",
+      "confidence": "high",
+      "note": "§ 52-584: 'No action to recover damages for injury to the person ... caused by negligence, or by reckless or wanton misconduct ... shall be brought but within two years from the date when the injury is first sustained or discovered or in the exercise of reasonable care should have been discovered, and except that no such action may be brought more than three years from the date of the act or omission complained of'. Fraudulent concealment delays accrual (§ 52-595)."
+    },
+    "civil_minor_tolling": {
+      "summary": "Connecticut does NOT pause the civil deadline for most injuries while the victim is a child. The three-year and two-year periods run from the abuse even if the victim was a minor. Only sexual-abuse claims get special extended time.",
+      "citation": "Conn. Gen. Stat. §§ 52-577, 52-584 (no general tolling provision in chapter 926)",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_926.htm",
+      "quote": "[Official annotation to § 52-584:] Provides no exceptions for minors or insane persons. 3 CA 602. [Annotation to § 52-595:] Cannot be construed as embodying an exception by implication in favor of an unemancipated minor. 139 C. 218.",
+      "confidence": "medium",
+      "note": "We searched all of chapter 926 (Statute of Limitations) and found no general minority tolling; the only minor-specific civil rule is § 52-577d (sexual abuse, out of scope). The quote is from the official code annotations, not statute text. Continuing-course-of-conduct and fraudulent-concealment doctrines can sometimes delay the start (case law, not verified)."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against the State go to the Office of the Claims Commissioner within one year of when the injury was sustained or discovered, and never more than three years after the act. Suits against a town and its employee jointly need written notice to the town clerk within six months and a lawsuit within two years.",
+      "citation": "Conn. Gen. Stat. § 4-148(a); § 7-465(a)",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_053.htm#sec_4-148",
+      "quote": "no claim shall be presented under this chapter but within one year after it accrues. Claims for injury to person ... shall be deemed to accrue on the date when the damage or injury is sustained or discovered ... provided no claim shall be presented more than three years from the date of the act",
+      "confidence": "medium",
+      "note": "§ 7-465(a) (https://www.cga.ct.gov/current/pub/chap_113.htm#sec_7-465): suit 'commenced within two years after the cause of action therefor arose and written notice ... filed with the clerk of such municipality within six months'. § 7-465 indemnification excludes wilful or wanton acts. The General Assembly can authorize late claims by special act (§ 4-148(b)). Other municipal notice statutes (e.g. § 52-557n) were not read."
+    },
+    "criminal_child_abuse": {
+      "summary": "Physical child abuse (for example, risk of injury to a child, or assault) must be charged within five years of the offense if it can carry more than a year in prison. There is no rule pausing it until the victim turns 18 for non-sexual abuse.",
+      "citation": "Conn. Gen. Stat. § 54-193(c)",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_966.htm#sec_54-193",
+      "quote": "No person may be prosecuted for any offense, other than an offense set forth in subsection (a) or (b) of this section, for which the punishment is or may be imprisonment in excess of one year, except within five years next after the offense has been committed.",
+      "confidence": "high",
+      "note": "No limit for class A felonies (§ 54-193(a)(1)(A)). The no-limit rule for § 53-21 covers only subdivision (a)(2) (sexual contact); physical risk of injury under § 53-21(a)(1) falls under the five-year rule. The period is extended while the accused has fled and lives outside the state (§ 54-193(e))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault: five years from the offense (no limit if it is a class A felony). Misdemeanor assault: one year.",
+      "citation": "Conn. Gen. Stat. § 54-193(a), (c), (d)",
+      "source_url": "https://www.cga.ct.gov/current/pub/chap_966.htm#sec_54-193",
+      "quote": "(d) No person may be prosecuted for any offense, other than an offense set forth in subsection (a), (b) or (c) of this section, except within one year next after the offense has been committed.",
+      "confidence": "high"
+    }
+  },
   "channels": [
     {
       "id": "ct-public-health-practitioner-investigations",

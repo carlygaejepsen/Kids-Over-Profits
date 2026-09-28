@@ -3,6 +3,49 @@
   "abbr": "CA",
   "updated": "2026-09-22",
   "note": "California has a trap that catches families constantly. The Board of Behavioral Sciences warns that a complaint filed by anyone other than the client may be impossible to pursue, because the client owns the confidentiality of their own treatment records - so a parent complaining about their adult child's therapist, or a sibling complaining for a survivor, may need signed authorisations from everyone involved before the Board can investigate at all. Sort that out before you file, not after.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for assault, battery, and injuries caused by someone's wrongful act or negligence. False imprisonment (being held against your will) has only one year.",
+      "citation": "Cal. Code Civ. Proc. § 335.1; § 340(c)",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CCP&sectionNum=335.1",
+      "quote": "Within two years: An action for assault, battery, or injury to, or for the death of, an individual caused by the wrongful act or neglect of another.",
+      "confidence": "high",
+      "note": "§ 340(c) (https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CCP&sectionNum=340): 'Within one year: ... (c) An action for libel, slander, false imprisonment'. California courts apply a common-law delayed-discovery rule (case law, not verified here)."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18, so a two-year claim can be filed until age 20 (one-year false imprisonment claims until 19). This pause does NOT apply to claims against a government body or public employee.",
+      "citation": "Cal. Code Civ. Proc. § 352",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CCP&sectionNum=352",
+      "quote": "(a) If a person entitled to bring an action ... is, at the time the cause of action accrued either under the age of majority ..., the time of the disability is not part of the time limited ... (b) This section shall not apply to an action against a public entity or public employee",
+      "confidence": "high",
+      "note": "No cap on the tolling. The extended childhood deadlines in CCP § 340.1 are for sexual assault only. No statutory discovery rule for non-sexual abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "For a state- or county-run facility, a written government claim must be filed within six months of the injury, and a lawsuit within six months after the claim is rejected in writing (two years if no written rejection is sent). Being a minor does not pause these deadlines, but it is grounds for the agency to accept a late claim if applied for within a year.",
+      "citation": "Cal. Gov. Code §§ 911.2(a), 945.6(a), 911.6(b)(2)-(3); Cal. Code Civ. Proc. § 352(b)",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=GOV&sectionNum=911.2",
+      "quote": "A claim relating to a cause of action for death or for injury to person or to personal property or growing crops shall be presented ... not later than six months after the accrual of the cause of action.",
+      "confidence": "high",
+      "note": "§ 945.6(a): suit 'not later than six months after the date such notice is personally delivered or deposited in the mail' or, without notice, 'within two years from the accrual'. § 911.6(b)(2)-(3) requires the board to grant a late-claim application if the claimant was a minor during the claim period (for (3), if applied for within six months of turning 18 or a year after accrual, whichever first). Late-claim applications generally must be made within one year of accrual (Gov. Code § 911.4, not re-read here)."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony child abuse or endangerment (Penal Code 273a(a)) and felony cruel corporal punishment or traumatic injury to a child (273d) must be charged within three years of the offense. The clock is not paused until the child turns 18 for these physical-abuse crimes.",
+      "citation": "Cal. Penal Code § 801; §§ 273a(a), 273d(a); § 805(a)",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=801",
+      "quote": "Except as provided in Sections 799 and 800, prosecution for an offense punishable by imprisonment in the state prison or pursuant to subdivision (h) of Section 1170 shall be commenced within three years after commission of the offense.",
+      "confidence": "medium",
+      "note": "273a(a) and 273d(a) carry a maximum of six years, below the eight-year threshold for the six-year period in § 800; § 805(a) says enhancements are disregarded. Offenses punishable by life (e.g. § 273ab, assault on a child causing death or coma) have no limit (§ 799). Misdemeanor child endangerment (273a(b)) and misdemeanor assault/battery: one year (§ 802(a)). Up to three years out of state does not count (§ 803(d)). No 273a/273d-specific extension was found in §§ 799-805 as currently in force; the medium rating reflects that we read the chapter but did not have an annotated code."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault such as assault with a deadly weapon or force likely to cause great bodily injury: three years from the offense. Felonies carrying eight years or more: six years. Misdemeanor assault or battery: one year.",
+      "citation": "Cal. Penal Code §§ 800, 801, 802(a); § 245(a)",
+      "source_url": "https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=PEN&sectionNum=800",
+      "quote": "prosecution for an offense punishable by imprisonment in the state prison for eight years or more ... shall be commenced within six years after commission of the offense.",
+      "confidence": "high",
+      "note": "§ 245(a)(1) carries two, three or four years, so § 801's three years applies; assault with a machine gun or assault weapon (§ 245(a)(3), up to 12 years) gets six. § 802(a): non-prison offenses 'shall be commenced within one year after commission of the offense.'"
+    }
+  },
   "channels": [
     {
       "id": "ca-board-behavioral-sciences",

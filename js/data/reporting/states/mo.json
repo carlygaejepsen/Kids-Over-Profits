@@ -3,6 +3,49 @@
   "abbr": "MO",
   "updated": "2026-09-22",
   "note": "Missouri matters to this industry for a particular reason: for decades religious residential facilities operated here entirely outside licensing. HB 557, signed in July 2021, did not licence them, but it did require every license-exempt facility to register with the state and to run background checks on everyone with access to children. So a Missouri program may be licensed, registered-but-exempt, or operating in breach of the notification law - and which one it is changes who you report to.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for assault, battery or false imprisonment. Negligence and other personal injury claims have five years.",
+      "citation": "Mo. Rev. Stat. § 516.140; Mo. Rev. Stat. § 516.120(4)",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=516.140",
+      "quote": "Within two years: an action for libel, slander, injurious falsehood, assault, battery, false imprisonment, criminal conversation, malicious prosecution or actions brought under section 290.140.",
+      "confidence": "high",
+      "note": "§ 516.120(4): five years for 'any other injury to the person or rights of another, not arising on contract and not herein otherwise enumerated' (https://revisor.mo.gov/main/OneSection.aspx?section=516.120). Missouri's personal injury accrual rule (§ 516.100, damage 'sustained and capable of ascertainment') was not re-read here."
+    },
+    "civil_minor_tolling": {
+      "summary": "If the injured person was under 21 when the claim arose, the normal period starts when they turn 21: assault or battery by the 23rd birthday, negligence by the 26th. There is no longer deadline for non-sexual physical abuse of a child.",
+      "citation": "Mo. Rev. Stat. § 516.170",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=516.170",
+      "quote": "Except as provided in section 516.105, if any person entitled to bring an action in sections 516.100 to 516.370 specified, at the time the cause of action accrued be either within the age of twenty-one years, or mentally incapacitated, such person shall be at liberty to bring such actions within the respective times ... limited after such disability is removed.",
+      "confidence": "high",
+      "note": "The statute says age twenty-one, not eighteen. No cap appears in § 516.170. Medical malpractice (§ 516.105) is excepted. § 537.046 (childhood sexual abuse) is out of scope."
+    },
+    "civil_government_claims": {
+      "summary": "Missouri keeps sovereign immunity for the state and local governments except for injuries from vehicle operation and dangerous property conditions, so most abuse claims cannot be brought against the government entity itself; no general notice-of-claim statute was found.",
+      "citation": "Mo. Rev. Stat. § 537.600",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=537.600",
+      "quote": "Such sovereign or governmental tort immunity as existed at common law in this state prior to September 12, 1977 ... shall remain in full force and effect; except that, the immunity of the public entity from liability and suit for compensatory damages for negligent acts or omissions is hereby expressly waived in the following instances",
+      "confidence": "medium",
+      "note": "Individual employees may still be sued, subject to official immunity doctrines, and entities that buy liability insurance may waive immunity to that extent (§ 537.610, not read). Some cities have a 90-day notice rule (§ 82.210, not read). This field describes immunity rather than a deadline."
+    },
+    "criminal_child_abuse": {
+      "summary": "Abuse or neglect of a child is usually a class D felony, which must be charged within three years of the crime; if it caused serious physical or emotional injury (class B), also three years. If the child died (class A), there is no limit. The clock does not wait until the child turns 18.",
+      "citation": "Mo. Rev. Stat. § 556.036(1), (2)(1); Mo. Rev. Stat. § 568.060",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=556.036",
+      "quote": "A prosecution for murder, rape in the first degree ... or any class A felony may be commenced at any time. 2. Except as otherwise provided in this section, prosecutions for other offenses must be commenced within the following periods of limitation: (1) For any felony, three years",
+      "confidence": "high",
+      "note": "§ 568.060.6-7: class D felony by default; class B for serious emotional or serious physical injury or a prior offense; class A if the child dies or in the aggravated cases of subsection 7 (not read in full). § 556.037 (no limit for offenses involving a person 18 or under) covers sexual offenses only. The period stops while the accused is out of state, up to three extra years (§ 556.036.6(1))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the crime for felony assault (first degree class B, second degree). No limit for first degree assault that inflicts great bodily harm or targets a 'special victim' (class A). Misdemeanor assault: one year.",
+      "citation": "Mo. Rev. Stat. § 556.036; Mo. Rev. Stat. §§ 565.050, 565.052",
+      "source_url": "https://revisor.mo.gov/main/OneSection.aspx?section=556.036",
+      "quote": "(1) For any felony, three years, except as provided in subdivision (4) of this subsection; (2) For any misdemeanor, one year;",
+      "confidence": "high",
+      "note": "§ 565.050.2: first degree assault is class B 'unless in the course thereof the person inflicts great bodily harm on the victim, or if the victim of such assault is a special victim ... in which case it is a class A felony' (no limit). Second degree assault is class D (§ 565.052.3)."
+    }
+  },
   "channels": [
     {
       "id": "mo-professional-registration",

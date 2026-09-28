@@ -3,6 +3,49 @@
   "abbr": "WI",
   "updated": "2026-09-22",
   "note": "Wisconsin gives anyone receiving mental health or substance use treatment a statutory set of client rights, with a formal grievance procedure behind them and client rights staff who will write the grievance for you if you ask. That is separate from complaining about the clinician or the facility, and it is the channel most people in a Wisconsin program have never been told exists.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for assault, battery, false imprisonment and other intentional harm, and three years for negligence and other personal injury.",
+      "citation": "Wis. Stat. § 893.57 (intentional torts); Wis. Stat. § 893.54(1m)(a) (injury to the person)",
+      "source_url": "https://docs.legis.wisconsin.gov/statutes/statutes/893/v/57",
+      "quote": "An action to recover damages for libel, slander, assault, battery, invasion of privacy, false imprisonment or other intentional tort to the person shall be commenced within 3 years after the cause of action accrues or be barred.",
+      "confidence": "high",
+      "note": "893.54(1m)(a): 'An action to recover damages for injuries to the person ... shall be commenced within 3 years or be barred' (https://docs.legis.wisconsin.gov/statutes/statutes/893/v/54). The 893.57 period was lengthened by 2009 Act 120 (per the section's history note). Claims against health care providers have their own rules, not researched here."
+    },
+    "civil_minor_tolling": {
+      "summary": "For someone injured as a child, the deadline is the later of the normal three years from the injury or two years after turning 18, which is age 20. Wisconsin's longer deadline for childhood abuse (until age 35) covers sexual abuse only.",
+      "citation": "Wis. Stat. § 893.16(1)-(2)",
+      "source_url": "https://docs.legis.wisconsin.gov/statutes/statutes/893/ii/16",
+      "quote": "(1) If a person entitled to bring an action is, at the time the cause of action accrues, either under the age of 18 years, except for actions against health care providers; or mentally ill, the action may be commenced within 2 years after the disability ceases",
+      "confidence": "high",
+      "note": "893.16(2): \"Subsection (1) does not shorten a period of limitation otherwise prescribed.\" The quoted text was read on the official page reached through the redirect from https://docs.legis.wisconsin.gov/document/statutes/893.16. Wisconsin is unusual: a minor does not get the full normal period after turning 18, only 2 years (or the normal period, if it ends later). § 893.587 (claims until age 35) covers only child sexual assault offenses (948.02, 948.025, 948.06, 948.085, 948.095, 895.442), not physical abuse under 948.03."
+    },
+    "civil_government_claims": {
+      "summary": "For a county, city, school district or other local government, serve written notice within 120 days of the injury, and file an itemized claim. If the claim is denied, you have six months from the denial notice to sue. For a state employee, serve written notice on the Attorney General within 120 days of the injury.",
+      "citation": "Wis. Stat. § 893.80(1d), (1g) (local governments); Wis. Stat. § 893.82(3) (state officers and employees)",
+      "source_url": "https://docs.legis.wisconsin.gov/statutes/statutes/893/viii/80",
+      "quote": "(a) Within 120 days after the happening of the event giving rise to the claim, written notice of the circumstances of the claim signed by the party, agent or attorney is served on the ... governmental subdivision or agency and on the officer, official, agent or employee",
+      "confidence": "medium",
+      "note": "Under 893.80(1d)(a), a missed notice is excused if the entity had actual notice and there was no prejudice. 893.80(1g): 'No action on a claim ... may be brought after 6 months from the date of service of the notice of disallowance', and failure to act within 120 days counts as a disallowance. 893.82(3) requires notice to the attorney general 'within 120 days of the event causing the injury', and 893.82(2m) requires strict compliance (https://docs.legis.wisconsin.gov/statutes/statutes/893/viii/82)."
+    },
+    "criminal_child_abuse": {
+      "summary": "Physical abuse of a child can be charged until the victim turns 45 if it caused great bodily harm on purpose. Other physical child abuse, reckless abuse, failing to protect a child, and causing a child mental harm can be charged until the victim turns 26. The normal six years from the offense applies if it ends later.",
+      "citation": "Wis. Stat. § 939.74(2)(c), (2)(cm); Wis. Stat. § 948.03 (physical abuse of a child); § 948.04 (causing mental harm to a child)",
+      "source_url": "https://docs.legis.wisconsin.gov/statutes/statutes/939/vi/74",
+      "quote": "(cm) A prosecution for violation of s. 948.03 (2) (b) or (c) , (3) , (4) , or (5) (a) 4. or 5. , 948.04 or 948.07 (5) or (6) shall be commenced before the victim reaches the age of 26 years or be barred",
+      "confidence": "high",
+      "note": "939.74(2)(c) lists 948.03(2)(a) (intentionally causing great bodily harm to a child) and 948.03(5)(a)1.-3. (repeated physical abuse causing death or great bodily harm, or at least 2 violations of 948.03(2)(a)) among offenses that 'shall be commenced before the victim reaches the age of 45 years'. Sub. (2) begins 'Notwithstanding that the time limitation under sub. (1) has expired', so the general 6-year felony period still applies if it ends later. Offense grades were confirmed at https://docs.legis.wisconsin.gov/document/statutes/948.03."
+    },
+    "criminal_felony_assault": {
+      "summary": "Six years from the offense for felony battery or assault. Misdemeanor battery: three years.",
+      "citation": "Wis. Stat. § 939.74(1)",
+      "source_url": "https://docs.legis.wisconsin.gov/statutes/statutes/939/vi/74",
+      "quote": "(1) Except as provided in subs. (2) and (2d) and s. 946.88 (1) , prosecution for a felony must be commenced within 6 years and prosecution for a misdemeanor or for adultery within 3 years after the commission thereof.",
+      "confidence": "high",
+      "note": "Under 939.74(2d), DNA evidence can extend the period for felonies under ch. 940 and 948. First-degree intentional homicide and other listed offenses have no limit."
+    }
+  },
   "channels": [
     {
       "id": "wi-mpsw-board",

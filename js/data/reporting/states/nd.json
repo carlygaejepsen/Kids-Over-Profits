@@ -3,6 +3,49 @@
   "abbr": "ND",
   "updated": "2026-09-22",
   "note": "North Dakota's reporting line is not staffed around the clock: live agents answer between 8am and 5pm Central on weekdays, and outside that you can only leave a message. If a child is in immediate danger at a weekend, call law enforcement rather than waiting on a callback. North Dakota law does require institutional abuse reports to be made and received the same way as every other report, so a program is not a special case.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for assault, battery or false imprisonment. Six years for negligence and other personal injury that is not an intentional tort.",
+      "citation": "N.D. Cent. Code 28-01-18(1) (assault, battery, false imprisonment: 2 years); 28-01-16(5) (other injury to the person: 6 years)",
+      "source_url": "https://www.ndlegis.gov/cencode/t28c01.pdf",
+      "quote": "the following actions must be commenced within two years after the claim for relief has accrued: 1. An action for libel, slander, assault, battery, or false imprisonment.",
+      "confidence": "high",
+      "note": "28-01-16(5): 'An action for criminal conversation or for any other injury to the person or rights of another not arising upon contract, when not otherwise expressly provided' must be commenced within six years. Sexual-assault claims have their own rules (28-01-25.1, 28-01-25.2), not covered here."
+    },
+    "civil_minor_tolling": {
+      "summary": "Partly. Time while you are under 18 does not count, but the extension can last no longer than one year after you turn 18. In practice the deadline is your 19th birthday or the normal deadline counted from the injury, whichever is later. No general extended deadline for physical (non-sexual) child abuse.",
+      "citation": "N.D. Cent. Code 28-01-25",
+      "source_url": "https://www.ndlegis.gov/cencode/t28c01.pdf",
+      "quote": "the time of such disability is not a part of the time limited for the commencement of the action. However, the period ... cannot be extended more than five years by any such disability except infancy, nor can it be extended in any case longer than one year after the disability ceases.",
+      "confidence": "medium",
+      "note": "The one-year-after-18 cap is unusual and harsh: a child hurt at 12 in an assault has until 19, not 20. For a six-year negligence claim, if six years from the injury runs past 19 that later date should govern because the extension only lengthens, never shortens, the period. Confirm reading with a lawyer."
+    },
+    "civil_government_claims": {
+      "summary": "For claims against the State of North Dakota, written notice must go to the Office of Management and Budget within 180 days after the injury is discovered (one year for a serious injury), and the suit must be filed within three years; claims against cities, counties and other political subdivisions must be filed within three years.",
+      "citation": "N.D. Cent. Code 32-12.2-04(1) (notice), 28-01-22.1 (state, 3 years), 32-12.1-10 (political subdivisions, 3 years)",
+      "source_url": "https://www.ndlegis.gov/cencode/t32c12-2.pdf",
+      "quote": "A person bringing a claim against the state or a state employee for an injury shall present to the director of the office of management and budget within one hundred eighty days after the alleged injury is discovered or reasonably should have been discovered a written notice",
+      "confidence": "high",
+      "note": "28-01-22.1 (in https://www.ndlegis.gov/cencode/t28c01.pdf): 'an action against the state or its employees ... must be commenced within three years after the claim for relief has accrued', accruing on discovery. 32-12.1-10 (https://www.ndlegis.gov/cencode/t32c12-1.pdf): political-subdivision actions 'must be commenced within three years'. No notice requirement found in chapter 32-12.1. The notice period excludes time the person was incapacitated by the injury."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years from the offense for felony child abuse. There is no pause until the child turns 18 for physical abuse; the child-victim extensions apply only to sexual offenses and trafficking.",
+      "citation": "N.D. Cent. Code 29-04-02; offense at 14-09-22",
+      "source_url": "https://www.ndlegis.gov/cencode/t29c04.pdf",
+      "quote": "Except as otherwise provided by law, a prosecution for any felony other than murder must be commenced within three years after its commission.",
+      "confidence": "high",
+      "note": "14-09-22 (abuse of child) is a class C felony, class B if the child is under six, and class B when committed by a paid caregiver 'who provides care, supervision, education, or guidance for a child unaccompanied by the child's parent' - relevant to residential programs. 29-04-03.1 and 29-04-03.2 (longer periods, clock starting at 15) cover only chapter 12.1-20 sexual offenses and trafficking. 29-04-04 stops the clock while the defendant is out of state."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the offense for aggravated assault and other felonies. Misdemeanor (simple) assault: two years.",
+      "citation": "N.D. Cent. Code 29-04-02 (felonies); 29-04-03 (misdemeanors); aggravated assault 12.1-17-02",
+      "source_url": "https://www.ndlegis.gov/cencode/t29c04.pdf",
+      "quote": "A prosecution of a misdemeanor or infraction, except as otherwise provided by law, must be commenced within two years after its commission.",
+      "confidence": "high",
+      "note": "Aggravated assault under 12.1-17-02 is a class C felony (3 years under 29-04-02). Time the defendant spends outside North Dakota is not counted (29-04-04)."
+    }
+  },
   "channels": [
     {
       "id": "nd-counselor-examiners-board",

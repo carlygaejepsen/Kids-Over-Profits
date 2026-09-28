@@ -3,6 +3,49 @@
   "abbr": "OR",
   "updated": "2026-09-22",
   "note": "Oregon's mental health licensing boards sit under one agency, the Mental Health Regulatory Agency, which investigates on its own initiative as well as on complaints - it names newspaper articles and broadcasts as a reason it will open a case, which is unusually explicit. Licensees in Oregon are themselves required to report a colleague they believe is in breach, which is worth knowing if you are a clinician who has seen something.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for assault, battery, false imprisonment or other injury, including negligence. Abuse suffered as a child has a much longer deadline (see below).",
+      "citation": "Or. Rev. Stat. § 12.110(1)",
+      "source_url": "https://www.oregonlegislature.gov/bills_laws/ors/ors012.html",
+      "quote": "An action for assault, battery, false imprisonment, or for any injury to the person or rights of another, not arising on contract, and not especially enumerated in this chapter, shall be commenced within two years",
+      "confidence": "high",
+      "note": "ORS 12.115 adds an outer limit of 10 years from the act for negligent injury claims. Read from the 2025 edition of ORS chapter 12."
+    },
+    "civil_minor_tolling": {
+      "summary": "For physical or serious emotional abuse by an adult while you were under 18, you can sue until you turn 40, or within five years after you realize the abuse caused your injury, whichever is later. For other injuries, being a minor pauses the clock only until one year after your 18th birthday, and never by more than five years.",
+      "citation": "Or. Rev. Stat. §§ 12.117(1)(a), 12.160",
+      "source_url": "https://www.oregonlegislature.gov/bills_laws/ors/ors012.html",
+      "quote": "An action based on conduct that constitutes child abuse or conduct allowing, permitting or encouraging child abuse that occurs while the person is under 18 years of age must be commenced before the person attains 40 years of age, or ... not more than five years from the date the person discovers",
+      "confidence": "high",
+      "note": "12.117(2)(a): 'Child abuse' means intentional conduct by an adult that results in any physical injury to a child, or mental injury causing 'observable and substantial impairment' of the child's ability to function caused by cruelty. It also covers 'conduct allowing, permitting or encouraging child abuse', which can reach a program that allowed staff abuse. General minority tolling, 12.160(2): 'may not be extended under subsection (1) of this section for more than five years, or for more than one year after the person attains 18 years of age, whichever occurs first.' Last amended 2025 c.447."
+    },
+    "civil_government_claims": {
+      "summary": "For claims against a state agency, county, city or other public body, a notice of claim is due within 180 days of the injury, and the lawsuit within two years. Youth in the custody of the Department of Human Services or the Oregon Youth Authority do not need to give the notice for claims against those agencies.",
+      "citation": "Or. Rev. Stat. § 30.275(2), (8), (9)",
+      "source_url": "https://www.oregonlegislature.gov/bills_laws/ors/ors030.html",
+      "quote": "(b) For all other claims, within 180 days after the alleged loss or injury.",
+      "confidence": "high",
+      "note": "The 180-day notice excludes up to 90 days during which the injured person could not give notice 'because of minority, incompetency or other incapacity.' 30.275(9): suit 'shall be commenced within two years after the alleged loss or injury', except as provided in ORS 12.120, 12.135 and 659A.875 and 'notwithstanding any other provision of ORS chapter 12'. Whether the 12.117 child abuse period overrides the two-year public-body limit is not settled by the text read here (12.117 is not in the listed exceptions)."
+    },
+    "criminal_child_abuse": {
+      "summary": "First-degree criminal mistreatment of a child (a felony) and felony strangulation: six years, or if the victim was under 18, before the victim turns 30 or within 12 years of a report to police or child welfare, whichever comes first. Other felony physical abuse such as assault: three years.",
+      "citation": "Or. Rev. Stat. § 131.125(3)(a)-(b), (8)",
+      "source_url": "https://www.oregonlegislature.gov/bills_laws/ors/ors131.html",
+      "quote": "may be commenced within six years after the commission of the crime or, if the victim at the time of the crime was under 18 years of age, anytime before the victim attains 30 years of age or within 12 years after the offense is reported to a law enforcement agency or the Department of Human ...",
+      "confidence": "medium",
+      "note": "Covers Criminal mistreatment in the first degree (ORS 163.205) and felony strangulation (ORS 163.187(4)). Felony assault of a child that is not charged as one of those crimes falls under the general three-year felony period (131.125(8)(a)). Misdemeanor strangulation of a child: before age 22 or within 4 years of a report, whichever first (131.125(4)). How 'whichever occurs first' interacts with the six-year base period is not spelled out in the text."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years for felony assault. Misdemeanor assault must be charged within two years.",
+      "citation": "Or. Rev. Stat. § 131.125(8)",
+      "source_url": "https://www.oregonlegislature.gov/bills_laws/ors/ors131.html",
+      "quote": "prosecutions for other offenses must be commenced within the following periods of limitations after their commission: (a) For any other felony, three years. (b) For any misdemeanor, two years.",
+      "confidence": "high",
+      "note": "If the offense is based on misconduct in office by a public employee, 131.125(9)(b) can extend it up to three more years. Last amended 2023."
+    }
+  },
   "channels": [
     {
       "id": "or-mental-health-regulatory-agency",

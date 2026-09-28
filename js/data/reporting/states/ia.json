@@ -3,6 +3,49 @@
   "abbr": "IA",
   "updated": "2026-09-22",
   "note": "Iowa runs a separate number for abuse suspected inside a licensed facility or program, distinct from the general child abuse hotline - use it if what happened was inside a program. Iowa also folded its Board of Psychology into the Board of Behavioral Health Professionals in 2024, so one board now covers psychologists along with counselors and social workers. And the Iowa Office of Ombudsman covers both the licensing boards and Health and Human Services, which makes it the escalation route when either one stalls.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for any personal injury claim, including assault, battery, false imprisonment and negligence.",
+      "citation": "Iowa Code § 614.1(2)",
+      "source_url": "https://www.legis.iowa.gov/docs/code/614.1.pdf",
+      "quote": "2. Injuries to person or reputation - relative rights - statute penalty. Those founded on injuries to the person or reputation, including injuries to relative rights, whether based on contract or tort, or for a statute penalty, within two years.",
+      "confidence": "high",
+      "note": "One period for intentional torts and negligence. 2026 Iowa Acts, SF 512 (effective July 1, 2026) adds that nothing in § 614.1 alters the law on when a claim accrues, 'including the discovery rule' (per the Legislative Services Agency 2026 Summary of Legislation, https://www.legis.iowa.gov/docs/publications/SOL/1611625.pdf); the bill text itself was not read."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. As of July 1, 2026, someone injured as a child has until five years after turning 18 (age 23) to sue. Before that change the extension was only one year after turning 18. It also applies to claims against the state and local governments.",
+      "citation": "Iowa Code § 614.8(2), as amended by 2026 Iowa Acts, HF 1036, § 5 (effective July 1, 2026)",
+      "source_url": "https://www.legis.iowa.gov/docs/publications/LGE/91/HF1036.pdf",
+      "quote": "the times limited for actions in this chapter, or chapter 216, 659A, 669, or 670, except those brought for penalties and forfeitures, are extended in favor of minors, so that they shall have one year five years from and after attainment of majority",
+      "confidence": "medium",
+      "note": "The quote is from the enrolled bill, where 'one year' is struck and 'five years' inserted (strike-through formatting is lost in text extraction; the LSA 2026 summary table lists § 614.8(2) as amended by HF 1036 § 5, signed May 15, 2026, effective July 1, 2026). The Iowa Code 2026 compilation on the code site (https://www.legis.iowa.gov/docs/code/614.8.pdf) still reads 'one year' because it predates the Act. The Act does not say whether it revives claims already expired under the one-year rule. No general discovery rule for non-sexual abuse; § 614.8A covers sexual abuse and human trafficking only."
+    },
+    "civil_government_claims": {
+      "summary": "Against the State of Iowa, a written claim must be filed with the Department of Management within two years; the State cannot be sued for assault, battery or false imprisonment. Against a city, county or school district, the lawsuit must be filed within two years of the injury. Minors get the extension described above in both cases.",
+      "citation": "Iowa Code §§ 669.13(1), 669.14(4), 670.5",
+      "source_url": "https://www.legis.iowa.gov/docs/code/669.13.pdf",
+      "quote": "Except as provided in section 614.8, a claim or suit otherwise permitted under this chapter shall be forever barred, unless within two years after the claim accrued, the claim is made in writing and filed with the director of the department of management",
+      "confidence": "high",
+      "note": "§ 669.14(4) excludes 'Any claim arising out of assault, battery, false imprisonment'. § 670.5 (municipalities, https://www.legis.iowa.gov/docs/code/670.5.pdf): 'shall commence an action therefor within two years after the alleged wrongful death, loss, or injury', with no separate notice requirement."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony child endangerment against a child under 18 (causing bodily injury, serious injury or death) can be charged at any time; there is no deadline. Misdemeanor child endangerment must be charged within 3 years.",
+      "citation": "Iowa Code § 802.2B(6); § 726.6(5)-(7); § 802.3",
+      "source_url": "https://www.legis.iowa.gov/docs/code/802.2B.pdf",
+      "quote": "An information or indictment for the following offenses committed on or with a person who is under the age of eighteen years may be commenced at any time after the commission of the offense: ... 6. Child endangerment in violation of section 726.6, subsection 5, 6, or 7.",
+      "confidence": "medium",
+      "note": "Before July 1, 2026: § 726.6(5) (death, class B), (6) (serious injury, class C), (7) (bodily injury, class D). Child endangerment covers a 'person having custody or control over a child', which § 726.6(4) defines to include a person who 'has accepted, undertaken, or assumed supervision of a child ... from the parent or guardian', which fits program staff. Aggravated-misdemeanor child endangerment (§ 726.6(8)) falls under § 802.3's 3 years. 2026 Iowa Acts HF 2360 (effective July 1, 2026; enrolled text https://www.legis.iowa.gov/docs/publications/LGE/91/HF2360.pdf) added a definition as new subsection 1 and renumbered the penalty subsections: death is now (6), serious injury (7), bodily injury (8). HF 2360 did not amend § 802.2B, which still cites 'subsection 5, 6, or 7'. The Iowa Code editor normally updates such internal references, but until the 2027 Code is published, confirm that bodily-injury child endangerment (now (8)) is still covered by the no-limit rule. § 802.2B last amended 2021 Iowa Acts ch. 102."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault (for example, assault causing serious injury) must be charged within 3 years. Iowa uses the same 3 years for aggravated and serious misdemeanor assault; simple misdemeanor assault must be charged within 1 year.",
+      "citation": "Iowa Code §§ 802.3, 802.4, 708.2",
+      "source_url": "https://www.legis.iowa.gov/docs/code/802.3.pdf",
+      "quote": "In all cases, except those enumerated in section 802.1, 802.2, 802.2A, 802.2B, 802.2C, 802.2D, 802.2E, 802.2F, 802.2G, or 802.10, an indictment or information for a felony or aggravated or serious misdemeanor shall be found within three years after its commission.",
+      "confidence": "high",
+      "note": "§ 708.2(5): assault causing serious injury is a class D felony; (1) and (3) aggravated misdemeanors; (2) serious misdemeanor; (7) simple misdemeanor. § 802.4: simple misdemeanor 'within one year'. § 802.6: time out of state is excluded. 2026 Iowa Acts SF 2218 amended § 802.3 only to add a new § 802.2H (election misconduct)."
+    }
+  },
   "channels": [
     {
       "id": "ia-behavioral-health-professionals-board",

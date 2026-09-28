@@ -3,6 +3,49 @@
   "abbr": "ID",
   "updated": "2026-09-22",
   "note": "Idaho has a trap worth knowing before you pick up the phone. The child protection division's role is limited to what happens in a family home: where the person who harmed a child does not live with them, as in any residential program, the report is forwarded to law enforcement instead of being investigated by child protection. So for abuse inside a program, the police and the licensing division are the substantive channels, and the hotline is the way in rather than the destination.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for a personal injury claim, including negligence, and two years for assault, battery or false imprisonment. The clock starts when the harm happens, not when it is discovered. A child physically injured under Idaho's injury-to-a-child law has a longer, separate deadline (see the minors section).",
+      "citation": "Idaho Code § 5-219(4), (5)",
+      "source_url": "https://legislature.idaho.gov/statutesrules/idstat/Title5/T5CH2/SECT5-219/",
+      "quote": "Within two (2) years: ... 4. An action to recover damages for professional malpractice, or for an injury to the person ... 5. An action for libel, slander, assault, battery, false imprisonment or seduction.",
+      "confidence": "high",
+      "note": "§ 5-219(4) says the claim accrues 'as of the time of the occurrence, act or omission complained of' and is not extended by continuing damages; discovery applies only to foreign objects or fraudulent concealment by a professional."
+    },
+    "civil_minor_tolling": {
+      "summary": "For a child hurt by physical abuse that counts as the crime of injury to a child, the lawsuit can be filed up to 5 years after turning 18, or within 5 years of discovering the abuse and its link to the injury, whichever is later. That claim can also be brought against the abuser's employer. For other injuries, being a minor pauses the two-year clock, but for no more than 6 years.",
+      "citation": "Idaho Code §§ 6-1701(1)(d), (2); 6-1704(1); 5-230",
+      "source_url": "https://legislature.idaho.gov/statutesrules/idstat/Title6/T6CH17/SECT6-1704/",
+      "quote": "an action under the provisions of this chapter must be commenced within five (5) years from the date that an aggrieved child reaches the age of eighteen (18) years or ... within five (5) years of the time the child discovers or reasonably should have discovered the act, abuse or exploitation",
+      "confidence": "high",
+      "note": "§ 6-1701(1)(d) (https://legislature.idaho.gov/statutesrules/idstat/Title6/T6CH17/SECT6-1701/) lets a child sue anyone who has 'Injured a child as defined in section 18-1501', which is Idaho's physical child abuse crime, so this is not limited to sexual abuse. § 6-1701(2) allows a common-law action against the employer where the act involves employment-related circumstances under § 6-1607(2). General tolling, § 5-230 (https://legislature.idaho.gov/statutesrules/idstat/Title5/T5CH2/SECT5-230/): 'the time limited for the commencement of an action shall not be tolled for a period of more than six (6) years on account of minority'."
+    },
+    "civil_government_claims": {
+      "summary": "A written claim must be filed within 180 days (with the Secretary of State for the state, or the clerk for a county or city), and the lawsuit within 2 years. Minors get until 180 days after turning 18 (or 6 years, whichever is earlier), and child-abuse claims follow the 5-years-after-18 rule. Governments cannot be sued for assault, battery or false imprisonment by employees acting without malice or criminal intent.",
+      "citation": "Idaho Code §§ 6-905, 6-906, 6-906A, 6-911, 6-904(3)",
+      "source_url": "https://legislature.idaho.gov/statutesrules/idstat/Title6/T6CH9/SECT6-906A/",
+      "quote": "(2) For any claim filed by or on behalf of a minor against a governmental entity or its employee in a child abuse case, as described in section 6-1701, Idaho Code, such claim shall be filed in accordance with the provisions of section 6-1704, Idaho Code.",
+      "confidence": "high",
+      "note": "§ 6-905/6-906: claim filed 'within one hundred eighty (180) days from the date the claim arose or reasonably should have been discovered'. § 6-911: action 'within two (2) years after the date the claim arose or reasonably should have been discovered'. § 6-906A(1) minors: '180 days after said person reaches the age of majority or six (6) years ... whichever is earlier'; subsection (2) added 2023, ch. 178. § 6-904(3) immunity for assault, battery, false imprisonment applies only to employees acting 'without malice or criminal intent'."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony injury to a child (causing or permitting a child to suffer physical pain or injury in conditions likely to cause great bodily harm or death) must be charged within 5 years. Misdemeanor injury to a child must be charged within 1 year. The clock is not paused until the child turns 18.",
+      "citation": "Idaho Code §§ 19-402, 19-403(1), 18-1501",
+      "source_url": "https://legislature.idaho.gov/statutesrules/idstat/Title19/T19CH4/SECT19-402/",
+      "quote": "A prosecution for any felony other than those specified in section 19-401, Idaho Code, must be commenced by the filing of the complaint or the finding of an indictment within five (5) years after its commission",
+      "confidence": "high",
+      "note": "§ 18-1501(1) (felony, up to 10 years) vs. (2) (misdemeanor). No-limit offenses in § 19-401 are murder, voluntary manslaughter and sex offenses, not physical child abuse (§ 19-401 last amended 2026, ch. 191). Failure to report child abuse (§ 16-1605) has 4 years (§ 19-403(2))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault or battery (for example aggravated assault or aggravated battery) must be charged within 5 years. Misdemeanor assault or battery must be charged within 1 year.",
+      "citation": "Idaho Code §§ 19-402, 19-403(1)",
+      "source_url": "https://legislature.idaho.gov/statutesrules/idstat/Title19/T19CH4/SECT19-402/",
+      "quote": "must be commenced by the filing of the complaint or the finding of an indictment within five (5) years after its commission",
+      "confidence": "high",
+      "note": "§ 19-403(1): 'a prosecution for any misdemeanor must be commenced ... within one (1) year after its commission.' Aggravated assault (§ 18-905) and aggravated battery (§ 18-907) are felonies; those sections were not re-read."
+    }
+  },
   "channels": [
     {
       "id": "id-dopl",

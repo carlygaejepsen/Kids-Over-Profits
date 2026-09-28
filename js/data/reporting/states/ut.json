@@ -3,6 +3,49 @@
   "abbr": "UT",
   "updated": "2026-09-22",
   "note": "Utah licenses every mental health profession through one division, DOPL, so a complaint about a therapist, a psychologist, a counselor or a psychiatrist all start in the same place. It is also one of the few states with an ombuds office written specifically for young people in residential programs, and that office takes calls from the youth themselves.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Four years from the injury for physical injury, including assault, battery and negligence. False imprisonment has a shorter deadline: one year.",
+      "citation": "Utah Code § 78B-2-307(4) (four-year catch-all); Utah Code § 78B-2-302(4) (one year for false imprisonment)",
+      "source_url": "https://le.utah.gov/xcode/Title78B/Chapter2/C78B-2-S307_2023050320230503.html",
+      "quote": "An action may be brought within four years: ... (4) for relief not otherwise provided for by law. [78B-2-302: An action may be brought within one year: ... (4) for libel, slander, false imprisonment, or seduction;]",
+      "confidence": "medium",
+      "note": "Utah has no statute that names personal injury or negligence, so these claims fall under the four-year catch-all in 78B-2-307(4) (it was subsection (3) before a 2023 amendment). Assault and battery are NOT in the current one-year list in 78B-2-302 (read at https://le.utah.gov/xcode/Title78B/Chapter2/C78B-2-S302_2017050920170509.html). Only libel, slander, false imprisonment and seduction are. So the common claim that Utah has a one-year deadline for assault and battery looks out of date. A 2005 bill (HB 204) changed the assault and battery period. Claims against a licensed health care provider fall under the separate Utah Health Care Malpractice Act and were not researched here."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18. For someone injured as a child, the deadline (four years, or one year for false imprisonment) starts at 18. Utah has no longer deadline for physical abuse of a child. The longer child abuse deadline in § 78B-2-308 covers sexual abuse only.",
+      "citation": "Utah Code § 78B-2-108",
+      "source_url": "https://le.utah.gov/xcode/Title78B/Chapter2/C78B-2-S108_2021050520210505.html",
+      "quote": "(2) During the time that an individual is underage or mentally incompetent, the statute of limitations for a cause of action other than for the recovery of real property may not run.",
+      "confidence": "high",
+      "note": "Utah Code § 78B-2-308 (childhood abuse, discovery rule, revival window) defines 'sexual abuse' only and does not cover non-sexual physical abuse. There is no cap on minority tolling in the text of § 78B-2-108."
+    },
+    "civil_government_claims": {
+      "summary": "To sue the state, a county, a city or their employees, you must file a written notice of claim within one year after the claim arises. You must then file the lawsuit within two years after the claim arises, and not sooner than 60 days after the notice.",
+      "citation": "Utah Code §§ 63G-7-401, 63G-7-402, 63G-7-403 (Governmental Immunity Act of Utah)",
+      "source_url": "https://le.utah.gov/xcode/Title63G/Chapter7/C63G-7-S402_1800010118000101.html",
+      "quote": "A claim against a governmental entity, or against an employee for an act or omission occurring during the performance of the employee's duties ... is barred unless notice of claim is filed ... within one year after the claim arises",
+      "confidence": "medium",
+      "note": "63G-7-403(2)(b) (amended 2025): 'a claimant shall commence the action within two years after the claim arises' (read at https://le.utah.gov/xcode/Title63G/Chapter7/C63G-7-S403_2025070120250507.html). Under 63G-7-401(2)(a) the claim 'arises when the statute of limitations that would apply if the claim were against a private person begins to run', which suggests minority tolling may also delay the notice deadline. That reading is not confirmed. Survivors should not rely on it without a lawyer."
+    },
+    "criminal_child_abuse": {
+      "summary": "Four years from the abuse for felony child abuse. Misdemeanor child abuse: two years. Utah does not pause the criminal clock until the child turns 18 for non-sexual physical abuse. Child abuse homicide can be charged at any time.",
+      "citation": "Utah Code § 76-1-302(1); Utah Code § 76-1-301(2)(e) (child abuse homicide, no limit)",
+      "source_url": "https://le.utah.gov/xcode/Title76/Chapter1/C76-1-S302_2026050620260506.html",
+      "quote": "(1) Except as otherwise provided by Subsection (2) or another provision of the Utah Code, a prosecution for: (a) a felony or negligent homicide shall be commenced within four years after it is committed; (b) a misdemeanor other than negligent homicide shall be commenced within two years",
+      "confidence": "high",
+      "note": "Checked 76-1-301, 301.1, 301.5, 302 (amended 2026), 303 and 304. None extends the period for non-sexual child abuse (76-5-109). Under 76-1-304 the clock does not run while the defendant is out of state. Under 76-1-303(3), misconduct by a public employee can extend the period by up to 3 years."
+    },
+    "criminal_felony_assault": {
+      "summary": "Four years from the assault for felony (aggravated) assault. Misdemeanor assault: two years.",
+      "citation": "Utah Code § 76-1-302(1)",
+      "source_url": "https://le.utah.gov/xcode/Title76/Chapter1/C76-1-S302_2026050620260506.html",
+      "quote": "a prosecution for: (a) a felony or negligent homicide shall be commenced within four years after it is committed; (b) a misdemeanor other than negligent homicide shall be commenced within two years after it is committed",
+      "confidence": "high",
+      "note": "Aggravated kidnapping and child kidnapping can be charged at any time (76-1-301). The clock does not run while the defendant is out of state (76-1-304)."
+    }
+  },
   "channels": [
     {
       "id": "ut-dopl",

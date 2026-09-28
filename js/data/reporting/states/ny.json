@@ -3,6 +3,49 @@
   "abbr": "NY",
   "updated": "2026-09-22",
   "note": "New York has something most states do not: the Justice Center for the Protection of People with Special Needs, created by statute in 2013, with its own 24-hour register, its own investigators and the power to support criminal prosecution. It says every allegation is investigated to conclusion, and it provides advocates to victims and families during the investigation. If the program is a New York state-operated, licensed or certified facility, this is the strongest channel in the state.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year for intentional harm: assault, battery and false imprisonment. Three years for negligence (for example, a program's negligent supervision or hiring). If the person who hurt you is criminally prosecuted, you get at least one year after the criminal case ends to sue them.",
+      "citation": "N.Y. C.P.L.R. 215(3) (intentional torts, 1 year); 214(5) (personal injury/negligence, 3 years); 215(8)(a) (criminal-action extension)",
+      "source_url": "https://www.nysenate.gov/legislation/laws/CVP/215",
+      "quote": "The following actions shall be commenced within one year: ... 3. an action to recover damages for assault, battery, false imprisonment, malicious prosecution, libel, slander, false words causing special damages, or a violation of the right of privacy",
+      "confidence": "high",
+      "note": "CPLR 214(5) (https://www.nysenate.gov/legislation/laws/CVP/214): 'an action to recover damages for a personal injury except as provided in sections 214-b, 214-c, 214-i and 215' - three years. 215(8)(a): where a criminal action is commenced against the same defendant for the same event, the plaintiff has 'at least one year from the termination of the criminal action'. 215(9): injury from domestic violence has two years (not usually relevant to programs). Child sexual abuse claims have separate rules (CPLR 208(b), 214-g), not covered here."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. For a one-year claim (assault, battery), the time you were under 18 is not counted, so the deadline is your 19th birthday. For a three-year negligence claim, you have three years after turning 18 (your 21st birthday). The 10-year cap in this statute does not apply to minors except in medical malpractice. No general extended period for physical (non-sexual) child abuse.",
+      "citation": "N.Y. C.P.L.R. 208(a)",
+      "source_url": "https://www.nysenate.gov/legislation/laws/CVP/208",
+      "quote": "the time within which the action must be commenced shall be extended to three years after the disability ceases ... if the time otherwise limited is less than three years, the time shall be extended by the period of disability.",
+      "confidence": "high",
+      "note": "Same subsection: 'shall not be extended by this provision beyond ten years after the cause of action accrues, except, in any action other than for medical, dental or podiatric malpractice, where the person was under a disability due to infancy.' So the 10-year cap does NOT limit a minor's assault or negligence claim (the task brief's example of a '10-year infancy toll cap' applies only to malpractice or to insanity). Infancy for CPLR purposes means under 18 (CPLR 105(j); definition not re-read for this research)."
+    },
+    "civil_government_claims": {
+      "summary": "Against a county, city, town, village or school district: serve a notice of claim within 90 days and sue within one year and 90 days. Against New York State (Court of Claims): file the claim, or a notice of intention to file, within 90 days; then the claim is due within two years for negligence or one year for intentional torts. Minors get extra time under the tolling rules.",
+      "citation": "N.Y. Gen. Mun. Law 50-e(1)(a), 50-i(1)(c); N.Y. Ct. Cl. Act 10(3), 10(3-b), 10(5)",
+      "source_url": "https://www.nysenate.gov/legislation/laws/GMU/50-I",
+      "quote": "(c) the action or special proceeding shall be commenced within one year and ninety days after the happening of the event upon which the claim is based",
+      "confidence": "medium",
+      "note": "50-e(1)(a) (https://www.nysenate.gov/legislation/laws/GMU/50-E, revision of 2026-02-20): notice of claim 'within ninety days after the claim arises'; courts may allow late notice under 50-e(5). Court of Claims Act 10(3) negligence: 90 days, or notice of intention then 'within two years after the accrual'; 10(3-b) intentional torts: 90 days, or notice of intention then 'within one year after the accrual'; 10(5): 'If the claimant shall be under legal disability, the claim may be presented within two years after such disability is removed.' (https://www.nysenate.gov/legislation/laws/CTC/10). CPLR 208 infancy tolling applies to the 50-i period, but the interaction with the 90-day notice (late-notice motion) is fact-specific; confidence medium for that reason. 'years' is 1.25 for the 1 year 90 days local-government period."
+    },
+    "criminal_child_abuse": {
+      "summary": "Five years from the offense for felony physical abuse of a child (charged as felony assault). Endangering the welfare of a child is a misdemeanor: two years. The clock does not pause until the child is older for physical abuse; the age-23 rule applies only to sexual offenses, incest and child sexual performance.",
+      "citation": "N.Y. Crim. Proc. Law 30.10(2)(b), (2)(c), (3)(f)",
+      "source_url": "https://www.nysenate.gov/legislation/laws/CPL/30.10",
+      "quote": "(b) A prosecution for any other felony must be commenced within five years after the commission thereof; (c) A prosecution for a misdemeanor must be commenced within two years after the commission thereof",
+      "confidence": "high",
+      "note": "New York has no stand-alone felony 'child abuse' crime; physical abuse is charged as assault (Penal Law 120.05, 120.10) or similar, and endangering the welfare of a child (Penal Law 260.10) is a class A misdemeanor. 30.10(3)(f) delays the start to age 23 (or report) only for 'a sexual offense as defined in article one hundred thirty' and related incest/sexual performance crimes. Time the defendant is continuously out of state or whereabouts unknown is excluded, up to five extra years (30.10(4)(a)). Class A felonies have no limit (30.10(2)(a))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years from the offense for felony assault (first- or second-degree). Misdemeanor (third-degree) assault: two years.",
+      "citation": "N.Y. Crim. Proc. Law 30.10(2)(b), (2)(c)",
+      "source_url": "https://www.nysenate.gov/legislation/laws/CPL/30.10",
+      "quote": "(b) A prosecution for any other felony must be commenced within five years after the commission thereof; (c) A prosecution for a misdemeanor must be commenced within two years after the commission thereof",
+      "confidence": "high",
+      "note": "Current text is the 2024-07-26 revision on nysenate.gov. Class A felonies (e.g., some assault-related homicide-level offenses) may be commenced at any time."
+    }
+  },
   "channels": [
     {
       "id": "ny-office-professional-discipline",

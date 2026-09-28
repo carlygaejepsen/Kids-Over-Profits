@@ -3,6 +3,49 @@
   "abbr": "MT",
   "updated": "2026-09-22",
   "note": "Montana licenses these programs under their own category - Private Alternative Adolescent Residential or Outdoor Programs - so there is a regulator whose job is specifically this industry. Oversight moved in 2019: the legislature dissolved the old PAARP board at the Department of Labor and gave licensing to DPHHS, which has since revoked a program's licence outright. Complaints to the Licensure Bureau are always anonymous, and the corrective actions it imposes are published.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for assault, battery or false imprisonment. Negligence and other personal injury claims have three years.",
+      "citation": "Mont. Code Ann. § 27-2-204(1), (3)",
+      "source_url": "https://mca.legmt.gov/bills/mca/title_0270/chapter_0020/part_0020/section_0040/0270-0020-0020-0040.html",
+      "quote": "(1) Except as provided in 27-2-216, the period prescribed for the commencement of an action upon a liability not founded upon an instrument in writing is within 3 years. ... (3) The period prescribed for the commencement of an action for libel, slander, assault, battery, false imprisonment, or seduction is within 2 years.",
+      "confidence": "high",
+      "note": "Montana Code Annotated 2025. A version effective October 1, 2026 (Ch. 709, L. 2025) adds an exception for § 27-2-219 (gender transition treatment claims) but does not change the 2- and 3-year periods. Montana's accrual/discovery rule (§ 27-2-102) was not read."
+    },
+    "civil_minor_tolling": {
+      "summary": "The time while the injured person is a minor does not count, so the clock starts at 18: assault or battery claims by the 20th birthday, negligence claims by the 21st. There is no longer deadline for non-sexual physical abuse of a child.",
+      "citation": "Mont. Code Ann. § 27-2-401(1)",
+      "source_url": "https://mca.legmt.gov/bills/mca/title_0270/chapter_0020/part_0040/section_0010/0270-0020-0040-0010.html",
+      "quote": "If a person entitled to bring an action mentioned in part 2, except 27-2-211(3), is, at the time the cause of action accrues, either a minor or has been committed pursuant to 53-21-127, the time of the disability is not a part of the time limit for commencing the action.",
+      "confidence": "high",
+      "note": "No cap on minority tolling (the 5-year cap applies only to commitment). § 27-2-216 (to age 27 or 3 years from discovery) covers childhood sexual abuse only."
+    },
+    "civil_government_claims": {
+      "summary": "A claim against the State must first be presented in writing to the Department of Administration, which has 120 days to decide (the deadline to sue pauses for those 120 days); claims against a county or city are filed with its clerk. The ordinary 2- or 3-year periods still apply.",
+      "citation": "Mont. Code Ann. § 2-9-301",
+      "source_url": "https://mca.legmt.gov/bills/mca/title_0020/chapter_0090/part_0030/section_0010/0020-0090-0030-0010.html",
+      "quote": "A complaint based on a claim subject to the provisions of subsection (1) may not be filed in district court unless the claimant has first presented the claim to the department of administration and the department has finally denied the claim. ... Upon the department's receipt of the claim, the statute of limitations on the claim is tolled for 120 days.",
+      "confidence": "medium",
+      "note": "No separate short notice deadline was found in § 2-9-301; the claim must simply be presented before suing and within the normal limitations period."
+    },
+    "criminal_child_abuse": {
+      "summary": "Five years from the crime for felony assault on a minor (victim under 14, offender an adult) or other felony child abuse. Misdemeanor child endangerment: one year. The clock does not wait until the child turns 18.",
+      "citation": "Mont. Code Ann. § 45-1-205(2); Mont. Code Ann. § 45-5-212",
+      "source_url": "https://mca.legmt.gov/bills/mca/title_0450/chapter_0010/part_0020/section_0050/0450-0010-0020-0050.html",
+      "quote": "(2) Except as provided in subsection (7)(b) or as otherwise provided by law, prosecutions for other offenses are subject to the following periods of limitation: (a) A prosecution for a felony must be commenced within 5 years after it is committed. (b) A prosecution for a misdemeanor must be commenced within 1 year after it is committed.",
+      "confidence": "high",
+      "note": "Assault on a minor (§ 45-5-212) is punished by imprisonment 'in a state prison for a term not to exceed 5 years' (up to 40 years for very young victims), so it is a felony. Endangering the welfare of children (§ 45-5-622) covers a 'parent, guardian, or other person supervising the welfare of a child'; the basic offense is a misdemeanor ('imprisoned in the county jail for any term not to exceed 6 months', § 45-5-622(6)(a)), so one year; the felony tier in § 45-5-622(6)(b) applies to subsection (3), which covers specific conduct (drug-related exposure, among others) not read in full. The no-limit rule for victims under 18 (§ 45-1-205(1)(c)) covers sex offenses only. The period does not run while the offender lives outside Montana (§ 45-1-206(1))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years from the crime for aggravated assault or any other felony. Misdemeanor assault: one year.",
+      "citation": "Mont. Code Ann. § 45-1-205(2)",
+      "source_url": "https://mca.legmt.gov/bills/mca/title_0450/chapter_0010/part_0020/section_0050/0450-0010-0020-0050.html",
+      "quote": "(a) A prosecution for a felony must be commenced within 5 years after it is committed. (b) A prosecution for a misdemeanor must be commenced within 1 year after it is committed.",
+      "confidence": "high",
+      "note": "Excluded periods: offender not resident in Montana, or a pending prosecution for the same conduct (§ 45-1-206)."
+    }
+  },
   "channels": [
     {
       "id": "mt-behavioral-health-boards",

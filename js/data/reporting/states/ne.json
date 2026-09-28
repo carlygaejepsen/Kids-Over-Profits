@@ -3,6 +3,49 @@
   "abbr": "NE",
   "updated": "2026-09-22",
   "note": "Nebraska has an Office of Inspector General of Nebraska Child Welfare that sits in the legislature rather than in the department it scrutinises, and takes complaints directly. That independence matters when the concern is that the agency itself is not acting. Nebraska also says its hotline reports are confidential and are not shared with the family.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Four years for personal injury, including assault, battery, false imprisonment and negligence. (Nebraska used to have a one-year limit for assault and battery, but it was removed in 2000.)",
+      "citation": "Neb. Rev. Stat. 25-207(3)",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=25-207",
+      "quote": "The following actions can only be brought within four years: ... (3) an action for an injury to the rights of the plaintiff, not arising on contract, and not hereinafter enumerated",
+      "confidence": "medium",
+      "note": "25-208 (https://nebraskalegislature.gov/laws/statutes.php?statute=25-208) now lists only libel/slander (1 year) and malpractice (2 years); it says 'The changes made to this section by Laws 2000, LB 921, shall apply to causes of action accruing on and after July 13, 2000.' Assault, battery and false imprisonment are therefore governed by the four-year catch-all for claims accruing on or after July 13, 2000. Older claims (before July 13, 2000) had a one-year limit. Claims against a staff member who is a licensed professional could be argued to be 'malpractice' (2 years)."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were a minor when hurt, the clock does not start until the disability ends. Nebraska courts read the statute's 'within the age of twenty years' to mean until your 21st birthday, so the four-year limit usually runs to age 25. There is no general extended deadline for physical (non-sexual) child abuse.",
+      "citation": "Neb. Rev. Stat. 25-213",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=25-213",
+      "quote": "is, at the time the cause of action accrued, within the age of twenty years, a person with a mental disorder, or imprisoned, every such person shall be entitled to bring such action within the respective times limited by Chapter 25 after such disability is removed.",
+      "confidence": "medium",
+      "note": "The 'until 21' reading comes from the annotations on the Legislature's page citing Lawson v. Ford Motor Co., 225 Neb. 725 (1987) and Carruth v. State, 271 Neb. 433 (2006). 25-213 expressly also applies to the State Tort Claims Act and the Political Subdivisions Tort Claims Act, so the toll carries over to government claims. Nebraska's age of majority is 19, which is why this wording confuses people."
+    },
+    "civil_government_claims": {
+      "summary": "State of Nebraska: a written claim must be filed with the Risk Manager within two years. Counties, cities, school districts and other political subdivisions: a written claim within one year and a lawsuit within two years. For minors these deadlines are tolled under 25-213.",
+      "citation": "Neb. Rev. Stat. 81-8,227 (State Tort Claims Act); 13-919 (Political Subdivisions Tort Claims Act)",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=13-919",
+      "quote": "Every claim against a political subdivision permitted under the Political Subdivisions Tort Claims Act shall be forever barred unless within one year after such claim accrued the claim is made in writing to the governing body.",
+      "confidence": "high",
+      "note": "81-8,227 (https://nebraskalegislature.gov/laws/statutes.php?statute=81-8,227): state claims barred 'unless within two years after such claim accrued the claim is made in writing to the Risk Manager'. Both acts say they and 25-213 are the only limitation statutes that apply. 13-920 requires the same one-year written claim before suing an individual political-subdivision employee."
+    },
+    "criminal_child_abuse": {
+      "summary": "For child abuse (felony or misdemeanor) when the child was under 16: seven years from the abuse or seven years from the child's 16th birthday, whichever is later. If the child was 16 or 17, the general limits apply (three years for a felony, 18 months for a misdemeanor).",
+      "citation": "Neb. Rev. Stat. 29-110(3); offense at 28-707",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=29-110",
+      "quote": "no person shall be prosecuted for kidnapping under section 28-313, false imprisonment under section 28-314 or 28-315, child abuse under section 28-707 ... when the victim is under sixteen years of age at the time of the offense (a) unless the indictment ... within seven years",
+      "confidence": "medium",
+      "note": "28-707 child abuse includes 'cruelly confined or cruelly punished' and ranges from a Class I misdemeanor to a Class IB felony. The same seven-year rule covers false imprisonment (28-314, 28-315) of a child under 16, relevant to seclusion. Confidence is medium only because the 'under sixteen' condition could be read to attach to the last-listed offense; the Legislature's text places it after all listed offenses, which I read as applying to all of them. Last amended by Laws 2025, LB383."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the offense for felony assault (first- and second-degree assault). Misdemeanor (third-degree) assault: 18 months.",
+      "citation": "Neb. Rev. Stat. 29-110(1), (2); assault offenses 28-308 to 28-310",
+      "source_url": "https://nebraskalegislature.gov/laws/statutes.php?statute=29-110",
+      "quote": "no person shall be prosecuted for any felony unless the indictment is found by a grand jury within three years next after the offense has been done or committed",
+      "confidence": "high",
+      "note": "Misdemeanors: 'within one year and six months from the time of committing the offense' (29-110(2)). The time limits do not apply to anyone fleeing from justice (29-110(13))."
+    }
+  },
   "channels": [
     {
       "id": "ne-dhhs-office-of-investigations",

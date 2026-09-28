@@ -31,6 +31,7 @@ const STATES_DIR = path.join(DATA_DIR, 'states');
 const NATIONAL_FILE = path.join(DATA_DIR, 'national.json');
 const OUTPUT_FILE = path.join(DATA_DIR, 'directory.json');
 const QA_FILE = path.join(ROOT, 'tmp', 'reporting-qa.md');
+const CHILDUSA_FILE = path.join(DATA_DIR, 'childusa-sol.json');
 
 /* The four things a reader is actually choosing between. The order here is
  * the order the page renders them in, and it is deliberate: a licensing board
@@ -75,6 +76,19 @@ const PROFESSIONS = [
 ];
 
 const ANONYMOUS = ['allowed', 'discouraged', 'not-allowed', 'unknown'];
+
+/* The deadlines researched per state, in the order the page shows them. Child
+ * sexual abuse is not here: it comes from CHILD USA's tracker
+ * (childusa-sol.json, scripts/pull-childusa-sol.js), which follows each
+ * legislature more closely than we could. */
+const DEADLINE_FIELDS = [
+    { key: 'civil_injury', group: 'civil', label: 'Physical abuse or injury' },
+    { key: 'civil_minor_tolling', group: 'civil', label: 'If it happened before you turned 18' },
+    { key: 'civil_government_claims', group: 'civil', label: 'If the program was run by or for the government' },
+    { key: 'criminal_child_abuse', group: 'criminal', label: 'Physical child abuse' },
+    { key: 'criminal_felony_assault', group: 'criminal', label: 'Assault' }
+];
+const CONFIDENCE = ['high', 'medium', 'low'];
 
 const STATES = {
     AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California',
@@ -336,8 +350,104 @@ function loadStateFile(file) {
         slug: STATES[abbr].toLowerCase().replace(/[^a-z0-9]+/g, '-'),
         updated: data.updated,
         note: data.note || undefined,
+        deadlines: normalizeStateDeadlines(data.deadlines, abbr),
         channels
     };
+}
+
+/**
+ * A state's researched deadlines. Each one must carry the statute's citation,
+ * the page its text was read on and a verbatim quote, so a reviewer can check
+ * the summary against the law without redoing the research. A field marked
+ * low confidence stays in the state file for the next reviewer but is not
+ * published: a wrong deadline can stop somebody filing.
+ */
+function normalizeStateDeadlines(raw, abbr) {
+    const where = `${abbr}/deadlines`;
+    if (raw === undefined) {
+        warn(where, 'no researched deadlines yet');
+        return undefined;
+    }
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+        fail(where, 'must be an object');
+        return undefined;
+    }
+    if (!isIsoDate(raw.verified_on)) {
+        fail(where, `verified_on must be YYYY-MM-DD - got ${JSON.stringify(raw.verified_on)}`);
+    } else if (daysSince(raw.verified_on) > 365) {
+        warn(where, `verified_on ${raw.verified_on} is over a year old - laws change every session`);
+    }
+    const items = [];
+    for (const field of DEADLINE_FIELDS) {
+        const item = raw[field.key];
+        const at = `${where}/${field.key}`;
+        if (item === undefined || item === null) {
+            warn(at, 'not researched');
+            continue;
+        }
+        if (typeof item !== 'object' || Array.isArray(item)) {
+            fail(at, 'must be an object or null');
+            continue;
+        }
+        const ok = checkString(at, 'summary', item.summary, { min: 20 })
+            & checkString(at, 'citation', item.citation, { min: 4 });
+        checkUrl(at, 'source_url', item.source_url);
+        if (typeof item.quote !== 'string' || item.quote.trim().length < 20) {
+            fail(at, 'needs the verbatim statute text it rests on in "quote"');
+        }
+        if (!CONFIDENCE.includes(item.confidence)) {
+            fail(at, `confidence must be one of ${CONFIDENCE.join(', ')} - got ${JSON.stringify(item.confidence)}`);
+            continue;
+        }
+        if (item.confidence === 'low') {
+            warn(at, 'low confidence - kept out of the page until someone confirms it');
+            continue;
+        }
+        if (!ok) continue;
+        items.push({
+            key: field.key,
+            group: field.group,
+            label: field.label,
+            summary: item.summary,
+            citation: item.citation,
+            source_url: item.source_url,
+            /* Shown on the page: the text supports it, but it turns on a
+             * reading of the statute or case law nobody here has confirmed. */
+            uncertain: item.confidence === 'medium' || undefined
+        });
+    }
+    return items.length ? { verified_on: raw.verified_on, items } : undefined;
+}
+
+/**
+ * CHILD USA's child sexual abuse summaries, by state abbreviation. Generated
+ * by scripts/pull-childusa-sol.js; checked here only for shape and age.
+ */
+function loadChildUsa() {
+    if (!fs.existsSync(CHILDUSA_FILE)) {
+        warn('childusa-sol.json', 'missing - run node scripts/pull-childusa-sol.js');
+        return {};
+    }
+    const data = readJson(CHILDUSA_FILE);
+    if (!data || !data.states) return {};
+    if (!isIsoDate(data.checked_on)) {
+        fail('childusa-sol.json', 'checked_on must be YYYY-MM-DD');
+    } else if (daysSince(data.checked_on) > 45) {
+        warn('childusa-sol.json', `last pulled ${data.checked_on} - rerun scripts/pull-childusa-sol.js`);
+    }
+    const out = {};
+    for (const [abbr, entry] of Object.entries(data.states)) {
+        const where = `childusa-sol.json/${abbr}`;
+        const civil = entry.civil && Array.isArray(entry.civil.summary) ? entry.civil.summary : [];
+        const criminal = entry.criminal && Array.isArray(entry.criminal.summary) ? entry.criminal.summary : [];
+        if (!civil.length || !criminal.length) {
+            fail(where, 'civil or criminal summary is empty');
+            continue;
+        }
+        checkUrl(where, 'url', entry.url);
+        out[abbr] = { url: entry.url, civil, criminal, checked_on: data.checked_on };
+    }
+    return out;
 }
 
 /**
@@ -395,6 +505,14 @@ function main() {
         ? fs.readdirSync(STATES_DIR).filter((f) => f.endsWith('.json')).sort()
         : [];
     const states = files.map((f) => loadStateFile(path.join(STATES_DIR, f))).filter(Boolean);
+    const childUsa = loadChildUsa();
+    for (const record of states) {
+        if (childUsa[record.abbr]) {
+            record.sexual_abuse = childUsa[record.abbr];
+        } else {
+            warn(record.abbr, 'no CHILD USA summary for child sexual abuse');
+        }
+    }
     const covered = new Set(states.map((s) => s.abbr));
     const missing = Object.keys(STATES).filter((a) => !covered.has(a)).sort();
 

@@ -3,6 +3,49 @@
   "abbr": "GA",
   "updated": "2026-09-22",
   "note": "Two things to know about Georgia before you file. The licensing boards will not accept a complaint without the licensee's name and licence number, so look them up first. And several of the outcomes a board can reach - a letter of concern, a private consent order - are confidential and will never be published, so a program's clean public record does not prove nothing was found.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for any personal injury claim, whether it is assault, battery, false imprisonment or negligence. If the injury came from a crime, the clock is paused while the criminal case is pending, for up to 6 years.",
+      "citation": "O.C.G.A. § 9-3-33; § 9-3-99",
+      "source_url": "https://codes.findlaw.com/ga/title-9-civil-practice/ga-code-sect-9-3-33.html",
+      "quote": "Except as otherwise provided in this article, actions for injuries to the person shall be brought within two years after the right of action accrues, except for injuries to the reputation, which shall be brought within one year after the right of action accrues",
+      "confidence": "high",
+      "note": "Georgia has no separate period for intentional torts; § 9-3-33 covers all 'injuries to the person', including assault, battery and false imprisonment. § 9-3-99 (https://codes.findlaw.com/ga/title-9-civil-practice/ga-code-sect-9-3-99.html): tort claims by a crime victim are tolled 'from the date of the commission of the alleged crime ... until the prosecution of such crime or act has become final or otherwise terminated, provided that such time does not exceed six years.' Official code (LexisNexis) and Justia were not fetchable (bot wall); text read on FindLaw, which states 'Current as of March 28, 2024'. The 2024, 2025 and 2026 Legislative Counsel summaries of enacted statutes list no amendment to §§ 9-3-33, 9-3-90 or 9-3-99."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were under 18 when you were hurt, the two years do not start until your 18th birthday, so the deadline is your 20th birthday. There is no cap in the statute.",
+      "citation": "O.C.G.A. § 9-3-90(b)",
+      "source_url": "https://codes.findlaw.com/ga/title-9-civil-practice/ga-code-sect-9-3-90.html",
+      "quote": "(b) Except as otherwise provided in Code Section 9-3-33.1, individuals who are less than 18 years of age when a cause of action accrues shall be entitled to the same time after he or she reaches the age of 18 years to bring an action as is prescribed for other persons.",
+      "confidence": "high",
+      "note": "The only exception named is § 9-3-33.1 (childhood sexual abuse), outside this research. Georgia has no general discovery rule for non-sexual abuse. The crime-victim tolling in § 9-3-99 (up to 6 years while a prosecution is pending) can add further time. Claims against the state follow the Tort Claims Act, which applies general tolling provisions (§ 50-21-27(e))."
+    },
+    "civil_government_claims": {
+      "summary": "Against the state, written notice must be sent within 12 months of discovering the loss and the lawsuit filed within 2 years; against a county the claim must be presented within 12 months, and against a city within 6 months. The state cannot be sued at all for assault, battery or false imprisonment by its employees, only for negligence.",
+      "citation": "O.C.G.A. §§ 50-21-26(a)(1), 50-21-27(c), 50-21-24(7), 36-11-1, 36-33-5(b)",
+      "source_url": "https://codes.findlaw.com/ga/title-50-state-government/ga-code-sect-50-21-26.html",
+      "quote": "(1) Notice of a claim shall be given in writing within 12 months of the date the loss was discovered or should have been discovered",
+      "confidence": "high",
+      "note": "§ 50-21-27(c): action 'forever barred unless it is commenced within two years after the date the loss was or should have been discovered.' § 50-21-24(7) keeps immunity for 'Assault, battery, false imprisonment, false arrest, malicious prosecution'. § 36-11-1 (counties): 'within 12 months after they accrue ... provided that minors ... shall be allowed 12 months after the removal of the disability'. § 36-33-5(b) (cities): 'Within six months of the happening of the event'. All read on FindLaw (current as of March 28, 2024)."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felonies against a child under 18, including second-degree cruelty to children, must be charged within 7 years. First-degree cruelty to children (maliciously causing a child cruel or excessive physical or mental pain) can be charged at any time if the child was under 16 and the crime happened on or after July 1, 2012.",
+      "citation": "O.C.G.A. § 17-3-2.1(b)(2); § 17-3-1(c); § 16-5-70",
+      "source_url": "https://codes.findlaw.com/ga/title-17-criminal-procedure/ga-code-sect-17-3-2-1.html",
+      "quote": "(b) For crimes committed on and after July 1, 2012, if the victim of a violation of: ... (2) Cruelty to children in the first degree, as defined in Code Section 16-5-70 ... is under 16 years of age on the date of the violation ... a prosecution may be commenced at any time.",
+      "confidence": "high",
+      "note": "The 7-year figure is the general rule for felonies against minors (O.C.G.A. § 17-3-1(c): 'shall be commenced within seven years after the commission of the crime'); the no-limit rule in § 17-3-2.1(b)(2) covers only first-degree cruelty to a child under 16, from July 1, 2012 on. § 17-3-1(c): felonies against victims under 18 'shall be commenced within seven years after the commission of the crime.' For crimes from July 1, 1992 to June 30, 2012, § 17-3-2.1(a) delayed the clock for cruelty to a child under 16 until the child turned 16 or it was reported, whichever came first. Second-degree cruelty (criminal negligence) is a felony (1-10 years) and gets the 7-year period. Third-degree cruelty is a misdemeanor (2 years). § 17-3-2: time does not run while the accused lives out of state or while the offender or crime is unknown. The 2026 act SB 587 amended § 16-5-70 but, per the Legislative Counsel summary, not the limitation sections."
+    },
+    "criminal_felony_assault": {
+      "summary": "Aggravated assault, like most felonies, must be charged within 4 years (7 years if the victim was under 18). Misdemeanor simple assault or battery must be charged within 2 years.",
+      "citation": "O.C.G.A. § 17-3-1(c), (e); § 16-5-21",
+      "source_url": "https://codes.findlaw.com/ga/title-17-criminal-procedure/ga-code-sect-17-3-1.html",
+      "quote": "prosecution for felonies other than those specified in subsections (a), (b), and (d) ... shall be commenced within four years after the commission of the crime, provided that prosecution for felonies committed against victims ... under the age of 18 years shall be commenced within seven years",
+      "confidence": "high",
+      "note": "Aggravated assault is punished by 1 to 20 years (§ 16-5-21(b)), so it is not a life felony and falls under the general 4-year rule. § 17-3-1(e): 'Prosecution for misdemeanors shall be commenced within two years after the commission of the crime.' Tolling under § 17-3-2 applies."
+    }
+  },
   "channels": [
     {
       "id": "ga-composite-board",

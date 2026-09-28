@@ -3,6 +3,49 @@
   "abbr": "RI",
   "updated": "2026-09-22",
   "note": "Rhode Island's reporting law names this industry directly: under RIGL 40-11-3 every person in the state must report suspected child abuse or neglect within 24 hours, and the law defines abuse to include injury, sexual abuse or exploitation, negligent treatment or maltreatment by any employee of a residential facility or any staff person providing out-of-home care. The same department licenses those facilities and takes the reports.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for injuries to the person, which covers assault, battery and negligence.",
+      "citation": "R.I. Gen. Laws § 9-1-14(b)",
+      "source_url": "https://webserver.rilegislature.gov/Statutes/TITLE9/9-1/9-1-14.htm",
+      "quote": "Actions for injuries to the person shall be commenced and sued within three (3) years next after the cause of action shall accrue, and not after",
+      "confidence": "high",
+      "note": "Rhode Island has no separate, shorter statute for assault, battery or false imprisonment in 9-1-14; they are treated as injuries to the person. Whether false imprisonment without physical injury falls under 9-1-14(b) or the ten-year catch-all (9-1-13) was not confirmed."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, the three years start at 18, so the deadline is your 21st birthday.",
+      "citation": "R.I. Gen. Laws § 9-1-19",
+      "source_url": "https://webserver.rilegislature.gov/Statutes/TITLE9/9-1/9-1-19.htm",
+      "quote": "If any person at the time any such cause of action shall accrue to him or her shall be under the age of eighteen (18) years, or of unsound mind, or beyond the limits of the United States, the person may bring the cause of action, within the time limited under this chapter, after the impediment ...",
+      "confidence": "high",
+      "note": "No cap. No general discovery rule or extended period for non-sexual child abuse was found; 9-1-51 covers childhood sexual abuse only."
+    },
+    "civil_government_claims": {
+      "summary": "Tort claims against the state, a city or town must be filed within three years of the injury; for a city or town, the claim must first be presented to the town or city council.",
+      "citation": "R.I. Gen. Laws §§ 9-1-25(a), 45-15-5",
+      "source_url": "https://webserver.rilegislature.gov/Statutes/TITLE9/9-1/9-1-25.htm",
+      "quote": "in cases involving actions or claims in tort against the state or any political subdivision thereof or any city or town, the action shall be instituted ... within three (3) years of the accrual of any claim of tort. Failure to institute suit within the three-year (3) period shall constitute a bar",
+      "confidence": "medium",
+      "note": "45-15-5 (https://webserver.rilegislature.gov/Statutes/TITLE45/45-15/45-15-5.htm) requires presenting the claim to the town or city council and waiting 40 days before suing; it sets no separate deadline. Whether 9-1-19 minority tolling applies to 9-1-25 claims was not confirmed."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years. Rhode Island's felony child abuse law (Brendan's Law) has no special deadline, so the general three-year rule applies, with no pause until the child turns 18.",
+      "citation": "R.I. Gen. Laws § 12-12-17(c); § 11-9-5.3",
+      "source_url": "https://webserver.rilegislature.gov/Statutes/TITLE12/12-12/12-12-17.htm",
+      "quote": "The statute of limitations for any other criminal offense shall be three (3) years, unless a longer statute of limitations is otherwise provided for in the general laws.",
+      "confidence": "medium",
+      "note": "11-9-5.3 (https://webserver.rilegislature.gov/Statutes/TITLE11/11-9/11-9-5.3.htm) expressly covers a person having care of a child 'including any instance where a child has been placed by his or her parents, caretaker, or licensed or governmental child placement agency for care or treatment', which fits residential programs. Its maximum penalty is 20 years (40 for a repeat offense), not life, so it is not in the no-limit list in 12-12-17(a). No tolling for minority was found in 12-12-17. Medium only because no search was made for a longer period elsewhere in the general laws."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years for felony assault, and three years for misdemeanor assault as well.",
+      "citation": "R.I. Gen. Laws § 12-12-17(c)",
+      "source_url": "https://webserver.rilegislature.gov/Statutes/TITLE12/12-12/12-12-17.htm",
+      "quote": "The statute of limitations for any other criminal offense shall be three (3) years, unless a longer statute of limitations is otherwise provided for in the general laws.",
+      "confidence": "high",
+      "note": "No limit applies to offenses punishable by life imprisonment and to listed crimes such as homicide, robbery and first-degree sexual assault (12-12-17(a)). Felony assault under 11-5-2 carries up to 20 years, so it uses the three-year default."
+    }
+  },
   "channels": [
     {
       "id": "ri-health-licensee-complaints",

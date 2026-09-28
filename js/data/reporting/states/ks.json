@@ -3,6 +3,49 @@
   "abbr": "KS",
   "updated": "2026-09-22",
   "note": "Kansas splits the work usefully: the Department for Children and Families investigates abuse or neglect alleged to have happened in a childcare or residential care facility, and it is required to pass any investigation involving a licensed facility straight to the Department of Health and Environment, which holds the licence. So one call to the Protection Report Center reaches both the investigation and the licensor.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Only one year for assault, battery or false imprisonment. Two years for negligence and other injury claims, starting when the injury is substantial or reasonably discoverable, but never more than 10 years after the act.",
+      "citation": "K.S.A. 60-514(b) (intentional torts); K.S.A. 60-513(a)(4), (b) (negligence)",
+      "source_url": "https://www.ksrevisor.org/statutes/chapters/ch60/060_005_0014.html",
+      "quote": "The following actions shall be brought within one year: (a) An action for libel or slander. (b) An action for assault, battery, malicious prosecution, or false imprisonment.",
+      "confidence": "high",
+      "note": "K.S.A. 60-513(a)(4) (https://www.ksrevisor.org/statutes/chapters/ch60/060_005_0013.html): two years for 'An action for injury to the rights of another, not arising on contract, and not herein enumerated'; 60-513(b): not accrued 'until the act giving rise to the cause of action first causes substantial injury, or, if the fact of injury is not reasonably ascertainable until some time after the initial act' until it becomes ascertainable, 'but in no event ... more than 10 years beyond the time of the act'. A claim framed as negligence (e.g., against a program for negligent supervision or hiring) gets 2 years; a claim against the staff member who hit or restrained the child is typically battery or false imprisonment with 1 year."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes, but briefly. Someone injured as a child gets one year after turning 18 to sue, and in no case more than 8 years after the act that caused the injury.",
+      "citation": "K.S.A. 60-515(a)",
+      "source_url": "https://www.ksrevisor.org/statutes/chapters/ch60/060_005_0015.html",
+      "quote": "is less than 18 years of age ... such person shall be entitled to bring such action within one year after the person's disability is removed, except that no such action shall be commenced ... more than eight years after the time of the act giving rise to the cause of action.",
+      "confidence": "medium",
+      "note": "Read literally, the minor gets one year after 18; if the ordinary period (1 or 2 years) would run out later than that, the ordinary period presumably still applies, but that interaction was not confirmed from case law. The 8-year cap means abuse at age 9 or younger may be barred before the child turns 18. The only exception named is K.S.A. 60-523 (childhood sexual abuse). No non-sexual abuse discovery statute beyond the general 60-513(b) accrual rule for 2-year claims."
+    },
+    "civil_government_claims": {
+      "summary": "Before suing a Kansas city, county, school district or other municipality, a written notice of claim must be filed with its clerk or governing body; you then wait for denial or 120 days. The lawsuit must still be filed within the normal deadline (1 or 2 years), with at least 90 days after denial.",
+      "citation": "K.S.A. 12-105b(d)",
+      "source_url": "https://www.ksrevisor.org/statutes/chapters/ch12/012_001_0005b.html",
+      "quote": "Any action brought pursuant to the Kansas tort claims act shall be commenced within the time period provided for in the code of civil procedure or it shall be forever barred, except that, a claimant shall have no less than 90 days from the date the claim is denied or deemed denied",
+      "confidence": "medium",
+      "note": "12-105b(d) sets no separate deadline for filing the notice itself; the filing pauses things for up to 120 days. It applies to municipalities; no equivalent pre-suit notice statute for claims against the State itself was located. Childhood sexual abuse claims are exempt from the notice (12-105b(d)(2)). K.S.A. 75-6104 lists the Tort Claims Act immunities; the portion read showed no general assault/battery exclusion, but the full list was not reviewed."
+    },
+    "criminal_child_abuse": {
+      "summary": "Abuse of a child (torturing, cruelly beating, cruel corporal punishment, or cruel physical restraint such as caging or binding a child under 18) must be charged within 5 years. The clock does not run while the crime is concealed, and in some child cases it can be extended until the victim turns 28.",
+      "citation": "K.S.A. 21-5107(d), (e); K.S.A. 21-5602",
+      "source_url": "https://www.ksrevisor.org/statutes/chapters/ch21/021_051_0007.html",
+      "quote": "a prosecution for any crime as defined in K.S.A. 21-5102, and amendments thereto, not governed by subsection (a), (b) or (c) shall be commenced within five years after it is committed.",
+      "confidence": "high",
+      "note": "K.S.A. 21-5602 (https://www.ksrevisor.org/statutes/chapters/ch21/021_056_0002.html) covers 'knowingly using cruel and inhuman physical restraint, including caging or confining the child in a space not designated for human habitation or binding the child in a way that is not medically necessary' (severity level 5 felony for ages 6-17; level 3 or 4 for more serious harm). 21-5107(e): time excludes periods when the accused is out of state, 'the fact of the crime is concealed', or, where the accused actively concealed it and two listed factors apply (victim under 15, victim unable to recognize the crime, victim prevented by a parent or 'other legal authority' from reporting, repressed memory with expert testimony), 'in no event ... later than the date the victim turns 28'. No-limit crimes in 21-5107(a) are murder and sex offenses."
+    },
+    "criminal_felony_assault": {
+      "summary": "Aggravated assault and aggravated battery must be charged within 5 years. Kansas uses the same 5 years for misdemeanor assault and battery.",
+      "citation": "K.S.A. 21-5107(d); K.S.A. 21-5412; K.S.A. 21-5413",
+      "source_url": "https://www.ksrevisor.org/statutes/chapters/ch21/021_051_0007.html",
+      "quote": "a prosecution for any crime as defined in K.S.A. 21-5102, and amendments thereto, not governed by subsection (a), (b) or (c) shall be commenced within five years after it is committed.",
+      "confidence": "high",
+      "note": "Aggravated assault is a severity level 7 person felony (21-5412(e)(2)); aggravated battery is level 4, 5, 7 or 8 (21-5413(h)(2)); simple assault is a class C and battery a class B person misdemeanor. The 5-year period in 21-5107(d) covers 'any crime as defined in K.S.A. 21-5102', which includes misdemeanors: K.S.A. 21-5102 (https://www.ksrevisor.org/statutes/chapters/ch21/021_051_0002.html) says 'Crimes are classified as felonies, misdemeanors, traffic infractions and cigarette or tobacco infractions.' Tolling in 21-5107(e) applies."
+    }
+  },
   "channels": [
     {
       "id": "ks-behavioral-sciences-regulatory-board",

@@ -3,6 +3,49 @@
   "abbr": "MN",
   "updated": "2026-09-22",
   "note": "Minnesota keeps a separate board for each profession, so check which licence the person holds before you file. Two things are worth knowing. Any person may voluntarily report a child who is being abused, or who has been abused in the past three years - that lookback is stated in the state's own guidance. And a maltreatment investigation by the Office of Health Facility Complaints ends in a narrative report that is shared with law enforcement, prosecutors and the licensing boards of everyone involved, so one report can reach several places at once.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for assault, battery or false imprisonment. Negligence claims (for example, a program's negligent supervision) have six years.",
+      "citation": "Minn. Stat. § 541.07(1); Minn. Stat. § 541.05, subd. 1(5)",
+      "source_url": "https://www.revisor.mn.gov/statutes/cite/541.07",
+      "quote": "the following actions shall be commenced within two years: (1) for libel, slander, assault, battery, false imprisonment, or other tort resulting in personal injury",
+      "confidence": "medium",
+      "note": "§ 541.05, subd. 1(5) gives six years 'for any other injury to the person or rights of another, not arising on contract, and not hereinafter enumerated' (https://www.revisor.mn.gov/statutes/cite/541.05). The phrase 'other tort resulting in personal injury' in § 541.07(1) has been read by Minnesota courts to mean intentional torts, leaving negligence under the six-year period; that reading comes from case law, not the statute text."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock is paused while the injured person is under 18, but the extra time is capped at one year after turning 18. In practice a child's claim must be filed by the later of the normal deadline or the 19th birthday.",
+      "citation": "Minn. Stat. § 541.15(a)(1)",
+      "source_url": "https://www.revisor.mn.gov/statutes/cite/541.15",
+      "quote": "shall suspend the running of the period of limitation until the same is removed; provided that such period, except in the case of infancy, shall not be extended for more than five years, nor in any case for more than one year after the disability ceases: (1) that the plaintiff is within the age of 18 years",
+      "confidence": "medium",
+      "note": "The 'later of' reading of the one-year cap is the usual interpretation but is inferred from the text. § 541.073's extended period covers sexual abuse only; no extended period for non-sexual physical abuse of a minor was found."
+    },
+    "civil_government_claims": {
+      "summary": "Written notice of the claim must be given within 180 days after the injury is discovered: to the attorney general for claims against the state, or to the city or county governing body for claims against a municipality.",
+      "citation": "Minn. Stat. § 3.736, subd. 5; Minn. Stat. § 466.05, subd. 1",
+      "source_url": "https://www.revisor.mn.gov/statutes/cite/3.736",
+      "quote": "shall present to the attorney general ... and any state employee from whom the claimant will seek compensation, within 180 days after the alleged loss or injury is discovered, a notice stating its time, place and circumstances",
+      "confidence": "high",
+      "note": "Municipal version: § 466.05, subd. 1 'within 180 days after the alleged loss or injury is discovered' (https://www.revisor.mn.gov/statutes/cite/466.05). Both treat actual notice of sufficient facts as compliance. Exceptions for minors or incapacity in subd. 6 / subd. 2 were not read in full."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years from the crime for malicious punishment of a child, child endangerment, or assault on a child. The clock does not wait until the child turns 18.",
+      "citation": "Minn. Stat. § 628.26(l); Minn. Stat. § 609.377",
+      "source_url": "https://www.revisor.mn.gov/statutes/cite/628.26",
+      "quote": "(l) In all other cases, indictments or complaints shall be found or made and filed in the proper court within three years after the commission of the offense.",
+      "confidence": "high",
+      "note": "Malicious punishment of a child (§ 609.377, by a 'parent, legal guardian, or caretaker') is not listed in § 628.26, so the three-year default applies. No limit if the crime caused the victim's death (§ 628.26(a)). Time the defendant lived outside Minnesota is excluded (§ 628.26(m))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the crime for felony assault (first through third degree) and for misdemeanor assault.",
+      "citation": "Minn. Stat. § 628.26(l)",
+      "source_url": "https://www.revisor.mn.gov/statutes/cite/628.26",
+      "quote": "(l) In all other cases, indictments or complaints shall be found or made and filed in the proper court within three years after the commission of the offense.",
+      "confidence": "high",
+      "note": "Assault is not among the listed exceptions in § 628.26, so three years applies regardless of degree."
+    }
+  },
   "channels": [
     {
       "id": "mn-behavioral-health-therapy-board",

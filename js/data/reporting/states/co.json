@@ -3,6 +3,48 @@
   "abbr": "CO",
   "updated": "2026-09-22",
   "note": "Colorado puts every licensed profession behind one complaint form at the Division of Professions and Occupations. It also has an independent Child Protection Ombudsman with its own complaint form, which publishes investigative reports naming what it found; that is a real route when a report has already been made and nothing moved.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Assault, battery and false imprisonment: one year. Negligence and most other injury claims (including outrageous conduct / emotional distress): two years. By statute, the clock starts when you knew, or reasonably should have known, both the injury and its cause.",
+      "citation": "Colo. Rev. Stat. § 13-80-103(1)(a); § 13-80-102(1)(a); § 13-80-108(1)",
+      "source_url": "https://law.justia.com/codes/colorado/title-13/limitation-of-actions/article-80/section-13-80-103/",
+      "quote": "The following civil actions, regardless of the theory upon which suit is brought, or against whom suit is brought, shall be commenced within one year after the cause of action accrues ... (a) The following tort actions: Assault, battery, false imprisonment, false arrest, libel, and slander;",
+      "confidence": "high",
+      "note": "§ 13-80-102(1)(a): 'must be commenced within two years ... Tort actions, including but not limited to actions for negligence, trespass, malicious abuse of process, malicious prosecution, outrageous conduct'. Justia's annotations note a negligent-supervision claim against an employer is not subject to the one-year assault period (Bradley v. Guess, 797 P.2d 749 (Colo. App. 1989)). The official C.R.S. is published through LexisNexis and could not be fetched; text read on Justia's 2025 edition."
+    },
+    "civil_minor_tolling": {
+      "summary": "For a minor with no court-appointed guardian, the deadline does not run until 18; they then have the normal period or two years after turning 18, whichever ends later. If a court appointed a guardian or conservator for the child, the clock runs during childhood as for an adult (the guardian gets at least two years after appointment). A parent is not a 'legal representative' unless appointed by a court.",
+      "citation": "Colo. Rev. Stat. § 13-81-103(1)(a), (c); § 13-81-101(2)-(3); § 13-80-108(1)",
+      "source_url": "https://law.justia.com/codes/colorado/title-13/limitation-of-actions/article-81/section-13-81-103/",
+      "quote": "If the disability of any person is terminated before the expiration of the period of limitation ... and no legal representative has been appointed for him, such person shall be allowed to take action within the period fixed by the applicable statute of limitations or within two years after",
+      "confidence": "medium",
+      "note": "§ 13-81-101(3): 'Person under disability' means 'a minor under eighteen years of age ... who does not have a legal guardian.' Youth in state custody may have had a court-appointed guardian or legal custodian, which could mean the clock ran during childhood; this needs a lawyer's review. General discovery rule, not limited to sexual abuse: § 13-80-108(1) 'a cause of action for injury to person ... shall be considered to accrue on the date both the injury and its cause are known or should have been known by the exercise of reasonable diligence.'"
+    },
+    "civil_government_claims": {
+      "summary": "Before suing a state or local government body or its employee, you must file a written notice within 182 days after discovering the injury (with the Attorney General for the state), then wait for a denial or 90 days; the suit itself must meet the normal deadline. Government bodies are immune except in listed situations.",
+      "citation": "Colo. Rev. Stat. § 24-10-109(1), (3), (5), (6)",
+      "source_url": "https://law.justia.com/codes/colorado/title-24/administration/article-10/section-24-10-109/",
+      "quote": "Any person claiming to have suffered an injury by a public entity or by an employee thereof while in the course of such employment, whether or not by a willful and wanton act or omission, shall file a written notice ... within one hundred eighty-two days after the date of the discovery of the injury",
+      "confidence": "high",
+      "note": "Failing to file 'shall forever bar any such action.' Whether minority tolls the 182-day notice was not confirmed from statute text. Immunity waivers (§ 24-10-106) and employee immunity except for willful and wanton conduct (§ 24-10-118) were not re-read."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony child abuse must be charged within three years of the offense, the general felony period. There is no rule pausing it until the child turns 18 for physical (non-sexual) abuse.",
+      "citation": "Colo. Rev. Stat. § 16-5-401(1)(a) (child abuse is § 18-6-401)",
+      "source_url": "https://law.justia.com/codes/colorado/title-16/code-of-criminal-procedure/article-5/part-4/section-16-5-401/",
+      "quote": "Murder, kidnapping, treason, any sex offense against a child, and any forgery regardless of the penalty provided: No limit ... Other felonies: Three years Misdemeanors: Eighteen months",
+      "confidence": "high",
+      "note": "The extended periods in § 16-5-401(6)-(8) apply to sexual offenses and trafficking, not to § 18-6-401. Kidnapping has no limit. Time the offender spends out of state (up to five years) does not count (§ 16-5-401(2)). A series of acts runs from the last act (§ 16-5-401(4)). Misdemeanor child abuse: 18 months."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault must be charged within three years of the offense. Misdemeanor assault: 18 months.",
+      "citation": "Colo. Rev. Stat. § 16-5-401(1)(a)",
+      "source_url": "https://law.justia.com/codes/colorado/title-16/code-of-criminal-procedure/article-5/part-4/section-16-5-401/",
+      "quote": "Other felonies: Three years Misdemeanors: Eighteen months",
+      "confidence": "high"
+    }
+  },
   "channels": [
     {
       "id": "co-division-professions-occupations",

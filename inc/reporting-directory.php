@@ -307,24 +307,84 @@ function kop_reporting_render_picker($selected_slug) {
 }
 
 /**
- * The note on filing deadlines, from national.json's "deadlines" block. Every
- * state's list carries it, because the question a survivor of a program that
- * closed decades ago brings to this page is whether any of it still applies.
- * The page states no deadline itself; the law moves every session, so it
- * points at a tracker that follows it. Prints nothing if the block is absent.
+ * A state's filing deadlines: the general note from national.json, then the
+ * state's own law - the researched deadlines for injury, assault and physical
+ * child abuse (states/<abbr>.json) and CHILD USA's summary for child sexual
+ * abuse (childusa-sol.json). Every state's list carries it, because the
+ * question a survivor of a program that closed decades ago brings to this
+ * page is whether any of it still applies. Each line links the statute or
+ * summary it came from; none of it is advice on a particular case.
  */
-function kop_reporting_render_deadlines() {
+function kop_reporting_render_deadlines($record) {
     $directory = kop_reporting_directory();
-    $deadlines = $directory['national']['deadlines'] ?? null;
-    if (!is_array($deadlines) || empty($deadlines['text']) || empty($deadlines['url'])) {
+    $general = $directory['national']['deadlines'] ?? null;
+    $items = $record['deadlines']['items'] ?? array();
+    $csa = $record['sexual_abuse'] ?? null;
+    if (!is_array($general) && !$items && !$csa) {
         return;
     }
+    $groups = array(
+        'civil'    => array('title' => 'Lawsuits', 'items' => array(), 'csa' => $csa ? $csa['civil'] : array()),
+        'criminal' => array('title' => 'Criminal charges', 'items' => array(), 'csa' => $csa ? $csa['criminal'] : array()),
+    );
+    foreach ($items as $item) {
+        if (isset($groups[$item['group']])) {
+            $groups[$item['group']]['items'][] = $item;
+        }
+    }
     ?>
-    <aside class="kop-rep-deadlines">
-        <h3 class="kop-rep-deadlines-h">If it happened years ago</h3>
-        <p><?php echo esc_html($deadlines['text']); ?></p>
-        <p>
-            <a href="<?php echo esc_url($deadlines['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($deadlines['link_label']); ?></a>.
+    <aside class="kop-rep-deadlines" aria-label="Filing deadlines in <?php echo esc_attr($record['state']); ?>">
+        <h3 class="kop-rep-deadlines-h">Deadlines in <?php echo esc_html($record['state']); ?>, if it happened years ago</h3>
+        <?php if (is_array($general) && !empty($general['text'])) : ?>
+            <p><?php echo esc_html($general['text']); ?></p>
+        <?php endif; ?>
+
+        <?php foreach ($groups as $key => $group) :
+            if (!$group['items'] && !$group['csa']) continue; ?>
+            <h4 class="kop-rep-deadlines-sub"><?php echo esc_html($group['title']); ?></h4>
+            <dl class="kop-rep-dl">
+                <?php foreach ($group['items'] as $item) : ?>
+                    <div class="kop-rep-dl-row">
+                        <dt><?php echo esc_html($item['label']); ?></dt>
+                        <dd>
+                            <?php if (!empty($item['uncertain'])) : ?>
+                                <span class="kop-rep-dl-flag">Less certain</span>
+                            <?php endif; ?>
+                            <?php echo esc_html($item['summary']); ?>
+                            <a class="kop-rep-cite" href="<?php echo esc_url($item['source_url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($item['citation']); ?></a>
+                        </dd>
+                    </div>
+                <?php endforeach; ?>
+                <?php if ($group['csa']) : ?>
+                    <div class="kop-rep-dl-row">
+                        <dt>Child sexual abuse</dt>
+                        <dd>
+                            <?php foreach ($group['csa'] as $line) : ?>
+                                <span class="kop-rep-dl-line"><?php echo esc_html($line); ?></span>
+                            <?php endforeach; ?>
+                            <a class="kop-rep-cite" href="<?php echo esc_url($csa['url']); ?>" target="_blank" rel="noopener">CHILD USA's summary</a>
+                        </dd>
+                    </div>
+                <?php endif; ?>
+            </dl>
+        <?php endforeach; ?>
+
+        <p class="kop-rep-deadlines-fine">
+            <?php if ($items) : ?>
+                Injury, assault and physical abuse deadlines researched from the statutes linked, checked
+                <?php echo esc_html(date_i18n('j F Y', strtotime($record['deadlines']['verified_on']))); ?>.
+            <?php endif; ?>
+            <?php if ($csa) : ?>
+                Child sexual abuse lines are CHILD USA's summary, copied <?php echo esc_html(date_i18n('j F Y', strtotime($csa['checked_on']))); ?>;
+                in them SOL means statute of limitations, CSA child sexual abuse, and CSAM child sexual abuse material.
+            <?php endif; ?>
+            <?php if (array_filter($items, function ($item) { return !empty($item['uncertain']); })) : ?>
+                "Less certain" marks a line that rests on a reading of the statute or of court rulings that has not been confirmed.
+            <?php endif; ?>
+            Exceptions, court rulings and the facts of a case can change any of these.
+            <?php if (is_array($general) && !empty($general['url'])) : ?>
+                <a href="<?php echo esc_url($general['url']); ?>" target="_blank" rel="noopener"><?php echo esc_html($general['link_label']); ?></a>.
+            <?php endif; ?>
             A lawyer can tell you which deadline applies to you.
         </p>
     </aside>
@@ -347,7 +407,7 @@ function kop_reporting_render_state_block($state_name) {
         <?php if (!empty($record['note'])) : ?>
             <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
         <?php endif; ?>
-        <?php kop_reporting_render_deadlines(); ?>
+        <?php kop_reporting_render_deadlines($record); ?>
         <?php kop_reporting_render_groups($record['channels'], 'h4'); ?>
         <?php if ($page) : ?>
             <p class="kop-rep-more">
@@ -399,7 +459,7 @@ function kop_reporting_render_page($state_slug = '') {
                 <?php if (!empty($record['note'])) : ?>
                     <p class="kop-rep-state-note"><?php echo esc_html($record['note']); ?></p>
                 <?php endif; ?>
-                <?php kop_reporting_render_deadlines(); ?>
+                <?php kop_reporting_render_deadlines($record); ?>
                 <?php kop_reporting_render_groups($record['channels']); ?>
             </section>
         <?php elseif ($state_slug !== '') : ?>

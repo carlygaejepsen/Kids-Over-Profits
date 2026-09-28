@@ -3,6 +3,48 @@
   "abbr": "DE",
   "updated": "2026-09-22",
   "note": "Delaware has an Institutional Abuse Unit inside the Department of Services for Children, Youth and Their Families that investigates abuse or neglect of a child while at a facility or program, so an institutional report does not get handled as an ordinary family case. Delaware also places a duty on every licensed practitioner to report another practitioner they reasonably believe is doing something that would be grounds for discipline - useful if you are a clinician who has seen something and is wondering whether you may say so.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the date the injury happened, for any personal-injury claim, including assault, battery and negligence.",
+      "citation": "10 Del. C. § 8119",
+      "source_url": "https://delcode.delaware.gov/title10/c081/index.html",
+      "quote": "No action for the recovery of damages upon a claim for alleged personal injuries shall be brought after the expiration of 2 years from the date upon which it is claimed that such alleged injuries were sustained",
+      "confidence": "high",
+      "note": "False imprisonment has no separate section in chapter 81; if it is not treated as a personal-injury claim it may fall under the three-year general period in § 8106 (not re-read; not verified)."
+    },
+    "civil_minor_tolling": {
+      "summary": "Delaware's childhood tolling rule (three years after the disability ends) only covers the claims listed in sections 8101-8115, and the two-year personal-injury deadline is section 8119, outside that range. So for physical-injury claims the clock likely runs from the injury even if the victim was a child. Only sexual-abuse claims get special treatment.",
+      "citation": "10 Del. C. § 8116; § 8119",
+      "source_url": "https://delcode.delaware.gov/title10/c081/index.html",
+      "quote": "If a person entitled to any action comprehended within §§ 8101-8115 of this title, shall have been ... under disability of infancy ..., this chapter shall not be a bar to such action during the continuance of such disability, nor until the expiration of 3 years from the removal thereof.",
+      "confidence": "medium",
+      "note": "The reading that § 8116 does not reach § 8119 comes from the text's own section range; Delaware case law on this point was not verified. Claims that fall within §§ 8101-8115 (e.g. the three-year § 8106 period, if it applies) would be tolled until three years after 18. Sexual abuse of a minor has no civil limit (§ 8145, out of scope). No general discovery rule for non-sexual abuse was found in the statute."
+    },
+    "civil_government_claims": {
+      "summary": "The State and its employees are immune for good-faith discretionary acts done without gross or wanton negligence. Counties, towns and other local bodies are immune from tort suits except narrow negligence exceptions (vehicles, public buildings, pollution); a local ordinance may require notice but cannot bar a suit if notice is given within one year.",
+      "citation": "10 Del. C. § 4001; §§ 4011-4013",
+      "source_url": "https://delcode.delaware.gov/title10/c040/sc02/index.html",
+      "quote": "Any political subdivision may enact a notice requirement by ordinance, so long as said notice requirement does not bar suit if notice is given within 1 year of occurrence.",
+      "confidence": "medium",
+      "note": "§ 4011(a): 'all governmental entities and their employees shall be immune from suit on any and all tort claims seeking recovery of damages' except as provided. § 4001 (https://delcode.delaware.gov/title10/c040/sc01/index.html) makes the plaintiff prove the absence of an immunity element, e.g. gross or wanton negligence or bad faith. No statewide notice-of-claim deadline was found; the normal § 8119 deadline applies to any suit that is allowed."
+    },
+    "criminal_child_abuse": {
+      "summary": "Child abuse causing permanent injury (first degree) is a class A felony and can be charged at any time. Other felony child abuse (second and third degree, child torture, felony endangering) must be charged within five years; misdemeanor child abuse within three years. The clock is not paused until the victim turns 18.",
+      "citation": "11 Del. C. § 205(a), (b); §§ 1103-1103D",
+      "source_url": "https://delcode.delaware.gov/title11/c002/index.html",
+      "quote": "(a) A prosecution for murder or any class A felony ... may be commenced at any time. (b) ... (1) A prosecution for any felony except murder or any class A felony ... must be commenced within 5 years after it is committed;",
+      "confidence": "high",
+      "note": "§ 1103C, added by 84 Del. Laws c. 126 (2023): child abuse in the first degree, 'serious physical injury to a child and that injury causes permanent disfigurement, permanent impairment of health, or permanent loss or impairment of a bodily organ', is a class A felony, so no limit. § 1103B (serious physical injury) is class B, § 1103A class D, § 1103 class A misdemeanor; text read at https://delcode.delaware.gov/title11/c005/sc05/index.html. The no-limit rule in § 205(e) covers sexual offenses and trafficking of minors only. The clock stops while the accused is fleeing or hiding (§ 205(h))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault (first or second degree) must be charged within five years; no limit if it is a class A felony. Misdemeanor assault (class A misdemeanor): three years; lesser misdemeanors: two years.",
+      "citation": "11 Del. C. § 205(b)",
+      "source_url": "https://delcode.delaware.gov/title11/c002/index.html",
+      "quote": "(1) A prosecution for any felony except murder or any class A felony, or any attempt to commit said crimes, must be commenced within 5 years after it is committed; (2) A prosecution for a class A misdemeanor must be commenced within 3 years after it is committed;",
+      "confidence": "high"
+    }
+  },
   "channels": [
     {
       "id": "de-division-professional-regulation",

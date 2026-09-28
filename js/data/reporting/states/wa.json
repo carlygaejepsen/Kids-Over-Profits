@@ -3,6 +3,49 @@
   "abbr": "WA",
   "updated": "2026-09-22",
   "note": "Washington is unusually clear about what its health complaint system will and will not take on: unprofessional conduct, a provider unable to practise safely, and unlicensed practice, but not scheduling, personality conflicts or billing. It also has an independent Office of the Family and Children's Ombuds, which exists to look at how the state itself handled a child's case.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for assault, battery and false imprisonment. Three years for negligence and other personal injury.",
+      "citation": "RCW 4.16.100(1) (two years); RCW 4.16.080(2) (three years)",
+      "source_url": "https://app.leg.wa.gov/RCW/default.aspx?cite=4.16.100",
+      "quote": "Within two years: (1) An action for libel, slander, assault, assault and battery, or false imprisonment.",
+      "confidence": "high",
+      "note": "RCW 4.16.080(2): 'An action for taking, detaining, or injuring personal property ... or for any other injury to the person or rights of another not hereinafter enumerated' must be brought within three years (https://app.leg.wa.gov/RCW/default.aspx?cite=4.16.080). Claims against licensed health care providers fall under RCW 4.16.350, not researched here."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18. For someone injured as a child, the two or three years start at 18. Washington's special childhood abuse law covers sexual abuse only, not physical abuse.",
+      "citation": "RCW 4.16.190",
+      "source_url": "https://app.leg.wa.gov/RCW/default.aspx?cite=4.16.190",
+      "quote": "if a person entitled to bring an action mentioned in this chapter ... be at the time the cause of action accrued either under the age of eighteen years, ... the time of such disability shall not be a part of the time limited for the commencement of action.",
+      "confidence": "high",
+      "note": "RCW 4.16.340 (amended 2024 c 253) removes the time limit for childhood sexual abuse on or after June 6, 2024, and keeps a discovery rule for earlier abuse. It defines 'childhood sexual abuse' by reference to chapter 9A.44 RCW and RCW 9.68A.040 (sexual offenses), so it does not cover non-sexual physical abuse (https://app.leg.wa.gov/RCW/default.aspx?cite=4.16.340)."
+    },
+    "civil_government_claims": {
+      "summary": "Before suing the state, file a claim form with the Office of Risk Management. For a county, city or other local government, file the claim with its designated agent. Either way the claim must be filed within the normal deadline, and you must wait 60 days before suing. The deadline is paused during those 60 days.",
+      "citation": "RCW 4.92.100, 4.92.110 (state); RCW 4.96.020 (local governments)",
+      "source_url": "https://app.leg.wa.gov/RCW/default.aspx?cite=4.92.110",
+      "quote": "No action subject to the claim filing requirements of RCW 4.92.100 shall be commenced against the state ... until sixty calendar days have elapsed after the claim is presented to the office of risk management",
+      "confidence": "high",
+      "note": "RCW 4.92.110 continues: \"The applicable period of limitations within which an action must be commenced shall be tolled during the sixty calendar day period.\" RCW 4.96.020(2): claims against a local entity 'shall be presented to the agent within the applicable period of limitations within which an action must be commenced', and (4) sets the same 60-day wait and tolling (https://app.leg.wa.gov/RCW/default.aspx?cite=4.96.020). There is no separate shorter notice deadline, and the normal 2- or 3-year period applies. The state claim must be on the standard tort claim form (RCW 4.92.100)."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years from the offense for felony assault of a child and other non-sexual child abuse felonies. Homicide by abuse can be charged at any time. Washington does not pause the criminal clock until 18 for non-sexual physical abuse.",
+      "citation": "RCW 9A.04.080(1)(j); RCW 9A.04.080(1)(a)(ii) (homicide by abuse, no limit)",
+      "source_url": "https://app.leg.wa.gov/RCW/default.aspx?cite=9A.04.080",
+      "quote": "(j) No other felony may be prosecuted more than three years after its commission",
+      "confidence": "high",
+      "note": "Assault of a child (RCW 9A.36.120-.140) and criminal mistreatment are not listed in 9A.04.080(1)(a)-(i), so the three-year catch-all applies. The clock does not run while the accused is 'not usually and publicly resident within this state' (9A.04.080(2)). A felony by a public officer connected with official duties has 10 years ((1)(c)(i)), which may matter for staff of state-run juvenile facilities. Last amended 2026 c 223."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the offense for felony assault (first, second and third degree). Gross misdemeanor assault: two years. Simple misdemeanor: one year.",
+      "citation": "RCW 9A.04.080(1)(j)-(l)",
+      "source_url": "https://app.leg.wa.gov/RCW/default.aspx?cite=9A.04.080",
+      "quote": "(j) No other felony may be prosecuted more than three years after its commission; ... (k) No gross misdemeanor ... may be prosecuted more than two years after its commission. (l) No misdemeanor may be prosecuted more than one year after its commission.",
+      "confidence": "high",
+      "note": "Fourth degree assault is generally a gross misdemeanor, so it would get 2 years (I did not read RCW 9A.36.041 to confirm its grade). Attempted murder has 10 years."
+    }
+  },
   "channels": [
     {
       "id": "wa-doh-health-professions",

@@ -3,6 +3,49 @@
   "abbr": "SC",
   "updated": "2026-09-22",
   "note": "South Carolina has a division specifically for this: Out of Home Abuse and Neglect, inside the Department of Social Services, which handles abuse and neglect of people in facilities rather than in family homes. That is the right first call for something that happened inside a program, and it has its own daytime and after-hours numbers.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for assault, battery or injury from negligence, counted from when you knew or should have known you had a claim. False imprisonment has a shorter two-year deadline.",
+      "citation": "S.C. Code §§ 15-3-530(5), 15-3-535, 15-3-550(1)",
+      "source_url": "https://www.scstatehouse.gov/code/t15c003.php",
+      "quote": "Within three years: ... (5) an action for assault, battery, or any injury to the person or rights of another, not arising on contract and not enumerated by law",
+      "confidence": "high",
+      "note": "15-3-535: actions under 15-3-530(5) 'must be commenced within three years after the person knew or by the exercise of reasonable diligence should have known that he had a cause of action.' 15-3-550: 'Within two years: (1) an action for libel, slander, or false imprisonment'."
+    },
+    "civil_minor_tolling": {
+      "summary": "Time spent under 18 does not count, but the extra time can never go past one year after your 18th birthday. So a person hurt as a child has at least until age 19, or longer if the normal three years from the injury (or from discovery) ends later.",
+      "citation": "S.C. Code § 15-3-40",
+      "source_url": "https://www.scstatehouse.gov/code/t15c003.php",
+      "quote": "the time of the disability is not a part of the time limited for the commencement of the action, except that the period within which the action must be brought cannot be extended: (a) more than five years by any such disability, except infancy; nor (b) in any case longer than one year after the ...",
+      "confidence": "medium",
+      "note": "Applies to Article 5 actions (which include 15-3-530 and 15-3-550) and Tort Claims Act actions. The cap limits only the extension; it does not appear to cut short the normal period, but that reading was not confirmed against case law. The discovery rule in 15-3-535 applies to all 15-3-530(5) claims and may help survivors who did not connect their injury to the abuse until later. No extended period for non-sexual child abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against the state or a county, city or other local government under the Tort Claims Act must be filed in court within two years of when the loss was or should have been discovered, or within three years if a verified claim was first filed with the agency (that claim is due within one year). Being a minor extends this under the rule above.",
+      "citation": "S.C. Code §§ 15-78-110, 15-78-80(d)",
+      "source_url": "https://www.scstatehouse.gov/code/t15c078.php",
+      "quote": "Except as provided for in Section 15-3-40, any action brought pursuant to this chapter is forever barred unless an action is commenced within two years after the date the loss was or should have been discovered",
+      "confidence": "high",
+      "note": "Filing a verified claim is optional ('may be filed'); if filed, 15-78-80(d) says it 'must be received within one year after the loss was or should have been discovered', and the lawsuit deadline becomes three years."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit. South Carolina has no general statute of limitations for crimes, so child abuse can be charged at any time.",
+      "citation": "No statute; South Carolina has no general criminal statute of limitations",
+      "source_url": "https://scsolicitor14.org/crime-to-court/",
+      "quote": "There is no statute of limitations in South Carolina, and prosecution can resume if new evidence supporting the charge comes to light.",
+      "confidence": "medium",
+      "note": "Source is the 14th Circuit Solicitor's Office (a South Carolina prosecutor's office), not statute text: the rule is the absence of any statute, so there is no section to quote. A very long delay can still be challenged as a due process violation (pre-indictment delay; see State v. Brazell, 325 S.C. 65 (1997)). A few specific statutes outside Title 16 set their own limits (for example some tax and election offenses), none found for child abuse or assault."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for felony or misdemeanor assault. South Carolina has no general statute of limitations for crimes.",
+      "citation": "No statute; South Carolina has no general criminal statute of limitations",
+      "source_url": "https://scsolicitor14.org/crime-to-court/",
+      "quote": "There is no statute of limitations in South Carolina, and prosecution can resume if new evidence supporting the charge comes to light.",
+      "confidence": "medium",
+      "note": "Same basis as criminal_child_abuse. Could not locate a South Carolina appellate opinion quoting the rule in the time available; the rule is widely stated but was confirmed here only from a prosecutor's office publication."
+    }
+  },
   "channels": [
     {
       "id": "sc-llr-boards",

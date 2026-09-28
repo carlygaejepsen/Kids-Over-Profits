@@ -3,6 +3,49 @@
   "abbr": "NV",
   "updated": "2026-09-22",
   "note": "Nevada has no single child abuse hotline. Clark County and Washoe County each run their own, and the Division of Child and Family Services covers everywhere else - and in those rural counties, out of hours, the Division tells you to call local law enforcement instead. Nevada's board websites were also mid-reorganisation when this was checked, and several published complaint forms had gone; where that is the case the phone number and address below came from the board's own live page, and it is worth asking them to send you the current form.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years. The same two-year limit covers assault, battery and false imprisonment, and personal injury caused by negligence.",
+      "citation": "Nev. Rev. Stat. 11.190(4)(c), (4)(e)",
+      "source_url": "https://www.leg.state.nv.us/NRS/NRS-011.html",
+      "quote": "4. Within 2 years: ... (c) An action for libel, slander, assault, battery, false imprisonment or seduction. ... (e) Except as otherwise provided in NRS 11.215 or 11.217, an action to recover damages for injuries to a person ... caused by the wrongful act or neglect of another.",
+      "confidence": "high",
+      "note": "11.215 and 11.217 are the sexual abuse/assault rules, not covered here. 11.190 was last amended in 2025 (history line ends '2025, 2317'); the 2-year periods are unchanged."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. Time while you are under 18 does not count, so the two years usually run to your 20th birthday. Time spent in the State's custodial care (for example foster care or a state placement begun before 18) also does not count, unless the person is imprisoned, paroled or on probation. No general extended period for physical (non-sexual) child abuse.",
+      "citation": "Nev. Rev. Stat. 11.250",
+      "source_url": "https://www.leg.state.nv.us/NRS/NRS-011.html",
+      "quote": "at the time the cause of action accrued, either: 1. Within the age of 18 years; or 2. Insane; or 3. In the custodial care of the State, if placed in such care while less than 18 years of age ... the time of such disability shall not be a part of the time limited",
+      "confidence": "high",
+      "note": "The custodial-care toll is directly relevant to state-placed youth: the clock may not start until they leave state care. Whether that includes youth placed by a county juvenile court or by another state was not researched."
+    },
+    "civil_government_claims": {
+      "summary": "A tort claim against the State of Nevada is filed with the Attorney General, and against a county, city or other political subdivision with its governing body, within two years; filing that administrative claim is not a precondition to suing, and the lawsuit itself follows the normal two-year limit.",
+      "citation": "Nev. Rev. Stat. 41.036(1)-(3)",
+      "source_url": "https://www.leg.state.nv.us/NRS/NRS-041.html",
+      "quote": "1. Each person who has a claim against the State or any of its agencies arising out of a tort must file the claim within 2 years after the time the cause of action accrues with the Attorney General. ... 3. The filing of a claim ... is not a condition precedent to bringing an action",
+      "confidence": "high",
+      "note": "Damages against the state and political subdivisions are capped by NRS 41.035 (not researched here). Suits against the government proceed under NRS 41.031."
+    },
+    "criminal_child_abuse": {
+      "summary": "Three years from the offense for felony child abuse or neglect. For physical abuse there is no pause until the child turns 18; the longer child-victim deadlines (age 36 or 43) apply only to sexual abuse and sex trafficking. If the abuse was committed in a secret manner, the three years start when it is discovered.",
+      "citation": "Nev. Rev. Stat. 171.085(4), 171.095(1)(a); offense at 200.508",
+      "source_url": "https://www.leg.state.nv.us/NRS/NRS-171.html",
+      "quote": "4. Any felony other than the felonies listed in subsections 1, 2 and 3 must be found, or an information or complaint filed, within 3 years after the commission of the offense.",
+      "confidence": "high",
+      "note": "NRS 200.508 (https://www.leg.state.nv.us/NRS/NRS-200.html): willfully causing a child under 18 'unjustifiable physical pain or mental suffering as a result of abuse or neglect' is a category B felony whether or not substantial harm results. 171.095(1)(a): 'If a felony ... is committed in a secret manner', the period runs 'after the discovery of the offense'."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years from the offense for felony battery or assault. Gross misdemeanors: two years. Misdemeanor battery or assault: one year.",
+      "citation": "Nev. Rev. Stat. 171.085(4); 171.090",
+      "source_url": "https://www.leg.state.nv.us/NRS/NRS-171.html",
+      "quote": "1. A gross misdemeanor must be found, or an information or complaint filed, within 2 years after the commission of the offense. 2. Any other misdemeanor must be found, or an information or complaint filed, within 1 year after the commission of the offense.",
+      "confidence": "high",
+      "note": "The felony period (3 years) is quoted under criminal_child_abuse from the same section, 171.085(4). The secret-manner discovery rule in 171.095(1)(a) also applies to assault."
+    }
+  },
   "channels": [
     {
       "id": "nv-marriage-family-counselor-board",

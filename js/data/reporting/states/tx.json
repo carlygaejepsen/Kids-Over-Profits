@@ -3,6 +3,49 @@
   "abbr": "TX",
   "updated": "2026-09-22",
   "note": "Texas folds the psychology, counseling, social work and marriage and family therapy boards into one council, BHEC, so one form covers most therapists; psychiatrists are separate, under the Medical Board. Texas is also one of the few states that publishes its filing deadline plainly, and it is longer than most: five years, and longer still for sexual misconduct.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for personal injury, which covers assault, battery, negligence and false imprisonment.",
+      "citation": "Tex. Civ. Prac. & Rem. Code § 16.003(a)",
+      "source_url": "https://tcss.legis.texas.gov/resources/CP/htm/CP.16.htm",
+      "quote": "a person must bring suit for trespass for injury to the estate or to the property of another, conversion of personal property, taking or detaining the personal property of another, personal injury, forcible entry and detainer, and forcible detainer not later than two years after the day the ...",
+      "confidence": "high",
+      "note": "The statute names 'personal injury' only; applying it to assault, battery and false imprisonment rests on Texas case law, not verified here. Read from the Texas Legislature's statute file server (the file behind statutes.capitol.texas.gov/Docs/CP/htm/CP.16.htm). Longer periods in 16.0045 are for sexual offenses and trafficking only."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, the time before your 18th birthday does not count. The two years start at 18, so the deadline is your 20th birthday.",
+      "citation": "Tex. Civ. Prac. & Rem. Code § 16.001(a)-(b)",
+      "source_url": "https://tcss.legis.texas.gov/resources/CP/htm/CP.16.htm",
+      "quote": "a person is under a legal disability if the person is: (1) younger than 18 years of age, regardless of whether the person is married ... (b) If a person entitled to bring a personal action is under a legal disability when the cause of action accrues, the time of the disability is not included ...",
+      "confidence": "high",
+      "note": "No cap. No extended civil period for non-sexual child abuse was found; 16.0045 (5 and 30 years) is limited to sexual assault, trafficking and related sexual offenses."
+    },
+    "civil_government_claims": {
+      "summary": "The Texas Tort Claims Act does not cover assault, battery, false imprisonment or other intentional harm, so those claims generally cannot be brought against a state or local government program at all; a survivor may need to sue the staff or a private contractor instead. For negligence claims it does cover, notice is due within six months of the incident unless the government already knew of the injury.",
+      "citation": "Tex. Civ. Prac. & Rem. Code §§ 101.057, 101.101",
+      "source_url": "https://tcss.legis.texas.gov/resources/CP/htm/CP.101.htm",
+      "quote": "This chapter does not apply to a claim: ... (2) arising out of assault, battery, false imprisonment, or any other intentional tort, including a tort involving disciplinary action by school authorities.",
+      "confidence": "medium",
+      "note": "101.101(c): notice is not required if the governmental unit has 'actual notice' of the injury. The lawsuit itself uses the normal two-year period. The Tort Claims Act does not waive immunity for intentional torts such as assault or battery (Tex. Civ. Prac. & Rem. Code 101.057, read 2026-09-28), so many abuse claims against government units are barred regardless of timing. Whether minority tolls the six-month notice was not confirmed."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony injury to a child and felony abandoning or endangering a child can be charged until 10 years after the victim's 18th birthday (the victim's 28th birthday).",
+      "citation": "Tex. Code Crim. Proc. art. 12.01(7)",
+      "source_url": "https://tcss.legis.texas.gov/resources/CR/htm/CR.12.htm",
+      "quote": "(7) ten years from the 18th birthday of the victim of the offense: (A) injury to a child under Section 22.04, Penal Code; ... or (C) abandoning or endangering a child;",
+      "confidence": "high",
+      "note": "Article 12.01 governs felony indictments; a misdemeanor-level offense uses the two-year misdemeanor rule (art. 12.02(a)). Current text reflects 2025 amendments (latest Acts 2025, 89th Leg., 2nd C.S., Ch. 16, eff. Dec. 4, 2025). Failure to stop or report an assaultive offense against a child (Penal Code 38.17) has no limit (12.01(1)(M))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Five years for aggravated assault. Most other felonies: three years. Misdemeanor assault: two years (three for family violence).",
+      "citation": "Tex. Code Crim. Proc. arts. 12.01(4)(I), 12.01(11), 12.02",
+      "source_url": "https://tcss.legis.texas.gov/resources/CR/htm/CR.12.htm",
+      "quote": "(4) five years from the date of the commission of the offense: ... (I) aggravated assault under Section 22.02, Penal Code; ... (11) three years from the date of the commission of the offense: all other felonies.",
+      "confidence": "high",
+      "note": "Art. 12.02(a): Class A and B misdemeanors 'within two years from the date of the commission of the offense'; 12.02(b) gives three years for misdemeanor assault against a family or household member or dating partner. Art. 12.05 stops the clock while the accused is out of state."
+    }
+  },
   "channels": [
     {
       "id": "tx-bhec",

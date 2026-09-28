@@ -3,6 +3,49 @@
   "abbr": "ME",
   "updated": "2026-09-22",
   "note": "Maine runs one number for two different jobs: 1-800-452-1999 takes reports of suspected child abuse and it takes licensing concerns about a children's residential facility, because the same Office of Child and Family Services unit licenses and investigates them. Maine also has an independent Child Welfare Ombudsman, outside the department, for when the department itself is the problem.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Six years from the injury, for assault, battery, false imprisonment and negligence alike.",
+      "citation": "14 M.R.S. § 752",
+      "source_url": "https://legislature.maine.gov/statutes/14/title14sec752.html",
+      "quote": "All civil actions shall be commenced within 6 years after the cause of action accrues and not afterwards, except actions on a judgment or decree of any court of record ... and except as otherwise specially provided.",
+      "confidence": "high",
+      "note": "Until 2021, 14 M.R.S. § 753 gave only 2 years for assault and battery and false imprisonment. PL 2021, c. 207 amended § 753 so it now covers only slander and libel (current text: 'Actions for slander and libel must be commenced within 2 years after the cause of action accrues.' https://legislature.maine.gov/statutes/14/title14sec753.html). Whether the 6-year period reaches claims that were already barred under the old 2-year rule before the 2021 change was not verified."
+    },
+    "civil_minor_tolling": {
+      "summary": "For someone injured as a child, the six years start when they turn 18, so the deadline is normally the 24th birthday. There is no separate longer deadline for non-sexual physical abuse of a child.",
+      "citation": "14 M.R.S. § 853",
+      "source_url": "https://legislature.maine.gov/statutes/14/title14sec853.html",
+      "quote": "If a person entitled to bring any of the actions under sections 752 to 754, including section 752-C, ... is a minor, mentally ill, imprisoned or without the limits of the United States when the cause of action accrues, the action may be brought within the times limited herein after the disability is removed.",
+      "confidence": "high",
+      "note": "No cap on minority tolling appears in § 853. 14 M.R.S. § 752-C (no limit) covers sexual acts toward minors only."
+    },
+    "civil_government_claims": {
+      "summary": "Under the Maine Tort Claims Act, written notice must be filed within 365 days, and suit within 2 years; if the claimant was a minor, suit may be brought within 2 years after turning 18.",
+      "citation": "14 M.R.S. §§ 8107, 8110",
+      "source_url": "https://legislature.maine.gov/statutes/14/title14sec8110.html",
+      "quote": "unless an action therein is begun within 2 years after the cause of action accrues, except that, if the claimant is a minor when the cause of action accrues, the action may be brought within 2 years of the minor's attaining 18 years of age.",
+      "confidence": "high",
+      "note": "Notice: § 8107(1) 'Within 365 days after any claim or cause of action permitted by this chapter accrues, or at a later time within the limits of section 8110, when a claimant shows good cause' (https://legislature.maine.gov/statutes/14/title14sec8107.html). Which claims the Act permits against governmental entities is limited; not researched."
+    },
+    "criminal_child_abuse": {
+      "summary": "Maine has no separate physical child abuse crime; it is charged as assault or endangering the welfare of a child. Six years for Class A, B or C crimes (such as assault on a child under 6, or aggravated assault) and three years for Class D or E crimes (such as simple assault or endangering the welfare of a child), counted from the crime, with no delay until the child turns 18.",
+      "citation": "17-A M.R.S. § 8(2); 17-A M.R.S. §§ 207, 554",
+      "source_url": "https://legislature.maine.gov/statutes/17-A/title17-Asec8.html",
+      "quote": "Except as provided in subsection 1 or 2-A, a prosecution for a Class A, Class B or Class C crime must be commenced within 6 years after it is committed and a prosecution for a Class D or Class E crime must be commenced within 3 years after it is committed.",
+      "confidence": "high",
+      "note": "The no-limit rule in § 8(1)(B) for victims under 18 covers only sex crimes. Assault on a person under 6 by an adult is Class C (§ 207(1)(B)). Endangering the welfare of a child, including 'recklessly endangers the health, safety or welfare of the child by violating a duty of care or protection', is Class D (§ 554), so 3 years. The period stops running while the accused is out of state, by up to 5 more years (§ 8(3)(A))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Aggravated assault (Class A or B): six years from the crime. Simple assault (Class D): three years.",
+      "citation": "17-A M.R.S. § 8(2); 17-A M.R.S. § 208",
+      "source_url": "https://legislature.maine.gov/statutes/17-A/title17-Asec8.html",
+      "quote": "a prosecution for a Class A, Class B or Class C crime must be commenced within 6 years after it is committed and a prosecution for a Class D or Class E crime must be commenced within 3 years after it is committed.",
+      "confidence": "high",
+      "note": "Aggravated assault (§ 208) is Class A (serious permanent disfigurement or loss of function) or Class B. Simple assault (§ 207(1)(A)) is Class D."
+    }
+  },
   "channels": [
     {
       "id": "me-professional-licensing-boards",

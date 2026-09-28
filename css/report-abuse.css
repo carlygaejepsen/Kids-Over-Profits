@@ -160,7 +160,7 @@
 .kop-rep-deadlines {
     margin: 0 0 2rem;
     padding: 1rem 1.25rem;
-    max-width: 72ch;
+    max-width: 88ch;
     background: var(--kop-soft-pastel-yellow, #FFF5CB);
     border-left: 4px solid var(--kop-orange, #EF9034);
     border-radius: 0 6px 6px 0;
@@ -181,6 +181,77 @@
 .kop-rep-deadlines a {
     color: var(--kop-teal-ink, #24757F);
     font-weight: 600;
+}
+
+.kop-rep-deadlines-sub {
+    margin: 1rem 0 0.35rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-rep-dl {
+    margin: 0;
+}
+
+.kop-rep-dl-row {
+    display: grid;
+    grid-template-columns: minmax(10rem, 15rem) 1fr;
+    gap: 0.2rem 1rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid rgba(0, 4, 53, 0.12);
+}
+
+.kop-rep-dl-row dt {
+    font-weight: 700;
+    line-height: 1.45;
+}
+
+.kop-rep-dl-row dd {
+    margin: 0;
+    line-height: 1.55;
+}
+
+.kop-rep-dl-flag {
+    display: inline-block;
+    margin-right: 0.35rem;
+    padding: 0 0.4rem;
+    border: 1px solid var(--kop-orange-ink, #A3570D);
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--kop-orange-ink, #A3570D);
+    vertical-align: 0.1em;
+}
+
+.kop-rep-dl-line {
+    display: block;
+}
+
+.kop-rep-dl-line + .kop-rep-dl-line {
+    margin-top: 0.25rem;
+}
+
+.kop-rep-deadlines a.kop-rep-cite {
+    display: inline-block;
+    margin-top: 0.15rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.kop-rep-deadlines p.kop-rep-deadlines-fine {
+    margin-top: 0.9rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: #3d4260;
+}
+
+@media (max-width: 640px) {
+    .kop-rep-dl-row {
+        grid-template-columns: 1fr;
+    }
 }
 
 .kop-rep-deadlines p:last-child {

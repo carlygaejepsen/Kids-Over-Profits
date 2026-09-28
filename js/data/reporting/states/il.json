@@ -3,6 +3,49 @@
   "abbr": "IL",
   "updated": "2026-09-22",
   "note": "Illinois has a practical shortcut worth knowing: if a facility has broken state licensing standards, you can call the child abuse hotline and say you want to make a licensing complaint. That is the state's own advice, and it saves working out which of the licensing offices covers a program. Every complaint about a licensed clinician, whatever the profession, goes to one intake unit at IDFPR.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for personal injury claims, including assault, battery, negligence and false imprisonment. If the person who hurt you was convicted of a Class X or Class 1 felony (or first degree murder) for it, there is no deadline to sue that person.",
+      "citation": "735 ILCS 5/13-202; 735 ILCS 5/13-202.1",
+      "source_url": "https://www.ilga.gov/Documents/legislation/ilcs/documents/073500050K13-202.htm",
+      "quote": "Actions for damages for an injury to the person, or for false imprisonment, or malicious prosecution ... except damages resulting from first degree murder or the commission of a Class X felony and the perpetrator thereof is convicted of such crime, shall be commenced within 2 years",
+      "confidence": "high",
+      "note": "§ 13-202.1(a) (https://www.ilga.gov/Documents/legislation/ilcs/documents/073500050K13-202.1.htm): an action 'may be brought at any time' if based on conduct that constituted first degree murder, a Class X felony or a Class 1 felony and 'the person was convicted'. Aggravated battery of a child is a Class X felony under 720 ILCS 5/12-3.05 (not re-read in detail). The no-limit rule reaches only the convicted person, not a program that employed them."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were under 18 when you were hurt, you have 2 years after your 18th birthday (until age 20) to sue. The statute sets no cap.",
+      "citation": "735 ILCS 5/13-211(a)",
+      "source_url": "https://www.ilga.gov/Documents/legislation/ilcs/documents/073500050K13-211.htm",
+      "quote": "If the person entitled to bring an action, specified in Sections 13-201 through 13-210 of this Code, at the time the cause of action accrued, is under the age of 18 years or is under a legal disability, then he or she may bring the action within 2 years after the person attains the age of 18 years",
+      "confidence": "high",
+      "note": "No general discovery statute for non-sexual abuse. § 13-202.3 (clock paused during threats, intimidation or manipulation by the perpetrator) is limited to injuries caused by sexual conduct or penetration."
+    },
+    "civil_government_claims": {
+      "summary": "Against a local government (county, city, school district) or its employees, the lawsuit must be filed within 1 year. Claims against the State of Illinois go to the Court of Claims: file within 2 years (minors have 2 years after turning 18), and file a notice with the Attorney General and the Court of Claims clerk within 1 year unless the claim itself is filed within that year.",
+      "citation": "745 ILCS 10/8-101(a); 705 ILCS 505/22(h); 705 ILCS 505/22-1",
+      "source_url": "https://www.ilga.gov/Documents/legislation/ilcs/documents/074500100K8-101.htm",
+      "quote": "No civil action other than an action described in subsection (b) may be commenced in any court against a local entity or any of its employees for any injury unless it is commenced within one year from the date that the injury was received or the cause of action accrued.",
+      "confidence": "medium",
+      "note": "705 ILCS 505/22(h) (https://www.ilga.gov/Documents/legislation/ilcs/documents/070505050K22.htm): 'All other claims must be filed within 2 years after it first accrues, saving to minors ... in which case the claim must be filed within 2 years from the time the disability ceases.' 505/22-1: notice 'Within 1 year from the date that such an injury was received'; 'A claimant is not required to file the notice ... if he or she files his or her claim within one year'. Whether the minority tolling of 735 ILCS 5/13-211 extends the one-year local-government period was not confirmed from statute text."
+    },
+    "criminal_child_abuse": {
+      "summary": "Illinois has no special deadline for physical child abuse: felonies such as aggravated battery of a child or felony child endangerment must be charged within 3 years. The clock is not paused until the child turns 18 for physical abuse.",
+      "citation": "720 ILCS 5/3-5(b); 720 ILCS 5/3-6",
+      "source_url": "https://www.ilga.gov/Documents/legislation/ilcs/documents/072000050K3-5.htm",
+      "quote": "Unless the statute describing the offense provides otherwise, or the period of limitation is extended by Section 3-6, a prosecution for any offense not designated in subsection (a) or (a-5) must be commenced within 3 years after the commission of the offense if it is a felony",
+      "confidence": "high",
+      "note": "The victim-under-18 extensions in § 3-6 (https://www.ilga.gov/Documents/legislation/ilcs/documents/072000050K3-6.htm) cover sex offenses, trafficking, child pornography and female genital mutilation only. A death-causing offense such as involuntary manslaughter has no limit (§ 3-5(a)). § 3-7 excludes time the defendant is not resident in Illinois. Child endangerment is now 720 ILCS 5/12C-5 (renumbered from 12-21.6); its text was not re-read."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony aggravated battery or aggravated assault must be charged within 3 years. Misdemeanor assault or battery must be charged within 1 year and 6 months.",
+      "citation": "720 ILCS 5/3-5(b); 720 ILCS 5/12-3.05",
+      "source_url": "https://www.ilga.gov/Documents/legislation/ilcs/documents/072000050K3-5.htm",
+      "quote": "must be commenced within 3 years after the commission of the offense if it is a felony, or within one year and 6 months after its commission if it is a misdemeanor.",
+      "confidence": "high",
+      "note": "§ 12-3.05(h): 'Unless otherwise provided, aggravated battery is a Class 3 felony', with Class 2, 1 and X grades for aggravating factors. § 3-5 last amended P.A. 104-245, eff. 1-1-26 (no change to these periods)."
+    }
+  },
   "channels": [
     {
       "id": "il-idfpr",

@@ -3,6 +3,49 @@
   "abbr": "AK",
   "updated": "2026-09-22",
   "note": "Alaska takes abuse reports by phone, email or fax, and says its hotline staff will answer questions about mandatory reporting and take all the required information over the phone - which is worth knowing if you are unsure whether what you have is enough to report. All the mental health licensing boards sit under one division, with a single investigations unit behind them.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from when the injury happened (when the claim 'accrued'). The same two years covers assault, battery, false imprisonment and negligence/personal injury.",
+      "citation": "Alaska Stat. § 09.10.070(a)",
+      "source_url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=09.10.070&secEnd=09.10.070",
+      "quote": "a person may not bring an action (1) for libel, slander, assault, battery, seduction, or false imprisonment, (2) for personal injury or death, or injury to the rights of another not arising on contract ... unless the action is commenced within two years of the accrual of the cause of action.",
+      "confidence": "high",
+      "note": "Alaska courts apply a common-law discovery rule to accrual in some cases; that is case law, not statute text, and was not verified here."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18, but the extension cannot go more than two years past the 18th birthday. In practice, someone hurt as a minor has until age 20.",
+      "citation": "Alaska Stat. § 09.10.140(a)",
+      "source_url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=09.10.140&secEnd=09.10.140",
+      "quote": "if a person entitled to bring an action ... is at the time the cause of action accrues either (1) under the age of majority ... the time of a disability ... is not a part of the time limit ... the period ... is not extended in any case longer than two years after the disability ceases.",
+      "confidence": "high",
+      "note": "Subsection (c) separately excludes time before the eighth birthday; it is a leftover of the 1997 tort-reform limit on minority tolling (the Alaska Supreme Court struck that limit in Sands v. Green, 2007) and does not shorten (a). The special delayed-discovery rule in (b) is for sexual abuse only. No general statutory discovery rule for non-sexual abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "No advance notice of claim is required to sue the State of Alaska in tort; the normal two-year deadline applies. But the State cannot be sued for claims arising out of assault, battery or false imprisonment (only negligence-type claims), so a survivor may need to sue the individual staff or a private contractor instead.",
+      "citation": "Alaska Stat. § 09.50.250; § 09.65.070 (municipalities)",
+      "source_url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=09.50.250&secEnd=09.50.250",
+      "quote": "A person or corporation having a contract, quasi-contract, or tort claim against the state may bring an action against the state ... However, an action may not be brought if the claim ... (3) arises out of assault, battery, false imprisonment, false arrest, malicious prosecution, abuse of process",
+      "confidence": "medium",
+      "note": "No notice-of-claim statute for state or municipal tort suits was found in AS 09.50 or 09.65.070. Municipal immunity in § 09.65.070(d) covers discretionary functions but not intentional torts by name. Not confirmed whether any local charter adds a notice rule."
+    },
+    "criminal_child_abuse": {
+      "summary": "Alaska has no separate felony 'physical child abuse' crime; physical abuse of a child is charged as assault (including third-degree assault for injuring a child under 12, or 12-15). Felony assault must be charged within 10 years of the offense. The clock is not paused until the child turns 18 for these non-sexual crimes.",
+      "citation": "Alaska Stat. § 12.10.010(b)(1); § 11.41.220(a)(1)(C), (a)(3)",
+      "source_url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=12.10.010&secEnd=12.10.010",
+      "quote": "a person may not be prosecuted ... unless the indictment is found or the information or complaint is instituted not later than (1) 10 years after the commission of a felony offense in violation of AS 11.41.120 - 11.41.330 ... or (2) five years after the commission of any other offense.",
+      "confidence": "medium",
+      "note": "Endangering the welfare of a child (AS 11.51.100) sits outside AS 11.41, so it falls under the five-year default. Time can stop running (up to 3 extra years) while the accused hides out of state (§ 12.10.040). Kidnapping has no limit (§ 12.10.010(a)(6)); custodial interference is within 11.41.300-.330 (10 years if a felony)."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault (first, second or third degree) must be charged within 10 years of the offense. Misdemeanor assault and other offenses: five years.",
+      "citation": "Alaska Stat. § 12.10.010(b)",
+      "source_url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=12.10.010&secEnd=12.10.010",
+      "quote": "not later than (1) 10 years after the commission of a felony offense in violation of AS 11.41.120 - 11.41.330 ... or (2) five years after the commission of any other offense.",
+      "confidence": "high",
+      "note": "Assault offenses are AS 11.41.200-11.41.230, inside the 11.41.120-.330 range. Time starts the day after the offense (§ 12.10.030)."
+    }
+  },
   "channels": [
     {
       "id": "ak-professional-licensing-boards",

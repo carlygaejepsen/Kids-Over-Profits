@@ -3,6 +3,49 @@
   "abbr": "SD",
   "updated": "2026-09-22",
   "note": "South Dakota's child protection intake runs on office hours only - 8am to 5pm Central on weekdays - and the state tells you to call local law enforcement instead for anything urgent outside them. Its counseling board is unusually frank that the process is slow: the licensee gets 20 days to answer, everything then goes to a board member, and the Board says the whole thing is generally lengthy.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for assault, battery or false imprisonment. Three years for other personal injury claims, such as negligence.",
+      "citation": "S.D. Codified Laws §§ 15-2-15(1), 15-2-14(3)",
+      "source_url": "https://sdlegislature.gov/Statutes/15-2-15",
+      "quote": "the following civil actions other than for the recovery of real property can be commenced only within two years after the cause of action shall have accrued: (1) An action for libel, slander, assault, battery, or false imprisonment;",
+      "confidence": "high",
+      "note": "15-2-14 (https://sdlegislature.gov/Statutes/15-2-14): three years for '(3) An action for personal injury.' Text read via the sdlegislature.gov statute API (api/Statutes/<section>.html)."
+    },
+    "civil_minor_tolling": {
+      "summary": "Time spent under 18 does not count, but the extra time can never go past one year after your 18th birthday. So a person hurt as a child has at least until age 19, or longer if the normal period from the injury ends later.",
+      "citation": "S.D. Codified Laws § 15-2-22",
+      "source_url": "https://sdlegislature.gov/Statutes/15-2-22",
+      "quote": "the time of the person's disability is not a part of the time limited for the commencement of the action. The period within which the action shall be brought cannot be extended more than five years by any disability except infancy, nor can it be extended in any case longer than one year after ...",
+      "confidence": "medium",
+      "note": "The age of minority is defined in chapter 26-1 (18). The cap limits only the extension; reading that it does not shorten the normal period was not confirmed against case law. No general discovery rule or extended civil period for non-sexual child abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "For injury claims against the state, a county, city, school district or other public entity, written notice must be given within 180 days of the injury. The notice does not extend the lawsuit deadline.",
+      "citation": "S.D. Codified Laws § 3-21-2",
+      "source_url": "https://sdlegislature.gov/Statutes/3-21-2",
+      "quote": "No action for the recovery of damages for personal injury ... caused by a public entity or its employees may be maintained against the public entity or its employees unless written notice of the time, place, and cause of the injury is given to the public entity ... within one hundred eighty ...",
+      "confidence": "high",
+      "note": "3-21-3 lists who receives notice (for the state, the attorney general and the commissioner of human resources and administration). Whether minority tolls the 180-day notice was not confirmed; other sections of chapter 3-21 (not read) may address incapacity. Sovereign immunity may bar claims regardless of timing."
+    },
+    "criminal_child_abuse": {
+      "summary": "Abuse of or cruelty to a minor (a felony) can be charged at any time before the victim turns 25. If the abuse is charged as aggravated assault instead, the limit is seven years from the offense.",
+      "citation": "S.D. Codified Laws § 26-10-1",
+      "source_url": "https://sdlegislature.gov/Statutes/26-10-1",
+      "quote": "Any person who abuses, exposes, tortures, torments, or cruelly punishes a minor in a manner which does not constitute aggravated assault, is guilty of a Class 4 felony. ... Notwithstanding § 23A-42-2, a charge brought pursuant to this section may be commenced at any time before the victim ...",
+      "confidence": "high",
+      "note": "Aggravated assault (22-18-1.1, a Class 3 felony) falls under the seven-year rule in 23A-42-2 with no tolling for minority found. 'Reasonable force' under 22-18-5 is a defense to 26-10-1."
+    },
+    "criminal_felony_assault": {
+      "summary": "Seven years for aggravated assault and other lower-level felonies. Misdemeanor simple assault also has seven years.",
+      "citation": "S.D. Codified Laws §§ 23A-42-2, 23A-42-1",
+      "source_url": "https://sdlegislature.gov/Statutes/23A-42-2",
+      "quote": "In all other prosecutions for a public offense and all proceedings of a quasi-criminal or penal nature ... the proceedings shall be commenced within seven years after the commission of the offense or crime which is the basis of the prosecution",
+      "confidence": "high",
+      "note": "No limit for Class A, B or C felonies (23A-42-1). Aggravated assault is a Class 3 felony (22-18-1.1, amended SL 2026, ch 101), so seven years applies. Simple assault (22-18-1) is a Class 1 misdemeanor, also seven years under 23A-42-2."
+    }
+  },
   "channels": [
     {
       "id": "sd-counselors-mft-board",

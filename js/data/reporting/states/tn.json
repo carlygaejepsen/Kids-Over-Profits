@@ -3,6 +3,49 @@
   "abbr": "TN",
   "updated": "2026-09-22",
   "note": "Three Tennessee specifics. The abuse hotline stops taking calls at weekends - from 11pm Central Friday to 11pm Central Sunday it plays a recording sending you to the online portal - so if something happens on a Saturday, use the portal. Licensing splits on whether a program calls itself clinical: DCS licenses the non-clinical residential programs, the Health Facilities Commission licenses the healthcare facilities. And unlike most states, the Department of Health says it will not reveal a complainant's name to the practitioner.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year for personal injury, including assault, battery, negligence and false imprisonment. It becomes two years if the person who hurt you is criminally prosecuted for it (and you sue that person).",
+      "citation": "Tenn. Code Ann. § 28-3-104(a)",
+      "source_url": "https://law.justia.com/codes/tennessee/2025/title-28/chapter-3/part-1/section-28-3-104/",
+      "quote": "the following actions shall be commenced within one (1) year after the cause of action accrued: (A) Actions for libel, injuries to the person, false imprisonment, malicious prosecution, or breach of marriage promise; (B) Civil actions ... brought under the federal civil rights statutes",
+      "confidence": "high",
+      "note": "28-3-104(a)(2): two years if criminal charges are brought against a person who caused the injury, the prosecution is commenced within one year, and the suit is 'brought by the person injured by the criminal conduct against the party prosecuted for such conduct.' The extension therefore reaches the prosecuted staff member, not necessarily the program. Official Tennessee code is published through LexisNexis, which could not be fetched; Justia's 2025 Tennessee Code was used."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, the clock starts at 18. With the one-year injury deadline, that means suing before your 19th birthday.",
+      "citation": "Tenn. Code Ann. § 28-1-106(a)",
+      "source_url": "https://law.justia.com/codes/tennessee/2025/title-28/chapter-1/section-28-1-106/",
+      "quote": "If the person entitled to commence an action is, at the time the cause of action accrued, either under eighteen (18) years of age, or adjudicated incompetent, such person ... may commence the action, after legal rights are restored, within the time of limitation for the particular cause of ...",
+      "confidence": "high",
+      "note": "Periods longer than three years are capped at three years after 18; this does not affect the one-year injury period. No general discovery rule or extended period for non-sexual child abuse was found in the statutes read (28-3-116 is childhood sexual abuse only and was not researched)."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against a county, city or other local government must be filed within 12 months. Claims against the State go to the Claims Commission: written notice must be given to the state's Division of Claims and Risk Management within the normal deadline for that kind of claim (one year for injury).",
+      "citation": "Tenn. Code Ann. §§ 29-20-305(b), 9-8-402(a)-(b)",
+      "source_url": "https://law.justia.com/codes/tennessee/2025/title-29/chapter-20/part-3/section-29-20-305/",
+      "quote": "The action must be commenced within twelve (12) months after the cause of action arises.",
+      "confidence": "medium",
+      "note": "9-8-402(b) (https://law.justia.com/codes/tennessee/2025/title-9/chapter-8/part-4/section-9-8-402/): 'The claim is barred unless the notice is given within the time provided by statutes of limitations applicable by the courts for similar occurrences'. Tennessee case law is understood to hold that minority tolling (28-1-106) does not extend the Governmental Tort Liability Act deadline, but that was not verified here. Immunity rules in the GTLA bar many intentional-tort claims against local governments."
+    },
+    "criminal_child_abuse": {
+      "summary": "Aggravated child abuse, neglect or endangerment (serious injury, a weapon, or torture): until 10 years after the victim turns 18, or longer if the normal felony period is longer. Ordinary felony child abuse of a teenager (injury, Class E felony): only two years from the offense.",
+      "citation": "Tenn. Code Ann. § 40-2-101(n), (b)(4); § 39-15-402; § 39-15-401(a)",
+      "source_url": "https://law.justia.com/codes/tennessee/2025/title-40/chapter-2/section-40-2-101/",
+      "quote": "prosecutions for any offense committed on or after July 1, 2016, that constitutes the offense of aggravated child abuse, or aggravated child neglect or endangerment, under § 39-15-402, shall commence by the later of: (1) Ten (10) years after the child reaches eighteen (18) years of age; or (2) ...",
+      "confidence": "high",
+      "note": "Aggravated child abuse is a Class B felony (8 years under (b)(2)); Class A if the child is 8 or younger or vulnerable (15 years). 39-15-402(c) counts 'severe bruising ... including those sustained by whipping children with objects' as serious bodily injury. Child abuse causing injury (39-15-401(a)) is a Class E felony for a child over 8, so two years from the offense (40-2-101(b)(4)); abuse or neglect under 401(b) is a Class A misdemeanor for a child over 8, so 12 months (40-2-102(a)). Offenses before July 1, 2016 follow earlier rules."
+    },
+    "criminal_felony_assault": {
+      "summary": "Four years for most aggravated assault (Class C or D felony). Misdemeanor assault must be charged within 12 months.",
+      "citation": "Tenn. Code Ann. §§ 40-2-101(b)(3), 40-2-102(a), 39-13-102(d)",
+      "source_url": "https://law.justia.com/codes/tennessee/2025/title-40/chapter-2/section-40-2-101/",
+      "quote": "Prosecution for a felony offense shall begin within: (1) Fifteen (15) years for a Class A felony; (2) Eight (8) years for a Class B felony; (3) Four (4) years for a Class C or Class D felony; and (4) Two (2) years for a Class E felony.",
+      "confidence": "high",
+      "note": "Aggravated assault under 39-13-102 is a Class C felony (Class D if reckless; Class B for strangulation of a pregnant victim). 40-2-102(a) (https://law.justia.com/codes/tennessee/2025/title-40/chapter-2/section-40-2-102/): 'all prosecutions for misdemeanors shall be commenced within the twelve (12) months after the offense has been committed'. 39-13-102(b) makes a custodian of a child who fails to protect the child from aggravated assault or aggravated child abuse guilty of aggravated assault."
+    }
+  },
   "channels": [
     {
       "id": "tn-health-related-boards",

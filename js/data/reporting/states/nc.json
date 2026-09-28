@@ -3,6 +3,49 @@
   "abbr": "NC",
   "updated": "2026-09-22",
   "note": "North Carolina keeps a separate board for each profession, so you have to know which licence the person holds before you can complain about them; every board publishes a licence lookup and it is worth checking first. Child abuse reporting is the other oddity: there is no statewide hotline, and a report goes to the department of social services in the county the program sits in.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years. The same three-year limit covers assault, battery and false imprisonment (from the date it happened) and negligence or other personal injury (from when the harm became apparent, with an outside limit of 10 years after the last act).",
+      "citation": "N.C. Gen. Stat. 1-52(16), 1-52(19)",
+      "source_url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_1/GS_1-52.html",
+      "quote": "Within three years an action - ... (19) For assault, battery, or false imprisonment, except as provided by G.S. 1-17(d) and (e).",
+      "confidence": "high",
+      "note": "1-52(16) (personal injury) has a discovery-style accrual rule but a 10-year repose: 'no cause of action shall accrue more than 10 years from the last act or omission of the defendant giving rise to the cause of action.' 1-17(d) and (e) are the child sexual abuse extensions, not covered here."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were under 18 when you were hurt, the normal time limit (three years for assault or injury) does not start until you turn 18, so the usual deadline is your 21st birthday. There is no general extended deadline for physical (non-sexual) child abuse.",
+      "citation": "N.C. Gen. Stat. 1-17(a)",
+      "source_url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_1/GS_1-17.html",
+      "quote": "A person entitled to commence an action who is under a disability at the time the cause of action accrued may bring his or her action within the time limited in this Subchapter, after the disability is removed",
+      "confidence": "high",
+      "note": "Disability includes being under 18. The 10-year repose in 1-52(16) for negligence-type personal injury claims is not expressly lifted by 1-17(a) for non-sexual claims; whether it can cut off a minor's negligence claim injured very young is a question for a lawyer. 1-17(b)/(c) are medical malpractice rules; 1-17(d)/(e) are child sexual abuse rules."
+    },
+    "civil_government_claims": {
+      "summary": "Negligence claims against a North Carolina state agency (for example a state-run juvenile facility) must be filed with the Industrial Commission within three years under the State Tort Claims Act; there is no general statutory notice-of-claim step for counties and cities.",
+      "citation": "N.C. Gen. Stat. 143-299",
+      "source_url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_143/GS_143-299.html",
+      "quote": "All claims against any and all State departments, institutions, and agencies shall henceforth be forever barred unless a claim be filed with the Industrial Commission within three years after the accrual of such claim",
+      "confidence": "medium",
+      "note": "The State Tort Claims Act covers negligence by state employees; intentional abuse by an employee is usually sued in Superior Court against the individual or as a constitutional claim, subject to immunity rules. Claims against counties and cities depend on governmental immunity and whether it was waived by insurance; I did not find a general statutory notice-of-claim deadline for local governments, but some local charters have one."
+    },
+    "criminal_child_abuse": {
+      "summary": "No time limit for felony child abuse. North Carolina has no statute of limitations for any felony. Misdemeanor child abuse must be charged within 10 years.",
+      "citation": "N.C. Gen. Stat. 15-1 (limits misdemeanors only); felony child abuse is N.C. Gen. Stat. 14-318.4",
+      "source_url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_15/GS_15-1.html",
+      "quote": "Notwithstanding subsection (a) of this section, the following misdemeanors shall be charged within 10 years of the commission of the crime: ... (4) G.S. 14-318.2.",
+      "confidence": "high",
+      "note": "The absence of a felony limitation is a matter of long-standing North Carolina case law (no statute sets one), so there is no statute text that says 'no limit'; 15-1 limits only misdemeanors. 14-318.4 felony child abuse (Class B2 to G felony) applies to 'a parent or any other person providing care to or supervision of a child less than 16 years of age.' The 10-year misdemeanor rule for 14-318.2 (misdemeanor child abuse) was added by S.L. 2019-245."
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for felony assault, because North Carolina has no statute of limitations for felonies. Misdemeanor assault must be charged within two years.",
+      "citation": "N.C. Gen. Stat. 15-1",
+      "source_url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_15/GS_15-1.html",
+      "quote": "all misdemeanors except malicious misdemeanors, shall be charged within two years after the commission of the same, and not afterwards",
+      "confidence": "high",
+      "note": "No statute imposes a limitation period on felonies; that rule comes from case law. Malicious misdemeanors are also unlimited under 15-1."
+    }
+  },
   "channels": [
     {
       "id": "nc-psychology-board",

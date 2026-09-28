@@ -3,6 +3,49 @@
   "abbr": "MA",
   "updated": "2026-09-22",
   "note": "Massachusetts calls a child abuse report a 51A, after the section of law that creates it, and you will hear that shorthand from every agency in the state. The Department of Early Education and Care licenses the residential and congregate care programs themselves, which is not where most people would think to look, and the state also has an independent Office of the Child Advocate covering every child-serving agency.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years from when the claim arises, for assault, battery, false imprisonment and negligence alike (all are tort actions).",
+      "citation": "Mass. Gen. Laws ch. 260, § 2A",
+      "source_url": "https://malegislature.gov/Laws/GeneralLaws/PartIII/TitleV/Chapter260/Section2A",
+      "quote": "Except as otherwise provided, actions of tort, actions of contract to recover for personal injuries, and actions of replevin, shall be commenced only within three years next after the cause of action accrues.",
+      "confidence": "high",
+      "note": "Massachusetts courts apply a discovery rule to when a cause of action 'accrues' in some cases; that is case law, not statute text."
+    },
+    "civil_minor_tolling": {
+      "summary": "If the injured person was a minor, the three years start when they turn 18, so the deadline is normally the 21st birthday. There is no separate longer deadline for non-sexual physical abuse of a child.",
+      "citation": "Mass. Gen. Laws ch. 260, § 7",
+      "source_url": "https://malegislature.gov/Laws/GeneralLaws/PartIII/TitleV/Chapter260/Section7",
+      "quote": "If the person entitled thereto is a minor, or is incapacitated by reason of mental illness when a right to bring an action first accrues, the action may be commenced within the time hereinbefore limited after the disability is removed.",
+      "confidence": "high",
+      "note": "No cap on minority tolling appears in § 7. The extended periods in ch. 260, §§ 4C and 4C1/2 cover sexual abuse of a minor only. Medical malpractice claims by minors have their own rule (ch. 231, § 60D), not researched."
+    },
+    "civil_government_claims": {
+      "summary": "Against a public employer, a written claim must be presented within two years (to the Attorney General for the state, or the mayor, city manager or similar official for a city or town), and suit must be filed within three years; public employers are not liable for intentional torts like assault and battery under this act.",
+      "citation": "Mass. Gen. Laws ch. 258, § 4",
+      "source_url": "https://malegislature.gov/Laws/GeneralLaws/PartIII/TitleIV/Chapter258/Section4",
+      "quote": "unless the claimant shall have first presented his claim in writing to the executive officer of such public employer within two years after the date upon which the cause of action arose ... No civil action shall be brought more than three years after the date upon which such cause of action accrued",
+      "confidence": "high",
+      "note": "The intentional-tort exclusion is in ch. 258, § 10(c) (not re-read here); a claim against the public employer typically has to be framed as negligence, and individual employees can be sued directly for intentional torts. Whether ch. 260, § 7 minority tolling extends the ch. 258 deadlines was not verified."
+    },
+    "criminal_child_abuse": {
+      "summary": "Assault and battery on a child causing injury: six years from the crime. Wanton or reckless conduct that puts a child at substantial risk of serious bodily injury (ch. 265, § 13L) has no time limit, though a case filed more than 27 years later needs corroborating evidence.",
+      "citation": "Mass. Gen. Laws ch. 277, § 63; ch. 265, §§ 13J, 13L",
+      "source_url": "https://malegislature.gov/Laws/GeneralLaws/PartIV/TitleII/Chapter277/Section63",
+      "quote": "An indictment or complaint for an offense set forth in section 13B, 13B1/2, 13B3/4, 13F, 13L, 22A ... of chapter 265 ... may be found and filed at any time after the date of the commission of such offense ... An indictment for any other crime shall be found and filed within 6 years",
+      "confidence": "medium",
+      "note": "Ch. 265, § 13J (assault and battery on a child under 14 causing bodily injury, including by an 'employee of a home or institution' who has care and custody) is not listed in § 63, so the six-year default applies, and the age-16 delayed start in the second paragraph of § 63 does not list § 13J either. § 13L (child under 18) is in the no-limit list. Time the defendant is not publicly resident in Massachusetts is excluded."
+    },
+    "criminal_felony_assault": {
+      "summary": "Six years from the crime for assault and battery with a dangerous weapon, assault and battery causing serious injury, and most other assaults. Simple (misdemeanor) assault and battery: also six years.",
+      "citation": "Mass. Gen. Laws ch. 277, § 63",
+      "source_url": "https://malegislature.gov/Laws/GeneralLaws/PartIV/TitleII/Chapter277/Section63",
+      "quote": "An indictment for any other crime shall be found and filed within 6 years after such crime has been committed. Any period during which the defendant is not usually and publicly a resident within the commonwealth shall be excluded in determining the time limited.",
+      "confidence": "medium",
+      "note": "Assault and battery on a family or household member (ch. 265, § 13M) and some other listed crimes have 10 years. The text says 'indictment for any other crime'; applying six years to misdemeanor complaints is the usual reading, not quoted directly."
+    }
+  },
   "channels": [
     {
       "id": "ma-occupational-licensure-boards",

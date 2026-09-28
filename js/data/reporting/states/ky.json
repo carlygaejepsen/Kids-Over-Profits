@@ -3,6 +3,49 @@
   "abbr": "KY",
   "updated": "2026-09-22",
   "note": "Kentucky's hotline is answered by people around the clock, but its online reporting form is only monitored on weekdays between 8am and 4:30pm Eastern - so an urgent report at a weekend has to be a phone call, not a form. Its counseling board is unusually clear about what happens next: it acknowledges a written complaint within two business days, sends a copy to the counselor for a response, and puts both in front of the board at its next meeting.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year from the injury for a personal injury claim, whether it is assault, battery or negligence. This is one of the shortest deadlines in the country.",
+      "citation": "KRS 413.140(1)(a)",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=58050",
+      "quote": "(1) The following actions shall be commenced within one (1) year after the cause of action accrued: (a) An action for an injury to the person of the plaintiff, or of her husband, his wife, child, ward, apprentice, or servant;",
+      "confidence": "high",
+      "note": "Current version effective July 15, 2026 (amended 2026 Ky. Acts ch. 172, which did not change subsection (1)(a)). False imprisonment is not named separately; it would fall under 'injury to the person' or 'arrest' in (1)(c), both one year, but this was not confirmed from case law. KRS 413.190 stops the clock while a Kentucky-resident defendant is out of state or obstructs the suit."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. For someone injured as a child, the one year starts on the 18th birthday, so the deadline is the 19th birthday. There is no cap. This does NOT apply to claims against the state through the Board of Claims.",
+      "citation": "KRS 413.170(1)",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=17873",
+      "quote": "If a person entitled to bring any action mentioned in KRS 413.090 to 413.160 ... was, at the time the cause of action accrued, an infant or of unsound mind, the action may be brought within the same number of years after the removal of the disability",
+      "confidence": "high",
+      "note": "No general discovery rule for non-sexual abuse; KRS 413.249 covers childhood sexual abuse only."
+    },
+    "civil_government_claims": {
+      "summary": "Injury claims against the Commonwealth go to the Board of Claims and must be filed within one year of discovering the injury, and never more than two years after the act. Being a minor does NOT extend this: a parent or guardian must file within the same deadline.",
+      "citation": "KRS 49.120(1), (3), (5)",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=51461",
+      "quote": "the claimant is an infant ... a guardian or next friend or committee or other qualified representative shall bring such action in the board on behalf of such person within the same time limitation set forth herein or the claim is barred, notwithstanding KRS 413.170",
+      "confidence": "high",
+      "note": "KRS 49.120(1): 'All claims must be filed with the board within one (1) year from the time the claim for relief accrued.' (3): personal injury claims accrue at discovery, but 'no action for personal injury shall be commenced beyond two (2) years from the date on which the alleged negligent act or omission actually occurred.' The Board of Claims hears negligence claims. Rules for counties and cities were not researched."
+    },
+    "criminal_child_abuse": {
+      "summary": "Kentucky has no time limit for any felony. Felony criminal abuse or neglect of a child (serious injury, torture, cruel confinement or cruel punishment) and felony assault on a child can be charged at any time. Misdemeanor abuse must be charged within 1 year.",
+      "citation": "KRS 500.050(1)-(2); KRS 508.100-508.120",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=50742",
+      "quote": "(1) Except as otherwise expressly provided, the prosecution of a felony is not subject to a period of limitation and may be commenced at any time. (2) ... the prosecution of an offense other than a felony must be commenced within one (1) year after it is committed.",
+      "confidence": "high",
+      "note": "Kentucky's criminal abuse statutes (KRS 508.100 first degree, Class C or B felony; 508.110 second degree, Class D felony; 508.120 third degree, usually a Class A misdemeanor) protect only victims 'under thirteen (13) years old, or who is physically helpless or mentally helpless' (as amended effective July 15, 2026, 2026 Ky. Acts ch. 68). They cover a person who abuses or 'permits another person of whom he or she has actual custody to be abused' and 'cruel confinement, or cruel punishment'. Abuse of a teenager is charged as assault (first to third degree are felonies) or wanton endangerment, with the same no-limit rule for felonies. Source for 508.100: https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=57460"
+    },
+    "criminal_felony_assault": {
+      "summary": "No time limit for felony assault (first, second or third degree). Misdemeanor assault (fourth degree) must be charged within 1 year.",
+      "citation": "KRS 500.050(1)-(2); KRS 508.010-508.030",
+      "source_url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=50742",
+      "quote": "the prosecution of a felony is not subject to a period of limitation and may be commenced at any time.",
+      "confidence": "high",
+      "note": "Felony classification of assault in the first to third degree and misdemeanor status of fourth-degree assault are from the statutes' chapter listing and general knowledge; KRS 508.010-508.030 text was not re-read."
+    }
+  },
   "channels": [
     {
       "id": "ky-licensed-professional-counselors-board",

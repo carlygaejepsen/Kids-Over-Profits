@@ -3,6 +3,49 @@
   "abbr": "HI",
   "updated": "2026-09-22",
   "note": "Hawaii has a name for what happens in these places: Institutional Harm, meaning abuse or neglect in any substitute care arrangement the Department licenses - foster, group or child care. Its Child Welfare Intake Unit takes Institutional Harm reports around the clock alongside ordinary abuse reports, which means you do not have to argue about which category your call belongs in.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years for any personal injury, whether it was assault, battery, false imprisonment or negligence. Hawaii courts start the two years when the person knew, or should have known, of the injury and who caused it.",
+      "citation": "Haw. Rev. Stat. § 657-7",
+      "source_url": "https://www.capitol.hawaii.gov/hrscurrent/Vol13_Ch0601-0676/HRS0657/HRS_0657-0007.htm",
+      "quote": "Actions for the recovery of compensation for damage or injury to persons or property shall be instituted within two years after the cause of action accrued, and not after, except as provided in section 657-13.",
+      "confidence": "high",
+      "note": "One statute covers intentional torts and negligence alike. The official annotations on the same page summarize case law applying a discovery rule to accrual (e.g., a case note that an abuse victim's knowledge of the cause of injuries was a jury question). Childhood sexual abuse has its own section (§ 657-1.8), outside this research."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. If you were under 18 when you were hurt, the two years start on your 18th birthday, so the deadline is your 20th birthday. The statute has no cap.",
+      "citation": "Haw. Rev. Stat. § 657-13",
+      "source_url": "https://www.capitol.hawaii.gov/hrscurrent/Vol13_Ch0601-0676/HRS0657/HRS_0657-0013.htm",
+      "quote": "If any person entitled to bring any action specified in this part ... is, at the time the cause of action accrued, either: (1) Within the age of eighteen years; ... such person shall be at liberty to bring such actions within the respective times limited in this part, after the disability is removed",
+      "confidence": "high",
+      "note": "The tolling does not apply to actions against a sheriff, chief of police or 'other officers'. It applies to actions 'specified in this part' (chapter 657 part I); whether it extends the 2-year period for State tort claims under § 662-4 was not confirmed. No general non-sexual abuse discovery statute, but courts apply a discovery rule to accrual (see civil_injury)."
+    },
+    "civil_government_claims": {
+      "summary": "A lawsuit against the State must be filed within two years of the injury, and the State cannot be sued under its tort claims law for assault, battery or false imprisonment by its employees. For a county, written notice is required within two years.",
+      "citation": "Haw. Rev. Stat. §§ 662-4, 662-15(4), 46-72",
+      "source_url": "https://www.capitol.hawaii.gov/hrscurrent/Vol13_Ch0601-0676/HRS0662/HRS_0662-0004.htm",
+      "quote": "A tort claim against the State shall be forever barred unless action is begun within two years after the claim accrues, except in the case of a medical tort claim when the limitation of action provisions set forth in section 657-7.3 shall apply.",
+      "confidence": "medium",
+      "note": "§ 662-15(4): the State Tort Liability Act 'shall not apply to ... Any claim arising out of assault, battery, false imprisonment, false arrest'. § 46-72 (counties): notice 'within two years after the injuries accrued'; the official annotation notes the Hawaii Supreme Court once held the county notice requirement invalid (55 H. 216, 517 P.2d 51), before the 1998 amendment set the two-year period, so its current enforceability is uncertain."
+    },
+    "criminal_child_abuse": {
+      "summary": "Hawaii has no separate felony crime of physical child abuse; it is charged as assault or as endangering the welfare of a minor. Those felonies must be charged within 3 years (6 years for a class A felony). The clock is not paused until the child turns 18 for physical abuse.",
+      "citation": "Haw. Rev. Stat. § 701-108(2)(b), (d), (6)(c); § 709-903.5; § 707-710",
+      "source_url": "https://www.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0701/HRS_0701-0108.htm",
+      "quote": "(b) A prosecution for a class A felony must be commenced within six years after it is committed; ... (d) A prosecution for any other felony must be commenced within three years after it is committed;",
+      "confidence": "medium",
+      "note": "§ 701-108(6)(c) pauses the clock 'For any felony offense under chapter 707, part V or VI, during any time when the victim is alive and under eighteen years of age', but part V is sexual offenses and part VI, titled 'Child Abuse', covers child pornography offenses (§ 707-750 et seq.), not physical abuse. Endangering the welfare of a minor in the first degree (a caregiver allowing serious or substantial bodily injury) is a class C felony (§ 709-903.5(3)); assault in the first degree is class B (§ 707-710(2)). Time stops while the accused is out of state (max 4 extra years) (§ 701-108(6)(a)). Last amended L 2023, c 124."
+    },
+    "criminal_felony_assault": {
+      "summary": "Assault in the first degree (class B felony) and second degree (class C felony) must be charged within 3 years. Misdemeanor assault must be charged within 2 years (1 year for a petty misdemeanor).",
+      "citation": "Haw. Rev. Stat. § 701-108(2)(d)-(f); §§ 707-710, 707-711",
+      "source_url": "https://www.capitol.hawaii.gov/hrscurrent/Vol14_Ch0701-0853/HRS0701/HRS_0701-0108.htm",
+      "quote": "(d) A prosecution for any other felony must be commenced within three years after it is committed; (e) A prosecution for a misdemeanor or parking violation must be commenced within two years after it is committed; and (f) A prosecution for a petty misdemeanor ... within one year",
+      "confidence": "high",
+      "note": "§ 707-711(1)(g) makes bodily injury to a worker at a state-operated or -contracted mental health facility assault in the second degree; there is no parallel provision for residents. Assault in the third degree (§ 707-712) was not re-read; it is generally a misdemeanor. DNA evidence can extend a felony period by up to 10 years (§ 701-108(3)(c))."
+    }
+  },
   "channels": [
     {
       "id": "hi-regulated-industries-complaints-office",

@@ -3,6 +3,49 @@
   "abbr": "OK",
   "updated": "2026-09-22",
   "note": "Oklahoma has an Office of Client Advocacy whose investigations unit exists specifically to investigate abuse, neglect, exploitation and caretaker misconduct involving children in congregate care settings. That is unusually close to this industry, and it is a separate route from the general child abuse hotline. Oklahoma also splits complaints about a residential facility: anything rising to abuse or neglect goes to Child Welfare Services, everything else is investigated by Child Care Services.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "One year for assault, battery or false imprisonment. Two years for other injury claims, such as negligence.",
+      "citation": "12 Okla. Stat. § 95(A)(3), (A)(4)",
+      "source_url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os12.rtf",
+      "quote": "3. Within two (2) years: ... an action for injury to the rights of another, not arising on contract, and not hereinafter enumerated; ... 4. Within one (1) year: An action for libel, slander, assault, battery, malicious prosecution, or false imprisonment;",
+      "confidence": "high",
+      "note": "Read from the official complete Title 12 file on oklegislature.gov (oscn.net was behind a bot check). 12 O.S. 95(A)(11) sets a one-year period for claims by a person who was an 'inmate' in custody of the state, a state contractor or a political subdivision; whether that reaches a youth held in a juvenile facility was not researched."
+    },
+    "civil_minor_tolling": {
+      "summary": "If you were under 18 when you were hurt, you get at least until one year after your 18th birthday to sue.",
+      "citation": "12 Okla. Stat. § 96",
+      "source_url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os12.rtf",
+      "quote": "If a person entitled to bring an action other than for the recovery of real property, except for a penalty or forfeiture, be, at the time the cause of action accrued, under any legal disability, every such person shall be entitled to bring such action within one (1) year after such disability ...",
+      "confidence": "medium",
+      "note": "The statute gives one year after the disability (minority) ends. Whether a minor injured near age 18 keeps the full regular period if it would end later than age 19 depends on case law not verified here. Special medical-malpractice rules in the same section do not apply to abuse claims. No general discovery rule or extended period for non-sexual child abuse was found; 12 O.S. 95(A)(6) (to age 45) is for childhood sexual abuse only."
+    },
+    "civil_government_claims": {
+      "summary": "For claims against the state, a county, city or public school, a written notice of claim must be filed within one year of the injury, and the lawsuit must be filed within 180 days after the claim is denied.",
+      "citation": "51 Okla. Stat. §§ 156(B), 157(B)",
+      "source_url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os51.rtf",
+      "quote": "A claim against the state or a political subdivision shall be forever barred unless notice thereof is presented within one (1) year after the loss occurs.",
+      "confidence": "high",
+      "note": "157(B): 'the action is commenced within one hundred eighty (180) days after denial of the claim.' A claim is deemed denied after 90 days without approval. 156(B) applies 'not withstanding any other provision of law', so minority tolling likely does not extend the one-year notice deadline; case law not checked. Private contractors are generally not covered by the Governmental Tort Claims Act."
+    },
+    "criminal_child_abuse": {
+      "summary": "Child abuse charges under Oklahoma's child abuse law, including physical abuse and neglect, can be filed until the victim's 45th birthday.",
+      "citation": "22 Okla. Stat. § 152(C)(1)",
+      "source_url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os22.rtf",
+      "quote": "any offense prohibited by Section 843.5 of Title 21 of the Oklahoma Statutes ... shall be commenced by the forty-fifth birthday of the alleged victim.",
+      "confidence": "high",
+      "note": "Two versions of 22 O.S. 152 are in force (Laws 2024, c. 310 and Laws 2025, c. 115); both put Section 843.5 child abuse under the 45th-birthday rule. The 2025 version says 'any offense prohibited by Section 843.5' and makes it retroactive for offenses not already time-barred. Section 843.5 covers abuse by a 'person responsible for a child's health, safety or welfare'; whether a given program employee fits that definition was not checked. If DNA evidence identifies the offender or the accused confesses, there is no limit (152(C)(2))."
+    },
+    "criminal_felony_assault": {
+      "summary": "Three years for most assaults, felony or misdemeanor. Seven years if a deadly weapon was used in a felony.",
+      "citation": "22 Okla. Stat. § 152(H), (K)",
+      "source_url": "https://www.oklegislature.gov/OK_Statutes/CompleteTitles/os22.rtf",
+      "quote": "H. In all other cases a prosecution for a public offense must be commenced within three (3) years after its commission. ... K. Prosecutions for criminal violations in which a deadly weapon is used to commit a felony ... shall be commenced within seven (7) years after the commission of the crime.",
+      "confidence": "high",
+      "note": "Misdemeanor assault also falls under the three-year default in 152(H). Murder has no limit (22 O.S. 151, not quoted)."
+    }
+  },
   "channels": [
     {
       "id": "ok-behavioral-health-licensure",

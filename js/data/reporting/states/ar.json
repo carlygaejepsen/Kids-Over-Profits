@@ -3,6 +3,49 @@
   "abbr": "AR",
   "updated": "2026-09-22",
   "note": "Two things set Arkansas apart. Its child abuse hotline is run by the State Police Crimes Against Children Division rather than by the human services department, so a report there goes straight to law enforcement. And the Office of Long-Term Care - the sole licensing authority for Psychiatric Residential Treatment Facilities - now publishes its monitoring reports, complaint visit reports, corrective action plans and notices of adverse action online, so you can read a facility's record before you call.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Assault, battery and false imprisonment: only one year from the injury. Negligence claims (for example, against a program for failing to protect you) are generally three years.",
+      "citation": "Ark. Code Ann. § 16-56-104(2); § 16-56-105",
+      "source_url": "https://law.justia.com/codes/arkansas/title-16/subtitle-5/chapter-56/subchapter-1/section-16-56-104/",
+      "quote": "The following actions shall be commenced within one (1) year after the cause of action shall accrue and not thereafter: (1) All special actions on the case; (2) Actions for: (A) Assault and battery; and (B) False imprisonment;",
+      "confidence": "medium",
+      "note": "The three-year negligence period comes from § 16-56-105 ('All actions founded on any contract or liability, expressed or implied'), which does not name personal injury; Arkansas courts apply it to negligence. That application is case law and was not verified here. Read on Justia (2025 Arkansas Code) because the official Arkansas code is hosted by LexisNexis and could not be fetched."
+    },
+    "civil_minor_tolling": {
+      "summary": "Someone injured as a minor gets three years after reaching adulthood to sue, whatever the normal deadline (so even the one-year battery claim becomes three years after turning 18).",
+      "citation": "Ark. Code Ann. § 16-56-116(a)",
+      "source_url": "https://law.justia.com/codes/arkansas/title-16/subtitle-5/chapter-56/subchapter-1/section-16-56-116/",
+      "quote": "If any person entitled to bring any action ... is under twenty-one (21) years of age or insane at the time of the accrual of the cause of action, that person may bring the action within three (3) years next after attaining full age",
+      "confidence": "medium",
+      "note": "The text says 'under twenty-one' but 'full age'; Arkansas's age of majority is 18 (Ark. Code § 9-25-101, not re-read). Safest reading: file within three years after the 18th birthday. No general discovery rule for non-sexual abuse was found."
+    },
+    "civil_government_claims": {
+      "summary": "Claims against the State of Arkansas cannot go to court; they are filed with the State Claims Commission within the same deadline as a similar lawsuit. Counties, cities, school districts and other local bodies are immune from tort suits except up to their liability insurance.",
+      "citation": "Ark. Code Ann. § 19-10-209; § 19-10-204; § 21-9-301",
+      "source_url": "https://law.justia.com/codes/arkansas/title-19/chapter-10/subchapter-2/section-19-10-209/",
+      "quote": "The Arkansas State Claims Commission shall not consider or allow a claim or action unless the claim or action has been filed ... within the period allowed by law for the commencement of an action for the enforcement of the same type of claim or action.",
+      "confidence": "medium",
+      "note": "§ 21-9-301(a): political subdivisions 'shall be immune from liability and from suit for damages except to the extent that they may be covered by liability insurance.' No separate notice-of-claim deadline was found."
+    },
+    "criminal_child_abuse": {
+      "summary": "Felony endangering the welfare of a minor and permitting abuse of a minor can be charged until the victim turns 28 if the crime was never reported to police or a prosecutor. First- and second-degree battery against a child can be charged within the normal felony period (usually three years) counted from the victim's 18th birthday, again if never reported.",
+      "citation": "Ark. Code Ann. § 5-1-109(a)(2), (h)",
+      "source_url": "https://law.justia.com/codes/arkansas/title-5/subtitle-1/chapter-1/section-5-1-109/",
+      "quote": "if ... the offense was committed against a minor, the violation has not been previously reported to a law enforcement agency or prosecuting attorney, and the victim has not reached the age of twenty-eight (28) years of age: ... (C) Endangering the welfare of a minor in the first degree",
+      "confidence": "high",
+      "note": "§ 5-1-109(h) lets these be charged after the normal period expires if against a minor, unreported, and 'the period prescribed in subsection (b) ... has not expired since the victim has reached eighteen (18) years of age': battery first and second degree, aggravated assault, terroristic threatening first degree, kidnapping, false imprisonment first degree, permanent detention or restraint. If the crime WAS reported at the time, the ordinary periods run from the offense: Class Y/A felony six years, other felonies three years (§ 5-1-109(b)). Justia shows the 2025 code."
+    },
+    "criminal_felony_assault": {
+      "summary": "Most felony assaults and batteries (Class B, C or D) must be charged within three years; Class Y or A felonies within six years. Misdemeanor assault or battery: one year. If the victim was a child and it was never reported, the period restarts at 18 (see child abuse).",
+      "citation": "Ark. Code Ann. § 5-1-109(b)",
+      "source_url": "https://law.justia.com/codes/arkansas/title-5/subtitle-1/chapter-1/section-5-1-109/",
+      "quote": "(1)(A) Class Y felony or Class A felony, six (6) years. ... (2)(A) ... Class B felony, Class C felony, Class D felony, or an unclassified felony, three (3) years. ... (3)(A) Misdemeanor or violation, one (1) year.",
+      "confidence": "high",
+      "note": "Up to three extra years while the accused is absent from the state (§ 5-1-109(g))."
+    }
+  },
   "channels": [
     {
       "id": "ar-counseling-board",

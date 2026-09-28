@@ -3,6 +3,49 @@
   "abbr": "MI",
   "updated": "2026-09-22",
   "note": "Michigan puts abuse in a child caring institution through the same centralised intake line as any other child abuse report, and its own guidance says a child can make that call themselves. Reports are then passed to whoever should investigate - law enforcement, or the licensing bureau. Licensing the facility and licensing the therapist are separate departments: MDHHS for the institution, LARA for the clinician.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Two years from the injury for assault, battery or false imprisonment; three years for negligence and other personal injury claims.",
+      "citation": "Mich. Comp. Laws § 600.5805(2), (3)",
+      "source_url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-600-5805",
+      "quote": "(2) Except as otherwise provided in this section, the period of limitations is 3 years after the time of the death or injury for all actions to recover damages for the death of a person or for injury to a person ... (3) Subject to subsections (4) to (6), the period of limitations is 2 years for an action charging assault, battery, or false imprisonment.",
+      "confidence": "high",
+      "note": "Five years for assault or battery by a spouse, co-parent, household member or dating partner (§ 600.5805(4)-(5)); ten years for criminal sexual conduct (§ 600.5805(6), not in scope). A negligence claim against a program (e.g. negligent supervision) uses the 3-year period."
+    },
+    "civil_minor_tolling": {
+      "summary": "If the injured person was under 18 when the claim arose, they have until one year after turning 18 (their 19th birthday) to sue, even if the normal period has run; if the normal period ends later, that later date applies.",
+      "citation": "Mich. Comp. Laws § 600.5851(1)",
+      "source_url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-600-5851",
+      "quote": "if the person first entitled to make an entry or bring an action under this act is under 18 years of age or insane at the time the claim accrues, the person or those claiming under the person shall have 1 year after the disability is removed through death or otherwise, to make the entry or bring the action although the period of limitations has run.",
+      "confidence": "high",
+      "note": "This is a one-year saving period, not a full pause: a child injured at 17 has until the later of 19 or the end of the normal 2- or 3-year period. No extended period for non-sexual physical abuse of a minor was found; § 5851b covers criminal sexual conduct only. Medical malpractice has separate rules (§ 600.5851(7)-(8))."
+    },
+    "civil_government_claims": {
+      "summary": "For a personal-injury claim against the State of Michigan, a written claim or notice of intent must be filed with the Court of Claims clerk within 6 months of the event.",
+      "citation": "Mich. Comp. Laws § 600.6431(1), (4)",
+      "source_url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-600-6431",
+      "quote": "For a claim against this state for property damage or personal injuries, the claimant shall file the claim or notice under subsection (1) with the clerk of the court of claims within 6 months after the event that gives rise to the claim.",
+      "confidence": "medium",
+      "note": "Covers the state and its agencies only. Counties and cities: governmental immunity (MCL 691.1407) bars most tort claims against the entity itself, and notice statutes there (e.g. MCL 691.1404, highway defects) are specific; not researched. Whether the § 600.5851 minority saving provision relaxes the 6-month notice was not verified."
+    },
+    "criminal_child_abuse": {
+      "summary": "Six years from the crime for child abuse in any degree. The clock does not wait until the child turns 18.",
+      "citation": "Mich. Comp. Laws § 767.24(10); Mich. Comp. Laws § 750.136b",
+      "source_url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-767-24",
+      "quote": "(10) All other indictments may be found and filed within 6 years after the offense is committed. (11) Any period during which the party charged did not usually and publicly reside within this state is not part of the time within which the respective indictments may be found and filed.",
+      "confidence": "medium",
+      "note": "Child abuse (MCL 750.136b) is not listed in any extended category of § 767.24, so the six-year default applies; first degree child abuse is 'a felony punishable by imprisonment for life or any term of years', but § 767.24(1) removes the limit only for listed crimes, not all life offenses. The 750.136 in § 767.24(3) is the female genital mutilation statute, not child abuse. Subsection (13): changes by the 2024 amendment apply only to offenses on or after its effective date."
+    },
+    "criminal_felony_assault": {
+      "summary": "Six years from the crime for felonious assault and assault with intent to do great bodily harm; ten years for assault with intent to commit murder. Misdemeanor assault and battery also appears to fall under the six-year catch-all.",
+      "citation": "Mich. Comp. Laws § 767.24(6), (10)",
+      "source_url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-767-24",
+      "quote": "(6) An indictment for kidnapping, extortion, assault with intent to commit murder, attempted murder, manslaughter, armed robbery, or first-degree home invasion may be found and filed as follows: (a) ... within 10 years after the offense is committed.",
+      "confidence": "medium",
+      "note": "The six-year default is § 767.24(10), quoted in criminal_child_abuse. Applying § 767.24 to misdemeanors charged by complaint is the common reading but not quoted directly."
+    }
+  },
   "channels": [
     {
       "id": "mi-bureau-professional-licensing",

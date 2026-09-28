@@ -3,6 +3,49 @@
   "abbr": "NH",
   "updated": "2026-09-22",
   "note": "New Hampshire has a Special Investigations Unit that exists to investigate allegations of abuse and neglect in institutional settings and residential facilities, rather than leaving them to an ordinary district office. It also has an Office of the Child Advocate whose remit expressly covers any organisation certified or contracted to provide direct services to children - which means the residential facilities themselves, not only the state agency.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Three years for all personal injury claims, including assault, battery, false imprisonment and negligence. If you could not reasonably have discovered the injury and its cause at the time, the three years run from when you did or should have.",
+      "citation": "N.H. Rev. Stat. Ann. 508:4, I",
+      "source_url": "https://www.gencourt.state.nh.us/rsa/html/LII/508/508-4.htm",
+      "quote": "all personal actions, except actions for slander or libel, may be brought only within 3 years of the act or omission complained of, except that when the injury and its causal relationship to the act or omission were not discovered and could not reasonably have been discovered at the time",
+      "confidence": "high",
+      "note": "Sexual assault claims have no limit under 508:4-g; not covered here."
+    },
+    "civil_minor_tolling": {
+      "summary": "Yes. Someone hurt as a child may sue within two years after turning 18 (so by age 20), or within the normal three years from the injury if that is later. The general discovery rule in 508:4 also applies. No special extended period for physical (non-sexual) child abuse.",
+      "citation": "N.H. Rev. Stat. Ann. 508:8",
+      "source_url": "https://www.gencourt.state.nh.us/rsa/html/LII/508/508-8.htm",
+      "quote": "An infant or mentally incompetent person may bring a personal action within 2 years after such disability is removed.",
+      "confidence": "medium",
+      "note": "The statute gives a separate two-year window after 18; I read it as an alternative to (not a replacement for) the three years under 508:4, so whichever ends later governs. Confirm with a lawyer for injuries at 16-17, where 3 years from injury can run past 20."
+    },
+    "civil_government_claims": {
+      "summary": "State of New Hampshire: sue within three years of the injury and give written notice to the agency within 180 days (late notice does not bar the claim unless the state shows it was substantially prejudiced). Towns, cities and counties: three years, with notice to the clerk by registered mail within 60 days.",
+      "citation": "N.H. Rev. Stat. Ann. 541-B:14, IV (state); 507-B:7 (governmental units)",
+      "source_url": "https://www.gencourt.state.nh.us/rsa/html/LV/541-B/541-B-14.htm",
+      "quote": "Any claim submitted under this chapter shall be brought within 3 years of the date of the alleged bodily injury ... the agency shall be provided written notice within 180 days after the time of the injury or damage as to the date, time, and location the injury or damage occurred.",
+      "confidence": "high",
+      "note": "507-B:7 (https://www.gencourt.state.nh.us/rsa/html/LII/507-B/507-B-7.htm): 3 years with discovery rule; notice 'by registered mail within 60 days', with the burden on the governmental unit to show prejudice if notice was late. State tort awards are capped at $475,000 per claimant (541-B:14, I). Former Youth Development Center (Sununu Center) residents had a separate settlement fund covering physical abuse and unlawful restraint (RSA 21-M:11-a), but it stopped accepting claims after June 30, 2025."
+    },
+    "criminal_child_abuse": {
+      "summary": "Six years from the offense for felony physical abuse of a child (charged as second-degree assault, which includes knowingly injuring a child under 13). Endangering the welfare of a child is usually a misdemeanor: one year. The clock does not pause until 18 for physical abuse; the 22-years-after-18 rule is for sexual offenses and incest only.",
+      "citation": "N.H. Rev. Stat. Ann. 625:8, I(a)-(c); offenses 631:2, I(d) and 639:3",
+      "source_url": "https://www.gencourt.state.nh.us/rsa/html/LXII/625/625-8.htm",
+      "quote": "prosecutions are subject to the following periods of limitations: (a) For a class A felony, 6 years; (b) For a class B felony, 6 years; (c) For a misdemeanor, one year",
+      "confidence": "high",
+      "note": "New Hampshire has no stand-alone felony 'child abuse' crime; physical abuse is charged as assault (631:2, I(d): 'Purposely or knowingly causes bodily injury to a child under 13 years of age' is a class B felony) or first-degree assault (class A or B felony). 639:3 endangering is a misdemeanor except the sexual-solicitation form. 625:8, III(e) adds one year from discovery where evidence destruction or witness tampering delayed discovery. The clock stops while the accused is out of state (625:8, VI)."
+    },
+    "criminal_felony_assault": {
+      "summary": "Six years from the offense for felony assault (first- or second-degree assault). Misdemeanor (simple) assault: one year.",
+      "citation": "N.H. Rev. Stat. Ann. 625:8, I; assault offenses 631:1, 631:2, 631:2-a",
+      "source_url": "https://www.gencourt.state.nh.us/rsa/html/LXII/625/625-8.htm",
+      "quote": "(a) For a class A felony, 6 years; (b) For a class B felony, 6 years; (c) For a misdemeanor, one year",
+      "confidence": "high",
+      "note": "Time begins to run the day after all elements occur, or after a continuing course of conduct ends (625:8, IV)."
+    }
+  },
   "channels": [
     {
       "id": "nh-mental-health-practice-board",

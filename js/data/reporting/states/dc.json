@@ -3,6 +3,48 @@
   "abbr": "DC",
   "updated": "2026-09-22",
   "note": "The District runs every complaint about a health professional through one investigating body, the Health Regulation and Licensing Administration, which works on behalf of all the occupation boards. It will not accept an anonymous complaint. Its boards can reprimand, impose probation, fine, suspend or revoke a licence under the Health Occupations Revision Act.",
+  "deadlines": {
+    "verified_on": "2026-09-28",
+    "civil_injury": {
+      "summary": "Assault, battery, false arrest and false imprisonment: one year. Negligence and other claims with no specific deadline (for example, negligent supervision by a program): three years.",
+      "citation": "D.C. Code § 12-301(a)(4), (a)(8)",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/12-301",
+      "quote": "(4) for libel, slander, assault, battery, mayhem, wounding, malicious prosecution, false arrest or false imprisonment— 1 year; ... (8) for which a limitation is not otherwise specially prescribed— 3 years;",
+      "confidence": "high",
+      "note": "Negligence falls under the three-year catch-all in (a)(8); that it is the governing period for negligence is standard D.C. case law and was not separately verified. D.C. courts apply a discovery rule in some cases (case law)."
+    },
+    "civil_minor_tolling": {
+      "summary": "The clock does not run while the injured person is under 18. After turning 18 they get the full normal period: one year for assault or battery (until 19), three years for negligence (until 21).",
+      "citation": "D.C. Code § 12-302(a)",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/12-302",
+      "quote": "when a person entitled to maintain an action is, at the time the right of action accrues: (1) under 18 years of age; or (2) non compos mentis; or (3) imprisoned — he or his proper representative may bring action within the time limited after the disability is removed.",
+      "confidence": "high",
+      "note": "No cap on the tolling. No statutory discovery rule for non-sexual abuse was found (the long deadlines in § 12-301(a)(11)-(12) are for sexual abuse only)."
+    },
+    "civil_government_claims": {
+      "summary": "To sue the District of Columbia for injuries, written notice must reach the Mayor within six months of the injury (a police report made in the regular course of duty also counts). The lawsuit itself follows the normal deadlines.",
+      "citation": "D.C. Code § 12-309(a)",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/12-309",
+      "quote": "an action may not be maintained against the District of Columbia for unliquidated damages to person or property unless, within six months after the injury or damage was sustained, the claimant, his agent, or attorney has given notice in writing to the Mayor",
+      "confidence": "high",
+      "note": "The text has no exception for minors; whether minority excuses late notice was not verified (case law). The notice rule applies to suits against the District, not to suits against individual employees or private contractors."
+    },
+    "criminal_child_abuse": {
+      "summary": "Cruelty to children (first or second degree) is a felony and must be charged within six years of the offense. The clock is not paused until the victim grows up for this non-sexual crime.",
+      "citation": "D.C. Code § 23-113(a)(4); § 22-1101",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/23-113",
+      "quote": "(4) Except as provided in paragraph (6), a prosecution for a felony other than those crimes enumerated in paragraph (1) or paragraph (3) is barred if not commenced within six (6) years after it is committed.",
+      "confidence": "high",
+      "note": "§ 22-1101: first degree (up to 15 years) covers one who 'tortures, beats, or otherwise willfully maltreats a child under 18 years of age ... and thereby causes bodily injury'; second degree carries up to 10 years, so both are felonies. The age-21 delay in § 23-113(d)(2) applies to listed sexual and trafficking offenses only. A continuing course of conduct runs from when it ends (§ 23-113(b)). The Secure DC emergency acts of 2024 temporarily amended § 23-113; the text read is the current codified version."
+    },
+    "criminal_felony_assault": {
+      "summary": "Felony assault (such as aggravated assault) must be charged within six years. Misdemeanor simple assault: three years.",
+      "citation": "D.C. Code § 23-113(a)(4)-(5)",
+      "source_url": "https://code.dccouncil.gov/us/dc/council/code/sections/23-113",
+      "quote": "(5) Except as provided in paragraphs (6) and (7), a prosecution for any other criminal offense is barred if not commenced within three (3) years after it is committed.",
+      "confidence": "high"
+    }
+  },
   "channels": [
     {
       "id": "dc-health-regulation-licensing",
