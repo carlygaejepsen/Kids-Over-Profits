@@ -36,23 +36,24 @@ get_header();
 
         <div class="admin-controls">
             <div class="filter-controls">
-                <label for="typeFilter">Type:</label>
-                <select id="typeFilter">
-                    <option value="wiki">Wiki Submissions</option>
-                    <option value="news" selected>News Submissions</option>
-                    <option value="data">Data Form Submissions</option>
-                    <option value="legislation">Legislation Submissions</option>
-                    <option value="lawsuit">Lawsuit Submissions</option>
-                </select>
-
-                <label for="statusFilter">Status:</label>
-                <select id="statusFilter">
-                    <option value="">All</option>
-                    <option value="submitted" selected>Pending Review</option>
-                    <option value="approved">Approved</option>
-                    <option value="published">Published</option>
-                    <option value="rejected">Rejected</option>
-                </select>
+                <input type="hidden" id="typeFilter" value="news">
+                <input type="hidden" id="statusFilter" value="submitted">
+                <div class="submission-tabs type-tabs" role="tablist" aria-label="Submission type">
+                    <button type="button" role="tab" class="submission-tab" data-type="news">News <span class="tab-count" data-count-for="news"></span></button>
+                    <button type="button" role="tab" class="submission-tab" data-type="data">Data <span class="tab-count" data-count-for="data"></span></button>
+                    <button type="button" role="tab" class="submission-tab" data-type="wiki">Wiki <span class="tab-count" data-count-for="wiki"></span></button>
+                    <button type="button" role="tab" class="submission-tab" data-type="lawsuit">Lawsuits <span class="tab-count" data-count-for="lawsuit"></span></button>
+                    <button type="button" role="tab" class="submission-tab" data-type="legislation">Legislation <span class="tab-count" data-count-for="legislation"></span></button>
+                </div>
+            </div>
+            <div class="filter-controls">
+                <div class="submission-tabs status-tabs" role="tablist" aria-label="Status">
+                    <button type="button" role="tab" class="submission-tab" data-status="submitted">Pending</button>
+                    <button type="button" role="tab" class="submission-tab" data-status="approved">Approved</button>
+                    <button type="button" role="tab" class="submission-tab" data-status="published">Published</button>
+                    <button type="button" role="tab" class="submission-tab" data-status="rejected">Rejected</button>
+                    <button type="button" role="tab" class="submission-tab" data-status="">All</button>
+                </div>
 
                 <label for="searchFilter">Search:</label>
                 <input type="text" id="searchFilter" placeholder="Program name or location...">

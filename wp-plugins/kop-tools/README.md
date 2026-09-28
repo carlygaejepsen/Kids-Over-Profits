@@ -10,8 +10,7 @@ directory), so nothing has to be reached by a memorized URL.
 - One registry (`kop_tools_registry()`) lists every tool by category. Each
   entry is one of four types: `wp-page` (a WordPress page with an admin
   template, URL resolved live), `screen` (a wp-admin screen the theme
-  registers, such as Approve Facility Edits, Bug Reports or the Glossary
-  Editor), `page` (a self-contained tool in the theme's `api/` directory,
+  registers, such as Bug Reports or the Glossary Editor), `page` (a self-contained tool in the theme's `api/` directory,
   optionally with a `query` such as `run=1&dry=1`) or `action` (a POST-only
   endpoint run from the dashboard's Run button).
 - The same registry feeds three places: the dashboard

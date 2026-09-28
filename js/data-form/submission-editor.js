@@ -8,7 +8,7 @@
  * "Save and approve" then runs the normal approval, which merges it into the
  * master data exactly as approving from the review queue does.
  *
- * Links come from api/approve-edits.php and the Submissions Review page.
+ * Links come from the Submissions Review page.
  * Config: window.KOP_SUBMISSION_EDITOR = { manageApi, processEditApi, reviewUrl }
  * (localized in inc/enqueue.php).
  */

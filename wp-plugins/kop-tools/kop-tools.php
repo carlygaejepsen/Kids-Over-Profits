@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: KOP Tools
- * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Approve Edits, Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
- * Version: 2.0.0
+ * Description: One menu for every Kids Over Profits admin tool: the admin pages (Submissions Review, Data Manager, Wiki Editor, ...), the theme's wp-admin screens (Bug Reports, Glossary Editor, ...) and the self-contained tools in the child theme's api/ directory. The wp-admin sidebar, the admin bar dropdown and the dashboard all read the same registry.
+ * Version: 2.1.0
  * Author: Kids Over Profits
  * License: GPL-2.0-or-later
  */
@@ -38,16 +38,9 @@ function kop_tools_registry() {
         'Review queue' => array(
             array(
                 'title'    => 'Submissions Review',
-                'desc'     => 'Approve or reject news, wiki, data, and anonymous document submissions.',
+                'desc'     => 'The one place to approve, reject or edit every submission: news, data (facility edit suggestions), wiki, lawsuits and legislation.',
                 'type'     => 'wp-page',
                 'template' => 'page-admin-submissions.php',
-            ),
-            array(
-                'title'    => 'Approve Facility Edits',
-                'desc'     => 'Review public suggested edits (facilities, locations, referrers) and approve them into the master tables or reject them.',
-                'type'     => 'screen',
-                'screen'   => 'approve-facility-edits',
-                'requires' => 'render_approval_page_iframe',
             ),
             array(
                 'title' => 'Publish Approved Records',
@@ -370,8 +363,8 @@ function kop_tools_resolve(array $tool) {
 
 /**
  * Sidebar menu: All Tools, then the sidebar categories' tools in registry
- * order. The theme registers its own wp-admin screens (Approve Facility
- * Edits, Bug Reports, Glossary Editor, Glossary Feedback) under this parent;
+ * order. The theme registers its own wp-admin screens (Bug Reports,
+ * Glossary Editor, Glossary Feedback) under this parent;
  * kop_tools_order_sidebar() then sorts the whole submenu into registry order.
  * Full URLs as submenu slugs are treated by WordPress as external links.
  */

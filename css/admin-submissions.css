@@ -122,6 +122,67 @@
     font-family: inherit;
 }
 
+.admin-controls .filter-controls + .filter-controls {
+    margin-top: 12px;
+}
+
+.submission-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.submission-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--kop-border-primary);
+    background: var(--kop-white);
+    color: var(--kop-midnight-blue);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.submission-tab:hover {
+    border-color: var(--kop-teal);
+}
+
+.submission-tab:focus-visible {
+    outline: 2px solid var(--kop-navy);
+    outline-offset: 2px;
+}
+
+.submission-tab.is-active {
+    background: var(--kop-midnight-blue);
+    border-color: var(--kop-midnight-blue);
+    color: var(--kop-white);
+}
+
+.type-tabs .submission-tab {
+    font-size: 15px;
+    padding: 10px 18px;
+}
+
+.tab-count {
+    min-width: 22px;
+    padding: 1px 7px;
+    border-radius: 11px;
+    background: var(--kop-orange);
+    color: var(--kop-midnight-blue);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.tab-count:empty,
+.tab-count[hidden] {
+    display: none;
+}
+
 .btn-secondary {
     border-radius: 14px;
     padding: 10px 22px;

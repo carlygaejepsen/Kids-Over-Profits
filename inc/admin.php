@@ -8,33 +8,31 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Approve Edits screen, under the KOP Tools menu rather than a top-level entry
- * of its own. The slug stays approve-facility-edits so existing links
- * (the submissions editor's reviewUrl) keep working.
+ * Submissions Review, opened on one type's tab (news, data, wiki, lawsuit,
+ * legislation). The one page for approving submissions; '' if no page uses
+ * the template.
  */
-function add_approval_page_to_menu() {
-    add_submenu_page(
-        kop_tools_parent_slug(),
-        'Approve Facility Edits',
-        'Approve Facility Edits',
-        'manage_options',
-        'approve-facility-edits',
-        'render_approval_page_iframe'
-    );
+function kop_submissions_review_url($type = '') {
+    $url = kop_find_template_page_url('page-admin-submissions.php');
+    if ($url === '' || $type === '') {
+        return $url;
+    }
+    return add_query_arg('type', $type, $url);
 }
-add_action('admin_menu', 'add_approval_page_to_menu', 20);
 
 /**
- * Render approval page iframe
+ * The old "Approve Edits" screen (an iframe of api/approve-edits.php, a
+ * read-only list) is retired: its wp-admin URL forwards to the Data tab of
+ * Submissions Review, which approves, rejects and edits the same rows.
  */
-function render_approval_page_iframe() {
-    $url = get_stylesheet_directory_uri() . '/api/approve-edits.php';
-    ?>
-    <div class="wrap">
-        <iframe src="<?php echo esc_url($url); ?>" style="width: 100%; height: calc(100vh - 100px); border: none;"></iframe>
-    </div>
-    <?php
+function kop_redirect_retired_approve_edits() {
+    if (isset($_GET['page']) && $_GET['page'] === 'approve-facility-edits') {
+        $url = kop_submissions_review_url('data');
+        wp_redirect($url !== '' ? $url : admin_url('admin.php?page=' . kop_tools_parent_slug()));
+        exit;
+    }
 }
+add_action('admin_init', 'kop_redirect_retired_approve_edits');
 
 /**
  * The front-end tool pages (Data Manager, Wiki Editor, etc.) are WordPress

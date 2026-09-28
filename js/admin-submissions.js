@@ -119,11 +119,41 @@ document.addEventListener('DOMContentLoaded', () => {
     // type a name/email. Fall back to any previously-saved value for safety.
     const REVIEWER = config.reviewer || localStorage.getItem('adminEmail') || '';
 
+    // Type and status are tab rows; the hidden inputs hold the current value.
+    const typeTabs = Array.from(document.querySelectorAll('.type-tabs [data-type]'));
+    const statusTabs = Array.from(document.querySelectorAll('.status-tabs [data-status]'));
+
+    function markTabs(tabs, attr, value) {
+        tabs.forEach(tab => {
+            const on = tab.getAttribute(attr) === value;
+            tab.classList.toggle('is-active', on);
+            tab.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+    }
+
     // Open on the tab a notification email links to (?type=wiki and so on).
     const linkedType = new URLSearchParams(window.location.search).get('type');
-    if (typeFilter && linkedType && typeFilter.querySelector('option[value="' + CSS.escape(linkedType) + '"]')) {
+    if (typeFilter && linkedType && typeTabs.some(tab => tab.dataset.type === linkedType)) {
         typeFilter.value = linkedType;
     }
+    markTabs(typeTabs, 'data-type', typeFilter.value);
+    markTabs(statusTabs, 'data-status', statusFilter.value);
+
+    typeTabs.forEach(tab => tab.addEventListener('click', () => {
+        if (typeFilter.value === tab.dataset.type) return;
+        typeFilter.value = tab.dataset.type;
+        markTabs(typeTabs, 'data-type', typeFilter.value);
+        const url = new URL(window.location.href);
+        url.searchParams.set('type', typeFilter.value);
+        window.history.replaceState(null, '', url);
+        typeFilter.dispatchEvent(new Event('change'));
+    }));
+    statusTabs.forEach(tab => tab.addEventListener('click', () => {
+        if (statusFilter.value === tab.dataset.status) return;
+        statusFilter.value = tab.dataset.status;
+        markTabs(statusTabs, 'data-status', statusFilter.value);
+        statusFilter.dispatchEvent(new Event('change'));
+    }));
 
     // Initialize
     loadStats();
@@ -266,30 +296,39 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Load submission statistics
      */
+    async function fetchStats(type) {
+        const response = await fetch(MANAGE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'stats', type: type })
+        });
+        const result = await response.json();
+        if (!result.success) return null;
+        if (type === 'news' && result.news) {
+            return result.news.by_status || {};
+        }
+        if (result.stats) {
+            // legislation / lawsuits return a generic per-type stats block
+            return result.stats.by_status || {};
+        }
+        if (result.wiki) {
+            return result.wiki.by_status || {};
+        }
+        return {};
+    }
+
+    // "Pending" is called 'submitted' in wiki/news and 'pending' in the
+    // data / legislation / lawsuit tables.
+    function pendingCount(stats) {
+        return Number(stats.submitted || stats.pending || 0);
+    }
+
     async function loadStats() {
+        loadTabCounts();
         try {
-            const currentType = typeFilter ? typeFilter.value : 'wiki';
-            const response = await fetch(MANAGE_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'stats', type: currentType })
-            });
-
-            const result = await response.json();
-            if (result.success) {
-                let stats = {};
-                if (currentType === 'news' && result.news) {
-                    stats = result.news.by_status || {};
-                } else if (result.stats) {
-                    // legislation / lawsuits return a generic per-type stats block
-                    stats = result.stats.by_status || {};
-                } else if (result.wiki) {
-                    stats = result.wiki.by_status || {};
-                }
-
-                // "Pending" is called 'submitted' in wiki/news and 'pending' in
-                // the data / legislation / lawsuit tables.
-                statPending.textContent = (stats.submitted || stats.pending) || 0;
+            const stats = await fetchStats(typeFilter ? typeFilter.value : 'wiki');
+            if (stats) {
+                statPending.textContent = pendingCount(stats);
                 statApproved.textContent = stats.approved || 0;
                 statPublished.textContent = stats.published || 0;
                 statRejected.textContent = stats.rejected || 0;
@@ -297,6 +336,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Failed to load stats:', error);
         }
+    }
+
+    /**
+     * Pending count on every type tab, so a queue with work in it is visible
+     * without opening it.
+     */
+    function loadTabCounts() {
+        typeTabs.forEach(async tab => {
+            const badge = tab.querySelector('.tab-count');
+            if (!badge) return;
+            try {
+                const stats = await fetchStats(tab.dataset.type);
+                const n = stats ? pendingCount(stats) : 0;
+                badge.textContent = n > 0 ? String(n) : '';
+                badge.hidden = n === 0;
+            } catch (error) {
+                badge.hidden = true;
+            }
+        });
     }
 
     /**

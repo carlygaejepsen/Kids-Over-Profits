@@ -1273,7 +1273,7 @@ function enqueue_data_form_script() {
             wp_localize_script('kop-submission-editor', 'KOP_SUBMISSION_EDITOR', array(
                 'manageApi'      => get_stylesheet_directory_uri() . '/api/manage-submissions.php',
                 'processEditApi' => get_stylesheet_directory_uri() . '/api/process-edit.php',
-                'reviewUrl'      => admin_url('admin.php?page=approve-facility-edits'),
+                'reviewUrl'      => function_exists('kop_submissions_review_url') ? kop_submissions_review_url('data') : '',
             ));
 
         }
