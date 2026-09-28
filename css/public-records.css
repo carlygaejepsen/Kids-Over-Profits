@@ -227,6 +227,7 @@
 .kop-badge-unknown     { background: #edf2f7; color: #718096; }
 
 /* Legislation status badges */
+.kop-badge-proposed       { background: var(--kop-sand); color: var(--kop-midnight-blue); border: 1px dashed var(--kop-midnight-blue); }
 .kop-badge-introduced     { background: var(--kop-powder-blue); color: var(--kop-midnight-blue); }
 .kop-badge-in_committee   { background: var(--kop-soft-pastel-yellow); color: #6b5000; }
 .kop-badge-passed_house,

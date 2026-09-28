@@ -154,7 +154,7 @@ try {
     $validChambers = ['house','senate','assembly','joint','federal_house','federal_senate','other','unknown'];
     $chamber = in_array($data['chamber'] ?? '', $validChambers, true) ? $data['chamber'] : 'unknown';
 
-    $validStatuses = ['introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown'];
+    $validStatuses = ['proposed','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown'];
     $status = in_array($data['status'] ?? '', $validStatuses, true) ? $data['status'] : 'unknown';
 
     $validPositions = ['support','oppose','neutral','watch','unknown'];

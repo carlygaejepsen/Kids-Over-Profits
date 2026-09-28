@@ -131,6 +131,7 @@ get_header();
                     <label>Status
                         <select name="status" id="leg-status">
                             <option value="unknown">Unknown</option>
+                            <option value="proposed">Proposed (discussion draft)</option>
                             <option value="introduced">Introduced</option>
                             <option value="in_committee">In committee</option>
                             <option value="passed_house">Passed house</option>

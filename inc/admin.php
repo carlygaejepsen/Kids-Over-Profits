@@ -1595,6 +1595,103 @@ function kop_apply_lawsuit_seeds() {
     return $done;
 }
 /**
+ * Bill statuses the legislation table accepts. 'proposed' covers a bill
+ * released as a discussion draft that has no bill number yet.
+ */
+function kop_legislation_statuses() {
+    return array('proposed', 'introduced', 'in_committee', 'passed_house', 'passed_senate', 'signed', 'vetoed', 'dead', 'enacted', 'unknown');
+}
+/**
+ * Add any status from kop_legislation_statuses() the live status ENUM lacks.
+ * Tables made before 'proposed' existed reject it otherwise.
+ */
+function kop_legislation_status_enum(PDO $pdo) {
+    $type = $pdo->query("SELECT COLUMN_TYPE FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'legislation' AND COLUMN_NAME = 'status'")->fetchColumn();
+    if (!$type || strpos($type, "'proposed'") !== false) {
+        return;
+    }
+    $list = "'" . implode("','", kop_legislation_statuses()) . "'";
+    $pdo->exec("ALTER TABLE legislation MODIFY status ENUM({$list}) NOT NULL DEFAULT 'unknown'");
+}
+/**
+ * Legislation records assembled offline (seeds/legislation.json). Each bill
+ * is inserted once, matched by bill_title and jurisdiction, as a published
+ * record. Existing bills are never modified, so edits made in the
+ * legislation admin persist.
+ */
+function kop_apply_legislation_seeds() {
+    $done = array();
+    $path = trailingslashit(get_stylesheet_directory()) . 'seeds/legislation.json';
+    if (!file_exists($path)) {
+        return $done;
+    }
+    $spec = json_decode((string) file_get_contents($path), true);
+    if (!is_array($spec) || empty($spec['legislation']) || !is_array($spec['legislation'])) {
+        return $done;
+    }
+    $pdo = kop_seed_pdo();
+    if (!$pdo) {
+        return $done;
+    }
+    $submitted_by = (string) ($spec['submitted_by'] ?? 'seed');
+    $json = static function ($v) {
+        return wp_json_encode(is_array($v) ? array_values($v) : array(), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    };
+    try {
+        kop_legislation_status_enum($pdo);
+    } catch (Throwable $e) {
+        error_log('kop_legislation_status_enum: ' . $e->getMessage());
+    }
+    try {
+        $exists = $pdo->prepare('SELECT id FROM legislation WHERE bill_title = ? AND jurisdiction = ? LIMIT 1');
+        $insert = $pdo->prepare(
+            'INSERT INTO legislation (bill_number, bill_title, jurisdiction, chamber, session_year, bill_type, sponsors,
+                status, introduced_date, last_action_date, last_action_text, subject_tags, summary, full_text_url,
+                official_url, position, facilities_affected, tags, publication_status, submitted_by, reviewer_notes, published_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, \'published\', ?, ?, NOW())'
+        );
+        $chambers  = array('house', 'senate', 'assembly', 'joint', 'federal_house', 'federal_senate', 'other', 'unknown');
+        $positions = array('support', 'oppose', 'neutral', 'watch', 'unknown');
+        foreach ($spec['legislation'] as $bill) {
+            if (empty($bill['bill_title'])) {
+                continue;
+            }
+            $jurisdiction = (string) ($bill['jurisdiction'] ?? '');
+            $exists->execute(array($bill['bill_title'], $jurisdiction));
+            if ($exists->fetchColumn()) {
+                continue;
+            }
+            $insert->execute(array(
+                (string) ($bill['bill_number'] ?? ''),
+                (string) $bill['bill_title'],
+                $jurisdiction,
+                in_array($bill['chamber'] ?? '', $chambers, true) ? $bill['chamber'] : 'unknown',
+                (string) ($bill['session_year'] ?? ''),
+                (string) ($bill['bill_type'] ?? ''),
+                $json($bill['sponsors'] ?? array()),
+                in_array($bill['status'] ?? '', kop_legislation_statuses(), true) ? $bill['status'] : 'unknown',
+                !empty($bill['introduced_date']) ? $bill['introduced_date'] : null,
+                !empty($bill['last_action_date']) ? $bill['last_action_date'] : null,
+                (string) ($bill['last_action_text'] ?? ''),
+                $json($bill['subject_tags'] ?? array()),
+                (string) ($bill['summary'] ?? ''),
+                (string) ($bill['full_text_url'] ?? ''),
+                (string) ($bill['official_url'] ?? ''),
+                in_array($bill['position'] ?? '', $positions, true) ? $bill['position'] : 'unknown',
+                $json($bill['facilities_affected'] ?? array()),
+                $json($bill['tags'] ?? array()),
+                $submitted_by,
+                (string) ($bill['reviewer_notes'] ?? ''),
+            ));
+            $done[] = (int) $pdo->lastInsertId();
+        }
+    } catch (Throwable $e) {
+        error_log('kop_apply_legislation_seeds: ' . $e->getMessage());
+    }
+    return $done;
+}
+/**
  * Document folder corrections (seeds/media-folder-fixes.json): tags_add rows
  * go into the theme's extra-membership table so a document shows in a
  * second folder; moves and removals rewrite FileBird's own membership table.
@@ -1790,6 +1887,7 @@ function kop_apply_template_assignments() {
         kop_facility_v2_request_sync();   // before the write switch the seeds above edit the legacy tables
     }
     $summary['lawsuits']     = kop_apply_lawsuit_seeds();
+    $summary['legislation']  = kop_apply_legislation_seeds();
     $summary['media']        = kop_apply_media_folder_fixes();
     $summary['subfolders']   = kop_apply_media_subfolders();
     $summary['text']         = kop_apply_text_fixes();
@@ -1845,7 +1943,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '50';
+    $version = '51';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

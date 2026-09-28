@@ -56,6 +56,7 @@ try {
 }
 
 $status_labels = [
+    'proposed'      => 'Proposed (draft)',
     'introduced'    => 'Introduced',
     'in_committee'  => 'In Committee',
     'passed_house'  => 'Passed House',
@@ -262,7 +263,7 @@ $legislation_flag_for = static function ($jurisdiction) {
             <?php if ($bill['full_text_url'] || $bill['official_url']): ?>
             <div class="kop-card-links">
                 <?php if ($bill['official_url']): ?>
-                    <a class="kop-card-link" href="<?php echo esc_url($bill['official_url']); ?>" target="_blank" rel="noopener">Official tracker &rarr;</a>
+                    <a class="kop-card-link" href="<?php echo esc_url($bill['official_url']); ?>" target="_blank" rel="noopener"><?php echo $status_slug === 'proposed' ? 'Official announcement' : 'Official tracker'; ?> &rarr;</a>
                 <?php endif; ?>
                 <?php if ($bill['full_text_url']): ?>
                     <a class="kop-card-link" href="<?php echo esc_url($bill['full_text_url']); ?>" target="_blank" rel="noopener">Full text &rarr;</a>

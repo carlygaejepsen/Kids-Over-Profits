@@ -1,0 +1,26 @@
+{
+  "submitted_by": "Dani (admin import via Claude)",
+  "legislation": [
+    {
+      "bill_title": "Better Results through In-community Delivery, Greater Enforcement, and Stronger Services for Kids Act (BRIDGES for Kids Act)",
+      "bill_number": "",
+      "jurisdiction": "Federal",
+      "chamber": "federal_senate",
+      "session_year": "2025-2026 (119th Congress)",
+      "bill_type": "",
+      "sponsors": ["Ron Wyden (D-OR)"],
+      "status": "proposed",
+      "introduced_date": null,
+      "last_action_date": "2025-12-18",
+      "last_action_text": "Released as a discussion draft by Sen. Wyden, ranking member of the Senate Finance Committee. Not yet introduced; no bill number has been assigned.",
+      "subject_tags": ["residential treatment facilities", "oversight", "Medicaid", "community-based care", "protection and advocacy", "staffing standards", "licensing", "out-of-state placement", "foster care"],
+      "summary": "Wyden's response to the Senate Finance Committee's two-year investigation, \"Warehouses of Neglect: How Taxpayers Are Funding Systemic Abuse in Youth Residential Treatment Facilities.\" Released December 18, 2025 as a discussion draft; the draft text leaves the bill number and committee blank, so there is no Congress.gov tracking page yet.\n\nTitle I invests in alternatives to residential care: a 90 percent federal Medicaid match for intensive home and community-based mental health and substance use services for youth under 21, a higher Title IV-E match for kinship foster care, adoption and guardianship, peer support grants for kinship caregivers, a CMS study of care navigation so community services are exhausted before a child is placed in a residential treatment facility, reinvestment of fraud and abuse recoveries from these facilities into community care, and workforce and student loan support for behavioral health providers.\n\nTitle II strengthens oversight: a uniform reporting system for youth residential treatment facilities, annual state surveys, Medicaid and CHIP conditions of participation that are reevaluated every year, records and facility access for protection and advocacy systems, state licensure requirements, Court Improvement Program education about these facilities, a GAO study of provider marketing practices and inducements, and an HHS-OIG study of out-of-state placements.\n\nTitle III raises the floor for care: staffing and supervision requirements (at least one licensed mental or behavioral health provider on site 12 hours a day and on call 24/7), education requirements, a GAO study of evidence-based practices, legal representation for every youth in foster care, and student loan repayment for child advocates.",
+      "full_text_url": "https://www.finance.senate.gov/download/rtf-legislative-text",
+      "official_url": "https://www.finance.senate.gov/ranking-members-news/wyden-announces-major-reforms-to-youth-residential-treatment-facilities",
+      "position": "unknown",
+      "facilities_affected": ["Youth residential treatment facilities", "Psychiatric residential treatment facilities (inpatient psychiatric services under 21)", "Out-of-state placements"],
+      "tags": ["discussion draft", "Senate Finance Committee", "Warehouses of Neglect"],
+      "reviewer_notes": "[claude 2026-09-28] Sources: Finance Committee release https://www.finance.senate.gov/ranking-members-news/wyden-announces-major-reforms-to-youth-residential-treatment-facilities ; section-by-section (titled Discussion Draft) https://www.finance.senate.gov/download/rtf-section-by-section ; draft text (S. __, committee blank) https://www.finance.senate.gov/download/rtf-legislative-text ; Youth Law Center May 2026 briefing still calls it a discussion draft https://www.ylc.org/federal-youth-policy-briefing-may-2026/ ; coverage https://mindsitenews.org/2026/01/07/new-senate-bill-targets-troubled-teen-industry-and-residential-treatment-abuse/ . If it is introduced, set bill_number, introduced_date, status and point official_url at Congress.gov."
+    }
+  ]
+}

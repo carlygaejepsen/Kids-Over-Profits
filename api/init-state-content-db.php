@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `legislation` (
   `session_year` varchar(20) DEFAULT NULL COMMENT 'Legislative session / year (e.g. 2025, 2025-2026)',
   `bill_type` varchar(50) DEFAULT NULL COMMENT 'HB, SB, AB, HR, SR, etc.',
   `sponsors` text DEFAULT NULL COMMENT 'JSON array of sponsor names',
-  `status` enum('introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown') NOT NULL DEFAULT 'unknown',
+  `status` enum('proposed','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown') NOT NULL DEFAULT 'unknown',
   `introduced_date` date DEFAULT NULL,
   `last_action_date` date DEFAULT NULL,
   `last_action_text` varchar(500) DEFAULT NULL,

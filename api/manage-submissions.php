@@ -124,7 +124,7 @@ function kop_editable_fields($type) {
                 'json_array' => ['sponsors','subject_tags','facilities_affected','tags'],
                 'enums' => [
                     'chamber'  => ['house','senate','assembly','joint','federal_house','federal_senate','other','unknown'],
-                    'status'   => ['introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown'],
+                    'status'   => ['proposed','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted','unknown'],
                     'position' => ['support','oppose','neutral','watch','unknown'],
                 ],
             ];

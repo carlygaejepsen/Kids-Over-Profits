@@ -1208,7 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'chamber', label: 'Chamber', type: 'select', options: ['unknown','house','senate','assembly','joint','federal_house','federal_senate','other'] },
             { key: 'session_year', label: 'Session / year', type: 'text' },
             { key: 'bill_type', label: 'Bill type', type: 'text' },
-            { key: 'status', label: 'Bill status', type: 'select', options: ['unknown','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted'] },
+            { key: 'status', label: 'Bill status', type: 'select', options: ['unknown','proposed','introduced','in_committee','passed_house','passed_senate','signed','vetoed','dead','enacted'] },
             { key: 'position', label: 'KOP position', type: 'select', options: ['unknown','support','oppose','neutral','watch'] },
             { key: 'introduced_date', label: 'Introduced date', type: 'date' },
             { key: 'last_action_date', label: 'Last action date', type: 'date' },
