@@ -126,6 +126,12 @@ function kop_tools_registry() {
                 'type'  => 'page',
                 'path'  => 'api/manage-addresses.php',
             ),
+            array(
+                'title' => 'Journalists (internal)',
+                'desc'  => 'Internal contact list of journalists covering the TTI, extracted from news bylines: contact details, outreach status, notes, CSV export. Never shown publicly.',
+                'type'  => 'page',
+                'path'  => 'api/manage-journalists.php',
+            ),
         ),
         'News' => array(
             array(
@@ -151,12 +157,6 @@ function kop_tools_registry() {
                 'desc'  => 'Re-cluster every news submission into cross-outlet story groups. Idempotent repair; day-to-day grouping already happens on save.',
                 'type'  => 'action',
                 'path'  => 'api/rebuild-news-story-groups.php',
-            ),
-            array(
-                'title' => 'Journalists (internal)',
-                'desc'  => 'Internal contact list of journalists covering the TTI, extracted from news bylines: contact details, outreach status, notes, CSV export. Never shown publicly.',
-                'type'  => 'page',
-                'path'  => 'api/manage-journalists.php',
             ),
         ),
         'Inspections' => array(
