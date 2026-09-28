@@ -1533,14 +1533,25 @@
         const ageMax = facility.age_max;
         const ageText = (ageMin != null && ageMax != null) ? `${ageMin}–${ageMax}`
             : (ageMin != null) ? `${ageMin}+` : (ageMax != null) ? `up to ${ageMax}` : '';
+        // Owner names and private/public ownership share one row, so the card
+        // does not read "Ownership ... Owner ..." as the owner twice.
+        const ownerEntries = ownerItems.map(renderListEntry).filter(s => s && s.trim() !== '');
+        const ownership = rawOwnership(facility);
+        let ownerRow = renderScalarRow('Ownership', ownership);
+        if (ownerEntries.length === 1) {
+            ownerRow = detailRow('Owner', ownerEntries[0] + (ownership ? ` <span class="detail-sub">${escapeHtml(ownership.toLowerCase())}</span>` : ''));
+        } else if (ownerEntries.length > 1) {
+            const lis = ownerEntries.map(s => `<li>${s}</li>`).join('')
+                + (ownership ? `<li class="detail-sub-item">${escapeHtml(ownership)}</li>` : '');
+            ownerRow = detailRow('Owners', `<ul class="detail-value-list">${lis}</ul>`);
+        }
         detailRows.push(detailGroup('Program', [
             renderScalarRow('Type', facility.type),
             renderScalarRow('Ages', ageText),
             renderScalarRow('Gender', facility.gender),
-            renderScalarRow('Ownership', rawOwnership(facility)),
+            ownerRow,
             sameName(facility.operator_name) ? '' : renderScalarRow('Operator', facility.operator_name),
             renderListSection('Other operators', facility.other_operators),
-            renderListSection(ownerItems.length > 1 ? 'Owners' : 'Owner', ownerItems),
             renderListSection('Past owners', facility.past_owners),
             (facility.country && !isUsCountry(facility.country)) ? renderScalarRow('Country', facility.country) : '',
             // Where it operated before moving (locationDetails.formerLocations).
