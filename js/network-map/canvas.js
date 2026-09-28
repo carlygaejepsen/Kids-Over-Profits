@@ -262,6 +262,34 @@
         return prefix + ' ' + names[0] + (names.length > 1 ? ' +' + (names.length - 1) : '');
     }
 
+    /*
+     * The kind word set under a name (2d.2, the owner's choice of
+     * 2026-09-28): what a reader cannot tell from the shape. A person is
+     * an ellipse and a program is the plain box - the board's own key -
+     * so neither is marked; a company, a trade group, a government body
+     * and a church say what they are in small caps under the name. Never
+     * a colour: colour by kind is what the owner took out on 2026-09-22.
+     */
+    var KIND_WORDS = {
+        parent: 'COMPANY', association: 'TRADE GROUP',
+        government: 'GOVERNMENT', church: 'CHURCH'
+    };
+
+    /** The word under this node (or kind), or '' for the unmarked kinds. */
+    function kindWord(nodeOrKind) {
+        var kind = nodeOrKind && nodeOrKind.kind !== undefined ? nodeOrKind.kind : nodeOrKind;
+        return KIND_WORDS[kind] || '';
+    }
+
+    /* Drawn smaller than the years line and bold, so the word reads as a
+     * mark rather than as more history. The mark never changes a bubble's
+     * height: it shares the years line where the node has one, and where
+     * it is the only thing under the name it fits inside the bubble's own
+     * padding, with the name nudged up to make its room. Two views
+     * (WWASPS's and CEDU's) fit the stage with nothing to spare, and any
+     * change of bubble height reshuffled their rows off it. */
+    var KIND_SIZE = 8;
+
     function subLines(node) {
         if (node._subLines !== undefined) return node._subLines;
         var lines = [];
@@ -294,6 +322,7 @@
         node._subLines = lines;
         return lines;
     }
+
 
     /* The years of operation, a smaller second line under a name. */
     var YEARS_SIZE = 9.5;
@@ -2093,6 +2122,13 @@
                  * the bubble freely put six of seventy lines off straight -
                  * the cost of one name's annotation falling on every name in
                  * the view. */
+                /* The kind word (2d.2) is a mark, never an annotation, so
+                 * it is never cut: the bubble is at least as wide as the
+                 * word, however short the name (WWASPS is narrower than
+                 * COMPANY) - plus a scrap for the years it shares its line
+                 * with, so the cut never eats them whole. */
+                var word = kindWord(node);
+                if (word) core = Math.max(core, ctx.measureText(word).width + (subs.length ? 30 : 2));
                 node._baseW = Math.max(core, Math.min(subW, core * SUB_STRETCH));
             }
             return node._baseW;
@@ -2624,18 +2660,58 @@
                 var ink = inkOn(scratch);
                 var size = LABEL_SIZE * bubble.scale;
                 var subs = subLines(node);
+                var word = kindWord(node);
                 var nameY = (bb3[1] + bb3[3]) / 2 - subs.length * YEARS_LINE * bubble.scale / 2;
+                /* A word with no years to share a line with lives inside
+                 * the bubble's own padding: the name gives up a little of
+                 * the top pad and the box never grows, so the mark never
+                 * moves the layout (2d.2). */
+                if (word && !subs.length) nameY -= 4 * bubble.scale;
                 ctx.globalAlpha = alpha;
                 ctx.fillStyle = ink;
                 ctx.font = (node.degree >= 8 ? '600 ' : '') + size + 'px ' + FONT;
                 ctx.fillText(node.name, sx[i], nameY + 0.5);
-                if (subs.length) {
-                    ctx.globalAlpha = alpha * 0.8;
-                    ctx.font = (YEARS_SIZE * bubble.scale) + 'px ' + FONT;
+                if (subs.length || word) {
                     var room = baseWidth(node) * bubble.scale;
+                    var kindFont = '600 ' + (KIND_SIZE * bubble.scale) + 'px ' + FONT;
+                    var yearsFont = (YEARS_SIZE * bubble.scale) + 'px ' + FONT;
+                    if (word && !subs.length) {
+                        ctx.globalAlpha = alpha * 0.75;
+                        ctx.font = kindFont;
+                        if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '1px';
+                        ctx.fillText(word, sx[i], nameY + (LABEL_LINE / 2 + 4) * bubble.scale);
+                        if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
+                    }
                     for (var si = 0; si < subs.length; si++) {
-                        ctx.fillText(fitSub(node, si, subs[si], room), sx[i],
-                            nameY + (LABEL_LINE / 2 + YEARS_LINE / 2 + si * YEARS_LINE) * bubble.scale);
+                        var lineY = nameY + (LABEL_LINE / 2 + YEARS_LINE / 2 + si * YEARS_LINE) * bubble.scale;
+                        /* The kind word (2d.2) shares the first line with
+                         * the years and the old names, so the mark costs a
+                         * marked name no height at all. Small caps, bold, a
+                         * shade quieter than the years, and never cut: the
+                         * years part gives way instead, and baseWidth holds
+                         * the word whole. */
+                        if (si === 0 && word) {
+                            ctx.font = kindFont;
+                            var wordW = ctx.measureText(word).width;
+                            var wordGap = 5 * bubble.scale;
+                            ctx.font = yearsFont;
+                            var part = fitSub(node, si, subs[si], room - wordW - wordGap);
+                            var partW = ctx.measureText(part).width;
+                            var lineLeft = sx[i] - (partW + wordGap + wordW) / 2;
+                            ctx.textAlign = 'left';
+                            ctx.globalAlpha = alpha * 0.8;
+                            ctx.fillText(part, lineLeft, lineY);
+                            ctx.globalAlpha = alpha * 0.75;
+                            ctx.font = kindFont;
+                            if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '1px';
+                            ctx.fillText(word, lineLeft + partW + wordGap, lineY);
+                            if (ctx.letterSpacing !== undefined) ctx.letterSpacing = '0px';
+                            ctx.textAlign = 'center';
+                            continue;
+                        }
+                        ctx.globalAlpha = alpha * 0.8;
+                        ctx.font = yearsFont;
+                        ctx.fillText(fitSub(node, si, subs[si], room), sx[i], lineY);
                     }
                 }
                 ctx.globalAlpha = 1;
@@ -3053,6 +3129,10 @@
         /* The small lines under a name, so a layout working without a live
          * renderer budgets the same room the painter will use. */
         subLines: subLines,
+        /* The kind word under a name (2d.2), '' for the unmarked kinds; the
+         * legend reads the same function, so the two cannot drift. It never
+         * changes a bubble's size: it rides the years line, or the padding. */
+        kindWord: kindWord,
         styleFor: styleFor,
         isPeopleLine: isPeopleLine,
         peopleOn: peopleOn,

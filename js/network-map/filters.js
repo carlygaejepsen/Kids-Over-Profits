@@ -226,9 +226,10 @@
          *
          * The key is the board's own: a name's fill says whether the place
          * is open, and a blue name is a NATSAP member. Kinds are told by
-         * shape - people in ellipses - and by the drawer; there is no
-         * colour-by-kind, because a board of coloured blocks was what the
-         * owner asked to have taken away.
+         * shape - people in ellipses - and, since 2d.2, by the small-caps
+         * kind word under a company, trade group, government body or
+         * church; there is no colour-by-kind, because a board of coloured
+         * blocks was what the owner asked to have taken away.
          */
         filters.renderLegend = function () {
             if (!legend) return;
@@ -268,6 +269,37 @@
                     natsap: !!entry.natsap,
                     deaths: !!entry.deaths
                 });
+            });
+
+            /* The marked kinds (2d.2): a row per kind on screen, its word
+             * from the painter's own kindWord so the legend cannot drift
+             * from the board. The word is the mark, so the row carries it
+             * in the mark's own style; a program is the plain box and a
+             * person the ellipse above, so neither needs a row here. */
+            [
+                { kind: 'parent', label: 'Company' },
+                { kind: 'association', label: 'Trade group' },
+                { kind: 'government', label: 'Government body' },
+                { kind: 'church', label: 'Church' }
+            ].forEach(function (entry) {
+                var word = painter.kindWord ? painter.kindWord(entry.kind) : '';
+                if (!word) return;
+                var when = function (n) { return n.kind === entry.kind; };
+                if (!has(when)) return;
+                var built = row('', tally(when));
+                var text = built.item.children[1];
+                var lead = document_.createElement('span');
+                lead.textContent = entry.label + ' (';
+                var mark = document_.createElement('span');
+                mark.className = 'kop-network__legend-kind-word';
+                mark.textContent = word;
+                var tail = document_.createElement('span');
+                tail.textContent = ' under the name)';
+                text.appendChild(lead);
+                text.appendChild(mark);
+                text.appendChild(tail);
+                keyList.appendChild(built.item);
+                painter.swatch(built.mark, { kind: entry.kind, status: 'unknown' });
             });
 
             /* The "+N" pill, only when something on screen carries one. */

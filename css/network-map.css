@@ -1063,6 +1063,14 @@ html.kop-network-pinned {
 	white-space: nowrap;
 }
 
+/* The kind word inside a legend row (2d.2), set the way the board sets it
+ * under a name: small caps, bold, a touch spaced. */
+.kop-network__legend-kind-word {
+	font-size: 0.62rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+}
+
 /* A row that explains a mark rather than naming one: it is a sentence, so
  * it wraps instead of being cut off, and its swatch sits with the first
  * line rather than in the middle of the block. */

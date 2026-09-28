@@ -109,6 +109,12 @@ function buildSandbox() {
     const badgeCalls = [];
     const captionCalls = [];
     const yearsCalls = [];
+    const kindCalls = [];
+
+    /* The kind word under a company, trade group, government body or
+     * church (2d.2). It belongs to the name above it, like the years, and
+     * must never count as a name of its own. */
+    const KIND_WORD = /^(COMPANY|TRADE GROUP|GOVERNMENT|CHURCH)$/;
 
     /* The small lines a bubble carries under its name: the years, the name
      * the place traded under before, or the two on one line. They belong to
@@ -135,8 +141,12 @@ function buildSandbox() {
             /* What a line says is written in italic on the line; it is not a
              * name either. */
             if (String(ctx.font || '').indexOf('italic') === 0) { captionCalls.push(t); return; }
-            /* A sub-line belongs to the name above it, not to itself. */
+            /* A sub-line belongs to the name above it, not to itself. Names
+             * are never cut, so anything ending in an ellipsis is a cut
+             * sub-line, however short the cut left it. */
             if (SUB_LINE.test(String(t)) || SUB_LINE_CUT.test(String(t))) { yearsCalls.push(t); return; }
+            if (/…$/.test(String(t))) { yearsCalls.push(t); return; }
+            if (KIND_WORD.test(String(t))) { kindCalls.push(t); return; }
             labelCalls.push('text:' + t);
             /* textAlign matters: a label that could not fit below its node is
              * drawn beside it, left or right aligned, and its box is then on
@@ -421,7 +431,7 @@ function buildSandbox() {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
         document: document_, buildRail, mediaListeners,
         pending: () => queue.length,
-        labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls,
+        labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls, kindCalls,
         /* The stage the map believes it has, so the same modules can be run
          * at a phone width without a second sandbox. */
         setStage: (width, height) => { stage.width = width; stage.height = height; },
@@ -432,6 +442,7 @@ function buildSandbox() {
             badgeCalls.length = 0;
             captionCalls.length = 0;
             yearsCalls.length = 0;
+            kindCalls.length = 0;
         }
     };
 }
@@ -448,7 +459,7 @@ function run() {
 
     const {
         sandbox, canvas, ops, fire, motion, flushFrames, runTimers,
-        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls, resetOps, setStage
+        document: doc, buildRail, mediaListeners, labelCalls, labelBoxes, badgeCalls, yearsCalls, captionCalls, kindCalls, resetOps, setStage
     } = buildSandbox();
     const store = sandbox.KOPNetworkStore.create();
     store.hydrate(graph, layout);
@@ -3833,6 +3844,89 @@ function run() {
     focus.setMode('focus');
     focus.clear();
     flushFrames();
+    }
+
+    /* ------------------------------------------------ kind marks (2d.2) -- */
+
+    /* The owner's choice of 2026-09-28: a small-caps kind word under a
+     * company, trade group, government body or church - never a colour -
+     * and a legend row per marked kind on screen, read off the painter's
+     * own kindWord so the two cannot drift. Programs and people stay
+     * unmarked: the plain box and the ellipse are the board's own key. */
+    {
+    const painter = sandbox.KOPNetworkCanvas;
+    const marked = /^(COMPANY|TRADE GROUP|GOVERNMENT|CHURCH)$/;
+    check(painter.kindWord('parent') === 'COMPANY' && painter.kindWord('association') === 'TRADE GROUP' &&
+        painter.kindWord('government') === 'GOVERNMENT' && painter.kindWord('church') === 'CHURCH' &&
+        painter.kindWord('facility') === '' && painter.kindWord('person') === '' && painter.kindWord('other') === '',
+        'the kind words are not the chosen set');
+    const aCompany = store.nodes.find((n) => n.kind === 'parent');
+    check(painter.kindWord(aCompany) === 'COMPANY', 'kindWord does not read a node');
+
+    /* The mark never changes a bubble's height: it shares the years line
+     * where the node has one, and fits inside the bubble's own padding
+     * where the word is alone. The WWASPS and CEDU views fit the stage
+     * with nothing to spare, and any change of bubble height reshuffled
+     * their rows off it. */
+    const withYears = store.nodes.find((n) => n.kind === 'parent' && painter.subLines(n).length);
+    const wordOnly = store.nodes.find((n) => n.kind === 'parent' && !painter.subLines(n).length);
+    check(!!withYears && !!wordOnly, 'no company with and without a years line to measure the mark by');
+    check(!withYears || renderer.labelBox(withYears).height ===
+        painter.LABEL_PITCH + painter.subLines(withYears).length * painter.YEARS_LINE,
+        'a company with a years line pays height for its kind word');
+    check(!wordOnly || renderer.labelBox(wordOnly).height === painter.LABEL_PITCH,
+        'a company with only its kind word pays height for it');
+
+    /* Drawn: every marked name whose label is on the stage carries its
+     * word, no word is ever read as a name, and the room the word takes
+     * is reserved, so nothing overlaps. */
+    focus.setMode('focus');
+    focus.clear();
+    flushFrames();
+    focus.select(hub);
+    flushFrames();
+    resetOps();
+    renderer.draw();
+    const kindScene = focus.scene();
+    const drawnNames = new Set(labelBoxes.map((b) => b.t));
+    const wantBy = {};
+    kindScene.nodes.forEach((n) => {
+        const w = painter.kindWord(n);
+        if (w && drawnNames.has(n.name)) wantBy[w] = (wantBy[w] || 0) + 1;
+    });
+    check(Object.keys(wantBy).length > 0, hub.name + "'s board draws no marked kind, so the word is untested");
+    const gotBy = {};
+    kindCalls.forEach((t) => { gotBy[t] = (gotBy[t] || 0) + 1; });
+    check(Object.keys(wantBy).every((w) => (gotBy[w] || 0) >= wantBy[w]),
+        'a marked name on the stage is missing its kind word: want ' + JSON.stringify(wantBy) +
+        ', got ' + JSON.stringify(gotBy),
+        'kind words drawn: ' + Object.keys(wantBy).map((w) => w + ' x' + wantBy[w]).join(', '));
+    check(labelCalls.every((c) => !marked.test(c.replace(/^(text|halo):/, ''))),
+        'a kind word was drawn as a name');
+    check(collidingLabels(labelBoxes).length === 0, 'names overlap once the kind words take their room');
+
+    /* The legend: a row per marked kind on screen, carrying the word. */
+    rail.renderLegend();
+    const rowTexts = shell.legend.querySelectorAll('span')
+        .filter((s) => s.className === 'kop-network__legend-label')
+        .map((s) => s.textContent);
+    const kindsShowing = new Set(kindScene.nodes.map((n) => n.kind));
+    [
+        ['parent', 'Company (COMPANY under the name)'],
+        ['association', 'Trade group (TRADE GROUP under the name)'],
+        ['government', 'Government body (GOVERNMENT under the name)'],
+        ['church', 'Church (CHURCH under the name)']
+    ].forEach(([kind, label]) => {
+        check(kindsShowing.has(kind) === (rowTexts.indexOf(label) !== -1),
+            'the legend and the map disagree about a ' + kind + ' being on screen');
+    });
+    const wordSpans = shell.legend.querySelectorAll('span')
+        .filter((s) => s.className === 'kop-network__legend-kind-word');
+    check(wordSpans.length > 0 && wordSpans.every((s) => marked.test(s.textContent)),
+        'the legend rows do not carry the kind word in its own style');
+    focus.clear();
+    flushFrames();
+    rail.renderLegend();
     }
 
     /* ------------------------------------------------------ the hover card -- */

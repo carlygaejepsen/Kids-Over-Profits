@@ -1967,6 +1967,30 @@ drawn.
 the name. Not built yet; it sits on the open list (PLAN.md 3.1) after
 the route highlight and the list view.
 
+*Built (2026-09-28).* `kindWord` in canvas.js: COMPANY, TRADE GROUP,
+GOVERNMENT and CHURCH, in small caps under the name, bold at 8px, a
+shade quieter than the years, letter-spaced where the browser can. A
+program and a person stay unmarked - the plain box and the ellipse are
+the board's own key - so the word marks the minority and the majority
+stays quiet. The mark never changes a bubble's size: it shares the
+years line where the node has one (the years give way to it, cut with
+an ellipsis; the word is never cut, and baseWidth holds it whole even
+where the name is narrower, as WWASPS is), and where the word is the
+only thing under the name it fits inside the bubble's own padding, the
+name nudged up to make its room. That rule was found the hard way: the
+WWASPS and CEDU views fit the stage with nothing to spare, and giving
+the word a line of its own reshuffled their rows off it - six of
+WWASPS's connections a pan away, The Brown Schools drawn without its
+name. Zero height delta puts every layout back exactly where the owner
+tuned it. The word fades with the labels at small zoom for nothing,
+because a name drawn as a dot draws no sub-lines. The legend (2d.9's
+kind rows) gets a row per marked kind on screen, with a count and the
+word set in its own style in the row text, read off the painter's
+`kindWord` so the two cannot drift; at 18px a painted word is
+illegible, which is why the word sits in the text rather than the
+swatch, as the plan foresaw ("the one a legend can point at without a
+swatch").
+
 ### 2d.3 "Add color coding."
 
 *What it has.* Colour already carries four things, all from the board:
@@ -2222,6 +2246,9 @@ overhanging its own box by its padding and border all along.
 
 *Still open.* The kind rows, which wait on 2d.2 and the owner's answer.
 
+*Closed (2026-09-28).* The kind rows arrived with 2d.2: a row per marked
+kind on screen, its word from the painter's own `kindWord`.
+
 ### 2d.10 "Add a 'Reset zoom' button."
 
 *What it has.* A Reset view button on the stage (2b.3) re-lays the board
@@ -2275,8 +2302,8 @@ it.
 5. **2d.6 highlight on the board in view**: done 2026-09-28
    (`focus.highlightRoute`, the held emphasis, `route=` in the link).
    Answers 6.
-6. **2d.2 kind marks** after the owner's yes, with their legend rows.
-   Answers 2, and the rest of 3.
+6. **2d.2 kind marks**: done 2026-09-28, with their legend rows, after
+   the owner chose the kind word. Answers 2, and the rest of 3.
 7. **2d.4 hulls and group-by-network**: the one that costs real time; it
    was already the open decision, and it slips to Phase 3 without loss.
    Answers 4.
