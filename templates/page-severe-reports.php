@@ -263,9 +263,8 @@ $kop_sr_icon = static function ($name) {
         that describe serious harm, using the state's own severity rating or
         complaint outcome where there is one. A person then reads the report and
         approves or rejects each one. Only findings the state substantiated are
-        listed: a citation, or a complaint the investigator upheld. Assaults by
-        another child are not listed, and a child running away is listed only
-        when it ended in a death or a serious injury.
+        listed: a citation, or a complaint the investigator upheld. A child
+        running away is listed only when it ended in a death or a serious injury.
         This page is not complete: it covers the states and reports reviewed so far,
         and a facility's absence here says nothing about its record. Every report we
         hold, flagged or not, is on the <a href="/inspection-reports/">state trackers</a>.</p>
