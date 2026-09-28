@@ -461,6 +461,10 @@ check($tally['CA'] === array('all' => 1, 'death' => 1, 'police' => 1), 'severe p
 check(kop_ih_flag_needle("Staff  punched a Resident.\nIn the face. [...] Later text.") === 'staffpunchedaresident.intheface.', 'flag needle: the first run of the excerpt, lower-cased, spaces removed');
 check(mb_strlen(kop_ih_flag_needle(str_repeat('abcdefghij ', 40))) === 160, 'flag needle: capped at 160 characters');
 
+check(kop_ih_document_url('', json_encode(array('pdf_url' => 'https://info.ncdhhs.gov/a.pdf?ver=1'))) === 'https://info.ncdhhs.gov/a.pdf?ver=1'
+    && kop_ih_document_url('', json_encode(array('sod_url' => 'https://rcctrails.dhs.ga.gov/x?EID=1'))) === 'https://rcctrails.dhs.ga.gov/x?EID=1'
+    && kop_ih_document_url('https://www.dhs.state.mn.us/doc', '{}') === 'https://www.dhs.state.mn.us/doc'
+    && kop_ih_document_url('', json_encode(array('Deficiency Narrative' => 'x'))) === '', 'flags: the document url comes from pdf_url, sod_url or the report link, else none');
 check(kop_ih_card_excerpt(str_repeat('word ', 100), 50) === 'word word word word word word word word word word [...]', 'site: a long excerpt is cut at a word and the cut is marked');
 
 echo "Rules: $checks checks, $failures failed.\n";

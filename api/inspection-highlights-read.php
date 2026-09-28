@@ -10,7 +10,8 @@
  * Each finding carries a "needle": the opening of the quoted text, lower-cased
  * with the spaces removed. The trackers read static JSON whose report ids do
  * not match the database's, so a report is recognised by the state's own
- * words instead.
+ * words instead, or, where the document has a URL of its own, by "url": the
+ * link the tracker shows as the official report (kop_ih_document_url).
  */
 require_once __DIR__ . '/config.php';
 require_once dirname(__DIR__) . '/inc/inspection-highlights.php';
@@ -32,14 +33,28 @@ try {
         list($sql, $params) = kop_ih_severe_query($state);
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $findings[] = array(
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // The document URL is in each report's stored fields.
+        $urls = array();
+        $report_ids = array_values(array_unique(array_map('intval', array_column($rows, 'report_id'))));
+        // The deploy copies api/ before inc/; until the helper arrives, text matching alone.
+        if ($report_ids && function_exists('kop_ih_document_url')) {
+            $docs = $pdo->query('SELECT id, report_url, categories_json FROM inspection_reports WHERE id IN (' . implode(',', $report_ids) . ')');
+            foreach ($docs->fetchAll(PDO::FETCH_ASSOC) as $doc) {
+                $urls[(int) $doc['id']] = kop_ih_document_url($doc['report_url'], $doc['categories_json']);
+            }
+        }
+        foreach ($rows as $row) {
+            $finding = array(
                 'id'       => (int) $row['id'],
                 'facility' => (string) $row['facility_name'],
                 'date'     => (string) $row['finding_date'],
                 'label'    => $categories[$row['category']]['label'] ?? 'Severe finding',
                 'needle'   => kop_ih_flag_needle($row['excerpt']),
             );
+            $url = $urls[(int) $row['report_id']] ?? '';
+            if ($url !== '') $finding['url'] = $url;
+            $findings[] = $finding;
         }
     }
 } catch (Exception $e) {

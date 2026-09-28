@@ -60,6 +60,23 @@ const twins = [
     { id: 7, facility: 'Example Ranch', needle: needle(longText) },
     { id: 8, facility: 'Example Ranch', needle: needle(longText) },
 ];
+// North Carolina and Florida load a report's text only when it is opened: the
+// official link (the document's own URL) identifies it before then.
+const pdf = 'https://info.ncdhhs.gov/dhsr/mhlcs/sods/2019/20190404-150417.pdf?ver=1';
+const linkedFindings = [
+    { id: 20, facility: 'Lake James Alternative Family Living', label: 'Physical abuse or assault', needle: needle(longText), url: pdf },
+    { id: 21, facility: 'Lake James Alternative Family Living', label: 'Death', needle: needle(shortText), url: pdf },
+];
+check('a report with no text yet is flagged by its official link',
+    (find(linkedFindings, 'Somewhere Else', '', {}, ['https://example.org/other.pdf', pdf]) || {}).id === 20);
+check('one document holding two findings: the second report on it takes the second',
+    (find(linkedFindings, 'x', '', { 20: true }, [pdf]) || {}).id === 21);
+check('another document is not flagged by link',
+    find(linkedFindings, 'x', '', {}, ['https://info.ncdhhs.gov/dhsr/mhlcs/sods/2019/20190404-150418.pdf?ver=1']) === null);
+check('a report with neither text nor links is not flagged', find(linkedFindings, 'x', '', {}, []) === null);
+check('findings without a url still match by text alone',
+    (find(findings, 'HMIH CEDAR CREST, LLC', shortText, {}, [pdf]) || {}).id === 1);
+
 check('two findings with one opening: the first report takes the first', (find(twins, 'Example Ranch', longText, {}) || {}).id === 7);
 check('and the second report takes the one still unclaimed', (find(twins, 'Example Ranch', longText, { 7: true }) || {}).id === 8);
 check('a claimed finding is still better than none', (find(twins, 'Example Ranch', longText, { 7: true, 8: true }) || {}).id === 7);

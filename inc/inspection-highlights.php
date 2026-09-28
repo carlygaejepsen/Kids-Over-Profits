@@ -1298,6 +1298,23 @@ if (!function_exists('kop_ih_scanner_version')) {
         }
     }
 
+    /**
+     * The URL of the report's own document, as the state trackers link it as
+     * the official report: the PDF (North Carolina, Florida, Arkansas), the
+     * statement of deficiencies (Georgia) or the scraped link (Minnesota).
+     * Empty for the states whose reports share a page or have none (Texas,
+     * California, Utah, Arizona, Connecticut), which the trackers match by
+     * text instead.
+     */
+    function kop_ih_document_url($report_url, $categories_json) {
+        $data = json_decode((string) $categories_json, true);
+        foreach (array('pdf_url', 'sod_url') as $key) {
+            if (is_array($data) && is_string($data[$key] ?? null) && trim($data[$key]) !== '') return trim($data[$key]);
+        }
+        $url = trim((string) $report_url);
+        return preg_match('#^https?://#i', $url) ? $url : '';
+    }
+
     /** A page a person can open for the report: the scraped link, or California's facility page. */
     function kop_ih_source_url(array $row) {
         $url = trim((string) ($row['report_url'] ?? ''));

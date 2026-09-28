@@ -11,7 +11,11 @@
  * report is recognised by the state's own words: the api sends the opening of
  * each quoted finding, lower-cased with the spaces removed (the "needle"), and
  * a report is that finding when its text contains it. A short needle must
- * also sit under the same facility name.
+ * also sit under the same facility name. Where a finding's document has a
+ * URL of its own (North Carolina, Georgia, Minnesota, Arkansas, Florida),
+ * the api sends it too and a report whose official link is that URL is the
+ * finding, text or no text: the NC and FL lists load a report's text only
+ * when it is opened.
  *
  * It works on the rendered page, so the state viewers need no changes: the
  * legacy viewers (Texas, California) and the shared report-page.js engine use
@@ -50,30 +54,50 @@
         return String(name == null ? '' : name).toLowerCase().replace(/[^a-z0-9]+/g, '');
     }
 
+    /** Whether one of a report's links is the finding's own document. */
+    function linked(f, links) {
+        return !!(f && f.url && links && links.indexOf(f.url) !== -1);
+    }
+
     /**
-     * The approved finding a report's text belongs to, or null. Pure. A
-     * facility can hold one citation twice with the same opening (Texas
-     * lists a few that way), so a finding already claimed by another report
-     * (ids in `taken`) yields to an unclaimed one that also matches.
+     * The approved finding a report belongs to, or null. Pure. A report is
+     * the finding's when one of its links is the finding's document (the
+     * states whose lists load the text only when a report is opened: North
+     * Carolina, Florida) or when its text holds the needle. A facility can
+     * hold one citation twice with the same opening (Texas lists a few that
+     * way), and one North Carolina document can hold several findings, so a
+     * finding already claimed by another report (ids in `taken`) yields to
+     * an unclaimed one that also matches.
      */
-    function find(findings, facilityName, text, taken) {
+    function find(findings, facilityName, text, taken, links) {
         var hay = squash(text);
         var key = nameKey(facilityName);
-        if (!hay) return null;
+        if (!hay && !(links && links.length)) return null;
         var fallback = null;
         for (var i = 0; i < findings.length; i++) {
             var f = findings[i];
-            if (!f || !f.needle || f.needle.length < SHORTEST_NEEDLE) continue;
-            // The cheap test first: most findings belong to another facility.
-            if (f.needle.length < UNIQUE_NEEDLE && nameKey(f.facility) !== key) continue;
-            if (hay.indexOf(f.needle) === -1) continue;
+            if (!f) continue;
+            if (!linked(f, links)) {
+                if (!hay || !f.needle || f.needle.length < SHORTEST_NEEDLE) continue;
+                // The cheap test first: most findings belong to another facility.
+                if (f.needle.length < UNIQUE_NEEDLE && nameKey(f.facility) !== key) continue;
+                if (hay.indexOf(f.needle) === -1) continue;
+            }
             if (!taken || !taken[f.id]) return f;
             if (!fallback) fallback = f;
         }
         return fallback;
     }
 
-    KOP.severeFlags = { find: find, squash: squash, nameKey: nameKey };
+    /** The hrefs under a node, as written in the markup. */
+    function linksIn(node) {
+        var out = [];
+        var anchors = node.querySelectorAll('a[href]');
+        for (var i = 0; i < anchors.length; i++) out.push(String(anchors[i].getAttribute('href')).trim());
+        return out;
+    }
+
+    KOP.severeFlags = { find: find, squash: squash, nameKey: nameKey, linked: linked };
 
     var doc = global.document;
     var config = global.KOP_SEVERE_FLAGS;
@@ -100,17 +124,19 @@
         return sel + ':not([data-kop-severe-count])';
     }).join(', ');
 
-    /** Findings that could sit in this facility: its own, and any long enough to be unique. */
+    /** Findings that could sit in this facility: its own, any long enough to be unique, any with a document link. */
     function candidatesFor(facilityName) {
         var key = nameKey(facilityName);
         return findings.filter(function (f) {
-            return f && f.needle && f.needle.length >= SHORTEST_NEEDLE
+            if (!f) return false;
+            if (f.url) return true;
+            return f.needle && f.needle.length >= SHORTEST_NEEDLE
                 && (f.needle.length >= UNIQUE_NEEDLE || nameKey(f.facility) === key);
         });
     }
 
     function markReport(report, facilityName, candidates, taken) {
-        var found = find(candidates, facilityName, report.textContent, taken);
+        var found = find(candidates, facilityName, report.textContent, taken, linksIn(report));
         report.setAttribute('data-kop-severe', found ? 'yes' : 'no');
         if (!found) return false;
         taken[found.id] = true;
@@ -135,7 +161,10 @@
         var nameNode = facility.querySelector(SELECTORS.facilityName);
         var name = nameNode ? nameNode.textContent : '';
         var hay = squash(facility.textContent);
-        var candidates = candidatesFor(name).filter(function (f) { return hay.indexOf(f.needle) !== -1; });
+        var links = linksIn(facility);
+        var candidates = candidatesFor(name).filter(function (f) {
+            return linked(f, links) || (f.needle && hay.indexOf(f.needle) !== -1);
+        });
 
         var count = 0;
         if (candidates.length) {
