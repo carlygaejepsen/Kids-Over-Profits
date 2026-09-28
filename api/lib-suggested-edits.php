@@ -139,19 +139,17 @@ if (!function_exists('kop_is_placeholder_project_name')) {
 
 if (!function_exists('kop_provider_project_name')) {
     /**
-     * Project name for a mental health provider submission, following the
-     * other tabs: a parent company (the operator) names the project, and a
-     * provider without one is filed under its state (or country), uppercase,
-     * like the location projects. Returns '' when nothing usable is present.
+     * Project name for a mental health provider submission that arrived
+     * without one: its state (or country), uppercase, like the location
+     * projects. The operator block is usually the provider's own hospital or
+     * health system, not a parent company, so it never names the project on
+     * its own; parent-company projects are named by an admin in the form. The
+     * operator or facility name is used only when no location is given.
+     * Returns '' when nothing usable is present.
      */
     function kop_provider_project_name($project_data) {
         if (!is_array($project_data)) {
             return '';
-        }
-
-        $operator_name = trim((string) ($project_data['operator']['name'] ?? ''));
-        if ($operator_name !== '' && !kop_is_placeholder_project_name($operator_name)) {
-            return $operator_name;
         }
 
         $states = [
@@ -171,10 +169,6 @@ if (!function_exists('kop_provider_project_name')) {
             if (!is_array($facility)) {
                 continue;
             }
-            $facility_operator = trim((string) ($facility['identification']['currentOperator'] ?? ''));
-            if ($facility_operator !== '' && !kop_is_placeholder_project_name($facility_operator)) {
-                return $facility_operator;
-            }
             $state = strtoupper(trim((string) ($facility['locationDetails']['state'] ?? $facility['addressParts']['state'] ?? '')));
             if (isset($states[$state])) {
                 return $states[$state];
@@ -186,6 +180,11 @@ if (!function_exists('kop_provider_project_name')) {
             if ($country !== '' && !in_array($country, ['US', 'USA', 'UNITED STATES', 'UNITED STATES OF AMERICA'], true)) {
                 return $country;
             }
+        }
+
+        $operator_name = trim((string) ($project_data['operator']['name'] ?? ''));
+        if ($operator_name !== '' && !kop_is_placeholder_project_name($operator_name)) {
+            return $operator_name;
         }
 
         $first_named_facility = kop_get_first_named_facility($project_data['facilities'] ?? []);
@@ -453,8 +452,8 @@ if (!function_exists('kop_apply_suggested_edit')) {
             // on the data; they are facility-shaped but are not TTI facilities.
             $isProvider = strtolower(trim((string) ($project_data['category'] ?? $decoded_data['category'] ?? ''))) === 'providers';
 
-            // A provider sent without a project name takes its parent company's
-            // name, or else its state's, instead of "Unknown Project".
+            // A provider sent without a project name is filed under its state
+            // instead of "Unknown Project".
             if ($isProvider && kop_is_placeholder_project_name($master_id)) {
                 $provider_name = kop_sanitize_project_identifier(kop_provider_project_name($project_data));
                 if ($provider_name !== '') {

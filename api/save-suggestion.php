@@ -390,8 +390,8 @@ try {
         }
     }
     
-    // A provider with no project name is filed under its parent company, or
-    // else its state (lib-suggested-edits.php), not "Unknown Project".
+    // A provider with no project name is filed under its state
+    // (lib-suggested-edits.php), not "Unknown Project".
     if ($effective_category === 'providers' && kop_is_placeholder_project_name($master_id)) {
         $provider_name = kop_provider_project_name($data);
         if ($provider_name !== '') {
