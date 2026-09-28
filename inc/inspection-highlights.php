@@ -814,6 +814,35 @@ if (!function_exists('kop_ih_scanner_version')) {
         return array($sql, $params);
     }
 
+    /** The rows kop_ih_severe_tally() counts: state and kinds of harm of every approved severe finding. */
+    function kop_ih_severe_tally_sql() {
+        return "SELECT state, categories FROM inspection_highlights
+            WHERE status = 'approved' AND score >= " . (int) kop_ih_severe_score();
+    }
+
+    /**
+     * Approved severe findings counted by state and kind of harm, for the
+     * Severe Reports page's state and kind tiles. A finding counts once under
+     * each kind in its categories list, and once in 'all'. Returns
+     * array('all' => array('all' => n, kind => n, ...), 'TX' => array(...), ...).
+     */
+    function kop_ih_severe_tally(array $rows) {
+        $known = kop_ih_categories();
+        $tally = array('all' => array('all' => 0));
+        foreach ($rows as $row) {
+            $state = strtoupper((string) $row['state']);
+            if (!isset($tally[$state])) $tally[$state] = array('all' => 0);
+            $tally['all']['all']++;
+            $tally[$state]['all']++;
+            foreach (array_unique(array_filter(array_map('trim', explode(',', (string) $row['categories'])))) as $kind) {
+                if (!isset($known[$kind])) continue;
+                $tally['all'][$kind] = ($tally['all'][$kind] ?? 0) + 1;
+                $tally[$state][$kind] = ($tally[$state][$kind] ?? 0) + 1;
+            }
+        }
+        return $tally;
+    }
+
     /**
      * What a tracker page looks for to flag a report: the first run of the
      * excerpt (up to the first gap), lower-cased with every space removed, so
@@ -1030,6 +1059,15 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
             $counts['all'] += (int) $row['n'];
         }
         return $counts;
+    }
+
+    function kop_ih_site_severe_tally() {
+        global $wpdb;
+        if (!kop_ih_site_ready()) return kop_ih_severe_tally(array());
+        $suppress = $wpdb->suppress_errors(true);
+        $rows = $wpdb->get_results(kop_ih_severe_tally_sql(), ARRAY_A);
+        $wpdb->suppress_errors($suppress);
+        return kop_ih_severe_tally((array) $rows);
     }
 
     /** Cards for the "demand attention" grid, in the markup the hand-featured cards use. */

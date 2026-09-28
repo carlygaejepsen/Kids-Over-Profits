@@ -362,6 +362,11 @@ check($run(kop_ih_severe_query('', 'death')) === array(11, 16), 'severe page: th
 check($run(kop_ih_severe_query('', 'physical_abuse')) === array(12), 'severe page: a category matches a whole entry of the list');
 check($run(kop_ih_severe_query('', 'not-a-category')) === array(12, 13, 11, 16), 'severe page: an unknown category filters nothing');
 check($run(kop_ih_severe_query('', '', 2, 1)) === array(13, 11), 'severe page: limit and offset page through the list');
+$tally = kop_ih_severe_tally($site->query(kop_ih_severe_tally_sql())->fetchAll(PDO::FETCH_ASSOC));
+check($tally['all']['all'] === 4 && $tally['TX']['all'] === 4, 'severe page tiles: every approved severe finding counted, per state and overall');
+check(($tally['TX']['death'] ?? 0) === 2 && ($tally['TX']['physical_abuse'] ?? 0) === 1, 'severe page tiles: counted per kind of harm');
+$tally = kop_ih_severe_tally(array(array('state' => 'ca', 'categories' => 'death,police,death,bogus')));
+check($tally['CA'] === array('all' => 1, 'death' => 1, 'police' => 1), 'severe page tiles: a kind counts once per finding, unknown kinds are skipped');
 check(kop_ih_flag_needle("Staff  punched a Resident.\nIn the face. [...] Later text.") === 'staffpunchedaresident.intheface.', 'flag needle: the first run of the excerpt, lower-cased, spaces removed');
 check(mb_strlen(kop_ih_flag_needle(str_repeat('abcdefghij ', 40))) === 160, 'flag needle: capped at 160 characters');
 
