@@ -1250,6 +1250,16 @@ function enqueue_data_form_script() {
 
                     );
 
+            // Survivor Testimony section (js/data-form/testimony.js).
+            $testimony_path = get_stylesheet_directory() . '/js/data-form/testimony.js';
+            wp_enqueue_script(
+                'kop-testimony',
+                get_stylesheet_directory_uri() . '/js/data-form/testimony.js',
+                array('kop-admin-data-page-script'),
+                file_exists($testimony_path) ? filemtime($testimony_path) : time(),
+                true
+            );
+
             // ?submission=<id> opens a pending data submission in this form
             // (js/data-form/submission-editor.js); saves go to the submission.
             $submission_editor_path = get_stylesheet_directory() . '/js/data-form/submission-editor.js';

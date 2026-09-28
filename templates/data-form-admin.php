@@ -1716,6 +1716,24 @@ get_header();
                 </div>
             </div>
         </div>
+
+        <!-- Survivor Testimony Section (js/data-form/testimony.js) -->
+        <div class="section" id="survivor-testimony-section" data-section-views="companies,locations,providers">
+            <div class="section-header">
+                <h2 class="section-title">Survivor Testimony</h2>
+                <span class="section-toggle" aria-hidden="true">&#9662;</span>
+            </div>
+            <div class="section-content">
+                <p style="margin: 0 0 12px; font-size: 14px;">
+                    First-person accounts from survivors of this facility. Testimony stays private until
+                    "OK to publish" is ticked; only then does it appear on the public facility page.
+                    Use "Move to testimony" below to take an account out of the notes.
+                </p>
+                <div id="survivor-testimony-list"></div>
+                <button type="button" class="btn" id="add-survivor-testimony-btn" style="background: #24757F; color: #fff;">Add testimony</button>
+                <div id="survivor-testimony-movable"></div>
+            </div>
+        </div>
         
         <!-- Linked News Articles Section -->
         <div class="section" id="linked-news-section" data-section-views="companies,locations">

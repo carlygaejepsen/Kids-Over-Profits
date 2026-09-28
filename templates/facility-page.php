@@ -36,6 +36,7 @@ $kop_fp_sections = array();
 $kop_fp_has_practices = !empty($page['practices']);
 $kop_fp_has_staff = !empty($page['staff']);
 $kop_fp_has_notes = !empty($page['notes']) || !empty($page['field_notes']);
+$kop_fp_has_testimony = !empty($page['testimony']);
 $kop_fp_has_news = !empty($page['news']);
 $kop_fp_has_lawsuits = !empty($page['lawsuits']);
 $kop_fp_has_memorials = !empty($page['memorials']);
@@ -55,6 +56,7 @@ if ($kop_fp_has_practices) $kop_fp_sections['practices'] = 'Reported practices';
 if ($kop_fp_has_staff) $kop_fp_sections['staff'] = 'Staff';
 if ($kop_fp_has_network) $kop_fp_sections['network'] = 'Network';
 if ($kop_fp_has_docs) $kop_fp_sections['documents'] = 'Documents';
+if ($kop_fp_has_testimony) $kop_fp_sections['testimony'] = 'Survivor testimony';
 if ($kop_fp_has_notes) $kop_fp_sections['notes'] = 'Research notes';
 if ($kop_fp_has_wiki) $kop_fp_sections['wiki'] = 'Wiki entries';
 if ($kop_fp_has_siblings) $kop_fp_sections['related'] = 'Same operator';
@@ -362,6 +364,19 @@ get_header();
                         <p class="kop-fp-count"><a href="<?php echo esc_url($page['research'][0]['library']); ?>">The whole research library</a></p>
                     <?php endif; ?>
                 <?php endif; ?>
+            </section>
+            <?php endif; ?>
+
+            <?php if ($kop_fp_has_testimony) : ?>
+            <section class="kop-fp-section" id="testimony">
+                <h2>Survivor testimony</h2>
+                <p class="kop-fp-detail">First-person accounts from people who were at this facility, published with their permission.</p>
+                <?php foreach ($page['testimony'] as $kop_fp_t) : ?>
+                    <figure class="kop-fp-testimony">
+                        <blockquote><?php foreach (preg_split('/\R\s*\R/', $kop_fp_t['text']) as $kop_fp_para) : ?><p><?php echo nl2br(esc_html(trim($kop_fp_para))); ?></p><?php endforeach; ?></blockquote>
+                        <figcaption>Survivor account<?php if ($kop_fp_t['date_label'] !== '') : ?>, shared <?php echo esc_html($kop_fp_t['date_label']); ?><?php endif; ?></figcaption>
+                    </figure>
+                <?php endforeach; ?>
             </section>
             <?php endif; ?>
 

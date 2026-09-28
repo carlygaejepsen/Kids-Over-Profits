@@ -878,6 +878,30 @@ if (!function_exists('kop_facility_pages_checklist_items')) {
     }
 }
 
+if (!function_exists('kop_facility_pages_testimony')) {
+    /**
+     * Published survivor testimony as [{text, date_label}]. Only entries an
+     * admin marked "OK to publish" (publish === true) are returned; the
+     * source (e.g. "Submission #50") stays internal.
+     */
+    function kop_facility_pages_testimony($value) {
+        $out = array();
+        if (!is_array($value)) return $out;
+        foreach ($value as $entry) {
+            if (!is_array($entry) || ($entry['publish'] ?? false) !== true) continue;
+            $text = trim((string) ($entry['text'] ?? ''));
+            if ($text === '') continue;
+            $date = trim((string) ($entry['date'] ?? ''));
+            $time = $date !== '' ? strtotime($date) : false;
+            $out[] = array(
+                'text'       => $text,
+                'date_label' => $time ? date('F Y', $time) : '',
+            );
+        }
+        return $out;
+    }
+}
+
 if (!function_exists('kop_facility_pages_field_notes')) {
     /**
      * Per-field research notes as [{label, text}]. Keys are dotted field
@@ -1049,6 +1073,7 @@ if (!function_exists('kop_facility_page_signals')) {
             if (kop_facility_pages_checklist_items($doc[$k] ?? null, $k)) $s[] = $k;
         }
         if (kop_facility_pages_field_notes($doc['fieldNotes'] ?? null)) $s[] = 'fieldNotes';
+        if (kop_facility_pages_testimony($doc['survivorTestimony'] ?? null)) $s[] = 'survivorTestimony';
         if (kop_facility_pages_resources_held($doc['resources'] ?? null)) $s[] = 'resources';
 
         $loc = isset($doc['location']) && is_array($doc['location']) ? $doc['location'] : array();
@@ -1705,6 +1730,7 @@ if (!function_exists('kop_facility_page_data')) {
         $staff = kop_facility_pages_staff_entries($doc['staff'] ?? null);
         $notes = array_merge(kop_facility_pages_clean_notes($doc['notes'] ?? null), kop_facility_pages_clean_notes($op['notes'] ?? null));
         $field_notes = kop_facility_pages_field_notes($doc['fieldNotes'] ?? null);
+        $testimony = kop_facility_pages_testimony($doc['survivorTestimony'] ?? null);
         $profile_links = array();
         foreach ((array) ($doc['profileLinks'] ?? array()) as $link) {
             $url = '';
@@ -1784,6 +1810,7 @@ if (!function_exists('kop_facility_page_data')) {
             'staff'         => $staff,
             'notes'         => $notes,
             'field_notes'   => $field_notes,
+            'testimony'     => $testimony,
             'profile_links' => $profile_links,
             'resources'     => $resources,
             'news'          => $news,

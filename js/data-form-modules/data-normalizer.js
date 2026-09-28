@@ -873,6 +873,28 @@
         return '';
     }
 
+    /** Survivor testimony entries. Mirrors kop_facility_testimony_list(). */
+    function v2TestimonyList(value) {
+        if (!Array.isArray(value)) return [];
+        const out = [];
+        value.forEach((entry) => {
+            if (typeof entry === 'string') entry = { text: entry };
+            if (!isPlainObject(entry)) return;
+            const text = v2Str(entry.text);
+            if (text === '') return;
+            const publish = entry.publish;
+            out.push({
+                id: v2Str(entry.id),
+                text,
+                source: v2Str(entry.source),
+                date: v2Str(entry.date),
+                movedFrom: v2Str(entry.movedFrom),
+                publish: publish === true || publish === 1 || publish === '1' || publish === 'true'
+            });
+        });
+        return out;
+    }
+
     function v2List(value) {
         if (value === null || value === undefined || value === '') return [];
         if (!Array.isArray(value) && !isPlainObject(value)) return [v2Str(value)];
@@ -1193,7 +1215,7 @@
             memberships: [], certifications: [], licensing: [], profileLinks: [],
             resources: {}, treatmentTypes: {}, targetedDiagnoses: {}, targetedBehaviors: {}, ttiPractices: {},
             philosophy: {}, conditions: {}, criticalIncidents: {},
-            notes: [], fieldNotes: {},
+            notes: [], fieldNotes: {}, survivorTestimony: [],
             documentFolderId: null,
             provenance: {
                 sourceProject: '', sourceProjectId: null, sourceCategory: '', sourceOperator: null,
@@ -1210,7 +1232,7 @@
         'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
         'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
         'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
-        'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
+        'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
         'isPrivatelyOwned', 'sourceProject', 'sourceProjectId', 'sourceCategory',
         'sourceOperator', 'linkedFromRef', 'kopProfileVersion', 'facility_id',
         'name', 'displayName', 'city', 'state', 'timestamp',
@@ -1616,6 +1638,7 @@
         doc.conditions = v2Map(f.conditions);
         doc.criticalIncidents = v2Map(f.criticalIncidents);
         doc.fieldNotes = v2Map(f.fieldNotes);
+        doc.survivorTestimony = v2TestimonyList(f.survivorTestimony);
         doc.documentFolderId = v2Int(f.documentFolderId);
 
         const prov = isV2 && isPlainObject(f.provenance) ? f.provenance : {};
@@ -1716,7 +1739,8 @@
             conditions: doc.conditions || {},
             criticalIncidents: doc.criticalIncidents || {},
             notes: doc.notes || [],
-            fieldNotes: doc.fieldNotes || {}
+            fieldNotes: doc.fieldNotes || {},
+            survivorTestimony: doc.survivorTestimony || []
         };
         delete legacy.operatingPeriod.schema_version;
 

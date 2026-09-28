@@ -10,6 +10,25 @@ if (!defined('ABSPATH')) {
 require_once get_stylesheet_directory() . '/api/news-mentions.php';
 
 /**
+ * Unpublished survivor testimony never leaves the server in a kop/v1 response
+ * for anyone but an admin (kop_facility_testimony_redact, inc/facility-store.php).
+ */
+function kop_rest_redact_private_testimony($response, $server, $request) {
+    if (!($response instanceof WP_REST_Response) || !($request instanceof WP_REST_Request)) {
+        return $response;
+    }
+    if (strpos((string) $request->get_route(), '/kop/v1/') !== 0) {
+        return $response;
+    }
+    if (!function_exists('kop_facility_testimony_redact') || kop_facility_testimony_viewer_is_admin()) {
+        return $response;
+    }
+    $response->set_data(kop_facility_testimony_redact($response->get_data()));
+    return $response;
+}
+add_filter('rest_post_dispatch', 'kop_rest_redact_private_testimony', 10, 3);
+
+/**
  * Register REST API routes for facilities data.
  */
 function kop_register_facilities_rest_routes() {

@@ -208,6 +208,13 @@ try {
         }
     } catch (Exception $e) {}
 
+    // The public data form loads this too: unpublished survivor testimony
+    // stays with admins (inc/facility-store.php).
+    require_once dirname(__DIR__) . '/inc/facility-store.php';
+    if (!kop_facility_testimony_viewer_is_admin()) {
+        $projects = kop_facility_testimony_redact($projects);
+    }
+
     echo json_encode([
         'success' => true, 
         'projects' => $projects,

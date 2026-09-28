@@ -102,6 +102,81 @@ if (!function_exists('kop_facility_str')) {
     }
 }
 
+if (!function_exists('kop_facility_testimony_list')) {
+    /**
+     * Survivor testimony entries: {id, text, source, date, movedFrom, publish}.
+     * A bare string becomes an entry; entries without text are dropped.
+     * publish is true only when an admin ticked "OK to publish", so nothing
+     * shows on a public page by default. Mirrors v2TestimonyList() in
+     * js/data-form-modules/data-normalizer.js.
+     */
+    function kop_facility_testimony_list($value) {
+        if (!is_array($value)) return array();
+        $out = array();
+        foreach ($value as $entry) {
+            if (is_string($entry)) $entry = array('text' => $entry);
+            if (!is_array($entry)) continue;
+            $text = kop_facility_str($entry['text'] ?? '');
+            if ($text === '') continue;
+            $publish = $entry['publish'] ?? false;
+            $out[] = array(
+                'id'        => kop_facility_str($entry['id'] ?? ''),
+                'text'      => $text,
+                'source'    => kop_facility_str($entry['source'] ?? ''),
+                'date'      => kop_facility_str($entry['date'] ?? ''),
+                'movedFrom' => kop_facility_str($entry['movedFrom'] ?? ''),
+                'publish'   => $publish === true || $publish === 1 || $publish === '1' || $publish === 'true',
+            );
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_testimony_redact')) {
+    /**
+     * Drop unpublished survivor testimony from any payload, at any depth, so
+     * it never leaves the server for a viewer who is not an admin. Every
+     * "survivorTestimony" list keeps only its publish === true entries.
+     */
+    function kop_facility_testimony_redact($value) {
+        if ($value instanceof stdClass) {
+            foreach (get_object_vars($value) as $key => $child) {
+                $value->$key = $key === 'survivorTestimony'
+                    ? kop_facility_testimony_published($child)
+                    : kop_facility_testimony_redact($child);
+            }
+            return $value;
+        }
+        if (!is_array($value)) return $value;
+        foreach ($value as $key => $child) {
+            if ($key === 'survivorTestimony') {
+                $value[$key] = kop_facility_testimony_published($child);
+            } elseif (is_array($child) || $child instanceof stdClass) {
+                $value[$key] = kop_facility_testimony_redact($child);
+            }
+        }
+        return $value;
+    }
+
+    /** The publish === true entries of one testimony list. */
+    function kop_facility_testimony_published($list) {
+        if (!is_array($list)) return array();
+        $out = array();
+        foreach ($list as $entry) {
+            if ($entry instanceof stdClass) $entry = (array) $entry;
+            if (is_array($entry) && ($entry['publish'] ?? false) === true) $out[] = $entry;
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_testimony_viewer_is_admin')) {
+    /** Only admins see unpublished testimony. Fails closed outside WordPress. */
+    function kop_facility_testimony_viewer_is_admin() {
+        return function_exists('current_user_can') && current_user_can('manage_options');
+    }
+}
+
 if (!function_exists('kop_facility_list')) {
     /**
      * Any value to a list. Strings are trimmed and empties dropped; scalars are
@@ -573,6 +648,7 @@ if (!function_exists('kop_facility_blank_document')) {
             'criticalIncidents' => array(),
             'notes'         => array(),
             'fieldNotes'    => array(),
+            'survivorTestimony' => array(),
             'documentFolderId' => null,
             'provenance'    => array(
                 'sourceProject' => '', 'sourceProjectId' => null, 'sourceCategory' => '',
@@ -906,6 +982,7 @@ if (!function_exists('kop_facility_normalize')) {
         $doc['conditions']        = kop_facility_map($f['conditions'] ?? array());
         $doc['criticalIncidents'] = kop_facility_map($f['criticalIncidents'] ?? array());
         $doc['fieldNotes']        = kop_facility_map($f['fieldNotes'] ?? array());
+        $doc['survivorTestimony'] = kop_facility_testimony_list($f['survivorTestimony'] ?? array());
 
         $doc['documentFolderId'] = kop_facility_int($f['documentFolderId'] ?? null);
 
@@ -941,7 +1018,7 @@ if (!function_exists('kop_facility_normalize')) {
             'certifications', 'licensing', 'profileLinks', 'resources', 'treatmentTypes',
             'targetedDiagnoses', 'targetedBehaviors', 'ttiPractices',
             'philosophy', 'conditions', 'criticalIncidents', 'notes', 'fieldNotes',
-            'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
+            'survivorTestimony', 'documentFolderId', 'otherOperators', 'pastOperators', 'investors',
             'isPrivatelyOwned', 'sourceProject', 'sourceProjectId', 'sourceCategory',
             'sourceOperator', 'linkedFromRef', 'kopProfileVersion', 'facility_id',
             'name', 'displayName', 'city', 'state', 'timestamp',
@@ -1327,6 +1404,7 @@ if (!function_exists('kop_facility_validate')) {
             'licensing'                   => $doc['licensing'] ?? null,
             'profileLinks'                => $doc['profileLinks'] ?? null,
             'notes'                       => $doc['notes'] ?? null,
+            'survivorTestimony'           => $doc['survivorTestimony'] ?? null,
             'location.additionalLocations' => $loc['additionalLocations'] ?? null,
             'location.formerLocations'    => $loc['formerLocations'] ?? null,
             'staff.administrator'         => $doc['staff']['administrator'] ?? null,
@@ -1548,6 +1626,7 @@ if (!function_exists('kop_facility_to_legacy')) {
             'criticalIncidents' => $doc['criticalIncidents'],
             'notes'          => $doc['notes'],
             'fieldNotes'     => $doc['fieldNotes'],
+            'survivorTestimony' => $doc['survivorTestimony'] ?? array(),
         );
 
         if ($doc['facility_id'] !== null) $legacy['facility_id'] = $doc['facility_id'];

@@ -78,6 +78,16 @@ Open the admin data form with `?submission=<id>` to load a pending data submissi
 - **Save and approve** saves, then approves through `api/process-edit.php`, the same merge the review queue runs. **Reject** rejects it.
 - If something else replaces the form's data (loading another project, switching tabs, clearing the form), the next save refuses to write it into the submission, ends submission mode and restores the normal saves.
 
+## Survivor testimony
+
+Each facility (and provider site) has a `survivorTestimony` list of `{id, text, source, date, movedFrom, publish}`, edited in the admin form's **Survivor Testimony** section (`js/data-form/testimony.js`).
+
+- **Move to testimony:** the section lists every note on the facility that could be an account (general notes, field notes, the custom treatment/philosophy/incident entries and a provider's other TTI practices). Moving one takes the text out of the note and into a new entry. Inside a submission opened with `?submission=<id>` the entry is credited to that submission and its date.
+- **Private until marked:** `publish` is false until "OK to publish" is ticked. Only published entries appear on `/facility/<slug>/` (Survivor testimony section, `kop_facility_pages_testimony()`), credited as "Survivor account, shared <month year>"; the source stays internal.
+- **Never sent to the public:** `kop_facility_testimony_redact()` (`inc/facility-store.php`) strips unpublished entries from `api/get-master-data.php` and from every `kop/v1` REST response (`rest_post_dispatch`) unless the viewer has `manage_options`. The data form's search requests send the REST nonce so an admin gets the full record.
+- **Kept on approval:** a public suggestion comes back without the hidden entries, so `kop_preserve_hidden_testimony()` (`api/lib-suggested-edits.php`) puts them back before the suggestion replaces the facility.
+- **Storage:** a typed field of the v2 facility document (`kop_facility_testimony_list()`, mirrored by `v2TestimonyList()` in `data-normalizer.js`; `scripts/check-facility-normalizer-parity.js` checks both).
+
 ## Mental Health Providers (hybrid category)
 
 The **Mental Health Providers** tab (`data-category="providers"`) is for providers that are not part of the TTI but use TTI practices and refer children to TTI facilities: acute psychiatric wards, partial hospitalization (PHP) and intensive outpatient (IOP) programs, day schools, respite care and outpatient therapy.

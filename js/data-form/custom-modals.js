@@ -479,8 +479,11 @@ class OrganizerModal {
         // REST root: KOP_DATA_FORM_CONFIG.restUrl already ends in kop/v1/.
         const searchUrl = `${OrganizerModal.restRoot()}search?${params.toString()}`;
 
-        // Fetch from database exactly like data-search.js
-        fetch(searchUrl)
+        // Fetch from database exactly like data-search.js (nonce included, so an
+        // admin gets unpublished survivor testimony).
+        const searchCfg = window.KOP_DATA_FORM_CONFIG || window.KOP_FormConfig?.DATA_FORM_CONFIG || {};
+        const restNonce = searchCfg.nonce || searchCfg.api?.nonce || '';
+        fetch(searchUrl, { credentials: 'same-origin', headers: restNonce ? { 'X-WP-Nonce': restNonce } : {} })
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.results) {

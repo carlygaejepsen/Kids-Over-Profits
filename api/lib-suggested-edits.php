@@ -192,6 +192,57 @@ if (!function_exists('kop_provider_project_name')) {
     }
 }
 
+if (!function_exists('kop_preserve_hidden_testimony')) {
+    /**
+     * The public form never sees unpublished survivor testimony (it is
+     * redacted for non-admins), so a suggestion comes back without it.
+     * Before the suggestion replaces a facility, put those entries back:
+     * every existing entry with publish !== true whose id (or text) is not in
+     * the suggestion is appended. Facilities match by facility_id, then name.
+     *
+     * @param array $new_facilities      facilities from the suggestion
+     * @param array $existing_facilities facilities as stored now
+     * @return array the suggestion's facilities with hidden testimony restored
+     */
+    function kop_preserve_hidden_testimony(array $new_facilities, array $existing_facilities) {
+        $by_id = [];
+        $by_name = [];
+        foreach ($existing_facilities as $facility) {
+            if (!is_array($facility) || empty($facility['survivorTestimony']) || !is_array($facility['survivorTestimony'])) continue;
+            $fid = (int) ($facility['facility_id'] ?? 0);
+            if ($fid > 0) $by_id[$fid] = $facility['survivorTestimony'];
+            $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+            if ($name !== '') $by_name[$name] = $facility['survivorTestimony'];
+        }
+        if (!$by_id && !$by_name) return $new_facilities;
+
+        foreach ($new_facilities as $i => $facility) {
+            if (!is_array($facility)) continue;
+            $fid = (int) ($facility['facility_id'] ?? 0);
+            $name = strtolower(trim((string) ($facility['identification']['name'] ?? '')));
+            $existing = ($fid > 0 && isset($by_id[$fid])) ? $by_id[$fid] : ($by_name[$name] ?? null);
+            if (!$existing) continue;
+
+            $list = is_array($facility['survivorTestimony'] ?? null) ? $facility['survivorTestimony'] : [];
+            $ids = [];
+            $texts = [];
+            foreach ($list as $entry) {
+                if (!is_array($entry)) continue;
+                if (($entry['id'] ?? '') !== '') $ids[(string) $entry['id']] = true;
+                $texts[trim((string) ($entry['text'] ?? ''))] = true;
+            }
+            foreach ($existing as $entry) {
+                if (!is_array($entry) || ($entry['publish'] ?? false) === true) continue;
+                $id = (string) ($entry['id'] ?? '');
+                if (($id !== '' && isset($ids[$id])) || isset($texts[trim((string) ($entry['text'] ?? ''))])) continue;
+                $list[] = $entry;
+            }
+            $new_facilities[$i]['survivorTestimony'] = $list;
+        }
+        return $new_facilities;
+    }
+}
+
 if (!function_exists('kop_consultant_display_name')) {
     function kop_consultant_display_name($consultant) {
         if (!is_array($consultant)) {
@@ -500,6 +551,50 @@ if (!function_exists('kop_apply_suggested_edit')) {
             } else {
                 $tableName = $facilities_table;
                 $category = 'companies';
+            }
+
+            // Put back unpublished survivor testimony the submitter never saw.
+            if (!empty($project_data['facilities']) && is_array($project_data['facilities'])) {
+                $existing_facilities = [];
+                if ($category === 'companies' || $category === 'locations') {
+                    if (function_exists('kop_facility_load')) {
+                        $load_prefix = $wp_prefix !== '' ? $wp_prefix : (isset($GLOBALS['wpdb']->prefix) ? $GLOBALS['wpdb']->prefix : '');
+                        foreach ($project_data['facilities'] as $facility) {
+                            $fid = is_array($facility) ? (int) ($facility['facility_id'] ?? 0) : 0;
+                            if ($fid <= 0) continue;
+                            $loaded = kop_facility_load($fid, ['pdo' => $pdo, 'prefix' => $load_prefix]);
+                            if ($loaded && !empty($loaded['doc']['survivorTestimony'])) {
+                                $existing_facilities[] = [
+                                    'facility_id' => $fid,
+                                    'identification' => ['name' => $loaded['doc']['identification']['name'] ?? ''],
+                                    'survivorTestimony' => $loaded['doc']['survivorTestimony'],
+                                ];
+                            }
+                        }
+                    }
+                } else {
+                    $prior = $pdo->prepare("SELECT json_data FROM `{$tableName}` WHERE unique_name = ? LIMIT 1");
+                    $prior->execute([$resolved_master_id]);
+                    $prior_json = $prior->fetchColumn();
+                    $prior_data = $prior_json ? kop_extract_project_data(json_decode($prior_json, true)) : [];
+                    $existing_facilities = is_array($prior_data['facilities'] ?? null) ? $prior_data['facilities'] : [];
+                }
+                if ($existing_facilities) {
+                    $restored = kop_preserve_hidden_testimony($project_data['facilities'], $existing_facilities);
+                    $project_data['facilities'] = $restored;
+                    // Write them into the innermost data level the payload uses.
+                    $node = &$decoded_data;
+                    $depth = 0;
+                    while (is_array($node) && isset($node['data']) && is_array($node['data']) && $depth < 3) {
+                        $node = &$node['data'];
+                        $depth++;
+                    }
+                    if (is_array($node)) $node['facilities'] = $restored;
+                    if (is_array($decoded_data) && isset($decoded_data['facilities']) && $depth > 0) {
+                        $decoded_data['facilities'] = $restored;
+                    }
+                    unset($node);
+                }
             }
 
             $project_payload = kop_build_project_payload($decoded_data, $resolved_master_id, $category);

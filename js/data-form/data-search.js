@@ -80,8 +80,11 @@ const KOP_Search = (function() {
         const restRoot = cfg.restUrl || cfg.api?.root || window.kopData?.restUrl || '/wp-json/kop/v1/';
         const searchUrl = `${restRoot.endsWith('/') ? restRoot : `${restRoot}/`}search?${params.toString()}`;
 
-        // Fetch from database
-        fetch(searchUrl)
+        // Fetch from database. The nonce lets WordPress see the logged-in admin,
+        // who gets unpublished survivor testimony; without it the record comes
+        // back redacted and a save would drop that testimony.
+        const restNonce = cfg.nonce || cfg.api?.nonce || '';
+        fetch(searchUrl, { credentials: 'same-origin', headers: restNonce ? { 'X-WP-Nonce': restNonce } : {} })
             .then(response => response.json())
             .then(data => {
                 if (data.success && data.results) {
