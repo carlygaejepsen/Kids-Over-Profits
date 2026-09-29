@@ -1491,10 +1491,9 @@ if (!function_exists('kop_program_links_register_script')) {
 }
 
 if (!function_exists('kop_facility_pages_location_search_url')) {
-    /** The location index filtered to a facility name. Every facility is listed there. */
+    /** The directory's location tab filtered to a facility name. Every facility is listed there. */
     function kop_facility_pages_location_search_url($name) {
-        $index_url = function_exists('kop_asl_page_url_by_template') ? kop_asl_page_url_by_template('page-location-index.php') : '';
-        if ($index_url === '') $index_url = home_url('/location-index/');
+        $index_url = function_exists('kop_location_index_url') ? kop_location_index_url() : home_url('/tti-program-index/?view=location');
         return add_query_arg('search', rawurlencode((string) $name), $index_url);
     }
 }

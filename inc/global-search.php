@@ -92,11 +92,11 @@ function kop_global_search_collect($phrase) {
     $v2 = (function_exists('kop_v2_active') && kop_v2_active('search')) ? kop_v2_search($phrase, 6, 3, 4) : null;
     if ($v2 !== null) {
         $program_index_url  = kop_asl_page_url_by_template('page-tti-program-index.php');
-        $location_index_url = kop_asl_page_url_by_template('page-location-index.php');
+        $location_index_url = kop_location_index_url();
         $to_item = function ($r) use ($program_index_url, $location_index_url) {
             // A facility with a page of its own links there; otherwise its
-            // state hub, then an index filtered to the name. The program
-            // index lists operators only, so facilities go to the location index.
+            // state hub, then the directory filtered to the name: operators
+            // on the parent company tab, facilities on the location tab.
             $index_url = $r['kind'] === 'operator' ? $program_index_url : $location_index_url;
             $url = !empty($r['profile_url']) ? $r['profile_url']
                 : ($r['url'] !== '' ? $r['url']
@@ -284,7 +284,7 @@ function kop_global_search_collect($phrase) {
     $fac_addr_table   = $wpdb->prefix . 'kop_facility_addresses';
     if (kop_asl_table_exists($addresses_table)) {
         $has_join  = kop_asl_table_exists($fac_addr_table);
-        $index_url = kop_asl_page_url_by_template('page-location-index.php');
+        $index_url = kop_location_index_url();
         $rows      = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT id, street, city, state, zip FROM `{$addresses_table}`

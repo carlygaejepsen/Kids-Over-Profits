@@ -48,10 +48,10 @@ $kop_net_counts  = !empty($kop_net_meta['counts']) ? $kop_net_meta['counts'] : a
 $kop_net_views   = !empty($kop_net_meta['views']) ? $kop_net_meta['views'] : array();
 $kop_net_ready   = !empty($kop_net_kinds);
 
-// The location index lists every facility; the program index only operators and chains.
-$kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
-    ? kop_facility_pages_page_url_by_template('page-location-index.php', '/location-index/')
-    : home_url('/location-index/');
+// The directory's location tab lists every facility; the parent company tab only operators and chains.
+$kop_net_directory = function_exists('kop_location_index_url')
+    ? kop_location_index_url()
+    : home_url('/tti-program-index/?view=location');
 ?>
 
 <div class="kop-network" data-kop-bug-feature="network-map" data-kop-bug-label="Network Map">

@@ -47,7 +47,7 @@
             var base = String(config.directoryUrl);
             return {
                 url: base + (base.indexOf('?') === -1 ? '?' : '&') + 'search=' + encodeURIComponent(node.name),
-                label: 'Find it in the location index',
+                label: 'Find it in the facility directory',
                 own: false
             };
         }

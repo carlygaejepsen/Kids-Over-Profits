@@ -72,10 +72,10 @@ function kop_asl_collect_database_matches($phrase) {
     if (function_exists('kop_v2_active') && kop_v2_active('search')) {
         $v2 = kop_v2_search($phrase, 4, 2, 2);
         $program_index_url  = kop_asl_page_url_by_template('page-tti-program-index.php');
-        $location_index_url = kop_asl_page_url_by_template('page-location-index.php');
+        $location_index_url = kop_location_index_url();
         $labels = array('operator' => 'Company', 'facility' => 'Facility record', 'place' => 'Location');
         foreach (array_merge($v2['operators'], $v2['facilities'], $v2['places']) as $r) {
-            // The program index lists operators only; facilities go to the location index.
+            // Operators go to the parent company tab; facilities to the location tab.
             $index_url = $r['kind'] === 'operator' ? $program_index_url : $location_index_url;
             $items[] = array(
                 'title' => $r['display'],
@@ -225,4 +225,15 @@ function kop_asl_page_url_by_template($template_basename) {
     }
     $cache[$template_basename] = $url;
     return $url;
+}
+
+/**
+ * The facility directory's "By location" tab, which lists every facility
+ * (page-tti-program-index.php ?view=location; the separate location index
+ * page was folded into it on 2026-09-29 and now redirects there).
+ */
+function kop_location_index_url() {
+    $url = kop_asl_page_url_by_template('page-tti-program-index.php');
+    if ($url === '') $url = home_url('/tti-program-index/');
+    return add_query_arg('view', 'location', $url);
 }

@@ -283,10 +283,10 @@ if (!function_exists('kop_network_map_config')) {
      * link to. Localised as KOP_NETWORK_CONFIG.
      */
     function kop_network_map_config() {
-        // The location index, not the program index: it lists every facility.
-        $directory = function_exists('kop_facility_pages_page_url_by_template')
-            ? kop_facility_pages_page_url_by_template('page-location-index.php', '/location-index/')
-            : home_url('/location-index/');
+        // The directory's location tab, not the parent company tab: it lists every facility.
+        $directory = function_exists('kop_location_index_url')
+            ? kop_location_index_url()
+            : home_url('/tti-program-index/?view=location');
 
         return array(
             'graphUrl'     => kop_network_map_url('graph.json'),

@@ -28,7 +28,11 @@ function kop_redirect_map() {
         // Retired shells (phase 3). Each was an empty container or hand-typed
         // list that a template-driven page now covers.
         'edcons'        => '/referrers-educational-consultants/',
-        'international' => '/location-index/?type=country',
+        'international' => '/tti-program-index/?view=location&type=country',
+
+        // The location index became the "By location" tab of the facility
+        // directory (2026-09-29). Old ?search= and ?type= links carry over.
+        'location-index' => '/tti-program-index/?view=location',
         '405-2'         => '/',
         'test-scripts'  => '/',
         'admin-tools'   => '/wp-admin/admin.php?page=kop-tools',
@@ -72,6 +76,13 @@ function kop_apply_redirect_map() {
     $target = $map[$path];
     if (strpos($target, 'http') !== 0) {
         $target = home_url($target);
+    }
+    // Keep the request's query (?search=, ?type=) on internal targets.
+    if (strpos($target, home_url()) === 0 && !empty($_SERVER['QUERY_STRING'])) {
+        parse_str((string) $_SERVER['QUERY_STRING'], $kop_query);
+        if ($kop_query) {
+            $target = add_query_arg(array_map('rawurlencode', array_filter($kop_query, 'is_string')), $target);
+        }
     }
     wp_safe_redirect($target, 301);
     exit;

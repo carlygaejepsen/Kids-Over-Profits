@@ -169,7 +169,7 @@ to the program aggregate otherwise.
 Templates live in `templates/`; `inc/enqueue.php` loads each page's assets conditionally:
 - `templates/page-admin-data.php` → Admin form assets, mode='admin'
 - `templates/page-data.php` → Public form assets, mode='suggestions'
-- `templates/page-tti-program-index.php` → Program index (operators and chains)
+- `templates/page-tti-program-index.php` → Facility directory, two tabs: by parent company (`js/tti-program-index.js`) and by location (`?view=location`, `js/location-index.js`; `/location-index/` redirects here)
 - `templates/page-wiki-editor.php` → Wiki content editor
 - `templates/page-news-processor.php` → News processing
 - State report pages: `kop_enqueue_report_scripts()` matches a fixed list of slugs (`ca-reports`, `ut-reports`, ...), not a `*-reports` pattern; a new state must be added there and in `inc/rest-api.php`

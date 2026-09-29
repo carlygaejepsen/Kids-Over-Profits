@@ -2150,7 +2150,7 @@ function attachAliasEntryLinks(container) {
             const facilityName = entry.dataset.aliasFacility || '';
 
             let target = null;
-            document.querySelectorAll('.operator-section:not(.alias-entry)').forEach(sec => {
+            document.querySelectorAll('#facilities-container .operator-section:not(.alias-entry)').forEach(sec => {
                 if (!target && sec.dataset.operator === targetName) target = sec;
             });
             if (!target) return;
@@ -2186,7 +2186,7 @@ function filterFacilities() {
     const sortSelect = document.getElementById('sortBy');
     const violationsOnly = !!sortSelect && sortSelect.value === 'violations-only';
 
-    const operatorSections = document.querySelectorAll('.operator-section');
+    const operatorSections = document.querySelectorAll('#facilities-container .operator-section');
 
     operatorSections.forEach(section => {
         const operatorName = section.dataset.operator.toLowerCase();
@@ -2640,8 +2640,8 @@ function setupEventListeners() {
 function handleSort() {
     const sortDropdown = document.getElementById('sortBy');
     const sortValue = sortDropdown ? sortDropdown.value : 'name';
-    const operatorSections = Array.from(document.querySelectorAll('.operator-section'));
-    const container = document.querySelector('.facilities-database');
+    const operatorSections = Array.from(document.querySelectorAll('#facilities-container .operator-section'));
+    const container = document.querySelector('#facilities-container .facilities-database');
 
     if (!container) return;
 

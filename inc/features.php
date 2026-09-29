@@ -1219,7 +1219,7 @@ function kop_news_arc_facility_link(array $arc): ?array {
         $url = (string) kop_facility_page_url_for_name($label);
     }
     if ($url === '') {
-        $url = '/location-index/?search=' . rawurlencode($label);
+        $url = '/tti-program-index/?view=location&search=' . rawurlencode($label);
     }
     return ['label' => $label, 'url' => $url];
 }

@@ -1596,6 +1596,23 @@ function enqueue_tti_processor_scripts() {
         true
     );
 
+    // The "By location" tab (was the separate /location-index/ page). Its
+    // config (locationConfig, locationIndexConfig) is inline in the template.
+    wp_enqueue_script(
+        'kop-document-library-script',
+        $theme_uri . '/js/document-library.js',
+        array('jquery'),
+        file_exists($theme_dir . '/js/document-library.js') ? filemtime($theme_dir . '/js/document-library.js') : time(),
+        true
+    );
+    wp_enqueue_script(
+        'kop-location-index',
+        $theme_uri . '/js/location-index.js',
+        array('kop-document-library-script', 'kop-facility-merge', 'kop-submit-info', 'kop-facility-resources', 'kop-program-links', 'tti-program-index-script'),
+        file_exists($theme_dir . '/js/location-index.js') ? filemtime($theme_dir . '/js/location-index.js') : time(),
+        true
+    );
+
     // Build dataset URLs
     $rest_endpoint = esc_url_raw(rest_url('kop/v1/facilities'));
     $api_endpoint = $theme_uri . '/api/get-master-data.php';

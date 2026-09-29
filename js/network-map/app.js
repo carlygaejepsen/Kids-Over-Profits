@@ -407,7 +407,7 @@
         if (!loading) return;
         loading.hidden = false;
         loading.textContent = message + ' ';
-        var url = (CONFIG && CONFIG.directoryUrl) || '/location-index/';
+        var url = (CONFIG && CONFIG.directoryUrl) || '/tti-program-index/?view=location';
         var link = document.createElement('a');
         link.href = url;
         link.textContent = 'Browse the facility directory instead.';

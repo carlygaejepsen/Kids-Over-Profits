@@ -21,7 +21,7 @@ SITE = 'https://kidsoverprofits.org/'
 # One published page per child template.
 SAMPLES = [
     '', 'history/', 'antiquity/', 'alabama/', 'australia/', 'hyde/', 'report-abuse/',
-    'glossary/', 'network-map/', 'lawsuits/', 'legislative-efforts/', 'location-index/',
+    'glossary/', 'network-map/', 'lawsuits/', 'legislative-efforts/',
     'in-loving-memory/', 'inspection-reports/', 'severe-reports/', 'tti-program-index/',
     'referrers-educational-consultants/', 'tti-news-feed/', 'ar-reports/',
     'document-library-discovery-ranch/', 'privacy-policy/', 'terms-of-service/',

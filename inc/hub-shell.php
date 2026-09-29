@@ -154,7 +154,7 @@ function kop_hub_config($slug) {
         'where-are-the-kids' => array(
             'standfirst' => 'Troubled teen programs state by state and country by country, with the inspection reports each state publishes.',
             'actions'    => array(
-                array('label' => 'Parent companies and chains', 'template' => 'page-tti-program-index.php', 'path' => '/tti-program-index/'),
+                array('label' => 'Facility directory', 'template' => 'page-tti-program-index.php', 'path' => '/tti-program-index/'),
                 array('label' => 'Network map', 'slug' => 'network-map'),
                 array('label' => 'Severe inspection reports', 'template' => 'page-severe-reports.php', 'path' => '/severe-reports/'),
             ),

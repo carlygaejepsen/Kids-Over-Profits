@@ -154,12 +154,17 @@ window.loadFacilityDocuments = async function(folderId, containerOrId) {
     }
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+// The "By location" tab of the facility directory (page-tti-program-index.php).
+// Its controls carry a loc- prefix so they do not collide with the parent
+// company tab's. The data loads the first time the tab is shown
+// (kop:location-tab-shown from the tab switcher), not on page load.
+function initLocationIndex() {
     const containerId = 'locations-container';
-    const searchInput = document.getElementById('searchInput');
-    const typeFilter = document.getElementById('typeFilter');
-    // /location-index/?type=country (or state) opens the index pre-filtered;
-    // the retired /international/ page redirects here.
+    if (!document.getElementById(containerId)) return;
+    const searchInput = document.getElementById('loc-searchInput');
+    const typeFilter = document.getElementById('loc-typeFilter');
+    // ?view=location&type=country (or state) opens the tab pre-filtered;
+    // the retired /international/ and /location-index/ pages redirect here.
     const initialParams = new URLSearchParams(window.location.search);
     const initialType = initialParams.get('type');
     if (typeFilter && (initialType === 'country' || initialType === 'state')) {
@@ -171,9 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput && initialSearch) {
         searchInput.value = initialSearch;
     }
-    const sortBy = document.getElementById('sortBy');
-    const clearSearchBtn = document.getElementById('clearSearch');
-    const alphabetFilter = document.getElementById('alphabet-filter');
+    const sortBy = document.getElementById('loc-sortBy');
+    const clearSearchBtn = document.getElementById('loc-clearSearch');
+    const alphabetFilter = document.getElementById('loc-alphabet-filter');
 
     let allLocations = [];
     let filteredLocations = [];
@@ -618,7 +623,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alphabetFilter.innerHTML = html;
         
         window.filterByChar = (char) => {
-            document.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
+            alphabetFilter.querySelectorAll('.alpha-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             currentAlphaFilter = char;
             filterAndRender();
@@ -1312,17 +1317,25 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', filterAndRender);
     typeFilter.addEventListener('change', filterAndRender);
     sortBy.addEventListener('change', filterAndRender);
-    clearSearchBtn.addEventListener('click', window.clearSearch);
+    clearSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        typeFilter.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+    });
 
     fetchData();
-});
+}
 
-window.clearSearch = function() {
-    const searchInput = document.getElementById('searchInput');
-    const typeFilter = document.getElementById('typeFilter');
-    if (searchInput) searchInput.value = '';
-    if (typeFilter) typeFilter.value = '';
-    if (searchInput) searchInput.dispatchEvent(new Event('input'));
-};
+let locationIndexStarted = false;
+function startLocationIndex() {
+    if (locationIndexStarted) return;
+    locationIndexStarted = true;
+    initLocationIndex();
+}
+document.addEventListener('kop:location-tab-shown', startLocationIndex);
+document.addEventListener('DOMContentLoaded', function() {
+    const panel = document.getElementById('kop-dir-panel-location');
+    if (panel && !panel.hidden) startLocationIndex();
+});
 
 })();

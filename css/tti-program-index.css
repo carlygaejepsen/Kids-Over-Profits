@@ -1403,3 +1403,53 @@ body.kop-doc-modal-open {
     background: #33a7b5;
     color: #ffffff !important;
 }
+
+/* Directory tabs: by parent company / by location (page-tti-program-index.php) */
+.kop-dir-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25em;
+    margin: 0 0 1.25em;
+    padding: 0.25em 0.5em 0;
+    background: #fff;
+    border-bottom: 2px solid #e2e2ea;
+    border-radius: 8px 8px 0 0;
+}
+
+.kop-dir-tab {
+    background: transparent;
+    color: #4b5563;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    padding: 0.65em 1.1em;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.kop-dir-tab:hover,
+.kop-dir-tab:focus-visible {
+    background: transparent;
+    color: var(--kop-midnight-blue);
+}
+
+.kop-dir-tab.active {
+    color: var(--kop-midnight-blue);
+    border-bottom-color: var(--kop-midnight-blue);
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .kop-dir-tabs {
+        flex-wrap: nowrap;
+        padding: 0.25em 0 0;
+    }
+
+    .kop-dir-tab {
+        flex: 1 1 0;
+        padding: 0.65em 0.5em;
+        white-space: nowrap;
+    }
+}
