@@ -276,6 +276,16 @@ Open:
 4. **Act on decisions 12 to 14** once answered.
 5. **Category archive layout and a 404 page** (6.6), with search and links to
    the main hubs, after 2 to 4. Both on a solid panel.
+6. **"In this article" and "In this section" on the history pages**
+   (owner's suggestion 2026-09-29; spec at the end of
+   PAGE-TEMPLATE-DESIGN-PLAN.md). Programs, people and companies each
+   article names, found by matching the network map's names against the
+   content and linked to profiles and the map, with a pin/skip map in
+   `inc/article-parts.php`; the same across the section on the History hub
+   beside the map preview, plus six to eight owner-chosen dated events
+   linking to their entries. No events per article: the period band and
+   Contents already are that. Hidden below three names, which leaves the
+   six pre-industry pages as they are.
 
 Done for any template task: PHP lints, the offline test passes, screenshots
 at 390, 768 and 1440 looked at, `check-bare-text.py` passes, deploy green,

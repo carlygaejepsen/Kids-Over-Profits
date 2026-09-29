@@ -2796,7 +2796,9 @@ is a two-year-old screenshot of someone else's tool.
    the version bump; then check the live page for no miro.com link, the
    new og:image, headings `h2`/`h3`, and `python scripts/check-bare-text.py`.
    `php scripts/test-hub-pages.php` asserts the history hub prints no
-   miro.com link.
+   miro.com link. The hub's "In this section" names box
+   (PAGE-TEMPLATE-DESIGN-PLAN.md, specified 2026-09-29) can ride with this
+   commit, beside the still.
 2. After 4.1: the shortcode and `kop_network_map_view_slice($key)`, the
    figure moved inside the shell, the hub test extended to find the
    shell and parse its JSON; the embed suite gets a view slice beside the

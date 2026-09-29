@@ -33,6 +33,8 @@ specialized template. The source inventory and repository relationship are in
   (`scripts/inventory-posts.py`) and nothing else yet.
 - What is left (hub visual QA, Phase 4, and the owner's decisions) is
   tracked in [PLAN.md](PLAN.md) section 3.2.
+- 2026-09-29: "In this article" and "In this section" name boxes for the
+  history pages specified at the end of this document (PLAN.md 3.2 item 6).
 
 ## Goal
 
@@ -252,3 +254,99 @@ Start with the hub family, not the legal-document pages:
 This keeps the site's navigation coherent while allowing the page content to
 determine whether a candidate is truly a hub, an archive, or a page that
 should disappear behind a redirect.
+
+## In this article, In this section (specified 2026-09-29)
+
+The owner's suggestion of 2026-09-29: the history pages should preview
+what is in them, the important facilities, events and people. Scoped
+against what the templates already print, and against a count of what the
+pages actually name.
+
+*What the pages have.* `templates/page-article.php` prints a standfirst
+(the excerpt), a Contents box from the era headings, the period band
+(`kop_article_timeline`, dated entries with ids of their own) and the
+next article in the section's reading order (`kop_article_continue`). The
+History hub prints its standfirst, three actions and four timeline cards.
+So the events of a timeline are previewed twice already; what no page
+shows is who it is about.
+
+*What the pages name.* Matching the network map's names against the
+fifteen history seeds (whole word, six letters or more): Corporatization
+names 20 programs, 9 people and 17 companies on the map; Survivors and
+Families Fight Back 12, 4 and 1; How the Modern TTI Took Shape 11, 3 and
+6; the Wilderness Therapy Timeline 11, 2 and 3; Fundamentalist Christian
+Homes 7, 6 and 1; Experimental Group Psychology 6, 7 and 7; the Juvenile
+Justice Timeline 4, 1 and 2. Across the section, 59 programs, 24 people
+and 27 companies. Six pages (Antiquity, Early Child Control, Medieval
+Oblation, Orphanages, Developmental Disabilities, Birth of the TTI) name
+almost nothing on the map: they predate the industry.
+
+### Decisions
+
+- **Per article: "In this article".** A box beside Contents with up to
+  three short lists, Programs, People, Companies. A program links to its
+  facility page when it has one (`kop_facility_page_url`), otherwise to
+  the location index search the map's drawer uses; a person links to the
+  network map opened on them (`/network-map/#open=<id>`); a company to its
+  operator page when it has one (`kop_operator_page_url_for_name`),
+  otherwise to the map. Eight per list by the map's `importance`, then
+  "and N more" opening the rest in place. The box does not print below
+  three names in total, so the six early pages stay as they are.
+- **Found, not typed.** The names come from matching graph.json's nodes
+  (name and aliases, whole word, case-insensitive, six characters or
+  more) against the rendered content, in PHP, once per article per map
+  build (a transient keyed on the post's modified stamp and
+  `kop_network_map_cache_key()`). No editor types a list; a new build of
+  the map or an edit to the page refreshes it.
+- **A hand on the result.** `kop_article_features()` in
+  `inc/article-parts.php`, slug => `array('pin' => [...], 'skip' => [...])`,
+  the way `kop_article_parents()` holds the reading order: pinned names
+  lead their list, skipped names never print (short names such as "The
+  Seed" will hit ordinary prose). It starts empty and is filled from the
+  first offline render.
+- **On the hub: "In this section".** The same three lists across the
+  fourteen pages, eight names each by importance with the counts above
+  them ("59 programs, 24 people and 27 companies from these pages are on
+  the network map"), printed beside the Historical map preview from
+  NETWORK-MAP.md 4.4 so the picture and the names read together. Each
+  name links as above; each list ends with "all N" opening the rest.
+- **Events on the hub only, chosen by the owner.** Six to eight dated
+  lines, one per timeline, in `kop_hub_config()` under `history` as
+  `events` (date, text, slug, entry id), linking to the entry's own
+  anchor, which the period band already gives every dated line. Nothing
+  automatic can tell the entry a page turns on from the other hundred.
+  The per-article box has no events: the period band and Contents are
+  that.
+- **One renderer.** `kop_article_names($post_id)` finds the names;
+  `kop_article_names_box($names, $args)` prints the box for either
+  place; styles in `css/article-pieces.css` under `.kop-names*`, on the
+  solid panel like everything else.
+
+### Build steps
+
+1. `kop_article_names()`: the matcher, its cache, the links; a unit test
+   in `scripts/test-article-parts.php` on a fixture paragraph (a whole-word
+   miss on "Seed" inside "Seedling", an alias hit, a pinned name first, a
+   skipped name absent, the three-name floor).
+2. The box in `templates/page-article.php` after Contents, and the
+   stylesheet; render Corporatization and Antiquity offline (box present
+   and absent) and screenshots at 390, 768 and 1440 through
+   `scripts/preview-utility-pages.py` or a sibling flag; fill
+   `kop_article_features()` from what the first render shows.
+3. The hub box in `templates/page-hub.php` when the hub's config asks for
+   it (`names_from => 'section'`), counts and lists from
+   `kop_article_sequence('history')`; `scripts/test-hub-pages.php` asserts
+   the counts match a fresh match of the seeds.
+4. The owner's events list; the hub test checks every entry id resolves
+   on its page.
+
+Step 3 can ride with the first 4.4 commit in NETWORK-MAP.md (the history
+seed is rewritten there anyway); steps 1 and 2 stand alone.
+
+### Open decisions
+
+1. The hub events: the owner picks the six to eight lines, or a first
+   draft is proposed from the entries with the most names on the map?
+2. Companies with no operator page: link to the map (proposed) or omit?
+3. Should the box also appear on the Law & Policy and Survivors articles
+   later? The matcher is the same; only the floor decides.
