@@ -326,8 +326,10 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
     if (!empty($news['article_url']) && preg_match('#^https?://#i', $news['article_url'])) {
         require_once get_stylesheet_directory() . '/api/lib-article-fetch.php';
         $text = (string) fetchArticleContent($news['article_url']);
-        if (strlen($text) > 14000) {
-            $text = mb_strcut($text, 0, 14000, 'UTF-8') . ' [truncated]';
+        // Groq's free tier counts tokens per minute; the closure is nearly
+        // always in the opening paragraphs.
+        if (strlen($text) > 9000) {
+            $text = mb_strcut($text, 0, 9000, 'UTF-8') . ' [truncated]';
         }
         if (!mb_check_encoding($text, 'UTF-8')) {
             $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
@@ -336,8 +338,21 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
     $linked = kop_closure_linked_facilities($pdo, $news['id']);
 
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    // Token-per-minute limits are per model, so on a rate limit the smaller
+    // model usually still has room (as in process-news-ai.php).
+    $prompt = kop_closure_build_prompt($news, $linked, $text);
+    $models = array_values(array_unique(array_filter(array(getenv('GROQ_MODEL') ?: null, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'))));
     try {
-        $raw = kop_ai_generate('groq', kop_ai_api_keys(), kop_closure_build_prompt($news, $linked, $text), array('maxTokens' => 2048));
+        foreach ($models as $i => $model) {
+            try {
+                $raw = kop_ai_generate('groq', kop_ai_api_keys(), $prompt, array('maxTokens' => 2048, 'groqModel' => $model));
+                break;
+            } catch (Throwable $e) {
+                if ($i === count($models) - 1 || stripos($e->getMessage(), 'rate limit') === false) {
+                    throw $e;
+                }
+            }
+        }
     } catch (Throwable $e) {
         if ($write) {
             kop_closure_record_scan($pdo, $news['id'], $news['hash'], 'error', $e->getMessage());
