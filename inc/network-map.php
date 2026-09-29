@@ -572,9 +572,8 @@ if (!function_exists('kop_network_map_embed_html')) {
             ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/')
             : home_url('/network-map/');
         $slice['mapUrl'] = $map;
-        $count = count($slice['nodes']) - 1;
         $name = (string) $entry['name'];
-        $label = sprintf('Map of the %d names around %s on the network map; its connections are listed below.', $count, $name);
+        $label = sprintf('Map of %s and the names around it on the network map; its connections are listed below.', $name);
         $json = wp_json_encode($slice, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
 
         ob_start();
@@ -588,7 +587,8 @@ if (!function_exists('kop_network_map_embed_html')) {
                 </div>
             </div>
             <figcaption class="kop-network-embed__caption">
-                <span><?php echo esc_html($name); ?> and the <?php echo (int) $count; ?> names around it<?php
+                <?php // No count: people who only join two places are drawn as the line between them. ?>
+                <span><?php echo esc_html($name); ?> and the names around it<?php
                     if (!empty($slice['more'])) echo ', and ' . (int) $slice['more'] . ' more on the full map';
                 ?>. Click a name to open it on the map.</span>
                 <span class="kop-network-embed__actions">
