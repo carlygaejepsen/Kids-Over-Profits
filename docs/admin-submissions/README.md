@@ -28,6 +28,7 @@ Public insert paths: `api/save-wiki-submission.php`, `api/save-news-submission.p
 - **Stats:** Pending / Approved / Published / Rejected counts for the selected type.
 - **Filters:** type, status, and keyword search (per-type columns: program name/location for wiki, title/publication/author for news, `master_id` for data, title/number/jurisdiction for legislation and lawsuits).
 - **Reject All Pending:** rejects every pending submission currently listed.
+- **Industry PR index** (news only): the **Industry PR** status tab lists articles filed with status `promotional`, the internal index of news the facilities or their supporters put out (fundraisers, anniversaries, marketing, expansions, awards, hiring). File one with the **PR** button on a card, **File as Industry PR** in the detail panel, or **File selected as PR** in bulk; tag its kind with the "Industry PR kind" field in the structured editor (`json_data.promoKind`). Every public news reader lists only `approved`/`published`, so these never appear on the site, and the URL still blocks rediscovery by nightly discovery. **Approve** moves one back into the public news. The enum value is added on first use (`kop_news_status_enum_ensure()`).
 - **Duplicate URL warning:** flags news and wiki submissions whose URL appears in more than one listed submission.
 - **URL safety check:** scans a submission's URLs through Cloudmersive via `api/scan-submission-urls.php`.
 - **Wiki markdown editor:** side-by-side "Original / Uploaded" vs. "Generated / Editable" markdown with a diff view; Save Edits writes `generated_markdown`.
@@ -43,6 +44,7 @@ Public insert paths: `api/save-wiki-submission.php`, `api/save-news-submission.p
   - `news`: status `approved`, then re-syncs `lawsuit_news_links`.
   - `data`: not a status flip. `kop_apply_suggested_edit()` in `api/lib-suggested-edits.php` applies the edit (see Facility data below) and marks the row `approved`. Only rows still `pending` can be applied. `publish` is treated the same as approve.
   - `legislation` / `lawsuit`: go straight to `published` and stamp `published_at` (no separate publish step). A published lawsuit also syncs `lawsuit_facility_links` and `lawsuit_news_links`, resolves a FileBird folder from its first linked facility if none is set, and files its case documents into that folder.
+- **File as Industry PR** (news only, action `promo`): sets `promotional` and re-syncs lawsuit links so the article drops off case cards.
 - **Reject:** sets the rejected status; for news it also re-syncs lawsuit links so the article drops off case cards.
 - **Mark as Published:** sets `published` (wiki also updates `wiki_master` as on approve).
 - **Delete:** removes the rows and their `submission_attachments` rows.
@@ -76,7 +78,7 @@ GET:
 - `?action=get&type=news&id=123`: one submission.
 
 POST (JSON body):
-- `{ "action": "approve" | "reject" | "publish", "type": "news", "ids": [123], "reviewerNotes": "...", "reviewedBy": "..." }`
+- `{ "action": "approve" | "reject" | "publish" | "promo", "type": "news", "ids": [123], "reviewerNotes": "...", "reviewedBy": "..." }`
 - `{ "action": "delete", "type": "news", "ids": [123] }`
 - `{ "action": "update_status", "type": "news", "ids": [123], "status": "approved" }`: plain status change, no side effects.
 - `{ "action": "update_fields", "type": "lawsuit", "id": 123, "fields": { ... } }`: structured editor save (not wiki). Editing news or lawsuit facility mentions re-syncs `news_facility_links` / `lawsuit_facility_links`.

@@ -39,7 +39,7 @@ try {
 
     $pdo->exec(
         "ALTER TABLE news_submissions
-         MODIFY status ENUM('draft','submitted','approved','published','rejected','deleted')
+         MODIFY status ENUM('draft','submitted','approved','published','rejected','deleted','promotional')
          NOT NULL DEFAULT 'submitted'"
     );
 

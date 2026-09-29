@@ -139,7 +139,7 @@ function kop_editable_fields($type) {
         case 'news':
             return [
                 'cols' => ['article_title','alternate_title','author','publication_name','publication_date','article_url','article_type','facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings','summary','reviewer_notes'],
-                'json_fields' => ['organizationLogoName','organizationLogoUrl'],
+                'json_fields' => ['organizationLogoName','organizationLogoUrl','promoKind'],
                 'json_array' => ['facilities_mentioned','staff_mentioned','survivors_mentioned','content_warnings'],
                 'enums' => [
                     'article_type' => ['lawsuit','event','expose','arrest','closure','corporate','general'],
@@ -151,6 +151,32 @@ function kop_editable_fields($type) {
         default:
             return null; // wiki has its own editor
     }
+}
+
+/**
+ * Kinds of industry PR an article filed as 'promotional' can be tagged with
+ * (json_data.promoKind). '' means not yet sorted.
+ */
+function kop_news_promo_kinds(): array {
+    return ['', 'fundraiser', 'anniversary', 'marketing', 'expansion', 'award', 'hiring', 'community', 'other'];
+}
+
+/**
+ * news_submissions.status gained 'promotional' for the internal industry-PR
+ * index: articles the facilities or their supporters put out (fundraisers,
+ * anniversaries, marketing, expansions). Every public reader lists only
+ * approved/published, so these never leave the admin screens. Tables made
+ * before the value existed reject it, so add it on first use.
+ */
+function kop_news_status_enum_ensure(PDO $pdo): void {
+    $type = $pdo->query("SELECT COLUMN_TYPE FROM information_schema.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'news_submissions' AND COLUMN_NAME = 'status'")->fetchColumn();
+    if (!$type || strpos($type, "'promotional'") !== false) {
+        return;
+    }
+    $pdo->exec("ALTER TABLE news_submissions
+        MODIFY status ENUM('draft','submitted','approved','published','rejected','deleted','promotional')
+        NOT NULL DEFAULT 'submitted'");
 }
 
 /** Trim/dedupe a list that may arrive as an array or newline-separated text. */
@@ -359,13 +385,26 @@ try {
         case 'approve':
         case 'reject':
         case 'publish':
+        case 'promo':
             if (empty($ids)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'No submission IDs provided']);
                 exit;
             }
-            
-            $status = $action === 'approve' ? 'approved' : ($action === 'publish' ? 'published' : 'rejected');
+
+            if ($action === 'promo') {
+                // File as industry PR: off the public site, kept in the
+                // internal index (and still blocking rediscovery of the URL).
+                if ($type !== 'news') {
+                    http_response_code(400);
+                    echo json_encode(['success' => false, 'error' => 'Only news articles can be filed as industry PR']);
+                    exit;
+                }
+                kop_news_status_enum_ensure($pdo);
+            }
+
+            $status = $action === 'approve' ? 'approved'
+                : ($action === 'publish' ? 'published' : ($action === 'promo' ? 'promotional' : 'rejected'));
             // Legislation and lawsuits go live the moment they're approved —
             // there's no separate publish step in those workflows, so approving
             // publishes (and stamps published_at via the record branch below).
@@ -452,7 +491,7 @@ try {
             // become media-library attachments at this point — not before, so
             // unreviewed files never enter the library).
             // News changing state: an article that just went live may cover a
-            // tracked case, and a rejected one must drop off the case cards.
+            // tracked case, and a rejected or PR one must drop off the case cards.
             if ($type === 'news') {
                 require_once __DIR__ . '/lawsuit-news-links.php';
                 foreach ($ids as $nid) {
@@ -624,11 +663,17 @@ try {
             $validStatuses = ($type === 'data')
                 ? ['submitted', 'pending', 'approved', 'rejected']
                 : ['draft', 'submitted', 'pending', 'approved', 'published', 'rejected'];
+            if ($type === 'news') {
+                $validStatuses[] = 'promotional';
+            }
 
             if (!in_array($newStatus, $validStatuses)) {
                 http_response_code(400);
                 echo json_encode(['success' => false, 'error' => 'Invalid status']);
                 exit;
+            }
+            if ($newStatus === 'promotional') {
+                kop_news_status_enum_ensure($pdo);
             }
 
             // Map the UI's canonical "submitted" to whatever the target table
@@ -900,6 +945,10 @@ try {
                     }
                     $newsJson['organizationLogoUrl'] = $logoUrl;
                 }
+                if (array_key_exists('promoKind', $newsJsonFields)
+                    && in_array($newsJsonFields['promoKind'], kop_news_promo_kinds(), true)) {
+                    $newsJson['promoKind'] = $newsJsonFields['promoKind'];
+                }
                 if (array_key_exists('organizationLogoName', $newsJsonFields)) {
                     $newsJson['organizationLogoName'] = is_string($newsJsonFields['organizationLogoName'])
                         ? trim($newsJsonFields['organizationLogoName']) : '';
@@ -955,7 +1004,7 @@ try {
             echo json_encode([
                 'success' => false,
                 'error' => 'Invalid action',
-                'valid_actions' => ['approve', 'reject', 'publish', 'delete', 'update_status', 'update_fields', 'update_markdown', 'stats']
+                'valid_actions' => ['approve', 'reject', 'publish', 'promo', 'delete', 'update_status', 'update_fields', 'update_markdown', 'stats']
             ]);
     }
     

@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `news_submissions` (
   `json_data` longtext NOT NULL COMMENT 'Full form data as JSON',
   `generated_output` longtext COMMENT 'Generated formatted output',
   `story_group_id` int(11) DEFAULT NULL COMMENT 'Cross-outlet story cluster: id of the lowest-id article in the group; NULL = standalone',
-  `status` enum('draft','submitted','approved','published','rejected','deleted') NOT NULL DEFAULT 'submitted',
+  `status` enum('draft','submitted','approved','published','rejected','deleted','promotional') NOT NULL DEFAULT 'submitted' COMMENT 'promotional = internal industry-PR index, never public',
   `submitted_by` varchar(255) DEFAULT NULL COMMENT 'User identifier or email',
   `submission_notes` text COMMENT 'Notes from submitter',
   `reviewer_notes` text COMMENT 'Notes from reviewer/admin',

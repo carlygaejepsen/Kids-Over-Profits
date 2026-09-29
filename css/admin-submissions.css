@@ -269,6 +269,17 @@
     background: rgba(254, 128, 136, 0.3);
 }
 
+/* Industry PR index: internal only, never public */
+.status-promotional {
+    background: var(--kop-sand);
+    border-style: dashed;
+}
+
+.promo-kind {
+    font-weight: 700;
+    color: var(--kop-navy);
+}
+
 .submission-meta {
     font-size: 13px;
     color: var(--kop-text-secondary);
@@ -345,6 +356,11 @@
 
 .btn-quick-publish {
     background: var(--kop-orange);
+    color: var(--kop-white);
+}
+
+.btn-quick-promo {
+    background: var(--kop-navy);
     color: var(--kop-white);
 }
 
@@ -864,6 +880,11 @@
     color: var(--kop-white);
 }
 
+.btn-promo {
+    background: var(--kop-navy);
+    color: var(--kop-white);
+}
+
 .btn-delete {
     background: var(--kop-midnight-blue);
     color: var(--kop-white);
@@ -959,6 +980,11 @@
 
 .btn-bulk-reject {
     background: var(--kop-coral-pink);
+    color: var(--kop-white);
+}
+
+.btn-bulk-promo {
+    background: var(--kop-navy);
     color: var(--kop-white);
 }
 
@@ -1567,4 +1593,8 @@ textarea.kop-edit-input {
     .kop-edit-grid {
         grid-template-columns: 1fr;
     }
+}
+/* Industry PR controls show on the news type only (js syncNewsOnly) */
+.news-only[hidden] {
+    display: none !important;
 }

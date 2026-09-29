@@ -31,6 +31,10 @@ get_header();
                     <span class="stat-label">Rejected</span>
                     <span class="stat-value" id="statRejected">-</span>
                 </div>
+                <div class="stat-card news-only" id="statPromoCard" hidden>
+                    <span class="stat-label">Industry PR</span>
+                    <span class="stat-value" id="statPromo">-</span>
+                </div>
             </div>
         </header>
 
@@ -52,6 +56,7 @@ get_header();
                     <button type="button" role="tab" class="submission-tab" data-status="approved">Approved</button>
                     <button type="button" role="tab" class="submission-tab" data-status="published">Published</button>
                     <button type="button" role="tab" class="submission-tab" data-status="rejected">Rejected</button>
+                    <button type="button" role="tab" class="submission-tab news-only" data-status="promotional" title="Internal index of articles the facilities or their supporters put out: fundraisers, anniversaries, marketing, expansions. Never shown on the public site." hidden>Industry PR</button>
                     <button type="button" role="tab" class="submission-tab" data-status="">All</button>
                 </div>
 
@@ -68,6 +73,7 @@ get_header();
                 <span id="selectedCount" class="selected-count" aria-live="polite">0 selected</span>
                 <button type="button" id="approveSelectedBtn" class="btn-bulk btn-bulk-approve" disabled><?php echo kop_icon('check'); ?> Approve selected</button>
                 <button type="button" id="rejectSelectedBtn" class="btn-bulk btn-bulk-reject" disabled><?php echo kop_icon('x'); ?> Reject selected</button>
+                <button type="button" id="promoSelectedBtn" class="btn-bulk btn-bulk-promo news-only" disabled hidden><?php echo kop_icon('megaphone'); ?> File selected as PR</button>
                 <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions"><?php echo kop_icon('x'); ?> Reject All Pending</button>
             </div>
         </div>
@@ -274,6 +280,7 @@ get_header();
                     <div class="action-buttons">
                         <button type="button" id="approveBtn" class="btn-approve">✓ Approve</button>
                         <button type="button" id="rejectBtn" class="btn-reject">✗ Reject</button>
+                        <button type="button" id="promoBtn" class="btn-promo news-only" title="Industry PR: keep it in the internal index, off the public site" hidden><?php echo kop_icon('megaphone'); ?> File as Industry PR</button>
                         <button type="button" id="publishBtn" class="btn-publish"><?php echo kop_icon('upload'); ?> Mark as Published</button>
                         <button type="button" id="deleteBtn" class="btn-delete"><?php echo kop_icon('trash'); ?> Delete</button>
                     </div>

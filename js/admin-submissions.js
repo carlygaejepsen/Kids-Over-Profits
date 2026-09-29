@@ -57,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Action buttons
     const approveBtn = document.getElementById('approveBtn');
     const rejectBtn = document.getElementById('rejectBtn');
+    const promoBtn = document.getElementById('promoBtn');
     const publishBtn = document.getElementById('publishBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const rejectAllBtn = document.getElementById('rejectAllBtn');
@@ -64,12 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedCount = document.getElementById('selectedCount');
     const approveSelectedBtn = document.getElementById('approveSelectedBtn');
     const rejectSelectedBtn = document.getElementById('rejectSelectedBtn');
+    const promoSelectedBtn = document.getElementById('promoSelectedBtn');
 
     // Stats elements
     const statPending = document.getElementById('statPending');
     const statApproved = document.getElementById('statApproved');
     const statPublished = document.getElementById('statPublished');
     const statRejected = document.getElementById('statRejected');
+    const statPromo = document.getElementById('statPromo');
 
     // State
     let currentSubmission = null;
@@ -140,13 +143,29 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeFilter && linkedType && typeTabs.some(tab => tab.dataset.type === linkedType)) {
         typeFilter.value = linkedType;
     }
+    /**
+     * The Industry PR index (status 'promotional': fundraisers, anniversaries,
+     * marketing and expansions the facilities put out) exists only for news,
+     * so its tab, stat and buttons show on the news type alone.
+     */
+    function syncNewsOnly() {
+        const isNews = typeFilter.value === 'news';
+        document.querySelectorAll('.news-only').forEach(el => { el.hidden = !isNews; });
+        if (!isNews && statusFilter.value === 'promotional') {
+            statusFilter.value = 'submitted';
+        }
+    }
+
     markTabs(typeTabs, 'data-type', typeFilter.value);
+    syncNewsOnly();
     markTabs(statusTabs, 'data-status', statusFilter.value);
 
     typeTabs.forEach(tab => tab.addEventListener('click', () => {
         if (typeFilter.value === tab.dataset.type) return;
         typeFilter.value = tab.dataset.type;
         markTabs(typeTabs, 'data-type', typeFilter.value);
+        syncNewsOnly();
+        markTabs(statusTabs, 'data-status', statusFilter.value);
         const url = new URL(window.location.href);
         url.searchParams.set('type', typeFilter.value);
         window.history.replaceState(null, '', url);
@@ -188,6 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     approveBtn.addEventListener('click', () => performAction('approve'));
     rejectBtn.addEventListener('click', () => performAction('reject'));
+    if (promoBtn) {
+        promoBtn.addEventListener('click', () => performAction('promo'));
+    }
     publishBtn.addEventListener('click', () => performAction('publish'));
     deleteBtn.addEventListener('click', () => {
         if (confirm('Are you sure you want to delete this submission? This cannot be undone.')) {
@@ -203,6 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (rejectSelectedBtn) {
         rejectSelectedBtn.addEventListener('click', () => bulkAction('reject'));
+    }
+    if (promoSelectedBtn) {
+        promoSelectedBtn.addEventListener('click', () => bulkAction('promo'));
     }
     if (selectAllPending) {
         selectAllPending.addEventListener('change', () => {
@@ -364,6 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 statApproved.textContent = stats.approved || 0;
                 statPublished.textContent = stats.published || 0;
                 statRejected.textContent = stats.rejected || 0;
+                if (statPromo) statPromo.textContent = stats.promotional || 0;
             }
         } catch (error) {
             console.error('Failed to load stats:', error);
@@ -457,6 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function statusAfter(action, type) {
         if (action === 'reject') return 'rejected';
+        if (action === 'promo') return 'promotional';
         if (action === 'publish') return type === 'data' ? 'approved' : 'published';
         return (type === 'legislation' || type === 'lawsuit') ? 'published' : 'approved';
     }
@@ -470,9 +497,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const status = submission.status;
         const date = formatDate(submission.created_at);
         const pending = isPendingStatus(status);
-        const canApprove = pending || status === 'rejected';
+        const canApprove = pending || status === 'rejected' || status === 'promotional';
         const canReject = status !== 'rejected';
         const canPublish = currentType !== 'data' && status === 'approved';
+        const canPromo = currentType === 'news' && status !== 'promotional';
         return `
             <div class="submission-footer">
                 <label class="card-select-wrap">
@@ -484,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button type="button" class="btn-quick btn-quick-approve" data-action="approve" ${canApprove ? '' : 'disabled'}>${kopIcon('check')} Approve</button>
                     ${canPublish ? `<button type="button" class="btn-quick btn-quick-publish" data-action="publish">${kopIcon('upload')} Publish</button>` : ''}
                     <button type="button" class="btn-quick btn-quick-reject" data-action="reject" ${canReject ? '' : 'disabled'}>${kopIcon('x')} Reject</button>
+                    ${canPromo ? `<button type="button" class="btn-quick btn-quick-promo" data-action="promo" title="File as industry PR: internal index, never public">${kopIcon('megaphone')} PR</button>` : ''}
                     <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
                 </div>
             </div>`;
@@ -542,6 +571,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 const duplicateBadge = hasDuplicates ? `<span class="duplicate-badge">${kopIcon('alert-triangle')} Duplicate</span>` : '';
+                // In the Industry PR index, show the kind and the article date.
+                const promoKind = submission.status === 'promotional'
+                    ? ((submission.json_data && submission.json_data.promoKind) || 'unsorted')
+                    : '';
+                const promoMeta = promoKind
+                    ? (submission.years_active ? `<span>${kopIcon('calendar')} ${escapeHtml(String(submission.years_active).slice(0, 10))}</span>` : '')
+                        + `<span class="promo-kind">${kopIcon('megaphone')} PR: ${escapeHtml(promoKind)}</span>`
+                    : '';
                 
                 card.innerHTML = `
                     <div class="submission-header">
@@ -552,6 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${kopIcon('newspaper')} ${escapeHtml(source)}</span>
                         <span>${kopIcon('pen-line')} ${escapeHtml(author)}</span>
                         <span>${kopIcon('tag')} ${escapeHtml(submission.article_type || 'general')}</span>
+                        ${promoMeta}
                     </div>
                     ${footer}
                 `;
@@ -617,6 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (approveSelectedBtn) approveSelectedBtn.disabled = ids.length === 0;
         if (rejectSelectedBtn) rejectSelectedBtn.disabled = ids.length === 0;
+        if (promoSelectedBtn) promoSelectedBtn.disabled = ids.length === 0;
         if (selectAllPending) {
             selectAllPending.disabled = selectable === 0;
             selectAllPending.checked = selectable > 0 && ids.length === selectable;
@@ -689,24 +728,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Approve or reject every ticked card in one request.
+     * Approve, reject or file as industry PR every ticked card in one request.
      */
+    const BULK_WORDS = {
+        approve: { verb: 'Approve', doing: 'Approving', done: 'approved' },
+        reject: { verb: 'Reject', doing: 'Rejecting', done: 'rejected' },
+        promo: { verb: 'File as industry PR', doing: 'Filing', done: 'filed as industry PR' },
+    };
+
     async function bulkAction(action) {
         const ids = selectedIds();
         if (ids.length === 0) return;
-        const verb = action === 'approve' ? 'Approve' : 'Reject';
-        if (!confirm(`${verb} ${ids.length} selected submission(s)?`)) return;
+        const words = BULK_WORDS[action];
+        if (!confirm(`${words.verb}: ${ids.length} selected submission(s)?`)) return;
 
-        const btn = action === 'approve' ? approveSelectedBtn : rejectSelectedBtn;
+        const btn = { approve: approveSelectedBtn, reject: rejectSelectedBtn, promo: promoSelectedBtn }[action];
         const label = btn.innerHTML;
-        approveSelectedBtn.disabled = true;
-        rejectSelectedBtn.disabled = true;
-        btn.textContent = `${verb === 'Approve' ? 'Approving' : 'Rejecting'} ${ids.length}...`;
+        [approveSelectedBtn, rejectSelectedBtn, promoSelectedBtn].forEach(b => { if (b) b.disabled = true; });
+        btn.textContent = `${words.doing} ${ids.length}...`;
 
         try {
             const result = await runAction(action, ids, action === 'reject' ? 'Bulk rejection' : '');
             if (!result.success) {
-                alert(`Some submissions could not be ${action === 'approve' ? 'approved' : 'rejected'}: ${result.error || 'Unknown error'}`);
+                alert(`Some submissions could not be ${words.done}: ${result.error || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Bulk action failed:', error);
@@ -964,6 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rejectBtn.disabled = false;
         publishBtn.disabled = false;
         deleteBtn.disabled = false;
+        if (promoBtn) promoBtn.disabled = status === 'promotional';
 
         // Publish is a wiki/news concept (approved → live on wiki). The
         // suggested_edits enum for data submissions only allows
@@ -1457,6 +1502,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { key: 'article_url', label: 'Article URL', type: 'url' },
             { key: 'article_type', label: 'Article type', type: 'select', options: ['general','lawsuit','event','expose','arrest','closure','corporate'] },
             { key: 'summary', label: 'Summary', type: 'textarea' },
+            { key: 'promoKind', label: 'Industry PR kind (for articles filed as PR)', type: 'select', options: ['', 'fundraiser', 'anniversary', 'marketing', 'expansion', 'award', 'hiring', 'community', 'other'] },
             { key: 'organizationLogoName', label: 'Featured company / organization', type: 'text' },
             { key: 'organizationLogoUrl', label: 'Company logo image URL (HTTPS)', type: 'url' },
             { key: 'facilities_mentioned', label: 'Facilities mentioned (one per line)', type: 'list' },
@@ -1577,7 +1623,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 (f.options || []).forEach(opt => {
                     const o = document.createElement('option');
                     o.value = opt;
-                    o.textContent = opt;
+                    o.textContent = opt || '(not set)';
                     input.appendChild(o);
                 });
                 input.value = (src[f.key] != null && src[f.key] !== '') ? String(src[f.key]) : (f.options[0] || '');
@@ -1693,6 +1739,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rejectBtn.disabled = true;
         publishBtn.disabled = true;
         deleteBtn.disabled = true;
+        if (promoBtn) promoBtn.disabled = true;
 
         actionStatus.innerHTML = '<span class="loading">Processing...</span>';
 
