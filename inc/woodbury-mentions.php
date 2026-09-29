@@ -341,9 +341,14 @@ function kop_wb_file_locked(array $r, array $fac, $reviewer) {
         // Tagged before the slow cover render, so a killed run is found above.
         update_post_meta($att, '_kop_woodbury_key', $r['ckey']);
     }
+    // No cover render here: the host kills a request that renders a heavy
+    // PDF, and a retry rendered the same one again, so filing never got past
+    // it. The cover is drawn in the background by kop_wb_render_covers().
     if (!wp_get_attachment_metadata($att)) {
-        wp_update_attachment_metadata($att, wp_generate_attachment_metadata($att, get_attached_file($att)));
+        $file = get_attached_file($att);
+        wp_update_attachment_metadata($att, array('filesize' => $file && file_exists($file) ? (int) filesize($file) : 0));
     }
+    kop_wb_schedule_covers();
     update_post_meta($att, '_kop_import_md5', md5_file($path));
     update_post_meta($att, '_kop_woodbury_issue', (int) $r['issue_id']);
     update_post_meta($att, '_kop_woodbury_pages', $r['pages']);
@@ -367,6 +372,61 @@ function kop_wb_file_locked(array $r, array $fac, $reviewer) {
     delete_transient('kop_hidden_preview_ids');
     return array('attachment_id' => (int) $att, 'folder_id' => $folder, 'url' => (string) wp_get_attachment_url($att), 'facility' => $fac['name']);
 }
+
+/* ---- Covers for filed extracts, drawn in the background ------------- */
+
+function kop_wb_schedule_covers($delay = 30) {
+    if (!wp_next_scheduled('kop_wb_render_covers')) {
+        wp_schedule_single_event(time() + $delay, 'kop_wb_render_covers');
+    }
+}
+
+/**
+ * Render the first-page cover of up to two filed extracts that have none.
+ * Each is marked kop_pdf_preview_failed before rendering (as in
+ * api/regenerate-pdf-previews.php), so one the host kills is tried once and
+ * then left for that tool's ?retry=1.
+ */
+add_action('kop_wb_render_covers', function () {
+    global $wpdb;
+    $ids = $wpdb->get_col(
+        "SELECT DISTINCT pm.post_id FROM {$wpdb->postmeta} pm
+         JOIN {$wpdb->posts} p ON p.ID = pm.post_id AND p.post_type = 'attachment'
+         LEFT JOIN {$wpdb->postmeta} f ON f.post_id = pm.post_id AND f.meta_key = 'kop_pdf_preview_failed'
+         WHERE pm.meta_key = '_kop_woodbury_key' AND f.meta_id IS NULL
+         ORDER BY pm.post_id"
+    );
+    $todo = array();
+    foreach ($ids as $id) {
+        $meta = wp_get_attachment_metadata((int) $id);
+        if (empty($meta['sizes'])) {
+            $todo[] = (int) $id;
+        }
+    }
+    if (!$todo) {
+        return;
+    }
+    require_once ABSPATH . 'wp-admin/includes/image.php';
+    @set_time_limit(120);
+    foreach (array_slice($todo, 0, 2) as $id) {
+        $file = get_attached_file($id);
+        update_post_meta($id, 'kop_pdf_preview_failed', 'killed ' . gmdate('c'));
+        if (!$file || !file_exists($file)) {
+            continue;
+        }
+        $meta = wp_generate_attachment_metadata($id, $file);
+        if (is_array($meta) && !empty($meta['sizes'])) {
+            delete_post_meta($id, 'kop_pdf_preview_failed');
+            wp_update_attachment_metadata($id, $meta);
+        } else {
+            update_post_meta($id, 'kop_pdf_preview_failed', gmdate('c'));
+        }
+    }
+    delete_transient('kop_hidden_preview_ids');
+    if (count($todo) > 2) {
+        kop_wb_schedule_covers(60);
+    }
+});
 
 /** Delete the copy this tool imported and put the candidate back in the queue. */
 function kop_wb_undo(array $r, $reviewer) {
