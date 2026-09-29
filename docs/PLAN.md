@@ -228,8 +228,9 @@ own.
    2026-09-29, seed_version 3); 4.3 the
    timeline, a year slider (owner 2026-09-29: names with no known years
    are left out while it is on, with a count; people follow their
-   places; built 2026-09-29 except step 5, years read from profile
-   text, which waits for the owner's review). 4.2, the board re-import, is dropped (owner 2026-09-29:
+   places; built 2026-09-29, and the undated names researched on the
+   web: 151 with sourced years wait on the owner at KOP Data Tools >
+   Map Years, 180 need a second pass with more web searches). 4.2, the board re-import, is dropped (owner 2026-09-29:
    nobody edits the Miro board; corrections stay in
    network-overrides.json).
 2. Later, not to be started without a word from the owner: chain hulls and

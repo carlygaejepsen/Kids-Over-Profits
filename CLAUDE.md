@@ -38,6 +38,9 @@ node scripts/test-network-modules.js
 # The map on facility pages (embed.js + kop_network_map_slice_from_graph, PHP must match focus.js)
 node scripts/test-network-embed.js [--php=<Local php.exe>]
 node scripts/test-network-timeline.js           # the timeline (store years, timeline.js), seconds
+# Researched map years reviewed at KOP Data Tools > Map Years (inc/network-years.php); accepted ones go on the map at once
+node scripts/build-years-candidates.js [tmp/years-research]   # results -> js/data/network/years-candidates.json
+php scripts/test-network-years.php && python scripts/check-network-years-page.py
 
 # After editing the reporting directory data in js/data/reporting/
 node scripts/build-reporting-directory.js

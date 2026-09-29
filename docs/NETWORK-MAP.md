@@ -2787,12 +2787,25 @@ what then" has no answer.
   (`renderer.setFaded`) under whatever a hover lights, at the dimmed
   ink; the panel carries its own swatch ("Faded: not operating") and the
   note, so the Key is unchanged.
-- **Step 5 (years read from profile text) is not built.** It needs the
-  owner to review what the reader finds before any of it counts, and
-  with undated names left out it matters more: 331 of the 667 places and
-  companies have no years, among them Universal Health Services and
-  Synanon. `overrides.years` in network-overrides.json is the way to add
-  one by hand meanwhile.
+- **Step 5 became outside research with a review screen (2026-09-29).**
+  Profile text gave one year in 218 records (Mars Home for Youth, 1929),
+  so the 331 undated names were researched on the web instead, each
+  year with a source link and a quoted sentence containing it
+  (`scripts/build-years-candidates.js` drops any year no quote holds):
+  151 came back with years (62 high, 67 medium, 22 low confidence), 180
+  with none, most because the session's 200 web searches ran out, not
+  because nothing exists. They are reviewed on KOP Data Tools > Map
+  Years (`inc/network-years.php`,
+  https://kidsoverprofits.org/wp-admin/admin.php?page=kop-network-years):
+  one page, editable years, one click to accept or reject, "accept all
+  high-confidence", undo. The owner asked for review to work that way.
+  A decision saves at once to the option `kop_network_years_review` and
+  shows at once: accepted years go over graph.json's through
+  `yearOverrides` in the map config and in the page slices, as closures
+  go over its status. `php scripts/test-network-years.php` and
+  `python scripts/check-network-years-page.py` test it offline. The 180
+  are worth a second research pass in a session with a larger search
+  allowance (`CLAUDE_CODE_MAX_WEB_SEARCHES_PER_SESSION`).
 - **The layout of a smaller board.** With the undated names gone, focus
   can lay a board out with the opened name in a corner (Provo Canyon
   School, 1985: bottom left); that is the layout's answer for that set

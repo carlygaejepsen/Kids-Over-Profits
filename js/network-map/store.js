@@ -60,6 +60,18 @@
         return graph;
     }
 
+    /* Years accepted on the Map Years screen (inc/network-years.php) come
+     * the same way, as map name id => years (KOP_NETWORK_CONFIG.
+     * yearOverrides), and go over the file's years. */
+    function applyYearOverrides(graph, overrides) {
+        if (!graph || !overrides) return graph;
+        (graph.nodes || []).forEach(function (raw) {
+            var years = overrides[raw.id];
+            if (years) raw.years = years;
+        });
+        return graph;
+    }
+
     function toSet(list) {
         var set = Object.create(null);
         (list || []).forEach(function (v) { set[v] = true; });
@@ -109,7 +121,7 @@
                 fetchJson(config.graphUrl),
                 fetchJson(config.layoutUrl)
             ]).then(function (both) {
-                store.hydrate(applyStatusOverrides(both[0], config.statusOverrides), both[1]);
+                store.hydrate(applyYearOverrides(applyStatusOverrides(both[0], config.statusOverrides), config.yearOverrides), both[1]);
                 return store;
             });
         };

@@ -225,6 +225,7 @@ function trailingslashit($s) { return rtrim((string) $s, '/\\') . '/'; }
 function add_query_arg($k, $v, $url) { return $url . (strpos($url, '?') === false ? '?' : '&') . $k . '=' . $v; }
 function wp_json_encode($v, $f = 0) { return json_encode($v, $f); }
 function get_transient($k) { return false; }
+if (!function_exists('get_option')) { function get_option($k, $d = false) { return $d; } }
 function set_transient($k, $v, $t = 0) { return true; }
 if (!defined('WEEK_IN_SECONDS')) define('WEEK_IN_SECONDS', 604800);
 if (!defined('DAY_IN_SECONDS')) define('DAY_IN_SECONDS', 86400);

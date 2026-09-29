@@ -19,6 +19,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Years reviewed in wp-admin and laid over graph.json's (KOP Data Tools >
+// Map Years); loaded here so everything that reads the map has them.
+require_once __DIR__ . '/network-years.php';
+
 if (!function_exists('kop_network_map_file')) {
     /** Absolute path to one of the network data files. */
     function kop_network_map_file($name) {
@@ -297,6 +301,8 @@ if (!function_exists('kop_network_map_config')) {
             // Facility id => status, for facilities closed since graph.json
             // was built; store.js writes them over the file's own status.
             'statusOverrides' => (object) kop_network_map_status_overrides(),
+            // Map name id => years, accepted on the Map Years screen.
+            'yearOverrides' => (object) kop_network_map_year_overrides(),
         );
     }
 }
@@ -682,7 +688,8 @@ if (!function_exists('kop_network_map_cached_slice')) {
             $cache_key .= ':' . substr((string) ($index['fingerprint'] ?? ''), 0, 12);
         }
         $overrides = kop_network_map_status_overrides();
-        $cache_key .= ':' . substr(md5(wp_json_encode($overrides)), 0, 8) . ':v2';
+        $year_overrides = kop_network_map_year_overrides();
+        $cache_key .= ':' . substr(md5(wp_json_encode(array($overrides, $year_overrides))), 0, 8) . ':v2';
         $transient = 'kop_nm_slice_' . md5($kind . ':' . $key);
         $cached = get_transient($transient);
         if (is_array($cached) && ($cached['_key'] ?? '') === $cache_key) {
@@ -697,6 +704,7 @@ if (!function_exists('kop_network_map_cached_slice')) {
         }
         if ($slice) {
             $slice['nodes'] = kop_network_map_apply_status_overrides($slice['nodes'], $overrides);
+            $slice['nodes'] = kop_network_map_apply_year_overrides($slice['nodes'], $year_overrides);
             $urls = function_exists('kop_network_map_facility_urls') ? kop_network_map_facility_urls() : array();
             $slice['urls'] = array();
             foreach ($slice['nodes'] as $node) {
