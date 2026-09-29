@@ -56,15 +56,20 @@
     color: var(--kop-white, #fff);
 }
 
-.kop-hub-thumbnail {
-    margin: 0 0 1.5rem;
+/* Kadence draws .post-thumbnail as a zero-height ratio box; without this
+   reset the header image is laid out 0px tall (see css/article.css). */
+.wp-site-blocks .kop-hub .post-thumbnail.kop-hub-thumbnail {
+    height: auto;
+    padding-bottom: 0;
+    overflow: visible;
+    margin: 0 0 1.75rem;
 }
 
-.kop-hub-thumbnail img {
+.wp-site-blocks .kop-hub .post-thumbnail.kop-hub-thumbnail img {
     display: block;
     width: 100%;
     height: auto;
-    max-height: 24rem;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     object-position: center 30%;
     border-radius: 6px;

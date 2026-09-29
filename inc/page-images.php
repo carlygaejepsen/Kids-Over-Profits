@@ -48,17 +48,53 @@ function kop_page_images_heading_text($html) {
     return strtolower(trim(preg_replace('/\s+/u', ' ', $text)));
 }
 
-/** The image block inserted after a heading, captioned with the credit line. */
+/**
+ * Bump when the block markup below changes: blocks already placed in an
+ * older format are rebuilt on the next run.
+ */
+define('KOP_PAGE_IMAGES_FORMAT', '2');
+
+/**
+ * The image block inserted after a heading, captioned with the credit line.
+ * Full size, not 'large': this site's large size is capped at 400px tall, so
+ * a portrait came out 242px wide. The kop-page-photo class gives every placed
+ * photo the same column-wide banner shape (css/article.css).
+ */
 function kop_page_images_block($attachment_id) {
-    $src     = wp_get_attachment_image_url($attachment_id, 'large');
+    $src     = wp_get_attachment_image_url($attachment_id, 'full');
     $alt     = (string) get_post_meta($attachment_id, '_wp_attachment_image_alt', true);
     $caption = (string) wp_get_attachment_caption($attachment_id);
-    $attrs   = wp_json_encode(array('id' => $attachment_id, 'sizeSlug' => 'large', 'linkDestination' => 'none'));
+    $attrs   = wp_json_encode(array('id' => $attachment_id, 'sizeSlug' => 'full', 'linkDestination' => 'none', 'className' => 'kop-page-photo'));
     return "<!-- wp:image {$attrs} -->\n"
-        . '<figure class="wp-block-image size-large"><img src="' . esc_url($src) . '" alt="' . esc_attr($alt)
+        . '<figure class="wp-block-image size-full kop-page-photo"><img src="' . esc_url($src) . '" alt="' . esc_attr($alt)
         . '" class="wp-image-' . (int) $attachment_id . '"/>'
         . ($caption !== '' ? '<figcaption class="wp-element-caption">' . esc_html($caption) . '</figcaption>' : '')
         . "</figure>\n<!-- /wp:image -->";
+}
+
+/**
+ * Rebuild a block this file placed in an older format. Returns the new
+ * content, or null when the block is missing or already current.
+ */
+function kop_page_images_restyle($content, $attachment_id) {
+    $re = '#<!-- wp:image \{"id":' . (int) $attachment_id . ',[^}]*\} -->.*?<!-- /wp:image -->#s';
+    if (preg_match_all($re, $content, $m) !== 1 || strpos($m[0][0], 'kop-page-photo') !== false) {
+        return null;
+    }
+    return str_replace($m[0][0], kop_page_images_block($attachment_id), $content);
+}
+
+/** Save page content unfiltered (see the note in kop_apply_page_images()). */
+function kop_page_images_save($page_id, $content) {
+    $kses = has_filter('content_save_pre', 'wp_filter_post_kses');
+    if ($kses) {
+        kses_remove_filters();
+    }
+    $saved = wp_update_post(array('ID' => $page_id, 'post_content' => wp_slash($content)), true);
+    if ($kses) {
+        kses_init_filters();
+    }
+    return $saved;
 }
 
 /**
@@ -112,26 +148,24 @@ function kop_apply_page_images() {
             continue;
         }
         if (strpos($page->post_content, 'wp-image-' . $attachment_id . '"') !== false) {
-            continue;
-        }
-        $content = kop_page_images_insert_after_heading($page->post_content, $heading, kop_page_images_block($attachment_id));
-        if ($content === null) {
-            $out['failed'][] = $label . ': heading not found exactly once';
-            continue;
+            $content = kop_page_images_restyle($page->post_content, $attachment_id);
+            if ($content === null) {
+                continue;
+            }
+            $label .= ' (restyled)';
+        } else {
+            $content = kop_page_images_insert_after_heading($page->post_content, $heading, kop_page_images_block($attachment_id));
+            if ($content === null) {
+                $out['failed'][] = $label . ': heading not found exactly once';
+                continue;
+            }
         }
         // The seed usually runs on a visitor's request, where kses would
         // filter the whole page on save and strip markup an editor put
         // there (embeds, iframes). The content is the stored page plus one
         // block built here, so save it unfiltered. wp_update_post expects
         // slashed data.
-        $kses = has_filter('content_save_pre', 'wp_filter_post_kses');
-        if ($kses) {
-            kses_remove_filters();
-        }
-        $saved = wp_update_post(array('ID' => $page->ID, 'post_content' => wp_slash($content)), true);
-        if ($kses) {
-            kses_init_filters();
-        }
+        $saved = kop_page_images_save($page->ID, $content);
         if (is_wp_error($saved)) {
             $out['failed'][] = $label . ': ' . $saved->get_error_message();
             continue;
@@ -153,7 +187,7 @@ function kop_maybe_apply_page_images() {
     if (!file_exists($path)) {
         return;
     }
-    $version = md5_file($path);
+    $version = md5_file($path) . ':' . KOP_PAGE_IMAGES_FORMAT;
     if (get_option('kop_page_images_applied') === $version || get_transient('kop_page_images_retry') === $version) {
         return;
     }

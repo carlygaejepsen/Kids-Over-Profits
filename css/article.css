@@ -26,23 +26,48 @@
     color: var(--kop-text-secondary, #4a4f6a);
 }
 
-.kop-article-thumbnail {
-    margin: 0 0 1.5rem;
+/* Kadence draws .post-thumbnail as a zero-height box with a padding-bottom
+   ratio and an absolutely placed inner wrapper; this template prints the
+   image straight into the box, so without the reset below the image is laid
+   out 0px tall and only its credit line shows. The selectors carry
+   .wp-site-blocks and .kop-article to outrank Kadence's
+   `.wp-site-blocks .post-thumbnail:not(...) img { height: 100% }`. */
+.wp-site-blocks .kop-article .post-thumbnail.kop-article-thumbnail {
+    height: auto;
+    padding-bottom: 0;
+    overflow: visible;
+    margin: 0 0 1.75rem;
 }
 
-.kop-article-thumbnail img {
+/* Every photo on the page, header or in the text, is the same banner:
+   the full column wide, one fixed shape, cropped from a little above centre
+   so faces in portraits and engravings stay in frame. */
+.wp-site-blocks .kop-article .post-thumbnail.kop-article-thumbnail img,
+.kop-article .entry-content figure.kop-page-photo img {
     display: block;
     width: 100%;
     height: auto;
-    /* A portrait header (an engraving, a 1960s press photo) would fill the
-       screen at full width; crop it to a banner instead. */
-    max-height: 26rem;
+    aspect-ratio: 16 / 9;
     object-fit: cover;
     object-position: center 30%;
     border-radius: 6px;
 }
 
-.kop-thumb-credit {
+.kop-article .entry-content figure.kop-page-photo {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.75rem 0 2rem;
+}
+
+/* Easy FancyBox wraps each image in an inline <a class="fancybox">, which
+   would hold the image at its own width. */
+.kop-article .entry-content figure.kop-page-photo > a {
+    display: block;
+}
+
+.kop-thumb-credit,
+.kop-article .entry-content figure.kop-page-photo figcaption {
     margin: 0.4rem 0 0;
     font-size: 0.78rem;
     line-height: 1.4;

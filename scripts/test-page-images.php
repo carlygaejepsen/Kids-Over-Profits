@@ -78,6 +78,17 @@ foreach ((array) $seed as $entry) {
         (bool) preg_match('#<!-- /wp:heading -->\n\n<!-- wp:image \{"id":' . $fake_id . ',#', $new));
     check("$label credit and alt text in the block",
         strpos($block, '<figcaption class="wp-element-caption">Someone, CC BY 4.0') !== false && strpos($block, 'alt="Alt text for') !== false);
+    check("$label block is full size with the kop-page-photo style",
+        strpos($block, '"sizeSlug":"full"') !== false && strpos($block, 'class="wp-block-image size-full kop-page-photo"') !== false);
+
+    // A block placed in the first format ('large', no class) is rebuilt once.
+    $old = "<!-- wp:image {\"id\":$fake_id,\"sizeSlug\":\"large\",\"linkDestination\":\"none\"} -->\n"
+        . "<figure class=\"wp-block-image size-large\"><img src=\"x.jpg\" alt=\"\" class=\"wp-image-$fake_id\"/></figure>\n<!-- /wp:image -->";
+    $placed_old = kop_page_images_insert_after_heading($content, $heading, $old);
+    $restyled   = kop_page_images_restyle($placed_old, $fake_id);
+    check("$label old-format block is rebuilt in place",
+        $restyled !== null && str_replace("\n\n" . $block, '', $restyled) === $content);
+    check("$label current block is left alone", kop_page_images_restyle($new, $fake_id) === null);
 }
 
 echo $failures ? "\n$failures failed\n" : "\nall passed\n";
