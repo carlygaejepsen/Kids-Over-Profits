@@ -478,6 +478,9 @@ check(kop_ih_excerpt_html("A <b>.\n\nB & C") === '<p>A &lt;b&gt;.</p><p>B &amp; 
 $day = new PDO('sqlite::memory:');
 $day->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 kop_ih_ensure_tables($day);
+$day->exec('CREATE TABLE inspection_facilities (id INTEGER PRIMARY KEY, state TEXT, facility_name TEXT, program_name TEXT)');
+$day->exec("INSERT INTO inspection_facilities VALUES (1, 'TX', 'Example Ranch', ''), (2, 'TX', 'Other Ranch', ''),
+    (3, 'CA', 'NEW BEGINNINGS - RAJA', '336403968'), (4, 'CA', '336403968', '336403968'), (5, 'CA', 'SUNRISE HOME', '111111111'), (6, 'CA', 'SUNRISE HOME', '222222222')");
 $ins = $day->prepare("INSERT INTO inspection_highlights (id, report_id, facility_id, finding_key, text_hash, state, category, categories, score, finding_date, excerpt, standard, state_label, status, scanner_version)
     VALUES (?, ?, ?, ?, ?, 'TX', ?, ?, ?, ?, ?, ?, ?, ?, 4)");
 foreach (array(
@@ -500,6 +503,19 @@ check($kept['excerpt'] === "Staff punched a child.\n\nA child in care self-harme
     && $kept['standard'] === '748.1101; 748.685' && $kept['state_label'] === 'High', 'merge: text, kinds of harm and citations combined');
 check(array_map('intval', $day->query('SELECT id FROM inspection_highlights ORDER BY id')->fetchAll(PDO::FETCH_COLUMN)) === array(1, 4, 5, 6), 'merge: other days, other facilities and pending findings are left alone');
 check(kop_ih_merge_same_day($day, true) === array(), 'merge: a second run finds nothing to do');
+foreach (array(
+    array(7, 20, 4, 'death', 'death', 77, '2023-12-18', 'C1 was found unconscious from an overdose and later passed away.', '', '', 'approved'),
+    array(8, 21, 3, 'death', 'death', 77, '2023-12-18', 'C1 was found unconscious from an overdose and later passed away.', '', '', 'approved'),
+    array(9, 22, 5, 'death', 'death', 90, '2024-03-01', 'A child died at one home.', '', '', 'approved'),
+    array(10, 23, 6, 'death', 'death', 90, '2024-03-01', 'A child died at another home.', '', '', 'approved'),
+) as $r) {
+    $ins->execute(array($r[0], $r[1], $r[2], 'k' . $r[0], 'h' . $r[0], $r[3], $r[4], $r[5], $r[6], $r[7], $r[8], $r[9], $r[10]));
+}
+check(kop_ih_facility_twins($day, 4) === array(3, 4) && kop_ih_facility_twins($day, 1) === array(1), 'merge: records sharing a license number are one facility');
+$lic = kop_ih_merge_same_day($day, true);
+check(count($lic) === 1 && $lic[0]['keep'] === 8 && $lic[0]['identical'] === array(7), 'merge: the same finding under a second, number-named record goes; the named record keeps it');
+check((int) $day->query('SELECT COUNT(*) FROM inspection_highlights WHERE id IN (9, 10)')->fetchColumn() === 2, 'merge: two homes that only share a name are not merged');
+check(kop_ih_same_day_covers($day, 4, '2023-12-18', 'C1 was found unconscious from an overdose and later passed away.'), 'merge: a rescan under the other record does not queue it again');
 check(kop_ih_same_day_covers($day, 1, '2024-01-05', 'A child in care self-harmed with staff aware.')
     && !kop_ih_same_day_covers($day, 1, '2024-01-05', 'Something new happened.')
     && !kop_ih_same_day_covers($day, 1, null, 'Staff punched a child.'), 'merge: a rescan does not queue a finding already folded in');

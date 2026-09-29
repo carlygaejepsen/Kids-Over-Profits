@@ -1297,11 +1297,54 @@ if (!function_exists('kop_ih_scanner_version')) {
             === kop_ih_squash_text(kop_ih_combine_excerpts(array($existing)));
     }
 
-    /** Whether an approved finding of this facility on this day already holds the excerpt. */
+    /**
+     * What makes two facility records one facility: the same state and the
+     * same license number (program_name in California, Minnesota, Texas and
+     * some of Utah). The California scraper has made a second record for
+     * some licenses, named only by the number. A shared name alone is not
+     * enough: two group homes can be called the same.
+     * Returns the keys for one inspection_facilities row.
+     */
+    function kop_ih_facility_keys(array $fac) {
+        $state = strtoupper(trim((string) ($fac['state'] ?? '')));
+        $keys = array();
+        foreach (array('program_name', 'facility_name') as $col) {
+            $license = trim((string) ($fac[$col] ?? ''));
+            if (preg_match('/^\d{6,}$/', $license)) $keys[] = 'l|' . $state . '|' . $license;
+        }
+        return array_values(array_unique($keys));
+    }
+
+    /** Every facility record that is the same facility as $facility_id, itself included. */
+    function kop_ih_facility_twins(PDO $pdo, $facility_id) {
+        try {
+            $stmt = $pdo->prepare('SELECT * FROM inspection_facilities WHERE id = ?');
+            $stmt->execute(array((int) $facility_id));
+            $fac = $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $fac = false;
+        }
+        if (!$fac) return array((int) $facility_id);
+        $license = '';
+        foreach (kop_ih_facility_keys($fac) as $key) {
+            if (strpos($key, 'l|') === 0) $license = substr($key, strrpos($key, '|') + 1);
+        }
+        $ids = array();
+        if ($license !== '') {
+            $stmt = $pdo->prepare('SELECT id FROM inspection_facilities WHERE state = ? AND (program_name = ? OR facility_name = ?)');
+            $stmt->execute(array($fac['state'], $license, $license));
+            $ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        }
+        $ids[] = (int) $facility_id;
+        return array_values(array_unique($ids));
+    }
+
+    /** Whether an approved finding of this facility (under any of its records) on this day already holds the excerpt. */
     function kop_ih_same_day_covers(PDO $pdo, $facility_id, $date, $excerpt) {
         if ($date === null || $date === '') return false;
-        $stmt = $pdo->prepare("SELECT excerpt FROM inspection_highlights WHERE facility_id = ? AND finding_date = ? AND status = 'approved'");
-        $stmt->execute(array((int) $facility_id, $date));
+        $twins = kop_ih_facility_twins($pdo, $facility_id);
+        $stmt = $pdo->prepare("SELECT excerpt FROM inspection_highlights WHERE facility_id IN (" . implode(',', $twins) . ") AND finding_date = ? AND status = 'approved'");
+        $stmt->execute(array($date));
         foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $existing) {
             if (kop_ih_excerpt_covered($existing, $excerpt)) return true;
         }
@@ -1327,20 +1370,45 @@ if (!function_exists('kop_ih_scanner_version')) {
      * deleted. A finding whose text is already there only goes. The store
      * then never queues the deleted ones again (kop_ih_same_day_covers).
      *
+     * A facility held under two records with one license (kop_ih_facility_keys) counts as one;
+     * the finding under the record with a real name is the one kept.
+     *
      * $facility_id 0 looks at every facility. With $apply false nothing is
      * written. Returns one entry per merge: keep, merged ids, identical ids,
      * facility, date, and the combined excerpt.
      */
     function kop_ih_merge_same_day(PDO $pdo, $apply = true, $facility_id = 0) {
-        $where = "status = 'approved' AND score >= " . (int) kop_ih_severe_score() . ' AND finding_date IS NOT NULL';
-        $params = array();
-        if ($facility_id) { $where .= ' AND facility_id = ?'; $params[] = (int) $facility_id; }
-        $stmt = $pdo->prepare("SELECT * FROM inspection_highlights WHERE $where ORDER BY facility_id, finding_date, score DESC, id ASC");
-        $stmt->execute($params);
-        $groups = array();
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $groups[$row['facility_id'] . '|' . $row['finding_date']][] = $row;
+        $where = "h.status = 'approved' AND h.score >= " . (int) kop_ih_severe_score() . ' AND h.finding_date IS NOT NULL';
+        if ($facility_id) $where .= ' AND h.facility_id IN (' . implode(',', kop_ih_facility_twins($pdo, $facility_id)) . ')';
+        $rows = $pdo->query("SELECT h.*, f.state AS fac_state, f.facility_name AS fac_name, f.program_name AS fac_program
+            FROM inspection_highlights h LEFT JOIN inspection_facilities f ON f.id = h.facility_id
+            WHERE $where ORDER BY h.id ASC")->fetchAll(PDO::FETCH_ASSOC);
+
+        // One facility per set of records sharing a license number (union-find over their keys).
+        $parent = array();
+        $find = static function ($x) use (&$parent) {
+            while ($parent[$x] !== $x) $x = $parent[$x] = $parent[$parent[$x]];
+            return $x;
+        };
+        foreach ($rows as $row) {
+            $keys = kop_ih_facility_keys(array('state' => $row['fac_state'] ?? $row['state'], 'facility_name' => $row['fac_name'], 'program_name' => $row['fac_program']));
+            $keys[] = 'id|' . $row['facility_id'];
+            foreach ($keys as $key) if (!isset($parent[$key])) $parent[$key] = $key;
+            $root = $find($keys[0]);
+            foreach ($keys as $key) $parent[$find($key)] = $root;
         }
+        $groups = array();
+        foreach ($rows as $row) {
+            $groups[$find('id|' . $row['facility_id']) . '|' . $row['finding_date']][] = $row;
+        }
+        // Worst first, then the one under a named record, then the oldest.
+        foreach ($groups as &$group) {
+            usort($group, static function ($a, $b) {
+                $named = static function ($r) { return preg_match('/^\d+$/', trim((string) $r['fac_name'])) ? 0 : 1; };
+                return (int) $b['score'] <=> (int) $a['score'] ?: $named($b) <=> $named($a) ?: (int) $a['id'] <=> (int) $b['id'];
+            });
+        }
+        unset($group);
 
         $cats = kop_ih_categories();
         $merges = array();
