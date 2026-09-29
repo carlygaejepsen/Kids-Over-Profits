@@ -118,11 +118,15 @@ The date is when each was last confirmed open.
    through `kop_nav_item_specs()` on deploy. `rebuild-header-menu.php`
    is retired; its apply would have dropped TTI Glossary, Open Data and
    Report Abuse.)
-2. **PDF covers** (2026-09-23).
-   [regenerate-pdf-previews.php](https://kidsoverprofits.org/wp-content/themes/child/api/regenerate-pdf-previews.php),
-   then `?apply=1` until it reports 0 remaining (153 PDFs).
-3. **Severe findings review** (2026-09-24). The nightly scan cron was added
-   on 2026-09-24 (first run 04:15 on 2026-09-25). Send the first lines of
+2. **PDF covers** (2026-09-29: 177 left).
+   [regenerate-pdf-previews.php?apply=1](https://kidsoverprofits.org/wp-content/themes/child/api/regenerate-pdf-previews.php?apply=1)
+   until it reports 0 remaining. A PDF that gets the process killed (the
+   browser sees a 503) is marked and skipped on the next run; two full
+   Woodbury issues and one Sequel TSI PDF are marked so far.
+3. **Severe findings review** (2026-09-29). The nightly scan cron is not
+   installed (no crontab entry, no log on 2026-09-29). Add it in cPanel >
+   Cron Jobs, the line in `docs/state-inspection-reports/README.md`. Then
+   send the first lines of
    `/home/kidsover/logs/inspection-highlights-scan.log` (expect "Saved:
    scanned N reports, 0 remaining"), then review candidates in
    [review-inspection-highlights.php](https://kidsoverprofits.org/wp-content/themes/child/api/review-inspection-highlights.php).
