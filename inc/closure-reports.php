@@ -354,7 +354,9 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
             }
         }
     } catch (Throwable $e) {
-        if ($write) {
+        // A rate limit says nothing about the article: leave it unscanned so
+        // the next run tries again without spending one of its three tries.
+        if ($write && stripos($e->getMessage(), 'rate limit') === false) {
             kop_closure_record_scan($pdo, $news['id'], $news['hash'], 'error', $e->getMessage());
         }
         return array('error', array(), $e->getMessage());
