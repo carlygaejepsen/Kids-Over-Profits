@@ -226,7 +226,7 @@ $kop_reports_hub_url = !empty($kop_reports_hub_pages) ? get_permalink($kop_repor
     // Ongoing Stories — the big developing stories (news story arcs).
     // Renders nothing until arcs exist, so it's safe from day one.
     if (function_exists('kop_ongoing_stories_shortcode')) {
-        echo kop_ongoing_stories_shortcode(array());
+        echo kop_ongoing_stories_shortcode(array('limit' => 4));
     }
     ?>
 
