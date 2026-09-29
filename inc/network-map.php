@@ -78,6 +78,85 @@ if (!function_exists('kop_network_map_cache_key')) {
     }
 }
 
+if (!function_exists('kop_network_map_status_bucket')) {
+    /** PHP twin of statusBucket() in js/network-map/store.js. */
+    function kop_network_map_status_bucket($raw) {
+        $s = strtolower(trim((string) $raw));
+        if ($s === '') return 'unknown';
+        if (strpos($s, 'open') === 0) return 'open';
+        if ($s === 'rebranded') return 'rebranded';
+        if (strpos($s, 'closed') === 0 || strpos($s, 'rebrand') !== false) return 'closed';
+        return 'unknown';
+    }
+}
+
+if (!function_exists('kop_network_map_status_overrides')) {
+    /**
+     * Facility id => 'closed' for every map name the board draws as open or
+     * unrecorded whose facility is Closed in facilities_v2. graph.json is
+     * built offline from the Miro board, so without this a facility closed
+     * since the last build (a confirmed closure report, inc/closure-reports.php,
+     * or an edit in the data form) would stay open on the map. One way only:
+     * the board's closed and rebranded names are never reopened.
+     *
+     * Keyed on the graph build and facilities_v2's row count and last update,
+     * so a status change shows on the next request.
+     */
+    function kop_network_map_status_overrides() {
+        static $memo = null;
+        if ($memo !== null) {
+            return $memo;
+        }
+        global $wpdb;
+        $key = kop_network_map_cache_key();
+        if ($key === '' || !function_exists('kop_facility_pages_table_exists') || !kop_facility_pages_table_exists('facilities_v2')) {
+            return $memo = array();
+        }
+        $stamp = $wpdb->get_row('SELECT COUNT(*), MAX(updated_at) FROM facilities_v2', ARRAY_N);
+        $key .= ':' . md5(implode('|', array_map('strval', (array) $stamp))) . ':v1';
+
+        $cached = get_transient('kop_network_map_status_overrides');
+        if (is_array($cached) && ($cached['_key'] ?? '') === $key) {
+            return $memo = $cached['map'];
+        }
+
+        $ids = array();
+        $graph = kop_network_map_graph();
+        foreach ($graph ? $graph['nodes'] : array() as $node) {
+            $fid = (int) ($node['facilityId'] ?? 0);
+            $bucket = kop_network_map_status_bucket($node['status'] ?? '');
+            if ($fid > 0 && ($bucket === 'open' || $bucket === 'unknown')) {
+                $ids[$fid] = true;
+            }
+        }
+        $map = array();
+        foreach (array_chunk(array_keys($ids), 500) as $chunk) {
+            $in = implode(',', array_map('intval', $chunk));
+            foreach ((array) $wpdb->get_col("SELECT id FROM facilities_v2 WHERE status = 'Closed' AND id IN ({$in})") as $id) {
+                $map[(int) $id] = 'closed';
+            }
+        }
+        set_transient('kop_network_map_status_overrides', array('_key' => $key, 'map' => $map), DAY_IN_SECONDS);
+        return $memo = $map;
+    }
+}
+
+if (!function_exists('kop_network_map_apply_status_overrides')) {
+    /** graph.json-shaped nodes with the overrides written into 'status'. */
+    function kop_network_map_apply_status_overrides(array $nodes, array $overrides) {
+        if (!$overrides) {
+            return $nodes;
+        }
+        foreach ($nodes as $i => $node) {
+            $fid = (int) ($node['facilityId'] ?? 0);
+            if ($fid > 0 && isset($overrides[$fid])) {
+                $nodes[$i]['status'] = $overrides[$fid];
+            }
+        }
+        return $nodes;
+    }
+}
+
 if (!function_exists('kop_network_map_meta')) {
     /**
      * The filter vocabulary and counts, as the build script recorded them.
@@ -215,6 +294,9 @@ if (!function_exists('kop_network_map_config')) {
             // Facility id => profile URL. Ids absent from this map have no
             // page, so the drawer sends those to a directory search instead.
             'facilityUrls' => (object) kop_network_map_facility_urls(),
+            // Facility id => status, for facilities closed since graph.json
+            // was built; store.js writes them over the file's own status.
+            'statusOverrides' => (object) kop_network_map_status_overrides(),
         );
     }
 }
@@ -225,8 +307,10 @@ if (!function_exists('kop_network_map_flush')) {
         delete_transient('kop_network_map_meta');
         delete_transient('kop_network_map_facility_urls');
         delete_transient('kop_network_map_facility_links');
+        delete_transient('kop_network_map_status_overrides');
     }
     add_action('kop_facility_v2_sync', 'kop_network_map_flush', 20);
+    add_action('kop_facility_status_changed', 'kop_network_map_flush', 20);
 }
 
 if (!function_exists('kop_network_map_label')) {
@@ -597,7 +681,8 @@ if (!function_exists('kop_network_map_cached_slice')) {
             $index = kop_facility_pages_index();
             $cache_key .= ':' . substr((string) ($index['fingerprint'] ?? ''), 0, 12);
         }
-        $cache_key .= ':v2';
+        $overrides = kop_network_map_status_overrides();
+        $cache_key .= ':' . substr(md5(wp_json_encode($overrides)), 0, 8) . ':v2';
         $transient = 'kop_nm_slice_' . md5($kind . ':' . $key);
         $cached = get_transient($transient);
         if (is_array($cached) && ($cached['_key'] ?? '') === $cache_key) {
@@ -611,6 +696,7 @@ if (!function_exists('kop_network_map_cached_slice')) {
                 : kop_network_map_slice_from_graph($graph, kop_network_map_layout(), $key);
         }
         if ($slice) {
+            $slice['nodes'] = kop_network_map_apply_status_overrides($slice['nodes'], $overrides);
             $urls = function_exists('kop_network_map_facility_urls') ? kop_network_map_facility_urls() : array();
             $slice['urls'] = array();
             foreach ($slice['nodes'] as $node) {

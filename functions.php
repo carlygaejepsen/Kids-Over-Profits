@@ -94,6 +94,9 @@ require_once get_stylesheet_directory() . '/inc/resources-list.php';
 // Network map data access (graph metadata + facility profile URLs)
 require_once get_stylesheet_directory() . '/inc/network-map.php';
 
+// Facility closures reported in the news: hourly scan, review queue, confirm sets the status
+require_once get_stylesheet_directory() . '/inc/closure-reports.php';
+
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';
 

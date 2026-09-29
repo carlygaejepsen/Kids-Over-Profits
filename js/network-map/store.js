@@ -47,6 +47,19 @@
     var DEFAULT_CATEGORIES = ['corporate', 'leadership', 'staff', 'clinical', 'admissions', 'unknown',
         'family', 'membership', 'board', 'referral', 'survivor', 'other'];
 
+    /* graph.json is built offline from the board; a facility closed since
+     * then comes from PHP as facility id => status (KOP_NETWORK_CONFIG.
+     * statusOverrides, kop_network_map_status_overrides()) and is written
+     * over the file's status here, before anything reads it. */
+    function applyStatusOverrides(graph, overrides) {
+        if (!graph || !overrides) return graph;
+        (graph.nodes || []).forEach(function (raw) {
+            var status = raw.facilityId != null ? overrides[raw.facilityId] : undefined;
+            if (status) raw.status = status;
+        });
+        return graph;
+    }
+
     function toSet(list) {
         var set = Object.create(null);
         (list || []).forEach(function (v) { set[v] = true; });
@@ -93,7 +106,7 @@
                 fetchJson(config.graphUrl),
                 fetchJson(config.layoutUrl)
             ]).then(function (both) {
-                store.hydrate(both[0], both[1]);
+                store.hydrate(applyStatusOverrides(both[0], config.statusOverrides), both[1]);
                 return store;
             });
         };
@@ -616,7 +629,7 @@
         return store;
     }
 
-    var api = { create: create, statusBucket: statusBucket, DEFAULT_CATEGORIES: DEFAULT_CATEGORIES };
+    var api = { create: create, statusBucket: statusBucket, applyStatusOverrides: applyStatusOverrides, DEFAULT_CATEGORIES: DEFAULT_CATEGORIES };
 
     if (typeof module === 'object' && module.exports) module.exports = api;
     else root.KOPNetworkStore = api;

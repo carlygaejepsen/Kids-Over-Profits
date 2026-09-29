@@ -98,6 +98,11 @@ function kop_submission_types() {
             'label'    => 'legislation suggestion',
             'template' => 'page-admin-legislation.php',
         ),
+        // Found by the hourly news scan (inc/closure-reports.php).
+        'closure_report' => array(
+            'label'      => 'facility closure report',
+            'admin_page' => 'kop-closure-reports',
+        ),
     );
 }
 

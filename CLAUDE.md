@@ -65,6 +65,11 @@ python scripts/preview-utility-pages.py --shots tmp/utility-preview
 python scripts/preview-hub-pages.py --shots tmp/hub-preview
 # The legacy news posts + 2024 index going into news_submissions (against tmp/prod.sqlite)
 php scripts/test-news-post-import.php
+# Facility closures reported in the news (inc/closure-reports.php): hourly WP-Cron scan of saved
+# articles -> KOP Data Tools > Closure Reports; confirming one sets the facility's status, which the
+# /facility/ page and the network map (kop_network_map_status_overrides) follow at once
+php scripts/test-closure-reports.php              # offline, against tmp/prod.sqlite, no Groq calls
+php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dry run; "apply" stores reports
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
@@ -137,6 +142,7 @@ to the program aggregate otherwise.
 - `providers_master` - Mental health providers outside the TTI (psychiatric wards, PHP/IOP, day schools, respite, outpatient) that use TTI practices or refer to TTI facilities; the data form's "providers" category (`js/data-form/provider-form.js`), kept out of the facility tables
 - `wiki_submissions` / `news_submissions` - Content submissions
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
+- `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
