@@ -1591,6 +1591,13 @@ button.kop-network__popup-person {
 .kop-network__timeline-range {
 	flex: 1;
 	min-width: 0;
+	height: 1.5rem;
+	/* The theme styles every input as a text box; a slider is not one. */
+	margin: 0;
+	padding: 0;
+	border: 0;
+	box-shadow: none;
+	background: transparent;
 	accent-color: var(--kop-navy-blue, #000080);
 }
 
