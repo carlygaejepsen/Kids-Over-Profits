@@ -21,7 +21,7 @@ Phase 4 is specified at the end, piece by piece, ready to build.
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
 | 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster, zoom controls and the fuller legend done (2026-09-22); hover cards next; the rest itemised below in build order |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view done (2026-09-28); corrections outlined |
-| 4 | Integration: facility page embed, board re-import from wp-admin, timeline | Specified (2026-09-29), in build order 4.1, 4.3, 4.2 |
+| 4 | Integration: facility page embed, board re-import from wp-admin, timeline, the history page's Miro board retired for the map | Specified (2026-09-29), in build order 4.4 still, 4.1, 4.4 live, 4.3, 4.2 |
 
 ## Phase 1 recap
 
@@ -2478,13 +2478,16 @@ the switch rides in the link as `list=1`.
 
 ## Phase 4: integration
 
-Three pieces, specified 2026-09-29 on the owner's go-ahead of 2026-09-28.
-Each ships on its own, in the order below: the facility page embed first
-(the piece readers meet), the timeline second (all inside the map, no
-secrets), the board re-import last (its first two steps are useful before
-any automation, and the owner decides the rest after seeing them).
+Four pieces, specified 2026-09-29 on the owner's go-ahead of 2026-09-28
+(the fourth, the history page, asked for the same day). Each ships on its
+own, in this order: the history page's still image first (content only,
+no map code), the facility page embed (the piece readers meet), the live
+preview on the history page (the embed again, on a starter view), the
+timeline (all inside the map, no secrets), and the board re-import last
+(its first two steps are useful before any automation, and the owner
+decides the rest after seeing them).
 
-Two facts found while specifying shape the second piece. Production has no
+Two facts found while specifying shape the re-import. Production has no
 Node: checked over SSH on 2026-09-29, there is no node, npm or nodevenv on
 the account, and PHP 8.2 has pdo_mysql, pdo_sqlite and zip. And the build
 reads production data in four places (`facilities_v2` for matching, years,
@@ -2721,21 +2724,103 @@ what then" has no answer.
    operating, a known closed one not, a person following its places), the
    link round trip, the legend rows.
 
+### 4.4 The history page: retire the Miro board
+
+*What it has.* https://kidsoverprofits.org/history/ still carries the
+2024 paragraph ("We made a map to show the tangled web of connections...
+Check it out here") linking the Miro board, and under it a 1080 by 900
+screenshot of that board (attachment 561), which Yoast also picks as the
+page's og:image and primary image because the page has no featured
+image. The hub's action row already links the network map. The September
+rewrite of the page (`seeds/history/history.html`, seed_version 1,
+allow_published) never applied: the page's modified stamp
+(2026-09-17 19:26:56, the template assignment) no longer matched the
+seed's `last_seed_modified_gmt`, so the seed was skipped, and the live
+content is the 2024 layout with `h5` under `h3`. The seed text itself
+still links Miro and the Miro screenshot. In the mirror of 2026-09-25 the
+history page is the only page that links miro.com.
+
+*The gap.* The page sends readers to a board that the map replaced on
+2026-09-21, and the picture the site shows for "who is connected to whom"
+is a two-year-old screenshot of someone else's tool.
+
+*Decisions.*
+
+- **Miro goes entirely.** No link, no screenshot. Where the board came
+  from is recorded above under Phase 1 and stays there; the board itself
+  is untouched, just unlinked. Attachment 561 stays in the media library
+  unused (media is never deleted for a content change).
+- **A still first, the live map second.** The figure becomes a screenshot
+  of the map's own **Historical** starter view (19 names: Synanon, The
+  Seed, Straight Inc, CEDU, The Brown Schools, Devereux, the Semblers and
+  the people between them), linked to `/network-map/#view=historical`,
+  which the map already opens from the hash. That ships now through the
+  seed, with no map code. When 4.1's `embed.js` exists, a shortcode
+  upgrades the figure into the live embed and the still stays as its
+  fallback and as the og:image.
+- **The still is a theme file, made by the preview script.**
+  `python scripts/preview-network-map.py --hash "#view=historical" --shots`
+  already renders the working tree's map at 1440 px; the desktop shot goes
+  to `images/network-map-historical.jpg` in the theme (our own picture, so
+  the public repository is fine), and the same command refreshes it after
+  a build that changes the view. The figure's `src` is the theme URL; no
+  media upload, no srcset, one image.
+- **The seed carries the change.** `seeds/history/history.json` goes to
+  `seed_version: 2` with `overwrite_existing: true`, and
+  `history/history.html` drops the Miro sentence and link, keeps the
+  September rewrite around it, and replaces the figure with the new still
+  (real alt text: "The network map's Historical view: Synanon, The Seed,
+  Straight Inc, CEDU and the people who moved between them", linked to
+  the view). Overwriting is right here because the live page is the 2024
+  content, not an editor's later work: the 19:26 stamp is the template
+  assignment. Applied by the next bump of `$version` in
+  `kop_maybe_apply_template_assignments()`.
+- **The live preview.** `[kop_network_preview view="historical"]`, a
+  shortcode in `inc/network-map.php` (the theme's shortcodes live in
+  `inc/article-pieces.php` and `inc/features.php`; the hub prints content
+  through `the_content`, so it runs). It prints the 4.1 embed shell with a
+  slice of the view's names and the lines among them, the view carried in
+  the slice's `meta.views` as its only, default view, so the embed paints
+  it as its opening board exactly as the map does, with no root to
+  select. The figure sits inside the shell as the picture until the embed
+  has painted once, and inside `<noscript>`. Caption: "A corner of the
+  network map: the programs and people of the 1960s to 1980s. Open the
+  full map." Clicks behave as in 4.1 (a name opens the full map on it).
+- **Not a new mechanism.** One shell, one stylesheet, one module for
+  facility pages and this page; the shortcode only chooses a view instead
+  of a facility.
+
+*To build.*
+
+1. Now: the still, the seed (`seed_version: 2`, `overwrite_existing`),
+   the version bump; then check the live page for no miro.com link, the
+   new og:image, headings `h2`/`h3`, and `python scripts/check-bare-text.py`.
+   `php scripts/test-hub-pages.php` asserts the history hub prints no
+   miro.com link.
+2. After 4.1: the shortcode and `kop_network_map_view_slice($key)`, the
+   figure moved inside the shell, the hub test extended to find the
+   shell and parse its JSON; the embed suite gets a view slice beside the
+   facility slice.
+
 ### Commit sequence
 
-1. `feat(map): one-hop slice and the embed module` (4.1 steps 1, 2, 4)
-2. `feat(facility): the map on facility pages and profile posts` (4.1
+1. `content(history): retire the Miro board, show the network map` (4.4
+   step 1)
+2. `feat(map): one-hop slice and the embed module` (4.1 steps 1, 2, 4)
+3. `feat(facility): the map on facility pages and profile posts` (4.1
    steps 3 and 5)
-3. `feat(map): years parsed and a timeline lens on the board` (4.3 steps
-   1 to 3)
-4. `feat(map): timeline in the list, years from profile text` (4.3 steps
-   4 to 6)
-5. `feat(map): the build reads a site export` (4.2 step 1)
-6. `feat(admin): Network Board screen, validation, pending imports` (4.2
+4. `feat(history): the Historical view live on the history hub` (4.4
    step 2)
-7. `feat(map): --pull and the pending endpoint` (4.2 step 3)
-8. `ci(map): build-network-map workflow and the publish button` (4.2
-   step 4)
+5. `feat(map): years parsed and a timeline lens on the board` (4.3 steps
+   1 to 3)
+6. `feat(map): timeline in the list, years from profile text` (4.3 steps
+   4 to 6)
+7. `feat(map): the build reads a site export` (4.2 step 1)
+8. `feat(admin): Network Board screen, validation, pending imports` (4.2
+   step 2)
+9. `feat(map): --pull and the pending endpoint` (4.2 step 3)
+10. `ci(map): build-network-map workflow and the publish button` (4.2
+    step 4)
 
 After each: `node scripts/build-network-graph.js`,
 `node scripts/test-network-graph.js`, the module suite in the background,
@@ -2754,3 +2839,5 @@ commit.
    with the rest?
 5. Does `staff-movement.csv` join the upload screen, or stay a repository
    file like the overrides?
+6. History page: Miro goes entirely (proposed), or one sentence keeps
+   "the original working board is on Miro" as a text link?

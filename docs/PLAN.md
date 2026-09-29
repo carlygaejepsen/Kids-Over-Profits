@@ -215,10 +215,14 @@ Live at https://kidsoverprofits.org/network-map/. Build and ship each on its
 own.
 
 1. **Phase 4 integration** (owner's go-ahead 2026-09-28; specified
-   2026-09-29 under "Phase 4: integration" in NETWORK-MAP.md, with an
-   eight-commit sequence and five open decisions for the owner). Build
-   order: 4.1 the one-hop map on facility pages and profile posts (the
-   map's own modules on an inline slice, "Open on the full map"); 4.3 the
+   2026-09-29 under "Phase 4: integration" in NETWORK-MAP.md, with a
+   ten-commit sequence and six open decisions for the owner). Build
+   order: 4.4 first step, retire the Miro paragraph and screenshot on
+   /history/ for a still of the map's Historical view (seed_version 2,
+   content only; the page is the only one linking miro.com); 4.1 the
+   one-hop map on facility pages and profile posts (the map's own modules
+   on an inline slice, "Open on the full map"); 4.4 second step, the
+   `[kop_network_preview]` shortcode making that still live; 4.3 the
    timeline, a year slider that dims what was not operating; 4.2 board
    re-import from a KOP Data Tools screen. Production has no Node and the
    build reads four production tables, so 4.2 keeps the one Node build,
