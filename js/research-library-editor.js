@@ -40,6 +40,8 @@
     var tags = [];           // [{id, type, name, place}] for the card being edited;
                              // type is 'facility' or 'operator' (a parent company)
     var searchTimer = null;
+    var lastSearch = { phrase: '', count: 0 };   // what the result list shows now
+    var creating = false;
 
     /** Fall back to alert() where <dialog> is not supported. */
     function openDialog() {
@@ -142,6 +144,10 @@
             return response.ok ? response.json() : { results: [] };
         }).then(function (body) {
             var results = (body && body.results) || [];
+            if (tagQuery.value.trim() !== phrase) {
+                return;   // typing moved on; a newer search is coming
+            }
+            lastSearch = { phrase: phrase, count: results.length };
             tagResults.innerHTML = '';
             if (!results.length) {
                 var empty = document.createElement('li');
@@ -162,9 +168,63 @@
                 li.appendChild(button);
                 tagResults.appendChild(li);
             });
+            // Nothing by exactly this name: offer to add it as a new program.
+            var exact = results.some(function (row) {
+                return String(row.name).toLowerCase() === phrase.toLowerCase();
+            });
+            if (!exact && config.create) {
+                var createLi = document.createElement('li');
+                var create = document.createElement('button');
+                create.type = 'button';
+                create.className = 'kop-rl-tag-create';
+                create.setAttribute('data-name', phrase);
+                create.textContent = 'Add "' + phrase + '" as a new program';
+                createLi.appendChild(create);
+                tagResults.appendChild(createLi);
+            }
             tagResults.removeAttribute('hidden');
         }).catch(function () {
             clearResults();
+        });
+    }
+
+    /**
+     * Tag a program the search did not find: the server adds it to the
+     * facility records (or returns the one that already has this name).
+     */
+    function createFacility(name) {
+        if (!name || creating) {
+            return;
+        }
+        creating = true;
+        setMessage('Adding "' + name + '"...');
+        fetch(config.create, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': config.nonce
+            },
+            body: JSON.stringify({ name: name })
+        }).then(function (response) {
+            return response.json().then(function (body) {
+                if (!response.ok || !body || !body.result) {
+                    throw new Error(body && body.message ? body.message : 'Could not add the program (' + response.status + ').');
+                }
+                return body;
+            });
+        }).then(function (body) {
+            addTag(body.result);
+            setMessage(body.created
+                ? 'Added "' + body.result.name + '" as a new program. Save to keep the tag.'
+                : '"' + body.result.name + '" was already a program; tagged it.');
+            tagQuery.value = '';
+            clearResults();
+            tagQuery.focus();
+        }).catch(function (error) {
+            setMessage(error.message || 'Could not add the program.', true);
+        }).then(function () {
+            creating = false;
         });
     }
 
@@ -447,6 +507,12 @@
     });
 
     tagResults.addEventListener('click', function (event) {
+        var create = event.target.closest('.kop-rl-tag-create');
+        if (create) {
+            event.preventDefault();
+            createFacility(create.getAttribute('data-name'));
+            return;
+        }
         var add = event.target.closest('.kop-rl-tag-add');
         if (!add) {
             return;
@@ -469,11 +535,17 @@
         searchTimer = window.setTimeout(searchFacilities, 250);
     });
 
-    // Enter in the search box must not submit the dialog's form.
+    // Enter in the search box must not submit the dialog's form. On a name the
+    // search already came back empty for, Enter adds it as a new program.
     tagQuery.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             window.clearTimeout(searchTimer);
+            var phrase = tagQuery.value.trim();
+            if (config.create && phrase.length >= 2 && lastSearch.phrase === phrase && !lastSearch.count) {
+                createFacility(phrase);
+                return;
+            }
             searchFacilities();
         }
     });

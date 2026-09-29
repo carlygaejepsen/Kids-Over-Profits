@@ -759,7 +759,8 @@
     display: none;
 }
 
-.kop-rl-tag-add {
+.kop-rl-tag-add,
+.kop-rl-tag-create {
     display: block;
     width: 100%;
     padding: 0.35rem 0.5rem;
@@ -779,14 +780,24 @@
 
 .kop-rl-tag-add:hover,
 .kop-rl-tag-add:focus,
-.kop-rl-tag-add:focus-visible {
+.kop-rl-tag-add:focus-visible,
+.kop-rl-tag-create:hover,
+.kop-rl-tag-create:focus,
+.kop-rl-tag-create:focus-visible {
     background: var(--kop-midnight-blue, #000435);
     color: var(--kop-white, #fff);
 }
 
-.kop-rl-tag-add:focus-visible {
+.kop-rl-tag-add:focus-visible,
+.kop-rl-tag-create:focus-visible {
     outline: 2px solid var(--kop-teal, #33a7b5);
     outline-offset: -2px;
+}
+
+/* "Add ... as a new program": set apart from the matches above it. */
+.kop-rl-tag-create {
+    border-top: 1px solid var(--kop-border-secondary, #d8d4c4);
+    font-weight: 600;
 }
 
 .kop-rl-tag-none {

@@ -1109,6 +1109,7 @@ function kop_research_enqueue_editor() {
     wp_localize_script('kop-research-library-editor', 'KOP_RESEARCH_EDITOR', array(
         'endpoint' => esc_url_raw(rest_url('kop/v1/research-entry')),
         'search'   => esc_url_raw(rest_url('kop/v1/research-facilities')),
+        'create'   => esc_url_raw(rest_url('kop/v1/research-facility')),
         'nonce'    => wp_create_nonce('wp_rest'),
     ));
 }
@@ -1235,6 +1236,77 @@ function kop_research_register_facility_search() {
     );
 }
 add_action('rest_api_init', 'kop_research_register_facility_search');
+
+/**
+ * POST kop/v1/research-facility {name}
+ *
+ * Tagging a program the picker cannot find adds it: a facilities_v2 record
+ * with only the name, filed under Unknown until someone fills it in from the
+ * data form. The identity resolver runs first, so a name that is already a
+ * facility returns that one instead of a second copy.
+ */
+function kop_research_register_facility_create() {
+    register_rest_route(
+        'kop/v1',
+        '/research-facility',
+        array(
+            'methods'             => WP_REST_Server::CREATABLE,
+            'callback'            => 'kop_research_create_facility',
+            'permission_callback' => function () {
+                return current_user_can(KOP_RESEARCH_CAP);
+            },
+            'args' => array(
+                'name' => array(
+                    'required'          => true,
+                    'type'              => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
+            ),
+        )
+    );
+}
+add_action('rest_api_init', 'kop_research_register_facility_create');
+
+function kop_research_create_facility($request) {
+    global $wpdb;
+
+    $name = trim(preg_replace('/\s+/', ' ', (string) $request->get_param('name')));
+    if (mb_strlen($name) < 2 || mb_strlen($name) > 200) {
+        return new WP_Error('kop_research_name', 'A program name is 2 to 200 characters.', array('status' => 400));
+    }
+
+    $pdo = function_exists('kop_seed_pdo') ? kop_seed_pdo() : null;
+    if (!$pdo) {
+        return new WP_Error('kop_research_db', 'The facility database is not reachable.', array('status' => 500));
+    }
+    require_once get_stylesheet_directory() . '/inc/facility-v2-writer.php';
+    if (!kop_v2_writes_active($pdo, $wpdb->prefix)) {
+        return new WP_Error('kop_research_db', 'Facility saves are not on facilities_v2 yet; add the program in the data form.', array('status' => 409));
+    }
+
+    try {
+        $saved = kop_v2_with_write_lock($pdo, function () use ($pdo, $wpdb, $name) {
+            return kop_v2_save_facility_entries($pdo, $wpdb->prefix, array(array('name' => $name)), array(
+                'source_project'  => 'Research & Reports tag',
+                'source_category' => 'research-library',
+            ));
+        });
+    } catch (Throwable $e) {
+        return new WP_Error('kop_research_create', 'Could not add the program: ' . $e->getMessage(), array('status' => 500));
+    }
+
+    $id    = isset($saved['ids'][0]) ? (int) $saved['ids'][0] : 0;
+    $chips = $id ? kop_research_facility_chips(array($id)) : array();
+    if (!$chips) {
+        return new WP_Error('kop_research_create', 'The program was not saved.', array('status' => 500));
+    }
+
+    return rest_ensure_response(array(
+        'ok'      => true,
+        'created' => !empty($saved['created']),
+        'result'  => $chips[0],
+    ));
+}
 
 /** Name search over the operator index and facilities_v2 for the picker. */
 function kop_research_search_facilities($request) {
