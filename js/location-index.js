@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
 
                 let yearRange = '';
-                let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
+                let facYears = getValueFromKeys(facility, ['operatingPeriod.yearsOfOperation', 'yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
                 if (facYears && typeof facYears === 'string') {
                     yearRange = escapeHtml(facYears);
                 } else {
@@ -1066,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'location', 'address', 'cityState', 'city_state', 'fullAddress', 'full_address',
                     'city', 'state', 'locationCity', 'location_city', 'locationState', 'location_state',
                     'operatingPeriod.status', 'status',
-                    'yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text',
+                    'yearsOfOperation', 'operatingPeriod.yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text',
                     'founded', 'yearFounded', 'opened', 'startYear', 'year_founded', 'start_year',
                     'operatingPeriod.startYear', 'operatingPeriod.start_year',
                     'operatingPeriod.endYear', 'operatingPeriod.end_year',

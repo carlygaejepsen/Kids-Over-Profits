@@ -1364,7 +1364,8 @@ function displayFacilities(facilitiesData, containerId) {
             const facilityLocation = getMergedLocation(facility) ? escapeHtml(getMergedLocation(facility)) : '';
 
             let yearRange = '';
-            let facYears = getValueFromKeys(facility, ['yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
+            // v2 records keep the text under operatingPeriod (inc/facility-store.php).
+            let facYears = getValueFromKeys(facility, ['operatingPeriod.yearsOfOperation', 'yearsOfOperation', 'yearsActive', 'years_active', 'operating_period_text']);
             if (facYears && typeof facYears === 'string') {
                 yearRange = escapeHtml(facYears);
             } else {
@@ -1707,6 +1708,7 @@ function displayFacilities(facilitiesData, containerId) {
                 'locationCity', 'location_city', 'locationState', 'location_state',
                 'operatingPeriod.status', 'status',
                 'yearsOfOperation', 'yearsActive', 'years_active',
+                'operatingPeriod.yearsOfOperation',
                 'operating_period_text', 'founded', 'yearFounded', 'opened',
                 'startYear', 'year_founded', 'start_year',
                 'operatingPeriod.startYear', 'operatingPeriod.start_year',
