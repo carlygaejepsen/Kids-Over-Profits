@@ -1,0 +1,1265 @@
+[
+ {
+  "key": "academy-at-canyon-creek>provo-canyon-school-springville-campus",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/article_5235.shtml",
+    "quote": "Academy At Canyon Creek is a new coed residential program scheduled to open on January 16, 2005"
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/provo-canyon-school/",
+    "quote": "In 2005, PCS also opened a program called Somerset/Academy at Canyon Creek, which was targeted towards a younger age group"
+   }
+  ],
+  "note": "Academy at Canyon Creek opened in Springville in January 2005, and Breaking Code Silence calls it a Provo Canyon School program. A PitchBook listing, seen only in a search snippet (the page returned 403), says Universal Health Services acquired it on August 1, 2006. No source says when the name was dropped for Provo Canyon School Springville."
+ },
+ {
+  "key": "academy-at-cedar-mountain>mountain-springs-preparatory-academy",
+  "year": 2004,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/mountain-springs-preparatory-academy/",
+    "quote": "It was originally founded under the name the Academy at Cedar Mountain, until is was purchased by CERTS in 2004 and the name was changed to Mountain Springs Preparatory Academy."
+   }
+  ],
+  "note": "CERTS bought the Academy at Cedar Mountain in 2004 and renamed it Mountain Springs Preparatory Academy."
+ },
+ {
+  "key": "academy-at-dundee-ranch>pillars-of-hope",
+  "year": 2004,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Pillars_of_Hope",
+    "quote": "Following the closure of Dundee Ranch, a new WWASP-associated facility known as Pillars of Hope opened at the same site in 2004."
+   },
+   {
+    "url": "https://ticotimes.net/2006/12/15/new-program-operates-at-former-dundee-site",
+    "quote": "a school for troubled teens that was shut down in 2003 following a raid by the local prosecutor's office"
+   }
+  ],
+  "note": "Dundee Ranch closed after the May 2003 raid and riot. Pillars of Hope reopened in the same buildings, run by former Dundee directors on land leased from Dundee's former owner. A December 2006 Tico Times article says it had been 'running for more than a year and a half', which points to 2005 rather than 2004."
+ },
+ {
+  "key": "agape-baptist-academy>agape-boarding-school",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Agape_Baptist_Academy",
+    "quote": "In 1996, the school moved to Cedar County, Missouri, and when they arrived in the local area, they held several small events such as a blood drives and other charitable events."
+   }
+  ],
+  "note": "Sources use Agape Baptist Academy and Agape Boarding School interchangeably; Wikipedia lists Agape Boarding School as an alternative name. No source dates a change between them. The 1996 quote is the move from Othello, WA to Cedar County, MO, not a rename."
+ },
+ {
+  "key": "agape-boarding-school>agape-boys-ranch",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Nothing found to date this or to confirm the order. The board's three Agape edges form a cycle, so at least one of them is drawn backwards, but the sources do not say which."
+ },
+ {
+  "key": "agape-boys-ranch>agape-baptist-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "No source found that dates or even names 'Agape Boys Ranch' as a distinct earlier name. The coverage says only that the program began in the early 1990s in Othello, WA and moved to Stockton, MO in 1996."
+ },
+ {
+  "key": "alberta-adolescent-recovery-centre>kids-of-the-canadian-west",
+  "year": 1991,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Alberta_Adolescent_Recovery_Centre",
+    "quote": "AARC was established in Calgary, Alberta in 1991."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Alberta_Adolescent_Recovery_Centre",
+    "quote": "The AARC program (formerly called KIDS of The Canadian West) was modeled off of the KIDS Of North Jersey program,"
+   },
+   {
+    "url": "https://aarc.ab.ca/history",
+    "quote": "In 1990, the Alberta Adolescent Recovery Centre (AARC) was established in Calgary to offer treatment and officially began admitting youth in 1992."
+   }
+  ],
+  "note": "Board order is backwards: KIDS of the Canadian West (a franchise Dean Vause set up for Miller Newton from 1989) became AARC. Wikipedia says 1991 and AARC's own site says 1990, so the year is uncertain."
+ },
+ {
+  "key": "alldredge-academy>alldredge-wilderness-journey",
+  "year": 2007,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/alldredge-academy/",
+    "quote": "Alldredge originally had three phases, but in 2007 the program dropped the third phase, which was called the Academic Phase. With this, the program also decided to change their name from Alldredge Academy to Alldredge Wilderness Journey."
+   }
+  ],
+  "note": "The program dropped its academic phase in 2007 and renamed itself to match. It closed on December 31, 2008. The only source is a survivor-run site."
+ },
+ {
+  "key": "anchor-home-for-boys>anchor-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://therevealer.org/the-anchor-boys/",
+    "quote": "He reestablished the school as Anchor Academy and set up on two different sites in Montana before financial problems led him to relocate to Vanduser, a tiny cotton-ginning town in southern Missouri, where he operates it to this day."
+   },
+   {
+    "url": "https://www.havredailynews.com/story/2003/01/11/local/anchor-academy-is-in-a-growth-mode/408647.html",
+    "quote": "The Anchor Academy moved to its present location four years ago."
+   }
+  ],
+  "note": "Dennis McElwrath moved the Roloff-era Anchor Home out of Texas and re-established it as Anchor Academy in Montana (later Vanduser, MO). A January 2003 Havre article says it moved to its current (Havre) site four years earlier, i.e. about 1999, but no source states the rename year directly."
+ },
+ {
+  "key": "anderson-academy>treasure-coast-boys-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Nothing found that links the two names. Private School Review gives Treasure Coast Boy's Academy a 'Year Founded: 2001' and does not mention Anderson Academy. Both are listed as Christian boys' schools in Vero Beach."
+ },
+ {
+  "key": "arizona-boys-ranch>canyon-state-academy",
+  "year": 2000,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Canyon_State_Academy",
+    "quote": "In March 2000, the name of the school was changed to Canyon State Academy (CSA), ushering in a decade in which new owners Rite of Passage began to standardize the naming and colors of the school to match some of their other high school programs and to distance itself from the ABR era."
+   }
+  ],
+  "note": "Rite of Passage took over and renamed the school to distance it from Arizona Boys Ranch, where Nicholaus Contreraz died in 1998."
+ },
+ {
+  "key": "aspen-institute-for-behavioral-assessment>viewpoint-center",
+  "year": 2014,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "quote": "Became independently owned as ViewPoint Center in May 2014."
+   }
+  ],
+  "note": "Aspen Education Group's Syracuse, UT assessment program was spun off and renamed ViewPoint Center in May 2014, during the same period Aspen was being sold off and Family Help & Wellness took over programs."
+ },
+ {
+  "key": "aspen-youth-alternatives>alternative-youth-adventures",
+  "year": 1999,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.strugglingteens.com/archives/2000/1/news02.html",
+    "quote": "(December 13, 1999) - Aspen Youth Alternatives, a subsidiary of Aspen Youth Services has merged with a leader in the adult corrections, field, Community Education Centers of New Jersey."
+   },
+   {
+    "url": "https://www.strugglingteens.com/archives/2000/1/news02.html",
+    "quote": "The programs developed by this new merger will not retain the Aspen name; they will be called Alternative Youth Adventures, or 'AYA.'"
+   }
+  ],
+  "note": "Aspen Youth Services spun off its adjudicated-youth programs by merging them with Community Education Centers in December 1999, and they were renamed Alternative Youth Adventures. The industry newsletter is dated January 2000, so the new name may have taken effect in early 2000."
+ },
+ {
+  "key": "aspen-youth-services>aspen-education-group",
+  "year": 2001,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://openminds.com/market-intelligence/news/052801aspen/",
+    "quote": "Aspen Youth Services announced on May 14, 2001 that it has changed its name to Aspen Education Group, Inc."
+   }
+  ],
+  "note": "Aspen Youth Services, formed in 1997-98 from College Health Enterprises' youth division, renamed itself Aspen Education Group in May 2001 because K-12 education had become its main business."
+ },
+ {
+  "key": "auldern-academy>sequel-tsi-north-carolina",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sequel_Youth_and_Family_Services",
+    "quote": "In September 2009, Sequel Youth and Family Services acquired Three Springs Inc. (TSI), an operator of youth behavioral health facilities based in Huntsville, Alabama."
+   }
+  ],
+  "note": "This probably is not a rename. Wikipedia lists 'Auldern Academy, Siler City, North Carolina (2009 - 2021)' and 'Sequel TSI North Carolina, Pittsboro, North Carolina (2009 - 2010)' as separate Sequel facilities, and Auldern kept its own name until Sequel closed it in 2021. Sequel TSI North Carolina was more likely the former Three Springs North Carolina program."
+ },
+ {
+  "key": "bethel-baptist-childrens-home>gulf-coast-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.helpsavetroubledteens.com/gulf-coast-academy-mississippi.html",
+    "quote": "Previous names: Bethel Boys Home, Bethel Boys Academy, Eagle Point Christian Academy, Respect Camp, Cambridge Academy, Pine View Academy (no year given)"
+   }
+  ],
+  "note": "Survivor site lists Bethel Boys Home as an earlier name of Gulf Coast Academy at 2147 Mill Street Extension, Lucedale, next to Bethel Baptist Church; no dated source for when the Gulf Coast Academy name was adopted. The direct step was via Bethel Boys Academy / Eagle Point, not straight from the children's home."
+ },
+ {
+  "key": "bethel-boys-academy>gulf-coast-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/news/bethelboysindex.html",
+    "quote": "Bethel Academy name changes to Eagle Point Christian Academy - 2/14/05"
+   }
+  ],
+  "note": "Bethel Boys Academy was renamed Eagle Point Christian Academy in February 2005 after the Attorney General's actions; the later Gulf Coast Academy name is undated in sources found. Consider Bethel Boys Academy > Eagle Point (2005) as the dated step."
+ },
+ {
+  "key": "bethesda-home-for-girls>mountain-park-baptist-boarding-academy",
+  "year": 1987,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://culteducation.com/group/1059-mountain-park-baptist-church-and-boarding-academy/14587-reform-schools-find-a-haven-here.html",
+    "quote": "Each attended either Mountain Park, which opened in Missouri in 1987, or Bethesda Home for Girls and Redemption Ranch for Boys, which were operated by Mountain Park founders Bob and Betty Wills from the early 1970s to 1987 in Hattiesburg, Miss."
+   },
+   {
+    "url": "https://culteducation.com/group/1059-mountain-park-baptist-church-and-boarding-academy/14587-reform-schools-find-a-haven-here.html",
+    "quote": "Ultimately, the state decided in 1986 to remove from the home 117 teens, dozens of whom described some form of mistreatment."
+   }
+  ],
+  "note": "St. Louis Post-Dispatch (Nov 2002, reprinted): after Mississippi removed 117 teens in 1986, Bob and Betty Wills moved their ministry to Missouri and opened Mountain Park in 1987. A relocation by the same operators, not a rename in place."
+ },
+ {
+  "key": "bible-baptist-temple>riverside-baptist-church",
+  "year": 2018,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://www.rbcstjoe.com/our-story",
+    "quote": "In January 2018, the church family voted to change the name of Bible Baptist Temple to Riverside Baptist Church."
+   }
+  ],
+  "note": "The church is in St. Joseph, MO, and its pastor Bill G. Marshall matches the board's William Marshall. The congregation voted to rename it in January 2018."
+ },
+ {
+  "key": "birdseye-boys-ranch>kaizen-academy",
+  "year": 2016,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/kaizen-academy-birdseye-boys-ranch/",
+    "quote": "She was arrested and the program's name was changed to Kaizen Academy shortly after in 2016."
+   }
+  ],
+  "note": "The order is right, but this is the combined change: Birdseye Boys Ranch became Birdseye RTC first, and Birdseye RTC became Kaizen Academy in 2016. This edge may duplicate the other two."
+ },
+ {
+  "key": "birdseye-rtc>birdseye-boys-ranch",
+  "year": null,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/kaizen-academy-birdseye-boys-ranch/",
+    "quote": "Kazien Academy (formerly known as Birdseye Boys Ranch and Birdseye RTC) is a behavior-modification program that opened in 1989."
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/kaizen-academy-birdseye-boys-ranch/",
+    "quote": "Around 2014, the program was renamed as Birdseye RTC, and the program was moved to a new location about 2 miles away."
+   }
+  ],
+  "note": "Drawn backwards: the program opened in 1989 as Birdseye Boys Ranch and later became Birdseye RTC when it moved about 2 miles. Breaking Code Silence says 'around 2014', but another summary of the same material says about 2009, so no year is given."
+ },
+ {
+  "key": "camp-elliott>talisman-school",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "No evidence of a program named Camp Elliott. Talisman School Inc is listed at 601 Camp Elliott Road, Black Mountain, so the link looks like a shared address rather than a rename. Talisman's day school came from New Leaf NC in 2010 (see that key)."
+ },
+ {
+  "key": "casa-by-the-sea>come-back-youth-services",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Mexican authorities closed Casa by the Sea on September 10, 2004. No source found mentions 'Come Back Youth Services' or any link between it and Casa by the Sea."
+ },
+ {
+  "key": "chrysalis-academy>chrysalis-therapeutic-boarding-school",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Chrysalis (Eureka, MT) was founded in 1998 and is now run by Embark Behavioral Health as 'Chrysalis Therapeutic Boarding School' (InnerChange Chrysalis, LLC). No source dates the name change or the Embark acquisition. It looks like a descriptor change rather than a real rename."
+ },
+ {
+  "key": "clearview-horizon>clearview-girls-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "The current site and branding are 'Clearview Horizon' (Clearview Horizon Girls Academy), and a search summary said it was 'formerly known as Clearview Girls Academy'. That suggests Clearview Girls Academy is the earlier name, but no verbatim source or year was found. 'Clearview Horizon Inc' is also the corporate name. Looked backwards to the researcher, but with no quoted source; order left as drawn."
+ },
+ {
+  "key": "copper-canyon-academy>sedona-sky-academy",
+  "year": 2014,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sedona_Sky_Academy",
+    "quote": "Subsequently, Copper Canyon Academy closed on April 7, 2014."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Sedona_Sky_Academy",
+    "quote": "Tammy Behrmann and Darren Prince, in association with Family Help & Wellness, opened Sedona Sky Academy on April 23, 2014, under the legal business name of Lake Montezuma RTC, LLC."
+   }
+  ],
+  "note": "Aspen closed Copper Canyon Academy on April 7, 2014. Its original founders, with Family Help & Wellness, reopened the Rimrock campus as Sedona Sky Academy on April 23, 2014."
+ },
+ {
+  "key": "daytop-village>samaritan-daytop-village",
+  "year": 2015,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Daytop",
+    "quote": "In late 2015, Daytop Village merged with Samaritan Village, another 50+ year old health and human services nonprofit organization with a specialty in drug and alcohol treatment."
+   },
+   {
+    "url": "https://www.samaritanvillage.org/our-history/",
+    "quote": "2014 – Signs a merger agreement with Daytop Village and agrees to merge names to: Samaritan Daytop Village."
+   }
+  ],
+  "note": "Daytop Village merged with Samaritan Village: the merger agreement and name change were agreed in 2014 (company history) and the merger took effect in late 2015 (Wikipedia). Year could be given as 2014 or 2015."
+ },
+ {
+  "key": "diamond-ranch-academy>olympus-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/olympus-academy/",
+    "quote": "Olympus Academy was a WWASP -affiliated behavior-modification program that reportedly opened in 2013."
+   }
+  ],
+  "note": "This is not a rename. Olympus Academy (2013-2017, Ahquin family) used a campus at 1500 E 2700 S, Hurricane that Diamond Ranch Academy had used before, while Diamond Ranch kept operating until 2023. Diamond Ranch's actual successor name after its 2023 closure was a proposed 'RAFA Academy' (KSL, martyg substack), which does not match this edge."
+ },
+ {
+  "key": "discovery-academy>oasis-ascent",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "No source links the two names. Discovery Academy (105 N 500 W, Provo) is listed as closed in 2018 and OASIS Ascent as opened in 2021. OASIS Ascent now lists an address nearby at 122 N 600 W, Provo, which suggests a successor but does not prove one."
+ },
+ {
+  "key": "discovery-ranch-for-girls>discovery-ranch",
+  "year": 2013,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/discovery-ranch-for-girls/",
+    "quote": "In 2013, the Girls' program moved to its current location in Cedar City, UT."
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/discovery-ranch-for-girls/",
+    "quote": "Discovery Ranch for Girls began as a part of Discovery Ranch, which is located in Mapleton, UT."
+   }
+  ],
+  "note": "This was a split, not a rename. The girls' side of the coed Discovery Ranch (Mapleton) moved to Cedar City in 2013 as Discovery Ranch for Girls, now called Discovery Ranch South. Discovery Ranch is the older name, so the board's arrow is reversed."
+ },
+ {
+  "key": "eagle-point-christian-academy>gulf-coast-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/news/bethelboysindex.html",
+    "quote": "Bethel Academy name changes to Eagle Point Christian Academy - 2/14/05"
+   },
+   {
+    "url": "https://www.helpsavetroubledteens.com/gulf-coast-academy-mississippi.html",
+    "quote": "Previous names: Bethel Boys Home, Bethel Boys Academy, Eagle Point Christian Academy, Respect Camp, Cambridge Academy, Pine View Academy (no year given)"
+   }
+  ],
+  "note": "Bethel Boys Academy became Eagle Point Christian Academy in February 2005 (Sun Herald headline); the Lucedale campus later ran as Gulf Coast Academy (survivor accounts place students there by 2006-2008), but no source dates the switch to Gulf Coast Academy, and it may have passed through Respect Camp / Cambridge / Pine View names. Order looks right."
+ },
+ {
+  "key": "eckerd-youth-alternatives>eckerd-connects",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://eckerd.org/about-us/our-history/",
+    "quote": "1998 Eckerd Rebrands Eckerd officially becomes Eckerd Youth Alternatives, Inc."
+   },
+   {
+    "url": "https://eckerd.org/eckerd-kids-continues-grow-workforce-services-south-carolina/",
+    "quote": "The organization's president and CEO, David Dennis, announced internally on Thursday March 16, 2017 that Eckerd Kids has received a substantial grant from the Workforce Innovation and Opportunity Act (WIOA), allowing them to elevate their work in the South Carolina and Lower Savannah region."
+   }
+  ],
+  "note": "The order is right: Eckerd Youth Alternatives (1998 name, also 'Eckerd Kids') later became Eckerd Connects. The organization still called itself Eckerd Kids in March 2017, so the change came after that, but no dated source for the rebrand was found. The legal name is still Eckerd Youth Alternatives, Inc."
+ },
+ {
+  "key": "embark-at-the-forge>eagle-cove-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://gurianinstitute.com/the-forge-school-leading-edge-residential-school-for-boys/",
+    "quote": "Forge is a new school but its parent organization, the Calo Division of Embark, is a premier agency in the residential treatment space."
+   }
+  ],
+  "note": "Both names are at 5842 Hwy 30, Benton, TN, and Eagle Cove Academy listings point to embarkbh.com. The Forge was described as new in an October 2020 article. No source dates the change or shows which name came first."
+ },
+ {
+  "key": "evangeline-christian-academy>evangelhouse-christian-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20020529010421/http://evangelhouse.com/",
+    "quote": "Copyright © 2001 Evangeline Christian Home for Girls"
+   },
+   {
+    "url": "https://www.allkindsoftherapy.com/news/evangelhouse-30-years-of-excellence",
+    "quote": "Evangelhouse Christian Academy proudly celebrates 30 years of continuous operation since its founding on August 5, 1995."
+   }
+  ],
+  "note": "The order is right, but the earlier name was 'Evangeline Christian Home for Girls'. Archived evangelhouse.com pages use that name through January 2006, show 'Evangel House' beside it from August 2006, and show only 'Evangel House Christian Academy' by January 2010. No source dates the change, so no year is given."
+ },
+ {
+  "key": "family-foundation-school>allynwood-academy",
+  "year": 2013,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Allynwood_Academy",
+    "quote": "In October 2013, the Family Foundation School changed its name to \"Allynwood Academy\", which the school stated was due to a change in program structure."
+   }
+  ],
+  "note": "It was renamed in October 2013, which the school put down to a change in program structure, and it closed in 2014 as enrollment fell amid abuse allegations."
+ },
+ {
+  "key": "fulshear-ranch-academy>fulshear-treatment-to-transition",
+  "year": 2013,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20131013005937/http://fulshearranchacademy.com/",
+    "quote": "Fulshear Ranch Academy is a proud member of InnerChange, the only family of treatment programs dedicated to the study, application, and advancement of treatment approaches designed expressly for adolescent girls and young women."
+   },
+   {
+    "url": "https://web.archive.org/web/20131113031804/http://fulshearranchacademy.com/",
+    "quote": "©2013 Fulshear Ranch Academy, an InnerChange program"
+   }
+  ],
+  "note": "The year comes from archived pages, not a dated statement: the site still says 'Fulshear Ranch Academy' on October 13, 2013, and the November 13, 2013 capture has the 'Treatment to Transition' branding with a 2013 copyright. The program has since become OPI Houston (Embark)."
+ },
+ {
+  "key": "horizon-academy>youth-foundation-success-academy",
+  "year": 2012,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://wwaspsurvivors.com/youth-foundation-closed/",
+    "quote": "The facility operated as Horizon Academy until 2012, when Youth Foundation Inc was established and the facility was re-named Youth Foundation Success Academy."
+   },
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/horizon-academy-northwest-academy/",
+    "quote": "Horizon Academy re-opened in LaVerkin, Utah, on the same property as the Cross Creek Programs."
+   }
+  ],
+  "note": "Horizon Academy left Amargosa Valley, NV for the Cross Creek property in La Verkin in 2011 and was renamed Youth Foundation Success Academy in 2012 (survivor site only). YFSA announced it would cease operations October 13, 2013."
+ },
+ {
+  "key": "innercept>paradigm-treatment-center-coeur-dalene-id",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Innercept (Coeur d'Alene, founded 2004) came under Altior Healthcare, which also owns Paradigm; Innercept is listed as closed, and Paradigm announced a new 32-bed Coeur d'Alene facility in a November 7, 2024 press release (newswire.com) that does not mention Innercept. No source dates or confirms a rename."
+ },
+ {
+  "key": "integrity-house>havenwood-south",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.kuer.org/health-science-environment/2022-03-22/even-after-serious-allegations-heres-why-shutting-down-a-teen-treatment-facility-in-utah-is-no-easy-task",
+    "quote": "The facility stayed open under the same ownership for six months, until someone new bought the business and renamed it Havenwood Academy."
+   }
+  ],
+  "note": "After founder Daniel Taylor was charged in 2013, Integrity House ran for six more months. His former attorney then bought it and renamed it Havenwood Academy, which puts the rename around late 2013 or 2014, but no source gives an exact year. Sources name the successor 'Havenwood Academy', not 'Havenwood South'."
+ },
+ {
+  "key": "ironwood-maine>the-ridge-maine",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.treatmentcentersdirectory.com/Maine/Morrill/ironwood-maine",
+    "quote": "The Ridge RTC Maine farmhouse in Morrill was once a substance use treatment center called Ironwood Maine."
+   },
+   {
+    "url": "https://rehabs.org/ironwood-maine/",
+    "quote": "They shut down in 2023."
+   }
+  ],
+  "note": "Altior Healthcare's Ridge RTC took over the Morrill site of Ironwood Maine, which closed in 2023. No source dates when the Ridge name was adopted; 2023 or 2024 is likely. For comparison, Altior's New Hampshire campus, Shortridge Academy, was rebranded The Ridge in 2023."
+ },
+ {
+  "key": "island-view-rtc>elevations-rtc",
+  "year": 2014,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Elevations_RTC",
+    "quote": "In April 2014, Syracuse RTC, LLC acquired Island View and changed the name to Elevations RTC and absorbed most of its employees."
+   }
+  ],
+  "note": "Aspen Education Group sold Island View RTC in Syracuse, UT in April 2014 to Syracuse RTC, LLC (Family Help & Wellness), which renamed it Elevations RTC."
+ },
+ {
+  "key": "kaizen-academy>birdseye-rtc",
+  "year": 2016,
+  "swapped": true,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/kaizen-academy-birdseye-boys-ranch/",
+    "quote": "She was arrested and the program's name was changed to Kaizen Academy shortly after in 2016."
+   },
+   {
+    "url": "https://strugglingteens.com/artman/publish/KaizenAcademyBN_160205_.shtml",
+    "quote": "Formation Of The Newly Renamed Kaizen Academy Announced"
+   }
+  ],
+  "note": "Drawn backwards: Birdseye RTC was renamed Kaizen Academy in February 2016, after its former director was arrested in 2014 for sexually abusing a resident. The StrugglingTeens announcement is dated February 4, 2016 (the date is in the page, not in the quoted headline)."
+ },
+ {
+  "key": "kansas-industrial-school-for-girls>youth-center-at-beloit",
+  "year": 1974,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Kansas_Industrial_School_for_Girls",
+    "quote": "The school name changed to the Youth Center at Beloit on July 1, 1974."
+   }
+  ],
+  "note": "This was a state renaming of the girls' industrial school (opened 1888) in Beloit, KS."
+ },
+ {
+  "key": "khk-a-pathway-family-center>kids-helping-kids",
+  "year": 2006,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/kids_helping_kids_-_straight_renamed",
+    "quote": "In early 2006, a few months after this segment aired, Pathway Family Center acquired Kids Helping Kids (Straight, Inc. acquired itself)."
+   }
+  ],
+  "note": "The board has this one backwards. Kids Helping Kids was the earlier name. It became 'Kids Helping Kids, A Pathway Family Center' after Pathway acquired it in early 2006, and it closed in late 2008. The only source is a survivor site."
+ },
+ {
+  "key": "kids-of-bergen-county>kids-of-north-new-jersey",
+  "year": 1990,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/kids-centers-of-america/",
+    "quote": "In 1990, 20 Bergen County officials descended on KIDS of Bergen County to investigate abuse. KIDS of Bergen County relocated to 200 Seaview Avenue, Secaucus, New Jersey 07094 and began marketing itself as 'KIDS of North Jersey'."
+   }
+  ],
+  "note": "After the 1990 Bergen County abuse investigation, KIDS moved from Hackensack to a warehouse in Secaucus and renamed itself KIDS of North Jersey. It closed in 1998. The source dates the investigation, not the move itself, so the year is approximate."
+ },
+ {
+  "key": "kids-of-southern-california>straight-southern-california",
+  "year": 1989,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/newspaper__magazine_articles_covering_straight_inc_1976-1993/yorba_linda_ca_straight_1989-1991",
+    "quote": "Yorba Linda, CA, Opened 1989-1990, formerly KIDS"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/KIDS_Centers_of_America",
+    "quote": "It closed in 1989."
+   }
+  ],
+  "note": "KIDS of Southern California (Yorba Linda, opened March 1988, a Miller Newton franchise) closed in 1989 after licensing trouble, and Straight Inc. opened its Southern California program in the same building. The sources are a survivor site and a Wikipedia article flagged as AI-generated."
+ },
+ {
+  "key": "life-line-inc>kids-of-greater-salt-lake",
+  "year": 1990,
+  "swapped": true,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/lifeline-for-youth/",
+    "quote": "KIDS of Greater Salt Lake's license was revoked amid allegations of abuse, negligence, and fraud, and the program closed in 1990."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/KIDS_Centers_of_America",
+    "quote": "In June 1990 the program had its license revoked and closed."
+   }
+  ],
+  "note": "The board has this backwards. KIDS of Greater Salt Lake (opened 1988) lost its license in June 1990 and reopened the same day as Life-line, Inc."
+ },
+ {
+  "key": "lifeline-for-youth>life-line-inc",
+  "year": null,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/lifeline-for-youth/",
+    "quote": "However, it was immediately reopened on the same day as Life-line, Inc."
+   }
+  ],
+  "note": "The program reopened in 1990 as Life-line, Inc. (see the KIDS edge), so Life-Line Inc is the earlier name and LifeLine for Youth the later one. No source dates the switch to 'LifeLine for Youth'."
+ },
+ {
+  "key": "mhy-family-services>mars-home-for-youth",
+  "year": null,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.butlereagle.com/20120820/mars-home-for-youth-changes-name-focus/",
+    "quote": "Mars Home for Youth has changed its name to MHY Family Services to reflect changes in direction at the facility."
+   },
+   {
+    "url": "https://www.butlereagle.com/20120820/mars-home-for-youth-changes-name-focus/",
+    "quote": "In the 1950s, the home was renamed United Presbyterian Home for Children, and then Mars Home for Youth in the 1970s."
+   }
+  ],
+  "note": "The board has this backwards: Mars Home for Youth became MHY Family Services. The year 2012 is the Butler Eagle article's publication date (August 20, 2012, which is also in the URL), not a sentence in the text. The earlier names were United Presbyterian Home for Children (1950s) and Mars Home for Youth (1970s). Year 2012 dropped: no quote contains it."
+ },
+ {
+  "key": "montana-academy>embark-at-flathead-valley",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Montana_Academy",
+    "quote": "Montana Academy closed in 2021 and Embark Behavioral Health now runs a residential treatment center there."
+   }
+  ],
+  "note": "Embark Behavioral Health bought Montana Academy in 2021 and reopened the campus as Embark at Flathead Valley in 2022. The 2022 year comes only from Kids Over Profits' own article, which is circular; Wikipedia confirms only the 2021 closure and the Embark takeover. Year 2022 dropped: no quote contains it."
+ },
+ {
+  "key": "new-beginnings-girls-academy>marvelous-grace-girls-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Survivor sources (1000placesudontwanttobe, Apple podcast summary) say Marvelous Grace Girls Academy in Pace, FL took over the building New Beginnings used before New Beginnings (McNamaras) moved to La Russell, MO after a Florida investigation. That is building reuse, not a rename. No dated quote found; one source lists Marvelous Grace as '(2001-present)'."
+ },
+ {
+  "key": "new-beginnings-girls-academy>rebekah-home-for-girls",
+  "year": null,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.motherjones.com/politics/2011/08/new-bethany-ifb-teen-homes-abuse/",
+    "quote": "New Beginnings and numerous other Christian reform schools trace their lineages to Texas radio evangelist Lester Roloff , who founded the Rebekah Home for Girls in Corpus Christi back in 1967, employing disciplinary tactics that were adopted by dozens of imitators."
+   },
+   {
+    "url": "https://www.motherjones.com/politics/2011/08/new-bethany-ifb-teen-homes-abuse/",
+    "quote": "Rebekah Home eventually closed, and New Beginnings opened in Florida soon after, under the watch of a couple who had worked with Roloff for 35 years."
+   }
+  ],
+  "note": "Board order is backwards: Rebekah Home (Roloff, 1967) came first. New Beginnings opened in Florida 'soon after' Rebekah Home closed, run by former Roloff staff Wiley and Faye Cameron. No exact year is given. It is a successor program rather than a strict rename."
+ },
+ {
+  "key": "new-hope-academy>pacific-coast-academy",
+  "year": 1999,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2001/7/23/19597875/teens-taken-from-samoa-center/",
+    "quote": "In 1999, New Hope closed its doors, reportedly stranding five youths in the South Pacific island nation, located 2,300 miles south of Hawaii."
+   },
+   {
+    "url": "https://www.deseret.com/1999/8/10/19459920/cartisano-back-in-business-outside-u-s-br-he-urges-parents-to-send-teens-to-overseas-camps/",
+    "quote": "Allred was setting up a new program, the Arizona-based Pacific Coast Academy with facilities in Samoa."
+   }
+  ],
+  "note": "This is a successor program rather than a straight rename: New Hope Academy in Samoa (started 1998 with Steve Cartisano) collapsed by February 1999, and people from it set up Pacific Coast Academy in Samoa the same year."
+ },
+ {
+  "key": "new-leaf-academy-of-north-carolina>talisman-school",
+  "year": 2010,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/New_Leaf_Academy",
+    "quote": "A Hendersonville , North Carolina campus of New Leaf Academy was established in 2005 and operated until June 2010."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/New_Leaf_Academy",
+    "quote": "Aspen announced that The Talisman School would open on its campus in August 2010 to enroll youth with Asperger's and other autism spectrum disorders ."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Aspen_Education_Group",
+    "quote": "Aspen announced that The Talisman School would open on its site in August 2010 to enroll youth with autism spectrum disorders ."
+   }
+  ],
+  "note": "Aspen Education Group converted the New Leaf Academy of North Carolina campus into The Talisman School (autism spectrum) in 2010; Wikipedia cites Aspen's press release 'Aspen Education Group Announces Program Conversion, Will Open Talisman School in August 2010'. Board order is right."
+ },
+ {
+  "key": "obsidian-trails-outdoor-schools>obsidian-schools",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.heraldandnews.com/wilderness-camp-death-suit-settled/article_188f0a9a-f98a-5e73-bd78-a83005c645de.html",
+    "quote": "Chris Folsom, general manager of Obsidian Schools, formerly Obsidian Trails, said his program remains committed to helping troubled kids."
+   }
+  ],
+  "note": "Order confirmed: Obsidian Trails became Obsidian Schools after a 15-year-old died on a trip in 2000 and the BLM revoked its permit (December 2000). The Herald and News article (about February 2002) already uses the new name, so the change fell in 2001-early 2002. No exact year is stated."
+ },
+ {
+  "key": "old-west-academy>majestic-ranch-academy",
+  "year": 2007,
+  "swapped": true,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/old-west-academy/",
+    "quote": "Old West Academy was a WWASP-affiliated behavior-modification program which opened in 2007 in the previous location of Majestic Ranch Academy"
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/Old_West_Academy",
+    "quote": "Old West Academy, formerly Majestic Ranch Academy, was a Boarding school located in Randolph, Utah. Founded in 1986, it housed boys and girls with behavioral issues, ages 7 to 14."
+   }
+  ],
+  "note": "The board has this one backwards. Majestic Ranch Academy (founded 1986) was the earlier name. It was rebranded Old West Academy in 2007 with the same program and most of the same staff."
+ },
+ {
+  "key": "paradise-cove>a-better-way-youth-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/paradise-cove/",
+    "quote": "I was at the 'other' one: Robert Louis Stevenson/A Better Way. I was there in '96."
+   }
+  ],
+  "note": "Survivor accounts describe A Better Way Youth Academy as the renamed Robert Louis Stevenson Youth Academy, a separate Samoan WWASP school that ran alongside Paradise Cove in 1996-97. Paradise Cove itself 'operated at least into 2000'. No source says Paradise Cove became A Better Way, so this is likely a sister program, not a rename."
+ },
+ {
+  "key": "peninsula-village>acadia-village",
+  "year": 2009,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://wiki.fornits.com/index.php/The_Village",
+    "quote": "November 2, 2009 it was announced that the facility was sold to Acadia Healthcare in Atlanta."
+   },
+   {
+    "url": "https://wiki.fornits.com/index.php/The_Village",
+    "quote": "In relationship with the sale the facility will change name to 'The Village'."
+   }
+  ],
+  "note": "Acadia Healthcare bought Peninsula Village in November 2009 and renamed it 'The Village' (also called Acadia Village). The only source is the Fornits wiki."
+ },
+ {
+  "key": "peninsula-village>village-behavioral-health-treatment-center",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://wiki.fornits.com/index.php/The_Village",
+    "quote": "November 2, 2009 it was announced that the facility was sold to Acadia Healthcare in Atlanta."
+   }
+  ],
+  "note": "After the 2009 Acadia sale it became 'The Village', and today it operates as Village Behavioral Health Treatment Center. No source dates the switch to the current full name, so no year is given. The order is right."
+ },
+ {
+  "key": "pine-view-christian-academy>bethel-academy-for-girls",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Survivor sources (helpsavetroubledteens, wwaspsurvivors) list 'Pine View Academy' as a former name of Bethel Boys Academy in Lucedale, MS, not of Bethel Academy for Girls in Petal, which the AP says opened in 1999. D&B lists a Pine View Christian Academy, Inc in Richton, MS. The link and its order are unconfirmed."
+ },
+ {
+  "key": "remuda-ranch-programs-for-anorexia-and-bulimia>remuda-ranch-programs",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "These look like a long and a short form of the same name for the Wickenburg eating disorder program, not a rename. No source dates when the long form was dropped. The Meadows acquired Remuda Ranch in 2012."
+ },
+ {
+  "key": "remuda-ranch-programs-for-anorexia-and-bulimia>the-meadows-ranch",
+  "year": 2018,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://www.prweb.com/releases/remuda_ranch_at_the_meadows_becomes_the_meadows_ranch/prweb15293270.htm",
+    "quote": "WICKENBURG, Ariz. (PRWEB) March 12, 2018"
+   },
+   {
+    "url": "https://www.themeadows.com/blog/remuda-ranch-meadows-becomes-meadows-ranch/",
+    "quote": "Since its acquisition by The Meadows in 2012, Remuda Ranch has programmatically evolved with a leading-edge approach to eating disorder treatment that is integrated with trauma services."
+   }
+  ],
+  "note": "The Meadows acquired Remuda Ranch in 2012 and renamed it The Meadows Ranch in March 2018. The press release is headlined 'Remuda Ranch at The Meadows Becomes The Meadows Ranch'."
+ },
+ {
+  "key": "rivendell-of-utah>copper-hills-youth-center",
+  "year": 1997,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/rivendell-of-utah/",
+    "quote": "Rivendell was ordered to close in May of 1997"
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/rivendell-of-utah/",
+    "quote": "Rivendell of Utah (1986-1997) West Jordan, UT"
+   }
+  ],
+  "note": "Rivendell of Utah was ordered to close in May 1997. Copper Hills Youth Center 'immediately opened in its place' at the same address (5899 Rivendell Dr) with many of the same staff, so it is widely seen as a rebrand. The source is an advocacy site."
+ },
+ {
+  "key": "rivendell-psychiatric-hospital>rivendell-of-arkansas",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Rivendell of Arkansas (Benton) is a separate hospital that has operated since 1985 and was bought by Universal Health Services in 2004. Nothing shows it was ever renamed from 'Rivendell Psychiatric Hospital'. It looks like a sister facility of the same brand, not a rename."
+ },
+ {
+  "key": "rivendell-psychiatric-hospital>rivendell-of-utah",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/rivendell-of-utah/",
+    "quote": "Rivendell of Utah (1986-1997) West Jordan, UT"
+   }
+  ],
+  "note": "Sources treat 'Rivendell Psychiatric Hospital (of Utah)' as another name for Rivendell of Utah, which opened in 1986, not as an earlier name. No dated rename was found, so this may be an alias rather than a rename."
+ },
+ {
+  "key": "schrom-boys-home-hawks-landing>schrom-boys-home",
+  "year": 2018,
+  "swapped": true,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.allkindsoftherapy.com/hawks-landing-celebrates-15-years-of-community-integration-for-teen-boys",
+    "quote": "Hawk's Landing was founded in 2006 as Schrom Therapeutic Home for Boys and was later renamed in 2018 when the founder retired."
+   }
+  ],
+  "note": "The board has this backwards. It opened in 2006 as Schrom's (Therapeutic) Home for Boys and was renamed Hawk's Landing in 2018 when the founder retired."
+ },
+ {
+  "key": "second-nature-blue-ridge>blue-ridge-therapeutic-wilderness",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/BlueRidgeTherapeuticWildernessBN_160727.shtml",
+    "quote": "As of July 19th Second Nature Blue Ridge is doing business as Blue Ridge Therapeutic Wilderness."
+   }
+  ],
+  "note": "Second Nature Blue Ridge (opened 2002) left the Second Nature group and became Blue Ridge Therapeutic Wilderness on July 19, 2016. The quote has no year; the year comes from the announcement's posting date, July 27, 2016, which is also in its URL (160727). Year 2016 dropped: no quote contains it."
+ },
+ {
+  "key": "second-nature-uintas>second-nature",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/second-nature-uintas/",
+    "quote": "In September 2014, the owners of Second Nature decided to reorganize our programs into two companies, Second Nature Entrada & Cascades and Second Nature Uintas & Blue Ridge."
+   }
+  ],
+  "note": "In the September 2014 reorganization the Entrada/Cascades side later became Evoke, which left the Uintas program as the plain 'Second Nature' brand. No source dates the change from 'Second Nature Uintas' to 'Second Nature'."
+ },
+ {
+  "key": "seneca-ranch>carolina-springs-academy",
+  "year": 2013,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/carolina-springs-academy-seneca-ranch/",
+    "quote": "As of 2013, the program has been reopened and currently operates under the name Seneca Ranch, still under the direction of Narvin Lichfield."
+   },
+   {
+    "url": "https://wwaspsurvivors.com/wwasp-programs/seneca-ranch/",
+    "quote": "Narvin appears to have gotten his start with WWASP in 1998 when he opened Carolina Springs Academy, functioning as both owner and Administrator."
+   }
+  ],
+  "note": "The board has this one backwards. Carolina Springs Academy opened in 1998 and lost its license in 2009, reopening briefly as Magnolia Hills Christian School. Narvin Lichfield was running it as Seneca Ranch by 2013, so 2013 is the latest the change can have happened, not a firm date. The only source is a survivor site."
+ },
+ {
+  "key": "solstice-east>magnolia-mill-school",
+  "year": 2024,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://www.northcarolinahealthnews.org/2025/06/14/asheville-academy-trails-carolina-owner-faced-financial-upheaval-before-deaths/",
+    "quote": "The program was licensed for 90 beds but had only four residents in August 2024, by which point it had rebranded as Magnolia Mill School, according to North Carolina Division of Health Services Regulation records and internal newsletters."
+   }
+  ],
+  "note": "Family Help & Wellness rebranded Solstice East as Magnolia Mill School in 2024 while enrollment fell. Asheville Academy for Girls absorbed it in early 2025."
+ },
+ {
+  "key": "st-johns-youth-academy>st-augustine-youth-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "St. Johns Youth Academy (Sequel TSI) on Avenue D was shut down by Florida DJJ in October 2022 after a riot and abuse allegations. St. Augustine Youth Academy now runs at 4500 Avenue D under Youth Opportunity Investments, so the order looks right. No source dates the reopening under the new name."
+ },
+ {
+  "key": "stillwater-academy>turnabout-academy",
+  "year": 2001,
+  "swapped": true,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/turnabout-stillwater-academy/",
+    "quote": "It was originally opened under the name “Turnabout Academy”, but its name was changed to “Stillwater Academy” in 2001 in order to lessen confusion with Turn-About Ranch , another behavior-modification program."
+   }
+  ],
+  "note": "Board order is backwards: Turnabout Academy (South Jordan, UT, a Straight spin-off founded 1988) was renamed Stillwater Academy in 2001 to avoid confusion with Turn-About Ranch. The source is Breaking Code Silence, a survivor advocacy group."
+ },
+ {
+  "key": "stone-mountain-school>asheville-academy-for-girls",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Asheville Academy's listed address (126 Camp Elliott Rd) is the address Stone Mountain School used in 2011-2013, and Stone Mountain School still operates at 601 Camp Elliott Rd. That suggests Asheville Academy took over the old Stone Mountain campus after Aspen's 2013 restructuring, not a rename. No dated source found. Aspen announced in July 2013 that Stone Mountain School and Talisman Academy would close (Wikipedia, Aspen Education Group)."
+ },
+ {
+  "key": "stone-mountain-school>camp-elliott",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "No source found showing a program called Camp Elliott. Camp Elliott Road is the street in Black Mountain, NC where Stone Mountain School (126, later 601 Camp Elliott Rd), Talisman School Inc (601 Camp Elliott Rd) and Asheville Academy (126 Camp Elliott Rd) sit, so this node is probably a place name rather than a program name. It needs a manual look."
+ },
+ {
+  "key": "straight-inc-cincinnati>kids-helping-kids",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/kids_helping_kids_-_straight_renamed",
+    "quote": "In the early 1990's (approx 1993), Kids Helping Kids moved into the old Cincinnati Straight, Inc. building which is in Milford, Ohio (Cincinnati suburb)."
+   }
+  ],
+  "note": "This was not a direct rename. Kids Helping Kids ran in Hebron, KY through the 1980s and moved into the former Straight Inc Cincinnati building in Milford around 1993. Only a survivor site gives the date, and only as 'approx 1993'."
+ },
+ {
+  "key": "straight-inc-michigan>pathway-family-cener",
+  "year": 1993,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "http://survivingstraightinc.com/pathway_family_center_-_straight_renamed",
+    "quote": "Straight Plymouth, MI closed in 1993 then reopened 3 weeks later as Pathway Family Center"
+   }
+  ],
+  "note": "Straight's Plymouth, MI program closed in 1993 and reopened three weeks later as Pathway Family Center (later in Southfield), which closed on January 30, 2009. The only source is a survivor site."
+ },
+ {
+  "key": "straight-inc>drug-free-america-foundation",
+  "year": 1995,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Drug_Free_America_Foundation",
+    "quote": "founded in 1976 by former US Ambassador Mel Sembler, his wife Betty Sembler (née Schlesinger), and Joseph Zappala as Straight, Inc., renamed The Straight Foundation, Inc. in 1985 and Drug Free America Foundation in 1995."
+   }
+  ],
+  "note": "Straight, Inc. became The Straight Foundation, Inc. in 1985 and Drug Free America Foundation in 1995. The board's 1993 end year for Straight is when its programs stopped; that date was not checked here."
+ },
+ {
+  "key": "teen-challenge-of-acadiana-inc>evangeline-christian-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20120103174212/http://evangelhouse.com/",
+    "quote": "Evangelhouse® and the Lifeleaf TM approach are registered marks of the Live Oak Behavioral Health Group, LLC used under license by Teen Challenge of Acadiana"
+   },
+   {
+    "url": "https://www.causeiq.com/organizations/evangel-house-christian-academy,721323576/",
+    "quote": "Teen Challenge of Acadiana Evangel House Christian Academy; Evangel House"
+   }
+  ],
+  "note": "Not a rename: Teen Challenge of Acadiana (formed 1995) is the nonprofit that still runs the school, and the school names are trade names (dba) under it. This edge is really operator to program."
+ },
+ {
+  "key": "the-goodale-school>montfort-hall",
+  "year": 2020,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.allkindsoftherapy.com/the-closing-of-goodale",
+    "quote": "In August 2020, Monarch a large non-profit providing mental health and human services throughout the state was convinced by a few of the Board members from the previous program to apply for a new License to open a therapeutic boarding school for the same population that had been served before."
+   }
+  ],
+  "note": "Board order looks backwards: Montford Hall (boys' substance-use boarding school, 75 Zillicoa St, Asheville) came first. The state closed it, and Monarch opened The Goodale School on a new license in August 2020 (press release Nov 11, 2020); Goodale closed in 2023. US News still lists Goodale under a 'montford-hall' URL. The source says 'the previous program' without naming Montford Hall. Note the board spells it 'Montfort'."
+ },
+ {
+  "key": "the-meadows-ranch>remuda-ranch-programs",
+  "year": 2018,
+  "swapped": true,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://www.prweb.com/releases/remuda_ranch_at_the_meadows_becomes_the_meadows_ranch/prweb15293270.htm",
+    "quote": "WICKENBURG, Ariz. (PRWEB) March 12, 2018"
+   },
+   {
+    "url": "https://www.themeadows.com/blog/remuda-ranch-meadows-becomes-meadows-ranch/",
+    "quote": "Since its acquisition by The Meadows in 2012, Remuda Ranch has programmatically evolved with a leading-edge approach to eating disorder treatment that is integrated with trauma services."
+   }
+  ],
+  "note": "The board has this one backwards. Remuda Ranch was the earlier name. The Meadows bought it in 2012, and a press release dated March 12, 2018 announced that 'Remuda Ranch at The Meadows Becomes The Meadows Ranch'."
+ },
+ {
+  "key": "three-springs-new-beginning>sequel-tsi-owens-cross-roads",
+  "year": 2009,
+  "swapped": false,
+  "confidence": "medium",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Sequel_Youth_and_Family_Services",
+    "quote": "In September 2009, Sequel Youth and Family Services acquired Three Springs Inc. (TSI), an operator of youth behavioral health facilities based in Huntsville, Alabama."
+   }
+  ],
+  "note": "Sequel acquired Three Springs Inc. in September 2009, and its Alabama programs, including Three Springs New Beginnings, were renamed 'Sequel TSI'. The year is the acquisition; no source dates the Owens Cross Roads rename itself."
+ },
+ {
+  "key": "three-springs-paint-rock-valley>sequel-tsi-paint-rock-valley",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://strugglingteens.com/artman/publish/printer_SequelYouthFamilyBN_010210.shtml",
+    "quote": "Sequel Youth and Family Services, a nationally recognized leader in youth services, announces the acquisition of privately held Three Springs, Inc."
+   }
+  ],
+  "note": "Sequel bought Three Springs (announced December 30, 2009) and ran it as Sequel TSI. The press release does not date the Paint Rock Valley name change itself. The campus closed on May 31, 2011. Year 2009 dropped: no quote contains it."
+ },
+ {
+  "key": "trails-momentum>momentum",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "WLOS (2025) calls the Henderson County young-adult program 'Momentum, also known as Trails Academy', managed by Wilderness Training & Consulting (Family Help & Wellness). The 'Trails' branding was probably dropped after the 2024 Trails Carolina death and license revocation, but no dated source was found."
+ },
+ {
+  "key": "truecore-behavioral-solutions>g4s-youth-services-llc",
+  "year": 2017,
+  "swapped": true,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://www.prnewswire.com/news-releases/truecore-behavioral-solutions-announces-new-name-and-corporate-ownership-300482755.html",
+    "quote": "TAMPA, Fla., June 30, 2017 /PRNewswire/ -- TrueCore Behavioral Solutions, formerly G4S Youth Services, announces today the formal change of name and ownership of the multi-state operator of at-risk-youth residential facilities and outpatient services."
+   }
+  ],
+  "note": "The board has this backwards. G4S sold its Youth Services subsidiary to an investment group that included its management (BHSB Holdings), and in June 2017 it was renamed TrueCore Behavioral Solutions."
+ },
+ {
+  "key": "utah-youth-village>utah-girls-village",
+  "year": 1989,
+  "swapped": true,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://youthvillage.org/wp-content/uploads/2020/07/Policies-and-Procedures.pdf",
+    "quote": "Utah Girls Village's name was changed to Utah Youth Village at the end of 1989 due to the addition of boys to the Village's program."
+   }
+  ],
+  "note": "Drawn backwards: Utah Girls' Village (founded 1969) became Utah Youth Village at the end of 1989, when it began taking boys. A search summary gave 1988 from another source that could not be verified; the organization's own policy manual says 1989."
+ },
+ {
+  "key": "vantage-point>threepeaks-ascent-rtc",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [],
+  "note": "Aspiro (Mt. Pleasant, UT), which ran Vantage Point, rebranded as ThreePeaks: aspiroadventure.com/who-we-help/vantage-point/ now 301-redirects to threepeakstreatment.com. No dated statement found, and the link between Vantage Point and the Beryl/Enterprise 'Ascent' program is not confirmed."
+ },
+ {
+  "key": "walkabout-therapeutic-expeditions>outback-therapeutic-expeditions",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.deseret.com/2004/9/21/19851594/walkabout-therapeutic-of-lehi-changes-its-name/",
+    "quote": "Walkabout Therapeutic Expeditions of Lehi, a program of Aspen Education Group, has changed its name to Outback Therapeutic Expeditions."
+   }
+  ],
+  "note": "Aspen Education Group renamed the program to avoid confusion or trademark claims from another Utah wilderness program using 'walkabout'. The quote itself has no year; the year is the September 21, 2004 date of the Deseret News article. The program closed on June 15, 2023. Year 2004 dropped: no quote contains it."
+ },
+ {
+  "key": "west-ridge-academy>utah-boys-ranch",
+  "year": 2005,
+  "swapped": true,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://archive.sltrib.com/article.php?id=3531870&itype=CMSID",
+    "quote": "Rebranded as West Ridge Academy in 2005, the school is applying to become a charter school named Eagle Summit Academy, which would receive public funding on a per-student basis."
+   },
+   {
+    "url": "https://en.wikipedia.org/wiki/West_Ridge_Academy",
+    "quote": "In early 2005, it opened new, separate facilities for girls and changed its name to West Ridge Academy."
+   }
+  ],
+  "note": "Board order is backwards: Utah Boys Ranch was renamed West Ridge Academy in early 2005 when it opened separate facilities for girls."
+ },
+ {
+  "key": "westwood-boys-ranch>westwood-program",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://meridell.com/about-us/our-history/",
+    "quote": "The 300-acre campus opened for the adolescent boys ranch program in Liberty Hill & named Westwood program."
+   }
+  ],
+  "note": "Meridell's timeline puts this in 1967: the Liberty Hill boys ranch opened and was named the Westwood program. That reads as a boys ranch program named Westwood from the start, not a later rename, so no rename year is given."
+ },
+ {
+  "key": "whetstone-academy>maple-hall-academy",
+  "year": null,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://web.archive.org/web/20231204003656/https://maplehallacademy.com/",
+    "quote": "Founded in 2021, Maple Hall Academy is a therapeutic boarding school nestled in the Shenandoah Valley set against the Blue Ridge Mountains of Virginia"
+   },
+   {
+    "url": "https://whetstoneacademy.com/",
+    "quote": "Founded in 2011, Whetstone Academy is a CARF and COGNIA accredited therapeutic boarding school"
+   }
+  ],
+  "note": "Probably not a rename: Whetstone Academy (South Carolina, 2011) still runs under its own name, and Maple Hall Academy was a separate Virginia school founded in 2021 on the same website template, whose domain is now parked. They look like sister programs with shared leadership (John Singleton), so this edge may be an affiliation, not a rename."
+ },
+ {
+  "key": "woodward-academy>georgia-military-school",
+  "year": 1966,
+  "swapped": true,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Woodward_Academy",
+    "quote": "Woodward Academy was founded in 1900 as Georgia Military Academy. Originally an all-male school, in 1964 it became coeducational and was renamed Woodward Academy in 1966."
+   }
+  ],
+  "note": "Likely a board mix-up: the Woodward Academy that was once Georgia Military Academy is the College Park, GA prep school, renamed in 1966, so Georgia Military came first (swapped). The node here is Woodward Academy in Woodward, IA (YSI/Sequel/Vivant), which has no known Georgia Military connection. The edge probably should be removed."
+ },
+ {
+  "key": "youth-center-at-beloit>beloit-juvenile-correctional-facility",
+  "year": 1997,
+  "swapped": false,
+  "confidence": "high",
+  "sources": [
+   {
+    "url": "https://en.wikipedia.org/wiki/Kansas_Industrial_School_for_Girls",
+    "quote": "The center's name officially changed for the last time to The Beloit Juvenile Correctional Facility on July 1, 1997."
+   }
+  ],
+  "note": "This was the last state renaming. The state closed the facility in 2009 and moved its residents to the Kansas Juvenile Correctional Complex in Topeka."
+ },
+ {
+  "key": "youth-foundation-success-academy>three-points-center",
+  "year": 2014,
+  "swapped": false,
+  "confidence": "low",
+  "sources": [
+   {
+    "url": "https://www.breakingcodesilence.org/three-points-center/",
+    "quote": "Three Points Center is a WWASP-affiliated behavior modification that was founded in 2014"
+   },
+   {
+    "url": "https://www.breakingcodesilence.org/three-points-center/",
+    "quote": "The program was originally located in the former location of Cross Creek Manor"
+   },
+   {
+    "url": "https://wwaspsurvivors.com/youth-foundation-closed/",
+    "quote": "as of October 13th 2013, Youth Foundation Success Academy (YFSA) will be ceasing operations."
+   }
+  ],
+  "note": "Not a documented rename: YFSA closed October 2013, and Three Points Center was founded in 2014 on the same former Cross Creek Manor campus (moved to Hurricane in 2018). Successor on the same site, not a proven rebrand."
+ }
+]

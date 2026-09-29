@@ -89,5 +89,19 @@ list($nodes, $edges) = kop_network_map_apply_rename_flips(
 $check('a swap reverses the rename line only', $edges[0]['source'] === 'kids' && $edges[0]['target'] === 'khk' && $edges[1]['source'] === 'khk');
 $check('and moves "rebranded" to the name that is now earlier', $nodes[0]['status'] === 'closed' && $nodes[1]['status'] === 'rebranded', json_encode($nodes));
 
+echo "-- Researched years --\n";
+$cands = kop_network_renames_candidates();
+$check('the researched years load, one per rename line at most', count($cands) > 0 && !array_diff_key($cands, $by), count($cands) . ' candidates');
+$cc = $cands['copper-canyon-academy>sedona-sky-academy'] ?? null;
+$check('Copper Canyon -> Sedona Sky: 2014 from the sources, order as drawn', $cc && $cc['year'] === 2014 && !$cc['swapped']);
+$bad = 0;
+foreach ($cands as $c) {
+    if (!$c['year']) continue;
+    $q = implode(' ', array_column($c['sources'], 'quote'));
+    if (strpos($q, (string) $c['year']) === false) $bad++;
+    foreach ($c['sources'] as $src) if (stripos($src['url'], 'kidsoverprofits.org') !== false) $bad++;
+}
+$check('every researched year is in a quote, and none cites this site', $bad === 0, $bad . ' bad');
+
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);

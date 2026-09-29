@@ -56,6 +56,25 @@ if (!function_exists('kop_network_renames_base_years')) {
     }
 }
 
+if (!function_exists('kop_network_renames_candidates')) {
+    /**
+     * Researched rename years, key => candidate (year, swapped, confidence,
+     * sources [{url, quote}], note); scripts/build-rename-candidates.js
+     * writes js/data/network/rename-candidates.json. Empty when missing.
+     */
+    function kop_network_renames_candidates() {
+        static $memo = null;
+        if ($memo !== null) return $memo;
+        $path = trailingslashit(get_stylesheet_directory()) . 'js/data/network/rename-candidates.json';
+        $list = file_exists($path) ? json_decode((string) file_get_contents($path), true) : null;
+        $memo = array();
+        foreach (is_array($list) ? $list : array() as $c) {
+            if (!empty($c['key'])) $memo[(string) $c['key']] = $c;
+        }
+        return $memo;
+    }
+}
+
 if (!function_exists('kop_network_renames_decisions')) {
     /** "earlier>later" => array('decision' => saved|skipped, 'year', 'swapped', 'by', 'at'). */
     function kop_network_renames_decisions() {
@@ -312,11 +331,18 @@ if (!function_exists('kop_network_renames_page')) {
         $map = function_exists('kop_network_map_page_url') ? kop_network_map_page_url() : home_url('/network-map/');
         $base = kop_network_renames_base_years($graph ?: array());
         $decisions = kop_network_renames_decisions();
+        $research = kop_network_renames_candidates();
         $now = array_merge($base, kop_network_renames_apply_years($base, $decisions));
         $rows = array();
         foreach (kop_network_renames_list($graph ?: array(), $base) as $r) {
             $a = kop_network_renames_assess($r);
             $d = $decisions[$r['key']] ?? array();
+            $c = $research[$r['key']] ?? null;
+            // A sourced year beats the guess from the board's own years.
+            if ($c && !empty($c['year'])) {
+                $a['suggest'] = (int) $c['year'];
+                $a['why'] = 'research';
+            }
             $link = function ($side) use ($map) {
                 $side['mapUrl'] = $map . '#open=' . rawurlencode($side['id']);
                 $side['pageUrl'] = $side['facilityId'] && function_exists('kop_facility_page_url') ? kop_facility_page_url($side['facilityId']) : '';
@@ -332,12 +358,25 @@ if (!function_exists('kop_network_renames_page')) {
                 'why' => $a['why'],
                 'decision' => (string) ($d['decision'] ?? ''),
                 'year' => (int) ($d['year'] ?? 0),
-                'swapped' => !empty($d['swapped']),
+                // Undecided: start the way the research says the names go.
+                'swapped' => $d ? !empty($d['swapped']) : !empty($c['swapped']),
+                'research' => $c ? array(
+                    'year' => !empty($c['year']) ? (int) $c['year'] : null,
+                    'swapped' => !empty($c['swapped']),
+                    'confidence' => (string) ($c['confidence'] ?? 'low'),
+                    'sources' => array_values(array_filter((array) ($c['sources'] ?? array()), function ($x) { return !empty($x['url']); })),
+                    'note' => (string) ($c['note'] ?? ''),
+                ) : null,
             );
         }
         // Problems first, then the rest, by name.
-        usort($rows, function ($x, $y) {
-            return (count($y['flags']) <=> count($x['flags'])) ?: strcasecmp($x['earlier']['name'], $y['earlier']['name']);
+        // Sourced years first (strongest first), then problems, then by name.
+        $rank = array('high' => 0, 'medium' => 1, 'low' => 2);
+        $score = function ($r) use ($rank) {
+            return $r['research'] && $r['research']['year'] ? $rank[$r['research']['confidence']] ?? 2 : 3;
+        };
+        usort($rows, function ($x, $y) use ($score) {
+            return ($score($x) <=> $score($y)) ?: (count($y['flags']) <=> count($x['flags'])) ?: strcasecmp($x['earlier']['name'], $y['earlier']['name']);
         });
         $config = array(
             'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -361,6 +400,7 @@ if (!function_exists('kop_network_renames_page')) {
                     <button type="button" data-tab="saved" aria-selected="false">Saved <span></span></button>
                     <button type="button" data-tab="skipped" aria-selected="false">Not a rename <span></span></button>
                 </div>
+                <button type="button" class="button button-primary kop-ren__bulk" hidden></button>
                 <span class="kop-ren__status" role="status" aria-live="polite"></span>
             </div>
             <div class="kop-ren__list"></div>
@@ -395,6 +435,15 @@ if (!function_exists('kop_network_renames_page')) {
             .kop-ren__hint { color: #50575e; }
             .kop-ren__error { color: #b32d2e; font-weight: 600; }
             .kop-ren__done { font-weight: 600; }
+            .kop-ren__research { margin: 12px 0 0; padding: 10px 12px; background: #f0f6fc; border-radius: 6px; }
+            .kop-ren__research h3 { margin: 0 0 6px; font-size: 13px; }
+            .kop-ren__sources { margin: 6px 0; padding: 0; list-style: none; }
+            .kop-ren__sources li { margin: 4px 0; padding: 6px 10px; background: #fff; border-radius: 4px; }
+            .kop-ren__sources q { font-style: italic; }
+            .kop-ren__badge { padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #f0f0f1; }
+            .kop-ren__badge.is-high { background: #d7f0dd; color: #14532d; }
+            .kop-ren__badge.is-medium { background: #fff3cd; color: #6b4e00; }
+            .kop-ren__badge.is-low { background: #fbe3e4; color: #7a1c1f; }
             .kop-ren__empty { padding: 24px; background: #fff; border: 1px dashed #c3c4c7; border-radius: 6px; text-align: center; }
         </style>
         <script>
@@ -402,6 +451,7 @@ if (!function_exists('kop_network_renames_page')) {
             var C = <?php echo wp_json_encode($config); ?>;
             var list = document.querySelector('.kop-ren__list');
             var status = document.querySelector('.kop-ren__status');
+            var bulk = document.querySelector('.kop-ren__bulk');
             var tab = 'review';
             var rows = C.rows;
             var years = C.years;
@@ -489,6 +539,8 @@ if (!function_exists('kop_network_renames_page')) {
                     c.appendChild(flags);
                 }
 
+                if (r.research) c.appendChild(researchBox(r.research));
+
                 var actions = el('div', 'kop-ren__actions');
                 if (r.decision === 'saved') {
                     actions.appendChild(el('span', 'kop-ren__done', 'Saved: renamed in ' + r.year + (swapped ? ' (order swapped)' : '') + '. On the map now.'));
@@ -522,11 +574,39 @@ if (!function_exists('kop_network_renames_page')) {
                 skip.type = 'button';
                 skip.addEventListener('click', function () { save([{ key: r.key, decision: 'skip' }]); });
                 actions.appendChild(skip);
-                if (r.suggest && !swapped) actions.appendChild(el('span', 'kop-ren__hint', 'Suggested from ' + r.why + '; check it.'));
+                if (r.suggest && r.why === 'research') actions.appendChild(el('span', 'kop-ren__hint', 'Year from the sources above; check the quote.'));
+                else if (r.suggest && !swapped) actions.appendChild(el('span', 'kop-ren__hint', 'Suggested from ' + r.why + '; check it.'));
+                if (r.research && r.research.swapped && !r.decision) actions.appendChild(el('span', 'kop-ren__hint', 'The sources say the board had these the wrong way round, so the order is already swapped.'));
                 if (r.flags.indexOf('reversed') !== -1 && !swapped) actions.appendChild(el('span', 'kop-ren__hint', 'Probably drawn backwards: press Swap order.'));
                 if (r.error) actions.appendChild(el('span', 'kop-ren__error', r.error));
                 c.appendChild(actions);
                 return c;
+            }
+
+            function researchBox(x) {
+                var box = el('div', 'kop-ren__research');
+                var h = el('h3', '', x.year ? 'Research: renamed in ' + x.year + ' ' : 'Research: no year found ');
+                if (x.year) h.appendChild(el('span', 'kop-ren__badge is-' + x.confidence, x.confidence + ' confidence'));
+                box.appendChild(h);
+                if (x.sources.length) {
+                    var ul = el('ul', 'kop-ren__sources');
+                    x.sources.forEach(function (s) {
+                        var li = el('li');
+                        if (s.quote) { li.appendChild(el('q', '', s.quote)); li.appendChild(document.createTextNode(' ')); }
+                        var a = el('a', '', hostOf(s.url)); a.href = s.url; a.target = '_blank'; a.rel = 'noopener nofollow';
+                        li.appendChild(a);
+                        ul.appendChild(li);
+                    });
+                    box.appendChild(ul);
+                }
+                if (x.note) box.appendChild(el('p', 'kop-ren__line', x.note));
+                return box;
+            }
+            function hostOf(url) {
+                try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return url; }
+            }
+            function sure(r) {
+                return tabOf(r) === 'review' && r.research && r.research.year && r.research.confidence === 'high';
             }
 
             function render() {
@@ -541,7 +621,16 @@ if (!function_exists('kop_network_renames_page')) {
                 var shown = rows.filter(function (r) { return tabOf(r) === tab; });
                 if (!shown.length) list.appendChild(el('p', 'kop-ren__empty', tab === 'review' ? 'Nothing left to review.' : 'Nothing here.'));
                 shown.forEach(function (r) { list.appendChild(card(r)); });
+                var high = rows.filter(sure);
+                bulk.hidden = tab !== 'review' || !high.length;
+                bulk.textContent = 'Save all ' + high.length + ' high-confidence years';
             }
+
+            bulk.addEventListener('click', function () {
+                save(rows.filter(sure).map(function (r) {
+                    return { key: r.key, decision: 'save', year: r.research.year, swapped: !!r.research.swapped };
+                }));
+            });
 
             document.querySelectorAll('.kop-ren__tabs button').forEach(function (b) {
                 b.addEventListener('click', function () { tab = b.getAttribute('data-tab'); status.textContent = ''; render(); });
