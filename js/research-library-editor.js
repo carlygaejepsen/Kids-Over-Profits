@@ -22,6 +22,7 @@
     }
 
     var titleInput = dialog.querySelector('.kop-rl-input-title');
+    var yearInput = dialog.querySelector('.kop-rl-input-year');
     var descInput = dialog.querySelector('.kop-rl-input-desc');
     var tierInput = dialog.querySelector('.kop-rl-input-relevance');
     var whyInput = dialog.querySelector('.kop-rl-input-why');
@@ -157,6 +158,7 @@
         return {
             titleLink: card.querySelector('.kop-rl-title a'),
             title: card.querySelector('.kop-rl-title'),
+            kind: card.querySelector('.kop-rl-kind'),
             desc: card.querySelector('.kop-rl-desc'),
             why: card.querySelector('.kop-rl-why'),
             tier: card.querySelector('.kop-rl-tier'),
@@ -175,6 +177,8 @@
         // A card with nothing to link to prints its title as plain text.
         var titleNode = fields.titleLink || fields.title;
         titleInput.value = titleNode ? titleNode.textContent.trim() : '';
+        var year = parseInt(card.getAttribute('data-year'), 10) || 0;
+        yearInput.value = year ? String(year) : '';
         descInput.value = fields.desc ? fields.desc.textContent.trim() : '';
         tierInput.value = card.getAttribute('data-relevance') || '0';
         whyInput.value = fields.why ? fields.why.textContent.trim() : '';
@@ -245,6 +249,13 @@
             titleInput.focus();
             return;
         }
+        var year = yearInput.value.trim();
+        var maxYear = new Date().getFullYear() + 1;
+        if (year !== '' && (!/^\d{4}$/.test(year) || +year < 1800 || +year > maxYear)) {
+            setMessage('The year must be four digits, from 1800 to ' + maxYear + '.', true);
+            yearInput.focus();
+            return;
+        }
 
         saveButton.disabled = true;
         setMessage('Saving...');
@@ -259,6 +270,7 @@
             body: JSON.stringify({
                 key: current.getAttribute('data-key'),
                 title: title,
+                year: year === '' ? 0 : parseInt(year, 10),
                 description: descInput.value.trim(),
                 cover_id: coverId,
                 relevance: parseInt(tierInput.value, 10) || 0,
@@ -300,6 +312,19 @@
         card.setAttribute('data-cover-id', body.cover_id || 0);
         card.setAttribute('data-relevance', body.relevance || 0);
         card.setAttribute('data-title', body.title);
+
+        // The "Academic / 2022" line. The year that comes back is the one set,
+        // or with it cleared, the guessed one; the sort reads data-year.
+        card.setAttribute('data-year', body.year || 0);
+        if (fields.kind) {
+            var meta = [card.getAttribute('data-kind') || '', body.year ? String(body.year) : ''];
+            fields.kind.textContent = meta.filter(function (part) { return part !== ''; }).join(' / ');
+            if (fields.kind.textContent) {
+                fields.kind.removeAttribute('hidden');
+            } else {
+                fields.kind.setAttribute('hidden', 'hidden');
+            }
+        }
 
         if (fields.why) {
             fields.why.textContent = body.relevance_note || '';

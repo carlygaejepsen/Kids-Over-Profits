@@ -33,6 +33,13 @@ $GLOBALS['kop_test_meta'] = array(
     ),
     502 => array(
         '_wp_attached_file' => '2019/05/some-old-study.pdf',
+        // Set in the editor: beats the 2019 in the caption.
+        'kop_research_year' => 2011,
+    ),
+    // Edited in place, with a title that reads like its filename.
+    503 => array(
+        '_wp_attached_file'   => '2024/08/GAO-2022-TTI-report.pdf',
+        'kop_research_edited' => '2026-09-29 10:00:00',
     ),
 );
 
@@ -145,8 +152,40 @@ function kop_get_folder_attachments($folder_id) {
             'post_content'   => 'A description.',
             'post_mime_type' => 'application/pdf',
         ),
+        (object) array(
+            'ID'                => 503,
+            'post_title'        => 'GAO 2022 TTI report',
+            'post_excerpt'      => '',
+            'post_content'      => '',
+            'post_mime_type'    => 'application/pdf',
+            // The longer title a sidecar offers; it must not replace a typed one.
+            'kop_sidecar_title' => 'Child Welfare HHS Should Facilitate Information Sharing',
+        ),
     );
 }
+
+// --- What the save callback touches ------------------------------------------
+
+class WP_Error {
+    public $code;
+    public $message;
+    public function __construct($code, $message, $data = array()) {
+        $this->code = $code;
+        $this->message = $message;
+    }
+}
+function get_post_type($id) { return in_array((int) $id, array(501, 502, 503), true) ? 'attachment' : false; }
+function get_post_field($field, $id) {
+    $excerpts = array(501 => 'by U.S. Senate Committee on Finance, 2024', 502 => 'by A Researcher, 2019');
+    return $field === 'post_excerpt' && isset($excerpts[$id]) ? $excerpts[$id] : '';
+}
+function wp_update_post($post) { $GLOBALS['kop_test_updated'][$post['ID']] = $post; return $post['ID']; }
+function update_post_meta($id, $key, $value) { $GLOBALS['kop_test_meta'][$id][$key] = $value; return true; }
+function add_post_meta($id, $key, $value) { $GLOBALS['kop_test_meta'][$id][$key][] = $value; return true; }
+function delete_post_meta($id, $key) { unset($GLOBALS['kop_test_meta'][$id][$key]); return true; }
+function current_time($type) { return '2026-09-29 12:00:00'; }
+function delete_transient($key) { return true; }
+function update_option($key, $value, $autoload = null) { return true; }
 function kop_resolve_live_attachment($id) { return (int) $id; }
 function get_attached_file($id) { return ''; }
 function kop_get_attachment_preview_url($id, $size = '') { return "https://example.test/cover-$id.jpg"; }
@@ -284,6 +323,41 @@ contains('an untagged card hides the line', $html, 'class="kop-rl-facilities" hi
 lacks('a facility that no longer exists is not linked', $html, 'data-id="404"');
 contains('the dialog has the tag box', $html, 'class="kop-rl-tags"');
 contains('the dialog has the facility search', $html, 'class="kop-rl-tag-query"');
+
+echo "\n-- Title and year --\n";
+check('a real year survives', kop_research_clean_year('2022'), 2022);
+check('next year is allowed', kop_research_clean_year((int) gmdate('Y') + 1), (int) gmdate('Y') + 1);
+check('a year too far out is not a year', kop_research_clean_year((int) gmdate('Y') + 2), 0);
+check('a year before 1800 is not a year', kop_research_clean_year(1066), 0);
+check('junk is not a year', kop_research_clean_year('soon'), 0);
+
+$by_key = array();
+foreach ($library as $row) {
+    $by_key[$row['key']] = $row;
+}
+check('the editor year beats the caption', $by_key['att:502']['year'], 2011);
+check('the seed year stands where none is set', $by_key['att:501']['year'], 2024);
+check('with neither, the filename year', $by_key['att:503']['year'], 2022);
+check('an edited title shows as typed, even one that reads like the filename', $by_key['att:503']['title'], 'GAO 2022 TTI report');
+contains('the card carries its kind for the editor', $html, 'data-kind="Academic"');
+contains('the kind line shows the editor year', $html, '<span class="kop-rl-kind">Academic / 2011</span>');
+contains('the dialog has the year field', $html, 'class="kop-rl-input-year"');
+
+$save = function ($key, $year) {
+    return kop_research_save_entry(new KOP_Test_Request(array(
+        'key' => $key, 'title' => 'Some Old Study', 'year' => $year, 'description' => '',
+        'cover_id' => 0, 'relevance' => 0, 'relevance_note' => '', 'facilities' => array(),
+    )));
+};
+$saved = $save('att:502', 1997);
+check('a saved year comes back', array($saved['year'], $saved['year_set']), array(1997, 1997));
+check('and is stored on the document', get_post_meta(502, KOP_RESEARCH_YEAR_META, true), 1997);
+$saved = $save('att:502', 0);
+check('clearing it deletes the stored year', get_post_meta(502, KOP_RESEARCH_YEAR_META, true), '');
+check('and the card goes back to the guessed year', array($saved['year'], $saved['year_set']), array(2019, 0));
+$refused = $save('att:502', 1066);
+check('a year out of range is refused', $refused instanceof WP_Error ? $refused->code : 'saved', 'kop_research_year');
+check('and nothing is stored', get_post_meta(502, KOP_RESEARCH_YEAR_META, true), '');
 
 echo $failures ? "\n$failures FAILURES\n" : "\nresearch library: PASS\n";
 exit($failures ? 1 : 0);

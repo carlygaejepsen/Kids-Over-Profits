@@ -88,6 +88,20 @@ if (!defined('KOP_RESEARCH_FACILITY_META')) {
 }
 
 /**
+ * Publication year set in the editor dialog. Beats the seed map and every
+ * guess from the caption, title or filename; deleting it brings those back.
+ */
+if (!defined('KOP_RESEARCH_YEAR_META')) {
+    define('KOP_RESEARCH_YEAR_META', 'kop_research_year');
+}
+
+/** A usable publication year (1800 to next year), or 0. */
+function kop_research_clean_year($value) {
+    $year = is_numeric($value) ? (int) $value : 0;
+    return ($year >= 1800 && $year <= (int) gmdate('Y') + 1) ? $year : 0;
+}
+
+/**
  * The ids a document is tagged with. Attachment meta for a real document, the
  * external overrides option for the entries that have no file.
  */
@@ -478,6 +492,41 @@ function kop_research_is_excluded($title, $file) {
 }
 
 
+/**
+ * The seed-map entry for an attachment (by 'id:<id>', then by file basename)
+ * and that basename.
+ *
+ * @return array{0: array, 1: string}
+ */
+function kop_research_override_for($attachment_id, $file, $title, $overrides) {
+    $base = strtolower(pathinfo(basename($file !== '' ? $file : (string) $title), PATHINFO_FILENAME));
+    if (isset($overrides['id:' . $attachment_id])) {
+        return array($overrides['id:' . $attachment_id], $base);
+    }
+    return array(isset($overrides[$base]) ? $overrides[$base] : array(), $base);
+}
+
+/**
+ * The year a card shows: the one set in the editor, then the seed map, then
+ * the last year in the caption, the title or the filename.
+ */
+function kop_research_attachment_year($attachment_id, $override, $excerpt, $title, $base) {
+    $year = kop_research_clean_year(get_post_meta($attachment_id, KOP_RESEARCH_YEAR_META, true));
+    if (!$year && isset($override['year'])) {
+        $year = (int) $override['year'];
+    }
+    if (!$year) {
+        $year = kop_research_year_from($excerpt);
+    }
+    if (!$year) {
+        $year = kop_research_year_from($title);
+    }
+    if (!$year) {
+        $year = kop_research_year_from($base);
+    }
+    return $year;
+}
+
 /** Last plausible publication year in a string, or 0. */
 function kop_research_year_from($text) {
     if (is_string($text) && preg_match_all('/\b(19[3-9]\d|20[0-4]\d)\b/', $text, $m)) {
@@ -538,14 +587,7 @@ function kop_research_library_items() {
                 || kop_research_is_excluded($attachment->post_title, $file)) {
                 continue;
             }
-            $base = strtolower(pathinfo(basename($file !== '' ? $file : (string) $attachment->post_title), PATHINFO_FILENAME));
-
-            $override = array();
-            if (isset($overrides['id:' . $attachment->ID])) {
-                $override = $overrides['id:' . $attachment->ID];
-            } elseif (isset($overrides[$base])) {
-                $override = $overrides[$base];
-            }
+            list($override, $base) = kop_research_override_for($attachment->ID, $file, $attachment->post_title, $overrides);
 
             // Once a card has been edited in place the attachment's own title
             // and description are what someone chose, so they beat the seed map.
@@ -554,7 +596,10 @@ function kop_research_library_items() {
             $title = (!$edited && isset($override['title']))
                 ? $override['title']
                 : (string) $attachment->post_title;
-            if ($edited || !isset($override['title'])) {
+            // Only a title nobody has set gets cleaned up. A typed title is
+            // shown exactly as saved, even when it reads like the filename
+            // ("GAO 2022 TTI report" for GAO-2022-TTI-report.pdf).
+            if (!$edited && !isset($override['title'])) {
                 if (!empty($attachment->kop_sidecar_title)
                     && kop_research_is_filename_title($title, $file)
                     && kop_research_title_reads_better($attachment->kop_sidecar_title, $title)) {
@@ -574,16 +619,7 @@ function kop_research_library_items() {
                 : trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt));
             $byline = trim(preg_replace('/,\s*(19|20)\d{2}\s*$/', '', $byline));
 
-            $year = isset($override['year']) ? (int) $override['year'] : 0;
-            if (!$year) {
-                $year = kop_research_year_from($attachment->post_excerpt);
-            }
-            if (!$year) {
-                $year = kop_research_year_from($attachment->post_title);
-            }
-            if (!$year) {
-                $year = kop_research_year_from($base);
-            }
+            $year = kop_research_attachment_year($attachment->ID, $override, $attachment->post_excerpt, $attachment->post_title, $base);
 
             // A record whose file is gone: serve the copy that still exists,
             // and if there is none, mark the card so it is not offered as a
@@ -663,7 +699,7 @@ function kop_research_library_items() {
             'title'         => isset($edit['title']) ? $edit['title'] : $entry['title'],
             'description'   => isset($edit['description']) ? $edit['description'] : '',
             'byline'        => isset($entry['byline']) ? $entry['byline'] : '',
-            'year'          => isset($entry['year']) ? (int) $entry['year'] : 0,
+            'year'          => !empty($edit['year']) ? (int) $edit['year'] : (isset($entry['year']) ? (int) $entry['year'] : 0),
             'kind'          => isset($entry['kind']) ? $entry['kind'] : 'Report',
             'file_url'      => $entry['url'],
             'file_label'    => 'Publisher',
@@ -767,7 +803,7 @@ function kop_hub_module_research() {
                 ?>
                 <li class="kop-rl-card" data-key="<?php echo esc_attr($item['key']); ?>" data-cover-id="<?php echo (int) $item['cover_id']; ?>"
                     data-relevance="<?php echo (int) $item['relevance']; ?>" data-year="<?php echo (int) $item['year']; ?>"
-                    data-title="<?php echo esc_attr($item['title']); ?>">
+                    data-kind="<?php echo esc_attr($item['kind']); ?>" data-title="<?php echo esc_attr($item['title']); ?>">
                     <?php // With nothing to link to, the cover is a plain box. ?>
                     <<?php echo $primary === '' ? 'span' : 'a'; ?> class="<?php echo esc_attr($cls('kop-rl-cover', $primary_doc)); ?>"<?php
                         if ($primary !== '') {
@@ -795,9 +831,8 @@ function kop_hub_module_research() {
                                 echo esc_html($kop_rl_tiers[$item['relevance']]);
                             ?></span>
                         <?php endif; ?>
-                        <?php if ($meta) : ?>
-                            <span class="kop-rl-kind"><?php echo esc_html(implode(' / ', $meta)); ?></span>
-                        <?php endif; ?>
+                        <?php // Printed even when empty, so the editor can fill in a year. ?>
+                        <span class="kop-rl-kind"<?php echo $meta ? '' : ' hidden'; ?>><?php echo esc_html(implode(' / ', $meta)); ?></span>
                         <?php if (!empty($item['missing'])) : ?>
                             <span class="kop-rl-missing" title="The media record exists but its file is not on the server. Re-upload it, then edit this card's photo.">File missing</span>
                         <?php endif; ?>
@@ -866,6 +901,12 @@ function kop_research_render_editor_dialog() {
             <label class="kop-rl-field">
                 <span>Title</span>
                 <input type="text" name="title" class="kop-rl-input-title" required maxlength="300">
+            </label>
+
+            <label class="kop-rl-field">
+                <span>Year</span>
+                <input type="text" name="year" class="kop-rl-input-year" inputmode="numeric" maxlength="4"
+                       pattern="[0-9]{4}" placeholder="Year published. Empty goes back to the guessed year.">
             </label>
 
             <label class="kop-rl-field">
@@ -1051,6 +1092,13 @@ function kop_research_register_rest() {
                     'default'           => '',
                     'sanitize_callback' => 'sanitize_text_field',
                 ),
+                // 0 clears the editor's year so the guessed one comes back.
+                'year' => array(
+                    'required'          => false,
+                    'type'              => 'integer',
+                    'default'           => 0,
+                    'sanitize_callback' => 'absint',
+                ),
                 'facilities' => array(
                     'required' => false,
                     'type'     => 'array',
@@ -1130,6 +1178,8 @@ function kop_research_save_entry($request) {
     $cover_id    = (int) $request->get_param('cover_id');
     $relevance   = kop_research_clean_tier($request->get_param('relevance'));
     $why         = trim((string) $request->get_param('relevance_note'));
+    $year_given  = (int) $request->get_param('year');
+    $year        = kop_research_clean_year($year_given);
 
     // Only ids that are really in facilities_v2 are stored, so a stale chip
     // from an open tab cannot put a dead link on the card.
@@ -1137,6 +1187,9 @@ function kop_research_save_entry($request) {
 
     if ($title === '') {
         return new WP_Error('kop_research_title', 'A title is required.', array('status' => 400));
+    }
+    if ($year_given && !$year) {
+        return new WP_Error('kop_research_year', 'The year must be four digits, from 1800 to next year.', array('status' => 400));
     }
     if ($cover_id && get_post_type($cover_id) !== 'attachment') {
         return new WP_Error('kop_research_cover', 'That photo is not in the media library.', array('status' => 400));
@@ -1173,6 +1226,11 @@ function kop_research_save_entry($request) {
         } else {
             delete_post_meta($id, KOP_RESEARCH_RELEVANCE_NOTE_META);
         }
+        if ($year) {
+            update_post_meta($id, KOP_RESEARCH_YEAR_META, $year);
+        } else {
+            delete_post_meta($id, KOP_RESEARCH_YEAR_META);
+        }
         // One row per facility: rewritten whole, so removing a chip removes it.
         delete_post_meta($id, KOP_RESEARCH_FACILITY_META);
         foreach ($facilities as $facility_id) {
@@ -1184,6 +1242,11 @@ function kop_research_save_entry($request) {
         $cover = function_exists('kop_get_attachment_preview_url')
             ? kop_get_attachment_preview_url($id, 'large')
             : wp_get_attachment_image_url($id, 'large');
+
+        // What the card shows now: the year just set, or with none, the guess.
+        $file = (string) get_post_meta($id, '_wp_attached_file', true);
+        list($override, $base) = kop_research_override_for($id, $file, $title, kop_research_library_overrides());
+        $shown_year = kop_research_attachment_year($id, $override, (string) get_post_field('post_excerpt', $id), $title, $base);
 
     } elseif (strpos($key, 'ext:') === 0) {
         $id    = substr($key, 4);
@@ -1199,11 +1262,21 @@ function kop_research_save_entry($request) {
             'cover_id'       => $cover_id,
             'relevance'      => $relevance,
             'relevance_note' => $why,
+            'year'           => $year,
             'facilities'     => $facilities,
         );
         update_option(KOP_RESEARCH_EXTERNAL_OPTION, $edits, false);
 
         $cover = $cover_id ? wp_get_attachment_image_url($cover_id, 'large') : '';
+
+        $shown_year = $year;
+        if (!$shown_year) {
+            foreach (kop_research_library_external() as $entry) {
+                if ($entry['id'] === $id && isset($entry['year'])) {
+                    $shown_year = (int) $entry['year'];
+                }
+            }
+        }
 
     } else {
         return new WP_Error('kop_research_key', 'Unrecognised entry.', array('status' => 400));
@@ -1225,6 +1298,8 @@ function kop_research_save_entry($request) {
         'relevance'      => $relevance,
         'relevance_label' => $relevance ? $tiers[$relevance] : '',
         'relevance_note' => $why,
+        'year'           => $shown_year,
+        'year_set'       => $year,
         'facilities'     => kop_research_facility_chips($facilities),
     ));
 }
