@@ -383,7 +383,10 @@
 
                     allFacilitiesData = groupFacilities(facilities);
                     renderAlphabetFilter();
-                    renderFacilitiesForLetter('ALL');
+                    // A term typed (or pre-filled from ?search=) while the data
+                    // was loading applies now, however long the load took.
+                    if (searchInput && searchInput.value.trim()) filterAndSort();
+                    else renderFacilitiesForLetter('ALL');
                 })
                 .catch(function (error) {
                     console.error('Failed to load ' + adapter.state + ' report data:', error);
