@@ -252,3 +252,81 @@
     font-size: 0.88em;
     overflow-wrap: anywhere;
 }
+
+/* ---- Past editions ----------------------------------------------------- */
+
+.kop-od-editions {
+    margin-top: 2.5rem;
+    line-height: 1.55;
+}
+
+.kop-od-cite {
+    padding: 0.75rem 1rem;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border-left: 4px solid var(--kop-orange, #EF9034);
+    border-radius: 4px;
+    overflow-wrap: anywhere;
+}
+
+.kop-od-table-wrap {
+    overflow-x: auto;
+}
+
+.kop-od-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.kop-od-table th,
+.kop-od-table td {
+    padding: 0.6rem 0.75rem 0.6rem 0;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid rgba(0, 4, 53, 0.12);
+}
+
+.kop-od-table thead th {
+    font-size: 0.9rem;
+    color: var(--kop-text-secondary, #3a3f63);
+}
+
+.kop-od-table tbody th {
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-od-table-sub {
+    display: block;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--kop-text-secondary, #3a3f63);
+}
+
+/* On a phone each edition is a short block: month, then its downloads. */
+@media (max-width: 600px) {
+    .kop-od-table thead {
+        display: none;
+    }
+
+    .kop-od-table tr {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 4, 53, 0.12);
+    }
+
+    .kop-od-table th,
+    .kop-od-table td {
+        padding: 0;
+        border-bottom: 0;
+    }
+
+    .kop-od-table tbody th {
+        flex-basis: 100%;
+    }
+
+    .kop-od-table td:nth-child(2)::after {
+        content: " facilities";
+    }
+}

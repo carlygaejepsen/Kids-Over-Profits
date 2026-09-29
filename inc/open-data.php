@@ -668,6 +668,7 @@ function kop_open_data_build() {
     }
 
     kop_open_data_save_manifest($manifest);
+    kop_open_data_save_edition($manifest);
     return $manifest;
 }
 
@@ -755,7 +756,93 @@ function kop_open_data_build_fulltext($seconds = 20) {
         'generated_at' => gmdate('c'),
     );
     kop_open_data_save_manifest($manifest);
+    kop_open_data_save_edition_fulltext($manifest);
     return true;
+}
+
+/* ---- Editions ------------------------------------------------------------ */
+
+/*
+ * Frozen monthly copies, so a finding can be cited against the exact files it
+ * came from. The first build of each month copies the ZIP into
+ * editions/<YYYY-MM>/ with an edition.json (build time, rows per dataset,
+ * checksum); the first full-text build of each quarter adds that file to the
+ * month it lands in. An edition is never written over once it exists.
+ */
+
+function kop_open_data_editions_dir() {
+    return kop_open_data_dir()['path'] . '/editions';
+}
+
+function kop_open_data_edition_url($edition, $name) {
+    return kop_open_data_dir()['url'] . '/editions/' . rawurlencode($edition) . '/' . rawurlencode($name);
+}
+
+/** Every edition, newest first: array of edition.json contents. */
+function kop_open_data_editions() {
+    $editions = array();
+    foreach (glob(kop_open_data_editions_dir() . '/*/edition.json') ?: array() as $file) {
+        $edition = json_decode((string) file_get_contents($file), true);
+        if (is_array($edition) && !empty($edition['edition'])) $editions[] = $edition;
+    }
+    usort($editions, static function ($a, $b) { return strcmp($b['edition'], $a['edition']); });
+    return $editions;
+}
+
+function kop_open_data_write_edition_json($dir, array $edition) {
+    file_put_contents("$dir/edition.json.tmp", wp_json_encode($edition, JSON_PRETTY_PRINT | KOP_OPEN_DATA_JSON_FLAGS));
+    kop_open_data_finish("$dir/edition.json.tmp", "$dir/edition.json");
+}
+
+/** The month's edition from this build's ZIP, unless the month has one already. */
+function kop_open_data_save_edition(array $manifest) {
+    if (empty($manifest['zip'])) return;
+    $month = gmdate('Y-m', strtotime($manifest['generated_at']));
+    $dir = kop_open_data_editions_dir() . '/' . $month;
+    if (file_exists("$dir/edition.json") || !wp_mkdir_p($dir)) return;
+
+    $src = kop_open_data_dir()['path'];
+    copy("$src/" . KOP_OPEN_DATA_ZIP, "$dir/" . KOP_OPEN_DATA_ZIP . '.tmp');
+    kop_open_data_finish("$dir/" . KOP_OPEN_DATA_ZIP . '.tmp', "$dir/" . KOP_OPEN_DATA_ZIP);
+    copy("$src/manifest.json", "$dir/manifest.json");
+
+    $rows = array();
+    foreach ($manifest['datasets'] as $key => $d) $rows[$key] = (int) $d['rows'];
+    kop_open_data_write_edition_json($dir, array(
+        'edition'      => $month,
+        'generated_at' => $manifest['generated_at'],
+        'license'      => KOP_OPEN_DATA_LICENSE,
+        'rows'         => $rows,
+        'zip'          => kop_open_data_file_entry($dir, KOP_OPEN_DATA_ZIP, 'zip'),
+        'full_text'    => null,
+    ));
+}
+
+/**
+ * Add the inspection full text to the current month's edition when no
+ * edition from this quarter has it yet: at about 70 MB a copy, a monthly
+ * copy would add most of a gigabyte a year.
+ */
+function kop_open_data_save_edition_fulltext(array $manifest) {
+    if (empty($manifest['full_text'])) return;
+    $now = strtotime($manifest['full_text']['generated_at']);
+    $quarter = static function ($ts) {
+        return gmdate('Y', $ts) . '-Q' . (int) ceil(gmdate('n', $ts) / 3);
+    };
+    foreach (kop_open_data_editions() as $edition) {
+        if (!empty($edition['full_text']) && $quarter(strtotime($edition['edition'] . '-01')) === $quarter($now)) return;
+    }
+    $dir = kop_open_data_editions_dir() . '/' . gmdate('Y-m', $now);
+    $edition = is_readable("$dir/edition.json") ? json_decode((string) file_get_contents("$dir/edition.json"), true) : null;
+    if (!is_array($edition)) return;   // the month's ZIP edition comes first; the next full-text build retries
+
+    copy(kop_open_data_dir()['path'] . '/' . KOP_OPEN_DATA_FULLTEXT, "$dir/" . KOP_OPEN_DATA_FULLTEXT . '.tmp');
+    kop_open_data_finish("$dir/" . KOP_OPEN_DATA_FULLTEXT . '.tmp', "$dir/" . KOP_OPEN_DATA_FULLTEXT);
+    $edition['full_text'] = kop_open_data_file_entry($dir, KOP_OPEN_DATA_FULLTEXT, 'jsonl.gz') + array(
+        'rows'         => (int) $manifest['full_text']['rows'],
+        'generated_at' => $manifest['full_text']['generated_at'],
+    );
+    kop_open_data_write_edition_json($dir, $edition);
 }
 
 /* ---- Schedule ----------------------------------------------------------- */

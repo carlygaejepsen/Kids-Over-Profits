@@ -154,6 +154,72 @@ $kop_od_built = !empty($kop_od_manifest['generated_at']) ? strtotime($kop_od_man
 
     <?php endif; ?>
 
+    <?php $kop_od_editions = kop_open_data_editions(); ?>
+    <?php if ($kop_od_editions) : ?>
+        <?php
+        $kop_od_month = static function ($edition) {
+            return wp_date('F Y', strtotime($edition . '-15 12:00:00 UTC'));
+        };
+        $kop_od_latest = $kop_od_editions[0];
+        ?>
+        <section class="kop-od-editions" aria-labelledby="kop-od-editions-heading">
+            <h2 id="kop-od-editions-heading" class="kop-od-section-title">Past editions</h2>
+            <p>
+                The downloads above change every day. To cite the data, use a monthly edition: it is frozen on the first build of the month and never changes,
+                so anyone can check your numbers against the same files. The full text of the inspection reports is kept once a quarter.
+            </p>
+            <p class="kop-od-cite">
+                <strong>How to cite:</strong>
+                Kids Over Profits, <em>Open Data</em>, <?php echo esc_html($kop_od_month($kop_od_latest['edition'])); ?> edition,
+                <?php echo esc_html(kop_open_data_edition_url($kop_od_latest['edition'], KOP_OPEN_DATA_ZIP)); ?>. CC BY-SA 4.0.
+            </p>
+            <div class="kop-od-table-wrap">
+                <table class="kop-od-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Edition</th>
+                            <th scope="col">Facilities</th>
+                            <th scope="col">All datasets</th>
+                            <th scope="col">Inspection full text</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($kop_od_editions as $kop_od_ed) : ?>
+                            <tr id="<?php echo esc_attr('edition-' . $kop_od_ed['edition']); ?>">
+                                <th scope="row">
+                                    <?php echo esc_html($kop_od_month($kop_od_ed['edition'])); ?>
+                                    <span class="kop-od-table-sub">built <?php echo esc_html(wp_date(get_option('date_format'), strtotime($kop_od_ed['generated_at']))); ?></span>
+                                </th>
+                                <td><?php echo esc_html(number_format_i18n((int) ($kop_od_ed['rows']['facilities'] ?? 0))); ?></td>
+                                <td>
+                                    <a class="kop-od-file" href="<?php echo esc_url(kop_open_data_edition_url($kop_od_ed['edition'], $kop_od_ed['zip']['name'])); ?>" download>
+                                        <?php echo $kop_od_icon('download'); ?>
+                                        <span>ZIP</span>
+                                        <span class="kop-od-file-size"><?php echo esc_html(kop_open_data_size($kop_od_ed['zip']['bytes'])); ?></span>
+                                    </a>
+                                </td>
+                                <td>
+                                    <?php if (!empty($kop_od_ed['full_text'])) : ?>
+                                        <a class="kop-od-file" href="<?php echo esc_url(kop_open_data_edition_url($kop_od_ed['edition'], $kop_od_ed['full_text']['name'])); ?>" download>
+                                            <?php echo $kop_od_icon('download'); ?>
+                                            <span>JSONL.GZ</span>
+                                            <span class="kop-od-file-size"><?php echo esc_html(kop_open_data_size($kop_od_ed['full_text']['bytes'])); ?></span>
+                                        </a>
+                                    <?php else : ?>
+                                        <span class="kop-od-table-sub">not kept this month</span>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <p class="kop-od-table-sub">
+                Each edition's row counts and checksums are in its <code>edition.json</code>, next to the ZIP.
+            </p>
+        </section>
+    <?php endif; ?>
+
     <section class="kop-od-notes" aria-labelledby="kop-od-notes-heading">
         <h2 id="kop-od-notes-heading" class="kop-od-section-title">Good to know</h2>
         <ul>

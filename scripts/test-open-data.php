@@ -59,7 +59,10 @@ $check = function ($label, $ok, $detail = '') use (&$failures) {
 
 $dir = kop_open_data_dir()['path'];
 $check('the build writes into tmp/kop-open-data', realpath(dirname($dir)) === realpath(dirname(__DIR__) . '/tmp') && basename($dir) === 'kop-open-data');
-foreach (glob("$dir/*") ?: array() as $old) @unlink($old);
+foreach (array_merge(glob("$dir/editions/*/*") ?: array(), glob("$dir/*") ?: array()) as $old) {
+    if (is_file($old)) unlink($old);
+}
+foreach (glob("$dir/editions/*", GLOB_ONLYDIR) ?: array() as $old) rmdir($old);
 
 // ---------------------------------------------------------------------------
 echo "-- Build --\n";
@@ -174,6 +177,22 @@ foreach ($manifest['datasets'] as $d) foreach ($d['files'] as $f) $want[] = $f['
 $check('ZIP holds the README and every file', !array_diff($want, $names), implode(', ', array_diff($want, $names)));
 
 // ---------------------------------------------------------------------------
+echo "\n-- Editions --\n";
+$month = gmdate('Y-m', strtotime($manifest['generated_at']));
+$ed_dir = kop_open_data_editions_dir() . '/' . $month;
+$editions = kop_open_data_editions();
+$check("this month's edition was saved", count($editions) === 1 && $editions[0]['edition'] === $month);
+$check('edition ZIP is a byte-for-byte copy', hash_file('sha256', "$ed_dir/" . KOP_OPEN_DATA_ZIP) === $manifest['zip']['sha256']
+    && $editions[0]['zip']['sha256'] === $manifest['zip']['sha256']);
+$check('edition records rows per dataset', ($editions[0]['rows']['facilities'] ?? -1) === $rows('facilities'));
+$frozen = file_get_contents("$ed_dir/edition.json");
+$frozen_zip = hash_file('sha256', "$ed_dir/" . KOP_OPEN_DATA_ZIP);
+$later = $manifest;
+$later['generated_at'] = gmdate('c', strtotime($manifest['generated_at']) + 60);
+kop_open_data_save_edition($later);
+$check('a later build the same month leaves the edition alone', file_get_contents("$ed_dir/edition.json") === $frozen
+    && hash_file('sha256', "$ed_dir/" . KOP_OPEN_DATA_ZIP) === $frozen_zip);
+
 if (!isset($args['skip-fulltext'])) {
     echo "\n-- Full text --\n";
     $GLOBALS['kop_test_fulltext_slices'] = 0;
@@ -204,6 +223,13 @@ if (!isset($args['skip-fulltext'])) {
     $check('every line is a report with its text', $bad === 0, "$bad bad lines");
     $check('every report once', $lines === $total && count($ids) === $total, "$lines lines, " . count($ids) . " ids, $total in the mirror");
     $check('manifest row count matches', (int) $manifest['full_text']['rows'] === $total);
+
+    $edition = kop_open_data_editions()[0];
+    $check("full text kept in this quarter's edition", !empty($edition['full_text'])
+        && hash_file('sha256', "$ed_dir/" . KOP_OPEN_DATA_FULLTEXT) === $manifest['full_text']['sha256']);
+    $kept = file_get_contents("$ed_dir/edition.json");
+    kop_open_data_save_edition_fulltext($manifest);
+    $check('a second full-text build the same quarter adds no copy', file_get_contents("$ed_dir/edition.json") === $kept);
 }
 
 // ---------------------------------------------------------------------------
@@ -214,6 +240,7 @@ $html = ob_get_clean();
 file_put_contents("$dir/page.html", str_replace('facility-profile.css', 'open-data.css', $html));
 $check('page lists every dataset', substr_count($html, 'class="kop-od-item"') === count($manifest['datasets']));
 $check('page links the ZIP', strpos($html, KOP_OPEN_DATA_ZIP) !== false);
+$check('page lists the past editions', strpos($html, 'Past editions') !== false && strpos($html, 'editions/' . $month . '/') !== false);
 $check('page states the license', strpos($html, 'Attribution-ShareAlike 4.0') !== false);
 echo "  wrote $dir/page.html\n";
 
