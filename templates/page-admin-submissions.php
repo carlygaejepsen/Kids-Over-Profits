@@ -68,7 +68,7 @@ get_header();
             <div class="bulk-actions">
                 <label class="bulk-select-all">
                     <input type="checkbox" id="selectAllPending">
-                    <span>Select all pending</span>
+                    <span>Select all</span>
                 </label>
                 <span id="selectedCount" class="selected-count" aria-live="polite">0 selected</span>
                 <button type="button" id="approveSelectedBtn" class="btn-bulk btn-bulk-approve" disabled><?php echo kop_icon('check'); ?> Approve selected</button>

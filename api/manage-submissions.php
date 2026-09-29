@@ -471,13 +471,15 @@ try {
                         WHERE id IN ($placeholders)";
                 $params = array_merge([$status], $ids);
             } else {
-                $sql = "UPDATE $table SET 
+                // An action without a note (card buttons, bulk approve, refiling
+                // a rejected article as PR) keeps the notes already there.
+                $sql = "UPDATE $table SET
                             status = ?,
-                            reviewer_notes = ?,
+                            reviewer_notes = CASE WHEN ? = '' THEN reviewer_notes ELSE ? END,
                             reviewed_by = ?,
                             reviewed_at = CURRENT_TIMESTAMP
                         WHERE id IN ($placeholders)";
-                $params = array_merge([$status, $reviewerNotes, $reviewedBy], $ids);
+                $params = array_merge([$status, $reviewerNotes, $reviewerNotes, $reviewedBy], $ids);
             }
             
             $stmt = $pdo->prepare($sql);

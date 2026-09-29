@@ -423,11 +423,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const search = searchFilter.value.trim();
         const currentType = typeFilter ? typeFilter.value : 'wiki';
 
-        // Build query parameters
+        // Build query parameters. The API caps a page at 200, so page
+        // through until the whole filtered list is in (a status tab such as
+        // Rejected can hold more than one page, and refiling works off it).
+        const PAGE_SIZE = 200;
+        const MAX_ROWS = 3000;
         const params = new URLSearchParams({
             action: 'list',
             type: currentType,
-            limit: '100'
+            limit: String(PAGE_SIZE)
         });
         if (status) params.set('status', status);
         if (search) params.set('search', search);
@@ -438,14 +442,20 @@ document.addEventListener('DOMContentLoaded', () => {
         noSubmissions.style.display = 'none';
 
         try {
-            const url = `${MANAGE_API}?${params.toString()}`;
-            console.log('Fetching submissions from:', url);
-
-            const response = await fetch(url);
-            console.log('Response status:', response.status);
-
-            const result = await response.json();
-            console.log('API Response:', result);
+            let result = null;
+            let rows = [];
+            for (let offset = 0; offset < MAX_ROWS; offset += PAGE_SIZE) {
+                params.set('offset', String(offset));
+                const response = await fetch(`${MANAGE_API}?${params.toString()}`);
+                const page = await response.json();
+                if (!page.success || !Array.isArray(page.data)) {
+                    result = page;
+                    break;
+                }
+                rows = rows.concat(page.data);
+                result = Object.assign({}, page, { data: rows });
+                if (page.data.length < PAGE_SIZE || rows.length >= (page.total || 0)) break;
+            }
 
             loadingMessage.style.display = 'none';
 
@@ -501,10 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const canReject = status !== 'rejected';
         const canPublish = currentType !== 'data' && status === 'approved';
         const canPromo = currentType === 'news' && status !== 'promotional';
+        const selectable = pending || status === 'rejected';
         return `
             <div class="submission-footer">
                 <label class="card-select-wrap">
-                    <input type="checkbox" class="card-select" data-id="${submission.id}" ${pending ? '' : 'disabled'} aria-label="Select this submission">
+                    <input type="checkbox" class="card-select" data-id="${submission.id}" ${selectable ? '' : 'disabled'} aria-label="Select this submission">
                     <span class="submission-date">Submitted: ${date}</span>
                 </label>
                 <div class="card-actions">
