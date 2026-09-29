@@ -60,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const publishBtn = document.getElementById('publishBtn');
     const deleteBtn = document.getElementById('deleteBtn');
     const rejectAllBtn = document.getElementById('rejectAllBtn');
+    const selectAllPending = document.getElementById('selectAllPending');
+    const selectedCount = document.getElementById('selectedCount');
+    const approveSelectedBtn = document.getElementById('approveSelectedBtn');
+    const rejectSelectedBtn = document.getElementById('rejectSelectedBtn');
 
     // Stats elements
     const statPending = document.getElementById('statPending');
@@ -194,6 +198,34 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rejectAllBtn) {
         rejectAllBtn.addEventListener('click', rejectAllPending);
     }
+    if (approveSelectedBtn) {
+        approveSelectedBtn.addEventListener('click', () => bulkAction('approve'));
+    }
+    if (rejectSelectedBtn) {
+        rejectSelectedBtn.addEventListener('click', () => bulkAction('reject'));
+    }
+    if (selectAllPending) {
+        selectAllPending.addEventListener('change', () => {
+            submissionsList.querySelectorAll('.card-select:not(:disabled)').forEach(cb => {
+                cb.checked = selectAllPending.checked;
+            });
+            updateSelectionState();
+        });
+    }
+    // Quick approve / reject / publish buttons and the select boxes live on
+    // every card, so one delegated listener covers them all across re-renders.
+    submissionsList.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-quick[data-action]');
+        if (!btn || btn.disabled) return;
+        const card = btn.closest('.submission-card');
+        if (!card) return;
+        quickAction(btn.dataset.action, card.dataset.id, card);
+    });
+    submissionsList.addEventListener('change', (e) => {
+        if (e.target.classList && e.target.classList.contains('card-select')) {
+            updateSelectionState();
+        }
+    });
 
     if (saveEditsBtn) {
         saveEditsBtn.addEventListener('click', saveMarkdownEdits);
@@ -415,6 +447,73 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Render submissions list
      */
+    function isPendingStatus(status) {
+        return status === 'submitted' || status === 'pending';
+    }
+
+    /**
+     * The status a submission lands in after an action, mirroring the API:
+     * legislation and lawsuits publish on approve, data has no publish step.
+     */
+    function statusAfter(action, type) {
+        if (action === 'reject') return 'rejected';
+        if (action === 'publish') return type === 'data' ? 'approved' : 'published';
+        return (type === 'legislation' || type === 'lawsuit') ? 'published' : 'approved';
+    }
+
+    /**
+     * Card footer: select box, date, quick actions and the details toggle.
+     * Every submission type shares it so approve / reject never needs the
+     * detail panel open.
+     */
+    function cardFooterHtml(submission, currentType) {
+        const status = submission.status;
+        const date = formatDate(submission.created_at);
+        const pending = isPendingStatus(status);
+        const canApprove = pending || status === 'rejected';
+        const canReject = status !== 'rejected';
+        const canPublish = currentType !== 'data' && status === 'approved';
+        return `
+            <div class="submission-footer">
+                <label class="card-select-wrap">
+                    <input type="checkbox" class="card-select" data-id="${submission.id}" ${pending ? '' : 'disabled'} aria-label="Select this submission">
+                    <span class="submission-date">Submitted: ${date}</span>
+                </label>
+                <div class="card-actions">
+                    <span class="card-action-status" aria-live="polite"></span>
+                    <button type="button" class="btn-quick btn-quick-approve" data-action="approve" ${canApprove ? '' : 'disabled'}>${kopIcon('check')} Approve</button>
+                    ${canPublish ? `<button type="button" class="btn-quick btn-quick-publish" data-action="publish">${kopIcon('upload')} Publish</button>` : ''}
+                    <button type="button" class="btn-quick btn-quick-reject" data-action="reject" ${canReject ? '' : 'disabled'}>${kopIcon('x')} Reject</button>
+                    <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
+                </div>
+            </div>`;
+    }
+
+    /**
+     * Swap a card's status badge and footer for the submission's current
+     * state without rebuilding the card, so an expanded detail panel inside
+     * it survives.
+     */
+    function refreshCard(card, submission) {
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const badge = card.querySelector('.submission-header .status-badge');
+        if (badge) {
+            badge.className = `status-badge status-${submission.status}`;
+            badge.textContent = submission.status;
+        }
+        const footer = card.querySelector(':scope > .submission-footer');
+        if (footer) {
+            const tpl = document.createElement('template');
+            tpl.innerHTML = cardFooterHtml(submission, currentType).trim();
+            const fresh = tpl.content.firstElementChild;
+            footer.replaceWith(fresh);
+            const btn = fresh.querySelector('.btn-view');
+            btn.addEventListener('click', () => viewSubmission(submission.id));
+            if (String(expandedCardId) === String(submission.id)) btn.textContent = 'Hide Details';
+        }
+        card.classList.toggle('is-pending', isPendingStatus(submission.status));
+    }
+
     function renderSubmissions(submissions) {
         detachModal();              // see comment in loadSubmissions — must precede wiping list
         submissionsList.innerHTML = '';
@@ -422,11 +521,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         submissions.forEach(submission => {
             const card = document.createElement('div');
-            card.className = 'submission-card';
+            card.className = 'submission-card' + (isPendingStatus(submission.status) ? ' is-pending' : '');
             card.dataset.id = submission.id;
 
             const statusClass = `status-${submission.status}`;
-            const date = formatDate(submission.created_at);
+            const footer = cardFooterHtml(submission, currentType);
 
             if (currentType === 'news') {
                 const title = submission.article_title || 'Untitled Article';
@@ -454,10 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${kopIcon('pen-line')} ${escapeHtml(author)}</span>
                         <span>${kopIcon('tag')} ${escapeHtml(submission.article_type || 'general')}</span>
                     </div>
-                    <div class="submission-footer">
-                        <span class="submission-date">Submitted: ${date}</span>
-                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
-                    </div>
+                    ${footer}
                 `;
             } else if (currentType === 'data') {
                 card.innerHTML = `
@@ -468,10 +564,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="submission-meta">
                         <span>${kopIcon('refresh')} Data Update</span>
                     </div>
-                    <div class="submission-footer">
-                        <span class="submission-date">Submitted: ${date}</span>
-                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
-                    </div>
+                    ${footer}
                 `;
             } else if (currentType === 'legislation' || currentType === 'lawsuit') {
                 const icon  = currentType === 'legislation' ? kopIcon('landmark') : kopIcon('scale');
@@ -485,10 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${icon} ${label}</span>
                         <span>${kopIcon('map-pin')} ${escapeHtml(submission.city_state || 'Jurisdiction unknown')}</span>
                     </div>
-                    <div class="submission-footer">
-                        <span class="submission-date">Submitted: ${date}</span>
-                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
-                    </div>
+                    ${footer}
                 `;
             } else {
                 card.innerHTML = `
@@ -501,16 +591,137 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>${kopIcon('calendar')} ${escapeHtml(submission.years_active || 'Years unknown')}</span>
                         <span>${kopIcon('tag')} ${escapeHtml(submission.program_type || 'Type unknown')}</span>
                     </div>
-                    <div class="submission-footer">
-                        <span class="submission-date">Submitted: ${date}</span>
-                        <button type="button" class="btn-view" data-id="${submission.id}">View Details</button>
-                    </div>
+                    ${footer}
                 `;
             }
 
             card.querySelector('.btn-view').addEventListener('click', () => viewSubmission(submission.id));
             submissionsList.appendChild(card);
         });
+        updateSelectionState();
+    }
+
+    /**
+     * Enable the bulk buttons only when something is ticked, and keep the
+     * "select all" box in step with the individual boxes.
+     */
+    function selectedIds() {
+        return Array.from(submissionsList.querySelectorAll('.card-select:checked')).map(cb => cb.dataset.id);
+    }
+
+    function updateSelectionState() {
+        const ids = selectedIds();
+        const selectable = submissionsList.querySelectorAll('.card-select:not(:disabled)').length;
+        if (selectedCount) {
+            selectedCount.textContent = `${ids.length} selected`;
+        }
+        if (approveSelectedBtn) approveSelectedBtn.disabled = ids.length === 0;
+        if (rejectSelectedBtn) rejectSelectedBtn.disabled = ids.length === 0;
+        if (selectAllPending) {
+            selectAllPending.disabled = selectable === 0;
+            selectAllPending.checked = selectable > 0 && ids.length === selectable;
+            selectAllPending.indeterminate = ids.length > 0 && ids.length < selectable;
+        }
+    }
+
+    /**
+     * POST one review action for a set of IDs. Shared by the detail panel,
+     * the quick buttons on each card, and the bulk buttons.
+     */
+    async function runAction(action, ids, notes) {
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const email = (reviewerEmail && reviewerEmail.value.trim()) || REVIEWER || localStorage.getItem('adminEmail') || '';
+        if (email) localStorage.setItem('adminEmail', email);
+        const response = await fetch(MANAGE_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: action,
+                type: currentType,
+                ids: ids,
+                reviewerNotes: notes || '',
+                reviewedBy: email
+            })
+        });
+        return response.json();
+    }
+
+    /**
+     * Approve / reject / publish straight from the card. The card updates in
+     * place (badge, buttons, stats); the list is not re-fetched so the rest
+     * of the queue stays where it was.
+     */
+    async function quickAction(action, id, card) {
+        const currentType = typeFilter ? typeFilter.value : 'wiki';
+        const submission = allSubmissions.find(s => String(s.id) === String(id));
+        if (!submission) return;
+        if (action === 'reject' && !confirm(`Reject "${cardTitle(submission, currentType)}"?`)) return;
+
+        const status = card.querySelector('.card-action-status');
+        card.querySelectorAll('.btn-quick').forEach(b => { b.disabled = true; });
+        if (status) { status.className = 'card-action-status loading'; status.textContent = 'Working...'; }
+
+        try {
+            const result = await runAction(action, [id], '');
+            if (result.success) {
+                submission.status = statusAfter(action, currentType);
+                if (currentSubmission && String(currentSubmission.id) === String(id)) {
+                    currentSubmission.status = submission.status;
+                    modalStatus.textContent = submission.status;
+                    modalStatus.className = `status-badge status-${submission.status}`;
+                    updateButtonStates(submission.status);
+                }
+                refreshCard(card, submission);
+                const fresh = card.querySelector('.card-action-status');
+                if (fresh) { fresh.className = 'card-action-status success'; fresh.textContent = submission.status; }
+                loadStats();
+                updateSelectionState();
+            } else {
+                refreshCard(card, submission);
+                const fresh = card.querySelector('.card-action-status');
+                if (fresh) { fresh.className = 'card-action-status error'; fresh.textContent = result.error || 'Action failed'; }
+            }
+        } catch (error) {
+            console.error('Quick action failed:', error);
+            refreshCard(card, submission);
+            const fresh = card.querySelector('.card-action-status');
+            if (fresh) { fresh.className = 'card-action-status error'; fresh.textContent = 'Network error'; }
+        }
+    }
+
+    function cardTitle(submission, currentType) {
+        if (currentType === 'news') return submission.article_title || 'Untitled Article';
+        return submission.program_name || 'Untitled';
+    }
+
+    /**
+     * Approve or reject every ticked card in one request.
+     */
+    async function bulkAction(action) {
+        const ids = selectedIds();
+        if (ids.length === 0) return;
+        const verb = action === 'approve' ? 'Approve' : 'Reject';
+        if (!confirm(`${verb} ${ids.length} selected submission(s)?`)) return;
+
+        const btn = action === 'approve' ? approveSelectedBtn : rejectSelectedBtn;
+        const label = btn.innerHTML;
+        approveSelectedBtn.disabled = true;
+        rejectSelectedBtn.disabled = true;
+        btn.textContent = `${verb === 'Approve' ? 'Approving' : 'Rejecting'} ${ids.length}...`;
+
+        try {
+            const result = await runAction(action, ids, action === 'reject' ? 'Bulk rejection' : '');
+            if (!result.success) {
+                alert(`Some submissions could not be ${action === 'approve' ? 'approved' : 'rejected'}: ${result.error || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Bulk action failed:', error);
+            alert('Network error while updating submissions.');
+        } finally {
+            btn.innerHTML = label;
+            loadStats();
+            loadSubmissions();
+        }
     }
 
     /**
@@ -1478,17 +1689,10 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     async function performAction(action) {
         if (!currentSubmission) return;
-        const currentType = typeFilter ? typeFilter.value : 'wiki';
 
         const notes = reviewerNotes.value.trim();
-        // Reviewer identity is the logged-in admin (REVIEWER); the editable
-        // field just lets them override it. No prompt needed.
-        const email = reviewerEmail.value.trim() || REVIEWER;
-
-        // Save email for future use
-        if (email) {
-            localStorage.setItem('adminEmail', email);
-        }
+        // Reviewer identity is the logged-in admin (REVIEWER), or whatever
+        // the editable field holds; runAction picks it up.
 
         // Disable all buttons during action
         approveBtn.disabled = true;
@@ -1499,22 +1703,10 @@ document.addEventListener('DOMContentLoaded', () => {
         actionStatus.innerHTML = '<span class="loading">Processing...</span>';
 
         try {
-            const response = await fetch(MANAGE_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: action,
-                    type: currentType, // Dynamic type
-                    ids: [currentSubmission.id],
-                    reviewerNotes: notes,
-                    reviewedBy: email
-                })
-            });
-
-            const result = await response.json();
+            const result = await runAction(action, [currentSubmission.id], notes);
 
             if (result.success) {
-                actionStatus.innerHTML = `<span class="success">✓ ${result.message}</span>`;
+                actionStatus.innerHTML = `<span class="success">${kopIcon('check')} ${result.message}</span>`;
 
                 // Refresh data
                 setTimeout(() => {
@@ -1596,7 +1788,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Network error while rejecting submissions.');
         } finally {
             rejectAllBtn.disabled = false;
-            rejectAllBtn.textContent = '✗ Reject All Pending';
+            rejectAllBtn.innerHTML = `${kopIcon('x')} Reject All Pending`;
         }
     }
 

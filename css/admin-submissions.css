@@ -287,6 +287,97 @@
     align-items: center;
 }
 
+.card-select-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.card-select-wrap input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--kop-teal);
+    cursor: pointer;
+}
+
+.card-select-wrap input:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.btn-quick {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn-quick .kop-icon {
+    width: 14px;
+    height: 14px;
+}
+
+.btn-quick-approve {
+    background: var(--kop-chartreuse);
+    color: var(--kop-midnight-blue);
+}
+
+.btn-quick-reject {
+    background: var(--kop-coral-pink);
+    color: var(--kop-white);
+}
+
+.btn-quick-publish {
+    background: var(--kop-orange);
+    color: var(--kop-white);
+}
+
+.btn-quick:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 4, 53, 0.18);
+}
+
+.btn-quick:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.card-action-status {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.card-action-status.loading {
+    color: var(--kop-teal);
+}
+
+.card-action-status.success {
+    color: var(--kop-navy-blue);
+}
+
+.card-action-status.error {
+    color: #c0392b;
+    text-transform: none;
+}
+
 .btn-view {
     border: none;
     border-radius: 999px;
@@ -816,7 +907,76 @@
     padding-top: 16px;
     border-top: 1px dashed var(--kop-border-secondary);
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 12px;
+}
+
+.bulk-select-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--kop-midnight-blue);
+    cursor: pointer;
+}
+
+.bulk-select-all input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--kop-teal);
+}
+
+.selected-count {
+    font-size: 13px;
+    color: var(--kop-text-secondary);
+    min-width: 6em;
+}
+
+.btn-bulk {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-bulk .kop-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-bulk-approve {
+    background: var(--kop-chartreuse);
+    color: var(--kop-midnight-blue);
+}
+
+.btn-bulk-reject {
+    background: var(--kop-coral-pink);
+    color: var(--kop-white);
+}
+
+.btn-bulk:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 4, 53, 0.15);
+}
+
+.btn-bulk:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn-reject-all {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .btn-reject-all {

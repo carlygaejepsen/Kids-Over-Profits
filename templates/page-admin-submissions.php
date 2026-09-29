@@ -61,7 +61,14 @@ get_header();
                 <button type="button" id="refreshBtn" class="btn-secondary"><?php echo kop_icon('refresh'); ?> Refresh</button>
             </div>
             <div class="bulk-actions">
-                <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions">✗ Reject All Pending</button>
+                <label class="bulk-select-all">
+                    <input type="checkbox" id="selectAllPending">
+                    <span>Select all pending</span>
+                </label>
+                <span id="selectedCount" class="selected-count" aria-live="polite">0 selected</span>
+                <button type="button" id="approveSelectedBtn" class="btn-bulk btn-bulk-approve" disabled><?php echo kop_icon('check'); ?> Approve selected</button>
+                <button type="button" id="rejectSelectedBtn" class="btn-bulk btn-bulk-reject" disabled><?php echo kop_icon('x'); ?> Reject selected</button>
+                <button type="button" id="rejectAllBtn" class="btn-reject-all" title="Reject all currently displayed pending submissions"><?php echo kop_icon('x'); ?> Reject All Pending</button>
             </div>
         </div>
 
