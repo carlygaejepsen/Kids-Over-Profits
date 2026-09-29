@@ -1122,6 +1122,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'resources', 'fieldNotes', 'linked_news', 'linked_lawsuits', 'facility_id', 'profile_url',
                         'memorials', // Rendered in the dedicated Deaths on record section
                         'inspection_stats', // Rendered in At a glance
+                        'research', // Tagged documents, listed on the program index and facility pages
                         // Internal provenance metadata recorded when a facility is
                         // aggregated into a location project (see api/save-master.php).
                         // The operator is already shown in the header subtext.

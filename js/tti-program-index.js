@@ -668,6 +668,26 @@ function displayFacilities(facilitiesData, containerId) {
             </div>`;
     };
 
+    // Research & Reports documents tagged with this facility or company at
+    // /researchreports/ (research[], attached by kop_attach_research_to_projects
+    // in inc/facility-v2-readers.php). Listed whether or not a FileBird folder
+    // matches the name.
+    const buildResearchListHtml = research => {
+        const items = Array.isArray(research) ? research.filter(r => r && r.title) : [];
+        if (!items.length) return '';
+        const rows = items.map(r => {
+            const title = escapeHtml(r.title);
+            const titleHtml = r.url
+                ? `<a href="${escapeAttribute(r.url)}" target="_blank" rel="noopener" class="facility-news-title">${title}</a>`
+                : `<span class="facility-news-title">${title}</span>`;
+            const meta = [r.byline, r.pages].filter(Boolean).map(escapeHtml);
+            const metaHtml = meta.length ? `<div class="facility-news-meta">${meta.join(' &middot; ')}</div>` : '';
+            const whyHtml = r.why ? `<div class="facility-news-meta">${escapeHtml(r.why)}</div>` : '';
+            return `<li class="facility-news-item">${titleHtml}${metaHtml}${whyHtml}</li>`;
+        }).join('');
+        return `<ul class="facility-news-list facility-research-list">${rows}</ul>`;
+    };
+
     // --- Main Rendering Logic ---
 
     let html = '<div class="facilities-database">';
@@ -741,7 +761,8 @@ function displayFacilities(facilitiesData, containerId) {
                 // picker). Preferred over fuzzy folder-name matching when present.
                 documentFolderId: projectData.documentFolderId || project.documentFolderId || null,
                 linked_news: Array.isArray(project.linked_news) ? project.linked_news : [],
-                linked_lawsuits: Array.isArray(project.linked_lawsuits) ? project.linked_lawsuits : []
+                linked_lawsuits: Array.isArray(project.linked_lawsuits) ? project.linked_lawsuits : [],
+                research: Array.isArray(project.research) ? project.research : []
             });
         });
     } else if (Array.isArray(facilitiesData)) {
@@ -1226,10 +1247,11 @@ function displayFacilities(facilitiesData, containerId) {
             operatorGroup.documentFolderId,
             cleanText(operator.name) || cleanText(operator.currentName) || operatorName
         );
-        const operatorDocLibraryHtml = operatorFolder
+        const operatorResearchHtml = buildResearchListHtml(operatorGroup.research);
+        const operatorDocLibraryHtml = (operatorFolder || operatorResearchHtml)
             ? renderDetailSection(
                 'Documents',
-                buildDocLibraryHtml(operatorFolder, 'operator-document-row'),
+                operatorResearchHtml + buildDocLibraryHtml(operatorFolder, 'operator-document-row'),
                 'operator-documents-section'
             )
             : '';
@@ -1739,6 +1761,8 @@ function displayFacilities(facilitiesData, containerId) {
 
                                                     'facility_id', // Internal identifier stamped on by the server
 
+                                                    'research', // Tagged documents, rendered in the Documents section
+
                                                     'profile_url', // Link to the generated facility page, rendered in the summary
 
                                                     // Internal provenance recorded when a facility is aggregated
@@ -1914,10 +1938,11 @@ function displayFacilities(facilitiesData, containerId) {
                 }
             }
 
-            const documentsSectionHtml = documentsHtml
+            const researchHtml = buildResearchListHtml(facility.research);
+            const documentsSectionHtml = (documentsHtml || researchHtml)
                 ? renderDetailSection(
                     'Documents',
-                    `<div class="facility-detail-grid">${documentsHtml}</div>`,
+                    researchHtml + (documentsHtml ? `<div class="facility-detail-grid">${documentsHtml}</div>` : ''),
                     'facility-documents-section'
                 )
                 : '';

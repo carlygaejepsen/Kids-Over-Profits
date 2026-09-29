@@ -1901,44 +1901,64 @@ if (!function_exists('kop_facility_pages_research_tagged')) {
             ),
         ));
 
+        $library_url = kop_facility_pages_research_library_url();
+        $out = array();
+        foreach ((array) $attachments as $attachment) {
+            $out[] = kop_facility_pages_research_item($attachment, $facility_id, $library_url);
+        }
+        return $out;
+    }
+}
+
+if (!function_exists('kop_facility_pages_research_library_url')) {
+    /** The Research & Reports hub, where every tagged document is listed. */
+    function kop_facility_pages_research_library_url() {
         $library_url = kop_facility_pages_page_url_by_template('page-hub.php', '/researchreports/');
         if (defined('KOP_RESEARCH_SLUG')) {
             $page = get_page_by_path(KOP_RESEARCH_SLUG);
             if ($page) $library_url = (string) get_permalink($page);
         }
+        return $library_url;
+    }
+}
 
-        $out = array();
-        foreach ((array) $attachments as $attachment) {
-            $url = (string) wp_get_attachment_url($attachment->ID);
-            $why = trim((string) get_post_meta($attachment->ID, 'kop_research_relevance_note', true));
-            // Where in the document this facility is named, from
-            // seeds/research-facility-tags.json: {id: {pages, pdf_page}}.
-            $cites = get_post_meta($attachment->ID, 'kop_research_facility_pages', true);
-            $cite = is_array($cites) && isset($cites[$facility_id]) && is_array($cites[$facility_id]) ? $cites[$facility_id] : array();
-            $pages = trim((string) ($cite['pages'] ?? ''));
-            if ($url !== '' && !empty($cite['pdf_page'])) $url .= '#page=' . (int) $cite['pdf_page'];
-            // The research library's own title and byline for the card, unless
-            // an editor has since edited it (inc/research-library.php).
-            $title = (string) $attachment->post_title;
-            $byline = trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt));
-            if (function_exists('kop_research_library_overrides')) {
-                $overrides = kop_research_library_overrides();
-                $base = strtolower(pathinfo(basename((string) get_post_meta($attachment->ID, '_wp_attached_file', true)), PATHINFO_FILENAME));
-                $override = $overrides['id:' . $attachment->ID] ?? ($overrides[$base] ?? array());
-                $edited = defined('KOP_RESEARCH_EDITED_META') && (string) get_post_meta($attachment->ID, KOP_RESEARCH_EDITED_META, true) !== '';
-                if (!$edited && isset($override['title'])) $title = (string) $override['title'];
-                if (isset($override['byline'])) $byline = (string) $override['byline'];
-            }
-            $out[] = array(
-                'title'   => $title,
-                'url'     => $url !== '' ? $url : $library_url,
-                'byline'  => $byline,
-                'why'     => $why,
-                'pages'   => $pages === '' ? '' : (preg_match('/[,\-]/', $pages) ? 'pp. ' : 'p. ') . $pages,
-                'library' => $library_url,
-            );
+if (!function_exists('kop_facility_pages_research_item')) {
+    /**
+     * One tagged research document as {title, url, byline, why, pages,
+     * library}. Shared by the facility and operator pages and the program
+     * index feed (kop_attach_research_to_projects). $facility_id picks the
+     * seeded page cite; 0 skips it.
+     */
+    function kop_facility_pages_research_item($attachment, $facility_id, $library_url) {
+        $facility_id = (int) $facility_id;
+        $url = (string) wp_get_attachment_url($attachment->ID);
+        $why = trim((string) get_post_meta($attachment->ID, 'kop_research_relevance_note', true));
+        // Where in the document this facility is named, from
+        // seeds/research-facility-tags.json: {id: {pages, pdf_page}}.
+        $cites = get_post_meta($attachment->ID, 'kop_research_facility_pages', true);
+        $cite = is_array($cites) && isset($cites[$facility_id]) && is_array($cites[$facility_id]) ? $cites[$facility_id] : array();
+        $pages = trim((string) ($cite['pages'] ?? ''));
+        if ($url !== '' && !empty($cite['pdf_page'])) $url .= '#page=' . (int) $cite['pdf_page'];
+        // The research library's own title and byline for the card, unless
+        // an editor has since edited it (inc/research-library.php).
+        $title = (string) $attachment->post_title;
+        $byline = trim(preg_replace('/^by\s+/i', '', (string) $attachment->post_excerpt));
+        if (function_exists('kop_research_library_overrides')) {
+            $overrides = kop_research_library_overrides();
+            $base = strtolower(pathinfo(basename((string) get_post_meta($attachment->ID, '_wp_attached_file', true)), PATHINFO_FILENAME));
+            $override = $overrides['id:' . $attachment->ID] ?? ($overrides[$base] ?? array());
+            $edited = defined('KOP_RESEARCH_EDITED_META') && (string) get_post_meta($attachment->ID, KOP_RESEARCH_EDITED_META, true) !== '';
+            if (!$edited && isset($override['title'])) $title = (string) $override['title'];
+            if (isset($override['byline'])) $byline = (string) $override['byline'];
         }
-        return $out;
+        return array(
+            'title'   => $title,
+            'url'     => $url !== '' ? $url : $library_url,
+            'byline'  => $byline,
+            'why'     => $why,
+            'pages'   => $pages === '' ? '' : (preg_match('/[,\-]/', $pages) ? 'pp. ' : 'p. ') . $pages,
+            'library' => $library_url,
+        );
     }
 }
 

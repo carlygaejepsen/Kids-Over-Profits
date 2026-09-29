@@ -448,8 +448,87 @@ if (!function_exists('kop_v2_get_facilities_projects')) {
         kop_attach_linked_lawsuits_to_projects($wpdb, $projects);
         kop_attach_memorials_to_projects($wpdb, $projects);
         kop_attach_inspection_stats_to_projects($wpdb, $projects);
+        kop_attach_research_to_projects($projects);
 
         return array('source' => 'database-v2', 'projects' => $projects);
+    }
+}
+
+if (!function_exists('kop_attach_research_to_projects')) {
+    /**
+     * Research & Reports documents tagged with a facility or parent company
+     * (inc/research-library.php), attached as research[]: to each nested
+     * facility by its facilities_v2 id, and to each operator project by its
+     * kop_operators id. The same items the facility and operator pages list
+     * (kop_facility_pages_research_item), newest first, read with one meta
+     * query for the whole feed.
+     */
+    function kop_attach_research_to_projects(array &$projects) {
+        global $wpdb;
+        if (!defined('KOP_RESEARCH_FACILITY_META') || !defined('KOP_RESEARCH_OPERATOR_META')
+            || !function_exists('kop_facility_pages_research_item')) {
+            return;
+        }
+
+        $rows = $wpdb->get_results($wpdb->prepare(
+            "SELECT pm.post_id, pm.meta_key, pm.meta_value
+               FROM {$wpdb->postmeta} pm
+               JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+              WHERE pm.meta_key IN (%s, %s)
+                AND p.post_type = 'attachment' AND p.post_status = 'inherit'
+              ORDER BY p.post_date DESC, p.ID DESC",
+            KOP_RESEARCH_FACILITY_META,
+            KOP_RESEARCH_OPERATOR_META
+        ), ARRAY_A);
+        if (!$rows) return;
+
+        $by_facility = array();
+        $by_operator = array();
+        $post_ids = array();
+        foreach ($rows as $r) {
+            $pid = (int) $r['post_id'];
+            $id  = (int) $r['meta_value'];
+            if ($pid <= 0 || $id <= 0) continue;
+            $post_ids[$pid] = true;
+            if ($r['meta_key'] === KOP_RESEARCH_FACILITY_META) {
+                $by_facility[$id][$pid] = true;
+            } else {
+                $by_operator[$id][$pid] = true;
+            }
+        }
+        if (!$post_ids) return;
+
+        // Load the posts and their meta in two queries, not one per document.
+        $post_ids = array_keys($post_ids);
+        _prime_post_caches($post_ids, false, true);
+        $library_url = kop_facility_pages_research_library_url();
+        $item = static function ($pid, $facility_id) use ($library_url) {
+            $post = get_post($pid);
+            return $post ? kop_facility_pages_research_item($post, $facility_id, $library_url) : null;
+        };
+        $items_for = static function (array $pids, $facility_id) use ($item) {
+            $out = array();
+            foreach (array_slice(array_keys($pids), 0, 20) as $pid) {
+                $one = $item($pid, $facility_id);
+                if ($one !== null) $out[] = $one;
+            }
+            return $out;
+        };
+
+        foreach ($projects as &$project) {
+            if (($project['source_table'] ?? '') === 'facilities_master' && !empty($project['id'])
+                && isset($by_operator[(int) $project['id']])) {
+                $project['research'] = $items_for($by_operator[(int) $project['id']], 0);
+            }
+            if (!isset($project['data']['facilities']) || !is_array($project['data']['facilities'])) continue;
+            foreach ($project['data']['facilities'] as $i => $nested) {
+                $fid = is_array($nested) && !empty($nested['facility_id']) ? (int) $nested['facility_id'] : 0;
+                if ($fid > 0 && isset($by_facility[$fid])) {
+                    $project['data']['facilities'][$i]['research'] = $items_for($by_facility[$fid], $fid);
+                }
+            }
+        }
+        unset($project);
     }
 }
 

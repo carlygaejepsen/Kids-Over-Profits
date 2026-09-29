@@ -391,6 +391,16 @@ if (isset($seed_ids[$sample]) && isset($research_index['ids'][$sample]) && $rese
         && strpos($html, '>Warehouses of Neglect: How Taxpayers') !== false,
         $out_dir . '/' . $data['slug'] . '.html');
 }
+// The program index feed carries the same documents (kop_attach_research_to_projects).
+$feed = array('op' => array('id' => 0, 'source_table' => 'facilities_master', 'data' => array('facilities' => array(
+    array('facility_id' => $sample), array('facility_id' => 999999999), array('name' => 'no id'),
+))));
+kop_attach_research_to_projects($feed);
+$fed = $feed['op']['data']['facilities'];
+$check('the program index feed lists a tagged facility\'s report with its pages',
+    isset($fed[0]['research'][0]) && $fed[0]['research'][0]['pages'] === 'p. 31' && strpos($fed[0]['research'][0]['url'], '.pdf#page=32') !== false
+        && strpos($fed[0]['research'][0]['title'], 'Warehouses of Neglect') === 0 && !isset($fed[1]['research']) && !isset($fed[2]['research']),
+    isset($fed[0]['research']) ? count($fed[0]['research']) . ' document(s)' : 'none attached');
 $pdo->exec('DROP TABLE temp.wpdl_postmeta');
 kop_facility_pages_index(true);
 

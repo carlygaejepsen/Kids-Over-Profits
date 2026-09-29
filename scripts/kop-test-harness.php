@@ -147,6 +147,11 @@ function get_post_meta($id, $key = '', $single = false) {
     }
     return $v;
 }
+function get_post($id) {
+    global $wpdb;
+    return $wpdb->get_row($wpdb->prepare('SELECT ID, post_title, post_excerpt, post_name FROM wpdl_posts WHERE ID = %d', $id)) ?: null;
+}
+function _prime_post_caches() {}
 function wp_get_attachment_url($id) {
     $file = get_post_meta($id, '_wp_attached_file', true);
     return $file === '' ? false : home_url('wp-content/uploads/' . ltrim($file, '/'));
