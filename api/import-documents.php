@@ -13,7 +13,9 @@
  *       "title": "Some article (Paper, 1999-05-07)",     optional, defaults to the file name
  *       "folder": "Facility Name",                        FileBird folder, created when missing
  *       "parent": "ARIZONA",                              optional parent folder ("" = top level)
- *       "source_url": "https://..."                       optional, kept as _kop_source_url
+ *       "source_url": "https://...",                      optional, kept as _kop_source_url
+ *       "caption": "Artist, CC BY 4.0, via ...",          optional, the attachment caption (credit line)
+ *       "alt": "What the image shows"                     optional, the image alt text
  *     }
  *   ]
  *
@@ -155,6 +157,20 @@ foreach ($manifest as $n => $item) {
             $line['url'] = wp_get_attachment_url($attachment_id);
         } else {
             $line['attachment'] = 'would import';
+        }
+
+        // --- caption and alt text, also on a rerun so a corrected credit lands --
+        if ($apply && $attachment_id) {
+            $caption = trim((string)($item['caption'] ?? ''));
+            if ($caption !== '' && get_post_field('post_excerpt', $attachment_id) !== $caption) {
+                wp_update_post(array('ID' => $attachment_id, 'post_excerpt' => $caption));
+                $line['caption'] = true;
+            }
+            $alt = trim((string)($item['alt'] ?? ''));
+            if ($alt !== '' && get_post_meta($attachment_id, '_wp_attachment_image_alt', true) !== $alt) {
+                update_post_meta($attachment_id, '_wp_attachment_image_alt', $alt);
+                $line['alt'] = true;
+            }
         }
 
         // --- file it ---------------------------------------------------------

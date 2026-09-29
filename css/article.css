@@ -34,7 +34,20 @@
     display: block;
     width: 100%;
     height: auto;
+    /* A portrait header (an engraving, a 1960s press photo) would fill the
+       screen at full width; crop it to a banner instead. */
+    max-height: 26rem;
+    object-fit: cover;
+    object-position: center 30%;
     border-radius: 6px;
+}
+
+.kop-thumb-credit {
+    margin: 0.4rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--kop-text-secondary, #4a4f6a);
+    text-align: right;
 }
 
 /* ---- Contents box ------------------------------------------------------ */

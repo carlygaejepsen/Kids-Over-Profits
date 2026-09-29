@@ -64,7 +64,27 @@
     display: block;
     width: 100%;
     height: auto;
+    max-height: 24rem;
+    object-fit: cover;
+    object-position: center 30%;
     border-radius: 6px;
+}
+
+.kop-thumb-credit {
+    margin: 0.4rem 0 0;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--kop-text-secondary, #4a4f6a);
+    text-align: right;
+}
+
+/* Research & Reports opens its editor text with a stack-of-books photo
+   (attachment 484). The owner likes it but it filled the screen; keep it
+   as a short banner. */
+.kop-hub .entry-content img.wp-image-484 {
+    width: 100%;
+    max-height: 16rem;
+    object-fit: cover;
 }
 
 /* ---- Modules ----------------------------------------------------------- */

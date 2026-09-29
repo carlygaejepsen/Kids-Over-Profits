@@ -208,6 +208,14 @@ while (have_posts()) :
         <?php if (has_post_thumbnail()) : ?>
             <div class="post-thumbnail kop-article-thumbnail">
                 <?php the_post_thumbnail('full'); ?>
+                <?php
+                // The credit line an openly licensed photo requires
+                // (inc/page-images.php imports it as the caption).
+                $kop_art_credit = get_the_post_thumbnail_caption();
+                if ($kop_art_credit !== '') :
+                    ?>
+                    <p class="kop-thumb-credit"><?php echo esc_html($kop_art_credit); ?></p>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
 

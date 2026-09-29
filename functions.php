@@ -116,3 +116,6 @@ require_once get_stylesheet_directory() . '/inc/article-pieces.php';
 
 // Keeps crawlers out of the staging copy of the site
 require_once get_stylesheet_directory() . '/inc/staging-links.php';
+
+// Featured and in-article photos placed from seeds/page-images.json
+require_once get_stylesheet_directory() . '/inc/page-images.php';
