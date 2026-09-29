@@ -103,6 +103,11 @@ function kop_submission_types() {
             'label'      => 'facility closure report',
             'admin_page' => 'kop-closure-reports',
         ),
+        // Records the hourly news scan created (inc/facility-discovery.php).
+        'new_facility' => array(
+            'label'      => 'facility added from the news',
+            'admin_page' => 'kop-facilities-from-news',
+        ),
     );
 }
 

@@ -96,6 +96,8 @@ require_once get_stylesheet_directory() . '/inc/network-map.php';
 
 // Facility closures reported in the news: hourly scan, review queue, confirm sets the status
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
+// Facilities that surface in the news and are not in the database: the hourly scan creates their records
+require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
 
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';

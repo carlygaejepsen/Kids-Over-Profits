@@ -311,6 +311,46 @@ function kop_closure_resolve_facility(PDO $pdo, array $report, &$alias_index) {
 }
 
 /**
+ * An article's text for a Groq prompt, or '' when it cannot be fetched.
+ * Groq's free tier counts tokens per minute, and what the scans look for is
+ * nearly always in the opening paragraphs, so it is cut at $max bytes.
+ */
+function kop_closure_article_text($url, $max = 9000) {
+    if (!$url || !preg_match('#^https?://#i', $url)) {
+        return '';
+    }
+    require_once get_stylesheet_directory() . '/api/lib-article-fetch.php';
+    $text = (string) fetchArticleContent($url);
+    if (strlen($text) > $max) {
+        $text = mb_strcut($text, 0, $max, 'UTF-8') . ' [truncated]';
+    }
+    if (!mb_check_encoding($text, 'UTF-8')) {
+        $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
+    }
+    return $text;
+}
+
+/**
+ * Ask Groq, falling back to the smaller model on a rate limit: token limits
+ * are per model, so it usually still has room (as in process-news-ai.php).
+ * Throws the last error, whose message says "rate limit" when both were out.
+ */
+function kop_closure_groq($prompt, $max_tokens = 2048) {
+    require_once get_stylesheet_directory() . '/api/ai-providers.php';
+    $models = array_values(array_unique(array_filter(array(getenv('GROQ_MODEL') ?: null, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'))));
+    foreach ($models as $i => $model) {
+        try {
+            return kop_ai_generate('groq', kop_ai_api_keys(), $prompt, array('maxTokens' => $max_tokens, 'groqModel' => $model));
+        } catch (Throwable $e) {
+            if ($i === count($models) - 1 || stripos($e->getMessage(), 'rate limit') === false) {
+                throw $e;
+            }
+        }
+    }
+    throw new RuntimeException('No Groq model to try');
+}
+
+/**
  * Scan one article. Returns array(outcome, reports[], detail). With $write
  * false nothing is stored (the CLI dry run).
  */
@@ -322,37 +362,12 @@ function kop_closure_scan_article(PDO $pdo, array $news, $write, &$alias_index) 
         return array('skipped', array(), '');
     }
 
-    $text = '';
-    if (!empty($news['article_url']) && preg_match('#^https?://#i', $news['article_url'])) {
-        require_once get_stylesheet_directory() . '/api/lib-article-fetch.php';
-        $text = (string) fetchArticleContent($news['article_url']);
-        // Groq's free tier counts tokens per minute; the closure is nearly
-        // always in the opening paragraphs.
-        if (strlen($text) > 9000) {
-            $text = mb_strcut($text, 0, 9000, 'UTF-8') . ' [truncated]';
-        }
-        if (!mb_check_encoding($text, 'UTF-8')) {
-            $text = mb_convert_encoding($text, 'UTF-8', 'UTF-8');
-        }
-    }
+    $text = kop_closure_article_text($news['article_url'] ?? '');
     $linked = kop_closure_linked_facilities($pdo, $news['id']);
 
     require_once get_stylesheet_directory() . '/api/ai-providers.php';
-    // Token-per-minute limits are per model, so on a rate limit the smaller
-    // model usually still has room (as in process-news-ai.php).
-    $prompt = kop_closure_build_prompt($news, $linked, $text);
-    $models = array_values(array_unique(array_filter(array(getenv('GROQ_MODEL') ?: null, 'openai/gpt-oss-120b', 'openai/gpt-oss-20b'))));
     try {
-        foreach ($models as $i => $model) {
-            try {
-                $raw = kop_ai_generate('groq', kop_ai_api_keys(), $prompt, array('maxTokens' => 2048, 'groqModel' => $model));
-                break;
-            } catch (Throwable $e) {
-                if ($i === count($models) - 1 || stripos($e->getMessage(), 'rate limit') === false) {
-                    throw $e;
-                }
-            }
-        }
+        $raw = kop_closure_groq(kop_closure_build_prompt($news, $linked, $text));
     } catch (Throwable $e) {
         // A rate limit says nothing about the article: leave it unscanned so
         // the next run tries again without spending one of its three tries.

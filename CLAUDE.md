@@ -71,6 +71,10 @@ php scripts/test-news-post-import.php
 # /facility/ page and the network map (kop_network_map_status_overrides) follow at once
 php scripts/test-closure-reports.php              # offline, against tmp/prod.sqlite, no Groq calls
 php api/scan-closure-reports.php --type=closure   # on the server (ea-php82): dry run; "apply" stores reports
+# Facilities the news mentions that have no record (inc/facility-discovery.php): the hourly scan creates
+# them from the article, or links a known one; KOP Data Tools > Facilities from News to remove or create by hand
+php scripts/test-facility-discovery.php           # offline, against tmp/prod.sqlite, no Groq calls
+php api/scan-new-facilities.php --ids=502         # on the server: dry run; "apply" creates records
 # Journalist extraction from news bylines (api/lib-journalists.php), against tmp/prod.sqlite
 php scripts/test-journalists.php [--list]
 # Subfolders for the largest flat FileBird folders: plan from tmp/prod.sqlite into
@@ -144,6 +148,7 @@ to the program aggregate otherwise.
 - `wiki_submissions` / `news_submissions` - Content submissions
 - `journalists` / `journalist_articles` - Internal-only list of journalists covering the TTI, extracted from news bylines (`api/lib-journalists.php`, managed in `api/manage-journalists.php`); never exposed publicly
 - `facility_closure_reports` / `news_closure_scans` - Closures the hourly news scan found (one row per article and program, pending until an admin confirms) and which articles it has read (`inc/closure-reports.php`)
+- `news_facility_candidates` / `news_facility_scans` - Every facility name from the news with no record and what the scan decided (created, matched, possible duplicate, provider, not a facility), one row per name, and which articles it has read (`inc/facility-discovery.php`)
 - `lawsuit_facility_links` / `lawsuit_news_links` - Which facilities a lawsuit involves and which articles cover it (synced on save; `api/lawsuit-facility-links.php`, `api/lawsuit-news-links.php`)
 - `{prefix}kop_media_folder_tags` - Extra folder memberships (one document, many folders)
 - `{prefix}kop_folder_links` - Legacy/current-name folder equivalence (curated in `api/link-folders.php`)
