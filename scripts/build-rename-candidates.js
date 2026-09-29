@@ -12,9 +12,14 @@
  *
  * The owner reviews them on KOP Data Tools > Map Renames
  * (inc/network-renames.php); nothing reaches the map until a rename is
- * saved there. As with the map years (scripts/build-years-candidates.js),
- * each proposal is held to its sources: a year no quote contains is dropped
- * and the note says so, and a rename no longer in graph.json is left out.
+ * saved there. Every year keeps its sources beside it; a year no quote
+ * contains (one taken from an article's date, say) stays, and the note says
+ * so, for the owner to judge. A rename no longer in graph.json is left out.
+ *
+ * Kids Over Profits' own articles are a primary source, often the only one:
+ * the owner's research, from newspaper scans and records nobody else has
+ * put online (owner, 2026-09-29). A year one of them states is high
+ * confidence. Never drop or discount them as circular.
  */
 'use strict';
 
@@ -48,18 +53,20 @@ asked.forEach((key) => {
     stats.answered++;
     const sources = (Array.isArray(r.sources) ? r.sources : [])
         .filter((s) => s && /^https?:\/\//.test(String(s.url || '')))
-        // The site's own pages repeat what the board says; they cannot confirm it.
-        .filter((s) => !/^https?:\/\/(www\.)?kidsoverprofits\.org\//i.test(String(s.url)))
         .map((s) => ({ url: String(s.url), quote: String(s.quote || '').replace(/\s+/g, ' ').trim().slice(0, 400) }))
         .slice(0, 4);
-    const notes = [String(r.note || '').replace(/\s+/g, ' ').trim()].filter(Boolean);
+    // A researcher who called the site's own reporting circular was wrong; keep the facts, drop the verdict.
+    const notes = [String(r.note || '').replace(/\s+/g, ' ').trim()
+        .replace(/,? which is circular/gi, '').replace(/\bis circular\b/gi, 'is the source')
+        .replace(/comes only from Kids Over Profits' own article/gi, "comes from Kids Over Profits' reporting")].filter(Boolean);
     let year = Number(r.year) || null;
     if (year && (year < 1800 || year > THIS_YEAR)) {
         notes.push('Year ' + year + ' dropped: out of range.');
         year = null; stats.dropped++;
-    } else if (year && sources.map((s) => s.quote).join(' ').indexOf(String(year)) === -1) {
-        notes.push('Year ' + year + ' dropped: no quote contains it.');
-        year = null; stats.dropped++;
+    }
+    const yearQuoted = !!year && sources.map((s) => s.quote).join(' ').indexOf(String(year)) !== -1;
+    if (year && !yearQuoted) {
+        notes.push('The year ' + year + ' is not in the quoted words; it comes from the source\'s date or context, so check the link.');
     }
     if (year) stats.year++;
     // The card starts swapped on the research's word, so that word needs a quote behind it.
@@ -69,8 +76,10 @@ asked.forEach((key) => {
         swapped = false;
     }
     if (swapped) stats.swapped++;
-    const confidence = ['high', 'medium', 'low'].indexOf(r.confidence) !== -1 ? r.confidence : 'low';
-    out.push({ key, year, swapped, confidence: year ? confidence : 'low', sources, note: notes.join(' ') });
+    let confidence = ['high', 'medium', 'low'].indexOf(r.confidence) !== -1 ? r.confidence : 'low';
+    const kop = sources.some((s) => /^https?:\/\/(www\.)?kidsoverprofits\.org\//i.test(s.url) && year && s.quote.indexOf(String(year)) !== -1);
+    if (kop) confidence = 'high';
+    out.push({ key, year, yearQuoted, swapped, confidence: year ? confidence : 'low', sources, note: notes.join(' ') });
 });
 
 out.sort((a, b) => a.key.localeCompare(b.key));

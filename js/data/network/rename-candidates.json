@@ -2,6 +2,7 @@
  {
   "key": "academy-at-canyon-creek>provo-canyon-school-springville-campus",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -19,6 +20,7 @@
  {
   "key": "academy-at-cedar-mountain>mountain-springs-preparatory-academy",
   "year": 2004,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -32,6 +34,7 @@
  {
   "key": "academy-at-dundee-ranch>pillars-of-hope",
   "year": 2004,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -49,6 +52,7 @@
  {
   "key": "agape-baptist-academy>agape-boarding-school",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -62,6 +66,7 @@
  {
   "key": "agape-boarding-school>agape-boys-ranch",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -70,6 +75,7 @@
  {
   "key": "agape-boys-ranch>agape-baptist-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -78,6 +84,7 @@
  {
   "key": "alberta-adolescent-recovery-centre>kids-of-the-canadian-west",
   "year": 1991,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -99,6 +106,7 @@
  {
   "key": "alldredge-academy>alldredge-wilderness-journey",
   "year": 2007,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -112,6 +120,7 @@
  {
   "key": "anchor-home-for-boys>anchor-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -129,6 +138,7 @@
  {
   "key": "anderson-academy>treasure-coast-boys-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -137,6 +147,7 @@
  {
   "key": "arizona-boys-ranch>canyon-state-academy",
   "year": 2000,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -150,6 +161,7 @@
  {
   "key": "aspen-institute-for-behavioral-assessment>viewpoint-center",
   "year": 2014,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -163,6 +175,7 @@
  {
   "key": "aspen-youth-alternatives>alternative-youth-adventures",
   "year": 1999,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -180,6 +193,7 @@
  {
   "key": "aspen-youth-services>aspen-education-group",
   "year": 2001,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -193,6 +207,7 @@
  {
   "key": "auldern-academy>sequel-tsi-north-carolina",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -206,6 +221,7 @@
  {
   "key": "bethel-baptist-childrens-home>gulf-coast-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -219,6 +235,7 @@
  {
   "key": "bethel-boys-academy>gulf-coast-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -232,6 +249,7 @@
  {
   "key": "bethesda-home-for-girls>mountain-park-baptist-boarding-academy",
   "year": 1987,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -249,6 +267,7 @@
  {
   "key": "bible-baptist-temple>riverside-baptist-church",
   "year": 2018,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -262,6 +281,7 @@
  {
   "key": "birdseye-boys-ranch>kaizen-academy",
   "year": 2016,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -275,6 +295,7 @@
  {
   "key": "birdseye-rtc>birdseye-boys-ranch",
   "year": null,
+  "yearQuoted": false,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -292,6 +313,7 @@
  {
   "key": "camp-elliott>talisman-school",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -300,6 +322,7 @@
  {
   "key": "casa-by-the-sea>come-back-youth-services",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -308,6 +331,7 @@
  {
   "key": "chrysalis-academy>chrysalis-therapeutic-boarding-school",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -316,6 +340,7 @@
  {
   "key": "clearview-horizon>clearview-girls-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -324,6 +349,7 @@
  {
   "key": "copper-canyon-academy>sedona-sky-academy",
   "year": 2014,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -341,6 +367,7 @@
  {
   "key": "daytop-village>samaritan-daytop-village",
   "year": 2015,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -358,6 +385,7 @@
  {
   "key": "diamond-ranch-academy>olympus-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -371,6 +399,7 @@
  {
   "key": "discovery-academy>oasis-ascent",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -379,6 +408,7 @@
  {
   "key": "discovery-ranch-for-girls>discovery-ranch",
   "year": 2013,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -396,6 +426,7 @@
  {
   "key": "eagle-point-christian-academy>gulf-coast-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -413,6 +444,7 @@
  {
   "key": "eckerd-youth-alternatives>eckerd-connects",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -430,6 +462,7 @@
  {
   "key": "embark-at-the-forge>eagle-cove-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -443,6 +476,7 @@
  {
   "key": "evangeline-christian-academy>evangelhouse-christian-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -460,6 +494,7 @@
  {
   "key": "family-foundation-school>allynwood-academy",
   "year": 2013,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -473,6 +508,7 @@
  {
   "key": "fulshear-ranch-academy>fulshear-treatment-to-transition",
   "year": 2013,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -490,6 +526,7 @@
  {
   "key": "horizon-academy>youth-foundation-success-academy",
   "year": 2012,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -507,6 +544,7 @@
  {
   "key": "innercept>paradigm-treatment-center-coeur-dalene-id",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -515,6 +553,7 @@
  {
   "key": "integrity-house>havenwood-south",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -528,6 +567,7 @@
  {
   "key": "ironwood-maine>the-ridge-maine",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -545,6 +585,7 @@
  {
   "key": "island-view-rtc>elevations-rtc",
   "year": 2014,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -558,6 +599,7 @@
  {
   "key": "kaizen-academy>birdseye-rtc",
   "year": 2016,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "medium",
   "sources": [
@@ -575,6 +617,7 @@
  {
   "key": "kansas-industrial-school-for-girls>youth-center-at-beloit",
   "year": 1974,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -588,6 +631,7 @@
  {
   "key": "khk-a-pathway-family-center>kids-helping-kids",
   "year": 2006,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -601,6 +645,7 @@
  {
   "key": "kids-of-bergen-county>kids-of-north-new-jersey",
   "year": 1990,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -614,6 +659,7 @@
  {
   "key": "kids-of-southern-california>straight-southern-california",
   "year": 1989,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -631,6 +677,7 @@
  {
   "key": "life-line-inc>kids-of-greater-salt-lake",
   "year": 1990,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "medium",
   "sources": [
@@ -648,6 +695,7 @@
  {
   "key": "lifeline-for-youth>life-line-inc",
   "year": null,
+  "yearQuoted": false,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -660,9 +708,10 @@
  },
  {
   "key": "mhy-family-services>mars-home-for-youth",
-  "year": null,
+  "year": 2012,
+  "yearQuoted": false,
   "swapped": true,
-  "confidence": "low",
+  "confidence": "high",
   "sources": [
    {
     "url": "https://www.butlereagle.com/20120820/mars-home-for-youth-changes-name-focus/",
@@ -673,24 +722,30 @@
     "quote": "In the 1950s, the home was renamed United Presbyterian Home for Children, and then Mars Home for Youth in the 1970s."
    }
   ],
-  "note": "The board has this backwards: Mars Home for Youth became MHY Family Services. The year 2012 is the Butler Eagle article's publication date (August 20, 2012, which is also in the URL), not a sentence in the text. The earlier names were United Presbyterian Home for Children (1950s) and Mars Home for Youth (1970s). Year 2012 dropped: no quote contains it."
+  "note": "The board has this backwards: Mars Home for Youth became MHY Family Services. The year 2012 is the Butler Eagle article's publication date (August 20, 2012, which is also in the URL), not a sentence in the text. The earlier names were United Presbyterian Home for Children (1950s) and Mars Home for Youth (1970s). The year 2012 is not in the quoted words; it comes from the source's date or context, so check the link."
  },
  {
   "key": "montana-academy>embark-at-flathead-valley",
-  "year": null,
+  "year": 2022,
+  "yearQuoted": true,
   "swapped": false,
-  "confidence": "low",
+  "confidence": "high",
   "sources": [
+   {
+    "url": "https://kidsoverprofits.org/investigatory-spotlight-john-santa-montana-academy/",
+    "quote": "Montana Academy was purchased by Embark Behavioral Health in 2021 and the facility reopened as Embark at Flathead Valley in 2022."
+   },
    {
     "url": "https://en.wikipedia.org/wiki/Montana_Academy",
     "quote": "Montana Academy closed in 2021 and Embark Behavioral Health now runs a residential treatment center there."
    }
   ],
-  "note": "Embark Behavioral Health bought Montana Academy in 2021 and reopened the campus as Embark at Flathead Valley in 2022. The 2022 year comes only from Kids Over Profits' own article, which is circular; Wikipedia confirms only the 2021 closure and the Embark takeover. Year 2022 dropped: no quote contains it."
+  "note": "Embark Behavioral Health bought Montana Academy in 2021 and reopened the campus as Embark at Flathead Valley in 2022. The 2022 year comes from Kids Over Profits' reporting; Wikipedia confirms only the 2021 closure and the Embark takeover."
  },
  {
   "key": "new-beginnings-girls-academy>marvelous-grace-girls-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -699,6 +754,7 @@
  {
   "key": "new-beginnings-girls-academy>rebekah-home-for-girls",
   "year": null,
+  "yearQuoted": false,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -716,6 +772,7 @@
  {
   "key": "new-hope-academy>pacific-coast-academy",
   "year": 1999,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -733,6 +790,7 @@
  {
   "key": "new-leaf-academy-of-north-carolina>talisman-school",
   "year": 2010,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -754,6 +812,7 @@
  {
   "key": "obsidian-trails-outdoor-schools>obsidian-schools",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -767,6 +826,7 @@
  {
   "key": "old-west-academy>majestic-ranch-academy",
   "year": 2007,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "medium",
   "sources": [
@@ -784,6 +844,7 @@
  {
   "key": "paradise-cove>a-better-way-youth-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -797,6 +858,7 @@
  {
   "key": "peninsula-village>acadia-village",
   "year": 2009,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -814,6 +876,7 @@
  {
   "key": "peninsula-village>village-behavioral-health-treatment-center",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -827,6 +890,7 @@
  {
   "key": "pine-view-christian-academy>bethel-academy-for-girls",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -835,6 +899,7 @@
  {
   "key": "remuda-ranch-programs-for-anorexia-and-bulimia>remuda-ranch-programs",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -843,6 +908,7 @@
  {
   "key": "remuda-ranch-programs-for-anorexia-and-bulimia>the-meadows-ranch",
   "year": 2018,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -860,6 +926,7 @@
  {
   "key": "rivendell-of-utah>copper-hills-youth-center",
   "year": 1997,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -877,6 +944,7 @@
  {
   "key": "rivendell-psychiatric-hospital>rivendell-of-arkansas",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -885,6 +953,7 @@
  {
   "key": "rivendell-psychiatric-hospital>rivendell-of-utah",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -898,6 +967,7 @@
  {
   "key": "schrom-boys-home-hawks-landing>schrom-boys-home",
   "year": 2018,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "medium",
   "sources": [
@@ -910,20 +980,22 @@
  },
  {
   "key": "second-nature-blue-ridge>blue-ridge-therapeutic-wilderness",
-  "year": null,
+  "year": 2016,
+  "yearQuoted": false,
   "swapped": false,
-  "confidence": "low",
+  "confidence": "medium",
   "sources": [
    {
     "url": "https://strugglingteens.com/artman/publish/BlueRidgeTherapeuticWildernessBN_160727.shtml",
     "quote": "As of July 19th Second Nature Blue Ridge is doing business as Blue Ridge Therapeutic Wilderness."
    }
   ],
-  "note": "Second Nature Blue Ridge (opened 2002) left the Second Nature group and became Blue Ridge Therapeutic Wilderness on July 19, 2016. The quote has no year; the year comes from the announcement's posting date, July 27, 2016, which is also in its URL (160727). Year 2016 dropped: no quote contains it."
+  "note": "Second Nature Blue Ridge (opened 2002) left the Second Nature group and became Blue Ridge Therapeutic Wilderness on July 19, 2016. The quote has no year; the year comes from the announcement's posting date, July 27, 2016, which is also in its URL (160727). The year 2016 is not in the quoted words; it comes from the source's date or context, so check the link."
  },
  {
   "key": "second-nature-uintas>second-nature",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -937,6 +1009,7 @@
  {
   "key": "seneca-ranch>carolina-springs-academy",
   "year": 2013,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -954,12 +1027,17 @@
  {
   "key": "solstice-east>magnolia-mill-school",
   "year": 2024,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
    {
     "url": "https://www.northcarolinahealthnews.org/2025/06/14/asheville-academy-trails-carolina-owner-faced-financial-upheaval-before-deaths/",
     "quote": "The program was licensed for 90 beds but had only four residents in August 2024, by which point it had rebranded as Magnolia Mill School, according to North Carolina Division of Health Services Regulation records and internal newsletters."
+   },
+   {
+    "url": "https://kidsoverprofits.org/asheville-academy/",
+    "quote": "Magnolia Mill School was known as Solstice East prior to rebranding in 2024."
    }
   ],
   "note": "Family Help & Wellness rebranded Solstice East as Magnolia Mill School in 2024 while enrollment fell. Asheville Academy for Girls absorbed it in early 2025."
@@ -967,6 +1045,7 @@
  {
   "key": "st-johns-youth-academy>st-augustine-youth-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -975,6 +1054,7 @@
  {
   "key": "stillwater-academy>turnabout-academy",
   "year": 2001,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "medium",
   "sources": [
@@ -988,6 +1068,7 @@
  {
   "key": "stone-mountain-school>asheville-academy-for-girls",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -996,6 +1077,7 @@
  {
   "key": "stone-mountain-school>camp-elliott",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -1004,6 +1086,7 @@
  {
   "key": "straight-inc-cincinnati>kids-helping-kids",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -1017,6 +1100,7 @@
  {
   "key": "straight-inc-michigan>pathway-family-cener",
   "year": 1993,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -1030,6 +1114,7 @@
  {
   "key": "straight-inc>drug-free-america-foundation",
   "year": 1995,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -1043,6 +1128,7 @@
  {
   "key": "teen-challenge-of-acadiana-inc>evangeline-christian-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -1060,6 +1146,7 @@
  {
   "key": "the-goodale-school>montfort-hall",
   "year": 2020,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -1073,6 +1160,7 @@
  {
   "key": "the-meadows-ranch>remuda-ranch-programs",
   "year": 2018,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "high",
   "sources": [
@@ -1090,6 +1178,7 @@
  {
   "key": "three-springs-new-beginning>sequel-tsi-owens-cross-roads",
   "year": 2009,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "medium",
   "sources": [
@@ -1102,20 +1191,26 @@
  },
  {
   "key": "three-springs-paint-rock-valley>sequel-tsi-paint-rock-valley",
-  "year": null,
+  "year": 2009,
+  "yearQuoted": true,
   "swapped": false,
-  "confidence": "low",
+  "confidence": "high",
   "sources": [
+   {
+    "url": "https://kidsoverprofits.org/three-springs-inc/",
+    "quote": "On December 30, 2009, Three Springs Inc. was acquired by Sequel Youth and Family Services."
+   },
    {
     "url": "https://strugglingteens.com/artman/publish/printer_SequelYouthFamilyBN_010210.shtml",
     "quote": "Sequel Youth and Family Services, a nationally recognized leader in youth services, announces the acquisition of privately held Three Springs, Inc."
    }
   ],
-  "note": "Sequel bought Three Springs (announced December 30, 2009) and ran it as Sequel TSI. The press release does not date the Paint Rock Valley name change itself. The campus closed on May 31, 2011. Year 2009 dropped: no quote contains it."
+  "note": "Sequel bought Three Springs (announced December 30, 2009) and ran it as Sequel TSI. The press release does not date the Paint Rock Valley name change itself. The campus closed on May 31, 2011."
  },
  {
   "key": "trails-momentum>momentum",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -1124,6 +1219,7 @@
  {
   "key": "truecore-behavioral-solutions>g4s-youth-services-llc",
   "year": 2017,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "high",
   "sources": [
@@ -1137,6 +1233,7 @@
  {
   "key": "utah-youth-village>utah-girls-village",
   "year": 1989,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "high",
   "sources": [
@@ -1150,6 +1247,7 @@
  {
   "key": "vantage-point>threepeaks-ascent-rtc",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [],
@@ -1157,20 +1255,22 @@
  },
  {
   "key": "walkabout-therapeutic-expeditions>outback-therapeutic-expeditions",
-  "year": null,
+  "year": 2004,
+  "yearQuoted": false,
   "swapped": false,
-  "confidence": "low",
+  "confidence": "high",
   "sources": [
    {
     "url": "https://www.deseret.com/2004/9/21/19851594/walkabout-therapeutic-of-lehi-changes-its-name/",
     "quote": "Walkabout Therapeutic Expeditions of Lehi, a program of Aspen Education Group, has changed its name to Outback Therapeutic Expeditions."
    }
   ],
-  "note": "Aspen Education Group renamed the program to avoid confusion or trademark claims from another Utah wilderness program using 'walkabout'. The quote itself has no year; the year is the September 21, 2004 date of the Deseret News article. The program closed on June 15, 2023. Year 2004 dropped: no quote contains it."
+  "note": "Aspen Education Group renamed the program to avoid confusion or trademark claims from another Utah wilderness program using 'walkabout'. The quote itself has no year; the year is the September 21, 2004 date of the Deseret News article. The program closed on June 15, 2023. The year 2004 is not in the quoted words; it comes from the source's date or context, so check the link."
  },
  {
   "key": "west-ridge-academy>utah-boys-ranch",
   "year": 2005,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "high",
   "sources": [
@@ -1188,6 +1288,7 @@
  {
   "key": "westwood-boys-ranch>westwood-program",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -1201,6 +1302,7 @@
  {
   "key": "whetstone-academy>maple-hall-academy",
   "year": null,
+  "yearQuoted": false,
   "swapped": false,
   "confidence": "low",
   "sources": [
@@ -1218,6 +1320,7 @@
  {
   "key": "woodward-academy>georgia-military-school",
   "year": 1966,
+  "yearQuoted": true,
   "swapped": true,
   "confidence": "low",
   "sources": [
@@ -1231,6 +1334,7 @@
  {
   "key": "youth-center-at-beloit>beloit-juvenile-correctional-facility",
   "year": 1997,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "high",
   "sources": [
@@ -1244,6 +1348,7 @@
  {
   "key": "youth-foundation-success-academy>three-points-center",
   "year": 2014,
+  "yearQuoted": true,
   "swapped": false,
   "confidence": "low",
   "sources": [

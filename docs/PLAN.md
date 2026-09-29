@@ -411,8 +411,10 @@ Next, in order:
 1. **Owner:** work through Map Renames. Every rename was researched on
    2026-09-29 (`tmp/rename-research`, built by
    `node scripts/build-rename-candidates.js` into
-   `js/data/network/rename-candidates.json`). 45 of the 94 have a quoted,
-   sourced year (12 high confidence, which one button saves), and 19 were
+   `js/data/network/rename-candidates.json`). 50 of the 94 have a sourced
+   year (16 high confidence; the 14 whose year is in the quoted words save
+   with one button). Kids Over Profits' own reporting counts as a primary
+   source, and 19 were
    found drawn backwards and start swapped. The notes also flag lines that
    are not renames: a reused campus, a road name, or two schools mixed up
    (Woodward Academy and Georgia Military School). The rest fall back to

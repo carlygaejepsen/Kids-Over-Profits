@@ -363,6 +363,8 @@ if (!function_exists('kop_network_renames_page')) {
                 'research' => $c ? array(
                     'year' => !empty($c['year']) ? (int) $c['year'] : null,
                     'swapped' => !empty($c['swapped']),
+                    // False when the year is the source's date, not in its words: saved one by one.
+                    'yearQuoted' => !isset($c['yearQuoted']) || !empty($c['yearQuoted']),
                     'confidence' => (string) ($c['confidence'] ?? 'low'),
                     'sources' => array_values(array_filter((array) ($c['sources'] ?? array()), function ($x) { return !empty($x['url']); })),
                     'note' => (string) ($c['note'] ?? ''),
@@ -606,7 +608,7 @@ if (!function_exists('kop_network_renames_page')) {
                 try { return new URL(url).hostname.replace(/^www\./, ''); } catch (e) { return url; }
             }
             function sure(r) {
-                return tabOf(r) === 'review' && r.research && r.research.year && r.research.confidence === 'high';
+                return tabOf(r) === 'review' && r.research && r.research.year && r.research.yearQuoted && r.research.confidence === 'high';
             }
 
             function render() {

@@ -98,10 +98,14 @@ $bad = 0;
 foreach ($cands as $c) {
     if (!$c['year']) continue;
     $q = implode(' ', array_column($c['sources'], 'quote'));
-    if (strpos($q, (string) $c['year']) === false) $bad++;
-    foreach ($c['sources'] as $src) if (stripos($src['url'], 'kidsoverprofits.org') !== false) $bad++;
+    // A year from the source's date is kept, but the card has to say so.
+    if (strpos($q, (string) $c['year']) === false && strpos($c['note'], 'not in the quoted words') === false) $bad++;
 }
-$check('every researched year is in a quote, and none cites this site', $bad === 0, $bad . ' bad');
+$check('a year outside the quotes is kept with a note saying so', $bad === 0, $bad . ' bad');
+$mt = $cands['montana-academy>embark-at-flathead-valley'] ?? null;
+$check('Kids Over Profits reporting counts as a source: Montana Academy -> Embark 2022, high',
+    $mt && $mt['year'] === 2022 && $mt['confidence'] === 'high' && stripos($mt['note'], 'circular') === false,
+    $mt ? $mt['year'] . ' ' . $mt['confidence'] : '');
 
 echo $failures ? "\n$failures FAILED\n" : "\nAll passed\n";
 exit($failures ? 1 : 0);
