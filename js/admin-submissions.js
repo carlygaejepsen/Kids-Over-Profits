@@ -655,7 +655,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentType = typeFilter ? typeFilter.value : 'wiki';
         const submission = allSubmissions.find(s => String(s.id) === String(id));
         if (!submission) return;
-        if (action === 'reject' && !confirm(`Reject "${cardTitle(submission, currentType)}"?`)) return;
 
         const status = card.querySelector('.card-action-status');
         card.querySelectorAll('.btn-quick').forEach(b => { b.disabled = true; });
@@ -687,11 +686,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const fresh = card.querySelector('.card-action-status');
             if (fresh) { fresh.className = 'card-action-status error'; fresh.textContent = 'Network error'; }
         }
-    }
-
-    function cardTitle(submission, currentType) {
-        if (currentType === 'news') return submission.article_title || 'Untitled Article';
-        return submission.program_name || 'Untitled';
     }
 
     /**
