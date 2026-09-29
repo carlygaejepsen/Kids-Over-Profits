@@ -328,6 +328,7 @@
 
     page.mount({
         state: 'Florida',
+        archiveState: 'FL',
         emptyMessage: 'No facilities found in the database for Florida.',
 
         filters: [{
@@ -413,6 +414,7 @@
                     report.track_id ? 'Track ID ' + report.track_id : ''
                 ],
                 link: { href: report.url, text: 'Official report' },
+                links: [ctx.archiveLink(report.url)],
                 preview: preview,
                 body: function () { return page.withText(report, 'FL', function () {
                     var html = '';

@@ -237,6 +237,7 @@
 
     page.mount({
         state: 'Oregon',
+        archiveState: 'OR',
         emptyMessage: 'No facilities found in the database for Oregon.',
 
         load: function () {
@@ -295,6 +296,7 @@
                 badges: badges,
                 facts: [report.coordinator ? 'Licensing coordinator ' + report.coordinator : ''],
                 link: { href: report.pdf_url, text: 'Official report' },
+                links: [ctx.archiveLink(report.pdf_url)],
                 preview: report.preview,
                 body: function () {
                     var html = '';

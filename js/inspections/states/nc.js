@@ -206,6 +206,7 @@
 
     page.mount({
         state: 'North Carolina',
+        archiveState: 'NC',
         emptyMessage: 'No facilities found in the database for North Carolina.',
 
         load: function () {
@@ -287,6 +288,7 @@
                 badges: badges,
                 facts: [report.pages ? ctx.plural(report.pages, 'page') : ''],
                 link: { href: report.pdf_url, text: 'Official report' },
+                links: [ctx.archiveLink(report.pdf_url)],
                 preview: report.opening,
                 body: function () { return page.withText(report, 'NC', function () {
                     var html = '';

@@ -188,6 +188,7 @@
 
     page.mount({
         state: 'Washington',
+        archiveState: 'WA',
         emptyMessage: 'No facilities found in the database for Washington.',
 
         load: function () {
@@ -263,6 +264,7 @@
                     report.onsite_dates ? 'Investigated ' + report.onsite_dates : ''
                 ],
                 link: { href: report.pdf_url, text: 'Official document' },
+                links: [ctx.archiveLink(report.pdf_url)],
                 preview: report.outcome_text,
                 body: function () {
                     if (report.misattached) {

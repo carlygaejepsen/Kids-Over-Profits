@@ -265,6 +265,7 @@
 
     page.mount({
         state: 'Utah',
+        archiveState: 'UT',
         emptyMessage: 'No Utah inspection data found.',
 
         load: function () {
@@ -331,11 +332,12 @@
             var first = report.checklists[0] || {};
             var census = first.census ? 'Census ' + first.census + (first.capacity ? ' of ' + first.capacity : '') : '';
 
-            var links = report.checklists.map(function (c, i) {
-                return {
-                    href: CHECKLIST_URL + encodeURIComponent(c.id) + '?dl=1',
-                    text: report.checklists.length > 1 ? 'Checklist ' + (i + 1) + ' (PDF)' : 'Checklist (PDF)'
-                };
+            var links = [];
+            report.checklists.forEach(function (c, i) {
+                var label = report.checklists.length > 1 ? 'Checklist ' + (i + 1) : 'Checklist';
+                links.push({ href: CHECKLIST_URL + encodeURIComponent(c.id) + '?dl=1', text: label + ' (PDF)' });
+                var archived = ctx.archiveLink('checklist_' + c.id, label + ' (archived copy)');
+                if (archived) links.push(archived);
             });
 
             return {

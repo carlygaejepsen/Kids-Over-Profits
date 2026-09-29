@@ -46,11 +46,21 @@
  *   violationsNote     For states whose data carries no findings: shown instead
  *                      of an empty list when a violations sort is chosen, so
  *                      "no results" is not mistaken for "no violations".
+ *   archiveState       Two-letter code of the state's copies on this site
+ *                      (wp-content/uploads/inspection-reports/<code>/, copied
+ *                      from Drive by api/sync-inspection-archive.php). Its
+ *                      index.json loads with the data; report() then adds
+ *                      ctx.archiveLink(urlOrName) to its links.
  *
  * Tones: 'flagged' (violations), 'clean' (inspected, none found), 'repeat'
  * (a repeat violation), 'neutral'.
  *
- * ctx: { escapeHtml, countFlagged, reports, formatDate, ui }.
+ * ctx: { escapeHtml, countFlagged, reports, formatDate, ui, archiveLink }.
+ *
+ * ctx.archiveLink(urlOrName, text) -> { href, text: 'Archived copy' } when this
+ * site holds a copy of that document, else null (links skips nulls). It looks
+ * the file up by archiveKey(), which must match kop_inspection_archive_key() in
+ * api/sync-inspection-archive.php.
  */
 (function (global) {
     'use strict';
@@ -58,6 +68,34 @@
     var KOP = global.KOP = global.KOP || {};
 
     var NEW_REPORT_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
+    var ARCHIVE_BASE = '/wp-content/uploads/inspection-reports/';
+
+    /**
+     * Lookup key of an archived report: the last path segment of a URL or file
+     * name, without query, percent-decoded, anything outside [A-Za-z0-9._-]
+     * made "_", lowercased. Same as kop_inspection_archive_key() in PHP.
+     */
+    function archiveKey(urlOrName) {
+        var name = safeString(urlOrName).replace(/[?#][\s\S]*$/, '');
+        name = name.slice(name.lastIndexOf('/') + 1);
+        try { name = decodeURIComponent(name); } catch (e) { /* keep it encoded */ }
+        return name.replace(/[^A-Za-z0-9._-]/g, '_').toLowerCase();
+    }
+
+    /** The state's archive index ({ key: file name }); {} when it has none. */
+    function loadArchiveIndex(code) {
+        if (!code || typeof fetch !== 'function') return Promise.resolve({});
+        var dir = ARCHIVE_BASE + encodeURIComponent(String(code).toLowerCase()) + '/';
+        return fetch(dir + 'index.json', { cache: 'no-cache' })
+            .then(function (resp) { return resp.ok ? resp.json() : {}; })
+            .then(function (data) {
+                var files = (data && data.files) || {};
+                var out = {};
+                Object.keys(files).forEach(function (key) { out[key] = dir + encodeURIComponent(files[key]); });
+                return out;
+            })
+            .catch(function () { return {}; });
+    }
     var TONES = { flagged: 1, clean: 1, repeat: 1, neutral: 1 };
 
     function safeString(value) {
@@ -263,13 +301,21 @@
             return reportsOf(f).filter(adapter.isFlagged).length;
         }
 
+        var archive = {};
+        function archiveLink(urlOrName, text) {
+            var key = archiveKey(urlOrName);
+            var href = key && archive[key];
+            return href ? { href: href, text: text || 'Archived copy' } : null;
+        }
+
         var ctx = {
             escapeHtml: escapeHtml,
             countFlagged: countFlagged,
             reports: reportsOf,
             formatDate: formatDate,
             plural: plural,
-            ui: ui
+            ui: ui,
+            archiveLink: archiveLink
         };
 
         function isRecentReport(report) {
@@ -320,9 +366,11 @@
         if (newOnlyCheckbox) newOnlyCheckbox.addEventListener('change', filterAndSort);
 
         function initializeReport() {
-            Promise.resolve()
-                .then(function () { return adapter.load(); })
-                .then(function (result) {
+            // The archive index is optional: a page without one still loads.
+            Promise.all([Promise.resolve().then(function () { return adapter.load(); }), loadArchiveIndex(adapter.archiveState)])
+                .then(function (loaded) {
+                    var result = loaded[0];
+                    archive = loaded[1];
                     var facilities = (result && result.facilities) || [];
                     if (!facilities.length) {
                         reportContainer.innerHTML = '<p class="kop-rp-empty">' + escapeHtml(adapter.emptyMessage
@@ -628,6 +676,7 @@
     KOP.reportPage = {
         mount: mount,
         withText: withText,
+        archiveKey: archiveKey,
         escapeHtml: escapeHtml,
         safeString: safeString,
         displayName: displayName,
