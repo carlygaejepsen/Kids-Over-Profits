@@ -98,6 +98,8 @@ require_once get_stylesheet_directory() . '/inc/network-map.php';
 require_once get_stylesheet_directory() . '/inc/closure-reports.php';
 // Facilities that surface in the news and are not in the database: the hourly scan creates their records
 require_once get_stylesheet_directory() . '/inc/facility-discovery.php';
+// Woodbury Reports pages about a program, cut by scripts/woodbury-scan.py, reviewed and filed in its doc library
+require_once get_stylesheet_directory() . '/inc/woodbury-mentions.php';
 
 // Where each long-form article sits: its trail back to a hub, and what to read next
 require_once get_stylesheet_directory() . '/inc/article-parts.php';

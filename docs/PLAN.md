@@ -146,6 +146,12 @@ The date is when each was last confirmed open.
    copy.
 8. **WA full scrape** (2026-09-24). `wa_scraper.py --full` in the Tools repo,
    with `KOP_DATA_API_KEY`.
+9. **Woodbury Reports pages** (2026-09-29). Review at
+   [KOP Data Tools > Woodbury Reports](https://kidsoverprofits.org/wp-admin/admin.php?page=kop-woodbury-reports):
+   2,208 candidates from 73 issues (2006-2014). "File it" puts the pages in
+   the program's doc library. Start with Articles (exact matches are
+   pre-ticked), then News items. "No record yet" holds ~230 program articles
+   with no facility record, a lead list for new records.
 
 ### Hosting
 
