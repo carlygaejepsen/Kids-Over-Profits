@@ -69,6 +69,10 @@ php scripts/test-journalists.php [--list]
 # seeds/media-subfolders.json (report in tmp/), applied on deploy by kop_apply_media_subfolders()
 python scripts/build-media-subfolders.py
 php scripts/test-media-subfolders.php
+# Open data bulk downloads (/open-data/, inc/open-data.php; built daily by WP-Cron into uploads/kop-open-data/).
+# Every dataset names its columns; a new public table or column is added there, never via SELECT *
+php scripts/test-open-data.php [--skip-fulltext]  # builds from tmp/prod.sqlite into tmp/kop-open-data/, privacy checks
+php scripts/build-open-data.php                   # on the server (ea-php82), rebuild now
 # SVG icons that replace emojis (inc/icons.php: kop_icon() / kopIcon(), and the
 # render filter for emojis in post content, widgets and the ACF facility-key field)
 php scripts/test-icons.php

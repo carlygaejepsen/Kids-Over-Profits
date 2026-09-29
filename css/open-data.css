@@ -1,0 +1,254 @@
+/*
+ * Open data page (templates/page-open-data.php, inc/open-data.php).
+ *
+ * One white card, as the glossary and reporting pages are: no text on the
+ * gradient. Download links are real buttons with the format and size, so a
+ * reader knows what they are getting before they click.
+ *
+ * Bright accents stay on borders and rules, never behind text.
+ */
+
+.kop-od-page {
+    max-width: 68rem;
+    margin: 1.5rem auto 3rem;
+    padding: 2rem 2.5rem 3rem;
+    color: var(--kop-text-primary, #000435);
+    background: var(--kop-white, #fff);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 4, 53, 0.08);
+}
+
+@media (max-width: 600px) {
+    .kop-od-page {
+        margin-left: 0;
+        margin-right: 0;
+        padding: 1.25rem 1rem 2rem;
+        border-radius: 0;
+    }
+}
+
+.kop-od-header {
+    margin-bottom: 1.25rem;
+}
+
+.kop-od-title {
+    margin: 0;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-od-summary {
+    margin: 0.6rem 0 0;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-od-intro {
+    max-width: 50rem;
+    margin: 0 0 2rem;
+    padding: 0.1rem 0 0.1rem 1.1rem;
+    border-left: 4px solid var(--kop-teal, #33A7B5);
+    line-height: 1.6;
+}
+
+.kop-od-intro-title,
+.kop-od-section-title {
+    margin: 0 0 0.6rem;
+    font-size: 1.3rem;
+    color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-od-terms {
+    margin: 0.75rem 0 0;
+    padding-left: 1.2rem;
+}
+
+.kop-od-terms li + li {
+    margin-top: 0.45rem;
+}
+
+.kop-od-editor-content {
+    margin-bottom: 1.5rem;
+}
+
+.kop-od-pending {
+    padding: 1rem 1.25rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 8px;
+}
+
+/* ---- Download everything ---------------------------------------------- */
+
+.kop-od-bulk {
+    margin-bottom: 2.25rem;
+}
+
+.kop-od-bulk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+    gap: 1rem;
+}
+
+.kop-od-bulk-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.75rem;
+    align-items: start;
+    padding: 1.1rem 1.25rem;
+    color: var(--kop-midnight-blue, #000435);
+    text-decoration: none;
+    background: var(--kop-soft-pastel-yellow, #FFF5CB);
+    border: 2px solid var(--kop-orange, #EF9034);
+    border-radius: 10px;
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.kop-od-bulk-card:hover,
+.kop-od-bulk-card:focus-visible {
+    box-shadow: 0 6px 18px rgba(0, 4, 53, 0.15);
+    transform: translateY(-1px);
+}
+
+.kop-od-bulk-card .kop-icon {
+    grid-row: span 2;
+    width: 1.75rem;
+    height: 1.75rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-od-bulk-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.kop-od-bulk-meta {
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.kop-od-built {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0.9rem 0 0;
+    font-size: 0.9rem;
+    color: var(--kop-text-secondary, #3a3f63);
+}
+
+.kop-od-built .kop-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* ---- Dataset list ------------------------------------------------------ */
+
+.kop-od-group {
+    margin-bottom: 2rem;
+}
+
+.kop-od-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgba(0, 4, 53, 0.12);
+}
+
+.kop-od-item {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(0, 4, 53, 0.12);
+}
+
+.kop-od-item:target {
+    padding-left: 0.75rem;
+    border-left: 4px solid var(--kop-chartreuse, #B2E102);
+}
+
+.kop-od-item-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.05rem;
+    color: var(--kop-navy-blue, #000080);
+}
+
+.kop-od-item-desc {
+    margin: 0;
+    line-height: 1.5;
+}
+
+.kop-od-item-count {
+    margin: 0.3rem 0 0;
+    font-size: 0.9rem;
+    color: var(--kop-text-secondary, #3a3f63);
+}
+
+.kop-od-item-files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.kop-od-file {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.75rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--kop-white, #fff);
+    text-decoration: none;
+    white-space: nowrap;
+    background: var(--kop-navy-blue, #000080);
+    border-radius: 6px;
+}
+
+.kop-od-file:hover,
+.kop-od-file:focus-visible {
+    color: var(--kop-white, #fff);
+    background: var(--kop-midnight-blue, #000435);
+}
+
+.kop-od-file .kop-icon {
+    width: 1rem;
+    height: 1rem;
+}
+
+.kop-od-file-size {
+    font-weight: 400;
+    opacity: 0.85;
+}
+
+@media (max-width: 700px) {
+    .kop-od-item {
+        flex-direction: column;
+        gap: 0.6rem;
+    }
+}
+
+/* ---- Notes ------------------------------------------------------------- */
+
+.kop-od-notes {
+    margin-top: 2.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--kop-sand, #F2EEDF);
+    border-radius: 10px;
+    line-height: 1.55;
+}
+
+.kop-od-notes ul {
+    margin: 0;
+    padding-left: 1.2rem;
+}
+
+.kop-od-notes li + li {
+    margin-top: 0.6rem;
+}
+
+.kop-od-notes code {
+    font-size: 0.88em;
+    overflow-wrap: anywhere;
+}

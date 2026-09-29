@@ -466,6 +466,8 @@ function kop_tool_page_specs() {
         array('template' => 'page-report-abuse.php',       'title' => 'Report Abuse',        'slug' => 'report-abuse',       'status' => 'publish'),
         // The TTI glossary, rendered from js/data/glossary/glossary.json.
         array('template' => 'page-glossary.php',           'title' => 'TTI Glossary',        'slug' => 'glossary',           'status' => 'publish'),
+        // Bulk downloads of every public dataset, built daily by inc/open-data.php.
+        array('template' => 'page-open-data.php',          'title' => 'Open Data',           'slug' => 'open-data',          'status' => 'publish'),
     );
 }
 
@@ -504,6 +506,11 @@ function kop_nav_item_specs() {
             'slug'   => KOP_GLOSSARY_SLUG,
             'parent' => 'Learn More',
             'title'  => 'TTI Glossary',
+        ),
+        array(
+            'slug'   => KOP_OPEN_DATA_SLUG,
+            'parent' => 'Learn More',
+            'title'  => 'Open Data',
         ),
     );
 }
@@ -626,7 +633,7 @@ add_action('after_switch_theme', 'kop_ensure_tool_pages');
  * guarded by the same option, so the work still happens once.
  */
 function kop_maybe_ensure_tool_pages() {
-    $version = '9';
+    $version = '10';
     if (get_option('kop_tool_pages_ensured') === $version) {
         return;
     }
@@ -2003,7 +2010,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '54';
+    $version = '55';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

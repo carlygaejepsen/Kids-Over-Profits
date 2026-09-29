@@ -85,6 +85,9 @@ require_once get_stylesheet_directory() . '/inc/glossary.php';
 require_once get_stylesheet_directory() . '/inc/glossary-feedback.php';
 require_once get_stylesheet_directory() . '/inc/glossary-editor.php';
 
+// Open data: daily bulk downloads of every public dataset (/open-data/)
+require_once get_stylesheet_directory() . '/inc/open-data.php';
+
 // The /resources/ list (crisis lines, survivor support, advocacy, reading)
 require_once get_stylesheet_directory() . '/inc/resources-list.php';
 
