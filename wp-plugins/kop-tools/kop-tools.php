@@ -277,7 +277,7 @@ function kop_tools_registry() {
             ),
             array(
                 'title' => 'Rebuild Header Menu',
-                'desc'  => 'Show or rebuild the task-based header navigation. Dry run on open; ?apply=1 builds, ?restore=1 puts the old menus back.',
+                'desc'  => 'Show the task-based header navigation plan (read-only; rebuilding is retired, new entries come from kop_nav_item_specs()).',
                 'type'  => 'page',
                 'path'  => 'api/rebuild-header-menu.php',
             ),

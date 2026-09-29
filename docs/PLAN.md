@@ -114,10 +114,10 @@ The date is when each was last confirmed open.
 
 ### Admin runs
 
-1. **Menu entries** (2026-09-23).
-   [rebuild-header-menu.php](https://kidsoverprofits.org/wp-content/themes/child/api/rebuild-header-menu.php),
-   then `?apply=1`. Puts Inspection Reports and Severe Reports in the
-   Monitor menu.
+1. (Done 2026-09-29, no action: Severe Reports joins the Monitor menu
+   through `kop_nav_item_specs()` on deploy. `rebuild-header-menu.php`
+   is retired; its apply would have dropped TTI Glossary, Open Data and
+   Report Abuse.)
 2. **PDF covers** (2026-09-23).
    [regenerate-pdf-previews.php](https://kidsoverprofits.org/wp-content/themes/child/api/regenerate-pdf-previews.php),
    then `?apply=1` until it reports 0 remaining (153 PDFs).

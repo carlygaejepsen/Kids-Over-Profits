@@ -34,6 +34,9 @@ function kop_test_item($id, $parent, $title, $object_id = 0, $order = 0, $object
 $GLOBALS['items'] = array(
     3 => array(
         kop_test_item(10922, 0, 'Home', 1, 1),
+        kop_test_item(10931, 0, 'Monitor', 0, 10, 'custom'),
+        kop_test_item(10933, 10931, 'Inspection Reports', 44, 12),
+        kop_test_item(10938, 10931, 'Legislative Efforts', 49, 17),
         kop_test_item(10939, 0, 'Get Support', 0, 20, 'custom'),
         kop_test_item(10942, 10939, 'Resources', 55, 22),
         kop_test_item(10944, 0, 'Get Involved', 0, 30, 'custom'),
@@ -48,8 +51,11 @@ $GLOBALS['next_id'] = 30000;
 
 /* ---- The WordPress surface the function touches ------------------------ */
 
+// Glossary and Open Data have no page here, so the cases below cover Report
+// Abuse and Severe Reports; a missing page is reported and never inserted.
 function get_page_by_path($slug) {
-    return $slug === 'report-abuse' ? (object) array('ID' => 777, 'post_name' => $slug) : null;
+    $ids = array('report-abuse' => 777, 'severe-reports' => 888);
+    return isset($ids[$slug]) ? (object) array('ID' => $ids[$slug], 'post_name' => $slug) : null;
 }
 function wp_get_nav_menus() { return $GLOBALS['menus']; }
 function wp_get_nav_menu_items($term_id) { return $GLOBALS['items'][$term_id] ?? array(); }
@@ -74,6 +80,19 @@ function get_stylesheet_directory() { return dirname(__DIR__); }
 if (!defined('KOP_REPORTING_SLUG')) {
     define('KOP_REPORTING_SLUG', 'report-abuse');
 }
+if (!defined('KOP_GLOSSARY_SLUG')) {
+    define('KOP_GLOSSARY_SLUG', 'glossary');
+}
+if (!defined('KOP_OPEN_DATA_SLUG')) {
+    define('KOP_OPEN_DATA_SLUG', 'open-data');
+}
+
+/* What a run added, without the "page does not exist yet" lines. */
+function kop_test_added(array $summary) {
+    return array_values(array_filter($summary, function ($line) {
+        return strpos($line, 'page does not exist yet') === false;
+    }));
+}
 
 /* Only the two functions under test, lifted out of inc/admin.php, so this
  * harness does not have to satisfy every dependency that file loads. */
@@ -95,9 +114,9 @@ function check($label, $ok, $detail = '') {
     printf("%s %s%s\n", $ok ? 'PASS' : 'FAIL', $label, $detail !== '' ? "  ($detail)" : '');
 }
 
-// 1. One insert, under the right parent, in the right menu.
+// 1. One insert per page, under the right parent, in the right menu.
 $first = kop_ensure_nav_items();
-check('adds one entry', count($GLOBALS['inserted']) === 1, count($GLOBALS['inserted']) . ' inserted');
+check('adds two entries', count($GLOBALS['inserted']) === 2, count($GLOBALS['inserted']) . ' inserted');
 $ins = $GLOBALS['inserted'][0] ?? array('menu' => 0, 'args' => array());
 check('lands in the menu holding the parent', ($ins['menu'] ?? 0) === 3, 'menu ' . ($ins['menu'] ?? '?'));
 check('nests under Get Involved', ($ins['args']['menu-item-parent-id'] ?? 0) === 10944,
@@ -106,13 +125,21 @@ check('points at the page, not a custom URL',
     ($ins['args']['menu-item-object'] ?? '') === 'page' && ($ins['args']['menu-item-object-id'] ?? 0) === 777);
 check('appended after existing children', ($ins['args']['menu-item-position'] ?? 0) === 37,
     'position ' . ($ins['args']['menu-item-position'] ?? '?'));
-check('reports what it did', $first === array('report-abuse => Primary > Get Involved'),
-    implode('; ', $first) ?: 'nothing');
+$sev = $GLOBALS['inserted'][1] ?? array('menu' => 0, 'args' => array());
+check('Severe Reports nests under Monitor', ($sev['args']['menu-item-parent-id'] ?? 0) === 10931
+    && ($sev['args']['menu-item-object-id'] ?? 0) === 888,
+    'parent ' . ($sev['args']['menu-item-parent-id'] ?? '?'));
+check('Severe Reports appended after Monitor\'s children', ($sev['args']['menu-item-position'] ?? 0) === 18,
+    'position ' . ($sev['args']['menu-item-position'] ?? '?'));
+check('reports what it did', kop_test_added($first) === array(
+        'report-abuse => Primary > Get Involved',
+        'severe-reports => Primary > Monitor',
+    ), implode('; ', $first) ?: 'nothing');
 
 // 2. Idempotent: a second run must do nothing at all.
 $before = count($GLOBALS['inserted']);
 $second = kop_ensure_nav_items();
-check('second run inserts nothing', count($GLOBALS['inserted']) === $before && $second === array(),
+check('second run inserts nothing', count($GLOBALS['inserted']) === $before && kop_test_added($second) === array(),
     (count($GLOBALS['inserted']) - $before) . ' added');
 
 // 3. An editor who moved it elsewhere in the menu keeps their arrangement.

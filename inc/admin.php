@@ -512,6 +512,11 @@ function kop_nav_item_specs() {
             'parent' => 'Learn More',
             'title'  => 'Open Data',
         ),
+        array(
+            'slug'   => 'severe-reports',
+            'parent' => 'Monitor',
+            'title'  => 'Severe Reports',
+        ),
     );
 }
 
@@ -2010,7 +2015,7 @@ function kop_apply_template_assignments() {
  * the lists above change.
  */
 function kop_maybe_apply_template_assignments() {
-    $version = '57';
+    $version = '58';
     if (get_option('kop_template_assignments_applied') === $version) {
         return;
     }

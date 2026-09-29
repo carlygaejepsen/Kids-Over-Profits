@@ -149,8 +149,22 @@ if (empty($_GET['apply'])) {
         'current_locations' => array_intersect_key($locations, array_flip(KOP_HEADER_MENU_LOCATIONS)),
         'missing_pages' => $missing,
         'menu' => kop_header_menu_summary($resolved),
-        'next' => 'Add ?apply=1 to build this menu and put it in the header.',
+        'next' => 'Rebuilding is retired (it would drop entries added since 2026-09-18). Add entries through kop_nav_item_specs() in inc/admin.php.',
     ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// Retired 2026-09-29. The menu was built once (2026-09-18) and has had entries
+// added since by kop_ensure_nav_items() and by hand; re-running would delete
+// and rebuild it from this older list. New entries go in kop_nav_item_specs()
+// in inc/admin.php, which only adds what is missing.
+if (empty($_GET['force'])) {
+    http_response_code(409);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Retired: this rebuilds the header menu from an old list and would drop entries added since. '
+            . 'Add menu entries through kop_nav_item_specs() in inc/admin.php instead.',
+    ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     exit;
 }
 
