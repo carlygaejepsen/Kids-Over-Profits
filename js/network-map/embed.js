@@ -17,7 +17,10 @@
  *
  * The figure is hidden until the first paint, so a page without
  * JavaScript, or one where the scripts fail, shows the list alone as it
- * always has. Painting waits until the figure is near the screen.
+ * always has. A figure carrying a still picture (the history hub's
+ * [kop_network_preview], a slice of a starter view rather than of one
+ * name) shows the still until then instead. Painting waits until the
+ * figure is near the screen.
  */
 (function (root) {
     'use strict';
@@ -29,7 +32,7 @@
         if (!holder) return null;
         try {
             var slice = JSON.parse(holder.textContent || '');
-            return slice && slice.nodes && slice.root ? slice : null;
+            return slice && slice.nodes && (slice.root || slice.view) ? slice : null;
         } catch (e) {
             return null;
         }
@@ -64,17 +67,27 @@
             return null;
         }
 
-        /* Measured from here on, so it has to be in the layout. */
+        /* Measured from here on, so it has to be in the layout. A figure
+         * with a still keeps showing it until the canvas has painted. */
+        var stage = figure.querySelector('.kop-network-embed__stage');
+        var still = figure.querySelector('.kop-network-embed__still');
         figure.hidden = false;
+        if (stage) stage.hidden = false;
 
         var store = root.KOPNetworkStore.create();
         store.hydrate(slice, slice.layout || null);
-        var rootNode = store.node(slice.root);
-        if (!rootNode) {
-            figure.hidden = true;
+        var rootNode = slice.root ? store.node(slice.root) : null;
+        if (slice.view ? !store.setView(slice.view) : !rootNode) {
+            restore(figure);
             return null;
         }
         var urls = profileUrls(slice);
+        /* As the map opens on it. Fitting the whole view instead shrinks a
+         * page-sized stage's worth of names to dots; the preview's stage is
+         * made taller instead (network-embed.css), and Fit is a button. */
+        var openView = function () {
+            focus.start();
+        };
         var navigate = options.navigate || function (url, newTab) {
             if (newTab) win.open(url, '_blank', 'noopener');
             else win.location.href = url;
@@ -108,7 +121,10 @@
         renderer.useChainIndex(store.chainIndex);
         renderer.useBoardColours(store.meta);
         renderer.resize();
-        focus.select(rootNode);
+        /* A facility opens as a click on it would; a starter view opens as
+         * the map opens on it. */
+        if (rootNode) focus.select(rootNode);
+        else openView();
 
         var buttons = figure.querySelectorAll('[data-kop-embed-zoom]');
         Array.prototype.forEach.call(buttons, function (button) {
@@ -122,24 +138,38 @@
 
         /* A phone turned on its side, or the column narrowing: frame the
          * names for the stage it has now. Debounced like the map's own. */
-        var stage = figure.querySelector('.kop-network-embed__stage') || canvas;
         var pending = 0;
         var onResize = function () {
             viewport.resize();
             if (pending) win.clearTimeout(pending);
             pending = win.setTimeout(function () {
                 pending = 0;
-                focus.reframe();
+                if (rootNode) focus.reframe();
+                else openView();
             }, 180);
         };
         if (win.ResizeObserver) {
-            new win.ResizeObserver(onResize).observe(stage);
+            new win.ResizeObserver(onResize).observe(stage || canvas);
         } else if (win.addEventListener) {
             win.addEventListener('resize', onResize);
         }
 
+        if (still) still.hidden = true;
+        if (fit) fit.hidden = false;
         figure.setAttribute('data-state', 'ready');
         return { store: store, renderer: renderer, viewport: viewport, focus: focus, slice: slice };
+    }
+
+    /** Back to what the page printed: the still where there is one, else nothing. */
+    function restore(figure) {
+        var stage = figure.querySelector('.kop-network-embed__stage');
+        var still = figure.querySelector('.kop-network-embed__still');
+        if (still) {
+            still.hidden = false;
+            if (stage) stage.hidden = true;
+        } else {
+            figure.hidden = true;
+        }
     }
 
     /** Start each figure once it comes near the screen, or at once. */
@@ -150,7 +180,7 @@
                 try {
                     start(figure, { window: win });
                 } catch (e) {
-                    figure.hidden = true;
+                    restore(figure);
                     if (win.console) win.console.error('Network map embed failed.', e);
                 }
             };
@@ -158,8 +188,8 @@
                 go();
                 return;
             }
-            /* The figure is hidden, so it has no box to watch; its section
-             * does. */
+            /* A figure without a still is hidden, so it has no box to
+             * watch; its section does. */
             var watch = figure.parentNode || figure;
             var observer = new win.IntersectionObserver(function (entries) {
                 if (!entries.some(function (entry) { return entry.isIntersecting; })) return;

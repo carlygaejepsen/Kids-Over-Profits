@@ -224,7 +224,8 @@ own.
    own slice, not one hop, held to focus.js by
    `scripts/test-network-embed.js`; decisions 1 and 2 as proposed); 4.4
    second step, the
-   `[kop_network_preview]` shortcode making that still live; 4.3 the
+   `[kop_network_preview]` shortcode making that still live (built
+   2026-09-29, seed_version 3); 4.3 the
    timeline, a year slider (owner 2026-09-29: names with no known years
    are left out while it is on, with a count; people follow their
    places). 4.2, the board re-import, is dropped (owner 2026-09-29:

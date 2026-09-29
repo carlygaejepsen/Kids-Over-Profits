@@ -375,35 +375,16 @@ if (!function_exists('kop_network_map_layout')) {
     }
 }
 
-if (!function_exists('kop_network_map_slice_from_graph')) {
+if (!function_exists('kop_network_map_slice_index')) {
     /**
-     * The part of the graph the map draws when a name is opened in Focus
-     * mode, in graph.json's own shape, so the map's store takes it as it
-     * takes the whole file (Phase 4.1, the facility page embed).
-     *
-     * Which names: the rules of visibleIds() in js/network-map/focus.js for
-     * a trail of one, with every filter at its default (all on). The root
-     * and everything it touches; everyone a person among those touches;
-     * every place those people connect to; and the company that owns each
-     * program on it. scripts/test-network-embed.js holds the two to the same
-     * answer for every facility on the map, so change them together.
-     *
-     * A root with more than $cap direct connections keeps the $cap most
-     * important; 'more' says how many went. Every edge among the kept names
-     * comes along, and each node carries offSlice, how many of its
-     * connections the slice left out, so the "+N" on a name says what it
-     * says on the full map. Returns null for a name the graph lacks.
+     * The graph's nodes by id and its adjacency, over the nodes the layout
+     * places (store.hydrate() drops the rest). The slice functions share it.
      */
-    function kop_network_map_slice_from_graph(array $graph, array $positions, $root, $cap = 40) {
+    function kop_network_map_slice_index(array $graph, array $positions) {
         $nodes = array();
         foreach ($graph['nodes'] as $node) {
             $nodes[(string) $node['id']] = $node;
         }
-        $root = (string) $root;
-        if (!isset($nodes[$root]) || !isset($positions[$root])) {
-            return null;
-        }
-        // Adjacency over the nodes the layout places, as store.hydrate() keeps them.
         $adjacent = array();
         foreach ((array) ($graph['edges'] ?? array()) as $edge) {
             $s = (string) $edge['source'];
@@ -414,10 +395,24 @@ if (!function_exists('kop_network_map_slice_from_graph')) {
             $adjacent[$s][] = array('other' => $t, 'edge' => $edge, 'outgoing' => true);
             $adjacent[$t][] = array('other' => $s, 'edge' => $edge, 'outgoing' => false);
         }
+        return array($nodes, $adjacent);
+    }
+}
+
+if (!function_exists('kop_network_map_slice_opened')) {
+    /**
+     * The names the map shows around one opened name: visibleIds() in
+     * js/network-map/focus.js for a trail of one, every filter at its
+     * default (all on). The root and everything it touches; everyone a
+     * person among those touches; every place those people connect to; and
+     * the company that owns each program on it. With more than $cap direct
+     * connections, only the $cap most important stay and $more says how
+     * many went. id => true.
+     */
+    function kop_network_map_slice_opened(array $nodes, array $adjacent, $root, $cap, &$more) {
         $kind = static function ($id) use ($nodes) {
             return (string) ($nodes[$id]['kind'] ?? '');
         };
-
         $first = array();
         foreach ($adjacent[$root] ?? array() as $link) {
             $first[$link['other']] = true;
@@ -444,14 +439,7 @@ if (!function_exists('kop_network_map_slice_from_graph')) {
             }
         }
         // ...and nobody is on the map without their places.
-        foreach (array_keys($asked) as $id) {
-            if ($kind($id) !== 'person') continue;
-            foreach ($adjacent[$id] ?? array() as $link) {
-                if ($kind($link['other']) !== 'person') {
-                    $asked[$link['other']] = true;
-                }
-            }
-        }
+        kop_network_map_slice_with_places($nodes, $adjacent, $asked);
         // The company that owns each program, one step up.
         foreach (array_keys($asked) as $id) {
             if ($kind($id) !== 'facility') continue;
@@ -470,16 +458,42 @@ if (!function_exists('kop_network_map_slice_from_graph')) {
                 if (!isset($first[$link['other']])) unset($asked[$link['other']]);
             }
         }
+        return $asked;
+    }
+}
 
-        // In graph.json's order, which the store keeps: the layout breaks
-        // ties by it, so another order settles the same names elsewhere.
+if (!function_exists('kop_network_map_slice_with_places')) {
+    /** withTheirPlaces() in focus.js: every place and company the people in $set connect to. */
+    function kop_network_map_slice_with_places(array $nodes, array $adjacent, array &$set) {
+        foreach (array_keys($set) as $id) {
+            if (($nodes[$id]['kind'] ?? '') !== 'person') continue;
+            foreach ($adjacent[$id] ?? array() as $link) {
+                if (($nodes[$link['other']]['kind'] ?? '') !== 'person') {
+                    $set[$link['other']] = true;
+                }
+            }
+        }
+    }
+}
+
+if (!function_exists('kop_network_map_slice_pack')) {
+    /**
+     * A set of names as graph.json-shaped data the map's store takes as it
+     * takes the whole file: the nodes in graph.json's order (the layout
+     * breaks ties by it, so another order settles the same names
+     * elsewhere), every edge among them, their layout positions, and meta
+     * with $views as its only starter views. Each node carries offSlice,
+     * how many of its connections the slice left out, which focus.js adds
+     * to the "+N" so a name says what it says on the full map.
+     */
+    function kop_network_map_slice_pack(array $graph, array $nodes, array $adjacent, array $positions, array $ids, array $views) {
         $out_nodes = array();
         $out_positions = array();
         foreach ($nodes as $id => $node) {
-            if (!isset($asked[$id])) continue;
+            if (!isset($ids[$id]) || !isset($positions[$id])) continue;
             $off = 0;
             foreach ($adjacent[$id] ?? array() as $link) {
-                if (!isset($asked[$link['other']])) $off++;
+                if (!isset($ids[$link['other']])) $off++;
             }
             if ($off) {
                 $node['offSlice'] = $off;
@@ -489,18 +503,15 @@ if (!function_exists('kop_network_map_slice_from_graph')) {
         }
         $out_edges = array();
         foreach ((array) ($graph['edges'] ?? array()) as $edge) {
-            if (isset($asked[(string) $edge['source']], $asked[(string) $edge['target']])) {
+            if (isset($out_positions[(string) $edge['source']], $out_positions[(string) $edge['target']])) {
                 $out_edges[] = $edge;
             }
         }
-        // The renderer reads the board colours and the chain order from
-        // meta; the starter views are the map page's business.
+        // The renderer reads the board colours and the chain order from meta.
         $meta = (array) ($graph['meta'] ?? array());
-        $meta['views'] = array();
+        $meta['views'] = $views;
         $meta['headline'] = array();
         return array(
-            'root'   => $root,
-            'more'   => $more,
             'nodes'  => $out_nodes,
             'edges'  => $out_edges,
             'meta'   => $meta,
@@ -509,33 +520,97 @@ if (!function_exists('kop_network_map_slice_from_graph')) {
     }
 }
 
-if (!function_exists('kop_network_map_slice')) {
+if (!function_exists('kop_network_map_slice_from_graph')) {
     /**
-     * kop_network_map_slice_from_graph() for the deployed graph, with the
-     * profile page URL of every name in it that has one ('urls', node id =>
-     * URL, for Ctrl-click). Cached per name against the graph build and the
-     * facility page index.
+     * The part of the graph the map draws when a name is opened in Focus
+     * mode (Phase 4.1, the facility page embed): 'root', 'more' (names the
+     * cap left out) and graph.json's own shape. scripts/test-network-embed.js
+     * holds it to what focus.js shows for the same name on the full map, for
+     * every facility on the map, so change the two together. Null for a
+     * name the graph or the layout lacks.
      */
-    function kop_network_map_slice($node_id) {
-        $key = kop_network_map_cache_key();
-        if ($key === '' || (string) $node_id === '') {
+    function kop_network_map_slice_from_graph(array $graph, array $positions, $root, $cap = 40) {
+        $root = (string) $root;
+        list($nodes, $adjacent) = kop_network_map_slice_index($graph, $positions);
+        if (!isset($nodes[$root]) || !isset($positions[$root])) {
+            return null;
+        }
+        $more = 0;
+        $ids = kop_network_map_slice_opened($nodes, $adjacent, $root, $cap, $more);
+        return array('root' => $root, 'more' => $more)
+            + kop_network_map_slice_pack($graph, $nodes, $adjacent, $positions, $ids, array());
+    }
+}
+
+if (!function_exists('kop_network_map_view_slice_from_graph')) {
+    /**
+     * The board a starter view opens on (the history hub's preview, 4.4):
+     * 'view' and graph.json's shape, the view as meta's only view so the
+     * store opens on it. As visibleIds() with no trail: the view's own
+     * names and the places of the people among them, and when the view is
+     * opened on one organisation (root), everything opening it brings.
+     * Held to focus.js for every view by scripts/test-network-embed.js.
+     */
+    function kop_network_map_view_slice_from_graph(array $graph, array $positions, $key) {
+        $view = null;
+        foreach ((array) ($graph['meta']['views'] ?? array()) as $candidate) {
+            if (($candidate['key'] ?? '') === (string) $key) $view = $candidate;
+        }
+        if (!$view) {
+            return null;
+        }
+        list($nodes, $adjacent) = kop_network_map_slice_index($graph, $positions);
+        $ids = array();
+        $root = (string) ($view['root'] ?? '');
+        if ($root !== '' && isset($nodes[$root], $positions[$root])) {
+            $more = 0;
+            $ids = kop_network_map_slice_opened($nodes, $adjacent, $root, PHP_INT_MAX, $more);
+        }
+        $opening = array();
+        foreach ((array) ($view['ids'] ?? array()) as $id) {
+            if (isset($nodes[$id], $positions[$id])) $opening[$id] = true;
+        }
+        if (!$opening && !$ids) {
+            return null;
+        }
+        kop_network_map_slice_with_places($nodes, $adjacent, $opening);
+        $ids += $opening;
+        return array('view' => (string) $key)
+            + kop_network_map_slice_pack($graph, $nodes, $adjacent, $positions, $ids, array($view));
+    }
+}
+
+if (!function_exists('kop_network_map_cached_slice')) {
+    /**
+     * A slice for the deployed graph, cached against the graph build and the
+     * facility page index, with the profile page URL of every name in it
+     * that has one ('urls', [id, URL] pairs for Ctrl-click; not an array
+     * keyed by id, which PHP would renumber for an id that looks like a
+     * number). $kind is 'node' or 'view'.
+     */
+    function kop_network_map_cached_slice($kind, $key) {
+        $cache_key = kop_network_map_cache_key();
+        if ($cache_key === '' || (string) $key === '') {
             return null;
         }
         if (function_exists('kop_facility_pages_index')) {
             $index = kop_facility_pages_index();
-            $key .= ':' . substr((string) ($index['fingerprint'] ?? ''), 0, 12);
+            $cache_key .= ':' . substr((string) ($index['fingerprint'] ?? ''), 0, 12);
         }
-        $key .= ':v1';
-        $transient = 'kop_nm_slice_' . md5((string) $node_id);
+        $cache_key .= ':v2';
+        $transient = 'kop_nm_slice_' . md5($kind . ':' . $key);
         $cached = get_transient($transient);
-        if (is_array($cached) && ($cached['_key'] ?? '') === $key) {
+        if (is_array($cached) && ($cached['_key'] ?? '') === $cache_key) {
             return $cached['slice'];
         }
         $graph = kop_network_map_graph();
-        $slice = $graph ? kop_network_map_slice_from_graph($graph, kop_network_map_layout(), $node_id) : null;
+        $slice = null;
+        if ($graph) {
+            $slice = $kind === 'view'
+                ? kop_network_map_view_slice_from_graph($graph, kop_network_map_layout(), $key)
+                : kop_network_map_slice_from_graph($graph, kop_network_map_layout(), $key);
+        }
         if ($slice) {
-            // Not a PHP array keyed by id: an id that looks like a number
-            // would come back renumbered, as the facility URLs once did.
             $urls = function_exists('kop_network_map_facility_urls') ? kop_network_map_facility_urls() : array();
             $slice['urls'] = array();
             foreach ($slice['nodes'] as $node) {
@@ -545,19 +620,81 @@ if (!function_exists('kop_network_map_slice')) {
                 }
             }
         }
-        set_transient($transient, array('_key' => $key, 'slice' => $slice), WEEK_IN_SECONDS);
+        set_transient($transient, array('_key' => $cache_key, 'slice' => $slice), WEEK_IN_SECONDS);
         return $slice;
+    }
+}
+
+if (!function_exists('kop_network_map_slice')) {
+    /** The facility page slice for one map name; see kop_network_map_slice_from_graph(). */
+    function kop_network_map_slice($node_id) {
+        return kop_network_map_cached_slice('node', (string) $node_id);
+    }
+}
+
+if (!function_exists('kop_network_map_view_slice')) {
+    /** A starter view's slice; see kop_network_map_view_slice_from_graph(). */
+    function kop_network_map_view_slice($key) {
+        return kop_network_map_cached_slice('view', (string) $key);
+    }
+}
+
+if (!function_exists('kop_network_map_page_url')) {
+    function kop_network_map_page_url() {
+        return function_exists('kop_facility_pages_page_url_by_template')
+            ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/')
+            : home_url('/network-map/');
+    }
+}
+
+if (!function_exists('kop_network_map_embed_shell')) {
+    /**
+     * The embed's markup, shared by a facility page and the preview
+     * shortcode: a figure holding the slice as JSON, which
+     * js/network-map/embed.js paints. The canvas stage is hidden until the
+     * first paint. With a still ($still_html), the figure shows the still
+     * until then, and after a failure; without one, the whole figure is
+     * hidden until then. Sets $GLOBALS['kop_network_embed'] so the footer
+     * loads the scripts.
+     */
+    function kop_network_map_embed_shell(array $slice, $label, $caption_html, $open_url, $still_html = '') {
+        $GLOBALS['kop_network_embed'] = true;
+        $slice['mapUrl'] = kop_network_map_page_url();
+        $json = wp_json_encode($slice, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
+        $still = trim((string) $still_html) !== '';
+        ob_start();
+        ?>
+        <figure class="kop-network-embed<?php echo $still ? ' kop-network-embed--still' : ''; ?>" data-kop-network-embed<?php echo $still ? '' : ' hidden'; ?>>
+            <?php if ($still) : ?>
+            <div class="kop-network-embed__still"><?php echo $still_html; ?></div>
+            <?php endif; ?>
+            <div class="kop-network-embed__stage"<?php echo $still ? ' hidden' : ''; ?>>
+                <canvas class="kop-network-embed__canvas" role="img" aria-label="<?php echo esc_attr($label); ?>"></canvas>
+                <div class="kop-network-embed__zoom">
+                    <button type="button" class="kop-network-embed__button" data-kop-embed-zoom="in" aria-label="Zoom in">+</button>
+                    <button type="button" class="kop-network-embed__button" data-kop-embed-zoom="out" aria-label="Zoom out">&minus;</button>
+                </div>
+            </div>
+            <figcaption class="kop-network-embed__caption">
+                <span><?php echo $caption_html; ?></span>
+                <span class="kop-network-embed__actions">
+                    <button type="button" class="kop-network-embed__button" data-kop-embed-fit hidden>Fit</button>
+                    <a class="kop-network-embed__button kop-network-embed__open" href="<?php echo esc_url($open_url); ?>">Open on the full map</a>
+                </span>
+            </figcaption>
+            <script type="application/json" class="kop-network-embed__data"><?php echo $json; ?></script>
+        </figure>
+        <?php
+        return (string) ob_get_clean();
     }
 }
 
 if (!function_exists('kop_network_map_embed_html')) {
     /**
-     * The embed shell for a facility page or profile post: a hidden figure
-     * holding the slice as JSON, which js/network-map/embed.js paints and
-     * unhides. Without JavaScript, or when the scripts fail, it stays hidden
-     * and the list of connections under it is the section. '' when the map
-     * does not draw the facility. Sets $GLOBALS['kop_network_embed'] so the
-     * footer loads the scripts.
+     * The map for a facility page or profile post's network section, or ''
+     * when the map does not draw the facility. Without JavaScript, or when
+     * the scripts fail, it stays hidden and the list under it is the
+     * section.
      */
     function kop_network_map_embed_html($facility_id) {
         if (!function_exists('kop_network_map_facility_connections')) return '';
@@ -566,41 +703,69 @@ if (!function_exists('kop_network_map_embed_html')) {
         if (!$entry || empty($entry['links'])) return '';
         $slice = kop_network_map_slice($entry['node']);
         if (!$slice || count($slice['nodes']) < 2) return '';
-        $GLOBALS['kop_network_embed'] = true;
 
-        $map = function_exists('kop_facility_pages_page_url_by_template')
-            ? kop_facility_pages_page_url_by_template('page-network-map.php', '/network-map/')
-            : home_url('/network-map/');
-        $slice['mapUrl'] = $map;
         $name = (string) $entry['name'];
-        $label = sprintf('Map of %s and the names around it on the network map; its connections are listed below.', $name);
-        $json = wp_json_encode($slice, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
-
-        ob_start();
-        ?>
-        <figure class="kop-network-embed" data-kop-network-embed hidden>
-            <div class="kop-network-embed__stage">
-                <canvas class="kop-network-embed__canvas" role="img" aria-label="<?php echo esc_attr($label); ?>"></canvas>
-                <div class="kop-network-embed__zoom">
-                    <button type="button" class="kop-network-embed__button" data-kop-embed-zoom="in" aria-label="Zoom in">+</button>
-                    <button type="button" class="kop-network-embed__button" data-kop-embed-zoom="out" aria-label="Zoom out">&minus;</button>
-                </div>
-            </div>
-            <figcaption class="kop-network-embed__caption">
-                <?php // No count: people who only join two places are drawn as the line between them. ?>
-                <span><?php echo esc_html($name); ?> and the names around it<?php
-                    if (!empty($slice['more'])) echo ', and ' . (int) $slice['more'] . ' more on the full map';
-                ?>. Click a name to open it on the map.</span>
-                <span class="kop-network-embed__actions">
-                    <button type="button" class="kop-network-embed__button" data-kop-embed-fit>Fit</button>
-                    <a class="kop-network-embed__button kop-network-embed__open" href="<?php echo esc_url($map . '#open=' . rawurlencode($entry['node'])); ?>">Open on the full map</a>
-                </span>
-            </figcaption>
-            <script type="application/json" class="kop-network-embed__data"><?php echo $json; ?></script>
-        </figure>
-        <?php
-        return (string) ob_get_clean();
+        // No count: people who only join two places are drawn as the line
+        // between them, so the names drawn are fewer than the names held.
+        $caption = esc_html($name) . ' and the names around it'
+            . (!empty($slice['more']) ? ', and ' . (int) $slice['more'] . ' more on the full map' : '')
+            . '. Click a name to open it on the map.';
+        return kop_network_map_embed_shell(
+            $slice,
+            sprintf('Map of %s and the names around it on the network map; its connections are listed below.', $name),
+            $caption,
+            kop_network_map_page_url() . '#open=' . rawurlencode($entry['node'])
+        );
     }
+}
+
+if (!function_exists('kop_network_map_preview_shortcode')) {
+    /**
+     * [kop_network_preview view="historical" caption="..."]<still>[/kop_network_preview]
+     *
+     * A starter view of the map, live, on a content page (the history hub,
+     * Phase 4.4). The enclosed content is the still picture of the view: it
+     * shows until the map has painted and stays if it cannot, and being in
+     * the post content it is also the image Yoast picks for sharing. A
+     * click on a name opens it on the full map.
+     */
+    function kop_network_map_preview_shortcode($atts, $content = '') {
+        $atts = shortcode_atts(array('view' => 'historical', 'caption' => ''), (array) $atts, 'kop_network_preview');
+        $key = sanitize_key($atts['view']);
+        $slice = kop_network_map_view_slice($key);
+        if (!$slice) {
+            return (string) $content;
+        }
+        $label = '';
+        foreach ($slice['meta']['views'] as $view) {
+            $label = (string) ($view['label'] ?? '');
+        }
+        $caption = $atts['caption'] !== ''
+            ? esc_html($atts['caption'])
+            : esc_html(sprintf('The %s view of the network map.', $label !== '' ? $label : $key));
+        return kop_network_map_embed_shell(
+            $slice,
+            sprintf('The network map\'s %s view; a click on a name opens it on the full map.', $label !== '' ? $label : $key),
+            $caption . ' Click a name to open it on the map.',
+            kop_network_map_page_url() . '#view=' . rawurlencode($key),
+            (string) $content
+        );
+    }
+    if (function_exists('add_shortcode')) {
+        add_shortcode('kop_network_preview', 'kop_network_map_preview_shortcode');
+    }
+}
+
+if (!function_exists('kop_network_map_preview_style')) {
+    /** The embed stylesheet in the head of a page whose content carries the preview. */
+    function kop_network_map_preview_style() {
+        if (!is_singular()) return;
+        $post = get_queried_object();
+        if ($post && isset($post->post_content) && has_shortcode($post->post_content, 'kop_network_preview')) {
+            kop_network_map_embed_style();
+        }
+    }
+    add_action('wp_enqueue_scripts', 'kop_network_map_preview_style', 20);
 }
 
 if (!function_exists('kop_network_map_enqueue_embed')) {

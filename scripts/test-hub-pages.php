@@ -201,13 +201,39 @@ function kop_test_ez_toc($c) {
 add_filter('the_content', 'kop_test_ez_toc', 100);
 function the_content() {
     $html = preg_replace('/<!--.*?-->/s', '', $GLOBALS['kop_test_post']->post_content);
-    echo apply_filters('the_content', $html);
+    echo kop_test_run_shortcodes(apply_filters('the_content', $html));
 }
+
+// The theme's own shortcodes (the history hub's [kop_network_preview]), run
+// as WordPress runs them on the_content, enclosed content included.
+$GLOBALS['kop_test_shortcodes'] = array();
+function add_shortcode($tag, $cb) { $GLOBALS['kop_test_shortcodes'][$tag] = $cb; }
+function shortcode_atts($defaults, $atts) { return array_merge($defaults, array_intersect_key((array) $atts, $defaults)); }
+function kop_test_run_shortcodes($html) {
+    foreach ($GLOBALS['kop_test_shortcodes'] as $tag => $cb) {
+        $html = preg_replace_callback('/\[' . $tag . '([^\]]*)\](?:(.*?)\[\/' . $tag . '\])?/s', function ($m) use ($cb) {
+            preg_match_all('/(\w+)="([^"]*)"/', $m[1], $pairs, PREG_SET_ORDER);
+            $atts = array();
+            foreach ($pairs as $p) $atts[$p[1]] = $p[2];
+            return $cb($atts, $m[2] ?? '');
+        }, $html);
+    }
+    return $html;
+}
+function sanitize_key($k) { return preg_replace('/[^a-z0-9_\-]/', '', strtolower((string) $k)); }
+function trailingslashit($s) { return rtrim((string) $s, '/\\') . '/'; }
+function add_query_arg($k, $v, $url) { return $url . (strpos($url, '?') === false ? '?' : '&') . $k . '=' . $v; }
+function wp_json_encode($v, $f = 0) { return json_encode($v, $f); }
+function get_transient($k) { return false; }
+function set_transient($k, $v, $t = 0) { return true; }
+if (!defined('WEEK_IN_SECONDS')) define('WEEK_IN_SECONDS', 604800);
+if (!defined('DAY_IN_SECONDS')) define('DAY_IN_SECONDS', 86400);
 
 require ABSPATH . 'inc/admin.php';
 require ABSPATH . 'inc/article-parts.php';
 require ABSPATH . 'inc/hub-shell.php';
 require ABSPATH . 'inc/hub-posts.php';
+require ABSPATH . 'inc/network-map.php';
 
 // --- Checks -----------------------------------------------------------------
 
@@ -402,6 +428,18 @@ check('history shows the Historical view still',
     strpos($history, '/images/network-map-historical.jpg') !== false
     && strpos($history, 'href="/network-map/#view=historical"') !== false
     && is_file(ABSPATH . 'images/network-map-historical.jpg'));
+// The still sits inside the live preview (4.4 step 2), which paints the
+// Historical view over it; the slice is graph.json-shaped with the view as
+// its only one.
+$preview_ok = preg_match('#<figure class="kop-network-embed kop-network-embed--still" data-kop-network-embed>\s*<div class="kop-network-embed__still">.*?network-map-historical\.jpg.*?</div>.*?<div class="kop-network-embed__stage" hidden>.*?<script type="application/json" class="kop-network-embed__data">(.*?)</script>#s', $history, $pm);
+$preview = $preview_ok ? json_decode($pm[1], true) : null;
+check('history carries the live Historical preview around the still',
+    is_array($preview) && ($preview['view'] ?? '') === 'historical'
+    && count($preview['meta']['views'] ?? array()) === 1
+    && in_array('synanon', array_column($preview['nodes'] ?? array(), 'id'), true)
+    && strpos($history, '[kop_network_preview') === false,
+    is_array($preview) ? count($preview['nodes']) . ' names, ' . (int) (strlen($pm[1]) / 1024) . ' KB' : 'no preview JSON');
+check('the preview opens the full map on the view', strpos($history, 'network-map/#view=historical">Open on the full map') !== false);
 
 if ($check_live_links) {
     $live_urls = array_values(array_unique($live_urls));

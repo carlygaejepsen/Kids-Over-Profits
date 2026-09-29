@@ -2853,6 +2853,19 @@ is a two-year-old screenshot of someone else's tool.
    shell and parse its JSON; the embed suite gets a view slice beside the
    facility slice.
 
+   *Built 2026-09-29.* The still is the shortcode's enclosed content
+   (`[kop_network_preview view="historical" caption="..."]<a><img></a>
+   [/kop_network_preview]` in a wp:html block, seed_version 3,
+   template-assignment version 57), so it stays in the post for Yoast and
+   shows until the canvas paints, or for good if it cannot. The view
+   slice (`kop_network_map_view_slice_from_graph`) is the opening board:
+   the view's names plus their people's places, plus everything opening
+   the root brings where a view has one; 34 names, 28 KB for Historical.
+   The parity test now covers all six starter views as well as the 536
+   facilities. Fitting the view to a 440 px stage shrank it to dots, so
+   the preview opens at the map's own framing on a taller stage (640 px
+   from 768 px, 520 on phones), with Fit as a button.
+
 ### Commit sequence
 
 1. `content(history): retire the Miro board, show the network map` (4.4

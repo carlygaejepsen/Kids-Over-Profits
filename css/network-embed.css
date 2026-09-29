@@ -111,3 +111,30 @@
 	background: var(--kop-midnight-blue, #000435);
 	color: var(--kop-white, #fff);
 }
+
+/* The history hub's preview shows its still until the map has painted. */
+.kop-network-embed__still img {
+	display: block;
+	width: 100%;
+	height: auto;
+	border: 1px solid #d8d2bd;
+	border-radius: 8px;
+}
+
+.kop-network-embed__still[hidden],
+.kop-network-embed__stage[hidden],
+.kop-network-embed__button[hidden] {
+	display: none;
+}
+
+/* A starter view is a board of its own, laid out for the map's tall stage,
+ * so the preview gets more height than a facility's map. */
+.kop-network-embed--still .kop-network-embed__stage {
+	height: 520px;
+}
+
+@media (min-width: 768px) {
+	.kop-network-embed--still .kop-network-embed__stage {
+		height: 640px;
+	}
+}

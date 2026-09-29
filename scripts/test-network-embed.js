@@ -96,9 +96,15 @@ function run() {
         failures.push('could not cut the slices with ' + php + ': ' + (error.message || error).split('\n')[0]);
         return;
     }
-    const roots = Object.keys(slices);
-    const expected = only.length ? only.length : graph.nodes.filter((n) => n.facilityId).length;
+    const roots = Object.keys(slices).filter((id) => id.indexOf('view:') !== 0);
+    const viewKeys = Object.keys(slices).filter((id) => id.indexOf('view:') === 0).map((id) => id.slice(5));
+    const expected = only.length ? only.filter((id) => id.indexOf('view:') !== 0).length
+        : graph.nodes.filter((n) => n.facilityId).length;
     check(roots.length === expected, 'the PHP cut ' + roots.length + ' slices for ' + expected + ' facility names');
+    if (!only.length) {
+        check(viewKeys.length === graph.meta.views.length,
+            'the PHP cut ' + viewKeys.length + ' view slices for ' + graph.meta.views.length + ' starter views');
+    }
 
     const box = buildSandbox();
     const { sandbox } = box;
@@ -110,6 +116,8 @@ function run() {
         { filename: 'js/network-map/embed.js' });
     check(!!sandbox.KOPNetworkEmbed, 'embed.js did not define KOPNetworkEmbed');
 
+    /* id is a name to open, or view:<key> for a starter view as the map
+     * opens on it. */
     function focused(store, id) {
         const renderer = sandbox.KOPNetworkCanvas.create(box.canvas);
         const viewport = sandbox.KOPNetworkViewport.create({ canvas: box.canvas, renderer });
@@ -117,7 +125,12 @@ function run() {
         renderer.useChainIndex(store.chainIndex);
         renderer.useBoardColours(store.meta);
         renderer.resize();
-        focus.select(store.node(id));
+        if (id.indexOf('view:') === 0) {
+            store.setView(id.slice(5));
+            focus.start();
+        } else {
+            focus.select(store.node(id));
+        }
         box.flushFrames();
         box.runTimers();
         box.flushFrames();
@@ -151,6 +164,26 @@ function run() {
         check(slice.nodes.every((n) => slice.layout.positions[n.id]), id + ': a name in the slice has no position');
         check((slice.more > 0) === (full.neighbours(id).length > 40), id + ': the cap note does not match the cap');
 
+        compare(id, slice);
+    });
+
+    /* The starter views, as the map opens on each (the history hub's
+     * preview). The whole store goes back to the default view after. */
+    viewKeys.forEach((key) => {
+        const slice = slices['view:' + key];
+        if (!slice) {
+            failures.push('no slice for the ' + key + ' view');
+            return;
+        }
+        check(slice.view === key && slice.meta.views.length === 1 && slice.meta.views[0].key === key,
+            key + ': the view slice does not carry its view as its only one');
+        const ids = new Set(slice.nodes.map((n) => n.id));
+        check(slice.edges.every((e) => ids.has(e.source) && ids.has(e.target)), key + ': a line in the view slice has an end outside it');
+        compare('view:' + key, slice);
+        full.setView('default');
+    });
+
+    function compare(id, slice) {
         const small = sandbox.KOPNetworkStore.create();
         small.hydrate(slice, slice.layout);
         const want = focused(full, id);
@@ -176,10 +209,10 @@ function run() {
         });
         if (drift.length) moved.push(id + ' (' + drift.length + ')');
         else same++;
-    });
+    }
     check(moved.length === 0,
         moved.length + ' slices settle to other positions than the map: ' + moved.slice(0, 8).join(', '));
-    notes.push(same + ' of ' + roots.length + ' slices draw the board the map draws, name for name and place for place');
+    notes.push(same + ' of ' + (roots.length + viewKeys.length) + ' slices draw the board the map draws, name for name and place for place');
     check(biggest.bytes < 120 * 1024, 'the largest slice, ' + biggest.id + ', is ' + Math.round(biggest.bytes / 1024) + ' KB',
         'largest slice: ' + biggest.id + ', ' + Math.round(biggest.bytes / 1024) + ' KB');
 
@@ -286,6 +319,56 @@ function run() {
     check(k1 > k0, 'the + button did not zoom in');
     (listeners['fit'] || []).forEach((fn) => fn());
     check(parts.renderer.transform.k < k1, 'Fit did not frame the names again after a zoom in');
+
+    /* The history hub's preview: a starter view, with a still that shows
+     * until the canvas has painted and goes when it has. */
+    const viewSlice = slices['view:historical'];
+    if (viewSlice) {
+        const still = { hidden: false };
+        const stage = { hidden: true };
+        const fitButton = button({ name: 'fit2' });
+        fitButton.hidden = true;
+        const pAttrs = {};
+        const preview = {
+            hidden: false,
+            parentNode: null,
+            setAttribute: (k, v) => { pAttrs[k] = String(v); },
+            getAttribute: (k) => (k in pAttrs ? pAttrs[k] : null),
+            querySelector: (sel) => ({
+                '.kop-network-embed__data': { textContent: JSON.stringify(viewSlice) },
+                'canvas': box.canvas,
+                '[data-kop-embed-fit]': fitButton,
+                '.kop-network-embed__stage': stage,
+                '.kop-network-embed__still': still
+            })[sel] || null,
+            querySelectorAll: () => []
+        };
+        box.resetOps();
+        const shown = sandbox.KOPNetworkEmbed.start(preview, { window: sandbox, navigate: () => {} });
+        box.flushFrames();
+        box.runTimers();
+        box.flushFrames();
+        check(!!shown && pAttrs['data-state'] === 'ready', 'the Historical preview did not start');
+        check(still.hidden === true && stage.hidden === false && fitButton.hidden === false,
+            'the preview did not swap its still for the canvas (still ' + still.hidden + ', stage ' + stage.hidden + ')');
+        if (shown) {
+            box.resetOps();
+            shown.renderer.draw();
+            const names = box.labelCalls.filter((c) => c.startsWith('text:')).map((c) => c.slice(5));
+            check(names.indexOf('Synanon') !== -1 && names.indexOf('The Seed') !== -1,
+                'the Historical preview did not draw Synanon and The Seed',
+                'the Historical preview draws ' + shown.focus.scene().nodes.length + ' names, Synanon and The Seed among them');
+            check(shown.focus.chain().length === 0, 'the preview opened a trail instead of the view');
+        }
+        /* And a view slice that names a view the store lacks leaves the still. */
+        const bad = JSON.parse(JSON.stringify(viewSlice));
+        bad.view = 'no-such-view';
+        still.hidden = false;
+        stage.hidden = true;
+        preview.querySelector = ((q) => (sel) => (sel === '.kop-network-embed__data' ? { textContent: JSON.stringify(bad) } : q(sel)))(preview.querySelector);
+        check(sandbox.KOPNetworkEmbed.start(preview, { window: sandbox }) === null && still.hidden === false && stage.hidden === true,
+            'a preview that could not start did not put its still back');
+    }
 
     /* A figure with no data stays hidden and says nothing. */
     const empty = { hidden: true, setAttribute() {}, querySelector: () => null, querySelectorAll: () => [] };
