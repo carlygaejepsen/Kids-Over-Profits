@@ -63,6 +63,8 @@
                     cited:        tags.indexOf('Citation') !== -1,
                     pdf_url:      cats.pdf_url || report.report_url || '',
                     drive_file_id: safeString(cats.drive_file_id),
+                    // PRTF database records name their archived copy; library ones go by Drive id.
+                    archive_name: safeString(cats.archive_name) || (cats.drive_file_id ? safeString(cats.drive_file_id) + '.pdf' : ''),
                     doc_page_url: cats.doc_page_url || ''
                 };
             }).sort(function (a, b) { return parseDate(b.report_date) - parseDate(a.report_date); });
@@ -153,7 +155,7 @@
                 facts: ['Published by Disability Rights Arkansas'],
                 link: { href: report.pdf_url, text: 'View document' },
                 links: [
-                    report.drive_file_id ? ctx.archiveLink(report.drive_file_id + '.pdf') : null,
+                    report.archive_name ? ctx.archiveLink(report.archive_name) : null,
                     { href: report.doc_page_url, text: 'DRA page' }
                 ],
                 preview: report.summary,
