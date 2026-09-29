@@ -237,6 +237,16 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 						aria-pressed="false" aria-controls="kop-network-list">
 						List
 					</button>
+
+					<?php
+					// The timeline (Phase 4.3, timeline.js): the board as it
+					// stood in one year. Pressed, a year slider opens at the
+					// foot of the stage; the year rides in the link as year=.
+					?>
+					<button type="button" class="kop-network__button" id="kop-network-timeline-toggle"
+						aria-pressed="false" aria-controls="kop-network-timeline">
+						Timeline
+					</button>
 				</div>
 			</div>
 
@@ -404,6 +414,26 @@ $kop_net_directory = function_exists('kop_facility_pages_page_url_by_template')
 					<div class="kop-network__drawer-body" id="kop-network-drawer-body"></div>
 				</aside>
 
+			</div>
+
+			<?php
+			// The timeline's slider, a row under the stage and the
+			// drawer. Switching it on changes the board anyway, so the
+			// stage giving up a row's height costs nothing, and the
+			// board is framed around it rather than under it. It stays
+			// with the list, which fades its rows by the same year.
+			?>
+			<div class="kop-network__timeline" id="kop-network-timeline" role="group" aria-label="Timeline" hidden>
+				<div class="kop-network__timeline-row">
+					<label class="kop-network__timeline-label" for="kop-network-year">Year</label>
+					<input type="range" class="kop-network__timeline-range" id="kop-network-year" min="1880" max="<?php echo esc_attr(gmdate('Y')); ?>" step="1">
+					<output class="kop-network__timeline-year" id="kop-network-year-out" for="kop-network-year"></output>
+				</div>
+				<p class="kop-network__timeline-note">
+					<span class="kop-network__timeline-swatch" aria-hidden="true"></span>
+					Faded: not operating.
+					<span id="kop-network-timeline-note"></span>
+				</p>
 			</div>
 		</div>
 

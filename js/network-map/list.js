@@ -132,10 +132,17 @@
         var profileFor = root.KOPNetworkDrawer && root.KOPNetworkDrawer.profileFor;
         var nameRow = function (node, folded) {
             var profile = profileFor ? profileFor(node, config) : null;
+            /* The timeline's year: a dated name that was not operating is
+             * faded on the board, and says so here. */
+            var faded = store.year !== null && store.year !== undefined && store.yearState &&
+                store.yearState(node, store.year) === 'off';
+            var shown = [folded ? '(drawn on a line)' : '', faded ? 'not operating in ' + store.year : '']
+                .filter(Boolean).join('; ');
             return {
                 id: node.id,
                 name: node.name,
-                shownAs: folded ? '(drawn on a line)' : '',
+                faded: faded,
+                shownAs: shown,
                 kind: KIND_WORDS[node.kind] || node.kind || '',
                 status: STATUS_WORDS[node.status] || '',
                 years: node.years || '',
@@ -300,7 +307,7 @@
 
             var tbody = el('tbody');
             ordered(which, data).forEach(function (row) {
-                var tr = el('tr');
+                var tr = el('tr', row.faded ? 'is-faded' : '');
                 columns.forEach(function (column) {
                     var td = el('td');
                     if (column.key === 'name') {

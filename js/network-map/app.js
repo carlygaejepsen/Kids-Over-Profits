@@ -109,6 +109,8 @@
                 /* The line the popup describes may not be in the new view. */
                 if (popup) popup.hide();
                 if (card) card.hide();
+                /* The trail is what the timeline keeps; its note follows. */
+                if (app.timeline) app.timeline.sync();
                 renderChain(app);
                 syncMode(app);
                 syncBoardControls(app);
@@ -255,6 +257,33 @@
             wireList(app);
         }
 
+        /* The timeline (Phase 4.3): a year slider at the foot of the stage.
+         * It changes what the store lets through and what the renderer
+         * fades, then asks for the same refresh a filter does. */
+        if (window.KOPNetworkTimeline) {
+            app.timeline = window.KOPNetworkTimeline.create({
+                store: store,
+                renderer: renderer,
+                focus: focus,
+                announce: announce,
+                window: window,
+                refresh: function () { app.refresh(); },
+                redraw: function () { viewport.scheduleDraw(); },
+                onChange: function () {
+                    if (app.list && app.list.isOpen()) app.list.render();
+                    if (filters) filters.renderLegend();
+                    if (app.urlState) app.urlState.write();
+                },
+                elements: {
+                    toggle: byId('kop-network-timeline-toggle'),
+                    panel: byId('kop-network-timeline'),
+                    range: byId('kop-network-year'),
+                    output: byId('kop-network-year-out'),
+                    note: byId('kop-network-timeline-note')
+                }
+            });
+        }
+
         if (window.KOPNetworkPath) {
             app.path = window.KOPNetworkPath.create({
                 store: store,
@@ -323,6 +352,13 @@
                     /* The List switch, in and out of the link. */
                     listOpen: function () { return app.list ? app.list.isOpen() : false; },
                     onList: function (open) { setListOpen(app, open); },
+                    /* The timeline's year, in and out of the link. */
+                    year: function () { return app.timeline ? app.timeline.year() : null; },
+                    onYear: function (year) {
+                        if (!app.timeline) return;
+                        if (year) app.timeline.setYear(year);
+                        else if (app.timeline.isOpen()) app.timeline.setOpen(false);
+                    },
                     /* A link naming a starter view opens on it. */
                     onView: function (key) {
                         if (key === store.view) return false;

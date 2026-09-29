@@ -2180,6 +2180,13 @@
             return [cx - hw, cy - hh, cx + hw, cy + hh];
         }
 
+        /* Ids to draw faded under any emphasis, or null: the timeline's
+         * names that were not operating in its year (timeline.js). */
+        renderer.faded = null;
+        renderer.setFaded = function (ids) {
+            renderer.faded = ids && Object.keys(ids).length ? ids : null;
+        };
+
         renderer.setEmphasis = function (next) {
             renderer.emphasis = next || { hoverId: null };
         };
@@ -2270,6 +2277,34 @@
             var offsets = emphasis.offsets || null;
             var dim = emphasis.dim === undefined ? 0.15 : emphasis.dim;
             var i, node;
+
+            /* The timeline's faded names (setFaded): not operating in the
+             * year shown. They sit under whatever a hover lights, as the
+             * background it dims: out of the lit set, and with them every
+             * line that touches them. The hovered name itself stays lit, so
+             * pointing at a faded name still says what it is. */
+            var faded = renderer.faded;
+            if (faded) {
+                var litSet = Object.create(null);
+                var fid;
+                if (near) {
+                    for (fid in near) if (!faded[fid]) litSet[fid] = true;
+                } else {
+                    for (i = 0; i < scene.nodes.length; i++) {
+                        if (!faded[scene.nodes[i].id]) litSet[scene.nodes[i].id] = true;
+                    }
+                }
+                if (hoverId) litSet[hoverId] = true;
+                if (nearEdges) {
+                    var litEdges = Object.create(null);
+                    for (i = 0; i < scene.edges.length; i++) {
+                        var fe = scene.edges[i];
+                        if (nearEdges[fe.id] && litSet[fe.sourceId] && litSet[fe.targetId]) litEdges[fe.id] = true;
+                    }
+                    nearEdges = litEdges;
+                }
+                near = litSet;
+            }
 
             /* Screen positions once per frame, reused by edges, nodes and
              * labels. Nodes carry their index so an edge can find its ends

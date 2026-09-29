@@ -88,6 +88,9 @@
         var revision = 0;
         var cache = null;
         var cacheRevision = -1;
+        /* The names kept through the timeline when the visible set was cached. */
+        var cacheKeep = '';
+        var keepNow = Object.create(null);
 
         /* ---------------------------------------------------------- load -- */
 
@@ -298,12 +301,138 @@
             return revision;
         };
 
+        /* ---------------------------------------------------- the timeline -- */
+
+        /* The year the timeline shows, or null when it is off (timeline.js,
+         * Phase 4.3). Not one of the filters: the Key's reset must not
+         * switch the timeline off under the slider. */
+        store.year = null;
+
+        /* A function giving the ids the reader asked for (timeline.js sets
+         * it from the trail and the view), kept on the board through the
+         * timeline even with no known years: leaving out the name that was
+         * opened would leave the question with nothing to stand on. */
+        store.yearKeep = null;
+
+        /**
+         * { start, end } from a node's years, either end null where the
+         * record leaves it open: "1971-2004", "from 1971", "until 2004",
+         * "1998" (one year). null for a name with no known years, which is
+         * every person: people are dated by their places.
+         */
+        store.yearsOf = function (node) {
+            if (!node) return null;
+            if (node._years !== undefined) return node._years;
+            var text = String(node.years || '').trim();
+            var m;
+            var out = null;
+            if ((m = /^(\d{4})\s*[-\u2013]\s*(\d{4})$/.exec(text))) out = { start: +m[1], end: +m[2] };
+            else if ((m = /^from (\d{4})$/.exec(text))) out = { start: +m[1], end: null };
+            else if ((m = /^until (\d{4})$/.exec(text))) out = { start: null, end: +m[1] };
+            else if ((m = /^(\d{4})$/.exec(text))) out = { start: +m[1], end: +m[1] };
+            node._years = out;
+            return out;
+        };
+
+        /**
+         * Where a name stands in a year: 'on' (operating: start <= year <=
+         * end, open ends inclusive), 'off' (dated, and not operating), or
+         * 'unknown' (no known years). A person has no years of their own
+         * and follows their places: 'on' when any place or company they
+         * connect to is, 'off' when they have dated places and none was,
+         * 'unknown' when none of their places is dated.
+         *
+         * So what is 'unknown' does not depend on the year, and the board
+         * the timeline leaves (the unknowns go, owner 2026-09-29) stays
+         * the same board as the slider moves: only the fading changes, and
+         * nothing is laid out again under the reader.
+         */
+        store.yearState = function (node, year) {
+            if (!node) return 'unknown';
+            if (node.kind === 'person') {
+                var links = store.adjacency[node.id] || [];
+                var dated = false;
+                for (var i = 0; i < links.length; i++) {
+                    var other = links[i].other;
+                    if (other.kind === 'person') continue;
+                    var state = store.yearState(other, year);
+                    if (state === 'on') return 'on';
+                    if (state === 'off') dated = true;
+                }
+                return dated ? 'off' : 'unknown';
+            }
+            var y = store.yearsOf(node);
+            if (!y) return 'unknown';
+            return (y.start === null || y.start <= year) && (y.end === null || year <= y.end) ? 'on' : 'off';
+        };
+
+        /** The slider's range: the earliest year on the board, down to its decade, to this year. */
+        store.yearRange = function () {
+            var min = Infinity;
+            store.nodes.forEach(function (node) {
+                var y = store.yearsOf(node);
+                if (!y) return;
+                var first = y.start !== null ? y.start : y.end;
+                if (first < min) min = first;
+            });
+            var max = new Date().getFullYear();
+            if (min === Infinity) min = max;
+            return { min: Math.floor(min / 10) * 10, max: max };
+        };
+
+        /** Show the board as it stood in a year, or null for the whole board. */
+        store.setYear = function (year) {
+            var next = year === null || year === undefined || isNaN(year) ? null : Math.round(Number(year));
+            if (next !== null) {
+                var range = store.yearRange();
+                next = Math.max(range.min, Math.min(range.max, next));
+            }
+            if (next === store.year) return;
+            /* Only switching the timeline on or off changes what is on the
+             * board; a new year only changes what is faded. */
+            var boardChanges = (next === null) !== (store.year === null);
+            store.year = next;
+            if (boardChanges) revision++;
+        };
+
+        /** Ids drawn faded in the year: names with known years, or dated places, not operating. */
+        store.fadedIds = function () {
+            var out = Object.create(null);
+            if (store.year === null) return out;
+            store.nodes.forEach(function (node) {
+                if (store.yearState(node, store.year) === 'off') out[node.id] = true;
+            });
+            return out;
+        };
+
+        /**
+         * The timeline's note: of the places and companies on the whole
+         * graph, how many have known years, how many of those were
+         * operating in the year, and how many have none and are left out.
+         */
+        store.yearCounts = function (year) {
+            var out = { dated: 0, on: 0, unknown: 0 };
+            store.nodes.forEach(function (node) {
+                if (node.kind === 'person') return;
+                var state = store.yearState(node, year);
+                if (state === 'unknown') out.unknown++;
+                else {
+                    out.dated++;
+                    if (state === 'on') out.on++;
+                }
+            });
+            return out;
+        };
+
         /* ------------------------------------------- the visible subgraph -- */
 
         function nodePasses(node, f) {
             if (!f.kinds[node.kind]) return false;
             if (!f.statuses[node.status]) return false;
             if (f.natsapOnly && !node.natsap) return false;
+            /* The timeline leaves out what has no known years (and people
+             * with no place operating); what was not operating stays, faded. */
+            if (store.year !== null && !keepNow[node.id] && store.yearState(node, store.year) === 'unknown') return false;
             if (!f.chains[node.chain]) return false;
             /* A node sits in one board frame in practice, but the format
              * allows several; any checked frame keeps it. A node with no
@@ -321,7 +450,11 @@
          * revision has moved.
          */
         store.visible = function () {
-            if (cache && cacheRevision === revision) return cache;
+            var keepIds = store.year !== null && store.yearKeep ? store.yearKeep() : [];
+            var keepSig = keepIds.join(',');
+            if (cache && cacheRevision === revision && cacheKeep === keepSig) return cache;
+            keepNow = Object.create(null);
+            keepIds.forEach(function (id) { keepNow[id] = true; });
             /* Callable before the data lands, so the page can render its
              * shell and its empty stage without a guard at every call site. */
             if (!store.ready || !store.filters) {
@@ -392,6 +525,7 @@
 
             cache = { nodes: nodes, edges: edges, nodeIds: nodeIds, degrees: degrees };
             cacheRevision = revision;
+            cacheKeep = keepSig;
             return cache;
         };
 

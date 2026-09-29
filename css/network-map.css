@@ -1559,3 +1559,79 @@ button.kop-network__popup-person {
 .kop-network__legend-mark--line {
 	width: 26px;
 }
+
+/* The timeline (timeline.js): a row under the stage and the drawer, on a
+ * solid panel. The stage gives up its height and is framed again. */
+.kop-network__timeline {
+	flex: 0 0 auto;
+	padding: 0.45rem 0.8rem 0.5rem;
+	border: 1px solid var(--kop-net-border);
+	border-radius: var(--kop-net-radius);
+	background: #fff;
+	color: var(--kop-midnight-blue, #000435);
+}
+
+.kop-network__timeline[hidden] {
+	display: none;
+}
+
+.kop-network__timeline-row {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+}
+
+.kop-network__timeline-label {
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.kop-network__timeline-range {
+	flex: 1;
+	min-width: 0;
+	accent-color: var(--kop-navy-blue, #000080);
+}
+
+.kop-network__timeline-year {
+	min-width: 3.2em;
+	font-size: 1.15rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+}
+
+.kop-network__timeline-note {
+	margin: 0.3rem 0 0;
+	font-size: 0.78rem;
+	line-height: 1.35;
+}
+
+.kop-network__timeline-swatch {
+	display: inline-block;
+	width: 0.9em;
+	height: 0.9em;
+	margin-right: 0.25em;
+	vertical-align: -0.1em;
+	border: 1px solid #000435;
+	border-radius: 3px;
+	background: #fff5cb;
+	opacity: 0.3;
+}
+
+.kop-network__timeline-range:focus-visible {
+	outline: 2px solid var(--kop-teal, #33A7B5);
+	outline-offset: 2px;
+}
+
+/* In the list the timeline's faded rows read as faded too. */
+.kop-network__list tr.is-faded td {
+	opacity: 0.45;
+}
+
+@media (max-width: 600px) {
+	.kop-network__timeline-note {
+		font-size: 0.72rem;
+	}
+}

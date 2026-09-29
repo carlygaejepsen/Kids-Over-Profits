@@ -24,6 +24,11 @@
  *
  *   #open=provo-canyon-school&list=1
  *
+ * The timeline (timeline.js) rides along as year=, trail or no trail; a
+ * year the board does not reach is brought to its nearest end:
+ *
+ *   #open=provo-canyon-school&year=1995
+ *
  * The hash rather than the query string, because nothing here needs the
  * server and a query change would reload the page. replaceState rather than
  * pushState: every click would otherwise be a Back step, and the breadcrumb
@@ -34,9 +39,9 @@
 (function (root) {
     'use strict';
 
-    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null, simple: bool, route: [...], list: bool} from a hash string. */
+    /** {ids: [...], mode: 'focus'|'expand'|'path'|null, view: key|null, simple: bool, route: [...], list: bool, year: number|null} from a hash string. */
     function parse(hash) {
-        var out = { ids: [], mode: null, view: null, simple: false, route: [], list: false };
+        var out = { ids: [], mode: null, view: null, simple: false, route: [], list: false, year: null };
         var text = String(hash || '').replace(/^#/, '');
         if (!text) return out;
         text.split('&').forEach(function (pair) {
@@ -61,13 +66,15 @@
                 out.route = value.split(',').map(function (id) { return id.trim(); }).filter(Boolean);
             } else if (key === 'list') {
                 out.list = value === '1';
+            } else if (key === 'year' && /^\d{4}$/.test(value)) {
+                out.year = Number(value);
             }
         });
         return out;
     }
 
-    /** The hash for a trail, a starter view, Simplify, a lit route and the List switch, or '' for the plain opening view. */
-    function format(ids, mode, view, simple, route, list) {
+    /** The hash for a trail, a starter view, Simplify, a lit route, the List switch and the timeline's year, or '' for the plain opening view. */
+    function format(ids, mode, view, simple, route, list, year) {
         var parts = [];
         if (ids && ids.length) {
             parts.push('open=' + ids.map(encodeURIComponent).join(','));
@@ -81,6 +88,7 @@
         if (view && view !== 'default') parts.push('view=' + encodeURIComponent(view));
         if (simple) parts.push('simple=1');
         if (list) parts.push('list=1');
+        if (year) parts.push('year=' + year);
         return parts.length ? '#' + parts.join('&') : '';
     }
 
@@ -97,7 +105,8 @@
             var hash = format(focus.chain(), focus.mode(), options.view ? options.view() : null,
                 focus.isSimple ? focus.isSimple() : false,
                 focus.litRoute ? focus.litRoute() : null,
-                options.listOpen ? options.listOpen() : false);
+                options.listOpen ? options.listOpen() : false,
+                options.year ? options.year() : null);
             if ((location_.hash || '') === hash) return;
             writing = true;
             var base = String(location_.href || '').split('#')[0];
@@ -116,6 +125,8 @@
             if (focus.setSimple && focus.isSimple() !== state.simple) focus.setSimple(state.simple);
             /* The List switch stands whether or not there is a trail. */
             if (options.onList) options.onList(state.list);
+            /* The timeline too: on at the year named, or off. */
+            if (options.onYear) options.onYear(state.year);
             if (!state.ids.length && !focus.chain().length && !viewChanged) return;
             focus.restore(state.ids, state.mode);
             /* The trail first, then the route lit on it. A route without a

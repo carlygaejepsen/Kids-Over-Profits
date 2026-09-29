@@ -2763,6 +2763,46 @@ what then" has no answer.
    operating, a known closed one not, a person following its places), the
    link round trip, the legend rows.
 
+*Built 2026-09-29, steps 1 to 4 and 6.* Where it differs from the above:
+
+- **Undated names are left out, not drawn as now** (owner, 2026-09-29),
+  with the count in a note under the slider. What is left out never
+  depends on the year: a place or company with no known years, and a
+  person none of whose places has known years. A person whose dated
+  places were not operating is faded like a place, not removed. The
+  first build removed such people year by year, and every step of the
+  slider then laid the board out again with names jumping about; now the
+  board is laid out once when the timeline opens and the slider only
+  fades (`store.setYear` bumps the store revision only on or off).
+- **What the reader opened stays.** Universal Health Services, which the
+  map opens on, and Synanon have no years; leaving out the opened name
+  emptied the board. `store.yearKeep` (the trail, or the view's names and
+  root) is kept whatever its years, and the note says so ("Kept as
+  opened, years unknown: ...").
+- **The slider is a row under the stage and the drawer**, not over it:
+  over the stage it covered the name that was opened, since focus frames
+  the board to the whole stage. Opening the timeline changes the board
+  anyway, so the stage giving up the row costs no extra layout.
+- **Faded, not a legend row.** The renderer keeps a faded set
+  (`renderer.setFaded`) under whatever a hover lights, at the dimmed
+  ink; the panel carries its own swatch ("Faded: not operating") and the
+  note, so the Key is unchanged.
+- **Step 5 (years read from profile text) is not built.** It needs the
+  owner to review what the reader finds before any of it counts, and
+  with undated names left out it matters more: 331 of the 667 places and
+  companies have no years, among them Universal Health Services and
+  Synanon. `overrides.years` in network-overrides.json is the way to add
+  one by hand meanwhile.
+- **The layout of a smaller board.** With the undated names gone, focus
+  can lay a board out with the opened name in a corner (Provo Canyon
+  School, 1985: bottom left); that is the layout's answer for that set
+  of names, the same with the slider anywhere.
+
+`node scripts/test-network-timeline.js` (seconds) holds the four year
+formats and both open ends, people following their places, the board
+not moving with the year, the kept names, year= in the link, the list's
+faded rows, and timeline.js against stub elements.
+
 ### 4.4 The history page: retire the Miro board
 
 *What it has.* https://kidsoverprofits.org/history/ still carries the
