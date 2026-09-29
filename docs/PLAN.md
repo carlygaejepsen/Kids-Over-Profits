@@ -214,11 +214,16 @@ The date is when each was last confirmed open.
 Live at https://kidsoverprofits.org/network-map/. Build and ship each on its
 own.
 
-1. **Phase 4 integration** (owner's go-ahead 2026-09-28): the one-hop
-   mini graph on facility profile pages with a "See full map" link, admin
-   CSV re-import through an `api/` endpoint, and a timeline mode now that
-   2b.6 filled in years. Outlined at the end of NETWORK-MAP.md; spec each
-   piece there before building, as 2d.6 and the list view were.
+1. **Phase 4 integration** (owner's go-ahead 2026-09-28; specified
+   2026-09-29 under "Phase 4: integration" in NETWORK-MAP.md, with an
+   eight-commit sequence and five open decisions for the owner). Build
+   order: 4.1 the one-hop map on facility pages and profile posts (the
+   map's own modules on an inline slice, "Open on the full map"); 4.3 the
+   timeline, a year slider that dims what was not operating; 4.2 board
+   re-import from a KOP Data Tools screen. Production has no Node and the
+   build reads four production tables, so 4.2 keeps the one Node build,
+   fed by a site-made data export, run by `--pull` locally first and by a
+   GitHub Actions workflow if the owner wants the button.
 2. Later, not to be started without a word from the owner: chain hulls and
    group-by-network (2d.4), "Suggest a correction" from the map (Phase 3).
 

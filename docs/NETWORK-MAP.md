@@ -8,8 +8,8 @@ Miro board export.
 This document is the working plan. Phase 1 is done. Phase 2 is planned below
 in detail. The fix list raised on 2026-09-17 is reconciled against what has
 been built in its own section before Phase 3, and the ten reader suggestions
-of 2026-09-22 the same way (Phase 2d). Phases 3 and 4 are outlined at the
-end.
+of 2026-09-22 the same way (Phase 2d). Phase 3 is built except corrections;
+Phase 4 is specified at the end, piece by piece, ready to build.
 
 ## Status
 
@@ -21,7 +21,7 @@ end.
 | 2c | Board additions from the owner's research: the Sequel/TSI/YSI/Vivant chain | Done (2026-09-21): operators, current operators, staff tab |
 | 2d | Reader suggestions of 2026-09-22: opening cluster, kind marks, hulls, hover cards, highlight on the board, Simplify, Show all connections, legend, zoom controls | Opening cluster, zoom controls and the fuller legend done (2026-09-22); hover cards next; the rest itemised below in build order |
 | 3 | Analysis tools: paths between two nodes, list view with CSV export, corrections | Paths done (2026-09-21); list view done (2026-09-28); corrections outlined |
-| 4 | Integration: facility page embed, admin CSV re-import, timeline | Outlined |
+| 4 | Integration: facility page embed, board re-import from wp-admin, timeline | Specified (2026-09-29), in build order 4.1, 4.3, 4.2 |
 
 ## Phase 1 recap
 
@@ -2476,13 +2476,281 @@ the switch rides in the link as `list=1`.
   `suggested_edits`.
 - Optional re-layout of the filtered subgraph on demand.
 
-## Phase 4: integration (outline)
+## Phase 4: integration
 
-- A one-hop mini graph on `single-facility-profile.php` and the generated
-  `/facility/` pages, rendered by the same modules from graph.json, with a
-  "See full map" link.
-- Admin CSV re-import through an `api/` endpoint so researchers update the
-  board without a git commit.
-- A timeline mode once years are populated. Today only two board rows have
-  dates; 2b.6 fills in several hundred from the facility and operator
-  records, which is enough to start.
+Three pieces, specified 2026-09-29 on the owner's go-ahead of 2026-09-28.
+Each ships on its own, in the order below: the facility page embed first
+(the piece readers meet), the timeline second (all inside the map, no
+secrets), the board re-import last (its first two steps are useful before
+any automation, and the owner decides the rest after seeing them).
+
+Two facts found while specifying shape the second piece. Production has no
+Node: checked over SSH on 2026-09-29, there is no node, npm or nodevenv on
+the account, and PHP 8.2 has pdo_mysql, pdo_sqlite and zip. And the build
+reads production data in four places (`facilities_v2` for matching, years,
+deaths and the profile claims; `wpdl_kop_operators` for company years;
+`memorial_victims` for deaths), then the layout needs d3-force. So the
+board cannot be rebuilt on the server, and it should not be rebuilt by a
+second, PHP, build either.
+
+### 4.1 The map on a facility's page
+
+*What it has.* Every generated `/facility/` page whose facility the map
+draws (477 facility ids today, of the 1,891 pages) has a "Connections on
+the network map" section (`kop_facility_pages_network`): the names grouped
+as the drawer groups them, and a link that opens the full map on that
+name. The 14 Facility Profile posts (`single-facility-profile.php`) have no
+map section at all.
+
+*The gap.* The section is a list. It says who, not how they sit together:
+that a program's owner and its sister programs are one cluster, that one
+person joins it to a place in another chain. The picture the map paints for
+a single name in Focus mode is exactly that, and nobody sees it without
+leaving the page.
+
+*Decisions.*
+
+- **Same picture, same code.** The embed runs the map's own store, canvas,
+  viewport and focus modules (`KOPNetworkStore`, `KOPNetworkCanvas`,
+  `KOPNetworkViewport`, `KOPNetworkFocus`, with the d3-force bundle), not a
+  second renderer. Fidelity is the point: status fills, chain colours,
+  NATSAP blue, the red death ring, kind words, people folded into lines. A
+  second SVG renderer would drift from the map inside a week. The UI
+  modules (search, filters, drawer, card, connection popup, list, path,
+  keys, url-state, app) stay on the map page.
+- **The data is a slice, not the graph.** graph.json is 1.4 MB. PHP prints
+  a one-hop slice inline in the page (`<script type="application/json">`):
+  the root, every name it has a line to, the lines among that set
+  (neighbour to neighbour included, so the triangles show) and
+  `graph.meta` as is, because the renderer reads the board colours from
+  it. It has graph.json's shape, so `store.hydrate(slice, null)` takes it
+  unchanged. Typically 5 to 30 KB. A root with more than 40 neighbours
+  keeps the 40 of highest importance and the caption says "and N more on
+  the full map"; the list under it is complete regardless.
+- **One PHP function owns it.** `kop_network_map_slice($node_id)` in
+  `inc/network-map.php`, from the cached graph. The facility page
+  fingerprint already includes the graph's cache key, so a new build
+  refreshes every page.
+- **It loads late and only where it is needed.** The five scripts are
+  enqueued in the footer on pages that have a slice, under the handles and
+  URLs the map page uses, so a browser that has seen the map has them
+  cached. About 400 KB uncompressed, 100 KB over the wire. The embed
+  starts when the section scrolls near (IntersectionObserver; at once when
+  the browser lacks it). A page without the section loads nothing.
+- **What it does.** Opens the root in Focus mode (`focus.select`, then
+  `fitAll`) and holds. Resting on a name lights its lines as on the map. A
+  click on a name goes to the full map opened on that name
+  (`/network-map/#open=<id>`); Ctrl-click opens the profile as on the map.
+  No trail, no modes, no filters: the page is the question, and the map is
+  where to go on. The wheel scrolls the page, never zooms; pinch and the
+  + and - buttons zoom. Two buttons: **Open on the full map** and **Fit**.
+- **Accessible by the list.** The canvas is `role="img"` with a label
+  ("Map of N names connected to X; they are listed below") and is out of
+  the tab order; the existing list is the text. Reduced motion is already
+  honoured by focus (no settle animation).
+- **Without JavaScript, or when the load fails,** the section is what it
+  is today: the canvas shell stays `hidden` until the embed has painted
+  once.
+- **Facility Profile posts get the same section.** `kop_facility_pages_network`
+  answers by facility id, and the post template already knows its id (the
+  lawsuits query uses it). List and embed both.
+- **Placement.** At the top of the network section, before the grouped
+  list; full width of the section; 360 px tall on phones, 440 from 768 px.
+  Its own small stylesheet, `css/network-embed.css` (`kop-network-embed__*`),
+  since the canvas paints itself and needs nothing from network-map.css.
+
+*To build.*
+
+1. `kop_network_map_slice()` and `kop_network_map_embed_html($facility_id)`
+   in `inc/network-map.php`; `scripts/test-facility-pages.php` checks every
+   slice: the root is in it, every node id and both ends of every edge
+   exist in graph.json, it stays under 60 KB, and the cap message appears
+   only when a root was truncated.
+2. `js/network-map/embed.js`, loaded after focus: finds every
+   `[data-kop-network-embed]`, reads its JSON, creates store, renderer,
+   viewport and focus, selects, fits, wires the click, the buttons and
+   the observer.
+3. The shell in `templates/facility-page.php` and
+   `templates/single-facility-profile.php`; the enqueue in
+   `kop_facility_pages_enqueue` (and the post's template) when the page
+   has a slice.
+4. An embed suite in `scripts/test-network-modules.js`: a 20-line port of
+   the slice for Provo Canyon School, hydrated and selected; the scene
+   draws the root and every neighbour, no labels collide, the page path
+   (`embed.js` against a stub document holding one data element) paints
+   once and the click handler builds the right map link.
+5. `scripts/preview-network-map.py --facility <slug>` splices the working
+   tree into a live facility page at 390, 768 and 1440 px; then
+   `python scripts/check-bare-text.py`.
+
+### 4.2 Board re-import from wp-admin
+
+*What it has.* The board is two CSVs exported from the Miro copy, plus the
+overrides, the staff lists and the movement CSV, turned into graph.json and
+layout.json by two Node scripts and committed. Every update is a git commit
+by someone with the repository, Node 22 and a fresh mirror of production.
+
+*The gap.* The researcher who edits the board cannot ship it.
+
+*Decisions.*
+
+- **One build, in Node, run on demand.** The build stays
+  `build-network-graph.js`; it runs on GitHub Actions when asked, and the
+  same command runs on the owner's machine. No PHP port: two builds drift,
+  which the glossary only holds off with a test that fails when they
+  differ, and there is no PHP d3-force.
+- **Production data reaches the build as an export the site makes of
+  itself,** not through an SSH key kept in GitHub.
+  `api/network-board-export.php` (admin in the browser, or the CLI) writes
+  the three tables as JSON files (`facilities_v2` with its json_data,
+  about 40 MB raw and a few MB gzipped; operators; published memorial
+  rows), and the build takes `--data=<dir>` to read them in place of
+  `tmp/prod.sqlite`. The four readers become one `rows(table)` shim with
+  two backs; the only SQL clause, the published filter on memorial rows,
+  moves into JS. The mirror stays the default locally.
+- **The screen.** KOP Data Tools > Network Board (`inc/network-board.php`).
+  It takes `tti_nodes.csv` and `tti_edges.csv` together, always the pair,
+  and validates before storing anything: exact header rows; no empty
+  name; numeric board_x and board_y; every line's two ends name a node
+  row. It then shows the diff against the deployed pair by name key
+  (names added, removed and renamed; lines added and removed) and needs a
+  second click when more than a tenth of the names would go. The
+  overrides stay a repository file: small, code-like, reviewed in git.
+- **Pending, one at a time.** An accepted pair is written to
+  `wp-content/uploads/kop-network/pending/<Y-m-d-His>/` with a manifest
+  (user, time, counts, sha256) that the option `kop_network_board_pending`
+  points at; a newer upload replaces it.
+- **The build trigger.** The screen's **Build and publish** button asks
+  GitHub to run `.github/workflows/build-network-map.yml`
+  (`workflow_dispatch` through the REST API, a fine-grained token in
+  `config.local.php` as `KOP_GITHUB_TOKEN`, Actions and Contents write).
+  The job checks out main, fetches the pending pair and the data export
+  from `api/network-board-pending.php` with a shared secret
+  (`KOP_BOARD_SYNC_SECRET` on both sides), copies the CSVs into
+  `js/data/network/`, runs the graph build with `--data`, the layout build
+  and both graph tests, commits `data(map): board import <date> by <user>`,
+  pushes to main (deploy.yml deploys as always) and posts
+  `tmp/network-qa.md` and the run URL back to the pending endpoint, as a
+  multipart file part because the host's firewall rejects markup in form
+  fields. The screen then shows the QA report and marks the import done,
+  or failed with the run link. A concurrency group queues a second import.
+- **The fallback needs no secrets and ships first.**
+  `node scripts/build-network-graph.js --pull` fetches the pending pair
+  and the export with the secret from `.env`, builds, and the owner
+  commits. Until a build lands the screen says "waiting for a build".
+- **History.** The last ten imports: date, user, counts, run link, QA
+  report.
+
+*To build.*
+
+1. The `rows()` shim and `--data=<dir>`; `api/network-board-export.php`.
+   Check once that a build from the export equals a build from the mirror
+   (same sourceHash and counts), and keep the check in
+   `scripts/test-network-graph.js`, skipped when no export is present.
+2. `inc/network-board.php` and `api/network-board-upload.php`
+   (validation, diff, pending); `scripts/test-network-board.php`: a wrong
+   header refused, a dangling line refused, the diff counts on a synthetic
+   edit, the one-tenth warning.
+3. `--pull` and `api/network-board-pending.php` (GET the manifest and
+   files, POST the report and the run URL).
+4. `build-network-map.yml`, the dispatch from the screen, status and
+   history.
+
+Owner steps: create the fine-grained token and the two secrets, and decide
+who may upload (manage_options proposed, the check `api/save-master.php`
+uses).
+
+### 4.3 Timeline
+
+*What it has.* 336 of the 667 places and companies carry years
+(`node.years`: "1971-2004", "from 1971", "until 2004" or "1998"); people
+never do; no line carries a date (the movement CSV has a year for 4 of its
+28 rows). Years are drawn under the name and sort the list.
+
+*The gap.* The board is timeless. Provo Canyon School of 1971 and Sequel
+of 2017 share one stage, and "what was operating in 1995, and who owned
+what then" has no answer.
+
+*Decisions.*
+
+- **A lens, not a board.** Timeline is a switch in the toolbar beside
+  List, and a year slider under the stage: from the earliest start year
+  on the board rounded down to the decade, to this year; arrow keys step
+  a year, Page Up and Page Down a decade; the value is read out. It
+  applies to whatever board is showing, the opening cluster included, and
+  adds and removes nothing.
+- **Three states for a name in year Y.** Operating (start <= Y <= end,
+  open ends inclusive: "from 1971" runs to today, "until 2004" from the
+  start of the range) is drawn as now. Not operating (before its start or
+  after its end) is drawn at a quarter of its ink with the label dropped
+  unless hovered. Years unknown is drawn as now, and the legend says so
+  with the count. Hiding the unknowns would erase half the board and every
+  person, so they stay. A person is operating when any of their places on
+  the board is; a line is full when both ends are, faint otherwise.
+- **The status line** reads "1995: 212 of 336 dated names operating; 331
+  undated as drawn", announced on change, debounced.
+- **The link** carries `year=1995`, ignored out of range. Escape with the
+  slider focused closes the timeline. Switching to List keeps the year and
+  dims its rows the same way (a class on the row).
+- **Nothing else learns about years.** Simplify, Show all, routes and hover
+  are unchanged; the year is an emphasis layer applied after them in the
+  renderer (`setEmphasis` gains a `dim` set beside `near` and
+  `nearEdges`), so only canvas and a small `timeline.js` change.
+- **Coverage first, one build step.** `yearsFromText` over the facility's
+  description and history text in json_data (which `readProfileClaims`
+  already reads), listed in `tmp/network-qa.md` as "years read from text"
+  and reviewed before they count; expected to lift the 336 by a hundred
+  or so. `overrides.years` stays the correction path.
+- **Not in this phase.** Dated lines (who was where, when): the data is
+  four rows. A Gantt view in the list panel: worth a Phase 5 if the slider
+  earns its place. Autoplay.
+
+*To build.*
+
+1. Store: `yearsOf(node)` giving `{start, end}` for the four formats,
+   `operatingIn(node, year)` and `yearRange()`; tests for each format and
+   both open ends.
+2. `js/network-map/timeline.js`: the switch, the slider, the status line,
+   `year=` in url-state, the dim set into `renderer.setEmphasis`.
+3. Canvas draws the dim set; legend rows "Not operating in <year>" and
+   "Years unknown (N)".
+4. List rows dimmed with the year.
+5. Build: years from profile text, the QA section, and
+   `test-network-graph.js` still holding that no person carries years.
+6. Harness: the dim set for 1995 on the opening cluster (a known open name
+   operating, a known closed one not, a person following its places), the
+   link round trip, the legend rows.
+
+### Commit sequence
+
+1. `feat(map): one-hop slice and the embed module` (4.1 steps 1, 2, 4)
+2. `feat(facility): the map on facility pages and profile posts` (4.1
+   steps 3 and 5)
+3. `feat(map): years parsed and a timeline lens on the board` (4.3 steps
+   1 to 3)
+4. `feat(map): timeline in the list, years from profile text` (4.3 steps
+   4 to 6)
+5. `feat(map): the build reads a site export` (4.2 step 1)
+6. `feat(admin): Network Board screen, validation, pending imports` (4.2
+   step 2)
+7. `feat(map): --pull and the pending endpoint` (4.2 step 3)
+8. `ci(map): build-network-map workflow and the publish button` (4.2
+   step 4)
+
+After each: `node scripts/build-network-graph.js`,
+`node scripts/test-network-graph.js`, the module suite in the background,
+the preview script for anything drawn, and the PLAN.md line in the same
+commit.
+
+### Open decisions
+
+1. A click on a name in the embed goes to the full map (proposed), or to
+   the neighbour's own page when it has one?
+2. The 14 Facility Profile posts get the embed too (proposed), or only the
+   generated pages?
+3. Re-import: wire GitHub Actions with a token in `config.local.php`, or
+   stop at `--pull`, with the owner building on request?
+4. Timeline: names with unknown years stay as drawn (proposed), or fade
+   with the rest?
+5. Does `staff-movement.csv` join the upload screen, or stay a repository
+   file like the overrides?
