@@ -217,9 +217,9 @@ own.
 1. **Phase 4 integration** (owner's go-ahead 2026-09-28; specified
    2026-09-29 under "Phase 4: integration" in NETWORK-MAP.md, with a
    ten-commit sequence and six open decisions for the owner). Build
-   order: 4.4 first step, retire the Miro paragraph and screenshot on
-   /history/ for a still of the map's Historical view (seed_version 2,
-   content only; the page is the only one linking miro.com); 4.1 the
+   order: 4.4 first step (built 2026-09-29: /history/ drops Miro for a
+   still of the Historical view, `images/network-map-historical.jpg`,
+   seed_version 2, open decision 6 taken as proposed); 4.1 the
    one-hop map on facility pages and profile posts (the map's own modules
    on an inline slice, "Open on the full map"); 4.4 second step, the
    `[kop_network_preview]` shortcode making that still live; 4.3 the

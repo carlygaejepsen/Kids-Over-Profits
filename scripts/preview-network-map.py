@@ -10,6 +10,7 @@ the server open for you or drives it with Playwright and saves screenshots.
     python scripts/preview-network-map.py --shots tmp/map-preview # desktop + phone screenshots
     python scripts/preview-network-map.py --shots tmp/map-preview --hash "#open=wwasps"
     python scripts/preview-network-map.py --config tmp/live-config.json   # e.g. the live facilityUrls
+    python scripts/preview-network-map.py --hash "#view=historical" --still images/network-map-historical.jpg
 
 tmp/map-preview/ is gitignored.
 
@@ -131,17 +132,52 @@ def shots(url, out_dir, hash_):
     return 1 if problems else 0
 
 
+def still(url, path, hash_):
+    """The stage alone at 1440 px, Key and stage buttons hidden, as a JPEG.
+
+    This is the picture pages show of the map where the live map is not
+    running (the history hub's figure), so it is the map's own drawing with
+    none of its controls.
+    """
+    from playwright.sync_api import sync_playwright
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    problems = []
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        page = browser.new_page(viewport={'width': 1440, 'height': 900}, device_scale_factor=1)
+        page.on('pageerror', lambda e: problems.append('pageerror: %s' % e))
+        page.goto(url + hash_)
+        page.wait_for_selector('#kop-network-app[data-state="ready"]', timeout=20000)
+        page.wait_for_timeout(1200)
+        page.add_style_tag(content=(
+            '#kop-network-stage .kop-network__key,'
+            '#kop-network-stage .kop-network__stage-button,'
+            '#kop-network-stage .kop-network__zoom-hint { visibility: hidden !important; }'))
+        page.wait_for_timeout(200)
+        page.locator('#kop-network-stage').screenshot(path=path, type='jpeg', quality=82)
+        print('saved', path)
+        browser.close()
+    for problem in problems:
+        print('PROBLEM', problem)
+    return 1 if problems else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--port', type=int, default=0, help='port to serve on (default: any free port)')
     parser.add_argument('--shots', metavar='DIR', help='save desktop and phone screenshots here, then exit')
     parser.add_argument('--hash', default='', help='a map address to open, e.g. "#open=wwasps"')
+    parser.add_argument('--still', metavar='FILE', help='save the stage alone at 1440 px as a JPEG, then exit')
     parser.add_argument('--config', metavar='FILE', help='JSON laid over the preview config (data URLs stay local)')
     args = parser.parse_args()
     if args.config:
         CONFIG_EXTRA.update(json.load(open(args.config, encoding='utf-8')))
 
     server, url = serve(args.port)
+    if args.still:
+        code = still(url, args.still, args.hash)
+        server.shutdown()
+        return code
     if args.shots:
         code = shots(url, args.shots, args.hash)
         server.shutdown()

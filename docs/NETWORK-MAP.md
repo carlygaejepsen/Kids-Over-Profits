@@ -2799,6 +2799,16 @@ is a two-year-old screenshot of someone else's tool.
    miro.com link. The hub's "In this section" names box
    (PAGE-TEMPLATE-DESIGN-PLAN.md, specified 2026-09-29) can ride with this
    commit, beside the still.
+   *Built 2026-09-29.* `python scripts/preview-network-map.py --hash
+   "#view=historical" --still images/network-map-historical.jpg` makes the
+   still (the stage alone at 1440 px, Key and stage buttons hidden, 1376
+   by 795 JPEG); rerun it after a build that changes the view. The seed
+   drops the Miro sentence and figure (decision 6 as proposed), links the
+   still and its caption to the view, and applies on template-assignment
+   version 56. `scripts/test-hub-pages.php` now renders a page whose seed
+   says `overwrite_existing` with the seed's content, and checks the
+   history hub for no miro.com and the still. The "In this section" box
+   did not ride along.
 2. After 4.1: the shortcode and `kop_network_map_view_slice($key)`, the
    figure moved inside the shell, the hub test extended to find the
    shell and parse its JSON; the embed suite gets a view slice beside the

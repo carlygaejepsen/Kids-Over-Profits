@@ -90,6 +90,15 @@ function kop_test_page($slug) {
         );
         $stmt->execute(array($slug));
         $row = $stmt->fetch(PDO::FETCH_OBJ);
+        // A seed that overwrites the page replaces its content on the next
+        // deploy whatever the mirror holds, so render the seed's content.
+        foreach (glob(ABSPATH . 'seeds/{,*/}*.json', GLOB_BRACE) ?: array() as $seed_file) {
+            $seed = json_decode((string) file_get_contents($seed_file), true);
+            if ($row && is_array($seed) && ($seed['slug'] ?? '') === $slug && !empty($seed['overwrite_existing'])
+                && is_file(ABSPATH . 'seeds/' . $seed['content_file'])) {
+                $row->post_content = file_get_contents(ABSPATH . 'seeds/' . $seed['content_file']);
+            }
+        }
         $cache[$slug] = $row ?: null;
     }
     return $cache[$slug];
@@ -383,6 +392,16 @@ foreach ($rendered as $slug => $html) {
             substr_count($html, 'class="kop-hub-reading-thumb"') === count($with_image), count($with_image) . ' with an image');
     }
 }
+
+// History: the Miro board is retired for the network map (Phase 4.4).
+$history = $rendered['history'] ?? '';
+echo "\nhistory\n";
+check('history renders', $history !== '');
+check('history links no miro.com', stripos($history, 'miro.com') === false);
+check('history shows the Historical view still',
+    strpos($history, '/images/network-map-historical.jpg') !== false
+    && strpos($history, 'href="/network-map/#view=historical"') !== false
+    && is_file(ABSPATH . 'images/network-map-historical.jpg'));
 
 if ($check_live_links) {
     $live_urls = array_values(array_unique($live_urls));
