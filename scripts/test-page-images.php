@@ -57,8 +57,8 @@ foreach ((array) $seed as $entry) {
     $key     = $slug . "\x1f" . $heading;
     check("$label listed once", !isset($seen[$key]));
     $seen[$key] = true;
-    check("$label has a Commons, GovInfo or Flickr source URL",
-        (bool) preg_match('#^https://(commons\.wikimedia\.org/wiki/File:|www\.govinfo\.gov/|www\.flickr\.com/photos/)#', (string) ($entry['source_url'] ?? '')));
+    check("$label has a Commons, GovInfo, Flickr or StockSnap source URL",
+        (bool) preg_match('#^https://(commons\.wikimedia\.org/wiki/File:|www\.govinfo\.gov/|www\.flickr\.com/photos/|stocksnap\.io/photo/)#', (string) ($entry['source_url'] ?? '')));
 
     $stmt = $db->prepare("SELECT post_content FROM wpdl_posts WHERE post_name = ? AND post_type = 'page' AND post_status = 'publish'");
     $stmt->execute(array($slug));
