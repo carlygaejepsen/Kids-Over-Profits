@@ -9,7 +9,11 @@
  * with the article text and the database's look-alike records:
  *
  *   - a specific youth residential program we already have under another
- *     spelling: the article is linked to that record;
+ *     spelling of the same name: the article is linked to that record;
+ *   - an earlier or later name of a record: held. Each name era is its own
+ *     record (owner's rule, 2026-09-29: Bethel Boys Academy and Eagle Point
+ *     Christian Academy are two records), so the article belongs to a
+ *     record for that era, which a person creates (docs/PLAN.md 3.7);
  *   - a specific youth residential program we do not have, with a known
  *     state or country: a new facilities_v2 record is created from what the
  *     article says (name, place, type, status, years, operator), citing the
@@ -41,6 +45,7 @@ function kop_facdisc_decisions() {
         'created'      => 'Created',
         'matched'      => 'Already in the database',
         'possible_duplicate' => 'Possible duplicate',
+        'other_era'    => 'Earlier or later name',
         'needs_place'  => 'No place given',
         'provider'     => 'Provider, not a facility',
         'not_facility' => 'Not a facility',
@@ -400,13 +405,15 @@ function kop_facdisc_build_prompt(array $news, array $names, array $lookalikes, 
         }
     }
     $p .= "\nReturn ONLY a JSON object with one entry per name, in the same order:\n";
-    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|provider|organization|vague","sameAs":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Suspended|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
+    $p .= '{"names":[{"name":"the name exactly as listed","kind":"facility|provider|organization|vague","sameAs":null,"renameOf":null,"officialName":"","otherNames":[],"city":"","state":"two-letter US state code, or empty","country":"","type":"","status":"Open|Closed|Suspended|Unknown","startYear":null,"endYear":null,"operator":"","gender":"Male|Female|Co-ed or empty","evidence":"one sentence copied from the article that places or describes it"}]}' . "\n\n";
     $p .= "kind:\n";
     $p .= "- facility: one specific youth residential program or site, named well enough to identify (a detention center, an academy, a ranch, a group home).\n";
     $p .= "- provider: a psychiatric hospital or ward, outpatient clinic, day school, day treatment or partial hospitalization program.\n";
     $p .= "- organization: an agency, department, court, police force, law firm, company, charity, church, school district, or anything that is not one residential site. A company that runs programs is an organization; its programs are facilities.\n";
     $p .= "- vague: a description rather than a name (\"the facility\", \"an unnamed children's home\", \"Hope unit\", \"Safe\"), or a name too generic to identify one place.\n";
-    $p .= "sameAs: the id of a listed record that is the same residential site (a misspelling, a former or later name, the same site under an operator's name). Only an id from that name's list; null when none is the same place. Two different sites with similar names are not the same, and a college, school district, company or agency that shares a word with a listed program is not that program.\n";
+    $p .= "sameAs: the id of a listed record that is the same site under the same name: a misspelling, an abbreviation or acronym, or the name with or without its operator's. Not a former or later name.\n";
+    $p .= "renameOf: the id of a listed record that is the same site under a different name, earlier or later (the article's name was used before or after the record's). Only an id from that name's list; otherwise null.\n";
+    $p .= "For sameAs, besides the above: Only an id from that name's list; null when none is the same place. Two different sites with similar names are not the same, and a college, school district, company or agency that shares a word with a listed program is not that program.\n";
     $p .= "For a facility, fill the rest only from the article. The state or country may come from anything the article says about where it is: a city, a county (\"Knox County\" in a Tennessee paper), the dateline, the outlet's own state, or the state agency involved. officialName (its correct full name), otherNames (other names the article gives it), city, state or country, type (one of: " . implode(', ', kop_facdisc_types()) . '; empty if unclear), status (Closed only if the article says it closed for good; Suspended if it is temporarily closed, its license or admissions suspended), startYear and endYear (only years the article gives), operator (the company or agency running it), gender. Leave a field empty rather than guess.' . "\n";
     return $p;
 }
@@ -453,6 +460,7 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
             $allowed[(int) $f['id']] = true;
         }
         $same = isset($e['sameAs']) && is_numeric($e['sameAs']) && isset($allowed[(int) $e['sameAs']]) ? (int) $e['sameAs'] : null;
+        $rename = isset($e['renameOf']) && is_numeric($e['renameOf']) && isset($allowed[(int) $e['renameOf']]) ? (int) $e['renameOf'] : null;
         $state = strtoupper($str($e['state'] ?? '', 2));
         $status = ucfirst(strtolower($str($e['status'] ?? '')));
         $gender = $str($e['gender'] ?? '');
@@ -465,6 +473,7 @@ function kop_facdisc_parse_reply($reply, array $names, array $lookalikes) {
             'name'         => $name,
             'kind'         => $kind,
             'sameAs'       => $same,
+            'renameOf'     => $same ? null : $rename,
             'officialName' => $str($e['officialName'] ?? '') ?: $name,
             'otherNames'   => array_slice($other, 0, 8),
             'city'         => $str($e['city'] ?? '', 100),
@@ -593,6 +602,10 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
     if ($entry['kind'] === 'facility' && $entry['sameAs']) {
         $decision = 'matched';
         $fid = $entry['sameAs'];
+    } elseif ($entry['kind'] === 'facility' && !empty($entry['renameOf'])) {
+        // Another era of a record: not linked to it, not created yet.
+        $decision = 'other_era';
+        $fid = $entry['renameOf'];
     } elseif ($entry['kind'] === 'facility' && $entry['state'] === '' && $entry['country'] === '') {
         $decision = 'needs_place';
         $fid = null;
@@ -612,7 +625,7 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
         $fid = null;
     }
     if ($write) {
-        if ($fid && $decision !== 'possible_duplicate') {
+        if ($fid && !in_array($decision, array('possible_duplicate', 'other_era'), true)) {
             kop_facdisc_link($pdo, $news['id'], $fid);
         }
         kop_facdisc_record($pdo, $entry['name'], $news, $decision, $fid, $detail);
@@ -840,7 +853,7 @@ function kop_facdisc_create_by_hand(PDO $pdo, $candidate_id, array $fields, $rev
     }
     $detail = json_decode((string) $c['detail'], true) ?: array();
     $entry = array_merge(array(
-        'name' => $c['mention'], 'kind' => 'facility', 'sameAs' => null, 'officialName' => $c['mention'], 'otherNames' => array(),
+        'name' => $c['mention'], 'kind' => 'facility', 'sameAs' => null, 'renameOf' => null, 'officialName' => $c['mention'], 'otherNames' => array(),
         'city' => '', 'state' => '', 'country' => '', 'type' => '', 'status' => 'Unknown', 'startYear' => null, 'endYear' => null,
         'operator' => '', 'gender' => '', 'evidence' => '',
     ), $detail['entry'] ?? array());
@@ -1044,7 +1057,7 @@ function kop_render_facilities_from_news_page() {
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="remove"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'
                 . '<button type="submit" class="button button-small" onclick="return confirm(\'Remove this record?\')">Remove record</button></form>';
-        } elseif (in_array($r['decision'], array('possible_duplicate', 'needs_place', 'provider', 'not_facility', 'removed'), true)) {
+        } elseif (in_array($r['decision'], array('possible_duplicate', 'other_era', 'needs_place', 'provider', 'not_facility', 'removed'), true)) {
             echo '<form method="post" style="margin-bottom:8px">';
             wp_nonce_field('kop_facilities_from_news');
             echo '<input type="hidden" name="kop_fd_action" value="link"><input type="hidden" name="kop_fd_id" value="' . (int) $r['id'] . '">'

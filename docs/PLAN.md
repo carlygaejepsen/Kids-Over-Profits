@@ -366,4 +366,61 @@ the text goes in the page body, never in post meta, ACF or a table (owner,
   models in the AI helpers (`docs/news-processor/README.md`); the pages send
   `provider: 'groq'`, so they only run when a request names them.
 
+### 3.7 Name eras
+
+Owner's decisions, 2026-09-29:
+- **Each name is its own record.** Bethel Boys' Academy (#100180) and Eagle
+  Point Christian Academy (#13927) are two records joined by a rename, not
+  one record with an alias.
+- **A facility is listed under its current name**, unless the owner marks
+  another as the name it is best known by.
+- **Anything dated shows the name in use at its date.** That covers
+  articles, lawsuits, inspections and closures.
+
+What stands in the way today:
+- `identification.pastNames` and `otherNames` are undated strings, and a
+  record often lists other eras' names. #13927 lists Bethel Boys Academy,
+  Gulf Coast Academy and Bethel Baptist Children's Home, so articles about
+  those names link to the current era.
+- Some curated match aliases name another era. They were restored to v2 on
+  2026-09-29 by `api/restore-match-aliases.php`, the June curation as it
+  was, and need an owner pass:
+  - Bethel Boys Academy (#13927)
+  - Laurel Ridge Treatment Center (#10602)
+  - Agape Boarding School (#11361)
+  - Refuge of Grace (#11462)
+  - Change Academy at Lake of the Ozarks (#11355)
+  - Cleo Wallace Academy (#12621)
+- The map build turns listed names into rebrand edges and always reads them
+  as the earlier name, with no year. See the note in
+  `scripts/build-network-graph.js`.
+- New curated aliases have no v2 path: `api/apply-match-aliases.php` exits
+  on the frozen legacy tables.
+
+Already done: since 2026-09-29 the news scan (`inc/facility-discovery.php`)
+holds an earlier or later name as "Earlier or later name", noting the record
+it belongs to. It neither links it to that record nor creates one. Those
+names are listed on KOP Data Tools > Facilities from News.
+
+Steps:
+1. **Era links.** Add `identification.renamedFrom` and `renamedTo`, each a
+   list of `{facility_id, year}`, through the schema, normalize, validator
+   and data form. Seed them from the map's rebrand edges and from past names
+   that name an existing record, as an owner-reviewed list.
+2. **Matching by era.** A name that is another record's name, or an era
+   linked to it, never resolves through a different record's otherNames,
+   pastNames or match aliases. On "Earlier or later name", the scan offers
+   "Create era record", prefilled with the link.
+3. **Pages.**
+   - A facility page says "Later called X" and "Earlier called Y" with links.
+   - Hubs and search list every era under its own name.
+   - `identification.listAs` holds the owner's headline-name override.
+4. **Dated items.** Articles, lawsuits and inspections belong to the era
+   whose years cover their date. A report lists items linked outside those
+   years while a sibling era covers them.
+5. **Map.** Rebrand edges come from the era links, with direction and year,
+   instead of guessing from listed names.
+6. **Closures.** A closure report applies to the era in use at its date. A
+   place renamed and still operating is not closed.
+
 ---

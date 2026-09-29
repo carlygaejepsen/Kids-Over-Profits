@@ -113,6 +113,16 @@ $check('a same-as id from the name\'s own list is kept', $e['Ashville Academy fo
 $check('a same-as id from another name\'s list is dropped', $e['Maryland Department of Juvenile Services']['sameAs'] === null);
 $e3 = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'Walker Point', 'kind' => 'facility', 'status' => 'suspended')))), array('Walker Point'), array());
 $check('a temporary closure is kept as Suspended', $e3['Walker Point']['status'] === 'Suspended');
+$e4 = kop_facdisc_parse_reply(json_encode(array('names' => array(
+    array('name' => 'Bethel Boys Academy', 'kind' => 'facility', 'sameAs' => null, 'renameOf' => 13927),
+    array('name' => 'Eagle Point Academy', 'kind' => 'facility', 'sameAs' => 13927, 'renameOf' => 13927),
+    array('name' => 'Gulf Coast', 'kind' => 'facility', 'renameOf' => 99)))),
+    array('Bethel Boys Academy', 'Eagle Point Academy', 'Gulf Coast'),
+    array('Bethel Boys Academy' => array(array('id' => 13927)), 'Eagle Point Academy' => array(array('id' => 13927)), 'Gulf Coast' => array(array('id' => 13927))));
+$check('an earlier name is kept as another era of its record, not the same record',
+    $e4['Bethel Boys Academy']['renameOf'] === 13927 && $e4['Bethel Boys Academy']['sameAs'] === null);
+$check('same-as wins over rename; a rename id not offered is dropped',
+    $e4['Eagle Point Academy']['renameOf'] === null && $e4['Gulf Coast']['renameOf'] === null);
 $check('kinds kept', $e['Hope unit']['kind'] === 'vague' && $e['Sheppard Pratt']['kind'] === 'provider');
 $check('no names array is unreadable', kop_facdisc_parse_reply('{"closures":[]}', $asked, array()) === null);
 $e2 = kop_facdisc_parse_reply(json_encode(array('names' => array(array('name' => 'SILVER OAK ACADEMY (Maryland)', 'kind' => 'facility', 'type' => 'Prison')))), array('Silver Oak Academy'), array());
