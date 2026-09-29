@@ -2624,6 +2624,9 @@ into the live page.
 
 ### 4.2 Board re-import from wp-admin
 
+*Dropped 2026-09-29: the owner says nobody edits the Miro board, so there
+is nothing to re-import. Kept below as the record of what was specified.*
+
 *What it has.* The board is two CSVs exported from the Miro copy, plus the
 overrides, the staff lists and the movement CSV, turned into graph.json and
 layout.json by two Node scripts and committed. Every update is a git commit
@@ -2894,8 +2897,10 @@ commit.
    This replaces the "Three states" decision in 4.3.*
 5. Does `staff-movement.csv` join the upload screen, or stay a repository
    file like the overrides?
-   *Open 2026-09-29: the owner asked first whether the Miro board is still
-   edited at all; if not, 4.2 is not worth building and this and 3 fall
-   away.*
+   *Closed 2026-09-29 with 4.2 itself: nobody edits the Miro board, so
+   there is no board to re-import. The CSVs in js/data/network/ are the
+   last export and stay as they are; corrections and additions go on
+   through network-overrides.json and staff-movement.csv in the
+   repository.*
 6. History page: Miro goes entirely (proposed), or one sentence keeps
    "the original working board is on Miro" as a text link?
