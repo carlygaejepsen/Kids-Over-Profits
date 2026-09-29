@@ -1588,7 +1588,9 @@ button.kop-network__popup-person {
 	letter-spacing: 0.04em;
 }
 
-.kop-network__timeline-range {
+.kop-network__timeline input.kop-network__timeline-range {
+	-webkit-appearance: auto;
+	appearance: auto;
 	flex: 1;
 	min-width: 0;
 	height: 1.5rem;
