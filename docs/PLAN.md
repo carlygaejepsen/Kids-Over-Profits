@@ -408,8 +408,15 @@ Done 2026-09-29:
   current name's record.
 
 Next, in order:
-1. **Owner:** work through Map Renames. The screen suggests a year for 27
-   of the 94, from the earlier name's closing year.
+1. **Owner:** work through Map Renames. Every rename was researched on
+   2026-09-29 (`tmp/rename-research`, built by
+   `node scripts/build-rename-candidates.js` into
+   `js/data/network/rename-candidates.json`). 45 of the 94 have a quoted,
+   sourced year (12 high confidence, which one button saves), and 19 were
+   found drawn backwards and start swapped. The notes also flag lines that
+   are not renames: a reused campus, a road name, or two schools mixed up
+   (Woodward Academy and Georgia Military School). The rest fall back to
+   the board's own years.
 2. **Rename years into the records.** A saved rename sets the two facility
    records' start and end years (facilities_v2, through the
    to_legacy/normalize path) and records the link as
