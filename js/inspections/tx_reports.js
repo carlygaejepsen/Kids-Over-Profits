@@ -518,6 +518,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         <strong>Standard Risk Level:</strong> ${escapeHtml(riskLevel)}<br>
                         <strong>Corrected at Inspection:</strong> ${escapeHtml(citation['Corrected at Inspection'] || 'N/A')}<br>
                         ${citation['Date Correction Evaluated'] ? `<strong>Date Correction Evaluated:</strong> ${escapeHtml(citation['Date Correction Evaluated'])}<br>` : ''}
+                        ${citation['Correction Deadline'] ? `<strong>Correction Deadline:</strong> ${escapeHtml(citation['Correction Deadline'])}<br>` : ''}
+                        ${citation['Correction Evaluation Result'] ? `<strong>Correction Evaluation Result:</strong> ${escapeHtml(citation['Correction Evaluation Result'])}<br>` : ''}
                     </div>
 
                     ${citation['Deficiency Narrative'] ? `
@@ -531,6 +533,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="narrative-section">
                             <h4>Correction Narrative:</h4>
                             <p>${escapeHtml(citation['Correction Narrative'])}</p>
+                        </div>
+                    ` : ''}
+
+                    ${citation['Additional Correction Narrative'] ? `
+                        <div class="narrative-section">
+                            <h4>Correction Follow-up:</h4>
+                            <p>${escapeHtml(citation['Additional Correction Narrative'])}</p>
                         </div>
                     ` : ''}
                     
