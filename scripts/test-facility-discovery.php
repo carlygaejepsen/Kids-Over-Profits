@@ -66,7 +66,14 @@ $check('a misspelled name finds the right record among its look-alikes',
 $check('a near-identical name in the same state is caught before a create',
     kop_facdisc_near_duplicate($pdo, 'Ashville Academy for Girls', 'NC') === 11656);
 $check('and the same name in another state is not', kop_facdisc_near_duplicate($pdo, 'Ashville Academy for Girls', 'MT') === null);
-$check('a genuinely new name is not a near duplicate', kop_facdisc_near_duplicate($pdo, 'Silver Oak Academy', 'MD') === null);
+$check('a genuinely new name is not a near duplicate', kop_facdisc_near_duplicate($pdo, 'Silver Oak Academy', 'MD', 'Keymar') === null);
+$check('a program whose campuses are on record is held ("Maple Lake Academy")',
+    in_array(kop_facdisc_near_duplicate($pdo, 'Maple Lake Academy', 'UT', 'Spanish Fork'), array(10475, 10476), true));
+$check('a same-city name sharing a distinctive word is held ("Three Points Ranch", Hurricane)',
+    kop_facdisc_near_duplicate($pdo, 'Three Points Ranch', 'UT', 'Hurricane') === 10545);
+$check('the same words in another city are not', kop_facdisc_near_duplicate($pdo, 'Three Points Ranch', 'UT', 'Provo') === null);
+$check('new programs from the dry run stay new', kop_facdisc_near_duplicate($pdo, 'Zion Hills Academy', 'UT', '') === null
+    && kop_facdisc_near_duplicate($pdo, "Walker's Point Youth and Family Center", 'WI', 'Milwaukee') === null);
 $check('a name of stopwords only has no look-alikes', kop_facdisc_lookalikes($pdo, 'Youth Academy Center', $index) === array());
 
 // ---------------------------------------------------------------------------

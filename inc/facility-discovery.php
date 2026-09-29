@@ -213,28 +213,53 @@ function kop_facdisc_near_tokens($t, array $index) {
 }
 
 /**
- * An existing record whose name is nearly the same as $name, in the same
- * state (or anywhere, with no state): a misspelling the model did not catch.
- * Returns its id or null.
+ * An existing record that is probably the same place, which the model did
+ * not call the same: returns its id, or null. In the same state (anywhere,
+ * with no state):
+ *   - a name a couple of letters off ("Ashville Academy for Girls");
+ *   - one name inside the other ("Maple Lake Academy" and "Maple Lake
+ *     Academy, LLC - Boys' Home");
+ *   - the same city and a distinctive word in common ("Three Points Ranch"
+ *     and "Three Points Center", both in Hurricane, UT).
+ * Such a name is held for a person rather than created.
  */
-function kop_facdisc_near_duplicate(PDO $pdo, $name, $state) {
+function kop_facdisc_near_duplicate(PDO $pdo, $name, $state, $city = '') {
     $clean = static function ($n) {
         $k = kop_normalize_name_key(preg_replace('/\s*\([^)]*\)\s*$/', '', (string) $n));
-        $k = preg_replace('/\b(the|of|for|and|inc|llc)\b/', ' ', $k);
+        $k = preg_replace('/\b(the|of|for|and|inc|llc|ltd|corp)\b/', ' ', $k);
         return trim(preg_replace('/\s+/', ' ', $k));
+    };
+    $stop = kop_news_stopwords();
+    $words = static function ($k) use ($stop) {
+        return array_filter(explode(' ', $k), static function ($w) use ($stop) {
+            return strlen($w) >= 4 && !ctype_digit($w) && !isset($stop[$w]);
+        });
     };
     $key = $clean($name);
     if (strlen($key) < 6) {
         return null;
     }
+    $mine = $words($key);
+    $city_key = kop_normalize_name_key((string) $city);
     $stmt = $state !== ''
-        ? $pdo->prepare('SELECT id, unique_name FROM facilities_v2 WHERE state = ?')
-        : $pdo->prepare('SELECT id, unique_name FROM facilities_v2');
+        ? $pdo->prepare('SELECT id, unique_name, city FROM facilities_v2 WHERE state = ?')
+        : $pdo->prepare('SELECT id, unique_name, city FROM facilities_v2');
     $stmt->execute($state !== '' ? array($state) : array());
     $max = max(2, (int) floor(strlen($key) / 10));
     foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
         $other = $clean($r['unique_name']);
-        if ($other !== '' && abs(strlen($other) - strlen($key)) <= $max && levenshtein($other, $key) <= $max) {
+        if ($other === '') {
+            continue;
+        }
+        if (abs(strlen($other) - strlen($key)) <= $max && levenshtein($other, $key) <= $max) {
+            return (int) $r['id'];
+        }
+        if ($state !== '' && strlen($other) >= 6
+            && (strpos(' ' . $other . ' ', ' ' . $key . ' ') !== false || strpos(' ' . $key . ' ', ' ' . $other . ' ') !== false)) {
+            return (int) $r['id'];
+        }
+        if ($state !== '' && $city_key !== '' && kop_normalize_name_key((string) $r['city']) === $city_key
+            && array_intersect($mine, $words($other))) {
             return (int) $r['id'];
         }
     }
@@ -525,7 +550,7 @@ function kop_facdisc_apply_entry(PDO $pdo, array $entry, array $news, $write) {
     } elseif ($entry['kind'] === 'facility' && $entry['state'] === '' && $entry['country'] === '') {
         $decision = 'needs_place';
         $fid = null;
-    } elseif ($entry['kind'] === 'facility' && ($near = kop_facdisc_near_duplicate($pdo, $entry['officialName'], $entry['state']))) {
+    } elseif ($entry['kind'] === 'facility' && ($near = kop_facdisc_near_duplicate($pdo, $entry['officialName'], $entry['state'], $entry['city']))) {
         $decision = 'possible_duplicate';
         $fid = $near;
     } elseif ($entry['kind'] === 'facility') {
