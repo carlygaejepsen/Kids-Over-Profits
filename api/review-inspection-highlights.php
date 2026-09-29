@@ -65,7 +65,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && check_admin_referer('kop_review_hig
             $decision, $note !== '' ? $note : null,
             $pending ? null : $user->user_login, $pending ? null : gmdate('Y-m-d H:i:s'), $id,
         ));
-        echo json_encode(array('success' => true, 'status' => $decision));
+        // The site shows one entry per facility per day: an approval folds
+        // this finding and any others of its day into one.
+        $merged = 0;
+        if ($decision === 'approved') {
+            $fac = $pdo->prepare('SELECT facility_id FROM inspection_highlights WHERE id = ?');
+            $fac->execute(array($id));
+            foreach (kop_ih_merge_same_day($pdo, true, (int) $fac->fetchColumn()) as $m) {
+                $merged += count($m['merged']) + count($m['identical']);
+            }
+        }
+        echo json_encode(array('success' => true, 'status' => $decision, 'merged' => $merged));
     } catch (PDOException $e) {
         echo json_encode(array('success' => false, 'error' => $e->getMessage()));
     }
@@ -153,7 +163,7 @@ button.plain { background: #fff; color: #000080; border: 1px solid #000080; }
 .pill { display: inline-block; border: 2px solid #FE8088; border-radius: 999px; padding: 1px 9px; font-size: 0.78rem; font-weight: 700; }
 .pill.state { border-color: #33A7B5; }
 .pill.severe { border-color: #c0392b; color: #c0392b; }
-blockquote { margin: 10px 0; padding: 8px 14px; background: #FFF5CB; border-left: 4px solid #EF9034; line-height: 1.5; }
+blockquote { margin: 10px 0; padding: 8px 14px; background: #FFF5CB; border-left: 4px solid #EF9034; line-height: 1.5; white-space: pre-line; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
 .actions input { flex: 1 1 260px; max-width: 420px; }
 pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-radius: 6px; max-height: 420px; overflow: auto; font: 0.82rem/1.5 system-ui, sans-serif; }
@@ -257,7 +267,8 @@ pre.full { white-space: pre-wrap; background: #F2EEDF; padding: 10px; border-rad
             .then(function (j) {
                 if (!j.success) { alert(j.error || 'Could not save.'); btn.disabled = false; return; }
                 card.classList.add('done');
-                card.querySelector('.actions').innerHTML = '<span class="muted">Marked ' + j.status + '.</span>';
+                card.querySelector('.actions').innerHTML = '<span class="muted">Marked ' + j.status + '.'
+                    + (j.merged ? ' Merged with ' + j.merged + ' other finding' + (j.merged === 1 ? '' : 's') + ' from the same day.' : '') + '</span>';
             })
             .catch(function () { alert('Could not save.'); btn.disabled = false; });
     });

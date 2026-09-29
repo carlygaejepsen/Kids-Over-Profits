@@ -1205,6 +1205,8 @@ if (!function_exists('kop_ih_scanner_version')) {
                 $dup = $pdo->prepare('SELECT id FROM inspection_highlights WHERE facility_id = ? AND text_hash = ? AND report_id <> ? LIMIT 1');
                 $dup->execute(array((int) $row['facility_id'], $c['text_hash'], $report_id));
                 if ($dup->fetchColumn()) { $counts['duplicate']++; continue; }
+                // Nor is one already folded into an approved finding of the same day (kop_ih_merge_same_day).
+                if (kop_ih_same_day_covers($pdo, (int) $row['facility_id'], $values[9], $c['excerpt'])) { $counts['duplicate']++; continue; }
                 $pdo->prepare('INSERT INTO inspection_highlights
                     (category, categories, score, excerpt, standard, state_label, kind, corrected_on_site, scanner_version, finding_date,
                      report_id, facility_id, finding_key, text_hash, state, status)
@@ -1227,6 +1229,175 @@ if (!function_exists('kop_ih_scanner_version')) {
             $counts['dropped']++;
         }
         return $counts;
+    }
+
+    // -----------------------------------------------------------------------
+    // Merge: one entry per facility per day
+    // -----------------------------------------------------------------------
+
+    /** Text reduced for comparing: lower-cased, letters and digits only. */
+    function kop_ih_squash_text($text) {
+        return (string) preg_replace('/[^\p{L}\p{N}]+/u', '', mb_strtolower((string) $text));
+    }
+
+    /**
+     * The parts of an excerpt: one per finding folded into it (kept apart by
+     * a blank line), each a list of runs of the state's text (kept apart by
+     * " [...] " where text between them is left out).
+     */
+    function kop_ih_excerpt_parts($excerpt) {
+        $parts = array();
+        foreach (preg_split('/\n\s*\n/u', trim((string) $excerpt)) as $part) {
+            $segments = array_values(array_filter(array_map('trim', explode(' [...] ', $part)), 'strlen'));
+            if ($segments) $parts[] = $segments;
+        }
+        return $parts;
+    }
+
+    /**
+     * Several excerpts as one: the first one's text first, then whatever the
+     * others add, each as its own paragraph. A run of text already there
+     * (the same words, whatever the spacing or punctuation) is left out; a run
+     * that holds an earlier one, like a longer cut of the same sentence,
+     * replaces it.
+     */
+    function kop_ih_combine_excerpts(array $excerpts) {
+        $parts = array();
+        foreach ($excerpts as $excerpt) {
+            foreach (kop_ih_excerpt_parts($excerpt) as $segments) {
+                $added = array();
+                foreach ($segments as $segment) {
+                    $key = kop_ih_squash_text($segment);
+                    if ($key === '') continue;
+                    $covered = false;
+                    foreach ($parts as $p => $kept) {
+                        foreach ($kept as $s => $old) {
+                            if (strpos($old['key'], $key) !== false) { $covered = true; break 2; }
+                            if (strpos($key, $old['key']) !== false) unset($parts[$p][$s]);
+                        }
+                    }
+                    foreach ($added as $old) {
+                        if (strpos($old['key'], $key) !== false) { $covered = true; break; }
+                    }
+                    if (!$covered) $added[] = array('key' => $key, 'text' => $segment);
+                }
+                if ($added) $parts[] = $added;
+            }
+        }
+        $out = array();
+        foreach ($parts as $kept) {
+            if ($kept) $out[] = implode(' [...] ', array_column($kept, 'text'));
+        }
+        return implode("\n\n", $out);
+    }
+
+    /** Whether $excerpt adds nothing to $existing: every run of it is already there. */
+    function kop_ih_excerpt_covered($existing, $excerpt) {
+        return kop_ih_squash_text(kop_ih_combine_excerpts(array($existing, $excerpt)))
+            === kop_ih_squash_text(kop_ih_combine_excerpts(array($existing)));
+    }
+
+    /** Whether an approved finding of this facility on this day already holds the excerpt. */
+    function kop_ih_same_day_covers(PDO $pdo, $facility_id, $date, $excerpt) {
+        if ($date === null || $date === '') return false;
+        $stmt = $pdo->prepare("SELECT excerpt FROM inspection_highlights WHERE facility_id = ? AND finding_date = ? AND status = 'approved'");
+        $stmt->execute(array((int) $facility_id, $date));
+        foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $existing) {
+            if (kop_ih_excerpt_covered($existing, $excerpt)) return true;
+        }
+        return false;
+    }
+
+    /** Distinct non-empty values, joined and cut to a column's width. */
+    function kop_ih_join_distinct(array $values, $width) {
+        $seen = array();
+        foreach ($values as $v) {
+            $v = trim((string) $v);
+            if ($v !== '' && !isset($seen[mb_strtolower($v)])) $seen[mb_strtolower($v)] = $v;
+        }
+        if (!$seen) return null;
+        return mb_substr(implode('; ', $seen), 0, $width);
+    }
+
+    /**
+     * One entry per facility per calendar day on the site (owner rule,
+     * 2026-09-29). Approved severe findings of one facility dated the same day
+     * become one: the worst (then the oldest) keeps its id and takes in the
+     * others' text, kinds of harm, citations and state labels; the others are
+     * deleted. A finding whose text is already there only goes. The store
+     * then never queues the deleted ones again (kop_ih_same_day_covers).
+     *
+     * $facility_id 0 looks at every facility. With $apply false nothing is
+     * written. Returns one entry per merge: keep, merged ids, identical ids,
+     * facility, date, and the combined excerpt.
+     */
+    function kop_ih_merge_same_day(PDO $pdo, $apply = true, $facility_id = 0) {
+        $where = "status = 'approved' AND score >= " . (int) kop_ih_severe_score() . ' AND finding_date IS NOT NULL';
+        $params = array();
+        if ($facility_id) { $where .= ' AND facility_id = ?'; $params[] = (int) $facility_id; }
+        $stmt = $pdo->prepare("SELECT * FROM inspection_highlights WHERE $where ORDER BY facility_id, finding_date, score DESC, id ASC");
+        $stmt->execute($params);
+        $groups = array();
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+            $groups[$row['facility_id'] . '|' . $row['finding_date']][] = $row;
+        }
+
+        $cats = kop_ih_categories();
+        $merges = array();
+        foreach ($groups as $rows) {
+            if (count($rows) < 2) continue;
+            $keep = $rows[0];
+            $excerpt = kop_ih_combine_excerpts(array($keep['excerpt']));
+            $identical = array();
+            $merged = array();
+            $kinds = array_filter(explode(',', (string) $keep['categories']));
+            $corrected = array($keep['corrected_on_site']);
+            foreach (array_slice($rows, 1) as $row) {
+                $combined = kop_ih_combine_excerpts(array($excerpt, $row['excerpt']));
+                if (kop_ih_squash_text($combined) === kop_ih_squash_text($excerpt)) {
+                    $identical[] = (int) $row['id'];
+                } else {
+                    $merged[] = (int) $row['id'];
+                    $excerpt = $combined;
+                }
+                $kinds = array_merge($kinds, array_filter(explode(',', (string) $row['categories'])));
+                $corrected[] = $row['corrected_on_site'];
+            }
+            // Kinds of harm worst first, as the scanner lists them.
+            $kinds = array_values(array_unique($kinds));
+            usort($kinds, static function ($a, $b) use ($cats) {
+                return ($cats[$b]['weight'] ?? 0) <=> ($cats[$a]['weight'] ?? 0);
+            });
+            $gone = array_merge($merged, $identical);
+            $note = trim(trim((string) $keep['review_note']) . ' Same-day findings merged in: #' . implode(', #', $gone) . '.');
+            $merges[] = array(
+                'keep' => (int) $keep['id'], 'merged' => $merged, 'identical' => $identical,
+                'facility_id' => (int) $keep['facility_id'], 'date' => $keep['finding_date'], 'excerpt' => $excerpt,
+            );
+            if (!$apply) continue;
+
+            $pdo->beginTransaction();
+            try {
+                $pdo->prepare('UPDATE inspection_highlights SET excerpt = ?, categories = ?, score = ?, standard = ?, state_label = ?,
+                    corrected_on_site = ?, review_note = ? WHERE id = ?')->execute(array(
+                    $excerpt,
+                    implode(',', $kinds),
+                    max(array_map('intval', array_column($rows, 'score'))),
+                    kop_ih_join_distinct(array_column($rows, 'standard'), 500),
+                    kop_ih_join_distinct(array_column($rows, 'state_label'), 120),
+                    // Corrected at the inspection only when every one of them was.
+                    count(array_unique(array_map('strval', $corrected))) === 1 ? $keep['corrected_on_site'] : 0,
+                    mb_substr($note, 0, 500),
+                    (int) $keep['id'],
+                ));
+                $pdo->exec('DELETE FROM inspection_highlights WHERE id IN (' . implode(',', array_map('intval', $gone)) . ')');
+                $pdo->commit();
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                throw $e;
+            }
+        }
+        return $merges;
     }
 
     /**
@@ -1324,6 +1495,15 @@ if (!function_exists('kop_ih_scanner_version')) {
             return 'https://www.ccld.dss.ca.gov/carefacilitysearch/FacDetail/' . $m[1];
         }
         return '';
+    }
+
+    /** An excerpt as escaped HTML: one paragraph per finding merged into it. */
+    function kop_ih_excerpt_html($excerpt) {
+        $out = '';
+        foreach (preg_split('/\n\s*\n/u', trim((string) $excerpt)) as $part) {
+            if (trim($part) !== '') $out .= '<p>' . htmlspecialchars(trim($part), ENT_QUOTES, 'UTF-8') . '</p>';
+        }
+        return $out;
     }
 
     /** An excerpt cut to fit a card, at a word, with the cut marked. */
@@ -1425,7 +1605,7 @@ if (function_exists('get_transient') && !function_exists('kop_ih_site_highlights
                     <h3><?php echo esc_html($row['facility_name']); ?>
                         <span class="kop-flagged-state"><?php echo esc_html($row['state']); ?></span></h3>
                     <div class="kop-flagged-date"><?php echo $date !== '' ? 'Inspected ' . esc_html($date) : ''; ?><?php echo $date !== '' && $label !== '' ? ' &middot; ' : ''; ?><?php echo esc_html($label); ?></div>
-                    <blockquote class="kop-flagged-quote"><?php echo esc_html(kop_ih_card_excerpt($row['excerpt'])); ?></blockquote>
+                    <blockquote class="kop-flagged-quote"><?php echo kop_ih_excerpt_html(kop_ih_card_excerpt($row['excerpt'])); ?></blockquote>
                     <div class="kop-flagged-source">From the state's report<?php echo $row['state_label'] ? '. ' . esc_html($row['state_label']) : ''; ?></div>
                     <div class="kop-flagged-links">
                         <?php if ($source !== ''): ?>

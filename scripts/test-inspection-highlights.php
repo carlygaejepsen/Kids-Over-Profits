@@ -467,6 +467,43 @@ check(kop_ih_document_url('', json_encode(array('pdf_url' => 'https://info.ncdhh
     && kop_ih_document_url('', json_encode(array('Deficiency Narrative' => 'x'))) === '', 'flags: the document url comes from pdf_url, sod_url or the report link, else none');
 check(kop_ih_card_excerpt(str_repeat('word ', 100), 50) === 'word word word word word word word word word word [...]', 'site: a long excerpt is cut at a word and the cut is marked');
 
+// One entry per facility per day: same text goes, different text is combined.
+check(kop_ih_combine_excerpts(array('Staff hit a child.', 'Staff  hit a child')) === 'Staff hit a child.', 'merge: the same words, spaced or punctuated differently, are one');
+check(kop_ih_combine_excerpts(array('Staff hit a child.', 'A child was choked.')) === "Staff hit a child.\n\nA child was choked.", 'merge: different findings become paragraphs');
+check(kop_ih_combine_excerpts(array('The report said E2 origi', 'The report said E2 originally denied it. [...] Staff hit a child.'))
+    === "The report said E2 originally denied it. [...] Staff hit a child.", 'merge: a longer cut of a sentence replaces the shorter one');
+check(kop_ih_combine_excerpts(array('Staff hit a child. [...] He was bruised.', 'He was bruised.')) === 'Staff hit a child. [...] He was bruised.', 'merge: a run already quoted is not repeated');
+check(kop_ih_excerpt_html("A <b>.\n\nB & C") === '<p>A &lt;b&gt;.</p><p>B &amp; C</p>', 'merge: each merged finding is its own escaped paragraph');
+
+$day = new PDO('sqlite::memory:');
+$day->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+kop_ih_ensure_tables($day);
+$ins = $day->prepare("INSERT INTO inspection_highlights (id, report_id, facility_id, finding_key, text_hash, state, category, categories, score, finding_date, excerpt, standard, state_label, status, scanner_version)
+    VALUES (?, ?, ?, ?, ?, 'TX', ?, ?, ?, ?, ?, ?, ?, ?, 4)");
+foreach (array(
+    // id, report, facility, category, categories, score, date, excerpt, standard, label, status
+    array(1, 10, 1, 'physical_abuse', 'physical_abuse', 80, '2024-01-05', 'Staff punched a child.', '748.1101', 'High', 'approved'),
+    array(2, 11, 1, 'self_harm', 'self_harm', 72, '2024-01-05', 'A child in care self-harmed with staff aware.', '748.685', 'High', 'approved'),
+    array(3, 12, 1, 'physical_abuse', 'physical_abuse', 80, '2024-01-05', 'Staff punched a child', '748.1101', 'High', 'approved'),
+    array(4, 13, 1, 'death', 'death', 95, '2024-01-06', 'A child died.', '', '', 'approved'),
+    array(5, 14, 2, 'death', 'death', 95, '2024-01-05', 'Another facility.', '', '', 'approved'),
+    array(6, 15, 1, 'death', 'death', 95, '2024-01-05', 'A pending finding that day.', '', '', 'pending'),
+) as $r) {
+    $ins->execute(array($r[0], $r[1], $r[2], 'k' . $r[0], 'h' . $r[0], $r[3], $r[4], $r[5], $r[6], $r[7], $r[8], $r[9], $r[10]));
+}
+$dry = kop_ih_merge_same_day($day, false);
+check(count($dry) === 1 && (int) $day->query('SELECT COUNT(*) FROM inspection_highlights')->fetchColumn() === 6, 'merge: a dry run writes nothing');
+$done = kop_ih_merge_same_day($day, true);
+$kept = $day->query('SELECT * FROM inspection_highlights WHERE id = 1')->fetch(PDO::FETCH_ASSOC);
+check(count($done) === 1 && $done[0]['keep'] === 1 && $done[0]['identical'] === array(3) && $done[0]['merged'] === array(2), 'merge: the worst, oldest finding keeps its id; the identical one goes, the different one is folded in');
+check($kept['excerpt'] === "Staff punched a child.\n\nA child in care self-harmed with staff aware." && $kept['categories'] === 'physical_abuse,self_harm'
+    && $kept['standard'] === '748.1101; 748.685' && $kept['state_label'] === 'High', 'merge: text, kinds of harm and citations combined');
+check(array_map('intval', $day->query('SELECT id FROM inspection_highlights ORDER BY id')->fetchAll(PDO::FETCH_COLUMN)) === array(1, 4, 5, 6), 'merge: other days, other facilities and pending findings are left alone');
+check(kop_ih_merge_same_day($day, true) === array(), 'merge: a second run finds nothing to do');
+check(kop_ih_same_day_covers($day, 1, '2024-01-05', 'A child in care self-harmed with staff aware.')
+    && !kop_ih_same_day_covers($day, 1, '2024-01-05', 'Something new happened.')
+    && !kop_ih_same_day_covers($day, 1, null, 'Staff punched a child.'), 'merge: a rescan does not queue a finding already folded in');
+
 echo "Rules: $checks checks, $failures failed.\n";
 
 // ---------------------------------------------------------------------------

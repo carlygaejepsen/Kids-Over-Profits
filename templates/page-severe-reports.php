@@ -227,7 +227,7 @@ $kop_sr_icon = static function ($name) {
                     <?php endif; endforeach; ?>
                 </div>
             </header>
-            <blockquote class="kop-flagged-quote"><?php echo esc_html($kop_sr_row['excerpt']); ?></blockquote>
+            <blockquote class="kop-flagged-quote"><?php echo kop_ih_excerpt_html($kop_sr_row['excerpt']); // escaped in the helper ?></blockquote>
             <p class="kop-flagged-source">From the state's report<?php echo $kop_sr_row['state_label'] ? '. ' . esc_html($kop_sr_row['state_label']) : ''; ?><?php
                 echo $kop_sr_row['standard'] ? '. Cited: ' . esc_html($kop_sr_row['standard']) : ''; ?><?php
                 echo $kop_sr_row['corrected_on_site'] ? '. The state recorded it as corrected at the inspection' : ''; ?>.<?php

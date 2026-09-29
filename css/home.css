@@ -477,6 +477,20 @@
     line-height: 1.5;
 }
 
+/* Findings from the same day are merged into one entry, a paragraph each */
+.kop-flagged-quote p,
+.kop-flagged-card .kop-flagged-quote p {
+    margin: 0 0 0.6em;
+    font-size: inherit;
+    color: inherit;
+    line-height: inherit;
+}
+
+.kop-flagged-quote p:last-child,
+.kop-flagged-card .kop-flagged-quote p:last-child {
+    margin-bottom: 0;
+}
+
 .kop-flagged-source {
     font-size: 0.78rem;
     color: #4a5568;

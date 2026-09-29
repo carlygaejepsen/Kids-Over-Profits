@@ -45,16 +45,22 @@ try {
             }
         }
         foreach ($rows as $row) {
-            $finding = array(
-                'id'       => (int) $row['id'],
-                'facility' => (string) $row['facility_name'],
-                'date'     => (string) $row['finding_date'],
-                'label'    => $categories[$row['category']]['label'] ?? 'Severe finding',
-                'needle'   => kop_ih_flag_needle($row['excerpt']),
-            );
-            $url = $urls[(int) $row['report_id']] ?? '';
-            if ($url !== '') $finding['url'] = $url;
-            $findings[] = $finding;
+            // Findings of one day are merged into one entry, a paragraph each
+            // (kop_ih_merge_same_day), and may come from more than one report:
+            // each paragraph gets a needle of its own, under the same id.
+            $parts = preg_split('/\n\s*\n/u', trim((string) $row['excerpt']));
+            foreach ($parts as $n => $part) {
+                $finding = array(
+                    'id'       => (int) $row['id'],
+                    'facility' => (string) $row['facility_name'],
+                    'date'     => (string) $row['finding_date'],
+                    'label'    => $categories[$row['category']]['label'] ?? 'Severe finding',
+                    'needle'   => kop_ih_flag_needle($part),
+                );
+                $url = $n === 0 ? ($urls[(int) $row['report_id']] ?? '') : '';
+                if ($url !== '') $finding['url'] = $url;
+                $findings[] = $finding;
+            }
         }
     }
 } catch (Exception $e) {
