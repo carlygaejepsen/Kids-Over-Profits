@@ -219,9 +219,11 @@ own.
    ten-commit sequence and six open decisions for the owner). Build
    order: 4.4 first step (built 2026-09-29: /history/ drops Miro for a
    still of the Historical view, `images/network-map-historical.jpg`,
-   seed_version 2, open decision 6 taken as proposed); 4.1 the
-   one-hop map on facility pages and profile posts (the map's own modules
-   on an inline slice, "Open on the full map"); 4.4 second step, the
+   seed_version 2, open decision 6 taken as proposed); 4.1 the map on
+   facility pages and profile posts (built 2026-09-29: the Focus view's
+   own slice, not one hop, held to focus.js by
+   `scripts/test-network-embed.js`; decisions 1 and 2 as proposed); 4.4
+   second step, the
    `[kop_network_preview]` shortcode making that still live; 4.3 the
    timeline, a year slider that dims what was not operating; 4.2 board
    re-import from a KOP Data Tools screen. Production has no Node and the

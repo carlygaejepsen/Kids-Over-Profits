@@ -64,6 +64,10 @@
          * with null when the pointer has moved off, or clicked on nothing. */
         var onHoverEdge = options.onHoverEdge || function () {};
         var onSelectEdge = options.onSelectEdge || function () {};
+        /* false leaves the wheel to the page: a map embedded in an article
+         * (embed.js) must not catch a reader scrolling past it. Pinch,
+         * double click and the buttons still zoom. */
+        var wheelZooms = options.wheel !== false;
 
         /* Where a node currently is, and where it currently *appears*. The
          * base position is the live object, so a drag writes straight to it:
@@ -590,7 +594,7 @@
             onZoomGesture();
         }
 
-        canvas.addEventListener('wheel', onWheel, { passive: false });
+        if (wheelZooms) canvas.addEventListener('wheel', onWheel, { passive: false });
         canvas.addEventListener('dblclick', onDoubleClick);
         canvas.style.cursor = 'grab';
 

@@ -2586,6 +2586,42 @@ leaving the page.
    tree into a live facility page at 390, 768 and 1440 px; then
    `python scripts/check-bare-text.py`.
 
+*Built 2026-09-29.* Three things differ from the plan above, all found
+while building it:
+
+- **Not one hop.** The map's Focus view for one name is more than its
+  neighbours: a person on it brings everyone they touch and their places,
+  and a program brings the company that owns it (`visibleIds()` in
+  focus.js). A one-hop slice drew a different, smaller board.
+  `kop_network_map_slice_from_graph()` follows the same rules, in
+  graph.json's node order (the layout breaks ties by it), and every node
+  carries `offSlice`, its connections the slice left out, which store and
+  focus add to the "+N" so each name says what it says on the full map.
+  The slice also carries its names' layout positions (`layout`), since
+  the store drops a node with none. Median 6 names, Provo Canyon School
+  106 (89 KB inline); no root has more than 40 direct connections, so the
+  cap is written and tested but trims nothing today.
+- **The parity test is its own file.** `node scripts/test-network-embed.js`
+  (about a minute) cuts every facility slice with the PHP
+  (`scripts/network-slices.php`, through Local's php.exe) and holds each
+  to focus.js on the whole graph: same names, same folded people, same
+  "+N", same settled positions. All 536 match. Then embed.js against a
+  stub figure: it paints, unhides, labels every name on the stage, leaves
+  the wheel to the page, a click opens the name on the map and Ctrl-click
+  the profile. test-network-modules.js exports its sandbox for it.
+- **Framing.** The embed opens where the map opens a name, centred at a
+  readable zoom, not fitted: fitting Provo Canyon School's 78 drawn names
+  into 360 px makes them unreadable. Fit is one button away. On a phone
+  that is about five names on the opening stage.
+
+The profile posts get the section under the post text (the rail beside it
+is too narrow for the map); the section is new to them, list and map
+together, from `kop_facility_pages_network()` on their v2 record id.
+`python scripts/preview-network-map.py --facility provo-canyon-school-ut
+--shots tmp/map-preview` takes the figure from the page
+test-facility-pages.php rendered into tmp/facility-pages/ and splices it
+into the live page.
+
 ### 4.2 Board re-import from wp-admin
 
 *What it has.* The board is two CSVs exported from the Miro copy, plus the

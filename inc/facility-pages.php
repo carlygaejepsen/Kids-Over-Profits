@@ -207,6 +207,11 @@ if (!function_exists('kop_facility_pages_enqueue')) {
         if (file_exists($doc_css) && !empty($GLOBALS['kop_facility_page']['documents']['html'])) {
             wp_enqueue_style('kop-document-library-style', $theme_uri . '/css/document-library.css', array('kop-colors'), filemtime($doc_css));
         }
+        // The map in the Network section (inc/network-map.php); its scripts
+        // follow in the footer once the section has printed it.
+        if (!empty($GLOBALS['kop_facility_page']['network']) && function_exists('kop_network_map_embed_style')) {
+            kop_network_map_embed_style();
+        }
         $js = $theme_dir . '/js/submit-info.js';
         if (file_exists($js)) {
             wp_enqueue_script('kop-submit-info', $theme_uri . '/js/submit-info.js', array(), filemtime($js), true);

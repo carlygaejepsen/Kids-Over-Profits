@@ -35,6 +35,8 @@ node scripts/test-network-graph.js
 
 # After editing anything in js/network-map/
 node scripts/test-network-modules.js
+# The map on facility pages (embed.js + kop_network_map_slice_from_graph, PHP must match focus.js)
+node scripts/test-network-embed.js [--php=<Local php.exe>]
 
 # After editing the reporting directory data in js/data/reporting/
 node scripts/build-reporting-directory.js

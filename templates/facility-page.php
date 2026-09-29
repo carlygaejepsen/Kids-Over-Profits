@@ -321,6 +321,7 @@ get_header();
             <section class="kop-fp-section" id="network">
                 <h2>Connections on the network map</h2>
                 <p class="kop-fp-count">The companies, people and programs our research map ties to this program. <a href="<?php echo esc_url($page['network']['map_url']); ?>">Open it on the network map</a>.</p>
+                <?php echo function_exists('kop_network_map_embed_html') ? kop_network_map_embed_html((int) $page['id']) : ''; ?>
                 <?php foreach ($page['network']['groups'] as $group) : ?>
                     <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
                     <ul class="kop-fp-records">

@@ -672,7 +672,7 @@
              */
             var hidden = Object.create(null);
             nodes.forEach(function (node) {
-                var off = 0;
+                var off = node.offSlice || 0;
                 store.neighbours(node.id, true).forEach(function (link) {
                     if (!shown[link.other.id] && !fold.folded[link.other.id]) off++;
                 });

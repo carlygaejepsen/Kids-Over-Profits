@@ -11,6 +11,7 @@ the server open for you or drives it with Playwright and saves screenshots.
     python scripts/preview-network-map.py --shots tmp/map-preview --hash "#open=wwasps"
     python scripts/preview-network-map.py --config tmp/live-config.json   # e.g. the live facilityUrls
     python scripts/preview-network-map.py --hash "#view=historical" --still images/network-map-historical.jpg
+    python scripts/preview-network-map.py --facility provo-canyon-school --shots tmp/map-preview   # the page embed
 
 tmp/map-preview/ is gitignored.
 
@@ -162,16 +163,78 @@ def still(url, path, hash_):
     return 1 if problems else 0
 
 
+EMBED_SCRIPTS = ('js/vendor/d3-force.bundle.min.js', 'js/network-map/store.js', 'js/network-map/canvas.js',
+                 'js/network-map/viewport.js', 'js/network-map/focus.js', 'js/network-map/embed.js')
+
+
+def facility(slug, out_dir):
+    """The working tree's map embed on the live facility page, at three widths.
+
+    The figure comes from the page scripts/test-facility-pages.php renders
+    into tmp/facility-pages/<slug>.html (run it with --out=tmp/facility-pages
+    and --id= for the facility first), so it carries the slice the PHP cuts
+    today. It goes into the live page's Network section, above the list,
+    with the local stylesheet and scripts; nothing else on the page changes.
+    """
+    from playwright.sync_api import sync_playwright
+    rendered = os.path.join(REPO, 'tmp', 'facility-pages', slug + '.html')
+    if not os.path.exists(rendered):
+        sys.exit('No %s: run scripts/test-facility-pages.php --out=tmp/facility-pages --id=<id> first' % rendered)
+    found = re.search(r'<figure class="kop-network-embed".*?</figure>', open(rendered, encoding='utf-8').read(), re.S)
+    if not found:
+        sys.exit('%s has no network embed' % rendered)
+    figure = found.group(0)
+    css = open(os.path.join(REPO, 'css', 'network-embed.css'), encoding='utf-8').read()
+    scripts = [open(os.path.join(REPO, rel), encoding='utf-8').read() for rel in EMBED_SCRIPTS]
+    os.makedirs(out_dir, exist_ok=True)
+    problems = []
+    with sync_playwright() as pw:
+        browser = pw.chromium.launch()
+        for width, height in ((390, 844), (768, 1024), (1440, 900)):
+            page = browser.new_page(viewport={'width': width, 'height': height})
+            page.on('pageerror', lambda e, w=width: problems.append('%d pageerror: %s' % (w, e)))
+            page.goto('https://kidsoverprofits.org/facility/%s/' % slug, wait_until='domcontentloaded')
+            page.wait_for_selector('#network', timeout=30000)
+            page.add_style_tag(content=css)
+            page.evaluate("""(html) => {
+                const section = document.getElementById('network');
+                const count = section.querySelector('.kop-fp-count');
+                const holder = document.createElement('div');
+                holder.innerHTML = html;
+                (count || section.firstElementChild).after(holder.firstElementChild);
+            }""", figure)
+            for script in scripts:
+                page.add_script_tag(content=script)
+            page.locator('#network').scroll_into_view_if_needed()
+            try:
+                page.wait_for_selector('[data-kop-network-embed][data-state="ready"]', timeout=15000)
+            except Exception:
+                problems.append('%d: the embed never painted' % width)
+            page.wait_for_timeout(1500)
+            path = os.path.join(out_dir, 'embed-%s-%d.png' % (slug, width))
+            page.locator('#network').screenshot(path=path)
+            print('saved', path)
+            page.close()
+        browser.close()
+    for problem in problems:
+        print('PROBLEM', problem)
+    return 1 if problems else 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--port', type=int, default=0, help='port to serve on (default: any free port)')
     parser.add_argument('--shots', metavar='DIR', help='save desktop and phone screenshots here, then exit')
     parser.add_argument('--hash', default='', help='a map address to open, e.g. "#open=wwasps"')
     parser.add_argument('--still', metavar='FILE', help='save the stage alone at 1440 px as a JPEG, then exit')
+    parser.add_argument('--facility', metavar='SLUG', help='the map embed on the live /facility/SLUG/ page at 390, 768, 1440 px (with --shots DIR)')
     parser.add_argument('--config', metavar='FILE', help='JSON laid over the preview config (data URLs stay local)')
     args = parser.parse_args()
     if args.config:
         CONFIG_EXTRA.update(json.load(open(args.config, encoding='utf-8')))
+
+    if args.facility:
+        return facility(args.facility, args.shots or os.path.join(REPO, 'tmp', 'map-preview'))
 
     server, url = serve(args.port)
     if args.still:

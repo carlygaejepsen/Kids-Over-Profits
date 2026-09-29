@@ -209,6 +209,37 @@ if (function_exists('kop_network_map_facility_urls') && function_exists('kop_net
             $drawn[$sample]['name'] . ': ' . $listed . ' listed, ' . ($net['map_url'] ?? 'no map link'));
         $want_ids[] = $sample;
     }
+
+    // Every facility the map draws gets a slice for its page's map: the
+    // root in it, every name and both ends of every line in graph.json,
+    // small enough to print inline, and the cap note only on a capped root.
+    // scripts/test-network-embed.js holds each one to what the map shows.
+    $graph = kop_network_map_graph();
+    $graph_nodes = array();
+    foreach ($graph['nodes'] as $n) $graph_nodes[(string) $n['id']] = true;
+    $direct = array();
+    foreach ($graph['edges'] as $e) {
+        $direct[$e['source']] = ($direct[$e['source']] ?? 0) + 1;
+        $direct[$e['target']] = ($direct[$e['target']] ?? 0) + 1;
+    }
+    $bad = array();
+    $largest = array(0, '');
+    foreach ($drawn as $fid => $entry) {
+        $slice = kop_network_map_slice($entry['node']);
+        $ids = $slice ? array_flip(array_column($slice['nodes'], 'id')) : array();
+        $bytes = $slice ? strlen(json_encode($slice)) : 0;
+        if ($bytes > $largest[0]) $largest = array($bytes, $entry['name']);
+        $ends = true;
+        foreach ($slice['edges'] ?? array() as $e) {
+            if (!isset($ids[$e['source']], $ids[$e['target']])) { $ends = false; break; }
+        }
+        if (!$slice || !isset($ids[$entry['node']]) || !$ends || array_diff_key($ids, $graph_nodes)
+            || $bytes > 120 * 1024 || (($slice['more'] ?? 0) > 0) !== (($direct[$entry['node']] ?? 0) > 40)) {
+            $bad[] = $fid . ' ' . $entry['name'];
+        }
+    }
+    $check('every map slice holds its root and only graph names, under 120 KB', !$bad,
+        $bad ? implode('; ', array_slice($bad, 0, 5)) : count($drawn) . ' slices, largest ' . $largest[1] . ' at ' . (int) ($largest[0] / 1024) . ' KB');
 } else {
     $check('network map module loads with a graph', false, 'inc/network-map.php or js/data/network/graph.json missing');
 }
@@ -265,6 +296,18 @@ foreach ($picks as $id) {
     foreach ($m[1] as $sec) $sections_seen[$sec] = ($sections_seen[$sec] ?? 0) + 1;
     $check(sprintf('render %d %s', $id, $data['name']), $rendered && strpos($html, '<h1') !== false,
         sprintf('%.0f ms, %d KB, sections: %s', $data_s * 1000, strlen($html) / 1024, implode(',', $m[1]) ?: 'none'));
+    if (in_array('network', $m[1], true)) {
+        // The map above the list (Phase 4.1): a hidden figure whose JSON is
+        // the slice for this facility's name on the map.
+        $embed_ok = preg_match('#<figure class="kop-network-embed" data-kop-network-embed hidden>.*?<script type="application/json" class="kop-network-embed__data">(.*?)</script>#s', $html, $em);
+        $slice = $embed_ok ? json_decode($em[1], true) : null;
+        $drawn_node = kop_network_map_facility_connections()[$id]['node'] ?? '';
+        $check("  $id network section carries the map", is_array($slice) && ($slice['root'] ?? '') === $drawn_node
+            && in_array($drawn_node, array_column($slice['nodes'] ?? array(), 'id'), true)
+            && !empty($GLOBALS['kop_network_embed']),
+            is_array($slice) ? count($slice['nodes']) . ' names, ' . (int) (strlen($em[1]) / 1024) . ' KB' : 'no embed JSON');
+        unset($GLOBALS['kop_network_embed']);
+    }
     echo '      ' . $data['summary'] . "\n";
     echo '      ' . $file . "\n";
 }

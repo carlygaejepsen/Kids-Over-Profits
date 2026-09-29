@@ -151,6 +151,11 @@
                     /* Deaths the memorial records for this name. */
                     deaths: raw.deaths || 0,
                     isolated: !!raw.isolated,
+                    /* Connections the name has that a page's slice of the
+                     * graph left out (the facility page embed); 0 on the
+                     * map, which has them all. focus counts them into the
+                     * "+N" so it says what the full map would. */
+                    offSlice: raw.offSlice || 0,
                     /* Settled position. Mutable: dragging a node moves it and
                      * pins it for the session. x0/y0 is the way back. */
                     x: pos.x,

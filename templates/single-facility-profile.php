@@ -24,6 +24,11 @@ if (file_exists($kop_fp_css_path)) {
         filemtime($kop_fp_css_path)
     );
 }
+// The network map section's own frame (inc/network-map.php); small, and
+// the head is printed before the template knows whether the map draws it.
+if (function_exists('kop_network_map_embed_style')) {
+    kop_network_map_embed_style();
+}
 
 if (!function_exists('kop_fp_meta')) {
     /** Trimmed string meta, or the raw value when it is an array. */
@@ -450,7 +455,34 @@ while (have_posts()) :
                 'before' => '<div class="page-links">',
                 'after'  => '</div>',
             ));
+
+            // The same section the generated facility pages carry: the map
+            // around this facility, then its connections listed.
+            $kop_fp_network = ($kop_fp_record_id && function_exists('kop_facility_pages_network'))
+                ? kop_facility_pages_network($kop_fp_record_id) : null;
             ?>
+            <?php if (!empty($kop_fp_network['groups'])) : ?>
+            <section class="kop-fp-section kop-fp-network" id="network">
+                <h2>Connections on the network map</h2>
+                <p class="kop-fp-count">The companies, people and programs our research map ties to this program. <a href="<?php echo esc_url($kop_fp_network['map_url']); ?>">Open it on the network map</a>.</p>
+                <?php echo kop_network_map_embed_html($kop_fp_record_id); ?>
+                <?php foreach ($kop_fp_network['groups'] as $group) : ?>
+                    <h3 class="kop-fp-subhead"><?php echo esc_html($group['label']); ?></h3>
+                    <ul class="kop-fp-records">
+                        <?php foreach ($group['items'] as $item) : ?>
+                            <li>
+                                <?php if ($item['url'] !== '') : ?>
+                                    <a href="<?php echo esc_url($item['url']); ?>"><?php echo esc_html($item['name']); ?></a>
+                                <?php else : ?>
+                                    <span><?php echo esc_html($item['name']); ?></span>
+                                <?php endif; ?>
+                                <?php if ($item['role'] !== '') : ?><span class="meta"><?php echo esc_html($item['role']); ?></span><?php endif; ?>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endforeach; ?>
+            </section>
+            <?php endif; ?>
         </div>
 
     </div>

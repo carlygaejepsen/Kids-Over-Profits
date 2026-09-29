@@ -4459,18 +4459,23 @@ function run() {
     flushFrames();
 }
 
-try {
-    run();
-} catch (error) {
-    failures.push('threw: ' + (error && error.stack ? error.stack : error));
-}
+/* scripts/test-network-embed.js borrows the sandbox; run only when called. */
+module.exports = { buildSandbox, collidingLabels };
 
-notes.forEach(function (note) { console.log('  note: ' + note); });
-if (failures.length === 0) {
-    console.log('network module tests: PASS');
-    process.exit(0);
+if (require.main === module) {
+    try {
+        run();
+    } catch (error) {
+        failures.push('threw: ' + (error && error.stack ? error.stack : error));
+    }
+
+    notes.forEach(function (note) { console.log('  note: ' + note); });
+    if (failures.length === 0) {
+        console.log('network module tests: PASS');
+        process.exit(0);
+    }
+    console.error('network module tests: FAIL');
+    failures.slice(0, 40).forEach(function (failure) { console.error('  - ' + failure); });
+    if (failures.length > 40) console.error('  ... and ' + (failures.length - 40) + ' more');
+    process.exit(1);
 }
-console.error('network module tests: FAIL');
-failures.slice(0, 40).forEach(function (failure) { console.error('  - ' + failure); });
-if (failures.length > 40) console.error('  ... and ' + (failures.length - 40) + ' more');
-process.exit(1);
